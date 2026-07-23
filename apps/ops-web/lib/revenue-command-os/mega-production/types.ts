@@ -18,6 +18,52 @@ export type ExperimentStatus='draft'|'review'|'approved'|'running'|'paused'|'com
 export type RegistryStatus='draft'|'testing'|'approved'|'active'|'degraded'|'rolled_back'|'retired'
 export type AnomalyClass='commercial'|'operational'|'financial'|'ai_model'|'security'|'infrastructure'|'data_quality'
 export type Severity='critical'|'high'|'medium'|'low'|'info'
+export type MegaTruthMode='live'|'degraded'|'unavailable'
+export type MegaSourceCriticality='advisory'|'operational'|'safety'
+export type MegaCapabilityKey='learning'|'experimentation'|'attribution'|'forecasting'|'runtime'|'governance'|'quality'|'safety'|'activation'|'recovery'|'finops'
+
+export interface MegaSourceHealth {
+  key:string
+  label:string
+  table:string
+  capability:MegaCapabilityKey
+  criticality:MegaSourceCriticality
+  ok:boolean
+  count:number
+  queriedAt:string
+  recoverable:boolean
+  errorCode?:string
+  message?:string
+  traceId?:string
+}
+export interface MegaCapabilityHealth {
+  key:MegaCapabilityKey
+  label:string
+  state:MegaTruthMode
+  sourceKeys:string[]
+  healthySources:string[]
+  failedSources:string[]
+  message:string
+}
+export interface MegaActionAvailability {
+  allowed:boolean
+  reason:string
+  requiredSources:string[]
+  missingSources:string[]
+  maxActivationLevel?:ActivationLevel
+}
+export interface MegaActionAvailabilityMap {
+  internalInspection:MegaActionAvailability
+  emergencyStop:MegaActionAvailability
+  activationReview:MegaActionAvailability
+  externalExecution:MegaActionAvailability
+}
+export interface MegaMetricAvailability {
+  activationSafety:boolean
+  forecastAccuracy:boolean
+  queueDepth:boolean
+  openAnomalies:boolean
+}
 export interface MegaActor{ id:string; tenantId:string; displayName:string; role:string; permissions:string[] }
 export interface StrategyOutcome{ id:string; tenantId:string; strategyId:string; strategyVersionId:string; objectiveId:string; status:string; plannedRevenue:number; actualRevenue:number; plannedMargin:number; actualMargin:number; pipelineCreated:number; meetings:number; proposals:number; conversions:number; executionCompleteness:number; attributionConfidence:number; lessons:string[]; observedAt:string }
 export interface CommandPerformance{ commandCode:string; segment?:string; territory?:string; selections:number; executions:number; successes:number; revenueContribution:number; marginContribution:number; successRate:number; confidence:number; state:'unproven'|'promising'|'validated'|'high_performing'|'context_specific'|'underperforming'|'suppressed'|'retired'|'review_required'; updatedAt:string }
@@ -40,11 +86,36 @@ export interface ProductionActivation{ id:string; tenantId:string; level:Activat
 export interface SecurityReview{ id:string; code:string; status:'planned'|'running'|'passed'|'failed'|'conditional'; critical:number; high:number; medium:number; low:number; findings:Array<{code:string;severity:Severity;title:string;status:string;owner?:string}>; completedAt?:string }
 export interface DisasterRecoverySummary{ id:string; scenario:string; status:'planned'|'running'|'passed'|'failed'; rpoMinutes:number; rtoMinutes:number; actualRecoveryMinutes?:number; evidence:string[]; runAt?:string }
 export interface MegaProductionDashboard{
-  mode:SystemMode; activationLevel:ActivationLevel; learningCoverage:Record<LearningCapability,boolean>; productionCoverage:Record<ProductionCapability,boolean>;
-  outcomes:StrategyOutcome[]; commandPerformance:CommandPerformance[]; segmentLearning:SegmentLearning[]; experiments:RevenueExperiment[];
-  attributions:AttributionResult[]; calibrations:ForecastCalibration[]; anomalies:Anomaly[]; queues:QueueHealth[]; workers:WorkerHealth[];
-  locks:DistributedLock[]; registries:RegistryEntry[]; evaluations:EvaluationSummary[]; cost:CostSummary; confidencePolicies:ConfidencePolicy[];
-  emergencyStops:EmergencyStop[]; activation?:ProductionActivation; securityReview?:SecurityReview; disasterRecovery:DisasterRecoverySummary[];
-  metrics:{queueDepth:number; oldestJobAgeSeconds:number; successRate:number; deadLetters:number; openAnomalies:number; activeExperiments:number; learningSamples:number; forecastAccuracy:number; activationSafetyScore:number};
-  generatedAt:string; freshness:{state:'live'|'fresh'|'aging'|'stale';message:string}; externalActionsEnabled:boolean; approvedExternalActionsEnabled:boolean
+  mode:SystemMode
+  activationLevel:ActivationLevel
+  learningCoverage:Record<LearningCapability,boolean>
+  productionCoverage:Record<ProductionCapability,boolean>
+  outcomes:StrategyOutcome[]
+  commandPerformance:CommandPerformance[]
+  segmentLearning:SegmentLearning[]
+  experiments:RevenueExperiment[]
+  attributions:AttributionResult[]
+  calibrations:ForecastCalibration[]
+  anomalies:Anomaly[]
+  queues:QueueHealth[]
+  workers:WorkerHealth[]
+  locks:DistributedLock[]
+  registries:RegistryEntry[]
+  evaluations:EvaluationSummary[]
+  cost:CostSummary
+  confidencePolicies:ConfidencePolicy[]
+  emergencyStops:EmergencyStop[]
+  activation?:ProductionActivation
+  securityReview?:SecurityReview
+  disasterRecovery:DisasterRecoverySummary[]
+  metrics:{queueDepth:number; oldestJobAgeSeconds:number; successRate:number; deadLetters:number; openAnomalies:number; activeExperiments:number; learningSamples:number; forecastAccuracy:number; activationSafetyScore:number}
+  metricAvailability:MegaMetricAvailability
+  generatedAt:string
+  dataMode:MegaTruthMode
+  sourceHealth:MegaSourceHealth[]
+  capabilityHealth:MegaCapabilityHealth[]
+  actionAvailability:MegaActionAvailabilityMap
+  freshness:{state:'live'|'fresh'|'aging'|'stale'|'degraded'|'unavailable';message:string}
+  externalActionsEnabled:boolean
+  approvedExternalActionsEnabled:boolean
 }

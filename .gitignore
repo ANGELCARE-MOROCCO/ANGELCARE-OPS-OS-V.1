@@ -107,3 +107,35 @@ RELEASES
 **/backups/
 **/source-backups-*/
 **/.revenue-os-backups/
+
+# BEGIN ANGELCARE LOCAL ARTIFACTS
+# Local patch backups and installer state
+.angelcare*-backups/
+.angelcare_backups/
+.angelcare-*-state.json
+
+# Temporary TypeScript verification files
+**/.tsconfig.mz*.json
+**/.tsconfig.*-temporary.json
+
+# Surgical pre-fix and backup copies
+**/*.before_*
+**/*.before-*
+**/*.bak
+**/*.backup
+**/*.orig
+**/*~
+
+# Local runtime and generated artifacts
+**/*.log
+**/*.tmp
+**/*.temp
+**/.DS_Store
+**/.next/
+**/.turbo/
+**/coverage/
+
+# Local archives and checksums
+**/*.zip
+**/*.sha256.txt
+# END ANGELCARE LOCAL ARTIFACTS

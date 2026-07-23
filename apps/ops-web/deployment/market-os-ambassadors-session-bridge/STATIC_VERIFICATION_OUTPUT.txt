@@ -1,0 +1,41 @@
+OK  required file exists: lib/market-os/ambassadors/auth.ts
+OK  required file exists: lib/market-os/ambassadors/contracts.ts
+OK  required file exists: lib/market-os/ambassadors/persistence.ts
+OK  required file exists: database/market-os-ambassadors/20260722_market_os_ambassador_ops_session_bridge.sql
+OK  required file exists: database/market-os-ambassadors/20260722_market_os_ambassador_ops_session_bridge_bootstrap_ceo.sql
+OK  required file exists: database/market-os-ambassadors/20260722_market_os_ambassador_ops_session_bridge.rollback.sql
+OK  required file exists: deployment/market-os-ambassadors-session-bridge/EXPLICIT_MAPPING.sql.example
+OK  required file exists: deployment/market-os-ambassadors-session-bridge/VERIFY_DATABASE.sql
+OK  auth bridge contains const OPS_SESSION_COOKIE = "angelcare_ops_session"
+OK  auth bridge contains .from("app_sessions")
+OK  auth bridge contains .from("app_users")
+OK  auth bridge contains resolveOpsSessionActor
+OK  auth bridge contains resolveSupabaseActor
+OK  auth bridge contains "app_user_id"
+OK  auth bridge contains authenticationSource: "ops_session"
+OK  auth bridge contains authenticationSource: "supabase_auth"
+OK  auth bridge contains OpsOS session is expired
+OK  auth bridge contains OpsOS session is invalid or revoked
+OK  auth bridge contains No active Ambassador scope is assigned to this user
+OK  actor contract contains export type AmbassadorAuthenticationSource = "supabase_auth" | "ops_session"
+OK  actor contract contains authUserId: string | null
+OK  actor contract contains appUserId: string | null
+OK  actor contract contains authenticationSource: AmbassadorAuthenticationSource
+OK  immutable audit contains authentication_source: actor.authenticationSource
+OK  immutable audit contains app_user_id: actor.appUserId
+OK  bridge migration contains add column if not exists app_user_id uuid
+OK  bridge migration contains alter column auth_user_id drop not null
+OK  bridge migration contains market_os_ambassador_actor_identity_required
+OK  bridge migration contains uq_market_os_ambassador_actor_app_user_active_scope
+OK  bridge migration contains references public.app_users(id) on delete cascade
+OK  guarded CEO bootstrap contains v_user_count <> 1
+OK  guarded scope bootstrap contains v_scope_count <> 1
+OK  guarded bootstrap contains 'ambassador_admin'
+OK  auth bridge excludes role === 'ceo' ? 'ambassador_admin'
+OK  auth bridge excludes role === "ceo" ? "ambassador_admin"
+OK  auth bridge excludes anonymous actor
+OK  auth bridge excludes local fallback
+OK  auth bridge excludes return mock
+OK  strict TypeScript static verification passed
+
+PASS  Ambassador OpsOS session bridge verification: 39 checks

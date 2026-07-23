@@ -4364,132 +4364,83 @@ export default function AmbassadorOnboardingRoute() {
 
   return (
     <div
-      data-page7-enterprise="operational-command-center"
+      data-page7-enterprise="readiness-journey-command-v4"
       className="min-w-0 flex-1 bg-[#f4f7fb] p-4 text-slate-950 lg:p-6"
     >
-      <header className="rounded-[28px] border border-slate-200 bg-white p-5 shadow-[0_15px_50px_rgba(15,23,42,0.07)] lg:p-6">
-        <div className="flex flex-col gap-5 2xl:flex-row 2xl:items-start 2xl:justify-between">
-          <div className="min-w-0">
-            <div className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-blue-700">
+      <header className="overflow-hidden border border-slate-200 bg-white shadow-[0_16px_50px_rgba(15,23,42,0.08)]">
+        <div className="grid 2xl:grid-cols-[minmax(0,1fr)_420px]">
+          <div className="border-l-4 border-[#cf2437] px-6 py-6 lg:px-7">
+            <div className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-[#164d7d]">
               <Sparkles className="h-4 w-4" />
-              Ambassador Activation OS
+              ANGELCARE READINESS JOURNEY · ACTIVATION CONTROL
             </div>
 
-            <h1 className="mt-3 text-3xl font-black tracking-tight text-slate-950">
-              Activation & onboarding des ambassadeurs
+            <h1 className="mt-2 text-3xl font-black tracking-tight text-slate-950">
+              Parcours de préparation & activation
             </h1>
 
             <p className="mt-2 max-w-5xl text-sm font-semibold leading-6 text-slate-600">
-              Pilotez la conversion complète d’un candidat validé vers un ambassadeur conforme,
-              formé, affecté, financièrement configuré et réellement prêt à exécuter.
+              Suivez chaque dossier depuis la préqualification jusqu’à l’activation, avec une lecture immédiate des preuves acquises, des contrôles manquants et des blocages réels.
             </p>
 
-            <div className="mt-4 flex flex-wrap gap-2">
-              {[
-                "Données réelles uniquement",
-                "Commission 10% verrouillée",
-                "Gates obligatoires",
-                "Synchronisation multi-modules",
-                "Audit et traçabilité",
-              ].map((label) => (
-                <span
-                  key={label}
-                  className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.12em] text-slate-700"
-                >
-                  {label}
-                </span>
-              ))}
+            <div className="mt-5 flex max-w-5xl flex-wrap items-center gap-2">
+              <button type="button" onClick={() => setModal("start")} className="inline-flex h-11 items-center gap-2 rounded-xl bg-[#0b4d85] px-4 text-sm font-black !text-white shadow-lg shadow-blue-200 hover:bg-[#083c69]">
+                <Plus className="h-4 w-4 !text-white" /> Démarrer onboarding
+              </button>
+              <button type="button" onClick={() => setModal("import")} className="inline-flex h-11 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-black text-slate-950 hover:bg-slate-50">
+                <Upload className="h-4 w-4" /> Importer dossiers
+              </button>
+              <button type="button" onClick={() => setModal("training")} className="inline-flex h-11 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-black text-slate-950 hover:bg-slate-50">
+                <CalendarDays className="h-4 w-4" /> Session collective
+              </button>
+              <button type="button" onClick={() => setModal("bulk")} disabled={!selectedKeys.size && !selectedDossier} className="inline-flex h-11 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-black text-slate-950 hover:bg-slate-50 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400">
+                <Layers3 className="h-4 w-4" /> Actions groupées
+              </button>
+              <button type="button" onClick={() => setModal("risks")} className="inline-flex h-11 items-center gap-2 rounded-xl border border-amber-200 bg-amber-50 px-4 text-sm font-black text-amber-900 hover:bg-amber-100">
+                <AlertTriangle className="h-4 w-4" /> Centre de contrôles
+                <span className="rounded-full bg-amber-200 px-2 py-0.5 text-[10px]">{riskItems.length}</span>
+              </button>
+              <button type="button" onClick={exportCurrentView} className="inline-flex h-11 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-black text-slate-950 hover:bg-slate-50">
+                <Download className="h-4 w-4" /> Exporter
+              </button>
+              <button type="button" onClick={() => void loadData()} disabled={loading} aria-label="Actualiser" className="flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-950 hover:bg-slate-50 disabled:opacity-50">
+                <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
+              </button>
             </div>
           </div>
 
-          <div className="flex max-w-4xl flex-wrap items-center justify-start gap-2 2xl:justify-end">
-            <button
-              type="button"
-              onClick={() => setModal("start")}
-              className="inline-flex h-11 items-center gap-2 rounded-2xl bg-blue-600 px-4 text-sm font-black text-white shadow-lg shadow-blue-200 hover:bg-blue-700"
-            >
-              <Plus className="h-4 w-4" />
-              Démarrer onboarding
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setModal("import")}
-              className="inline-flex h-11 items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-black text-slate-950 hover:bg-slate-50"
-            >
-              <Upload className="h-4 w-4" />
-              Importer dossiers
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setModal("training")}
-              className="inline-flex h-11 items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-black text-slate-950 hover:bg-slate-50"
-            >
-              <CalendarDays className="h-4 w-4" />
-              Session collective
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setModal("bulk")}
-              disabled={
-                !selectedKeys.size &&
-                !selectedDossier
-              }
-              className="inline-flex h-11 items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-black text-slate-950 hover:bg-slate-50 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400"
-            >
-              <Layers3 className="h-4 w-4" />
-              Actions groupées
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setModal("risks")}
-              className="inline-flex h-11 items-center gap-2 rounded-2xl border border-amber-200 bg-amber-50 px-4 text-sm font-black text-amber-900 hover:bg-amber-100"
-            >
-              <AlertTriangle className="h-4 w-4" />
-              Centre de contrôles
-              <span className="rounded-full bg-amber-200 px-2 py-0.5 text-[10px]">
-                {riskItems.length}
+          <aside className="bg-[#082b4d] px-6 py-6">
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] !text-[#9ec4e7]">Posture de préparation</p>
+            <div className="mt-3 flex items-end justify-between gap-4">
+              <div>
+                <p className="text-5xl font-black tabular-nums !text-white">{globalReadiness}%</p>
+                <p className="mt-1 text-xs font-bold !text-[#d6e4f2]">moyenne réelle du portefeuille</p>
+              </div>
+              <span className="grid h-12 w-12 place-items-center rounded-2xl border border-white/15 bg-white/10 !text-white">
+                <Activity className="h-5 w-5 !text-white" />
               </span>
-            </button>
-
-            <button
-              type="button"
-              onClick={exportCurrentView}
-              className="inline-flex h-11 items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-black text-slate-950 hover:bg-slate-50"
-            >
-              <Download className="h-4 w-4" />
-              Exporter
-            </button>
-
-            <button
-              type="button"
-              onClick={() => void loadData()}
-              disabled={loading}
-              className="flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-950 hover:bg-slate-50 disabled:opacity-50"
-            >
-              <RefreshCw
-                className={`h-4 w-4 ${
-                  loading ? "animate-spin" : ""
-                }`}
-              />
-            </button>
-          </div>
+            </div>
+            <div className="mt-5 h-2 overflow-hidden rounded-full bg-white/15">
+              <div className="h-full rounded-full bg-[#66b6ff]" style={{ width: `${globalReadiness}%` }} />
+            </div>
+            <div className="mt-6 grid grid-cols-2 gap-3 border-t border-white/10 pt-5">
+              <div>
+                <p className="text-[9px] font-black uppercase tracking-[0.14em] !text-[#9ec4e7]">Prêts à activer</p>
+                <p className="mt-1 text-2xl font-black tabular-nums !text-white">{stageCounts.ready}</p>
+              </div>
+              <div>
+                <p className="text-[9px] font-black uppercase tracking-[0.14em] !text-[#9ec4e7]">Blocages actifs</p>
+                <p className="mt-1 text-2xl font-black tabular-nums !text-white">{riskItems.length}</p>
+              </div>
+            </div>
+            <p className="mt-5 text-[11px] font-semibold leading-5 !text-[#d6e4f2]">
+              Point de friction dominant : {String(topBottleneck[0]).replaceAll("_", " ")} · {topBottleneck[1]} dossier(s).
+            </p>
+          </aside>
         </div>
 
-        {notice ? (
-          <div className="mt-4 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-bold text-emerald-900">
-            {notice}
-          </div>
-        ) : null}
-
-        {error ? (
-          <div className="mt-4 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-bold text-rose-900">
-            {error}
-          </div>
-        ) : null}
+        {notice ? <div className="border-t border-emerald-200 bg-emerald-50 px-6 py-3 text-sm font-bold text-emerald-900">{notice}</div> : null}
+        {error ? <div className="border-t border-rose-200 bg-rose-50 px-6 py-3 text-sm font-bold text-rose-900">{error}</div> : null}
       </header>
 
       <section className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-5 2xl:grid-cols-10">

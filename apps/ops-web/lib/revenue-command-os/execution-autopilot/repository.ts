@@ -1,7 +1,7 @@
 import 'server-only'
-import { createClient } from '@/lib/supabase/server'
+import { createServiceClient } from '@/lib/supabase/server'
 import type { AdapterHealth, CompensationResult, ExecutionAction, ExecutionAttempt, ExecutionResult, ExecutionWebhookEvent, PropagationPackage, PropagationRun } from './types'
-async function db(){return await createClient() as any}
+async function db(){return await createServiceClient() as any}
 const payload=<T>(row:any):T=>((row?.payload??row) as T)
 export async function listPropagationPackages(tenantId:string){const c=await db();const r=await c.from('revenue_os_propagation_packages').select('*').eq('tenant_id',tenantId).in('status',['prepared_shadow','ready','activated']).order('created_at',{ascending:false}).limit(100);if(r.error)throw r.error;return(r.data||[]).map((x:any)=>payload<PropagationPackage>(x))}
 export async function loadPropagationPackage(tenantId:string,id:string):Promise<PropagationPackage>{const c=await db();const r=await c.from('revenue_os_propagation_packages').select('*').eq('tenant_id',tenantId).eq('id',id).maybeSingle();if(r.error||!r.data)throw r.error||new Error('PROPAGATION_PACKAGE_NOT_FOUND');return payload<PropagationPackage>(r.data)}

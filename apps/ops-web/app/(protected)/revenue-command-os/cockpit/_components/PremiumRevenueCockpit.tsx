@@ -1,5 +1,7 @@
 'use client'
 
+import Link from 'next/link'
+
 import {
   Activity,
   AlertTriangle,
@@ -16,6 +18,7 @@ import {
   Download,
   Eye,
   FlaskConical,
+  Fingerprint,
   GitBranch,
   Layers3,
   LineChart,
@@ -34,7 +37,14 @@ import {
   X,
   Zap,
 } from 'lucide-react'
-import { useCallback, useEffect, useMemo, useState, type ChangeEvent, type MouseEvent, type ReactNode } from 'react'
+import { useCallback, useEffect, useMemo, useState, type ChangeEvent, type ReactNode } from 'react'
+import { fetchRevenueOsJson } from '@/lib/revenue-command-os/client-http'
+import CockpitHero from '../../_components/hero-sovereignty/heroes/CockpitHero'
+import {
+  DrawerActionFooter, DrawerBadge, DrawerCloseButton, DrawerExecutiveBrief, DrawerMetric,
+  DrawerPrimaryAction, DrawerSection as SovereignDrawerSection, SovereignDrawerOverlay,
+  SovereignDrawerPanel, drawerStyles,
+} from '../../_components/drawer-sovereignty/DrawerPrimitives'
 import type {
   ApprovalGovernanceSummary,
   CampaignWaveSummary,
@@ -89,9 +99,12 @@ export default function PremiumRevenueCockpit() {
     setBusy(true)
     setError('')
     try {
-      const response = await fetch(`/api/revenue-command-os/cockpit?view=${roleView}&refresh=${force ? 'true' : 'false'}`, { cache: 'no-store' })
-      const payload = await response.json()
-      if (!response.ok || !payload.ok) throw new Error(payload.error?.message || 'Chargement du cockpit impossible.')
+      const payload = await fetchRevenueOsJson<CockpitDashboard>(
+        `/api/revenue-command-os/cockpit?view=${roleView}&refresh=${force ? 'true' : 'false'}`,
+        { cache: 'no-store' },
+        { timeoutMs: 25000, fallbackMessage: 'Chargement du cockpit impossible.' },
+      )
+      if (!payload.data) throw new Error('Le cockpit n’a retourné aucune situation exploitable.')
       setDashboard(payload.data)
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : String(caught))
@@ -129,9 +142,11 @@ export default function PremiumRevenueCockpit() {
   async function acknowledge(exception: RevenueException) {
     setActionBusy(true)
     try {
-      const response = await fetch('/api/revenue-command-os/cockpit/acknowledge', { method: 'POST', headers: { 'content-type': 'application/json', 'idempotency-key': crypto.randomUUID() }, body: JSON.stringify({ exceptionId: exception.id }) })
-      const payload = await response.json()
-      if (!response.ok || !payload.ok) throw new Error(payload.error?.message || 'Accusé de réception impossible.')
+      await fetchRevenueOsJson('/api/revenue-command-os/cockpit/acknowledge', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', 'idempotency-key': crypto.randomUUID() },
+        body: JSON.stringify({ exceptionId: exception.id }),
+      }, { fallbackMessage: 'Accusé de réception impossible.' })
       await load(true)
       setSelectedException(null)
     } catch (caught) {
@@ -169,7 +184,7 @@ export default function PremiumRevenueCockpit() {
             <div className="rounded-2xl bg-blue-50 p-3">
               <p className="text-[10px] font-black uppercase tracking-[.16em] text-blue-700">Posture active</p>
               <p className="mt-1 text-sm font-black text-slate-950">{dashboard?.executionMode || 'shadow'}</p>
-              <p className="mt-1 text-[11px] leading-5 text-slate-500">Toutes les décisions restent soumises aux contrôles MZ12–MZ14.</p>
+              <p className="mt-1 text-[11px] leading-5 text-slate-500">Toutes les décisions restent soumises aux validations, permissions et approbations applicables.</p>
             </div>
           </div>
         </aside>
@@ -186,41 +201,34 @@ export default function PremiumRevenueCockpit() {
 
 function CommandHeader({ dashboard, busy, actionBusy, roleView, setRoleView, onRefresh, onExport }: { dashboard: CockpitDashboard | null; busy: boolean; actionBusy: boolean; roleView: CockpitRoleView; setRoleView: (value: CockpitRoleView) => void; onRefresh: () => void; onExport: () => void }) {
   const brief = dashboard?.executiveBrief
-  return <section className="relative overflow-hidden rounded-[34px] border border-slate-900/5 bg-[linear-gradient(135deg,#071327_0%,#0c2344_48%,#103f6d_100%)] text-white shadow-[0_28px_90px_rgba(15,23,42,.22)]">
-    <div className="absolute inset-0 opacity-25 [background-image:radial-gradient(circle_at_12%_18%,#38bdf8_0,transparent_28%),radial-gradient(circle_at_88%_22%,#22c55e_0,transparent_21%),linear-gradient(110deg,transparent_30%,rgba(255,255,255,.08)_50%,transparent_70%)]" />
-    <div className="relative grid gap-8 p-6 lg:grid-cols-[minmax(0,1fr)_430px] lg:p-8 xl:p-10">
-      <div>
-        <div className="flex flex-wrap items-center gap-2">
-          <Badge label="MZ15 · Premium Revenue Cockpit" tone="blue" />
-          <Badge label={`Mode ${dashboard?.executionMode || 'shadow'}`} tone="slate" />
-          <Badge label={`${dashboard?.counts.criticalExceptions || 0} intervention(s) critique(s)`} tone={(dashboard?.counts.criticalExceptions || 0) > 0 ? 'red' : 'green'} />
-        </div>
-        <p className="mt-6 text-[11px] font-black uppercase tracking-[.2em] text-blue-200">Revenue Situation Brief</p>
-        <h1 className="mt-2 max-w-5xl text-3xl font-black tracking-[-.035em] sm:text-4xl xl:text-[52px] xl:leading-[1.05]">{brief?.objectiveStatement || 'Le système consolide la situation revenue AngelCare.'}</h1>
-        <p className="mt-5 max-w-4xl text-sm leading-7 text-slate-300 lg:text-base">{brief?.currentPosition || 'Chargement des objectifs, signaux, stratégies, programmes et actions...'}</p>
-        <div className="mt-6 grid gap-3 md:grid-cols-3">
-          <BriefStrip label="Prévision" value={brief?.forecastStatement || 'En calcul'} icon={<LineChart size={17} />} />
-          <BriefStrip label="Décision immédiate" value={brief?.immediateDecision || 'Aucune décision calculée'} icon={<Zap size={17} />} />
-          <BriefStrip label="Ce qui se passe ensuite" value={brief?.recommendedExecutiveAction || 'Surveillance active'} icon={<ArrowRight size={17} />} />
-        </div>
-      </div>
-      <div className="space-y-4">
-        <div className="flex flex-wrap justify-end gap-2">
-          <select value={roleView} onChange={(event: ChangeEvent<HTMLSelectElement>) => setRoleView(event.target.value as CockpitRoleView)} className="rounded-xl border border-white/15 bg-white/10 px-3 py-2.5 text-xs font-black text-white outline-none backdrop-blur [&>option]:text-slate-900">
-            {roleViews.map((view) => <option key={view.key} value={view.key}>{view.label}</option>)}
-          </select>
-          <button onClick={onRefresh} disabled={busy} className="rounded-xl border border-white/15 bg-white/10 px-3 py-2.5 text-xs font-black hover:bg-white/15 disabled:opacity-50"><RefreshCw size={15} className={`mr-2 inline ${busy ? 'animate-spin' : ''}`} />Actualiser</button>
-          <button onClick={onExport} disabled={actionBusy} className="rounded-xl bg-white px-3 py-2.5 text-xs font-black text-slate-950 hover:bg-blue-50 disabled:opacity-50"><Download size={15} className="mr-2 inline" />Brief A4</button>
-        </div>
-        <div className="grid grid-cols-2 gap-3">
-          <HeroMetric label="Objectif" value={formatDh(dashboard?.objective?.revenueTarget || 0)} sub={`${dashboard?.objective?.progressPercent || 0}% réalisé`} icon={<Target />} />
-          <HeroMetric label="Pipeline" value={formatDh(dashboard?.objective?.qualifiedPipeline || 0)} sub={`${dashboard?.objective?.forecastPercent || 0}% couverture`} icon={<TrendingUp />} />
-          <HeroMetric label="Revenu exposé" value={formatDh(dashboard?.counts.revenueAtRisk || 0)} sub={`${dashboard?.counts.criticalExceptions || 0} exception(s)`} icon={<ShieldAlert />} alert={(dashboard?.counts.revenueAtRisk || 0) > 0} />
-          <HeroMetric label="Approbations" value={String(dashboard?.counts.approvalsRequired || 0)} sub="Décisions requises" icon={<BadgeCheck />} alert={(dashboard?.counts.approvalsRequired || 0) > 0} />
-        </div>
-      </div>
+  return <>
+    <CockpitHero
+      state={busy && !dashboard ? 'INITIALIZING' : !dashboard ? 'OFFLINE' : dashboard.zoneHealth.some((zone) => ['degraded', 'blocked', 'stale'].includes(zone.status)) ? 'DEGRADED' : 'LIVE'}
+      posture={`Mode ${dashboard?.executionMode || 'shadow'}`}
+      authority={dashboard ? `Direction générale · effets externes exécutés: ${dashboard.counts.externalActionsExecuted}` : 'Autorité en attente de résolution'}
+      summary={brief?.currentPosition || 'Le système consolide la situation revenue AngelCare, ses priorités, exceptions et décisions requises.'}
+      freshness={dashboard?.generatedAt ? new Date(dashboard.generatedAt).toLocaleString('fr-FR') : undefined}
+      metrics={[
+        { label: 'Objectif', value: dashboard?.objective ? formatDh(dashboard.objective.revenueTarget) : '—', note: dashboard?.objective ? `${dashboard.objective.progressPercent}% réalisé` : 'Non calculé', tone: 'blue' },
+        { label: 'Pipeline qualifié', value: dashboard?.objective ? formatDh(dashboard.objective.qualifiedPipeline) : '—', note: dashboard?.objective ? `${dashboard.objective.forecastPercent}% couverture` : 'Non calculé', tone: 'cyan' },
+        { label: 'Revenu exposé', value: dashboard ? formatDh(dashboard.counts.revenueAtRisk) : '—', note: dashboard ? `${dashboard.counts.criticalExceptions} exception(s) critique(s)` : 'Indisponible', tone: dashboard?.counts.revenueAtRisk ? 'rose' : 'emerald' },
+        { label: 'Approbations', value: dashboard ? dashboard.counts.approvalsRequired : '—', note: 'Décisions humaines requises', tone: dashboard?.counts.approvalsRequired ? 'amber' : 'emerald' },
+      ]}
+      actions={[
+        { label: busy ? 'Actualisation…' : 'Actualiser', onClick: onRefresh, disabled: busy, reason: busy ? 'Le cockpit est déjà en cours d’actualisation.' : undefined, kind: 'secondary', icon: RefreshCw },
+        { label: actionBusy ? 'Export…' : 'Brief exécutif', onClick: onExport, disabled: actionBusy || !dashboard, reason: actionBusy ? 'Un export est déjà en cours.' : !dashboard ? 'Le cockpit doit être disponible avant export.' : undefined, kind: 'primary', icon: Download },
+      ]}
+      warning={dashboard?.counts.externalActionsExecuted ? 'Attention — le compteur signale des effets externes exécutés dans la source actuelle; MZ22 ne modifie pas cette posture.' : 'Shadow control — aucune action externe n’est activée par le hero.'}
+    />
+    <div className="mt-3 flex justify-end">
+      <label className="inline-flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-[10px] font-black uppercase tracking-[.12em] text-slate-500 shadow-sm">
+        Perspective
+        <select value={roleView} onChange={(event: ChangeEvent<HTMLSelectElement>) => setRoleView(event.target.value as CockpitRoleView)} className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-black normal-case tracking-normal text-slate-900 outline-none focus:border-blue-400 focus-visible:ring-2 focus-visible:ring-blue-300">
+          {roleViews.map((view) => <option key={view.key} value={view.key}>{view.label}</option>)}
+        </select>
+      </label>
     </div>
-  </section>
+  </>
 }
 
 function Overview({ dashboard, onOpenZone, onSelectException }: { dashboard: CockpitDashboard; onOpenZone: (zone: CockpitZoneKey) => void; onSelectException: (exception: RevenueException) => void }) {
@@ -255,13 +263,13 @@ function Overview({ dashboard, onOpenZone, onSelectException }: { dashboard: Coc
     </div>
 
     <div className="grid gap-5 xl:grid-cols-3">
-      <Panel title="Stratégie active" eyebrow="MZ10 · MZ11 · MZ12">
+      <Panel title="Stratégie active" eyebrow="Strategy lineage · Council · Decision">
         {dashboard.strategies[0] ? <StrategyCompact strategy={dashboard.strategies[0]} council={dashboard.council} /> : <EmptyState icon={<Sparkles />} title="Aucune stratégie active" text="Assemblez puis validez une stratégie depuis le Strategy Brain." />}
       </Panel>
-      <Panel title="Programmes revenus" eyebrow="MZ13 · Mission Compiler">
+      <Panel title="Programmes revenus" eyebrow="Strategy → Program → Campaign → Mission">
         <div className="space-y-3">{dashboard.programs.slice(0, 5).map((program) => <ProgramCompact key={program.id} program={program} />)}{!dashboard.programs.length ? <EmptyState icon={<Layers3 />} title="Aucun programme actif" text="Une stratégie approuvée doit être compilée en travail opérationnel." /> : null}</div>
       </Panel>
-      <Panel title="Exécution contrôlée" eyebrow="MZ14 · Autopilot">
+      <Panel title="Exécution contrôlée" eyebrow="Execution governance · Adapters · Outcomes">
         <ExecutionMini dashboard={dashboard} />
       </Panel>
     </div>
@@ -290,7 +298,7 @@ function ObjectiveZone({ dashboard }: { dashboard: CockpitDashboard }) {
 
 function SignalsZone({ signals }: { signals: LiveSignalSummary[] }) {
   return <Panel title={`Signaux marché & activité · ${signals.length}`} eyebrow="Live Market and Business Signals">
-    <div className="grid gap-3 lg:grid-cols-2">{signals.map((signal) => <div key={signal.id} className={`rounded-3xl border p-5 ${signal.severity === 'critical' ? 'border-red-200 bg-red-50/50' : signal.severity === 'high' ? 'border-amber-200 bg-amber-50/40' : 'border-slate-200 bg-white'}`}><div className="flex items-start justify-between gap-3"><div><div className="flex flex-wrap gap-2"><SeverityBadge value={signal.severity} /><span className="rounded-full bg-white px-2 py-1 text-[10px] font-black uppercase text-slate-500">{signal.category}</span></div><h3 className="mt-3 text-base font-black text-slate-950">{signal.title}</h3></div><Freshness value={signal.freshness.state} text={timeAgo(signal.occurredAt)} /></div><p className="mt-3 text-sm leading-6 text-slate-600">{signal.summary}</p><div className="mt-4 grid grid-cols-3 gap-2"><ScoreMini label="Priorité" value={signal.priorityScore} /><ScoreMini label="Opportunité" value={signal.opportunityScore} /><ScoreMini label="Risque" value={signal.riskScore} /></div><div className="mt-4 flex items-center justify-between border-t border-slate-200/70 pt-3"><span className="text-[11px] font-bold text-slate-500">{signal.source} · {signal.confidence}</span><button className="text-xs font-black text-blue-700">Inspecter <ChevronRight className="inline" size={14} /></button></div></div>)}{!signals.length ? <div className="lg:col-span-2"><EmptyState icon={<BellRing />} title="Aucun signal correspondant" text="Ajustez le filtre ou vérifiez la santé du Signal Fabric." /></div> : null}</div>
+    <div className="grid gap-3 lg:grid-cols-2">{signals.map((signal) => <div key={signal.id} className={`rounded-3xl border p-5 ${signal.severity === 'critical' ? 'border-red-200 bg-red-50/50' : signal.severity === 'high' ? 'border-amber-200 bg-amber-50/40' : 'border-slate-200 bg-white'}`}><div className="flex items-start justify-between gap-3"><div><div className="flex flex-wrap gap-2"><SeverityBadge value={signal.severity} /><span className="rounded-full bg-white px-2 py-1 text-[10px] font-black uppercase text-slate-500">{signal.category}</span></div><h3 className="mt-3 text-base font-black text-slate-950">{signal.title}</h3></div><Freshness value={signal.freshness.state} text={timeAgo(signal.occurredAt)} /></div><p className="mt-3 text-sm leading-6 text-slate-600">{signal.summary}</p><div className="mt-4 grid grid-cols-3 gap-2"><ScoreMini label="Priorité" value={signal.priorityScore} /><ScoreMini label="Opportunité" value={signal.opportunityScore} /><ScoreMini label="Risque" value={signal.riskScore} /></div><div className="mt-4 flex items-center justify-between border-t border-slate-200/70 pt-3"><span className="text-[11px] font-bold text-slate-500">{signal.source} · {signal.confidence}</span><Link href="/revenue-command-os/signals/live-stream" className="text-xs font-black text-blue-700">Inspecter dans Signaux <ChevronRight className="inline" size={14} /></Link></div></div>)}{!signals.length ? <div className="lg:col-span-2"><EmptyState icon={<BellRing />} title="Aucun signal correspondant" text="Ajustez le filtre ou vérifiez la santé du Signal Fabric." /></div> : null}</div>
   </Panel>
 }
 
@@ -300,13 +308,13 @@ function StrategyZone({ strategies }: { strategies: StrategyAssemblySummary[] })
 
 function CouncilZone({ dashboard }: { dashboard: CockpitDashboard }) {
   const council = dashboard.council
-  if (!council) return <Panel title="Conseil de validation"><EmptyState icon={<ShieldCheck />} title="Aucun run du Conseil" text="Sélectionnez une stratégie puis lancez la validation MZ11." /></Panel>
+  if (!council) return <Panel title="Conseil de validation"><EmptyState icon={<ShieldCheck />} title="Aucun run du Conseil" text="Sélectionnez une stratégie puis lancez sa validation gouvernée." /></Panel>
   const scores = Object.entries(council.scores)
   return <div className="space-y-5"><Panel title={`Classification · ${council.classification}`} eyebrow={`Run ${shortId(council.runId)}`} action={<StatusPill value={council.readyForExecutiveReview ? 'ready' : 'blocked'} />}><div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_360px]"><div><div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">{scores.map(([label, value]) => <ScoreCard key={label} label={label} value={value} />)}</div><div className="mt-5 grid gap-3 md:grid-cols-4"><SmallMetric label="Agents terminés" value={`${council.completedAgents}/${Math.max(10, council.reviewCount)}`} /><SmallMetric label="Findings bloquants" value={String(council.blockingFindings)} alert={council.blockingFindings > 0} /><SmallMetric label="Contradictions" value={String(council.contradictions)} alert={council.contradictions > 0} /><SmallMetric label="Red Team survécue" value={`${council.survivedAttacks}/${council.redTeamAttacks}`} /></div></div><div className="rounded-3xl border border-slate-200 bg-slate-50 p-5"><p className="text-xs font-black uppercase tracking-[.14em] text-slate-500">Findings prioritaires</p><div className="mt-4 space-y-2">{council.topFindings.slice(0, 6).map((finding) => <div key={finding} className="rounded-xl bg-white p-3 text-xs font-semibold leading-5 text-slate-700 shadow-sm">{finding}</div>)}{!council.topFindings.length ? <p className="text-sm text-slate-500">Aucun finding textuel disponible.</p> : null}</div></div></div></Panel></div>
 }
 
 function ProgramsZone({ programs }: { programs: RevenueProgramSummary[] }) {
-  return <Panel title={`Programmes revenus actifs · ${programs.length}`} eyebrow="Strategy → Program → Campaign → Mission"><div className="grid gap-4 xl:grid-cols-2">{programs.map((program) => <div key={program.id} className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm"><div className="flex items-start justify-between"><div><p className="text-[10px] font-black uppercase tracking-[.14em] text-blue-700">{program.code}</p><h3 className="mt-2 text-lg font-black text-slate-950">{program.title}</h3><p className="mt-1 text-xs text-slate-500">{program.owner} · {program.territories.join(', ')}</p></div><StatusPill value={program.status} /></div><div className="mt-5 grid grid-cols-3 gap-2"><SmallMetric label="Forecast" value={formatDh(program.forecastRevenue)} /><SmallMetric label="Pipeline" value={formatDh(program.pipelineContribution)} /><SmallMetric label="Capacité" value={`${program.capacityUtilization}%`} alert={program.capacityUtilization >= 90} /></div><div className="mt-5"><ProgressBar label="Progression" value={program.progressPercent} tone="green" /></div><div className="mt-4 grid grid-cols-4 gap-2 text-center"><TinyCount label="Campagnes" value={program.activeCampaigns} /><TinyCount label="Waves" value={program.activeWaves} /><TinyCount label="Missions" value={program.missions} /><TinyCount label="Bloquées" value={program.tasksBlocked} alert={program.tasksBlocked > 0} /></div><button className="mt-5 w-full rounded-xl border border-slate-200 py-2.5 text-xs font-black text-slate-700 hover:bg-slate-50">Ouvrir le programme <ArrowRight className="ml-1 inline" size={14} /></button></div>)}{!programs.length ? <div className="xl:col-span-2"><EmptyState icon={<Layers3 />} title="Aucun programme" text="Compilez une stratégie MZ12 approuvée avec MZ13." /></div> : null}</div></Panel>
+  return <Panel title={`Programmes revenus actifs · ${programs.length}`} eyebrow="Strategy → Program → Campaign → Mission"><div className="grid gap-4 xl:grid-cols-2">{programs.map((program) => <div key={program.id} className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm"><div className="flex items-start justify-between"><div><p className="text-[10px] font-black uppercase tracking-[.14em] text-blue-700">{program.code}</p><h3 className="mt-2 text-lg font-black text-slate-950">{program.title}</h3><p className="mt-1 text-xs text-slate-500">{program.owner} · {program.territories.join(', ')}</p></div><StatusPill value={program.status} /></div><div className="mt-5 grid grid-cols-3 gap-2"><SmallMetric label="Forecast" value={formatDh(program.forecastRevenue)} /><SmallMetric label="Pipeline" value={formatDh(program.pipelineContribution)} /><SmallMetric label="Capacité" value={`${program.capacityUtilization}%`} alert={program.capacityUtilization >= 90} /></div><div className="mt-5"><ProgressBar label="Progression" value={program.progressPercent} tone="green" /></div><div className="mt-4 grid grid-cols-4 gap-2 text-center"><TinyCount label="Campagnes" value={program.activeCampaigns} /><TinyCount label="Waves" value={program.activeWaves} /><TinyCount label="Missions" value={program.missions} /><TinyCount label="Bloquées" value={program.tasksBlocked} alert={program.tasksBlocked > 0} /></div><div className="mt-5 flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-xs font-black text-slate-600"><span>Dossier consolidé dans cette vue</span><BadgeCheck size={14} className="text-emerald-600" /></div></div>)}{!programs.length ? <div className="xl:col-span-2"><EmptyState icon={<Layers3 />} title="Aucun programme" text="Compilez une stratégie approuvée dans le Mission Compiler." /></div> : null}</div></Panel>
 }
 
 function RunsZone({ runs }: { runs: CommandRunSummary[] }) {
@@ -319,7 +327,7 @@ function WavesZone({ waves }: { waves: CampaignWaveSummary[] }) {
 
 function CompilerZone({ dashboard }: { dashboard: CockpitDashboard }) {
   const compiler = dashboard.compiler
-  return <div className="space-y-5"><Panel title="Mission Compiler · état global" eyebrow="MZ13 deterministic compilation"><div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5"><CommandMetric label="Éligibles" value={String(compiler.eligibleStrategies)} detail="Stratégies approuvées" progress={Math.min(100, compiler.eligibleStrategies * 20)} tone="blue" icon={<BadgeCheck />} /><CommandMetric label="Compilées" value={String(compiler.compiled)} detail={`${compiler.readyForPropagation} prêtes MZ14`} progress={Math.min(100, compiler.compiled * 15)} tone="green" icon={<GitBranch />} /><CommandMetric label="Objets générés" value={String(compiler.generatedObjects)} detail="Programs à tasks" progress={Math.min(100, compiler.generatedObjects / 10)} tone="violet" icon={<ListChecks />} /><CommandMetric label="Conflits" value={String(compiler.blockingConflicts)} detail="Bloquants ouverts" progress={Math.min(100, compiler.blockingConflicts * 20)} tone="red" icon={<AlertTriangle />} /><CommandMetric label="Rollback" value={String(compiler.rolledBack)} detail={`${compiler.superseded} superseded`} progress={0} tone="amber" icon={<TimerReset />} /></div></Panel><Panel title="Chaîne de compilation" eyebrow="No manual reconstruction"><div className="grid gap-3 md:grid-cols-4 xl:grid-cols-8">{['Strategy','Revenue Play','Program','Campaign','Wave','Mission','Task','Evidence'].map((label, index) => <div key={label} className="relative rounded-2xl border border-slate-200 bg-slate-50 p-4 text-center"><span className="text-[10px] font-black text-blue-700">{String(index + 1).padStart(2, '0')}</span><p className="mt-2 text-xs font-black text-slate-900">{label}</p>{index < 7 ? <ChevronRight className="absolute -right-4 top-1/2 hidden -translate-y-1/2 text-slate-300 xl:block" size={18} /> : null}</div>)}</div></Panel></div>
+  return <div className="space-y-5"><Panel title="Mission Compiler · état global" eyebrow="Deterministic mission manufacturing"><div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5"><CommandMetric label="Éligibles" value={String(compiler.eligibleStrategies)} detail="Stratégies approuvées" progress={Math.min(100, compiler.eligibleStrategies * 20)} tone="blue" icon={<BadgeCheck />} /><CommandMetric label="Compilées" value={String(compiler.compiled)} detail={`${compiler.readyForPropagation} prêtes pour exécution`} progress={Math.min(100, compiler.compiled * 15)} tone="green" icon={<GitBranch />} /><CommandMetric label="Objets générés" value={String(compiler.generatedObjects)} detail="Programs à tasks" progress={Math.min(100, compiler.generatedObjects / 10)} tone="violet" icon={<ListChecks />} /><CommandMetric label="Conflits" value={String(compiler.blockingConflicts)} detail="Bloquants ouverts" progress={Math.min(100, compiler.blockingConflicts * 20)} tone="red" icon={<AlertTriangle />} /><CommandMetric label="Rollback" value={String(compiler.rolledBack)} detail={`${compiler.superseded} superseded`} progress={0} tone="amber" icon={<TimerReset />} /></div></Panel><Panel title="Chaîne de compilation" eyebrow="No manual reconstruction"><div className="grid gap-3 md:grid-cols-4 xl:grid-cols-8">{['Strategy','Revenue Play','Program','Campaign','Wave','Mission','Task','Evidence'].map((label, index) => <div key={label} className="relative rounded-2xl border border-slate-200 bg-slate-50 p-4 text-center"><span className="text-[10px] font-black text-blue-700">{String(index + 1).padStart(2, '0')}</span><p className="mt-2 text-xs font-black text-slate-900">{label}</p>{index < 7 ? <ChevronRight className="absolute -right-4 top-1/2 hidden -translate-y-1/2 text-slate-300 xl:block" size={18} /> : null}</div>)}</div></Panel></div>
 }
 
 function ExecutionZone({ dashboard }: { dashboard: CockpitDashboard }) {
@@ -333,7 +341,7 @@ function ExceptionsZone({ exceptions, onSelect }: { exceptions: RevenueException
 }
 
 function ExperimentsZone({ experiments }: { experiments: ExperimentSummary[] }) {
-  return <Panel title={`Expériences & winning plays · ${experiments.length}`} eyebrow="Visible now · Adaptive learning in MZ16"><div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3">{experiments.map((experiment) => <div key={experiment.id} className="rounded-3xl border border-slate-200 p-5"><div className="flex items-center justify-between"><span className="rounded-full bg-violet-50 px-2 py-1 text-[10px] font-black uppercase text-violet-700">{experiment.dimension}</span><span className="text-[10px] font-black uppercase text-slate-400">{experiment.evidenceStatus}</span></div><h3 className="mt-4 text-base font-black text-slate-950">{experiment.title}</h3><div className="mt-5 grid grid-cols-2 gap-3"><SmallMetric label={experiment.baselineLabel} value={String(experiment.baselineMetric)} /><SmallMetric label={experiment.challengerLabel} value={String(experiment.challengerMetric)} /></div><div className="mt-5 flex items-end justify-between"><div><p className="text-[10px] font-black uppercase text-slate-400">Lift observé</p><p className={`mt-1 text-3xl font-black ${experiment.liftPercent >= 0 ? 'text-emerald-700' : 'text-red-700'}`}>{experiment.liftPercent >= 0 ? '+' : ''}{experiment.liftPercent}%</p></div><div className="text-right"><p className="text-xs font-bold text-slate-500">n={experiment.sampleSize}</p><p className="mt-1 text-xs font-black text-blue-700">Confiance {experiment.confidence}%</p></div></div>{experiment.winningVariant ? <div className="mt-4 rounded-xl bg-emerald-50 p-3 text-xs font-black text-emerald-800"><CheckCircle2 className="mr-2 inline" size={15} />Winning: {experiment.winningVariant}</div> : null}</div>)}{!experiments.length ? <div className="lg:col-span-2 xl:col-span-3"><EmptyState icon={<FlaskConical />} title="Aucune expérience exploitable" text="Les comparaisons observées seront affichées ici; l’apprentissage adaptatif complet appartient à MZ16." /></div> : null}</div></Panel>
+  return <Panel title={`Expériences & winning plays · ${experiments.length}`} eyebrow="Evidence now · Learning governed"><div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3">{experiments.map((experiment) => <div key={experiment.id} className="rounded-3xl border border-slate-200 p-5"><div className="flex items-center justify-between"><span className="rounded-full bg-violet-50 px-2 py-1 text-[10px] font-black uppercase text-violet-700">{experiment.dimension}</span><span className="text-[10px] font-black uppercase text-slate-400">{experiment.evidenceStatus}</span></div><h3 className="mt-4 text-base font-black text-slate-950">{experiment.title}</h3><div className="mt-5 grid grid-cols-2 gap-3"><SmallMetric label={experiment.baselineLabel} value={String(experiment.baselineMetric)} /><SmallMetric label={experiment.challengerLabel} value={String(experiment.challengerMetric)} /></div><div className="mt-5 flex items-end justify-between"><div><p className="text-[10px] font-black uppercase text-slate-400">Lift observé</p><p className={`mt-1 text-3xl font-black ${experiment.liftPercent >= 0 ? 'text-emerald-700' : 'text-red-700'}`}>{experiment.liftPercent >= 0 ? '+' : ''}{experiment.liftPercent}%</p></div><div className="text-right"><p className="text-xs font-bold text-slate-500">n={experiment.sampleSize}</p><p className="mt-1 text-xs font-black text-blue-700">Confiance {experiment.confidence}%</p></div></div>{experiment.winningVariant ? <div className="mt-4 rounded-xl bg-emerald-50 p-3 text-xs font-black text-emerald-800"><CheckCircle2 className="mr-2 inline" size={15} />Winning: {experiment.winningVariant}</div> : null}</div>)}{!experiments.length ? <div className="lg:col-span-2 xl:col-span-3"><EmptyState icon={<FlaskConical />} title="Aucune expérience exploitable" text="Les comparaisons observées apparaîtront ici lorsque les échantillons seront suffisants." /></div> : null}</div></Panel>
 }
 
 function LearningZone({ rows }: { rows: LearningMemorySummary[] }) {
@@ -341,11 +349,86 @@ function LearningZone({ rows }: { rows: LearningMemorySummary[] }) {
 }
 
 function ApprovalsZone({ approvals }: { approvals: ApprovalGovernanceSummary[] }) {
-  return <Panel title={`Approbations & gouvernance · ${approvals.length}`} eyebrow="No opaque approvals"><div className="space-y-3">{approvals.map((approval) => <div key={approval.id} className="grid gap-4 rounded-3xl border border-slate-200 p-5 lg:grid-cols-[minmax(0,1fr)_220px_160px]"><div><div className="flex flex-wrap gap-2"><span className="rounded-full bg-amber-50 px-2 py-1 text-[10px] font-black uppercase text-amber-700">{approval.approvalType}</span>{approval.reversible ? <span className="rounded-full bg-emerald-50 px-2 py-1 text-[10px] font-black uppercase text-emerald-700">Réversible</span> : <span className="rounded-full bg-red-50 px-2 py-1 text-[10px] font-black uppercase text-red-700">Irréversible</span>}</div><h3 className="mt-3 text-base font-black text-slate-950">{approval.title}</h3><p className="mt-2 text-sm leading-6 text-slate-600">{approval.businessConsequence}</p>{approval.conditions.length ? <div className="mt-3 flex flex-wrap gap-2">{approval.conditions.map((condition) => <Tag key={condition} text={condition} />)}</div> : null}</div><div className="rounded-2xl bg-slate-50 p-4"><Definition label="Rôle requis" value={approval.requiredRole} /><Definition label="Demandé par" value={approval.requestedBy} /><Definition label="Expiration" value={approval.expiresAt ? new Date(approval.expiresAt).toLocaleDateString('fr-FR') : 'Non définie'} /></div><div className="flex flex-col items-stretch justify-center gap-2"><StatusPill value={approval.status} /><button className="rounded-xl bg-slate-950 px-4 py-2.5 text-xs font-black text-white">Ouvrir la décision</button></div></div>)}{!approvals.length ? <EmptyState icon={<BadgeCheck />} title="Aucune approbation" text="Les décisions stratégiques et actions sensibles apparaîtront ici." /> : null}</div></Panel>
+  return <Panel title={`Approbations & gouvernance · ${approvals.length}`} eyebrow="No opaque approvals"><div className="space-y-3">{approvals.map((approval) => <div key={approval.id} className="grid gap-4 rounded-3xl border border-slate-200 p-5 lg:grid-cols-[minmax(0,1fr)_220px_160px]"><div><div className="flex flex-wrap gap-2"><span className="rounded-full bg-amber-50 px-2 py-1 text-[10px] font-black uppercase text-amber-700">{approval.approvalType}</span>{approval.reversible ? <span className="rounded-full bg-emerald-50 px-2 py-1 text-[10px] font-black uppercase text-emerald-700">Réversible</span> : <span className="rounded-full bg-red-50 px-2 py-1 text-[10px] font-black uppercase text-red-700">Irréversible</span>}</div><h3 className="mt-3 text-base font-black text-slate-950">{approval.title}</h3><p className="mt-2 text-sm leading-6 text-slate-600">{approval.businessConsequence}</p>{approval.conditions.length ? <div className="mt-3 flex flex-wrap gap-2">{approval.conditions.map((condition) => <Tag key={condition} text={condition} />)}</div> : null}</div><div className="rounded-2xl bg-slate-50 p-4"><Definition label="Rôle requis" value={approval.requiredRole} /><Definition label="Demandé par" value={approval.requestedBy} /><Definition label="Expiration" value={approval.expiresAt ? new Date(approval.expiresAt).toLocaleDateString('fr-FR') : 'Non définie'} /></div><div className="flex flex-col items-stretch justify-center gap-2"><StatusPill value={approval.status} /><Link href="/revenue-command-os/approvals" className="rounded-xl bg-slate-950 px-4 py-2.5 text-center text-xs font-black text-white">Ouvrir Approval Center</Link></div></div>)}{!approvals.length ? <EmptyState icon={<BadgeCheck />} title="Aucune approbation" text="Les décisions stratégiques et actions sensibles apparaîtront ici." /> : null}</div></Panel>
 }
 
 function ExceptionDrawer({ exception, busy, onClose, onAcknowledge }: { exception: RevenueException; busy: boolean; onClose: () => void; onAcknowledge: () => void }) {
-  return <div className="fixed inset-0 z-[150] bg-slate-950/35 backdrop-blur-sm" onMouseDown={(event: MouseEvent<HTMLDivElement>) => { if (event.target === event.currentTarget) onClose() }}><aside className="absolute inset-y-0 right-0 w-full max-w-xl overflow-y-auto bg-white shadow-2xl"><div className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-200 bg-white/95 px-5 py-4 backdrop-blur"><div className="flex items-center gap-3"><PriorityBadge value={exception.priority} /><div><p className="text-[10px] font-black uppercase tracking-[.14em] text-slate-400">Revenue Exception</p><p className="font-black text-slate-950">{exception.code}</p></div></div><button onClick={onClose} className="rounded-xl border border-slate-200 p-2 text-slate-500 hover:bg-slate-50"><X size={18} /></button></div><div className="space-y-5 p-5"><div><StatusPill value={exception.status} /><h2 className="mt-4 text-2xl font-black tracking-tight text-slate-950">{exception.title}</h2><p className="mt-3 text-sm leading-7 text-slate-600">{exception.summary}</p></div><div className="grid grid-cols-2 gap-3"><SmallMetric label="Revenu exposé" value={formatDh(exception.revenueAtRisk)} alert /><SmallMetric label="Sévérité" value={exception.severity} alert={exception.severity === 'critical' || exception.severity === 'high'} /></div><DrawerSection title="Impact business"><p>{exception.businessImpact}</p></DrawerSection><DrawerSection title="Cause racine"><p>{exception.rootCause}</p></DrawerSection><DrawerSection title="Action recommandée"><p className="font-bold text-blue-800">{exception.recommendedAction}</p></DrawerSection><DrawerSection title="Preuves"><ul className="space-y-2">{exception.evidence.map((evidence) => <li key={evidence} className="rounded-xl bg-slate-50 p-3 text-xs font-semibold text-slate-700">{evidence}</li>)}{!exception.evidence.length ? <li className="text-sm text-slate-500">Preuve à compléter.</li> : null}</ul></DrawerSection><DrawerSection title="Actions gouvernées"><div className="flex flex-wrap gap-2">{exception.allowedActions.map((action) => <Tag key={action} text={action} />)}</div></DrawerSection><div className="grid gap-2 sm:grid-cols-2"><button onClick={onAcknowledge} disabled={busy || exception.status !== 'open'} className="rounded-xl border border-slate-300 px-4 py-3 text-sm font-black text-slate-700 disabled:opacity-50"><Eye className="mr-2 inline" size={16} />Accuser réception</button><button className="rounded-xl bg-red-700 px-4 py-3 text-sm font-black text-white"><Zap className="mr-2 inline" size={16} />Lancer intervention</button></div></div></aside></div>
+  const critical = exception.severity === 'critical' || exception.priority === 'P0'
+  const dueLabel = exception.dueAt ? new Date(exception.dueAt).toLocaleString('fr-FR') : 'Aucune échéance déclarée'
+  const owner = exception.ownerLabel || exception.escalationRole || 'Revenue Operations'
+  const acknowledged = Boolean(exception.acknowledgedAt)
+
+  return <SovereignDrawerOverlay onClose={onClose} label={`Executive Intervention Dossier — ${exception.code}`}>
+    <SovereignDrawerPanel width="max-w-[900px]" dataId="MZ23-DRAWER-01-EXCEPTION">
+      <header className="relative overflow-hidden bg-[linear-gradient(135deg,#1b0b0d_0%,#4c1018_48%,#111827_100%)] px-5 py-6 text-white sm:px-7 sm:py-7">
+        <div className={`absolute inset-0 opacity-35 ${drawerStyles.fineGrid}`} />
+        <div className="absolute -right-16 -top-24 h-72 w-72 rounded-full bg-rose-500/15 blur-3xl" />
+        <div className="relative grid gap-6 lg:grid-cols-[1fr_290px] lg:items-center">
+          <div>
+            <div className="flex flex-wrap gap-2"><DrawerBadge inverted>ANGELCARE · REVENUE COMMAND OS</DrawerBadge><DrawerBadge inverted>Executive Intervention Dossier</DrawerBadge></div>
+            <div className="mt-5 flex items-start gap-4">
+              <span className="grid h-14 w-14 shrink-0 place-items-center rounded-[22px] border border-white/15 bg-white/10 text-white shadow-xl"><ShieldAlert size={25} /></span>
+              <div className="min-w-0">
+                <div className="flex flex-wrap gap-2"><DrawerBadge inverted>{exception.priority}</DrawerBadge><DrawerBadge inverted>{exception.severity}</DrawerBadge><DrawerBadge inverted>{exception.status}</DrawerBadge></div>
+                <p className="mt-4 text-[9px] font-black uppercase tracking-[.2em] text-rose-200">{exception.code} · {exception.exceptionType}</p>
+                <h2 className="mt-2 text-3xl font-black tracking-[-.045em] text-white sm:text-4xl">{exception.title}</h2>
+                <p className="mt-3 max-w-2xl text-sm font-semibold leading-6 text-slate-200">{exception.summary}</p>
+              </div>
+            </div>
+            <div className="mt-5"><DrawerExecutiveBrief dark tone="rose">{exception.businessImpact}</DrawerExecutiveBrief></div>
+            <div className="mt-4 flex flex-wrap gap-2"><DrawerBadge inverted>Responsable · {owner}</DrawerBadge><DrawerBadge inverted>Source · {zoneLabel(exception.sourceZone)}</DrawerBadge><DrawerBadge inverted>{acknowledged ? 'Réception confirmée' : 'Réception requise'}</DrawerBadge></div>
+          </div>
+          <div className="relative h-52 overflow-hidden rounded-[32px] border border-white/10 bg-white/[.06] p-5 backdrop-blur-xl">
+            <span className="absolute left-1/2 top-[42%] grid h-24 w-24 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border border-white/15 bg-white/10 text-white"><Zap size={31} /></span>
+            <div className="absolute inset-x-5 bottom-5 grid grid-cols-2 gap-2"><div className="rounded-2xl border border-white/10 bg-white/[.07] p-3 text-center"><p className="text-2xl font-black text-white">{formatDh(exception.revenueAtRisk)}</p><p className="mt-1 text-[8px] font-black uppercase text-rose-200">Revenu exposé</p></div><div className="rounded-2xl border border-white/10 bg-white/[.07] p-3 text-center"><p className="text-2xl font-black text-white">{exception.evidence.length}</p><p className="mt-1 text-[8px] font-black uppercase text-rose-200">Preuves</p></div></div>
+            <span className="absolute left-5 top-5 rounded-xl border border-white/15 bg-white/10 px-3 py-2 text-[8px] font-black text-white">CAUSE</span>
+            <span className="absolute right-5 top-5 rounded-xl border border-white/15 bg-white/10 px-3 py-2 text-[8px] font-black text-white">RECOVERY</span>
+          </div>
+        </div>
+        <div className="absolute right-5 top-5"><DrawerCloseButton onClose={onClose} inverted /></div>
+      </header>
+
+      <div className="min-h-0 flex-1 overflow-y-auto bg-slate-50/75 px-5 py-6 sm:px-7 sm:py-7">
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          <DrawerMetric label="Revenu exposé" value={formatDh(exception.revenueAtRisk)} note="Impact financier déclaré" icon={LineChart} tone="rose" />
+          <DrawerMetric label="Sévérité" value={exception.severity} note={critical ? 'Intervention prioritaire' : 'Surveillance gouvernée'} icon={AlertTriangle} tone={critical ? 'rose' : 'amber'} />
+          <DrawerMetric label="Échéance" value={exception.dueAt ? new Date(exception.dueAt).toLocaleDateString('fr-FR') : '—'} note={dueLabel} icon={Clock3} tone={exception.dueAt ? 'amber' : 'slate'} />
+          <DrawerMetric label="Actions autorisées" value={exception.allowedActions.length} note="Périmètre gouverné" icon={ShieldCheck} tone="blue" />
+        </div>
+
+        <div className="mt-6 grid gap-5 xl:grid-cols-2">
+          <SovereignDrawerSection eyebrow="01 · Impact" title="Conséquence business" icon={LineChart} tone="rose"><p className="font-semibold leading-6 text-slate-800">{exception.businessImpact}</p></SovereignDrawerSection>
+          <SovereignDrawerSection eyebrow="02 · Diagnostic" title="Cause racine" icon={GitBranch} tone="amber"><p className="font-semibold leading-6 text-slate-800">{exception.rootCause}</p></SovereignDrawerSection>
+        </div>
+
+        <div className="mt-5"><SovereignDrawerSection eyebrow="03 · Recovery" title="Action recommandée" icon={Rocket} tone="blue"><div className="rounded-[22px] border border-blue-200 bg-blue-50 p-4"><p className="text-sm font-black leading-6 text-blue-950">{exception.recommendedAction}</p></div></SovereignDrawerSection></div>
+
+        <div className="mt-5 grid gap-5 xl:grid-cols-[1.05fr_.95fr]">
+          <SovereignDrawerSection eyebrow="04 · Evidence" title="Preuves disponibles" icon={BookOpen} tone="emerald">
+            <div className="space-y-2">{exception.evidence.length ? exception.evidence.map((evidence, index) => <div key={`${evidence}-${index}`} className="grid grid-cols-[36px_1fr] items-start gap-3 rounded-2xl border border-slate-200 bg-white p-3"><span className="grid h-9 w-9 place-items-center rounded-xl bg-emerald-50 text-[10px] font-black text-emerald-800">{index + 1}</span><p className="pt-1 text-xs font-bold leading-5 text-slate-800">{evidence}</p></div>) : <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-4 text-xs font-semibold text-slate-600">Preuve à compléter avant toute décision irréversible.</div>}</div>
+          </SovereignDrawerSection>
+          <SovereignDrawerSection eyebrow="05 · Périmètre" title="Entité, propriétaire et trace" icon={Fingerprint} tone="violet">
+            <dl className="space-y-3">{[
+              ['Entité affectée', exception.affectedEntityLabel || exception.affectedEntityType],
+              ['Type d’entité', exception.affectedEntityType],
+              ['Identifiant', exception.affectedEntityId || 'Indisponible'],
+              ['Responsable', owner],
+              ['Créée', new Date(exception.createdAt).toLocaleString('fr-FR')],
+              ['Réception', exception.acknowledgedAt ? new Date(exception.acknowledgedAt).toLocaleString('fr-FR') : 'En attente'],
+              ['Résolution', exception.resolvedAt ? new Date(exception.resolvedAt).toLocaleString('fr-FR') : 'Non résolue'],
+            ].map(([label, value]) => <div key={label} className="flex items-start justify-between gap-5 border-b border-slate-100 pb-3 last:border-0 last:pb-0"><dt className="text-[10px] font-black uppercase tracking-[.1em] text-slate-500">{label}</dt><dd className="max-w-[62%] text-right text-xs font-black text-slate-900">{value}</dd></div>)}</dl>
+          </SovereignDrawerSection>
+        </div>
+
+        <div className="mt-5"><SovereignDrawerSection eyebrow="06 · Gouvernance" title="Actions autorisées par le dossier" icon={ShieldCheck} tone="blue"><div className="flex flex-wrap gap-2">{exception.allowedActions.length ? exception.allowedActions.map((action) => <DrawerBadge key={action} tone="blue">{action}</DrawerBadge>) : <span className="text-xs font-semibold text-slate-600">Aucune action gouvernée n’est déclarée.</span>}</div></SovereignDrawerSection></div>
+      </div>
+
+      <DrawerActionFooter note={exception.status !== 'open' ? `Accusé de réception indisponible : statut actuel ${exception.status}.` : 'L’accusé de réception conserve la trace interne. L’intervention complète reste dans Intervention Control.'}>
+        <DrawerPrimaryAction onClick={onAcknowledge} disabled={busy || exception.status !== 'open'} tone="emerald"><Eye size={16} />{busy ? 'Traitement…' : 'Accuser réception'}</DrawerPrimaryAction>
+        <Link href="/revenue-command-os/exceptions" className="inline-flex min-h-11 items-center justify-center gap-2 rounded-2xl bg-rose-700 px-5 py-3 text-xs font-black text-white shadow-lg transition hover:bg-rose-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-rose-100"><Zap size={16} />Ouvrir Intervention Control<ArrowRight size={15} /></Link>
+      </DrawerActionFooter>
+    </SovereignDrawerPanel>
+  </SovereignDrawerOverlay>
 }
 
 function StrategyHero({ strategy }: { strategy: StrategyAssemblySummary }) { return <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_360px]"><div><div className="flex flex-wrap gap-2"><StatusPill value={strategy.status} /><Tag text={strategy.archetype} /><Tag text={`${strategy.provider} · ${strategy.model}`} /></div><h2 className="mt-5 text-3xl font-black tracking-tight text-slate-950">{strategy.title}</h2><p className="mt-4 text-base leading-8 text-slate-600">{strategy.thesis}</p><div className="mt-6 grid gap-3 sm:grid-cols-3"><SmallMetric label="Confiance" value={`${strategy.confidence}%`} /><SmallMetric label="Hypothèses ouvertes" value={String(strategy.assumptionsOpen)} alert={strategy.assumptionsOpen > 0} /><SmallMetric label="Risques élevés" value={String(strategy.risksHigh)} alert={strategy.risksHigh > 0} /></div></div><div className="rounded-3xl border border-slate-200 bg-slate-50 p-5"><Definition label="Offre" value={strategy.offer} /><Definition label="Value proposition" value={strategy.valueProposition || 'Non renseignée'} /><Definition label="Pricing posture" value={strategy.pricingPosture} /><Definition label="Segments" value={strategy.targetSegments.join(', ') || 'Non défini'} /><Definition label="Territoires" value={strategy.territories.join(', ') || 'Non défini'} /></div></div> }
@@ -355,7 +438,6 @@ function ProgramCompact({ program }: { program: RevenueProgramSummary }) { retur
 function ExecutionMini({ dashboard }: { dashboard: CockpitDashboard }) { const execution = dashboard.execution; return <div><div className="grid grid-cols-3 gap-2"><TinyCount label="Queued" value={execution.queued} /><TinyCount label="Success" value={execution.succeeded} /><TinyCount label="Failed" value={execution.failed} alert={execution.failed > 0} /></div><div className="mt-4 space-y-2">{Object.entries(execution.adapterHealth).slice(0, 7).map(([adapter, status]) => <div key={adapter} className="flex items-center justify-between rounded-xl bg-slate-50 px-3 py-2"><span className="truncate text-xs font-bold text-slate-600">{adapter}</span><span className={`h-2 w-2 rounded-full ${status === 'healthy' ? 'bg-emerald-500' : status === 'credentials_missing' ? 'bg-amber-500' : 'bg-slate-400'}`} /></div>)}</div><div className="mt-4 rounded-2xl border border-slate-200 p-3 text-xs font-bold text-slate-600">External actions executed: <span className="float-right font-black text-slate-950">{execution.externalActionsExecuted}</span></div></div> }
 
 function Panel({ title, eyebrow, action, children }: { title: string; eyebrow?: string; action?: ReactNode; children: ReactNode }) { return <section className="rounded-[28px] border border-slate-200 bg-white p-5 shadow-[0_14px_44px_rgba(15,23,42,.055)] lg:p-6"><div className="mb-5 flex items-start justify-between gap-4"><div>{eyebrow ? <p className="text-[10px] font-black uppercase tracking-[.17em] text-blue-700">{eyebrow}</p> : null}<h2 className="mt-1 text-lg font-black tracking-tight text-slate-950">{title}</h2></div>{action}</div>{children}</section> }
-function DrawerSection({ title, children }: { title: string; children: ReactNode }) { return <section className="rounded-2xl border border-slate-200 p-4"><p className="mb-3 text-[10px] font-black uppercase tracking-[.14em] text-slate-400">{title}</p><div className="text-sm leading-6 text-slate-700">{children}</div></section> }
 function BriefStrip({ label, value, icon }: { label: string; value: string; icon: ReactNode }) { return <div className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur"><div className="flex items-center gap-2 text-blue-200">{icon}<span className="text-[10px] font-black uppercase tracking-[.13em]">{label}</span></div><p className="mt-3 line-clamp-3 text-xs font-semibold leading-5 text-slate-200">{value}</p></div> }
 function HeroMetric({ label, value, sub, icon, alert }: { label: string; value: string; sub: string; icon: ReactNode; alert?: boolean }) { return <div className={`rounded-2xl border p-4 backdrop-blur ${alert ? 'border-red-300/20 bg-red-500/10' : 'border-white/10 bg-white/5'}`}><div className={alert ? 'text-red-200' : 'text-blue-200'}>{icon}</div><p className="mt-3 text-2xl font-black tracking-tight">{value}</p><p className="mt-1 text-xs text-slate-400">{label} · {sub}</p></div> }
 function CommandMetric({ label, value, detail, progress, tone, icon }: { label: string; value: string; detail: string; progress: number; tone: 'blue' | 'green' | 'violet' | 'amber' | 'red'; icon: ReactNode }) { const styles = { blue: ['bg-blue-50 text-blue-700','bg-blue-600'], green: ['bg-emerald-50 text-emerald-700','bg-emerald-500'], violet: ['bg-violet-50 text-violet-700','bg-violet-600'], amber: ['bg-amber-50 text-amber-700','bg-amber-500'], red: ['bg-red-50 text-red-700','bg-red-600'] }[tone]; return <div className="rounded-[26px] border border-slate-200 bg-white p-5 shadow-sm"><div className="flex items-center justify-between"><span className={`grid h-10 w-10 place-items-center rounded-2xl ${styles[0]}`}>{icon}</span><span className="text-[10px] font-black uppercase tracking-[.14em] text-slate-400">{label}</span></div><p className="mt-5 text-3xl font-black tracking-tight text-slate-950">{value}</p><p className="mt-1 text-xs text-slate-500">{detail}</p><div className="mt-4 h-1.5 rounded-full bg-slate-100"><div className={`h-1.5 rounded-full ${styles[1]}`} style={{ width: `${Math.max(0, Math.min(100, progress))}%` }} /></div></div> }
@@ -372,7 +454,7 @@ function Freshness({ value, text }: { value: string; text: string }) { const col
 function Tag({ text }: { text: string }) { return <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-black text-slate-600">{text}</span> }
 function Badge({ label, tone }: { label: string; tone: 'blue' | 'slate' | 'red' | 'green' }) { const style = tone === 'blue' ? 'bg-blue-400/15 text-blue-100' : tone === 'red' ? 'bg-red-400/15 text-red-100' : tone === 'green' ? 'bg-emerald-400/15 text-emerald-100' : 'bg-white/10 text-slate-200'; return <span className={`rounded-full px-3 py-1.5 text-[10px] font-black uppercase tracking-[.12em] ${style}`}>{label}</span> }
 function EmptyState({ icon, title, text, positive }: { icon: ReactNode; title: string; text: string; positive?: boolean }) { return <div className="grid place-items-center rounded-3xl border border-dashed border-slate-200 py-12 text-center"><span className={`grid h-12 w-12 place-items-center rounded-2xl ${positive ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-50 text-slate-400'}`}>{icon}</span><p className="mt-4 text-sm font-black text-slate-800">{title}</p><p className="mt-1 max-w-md text-xs leading-5 text-slate-500">{text}</p></div> }
-function LoadingCockpit() { return <div className="grid min-h-[520px] place-items-center rounded-[30px] border border-slate-200 bg-white"><div className="text-center"><Orbit className="mx-auto animate-spin text-blue-600" size={48} /><p className="mt-4 text-lg font-black text-slate-950">Construction du Revenue Situation Brief...</p><p className="mt-2 text-sm text-slate-500">Agrégation MZ01–MZ14, causalité, exceptions et gouvernance.</p></div></div> }
+function LoadingCockpit() { return <div className="grid min-h-[520px] place-items-center rounded-[30px] border border-slate-200 bg-white"><div className="text-center"><Orbit className="mx-auto animate-spin text-blue-600" size={48} /><p className="mt-4 text-lg font-black text-slate-950">Construction du Revenue Situation Brief...</p><p className="mt-2 text-sm text-slate-500">Agrégation des objectifs, signaux, stratégies, exécutions et preuves.</p></div></div> }
 
 function filterText<T>(rows: T[], query: string, getter: (row: T) => string): T[] { const normalized = query.trim().toLowerCase(); return normalized ? rows.filter((row) => getter(row).toLowerCase().includes(normalized)) : rows }
 function formatDh(value: number): string { return `${Math.round(value).toLocaleString('fr-FR')} Dh` }

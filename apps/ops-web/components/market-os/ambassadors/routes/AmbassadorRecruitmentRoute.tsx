@@ -1075,27 +1075,55 @@ export default function AmbassadorRecruitmentRoute({
   const metricCards = [
     { label: "Nouveaux candidats", value: formatNumber(metrics.new), icon: UserPlus, tone: "bg-blue-50 text-blue-700", helper: "Dossiers à qualifier" },
     { label: "Contactés", value: formatNumber(metrics.contacted), icon: MessageCircle, tone: "bg-sky-50 text-sky-700", helper: "Premier contact réalisé" },
-    { label: "Entretiens planifiés", value: formatNumber(metrics.interviews), icon: CalendarDays, tone: "bg-violet-50 text-violet-700", helper: "Étape entretien" },
+    { label: "Entretiens planifiés", value: formatNumber(metrics.interviews), icon: CalendarDays, tone: "bg-indigo-50 text-indigo-700", helper: "Étape entretien" },
     { label: "Validés", value: formatNumber(metrics.validated), icon: CheckCircle2, tone: "bg-emerald-50 text-emerald-700", helper: "Prêts pour intégration" },
     { label: "Rejetés", value: formatNumber(metrics.rejected), icon: X, tone: "bg-amber-50 text-amber-700", helper: "Décisions clôturées" },
     { label: "Délai moyen", value: `${metrics.averageDays.toLocaleString("fr-FR", { maximumFractionDigits: 1 })} j`, icon: Clock3, tone: "bg-rose-50 text-rose-700", helper: "Calculé sur les dossiers datés" },
   ];
 
   return (
-    <div data-ambassador-recruitment-route="real-sync-premium-v3" className="min-h-screen w-full bg-[#f7f9fc] text-slate-950">
+    <div data-ambassador-recruitment-route="talent-acquisition-command-v4" className="min-h-screen w-full bg-[#f7f9fc] text-slate-950">
       <div className="w-full space-y-4 px-5 py-5 xl:px-7 2xl:px-8">
-        <header className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-          <div>
-            <h1 className="text-[30px] font-black tracking-tight text-slate-950">Candidats</h1>
-            <p className="mt-1 text-sm font-semibold text-slate-500">Pilotez le recrutement des ambassadeurs, sécurisez chaque étape et préparez les meilleurs profils à l’activation.</p>
-          </div>
-          <div className="flex flex-wrap items-center gap-2">
-            <Button variant="primary" onClick={openCandidateModal}><Plus className="h-4 w-4" /> Nouveau candidat</Button>
-            <Button onClick={() => { if (!candidates.length) { setNotice({ type: "info", message: "Créez d’abord un candidat réel pour planifier un entretien." }); return; } setInterviewCandidate(null); setInterviewOpen(true); }}><CalendarDays className="h-4 w-4" /> Planifier entretien</Button>
-            <Button onClick={() => setCvImportOpen(true)}><Upload className="h-4 w-4" /> Importer CV</Button>
-            <Button onClick={() => { if (!candidates.length) { setNotice({ type: "info", message: "Créez d’abord des candidats réels pour constituer une cohorte." }); return; } setCohortOpen(true); }}><Users className="h-4 w-4" /> Créer cohorte</Button>
-            <Button onClick={() => setExportOpen(true)}><Download className="h-4 w-4" /> Exporter pipeline</Button>
-            <Button variant="ghost" onClick={onRefresh} disabled={refreshing}><RefreshCw className={cn("h-4 w-4", refreshing && "animate-spin")} /></Button>
+        <header className="overflow-hidden border border-slate-200 bg-white shadow-[0_16px_45px_rgba(15,23,42,0.07)]">
+          <div className="grid xl:grid-cols-[minmax(0,1fr)_430px]">
+            <div className="border-l-4 border-[#cf2437] px-6 py-6 lg:px-7">
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#164d7d]">
+                ANGELCARE TALENT ACQUISITION · PIPELINE NATIONAL
+              </p>
+              <h1 className="mt-2 text-[32px] font-black tracking-tight text-slate-950">
+                Commandement du recrutement ambassadeurs
+              </h1>
+              <p className="mt-2 max-w-4xl text-sm font-semibold leading-6 text-slate-600">
+                Qualifiez les candidatures réelles, sécurisez les entretiens, les décisions et le passage vers l’activation sans perdre le contexte de chaque profil.
+              </p>
+
+              <div className="mt-5 flex flex-wrap items-center gap-2">
+                <Button variant="primary" onClick={openCandidateModal}><Plus className="h-4 w-4" /> Nouveau candidat</Button>
+                <Button onClick={() => { if (!candidates.length) { setNotice({ type: "info", message: "Créez d’abord un candidat réel pour planifier un entretien." }); return; } setInterviewCandidate(null); setInterviewOpen(true); }}><CalendarDays className="h-4 w-4" /> Planifier entretien</Button>
+                <Button onClick={() => setCvImportOpen(true)}><Upload className="h-4 w-4" /> Importer CV</Button>
+                <Button onClick={() => { if (!candidates.length) { setNotice({ type: "info", message: "Créez d’abord des candidats réels pour constituer une cohorte." }); return; } setCohortOpen(true); }}><Users className="h-4 w-4" /> Créer cohorte</Button>
+                <Button onClick={() => setExportOpen(true)}><Download className="h-4 w-4" /> Exporter pipeline</Button>
+                <Button variant="ghost" onClick={onRefresh} disabled={refreshing}><RefreshCw className={cn("h-4 w-4", refreshing && "animate-spin")} /></Button>
+              </div>
+            </div>
+
+            <aside className="grid grid-cols-3 bg-[#082b4d] text-center xl:grid-cols-1 xl:text-left">
+              <div className="border-b border-white/10 px-5 py-4">
+                <p className="text-[9px] font-black uppercase tracking-[0.17em] !text-[#9ec4e7]">Portefeuille actif</p>
+                <p className="mt-1 text-3xl font-black tabular-nums !text-white">{candidates.length}</p>
+                <p className="mt-1 text-[10px] font-semibold !text-[#d6e4f2]">candidature(s) synchronisée(s)</p>
+              </div>
+              <div className="border-b border-white/10 px-5 py-4">
+                <p className="text-[9px] font-black uppercase tracking-[0.17em] !text-[#9ec4e7]">Entretiens</p>
+                <p className="mt-1 text-3xl font-black tabular-nums !text-white">{metrics.interviews}</p>
+                <p className="mt-1 text-[10px] font-semibold !text-[#d6e4f2]">dossier(s) à l’étape entretien</p>
+              </div>
+              <div className="px-5 py-4">
+                <p className="text-[9px] font-black uppercase tracking-[0.17em] !text-[#9ec4e7]">Profils validés</p>
+                <p className="mt-1 text-3xl font-black tabular-nums !text-white">{metrics.validated}</p>
+                <p className="mt-1 text-[10px] font-semibold !text-[#d6e4f2]">prêts pour le prochain contrôle</p>
+              </div>
+            </aside>
           </div>
         </header>
 
@@ -1133,7 +1161,7 @@ export default function AmbassadorRecruitmentRoute({
             <SidePanel title="Entretiens à venir" action={<button type="button" onClick={() => { if (interviews[0]) { setInterviewCandidate(interviews[0].candidate); setInterviewOpen(true); } }} className="text-[10px] font-black text-blue-700">Voir calendrier</button>}>
               <div className="space-y-2">
                 {interviews.map(({ candidate, at }) => (
-                  <button key={candidateId(candidate)} type="button" onClick={() => setSelectedCandidate(candidate)} className="flex w-full items-center gap-3 rounded-xl bg-slate-50 p-2 text-left hover:bg-violet-50">
+                  <button key={candidateId(candidate)} type="button" onClick={() => setSelectedCandidate(candidate)} className="flex w-full items-center gap-3 rounded-xl bg-slate-50 p-2 text-left hover:bg-indigo-50">
                     <div className="w-9 text-center"><p className="text-base font-black leading-none text-slate-900">{at.getDate()}</p><p className="mt-1 text-[9px] font-black uppercase text-slate-500">{at.toLocaleDateString("fr-FR", { month: "short" })}</p></div>
                     <div className="min-w-0 flex-1"><p className="truncate text-xs font-black text-slate-900">{candidateName(candidate)}</p><p className="truncate text-[10px] font-bold text-slate-500">{at.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })} · {text(candidate.interview_format, "Format à confirmer")}</p></div>
                   </button>
@@ -1203,7 +1231,7 @@ export default function AmbassadorRecruitmentRoute({
                       <td className="px-4 py-3"><div className="flex items-center gap-2"><div className="h-1.5 w-16 overflow-hidden rounded-full bg-slate-100"><div className={cn("h-full rounded-full", candidateScore(candidate) >= 80 ? "bg-emerald-500" : candidateScore(candidate) >= 60 ? "bg-amber-500" : "bg-rose-500")} style={{ width: `${candidateScore(candidate)}%` }} /></div><span className="text-xs font-black text-slate-900">{candidateScore(candidate)}%</span></div></td>
                       <td className="px-4 py-3"><p className="font-bold text-slate-900">{nextAction(candidate)}</p><p className="mt-0.5 text-[11px] font-bold text-slate-500">{shortDate(dateValue(candidate, ["next_action_at", "follow_up_at", "interview_at", "due_at"]))}</p></td>
                       <td className="px-4 py-3">{docs.known ? <span className={cn("rounded-full px-2.5 py-1 text-xs font-black", docs.missing ? "bg-amber-50 text-amber-700" : "bg-emerald-50 text-emerald-700")}>{docs.complete}/{docs.total}</span> : <span className="text-xs font-bold text-slate-400">—</span>}</td>
-                      <td className="px-4 py-3"><div className="flex justify-end gap-1.5">{phone ? <a href={`tel:${normalizePhone(phone)}`} className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50"><Phone className="h-3.5 w-3.5" /></a> : null}{email ? <a href={`mailto:${email}`} className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50"><Mail className="h-3.5 w-3.5" /></a> : null}<button type="button" onClick={() => { setInterviewCandidate(candidate); setInterviewOpen(true); }} className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-violet-100 bg-violet-50 text-violet-700 hover:bg-violet-100"><CalendarDays className="h-3.5 w-3.5" /></button>{target ? <button type="button" disabled={savingId === id} onClick={() => moveStage(candidate, target)} className="inline-flex h-8 items-center gap-1 rounded-lg border border-blue-100 bg-blue-50 px-2.5 text-[11px] font-black text-blue-700 hover:bg-blue-100 disabled:opacity-50">{savingId === id ? "Sync…" : "Avancer"}<ChevronRight className="h-3.5 w-3.5" /></button> : null}<button type="button" onClick={() => setSelectedCandidate(candidate)} className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50"><MoreHorizontal className="h-3.5 w-3.5" /></button></div></td>
+                      <td className="px-4 py-3"><div className="flex justify-end gap-1.5">{phone ? <a href={`tel:${normalizePhone(phone)}`} className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50"><Phone className="h-3.5 w-3.5" /></a> : null}{email ? <a href={`mailto:${email}`} className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50"><Mail className="h-3.5 w-3.5" /></a> : null}<button type="button" onClick={() => { setInterviewCandidate(candidate); setInterviewOpen(true); }} className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-violet-100 bg-indigo-50 text-indigo-700 hover:bg-violet-100"><CalendarDays className="h-3.5 w-3.5" /></button>{target ? <button type="button" disabled={savingId === id} onClick={() => moveStage(candidate, target)} className="inline-flex h-8 items-center gap-1 rounded-lg border border-blue-100 bg-blue-50 px-2.5 text-[11px] font-black text-blue-700 hover:bg-blue-100 disabled:opacity-50">{savingId === id ? "Sync…" : "Avancer"}<ChevronRight className="h-3.5 w-3.5" /></button> : null}<button type="button" onClick={() => setSelectedCandidate(candidate)} className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50"><MoreHorizontal className="h-3.5 w-3.5" /></button></div></td>
                     </tr>
                   );
                 })}

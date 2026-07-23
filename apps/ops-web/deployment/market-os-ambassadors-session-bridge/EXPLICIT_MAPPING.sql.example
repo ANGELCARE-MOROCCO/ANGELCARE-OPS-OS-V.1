@@ -1,0 +1,25 @@
+-- REVIEW AND REPLACE EVERY PLACEHOLDER BEFORE EXECUTION.
+begin;
+
+insert into public.market_os_ambassador_actor_roles (
+  auth_user_id,
+  app_user_id,
+  tenant_id,
+  organization_id,
+  role_key,
+  display_name,
+  status
+) values (
+  null,
+  '<APP_USER_UUID>'::uuid,
+  '<TENANT_ID>',
+  '<ORGANIZATION_ID>',
+  'ambassador_admin',
+  '<DISPLAY_NAME>',
+  'active'
+)
+on conflict (app_user_id, tenant_id, organization_id, role_key)
+where app_user_id is not null
+do update set display_name = excluded.display_name, status = 'active', updated_at = now();
+
+commit;

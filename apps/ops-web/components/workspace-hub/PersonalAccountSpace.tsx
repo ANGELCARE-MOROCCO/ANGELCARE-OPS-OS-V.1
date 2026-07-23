@@ -125,7 +125,7 @@ function encodeMailto(subject: string, body: string) {
 
 function InfoRow({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
-    <div className="group flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white/80 px-3 py-3 shadow-sm transition hover:border-blue-200 hover:bg-blue-50/40">
+    <div className="group flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white/90 px-3 py-3 shadow-sm transition hover:-translate-y-0.5 hover:border-blue-200 hover:bg-blue-50/60 hover:shadow-md">
       <div className="flex min-w-0 items-center gap-3">
         <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-700 ring-1 ring-blue-100">
           {icon}
@@ -200,7 +200,7 @@ export default function PersonalAccountSpace({ hubUser }: { hubUser: AuthorizedW
       subtitle: 'Confirming receipt of internal broadcast.',
       steps: [
         { id: 'send', label: 'Send acknowledgement', percent: 60 },
-        { id: 'refresh', label: 'Refresh board', percent: 90 },
+        { id: 'refresh', label: 'Refresh member suite', percent: 90 },
         { id: 'complete', label: 'Acknowledgement saved', percent: 100 },
       ],
     })
@@ -229,7 +229,7 @@ export default function PersonalAccountSpace({ hubUser }: { hubUser: AuthorizedW
       steps: [
         { id: 'validate', label: 'Validate comment', percent: 20 },
         { id: 'send', label: 'Save comment', percent: 70 },
-        { id: 'refresh', label: 'Refresh board', percent: 95 },
+        { id: 'refresh', label: 'Refresh member suite', percent: 95 },
         { id: 'complete', label: 'Comment saved', percent: 100 },
       ],
     })
@@ -289,23 +289,23 @@ export default function PersonalAccountSpace({ hubUser }: { hubUser: AuthorizedW
   const unreadMemos = memos.filter((memo) => !memo.acknowledgedAt).length
 
   return (
-    <section className="relative mt-5 overflow-hidden rounded-[34px] border border-white/80 bg-white p-[1px] shadow-[0_24px_90px_rgba(15,23,42,0.10)] ring-1 ring-slate-200/70">
+    <section className="relative mt-4 overflow-hidden rounded-[38px] border border-white/90 bg-white/90 p-[1px] shadow-[0_30px_100px_rgba(15,23,42,0.09)] ring-1 ring-slate-200/70 backdrop-blur-xl">
       <ActionProgressPanel progress={progress.progress} onClose={progress.closeProgress} />
 
-      <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-blue-700 via-cyan-500 to-emerald-400" />
-      <div className="absolute -left-20 -top-20 h-56 w-56 rounded-full bg-blue-200/50 blur-3xl" />
-      <div className="absolute -right-20 top-8 h-56 w-56 rounded-full bg-emerald-100/60 blur-3xl" />
+      <div className="absolute inset-x-0 top-0 h-1.5 bg-[linear-gradient(90deg,#e11d48_0%,#e11d48_12%,#1d4ed8_12%,#1d4ed8_68%,#0ea5e9_68%,#0ea5e9_86%,#16a34a_86%)]" />
+      <div className="absolute -left-20 -top-20 h-64 w-64 rounded-full bg-blue-200/45 blur-3xl" />
+      <div className="absolute -right-20 top-8 h-64 w-64 rounded-full bg-cyan-100/55 blur-3xl" />
 
-      <div className="relative rounded-[33px] bg-gradient-to-br from-white via-white to-slate-50 p-5 lg:p-6">
+      <div className="relative rounded-[37px] bg-gradient-to-br from-white via-white to-blue-50/45 p-5 lg:p-7">
         <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
           <div>
             <div className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-4 py-2 text-xs font-black uppercase tracking-[0.22em] text-blue-700 shadow-sm">
               <Crown className="h-4 w-4" />
-              My Account Space
+              SANILA Member Space
             </div>
-            <h2 className="mt-3 text-3xl font-black tracking-[-0.06em] text-slate-950">Personal command board</h2>
+            <h2 className="mt-3 text-3xl font-black tracking-[-0.06em] text-slate-950">Your identity, messages & direct support</h2>
             <p className="mt-1 max-w-4xl text-sm leading-6 text-slate-600">
-              Broadcast memos, profile identity, headquarters support, HR/Admin contact and secure disconnect.
+              Your trusted member suite for internal memos, verified identity, direct headquarters assistance and secure session control.
             </p>
           </div>
 
@@ -313,15 +313,15 @@ export default function PersonalAccountSpace({ hubUser }: { hubUser: AuthorizedW
             <button
               type="button"
               onClick={() => void loadAccountSpace(true)}
-              className="inline-flex items-center gap-2 rounded-2xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm font-black text-blue-700 transition hover:bg-blue-100"
+              className="inline-flex items-center gap-2 rounded-2xl border border-blue-200 bg-white px-4 py-3 text-sm font-black text-blue-700 shadow-sm transition hover:-translate-y-0.5 hover:bg-blue-50"
             >
               <Clock3 className="h-4 w-4" />
-              Refresh board
+              Refresh member suite
             </button>
             <button
               type="button"
               onClick={disconnect}
-              className="inline-flex items-center gap-2 rounded-2xl bg-slate-950 px-4 py-3 text-sm font-black text-white shadow-[0_18px_42px_rgba(15,23,42,0.20)] transition hover:bg-slate-800"
+              className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-[#0b2f78] to-blue-700 px-4 py-3 text-sm font-black text-white shadow-[0_18px_42px_rgba(29,78,216,0.24)] transition hover:-translate-y-0.5 hover:shadow-[0_22px_48px_rgba(29,78,216,0.30)]"
             >
               <LogOut className="h-4 w-4" />
               Disconnect
@@ -330,16 +330,16 @@ export default function PersonalAccountSpace({ hubUser }: { hubUser: AuthorizedW
         </div>
 
         <div className="mt-5 grid gap-4 xl:grid-cols-[1.15fr_.9fr_.9fr]">
-          <div className="relative overflow-hidden rounded-[28px] border border-blue-200 bg-gradient-to-br from-blue-50 via-white to-cyan-50 p-4 shadow-sm">
+          <div className="relative overflow-hidden rounded-[30px] border border-blue-200 bg-gradient-to-br from-blue-50 via-white to-cyan-50 p-5 shadow-[0_18px_50px_rgba(30,64,175,0.08)]">
             <div className="absolute -right-12 -top-12 h-32 w-32 rounded-full bg-blue-200/60 blur-3xl" />
             <div className="relative flex items-center justify-between gap-3">
               <div>
                 <div className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.22em] text-blue-700">
                   <MessageSquareText className="h-4 w-4" />
-                  Broadcast board
+                  Personal command messages
                 </div>
                 <div className="mt-2 text-2xl font-black tracking-[-0.05em] text-slate-950">{unreadMemos} pending</div>
-                <p className="mt-1 text-xs font-semibold text-slate-600">Live memos, warnings and reminders requiring receipt or comment.</p>
+                <p className="mt-1 text-xs font-semibold text-slate-600">Live internal communications entrusted to your profile and requiring acknowledgement or response.</p>
               </div>
               <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-600 text-white shadow-[0_18px_42px_rgba(37,99,235,0.26)]">
                 {unreadMemos ? <AlertTriangle className="h-6 w-6" /> : <CheckCircle2 className="h-6 w-6" />}
@@ -418,17 +418,17 @@ export default function PersonalAccountSpace({ hubUser }: { hubUser: AuthorizedW
             </div>
           </div>
 
-          <div className="relative overflow-hidden rounded-[28px] border border-violet-200 bg-gradient-to-br from-violet-50 via-white to-blue-50 p-4 shadow-sm">
+          <div className="relative overflow-hidden rounded-[30px] border border-indigo-200 bg-gradient-to-br from-indigo-50 via-white to-blue-50 p-5 shadow-[0_18px_50px_rgba(49,46,129,0.08)]">
             <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-violet-200/60 blur-3xl" />
             <div className="relative flex items-center justify-between">
               <div>
-                <div className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.22em] text-violet-700">
+                <div className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.22em] text-indigo-700">
                   <UserRound className="h-4 w-4" />
-                  Personal details
+                  Verified identity
                 </div>
                 <div className="mt-2 text-2xl font-black tracking-[-0.05em] text-slate-950">{account?.fullName || hubUser.name}</div>
               </div>
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-violet-600 text-white shadow-[0_18px_42px_rgba(124,58,237,0.24)]">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-[#0b2f78] to-indigo-600 text-white shadow-[0_18px_42px_rgba(49,46,129,0.24)]">
                 <BadgeCheck className="h-6 w-6" />
               </div>
             </div>
@@ -442,15 +442,15 @@ export default function PersonalAccountSpace({ hubUser }: { hubUser: AuthorizedW
             </div>
           </div>
 
-          <div className="relative overflow-hidden rounded-[28px] border border-emerald-200 bg-gradient-to-br from-emerald-50 via-white to-cyan-50 p-4 shadow-sm">
+          <div className="relative overflow-hidden rounded-[30px] border border-emerald-200 bg-gradient-to-br from-emerald-50 via-white to-cyan-50 p-5 shadow-[0_18px_50px_rgba(5,150,105,0.08)]">
             <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-emerald-200/60 blur-3xl" />
             <div className="relative flex items-center justify-between">
               <div>
                 <div className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.22em] text-emerald-700">
                   <Headphones className="h-4 w-4" />
-                  Headquarters
+                  Priority headquarters access
                 </div>
-                <div className="mt-2 text-2xl font-black tracking-[-0.05em] text-slate-950">Contact ANGELCARE</div>
+                <div className="mt-2 text-2xl font-black tracking-[-0.05em] text-slate-950">Direct support channel</div>
               </div>
               <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-600 text-white shadow-[0_18px_42px_rgba(5,150,105,0.24)]">
                 <Building2 className="h-6 w-6" />
@@ -464,7 +464,7 @@ export default function PersonalAccountSpace({ hubUser }: { hubUser: AuthorizedW
                 className="inline-flex items-center justify-center gap-2 rounded-2xl bg-blue-600 px-4 py-3 text-sm font-black text-white shadow-[0_16px_36px_rgba(37,99,235,0.22)] transition hover:bg-blue-700"
               >
                 <Mail className="h-4 w-4" />
-                Send email request
+                Write to Headquarters
               </button>
 
               <button
@@ -473,11 +473,11 @@ export default function PersonalAccountSpace({ hubUser }: { hubUser: AuthorizedW
                 className="inline-flex items-center justify-center gap-2 rounded-2xl bg-emerald-600 px-4 py-3 text-sm font-black text-white shadow-[0_16px_36px_rgba(5,150,105,0.20)] transition hover:bg-emerald-700"
               >
                 <Phone className="h-4 w-4" />
-                HR / Admin services call
+                Call HR / Admin services
               </button>
 
               <div className="rounded-2xl border border-emerald-100 bg-white/85 p-3 text-xs font-semibold leading-5 text-slate-600">
-                French request templates are prepared for <strong>{EMAIL_TARGET}</strong>.
+                Professional request templates are ready for <strong>{EMAIL_TARGET}</strong> and automatically include your verified profile signature.
               </div>
             </div>
           </div>
@@ -490,7 +490,7 @@ export default function PersonalAccountSpace({ hubUser }: { hubUser: AuthorizedW
             <div className="flex items-start justify-between border-b border-slate-200 bg-gradient-to-r from-blue-50 to-white p-5">
               <div>
                 <div className="text-xs font-black uppercase tracking-[0.24em] text-blue-600">Email template</div>
-                <h3 className="mt-2 text-3xl font-black tracking-[-0.05em] text-slate-950">Send request to Headquarters</h3>
+                <h3 className="mt-2 text-3xl font-black tracking-[-0.05em] text-slate-950">Contact AngelCare Headquarters</h3>
               </div>
               <button onClick={() => setEmailOpen(false)} className="rounded-full border border-slate-200 bg-white p-2 text-slate-500">
                 <X className="h-4 w-4" />
@@ -529,7 +529,7 @@ export default function PersonalAccountSpace({ hubUser }: { hubUser: AuthorizedW
                 className="inline-flex items-center justify-center gap-2 rounded-2xl bg-slate-950 px-5 py-3 text-sm font-black text-white"
               >
                 <Mail className="h-4 w-4" />
-                Open email composer
+                Open secure email composer
               </button>
             </div>
           </div>

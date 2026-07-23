@@ -63,11 +63,6 @@ type AmbassadorCockpitRouteProps = {
   onExportReport: () => void
 }
 
-const cityFallbacks = [
-  { city: "Rabat", status: "Sain", coverage: 92, ambassadors: 42, leads: 512, conversions: 78, tone: "emerald" },
-  { city: "Casablanca", status: "Attention", coverage: 74, ambassadors: 58, leads: 563, conversions: 93, tone: "amber" },
-  { city: "Kénitra", status: "À risque", coverage: 48, ambassadors: 28, leads: 172, conversions: 43, tone: "rose" },
-]
 
 const missionScenarios = [
   {
@@ -432,9 +427,10 @@ function formatNumber(value?: number | string | null) {
   return new Intl.NumberFormat("fr-FR").format(numeric)
 }
 
-function formatMoney(value?: number | string | null, currency = "MAD") {
+function formatMoney(value?: number | string | null, currency = "Dh") {
   const numeric = Number(value || 0)
-  return `${formatNumber(numeric)} ${currency}`
+  const label = !currency || currency.toUpperCase() === "MAD" ? "Dh" : currency
+  return `${formatNumber(numeric)} ${label}`
 }
 
 function shortDate(value?: string | null) {
@@ -701,20 +697,65 @@ function reportMissingFields(form: typeof defaultReportConfig) {
 }
 
 function pickCities(snapshot: AmbassadorWorkspaceSnapshot) {
-  return cityFallbacks.map((base) => {
-    const ambassadors = snapshot.ambassadors.filter((item: AnyRecord) => (item.city || "").toLowerCase() === base.city.toLowerCase())
-    const territories = snapshot.territories.filter((item: AnyRecord) => (item.city || "").toLowerCase() === base.city.toLowerCase())
-    const missions = snapshot.missions.filter((item: AnyRecord) => (item.city || "").toLowerCase() === base.city.toLowerCase())
-    const averageCoverage = territories.length
-      ? Math.round(territories.reduce((sum: number, item: AnyRecord) => sum + Number(item.coverage_goal || 0), 0) / territories.length)
-      : base.coverage
+  const leads = (((snapshot as AnyRecord).leads || []) as AnyRecord[])
+  const conversions = (((snapshot as AnyRecord).conversions || []) as AnyRecord[])
+  const cityNames = Array.from(
+    new Set(
+      [
+        ...snapshot.territories.map((item: AnyRecord) => String(item.city || "").trim()),
+        ...snapshot.ambassadors.map((item: AnyRecord) => String(item.city || "").trim()),
+        ...leads.map((item: AnyRecord) => String(item.city || "").trim()),
+      ].filter(Boolean),
+    ),
+  ).sort((a, b) => a.localeCompare(b, "fr"))
+
+  return cityNames.map((city) => {
+    const ambassadors = snapshot.ambassadors.filter(
+      (item: AnyRecord) => String(item.city || "").toLowerCase() === city.toLowerCase() && item.status !== "archived",
+    )
+    const territories = snapshot.territories.filter(
+      (item: AnyRecord) => String(item.city || "").toLowerCase() === city.toLowerCase() && item.status !== "archived",
+    )
+    const cityLeads = leads.filter((item: AnyRecord) => String(item.city || "").toLowerCase() === city.toLowerCase())
+    const cityConversions = conversions.filter((item: AnyRecord) => {
+      if (String(item.city || "").toLowerCase() === city.toLowerCase()) return true
+      const lead = leads.find((candidate: AnyRecord) => candidate.id === item.lead_id)
+      return String(lead?.city || "").toLowerCase() === city.toLowerCase()
+    })
+
+    const explicitCoverage = territories
+      .map((item: AnyRecord) => Number(item.coverage_percent ?? item.coverage_rate ?? item.current_coverage ?? item.coverage_goal ?? 0))
+      .filter((value) => Number.isFinite(value) && value > 0)
+
+    const targetAmbassadors = territories.reduce(
+      (sum: number, item: AnyRecord) => sum + Number(item.target_ambassadors || item.ambassador_target || 0),
+      0,
+    )
+
+    const coverage = explicitCoverage.length
+      ? Math.round(explicitCoverage.reduce((sum, value) => sum + value, 0) / explicitCoverage.length)
+      : targetAmbassadors > 0
+        ? Math.min(100, Math.round((ambassadors.length / targetAmbassadors) * 100))
+        : 0
+
+    const state = coverage >= 80
+      ? { status: "Couverture solide", tone: "emerald" }
+      : coverage >= 60
+        ? { status: "Sous contrôle", tone: "blue" }
+        : coverage >= 40
+          ? { status: "À renforcer", tone: "amber" }
+          : coverage > 0
+            ? { status: "Critique", tone: "rose" }
+            : { status: "Non mesurée", tone: "slate" }
 
     return {
-      ...base,
-      coverage: averageCoverage || base.coverage,
-      ambassadors: ambassadors.length || base.ambassadors,
-      leads: missions.reduce((sum: number, item: AnyRecord) => sum + Number(item.leads_generated || 0), 0) || base.leads,
-      conversions: Math.max(0, Math.round((missions.length || base.conversions / 8) * 6)) || base.conversions,
+      city,
+      coverage,
+      ambassadors: ambassadors.length,
+      leads: cityLeads.length,
+      conversions: cityConversions.length,
+      territories: territories.length,
+      ...state,
     }
   })
 }
@@ -727,17 +768,18 @@ function topAmbassadors(snapshot: AmbassadorWorkspaceSnapshot) {
 }
 
 function recentActivity(snapshot: AmbassadorWorkspaceSnapshot) {
-  const audit = [...snapshot.audit]
-    .sort((a: AnyRecord, b: AnyRecord) => String(b.created_at || "").localeCompare(String(a.created_at || "")))
-    .slice(0, 5)
-
-  if (audit.length) return audit
-
   return [
-    { id: "fallback-1", action: "Conversion à valider", summary: "Lead prioritaire attribué à un ambassadeur Casablanca", created_at: new Date().toISOString() } as AmbassadorAuditLog,
-    { id: "fallback-2", action: "Mission démarrée", summary: "Opération terrain active sur Rabat", created_at: new Date().toISOString() } as AmbassadorAuditLog,
-    { id: "fallback-3", action: "Nouveau candidat", summary: "Candidat ajouté à la préqualification", created_at: new Date().toISOString() } as AmbassadorAuditLog,
+    ...((snapshot.activity || []) as AnyRecord[]),
+    ...((snapshot.audit || []) as AnyRecord[]),
   ]
+    .sort((a: AnyRecord, b: AnyRecord) =>
+      String(b.created_at || b.updated_at || "").localeCompare(String(a.created_at || a.updated_at || "")),
+    )
+    .filter((item: AnyRecord, index: number, list: AnyRecord[]) => {
+      const identity = `${item.id || ""}:${item.action || item.summary || ""}:${item.created_at || ""}`
+      return list.findIndex((candidate: AnyRecord) => `${candidate.id || ""}:${candidate.action || candidate.summary || ""}:${candidate.created_at || ""}` === identity) === index
+    })
+    .slice(0, 8)
 }
 
 function recruitmentStageSummary(records: AmbassadorRecruitmentRecord[]) {
@@ -1231,179 +1273,280 @@ export default function AmbassadorCockpitRoute({
       ? { tone: "success", message: actionMessage }
       : null
 
-  const kpiCards = [
-    { label: "Ambassadeurs actifs", value: formatNumber(activeAmbassadors), meta: "réseau mobilisable", icon: Users, tone: "blue" },
-    { label: "Candidats en cours", value: formatNumber(kpis.recruitmentPipeline || candidates), meta: "pipeline recrutement", icon: UserPlus, tone: "violet" },
-    { label: "Missions en cours", value: formatNumber(kpis.openMissions || liveMissions), meta: "exécution terrain", icon: MapPinned, tone: "emerald" },
-    { label: "Leads générés", value: formatNumber(kpis.leadsGenerated || leads.length || snapshot.ambassadors.reduce((sum: number, item: AnyRecord) => sum + Number(item.leads_generated || 0), 0)), meta: "source terrain", icon: Target, tone: "blue" },
-    { label: "Conversions à valider", value: formatNumber(conversions.filter((item) => String(item.status || "pending") === "pending").length || 214), meta: "contrôle OPS", icon: ClipboardCheck, tone: "amber" },
-    { label: "Incentives en attente", value: formatMoney(payouts.totalPending || 128450), meta: "exposition finance", icon: Wallet, tone: "rose" },
-  ]
+  const pendingConversionsCount = conversions.filter((item: AnyRecord) =>
+    ["pending", "to_validate", "à valider"].includes(String(item.status || item.validation_decision || "pending").toLowerCase()),
+  ).length
+  const pendingIncentivesCount = snapshot.incentives.filter((item: AnyRecord) => item.status === "pending").length
+  const unassignedAmbassadors = snapshot.ambassadors.filter(
+    (item: AnyRecord) => item.status !== "archived" && !item.territory_id && !item.assigned_territory_id,
+  ).length
+  const incompleteOnboarding = snapshot.onboarding.filter((item: AnyRecord) =>
+    Number(item.completion_rate || item.progress || 0) < 100 && !["completed", "activated"].includes(String(item.stage || item.status || "").toLowerCase()),
+  ).length
+  const trainingAttention = snapshot.training.filter((item: AnyRecord) =>
+    !item.archived_at && !["completed", "certified", "valid"].includes(String(item.certification_status || item.status || "").toLowerCase()),
+  ).length
+  const staleLeadThreshold = Date.now() - 7 * 24 * 60 * 60 * 1000
+  const staleLeads = leads.filter((item: AnyRecord) => {
+    if (["converted", "closed", "lost", "archived"].includes(String(item.status || "").toLowerCase())) return false
+    const date = new Date(item.updated_at || item.created_at || 0).getTime()
+    return Number.isFinite(date) && date > 0 && date < staleLeadThreshold
+  }).length
+
+  const readinessValues = [
+    Number(kpis.territoryCoverage || 0),
+    Number(kpis.onboardingCompletion || 0),
+    Number(kpis.trainingCompletion || 0),
+    Number(kpis.kpiCompletion || 0),
+  ].filter((value) => Number.isFinite(value) && value > 0)
+  const networkReadiness = readinessValues.length
+    ? Math.round(readinessValues.reduce((sum, value) => sum + value, 0) / readinessValues.length)
+    : 0
+  const networkCondition = networkReadiness >= 80
+    ? { label: "Réseau opérationnel maîtrisé", detail: "Les principaux indicateurs de couverture et de préparation sont sous contrôle.", tone: "emerald" }
+    : networkReadiness >= 60
+      ? { label: "Réseau stable avec interventions ciblées", detail: "La situation est exploitable, avec des dossiers précis à reprendre.", tone: "blue" }
+      : networkReadiness > 0
+        ? { label: "Intervention managériale requise", detail: "Les indicateurs disponibles signalent un besoin de renforcement opérationnel.", tone: "amber" }
+        : { label: "Mesure réseau en cours de constitution", detail: "Les données disponibles ne permettent pas encore de consolider un indice global.", tone: "slate" }
+
+  const managementAttention = [
+    { label: "Ambassadeurs sans territoire", detail: "Affectation opérationnelle requise", count: unassignedAmbassadors, tone: "rose", action: () => openModal("mission") },
+    { label: "Onboarding incomplet", detail: "Activation à sécuriser", count: incompleteOnboarding, tone: "amber", action: () => openModal("candidate") },
+    { label: "Conversions à valider", detail: "Contrôle OPS en attente", count: pendingConversionsCount, tone: "blue", action: () => openModal("conversion") },
+    { label: "Formations ou certifications à reprendre", detail: "Préparation terrain incomplète", count: trainingAttention, tone: "amber", action: () => openModal("candidate") },
+    { label: "Leads sans mouvement depuis 7 jours", detail: "Relance commerciale à lancer", count: staleLeads, tone: "slate", action: () => openModal("lead") },
+    { label: "Incentives en attente", detail: "Décision finance ou OPS requise", count: pendingIncentivesCount, tone: "rose", action: () => openModal("incentive") },
+  ].filter((item) => item.count > 0)
+
+  const riskSignals = [
+    ...territoryCities
+      .filter((city) => city.coverage > 0 && city.coverage < 60)
+      .map((city) => ({ title: `${city.city} — couverture ${city.coverage}%`, detail: `${city.ambassadors} ambassadeur(s) actif(s) sur ${city.territories} territoire(s).`, level: city.coverage < 40 ? "Critique" : "À renforcer" })),
+    ...(pendingConversionsCount > 0 ? [{ title: "Conversions en attente de décision", detail: `${pendingConversionsCount} dossier(s) nécessitent une validation.`, level: "OPS" }] : []),
+    ...(trainingAttention > 0 ? [{ title: "Préparation terrain incomplète", detail: `${trainingAttention} dossier(s) formation ou certification à reprendre.`, level: "Conformité" }] : []),
+  ].slice(0, 6)
+
+  const globalCoverage = territoryCities.length
+    ? Math.round(territoryCities.reduce((sum, city) => sum + city.coverage, 0) / territoryCities.length)
+    : Number(kpis.territoryCoverage || 0)
 
   return (
-    <div data-ambassador-cockpit-route="real-sync" className="min-h-screen bg-slate-50 px-6 py-6 text-slate-950 lg:px-8">
-      <header className="rounded-[32px] border border-slate-200 bg-white p-6 shadow-sm shadow-slate-200/70">
-        <div className="flex flex-col gap-6 xl:flex-row xl:items-start xl:justify-between">
-          <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-black uppercase tracking-[0.14em] text-blue-700">
-              <BarChart3 size={14} /> Market OS Ambassador
-            </div>
-            <h1 className="mt-4 text-3xl font-black tracking-tight text-slate-950">Cockpit de pilotage</h1>
-            <p className="mt-2 text-sm font-semibold leading-6 text-slate-600">
-              Centre de commandement opérationnel pour piloter recrutement, activation, missions terrain, leads, conversions et incentives ambassadeurs.
-            </p>
-            <div className="mt-4 flex flex-wrap gap-2 text-xs font-black">
-              <StatusPill tone="emerald">Sync API active</StatusPill>
-              <StatusPill tone="blue">Snapshot borné</StatusPill>
-              <StatusPill tone="amber">Actions auditées</StatusPill>
+    <div data-ambassador-cockpit-route="executive-network-command" className="min-h-screen bg-[#f1f4f7] text-slate-950">
+      <section className="border-b border-[#cad6e2] bg-white">
+        <div className="grid min-h-[300px] 2xl:grid-cols-[1.45fr_0.55fr]">
+          <div className="relative overflow-hidden px-6 py-8 lg:px-9 lg:py-10">
+            <div className="absolute inset-y-0 left-0 w-1.5 bg-[#bd2634]" />
+            <div className="max-w-5xl">
+              <div className="flex flex-wrap items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-[#2c5d8d]">
+                <span>AngelCare Market OS</span>
+                <span className="h-1 w-1 rounded-full bg-[#bd2634]" />
+                <span>Executive Network Command</span>
+              </div>
+              <h1 className="mt-5 max-w-4xl text-[34px] font-black tracking-[-0.04em] text-[#071c34] lg:text-[46px]">
+                Commandement du réseau ambassadeurs
+              </h1>
+              <p className="mt-4 max-w-4xl text-sm font-semibold leading-6 text-slate-600">
+                Vue de direction pour comprendre la posture du réseau, les mouvements opérationnels et les interventions à engager aujourd’hui.
+              </p>
+
+              <div className="mt-7 flex flex-wrap gap-2">
+                <button type="button" onClick={() => openModal("mission")} className="inline-flex h-11 items-center gap-2 rounded-xl bg-[#0b3159] px-4 text-sm font-black !text-white shadow-[0_10px_26px_rgba(11,49,89,0.2)] hover:bg-[#092746]">
+                  <Plus size={16} /> Créer une mission
+                </button>
+                <button type="button" onClick={() => openModal("candidate")} className="inline-flex h-11 items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 text-sm font-black text-[#173a61] hover:bg-slate-50">
+                  <UserPlus size={16} /> Nouveau candidat
+                </button>
+                <button type="button" onClick={() => openModal("lead")} className="inline-flex h-11 items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 text-sm font-black text-[#173a61] hover:bg-slate-50">
+                  <Target size={16} /> Nouveau lead
+                </button>
+                <button type="button" onClick={() => openModal("export")} className="inline-flex h-11 items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 text-sm font-black text-slate-700 hover:bg-slate-50">
+                  <Download size={16} /> Rapport
+                </button>
+                <button type="button" onClick={onRefresh} className="inline-flex h-11 items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 text-sm font-black text-slate-700 hover:bg-slate-50">
+                  <RefreshCw size={16} className={refreshing ? "animate-spin" : ""} /> Actualiser
+                </button>
+              </div>
             </div>
           </div>
-          <div className="flex flex-wrap gap-3">
-            <button type="button" onClick={() => openModal("mission")} className="inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-4 py-3 text-sm font-black text-white shadow-lg shadow-blue-200 transition hover:bg-blue-700">
-              <Plus size={16} /> Créer mission
-            </button>
-            <button type="button" onClick={() => openModal("candidate")} className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-800 hover:border-blue-200 hover:text-blue-700">
-              <UserPlus size={16} /> Nouveau candidat
-            </button>
-            <button type="button" onClick={() => openModal("lead")} className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-800 hover:border-blue-200 hover:text-blue-700">
-              <Target size={16} /> Nouveau lead
-            </button>
-            <button type="button" onClick={() => openModal("export")} className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-800 hover:border-blue-200 hover:text-blue-700">
-              <Download size={16} /> Exporter rapport
-            </button>
-            <button type="button" onClick={onRefresh} className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-800 hover:border-blue-200 hover:text-blue-700">
-              <RefreshCw size={16} className={refreshing ? "animate-spin" : ""} /> Actualiser
-            </button>
-          </div>
+
+          <aside className="border-t border-[#cad6e2] bg-[#092846] px-7 py-8 !text-white 2xl:border-l 2xl:border-t-0">
+            <p className="text-[10px] font-black uppercase tracking-[0.18em] !text-[#bfdbfe]">Posture opérationnelle</p>
+            <div className="mt-5 flex items-start justify-between gap-4">
+              <div>
+                <p className="text-5xl font-black tabular-nums tracking-[-0.055em]">{networkReadiness}</p>
+                <p className="mt-1 text-[10px] font-black uppercase tracking-[0.16em] !text-[#bfdbfe]">Indice consolidé / 100</p>
+              </div>
+              <span className={`grid h-14 w-14 place-items-center rounded-full border border-white/15 ${networkCondition.tone === "emerald" ? "bg-emerald-400/15 text-emerald-200" : networkCondition.tone === "amber" ? "bg-amber-400/15 text-amber-200" : "bg-blue-400/15 !text-[#bfdbfe]"}`}>
+                <ShieldCheck size={25} />
+              </span>
+            </div>
+            <div className="mt-6 h-2 overflow-hidden rounded-full bg-white/15">
+              <div className="h-full rounded-full bg-[#79baff]" style={{ width: `${Math.max(0, Math.min(100, networkReadiness))}%` }} />
+            </div>
+            <h2 className="mt-6 text-lg font-black">{networkCondition.label}</h2>
+            <p className="mt-2 text-xs font-semibold leading-5 !text-[#dbeafe]">{networkCondition.detail}</p>
+            <div className="mt-5 border-t border-white/10 pt-4 text-[10px] font-bold !text-[#bfdbfe]">
+              Mise à jour : {snapshot.updatedAt ? new Date(snapshot.updatedAt).toLocaleString("fr-FR") : "Non disponible"}
+            </div>
+          </aside>
         </div>
+
         {(error || success || actionMessage || actionError || diagnostics.length > 0) ? (
-          <div className="mt-5 grid gap-3 lg:grid-cols-3">
-            {error ? <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-bold text-rose-700">{error}</div> : null}
-            {success || actionMessage ? <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-bold text-emerald-700">{success || actionMessage}</div> : null}
-            {actionError ? <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-bold text-rose-700">{actionError}</div> : null}
-            {diagnostics.slice(0, 1).map((item) => <div key={item} className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-bold text-amber-700">{item}</div>)}
+          <div className="grid gap-2 border-t border-slate-200 px-6 py-3 lg:px-9 lg:grid-cols-3">
+            {error ? <div className="border-l-4 border-rose-500 bg-rose-50 px-4 py-3 text-sm font-bold text-rose-800">{error}</div> : null}
+            {success || actionMessage ? <div className="border-l-4 border-emerald-500 bg-emerald-50 px-4 py-3 text-sm font-bold text-emerald-800">{success || actionMessage}</div> : null}
+            {actionError ? <div className="border-l-4 border-rose-500 bg-rose-50 px-4 py-3 text-sm font-bold text-rose-800">{actionError}</div> : null}
+            {diagnostics.slice(0, 1).map((item) => <div key={item} className="border-l-4 border-amber-500 bg-amber-50 px-4 py-3 text-sm font-bold text-amber-800">{item}</div>)}
           </div>
         ) : null}
-      </header>
-
-      <section className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-6">
-        {kpiCards.map((card) => <MetricCard key={card.label} {...card} />)}
       </section>
 
-      <section className="mt-6 grid gap-5 xl:grid-cols-[1.2fr_0.8fr]">
-        <div className="grid gap-5 lg:grid-cols-3">
-          {territoryCities.map((city) => (
-            <article key={city.city} className="rounded-[26px] border border-slate-200 bg-white p-5 shadow-sm shadow-slate-200/70">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="text-lg font-black text-slate-950">{city.city}</h2>
-                  <p className="text-xs font-bold text-slate-500">Couverture terrain</p>
-                </div>
-                <StatusPill tone={city.tone}>{city.status}</StatusPill>
+      <main className="space-y-5 p-4 lg:p-6">
+        <section className="grid gap-4 xl:grid-cols-[1.25fr_0.75fr]">
+          <article className="border border-slate-200 bg-white shadow-[0_12px_34px_rgba(15,23,42,0.05)]">
+            <div className="grid sm:grid-cols-2 xl:grid-cols-4">
+              <div className="border-b border-r border-slate-200 px-5 py-5 xl:border-b-0">
+                <p className="text-[9px] font-black uppercase tracking-[0.16em] text-slate-400">Réseau mobilisable</p>
+                <p className="mt-3 text-4xl font-black tabular-nums text-[#0a2342]">{formatNumber(activeAmbassadors)}</p>
+                <p className="mt-2 text-xs font-bold text-slate-500">ambassadeur(s) actif(s)</p>
               </div>
-              <div className="mt-5">
-                <div className="mb-2 flex justify-between text-xs font-black text-slate-600"><span>Couverture</span><span>{city.coverage}%</span></div>
-                <div className="h-2 rounded-full bg-slate-100"><div className={`h-2 rounded-full ${progressColor(city.tone)}`} style={{ width: `${Math.min(100, city.coverage)}%` }} /></div>
+              <div className="border-b border-slate-200 px-5 py-5 xl:border-b-0 xl:border-r">
+                <p className="text-[9px] font-black uppercase tracking-[0.16em] text-slate-400">Couverture mesurée</p>
+                <p className="mt-3 text-4xl font-black tabular-nums text-[#0a2342]">{globalCoverage}%</p>
+                <p className="mt-2 text-xs font-bold text-slate-500">sur {territoryCities.length} ville(s)</p>
               </div>
-              <dl className="mt-5 grid grid-cols-3 gap-3 text-center">
-                <div className="rounded-2xl bg-slate-50 p-3"><dt className="text-[10px] font-black uppercase text-slate-400">Amb.</dt><dd className="text-lg font-black">{city.ambassadors}</dd></div>
-                <div className="rounded-2xl bg-slate-50 p-3"><dt className="text-[10px] font-black uppercase text-slate-400">Leads</dt><dd className="text-lg font-black">{city.leads}</dd></div>
-                <div className="rounded-2xl bg-slate-50 p-3"><dt className="text-[10px] font-black uppercase text-slate-400">Conv.</dt><dd className="text-lg font-black">{city.conversions}</dd></div>
-              </dl>
-            </article>
-          ))}
-        </div>
-        <SectionCard title="Couverture globale" action={<button type="button" onClick={() => openModal("mission")}>Planifier renfort</button>}>
-          <div className="grid grid-cols-[110px_1fr] gap-5">
-            <div className="grid h-28 w-28 place-items-center rounded-[32px] border border-blue-100 bg-blue-50 text-center">
-              <div><div className="text-3xl font-black text-blue-700">71%</div><p className="text-[10px] font-black uppercase text-blue-500">réseau</p></div>
+              <div className="border-b border-r border-slate-200 px-5 py-5 sm:border-b-0">
+                <p className="text-[9px] font-black uppercase tracking-[0.16em] text-slate-400">Exécution terrain</p>
+                <p className="mt-3 text-4xl font-black tabular-nums text-[#0a2342]">{formatNumber(kpis.openMissions || liveMissions)}</p>
+                <p className="mt-2 text-xs font-bold text-slate-500">mission(s) ouverte(s)</p>
+              </div>
+              <div className="px-5 py-5">
+                <p className="text-[9px] font-black uppercase tracking-[0.16em] text-slate-400">Contribution commerciale</p>
+                <p className="mt-3 text-4xl font-black tabular-nums text-[#0a2342]">{formatNumber(kpis.leadsGenerated || leads.length)}</p>
+                <p className="mt-2 text-xs font-bold text-slate-500">lead(s) enregistrés</p>
+              </div>
             </div>
-            <div className="space-y-3 text-sm font-semibold text-slate-600">
-              <p><strong className="text-slate-950">Rabat</strong> reste sain et prêt pour plus de missions.</p>
-              <p><strong className="text-slate-950">Casablanca</strong> nécessite contrôle qualité sur les conversions.</p>
-              <p><strong className="text-slate-950">Kénitra</strong> doit être renforcé par une mission ciblée.</p>
-            </div>
-          </div>
-        </SectionCard>
-      </section>
+          </article>
 
-      <section className="mt-6 grid gap-5 xl:grid-cols-[1fr_1fr_0.9fr]">
-        <SectionCard title="Priorités du jour" action="6 actions">
-          <div className="space-y-3">
-            {[
-              { label: "Conversions à valider", detail: "Sous 48h pour éviter l'expiration", count: conversions.filter((item) => String(item.status || "pending") === "pending").length || 214, tone: "rose", action: () => openModal("conversion") },
-              { label: "Candidats à contacter", detail: "Première prise de contact à faire", count: 32, tone: "violet", action: () => openModal("candidate") },
-              { label: "Missions actives à suivre", detail: "Échéance dans les 3 prochains jours", count: 11, tone: "blue", action: () => openModal("mission") },
-              { label: "Incentives à approuver", detail: "En attente de validation OPS/Finance", count: payouts.pending || 18, tone: "amber", action: () => openModal("incentive") },
-              { label: "Leads sans activité", detail: "Aucune action depuis 7 jours", count: 67, tone: "slate", action: () => openModal("lead") },
-            ].map((item) => (
-              <button type="button" onClick={item.action} key={item.label} className="flex w-full items-center justify-between gap-4 rounded-2xl border border-slate-100 bg-slate-50 p-3 text-left transition hover:border-blue-200 hover:bg-blue-50">
-                <span><span className="block text-sm font-black text-slate-950">{item.label}</span><span className="text-xs font-semibold text-slate-500">{item.detail}</span></span>
-                <StatusPill tone={item.tone}>{item.count}</StatusPill>
+          <article className="border border-slate-200 bg-white p-5 shadow-[0_12px_34px_rgba(15,23,42,0.05)]">
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-[0.17em] text-[#2e6194]">Management attention</p>
+                <h2 className="mt-1 text-lg font-black text-[#0a2342]">Interventions à engager</h2>
+              </div>
+              <span className="grid h-10 w-10 place-items-center rounded-full bg-rose-50 text-rose-700"><AlertTriangle size={18} /></span>
+            </div>
+            <div className="mt-4 divide-y divide-slate-100">
+              {managementAttention.length ? managementAttention.slice(0, 5).map((item) => (
+                <button key={item.label} type="button" onClick={item.action} className="flex w-full items-center justify-between gap-4 py-3 text-left first:pt-0 last:pb-0">
+                  <span className="min-w-0">
+                    <span className="block truncate text-xs font-black text-slate-900">{item.label}</span>
+                    <span className="mt-1 block truncate text-[10px] font-semibold text-slate-500">{item.detail}</span>
+                  </span>
+                  <span className={`shrink-0 rounded-full border px-2.5 py-1 text-[10px] font-black ${toneClasses(item.tone)}`}>{item.count}</span>
+                </button>
+              )) : (
+                <div className="py-8 text-center text-xs font-semibold text-slate-500">Aucune intervention prioritaire détectée dans les données courantes.</div>
+              )}
+            </div>
+          </article>
+        </section>
+
+        <section className="grid gap-5 2xl:grid-cols-[1.35fr_0.65fr]">
+          <article className="min-w-0 border border-slate-200 bg-white shadow-[0_12px_34px_rgba(15,23,42,0.05)]">
+            <div className="flex flex-wrap items-end justify-between gap-4 border-b border-slate-200 px-5 py-5 lg:px-6">
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-[0.17em] text-[#2e6194]">Empreinte opérationnelle</p>
+                <h2 className="mt-1 text-xl font-black tracking-tight text-[#0a2342]">Couverture par ville</h2>
+                <p className="mt-1 text-xs font-semibold text-slate-500">Lecture consolidée des territoires, ambassadeurs, leads et conversions disponibles.</p>
+              </div>
+              <button type="button" onClick={() => openModal("mission")} className="inline-flex h-9 items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3 text-[10px] font-black text-blue-700 hover:bg-blue-100">
+                <MapPinned size={14} /> Planifier un renfort
               </button>
-            ))}
-          </div>
-        </SectionCard>
-
-        <SectionCard title="Flux d’activité" action="Audit">
-          <div className="space-y-4">
-            {activity.map((item: AnyRecord, index: number) => (
-              <div key={item.id || index} className="relative pl-7">
-                <span className="absolute left-0 top-1 grid h-4 w-4 place-items-center rounded-full bg-blue-100"><span className="h-2 w-2 rounded-full bg-blue-600" /></span>
-                <p className="text-sm font-black text-slate-950">{item.action || item.summary || "Activité"}</p>
-                <p className="mt-1 text-xs font-semibold leading-5 text-slate-500">{item.summary || item.entity_type || "Événement synchronisé dans le journal Ambassador."}</p>
-                <p className="mt-1 text-[11px] font-black uppercase tracking-[0.12em] text-slate-400">{shortDate(item.created_at)}</p>
-              </div>
-            ))}
-          </div>
-        </SectionCard>
-
-        <SectionCard title="Alertes / risques" action="Voir toutes">
-          <div className="space-y-3">
-            {[
-              { title: "Couverture faible à Kénitra", detail: "48% sous le seuil cible", level: "Critique" },
-              { title: "Leads sans activité", detail: "Relances nécessaires", level: "Élevé" },
-              { title: "Incentives en attente", detail: "Contrôle avant paiement", level: "Finance" },
-              { title: "Documents expirés", detail: "9 ambassadeurs concernés", level: "Conformité" },
-            ].map((item) => (
-              <div key={item.title} className="rounded-2xl border border-amber-100 bg-amber-50/60 p-3">
-                <div className="flex items-start justify-between gap-3"><p className="text-sm font-black text-slate-950">{item.title}</p><StatusPill tone="amber">{item.level}</StatusPill></div>
-                <p className="mt-1 text-xs font-semibold text-slate-600">{item.detail}</p>
-              </div>
-            ))}
-          </div>
-        </SectionCard>
-      </section>
-
-      <section className="mt-6 grid gap-5 xl:grid-cols-4">
-        <SectionCard title="Pipeline recrutement" action={<button type="button" onClick={() => openModal("candidate")}>Nouveau</button>}>
-          <MiniStageList rows={recruitment.map((item) => ({ label: item.stage, value: item.count }))} fallback={["Nouveau", "Contacté", "Entretien", "Validé"]} />
-        </SectionCard>
-        <SectionCard title="Exécution des missions" action={<button type="button" onClick={() => openModal("mission")}>Créer</button>}>
-          <MiniStageList rows={missions.map((item) => ({ label: item.stage, value: item.count }))} fallback={["Assignées", "En cours", "Terminées", "En retard"]} />
-        </SectionCard>
-        <SectionCard title="Conversions à valider" action={<button type="button" onClick={() => openModal("conversion")}>Traiter</button>}>
-          <div className="space-y-3">
-            {(conversions.length ? conversions : [{ lead_name: "Lead prioritaire", ambassador_name: "Ambassadeur terrain", city: "Casablanca", value: 1249 }]).slice(0, 4).map((item: AnyRecord, index: number) => (
-              <div key={item.id || index} className="flex items-center justify-between gap-3 rounded-2xl bg-slate-50 p-3">
-                <span><span className="block text-sm font-black text-slate-950">{item.lead_name || item.parent_name || `Conversion ${index + 1}`}</span><span className="text-xs font-semibold text-slate-500">{item.ambassador_name || labelForAmbassador(snapshot, item.ambassador_id)} • {item.city || "Ville"}</span></span>
-                <span className="text-xs font-black text-slate-700">{formatMoney(item.value || 0, item.currency || "MAD")}</span>
-              </div>
-            ))}
-          </div>
-        </SectionCard>
-        <SectionCard title="Exposition payouts" action={<button type="button" onClick={() => openModal("incentive")}>Contrôler</button>}>
-          <div className="rounded-3xl bg-slate-50 p-4">
-            <p className="text-xs font-black uppercase tracking-[0.14em] text-slate-500">Total en attente</p>
-            <div className="mt-2 text-2xl font-black text-slate-950">{formatMoney(payouts.totalPending || 128450)}</div>
-            <div className="mt-4 space-y-2 text-xs font-bold text-slate-600">
-              <div className="flex justify-between"><span>À approuver</span><span>{payouts.pending || 18}</span></div>
-              <div className="flex justify-between"><span>Approuvés</span><span>{payouts.approved}</span></div>
-              <div className="flex justify-between"><span>Payés</span><span>{payouts.paid}</span></div>
             </div>
-          </div>
-        </SectionCard>
-      </section>
+
+            {territoryCities.length ? (
+              <div className="divide-y divide-slate-100">
+                {territoryCities.slice(0, 8).map((city) => (
+                  <div key={city.city} className="grid gap-4 px-5 py-4 md:grid-cols-[minmax(160px,0.9fr)_1.2fr_repeat(3,minmax(70px,0.35fr))] md:items-center lg:px-6">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="grid h-8 w-8 place-items-center rounded-lg bg-[#edf4fb] text-[#2d70b8]"><Building2 size={15} /></span>
+                        <div>
+                          <p className="text-sm font-black text-[#0a2342]">{city.city}</p>
+                          <p className="mt-0.5 text-[10px] font-bold text-slate-500">{city.territories} territoire(s)</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div>
+                      <div className="flex items-center justify-between text-[10px] font-black text-slate-600"><span>{city.status}</span><span>{city.coverage}%</span></div>
+                      <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-100"><div className={`h-full rounded-full ${progressColor(city.tone)}`} style={{ width: `${Math.min(100, city.coverage)}%` }} /></div>
+                    </div>
+                    <div className="text-center"><p className="text-lg font-black tabular-nums text-[#0a2342]">{city.ambassadors}</p><p className="text-[9px] font-black uppercase text-slate-400">Amb.</p></div>
+                    <div className="text-center"><p className="text-lg font-black tabular-nums text-[#0a2342]">{city.leads}</p><p className="text-[9px] font-black uppercase text-slate-400">Leads</p></div>
+                    <div className="text-center"><p className="text-lg font-black tabular-nums text-[#0a2342]">{city.conversions}</p><p className="text-[9px] font-black uppercase text-slate-400">Conv.</p></div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="grid min-h-[260px] place-items-center border border-dashed border-slate-300 bg-slate-50/60 px-8 py-12 text-center">
+                <div><MapPinned className="mx-auto h-8 w-8 text-slate-300" /><p className="mt-4 text-sm font-black text-slate-800">Aucune couverture territoriale mesurable</p><p className="mx-auto mt-2 max-w-md text-xs font-semibold leading-5 text-slate-500">Les villes apparaîtront ici dès que les territoires ou dossiers ambassadeurs contiendront une ville exploitable.</p></div>
+              </div>
+            )}
+          </article>
+
+          <aside className="space-y-5">
+            <article className="border border-[#d5e1ee] bg-[#0b3159] p-5 !text-white shadow-[0_12px_34px_rgba(11,49,89,0.16)]">
+              <div className="flex items-center justify-between gap-4">
+                <div><p className="text-[10px] font-black uppercase tracking-[0.17em] !text-[#bfdbfe]">Flux opérationnel</p><h2 className="mt-1 text-lg font-black">Événements récents</h2></div>
+                <Sparkles size={18} className="!text-[#bfdbfe]" />
+              </div>
+              <div className="mt-5 divide-y divide-white/10">
+                {activity.length ? activity.slice(0, 6).map((item: AnyRecord, index: number) => (
+                  <div key={item.id || index} className="py-3 first:pt-0 last:pb-0">
+                    <p className="text-xs font-black">{item.action || item.summary || "Événement opérationnel"}</p>
+                    <p className="mt-1 line-clamp-2 text-[10px] font-semibold leading-5 !text-[#dbeafe]">{item.summary || item.entity_type || "Mise à jour synchronisée dans le journal Ambassador."}</p>
+                    <p className="mt-1 text-[9px] font-black uppercase tracking-[0.1em] !text-[#93c5fd]">{shortDate(item.created_at || item.updated_at)}</p>
+                  </div>
+                )) : <div className="py-8 text-center text-xs font-semibold !text-[#dbeafe]">Aucun événement réel disponible.</div>}
+              </div>
+            </article>
+
+            <article className="border border-slate-200 bg-white p-5 shadow-[0_12px_34px_rgba(15,23,42,0.05)]">
+              <div className="flex items-center justify-between gap-4"><div><p className="text-[10px] font-black uppercase tracking-[0.17em] text-[#2e6194]">Risques visibles</p><h2 className="mt-1 text-lg font-black text-[#0a2342]">Signaux à surveiller</h2></div><ShieldCheck size={19} className="text-[#2d70b8]" /></div>
+              <div className="mt-4 space-y-3">
+                {riskSignals.length ? riskSignals.map((item) => (
+                  <div key={item.title} className="border-l-2 border-amber-500 bg-amber-50/60 px-3 py-3">
+                    <div className="flex items-start justify-between gap-3"><p className="text-xs font-black text-slate-900">{item.title}</p><span className="rounded-full border border-amber-200 bg-white px-2 py-0.5 text-[9px] font-black text-amber-800">{item.level}</span></div>
+                    <p className="mt-1 text-[10px] font-semibold leading-5 text-slate-600">{item.detail}</p>
+                  </div>
+                )) : <div className="border border-dashed border-slate-300 bg-slate-50 px-4 py-7 text-center text-xs font-semibold text-slate-500">Aucun signal de risque calculable dans les données courantes.</div>}
+              </div>
+            </article>
+          </aside>
+        </section>
+
+        <section className="grid gap-5 lg:grid-cols-3">
+          <article className="border border-slate-200 bg-white p-5 shadow-[0_12px_34px_rgba(15,23,42,0.05)]">
+            <div className="flex items-center justify-between"><div><p className="text-[10px] font-black uppercase tracking-[0.17em] text-[#2e6194]">Entrée réseau</p><h2 className="mt-1 text-base font-black text-[#0a2342]">Pipeline recrutement</h2></div><UserPlus size={18} className="text-[#2d70b8]" /></div>
+            <MiniStageList rows={recruitment.map((item) => ({ label: item.stage, value: item.count }))} empty="Aucun candidat dans le pipeline." />
+          </article>
+          <article className="border border-slate-200 bg-white p-5 shadow-[0_12px_34px_rgba(15,23,42,0.05)]">
+            <div className="flex items-center justify-between"><div><p className="text-[10px] font-black uppercase tracking-[0.17em] text-[#2e6194]">Terrain</p><h2 className="mt-1 text-base font-black text-[#0a2342]">Exécution des missions</h2></div><MapPinned size={18} className="text-[#2d70b8]" /></div>
+            <MiniStageList rows={missions.map((item) => ({ label: item.stage, value: item.count }))} empty="Aucune mission disponible." />
+          </article>
+          <article className="border border-slate-200 bg-white p-5 shadow-[0_12px_34px_rgba(15,23,42,0.05)]">
+            <div className="flex items-center justify-between"><div><p className="text-[10px] font-black uppercase tracking-[0.17em] text-[#2e6194]">Finance réseau</p><h2 className="mt-1 text-base font-black text-[#0a2342]">Exposition incentives</h2></div><Wallet size={18} className="text-[#2d70b8]" /></div>
+            <div className="mt-5 grid grid-cols-3 gap-3 border-t border-slate-100 pt-5 text-center">
+              <div><p className="text-xl font-black tabular-nums text-amber-700">{payouts.pending}</p><p className="mt-1 text-[9px] font-black uppercase text-slate-400">En attente</p></div>
+              <div><p className="text-xl font-black tabular-nums text-blue-700">{payouts.approved}</p><p className="mt-1 text-[9px] font-black uppercase text-slate-400">Approuvés</p></div>
+              <div><p className="text-xl font-black tabular-nums text-emerald-700">{payouts.paid}</p><p className="mt-1 text-[9px] font-black uppercase text-slate-400">Payés</p></div>
+            </div>
+            <div className="mt-5 border-t border-slate-100 pt-4"><p className="text-[9px] font-black uppercase tracking-[0.14em] text-slate-400">Montant en attente</p><p className="mt-2 text-2xl font-black tabular-nums text-[#0a2342]">{formatMoney(payouts.totalPending)}</p></div>
+          </article>
+        </section>
+      </main>
 
       {modal === "candidate" ? <AmbassadorCandidateIntakeModal busy={busy} form={candidateForm} snapshot={snapshot} onChange={updateCandidate} onClose={closeModal} onSubmit={submitCandidate} feedback={modalFeedback} /> : null}
       {modal === "mission" ? <AmbassadorMissionBuilderModal busy={busy} form={missionForm} snapshot={snapshot} onChange={updateMission} onClose={closeModal} onSubmit={submitMission} feedback={modalFeedback} /> : null}
@@ -1412,19 +1555,23 @@ export default function AmbassadorCockpitRoute({
       {modal === "incentive" ? <AmbassadorIncentiveApprovalModal busy={busy} incentive={pendingIncentive} note={incentiveNote} onNote={setIncentiveNote} onClose={closeModal} onDecide={decideIncentive} snapshot={snapshot} feedback={modalFeedback} /> : null}
       {modal === "export" ? <AmbassadorReportExportModal busy={busy} form={reportForm} onChange={updateReport} onClose={closeModal} onPreview={previewReport} onExportCsv={exportReport} onExportPdf={() => setActionError("Export PDF non disponible dans l'infrastructure actuelle.")} onSchedule={() => setActionError("Planification non disponible dans l'infrastructure actuelle.")} preview={reportPreview} feedback={modalFeedback} /> : null}
 
-      {loading ? <div className="fixed bottom-5 right-5 rounded-2xl border border-blue-100 bg-white px-4 py-3 text-sm font-black text-blue-700 shadow-xl"><Loader2 className="mr-2 inline animate-spin" size={16} /> Chargement cockpit...</div> : null}
+      {loading ? <div className="fixed bottom-5 right-5 z-40 inline-flex items-center gap-2 rounded-xl border border-blue-100 bg-white px-4 py-3 text-xs font-black text-blue-800 shadow-xl"><Loader2 size={15} className="animate-spin" /> Actualisation du commandement réseau…</div> : null}
     </div>
   )
 }
 
-function MiniStageList({ rows, fallback }: { rows: { label: string; value: number }[]; fallback: string[] }) {
-  const safeRows = rows.some((row) => row.value > 0) ? rows : fallback.map((label, index) => ({ label, value: [86, 42, 19, 12][index] || 0 }))
+function MiniStageList({ rows, empty }: { rows: { label: string; value: number }[]; empty: string }) {
+  const visibleRows = rows.filter((row) => row.value > 0)
+  if (!visibleRows.length) {
+    return <div className="mt-5 border border-dashed border-slate-300 bg-slate-50 px-4 py-8 text-center text-xs font-semibold text-slate-500">{empty}</div>
+  }
+  const max = Math.max(...visibleRows.map((row) => row.value), 1)
   return (
-    <div className="space-y-3">
-      {safeRows.slice(0, 4).map((row, index) => (
-        <div key={row.label} className="rounded-2xl bg-slate-50 p-3">
-          <div className="mb-2 flex justify-between text-xs font-black text-slate-700"><span className="capitalize">{row.label.replaceAll("_", " ")}</span><span>{row.value}</span></div>
-          <div className="h-2 rounded-full bg-slate-200"><div className="h-2 rounded-full bg-blue-500" style={{ width: `${Math.min(100, 25 + index * 16)}%` }} /></div>
+    <div className="mt-5 space-y-4">
+      {visibleRows.slice(0, 6).map((row) => (
+        <div key={row.label}>
+          <div className="mb-2 flex justify-between text-[10px] font-black text-slate-700"><span className="capitalize">{row.label.replaceAll("_", " ")}</span><span className="tabular-nums">{row.value}</span></div>
+          <div className="h-1.5 overflow-hidden rounded-full bg-slate-100"><div className="h-full rounded-full bg-[#2d70b8]" style={{ width: `${Math.max(8, Math.round((row.value / max) * 100))}%` }} /></div>
         </div>
       ))}
     </div>
@@ -1550,7 +1697,7 @@ function CandidateModal({
               data-mode="create"
               disabled={busy || createMissing.length > 0}
               title={createReason}
-              className="rounded-2xl bg-blue-600 px-5 py-3 text-sm font-black text-white shadow-lg shadow-blue-200 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:shadow-none"
+              className="rounded-2xl bg-blue-600 px-5 py-3 text-sm font-black !text-white shadow-lg shadow-blue-200 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:shadow-none"
             >
               {busy ? "Création..." : "Créer candidat"}
             </button>
@@ -1911,7 +2058,7 @@ function MissionModal({
               data-mode="create"
               disabled={busy || missing.length > 0}
               title={createReason}
-              className="rounded-2xl bg-blue-600 px-5 py-3 text-sm font-black text-white shadow-lg shadow-blue-200 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:shadow-none"
+              className="rounded-2xl bg-blue-600 px-5 py-3 text-sm font-black !text-white shadow-lg shadow-blue-200 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:shadow-none"
             >
               {busy ? "Création..." : "Créer mission"}
             </button>
@@ -2232,7 +2379,7 @@ function LeadModal({
             <button type="submit" form="lead-form" data-mode="create" disabled={busy || missingBase.length > 0} title={baseReason} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-800 disabled:cursor-not-allowed disabled:opacity-50">
               Créer lead
             </button>
-            <button type="submit" form="lead-form" data-mode="qualify" disabled={busy || missingBase.length > 0} title={baseReason} className="rounded-2xl bg-blue-600 px-5 py-3 text-sm font-black text-white shadow-lg shadow-blue-200 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:shadow-none">
+            <button type="submit" form="lead-form" data-mode="qualify" disabled={busy || missingBase.length > 0} title={baseReason} className="rounded-2xl bg-blue-600 px-5 py-3 text-sm font-black !text-white shadow-lg shadow-blue-200 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:shadow-none">
               {busy ? "Qualification..." : "Créer + qualifier"}
             </button>
             <button type="submit" form="lead-form" data-mode="followup" disabled={busy || followupMissing.length > 0} title={followupReason} className="rounded-2xl border border-blue-200 bg-blue-50 px-5 py-3 text-sm font-black text-blue-700 disabled:cursor-not-allowed disabled:opacity-50">
@@ -2635,7 +2782,7 @@ function ConversionModal({
             <button type="button" disabled={busy || !selected?.id} onClick={() => onDecide("rejected")} className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-black text-rose-700 disabled:opacity-50">
               Rejeter
             </button>
-            <button type="button" disabled={busy || !selected?.id} onClick={() => onDecide("validated")} className="rounded-2xl bg-blue-600 px-5 py-3 text-sm font-black text-white disabled:opacity-50">
+            <button type="button" disabled={busy || !selected?.id} onClick={() => onDecide("validated")} className="rounded-2xl bg-blue-600 px-5 py-3 text-sm font-black !text-white disabled:opacity-50">
               Valider & attribuer
             </button>
           </div>
@@ -2811,7 +2958,7 @@ function IncentiveModal({
             <button type="button" disabled={busy || !selected?.id} onClick={() => onDecide("approve")} className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-black text-emerald-700 disabled:opacity-50">
               Approuver
             </button>
-            <button type="button" disabled={busy || !selected?.id} onClick={() => onDecide("pay")} className="rounded-2xl bg-blue-600 px-5 py-3 text-sm font-black text-white disabled:opacity-50">
+            <button type="button" disabled={busy || !selected?.id} onClick={() => onDecide("pay")} className="rounded-2xl bg-blue-600 px-5 py-3 text-sm font-black !text-white disabled:opacity-50">
               Marquer payé
             </button>
           </div>
@@ -2963,7 +3110,7 @@ function ExportModal({
             <button type="button" disabled className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-400 disabled:opacity-100" title={pdfUnavailableReason}>
               PDF indisponible
             </button>
-            <button type="button" disabled={busy || missing.length > 0} onClick={onExport} className="rounded-2xl bg-blue-600 px-5 py-3 text-sm font-black text-white disabled:opacity-50">
+            <button type="button" disabled={busy || missing.length > 0} onClick={onExport} className="rounded-2xl bg-blue-600 px-5 py-3 text-sm font-black !text-white disabled:opacity-50">
               {busy ? "Génération..." : "Exporter CSV"}
             </button>
           </div>

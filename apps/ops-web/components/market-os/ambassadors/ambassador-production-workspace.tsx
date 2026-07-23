@@ -60,9 +60,13 @@ import AmbassadorMarketSidebar from "./ambassador-market-sidebar"
 import AmbassadorCockpitRoute from "./routes/AmbassadorCockpitRoute"
 import AmbassadorDirectoryRoute from "./routes/AmbassadorDirectoryRoute"
 import AmbassadorRecruitmentRoute from "./routes/AmbassadorRecruitmentRoute"
+import AmbassadorReportsRoute from "./routes/AmbassadorReportsRoute"
+import AmbassadorTrainingRoute from "./routes/AmbassadorTrainingRoute"
 import AmbassadorMissionsRoute from "./routes/AmbassadorMissionsRoute"
 import AmbassadorLeadsRoute from "./routes/AmbassadorLeadsRoute"
 import AmbassadorPayoutsRoute from "./routes/AmbassadorPayoutsRoute"
+import AmbassadorPerformanceRoute from "./routes/AmbassadorPerformanceRoute"
+import AmbassadorGoalsKpisRoute from "./routes/AmbassadorGoalsKpisRoute"
 import type {
   Ambassador,
   AmbassadorAuditLog,
@@ -340,7 +344,7 @@ function StatusBadge({ status }: { status?: string | null }) {
 function FieldLabel({ label, children, error }: { label: string; children: ReactNode; error?: string }) {
   return (
     <label className="block">
-      <span className="text-[11px] font-black uppercase tracking-[0.14em] text-slate-9500">{label}</span>
+      <span className="text-[11px] font-black uppercase tracking-[0.14em] text-slate-500">{label}</span>
       <div className="mt-2">{children}</div>
       {error ? <div className="mt-1 text-xs font-bold text-rose-600">{error}</div> : null}
     </label>
@@ -429,7 +433,7 @@ function KpiCard({ label, value, meta, icon: Icon, tone, onClick }: { label: str
           <Icon size={20} />
         </div>
         <div className="min-w-0">
-          <div className="text-[11px] font-black uppercase tracking-[0.08em] text-slate-9500">{label}</div>
+          <div className="text-[11px] font-black uppercase tracking-[0.08em] text-slate-500">{label}</div>
           <div className="mt-1 text-2xl font-black text-slate-950">{value}</div>
           <div className="mt-1 text-[11px] font-black text-emerald-600">{meta}</div>
         </div>
@@ -456,7 +460,7 @@ function TableShell({
       <div className="flex items-start justify-between border-b border-slate-100 p-5">
         <div>
           <h2 className="font-black text-slate-950">{title}</h2>
-          <p className="mt-1 text-sm font-semibold text-slate-9500">{description}</p>
+          <p className="mt-1 text-sm font-semibold text-slate-500">{description}</p>
         </div>
       </div>
       {loading ? (
@@ -469,10 +473,10 @@ function TableShell({
         <div className="grid min-h-[220px] place-items-center p-8 text-center">
           <div>
             <div className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-slate-100">
-              <Search size={20} className="text-slate-9500" />
+              <Search size={20} className="text-slate-500" />
             </div>
             <div className="mt-3 text-sm font-black text-slate-950">No records found</div>
-            <div className="mt-1 text-xs font-semibold text-slate-9500">Adjust filters or create a new live record.</div>
+            <div className="mt-1 text-xs font-semibold text-slate-500">Adjust filters or create a new live record.</div>
           </div>
         </div>
       ) : (
@@ -541,6 +545,163 @@ function ModalShell({
   )
 }
 
+
+function GoalContractModalShell({
+  title,
+  description,
+  children,
+  onClose,
+  onSave,
+  saving,
+  error,
+  success,
+  saveLabel,
+}: {
+  title: string
+  description: string
+  children: ReactNode
+  onClose: () => void
+  onSave: () => void
+  saving: boolean
+  error?: string | null
+  success?: string | null
+  saveLabel: string
+}) {
+  useEffect(() => {
+    const previous = document.body.style.overflow
+    document.body.style.overflow = "hidden"
+    const onKey = (event: KeyboardEvent) => { if (event.key === "Escape") onClose() }
+    window.addEventListener("keydown", onKey)
+    return () => {
+      document.body.style.overflow = previous
+      window.removeEventListener("keydown", onKey)
+    }
+  }, [onClose])
+
+  return (
+    <div className="fixed inset-0 z-[10060] flex items-center justify-center bg-slate-950/35 p-4 backdrop-blur-[2px]" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose() }}>
+      <section role="dialog" aria-modal="true" aria-labelledby="goal-contract-modal-title" className="flex max-h-[94vh] w-full max-w-[1180px] flex-col overflow-hidden rounded-[30px] border border-slate-200 bg-[#f4f7fa] shadow-2xl">
+        <header className="relative overflow-hidden bg-[#082b4d] px-6 py-5 text-white">
+          <Target className="absolute -right-8 -top-8 text-white/5" size={170} />
+          <div className="relative flex items-start justify-between gap-4">
+            <div className="flex items-start gap-4">
+              <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl border border-white/15 bg-white/10 text-white"><Target size={21} /></span>
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-[0.18em] text-[#a9cce9]">Contrat de performance</p>
+                <h2 id="goal-contract-modal-title" className="mt-1 text-2xl font-black tracking-tight text-white">{title}</h2>
+                <p className="mt-2 max-w-3xl text-sm font-semibold leading-6 text-[#d9e7f3]">{description}</p>
+              </div>
+            </div>
+            <button type="button" aria-label="Fermer" onClick={onClose} className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-white/20 bg-white/10 text-white hover:bg-white/20"><X size={18} /></button>
+          </div>
+        </header>
+        <div className="min-h-0 flex-1 overflow-y-auto p-5 sm:p-6">
+          {error ? <div className="mb-4 rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm font-black text-rose-800">{error}</div> : null}
+          {success ? <div className="mb-4 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-black text-emerald-800">{success}</div> : null}
+          {children}
+        </div>
+        <footer className="sticky bottom-0 flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 bg-white p-4 sm:px-6">
+          <p className="text-xs font-bold text-slate-500">Les clés d’état, calculs, endpoints et payloads existants sont conservés.</p>
+          <div className="flex gap-2">
+            <ActionButton onClick={onClose} disabled={saving}>Annuler</ActionButton>
+            <ActionButton onClick={onSave} icon={saving ? Loader2 : CheckCircle2} variant="primary" disabled={saving}>{saving ? "Enregistrement…" : saveLabel}</ActionButton>
+          </div>
+        </footer>
+      </section>
+    </div>
+  )
+}
+
+
+function TalentAcademyModalShell({
+  kind,
+  title,
+  description,
+  icon: Icon,
+  children,
+  onClose,
+  onSave,
+  saving,
+  error,
+  success,
+  saveLabel,
+}: {
+  kind: "report" | "training"
+  title: string
+  description: string
+  icon: IconType
+  children: ReactNode
+  onClose: () => void
+  onSave: () => void
+  saving: boolean
+  error?: string | null
+  success?: string | null
+  saveLabel: string
+}) {
+  const isReport = kind === "report"
+
+  return (
+    <div className="fixed inset-0 z-[90] flex items-center justify-center bg-[#06182c]/60 p-3 backdrop-blur-[4px] sm:p-5">
+      <section
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={`ambassador-${kind}-modal-title`}
+        className="flex max-h-[94vh] w-full max-w-[1120px] flex-col overflow-hidden rounded-[26px] border border-white/15 bg-white shadow-[0_28px_90px_rgba(2,17,35,0.38)]"
+      >
+        <header className="relative overflow-hidden bg-[#082b4d] px-6 py-5 sm:px-7 sm:py-6">
+          <div className="absolute inset-y-0 right-0 w-[42%] bg-[radial-gradient(circle_at_75%_30%,rgba(74,144,211,0.35),transparent_62%)]" />
+          <div className="relative flex items-start justify-between gap-5">
+            <div className="flex min-w-0 items-start gap-4">
+              <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl border border-white/15 bg-white/10 !text-white">
+                <Icon size={22} />
+              </span>
+              <div className="min-w-0">
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] !text-[#9ec4e7]">
+                  {isReport ? "Publication & preuve corporate" : "Qualification & conformité terrain"}
+                </p>
+                <h2 id={`ambassador-${kind}-modal-title`} className="mt-1 text-2xl font-black tracking-tight !text-white">
+                  {title}
+                </h2>
+                <p className="mt-2 max-w-3xl text-sm font-semibold leading-6 !text-[#d6e4f2]">
+                  {description}
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label="Fermer"
+              className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-white/15 bg-white/10 !text-white transition hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/70"
+            >
+              <X size={18} />
+            </button>
+          </div>
+        </header>
+
+        <div className="min-h-0 flex-1 overflow-y-auto bg-[#f4f7fb] p-5 sm:p-7">
+          {error ? <div className="mb-4 rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm font-bold text-rose-800">{error}</div> : null}
+          {success ? <div className="mb-4 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-bold text-emerald-800">{success}</div> : null}
+          {children}
+        </div>
+
+        <footer className="flex flex-col gap-3 border-t border-slate-200 bg-white px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-xs font-semibold text-slate-500">
+            {isReport
+              ? "Le rapport est généré depuis les données Ambassador réellement disponibles."
+              : "Les règles de progression et de certification existantes restent inchangées."}
+          </p>
+          <div className="flex justify-end gap-3">
+            <ActionButton onClick={onClose} disabled={saving}>Annuler</ActionButton>
+            <ActionButton onClick={onSave} icon={saving ? Loader2 : CheckCircle2} variant="primary" disabled={saving}>
+              {saving ? "Synchronisation…" : saveLabel}
+            </ActionButton>
+          </div>
+        </footer>
+      </section>
+    </div>
+  )
+}
+
 function ConfirmModal({ state, saving, error, onClose, onConfirm }: { state: ConfirmState; saving: boolean; error?: string | null; onClose: () => void; onConfirm: () => void }) {
   return (
     <div className="fixed inset-0 z-[95] flex items-center justify-center bg-white/50 p-4 backdrop-blur-sm">
@@ -602,7 +763,7 @@ function DetailDrawer({
                 <div className="mt-2 flex flex-wrap items-center gap-2">
                   <StatusBadge status={ambassador.status} />
                   <StatusBadge status={ambassador.lifecycle_stage} />
-                  <span className="text-sm font-bold text-slate-9500">{ambassador.city || "No city"} · {ambassador.region || "No region"}</span>
+                  <span className="text-sm font-bold text-slate-500">{ambassador.city || "No city"} · {ambassador.region || "No region"}</span>
                 </div>
               </div>
             </div>
@@ -630,7 +791,7 @@ function DetailDrawer({
                 <div key={String(label)} className="rounded-2xl border border-slate-200 p-4">
                   <CardIcon className="text-violet-600" size={18} />
                   <div className="mt-2 text-xl font-black">{String(value)}</div>
-                  <div className="text-xs font-black uppercase text-slate-9500">{String(label)}</div>
+                  <div className="text-xs font-black uppercase text-slate-500">{String(label)}</div>
                 </div>
               )
             })}
@@ -671,7 +832,7 @@ function InfoPanel({ title, rows }: { title: string; rows: string[][] }) {
       <div className="mt-4 space-y-3">
         {rows.map(([label, value]) => (
           <div key={label} className="flex justify-between gap-4 rounded-xl bg-slate-50 px-3 py-2 text-sm">
-            <span className="font-bold text-slate-9500">{label}</span>
+            <span className="font-bold text-slate-500">{label}</span>
             <span className="text-right font-black text-slate-900">{value}</span>
           </div>
         ))}
@@ -685,7 +846,7 @@ function RelatedList({ title, items, empty }: { title: string; items: string[]; 
     <section className="rounded-2xl border border-slate-200 p-5">
       <h3 className="font-black text-slate-950">{title}</h3>
       <div className="mt-4 grid gap-2">
-        {items.length ? items.map((item) => <div key={item} className="rounded-xl bg-slate-50 px-3 py-2 text-sm font-bold text-slate-700">{item}</div>) : <div className="text-sm font-semibold text-slate-9500">{empty}</div>}
+        {items.length ? items.map((item) => <div key={item} className="rounded-xl bg-slate-50 px-3 py-2 text-sm font-bold text-slate-700">{item}</div>) : <div className="text-sm font-semibold text-slate-500">{empty}</div>}
       </div>
     </section>
   )
@@ -1402,6 +1563,159 @@ export default function AmbassadorProductionWorkspace({ mode = "overview", id }:
 
 
 
+
+  if (mode === "goals") {
+    return (
+      <div className="flex min-h-screen bg-[#f2f5f8] text-slate-950">
+        <AmbassadorMarketSidebar />
+        <main data-market-os-root className="min-w-0 flex-1 overflow-x-hidden bg-[#f2f5f8]">
+          <AmbassadorGoalsKpisRoute
+            snapshot={snapshot}
+            goals={filteredGoals}
+            loading={loading}
+            refreshing={refreshing}
+            error={error}
+            success={success}
+            onRefresh={() => void load(true)}
+            onExport={() => exportCurrentView("goals")}
+            onCreateGoal={() => openModal("goal")}
+            onEditGoal={(goal) => openModal("goal", goal)}
+            onRecalculateGoal={(goal) => void recalculateGoal(goal)}
+            onArchiveGoal={(goal) => openArchiveConfirm("goals", goal.id, goal.goal_type)}
+            onOpenAmbassador={(ambassador) => setDetail(ambassador)}
+          />
+          {modal ? renderModal() : null}
+          {detail ? (
+            <DetailDrawer
+              ambassador={snapshot.ambassadors.find((item) => item.id === detail.id) || detail}
+              snapshot={snapshot}
+              onClose={() => setDetail(null)}
+              onEdit={() => openModal("ambassador", snapshot.ambassadors.find((item) => item.id === detail.id) || detail)}
+              onAssign={() => openModal("assignTerritory", snapshot.ambassadors.find((item) => item.id === detail.id) || detail)}
+              onMission={() => openModal("mission", snapshot.ambassadors.find((item) => item.id === detail.id) || detail)}
+              onArchive={() => openArchiveConfirm("ambassadors", detail.id, detail.full_name)}
+            />
+          ) : null}
+          {confirm ? <ConfirmModal state={confirm} saving={saving} error={confirmError} onClose={() => setConfirm(null)} onConfirm={() => void runConfirm()} /> : null}
+        </main>
+      </div>
+    )
+  }
+
+
+  if (mode === "performance") {
+    return (
+      <div className="flex min-h-screen bg-[#f2f5f8] text-slate-950">
+        <AmbassadorMarketSidebar />
+        <main data-market-os-root className="min-w-0 flex-1 overflow-x-hidden bg-[#f2f5f8]">
+          <AmbassadorPerformanceRoute
+            snapshot={snapshot}
+            kpis={kpis as Record<string, number>}
+            goals={filteredGoals}
+            loading={loading}
+            refreshing={refreshing}
+            error={error}
+            success={success}
+            onRefresh={() => void load(true)}
+            onExport={() => exportCurrentView("ambassadors-performance")}
+            onCreateGoal={() => openModal("goal")}
+            onEditGoal={(goal) => openModal("goal", goal)}
+            onRecalculateGoal={(goal) => void recalculateGoal(goal)}
+            onArchiveGoal={(goal) => openArchiveConfirm("goals", goal.id, goal.goal_type)}
+            onOpenAmbassador={(ambassador) => setDetail(ambassador)}
+          />
+          {modal ? renderModal() : null}
+          {detail ? (
+            <DetailDrawer
+              ambassador={snapshot.ambassadors.find((item) => item.id === detail.id) || detail}
+              snapshot={snapshot}
+              onClose={() => setDetail(null)}
+              onEdit={() => openModal("ambassador", snapshot.ambassadors.find((item) => item.id === detail.id) || detail)}
+              onAssign={() => openModal("assignTerritory", snapshot.ambassadors.find((item) => item.id === detail.id) || detail)}
+              onMission={() => openModal("mission", snapshot.ambassadors.find((item) => item.id === detail.id) || detail)}
+              onArchive={() => openArchiveConfirm("ambassadors", detail.id, detail.full_name)}
+            />
+          ) : null}
+          {confirm ? <ConfirmModal state={confirm} saving={saving} error={confirmError} onClose={() => setConfirm(null)} onConfirm={() => void runConfirm()} /> : null}
+        </main>
+      </div>
+    )
+  }
+
+
+  if (mode === "reports") {
+    return (
+      <div className="flex min-h-screen bg-[#f2f5f8] text-slate-950">
+        <AmbassadorMarketSidebar />
+        <main data-market-os-root className="min-w-0 flex-1 overflow-x-hidden bg-[#f2f5f8]">
+          <AmbassadorReportsRoute
+            snapshot={snapshot}
+            reports={filteredReports}
+            loading={loading}
+            refreshing={refreshing}
+            error={error}
+            success={success}
+            query={query}
+            statusFilter={statusFilter}
+            sortKey={sortKey}
+            onQueryChange={setQuery}
+            onStatusFilterChange={setStatusFilter}
+            onSortKeyChange={setSortKey}
+            onRefresh={() => void load(true)}
+            onGenerateReport={() => openModal("report")}
+            onExportCurrent={() => exportCurrentView("ambassadors-reports")}
+            onOpenReport={(report) => openModal("report", report)}
+            onExportReport={(report) => exportCurrentView(report.report_type)}
+            onArchiveReport={(report) => openArchiveConfirm("reports", report.id, report.title)}
+          />
+          {modal ? renderModal() : null}
+          {confirm ? <ConfirmModal state={confirm} saving={saving} error={confirmError} onClose={() => setConfirm(null)} onConfirm={() => void runConfirm()} /> : null}
+        </main>
+      </div>
+    )
+  }
+
+  if (mode === "training") {
+    return (
+      <div className="flex min-h-screen bg-[#f2f5f8] text-slate-950">
+        <AmbassadorMarketSidebar />
+        <main data-market-os-root className="min-w-0 flex-1 overflow-x-hidden bg-[#f2f5f8]">
+          <AmbassadorTrainingRoute
+            snapshot={snapshot}
+            training={filteredTraining}
+            loading={loading}
+            refreshing={refreshing}
+            error={error}
+            success={success}
+            query={query}
+            statusFilter={statusFilter}
+            onQueryChange={setQuery}
+            onStatusFilterChange={setStatusFilter}
+            onRefresh={() => void load(true)}
+            onAssignTraining={() => openModal("training")}
+            onEditTraining={(record) => openModal("training", record)}
+            onArchiveTraining={(record) => openArchiveConfirm("training", record.id, record.training_name)}
+            onExport={() => exportCurrentView("ambassadors-training-certification")}
+            onOpenAmbassador={(ambassador) => setDetail(ambassador)}
+          />
+          {modal ? renderModal() : null}
+          {detail ? (
+            <DetailDrawer
+              ambassador={snapshot.ambassadors.find((item) => item.id === detail.id) || detail}
+              snapshot={snapshot}
+              onClose={() => setDetail(null)}
+              onEdit={() => openModal("ambassador", snapshot.ambassadors.find((item) => item.id === detail.id) || detail)}
+              onAssign={() => openModal("assignTerritory", snapshot.ambassadors.find((item) => item.id === detail.id) || detail)}
+              onMission={() => openModal("mission", snapshot.ambassadors.find((item) => item.id === detail.id) || detail)}
+              onArchive={() => openArchiveConfirm("ambassadors", detail.id, detail.full_name)}
+            />
+          ) : null}
+          {confirm ? <ConfirmModal state={confirm} saving={saving} error={confirmError} onClose={() => setConfirm(null)} onConfirm={() => void runConfirm()} /> : null}
+        </main>
+      </div>
+    )
+  }
+
   if (mode === "recruitment") {
     return (
       <div className="flex min-h-screen bg-slate-50 text-slate-950">
@@ -1491,7 +1805,7 @@ export default function AmbassadorProductionWorkspace({ mode = "overview", id }:
               </div>
               <div>
                 <h1 className="text-[30px] font-black tracking-tight">{config.title}</h1>
-                <p className="mt-1 text-sm font-semibold text-slate-9500">{config.description}</p>
+                <p className="mt-1 text-sm font-semibold text-slate-500">{config.description}</p>
               </div>
             </div>
           </div>
@@ -1526,7 +1840,7 @@ export default function AmbassadorProductionWorkspace({ mode = "overview", id }:
 
         <section className="mt-5 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
           <div className="grid gap-3 lg:grid-cols-[1.4fr_0.7fr_0.7fr_0.7fr_0.55fr]">
-            <label className="flex items-center gap-3 rounded-2xl border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-9500">
+            <label className="flex items-center gap-3 rounded-2xl border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-500">
               <Search size={17} />
               <input value={query} onChange={(event) => setQuery(event.target.value)} className="w-full bg-transparent outline-none" placeholder="Search live Ambassador records..." />
             </label>
@@ -1587,17 +1901,17 @@ export default function AmbassadorProductionWorkspace({ mode = "overview", id }:
       <TableShell title="Ambassadors" description="Live directory records with profile, assignment, edit and archive actions." loading={loading} empty={!filteredAmbassadors.length}>
         <div className="overflow-x-auto">
           <table className="w-full min-w-[980px] text-left text-sm">
-            <thead className="bg-slate-50 text-[11px] font-black uppercase tracking-[0.12em] text-slate-9500">
+            <thead className="bg-slate-50 text-[11px] font-black uppercase tracking-[0.12em] text-slate-500">
               <tr><th className="px-5 py-3">Ambassador</th><th>City / Region</th><th>Territory</th><th>Status</th><th>Scores</th><th>Missions</th><th>Actions</th></tr>
             </thead>
             <tbody>
               {filteredAmbassadors.map((item) => (
                 <tr key={item.id} className="border-t border-slate-100 hover:bg-violet-50/40">
-                  <td className="px-5 py-4"><button type="button" onClick={() => setDetail(item)} className="flex items-center gap-3 text-left"><span className="grid h-10 w-10 place-items-center rounded-xl bg-violet-100 text-xs font-black text-violet-700">{initials(item.full_name)}</span><span><b className="block text-slate-950">{item.full_name}</b><span className="text-xs font-semibold text-slate-9500">{item.email || item.phone || "No contact"}</span></span></button></td>
-                  <td className="font-bold text-slate-700">{item.city || "Not set"}<div className="text-xs text-slate-9500">{item.region || "No region"}</div></td>
+                  <td className="px-5 py-4"><button type="button" onClick={() => setDetail(item)} className="flex items-center gap-3 text-left"><span className="grid h-10 w-10 place-items-center rounded-xl bg-violet-100 text-xs font-black text-violet-700">{initials(item.full_name)}</span><span><b className="block text-slate-950">{item.full_name}</b><span className="text-xs font-semibold text-slate-500">{item.email || item.phone || "No contact"}</span></span></button></td>
+                  <td className="font-bold text-slate-700">{item.city || "Not set"}<div className="text-xs text-slate-500">{item.region || "No region"}</div></td>
                   <td className="font-bold text-slate-700">{item.territory_name || "Unassigned"}</td>
                   <td><StatusBadge status={item.status} /></td>
-                  <td className="font-black">{item.performance_score}/100<div className="text-xs text-slate-9500">KPI {item.kpi_score}/100</div></td>
+                  <td className="font-black">{item.performance_score}/100<div className="text-xs text-slate-500">KPI {item.kpi_score}/100</div></td>
                   <td className="font-black">{item.missions_completed}/{item.missions_assigned}</td>
                   <td><RowActions actions={[
                     ["View", Eye, () => setDetail(item)],
@@ -1620,8 +1934,8 @@ export default function AmbassadorProductionWorkspace({ mode = "overview", id }:
         <div className="grid gap-3 md:grid-cols-3">
           {filteredTerritories.slice(0, 6).map((item) => (
             <button type="button" key={item.id} onClick={() => openModal("territory", item)} className="rounded-2xl border border-slate-200 bg-white p-5 text-left shadow-sm hover:border-violet-300">
-              <div className="flex items-start justify-between"><div><h3 className="font-black">{item.name}</h3><p className="text-sm font-semibold text-slate-9500">{item.city || "No city"} · {item.region || "No region"}</p></div><StatusBadge status={item.status} /></div>
-              <div className="mt-4 grid grid-cols-2 gap-3 text-sm"><div className="rounded-xl bg-slate-50 p-3"><b>{item.active_ambassadors_count}</b><div className="text-xs font-bold text-slate-9500">Active</div></div><div className="rounded-xl bg-slate-50 p-3"><b>{item.coverage_goal}</b><div className="text-xs font-bold text-slate-9500">Goal</div></div></div>
+              <div className="flex items-start justify-between"><div><h3 className="font-black">{item.name}</h3><p className="text-sm font-semibold text-slate-500">{item.city || "No city"} · {item.region || "No region"}</p></div><StatusBadge status={item.status} /></div>
+              <div className="mt-4 grid grid-cols-2 gap-3 text-sm"><div className="rounded-xl bg-slate-50 p-3"><b>{item.active_ambassadors_count}</b><div className="text-xs font-bold text-slate-500">Active</div></div><div className="rounded-xl bg-slate-50 p-3"><b>{item.coverage_goal}</b><div className="text-xs font-bold text-slate-500">Goal</div></div></div>
             </button>
           ))}
         </div>
@@ -1629,7 +1943,7 @@ export default function AmbassadorProductionWorkspace({ mode = "overview", id }:
           <DataTable headers={["Territory", "Region", "Coverage", "Manager", "Status", "Actions"]}>
             {filteredTerritories.map((item) => (
               <tr key={item.id} className="border-t border-slate-100 hover:bg-violet-50/40">
-                <td className="px-5 py-4 font-black">{item.name}<div className="text-xs font-semibold text-slate-9500">{item.city || "No city"} · {item.zone || "No zone"}</div></td>
+                <td className="px-5 py-4 font-black">{item.name}<div className="text-xs font-semibold text-slate-500">{item.city || "No city"} · {item.zone || "No zone"}</div></td>
                 <td className="font-bold">{item.region || "Not set"}</td>
                 <td className="font-black">{item.active_ambassadors_count}/{item.coverage_goal}</td>
                 <td className="font-bold">{item.manager_name || "Not set"}</td>
@@ -1649,7 +1963,7 @@ export default function AmbassadorProductionWorkspace({ mode = "overview", id }:
         <DataTable headers={["Mission", "Ambassador", "Priority", "Status", "Due", "Actions"]}>
           {filteredMissions.map((item) => (
             <tr key={item.id} className="border-t border-slate-100 hover:bg-violet-50/40">
-              <td className="px-5 py-4 font-black">{item.title}<div className="text-xs font-semibold text-slate-9500">{item.mission_type || "field mission"} · {item.city || "No city"}</div></td>
+              <td className="px-5 py-4 font-black">{item.title}<div className="text-xs font-semibold text-slate-500">{item.mission_type || "field mission"} · {item.city || "No city"}</div></td>
               <td className="font-bold">{ambassadorName(item.ambassador_id)}</td>
               <td><StatusBadge status={item.priority} /></td>
               <td><StatusBadge status={item.status} /></td>
@@ -1668,15 +1982,15 @@ export default function AmbassadorProductionWorkspace({ mode = "overview", id }:
         <section className="grid gap-3 md:grid-cols-4 xl:grid-cols-7">
           {recruitmentStages.map((stage) => {
             const count = snapshot.recruitment.filter((item) => item.stage === stage).length
-            return <button type="button" key={stage} onClick={() => setStatusFilter(stage)} className="rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-sm hover:border-violet-300"><div className="text-xl font-black">{count}</div><div className="text-xs font-black capitalize text-slate-9500">{stage.replaceAll("_", " ")}</div></button>
+            return <button type="button" key={stage} onClick={() => setStatusFilter(stage)} className="rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-sm hover:border-violet-300"><div className="text-xl font-black">{count}</div><div className="text-xs font-black capitalize text-slate-500">{stage.replaceAll("_", " ")}</div></button>
           })}
         </section>
         <TableShell title="Recruitment Pipeline" description="Candidate records with stage movement, edit and archive actions." loading={loading} empty={!filteredRecruitment.length}>
           <DataTable headers={["Candidate", "City", "Source", "Stage", "Score", "Next Step", "Actions"]}>
             {filteredRecruitment.map((item) => (
               <tr key={item.id} className="border-t border-slate-100 hover:bg-violet-50/40">
-                <td className="px-5 py-4 font-black">{item.candidate_name}<div className="text-xs font-semibold text-slate-9500">{item.email || item.phone || "No contact"}</div></td>
-                <td className="font-bold">{item.city || "Not set"}<div className="text-xs text-slate-9500">{item.region || "No region"}</div></td>
+                <td className="px-5 py-4 font-black">{item.candidate_name}<div className="text-xs font-semibold text-slate-500">{item.email || item.phone || "No contact"}</div></td>
+                <td className="font-bold">{item.city || "Not set"}<div className="text-xs text-slate-500">{item.region || "No region"}</div></td>
                 <td className="font-bold">{item.source || "Not set"}</td>
                 <td><StatusBadge status={item.stage} /></td>
                 <td className="font-black">{item.evaluation_score}/100</td>
@@ -1716,7 +2030,7 @@ export default function AmbassadorProductionWorkspace({ mode = "overview", id }:
           {filteredTraining.map((item) => (
             <tr key={item.id} className="border-t border-slate-100 hover:bg-violet-50/40">
               <td className="px-5 py-4 font-black">{ambassadorName(item.ambassador_id)}</td>
-              <td className="font-bold">{item.training_name}<div className="text-xs text-slate-9500">{item.certification_name || "No certification"}</div></td>
+              <td className="font-bold">{item.training_name}<div className="text-xs text-slate-500">{item.certification_name || "No certification"}</div></td>
               <td><StatusBadge status={item.status} /></td>
               <td><StatusBadge status={item.certification_status || "pending"} /></td>
               <td className="font-black">{item.score}/100</td>
@@ -1735,7 +2049,7 @@ export default function AmbassadorProductionWorkspace({ mode = "overview", id }:
         <DataTable headers={["Goal", "Ambassador", "Period", "Progress", "Status", "Actions"]}>
           {filteredGoals.map((item) => (
             <tr key={item.id} className="border-t border-slate-100 hover:bg-violet-50/40">
-              <td className="px-5 py-4 font-black">{item.goal_type}<div className="text-xs font-semibold text-slate-9500">{item.manager_notes || "No manager note"}</div></td>
+              <td className="px-5 py-4 font-black">{item.goal_type}<div className="text-xs font-semibold text-slate-500">{item.manager_notes || "No manager note"}</div></td>
               <td className="font-bold">{ambassadorName(item.ambassador_id)}</td>
               <td className="font-bold">{item.period}</td>
               <td className="font-black">{item.current_value}/{item.target_value}<Progress value={item.completion_rate} /></td>
@@ -1770,7 +2084,7 @@ export default function AmbassadorProductionWorkspace({ mode = "overview", id }:
         <DataTable headers={["Ambassador", "Type", "Amount", "Status", "Approved", "Paid", "Actions"]}>
           {filteredIncentives.map((item) => (
             <tr key={item.id} className="border-t border-slate-100 hover:bg-violet-50/40">
-              <td className="px-5 py-4 font-black">{ambassadorName(item.ambassador_id)}<div className="text-xs font-semibold text-slate-9500">{item.reason || "No reason"}</div></td>
+              <td className="px-5 py-4 font-black">{ambassadorName(item.ambassador_id)}<div className="text-xs font-semibold text-slate-500">{item.reason || "No reason"}</div></td>
               <td className="font-bold">{item.incentive_type.replaceAll("_", " ")}</td>
               <td className="font-black">{formatMoney(item.amount, item.currency)}</td>
               <td><StatusBadge status={item.status} /></td>
@@ -1814,7 +2128,7 @@ export default function AmbassadorProductionWorkspace({ mode = "overview", id }:
       <section className="grid gap-5 xl:grid-cols-[1fr_0.7fr]">
         <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
           <div className="flex items-center justify-between">
-            <div><h2 className="font-black">Module Settings</h2><p className="mt-1 text-sm font-semibold text-slate-9500">Persist rules that drive Ambassador module behavior.</p></div>
+            <div><h2 className="font-black">Module Settings</h2><p className="mt-1 text-sm font-semibold text-slate-500">Persist rules that drive Ambassador module behavior.</p></div>
             <ActionButton onClick={() => openModal("settings")} icon={Settings} variant="primary">Edit Settings</ActionButton>
           </div>
           <div className="mt-5 grid gap-3">
@@ -1826,7 +2140,7 @@ export default function AmbassadorProductionWorkspace({ mode = "overview", id }:
               ["Training rules", stringifyJson(settings?.training_rules)],
               ["KPI rules", stringifyJson(settings?.kpi_rules)],
               ["Notification rules", stringifyJson(settings?.notification_rules)],
-            ].map(([label, value]) => <div key={label} className="rounded-2xl bg-slate-50 p-4"><div className="text-xs font-black uppercase text-slate-9500">{label}</div><pre className="mt-2 whitespace-pre-wrap text-xs font-bold text-slate-800">{value}</pre></div>)}
+            ].map(([label, value]) => <div key={label} className="rounded-2xl bg-slate-50 p-4"><div className="text-xs font-black uppercase text-slate-500">{label}</div><pre className="mt-2 whitespace-pre-wrap text-xs font-bold text-slate-800">{value}</pre></div>)}
           </div>
         </div>
         <AuditPanel audit={snapshot.audit} />
@@ -1836,20 +2150,10 @@ export default function AmbassadorProductionWorkspace({ mode = "overview", id }:
 
   function renderModal() {
     if (!modal) return null
+
     const title = modalTitle(modal.kind, Boolean(form.id))
-    const saveLabel = modal.kind === "report" ? "Generate & Export" : modal.kind === "assignTerritory" ? "Assign Territory" : "Save"
-    return (
-      <ModalShell
-        title={title}
-        description={modalDescription(modal.kind)}
-        icon={modalIcon(modal.kind)}
-        onClose={() => setModal(null)}
-        onSave={modal.kind === "report" ? () => void generateReportAndExport() : modal.kind === "checklist" ? () => setModal(null) : () => void saveModal()}
-        saving={saving}
-        error={error}
-        success={success}
-        saveLabel={modal.kind === "checklist" ? "Done" : saveLabel}
-      >
+    const body = (
+      <>
         {modal.kind === "ambassador" ? ambassadorForm() : null}
         {modal.kind === "territory" ? territoryForm() : null}
         {modal.kind === "assignTerritory" ? assignTerritoryForm() : null}
@@ -1862,6 +2166,66 @@ export default function AmbassadorProductionWorkspace({ mode = "overview", id }:
         {modal.kind === "incentive" ? incentiveForm() : null}
         {modal.kind === "report" ? reportForm() : null}
         {modal.kind === "settings" ? settingsForm() : null}
+      </>
+    )
+
+    const onSave = modal.kind === "report"
+      ? () => void generateReportAndExport()
+      : modal.kind === "checklist"
+        ? () => setModal(null)
+        : () => void saveModal()
+
+    if (modal.kind === "goal") {
+      return (
+        <GoalContractModalShell
+          title={title}
+          description={modalDescription(modal.kind)}
+          onClose={() => setModal(null)}
+          onSave={onSave}
+          saving={saving}
+          error={error}
+          success={success}
+          saveLabel={form.id ? "Mettre à jour l’objectif" : "Créer l’objectif"}
+        >
+          {body}
+        </GoalContractModalShell>
+      )
+    }
+
+    if (modal.kind === "report" || modal.kind === "training") {
+      return (
+        <TalentAcademyModalShell
+          kind={modal.kind}
+          title={title}
+          description={modalDescription(modal.kind)}
+          icon={modalIcon(modal.kind)}
+          onClose={() => setModal(null)}
+          onSave={onSave}
+          saving={saving}
+          error={error}
+          success={success}
+          saveLabel={modal.kind === "report" ? "Générer & exporter" : "Enregistrer la qualification"}
+        >
+          {body}
+        </TalentAcademyModalShell>
+      )
+    }
+
+    const saveLabel = modal.kind === "assignTerritory" ? "Assign Territory" : "Save"
+
+    return (
+      <ModalShell
+        title={title}
+        description={modalDescription(modal.kind)}
+        icon={modalIcon(modal.kind)}
+        onClose={() => setModal(null)}
+        onSave={onSave}
+        saving={saving}
+        error={error}
+        success={success}
+        saveLabel={modal.kind === "checklist" ? "Done" : saveLabel}
+      >
+        {body}
       </ModalShell>
     )
   }
@@ -1891,15 +2255,134 @@ export default function AmbassadorProductionWorkspace({ mode = "overview", id }:
   }
 
   function checklistForm(record: AmbassadorOnboardingRecord) {
-    return <section className="grid gap-3">{record.checklist.length ? record.checklist.map((step: AmbassadorChecklistItem) => <button type="button" key={step.id} disabled={saving} onClick={() => void completeOnboardingStep(record, step)} className="flex items-center justify-between rounded-2xl border border-slate-200 p-4 text-left font-bold hover:border-violet-300"><span>{step.label}</span><StatusBadge status={step.done ? "completed" : "pending"} /></button>) : <div className="rounded-2xl bg-slate-50 p-4 text-sm font-bold text-slate-9500">No checklist items yet. Edit this onboarding plan to add checklist items.</div>}</section>
+    return <section className="grid gap-3">{record.checklist.length ? record.checklist.map((step: AmbassadorChecklistItem) => <button type="button" key={step.id} disabled={saving} onClick={() => void completeOnboardingStep(record, step)} className="flex items-center justify-between rounded-2xl border border-slate-200 p-4 text-left font-bold hover:border-violet-300"><span>{step.label}</span><StatusBadge status={step.done ? "completed" : "pending"} /></button>) : <div className="rounded-2xl bg-slate-50 p-4 text-sm font-bold text-slate-500">No checklist items yet. Edit this onboarding plan to add checklist items.</div>}</section>
   }
 
   function trainingForm() {
-    return <section className="grid gap-4 md:grid-cols-3"><FieldLabel label="Ambassador" error={formErrors.ambassador_id}><SelectInput value={form.ambassador_id || ""} onChange={(event) => setFormValue("ambassador_id", event.target.value)}><option value="">Choose ambassador</option>{activeAmbassadors.map((item) => <option key={item.id} value={item.id}>{item.full_name}</option>)}</SelectInput></FieldLabel><FieldLabel label="Training name" error={formErrors.training_name}><TextInput value={form.training_name || ""} onChange={(event) => setFormValue("training_name", event.target.value)} /></FieldLabel><FieldLabel label="Certification"><TextInput value={form.certification_name || ""} onChange={(event) => setFormValue("certification_name", event.target.value)} /></FieldLabel><FieldLabel label="Training status"><SelectInput value={form.status || "assigned"} onChange={(event) => setFormValue("status", event.target.value)}>{trainingStatuses.map((item) => <option key={item} value={item}>{item}</option>)}</SelectInput></FieldLabel><FieldLabel label="Certification status"><SelectInput value={form.certification_status || "pending"} onChange={(event) => setFormValue("certification_status", event.target.value)}>{certificationStatuses.map((item) => <option key={item} value={item}>{item}</option>)}</SelectInput></FieldLabel><FieldLabel label="Score"><TextInput type="number" value={form.score || "0"} onChange={(event) => setFormValue("score", event.target.value)} /></FieldLabel><FieldLabel label="Valid until"><TextInput type="date" value={form.valid_until || ""} onChange={(event) => setFormValue("valid_until", event.target.value)} /></FieldLabel><FieldLabel label="Issued by"><TextInput value={form.issued_by || ""} onChange={(event) => setFormValue("issued_by", event.target.value)} /></FieldLabel></section>
+    return (
+      <div className="grid gap-5">
+        <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+          <div className="mb-4 flex items-start gap-3">
+            <span className="grid h-10 w-10 place-items-center rounded-xl bg-blue-50 text-blue-700"><Users size={18} /></span>
+            <div>
+              <h3 className="font-black text-slate-950">Profil & qualification assignée</h3>
+              <p className="mt-1 text-xs font-semibold text-slate-500">Identifiez le bénéficiaire et la qualification suivie sans modifier les règles existantes.</p>
+            </div>
+          </div>
+          <div className="grid gap-4 md:grid-cols-3">
+            <FieldLabel label="Ambassadeur" error={formErrors.ambassador_id}>
+              <SelectInput value={form.ambassador_id || ""} onChange={(event) => setFormValue("ambassador_id", event.target.value)}>
+                <option value="">Choisir un ambassadeur</option>
+                {activeAmbassadors.map((item) => <option key={item.id} value={item.id}>{item.full_name}</option>)}
+              </SelectInput>
+            </FieldLabel>
+            <FieldLabel label="Formation" error={formErrors.training_name}>
+              <TextInput value={form.training_name || ""} onChange={(event) => setFormValue("training_name", event.target.value)} placeholder="Intitulé réel de la formation" />
+            </FieldLabel>
+            <FieldLabel label="Certification associée">
+              <TextInput value={form.certification_name || ""} onChange={(event) => setFormValue("certification_name", event.target.value)} placeholder="Certification, habilitation ou attestation" />
+            </FieldLabel>
+          </div>
+        </section>
+
+        <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+          <div className="mb-4 flex items-start gap-3">
+            <span className="grid h-10 w-10 place-items-center rounded-xl bg-emerald-50 text-emerald-700"><GraduationCap size={18} /></span>
+            <div>
+              <h3 className="font-black text-slate-950">Progression & résultat</h3>
+              <p className="mt-1 text-xs font-semibold text-slate-500">Enregistrez l’état réel, le résultat disponible et la situation de certification.</p>
+            </div>
+          </div>
+          <div className="grid gap-4 md:grid-cols-3">
+            <FieldLabel label="Statut de formation">
+              <SelectInput value={form.status || "assigned"} onChange={(event) => setFormValue("status", event.target.value)}>
+                {trainingStatuses.map((item) => <option key={item} value={item}>{item}</option>)}
+              </SelectInput>
+            </FieldLabel>
+            <FieldLabel label="Statut de certification">
+              <SelectInput value={form.certification_status || "pending"} onChange={(event) => setFormValue("certification_status", event.target.value)}>
+                {certificationStatuses.map((item) => <option key={item} value={item}>{item}</option>)}
+              </SelectInput>
+            </FieldLabel>
+            <FieldLabel label="Score / 100">
+              <TextInput type="number" value={form.score || "0"} onChange={(event) => setFormValue("score", event.target.value)} />
+            </FieldLabel>
+          </div>
+        </section>
+
+        <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+          <div className="mb-4 flex items-start gap-3">
+            <span className="grid h-10 w-10 place-items-center rounded-xl bg-amber-50 text-amber-700"><BadgeCheck size={18} /></span>
+            <div>
+              <h3 className="font-black text-slate-950">Validité & autorité émettrice</h3>
+              <p className="mt-1 text-xs font-semibold text-slate-500">Contrôlez la période de validité et l’organisme réellement responsable de l’émission.</p>
+            </div>
+          </div>
+          <div className="grid gap-4 md:grid-cols-2">
+            <FieldLabel label="Valide jusqu’au">
+              <TextInput type="date" value={form.valid_until || ""} onChange={(event) => setFormValue("valid_until", event.target.value)} />
+            </FieldLabel>
+            <FieldLabel label="Émis par">
+              <TextInput value={form.issued_by || ""} onChange={(event) => setFormValue("issued_by", event.target.value)} placeholder="Responsable, Academy ou organisme" />
+            </FieldLabel>
+          </div>
+        </section>
+      </div>
+    )
   }
 
   function goalForm() {
-    return <section className="grid gap-4 md:grid-cols-3"><FieldLabel label="Ambassador"><SelectInput value={form.ambassador_id || ""} onChange={(event) => setFormValue("ambassador_id", event.target.value)}><option value="">Network goal</option>{activeAmbassadors.map((item) => <option key={item.id} value={item.id}>{item.full_name}</option>)}</SelectInput></FieldLabel><FieldLabel label="Period"><TextInput value={form.period || "current"} onChange={(event) => setFormValue("period", event.target.value)} /></FieldLabel><FieldLabel label="Goal type" error={formErrors.goal_type}><TextInput value={form.goal_type || ""} onChange={(event) => setFormValue("goal_type", event.target.value)} /></FieldLabel><FieldLabel label="Target" error={formErrors.target_value}><TextInput type="number" value={form.target_value || "0"} onChange={(event) => setFormValue("target_value", event.target.value)} /></FieldLabel><FieldLabel label="Current"><TextInput type="number" value={form.current_value || "0"} onChange={(event) => setFormValue("current_value", event.target.value)} /></FieldLabel><FieldLabel label="Status"><SelectInput value={form.status || "tracking"} onChange={(event) => setFormValue("status", event.target.value)}>{["tracking", "at_risk", "achieved", "missed"].map((item) => <option key={item} value={item}>{item}</option>)}</SelectInput></FieldLabel><div className="md:col-span-3"><FieldLabel label="Manager notes"><TextArea value={form.manager_notes || ""} onChange={(event) => setFormValue("manager_notes", event.target.value)} /></FieldLabel></div></section>
+    const target = Number(form.target_value || 0)
+    const actual = Number(form.current_value || 0)
+    const progress = target > 0 ? Math.max(0, (actual / target) * 100) : 0
+    const variance = actual - target
+    return (
+      <div className="grid gap-5 lg:grid-cols-[1fr_330px]">
+        <div className="space-y-5">
+          <section className="rounded-[26px] border border-slate-200 bg-white p-5 shadow-sm">
+            <div className="mb-4 flex items-start gap-3"><span className="grid h-10 w-10 place-items-center rounded-xl bg-blue-50 text-blue-700"><Target size={18} /></span><div><h3 className="font-black text-slate-950">1. Définition de l’objectif</h3><p className="mt-1 text-xs font-semibold text-slate-500">Définissez l’engagement mesurable avec les champs existants.</p></div></div>
+            <div className="grid gap-4 md:grid-cols-2">
+              <FieldLabel label="Intitulé / métrique" error={formErrors.goal_type}><TextInput value={form.goal_type || ""} onChange={(event) => setFormValue("goal_type", event.target.value)} placeholder="Ex. Leads qualifiés, visites partenaires…" /></FieldLabel>
+              <FieldLabel label="Responsable ambassadeur"><SelectInput value={form.ambassador_id || ""} onChange={(event) => setFormValue("ambassador_id", event.target.value)}><option value="">Objectif réseau</option>{activeAmbassadors.map((item) => <option key={item.id} value={item.id}>{item.full_name}</option>)}</SelectInput></FieldLabel>
+            </div>
+          </section>
+          <section className="rounded-[26px] border border-slate-200 bg-white p-5 shadow-sm">
+            <div className="mb-4 flex items-start gap-3"><span className="grid h-10 w-10 place-items-center rounded-xl bg-emerald-50 text-emerald-700"><BarChart3 size={18} /></span><div><h3 className="font-black text-slate-950">2. Cible, résultat et période</h3><p className="mt-1 text-xs font-semibold text-slate-500">Conservez les valeurs numériques brutes attendues par le backend.</p></div></div>
+            <div className="grid gap-4 md:grid-cols-3">
+              <FieldLabel label="Cible" error={formErrors.target_value}><TextInput type="number" value={form.target_value || "0"} onChange={(event) => setFormValue("target_value", event.target.value)} /></FieldLabel>
+              <FieldLabel label="Résultat actuel"><TextInput type="number" value={form.current_value || "0"} onChange={(event) => setFormValue("current_value", event.target.value)} /></FieldLabel>
+              <FieldLabel label="Période"><TextInput value={form.period || "current"} onChange={(event) => setFormValue("period", event.target.value)} placeholder="Ex. 2026-Q3" /></FieldLabel>
+              <FieldLabel label="Statut"><SelectInput value={form.status || "tracking"} onChange={(event) => setFormValue("status", event.target.value)}>{["tracking", "at_risk", "achieved", "missed"].map((item) => <option key={item} value={item}>{item}</option>)}</SelectInput></FieldLabel>
+            </div>
+          </section>
+          <section className="rounded-[26px] border border-slate-200 bg-white p-5 shadow-sm">
+            <div className="mb-4 flex items-start gap-3"><span className="grid h-10 w-10 place-items-center rounded-xl bg-amber-50 text-amber-800"><FileText size={18} /></span><div><h3 className="font-black text-slate-950">3. Notes et éléments de preuve</h3><p className="mt-1 text-xs font-semibold text-slate-500">Documentez le contexte, les réserves et les éléments disponibles.</p></div></div>
+            <FieldLabel label="Notes du responsable"><TextArea value={form.manager_notes || ""} onChange={(event) => setFormValue("manager_notes", event.target.value)} placeholder="Contexte de l’objectif, éléments de preuve, intervention attendue…" /></FieldLabel>
+          </section>
+        </div>
+        <aside className="space-y-4">
+          <section className="overflow-hidden rounded-[26px] border border-slate-200 bg-white shadow-sm">
+            <div className="bg-[#082b4d] p-5">
+              <p className="text-[10px] font-black uppercase tracking-[0.16em] text-[#a9cce9]">Synthèse de validation</p>
+              <h3 className="mt-2 text-lg font-black text-white">Contrat mesurable</h3>
+              <p className="mt-1 text-xs font-semibold leading-5 text-[#d9e7f3]">Aperçu calculé uniquement pour l’affichage, sans modifier le calcul serveur.</p>
+            </div>
+            <div className="p-5">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="rounded-2xl bg-slate-50 p-3"><p className="text-[9px] font-black uppercase tracking-[0.12em] text-slate-500">Cible</p><p className="mt-2 text-xl font-black tabular-nums text-slate-950">{target}</p></div>
+                <div className="rounded-2xl bg-slate-50 p-3"><p className="text-[9px] font-black uppercase tracking-[0.12em] text-slate-500">Actuel</p><p className="mt-2 text-xl font-black tabular-nums text-slate-950">{actual}</p></div>
+              </div>
+              <div className="mt-4">
+                <div className="flex items-center justify-between text-xs font-black"><span>Accomplissement</span><span>{progress.toFixed(1)}%</span></div>
+                <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-100"><div className="h-full rounded-full bg-blue-600" style={{ width: `${Math.min(100, progress)}%` }} /></div>
+                <div className={`mt-4 flex items-center justify-between rounded-2xl p-3 text-sm font-black ${variance >= 0 ? "bg-emerald-50 text-emerald-800" : "bg-rose-50 text-rose-800"}`}><span>Écart</span><span className="tabular-nums">{variance > 0 ? "+" : ""}{variance}</span></div>
+              </div>
+            </div>
+          </section>
+          <section className="rounded-[26px] border border-slate-200 bg-white p-5 shadow-sm"><h3 className="text-sm font-black text-slate-950">Contrôles avant validation</h3><div className="mt-4 space-y-2">{[[Boolean(form.goal_type?.trim()), "Objectif défini"], [target > 0, "Cible supérieure à zéro"], [Boolean(form.period?.trim()), "Période renseignée"], [Boolean(form.status), "Statut existant conservé"]].map(([ok, label]) => <div key={String(label)} className="flex items-center gap-2 rounded-xl bg-slate-50 px-3 py-2 text-xs font-bold text-slate-700"><span className={`grid h-5 w-5 place-items-center rounded-full ${ok ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-800"}`}>{ok ? "✓" : "!"}</span>{label}</div>)}</div></section>
+        </aside>
+      </div>
+    )
   }
 
   function incentiveForm() {
@@ -1907,7 +2390,63 @@ export default function AmbassadorProductionWorkspace({ mode = "overview", id }:
   }
 
   function reportForm() {
-    return <section className="grid gap-4 md:grid-cols-2"><FieldLabel label="Report type" error={formErrors.report_type}><SelectInput value={form.report_type || config.exportType} onChange={(event) => setFormValue("report_type", event.target.value)}>{["ambassadors", "territories", "recruitment", "missions", "goals", "incentives", "performance"].map((item) => <option key={item} value={item}>{item}</option>)}</SelectInput></FieldLabel><FieldLabel label="Title"><TextInput value={form.title || ""} onChange={(event) => setFormValue("title", event.target.value)} /></FieldLabel><FieldLabel label="Period start"><TextInput type="date" value={form.period_start || ""} onChange={(event) => setFormValue("period_start", event.target.value)} /></FieldLabel><FieldLabel label="Period end"><TextInput type="date" value={form.period_end || ""} onChange={(event) => setFormValue("period_end", event.target.value)} /></FieldLabel><FieldLabel label="Generated by"><TextInput value={form.generated_by || ""} onChange={(event) => setFormValue("generated_by", event.target.value)} /></FieldLabel></section>
+    return (
+      <div className="grid gap-5 lg:grid-cols-[1.15fr_0.85fr]">
+        <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+          <div className="mb-5 flex items-start gap-3">
+            <span className="grid h-10 w-10 place-items-center rounded-xl bg-blue-50 text-blue-700"><FileText size={18} /></span>
+            <div>
+              <h3 className="font-black text-slate-950">Brief de publication</h3>
+              <p className="mt-1 text-xs font-semibold text-slate-500">Définissez le document à produire depuis les données Ambassador actuellement disponibles.</p>
+            </div>
+          </div>
+          <div className="grid gap-4 md:grid-cols-2">
+            <FieldLabel label="Type de rapport" error={formErrors.report_type}>
+              <SelectInput value={form.report_type || config.exportType} onChange={(event) => setFormValue("report_type", event.target.value)}>
+                {["ambassadors", "territories", "recruitment", "missions", "goals", "incentives", "performance"].map((item) => <option key={item} value={item}>{item}</option>)}
+              </SelectInput>
+            </FieldLabel>
+            <FieldLabel label="Titre du document">
+              <TextInput value={form.title || ""} onChange={(event) => setFormValue("title", event.target.value)} placeholder="Rapport opérationnel AngelCare" />
+            </FieldLabel>
+            <FieldLabel label="Début de période">
+              <TextInput type="date" value={form.period_start || ""} onChange={(event) => setFormValue("period_start", event.target.value)} />
+            </FieldLabel>
+            <FieldLabel label="Fin de période">
+              <TextInput type="date" value={form.period_end || ""} onChange={(event) => setFormValue("period_end", event.target.value)} />
+            </FieldLabel>
+            <div className="md:col-span-2">
+              <FieldLabel label="Généré par">
+                <TextInput value={form.generated_by || ""} onChange={(event) => setFormValue("generated_by", event.target.value)} placeholder="Responsable ou direction" />
+              </FieldLabel>
+            </div>
+          </div>
+        </section>
+
+        <aside className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+          <div className="bg-[#082b4d] p-5">
+            <p className="text-[10px] font-black uppercase tracking-[0.18em] !text-[#9ec4e7]">Aperçu de contrôle</p>
+            <h3 className="mt-2 text-xl font-black !text-white">Document AngelCare</h3>
+            <p className="mt-2 text-xs font-semibold leading-5 !text-[#d6e4f2]">La génération conserve les données, filtres et règles du workflow existant.</p>
+          </div>
+          <div className="p-5">
+            <div className="min-h-[260px] border border-slate-200 bg-white p-5 shadow-[0_12px_30px_rgba(15,23,42,0.08)]">
+              <p className="text-[9px] font-black uppercase tracking-[0.18em] text-[#164d7d]">ANGELCARE · MARKET OS</p>
+              <h4 className="mt-5 text-lg font-black text-slate-950">{form.title || "Rapport opérationnel"}</h4>
+              <p className="mt-2 text-xs font-semibold text-slate-500">{form.report_type || config.exportType}</p>
+              <div className="mt-7 space-y-3">
+                <div className="h-2 w-full bg-slate-100" />
+                <div className="h-2 w-[82%] bg-slate-100" />
+                <div className="h-2 w-[64%] bg-slate-100" />
+              </div>
+              <div className="mt-8 border-t border-slate-200 pt-4 text-[10px] font-bold text-slate-500">
+                {form.period_start || "Début"} — {form.period_end || "Fin"}
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    )
   }
 
   function settingsForm() {
@@ -1919,7 +2458,7 @@ function DataTable({ headers, children }: { headers: string[]; children: ReactNo
   return (
     <div className="overflow-x-auto">
       <table className="w-full min-w-[920px] text-left text-sm">
-        <thead className="bg-slate-50 text-[11px] font-black uppercase tracking-[0.12em] text-slate-9500">
+        <thead className="bg-slate-50 text-[11px] font-black uppercase tracking-[0.12em] text-slate-500">
           <tr>{headers.map((header, index) => <th key={header} className={index === 0 ? "px-5 py-3" : "py-3"}>{header}</th>)}</tr>
         </thead>
         <tbody>{children}</tbody>
@@ -1957,10 +2496,10 @@ function AuditPanel({ audit }: { audit: AmbassadorAuditLog[] }) {
         {audit.slice(0, 10).map((item) => (
           <div key={item.id} className="rounded-2xl bg-slate-50 p-3">
             <div className="text-xs font-black text-slate-950">{item.action}</div>
-            <div className="mt-1 text-xs font-semibold text-slate-9500">{item.summary || item.entity_type}</div>
+            <div className="mt-1 text-xs font-semibold text-slate-500">{item.summary || item.entity_type}</div>
           </div>
         ))}
-        {!audit.length ? <div className="text-sm font-semibold text-slate-9500">No audit events yet.</div> : null}
+        {!audit.length ? <div className="text-sm font-semibold text-slate-500">No audit events yet.</div> : null}
       </div>
     </aside>
   )
@@ -1977,10 +2516,10 @@ function modalTitle(kind: ModalKind, edit: boolean) {
     moveRecruitment: "Move Recruitment Stage",
     onboarding: `${action} Onboarding Plan`,
     checklist: "Onboarding Checklist",
-    training: `${action} Training & Certification`,
-    goal: `${action} KPI Goal`,
+    training: edit ? "Mettre à jour la qualification" : "Affecter une formation & certification",
+    goal: edit ? "Modifier le contrat d’objectif" : "Créer un contrat d’objectif",
     incentive: `${action} Incentive`,
-    report: "Report Generator",
+    report: "Générer un rapport contrôlé",
     settings: "Ambassador Settings",
   }
   return titles[kind]
@@ -1996,10 +2535,10 @@ function modalDescription(kind: ModalKind) {
     moveRecruitment: "Move a candidate to the next recruitment stage with notes and next step.",
     onboarding: "Create or update an onboarding plan with owner, due date and checklist.",
     checklist: "Complete or reopen checklist items. Completion rate recalculates server-side.",
-    training: "Assign training and update certification status, score, validity and issuer.",
-    goal: "Create or update measurable KPI goals and current progress.",
+    training: "Affectez la formation, enregistrez le résultat réel et contrôlez la validité de la certification.",
+    goal: "Définissez le responsable, la métrique, la cible, le résultat actuel, la période, le statut et les notes sans modifier les calculs existants.",
     incentive: "Create or update incentive records. Approval and payment require confirmation actions.",
-    report: "Generate a report record and export a CSV built from current Ambassador data.",
+    report: "Préparez un document corporate et exportez-le depuis les données Ambassador réellement disponibles.",
     settings: "Persist module rules as JSON configuration.",
   }
   return descriptions[kind]

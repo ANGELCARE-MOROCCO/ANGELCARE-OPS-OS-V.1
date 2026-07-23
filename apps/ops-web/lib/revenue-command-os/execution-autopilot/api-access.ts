@@ -1,6 +1,30 @@
-import { NextResponse } from 'next/server'
 import type { ExecutionActor } from './types'
-export function executionRights(user:any){const p=new Set<string>((Array.isArray(user?.permissions)?user.permissions:[]).map(String));const role=String(user?.role||user?.role_key||'');const all=p.has('*')||['admin','super_admin','managing_director','direction'].includes(role);return{view:all||p.has('revenue_os.execution.view'),prepare:all||p.has('revenue_os.execution.prepare'),activate:all||p.has('revenue_os.execution.activate'),approve:all||p.has('revenue_os.execution.approve'),operate:all||p.has('revenue_os.execution.operate'),rollback:all||p.has('revenue_os.execution.rollback'),admin:all||p.has('revenue_os.execution.admin')}}
-export const tenantOf=(user:any,payload?:any)=>String(payload?.tenantId||user?.tenant_id||user?.tenantId||user?.organization_id||'angelcare')
-export const actorOf=(user:any,tenantId:string):ExecutionActor=>({id:String(user?.id||user?.email||'current-user'),displayName:String(user?.full_name||user?.name||user?.email||'Opérateur Revenue OS'),role:String(user?.role||user?.role_key||'revenue_operator'),permissions:Array.isArray(user?.permissions)?user.permissions.map(String):[],tenantId})
-export const executionError=(code:string,message:string,status=400)=>NextResponse.json({ok:false,error:{code,message},externalActionsExecuted:0},{status})
+import {
+  actorFromRevenueOsUser,
+  hasRevenueOsPermission,
+  revenueOsTenantOf,
+} from '../access'
+import { RevenueOsError } from '../errors'
+import { revenueOsErrorResponse } from '../http'
+
+export function executionRights(user: any) {
+  return {
+    view: hasRevenueOsPermission(user, 'revenue_os.execution.view', ['revenue_os.view']),
+    prepare: hasRevenueOsPermission(user, 'revenue_os.execution.prepare'),
+    activate: hasRevenueOsPermission(user, 'revenue_os.execution.activate'),
+    approve: hasRevenueOsPermission(user, 'revenue_os.execution.approve'),
+    operate: hasRevenueOsPermission(user, 'revenue_os.execution.operate'),
+    rollback: hasRevenueOsPermission(user, 'revenue_os.execution.rollback'),
+    admin: hasRevenueOsPermission(user, 'revenue_os.execution.admin'),
+  }
+}
+
+export const tenantOf = (user: any, payload?: unknown) => revenueOsTenantOf(user, payload)
+
+export const actorOf = (user: any, tenantId: string): ExecutionActor => {
+  const actor = actorFromRevenueOsUser(user, { tenantId })
+  return actor as ExecutionActor
+}
+
+export const executionError = (code: string, message: string, status = 400) =>
+  revenueOsErrorResponse(new RevenueOsError(code, message, { status, recoverable: status >= 500 }))

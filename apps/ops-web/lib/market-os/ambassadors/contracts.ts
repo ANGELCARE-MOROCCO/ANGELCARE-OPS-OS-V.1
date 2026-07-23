@@ -74,9 +74,13 @@ export const AMBASSADOR_PERMISSIONS = [
 
 export type AmbassadorPermission = (typeof AMBASSADOR_PERMISSIONS)[number] | "*"
 
+export type AmbassadorAuthenticationSource = "supabase_auth" | "ops_session"
+
 export type AmbassadorActor = {
   actorId: string
-  authUserId: string
+  authUserId: string | null
+  appUserId: string | null
+  authenticationSource: AmbassadorAuthenticationSource
   displayName: string
   email: string | null
   roleKey: string

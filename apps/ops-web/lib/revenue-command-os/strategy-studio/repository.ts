@@ -1,12 +1,12 @@
 import 'server-only'
-import { createClient } from '@/lib/supabase/server'
+import { createServiceClient } from '@/lib/supabase/server'
 import type { ContextSnapshot, RevenueObjective, RevenueStrategy, StrategyComparison } from '../strategy-brain/types'
 import type { CouncilClassificationResult, CouncilDisagreement, CouncilReview, RedTeamAttack } from '../validation-council/types'
 import { simulateCapacity, simulateOutcomes } from './simulations'
 import { buildCompilationPreview } from './compilation-preview'
 import type { ApprovalRequest, ExecutiveMemo, StrategyStudioDossier, StudioActionInput, StudioAuditEvent, StudioStatus, StrategyVersionEntry } from './types'
 
-async function db(){return await createClient() as any}
+async function db(){return await createServiceClient() as any}
 const payload=<T>(row:any):T=>((row?.payload??row) as T)
 export async function listStudioStrategies(tenantId:string){
   const c=await db();const result=await c.from('revenue_os_council_classifications').select('strategy_id,classification,ready_for_mz12,payload,created_at').eq('tenant_id',tenantId).eq('ready_for_mz12',true).order('created_at',{ascending:false}).limit(100)
@@ -36,7 +36,7 @@ export async function loadStudioDossier(strategyId:string,tenantId:string):Promi
   const runId=councilRunRow.data?.id
   let reviews:CouncilReview[]=[],attacks:RedTeamAttack[]=[],disagreements:CouncilDisagreement[]=[]
   if(runId){const [rr,aa,dd]=await Promise.all([c.from('revenue_os_council_reviews').select('*').eq('run_id',runId).eq('tenant_id',tenantId).order('created_at'),c.from('revenue_os_council_red_team_attacks').select('*').eq('run_id',runId).eq('tenant_id',tenantId),c.from('revenue_os_council_disagreements').select('*').eq('run_id',runId).eq('tenant_id',tenantId)]);for(const r of [rr,aa,dd])if(r.error)throw r.error;reviews=(rr.data||[]).map((x:any)=>payload<CouncilReview>(x));attacks=(aa.data||[]).map((x:any)=>payload<RedTeamAttack>(x));disagreements=(dd.data||[]).map((x:any)=>payload<CouncilDisagreement>(x))}
-  const evidence=reviews.flatMap(r=>r.evidenceChecks).map(x=>({id:x.id,claim:x.claim,classification:x.classification,sourceIds:x.sourceIds,freshness:x.freshness,confidence:x.confidence,blocking:x.blocking,provenance:x.sourceIds.join(', ')||'Conseil MZ11'}))
+  const evidence=reviews.flatMap(r=>r.evidenceChecks).map(x=>({id:x.id,claim:x.claim,classification:x.classification,sourceIds:x.sourceIds,freshness:x.freshness,confidence:x.confidence,blocking:x.blocking,provenance:x.sourceIds.join(', ')||'Conseil stratégique'}))
   const assumptions=strategy.assumptions.map(a=>({id:a.id,statement:a.assumption,source:a.source,confidence:a.confidence,impact:a.impact,status:a.status,owner:a.owner,validationRequired:a.validationRequired,affectedComponents:['thesis','predicted_results'],councilFindings:reviews.flatMap(r=>r.findings.filter(f=>f.domain==='assumptions').map(f=>f.title))}))
   const approval=approvalRow.data?payload<ApprovalRequest>(approvalRow.data):undefined
   const versions:StrategyVersionEntry[]=(versionRows.data||[]).map((x:any)=>({id:x.id,strategyId:x.strategy_id,version:x.version,status:x.status,source:x.source_hash||'strategy',createdAt:x.created_at,summary:String(x.payload?.summary||x.status||'Version stratégique'),parentVersion:x.payload?.strategy?.parentVersion}))

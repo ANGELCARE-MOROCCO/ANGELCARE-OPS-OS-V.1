@@ -1,0 +1,99 @@
+.canvas {
+  position: relative;
+  isolation: isolate;
+}
+.canvas::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 8% 5%, rgba(37, 99, 235, .055), transparent 25%),
+    radial-gradient(circle at 93% 12%, rgba(14, 165, 233, .045), transparent 24%),
+    linear-gradient(180deg, #f8fbff 0%, #f4f7fb 52%, #f8fafc 100%);
+}
+.canvas::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: .22;
+  background-image: linear-gradient(rgba(148,163,184,.13) 1px, transparent 1px), linear-gradient(90deg, rgba(148,163,184,.13) 1px, transparent 1px);
+  background-size: 32px 32px;
+  mask-image: linear-gradient(to bottom, black, transparent 72%);
+}
+.glass {
+  background: rgba(255,255,255,.86);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 24px 80px rgba(15,23,42,.08), inset 0 1px 0 rgba(255,255,255,.8);
+}
+.softGlass {
+  background: rgba(255,255,255,.72);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 16px 45px rgba(15,23,42,.055), inset 0 1px 0 rgba(255,255,255,.72);
+}
+.raised {
+  box-shadow: 0 20px 60px rgba(15,23,42,.09), 0 2px 8px rgba(15,23,42,.04);
+}
+.gridFine {
+  background-image: linear-gradient(rgba(148,163,184,.11) 1px, transparent 1px), linear-gradient(90deg, rgba(148,163,184,.11) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+.dotField {
+  background-image: radial-gradient(rgba(100,116,139,.23) .7px, transparent .7px);
+  background-size: 18px 18px;
+}
+.scanline {
+  position: relative;
+  overflow: hidden;
+}
+.scanline::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  top: -40%;
+  height: 38%;
+  pointer-events: none;
+  background: linear-gradient(180deg, transparent, rgba(56,189,248,.12), transparent);
+  animation: sovereign-scan 5.6s linear infinite;
+}
+.pulse {
+  animation: sovereign-pulse 2.8s ease-in-out infinite;
+}
+.floatSlow {
+  animation: sovereign-float 7s ease-in-out infinite;
+}
+.flow {
+  animation: sovereign-flow 2.8s linear infinite;
+}
+.draw {
+  stroke-dasharray: 8 10;
+  animation: sovereign-draw 14s linear infinite;
+}
+.shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-120%);
+  background: linear-gradient(100deg, transparent, rgba(255,255,255,.62), transparent);
+  animation: sovereign-shimmer 5s ease-in-out infinite;
+}
+.fadeIn {
+  animation: sovereign-fade .45s ease-out both;
+}
+@keyframes sovereign-scan { to { transform: translateY(390%); } }
+@keyframes sovereign-pulse { 0%,100% { opacity: .58; transform: scale(.96); } 50% { opacity: 1; transform: scale(1.04); } }
+@keyframes sovereign-float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+@keyframes sovereign-flow { to { background-position: 72px 0; } }
+@keyframes sovereign-draw { to { stroke-dashoffset: -180; } }
+@keyframes sovereign-shimmer { 0%,62% { transform: translateX(-120%); } 88%,100% { transform: translateX(120%); } }
+@keyframes sovereign-fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@media (prefers-reduced-motion: reduce) {
+  .scanline::after, .pulse, .floatSlow, .flow, .draw, .shimmer::after, .fadeIn { animation: none !important; }
+}

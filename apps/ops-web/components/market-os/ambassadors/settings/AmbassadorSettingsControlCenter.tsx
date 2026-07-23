@@ -50,25 +50,27 @@ import type {
 } from "@/lib/market-os/ambassadors/settings/contracts"
 
 const domains = [
-  { key: "overview", label: "Executive overview", icon: Activity },
-  { key: "program", label: "Program identity", icon: BriefcaseBusiness },
-  { key: "recruitment", label: "Recruitment & eligibility", icon: Users },
-  { key: "onboarding", label: "Onboarding & activation", icon: ClipboardCheck },
-  { key: "training", label: "Training & certification", icon: GraduationCap },
-  { key: "territories", label: "Territories & capacity", icon: MapPinned },
-  { key: "missions", label: "Mission execution", icon: Workflow },
-  { key: "attribution", label: "Leads & attribution", icon: Target },
-  { key: "rewards", label: "Rewards & payouts", icon: CircleDollarSign },
-  { key: "kpis", label: "KPIs & performance", icon: SlidersHorizontal },
+  { key: "overview", label: "Vue exécutive", icon: Activity },
+  { key: "program", label: "Identité du programme", icon: BriefcaseBusiness },
+  { key: "recruitment", label: "Recrutement et éligibilité", icon: Users },
+  { key: "onboarding", label: "Intégration et activation", icon: ClipboardCheck },
+  { key: "training", label: "Formation et certification", icon: GraduationCap },
+  { key: "territories", label: "Territoires et capacité", icon: MapPinned },
+  { key: "missions", label: "Exécution des missions", icon: Workflow },
+  { key: "attribution", label: "Leads et attribution", icon: Target },
+  { key: "rewards", label: "Récompenses et paiements", icon: CircleDollarSign },
+  { key: "kpis", label: "Objectifs et performance", icon: SlidersHorizontal },
   { key: "communications", label: "Communications", icon: BellRing },
-  { key: "governance", label: "Security & governance", icon: ShieldCheck },
-  { key: "versions", label: "Versions & audit", icon: History },
+  { key: "governance", label: "Sécurité et gouvernance", icon: ShieldCheck },
+  { key: "versions", label: "Versions et audit", icon: History },
 ] as const
 
 type DomainKey = (typeof domains)[number]["key"]
 type IconType = ComponentType<{ className?: string; size?: number }>
 type ModalState =
   | { kind: "create" }
+  | { kind: "validation" }
+  | { kind: "impact" }
   | { kind: "decision"; domain: SettingsApprovalDomain }
   | { kind: "publish" }
   | { kind: "rollback"; version: AmbassadorSettingsVersion }
@@ -79,7 +81,7 @@ const statusTone: Record<string, string> = {
   published: "border-emerald-200 bg-emerald-50 text-emerald-700",
   approved: "border-blue-200 bg-blue-50 text-blue-700",
   pending_approval: "border-amber-200 bg-amber-50 text-amber-700",
-  scheduled: "border-violet-200 bg-violet-50 text-violet-700",
+  scheduled: "border-blue-200 bg-blue-50 text-blue-700",
   draft: "border-slate-200 bg-slate-50 text-slate-700",
   revision_requested: "border-orange-200 bg-orange-50 text-orange-700",
   rejected: "border-red-200 bg-red-50 text-red-700",
@@ -103,14 +105,50 @@ function formatDh(value: number): string {
   return `${new Intl.NumberFormat("fr-MA", { maximumFractionDigits: 0 }).format(value || 0)} Dh`
 }
 
+const DISPLAY_LABELS: Record<string, string> = {
+  active: "Actif",
+  paused: "En pause",
+  restricted: "Restreint",
+  archived: "Archivé",
+  published: "Publiée",
+  approved: "Approuvée",
+  pending: "En attente",
+  pending_approval: "Approbation en attente",
+  scheduled: "Planifiée",
+  draft: "Projet",
+  revision_requested: "Révision demandée",
+  rejected: "Rejetée",
+  failed: "Échec",
+  superseded: "Remplacée",
+  rolled_back: "Version de restauration",
+  cancelled: "Annulée",
+  organization: "Organisation",
+  program: "Programme",
+  country: "Pays",
+  region: "Région",
+  city: "Ville",
+  territory: "Territoire",
+  service_line: "Ligne de service",
+  weekly: "Hebdomadaire",
+  biweekly: "Bimensuel",
+  monthly: "Mensuel",
+  email: "Email",
+  whatsapp: "WhatsApp",
+  sms: "SMS",
+  in_app: "Notification interne",
+  compliance: "Conformité",
+  finance: "Finance",
+  system: "Système",
+}
+
 function titleCase(value: string): string {
-  return value.replaceAll("_", " ").replace(/\b\w/g, (letter) => letter.toUpperCase())
+  return DISPLAY_LABELS[value] || value.replaceAll("_", " ").replace(/\b\w/g, (letter) => letter.toUpperCase())
 }
 
 function StatusBadge({ status }: { status: string }) {
   return (
     <span className={`inline-flex items-center rounded-full border px-2.5 py-1 text-[11px] font-black uppercase tracking-[0.08em] ${statusTone[status] || statusTone.draft}`}>
-      {status.replaceAll("_", " ")}
+      {titleCase(status)}
     </span>
   )
 }
@@ -131,8 +169,8 @@ function Button({
   type?: "button" | "submit"
 }) {
   const classes = {
-    primary: "border-violet-600 bg-violet-600 text-white hover:bg-violet-700",
-    secondary: "border-slate-200 bg-white text-slate-700 hover:border-violet-300 hover:text-violet-700",
+    primary: "border-blue-600 bg-blue-600 text-white hover:bg-blue-700",
+    secondary: "border-slate-200 bg-white text-slate-700 hover:border-blue-300 hover:text-blue-700",
     danger: "border-red-200 bg-red-50 text-red-700 hover:bg-red-100",
     success: "border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100",
   }[variant]
@@ -151,14 +189,14 @@ function Button({
 
 function MetricCard({ icon: Icon, label, value, detail }: { icon: IconType; label: string; value: ReactNode; detail: string }) {
   return (
-    <article className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <div className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-500">{label}</div>
-          <div className="mt-2 text-2xl font-black tracking-tight text-slate-950">{value}</div>
-          <div className="mt-1 text-xs font-semibold leading-5 text-slate-500">{detail}</div>
+    <article className="min-w-0 border-l border-white/15 px-4 py-2 first:border-l-0 first:pl-0">
+      <div className="flex items-start gap-3">
+        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-white/10 text-blue-200"><Icon size={17} /></span>
+        <div className="min-w-0">
+          <div className="text-[9px] font-black uppercase tracking-[0.16em] text-slate-300">{label}</div>
+          <div className="mt-1 text-xl font-black tracking-tight text-white">{value}</div>
+          <div className="mt-1 text-[11px] font-semibold leading-4 text-slate-300">{detail}</div>
         </div>
-        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-violet-50 text-violet-700"><Icon size={18} /></span>
       </div>
     </article>
   )
@@ -189,7 +227,7 @@ function Field({ label, hint, children }: { label: string; hint?: string; childr
   )
 }
 
-const inputClass = "w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-semibold text-slate-900 outline-none transition focus:border-violet-400 focus:ring-4 focus:ring-violet-100 disabled:bg-slate-50 disabled:text-slate-500"
+const inputClass = "w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-semibold text-slate-900 outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100 disabled:bg-slate-50 disabled:text-slate-500"
 
 function TextField({ value, onChange, disabled, placeholder = "" }: { value: string; onChange: (value: string) => void; disabled?: boolean; placeholder?: string }) {
   return <input className={inputClass} value={value} onChange={(event) => onChange(event.target.value)} disabled={disabled} placeholder={placeholder} />
@@ -209,19 +247,19 @@ function SelectField({ value, onChange, disabled, options }: { value: string; on
 
 function Toggle({ checked, onChange, disabled, label, description }: { checked: boolean; onChange: (value: boolean) => void; disabled?: boolean; label: string; description?: string }) {
   return (
-    <button type="button" disabled={disabled} onClick={() => onChange(!checked)} className="flex w-full items-center justify-between gap-4 rounded-xl border border-slate-200 bg-white p-3 text-left transition hover:border-violet-300 disabled:cursor-not-allowed disabled:bg-slate-50">
+    <button type="button" disabled={disabled} onClick={() => onChange(!checked)} className="flex w-full items-center justify-between gap-4 rounded-xl border border-slate-200 bg-white p-3 text-left transition hover:border-blue-300 disabled:cursor-not-allowed disabled:bg-slate-50">
       <span>
         <span className="block text-xs font-black text-slate-800">{label}</span>
         {description ? <span className="mt-1 block text-[11px] font-semibold leading-4 text-slate-500">{description}</span> : null}
       </span>
-      <span className={`relative h-6 w-11 shrink-0 rounded-full transition ${checked ? "bg-violet-600" : "bg-slate-300"}`}>
+      <span className={`relative h-6 w-11 shrink-0 rounded-full transition ${checked ? "bg-blue-600" : "bg-slate-300"}`}>
         <span className={`absolute top-1 h-4 w-4 rounded-full bg-white shadow transition ${checked ? "left-6" : "left-1"}`} />
       </span>
     </button>
   )
 }
 
-function ListField({ value, onChange, disabled, placeholder = "One item per line" }: { value: string[]; onChange: (value: string[]) => void; disabled?: boolean; placeholder?: string }) {
+function ListField({ value, onChange, disabled, placeholder = "Un élément par ligne" }: { value: string[]; onChange: (value: string[]) => void; disabled?: boolean; placeholder?: string }) {
   return (
     <textarea
       className={`${inputClass} min-h-28 resize-y leading-6`}
@@ -235,8 +273,8 @@ function ListField({ value, onChange, disabled, placeholder = "One item per line
 
 function SectionIntro({ icon: Icon, title, description }: { icon: IconType; title: string; description: string }) {
   return (
-    <div className="mb-5 flex items-start gap-3 rounded-2xl border border-violet-100 bg-violet-50/60 p-4">
-      <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-white text-violet-700 shadow-sm"><Icon size={19} /></span>
+    <div className="mb-5 flex items-start gap-3 rounded-2xl border border-blue-100 bg-blue-50/60 p-4">
+      <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-white text-blue-700 shadow-sm"><Icon size={19} /></span>
       <div><h3 className="font-black text-slate-950">{title}</h3><p className="mt-1 text-xs font-semibold leading-5 text-slate-600">{description}</p></div>
     </div>
   )
@@ -244,13 +282,13 @@ function SectionIntro({ icon: Icon, title, description }: { icon: IconType; titl
 
 function Modal({ title, description, onClose, children }: { title: string; description?: string; onClose: () => void; children: ReactNode }) {
   return (
-    <div className="fixed inset-0 z-[100] grid place-items-center bg-slate-950/40 p-4 backdrop-blur-sm">
-      <div className="max-h-[92vh] w-full max-w-xl overflow-y-auto rounded-3xl border border-slate-200 bg-white shadow-2xl">
-        <div className="sticky top-0 z-10 flex items-start justify-between gap-4 border-b border-slate-100 bg-white px-6 py-5">
-          <div><h2 className="text-xl font-black text-slate-950">{title}</h2>{description ? <p className="mt-1 text-sm font-semibold text-slate-500">{description}</p> : null}</div>
-          <button type="button" onClick={onClose} className="grid h-9 w-9 place-items-center rounded-xl border border-slate-200 text-slate-500 hover:bg-slate-50"><X size={17} /></button>
+    <div className="fixed inset-0 z-[120] flex items-center justify-center bg-slate-950/55 p-3 backdrop-blur-sm sm:p-6">
+      <div role="dialog" aria-modal="true" aria-labelledby="ambassador-settings-modal-title" className="flex max-h-[94vh] w-full max-w-3xl flex-col overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-2xl">
+        <div className="flex items-start justify-between gap-4 bg-[#071d3b] px-6 py-5 text-white">
+          <div><p className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-200">ANGELCARE · Gouvernance des politiques</p><h2 id="ambassador-settings-modal-title" className="mt-2 text-xl font-black tracking-tight">{title}</h2>{description ? <p className="mt-1 max-w-2xl text-sm font-semibold leading-6 text-slate-300">{description}</p> : null}</div>
+          <button type="button" onClick={onClose} aria-label="Fermer" className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-white/15 bg-white/10 text-white hover:bg-white/15"><X size={17} /></button>
         </div>
-        <div className="p-6">{children}</div>
+        <div className="min-h-0 flex-1 overflow-y-auto p-6">{children}</div>
       </div>
     </div>
   )
@@ -280,7 +318,7 @@ export default function AmbassadorSettingsControlCenter() {
     setError(null)
     const response = await ambassadorSettingsApi.load()
     if (!response.ok || !response.data) {
-      setError(response.error || "Settings control center could not be loaded")
+      setError(response.error || "Le centre de gouvernance des politiques n’a pas pu être chargé")
       setLoading(false)
       setRefreshing(false)
       return
@@ -295,6 +333,20 @@ export default function AmbassadorSettingsControlCenter() {
 
   useEffect(() => { void load() }, [load])
 
+  useEffect(() => {
+    if (!modal) return
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = "hidden"
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setModal(null)
+    }
+    window.addEventListener("keydown", onKeyDown)
+    return () => {
+      document.body.style.overflow = previousOverflow
+      window.removeEventListener("keydown", onKeyDown)
+    }
+  }, [modal])
+
   const selectedVersion = useMemo(() => {
     if (!snapshot || !selectedId) return null
     return snapshot.versions.find((version) => version.id === selectedId) || null
@@ -305,7 +357,7 @@ export default function AmbassadorSettingsControlCenter() {
     const version = selectedVersion
     const next = version?.configuration || snapshot.effectiveConfiguration
     setConfiguration(cloneConfiguration(next))
-    setTitle(version?.title || "Effective Ambassador policy")
+    setTitle(version?.title || "Politique Ambassadeurs effective")
     setChangeSummary(version?.change_summary || "")
     setDirty(false)
   }, [selectedVersion, snapshot])
@@ -330,7 +382,7 @@ export default function AmbassadorSettingsControlCenter() {
     setError(null)
     setSuccess(null)
     const response = await action()
-    if (!response.ok) setError(response.error || "Action failed")
+    if (!response.ok) setError(response.error || "Action refusée")
     else {
       setSuccess(message)
       await load(true)
@@ -343,7 +395,7 @@ export default function AmbassadorSettingsControlCenter() {
     if (!selectedVersion) return
     const ok = await runAction(
       () => ambassadorSettingsApi.updateDraft(selectedVersion.id, { title, changeSummary, configuration }),
-      "Draft saved without changing the live policy.",
+      "Projet enregistré sans modifier la politique en production.",
     )
     if (ok) setDirty(false)
   }
@@ -353,7 +405,7 @@ export default function AmbassadorSettingsControlCenter() {
       const response = await ambassadorSettingsApi.createDraft(createForm)
       if (response.ok && response.data) setSelectedId(response.data.id)
       return response
-    }, "New policy draft created from the effective configuration.")
+    }, "Nouveau projet de politique créé depuis la configuration effective.")
     if (ok) {
       setModal(null)
       setCreateForm({ title: "", scopeType: "organization", scopeKey: "default", changeSummary: "" })
@@ -365,7 +417,7 @@ export default function AmbassadorSettingsControlCenter() {
     if (!selectedVersion) return
     const ok = await runAction(
       () => ambassadorSettingsApi.decideDraft(selectedVersion.id, { domain: domainValue, decision: decisionForm.decision, note: decisionForm.note }),
-      `${titleCase(domainValue)} approval decision recorded.`,
+      `Décision d’approbation ${titleCase(domainValue)} enregistrée.`,
     )
     if (ok) {
       setModal(null)
@@ -378,7 +430,7 @@ export default function AmbassadorSettingsControlCenter() {
     const normalized = publishAt ? new Date(publishAt).toISOString() : null
     const ok = await runAction(
       () => ambassadorSettingsApi.publishDraft(selectedVersion.id, normalized),
-      normalized ? "Publication scheduled successfully." : "Policy version published and made effective.",
+      normalized ? "Publication planifiée avec succès." : "Version publiée et rendue effective.",
     )
     if (ok) {
       setModal(null)
@@ -389,7 +441,7 @@ export default function AmbassadorSettingsControlCenter() {
   async function rollback(version: AmbassadorSettingsVersion) {
     const ok = await runAction(
       () => ambassadorSettingsApi.rollbackVersion(version.id, rollbackReason),
-      `A new effective rollback version was published from v${version.revision}.`,
+      `Une nouvelle version de restauration effective a été publiée depuis v${version.revision}.`,
     )
     if (ok) {
       setModal(null)
@@ -399,18 +451,25 @@ export default function AmbassadorSettingsControlCenter() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen bg-[#f5f7fb] text-slate-950">
+      <div className="flex min-h-screen bg-[#f4f7fb] text-slate-950">
         <AmbassadorMarketSidebar />
-        <main className="grid min-w-0 flex-1 place-items-center"><div className="text-center"><Loader2 className="mx-auto animate-spin text-violet-600" size={28} /><p className="mt-3 text-sm font-black text-slate-600">Loading policy control center…</p></div></main>
+        <main className="min-w-0 flex-1 p-5 xl:p-8">
+          <div className="animate-pulse space-y-5">
+            <section className="h-44 rounded-[28px] border border-slate-200 bg-white" />
+            <section className="h-32 rounded-[26px] bg-[#071d3b]" />
+            <section className="grid gap-5 2xl:grid-cols-[230px_minmax(0,1fr)_330px]"><div className="h-[620px] rounded-[24px] border border-slate-200 bg-white" /><div className="h-[620px] rounded-[24px] border border-slate-200 bg-white" /><div className="h-[620px] rounded-[24px] border border-slate-200 bg-white" /></section>
+            <p className="sr-only">Chargement de la gouvernance des politiques…</p>
+          </div>
+        </main>
       </div>
     )
   }
 
   if (!snapshot) {
     return (
-      <div className="flex min-h-screen bg-[#f5f7fb] text-slate-950">
+      <div className="flex min-h-screen bg-[#f4f7fb] text-slate-950">
         <AmbassadorMarketSidebar />
-        <main className="grid min-w-0 flex-1 place-items-center p-8"><div className="max-w-lg rounded-3xl border border-red-200 bg-white p-8 text-center shadow-sm"><AlertTriangle className="mx-auto text-red-600" size={30} /><h1 className="mt-4 text-xl font-black">Settings unavailable</h1><p className="mt-2 text-sm font-semibold text-slate-600">{error}</p><div className="mt-5"><Button icon={RefreshCw} onClick={() => void load()} variant="primary">Retry</Button></div></div></main>
+        <main className="grid min-w-0 flex-1 place-items-center p-8"><div className="max-w-xl rounded-[28px] border border-red-200 bg-white p-8 text-center shadow-sm"><span className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-red-50 text-red-700"><AlertTriangle size={28} /></span><h1 className="mt-5 text-xl font-black">Politiques indisponibles</h1><p className="mt-2 text-sm font-semibold leading-6 text-slate-600">{error}</p><p className="mt-2 text-xs font-bold text-slate-400">Le dernier contexte de politique n’est pas remplacé par un faux état de réussite.</p><div className="mt-5"><Button icon={RefreshCw} onClick={() => void load()} variant="primary">Réessayer</Button></div></div></main>
       </div>
     )
   }
@@ -423,25 +482,25 @@ export default function AmbassadorSettingsControlCenter() {
     <div className="flex min-h-screen min-w-0 bg-[#f5f7fb] text-slate-950">
       <AmbassadorMarketSidebar />
       <main className="min-w-0 flex-1 overflow-x-hidden">
-        <header className="border-b border-slate-200 bg-white px-6 py-5 xl:px-8">
-          <div className="flex flex-wrap items-start justify-between gap-5">
+        <header className="border-b border-slate-200 bg-white px-5 py-6 xl:px-8 xl:py-7">
+          <div className="flex flex-wrap items-start justify-between gap-6">
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="rounded-full border border-violet-200 bg-violet-50 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-violet-700">Policy & Runtime Control</span>
+                <span className="rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-blue-800">POLITIQUES · VERSIONNEMENT · EXÉCUTION</span>
                 <StatusBadge status={effective?.status || "draft"} />
               </div>
-              <h1 className="mt-3 text-2xl font-black tracking-tight text-slate-950 xl:text-3xl">Ambassador Program Settings</h1>
-              <p className="mt-2 max-w-3xl text-sm font-semibold leading-6 text-slate-600">Control how recruitment, activation, territories, missions, attribution, rewards, communications and governance operate—through versioned drafts, validation, approvals and safe publication.</p>
-              <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-xs font-bold text-slate-500">
-                <span>Scope: <b className="text-slate-800">{snapshot.actor.organizationId}</b></span>
-                <span>Role: <b className="text-slate-800">{snapshot.actor.roleKey}</b></span>
-                <span>Actor: <b className="text-slate-800">{snapshot.actor.displayName}</b></span>
+              <h1 className="mt-4 max-w-4xl text-3xl font-black tracking-[-0.035em] text-slate-950 xl:text-[38px]">Politiques et gouvernance du programme Ambassadeurs</h1>
+              <p className="mt-3 max-w-4xl text-sm font-semibold leading-7 text-slate-600">Pilotez le recrutement, l’activation, les territoires, les missions, l’attribution, les récompenses, les communications et la gouvernance au moyen de versions contrôlées, validations, approbations et publications sécurisées.</p>
+              <div className="mt-4 flex flex-wrap gap-2 text-xs font-bold text-slate-600">
+                <span className="rounded-full bg-slate-100 px-3 py-1.5">Périmètre : <b className="text-slate-900">{snapshot.actor.organizationId}</b></span>
+                <span className="rounded-full bg-slate-100 px-3 py-1.5">Rôle : <b className="text-slate-900">{snapshot.actor.roleKey}</b></span>
+                <span className="rounded-full bg-slate-100 px-3 py-1.5">Acteur : <b className="text-slate-900">{snapshot.actor.displayName}</b></span>
               </div>
             </div>
             <div className="flex flex-wrap gap-2">
-              <Button icon={RefreshCw} onClick={() => void load(true)} disabled={refreshing}>{refreshing ? "Refreshing…" : "Refresh"}</Button>
-              {snapshot.capabilities.canProcessRuntime && scheduledCount > 0 ? <Button icon={PlayCircle} onClick={() => void runAction(() => ambassadorSettingsApi.processRuntime(), "Due publication queue processed.")} disabled={saving}>Process due publications</Button> : null}
-              {snapshot.capabilities.canDraft ? <Button icon={FileText} onClick={() => setModal({ kind: "create" })} variant="primary">Create policy draft</Button> : null}
+              <Button icon={RefreshCw} onClick={() => void load(true)} disabled={refreshing}>{refreshing ? "Actualisation…" : "Actualiser"}</Button>
+              {snapshot.capabilities.canProcessRuntime && scheduledCount > 0 ? <Button icon={PlayCircle} onClick={() => void runAction(() => ambassadorSettingsApi.processRuntime(), "File des publications arrivées à échéance traitée.")} disabled={saving}>Traiter les publications dues</Button> : null}
+              {snapshot.capabilities.canDraft ? <Button icon={FileText} onClick={() => setModal({ kind: "create" })} variant="primary">Créer un projet de politique</Button> : null}
             </div>
           </div>
         </header>
@@ -451,23 +510,23 @@ export default function AmbassadorSettingsControlCenter() {
           {success ? <div className="flex items-start gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-bold text-emerald-800"><CheckCircle2 className="mt-0.5 shrink-0" size={17} /><span>{success}</span><button className="ml-auto" onClick={() => setSuccess(null)}><X size={16} /></button></div> : null}
           {snapshot.diagnostics.map((item, index) => <div key={`${item.message}-${index}`} className={`rounded-2xl border p-4 text-sm font-bold ${item.severity === "error" ? "border-red-200 bg-red-50 text-red-800" : item.severity === "warning" ? "border-amber-200 bg-amber-50 text-amber-800" : "border-blue-200 bg-blue-50 text-blue-800"}`}>{item.message}</div>)}
 
-          <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
-            <MetricCard icon={FileCheck2} label="Organization baseline" value={effective ? `v${effective.revision}` : "Legacy"} detail={effective ? `Published ${formatDate(effective.published_at)}` : "Awaiting first versioned publication"} />
-            <MetricCard icon={Network} label="Program status" value={configuration.program.status} detail={`${configuration.program.activeCities.length} active cities · ${configuration.program.serviceLines.length} service lines`} />
-            <MetricCard icon={ShieldCheck} label="Validation" value={validation ? `${validation.score}/100` : "Not run"} detail={validation ? `${validation.issues.length} identified control points` : "Validate the selected draft before submission"} />
-            <MetricCard icon={FileClock} label="Pending approvals" value={pendingCount} detail={`${snapshot.drafts.length} open draft or release records`} />
-            <MetricCard icon={CalendarClock} label="Active scopes" value={snapshot.activeScopes.length} detail={`${scheduledCount} scheduled · ${snapshot.runtimeEvents.filter((event) => event.status === "failed").length} runtime failures`} />
+          <section className="grid gap-4 rounded-[26px] bg-[#071d3b] p-5 shadow-[0_18px_50px_rgba(7,29,59,0.18)] sm:grid-cols-2 xl:grid-cols-5">
+            <MetricCard icon={FileCheck2} label="Politique effective" value={effective ? `v${effective.revision}` : "Historique"} detail={effective ? `Publiée le ${formatDate(effective.published_at)}` : "Première publication versionnée attendue"} />
+            <MetricCard icon={Network} label="État du programme" value={titleCase(configuration.program.status)} detail={`${configuration.program.activeCities.length} villes actives · ${configuration.program.serviceLines.length} lignes de service`} />
+            <MetricCard icon={ShieldCheck} label="Validation" value={validation ? `${validation.score}/100` : "Non exécutée"} detail={validation ? `${validation.issues.length} point(s) de contrôle` : "Validation requise avant soumission"} />
+            <MetricCard icon={FileClock} label="Approbations" value={pendingCount} detail={`${snapshot.drafts.length} projet(s) ou diffusion(s) ouverte(s)`} />
+            <MetricCard icon={CalendarClock} label="Exécution" value={snapshot.activeScopes.length} detail={`${scheduledCount} publication(s) planifiée(s) · ${snapshot.runtimeEvents.filter((event) => event.status === "failed").length} échec(s)`} />
           </section>
 
           <section className="grid gap-5 2xl:grid-cols-[230px_minmax(0,1fr)_330px]">
             <aside className="h-fit rounded-2xl border border-slate-200 bg-white p-3 shadow-sm 2xl:sticky 2xl:top-5">
-              <div className="px-3 pb-3 pt-2 text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">Control domains</div>
+              <div className="px-3 pb-3 pt-2 text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">Domaines de gouvernance</div>
               <nav className="space-y-1">
                 {domains.map((item) => {
                   const Icon = item.icon
                   const active = domain === item.key
                   return (
-                    <button key={item.key} type="button" onClick={() => setDomain(item.key)} className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-xs font-black transition ${active ? "bg-violet-100 text-violet-700" : "text-slate-600 hover:bg-slate-50 hover:text-slate-950"}`}>
+                    <button key={item.key} type="button" onClick={() => setDomain(item.key)} className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-xs font-black transition ${active ? "bg-blue-100 text-blue-700" : "text-slate-600 hover:bg-slate-50 hover:text-slate-950"}`}>
                       <Icon size={15} /><span className="min-w-0 flex-1">{item.label}</span>{active ? <ChevronRight size={14} /> : null}
                     </button>
                   )
@@ -478,27 +537,27 @@ export default function AmbassadorSettingsControlCenter() {
             <div className="min-w-0 space-y-5">
               <Panel
                 title={title}
-                description={selectedVersion ? `Version v${selectedVersion.revision} · ${selectedVersion.scope_type}:${selectedVersion.scope_key}` : "Current effective configuration"}
+                description={selectedVersion ? `Version v${selectedVersion.revision} · ${titleCase(selectedVersion.scope_type)} : ${selectedVersion.scope_key}` : "Configuration effective actuelle"}
                 action={<StatusBadge status={selectedVersion?.status || effective?.status || "published"} />}
               >
                 <div className="grid gap-4 md:grid-cols-[1fr_1.4fr]">
-                  <Field label="Version title"><TextField value={title} onChange={(value) => { setTitle(value); setDirty(true) }} disabled={!editable} /></Field>
-                  <Field label="Change summary" hint="mandatory before submission"><TextField value={changeSummary} onChange={(value) => { setChangeSummary(value); setDirty(true) }} disabled={!editable} placeholder="Explain why this policy change is required" /></Field>
+                  <Field label="Titre de la version"><TextField value={title} onChange={(value) => { setTitle(value); setDirty(true) }} disabled={!editable} /></Field>
+                  <Field label="Synthèse des changements" hint="obligatoire avant soumission"><TextField value={changeSummary} onChange={(value) => { setChangeSummary(value); setDirty(true) }} disabled={!editable} placeholder="Expliquez pourquoi cette évolution de politique est nécessaire" /></Field>
                 </div>
                 <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-slate-100 pt-4">
-                  {editable ? <Button icon={Save} onClick={() => void saveDraft()} disabled={saving || !dirty} variant="primary">Save draft</Button> : null}
-                  {selectedVersion && ["draft", "revision_requested"].includes(selectedVersion.status) && snapshot.capabilities.canValidate ? <Button icon={ShieldCheck} onClick={() => void runAction(() => ambassadorSettingsApi.validateDraft(selectedVersion.id), "Validation completed and recorded.")} disabled={saving || dirty}>Validate</Button> : null}
-                  {selectedVersion && ["draft", "revision_requested", "pending_approval", "approved"].includes(selectedVersion.status) && snapshot.capabilities.canValidate ? <Button icon={Activity} onClick={() => void runAction(() => ambassadorSettingsApi.simulateDraft(selectedVersion.id), "Operational and financial impact simulated.")} disabled={saving || dirty}>Simulate impact</Button> : null}
-                  {selectedVersion && ["draft", "revision_requested"].includes(selectedVersion.status) && snapshot.capabilities.canSubmit ? <Button icon={Send} onClick={() => void runAction(() => ambassadorSettingsApi.submitDraft(selectedVersion.id), "Version submitted for controlled approval.")} disabled={saving || dirty || !validation?.valid} variant="success">Submit for approval</Button> : null}
-                  {selectedVersion?.status === "pending_approval" && snapshot.capabilities.canApprove && pendingApproval ? <Button icon={BadgeCheck} onClick={() => setModal({ kind: "decision", domain: pendingApproval.approval_domain })} variant="success">Decide {pendingApproval.approval_domain}</Button> : null}
-                  {selectedVersion?.status === "approved" && snapshot.capabilities.canPublish ? <Button icon={PlayCircle} onClick={() => setModal({ kind: "publish" })} variant="primary">Publish or schedule</Button> : null}
-                  {dirty ? <span className="ml-auto text-xs font-black text-amber-600">Unsaved changes</span> : null}
+                  {editable ? <Button icon={Save} onClick={() => void saveDraft()} disabled={saving || !dirty} variant="primary">Enregistrer le projet</Button> : null}
+                  {selectedVersion && ["draft", "revision_requested"].includes(selectedVersion.status) && snapshot.capabilities.canValidate ? <Button icon={ShieldCheck} onClick={() => setModal({ kind: "validation" })} disabled={saving || dirty}>Valider la configuration</Button> : null}
+                  {selectedVersion && ["draft", "revision_requested", "pending_approval", "approved"].includes(selectedVersion.status) && snapshot.capabilities.canValidate ? <Button icon={Activity} onClick={() => setModal({ kind: "impact" })} disabled={saving || dirty}>Simuler l’impact</Button> : null}
+                  {selectedVersion && ["draft", "revision_requested"].includes(selectedVersion.status) && snapshot.capabilities.canSubmit ? <Button icon={Send} onClick={() => void runAction(() => ambassadorSettingsApi.submitDraft(selectedVersion.id), "Version soumise au circuit d’approbation contrôlé.")} disabled={saving || dirty || !validation?.valid} variant="success">Soumettre à approbation</Button> : null}
+                  {selectedVersion?.status === "pending_approval" && snapshot.capabilities.canApprove && pendingApproval ? <Button icon={BadgeCheck} onClick={() => setModal({ kind: "decision", domain: pendingApproval.approval_domain })} variant="success">Décider · {titleCase(pendingApproval.approval_domain)}</Button> : null}
+                  {selectedVersion?.status === "approved" && snapshot.capabilities.canPublish ? <Button icon={PlayCircle} onClick={() => setModal({ kind: "publish" })} variant="primary">Publier ou planifier</Button> : null}
+                  {dirty ? <span className="ml-auto text-xs font-black text-amber-600">Modifications non enregistrées</span> : null}
                 </div>
               </Panel>
 
               {domain === "overview" ? <Overview configuration={configuration} version={selectedVersion} approvals={approvalsForSelected} /> : null}
               {domain !== "overview" && domain !== "versions" ? (
-                <Panel title={domains.find((item) => item.key === domain)?.label || "Policy domain"} description={editable ? "Structured draft editor. Changes remain isolated until approved and published." : "Read-only effective or controlled version view."}>
+                <Panel title={domains.find((item) => item.key === domain)?.label || "Domaine de politique"} description={editable ? "Éditeur structuré du projet. Les changements restent isolés jusqu’à leur approbation et publication." : "Consultation en lecture seule de la version effective ou contrôlée."}>
                   <DomainEditor domain={domain} configuration={configuration} mutate={mutateDomain} disabled={!editable} />
                 </Panel>
               ) : null}
@@ -506,31 +565,31 @@ export default function AmbassadorSettingsControlCenter() {
             </div>
 
             <aside className="space-y-5">
-              <Panel title="Version queue" description="Drafts, approvals and scheduled releases">
+              <Panel title="File des versions" description="Projets, approbations et publications planifiées">
                 <div className="space-y-2">
                   {snapshot.drafts.length ? snapshot.drafts.map((version) => (
-                    <button key={version.id} type="button" onClick={() => setSelectedId(version.id)} className={`w-full rounded-xl border p-3 text-left transition ${selectedId === version.id ? "border-violet-300 bg-violet-50" : "border-slate-200 hover:border-violet-200"}`}>
+                    <button key={version.id} type="button" onClick={() => setSelectedId(version.id)} className={`w-full rounded-xl border p-3 text-left transition ${selectedId === version.id ? "border-blue-300 bg-blue-50" : "border-slate-200 hover:border-blue-200"}`}>
                       <div className="flex items-center justify-between gap-2"><span className="text-xs font-black text-slate-900">v{version.revision} · {version.title}</span><StatusBadge status={version.status} /></div>
-                      <div className="mt-2 text-[11px] font-semibold text-slate-500">Updated {formatDate(version.updated_at)}</div>
+                      <div className="mt-2 text-[11px] font-semibold text-slate-500">Mis à jour le {formatDate(version.updated_at)}</div>
                     </button>
-                  )) : <div className="rounded-xl bg-slate-50 p-4 text-xs font-bold text-slate-500">No open policy drafts.</div>}
+                  )) : <div className="rounded-xl bg-slate-50 p-4 text-xs font-bold text-slate-500">Aucun projet de politique ouvert.</div>}
                 </div>
               </Panel>
 
-              <Panel title="Approval gates" description="Latest round for the selected version">
+              <Panel title="Portes d’approbation" description="Dernier cycle pour la version sélectionnée">
                 <div className="space-y-2">
-                  {approvalsForSelected.length ? approvalsForSelected.map((approval) => <ApprovalRow key={approval.id} approval={approval} />) : <div className="rounded-xl bg-slate-50 p-4 text-xs font-bold text-slate-500">No approval gates created for this version.</div>}
+                  {approvalsForSelected.length ? approvalsForSelected.map((approval) => <ApprovalRow key={approval.id} approval={approval} />) : <div className="rounded-xl bg-slate-50 p-4 text-xs font-bold text-slate-500">Aucune porte d’approbation créée pour cette version.</div>}
                 </div>
               </Panel>
 
-              <Panel title="Release intelligence" description="Latest validation and impact evidence">
+              <Panel title="Preuves de mise en production" description="Dernières preuves de validation et d’impact">
                 <div className="space-y-3 text-xs font-semibold text-slate-600">
-                  <InfoRow label="Validation score" value={validation ? `${validation.score}/100` : "Not available"} />
-                  <InfoRow label="Blocking errors" value={String(validation?.issues.filter((item) => item.severity === "error").length || 0)} />
-                  <InfoRow label="Risk level" value={impact?.riskLevel || "Not simulated"} />
-                  <InfoRow label="Affected Ambassadors" value={String(impact?.affectedAmbassadors || 0)} />
-                  <InfoRow label="Pending payout exposure" value={formatDh(impact?.pendingPayoutsMad || 0)} />
-                  <InfoRow label="Projected commission delta" value={formatDh(impact?.projectedCommissionDeltaMad || 0)} />
+                  <InfoRow label="Score de validation" value={validation ? `${validation.score}/100` : "Non disponible"} />
+                  <InfoRow label="Erreurs bloquantes" value={String(validation?.issues.filter((item) => item.severity === "error").length || 0)} />
+                  <InfoRow label="Niveau de risque" value={impact?.riskLevel || "Non simulé"} />
+                  <InfoRow label="Ambassadeurs concernés" value={String(impact?.affectedAmbassadors || 0)} />
+                  <InfoRow label="Exposition des paiements en attente" value={formatDh(impact?.pendingPayoutsMad || 0)} />
+                  <InfoRow label="Écart de commission simulé" value={formatDh(impact?.projectedCommissionDeltaMad || 0)} />
                 </div>
                 {validation?.issues.length ? <div className="mt-4 space-y-2">{validation.issues.slice(0, 5).map((item) => <div key={`${item.path}-${item.code}`} className={`rounded-xl border p-3 text-[11px] font-bold ${item.severity === "error" ? "border-red-200 bg-red-50 text-red-700" : "border-amber-200 bg-amber-50 text-amber-700"}`}>{item.message}</div>)}</div> : null}
               </Panel>
@@ -540,45 +599,85 @@ export default function AmbassadorSettingsControlCenter() {
       </main>
 
       {modal?.kind === "create" ? (
-        <Modal title="Create policy draft" description="Start from the currently effective configuration. Production remains unchanged." onClose={() => setModal(null)}>
+        <Modal title="Créer un projet de politique" description="Le projet part de la configuration actuellement effective. La production reste inchangée." onClose={() => setModal(null)}>
           <div className="space-y-4">
-            <Field label="Draft title"><TextField value={createForm.title} onChange={(value) => setCreateForm((current) => ({ ...current, title: value }))} placeholder="Example: Q3 national Ambassador policy" /></Field>
+            <Field label="Titre du projet"><TextField value={createForm.title} onChange={(value) => setCreateForm((current) => ({ ...current, title: value }))} placeholder="Exemple : Politique nationale Ambassadeurs — T3" /></Field>
             <div className="grid gap-4 md:grid-cols-2">
-              <Field label="Scope type"><SelectField value={createForm.scopeType} onChange={(value) => setCreateForm((current) => ({ ...current, scopeType: value }))} options={["organization", "program", "country", "region", "city", "territory", "service_line"].map((value) => ({ value, label: titleCase(value) }))} /></Field>
-              <Field label="Scope key"><TextField value={createForm.scopeKey} onChange={(value) => setCreateForm((current) => ({ ...current, scopeKey: value }))} /></Field>
+              <Field label="Type de périmètre"><SelectField value={createForm.scopeType} onChange={(value) => setCreateForm((current) => ({ ...current, scopeType: value }))} options={["organization", "program", "country", "region", "city", "territory", "service_line"].map((value) => ({ value, label: titleCase(value) }))} /></Field>
+              <Field label="Clé de périmètre"><TextField value={createForm.scopeKey} onChange={(value) => setCreateForm((current) => ({ ...current, scopeKey: value }))} /></Field>
             </div>
-            <Field label="Initial change summary"><textarea className={`${inputClass} min-h-24`} value={createForm.changeSummary} onChange={(event) => setCreateForm((current) => ({ ...current, changeSummary: event.target.value }))} /></Field>
-            <div className="flex justify-end gap-2 border-t border-slate-100 pt-4"><Button onClick={() => setModal(null)}>Cancel</Button><Button icon={FileText} onClick={() => void createDraft()} disabled={saving || !createForm.title.trim()} variant="primary">Create isolated draft</Button></div>
+            <Field label="Synthèse initiale des changements"><textarea className={`${inputClass} min-h-24`} value={createForm.changeSummary} onChange={(event) => setCreateForm((current) => ({ ...current, changeSummary: event.target.value }))} /></Field>
+            <div className="sticky bottom-0 -mx-6 -mb-6 flex justify-end gap-2 border-t border-slate-100 bg-white px-6 py-4"><Button onClick={() => setModal(null)}>Annuler</Button><Button icon={FileText} onClick={() => void createDraft()} disabled={saving || !createForm.title.trim()} variant="primary">Créer le projet isolé</Button></div>
+          </div>
+        </Modal>
+      ) : null}
+
+      {modal?.kind === "validation" && selectedVersion ? (
+        <Modal title="Valider la configuration" description="Exécutez les contrôles backend existants sur la version sélectionnée. Le frontend ne recalcule aucun résultat." onClose={() => setModal(null)}>
+          <div className="space-y-5">
+            <section className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+              <div className="flex flex-wrap items-start justify-between gap-3"><div><p className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-500">Version contrôlée</p><h3 className="mt-1 text-lg font-black text-slate-950">v{selectedVersion.revision} · {selectedVersion.title}</h3><p className="mt-1 text-xs font-semibold text-slate-500">{titleCase(selectedVersion.scope_type)} · {selectedVersion.scope_key}</p></div><StatusBadge status={selectedVersion.status} /></div>
+            </section>
+            {validation ? (
+              <section className={`rounded-2xl border p-4 ${validation.valid ? "border-emerald-200 bg-emerald-50" : "border-rose-200 bg-rose-50"}`}>
+                <div className="flex items-start justify-between gap-4"><div><p className={`text-sm font-black ${validation.valid ? "text-emerald-950" : "text-rose-950"}`}>{validation.valid ? "Configuration valide" : "Configuration non valide"}</p><p className={`mt-1 text-xs font-semibold ${validation.valid ? "text-emerald-800" : "text-rose-800"}`}>{validation.issues.length} point(s) de contrôle · score {validation.score}/100</p></div><span className={`text-2xl font-black tabular-nums ${validation.valid ? "text-emerald-700" : "text-rose-700"}`}>{validation.score}</span></div>
+                {validation.issues.length ? <div className="mt-4 space-y-2">{validation.issues.map((item) => <div key={`${item.path}-${item.code}`} className="rounded-xl border border-white/70 bg-white/70 p-3"><div className="flex items-start justify-between gap-3"><p className="text-xs font-black text-slate-900">{item.message}</p><span className={`rounded-full px-2 py-1 text-[9px] font-black uppercase ${item.severity === "error" ? "bg-rose-100 text-rose-700" : "bg-amber-100 text-amber-700"}`}>{item.severity === "error" ? "Erreur" : "Avertissement"}</span></div><p className="mt-1 text-[10px] font-semibold text-slate-500">{item.path}</p></div>)}</div> : null}
+              </section>
+            ) : <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-6 text-center text-sm font-bold text-slate-500">Aucune validation enregistrée pour cette version.</div>}
+            <div className="sticky bottom-0 -mx-6 -mb-6 flex justify-end gap-2 border-t border-slate-100 bg-white px-6 py-4"><Button onClick={() => setModal(null)}>Annuler</Button><Button icon={ShieldCheck} onClick={() => void (async () => { const ok = await runAction(() => ambassadorSettingsApi.validateDraft(selectedVersion.id), "Validation exécutée et enregistrée."); if (ok) setModal(null) })()} disabled={saving || dirty} variant="primary">{validation ? "Relancer la validation" : "Exécuter la validation"}</Button></div>
+          </div>
+        </Modal>
+      ) : null}
+
+      {modal?.kind === "impact" && selectedVersion ? (
+        <Modal title="Simuler l’impact opérationnel" description="La simulation présentée provient exclusivement du backend existant. Aucun score, risque ou montant n’est inventé par l’interface." onClose={() => setModal(null)}>
+          <div className="space-y-5">
+            <section className="rounded-2xl border border-slate-200 bg-slate-50 p-4"><div className="flex flex-wrap items-start justify-between gap-3"><div><p className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-500">Version analysée</p><h3 className="mt-1 text-lg font-black text-slate-950">v{selectedVersion.revision} · {selectedVersion.title}</h3><p className="mt-1 text-xs font-semibold text-slate-500">{titleCase(selectedVersion.scope_type)} · {selectedVersion.scope_key}</p></div><StatusBadge status={selectedVersion.status} /></div></section>
+            {impact ? <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {[
+                ["Ambassadeurs concernés", impact.affectedAmbassadors],
+                ["Territoires concernés", impact.affectedTerritories],
+                ["Missions ouvertes", impact.openMissions],
+                ["Candidats en pipeline", impact.candidatesInPipeline],
+                ["Conversions en attente", impact.pendingConversions],
+                ["Récompenses en attente", impact.pendingRewards],
+                ["Paiements en attente", formatDh(impact.pendingPayoutsMad || 0)],
+                ["Écart de commission", formatDh(impact.projectedCommissionDeltaMad || 0)],
+                ["Niveau de risque", titleCase(impact.riskLevel || "non_simulé")],
+              ].map(([label, value]) => <div key={String(label)} className="rounded-2xl border border-slate-200 bg-white p-4"><p className="text-[10px] font-black uppercase tracking-[0.12em] text-slate-500">{label}</p><p className="mt-2 text-xl font-black tabular-nums text-slate-950">{value ?? 0}</p></div>)}
+            </section> : <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-6 text-center text-sm font-bold text-slate-500">Aucune simulation enregistrée pour cette version.</div>}
+            {impact?.warnings?.length ? <section className="rounded-2xl border border-amber-200 bg-amber-50 p-4"><p className="text-xs font-black uppercase tracking-[0.12em] text-amber-800">Avertissements backend</p><div className="mt-3 space-y-2">{impact.warnings.map((warning, index) => <p key={`${warning}-${index}`} className="text-sm font-semibold leading-6 text-amber-900">• {warning}</p>)}</div></section> : null}
+            <div className="sticky bottom-0 -mx-6 -mb-6 flex justify-end gap-2 border-t border-slate-100 bg-white px-6 py-4"><Button onClick={() => setModal(null)}>Annuler</Button><Button icon={Activity} onClick={() => void (async () => { const ok = await runAction(() => ambassadorSettingsApi.simulateDraft(selectedVersion.id), "Impact opérationnel et financier simulé."); if (ok) setModal(null) })()} disabled={saving || dirty} variant="primary">{impact ? "Relancer la simulation" : "Exécuter la simulation"}</Button></div>
           </div>
         </Modal>
       ) : null}
 
       {modal?.kind === "decision" ? (
-        <Modal title={`${titleCase(modal.domain)} approval decision`} description="The authenticated actor and decision note will be preserved in immutable audit." onClose={() => setModal(null)}>
+        <Modal title={`Décision d’approbation · ${titleCase(modal.domain)}`} description="L’acteur authentifié et la note de décision seront conservés dans l’audit immuable." onClose={() => setModal(null)}>
           <div className="space-y-4">
-            <Field label="Decision"><SelectField value={decisionForm.decision} onChange={(value) => setDecisionForm((current) => ({ ...current, decision: value as SettingsApprovalStatus }))} options={[{ value: "approved", label: "Approve" }, { value: "revision_requested", label: "Request revision" }, { value: "rejected", label: "Reject" }]} /></Field>
-            <Field label="Decision note"><textarea className={`${inputClass} min-h-28`} value={decisionForm.note} onChange={(event) => setDecisionForm((current) => ({ ...current, note: event.target.value }))} placeholder="Record the rationale and any required conditions" /></Field>
-            <div className="flex justify-end gap-2 border-t border-slate-100 pt-4"><Button onClick={() => setModal(null)}>Cancel</Button><Button icon={BadgeCheck} onClick={() => void decideApproval(modal.domain)} disabled={saving || !decisionForm.note.trim()} variant={decisionForm.decision === "approved" ? "success" : "danger"}>Record decision</Button></div>
+            <Field label="Décision"><SelectField value={decisionForm.decision} onChange={(value) => setDecisionForm((current) => ({ ...current, decision: value as SettingsApprovalStatus }))} options={[{ value: "approved", label: "Approuver" }, { value: "revision_requested", label: "Demander une révision" }, { value: "rejected", label: "Rejeter" }]} /></Field>
+            <Field label="Note de décision"><textarea className={`${inputClass} min-h-28`} value={decisionForm.note} onChange={(event) => setDecisionForm((current) => ({ ...current, note: event.target.value }))} placeholder="Consignez la justification et les conditions requises" /></Field>
+            <div className="sticky bottom-0 -mx-6 -mb-6 flex justify-end gap-2 border-t border-slate-100 bg-white px-6 py-4"><Button onClick={() => setModal(null)}>Annuler</Button><Button icon={BadgeCheck} onClick={() => void decideApproval(modal.domain)} disabled={saving || !decisionForm.note.trim()} variant={decisionForm.decision === "approved" ? "success" : "danger"}>Enregistrer la décision</Button></div>
           </div>
         </Modal>
       ) : null}
 
       {modal?.kind === "publish" ? (
-        <Modal title="Publish approved policy" description="Publish now or schedule activation. Publication updates the effective policy pointer and legacy compatibility projection transactionally." onClose={() => setModal(null)}>
+        <Modal title="Publier la politique approuvée" description="Publiez immédiatement ou planifiez l’activation. Le pointeur de politique effective est mis à jour transactionnellement par le backend existant." onClose={() => setModal(null)}>
           <div className="space-y-4">
-            <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-bold text-emerald-800"><CheckCircle2 className="mr-2 inline" size={17} />All required approval gates must be complete before this action succeeds.</div>
-            <Field label="Scheduled activation" hint="leave blank to publish immediately"><input className={inputClass} type="datetime-local" value={publishAt} onChange={(event) => setPublishAt(event.target.value)} /></Field>
-            <div className="flex justify-end gap-2 border-t border-slate-100 pt-4"><Button onClick={() => setModal(null)}>Cancel</Button><Button icon={publishAt ? CalendarClock : PlayCircle} onClick={() => void publish()} disabled={saving} variant="primary">{publishAt ? "Schedule publication" : "Publish now"}</Button></div>
+            <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-bold text-emerald-800"><CheckCircle2 className="mr-2 inline" size={17} />Toutes les portes d’approbation requises doivent être complètes avant que cette action puisse aboutir.</div>
+            <Field label="Activation planifiée" hint="laisser vide pour publier immédiatement"><input className={inputClass} type="datetime-local" value={publishAt} onChange={(event) => setPublishAt(event.target.value)} /></Field>
+            <div className="sticky bottom-0 -mx-6 -mb-6 flex justify-end gap-2 border-t border-slate-100 bg-white px-6 py-4"><Button onClick={() => setModal(null)}>Annuler</Button><Button icon={publishAt ? CalendarClock : PlayCircle} onClick={() => void publish()} disabled={saving} variant="primary">{publishAt ? "Planifier la publication" : "Publier maintenant"}</Button></div>
           </div>
         </Modal>
       ) : null}
 
       {modal?.kind === "rollback" ? (
-        <Modal title={`Restore policy from v${modal.version.revision}`} description="A rollback never rewrites history. It publishes a new version copied from the selected historical policy." onClose={() => setModal(null)}>
+        <Modal title={`Restaurer la politique depuis v${modal.version.revision}`} description="Une restauration ne réécrit jamais l’historique. Elle publie une nouvelle version copiée depuis la politique historique sélectionnée." onClose={() => setModal(null)}>
           <div className="space-y-4">
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm font-bold text-amber-800"><AlertTriangle className="mr-2 inline" size={17} />This changes the effective operating doctrine immediately after the transactional gate succeeds.</div>
-            <Field label="Mandatory rollback reason"><textarea className={`${inputClass} min-h-28`} value={rollbackReason} onChange={(event) => setRollbackReason(event.target.value)} placeholder="Describe the incident, risk or operational reason requiring restoration" /></Field>
-            <div className="flex justify-end gap-2 border-t border-slate-100 pt-4"><Button onClick={() => setModal(null)}>Cancel</Button><Button icon={RotateCcw} onClick={() => void rollback(modal.version)} disabled={saving || !rollbackReason.trim()} variant="danger">Publish rollback version</Button></div>
+            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm font-bold text-amber-800"><AlertTriangle className="mr-2 inline" size={17} />Cette action modifie la doctrine d’exploitation effective dès que le contrôle transactionnel aboutit.</div>
+            <Field label="Motif obligatoire de restauration"><textarea className={`${inputClass} min-h-28`} value={rollbackReason} onChange={(event) => setRollbackReason(event.target.value)} placeholder="Décrivez l’incident, le risque ou la raison opérationnelle justifiant la restauration" /></Field>
+            <div className="sticky bottom-0 -mx-6 -mb-6 flex justify-end gap-2 border-t border-slate-100 bg-white px-6 py-4"><Button onClick={() => setModal(null)}>Annuler</Button><Button icon={RotateCcw} onClick={() => void rollback(modal.version)} disabled={saving || !rollbackReason.trim()} variant="danger">Publier la version de restauration</Button></div>
           </div>
         </Modal>
       ) : null}
@@ -588,31 +687,31 @@ export default function AmbassadorSettingsControlCenter() {
 
 function Overview({ configuration, version, approvals }: { configuration: AmbassadorSettingsConfiguration; version: AmbassadorSettingsVersion | null; approvals: AmbassadorSettingsApproval[] }) {
   const controls = [
-    ["Program perimeter", `${configuration.program.activeCities.length} cities · ${configuration.program.serviceLines.length} service lines`, BriefcaseBusiness],
-    ["Recruitment gate", `Minimum score ${configuration.recruitment.interviewMinimumScore}/100`, Users],
-    ["Certification", `${configuration.training.certificationMinimumScore}/100 · ${configuration.training.certificationValidityDays} days`, GraduationCap],
-    ["Mission capacity", `${configuration.missions.maximumConcurrentMissions} concurrent · proof ${configuration.missions.proofRequired ? "required" : "optional"}`, Workflow],
-    ["Commission doctrine", `${configuration.rewards.defaultCommissionRate}% · minimum ${formatDh(configuration.rewards.minimumPayoutMad)}`, Banknote],
-    ["Governance", configuration.governance.separationOfDutiesRequired ? "Separation of duties active" : "Separation of duties disabled", ShieldCheck],
+    ["Périmètre du programme", `${configuration.program.activeCities.length} villes · ${configuration.program.serviceLines.length} lignes de service`, BriefcaseBusiness],
+    ["Filtre de recrutement", `Seuil d’entretien ${configuration.recruitment.interviewMinimumScore}/100`, Users],
+    ["Certification", `${configuration.training.certificationMinimumScore}/100 · validité ${configuration.training.certificationValidityDays} jours`, GraduationCap],
+    ["Capacité mission", `${configuration.missions.maximumConcurrentMissions} simultanée(s) · preuve ${configuration.missions.proofRequired ? "obligatoire" : "facultative"}`, Workflow],
+    ["Doctrine de commission", `${configuration.rewards.defaultCommissionRate}% · minimum ${formatDh(configuration.rewards.minimumPayoutMad)}`, Banknote],
+    ["Gouvernance", configuration.governance.separationOfDutiesRequired ? "Séparation des responsabilités active" : "Séparation des responsabilités désactivée", ShieldCheck],
   ] as Array<[string, string, IconType]>
   return (
     <div className="space-y-5">
-      <Panel title="Operating doctrine at a glance" description="The core rules this version will enforce after publication.">
+      <Panel title="Doctrine d’exploitation" description="Les règles principales que cette version appliquera après publication.">
         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-          {controls.map(([label, value, Icon]) => <div key={label} className="rounded-2xl border border-slate-200 bg-slate-50/70 p-4"><Icon className="text-violet-700" size={18} /><div className="mt-3 text-[10px] font-black uppercase tracking-[0.15em] text-slate-500">{label}</div><div className="mt-1 text-sm font-black text-slate-900">{value}</div></div>)}
+          {controls.map(([label, value, Icon]) => <div key={label} className="rounded-2xl border border-slate-200 bg-slate-50/70 p-4"><Icon className="text-blue-700" size={18} /><div className="mt-3 text-[10px] font-black uppercase tracking-[0.15em] text-slate-500">{label}</div><div className="mt-1 text-sm font-black text-slate-900">{value}</div></div>)}
         </div>
       </Panel>
       <div className="grid gap-5 xl:grid-cols-2">
-        <Panel title="Lifecycle readiness" description="Current progress through the controlled release chain.">
+        <Panel title="Préparation de la version" description="Progression actuelle dans la chaîne de publication contrôlée.">
           <div className="space-y-3">
-            {["Draft", "Validated", "Simulated", "Approved", "Published"].map((step, index) => {
+            {["Projet", "Validée", "Simulée", "Approuvée", "Publiée"].map((step, index) => {
               const complete = index === 0 || Boolean(version?.validation_result) && index <= 1 || Boolean(version?.impact_snapshot) && index <= 2 || ["approved", "scheduled", "published", "superseded"].includes(version?.status || "") && index <= 3 || ["published", "superseded"].includes(version?.status || "") && index <= 4
               return <div key={step} className="flex items-center gap-3"><span className={`grid h-7 w-7 place-items-center rounded-full ${complete ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-400"}`}>{complete ? <Check size={14} /> : index + 1}</span><span className={`text-sm font-black ${complete ? "text-slate-900" : "text-slate-400"}`}>{step}</span></div>
             })}
           </div>
         </Panel>
-        <Panel title="Approval architecture" description="Domain gates created for the selected approval round.">
-          <div className="space-y-2">{approvals.length ? approvals.map((approval) => <ApprovalRow key={approval.id} approval={approval} />) : <div className="rounded-xl bg-slate-50 p-4 text-xs font-bold text-slate-500">Approval gates are created after successful validation and submission.</div>}</div>
+        <Panel title="Architecture d’approbation" description="Domaines de décision créés pour le cycle d’approbation sélectionné.">
+          <div className="space-y-2">{approvals.length ? approvals.map((approval) => <ApprovalRow key={approval.id} approval={approval} />) : <div className="rounded-xl bg-slate-50 p-4 text-xs font-bold text-slate-500">Les portes d’approbation sont créées après validation et soumission réussies.</div>}</div>
         </Panel>
       </div>
     </div>
@@ -621,7 +720,7 @@ function Overview({ configuration, version, approvals }: { configuration: Ambass
 
 function ApprovalRow({ approval }: { approval: AmbassadorSettingsApproval }) {
   const Icon = approval.status === "approved" ? CheckCircle2 : approval.status === "pending" ? Clock3 : XCircle
-  return <div className="flex items-center gap-3 rounded-xl border border-slate-200 p-3"><span className={`grid h-8 w-8 place-items-center rounded-lg ${approval.status === "approved" ? "bg-emerald-50 text-emerald-700" : approval.status === "pending" ? "bg-amber-50 text-amber-700" : "bg-red-50 text-red-700"}`}><Icon size={16} /></span><div className="min-w-0 flex-1"><div className="text-xs font-black text-slate-900">{titleCase(approval.approval_domain)}</div><div className="mt-0.5 text-[11px] font-semibold text-slate-500">{approval.decision_note || "Awaiting authorized decision"}</div></div><StatusBadge status={approval.status} /></div>
+  return <div className="flex items-center gap-3 rounded-xl border border-slate-200 p-3"><span className={`grid h-8 w-8 place-items-center rounded-lg ${approval.status === "approved" ? "bg-emerald-50 text-emerald-700" : approval.status === "pending" ? "bg-amber-50 text-amber-700" : "bg-red-50 text-red-700"}`}><Icon size={16} /></span><div className="min-w-0 flex-1"><div className="text-xs font-black text-slate-900">{titleCase(approval.approval_domain)}</div><div className="mt-0.5 text-[11px] font-semibold text-slate-500">{approval.decision_note || "Décision autorisée en attente"}</div></div><StatusBadge status={approval.status} /></div>
 }
 
 function InfoRow({ label, value }: { label: string; value: string }) {
@@ -631,36 +730,36 @@ function InfoRow({ label, value }: { label: string; value: string }) {
 function VersionsPanel({ snapshot, selectedId, onSelect, onRollback }: { snapshot: AmbassadorSettingsControlCenterSnapshot; selectedId: string | null; onSelect: (id: string) => void; onRollback: (version: AmbassadorSettingsVersion) => void }) {
   return (
     <div className="space-y-5">
-      <Panel title="Effective policy scopes" description="Canonical published pointers resolved by the runtime from the most specific matching scope.">
+      <Panel title="Périmètres de politique effectifs" description="Pointeurs publiés résolus par le moteur existant du périmètre le plus spécifique au plus général.">
         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
           {snapshot.activeScopes.length ? snapshot.activeScopes.map((scope) => {
             const version = snapshot.versions.find((item) => item.id === scope.current_version_id)
-            return <button key={String(scope.id)} type="button" onClick={() => version && onSelect(version.id)} className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-left hover:border-violet-300"><div className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-500">{String(scope.scope_type)} · {String(scope.scope_key)}</div><div className="mt-2 text-sm font-black text-slate-900">{version ? `v${version.revision} · ${version.title}` : "Published pointer"}</div><div className="mt-1 text-[11px] font-semibold text-slate-500">Effective since {formatDate(String(scope.published_at || ""))}</div></button>
-          }) : <div className="rounded-xl bg-slate-50 p-4 text-xs font-bold text-slate-500">No versioned scope is active yet. The scoped legacy settings remain the organization baseline.</div>}
+            return <button key={String(scope.id)} type="button" onClick={() => version && onSelect(version.id)} className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-left hover:border-blue-300"><div className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-500">{titleCase(String(scope.scope_type))} · {String(scope.scope_key)}</div><div className="mt-2 text-sm font-black text-slate-900">{version ? `v${version.revision} · ${version.title}` : "Pointeur publié"}</div><div className="mt-1 text-[11px] font-semibold text-slate-500">Effective depuis le {formatDate(String(scope.published_at || ""))}</div></button>
+          }) : <div className="rounded-xl bg-slate-50 p-4 text-xs font-bold text-slate-500">Aucun périmètre versionné n’est encore actif. Les paramètres historiques restent la référence organisationnelle.</div>}
         </div>
       </Panel>
-      <Panel title="Version history" description="Every configuration remains traceable. Published history is never edited in place.">
+      <Panel title="Historique des versions" description="Chaque configuration demeure traçable. Une publication historique n’est jamais modifiée sur place.">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[860px] text-left text-xs">
-            <thead className="bg-slate-50 text-[10px] font-black uppercase tracking-[0.12em] text-slate-500"><tr><th className="px-4 py-3">Version</th><th>Title</th><th>Scope</th><th>Status</th><th>Validation</th><th>Published</th><th>Actions</th></tr></thead>
+            <thead className="bg-slate-50 text-[10px] font-black uppercase tracking-[0.12em] text-slate-500"><tr><th className="px-4 py-3">Version</th><th>Titre</th><th>Périmètre</th><th>Statut</th><th>Validation</th><th>Publication</th><th>Actions</th></tr></thead>
             <tbody>
               {snapshot.versions.map((version) => (
-                <tr key={version.id} className={`border-t border-slate-100 ${selectedId === version.id ? "bg-violet-50/60" : "hover:bg-slate-50"}`}>
+                <tr key={version.id} className={`border-t border-slate-100 ${selectedId === version.id ? "bg-blue-50/60" : "hover:bg-slate-50"}`}>
                   <td className="px-4 py-4 font-black text-slate-950">v{version.revision}</td>
-                  <td><div className="font-black text-slate-900">{version.title}</div><div className="mt-1 max-w-xs truncate font-semibold text-slate-500">{version.change_summary || "No summary"}</div></td>
-                  <td className="font-bold text-slate-600">{version.scope_type}:{version.scope_key}</td>
+                  <td><div className="font-black text-slate-900">{version.title}</div><div className="mt-1 max-w-xs truncate font-semibold text-slate-500">{version.change_summary || "Aucune synthèse"}</div></td>
+                  <td className="font-bold text-slate-600">{titleCase(version.scope_type)} : {version.scope_key}</td>
                   <td><StatusBadge status={version.status} /></td>
                   <td className="font-black">{version.validation_result ? `${version.validation_result.score}/100` : "—"}</td>
                   <td className="font-semibold text-slate-500">{formatDate(version.published_at)}</td>
-                  <td><div className="flex gap-2"><Button onClick={() => onSelect(version.id)}>Open</Button>{snapshot.capabilities.canRollback && ["published", "superseded", "rolled_back"].includes(version.status) ? <Button icon={RotateCcw} onClick={() => onRollback(version)} variant="danger">Restore</Button> : null}</div></td>
+                  <td><div className="flex gap-2"><Button onClick={() => onSelect(version.id)}>Ouvrir</Button>{snapshot.capabilities.canRollback && ["published", "superseded", "rolled_back"].includes(version.status) ? <Button icon={RotateCcw} onClick={() => onRollback(version)} variant="danger">Restaurer</Button> : null}</div></td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
       </Panel>
-      <Panel title="Immutable runtime evidence" description="Recent validation, simulation, publication and rollback events.">
-        <div className="space-y-2">{snapshot.runtimeEvents.length ? snapshot.runtimeEvents.map((event) => <div key={event.id} className="flex items-start gap-3 rounded-xl border border-slate-200 p-3"><span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-slate-50 text-violet-700"><Activity size={15} /></span><div className="min-w-0 flex-1"><div className="flex flex-wrap items-center gap-2"><b className="text-xs text-slate-900">{titleCase(event.event_type)}</b><StatusBadge status={event.status} /></div><p className="mt-1 text-xs font-semibold text-slate-600">{event.summary}</p><p className="mt-1 text-[10px] font-bold text-slate-400">{formatDate(event.created_at)}</p></div></div>) : <div className="rounded-xl bg-slate-50 p-4 text-xs font-bold text-slate-500">No runtime evidence recorded yet.</div>}</div>
+      <Panel title="Preuves d’exécution immuables" description="Derniers événements de validation, simulation, publication et restauration.">
+        <div className="space-y-2">{snapshot.runtimeEvents.length ? snapshot.runtimeEvents.map((event) => <div key={event.id} className="flex items-start gap-3 rounded-xl border border-slate-200 p-3"><span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-slate-50 text-blue-700"><Activity size={15} /></span><div className="min-w-0 flex-1"><div className="flex flex-wrap items-center gap-2"><b className="text-xs text-slate-900">{titleCase(event.event_type)}</b><StatusBadge status={event.status} /></div><p className="mt-1 text-xs font-semibold text-slate-600">{event.summary}</p><p className="mt-1 text-[10px] font-bold text-slate-400">{formatDate(event.created_at)}</p></div></div>) : <div className="rounded-xl bg-slate-50 p-4 text-xs font-bold text-slate-500">Aucune preuve d’exécution enregistrée.</div>}</div>
       </Panel>
     </div>
   )
@@ -669,180 +768,180 @@ function VersionsPanel({ snapshot, selectedId, onSelect, onRollback }: { snapsho
 function DomainEditor({ domain, configuration, mutate, disabled }: { domain: Exclude<DomainKey, "overview" | "versions">; configuration: AmbassadorSettingsConfiguration; mutate: <K extends Exclude<DomainKey, "overview" | "versions">>(key: K, patch: Partial<AmbassadorSettingsConfiguration[K]>) => void; disabled: boolean }) {
   if (domain === "program") {
     const value = configuration.program
-    return <div><SectionIntro icon={BriefcaseBusiness} title="Program identity and operating perimeter" description="Define the national program, active cities, service coverage, ownership and capacity without changing live operations until publication." /><div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-      <Field label="Program name"><TextField value={value.programName} onChange={(programName) => mutate("program", { programName })} disabled={disabled} /></Field>
-      <Field label="Program code"><TextField value={value.programCode} onChange={(programCode) => mutate("program", { programCode })} disabled={disabled} /></Field>
-      <Field label="Program status"><SelectField value={value.status} onChange={(status) => mutate("program", { status: status as typeof value.status })} disabled={disabled} options={["active", "paused", "restricted", "archived"].map((item) => ({ value: item, label: titleCase(item) }))} /></Field>
-      <Field label="Country"><TextField value={value.country} onChange={(country) => mutate("program", { country })} disabled={disabled} /></Field>
-      <Field label="Default region"><TextField value={value.defaultRegion} onChange={(defaultRegion) => mutate("program", { defaultRegion })} disabled={disabled} /></Field>
-      <Field label="Timezone"><TextField value={value.timezone} onChange={(timezone) => mutate("program", { timezone })} disabled={disabled} /></Field>
-      <Field label="Capacity target"><NumberField value={value.capacityTarget} onChange={(capacityTarget) => mutate("program", { capacityTarget })} disabled={disabled} min={1} /></Field>
-      <Field label="Maximum active Ambassadors"><NumberField value={value.maximumActiveAmbassadors} onChange={(maximumActiveAmbassadors) => mutate("program", { maximumActiveAmbassadors })} disabled={disabled} min={1} /></Field>
-      <Field label="Default language"><SelectField value={value.defaultLanguage} onChange={(defaultLanguage) => mutate("program", { defaultLanguage: defaultLanguage as typeof value.defaultLanguage })} disabled={disabled} options={[{ value: "fr", label: "French" }, { value: "ar", label: "Arabic" }, { value: "en", label: "English" }]} /></Field>
-      <Field label="Program owner"><TextField value={value.programOwner} onChange={(programOwner) => mutate("program", { programOwner })} disabled={disabled} /></Field>
-      <Field label="Compliance owner"><TextField value={value.complianceOwner} onChange={(complianceOwner) => mutate("program", { complianceOwner })} disabled={disabled} /></Field>
-      <Field label="Finance owner"><TextField value={value.financeOwner} onChange={(financeOwner) => mutate("program", { financeOwner })} disabled={disabled} /></Field>
-      <div className="md:col-span-2"><Field label="Active cities"><ListField value={value.activeCities} onChange={(activeCities) => mutate("program", { activeCities })} disabled={disabled} /></Field></div>
-      <div><Field label="Service lines"><ListField value={value.serviceLines} onChange={(serviceLines) => mutate("program", { serviceLines })} disabled={disabled} /></Field></div>
-      <div className="md:col-span-2 xl:col-span-3"><Toggle checked={value.applicationOpen} onChange={(applicationOpen) => mutate("program", { applicationOpen })} disabled={disabled} label="Public applications open" description="When disabled, new Ambassador applications must be blocked at intake." /></div>
+    return <div><SectionIntro icon={BriefcaseBusiness} title="Identité du programme et périmètre d’exploitation" description="Définissez le programme national, les villes actives, la couverture de services, les responsables et la capacité sans modifier la production avant publication." /><div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+      <Field label="Nom du programme"><TextField value={value.programName} onChange={(programName) => mutate("program", { programName })} disabled={disabled} /></Field>
+      <Field label="Code du programme"><TextField value={value.programCode} onChange={(programCode) => mutate("program", { programCode })} disabled={disabled} /></Field>
+      <Field label="État du programme"><SelectField value={value.status} onChange={(status) => mutate("program", { status: status as typeof value.status })} disabled={disabled} options={["active", "paused", "restricted", "archived"].map((item) => ({ value: item, label: titleCase(item) }))} /></Field>
+      <Field label="Pays"><TextField value={value.country} onChange={(country) => mutate("program", { country })} disabled={disabled} /></Field>
+      <Field label="Région par défaut"><TextField value={value.defaultRegion} onChange={(defaultRegion) => mutate("program", { defaultRegion })} disabled={disabled} /></Field>
+      <Field label="Fuseau horaire"><TextField value={value.timezone} onChange={(timezone) => mutate("program", { timezone })} disabled={disabled} /></Field>
+      <Field label="Objectif de capacité"><NumberField value={value.capacityTarget} onChange={(capacityTarget) => mutate("program", { capacityTarget })} disabled={disabled} min={1} /></Field>
+      <Field label="Maximum d’Ambassadeurs actifs"><NumberField value={value.maximumActiveAmbassadors} onChange={(maximumActiveAmbassadors) => mutate("program", { maximumActiveAmbassadors })} disabled={disabled} min={1} /></Field>
+      <Field label="Langue par défaut"><SelectField value={value.defaultLanguage} onChange={(defaultLanguage) => mutate("program", { defaultLanguage: defaultLanguage as typeof value.defaultLanguage })} disabled={disabled} options={[{ value: "fr", label: "Français" }, { value: "ar", label: "Arabe" }, { value: "en", label: "Anglais" }]} /></Field>
+      <Field label="Responsable du programme"><TextField value={value.programOwner} onChange={(programOwner) => mutate("program", { programOwner })} disabled={disabled} /></Field>
+      <Field label="Responsable conformité"><TextField value={value.complianceOwner} onChange={(complianceOwner) => mutate("program", { complianceOwner })} disabled={disabled} /></Field>
+      <Field label="Responsable finance"><TextField value={value.financeOwner} onChange={(financeOwner) => mutate("program", { financeOwner })} disabled={disabled} /></Field>
+      <div className="md:col-span-2"><Field label="Villes actives"><ListField value={value.activeCities} onChange={(activeCities) => mutate("program", { activeCities })} disabled={disabled} /></Field></div>
+      <div><Field label="Lignes de service"><ListField value={value.serviceLines} onChange={(serviceLines) => mutate("program", { serviceLines })} disabled={disabled} /></Field></div>
+      <div className="md:col-span-2 xl:col-span-3"><Toggle checked={value.applicationOpen} onChange={(applicationOpen) => mutate("program", { applicationOpen })} disabled={disabled} label="Candidatures publiques ouvertes" description="Lorsque ce paramètre est désactivé, les nouvelles candidatures doivent être bloquées à l’entrée." /></div>
     </div></div>
   }
 
   if (domain === "recruitment") {
     const value = configuration.recruitment
-    return <div><SectionIntro icon={Users} title="Recruitment and eligibility doctrine" description="Control identity requirements, deduplication, selection thresholds, lifecycle stages and exception authority." /><div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-      <Field label="Minimum age"><NumberField value={value.minimumAge} onChange={(minimumAge) => mutate("recruitment", { minimumAge })} disabled={disabled} min={18} /></Field>
-      <Field label="Interview minimum score"><NumberField value={value.interviewMinimumScore} onChange={(interviewMinimumScore) => mutate("recruitment", { interviewMinimumScore })} disabled={disabled} min={0} max={100} /></Field>
-      <Field label="Candidate retention days"><NumberField value={value.candidateRetentionDays} onChange={(candidateRetentionDays) => mutate("recruitment", { candidateRetentionDays })} disabled={disabled} min={1} /></Field>
-      <Field label="Duplicate policy"><SelectField value={value.duplicatePolicy} onChange={(duplicatePolicy) => mutate("recruitment", { duplicatePolicy: duplicatePolicy as typeof value.duplicatePolicy })} disabled={disabled} options={[{ value: "email_or_phone", label: "Email or phone" }, { value: "email", label: "Email only" }, { value: "phone", label: "Phone only" }]} /></Field>
-      <Field label="Required fields"><ListField value={value.requiredFields} onChange={(requiredFields) => mutate("recruitment", { requiredFields })} disabled={disabled} /></Field>
-      <Field label="Required documents"><ListField value={value.requiredDocuments} onChange={(requiredDocuments) => mutate("recruitment", { requiredDocuments })} disabled={disabled} /></Field>
-      <Field label="Accepted cities"><ListField value={value.acceptedCities} onChange={(acceptedCities) => mutate("recruitment", { acceptedCities })} disabled={disabled} /></Field>
-      <Field label="Required languages"><ListField value={value.requiredLanguages} onChange={(requiredLanguages) => mutate("recruitment", { requiredLanguages })} disabled={disabled} /></Field>
-      <Field label="Controlled stages"><ListField value={value.stages} onChange={(stages) => mutate("recruitment", { stages })} disabled={disabled} /></Field>
-      <div className="md:col-span-2 xl:col-span-3 grid gap-3 md:grid-cols-2"><Toggle checked={value.allowManualExceptions} onChange={(allowManualExceptions) => mutate("recruitment", { allowManualExceptions })} disabled={disabled} label="Allow documented exceptions" /><Toggle checked={value.conversionRequiresApproval} onChange={(conversionRequiresApproval) => mutate("recruitment", { conversionRequiresApproval })} disabled={disabled} label="Candidate conversion requires approval" /></div>
-      <div className="md:col-span-2 xl:col-span-3"><Field label="Automatic rejection reasons"><ListField value={value.automaticRejectionReasons} onChange={(automaticRejectionReasons) => mutate("recruitment", { automaticRejectionReasons })} disabled={disabled} /></Field></div>
+    return <div><SectionIntro icon={Users} title="Doctrine de recrutement et d’éligibilité" description="Contrôlez les exigences d’identité, la déduplication, les seuils de sélection, les étapes du cycle et l’autorité d’exception." /><div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+      <Field label="Âge minimum"><NumberField value={value.minimumAge} onChange={(minimumAge) => mutate("recruitment", { minimumAge })} disabled={disabled} min={18} /></Field>
+      <Field label="Seuil minimum d’entretien"><NumberField value={value.interviewMinimumScore} onChange={(interviewMinimumScore) => mutate("recruitment", { interviewMinimumScore })} disabled={disabled} min={0} max={100} /></Field>
+      <Field label="Conservation des candidats — jours"><NumberField value={value.candidateRetentionDays} onChange={(candidateRetentionDays) => mutate("recruitment", { candidateRetentionDays })} disabled={disabled} min={1} /></Field>
+      <Field label="Politique de doublons"><SelectField value={value.duplicatePolicy} onChange={(duplicatePolicy) => mutate("recruitment", { duplicatePolicy: duplicatePolicy as typeof value.duplicatePolicy })} disabled={disabled} options={[{ value: "email_or_phone", label: "Email or phone" }, { value: "email", label: "Email only" }, { value: "phone", label: "Phone only" }]} /></Field>
+      <Field label="Champs obligatoires"><ListField value={value.requiredFields} onChange={(requiredFields) => mutate("recruitment", { requiredFields })} disabled={disabled} /></Field>
+      <Field label="Documents obligatoires"><ListField value={value.requiredDocuments} onChange={(requiredDocuments) => mutate("recruitment", { requiredDocuments })} disabled={disabled} /></Field>
+      <Field label="Villes acceptées"><ListField value={value.acceptedCities} onChange={(acceptedCities) => mutate("recruitment", { acceptedCities })} disabled={disabled} /></Field>
+      <Field label="Langues requises"><ListField value={value.requiredLanguages} onChange={(requiredLanguages) => mutate("recruitment", { requiredLanguages })} disabled={disabled} /></Field>
+      <Field label="Étapes contrôlées"><ListField value={value.stages} onChange={(stages) => mutate("recruitment", { stages })} disabled={disabled} /></Field>
+      <div className="md:col-span-2 xl:col-span-3 grid gap-3 md:grid-cols-2"><Toggle checked={value.allowManualExceptions} onChange={(allowManualExceptions) => mutate("recruitment", { allowManualExceptions })} disabled={disabled} label="Autoriser les exceptions documentées" /><Toggle checked={value.conversionRequiresApproval} onChange={(conversionRequiresApproval) => mutate("recruitment", { conversionRequiresApproval })} disabled={disabled} label="Conversion du candidat soumise à approbation" /></div>
+      <div className="md:col-span-2 xl:col-span-3"><Field label="Motifs de rejet automatique"><ListField value={value.automaticRejectionReasons} onChange={(automaticRejectionReasons) => mutate("recruitment", { automaticRejectionReasons })} disabled={disabled} /></Field></div>
     </div></div>
   }
 
   if (domain === "onboarding") {
     const value = configuration.onboarding
-    return <div><SectionIntro icon={ClipboardCheck} title="Onboarding and activation gates" description="Determine exactly what must be completed before an Ambassador becomes operational." /><div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-      <Field label="Completion deadline days"><NumberField value={value.completionDeadlineDays} onChange={(completionDeadlineDays) => mutate("onboarding", { completionDeadlineDays })} disabled={disabled} min={1} /></Field>
-      <Field label="Reminder interval hours"><NumberField value={value.automaticReminderHours} onChange={(automaticReminderHours) => mutate("onboarding", { automaticReminderHours })} disabled={disabled} min={1} /></Field>
-      <Field label="Escalation after hours"><NumberField value={value.escalationAfterHours} onChange={(escalationAfterHours) => mutate("onboarding", { escalationAfterHours })} disabled={disabled} min={1} /></Field>
-      <div className="md:col-span-2 xl:col-span-3"><Field label="Mandatory activation steps"><ListField value={value.mandatorySteps} onChange={(mandatorySteps) => mutate("onboarding", { mandatorySteps })} disabled={disabled} /></Field></div>
-      <Toggle checked={value.profileVerificationRequired} onChange={(profileVerificationRequired) => mutate("onboarding", { profileVerificationRequired })} disabled={disabled} label="Profile verification required" />
-      <Toggle checked={value.contractAcknowledgementRequired} onChange={(contractAcknowledgementRequired) => mutate("onboarding", { contractAcknowledgementRequired })} disabled={disabled} label="Contract acknowledgement required" />
-      <Toggle checked={value.bankDetailsRequired} onChange={(bankDetailsRequired) => mutate("onboarding", { bankDetailsRequired })} disabled={disabled} label="Bank details required" />
-      <Toggle checked={value.territoryConfirmationRequired} onChange={(territoryConfirmationRequired) => mutate("onboarding", { territoryConfirmationRequired })} disabled={disabled} label="Territory confirmation required" />
-      <Toggle checked={value.managerApprovalRequired} onChange={(managerApprovalRequired) => mutate("onboarding", { managerApprovalRequired })} disabled={disabled} label="Manager approval required" />
-      <Toggle checked={value.suspendOnExpiredDocuments} onChange={(suspendOnExpiredDocuments) => mutate("onboarding", { suspendOnExpiredDocuments })} disabled={disabled} label="Suspend on expired documents" />
+    return <div><SectionIntro icon={ClipboardCheck} title="Portes d’intégration et d’activation" description="Déterminez précisément ce qui doit être accompli avant qu’un Ambassadeur devienne opérationnel." /><div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+      <Field label="Délai de réalisation — jours"><NumberField value={value.completionDeadlineDays} onChange={(completionDeadlineDays) => mutate("onboarding", { completionDeadlineDays })} disabled={disabled} min={1} /></Field>
+      <Field label="Intervalle de rappel — heures"><NumberField value={value.automaticReminderHours} onChange={(automaticReminderHours) => mutate("onboarding", { automaticReminderHours })} disabled={disabled} min={1} /></Field>
+      <Field label="Escalade après — heures"><NumberField value={value.escalationAfterHours} onChange={(escalationAfterHours) => mutate("onboarding", { escalationAfterHours })} disabled={disabled} min={1} /></Field>
+      <div className="md:col-span-2 xl:col-span-3"><Field label="Étapes d’activation obligatoires"><ListField value={value.mandatorySteps} onChange={(mandatorySteps) => mutate("onboarding", { mandatorySteps })} disabled={disabled} /></Field></div>
+      <Toggle checked={value.profileVerificationRequired} onChange={(profileVerificationRequired) => mutate("onboarding", { profileVerificationRequired })} disabled={disabled} label="Vérification du profil obligatoire" />
+      <Toggle checked={value.contractAcknowledgementRequired} onChange={(contractAcknowledgementRequired) => mutate("onboarding", { contractAcknowledgementRequired })} disabled={disabled} label="Acceptation du contrat obligatoire" />
+      <Toggle checked={value.bankDetailsRequired} onChange={(bankDetailsRequired) => mutate("onboarding", { bankDetailsRequired })} disabled={disabled} label="Coordonnées bancaires obligatoires" />
+      <Toggle checked={value.territoryConfirmationRequired} onChange={(territoryConfirmationRequired) => mutate("onboarding", { territoryConfirmationRequired })} disabled={disabled} label="Confirmation du territoire obligatoire" />
+      <Toggle checked={value.managerApprovalRequired} onChange={(managerApprovalRequired) => mutate("onboarding", { managerApprovalRequired })} disabled={disabled} label="Approbation manager obligatoire" />
+      <Toggle checked={value.suspendOnExpiredDocuments} onChange={(suspendOnExpiredDocuments) => mutate("onboarding", { suspendOnExpiredDocuments })} disabled={disabled} label="Suspendre en cas de documents expirés" />
     </div></div>
   }
 
   if (domain === "training") {
     const value = configuration.training
-    return <div><SectionIntro icon={GraduationCap} title="Training and certification controls" description="Protect mission quality through mandatory learning, passing scores, validity and recertification gates." /><div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-      <Field label="Certification minimum score"><NumberField value={value.certificationMinimumScore} onChange={(certificationMinimumScore) => mutate("training", { certificationMinimumScore })} disabled={disabled} min={60} max={100} /></Field>
-      <Field label="Maximum attempts"><NumberField value={value.maximumAttempts} onChange={(maximumAttempts) => mutate("training", { maximumAttempts })} disabled={disabled} min={1} /></Field>
-      <Field label="Certification validity days"><NumberField value={value.certificationValidityDays} onChange={(certificationValidityDays) => mutate("training", { certificationValidityDays })} disabled={disabled} min={30} /></Field>
-      <Field label="Recertification reminder days"><NumberField value={value.recertificationReminderDays} onChange={(recertificationReminderDays) => mutate("training", { recertificationReminderDays })} disabled={disabled} min={1} /></Field>
-      <div className="md:col-span-2"><Field label="Mandatory programs"><ListField value={value.mandatoryPrograms} onChange={(mandatoryPrograms) => mutate("training", { mandatoryPrograms })} disabled={disabled} /></Field></div>
-      <Field label="Authorized certifier roles"><ListField value={value.authorizedCertifierRoles} onChange={(authorizedCertifierRoles) => mutate("training", { authorizedCertifierRoles })} disabled={disabled} /></Field>
-      <Toggle checked={value.fieldShadowingRequired} onChange={(fieldShadowingRequired) => mutate("training", { fieldShadowingRequired })} disabled={disabled} label="Field shadowing required" />
-      <Toggle checked={value.suspendOnCertificationExpiry} onChange={(suspendOnCertificationExpiry) => mutate("training", { suspendOnCertificationExpiry })} disabled={disabled} label="Suspend expired certifications" />
-      <Toggle checked={value.highRiskMissionCertificationRequired} onChange={(highRiskMissionCertificationRequired) => mutate("training", { highRiskMissionCertificationRequired })} disabled={disabled} label="High-risk mission certification gate" />
+    return <div><SectionIntro icon={GraduationCap} title="Contrôles de formation et certification" description="Protégez la qualité des missions grâce aux formations obligatoires, seuils de réussite, durées de validité et recertifications." /><div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+      <Field label="Seuil minimum de certification"><NumberField value={value.certificationMinimumScore} onChange={(certificationMinimumScore) => mutate("training", { certificationMinimumScore })} disabled={disabled} min={60} max={100} /></Field>
+      <Field label="Nombre maximal de tentatives"><NumberField value={value.maximumAttempts} onChange={(maximumAttempts) => mutate("training", { maximumAttempts })} disabled={disabled} min={1} /></Field>
+      <Field label="Validité de la certification — jours"><NumberField value={value.certificationValidityDays} onChange={(certificationValidityDays) => mutate("training", { certificationValidityDays })} disabled={disabled} min={30} /></Field>
+      <Field label="Rappel de recertification — jours"><NumberField value={value.recertificationReminderDays} onChange={(recertificationReminderDays) => mutate("training", { recertificationReminderDays })} disabled={disabled} min={1} /></Field>
+      <div className="md:col-span-2"><Field label="Programmes obligatoires"><ListField value={value.mandatoryPrograms} onChange={(mandatoryPrograms) => mutate("training", { mandatoryPrograms })} disabled={disabled} /></Field></div>
+      <Field label="Rôles autorisés à certifier"><ListField value={value.authorizedCertifierRoles} onChange={(authorizedCertifierRoles) => mutate("training", { authorizedCertifierRoles })} disabled={disabled} /></Field>
+      <Toggle checked={value.fieldShadowingRequired} onChange={(fieldShadowingRequired) => mutate("training", { fieldShadowingRequired })} disabled={disabled} label="Immersion terrain obligatoire" />
+      <Toggle checked={value.suspendOnCertificationExpiry} onChange={(suspendOnCertificationExpiry) => mutate("training", { suspendOnCertificationExpiry })} disabled={disabled} label="Suspendre les certifications expirées" />
+      <Toggle checked={value.highRiskMissionCertificationRequired} onChange={(highRiskMissionCertificationRequired) => mutate("training", { highRiskMissionCertificationRequired })} disabled={disabled} label="Certification obligatoire pour missions à risque élevé" />
     </div></div>
   }
 
   if (domain === "territories") {
     const value = configuration.territories
-    return <div><SectionIntro icon={MapPinned} title="Territory and field capacity rules" description="Configure geographic hierarchy, primary/backup assignment doctrine, capacity and coverage escalation." /><div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-      <Field label="Maximum Ambassadors per territory"><NumberField value={value.maximumAmbassadorsPerTerritory} onChange={(maximumAmbassadorsPerTerritory) => mutate("territories", { maximumAmbassadorsPerTerritory })} disabled={disabled} min={1} /></Field>
-      <Field label="Default assignment days"><NumberField value={value.defaultAssignmentDays} onChange={(defaultAssignmentDays) => mutate("territories", { defaultAssignmentDays })} disabled={disabled} min={1} /></Field>
-      <Field label="Travel radius km"><NumberField value={value.travelRadiusKm} onChange={(travelRadiusKm) => mutate("territories", { travelRadiusKm })} disabled={disabled} min={0} /></Field>
-      <Field label="Coverage escalation hours"><NumberField value={value.uncoveredTerritoryEscalationHours} onChange={(uncoveredTerritoryEscalationHours) => mutate("territories", { uncoveredTerritoryEscalationHours })} disabled={disabled} min={1} /></Field>
-      <div className="md:col-span-2"><Field label="Territory hierarchy"><ListField value={value.hierarchyLevels} onChange={(hierarchyLevels) => mutate("territories", { hierarchyLevels })} disabled={disabled} /></Field></div>
-      <Toggle checked={value.exclusivePrimaryAssignment} onChange={(exclusivePrimaryAssignment) => mutate("territories", { exclusivePrimaryAssignment })} disabled={disabled} label="Exclusive primary assignment" />
-      <Toggle checked={value.managerApprovalRequired} onChange={(managerApprovalRequired) => mutate("territories", { managerApprovalRequired })} disabled={disabled} label="Manager approval required" />
-      <Toggle checked={value.allowBackupAssignments} onChange={(allowBackupAssignments) => mutate("territories", { allowBackupAssignments })} disabled={disabled} label="Allow backup assignments" />
-      <Toggle checked={value.allowTemporaryAssignments} onChange={(allowTemporaryAssignments) => mutate("territories", { allowTemporaryAssignments })} disabled={disabled} label="Allow temporary assignments" />
+    return <div><SectionIntro icon={MapPinned} title="Règles de territoire et capacité terrain" description="Configurez la hiérarchie géographique, les affectations principales et de secours, la capacité et l’escalade de couverture." /><div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+      <Field label="Maximum d’Ambassadeurs par territoire"><NumberField value={value.maximumAmbassadorsPerTerritory} onChange={(maximumAmbassadorsPerTerritory) => mutate("territories", { maximumAmbassadorsPerTerritory })} disabled={disabled} min={1} /></Field>
+      <Field label="Durée d’affectation par défaut — jours"><NumberField value={value.defaultAssignmentDays} onChange={(defaultAssignmentDays) => mutate("territories", { defaultAssignmentDays })} disabled={disabled} min={1} /></Field>
+      <Field label="Rayon de déplacement — km"><NumberField value={value.travelRadiusKm} onChange={(travelRadiusKm) => mutate("territories", { travelRadiusKm })} disabled={disabled} min={0} /></Field>
+      <Field label="Escalade de couverture — heures"><NumberField value={value.uncoveredTerritoryEscalationHours} onChange={(uncoveredTerritoryEscalationHours) => mutate("territories", { uncoveredTerritoryEscalationHours })} disabled={disabled} min={1} /></Field>
+      <div className="md:col-span-2"><Field label="Hiérarchie territoriale"><ListField value={value.hierarchyLevels} onChange={(hierarchyLevels) => mutate("territories", { hierarchyLevels })} disabled={disabled} /></Field></div>
+      <Toggle checked={value.exclusivePrimaryAssignment} onChange={(exclusivePrimaryAssignment) => mutate("territories", { exclusivePrimaryAssignment })} disabled={disabled} label="Affectation principale exclusive" />
+      <Toggle checked={value.managerApprovalRequired} onChange={(managerApprovalRequired) => mutate("territories", { managerApprovalRequired })} disabled={disabled} label="Approbation manager obligatoire" />
+      <Toggle checked={value.allowBackupAssignments} onChange={(allowBackupAssignments) => mutate("territories", { allowBackupAssignments })} disabled={disabled} label="Autoriser les affectations de secours" />
+      <Toggle checked={value.allowTemporaryAssignments} onChange={(allowTemporaryAssignments) => mutate("territories", { allowTemporaryAssignments })} disabled={disabled} label="Autoriser les affectations temporaires" />
     </div></div>
   }
 
   if (domain === "missions") {
     const value = configuration.missions
-    return <div><SectionIntro icon={Workflow} title="Mission execution policy" description="Define eligibility, concurrency, evidence, checkpoints, escalation and completion gates for field execution." /><div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-      <Field label="Maximum concurrent missions"><NumberField value={value.maximumConcurrentMissions} onChange={(maximumConcurrentMissions) => mutate("missions", { maximumConcurrentMissions })} disabled={disabled} min={1} /></Field>
-      <Field label="Acceptance deadline hours"><NumberField value={value.acceptanceDeadlineHours} onChange={(acceptanceDeadlineHours) => mutate("missions", { acceptanceDeadlineHours })} disabled={disabled} min={1} /></Field>
-      <Field label="Incident escalation hours"><NumberField value={value.incidentEscalationHours} onChange={(incidentEscalationHours) => mutate("missions", { incidentEscalationHours })} disabled={disabled} min={1} /></Field>
-      <Field label="Allowed mission types"><ListField value={value.allowedMissionTypes} onChange={(allowedMissionTypes) => mutate("missions", { allowedMissionTypes })} disabled={disabled} /></Field>
-      <div className="md:col-span-2"><Field label="Cancellation reasons"><ListField value={value.cancellationReasons} onChange={(cancellationReasons) => mutate("missions", { cancellationReasons })} disabled={disabled} /></Field></div>
-      <Toggle checked={value.proofRequired} onChange={(proofRequired) => mutate("missions", { proofRequired })} disabled={disabled} label="Proof required" />
-      <Toggle checked={value.managerReviewRequired} onChange={(managerReviewRequired) => mutate("missions", { managerReviewRequired })} disabled={disabled} label="Manager review required" />
-      <Toggle checked={value.locationEvidenceRequired} onChange={(locationEvidenceRequired) => mutate("missions", { locationEvidenceRequired })} disabled={disabled} label="Location evidence required" />
-      <Toggle checked={value.checkpointRequired} onChange={(checkpointRequired) => mutate("missions", { checkpointRequired })} disabled={disabled} label="Checkpoint required" />
-      <Toggle checked={value.completionRequiresApprovedProof} onChange={(completionRequiresApprovedProof) => mutate("missions", { completionRequiresApprovedProof })} disabled={disabled} label="Completion requires approved proof" />
+    return <div><SectionIntro icon={Workflow} title="Politique d’exécution des missions" description="Définissez l’éligibilité, la simultanéité, les preuves, les jalons, les escalades et les portes de clôture pour l’exécution terrain." /><div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+      <Field label="Maximum de missions simultanées"><NumberField value={value.maximumConcurrentMissions} onChange={(maximumConcurrentMissions) => mutate("missions", { maximumConcurrentMissions })} disabled={disabled} min={1} /></Field>
+      <Field label="Délai d’acceptation — heures"><NumberField value={value.acceptanceDeadlineHours} onChange={(acceptanceDeadlineHours) => mutate("missions", { acceptanceDeadlineHours })} disabled={disabled} min={1} /></Field>
+      <Field label="Escalade incident — heures"><NumberField value={value.incidentEscalationHours} onChange={(incidentEscalationHours) => mutate("missions", { incidentEscalationHours })} disabled={disabled} min={1} /></Field>
+      <Field label="Types de missions autorisés"><ListField value={value.allowedMissionTypes} onChange={(allowedMissionTypes) => mutate("missions", { allowedMissionTypes })} disabled={disabled} /></Field>
+      <div className="md:col-span-2"><Field label="Motifs d’annulation"><ListField value={value.cancellationReasons} onChange={(cancellationReasons) => mutate("missions", { cancellationReasons })} disabled={disabled} /></Field></div>
+      <Toggle checked={value.proofRequired} onChange={(proofRequired) => mutate("missions", { proofRequired })} disabled={disabled} label="Preuve obligatoire" />
+      <Toggle checked={value.managerReviewRequired} onChange={(managerReviewRequired) => mutate("missions", { managerReviewRequired })} disabled={disabled} label="Revue manager obligatoire" />
+      <Toggle checked={value.locationEvidenceRequired} onChange={(locationEvidenceRequired) => mutate("missions", { locationEvidenceRequired })} disabled={disabled} label="Preuve de localisation obligatoire" />
+      <Toggle checked={value.checkpointRequired} onChange={(checkpointRequired) => mutate("missions", { checkpointRequired })} disabled={disabled} label="Jalon de contrôle obligatoire" />
+      <Toggle checked={value.completionRequiresApprovedProof} onChange={(completionRequiresApprovedProof) => mutate("missions", { completionRequiresApprovedProof })} disabled={disabled} label="Clôture conditionnée par une preuve approuvée" />
     </div></div>
   }
 
   if (domain === "attribution") {
     const value = configuration.attribution
-    return <div><SectionIntro icon={Target} title="Lead, conversion and attribution rules" description="Protect revenue credit through qualified fields, duplicate handling, attribution windows, proof and dispute controls." /><div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-      <Field label="Attribution window days"><NumberField value={value.attributionWindowDays} onChange={(attributionWindowDays) => mutate("attribution", { attributionWindowDays })} disabled={disabled} min={1} /></Field>
-      <Field label="Dispute window days"><NumberField value={value.disputeWindowDays} onChange={(disputeWindowDays) => mutate("attribution", { disputeWindowDays })} disabled={disabled} min={1} /></Field>
-      <Field label="Duplicate lead policy"><SelectField value={value.duplicateLeadPolicy} onChange={(duplicateLeadPolicy) => mutate("attribution", { duplicateLeadPolicy: duplicateLeadPolicy as typeof value.duplicateLeadPolicy })} disabled={disabled} options={[{ value: "merge", label: "Merge" }, { value: "reject", label: "Reject" }, { value: "manual_review", label: "Manual review" }]} /></Field>
-      <Field label="Required lead fields"><ListField value={value.requiredLeadFields} onChange={(requiredLeadFields) => mutate("attribution", { requiredLeadFields })} disabled={disabled} /></Field>
-      <div className="md:col-span-2"><Field label="Validation authority roles"><ListField value={value.validationAuthorityRoles} onChange={(validationAuthorityRoles) => mutate("attribution", { validationAuthorityRoles })} disabled={disabled} /></Field></div>
-      <Toggle checked={value.promoCodeAttributionEnabled} onChange={(promoCodeAttributionEnabled) => mutate("attribution", { promoCodeAttributionEnabled })} disabled={disabled} label="Promo-code attribution" />
-      <Toggle checked={value.referralLinkAttributionEnabled} onChange={(referralLinkAttributionEnabled) => mutate("attribution", { referralLinkAttributionEnabled })} disabled={disabled} label="Referral-link attribution" />
-      <Toggle checked={value.manualAttributionRequiresApproval} onChange={(manualAttributionRequiresApproval) => mutate("attribution", { manualAttributionRequiresApproval })} disabled={disabled} label="Manual attribution approval" />
-      <Toggle checked={value.conversionProofRequired} onChange={(conversionProofRequired) => mutate("attribution", { conversionProofRequired })} disabled={disabled} label="Conversion proof required" />
-      <Toggle checked={value.refundReversesAttribution} onChange={(refundReversesAttribution) => mutate("attribution", { refundReversesAttribution })} disabled={disabled} label="Refund reverses attribution" />
+    return <div><SectionIntro icon={Target} title="Règles de leads, conversion et attribution" description="Protégez l’attribution du revenu par des champs qualifiés, la gestion des doublons, les fenêtres d’attribution, les preuves et les contrôles de litige." /><div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+      <Field label="Fenêtre d’attribution — jours"><NumberField value={value.attributionWindowDays} onChange={(attributionWindowDays) => mutate("attribution", { attributionWindowDays })} disabled={disabled} min={1} /></Field>
+      <Field label="Fenêtre de litige — jours"><NumberField value={value.disputeWindowDays} onChange={(disputeWindowDays) => mutate("attribution", { disputeWindowDays })} disabled={disabled} min={1} /></Field>
+      <Field label="Politique de doublons des leads"><SelectField value={value.duplicateLeadPolicy} onChange={(duplicateLeadPolicy) => mutate("attribution", { duplicateLeadPolicy: duplicateLeadPolicy as typeof value.duplicateLeadPolicy })} disabled={disabled} options={[{ value: "merge", label: "Merge" }, { value: "reject", label: "Rejeter" }, { value: "manual_review", label: "Manual review" }]} /></Field>
+      <Field label="Champs obligatoires du lead"><ListField value={value.requiredLeadFields} onChange={(requiredLeadFields) => mutate("attribution", { requiredLeadFields })} disabled={disabled} /></Field>
+      <div className="md:col-span-2"><Field label="Rôles autorisés à valider"><ListField value={value.validationAuthorityRoles} onChange={(validationAuthorityRoles) => mutate("attribution", { validationAuthorityRoles })} disabled={disabled} /></Field></div>
+      <Toggle checked={value.promoCodeAttributionEnabled} onChange={(promoCodeAttributionEnabled) => mutate("attribution", { promoCodeAttributionEnabled })} disabled={disabled} label="Attribution par code promotionnel" />
+      <Toggle checked={value.referralLinkAttributionEnabled} onChange={(referralLinkAttributionEnabled) => mutate("attribution", { referralLinkAttributionEnabled })} disabled={disabled} label="Attribution par lien de recommandation" />
+      <Toggle checked={value.manualAttributionRequiresApproval} onChange={(manualAttributionRequiresApproval) => mutate("attribution", { manualAttributionRequiresApproval })} disabled={disabled} label="Approbation de l’attribution manuelle" />
+      <Toggle checked={value.conversionProofRequired} onChange={(conversionProofRequired) => mutate("attribution", { conversionProofRequired })} disabled={disabled} label="Preuve de conversion obligatoire" />
+      <Toggle checked={value.refundReversesAttribution} onChange={(refundReversesAttribution) => mutate("attribution", { refundReversesAttribution })} disabled={disabled} label="Remboursement annulant l’attribution" />
     </div></div>
   }
 
   if (domain === "rewards") {
     const value = configuration.rewards
-    return <div><SectionIntro icon={CircleDollarSign} title="Reward, commission and payout doctrine" description="Control the 10% commission baseline, financial gates, payout cycle, limits, reversals and temporary incentives." /><div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-      <Field label="Default commission rate %"><NumberField value={value.defaultCommissionRate} onChange={(defaultCommissionRate) => mutate("rewards", { defaultCommissionRate })} disabled={disabled} min={0} max={100} /></Field>
-      <Field label="Minimum payout"><NumberField value={value.minimumPayoutMad} onChange={(minimumPayoutMad) => mutate("rewards", { minimumPayoutMad })} disabled={disabled} min={0} /></Field>
-      <Field label="Maximum reward"><NumberField value={value.maximumRewardMad} onChange={(maximumRewardMad) => mutate("rewards", { maximumRewardMad })} disabled={disabled} min={0} /></Field>
-      <Field label="Payout cycle"><SelectField value={value.payoutCycle} onChange={(payoutCycle) => mutate("rewards", { payoutCycle: payoutCycle as typeof value.payoutCycle })} disabled={disabled} options={["weekly", "biweekly", "monthly"].map((item) => ({ value: item, label: titleCase(item) }))} /></Field>
-      <Field label="Temporary bonus rate %"><NumberField value={value.temporaryBonusRate} onChange={(temporaryBonusRate) => mutate("rewards", { temporaryBonusRate })} disabled={disabled || !value.temporaryBonusEnabled} min={0} max={100} /></Field>
-      <Field label="Temporary bonus end"><input className={inputClass} type="date" value={value.temporaryBonusEndsAt || ""} onChange={(event) => mutate("rewards", { temporaryBonusEndsAt: event.target.value || null })} disabled={disabled || !value.temporaryBonusEnabled} /></Field>
-      <Toggle checked={value.financeApprovalRequired} onChange={(financeApprovalRequired) => mutate("rewards", { financeApprovalRequired })} disabled={disabled} label="Finance approval required" />
-      <Toggle checked={value.proofRequiredBeforeReward} onChange={(proofRequiredBeforeReward) => mutate("rewards", { proofRequiredBeforeReward })} disabled={disabled} label="Approved proof before reward" />
-      <Toggle checked={value.paymentReferenceRequired} onChange={(paymentReferenceRequired) => mutate("rewards", { paymentReferenceRequired })} disabled={disabled} label="Payment reference required" />
-      <Toggle checked={value.refundReversesReward} onChange={(refundReversesReward) => mutate("rewards", { refundReversesReward })} disabled={disabled} label="Refund reverses reward" />
-      <Toggle checked={value.temporaryBonusEnabled} onChange={(temporaryBonusEnabled) => mutate("rewards", { temporaryBonusEnabled })} disabled={disabled} label="Temporary bonus enabled" />
+    return <div><SectionIntro icon={CircleDollarSign} title="Doctrine de récompense, commission et paiement" description="Contrôlez la commission de référence, les portes financières, le cycle de paiement, les plafonds, les annulations et les bonus temporaires." /><div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+      <Field label="Taux de commission par défaut — %"><NumberField value={value.defaultCommissionRate} onChange={(defaultCommissionRate) => mutate("rewards", { defaultCommissionRate })} disabled={disabled} min={0} max={100} /></Field>
+      <Field label="Paiement minimum — Dh"><NumberField value={value.minimumPayoutMad} onChange={(minimumPayoutMad) => mutate("rewards", { minimumPayoutMad })} disabled={disabled} min={0} /></Field>
+      <Field label="Récompense maximale — Dh"><NumberField value={value.maximumRewardMad} onChange={(maximumRewardMad) => mutate("rewards", { maximumRewardMad })} disabled={disabled} min={0} /></Field>
+      <Field label="Cycle de paiement"><SelectField value={value.payoutCycle} onChange={(payoutCycle) => mutate("rewards", { payoutCycle: payoutCycle as typeof value.payoutCycle })} disabled={disabled} options={["weekly", "biweekly", "monthly"].map((item) => ({ value: item, label: titleCase(item) }))} /></Field>
+      <Field label="Taux du bonus temporaire — %"><NumberField value={value.temporaryBonusRate} onChange={(temporaryBonusRate) => mutate("rewards", { temporaryBonusRate })} disabled={disabled || !value.temporaryBonusEnabled} min={0} max={100} /></Field>
+      <Field label="Fin du bonus temporaire"><input className={inputClass} type="date" value={value.temporaryBonusEndsAt || ""} onChange={(event) => mutate("rewards", { temporaryBonusEndsAt: event.target.value || null })} disabled={disabled || !value.temporaryBonusEnabled} /></Field>
+      <Toggle checked={value.financeApprovalRequired} onChange={(financeApprovalRequired) => mutate("rewards", { financeApprovalRequired })} disabled={disabled} label="Approbation finance obligatoire" />
+      <Toggle checked={value.proofRequiredBeforeReward} onChange={(proofRequiredBeforeReward) => mutate("rewards", { proofRequiredBeforeReward })} disabled={disabled} label="Preuve approuvée avant récompense" />
+      <Toggle checked={value.paymentReferenceRequired} onChange={(paymentReferenceRequired) => mutate("rewards", { paymentReferenceRequired })} disabled={disabled} label="Référence de paiement obligatoire" />
+      <Toggle checked={value.refundReversesReward} onChange={(refundReversesReward) => mutate("rewards", { refundReversesReward })} disabled={disabled} label="Remboursement annulant la récompense" />
+      <Toggle checked={value.temporaryBonusEnabled} onChange={(temporaryBonusEnabled) => mutate("rewards", { temporaryBonusEnabled })} disabled={disabled} label="Bonus temporaire activé" />
     </div></div>
   }
 
   if (domain === "kpis") {
     const value = configuration.kpis
     const weightTotal = Object.values(value.weights).reduce((sum, item) => sum + Number(item || 0), 0)
-    return <div><SectionIntro icon={SlidersHorizontal} title="KPI and performance doctrine" description="Set targets, performance triggers and a transparent 100-point scoring model." /><div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-      <Field label="Daily contacts"><NumberField value={value.dailyContactsTarget} onChange={(dailyContactsTarget) => mutate("kpis", { dailyContactsTarget })} disabled={disabled} min={0} /></Field>
-      <Field label="Daily qualified leads"><NumberField value={value.dailyQualifiedLeadsTarget} onChange={(dailyQualifiedLeadsTarget) => mutate("kpis", { dailyQualifiedLeadsTarget })} disabled={disabled} min={0} /></Field>
-      <Field label="Monthly conversions"><NumberField value={value.monthlyConversionsTarget} onChange={(monthlyConversionsTarget) => mutate("kpis", { monthlyConversionsTarget })} disabled={disabled} min={0} /></Field>
-      <Field label="Monthly revenue target"><NumberField value={value.monthlyRevenueTargetMad} onChange={(monthlyRevenueTargetMad) => mutate("kpis", { monthlyRevenueTargetMad })} disabled={disabled} min={0} /></Field>
-      <Field label="Follow-up SLA hours"><NumberField value={value.followUpSlaHours} onChange={(followUpSlaHours) => mutate("kpis", { followUpSlaHours })} disabled={disabled} min={1} /></Field>
-      <Field label="Inactivity threshold days"><NumberField value={value.inactivityThresholdDays} onChange={(inactivityThresholdDays) => mutate("kpis", { inactivityThresholdDays })} disabled={disabled} min={1} /></Field>
-      <Field label="Coaching trigger"><NumberField value={value.coachingTriggerScore} onChange={(coachingTriggerScore) => mutate("kpis", { coachingTriggerScore })} disabled={disabled} min={0} max={100} /></Field>
-      <Field label="Suspension trigger"><NumberField value={value.suspensionTriggerScore} onChange={(suspensionTriggerScore) => mutate("kpis", { suspensionTriggerScore })} disabled={disabled} min={0} max={100} /></Field>
-      <div className="md:col-span-2 xl:col-span-3 rounded-2xl border border-slate-200 bg-slate-50 p-4"><div className="flex items-center justify-between"><h4 className="text-xs font-black text-slate-900">Score weighting</h4><span className={`text-xs font-black ${weightTotal === 100 ? "text-emerald-700" : "text-red-700"}`}>{weightTotal}/100</span></div><div className="mt-4 grid gap-3 md:grid-cols-5">{Object.entries(value.weights).map(([key, weight]) => <Field key={key} label={titleCase(key)}><NumberField value={weight} onChange={(next) => mutate("kpis", { weights: { ...value.weights, [key]: next } })} disabled={disabled} min={0} max={100} /></Field>)}</div></div>
+    return <div><SectionIntro icon={SlidersHorizontal} title="Doctrine des objectifs et de la performance" description="Définissez les objectifs, les seuils d’intervention et la pondération transparente existante." /><div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+      <Field label="Contacts quotidiens"><NumberField value={value.dailyContactsTarget} onChange={(dailyContactsTarget) => mutate("kpis", { dailyContactsTarget })} disabled={disabled} min={0} /></Field>
+      <Field label="Leads qualifiés quotidiens"><NumberField value={value.dailyQualifiedLeadsTarget} onChange={(dailyQualifiedLeadsTarget) => mutate("kpis", { dailyQualifiedLeadsTarget })} disabled={disabled} min={0} /></Field>
+      <Field label="Conversions mensuelles"><NumberField value={value.monthlyConversionsTarget} onChange={(monthlyConversionsTarget) => mutate("kpis", { monthlyConversionsTarget })} disabled={disabled} min={0} /></Field>
+      <Field label="Objectif mensuel de chiffre d’affaires — Dh"><NumberField value={value.monthlyRevenueTargetMad} onChange={(monthlyRevenueTargetMad) => mutate("kpis", { monthlyRevenueTargetMad })} disabled={disabled} min={0} /></Field>
+      <Field label="Délai SLA de relance — heures"><NumberField value={value.followUpSlaHours} onChange={(followUpSlaHours) => mutate("kpis", { followUpSlaHours })} disabled={disabled} min={1} /></Field>
+      <Field label="Seuil d’inactivité — jours"><NumberField value={value.inactivityThresholdDays} onChange={(inactivityThresholdDays) => mutate("kpis", { inactivityThresholdDays })} disabled={disabled} min={1} /></Field>
+      <Field label="Seuil de coaching"><NumberField value={value.coachingTriggerScore} onChange={(coachingTriggerScore) => mutate("kpis", { coachingTriggerScore })} disabled={disabled} min={0} max={100} /></Field>
+      <Field label="Seuil de suspension"><NumberField value={value.suspensionTriggerScore} onChange={(suspensionTriggerScore) => mutate("kpis", { suspensionTriggerScore })} disabled={disabled} min={0} max={100} /></Field>
+      <div className="md:col-span-2 xl:col-span-3 rounded-2xl border border-slate-200 bg-slate-50 p-4"><div className="flex items-center justify-between"><h4 className="text-xs font-black text-slate-900">Pondération de la performance</h4><span className={`text-xs font-black ${weightTotal === 100 ? "text-emerald-700" : "text-red-700"}`}>{weightTotal}/100</span></div><div className="mt-4 grid gap-3 md:grid-cols-5">{Object.entries(value.weights).map(([key, weight]) => <Field key={key} label={titleCase(key)}><NumberField value={weight} onChange={(next) => mutate("kpis", { weights: { ...value.weights, [key]: next } })} disabled={disabled} min={0} max={100} /></Field>)}</div></div>
     </div></div>
   }
 
   if (domain === "communications") {
     const value = configuration.communications
     const channels = ["email", "whatsapp", "sms", "in_app"] as const
-    return <div><SectionIntro icon={BellRing} title="Communications and escalation" description="Control approved channels, consent, quiet hours, reminders, escalation and delivery resilience." /><div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-      <Field label="Blocked escalation hours"><NumberField value={value.blockedEscalationHours} onChange={(blockedEscalationHours) => mutate("communications", { blockedEscalationHours })} disabled={disabled} min={1} /></Field>
-      <Field label="Training expiry reminder days"><NumberField value={value.trainingExpiryReminderDays} onChange={(trainingExpiryReminderDays) => mutate("communications", { trainingExpiryReminderDays })} disabled={disabled} min={1} /></Field>
-      <Field label="Proof revision reminder hours"><NumberField value={value.proofRevisionReminderHours} onChange={(proofRevisionReminderHours) => mutate("communications", { proofRevisionReminderHours })} disabled={disabled} min={1} /></Field>
-      <Field label="Quiet hours start"><input className={inputClass} type="time" value={value.quietHoursStart} onChange={(event) => mutate("communications", { quietHoursStart: event.target.value })} disabled={disabled} /></Field>
-      <Field label="Quiet hours end"><input className={inputClass} type="time" value={value.quietHoursEnd} onChange={(event) => mutate("communications", { quietHoursEnd: event.target.value })} disabled={disabled} /></Field>
-      <Field label="Maximum delivery attempts"><NumberField value={value.maximumDeliveryAttempts} onChange={(maximumDeliveryAttempts) => mutate("communications", { maximumDeliveryAttempts })} disabled={disabled} min={1} /></Field>
-      <div className="md:col-span-2 xl:col-span-3 rounded-2xl border border-slate-200 p-4"><div className="text-xs font-black text-slate-900">Enabled channels</div><div className="mt-3 grid gap-3 md:grid-cols-4">{channels.map((channel) => <Toggle key={channel} checked={value.enabledChannels.includes(channel)} onChange={(checked) => mutate("communications", { enabledChannels: checked ? [...new Set([...value.enabledChannels, channel])] : value.enabledChannels.filter((item) => item !== channel) })} disabled={disabled} label={titleCase(channel)} />)}</div></div>
-      <Toggle checked={value.dailyReportRequired} onChange={(dailyReportRequired) => mutate("communications", { dailyReportRequired })} disabled={disabled} label="Daily report required" />
-      <Toggle checked={value.consentRequired} onChange={(consentRequired) => mutate("communications", { consentRequired })} disabled={disabled} label="Communication consent required" />
+    return <div><SectionIntro icon={BellRing} title="Communications et escalade" description="Contrôlez les canaux autorisés, le consentement, les heures calmes, les rappels, les escalades et la résilience de diffusion." /><div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+      <Field label="Escalade d’un blocage — heures"><NumberField value={value.blockedEscalationHours} onChange={(blockedEscalationHours) => mutate("communications", { blockedEscalationHours })} disabled={disabled} min={1} /></Field>
+      <Field label="Rappel d’expiration formation — jours"><NumberField value={value.trainingExpiryReminderDays} onChange={(trainingExpiryReminderDays) => mutate("communications", { trainingExpiryReminderDays })} disabled={disabled} min={1} /></Field>
+      <Field label="Rappel de révision de preuve — heures"><NumberField value={value.proofRevisionReminderHours} onChange={(proofRevisionReminderHours) => mutate("communications", { proofRevisionReminderHours })} disabled={disabled} min={1} /></Field>
+      <Field label="Début des heures calmes"><input className={inputClass} type="time" value={value.quietHoursStart} onChange={(event) => mutate("communications", { quietHoursStart: event.target.value })} disabled={disabled} /></Field>
+      <Field label="Fin des heures calmes"><input className={inputClass} type="time" value={value.quietHoursEnd} onChange={(event) => mutate("communications", { quietHoursEnd: event.target.value })} disabled={disabled} /></Field>
+      <Field label="Maximum de tentatives de diffusion"><NumberField value={value.maximumDeliveryAttempts} onChange={(maximumDeliveryAttempts) => mutate("communications", { maximumDeliveryAttempts })} disabled={disabled} min={1} /></Field>
+      <div className="md:col-span-2 xl:col-span-3 rounded-2xl border border-slate-200 p-4"><div className="text-xs font-black text-slate-900">Canaux activés</div><div className="mt-3 grid gap-3 md:grid-cols-4">{channels.map((channel) => <Toggle key={channel} checked={value.enabledChannels.includes(channel)} onChange={(checked) => mutate("communications", { enabledChannels: checked ? [...new Set([...value.enabledChannels, channel])] : value.enabledChannels.filter((item) => item !== channel) })} disabled={disabled} label={titleCase(channel)} />)}</div></div>
+      <Toggle checked={value.dailyReportRequired} onChange={(dailyReportRequired) => mutate("communications", { dailyReportRequired })} disabled={disabled} label="Rapport quotidien obligatoire" />
+      <Toggle checked={value.consentRequired} onChange={(consentRequired) => mutate("communications", { consentRequired })} disabled={disabled} label="Consentement de communication obligatoire" />
     </div></div>
   }
 
   const value = configuration.governance
-  return <div><SectionIntro icon={ShieldCheck} title="Security, roles and governance" description="Enforce separation of duties, approval authority, export control, sessions, emergency access and rollback governance." /><div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-    <Field label="Session maximum hours"><NumberField value={value.sessionMaximumHours} onChange={(sessionMaximumHours) => mutate("governance", { sessionMaximumHours })} disabled={disabled} min={1} /></Field>
-    <Field label="Emergency access minutes"><NumberField value={value.emergencyAccessMaximumMinutes} onChange={(emergencyAccessMaximumMinutes) => mutate("governance", { emergencyAccessMaximumMinutes })} disabled={disabled || !value.emergencyAccessEnabled} min={1} /></Field>
-    <div className="md:col-span-2"><Field label="Export-authorized roles"><ListField value={value.exportAllowedRoles} onChange={(exportAllowedRoles) => mutate("governance", { exportAllowedRoles })} disabled={disabled} /></Field></div>
-    <Toggle checked={value.separationOfDutiesRequired} onChange={(separationOfDutiesRequired) => mutate("governance", { separationOfDutiesRequired })} disabled={disabled} label="Separation of duties required" />
-    <Toggle checked={value.dualApprovalForFinanceChanges} onChange={(dualApprovalForFinanceChanges) => mutate("governance", { dualApprovalForFinanceChanges })} disabled={disabled} label="Finance changes require dual approval" />
-    <Toggle checked={value.complianceApprovalForPrivacyChanges} onChange={(complianceApprovalForPrivacyChanges) => mutate("governance", { complianceApprovalForPrivacyChanges })} disabled={disabled} label="Compliance approval for privacy changes" />
-    <Toggle checked={value.configurationChangeReasonRequired} onChange={(configurationChangeReasonRequired) => mutate("governance", { configurationChangeReasonRequired })} disabled={disabled} label="Change reason required" />
-    <Toggle checked={value.publicationRequiresValidation} onChange={(publicationRequiresValidation) => mutate("governance", { publicationRequiresValidation })} disabled={disabled} label="Validation required before publication" />
-    <Toggle checked={value.rollbackRequiresDirector} onChange={(rollbackRequiresDirector) => mutate("governance", { rollbackRequiresDirector })} disabled={disabled} label="Rollback requires director authority" />
-    <Toggle checked={value.emergencyAccessEnabled} onChange={(emergencyAccessEnabled) => mutate("governance", { emergencyAccessEnabled })} disabled={disabled} label="Emergency access enabled" description="Keep disabled unless an approved break-glass procedure is operational." />
+  return <div><SectionIntro icon={ShieldCheck} title="Sécurité, rôles et gouvernance" description="Appliquez la séparation des responsabilités, les autorités d’approbation, le contrôle des exports, les sessions, l’accès d’urgence et la gouvernance des restaurations." /><div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+    <Field label="Durée maximale de session — heures"><NumberField value={value.sessionMaximumHours} onChange={(sessionMaximumHours) => mutate("governance", { sessionMaximumHours })} disabled={disabled} min={1} /></Field>
+    <Field label="Accès d’urgence — minutes"><NumberField value={value.emergencyAccessMaximumMinutes} onChange={(emergencyAccessMaximumMinutes) => mutate("governance", { emergencyAccessMaximumMinutes })} disabled={disabled || !value.emergencyAccessEnabled} min={1} /></Field>
+    <div className="md:col-span-2"><Field label="Rôles autorisés à exporter"><ListField value={value.exportAllowedRoles} onChange={(exportAllowedRoles) => mutate("governance", { exportAllowedRoles })} disabled={disabled} /></Field></div>
+    <Toggle checked={value.separationOfDutiesRequired} onChange={(separationOfDutiesRequired) => mutate("governance", { separationOfDutiesRequired })} disabled={disabled} label="Séparation des responsabilités obligatoire" />
+    <Toggle checked={value.dualApprovalForFinanceChanges} onChange={(dualApprovalForFinanceChanges) => mutate("governance", { dualApprovalForFinanceChanges })} disabled={disabled} label="Double approbation pour les changements financiers" />
+    <Toggle checked={value.complianceApprovalForPrivacyChanges} onChange={(complianceApprovalForPrivacyChanges) => mutate("governance", { complianceApprovalForPrivacyChanges })} disabled={disabled} label="Approbation conformité pour les changements de confidentialité" />
+    <Toggle checked={value.configurationChangeReasonRequired} onChange={(configurationChangeReasonRequired) => mutate("governance", { configurationChangeReasonRequired })} disabled={disabled} label="Motif de changement obligatoire" />
+    <Toggle checked={value.publicationRequiresValidation} onChange={(publicationRequiresValidation) => mutate("governance", { publicationRequiresValidation })} disabled={disabled} label="Validation obligatoire avant publication" />
+    <Toggle checked={value.rollbackRequiresDirector} onChange={(rollbackRequiresDirector) => mutate("governance", { rollbackRequiresDirector })} disabled={disabled} label="Restauration soumise à l’autorité de direction" />
+    <Toggle checked={value.emergencyAccessEnabled} onChange={(emergencyAccessEnabled) => mutate("governance", { emergencyAccessEnabled })} disabled={disabled} label="Accès d’urgence activé" description="À maintenir désactivé tant qu’une procédure d’urgence approuvée n’est pas opérationnelle." />
   </div></div>
 }

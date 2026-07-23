@@ -277,7 +277,11 @@ export async function writeAudit(
     payload: input.payload || {},
     before_snapshot: input.before || null,
     after_snapshot: input.after || null,
-    metadata: {},
+    metadata: {
+      authentication_source: actor.authenticationSource,
+      auth_user_id: actor.authUserId,
+      app_user_id: actor.appUserId,
+    },
     created_at: new Date().toISOString(),
   }
   const result = await getAmbassadorSupabaseAdmin().from(ENTITY_CONFIG.audit.table).insert(row).select("*").single()

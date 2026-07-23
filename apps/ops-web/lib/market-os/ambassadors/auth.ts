@@ -1,11 +1,18 @@
 import { randomUUID } from "node:crypto"
-import type { AmbassadorActor, AmbassadorPermission } from "./contracts"
+import type {
+  AmbassadorActor,
+  AmbassadorAuthenticationSource,
+  AmbassadorPermission,
+} from "./contracts"
 import { AmbassadorServiceError } from "./errors"
 import { getAmbassadorSupabaseAdmin } from "./supabase"
 
+const OPS_SESSION_COOKIE = "angelcare_ops_session"
+
 type ActorRoleRow = {
   id: string
-  auth_user_id: string
+  auth_user_id: string | null
+  app_user_id: string | null
   tenant_id: string
   organization_id: string
   role_key: string
@@ -14,6 +21,8 @@ type ActorRoleRow = {
 }
 
 type PermissionRow = { permission_key: string }
+type SupabaseCredential = { token: string; explicit: boolean }
+type UnknownRow = Record<string, unknown>
 
 function parseCookies(request: Request): Map<string, string> {
   const result = new Map<string, string>()
@@ -60,19 +69,18 @@ function tokenFromStructuredCookie(value: string): string | null {
   return null
 }
 
-function extractAccessToken(request: Request): string | null {
+function extractSupabaseCredential(request: Request, cookies: Map<string, string>): SupabaseCredential | null {
   const authorization = request.headers.get("authorization")
   if (authorization?.toLowerCase().startsWith("bearer ")) {
     const token = authorization.slice(7).trim()
-    if (token) return token
+    if (token) return { token, explicit: true }
   }
 
-  const cookies = parseCookies(request)
   for (const key of ["sb-access-token", "supabase-access-token", "supabase-auth-token"]) {
     const value = cookies.get(key)
     if (value) {
       const token = tokenFromStructuredCookie(value)
-      if (token) return token
+      if (token) return { token, explicit: false }
     }
   }
 
@@ -88,9 +96,16 @@ function extractAccessToken(request: Request): string | null {
   for (const parts of grouped.values()) {
     const joined = parts.sort((a, b) => a[0] - b[0]).map((item) => item[1]).join("")
     const token = tokenFromStructuredCookie(joined)
-    if (token) return token
+    if (token) return { token, explicit: false }
   }
   return null
+}
+
+function extractOpsSessionToken(cookies: Map<string, string>): string | null {
+  const value = cookies.get(OPS_SESSION_COOKIE)
+  if (!value) return null
+  const token = decodeCookieValue(value).trim()
+  return token || null
 }
 
 function selectedScope(request: Request, memberships: ActorRoleRow[]): ActorRoleRow {
@@ -115,42 +130,85 @@ function requestIp(request: Request): string | null {
   return request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || request.headers.get("x-real-ip") || null
 }
 
-export async function resolveAmbassadorActor(request: Request): Promise<AmbassadorActor> {
-  const token = extractAccessToken(request)
-  if (!token) throw new AmbassadorServiceError("AUTH_REQUIRED", "Authentication is required", 401)
+function stringField(row: UnknownRow, keys: string[]): string | null {
+  for (const key of keys) {
+    const value = row[key]
+    if (typeof value === "string" && value.trim()) return value.trim()
+  }
+  return null
+}
 
+function isSessionRevoked(session: UnknownRow): boolean {
+  if (stringField(session, ["revoked_at", "invalidated_at", "deleted_at"])) return true
+  const status = stringField(session, ["status", "state"])?.toLowerCase()
+  return status ? ["revoked", "invalid", "invalidated", "disabled", "expired", "terminated"].includes(status) : false
+}
+
+function sessionExpired(session: UnknownRow): boolean {
+  const expiresAt = stringField(session, ["expires_at"])
+  if (!expiresAt) return true
+  const timestamp = Date.parse(expiresAt)
+  return !Number.isFinite(timestamp) || timestamp <= Date.now()
+}
+
+function configurationFailure(message: string): never {
+  throw new AmbassadorServiceError("CONFIGURATION_ERROR", message, 503)
+}
+
+async function resolveMemberships(
+  request: Request,
+  identityColumn: "auth_user_id" | "app_user_id",
+  identityValue: string,
+): Promise<ActorRoleRow> {
   const supabase = getAmbassadorSupabaseAdmin()
-  const { data: userData, error: userError } = await supabase.auth.getUser(token)
-  const user = userData?.user
-  if (userError || !user) throw new AmbassadorServiceError("AUTH_INVALID", "Authentication token is invalid or expired", 401)
-
-  const { data: membershipData, error: membershipError } = await supabase
+  const { data, error } = await supabase
     .from("market_os_ambassador_actor_roles")
-    .select("id,auth_user_id,tenant_id,organization_id,role_key,display_name,status")
-    .eq("auth_user_id", user.id)
+    .select("id,auth_user_id,app_user_id,tenant_id,organization_id,role_key,display_name,status")
+    .eq(identityColumn, identityValue)
     .eq("status", "active")
 
-  if (membershipError) {
-    throw new AmbassadorServiceError("PERSISTENCE_ERROR", `Unable to resolve Ambassador actor scope: ${membershipError.message}`, 503)
+  if (error) {
+    const lower = String(error.message || "").toLowerCase()
+    if (identityColumn === "app_user_id" && lower.includes("app_user_id")) {
+      configurationFailure("Ambassador OpsOS session bridge migration is missing; apply the session bridge migration")
+    }
+    throw new AmbassadorServiceError("PERSISTENCE_ERROR", `Unable to resolve Ambassador actor scope: ${error.message}`, 503)
   }
-  const membership = selectedScope(request, (membershipData || []) as ActorRoleRow[])
+  return selectedScope(request, (data || []) as ActorRoleRow[])
+}
 
-  const { data: permissionData, error: permissionError } = await supabase
+async function resolvePermissions(roleKey: string): Promise<ReadonlySet<string>> {
+  const { data, error } = await getAmbassadorSupabaseAdmin()
     .from("market_os_ambassador_role_permissions")
     .select("permission_key")
-    .eq("role_key", membership.role_key)
+    .eq("role_key", roleKey)
     .eq("enabled", true)
 
-  if (permissionError) {
-    throw new AmbassadorServiceError("PERSISTENCE_ERROR", `Unable to resolve Ambassador permissions: ${permissionError.message}`, 503)
+  if (error) {
+    throw new AmbassadorServiceError("PERSISTENCE_ERROR", `Unable to resolve Ambassador permissions: ${error.message}`, 503)
   }
+  return new Set<string>((data || []).map((row: PermissionRow) => String(row.permission_key || "")).filter(Boolean))
+}
 
-  const permissions = new Set<string>((permissionData || []).map((row: PermissionRow) => String(row.permission_key || "")).filter(Boolean))
+function actorResult(
+  request: Request,
+  membership: ActorRoleRow,
+  identity: {
+    authenticationSource: AmbassadorAuthenticationSource
+    authUserId: string | null
+    appUserId: string | null
+    displayName: string
+    email: string | null
+  },
+  permissions: ReadonlySet<string>,
+): AmbassadorActor {
   return {
     actorId: membership.id,
-    authUserId: user.id,
-    displayName: membership.display_name || String(user.user_metadata?.full_name || user.email || user.id),
-    email: user.email || null,
+    authUserId: identity.authUserId,
+    appUserId: identity.appUserId,
+    authenticationSource: identity.authenticationSource,
+    displayName: membership.display_name || identity.displayName,
+    email: identity.email,
     roleKey: membership.role_key,
     tenantId: membership.tenant_id,
     organizationId: membership.organization_id,
@@ -159,6 +217,100 @@ export async function resolveAmbassadorActor(request: Request): Promise<Ambassad
     ipAddress: requestIp(request),
     userAgent: request.headers.get("user-agent"),
   }
+}
+
+async function resolveSupabaseActor(request: Request, token: string): Promise<AmbassadorActor> {
+  const supabase = getAmbassadorSupabaseAdmin()
+  const { data: userData, error: userError } = await supabase.auth.getUser(token)
+  const user = userData?.user
+  if (userError || !user) {
+    throw new AmbassadorServiceError("AUTH_INVALID", "Authentication token is invalid or expired", 401)
+  }
+
+  const membership = await resolveMemberships(request, "auth_user_id", user.id)
+  const permissions = await resolvePermissions(membership.role_key)
+  return actorResult(request, membership, {
+    authenticationSource: "supabase_auth",
+    authUserId: user.id,
+    appUserId: null,
+    displayName: String(user.user_metadata?.full_name || user.email || user.id),
+    email: user.email || null,
+  }, permissions)
+}
+
+async function resolveOpsSessionActor(request: Request, sessionToken: string): Promise<AmbassadorActor> {
+  const supabase = getAmbassadorSupabaseAdmin()
+  const { data: rawSession, error: sessionError } = await supabase
+    .from("app_sessions")
+    .select("*")
+    .eq("session_token", sessionToken)
+    .maybeSingle()
+
+  if (sessionError) {
+    throw new AmbassadorServiceError("PERSISTENCE_ERROR", `Unable to validate OpsOS session: ${sessionError.message}`, 503)
+  }
+  const session = (rawSession || null) as UnknownRow | null
+  if (!session || isSessionRevoked(session)) {
+    throw new AmbassadorServiceError("AUTH_INVALID", "OpsOS session is invalid or revoked", 401)
+  }
+  if (sessionExpired(session)) {
+    await supabase.from("app_sessions").delete().eq("session_token", sessionToken).then(() => undefined, () => undefined)
+    throw new AmbassadorServiceError("AUTH_INVALID", "OpsOS session is expired", 401)
+  }
+
+  const appUserId = stringField(session, ["user_id"])
+  if (!appUserId) {
+    throw new AmbassadorServiceError("AUTH_INVALID", "OpsOS session has no user identity", 401)
+  }
+
+  const { data: rawUser, error: userError } = await supabase
+    .from("app_users")
+    .select("*")
+    .eq("id", appUserId)
+    .maybeSingle()
+
+  if (userError) {
+    throw new AmbassadorServiceError("PERSISTENCE_ERROR", `Unable to validate OpsOS user: ${userError.message}`, 503)
+  }
+  const user = (rawUser || null) as UnknownRow | null
+  if (!user || stringField(user, ["status"])?.toLowerCase() !== "active") {
+    throw new AmbassadorServiceError("AUTH_INVALID", "OpsOS user is missing or inactive", 401)
+  }
+
+  const membership = await resolveMemberships(request, "app_user_id", appUserId)
+  const permissions = await resolvePermissions(membership.role_key)
+  return actorResult(request, membership, {
+    authenticationSource: "ops_session",
+    authUserId: null,
+    appUserId,
+    displayName: stringField(user, ["full_name", "display_name", "name", "username", "email"]) || appUserId,
+    email: stringField(user, ["email"]),
+  }, permissions)
+}
+
+export async function resolveAmbassadorActor(request: Request): Promise<AmbassadorActor> {
+  const cookies = parseCookies(request)
+  const supabaseCredential = extractSupabaseCredential(request, cookies)
+  const opsSessionToken = extractOpsSessionToken(cookies)
+
+  if (supabaseCredential) {
+    try {
+      return await resolveSupabaseActor(request, supabaseCredential.token)
+    } catch (error) {
+      if (
+        !supabaseCredential.explicit &&
+        opsSessionToken &&
+        error instanceof AmbassadorServiceError &&
+        error.code === "AUTH_INVALID"
+      ) {
+        return resolveOpsSessionActor(request, opsSessionToken)
+      }
+      throw error
+    }
+  }
+
+  if (opsSessionToken) return resolveOpsSessionActor(request, opsSessionToken)
+  throw new AmbassadorServiceError("AUTH_REQUIRED", "Authentication is required", 401)
 }
 
 export function actorCan(actor: AmbassadorActor, permission: AmbassadorPermission): boolean {

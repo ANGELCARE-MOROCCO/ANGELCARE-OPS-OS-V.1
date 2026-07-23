@@ -1,9 +1,14 @@
-import type { CSSProperties } from 'react'
 import AppShell, { PageAction } from '@/app/components/erp/AppShell'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { requireRole } from '@/lib/auth/session'
-import SmartPermissionsPanel from '@/app/(protected)/users/_components/SmartPermissionsPanel'
+import UserCreateCommandCenter from '@/app/(protected)/users/new/_components/UserCreateCommandCenter'
+import {
+  readUserProfilePhoto,
+  removeUserProfilePhoto,
+  uploadUserProfilePhoto,
+  validateUserProfilePhoto,
+} from '@/lib/users/profile-photo'
 import {
   ROLE_PERMISSION_TEMPLATES,
   USER_ROLE_OPTIONS,
@@ -11,15 +16,6 @@ import {
 } from '@/lib/auth/permissions'
 
 type AnyRow = Record<string, any>
-
-const ROLE_OPTIONS = USER_ROLE_OPTIONS.map((role) => ({
-  value: role.value,
-  label: `${role.label} · ${role.department}`,
-}))
-
-const SYSTEM_ACCESS = [
-  ['Web Application', 'Synced'], ['Mobile Application', 'Ready'], ['Attendance System', 'Synced'], ['Payroll System', 'Controlled'], ['Learning Management', 'Synced'], ['Communication Hub', 'Synced'], ['Document Management', 'Synced'], ['HR Staff 360', 'Synced'], ['Market OS', 'Role based'], ['Revenue Command Center', 'Role based'], ['Academy OS', 'Role based'], ['Voice Center', 'Role based'],
-]
 
 async function readList(supabase: any, table: string, columns = '*', orderColumn?: string) {
   try {
@@ -54,9 +50,16 @@ export default async function NewUserPage() {
     readList(supabase, 'hr_positions', 'id,title,name,position,department,status'),
   ])
 
-  const departments = uniqueValues([...users, ...staff, ...departmentsTable], ['department', 'name', 'title'], ['Direction', 'Administration', 'Human Resources', 'Operations', 'Marketing', 'Sales', 'Finance', 'Academy', 'Customer Success', 'Field Staff'])
-  const positions = uniqueValues([...users, ...staff, ...positionsTable], ['job_title', 'position', 'title', 'name'], ['CEO', 'Manager', 'HR Manager', 'Operations Manager', 'Marketing Officer', 'Sales Agent', 'Finance Officer', 'Academy Trainer', 'Session Leader', 'Caregiver'])
-  const managers = users.filter((u) => ['ceo', 'manager', 'admin', 'hr', 'operations'].includes(String(u.role || '').toLowerCase()))
+  const departments = uniqueValues(
+    [...users, ...staff, ...departmentsTable],
+    ['department', 'name', 'title'],
+    ['Direction', 'Administration', 'Human Resources', 'Operations', 'Marketing', 'Sales', 'Finance', 'Academy', 'Customer Success', 'Field Staff'],
+  )
+  const positions = uniqueValues(
+    [...users, ...staff, ...positionsTable],
+    ['job_title', 'position', 'title', 'name'],
+    ['CEO', 'Manager', 'HR Manager', 'Operations Manager', 'Marketing Officer', 'Sales Agent', 'Finance Officer', 'Academy Trainer', 'Session Leader', 'Caregiver'],
+  )
 
   async function createUser(formData: FormData) {
     'use server'
@@ -66,6 +69,9 @@ export default async function NewUserPage() {
 
     const password = String(formData.get('password') || '')
     if (password.length < 6) throw new Error('Le mot de passe doit contenir au moins 6 caractères.')
+
+    const profilePhoto = readUserProfilePhoto(formData)
+    validateUserProfilePhoto(profilePhoto)
 
     const role = String(formData.get('role') || 'staff').trim().toLowerCase()
     const catalogState = String(formData.get('permissions_catalog_state') || '')
@@ -96,136 +102,75 @@ export default async function NewUserPage() {
       permissions,
     }
 
-    const { error } = await supabase.from('app_users').insert([payload])
-    if (error) throw new Error(error.message)
+    const { data: createdUser, error } = await supabase
+      .from('app_users')
+      .insert([payload])
+      .select('id')
+      .single()
 
-    await supabase.from('app_audit_logs').insert([{ actor_user_id: actor.id, action: 'create_user', target_table: 'app_users', details: { username: payload.username, role: payload.role, department: payload.department, permissions_count: permissions.length, source: 'premium_users_module' } }])
+    if (error || !createdUser?.id) throw new Error(error?.message || 'Impossible de créer le collaborateur.')
+
+    let uploadedPhotoPath: string | null = null
+
+    try {
+      if (profilePhoto) {
+        uploadedPhotoPath = await uploadUserProfilePhoto(supabase, String(createdUser.id), profilePhoto)
+        const { error: photoUpdateError } = await supabase
+          .from('app_users')
+          .update({
+            profile_photo_path: uploadedPhotoPath,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', createdUser.id)
+
+        if (photoUpdateError) throw new Error(photoUpdateError.message)
+      }
+
+      await supabase.from('app_audit_logs').insert([{
+        actor_user_id: actor.id,
+        action: 'create_user',
+        target_table: 'app_users',
+        target_id: String(createdUser.id),
+        details: {
+          username: payload.username,
+          role: payload.role,
+          department: payload.department,
+          permissions_count: permissions.length,
+          profile_photo_attached: Boolean(uploadedPhotoPath),
+          source: 'premium_users_module',
+        },
+      }])
+    } catch (creationError) {
+      if (uploadedPhotoPath) {
+        await removeUserProfilePhoto(supabase, uploadedPhotoPath).catch(() => undefined)
+      }
+      await supabase.from('app_users').delete().eq('id', createdUser.id)
+      throw creationError
+    }
 
     redirect('/users')
   }
 
   return (
     <AppShell
-      title="Create App User"
-      subtitle="Premium account creation cockpit connected to AngelCare roles, departments, HR identity, app routes and permission matrix."
-      breadcrumbs={[{ label: 'Administration', href: '/users' }, { label: 'Users', href: '/users' }, { label: 'Create' }]}
-      actions={<><PageAction href="/users" variant="light">Cancel</PageAction><PageAction href="#create-user-submit">Create User</PageAction></>}
+      hideSidebar
+      title="SANILA Identity Provisioning"
+      subtitle="Émission contrôlée d’une identité AngelCare, de son compte initial et de son environnement opérationnel."
+      breadcrumbs={[{ label: 'Administration', href: '/users' }, { label: 'Utilisateurs', href: '/users' }, { label: 'Nouvelle identité' }]}
+      actions={<PageAction href="/users" variant="light">Retour au command center</PageAction>}
     >
-      <form action={createUser} style={formStyle}>
-        <div style={stepperStyle}>
-          {[
-            ['1', 'Basic Information', 'User details'], ['2', 'Organization', 'Department & Position'], ['3', 'Role & Permissions', 'Access & Privileges'], ['4', 'Assignments', 'Teams & Reporting'], ['5', 'Review & Confirm', 'Verify & Create'],
-          ].map(([n, title, sub]) => <div key={n} style={stepStyle}><span style={stepBubbleStyle}>{n}</span><span><strong>{title}</strong><small>{sub}</small></span></div>)}
-        </div>
-
-        <div style={layoutStyle}>
-          <main style={mainStyle}>
-            <div style={twoGridStyle}>
-              <Card icon="👤" title="Personal Information">
-                <div style={fieldGridStyle}>
-                  <Field name="full_name" label="Full Name" required placeholder="Enter full name" />
-                  <Field name="email" label="Email Address" type="email" required placeholder="name@angelcare.ma" />
-                  <Field name="phone" label="Phone Number" required placeholder="+212 6 12 34 56 78" />
-                  <Field name="employee_id" label="ID Number / Employee Code" placeholder="Optional internal reference" />
-                  <Field name="birth_date" label="Date of Birth" type="date" />
-                  <Select name="gender" label="Gender" options={['Not specified', 'Female', 'Male']} />
-                </div>
-              </Card>
-
-              <Card icon="🔐" title="Account Information">
-                <div style={fieldGridStyle}>
-                  <Field name="username" label="Username" required placeholder="username" />
-                  <Field name="password" label="Temporary Password" required type="password" placeholder="Temporary password" />
-                  <Select name="language" label="Language" options={[['fr', 'French'], ['en', 'English'], ['ar', 'Arabic']]} defaultValue="fr" />
-                  <Select name="timezone" label="Timezone" options={['(GMT+01:00) Casablanca', '(GMT+00:00) UTC']} />
-                  <Select name="status" label="Account Status" options={[['active', 'Active'], ['inactive', 'Inactive'], ['pending', 'Pending']]} defaultValue="active" />
-                  <Toggle name="must_change_password" label="Require password change on first login" defaultChecked />
-                </div>
-                <div style={infoStyle}>User will receive login instructions based on your current app email workflow.</div>
-              </Card>
-            </div>
-
-            <Card icon="🏢" title="Organization Details">
-              <div style={orgGridStyle}>
-                <Select name="department" label="Department" options={departments} required />
-                <Select name="position" label="Position" options={positions} required />
-                <Select name="employment_type" label="Employment Type" options={['Full-time', 'Part-time', 'Contractor', 'Intern', 'Freelance', 'Temporary']} />
-                <Select name="work_location" label="Work Location" options={['Rabat', 'Temara', 'Casablanca', 'Remote', 'Field / Client Sites', 'Academy Center']} />
-                <Select name="reports_to" label="Reports To Manager" options={[['', 'No manager selected'], ...managers.map((m) => [String(m.id), `${m.full_name || m.username} · ${m.role}`])]} />
-                <Select name="team" label="Team" options={['Executive', 'HR Operations', 'Field Operations', 'Marketing', 'Sales', 'Finance', 'Academy', 'Customer Success', 'Backoffice']} />
-                <Select name="cost_center" label="Cost Center" options={['General', 'HR', 'Operations', 'Marketing', 'Sales', 'Finance', 'Academy']} />
-                <Select name="employee_type" label="Employee Type" options={['Internal Staff', 'Manager', 'Field Staff', 'Trainer', 'Admin', 'External Partner']} />
-              </div>
-            </Card>
-
-            <Card icon="🛡️" title="Role & Permission Template">
-              <div style={roleGridStyle}>
-                <Select name="role" label="Assign Role" options={ROLE_OPTIONS} required defaultValue="staff" />
-              </div>
-              <div style={infoStyle}>Role templates are displayed below for reference only. Permissions are selected directly from the live catalog and saved exactly as chosen.</div>
-              <div style={previewGridStyle}>
-                {['Dashboard', 'People', 'Operations', 'Finance', 'Reports', 'Settings', 'Admin', 'Market OS', 'Revenue', 'Academy', 'HR', 'Voice'].map((x, i) => <div key={x} style={previewCardStyle}><span>{['📊','👥','⚙️','💳','📈','🔧','🛡️','📣','💎','🎓','🏢','☎️'][i]}</span><strong>{x}</strong><small>covered</small></div>)}
-              </div>
-            </Card>
-
-            <SmartPermissionsPanel defaultPermissions={[]} roleTemplates={ROLE_PERMISSION_TEMPLATES} />
-          </main>
-
-          <aside style={asideStyle}>
-            <Card icon="🧾" title="User Summary" compact>
-              <div style={avatarPreviewStyle}>U</div>
-              <Summary label="Full Name" value="—" /><Summary label="Email" value="—" /><Summary label="Username" value="—" /><Summary label="Role" value="—" /><Summary label="Department" value="—" /><Summary label="Position" value="—" /><Summary label="Status" value="Active" tone="green" />
-            </Card>
-
-            <Card icon="🔗" title="System Access" compact>
-              <div style={accessListStyle}>{SYSTEM_ACCESS.map(([name, status]) => <div key={name} style={accessRowStyle}><span>{name}</span><strong>{status}</strong></div>)}</div>
-              <div style={liveStyle}>● Live synced from app permission map</div>
-            </Card>
-
-            <Card icon="⚙️" title="Additional Options" compact>
-              <Toggle name="send_welcome_email" label="Send welcome email" defaultChecked />
-              <Toggle name="two_factor_required" label="Two-factor authentication required" />
-              <Toggle name="add_to_onboarding" label="Add to onboarding workflow" defaultChecked />
-            </Card>
-
-            <button id="create-user-submit" type="submit" style={submitStyle}>Create User</button>
-          </aside>
-        </div>
-      </form>
+      <UserCreateCommandCenter
+        action={createUser}
+        roles={USER_ROLE_OPTIONS.map((role) => ({
+          value: role.value,
+          label: role.label,
+          department: role.department,
+          defaultHome: 'defaultHome' in role ? String(role.defaultHome || '') : null,
+        }))}
+        departments={departments}
+        positions={positions}
+        roleTemplates={ROLE_PERMISSION_TEMPLATES}
+      />
     </AppShell>
   )
 }
-
-function Card({ icon, title, children, compact = false }: any) { return <section style={compact ? compactCardStyle : cardStyle}><h2 style={cardTitleStyle}><span>{icon}</span>{title}</h2>{children}</section> }
-function Field({ name, label, type = 'text', required = false, placeholder = '' }: any) { return <label style={fieldStyle}><span>{label}{required ? <b>*</b> : null}</span><input name={name} type={type} required={required} placeholder={placeholder} style={inputStyle} /></label> }
-function Select({ name, label, options, required = false, defaultValue }: any) { return <label style={fieldStyle}><span>{label}{required ? <b>*</b> : null}</span><select name={name} required={required} defaultValue={defaultValue} style={inputStyle}>{options.map((option: any) => { const value = Array.isArray(option) ? option[0] : typeof option === 'string' ? option : option.value; const label = Array.isArray(option) ? option[1] : typeof option === 'string' ? option : option.label; return <option key={value} value={value}>{label}</option> })}</select></label> }
-function Toggle({ name, label, defaultChecked = false }: any) { return <label style={toggleStyle}><span>{label}</span><input name={name} type="checkbox" defaultChecked={defaultChecked} /></label> }
-function Summary({ label, value, tone }: any) { return <div style={summaryRowStyle}><span>{label}</span><strong style={tone === 'green' ? greenBadgeStyle : undefined}>{value}</strong></div> }
-
-const formStyle: CSSProperties = { display: 'grid', gap: 18 }
-const stepperStyle: CSSProperties = { display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: 10, padding: 18, borderRadius: 28, background: '#fff', border: '1px solid #e5e7eb', boxShadow: '0 20px 60px rgba(15,23,42,.06)' }
-const stepStyle: CSSProperties = { display: 'flex', alignItems: 'center', gap: 12, color: '#0f172a' }
-const stepBubbleStyle: CSSProperties = { width: 38, height: 38, display: 'grid', placeItems: 'center', borderRadius: 999, background: 'linear-gradient(135deg,#7c3aed,#4f46e5)', color: '#fff', fontWeight: 1000, boxShadow: '0 10px 24px rgba(124,58,237,.25)' }
-const layoutStyle: CSSProperties = { display: 'grid', gridTemplateColumns: '1fr 360px', gap: 18, alignItems: 'start' }
-const mainStyle: CSSProperties = { minWidth: 0 }
-const twoGridStyle: CSSProperties = { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 18 }
-const cardStyle: CSSProperties = { borderRadius: 28, padding: 22, background: '#fff', border: '1px solid #e5e7eb', boxShadow: '0 20px 50px rgba(15,23,42,.055)', marginBottom: 18 }
-const compactCardStyle: CSSProperties = { ...cardStyle, padding: 18, marginBottom: 12 }
-const cardTitleStyle: CSSProperties = { margin: '0 0 18px', display: 'flex', alignItems: 'center', gap: 10, color: '#0f172a', fontSize: 18, fontWeight: 1000 }
-const fieldGridStyle: CSSProperties = { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }
-const orgGridStyle: CSSProperties = { display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 14 }
-const roleGridStyle: CSSProperties = { display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 14 }
-const fieldStyle: CSSProperties = { display: 'grid', gap: 7, color: '#1e293b', fontWeight: 900, fontSize: 13 }
-const inputStyle: CSSProperties = { height: 46, borderRadius: 14, border: '1px solid #dbe3ef', padding: '0 13px', color: '#0f172a', fontWeight: 800, background: '#fff', outline: 'none' }
-const toggleStyle: CSSProperties = { minHeight: 46, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, color: '#1e293b', fontWeight: 900, fontSize: 13, padding: '0 4px' }
-const infoStyle: CSSProperties = { marginTop: 14, padding: 13, borderRadius: 16, background: '#eff6ff', color: '#2563eb', fontWeight: 850, fontSize: 13 }
-const previewGridStyle: CSSProperties = { display: 'grid', gridTemplateColumns: 'repeat(6,1fr)', gap: 10, marginTop: 16 }
-const previewCardStyle: CSSProperties = { display: 'grid', gap: 5, padding: 12, borderRadius: 16, border: '1px solid #e2e8f0', background: '#f8fafc', color: '#0f172a', fontSize: 12 }
-const asideStyle: CSSProperties = { position: 'sticky', top: 94 }
-const avatarPreviewStyle: CSSProperties = { margin: '6px auto 16px', width: 72, height: 72, display: 'grid', placeItems: 'center', borderRadius: 999, background: 'linear-gradient(135deg,#7c3aed,#38bdf8)', color: '#fff', fontWeight: 1000, fontSize: 28 }
-const summaryRowStyle: CSSProperties = { display: 'flex', justifyContent: 'space-between', gap: 10, padding: '8px 0', color: '#475569', borderBottom: '1px solid #f1f5f9', fontWeight: 800 }
-const greenBadgeStyle: CSSProperties = { padding: '4px 8px', borderRadius: 999, background: '#dcfce7', color: '#15803d' }
-const accessListStyle: CSSProperties = { display: 'grid', gap: 9 }
-const accessRowStyle: CSSProperties = { display: 'flex', justifyContent: 'space-between', gap: 10, color: '#334155', fontWeight: 850, fontSize: 13 }
-const liveStyle: CSSProperties = { marginTop: 14, padding: 10, borderRadius: 14, textAlign: 'center', background: '#dcfce7', color: '#15803d', fontWeight: 950, fontSize: 12 }
-const submitStyle: CSSProperties = { width: '100%', border: 0, borderRadius: 18, padding: 16, background: 'linear-gradient(135deg,#7c3aed,#4f46e5)', color: '#fff', fontWeight: 1000, cursor: 'pointer', boxShadow: '0 20px 40px rgba(124,58,237,.25)' }

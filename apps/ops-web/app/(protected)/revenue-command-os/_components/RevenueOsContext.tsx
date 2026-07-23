@@ -1,7 +1,8 @@
 'use client'
 
+import { fetchRevenueOsJson } from '@/lib/revenue-command-os/client-http'
 import { createContext, useCallback, useContext, useMemo, useState } from 'react'
-import type { RevenueOsFoundationBootstrap, RevenueOsObjectiveInput } from '@/lib/revenue-command-os/types'
+import type { RevenueOsFoundationBootstrap, RevenueOsObjective, RevenueOsObjectiveInput } from '@/lib/revenue-command-os/types'
 
 type RevenueOsContextValue = {
   bootstrap: RevenueOsFoundationBootstrap
@@ -28,9 +29,8 @@ export function RevenueOsProvider({
     setBusy(true)
     setError(null)
     try {
-      const response = await fetch('/api/revenue-command-os/foundation', { cache: 'no-store' })
-      const payload = await response.json()
-      if (!response.ok) throw new Error(payload?.error?.message || 'Actualisation impossible.')
+      const payload = await fetchRevenueOsJson<typeof initialBootstrap>('/api/revenue-command-os/foundation', { cache: 'no-store' }, { fallbackMessage: 'Actualisation impossible.' })
+      if (!payload.data) throw new Error('Le socle Revenue OS n’a retourné aucune donnée exploitable.')
       setBootstrap(payload.data)
     } catch (refreshError) {
       setError(refreshError instanceof Error ? refreshError.message : 'Actualisation impossible.')
@@ -43,16 +43,16 @@ export function RevenueOsProvider({
     setBusy(true)
     setError(null)
     try {
-      const response = await fetch('/api/revenue-command-os/foundation', {
+      const payload = await fetchRevenueOsJson<RevenueOsObjective>('/api/revenue-command-os/foundation', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'create_objective', payload: input }),
-      })
-      const payload = await response.json()
-      if (!response.ok) throw new Error(payload?.error?.message || 'Création impossible.')
+      }, { fallbackMessage: 'Création impossible.' })
+      if (!payload.data) throw new Error('L’objectif créé n’a pas été retourné par le service.')
+      const createdObjective = payload.data
       setBootstrap((current) => ({
         ...current,
-        objectives: [payload.data, ...current.objectives],
+        objectives: [createdObjective, ...current.objectives],
       }))
     } catch (createError) {
       const message = createError instanceof Error ? createError.message : 'Création impossible.'

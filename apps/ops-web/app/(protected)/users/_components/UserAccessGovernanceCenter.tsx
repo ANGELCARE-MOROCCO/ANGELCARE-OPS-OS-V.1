@@ -37,7 +37,7 @@ type Props = {
 }
 
 type StatusTone = 'green' | 'amber' | 'red' | 'blue' | 'slate'
-type UsersPageMode = 'governance' | 'activities' | 'attendance'
+type UsersPageMode = 'governance' | 'activities' | 'attendance' | 'messages'
 
 function formatDate(value?: string | null) {
   if (!value) return '—'
@@ -134,8 +134,12 @@ export default function UserAccessGovernanceCenter({
   const [scans, setScans] = useState(initialScans)
   const [query, setQuery] = useState('')
 
-  const [activeUsersPage, setActiveUsersPage] = useState<any>('messages')
-  
+  const [activeUsersPage, setActiveUsersPage] = useState<UsersPageMode>('governance')
+  const [directoryStatus, setDirectoryStatus] = useState('all')
+  const [directoryDepartment, setDirectoryDepartment] = useState('all')
+  const [directorySort, setDirectorySort] = useState<'name' | 'readiness' | 'recent'>('name')
+  const [advancedGovernanceOpen, setAdvancedGovernanceOpen] = useState(false)
+
 
   useEffect(() => {
     if (typeof window === 'undefined') return
@@ -209,10 +213,17 @@ const [moduleQuery, setModuleQuery] = useState('')
 
   const scanPayload = scanSummary || (latestScan?.payload as unknown as AccessGovernanceScanSummary | undefined) || null
 
+  const directoryDepartments = useMemo(
+    () => Array.from(new Set(users.map((user) => String(user.department || '').trim()).filter((value) => value && value !== '—'))).sort((a, b) => a.localeCompare(b)),
+    [users],
+  )
+
   const filteredUsers = useMemo(() => {
     const q = query.trim().toLowerCase()
-    if (!q) return users
-    return users.filter((user) => {
+    const filtered = users.filter((user) => {
+      const userStatus = String(user.status || user.rawUser?.status || '').toLowerCase()
+      const statusMatches = directoryStatus === 'all' || userStatus === directoryStatus
+      const departmentMatches = directoryDepartment === 'all' || String(user.department || '') === directoryDepartment
       const haystack = [
         user.fullName,
         user.username,
@@ -220,11 +231,23 @@ const [moduleQuery, setModuleQuery] = useState('')
         user.role,
         user.department,
         user.position,
-        String(user.rawUser?.status || user.status || ''),
+        user.city,
+        user.phone,
+        userStatus,
       ].join(' ').toLowerCase()
-      return haystack.includes(q)
+      return statusMatches && departmentMatches && (!q || haystack.includes(q))
     })
-  }, [users, query])
+
+    return [...filtered].sort((a, b) => {
+      if (directorySort === 'readiness') return Number(b.readiness || 0) - Number(a.readiness || 0)
+      if (directorySort === 'recent') {
+        const aTime = new Date(String(a.rawUser?.updated_at || a.createdAt || 0)).getTime() || 0
+        const bTime = new Date(String(b.rawUser?.updated_at || b.createdAt || 0)).getTime() || 0
+        return bTime - aTime
+      }
+      return String(a.fullName || a.email || '').localeCompare(String(b.fullName || b.email || ''))
+    })
+  }, [users, query, directoryStatus, directoryDepartment, directorySort])
 
   const filteredModules = useMemo(() => {
     const q = moduleQuery.trim().toLowerCase()
@@ -410,56 +433,94 @@ const [moduleQuery, setModuleQuery] = useState('')
           await refreshPermissionCatalog('Permission catalog refreshed after registry rollback.')
         }}
       />
-      <BroadcastControlTower />
       {registryMessage ? <div style={errorBannerStyle}>{registryMessage}</div> : null}
 
       <section style={heroStyle} className="uag-hero">
-        <div style={{ minWidth: 0 }}>
-          <div style={eyebrowStyle}>User Access Governance Center</div>
-          <h1 style={titleStyle}>Users & Access Control</h1>
-          <p style={subtitleStyle}>Scan, organize and govern workspace access across ANGELCARE OpsOS.</p>
-          <div style={metaRowStyle}>
-            <MetaChip tone="blue" label="Loaded" value={formatDate(loadedAt)} />
-            <MetaChip tone={healthTone} label="Registry health" value={healthLabel} />
-            <MetaChip tone="slate" label="Current role" value={currentUserRole || '—'} />
+        <div aria-hidden="true" style={heroGlowOneStyle} />
+        <div aria-hidden="true" style={heroGlowTwoStyle} />
+        <div style={heroIdentityColumnStyle}>
+          <div style={brandLockupStyle}>
+            <div style={brandLogoPlateStyle}>
+              <img src="/logo.png" alt="ANGELCARE" style={brandLogoStyle} />
+            </div>
+            <div>
+              <div style={brandKickerStyle}>ANGELCARE SANILA OS</div>
+              <div style={brandSublineStyle}>People · Identity · Access Command</div>
+            </div>
           </div>
-</div>
 
-        <div style={actionsStyle}>
-          <ActionButton onClick={() => setScannerOpen(true)} disabled={!canManageGovernance} tone="primary" reason={canRender(canManageGovernance, 'Requires CEO, Admin, Manager, or users.manage.')}>
-            Open Global Registry Scanner
-          </ActionButton>
-          <ActionButton onClick={() => refreshRegistry()} disabled={refreshBusy} tone="secondary">
-            {refreshBusy ? 'Refreshing...' : 'Refresh Registry'}
-          </ActionButton>
-          <ActionButton onClick={() => void refreshPermissionCatalog('Permission control refreshed.')} disabled={refreshBusy} tone="ghost">
-            Refresh Permission Control
-          </ActionButton>
-          {canCreateUser ? (
-            <Link href="/users/new" style={linkButtonStyle}>New User</Link>
-          ) : (
-            <button type="button" style={disabledButtonStyle} disabled title="Requires CEO, Manager, or Admin.">New User</button>
-          )}
-          <button type="button" style={disabledButtonStyle} disabled title="Role template editing ships in Phase 2.">
-            Role Templates
-          </button>
+          <div style={heroCopyStyle}>
+            <div style={eyebrowStyle}>Enterprise Workforce Control Plane</div>
+            <h1 style={titleStyle}>Users, Identity & Access Excellence</h1>
+            <p style={subtitleStyle}>A privileged command environment for governing every staff identity, operating role, access surface, activity signal and attendance obligation across ANGELCARE.</p>
+          </div>
+
+          <div style={heroSignalGridStyle}>
+            <HeroSignal icon="◉" label="Workforce identities" value={String(users.length)} detail={`${activeUsers} active members`} tone="blue" />
+            <HeroSignal icon="✓" label="Identity readiness" value={`${users.length ? Math.round(users.reduce((sum, user) => sum + Number(user.readiness || 0), 0) / users.length) : 0}%`} detail="Average staff-file completion" tone="green" />
+            <HeroSignal icon="⌁" label="Access estate" value={String(registry.stats.totalRoutes)} detail={`${registry.stats.totalModules} governed modules`} tone="purple" />
+            <HeroSignal icon="◆" label="Registry posture" value={healthLabel} detail={scanHeadline ? `Last scan ${formatShortDate(scanHeadline)}` : 'Scan readiness available'} tone={healthTone === 'red' ? 'red' : healthTone === 'amber' ? 'amber' : 'slate'} />
+          </div>
+
+          <div style={metaRowStyle}>
+            <MetaChip tone="blue" label="Command synchronized" value={formatDate(loadedAt)} />
+            <MetaChip tone={healthTone} label="Registry health" value={healthLabel} />
+            <MetaChip tone="slate" label="Your clearance" value={currentUserRole || '—'} />
+          </div>
+        </div>
+
+        <div style={heroCommandColumnStyle}>
+          <div style={commandColumnHeaderStyle}>
+            <span style={commandLiveDotStyle} />
+            <div>
+              <strong style={commandColumnTitleStyle}>Executive actions</strong>
+              <span style={commandColumnSubtitleStyle}>Authorized controls available in your current session</span>
+            </div>
+          </div>
+          <div style={actionsStyle}>
+            {canCreateUser ? (
+              <Link href="/users/new" style={heroPrimaryLinkStyle}><span style={actionIconStyle}>＋</span><span><strong>Create staff identity</strong><small>Provision account, role and permissions</small></span></Link>
+            ) : (
+              <button type="button" style={heroDisabledActionStyle} disabled title="Requires CEO, Manager, or Admin.">Create staff identity</button>
+            )}
+            <ActionButton onClick={() => setScannerOpen(true)} disabled={!canManageGovernance} tone="primary" reason={canRender(canManageGovernance, 'Requires CEO, Admin, Manager, or users.manage.')}>
+              Open Global Registry Scanner
+            </ActionButton>
+            <div style={heroSecondaryActionGridStyle}>
+              <ActionButton onClick={() => refreshRegistry()} disabled={refreshBusy} tone="secondary">
+                {refreshBusy ? 'Refreshing...' : 'Refresh Registry'}
+              </ActionButton>
+              <ActionButton onClick={() => void refreshPermissionCatalog('Permission control refreshed.')} disabled={refreshBusy} tone="ghost">
+                Refresh Permissions
+              </ActionButton>
+            </div>
+          </div>
+          <div style={commandTrustPanelStyle}>
+            <div style={commandTrustTopStyle}><span>Secure identity fabric</span><strong>{inactiveUsers ? `${inactiveUsers} attention` : 'All clear'}</strong></div>
+            <div style={commandTrustTrackStyle}><span style={{ ...commandTrustFillStyle, width: `${users.length ? Math.round((activeUsers / users.length) * 100) : 0}%` }} /></div>
+            <p style={commandTrustCopyStyle}>Every visible action remains governed by the existing role, permission and route-access controls.</p>
+          </div>
         </div>
       </section>
 
       <section style={modeSwitcherStyle}>
-        <div>
-          <div style={subTitleStyle}>Users Management Workspaces</div>
-          <div style={subDetailStyle}>Open a focused in-page workspace without leaving the main users management page.</div>
+        <div style={modeSwitcherHeaderStyle}>
+          <div style={modeSwitcherKickerStyle}>SANILA COMMAND WORKSPACES</div>
+          <div style={subTitleStyle}>Choose the operational lens you need</div>
+          <div style={subDetailStyle}>Each workspace keeps the same authenticated records and backend contracts while presenting a purpose-built executive experience.</div>
         </div>
-        <div style={modeButtonRowStyle}>
-          <button type="button" onClick={() => setActiveUsersPage('governance')} style={activeUsersPage === 'governance' ? modeButtonActiveStyle : modeButtonStyle}>Access Control</button>
-          <OperationCompletionManagerButton />
-          <button type="button" onClick={() => setActiveUsersPage('activities')} style={activeUsersPage === 'activities' ? modeButtonActiveStyle : modeButtonStyle}>User's Activities</button>
-          <button type="button" onClick={() => setActiveUsersPage('attendance')} style={activeUsersPage === 'attendance' ? modeButtonActiveStyle : modeButtonStyle}>Attendance</button>
+        <div className="users-command-grid" style={modeButtonRowStyle}>
+          <WorkspaceModeButton active={activeUsersPage === 'governance'} icon="◫" title="People & Access" detail="Directory, permissions and registry" onClick={() => setActiveUsersPage('governance')} />
+          <WorkspaceModeButton active={activeUsersPage === 'activities'} icon="⌁" title="Activity Intelligence" detail="Sessions, devices and behavior" onClick={() => setActiveUsersPage('activities')} />
+          <WorkspaceModeButton active={activeUsersPage === 'attendance'} icon="◷" title="Attendance Command" detail="Presence, shifts and exceptions" onClick={() => setActiveUsersPage('attendance')} />
+          <WorkspaceModeButton active={activeUsersPage === 'messages'} icon="✦" title="Broadcast Control" detail="Memos, acknowledgement and follow-up" onClick={() => setActiveUsersPage('messages')} />
+          <div style={operationCommandStyle}><OperationCompletionManagerButton /></div>
         </div>
       </section>
 
-      {activeUsersPage === 'activities' ? (
+      {activeUsersPage === 'messages' ? (
+        <BroadcastControlTower />
+      ) : activeUsersPage === 'activities' ? (
         <UsersActivitiesInPage
           users={users}
           registry={registry}
@@ -509,11 +570,44 @@ const [moduleQuery, setModuleQuery] = useState('')
       <section style={panelStyle}>
         <SectionHeader eyebrow="Directory" title="Users Directory" subtitle="Open access previews, review permissions and jump to the existing edit flow." />
 
-        <div className="uag-toolbar" style={toolbarStyle}>
-          <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search users, roles, departments, email..." style={searchStyle} />
+        <div className="directory-command-grid" style={directoryCommandBarStyle}>
+          <label style={directorySearchFieldStyle}>
+            <span style={directoryFieldLabelStyle}>Search the workforce</span>
+            <span style={directorySearchControlStyle}><span style={directorySearchIconStyle}>⌕</span><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Name, email, role, department, city..." style={directorySearchInputStyle} /></span>
+          </label>
+          <label style={directoryFilterFieldStyle}>
+            <span style={directoryFieldLabelStyle}>Account state</span>
+            <select value={directoryStatus} onChange={(event) => setDirectoryStatus(event.target.value)} style={directorySelectStyle}>
+              <option value="all">All account states</option>
+              <option value="active">Active</option>
+              <option value="pending">Pending</option>
+              <option value="inactive">Inactive</option>
+              <option value="suspended">Suspended</option>
+            </select>
+          </label>
+          <label style={directoryFilterFieldStyle}>
+            <span style={directoryFieldLabelStyle}>Department</span>
+            <select value={directoryDepartment} onChange={(event) => setDirectoryDepartment(event.target.value)} style={directorySelectStyle}>
+              <option value="all">All departments</option>
+              {directoryDepartments.map((department) => <option key={department} value={department}>{department}</option>)}
+            </select>
+          </label>
+          <label style={directoryFilterFieldStyle}>
+            <span style={directoryFieldLabelStyle}>Sort order</span>
+            <select value={directorySort} onChange={(event) => setDirectorySort(event.target.value as 'name' | 'readiness' | 'recent')} style={directorySelectStyle}>
+              <option value="name">Name A–Z</option>
+              <option value="readiness">Highest readiness</option>
+              <option value="recent">Recently updated</option>
+            </select>
+          </label>
+          <button type="button" onClick={() => { setQuery(''); setDirectoryStatus('all'); setDirectoryDepartment('all'); setDirectorySort('name') }} style={directoryResetButtonStyle}>Reset filters</button>
+        </div>
+        <div style={directoryResultRailStyle}>
+          <div style={directoryResultIdentityStyle}><span style={directoryResultPulseStyle} /><strong>{filteredUsers.length}</strong><span>visible identities from {users.length} total</span></div>
           <div style={toolbarMetaStyle}>
-            <SmallStat label="Visible" value={String(filteredUsers.length)} />
-            <SmallStat label="Preview" value={canPreviewGovernance ? 'Enabled' : 'Disabled'} tone={canPreviewGovernance ? 'green' : 'amber'} />
+            <SmallStat label="Active" value={String(activeUsers)} tone="green" />
+            <SmallStat label="Attention" value={String(inactiveUsers)} tone={inactiveUsers ? 'amber' : 'green'} />
+            <SmallStat label="Preview" value={canPreviewGovernance ? 'Enabled' : 'Restricted'} tone={canPreviewGovernance ? 'blue' : 'amber'} />
           </div>
         </div>
 
@@ -526,6 +620,8 @@ const [moduleQuery, setModuleQuery] = useState('')
                     key={user.id || user.email || user.username || user.fullName || user.full_name}
                     user={user}
                     canOpenProfile={canOpenProfile}
+                    canEditUser={canEditUser}
+                    canDeleteUsers={canDeleteUsers}
                   />
                 ))}
               </div>
@@ -542,7 +638,7 @@ const [moduleQuery, setModuleQuery] = useState('')
                 <article key={user.id} style={mobileCardStyle}>
                   <div style={mobileCardTopStyle}>
                     <div style={userCellStyle}>
-                      <div style={avatarStyle}>{user.initials}</div>
+                      <UserPortrait user={user} size={46} style={avatarStyle} />
                       <div style={{ minWidth: 0 }}>
                         <div style={userNameStyle}>{user.fullName}</div>
                         <div style={userSubStyle}>{user.email || '—'}</div>
@@ -573,6 +669,26 @@ const [moduleQuery, setModuleQuery] = useState('')
         {!filteredUsers.length ? <EmptyState text="No users match the current filter." /> : null}
       </section>
 
+      <section style={advancedGovernanceGateStyle}>
+        <div style={advancedGovernanceIdentityStyle}>
+          <div style={advancedGovernanceIconStyle}>⌘</div>
+          <div>
+            <div style={modeSwitcherKickerStyle}>ADVANCED ACCESS INTELLIGENCE</div>
+            <h2 style={advancedGovernanceTitleStyle}>Registry, routes, templates and scan evidence</h2>
+            <p style={advancedGovernanceCopyStyle}>The technical governance estate stays intentionally collapsed so everyday people management remains clean. Open it only when you need deep access-control diagnostics.</p>
+          </div>
+        </div>
+        <div style={advancedGovernanceStatsStyle}>
+          <SmallStat label="Modules" value={String(registry.stats.totalModules)} tone="blue" />
+          <SmallStat label="Routes" value={String(registry.stats.totalRoutes)} tone="slate" />
+          <SmallStat label="Stale" value={String(registry.stats.staleRoutes)} tone={registry.stats.staleRoutes ? 'amber' : 'green'} />
+          <button type="button" onClick={() => setAdvancedGovernanceOpen((open) => !open)} style={advancedGovernanceButtonStyle}>
+            {advancedGovernanceOpen ? 'Collapse registry intelligence' : 'Open registry intelligence'}
+          </button>
+        </div>
+      </section>
+
+      {advancedGovernanceOpen ? (<>
       <div className="uag-two" style={twoColumnStyle}>
         <section style={panelStyle}>
           <SectionHeader eyebrow="App Scan" title="App Access Scan Center" subtitle="Detects access surfaces only. It does not grant access automatically." />
@@ -837,6 +953,7 @@ const [moduleQuery, setModuleQuery] = useState('')
           </div>
         </div>
       </section>
+      </>) : null}
 
       </>)}
 
@@ -922,14 +1039,21 @@ const [moduleQuery, setModuleQuery] = useState('')
       <style jsx global>{`
         .desktop-only { display: block; }
         .mobile-only { display: none; }
+        @media (max-width: 1280px) {
+          .users-command-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+          .directory-command-grid { grid-template-columns: minmax(240px, 1.5fr) repeat(2, minmax(170px, 1fr)) !important; }
+        }
         @media (max-width: 980px) {
           .desktop-only { display: none !important; }
           .mobile-only { display: block !important; }
           .uag-hero { grid-template-columns: 1fr !important; }
           .uag-kpi { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
           .uag-two { grid-template-columns: 1fr !important; }
-          .scan-summary, .scan-dual, .events-dual, .preview-grid, .uag-toolbar { grid-template-columns: 1fr !important; }
+          .scan-summary, .scan-dual, .events-dual, .preview-grid, .uag-toolbar, .directory-command-grid { grid-template-columns: 1fr !important; }
           .uag-toolbar { justify-content: stretch !important; }
+        }
+        @media (max-width: 720px) {
+          .users-command-grid { grid-template-columns: 1fr !important; }
         }
         @media (max-width: 640px) {
           .uag-kpi { grid-template-columns: 1fr !important; }
@@ -1091,7 +1215,7 @@ function UsersActivitiesInPage({
         <>
           <div style={selectedUserIntelligenceBannerStyle}>
             <div style={userCellStyle}>
-              <div style={activityAvatarStyle}>{selectedUser.initials}</div>
+              <UserPortrait user={selectedUser} size={54} style={activityAvatarStyle} />
               <div>
                 <div style={activityIdentityTitleStyle}>{selectedUser.fullName || 'Unnamed user'}</div>
                 <div style={userSubStyle}>{selectedUser.email || '—'} · {selectedUser.role || '—'} · selected user intelligence profile</div>
@@ -1472,7 +1596,7 @@ function UsersAttendanceInPage({ users, canOpenProfile }: { users: UserStaffReco
             <button key={user.id} type="button" onClick={() => setSelectedAttendanceUserId(user.id)} style={attendanceUserCardStyle} className={pulseClass}>
               <div style={attendanceCardTopStyle}>
                 <div style={userCellStyle}>
-                  <div style={attendanceAvatarStyle}>{user.initials}</div>
+                  <UserPortrait user={user} size={48} style={attendanceAvatarStyle} />
                   <div style={{ minWidth: 0 }}>
                     <div style={attendanceUserNameStyle}>{user.fullName || 'Unnamed user'}</div>
                     <div style={attendanceUserSubStyle}>{user.email || '—'}</div>
@@ -2937,7 +3061,7 @@ function AttendanceHistoryModal({
       <div style={attendanceModalStyle}>
         <div style={attendanceModalHeaderStyle}>
           <div style={userCellStyle}>
-            <div style={attendanceModalAvatarStyle}>{user.initials}</div>
+            <UserPortrait user={user} size={58} style={attendanceModalAvatarStyle} />
             <div>
               <div style={attendanceModalTitleStyle}>{user.fullName || 'Unnamed user'}</div>
               <div style={attendanceModalSubStyle}>{user.email || '—'} · {user.department || '—'} · {user.role || '—'}</div>
@@ -3201,12 +3325,59 @@ function ActionButton({
 }
 
 
+
+function userProfilePhotoUrl(user: UserStaffRecord) {
+  const path = String(user.rawUser?.profile_photo_path || '').trim()
+  if (!path || !user.id) return null
+  const version = String(user.rawUser?.profile_photo_updated_at || user.rawUser?.updated_at || '').trim()
+  return `/api/users/${encodeURIComponent(user.id)}/profile-photo${version ? `?v=${encodeURIComponent(version)}` : ''}`
+}
+
+function UserPortrait({ user, size = 52, style }: { user: UserStaffRecord; size?: number; style?: CSSProperties }) {
+  const source = userProfilePhotoUrl(user)
+  const [photoFailed, setPhotoFailed] = useState(false)
+  const name = String(user.fullName || user.name || user.email || 'Utilisateur')
+  const showPhoto = Boolean(source && !photoFailed)
+  return (
+    <span style={{ ...userPortraitBaseStyle, width: size, height: size, ...style }} aria-label={`Photo de ${name}`}>
+      {showPhoto ? <img src={source || ''} alt={name} style={userPortraitImageStyle} onError={() => setPhotoFailed(true)} /> : <span>{directoryInitials(name)}</span>}
+      <i aria-hidden="true" style={userPortraitVerifiedDotStyle}>✓</i>
+    </span>
+  )
+}
+
+function HeroSignal({ icon, label, value, detail, tone }: { icon: string; label: string; value: string; detail: string; tone: StatusTone | 'purple' }) {
+  const toneStyle = heroSignalToneStyles[tone]
+  return (
+    <div style={{ ...heroSignalStyle, ...toneStyle }}>
+      <span style={heroSignalIconStyle}>{icon}</span>
+      <span style={heroSignalLabelStyle}>{label}</span>
+      <strong style={heroSignalValueStyle}>{value}</strong>
+      <small style={heroSignalDetailStyle}>{detail}</small>
+    </div>
+  )
+}
+
+function WorkspaceModeButton({ active, icon, title, detail, onClick }: { active: boolean; icon: string; title: string; detail: string; onClick: () => void }) {
+  return (
+    <button type="button" onClick={onClick} style={active ? workspaceModeActiveStyle : workspaceModeStyle} aria-pressed={active}>
+      <span style={active ? workspaceModeIconActiveStyle : workspaceModeIconStyle}>{icon}</span>
+      <span style={workspaceModeCopyStyle}><strong>{title}</strong><small>{detail}</small></span>
+      <span style={workspaceModeArrowStyle}>{active ? '●' : '→'}</span>
+    </button>
+  )
+}
+
 function PremiumUsersDirectoryCard({
   user,
   canOpenProfile,
+  canEditUser,
+  canDeleteUsers,
 }: {
   user: UserStaffRecord
   canOpenProfile: boolean
+  canEditUser: boolean
+  canDeleteUsers: boolean
 }) {
   const fullName = String(user.fullName || user.name || user.email || 'Utilisateur').trim()
   const username = String(user.username || user.email || '—').trim()
@@ -3222,24 +3393,25 @@ function PremiumUsersDirectoryCard({
   const roleTone = directoryRoleTone(role)
   const signalTone = moduleCoverageScore >= 75 ? 'green' : moduleCoverageScore >= 35 ? 'amber' : 'red'
 
+  const readiness = Math.max(0, Math.min(100, Number(user.readiness || 0)))
+  const lastLogin = formatDirectoryCardDate(user.lastLoginAt)
+
   return (
     <article style={premiumUserCardStyle}>
+      <div style={premiumUserCardAccentStyle} />
       <div style={premiumUserCardTopStyle}>
         <div style={premiumUserIdentityStyle}>
-          <div style={premiumUserAvatarStyle}>{directoryInitials(fullName)}</div>
+          <UserPortrait user={user} size={64} style={premiumUserAvatarStyle} />
           <div style={{ minWidth: 0 }}>
+            <div style={premiumIdentityOverlineStyle}>SANILA STAFF IDENTITY</div>
             <h3 style={premiumUserNameStyle}>{fullName}</h3>
+            <p style={premiumUserPositionStyle}>{user.position || 'Position not assigned'} · {department}</p>
             <p style={premiumUserEmailStyle}>{email}</p>
           </div>
         </div>
 
         <div style={premiumSignalStackStyle}>
-          <span style={directorySignalBarsStyle(signalTone)}>
-            <i />
-            <i />
-            <i />
-            <i />
-          </span>
+          <span style={directorySignalBarsStyle(signalTone)}><i /><i /><i /><i /></span>
           <span style={directoryStatusPillStyle(tone)}>● {status}</span>
         </div>
       </div>
@@ -3247,34 +3419,36 @@ function PremiumUsersDirectoryCard({
       <div style={premiumUserChipRowStyle}>
         <span style={directoryRolePillStyle(roleTone)}>{role}</span>
         <span style={premiumSoftPillStyle}>@ {username}</span>
+        <span style={premiumReadinessPillStyle}>{readiness}% identity ready</span>
       </div>
 
       <div style={premiumUserDataGridStyle}>
-        <PremiumUserData label="Département" value={department} icon="🏢" />
-        <PremiumUserData label="Permissions" value={String(permissions)} icon="🔐" />
-        <PremiumUserData label="Couverture modules" value={moduleCoverageText} icon="🧩" />
-        <PremiumUserData label="Dernière mise à jour" value={updatedAt} icon="📅" />
+        <PremiumUserData label="Permissions" value={String(permissions)} icon="⌘" />
+        <PremiumUserData label="Module coverage" value={moduleCoverageText} icon="◫" />
+        <PremiumUserData label="Last sign-in" value={lastLogin} icon="◷" />
+        <PremiumUserData label="Record updated" value={updatedAt} icon="↻" />
       </div>
 
       <div style={premiumCoverageBlockStyle}>
         <div style={premiumCoverageHeaderStyle}>
-          <span>Module coverage</span>
-          <strong>{moduleCoverageScore}%</strong>
+          <span>Identity & access assurance</span>
+          <strong>{readiness}%</strong>
         </div>
         <div style={premiumCoverageTrackStyle}>
-          <div style={{ ...premiumCoverageFillStyle, width: `${moduleCoverageScore}%`, background: directoryToneSolid(signalTone) }} />
+          <div style={{ ...premiumCoverageFillStyle, width: `${readiness}%`, background: directoryToneSolid(readiness >= 75 ? 'green' : readiness >= 45 ? 'amber' : 'red') }} />
         </div>
+        <div style={premiumCoverageFootStyle}><span>{moduleCoverageScore}% module reach</span><span>{user.city || 'Location not assigned'}</span></div>
       </div>
 
       <div style={premiumUserActionRowStyle}>
-        {canOpenProfile ? (
-          <a href={`/users/${user.id}`} style={premiumUserActionPrimaryStyle}>Profile</a>
-        ) : (
-          <span style={premiumUserActionDisabledStyle}>Profile</span>
-        )}
-        <a href={`/users/${user.id}/edit`} style={premiumUserActionStyle}>Edit</a>
-        <a href={`/users/${user.id}`} style={premiumUserActionStyle}>Access preview</a>
-        <a href={`/users/${user.id}/delete`} style={premiumUserDeleteActionStyle}>Delete</a>
+        {canOpenProfile ? <a href={`/users/${user.id}`} style={premiumUserActionPrimaryStyle}>Open profile</a> : <span style={premiumUserActionDisabledStyle}>Profile restricted</span>}
+        {canEditUser ? <a href={`/users/${user.id}/edit`} style={premiumUserActionStyle}>Edit identity</a> : <span style={premiumUserActionDisabledStyle}>Edit restricted</span>}
+        <a href={`/users/${user.id}/attendance`} style={premiumUserActionStyle}>Attendance</a>
+      </div>
+      <div style={premiumUserSecondaryActionsStyle}>
+        <a href={`/users/${user.id}/tasks`} style={premiumUserTextActionStyle}>Tasks</a>
+        <a href={`/users/${user.id}/lead-portfolio`} style={premiumUserTextActionStyle}>Lead portfolio</a>
+        {canDeleteUsers ? <a href={`/users/${user.id}/delete`} style={premiumUserDeleteTextActionStyle}>Controlled deletion</a> : <span style={premiumUserRestrictedTextStyle}>Deletion restricted</span>}
       </div>
     </article>
   )
@@ -3720,10 +3894,17 @@ function Td({ children, style }: { children: React.ReactNode; style?: CSSPropert
   return <td style={{ ...tdStyle, ...style }}>{children}</td>
 }
 
-const modeSwitcherStyle: CSSProperties = { display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 14, padding: 14, borderRadius: 22, border: '1px solid #dbe5f2', background: '#fff', boxShadow: '0 16px 36px rgba(15,23,42,.04)', flexWrap: 'wrap' }
-const modeButtonRowStyle: CSSProperties = { display: 'flex', gap: 10, flexWrap: 'wrap' }
-const modeButtonStyle: CSSProperties = { border: '1px solid #cbd5e1', background: '#fff', color: '#0f172a', borderRadius: 999, padding: '11px 14px', fontWeight: 950, cursor: 'pointer' }
-const modeButtonActiveStyle: CSSProperties = { ...modeButtonStyle, border: '1px solid #1d4ed8', background: 'linear-gradient(135deg,#2563eb,#0f172a)', color: '#fff', boxShadow: '0 14px 28px rgba(37,99,235,.18)' }
+const modeSwitcherStyle: CSSProperties = { position: 'relative', display: 'grid', gap: 18, padding: '22px', borderRadius: 30, border: '1px solid rgba(191,219,254,.95)', background: 'linear-gradient(135deg,rgba(255,255,255,.98),rgba(247,250,255,.98))', boxShadow: '0 24px 70px rgba(15,23,42,.07)', overflow: 'hidden' }
+const modeSwitcherHeaderStyle: CSSProperties = { display: 'grid', gap: 5, maxWidth: 920 }
+const modeSwitcherKickerStyle: CSSProperties = { color: '#2563eb', fontSize: 10, fontWeight: 1000, letterSpacing: '.18em', textTransform: 'uppercase' }
+const modeButtonRowStyle: CSSProperties = { display: 'grid', gridTemplateColumns: 'repeat(4,minmax(210px,1fr)) auto', gap: 12, alignItems: 'stretch' }
+const workspaceModeStyle: CSSProperties = { display: 'grid', gridTemplateColumns: '44px minmax(0,1fr) auto', gap: 12, alignItems: 'center', minHeight: 82, padding: 14, textAlign: 'left', border: '1px solid #dbe5f2', background: '#fff', color: '#0f172a', borderRadius: 21, cursor: 'pointer', boxShadow: '0 14px 34px rgba(15,23,42,.045)', transition: 'transform .18s ease, box-shadow .18s ease, border-color .18s ease' }
+const workspaceModeActiveStyle: CSSProperties = { ...workspaceModeStyle, border: '1px solid rgba(59,130,246,.9)', background: 'linear-gradient(135deg,#0f3d91 0%,#1764c0 100%)', color: '#fff', boxShadow: '0 20px 46px rgba(29,78,216,.22)' }
+const workspaceModeIconStyle: CSSProperties = { width: 44, height: 44, borderRadius: 16, display: 'grid', placeItems: 'center', background: '#eff6ff', color: '#1d4ed8', border: '1px solid #dbeafe', fontSize: 19, fontWeight: 1000 }
+const workspaceModeIconActiveStyle: CSSProperties = { ...workspaceModeIconStyle, background: 'rgba(255,255,255,.16)', color: '#fff', border: '1px solid rgba(255,255,255,.22)' }
+const workspaceModeCopyStyle: CSSProperties = { display: 'grid', gap: 4, minWidth: 0 }
+const workspaceModeArrowStyle: CSSProperties = { fontSize: 15, fontWeight: 1000, opacity: .75 }
+const operationCommandStyle: CSSProperties = { display: 'grid', alignItems: 'stretch', minWidth: 178 }
 const activityWorkspaceStyle: CSSProperties = { display: 'grid', gap: 16, borderRadius: 30, padding: 22, border: '1px solid #dbe5f2', background: 'linear-gradient(135deg,#ffffff 0%,#f8fbff 58%,#eef6ff 100%)', boxShadow: '0 24px 60px rgba(15,23,42,.06)' }
 const activityHeroStyle: CSSProperties = { display: 'grid', gridTemplateColumns: '1fr auto', gap: 16, alignItems: 'start' }
 const activityTitleStyle: CSSProperties = { margin: '10px 0 8px', color: '#0f172a', fontSize: 32, lineHeight: 1.08, fontWeight: 1000, letterSpacing: '-.035em' }
@@ -3737,18 +3918,18 @@ const activitySectionBodyStyle: CSSProperties = { display: 'flex', flexWrap: 'wr
 const activityMetricStyle: CSSProperties = { minWidth: 145, flex: '1 1 145px', display: 'grid', gap: 5, padding: 14, borderRadius: 18, border: '1px solid #e2e8f0', background: '#f8fafc' }
 const activityMetricValueStyle: CSSProperties = { color: '#0f172a', fontSize: 16, lineHeight: 1.35, fontWeight: 950, wordBreak: 'break-word' }
 const activityActionRowStyle: CSSProperties = { display: 'flex', flexWrap: 'wrap', gap: 8, width: '100%', marginTop: 4 }
-const rootStyle: CSSProperties = { display: 'grid', gap: 18 }
-const heroStyle: CSSProperties = { display: 'grid', gridTemplateColumns: '1.2fr .8fr', gap: 18, alignItems: 'start', borderRadius: 30, padding: 26, background: 'linear-gradient(135deg,#ffffff 0%,#f8fbff 45%,#eef4ff 100%)', border: '1px solid #dbe5f2', boxShadow: '0 24px 60px rgba(15,23,42,.06)' }
-const eyebrowStyle: CSSProperties = { display: 'inline-flex', width: 'fit-content', padding: '6px 10px', borderRadius: 999, background: '#eef2ff', color: '#3730a3', fontWeight: 950, fontSize: 12, letterSpacing: '.08em', textTransform: 'uppercase' }
-const titleStyle: CSSProperties = { margin: '10px 0 8px', color: '#0f172a', fontSize: 38, lineHeight: 1.05, fontWeight: 1000, letterSpacing: '-.04em' }
-const subtitleStyle: CSSProperties = { margin: 0, color: '#475569', fontSize: 15, lineHeight: 1.7, fontWeight: 650, maxWidth: 760 }
-const metaRowStyle: CSSProperties = { display: 'flex', flexWrap: 'wrap', gap: 10, marginTop: 18 }
-const actionsStyle: CSSProperties = { display: 'grid', gap: 10, justifyItems: 'stretch' }
-const panelStyle: CSSProperties = { background: '#fff', border: '1px solid #dbe5f2', borderRadius: 28, padding: 22, boxShadow: '0 20px 48px rgba(15,23,42,.05)' }
+const rootStyle: CSSProperties = { position: 'relative', isolation: 'isolate', width: '100%', maxWidth: 'none', display: 'grid', gap: 20, padding: 'clamp(12px,1.35vw,24px)', borderRadius: 38, background: 'radial-gradient(circle at 100% 0%,rgba(56,189,248,.12),transparent 28%), radial-gradient(circle at 0% 35%,rgba(37,99,235,.08),transparent 30%), linear-gradient(180deg,#f5f8fd 0%,#ffffff 28%,#f8fbff 100%)', boxSizing: 'border-box', overflow: 'hidden' }
+const heroStyle: CSSProperties = { position: 'relative', display: 'grid', gridTemplateColumns: 'minmax(0,1.45fr) minmax(340px,.55fr)', gap: 24, alignItems: 'stretch', borderRadius: 36, padding: 'clamp(24px,2.5vw,40px)', background: 'linear-gradient(118deg,#071a38 0%,#0d3c82 47%,#1769c3 100%)', border: '1px solid rgba(147,197,253,.35)', boxShadow: '0 38px 100px rgba(8,35,82,.24)', overflow: 'hidden' }
+const eyebrowStyle: CSSProperties = { display: 'inline-flex', width: 'fit-content', padding: '7px 11px', borderRadius: 999, background: 'rgba(219,234,254,.12)', color: '#dbeafe', border: '1px solid rgba(219,234,254,.18)', fontWeight: 950, fontSize: 10, letterSpacing: '.14em', textTransform: 'uppercase' }
+const titleStyle: CSSProperties = { margin: '12px 0 10px', color: '#fff', fontSize: 'clamp(36px,3.5vw,62px)', lineHeight: .98, fontWeight: 1000, letterSpacing: '-.055em', maxWidth: 950 }
+const subtitleStyle: CSSProperties = { margin: 0, color: 'rgba(239,246,255,.82)', fontSize: 15, lineHeight: 1.72, fontWeight: 680, maxWidth: 850 }
+const metaRowStyle: CSSProperties = { display: 'flex', flexWrap: 'wrap', gap: 10, marginTop: 20 }
+const actionsStyle: CSSProperties = { display: 'grid', gap: 11, justifyItems: 'stretch' }
+const panelStyle: CSSProperties = { background: 'linear-gradient(180deg,#ffffff 0%,#fbfdff 100%)', border: '1px solid rgba(219,229,242,.95)', borderRadius: 30, padding: 'clamp(18px,1.7vw,28px)', boxShadow: '0 24px 64px rgba(15,23,42,.065)' }
 const sectionHeaderStyle: CSSProperties = { marginBottom: 16 }
 const sectionTitleStyle: CSSProperties = { margin: '6px 0 6px', color: '#0f172a', fontSize: 22, fontWeight: 950 }
 const sectionSubtitleStyle: CSSProperties = { margin: 0, color: '#64748b', lineHeight: 1.65, fontWeight: 650 }
-const kpiGridStyle: CSSProperties = { display: 'grid', gridTemplateColumns: 'repeat(4,minmax(0,1fr))', gap: 12 }
+const kpiGridStyle: CSSProperties = { display: 'grid', gridTemplateColumns: 'repeat(4,minmax(0,1fr))', gap: 13 }
 const permissionControlStyle: CSSProperties = {
   display: 'grid',
   gap: 12,
@@ -3762,7 +3943,7 @@ const permissionControlStatsStyle: CSSProperties = { display: 'flex', flexWrap: 
 const permissionControlMessageStyle: CSSProperties = { padding: '10px 12px', borderRadius: 14, background: '#eff6ff', color: '#1d4ed8', fontWeight: 800, fontSize: 12, lineHeight: 1.5 }
 const permissionControlErrorStyle: CSSProperties = { padding: '10px 12px', borderRadius: 14, background: '#fef2f2', color: '#991b1b', fontWeight: 800, fontSize: 12, lineHeight: 1.5 }
 const permissionControlLoadedStyle: CSSProperties = { color: '#64748b', fontSize: 12, fontWeight: 700 }
-const metricCardStyle: CSSProperties = { borderRadius: 20, padding: 16, border: '1px solid #dbe5f2', background: '#fff', display: 'grid', gap: 6, minWidth: 0 }
+const metricCardStyle: CSSProperties = { position: 'relative', borderRadius: 22, padding: 17, border: '1px solid #dbe5f2', background: 'linear-gradient(145deg,#ffffff,#f8fbff)', display: 'grid', gap: 7, minWidth: 0, boxShadow: '0 15px 36px rgba(15,23,42,.045)', overflow: 'hidden' }
 const metricValueStyle: CSSProperties = { color: '#0f172a', fontSize: 24, fontWeight: 950, lineHeight: 1.1 }
 const metricLabelStyle: CSSProperties = { color: '#64748b', fontSize: 12, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.08em' }
 const toneStyles: Record<StatusTone, CSSProperties> = {
@@ -3899,6 +4080,69 @@ const usageTrackStyle: CSSProperties = { height: 8, borderRadius: 999, overflow:
 const usageFillStyle: CSSProperties = { height: '100%', borderRadius: 999, background: 'linear-gradient(90deg,#2563eb,#38bdf8)' }
 
 
+
+const heroGlowOneStyle: CSSProperties = { position: 'absolute', width: 520, height: 520, borderRadius: '50%', right: -160, top: -250, background: 'radial-gradient(circle,rgba(96,165,250,.34),rgba(96,165,250,0) 68%)', pointerEvents: 'none' }
+const heroGlowTwoStyle: CSSProperties = { position: 'absolute', width: 380, height: 380, borderRadius: '50%', left: '38%', bottom: -270, background: 'radial-gradient(circle,rgba(34,211,238,.22),rgba(34,211,238,0) 70%)', pointerEvents: 'none' }
+const heroIdentityColumnStyle: CSSProperties = { position: 'relative', zIndex: 1, display: 'grid', alignContent: 'start', gap: 20, minWidth: 0 }
+const brandLockupStyle: CSSProperties = { display: 'flex', alignItems: 'center', gap: 14 }
+const brandLogoPlateStyle: CSSProperties = { width: 76, height: 58, padding: 8, borderRadius: 18, display: 'grid', placeItems: 'center', background: 'rgba(255,255,255,.96)', border: '1px solid rgba(255,255,255,.75)', boxShadow: '0 16px 36px rgba(2,12,27,.24)' }
+const brandLogoStyle: CSSProperties = { display: 'block', width: '100%', height: '100%', objectFit: 'contain' }
+const brandKickerStyle: CSSProperties = { color: '#fff', fontSize: 13, fontWeight: 1000, letterSpacing: '.18em' }
+const brandSublineStyle: CSSProperties = { marginTop: 4, color: 'rgba(219,234,254,.76)', fontSize: 11, fontWeight: 850, letterSpacing: '.08em', textTransform: 'uppercase' }
+const heroCopyStyle: CSSProperties = { display: 'grid', alignContent: 'start' }
+const heroSignalGridStyle: CSSProperties = { display: 'grid', gridTemplateColumns: 'repeat(4,minmax(0,1fr))', gap: 10 }
+const heroSignalStyle: CSSProperties = { display: 'grid', gridTemplateColumns: '34px minmax(0,1fr)', columnGap: 9, rowGap: 3, minHeight: 112, padding: 14, borderRadius: 20, border: '1px solid rgba(255,255,255,.14)', background: 'rgba(255,255,255,.085)', backdropFilter: 'blur(12px)', color: '#fff' }
+const heroSignalToneStyles: Record<StatusTone | 'purple', CSSProperties> = { blue: { boxShadow: 'inset 0 0 0 1px rgba(96,165,250,.08)' }, green: { boxShadow: 'inset 0 0 0 1px rgba(52,211,153,.13)' }, red: { boxShadow: 'inset 0 0 0 1px rgba(248,113,113,.15)' }, amber: { boxShadow: 'inset 0 0 0 1px rgba(251,191,36,.15)' }, slate: { boxShadow: 'inset 0 0 0 1px rgba(203,213,225,.1)' }, purple: { boxShadow: 'inset 0 0 0 1px rgba(196,181,253,.13)' } }
+const heroSignalIconStyle: CSSProperties = { gridRow: '1 / span 2', width: 34, height: 34, borderRadius: 13, display: 'grid', placeItems: 'center', background: 'rgba(255,255,255,.13)', color: '#fff', fontWeight: 1000 }
+const heroSignalLabelStyle: CSSProperties = { color: 'rgba(219,234,254,.72)', fontSize: 9, fontWeight: 950, letterSpacing: '.11em', textTransform: 'uppercase' }
+const heroSignalValueStyle: CSSProperties = { color: '#fff', fontSize: 21, lineHeight: 1.05, fontWeight: 1000, letterSpacing: '-.04em', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }
+const heroSignalDetailStyle: CSSProperties = { gridColumn: '1 / -1', marginTop: 7, color: 'rgba(239,246,255,.68)', fontSize: 10, fontWeight: 760 }
+const heroCommandColumnStyle: CSSProperties = { position: 'relative', zIndex: 1, alignSelf: 'stretch', display: 'grid', alignContent: 'start', gap: 16, padding: 18, borderRadius: 28, background: 'rgba(255,255,255,.96)', border: '1px solid rgba(255,255,255,.76)', boxShadow: '0 28px 70px rgba(2,12,27,.24)', color: '#0f172a' }
+const commandColumnHeaderStyle: CSSProperties = { display: 'grid', gridTemplateColumns: '12px minmax(0,1fr)', gap: 10, alignItems: 'start', paddingBottom: 13, borderBottom: '1px solid #e2e8f0' }
+const commandLiveDotStyle: CSSProperties = { width: 10, height: 10, marginTop: 4, borderRadius: '50%', background: '#22c55e', boxShadow: '0 0 0 5px rgba(34,197,94,.13)' }
+const commandColumnTitleStyle: CSSProperties = { display: 'block', color: '#0f172a', fontSize: 14, fontWeight: 1000 }
+const commandColumnSubtitleStyle: CSSProperties = { display: 'block', marginTop: 4, color: '#64748b', fontSize: 11, fontWeight: 760, lineHeight: 1.4 }
+const heroPrimaryLinkStyle: CSSProperties = { display: 'grid', gridTemplateColumns: '42px minmax(0,1fr)', gap: 12, alignItems: 'center', minHeight: 70, padding: 13, borderRadius: 19, background: 'linear-gradient(135deg,#0d47a1,#1976d2)', color: '#fff', textDecoration: 'none', boxShadow: '0 18px 38px rgba(25,118,210,.24)' }
+const actionIconStyle: CSSProperties = { width: 42, height: 42, borderRadius: 15, display: 'grid', placeItems: 'center', background: 'rgba(255,255,255,.16)', fontSize: 22, fontWeight: 500 }
+const heroDisabledActionStyle: CSSProperties = { minHeight: 64, borderRadius: 18, border: '1px solid #e2e8f0', background: '#f8fafc', color: '#94a3b8', fontWeight: 900 }
+const heroSecondaryActionGridStyle: CSSProperties = { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 9 }
+const commandTrustPanelStyle: CSSProperties = { display: 'grid', gap: 9, padding: 13, borderRadius: 18, background: 'linear-gradient(135deg,#f8fbff,#eff6ff)', border: '1px solid #dbeafe' }
+const commandTrustTopStyle: CSSProperties = { display: 'flex', justifyContent: 'space-between', gap: 10, color: '#1e3a8a', fontSize: 11, fontWeight: 950 }
+const commandTrustTrackStyle: CSSProperties = { height: 7, borderRadius: 999, background: '#dbeafe', overflow: 'hidden' }
+const commandTrustFillStyle: CSSProperties = { display: 'block', height: '100%', borderRadius: 999, background: 'linear-gradient(90deg,#16a34a,#22c55e)' }
+const commandTrustCopyStyle: CSSProperties = { margin: 0, color: '#64748b', fontSize: 10, lineHeight: 1.5, fontWeight: 720 }
+const directoryCommandBarStyle: CSSProperties = { display: 'grid', gridTemplateColumns: 'minmax(280px,1.65fr) repeat(3,minmax(160px,.75fr)) auto', gap: 10, alignItems: 'end', padding: 14, marginTop: 6, borderRadius: 24, border: '1px solid #dbeafe', background: 'linear-gradient(135deg,#f8fbff,#ffffff)', boxShadow: '0 16px 42px rgba(15,23,42,.045)' }
+const directorySearchFieldStyle: CSSProperties = { display: 'grid', gap: 7 }
+const directoryFilterFieldStyle: CSSProperties = { display: 'grid', gap: 7 }
+const directoryFieldLabelStyle: CSSProperties = { color: '#475569', fontSize: 9, fontWeight: 1000, letterSpacing: '.12em', textTransform: 'uppercase' }
+const directorySearchControlStyle: CSSProperties = { display: 'grid', gridTemplateColumns: '42px minmax(0,1fr)', alignItems: 'center', minHeight: 48, borderRadius: 17, border: '1px solid #cbd5e1', background: '#fff', overflow: 'hidden' }
+const directorySearchIconStyle: CSSProperties = { display: 'grid', placeItems: 'center', color: '#2563eb', fontSize: 22 }
+const directorySearchInputStyle: CSSProperties = { width: '100%', height: 46, border: 0, outline: 'none', padding: '0 13px 0 0', color: '#0f172a', background: 'transparent', fontWeight: 800 }
+const directorySelectStyle: CSSProperties = { width: '100%', minHeight: 48, borderRadius: 17, border: '1px solid #cbd5e1', outline: 'none', padding: '0 13px', color: '#0f172a', background: '#fff', fontWeight: 850 }
+const directoryResetButtonStyle: CSSProperties = { minHeight: 48, borderRadius: 17, border: '1px solid #dbe5f2', background: '#fff', color: '#334155', padding: '0 15px', fontWeight: 950, cursor: 'pointer' }
+const directoryResultRailStyle: CSSProperties = { display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, marginTop: 12, flexWrap: 'wrap' }
+const directoryResultIdentityStyle: CSSProperties = { display: 'flex', alignItems: 'center', gap: 8, color: '#64748b', fontSize: 12, fontWeight: 800 }
+const directoryResultPulseStyle: CSSProperties = { width: 8, height: 8, borderRadius: '50%', background: '#22c55e', boxShadow: '0 0 0 4px rgba(34,197,94,.12)' }
+const advancedGovernanceGateStyle: CSSProperties = { display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 18, flexWrap: 'wrap', padding: 20, borderRadius: 29, border: '1px solid #c7d2fe', background: 'radial-gradient(circle at 100% 0%,rgba(224,231,255,.8),transparent 32%),linear-gradient(135deg,#ffffff,#f8faff)', boxShadow: '0 22px 58px rgba(30,64,175,.07)' }
+const advancedGovernanceIdentityStyle: CSSProperties = { display: 'grid', gridTemplateColumns: '54px minmax(0,1fr)', gap: 15, alignItems: 'center', maxWidth: 880 }
+const advancedGovernanceIconStyle: CSSProperties = { width: 54, height: 54, borderRadius: 19, display: 'grid', placeItems: 'center', background: 'linear-gradient(135deg,#0f172a,#2563eb)', color: '#fff', fontSize: 22, boxShadow: '0 17px 34px rgba(37,99,235,.2)' }
+const advancedGovernanceTitleStyle: CSSProperties = { margin: '5px 0 4px', color: '#0f172a', fontSize: 20, fontWeight: 1000, letterSpacing: '-.025em' }
+const advancedGovernanceCopyStyle: CSSProperties = { margin: 0, color: '#64748b', fontSize: 12, lineHeight: 1.55, fontWeight: 720 }
+const advancedGovernanceStatsStyle: CSSProperties = { display: 'flex', gap: 8, alignItems: 'stretch', flexWrap: 'wrap', justifyContent: 'flex-end' }
+const advancedGovernanceButtonStyle: CSSProperties = { minHeight: 48, border: 0, borderRadius: 16, padding: '0 17px', background: 'linear-gradient(135deg,#0f3d91,#2563eb)', color: '#fff', fontWeight: 1000, cursor: 'pointer', boxShadow: '0 16px 34px rgba(37,99,235,.2)' }
+const userPortraitBaseStyle: CSSProperties = { position: 'relative', display: 'grid', placeItems: 'center', flexShrink: 0, overflow: 'visible', borderRadius: '50%', background: 'linear-gradient(135deg,#2563eb,#0f172a)', color: '#fff', fontWeight: 1000, boxSizing: 'border-box' }
+const userPortraitImageStyle: CSSProperties = { width: '100%', height: '100%', objectFit: 'cover', borderRadius: 'inherit', display: 'block' }
+const userPortraitVerifiedDotStyle: CSSProperties = { position: 'absolute', right: -1, bottom: -1, width: 18, height: 18, borderRadius: '50%', display: 'grid', placeItems: 'center', background: '#22c55e', color: '#fff', border: '3px solid #fff', fontSize: 8, fontStyle: 'normal', fontWeight: 1000, boxShadow: '0 5px 12px rgba(22,163,74,.28)' }
+const premiumUserCardAccentStyle: CSSProperties = { position: 'absolute', inset: '0 0 auto 0', height: 4, background: 'linear-gradient(90deg,#ef4444 0 8%,#2563eb 8% 68%,#06b6d4 68% 84%,#22c55e 84% 100%)' }
+const premiumIdentityOverlineStyle: CSSProperties = { color: '#2563eb', fontSize: 8, fontWeight: 1000, letterSpacing: '.13em' }
+const premiumUserPositionStyle: CSSProperties = { margin: '4px 0 0', color: '#334155', fontSize: 11, fontWeight: 850, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }
+const premiumReadinessPillStyle: CSSProperties = { display: 'inline-flex', alignItems: 'center', borderRadius: 999, padding: '7px 10px', background: '#ecfdf5', color: '#047857', border: '1px solid #bbf7d0', fontSize: 10, fontWeight: 950 }
+const premiumCoverageFootStyle: CSSProperties = { display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, color: '#64748b', fontSize: 9, fontWeight: 850 }
+const premiumUserSecondaryActionsStyle: CSSProperties = { display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', paddingTop: 2 }
+const premiumUserTextActionStyle: CSSProperties = { color: '#1d4ed8', textDecoration: 'none', fontSize: 10, fontWeight: 950 }
+const premiumUserDeleteTextActionStyle: CSSProperties = { marginLeft: 'auto', color: '#dc2626', textDecoration: 'none', fontSize: 10, fontWeight: 950 }
+const premiumUserRestrictedTextStyle: CSSProperties = { marginLeft: 'auto', color: '#94a3b8', fontSize: 10, fontWeight: 850 }
+
 const toneBadgeStyles: Record<StatusTone, CSSProperties> = {
   green: { background: '#dcfce7', color: '#166534' },
   amber: { background: 'linear-gradient(135deg,#dc2626,#991b1b)', color: '#fff' },
@@ -3908,35 +4152,37 @@ const toneBadgeStyles: Record<StatusTone, CSSProperties> = {
 }
 
 const premiumUsersCardScrollShellStyle: CSSProperties = {
-  marginTop: 14,
-  maxHeight: 'min(760px, calc(100vh - 340px))',
+  marginTop: 16,
+  maxHeight: 'min(860px, calc(100vh - 250px))',
   overflowY: 'auto',
   overflowX: 'hidden',
-  padding: '4px 10px 10px 4px',
-  borderRadius: 26,
+  padding: '8px 12px 14px 8px',
+  borderRadius: 28,
   border: '1px solid #dbeafe',
-  background: 'linear-gradient(135deg,#ffffff,#f8fbff)',
-  boxShadow: 'inset 0 0 0 1px rgba(255,255,255,.65)',
+  background: 'linear-gradient(135deg,#f7fbff,#ffffff)',
+  boxShadow: 'inset 0 0 0 1px rgba(255,255,255,.78)',
   scrollbarWidth: 'thin',
 }
 
 const premiumUsersCardGridStyle: CSSProperties = {
   display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))',
+  gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 360px), 1fr))',
   gap: 14,
   alignItems: 'stretch',
 }
 
 const premiumUserCardStyle: CSSProperties = {
+  position: 'relative',
   display: 'grid',
-  gap: 13,
-  minHeight: 230,
-  padding: 16,
-  borderRadius: 24,
-  border: '1px solid #dbeafe',
-  background: 'linear-gradient(135deg,#ffffff 0%,#fbfdff 100%)',
-  boxShadow: '0 18px 44px rgba(15,23,42,.055)',
+  gap: 14,
+  minHeight: 360,
+  padding: 18,
+  borderRadius: 28,
+  border: '1px solid rgba(191,219,254,.95)',
+  background: 'radial-gradient(circle at 100% 0%,rgba(219,234,254,.55),transparent 28%),linear-gradient(150deg,#ffffff 0%,#fbfdff 70%,#f3f8ff 100%)',
+  boxShadow: '0 22px 58px rgba(15,23,42,.075)',
   minWidth: 0,
+  overflow: 'hidden',
 }
 
 const premiumUserCardTopStyle: CSSProperties = {
@@ -3948,29 +4194,25 @@ const premiumUserCardTopStyle: CSSProperties = {
 
 const premiumUserIdentityStyle: CSSProperties = {
   display: 'grid',
-  gridTemplateColumns: '44px minmax(0,1fr)',
+  gridTemplateColumns: '64px minmax(0,1fr)',
   gap: 12,
   alignItems: 'center',
   minWidth: 0,
 }
 
 const premiumUserAvatarStyle: CSSProperties = {
-  width: 44,
-  height: 44,
-  borderRadius: 16,
-  display: 'grid',
-  placeItems: 'center',
+  borderRadius: '50%',
   background: 'linear-gradient(135deg,#2563eb,#0f172a)',
   color: '#fff',
-  fontSize: 14,
+  fontSize: 16,
   fontWeight: 1000,
-  boxShadow: '0 16px 30px rgba(37,99,235,.18)',
+  boxShadow: '0 0 0 5px #fff,0 0 0 7px #bfdbfe,0 18px 36px rgba(37,99,235,.22)',
 }
 
 const premiumUserNameStyle: CSSProperties = {
   margin: 0,
   color: '#0f172a',
-  fontSize: 14,
+  fontSize: 17,
   lineHeight: 1.2,
   fontWeight: 1000,
   letterSpacing: '-.02em',
@@ -4070,7 +4312,7 @@ const premiumCoverageFillStyle: CSSProperties = {
 
 const premiumUserActionRowStyle: CSSProperties = {
   display: 'grid',
-  gridTemplateColumns: '1.1fr .8fr 1fr .8fr',
+  gridTemplateColumns: '1.15fr 1fr .9fr',
   gap: 8,
   marginTop: 2,
 }

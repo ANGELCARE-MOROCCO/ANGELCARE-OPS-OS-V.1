@@ -1,6 +1,30 @@
-import { NextResponse } from 'next/server'
 import type { CompilerActor } from './types'
-export function compilerRights(user:any){const permissions=new Set<string>((Array.isArray(user?.permissions)?user.permissions:[]).map(String));const role=String(user?.role||user?.role_key||'');const all=permissions.has('*')||['admin','super_admin','managing_director','direction'].includes(role);return{view:all||permissions.has('revenue_os.mission_compiler.view'),compile:all||permissions.has('revenue_os.mission_compiler.compile'),recompile:all||permissions.has('revenue_os.mission_compiler.recompile'),resolve:all||permissions.has('revenue_os.mission_compiler.resolve'),rollback:all||permissions.has('revenue_os.mission_compiler.rollback'),prepare:all||permissions.has('revenue_os.mission_compiler.prepare_propagation')}}
-export const tenantOf=(user:any,payload?:any)=>String(payload?.tenantId||user?.tenant_id||user?.tenantId||user?.organization_id||'angelcare')
-export const actorOf=(user:any,tenantId:string):CompilerActor=>({id:String(user?.id||user?.email||'current-user'),displayName:String(user?.full_name||user?.name||user?.email||'Opérateur Revenue OS'),role:String(user?.role||user?.role_key||'revenue_operator'),permissions:Array.isArray(user?.permissions)?user.permissions.map(String):[],tenantId})
-export const compilerError=(code:string,message:string,status=400)=>NextResponse.json({ok:false,error:{code,message},externalActions:0},{status})
+import {
+  actorFromRevenueOsUser,
+  hasRevenueOsPermission,
+  revenueOsTenantOf,
+} from '../access'
+import { RevenueOsError } from '../errors'
+import { revenueOsErrorResponse } from '../http'
+
+export function compilerRights(user: any) {
+  return {
+    view: hasRevenueOsPermission(user, 'revenue_os.mission_compiler.view', ['revenue_os.view']),
+    compile: hasRevenueOsPermission(user, 'revenue_os.mission_compiler.compile'),
+    recompile: hasRevenueOsPermission(user, 'revenue_os.mission_compiler.recompile'),
+    resolve: hasRevenueOsPermission(user, 'revenue_os.mission_compiler.resolve'),
+    rollback: hasRevenueOsPermission(user, 'revenue_os.mission_compiler.rollback'),
+    prepare: hasRevenueOsPermission(user, 'revenue_os.mission_compiler.prepare_propagation'),
+    acceptRisk: hasRevenueOsPermission(user, 'revenue_os.mission_compiler.accept_risk'),
+  }
+}
+
+export const tenantOf = (user: any, payload?: unknown) => revenueOsTenantOf(user, payload)
+
+export const actorOf = (user: any, tenantId: string): CompilerActor => {
+  const actor = actorFromRevenueOsUser(user, { tenantId })
+  return actor as CompilerActor
+}
+
+export const compilerError = (code: string, message: string, status = 400) =>
+  revenueOsErrorResponse(new RevenueOsError(code, message, { status, recoverable: status >= 500 }))

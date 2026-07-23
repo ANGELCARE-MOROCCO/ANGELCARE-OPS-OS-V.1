@@ -11,6 +11,8 @@ type AppUserLike = {
   status?: string | null
   department?: string | null
   permissions?: string[] | null
+  profile_photo_path?: string | null
+  updated_at?: string | null
 }
 
 export type AuthorizedWorkspaceRoute = {
@@ -46,6 +48,7 @@ export type AuthorizedWorkspaceHubData = {
     department: string
     permissionCount: number
     fullAccess: boolean
+    photoUrl: string | null
   }
   modules: AuthorizedWorkspaceModule[]
   stats: {
@@ -268,6 +271,10 @@ export async function loadAuthorizedWorkspaceHub(user: AppUserLike): Promise<Aut
       department: String(user.department || ''),
       permissionCount: permissions.length,
       fullAccess,
+      photoUrl:
+        user.profile_photo_path && user.id
+          ? `/api/users/${encodeURIComponent(String(user.id))}/profile-photo?v=${encodeURIComponent(String(user.updated_at || '1'))}`
+          : null,
     },
     modules,
     stats: {

@@ -7,10 +7,24 @@ import type {
   PermissionCatalogResponse,
 } from '@/lib/users/access-governance/permission-catalog'
 
+export type PermissionSelectionSummary = {
+  catalogState: 'loading' | 'error' | 'ready'
+  selectedCount: number
+  selectedKeys: string[]
+  selectedModules: number
+  selectedRoutes: number
+  selectedLegacy: number
+  selectedRisk: number
+  catalogModules: number
+  catalogPermissions: number
+}
+
 type Props = {
   defaultPermissions?: string[]
   roleTemplates?: Record<string, string[]>
   catalogEndpoint?: string
+  mode?: 'create' | 'edit'
+  onSummaryChange?: (summary: PermissionSelectionSummary) => void
 }
 
 type CatalogState = {
@@ -113,6 +127,8 @@ export default function SmartPermissionsPanel({
   defaultPermissions = [],
   roleTemplates = {},
   catalogEndpoint = '/api/users/access-governance/permission-catalog',
+  mode = 'create',
+  onSummaryChange,
 }: Props) {
   const [selected, setSelected] = useState<Set<string>>(() => new Set(defaultPermissions))
   const [query, setQuery] = useState('')
@@ -235,14 +251,32 @@ export default function SmartPermissionsPanel({
   const permissionCount = filteredModules.reduce((count, module) => count + module.permissions.length, 0)
   const sourceFlags = catalog.source || { registry: false, staticPermissions: false, generatedRoutes: false, resources: false }
 
+  const selectedSummary = useMemo<PermissionSelectionSummary>(() => {
+    const selectedKeys = [...selected].sort((a, b) => a.localeCompare(b))
+    const selectedItems = catalog.flatPermissions.filter((permission) => selected.has(permission.key))
+    const moduleKeys = new Set(selectedItems.map((permission) => permission.moduleKey).filter(Boolean))
+    const selectedLegacy = selectedKeys.filter((permission) => !isKnownCatalogPermission(permission, catalog.flatPermissions)).length
+    const selectedRisk = selectedItems.filter((permission) => {
+      const risk = String(permission.riskLevel || '').toLowerCase()
+      return risk && !['low', 'normal', 'standard', 'none'].includes(risk)
+    }).length
+
+    return {
+      catalogState: catalog.loading ? 'loading' : catalog.error ? 'error' : 'ready',
+      selectedCount: selectedKeys.length,
+      selectedKeys,
+      selectedModules: moduleKeys.size,
+      selectedRoutes: selectedItems.filter((permission) => permission.type === 'route').length,
+      selectedLegacy,
+      selectedRisk,
+      catalogModules: catalog.modules.length,
+      catalogPermissions: catalog.flatPermissions.length,
+    }
+  }, [catalog.error, catalog.flatPermissions, catalog.loading, catalog.modules.length, selected])
+
   useEffect(() => {
-    setExpanded((current) => {
-      if (current.size) return current
-      const next = new Set<string>()
-      filteredModules.slice(0, 4).forEach((module) => next.add(module.moduleKey))
-      return next
-    })
-  }, [filteredModules])
+    onSummaryChange?.(selectedSummary)
+  }, [onSummaryChange, selectedSummary])
 
   function togglePermission(permissionKey: string) {
     setSelected((current) => {
@@ -271,6 +305,14 @@ export default function SmartPermissionsPanel({
       else next.add(moduleKey)
       return next
     })
+  }
+
+  function expandAll() {
+    setExpanded(new Set(filteredModules.map((module) => module.moduleKey)))
+  }
+
+  function collapseAll() {
+    setExpanded(new Set())
   }
 
   function selectAllVisible() {
@@ -302,10 +344,10 @@ export default function SmartPermissionsPanel({
 
       <div style={topStyle}>
         <div>
-          <div style={eyebrowStyle}>Unified permission catalog</div>
-          <h2 style={titleStyle}>Latest scanned modules, routes and legacy access</h2>
+          <div style={eyebrowStyle}>SANILA access governance · {mode === 'edit' ? 'change control' : 'identity clearance'}</div>
+          <h2 style={titleStyle}>{mode === 'edit' ? 'Govern visible workspaces, routes and sensitive access' : 'Define the member’s operational clearance'}</h2>
           <p style={textStyle}>
-            Permissions are sourced from the live access registry when available, with generated and legacy permissions preserved for backward compatibility.
+            The live registry remains the source of truth. Role templates are informative only: no access is granted silently, and legacy permissions remain protected until deliberately removed.
           </p>
           {catalog.message ? <div style={noticeStyle}>{catalog.message}</div> : null}
           {catalog.error ? <div style={errorStyle}>{catalog.error}</div> : null}
@@ -343,6 +385,12 @@ export default function SmartPermissionsPanel({
         <button type="button" style={lightButtonStyle} onClick={clearSelected}>
           Clear selected
         </button>
+        <button type="button" style={lightButtonStyle} onClick={expandAll}>
+          Expand all
+        </button>
+        <button type="button" style={lightButtonStyle} onClick={collapseAll}>
+          Collapse all
+        </button>
       </div>
 
       <div style={summaryBarStyle}>
@@ -371,7 +419,7 @@ export default function SmartPermissionsPanel({
           const allKeys = module.permissions.map((permission) => permission.key)
           const selectedCount = allKeys.filter((permission) => selected.has(permission)).length
           const sourceSet = uniqueSorted(module.permissions.map((permission) => permission.source))
-          const isExpanded = expanded.has(module.moduleKey) || module.permissions.length <= 8
+          const isExpanded = expanded.has(module.moduleKey)
 
           return (
             <article key={module.moduleKey} style={moduleCardStyle}>
@@ -451,7 +499,7 @@ export default function SmartPermissionsPanel({
 
       <div style={stickyHintStyle}>
         <strong>{totalSelected} permissions selected</strong>
-        <span>Saved into `app_users.permissions` when the user form submits.</span>
+        <span>These selections define the dashboard, modules, route families and operational pages visible to this member.</span>
       </div>
     </section>
   )
@@ -475,7 +523,7 @@ const panelStyle: CSSProperties = {
   marginTop: 18,
 }
 const topStyle: CSSProperties = { display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(280px,1fr))', gap: 16, alignItems: 'start', marginBottom: 16 }
-const eyebrowStyle: CSSProperties = { color: '#7c3aed', fontSize: 11, fontWeight: 1000, textTransform: 'uppercase', letterSpacing: '.14em' }
+const eyebrowStyle: CSSProperties = { color: '#1d4ed8', fontSize: 11, fontWeight: 1000, textTransform: 'uppercase', letterSpacing: '.14em' }
 const titleStyle: CSSProperties = { margin: '6px 0', fontSize: 28, lineHeight: 1.05, fontWeight: 1000, letterSpacing: '-.04em', color: '#0f172a' }
 const textStyle: CSSProperties = { margin: 0, color: '#64748b', fontWeight: 750, lineHeight: 1.7 }
 const noticeStyle: CSSProperties = { marginTop: 12, padding: 12, borderRadius: 16, background: '#eff6ff', border: '1px solid #bfdbfe', color: '#1d4ed8', fontWeight: 850, fontSize: 13 }
@@ -488,14 +536,14 @@ const toolbarStyle: CSSProperties = {
   gap: 10,
   padding: 12,
   borderRadius: 24,
-  background: '#eef2ff',
+  background: '#eff6ff',
   border: '1px solid #ddd6fe',
   marginBottom: 12,
 }
 const searchStyle: CSSProperties = { minWidth: 0, border: '1px solid #c7d2fe', borderRadius: 16, padding: '12px 14px', fontWeight: 850, outline: 'none', background: '#fff', color: '#0f172a' }
 const selectStyle: CSSProperties = { border: '1px solid #c7d2fe', borderRadius: 16, padding: '12px 14px', fontWeight: 850, background: '#fff', color: '#0f172a' }
 const toggleStyle: CSSProperties = { display: 'flex', alignItems: 'center', gap: 10, borderRadius: 16, padding: '0 12px', background: '#fff', border: '1px solid #c7d2fe', fontWeight: 900, color: '#0f172a' }
-const darkButtonStyle: CSSProperties = { border: 0, borderRadius: 16, padding: '12px 14px', background: '#4c1d95', color: '#fff', fontWeight: 950, cursor: 'pointer' }
+const darkButtonStyle: CSSProperties = { border: 0, borderRadius: 16, padding: '12px 14px', background: '#0b347d', color: '#fff', fontWeight: 950, cursor: 'pointer' }
 const lightButtonStyle: CSSProperties = { border: '1px solid #cbd5e1', borderRadius: 16, padding: '12px 14px', background: '#fff', color: '#0f172a', fontWeight: 950, cursor: 'pointer' }
 const summaryBarStyle: CSSProperties = {
   display: 'flex',

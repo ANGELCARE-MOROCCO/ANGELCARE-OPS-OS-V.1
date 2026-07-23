@@ -1,7 +1,7 @@
 import 'server-only'
-import { createClient } from '@/lib/supabase/server'
+import { createServiceClient } from '@/lib/supabase/server'
 import type { CompilationBlueprint, CompilationConflict, CompilationDelta, CompilationRun, CompileResult } from './types'
-async function db(){return await createClient() as any}
+async function db(){return await createServiceClient() as any}
 const payload=<T>(row:any):T=>((row?.payload??row) as T)
 const tableMap={revenuePlays:'revenue_os_revenue_plays',programs:'revenue_os_programs',campaigns:'revenue_os_campaigns',waves:'revenue_os_campaign_waves',accountPlans:'revenue_os_account_plans',missions:'revenue_os_missions',tasks:'revenue_os_mission_tasks',steps:'revenue_os_task_steps',scripts:'revenue_os_compiled_scripts',evidenceRequirements:'revenue_os_evidence_requirements',deadlines:'revenue_os_compiled_deadlines',capacityRequirements:'revenue_os_compiled_capacity_requirements',assignmentEligibility:'revenue_os_assignment_eligibility',owners:'revenue_os_compiled_owners',dependencies:'revenue_os_compilation_dependencies',approvalGates:'revenue_os_compilation_approval_gates',kpis:'revenue_os_compilation_kpis',retryRules:'revenue_os_compilation_retry_rules',rescueRoutes:'revenue_os_compilation_rescue_routes',stopConditions:'revenue_os_compilation_stop_conditions',escalations:'revenue_os_compilation_escalations',conflicts:'revenue_os_compilation_conflicts'} as const
 export async function listEligibleStrategies(tenantId:string){const c=await db();const approvals=await c.from('revenue_os_approval_requests').select('id,strategy_id,strategy_version,approval_class,status,ready_for_mz13,payload,created_at').eq('tenant_id',tenantId).eq('ready_for_mz13',true).order('created_at',{ascending:false}).limit(100);if(approvals.error)throw approvals.error;return approvals.data||[]}

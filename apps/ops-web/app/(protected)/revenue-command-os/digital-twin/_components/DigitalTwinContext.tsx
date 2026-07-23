@@ -1,5 +1,6 @@
 'use client'
 
+import { fetchRevenueOsJson } from '@/lib/revenue-command-os/client-http'
 import { createContext, useCallback, useContext, useMemo, useState } from 'react'
 import type { RevenueTwinBootstrap, RevenueTwinMutationInput, RevenueTwinValidationIssue } from '@/lib/revenue-command-os/types'
 
@@ -21,41 +22,43 @@ export function DigitalTwinProvider({ initialTwin, children }: { initialTwin: Re
   const [error, setError] = useState<string | null>(null)
 
   const request = useCallback(async (body?: Record<string, unknown>) => {
-    const response = await fetch('/api/revenue-command-os/digital-twin', body ? {
+    return fetchRevenueOsJson<RevenueTwinBootstrap>('/api/revenue-command-os/digital-twin', body ? {
       method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
-    } : { cache: 'no-store' })
-    const payload = await response.json()
-    if (!response.ok) throw new Error(payload?.error?.message || 'Opération Digital Twin impossible.')
-    return payload
+    } : { cache: 'no-store' }, { fallbackMessage: 'Opération Digital Twin impossible.' })
+  }, [])
+
+  const applyTwin = useCallback((payload: { data?: RevenueTwinBootstrap }) => {
+    if (!payload.data) throw new Error('Le modèle commercial n’a retourné aucune donnée exploitable.')
+    setTwin(payload.data)
   }, [])
 
   const refresh = useCallback(async () => {
     setBusy(true); setError(null)
-    try { const payload = await request(); setTwin(payload.data) }
+    try { const payload = await request(); applyTwin(payload) }
     catch (current) { setError(current instanceof Error ? current.message : 'Actualisation impossible.') }
     finally { setBusy(false) }
-  }, [request])
+  }, [applyTwin, request])
 
   const runValidation = useCallback(async () => {
     setBusy(true); setError(null)
-    try { await request({ action: 'run_validation' }); const payload = await request(); setTwin(payload.data) }
+    try { await request({ action: 'run_validation' }); const payload = await request(); applyTwin(payload) }
     catch (current) { setError(current instanceof Error ? current.message : 'Validation impossible.') }
     finally { setBusy(false) }
-  }, [request])
+  }, [applyTwin, request])
 
   const mutate = useCallback(async (input: RevenueTwinMutationInput) => {
     setBusy(true); setError(null)
-    try { await request({ action: 'mutate_entity', payload: { entity: input.entity, operation: input.operation, id: input.id, data: input.payload } }); const payload = await request(); setTwin(payload.data) }
+    try { await request({ action: 'mutate_entity', payload: { entity: input.entity, operation: input.operation, id: input.id, data: input.payload } }); const payload = await request(); applyTwin(payload) }
     catch (current) { setError(current instanceof Error ? current.message : 'Mutation impossible.'); throw current }
     finally { setBusy(false) }
-  }, [request])
+  }, [applyTwin, request])
 
   const updateIssueStatus = useCallback(async (issueId: string, status: RevenueTwinValidationIssue['status']) => {
     setBusy(true); setError(null)
-    try { await request({ action: 'update_validation_status', payload: { issueId, status } }); const payload = await request(); setTwin(payload.data) }
+    try { await request({ action: 'update_validation_status', payload: { issueId, status } }); const payload = await request(); applyTwin(payload) }
     catch (current) { setError(current instanceof Error ? current.message : 'Mise à jour impossible.') }
     finally { setBusy(false) }
-  }, [request])
+  }, [applyTwin, request])
 
   const value = useMemo(() => ({ twin, busy, error, refresh, runValidation, mutate, updateIssueStatus }), [twin, busy, error, refresh, runValidation, mutate, updateIssueStatus])
   return <DigitalTwinContext.Provider value={value}>{children}</DigitalTwinContext.Provider>

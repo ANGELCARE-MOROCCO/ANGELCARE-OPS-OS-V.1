@@ -1,3 +1,5 @@
+import { REVENUE_OS_MANAGER_PERMISSIONS, REVENUE_OS_PERMISSION_KEYS, REVENUE_OS_READ_ONLY_PERMISSIONS } from '@/lib/revenue-command-os/permissions'
+
 export const MODULE_PERMISSIONS = {
   academy: ['academy.view', 'academy.manage'],
   admin: ['admin.view', 'admin.manage'],
@@ -25,22 +27,7 @@ export const MODULE_PERMISSIONS = {
   profile: ['profile.view'],
   reports: ['reports.view', 'reports.export'],
   'revenue-command-center': ['revenue.view', 'revenue.manage'],
-  revenue_command_os: [
-    'revenue_os.view',
-    'revenue_os.manage',
-    'revenue_os.objectives.manage',
-    'revenue_os.digital_twin.manage',
-    'revenue_os.knowledge.manage',
-    'revenue_os.knowledge.approve',
-    'revenue_os.signals.manage',
-    'revenue_os.signals.ingest',
-    'revenue_os.signals.audit',
-    'revenue_os.strategy.manage',
-    'revenue_os.commands.manage',
-    'revenue_os.approvals.manage',
-    'revenue_os.audit.view',
-    'revenue_os.settings.manage',
-  ],
+  revenue_command_os: [...REVENUE_OS_PERMISSION_KEYS],
   capital_command: ['capital.view', 'capital.manage'],
   sales: ['sales.view', 'sales.manage'],
   services: ['services.view', 'services.create', 'services.edit', 'services.delete'],
@@ -146,6 +133,9 @@ export const ROLE_PERMISSION_TEMPLATES: Record<string, string[]> = {
   ceo: ['*'],
   direction: ['*'],
   admin: ['*'],
+  revenue_admin: [...REVENUE_OS_PERMISSION_KEYS],
+  revenue_manager: [...REVENUE_OS_MANAGER_PERMISSIONS],
+  revenue_viewer: [...REVENUE_OS_READ_ONLY_PERMISSIONS],
 
   marketing: [
     'profile.view',

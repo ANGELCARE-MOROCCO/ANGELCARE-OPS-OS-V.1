@@ -1,5 +1,7 @@
 import 'server-only'
-import { createClient } from '@/lib/supabase/server'
+
+import { publicRevenueOsMessage } from '../errors'
+import { createServiceClient } from '@/lib/supabase/server'
 import type { CockpitIntervention, CockpitWatchlist, ExecutiveBrief, RevenueException } from './types'
 
 export interface RawCockpitSources {
@@ -56,7 +58,7 @@ interface QuerySpec {
 }
 
 async function database(): Promise<any> {
-  return await createClient() as any
+  return await createServiceClient() as any
 }
 
 const specs: QuerySpec[] = [
@@ -118,10 +120,10 @@ export async function loadCockpitSources(tenantId: string): Promise<RawCockpitSo
       const response = await query
       if (response.error) throw response.error
       result[spec.key] = response.data || []
-      sourceHealth[spec.table] = { ok: true }
+      sourceHealth[spec.key] = { ok: true }
     } catch (error) {
       result[spec.key] = []
-      sourceHealth[spec.table] = { ok: false, message: error instanceof Error ? error.message : String(error) }
+      sourceHealth[spec.key] = { ok: false, message: publicRevenueOsMessage(error instanceof Error ? error.message : String(error)) }
     }
   }))
 

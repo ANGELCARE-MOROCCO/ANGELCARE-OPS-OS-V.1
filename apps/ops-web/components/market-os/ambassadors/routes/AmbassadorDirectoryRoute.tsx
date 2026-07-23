@@ -589,7 +589,7 @@ function statusTone(
     active:
       "border-emerald-200 bg-emerald-50 text-emerald-800",
     onboarding:
-      "border-violet-200 bg-violet-50 text-violet-800",
+      "border-blue-200 bg-blue-50 text-blue-800",
     inactive:
       "border-rose-200 bg-rose-50 text-rose-800",
     suspended:
@@ -1271,13 +1271,13 @@ function ModalShell({
   width?: string
 }) {
   return (
-    <div className="fixed inset-0 z-[170] flex items-start justify-center overflow-y-auto bg-slate-950/45 px-4 pb-10 pt-[92px] backdrop-blur-[3px]">
+    <div className="fixed inset-0 z-[190] flex items-start justify-center overflow-y-auto bg-[#071426]/58 px-3 pb-8 pt-[82px] backdrop-blur-[3px]">
       <div
-        className={`flex max-h-[calc(100vh-112px)] w-full flex-col overflow-hidden rounded-[28px] border border-slate-200 bg-[#f5f7fb] shadow-[0_35px_110px_rgba(15,23,42,0.38)] ${width}`}
+        className={`flex max-h-[calc(100vh-112px)] w-full flex-col overflow-hidden rounded-[22px] border border-slate-300 bg-[#f4f7fa] shadow-[0_38px_120px_rgba(3,15,31,0.42)] ${width}`}
       >
         <header className="flex items-start justify-between gap-4 border-b border-slate-200 bg-white px-6 py-5">
           <div className="flex min-w-0 items-start gap-4">
-            <span className="rounded-2xl border border-blue-100 bg-blue-50 p-3 text-blue-700">
+            <span className="rounded-xl border border-blue-200 bg-blue-50 p-3 text-blue-700">
               <Icon className="h-5 w-5" />
             </span>
 
@@ -1295,7 +1295,7 @@ function ModalShell({
           <button
             type="button"
             onClick={onClose}
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-950 hover:bg-slate-50"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
           >
             <X className="h-4 w-4" />
           </button>
@@ -3485,123 +3485,96 @@ export default function AmbassadorDirectoryRoute(_props?: Partial<AmbassadorDire
   return (
     <div
       data-ambassador-directory-route="enterprise-master-dossier"
-      className="min-w-0 flex-1 bg-[#f5f7fb] p-4 text-slate-950 lg:p-5"
+      className="min-w-0 flex-1 bg-[#f1f4f7] p-4 text-slate-950 lg:p-5"
     >
-      <header className="rounded-[26px] border border-slate-200 bg-white p-5 shadow-[0_14px_45px_rgba(15,23,42,0.065)]">
-        <div className="flex flex-col gap-5 2xl:flex-row 2xl:items-start 2xl:justify-between">
-          <div>
-            <div className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-blue-700">
-              <Sparkles className="h-4 w-4" />
-              Ambassador Master Dossier
-            </div>
+      <header className="overflow-hidden border border-slate-200 bg-white shadow-[0_12px_36px_rgba(15,23,42,0.055)]">
+        <div className="grid xl:grid-cols-[1.3fr_0.7fr]">
+          <div className="relative px-5 py-6 lg:px-7">
+            <div className="absolute inset-y-0 left-0 w-1.5 bg-[#bd2634]" />
+            <div className="flex flex-col gap-5 2xl:flex-row 2xl:items-end 2xl:justify-between">
+              <div className="max-w-4xl">
+                <div className="flex flex-wrap items-center gap-2 text-[10px] font-black uppercase tracking-[0.19em] text-[#2e6194]">
+                  <span>AngelCare Ambassador Network</span>
+                  <span className="h-1 w-1 rounded-full bg-[#bd2634]" />
+                  <span>Registre opérationnel</span>
+                </div>
+                <h1 className="mt-4 text-[30px] font-black tracking-[-0.035em] text-[#071c34] lg:text-[38px]">
+                  Répertoire des ambassadeurs
+                </h1>
+                <p className="mt-3 max-w-4xl text-sm font-semibold leading-6 text-slate-600">
+                  Registre maître pour contrôler l’identité, l’affectation territoriale, l’activité terrain, la contribution commerciale, la préparation et la rémunération de chaque ambassadeur.
+                </p>
+              </div>
 
-            <h1 className="mt-3 text-3xl font-black tracking-tight text-slate-950">
-              Dossiers ambassadeurs
-            </h1>
-
-            <p className="mt-2 max-w-5xl text-sm font-semibold leading-6 text-slate-600">
-              Consultez, pilotez et synchronisez l’identité, l’exécution terrain,
-              les leads, la performance, la conformité, la formation et la
-              rémunération de chaque ambassadeur.
-            </p>
-
-            <div className="mt-4 flex flex-wrap gap-2">
-              {[
-                "Données réelles uniquement",
-                "Dossier canonique",
-                "Commission fixe 10%",
-                "Audit multi-modules",
-                "Actions contrôlées",
-              ].map((label) => (
-                <span
-                  key={label}
-                  className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.12em] text-slate-700"
+              <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={() => setModal("mission")}
+                  disabled={!selectedDossier}
+                  className="inline-flex h-11 items-center gap-2 rounded-xl bg-[#0b3159] px-4 text-sm font-black !text-white shadow-[0_9px_22px_rgba(11,49,89,0.18)] hover:bg-[#092746] disabled:bg-slate-200 disabled:!text-slate-500 disabled:shadow-none"
                 >
-                  {label}
-                </span>
-              ))}
+                  <Plus className="h-4 w-4" /> Affecter une mission
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setModal("lead")}
+                  disabled={!selectedDossier}
+                  className="inline-flex h-11 items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 text-sm font-black text-[#173a61] hover:bg-slate-50 disabled:!text-slate-400"
+                >
+                  <Target className="h-4 w-4" /> Créer un lead
+                </button>
+                <button
+                  type="button"
+                  onClick={() => void loadData()}
+                  disabled={loading}
+                  className="grid h-11 w-11 place-items-center rounded-xl border border-slate-300 bg-white text-[#173a61] hover:bg-slate-50 disabled:opacity-50"
+                  aria-label="Actualiser le répertoire"
+                >
+                  <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
+                </button>
+              </div>
             </div>
           </div>
 
-          <div className="flex max-w-4xl flex-wrap items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setModal("mission")}
-              disabled={!selectedDossier}
-              className="inline-flex h-11 items-center gap-2 rounded-2xl bg-blue-600 px-4 text-sm font-black text-white shadow-lg shadow-blue-200 disabled:bg-slate-200 disabled:text-slate-500 disabled:shadow-none"
-            >
-              <Plus className="h-4 w-4" />
-              Affecter une mission
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setModal("lead")}
-              disabled={!selectedDossier}
-              className="inline-flex h-11 items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-black text-slate-950 hover:bg-slate-50 disabled:text-slate-400"
-            >
-              <Target className="h-4 w-4" />
-              Créer un lead
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setModal("note")}
-              disabled={!selectedDossier}
-              className="inline-flex h-11 items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-black text-slate-950 hover:bg-slate-50 disabled:text-slate-400"
-            >
-              <NotebookPen className="h-4 w-4" />
-              Ouvrir une note
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setModal("archive")}
-              disabled={!selectedDossier}
-              className="inline-flex h-11 items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-black text-slate-950 hover:bg-slate-50 disabled:text-slate-400"
-            >
-              <Archive className="h-4 w-4" />
-              Archiver
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setModal("more")}
-              disabled={!selectedDossier}
-              className="flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-950 hover:bg-slate-50 disabled:text-slate-400"
-            >
-              <Ellipsis className="h-5 w-5" />
-            </button>
-
-            <button
-              type="button"
-              onClick={() => void loadData()}
-              disabled={loading}
-              className="flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-950 hover:bg-slate-50 disabled:opacity-50"
-            >
-              <RefreshCw
-                className={`h-4 w-4 ${
-                  loading ? "animate-spin" : ""
-                }`}
-              />
-            </button>
+          <div className="grid grid-cols-3 border-t border-slate-200 bg-[#f5f8fb] xl:border-l xl:border-t-0">
+            <div className="border-r border-slate-200 px-4 py-6 text-center">
+              <p className="text-[9px] font-black uppercase tracking-[0.14em] text-slate-400">Portefeuille</p>
+              <p className="mt-3 text-3xl font-black tabular-nums text-[#0a2342]">{dossiers.length}</p>
+              <p className="mt-1 text-[10px] font-bold text-slate-500">dossiers</p>
+            </div>
+            <div className="border-r border-slate-200 px-4 py-6 text-center">
+              <p className="text-[9px] font-black uppercase tracking-[0.14em] text-slate-400">Résultats</p>
+              <p className="mt-3 text-3xl font-black tabular-nums text-[#0a2342]">{filteredDossiers.length}</p>
+              <p className="mt-1 text-[10px] font-bold text-slate-500">visibles</p>
+            </div>
+            <div className="px-4 py-6 text-center">
+              <p className="text-[9px] font-black uppercase tracking-[0.14em] text-slate-400">Sélection</p>
+              <p className="mt-3 text-3xl font-black tabular-nums text-[#0a2342]">{selectedDossier ? "01" : "00"}</p>
+              <p className="mt-1 text-[10px] font-bold text-slate-500">dossier ouvert</p>
+            </div>
           </div>
         </div>
 
-        {notice ? (
-          <div className="mt-4 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-bold text-emerald-900">
-            {notice}
+        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 px-5 py-3 lg:px-7">
+          <div className="flex flex-wrap items-center gap-2 text-[10px] font-black uppercase tracking-[0.12em] text-slate-500">
+            <span className="inline-flex items-center gap-1.5"><ShieldCheck className="h-3.5 w-3.5 text-emerald-600" /> Dossier canonique</span>
+            <span className="h-1 w-1 rounded-full bg-slate-300" />
+            <span>Données synchronisées</span>
+            <span className="h-1 w-1 rounded-full bg-slate-300" />
+            <span>Actions contrôlées</span>
           </div>
-        ) : null}
+          <div className="flex items-center gap-2">
+            <button type="button" onClick={() => setModal("note")} disabled={!selectedDossier} className="inline-flex h-9 items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 text-[10px] font-black text-slate-700 hover:bg-slate-50 disabled:opacity-40"><NotebookPen className="h-3.5 w-3.5" /> Note interne</button>
+            <button type="button" onClick={() => setModal("archive")} disabled={!selectedDossier} className="inline-flex h-9 items-center gap-2 rounded-lg border border-rose-200 bg-white px-3 text-[10px] font-black text-rose-700 hover:bg-rose-50 disabled:opacity-40"><Archive className="h-3.5 w-3.5" /> Archiver</button>
+            <button type="button" onClick={() => setModal("more")} disabled={!selectedDossier} className="grid h-9 w-9 place-items-center rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 disabled:opacity-40" aria-label="Plus d’actions"><Ellipsis className="h-4 w-4" /></button>
+          </div>
+        </div>
 
-        {error ? (
-          <div className="mt-4 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-bold text-rose-900">
-            {error}
-          </div>
-        ) : null}
+        {notice ? <div className="border-t border-emerald-200 bg-emerald-50 px-5 py-3 text-sm font-bold text-emerald-900 lg:px-7">{notice}</div> : null}
+        {error ? <div className="border-t border-rose-200 bg-rose-50 px-5 py-3 text-sm font-bold text-rose-900 lg:px-7">{error}</div> : null}
       </header>
 
-      <div className="mt-4 grid min-w-0 gap-4 2xl:grid-cols-[275px_minmax(0,1fr)_395px]">
+      <div className="mt-4 grid min-w-0 gap-4 2xl:grid-cols-[290px_minmax(0,1fr)_410px]">
         <aside className="min-w-0">
           <Card className="sticky top-24 overflow-hidden">
             <div className="border-b border-slate-100 p-4">
@@ -3895,7 +3868,7 @@ export default function AmbassadorDirectoryRoute(_props?: Partial<AmbassadorDire
                         onClick={() => setActiveTab(tab.key)}
                         className={`inline-flex h-10 shrink-0 items-center gap-2 rounded-xl px-3 text-[11px] font-black transition ${
                           activeTab === tab.key
-                            ? "bg-blue-600 text-white"
+                            ? "bg-blue-600 !text-white"
                             : "text-slate-600 hover:bg-slate-50"
                         }`}
                       >
@@ -4326,7 +4299,7 @@ export default function AmbassadorDirectoryRoute(_props?: Partial<AmbassadorDire
                     <button
                       type="button"
                       onClick={() => setModal("mission")}
-                      className="inline-flex h-10 items-center gap-2 rounded-2xl bg-blue-600 px-3 text-xs font-black text-white"
+                      className="inline-flex h-10 items-center gap-2 rounded-2xl bg-blue-600 px-3 text-xs font-black !text-white"
                     >
                       <Plus className="h-4 w-4" />
                       Affecter mission
@@ -4436,7 +4409,7 @@ export default function AmbassadorDirectoryRoute(_props?: Partial<AmbassadorDire
                         <button
                           type="button"
                           onClick={() => setModal("mission")}
-                          className="inline-flex h-11 items-center gap-2 rounded-2xl bg-blue-600 px-4 text-sm font-black text-white"
+                          className="inline-flex h-11 items-center gap-2 rounded-2xl bg-blue-600 px-4 text-sm font-black !text-white"
                         >
                           <Plus className="h-4 w-4" />
                           Affecter une mission
@@ -4504,7 +4477,7 @@ export default function AmbassadorDirectoryRoute(_props?: Partial<AmbassadorDire
                       <button
                         type="button"
                         onClick={() => setModal("lead")}
-                        className="inline-flex h-10 items-center gap-2 rounded-2xl bg-blue-600 px-3 text-xs font-black text-white"
+                        className="inline-flex h-10 items-center gap-2 rounded-2xl bg-blue-600 px-3 text-xs font-black !text-white"
                       >
                         <Plus className="h-4 w-4" />
                         Créer lead
@@ -4619,7 +4592,7 @@ export default function AmbassadorDirectoryRoute(_props?: Partial<AmbassadorDire
                           <button
                             type="button"
                             onClick={() => setModal("lead")}
-                            className="inline-flex h-11 items-center gap-2 rounded-2xl bg-blue-600 px-4 text-sm font-black text-white"
+                            className="inline-flex h-11 items-center gap-2 rounded-2xl bg-blue-600 px-4 text-sm font-black !text-white"
                           >
                             <Plus className="h-4 w-4" />
                             Créer un lead
@@ -4790,7 +4763,7 @@ export default function AmbassadorDirectoryRoute(_props?: Partial<AmbassadorDire
                     <button
                       type="button"
                       onClick={openTrainingModal}
-                      className="inline-flex h-10 items-center gap-2 rounded-2xl bg-violet-600 px-3 text-xs font-black text-white"
+                      className="inline-flex h-10 items-center gap-2 rounded-2xl bg-violet-600 px-3 text-xs font-black !text-white"
                     >
                       <Plus className="h-4 w-4" />
                       Affecter formation
@@ -4875,7 +4848,7 @@ export default function AmbassadorDirectoryRoute(_props?: Partial<AmbassadorDire
                         <button
                           type="button"
                           onClick={openTrainingModal}
-                          className="inline-flex h-11 items-center gap-2 rounded-2xl bg-violet-600 px-4 text-sm font-black text-white"
+                          className="inline-flex h-11 items-center gap-2 rounded-2xl bg-violet-600 px-4 text-sm font-black !text-white"
                         >
                           <Plus className="h-4 w-4" />
                           Affecter une formation
@@ -5046,7 +5019,7 @@ export default function AmbassadorDirectoryRoute(_props?: Partial<AmbassadorDire
                           openDocumentModal(firstMissing)
                         }
                       }}
-                      className="inline-flex h-10 items-center gap-2 rounded-2xl bg-blue-600 px-3 text-xs font-black text-white"
+                      className="inline-flex h-10 items-center gap-2 rounded-2xl bg-blue-600 px-3 text-xs font-black !text-white"
                     >
                       <Upload className="h-4 w-4" />
                       Ajouter / contrôler
@@ -5854,7 +5827,7 @@ export default function AmbassadorDirectoryRoute(_props?: Partial<AmbassadorDire
                                   }
                                   className={`rounded-full border px-3 py-2 text-[10px] font-black ${
                                     draft.services.includes(service)
-                                      ? "border-blue-600 bg-blue-600 text-white"
+                                      ? "border-blue-600 bg-blue-600 !text-white"
                                       : "border-slate-200 bg-white text-slate-800"
                                   }`}
                                 >
@@ -5882,7 +5855,7 @@ export default function AmbassadorDirectoryRoute(_props?: Partial<AmbassadorDire
                                   }
                                   className={`rounded-full border px-3 py-2 text-[10px] font-black ${
                                     draft.channels.includes(channel)
-                                      ? "border-emerald-600 bg-emerald-600 text-white"
+                                      ? "border-emerald-600 bg-emerald-600 !text-white"
                                       : "border-slate-200 bg-white text-slate-800"
                                   }`}
                                 >
@@ -6033,7 +6006,7 @@ export default function AmbassadorDirectoryRoute(_props?: Partial<AmbassadorDire
                       type="button"
                       onClick={() => void saveDossier()}
                       disabled={!dirty || busy}
-                      className="inline-flex h-10 items-center gap-2 rounded-2xl bg-blue-600 px-4 text-xs font-black text-white disabled:bg-slate-200 disabled:text-slate-500"
+                      className="inline-flex h-10 items-center gap-2 rounded-2xl bg-blue-600 px-4 text-xs font-black !text-white disabled:bg-slate-200 disabled:!text-slate-500"
                     >
                       {busy ? (
                         <Loader2 className="h-4 w-4 animate-spin" />
@@ -6088,7 +6061,7 @@ export default function AmbassadorDirectoryRoute(_props?: Partial<AmbassadorDire
                       ? !missionForm.title.trim()
                       : !missionForm.existingMissionId)
                   }
-                  className="inline-flex h-11 items-center gap-2 rounded-2xl bg-blue-600 px-5 text-sm font-black text-white disabled:bg-slate-200 disabled:text-slate-500"
+                  className="inline-flex h-11 items-center gap-2 rounded-2xl bg-blue-600 px-5 text-sm font-black !text-white disabled:bg-slate-200 disabled:!text-slate-500"
                 >
                   {busy ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
@@ -6504,7 +6477,7 @@ export default function AmbassadorDirectoryRoute(_props?: Partial<AmbassadorDire
                     (!leadForm.phone.trim() &&
                       !leadForm.email.trim())
                   }
-                  className="inline-flex h-11 items-center gap-2 rounded-2xl bg-blue-600 px-5 text-sm font-black text-white disabled:bg-slate-200 disabled:text-slate-500"
+                  className="inline-flex h-11 items-center gap-2 rounded-2xl bg-blue-600 px-5 text-sm font-black !text-white disabled:bg-slate-200 disabled:!text-slate-500"
                 >
                   {busy ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
@@ -6806,7 +6779,7 @@ export default function AmbassadorDirectoryRoute(_props?: Partial<AmbassadorDire
                 type="button"
                 onClick={() => void saveNote()}
                 disabled={busy || !noteForm.text.trim()}
-                className="inline-flex h-11 items-center gap-2 rounded-2xl bg-blue-600 px-5 text-sm font-black text-white disabled:bg-slate-200"
+                className="inline-flex h-11 items-center gap-2 rounded-2xl bg-blue-600 px-5 text-sm font-black !text-white disabled:bg-slate-200"
               >
                 {busy ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
@@ -6992,7 +6965,7 @@ export default function AmbassadorDirectoryRoute(_props?: Partial<AmbassadorDire
                     !archiveForm.reason.trim() ||
                     !archiveForm.managerApproval.trim()
                   }
-                  className="inline-flex h-11 items-center gap-2 rounded-2xl bg-rose-600 px-5 text-sm font-black text-white disabled:bg-slate-200"
+                  className="inline-flex h-11 items-center gap-2 rounded-2xl bg-rose-600 px-5 text-sm font-black !text-white disabled:bg-slate-200"
                 >
                   {busy ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
@@ -7179,7 +7152,7 @@ export default function AmbassadorDirectoryRoute(_props?: Partial<AmbassadorDire
                 type="button"
                 onClick={() => void scheduleTraining()}
                 disabled={busy || !trainingForm.title.trim()}
-                className="inline-flex h-11 items-center gap-2 rounded-2xl bg-violet-600 px-5 text-sm font-black text-white disabled:bg-slate-200"
+                className="inline-flex h-11 items-center gap-2 rounded-2xl bg-violet-600 px-5 text-sm font-black !text-white disabled:bg-slate-200"
               >
                 {busy ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
@@ -7335,7 +7308,7 @@ export default function AmbassadorDirectoryRoute(_props?: Partial<AmbassadorDire
                 type="button"
                 onClick={() => void saveDocument()}
                 disabled={busy}
-                className="inline-flex h-11 items-center gap-2 rounded-2xl bg-blue-600 px-5 text-sm font-black text-white"
+                className="inline-flex h-11 items-center gap-2 rounded-2xl bg-blue-600 px-5 text-sm font-black !text-white"
               >
                 {busy ? (
                   <Loader2 className="h-4 w-4 animate-spin" />

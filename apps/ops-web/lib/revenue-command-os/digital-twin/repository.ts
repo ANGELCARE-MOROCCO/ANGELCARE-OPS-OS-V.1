@@ -1,7 +1,7 @@
 import 'server-only'
 
-import { createClient } from '@/lib/supabase/server'
-import { normalizeRevenueOsError, RevenueOsError } from '../errors'
+import { createServiceClient } from '@/lib/supabase/server'
+import { normalizeRevenueOsError, publicRevenueOsMessage, RevenueOsError } from '../errors'
 import { writeRevenueOsAuditEvent } from '../repository'
 import type {
   RevenueTwinBootstrap,
@@ -105,13 +105,13 @@ function rowRelationship(row: Row): RevenueTwinOfferRelationship {
   return { id: String(row.id), code: row.code, sourceOfferCode: row.source_offer_code, targetOfferCode: row.target_offer_code, relationshipType: row.relationship_type, rationale: row.rationale || '', eligibilityRules: array(row.eligibility_rules), timing: row.timing || '', priorityScore: numberValue(row.priority_score), active: Boolean(row.active) }
 }
 
-async function safeRows(supabase: Awaited<ReturnType<typeof createClient>>, table: string, warnings: string[]): Promise<Row[]> {
+async function safeRows(supabase: Awaited<ReturnType<typeof createServiceClient>>, table: string, warnings: string[]): Promise<Row[]> {
   try {
     const { data, error } = await supabase.from(table).select('*').order('created_at', { ascending: true })
     if (error) throw error
     return data || []
   } catch (error) {
-    warnings.push(`${table}: ${error instanceof Error ? error.message : String(error)}`)
+    warnings.push(publicRevenueOsMessage(error instanceof Error ? error.message : String(error)))
     return []
   }
 }
@@ -119,11 +119,11 @@ async function safeRows(supabase: Awaited<ReturnType<typeof createClient>>, tabl
 export async function readRevenueDigitalTwin(): Promise<{ bootstrap: RevenueTwinBootstrap; warnings: string[] }> {
   const seed = createSeedDigitalTwinBootstrap()
   const warnings: string[] = []
-  let supabase: Awaited<ReturnType<typeof createClient>>
+  let supabase: Awaited<ReturnType<typeof createServiceClient>>
   try {
-    supabase = await createClient()
+    supabase = await createServiceClient()
   } catch (error) {
-    warnings.push(`Supabase indisponible: ${error instanceof Error ? error.message : String(error)}`)
+    warnings.push(publicRevenueOsMessage(error instanceof Error ? error.message : String(error)))
     return { bootstrap: { ...seed, validationIssues: validateDigitalTwin(seed), completeness: calculateDigitalTwinCompleteness(seed) }, warnings }
   }
 
@@ -222,7 +222,7 @@ export async function mutateRevenueDigitalTwin(input: RevenueTwinMutationInput, 
   const table = REVENUE_TWIN_ENTITY_TABLES[input.entity]
   const payload = sanitizePayload(input.entity, input.payload)
   try {
-    const supabase = await createClient()
+    const supabase = await createServiceClient()
     let response: { data: Row | null; error: any }
     if (input.operation === 'create') {
       const createPayload = input.entity === 'business-unit' || input.entity === 'offer'
@@ -262,7 +262,7 @@ export async function persistDigitalTwinValidation(actor: Actor) {
   const issues = validateDigitalTwin(bootstrap)
   const completeness = calculateDigitalTwinCompleteness(bootstrap)
   try {
-    const supabase = await createClient()
+    const supabase = await createServiceClient()
     for (const current of issues) {
       const { error } = await supabase.from('revenue_os_digital_twin_gaps').upsert({
         code: current.code,
@@ -299,7 +299,7 @@ export async function persistDigitalTwinValidation(actor: Actor) {
 export async function updateValidationIssueStatus(issueId: string, nextStatus: RevenueTwinValidationIssue['status'], actor: Actor) {
   if (!['open', 'acknowledged', 'resolved', 'waived'].includes(nextStatus)) throw new RevenueOsError('REVENUE_TWIN_INVALID_INPUT', 'Statut de validation non autorisé.', { status: 400 })
   try {
-    const supabase = await createClient()
+    const supabase = await createServiceClient()
     const { data, error } = await supabase.from('revenue_os_digital_twin_gaps').update({ status: nextStatus, updated_at: new Date().toISOString(), resolved_at: nextStatus === 'resolved' ? new Date().toISOString() : null }).eq('id', issueId).select('*').single()
     if (error) throw error
     await writeRevenueOsAuditEvent({ action: 'digital_twin.validation.status_changed', actorId: actor.id, actorLabel: actor.label, actorType: 'user', resourceType: 'digital_twin_gap', resourceId: issueId, outcome: 'success', summary: `Point de validation passé à ${nextStatus}.`, metadata: { nextStatus } }, supabase)

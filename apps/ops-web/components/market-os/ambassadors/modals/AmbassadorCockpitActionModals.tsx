@@ -373,7 +373,7 @@ function toneClasses(tone = "blue") {
     rose: "bg-rose-50 text-rose-700 border-rose-100",
     violet: "bg-violet-50 text-violet-700 border-violet-100",
     slate: "bg-slate-50 text-slate-700 border-slate-100",
-    navy: "bg-slate-900 !text-slate-950 border-slate-900",
+    navy: "bg-slate-900 !text-white border-slate-900",
   }
   return tones[tone] || tones.blue
 }
@@ -548,18 +548,10 @@ function leadCreateMissingFields(form: typeof defaultLead) {
   return missing
 }
 
-function leadLiveScore(form: typeof defaultLead) {
-  const base = Number(form.qualification_score || 0)
-  const whatsappBonus = form.whatsapp_available === "oui" ? 5 : 0
-  const scoringBonus = Number(form.probable_budget ? 4 : 0)
-  const attributionBonus = form.ambassador_source && form.territory ? 6 : 0
-  return Math.max(0, Math.min(100, base + whatsappBonus + scoringBonus + attributionBonus))
-}
-
 function leadTemperature(form: typeof defaultLead) {
-  const score = leadLiveScore(form)
-  if (form.temperature === "chaud" || score >= 85) return { label: "Chaud", tone: "emerald" }
-  if (form.temperature === "tiède" || score >= 70) return { label: "Tiède", tone: "blue" }
+  const declared = form.temperature.trim().toLowerCase()
+  if (declared === "urgent" || declared === "chaud") return { label: declared === "urgent" ? "Urgent" : "Chaud", tone: "emerald" }
+  if (declared === "tiède") return { label: "Tiède", tone: "blue" }
   return { label: "Froid", tone: "amber" }
 }
 
@@ -711,20 +703,21 @@ function ModalFrame({
   }
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-[80] flex items-center justify-center bg-slate-950/28 px-1 py-2 backdrop-blur-sm sm:px-2 lg:px-4 placeholder:!text-slate-600" style={{ top: topOffset }}>
-      <div className={`flex h-[calc(100dvh-var(--angelcare-overhead-height,96px)-16px)] !w-[calc(100vw-16px)] !max-w-[1680px] flex-col overflow-hidden rounded-[34px] border border-slate-200 bg-white shadow-2xl shadow-slate-950/20 sm:!w-[calc(100vw-24px)] lg:!w-[calc(100vw-48px)] 2xl:!w-[calc(100vw-72px)] ${width} !text-slate-950 [&_*]:!text-slate-950 [&_label]:!text-slate-950 [&_h1]:!text-slate-950 [&_h2]:!text-slate-950 [&_h3]:!text-slate-950 [&_p]:!text-slate-950 [&_span]:!text-slate-950 [&_button]:!text-slate-950 [&_input]:!text-slate-950 [&_select]:!text-slate-950 [&_textarea]:!text-slate-950 [&_option]:!text-slate-950`}>
-        <header className="sticky top-0 z-20 border-b border-slate-100 bg-white px-6 py-5 text-slate-950 placeholder:!text-slate-600">
+    <div className="fixed inset-x-0 bottom-0 z-[190] flex items-center justify-center bg-[#071426]/58 px-2 py-3 backdrop-blur-[3px] sm:px-3 lg:px-6" style={{ top: topOffset }}>
+      <div className={`flex h-[calc(100dvh-var(--angelcare-overhead-height,96px)-24px)] w-[calc(100vw-16px)] max-w-[1640px] flex-col overflow-hidden rounded-[22px] border border-slate-300 bg-white shadow-[0_38px_120px_rgba(3,15,31,0.42)] sm:w-[calc(100vw-28px)] lg:w-[calc(100vw-64px)] ${width}`}>
+        <header className="sticky top-0 z-20 border-b border-slate-200 bg-white px-6 py-5">
           <div className="flex items-start justify-between gap-6">
             <div className="flex items-start gap-4">
-              <div className={`grid h-12 w-12 place-items-center rounded-2xl border border-blue-100 bg-blue-50 text-blue-700 ${chrome === "amber" ? "bg-amber-50 text-amber-700 border-amber-100" : chrome === "rose" ? "bg-rose-50 text-rose-700 border-rose-100" : chrome === "navy" ? "bg-slate-900 !text-slate-950 border-slate-900" : ""}`}>
+              <div className={`grid h-12 w-12 place-items-center rounded-xl border ${chrome === "amber" ? "border-amber-200 bg-amber-50 text-amber-700" : chrome === "rose" ? "border-rose-200 bg-rose-50 text-rose-700" : chrome === "navy" ? "border-[#0b3159] bg-[#0b3159] !text-white" : "border-blue-200 bg-blue-50 text-blue-700"}`}>
                 <Icon size={20} />
               </div>
               <div>
-                <h2 className="text-xl font-black !text-slate-950" style={{ color: "#0f172a" }}>{title}</h2>
-                <p className="mt-1 max-w-6xl text-sm font-semibold leading-6 !!text-slate-950" style={{ color: "#475569" }}>{subtitle}</p>
+                <p className="text-[9px] font-black uppercase tracking-[0.18em] text-[#2e6194]">AngelCare controlled workspace</p>
+                <h2 className="mt-1 text-xl font-black tracking-tight text-[#071c34]">{title}</h2>
+                <p className="mt-1 max-w-6xl text-sm font-semibold leading-6 text-slate-600">{subtitle}</p>
               </div>
             </div>
-            <button type="button" onClick={onClose} className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl border border-slate-200 !text-slate-950 hover:bg-slate-50 placeholder:!text-slate-600">
+            <button type="button" onClick={onClose} className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-50">
               <X size={16} />
             </button>
           </div>
@@ -735,7 +728,7 @@ function ModalFrame({
           ) : null}
         </header>
         <div className={`flex-1 overflow-y-auto overscroll-contain px-6 py-6 ${chromeClasses[chrome]}`}>{children}</div>
-        <footer className="sticky bottom-0 z-20 border-t border-slate-100 bg-white/95 px-6 py-4 backdrop-blur placeholder:!text-slate-600">{footer}</footer>
+        <footer className="sticky bottom-0 z-20 border-t border-slate-200 bg-white px-6 py-4 shadow-[0_-10px_28px_rgba(15,23,42,0.04)]">{footer}</footer>
       </div>
     </div>
   )
@@ -804,17 +797,17 @@ function ScenarioCards({
             type="button"
             onClick={() => onSelect(item.id)}
             className={`rounded-[24px] border p-4 text-left transition ${
-              selected ? "border-slate-900 bg-slate-900 !text-slate-950 shadow-lg shadow-slate-200/70" : "border-slate-200 bg-white/90 hover:border-blue-200 hover:bg-white"
+              selected ? "border-slate-900 bg-slate-900 !text-white shadow-lg shadow-slate-200/70" : "border-slate-200 bg-white/90 hover:border-blue-200 hover:bg-white"
             }`}
           >
             <div className="flex items-center justify-between gap-3">
-              <div className={`grid h-9 w-9 place-items-center rounded-2xl ${selected ? "bg-white/10 !text-slate-950" : "bg-blue-50 text-blue-700"}`}>
+              <div className={`grid h-9 w-9 place-items-center rounded-2xl ${selected ? "bg-white/10 !text-white" : "bg-blue-50 text-blue-700"}`}>
                 <MapPinned size={16} />
               </div>
               <StatusPill tone={selected ? "slate" : "blue"}>{item.priorityHint}</StatusPill>
             </div>
             <p className="mt-3 text-sm font-black tracking-tight">{item.label}</p>
-            <p className={`mt-2 text-xs font-semibold leading-5 ${selected ? "!text-slate-950" : "!text-slate-950"}`}>{item.objective}</p>
+            <p className={`mt-2 text-xs font-semibold leading-5 ${selected ? "!text-slate-200" : "!text-slate-950"}`}>{item.objective}</p>
           </button>
         )
       })}
@@ -1693,7 +1686,6 @@ export function AmbassadorLeadQualificationModal({
   feedback?: CockpitModalFeedback | null
 }) {
   const leadTemp = useMemo(() => leadTemperature(form), [form])
-  const liveScore = useMemo(() => leadLiveScore(form), [form])
   const missingBase = useMemo(() => leadCreateMissingFields(form), [form])
   const followupMissing = useMemo(() => [...leadCreateMissingFields(form), ...(form.next_followup_at.trim() ? [] : ["Date de relance"])], [form])
   const checklist = useMemo(() => leadChecklist(form), [form])
@@ -1706,7 +1698,7 @@ export function AmbassadorLeadQualificationModal({
   return (
     <ModalFrame
       title="Nouveau lead"
-      subtitle="CRM de qualification premium avec segments, duplication, suivi et signal commercial exploitable."
+      subtitle="Dossier commercial structuré pour identifier le besoin, attribuer la source, qualifier, planifier la relance et préparer la conversion."
       icon={Target}
       width="w-[calc(100vw-16px)] lg:w-[calc(100vw-48px)] xl:max-w-[1560px]"
       feedback={feedback}
@@ -1715,7 +1707,7 @@ export function AmbassadorLeadQualificationModal({
       footer={
         <div className="flex w-full flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
           <div className="space-y-1 text-xs font-semibold !text-slate-950">
-            <p className="font-black text-slate-900">{leadTemp.label} · {liveScore}%</p>
+            <p className="font-black text-slate-900">{leadTemp.label} · contrôles {checklist.filter((item) => item.done).length}/{checklist.length}</p>
             <p>{baseReason}</p>
             <p>{followupReason}</p>
           </div>
@@ -1726,7 +1718,7 @@ export function AmbassadorLeadQualificationModal({
             <button type="submit" form="lead-form" data-mode="create" disabled={busy || missingBase.length > 0} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-800 disabled:cursor-not-allowed disabled:opacity-50 placeholder:!text-slate-600">
               Créer lead
             </button>
-            <button type="submit" form="lead-form" data-mode="qualify" disabled={busy || missingBase.length > 0} className="rounded-2xl bg-blue-600 px-5 py-3 text-sm font-black !text-slate-950 shadow-lg shadow-blue-200 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:shadow-none placeholder:!text-slate-600">
+            <button type="submit" form="lead-form" data-mode="qualify" disabled={busy || missingBase.length > 0} className="rounded-2xl bg-blue-600 px-5 py-3 text-sm font-black text-white shadow-lg shadow-blue-200 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:shadow-none placeholder:!text-slate-600">
               {busy ? "Qualification..." : "Créer + qualifier"}
             </button>
             <button type="submit" form="lead-form" data-mode="followup" disabled={busy || followupMissing.length > 0} className="rounded-2xl border border-blue-200 bg-blue-50 px-5 py-3 text-sm font-black text-blue-700 disabled:cursor-not-allowed disabled:opacity-50 placeholder:!text-slate-600">
@@ -1770,7 +1762,7 @@ export function AmbassadorLeadQualificationModal({
                       <div className={`grid h-9 w-9 place-items-center rounded-2xl ${selected ? "bg-blue-50 text-blue-700" : "bg-slate-100 !text-slate-950"}`}>
                         <Icon size={16} />
                       </div>
-                      {selected ? <CheckCircle2 size={16} className="text-blue-600" /> : <Sparkles size={16} className="!text-slate-950" />}
+                      {selected ? <CheckCircle2 size={16} className="text-blue-600" /> : <Target size={16} className="text-slate-500" />}
                     </div>
                     <p className="mt-3 text-sm font-black tracking-tight text-slate-950">{item.label}</p>
                   </button>
@@ -1853,9 +1845,13 @@ export function AmbassadorLeadQualificationModal({
                     {["froid", "tiède", "chaud", "urgent"].map((item) => <option key={item}>{item}</option>)}
                   </select>
                 </Field>
-                <Field label="Score qualification">
+                <Field label="Niveau de qualification">
                   <select className={selectClass} value={form.qualification_score} onChange={(e) => onChange("qualification_score", e.target.value)}>
-                    {["52", "62", "72", "82", "92"].map((item) => <option key={item} value={item}>{item}%</option>)}
+                    <option value="52">À confirmer</option>
+                    <option value="62">Informations partielles</option>
+                    <option value="72">Qualifié</option>
+                    <option value="82">Prioritaire</option>
+                    <option value="92">Prêt à convertir</option>
                   </select>
                 </Field>
                 <Field label="Budget probable">
@@ -1870,7 +1866,7 @@ export function AmbassadorLeadQualificationModal({
             <section className="rounded-[30px] border border-blue-100 bg-[linear-gradient(180deg,#f8fbff_0%,#eef5ff_100%)] p-5 shadow-sm shadow-blue-100/60 placeholder:!text-slate-600">
               <div className="flex items-center justify-between gap-3">
                 <h3 className="text-sm font-black tracking-tight text-slate-950">Suivi commercial</h3>
-                <StatusPill tone={leadTemp.tone}>{liveScore}%</StatusPill>
+                <StatusPill tone={leadTemp.tone}>{checklist.filter((item) => item.done).length}/{checklist.length}</StatusPill>
               </div>
               <div className="mt-4 grid gap-4 md:grid-cols-2">
                 <Field label="Risque doublon">
@@ -1907,7 +1903,7 @@ export function AmbassadorLeadQualificationModal({
                 <p className="text-[11px] font-black uppercase tracking-[0.18em] text-blue-700">Qualification cockpit</p>
                 <h3 className="mt-1 text-lg font-black text-slate-950">{leadTemp.label}</h3>
               </div>
-              <StatusPill tone={leadTemp.tone}>{liveScore}%</StatusPill>
+              <StatusPill tone={leadTemp.tone}>{checklist.filter((item) => item.done).length}/{checklist.length}</StatusPill>
             </div>
             <div className="mt-4 grid gap-3 md:grid-cols-2">
               <div className="rounded-3xl border border-white bg-white p-4 shadow-sm placeholder:!text-slate-600">
@@ -1919,8 +1915,8 @@ export function AmbassadorLeadQualificationModal({
                 <p className="mt-2 text-sm font-semibold leading-6 !text-slate-950">{form.duplicate_risk}</p>
               </div>
               <div className="rounded-3xl border border-white bg-white p-4 shadow-sm placeholder:!text-slate-600">
-                <p className="text-[11px] font-black uppercase tracking-[0.14em] !text-slate-950">Probabilité</p>
-                <p className="mt-2 text-sm font-semibold leading-6 !text-slate-950">{form.qualification_score}%</p>
+                <p className="text-[11px] font-black uppercase tracking-[0.14em] !text-slate-950">Décision suivante</p>
+                <p className="mt-2 text-sm font-semibold leading-6 !text-slate-950">{form.next_followup_at ? "Relance planifiée" : "Action à planifier"}</p>
               </div>
               <div className="rounded-3xl border border-white bg-white p-4 shadow-sm placeholder:!text-slate-600">
                 <p className="text-[11px] font-black uppercase tracking-[0.14em] !text-slate-950">Budget</p>
@@ -2030,7 +2026,7 @@ export function AmbassadorConversionValidationModal({
             <button type="button" disabled={busy || !selected?.id} onClick={() => onDecide("rejected")} className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-black text-rose-700 disabled:opacity-50 placeholder:!text-slate-600">
               Refuser avec motif
             </button>
-            <button type="button" disabled={busy || !selected?.id} onClick={() => onDecide("validated")} className="rounded-2xl bg-slate-900 px-5 py-3 text-sm font-black !text-slate-950 disabled:opacity-50 placeholder:!text-slate-600">
+            <button type="button" disabled={busy || !selected?.id} onClick={() => onDecide("validated")} className="rounded-2xl bg-slate-900 px-5 py-3 text-sm font-black !text-white disabled:opacity-50 placeholder:!text-slate-600">
               Valider conversion
             </button>
           </div>
@@ -2053,13 +2049,13 @@ export function AmbassadorConversionValidationModal({
                     type="button"
                     onClick={() => setSelectedId(String(item.id || ""))}
                     className={`w-full rounded-3xl border p-4 text-left transition ${
-                      isSelected ? "border-slate-900 bg-slate-900 !text-slate-950 shadow-lg shadow-slate-100/60" : "border-slate-200 bg-slate-50/80 hover:border-blue-200 hover:bg-white"
+                      isSelected ? "border-slate-900 bg-slate-900 !text-white shadow-lg shadow-slate-100/60" : "border-slate-200 bg-slate-50/80 hover:border-blue-200 hover:bg-white"
                     }`}
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div>
                         <p className="text-sm font-black">{item.lead_name || "Conversion"}</p>
-                        <p className={`mt-1 text-xs font-semibold ${isSelected ? "!text-slate-950" : "!text-slate-950"}`}>{item.source || "Source"} · {item.city || "Ville"}</p>
+                        <p className={`mt-1 text-xs font-semibold ${isSelected ? "!text-slate-200" : "!text-slate-950"}`}>{item.source || "Source"} · {item.city || "Ville"}</p>
                       </div>
                       <StatusPill tone={String(item.status || "pending") === "validated" ? "emerald" : String(item.status || "pending") === "rejected" ? "rose" : "amber"}>
                         {String(item.status || "pending")}
@@ -2205,7 +2201,7 @@ export function AmbassadorIncentiveApprovalModal({
             <button type="button" disabled={busy || !selected?.id} onClick={() => onDecide("approve")} className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-black text-emerald-700 disabled:opacity-50 placeholder:!text-slate-600">
               Approuver
             </button>
-            <button type="button" disabled={busy || !selected?.id} onClick={() => onDecide("pay")} className="rounded-2xl bg-slate-900 px-5 py-3 text-sm font-black !text-slate-950 disabled:opacity-50 placeholder:!text-slate-600">
+            <button type="button" disabled={busy || !selected?.id} onClick={() => onDecide("pay")} className="rounded-2xl bg-slate-900 px-5 py-3 text-sm font-black !text-white disabled:opacity-50 placeholder:!text-slate-600">
               Marquer comme payé
             </button>
           </div>
@@ -2228,13 +2224,13 @@ export function AmbassadorIncentiveApprovalModal({
                     type="button"
                     onClick={() => setSelectedId(String(item.id || ""))}
                     className={`w-full rounded-3xl border p-4 text-left transition ${
-                      isSelected ? "border-slate-900 bg-slate-900 !text-slate-950 shadow-lg shadow-slate-100/60" : "border-slate-200 bg-slate-50/80 hover:border-blue-200 hover:bg-white"
+                      isSelected ? "border-slate-900 bg-slate-900 !text-white shadow-lg shadow-slate-100/60" : "border-slate-200 bg-slate-50/80 hover:border-blue-200 hover:bg-white"
                     }`}
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div>
                         <p className="text-sm font-black">{labelForAmbassador(snapshot, item.ambassador_id)}</p>
-                        <p className={`mt-1 text-xs font-semibold ${isSelected ? "!text-slate-950" : "!text-slate-950"}`}>{item.incentive_type || "Commission"} · {item.status || "pending"}</p>
+                        <p className={`mt-1 text-xs font-semibold ${isSelected ? "!text-slate-200" : "!text-slate-950"}`}>{item.incentive_type || "Commission"} · {item.status || "pending"}</p>
                       </div>
                       <StatusPill tone="blue">{formatMoney(item.amount || 0, item.currency || "MAD")}</StatusPill>
                     </div>
@@ -2368,7 +2364,7 @@ export function AmbassadorReportExportModal({
             <button type="button" disabled title={pdfDisabledReason} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black !text-slate-950 disabled:opacity-100 placeholder:!text-slate-600">
               Exporter PDF
             </button>
-            <button type="button" disabled={busy || missing.length > 0} onClick={onExportCsv} className="rounded-2xl bg-slate-900 px-5 py-3 text-sm font-black !text-slate-950 disabled:opacity-50 placeholder:!text-slate-600">
+            <button type="button" disabled={busy || missing.length > 0} onClick={onExportCsv} className="rounded-2xl bg-slate-900 px-5 py-3 text-sm font-black !text-white disabled:opacity-50 placeholder:!text-slate-600">
               {busy ? "Génération..." : "Exporter CSV"}
             </button>
             <button type="button" disabled title={scheduleDisabledReason} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black !text-slate-950 disabled:opacity-100 placeholder:!text-slate-600">
@@ -2454,13 +2450,13 @@ export function AmbassadorReportExportModal({
                   onClick={() => item.available && onChange("format", item.value)}
                   className={`rounded-2xl border p-3 text-left transition ${
                     form.format === item.value
-                      ? "border-slate-900 bg-slate-900 !text-slate-950"
+                      ? "border-slate-900 bg-slate-900 !text-white"
                       : "border-slate-200 bg-slate-50 text-slate-700 disabled:opacity-50"
                   }`}
                   title={item.reason}
                 >
                   <p className="text-sm font-black">{item.label}</p>
-                  <p className={`mt-1 text-xs font-semibold ${form.format === item.value ? "!text-slate-950" : "!text-slate-950"}`}>
+                  <p className={`mt-1 text-xs font-semibold ${form.format === item.value ? "!text-slate-200" : "!text-slate-950"}`}>
                     {item.available ? "Disponible" : item.reason}
                   </p>
                 </button>

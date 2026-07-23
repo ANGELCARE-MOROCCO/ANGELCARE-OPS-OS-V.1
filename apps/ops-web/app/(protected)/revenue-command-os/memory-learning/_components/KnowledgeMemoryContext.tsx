@@ -1,5 +1,6 @@
 'use client'
 
+import { fetchRevenueOsJson } from '@/lib/revenue-command-os/client-http'
 import { createContext, useCallback, useContext, useMemo, useState } from 'react'
 import type {
   RevenueDoctrineMutationInput,
@@ -31,17 +32,17 @@ export function KnowledgeMemoryProvider({ initialKnowledge, children }: { initia
   const call=useCallback(async(action:string,payload?:unknown)=>{
     setBusy(true); setError('')
     try {
-      const response=await fetch('/api/revenue-command-os/knowledge-memory',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action,payload})})
-      const json=await response.json(); if(!response.ok || !json.ok) throw new Error(json?.error?.message || 'Action impossible.')
-      const refresh=await fetch('/api/revenue-command-os/knowledge-memory',{cache:'no-store'}); const refreshed=await refresh.json(); if(!refresh.ok || !refreshed.ok) throw new Error(refreshed?.error?.message || 'Actualisation impossible.')
+      const result=await fetchRevenueOsJson<unknown>('/api/revenue-command-os/knowledge-memory',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action,payload})},{fallbackMessage:'Action Doctrine & mémoire impossible.'})
+      const refreshed=await fetchRevenueOsJson<RevenueKnowledgeBootstrap>('/api/revenue-command-os/knowledge-memory',{cache:'no-store'},{fallbackMessage:'Actualisation Doctrine & mémoire impossible.'})
+      if(!refreshed.data) throw new Error('La mémoire institutionnelle n’a retourné aucune donnée.')
       setKnowledge(refreshed.data)
-      return json.data
+      return result.data
     } catch(e) { setError(e instanceof Error?e.message:'Erreur Doctrine & mémoire.'); throw e }
     finally { setBusy(false) }
   },[])
   const refresh=useCallback(async()=>{
     setBusy(true);setError('')
-    try { const response=await fetch('/api/revenue-command-os/knowledge-memory',{cache:'no-store'});const json=await response.json();if(!response.ok||!json.ok)throw new Error(json?.error?.message||'Actualisation impossible.');setKnowledge(json.data) }
+    try { const json=await fetchRevenueOsJson<RevenueKnowledgeBootstrap>('/api/revenue-command-os/knowledge-memory',{cache:'no-store'},{fallbackMessage:'Actualisation Doctrine & mémoire impossible.'});if(!json.data)throw new Error('La mémoire institutionnelle n’a retourné aucune donnée.');setKnowledge(json.data) }
     catch(e){setError(e instanceof Error?e.message:'Actualisation impossible.')}
     finally{setBusy(false)}
   },[])

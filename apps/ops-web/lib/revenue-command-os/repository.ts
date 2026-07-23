@@ -1,6 +1,6 @@
 import 'server-only'
 
-import { createClient } from '@/lib/supabase/server'
+import { createServiceClient } from '@/lib/supabase/server'
 import { REVENUE_OS_FEATURE_FLAGS, REVENUE_OS_WORKSPACES } from './constants'
 import { getRevenueOsEnvironmentConfig } from './env'
 import { normalizeRevenueOsError, RevenueOsError } from './errors'
@@ -121,10 +121,10 @@ async function safeSelect<T>(query: PromiseLike<{ data: T[] | null; error: any }
 
 export async function readRevenueOsFoundation(): Promise<RepositoryReadResult> {
   const warnings: string[] = []
-  let supabase: Awaited<ReturnType<typeof createClient>>
+  let supabase: Awaited<ReturnType<typeof createServiceClient>>
 
   try {
-    supabase = await createClient()
+    supabase = await createServiceClient()
   } catch (error) {
     warnings.push(`Supabase indisponible: ${error instanceof Error ? error.message : String(error)}`)
     return { bootstrap: createFoundationBootstrap(), warnings }
@@ -200,7 +200,7 @@ export async function createRevenueOsObjective(input: RevenueOsObjectiveInput, a
   const objective = createFoundationObjective({ ...input, owner: actor?.label })
 
   try {
-    const supabase = await createClient()
+    const supabase = await createServiceClient()
     const row = {
       id: objective.id,
       code: objective.code,
@@ -252,9 +252,9 @@ export async function writeRevenueOsAuditEvent(input: {
   outcome: RevenueOsAuditEvent['outcome']
   summary: string
   metadata?: Record<string, unknown>
-}, existingClient?: Awaited<ReturnType<typeof createClient>>) {
+}, existingClient?: Awaited<ReturnType<typeof createServiceClient>>) {
   try {
-    const supabase = existingClient || await createClient()
+    const supabase = existingClient || await createServiceClient()
     const eventId = createRevenueOsEventId(input.action.replace(/\./g, '_'))
     const { data, error } = await supabase.from('revenue_os_audit_events').insert({
       event_id: eventId,

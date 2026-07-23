@@ -1,12 +1,170 @@
 import crypto from 'node:crypto'
 import type { NextRequest } from 'next/server'
-import { NextResponse } from 'next/server'
 import { getCurrentUser } from '@/lib/getUser'
-import { actorOf, executionError, executionRights, tenantOf } from './api-access'
-import { activateSchema, adapterControlSchema, approveActionSchema, prepareSchema, rejectActionSchema, retrySchema, rollbackSchema, runActionSchema } from './schemas'
-import { activatePropagation, approveExecutionAction, compensateExecutionAction, executionDashboard, preparePropagation, rejectExecutionAction, retryExecutionAction, validatePropagationPackage } from './service'
+import { RevenueOsError } from '../errors'
+import { revenueOsErrorResponse, revenueOsSuccess } from '../http'
+import { actorOf, executionRights, tenantOf } from './api-access'
+import {
+  activateSchema,
+  adapterControlSchema,
+  approveActionSchema,
+  prepareSchema,
+  rejectActionSchema,
+  retrySchema,
+  rollbackSchema,
+  runActionSchema,
+} from './schemas'
+import {
+  activatePropagation,
+  approveExecutionAction,
+  compensateExecutionAction,
+  executionDashboard,
+  preparePropagation,
+  rejectExecutionAction,
+  retryExecutionAction,
+  validatePropagationPackage,
+} from './service'
 import { adapterRegistry } from './registry'
-export async function handlePropagation(request:NextRequest,action:'validate'|'prepare'|'activate'|'pause'|'resume'|'cancel'){const user=await getCurrentUser();if(!user)return executionError('UNAUTHENTICATED','Authentification requise.',401);const rights=executionRights(user);const raw=await request.json().catch(()=>({}));const tenantId=tenantOf(user,raw);const actor=actorOf(user,tenantId);try{if(action==='validate'){if(!rights.view)return executionError('FORBIDDEN','Permission requise.',403);const parsed=prepareSchema.pick({packageId:true}).safeParse(raw);if(!parsed.success)return executionError('INVALID_INPUT',parsed.error.issues.map(x=>x.message).join('; '));return NextResponse.json({ok:true,data:await validatePropagationPackage(tenantId,parsed.data.packageId),externalActionsExecuted:0})}if(action==='prepare'){if(!rights.prepare)return executionError('FORBIDDEN','Permission de préparation requise.',403);const parsed=prepareSchema.safeParse(raw);if(!parsed.success)return executionError('INVALID_INPUT',parsed.error.issues.map(x=>x.message).join('; '));const idempotencyKey=request.headers.get('idempotency-key')||parsed.data.idempotencyKey||crypto.randomUUID();return NextResponse.json({ok:true,data:await preparePropagation({tenantId,actor,...parsed.data,idempotencyKey}),externalActionsExecuted:0})}if(action==='activate'){if(!rights.activate)return executionError('FORBIDDEN','Permission d’activation requise.',403);const parsed=activateSchema.safeParse(raw);if(!parsed.success)return executionError('INVALID_INPUT',parsed.error.issues.map(x=>x.message).join('; '));return NextResponse.json({ok:true,data:await activatePropagation({tenantId,actor,...parsed.data}),externalActionsExecuted:0})}const parsed=runActionSchema.safeParse(raw);if(!parsed.success)return executionError('INVALID_INPUT',parsed.error.issues.map(x=>x.message).join('; '));return NextResponse.json({ok:true,data:{runId:parsed.data.runId,status:action,reason:parsed.data.reason},externalActionsExecuted:0})}catch(error){return executionError('PROPAGATION_FAILED',error instanceof Error?error.message:String(error),500)}}
-export async function handleExecutionAction(request:NextRequest,action:'approve'|'reject'|'retry'|'rollback'|'compensate'){const user=await getCurrentUser();if(!user)return executionError('UNAUTHENTICATED','Authentification requise.',401);const rights=executionRights(user);const raw=await request.json().catch(()=>({}));const tenantId=tenantOf(user,raw);const actor=actorOf(user,tenantId);try{if(action==='approve'){if(!rights.approve)return executionError('FORBIDDEN','Permission d’approbation requise.',403);const parsed=approveActionSchema.safeParse(raw);if(!parsed.success)return executionError('INVALID_INPUT',parsed.error.issues.map(x=>x.message).join('; '));return NextResponse.json({ok:true,data:await approveExecutionAction({tenantId,actor,...parsed.data}),externalActionsExecuted:0})}if(action==='reject'){if(!rights.approve)return executionError('FORBIDDEN','Permission d’approbation requise.',403);const parsed=rejectActionSchema.safeParse(raw);if(!parsed.success)return executionError('INVALID_INPUT',parsed.error.issues.map(x=>x.message).join('; '));return NextResponse.json({ok:true,data:await rejectExecutionAction({tenantId,actor,...parsed.data}),externalActionsExecuted:0})}if(action==='retry'){if(!rights.operate)return executionError('FORBIDDEN','Permission opérateur requise.',403);const parsed=retrySchema.safeParse(raw);if(!parsed.success)return executionError('INVALID_INPUT',parsed.error.issues.map(x=>x.message).join('; '));return NextResponse.json({ok:true,data:await retryExecutionAction({tenantId,actor,...parsed.data}),externalActionsExecuted:0})}if(!rights.rollback)return executionError('FORBIDDEN','Permission rollback requise.',403);const parsed=rollbackSchema.safeParse(raw);if(!parsed.success)return executionError('INVALID_INPUT',parsed.error.issues.map(x=>x.message).join('; '));return NextResponse.json({ok:true,data:await compensateExecutionAction({tenantId,actor,actionId:parsed.data.actionId,reason:parsed.data.reason}),externalActionsExecuted:0})}catch(error){return executionError('EXECUTION_ACTION_FAILED',error instanceof Error?error.message:String(error),500)}}
-export async function handleAdapter(request:NextRequest,action:'test'|'suspend'|'restore'){const user=await getCurrentUser();if(!user)return executionError('UNAUTHENTICATED','Authentification requise.',401);const rights=executionRights(user);if(!rights.admin)return executionError('FORBIDDEN','Permission administrateur requise.',403);const raw=await request.json().catch(()=>({}));const parsed=adapterControlSchema.safeParse(raw);if(!parsed.success)return executionError('INVALID_INPUT',parsed.error.issues.map(x=>x.message).join('; '));const adapter=adapterRegistry().resolve(parsed.data.adapterCode);const health=await adapter.health();return NextResponse.json({ok:true,data:{action,adapter:parsed.data.adapterCode,health,reason:parsed.data.reason},externalActionsExecuted:0})}
-export async function handleDashboard(){const user=await getCurrentUser();if(!user)return executionError('UNAUTHENTICATED','Authentification requise.',401);if(!executionRights(user).view)return executionError('FORBIDDEN','Permission requise.',403);try{return NextResponse.json({ok:true,data:await executionDashboard(tenantOf(user)),externalActionsExecuted:0})}catch(error){return executionError('DASHBOARD_FAILED',error instanceof Error?error.message:String(error),500)}}
+
+async function authenticatedUser() {
+  const user = await getCurrentUser()
+  if (!user) {
+    throw new RevenueOsError('REVENUE_OS_UNAUTHENTICATED', 'Authentification requise.', {
+      status: 401,
+      recoverable: true,
+    })
+  }
+  return user
+}
+
+function validationError(message: string) {
+  return new RevenueOsError('REVENUE_OS_INVALID_INPUT', message, { status: 422, recoverable: true })
+}
+
+export async function handlePropagation(
+  request: NextRequest,
+  action: 'validate' | 'prepare' | 'activate' | 'pause' | 'resume' | 'cancel',
+) {
+  try {
+    const user = await authenticatedUser()
+    const rights = executionRights(user)
+    const raw = await request.json().catch(() => ({}))
+    const tenantId = tenantOf(user, raw)
+    const actor = actorOf(user, tenantId)
+
+    if (action === 'validate') {
+      if (!rights.view) throw new RevenueOsError('REVENUE_OS_PERMISSION_DENIED', 'Permission requise.', { status: 403 })
+      const parsed = prepareSchema.pick({ packageId: true }).safeParse(raw)
+      if (!parsed.success) throw validationError(parsed.error.issues.map((issue) => issue.message).join('; '))
+      return revenueOsSuccess(await validatePropagationPackage(tenantId, parsed.data.packageId))
+    }
+
+    if (action === 'prepare') {
+      if (!rights.prepare) throw new RevenueOsError('REVENUE_OS_PERMISSION_DENIED', 'Permission de préparation requise.', { status: 403 })
+      const parsed = prepareSchema.safeParse(raw)
+      if (!parsed.success) throw validationError(parsed.error.issues.map((issue) => issue.message).join('; '))
+      const idempotencyKey =
+        request.headers.get('idempotency-key') || parsed.data.idempotencyKey || crypto.randomUUID()
+      return revenueOsSuccess(
+        await preparePropagation({ tenantId, actor, ...parsed.data, idempotencyKey }),
+      )
+    }
+
+    if (action === 'activate') {
+      if (!rights.activate) throw new RevenueOsError('REVENUE_OS_PERMISSION_DENIED', 'Permission d’activation requise.', { status: 403 })
+      const parsed = activateSchema.safeParse(raw)
+      if (!parsed.success) throw validationError(parsed.error.issues.map((issue) => issue.message).join('; '))
+      return revenueOsSuccess(await activatePropagation({ tenantId, actor, ...parsed.data }))
+    }
+
+    const parsed = runActionSchema.safeParse(raw)
+    if (!parsed.success) throw validationError(parsed.error.issues.map((issue) => issue.message).join('; '))
+
+    return revenueOsSuccess({ runId: parsed.data.runId, status: action, reason: parsed.data.reason })
+  } catch (error) {
+    return revenueOsErrorResponse(error)
+  }
+}
+
+export async function handleExecutionAction(
+  request: NextRequest,
+  action: 'approve' | 'reject' | 'retry' | 'rollback' | 'compensate',
+) {
+  try {
+    const user = await authenticatedUser()
+    const rights = executionRights(user)
+    const raw = await request.json().catch(() => ({}))
+    const tenantId = tenantOf(user, raw)
+    const actor = actorOf(user, tenantId)
+
+    if (action === 'approve') {
+      if (!rights.approve) throw new RevenueOsError('REVENUE_OS_PERMISSION_DENIED', 'Permission d’approbation requise.', { status: 403 })
+      const parsed = approveActionSchema.safeParse(raw)
+      if (!parsed.success) throw validationError(parsed.error.issues.map((issue) => issue.message).join('; '))
+      return revenueOsSuccess(await approveExecutionAction({ tenantId, actor, ...parsed.data }))
+    }
+
+    if (action === 'reject') {
+      if (!rights.approve) throw new RevenueOsError('REVENUE_OS_PERMISSION_DENIED', 'Permission d’approbation requise.', { status: 403 })
+      const parsed = rejectActionSchema.safeParse(raw)
+      if (!parsed.success) throw validationError(parsed.error.issues.map((issue) => issue.message).join('; '))
+      return revenueOsSuccess(await rejectExecutionAction({ tenantId, actor, ...parsed.data }))
+    }
+
+    if (action === 'retry') {
+      if (!rights.operate) throw new RevenueOsError('REVENUE_OS_PERMISSION_DENIED', 'Permission opérateur requise.', { status: 403 })
+      const parsed = retrySchema.safeParse(raw)
+      if (!parsed.success) throw validationError(parsed.error.issues.map((issue) => issue.message).join('; '))
+      return revenueOsSuccess(await retryExecutionAction({ tenantId, actor, ...parsed.data }))
+    }
+
+    if (!rights.rollback) {
+      throw new RevenueOsError('REVENUE_OS_PERMISSION_DENIED', 'Permission rollback requise.', { status: 403 })
+    }
+    const parsed = rollbackSchema.safeParse(raw)
+    if (!parsed.success) throw validationError(parsed.error.issues.map((issue) => issue.message).join('; '))
+    return revenueOsSuccess(
+      await compensateExecutionAction({
+        tenantId,
+        actor,
+        actionId: parsed.data.actionId,
+        reason: parsed.data.reason,
+      }),
+    )
+  } catch (error) {
+    return revenueOsErrorResponse(error)
+  }
+}
+
+export async function handleAdapter(
+  request: NextRequest,
+  action: 'test' | 'suspend' | 'restore',
+) {
+  try {
+    const user = await authenticatedUser()
+    if (!executionRights(user).admin) {
+      throw new RevenueOsError('REVENUE_OS_PERMISSION_DENIED', 'Permission administrateur requise.', { status: 403 })
+    }
+    const raw = await request.json().catch(() => ({}))
+    tenantOf(user, raw)
+    const parsed = adapterControlSchema.safeParse(raw)
+    if (!parsed.success) throw validationError(parsed.error.issues.map((issue) => issue.message).join('; '))
+    const adapter = adapterRegistry().resolve(parsed.data.adapterCode)
+    const health = await adapter.health()
+    return revenueOsSuccess({ action, adapter: parsed.data.adapterCode, health, reason: parsed.data.reason })
+  } catch (error) {
+    return revenueOsErrorResponse(error)
+  }
+}
+
+export async function handleDashboard() {
+  try {
+    const user = await authenticatedUser()
+    if (!executionRights(user).view) {
+      throw new RevenueOsError('REVENUE_OS_PERMISSION_DENIED', 'Permission requise.', { status: 403 })
+    }
+    return revenueOsSuccess(await executionDashboard(tenantOf(user)))
+  } catch (error) {
+    return revenueOsErrorResponse(error)
+  }
+}

@@ -1,6 +1,6 @@
 import { createHash, createHmac, randomUUID, timingSafeEqual } from 'node:crypto'
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { createServiceClient } from '@/lib/supabase/server'
 import { normalizeRevenueOsError, RevenueOsError } from '@/lib/revenue-command-os/errors'
 import { ingestRevenueSignal } from '@/lib/revenue-command-os/signal-fabric/repository'
 import type { RevenueSignalIngestionInput } from '@/lib/revenue-command-os/types'
@@ -23,7 +23,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ so
   const timestamp = request.headers.get('x-revenue-signal-timestamp') || ''
   const secret = process.env.REVENUE_OS_SIGNAL_WEBHOOK_SECRET || ''
   const { sourceCode } = await context.params
-  const supabase = await createClient()
+  const supabase = await createServiceClient()
 
   const reject = async (reason: string, status: number) => {
     await supabase.from('revenue_os_signal_webhook_receipts').insert({ receipt_id: receiptId, source_code: sourceCode, signature_valid: false, body_hash: bodyHash, status: 'rejected', rejection_reason: reason, received_at: receivedAt.toISOString(), metadata: { shadowOnly: true } })

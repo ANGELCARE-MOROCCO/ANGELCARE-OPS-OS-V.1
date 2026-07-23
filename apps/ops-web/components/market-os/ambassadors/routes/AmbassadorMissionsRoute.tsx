@@ -23,6 +23,7 @@ import {
   Play,
   Plus,
   RefreshCw,
+  RadioTower,
   Search,
   ShieldCheck,
   Target,
@@ -99,7 +100,7 @@ const statusTones: Record<StatusGroup, string> = {
   planned: "border-blue-200 bg-blue-50/60 text-blue-800",
   active: "border-emerald-200 bg-emerald-50/60 text-emerald-800",
   late: "border-rose-200 bg-rose-50/60 text-rose-800",
-  validation: "border-violet-200 bg-violet-50/60 text-violet-800",
+  validation: "border-blue-200 bg-blue-50/70 text-blue-800",
   completed: "border-teal-200 bg-teal-50/60 text-teal-800",
 };
 
@@ -384,11 +385,11 @@ export default function AmbassadorMissionsRoute({ snapshot, loading, refreshing,
       if (!mission.ambassador_id) reasons.push("Aucun ambassadeur affecté");
       if (!proofReady(mission, meta)) reasons.push("Preuve non prête");
       if (meta.incidents?.some((incident) => !["closed", "resolved"].includes(text(incident.status).toLowerCase()))) reasons.push("Incident ouvert");
-      const score = (normalizeStatus(mission) === "late" ? 1000 : 0) + (priorityRank[text(mission.priority).toLowerCase()] || 2) * 100 + (due ? Math.max(0, 30 - Math.floor((due - Date.now()) / 86400000)) : 0);
-      return { mission, reasons, score };
+      const priorityWeight = (normalizeStatus(mission) === "late" ? 1000 : 0) + (priorityRank[text(mission.priority).toLowerCase()] || 2) * 100 + (due ? Math.max(0, 30 - Math.floor((due - Date.now()) / 86400000)) : 0);
+      return { mission, reasons, priorityWeight };
     })
     .filter((item) => item.reasons.length)
-    .sort((a, b) => b.score - a.score)
+    .sort((a, b) => b.priorityWeight - a.priorityWeight)
     .slice(0, 6), [missions]);
 
   const roadMap = useMemo(() => missions
@@ -575,7 +576,8 @@ export default function AmbassadorMissionsRoute({ snapshot, loading, refreshing,
                 <MapPinned size={13} /> Centre d’exécution terrain
               </div>
               <h1 className="mt-3 text-[30px] font-black tracking-[-0.035em] text-slate-950 xl:text-[36px]">Missions terrain</h1>
-              <p className="mt-1 max-w-[940px] text-sm font-semibold leading-6 text-slate-600">Pilotez l’affectation, l’exécution, les preuves, les incidents, la validation et la clôture de chaque mission ambassadeur depuis une seule source opérationnelle.</p>
+              <p className="mt-1 text-[10px] font-black uppercase tracking-[0.17em] text-blue-700">National Field Dispatch Command</p>
+              <p className="mt-2 max-w-[940px] text-sm font-semibold leading-6 text-slate-600">Pilotez l’affectation, l’exécution, les preuves, les incidents, la validation et la clôture de chaque mission ambassadeur depuis une seule source opérationnelle.</p>
             </div>
             <div className="flex flex-wrap items-center gap-2">
               <HeaderButton primary icon={Plus} onClick={openExactMissionBuilder}>Créer mission</HeaderButton>
@@ -594,14 +596,31 @@ export default function AmbassadorMissionsRoute({ snapshot, loading, refreshing,
         {success ? <Notice tone="success">{success}</Notice> : null}
         {feedback ? <Notice tone={feedback.tone}>{feedback.text}</Notice> : null}
 
-        <section className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4 2xl:grid-cols-7">
-          <KpiCard label="Missions en cours" value={kpis.active} helper="Exécution active" icon={Play} tone="emerald" onClick={() => setStatusFilter("active")} />
-          <KpiCard label="À démarrer" value={kpis.planned} helper="Affectation / lancement" icon={Calendar} tone="blue" onClick={() => setStatusFilter("planned")} />
-          <KpiCard label="En retard" value={kpis.late} helper="Échéance dépassée" icon={AlertTriangle} tone="rose" onClick={() => setStatusFilter("late")} />
-          <KpiCard label="En validation" value={kpis.validation} helper="Contrôle des résultats" icon={ShieldCheck} tone="violet" onClick={() => setStatusFilter("validation")} />
-          <KpiCard label="Terminées (MTD)" value={kpis.completedMtd} helper="Clôturées ce mois" icon={CheckCircle2} tone="teal" onClick={() => setStatusFilter("completed")} />
-          <KpiCard label="Couverture terrain" value={`${kpis.coverage}%`} helper={`${territories.length} territoire(s) réel(s)`} icon={Target} tone="cyan" />
-          <KpiCard label="Incidents ouverts" value={kpis.incidents} helper="Escalades actives" icon={AlertTriangle} tone="amber" onClick={() => document.getElementById("mission-incidents")?.scrollIntoView({ behavior: "smooth" })} />
+        <section className="mt-4 grid gap-4 xl:grid-cols-[1.15fr_1.35fr_0.8fr]">
+          <div className="relative overflow-hidden rounded-[28px] border border-slate-800 bg-slate-950 p-5 text-white shadow-[0_22px_55px_rgba(15,23,42,0.18)]">
+            <div className="absolute inset-y-0 right-0 w-40 bg-[radial-gradient(circle_at_center,rgba(37,99,235,0.26),transparent_68%)]" />
+            <div className="relative">
+              <div className="flex items-center justify-between gap-3"><span className="text-[10px] font-black uppercase tracking-[0.17em] text-blue-200">Posture de dispatch</span><RadioTower size={18} className="text-blue-300" /></div>
+              <div className="mt-5 flex items-end gap-3"><strong className="text-5xl font-black tabular-nums">{kpis.active}</strong><span className="pb-1 text-sm font-bold text-slate-300">mission(s) en exécution</span></div>
+              <div className="mt-5 grid grid-cols-3 gap-2 border-t border-white/10 pt-4">
+                <DispatchDatum label="À lancer" value={kpis.planned} onClick={() => setStatusFilter("planned")} />
+                <DispatchDatum label="En retard" value={kpis.late} danger onClick={() => setStatusFilter("late")} />
+                <DispatchDatum label="Incidents" value={kpis.incidents} warning onClick={() => document.getElementById("mission-incidents")?.scrollIntoView({ behavior: "smooth" })} />
+              </div>
+            </div>
+          </div>
+          <div className="rounded-[28px] border border-slate-200 bg-white p-5 shadow-sm">
+            <div className="flex items-center justify-between gap-4"><div><p className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-500">Flux opérationnel</p><h2 className="mt-1 text-lg font-black text-slate-950">De l’affectation à la preuve</h2></div><span className="rounded-full bg-blue-50 px-3 py-1.5 text-xs font-black text-blue-700">{missions.length} au registre</span></div>
+            <div className="mt-5 grid grid-cols-2 gap-x-4 gap-y-4 sm:grid-cols-5">
+              {[{ key: "planned", label: "Planifiées", value: kpis.planned }, { key: "active", label: "En cours", value: kpis.active }, { key: "late", label: "En retard", value: kpis.late }, { key: "validation", label: "Preuve / validation", value: kpis.validation }, { key: "completed", label: "Terminées MTD", value: kpis.completedMtd }].map((item) => <button type="button" key={item.key} onClick={() => setStatusFilter(item.key as StatusGroup)} className="group text-left"><span className="block text-2xl font-black tabular-nums text-slate-950 group-hover:text-blue-700">{item.value}</span><span className="mt-1 block text-[10px] font-black uppercase tracking-[0.1em] text-slate-500">{item.label}</span><span className={`mt-3 block h-1.5 rounded-full ${item.key === "late" ? "bg-rose-500" : item.key === "active" || item.key === "completed" ? "bg-emerald-500" : "bg-blue-600"}`} /></button>)}
+            </div>
+          </div>
+          <div className="rounded-[28px] border border-slate-200 bg-white p-5 shadow-sm">
+            <div className="flex items-center justify-between"><Target size={20} className="text-blue-700" /><span className="rounded-full bg-emerald-50 px-2.5 py-1 text-[10px] font-black text-emerald-700">Données réelles</span></div>
+            <div className="mt-5 text-4xl font-black tabular-nums text-slate-950">{kpis.coverage}%</div>
+            <p className="mt-1 text-sm font-black text-slate-700">Couverture territoriale</p>
+            <p className="mt-2 text-xs font-semibold leading-5 text-slate-500">{territories.length} territoire(s) actuellement représenté(s) par les missions synchronisées.</p>
+          </div>
         </section>
 
         <section className="mt-4 rounded-[28px] border border-slate-200 bg-white p-4 shadow-sm xl:p-5">
@@ -651,7 +670,7 @@ export default function AmbassadorMissionsRoute({ snapshot, loading, refreshing,
             <CompactPanel title="Contrôles immédiats" icon={ShieldCheck}>
               <ControlRow label="Sans ambassadeur" value={missions.filter((item) => !item.ambassador_id && normalizeStatus(item) !== "completed").length} tone="rose" />
               <ControlRow label="Preuves manquantes" value={missions.filter((item) => normalizeStatus(item) !== "completed" && !proofReady(item)).length} tone="amber" />
-              <ControlRow label="En validation" value={kpis.validation} tone="violet" />
+              <ControlRow label="En validation" value={kpis.validation} tone="blue" />
               <ControlRow label="Incidents ouverts" value={openIncidents.length} tone="rose" />
             </CompactPanel>
           </aside>
@@ -710,22 +729,8 @@ function Notice({ tone, children }: { tone: "success" | "error"; children: React
   return <div className={`mt-4 rounded-2xl border px-4 py-3 text-sm font-bold ${tone === "success" ? "border-emerald-200 bg-emerald-50 text-emerald-800" : "border-rose-200 bg-rose-50 text-rose-800"}`}>{children}</div>;
 }
 
-const kpiTone: Record<string, { icon: string; bar: string }> = {
-  emerald: { icon: "bg-emerald-50 text-emerald-700", bar: "bg-emerald-500" },
-  blue: { icon: "bg-blue-50 text-blue-700", bar: "bg-blue-500" },
-  rose: { icon: "bg-rose-50 text-rose-700", bar: "bg-rose-500" },
-  violet: { icon: "bg-violet-50 text-violet-700", bar: "bg-violet-500" },
-  teal: { icon: "bg-teal-50 text-teal-700", bar: "bg-teal-500" },
-  cyan: { icon: "bg-cyan-50 text-cyan-700", bar: "bg-cyan-500" },
-  amber: { icon: "bg-amber-50 text-amber-700", bar: "bg-amber-500" },
-};
-
-function KpiCard({ label, value, helper, icon: Icon, tone, onClick }: { label: string; value: string | number; helper: string; icon: IconType; tone: string; onClick?: () => void }) {
-  const palette = kpiTone[tone] || kpiTone.blue;
-  return <button type="button" onClick={onClick} className="group min-h-[126px] rounded-[24px] border border-slate-200 bg-white p-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-md">
-    <div className="flex items-start justify-between gap-3"><div><div className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-500">{label}</div><div className="mt-2 text-[28px] font-black tracking-tight text-slate-950">{value}</div></div><div className={`grid h-11 w-11 place-items-center rounded-2xl ${palette.icon}`}><Icon size={20} /></div></div>
-    <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-slate-100"><div className={`h-full w-2/3 rounded-full ${palette.bar}`} /></div><div className="mt-2 text-[11px] font-bold text-slate-500">{helper}</div>
-  </button>;
+function DispatchDatum({ label, value, danger = false, warning = false, onClick }: { label: string; value: number; danger?: boolean; warning?: boolean; onClick?: () => void }) {
+  return <button type="button" onClick={onClick} className="rounded-xl p-2 text-left transition hover:bg-white/5"><span className={`block text-xl font-black tabular-nums ${danger ? "text-rose-300" : warning ? "text-amber-300" : "text-white"}`}>{value}</span><span className="mt-1 block text-[9px] font-black uppercase tracking-[0.1em] text-slate-400">{label}</span></button>;
 }
 
 function LifecycleColumn({ status, missions, ambassadorName, onSelect }: { status: StatusGroup; missions: AnyRow[]; ambassadorName: (id: unknown) => string; onSelect: (mission: AnyRow) => void }) {
@@ -778,7 +783,7 @@ function MissionTable({ loading, missions, ambassadorName, onSelect, onAction }:
 }
 
 function StatusPill({ group }: { group: StatusGroup }) {
-  const classes: Record<StatusGroup, string> = { planned: "bg-blue-50 text-blue-700", active: "bg-emerald-50 text-emerald-700", late: "bg-rose-50 text-rose-700", validation: "bg-violet-50 text-violet-700", completed: "bg-teal-50 text-teal-700" };
+  const classes: Record<StatusGroup, string> = { planned: "bg-blue-50 text-blue-700", active: "bg-emerald-50 text-emerald-700", late: "bg-rose-50 text-rose-700", validation: "bg-blue-50 text-blue-700", completed: "bg-teal-50 text-teal-700" };
   return <span className={`inline-flex rounded-full px-2.5 py-1 font-black ${classes[group]}`}>{statusLabels[group]}</span>;
 }
 
@@ -802,8 +807,8 @@ function CompactPanel({ title, icon: Icon, children, action, onAction }: { title
 }
 
 function ControlRow({ label, value, tone }: { label: string; value: number; tone: string }) {
-  const classes: Record<string, string> = { rose: "bg-rose-50 text-rose-700", amber: "bg-amber-50 text-amber-700", violet: "bg-violet-50 text-violet-700" };
-  return <div className="flex items-center justify-between rounded-2xl bg-slate-50 px-3 py-3"><span className="text-xs font-bold text-slate-700">{label}</span><span className={`rounded-full px-2.5 py-1 text-xs font-black ${classes[tone] || classes.violet}`}>{value}</span></div>;
+  const classes: Record<string, string> = { rose: "bg-rose-50 text-rose-700", amber: "bg-amber-50 text-amber-700", blue: "bg-blue-50 text-blue-700" };
+  return <div className="flex items-center justify-between rounded-2xl bg-slate-50 px-3 py-3"><span className="text-xs font-bold text-slate-700">{label}</span><span className={`rounded-full px-2.5 py-1 text-xs font-black ${classes[tone] || classes.blue}`}>{value}</span></div>;
 }
 
 function PriorityRow({ mission, reasons, ambassador, onClick }: { mission: AnyRow; reasons: string[]; ambassador: string; onClick: () => void }) {
@@ -898,7 +903,7 @@ const assignmentRoleOptions = [
 const assignmentStrategyOptions = [
   { value: "solo_controle", title: "Solo contrôlé", description: "Un responsable autonome avec checkpoints renforcés.", teamSize: 1, tone: "blue" },
   { value: "binome_terrain", title: "Binôme terrain", description: "Responsable + support pour couverture et preuve.", teamSize: 2, tone: "emerald" },
-  { value: "equipe_activation", title: "Équipe activation", description: "Cellule de 3 à 5 ambassadeurs pour volume terrain.", teamSize: 4, tone: "violet" },
+  { value: "equipe_activation", title: "Équipe activation", description: "Cellule de 3 à 5 ambassadeurs pour volume terrain.", teamSize: 4, tone: "blue" },
   { value: "hybride_terrain_digital", title: "Hybride terrain + digital", description: "Terrain, WhatsApp et relance répartis par rôle.", teamSize: 3, tone: "amber" },
 ];
 
@@ -1183,7 +1188,7 @@ function AssignMissionModal({ missions, ambassadors, selectedMission, busy, feed
       <div className="space-y-5">
         <ModalSection title="3. Responsable principal" subtitle="Sélectionnez le pilote et contrôlez immédiatement son aptitude">
           <div className="grid gap-4 lg:grid-cols-[1fr_0.9fr]">
-            <Field label="Ambassadeur responsable" required><select value={primaryId} onChange={(event) => { const id = event.target.value; setPrimaryId(id); setTeamMembers((rows) => rows.filter((row) => row.ambassadorId !== id)); }} className={inputClass}><option value="">Choisir le responsable principal</option>{ambassadors.map((item) => <option key={item.id} value={item.id}>{ambassadorDisplayName(item)} · {ambassadorDisplayCity(item)} · score {ambassadorQualityScore(item)}%</option>)}</select></Field>
+            <Field label="Ambassadeur responsable" required><select value={primaryId} onChange={(event) => { const id = event.target.value; setPrimaryId(id); setTeamMembers((rows) => rows.filter((row) => row.ambassadorId !== id)); }} className={inputClass}><option value="">Choisir le responsable principal</option>{ambassadors.map((item) => <option key={item.id} value={item.id}>{ambassadorDisplayName(item)} · {ambassadorDisplayCity(item)}</option>)}</select></Field>
             <Field label="Rôle principal"><input value="Responsable mission" readOnly className={`${inputClass} bg-slate-50`} /></Field>
           </div>
           {primary ? <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">

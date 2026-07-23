@@ -23,7 +23,11 @@ export async function executeStudioAction(input:StudioActionInput):Promise<Studi
     if(conditional)newStatus='conditional_approval';else if(authoritySatisfied&&conditionsSatisfied(conditions))newStatus='ready_for_mz13';else newStatus='under_review'
     approval.status=newStatus;await saveApprovalRequest(approval);await saveDecision(input.tenantId,decision);await updateApprovalStatus(input.tenantId,approval.id,newStatus,{...approval,status:newStatus})
   }else if(input.action==='reject'){
-    await saveStudioArtifact('revenue_os_approval_decisions',{...row(input,{reason:input.reason}),id:crypto.randomUUID(),decision:'rejected',status:'final'})
+    const approvalClass=input.approvalClass||dossier.approval?.approvalClass||'standard'
+    approval=dossier.approval||{id:crypto.randomUUID(),tenantId:input.tenantId,strategyId:input.strategyId,strategyVersion:input.strategyVersion,approvalClass,status:'rejected',requestedBy:input.actor.id,requestedAt:new Date().toISOString(),requirements:buildApprovalRequirements(input.strategyId,input.strategyVersion,approvalClass),decisions:[],conditions:[],expiresAt:undefined,idempotencyKey:input.idempotencyKey}
+    const decision:ApprovalDecision={id:crypto.randomUUID(),requestId:approval.id,strategyId:input.strategyId,strategyVersion:input.strategyVersion,actor:input.actor,decision:'rejected',reason:input.reason,conditions:approval.conditions||[],decidedAt:new Date().toISOString(),externalActions:0}
+    approval={...approval,approvalClass,status:'rejected',decisions:[...(approval.decisions||[]),decision]}
+    await saveApprovalRequest(approval);await saveDecision(input.tenantId,decision);await updateApprovalStatus(input.tenantId,approval.id,'rejected',{...approval})
   }else if(input.action==='amend'){
     const strategy={...dossier.strategy,...(input.amendment||{}),version:bump(dossier.strategy.version),parentVersion:dossier.strategy.version,status:'draft' as const,createdAt:new Date().toISOString()};resultingVersion=strategy.version;requiresCouncilRevalidation=true;await saveStrategyVersion(input.tenantId,strategy,'mz12_amendment',input.reason);await saveStudioArtifact('revenue_os_strategy_amendments',{...row(input,{reason:input.reason,amendment:input.amendment,resultingVersion}),id:crypto.randomUUID(),source_version:input.strategyVersion,resulting_version:resultingVersion,status:'draft'})
   }else if(input.action==='combine'){
@@ -32,6 +36,7 @@ export async function executeStudioAction(input:StudioActionInput):Promise<Studi
     requiresCouncilRevalidation=true;await saveStudioArtifact('revenue_os_reanalysis_requests',{...row(input,{reason:input.reason}),id:crypto.randomUUID(),status:'open'})
   }else if(input.action==='request_evidence'){
     await saveStudioArtifact('revenue_os_evidence_requests',{...row(input,{reason:input.reason,requestedEvidence:input.amendment||{}}),id:crypto.randomUUID(),status:'open'})
+    if(dossier.approval){approval={...dossier.approval,status:'evidence_requested'};await updateApprovalStatus(input.tenantId,dossier.approval.id,'evidence_requested',{...approval})}
   }else if(input.action==='change_objective'){
     requiresCouncilRevalidation=true;await saveStudioArtifact('revenue_os_objective_change_requests',{...row(input,{changes:input.objectiveChanges,reason:input.reason}),id:crypto.randomUUID(),objective_id:dossier.objective.id,status:'pending_reanalysis'})
   }else if(input.action==='change_constraint'){

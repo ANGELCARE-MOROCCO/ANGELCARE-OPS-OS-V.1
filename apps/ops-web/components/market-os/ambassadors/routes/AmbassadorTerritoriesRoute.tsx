@@ -331,9 +331,9 @@ function Kpi({label,value,helper,icon:Icon,tone}:{label:string;value:string;help
 }
 function ModalShell({title,subtitle,icon:Icon,children,footer,onClose,width="max-w-6xl"}:{title:string;subtitle:string;icon:LucideIcon;children:ReactNode;footer:ReactNode;onClose:()=>void;width?:string}) {
   return <div className="fixed inset-0 z-[190] flex items-start justify-center overflow-y-auto bg-slate-950/45 px-4 pb-10 pt-[92px] backdrop-blur-[3px]">
-    <div className={`flex max-h-[calc(100vh-112px)] w-full flex-col overflow-hidden rounded-[28px] border border-slate-200 bg-[#f5f7fb] shadow-[0_35px_110px_rgba(15,23,42,0.38)] ${width}`}>
+    <div className={`flex max-h-[calc(100vh-112px)] w-full flex-col overflow-hidden rounded-[22px] border border-slate-300 bg-[#f4f7fa] shadow-[0_38px_120px_rgba(3,15,31,0.42)] ${width}`}>
       <header className="flex items-start justify-between gap-4 border-b border-slate-200 bg-white px-6 py-5">
-        <div className="flex min-w-0 items-start gap-4"><span className="rounded-2xl border border-blue-100 bg-blue-50 p-3 text-blue-700"><Icon className="h-5 w-5"/></span>
+        <div className="flex min-w-0 items-start gap-4"><span className="rounded-xl border border-blue-200 bg-blue-50 p-3 text-blue-700"><Icon className="h-5 w-5"/></span>
         <div><h2 className="text-xl font-black text-slate-950">{title}</h2><p className="mt-1 max-w-4xl text-sm font-semibold leading-6 text-slate-600">{subtitle}</p></div></div>
         <button type="button" onClick={onClose} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-950"><X className="h-4 w-4"/></button>
       </header>
@@ -726,35 +726,56 @@ export default function AmbassadorTerritoriesRoute() {
     setSelectedTerritoryId(territory.id);setDrawerMode("territory");setDrawerOpen(true);setError("")
   }
 
-  return <div data-ambassador-territories-route="enterprise-territory-command-center" className="min-w-0 flex-1 bg-[#f5f7fb] p-4 text-slate-950 lg:p-5">
+  return <div data-ambassador-territories-route="enterprise-territory-command-center" className="min-w-0 flex-1 bg-[#f1f4f7] p-4 text-slate-950 lg:p-5">
     <div className={`grid min-w-0 gap-4 ${drawerOpen?"2xl:grid-cols-[minmax(0,1fr)_430px]":"grid-cols-1"}`}>
       <main className="min-w-0 space-y-4">
-        <header className="rounded-[26px] border border-slate-200 bg-white p-5 shadow-[0_14px_45px_rgba(15,23,42,0.065)]">
-          <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
-            <div>
-              <div className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-blue-700"><MapIcon className="h-4 w-4"/>Couverture nationale Ambassador OS</div>
-              <h1 className="mt-3 text-3xl font-black tracking-tight text-slate-950">Territoires & couverture</h1>
-              <p className="mt-2 max-w-4xl text-sm font-semibold leading-6 text-slate-600">Pilotez les zones réelles, la densité d’ambassadeurs, la capacité, les objectifs, les risques et les décisions d’affectation avec approbation manager.</p>
+        <header className="overflow-hidden border border-slate-200 bg-white shadow-[0_12px_36px_rgba(15,23,42,0.055)]">
+          <div className="grid 2xl:grid-cols-[1.3fr_0.7fr]">
+            <div className="relative px-5 py-6 lg:px-7">
+              <div className="absolute inset-y-0 left-0 w-1.5 bg-[#bd2634]" />
+              <div className="flex flex-col gap-5 xl:flex-row xl:items-end xl:justify-between">
+                <div className="max-w-4xl">
+                  <div className="flex flex-wrap items-center gap-2 text-[10px] font-black uppercase tracking-[0.19em] text-[#2e6194]"><MapIcon className="h-4 w-4"/><span>Geographic Coverage Command</span><span className="h-1 w-1 rounded-full bg-[#bd2634]"/><span>Morocco Network</span></div>
+                  <h1 className="mt-4 text-[30px] font-black tracking-[-0.035em] text-[#071c34] lg:text-[38px]">Territoires & déploiement national</h1>
+                  <p className="mt-3 max-w-4xl text-sm font-semibold leading-6 text-slate-600">Pilotez les unités géographiques réelles, la densité du réseau, les écarts de couverture, la capacité terrain et les décisions d’affectation soumises à contrôle.</p>
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <button type="button" onClick={()=>openAssignment(null)} className="inline-flex h-11 items-center gap-2 rounded-xl bg-[#0b3159] px-4 text-sm font-black !text-white shadow-[0_9px_22px_rgba(11,49,89,0.18)] hover:bg-[#092746]"><Plus className="h-4 w-4"/>Affecter un territoire</button>
+                  <button type="button" onClick={()=>setModal("import")} className="inline-flex h-11 items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 text-sm font-black text-[#173a61] hover:bg-slate-50"><Upload className="h-4 w-4"/>Importer</button>
+                  <button type="button" onClick={()=>setModal("export")} className="inline-flex h-11 items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 text-sm font-black text-slate-700 hover:bg-slate-50"><Download className="h-4 w-4"/>Exporter</button>
+                  <button type="button" onClick={()=>setModal("layers")} className="grid h-11 w-11 place-items-center rounded-xl border border-slate-300 bg-white text-slate-700 hover:bg-slate-50" aria-label="Couches de lecture"><Layers3 className="h-4 w-4"/></button>
+                  <button type="button" onClick={()=>void refresh()} disabled={loading} className="grid h-11 w-11 place-items-center rounded-xl border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 disabled:opacity-50" aria-label="Actualiser les territoires"><RefreshCw className={`h-4 w-4 ${loading?"animate-spin":""}`}/></button>
+                </div>
+              </div>
             </div>
-            <div className="flex flex-wrap items-center gap-2">
-              <button type="button" onClick={()=>openAssignment(null)} className="inline-flex h-11 items-center gap-2 rounded-2xl bg-blue-600 px-4 text-sm font-black text-white shadow-lg shadow-blue-200"><Plus className="h-4 w-4"/>Affecter territoire</button>
-              <button type="button" onClick={()=>setModal("import")} className="inline-flex h-11 items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-black text-slate-950"><Upload className="h-4 w-4"/>Importer zones</button>
-              <button type="button" onClick={()=>setModal("export")} className="inline-flex h-11 items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-black text-slate-950"><Download className="h-4 w-4"/>Exporter</button>
-              <button type="button" onClick={()=>setModal("layers")} className="flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-950"><MoreHorizontal className="h-5 w-5"/></button>
-              <button type="button" onClick={()=>void refresh()} disabled={loading} className="flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-950 disabled:opacity-50"><RefreshCw className={`h-4 w-4 ${loading?"animate-spin":""}`}/></button>
+
+            <div className="grid grid-cols-2 border-t border-slate-200 bg-[#0a2545] !text-white 2xl:border-l 2xl:border-t-0">
+              <div className="border-r border-white/10 px-5 py-6">
+                <p className="text-[9px] font-black uppercase tracking-[0.16em] !text-[#bfdbfe]">Couverture réseau</p>
+                <p className="mt-4 text-4xl font-black tabular-nums">{fmt(globalCoverage)}%</p>
+                <p className="mt-2 text-[10px] font-semibold leading-5 !text-[#dbeafe]">Pondération basée sur le potentiel réel disponible.</p>
+              </div>
+              <div className="px-5 py-6">
+                <p className="text-[9px] font-black uppercase tracking-[0.16em] !text-[#bfdbfe]">Écart territorial</p>
+                <p className="mt-4 text-4xl font-black tabular-nums">{underCovered.length}</p>
+                <p className="mt-2 text-[10px] font-semibold leading-5 !text-[#dbeafe]">zone(s) sous le niveau de service défini.</p>
+              </div>
+              <div className="col-span-2 border-t border-white/10 px-5 py-4">
+                <div className="flex items-center justify-between gap-4 text-[10px] font-black uppercase tracking-[0.12em] !text-[#dbeafe]"><span>{territoryMetrics.length} territoire(s) documenté(s)</span><span>{pendingCount} approbation(s)</span></div>
+              </div>
             </div>
           </div>
-          {notice?<div className="mt-4 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-bold text-emerald-900">{notice}</div>:null}
-          {error?<div className="mt-4 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-bold text-rose-900">{error}</div>:null}
+          {notice?<div className="border-t border-emerald-200 bg-emerald-50 px-5 py-3 text-sm font-bold text-emerald-900 lg:px-7">{notice}</div>:null}
+          {error?<div className="border-t border-rose-200 bg-rose-50 px-5 py-3 text-sm font-bold text-rose-900 lg:px-7">{error}</div>:null}
         </header>
 
-        <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-6">
-          <Kpi label="Taux de couverture" value={`${fmt(globalCoverage)}%`} helper="Pondéré par potentiel réel" icon={Target} tone="bg-emerald-50 text-emerald-700"/>
-          <Kpi label="Territoires actifs" value={fmt(territoryMetrics.filter(t=>norm(t.status)==="active").length)} helper={`${territoryMetrics.length} dossier(s)`} icon={MapPin} tone="bg-blue-50 text-blue-700"/>
-          <Kpi label="Ambassadeurs terrain" value={fmt(activeAmbassadors.filter(a=>territoryIdOf(a)).length)} helper={`${activeAmbassadors.length} actif(s)`} icon={Users} tone="bg-violet-50 text-violet-700"/>
-          <Kpi label="Potentiel adressable" value={totalHouseholds?`${fmt(totalHouseholds)} ménages`:totalAccounts?`${fmt(totalAccounts)} comptes`:"À renseigner"} helper="Aucune valeur inventée" icon={Building2} tone="bg-cyan-50 text-cyan-700"/>
-          <Kpi label="Zones sous-couvertes" value={fmt(underCovered.length)} helper={`${pendingCount} approbation(s)`} icon={AlertTriangle} tone="bg-rose-50 text-rose-700"/>
-          <Kpi label="Charge moyenne" value={`${fmt(averageWorkload)}%`} helper="Capacité opérationnelle" icon={Gauge} tone="bg-amber-50 text-amber-700"/>
+        <section className="overflow-hidden border border-slate-200 bg-white shadow-[0_12px_34px_rgba(15,23,42,0.05)]">
+          <div className="grid sm:grid-cols-2 xl:grid-cols-4">
+            <div className="border-b border-r border-slate-200 px-5 py-4 xl:border-b-0"><p className="text-[9px] font-black uppercase tracking-[0.14em] text-slate-400">Ambassadeurs déployés</p><div className="mt-3 flex items-end justify-between gap-3"><p className="text-3xl font-black tabular-nums text-[#0a2342]">{fmt(activeAmbassadors.filter(a=>territoryIdOf(a)).length)}</p><Users className="h-5 w-5 text-[#2d70b8]"/></div><p className="mt-1 text-[10px] font-bold text-slate-500">sur {activeAmbassadors.length} actif(s)</p></div>
+            <div className="border-b border-slate-200 px-5 py-4 xl:border-b-0 xl:border-r"><p className="text-[9px] font-black uppercase tracking-[0.14em] text-slate-400">Potentiel adressable</p><div className="mt-3 flex items-end justify-between gap-3"><p className="text-2xl font-black tabular-nums text-[#0a2342]">{totalHouseholds?`${fmt(totalHouseholds)} ménages`:totalAccounts?`${fmt(totalAccounts)} comptes`:"À renseigner"}</p><Building2 className="h-5 w-5 text-[#2d70b8]"/></div><p className="mt-1 text-[10px] font-bold text-slate-500">Valeurs enregistrées uniquement</p></div>
+            <div className="border-b border-r border-slate-200 px-5 py-4 sm:border-b-0"><p className="text-[9px] font-black uppercase tracking-[0.14em] text-slate-400">Charge moyenne</p><div className="mt-3 flex items-end justify-between gap-3"><p className="text-3xl font-black tabular-nums text-[#0a2342]">{fmt(averageWorkload)}%</p><Gauge className="h-5 w-5 text-amber-600"/></div><p className="mt-1 text-[10px] font-bold text-slate-500">capacité opérationnelle</p></div>
+            <div className="px-5 py-4"><p className="text-[9px] font-black uppercase tracking-[0.14em] text-slate-400">Territoires actifs</p><div className="mt-3 flex items-end justify-between gap-3"><p className="text-3xl font-black tabular-nums text-[#0a2342]">{fmt(territoryMetrics.filter(t=>norm(t.status)==="active").length)}</p><MapPin className="h-5 w-5 text-emerald-600"/></div><p className="mt-1 text-[10px] font-bold text-slate-500">{territoryMetrics.length} dossier(s) total</p></div>
+          </div>
         </section>
 
         <section className="grid min-w-0 gap-4 xl:grid-cols-[245px_minmax(0,1fr)]">
@@ -809,9 +830,9 @@ export default function AmbassadorTerritoriesRoute() {
                   const point=pointFor(t.city,index),value=mapValue(t)
                   const color=mapLayer==="coverage"?coverageColor(value):value>=80?"#dc2626":value>=60?"#d97706":value>0?"#2563eb":"#64748b"
                   return <button key={t.id} type="button" onClick={()=>openDossier(t)} className="group absolute -translate-x-1/2 -translate-y-1/2" style={{left:`${point.x}%`,top:`${point.y}%`}}>
-                    <span className="relative flex h-10 w-10 items-center justify-center rounded-full border-4 border-white text-xs font-black text-white shadow-[0_8px_20px_rgba(15,23,42,0.28)] transition group-hover:scale-110" style={{backgroundColor:color}}>
+                    <span className="relative flex h-10 w-10 items-center justify-center rounded-full border-4 border-white text-xs font-black !text-white shadow-[0_8px_20px_rgba(15,23,42,0.28)] transition group-hover:scale-110" style={{backgroundColor:color}}>
                       {t.activeAmbassadorCount}
-                      {t.pendingAssignments.length?<span className="absolute -right-2 -top-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-violet-600 px-1 text-[9px] font-black text-white ring-2 ring-white">{t.pendingAssignments.length}</span>:null}
+                      {t.pendingAssignments.length?<span className="absolute -right-2 -top-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#0b3159] px-1 text-[9px] font-black !text-white ring-2 ring-white">{t.pendingAssignments.length}</span>:null}
                     </span>
                     {showLabels?<span className="mt-1 block max-w-[140px] rounded-xl border border-slate-200 bg-white/95 px-2 py-1 text-[9px] font-black text-slate-950 shadow-lg">{t.city||t.name} · {fmt(value)}{mapLayer==="leads"?"":"%"}</span>:null}
                   </button>
@@ -969,7 +990,7 @@ export default function AmbassadorTerritoriesRoute() {
                 ].map(([ok,label])=><div key={String(label)} className="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 p-3"><span className="text-[11px] font-black">{label}</span>{ok?<CheckCircle2 className="h-4 w-4 text-emerald-600"/>:<AlertTriangle className="h-4 w-4 text-amber-600"/>}</div>)}</div>
               </Card>
             </div></div>
-            <footer className="border-t border-slate-200 bg-white p-4"><div className="flex items-center justify-between gap-3"><div><p className="text-[9px] font-black uppercase text-slate-500">Statut après soumission</p><p className="mt-1 text-xs font-black text-amber-700">En attente d’approbation</p></div><button type="button" onClick={()=>void submitAssignment()} disabled={busy||readiness<100} className="inline-flex h-11 items-center gap-2 rounded-2xl bg-blue-600 px-5 text-sm font-black text-white disabled:bg-slate-200 disabled:text-slate-500">{busy?<Loader2 className="h-4 w-4 animate-spin"/>:<ShieldCheck className="h-4 w-4"/>}Soumettre</button></div></footer>
+            <footer className="border-t border-slate-200 bg-white p-4"><div className="flex items-center justify-between gap-3"><div><p className="text-[9px] font-black uppercase text-slate-500">Statut après soumission</p><p className="mt-1 text-xs font-black text-amber-700">En attente d’approbation</p></div><button type="button" onClick={()=>void submitAssignment()} disabled={busy||readiness<100} className="inline-flex h-11 items-center gap-2 rounded-2xl bg-blue-600 px-5 text-sm font-black !text-white disabled:bg-slate-200 disabled:!text-slate-500">{busy?<Loader2 className="h-4 w-4 animate-spin"/>:<ShieldCheck className="h-4 w-4"/>}Soumettre</button></div></footer>
           </>:selectedTerritory?<div className="min-h-0 flex-1 overflow-y-auto p-4"><div className="space-y-4">
             <div className={`rounded-[22px] border p-4 ${coverageBg(selectedTerritory.coveragePercent)}`}><div className="flex items-start justify-between"><div><p className="text-[9px] font-black uppercase text-slate-500">Couverture actuelle</p><p className="mt-1 text-3xl font-black">{fmt(selectedTerritory.coveragePercent)}%</p><p className="mt-1 text-xs font-black text-slate-600">SLA {selectedTerritory.coverageTarget}%</p></div><span className={`rounded-full border px-3 py-1 text-[10px] font-black ${statusClass(selectedTerritory.status)}`}>{statusLabel(selectedTerritory.status)}</span></div><div className="mt-3"><Progress value={selectedTerritory.coveragePercent} color={selectedTerritory.coveragePercent>=80?"bg-emerald-600":selectedTerritory.coveragePercent>=60?"bg-blue-600":selectedTerritory.coveragePercent>=40?"bg-amber-500":"bg-rose-600"}/></div></div>
             <Card className="p-4"><h3 className="text-sm font-black">Identité territoriale</h3><div className="mt-3 space-y-3">{[["Région",selectedTerritory.region||"—"],["Ville",selectedTerritory.city||"—"],["Préfecture",selectedTerritory.config.prefecture||"—"],["Secteur",selectedTerritory.zone||"—"],["Manager",selectedTerritory.manager||"À affecter"]].map(([label,value])=><div key={label} className="flex justify-between gap-4 border-b border-slate-100 pb-2"><span className="text-[9px] font-black uppercase text-slate-500">{label}</span><span className="text-right text-xs font-black">{value}</span></div>)}</div></Card>
@@ -977,20 +998,20 @@ export default function AmbassadorTerritoriesRoute() {
             <Card className="p-4"><div className="flex items-center justify-between"><div><h3 className="text-sm font-black">Approbations en attente</h3><p className="mt-1 text-[10px] font-bold text-slate-500">Décision obligatoire avant rattachement.</p></div><span className="rounded-full bg-violet-50 px-2.5 py-1 text-[10px] font-black text-violet-800">{selectedTerritory.pendingAssignments.length}</span></div>
               <div className="mt-4 space-y-2">{selectedTerritory.pendingAssignments.map(a=><div key={a.id} className="rounded-2xl border border-violet-200 bg-violet-50 p-3"><p className="text-xs font-black text-violet-950">{a.ambassadorName}</p><p className="mt-1 text-[10px] font-bold text-violet-800">{a.assignmentType} · soumis le {shortDate(a.submittedAt)}</p><div className="mt-3 grid grid-cols-2 gap-2">
                 <button type="button" onClick={()=>{setApprovalTarget({territoryId:selectedTerritory.id,assignment:a,decision:"rejected",managerName:a.approvalManager||selectedTerritory.manager,note:""});setModal("approval")}} className="h-9 rounded-xl border border-rose-200 bg-white text-[10px] font-black text-rose-700">Rejeter</button>
-                <button type="button" onClick={()=>{setApprovalTarget({territoryId:selectedTerritory.id,assignment:a,decision:"approved",managerName:a.approvalManager||selectedTerritory.manager,note:""});setModal("approval")}} className="h-9 rounded-xl bg-emerald-600 text-[10px] font-black text-white">Approuver</button>
+                <button type="button" onClick={()=>{setApprovalTarget({territoryId:selectedTerritory.id,assignment:a,decision:"approved",managerName:a.approvalManager||selectedTerritory.manager,note:""});setModal("approval")}} className="h-9 rounded-xl bg-emerald-600 text-[10px] font-black !text-white">Approuver</button>
               </div></div>)}{!selectedTerritory.pendingAssignments.length?<p className="py-5 text-center text-xs font-semibold text-slate-500">Aucune décision en attente.</p>:null}</div>
             </Card>
             <Card className="p-4"><h3 className="text-sm font-black">Ambassadeurs affectés</h3><div className="mt-3 space-y-2">{selectedTerritory.activeAmbassadors.map(a=><div key={rid(a)} className="flex items-center justify-between rounded-xl border border-slate-200 p-3"><span><span className="block text-xs font-black">{txt(a.full_name||a.name)||rid(a)}</span><span className="mt-1 block text-[10px] font-bold text-slate-500">{txt(a.city)||"Ville non renseignée"}</span></span><UserCheck className="h-4 w-4 text-emerald-600"/></div>)}{!selectedTerritory.activeAmbassadors.length?<p className="py-4 text-center text-xs font-semibold text-slate-500">Aucun ambassadeur actif affecté.</p>:null}</div></Card>
-            <button type="button" onClick={()=>openAssignment(selectedTerritory)} className="h-11 w-full rounded-2xl bg-blue-600 text-xs font-black text-white">Nouvelle affectation</button>
+            <button type="button" onClick={()=>openAssignment(selectedTerritory)} className="h-11 w-full rounded-2xl bg-blue-600 text-xs font-black !text-white">Nouvelle affectation</button>
           </div></div>:<div className="p-10 text-center"><MapPin className="mx-auto h-9 w-9 text-blue-600"/><p className="mt-3 text-base font-black">Aucun territoire sélectionné</p></div>}
         </Card>
       </aside>:null}
     </div>
 
-    {!drawerOpen?<button type="button" onClick={()=>setDrawerOpen(true)} className="fixed bottom-6 right-6 z-40 inline-flex h-12 items-center gap-2 rounded-2xl bg-blue-600 px-4 text-sm font-black text-white shadow-xl"><MapPin className="h-4 w-4"/>Ouvrir le contrôle territorial</button>:null}
+    {!drawerOpen?<button type="button" onClick={()=>setDrawerOpen(true)} className="fixed bottom-6 right-6 z-40 inline-flex h-12 items-center gap-2 rounded-2xl bg-blue-600 px-4 text-sm font-black !text-white shadow-xl"><MapPin className="h-4 w-4"/>Ouvrir le contrôle territorial</button>:null}
 
     {modal==="import"?<ModalShell title="Importer des zones" subtitle="Import CSV contrôlé, sans seed ni activation automatique. Chaque ligne valide devient un territoire brouillon." icon={FileSpreadsheet} onClose={()=>setModal(null)} width="max-w-6xl"
-      footer={<div className="flex items-center justify-between gap-3"><p className="text-xs font-black text-slate-600">{csvRows.length} ligne(s) détectée(s)</p><div className="flex gap-2"><button type="button" onClick={()=>setModal(null)} className="h-11 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-black">Fermer</button><button type="button" onClick={()=>void importZones()} disabled={busy||!csvRows.length} className="inline-flex h-11 items-center gap-2 rounded-2xl bg-blue-600 px-5 text-sm font-black text-white disabled:bg-slate-200">{busy?<Loader2 className="h-4 w-4 animate-spin"/>:<Upload className="h-4 w-4"/>}Importer en brouillon</button></div></div>}>
+      footer={<div className="flex items-center justify-between gap-3"><p className="text-xs font-black text-slate-600">{csvRows.length} ligne(s) détectée(s)</p><div className="flex gap-2"><button type="button" onClick={()=>setModal(null)} className="h-11 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-black">Fermer</button><button type="button" onClick={()=>void importZones()} disabled={busy||!csvRows.length} className="inline-flex h-11 items-center gap-2 rounded-2xl bg-blue-600 px-5 text-sm font-black !text-white disabled:bg-slate-200">{busy?<Loader2 className="h-4 w-4 animate-spin"/>:<Upload className="h-4 w-4"/>}Importer en brouillon</button></div></div>}>
       <div className="grid gap-5 lg:grid-cols-[0.8fr_1.2fr]">
         <Card className="p-5"><h3 className="text-base font-black">Source CSV</h3><p className="mt-2 text-xs font-semibold leading-6 text-slate-500">Colonnes reconnues : name/nom, region, city/ville, zone, prefecture/commune, addressable_households, addressable_accounts, target_ambassadors, target_leads, target_conversions, sla_coverage, manager.</p>
           <textarea value={csvText} onChange={e=>{setCsvText(e.target.value);parseCsv(e.target.value)}} placeholder="name,region,city,zone,target_ambassadors,target_leads,sla_coverage,manager" className={`${textareaClass} mt-4 min-h-[360px] font-mono text-xs`}/>
@@ -1010,13 +1031,13 @@ export default function AmbassadorTerritoriesRoute() {
     </ModalShell>:null}
 
     {modal==="export"?<ModalShell title="Exporter la couverture territoriale" subtitle="Le fichier est généré depuis les seuls territoires réels correspondant aux filtres actuels." icon={Download} onClose={()=>setModal(null)} width="max-w-3xl"
-      footer={<div className="flex justify-end gap-2"><button type="button" onClick={()=>setModal(null)} className="h-11 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-black">Annuler</button><button type="button" onClick={()=>void exportCsv()} className="inline-flex h-11 items-center gap-2 rounded-2xl bg-blue-600 px-5 text-sm font-black text-white"><Download className="h-4 w-4"/>Générer le CSV</button></div>}>
+      footer={<div className="flex justify-end gap-2"><button type="button" onClick={()=>setModal(null)} className="h-11 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-black">Annuler</button><button type="button" onClick={()=>void exportCsv()} className="inline-flex h-11 items-center gap-2 rounded-2xl bg-blue-600 px-5 text-sm font-black !text-white"><Download className="h-4 w-4"/>Générer le CSV</button></div>}>
       <Card className="p-5"><div className="grid gap-3 sm:grid-cols-3">{[["Territoires",filtered.length],["Couverture",`${fmt(globalCoverage)}%`],["Approbations",pendingCount]].map(([label,value])=><div key={String(label)} className="rounded-2xl border border-slate-200 bg-slate-50 p-4"><p className="text-[9px] font-black uppercase text-slate-500">{label}</p><p className="mt-1 text-2xl font-black">{value}</p></div>)}</div>
       <p className="mt-5 text-xs font-semibold leading-6 text-slate-600">Colonnes : identité territoriale, statut, manager, ambassadeurs, potentiel, couverture, SLA, missions, leads, conversions, charge et décisions en attente.</p></Card>
     </ModalShell>:null}
 
     {modal==="layers"?<ModalShell title="Couches & contrôles de carte" subtitle="Adaptez la lecture de la carte sans modifier les données métier." icon={Layers3} onClose={()=>setModal(null)} width="max-w-2xl"
-      footer={<div className="flex justify-end"><button type="button" onClick={()=>setModal(null)} className="h-11 rounded-2xl bg-blue-600 px-5 text-sm font-black text-white">Appliquer</button></div>}>
+      footer={<div className="flex justify-end"><button type="button" onClick={()=>setModal(null)} className="h-11 rounded-2xl bg-blue-600 px-5 text-sm font-black !text-white">Appliquer</button></div>}>
       <div className="grid gap-3 sm:grid-cols-2">{([
         { value: "coverage", label: "Couverture", icon: Target },
         { value: "workload", label: "Charge opérationnelle", icon: Gauge },
@@ -1028,7 +1049,7 @@ export default function AmbassadorTerritoriesRoute() {
     </ModalShell>:null}
 
     {modal==="approval"&&approvalTarget?<ModalShell title={approvalTarget.decision==="approved"?"Approuver l’affectation":"Rejeter l’affectation"} subtitle="La décision est journalisée. Une approbation rattache réellement l’ambassadeur et recalcule la couverture." icon={ShieldCheck} onClose={()=>{setModal(null);setApprovalTarget(null)}} width="max-w-3xl"
-      footer={<div className="flex justify-end gap-2"><button type="button" onClick={()=>{setModal(null);setApprovalTarget(null)}} className="h-11 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-black">Annuler</button><button type="button" onClick={()=>void decideAssignment()} disabled={busy||!approvalTarget.managerName.trim()||(approvalTarget.decision==="rejected"&&!approvalTarget.note.trim())} className={`inline-flex h-11 items-center gap-2 rounded-2xl px-5 text-sm font-black text-white disabled:bg-slate-200 ${approvalTarget.decision==="approved"?"bg-emerald-600":"bg-rose-600"}`}>{busy?<Loader2 className="h-4 w-4 animate-spin"/>:approvalTarget.decision==="approved"?<CheckCircle2 className="h-4 w-4"/>:<X className="h-4 w-4"/>}Confirmer la décision</button></div>}>
+      footer={<div className="flex justify-end gap-2"><button type="button" onClick={()=>{setModal(null);setApprovalTarget(null)}} className="h-11 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-black">Annuler</button><button type="button" onClick={()=>void decideAssignment()} disabled={busy||!approvalTarget.managerName.trim()||(approvalTarget.decision==="rejected"&&!approvalTarget.note.trim())} className={`inline-flex h-11 items-center gap-2 rounded-2xl px-5 text-sm font-black !text-white disabled:bg-slate-200 ${approvalTarget.decision==="approved"?"bg-emerald-600":"bg-rose-600"}`}>{busy?<Loader2 className="h-4 w-4 animate-spin"/>:approvalTarget.decision==="approved"?<CheckCircle2 className="h-4 w-4"/>:<X className="h-4 w-4"/>}Confirmer la décision</button></div>}>
       <Card className="p-5"><div className="rounded-2xl border border-slate-200 bg-slate-50 p-4"><p className="text-[9px] font-black uppercase text-slate-500">Ambassadeur</p><p className="mt-1 text-lg font-black">{approvalTarget.assignment.ambassadorName}</p><p className="mt-1 text-xs font-bold text-slate-500">{approvalTarget.assignment.assignmentType} · soumis le {shortDate(approvalTarget.assignment.submittedAt)}</p></div>
         <div className="mt-4 grid gap-3"><Field label="Manager décisionnaire" required><input value={approvalTarget.managerName} onChange={e=>setApprovalTarget(v=>v?{...v,managerName:e.target.value}:v)} className={inputClass}/></Field>
         <Field label={approvalTarget.decision==="rejected"?"Justification du rejet":"Note de décision"} required={approvalTarget.decision==="rejected"}><textarea value={approvalTarget.note} onChange={e=>setApprovalTarget(v=>v?{...v,note:e.target.value}:v)} className={textareaClass}/></Field></div>

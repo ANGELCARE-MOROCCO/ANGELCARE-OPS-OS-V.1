@@ -6,6 +6,6 @@ import SignalFabricFrame from './_components/SignalFabricFrame'
 export const dynamic='force-dynamic'
 export default async function RevenueSignalLayout({children}:{children:React.ReactNode}){
   await requireAccess(['revenue_os.signals.manage','revenue_os.view','revenue.view'])
-  const {bootstrap}=await readRevenueSignalFabric()
-  return <SignalFabricProvider initialFabric={bootstrap}><SignalFabricFrame>{children}</SignalFabricFrame></SignalFabricProvider>
+  const {bootstrap,warnings}=await readRevenueSignalFabric()
+  return <SignalFabricProvider initialFabric={bootstrap} initialWarnings={warnings}><SignalFabricFrame>{children}</SignalFabricFrame></SignalFabricProvider>
 }

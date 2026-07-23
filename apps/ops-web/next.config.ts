@@ -6,6 +6,11 @@ const nextConfig: NextConfig = {
   // Prevent Vercel/Next webpack cache serialization crashes caused by very large AC360 French cockpit bundles.
   experimental: {
     webpackBuildWorker: false,
+    // Allows a 1 MB staff portrait plus normal multipart form overhead.
+    // The application and Supabase bucket still enforce the strict 1 MB image rule.
+    serverActions: {
+      bodySizeLimit: '2mb',
+    },
   },
 
   webpack: (config) => {

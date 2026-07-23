@@ -57,7 +57,7 @@ export const REVENUE_OS_WORKSPACES: RevenueOsWorkspaceDefinition[] = [
   {
     key: 'strategic-view',
     label: 'Revenue Command Cockpit',
-    shortLabel: 'Cockpit MZ15',
+    shortLabel: 'Cockpit exécutif',
     description: 'Le système stratégique final qui unifie objectifs, signaux, stratégie, Conseil, programmes, exécution, exceptions, apprentissage et gouvernance.',
     href: '/revenue-command-os/cockpit',
     icon: 'Command',
@@ -135,7 +135,7 @@ export const REVENUE_OS_WORKSPACES: RevenueOsWorkspaceDefinition[] = [
   {
     key: 'validation-council',
     label: 'Conseil de validation',
-    shortLabel: 'Conseil MZ11',
+    shortLabel: 'Conseil stratégique',
     description: 'Dix spécialistes indépendants valident, attaquent, corrigent et classent chaque stratégie.',
     href: '/revenue-command-os/validation-council',
     icon: 'ShieldCheck',
@@ -148,7 +148,7 @@ export const REVENUE_OS_WORKSPACES: RevenueOsWorkspaceDefinition[] = [
   {
     key: 'strategy-studio',
     label: 'Strategy Studio',
-    shortLabel: 'Studio MZ12',
+    shortLabel: 'Studio de décision',
     description: 'Workspace exécutif de compréhension, simulation, décision, approbation et note de décision.',
     href: '/revenue-command-os/strategy-studio',
     icon: 'BadgeCheck',
@@ -160,8 +160,8 @@ export const REVENUE_OS_WORKSPACES: RevenueOsWorkspaceDefinition[] = [
   },
   {
     key: 'intelligent-commands',
-    label: 'Commandes intelligentes',
-    shortLabel: 'Commandes',
+    label: 'Commandes 3000 · Bibliothèque stratégique complète',
+    shortLabel: 'Commandes 3000',
     description: 'Noyau des objets de commande versionnés qui orchestreront la bibliothèque des 3 000 intelligences commerciales.',
     href: '/revenue-command-os/command-kernel',
     icon: 'Sparkles',

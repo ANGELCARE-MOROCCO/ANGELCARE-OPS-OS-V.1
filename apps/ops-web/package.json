@@ -156,7 +156,9 @@
     "revenue-os:phase16:verify": "node scripts/revenue-command-os/verify-phase16.mjs",
     "revenue-os:phase16:test": "node scripts/revenue-command-os/test-phase16.mjs",
     "revenue-os:phase16:sql-review": "node scripts/revenue-command-os/sql-review-phase16.mjs",
-    "revenue-os:phase16:typecheck": "NODE_OPTIONS=--max-old-space-size=8192 tsc -p tsconfig.revenue-os-phase16.json --noEmit"
+    "revenue-os:phase16:typecheck": "NODE_OPTIONS=--max-old-space-size=8192 tsc -p tsconfig.revenue-os-phase16.json --noEmit",
+    "verify:revenue-os-mz17": "node scripts/revenue-command-os/verify-mz17-production-consistency-repair.mjs",
+    "typecheck:revenue-os-mz17": "tsc -p tsconfig.revenue-os-mz17-repair.json --noEmit --pretty false"
   },
   "dependencies": {
     "@google/genai": "^2.12.0",
