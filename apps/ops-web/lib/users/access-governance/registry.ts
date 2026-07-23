@@ -58,8 +58,12 @@ const MODULE_GROUPS: Record<string, string> = {
   dashboard: 'workspace',
 }
 
-const ADMIN_ROLES = new Set(['ceo', 'admin', 'manager'])
-const VIEW_ROLES = new Set(['ceo', 'admin', 'manager'])
+const ACCESS_GOVERNANCE_ADMIN_ROLES = [
+  'ceo', 'direction', 'admin', 'manager', 'super_admin', 'owner', 'root', 'root_admin',
+  'hr_admin', 'hr_manager', 'operations_manager',
+] as const
+const ADMIN_ROLES = new Set<string>(ACCESS_GOVERNANCE_ADMIN_ROLES)
+const VIEW_ROLES = new Set<string>(ACCESS_GOVERNANCE_ADMIN_ROLES)
 const CORE_SYSTEM_MODULES = new Set(['admin', 'profile', 'users'])
 
 function strip(value: unknown) {

@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/server'
 import { requireRole } from '@/lib/auth/session'
 import EmailOSMailboxAccessSection from '@/app/(protected)/users/_components/EmailOSMailboxAccessSection'
 import UserBrowserExtensionAccessSection from '@/app/(protected)/users/_components/UserBrowserExtensionAccessSection'
+import StaffDossierNavigator from './_components/StaffDossierNavigator'
 import { getMailboxAccessAudit, getUserEmailOSMailboxAssignments } from '@/lib/email-os-core/access-governance'
 import { isExtensionAdmin } from '@/lib/browser-extension/access'
 import { loadUserAccess } from '@/lib/browser-extension/runtime'
@@ -691,235 +692,190 @@ export default async function UserProfilePage({
     }
   }
 
+  const profilePhotoUrl = userRecord.profile_photo_path
+    ? `/api/users/${encodeURIComponent(String(userRecord.id))}/profile-photo?v=${encodeURIComponent(String(userRecord.updated_at || '1'))}`
+    : ''
+  const emailSummary = emailOSAccess.summary || {}
+  const emailAssignmentCount = Number(emailSummary.assigned_mailboxes_count || emailOSAccess.assignments?.length || 0)
+  const emailLockedCount = Number(emailSummary.locked_assignments_count || 0)
+  const browserDevices = browserExtensionSnapshot?.devices || []
+  const browserActiveDevices = browserDevices.filter((device: AnyRecord) => String(device.status || '').toLowerCase() === 'active').length
+  const browserProfile = browserExtensionSnapshot?.access?.profile || null
+  const managerAttention = missingFields.length + (userRecord.must_change_password ? 1 : 0) + emailLockedCount
+
+  const overview = (
+    <div style={dossierStackStyle}>
+      <div style={executiveGridStyle}>
+        <section style={executiveCardStyle}>
+          <span style={cardEyebrowStyle}>Lecture direction</span>
+          <h3 style={cardTitleStyle}>État opérationnel du collaborateur</h3>
+          <div style={executiveFactsStyle}>
+            <InfoMini label="Compte" value={isAccessSuspended ? 'Suspendu / restreint' : 'Actif et autorisé'} />
+            <InfoMini label="Présence digitale" value={isLiveLoggedIn ? `${activeSessions} session(s) active(s)` : 'Hors ligne'} />
+            <InfoMini label="Dernière connexion" value={formatDate(userRecord.last_login_at)} />
+            <InfoMini label="Accès SANILA" value={`${permissions.length} autorisation(s)`} />
+          </div>
+        </section>
+        <section style={executiveCardStyle}>
+          <span style={cardEyebrowStyle}>Action management</span>
+          <h3 style={cardTitleStyle}>{managerAttention ? 'Points d’attention à traiter' : 'Dossier sous contrôle'}</h3>
+          <div style={alertStackStyle}>
+            {missingFields.length ? <div style={alertAmberStyle}>Compléter : {missingFields.join(', ')}</div> : null}
+            {userRecord.must_change_password ? <div style={alertAmberStyle}>Le mot de passe temporaire doit être remplacé.</div> : null}
+            {emailLockedCount ? <div style={alertRedStyle}>{emailLockedCount} accès Email OS verrouillé(s).</div> : null}
+            {!managerAttention ? <div style={alertGreenStyle}>Aucune anomalie prioritaire détectée dans les données disponibles.</div> : null}
+          </div>
+        </section>
+      </div>
+
+      <div style={quickGridStyle}>
+        <a href={`/users/${userRecord.id}/attendance`} style={quickLinkStyle}><strong>Présence & ponctualité</strong><span>Ouvrir le cockpit individuel</span></a>
+        <a href={`/users/${userRecord.id}/tasks`} style={quickLinkStyle}><strong>Exécution des tâches</strong><span>Voir charge et échéances</span></a>
+        <a href={`/users/${userRecord.id}/lead-portfolio`} style={quickLinkStyle}><strong>Portefeuille commercial</strong><span>Voir leads et suivis</span></a>
+        <a href={`/users/${userRecord.id}/edit`} style={quickLinkStyle}><strong>Gouvernance identité</strong><span>Modifier avec contrôle</span></a>
+      </div>
+
+      <div style={trustGridStyle}>
+        <div style={trustCardStyle}><span style={trustLabelStyle}>SANILA OS</span><strong style={trustValueStyle}>{permissions.length}</strong><small style={trustDetailStyle}>{pageRoutes} routes · {criticalPermissions} sensibles</small></div>
+        <div style={trustCardStyle}><span style={trustLabelStyle}>EMAIL OS</span><strong style={trustValueStyle}>{emailAssignmentCount}</strong><small style={trustDetailStyle}>{emailLockedCount ? `${emailLockedCount} verrouillé(s)` : 'Sécurité saine'}</small></div>
+        <div style={trustCardStyle}><span style={trustLabelStyle}>BROWSER OS</span><strong style={trustValueStyle}>{browserProfile?.enabled ? 'ACTIF' : 'NON ACTIF'}</strong><small style={trustDetailStyle}>{browserActiveDevices} appareil(s) actif(s)</small></div>
+      </div>
+    </div>
+  )
+
+  const identity = (
+    <div style={dossierStackStyle}>
+      <div style={twoColStyle}>
+        <section style={subPanelStyle}>
+          <Header eyebrow="Identité" title="Informations personnelles" subtitle="Lecture officielle de l’identité numérique SANILA." />
+          <div style={infoGridStyle}>
+            <InfoCard label="Nom complet" value={userRecord.full_name || userRecord.name || userRecord.display_name} tone="blue" />
+            <InfoCard label="Nom utilisateur" value={userRecord.username} tone="slate" />
+            <InfoCard label="Email" value={userRecord.email} tone="blue" />
+            <InfoCard label="Téléphone" value={userRecord.phone || userRecord.phone_number} tone="green" />
+            <InfoCard label="Langue" value={userRecord.language} tone="purple" />
+            <InfoCard label="Créé le" value={formatDate(userRecord.created_at)} tone="slate" />
+          </div>
+        </section>
+        <section style={subPanelStyle}>
+          <Header eyebrow="Organisation" title="Position professionnelle" subtitle="Rattachement, rôle et état du compte." />
+          <div style={infoGridStyle}>
+            <InfoCard label="Département" value={userRecord.department || userRecord.department_name} tone="blue" />
+            <InfoCard label="Poste" value={userRecord.job_title || userRecord.position || userRecord.role_title} tone="purple" />
+            <InfoCard label="Rôle système" value={userRecord.role} tone={roleTone(userRecord.role)} />
+            <InfoCard label="Statut" value={userRecord.status} tone={statusTone(userRecord.status)} />
+            <InfoCard label="Mot de passe initial" value={userRecord.must_change_password ? 'Changement requis' : 'Stabilisé'} tone={userRecord.must_change_password ? 'amber' : 'green'} />
+            <InfoCard label="Complétude" value={`${completion}%`} tone={readinessTone} />
+          </div>
+        </section>
+      </div>
+      <TemporaryAccessPanel userId={String(userRecord.id)} suspended={isAccessSuspended} status={safeText(userRecord.status, 'active')} />
+    </div>
+  )
+
+  const sanilaAccess = (
+    <div style={dossierStackStyle}>
+      <div style={permissionSummaryStyle}>
+        <PremiumKpi label="Autorisations" value={String(permissions.length)} detail="Source app_users.permissions" tone="blue" />
+        <PremiumKpi label="Routes" value={String(pageRoutes)} detail="Pages et espaces explicitement exposés" tone="purple" />
+        <PremiumKpi label="Scopes sensibles" value={String(criticalPermissions)} detail="Manage / admin / delete" tone={criticalPermissions ? 'red' : 'green'} />
+      </div>
+      <div style={securityBoundaryStyle}>
+        <strong>Frontière de sécurité SANILA</strong>
+        <span>Ces autorisations gouvernent les cartes et routes de l’application. Elles ne donnent pas automatiquement accès aux boîtes Email OS ni aux capacités Browser OS.</span>
+      </div>
+      {permissions.length ? <div style={permissionGroupListStyle}>{Object.entries(groupedPermissions).map(([group, items]) => <PermissionGroup key={group} group={group} items={items} total={permissions.length} />)}</div> : <Empty text="Aucune autorisation SANILA détaillée." />}
+    </div>
+  )
+
+  const emailOS = (
+    <div style={dossierStackStyle}>
+      <div style={specializedHeroStyle}>
+        <div><span style={cardEyebrowStyle}>Système spécialisé indépendant</span><h3 style={cardTitleStyle}>Email OS Access Passport</h3><p style={specializedCopyStyle}>Les rôles, PIN, sessions et droits de chaque boîte sont gouvernés séparément des permissions générales SANILA.</p></div>
+        <div style={specializedMetricStyle}><strong>{emailAssignmentCount}</strong><span>boîte(s) assignée(s)</span></div>
+      </div>
+      <details style={governanceDetailsStyle}>
+        <summary style={governanceSummaryStyle}><span><strong>Ouvrir la gouvernance Email OS</strong><small>Attributions, rôles, droits, PIN, sessions et audit</small></span><span style={openPillStyle}>ACCÈS CONTRÔLÉ</span></summary>
+        <div style={embeddedSystemStyle}><EmailOSMailboxAccessSection userId={resolvedUserId} initialSummary={emailOSAccess.summary} initialAssignments={emailOSAccess.assignments} initialMailboxes={safeMailboxes} initialAudit={emailOSAudit} /></div>
+      </details>
+    </div>
+  )
+
+  const browserOS = (
+    <div style={dossierStackStyle}>
+      <div style={specializedHeroStyle}>
+        <div><span style={cardEyebrowStyle}>Runtime commercial spécialisé</span><h3 style={cardTitleStyle}>Revenue Command Browser OS</h3><p style={specializedCopyStyle}>Accès individuel aux modules, capacités, adaptateurs, territoires, autonomie, approbations et appareils Chrome.</p></div>
+        <div style={specializedMetricStyle}><strong>{browserProfile?.enabled ? 'ACTIF' : 'NON ACTIF'}</strong><span>{browserActiveDevices} appareil(s) actif(s)</span></div>
+      </div>
+      {browserExtensionSnapshot ? <details style={governanceDetailsStyle}><summary style={governanceSummaryStyle}><span><strong>Ouvrir le Browser OS Access Studio</strong><small>Capacités signées, autonomie, devices et versions d’accès</small></span><span style={openPillStyle}>GOUVERNANCE AVANCÉE</span></summary><div style={embeddedSystemStyle}><UserBrowserExtensionAccessSection initialSnapshot={browserExtensionSnapshot as any} modules={BROWSER_EXTENSION_MODULES as any} b2bContract={B2B_EXTENSION_CONTRACT as any} /></div></details> : <Empty text="Vous ne disposez pas du niveau d’administration Browser OS requis pour ouvrir cette gouvernance." />}
+    </div>
+  )
+
+  const sessionsAudit = (
+    <div style={dossierStackStyle}>
+      <div style={twoColStyle}>
+        <section style={subPanelStyle}>
+          <Header eyebrow="Connexions" title="Sessions récentes" subtitle="État des connexions applicatives filtrées." />
+          <form action={`/users/${userRecord.id}`} method="get" style={compactFilterStyle}>
+            <input name="sessionFrom" type="date" defaultValue={sessionFrom} style={filterInputStyle} />
+            <input name="sessionTo" type="date" defaultValue={sessionTo} style={filterInputStyle} />
+            <select name="sessionStatus" defaultValue={sessionStatus || 'all'} style={filterInputStyle}><option value="all">Toutes</option><option value="active">Actives</option><option value="expired">Expirées</option></select>
+            <input name="sessionSearch" defaultValue={sessionSearch} placeholder="Source, appareil, ID" style={filterInputStyle} />
+            <button style={filterButtonStyle}>Appliquer</button>
+          </form>
+          <div style={sessionListStyle}>{sessions.length ? sessions.map((session) => <SessionCard key={session.id || `${session.created_at}-${session.expires_at}`} session={session} />) : <Empty text="Aucune session pour ces filtres." />}</div>
+        </section>
+        <section style={subPanelStyle}>
+          <Header eyebrow="Audit" title="Chronologie utilisateur" subtitle="Actions récentes et preuves système." />
+          <form action={`/users/${userRecord.id}`} method="get" style={compactFilterStyle}>
+            <input name="activityFrom" type="date" defaultValue={activityFrom} style={filterInputStyle} />
+            <input name="activityTo" type="date" defaultValue={activityTo} style={filterInputStyle} />
+            <input name="activityAction" defaultValue={activityAction} placeholder="Action" style={filterInputStyle} />
+            <input name="activitySearch" defaultValue={activitySearch} placeholder="Source ou cible" style={filterInputStyle} />
+            <button style={filterButtonStyle}>Appliquer</button>
+          </form>
+          <div style={activityListStyle}>{logs.length ? logs.map((log) => <ActivityCard key={log.id || `${log.action}-${log.created_at}`} log={log} />) : <Empty text="Aucune activité pour ces filtres." />}</div>
+        </section>
+      </div>
+    </div>
+  )
+
+  const administration = (
+    <div style={dossierStackStyle}>
+      <div style={securityBoundaryStyle}><strong>Contrôles administratifs protégés</strong><span>Privilégier la suspension ou la révocation des systèmes spécialisés avant toute suppression définitive.</span></div>
+      <details style={dangerDetailsStyle}><summary style={dangerSummaryStyle}>Afficher la zone de suppression permanente</summary><div style={dangerContentStyle}><div><strong style={dangerTitleStyle}>Supprimer définitivement ce compte utilisateur</strong><p style={dangerTextStyle}>Cette action est irréversible et doit rester exceptionnelle.</p></div><form action={`/users/${userRecord.id}/delete`} method="get" style={dangerFormStyle}><input type="hidden" name="confirm" value="DELETE" /><button style={dangerButtonStyle}>Continuer vers la confirmation DELETE</button></form></div></details>
+    </div>
+  )
+
   return (
     <AppShell
       hideSidebar
-      title={userRecord.full_name || 'Profil utilisateur'}
-      subtitle={`Compte interne AngelCare • ${safeText(userRecord.role, 'staff')} • ${safeText(userRecord.status, 'active')}`}
-      breadcrumbs={[
-        { label: 'Administration', href: '/users' },
-        { label: userRecord.full_name || 'Profil utilisateur' },
-      ]}
-      actions={
-        <>
-          <PageAction href="/users" variant="light">Retour</PageAction>
-          <PageAction href={`/users/${userRecord.id}/edit`}>Modifier</PageAction>
-          <PageAction href={`/users/${userRecord.id}/delete`} variant="light">Supprimer</PageAction>
-          <PageAction href={`/users/${userRecord.id}/attendance`} variant="light">Attendance</PageAction>
-          <PageAction href={`/users/${userRecord.id}/attendance`} variant="light">Attendance Dashboard</PageAction>
-        </>
-      }
+      title={userRecord.full_name || 'Dossier collaborateur'}
+      subtitle={`SANILA Staff 360° • ${safeText(userRecord.role, 'staff')} • ${safeText(userRecord.status, 'active')}`}
+      breadcrumbs={[{ label: 'People Command', href: '/users' }, { label: userRecord.full_name || 'Dossier collaborateur' }]}
+      actions={<><PageAction href="/users" variant="light">People Command</PageAction><PageAction href={`/users/${userRecord.id}/edit`}>Modifier l’identité</PageAction><PageAction href={`/users/${userRecord.id}/attendance`} variant="light">Présence</PageAction><PageAction href={`/users/${userRecord.id}/tasks`} variant="light">Tâches</PageAction><PageAction href={`/users/${userRecord.id}/lead-portfolio`} variant="light">Leads</PageAction></>}
     >
-      <div style={pageStyle}>
-        <section style={heroStyle}>
-          <div style={heroGlowStyle} />
-          <div style={heroIdentityStyle}>
-            <div style={avatarStyle}>{initialsFromName(userRecord.full_name || userRecord.name || userRecord.email)}</div>
-            <div style={{ minWidth: 0 }}>
-              <div style={badgeRowStyle}>
-                <PremiumChip label={safeText(userRecord.status, 'active')} tone={statusTone(userRecord.status)} icon="●" />
-                <PremiumChip label={safeText(userRecord.role, 'staff')} tone={roleTone(userRecord.role)} icon="◆" />
-                <PremiumChip label={safeText(userRecord.language, 'fr')} tone="blue" icon="🌐" />
-                {userRecord.must_change_password ? <PremiumChip label="Password reset required" tone="amber" icon="⚠" /> : <PremiumChip label="Password stable" tone="green" icon="✓" />}
-              </div>
-              <h1 style={heroTitleStyle}>{safeText(userRecord.full_name || userRecord.name || userRecord.display_name, 'Utilisateur sans nom')}</h1>
-              <p style={heroTextStyle}>
-                {safeText(userRecord.department || userRecord.department_name, 'Département non défini')} · {safeText(userRecord.job_title || userRecord.position || userRecord.role_title, 'Poste non renseigné')}
-              </p>
-              <div style={heroSignalGridStyle}>
-                <InfoMini label="Email" value={userRecord.email} />
-                <InfoMini label="Téléphone" value={userRecord.phone || userRecord.phone_number} />
-                <InfoMini label="Dernière connexion" value={formatDate(userRecord.last_login_at)} />
-              </div>
+      <div style={dossierPageStyle}>
+        <section style={dossierHeroStyle}>
+          <div style={brandBlockStyle}><img src="/logo.png" alt="AngelCare" style={brandLogoStyle} /><span>SANILA OS · STAFF 360° EXECUTIVE DOSSIER</span></div>
+          <div style={identityHeroGridStyle}>
+            <div style={identityMainStyle}>
+              <div style={portraitFrameStyle}>{profilePhotoUrl ? <img src={profilePhotoUrl} alt={safeText(userRecord.full_name, 'Photo collaborateur')} style={portraitImageStyle} /> : <span>{initialsFromName(userRecord.full_name || userRecord.email)}</span>}<i style={verifiedDotStyle}>✓</i></div>
+              <div><div style={badgeRowStyle}><PremiumChip label={safeText(userRecord.status, 'active')} tone={statusTone(userRecord.status)} /><PremiumChip label={safeText(userRecord.role, 'staff')} tone={roleTone(userRecord.role)} /><PremiumChip label={isLiveLoggedIn ? 'En ligne' : 'Hors ligne'} tone={isLiveLoggedIn ? 'green' : 'slate'} /></div><h1 style={dossierHeroTitleStyle}>{safeText(userRecord.full_name || userRecord.name || userRecord.display_name, 'Collaborateur')}</h1><p style={dossierHeroSubtitleStyle}>{safeText(userRecord.job_title || userRecord.position || userRecord.role_title, 'Poste non renseigné')} · {safeText(userRecord.department || userRecord.department_name, 'Département non défini')}</p><div style={identityFactsStyle}><span>{safeText(userRecord.email)}</span><span>{safeText(userRecord.phone || userRecord.phone_number)}</span><span>ID {String(userRecord.id).slice(0, 8).toUpperCase()}</span></div></div>
             </div>
-          </div>
-
-          <div style={heroRightStyle}>
-            <LiveAccessStatePanel isLive={isLiveLoggedIn} activeSessions={activeSessions} lastLogin={userRecord.last_login_at} />
-            <TemporaryAccessPanel userId={String(userRecord.id)} suspended={isAccessSuspended} status={safeText(userRecord.status, 'active')} />
+            <div style={passportMetricsStyle}><div><span>Identité</span><strong>{completion}%</strong></div><div><span>Accès SANILA</span><strong>{permissions.length}</strong></div><div><span>Sessions actives</span><strong>{activeSessions}</strong></div><div><span>Systèmes spécialisés</span><strong>{(emailAssignmentCount ? 1 : 0) + (browserProfile?.enabled ? 1 : 0)}/2</strong></div></div>
           </div>
         </section>
 
-        <section style={kpiGridStyle}>
-          <PremiumKpi label="Permissions" value={String(permissions.length)} detail="Synced user access scope" tone="blue" icon="🔐" />
-          <PremiumKpi label="Page routes" value={String(pageRoutes)} detail="Authorized pages and workspaces" tone="purple" icon="↗" />
-          <PremiumKpi label="Sessions actives" value={String(activeSessions)} detail={`${expiredSessions} expired in current filter`} tone={activeSessions ? 'green' : 'slate'} icon="●" />
-          <PremiumKpi label="Missing fields" value={String(missingFields.length)} detail={missingFields.slice(0, 3).join(', ') || 'Profile complete'} tone={missingFields.length ? 'amber' : 'green'} icon="✓" />
-          <PremiumKpi label="Critical scopes" value={String(criticalPermissions)} detail="Manage / admin / delete sensitivity" tone={criticalPermissions ? 'red' : 'green'} icon="⚠" />
-          <PremiumKpi label="Créé le" value={shortDate(userRecord.created_at)} detail={formatDate(userRecord.created_at)} tone="slate" icon="📅" />
-        </section>
-
-        {missingFields.length ? (
-          <div style={warningBannerStyle}>
-            <strong>Profil incomplet à compléter</strong>
-            <span>{missingFields.join(', ')}</span>
-          </div>
-        ) : null}
-
-        <div style={gridStyle}>
-          <section style={panelStyle}>
-            <Header eyebrow="Identité" title="Informations personnelles" subtitle="Profil individuel synchronisé depuis la base utilisateurs." />
-            <div style={infoGridStyle}>
-              <InfoCard icon="👤" label="Nom complet" value={userRecord.full_name || userRecord.name || userRecord.display_name} tone="blue" />
-              <InfoCard icon="@" label="Nom utilisateur" value={userRecord.username} tone="slate" />
-              <InfoCard icon="☎" label="Téléphone" value={userRecord.phone || userRecord.phone_number} tone="green" />
-              <InfoCard icon="✉" label="Email" value={userRecord.email} tone="blue" />
-              <InfoCard icon="🌐" label="Langue" value={userRecord.language} tone="purple" />
-              <InfoCard icon="🕒" label="Dernière connexion" value={formatDate(userRecord.last_login_at)} tone={userRecord.last_login_at ? 'green' : 'amber'} />
-            </div>
-          </section>
-
-          <section style={panelStyle}>
-            <Header eyebrow="Professionnel" title="Profil opérationnel" subtitle="Lecture management du rattachement, rôle et statut." />
-            <div style={opsVisualStyle}>
-              <div style={opsScoreStyle}>
-                <span>Operational readiness</span>
-                <strong>{completion}%</strong>
-                <MiniBar value={completion} tone={readinessTone} />
-              </div>
-              <div style={opsScoreStyle}>
-                <span>Access health</span>
-                <strong>{accessScore}%</strong>
-                <MiniBar value={accessScore} tone={accessTone} />
-              </div>
-            </div>
-            <div style={infoGridStyle}>
-              <InfoCard icon="🏢" label="Département" value={userRecord.department || userRecord.department_name} tone="blue" />
-              <InfoCard icon="💼" label="Poste" value={userRecord.job_title || userRecord.position || userRecord.role_title} tone="purple" />
-              <InfoCard icon="🛡" label="Rôle système" value={userRecord.role} tone={roleTone(userRecord.role)} />
-              <InfoCard icon="●" label="Statut" value={userRecord.status} tone={statusTone(userRecord.status)} />
-              <InfoCard icon="🔑" label="Changement mot de passe" value={userRecord.must_change_password ? 'Obligatoire' : 'Non requis'} tone={userRecord.must_change_password ? 'amber' : 'green'} />
-              <InfoCard icon="📅" label="Créé le" value={formatDate(userRecord.created_at)} tone="slate" />
-            </div>
-          </section>
-
-          <section style={widePanelStyle}>
-            <Header eyebrow="Permissions" title="Modules autorisés" subtitle="Permissions groupées par nature d’accès avec indicateurs de sensibilité." />
-
-            <div style={permissionSummaryStyle}>
-              <PremiumKpi label="Total" value={String(permissions.length)} detail="All synced permissions" tone="blue" icon="🔐" />
-              <PremiumKpi label="Routes" value={String(pageRoutes)} detail="Page/workspace access" tone="purple" icon="↗" />
-              <PremiumKpi label="Critical" value={String(criticalPermissions)} detail="Admin/manage/delete scopes" tone={criticalPermissions ? 'red' : 'green'} icon="⚠" />
-            </div>
-
-            {permissions.length ? (
-              <div style={permissionGroupListStyle}>
-                {Object.entries(groupedPermissions).map(([group, items]) => (
-                  <PermissionGroup key={group} group={group} items={items} total={permissions.length} />
-                ))}
-              </div>
-            ) : (
-              <Empty icon="🔒" text="Aucune permission détaillée définie pour cet utilisateur." />
-            )}
-          </section>
-
-          <div style={{ gridColumn: '1 / -1' }}>
-            <EmailOSMailboxAccessSection
-              userId={resolvedUserId}
-              initialSummary={emailOSAccess.summary}
-              initialAssignments={emailOSAccess.assignments}
-              initialMailboxes={safeMailboxes}
-              initialAudit={emailOSAudit}
-            />
-          </div>
-
-          <section style={widePanelStyle}>
-            <Header eyebrow="Connexions" title="Sessions récentes" subtitle="Historique de connexion synchronisé avec filtres serveur et lecture visuelle." />
-
-            <form action={`/users/${userRecord.id}`} method="get" style={filterBarStyle}>
-              <label style={filterLabelStyle}>Du<input name="sessionFrom" type="date" defaultValue={sessionFrom} style={filterInputStyle} /></label>
-              <label style={filterLabelStyle}>Au<input name="sessionTo" type="date" defaultValue={sessionTo} style={filterInputStyle} /></label>
-              <label style={filterLabelStyle}>Statut
-                <select name="sessionStatus" defaultValue={sessionStatus || 'all'} style={filterInputStyle}>
-                  <option value="all">Toutes</option>
-                  <option value="active">Actives</option>
-                  <option value="expired">Expirées</option>
-                </select>
-              </label>
-              <label style={filterLabelStyle}>Recherche<input name="sessionSearch" defaultValue={sessionSearch} placeholder="ID, source, device..." style={filterInputStyle} /></label>
-              <button style={filterButtonStyle}>Filtrer sessions</button>
-            </form>
-
-            <div style={sessionVisualRowStyle}>
-              <PremiumKpi label="Active" value={String(activeSessions)} detail="Matching current filters" tone={activeSessions ? 'green' : 'slate'} icon="●" />
-              <PremiumKpi label="Expired" value={String(expiredSessions)} detail="Matching current filters" tone="slate" icon="◌" />
-              <PremiumKpi label="Loaded" value={String(sessions.length)} detail="Synced session rows" tone="blue" icon="📡" />
-            </div>
-
-            {sessions.length ? (
-              <div style={sessionListStyle}>
-                {sessions.map((session) => (
-                  <SessionCard key={session.id || `${session.created_at}-${session.expires_at}`} session={session} />
-                ))}
-              </div>
-            ) : (
-              <Empty icon="📡" text="Aucune session enregistrée pour ces filtres." />
-            )}
-          </section>
-
-          <section style={widePanelStyle}>
-            <Header eyebrow="Activité" title="Journal utilisateur" subtitle="Audit trail synchronisé avec filtres par dates, action et contenu." />
-
-            <form action={`/users/${userRecord.id}`} method="get" style={filterBarStyle}>
-              <label style={filterLabelStyle}>Du<input name="activityFrom" type="date" defaultValue={activityFrom} style={filterInputStyle} /></label>
-              <label style={filterLabelStyle}>Au<input name="activityTo" type="date" defaultValue={activityTo} style={filterInputStyle} /></label>
-              <label style={filterLabelStyle}>Action<input name="activityAction" defaultValue={activityAction} placeholder="login, update, delete..." style={filterInputStyle} /></label>
-              <label style={filterLabelStyle}>Recherche<input name="activitySearch" defaultValue={activitySearch} placeholder="table, source, target..." style={filterInputStyle} /></label>
-              <button style={filterButtonStyle}>Filtrer activité</button>
-            </form>
-
-            <div style={activityInsightStyle}>
-              <div>
-                <span style={activityInsightLabelStyle}>Synced activity rows</span>
-                <strong style={activityInsightValueStyle}>{logs.length}</strong>
-              </div>
-              <MiniBar value={Math.min(100, logs.length * 12)} tone={logs.length ? 'blue' : 'slate'} />
-            </div>
-
-            {logs.length ? (
-              <div style={activityListStyle}>
-                {logs.map((log) => (
-                  <ActivityCard key={log.id || `${log.action}-${log.created_at}`} log={log} />
-                ))}
-              </div>
-            ) : (
-              <Empty icon="◇" text="Aucune activité récente pour ces filtres." />
-            )}
-          </section>
-
-          <section style={widePanelStyle}>
-            <Header eyebrow="Management" title="Lecture manager rapide" subtitle="Résumé opérationnel calculé depuis les données synchronisées." />
-            <div style={managerGridStyle}>
-              <ManagerCard title="Niveau d’accès" value={userRecord.role === 'ceo' ? 'Contrôle total' : permissions.length > 25 ? 'Accès très étendu' : permissions.length > 5 ? 'Accès étendu' : 'Accès limité'} tone={permissions.length > 25 ? 'amber' : 'blue'} />
-              <ManagerCard title="Risque opérationnel" value={userRecord.status !== 'active' ? 'Compte désactivé' : userRecord.must_change_password ? 'Mot de passe temporaire' : criticalPermissions ? 'Accès sensible' : 'Normal'} tone={userRecord.status !== 'active' ? 'red' : userRecord.must_change_password || criticalPermissions ? 'amber' : 'green'} />
-              <ManagerCard title="Action recommandée" value={permissions.length === 0 && userRecord.role !== 'ceo' ? 'Ajouter permissions' : missingFields.length ? 'Compléter profil' : 'Surveillance standard'} tone={missingFields.length ? 'amber' : 'green'} />
-            </div>
-          </section>
-
-          {browserExtensionSnapshot ? (
-            <div style={{ gridColumn: '1 / -1' }}>
-              <UserBrowserExtensionAccessSection
-                initialSnapshot={browserExtensionSnapshot as any}
-                modules={BROWSER_EXTENSION_MODULES as any}
-                b2bContract={B2B_EXTENSION_CONTRACT as any}
-              />
-            </div>
-          ) : null}
-
-          <section style={dangerPanelStyle}>
-            <Header eyebrow="Danger zone" title="Suppression permanente" subtitle="Action administrative protégée par confirmation explicite." />
-            <div style={dangerContentStyle}>
-              <div>
-                <strong style={dangerTitleStyle}>Supprimer définitivement ce compte utilisateur</strong>
-                <p style={dangerTextStyle}>Cette action doit rester réservée aux administrateurs autorisés. Le flux exige une confirmation explicite côté route avant exécution.</p>
-              </div>
-              <form action={`/users/${userRecord.id}/delete`} method="get" style={dangerFormStyle}>
-                <input type="hidden" name="confirm" value="DELETE" />
-                <button style={dangerButtonStyle}>Confirmer DELETE permanent</button>
-              </form>
-            </div>
-          </section>
-        </div>
+        <StaffDossierNavigator sections={[
+          { key: 'overview', label: 'Vue exécutive', eyebrow: 'Command brief', description: 'Lecture immédiate de l’état, des responsabilités, des risques et des prochaines actions.', content: overview, attention: managerAttention },
+          { key: 'identity', label: 'Identité & organisation', eyebrow: 'Official staff passport', description: 'Vérité administrative et professionnelle du collaborateur.', content: identity, attention: missingFields.length },
+          { key: 'sanila', label: 'Accès SANILA', eyebrow: 'Application access boundary', description: 'Permissions générales, routes et scopes visibles dans les espaces SANILA.', content: sanilaAccess, attention: criticalPermissions },
+          { key: 'email', label: 'Email OS', eyebrow: 'Independent mailbox security', description: 'Attributions de boîtes, rôles, PIN, sessions et audit dans une frontière séparée.', content: emailOS, attention: emailLockedCount },
+          { key: 'browser', label: 'Browser OS', eyebrow: 'Revenue runtime clearance', description: 'Capacités commerciales, autonomie, adaptateurs et appareils autorisés individuellement.', content: browserOS },
+          { key: 'audit', label: 'Sessions & audit', eyebrow: 'Digital trust evidence', description: 'Connexions, chronologie et preuves d’activité du compte.', content: sessionsAudit },
+          { key: 'admin', label: 'Contrôles administratifs', eyebrow: 'Protected governance', description: 'Suspension, révocation et suppression dans une zone volontairement isolée.', content: administration },
+        ]} />
       </div>
     </AppShell>
   )
@@ -1094,3 +1050,49 @@ const permissionDetailsStyle: CSSProperties = { display: 'grid', gridTemplateCol
 const fullRouteBoxStyle: CSSProperties = { gridColumn: '1 / -1', display: 'grid', gap: 6, padding: 12, borderRadius: 16, background: '#fff', border: '1px solid #e2e8f0', color: '#64748b', fontSize: 12, fontWeight: 850, overflowWrap: 'anywhere' }
 
 const emptyIconStyle: CSSProperties = { width: 36, height: 36, borderRadius: 14, display: 'grid', placeItems: 'center', background: '#fff', border: '1px solid #e2e8f0', color: '#2563eb' }
+
+
+const dossierPageStyle: CSSProperties = { width: '100%', display: 'grid', gap: 20, padding: '2px 0 36px' }
+const dossierHeroStyle: CSSProperties = { position: 'relative', overflow: 'hidden', padding: 'clamp(22px,3vw,42px)', borderRadius: 30, color: '#fff', background: 'radial-gradient(circle at 85% 15%,rgba(74,178,255,.28),transparent 30%),linear-gradient(135deg,#061f39 0%,#0b3d68 56%,#0f5d91 100%)', boxShadow: '0 30px 80px rgba(4,31,57,.23)' }
+const brandBlockStyle: CSSProperties = { display: 'flex', alignItems: 'center', gap: 12, marginBottom: 28, color: '#d8ecfb', fontSize: 11, fontWeight: 950, letterSpacing: '.16em' }
+const brandLogoStyle: CSSProperties = { width: 142, maxHeight: 48, objectFit: 'contain', padding: '8px 10px', borderRadius: 12, background: '#fff' }
+const identityHeroGridStyle: CSSProperties = { display: 'grid', gridTemplateColumns: 'minmax(0,1.5fr) minmax(300px,.7fr)', gap: 28, alignItems: 'center' }
+const identityMainStyle: CSSProperties = { display: 'flex', alignItems: 'center', gap: 24, minWidth: 0 }
+const portraitFrameStyle: CSSProperties = { position: 'relative', flex: '0 0 auto', display: 'grid', placeItems: 'center', width: 132, height: 132, borderRadius: '50%', overflow: 'visible', border: '5px solid rgba(255,255,255,.88)', background: 'linear-gradient(145deg,#d7eafb,#fff)', color: '#0b3d68', fontSize: 34, fontWeight: 950, boxShadow: '0 18px 46px rgba(0,0,0,.28)' }
+const portraitImageStyle: CSSProperties = { width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }
+const verifiedDotStyle: CSSProperties = { position: 'absolute', right: 2, bottom: 5, display: 'grid', placeItems: 'center', width: 28, height: 28, borderRadius: '50%', border: '3px solid #fff', background: '#16a34a', color: '#fff', fontStyle: 'normal', fontSize: 13 }
+const dossierHeroTitleStyle: CSSProperties = { margin: '12px 0 5px', fontSize: 'clamp(30px,4vw,54px)', lineHeight: 1.02, letterSpacing: '-.055em' }
+const dossierHeroSubtitleStyle: CSSProperties = { margin: 0, color: '#c7dded', fontSize: 16 }
+const identityFactsStyle: CSSProperties = { display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 16 }
+const passportMetricsStyle: CSSProperties = { display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: 10 }
+const dossierStackStyle: CSSProperties = { display: 'grid', gap: 18 }
+const executiveGridStyle: CSSProperties = { display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: 16 }
+const executiveCardStyle: CSSProperties = { padding: 22, border: '1px solid #dbe7f0', borderRadius: 22, background: 'linear-gradient(145deg,#fff,#f8fbfe)' }
+const cardEyebrowStyle: CSSProperties = { display: 'block', marginBottom: 7, color: '#1670ad', fontSize: 10, fontWeight: 950, letterSpacing: '.14em', textTransform: 'uppercase' }
+const cardTitleStyle: CSSProperties = { margin: 0, color: '#12314d', fontSize: 21, letterSpacing: '-.025em' }
+const executiveFactsStyle: CSSProperties = { display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: 10, marginTop: 18 }
+const alertStackStyle: CSSProperties = { display: 'grid', gap: 9, marginTop: 18 }
+const alertAmberStyle: CSSProperties = { padding: '11px 13px', border: '1px solid #fde68a', borderRadius: 12, background: '#fffbeb', color: '#92400e', fontSize: 13, fontWeight: 750 }
+const alertRedStyle: CSSProperties = { ...alertAmberStyle, border: '1px solid #fecaca', background: '#fef2f2', color: '#991b1b' }
+const alertGreenStyle: CSSProperties = { ...alertAmberStyle, border: '1px solid #bbf7d0', background: '#f0fdf4', color: '#166534' }
+const quickGridStyle: CSSProperties = { display: 'grid', gridTemplateColumns: 'repeat(4,minmax(0,1fr))', gap: 12 }
+const quickLinkStyle: CSSProperties = { display: 'grid', gap: 5, padding: 18, border: '1px solid #dbe7f0', borderRadius: 18, background: '#fff', color: '#143d67', textDecoration: 'none', boxShadow: '0 10px 28px rgba(15,45,78,.06)' }
+const trustGridStyle: CSSProperties = { display: 'grid', gridTemplateColumns: 'repeat(3,minmax(0,1fr))', gap: 12 }
+const trustCardStyle: CSSProperties = { padding: 20, border: '1px solid #d7e5ef', borderRadius: 20, background: 'linear-gradient(145deg,#f8fbfe,#fff)' }
+const trustLabelStyle: CSSProperties = { color: '#678097', fontSize: 10, fontWeight: 950, letterSpacing: '.13em' }
+const trustValueStyle: CSSProperties = { display: 'block', margin: '8px 0 3px', color: '#0d355a', fontSize: 25 }
+const trustDetailStyle: CSSProperties = { color: '#6b8195' }
+const twoColStyle: CSSProperties = { display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: 18 }
+const subPanelStyle: CSSProperties = { padding: 20, border: '1px solid #dce7f1', borderRadius: 22, background: '#fbfdff' }
+const securityBoundaryStyle: CSSProperties = { display: 'grid', gap: 5, padding: 17, border: '1px solid #bfdbfe', borderRadius: 16, background: '#eff6ff', color: '#17456f' }
+const specializedHeroStyle: CSSProperties = { display: 'flex', justifyContent: 'space-between', gap: 22, alignItems: 'center', padding: 22, border: '1px solid #dbe7f0', borderRadius: 22, background: 'linear-gradient(135deg,#f8fbff,#edf6fc)' }
+const specializedCopyStyle: CSSProperties = { maxWidth: 760, margin: '8px 0 0', color: '#60788e', lineHeight: 1.6 }
+const specializedMetricStyle: CSSProperties = { minWidth: 150, padding: 18, borderRadius: 18, background: '#0c3e68', color: '#fff', textAlign: 'center' }
+const governanceDetailsStyle: CSSProperties = { border: '1px solid #d9e5ef', borderRadius: 22, overflow: 'hidden', background: '#fff' }
+const governanceSummaryStyle: CSSProperties = { display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 18, padding: 20, cursor: 'pointer', color: '#12314d' }
+const openPillStyle: CSSProperties = { padding: '7px 10px', borderRadius: 999, background: '#e8f3fb', color: '#126496', fontSize: 10, fontWeight: 950, letterSpacing: '.1em' }
+const embeddedSystemStyle: CSSProperties = { padding: 14, borderTop: '1px solid #e3ebf2', background: '#f7fafc' }
+const compactFilterStyle: CSSProperties = { display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: 8, marginBottom: 14 }
+const dangerDetailsStyle: CSSProperties = { border: '1px solid #fecaca', borderRadius: 18, overflow: 'hidden', background: '#fffafa' }
+const dangerSummaryStyle: CSSProperties = { padding: 18, color: '#991b1b', fontWeight: 900, cursor: 'pointer' }
+

@@ -13,10 +13,13 @@ export default async function DashboardPage() {
     loadAuthorizedIndependentResources(user),
   ])
 
+  const representedRoutes = new Set(data.modules.flatMap((module) => module.routes.map((route) => route.href)))
+  const supplementalIndependentResources = independentResources.filter((resource) => !representedRoutes.has(resource.href))
+
   return (
     <>
       <AuthorizedWorkspaceHub initialData={data} />
-      <AuthorizedResourceFamilyCards resources={independentResources} />
+      <AuthorizedResourceFamilyCards resources={supplementalIndependentResources} />
     </>
   )
 }

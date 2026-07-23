@@ -1,0 +1,14 @@
+.routeShell { position: relative; isolation: isolate; }
+.routeShell::before { content: ""; position: absolute; inset: 0; z-index: -2; pointer-events: none; background: radial-gradient(circle at 10% 7%, rgba(6,182,212,.08), transparent 26%), radial-gradient(circle at 92% 10%, rgba(37,99,235,.07), transparent 24%); }
+.fineGrid { background-image: linear-gradient(rgba(148,163,184,.09) 1px, transparent 1px), linear-gradient(90deg, rgba(148,163,184,.09) 1px, transparent 1px); background-size: 24px 24px; }
+.dotField { background-image: radial-gradient(rgba(100,116,139,.18) .8px, transparent .8px); background-size: 15px 15px; }
+.routeBand { position: relative; overflow: hidden; }
+.routeBand::after { content: ""; position: absolute; right: -66px; top: -94px; width: 270px; height: 270px; border-radius: 46%; border: 1px solid rgba(255,255,255,.13); box-shadow: 0 0 0 38px rgba(255,255,255,.035), 0 0 0 78px rgba(255,255,255,.022); transform: rotate(20deg); }
+.topology { background-image: linear-gradient(90deg, transparent 49.5%, rgba(14,165,233,.12) 50%, transparent 50.5%), linear-gradient(transparent 49.5%, rgba(14,165,233,.09) 50%, transparent 50.5%); background-size: 74px 74px; }
+.rail { scrollbar-width: thin; scrollbar-color: rgba(100,116,139,.35) transparent; }
+.rail::-webkit-scrollbar { height: 6px; width: 6px; }
+.rail::-webkit-scrollbar-thumb { background: rgba(100,116,139,.32); border-radius: 999px; }
+.pulse { position: relative; }
+.pulse::after { content: ""; position: absolute; inset: -1px; border-radius: inherit; pointer-events: none; box-shadow: 0 0 0 0 rgba(34,211,238,.18); animation: twinPulse 4s ease-out infinite; }
+@keyframes twinPulse { 70%,100% { box-shadow: 0 0 0 18px rgba(34,211,238,0); } }
+@media (prefers-reduced-motion: reduce) { .pulse::after { animation: none; } }

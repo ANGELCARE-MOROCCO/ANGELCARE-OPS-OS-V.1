@@ -29,7 +29,7 @@ function permissionsFor(user: WorkspaceUser) {
 function fullAccess(user: WorkspaceUser) {
   const role = String(user.role || user.role_key || '').trim().toLowerCase().replace(/[\s-]+/g, '_')
   const permissions = permissionsFor(user)
-  return ['ceo', 'owner', 'super_admin', 'root', 'root_admin'].includes(role) || permissions.includes('*')
+  return ['ceo', 'direction', 'owner', 'super_admin', 'root', 'root_admin'].includes(role) || permissions.includes('*')
 }
 
 function permissionAllows(permissions: Set<string>, resource: AccessResourceRegistryRow) {

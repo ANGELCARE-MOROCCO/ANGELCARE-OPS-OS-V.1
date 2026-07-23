@@ -102,7 +102,7 @@ function resourceRow(resource: AccessDiscoveredResource, timestamp: string, exis
       ...(existing?.metadata || {}),
       ...resource.metadata,
       detectedAt: timestamp,
-      scannerVersion: 2,
+      scannerVersion: 3,
     },
   }
 }
@@ -112,15 +112,50 @@ function parentResource(resources: AccessDiscoveredResource[], resource: AccessD
   return resources.find((candidate) => candidate.resourceKey === resource.parentResourceKey) || null
 }
 
+function dashboardContainerResources(resources: AccessDiscoveredResource[]) {
+  return resources.filter((resource) =>
+    !resource.parentResourceKey
+    && ['module', 'route_family', 'standalone_route'].includes(resource.resourceType)
+    && resource.assignable
+    && resource.dashboardVisible
+    && resource.status !== 'excluded',
+  )
+}
+
+function dashboardModuleKey(resource: AccessDiscoveredResource) {
+  const routeRoot = getRouteSegments(resource.canonicalRoute || '')[0]
+  return normalizeModuleKey(
+    resource.moduleKey
+    || resource.familyKey
+    || routeRoot
+    || resource.resourceKey.replace(/^(module|family|standalone):/, ''),
+  )
+}
+
+function topResourceFor(resources: AccessDiscoveredResource[], resource: AccessDiscoveredResource) {
+  let current = resource
+  const visited = new Set<string>()
+  while (current.parentResourceKey && !visited.has(current.resourceKey)) {
+    visited.add(current.resourceKey)
+    const parent = resources.find((candidate) => candidate.resourceKey === current.parentResourceKey)
+    if (!parent) break
+    current = parent
+  }
+  return current
+}
+
 function buildModuleRows(resources: AccessDiscoveredResource[], timestamp: string) {
-  return resources
-    .filter((resource) => resource.resourceType === 'module')
+  return dashboardContainerResources(resources)
     .map((resource, index) => {
-      const childRoutes = resources.filter((candidate) => candidate.moduleKey === resource.moduleKey && candidate.canonicalRoute)
+      const moduleKey = dashboardModuleKey(resource)
+      const childRoutes = resources.filter((candidate) => {
+        if (!candidate.canonicalRoute || !candidate.assignable || candidate.status === 'excluded') return false
+        return topResourceFor(resources, candidate).resourceKey === resource.resourceKey
+      })
       return {
-        module_key: resource.moduleKey || normalizeModuleKey(resource.resourceKey.replace(/^module:/, '')),
+        module_key: moduleKey,
         module_label: resource.displayName,
-        module_group: getModuleGroup(resource.moduleKey || resource.resourceKey),
+        module_group: getModuleGroup(moduleKey),
         parent_module_key: null,
         description: resource.description,
         icon: resource.icon,
@@ -130,12 +165,14 @@ function buildModuleRows(resources: AccessDiscoveredResource[], timestamp: strin
         status: 'active',
         risk_level: resource.riskLevel,
         sort_order: index,
-        detected_source: 'global-app-filesystem-scanner-v2',
+        detected_source: 'global-app-filesystem-scanner-v3-dashboard-complete',
         metadata: {
           ...resource.metadata,
           resourceKey: resource.resourceKey,
           routeCount: childRoutes.length,
           resourceType: resource.resourceType,
+          dashboardContainer: true,
+          scannerVersion: 3,
         },
         last_seen_at: timestamp,
       }
@@ -144,18 +181,18 @@ function buildModuleRows(resources: AccessDiscoveredResource[], timestamp: strin
 
 function buildRouteRows(resources: AccessDiscoveredResource[], timestamp: string) {
   return resources
-    .filter((resource) => ['route', 'dynamic_route', 'standalone_route'].includes(resource.resourceType) && resource.canonicalRoute)
+    .filter((resource) =>
+      ['route', 'dynamic_route', 'standalone_route'].includes(resource.resourceType)
+      && Boolean(resource.canonicalRoute)
+      && resource.assignable
+      && resource.status !== 'excluded',
+    )
     .map((resource) => {
       const canonicalRoute = resource.canonicalRoute as string
       const parent = parentResource(resources, resource)
-      const fallbackKey = resource.familyKey ? `family__${resource.familyKey}` : normalizeModuleKey(getRouteSegments(canonicalRoute)[0] || 'workspace')
-      const moduleKey = resource.moduleKey || fallbackKey
-      const rootResource = resources.find((candidate) =>
-        candidate.resourceType === 'module' && candidate.moduleKey === resource.moduleKey
-        || candidate.resourceType === 'route_family' && candidate.familyKey === resource.familyKey
-        || candidate.resourceKey === resource.parentResourceKey,
-      )
-      const modulePermissionKey = rootResource?.permissionKey || parent?.permissionKey || `${moduleKey}.view`
+      const rootResource = topResourceFor(resources, resource)
+      const moduleKey = dashboardModuleKey(rootResource)
+      const modulePermissionKey = rootResource.permissionKey || `${moduleKey}.view`
       const ancestorPermissionKeys: string[] = []
       let ancestor = parent
       const visited = new Set<string>()
@@ -171,7 +208,7 @@ function buildRouteRows(resources: AccessDiscoveredResource[], timestamp: string
         label: resource.displayName,
         short_label: resource.displayName.split(' / ').pop() || resource.displayName,
         module_key: moduleKey,
-        module_label: rootResource?.displayName || parent?.displayName || titleize(moduleKey),
+        module_label: rootResource.displayName || titleize(moduleKey),
         parent_module_key: null,
         permission_key: resource.permissionKey,
         module_permission_key: modulePermissionKey,
@@ -179,18 +216,21 @@ function buildRouteRows(resources: AccessDiscoveredResource[], timestamp: string
         workspace_key: getWorkspaceKey(canonicalRoute),
         submodule_key: getSubmoduleKey(canonicalRoute),
         resource_key: resource.resourceKey,
-        family_key: resource.familyKey,
+        family_key: rootResource.familyKey || resource.familyKey,
         status: 'active',
         is_protected: resource.protected,
         is_core_system: canonicalRoute.startsWith('/admin') || canonicalRoute.startsWith('/users'),
         is_navigation_visible: resource.navigationVisible,
-        detected_source: 'global-app-filesystem-scanner-v2',
+        detected_source: 'global-app-filesystem-scanner-v3-dashboard-complete',
         metadata: {
           ...resource.metadata,
           parentResourceKey: resource.parentResourceKey,
+          rootResourceKey: rootResource.resourceKey,
+          rootResourceType: rootResource.resourceType,
           resourceType: resource.resourceType,
           routePattern: resource.routePattern,
           ancestorPermissionKeys,
+          scannerVersion: 3,
         },
         last_seen_at: timestamp,
       }
@@ -258,7 +298,7 @@ function buildSummary(input: {
     latestScanId: input.scanId,
     registryVersionId: input.versionId,
     checksum: discovery.checksum,
-    source: 'global-app-filesystem-scanner-v2',
+    source: 'global-app-filesystem-scanner-v3-dashboard-complete',
     rootsScanned: discovery.rootsScanned,
     warnings: discovery.warnings,
     modules: moduleRows.map((module) => ({
@@ -420,7 +460,7 @@ async function publishRegistry(
     actor_email: actor.email || null,
     created_at: timestamp,
     published_at: timestamp,
-    metadata: { rootsScanned: discovery.rootsScanned, scannerVersion: 2 },
+    metadata: { rootsScanned: discovery.rootsScanned, scannerVersion: 3 },
   }).select('id').single()
   if (versionError) throw versionError
 
@@ -629,7 +669,7 @@ export async function rollbackAccessRegistryVersion(
       created_at: timestamp,
       published_at: timestamp,
       rolled_back_at: timestamp,
-      metadata: { rollbackOfVersionId: versionId, rollbackOfVersionNumber: version.version_number, scannerVersion: 2 },
+      metadata: { rollbackOfVersionId: versionId, rollbackOfVersionNumber: version.version_number, scannerVersion: 3 },
     }).select('id').single()
     if (rollbackVersionError) throw rollbackVersionError
 

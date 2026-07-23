@@ -6,8 +6,8 @@ import type { AccessDiscoveredResource, AccessResourceOverride, AccessResourceTy
 const ROUTE_FILES = new Set(['page.tsx', 'page.ts', 'page.jsx', 'page.js', 'route.ts', 'route.js'])
 const IGNORE_DIRECTORIES = new Set(['node_modules', '.next', '.git', '.turbo', 'coverage', 'dist', 'build', 'backups'])
 const NON_ASSIGNABLE_ROOTS = new Set([
-  'api', 'login', 'auth', 'unauthorized', 'system-offline', 'offline', 'health', 'favicon.ico',
-  '_not-found', 'not-found', 'privacy', 'terms', 'public', 'print', 'academy-print',
+  'root', 'api', 'login', 'auth', 'unauthorized', 'system-offline', 'offline', 'health', 'favicon.ico',
+  '_not-found', 'not-found', 'privacy', 'terms', 'public', 'print', 'academy-print', 'verify',
 ])
 const FORMAL_MODULE_ROOTS = new Set([
   'admin', 'academy', 'angelcare-360', 'angelcare-360-command-center', 'b2b-partnerships',

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useState, type CSSProperties, type ReactNode } from 'react'
+import { useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 import type {
   AccessDiscoveredResource,
   AccessGovernanceScanSummary,
@@ -73,6 +73,7 @@ export default function GlobalAccessRegistryScannerModal({ open, canManage, onCl
   const [confirmPublish, setConfirmPublish] = useState(false)
   const [versions, setVersions] = useState<AccessRegistryVersionRow[]>([])
   const [rollbackBusy, setRollbackBusy] = useState<string | null>(null)
+  const autoScanStarted = useRef(false)
 
   useEffect(() => {
     if (!open) return
@@ -138,6 +139,16 @@ export default function GlobalAccessRegistryScannerModal({ open, canManage, onCl
     }
   }
 
+  useEffect(() => {
+    if (!open) {
+      autoScanStarted.current = false
+      return
+    }
+    if (!canManage || summary || busy || autoScanStarted.current) return
+    autoScanStarted.current = true
+    void runDryScan()
+  }, [open, canManage, summary, busy])
+
   async function rollbackVersion(versionId: string) {
     if (!canManage || rollbackBusy || busy) return
     setRollbackBusy(versionId)
@@ -166,7 +177,7 @@ export default function GlobalAccessRegistryScannerModal({ open, canManage, onCl
         headers: { 'Idempotency-Key': `access-scan-publish:${summary.latestScanId}` },
       })
       setSummary(payload)
-      setNotice(`Registry version published successfully with ${payload.resourcesDetected} classified resources. Existing user grants were not changed automatically.`)
+      setNotice(`Registry version published successfully with ${payload.modulesDetected} dashboard card containers and ${payload.resourcesDetected} classified resources. Existing user grants were not changed automatically.`)
       setConfirmPublish(false)
       await onPublished(payload)
       setActiveTab('publication')
@@ -199,7 +210,7 @@ export default function GlobalAccessRegistryScannerModal({ open, canManage, onCl
           </div>
           <div style={headerActionsStyle}>
             <button type="button" onClick={runDryScan} disabled={!canManage || Boolean(busy)} style={primaryButtonStyle}>
-              {busy === 'scan' ? 'Scanning Entire App…' : summary ? 'Run Fresh Dry Scan' : 'Start Global Dry Scan'}
+              {busy === 'scan' ? 'Synchronizing Entire App…' : summary ? 'Run Fresh Integrity Scan' : 'Start Global Integrity Scan'}
             </button>
             <button type="button" onClick={onClose} style={closeButtonStyle}>Close</button>
           </div>
@@ -262,12 +273,12 @@ function EmptyScannerState({ includeApi, onIncludeApi, onRun, canManage, busy }:
     <section style={emptyStyle}>
       <div style={emptyIconStyle}>◎</div>
       <h3 style={{ margin: 0, color: '#0f172a', fontSize: 24 }}>Ready to scan the complete OpsOS application estate</h3>
-      <p style={{ maxWidth: 760, margin: '10px auto 0', color: '#64748b', lineHeight: 1.7, fontWeight: 600 }}>The scanner traverses every Next.js application root, including independently mounted pages such as CareLink OPS, TrainingHub, assessment portals, CEO controls, public operational surfaces and API route handlers.</p>
+      <p style={{ maxWidth: 760, margin: '10px auto 0', color: '#64748b', lineHeight: 1.7, fontWeight: 600 }}>The scanner automatically traverses every Next.js application root when this studio opens, including independently mounted pages such as CareLink OPS, TrainingHub, assessment portals, CEO controls, public operational surfaces and API route handlers.</p>
       <label style={toggleRowStyle}>
         <input type="checkbox" checked={includeApi} onChange={(event) => onIncludeApi(event.target.checked)} />
         Include API route inventory and guard-risk classification
       </label>
-      <button type="button" onClick={onRun} disabled={!canManage || busy} style={primaryButtonStyle}>Run Global Dry Scan</button>
+      <button type="button" onClick={onRun} disabled={!canManage || busy} style={primaryButtonStyle}>Run Global Integrity Scan</button>
       {!canManage ? <p style={{ color: '#b91c1c', fontWeight: 800 }}>This action requires users.manage or an authorized governance role.</p> : null}
     </section>
   )
@@ -276,7 +287,7 @@ function EmptyScannerState({ includeApi, onIncludeApi, onRun, canManage, busy }:
 function Overview({ summary, includeApi, onIncludeApi }: { summary: AccessGovernanceScanSummary; includeApi: boolean; onIncludeApi: (value: boolean) => void }) {
   const stats = [
     ['Application resources', summary.resourcesDetected],
-    ['Formal modules', summary.modulesDetected],
+    ['Dashboard card containers', summary.modulesDetected],
     ['Independent families', summary.familiesDetected],
     ['Nested groups', summary.groupsDetected],
     ['Assignable pages', summary.routesDetected],

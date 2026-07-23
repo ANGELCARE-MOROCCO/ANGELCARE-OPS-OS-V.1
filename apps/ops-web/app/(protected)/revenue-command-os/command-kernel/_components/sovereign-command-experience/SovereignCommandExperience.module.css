@@ -1,0 +1,73 @@
+.routeShell {
+  position: relative;
+  isolation: isolate;
+}
+
+.routeShell::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 12% 8%, rgba(99, 102, 241, .08), transparent 26%),
+    radial-gradient(circle at 88% 12%, rgba(14, 165, 233, .07), transparent 24%);
+}
+
+.fineGrid {
+  background-image:
+    linear-gradient(rgba(148, 163, 184, .09) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 163, 184, .09) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.dotField {
+  background-image: radial-gradient(rgba(100, 116, 139, .18) .8px, transparent .8px);
+  background-size: 15px 15px;
+}
+
+.routeBand {
+  position: relative;
+  overflow: hidden;
+}
+
+.routeBand::after {
+  content: "";
+  position: absolute;
+  right: -54px;
+  top: -82px;
+  width: 230px;
+  height: 230px;
+  border-radius: 48%;
+  border: 1px solid rgba(255,255,255,.12);
+  box-shadow: 0 0 0 34px rgba(255,255,255,.035), 0 0 0 70px rgba(255,255,255,.025);
+  transform: rotate(18deg);
+}
+
+.commandRail {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(100,116,139,.35) transparent;
+}
+
+.commandRail::-webkit-scrollbar { height: 6px; width: 6px; }
+.commandRail::-webkit-scrollbar-thumb { background: rgba(100,116,139,.32); border-radius: 999px; }
+
+.scanLine {
+  position: relative;
+  overflow: hidden;
+}
+.scanLine::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, transparent 0%, rgba(34,211,238,.08) 48%, transparent 52%);
+  transform: translateY(-100%);
+  animation: scan 7s linear infinite;
+}
+
+@keyframes scan { to { transform: translateY(100%); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .scanLine::after { animation: none; }
+}

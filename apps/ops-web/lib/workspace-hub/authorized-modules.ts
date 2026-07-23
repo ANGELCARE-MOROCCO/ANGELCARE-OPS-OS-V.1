@@ -59,74 +59,144 @@ export type AuthorizedWorkspaceHubData = {
     fallbackUsed: boolean
     registryRoutes: number
     registryModules: number
+    generatedRoutes: number
+    mergedRoutes: number
+    registryMissingRoutes: number
+    unmatchedPermissions: number
     registryStatus: 'live_registry' | 'empty_registry' | 'registry_error' | 'fallback_generated'
     registryError?: string
   }
   warnings: string[]
 }
 
+const FULL_ACCESS_ROLES = new Set([
+  'ceo', 'direction', 'super_admin', 'owner', 'root', 'root_admin',
+])
+
+const DASHBOARD_EXCLUDED_ROOTS = new Set([
+  'api', 'login', 'auth', 'unauthorized', 'system-offline', 'offline', 'health',
+  'favicon.ico', '_not-found', 'not-found', 'privacy', 'terms', 'public', 'print',
+  'academy-print', 'verify',
+])
+
+function normalizePermission(value: unknown) {
+  return String(value || '').trim().toLowerCase().replace(/\s+/g, '')
+}
+
 function normalizePermissions(input: unknown): string[] {
   if (!Array.isArray(input)) return []
-  return [...new Set(input.map(String).map((item) => item.trim()).filter(Boolean))]
+  return [...new Set(input.map(normalizePermission).filter(Boolean))]
+}
+
+function normalizeRole(value: unknown) {
+  return String(value || '').trim().toLowerCase().replace(/[\s-]+/g, '_')
 }
 
 function isFullAccessUser(user: AppUserLike) {
-  const role = String(user.role || '').toLowerCase()
+  const role = normalizeRole(user.role)
   const permissions = normalizePermissions(user.permissions)
+  return FULL_ACCESS_ROLES.has(role) || permissions.includes('*')
+}
 
-  // SECURITY RULE:
-  // Dashboard cards must be generated only from assigned permissions.
-  // Admin/direction no longer imply full module visibility unless '*' is explicitly assigned.
-  return ['ceo', 'super_admin', 'owner'].includes(role) || permissions.includes('*')
+function rootSegment(href: string) {
+  return String(href || '').split('?')[0].split('#')[0].split('/').filter(Boolean)[0]?.toLowerCase() || ''
+}
+
+function normalizedDashboardModuleKey(value: unknown, href: string) {
+  const raw = String(value || rootSegment(href) || 'workspace').trim().toLowerCase()
+  return raw.replace(/^family__/, '').replace(/^standalone__/, '') || 'workspace'
+}
+
+function isDashboardRoute(route: any) {
+  const href = String(route?.href || '').trim()
+  if (!href || href === '#' || href === '/') return false
+  return !DASHBOARD_EXCLUDED_ROOTS.has(rootSegment(href))
 }
 
 function normalizeRouteFromGenerated(route: any) {
   const href = String(route?.href || route?.path || '').trim()
   if (!href || href === '#') return null
 
-  const moduleKey = String(route?.module || route?.moduleKey || href.split('/').filter(Boolean)[0] || 'workspace')
-    .trim()
-    .toLowerCase()
+  const moduleKey = normalizedDashboardModuleKey(route?.module || route?.moduleKey, href)
 
   return {
     href,
     label: String(route?.label || route?.shortLabel || formatModuleLabel(href.split('/').filter(Boolean).pop() || moduleKey)),
+    short_label: String(route?.shortLabel || route?.label || formatModuleLabel(href)),
     module_key: moduleKey,
     module_label: String(route?.moduleLabel || formatModuleLabel(moduleKey)),
     module_group: String(route?.moduleGroup || 'ANGELCARE Workspaces'),
-    permission_key: String(route?.permissionKey || `page:${href}`),
-    module_permission_key: String(route?.modulePermissionKey || `${moduleKey}.view`),
+    permission_key: normalizePermission(route?.permissionKey || route?.value || `page:${href}`),
+    module_permission_key: normalizePermission(route?.modulePermissionKey || `${moduleKey}.view`),
     status: 'active',
     risk_level: 'normal',
-    route_type: 'page',
+    route_type: route?.routeType || 'page',
+    metadata: { ...(route?.metadata || {}), source: 'generated_app_routes' },
+    detected_source: 'lib/generated/app-routes.ts',
   }
 }
 
-async function loadGeneratedRoutesFallback() {
+async function loadGeneratedRoutes() {
   try {
     const mod = await import('@/lib/generated/app-routes')
     const appRoutes = Array.isArray((mod as any).APP_ROUTES) ? (mod as any).APP_ROUTES : []
-    return appRoutes.map(normalizeRouteFromGenerated).filter(Boolean)
+    return appRoutes.map(normalizeRouteFromGenerated).filter(Boolean).filter(isDashboardRoute)
   } catch {
     return []
   }
 }
 
-function canAccessRoute(route: any, userPermissions: string[], fullAccess: boolean) {
-  if (fullAccess) return true
+function mergeRouteUniverse(registryRoutes: any[], generatedRoutes: any[]) {
+  const routesByHref = new Map<string, any>()
 
+  for (const route of generatedRoutes) {
+    if (!isDashboardRoute(route)) continue
+    routesByHref.set(String(route.href), route)
+  }
+
+  for (const registryRoute of registryRoutes) {
+    if (!isDashboardRoute(registryRoute)) continue
+    const href = String(registryRoute.href)
+    const generated = routesByHref.get(href) || {}
+    const moduleKey = normalizedDashboardModuleKey(registryRoute.module_key || generated.module_key, href)
+    routesByHref.set(href, {
+      ...generated,
+      ...registryRoute,
+      module_key: moduleKey,
+      module_label: registryRoute.module_label || generated.module_label || formatModuleLabel(moduleKey),
+      module_group: registryRoute.module_group || generated.module_group || 'ANGELCARE Workspaces',
+      permission_key: normalizePermission(registryRoute.permission_key || generated.permission_key || `page:${href}`),
+      module_permission_key: normalizePermission(registryRoute.module_permission_key || generated.module_permission_key || `${moduleKey}.view`),
+      status: registryRoute.status || generated.status || 'active',
+      metadata: { ...(generated.metadata || {}), ...(registryRoute.metadata || {}), registryBacked: true },
+    })
+  }
+
+  return [...routesByHref.values()]
+}
+
+function permissionCandidates(route: any) {
   const href = String(route.href || '')
-  const moduleKey = String(route.module_key || route.moduleKey || '').toLowerCase()
-  const permissionKey = String(route.permission_key || route.permissionKey || `page:${href}`)
-  const modulePermissionKey = String(route.module_permission_key || route.modulePermissionKey || `${moduleKey}.view`)
+  const moduleKey = normalizedDashboardModuleKey(route.module_key || route.moduleKey, href)
+  const metadata = route?.metadata && typeof route.metadata === 'object' ? route.metadata : {}
+  const ancestorPermissionKeys = Array.isArray(metadata.ancestorPermissionKeys) ? metadata.ancestorPermissionKeys : []
 
-  return (
-    userPermissions.includes(permissionKey) ||
-    userPermissions.includes(modulePermissionKey) ||
-    userPermissions.includes(`page:${href}`) ||
-    userPermissions.includes(`${moduleKey}.view`) ||
-    userPermissions.some((permission) => permission.startsWith(`page:/${moduleKey}`))
-  )
+  return new Set([
+    normalizePermission(route.permission_key || route.permissionKey || `page:${href}`),
+    normalizePermission(route.module_permission_key || route.modulePermissionKey || `${moduleKey}.view`),
+    normalizePermission(`page:${href}`),
+    normalizePermission(`${moduleKey}.view`),
+    normalizePermission(`resource:family:${moduleKey}`),
+    ...ancestorPermissionKeys.map(normalizePermission),
+  ].filter(Boolean))
+}
+
+function canAccessRoute(route: any, userPermissions: Set<string>, fullAccess: boolean) {
+  if (fullAccess) return true
+  for (const candidate of permissionCandidates(route)) {
+    if (userPermissions.has(candidate)) return true
+  }
+  return false
 }
 
 function moduleDescription(moduleKey: string, routeCount: number) {
@@ -143,17 +213,17 @@ function moduleDescription(moduleKey: string, routeCount: number) {
   return `${routeCount} authorized workspace page${routeCount === 1 ? '' : 's'} available.`
 }
 
-function buildModulesFromRoutes(routes: any[], userPermissions: string[], fullAccess: boolean): AuthorizedWorkspaceModule[] {
+function buildModulesFromRoutes(routes: any[], userPermissions: Set<string>, fullAccess: boolean): AuthorizedWorkspaceModule[] {
   const grouped = new Map<string, any[]>()
 
   for (const route of routes) {
-    if (!route?.href) continue
+    if (!route?.href || !isDashboardRoute(route)) continue
     if (String(route.status || 'active') === 'stale') continue
     if (!canAccessRoute(route, userPermissions, fullAccess)) continue
 
-    const moduleKey = String(route.module_key || route.moduleKey || route.href.split('/').filter(Boolean)[0] || 'workspace').toLowerCase()
+    const moduleKey = normalizedDashboardModuleKey(route.module_key || route.moduleKey, route.href)
     const list = grouped.get(moduleKey) || []
-    list.push(route)
+    if (!list.some((item) => String(item.href) === String(route.href))) list.push(route)
     grouped.set(moduleKey, list)
   }
 
@@ -163,8 +233,8 @@ function buildModulesFromRoutes(routes: any[], userPermissions: string[], fullAc
         .map((route) => ({
           label: String(route.label || route.short_label || formatModuleLabel(route.href)),
           href: String(route.href),
-          permissionKey: String(route.permission_key || `page:${route.href}`),
-          modulePermissionKey: route.module_permission_key || `${moduleKey}.view`,
+          permissionKey: normalizePermission(route.permission_key || `page:${route.href}`),
+          modulePermissionKey: normalizePermission(route.module_permission_key || `${moduleKey}.view`),
           status: route.status || 'active',
         }))
         .sort((a, b) => {
@@ -174,8 +244,8 @@ function buildModulesFromRoutes(routes: any[], userPermissions: string[], fullAc
         })
 
       const primary = sortedRoutes.find((route) => route.href === `/${moduleKey}`) || sortedRoutes[0]
-      const moduleLabel = String(moduleRoutes[0]?.module_label || moduleRoutes[0]?.moduleLabel || formatModuleLabel(moduleKey))
-      const moduleGroup = String(moduleRoutes[0]?.module_group || moduleRoutes[0]?.moduleGroup || 'ANGELCARE Workspaces')
+      const moduleLabel = String(moduleRoutes.find((route) => route.module_label)?.module_label || formatModuleLabel(moduleKey))
+      const moduleGroup = String(moduleRoutes.find((route) => route.module_group)?.module_group || 'ANGELCARE Workspaces')
 
       return {
         moduleKey,
@@ -201,11 +271,11 @@ function buildModulesFromRoutes(routes: any[], userPermissions: string[], fullAc
 export async function loadAuthorizedWorkspaceHub(user: AppUserLike): Promise<AuthorizedWorkspaceHubData> {
   const supabase = await createClient()
   const permissions = normalizePermissions(user.permissions)
+  const permissionSet = new Set(permissions)
   const fullAccess = isFullAccessUser(user)
   const warnings: string[] = []
 
   let registryBacked = false
-  let fallbackUsed = false
   let registryRoutes: any[] = []
   let registryModulesCount = 0
   let registryStatus: AuthorizedWorkspaceHubData['stats']['registryStatus'] = 'empty_registry'
@@ -221,44 +291,55 @@ export async function loadAuthorizedWorkspaceHub(user: AppUserLike): Promise<Aut
         .order('href', { ascending: true }),
       supabase
         .from('access_module_registry')
-        .select('id', { count: 'exact', head: true }),
+        .select('id', { count: 'exact', head: true })
+        .neq('status', 'stale'),
     ])
 
-    if (moduleError) {
-      registryError = moduleError.message
-    }
-
+    if (moduleError) registryError = moduleError.message
     registryModulesCount = Number(moduleCount || 0)
 
     if (routeError) {
       registryStatus = 'registry_error'
       registryError = routeError.message
-      warnings.push('Workspace registry is synchronizing. Generated route fallback is active.')
+      warnings.push('The live access registry could not be read. The complete generated route catalogue is protecting dashboard coverage.')
     } else if (Array.isArray(routeData) && routeData.length > 0) {
       registryBacked = true
       registryStatus = 'live_registry'
       registryRoutes = routeData
     } else {
       registryStatus = 'empty_registry'
-      warnings.push('Workspace registry is synchronizing. Generated route fallback is active.')
+      warnings.push('The live access registry is empty. The complete generated route catalogue is active until a scan is published.')
     }
   } catch (error) {
     registryStatus = 'registry_error'
     registryError = error instanceof Error ? error.message : 'Unknown registry read error'
-    warnings.push('Workspace registry is temporarily unavailable. Generated route fallback is active.')
+    warnings.push('The live access registry is unavailable. The complete generated route catalogue is protecting dashboard coverage.')
   }
 
-  let routes = registryRoutes
+  const generatedRoutes = await loadGeneratedRoutes()
+  const registryHrefs = new Set(registryRoutes.map((route) => String(route.href)))
+  const registryMissingRoutes = generatedRoutes.filter((route: any) => !registryHrefs.has(String(route.href))).length
+  const routes = mergeRouteUniverse(registryRoutes, generatedRoutes)
+  const fallbackUsed = !registryRoutes.length || registryMissingRoutes > 0
 
-  if (!routes.length) {
-    const fallback = await loadGeneratedRoutesFallback()
-    routes = fallback
-    fallbackUsed = true
-    if (registryStatus !== 'registry_error') registryStatus = 'fallback_generated'
+  if (registryBacked && registryMissingRoutes > 0) {
+    warnings.push(`${registryMissingRoutes} generated application routes are not yet present in the published registry. They have been merged safely so authorized dashboard cards remain complete.`)
   }
 
-  const modules = buildModulesFromRoutes(routes, permissions, fullAccess)
+  const modules = buildModulesFromRoutes(routes, permissionSet, fullAccess)
   const authorizedPages = modules.reduce((sum, module) => sum + module.routeCount, 0)
+  const matchedPermissions = new Set<string>()
+  for (const route of routes) {
+    if (!canAccessRoute(route, permissionSet, false)) continue
+    for (const candidate of permissionCandidates(route)) {
+      if (permissionSet.has(candidate)) matchedPermissions.add(candidate)
+    }
+  }
+  const unmatchedPermissions = permissions.filter((permission) => permission !== '*' && !matchedPermissions.has(permission)).length
+
+  if (unmatchedPermissions > 0) {
+    warnings.push(`${unmatchedPermissions} assigned permission keys do not currently resolve to a dashboard route. They remain preserved for actions, APIs, legacy access, or future registry publication.`)
+  }
 
   return {
     user: {
@@ -285,7 +366,11 @@ export async function loadAuthorizedWorkspaceHub(user: AppUserLike): Promise<Aut
       fallbackUsed,
       registryRoutes: registryRoutes.length,
       registryModules: registryModulesCount,
-      registryStatus,
+      generatedRoutes: generatedRoutes.length,
+      mergedRoutes: routes.length,
+      registryMissingRoutes,
+      unmatchedPermissions,
+      registryStatus: registryRoutes.length ? registryStatus : generatedRoutes.length ? 'fallback_generated' : registryStatus,
       registryError,
     },
     warnings,
