@@ -20,10 +20,14 @@ export function getRevenueOsEnvironmentConfig(): RevenueOsEnvironmentConfig {
     : rawEnvironment === 'staging'
       ? 'staging'
       : 'development'
-  const executionModeRaw = String(process.env.REVENUE_OS_EXECUTION_MODE || 'shadow')
-  const executionMode = executionModeRaw === 'recommend' || executionModeRaw === 'approval-gated' || executionModeRaw === 'limited-autonomy'
-    ? executionModeRaw
-    : 'shadow'
+  const executionModeRaw = String(process.env.REVENUE_OS_EXECUTION_MODE || 'approval-gated').trim().toLowerCase()
+  const executionMode = executionModeRaw === 'approval_required' || executionModeRaw === 'approval-required' || executionModeRaw === 'approval_gated'
+    ? 'approval-gated'
+    : executionModeRaw === 'limited_autopilot' || executionModeRaw === 'limited-autopilot'
+      ? 'limited-autonomy'
+      : executionModeRaw === 'recommend' || executionModeRaw === 'approval-gated' || executionModeRaw === 'limited-autonomy'
+        ? executionModeRaw
+        : executionModeRaw === 'shadow' ? 'shadow' : 'approval-gated'
 
   return {
     environment,

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getCurrentUser } from '@/lib/getUser'
+import { actorFromRevenueOsUser } from '@/lib/revenue-command-os/access'
 import { normalizeRevenueOsError, RevenueOsError } from '@/lib/revenue-command-os/errors'
 import { createRevenueOsObjective, readRevenueOsFoundation } from '@/lib/revenue-command-os/repository'
 import type { RevenueOsExecutionMode, RevenueOsObjectiveInput, RevenueOsPriority } from '@/lib/revenue-command-os/types'
@@ -36,9 +37,9 @@ function stringField(value: unknown, name: string, minimum: number) {
 
 function objectiveInput(payload: any): RevenueOsObjectiveInput {
   const priorities: RevenueOsPriority[] = ['critical', 'high', 'medium', 'low']
-  const modes: RevenueOsExecutionMode[] = ['shadow', 'recommend']
+  const modes: RevenueOsExecutionMode[] = ['shadow', 'recommend', 'approval-gated', 'limited-autonomy']
   const priority = priorities.includes(payload?.priority) ? payload.priority : 'high'
-  const executionMode = modes.includes(payload?.executionMode) ? payload.executionMode : 'shadow'
+  const executionMode = modes.includes(payload?.executionMode) ? payload.executionMode : 'approval-gated'
   return {
     title: stringField(payload?.title, 'Objectif', 8),
     mandate: stringField(payload?.mandate, 'Mandat', 20),
@@ -55,7 +56,8 @@ export async function GET() {
     const user = await getCurrentUser()
     if (!user) return NextResponse.json({ ok: false, error: { code: 'UNAUTHENTICATED', message: 'Authentification requise.' } }, { status: 401 })
     if (!canAccess(user, 'revenue_os.view', true)) return NextResponse.json({ ok: false, error: { code: 'FORBIDDEN', message: 'Permission Revenue OS requise.' } }, { status: 403 })
-    const { bootstrap, warnings } = await readRevenueOsFoundation()
+    const actor = actorFromRevenueOsUser(user)
+    const { bootstrap, warnings } = await readRevenueOsFoundation(actor.tenantId)
     return NextResponse.json({ ok: true, data: bootstrap, warnings }, { headers: { 'Cache-Control': 'no-store' } })
   } catch (error) {
     return respondError(error)

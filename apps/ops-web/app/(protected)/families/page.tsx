@@ -1,30 +1,87 @@
 import Link from 'next/link'
-import AppShell, { PageAction } from '@/app/components/erp/AppShell'
+import {
+  AlertTriangle,
+  Archive,
+  ArrowRight,
+  Building2,
+  CalendarClock,
+  FileText,
+  Grid2X2,
+  HeartHandshake,
+  List,
+  MapPin,
+  Plus,
+  RefreshCcw,
+  Search,
+  ShieldAlert,
+  Sparkles,
+  UsersRound,
+} from 'lucide-react'
+import AppShell from '@/app/components/erp/AppShell'
 import { createClient } from '@/lib/supabase/server'
+import { hasPermission } from '@/lib/auth/permissions'
+import { requireUser } from '@/lib/auth/session'
+import {
+  BrandLockup,
+  ContinuityItem,
+  EmptyState,
+  Eyebrow,
+  HeroMetric,
+  KpiCard,
+  LocationLine,
+  ManagerAlert,
+  MetaBox,
+  Monogram,
+  StatusBadge,
+  formatDate,
+  isActiveStatus,
+  isSensitiveStatus,
+  normalize,
+  statusTone,
+  text,
+} from './_components/FamilyUi'
+import styles from './_components/families-sanila.module.css'
 
 type Family = Record<string, any>
+type Related = Record<string, any>
 
-function text(value: any, fallback = '—') {
-  return value === null || value === undefined || value === '' ? fallback : String(value)
+type SearchParams = {
+  q?: string
+  city?: string
+  status?: string
+  segment?: string
+  focus?: string
+  view?: string
 }
 
-function tone(status?: string) {
-  const s = (status || '').toLowerCase()
-  if (s.includes('vip')) return { bg: '#ede9fe', fg: '#5b21b6', bd: '#c4b5fd' }
-  if (s.includes('active')) return { bg: '#dcfce7', fg: '#166534', bd: '#86efac' }
-  if (s.includes('pending')) return { bg: '#fef3c7', fg: '#92400e', bd: '#fcd34d' }
-  if (s.includes('risk') || s.includes('urgent')) return { bg: '#fee2e2', fg: '#991b1b', bd: '#fca5a5' }
-  return { bg: '#e2e8f0', fg: '#334155', bd: '#cbd5e1' }
+function getFamilyState(family: Family, missions: Related[], contracts: Related[], leads: Related[]) {
+  const familyId = Number(family.id)
+  const familyMissions = missions.filter((item) => Number(item.family_id) === familyId)
+  const familyContracts = contracts.filter((item) => Number(item.family_id) === familyId)
+  const familyLeads = leads.filter((item) => Number(item.family_id) === familyId)
+  const activeMissions = familyMissions.filter((item) => isActiveStatus(item.status))
+  const activeContracts = familyContracts.filter((item) => isActiveStatus(item.status) || ['signed', 'active'].includes(normalize(item.status)))
+  const latestActivity = [
+    ...familyMissions.map((item) => item.updated_at || item.created_at || item.mission_date),
+    ...familyContracts.map((item) => item.updated_at || item.created_at || item.start_date),
+    ...familyLeads.map((item) => item.updated_at || item.created_at),
+    family.updated_at,
+    family.created_at,
+  ].filter(Boolean).sort((a, b) => new Date(String(b)).getTime() - new Date(String(a)).getTime())[0]
+
+  return { familyMissions, familyContracts, familyLeads, activeMissions, activeContracts, latestActivity }
 }
 
-export default async function FamiliesPage({ searchParams }: { searchParams?: Promise<{ q?: string; city?: string; status?: string; segment?: string }> }) {
+export default async function FamiliesPage({ searchParams }: { searchParams?: Promise<SearchParams> }) {
   const sp = await searchParams
   const q = (sp?.q || '').trim()
   const city = (sp?.city || '').trim()
   const status = (sp?.status || '').trim()
   const segment = (sp?.segment || '').trim()
+  const focus = (sp?.focus || 'all').trim()
+  const view = sp?.view === 'table' ? 'table' : 'cards'
 
-  const supabase = await createClient()
+  const [supabase, user] = await Promise.all([createClient(), requireUser()])
 
   let query = supabase.from('families').select('*').eq('is_archived', false).order('id', { ascending: false })
   if (city) query = query.eq('city', city)
@@ -32,127 +89,238 @@ export default async function FamiliesPage({ searchParams }: { searchParams?: Pr
   if (segment) query = query.eq('family_segment', segment)
   if (q) query = query.or(`family_name.ilike.%${q}%,parent_name.ilike.%${q}%,phone.ilike.%${q}%,city.ilike.%${q}%,zone.ilike.%${q}%`)
 
-  const [{ data, error }, { data: allRaw }] = await Promise.all([
+  const [filteredRes, allRes, missionsRes, contractsRes, leadsRes] = await Promise.all([
     query,
     supabase.from('families').select('*').eq('is_archived', false),
+    supabase.from('missions').select('*').order('id', { ascending: false }).limit(2000),
+    supabase.from('contracts').select('*').order('id', { ascending: false }).limit(1200),
+    supabase.from('leads').select('*').order('id', { ascending: false }).limit(1600),
   ])
 
-  const families = (data || []) as Family[]
-  const all = (allRaw || []) as Family[]
-  const cities = Array.from(new Set(all.map((f) => f.city).filter(Boolean))) as string[]
-  const segments = Array.from(new Set(all.map((f) => f.family_segment).filter(Boolean))) as string[]
+  const all = (allRes.data || []) as Family[]
+  const missions = (missionsRes.data || []) as Related[]
+  const contracts = (contractsRes.data || []) as Related[]
+  const leads = (leadsRes.data || []) as Related[]
+  const baseFamilies = (filteredRes.data || []) as Family[]
+  const today = Date.now()
 
-  const total = all.length
-  const active = all.filter((f) => (f.status || '').toLowerCase() === 'active').length
-  const vip = all.filter((f) => (f.status || '').toLowerCase() === 'vip' || (f.family_segment || '').toLowerCase() === 'vip').length
-  const risk = all.filter((f) => ['high', 'critical', 'urgent'].includes((f.risk_level || '').toLowerCase())).length
-  const children = all.reduce((s, f) => s + Number(f.children_count || 0), 0)
-  const pendingReview = all.filter((f) => f.next_review_at && new Date(f.next_review_at) <= new Date()).length
+  const familyStates = new Map<number, ReturnType<typeof getFamilyState>>()
+  all.forEach((family) => familyStates.set(Number(family.id), getFamilyState(family, missions, contracts, leads)))
+
+  const focusedFamilies = baseFamilies.filter((family) => {
+    const state = familyStates.get(Number(family.id)) || getFamilyState(family, missions, contracts, leads)
+    if (focus === 'active') return normalize(family.status) === 'active'
+    if (focus === 'priority') return ['high', 'urgent', 'critical', 'haute'].some((token) => normalize(family.priority).includes(token))
+    if (focus === 'risk') return isSensitiveStatus(family.risk_level)
+    if (focus === 'no-mission') return state.activeMissions.length === 0
+    if (focus === 'special') return Boolean(String(family.special_needs || '').trim())
+    if (focus === 'vip') return normalize(family.family_segment || family.status).includes('vip')
+    if (focus === 'review') return Boolean(family.next_review_at && new Date(family.next_review_at).getTime() <= today)
+    return true
+  })
+
+  const active = all.filter((family) => normalize(family.status) === 'active').length
+  const vip = all.filter((family) => normalize(family.family_segment || family.status).includes('vip')).length
+  const risk = all.filter((family) => isSensitiveStatus(family.risk_level)).length
+  const children = all.reduce((sum, family) => sum + Number(family.children_count || 0), 0)
+  const pendingReview = all.filter((family) => family.next_review_at && new Date(family.next_review_at).getTime() <= today).length
+  const noMission = all.filter((family) => (familyStates.get(Number(family.id))?.activeMissions.length || 0) === 0).length
+  const activeContracts = all.filter((family) => (familyStates.get(Number(family.id))?.activeContracts.length || 0) > 0).length
+  const specialNeeds = all.filter((family) => String(family.special_needs || '').trim()).length
+
+  const cities = Array.from(new Set(all.map((family) => family.city).filter(Boolean))).sort() as string[]
+  const segments = Array.from(new Set(all.map((family) => family.family_segment).filter(Boolean))).sort() as string[]
+
+  const canCreate = hasPermission(user, 'families.create') || hasPermission(user, 'families.view')
+  const canEdit = hasPermission(user, 'families.edit') || hasPermission(user, 'families.view')
+
+  const focusLinks = [
+    ['all', 'Toutes', all.length],
+    ['active', 'Actives', active],
+    ['priority', 'Prioritaires', all.filter((family) => ['high', 'urgent', 'critical', 'haute'].some((token) => normalize(family.priority).includes(token))).length],
+    ['risk', 'À risque', risk],
+    ['no-mission', 'Sans mission', noMission],
+    ['special', 'Besoins spécifiques', specialNeeds],
+    ['vip', 'VIP', vip],
+    ['review', 'À revoir', pendingReview],
+  ] as const
 
   return (
     <AppShell
-      title="Families Intelligence"
-      subtitle="CRM client enrichi : familles, besoins enfants, priorités, risques et continuité opérationnelle."
-      breadcrumbs={[{ label: 'Families' }]}
-      actions={<><PageAction href="/families/intelligence" variant="light">Command Center</PageAction><PageAction href="/families/new">+ Nouvelle famille</PageAction></>}
+      title="Families 360°"
+      subtitle="Household Relationship, Care Delivery & Trust Command"
+      breadcrumbs={[{ label: 'Families 360°' }]}
     >
-      <div style={pageStyle}>
-        <section style={heroStyle}>
-          <div>
-            <div style={eyebrowStyle}>Family Operating Layer</div>
-            <h1 style={heroTitleStyle}>Clients, besoins & potentiel service</h1>
-            <p style={heroTextStyle}>Vue manager pour détecter les familles VIP, les besoins spécifiques, les relances et les comptes à risque.</p>
+      <div className={styles.page}>
+        <section className={styles.hero}>
+          <div className={styles.heroMain}>
+            <BrandLockup />
+            <Eyebrow>Household Relationship Command</Eyebrow>
+            <h1 className={styles.heroTitle}>Chaque famille devient une relation suivie, comprise et opérationnellement protégée.</h1>
+            <p className={styles.heroText}>
+              Une vue consolidée des foyers, besoins enfants, parcours commercial, contrats et continuité de mission—sans dissocier la confiance client de l’exécution terrain.
+            </p>
+            <div className={styles.actionRow} style={{ marginTop: 24 }}>
+              {canCreate ? <Link href="/families/new" className={styles.primaryButton}><Plus size={16} />Nouvelle famille</Link> : null}
+              <Link href="/families/intelligence" className={styles.secondaryButton}><Sparkles size={16} />Centre d’intelligence</Link>
+              <Link href="/admin/archive-center" className={styles.softButton}><Archive size={16} />Archives</Link>
+              <Link href="/families" className={styles.softButton}><RefreshCcw size={16} />Actualiser</Link>
+            </div>
           </div>
-          <div style={heroPanelStyle}>
-            <strong>{total}</strong>
-            <span>familles actives dans le CRM</span>
+          <div className={styles.heroSide}>
+            <HeroMetric type="families" value={all.length} label="foyers actifs dans le portefeuille" />
+            <HeroMetric type="trust" value={activeContracts} label="familles avec contrat actif" />
+            <HeroMetric type="review" value={pendingReview} label="revues relationnelles dues" />
           </div>
         </section>
 
-        <section style={kpiGridStyle}>
-          <Kpi label="Total familles" value={total} sub="CRM actif" />
-          <Kpi label="Familles actives" value={active} sub="service en cours" />
-          <Kpi label="VIP / Premium" value={vip} sub="priorité relation" />
-          <Kpi label="À risque" value={risk} sub="surveillance manager" />
-          <Kpi label="Enfants suivis" value={children} sub="population service" />
-          <Kpi label="Reviews dues" value={pendingReview} sub="action attendue" />
+        <section className={styles.kpiGrid}>
+          <KpiCard label="Familles actives" value={active} sub={`${all.length} foyers non archivés`} tone="green" />
+          <KpiCard label="À risque" value={risk} sub="vigilance managériale" tone={risk ? 'red' : 'green'} />
+          <KpiCard label="Sans mission active" value={noMission} sub="continuité à confirmer" tone={noMission ? 'amber' : 'green'} />
+          <KpiCard label="Besoins spécifiques" value={specialNeeds} sub="briefing renforcé" tone="blue" />
+          <KpiCard label="Contrats actifs" value={activeContracts} sub="relation contractualisée" tone="green" />
+          <KpiCard label="Enfants suivis" value={children} sub="population déclarée" tone="violet" />
         </section>
 
-        <form style={filterStyle}>
-          <input name="q" defaultValue={q} placeholder="Recherche famille, parent, téléphone, ville, zone..." style={inputStyle} />
-          <select name="city" defaultValue={city} style={inputStyle}><option value="">Toutes villes</option>{cities.map((c) => <option key={c} value={c}>{c}</option>)}</select>
-          <select name="status" defaultValue={status} style={inputStyle}><option value="">Tous statuts</option><option value="active">active</option><option value="pending">pending</option><option value="inactive">inactive</option><option value="vip">vip</option></select>
-          <select name="segment" defaultValue={segment} style={inputStyle}><option value="">Tous segments</option>{segments.map((s) => <option key={s} value={s}>{s}</option>)}</select>
-          <button style={buttonStyle}>Filtrer</button>
-          <Link href="/families" style={lightButtonStyle}>Reset</Link>
+        <section className={styles.lifecycle} aria-label="Lecture du cycle relationnel familles">
+          <div className={styles.lifecycleStep}><strong>{leads.length}</strong>Prospects & leads</div>
+          <div className={styles.lifecycleStep}><strong>{all.length}</strong>Foyers qualifiés</div>
+          <div className={styles.lifecycleStep}><strong>{contracts.length}</strong>Contrats liés</div>
+          <div className={styles.lifecycleStep}><strong>{activeContracts}</strong>Services activés</div>
+          <div className={styles.lifecycleStep}><strong>{missions.filter((item) => isActiveStatus(item.status)).length}</strong>Missions actives</div>
+          <div className={styles.lifecycleStep}><strong>{risk}</strong>À surveiller</div>
+          <div className={styles.lifecycleStep}><strong>{pendingReview}</strong>Revues dues</div>
+        </section>
+
+        <nav className={styles.segmentNav} aria-label="Segments du portefeuille familles">
+          {focusLinks.map(([key, label, count]) => {
+            const params = new URLSearchParams()
+            if (q) params.set('q', q)
+            if (city) params.set('city', city)
+            if (status) params.set('status', status)
+            if (segment) params.set('segment', segment)
+            params.set('focus', key)
+            params.set('view', view)
+            return <Link key={key} href={`/families?${params.toString()}`} className={`${styles.segmentLink} ${focus === key ? styles.segmentActive : ''}`}>{label}<span>{count}</span></Link>
+          })}
+        </nav>
+
+        <form className={styles.commandBar}>
+          <div style={{ position: 'relative' }}>
+            <Search size={16} style={{ position: 'absolute', left: 13, top: 14, color: '#718299' }} />
+            <input name="q" defaultValue={q} placeholder="Famille, parent, téléphone, ville ou zone…" className={styles.input} style={{ paddingLeft: 38 }} />
+          </div>
+          <select name="city" defaultValue={city} className={styles.select}><option value="">Toutes les villes</option>{cities.map((item) => <option key={item} value={item}>{item}</option>)}</select>
+          <select name="status" defaultValue={status} className={styles.select}><option value="">Tous les statuts</option><option value="active">Active</option><option value="pending">En attente</option><option value="inactive">Inactive</option><option value="vip">VIP</option></select>
+          <select name="segment" defaultValue={segment} className={styles.select}><option value="">Tous les segments</option>{segments.map((item) => <option key={item} value={item}>{item}</option>)}</select>
+          <input type="hidden" name="focus" value={focus} />
+          <input type="hidden" name="view" value={view} />
+          <button className={styles.primaryButton} type="submit">Appliquer</button>
         </form>
 
-        {error ? <div style={errorStyle}>Erreur : {error.message}</div> : null}
+        {filteredRes.error ? <div className={styles.error}>Impossible de charger le portefeuille : {filteredRes.error.message}</div> : null}
 
-        <section style={gridStyle}>
-          {families.map((family) => {
-            const c = tone(family.status || family.risk_level)
-            return (
-              <article key={family.id} style={cardStyle}>
-                <div style={cardTopStyle}>
-                  <div>
-                    <div style={idStyle}>Family #{family.id}</div>
-                    <h2 style={cardTitleStyle}>{text(family.family_name || family.parent_name, 'Famille sans nom')}</h2>
-                    <p style={mutedStyle}>{text(family.city)} • {text(family.zone)} • {text(family.source, 'source inconnue')}</p>
-                  </div>
-                  <span style={{ ...badgeStyle, background: c.bg, color: c.fg, borderColor: c.bd }}>{text(family.status, 'active')}</span>
-                </div>
+        <div className={styles.contentWithRail}>
+          <main style={{ minWidth: 0, display: 'grid', gap: 14 }}>
+            <div className={styles.actionRow} style={{ justifyContent: 'space-between' }}>
+              <div style={{ color: '#5f748c', fontSize: 12, fontWeight: 800 }}>{focusedFamilies.length} résultat(s) · filtre « {focusLinks.find(([key]) => key === focus)?.[1] || 'Toutes'} »</div>
+              <div className={styles.actionRow}>
+                <Link href={buildViewHref(sp, 'cards')} className={view === 'cards' ? styles.primaryButton : styles.secondaryButton}><Grid2X2 size={15} />Cartes</Link>
+                <Link href={buildViewHref(sp, 'table')} className={view === 'table' ? styles.primaryButton : styles.secondaryButton}><List size={15} />Tableau</Link>
+              </div>
+            </div>
 
-                <div style={miniGridStyle}>
-                  <Info label="Parent" value={family.parent_name} />
-                  <Info label="Téléphone" value={family.phone} />
-                  <Info label="Enfants" value={family.children_count ?? 0} />
-                  <Info label="Âges" value={family.children_ages} />
-                </div>
+            {view === 'cards' ? (
+              <section className={styles.cardGrid}>
+                {focusedFamilies.map((family) => {
+                  const state = familyStates.get(Number(family.id)) || getFamilyState(family, missions, contracts, leads)
+                  const riskTone = isSensitiveStatus(family.risk_level) ? 'red' : statusTone(family.status)
+                  return (
+                    <article key={family.id} className={styles.familyCard}>
+                      <div className={styles.cardHeader}>
+                        <Monogram familyName={family.family_name} parentName={family.parent_name} />
+                        <div className={styles.cardIdentity}>
+                          <h3>{text(family.family_name, text(family.parent_name, `Famille #${family.id}`))}</h3>
+                          <p>{text(family.parent_name, 'Parent principal à compléter')}</p>
+                        </div>
+                        <StatusBadge value={family.risk_level || family.status} tone={riskTone} />
+                      </div>
 
-                <div style={sectionMiniStyle}>
-                  <strong>Besoins & préférences</strong>
-                  <p>{text(family.service_preferences || family.special_needs, 'Besoins non détaillés')}</p>
-                </div>
+                      <div className={styles.cardMeta}>
+                        <MetaBox label="Localisation" value={<LocationLine city={family.city} zone={family.zone} />} />
+                        <MetaBox label="Enfants" value={`${Number(family.children_count || 0)} · ${text(family.children_ages, 'âges non saisis')}`} />
+                        <MetaBox label="Service" value={text(family.service_preferences, 'À qualifier')} />
+                        <MetaBox label="Prochaine revue" value={formatDate(family.next_review_at)} />
+                      </div>
 
-                <div style={footerActionsStyle}>
-                  <Link href={`/families/${family.id}`} style={darkButtonStyle}>Ouvrir fiche</Link>
-                  <Link href={`/missions/new?family_id=${family.id}`} style={lightButtonStyle}>Créer mission</Link>
+                      <div className={styles.continuityRow}>
+                        <ContinuityItem label="Leads" value={state.familyLeads.length} tone={state.familyLeads.length ? 'blue' : 'slate'} />
+                        <ContinuityItem label="Contrat" value={state.activeContracts.length ? 'Actif' : state.familyContracts.length ? 'Historique' : 'Absent'} tone={state.activeContracts.length ? 'green' : state.familyContracts.length ? 'amber' : 'slate'} />
+                        <ContinuityItem label="Mission" value={state.activeMissions.length ? `${state.activeMissions.length} active(s)` : 'Aucune'} tone={state.activeMissions.length ? 'green' : 'amber'} />
+                        <ContinuityItem label="Activité" value={formatDate(state.latestActivity)} tone="slate" />
+                      </div>
+
+                      <div className={styles.cardFooter}>
+                        <div className={styles.actionRow}>
+                          <Link href={`/families/${family.id}`} className={styles.primaryButton}>Ouvrir le dossier<ArrowRight size={15} /></Link>
+                          {canEdit ? <Link href={`/families/edit/${family.id}`} className={styles.secondaryButton}>Modifier</Link> : null}
+                        </div>
+                        <Link href={`/missions/new?family_id=${family.id}`} className={styles.inlineAction}>Mission<Plus size={14} /></Link>
+                      </div>
+                    </article>
+                  )
+                })}
+              </section>
+            ) : (
+              <section className={styles.tablePanel}>
+                <div className={styles.tableScroll}>
+                  <table className={styles.table}>
+                    <thead><tr><th>Famille</th><th>Parent</th><th>Localisation</th><th>Enfants</th><th>Statut</th><th>Risque</th><th>Missions</th><th>Contrat</th><th>Revue</th><th>Actions</th></tr></thead>
+                    <tbody>
+                      {focusedFamilies.map((family) => {
+                        const state = familyStates.get(Number(family.id)) || getFamilyState(family, missions, contracts, leads)
+                        return <tr key={family.id}><td><strong>{text(family.family_name, `Famille #${family.id}`)}</strong></td><td>{text(family.parent_name)}</td><td>{[text(family.city, ''), text(family.zone, '')].filter(Boolean).join(' · ') || '—'}</td><td>{Number(family.children_count || 0)}</td><td><StatusBadge value={family.status} /></td><td><StatusBadge value={family.risk_level || 'normal'} tone={isSensitiveStatus(family.risk_level) ? 'red' : 'green'} /></td><td>{state.activeMissions.length} active(s)</td><td>{state.activeContracts.length ? 'Actif' : state.familyContracts.length ? 'Historique' : 'Absent'}</td><td>{formatDate(family.next_review_at)}</td><td><Link href={`/families/${family.id}`} className={styles.inlineAction}>Ouvrir<ArrowRight size={14} /></Link></td></tr>
+                      })}
+                    </tbody>
+                  </table>
                 </div>
-              </article>
-            )
-          })}
-        </section>
+              </section>
+            )}
+
+            {!focusedFamilies.length ? <EmptyState title="Aucune famille dans cette vue" text="Aucun dossier ne correspond aux critères actuels. Réinitialisez les filtres ou créez une nouvelle famille." action={<Link href="/families" className={styles.secondaryButton}>Réinitialiser</Link>} /> : null}
+          </main>
+
+          <aside className={styles.rail}>
+            <section className={styles.railPanel}>
+              <h2 className={styles.railTitle}>Priorités managériales</h2>
+              <div className={styles.alertList} style={{ marginTop: 13 }}>
+                {risk ? <ManagerAlert title={`${risk} famille(s) à risque`} text="Ouvrez le Centre d’intelligence pour comprendre les causes et prioriser l’intervention." tone="red" /> : <ManagerAlert title="Portefeuille sans risque critique" text="Aucun niveau high, critical ou urgent n’est actuellement déclaré." tone="green" />}
+                {noMission ? <ManagerAlert title={`${noMission} famille(s) sans mission active`} text="Vérifiez les foyers récemment convertis, en attente ou sans activation opérationnelle." tone="amber" /> : null}
+                {pendingReview ? <ManagerAlert title={`${pendingReview} revue(s) due(s)`} text="Les prochaines revues sont arrivées à échéance ou sont en retard." tone="amber" /> : null}
+                {specialNeeds ? <ManagerAlert title={`${specialNeeds} contexte(s) spécifiques`} text="Préparez le matching et le briefing avec une attention renforcée à la confidentialité." tone="blue" /> : null}
+              </div>
+              <Link href="/families/intelligence" className={styles.secondaryButton} style={{ marginTop: 14, width: '100%' }}>Ouvrir l’intelligence<ArrowRight size={15} /></Link>
+            </section>
+
+            <section className={styles.railPanel}>
+              <h2 className={styles.railTitle}>Portefeuille relationnel</h2>
+              <div className={styles.miniStats} style={{ marginTop: 13 }}>
+                <MetaBox label="VIP" value={vip} />
+                <MetaBox label="Contrats" value={activeContracts} />
+                <MetaBox label="Leads" value={leads.length} />
+              </div>
+            </section>
+          </aside>
+        </div>
       </div>
     </AppShell>
   )
 }
 
-function Kpi({ label, value, sub }: { label: string; value: number | string; sub: string }) { return <div style={kpiStyle}><span>{label}</span><strong>{value}</strong><small>{sub}</small></div> }
-function Info({ label, value }: { label: string; value: any }) { return <div style={infoStyle}><span>{label}</span><strong>{text(value)}</strong></div> }
-
-const pageStyle: React.CSSProperties = { display: 'grid', gap: 20 }
-const heroStyle: React.CSSProperties = { display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 24, padding: 30, borderRadius: 32, color: '#fff', background: 'radial-gradient(circle at top left,#2563eb,#020617 65%)', boxShadow: '0 30px 80px rgba(2,6,23,.28)' }
-const eyebrowStyle: React.CSSProperties = { display: 'inline-flex', padding: '7px 12px', borderRadius: 999, background: 'rgba(255,255,255,.12)', color: '#bfdbfe', fontWeight: 950, fontSize: 12, marginBottom: 12 }
-const heroTitleStyle: React.CSSProperties = { margin: 0, fontSize: 38, fontWeight: 950, color: '#fff' }
-const heroTextStyle: React.CSSProperties = { margin: '8px 0 0', color: 'rgba(255,255,255,.86)', fontWeight: 750, maxWidth: 720 }
-const heroPanelStyle: React.CSSProperties = { minWidth: 250, padding: 22, borderRadius: 26, background: 'rgba(255,255,255,.08)', border: '1px solid rgba(255,255,255,.16)', display: 'grid', gap: 6 }
-const kpiGridStyle: React.CSSProperties = { display: 'grid', gridTemplateColumns: 'repeat(6,minmax(0,1fr))', gap: 14 }
-const kpiStyle: React.CSSProperties = { background: '#fff', border: '1px solid #dbe3ee', borderRadius: 22, padding: 18, display: 'grid', gap: 6, color: '#0f172a', boxShadow: '0 18px 38px rgba(15,23,42,.05)' }
-const filterStyle: React.CSSProperties = { display: 'grid', gridTemplateColumns: '1fr 170px 150px 170px auto auto', gap: 12, padding: 16, borderRadius: 24, background: '#fff', border: '1px solid #dbe3ee', alignItems: 'center' }
-const inputStyle: React.CSSProperties = { padding: '12px 13px', borderRadius: 13, border: '1px solid #cbd5e1', background: '#f8fafc', color: '#0f172a' }
-const buttonStyle: React.CSSProperties = { border: 'none', borderRadius: 14, padding: '13px 16px', background: '#0f172a', color: '#fff', fontWeight: 950, cursor: 'pointer' }
-const lightButtonStyle: React.CSSProperties = { borderRadius: 14, padding: '12px 14px', background: '#f8fafc', color: '#0f172a', border: '1px solid #dbe3ee', fontWeight: 900, textDecoration: 'none', display: 'inline-flex', justifyContent: 'center' }
-const darkButtonStyle: React.CSSProperties = { ...buttonStyle, textDecoration: 'none', display: 'inline-flex', justifyContent: 'center' }
-const gridStyle: React.CSSProperties = { display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: 18 }
-const cardStyle: React.CSSProperties = { background: '#fff', border: '1px solid #dbe3ee', borderRadius: 26, padding: 22, boxShadow: '0 18px 38px rgba(15,23,42,.06)', display: 'grid', gap: 16 }
-const cardTopStyle: React.CSSProperties = { display: 'flex', justifyContent: 'space-between', gap: 16, alignItems: 'start' }
-const idStyle: React.CSSProperties = { color: '#64748b', fontSize: 12, fontWeight: 900, marginBottom: 6 }
-const cardTitleStyle: React.CSSProperties = { margin: 0, color: '#0f172a', fontSize: 24, fontWeight: 950 }
-const mutedStyle: React.CSSProperties = { margin: '6px 0 0', color: '#64748b', fontWeight: 750 }
-const badgeStyle: React.CSSProperties = { display: 'inline-flex', padding: '7px 11px', borderRadius: 999, border: '1px solid', fontSize: 12, fontWeight: 950 }
-const miniGridStyle: React.CSSProperties = { display: 'grid', gridTemplateColumns: 'repeat(4,minmax(0,1fr))', gap: 10 }
-const infoStyle: React.CSSProperties = { display: 'grid', gap: 5, padding: 12, borderRadius: 16, background: '#f8fafc', border: '1px solid #e2e8f0', color: '#334155' }
-const sectionMiniStyle: React.CSSProperties = { padding: 14, borderRadius: 18, background: 'linear-gradient(180deg,#f8fafc,#eef2ff)', border: '1px solid #dbe3ee', color: '#334155' }
-const footerActionsStyle: React.CSSProperties = { display: 'flex', gap: 10, flexWrap: 'wrap' }
-const errorStyle: React.CSSProperties = { padding: 16, borderRadius: 18, background: '#fee2e2', color: '#991b1b', fontWeight: 900 }
+function buildViewHref(sp: SearchParams | undefined, view: 'cards' | 'table') {
+  const params = new URLSearchParams()
+  Object.entries(sp || {}).forEach(([key, value]) => { if (value) params.set(key, value) })
+  params.set('view', view)
+  return `/families?${params.toString()}`
+}

@@ -1,164 +1,37 @@
 'use client'
 
-import { useMemo, useState } from 'react'
-import {
-  Activity,
-  AlertTriangle,
-  ArrowRight,
-  CheckCircle2,
-  Clock3,
-  CopyCheck,
-  Database,
-  Eye,
-  FileKey2,
-  Fingerprint,
-  Gauge,
-  GitMerge,
-  LockKeyhole,
-  Network,
-  RadioTower,
-  Radar,
-  ScanLine,
-  ShieldCheck,
-  Sparkles,
-  TimerOff,
-  Waypoints,
-  WifiOff,
-} from 'lucide-react'
-import type { LucideIcon } from 'lucide-react'
-import type { RevenueSignal, RevenueSignalSectionKey, RevenueSignalSeverity } from '@/lib/revenue-command-os/types'
-import { SChip, SDataTruth, SEmpty, SIcon, SMetric, sovereigntyStyles } from '../../_components/visual-sovereignty/SovereignPrimitives'
-import { useSignalFabric } from './SignalFabricContext'
+import type { ReactNode } from 'react'
+import type { RevenueSignalSectionKey } from '@/lib/revenue-command-os/types'
 import SignalDrawer from './SignalDrawer'
-import SignalsHero from '../../_components/hero-sovereignty/heroes/SignalsHero'
-
-const severityClass: Record<string, string> = { critical: 'bg-rose-500', high: 'bg-orange-500', medium: 'bg-amber-500', low: 'bg-blue-500', info: 'bg-slate-400' }
-const healthTone: Record<string, 'emerald' | 'amber' | 'rose' | 'violet' | 'slate'> = { healthy: 'emerald', degraded: 'amber', stale: 'amber', offline: 'rose', paused: 'slate', unconfigured: 'violet' }
-
-const destinationLanes: Array<[
-  string,
-  LucideIcon,
-  'violet' | 'blue' | 'rose' |
-  'amber' | 'cyan' | 'emerald',
-]> = [
-  ['Stratégie', Sparkles, 'violet'],
-  ['Routage des commandes', Waypoints, 'blue'],
-  ['Intervention exécutive', AlertTriangle, 'rose'],
-  ['Revue humaine', Eye, 'amber'],
-  ['Instantané de contexte', Network, 'cyan'],
-  ['Déduplication', CopyCheck, 'emerald'],
-]
+import {
+  ClassificationExperience,
+  ContextSnapshotsExperience,
+  DataAccessExperience,
+  DeduplicationExperience,
+  LiveStreamExperience,
+  ScheduledScansExperience,
+  SignalOverviewExperience,
+  SignalValidationExperience,
+  SourceControlExperience,
+  SourceHealthExperience,
+  StaleDataExperience,
+  SubscriptionsExperience,
+} from './sovereign-signal-experience/routes'
 
 export default function SignalFabricWorkspace({ sectionKey }: { sectionKey: RevenueSignalSectionKey }) {
-  const { fabric, warnings, error, setSelected, busy, runAllScans, runSourceScan, updateSourceStatus, updateIssueStatus } = useSignalFabric()
-  const [query, setQuery] = useState('')
-  const [severity, setSeverity] = useState<'all' | RevenueSignalSeverity>('all')
-  const filtered = useMemo(() => fabric.signals.filter((signal) => (severity === 'all' || signal.severity === severity) && (!query || `${signal.title} ${signal.summary} ${signal.code} ${signal.sourceCode} ${signal.category}`.toLowerCase().includes(query.toLowerCase()))).sort((a, b) => b.priorityScore - a.priorityScore), [fabric.signals, query, severity])
+  let content: ReactNode
+  if (sectionKey === 'overview') content = <SignalOverviewExperience />
+  else if (sectionKey === 'live-stream') content = <LiveStreamExperience />
+  else if (sectionKey === 'source-control') content = <SourceControlExperience />
+  else if (sectionKey === 'source-health') content = <SourceHealthExperience />
+  else if (sectionKey === 'classification') content = <ClassificationExperience />
+  else if (sectionKey === 'deduplication') content = <DeduplicationExperience />
+  else if (sectionKey === 'scheduled-scans') content = <ScheduledScansExperience />
+  else if (sectionKey === 'context-snapshots') content = <ContextSnapshotsExperience />
+  else if (sectionKey === 'stale-data') content = <StaleDataExperience />
+  else if (sectionKey === 'subscriptions') content = <SubscriptionsExperience />
+  else if (sectionKey === 'data-access') content = <DataAccessExperience />
+  else content = <SignalValidationExperience />
 
-  let content: React.ReactNode
-  switch (sectionKey) {
-    case 'overview': content = <NervousSystem fabric={fabric} onOpen={setSelected} busy={busy} onScan={runAllScans} warnings={warnings} error={error} />; break
-    case 'live-stream': content = <IntelligenceRiver signals={filtered} live={fabric.storageMode === 'supabase'} query={query} setQuery={setQuery} severity={severity} setSeverity={setSeverity} onOpen={setSelected} />; break
-    case 'source-control': content = <ConnectorHangar sources={fabric.sources} busy={busy} scan={runSourceScan} updateStatus={updateSourceStatus} />; break
-    case 'source-health': content = <ClinicalDiagnostics sources={fabric.sources} />; break
-    case 'classification': content = <SortingObservatory rules={fabric.rules} signals={fabric.signals} />; break
-    case 'deduplication': content = <CollisionLaboratory events={fabric.rawEvents} readiness={fabric.readiness.deduplicationSafety} />; break
-    case 'scheduled-scans': content = <RadarSchedule scans={fabric.scheduledScans} />; break
-    case 'context-snapshots': content = <EvidenceCapsules snapshots={fabric.contextSnapshots} />; break
-    case 'stale-data': content = <FreshnessDecay sources={fabric.sources} signals={fabric.signals} />; break
-    case 'subscriptions': content = <DistributionGrid subscriptions={fabric.subscriptions} />; break
-    case 'data-access': content = <ConfidentialityVault />; break
-    default: content = <FabricCertification readiness={fabric.readiness} issues={fabric.validationIssues} busy={busy} updateIssueStatus={updateIssueStatus} />
-  }
-  const truthMode = error
-    ? 'degraded'
-    : fabric.storageMode === 'contract-seed'
-      ? 'preview'
-      : warnings.length
-        ? 'degraded'
-        : fabric.executionPosture
-
-  return <div className="space-y-4"><SDataTruth mode={truthMode} warnings={error ? [error, ...warnings] : warnings} freshness={fabric.generatedAt} />{content}<SignalDrawer /></div>
-}
-
-function NervousSystem({ fabric, onOpen, busy, onScan, warnings, error }: { fabric: any; onOpen: (signal: RevenueSignal) => void; busy: boolean; onScan: () => void; warnings: string[]; error: string | null }) {
-  const active = fabric.signals.filter((signal: any) => !['resolved', 'dismissed'].includes(signal.status)).sort((a: any, b: any) => b.priorityScore - a.priorityScore).slice(0, 9)
-  return <div className="space-y-6">
-    <SignalsHero
-      state={error ? 'DEGRADED' : fabric.storageMode === 'contract-seed' ? 'PREVIEW' : fabric.counters.staleSources ? 'DEGRADED' : fabric.signals.length ? 'LIVE' : 'EMPTY'}
-      posture={fabric.executionPosture}
-      authority="Distribution interne · effets externes verrouillés"
-      summary={active[0] ? `${active[0].title}: ${active[0].summary}` : 'Aucun signal actif n’est disponible dans la fenêtre courante. Le tissu reste prêt à recevoir et qualifier de nouveaux événements.'}
-      freshness={new Date(fabric.generatedAt).toLocaleString('fr-FR')}
-      metrics={[
-        { label: 'Intake actif', value: active.length, note: 'Signaux non résolus', tone: 'cyan' },
-        { label: 'Confiance sources', value: `${fabric.counters.sourcesHealthy}/${fabric.counters.sourcesEnabled}`, note: 'Sources saines', tone: fabric.counters.staleSources ? 'amber' : 'emerald' },
-        { label: 'Sources obsolètes', value: fabric.counters.staleSources, note: 'Stale ou offline', tone: fabric.counters.staleSources ? 'rose' : 'emerald' },
-        { label: 'Routage contexte', value: fabric.counters.contextReady, note: 'Instantanés prêts', tone: 'blue' },
-      ]}
-      actions={[{ label: busy ? 'Scan en cours…' : 'Scanner les sources', onClick: onScan, disabled: busy, reason: busy ? 'Un scan de sources est déjà en cours.' : undefined, kind: 'primary', icon: Radar }]}
-      warning={error || warnings[0] || (fabric.storageMode === 'contract-seed' ? 'PREVIEW — les signaux et sources proviennent du contrat de référence, sans exécution externe.' : fabric.counters.staleSources ? `${fabric.counters.staleSources} source(s) sont stale ou offline; les métriques concernées restent explicitement dégradées.` : undefined)}
-    />
-    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5"><SMetric label="Signaux actifs" value={active.length} note="Non résolus" icon={RadioTower} tone="cyan" /><SMetric label="Critiques" value={fabric.counters.criticalSignals} note="Intervention" icon={AlertTriangle} tone="rose" /><SMetric label="Sources saines" value={`${fabric.counters.sourcesHealthy}/${fabric.counters.sourcesEnabled}`} note="Disponibilité" icon={Database} tone="emerald" /><SMetric label="Contextes prêts" value={fabric.counters.contextReady} note="Minimisés" icon={ShieldCheck} tone="blue" /><SMetric label="Doublons 24h" value={fabric.counters.duplicateEvents24h} note="Neutralisés" icon={CopyCheck} tone="violet" /></div>
-  </div>
-}
-
-function IntelligenceRiver({ signals, live, query, setQuery, severity, setSeverity, onOpen }: { signals: RevenueSignal[]; live: boolean; query: string; setQuery: (value: string) => void; severity: 'all' | RevenueSignalSeverity; setSeverity: (value: 'all' | RevenueSignalSeverity) => void; onOpen: (signal: RevenueSignal) => void }) {
-  return <section className="relative overflow-hidden rounded-[42px] border border-cyan-200 bg-gradient-to-b from-cyan-50 to-white p-6 shadow-[0_28px_85px_rgba(8,145,178,.1)] sm:p-8"><div className={`absolute inset-0 opacity-35 ${sovereigntyStyles.dotField}`} /><div className="relative flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between"><div><SChip tone="cyan"><Activity size={11} /> Intelligence River</SChip><h1 className="mt-4 text-4xl font-black tracking-[-.05em] text-slate-950">Les signaux les plus importants remontent naturellement à la surface.</h1></div><div className="flex flex-wrap gap-2"><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Rechercher dans le flux…" className="rounded-2xl border border-cyan-200 bg-white/90 px-4 py-3 text-sm outline-none focus:border-cyan-500" />{(['all', 'critical', 'high', 'medium', 'low'] as const).map((value) => <button key={value} onClick={() => setSeverity(value)} className={`rounded-2xl px-3 py-2 text-[10px] font-black uppercase ${severity === value ? 'bg-slate-950 text-white' : 'bg-white text-slate-600 ring-1 ring-slate-200'}`}>{value}</button>)}</div></div><div className="relative mt-8 space-y-3"><div className="absolute bottom-0 left-6 top-0 w-2 rounded-full bg-gradient-to-b from-rose-500 via-amber-400 via-blue-500 to-cyan-300" />{signals.map((signal, index) => <button key={signal.id} onClick={() => onOpen(signal)} className="relative ml-14 grid w-[calc(100%-3.5rem)] gap-4 rounded-[26px] border border-white bg-white/90 p-5 text-left shadow-[0_14px_35px_rgba(15,23,42,.07)] backdrop-blur transition hover:translate-x-1 md:grid-cols-[auto_1fr_auto] md:items-center"><span className={`absolute -left-[39px] top-1/2 h-5 w-5 -translate-y-1/2 rounded-full border-4 border-white ${severityClass[signal.severity]}`} /><div className="text-center"><p className="text-2xl font-black text-slate-950">{signal.priorityScore}</p><p className="text-[8px] font-black uppercase text-slate-400">priority</p></div><div><div className="flex flex-wrap items-center gap-2"><h3 className="text-sm font-black text-slate-950">{signal.title}</h3><SChip tone={signal.severity === 'critical' ? 'rose' : signal.severity === 'high' ? 'amber' : 'blue'}>{signal.severity}</SChip></div><p className="mt-2 text-xs leading-5 text-slate-600">{signal.summary}</p><p className="mt-2 text-[9px] font-bold uppercase tracking-[.1em] text-cyan-700">{signal.sourceCode} · {signal.category} · {signal.status}</p></div><div className="flex items-center gap-2 text-[10px] font-black text-blue-700"><Eye size={15} /> Examiner</div></button>)}</div>{!signals.length ? <SEmpty title="Aucun signal dans ce filtre" description={live ? "La source est saine, mais aucun événement ne correspond aux critères sélectionnés." : "L’aperçu contractuel ne contient aucun événement correspondant à ces critères."} /> : null}</section>
-}
-
-function ConnectorHangar({ sources, busy, scan, updateStatus }: { sources: any[]; busy: boolean; scan: (code: string) => Promise<void>; updateStatus: (id: string, status: any) => Promise<void> }) {
-  return <div className="space-y-6"><div><SChip tone="blue"><Database size={11} /> Connector Hangar</SChip><h1 className="mt-4 text-4xl font-black tracking-[-.05em] text-slate-950">Chaque source est une machine contrôlée, mesurée et isolée.</h1></div><div className="grid gap-5 lg:grid-cols-2 2xl:grid-cols-3">{sources.map((source, index) => <article key={source.id} className="relative overflow-hidden rounded-[34px] border border-slate-200 bg-white p-6 shadow-[0_22px_60px_rgba(15,23,42,.07)]"><div className={`absolute inset-x-0 top-0 h-1.5 ${source.status === 'healthy' ? 'bg-emerald-500' : source.status === 'offline' ? 'bg-rose-500' : 'bg-amber-500'}`} /><div className="flex items-start justify-between"><SIcon icon={Database} tone={healthTone[source.status] || 'slate'} /><SChip tone={healthTone[source.status] || 'slate'}>{source.status}</SChip></div><p className="mt-5 text-[9px] font-black uppercase tracking-[.15em] text-slate-400">Bay {String(index + 1).padStart(2, '0')} · {source.sourceKind}</p><h2 className="mt-2 text-xl font-black text-slate-950">{source.name}</h2><p className="mt-2 min-h-12 text-xs leading-5 text-slate-500">{source.description}</p><div className="mt-5 grid grid-cols-3 gap-2"><HangarFact label="Polling" value={`${source.pollingMinutes}m`} /><HangarFact label="Stale" value={`${source.staleAfterMinutes}m`} /><HangarFact label="Events" value={String(source.supportedEventTypes.length)} /></div><div className="mt-5 rounded-2xl bg-slate-50 p-3"><p className="text-[9px] font-black uppercase text-slate-400">Périmètre gouverné</p><p className="mt-2 text-[10px] leading-4 text-slate-600">{source.sourceTables.length ? `${source.sourceTables.length} connecteur(s) interne(s) contrôlé(s)` : 'Aucun connecteur technique déclaré'}</p></div><div className="mt-5 flex gap-2"><button disabled={busy} onClick={() => scan(source.code)} className="flex-1 rounded-2xl bg-slate-950 px-4 py-3 text-xs font-black text-white"><ScanLine size={15} className="mr-2 inline" />Scanner</button><button disabled={busy} onClick={() => updateStatus(source.id, source.status === 'paused' ? 'healthy' : 'paused')} className="rounded-2xl border border-slate-200 px-4 py-3 text-xs font-black text-slate-700">{source.status === 'paused' ? 'Activer' : 'Pause'}</button></div></article>)}</div></div>
-}
-function HangarFact({ label, value }: { label: string; value: string }) { return <div className="rounded-xl bg-slate-50 p-2 text-center"><p className="text-[8px] font-black uppercase text-slate-400">{label}</p><p className="mt-1 text-xs font-black text-slate-800">{value}</p></div> }
-
-function ClinicalDiagnostics({ sources }: { sources: any[] }) {
-  return <div className="space-y-6"><div><SChip tone="emerald"><Gauge size={11} /> Clinical Source Diagnostics</SChip><h1 className="mt-4 text-4xl font-black tracking-[-.05em] text-slate-950">La santé de chaque source se lit comme un électrocardiogramme opérationnel.</h1></div><div className="space-y-4">{sources.map((source) => { const health = source.status === 'healthy' ? 94 : source.status === 'degraded' ? 61 : source.status === 'stale' ? 43 : 18; return <article key={source.id} className="grid gap-5 rounded-[30px] border border-slate-200 bg-white p-5 shadow-[0_18px_45px_rgba(15,23,42,.055)] lg:grid-cols-[220px_1fr_270px] lg:items-center"><div className="flex items-center gap-3"><SIcon icon={source.status === 'offline' ? WifiOff : Activity} tone={healthTone[source.status] || 'slate'} /><div><h2 className="text-sm font-black text-slate-950">{source.name}</h2><p className="mt-1 text-[9px] uppercase tracking-[.12em] text-slate-400">{source.code}</p></div></div><div className="relative h-20 overflow-hidden rounded-2xl bg-slate-950 p-3"><svg className="h-full w-full" viewBox="0 0 520 70" preserveAspectRatio="none"><path d={`M0 38 C40 36 55 36 80 38 L95 38 L105 ${source.status === 'healthy' ? 8 : 25} L120 60 L135 22 L150 38 C210 39 240 36 290 38 L310 38 L320 ${source.status === 'healthy' ? 12 : 30} L335 55 L350 25 L365 38 C420 38 470 37 520 38`} fill="none" stroke={source.status === 'healthy' ? '#34d399' : source.status === 'offline' ? '#fb7185' : '#fbbf24'} strokeWidth="3" className={sovereigntyStyles.draw} /></svg><span className="absolute right-3 top-3 text-[9px] font-black uppercase text-slate-400">Pulse live</span></div><div className="grid grid-cols-3 gap-2"><HangarFact label="Health" value={`${health}%`} /><HangarFact label="Latency" value={`${Math.max(12, 100 - health)}ms`} /><HangarFact label="Failures" value={String(source.consecutiveFailures || 0)} /></div></article> })}</div></div>
-}
-
-function SortingObservatory({ rules, signals }: { rules: any[]; signals: any[] }) {
-  const gates = ['Opportunité', 'Risque', 'Client', 'Marché', 'Opérations', 'Compétitif']
-  return <section className="relative overflow-hidden rounded-[42px] border border-violet-200 bg-gradient-to-br from-white via-violet-50/50 to-blue-50 p-6 shadow-[0_28px_90px_rgba(91,33,182,.09)] sm:p-8"><div className="flex items-end justify-between"><div><SChip tone="violet"><GitMerge size={11} /> Signal Sorting Observatory</SChip><h1 className="mt-4 text-4xl font-black tracking-[-.05em] text-slate-950">Le chemin explicable d’un événement brut vers une décision de classement.</h1></div><SMetric label="Règles actives" value={rules.length} note="Versionnées" icon={Sparkles} tone="violet" /></div><div className="mt-8 grid gap-5 xl:grid-cols-[260px_1fr_300px]"><div className="rounded-[30px] border border-slate-200 bg-white p-5"><p className="text-[10px] font-black uppercase tracking-[.15em] text-slate-400">Incoming events</p><div className="mt-4 space-y-2">{signals.slice(0, 6).map((signal) => <div key={signal.id} className="rounded-2xl bg-slate-50 p-3"><p className="text-xs font-black text-slate-900">{signal.title}</p><p className="mt-1 text-[9px] text-slate-400">{signal.sourceCode}</p></div>)}</div></div><div className="relative rounded-[30px] border border-violet-200 bg-slate-950 p-6 text-white"><p className="text-[10px] font-black uppercase tracking-[.15em] text-violet-300">Decision gates</p><div className="mt-5 grid gap-3 md:grid-cols-2">{rules.slice(0, 8).map((rule, index) => <div key={rule.id} className="rounded-[22px] border border-white/10 bg-white/5 p-4"><div className="flex items-center justify-between"><span className="grid h-7 w-7 place-items-center rounded-full bg-violet-500 text-[9px] font-black">{index + 1}</span><SChip tone="violet">{rule.status}</SChip></div><h3 className="mt-3 text-xs font-black">{rule.name}</h3><p className="mt-2 text-[10px] leading-4 text-slate-300">{rule.scoreLogic}</p></div>)}</div></div><div className="rounded-[30px] border border-slate-200 bg-white p-5"><p className="text-[10px] font-black uppercase tracking-[.15em] text-slate-400">Classified lanes</p><div className="mt-4 space-y-3">{gates.map((gate, index) => <div key={gate} className="flex items-center gap-3 rounded-2xl border border-slate-200 p-3"><span className={`h-8 w-2 rounded-full ${['bg-emerald-500','bg-rose-500','bg-blue-500','bg-cyan-500','bg-amber-500','bg-violet-500'][index]}`} /><div><p className="text-xs font-black text-slate-900">{gate}</p><p className="mt-1 text-[9px] text-slate-400">{signals.filter((signal) => String(signal.category).toLowerCase().includes(gate.toLowerCase().slice(0, 4))).length} signaux</p></div><ArrowRight size={14} className="ml-auto text-slate-300" /></div>)}</div></div></div></section>
-}
-
-function CollisionLaboratory({ events, readiness }: { events: any[]; readiness: number }) {
-  const duplicate = events.filter((event) => event.processingStatus === 'duplicate')
-  return <div className="space-y-6"><div className="grid gap-4 md:grid-cols-[1fr_auto] md:items-end"><div><SChip tone="amber"><Fingerprint size={11} /> Identity Collision Laboratory</SChip><h1 className="mt-4 text-4xl font-black tracking-[-.05em] text-slate-950">Les événements identiques se superposent avant qu’une seule identité canonique n’émerge.</h1></div><SMetric label="Sécurité idempotente" value={`${readiness}%`} note="Exactly-once contract" icon={ShieldCheck} tone="emerald" progress={readiness} /></div><section className="relative min-h-[600px] overflow-hidden rounded-[40px] border border-amber-200 bg-white p-6 shadow-[0_25px_80px_rgba(146,64,14,.08)]"><div className={`absolute inset-0 opacity-50 ${sovereigntyStyles.dotField}`} /><div className="relative grid gap-6 lg:grid-cols-3">{events.slice(0, 12).map((event, index) => <article key={event.id} className={`relative rounded-full border-2 bg-white/88 p-5 text-center shadow-[0_14px_36px_rgba(15,23,42,.08)] backdrop-blur ${event.processingStatus === 'duplicate' ? 'border-amber-400' : 'border-emerald-300'} ${index % 4 === 1 ? 'lg:translate-y-16' : index % 4 === 2 ? 'lg:-translate-y-3' : ''}`}><Fingerprint size={26} className={`mx-auto ${event.processingStatus === 'duplicate' ? 'text-amber-600' : 'text-emerald-600'}`} /><p className="mt-3 text-xs font-black text-slate-900">{event.eventType}</p><p className="mt-1 font-mono text-[9px] text-slate-400">{event.deduplicationKey.slice(0, 16)}…</p><SChip tone={event.processingStatus === 'duplicate' ? 'amber' : 'emerald'} className="mt-3">{event.processingStatus}</SChip>{event.duplicateOfEventId ? <p className="mt-2 text-[9px] text-amber-700">canonical → {event.duplicateOfEventId}</p> : null}</article>)}</div><div className="relative mx-auto mt-10 max-w-xl rounded-[30px] bg-slate-950 p-6 text-center text-white"><CopyCheck size={30} className="mx-auto text-emerald-400" /><h2 className="mt-3 text-xl font-black">Identité canonique préservée</h2><p className="mt-2 text-sm text-slate-300">{duplicate.length} répétitions conservées pour audit, sans recréer de signal ni déclencher de traitement double.</p></div></section></div>
-}
-
-function RadarSchedule({ scans }: { scans: any[] }) {
-  return <div className="space-y-6"><div><SChip tone="cyan"><Radar size={11} /> Radar Schedule Room</SChip><h1 className="mt-4 text-4xl font-black tracking-[-.05em] text-slate-950">Chaque source est balayée selon une cadence, une fenêtre et un curseur contrôlés.</h1></div><div className="grid gap-6 xl:grid-cols-[600px_1fr]"><section className={`relative aspect-square overflow-hidden rounded-full border-2 border-cyan-200 bg-slate-950 shadow-[0_30px_90px_rgba(8,145,178,.2)] ${sovereigntyStyles.scanline}`}><div className="absolute inset-[12%] rounded-full border border-cyan-400/20" /><div className="absolute inset-[28%] rounded-full border border-cyan-400/20" /><div className="absolute inset-[44%] rounded-full border border-cyan-400/20" /><div className="absolute left-1/2 top-0 h-full w-px bg-cyan-400/15" /><div className="absolute left-0 top-1/2 h-px w-full bg-cyan-400/15" />{scans.slice(0, 8).map((scan, index) => <span key={scan.id} className={`absolute h-3 w-3 rounded-full bg-cyan-300 shadow-[0_0_18px_#67e8f9] ${sovereigntyStyles.pulse}`} style={{ left: `${20 + (index * 23) % 65}%`, top: `${17 + (index * 31) % 68}%` }} title={scan.name} />)}<div className="absolute inset-0 grid place-items-center"><div className="grid h-24 w-24 place-items-center rounded-full border border-cyan-300/40 bg-cyan-400/10"><Radar size={35} className="text-cyan-300" /></div></div></section><div className="space-y-4">{scans.map((scan, index) => <article key={scan.id} className="rounded-[28px] border border-slate-200 bg-white p-5 shadow-[0_18px_45px_rgba(15,23,42,.055)]"><div className="grid gap-4 md:grid-cols-[auto_1fr_auto] md:items-center"><span className="grid h-11 w-11 place-items-center rounded-2xl bg-cyan-50 font-mono text-xs font-black text-cyan-700">{String(index + 1).padStart(2, '0')}</span><div><div className="flex items-center gap-2"><h2 className="text-sm font-black text-slate-950">{scan.name}</h2><SChip tone={scan.status === 'active' ? 'emerald' : 'slate'}>{scan.status}</SChip></div><p className="mt-2 text-[10px] text-slate-500">{scan.scheduleExpression} · lookback {scan.lookbackMinutes} min · max {scan.maximumRecords}</p></div><div className="text-right"><p className="text-lg font-black text-slate-950">{scan.lastCreatedSignals || 0}</p><p className="text-[8px] font-black uppercase text-slate-400">last signals</p></div></div></article>)}</div></div></div>
-}
-
-function EvidenceCapsules({ snapshots }: { snapshots: any[] }) {
-  return <div className="space-y-6"><div><SChip tone="violet"><Network size={11} /> Evidence Capsules</SChip><h1 className="mt-4 text-4xl font-black tracking-[-.05em] text-slate-950">Chaque signal utile devient une capsule de contexte scellée, minimisée et expirante.</h1></div><div className="grid gap-6 lg:grid-cols-2">{snapshots.map((snapshot, index) => <article key={snapshot.id} className={`relative overflow-hidden rounded-[40px] border p-6 shadow-[0_24px_70px_rgba(76,29,149,.08)] ${index % 2 ? 'border-blue-200 bg-gradient-to-br from-blue-50 to-white' : 'border-violet-200 bg-gradient-to-br from-violet-50 to-white'}`}><div className="absolute right-0 top-0 h-36 w-36 rounded-bl-full bg-white/60" /><div className="relative flex items-start justify-between"><SIcon icon={LockKeyhole} tone={index % 2 ? 'blue' : 'violet'} /><SChip tone={snapshot.status === 'ready' ? 'emerald' : 'rose'}>{snapshot.status}</SChip></div><p className="relative mt-5 text-[9px] font-black uppercase tracking-[.16em] text-slate-400">{snapshot.code} · {snapshot.visibilityProfile}</p><h2 className="relative mt-2 text-xl font-black text-slate-950">{snapshot.purpose}</h2><div className="relative mt-6 grid grid-cols-4 gap-2"><HangarFact label="Faits" value={String(snapshot.facts.length)} /><HangarFact label="Sources" value={String(snapshot.sources.length)} /><HangarFact label="Complet" value={`${snapshot.completenessScore}%`} /><HangarFact label="Frais" value={`${snapshot.freshnessScore}%`} /></div><div className="relative mt-5 rounded-[24px] border border-white bg-white/70 p-4"><p className="text-[9px] font-black uppercase tracking-[.12em] text-violet-700">Champs masqués</p><div className="mt-3 flex flex-wrap gap-2">{snapshot.redactedFields.map((field: string) => <SChip key={field} tone="rose">{field}</SChip>)}</div></div></article>)}</div>{!snapshots.length ? <SEmpty title="Aucune capsule prête" description="Les contextes sont créés seulement à partir de signaux validés et selon le profil de visibilité autorisé." /> : null}</div>
-}
-
-function FreshnessDecay({ sources, signals }: { sources: any[]; signals: any[] }) {
-  const stale = sources.filter((source) => ['stale', 'offline', 'degraded'].includes(source.status))
-  const now = Date.now()
-  const ageMinutes = (signal: any) => Math.max(0, (now - new Date(signal.detectedAt || signal.occurredAt).getTime()) / 60000)
-  const ageBands = [{ label: '< 15 min', opacity: 'opacity-100', count: signals.filter((signal) => ageMinutes(signal) < 15).length }, { label: '15–60 min', opacity: 'opacity-80', count: signals.filter((signal) => ageMinutes(signal) >= 15 && ageMinutes(signal) < 60).length }, { label: '1–24 h', opacity: 'opacity-55', count: signals.filter((signal) => ageMinutes(signal) >= 60 && ageMinutes(signal) < 1440).length }, { label: '> 24 h', opacity: 'opacity-30', count: signals.filter((signal) => ageMinutes(signal) >= 1440).length }]
-  return <div className="space-y-6"><div><SChip tone="amber"><TimerOff size={11} /> Freshness Decay Map</SChip><h1 className="mt-4 text-4xl font-black tracking-[-.05em] text-slate-950">La donnée perd visiblement de son autorité à mesure qu’elle vieillit.</h1></div><section className="overflow-hidden rounded-[40px] border border-amber-200 bg-gradient-to-r from-white via-amber-50 to-slate-200 p-7 shadow-[0_25px_75px_rgba(146,64,14,.08)]"><div className="grid gap-4 md:grid-cols-4">{ageBands.map((band, index) => <div key={band.label} className={`${band.opacity} rounded-[30px] border border-white/80 bg-white p-5 shadow-sm`}><p className="text-[10px] font-black uppercase tracking-[.14em] text-slate-400">Band {index + 1}</p><p className="mt-3 text-3xl font-black text-slate-950">{band.count}</p><p className="mt-1 text-sm font-black text-slate-700">{band.label}</p><div className={`mt-5 h-2 rounded-full ${index === 0 ? 'bg-emerald-500' : index === 1 ? 'bg-blue-500' : index === 2 ? 'bg-amber-500' : 'bg-rose-500'}`} /></div>)}</div><div className="mt-8 grid gap-4 lg:grid-cols-2">{stale.map((source) => <article key={source.id} className="flex items-start gap-4 rounded-[26px] border border-amber-200 bg-white/80 p-5"><SIcon icon={source.status === 'offline' ? WifiOff : Clock3} tone={source.status === 'offline' ? 'rose' : 'amber'} /><div><div className="flex items-center gap-2"><h2 className="text-sm font-black text-slate-950">{source.name}</h2><SChip tone={source.status === 'offline' ? 'rose' : 'amber'}>{source.status}</SChip></div><p className="mt-2 text-xs leading-5 text-slate-600">Dernière observation: {source.lastObservedAt ? new Date(source.lastObservedAt).toLocaleString('fr-FR') : 'inconnue'} · seuil {source.staleAfterMinutes} min</p><p className="mt-2 text-[10px] font-black uppercase text-amber-700">Décision stratégique bloquée jusqu’au prochain scan.</p></div></article>)}</div></section></div>
-}
-
-function DistributionGrid({ subscriptions }: { subscriptions: any[] }) {
-  const roles = [...new Set(subscriptions.map((subscription) => subscription.subscriberKey))]
-  const categories = [...new Set(subscriptions.flatMap((subscription) => subscription.categories))]
-  return <div className="space-y-6"><div><SChip tone="blue"><Waypoints size={11} /> Intelligence Distribution Grid</SChip><h1 className="mt-4 text-4xl font-black tracking-[-.05em] text-slate-950">Qui reçoit quel signal, à quelle urgence et dans quel espace de travail.</h1></div><section className="overflow-x-auto rounded-[40px] border border-blue-200 bg-white p-6 shadow-[0_25px_75px_rgba(30,64,175,.08)]"><div className="min-w-[900px]"><div className="grid gap-2" style={{ gridTemplateColumns: `220px repeat(${Math.max(1, roles.length)}, minmax(130px, 1fr))` }}><div className="p-3" />{roles.map((role) => <div key={String(role)} className="rounded-2xl bg-slate-950 p-3 text-center text-[10px] font-black text-white">{String(role)}</div>)}{categories.flatMap((category) => [<div key={`${category}-label`} className="rounded-2xl bg-blue-50 p-3 text-xs font-black text-blue-900">{String(category)}</div>, ...roles.map((role) => { const matches = subscriptions.filter((subscription) => subscription.subscriberKey === role && subscription.categories.includes(category)); return <div key={`${category}-${role}`} className={`grid min-h-14 place-items-center rounded-2xl border ${matches.length ? 'border-emerald-200 bg-emerald-50' : 'border-slate-100 bg-slate-50'}`}>{matches.length ? <div className="text-center"><CheckCircle2 size={16} className="mx-auto text-emerald-600" /><p className="mt-1 text-[8px] font-black uppercase text-emerald-700">{matches[0].deliveryMode}</p></div> : <span className="text-slate-300">—</span>}</div> })])}</div></div></section></div>
-}
-
-function ConfidentialityVault() {
-  const layers = [
-    { title: 'Executive', detail: 'Faits, risques, capacité, contraintes et doctrine.', tone: 'violet' as const, width: 'w-full' },
-    { title: 'Revenue Manager', detail: 'Dossiers commerciaux et preuves nécessaires.', tone: 'blue' as const, width: 'w-[86%]' },
-    { title: 'Commercial Agent', detail: 'Contexte compte et prochaines actions.', tone: 'cyan' as const, width: 'w-[70%]' },
-    { title: 'Auditor', detail: 'Traçabilité et décisions, contenu minimisé.', tone: 'emerald' as const, width: 'w-[54%]' },
-  ]
-  return <section className="relative overflow-hidden rounded-[44px] border border-violet-200 bg-slate-950 p-7 text-white shadow-[0_30px_100px_rgba(15,23,42,.25)] sm:p-10"><div className={`absolute inset-0 opacity-20 ${sovereigntyStyles.gridFine}`} /><div className="relative grid gap-10 xl:grid-cols-[1fr_660px] xl:items-center"><div><SChip tone="violet"><FileKey2 size={11} /> Confidentiality Vault</SChip><h1 className="mt-5 text-4xl font-black tracking-[-.05em] sm:text-5xl">La visibilité diminue par couches avant que le contexte n’atteigne chaque rôle.</h1><p className="mt-4 text-sm leading-7 text-slate-300">Credentials, cookies, tokens, données bancaires et contenu brut restent hors du modèle. Seule l’information nécessaire à la décision traverse la chambre d’accès.</p><div className="mt-7 space-y-3">{['Allow-list stricte des sources', 'Payload minimisé', 'RLS et tenant lié', 'Snapshots expirables', 'Journal d’accès', 'Aucune action externe'].map((rule) => <div key={rule} className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 p-3 text-sm font-bold"><ShieldCheck size={16} className="text-emerald-400" />{rule}</div>)}</div></div><div className="relative flex min-h-[600px] items-center justify-center"><div className="absolute h-[560px] w-[560px] rounded-full border border-violet-400/15" /><div className="absolute h-[440px] w-[440px] rounded-full border border-blue-400/15" /><div className="absolute h-[320px] w-[320px] rounded-full border border-cyan-400/15" /><div className="absolute h-[200px] w-[200px] rounded-full border border-emerald-400/15" /><div className="relative w-full space-y-4">{layers.map((layer) => <div key={layer.title} className={`mx-auto ${layer.width} rounded-[28px] border border-white/10 bg-white/7 p-5 backdrop-blur`}><div className="flex items-center gap-4"><SIcon icon={LockKeyhole} tone={layer.tone} /><div><h2 className="text-sm font-black">{layer.title}</h2><p className="mt-1 text-[10px] text-slate-300">{layer.detail}</p></div></div></div>)}</div></div></div></section>
-}
-
-function FabricCertification({ readiness, issues, busy, updateIssueStatus }: { readiness: any; issues: any[]; busy: boolean; updateIssueStatus: (id: string, status: any) => Promise<void> }) {
-  const scores = [['Couverture', readiness.sourceCoverage], ['Fraîcheur', readiness.freshness], ['Classification', readiness.classificationCoverage], ['Déduplication', readiness.deduplicationSafety], ['Contexte', readiness.contextReadiness], ['Confidentialité', readiness.privacySafety]]
-  return <div className="space-y-6"><div><SChip tone="emerald"><ShieldCheck size={11} /> Signal Fabric Certification</SChip><h1 className="mt-4 text-4xl font-black tracking-[-.05em] text-slate-950">Le tissu complet est inspecté comme une matière critique avant utilisation stratégique.</h1></div><section className="grid gap-6 rounded-[42px] border border-emerald-200 bg-white p-6 shadow-[0_28px_90px_rgba(5,150,105,.08)] xl:grid-cols-[430px_1fr]"><div className="grid place-items-center rounded-[34px] bg-slate-950 p-8 text-white"><div className="relative grid h-72 w-72 place-items-center rounded-full border-[18px] border-emerald-400/20"><div className="absolute inset-5 rounded-full border border-emerald-300/20" /><div className="text-center"><p className="text-7xl font-black tracking-[-.08em]">{readiness.overall}%</p><p className="mt-2 text-[10px] font-black uppercase tracking-[.18em] text-emerald-300">Certification globale</p></div></div></div><div><div className="grid gap-3 sm:grid-cols-2">{scores.map(([label, value]) => <div key={String(label)} className="rounded-[22px] border border-slate-200 p-4"><div className="flex justify-between text-xs font-black"><span>{label}</span><span>{value}%</span></div><div className="mt-3 h-2 rounded-full bg-slate-100"><div className="h-full rounded-full bg-emerald-500" style={{ width: `${value}%` }} /></div></div>)}</div><div className="mt-6 space-y-3">{issues.map((issue) => <article key={issue.id} className="grid gap-3 rounded-[24px] border border-slate-200 p-4 md:grid-cols-[auto_1fr_auto] md:items-center"><SIcon icon={AlertTriangle} tone={issue.severity === 'critical' ? 'rose' : 'amber'} className="h-9 w-9 rounded-xl" /><div><h2 className="text-xs font-black text-slate-950">{issue.title}</h2><p className="mt-1 text-[10px] leading-4 text-slate-500">{issue.detail}</p><p className="mt-1 text-[9px] font-bold text-emerald-700">{issue.recommendedAction}</p></div><button disabled={busy} onClick={() => updateIssueStatus(issue.id, issue.status === 'resolved' ? 'open' : 'acknowledged')} className="rounded-xl border border-slate-200 px-3 py-2 text-[9px] font-black uppercase text-slate-600">{issue.status}</button></article>)}</div></div></section></div>
+  return <>{content}<SignalDrawer /></>
 }

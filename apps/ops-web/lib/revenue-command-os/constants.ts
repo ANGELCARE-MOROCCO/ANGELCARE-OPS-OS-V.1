@@ -11,7 +11,7 @@ export const REVENUE_OS_PHASE3_RELEASE_CODE = 'AC-REVENUE-OS-MZ03-DOCTRINE-MEMOR
 export const REVENUE_OS_PHASE3_MODULE_VERSION = '3.0.0-phase3'
 export const REVENUE_OS_RELEASE_CODE = 'AC-REVENUE-OS-MZ16-MEGA-PRODUCTION'
 export const REVENUE_OS_MODULE_VERSION = '16.0.0-phase16'
-export const REVENUE_OS_DEFAULT_EXECUTION_MODE: RevenueOsExecutionMode = 'shadow'
+export const REVENUE_OS_DEFAULT_EXECUTION_MODE: RevenueOsExecutionMode = 'approval-gated'
 
 export const REVENUE_OS_PERMISSIONS = {
   view: 'revenue_os.view',
@@ -51,6 +51,8 @@ export const REVENUE_OS_PERMISSIONS = {
   megaProductionEmergencyStop: 'revenue_os.mega_production.emergency_stop',
   experimentsManage: 'revenue_os.experiments.manage',
   registriesManage: 'revenue_os.registries.manage',
+  emailStudio: 'revenue_os.email_studio.use',
+  channelSettings: 'revenue_os.channels.manage',
 } as const
 
 export const REVENUE_OS_WORKSPACES: RevenueOsWorkspaceDefinition[] = [
@@ -180,7 +182,7 @@ export const REVENUE_OS_WORKSPACES: RevenueOsWorkspaceDefinition[] = [
     icon: 'Layers3',
     order: 70,
     permission: REVENUE_OS_PERMISSIONS.view,
-    status: 'planned',
+    status: 'ready',
     accent: 'green',
     contractScope: ['Plays', 'Campagnes', 'Vagues', 'Comptes cibles', 'Progression'],
   },
@@ -193,9 +195,22 @@ export const REVENUE_OS_WORKSPACES: RevenueOsWorkspaceDefinition[] = [
     icon: 'ListChecks',
     order: 80,
     permission: REVENUE_OS_PERMISSIONS.view,
-    status: 'planned',
+    status: 'ready',
     accent: 'blue',
     contractScope: ['Dépendances', 'Responsables', 'Échéances', 'Preuves', 'Escalades'],
+  },
+  {
+    key: 'email-studio',
+    label: 'Revenue Email Studio',
+    shortLabel: 'Email Studio',
+    description: 'Composer, envoyer, programmer, suivre et relancer les emails Revenue OS depuis les mailboxes Email OS assignées.',
+    href: '/revenue-command-os/email-studio',
+    icon: 'MailCheck',
+    order: 85,
+    permission: REVENUE_OS_PERMISSIONS.emailStudio,
+    status: 'ready',
+    accent: 'cyan',
+    contractScope: ['Mailboxes assignées', 'Brouillons', 'Envoi', 'Planification', 'Tracking', 'Relances', 'Audit Email OS'],
   },
   {
     key: 'approvals',
@@ -277,9 +292,9 @@ export const REVENUE_OS_FEATURE_FLAGS: RevenueOsFeatureFlag[] = [
   {
     key: 'revenue_os.shadow_mode',
     label: 'Mode Shadow',
-    description: 'Le moteur peut observer et simuler sans déclencher d’action externe.',
-    enabled: true,
-    locked: true,
+    description: 'Compatibilité de simulation conservée; la posture active est désormais l’exécution interne gouvernée et l’approbation avant tout effet externe.',
+    enabled: false,
+    locked: false,
     environment: 'all',
     riskClass: 'low',
   },
@@ -367,8 +382,8 @@ export const REVENUE_OS_FEATURE_FLAGS: RevenueOsFeatureFlag[] = [
   {
     key: 'revenue_os.strategy_execution',
     label: 'Exécution stratégique',
-    description: 'Autorise la propagation d’une stratégie approuvée. Verrouillé jusqu’aux phases ultérieures.',
-    enabled: false,
+    description: 'Autorise la propagation interne d’une stratégie approuvée vers les programmes, missions et actions gouvernées.',
+    enabled: true,
     locked: true,
     environment: 'all',
     riskClass: 'restricted',
@@ -376,7 +391,7 @@ export const REVENUE_OS_FEATURE_FLAGS: RevenueOsFeatureFlag[] = [
   {
     key: 'revenue_os.external_actions',
     label: 'Actions externes',
-    description: 'Autorise l’envoi de communications externes via outils contrôlés. Désactivé pendant la construction du Digital Twin.',
+    description: 'Le canal externe direct reste désactivé; seuls les effets approuvés via Email OS ou un canal explicitement activé sont admissibles.',
     enabled: false,
     locked: true,
     environment: 'all',

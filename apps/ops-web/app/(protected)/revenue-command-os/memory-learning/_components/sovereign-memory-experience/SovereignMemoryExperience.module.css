@@ -1,0 +1,17 @@
+.routeShell { position: relative; isolation: isolate; }
+.routeShell::before { content: ""; position: absolute; inset: 0; z-index: -2; pointer-events: none; background: radial-gradient(circle at 8% 5%, rgba(16,185,129,.08), transparent 25%), radial-gradient(circle at 94% 8%, rgba(124,58,237,.055), transparent 24%), linear-gradient(180deg, rgba(248,250,252,.82), rgba(255,255,255,0)); }
+.fineGrid { background-image: linear-gradient(rgba(148,163,184,.085) 1px, transparent 1px), linear-gradient(90deg, rgba(148,163,184,.085) 1px, transparent 1px); background-size: 24px 24px; }
+.dotField { background-image: radial-gradient(rgba(100,116,139,.2) .8px, transparent .8px); background-size: 15px 15px; }
+.routeBand { position: relative; overflow: hidden; }
+.routeBand::after { content: ""; position: absolute; right: -78px; top: -106px; width: 300px; height: 300px; border-radius: 44%; border: 1px solid rgba(255,255,255,.13); box-shadow: 0 0 0 40px rgba(255,255,255,.035), 0 0 0 84px rgba(255,255,255,.022); transform: rotate(18deg); }
+.archiveGrid { background-image: linear-gradient(rgba(16,185,129,.055) 1px, transparent 1px), linear-gradient(90deg, rgba(16,185,129,.055) 1px, transparent 1px); background-size: 46px 46px; }
+.lineage { position: relative; }
+.lineage::before { content: ""; position: absolute; left: 19px; top: 16px; bottom: 16px; width: 1px; background: linear-gradient(180deg, rgba(16,185,129,.35), rgba(124,58,237,.18)); }
+.rail { scrollbar-width: thin; scrollbar-color: rgba(100,116,139,.38) transparent; }
+.rail::-webkit-scrollbar { height: 6px; width: 6px; }
+.rail::-webkit-scrollbar-thumb { background: rgba(100,116,139,.34); border-radius: 999px; }
+.pulse { position: relative; }
+.pulse::after { content: ""; position: absolute; inset: -1px; border-radius: inherit; pointer-events: none; box-shadow: 0 0 0 0 rgba(16,185,129,.18); animation: memoryPulse 4.8s ease-out infinite; }
+@keyframes memoryPulse { 70%,100% { box-shadow: 0 0 0 20px rgba(16,185,129,0); } }
+@media (prefers-reduced-motion: reduce) { .pulse::after { animation: none; } }
+.routeShell :global(a:focus-visible), .routeShell :global(button:focus-visible), .routeShell :global(input:focus-visible), .routeShell :global(select:focus-visible), .routeShell :global(textarea:focus-visible) { outline: 3px solid rgba(16,185,129,.42); outline-offset: 3px; }

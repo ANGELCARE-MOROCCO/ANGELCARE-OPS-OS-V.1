@@ -43,6 +43,7 @@ import type { RevenueOsWorkspaceKey } from '@/lib/revenue-command-os/types'
 import { useRevenueOs } from './RevenueOsContext'
 import { SChip, SDataTruth, SEmpty, SIcon, SMetric, STraceLink, sovereigntyStyles } from './visual-sovereignty/SovereignPrimitives'
 import ApprovalCenterWorkspace from './approvals/ApprovalCenterWorkspace'
+import ChannelGovernancePanel from './ChannelGovernancePanel'
 import { AuditHero, ExceptionsHero, MissionsHero, ObjectivesHero, ProgramsHero, SettingsHero } from './hero-sovereignty/heroes'
 
 export default function RevenueOsWorkspacePage({ workspaceKey }: { workspaceKey: RevenueOsWorkspaceKey }) {
@@ -113,87 +114,87 @@ function MandateFact({ label, value }: { label: string; value: string }) {
 function ProgramTerrain() {
   const { bootstrap } = useRevenueOs()
   const objective = bootstrap.objectives[0]
-  const regions = [
-    { name: 'Capture B2B nationale', status: 'En conception', progress: 38, campaigns: 4, waves: 7, risk: 'Capacité commerciale', tone: 'blue' as const },
-    { name: 'Croissance Home Service', status: 'Sous validation', progress: 61, campaigns: 3, waves: 5, risk: 'Saisonnalité', tone: 'emerald' as const },
-    { name: 'Partenariats Academy', status: 'Shadow', progress: 24, campaigns: 2, waves: 3, risk: 'Preuves marché', tone: 'violet' as const },
-  ]
+  const programs = bootstrap.operations.programs
+  const state = bootstrap.operations.sourceState === 'unavailable' ? 'DEGRADED' : programs.length ? 'LIVE' : 'EMPTY'
   return <div className="min-h-screen overflow-hidden bg-[#f4f8f5] px-4 py-7 sm:px-7 lg:px-10 xl:px-12">
     <section className="mx-auto max-w-[1740px]">
       <ProgramsHero
-        state="PREVIEW"
-        posture="Portfolio contractuel"
-        authority="Exécution externe verrouillée"
-        summary={objective ? `Le mandat ${objective.code} fournit le contexte du portefeuille. Les territoires présentés sous le hero restent des compositions contractuelles jusqu’à publication de programmes persistés.` : 'Aucun mandat source disponible. Le portefeuille reste en attente de compilation et de publication persistée.'}
-        freshness={new Date(bootstrap.generatedAt).toLocaleString('fr-FR')}
+        state={state}
+        posture="Portfolio opérationnel persisté"
+        authority="Compilation approuvée · exécution approval-gated"
+        summary={programs[0]
+          ? `${programs[0].code} · ${programs[0].objective}`
+          : objective ? `Le mandat ${objective.code} est disponible, mais aucun programme compilé n’a encore été publié.` : 'Aucun programme ni mandat source n’est disponible pour ce tenant.'}
+        freshness={new Date(bootstrap.operations.generatedAt).toLocaleString('fr-FR')}
         metrics={[
-          { label: 'Mandat source', value: objective?.code || '—', note: objective?.title || 'Aucun objectif', tone: 'blue' },
-          { label: 'Programmes live', value: 'Non calculé', note: 'Source persistée non exposée', tone: 'slate' },
-          { label: 'Expansion', value: 'Indisponible', note: 'Compilation requise', tone: 'amber' },
-          { label: 'Effets externes', value: 'Verrouillés', note: `Mode ${bootstrap.executionMode}`, tone: 'rose' },
+          { label: 'Programmes persistés', value: bootstrap.operations.counts.programs, note: `${bootstrap.operations.counts.activePrograms} actif(s)`, tone: 'emerald' },
+          { label: 'Campagnes', value: programs.reduce((total, item) => total + item.campaigns, 0), note: 'Reliées aux programmes', tone: 'blue' },
+          { label: 'Missions', value: programs.reduce((total, item) => total + item.missions, 0), note: `${bootstrap.operations.counts.blockedTasks} tâche(s) bloquée(s)`, tone: bootstrap.operations.counts.blockedTasks ? 'amber' : 'violet' },
+          { label: 'Effets externes', value: 'Sur approbation', note: `Mode ${bootstrap.executionMode}`, tone: 'rose' },
         ]}
         actions={[{ label: 'Ouvrir la compilation', href: '/revenue-command-os/mission-compiler', kind: 'primary' }]}
-        warning="PREVIEW — les cartes de programmes sous ce hero sont des représentations contractuelles et ne sont pas comptées comme données live."
+        warning={bootstrap.operations.warnings.length ? `SOURCE PARTIELLE — ${bootstrap.operations.warnings.slice(0, 2).join(' · ')}` : undefined}
       />
 
-      <div className="relative mt-7 min-h-[660px] overflow-hidden rounded-[38px] border border-emerald-200 bg-white p-6 shadow-[0_24px_70px_rgba(15,23,42,.07)] sm:p-8">
+      {programs.length ? <div className="relative mt-7 min-h-[660px] overflow-hidden rounded-[38px] border border-emerald-200 bg-white p-6 shadow-[0_24px_70px_rgba(15,23,42,.07)] sm:p-8">
         <div className={`absolute inset-0 opacity-55 ${sovereigntyStyles.dotField}`} />
         <svg className="pointer-events-none absolute inset-0 h-full w-full" viewBox="0 0 1400 660" preserveAspectRatio="none"><path d="M140 530 C 310 380, 400 520, 580 330 S 920 230, 1110 360 S 1270 260, 1360 110" fill="none" stroke="rgba(16,185,129,.22)" strokeWidth="4" strokeDasharray="10 12" /></svg>
-        <div className="relative flex items-center justify-between"><div><p className="text-[10px] font-black uppercase tracking-[.17em] text-emerald-700">Carte des opérations</p><h2 className="mt-2 text-2xl font-black text-slate-950">Portefeuille de programmes actifs</h2></div><SDataTruth mode={bootstrap.storageMode} /></div>
+        <div className="relative flex items-center justify-between"><div><p className="text-[10px] font-black uppercase tracking-[.17em] text-emerald-700">Carte des opérations</p><h2 className="mt-2 text-2xl font-black text-slate-950">Programmes compilés et persistés</h2></div><SDataTruth mode={bootstrap.storageMode} /></div>
         <div className="relative mt-8 grid gap-6 lg:grid-cols-3">
-          {regions.map((region, index) => <article key={region.name} className={`relative min-h-[440px] overflow-hidden rounded-[34px] border p-6 ${index === 0 ? 'border-blue-200 bg-gradient-to-b from-blue-50 to-white' : index === 1 ? 'border-emerald-200 bg-gradient-to-b from-emerald-50 to-white' : 'border-violet-200 bg-gradient-to-b from-violet-50 to-white'} ${index === 1 ? 'lg:mt-20' : index === 2 ? 'lg:mt-8' : ''}`}>
-            <div className="flex items-start justify-between"><SIcon icon={index === 0 ? Radar : index === 1 ? Route : Orbit} tone={region.tone} /><SChip tone={region.tone}>{region.status}</SChip></div>
-            <h3 className="mt-6 text-2xl font-black tracking-tight text-slate-950">{region.name}</h3>
-            <p className="mt-3 text-sm leading-6 text-slate-600">Programme relié au mandat {objective?.code || 'en attente'}, structuré en campagnes et vagues commerciales.</p>
-            <div className="mt-6 grid grid-cols-2 gap-3"><MandateFact label="Campagnes" value={String(region.campaigns)} /><MandateFact label="Waves" value={String(region.waves)} /><MandateFact label="Progression" value={`${region.progress}%`} /><MandateFact label="Risque" value={region.risk} /></div>
-            <div className="mt-6"><div className="flex justify-between text-[10px] font-black uppercase tracking-[.1em] text-slate-500"><span>Avancement terrain</span><span>{region.progress}%</span></div><div className="mt-2 h-2 rounded-full bg-white"><div className={`h-full rounded-full ${index === 0 ? 'bg-blue-600' : index === 1 ? 'bg-emerald-500' : 'bg-violet-500'}`} style={{ width: `${region.progress}%` }} /></div></div>
-            <div className="absolute bottom-6 left-6 right-6 flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-4 py-3 text-xs font-black text-slate-500 shadow-sm"><span>Territoire en aperçu contractuel</span><BadgeCheck size={16} className="text-emerald-600" /></div>
+          {programs.map((program, index) => <article key={program.id} className={`relative min-h-[440px] overflow-hidden rounded-[34px] border p-6 ${index % 3 === 0 ? 'border-blue-200 bg-gradient-to-b from-blue-50 to-white' : index % 3 === 1 ? 'border-emerald-200 bg-gradient-to-b from-emerald-50 to-white' : 'border-violet-200 bg-gradient-to-b from-violet-50 to-white'} ${index % 3 === 1 ? 'lg:mt-20' : index % 3 === 2 ? 'lg:mt-8' : ''}`}>
+            <div className="flex items-start justify-between"><SIcon icon={index % 3 === 0 ? Radar : index % 3 === 1 ? Route : Orbit} tone={index % 3 === 0 ? 'blue' : index % 3 === 1 ? 'emerald' : 'violet'} /><SChip tone={['active','ready','compiled','in_progress'].includes(program.status) ? 'emerald' : program.tasksBlocked ? 'amber' : 'blue'}>{program.status}</SChip></div>
+            <p className="mt-5 font-mono text-[10px] font-black uppercase tracking-[.13em] text-blue-700">{program.code}</p>
+            <h3 className="mt-2 text-2xl font-black tracking-tight text-slate-950">{program.title}</h3>
+            <p className="mt-3 min-h-20 text-sm leading-6 text-slate-600">{program.objective}</p>
+            <div className="mt-6 grid grid-cols-2 gap-3"><MandateFact label="Campagnes" value={String(program.campaigns)} /><MandateFact label="Waves" value={String(program.waves)} /><MandateFact label="Missions" value={String(program.missions)} /><MandateFact label="Owner" value={program.owner} /></div>
+            <div className="mt-6"><div className="flex justify-between text-[10px] font-black uppercase tracking-[.1em] text-slate-500"><span>Avancement réel</span><span>{program.progress}%</span></div><div className="mt-2 h-2 rounded-full bg-white"><div className={`h-full rounded-full ${index % 3 === 0 ? 'bg-blue-600' : index % 3 === 1 ? 'bg-emerald-500' : 'bg-violet-500'}`} style={{ width: `${program.progress}%` }} /></div></div>
+            <div className="absolute bottom-6 left-6 right-6 flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-4 py-3 text-xs font-black text-slate-500 shadow-sm"><span>{program.tasksOpen} tâche(s) ouverte(s) · {program.tasksBlocked} bloquée(s)</span><BadgeCheck size={16} className={program.tasksBlocked ? 'text-amber-600' : 'text-emerald-600'} /></div>
           </article>)}
         </div>
-      </div>
+      </div> : <SEmpty title="Aucun programme compilé" description="La source est accessible, mais aucune stratégie approuvée n’a encore produit de programme persistant. Passez par le Strategy Studio puis le Mission Compiler." action={<Link href="/revenue-command-os/mission-compiler" className="rounded-2xl bg-slate-950 px-5 py-3 text-xs font-black text-white">Ouvrir le compilateur</Link>} />}
     </section>
   </div>
 }
 
 function MissionBinders() {
   const { bootstrap } = useRevenueOs()
-  const binders = [
-    { code: 'MIS-CAS-024', title: 'Dossier décideurs crèches privées', status: 'Prête', complexity: 84, tasks: 18, proof: 6, owner: 'Direction commerciale' },
-    { code: 'MIS-RBT-011', title: 'Activation partenaires Rabat', status: 'Validation', complexity: 66, tasks: 12, proof: 4, owner: 'B2B Partnerships' },
-    { code: 'MIS-HS-007', title: 'Conversion Home Service premium', status: 'Shadow', complexity: 48, tasks: 9, proof: 3, owner: 'Revenue Operations' },
-  ]
+  const missions = bootstrap.operations.missions
+  const state = bootstrap.operations.sourceState === 'unavailable' ? 'DEGRADED' : missions.length ? 'LIVE' : 'EMPTY'
   return <div className="min-h-screen bg-[#f7f5f1] px-4 py-7 sm:px-7 lg:px-10 xl:px-12">
     <section className="mx-auto max-w-[1740px]">
       <MissionsHero
-        state="PREVIEW"
-        posture="Archive contractuelle"
-        authority="Dossiers non exécutables depuis cette vue"
-        summary="Les classeurs ci-dessous illustrent l’organisation attendue des packages compilés. Aucun volume live n’est affirmé tant que la source de missions persistées n’est pas reliée à cette vue."
-        freshness={new Date(bootstrap.generatedAt).toLocaleString('fr-FR')}
+        state={state}
+        posture="Dossiers compilés persistés"
+        authority="Affectation, preuves et gates conservées"
+        summary={missions[0] ? `${missions[0].code} · ${missions[0].purpose}` : 'Aucune mission persistée n’est encore disponible. Le système n’invente aucun dossier de démonstration.'}
+        freshness={new Date(bootstrap.operations.generatedAt).toLocaleString('fr-FR')}
         metrics={[
-          { label: 'Missions actives', value: 'Non calculé', note: 'Source non exposée', tone: 'blue' },
-          { label: 'Nouvelles compilations', value: 'Non calculé', note: 'Compilation requise', tone: 'violet' },
-          { label: 'En validation', value: 'Non calculé', note: 'Source non exposée', tone: 'amber' },
-          { label: 'Archivées', value: 'Non calculé', note: 'Source non exposée', tone: 'slate' },
+          { label: 'Missions persistées', value: bootstrap.operations.counts.missions, note: `${bootstrap.operations.counts.openMissions} ouverte(s)`, tone: 'blue' },
+          { label: 'Tâches', value: missions.reduce((total, item) => total + item.taskCount, 0), note: `${missions.reduce((total, item) => total + item.completedTasks, 0)} terminée(s)`, tone: 'violet' },
+          { label: 'Tâches bloquées', value: bootstrap.operations.counts.blockedTasks, note: bootstrap.operations.counts.blockedTasks ? 'Intervention requise' : 'Aucun blocage', tone: bootstrap.operations.counts.blockedTasks ? 'amber' : 'emerald' },
+          { label: 'Preuves attendues', value: missions.reduce((total, item) => total + item.evidenceCount, 0), note: 'Exigences compilées', tone: 'slate' },
         ]}
         actions={[{ label: 'Ouvrir le compilateur', href: '/revenue-command-os/mission-compiler', kind: 'primary' }]}
-        warning="PREVIEW — aucun dossier illustratif n’est présenté comme une mission live."
+        warning={bootstrap.operations.warnings.length ? `SOURCE PARTIELLE — ${bootstrap.operations.warnings.slice(0, 2).join(' · ')}` : undefined}
       />
 
-      <div className="mt-9 grid gap-6 xl:grid-cols-[1fr_410px]">
+      {missions.length ? <div className="mt-9 grid gap-6 xl:grid-cols-[1fr_410px]">
         <div className="grid gap-5 md:grid-cols-2 2xl:grid-cols-3">
-          {binders.map((binder, index) => <article key={binder.code} className="group relative min-h-[560px] overflow-hidden rounded-r-[34px] rounded-l-[12px] border border-slate-300 bg-white shadow-[12px_24px_70px_rgba(15,23,42,.1)] transition hover:-translate-y-1">
-            <div className={`absolute inset-y-0 left-0 w-3 ${index === 0 ? 'bg-blue-700' : index === 1 ? 'bg-amber-500' : 'bg-violet-600'}`} />
-            <div className="absolute inset-x-8 top-0 h-4 rounded-b-xl bg-slate-100" />
-            <div className="p-7 pl-9"><div className="flex items-start justify-between"><div><p className="text-[10px] font-black uppercase tracking-[.18em] text-slate-400">Mission Binder</p><p className="mt-1 font-mono text-xs font-bold text-blue-700">{binder.code}</p></div><SChip tone={binder.status === 'Prête' ? 'emerald' : binder.status === 'Validation' ? 'amber' : 'violet'}>{binder.status}</SChip></div>
-            <h2 className="mt-8 text-2xl font-black tracking-tight text-slate-950">{binder.title}</h2><p className="mt-3 text-sm leading-6 text-slate-600">Package déterministe contenant le plan de mission, les tâches, la preuve attendue, les garde-fous et le circuit de récupération.</p>
-            <div className="mt-8 space-y-3"><BinderLine icon={Workflow} label="Stratégie source" value={`STR-${String(index + 11).padStart(3, '0')}`} /><BinderLine icon={Layers3} label="Programme" value={`Programme ${index + 1}`} /><BinderLine icon={UsersRound} label="Owner" value={binder.owner} /><BinderLine icon={ListChecks} label="Tâches" value={String(binder.tasks)} /><BinderLine icon={FileCheck2} label="Preuves" value={String(binder.proof)} /></div>
-            <div className="mt-8"><div className="flex justify-between text-[10px] font-black uppercase tracking-[.1em] text-slate-500"><span>Complexité de compilation</span><span>{binder.complexity}%</span></div><div className="mt-2 h-2 rounded-full bg-slate-100"><div className="h-full rounded-full bg-slate-950" style={{ width: `${binder.complexity}%` }} /></div></div>
-            <div className="mt-8 flex w-full items-center justify-between rounded-2xl bg-slate-950 px-4 py-3 text-xs font-black text-white"><span>Dossier visuel consolidé</span><BadgeCheck size={16} /></div></div>
-          </article>)}
+          {missions.map((mission, index) => {
+            const completion = mission.taskCount ? Math.round((mission.completedTasks / mission.taskCount) * 100) : 0
+            return <article key={mission.id} className="group relative min-h-[560px] overflow-hidden rounded-r-[34px] rounded-l-[12px] border border-slate-300 bg-white shadow-[12px_24px_70px_rgba(15,23,42,.1)] transition hover:-translate-y-1">
+              <div className={`absolute inset-y-0 left-0 w-3 ${mission.blockedTasks ? 'bg-amber-500' : index % 3 === 0 ? 'bg-blue-700' : index % 3 === 1 ? 'bg-emerald-600' : 'bg-violet-600'}`} />
+              <div className="absolute inset-x-8 top-0 h-4 rounded-b-xl bg-slate-100" />
+              <div className="p-7 pl-9"><div className="flex items-start justify-between"><div><p className="text-[10px] font-black uppercase tracking-[.18em] text-slate-400">Mission Binder</p><p className="mt-1 font-mono text-xs font-bold text-blue-700">{mission.code}</p></div><SChip tone={mission.blockedTasks ? 'amber' : ['ready','active','compiled','in_progress'].includes(mission.status) ? 'emerald' : 'violet'}>{mission.status}</SChip></div>
+              <h2 className="mt-8 text-2xl font-black tracking-tight text-slate-950">{mission.title}</h2><p className="mt-3 min-h-24 text-sm leading-6 text-slate-600">{mission.purpose}</p>
+              <div className="mt-8 space-y-3"><BinderLine icon={Workflow} label="Stratégie" value={mission.strategyId ? mission.strategyId.slice(0, 12) : '—'} /><BinderLine icon={Layers3} label="Programme" value={mission.programId ? mission.programId.slice(0, 12) : '—'} /><BinderLine icon={UsersRound} label="Owner" value={mission.owner} /><BinderLine icon={ListChecks} label="Tâches" value={`${mission.completedTasks}/${mission.taskCount}`} /><BinderLine icon={FileCheck2} label="Preuves" value={String(mission.evidenceCount)} /></div>
+              <div className="mt-8"><div className="flex justify-between text-[10px] font-black uppercase tracking-[.1em] text-slate-500"><span>Progression d’exécution</span><span>{completion}%</span></div><div className="mt-2 h-2 rounded-full bg-slate-100"><div className="h-full rounded-full bg-slate-950" style={{ width: `${completion}%` }} /></div></div>
+              <div className="mt-8 flex w-full items-center justify-between rounded-2xl bg-slate-950 px-4 py-3 text-xs font-black text-white"><span>{mission.nextAction || 'Dossier compilé et traçable'}</span><BadgeCheck size={16} /></div></div>
+            </article>
+          })}
         </div>
-        <aside className="rounded-[34px] border border-slate-200 bg-slate-950 p-7 text-white shadow-[0_28px_80px_rgba(15,23,42,.2)]"><SIcon icon={GitBranch} tone="blue" /><p className="mt-6 text-[10px] font-black uppercase tracking-[.18em] text-blue-300">Chaîne de compilation</p><h2 className="mt-2 text-3xl font-black tracking-tight">Stratégie → Mission → Preuve → Résultat</h2><div className="mt-8 space-y-1">{['Stratégie approuvée', 'Plan de compilation', 'Programme', 'Campagne', 'Wave', 'Mission', 'Tâches', 'Étapes', 'Preuves', 'Escalades'].map((step, index) => <div key={step} className="flex items-center gap-3"><span className={`grid h-8 w-8 place-items-center rounded-full text-[10px] font-black ${index < 4 ? 'bg-emerald-400 text-emerald-950' : 'bg-white/10 text-slate-300'}`}>{index + 1}</span><span className={`flex-1 border-b py-4 text-sm font-bold ${index < 4 ? 'border-emerald-400/20 text-white' : 'border-white/10 text-slate-400'}`}>{step}</span></div>)}</div></aside>
-      </div>
+        <aside className="rounded-[34px] border border-slate-200 bg-slate-950 p-7 text-white shadow-[0_28px_80px_rgba(15,23,42,.2)]"><SIcon icon={GitBranch} tone="blue" /><p className="mt-6 text-[10px] font-black uppercase tracking-[.18em] text-blue-300">Chaîne de compilation</p><h2 className="mt-2 text-3xl font-black tracking-tight">Stratégie → Mission → Preuve → Résultat</h2><div className="mt-8 space-y-1">{['Stratégie approuvée', 'Plan de compilation', 'Programme', 'Campagne', 'Wave', 'Mission', 'Tâches', 'Étapes', 'Preuves', 'Escalades'].map((step, index) => <div key={step} className="flex items-center gap-3"><span className={`grid h-8 w-8 place-items-center rounded-full text-[10px] font-black ${missions.length && index < 6 ? 'bg-emerald-400 text-emerald-950' : 'bg-white/10 text-slate-300'}`}>{index + 1}</span><span className={`flex-1 border-b py-4 text-sm font-bold ${missions.length && index < 6 ? 'border-emerald-400/20 text-white' : 'border-white/10 text-slate-400'}`}>{step}</span></div>)}</div></aside>
+      </div> : <SEmpty title="Aucune mission compilée" description="La source est accessible et ne contient aucune mission. Une stratégie approuvée doit être compilée avant l’ouverture de l’exécution." action={<Link href="/revenue-command-os/mission-compiler" className="rounded-2xl bg-slate-950 px-5 py-3 text-xs font-black text-white">Ouvrir le compilateur</Link>} />}
     </section>
   </div>
 }
@@ -204,36 +205,45 @@ function BinderLine({ icon: Icon, label, value }: { icon: typeof Workflow; label
 
 function InterventionTower() {
   const { bootstrap } = useRevenueOs()
-  const lanes = [
-    { title: 'Run campagne bloqué', severity: 'Critique', impact: '180 000 Dh exposés', timer: '01:42:18', route: 'Recovery route disponible', tone: 'rose' as const },
-    { title: 'Contexte compte incomplet', severity: 'Élevé', impact: '12 comptes affectés', timer: '05:18:03', route: 'Enrichissement requis', tone: 'amber' as const },
-    { title: 'Adapter Email en retry', severity: 'Moyen', impact: '7 actions différées', timer: '00:27:44', route: 'Retry automatique', tone: 'blue' as const },
+  const checkIssues = bootstrap.systemChecks
+    .filter((check) => check.status === 'attention' || check.status === 'degraded')
+    .map((check) => ({
+      key: check.key,
+      title: check.label,
+      detail: check.detail,
+      action: check.action,
+      severity: check.status === 'degraded' ? 'Critique' : 'Attention',
+      tone: check.status === 'degraded' ? 'rose' as const : 'amber' as const,
+    }))
+  const operationalIssues = [
+    ...(bootstrap.operations.counts.openContradictions ? [{ key: 'open-contradictions', title: 'Contradictions stratégiques ouvertes', detail: `${bootstrap.operations.counts.openContradictions} contradiction(s) persistée(s) exigent un arbitrage du Conseil.`, action: 'Ouvrir le Conseil de validation.', severity: 'Élevé', tone: 'amber' as const }] : []),
+    ...(bootstrap.operations.counts.blockedTasks ? [{ key: 'blocked-tasks', title: 'Tâches de mission bloquées', detail: `${bootstrap.operations.counts.blockedTasks} tâche(s) compilée(s) sont actuellement bloquées.`, action: 'Ouvrir les missions compilées et identifier le gate concerné.', severity: 'Élevé', tone: 'amber' as const }] : []),
+    ...bootstrap.operations.warnings.map((warning, index) => ({ key: `source-${index}`, title: 'Source opérationnelle partielle', detail: warning, action: 'Consulter le diagnostic de la source concernée.', severity: 'Attention', tone: 'amber' as const })),
   ]
+  const issues = [...checkIssues, ...operationalIssues]
+  const state = bootstrap.storageMode !== 'supabase' ? 'DEGRADED' : issues.length ? 'LIVE' : 'EMPTY'
   return <div className="min-h-screen bg-[#f7f8fa] px-4 py-7 sm:px-7 lg:px-10 xl:px-12">
     <section className="mx-auto max-w-[1740px]">
       <ExceptionsHero
-        state={bootstrap.storageMode === 'supabase' ? (bootstrap.counters.openExceptions ? 'LIVE' : 'EMPTY') : 'PREVIEW'}
+        state={state}
         posture="Intervention contrôlée"
-        authority="Recovery interne · effets externes verrouillés"
-        summary={bootstrap.counters.openExceptions ? `${bootstrap.counters.openExceptions} exception(s) ouverte(s) ont été détectées par les contrôles système disponibles.` : 'Aucune exception ouverte n’est signalée par la source actuellement disponible.'}
+        authority="Diagnostic réel · aucune action externe implicite"
+        summary={issues.length ? `${issues.length} point(s) d’attention réel(s) ont été détectés dans le périmètre actuellement lisible.` : 'Aucune exception ouverte n’est signalée par les contrôles et sources actuellement disponibles.'}
         freshness={new Date(bootstrap.generatedAt).toLocaleString('fr-FR')}
         metrics={[
-          { label: 'Exceptions ouvertes', value: bootstrap.storageMode === 'supabase' ? bootstrap.counters.openExceptions : '—', note: bootstrap.storageMode === 'supabase' ? 'Contrôles actifs' : 'Source contractuelle', tone: 'rose' },
-          { label: 'Escalades critiques', value: 'Non calculé', note: 'Classification non exposée', tone: 'amber' },
-          { label: 'Récupérables', value: 'Non calculé', note: 'Éligibilité backend requise', tone: 'blue' },
-          { label: 'Effets externes', value: 'Bloqués', note: `Mode ${bootstrap.executionMode}`, tone: 'slate' },
+          { label: 'Points d’attention', value: issues.length, note: 'Contrôles et sources réels', tone: issues.length ? 'rose' : 'emerald' },
+          { label: 'Contradictions', value: bootstrap.operations.counts.openContradictions, note: 'Dossiers stratégiques', tone: bootstrap.operations.counts.openContradictions ? 'amber' : 'emerald' },
+          { label: 'Tâches bloquées', value: bootstrap.operations.counts.blockedTasks, note: 'Missions compilées', tone: bootstrap.operations.counts.blockedTasks ? 'amber' : 'emerald' },
+          { label: 'Effets externes', value: 'Sur approbation', note: `Mode ${bootstrap.executionMode}`, tone: 'slate' },
         ]}
-        actions={[{ label: 'Recovery indisponible ici', disabled: true, reason: 'Aucune action backend de récupération n’est exposée depuis cette vue.', kind: 'danger' }]}
-        warning={bootstrap.storageMode === 'foundation-fallback' ? 'PREVIEW — les scénarios d’intervention sous ce hero sont contractuels et ne représentent pas des incidents live.' : 'Les exemples de voies d’intervention sous ce hero restent des compositions visuelles; seul le compteur système ci-dessus est présenté comme source live.'}
+        actions={[]}
+        warning={bootstrap.storageMode === 'foundation-fallback' ? 'SOURCE INDISPONIBLE — cette vue ne présente aucun scénario fictif; rétablissez la source avant toute décision.' : undefined}
       />
 
-      <div className="mt-7 grid gap-5 xl:grid-cols-[1fr_390px]">
-        <div className="space-y-5">
-          <section className="rounded-[34px] border border-rose-200 bg-gradient-to-r from-rose-50 to-white p-6"><div className="flex items-center justify-between"><div><p className="text-[10px] font-black uppercase tracking-[.18em] text-rose-700">Critical runway</p><h2 className="mt-2 text-2xl font-black text-slate-950">Interventions approchant leur seuil critique</h2></div><SIcon icon={Radar} tone="rose" /></div><div className="mt-6 space-y-3">{lanes.map((item, index) => <article key={item.title} className={`grid gap-4 rounded-[24px] border bg-white p-5 md:grid-cols-[auto_1fr_auto] md:items-center ${index === 0 ? 'border-rose-300 shadow-[0_16px_40px_rgba(225,29,72,.1)]' : 'border-slate-200'}`}><SIcon icon={index === 0 ? AlertOctagon : index === 1 ? ShieldAlert : TimerReset} tone={item.tone} /><div><div className="flex flex-wrap items-center gap-2"><h3 className="text-sm font-black text-slate-950">{item.title}</h3><SChip tone={item.tone}>{item.severity}</SChip></div><p className="mt-2 text-xs text-slate-500">{item.impact} · {item.route}</p></div><div className="text-right"><p className="font-mono text-lg font-black text-slate-950">{item.timer}</p><span className="mt-2 inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-[.1em] text-slate-400">Intervention via le dossier backend <ChevronRight size={13} /></span></div></article>)}</div></section>
-          <div className="grid gap-5 lg:grid-cols-2"><ExceptionBay title="Recoverable field" icon={Route} tone="amber" rows={['Retry planifié', 'Fallback disponible', 'Owner assigné', 'SLA sous contrôle']} /><ExceptionBay title="Dead-letter chamber" icon={FileLock2} tone="rose" rows={['Échec permanent isolé', 'Cause racine requise', 'Intervention manuelle', 'Compensation à définir']} /></div>
-        </div>
-        <aside className="rounded-[34px] border border-slate-200 bg-white p-6 shadow-[0_24px_70px_rgba(15,23,42,.07)]"><p className="text-[10px] font-black uppercase tracking-[.18em] text-blue-700">Intervention board</p><h2 className="mt-2 text-2xl font-black text-slate-950">Run campagne bloqué</h2><p className="mt-3 text-sm leading-6 text-slate-600">Une dépendance de contexte a empêché la génération d’un package conforme. Aucune action externe n’a été exécutée.</p><div className="mt-6 space-y-3"><InterventionFact label="Cause" value="Context snapshot incomplet" /><InterventionFact label="Impact" value="Wave Casablanca suspendue" /><InterventionFact label="Owner" value="Revenue Operations" /><InterventionFact label="Recovery" value="Rebuild du contexte puis retry" /><InterventionFact label="Escalade" value="Direction commerciale à T+4h" /></div><div className="mt-6 grid gap-2"><button type="button" disabled title="Action backend non exposée dans cet aperçu visuel" className="cursor-not-allowed rounded-2xl bg-slate-950 px-4 py-3 text-xs font-black text-white opacity-45">Récupération non disponible ici</button><button type="button" disabled title="Action backend non exposée dans cet aperçu visuel" className="cursor-not-allowed rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-xs font-black text-rose-700 opacity-50">Escalade non disponible ici</button></div><div className="mt-6 border-t border-slate-100 pt-5"><STraceLink traceId="trc_exc_9b3" label="Investigation" /></div></aside>
-      </div>
+      {issues.length ? <div className="mt-7 grid gap-5 xl:grid-cols-[minmax(0,1fr)_400px]">
+        <section className="rounded-[34px] border border-slate-200 bg-white p-6 shadow-[0_24px_70px_rgba(15,23,42,.07)]"><div className="flex items-center justify-between"><div><p className="text-[10px] font-black uppercase tracking-[.18em] text-rose-700">Registre d’intervention réel</p><h2 className="mt-2 text-2xl font-black text-slate-950">Anomalies, blocages et sources partielles</h2></div><SIcon icon={Radar} tone="rose" /></div><div className="mt-6 space-y-3">{issues.map((item) => <article key={item.key} className="grid gap-4 rounded-[24px] border border-slate-200 bg-white p-5 md:grid-cols-[auto_1fr] md:items-start"><SIcon icon={item.tone === 'rose' ? AlertOctagon : ShieldAlert} tone={item.tone} /><div><div className="flex flex-wrap items-center gap-2"><h3 className="text-sm font-black text-slate-950">{item.title}</h3><SChip tone={item.tone}>{item.severity}</SChip></div><p className="mt-2 text-xs leading-5 text-slate-600">{item.detail}</p>{item.action ? <p className="mt-3 text-[10px] font-black uppercase tracking-[.1em] text-blue-700">Action recommandée · {item.action}</p> : null}</div></article>)}</div></section>
+        <aside className="rounded-[34px] border border-slate-200 bg-slate-950 p-7 text-white shadow-[0_28px_80px_rgba(15,23,42,.2)]"><SIcon icon={ShieldCheck} tone="emerald" /><p className="mt-6 text-[10px] font-black uppercase tracking-[.18em] text-blue-300">Doctrine de récupération</p><h2 className="mt-2 text-2xl font-black">Aucune récupération fictive</h2><p className="mt-3 text-sm leading-6 text-slate-300">Chaque point affiché provient d’un contrôle, d’une contradiction, d’une tâche bloquée ou d’un diagnostic de source persistant. Une action n’est proposée que lorsqu’un workflow réel existe.</p><div className="mt-6 space-y-3"><PolicyFact label="Runtime" value={bootstrap.moduleVersion} /><PolicyFact label="Mode" value={bootstrap.executionMode} /><PolicyFact label="Tenant" value={bootstrap.operations.tenantId} /><PolicyFact label="Dernière lecture" value={new Date(bootstrap.operations.generatedAt).toLocaleString('fr-FR')} /></div></aside>
+      </div> : <div className="mt-7"><SEmpty title="Aucune exception réelle détectée" description="Les contrôles système, les sources opérationnelles, les contradictions et les tâches compilées ne remontent actuellement aucun blocage dans le périmètre autorisé." /></div>}
     </section>
   </div>
 }
@@ -268,7 +278,7 @@ function ForensicLedger() {
           <div className="space-y-4">{events.map((event, index) => <article key={event.id} className="relative pl-12"><span className={`absolute left-0 top-4 grid h-7 w-7 place-items-center rounded-full border-4 border-white shadow ${index === 0 ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-500'}`}>{index === 0 ? <Activity size={12} /> : <span className="h-2 w-2 rounded-full bg-slate-500" />}</span><div className={`w-full rounded-[24px] border p-5 text-left ${index === 0 ? 'border-blue-200 bg-blue-50/60 shadow-[0_12px_30px_rgba(37,99,235,.08)]' : 'border-slate-200 bg-white'}`}><div className="grid gap-4 md:grid-cols-[130px_1fr_auto] md:items-center"><div><p className="font-mono text-[10px] font-bold text-slate-500">{event.eventId}</p><p className="mt-1 text-[10px] text-slate-400">{new Date(event.createdAt).toLocaleString('fr-FR')}</p></div><div><p className="text-sm font-black text-slate-950">{event.action}</p><p className="mt-1 text-xs text-slate-500">{event.actor} · {event.resourceType}</p></div><SChip tone={event.outcome === 'success' ? 'emerald' : 'amber'}>{event.outcome}</SChip></div></div></article>)}</div>
           {!events.length ? <SEmpty title="Aucun événement dans cette fenêtre" description="Le ledger est disponible, mais aucun événement ne correspond à la période ou aux permissions actives." /> : null}
         </div>
-        <aside className="sticky top-6 self-start rounded-[34px] border border-slate-200 bg-slate-950 p-7 text-white shadow-[0_28px_80px_rgba(15,23,42,.2)]"><p className="text-[10px] font-black uppercase tracking-[.18em] text-blue-300">Causal investigation</p><h2 className="mt-3 text-2xl font-black">Chaîne complète de l’événement</h2><div className="mt-7 space-y-1">{['Requête reçue', 'Session résolue', 'Permission évaluée', 'Tenant lié', 'Lecture / écriture', 'Résultat produit', 'Événement audité'].map((step, index) => <div key={step} className="flex gap-3"><span className={`grid h-8 w-8 shrink-0 place-items-center rounded-full text-[10px] font-black ${index < 6 ? 'bg-emerald-400 text-emerald-950' : 'bg-blue-500 text-white'}`}>{index + 1}</span><div className="flex-1 border-b border-white/10 py-2.5"><p className="text-sm font-bold">{step}</p><p className="mt-1 font-mono text-[9px] text-slate-400">trace.segment.{index + 1}</p></div></div>)}</div><div className="mt-7 rounded-2xl border border-white/10 bg-white/5 p-4"><p className="text-[9px] font-black uppercase tracking-[.15em] text-slate-400">Trace sélectionnée</p><p className="mt-2 font-mono text-xs text-blue-200">trc_rev_20260722_0701</p></div></aside>
+        <aside className="sticky top-6 self-start rounded-[34px] border border-slate-200 bg-slate-950 p-7 text-white shadow-[0_28px_80px_rgba(15,23,42,.2)]"><p className="text-[10px] font-black uppercase tracking-[.18em] text-blue-300">Causal investigation</p><h2 className="mt-3 text-2xl font-black">Chaîne complète de l’événement</h2><div className="mt-7 space-y-1">{['Événement persisté', 'Acteur identifié', 'Ressource enregistrée', 'Résultat enregistré'].map((step, index) => <div key={step} className="flex gap-3"><span className={`grid h-8 w-8 shrink-0 place-items-center rounded-full text-[10px] font-black ${events.length ? 'bg-emerald-400 text-emerald-950' : 'bg-white/10 text-slate-400'}`}>{index + 1}</span><div className="flex-1 border-b border-white/10 py-2.5"><p className="text-sm font-bold">{step}</p><p className="mt-1 font-mono text-[9px] text-slate-400">trace.segment.{index + 1}</p></div></div>)}</div><div className="mt-7 rounded-2xl border border-white/10 bg-white/5 p-4"><p className="text-[9px] font-black uppercase tracking-[.15em] text-slate-400">Trace sélectionnée</p><p className="mt-2 break-all font-mono text-xs text-blue-200">{events[0]?.eventId || 'Aucune trace sélectionnée'}</p></div></aside>
       </div>
     </section>
   </div>
@@ -279,7 +289,7 @@ function GovernanceConstitution() {
   const chapters = [
     { number: 'I', title: 'Posture du runtime', summary: `Mode ${bootstrap.executionMode}`, icon: Command, tone: 'blue' as const },
     { number: 'II', title: 'Autorité & permissions', summary: 'Least privilege · rôles canoniques', icon: ShieldCheck, tone: 'emerald' as const },
-    { number: 'III', title: 'Actions externes', summary: 'Verrouillées par défaut', icon: FileLock2, tone: 'rose' as const },
+    { number: 'III', title: 'Actions externes', summary: 'Canaux autorisés · approbation obligatoire', icon: FileLock2, tone: 'rose' as const },
     { number: 'IV', title: 'Confiance des données', summary: bootstrap.storageMode === 'supabase' ? 'Sources live' : 'Fondation contractuelle', icon: Fingerprint, tone: 'violet' as const },
     { number: 'V', title: 'Gouvernance des commandes', summary: '3 000 commandes canoniques', icon: Sparkles, tone: 'blue' as const },
     { number: 'VI', title: 'Kill switches', summary: 'Global · tenant · adapter · action', icon: AlertOctagon, tone: 'rose' as const },
@@ -292,7 +302,7 @@ function GovernanceConstitution() {
         state={bootstrap.storageMode === 'supabase' ? 'LIVE' : 'PREVIEW'}
         posture={`Constitution ${bootstrap.contractVersion}`}
         authority="Configuration protégée · least privilege"
-        summary={`Le runtime ${bootstrap.moduleVersion} applique ${bootstrap.counters.enabledFeatureFlags} capacité(s) active(s), ${bootstrap.counters.lockedContractItems} élément(s) contractuellement protégés et des actions externes verrouillées par défaut.`}
+        summary={`Le runtime ${bootstrap.moduleVersion} applique ${bootstrap.counters.enabledFeatureFlags} capacité(s) active(s), ${bootstrap.counters.lockedContractItems} élément(s) contractuellement protégés et une exécution externe strictement gouvernée par canal et approbation.`}
         freshness={new Date(bootstrap.generatedAt).toLocaleString('fr-FR')}
         metrics={[
           { label: 'Contrat actif', value: bootstrap.contractVersion, note: bootstrap.releaseCode, tone: 'navy' },
@@ -300,13 +310,15 @@ function GovernanceConstitution() {
           { label: 'Compatibilité', value: bootstrap.moduleVersion, note: bootstrap.environment, tone: 'blue' },
           { label: 'Switches actifs', value: bootstrap.counters.enabledFeatureFlags, note: `${bootstrap.featureFlags.length} déclarés`, tone: 'emerald' },
         ]}
-        actions={[{ label: 'Configuration protégée', disabled: true, reason: 'Les changements de gouvernance exigent une autorité et un workflow existants; aucun nouveau workflow n’est ajouté par MZ22.' }]}
+        actions={[{ label: 'Configuration protégée', disabled: true, reason: 'Les changements structurels exigent un workflow de gouvernance existant. Seul WhatsApp est contrôlable depuis la section Canaux ci-dessous.' }]}
         warning={bootstrap.storageMode === 'foundation-fallback' ? 'PREVIEW — posture fondation contractuelle; aucune configuration persistée n’est modifiée depuis ce hero.' : undefined}
       />
 
       <div className="mt-10 rounded-[40px] border border-stone-300 bg-[#fffefa] p-6 shadow-[0_30px_90px_rgba(41,37,36,.1)] sm:p-9"><div className="flex items-center justify-between border-b-2 border-slate-950 pb-5"><div><p className="text-[10px] font-black uppercase tracking-[.2em] text-blue-700">ANGELCARE Revenue Command OS</p><h2 className="mt-2 text-2xl font-black tracking-tight text-slate-950">Constitution de gouvernance opérationnelle</h2></div><SIcon icon={BookOpenCheck} tone="navy" /></div>
         <div className="mt-7 grid gap-5 md:grid-cols-2">{chapters.map((chapter) => <article key={chapter.number} className="group relative overflow-hidden rounded-[28px] border border-stone-200 bg-white p-5 transition hover:border-blue-200 hover:shadow-[0_18px_45px_rgba(15,23,42,.07)]"><span className="absolute right-4 top-2 font-serif text-6xl font-black text-slate-50">{chapter.number}</span><div className="relative flex items-start gap-4"><SIcon icon={chapter.icon} tone={chapter.tone} /><div className="min-w-0 flex-1"><p className="text-[9px] font-black uppercase tracking-[.16em] text-slate-400">Chapitre {chapter.number}</p><h3 className="mt-1 text-lg font-black text-slate-950">{chapter.title}</h3><p className="mt-2 text-xs leading-5 text-slate-600">{chapter.summary}</p><div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3"><span className="text-[9px] font-black uppercase tracking-[.1em] text-emerald-700">En vigueur</span><span className="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-[.1em] text-slate-400">Résumé visible <BadgeCheck size={13} /></span></div></div></div></article>)}</div>
       </div>
+
+      <ChannelGovernancePanel initialPolicies={bootstrap.operations.channels} />
 
       <div className="mt-8 grid gap-5 lg:grid-cols-[1fr_380px]"><section className="rounded-[34px] border border-slate-200 bg-white p-6"><div className="flex items-center justify-between"><div><p className="text-[10px] font-black uppercase tracking-[.16em] text-blue-700">Feature flag articles</p><h2 className="mt-2 text-xl font-black text-slate-950">Capacités gouvernées</h2></div><SChip tone="emerald">{bootstrap.counters.enabledFeatureFlags} actives</SChip></div><div className="mt-5 grid gap-3 md:grid-cols-2">{bootstrap.featureFlags.map((flag) => <div key={flag.key} className="rounded-[22px] border border-slate-200 p-4"><div className="flex items-center gap-3"><span className={`h-3 w-3 rounded-full ${flag.enabled ? 'bg-emerald-500' : 'bg-slate-300'}`} /><p className="min-w-0 flex-1 truncate text-xs font-black text-slate-900">{flag.label}</p>{flag.locked ? <FileLock2 size={14} className="text-amber-600" /> : null}</div><p className="mt-2 text-[10px] leading-4 text-slate-500">{flag.description}</p></div>)}</div></section><aside className="rounded-[34px] bg-slate-950 p-6 text-white"><SIcon icon={ShieldCheck} tone="emerald" /><h2 className="mt-5 text-2xl font-black">Contrat actif</h2><p className="mt-3 text-sm leading-6 text-slate-300">{bootstrap.contractVersion}</p><div className="mt-6 space-y-3"><PolicyFact label="Release" value={bootstrap.releaseCode} /><PolicyFact label="Environment" value={bootstrap.environment} /><PolicyFact label="Mode" value={bootstrap.executionMode} /><PolicyFact label="Storage" value={bootstrap.storageMode} /></div></aside></div>
     </section>

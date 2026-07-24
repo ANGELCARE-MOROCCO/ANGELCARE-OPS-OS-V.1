@@ -31,7 +31,7 @@ function activePath(pathname: string, href: string) {
 function groupFor(href: string) {
   if (href.includes('cockpit') || href.includes('mega-production') || href.includes('digital-twin') || href.includes('revenue-objectives') || href.includes('signals')) return 'Commandement'
   if (href.includes('strategy') || href.includes('validation-council') || href.includes('command-kernel')) return 'Intelligence & décision'
-  if (href.includes('mission-compiler') || href.includes('execution-autopilot') || href.includes('active-programs') || href.includes('compiled-missions')) return 'Orchestration'
+  if (href.includes('mission-compiler') || href.includes('execution-autopilot') || href.includes('active-programs') || href.includes('compiled-missions') || href.includes('email-studio')) return 'Orchestration'
   if (href.includes('approvals') || href.includes('exceptions') || href.includes('memory-learning')) return 'Contrôle'
   return 'Gouvernance'
 }
@@ -146,7 +146,7 @@ export default function RevenueOsShell({ children }: { children: React.ReactNode
             <div className={`rounded-2xl border border-slate-200 bg-gradient-to-br from-slate-50 to-white ${collapsed ? 'p-2' : 'p-3'}`}>
               <div className={`flex items-center ${collapsed ? 'justify-center' : 'gap-3'}`}>
                 <span className="relative grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-slate-950 text-white"><ShieldCheck size={17} /><span className="absolute -right-1 -top-1 h-2.5 w-2.5 rounded-full border-2 border-white bg-emerald-500" /></span>
-                {!collapsed ? <div className="min-w-0 flex-1"><p className="truncate text-[11px] font-black text-slate-900">Production gouvernée</p><p className="mt-0.5 truncate text-[9px] font-semibold uppercase tracking-[.1em] text-slate-400">Actions externes verrouillées</p></div> : null}
+                {!collapsed ? <div className="min-w-0 flex-1"><p className="truncate text-[11px] font-black text-slate-900">Production gouvernée</p><p className="mt-0.5 truncate text-[9px] font-semibold uppercase tracking-[.1em] text-slate-400">Effets externes sur approbation</p></div> : null}
               </div>
             </div>
           </div>

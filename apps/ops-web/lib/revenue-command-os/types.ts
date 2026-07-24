@@ -16,6 +16,7 @@ export type RevenueOsWorkspaceKey =
   | 'memory-learning'
   | 'audit'
   | 'settings'
+  | 'email-studio'
 
 export type RevenueOsHealthStatus = 'operational' | 'degraded' | 'attention' | 'offline'
 export type RevenueOsMaturityStatus = 'locked' | 'ready' | 'foundation' | 'planned'
@@ -88,6 +89,105 @@ export type RevenueOsAuditEvent = {
   metadata?: Record<string, unknown>
 }
 
+export type RevenueOsOperationalSourceState = 'live' | 'partial' | 'unavailable'
+
+export type RevenueOsOperationalStrategy = {
+  id: string
+  code: string
+  title: string
+  thesis: string
+  archetype: string
+  status: string
+  version: string
+  confidence: number
+  evidenceCount: number
+  openAssumptions: number
+  highRisks: number
+  contradictions: number
+  councilClassification?: string
+  approvalStatus?: string
+  targetSegments: string[]
+  territories: string[]
+  updatedAt: string
+}
+
+export type RevenueOsOperationalProgram = {
+  id: string
+  code: string
+  title: string
+  objective: string
+  status: string
+  strategyId: string
+  owner: string
+  startDate?: string
+  endDate?: string
+  territories: string[]
+  campaigns: number
+  waves: number
+  missions: number
+  tasksOpen: number
+  tasksBlocked: number
+  progress: number
+  risks: string[]
+  updatedAt: string
+}
+
+export type RevenueOsOperationalMission = {
+  id: string
+  code: string
+  title: string
+  purpose: string
+  status: string
+  priority: string
+  strategyId: string
+  programId: string
+  campaignId: string
+  owner: string
+  assignmentStatus: string
+  startDate?: string
+  deadline?: string
+  taskCount: number
+  completedTasks: number
+  blockedTasks: number
+  evidenceCount: number
+  nextAction?: string
+  updatedAt: string
+}
+
+export type RevenueOsChannelPolicy = {
+  code: 'email_os' | 'gmail' | 'whatsapp' | 'calendar'
+  label: string
+  enabled: boolean
+  configured: boolean
+  userControllable: boolean
+  approvalRequired: boolean
+  policyState: 'active' | 'available' | 'disabled' | 'blocked'
+  reason: string
+}
+
+export type RevenueOsOperationalReadModel = {
+  tenantId: string
+  sourceState: RevenueOsOperationalSourceState
+  generatedAt: string
+  warnings: string[]
+  strategies: RevenueOsOperationalStrategy[]
+  programs: RevenueOsOperationalProgram[]
+  missions: RevenueOsOperationalMission[]
+  channels: RevenueOsChannelPolicy[]
+  counts: {
+    strategies: number
+    strategiesReadyForCouncil: number
+    strategiesApproved: number
+    pendingApprovals: number
+    openContradictions: number
+    programs: number
+    activePrograms: number
+    missions: number
+    openMissions: number
+    blockedTasks: number
+  }
+}
+
 export type RevenueOsFoundationBootstrap = {
   contractVersion: string
   releaseCode: string
@@ -101,6 +201,7 @@ export type RevenueOsFoundationBootstrap = {
   systemChecks: RevenueOsSystemCheck[]
   objectives: RevenueOsObjective[]
   auditEvents: RevenueOsAuditEvent[]
+  operations: RevenueOsOperationalReadModel
   counters: {
     workspaceCount: number
     lockedContractItems: number

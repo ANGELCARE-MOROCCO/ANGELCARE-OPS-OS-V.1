@@ -71,16 +71,16 @@ export const FOUNDATION_SYSTEM_CHECKS: RevenueOsSystemCheck[] = [
     key: 'execution-safety',
     label: 'Sécurité d’exécution',
     status: 'operational',
-    detail: 'Mode Shadow imposé. Les actions externes restent verrouillées.',
+    detail: 'Production gouvernée: les actions internes sont autorisées; tout effet externe exige un canal approuvé, une autorité valide et une décision traçable.',
     checkedAt: nowIso,
   },
   {
     key: 'database-foundation',
     label: 'Persistance Supabase',
-    status: 'attention',
-    detail: 'Les migrations Phase 1 et Phase 2 doivent être appliquées dans chaque environnement pour activer la persistance complète du Digital Twin.',
+    status: 'degraded',
+    detail: 'La source Supabase live est indisponible dans ce rendu de secours. Aucune donnée contractuelle n’est présentée comme donnée opérationnelle.',
     checkedAt: nowIso,
-    action: 'Appliquer 20260720_revenue_command_os_phase2_digital_twin.sql après la migration Phase 1',
+    action: 'Vérifier la connectivité Supabase et les variables de production avant toute nouvelle publication.',
   },
   {
     key: 'digital-twin-model',
@@ -138,8 +138,8 @@ export function createFoundationBootstrap(
   overrides: Partial<RevenueOsFoundationBootstrap> = {},
 ): RevenueOsFoundationBootstrap {
   const env = getRevenueOsEnvironmentConfig()
-  const auditEvents = overrides.auditEvents ?? FOUNDATION_AUDIT_EVENTS
-  const objectives = overrides.objectives ?? FOUNDATION_OBJECTIVES
+  const auditEvents = overrides.auditEvents ?? []
+  const objectives = overrides.objectives ?? []
   const featureFlags = overrides.featureFlags ?? REVENUE_OS_FEATURE_FLAGS
   const systemChecks = overrides.systemChecks ?? FOUNDATION_SYSTEM_CHECKS
   const workspaces = overrides.workspaces ?? REVENUE_OS_WORKSPACES
@@ -157,6 +157,22 @@ export function createFoundationBootstrap(
     systemChecks,
     objectives,
     auditEvents,
+    operations: overrides.operations ?? {
+      tenantId: 'unresolved',
+      sourceState: 'unavailable',
+      generatedAt: new Date().toISOString(),
+      warnings: ['Source opérationnelle indisponible.'],
+      strategies: [],
+      programs: [],
+      missions: [],
+      channels: [
+        { code: 'email_os', label: 'Email OS · mailboxes assignées', enabled: true, configured: false, userControllable: false, approvalRequired: true, policyState: 'blocked', reason: 'La politique est active mais la source live doit confirmer la configuration.' },
+        { code: 'gmail', label: 'Gmail direct', enabled: false, configured: false, userControllable: false, approvalRequired: false, policyState: 'disabled', reason: 'Désactivé par doctrine.' },
+        { code: 'whatsapp', label: 'WhatsApp', enabled: false, configured: false, userControllable: true, approvalRequired: true, policyState: 'available', reason: 'Activation manuelle requise.' },
+        { code: 'calendar', label: 'Calendrier externe', enabled: false, configured: false, userControllable: false, approvalRequired: false, policyState: 'disabled', reason: 'Désactivé par politique AngelCare.' },
+      ],
+      counts: { strategies: 0, strategiesReadyForCouncil: 0, strategiesApproved: 0, pendingApprovals: 0, openContradictions: 0, programs: 0, activePrograms: 0, missions: 0, openMissions: 0, blockedTasks: 0 },
+    },
     counters: {
       workspaceCount: workspaces.length,
       lockedContractItems: workspaces.reduce((total, item) => total + item.contractScope.length, 0),

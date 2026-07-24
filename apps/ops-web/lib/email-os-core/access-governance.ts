@@ -902,6 +902,7 @@ async function getAssignmentContext(userId: string, mailboxId: string) {
     .select('*')
     .eq('user_id', clean(userId))
     .eq('mailbox_id', clean(mailboxId))
+    .eq('status', 'active')
     .maybeSingle()
 
   if (error || !assignment) return null
