@@ -5,7 +5,7 @@ import { AngelCareHeroBrand, HeroActionRail, HeroAuthorityBadge, HeroExecutiveBr
 import styles from '../SovereignHeroes.module.css'
 
 export default function CockpitHero({ state, posture, authority, summary, metrics = [], actions = [], freshness, warning }: SovereignHeroProps) {
-  return <section className={`${styles.hero} min-h-[430px] bg-[linear-gradient(118deg,#061226_0%,#0b2850_52%,#0c4d75_100%)] p-6 text-white sm:p-8 xl:p-10`} data-hero-id="MZ22-HERO-01-COCKPIT">
+  return <section className={`${styles.hero} min-h-[430px] bg-[linear-gradient(118deg,#061226_0%,#0b2850_52%,#0c4d75_100%)] p-6 text-white sm:p-8 xl:p-10`} data-hero-surface="dark" data-hero-id="MZ22-HERO-01-COCKPIT">
     <div className={`absolute inset-0 opacity-35 ${styles.fineGrid}`} />
     <div className="absolute -right-24 -top-28 h-[420px] w-[420px] rounded-full border border-white/10" />
     <div className="absolute right-10 top-12 h-[250px] w-[250px] rounded-full border border-blue-300/15" />

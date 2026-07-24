@@ -1,0 +1,130 @@
+.visualIntegrity {
+  --rev-ink-strong: #0f172a;
+  --rev-ink: #1e293b;
+  --rev-ink-muted: #475569;
+  --rev-on-dark: #f8fafc;
+  --rev-on-dark-muted: #cbd5e1;
+  min-width: 0;
+  overflow-x: clip;
+  color: var(--rev-ink-strong);
+  color-scheme: light;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+.visualIntegrity,
+.visualIntegrity :where(*, *::before, *::after) {
+  box-sizing: border-box;
+}
+
+.visualIntegrity :where(main, section, article, aside, header, footer, nav, form, fieldset, div) {
+  min-width: 0;
+}
+
+.visualIntegrity :where(h1, h2, h3, h4, h5, h6, p, span, strong, small, label, a, button, li, td, th, code) {
+  overflow-wrap: anywhere;
+}
+
+.visualIntegrity :where(svg) {
+  flex-shrink: 0;
+}
+
+/* Solid and high-opacity light surfaces must never inherit white text. */
+.visualIntegrity :where(
+  [class~="bg-white"],
+  [class~="bg-white/95"],
+  [class~="bg-white/94"],
+  [class~="bg-white/90"],
+  [class~="bg-white/88"],
+  [class~="bg-white/80"],
+  [class~="bg-white/75"],
+  [class~="bg-slate-50"],
+  [class~="bg-slate-50/70"],
+  [class~="bg-slate-100"]
+) {
+  color: var(--rev-ink-strong);
+}
+
+/* Dark and saturated action surfaces must never inherit dark text. */
+.visualIntegrity :where(
+  [class~="bg-slate-950"],
+  [class~="bg-slate-900"],
+  [class~="bg-slate-800"],
+  [class~="bg-blue-600"],
+  [class~="bg-blue-700"],
+  [class~="bg-blue-800"],
+  [class~="bg-cyan-600"],
+  [class~="bg-cyan-700"],
+  [class~="bg-cyan-800"],
+  [class~="bg-emerald-600"],
+  [class~="bg-emerald-700"],
+  [class~="bg-violet-600"],
+  [class~="bg-violet-700"],
+  [class~="bg-rose-600"],
+  [class~="bg-rose-700"],
+  [class~="bg-amber-600"]
+) {
+  color: var(--rev-on-dark);
+}
+
+.visualIntegrity :where(input, textarea, select) {
+  color: var(--rev-ink-strong);
+  caret-color: #2563eb;
+}
+
+.visualIntegrity :where(input, textarea, select)::placeholder {
+  color: #64748b;
+  opacity: 1;
+}
+
+.visualIntegrity :where(button, a) {
+  text-decoration-thickness: from-font;
+}
+
+.visualIntegrity :where([role="dialog"], [aria-modal="true"]) {
+  isolation: isolate;
+}
+
+.visualIntegrity :where([role="dialog"] section, [role="dialog"] article, [role="dialog"] aside) {
+  max-width: 100%;
+}
+
+.visualIntegrity :where([class*="overflow-hidden"]) {
+  overflow-clip-margin: 2px;
+}
+
+/* Stop long operational values from colliding with adjacent controls. */
+.visualIntegrity :where([class*="grid-cols"], [class*="flex"]) > * {
+  min-width: 0;
+}
+
+.visualIntegrity :where(table) {
+  width: 100%;
+}
+
+.visualIntegrity :where(th, td) {
+  vertical-align: top;
+}
+
+@media (max-width: 720px) {
+  .visualIntegrity {
+    overflow-x: hidden;
+  }
+
+  .visualIntegrity :where([class~="grid-cols-3"], [class~="grid-cols-4"], [class~="grid-cols-5"], [class~="grid-cols-6"]) {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 460px) {
+  .visualIntegrity :where([class~="grid-cols-2"], [class~="grid-cols-3"], [class~="grid-cols-4"], [class~="grid-cols-5"], [class~="grid-cols-6"]) {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
+
+@media (prefers-contrast: more) {
+  .visualIntegrity {
+    --rev-ink-muted: #334155;
+    --rev-on-dark-muted: #e2e8f0;
+  }
+}

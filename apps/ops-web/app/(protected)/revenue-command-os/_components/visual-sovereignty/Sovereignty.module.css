@@ -97,3 +97,10 @@
 @media (prefers-reduced-motion: reduce) {
   .scanline::after, .pulse, .floatSlow, .flow, .draw, .shimmer::after, .fadeIn { animation: none !important; }
 }
+
+
+/* Revenue visual-integrity repair. */
+.canvas { min-width:0; overflow-x:clip; color:#0f172a; }
+.canvas > * { min-width:0; }
+.canvas::before,.canvas::after,.scanline::after,.shimmer::after { pointer-events:none; }
+.glass,.softGlass { color:#0f172a; }

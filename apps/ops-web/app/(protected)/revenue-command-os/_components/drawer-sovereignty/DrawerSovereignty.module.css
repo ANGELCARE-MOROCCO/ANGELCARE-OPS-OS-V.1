@@ -81,3 +81,23 @@
     max-width: 100% !important;
   }
 }
+
+
+/* Revenue visual-integrity repair. */
+.overlay { isolation:isolate; }
+.panel {
+  min-width:0;
+  max-width:min(100vw, 980px);
+  color:#0f172a;
+  background:#fff;
+}
+.panel :where(*) { min-width:0; }
+.panel :where(h1,h2,h3,h4,p,span,strong,small,label,a,button) { overflow-wrap:anywhere; }
+.panel :where([class~="bg-white"],[class~="bg-slate-50"],[class~="bg-slate-100"]) { color:#0f172a; }
+.panel :where([class~="bg-slate-950"],[class~="bg-slate-900"],[class~="bg-slate-800"]) { color:#f8fafc; }
+.panel :where(input,textarea,select) { color:#0f172a; }
+.panel :where(svg) { flex-shrink:0; }
+@media (max-width:640px) {
+  .panel { border-left:0; }
+  .panel :where([class~="grid-cols-2"],[class~="grid-cols-3"],[class~="grid-cols-4"]) { grid-template-columns:minmax(0,1fr) !important; }
+}

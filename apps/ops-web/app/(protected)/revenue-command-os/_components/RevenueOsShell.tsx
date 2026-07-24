@@ -22,6 +22,7 @@ import { useRevenueOs } from './RevenueOsContext'
 import RevenueOsIcon from './RevenueOsIcon'
 import ObjectiveComposer from './ObjectiveComposer'
 import { sovereigntyStyles } from './visual-sovereignty/SovereignPrimitives'
+import integrityStyles from './RevenueVisualIntegrity.module.css'
 
 function activePath(pathname: string, href: string) {
   if (href === '/revenue-command-os') return pathname === href
@@ -106,7 +107,7 @@ export default function RevenueOsShell({ children }: { children: React.ReactNode
   const sidebarWidth = collapsed ? 'lg:w-[92px]' : 'lg:w-[292px]'
 
   return (
-    <div className={`${sovereigntyStyles.canvas} min-h-[calc(100vh-86px)] text-slate-950`}>
+    <div className={`${sovereigntyStyles.canvas} ${integrityStyles.visualIntegrity} min-h-[calc(100vh-86px)] text-slate-950`} data-revenue-visual-integrity="v1">
       <div className="flex min-h-[calc(100vh-86px)]">
         {mobileOpen ? <button className="fixed inset-0 z-40 bg-slate-950/25 backdrop-blur-sm lg:hidden" onClick={() => setMobileOpen(false)} aria-label="Fermer la navigation" /> : null}
 

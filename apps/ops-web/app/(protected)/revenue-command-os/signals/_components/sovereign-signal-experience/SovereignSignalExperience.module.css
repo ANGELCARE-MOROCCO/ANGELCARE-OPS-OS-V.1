@@ -15,3 +15,37 @@
 @media (prefers-reduced-motion: reduce) { .pulse::after { animation: none; } }
 
 .routeShell :global(a:focus-visible), .routeShell :global(button:focus-visible), .routeShell :global(input:focus-visible), .routeShell :global(select:focus-visible) { outline: 3px solid rgba(6,182,212,.42); outline-offset: 3px; }
+
+
+/* Revenue visual-integrity repair: compose against available content width, not viewport width. */
+.routeShell { min-width:0; }
+.routeShell :where(*) { min-width:0; }
+.routeBand {
+  isolation:isolate;
+  container-type:inline-size;
+  min-width:0;
+  height:auto;
+  color:#f8fafc;
+}
+.routeBand::after { z-index:0; pointer-events:none; }
+.routeBand > :where([class~="absolute"]) { z-index:0; pointer-events:none; }
+.routeBand > :where([class~="relative"]) { z-index:2; }
+.routeBand > :where([class~="relative"][class~="grid"]) {
+  grid-template-columns:minmax(0,1fr) !important;
+  align-items:stretch !important;
+}
+.routeBand :where([class~="bg-white"],[class~="bg-slate-50"],[class~="bg-slate-100"]) { color:#0f172a; }
+.routeBand :where(h1,h2,h3,p,span,a,button) { overflow-wrap:anywhere; }
+.routeBand :where(button,a) { max-width:100%; white-space:normal; }
+@container (min-width:900px) {
+  .routeBand > :where([class~="relative"][class~="grid"]) {
+    grid-template-columns:minmax(0,1fr) minmax(300px,390px) !important;
+  }
+}
+@container (max-width:560px) {
+  .routeBand { border-radius:26px !important; }
+  .routeBand :where([class~="grid-cols-3"],[class~="grid-cols-4"],[class~="grid-cols-6"]) {
+    grid-template-columns:minmax(0,1fr) !important;
+  }
+  .routeBand::after { opacity:.45; transform:scale(.78) rotate(18deg); transform-origin:top right; }
+}
