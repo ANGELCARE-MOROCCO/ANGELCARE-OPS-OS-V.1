@@ -22,6 +22,50 @@ function drawerWidthPixels(width: string) {
   return match ? Number(match[1]) : 820
 }
 
+type FloatingToolStyleSnapshot = {
+  zIndex: string
+  zIndexPriority: string
+  pointerEvents: string
+  pointerEventsPriority: string
+}
+
+const REVENUE_DRAWER_FLOATING_TOOL_SELECTOR = '.voice-terminal, .vt-incoming-popup'
+
+function suppressFloatingToolsWhileDrawerIsOpen() {
+  const snapshots = new Map<HTMLElement, FloatingToolStyleSnapshot>()
+
+  const suppress = () => {
+    document.querySelectorAll<HTMLElement>(REVENUE_DRAWER_FLOATING_TOOL_SELECTOR).forEach((element) => {
+      if (!snapshots.has(element)) {
+        snapshots.set(element, {
+          zIndex: element.style.getPropertyValue('z-index'),
+          zIndexPriority: element.style.getPropertyPriority('z-index'),
+          pointerEvents: element.style.getPropertyValue('pointer-events'),
+          pointerEventsPriority: element.style.getPropertyPriority('pointer-events'),
+        })
+      }
+
+      element.style.setProperty('z-index', '160', 'important')
+      element.style.setProperty('pointer-events', 'none', 'important')
+    })
+  }
+
+  suppress()
+  const observer = new MutationObserver(suppress)
+  observer.observe(document.body, { childList: true, subtree: true })
+
+  return () => {
+    observer.disconnect()
+    snapshots.forEach((snapshot, element) => {
+      if (snapshot.zIndex) element.style.setProperty('z-index', snapshot.zIndex, snapshot.zIndexPriority)
+      else element.style.removeProperty('z-index')
+
+      if (snapshot.pointerEvents) element.style.setProperty('pointer-events', snapshot.pointerEvents, snapshot.pointerEventsPriority)
+      else element.style.removeProperty('pointer-events')
+    })
+  }
+}
+
 export function SovereignDrawerOverlay({ children, onClose, label, zIndex = 'z-[170]' }: { children: ReactNode; onClose: () => void; label: string; zIndex?: string }) {
   const [mounted, setMounted] = useState(false)
 
@@ -32,9 +76,11 @@ export function SovereignDrawerOverlay({ children, onClose, label, zIndex = 'z-[
     const previousOpenState = body.dataset.revenueDrawerOpen
     body.style.overflow = 'hidden'
     body.dataset.revenueDrawerOpen = 'true'
+    const restoreFloatingTools = suppressFloatingToolsWhileDrawerIsOpen()
     const onKeyDown = (event: KeyboardEvent) => { if (event.key === 'Escape') onClose() }
     window.addEventListener('keydown', onKeyDown)
     return () => {
+      restoreFloatingTools()
       body.style.overflow = previousOverflow
       if (previousOpenState === undefined) delete body.dataset.revenueDrawerOpen
       else body.dataset.revenueDrawerOpen = previousOpenState
