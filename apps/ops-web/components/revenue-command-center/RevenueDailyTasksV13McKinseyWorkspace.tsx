@@ -57,7 +57,7 @@ type Comment = {
   body: string
 }
 
-type Evidence = {
+type Preuves = {
   id: string
   label: string
   value: string
@@ -98,7 +98,7 @@ type Task = {
   tags: string[]
   subtasks: Subtask[]
   comments: Comment[]
-  evidence: Evidence[]
+  evidence: Preuves[]
   createdAt: string
   updatedAt: string
 }
@@ -135,18 +135,17 @@ const priorities: Priority[] = ["P0", "P1", "P2", "P3"]
 const types: TaskType[] = ["ceo", "sales", "sdr", "appointments", "partnerships", "b2c", "market_os", "academy", "finance", "hr", "ops", "quality", "admin"]
 
 const views: Array<{ mode: ViewMode; label: string; href: string; desc: string }> = [
-  { mode: "dashboard", label: "Command", href: "/revenue-command-center/daily-tasks", desc: "Executive task command center." },
-  { mode: "board", label: "Board", href: "/revenue-command-center/daily-tasks/board", desc: "Lifecycle execution board." },
-  { mode: "list", label: "List", href: "/revenue-command-center/daily-tasks/list", desc: "Dense task operating list." },
-  { mode: "focus", label: "Focus", href: "/revenue-command-center/daily-tasks/focus", desc: "Agent deep-work queue." },
-  { mode: "agents", label: "Agents", href: "/revenue-command-center/daily-tasks/agents", desc: "Workload and ownership." },
-  { mode: "approvals", label: "Approvals", href: "/revenue-command-center/daily-tasks/approvals", desc: "Manager decision gates." },
-  { mode: "blocked", label: "Blocked", href: "/revenue-command-center/daily-tasks/blocked", desc: "Blockers and recovery." },
-  { mode: "calendar", label: "Calendar", href: "/revenue-command-center/daily-tasks/calendar", desc: "Daily/weekly rhythm." },
-  { mode: "analytics", label: "Analytics", href: "/revenue-command-center/daily-tasks/analytics", desc: "SLA and execution metrics." },
-  { mode: "new", label: "New Task", href: "/revenue-command-center/daily-tasks/new", desc: "Create deep execution task." },
+  { mode: "dashboard", label: "Commandement", href: "/revenue-command-center/daily-tasks", desc: "Poste exécutif des tâches et engagements." },
+  { mode: "board", label: "Tableau", href: "/revenue-command-center/daily-tasks/board", desc: "Cycle d’exécution par statut." },
+  { mode: "list", label: "Liste", href: "/revenue-command-center/daily-tasks/list", desc: "Vue dense des tâches opérationnelles." },
+  { mode: "focus", label: "Priorités", href: "/revenue-command-center/daily-tasks/focus", desc: "File de travail concentrée par agent." },
+  { mode: "agents", label: "Équipe", href: "/revenue-command-center/daily-tasks/agents", desc: "Charge, capacité et responsabilité." },
+  { mode: "approvals", label: "Approbations", href: "/revenue-command-center/daily-tasks/approvals", desc: "Décisions et portes de validation." },
+  { mode: "blocked", label: "Blocages", href: "/revenue-command-center/daily-tasks/blocked", desc: "Obstacles, dépendances et récupération." },
+  { mode: "calendar", label: "Calendrier", href: "/revenue-command-center/daily-tasks/calendar", desc: "Rythme quotidien et hebdomadaire." },
+  { mode: "analytics", label: "Analyses", href: "/revenue-command-center/daily-tasks/analytics", desc: "SLA, valeur et qualité d’exécution." },
+  { mode: "new", label: "Nouvelle tâche", href: "/revenue-command-center/daily-tasks/new", desc: "Créer une mission d’exécution complète." },
 ]
-
 function uid() {
   return Math.random().toString(36).slice(2, 10)
 }
@@ -166,7 +165,7 @@ function label(value: string) {
 }
 
 function mad(value: number) {
-  return new Intl.NumberFormat("fr-MA", { style: "currency", currency: "MAD", maximumFractionDigits: 0 }).format(value || 0)
+  return `${new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 0 }).format(value || 0)} Dh`
 }
 
 function clamp(value: number) {
@@ -352,25 +351,8 @@ function writeStore(store: Store) {
 }
 
 function Card({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return <section className={`rounded-[1.35rem] border border-slate-200 bg-white p-5 shadow-sm ${className}`}>
-      <style jsx global>{`
-        /* RCC_PARENT_SHELL_FULLWIDTH_FIX_V5 */
-        .rcc-shell-main,
-        .rcc-shell-content,
-        .rcc-shell-content > *,
-        main.rcc-shell-main > * {
-          width: 100% !important;
-          max-width: none !important;
-          min-width: 0 !important;
-        }
-        [class*="revenue-command-center"] {
-          max-width: none !important;
-        }
-      `}</style>
-
-      {children}</section>
+  return <section className={`rounded-[1.35rem] border border-slate-200 bg-white p-5 shadow-[0_14px_40px_rgba(23,58,91,.065)] ${className}`}>{children}</section>
 }
-
 function Button(props: React.ButtonHTMLAttributes<HTMLButtonElement> & { tone?: "dark" | "blue" | "red" | "green" | "soft" }) {
   const tone = props.tone || "dark"
   const classes = {
@@ -429,7 +411,7 @@ function defaultDraft() {
     managerNotes: "",
     tagsText: "daily\nexecution",
     subtasksText: "Clarify objective\nExecute action\nLog evidence",
-    evidenceText: "Evidence required",
+    evidenceText: "Preuve requise",
   }
 }
 
@@ -443,7 +425,7 @@ export default function RevenueDailyTasksV13McKinseyWorkspace({ mode = "dashboar
   const [draft, setDraft] = useState(defaultDraft())
   const [newComment, setNewComment] = useState("")
   const [newSubtask, setNewSubtask] = useState("")
-  const [newEvidence, setNewEvidence] = useState("")
+  const [newPreuves, setNewPreuves] = useState("")
 
   useEffect(() => {
     const loaded = readStore()
@@ -515,7 +497,7 @@ export default function RevenueDailyTasksV13McKinseyWorkspace({ mode = "dashboar
       tags: draft.tagsText.split("\n").map((x) => x.trim()).filter(Boolean),
       subtasks: draft.subtasksText.split("\n").map((title) => ({ id: uid(), title: title.trim(), owner: draft.owner, done: false })).filter((s) => s.title),
       comments: [],
-      evidence: draft.evidenceText.trim() ? [{ id: uid(), label: "Evidence", value: draft.evidenceText.trim() }] : [],
+      evidence: draft.evidenceText.trim() ? [{ id: uid(), label: "Preuves", value: draft.evidenceText.trim() }] : [],
       createdAt: now(),
       updatedAt: now(),
     }
@@ -610,10 +592,10 @@ export default function RevenueDailyTasksV13McKinseyWorkspace({ mode = "dashboar
     setNewComment("")
   }
 
-  function addEvidence() {
-    if (!selected || !newEvidence.trim()) return
-    updateTask(selected.id, { evidence: [{ id: uid(), label: "Evidence", value: newEvidence.trim() }, ...selected.evidence] }, "Evidence added")
-    setNewEvidence("")
+  function addPreuves() {
+    if (!selected || !newPreuves.trim()) return
+    updateTask(selected.id, { evidence: [{ id: uid(), label: "Preuves", value: newPreuves.trim() }, ...selected.evidence] }, "Preuves added")
+    setNewPreuves("")
   }
 
   const filtered = useMemo(() => {
@@ -664,43 +646,42 @@ export default function RevenueDailyTasksV13McKinseyWorkspace({ mode = "dashboar
   }, [store.tasks])
 
   return (
-    <main className="rcc-shell-main w-full max-w-none min-w-0 flex-1 min-h-screen bg-[#F3F5F8] text-slate-950">
+    <main className="rcc-shell-main w-full max-w-none min-w-0 flex-1 min-h-screen bg-[radial-gradient(circle_at_85%_-10%,rgba(70,143,202,.12),transparent_28%),linear-gradient(180deg,#f8fbfe_0%,#edf4f9_100%)] text-slate-950">
       <div className="w-full max-w-none min-w-0 space-y-6 p-5 lg:p-8">
 
-        <section className="rounded-[1.75rem] border border-slate-200 bg-white p-8 shadow-sm">
+        <section className="overflow-hidden rounded-[2.2rem] border border-[#d7e4ef] bg-white p-8 shadow-[0_24px_70px_rgba(25,66,101,.10)]">
           <div className="grid gap-8 xl:grid-cols-[1.12fr_.88fr]">
             <div>
               <div className="flex flex-wrap gap-2">
-                <span className="rounded-md border border-blue-200 bg-blue-50 px-3 py-2 text-xs font-black tracking-wide text-blue-700">DAILY TASKS V13</span>
-                <span className="rounded-md border border-slate-300 bg-slate-50 px-3 py-2 text-xs font-black tracking-wide text-slate-700">MCKINSEY OPS</span>
-                <span className="rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-black tracking-wide text-emerald-700">PRODUCTION READY</span>
+                <span className="rounded-md border border-blue-200 bg-blue-50 px-3 py-2 text-xs font-black tracking-wide text-blue-700">ANGELCARE • EXÉCUTION QUOTIDIENNE</span>
+                <span className="rounded-md border border-slate-300 bg-slate-50 px-3 py-2 text-xs font-black tracking-wide text-slate-700">DISCIPLINE EXÉCUTIVE</span>
+                <span className="rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-black tracking-wide text-emerald-700">DONNÉES OPÉRATIONNELLES</span>
               </div>
 
               <h1 className="mt-6 max-w-5xl text-5xl font-black leading-tight tracking-tight text-slate-950">
-                Daily Tasks Corporate Execution Workspace
+                Poste de commandement de l’exécution quotidienne
               </h1>
 
               <p className="mt-5 max-w-4xl text-lg font-semibold leading-8 text-slate-600">
-                A structured operating system for daily execution: triage, ownership, SLA risk,
-                blockers, subtasks, evidence, approvals, quality gates, manager decisions and agent workload.
+                Un environnement structuré pour prioriser, attribuer et clôturer le travail quotidien avec visibilité sur les SLA, blocages, preuves, approbations, qualité et capacité des équipes.
               </p>
 
               <div className="mt-8 flex flex-wrap gap-3">
-                <Button tone="blue" type="button" onClick={() => setCreateOpen(true)}>Create Task</Button>
-                <Button tone="dark" type="button" onClick={() => selected && startTask(selected.id)}>Start Selected</Button>
-                <Button tone="red" type="button" onClick={() => selected && blockTask(selected.id)}>Block Selected</Button>
-                <Link href="/revenue-command-center" className="rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-black text-slate-800 hover:bg-slate-50">Revenue HQ</Link>
+                <Button tone="blue" type="button" onClick={() => setCreateOpen(true)}>Créer une tâche</Button>
+                <Button tone="dark" type="button" onClick={() => selected && startTask(selected.id)}>Démarrer la sélection</Button>
+                <Button tone="red" type="button" onClick={() => selected && blockTask(selected.id)}>Bloquer la sélection</Button>
+                <Link href="/revenue-command-center" className="rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-black text-slate-800 hover:bg-slate-50">Poste de commandement</Link>
               </div>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
               {[
-                ["Open", stats.open],
-                ["Today", stats.todayCount],
-                ["Blocked", stats.blocked],
-                ["Approvals", stats.approvals],
-                ["Value", mad(stats.value)],
-                ["SLA Risk", `${stats.risk}%`],
+                ["Ouvertes", stats.open],
+                ["Aujourd’hui", stats.todayCount],
+                ["Bloquées", stats.blocked],
+                ["Approbations", stats.approvals],
+                ["Valeur", mad(stats.value)],
+                ["Risque SLA", `${stats.risk}%`],
               ].map(([k, v]) => (
                 <div key={String(k)} className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
                   <p className="text-xs font-black uppercase tracking-[0.18em] text-slate-500">{k}</p>
@@ -724,50 +705,50 @@ export default function RevenueDailyTasksV13McKinseyWorkspace({ mode = "dashboar
           <Card>
             <div className="mb-5 flex items-start justify-between gap-4">
               <div>
-                <p className="text-xs font-black uppercase tracking-[0.18em] text-blue-700">Deep Task Creation</p>
-                <h2 className="mt-2 text-3xl font-black text-slate-950">Create a production-grade execution task</h2>
+                <p className="text-xs font-black uppercase tracking-[0.18em] text-blue-700">Création de mission</p>
+                <h2 className="mt-2 text-3xl font-black text-slate-950">Créer une tâche d’exécution complète</h2>
               </div>
-              <Button tone="soft" type="button" onClick={() => setCreateOpen(false)}>Close</Button>
+              <Button tone="soft" type="button" onClick={() => setCreateOpen(false)}>Fermer</Button>
             </div>
 
             <form onSubmit={createTask} className="grid gap-4 xl:grid-cols-4">
-              <Input value={draft.title} onChange={(e) => setDraft({ ...draft, title: e.target.value })} placeholder="Task title" />
+              <Input value={draft.title} onChange={(e) => setDraft({ ...draft, title: e.target.value })} placeholder="Intitulé de la tâche" />
               <Select value={draft.type} onChange={(e) => setDraft({ ...draft, type: e.target.value as TaskType })}>{types.map((x) => <option key={x} value={x}>{label(x)}</option>)}</Select>
               <Select value={draft.status} onChange={(e) => setDraft({ ...draft, status: e.target.value as TaskStatus })}>{statuses.map((x) => <option key={x} value={x}>{label(x)}</option>)}</Select>
               <Select value={draft.priority} onChange={(e) => setDraft({ ...draft, priority: e.target.value as Priority })}>{priorities.map((x) => <option key={x} value={x}>{x}</option>)}</Select>
-              <Input value={draft.owner} onChange={(e) => setDraft({ ...draft, owner: e.target.value })} placeholder="Owner" />
-              <Input value={draft.requester} onChange={(e) => setDraft({ ...draft, requester: e.target.value })} placeholder="Requester" />
-              <Input value={draft.department} onChange={(e) => setDraft({ ...draft, department: e.target.value })} placeholder="Department" />
-              <Input value={draft.module} onChange={(e) => setDraft({ ...draft, module: e.target.value })} placeholder="Related module" />
-              <Input value={draft.recordRef} onChange={(e) => setDraft({ ...draft, recordRef: e.target.value })} placeholder="Related record" />
+              <Input value={draft.owner} onChange={(e) => setDraft({ ...draft, owner: e.target.value })} placeholder="Responsable" />
+              <Input value={draft.requester} onChange={(e) => setDraft({ ...draft, requester: e.target.value })} placeholder="Demandeur" />
+              <Input value={draft.department} onChange={(e) => setDraft({ ...draft, department: e.target.value })} placeholder="Département" />
+              <Input value={draft.module} onChange={(e) => setDraft({ ...draft, module: e.target.value })} placeholder="Module concerné" />
+              <Input value={draft.recordRef} onChange={(e) => setDraft({ ...draft, recordRef: e.target.value })} placeholder="Dossier lié" />
               <Input type="date" value={draft.dueDate} onChange={(e) => setDraft({ ...draft, dueDate: e.target.value })} />
               <Input type="time" value={draft.dueTime} onChange={(e) => setDraft({ ...draft, dueTime: e.target.value })} />
-              <Input type="number" value={draft.valueMad} onChange={(e) => setDraft({ ...draft, valueMad: Number(e.target.value) })} placeholder="Value MAD" />
+              <Input type="number" value={draft.valueMad} onChange={(e) => setDraft({ ...draft, valueMad: Number(e.target.value) })} placeholder="Valeur en Dh" />
               <Input type="number" value={draft.impactScore} onChange={(e) => setDraft({ ...draft, impactScore: Number(e.target.value) })} placeholder="Impact %" />
-              <Input type="number" value={draft.urgencyScore} onChange={(e) => setDraft({ ...draft, urgencyScore: Number(e.target.value) })} placeholder="Urgency %" />
-              <Input type="number" value={draft.complexityScore} onChange={(e) => setDraft({ ...draft, complexityScore: Number(e.target.value) })} placeholder="Complexity %" />
-              <Input type="number" value={draft.slaRisk} onChange={(e) => setDraft({ ...draft, slaRisk: Number(e.target.value) })} placeholder="SLA risk %" />
-              <label className="flex items-center gap-3 rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm font-black"><input type="checkbox" checked={draft.approvalRequired} onChange={(e) => setDraft({ ...draft, approvalRequired: e.target.checked })} /> Approval required</label>
-              <label className="flex items-center gap-3 rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm font-black"><input type="checkbox" checked={draft.evidenceRequired} onChange={(e) => setDraft({ ...draft, evidenceRequired: e.target.checked })} /> Evidence required</label>
-              <Textarea className="xl:col-span-2" value={draft.executiveSummary} onChange={(e) => setDraft({ ...draft, executiveSummary: e.target.value })} placeholder="Executive summary" />
-              <Textarea className="xl:col-span-2" value={draft.successDefinition} onChange={(e) => setDraft({ ...draft, successDefinition: e.target.value })} placeholder="Success definition" />
-              <Textarea className="xl:col-span-2" value={draft.nextAction} onChange={(e) => setDraft({ ...draft, nextAction: e.target.value })} placeholder="Next action" />
-              <Textarea className="xl:col-span-2" value={draft.agentInstructions} onChange={(e) => setDraft({ ...draft, agentInstructions: e.target.value })} placeholder="Agent instructions" />
-              <Textarea className="xl:col-span-2" value={draft.qualityGate} onChange={(e) => setDraft({ ...draft, qualityGate: e.target.value })} placeholder="Quality gate" />
-              <Textarea className="xl:col-span-2" value={draft.blocker} onChange={(e) => setDraft({ ...draft, blocker: e.target.value })} placeholder="Blocker" />
-              <Textarea className="xl:col-span-2" value={draft.tagsText} onChange={(e) => setDraft({ ...draft, tagsText: e.target.value })} placeholder="Tags, one per line" />
-              <Textarea className="xl:col-span-2" value={draft.subtasksText} onChange={(e) => setDraft({ ...draft, subtasksText: e.target.value })} placeholder="Subtasks, one per line" />
-              <Button tone="blue" type="submit" className="xl:col-span-4">Create Task</Button>
+              <Input type="number" value={draft.urgencyScore} onChange={(e) => setDraft({ ...draft, urgencyScore: Number(e.target.value) })} placeholder="Urgence %" />
+              <Input type="number" value={draft.complexityScore} onChange={(e) => setDraft({ ...draft, complexityScore: Number(e.target.value) })} placeholder="Complexité %" />
+              <Input type="number" value={draft.slaRisk} onChange={(e) => setDraft({ ...draft, slaRisk: Number(e.target.value) })} placeholder="Risque SLA %" />
+              <label className="flex items-center gap-3 rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm font-black"><input type="checkbox" checked={draft.approvalRequired} onChange={(e) => setDraft({ ...draft, approvalRequired: e.target.checked })} /> Approbation requise</label>
+              <label className="flex items-center gap-3 rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm font-black"><input type="checkbox" checked={draft.evidenceRequired} onChange={(e) => setDraft({ ...draft, evidenceRequired: e.target.checked })} /> Preuve requise</label>
+              <Textarea className="xl:col-span-2" value={draft.executiveSummary} onChange={(e) => setDraft({ ...draft, executiveSummary: e.target.value })} placeholder="Synthèse exécutive" />
+              <Textarea className="xl:col-span-2" value={draft.successDefinition} onChange={(e) => setDraft({ ...draft, successDefinition: e.target.value })} placeholder="Critère de réussite" />
+              <Textarea className="xl:col-span-2" value={draft.nextAction} onChange={(e) => setDraft({ ...draft, nextAction: e.target.value })} placeholder="Prochaine action" />
+              <Textarea className="xl:col-span-2" value={draft.agentInstructions} onChange={(e) => setDraft({ ...draft, agentInstructions: e.target.value })} placeholder="Instructions d’exécution" />
+              <Textarea className="xl:col-span-2" value={draft.qualityGate} onChange={(e) => setDraft({ ...draft, qualityGate: e.target.value })} placeholder="Contrôle qualité" />
+              <Textarea className="xl:col-span-2" value={draft.blocker} onChange={(e) => setDraft({ ...draft, blocker: e.target.value })} placeholder="Blocage" />
+              <Textarea className="xl:col-span-2" value={draft.tagsText} onChange={(e) => setDraft({ ...draft, tagsText: e.target.value })} placeholder="Étiquettes, une par ligne" />
+              <Textarea className="xl:col-span-2" value={draft.subtasksText} onChange={(e) => setDraft({ ...draft, subtasksText: e.target.value })} placeholder="Sous-tâches, une par ligne" />
+              <Button tone="blue" type="submit" className="xl:col-span-4">Créer une tâche</Button>
             </form>
           </Card>
         ) : null}
 
         <Card>
           <div className="grid gap-4 lg:grid-cols-[1fr_.35fr_.35fr_.25fr]">
-            <Input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search tasks, owners, modules, blockers, decisions..." />
-            <Select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value as TaskStatus | "all")}><option value="all">All statuses</option>{statuses.map((x) => <option key={x} value={x}>{label(x)}</option>)}</Select>
-            <Select value={typeFilter} onChange={(e) => setTypeFilter(e.target.value as TaskType | "all")}><option value="all">All types</option>{types.map((x) => <option key={x} value={x}>{label(x)}</option>)}</Select>
-            <Button tone="dark" type="button" onClick={restore}>Reset</Button>
+            <Input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Rechercher une tâche, un responsable, un module ou un blocage…" />
+            <Select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value as TaskStatus | "all")}><option value="all">Tous les statuts</option>{statuses.map((x) => <option key={x} value={x}>{label(x)}</option>)}</Select>
+            <Select value={typeFilter} onChange={(e) => setTypeFilter(e.target.value as TaskType | "all")}><option value="all">Tous les types</option>{types.map((x) => <option key={x} value={x}>{label(x)}</option>)}</Select>
+            <Button tone="dark" type="button" onClick={restore}>Réinitialiser</Button>
           </div>
         </Card>
 
@@ -800,9 +781,9 @@ export default function RevenueDailyTasksV13McKinseyWorkspace({ mode = "dashboar
           <section className="grid gap-4 xl:grid-cols-4">
             {ownerStats.map((agent) => (
               <Card key={agent.owner}>
-                <p className="text-xs font-black uppercase tracking-[0.18em] text-blue-700">Agent Workload</p>
+                <p className="text-xs font-black uppercase tracking-[0.18em] text-blue-700">Charge de l’équipe</p>
                 <h3 className="mt-2 text-2xl font-black text-slate-950">{agent.owner}</h3>
-                <p className="mt-2 text-sm font-bold text-slate-500">{agent.count} tasks • {agent.blocked} blocked • {mad(agent.value)}</p>
+                <p className="mt-2 text-sm font-bold text-slate-500">{agent.count} tâches • {agent.blocked} bloquées • {mad(agent.value)}</p>
                 <div className="mt-4 h-3 overflow-hidden rounded-full bg-slate-100"><div className="h-full rounded-full bg-blue-700" style={{ width: `${agent.progress}%` }} /></div>
                 <p className="mt-2 text-sm font-black text-slate-700">{agent.progress}% average progress</p>
               </Card>
@@ -827,22 +808,22 @@ export default function RevenueDailyTasksV13McKinseyWorkspace({ mode = "dashboar
                   </button>
 
                   <div className="rounded-2xl bg-slate-50 p-4">
-                    <p className="text-xs font-black uppercase tracking-[0.18em] text-slate-400">Execution Scorecard</p>
+                    <p className="text-xs font-black uppercase tracking-[0.18em] text-slate-400">Score d’exécution</p>
                     <p className="mt-2 text-3xl font-black text-slate-950">{task.progress}%</p>
                     <p className="mt-1 text-xs font-bold text-slate-500">Impact {task.impactScore}% • SLA {task.slaRisk}%</p>
                     <p className="mt-2 text-sm font-black text-blue-700">{mad(task.valueMad)}</p>
                   </div>
 
                   <div className="grid grid-cols-2 gap-2">
-                    <Button tone="soft" type="button" onClick={() => setSelectedId(task.id)}>Open</Button>
-                    <Button tone="soft" type="button" onClick={() => autoScore(task.id)}>Score</Button>
-                    <Button tone="soft" type="button" onClick={() => startTask(task.id)}>Start</Button>
-                    <Button tone="soft" type="button" onClick={() => advanceTask(task.id)}>Advance</Button>
-                    <Button tone="red" type="button" onClick={() => blockTask(task.id)}>Block</Button>
-                    <Button tone="blue" type="button" onClick={() => sendReview(task.id)}>Review</Button>
-                    <Button tone="green" type="button" onClick={() => approveTask(task.id)}>Approve</Button>
-                    <Button tone="dark" type="button" onClick={() => completeTask(task.id)}>Complete</Button>
-                    <Button tone="red" type="button" onClick={() => deleteTask(task.id)} className="col-span-2">Delete</Button>
+                    <Button tone="soft" type="button" onClick={() => setSelectedId(task.id)}>Ouvrir</Button>
+                    <Button tone="soft" type="button" onClick={() => autoScore(task.id)}>Évaluer</Button>
+                    <Button tone="soft" type="button" onClick={() => startTask(task.id)}>Démarrer</Button>
+                    <Button tone="soft" type="button" onClick={() => advanceTask(task.id)}>Avancer</Button>
+                    <Button tone="red" type="button" onClick={() => blockTask(task.id)}>Bloquer</Button>
+                    <Button tone="blue" type="button" onClick={() => sendReview(task.id)}>Réviser</Button>
+                    <Button tone="green" type="button" onClick={() => approveTask(task.id)}>Approuver</Button>
+                    <Button tone="dark" type="button" onClick={() => completeTask(task.id)}>Clôturer</Button>
+                    <Button tone="red" type="button" onClick={() => deleteTask(task.id)} className="col-span-2">Supprimer</Button>
                   </div>
                 </div>
               </Card>
@@ -851,15 +832,15 @@ export default function RevenueDailyTasksV13McKinseyWorkspace({ mode = "dashboar
 
           <aside className="space-y-6">
             <Card>
-              <p className="text-xs font-black uppercase tracking-[0.18em] text-blue-700">Open Task Control Room</p>
-              <h2 className="mt-2 text-3xl font-black text-slate-950">{selected?.title || "No task selected"}</h2>
+              <p className="text-xs font-black uppercase tracking-[0.18em] text-blue-700">Salle de commandement de la tâche</p>
+              <h2 className="mt-2 text-3xl font-black text-slate-950">{selected?.title || "Aucune tâche sélectionnée"}</h2>
 
               {selected ? (
                 <div className="mt-5 space-y-4">
                   <div className="grid grid-cols-3 gap-3">
-                    <div className="rounded-xl bg-slate-50 p-4"><p className="text-xs font-black text-slate-400">Progress</p><p className="mt-1 text-2xl font-black">{selected.progress}%</p></div>
+                    <div className="rounded-xl bg-slate-50 p-4"><p className="text-xs font-black text-slate-400">Progression</p><p className="mt-1 text-2xl font-black">{selected.progress}%</p></div>
                     <div className="rounded-xl bg-slate-50 p-4"><p className="text-xs font-black text-slate-400">SLA</p><p className="mt-1 text-2xl font-black">{selected.slaRisk}%</p></div>
-                    <div className="rounded-xl bg-slate-50 p-4"><p className="text-xs font-black text-slate-400">Value</p><p className="mt-1 text-xl font-black">{mad(selected.valueMad)}</p></div>
+                    <div className="rounded-xl bg-slate-50 p-4"><p className="text-xs font-black text-slate-400">Valeur</p><p className="mt-1 text-xl font-black">{mad(selected.valueMad)}</p></div>
                   </div>
 
                   <Textarea value={selected.executiveSummary} onChange={(e) => updateTask(selected.id, { executiveSummary: e.target.value }, "Executive summary updated")} />
@@ -870,15 +851,15 @@ export default function RevenueDailyTasksV13McKinseyWorkspace({ mode = "dashboar
                     <Input value={selected.department} onChange={(e) => updateTask(selected.id, { department: e.target.value }, "Department updated")} />
                     <Input type="date" value={selected.dueDate} onChange={(e) => updateTask(selected.id, { dueDate: e.target.value }, "Due date updated")} />
                     <Input type="time" value={selected.dueTime} onChange={(e) => updateTask(selected.id, { dueTime: e.target.value }, "Due time updated")} />
-                    <Input type="number" value={selected.progress} onChange={(e) => updateTask(selected.id, { progress: clamp(Number(e.target.value)) }, "Progress updated")} />
+                    <Input type="number" value={selected.progress} onChange={(e) => updateTask(selected.id, { progress: clamp(Number(e.target.value)) }, "Progression updated")} />
                     <Input type="number" value={selected.slaRisk} onChange={(e) => updateTask(selected.id, { slaRisk: clamp(Number(e.target.value)) }, "SLA updated")} />
                   </div>
 
-                  <Textarea value={selected.successDefinition} onChange={(e) => updateTask(selected.id, { successDefinition: e.target.value }, "Success updated")} placeholder="Success definition" />
-                  <Textarea value={selected.nextAction} onChange={(e) => updateTask(selected.id, { nextAction: e.target.value }, "Next action updated")} placeholder="Next action" />
-                  <Textarea value={selected.agentInstructions} onChange={(e) => updateTask(selected.id, { agentInstructions: e.target.value }, "Agent instructions updated")} placeholder="Agent instructions" />
-                  <Textarea value={selected.qualityGate} onChange={(e) => updateTask(selected.id, { qualityGate: e.target.value }, "Quality gate updated")} placeholder="Quality gate" />
-                  <Textarea value={selected.blocker} onChange={(e) => updateTask(selected.id, { blocker: e.target.value, status: e.target.value.trim() ? "blocked" : selected.status }, "Blocker updated")} placeholder="Blocker" />
+                  <Textarea value={selected.successDefinition} onChange={(e) => updateTask(selected.id, { successDefinition: e.target.value }, "Success updated")} placeholder="Critère de réussite" />
+                  <Textarea value={selected.nextAction} onChange={(e) => updateTask(selected.id, { nextAction: e.target.value }, "Next action updated")} placeholder="Prochaine action" />
+                  <Textarea value={selected.agentInstructions} onChange={(e) => updateTask(selected.id, { agentInstructions: e.target.value }, "Agent instructions updated")} placeholder="Instructions d’exécution" />
+                  <Textarea value={selected.qualityGate} onChange={(e) => updateTask(selected.id, { qualityGate: e.target.value }, "Quality gate updated")} placeholder="Contrôle qualité" />
+                  <Textarea value={selected.blocker} onChange={(e) => updateTask(selected.id, { blocker: e.target.value, status: e.target.value.trim() ? "blocked" : selected.status }, "Blocker updated")} placeholder="Blocage" />
                   <Textarea value={selected.decisionNeeded} onChange={(e) => updateTask(selected.id, { decisionNeeded: e.target.value }, "Decision updated")} placeholder="Decision needed" />
                 </div>
               ) : null}
@@ -887,7 +868,7 @@ export default function RevenueDailyTasksV13McKinseyWorkspace({ mode = "dashboar
             {selected ? (
               <>
                 <Card>
-                  <p className="text-xs font-black uppercase tracking-[0.18em] text-blue-700">Subtasks</p>
+                  <p className="text-xs font-black uppercase tracking-[0.18em] text-blue-700">Sous-tâches</p>
                   <div className="mt-4 space-y-2">
                     {selected.subtasks.map((sub) => (
                       <button key={sub.id} type="button" onClick={() => toggleSubtask(selected.id, sub.id)} className="block w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-left text-sm font-black text-slate-900">
@@ -895,18 +876,18 @@ export default function RevenueDailyTasksV13McKinseyWorkspace({ mode = "dashboar
                       </button>
                     ))}
                     <div className="flex gap-2">
-                      <Input value={newSubtask} onChange={(e) => setNewSubtask(e.target.value)} placeholder="New subtask" />
-                      <Button tone="blue" type="button" onClick={addSubtask}>Add</Button>
+                      <Input value={newSubtask} onChange={(e) => setNewSubtask(e.target.value)} placeholder="Nouvelle sous-tâche" />
+                      <Button tone="blue" type="button" onClick={addSubtask}>Ajouter</Button>
                     </div>
                   </div>
                 </Card>
 
                 <Card>
-                  <p className="text-xs font-black uppercase tracking-[0.18em] text-blue-700">Evidence</p>
+                  <p className="text-xs font-black uppercase tracking-[0.18em] text-blue-700">Preuves</p>
                   <div className="mt-4 space-y-2">
                     <div className="flex gap-2">
-                      <Input value={newEvidence} onChange={(e) => setNewEvidence(e.target.value)} placeholder="Add evidence/link/note" />
-                      <Button tone="blue" type="button" onClick={addEvidence}>Add</Button>
+                      <Input value={newPreuves} onChange={(e) => setNewPreuves(e.target.value)} placeholder="Ajouter une preuve, un lien ou une note" />
+                      <Button tone="blue" type="button" onClick={addPreuves}>Ajouter</Button>
                     </div>
                     {selected.evidence.map((ev) => (
                       <div key={ev.id} className="rounded-xl border border-slate-200 bg-slate-50 p-3">
@@ -918,11 +899,11 @@ export default function RevenueDailyTasksV13McKinseyWorkspace({ mode = "dashboar
                 </Card>
 
                 <Card>
-                  <p className="text-xs font-black uppercase tracking-[0.18em] text-blue-700">Comments</p>
+                  <p className="text-xs font-black uppercase tracking-[0.18em] text-blue-700">Commentaires</p>
                   <div className="mt-4 space-y-2">
                     <div className="flex gap-2">
-                      <Input value={newComment} onChange={(e) => setNewComment(e.target.value)} placeholder="Add comment" />
-                      <Button tone="blue" type="button" onClick={addComment}>Send</Button>
+                      <Input value={newComment} onChange={(e) => setNewComment(e.target.value)} placeholder="Ajouter un commentaire" />
+                      <Button tone="blue" type="button" onClick={addComment}>Envoyer</Button>
                     </div>
                     {selected.comments.map((comment) => (
                       <div key={comment.id} className="rounded-xl border border-slate-200 bg-slate-50 p-3">
@@ -937,7 +918,7 @@ export default function RevenueDailyTasksV13McKinseyWorkspace({ mode = "dashboar
             ) : null}
 
             <Card>
-              <p className="text-xs font-black uppercase tracking-[0.18em] text-blue-700">Activity Log</p>
+              <p className="text-xs font-black uppercase tracking-[0.18em] text-blue-700">Journal d’activité</p>
               <div className="mt-4 max-h-[360px] space-y-2 overflow-auto pr-1">
                 {store.logs.slice(0, 14).map((log) => (
                   <div key={log.id} className="rounded-xl border border-slate-200 bg-slate-50 p-3">

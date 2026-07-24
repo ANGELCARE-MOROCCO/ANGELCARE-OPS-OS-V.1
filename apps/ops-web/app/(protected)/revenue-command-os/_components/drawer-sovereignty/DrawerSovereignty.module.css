@@ -1,10 +1,17 @@
 .overlay {
   animation: mz23-overlay-in 180ms ease-out both;
+  isolation: isolate;
+  overscroll-behavior: contain;
 }
 
 .panel {
   animation: mz23-drawer-in 280ms cubic-bezier(.2,.78,.2,1) both;
   isolation: isolate;
+  min-width: 0;
+  flex: 0 0 auto;
+  color: #0f172a;
+  background: #fff;
+  overscroll-behavior: contain;
 }
 
 .panel::before {
@@ -14,6 +21,48 @@
   width: 1px;
   background: linear-gradient(180deg, transparent, rgba(148,163,184,.55), transparent);
   pointer-events: none;
+  z-index: 4;
+}
+
+.panel :where(h1,h2,h3,h4,h5,h6,p,span,strong,small,label,a,button,li,td,th,code) {
+  overflow-wrap: anywhere;
+}
+
+.panel :where(svg) {
+  flex-shrink: 0;
+}
+
+.panel :where(input,textarea,select) {
+  color: #0f172a;
+  caret-color: #0891b2;
+}
+
+.panel :where(input,textarea,select)::placeholder {
+  color: #64748b;
+  opacity: 1;
+}
+
+.panel :where([class~="bg-white"],[class~="bg-slate-50"],[class~="bg-slate-100"]) {
+  color: #0f172a;
+}
+
+.panel :where([class~="bg-slate-950"],[class~="bg-slate-900"],[class~="bg-slate-800"]) {
+  color: #f8fafc;
+}
+
+.actionFooter {
+  position: sticky;
+  bottom: 0;
+  z-index: 30;
+  padding-bottom: max(1rem, env(safe-area-inset-bottom));
+}
+
+.actionRail {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: .625rem;
 }
 
 .fineGrid {
@@ -54,6 +103,13 @@
   box-shadow: 0 18px 45px rgba(15,23,42,.07);
 }
 
+/* Floating global tools must never sit above an active Revenue OS drawer. */
+:global(body[data-revenue-drawer-open="true"] .voice-terminal),
+:global(body[data-revenue-drawer-open="true"] .vt-incoming-popup) {
+  z-index: 160 !important;
+  pointer-events: none !important;
+}
+
 @keyframes mz23-overlay-in {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -62,6 +118,23 @@
 @keyframes mz23-drawer-in {
   from { transform: translateX(36px); opacity: .35; }
   to { transform: translateX(0); opacity: 1; }
+}
+
+@media (max-width: 640px) {
+  .panel {
+    width: 100%;
+    max-width: 100% !important;
+    border-left: 0;
+  }
+
+  .panel :where([class~="grid-cols-2"],[class~="grid-cols-3"],[class~="grid-cols-4"]) {
+    grid-template-columns: minmax(0,1fr) !important;
+  }
+
+  .actionRail > :where(button,a) {
+    width: 100%;
+    flex: 1 1 100%;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -73,31 +146,4 @@
   .fieldFocus:focus-within {
     transform: none;
   }
-}
-
-@media (max-width: 640px) {
-  .panel {
-    width: 100%;
-    max-width: 100% !important;
-  }
-}
-
-
-/* Revenue visual-integrity repair. */
-.overlay { isolation:isolate; }
-.panel {
-  min-width:0;
-  max-width:min(100vw, 980px);
-  color:#0f172a;
-  background:#fff;
-}
-.panel :where(*) { min-width:0; }
-.panel :where(h1,h2,h3,h4,p,span,strong,small,label,a,button) { overflow-wrap:anywhere; }
-.panel :where([class~="bg-white"],[class~="bg-slate-50"],[class~="bg-slate-100"]) { color:#0f172a; }
-.panel :where([class~="bg-slate-950"],[class~="bg-slate-900"],[class~="bg-slate-800"]) { color:#f8fafc; }
-.panel :where(input,textarea,select) { color:#0f172a; }
-.panel :where(svg) { flex-shrink:0; }
-@media (max-width:640px) {
-  .panel { border-left:0; }
-  .panel :where([class~="grid-cols-2"],[class~="grid-cols-3"],[class~="grid-cols-4"]) { grid-template-columns:minmax(0,1fr) !important; }
 }

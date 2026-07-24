@@ -1,7 +1,106 @@
 'use client'
-import { useEffect,useState } from 'react'
-import AppShell,{PageAction} from '@/app/components/erp/AppShell'
-import { ERPPanel,StatusPill } from '@/app/components/erp/ERPPrimitives'
-const areas=['customer_type','service_category','service_type','city','segment','payment_method','payment_term','order_status','discount_type','communication_script','next_action']
-export default function ConfigurationPage(){const[items,setItems]=useState<any[]>([]),[msg,setMsg]=useState('Ready'),[form,setForm]=useState<any>({area:'customer_type',is_active:true,sort_order:0});async function load(){const j=await fetch('/api/sales-terminal/options').then(r=>r.json());setItems(j.data||[]);if(!j.ok)setMsg(j.message)}useEffect(()=>{load()},[]);async function save(e:any){e.preventDefault();const j=await fetch('/api/sales-terminal/options',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(form)}).then(r=>r.json());setMsg(j.ok?'Option saved and active in Sales forms.':`Blocked: ${j.message}`);if(j.ok){setForm({area:form.area,is_active:true,sort_order:0});load()}}async function toggle(x:any){const j=await fetch('/api/sales-terminal/options',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:x.id,is_active:!x.is_active})}).then(r=>r.json());setMsg(j.ok?'Option updated.':j.message);load()}async function del(id:string){const j=await fetch('/api/sales-terminal/options?id='+id,{method:'DELETE'}).then(r=>r.json());setMsg(j.ok?'Option removed.':j.message);load()}const grouped=areas.map(a=>[a,items.filter(x=>x.area===a)] as const);return <AppShell title='Sales Configuration' subtitle='Add, edit, remove and activate options shown in the Sales Terminal forms.' breadcrumbs={[{label:'Sales',href:'/sales'},{label:'Configuration'}]} actions={<PageAction href='/sales'>Back to Sales</PageAction>}><ERPPanel title='Add Configuration Option' subtitle={msg}><form onSubmit={save} style={grid}><label style={label}>Area<select style={input} value={form.area} onChange={e=>setForm({...form,area:e.target.value})}>{areas.map(a=><option key={a} value={a}>{a}</option>)}</select></label><label style={label}>Label<input style={input} value={form.label||''} onChange={e=>setForm({...form,label:e.target.value})}/></label><label style={label}>Value<input style={input} value={form.value||''} onChange={e=>setForm({...form,value:e.target.value})} placeholder='auto if empty'/></label><label style={label}>Description<input style={input} value={form.description||''} onChange={e=>setForm({...form,description:e.target.value})}/></label><label style={label}>Sort order<input style={input} type='number' value={form.sort_order||0} onChange={e=>setForm({...form,sort_order:Number(e.target.value)})}/></label><button style={primary}>Save Option</button></form></ERPPanel><ERPPanel title='Configuration Areas' subtitle={`${items.length} options available`}><div style={cols}>{grouped.map(([area,list])=><section key={area} style={box}><h3 style={{marginTop:0}}>{area}</h3><div style={{display:'grid',gap:8}}>{list.map(x=><div key={x.id} style={row}><div><b>{x.label}</b><p style={muted}>{x.value}</p></div><span style={{display:'flex',gap:6}}><button style={small} onClick={()=>toggle(x)}>{x.is_active?'Disable':'Enable'}</button><button style={danger} onClick={()=>del(x.id)}>Remove</button><StatusPill tone={x.is_active?'green':'red'}>{x.is_active?'ON':'OFF'}</StatusPill></span></div>)}</div></section>)}</div></ERPPanel></AppShell>}
-const grid={display:'grid',gridTemplateColumns:'repeat(6,minmax(0,1fr))',gap:12} as React.CSSProperties,label={display:'grid',gap:6,fontWeight:850,color:'#0f172a'} as React.CSSProperties,input={border:'1px solid #cbd5e1',borderRadius:12,padding:'11px 12px',fontWeight:750,width:'100%'} as React.CSSProperties,primary={border:0,borderRadius:12,padding:12,background:'#0f172a',color:'#fff',fontWeight:950,cursor:'pointer'} as React.CSSProperties,cols={display:'grid',gridTemplateColumns:'repeat(2,minmax(0,1fr))',gap:14} as React.CSSProperties,box={border:'1px solid #e2e8f0',borderRadius:18,padding:14,background:'#f8fafc'} as React.CSSProperties,row={display:'flex',justifyContent:'space-between',alignItems:'center',gap:10,border:'1px solid #e2e8f0',borderRadius:14,padding:10,background:'#fff'} as React.CSSProperties,muted={margin:'4px 0 0',color:'#64748b',fontWeight:700} as React.CSSProperties,small={border:'1px solid #cbd5e1',background:'#fff',borderRadius:10,padding:'8px 10px',fontWeight:900,cursor:'pointer'} as React.CSSProperties,danger={...small,color:'#991b1b',background:'#fee2e2'} as React.CSSProperties
+
+import { FormEvent, useEffect, useMemo, useState } from 'react'
+import AppShell, { PageAction } from '@/app/components/erp/AppShell'
+import {
+  ActionButton, CommercialNav, EmptyState, Field, HeroStat, MetricTile, Notice, Panel, Pill,
+  SalesHero, SourceBadge, styles,
+} from '../_components/Sales360UI'
+
+type Option = { id: string; area: string; option_key?: string; label: string; value: string; description?: string; sort_order?: number; is_active?: boolean; updated_at?: string }
+const areas = ['customer_type', 'service_category', 'service_type', 'city', 'segment', 'payment_method', 'payment_term', 'order_status', 'discount_type', 'communication_script', 'next_action']
+const areaLabels: Record<string, string> = {
+  customer_type: 'Types de clients', service_category: 'Catégories de services', service_type: 'Types de services', city: 'Villes', segment: 'Segments',
+  payment_method: 'Méthodes de paiement', payment_term: 'Conditions de paiement', order_status: 'Statuts de commande', discount_type: 'Types de remise',
+  communication_script: 'Scripts de communication', next_action: 'Prochaines actions',
+}
+
+export default function ConfigurationPage() {
+  const [items, setItems] = useState<Option[]>([])
+  const [message, setMessage] = useState('Chargement de la gouvernance commerciale…')
+  const [form, setForm] = useState({ area: 'customer_type', label: '', value: '', description: '', sort_order: 0, is_active: true })
+  const [query, setQuery] = useState('')
+  const [activeArea, setActiveArea] = useState('all')
+  const [saving, setSaving] = useState(false)
+
+  async function load() {
+    try {
+      const response = await fetch('/api/sales-terminal/options', { cache: 'no-store' })
+      const json = await response.json()
+      if (!json.ok) throw new Error(json.message || 'Options API indisponible')
+      setItems(json.data || [])
+      setMessage(`${json.data?.length || 0} options chargées.`)
+    } catch (error) { setMessage(`Configuration partielle : ${error instanceof Error ? error.message : 'erreur inconnue'}`) }
+  }
+
+  useEffect(() => { void load() }, [])
+
+  async function save(event: FormEvent) {
+    event.preventDefault()
+    if (!form.label.trim()) return setMessage('Le libellé est obligatoire.')
+    setSaving(true)
+    try {
+      const response = await fetch('/api/sales-terminal/options', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) })
+      const json = await response.json()
+      if (!json.ok) throw new Error(json.message || 'Enregistrement impossible')
+      setMessage('Option enregistrée et disponible selon son statut.')
+      setForm(current => ({ ...current, label: '', value: '', description: '', sort_order: 0 }))
+      await load()
+    } catch (error) { setMessage(`Enregistrement bloqué : ${error instanceof Error ? error.message : 'erreur inconnue'}`) }
+    finally { setSaving(false) }
+  }
+
+  async function toggle(item: Option) {
+    const response = await fetch('/api/sales-terminal/options', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: item.id, is_active: !item.is_active }) })
+    const json = await response.json()
+    setMessage(json.ok ? 'Statut de l’option mis à jour.' : `Action bloquée : ${json.message}`)
+    if (json.ok) await load()
+  }
+
+  async function remove(item: Option) {
+    if (!window.confirm(`Supprimer l’option « ${item.label} » ? Les commandes historiques ne sont pas réécrites automatiquement.`)) return
+    const response = await fetch(`/api/sales-terminal/options?id=${item.id}`, { method: 'DELETE' })
+    const json = await response.json()
+    setMessage(json.ok ? 'Option supprimée.' : `Suppression bloquée : ${json.message}`)
+    if (json.ok) await load()
+  }
+
+  const visible = useMemo(() => items.filter(item => (activeArea === 'all' || item.area === activeArea) && `${item.label} ${item.value} ${item.option_key || ''} ${item.description || ''}`.toLowerCase().includes(query.toLowerCase())), [items, activeArea, query])
+  const active = items.filter(item => item.is_active !== false).length
+  const inactive = items.length - active
+  const usedAreas = new Set(items.map(item => item.area)).size
+
+  return <AppShell title="Configuration Sales 360" subtitle="Commercial Configuration Governance" breadcrumbs={[{ label: 'Sales', href: '/sales' }, { label: 'Configuration' }]} actions={<PageAction href="/sales">Command Center</PageAction>}>
+    <div className={styles.page}>
+      <SalesHero eyebrow="Commercial Configuration Governance" title="Gouverner les options qui structurent les formulaires et les statuts du Sales Terminal." text="Chaque option est gérée dans son périmètre actuel. L’activation, la désactivation ou la suppression ne réécrit pas automatiquement les commandes historiques." actions={<ActionButton tone="navy" icon="refresh" onClick={() => void load()}>Actualiser</ActionButton>} aside={<><HeroStat label="Options" value={items.length} detail={`${active} actives · ${inactive} inactives`} /><HeroStat label="Domaines couverts" value={usedAreas} detail={`${areas.length} familles prévues`} tone="blue" /><HeroStat label="Source" value="Sales Terminal" detail="sales_terminal_options" tone="green" /></>} />
+      <CommercialNav active="configuration" />
+      <div className={styles.metricsGrid}><MetricTile label="Options" value={items.length} detail="Toutes catégories" icon="settings" /><MetricTile label="Actives" value={active} detail="Disponibles dans les formulaires" icon="check" tone="green" /><MetricTile label="Inactives" value={inactive} detail="Conservées mais non proposées" icon="alert" tone={inactive ? 'amber' : 'green'} /><MetricTile label="Domaines" value={usedAreas} detail="Familles configurées" icon="service" tone="violet" /></div>
+      <Notice tone="amber" title="Impact historique" text="La suppression ou la désactivation d’une option ne met pas à jour les commandes existantes qui utilisent déjà sa valeur." />
+
+      <div className={styles.grid2} style={{ marginTop: 18 }}>
+        <Panel title="Créer ou mettre à jour une option" subtitle={message} action={<SourceBadge tone="green">API options existante</SourceBadge>}>
+          <form onSubmit={save} className={styles.formGrid2}>
+            <Field label="Domaine"><select className={styles.select} value={form.area} onChange={event => setForm({ ...form, area: event.target.value })}>{areas.map(area => <option key={area} value={area}>{areaLabels[area]}</option>)}</select></Field>
+            <Field label="Libellé *"><input className={styles.input} value={form.label} onChange={event => setForm({ ...form, label: event.target.value })} /></Field>
+            <Field label="Valeur" hint="Générée depuis le libellé si vide."><input className={styles.input} value={form.value} onChange={event => setForm({ ...form, value: event.target.value })} /></Field>
+            <Field label="Ordre"><input className={styles.input} type="number" value={form.sort_order} onChange={event => setForm({ ...form, sort_order: Number(event.target.value) })} /></Field>
+            <Field label="Description" wide><textarea className={styles.textarea} value={form.description} onChange={event => setForm({ ...form, description: event.target.value })} /></Field>
+            <div className={styles.fieldWide}><ActionButton type="submit" tone="navy" icon="check" disabled={saving}>{saving ? 'Enregistrement…' : 'Enregistrer l’option'}</ActionButton></div>
+          </form>
+        </Panel>
+
+        <Panel title="Couverture de configuration" subtitle="Répartition par domaine.">
+          <div className={styles.recordList}>{areas.map(area => {
+            const group = items.filter(item => item.area === area)
+            return <button key={area} className={`${styles.choiceCard} ${activeArea === area ? styles.choiceCardActive : ''}`} onClick={() => setActiveArea(activeArea === area ? 'all' : area)}><div className={styles.recordTitle}><strong>{areaLabels[area]}</strong><Pill tone={group.length ? 'blue' : 'amber'}>{group.length}</Pill></div><small>{group.filter(item => item.is_active !== false).length} actives</small></button>
+          })}</div>
+        </Panel>
+      </div>
+
+      <Panel title="Inventaire des options" subtitle={`${visible.length} options dans la vue actuelle`} action={<SourceBadge tone="green">sales_terminal_options</SourceBadge>} className="" >
+        <div className={styles.toolbar}><input className={styles.input} value={query} onChange={event => setQuery(event.target.value)} placeholder="Rechercher libellé, valeur, clé ou description…" /><select className={styles.select} value={activeArea} onChange={event => setActiveArea(event.target.value)} style={{ maxWidth: 240 }}><option value="all">Tous les domaines</option>{areas.map(area => <option key={area} value={area}>{areaLabels[area]}</option>)}</select></div>
+        <div className={styles.recordList}>{visible.length === 0 ? <EmptyState title="Aucune option visible" text="Aucune configuration ne correspond aux filtres actuels." /> : visible.map(item => <article key={item.id} className={styles.recordCard}><div className={styles.recordMain}><div className={styles.recordTitle}><strong>{item.label}</strong><Pill tone={item.is_active !== false ? 'green' : 'red'}>{item.is_active !== false ? 'Active' : 'Inactive'}</Pill><Pill tone="slate">{areaLabels[item.area] || item.area}</Pill></div><div className={styles.recordMeta}><span>Valeur : {item.value}</span><span>Clé : {item.option_key || 'générée'}</span><span>Ordre : {item.sort_order || 0}</span></div><p className={styles.muted}>{item.description || 'Aucune description.'}</p></div><div className={styles.recordActions}><ActionButton tone="light" onClick={() => void toggle(item)}>{item.is_active !== false ? 'Désactiver' : 'Activer'}</ActionButton><ActionButton tone="red" onClick={() => void remove(item)}>Supprimer</ActionButton></div></article>)}</div>
+      </Panel>
+    </div>
+  </AppShell>
+}

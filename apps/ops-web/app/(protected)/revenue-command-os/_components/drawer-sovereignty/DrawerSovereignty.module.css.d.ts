@@ -6,5 +6,7 @@ declare const classes: {
   readonly dotField: string
   readonly rail: string
   readonly fieldFocus: string
+  readonly actionFooter: string
+  readonly actionRail: string
 }
 export default classes

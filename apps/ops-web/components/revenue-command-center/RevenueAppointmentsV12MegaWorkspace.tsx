@@ -152,24 +152,23 @@ const types: AppointmentType[] = [
 ]
 
 const subpages: Array<{ mode: AppointmentPageMode; label: string; href: string; desc: string }> = [
-  { mode: "dashboard", label: "Dashboard", href: "/revenue-command-center/appointments", desc: "Master appointment command dashboard." },
-  { mode: "control-tower", label: "Control Tower", href: "/revenue-command-center/appointments/control-tower", desc: "Risk, SLA, VIP and executive intervention." },
-  { mode: "live", label: "Live Desk", href: "/revenue-command-center/appointments/live", desc: "Live meeting execution and action capture." },
-  { mode: "schedule", label: "Schedule", href: "/revenue-command-center/appointments/schedule", desc: "Create and schedule appointments." },
-  { mode: "calendar", label: "Calendar", href: "/revenue-command-center/appointments/calendar", desc: "Calendar and daily appointment rhythm." },
-  { mode: "queue", label: "Queue", href: "/revenue-command-center/appointments/queue", desc: "Operational queue by stage and owner." },
-  { mode: "recovery", label: "Recovery", href: "/revenue-command-center/appointments/recovery", desc: "Lost/no-show recovery workflows." },
-  { mode: "no-shows", label: "No-shows", href: "/revenue-command-center/appointments/no-shows", desc: "No-show detection and rescue." },
-  { mode: "reschedules", label: "Reschedules", href: "/revenue-command-center/appointments/reschedules", desc: "Reschedule control and confirmation." },
-  { mode: "analytics", label: "Analytics", href: "/revenue-command-center/appointments/analytics", desc: "Appointment metrics and conversion health." },
-  { mode: "performance", label: "Performance", href: "/revenue-command-center/appointments/performance", desc: "Closer and team performance." },
-  { mode: "conversion", label: "Conversion", href: "/revenue-command-center/appointments/conversion", desc: "Conversion control and deal outcomes." },
-  { mode: "risk", label: "Risk", href: "/revenue-command-center/appointments/risk", desc: "Risk intelligence and predictive alerts." },
-  { mode: "executive", label: "Executive", href: "/revenue-command-center/appointments/executive", desc: "Leadership view and decisions." },
-  { mode: "escalations", label: "Escalations", href: "/revenue-command-center/appointments/escalations", desc: "Executive escalation queue." },
-  { mode: "high-value", label: "High Value", href: "/revenue-command-center/appointments/high-value", desc: "High MAD opportunity control." },
+  { mode: "dashboard", label: "Vue exécutive", href: "/revenue-command-center/appointments", desc: "Poste de commandement des rendez-vous." },
+  { mode: "control-tower", label: "Tour de contrôle", href: "/revenue-command-center/appointments/control-tower", desc: "Risques, SLA, comptes prioritaires et intervention exécutive." },
+  { mode: "live", label: "Exécution en direct", href: "/revenue-command-center/appointments/live", desc: "Pilotage du rendez-vous et capture des engagements." },
+  { mode: "schedule", label: "Planification", href: "/revenue-command-center/appointments/schedule", desc: "Créer et planifier les rendez-vous." },
+  { mode: "calendar", label: "Calendrier", href: "/revenue-command-center/appointments/calendar", desc: "Rythme quotidien et calendrier commercial." },
+  { mode: "queue", label: "File opérationnelle", href: "/revenue-command-center/appointments/queue", desc: "Priorisation par étape et responsable." },
+  { mode: "recovery", label: "Récupération", href: "/revenue-command-center/appointments/recovery", desc: "Relance des rendez-vous perdus ou non honorés." },
+  { mode: "no-shows", label: "Absences", href: "/revenue-command-center/appointments/no-shows", desc: "Détection et sauvetage des rendez-vous non honorés." },
+  { mode: "reschedules", label: "Replanifications", href: "/revenue-command-center/appointments/reschedules", desc: "Contrôle des nouvelles dates et confirmations." },
+  { mode: "analytics", label: "Analyses", href: "/revenue-command-center/appointments/analytics", desc: "Indicateurs et santé de conversion." },
+  { mode: "performance", label: "Performance", href: "/revenue-command-center/appointments/performance", desc: "Performance des responsables et de l’équipe." },
+  { mode: "conversion", label: "Conversion", href: "/revenue-command-center/appointments/conversion", desc: "Résultats commerciaux et décisions de suite." },
+  { mode: "risk", label: "Risques", href: "/revenue-command-center/appointments/risk", desc: "Alertes prédictives et facteurs de risque." },
+  { mode: "executive", label: "Direction", href: "/revenue-command-center/appointments/executive", desc: "Vue leadership et décisions requises." },
+  { mode: "escalations", label: "Escalades", href: "/revenue-command-center/appointments/escalations", desc: "File des interventions exécutives." },
+  { mode: "high-value", label: "Forte valeur", href: "/revenue-command-center/appointments/high-value", desc: "Contrôle des opportunités à forte valeur." },
 ]
-
 function uid() {
   if (typeof crypto !== "undefined" && "randomUUID" in crypto) return crypto.randomUUID()
   return Math.random().toString(36).slice(2, 10)
@@ -186,7 +185,7 @@ function label(value: string) {
 }
 
 function mad(value: number) {
-  return new Intl.NumberFormat("fr-MA", { style: "currency", currency: "MAD", maximumFractionDigits: 0 }).format(value || 0)
+  return `${new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 0 }).format(value || 0)} Dh`
 }
 
 function clamp(value: number) {
@@ -397,30 +396,13 @@ function writeStore(store: AppointmentStore) {
 }
 
 function Card({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return <section className={`rounded-[1.75rem] border border-slate-200 bg-white p-5 shadow-sm ${className}`}>
-      <style jsx global>{`
-        /* RCC_PARENT_SHELL_FULLWIDTH_FIX_V5 */
-        .rcc-shell-main,
-        .rcc-shell-content,
-        .rcc-shell-content > *,
-        main.rcc-shell-main > * {
-          width: 100% !important;
-          max-width: none !important;
-          min-width: 0 !important;
-        }
-        [class*="revenue-command-center"] {
-          max-width: none !important;
-        }
-      `}</style>
-
-      {children}</section>
+  return <section className={`rounded-[1.75rem] border border-slate-200 bg-white p-5 shadow-[0_16px_46px_rgba(23,58,91,.07)] ${className}`}>{children}</section>
 }
-
 function Panel({ children, title, subtitle }: { children: React.ReactNode; title: string; subtitle?: string }) {
   return (
     <Card>
       <div className="mb-4">
-        <p className="text-xs font-black uppercase tracking-[0.22em] text-violet-700">{title}</p>
+        <p className="text-xs font-black uppercase tracking-[0.22em] text-[#1768aa]">{title}</p>
         {subtitle ? <p className="mt-1 text-sm font-bold leading-6 text-slate-500">{subtitle}</p> : null}
       </div>
       {children}
@@ -442,22 +424,22 @@ function Pill({ children, tone = "slate" }: { children: React.ReactNode; tone?: 
 }
 
 function Input(props: React.InputHTMLAttributes<HTMLInputElement>) {
-  return <input {...props} className={`w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-950 outline-none placeholder:text-slate-400 focus:border-violet-700 focus:ring-4 focus:ring-violet-100 ${props.className || ""}`} />
+  return <input {...props} className={`w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-950 outline-none placeholder:text-slate-400 focus:border-blue-700 focus:ring-4 focus:ring-blue-100 ${props.className || ""}`} />
 }
 
 function Select(props: React.SelectHTMLAttributes<HTMLSelectElement>) {
-  return <select {...props} className={`w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-950 outline-none focus:border-violet-700 focus:ring-4 focus:ring-violet-100 ${props.className || ""}`} />
+  return <select {...props} className={`w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-950 outline-none focus:border-blue-700 focus:ring-4 focus:ring-blue-100 ${props.className || ""}`} />
 }
 
 function Textarea(props: React.TextareaHTMLAttributes<HTMLTextAreaElement>) {
-  return <textarea {...props} className={`min-h-[100px] w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-950 outline-none placeholder:text-slate-400 focus:border-violet-700 focus:ring-4 focus:ring-violet-100 ${props.className || ""}`} />
+  return <textarea {...props} className={`min-h-[100px] w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-950 outline-none placeholder:text-slate-400 focus:border-blue-700 focus:ring-4 focus:ring-blue-100 ${props.className || ""}`} />
 }
 
 function Button(props: React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: "dark" | "primary" | "soft" | "danger" }) {
   const variant = props.variant || "dark"
   const variants = {
     dark: "bg-slate-950 text-white hover:bg-slate-800",
-    primary: "bg-violet-700 text-white hover:bg-violet-800",
+    primary: "bg-[#123f6e] text-white hover:bg-[#0d3158]",
     soft: "border border-slate-200 bg-white text-slate-800 hover:bg-slate-50",
     danger: "bg-rose-600 text-white hover:bg-rose-700",
   }
@@ -481,12 +463,12 @@ function statusTone(status: AppointmentStatus) {
 
 function pageTitle(mode: AppointmentPageMode) {
   const item = subpages.find((page) => page.mode === mode)
-  return item?.label || "Appointments"
+  return item?.label || "Rendez-vous"
 }
 
 function pageSubtitle(mode: AppointmentPageMode) {
   const item = subpages.find((page) => page.mode === mode)
-  return item?.desc || "Deep appointment execution layer."
+  return item?.desc || "Couche d’exécution complète des rendez-vous."
 }
 
 export default function RevenueAppointmentsV12MegaWorkspace({ mode = "dashboard" }: { mode?: AppointmentPageMode }) {
@@ -798,7 +780,7 @@ export default function RevenueAppointmentsV12MegaWorkspace({ mode = "dashboard"
 
   function addChecklistItem() {
     if (!selected || !newChecklistItem.trim()) return
-    updateAppointment(selected.id, { prepChecklist: [...selected.prepChecklist, newChecklistItem.trim()] }, "Checklist item added")
+    updateAppointment(selected.id, { prepChecklist: [...selected.prepChecklist, newChecklistItem.trim()] }, "Point de contrôle ajouté")
     setNewChecklistItem("")
   }
 
@@ -813,39 +795,39 @@ export default function RevenueAppointmentsV12MegaWorkspace({ mode = "dashboard"
   }))
 
   return (
-    <main className="rcc-shell-main w-full max-w-none min-w-0 flex-1 min-h-screen bg-violet-50/60 text-slate-950 selection:bg-violet-200 selection:text-slate-950">
+    <main className="rcc-shell-main w-full max-w-none min-w-0 flex-1 min-h-screen bg-[radial-gradient(circle_at_85%_-10%,rgba(70,143,202,.14),transparent_28%),linear-gradient(180deg,#f8fbfe_0%,#edf4f9_100%)] text-slate-950 selection:bg-blue-200 selection:text-slate-950">
       <div className="w-full max-w-none min-w-0 space-y-6 p-4 lg:p-8">
-        <section className="overflow-hidden rounded-[2.4rem] bg-gradient-to-br from-slate-950 via-violet-950 to-black p-7 text-white shadow-2xl lg:p-10">
+        <section className="overflow-hidden rounded-[2.4rem] border border-white/10 bg-[radial-gradient(circle_at_10%_0%,rgba(52,139,207,.35),transparent_35%),linear-gradient(135deg,#0a2342_0%,#07172d_65%,#061326_100%)] p-7 text-white shadow-2xl lg:p-10">
           <div className="grid gap-8 xl:grid-cols-[1.28fr_.72fr]">
             <div>
               <div className="flex flex-wrap gap-2">
-                <Pill tone="violet">Revenue Command</Pill>
-                <Pill tone="blue">Appointments V12 Mega</Pill>
+                <Pill tone="blue">ANGELCARE • Revenue Command OS</Pill>
+                <Pill tone="slate">Cycle rendez-vous 360°</Pill>
                 <Pill tone="amber">{pageTitle(mode)}</Pill>
               </div>
               <h1 className="mt-6 max-w-6xl text-4xl font-black leading-tight tracking-tight text-white md:text-6xl">
-                Appointments deep execution engine — conversion, field control, recovery and executive command.
+                Rendez-vous 360° — préparation, exécution, conversion, récupération et intervention exécutive.
               </h1>
               <p className="mt-5 max-w-5xl text-base font-semibold leading-8 text-violet-50/85 md:text-lg">
-                This is no longer a calendar. It is a full appointment operating system: scheduling, confirmation, preparation, live execution, no-show recovery, conversion control, field coordination, AI scoring, executive escalation and revenue protection.
+                Un poste de commandement complet pour planifier, confirmer, préparer, exécuter et convertir chaque rendez-vous, avec maîtrise des absences, coordination terrain, escalades et protection du revenu.
               </p>
               <div className="mt-7 flex flex-wrap gap-3">
-                <Button type="button" variant="primary" onClick={() => setCreateOpen(true)}>+ Schedule appointment</Button>
-                <Button type="button" onClick={() => selected && autoScore(selected.id)}>Auto-score selected</Button>
-                <Button type="button" variant="soft" onClick={restoreSeed}>Restore seed</Button>
-                <Link href="/revenue-command-center" className="rounded-2xl border border-white/20 bg-white/10 px-5 py-3 text-sm font-black text-white">← Revenue HQ</Link>
-                <Link href="/revenue-command-center/appointments/control-tower" className="rounded-2xl border border-white/20 bg-white/10 px-5 py-3 text-sm font-black text-white">Control Tower</Link>
+                <Button type="button" variant="primary" onClick={() => setCreateOpen(true)}>+ Planifier un rendez-vous</Button>
+                <Button type="button" onClick={() => selected && autoScore(selected.id)}>Évaluer la sélection</Button>
+                <Button type="button" variant="soft" onClick={restoreSeed}>Restaurer les données disponibles</Button>
+                <Link href="/revenue-command-center" className="rounded-2xl border border-white/20 bg-white/10 px-5 py-3 text-sm font-black text-white">← Poste de commandement</Link>
+                <Link href="/revenue-command-center/appointments/control-tower" className="rounded-2xl border border-white/20 bg-white/10 px-5 py-3 text-sm font-black text-white">Tour de contrôle</Link>
               </div>
             </div>
 
             <div className="grid gap-3 sm:grid-cols-2">
               {[
-                ["Today", stats.todayCount, "Appointments today"],
-                ["Unconfirmed", stats.unconfirmed, "Need confirmation"],
-                ["Value", mad(stats.value), "Revenue exposure"],
-                ["Risk", stats.risk, "At-risk appointments"],
-                ["Readiness", `${stats.avgReadiness}%`, "Avg readiness"],
-                ["Probability", `${stats.avgProbability}%`, "Avg conversion"],
+                ["Aujourd’hui", stats.todayCount, "Rendez-vous du jour"],
+                ["À confirmer", stats.unconfirmed, "Confirmation requise"],
+                ["Valeur", mad(stats.value), "Exposition revenu"],
+                ["Risque", stats.risk, "Rendez-vous à risque"],
+                ["Préparation", `${stats.avgReadiness}%`, "Préparation moyenne"],
+                ["Probabilité", `${stats.avgProbability}%`, "Conversion moyenne"],
               ].map(([k, v, d]) => (
                 <div key={String(k)} className="rounded-3xl bg-white/10 p-5 ring-1 ring-white/15">
                   <p className="text-xs font-black uppercase tracking-[0.2em] text-violet-100/70">{k}</p>
@@ -859,7 +841,7 @@ export default function RevenueAppointmentsV12MegaWorkspace({ mode = "dashboard"
 
         <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
           {subpages.map((page) => (
-            <Link key={page.href} href={page.href} className={`rounded-3xl border p-4 shadow-sm transition hover:-translate-y-1 hover:shadow-xl ${mode === page.mode ? "border-violet-400 bg-violet-100" : "border-slate-200 bg-white"}`}>
+            <Link key={page.href} href={page.href} className={`rounded-3xl border p-4 shadow-sm transition hover:-translate-y-1 hover:shadow-xl ${mode === page.mode ? "border-blue-300 bg-blue-50" : "border-slate-200 bg-white"}`}>
               <p className="text-sm font-black text-slate-950">{page.label}</p>
               <p className="mt-1 text-xs font-bold leading-5 text-slate-500">{page.desc}</p>
             </Link>
@@ -870,28 +852,28 @@ export default function RevenueAppointmentsV12MegaWorkspace({ mode = "dashboard"
           <Card>
             <div className="mb-4 flex items-start justify-between gap-3">
               <div>
-                <p className="text-xs font-black uppercase tracking-[0.25em] text-violet-700">Schedule</p>
-                <h2 className="mt-1 text-2xl font-black text-slate-950">Schedule full-control appointment</h2>
+                <p className="text-xs font-black uppercase tracking-[0.25em] text-violet-700">Planification</p>
+                <h2 className="mt-1 text-2xl font-black text-slate-950">Planifier un rendez-vous sous contrôle complet</h2>
               </div>
-              <Button type="button" variant="soft" onClick={() => setCreateOpen(false)}>Close</Button>
+              <Button type="button" variant="soft" onClick={() => setCreateOpen(false)}>Fermer</Button>
             </div>
             <form onSubmit={createAppointment} className="grid gap-4 xl:grid-cols-4">
-              <Input value={draft.title} onChange={(e) => setDraft({ ...draft, title: e.target.value })} placeholder="Appointment title" />
-              <Input value={draft.familyOrCompany} onChange={(e) => setDraft({ ...draft, familyOrCompany: e.target.value })} placeholder="Family / company" />
-              <Input value={draft.contactName} onChange={(e) => setDraft({ ...draft, contactName: e.target.value })} placeholder="Contact name" />
-              <Input value={draft.phone} onChange={(e) => setDraft({ ...draft, phone: e.target.value })} placeholder="Phone" />
-              <Input value={draft.city} onChange={(e) => setDraft({ ...draft, city: e.target.value })} placeholder="City" />
-              <Input value={draft.address} onChange={(e) => setDraft({ ...draft, address: e.target.value })} placeholder="Address / location" />
+              <Input value={draft.title} onChange={(e) => setDraft({ ...draft, title: e.target.value })} placeholder="Objet du rendez-vous" />
+              <Input value={draft.familyOrCompany} onChange={(e) => setDraft({ ...draft, familyOrCompany: e.target.value })} placeholder="Famille ou organisation" />
+              <Input value={draft.contactName} onChange={(e) => setDraft({ ...draft, contactName: e.target.value })} placeholder="Nom du contact" />
+              <Input value={draft.phone} onChange={(e) => setDraft({ ...draft, phone: e.target.value })} placeholder="Téléphone" />
+              <Input value={draft.city} onChange={(e) => setDraft({ ...draft, city: e.target.value })} placeholder="Ville" />
+              <Input value={draft.address} onChange={(e) => setDraft({ ...draft, address: e.target.value })} placeholder="Adresse ou lieu" />
               <Select value={draft.type} onChange={(e) => setDraft({ ...draft, type: e.target.value as AppointmentType })}>
                 {types.map((type) => <option key={type} value={type}>{label(type)}</option>)}
               </Select>
               <Select value={draft.mode} onChange={(e) => setDraft({ ...draft, mode: e.target.value as AppointmentMode })}>
                 {modes.map((item) => <option key={item} value={item}>{label(item)}</option>)}
               </Select>
-              <Input value={draft.owner} onChange={(e) => setDraft({ ...draft, owner: e.target.value })} placeholder="SDR / owner" />
+              <Input value={draft.owner} onChange={(e) => setDraft({ ...draft, owner: e.target.value })} placeholder="Responsable / SDR" />
               <Input value={draft.closer} onChange={(e) => setDraft({ ...draft, closer: e.target.value })} placeholder="Closer" />
-              <Input value={draft.fieldCoordinator} onChange={(e) => setDraft({ ...draft, fieldCoordinator: e.target.value })} placeholder="Field coordinator" />
-              <Input value={draft.specialist} onChange={(e) => setDraft({ ...draft, specialist: e.target.value })} placeholder="Specialist" />
+              <Input value={draft.fieldCoordinator} onChange={(e) => setDraft({ ...draft, fieldCoordinator: e.target.value })} placeholder="Coordinateur terrain" />
+              <Input value={draft.specialist} onChange={(e) => setDraft({ ...draft, specialist: e.target.value })} placeholder="Spécialiste" />
               <Select value={draft.status} onChange={(e) => setDraft({ ...draft, status: e.target.value as AppointmentStatus })}>
                 {statuses.map((status) => <option key={status} value={status}>{label(status)}</option>)}
               </Select>
@@ -900,22 +882,22 @@ export default function RevenueAppointmentsV12MegaWorkspace({ mode = "dashboard"
               </Select>
               <Input type="date" value={draft.date} onChange={(e) => setDraft({ ...draft, date: e.target.value })} />
               <Input type="time" value={draft.time} onChange={(e) => setDraft({ ...draft, time: e.target.value })} />
-              <Input type="number" value={draft.valueMad} onChange={(e) => setDraft({ ...draft, valueMad: Number(e.target.value) })} placeholder="Value MAD" />
-              <Input type="number" value={draft.probability} onChange={(e) => setDraft({ ...draft, probability: Number(e.target.value) })} placeholder="Conversion %" />
-              <Input type="number" value={draft.noShowRisk} onChange={(e) => setDraft({ ...draft, noShowRisk: Number(e.target.value) })} placeholder="No-show risk %" />
-              <Input type="number" value={draft.readinessScore} onChange={(e) => setDraft({ ...draft, readinessScore: Number(e.target.value) })} placeholder="Readiness %" />
-              <Input value={draft.decisionMaker} onChange={(e) => setDraft({ ...draft, decisionMaker: e.target.value })} placeholder="Decision maker" />
-              <Input value={draft.confirmationChannel} onChange={(e) => setDraft({ ...draft, confirmationChannel: e.target.value })} placeholder="Confirmation channel" />
+              <Input type="number" value={draft.valueMad} onChange={(e) => setDraft({ ...draft, valueMad: Number(e.target.value) })} placeholder="Valeur en Dh" />
+              <Input type="number" value={draft.probability} onChange={(e) => setDraft({ ...draft, probability: Number(e.target.value) })} placeholder="Probabilité de conversion %" />
+              <Input type="number" value={draft.noShowRisk} onChange={(e) => setDraft({ ...draft, noShowRisk: Number(e.target.value) })} placeholder="Risque d’absence %" />
+              <Input type="number" value={draft.readinessScore} onChange={(e) => setDraft({ ...draft, readinessScore: Number(e.target.value) })} placeholder="Niveau de préparation %" />
+              <Input value={draft.decisionMaker} onChange={(e) => setDraft({ ...draft, decisionMaker: e.target.value })} placeholder="Décideur" />
+              <Input value={draft.confirmationChannel} onChange={(e) => setDraft({ ...draft, confirmationChannel: e.target.value })} placeholder="Canal de confirmation" />
               <Input value={draft.source} onChange={(e) => setDraft({ ...draft, source: e.target.value })} placeholder="Source" />
               <label className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-800">
                 <input type="checkbox" checked={draft.decisionMakerPresent} onChange={(e) => setDraft({ ...draft, decisionMakerPresent: e.target.checked })} />
-                Decision maker present
+                Décideur présent
               </label>
-              <Textarea value={draft.meetingObjective} onChange={(e) => setDraft({ ...draft, meetingObjective: e.target.value })} placeholder="Meeting objective" className="xl:col-span-2" />
-              <Textarea value={draft.familyBriefing} onChange={(e) => setDraft({ ...draft, familyBriefing: e.target.value })} placeholder="Family/company briefing" className="xl:col-span-2" />
-              <Textarea value={draft.painPoints} onChange={(e) => setDraft({ ...draft, painPoints: e.target.value })} placeholder="Pain points" className="xl:col-span-2" />
-              <Textarea value={draft.predictedObjections} onChange={(e) => setDraft({ ...draft, predictedObjections: e.target.value })} placeholder="Predicted objections" className="xl:col-span-2" />
-              <Textarea value={draft.recommendedOffer} onChange={(e) => setDraft({ ...draft, recommendedOffer: e.target.value })} placeholder="Recommended offer" className="xl:col-span-2" />
+              <Textarea value={draft.meetingObjective} onChange={(e) => setDraft({ ...draft, meetingObjective: e.target.value })} placeholder="Objectif du rendez-vous" className="xl:col-span-2" />
+              <Textarea value={draft.familyBriefing} onChange={(e) => setDraft({ ...draft, familyBriefing: e.target.value })} placeholder="Brief famille / organisation" className="xl:col-span-2" />
+              <Textarea value={draft.painPoints} onChange={(e) => setDraft({ ...draft, painPoints: e.target.value })} placeholder="Enjeux et besoins" className="xl:col-span-2" />
+              <Textarea value={draft.predictedObjections} onChange={(e) => setDraft({ ...draft, predictedObjections: e.target.value })} placeholder="Objections anticipées" className="xl:col-span-2" />
+              <Textarea value={draft.recommendedOffer} onChange={(e) => setDraft({ ...draft, recommendedOffer: e.target.value })} placeholder="Offre recommandée" className="xl:col-span-2" />
               <Textarea value={draft.prepChecklist} onChange={(e) => setDraft({ ...draft, prepChecklist: e.target.value })} placeholder="Prep checklist, one per line" className="xl:col-span-2" />
               <Textarea value={draft.reminderPlan} onChange={(e) => setDraft({ ...draft, reminderPlan: e.target.value })} placeholder="Reminder plan" className="xl:col-span-2" />
               <Textarea value={draft.nextStep} onChange={(e) => setDraft({ ...draft, nextStep: e.target.value })} placeholder="Next step" className="xl:col-span-2" />
@@ -928,14 +910,14 @@ export default function RevenueAppointmentsV12MegaWorkspace({ mode = "dashboard"
           <div className="grid gap-4 lg:grid-cols-[1fr_.45fr_.35fr_.35fr]">
             <Input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search appointments, contact, owner, closer, objective..." />
             <Select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value as AppointmentStatus | "all")}>
-              <option value="all">All statuses</option>
+              <option value="all">Tous les statuts</option>
               {statuses.map((status) => <option key={status} value={status}>{label(status)}</option>)}
             </Select>
             <Select value={priorityFilter} onChange={(e) => setPriorityFilter(e.target.value as AppointmentPriority | "all")}>
-              <option value="all">All priorities</option>
+              <option value="all">Toutes les priorités</option>
               {priorities.map((priority) => <option key={priority} value={priority}>{label(priority)}</option>)}
             </Select>
-            <Button type="button" onClick={() => setCreateOpen(true)}>New appointment</Button>
+            <Button type="button" onClick={() => setCreateOpen(true)}>Nouveau rendez-vous</Button>
           </div>
         </Card>
 
@@ -999,8 +981,8 @@ export default function RevenueAppointmentsV12MegaWorkspace({ mode = "dashboard"
 
           <aside className="space-y-6">
             <Card className="bg-slate-950 text-white">
-              <p className="text-xs font-black uppercase tracking-[0.25em] text-violet-300">Selected appointment command room</p>
-              <h2 className="mt-2 text-3xl font-black text-white">{selected?.title || "No appointment selected"}</h2>
+              <p className="text-xs font-black uppercase tracking-[0.25em] text-violet-300">Salle de commandement du rendez-vous</p>
+              <h2 className="mt-2 text-3xl font-black text-white">{selected?.title || "Aucun rendez-vous sélectionné"}</h2>
 
               {selected ? (
                 <div className="mt-5 space-y-4">
@@ -1045,7 +1027,7 @@ export default function RevenueAppointmentsV12MegaWorkspace({ mode = "dashboard"
                         </button>
                       ))}
                       <div className="flex gap-2">
-                        <Input value={newChecklistItem} onChange={(e) => setNewChecklistItem(e.target.value)} placeholder="Add checklist item" />
+                        <Input value={newChecklistItem} onChange={(e) => setNewChecklistItem(e.target.value)} placeholder="Ajouter un point de contrôle" />
                         <Button type="button" variant="primary" onClick={addChecklistItem}>Add</Button>
                       </div>
                     </div>
@@ -1073,7 +1055,7 @@ export default function RevenueAppointmentsV12MegaWorkspace({ mode = "dashboard"
               ) : null}
             </Card>
 
-            <Panel title="Automation engine" subtitle="Operational watchdog rules for appointments.">
+            <Panel title="Moteur d’automatisation" subtitle="Operational watchdog rules for appointments.">
               <div className="space-y-3">
                 {store.automations.map((rule) => (
                   <button key={rule.id} type="button" onClick={() => toggleAutomation(rule.id)} className="block w-full rounded-2xl border border-slate-200 bg-slate-50 p-4 text-left">
@@ -1099,7 +1081,7 @@ export default function RevenueAppointmentsV12MegaWorkspace({ mode = "dashboard"
               ) : null}
             </Panel>
 
-            <Panel title="Activity stream" subtitle="Every command action is logged locally.">
+            <Panel title="Flux d’activité" subtitle="Every command action is logged locally.">
               <div className="space-y-2">
                 {store.logs.slice(0, 12).map((log) => (
                   <div key={log.id} className="rounded-2xl bg-slate-50 p-3">

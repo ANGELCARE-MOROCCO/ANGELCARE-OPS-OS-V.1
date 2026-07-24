@@ -1,23 +1,17 @@
-
-import AppShell, { PageAction } from '@/app/components/erp/AppShell'
+import AppShell from '@/app/components/erp/AppShell'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import { CommandRail, DarkRailCard, LightRailCard, Panel, ReviewRow, SecondaryAction, Services360Hero, Services360Nav, SourceBadge, styles } from '@/components/service-os/Services360UI'
 
-export default async function NewVariationPage({
-  params,
-}: {
-  params: Promise<{ id: string }>
-}) {
+export default async function NewVariationPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const serviceCode = `#${decodeURIComponent(id)}`
 
   async function createVariation(formData: FormData) {
     'use server'
-
     const { id } = await params
     const serviceCode = `#${decodeURIComponent(id)}`
     const supabase = await createClient()
-
     const payload = {
       service_code: serviceCode,
       name: String(formData.get('name') || ''),
@@ -35,124 +29,50 @@ export default async function NewVariationPage({
       available_cities: String(formData.get('available_cities') || ''),
       status: String(formData.get('status') || 'active'),
     }
-
     const { error } = await supabase.from('service_variations').insert([payload])
     if (error) throw new Error(error.message)
-
     redirect(`/services/${id}`)
   }
 
-  return (
-    <AppShell
-      title={`Nouvelle variation — ${serviceCode}`}
-      subtitle="Créer une variation commerciale et opérationnelle connectée à service_variations."
-      breadcrumbs={[
-        { label: 'Products & Services', href: '/services' },
-        { label: serviceCode, href: `/services/${id}` },
-        { label: 'Nouvelle variation' },
-      ]}
-      actions={<PageAction href={`/services/${id}`} variant="light">Retour</PageAction>}
-    >
-      <form action={createVariation} style={pageGridStyle}>
-        <section style={panelStyle}>
-          <div style={sectionHeaderStyle}>
-            <div style={eyebrowStyle}>Variation commerciale</div>
-            <h2 style={sectionTitleStyle}>Identité & positionnement</h2>
-            <p style={sectionTextStyle}>
-              Définissez une offre spécifique sous le code {serviceCode}. Exemple : Standard 3h Casablanca, Premium B2B, Mensuel école.
-            </p>
-          </div>
+  const nav = [{ label: 'Identité', href: '#identity' }, { label: 'Pricing', href: '#pricing' }, { label: 'Exécution', href: '#execution' }, { label: 'Revue', href: '#review' }]
 
-          <div style={gridStyle}>
-            <Field name="name" label="Nom de la variation" placeholder="Ex: H.S Standard 5h Casablanca" />
-            <Select name="client_type" label="Type client" options={['B2C', 'B2B', 'Institution', 'Event', 'Academy']} />
-            <Select name="pricing_model" label="Modèle tarifaire" options={['duration_city_pricing', 'package_pricing', 'premium_pricing', 'custom_pricing', 'monthly_pricing']} />
-            <Field name="base_price" label="Prix base MAD" type="number" placeholder="Ex: 350" />
-            <Select name="status" label="Statut" options={['active', 'inactive', 'pilot', 'seasonal']} />
-          </div>
-        </section>
-
-        <section style={panelStyle}>
-          <div style={sectionHeaderStyle}>
-            <div style={eyebrowStyle}>Pricing</div>
-            <h2 style={sectionTitleStyle}>Prix par durée et profil</h2>
-            <p style={sectionTextStyle}>Ces prix seront visibles directement dans la page catalogue du code service.</p>
-          </div>
-
-          <div style={gridStyle}>
-            <Field name="price_3h" label="Prix 3h MAD" type="number" />
-            <Field name="price_5h" label="Prix 5h MAD" type="number" />
-            <Field name="price_8h" label="Prix 8h MAD" type="number" />
-            <Field name="price_24h" label="Prix 24h MAD" type="number" />
-            <Field name="price_b2c" label="Prix B2C MAD" type="number" />
-            <Field name="price_b2b" label="Prix B2B MAD" type="number" />
-          </div>
-        </section>
-
-        <section style={panelStyle}>
-          <div style={sectionHeaderStyle}>
-            <div style={eyebrowStyle}>Exécution terrain</div>
-            <h2 style={sectionTitleStyle}>Staff, matériel et villes</h2>
-            <p style={sectionTextStyle}>Préparez la variation pour l’exploitation terrain et le matching caregiver.</p>
-          </div>
-
-          <div style={gridStyle}>
-            <Field name="required_staff" label="Staff requis" placeholder="Senior, spécialisée, newborn care..." />
-            <Field name="equipment" label="Matériel requis" placeholder="Kit bébé, jeux, supports éducatifs..." />
-            <Field name="available_cities" label="Villes disponibles" placeholder="Casablanca, Rabat, Kénitra..." />
-          </div>
-        </section>
-
-        <aside style={sidePanelStyle}>
-          <div style={sideBadgeStyle}>Service Variations</div>
-          <h3 style={sideTitleStyle}>Avant validation</h3>
-          <ul style={checklistStyle}>
-            <li>Le nom décrit clairement l’offre.</li>
-            <li>Le prix correspond au profil client.</li>
-            <li>Les durées sont cohérentes avec le terrain.</li>
-            <li>Le staff requis est exploitable par Ops.</li>
-            <li>Les villes disponibles sont claires.</li>
-          </ul>
-          <button type="submit" style={buttonStyle}>Créer la variation</button>
-        </aside>
+  return <AppShell title="Variation Configuration Studio" subtitle={serviceCode} breadcrumbs={[{ label: 'Services', href: '/services' }, { label: serviceCode, href: `/services/${id}` }, { label: 'Nouvelle variation' }]}>
+    <main className={styles.shell}>
+      <Services360Hero eyebrow="Service variation studio" title={`Create a market-ready variation for ${serviceCode}`} subtitle="Configure the commercial identity, price points, staff requirements, equipment and geographic availability using the existing service_variations insert contract." actions={<SecondaryAction href={`/services/${id}`}>Retour au service</SecondaryAction>} briefTitle="Variation provisioning" briefRows={[{ label: 'Service code', value: serviceCode }, { label: 'Destination', value: 'service_variations' }, { label: 'Status default', value: 'active' }, { label: 'Backend changes', value: 'None' }]} provenance={[{ label: 'Existing createVariation server action', tone: 'live' }]} />
+      <Services360Nav items={nav} />
+      <form action={createVariation} className={styles.grid2}>
+        <div style={{ display: 'grid', gap: 18 }}>
+          <Panel id="identity" eyebrow="01 · Variation identity" title="Commercial position" text="Name the offer and define the audience, pricing model and operational status.">
+            <div className={styles.formGrid}>
+              <Field label="Variation name" required><input className={styles.input} name="name" required /></Field>
+              <Field label="Client type"><select className={styles.select} name="client_type" defaultValue=""><option value="">Sélectionner</option><option>B2C</option><option>B2B</option><option>Institution</option><option>Event</option><option>Academy</option></select></Field>
+              <Field label="Pricing model"><select className={styles.select} name="pricing_model" defaultValue=""><option value="">Sélectionner</option><option value="duration_city_pricing">Duration + city</option><option value="package_pricing">Package</option><option value="premium_pricing">Premium</option><option value="custom_pricing">Custom</option><option value="monthly_pricing">Monthly</option></select></Field>
+              <Field label="Base price (Dh)"><input className={styles.input} name="base_price" type="number" min="0" /></Field>
+              <Field label="Status"><select className={styles.select} name="status" defaultValue="active"><option value="active">Active</option><option value="inactive">Inactive</option><option value="pilot">Pilot</option><option value="seasonal">Seasonal</option></select></Field>
+            </div>
+          </Panel>
+          <Panel id="pricing" eyebrow="02 · Pricing" title="Duration and client price points" text="All fields below map directly to the existing variation payload.">
+            <div className={styles.formGrid}>{[['price_3h','3h'],['price_5h','5h'],['price_8h','8h'],['price_24h','24h'],['price_b2c','B2C'],['price_b2b','B2B']].map(([name,label]) => <Field key={name} label={`${label} price (Dh)`}><input className={styles.input} name={name} type="number" min="0" /></Field>)}</div>
+          </Panel>
+          <Panel id="execution" eyebrow="03 · Operational design" title="Staff, equipment and cities" text="Describe the real field resources required by this variation.">
+            <div className={styles.formGrid}>
+              <Field label="Required staff"><input className={styles.input} name="required_staff" /></Field>
+              <Field label="Equipment"><input className={styles.input} name="equipment" /></Field>
+              <Field label="Available cities"><input className={styles.input} name="available_cities" placeholder="Rabat, Casablanca, Kénitra…" /></Field>
+            </div>
+          </Panel>
+          <Panel id="review" eyebrow="04 · Review" title="Create variation" text="Submission inserts one record and redirects to the current service dossier.">
+            <div className={styles.sourceStrip}><SourceBadge label="No architecture changes" tone="live" /><SourceBadge label="No new pricing logic" tone="live" /><SourceBadge label="Existing redirect preserved" tone="live" /></div>
+          </Panel>
+        </div>
+        <CommandRail>
+          <DarkRailCard title="Before provisioning" alerts={[{ title: 'Commercial clarity', text: 'The name and client type must be understandable to Sales.' }, { title: 'Pricing truth', text: 'Price points must reflect actual service delivery conditions.' }, { title: 'Operational readiness', text: 'Staff, equipment and coverage must be usable by Operations.' }]} />
+          <LightRailCard title="Persistence contract"><ReviewRow label="Table" value="service_variations" /><ReviewRow label="Service" value={serviceCode} /><ReviewRow label="Redirect" value={`/services/${id}`} /></LightRailCard>
+          <section className={styles.railCardLight}><button className={styles.primaryAction} style={{ width: '100%' }} type="submit">Créer la variation</button></section>
+        </CommandRail>
       </form>
-    </AppShell>
-  )
+    </main>
+  </AppShell>
 }
 
-function Field({ name, label, type = 'text', placeholder }: { name: string; label: string; type?: string; placeholder?: string }) {
-  return (
-    <label style={fieldStyle}>
-      <span style={labelStyle}>{label}</span>
-      <input name={name} type={type} placeholder={placeholder} style={inputStyle} />
-    </label>
-  )
-}
-
-function Select({ name, label, options }: { name: string; label: string; options: string[] }) {
-  return (
-    <label style={fieldStyle}>
-      <span style={labelStyle}>{label}</span>
-      <select name={name} style={inputStyle}>
-        <option value="">Sélectionner</option>
-        {options.map((option) => <option key={option} value={option}>{option}</option>)}
-      </select>
-    </label>
-  )
-}
-
-const pageGridStyle: React.CSSProperties = { display: 'grid', gridTemplateColumns: '1fr 340px', gap: 18, alignItems: 'start' }
-const panelStyle: React.CSSProperties = { background: '#fff', border: '1px solid #dbe3ee', borderRadius: 24, padding: 22, boxShadow: '0 18px 38px rgba(15,23,42,.06)', marginBottom: 18 }
-const sectionHeaderStyle: React.CSSProperties = { marginBottom: 18 }
-const eyebrowStyle: React.CSSProperties = { display: 'inline-flex', padding: '6px 10px', borderRadius: 999, background: '#eef2ff', color: '#3730a3', fontWeight: 950, fontSize: 12, marginBottom: 10 }
-const sectionTitleStyle: React.CSSProperties = { margin: 0, color: '#0f172a', fontSize: 22, fontWeight: 950 }
-const sectionTextStyle: React.CSSProperties = { margin: '8px 0 0', color: '#64748b', fontWeight: 650, lineHeight: 1.55 }
-const gridStyle: React.CSSProperties = { display: 'grid', gridTemplateColumns: 'repeat(3,minmax(0,1fr))', gap: 14 }
-const fieldStyle: React.CSSProperties = { display: 'grid', gap: 8 }
-const labelStyle: React.CSSProperties = { color: '#334155', fontWeight: 900, fontSize: 13 }
-const inputStyle: React.CSSProperties = { width: '100%', padding: '13px 14px', borderRadius: 12, border: '1px solid #cbd5e1', color: '#0f172a', boxSizing: 'border-box', background: '#fff' }
-const sidePanelStyle: React.CSSProperties = { position: 'sticky', top: 18, background: 'linear-gradient(180deg,#0f172a 0%,#1e293b 100%)', borderRadius: 24, padding: 22, color: '#fff', boxShadow: '0 24px 50px rgba(15,23,42,.22)' }
-const sideBadgeStyle: React.CSSProperties = { display: 'inline-flex', padding: '7px 11px', borderRadius: 999, background: 'rgba(255,255,255,.1)', color: '#dbeafe', fontWeight: 950, fontSize: 12, marginBottom: 14 }
-const sideTitleStyle: React.CSSProperties = { margin: '0 0 14px', fontSize: 22, fontWeight: 950 }
-const checklistStyle: React.CSSProperties = { display: 'grid', gap: 10, paddingLeft: 18, color: '#dbeafe', lineHeight: 1.55, fontWeight: 700, marginBottom: 22 }
-const buttonStyle: React.CSSProperties = { width: '100%', border: 'none', borderRadius: 14, background: '#fff', color: '#0f172a', padding: '14px 16px', fontWeight: 950, cursor: 'pointer' }
+function Field({ label, children, required = false }: { label: string; children: React.ReactNode; required?: boolean }) { return <label className={styles.field}><span className={styles.fieldLabel}>{label}{required ? ' *' : ''}</span>{children}</label> }

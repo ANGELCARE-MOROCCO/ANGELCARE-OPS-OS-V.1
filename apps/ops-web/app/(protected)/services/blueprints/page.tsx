@@ -1,23 +1,31 @@
 import AppShell from '@/app/components/erp/AppShell'
-import { ServiceOSHeader, ServiceOSPanel, ServiceOSKpi, StatusBadge } from '@/components/service-os/ServiceOSPrimitives'
-import { getServiceBlueprints, getServiceModules, getServiceRules, getCityDeployments, getServiceMissions, calculateServicePrice, recommendServiceForNeed } from '@/lib/service-os/engine'
+import { listServiceOSBlueprints, listServiceOSCityDeployments, listServiceOSModules, listServiceOSRules } from '@/lib/service-os/production/repository'
+import { CommandRail, DarkRailCard, Kpi, KpiGrid, LightRailCard, Panel, PrimaryAction, ReviewRow, ServiceCard, Services360Hero, Services360Nav, SourceBadge, styles } from '@/components/service-os/Services360UI'
 
-export default function Page() {
-  const blueprints = getServiceBlueprints()
-  const modules = getServiceModules()
-  const rules = getServiceRules()
-  const deployments = getCityDeployments()
-  const missions = getServiceMissions()
-  const samplePrice = calculateServicePrice({ blueprintCode: 'S.H', city: 'Rabat', urgent: true, night: true, specialNeeds: true, transport: true, hours: 5 })
-  const matches = recommendServiceForNeed('famille premium besoin special ecole domicile')
-  return (
-    <AppShell title="Blueprints" subtitle="ServiceOS enterprise layer" breadcrumbs={[{ label: 'Services', href: '/services' }, { label: 'Blueprints' }]}>
-      <ServiceOSHeader title="Blueprints" subtitle="Real synchronized Blueprints layer connected to shared AngelCare ServiceOS blueprints, rules, pricing, deployments and missions." />
-      <ServiceOSPanel>
-        <div className="mb-4">
-          <h2 className="text-xl font-black text-slate-950">Blueprint portfolio</h2>
-          <p className="mt-1 text-sm text-slate-600">Every AngelCare service becomes a configurable operating blueprint instead of a static card.</p>
-        </div><div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(280px,1fr))',gap:14}}>{blueprints.map((b)=><div key={b.code} style={{border:'1px solid #e2e8f0',borderRadius:20,padding:16,background:'#fff'}}><div style={{display:'flex',justifyContent:'space-between',gap:12}}><b>{b.code}</b><StatusBadge text={b.status}/></div><h3>{b.name}</h3><p style={{color:'#64748b'}}>{b.marketSegment}</p><p><b>Modules:</b> {(b.modules ?? []).length} • <b>Cities:</b> {(b.cities ?? []).join(', ')}</p><p><b>Workflow:</b> {(b.defaultWorkflow ?? []).slice(0, 4).join(' → ')}...</p></div>)}</div></ServiceOSPanel>
-    </AppShell>
-  )
+function money(value: unknown) { const amount = Number(value || 0); return `${Number.isFinite(amount) ? Math.round(amount).toLocaleString('fr-FR') : '0'} Dh` }
+
+export default async function Page() {
+  const [blueprints, modules, rules, deployments] = await Promise.all([listServiceOSBlueprints(), listServiceOSModules(), listServiceOSRules(), listServiceOSCityDeployments()])
+  const active = blueprints.filter((item) => item.status === 'active').length
+  const subscriptions = blueprints.filter((item) => item.subscriptionEligible).length
+  const institutional = blueprints.filter((item) => item.institutionalEligible).length
+  const avgMargin = blueprints.length ? Math.round(blueprints.reduce((sum, item) => sum + Number(item.marginTargetPct || 0), 0) / blueprints.length) : 0
+
+  return <AppShell title="Service Blueprint Portfolio" subtitle="Production ServiceOS architecture" breadcrumbs={[{ label: 'Services', href: '/services' }, { label: 'Blueprints' }]}>
+    <main className={styles.shell}>
+      <Services360Hero eyebrow="Production blueprint portfolio" title="The architecture behind every scalable AngelCare service." subtitle="Review configurable service lines, market position, modules, rules, cities, pricing, staff, documents, SLA and long-term horizon through the existing production repository with its safe fallback behavior clearly disclosed." actions={<PrimaryAction href="/services/blueprints/new">Créer un blueprint</PrimaryAction>} briefTitle="Architecture portfolio" briefRows={[{ label: 'Blueprints', value: blueprints.length }, { label: 'Active', value: active }, { label: 'Modules / rules', value: `${modules.length} / ${rules.length}` }, { label: 'Deployments', value: deployments.length }, { label: 'Average margin', value: `${avgMargin}%` }]} provenance={[{ label: 'Production repository with safe fallback', tone: 'configured' }, { label: 'Existing blueprint actions unchanged', tone: 'live' }]} />
+      <Services360Nav items={[{ label: 'Portfolio', href: '#portfolio' }, { label: 'Commercial', href: '#commercial' }, { label: 'Architecture health', href: '#health' }, { label: 'Services 360', href: '/services' }]} />
+      <KpiGrid><Kpi label="Blueprints" value={blueprints.length} helper={`${active} active`} /><Kpi label="Modules" value={modules.length} helper="Configurable operating blocks" /><Kpi label="Rules" value={rules.length} helper="Governance and pricing policies" /><Kpi label="Cities" value={deployments.length} helper="Deployment profiles" /><Kpi label="Subscriptions" value={subscriptions} helper="Eligible architectures" /><Kpi label="Institutional" value={institutional} helper="Institution-ready blueprints" /></KpiGrid>
+      <div className={styles.grid2}>
+        <div style={{ display: 'grid', gap: 18 }}>
+          <Panel id="portfolio" eyebrow="Blueprint portfolio" title="Production architecture records" text="Every card opens the existing blueprint edit route and keeps the current persistence contract intact.">
+            <div className={styles.gridAuto}>{blueprints.map((bp) => <ServiceCard key={bp.id} code={bp.code} title={bp.title} text={bp.description || bp.commercialTitle} status={<SourceBadge label={bp.status} tone={bp.status === 'active' ? 'live' : bp.status === 'retired' ? 'unavailable' : 'configured'} />} pills={[{ label: bp.family }, { label: `${bp.modules.length} modules`, tone: bp.modules.length ? 'good' : 'warn' }, { label: `${bp.rules.length} rules`, tone: bp.rules.length ? 'good' : 'warn' }]} stats={[{ label: 'Base price', value: money(bp.basePriceMad) }, { label: 'Margin', value: `${bp.marginTargetPct}%` }, { label: 'Cities', value: bp.cities.length }]} href={`/services/blueprints/${encodeURIComponent(bp.id)}/edit`} footer={bp.createdForHorizon} />)}</div>
+          </Panel>
+          <Panel id="commercial" eyebrow="Commercial architecture" title="Eligibility and market posture" text="Eligibility remains a blueprint property and is not presented as a separate billing or contract engine."><div className={styles.grid3}><article className={styles.card}><div className={styles.cardCode}>SUBSCRIPTIONS</div><h4 className={styles.cardTitle}>{subscriptions} eligible</h4><div className={styles.cardText}>Blueprints configured for recurring commercial packaging.</div></article><article className={styles.card}><div className={styles.cardCode}>INSTITUTIONAL</div><h4 className={styles.cardTitle}>{institutional} eligible</h4><div className={styles.cardText}>Blueprints configured for schools, hotels or institutional relationships.</div></article><article className={styles.card}><div className={styles.cardCode}>MARGIN</div><h4 className={styles.cardTitle}>{avgMargin}% average target</h4><div className={styles.cardText}>Planning target, not realized accounting margin.</div></article></div></Panel>
+          <Panel id="health" eyebrow="Architecture integrity" title="Configuration health" text="Read-only observations do not mutate the production repository."><div className={styles.grid4}><article className={styles.card}><div className={styles.cardCode}>MODULE GAPS</div><h4 className={styles.cardTitle}>{blueprints.filter((bp) => !bp.modules.length).length}</h4><div className={styles.cardText}>Blueprints without configured modules.</div></article><article className={styles.card}><div className={styles.cardCode}>RULE GAPS</div><h4 className={styles.cardTitle}>{blueprints.filter((bp) => !bp.rules.length).length}</h4><div className={styles.cardText}>Blueprints without configured rules.</div></article><article className={styles.card}><div className={styles.cardCode}>CITY GAPS</div><h4 className={styles.cardTitle}>{blueprints.filter((bp) => !bp.cities.length).length}</h4><div className={styles.cardText}>Blueprints without city scope.</div></article><article className={styles.card}><div className={styles.cardCode}>DOCUMENT GAPS</div><h4 className={styles.cardTitle}>{blueprints.filter((bp) => !bp.requiredDocuments.length).length}</h4><div className={styles.cardText}>Blueprints without required documents.</div></article></div></Panel>
+        </div>
+        <CommandRail><DarkRailCard title="Blueprint governance" alerts={[{ title: 'Repository provenance', text: 'The current production repository can return seeded fallback records when Supabase is unavailable.' }, { title: 'Configuration is not verification', text: 'Documents, staffing and city scope remain requirements until operational systems confirm them.' }, { title: 'Human approval', text: 'Editing a blueprint changes configuration only through the existing save action.' }]} /><LightRailCard title="Portfolio summary"><ReviewRow label="Active" value={active} /><ReviewRow label="Subscriptions" value={subscriptions} /><ReviewRow label="Institutional" value={institutional} /><ReviewRow label="Avg. margin" value={`${avgMargin}%`} /></LightRailCard></CommandRail>
+      </div>
+    </main>
+  </AppShell>
 }

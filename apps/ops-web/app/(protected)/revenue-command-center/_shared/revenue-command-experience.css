@@ -1,0 +1,48 @@
+[data-revenue-command-experience="premium-v1"] {
+  min-height: 100vh;
+  font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+[data-revenue-command-experience="premium-v1"] ::selection {
+  color: #071a31;
+  background: rgba(95, 179, 235, 0.3);
+}
+
+[data-revenue-command-experience="premium-v1"] :where(a, button, input, select, textarea, [role="button"]):focus-visible {
+  outline: 3px solid rgba(36, 119, 198, 0.35);
+  outline-offset: 2px;
+}
+
+[data-revenue-command-experience="premium-v1"] :where(button, input, select, textarea) {
+  font: inherit;
+}
+
+[data-revenue-command-experience="premium-v1"] :where(button:disabled, [aria-disabled="true"]) {
+  cursor: not-allowed;
+  opacity: 0.58;
+}
+
+[data-revenue-command-experience="premium-v1"] :where(a, button) {
+  -webkit-tap-highlight-color: transparent;
+}
+
+[data-revenue-command-experience="premium-v1"] :where([role="dialog"]) {
+  isolation: isolate;
+}
+
+[data-revenue-command-experience="premium-v1"] :where(table) {
+  font-variant-numeric: tabular-nums;
+}
+
+[data-revenue-command-experience="premium-v1"] :where(input, select, textarea) {
+  caret-color: #175fa7;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-revenue-command-experience="premium-v1"],
+  [data-revenue-command-experience="premium-v1"] * {
+    scroll-behavior: auto !important;
+  }
+}

@@ -1,0 +1,22 @@
+ANGELCARE REVENUE COMMAND CENTER — EXCELLENCE v1
+
+OPTION A — Extract and merge
+1. Place this ZIP in the ANGELCARE platform repository root.
+2. Extract it there and allow the included apps/ and docs/ paths to merge.
+3. Run:
+   cd apps/ops-web
+   node scripts/verify-revenue-command-center-uiux-excellence.mjs
+
+OPTION B — Unified patch
+1. Copy ANGELCARE_REVENUE_COMMAND_CENTER_EXCELLENCE_v1.patch to the repository root.
+2. Run:
+   patch -p1 < ANGELCARE_REVENUE_COMMAND_CENTER_EXCELLENCE_v1.patch
+3. Verify using the command above.
+
+Expected verifier result:
+93 checks passed. No contract violation detected by the static acceptance gate.
+
+Scope statement:
+139 route experiences are directly or transitively transformed.
+All 151 Revenue Command Center routes receive the protected premium foundation.
+12 routes are transparently listed in the report as global-foundation-only and are not falsely claimed as individually rebuilt.

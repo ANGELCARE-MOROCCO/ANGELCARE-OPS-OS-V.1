@@ -1,194 +1,72 @@
-import AppShell, { PageAction } from '@/app/components/erp/AppShell'
-import { ERPPanel, MetricCard, StatusPill } from '@/app/components/erp/ERPPrimitives'
+import Link from 'next/link'
+import AppShell from '@/app/components/erp/AppShell'
 import { createClient } from '@/lib/supabase/server'
 import { redirect, notFound } from 'next/navigation'
+import { CommandRail, DarkRailCard, EmptyState, Kpi, KpiGrid, LightRailCard, MiniStat, Panel, ReviewRow, SecondaryAction, Services360Hero, Services360Nav, SourceBadge, StatPill, styles } from '@/components/service-os/Services360UI'
 
-export default async function ServicePricingPage({ params }: { params: { id: string } }) {
+function text(value: unknown, fallback = 'Non défini') { return typeof value === 'string' && value.trim() ? value : fallback }
+function number(value: unknown, fallback = 0) { const parsed = Number(value); return Number.isFinite(parsed) ? parsed : fallback }
+function money(value: unknown) { return `${Math.round(number(value)).toLocaleString('fr-FR')} Dh` }
+
+export default async function ServicePricingPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   const supabase = await createClient()
-
-  const { data: service } = await supabase
-    .from('service_catalog')
-    .select('*')
-    .eq('id', params.id)
-    .single()
-
+  const { data: service } = await supabase.from('service_catalog').select('*').eq('id', id).single()
   if (!service) return notFound()
-
-  const { data: rules } = await supabase
-    .from('service_pricing_rules')
-    .select('*')
-    .eq('service_id', service.id)
-    .order('created_at', { ascending: false })
+  const { data: rules, error: rulesError } = await supabase.from('service_pricing_rules').select('*').eq('service_id', service.id).order('created_at', { ascending: false })
 
   async function addPricingRule(formData: FormData) {
     'use server'
-
     const supabase = await createClient()
-
     const payload = {
-      service_id: Number(params.id),
-      duration: String(formData.get('duration') || ''),
-      city: String(formData.get('city') || ''),
-      region: String(formData.get('region') || ''),
-      client_type: String(formData.get('client_type') || ''),
-      skill_level: String(formData.get('skill_level') || ''),
-      price: Number(formData.get('price') || 0),
-      notes: String(formData.get('notes') || ''),
-      status: String(formData.get('status') || 'active'),
+      service_id: Number(id), duration: String(formData.get('duration') || ''), city: String(formData.get('city') || ''), region: String(formData.get('region') || ''), client_type: String(formData.get('client_type') || ''), skill_level: String(formData.get('skill_level') || ''), price: Number(formData.get('price') || 0), notes: String(formData.get('notes') || ''), status: String(formData.get('status') || 'active'),
     }
-
     const { error } = await supabase.from('service_pricing_rules').insert([payload])
     if (error) throw new Error(error.message)
-
-    redirect(`/services/${params.id}/pricing`)
+    redirect(`/services/${id}/pricing`)
   }
 
-  const pricingRules = rules || []
-  const activeRules = pricingRules.filter((r: any) => r.status !== 'inactive').length
-  const b2cRules = pricingRules.filter((r: any) => r.client_type === 'B2C').length
-  const b2bRules = pricingRules.filter((r: any) => r.client_type === 'B2B').length
+  const pricingRules: any[] = rules || []
+  const explicitPriceRules = pricingRules.filter((rule) => 'price' in rule || 'duration' in rule || 'city' in rule)
+  const modifierRules = pricingRules.filter((rule) => 'modifier' in rule || 'condition' in rule)
+  const activeRules = pricingRules.filter((rule) => text(rule.status, 'active').toLowerCase() !== 'inactive' && rule.active !== false).length
+  const b2cRules = pricingRules.filter((rule) => text(rule.client_type).toUpperCase() === 'B2C').length
+  const b2bRules = pricingRules.filter((rule) => text(rule.client_type).toUpperCase() === 'B2B').length
+  const prices = explicitPriceRules.map((rule) => number(rule.price)).filter((value) => value > 0)
+  const minPrice = prices.length ? Math.min(...prices) : number(service.base_price)
+  const maxPrice = prices.length ? Math.max(...prices) : number(service.base_price)
+  const schemaMode = explicitPriceRules.length ? 'Explicit pricing records' : modifierRules.length ? 'Condition / modifier rules' : 'No pricing rules'
 
-  return (
-    <AppShell
-      title={`Pricing Engine — ${service.service_name}`}
-      subtitle="Gestion des prix par durée, ville, région, type client, niveau de compétence et conditions opérationnelles."
-      breadcrumbs={[
-        { label: 'Services', href: '/services' },
-        { label: service.service_name, href: `/services/${service.id}` },
-        { label: 'Pricing' },
-      ]}
-      actions={
-        <>
-          <PageAction href={`/services/${service.id}`} variant="light">Retour service</PageAction>
-          <PageAction href="/services" variant="light">Catalogue</PageAction>
-        </>
-      }
-    >
-      <section style={metricGridStyle}>
-        <MetricCard label="Règles tarifaires" value={pricingRules.length} sub="variations configurées" icon="💰" />
-        <MetricCard label="Actives" value={activeRules} sub="utilisables en vente" icon="✅" accent="#166534" />
-        <MetricCard label="B2C" value={b2cRules} sub="familles / particuliers" icon="👨‍👩‍👧" accent="#1d4ed8" />
-        <MetricCard label="B2B" value={b2bRules} sub="écoles / institutions" icon="🏫" accent="#7c3aed" />
-      </section>
+  const nav = [{ label: 'Vue consolidée', href: '#overview' }, { label: 'Ajouter une règle', href: '#create' }, { label: 'Matrice', href: '#matrix' }, { label: 'Observations', href: '#quality' }]
 
-      <section style={mainGridStyle}>
-        <ERPPanel
-          title="Ajouter une variation tarifaire"
-          subtitle="Crée une règle selon la durée, la ville, la région, le type client et le niveau requis."
-        >
-          <form action={addPricingRule} style={formGridStyle}>
-            <FieldSelect name="duration" label="Durée" options={['3h', '5h', '6h', '8h', '10h', '12h', '24h', 'Mensuel', 'Sur mesure']} />
-            <FieldSelect name="city" label="Ville" options={['Casablanca', 'Rabat', 'Kénitra', 'Témara', 'Salé', 'Mohammedia', 'Autre']} />
-            <Field name="region" label="Zone / Région" placeholder="Ex: Maarif, Agdal, Hay Riad..." />
-
-            <FieldSelect name="client_type" label="Type client" options={['B2C', 'B2B', 'Institution', 'Academy', 'Event']} />
-            <FieldSelect name="skill_level" label="Niveau requis" options={['Standard', 'Premium', 'Expert', 'Special needs', 'Newborn care', 'School support']} />
-            <Field name="price" label="Prix MAD" type="number" placeholder="Ex: 350" />
-
-            <FieldSelect name="status" label="Statut" options={['active', 'inactive', 'pilot', 'seasonal']} />
-
-            <label style={{ ...fieldStyle, gridColumn: '1 / -1' }}>
-              <span style={labelStyle}>Notes internes</span>
-              <textarea
-                name="notes"
-                placeholder="Ex: prix valable uniquement pour Casablanca centre, transport non inclus, caregiver experte obligatoire..."
-                style={textareaStyle}
-              />
-            </label>
-
-            <div style={{ gridColumn: '1 / -1' }}>
-              <button style={buttonStyle}>Ajouter la règle tarifaire</button>
-            </div>
-          </form>
-        </ERPPanel>
-
-        <aside style={sidePanelStyle}>
-          <div style={sideBadgeStyle}>Pricing Logic</div>
-          <h3 style={sideTitleStyle}>Utilisation future</h3>
-          <p style={sideTextStyle}>
-            Ces règles serviront ensuite à alimenter les devis, contrats, missions, packages, factures et propositions commerciales.
-          </p>
-          <ul style={sideListStyle}>
-            <li>Prix par ville</li>
-            <li>Prix par durée</li>
-            <li>Prix B2C / B2B</li>
-            <li>Prix selon compétence caregiver</li>
-            <li>Prix package / mensuel</li>
-          </ul>
-        </aside>
-      </section>
-
-      <ERPPanel title="Matrice tarifaire" subtitle="Liste des variations actuellement configurées pour ce service.">
-        <div style={rulesGridStyle}>
-          {pricingRules.length === 0 ? (
-            <div style={emptyStyle}>Aucune règle tarifaire pour le moment.</div>
-          ) : (
-            pricingRules.map((rule: any) => (
-              <div key={rule.id} style={ruleCardStyle}>
-                <div style={ruleTopStyle}>
-                  <strong style={priceStyle}>{rule.price || 0} MAD</strong>
-                  <StatusPill tone={rule.status === 'inactive' ? 'red' : 'green'}>{rule.status || 'active'}</StatusPill>
-                </div>
-
-                <div style={ruleTitleStyle}>
-                  {rule.duration || 'Durée libre'} • {rule.city || 'Ville libre'}
-                </div>
-
-                <div style={ruleMetaStyle}>
-                  {rule.region || 'Zone non définie'} • {rule.client_type || 'Client libre'} • {rule.skill_level || 'Niveau standard'}
-                </div>
-
-                {rule.notes ? <p style={ruleNotesStyle}>{rule.notes}</p> : null}
-              </div>
-            ))
-          )}
+  return <AppShell title="Service Pricing Control Studio" subtitle={text(service.service_name)} breadcrumbs={[{ label: 'Services', href: '/services' }, { label: text(service.service_name), href: `/services/${String(service.service_code || '').replace(/^#/, '')}` }, { label: 'Pricing' }]}>
+    <main className={styles.shell}>
+      <Services360Hero eyebrow="Service pricing studio" title={`Pricing architecture for ${text(service.service_name)}`} subtitle="Govern duration, city, region, client and skill-level pricing using the existing service_pricing_rules action. The interface also identifies which rule shape the live records currently expose." actions={<><SecondaryAction href={`/services/${String(service.service_code || '').replace(/^#/, '')}`}>Retour service</SecondaryAction><SecondaryAction href="/services/pricing-engine">Simulation Engine</SecondaryAction></>} briefTitle="Pricing control" briefRows={[{ label: 'Rules', value: pricingRules.length }, { label: 'Active', value: activeRules }, { label: 'Visible range', value: minPrice ? `${money(minPrice)}${maxPrice > minPrice ? ` → ${money(maxPrice)}` : ''}` : 'À définir' }, { label: 'Schema shape', value: schemaMode }]} provenance={[{ label: rulesError ? 'Pricing rules unavailable' : 'Live service_pricing_rules', tone: rulesError ? 'unavailable' : 'live' }, { label: 'Existing addPricingRule action', tone: 'live' }]} />
+      <Services360Nav items={nav} />
+      <KpiGrid><Kpi label="Rules" value={pricingRules.length} helper={schemaMode} /><Kpi label="Active" value={activeRules} helper="Available outside inactive state" /><Kpi label="B2C" value={b2cRules} helper="Family / individual context" /><Kpi label="B2B" value={b2bRules} helper="Institutional context" /><Kpi label="Minimum" value={minPrice ? money(minPrice) : '—'} helper="Loaded explicit prices" /><Kpi label="Maximum" value={maxPrice ? money(maxPrice) : '—'} helper="Loaded explicit prices" /></KpiGrid>
+      <div className={styles.grid2}>
+        <div style={{ display: 'grid', gap: 18 }}>
+          <Panel id="overview" eyebrow="Pricing passport" title="Current service price posture" text="Read-only summary of the service record and loaded pricing rules."><div className={styles.grid4}><MiniStat label="Base price" value={number(service.base_price) ? money(service.base_price) : 'À définir'} /><MiniStat label="Explicit records" value={explicitPriceRules.length} /><MiniStat label="Modifier rules" value={modifierRules.length} /><MiniStat label="Data source" value={rulesError ? 'Partial' : 'Loaded'} /></div><div className={styles.sourceStrip}><SourceBadge label={schemaMode} tone={modifierRules.length && !explicitPriceRules.length ? 'legacy' : 'live'} /><StatPill tone={prices.length ? 'good' : 'warn'}>{prices.length ? `${prices.length} visible price points` : 'No explicit price point'}</StatPill></div></Panel>
+          <Panel id="create" eyebrow="Create pricing record" title="Add an explicit pricing rule" text="The fields and payload remain exactly aligned with the existing server action."><form action={addPricingRule} className={styles.formGrid}>
+            <Field label="Duration"><select className={styles.select} name="duration" defaultValue=""><option value="">Sélectionner</option>{['3h','5h','6h','8h','10h','12h','24h','Mensuel','Sur mesure'].map((item) => <option key={item}>{item}</option>)}</select></Field>
+            <Field label="City"><select className={styles.select} name="city" defaultValue=""><option value="">Sélectionner</option>{['Casablanca','Rabat','Kénitra','Témara','Salé','Mohammedia','Autre'].map((item) => <option key={item}>{item}</option>)}</select></Field>
+            <Field label="Region / zone"><input className={styles.input} name="region" placeholder="Agdal, Hay Riad, Maarif…" /></Field>
+            <Field label="Client type"><select className={styles.select} name="client_type" defaultValue=""><option value="">Sélectionner</option>{['B2C','B2B','Institution','Academy','Event'].map((item) => <option key={item}>{item}</option>)}</select></Field>
+            <Field label="Skill level"><select className={styles.select} name="skill_level" defaultValue=""><option value="">Sélectionner</option>{['Standard','Premium','Expert','Special needs','Newborn care','School support'].map((item) => <option key={item}>{item}</option>)}</select></Field>
+            <Field label="Price (Dh)"><input className={styles.input} name="price" type="number" min="0" /></Field>
+            <Field label="Status"><select className={styles.select} name="status" defaultValue="active"><option value="active">Active</option><option value="inactive">Inactive</option><option value="pilot">Pilot</option><option value="seasonal">Seasonal</option></select></Field>
+            <label className={styles.field} style={{ gridColumn: '1 / -1' }}><span className={styles.fieldLabel}>Internal notes</span><textarea className={styles.textarea} name="notes" /></label>
+            <button className={styles.primaryAction} type="submit">Ajouter la règle tarifaire</button>
+          </form></Panel>
+          <Panel id="matrix" eyebrow="Pricing matrix" title="Loaded pricing rules" text="The primary view adapts to both explicit price records and condition/modifier-shaped records without changing either schema.">
+            {!pricingRules.length ? <EmptyState title="Aucune règle tarifaire" text="No pricing rule is currently visible for this service." /> : <div className={styles.gridAuto}>{pricingRules.map((rule, index) => <article className={styles.card} key={rule.id || index}><div className={styles.cardTop}><div><div className={styles.cardCode}>{text(rule.duration || rule.rule_name, `RULE-${index + 1}`)}</div><h4 className={styles.cardTitle}>{'price' in rule ? money(rule.price) : text(rule.rule_name || rule.name, 'Modifier rule')}</h4></div><SourceBadge label={text(rule.status, rule.active === false ? 'inactive' : 'active')} tone={rule.status === 'inactive' || rule.active === false ? 'unavailable' : 'live'} /></div><div className={styles.cardText}>{'price' in rule ? `${text(rule.city, 'Any city')} · ${text(rule.region, 'Any region')} · ${text(rule.client_type, 'Any client')} · ${text(rule.skill_level, 'Standard skill')}` : `${text(rule.condition, 'Condition not visible')} · modifier ${text(rule.modifier, 'not visible')}`}</div>{rule.notes ? <div className={styles.pills}><StatPill>{String(rule.notes)}</StatPill></div> : null}</article>)}</div>}
+          </Panel>
+          <Panel id="quality" eyebrow="Data-quality observations" title="Pricing integrity" text="Observations are advisory and do not mutate the service or pricing records."><div className={styles.grid4}><MiniStat label="No explicit price" value={!prices.length ? 'Attention' : 'OK'} /><MiniStat label="Inactive rules" value={pricingRules.length - activeRules} /><MiniStat label="B2C / B2B" value={`${b2cRules}/${b2bRules}`} /><MiniStat label="Schema mode" value={schemaMode} /></div></Panel>
         </div>
-      </ERPPanel>
-    </AppShell>
-  )
+        <CommandRail><DarkRailCard title="Pricing governance" alerts={[{ title: 'Schema truth', text: `Loaded records currently indicate: ${schemaMode}.` }, { title: 'Commercial integrity', text: 'This page does not claim tax, discount, credit-note or accounting approval features.' }, { title: 'Cross-module safety', text: 'Saving a rule does not rewrite contracts, orders, missions or invoices.' }]} /><LightRailCard title="Service context"><ReviewRow label="Service" value={text(service.service_code)} /><ReviewRow label="Base price" value={money(service.base_price)} /><ReviewRow label="Pricing model" value={text(service.pricing_model)} /><ReviewRow label="Rules" value={pricingRules.length} /></LightRailCard><LightRailCard title="Navigation"><ReviewRow label="Service dossier" value={<Link className={styles.textLink} href={`/services/${String(service.service_code || '').replace(/^#/, '')}`}>Open</Link>} /><ReviewRow label="Global engine" value={<Link className={styles.textLink} href="/services/pricing-engine">Open</Link>} /></LightRailCard></CommandRail>
+      </div>
+    </main>
+  </AppShell>
 }
 
-function Field({ name, label, type = 'text', placeholder }: { name: string; label: string; type?: string; placeholder?: string }) {
-  return (
-    <label style={fieldStyle}>
-      <span style={labelStyle}>{label}</span>
-      <input name={name} type={type} placeholder={placeholder} style={inputStyle} />
-    </label>
-  )
-}
-
-function FieldSelect({ name, label, options }: { name: string; label: string; options: string[] }) {
-  return (
-    <label style={fieldStyle}>
-      <span style={labelStyle}>{label}</span>
-      <select name={name} style={inputStyle}>
-        <option value="">Sélectionner</option>
-        {options.map((option) => (
-          <option key={option} value={option}>{option}</option>
-        ))}
-      </select>
-    </label>
-  )
-}
-
-const metricGridStyle: React.CSSProperties = { display: 'grid', gridTemplateColumns: 'repeat(4,minmax(0,1fr))', gap: 14, marginBottom: 18 }
-const mainGridStyle: React.CSSProperties = { display: 'grid', gridTemplateColumns: '1fr 340px', gap: 18, alignItems: 'start', marginBottom: 18 }
-const formGridStyle: React.CSSProperties = { display: 'grid', gridTemplateColumns: 'repeat(3,minmax(0,1fr))', gap: 14 }
-const fieldStyle: React.CSSProperties = { display: 'grid', gap: 8 }
-const labelStyle: React.CSSProperties = { color: '#334155', fontWeight: 900, fontSize: 13 }
-const inputStyle: React.CSSProperties = { width: '100%', padding: '13px 14px', borderRadius: 12, border: '1px solid #cbd5e1', color: '#0f172a', boxSizing: 'border-box', background: '#fff' }
-const textareaStyle: React.CSSProperties = { ...inputStyle, minHeight: 110, resize: 'vertical', fontFamily: 'inherit' }
-const buttonStyle: React.CSSProperties = { border: 'none', borderRadius: 14, background: '#0f172a', color: '#fff', padding: '13px 16px', fontWeight: 950, cursor: 'pointer' }
-const sidePanelStyle: React.CSSProperties = { position: 'sticky', top: 18, background: 'linear-gradient(180deg,#0f172a 0%,#1e293b 100%)', borderRadius: 24, padding: 22, color: '#fff', boxShadow: '0 24px 50px rgba(15,23,42,.22)' }
-const sideBadgeStyle: React.CSSProperties = { display: 'inline-flex', padding: '7px 11px', borderRadius: 999, background: 'rgba(255,255,255,.1)', color: '#dbeafe', fontWeight: 950, fontSize: 12, marginBottom: 14 }
-const sideTitleStyle: React.CSSProperties = { margin: '0 0 14px', fontSize: 22, fontWeight: 950 }
-const sideTextStyle: React.CSSProperties = { color: '#dbeafe', lineHeight: 1.6, fontWeight: 650 }
-const sideListStyle: React.CSSProperties = { display: 'grid', gap: 10, paddingLeft: 18, color: '#dbeafe', fontWeight: 750 }
-const rulesGridStyle: React.CSSProperties = { display: 'grid', gridTemplateColumns: 'repeat(3,minmax(0,1fr))', gap: 14 }
-const ruleCardStyle: React.CSSProperties = { border: '1px solid #e2e8f0', borderRadius: 18, padding: 16, background: 'linear-gradient(180deg,#fff 0%,#f8fafc 100%)' }
-const ruleTopStyle: React.CSSProperties = { display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, marginBottom: 10 }
-const priceStyle: React.CSSProperties = { color: '#0f172a', fontSize: 24, fontWeight: 950 }
-const ruleTitleStyle: React.CSSProperties = { color: '#0f172a', fontWeight: 950, marginBottom: 7 }
-const ruleMetaStyle: React.CSSProperties = { color: '#64748b', fontWeight: 700, lineHeight: 1.5 }
-const ruleNotesStyle: React.CSSProperties = { margin: '12px 0 0', color: '#475569', lineHeight: 1.55, fontWeight: 650 }
-const emptyStyle: React.CSSProperties = { gridColumn: '1 / -1', padding: 22, borderRadius: 18, background: '#f8fafc', border: '1px dashed #cbd5e1', color: '#64748b', fontWeight: 800 }
+function Field({ label, children }: { label: string; children: React.ReactNode }) { return <label className={styles.field}><span className={styles.fieldLabel}>{label}</span>{children}</label> }

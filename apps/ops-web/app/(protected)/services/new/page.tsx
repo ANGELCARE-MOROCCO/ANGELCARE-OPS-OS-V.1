@@ -1,26 +1,27 @@
-import AppShell, { PageAction } from '@/app/components/erp/AppShell'
+import AppShell from '@/app/components/erp/AppShell'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import {
+  CommandRail,
+  DarkRailCard,
+  LightRailCard,
+  Panel,
+  ReviewRow,
+  SecondaryAction,
+  Services360Hero,
+  Services360Nav,
+  SourceBadge,
+  styles,
+} from '@/components/service-os/Services360UI'
 
 const serviceCodes = [
-  ['#H.S', "Garde et accompagnement d'enfants à domicile"],
-  ['#S.K', "Garde enfant spécial à domicile"],
-  ['#S.H', "Garde enfant spécial hybride"],
-  ['#A.B', 'Animation anniversaire'],
-  ['#P.P', 'Bébé post accouchement'],
-  ['#E.X', 'Excursion'],
-  ['#S.S', "Enfant spécial à l’école"],
-  ['#S.L', 'Animation ludique avancée'],
-  ['#K.P', 'Animation fêtes'],
-  ['#A.A', 'AngelCare Academy'],
+  ['#H.S', "Garde et accompagnement d'enfants à domicile"], ['#S.K', 'Garde enfant spécial à domicile'], ['#S.H', 'Garde enfant spécial hybride'], ['#A.B', 'Animation anniversaire'], ['#P.P', 'Bébé post accouchement'], ['#E.X', 'Excursion'], ['#S.S', "Enfant spécial à l’école"], ['#S.L', 'Animation ludique avancée'], ['#K.P', 'Animation fêtes'], ['#A.A', 'AngelCare Academy'],
 ]
 
 export default function NewServicePage() {
   async function createService(formData: FormData) {
     'use server'
-
     const supabase = await createClient()
-
     const payload = {
       service_code: String(formData.get('service_code') || ''),
       service_name: String(formData.get('service_name') || ''),
@@ -38,430 +39,144 @@ export default function NewServicePage() {
       price_8h: Number(formData.get('price_8h') || 0),
       price_12h: Number(formData.get('price_12h') || 0),
       price_24h: Number(formData.get('price_24h') || 0),
-
-price_b2c: Number(formData.get('price_b2c') || 0),
-price_b2b: Number(formData.get('price_b2b') || 0),
-price_premium: Number(formData.get('price_premium') || 0),
-
-price_casablanca: Number(formData.get('price_casablanca') || 0),
-price_rabat: Number(formData.get('price_rabat') || 0),
-price_kenitra: Number(formData.get('price_kenitra') || 0),
-
-addons: String(formData.get('addons') || ''),
-required_staff: String(formData.get('required_staff') || ''),
-staff_count: Number(formData.get('staff_count') || 1),
-equipment: String(formData.get('equipment') || ''),
-transport_required: String(formData.get('transport_required') || ''),
-uniform_required: String(formData.get('uniform_required') || ''),
-certifications: String(formData.get('certifications') || ''),
-available_cities: String(formData.get('available_cities') || ''),
-available_regions: String(formData.get('available_regions') || ''),
-fulfillment_notes: String(formData.get('fulfillment_notes') || ''),
-
-}
-
-const { error } = await supabase
-  .from('service_catalog')
-  .upsert([payload], { onConflict: 'service_code' })
+      price_b2c: Number(formData.get('price_b2c') || 0),
+      price_b2b: Number(formData.get('price_b2b') || 0),
+      price_premium: Number(formData.get('price_premium') || 0),
+      price_casablanca: Number(formData.get('price_casablanca') || 0),
+      price_rabat: Number(formData.get('price_rabat') || 0),
+      price_kenitra: Number(formData.get('price_kenitra') || 0),
+      addons: String(formData.get('addons') || ''),
+      required_staff: String(formData.get('required_staff') || ''),
+      staff_count: Number(formData.get('staff_count') || 1),
+      equipment: String(formData.get('equipment') || ''),
+      transport_required: String(formData.get('transport_required') || ''),
+      uniform_required: String(formData.get('uniform_required') || ''),
+      certifications: String(formData.get('certifications') || ''),
+      available_cities: String(formData.get('available_cities') || ''),
+      available_regions: String(formData.get('available_regions') || ''),
+      fulfillment_notes: String(formData.get('fulfillment_notes') || ''),
+    }
+    const { error } = await supabase.from('service_catalog').upsert([payload], { onConflict: 'service_code' })
     if (error) throw new Error(error.message)
-
     redirect('/services')
   }
 
+  const stages = [
+    { label: '01 · Identité', href: '#identity' }, { label: '02 · Commercial', href: '#commercial' }, { label: '03 · Opérations', href: '#operations' }, { label: '04 · Couverture', href: '#coverage' }, { label: '05 · Revue', href: '#review' },
+  ]
+
   return (
-    <AppShell
-      title="Create Service / Package"
-      subtitle="Add a flexible AngelCare service, package, academy program, event or B2B training product."
-      breadcrumbs={[
-        { label: 'Products & Services', href: '/services' },
-        { label: 'New' },
-      ]}
-      actions={<PageAction href="/services" variant="light">Back</PageAction>}
-    >
-      <form action={createService} style={pageGridStyle}>
-        <section style={panelStyle}>
-          <div style={sectionHeaderStyle}>
-            <div>
-              <div style={eyebrowStyle}>Service identity</div>
-              <section style={panelStyle}>
-  <div style={sectionHeaderStyle}>
-    <div>
-      <div style={eyebrowStyle}>Moteur tarifaire</div>
-      <h2 style={sectionTitleStyle}>Variations de prix</h2>
-      <p style={sectionTextStyle}>
-        Configurez les prix selon la durée, la ville, le profil client et le niveau de service.
-      </p>
-    </div>
-  </div>
+    <AppShell title="Service Product Design Studio" subtitle="Create a service using the existing service_catalog contract" breadcrumbs={[{ label: 'Services', href: '/services' }, { label: 'Nouveau service' }]}>
+      <main className={styles.shell}>
+        <Services360Hero
+          eyebrow="Service product design studio"
+          title="Design a service that Sales can sell and Operations can actually deliver."
+          subtitle="The studio organizes every field already submitted by the existing create action into one controlled product-design journey. No database column, action, API or redirect is changed."
+          actions={<SecondaryAction href="/services">Retour au portfolio</SecondaryAction>}
+          briefTitle="Creation control"
+          briefRows={[
+            { label: 'Destination', value: 'service_catalog' },
+            { label: 'Save behavior', value: 'Upsert by service_code' },
+            { label: 'Currency', value: 'Dh' },
+            { label: 'Backend changes', value: 'None' },
+          ]}
+          provenance={[{ label: 'Existing createService server action', tone: 'live' }, { label: 'Schema compatibility must be verified in Supabase', tone: 'configured' }]}
+        />
 
-  <div style={gridStyle}>
-    <Field name="price_3h" label="Prix 3h MAD" type="number" placeholder="Ex: 250" />
-    <Field name="price_5h" label="Prix 5h MAD" type="number" placeholder="Ex: 350" />
-    <Field name="price_8h" label="Prix 8h MAD" type="number" placeholder="Ex: 500" />
+        <Services360Nav items={stages} />
 
-    <Field name="price_12h" label="Prix 12h MAD" type="number" placeholder="Ex: 750" />
-    <Field name="price_24h" label="Prix 24h MAD" type="number" placeholder="Ex: 1200" />
-    <Field name="price_premium" label="Prix premium MAD" type="number" placeholder="Ex: 900" />
+        <div className={styles.stageIndex}>
+          {stages.map((stage, index) => <a key={stage.href} className={styles.stageLink} href={stage.href}><span className={styles.stageNumber}>{String(index + 1).padStart(2, '0')}</span><span className={styles.stageName}>{stage.label.split(' · ')[1]}</span></a>)}
+        </div>
 
-    <Field name="price_b2c" label="Prix B2C MAD" type="number" placeholder="Familles" />
-    <Field name="price_b2b" label="Prix B2B MAD" type="number" placeholder="Écoles / institutions" />
-    <Field name="addons" label="Options / Add-ons" placeholder="Transport, nuit, urgence, matériel..." />
-  </div>
-</section>
+        <form action={createService} className={styles.grid2}>
+          <div style={{ display: 'grid', gap: 18 }}>
+            <Panel id="identity" eyebrow="Stage 01" title="Service identity" text="Define the canonical service code and business identity that will appear throughout the current catalogue.">
+              <div className={styles.formGrid}>
+                <Field label="Service code" required><select className={styles.select} name="service_code" required defaultValue=""><option value="" disabled>Sélectionner un code</option>{serviceCodes.map(([code, label]) => <option key={code} value={code}>{code} — {label}</option>)}</select></Field>
+                <Field label="Service name" required><input className={styles.input} name="service_name" required placeholder="Ex. Garde enfant spécial hybride" /></Field>
+                <Field label="Service family"><select className={styles.select} name="service_family" defaultValue=""><option value="">Sélectionner</option><option>Home care</option><option>Special needs</option><option>Postpartum</option><option>Events</option><option>Education</option><option>Academy</option><option>B2B / Institutions</option></select></Field>
+                <Field label="Client type"><select className={styles.select} name="client_type" defaultValue=""><option value="">Sélectionner</option><option>B2C Family</option><option>B2B Institution</option><option>Academy Candidate</option><option>Event Client</option><option>Hybrid</option></select></Field>
+                <Field label="Status"><select className={styles.select} name="status" defaultValue="active"><option value="active">Active</option><option value="inactive">Inactive</option><option value="seasonal">Seasonal</option><option value="pilot">Pilot</option></select></Field>
+                <Field label="Operational checklist"><textarea className={styles.textarea} name="internal_checklist" placeholder="Brief parent, skills, transport, mission order…" /></Field>
+              </div>
+            </Panel>
 
-<section style={panelStyle}>
-  <div style={sectionHeaderStyle}>
-    <div>
-      <div style={eyebrowStyle}>Couverture géographique</div>
-      <h2 style={sectionTitleStyle}>Villes, zones et règles locales</h2>
-      <p style={sectionTextStyle}>
-        Définissez les villes disponibles, les régions couvertes et les variations selon localisation.
-      </p>
-    </div>
-  </div>
+            <Panel id="commercial" eyebrow="Stage 02" title="Commercial & pricing architecture" text="All visible controls map directly to fields already included in the server action payload.">
+              <div className={styles.formGrid}>
+                <Field label="Pricing model"><select className={styles.select} name="pricing_model" defaultValue=""><option value="">Sélectionner</option><option value="duration_city_pricing">Duration + city pricing</option><option value="package_pricing">Package pricing</option><option value="premium_duration_pricing">Premium duration pricing</option><option value="custom_pricing">Custom pricing</option><option value="program_pricing">Program pricing</option></select></Field>
+                <Field label="Base price (Dh)"><input className={styles.input} name="base_price" type="number" min="0" /></Field>
+                <Field label="Duration options"><input className={styles.input} name="duration_options" placeholder="3h, 5h, 8h, 12h, 24h" /></Field>
+                <Field label="Price 3h (Dh)"><input className={styles.input} name="price_3h" type="number" min="0" /></Field>
+                <Field label="Price 5h (Dh)"><input className={styles.input} name="price_5h" type="number" min="0" /></Field>
+                <Field label="Price 8h (Dh)"><input className={styles.input} name="price_8h" type="number" min="0" /></Field>
+                <Field label="Price 12h (Dh)"><input className={styles.input} name="price_12h" type="number" min="0" /></Field>
+                <Field label="Price 24h (Dh)"><input className={styles.input} name="price_24h" type="number" min="0" /></Field>
+                <Field label="Premium price (Dh)"><input className={styles.input} name="price_premium" type="number" min="0" /></Field>
+                <Field label="B2C price (Dh)"><input className={styles.input} name="price_b2c" type="number" min="0" /></Field>
+                <Field label="B2B price (Dh)"><input className={styles.input} name="price_b2b" type="number" min="0" /></Field>
+                <Field label="Options / add-ons"><input className={styles.input} name="addons" placeholder="Transport, nuit, urgence, matériel…" /></Field>
+              </div>
+            </Panel>
 
-  <div style={gridStyle}>
-    <Field name="available_cities" label="Villes disponibles" placeholder="Casablanca, Rabat, Kénitra..." />
-    <Field name="available_regions" label="Zones / régions" placeholder="Maarif, Agdal, Hay Riad..." />
-    <Field name="price_casablanca" label="Supplément Casablanca" type="number" placeholder="Ex: 0" />
+            <Panel id="operations" eyebrow="Stage 03" title="Operational execution design" text="Describe the real people, skills, certifications, equipment and field requirements needed to fulfil the service.">
+              <div className={styles.formGrid}>
+                <Field label="Skill requirements"><input className={styles.input} name="skill_requirements" placeholder="Special needs, newborn, school support…" /></Field>
+                <Field label="Required staff"><input className={styles.input} name="required_staff" placeholder="Junior, senior, spécialisée…" /></Field>
+                <Field label="Staff count"><input className={styles.input} name="staff_count" type="number" min="1" defaultValue="1" /></Field>
+                <Field label="Equipment"><input className={styles.input} name="equipment" placeholder="Kit bébé, supports éducatifs…" /></Field>
+                <Field label="Transport requirement"><select className={styles.select} name="transport_required" defaultValue=""><option value="">Non défini</option><option value="Oui">Oui</option><option value="Non">Non</option><option value="Optionnel">Optionnel</option></select></Field>
+                <Field label="Uniform requirement"><select className={styles.select} name="uniform_required" defaultValue=""><option value="">Non défini</option><option value="Oui">Oui</option><option value="Non">Non</option></select></Field>
+                <Field label="Certifications"><input className={styles.input} name="certifications" placeholder="Petite enfance, premiers secours…" /></Field>
+                <Field label="Fulfilment notes"><textarea className={styles.textarea} name="fulfillment_notes" placeholder="Preparation, restrictions, internal mission instructions…" /></Field>
+              </div>
+            </Panel>
 
-    <Field name="price_rabat" label="Supplément Rabat" type="number" placeholder="Ex: 50" />
-    <Field name="price_kenitra" label="Supplément Kénitra" type="number" placeholder="Ex: 80" />
-  </div>
-</section>
+            <Panel id="coverage" eyebrow="Stage 04" title="Coverage & local rules" text="Geographic fields remain exactly those already written by the create action.">
+              <div className={styles.formGrid}>
+                <Field label="Available cities"><input className={styles.input} name="available_cities" placeholder="Casablanca, Rabat, Kénitra…" /></Field>
+                <Field label="Available regions"><input className={styles.input} name="available_regions" placeholder="Maarif, Agdal, Hay Riad…" /></Field>
+                <Field label="City rules"><input className={styles.input} name="city_rules" placeholder="Coverage, transport or local constraints…" /></Field>
+                <Field label="Casablanca price adjustment (Dh)"><input className={styles.input} name="price_casablanca" type="number" /></Field>
+                <Field label="Rabat price adjustment (Dh)"><input className={styles.input} name="price_rabat" type="number" /></Field>
+                <Field label="Kénitra price adjustment (Dh)"><input className={styles.input} name="price_kenitra" type="number" /></Field>
+              </div>
+            </Panel>
 
-<section style={panelStyle}>
-  <div style={sectionHeaderStyle}>
-    <div>
-      <div style={eyebrowStyle}>Exécution opérationnelle</div>
-      <h2 style={sectionTitleStyle}>Staff, matériel et fulfillment</h2>
-      <p style={sectionTextStyle}>
-        Définissez les besoins terrain nécessaires pour exécuter ce service correctement.
-      </p>
-    </div>
-  </div>
-
-  <div style={gridStyle}>
-    <Field name="required_staff" label="Type intervenante requis" placeholder="Junior, senior, spécialisée..." />
-    <Field name="staff_count" label="Nombre intervenantes" type="number" placeholder="Ex: 1" />
-    <Field name="equipment" label="Matériel nécessaire" placeholder="Jeux, kit bébé, supports éducatifs..." />
-
-    <Field name="transport_required" label="Transport requis" placeholder="Oui / Non / Optionnel" />
-    <Field name="uniform_required" label="Uniforme requis" placeholder="Oui / Non" />
-    <Field name="certifications" label="Certifications requises" placeholder="Petite enfance, premiers secours..." />
-
-    <label style={{ ...fieldStyle, gridColumn: '1 / -1' }}>
-      <span style={labelStyle}>Notes fulfillment</span>
-      <textarea
-        name="fulfillment_notes"
-        placeholder="Conditions particulières, préparation avant mission, consignes internes..."
-        style={textareaStyle}
-      />
-    </label>
-  </div>
-</section>
-              <h2 style={sectionTitleStyle}>Core service configuration</h2>
-              <p style={sectionTextStyle}>Define the service code, family, client type and operational pricing model.</p>
-            </div>
+            <Panel id="review" eyebrow="Stage 05" title="Final review & service creation" text="The action below performs the existing upsert and redirects to /services. No hidden workflow is introduced.">
+              <div className={styles.grid3}>
+                <div className={styles.card}><div className={styles.cardCode}>Identity</div><h4 className={styles.cardTitle}>Canonical catalogue record</h4><div className={styles.cardText}>Code, name, family, client type and status.</div></div>
+                <div className={styles.card}><div className={styles.cardCode}>Commercial</div><h4 className={styles.cardTitle}>Pricing fields</h4><div className={styles.cardText}>Base, duration, B2C, B2B, premium and city adjustments.</div></div>
+                <div className={styles.card}><div className={styles.cardCode}>Delivery</div><h4 className={styles.cardTitle}>Operational requirements</h4><div className={styles.cardText}>Staff, certifications, equipment, checklist and coverage.</div></div>
+              </div>
+            </Panel>
           </div>
 
-          <div style={gridStyle}>
-            <label style={fieldStyle}>
-              <span style={labelStyle}>Service code</span>
-              <select name="service_code" style={inputStyle}>
-                <option value="">Select code</option>
-                {serviceCodes.map(([code, label]) => (
-                  <option key={code} value={code}>{code} — {label}</option>
-                ))}
-              </select>
-            </label>
-
-            <Field name="service_name" label="Service name" placeholder="Example: Garde enfant spécial hybride" />
-
-            <label style={fieldStyle}>
-              <span style={labelStyle}>Service family</span>
-              <select name="service_family" style={inputStyle}>
-                <option value="">Select family</option>
-                <option value="Home care">Home care</option>
-                <option value="Special needs">Special needs</option>
-                <option value="Postpartum">Postpartum</option>
-                <option value="Events">Events</option>
-                <option value="Education">Education</option>
-                <option value="Academy">Academy</option>
-                <option value="B2B / Institutions">B2B / Institutions</option>
-              </select>
-            </label>
-
-            <label style={fieldStyle}>
-              <span style={labelStyle}>Client type</span>
-              <select name="client_type" style={inputStyle}>
-                <option value="">Select client type</option>
-                <option value="B2C Family">B2C Family</option>
-                <option value="B2B Institution">B2B Institution</option>
-                <option value="Academy Candidate">Academy Candidate</option>
-                <option value="Event Client">Event Client</option>
-                <option value="Hybrid">Hybrid</option>
-              </select>
-            </label>
-
-            <label style={fieldStyle}>
-              <span style={labelStyle}>Pricing model</span>
-              <select name="pricing_model" style={inputStyle}>
-                <option value="">Select pricing model</option>
-                <option value="duration_city_pricing">Duration + city pricing</option>
-                <option value="package_pricing">Package pricing</option>
-                <option value="premium_duration_pricing">Premium duration pricing</option>
-                <option value="custom_pricing">Custom pricing</option>
-                <option value="program_pricing">Program pricing</option>
-              </select>
-            </label>
-
-            <Field name="base_price" label="Base price MAD" type="number" placeholder="Example: 300" />
-          </div>
-        </section>
-        <section style={panelStyle}>
-  <div style={sectionHeaderStyle}>
-    <div>
-      <div style={eyebrowStyle}>Pricing engine</div>
-      <h2 style={sectionTitleStyle}>Variations et règles tarifaires</h2>
-      <p style={sectionTextStyle}>
-        Configurez librement les variations de prix selon durée, ville, profil client et options.
-      </p>
-    </div>
-  </div>
-
-  <div style={gridStyle}>
-    <Field name="price_3h" label="Prix 3h (MAD)" type="number" />
-    <Field name="price_5h" label="Prix 5h (MAD)" type="number" />
-    <Field name="price_8h" label="Prix 8h (MAD)" type="number" />
-
-    <Field name="price_casablanca" label="Supplément Casablanca" type="number" />
-    <Field name="price_rabat" label="Supplément Rabat" type="number" />
-    <Field name="price_other_city" label="Autres villes" type="number" />
-
-    <Field name="price_b2c" label="Prix B2C" type="number" />
-    <Field name="price_b2b" label="Prix B2B" type="number" />
-    <Field name="price_premium" label="Prix Premium" type="number" />
-
-    <Field name="addons" label="Options / Add-ons" placeholder="Transport, nuit, urgence..." />
-  </div>
-</section> 
-        <section style={panelStyle}>
-          <div style={sectionHeaderStyle}>
-            <div>
-              <div style={eyebrowStyle}>Operational rules</div>
-              <h2 style={sectionTitleStyle}>Duration, city, skills and checklist</h2>
-              <p style={sectionTextStyle}>These fields will later drive contracts, missions, caregiver matching and print templates.</p>
-            </div>
-          </div>
-
-          <div style={gridStyle}>
-            <Field name="duration_options" label="Duration options" placeholder="3h, 5h, 8h, 12h, 24h" />
-            <Field name="city_rules" label="City rules" placeholder="Casablanca, Rabat, Kénitra..." />
-            <Field name="skill_requirements" label="Skill requirements" placeholder="Special needs, newborn, school support..." />
-
-            <label style={{ ...fieldStyle, gridColumn: '1 / -1' }}>
-              <span style={labelStyle}>Internal checklist</span>
-              <textarea
-                name="internal_checklist"
-                placeholder="Example: confirm parent brief, verify caregiver skills, confirm transport, prepare mission order..."
-                style={textareaStyle}
-              />
-            </label>
-
-            <label style={fieldStyle}>
-              <span style={labelStyle}>Status</span>
-              <select name="status" defaultValue="active" style={inputStyle}>
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-                <option value="seasonal">Seasonal</option>
-                <option value="pilot">Pilot</option>
-              </select>
-            </label>
-          </div>
-        </section>
-<section style={panelStyle}>
-  <div style={sectionHeaderStyle}>
-    <div>
-      <div style={eyebrowStyle}>Operational execution</div>
-      <h2 style={sectionTitleStyle}>Logistique & ressources</h2>
-      <p style={sectionTextStyle}>
-        Définissez les besoins opérationnels pour exécuter le service.
-      </p>
-    </div>
-  </div>
-
-  <div style={gridStyle}>
-    <Field name="required_staff" label="Type intervenante" placeholder="Junior, senior, spécialisée..." />
-    <Field name="staff_count" label="Nombre requis" type="number" />
-    <Field name="equipment" label="Matériel requis" placeholder="Jeux, kit bébé, matériel éducatif..." />
-
-    <Field name="transport_required" label="Transport nécessaire" placeholder="Oui / Non / Optionnel" />
-    <Field name="uniform_required" label="Uniforme requis" placeholder="Oui / Non" />
-    <Field name="certifications" label="Certifications requises" placeholder="Petite enfance, soins..." />
-  </div>
-</section>
-        <aside style={sidePanelStyle}>
-          <div style={sideBadgeStyle}>AngelCare Service Engine</div>
-          <h3 style={sideTitleStyle}>Before saving, verify:</h3>
-
-          <ul style={checklistStyle}>
-            <li>Service code matches the operational category.</li>
-            <li>Pricing model is clear enough for sales and billing.</li>
-            <li>Duration options match real field execution.</li>
-            <li>Skills are clear for caregiver matching.</li>
-            <li>Checklist is usable by operations staff.</li>
-          </ul>
-
-          <button type="submit" style={buttonStyle}>Create service</button>
-        </aside>
-      </form>
+          <CommandRail>
+            <DarkRailCard title="Provisioning checklist" text="Before creating the service, confirm that the catalogue identity is commercially clear and operationally executable." alerts={[
+              { title: 'Service code', text: 'The current action upserts on service_code; reusing a code updates the existing record.' },
+              { title: 'Pricing integrity', text: 'Only enter price fields supported by the current live schema.' },
+              { title: 'Operational truth', text: 'Staff, certification and coverage values should reflect real delivery capacity.' },
+              { title: 'No fake automation', text: 'Creation does not automatically synchronize contract planner lists or CareLink mappings.' },
+            ]} />
+            <LightRailCard title="Persistence contract">
+              <ReviewRow label="Table" value="service_catalog" />
+              <ReviewRow label="Conflict key" value="service_code" />
+              <ReviewRow label="Redirect" value="/services" />
+              <ReviewRow label="Currency labels" value="Dh" />
+            </LightRailCard>
+            <section className={styles.railCardLight}>
+              <SourceBadge label="Existing server action" tone="live" />
+              <button className={styles.primaryAction} style={{ width: '100%', marginTop: 14 }} type="submit">Créer le service AngelCare</button>
+              <p className={styles.panelText}>Submission remains subject to the current Supabase schema and validation behavior.</p>
+            </section>
+          </CommandRail>
+        </form>
+      </main>
     </AppShell>
   )
 }
 
-function Field({
-  name,
-  label,
-  type = 'text',
-  placeholder,
-}: {
-  name: string
-  label: string
-  type?: string
-  placeholder?: string
-}) {
-  return (
-    <label style={fieldStyle}>
-      <span style={labelStyle}>{label}</span>
-      <input name={name} type={type} placeholder={placeholder} style={inputStyle} />
-    </label>
-  )
-}
-
-const pageGridStyle: React.CSSProperties = {
-  display: 'grid',
-  gridTemplateColumns: '1fr 340px',
-  gap: 18,
-  alignItems: 'start',
-}
-
-const panelStyle: React.CSSProperties = {
-  background: '#fff',
-  border: '1px solid #dbe3ee',
-  borderRadius: 24,
-  padding: 22,
-  boxShadow: '0 18px 38px rgba(15,23,42,.06)',
-  marginBottom: 18,
-}
-
-const sectionHeaderStyle: React.CSSProperties = {
-  marginBottom: 18,
-}
-
-const eyebrowStyle: React.CSSProperties = {
-  display: 'inline-flex',
-  padding: '6px 10px',
-  borderRadius: 999,
-  background: '#eef2ff',
-  color: '#3730a3',
-  fontWeight: 950,
-  fontSize: 12,
-  marginBottom: 10,
-}
-
-const sectionTitleStyle: React.CSSProperties = {
-  margin: 0,
-  color: '#0f172a',
-  fontSize: 22,
-  fontWeight: 950,
-}
-
-const sectionTextStyle: React.CSSProperties = {
-  margin: '8px 0 0',
-  color: '#64748b',
-  fontWeight: 650,
-  lineHeight: 1.55,
-}
-
-const gridStyle: React.CSSProperties = {
-  display: 'grid',
-  gridTemplateColumns: 'repeat(3,minmax(0,1fr))',
-  gap: 14,
-}
-
-const fieldStyle: React.CSSProperties = {
-  display: 'grid',
-  gap: 8,
-}
-
-const labelStyle: React.CSSProperties = {
-  color: '#334155',
-  fontWeight: 900,
-  fontSize: 13,
-}
-
-const inputStyle: React.CSSProperties = {
-  width: '100%',
-  padding: '13px 14px',
-  borderRadius: 12,
-  border: '1px solid #cbd5e1',
-  color: '#0f172a',
-  boxSizing: 'border-box',
-  background: '#fff',
-}
-
-const textareaStyle: React.CSSProperties = {
-  ...inputStyle,
-  minHeight: 120,
-  resize: 'vertical',
-  fontFamily: 'inherit',
-}
-
-const sidePanelStyle: React.CSSProperties = {
-  position: 'sticky',
-  top: 18,
-  background: 'linear-gradient(180deg,#0f172a 0%,#1e293b 100%)',
-  borderRadius: 24,
-  padding: 22,
-  color: '#fff',
-  boxShadow: '0 24px 50px rgba(15,23,42,.22)',
-}
-
-const sideBadgeStyle: React.CSSProperties = {
-  display: 'inline-flex',
-  padding: '7px 11px',
-  borderRadius: 999,
-  background: 'rgba(255,255,255,.1)',
-  color: '#dbeafe',
-  fontWeight: 950,
-  fontSize: 12,
-  marginBottom: 14,
-}
-
-const sideTitleStyle: React.CSSProperties = {
-  margin: '0 0 14px',
-  fontSize: 22,
-  fontWeight: 950,
-}
-
-const checklistStyle: React.CSSProperties = {
-  display: 'grid',
-  gap: 10,
-  paddingLeft: 18,
-  color: '#dbeafe',
-  lineHeight: 1.55,
-  fontWeight: 700,
-  marginBottom: 22,
-}
-
-const buttonStyle: React.CSSProperties = {
-  width: '100%',
-  border: 'none',
-  borderRadius: 14,
-  background: '#fff',
-  color: '#0f172a',
-  padding: '14px 16px',
-  fontWeight: 950,
-  cursor: 'pointer',
+function Field({ label, children, required = false }: { label: string; children: React.ReactNode; required?: boolean }) {
+  return <label className={styles.field}><span className={styles.fieldLabel}>{label}{required ? ' *' : ''}</span>{children}</label>
 }

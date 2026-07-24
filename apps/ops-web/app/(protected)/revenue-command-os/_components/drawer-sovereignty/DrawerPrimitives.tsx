@@ -1,6 +1,7 @@
 'use client'
 
-import { useEffect, type ElementType, type ReactNode } from 'react'
+import { useEffect, useState, type ElementType, type ReactNode } from 'react'
+import { createPortal } from 'react-dom'
 import { ArrowRight, ShieldCheck, X } from 'lucide-react'
 import styles from './DrawerSovereignty.module.css'
 
@@ -16,23 +17,63 @@ const tones: Record<Tone, { badge: string; icon: string; line: string; soft: str
   slate: { badge: 'border-slate-200 bg-slate-100 text-slate-800', icon: 'bg-slate-100 text-slate-700', line: 'bg-slate-700', soft: 'border-slate-200 bg-slate-50' },
 }
 
+function drawerWidthPixels(width: string) {
+  const match = width.match(/max-w-\[(\d+)px\]/)
+  return match ? Number(match[1]) : 820
+}
+
 export function SovereignDrawerOverlay({ children, onClose, label, zIndex = 'z-[170]' }: { children: ReactNode; onClose: () => void; label: string; zIndex?: string }) {
+  const [mounted, setMounted] = useState(false)
+
   useEffect(() => {
-    const previous = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
+    setMounted(true)
+    const body = document.body
+    const previousOverflow = body.style.overflow
+    const previousOpenState = body.dataset.revenueDrawerOpen
+    body.style.overflow = 'hidden'
+    body.dataset.revenueDrawerOpen = 'true'
     const onKeyDown = (event: KeyboardEvent) => { if (event.key === 'Escape') onClose() }
     window.addEventListener('keydown', onKeyDown)
     return () => {
-      document.body.style.overflow = previous
+      body.style.overflow = previousOverflow
+      if (previousOpenState === undefined) delete body.dataset.revenueDrawerOpen
+      else body.dataset.revenueDrawerOpen = previousOpenState
+      body.style.removeProperty('--revenue-active-drawer-width')
       window.removeEventListener('keydown', onKeyDown)
     }
   }, [onClose])
 
-  return <div className={`fixed inset-0 ${zIndex} flex justify-end bg-slate-950/48 backdrop-blur-[5px] ${styles.overlay}`} role="dialog" aria-modal="true" aria-label={label} onMouseDown={(event) => { if (event.target === event.currentTarget) onClose() }}>{children}</div>
+  if (!mounted) return null
+
+  return createPortal(
+    <div
+      className={`fixed inset-0 ${zIndex} flex justify-end bg-slate-950/64 backdrop-blur-[6px] ${styles.overlay}`}
+      role="dialog"
+      aria-modal="true"
+      aria-label={label}
+      data-revenue-drawer-overlay="true"
+      onMouseDown={(event) => { if (event.target === event.currentTarget) onClose() }}
+    >
+      {children}
+    </div>,
+    document.body,
+  )
 }
 
 export function SovereignDrawerPanel({ children, width = 'max-w-[820px]', dataId }: { children: ReactNode; width?: string; dataId: string }) {
-  return <aside className={`relative flex h-full w-full ${width} flex-col overflow-hidden border-l border-white/10 bg-white shadow-[-34px_0_110px_rgba(2,6,23,.32)] ${styles.panel}`} data-drawer-id={dataId}>{children}</aside>
+  const widthPx = drawerWidthPixels(width)
+
+  useEffect(() => {
+    const body = document.body
+    const previous = body.style.getPropertyValue('--revenue-active-drawer-width')
+    body.style.setProperty('--revenue-active-drawer-width', `${widthPx}px`)
+    return () => {
+      if (previous) body.style.setProperty('--revenue-active-drawer-width', previous)
+      else body.style.removeProperty('--revenue-active-drawer-width')
+    }
+  }, [widthPx])
+
+  return <aside className={`relative flex h-full w-full ${width} flex-col overflow-hidden border-l border-white/10 bg-white shadow-[-34px_0_110px_rgba(2,6,23,.32)] ${styles.panel}`} data-drawer-id={dataId} data-drawer-width={widthPx}>{children}</aside>
 }
 
 export function DrawerCloseButton({ onClose, inverted = false }: { onClose: () => void; inverted?: boolean }) {
@@ -83,9 +124,9 @@ export function DrawerExecutiveBrief({ children, tone = 'blue', dark = false }: 
 }
 
 export function DrawerActionFooter({ children, note }: { children: ReactNode; note?: string }) {
-  return <footer className="sticky bottom-0 z-20 border-t border-slate-200 bg-white/97 px-5 py-4 shadow-[0_-18px_45px_rgba(15,23,42,.07)] backdrop-blur-xl sm:px-7">
+  return <footer className={`border-t border-slate-200 bg-white/97 px-5 py-4 shadow-[0_-18px_45px_rgba(15,23,42,.07)] backdrop-blur-xl sm:px-7 ${styles.actionFooter}`} data-drawer-action-footer="true">
     {note ? <p className="mb-3 text-[10px] font-semibold leading-4 text-slate-600">{note}</p> : null}
-    <div className="flex flex-wrap items-center justify-end gap-2.5">{children}</div>
+    <div className={styles.actionRail}>{children}</div>
   </footer>
 }
 
