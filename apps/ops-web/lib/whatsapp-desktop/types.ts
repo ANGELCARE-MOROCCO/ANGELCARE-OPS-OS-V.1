@@ -84,6 +84,15 @@ export interface WhatsAppDesktopDevice {
   whatsapp_link_state: WhatsAppLinkState
   first_registered_at: string
   approved_at: string | null
+  suspended_at?: string | null
+  suspended_by?: string | null
+  suspension_reason?: string | null
+  restored_at?: string | null
+  restored_by?: string | null
+  revoked_at?: string | null
+  revoked_by?: string | null
+  revoke_reason?: string | null
+  compromised_at?: string | null
   last_heartbeat_at: string | null
   last_seen_at: string | null
   runtime_health: JsonRecord
@@ -108,6 +117,7 @@ export interface WhatsAppAuthorizationResult {
 }
 
 export interface WhatsAppGovernanceAdminOverview {
+  capabilities?: Record<string, boolean>
   workspaces: WhatsAppDesktopWorkspace[]
   assignments: Array<WhatsAppDesktopAssignment & { workspace?: { name: string; code: string }; user?: JsonRecord }>
   devices: Array<WhatsAppDesktopDevice & { workspace_access?: JsonRecord[]; user?: JsonRecord }>
@@ -117,4 +127,15 @@ export interface WhatsAppGovernanceAdminOverview {
   audit_events: JsonRecord[]
   users: JsonRecord[]
   counts: Record<string, number>
+}
+
+
+export interface WhatsAppDeviceLifecycleDossier {
+  device: WhatsAppDesktopDevice & { online: boolean; available_actions: string[] }
+  workspace_access: JsonRecord[]
+  sessions: JsonRecord[]
+  commands: JsonRecord[]
+  heartbeats: JsonRecord[]
+  audit_events: JsonRecord[]
+  security_events: JsonRecord[]
 }

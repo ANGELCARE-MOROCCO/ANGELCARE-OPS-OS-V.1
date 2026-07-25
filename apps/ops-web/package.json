@@ -79,6 +79,8 @@
     "carelink:production-smoke": "node scripts/carelink-production-smoke.mjs",
     "carelink:deploy-gate": "npm run carelink:mobile-reliability && npm run carelink:verify && npm run carelink:production-smoke",
     "carelink:mobile-reliability": "node scripts/carelink-mobile-reliability-lockdown.mjs",
+    "whatsapp-desktop:mz10:verify": "node scripts/verify-whatsapp-desktop-fleet-lifecycle-mz10.mjs",
+    "whatsapp-desktop:mz10:typecheck": "tsc -p tsconfig.whatsapp-desktop-mz10.json --pretty false",
     "traininghub:static": "node --env-file=.env.local scripts/verify-traininghub-production-hardening-static.mjs",
     "traininghub:prod-gate": "node --env-file=.env.local scripts/traininghub-final-production-completion-gate.mjs --with-tsc",
     "traininghub:prod-gate:full": "node --env-file=.env.local scripts/traininghub-final-production-completion-gate.mjs --full",
