@@ -751,7 +751,7 @@ export default function ProspectEnterpriseWorkspace({ mode }: { mode: ProspectEn
     return <main className={styles.shell} data-accent={contract.accent}><div className={styles.errorState}><span className={styles.errorStateIcon}><AlertTriangle size={22} /></span><h2>Le portefeuille n’a pas pu être chargé</h2><p>{error}</p><button type="button" className={styles.ghostButton} style={{ marginTop: 14 }} onClick={() => refresh(false)}><RefreshCcw size={14} /> Réessayer</button></div></main>
   }
 
-  const summary = portfolio?.summary || {}
+  const summary = portfolio?.summary
   const primaryAction = mode === "pipeline" ? () => prospects[0] && openModal("opportunity", prospects[0]) : mode === "qualification" ? () => prospects[0] && openModal("qualification", prospects[0]) : mode === "decision-map" ? () => prospects[0] && openModal("decision", prospects[0]) : mode === "risk" ? () => prospects[0] && openModal("risk", prospects[0]) : undefined
 
   return (
@@ -775,7 +775,7 @@ export default function ProspectEnterpriseWorkspace({ mode }: { mode: ProspectEn
           <span className={styles.heroBriefLabel}><Target size={13} /> Mandat opérationnel</span>
           <h2>{contract.focus}</h2>
           <p>Les chiffres visibles proviennent des tables Revenue Command. Toute capacité indisponible est signalée plutôt que simulée.</p>
-          <div className={styles.heroBriefGrid}><div className={styles.heroBriefMetric}><span>Pipeline</span><strong>{dh(summary.pipelineValueMad)}</strong></div><div className={styles.heroBriefMetric}><span>Pondéré</span><strong>{dh(summary.weightedPipelineMad)}</strong></div><div className={styles.heroBriefMetric}><span>Dossiers</span><strong>{number(summary.prospectCount)}</strong></div><div className={styles.heroBriefMetric}><span>Risques</span><strong>{number(summary.openRiskCount)}</strong></div></div>
+          <div className={styles.heroBriefGrid}><div className={styles.heroBriefMetric}><span>Pipeline</span><strong>{dh(summary?.pipelineValueMad)}</strong></div><div className={styles.heroBriefMetric}><span>Pondéré</span><strong>{dh(summary?.weightedPipelineMad)}</strong></div><div className={styles.heroBriefMetric}><span>Dossiers</span><strong>{number(summary?.prospectCount)}</strong></div><div className={styles.heroBriefMetric}><span>Risques</span><strong>{number(summary?.openRiskCount)}</strong></div></div>
         </aside>
       </section>
 
@@ -800,7 +800,7 @@ export default function ProspectEnterpriseWorkspace({ mode }: { mode: ProspectEn
       {mode === "recovery" ? <RecoveryView prospects={prospects} /> : null}
       {mode === "analytics" ? <AnalyticsView prospects={prospects} summary={summary} /> : null}
       {mode === "performance" ? <PerformanceView prospects={prospects} /> : null}
-      {mode === "high-value" ? <HighValueView prospects={prospects} threshold={number(summary.highValueThresholdMad)} /> : null}
+      {mode === "high-value" ? <HighValueView prospects={prospects} threshold={number(summary?.highValueThresholdMad)} /> : null}
       {mode === "risk" ? <RiskView prospects={prospects} risks={portfolio?.risks || []} onOpen={openModal} /> : null}
 
       <EnterpriseActionModal kind={modal.kind} prospect={modal.prospect} onClose={closeModal} onSaved={() => refresh(true)} />
