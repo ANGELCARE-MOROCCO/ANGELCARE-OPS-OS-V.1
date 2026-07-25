@@ -52,7 +52,7 @@ export default function DoctrineDrawer({ doctrine, onClose }: { doctrine: Revenu
 
   return <SovereignDrawerOverlay onClose={onClose} label={`Doctrine Vault — ${doctrine.code}`}>
     <SovereignDrawerPanel width="max-w-[920px]" dataId="MZ23-DRAWER-03-DOCTRINE">
-      <header className="relative overflow-hidden bg-[linear-gradient(135deg,#07140f_0%,#0b2d24_50%,#111827_100%)] px-5 py-6 text-white sm:px-7 sm:py-7">
+      <header data-drawer-surface="dark" className="relative overflow-hidden bg-[linear-gradient(135deg,#07140f_0%,#0b2d24_50%,#111827_100%)] px-5 py-6 text-white sm:px-7 sm:py-7">
         <div className={`absolute inset-0 opacity-35 ${drawerStyles.fineGrid}`} />
         <div className="absolute -right-12 -top-24 h-72 w-72 rounded-full bg-emerald-400/10 blur-3xl" />
         <div className="relative grid gap-6 lg:grid-cols-[1fr_300px] lg:items-center">

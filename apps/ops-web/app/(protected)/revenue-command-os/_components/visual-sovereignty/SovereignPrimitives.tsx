@@ -18,16 +18,16 @@ const toneMap: Record<SovereignTone, { chip: string; icon: string; border: strin
 }
 
 export function SIcon({ icon: Icon, tone = 'navy', className = '' }: { icon: ElementType; tone?: SovereignTone; className?: string }) {
-  return <span className={`grid h-11 w-11 shrink-0 place-items-center rounded-2xl shadow-sm ${toneMap[tone].icon} ${className}`}><Icon size={19} /></span>
+  return <span data-revenue-component="icon" data-tone={tone} className={`grid h-11 w-11 shrink-0 place-items-center rounded-2xl shadow-sm ${toneMap[tone].icon} ${className}`}><Icon size={19} /></span>
 }
 
 export function SChip({ children, tone = 'slate', className = '' }: { children: ReactNode; tone?: SovereignTone; className?: string }) {
-  return <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[9px] font-black uppercase tracking-[.12em] ${toneMap[tone].chip} ${className}`}>{children}</span>
+  return <span data-revenue-component="chip" data-tone={tone} className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[9px] font-black uppercase tracking-[.12em] ${toneMap[tone].chip} ${className}`}>{children}</span>
 }
 
 export function SMetric({ label, value, note, icon, tone = 'blue', progress }: { label: string; value: ReactNode; note?: string; icon?: ElementType; tone?: SovereignTone; progress?: number }) {
   const Icon = icon
-  return <div className={`rounded-[24px] border bg-white/90 p-4 ${toneMap[tone].border} ${styles.softGlass}`}>
+  return <div data-revenue-component="metric" data-revenue-surface="light" data-tone={tone} className={`rounded-[24px] border bg-white/90 p-4 ${toneMap[tone].border} ${styles.softGlass}`}>
     <div className="flex items-start justify-between gap-3">
       <div>{Icon ? <SIcon icon={Icon} tone={tone} className="h-9 w-9 rounded-xl" /> : null}</div>
       <div className="text-right text-2xl font-black tracking-[-.04em] text-slate-950">{value}</div>
@@ -60,23 +60,23 @@ export function SDataTruth({ mode, warnings = [], traceId, freshness }: { mode?:
                 : { tone: 'emerald' as SovereignTone, icon: Radio, label: 'Données live', spin: false }
 
   const Icon = state.icon
-  return <div className={`rounded-2xl border px-3.5 py-3 ${toneMap[state.tone].border} ${toneMap[state.tone].wash}`}>
-    <div className="flex items-center gap-2"><Icon size={15} className={`${state.spin ? 'animate-spin ' : ''}${state.tone === 'amber' ? 'text-amber-700' : state.tone === 'violet' ? 'text-violet-700' : state.tone === 'rose' ? 'text-rose-700' : state.tone === 'cyan' ? 'text-cyan-700' : state.tone === 'blue' ? 'text-blue-700' : 'text-emerald-700'}`} /><span className="text-[10px] font-black uppercase tracking-[.13em] text-slate-700">{state.label}</span>{traceId ? <span className="ml-auto font-mono text-[9px] text-slate-400">{traceId}</span> : null}</div>
+  return <div data-revenue-component="truth-state" data-revenue-surface="light" data-tone={state.tone} className={`rounded-2xl border px-3.5 py-3 ${toneMap[state.tone].border} ${toneMap[state.tone].wash}`}>
+    <div className="flex items-center gap-2"><Icon size={15} className={`${state.spin ? 'animate-spin ' : ''}${state.tone === 'amber' ? 'text-amber-700' : state.tone === 'violet' ? 'text-violet-700' : state.tone === 'rose' ? 'text-rose-700' : state.tone === 'cyan' ? 'text-cyan-700' : state.tone === 'blue' ? 'text-blue-700' : 'text-emerald-700'}`} /><span className="text-[10px] font-black uppercase tracking-[.13em] text-slate-700">{state.label}</span>{traceId ? <span className="ml-auto font-mono text-[9px] text-slate-500">{traceId}</span> : null}</div>
     {freshness ? <p className="mt-1.5 text-[9px] text-slate-500">{Number.isNaN(new Date(freshness).getTime()) ? freshness : `Actualisé ${new Date(freshness).toLocaleString('fr-FR')}`}</p> : null}
     {warningList.length ? <p className="mt-1.5 text-[10px] leading-4 text-slate-600">{warningList.slice(0, 2).join(' · ')}</p> : null}
   </div>
 }
 
 export function SSectionNav({ items, active, onChange, tone = 'navy' }: { items: readonly string[]; active: string; onChange: (item: string) => void; tone?: SovereignTone }) {
-  return <div className="flex gap-1.5 overflow-x-auto rounded-[22px] border border-slate-200 bg-white/80 p-2 shadow-[0_12px_34px_rgba(15,23,42,.045)] backdrop-blur-xl">
-    {items.map((item, index) => <button key={item} onClick={() => onChange(item)} className={`group flex shrink-0 items-center gap-2 rounded-2xl px-3.5 py-2.5 text-[11px] font-black transition ${active === item ? `${toneMap[tone].chip} shadow-sm` : 'text-slate-500 hover:bg-slate-50 hover:text-slate-950'}`}><span className={`grid h-5 w-5 place-items-center rounded-lg text-[9px] ${active === item ? 'bg-white/18' : 'bg-slate-100 text-slate-400'}`}>{String(index + 1).padStart(2, '0')}</span>{item}</button>)}
+  return <div data-revenue-component="section-nav" data-revenue-surface="light" className="flex gap-1.5 overflow-x-auto rounded-[22px] border border-slate-200 bg-white/80 p-2 shadow-[0_12px_34px_rgba(15,23,42,.045)] backdrop-blur-xl">
+    {items.map((item, index) => <button key={item} onClick={() => onChange(item)} className={`group flex shrink-0 items-center gap-2 rounded-2xl px-3.5 py-2.5 text-[11px] font-black transition ${active === item ? `${toneMap[tone].chip} shadow-sm` : 'text-slate-500 hover:bg-slate-50 hover:text-slate-950'}`}><span className={`grid h-5 w-5 place-items-center rounded-lg text-[9px] ${active === item ? 'bg-white/18' : 'bg-slate-100 text-slate-500'}`}>{String(index + 1).padStart(2, '0')}</span>{item}</button>)}
   </div>
 }
 
 export function SEmpty({ title, description, mode = 'empty', action, icon }: { title: string; description: string; mode?: 'empty' | 'locked' | 'unavailable'; action?: ReactNode; icon?: ElementType }) {
   const Icon = icon || (mode === 'locked' ? LockKeyhole : mode === 'unavailable' ? WifiOff : Circle)
   const tone: SovereignTone = mode === 'locked' ? 'amber' : mode === 'unavailable' ? 'rose' : 'blue'
-  return <div className={`relative overflow-hidden rounded-[28px] border p-8 text-center ${toneMap[tone].border} ${toneMap[tone].wash} ${styles.dotField}`}>
+  return <div data-revenue-component="empty-state" data-revenue-surface="light" data-tone={tone} className={`relative overflow-hidden rounded-[28px] border p-8 text-center ${toneMap[tone].border} ${toneMap[tone].wash} ${styles.dotField}`}>
     <SIcon icon={Icon} tone={tone} className="mx-auto" />
     <h3 className="mt-4 text-lg font-black tracking-tight text-slate-950">{title}</h3>
     <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-slate-600">{description}</p>
@@ -85,11 +85,11 @@ export function SEmpty({ title, description, mode = 'empty', action, icon }: { t
 }
 
 export function STraceLink({ traceId = '—', label = 'Ouvrir la trace', compact = false }: { traceId?: string; label?: string; compact?: boolean }) {
-  return <span className={`inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white text-[10px] font-black uppercase tracking-[.1em] text-slate-600 ${compact ? 'px-2.5 py-1.5' : 'px-3 py-2'}`}><ShieldCheck size={14} /><span className="font-mono normal-case tracking-normal">{traceId}</span><ChevronRight size={13} />{label}</span>
+  return <span data-revenue-component="trace-link" data-revenue-surface="light" className={`inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white text-[10px] font-black uppercase tracking-[.1em] text-slate-600 ${compact ? 'px-2.5 py-1.5' : 'px-3 py-2'}`}><ShieldCheck size={14} /><span className="font-mono normal-case tracking-normal">{traceId}</span><ChevronRight size={13} />{label}</span>
 }
 
 export function SCheckLine({ label, ok = true, detail }: { label: string; ok?: boolean; detail?: string }) {
-  return <div className="flex items-start gap-3 rounded-2xl border border-slate-100 bg-white/80 p-3"><span className={`mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full ${ok ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>{ok ? <Check size={12} strokeWidth={3} /> : <AlertTriangle size={12} />}</span><div><p className="text-xs font-black text-slate-800">{label}</p>{detail ? <p className="mt-1 text-[10px] leading-4 text-slate-500">{detail}</p> : null}</div></div>
+  return <div data-revenue-component="check-line" data-revenue-surface="light" className="flex items-start gap-3 rounded-2xl border border-slate-100 bg-white/80 p-3"><span className={`mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full ${ok ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>{ok ? <Check size={12} strokeWidth={3} /> : <AlertTriangle size={12} />}</span><div><p className="text-xs font-black text-slate-800">{label}</p>{detail ? <p className="mt-1 text-[10px] leading-4 text-slate-500">{detail}</p> : null}</div></div>
 }
 
 export { styles as sovereigntyStyles }

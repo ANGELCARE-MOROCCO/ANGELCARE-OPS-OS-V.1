@@ -293,7 +293,7 @@ function EntitySignature({ entity }: { entity: RevenueTwinEditableEntity }) {
 }
 
 function FieldControl({ field, value, onChange }: { field: Field; value: string; onChange: (value: string) => void }) {
-  const common = `w-full rounded-2xl border border-slate-300 bg-white px-4 py-3.5 text-sm font-semibold text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-cyan-600 focus:ring-4 focus:ring-cyan-100 ${drawerStyles.fieldFocus}`
+  const common = `w-full rounded-2xl border border-slate-300 bg-white px-4 py-3.5 text-sm font-semibold text-slate-950 outline-none transition placeholder:text-slate-500 focus:border-cyan-600 focus:ring-4 focus:ring-cyan-100 ${drawerStyles.fieldFocus}`
   if (field.type === 'textarea') return <textarea rows={4} value={value} placeholder={field.placeholder} onChange={(event) => onChange(event.target.value)} className={`${common} min-h-[112px] resize-y leading-6`} />
   if (field.type === 'select') return <select value={value || field.options?.[0] || ''} onChange={(event) => onChange(event.target.value)} className={common}>{field.options?.map((option) => <option key={option} value={option}>{displayOption(option)}</option>)}</select>
   return <input type={field.type === 'number' ? 'number' : 'text'} value={value} placeholder={field.placeholder || (field.type === 'list' ? 'Valeurs séparées par des virgules' : '')} onChange={(event) => onChange(event.target.value)} className={common} />
@@ -337,7 +337,7 @@ export default function DigitalTwinEntityDrawer({ entity, item, onClose }: { ent
   return <SovereignDrawerOverlay onClose={onClose} label={`${mode} — ${activeBlueprint.noun}`}>
     <SovereignDrawerPanel width="max-w-[940px]" dataId={activeBlueprint.id}>
       <form onSubmit={submit} className="flex h-full min-h-0 flex-col">
-        <header className="relative overflow-hidden bg-[linear-gradient(135deg,#07111f_0%,#0f2550_55%,#14213d_100%)] px-5 py-6 text-white sm:px-7 sm:py-7">
+        <header data-drawer-surface="dark" className="relative overflow-hidden bg-[linear-gradient(135deg,#07111f_0%,#0f2550_55%,#14213d_100%)] px-5 py-6 text-white sm:px-7 sm:py-7">
           <div className={`absolute inset-0 opacity-45 ${drawerStyles.fineGrid}`} />
           <div className="absolute -right-20 -top-28 h-72 w-72 rounded-full bg-cyan-400/10 blur-3xl" />
           <div className="relative grid gap-6 lg:grid-cols-[1fr_300px] lg:items-center">
@@ -374,7 +374,7 @@ export default function DigitalTwinEntityDrawer({ entity, item, onClose }: { ent
                 <p className="mb-5 text-xs font-semibold leading-5 text-slate-600">{section.description}</p>
                 <div className="grid gap-4 sm:grid-cols-2">
                   {sectionFields.map((field) => <label key={field.key} className={field.type === 'textarea' || field.type === 'list' ? 'sm:col-span-2' : ''}>
-                    <span className="mb-2 flex items-center justify-between gap-3 text-[10px] font-black uppercase tracking-[.12em] text-slate-700"><span>{field.label}</span>{field.required ? <span className="rounded-full bg-rose-50 px-2 py-1 text-[8px] text-rose-700">Requis</span> : <span className="text-[8px] text-slate-400">Optionnel</span>}</span>
+                    <span className="mb-2 flex items-center justify-between gap-3 text-[10px] font-black uppercase tracking-[.12em] text-slate-700"><span>{field.label}</span>{field.required ? <span className="rounded-full bg-rose-50 px-2 py-1 text-[8px] text-rose-700">Requis</span> : <span className="text-[8px] text-slate-500">Optionnel</span>}</span>
                     <FieldControl field={field} value={form[field.key] || ''} onChange={(value) => setForm((current) => ({ ...current, [field.key]: value }))} />
                     {field.type === 'list' ? <span className="mt-2 block text-[10px] font-semibold text-slate-500">Séparez chaque valeur par une virgule.</span> : null}
                   </label>)}

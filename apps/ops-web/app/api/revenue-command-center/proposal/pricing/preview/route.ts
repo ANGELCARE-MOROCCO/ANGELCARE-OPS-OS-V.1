@@ -1,0 +1,4 @@
+import { fail,ok } from "@/lib/revenue-command-center/canonical-server"
+import { revenueAccessFailure } from "@/lib/revenue-command-center/api-access"
+import { calculateFinancials,proposalContext } from "@/lib/revenue-command-center/proposal-enterprise/server"
+export async function POST(request:Request){try{await proposalContext("revenue.pricing.read");const body=await request.json(),financials=calculateFinancials({grossValue:body.grossValue,discountValue:body.discountValue,estimatedCost:body.estimatedCost}),minimum=Math.max(0,Number(body.minimumMarginPercent||25));return ok({financials,minimumMarginPercent:minimum,approvalRequired:financials.margin_percent<minimum||financials.discount_percent>10})}catch(error){const access=revenueAccessFailure(error);return access?fail(access.message,access.status):fail(error)}}

@@ -1,5 +1,7 @@
-import UltimateRevenueCommandPage from '../_v9/UltimateRevenueCommandPage'
+import RevenueExecutionWorkspace from "@/components/revenue-command-center/execution-enterprise/RevenueExecutionWorkspace"
+
+export const dynamic = "force-dynamic"
 
 export default function Page() {
-  return <UltimateRevenueCommandPage pageKey="workload-balancer" />
+  return <RevenueExecutionWorkspace experience="workload-balancer" />
 }

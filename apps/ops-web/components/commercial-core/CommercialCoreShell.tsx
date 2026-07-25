@@ -85,7 +85,7 @@ export function CommandHeader({
   source?: ReactNode
 }) {
   return (
-    <section className={styles.commandHeader}>
+    <section className={styles.commandHeader} data-commercial-focus-hide="true">
       <div className={styles.commandMain}>
         <span className={styles.commandEyebrow}>{eyebrow}</span>
         <h1>{title}</h1>
@@ -99,7 +99,7 @@ export function CommandHeader({
 }
 
 export function MetricStrip({ children }: { children: ReactNode }) {
-  return <section className={styles.metricStrip}>{children}</section>
+  return <section className={styles.metricStrip} data-commercial-focus-hide="true">{children}</section>
 }
 
 export function Metric({ label, value, context, tone = 'neutral' }: {
@@ -158,7 +158,7 @@ export function TruthNotice({ title, children, tone = 'info' }: {
   tone?: 'info' | 'attention' | 'risk'
 }) {
   return (
-    <section className={styles.truthNotice} data-tone={tone}>
+    <section className={styles.truthNotice} data-tone={tone} data-commercial-focus-hide="true">
       <strong>{title}</strong>
       <div>{children}</div>
     </section>

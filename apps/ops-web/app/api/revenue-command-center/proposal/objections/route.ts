@@ -1,0 +1,6 @@
+import { fail,ok } from "@/lib/revenue-command-center/canonical-server"
+import { revenueAccessFailure } from "@/lib/revenue-command-center/api-access"
+
+import { cleanString } from "@/lib/revenue-command-center/canonical-server"
+import { proposalContext } from "@/lib/revenue-command-center/proposal-enterprise/server"
+export async function POST(request:Request){try{const {access,supabase}=await proposalContext("revenue.negotiations.manage"),body=await request.json(),row={proposal_id:String(body.proposalId||""),negotiation_id:body.negotiationId||null,category:cleanString(body.category,"other"),wording:cleanString(body.wording),source_contact_name:cleanString(body.sourceContactName),severity:cleanString(body.severity,"medium"),response_strategy:cleanString(body.responseStrategy),resolution_status:"open",created_by:(access.user as any).id||null};if(!row.proposal_id||!row.wording)return fail("Proposition et objection exacte requises.",400);const {data,error}=await supabase.from("revenue_proposal_objections").insert(row).select("*").single();if(error)return fail(error);return ok({objection:data})}catch(error){const access=revenueAccessFailure(error);return access?fail(access.message,access.status):fail(error)}}

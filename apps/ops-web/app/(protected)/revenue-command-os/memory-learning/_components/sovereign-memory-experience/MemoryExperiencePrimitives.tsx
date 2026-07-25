@@ -90,7 +90,7 @@ export function MemorySafetyBanner({ detail = 'La mémoire institutionnelle rest
 
 export function MemoryLifecycle({ current }: { current: 'capture' | 'evidence' | 'review' | 'approval' | 'versioning' | 'indexing' | 'certification' }) {
   const stages = ['capture','evidence','review','approval','versioning','indexing','certification'] as const
-  return <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 xl:grid-cols-7">{stages.map((stage, index) => <div key={stage} className={`rounded-2xl border p-2 text-center ${stage === current ? 'border-emerald-300 bg-emerald-50' : 'border-slate-200 bg-white'}`}><BookOpenCheck size={13} className={`mx-auto ${stage === current ? 'text-emerald-700' : 'text-slate-400'}`} /><p className={`mt-1 text-[8px] font-black uppercase ${stage === current ? 'text-emerald-900' : 'text-slate-600'}`}>{index + 1}. {stage}</p></div>)}</div>
+  return <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 xl:grid-cols-7">{stages.map((stage, index) => <div key={stage} className={`rounded-2xl border p-2 text-center ${stage === current ? 'border-emerald-300 bg-emerald-50' : 'border-slate-200 bg-white'}`}><BookOpenCheck size={13} className={`mx-auto ${stage === current ? 'text-emerald-700' : 'text-slate-500'}`} /><p className={`mt-1 text-[8px] font-black uppercase ${stage === current ? 'text-emerald-900' : 'text-slate-600'}`}>{index + 1}. {stage}</p></div>)}</div>
 }
 
 export { styles as memoryExperienceStyles }

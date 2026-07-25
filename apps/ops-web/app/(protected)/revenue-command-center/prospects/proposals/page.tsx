@@ -1,7 +1,3 @@
-import ProspectEnterpriseWorkspace from "@/components/revenue-command-center/prospects-enterprise/ProspectEnterpriseWorkspace"
-
-export const dynamic = "force-dynamic"
-
-export default function Page() {
-  return <ProspectEnterpriseWorkspace mode="proposals" />
-}
+import RevenueProposalWorkspace from "@/components/revenue-command-center/proposal-enterprise/RevenueProposalWorkspace"
+export const dynamic="force-dynamic"
+export default function Page(){return <RevenueProposalWorkspace experience="proposal-command" contextType="prospect"/>}

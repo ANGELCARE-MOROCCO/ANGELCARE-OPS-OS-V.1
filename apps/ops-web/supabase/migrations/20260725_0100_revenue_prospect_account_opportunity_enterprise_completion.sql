@@ -1,39 +1,183 @@
 -- ANGELCARE Revenue Command Center
--- Phase 2: prospects, accounts, contacts and opportunities enterprise completion
--- Additive, idempotent and reversible-by-object migration. No destructive rewrite.
+-- Production compatibility migration for the observed legacy Revenue schema.
+-- Tailored from Phase 2 after read-only diagnostic on 2026-07-25.
+--
+-- IMPORTANT:
+-- * Keeps public.revenue_prospects.id as TEXT.
+-- * Preserves all 247 existing prospect IDs, including 172 non-UUID values.
+-- * Creates UUID accounts/opportunities while linking prospects through TEXT.
+-- * New prospect IDs are UUID-formatted strings stored as TEXT.
+-- * Replaces the original 20260725_0100 Phase 2 migration for this database.
+-- * Additive / compatibility-first. No legacy ID conversion and no row deletion.
 
--- Hard safety gate: the repository contains a legacy text-id prospect migration and a later UUID model.
--- Do not mutate a live database until the canonical UUID foundation is confirmed.
+begin;
+
+create extension if not exists pgcrypto;
+
 do $$
 declare
   required_table text;
-  id_type text;
+  prospect_id_type text;
+  task_id_type text;
 begin
   foreach required_table in array array[
-    'revenue_accounts',
     'revenue_contacts',
     'revenue_prospects',
-    'revenue_opportunities',
     'revenue_tasks',
     'revenue_appointments',
     'revenue_activities',
     'revenue_command_action_logs'
   ] loop
     if to_regclass('public.' || required_table) is null then
-      raise exception 'Revenue enterprise preflight failed: required table public.% is missing. Run the read-only reconciliation report before this migration.', required_table;
+      raise exception 'BLOCKED: required legacy table public.% is missing.', required_table;
     end if;
   end loop;
 
-  select data_type into id_type
+  select data_type into prospect_id_type
   from information_schema.columns
-  where table_schema = 'public' and table_name = 'revenue_prospects' and column_name = 'id';
+  where table_schema='public' and table_name='revenue_prospects' and column_name='id';
 
-  if id_type is distinct from 'uuid' then
-    raise exception 'Revenue enterprise preflight failed: public.revenue_prospects.id is %, expected uuid. The legacy text-id source must be reconciled with an approved data-migration plan before Phase 2.', coalesce(id_type, 'missing');
+  if prospect_id_type is distinct from 'text' then
+    raise exception 'BLOCKED: this compatibility migration expects public.revenue_prospects.id TEXT, found %.', coalesce(prospect_id_type,'missing');
+  end if;
+
+  select udt_name into task_id_type
+  from information_schema.columns
+  where table_schema='public' and table_name='revenue_tasks' and column_name='id';
+
+  if task_id_type is distinct from 'uuid' then
+    raise exception 'BLOCKED: public.revenue_tasks.id must remain UUID, found %.', coalesce(task_id_type,'missing');
+  end if;
+
+  if not exists (
+    select 1 from information_schema.columns
+    where table_schema='public' and table_name='revenue_prospects' and column_name='last_activity_at'
+  ) then
+    raise exception 'BLOCKED: last_activity_at repair is missing. Run the emergency repair first.';
   end if;
 end $$;
 
-create extension if not exists pgcrypto;
+-- Canonical UUID account table, absent from the observed production schema.
+create table if not exists public.revenue_accounts (
+  id uuid primary key default gen_random_uuid(),
+  account_name text not null,
+  legal_name text,
+  registration_number text,
+  account_type text not null default 'organization',
+  segment text default 'b2b',
+  city text default 'Unassigned',
+  territory text,
+  status text not null default 'active',
+  lifecycle_stage text not null default 'prospect',
+  priority text not null default 'medium',
+  owner_id uuid,
+  owner_name text default 'BD Officer',
+  website text,
+  domain text,
+  phone text,
+  email text,
+  address text,
+  industry text,
+  employee_band text,
+  annual_revenue_mad numeric not null default 0,
+  parent_account_id uuid references public.revenue_accounts(id) on delete set null,
+  last_activity_at timestamptz,
+  next_action_at timestamptz,
+  archived_at timestamptz,
+  metadata jsonb not null default '{}',
+  created_by uuid,
+  updated_by uuid,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+-- Extend the existing polymorphic contact table to the enterprise contract.
+alter table public.revenue_contacts
+  add column if not exists account_id uuid references public.revenue_accounts(id) on delete set null,
+  add column if not exists role_title text,
+  add column if not exists department text,
+  add column if not exists seniority text,
+  add column if not exists whatsapp text,
+  add column if not exists decision_role text not null default 'contact',
+  add column if not exists preferred_channel text not null default 'phone',
+  add column if not exists consent_status text not null default 'unknown',
+  add column if not exists status text not null default 'active',
+  add column if not exists owner_id uuid,
+  add column if not exists last_contact_at timestamptz,
+  add column if not exists archived_at timestamptz,
+  add column if not exists metadata jsonb not null default '{}';
+
+-- Keep the historical required entity_id contract while making new canonical inserts safe.
+create or replace function public.revenue_contact_sync_entity()
+returns trigger
+language plpgsql
+as $$
+begin
+  if new.entity_id is null or btrim(new.entity_id) = '' then
+    if new.account_id is not null then
+      new.entity_type := 'account';
+      new.entity_id := new.account_id::text;
+    else
+      new.entity_type := coalesce(nullif(new.entity_type,''), 'contact');
+      new.entity_id := new.id::text;
+    end if;
+  end if;
+  return new;
+end;
+$$;
+
+drop trigger if exists revenue_contacts_sync_entity on public.revenue_contacts;
+create trigger revenue_contacts_sync_entity
+before insert or update of account_id, entity_id, entity_type on public.revenue_contacts
+for each row execute function public.revenue_contact_sync_entity();
+
+-- Complete the existing prospect row without changing its TEXT primary key.
+alter table public.revenue_prospects
+  alter column id set default (gen_random_uuid()::text),
+  add column if not exists account_id uuid references public.revenue_accounts(id) on delete set null,
+  add column if not exists contact_id uuid references public.revenue_contacts(id) on delete set null,
+  add column if not exists owner_id uuid,
+  add column if not exists created_by uuid,
+  add column if not exists updated_by uuid;
+
+-- Canonical UUID opportunities linked to legacy prospects through TEXT.
+create table if not exists public.revenue_opportunities (
+  id uuid primary key default gen_random_uuid(),
+  prospect_id text references public.revenue_prospects(id) on delete cascade,
+  account_id uuid references public.revenue_accounts(id) on delete set null,
+  contact_id uuid references public.revenue_contacts(id) on delete set null,
+  title text not null,
+  stage text not null default 'qualification',
+  value_mad numeric not null default 0,
+  currency text not null default 'MAD',
+  probability numeric not null default 0,
+  expected_close_date date,
+  status text not null default 'open',
+  priority text not null default 'medium',
+  forecast_category text not null default 'pipeline',
+  owner_id uuid,
+  owner text default 'BD Officer',
+  next_step text,
+  next_step_at timestamptz,
+  source text not null default 'revenue_command_center',
+  loss_reason text,
+  close_reason text,
+  closed_at timestamptz,
+  archived_at timestamptz,
+  metadata jsonb not null default '{}',
+  created_by uuid,
+  updated_by uuid,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+alter table public.revenue_tasks
+  add column if not exists opportunity_id uuid references public.revenue_opportunities(id) on delete set null;
+
+alter table public.revenue_appointments
+  add column if not exists opportunity_id uuid references public.revenue_opportunities(id) on delete set null;
+
+
 
 create or replace function public.revenue_enterprise_touch_updated_at()
 returns trigger
@@ -106,11 +250,11 @@ alter table if exists public.revenue_opportunities
 -- Add only the canonical linking columns needed by the enterprise read model; keep a legacy
 -- text entity_id intact and compare it through an explicit text cast in the view below.
 alter table if exists public.revenue_tasks
-  add column if not exists prospect_id uuid references public.revenue_prospects(id) on delete cascade,
+  add column if not exists prospect_id text references public.revenue_prospects(id) on delete cascade,
   add column if not exists opportunity_id uuid references public.revenue_opportunities(id) on delete set null;
 
 alter table if exists public.revenue_appointments
-  add column if not exists prospect_id uuid references public.revenue_prospects(id) on delete cascade,
+  add column if not exists prospect_id text references public.revenue_prospects(id) on delete cascade,
   add column if not exists opportunity_id uuid references public.revenue_opportunities(id) on delete set null;
 
 create table if not exists public.revenue_account_aliases (
@@ -131,7 +275,7 @@ create table if not exists public.revenue_contact_relationships (
   id uuid primary key default gen_random_uuid(),
   contact_id uuid not null references public.revenue_contacts(id) on delete cascade,
   account_id uuid not null references public.revenue_accounts(id) on delete cascade,
-  prospect_id uuid references public.revenue_prospects(id) on delete cascade,
+  prospect_id text references public.revenue_prospects(id) on delete cascade,
   opportunity_id uuid references public.revenue_opportunities(id) on delete cascade,
   relationship_type text not null default 'stakeholder',
   decision_role text not null default 'contact',
@@ -152,7 +296,7 @@ create table if not exists public.revenue_contact_relationships (
 create table if not exists public.revenue_decision_map_members (
   id uuid primary key default gen_random_uuid(),
   account_id uuid references public.revenue_accounts(id) on delete cascade,
-  prospect_id uuid references public.revenue_prospects(id) on delete cascade,
+  prospect_id text references public.revenue_prospects(id) on delete cascade,
   opportunity_id uuid references public.revenue_opportunities(id) on delete cascade,
   contact_id uuid not null references public.revenue_contacts(id) on delete cascade,
   member_role text not null default 'influencer',
@@ -175,7 +319,7 @@ create table if not exists public.revenue_decision_map_members (
 
 create table if not exists public.revenue_qualification_assessments (
   id uuid primary key default gen_random_uuid(),
-  prospect_id uuid not null references public.revenue_prospects(id) on delete cascade,
+  prospect_id text not null references public.revenue_prospects(id) on delete cascade,
   opportunity_id uuid references public.revenue_opportunities(id) on delete set null,
   framework text not null default 'ANGELCARE_ENTERPRISE',
   need_score numeric not null default 0 check (need_score between 0 and 100),
@@ -214,7 +358,7 @@ create table if not exists public.revenue_account_status_history (
 create table if not exists public.revenue_account_risks (
   id uuid primary key default gen_random_uuid(),
   account_id uuid not null references public.revenue_accounts(id) on delete cascade,
-  prospect_id uuid references public.revenue_prospects(id) on delete cascade,
+  prospect_id text references public.revenue_prospects(id) on delete cascade,
   opportunity_id uuid references public.revenue_opportunities(id) on delete cascade,
   risk_type text not null,
   severity text not null default 'medium',
@@ -421,7 +565,7 @@ as $$
 declare
   v_account_id uuid;
   v_contact_id uuid;
-  v_prospect_id uuid;
+  v_prospect_id text;
   v_opportunity_id uuid;
   v_account_name text;
   v_prospect_name text;
@@ -434,6 +578,7 @@ begin
   v_contact_name := nullif(trim(payload->>'contactName'), '');
   v_value := coalesce(nullif(payload->>'valueMad', '')::numeric, 0);
   v_probability := greatest(0, least(100, coalesce(nullif(payload->>'probability', '')::numeric, 0)));
+  v_prospect_id := gen_random_uuid()::text;
 
   insert into public.revenue_accounts (
     account_name, legal_name, account_type, segment, city, lifecycle_stage, priority,
@@ -457,34 +602,14 @@ begin
     p_actor_id
   ) returning id into v_account_id;
 
-  if v_contact_name is not null then
-    insert into public.revenue_contacts (
-      account_id, full_name, role_title, email, phone, whatsapp, influence_level,
-      decision_role, preferred_channel, consent_status, status, owner_id, metadata
-    ) values (
-      v_account_id,
-      v_contact_name,
-      nullif(payload->>'roleTitle', ''),
-      nullif(payload->>'email', ''),
-      nullif(payload->>'phone', ''),
-      nullif(payload->>'whatsapp', ''),
-      'unknown',
-      'contact',
-      coalesce(nullif(payload->>'preferredChannel', ''), 'phone'),
-      'unknown',
-      'active',
-      p_actor_id,
-      jsonb_build_object('source', 'enterprise_dossier_studio')
-    ) returning id into v_contact_id;
-  end if;
-
   insert into public.revenue_prospects (
-    account_id, contact_id, name, company, city, source, segment, stage, priority,
+    id, account_id, contact_id, name, company, city, source, segment, stage, priority,
     score, value_mad, probability, owner_id, owner, contact_name, email, phone,
     next_action_at, status, data, metadata, created_by, updated_by
   ) values (
+    v_prospect_id,
     v_account_id,
-    v_contact_id,
+    null,
     v_prospect_name,
     v_account_name,
     coalesce(nullif(payload->>'city', ''), 'Unassigned'),
@@ -497,7 +622,7 @@ begin
     v_probability,
     p_actor_id,
     coalesce(nullif(payload->>'owner', ''), 'BD Officer'),
-    v_contact_name,
+    coalesce(v_contact_name, ''),
     nullif(payload->>'email', ''),
     nullif(payload->>'phone', ''),
     nullif(payload->>'nextActionAt', '')::timestamptz,
@@ -511,7 +636,34 @@ begin
     jsonb_build_object('source', 'enterprise_dossier_studio'),
     p_actor_id,
     p_actor_id
-  ) returning id into v_prospect_id;
+  );
+
+  if v_contact_name is not null then
+    insert into public.revenue_contacts (
+      account_id, entity_type, entity_id, full_name, role_title, email, phone, whatsapp,
+      influence_level, decision_role, preferred_channel, consent_status, status, owner_id, metadata
+    ) values (
+      v_account_id,
+      'prospect',
+      v_prospect_id,
+      v_contact_name,
+      nullif(payload->>'roleTitle', ''),
+      nullif(payload->>'email', ''),
+      nullif(payload->>'phone', ''),
+      nullif(payload->>'whatsapp', ''),
+      'unknown',
+      'contact',
+      coalesce(nullif(payload->>'preferredChannel', ''), 'phone'),
+      'unknown',
+      'active',
+      p_actor_id,
+      jsonb_build_object('source', 'enterprise_dossier_studio')
+    ) returning id into v_contact_id;
+
+    update public.revenue_prospects
+    set contact_id = v_contact_id, updated_at = now()
+    where id = v_prospect_id;
+  end if;
 
   if coalesce((payload->>'createOpportunity')::boolean, true) then
     insert into public.revenue_opportunities (
@@ -680,6 +832,14 @@ begin
   end loop;
 end $$;
 
+-- Core enterprise tables are server-command only in this compatibility deployment.
+alter table public.revenue_accounts enable row level security;
+alter table public.revenue_opportunities enable row level security;
+revoke all privileges on table public.revenue_accounts from anon, authenticated;
+revoke all privileges on table public.revenue_opportunities from anon, authenticated;
+grant all privileges on table public.revenue_accounts to service_role;
+grant all privileges on table public.revenue_opportunities to service_role;
+
 revoke all privileges on table public.revenue_prospect_enterprise_overview from anon, authenticated;
 grant select on table public.revenue_prospect_enterprise_overview to service_role;
 
@@ -688,3 +848,5 @@ grant execute on function public.revenue_create_enterprise_prospect_dossier(json
 
 comment on view public.revenue_prospect_enterprise_overview is
   'Canonical read model for ANGELCARE Revenue Command prospects, accounts, contacts, opportunities, tasks, meetings, risks and decision maps.';
+
+commit;

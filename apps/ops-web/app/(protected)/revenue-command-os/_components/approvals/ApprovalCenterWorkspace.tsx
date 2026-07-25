@@ -162,7 +162,7 @@ export default function ApprovalCenterWorkspace() {
 
       {!loading && selected ? <div className="mt-8 grid min-h-[740px] gap-5 xl:grid-cols-[330px_minmax(0,1fr)_380px]">
         <aside className="rounded-[32px] border border-slate-200 bg-white p-4 shadow-[0_20px_55px_rgba(15,23,42,.06)]">
-          <div className="flex items-center justify-between px-3 pt-2"><p className="text-[10px] font-black uppercase tracking-[.17em] text-slate-400">File de décision</p><button type="button" onClick={() => void load()} title="Actualiser" className="grid h-8 w-8 place-items-center rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50"><RefreshCw size={14} /></button></div>
+          <div className="flex items-center justify-between px-3 pt-2"><p className="text-[10px] font-black uppercase tracking-[.17em] text-slate-500">File de décision</p><button type="button" onClick={() => void load()} title="Actualiser" className="grid h-8 w-8 place-items-center rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50"><RefreshCw size={14} /></button></div>
           <div className="mt-4 space-y-2">{items.map((item) => {
             const active = item.strategyId === selected.strategyId
             return <button type="button" key={item.strategyId} onClick={() => setSelectedStrategyId(item.strategyId)} className={`w-full rounded-[22px] p-4 text-left transition ${active ? 'bg-slate-950 text-white shadow-xl' : 'bg-slate-50 text-slate-800 hover:bg-slate-100'}`}>
@@ -199,7 +199,7 @@ export default function ApprovalCenterWorkspace() {
 }
 
 function DecisionFact({ icon: Icon, label, value }: { icon: typeof Clock3; label: string; value: string }) {
-  return <div className="rounded-2xl border border-slate-200 p-4"><Icon size={18} className="text-amber-700" /><p className="mt-3 text-[9px] font-black uppercase tracking-[.12em] text-slate-400">{label}</p><p className="mt-1 text-sm font-black text-slate-900">{value}</p></div>
+  return <div className="rounded-2xl border border-slate-200 p-4"><Icon size={18} className="text-amber-700" /><p className="mt-3 text-[9px] font-black uppercase tracking-[.12em] text-slate-500">{label}</p><p className="mt-1 text-sm font-black text-slate-900">{value}</p></div>
 }
 
 function DecisionNarrative({ title, text }: { title: string; text: string }) {

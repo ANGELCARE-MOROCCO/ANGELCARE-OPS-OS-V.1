@@ -16,7 +16,12 @@ const requiredFiles = [
   "components/revenue-command-center/RevenuePartnershipsEnterprisePage.tsx",
   "components/revenue-command-center/PartnershipsWhiteTextGuard.tsx",
   "components/revenue-command-center/RevenueAppointmentsV12MegaWorkspace.tsx",
+  "components/revenue-command-center/engagement-enterprise/RevenueEngagementWorkspace.tsx",
+  "components/revenue-command-center/engagement-enterprise/RevenueEngagementWorkspace.module.css",
+  "components/revenue-command-center/engagement-enterprise/route-contracts.ts",
+  "components/revenue-command-center/engagement-enterprise/types.ts",
   "components/revenue-command-center/RevenueDailyTasksV13McKinseyWorkspace.tsx",
+  "components/revenue-command-center/execution-enterprise/RevenueExecutionWorkspace.tsx",
   "components/revenue-command-center/RevenuePartnershipsV13ActionsWorkspace.tsx",
   "lib/revenue-command-center/route-registry.ts",
 ];
@@ -95,11 +100,13 @@ check(!partnershipPage.includes('setModal("New Partnership")'), "partnership pri
 check(!partnershipPage.includes("programs.length || 24"), "fabricated program fallback removed");
 check(partnershipPage.includes("stats.active / stats.total"), "active rate is derived from live records");
 
-const appointmentsV12 = read("components/revenue-command-center/RevenueAppointmentsV12MegaWorkspace.tsx");
-check(appointmentsV12.includes("Rendez-vous 360°"), "appointment lifecycle receives the premium French command experience");
-check(appointmentsV12.includes('Intl.NumberFormat("fr-FR"'), "appointment monetary presentation uses fr-FR formatting");
-check(appointmentsV12.includes(" Dh`"), "appointment monetary presentation uses Dh");
-check(!appointmentsV12.includes("RCC_PARENT_SHELL_FULLWIDTH_FIX_V5"), "appointment workspace global CSS injection removed");
+const engagementV5 = read("components/revenue-command-center/engagement-enterprise/RevenueEngagementWorkspace.tsx");
+const engagementContractsV5 = read("components/revenue-command-center/engagement-enterprise/route-contracts.ts");
+check(engagementContractsV5.includes("Centre de commandement des rendez-vous"), "appointment lifecycle receives the premium French engagement command experience");
+check(engagementV5.includes('Intl.NumberFormat("fr-FR"'), "appointment monetary presentation uses fr-FR formatting");
+check(engagementV5.includes(" Dh`"), "appointment monetary presentation uses Dh");
+check(engagementV5.includes("Interactions persistées"), "communication persistence boundary is visible in the appointment experience");
+check(!engagementV5.includes("RCC_PARENT_SHELL_FULLWIDTH_FIX_V5"), "appointment workspace global CSS injection removed");
 
 const dailyTasksV13 = read("components/revenue-command-center/RevenueDailyTasksV13McKinseyWorkspace.tsx");
 check(dailyTasksV13.includes("Poste de commandement de l’exécution quotidienne"), "daily execution lifecycle receives the premium French command experience");
@@ -132,18 +139,21 @@ for (const route of expectedRoutes) {
 
 const routeFiles = pages.map((file) => ({ file, source: fs.readFileSync(file, "utf8") }));
 const familyCounts = {
-  ProspectEnterpriseWorkspace: 15,
-  ProspectEnterpriseDossier: 6,
-  RevenueB2CWorkflowV12MegaWorkspace: 26,
-  RevenueCommandFinalWorkspace: 13,
+  ProspectEnterpriseWorkspace: 13,
+  ProspectEnterpriseDossier: 4,
+  RevenueB2CWorkflowV12MegaWorkspace: 24,
+  RevenueCommandFinalWorkspace: 12,
   RevenueExecutiveBriefingV11Workspace: 3,
   RevenuePredictiveV11Workspace: 3,
   RevenueSDRV11Workspace: 3,
-  RevenuePartnershipsEnterpriseWorkspace: 13,
-  RevenueAppointmentsV12MegaWorkspace: 23,
-  RevenueDailyTasksV13McKinseyWorkspace: 16,
-  RevenuePartnershipsV13ActionsWorkspace: 9,
-  UltimateRevenueCommandPage: 9,
+  RevenuePartnershipsEnterpriseWorkspace: 12,
+  RevenueAppointmentsV12MegaWorkspace: 0,
+  RevenueEngagementWorkspace: 24,
+  RevenueDailyTasksV13McKinseyWorkspace: 0,
+  RevenueExecutionWorkspace: 21,
+  RevenuePartnershipsV13ActionsWorkspace: 8,
+  RevenueProposalWorkspace: 8,
+  UltimateRevenueCommandPage: 8,
 };
 for (const [family, expected] of Object.entries(familyCounts)) {
   const count = routeFiles.filter(({ source }) => source.includes(family)).length;
@@ -158,10 +168,16 @@ const transformedExperienceTargets = new Set([
   "components/revenue-command-center/RevenuePartnershipsEnterprisePage.tsx",
   "components/revenue-command-center/PartnershipsWhiteTextGuard.tsx",
   "components/revenue-command-center/RevenueAppointmentsV12MegaWorkspace.tsx",
+  "components/revenue-command-center/engagement-enterprise/RevenueEngagementWorkspace.tsx",
+  "components/revenue-command-center/engagement-enterprise/RevenueEngagementWorkspace.module.css",
+  "components/revenue-command-center/engagement-enterprise/route-contracts.ts",
+  "components/revenue-command-center/engagement-enterprise/types.ts",
   "components/revenue-command-center/RevenueDailyTasksV13McKinseyWorkspace.tsx",
+  "components/revenue-command-center/execution-enterprise/RevenueExecutionWorkspace.tsx",
   "components/revenue-command-center/RevenuePartnershipsV13ActionsWorkspace.tsx",
   "components/revenue-command-center/prospects-enterprise/ProspectEnterpriseWorkspace.tsx",
   "components/revenue-command-center/prospects-enterprise/ProspectEnterpriseDossier.tsx",
+  "components/revenue-command-center/proposal-enterprise/RevenueProposalWorkspace.tsx",
 ].map((file) => path.resolve(root, file)));
 
 const importPattern = /(?:import|export)\s+(?:[^"']*?\s+from\s+)?["']([^"']+)["']/g;
@@ -193,7 +209,7 @@ function reachesTransformedExperience(file, seen = new Set()) {
   return [...localDependencies(absolute)].some((dependency) => reachesTransformedExperience(dependency, seen));
 }
 const directlyTransformedRoutes = pages.filter((page) => reachesTransformedExperience(page)).length;
-check(directlyTransformedRoutes === 142, `direct/transitive premium route transformation: 142 (found ${directlyTransformedRoutes})`);
+check(directlyTransformedRoutes === 146, `direct/transitive premium route transformation: 146 (found ${directlyTransformedRoutes})`);
 
 const protectedPrefixes = [
   "app/api/",

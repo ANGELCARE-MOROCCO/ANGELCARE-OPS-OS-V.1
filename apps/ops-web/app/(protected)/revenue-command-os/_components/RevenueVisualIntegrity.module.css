@@ -125,3 +125,161 @@
     --rev-on-dark-muted: #e2e8f0;
   }
 }
+
+/* =========================================================
+   Final production contrast certification
+   Scope: Revenue Command OS only. Color and legibility only;
+   no dialog, drawer, grid or width geometry is changed here.
+   ========================================================= */
+
+.visualIntegrity {
+  --rev-light-title: #020617;
+  --rev-light-copy: #334155;
+  --rev-light-muted: #475569;
+  --rev-dark-title: #ffffff;
+  --rev-dark-copy: #e2e8f0;
+  --rev-dark-muted: #cbd5e1;
+}
+
+/* Explicit semantic surfaces always outrank the legacy global
+   ancestor selectors that incorrectly recolor nested panels. */
+.visualIntegrity :where([data-revenue-surface="dark"], [data-hero-surface="dark"]) {
+  color: var(--rev-dark-title) !important;
+}
+
+.visualIntegrity :where([data-revenue-surface="dark"], [data-hero-surface="dark"])
+  :where(h1,h2,h3,h4,h5,h6,strong):not([class*="text-"]) {
+  color: var(--rev-dark-title) !important;
+}
+
+.visualIntegrity :where([data-revenue-surface="dark"], [data-hero-surface="dark"])
+  :where(p,small,label,li,dt,dd,span):not([class*="text-"]) {
+  color: var(--rev-dark-copy) !important;
+}
+
+.visualIntegrity :where([data-revenue-surface="dark"], [data-hero-surface="dark"])
+  :where(.text-slate-500,.text-slate-400,.text-gray-500,.text-gray-400) {
+  color: var(--rev-dark-muted) !important;
+}
+
+.visualIntegrity :where([data-revenue-surface="dark"], [data-hero-surface="dark"])
+  :where(.text-slate-600,.text-slate-700) {
+  color: var(--rev-dark-copy) !important;
+}
+
+.visualIntegrity :where([data-revenue-surface="light"]) {
+  color: var(--rev-light-title) !important;
+}
+
+.visualIntegrity :where([data-revenue-surface="light"])
+  :where(h1,h2,h3,h4,h5,h6,strong):not([class*="text-"]) {
+  color: var(--rev-light-title) !important;
+}
+
+.visualIntegrity :where([data-revenue-surface="light"])
+  :where(p,small,label,li,dt,dd):not([class*="text-"]) {
+  color: var(--rev-light-copy) !important;
+}
+
+/* Existing Tailwind dark surfaces are certified even where a legacy
+   route has not yet received an explicit surface attribute. */
+.visualIntegrity :where(
+  [class~="bg-slate-950"],
+  [class~="bg-slate-900"],
+  [class~="bg-slate-800"],
+  [class*="from-slate-950"],
+  [class*="from-slate-900"],
+  [class*="from-rose-950"],
+  [class*="from-red-950"],
+  [class*="via-slate-950"],
+  [class*="via-slate-900"],
+  [class*="via-red-950"],
+  [class*="to-slate-950"],
+  [class*="to-slate-900"]
+) {
+  color: var(--rev-dark-title) !important;
+}
+
+.visualIntegrity :where(
+  [class~="bg-slate-950"],
+  [class~="bg-slate-900"],
+  [class~="bg-slate-800"],
+  [class*="from-slate-950"],
+  [class*="from-slate-900"],
+  [class*="from-rose-950"],
+  [class*="from-red-950"],
+  [class*="via-slate-950"],
+  [class*="via-slate-900"],
+  [class*="via-red-950"],
+  [class*="to-slate-950"],
+  [class*="to-slate-900"]
+) :where(h1,h2,h3,h4,h5,h6,strong):not([class*="text-"]) {
+  color: var(--rev-dark-title) !important;
+}
+
+.visualIntegrity :where(
+  [class~="bg-slate-950"],
+  [class~="bg-slate-900"],
+  [class~="bg-slate-800"],
+  [class*="from-slate-950"],
+  [class*="from-slate-900"],
+  [class*="from-rose-950"],
+  [class*="from-red-950"],
+  [class*="via-slate-950"],
+  [class*="via-slate-900"],
+  [class*="via-red-950"],
+  [class*="to-slate-950"],
+  [class*="to-slate-900"]
+) :where(.text-slate-500,.text-slate-400,.text-gray-500,.text-gray-400) {
+  color: var(--rev-dark-muted) !important;
+}
+
+/* Shared semantic chips: exact pairs meet AA for their compact size. */
+.visualIntegrity [data-revenue-component="chip"][data-tone="navy"] { background:#020617 !important; color:#fff !important; border-color:#334155 !important; }
+.visualIntegrity [data-revenue-component="chip"][data-tone="blue"] { background:#dbeafe !important; color:#1e3a8a !important; border-color:#93c5fd !important; }
+.visualIntegrity [data-revenue-component="chip"][data-tone="cyan"] { background:#cffafe !important; color:#164e63 !important; border-color:#67e8f9 !important; }
+.visualIntegrity [data-revenue-component="chip"][data-tone="emerald"] { background:#d1fae5 !important; color:#064e3b !important; border-color:#6ee7b7 !important; }
+.visualIntegrity [data-revenue-component="chip"][data-tone="amber"] { background:#fef3c7 !important; color:#78350f !important; border-color:#fcd34d !important; }
+.visualIntegrity [data-revenue-component="chip"][data-tone="rose"] { background:#ffe4e6 !important; color:#881337 !important; border-color:#fda4af !important; }
+.visualIntegrity [data-revenue-component="chip"][data-tone="violet"] { background:#ede9fe !important; color:#4c1d95 !important; border-color:#c4b5fd !important; }
+.visualIntegrity [data-revenue-component="chip"][data-tone="slate"] { background:#e2e8f0 !important; color:#1e293b !important; border-color:#cbd5e1 !important; }
+
+.visualIntegrity [data-revenue-component="icon"] svg,
+.visualIntegrity [data-revenue-component="chip"] svg,
+.visualIntegrity [data-revenue-component="drawer-action"] svg {
+  color: currentColor !important;
+  stroke: currentColor;
+}
+
+.visualIntegrity :where(button,a)[aria-disabled="true"],
+.visualIntegrity :where(button:disabled) {
+  opacity: .66;
+}
+
+/* Error boundary must remain authoritative even inside its outer white card. */
+.visualIntegrity [data-revenue-route="error-boundary"] [data-revenue-surface="dark"] h1,
+.visualIntegrity [data-revenue-route="error-boundary"] [data-revenue-surface="dark"] h2,
+.visualIntegrity [data-revenue-route="error-boundary"] [data-revenue-surface="dark"] h3 {
+  color:#fff !important;
+}
+
+.visualIntegrity [data-revenue-route="error-boundary"] [data-revenue-surface="dark"] p {
+  color:#ffe4e6 !important;
+}
+
+/* The global legacy mobile rule hides every aside. Revenue OS asides are
+   operational content and must remain rendered; their own component CSS
+   controls responsive stacking. */
+@media (max-width:1100px) {
+  .visualIntegrity aside {
+    display:block !important;
+  }
+
+  .visualIntegrity aside[class~="flex"] {
+    display:flex !important;
+  }
+
+  .visualIntegrity aside[class~="grid"] {
+    display:grid !important;
+  }
+}

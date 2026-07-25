@@ -14,7 +14,7 @@ export default function CommandDossier({ command, close }: { command: RevenueCom
     ['Résultats attendus', command.expectedOutcomes, 'amber'],
   ]
   return <div className="fixed inset-0 z-[140] bg-slate-950/45 p-3 backdrop-blur-sm sm:p-6" onMouseDown={close} role="presentation">
-    <section className="mx-auto h-full max-w-[1500px] overflow-y-auto rounded-[42px] bg-white shadow-[0_40px_130px_rgba(15,23,42,.35)]" onMouseDown={(event) => event.stopPropagation()} role="dialog" aria-modal="true" aria-labelledby="command-dossier-title">
+    <section className="mx-auto h-full max-w-[1500px] overflow-y-auto rounded-[42px] bg-white shadow-[0_40px_130px_rgba(15,23,42,.35)]" onMouseDown={(event) => event.stopPropagation()} role="dialog" aria-modal="true" data-revenue-modal="true" aria-labelledby="command-dossier-title">
       <div className="sticky top-0 z-10 flex items-start justify-between gap-5 border-b border-slate-100 bg-white/95 px-6 py-5 backdrop-blur">
         <div><div className="flex flex-wrap items-center gap-2"><SChip tone="violet">{command.commandCode}</SChip><SChip tone={command.status === 'approved' ? 'emerald' : 'amber'}>{command.status}</SChip><SChip tone={command.approvalClass === 'prohibited' ? 'rose' : 'blue'}>{command.approvalClass}</SChip></div><h2 id="command-dossier-title" className="mt-3 text-3xl font-black tracking-[-.045em] text-slate-950">{command.name}</h2></div>
         <button type="button" onClick={close} className="grid h-11 w-11 place-items-center rounded-2xl border border-slate-200 text-slate-600 hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-violet-200" aria-label="Fermer"><X size={19} /></button>

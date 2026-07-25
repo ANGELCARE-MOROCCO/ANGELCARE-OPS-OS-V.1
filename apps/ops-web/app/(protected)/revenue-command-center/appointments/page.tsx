@@ -1,7 +1,7 @@
-import RevenueAppointmentsProductionCommandCenter from "@/components/revenue-command-center/RevenueAppointmentsProductionCommandCenter"
+import RevenueEngagementWorkspace from "@/components/revenue-command-center/engagement-enterprise/RevenueEngagementWorkspace"
 
 export const dynamic = "force-dynamic"
 
 export default function Page() {
-  return <RevenueAppointmentsProductionCommandCenter />
+  return <RevenueEngagementWorkspace experience="engagement-command" />
 }

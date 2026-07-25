@@ -58,7 +58,7 @@ export default function CommandOverviewExperience({ data, loading, error, warnin
           {routeCards.map((route, index) => {
             const Icon = route.icon
             return <Link key={route.href} href={route.href} className="group rounded-[24px] border border-slate-200 bg-slate-50/70 p-4 transition hover:-translate-y-0.5 hover:border-violet-300 hover:bg-white hover:shadow-[0_18px_44px_rgba(15,23,42,.08)]">
-              <div className="flex items-start justify-between gap-3"><span className="grid h-10 w-10 place-items-center rounded-2xl bg-slate-950 text-white"><Icon size={18} /></span><span className="text-[9px] font-black text-slate-400">{String(index + 1).padStart(2, '0')}</span></div>
+              <div className="flex items-start justify-between gap-3"><span className="grid h-10 w-10 place-items-center rounded-2xl bg-slate-950 text-white"><Icon size={18} /></span><span className="text-[9px] font-black text-slate-500">{String(index + 1).padStart(2, '0')}</span></div>
               <h3 className="mt-4 text-sm font-black text-slate-950">{route.title}</h3>
               <p className="mt-2 text-[11px] font-semibold leading-5 text-slate-600">{route.description}</p>
             </Link>

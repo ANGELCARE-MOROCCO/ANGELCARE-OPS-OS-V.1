@@ -1,0 +1,41 @@
+ANGELCARE Revenue Command Center Excellence v5 / Mega ZIP 5
+
+1. Extract the ZIP from the repository root:
+
+   cd ~/Desktop/angelcare-platform
+   unzip -o ~/Downloads/ANGELCARE_REVENUE_COMMAND_CENTER_EXCELLENCE_v5_ENGAGEMENT_CONVERSION_PHASE5_PATCH.zip -d ~/Desktop/angelcare-platform
+
+2. Run cumulative static gates:
+
+   cd ~/Desktop/angelcare-platform/apps/ops-web
+   node scripts/verify-revenue-command-center-uiux-excellence.mjs
+   node scripts/verify-revenue-command-center-prospect-enterprise-phase2.mjs
+   node scripts/verify-revenue-command-center-execution-enterprise-phase4.mjs
+   node scripts/verify-revenue-command-center-engagement-enterprise-phase5.mjs
+   npx tsc -p tsconfig.revenue-command-center-engagement-phase5.json --pretty false
+
+3. Database cutover:
+
+   a. Confirm a current Supabase backup or snapshot.
+   b. Run read-only preflight:
+      supabase/revenue-command-center/preflight/20260725_engagement_appointments_communications_live_schema_preflight.sql
+   c. Continue only when CUTOVER_GATE = READY.
+   d. Run migration:
+      supabase/migrations/20260725_0300_revenue_engagement_appointments_communications_conversion.sql
+   e. Run verification:
+      supabase/revenue-command-center/verification/20260725_engagement_appointments_communications_rls_verification.sql
+
+4. Do not run the retired UUID-only prospect preflight. The repository preflight is updated to the accepted TEXT-ID contract.
+
+5. Authenticated smoke cycle:
+
+   - Create an appointment linked to a prospect/account/opportunity.
+   - Add participants and confirmations.
+   - Complete preparation.
+   - Open the live room and record note, objection, decision, and commitment.
+   - Complete the meeting outcome.
+   - Confirm follow-up tasks and appointment status history.
+   - Record a no-show and recovery attempt on a noncritical test appointment.
+   - Confirm communication events appear in the appointment and related entity timelines.
+
+6. Do not run npm run build locally unless separately authorized. Use the focused TypeScript gate above; Vercel may perform the full production build after commit and push.

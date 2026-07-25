@@ -332,7 +332,7 @@ function NavGroup({ title, children }: { title: string; children: React.ReactNod
     <div className="mb-5">
       <div className="mb-2 text-[11px] font-black uppercase tracking-[.16em] text-white/65">{title}</div>
       <div className="rcc-shell-content w-full max-w-none min-w-0 space-y-1">
-      
+
       <style jsx global>{`
         /* RCC_PARENT_SHELL_FULLWIDTH_FIX_V5 */
         .rcc-shell-main,
@@ -413,18 +413,19 @@ async function syncTaskStatus({
   try {
     const normalized =
       status === "completed" ? "done" :
-      status === "in_progress" ? "open" :
+      status === "pending" ? "waiting" :
       status
 
     if (typeof window !== "undefined") {
-      const response = await fetch("/api/revenue/tasks/update-status", {
+      const response = await fetch(`/api/revenue-command-center/execution/tasks/${taskId}/transition`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          id: taskId,
-          status: normalized,
+          toStatus: normalized === "completed" ? "done" : normalized,
+          reason: "Compatibility bridge from legacy task command",
+          completionOutcome: normalized === "done" ? "Completed through legacy command" : undefined,
         }),
       })
 

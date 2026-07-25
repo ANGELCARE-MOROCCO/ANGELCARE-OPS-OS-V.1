@@ -69,8 +69,8 @@ const expectedRouteContracts = new Map([
   ["qualification/page.tsx", ["ProspectEnterpriseWorkspace", 'mode="qualification"']],
   ["decision-map/page.tsx", ["ProspectEnterpriseWorkspace", 'mode="decision-map"']],
   ["appointments/page.tsx", ["ProspectEnterpriseWorkspace", 'mode="appointments"']],
-  ["proposals/page.tsx", ["ProspectEnterpriseWorkspace", 'mode="proposals"']],
-  ["negotiation/page.tsx", ["ProspectEnterpriseWorkspace", 'mode="negotiation"']],
+  ["proposals/page.tsx", ["RevenueProposalWorkspace", 'experience="proposal-command"']],
+  ["negotiation/page.tsx", ["RevenueProposalWorkspace", 'experience="negotiation-command"']],
   ["recovery/page.tsx", ["ProspectEnterpriseWorkspace", 'mode="recovery"']],
   ["analytics/page.tsx", ["ProspectEnterpriseWorkspace", 'mode="analytics"']],
   ["performance/page.tsx", ["ProspectEnterpriseWorkspace", 'mode="performance"']],
@@ -80,8 +80,8 @@ const expectedRouteContracts = new Map([
   ["[id]/page.tsx", ["ProspectEnterpriseDossier", 'mode="overview"']],
   ["[id]/qualification/page.tsx", ["ProspectEnterpriseDossier", 'mode="qualification"']],
   ["[id]/decision-map/page.tsx", ["ProspectEnterpriseDossier", 'mode="decision-map"']],
-  ["[id]/proposal/page.tsx", ["ProspectEnterpriseDossier", 'mode="proposal"']],
-  ["[id]/negotiation/page.tsx", ["ProspectEnterpriseDossier", 'mode="negotiation"']],
+  ["[id]/proposal/page.tsx", ["RevenueProposalWorkspace", 'experience="proposal-dossier"']],
+  ["[id]/negotiation/page.tsx", ["RevenueProposalWorkspace", 'experience="negotiation-room"']],
   ["[id]/recovery/page.tsx", ["ProspectEnterpriseDossier", 'mode="recovery"']],
 ])
 for (const [route, markers] of expectedRouteContracts) {
@@ -183,8 +183,8 @@ check(contactsApi.includes("relationshipWarning"), "contact relationship failure
 
 const migration = read("supabase/migrations/20260725_0100_revenue_prospect_account_opportunity_enterprise_completion.sql")
 const preflight = read("supabase/revenue-command-center/preflight/20260725_prospect_enterprise_live_schema_preflight.sql")
-check(migration.includes("Hard safety gate"), "migration blocks incompatible live schemas before mutation")
-check(migration.includes("expected uuid") && migration.includes("legacy text-id"), "legacy text-id versus UUID drift is explicitly guarded")
+check(migration.includes("BLOCKED: this compatibility migration expects public.revenue_prospects.id TEXT"), "migration blocks incompatible live schemas before mutation")
+check(migration.includes("Keeps public.revenue_prospects.id as TEXT") && migration.includes("No legacy ID conversion"), "legacy TEXT-ID compatibility is explicitly guarded")
 for (const table of [
   "revenue_account_aliases",
   "revenue_contact_relationships",

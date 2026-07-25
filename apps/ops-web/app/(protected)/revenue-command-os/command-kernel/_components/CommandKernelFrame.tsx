@@ -18,7 +18,7 @@ export default function CommandKernelFrame({ children }: { children: React.React
       <div className="mx-auto flex max-w-[1760px] flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
         <div className="flex items-center gap-4">
           <span className="grid h-12 w-12 shrink-0 place-items-center rounded-[18px] bg-slate-950 text-white shadow-[0_14px_34px_rgba(15,23,42,.18)]"><Boxes size={21} /></span>
-          <div><div className="flex flex-wrap items-center gap-2"><SChip tone="violet"><Fingerprint size={11} /> AngelCare Command Kernel</SChip><SChip tone="cyan"><ShieldCheck size={11} /> Shadow sécurisé</SChip></div><div className="mt-2 flex flex-wrap items-center gap-2 text-sm"><Link href="/revenue-command-os/command-kernel" className="font-black text-slate-950 hover:text-violet-700">Commandes</Link><ChevronRight size={14} className="text-slate-400" /><span className="font-bold text-slate-600">{current.label}</span></div></div>
+          <div><div className="flex flex-wrap items-center gap-2"><SChip tone="violet"><Fingerprint size={11} /> AngelCare Command Kernel</SChip><SChip tone="cyan"><ShieldCheck size={11} /> Shadow sécurisé</SChip></div><div className="mt-2 flex flex-wrap items-center gap-2 text-sm"><Link href="/revenue-command-os/command-kernel" className="font-black text-slate-950 hover:text-violet-700">Commandes</Link><ChevronRight size={14} className="text-slate-500" /><span className="font-bold text-slate-600">{current.label}</span></div></div>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <SDataTruth mode={error ? 'degraded' : loading && !data ? 'initializing' : data?.dataMode || 'unavailable'} warnings={warnings} freshness={data?.generatedAt} />

@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useMemo, useState } from 'react'
 import { usePermissionNavigation } from '@/components/navigation/PermissionNavigationProvider'
+import CommercialExperienceControls from '@/components/commercial-core/CommercialExperienceControls'
 
 type PermissionLink = {
   label?: string
@@ -220,6 +221,92 @@ function isActive(pathname: string, href: string) {
   return pathname === cleanHref || pathname.startsWith(`${cleanHref}/`)
 }
 
+type CommercialModuleKey = 'services' | 'sales' | 'billing'
+
+type CommercialContext = {
+  module: CommercialModuleKey
+  label: string
+  ownership: string
+  links: Array<{ label: string; href: string }>
+}
+
+const COMMERCIAL_CONTEXTS: Record<CommercialModuleKey, CommercialContext> = {
+  services: {
+    module: 'services',
+    label: 'Services',
+    ownership: 'Offre, tarification et capacité de livraison',
+    links: [
+      { label: 'Portfolio', href: '/services' },
+      { label: 'Blueprints', href: '/services/blueprints' },
+      { label: 'Tarification', href: '/services/pricing-engine' },
+      { label: 'Delivery readiness', href: '/services/operations' },
+      { label: 'Gouvernance', href: '/services/configuration' },
+      { label: 'Executive', href: '/services/enterprise' },
+    ],
+  },
+  sales: {
+    module: 'sales',
+    label: 'Sales',
+    ownership: 'Clients, commandes et exécution commerciale',
+    links: [
+      { label: 'Revenue Command', href: '/sales' },
+      { label: 'Clients', href: '/sales/clients' },
+      { label: 'Commandes', href: '/sales/orders' },
+      { label: 'Nouvelle commande', href: '/sales/orders/new' },
+      { label: 'Management', href: '/sales/management' },
+      { label: 'Configuration', href: '/sales/configuration' },
+    ],
+  },
+  billing: {
+    module: 'billing',
+    label: 'Billing',
+    ownership: 'Facturation, échéances et recouvrement',
+    links: [
+      { label: 'Accounts receivable', href: '/billing' },
+      { label: 'Vue exécutive', href: '/billing/overview' },
+      { label: 'Collections', href: '/billing/activation' },
+      { label: 'Contrats', href: '/contracts' },
+    ],
+  },
+}
+
+const SERVICE_OS_EMBEDDED_HEADER_ROUTES = new Set([
+  '/services',
+  '/services/blueprints',
+  '/services/enterprise',
+  '/services/configuration',
+  '/services/rules',
+  '/services/operations',
+  '/services/workflows',
+  '/services/incidents',
+  '/services/commercial',
+  '/services/pricing-engine',
+  '/services/subscriptions',
+  '/services/live-ops',
+  '/services/capacity',
+  '/services/expansion',
+  '/services/client-journey',
+  '/services/contracts',
+  '/services/compliance',
+  '/services/ai-matching',
+  '/services/ai-strategy',
+  '/services/market-intelligence',
+])
+
+function getCommercialContext(pathname: string): CommercialContext | null {
+  if (pathname === '/services' || pathname.startsWith('/services/')) return COMMERCIAL_CONTEXTS.services
+  if (pathname === '/sales' || pathname.startsWith('/sales/')) return COMMERCIAL_CONTEXTS.sales
+  if (pathname === '/billing' || pathname.startsWith('/billing/')) return COMMERCIAL_CONTEXTS.billing
+  if (/^\/contracts\/[^/]+\/activation(?:\/|$)/.test(pathname)) return COMMERCIAL_CONTEXTS.billing
+  return null
+}
+
+function hasEmbeddedCommercialHeader(pathname: string) {
+  if (SERVICE_OS_EMBEDDED_HEADER_ROUTES.has(pathname)) return true
+  if (pathname === '/sales' || pathname === '/billing' || pathname === '/billing/overview' || pathname === '/billing/activation') return true
+  return /^\/contracts\/[^/]+\/activation(?:\/|$)/.test(pathname)
+}
+
 export default function AppShell({
   hideSidebar = false,
   children,
@@ -238,6 +325,10 @@ export default function AppShell({
   links?: PermissionLink[]
 }) {
   const pathname = usePathname()
+  const commercialContext = getCommercialContext(pathname)
+  const commercialMode = commercialContext !== null
+  const sidebarSuppressed = hideSidebar || commercialMode
+  const embeddedCommercialHeader = commercialMode && hasEmbeddedCommercialHeader(pathname)
   const contextLinks = usePermissionNavigation()
   const [search, setSearch] = useState('')
   const [quickOpen, setQuickOpen] = useState(false)
@@ -273,8 +364,12 @@ export default function AppShell({
   }
 
   return (
-    <div data-hide-sidebar={hideSidebar ? "true" : "false"} style={shellStyle}>
-      {!hideSidebar && (
+    <div
+      data-hide-sidebar={sidebarSuppressed ? 'true' : 'false'}
+      data-commercial-shell={commercialMode ? 'true' : undefined}
+      style={commercialMode ? commercialShellStyle : shellStyle}
+    >
+      {!sidebarSuppressed && (
 <aside style={{ ...sidebarStyle, width: collapsed ? 92 : 330, minWidth: collapsed ? 92 : 330 }}>
         <div style={brandBlockStyle}>
           <Link href="/" style={brandStyle} aria-label="Go to AngelCare dashboard">
@@ -376,7 +471,7 @@ export default function AppShell({
 )}
 
       <div style={mainShellStyle}>
-        <header style={topbarStyle}>
+        <header style={commercialMode ? commercialTopbarStyle : topbarStyle}>
           <div style={searchWrapStyle}>
             <span style={{ fontSize: 18 }}>⌘</span>
             <input
@@ -405,16 +500,15 @@ export default function AppShell({
           </div>
 
           <div style={topbarActionsStyle}>
+            {commercialMode ? <CommercialExperienceControls /> : null}
             <button type="button" onClick={() => setQuickOpen(!quickOpen)} style={quickButtonStyle}>
-              ＋ Quick Create
+              {commercialMode ? 'Créer' : '＋ Quick Create'}
             </button>
-            <Link href="/reports" style={iconButtonStyle}>📊</Link>
-            <Link href="/incidents" style={notificationButtonStyle}>
-              🔔<span style={notificationDotStyle} />
-            </Link>
+            {!commercialMode ? <Link href="/reports" style={iconButtonStyle}>📊</Link> : null}
+            {!commercialMode ? <Link href="/incidents" style={notificationButtonStyle}>🔔<span style={notificationDotStyle} /></Link> : null}
             <Link href="/profile" style={profileButtonStyle}>
               <span style={avatarStyle}>A</span>
-              <span>Profile</span>
+              <span>Profil</span>
             </Link>
           </div>
 
@@ -434,7 +528,32 @@ export default function AppShell({
           ) : null}
         </header>
 
-        <section style={pageHeaderStyle}>
+        {commercialContext && !embeddedCommercialHeader ? (
+          <section style={commercialRouteBarStyle} aria-label={`Navigation ${commercialContext.label}`}>
+            <div style={commercialRouteIdentityStyle}>
+              <span style={commercialRouteEyebrowStyle}>SANILA Commercial Core</span>
+              <strong style={commercialRouteTitleStyle}>{commercialContext.label}</strong>
+              <small style={commercialRouteOwnershipStyle}>{commercialContext.ownership}</small>
+            </div>
+            <nav style={commercialRouteNavStyle} aria-label={`Workspaces ${commercialContext.label}`}>
+              {commercialContext.links.map((item) => {
+                const active = isActive(pathname, item.href)
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    aria-current={active ? 'page' : undefined}
+                    style={{ ...commercialRouteLinkStyle, ...(active ? commercialRouteActiveStyle : null) }}
+                  >
+                    {item.label}
+                  </Link>
+                )
+              })}
+            </nav>
+          </section>
+        ) : null}
+
+        {!embeddedCommercialHeader ? <section data-commercial-page-header={commercialMode ? 'true' : undefined} data-commercial-focus-hide={commercialMode ? 'true' : undefined} style={commercialMode ? commercialPageHeaderStyle : pageHeaderStyle}>
           <div>
             <div style={breadcrumbStyle}>
               <Link href="/" style={{ textDecoration: 'none', color: '#64748b' }}>Home</Link>
@@ -455,9 +574,9 @@ export default function AppShell({
             <p style={pageSubtitleStyle}>{subtitle}</p>
           </div>
           <div style={pageActionsStyle}>{actions}</div>
-        </section>
+        </section> : null}
 
-        <main style={contentStyle}>{children}
+        <main data-commercial-canvas={commercialMode ? 'true' : undefined} style={commercialMode ? commercialContentStyle : contentStyle}>{children}
       <OperationCompletionEngine /></main>
       </div>
     </div>
@@ -479,6 +598,7 @@ export function PageAction({
 
 const OVERHEAD_HEIGHT = 86
 const shellStyle: React.CSSProperties = { minHeight: '100vh', display: 'flex', paddingTop: OVERHEAD_HEIGHT, background: '#eef2f7', color: '#0f172a', fontFamily: 'Inter, Arial, sans-serif' }
+const commercialShellStyle: React.CSSProperties = { minHeight: `calc(100dvh - ${OVERHEAD_HEIGHT}px)`, display: 'flex', paddingTop: 0, width: '100%', background: 'linear-gradient(180deg, #f3f7fb 0%, #eef4f9 100%)', color: '#0f172a', fontFamily: 'Inter, Arial, sans-serif' }
 const sidebarStyle: React.CSSProperties = { height: `calc(100vh - ${OVERHEAD_HEIGHT}px)`, position: 'sticky', top: OVERHEAD_HEIGHT, background: 'linear-gradient(180deg, #050b14 0%, #07111f 44%, #0f172a 100%)', color: '#fff', display: 'flex', flexDirection: 'column', borderRight: '1px solid rgba(255,255,255,0.10)', transition: 'width .22s ease, min-width .22s ease', boxShadow: '22px 0 55px rgba(2,6,23,.18)', zIndex: 8 }
 const brandBlockStyle: React.CSSProperties = { padding: '14px 14px 12px', borderBottom: '1px solid rgba(255,255,255,0.08)', position: 'relative' }
 const brandStyle: React.CSSProperties = { display: 'flex', justifyContent: 'center', alignItems: 'center', color: '#fff', textDecoration: 'none' }
@@ -506,6 +626,7 @@ const navBadgeStyle: React.CSSProperties = { fontSize: 10, padding: '4px 7px', b
 const activeDotStyle: React.CSSProperties = { width: 8, height: 8, borderRadius: 999, boxShadow: '0 0 18px rgba(255,255,255,.45)' }
 const mainShellStyle: React.CSSProperties = { flex: 1, minWidth: 0 }
 const topbarStyle: React.CSSProperties = { height: 74, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, padding: '14px 24px', background: 'rgba(255,255,255,0.86)', backdropFilter: 'blur(12px)', borderBottom: '1px solid #dbe3ee', position: 'sticky', top: OVERHEAD_HEIGHT, zIndex: 10 }
+const commercialTopbarStyle: React.CSSProperties = { ...topbarStyle, width: '100%', padding: '12px clamp(16px, 2vw, 34px)', background: 'rgba(255,255,255,.94)', borderBottom: '1px solid #d6e2ed', boxShadow: '0 10px 30px rgba(15,40,78,.055)', zIndex: 40 }
 const searchWrapStyle: React.CSSProperties = { position: 'relative', flex: 1, maxWidth: 740, display: 'flex', alignItems: 'center', gap: 10, background: '#f8fafc', border: '1px solid #dbe3ee', borderRadius: 18, padding: '0 14px', height: 48 }
 const searchInputStyle: React.CSSProperties = { flex: 1, border: 'none', outline: 'none', background: 'transparent', color: '#0f172a', fontWeight: 750, fontSize: 14 }
 const searchResultsStyle: React.CSSProperties = { position: 'absolute', top: 56, left: 0, right: 0, background: '#fff', border: '1px solid #dbe3ee', borderRadius: 18, padding: 10, boxShadow: '0 22px 50px rgba(15,23,42,.14)', zIndex: 20, display: 'grid', gap: 8 }
@@ -529,6 +650,16 @@ const pageTitleStyle: React.CSSProperties = { margin: 0, color: '#0f172a', fontS
 const pageSubtitleStyle: React.CSSProperties = { margin: '10px 0 0', color: '#475569', fontWeight: 700, lineHeight: 1.6, maxWidth: 760 }
 const pageActionsStyle: React.CSSProperties = { display: 'flex', gap: 10, flexWrap: 'wrap' }
 const contentStyle: React.CSSProperties = { padding: '0 28px 34px' }
+const commercialPageHeaderStyle: React.CSSProperties = { padding: '22px clamp(16px, 2vw, 34px) 12px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: 18, flexWrap: 'wrap', borderBottom: '1px solid rgba(203,213,225,.72)', background: 'rgba(248,251,254,.9)' }
+const commercialContentStyle: React.CSSProperties = { width: '100%', minWidth: 0, padding: '16px clamp(14px, 1.8vw, 32px) 40px', overflow: 'clip' }
+const commercialRouteBarStyle: React.CSSProperties = { position: 'sticky', top: OVERHEAD_HEIGHT + 74, zIndex: 32, display: 'flex', alignItems: 'center', gap: 18, width: '100%', minWidth: 0, padding: '10px clamp(16px, 2vw, 34px)', borderBottom: '1px solid #d7e3ee', background: 'rgba(247,250,253,.96)', backdropFilter: 'blur(16px)', boxShadow: '0 12px 28px rgba(15,40,78,.05)' }
+const commercialRouteIdentityStyle: React.CSSProperties = { display: 'grid', minWidth: 210, gap: 1 }
+const commercialRouteEyebrowStyle: React.CSSProperties = { color: '#2f6da8', fontSize: 9, fontWeight: 950, letterSpacing: '.12em', textTransform: 'uppercase' }
+const commercialRouteTitleStyle: React.CSSProperties = { color: '#0b2748', fontSize: 16, fontWeight: 950, letterSpacing: '-.02em' }
+const commercialRouteOwnershipStyle: React.CSSProperties = { color: '#64748b', fontSize: 10, fontWeight: 750 }
+const commercialRouteNavStyle: React.CSSProperties = { display: 'flex', flex: 1, minWidth: 0, gap: 6, overflowX: 'auto', paddingBottom: 2, scrollbarWidth: 'thin' }
+const commercialRouteLinkStyle: React.CSSProperties = { display: 'inline-flex', alignItems: 'center', minWidth: 'max-content', minHeight: 34, padding: '8px 11px', border: '1px solid transparent', borderRadius: 11, color: '#52657d', background: 'transparent', textDecoration: 'none', fontSize: 11, fontWeight: 850 }
+const commercialRouteActiveStyle: React.CSSProperties = { borderColor: '#b9cee1', color: '#fff', background: '#0d315c', boxShadow: '0 8px 20px rgba(13,49,92,.16)' }
 const actionDarkStyle: React.CSSProperties = { display: 'inline-flex', alignItems: 'center', padding: '12px 15px', borderRadius: 14, background: '#0f172a', color: '#fff', textDecoration: 'none', fontWeight: 950 }
 const actionLightStyle: React.CSSProperties = { display: 'inline-flex', alignItems: 'center', padding: '12px 15px', borderRadius: 14, background: '#fff', color: '#0f172a', border: '1px solid #dbe3ee', textDecoration: 'none', fontWeight: 950 }
 const actionDangerStyle: React.CSSProperties = { display: 'inline-flex', alignItems: 'center', padding: '12px 15px', borderRadius: 14, background: '#fee2e2', color: '#991b1b', border: '1px solid #fecaca', textDecoration: 'none', fontWeight: 950 }

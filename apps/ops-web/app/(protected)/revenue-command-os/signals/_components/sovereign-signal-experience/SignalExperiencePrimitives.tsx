@@ -89,7 +89,7 @@ export function SignalSafetyBanner({ detail = 'Mode Shadow actif : le tissu obse
 
 export function SignalLifecycle({ current }: { current: 'source' | 'intake' | 'qualification' | 'context' | 'routing' | 'governance' }) {
   const stages = ['source','intake','qualification','context','routing','governance'] as const
-  return <div className="grid grid-cols-3 gap-2 sm:grid-cols-6">{stages.map((stage, index) => <div key={stage} className={`rounded-2xl border p-2 text-center ${stage === current ? 'border-cyan-300 bg-cyan-50' : 'border-slate-200 bg-white'}`}><RadioTower size={13} className={`mx-auto ${stage === current ? 'text-cyan-700' : 'text-slate-400'}`} /><p className={`mt-1 text-[8px] font-black uppercase ${stage === current ? 'text-cyan-900' : 'text-slate-600'}`}>{index + 1}. {stage}</p></div>)}</div>
+  return <div className="grid grid-cols-3 gap-2 sm:grid-cols-6">{stages.map((stage, index) => <div key={stage} className={`rounded-2xl border p-2 text-center ${stage === current ? 'border-cyan-300 bg-cyan-50' : 'border-slate-200 bg-white'}`}><RadioTower size={13} className={`mx-auto ${stage === current ? 'text-cyan-700' : 'text-slate-500'}`} /><p className={`mt-1 text-[8px] font-black uppercase ${stage === current ? 'text-cyan-900' : 'text-slate-600'}`}>{index + 1}. {stage}</p></div>)}</div>
 }
 
 export { styles as signalExperienceStyles }

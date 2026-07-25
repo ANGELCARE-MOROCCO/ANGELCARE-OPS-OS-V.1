@@ -10,31 +10,31 @@
 
 .coreBar {
   display: grid;
-  grid-template-columns: minmax(290px, .8fr) minmax(500px, 1.25fr) minmax(270px, .7fr);
+  grid-template-columns: minmax(250px, .68fr) minmax(480px, 1.35fr) minmax(250px, .62fr);
   align-items: stretch;
-  gap: 14px;
+  gap: 10px;
   width: 100%;
-  padding: 14px;
-  border: 1px solid #d9e6f2;
-  border-radius: 26px;
-  background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
-  box-shadow: 0 18px 48px rgba(15, 40, 78, .08);
+  padding: 10px;
+  border: 1px solid #d4e1ed;
+  border-radius: 22px;
+  background: rgba(255,255,255,.96);
+  box-shadow: 0 14px 38px rgba(15, 40, 78, .065);
 }
 
 .coreIdentity {
   display: flex;
   align-items: center;
-  gap: 13px;
+  gap: 11px;
   min-width: 0;
-  padding: 7px 9px;
+  padding: 5px 7px;
 }
 
 .logoPlate {
   display: grid;
   place-items: center;
-  width: 102px;
-  min-width: 102px;
-  height: 56px;
+  width: 88px;
+  min-width: 88px;
+  height: 50px;
   padding: 8px;
   border: 1px solid #e2e8f0;
   border-radius: 17px;
@@ -43,7 +43,7 @@
 
 .logo {
   max-width: 100%;
-  max-height: 38px;
+  max-height: 32px;
   object-fit: contain;
 }
 
@@ -87,7 +87,7 @@
   align-content: center;
   gap: 4px;
   min-width: 0;
-  padding: 12px 14px;
+  padding: 10px 12px;
   border: 1px solid #dbe7f3;
   border-radius: 17px;
   color: #334155;
@@ -129,7 +129,7 @@
   display: grid;
   align-content: center;
   gap: 5px;
-  padding: 12px 16px;
+  padding: 10px 14px;
   border-radius: 18px;
   background: #eef6ff;
   color: #0f315f;
@@ -150,17 +150,17 @@
 
 .commandHeader {
   display: grid;
-  grid-template-columns: minmax(0, 1.65fr) minmax(290px, .65fr);
-  gap: 24px;
+  grid-template-columns: minmax(0, 1.7fr) minmax(280px, .55fr);
+  gap: 20px;
   width: 100%;
   overflow: hidden;
-  padding: clamp(25px, 3.5vw, 42px);
-  border: 1px solid #d9e6f2;
-  border-radius: 30px;
+  padding: clamp(24px, 2.8vw, 36px);
+  border: 1px solid #d6e3ef;
+  border-radius: 26px;
   background:
-    radial-gradient(circle at 92% 0%, rgba(147, 197, 253, .24), transparent 30%),
-    linear-gradient(145deg, #ffffff 0%, #f5faff 100%);
-  box-shadow: 0 24px 64px rgba(15, 40, 78, .09);
+    radial-gradient(circle at 96% 0%, rgba(147, 197, 253, .20), transparent 30%),
+    linear-gradient(145deg, #ffffff 0%, #f6faff 100%);
+  box-shadow: 0 20px 54px rgba(15, 40, 78, .075);
 }
 
 .commandMain {
@@ -173,7 +173,7 @@
   max-width: 980px;
   margin: 8px 0 0;
   color: #081b35;
-  font-size: clamp(34px, 4vw, 58px);
+  font-size: clamp(32px, 3.4vw, 50px);
   font-weight: 950;
   letter-spacing: -.05em;
   line-height: .98;
@@ -181,7 +181,7 @@
 
 .commandDescription {
   max-width: 880px;
-  margin-top: 18px;
+  margin-top: 14px;
   color: #52657d;
   font-size: 15px;
   font-weight: 620;
@@ -225,10 +225,10 @@
   position: relative;
   display: grid;
   min-width: 0;
-  min-height: 116px;
+  min-height: 102px;
   align-content: center;
   gap: 6px;
-  padding: 17px;
+  padding: 15px 16px;
   border: 1px solid #dce7f1;
   border-radius: 20px;
   background: #fff;
@@ -274,13 +274,18 @@
 }
 
 .workspaceNav {
+  position: sticky;
+  top: calc(var(--commercial-overhead-height, 86px) + var(--commercial-topbar-height, 74px) + 8px);
+  z-index: 26;
   display: flex;
-  gap: 8px;
+  gap: 6px;
   overflow-x: auto;
-  padding: 7px;
-  border: 1px solid #dce7f1;
-  border-radius: 21px;
-  background: #fff;
+  padding: 6px;
+  border: 1px solid #d4e1ed;
+  border-radius: 17px;
+  background: rgba(255,255,255,.96);
+  box-shadow: 0 12px 28px rgba(15,40,78,.07);
+  backdrop-filter: blur(15px);
   scrollbar-width: thin;
 }
 
@@ -289,8 +294,8 @@
   display: grid;
   min-width: max-content;
   gap: 2px;
-  padding: 10px 14px;
-  border-radius: 14px;
+  padding: 9px 12px;
+  border-radius: 11px;
   color: #475569;
   text-decoration: none;
 }
@@ -417,4 +422,34 @@
   .commandMain h1 { font-size: 36px; }
   .metricStrip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .sectionHeading { align-items: flex-start; flex-direction: column; }
+}
+
+
+:global(html[data-commercial-focus='true']) .ownershipCard,
+:global(html[data-commercial-focus='true']) .coreIdentity {
+  display: none;
+}
+
+:global(html[data-commercial-focus='true']) .coreBar {
+  grid-template-columns: 1fr;
+  padding: 7px;
+}
+
+:global(html[data-commercial-focus='true']) .moduleSwitch {
+  max-width: 720px;
+  margin-inline: auto;
+}
+
+:global(html[data-commercial-density='compact']) .metric {
+  min-height: 88px;
+  padding: 12px 14px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .moduleLink,
+  .moduleActive,
+  .actionPrimary,
+  .actionSecondary {
+    transition: none;
+  }
 }

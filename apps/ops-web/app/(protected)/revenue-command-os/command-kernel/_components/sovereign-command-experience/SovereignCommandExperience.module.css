@@ -105,3 +105,14 @@
   }
   .routeBand::after { opacity:.45; transform:scale(.78) rotate(18deg); transform-origin:top right; }
 }
+
+/* Final production dark masthead contrast contract. */
+.routeBand :where(h1,h2,h3,h4,h5,h6) { color:#fff !important; }
+.routeBand :global(.text-slate-500),
+.routeBand :global(.text-slate-400),
+.routeBand :global(.text-gray-500),
+.routeBand :global(.text-gray-400) { color:#cbd5e1 !important; }
+.routeBand :global(.text-slate-600),
+.routeBand :global(.text-slate-700) { color:#e2e8f0 !important; }
+.routeBand :global(.text-slate-200),
+.routeBand :global(.text-slate-300) { color:#f1f5f9 !important; }

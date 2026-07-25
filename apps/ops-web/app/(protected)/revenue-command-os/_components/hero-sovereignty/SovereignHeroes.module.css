@@ -103,3 +103,12 @@
   .action { width:100%; }
 }
 @media (prefers-reduced-motion:reduce){ .flowLine { animation:none; }.action { transition:none; } }
+
+/* Final production hero contrast certification. */
+.hero[data-hero-surface="dark"] :where(h1,h2,h3,h4,h5,h6) { color:#fff !important; }
+.hero[data-hero-surface="dark"] :where(.text-slate-500,.text-slate-400,.text-gray-500,.text-gray-400) { color:#cbd5e1 !important; }
+.hero[data-hero-surface="dark"] :where(.text-slate-600,.text-slate-700) { color:#e2e8f0 !important; }
+.hero[data-hero-surface="dark"] :where(.text-slate-200,.text-slate-300) { color:#f1f5f9 !important; }
+.hero[data-hero-surface="dark"] :where(svg) { color:currentColor; }
+.hero[data-hero-surface="light"] :where(.text-slate-500,.text-slate-400,.text-gray-500,.text-gray-400) { color:#475569 !important; }
+.hero[data-hero-surface="light"] :where(.text-slate-600,.text-slate-700) { color:#334155 !important; }

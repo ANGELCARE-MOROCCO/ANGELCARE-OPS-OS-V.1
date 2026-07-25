@@ -78,7 +78,7 @@ export default function RevenueOsDashboard() {
             <SIcon icon={node.icon} tone={node.tone} className="mx-auto" /><p className="mt-3 text-xs font-black text-slate-900">{node.label}</p><span className="mt-2 inline-flex items-center gap-1 text-[9px] font-black uppercase tracking-[.1em] text-blue-700">Explorer <ChevronRight size={12} /></span>
           </Link>)}
 
-          <div className="absolute inset-x-4 bottom-4 z-20 grid gap-2 sm:grid-cols-2 lg:hidden">{orbitNodes.map((node) => <Link key={node.label} href={node.href} className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white/90 p-3 backdrop-blur"><SIcon icon={node.icon} tone={node.tone} className="h-9 w-9 rounded-xl" /><span className="text-xs font-black">{node.label}</span><ChevronRight size={14} className="ml-auto text-slate-400" /></Link>)}</div>
+          <div className="absolute inset-x-4 bottom-4 z-20 grid gap-2 sm:grid-cols-2 lg:hidden">{orbitNodes.map((node) => <Link key={node.label} href={node.href} className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white/90 p-3 backdrop-blur"><SIcon icon={node.icon} tone={node.tone} className="h-9 w-9 rounded-xl" /><span className="text-xs font-black">{node.label}</span><ChevronRight size={14} className="ml-auto text-slate-500" /></Link>)}</div>
         </div>
 
         <aside className="space-y-5">
@@ -94,5 +94,5 @@ export default function RevenueOsDashboard() {
 }
 
 function NucleusFact({ label, value }: { label: string; value: string }) {
-  return <div className="rounded-2xl border border-white/10 bg-white/5 p-3"><p className="text-[9px] font-black uppercase tracking-[.12em] text-slate-400">{label}</p><p className="mt-1 truncate text-xs font-black text-white">{value}</p></div>
+  return <div className="rounded-2xl border border-white/10 bg-white/5 p-3"><p className="text-[9px] font-black uppercase tracking-[.12em] text-slate-500">{label}</p><p className="mt-1 truncate text-xs font-black text-white">{value}</p></div>
 }

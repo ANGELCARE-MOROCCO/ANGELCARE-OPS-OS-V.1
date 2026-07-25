@@ -129,7 +129,7 @@ export default function RevenueOsShell({ children }: { children: React.ReactNode
 
           <nav className="mt-4 flex-1 overflow-y-auto px-3 pb-6">
             {groups.map((group) => <div key={group.label} className="mb-5">
-              {!collapsed ? <p className="px-3 pb-2 text-[9px] font-black uppercase tracking-[.19em] text-slate-400">{group.label}</p> : <div className="mx-auto mb-2 h-px w-8 bg-slate-200" />}
+              {!collapsed ? <p className="px-3 pb-2 text-[9px] font-black uppercase tracking-[.19em] text-slate-500">{group.label}</p> : <div className="mx-auto mb-2 h-px w-8 bg-slate-200" />}
               <div className="space-y-1">
                 {group.items.map((item) => {
                   const active = activePath(pathname, item.href)
@@ -147,7 +147,7 @@ export default function RevenueOsShell({ children }: { children: React.ReactNode
             <div className={`rounded-2xl border border-slate-200 bg-gradient-to-br from-slate-50 to-white ${collapsed ? 'p-2' : 'p-3'}`}>
               <div className={`flex items-center ${collapsed ? 'justify-center' : 'gap-3'}`}>
                 <span className="relative grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-slate-950 text-white"><ShieldCheck size={17} /><span className="absolute -right-1 -top-1 h-2.5 w-2.5 rounded-full border-2 border-white bg-emerald-500" /></span>
-                {!collapsed ? <div className="min-w-0 flex-1"><p className="truncate text-[11px] font-black text-slate-900">Production gouvernée</p><p className="mt-0.5 truncate text-[9px] font-semibold uppercase tracking-[.1em] text-slate-400">Effets externes sur approbation</p></div> : null}
+                {!collapsed ? <div className="min-w-0 flex-1"><p className="truncate text-[11px] font-black text-slate-900">Production gouvernée</p><p className="mt-0.5 truncate text-[9px] font-semibold uppercase tracking-[.1em] text-slate-500">Effets externes sur approbation</p></div> : null}
               </div>
             </div>
           </div>
@@ -161,7 +161,7 @@ export default function RevenueOsShell({ children }: { children: React.ReactNode
 
       {searchOpen ? <div className="fixed inset-0 z-[80] flex items-start justify-center bg-slate-950/35 px-4 pt-[12vh] backdrop-blur-md" onMouseDown={() => setSearchOpen(false)}>
         <section className={`w-full max-w-3xl overflow-hidden rounded-[30px] border border-white/60 bg-white ${sovereigntyStyles.raised}`} onMouseDown={(event) => event.stopPropagation()}>
-          <div className="flex items-center gap-3 border-b border-slate-100 px-5 py-4"><Command size={18} className="text-blue-700" /><input ref={searchRef} value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Chercher objectifs, signaux, stratégies, programmes, missions…" className="min-w-0 flex-1 bg-transparent text-base font-semibold outline-none placeholder:text-slate-400" /><span className="rounded-lg bg-slate-100 px-2 py-1 text-[9px] font-black uppercase text-slate-500">⌘ K</span><button onClick={() => setSearchOpen(false)} className="rounded-xl p-2 text-slate-400 hover:bg-slate-50 hover:text-slate-900"><X size={18} /></button></div>
+          <div className="flex items-center gap-3 border-b border-slate-100 px-5 py-4"><Command size={18} className="text-blue-700" /><input ref={searchRef} value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Chercher objectifs, signaux, stratégies, programmes, missions…" className="min-w-0 flex-1 bg-transparent text-base font-semibold outline-none placeholder:text-slate-500" /><span className="rounded-lg bg-slate-100 px-2 py-1 text-[9px] font-black uppercase text-slate-500">⌘ K</span><button onClick={() => setSearchOpen(false)} className="rounded-xl p-2 text-slate-500 hover:bg-slate-50 hover:text-slate-900"><X size={18} /></button></div>
           <div className="max-h-[56vh] overflow-y-auto p-3">
             {searchBusy ? <div className="p-8 text-center text-sm font-semibold text-slate-500">Recherche dans le système de revenus…</div> : results.length ? results.map((result) => <button key={`${result.type}-${result.id}`} onClick={() => { setSearchOpen(false); setQuery(''); router.push(result.href) }} className="flex w-full items-center gap-4 rounded-2xl px-4 py-3 text-left transition hover:bg-blue-50"><span className="grid h-10 w-10 place-items-center rounded-xl bg-slate-950 text-white"><Search size={16} /></span><span className="min-w-0 flex-1"><span className="block truncate text-sm font-black text-slate-900">{result.title}</span><span className="mt-1 block truncate text-[11px] text-slate-500">{result.subtitle}</span></span><ChevronRight size={17} className="text-slate-300" /></button>) : <div className="p-8 text-center"><Bell className="mx-auto text-slate-300" /><p className="mt-3 text-sm font-black text-slate-700">{query ? 'Aucun résultat correspondant' : 'Recherche souveraine Revenue OS'}</p><p className="mt-1 text-xs text-slate-500">Les résultats respectent vos permissions et le tenant actif.</p></div>}
           </div>

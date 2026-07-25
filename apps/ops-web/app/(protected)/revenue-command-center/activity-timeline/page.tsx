@@ -1,7 +1,7 @@
-import { RevenueEventTimelinePanel } from "@/components/revenue-command-center/RevenueEventTimelinePanel"
+import RevenueExecutionWorkspace from "@/components/revenue-command-center/execution-enterprise/RevenueExecutionWorkspace"
 
 export const dynamic = "force-dynamic"
 
 export default function Page() {
-  return <RevenueEventTimelinePanel />
+  return <RevenueExecutionWorkspace experience="activity-timeline" />
 }

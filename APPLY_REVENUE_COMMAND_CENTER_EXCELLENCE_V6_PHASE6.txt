@@ -1,0 +1,85 @@
+ANGELCARE REVENUE COMMAND CENTER — EXCELLENCE V6 APPLICATION
+
+PREREQUISITE
+- Excellence v1 through v5 must already be installed.
+- The production Revenue schema must already contain the verified Phase 2, 4 and 5 foundations.
+- public.revenue_prospects.id must remain TEXT.
+
+1. EXTRACT AT REPOSITORY ROOT
+
+cd ~/Desktop/angelcare-platform
+
+PATCH_ZIP="$(find ~/Downloads ~/Desktop -type f \
+  -iname 'ANGELCARE_REVENUE_COMMAND_CENTER_EXCELLENCE_v6_PROPOSAL_NEGOTIATION_PHASE6_PATCH*.zip' \
+  -print -quit)"
+
+echo "Patch found at: $PATCH_ZIP"
+
+test -n "$PATCH_ZIP" || {
+  echo "ERROR: Mega ZIP 6 patch not found."
+  exit 1
+}
+
+unzip -o "$PATCH_ZIP" -d ~/Desktop/angelcare-platform
+
+2. RUN CUMULATIVE STATIC GATES
+
+cd ~/Desktop/angelcare-platform/apps/ops-web
+
+node scripts/verify-revenue-command-center-uiux-excellence.mjs
+node scripts/verify-revenue-command-center-prospect-enterprise-phase2.mjs
+node scripts/verify-revenue-command-center-execution-enterprise-phase4.mjs
+node scripts/verify-revenue-command-center-engagement-enterprise-phase5.mjs
+node scripts/verify-revenue-command-center-proposal-enterprise-phase6.mjs
+
+npx tsc \
+  -p tsconfig.revenue-command-center-proposal-phase6.json \
+  --pretty false
+
+Expected verifier totals:
+- 113 checks
+- 258 checks
+- 193 checks
+- 296 checks
+- 291 checks
+
+A successful focused TypeScript command returns silently.
+
+3. DATABASE ACTIVATION
+
+Confirm a current Supabase backup or snapshot.
+
+Run first:
+apps/ops-web/supabase/revenue-command-center/preflight/20260725_proposal_pricing_negotiation_live_schema_preflight.sql
+
+Proceed only when the final row reports:
+CUTOVER_GATE = READY
+
+Then run:
+apps/ops-web/supabase/migrations/20260725_0400_revenue_proposal_pricing_negotiation_completion.sql
+
+Then run:
+apps/ops-web/supabase/revenue-command-center/verification/20260725_proposal_pricing_negotiation_rls_verification.sql
+
+Then run:
+apps/ops-web/supabase/revenue-command-center/verification/20260725_proposal_pricing_calculation_verification.sql
+
+Do not run the migration when the gate is BLOCKED.
+Do not convert revenue_prospects.id to UUID.
+Do not run the controlled rollback except after backup and explicit approval.
+
+4. AUTHENTICATED SMOKE SCENARIO
+
+- Create a proposal from a noncritical test opportunity.
+- Add service lines.
+- Create a pricing scenario.
+- Trigger and approve a margin exception if required.
+- Create an immutable version.
+- Generate the customer preview.
+- Prepare and record a genuine transmission.
+- Record a customer response.
+- Open negotiation.
+- Record an objection and counteroffer.
+- Request and decide a concession.
+- Record a final accepted outcome with evidence.
+- Confirm contract handoff and contract-preparation task.

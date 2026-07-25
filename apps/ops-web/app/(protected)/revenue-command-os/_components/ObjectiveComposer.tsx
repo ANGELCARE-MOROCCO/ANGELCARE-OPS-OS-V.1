@@ -56,7 +56,7 @@ export default function ObjectiveComposer({ open, onClose }: { open: boolean; on
   }
 
   return (
-    <div className="fixed inset-0 z-[120] grid place-items-center bg-slate-950/55 p-3 backdrop-blur-xl sm:p-6" role="dialog" aria-modal="true" aria-label="Composer un mandat revenus">
+    <div className="fixed inset-0 z-[120] grid place-items-center bg-slate-950/55 p-3 backdrop-blur-xl sm:p-6" role="dialog" aria-modal="true" data-revenue-modal="true" aria-label="Composer un mandat revenus">
       <form onSubmit={submit} className="grid max-h-[94vh] w-full max-w-[1380px] overflow-hidden rounded-[44px] border border-white/20 bg-white shadow-[0_50px_180px_rgba(2,6,23,.48)] xl:grid-cols-[310px_minmax(0,1fr)_340px]">
         <aside className="relative overflow-hidden bg-gradient-to-b from-slate-950 via-blue-950 to-slate-950 p-6 text-white sm:p-8">
           <div className={`absolute inset-0 opacity-20 ${sovereigntyStyles.gridFine}`} />
@@ -67,7 +67,7 @@ export default function ObjectiveComposer({ open, onClose }: { open: boolean; on
             <div className="mt-8 space-y-2">
               {chapters.map(([number, title, detail], index) => {
                 const active = index <= Math.floor(completion / 15)
-                return <div key={number} className={`grid grid-cols-[38px_1fr] gap-3 rounded-2xl border p-3 ${active ? 'border-blue-300/30 bg-blue-400/10' : 'border-white/10 bg-white/[.04]'}`}><span className={`grid h-9 w-9 place-items-center rounded-xl text-[9px] font-black ${active ? 'bg-white text-slate-950' : 'bg-white/10 text-slate-400'}`}>{number}</span><div><p className="text-[11px] font-black">{title}</p><p className="mt-0.5 text-[9px] text-slate-400">{detail}</p></div></div>
+                return <div key={number} className={`grid grid-cols-[38px_1fr] gap-3 rounded-2xl border p-3 ${active ? 'border-blue-300/30 bg-blue-400/10' : 'border-white/10 bg-white/[.04]'}`}><span className={`grid h-9 w-9 place-items-center rounded-xl text-[9px] font-black ${active ? 'bg-white text-slate-950' : 'bg-white/10 text-slate-500'}`}>{number}</span><div><p className="text-[11px] font-black">{title}</p><p className="mt-0.5 text-[9px] text-slate-500">{detail}</p></div></div>
               })}
             </div>
           </div>
@@ -96,12 +96,12 @@ export default function ObjectiveComposer({ open, onClose }: { open: boolean; on
         </main>
 
         <aside className="overflow-y-auto border-l border-slate-100 bg-slate-50/80 p-6 sm:p-8">
-          <p className="text-[10px] font-black uppercase tracking-[.18em] text-slate-400">Executive preview</p>
+          <p className="text-[10px] font-black uppercase tracking-[.18em] text-slate-500">Executive preview</p>
           <div className="mt-5 rounded-[32px] border border-slate-200 bg-white p-6 shadow-[0_24px_70px_rgba(15,23,42,.08)]">
             <div className="flex items-center justify-between"><SIcon icon={Target} tone="blue" /><span className="text-4xl font-black tracking-[-.06em] text-slate-100">{completion}%</span></div>
             <h3 className="mt-6 text-xl font-black tracking-[-.035em] text-slate-950">{form.title || 'Objectif à formaliser'}</h3>
             <p className="mt-3 text-xs leading-6 text-slate-500">{form.mandate || 'Le mandat exécutif apparaîtra ici avec son périmètre et ses limites.'}</p>
-            <div className="mt-5 space-y-2">{[['Business unit', form.businessUnit], ['Marché', form.targetMarket], ['Horizon', form.horizon], ['Priorité', form.priority], ['Posture', form.executionMode]].map(([label, value]) => <div key={label} className="rounded-2xl bg-slate-50 p-3"><p className="text-[8px] font-black uppercase tracking-[.12em] text-slate-400">{label}</p><p className="mt-1 text-[10px] font-black text-slate-700">{value}</p></div>)}</div>
+            <div className="mt-5 space-y-2">{[['Business unit', form.businessUnit], ['Marché', form.targetMarket], ['Horizon', form.horizon], ['Priorité', form.priority], ['Posture', form.executionMode]].map(([label, value]) => <div key={label} className="rounded-2xl bg-slate-50 p-3"><p className="text-[8px] font-black uppercase tracking-[.12em] text-slate-500">{label}</p><p className="mt-1 text-[10px] font-black text-slate-700">{value}</p></div>)}</div>
           </div>
           <div className="mt-5 rounded-[28px] border border-emerald-200 bg-emerald-50 p-5"><div className="flex gap-3"><ShieldCheck size={18} className="shrink-0 text-emerald-700" /><div><p className="text-xs font-black text-emerald-950">Boundary preserved</p><p className="mt-1 text-[10px] leading-5 text-emerald-800">Enregistrement uniquement. Aucun message, campagne, commande ou worker externe n’est déclenché.</p></div></div></div>
           <div className="mt-6 grid gap-3"><button disabled={busy} className="inline-flex items-center justify-center gap-2 rounded-2xl bg-slate-950 px-6 py-3.5 text-sm font-black text-white shadow-xl disabled:opacity-60">{busy ? <Loader2 className="animate-spin" size={17} /> : <ArrowRight size={17} />}Enregistrer sous gouvernance</button><button type="button" onClick={onClose} className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-bold text-slate-700 hover:bg-slate-50">Annuler</button></div>

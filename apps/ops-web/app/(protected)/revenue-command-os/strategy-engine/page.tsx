@@ -1,13 +1,15 @@
 import Link from 'next/link'
+import type { ElementType } from 'react'
 import {
   ArrowRight, BrainCircuit, CheckCircle2, CircleDot, GitCompareArrows,
   Layers3, Network, Orbit, ShieldCheck, Sparkles, Target, TriangleAlert,
 } from 'lucide-react'
 import { resolveRevenueOsActor } from '@/lib/revenue-command-os/access'
 import { readRevenueOsOperationalModel } from '@/lib/revenue-command-os/operational-read-model'
+import { normalizeRevenueOsError } from '@/lib/revenue-command-os/errors'
 import type { RevenueOsOperationalStrategy } from '@/lib/revenue-command-os/types'
 import { AiRuntimePanel } from './_components/AiRuntimePanel'
-import { SChip, SEmpty, SIcon } from '../_components/visual-sovereignty/SovereignPrimitives'
+import { SChip, SEmpty } from '../_components/visual-sovereignty/SovereignPrimitives'
 import sovereigntyStyles from '../_components/visual-sovereignty/Sovereignty.module.css'
 import StrategiesHero from '../_components/hero-sovereignty/heroes/StrategiesHero'
 
@@ -37,15 +39,31 @@ function truthState(sourceState: 'live' | 'partial' | 'unavailable', count: numb
   return sourceState === 'partial' ? 'DEGRADED' as const : 'LIVE' as const
 }
 
+async function loadStrategyEngineState() {
+  try {
+    const actor = await resolveRevenueOsActor('revenue_os.strategy.manage', { aliases: ['revenue_os.view', 'revenue.view'] })
+    const operations = await readRevenueOsOperationalModel(actor.tenantId)
+    return { actor, operations }
+  } catch (error) {
+    const normalized = normalizeRevenueOsError(error)
+    console.error('[RevenueOS:StrategyEngine]', {
+      code: normalized.code,
+      status: normalized.status,
+      recoverable: normalized.recoverable,
+      publicMessage: normalized.message,
+    })
+    throw normalized
+  }
+}
+
 export default async function StrategyEnginePage() {
-  const actor = await resolveRevenueOsActor('revenue_os.strategy.manage', { aliases: ['revenue_os.view', 'revenue.view'] })
-  const operations = await readRevenueOsOperationalModel(actor.tenantId)
+  const { actor, operations } = await loadStrategyEngineState()
   const strategies = operations.strategies
   const approved = operations.counts.strategiesApproved
   const top = strategies[0]
 
   return (
-    <main className="min-h-screen bg-[#f6f8fc] px-4 py-6 text-slate-950 sm:px-6 lg:px-8">
+    <main data-revenue-route="strategy-engine" data-revenue-surface="light" className="min-h-screen bg-[#f6f8fc] px-4 py-6 text-slate-950 sm:px-6 lg:px-8">
       <StrategiesHero
         state={truthState(operations.sourceState, strategies.length)}
         posture="Production analytique · dossier persisté"
@@ -70,13 +88,13 @@ export default async function StrategyEnginePage() {
       <div className="mt-7 grid gap-6 2xl:grid-cols-[330px_1fr_390px]">
         <aside className="space-y-4">
           <div><SChip tone="blue">Plan des preuves</SChip><h2 className="mt-3 text-2xl font-black tracking-[-.04em]">Ce que la stratégie est autorisée à considérer comme vrai.</h2></div>
-          {evidence.map(([title, detail, Icon, tone], index) => <article key={title} className={`relative overflow-hidden rounded-[30px] border border-slate-200 bg-white p-5 shadow-[0_18px_48px_rgba(15,23,42,.06)] ${index % 2 ? 'ml-5' : ''}`}><div className="flex items-start gap-4"><SIcon icon={Icon} tone={tone} /><div><p className="text-[9px] font-black uppercase tracking-[.15em] text-slate-400">Entrée {index + 1}</p><h3 className="mt-1 text-sm font-black">{title}</h3><p className="mt-2 text-[10px] leading-5 text-slate-500">{detail}</p></div></div><div className="mt-4 flex items-center gap-2 text-[9px] font-bold text-emerald-700"><CheckCircle2 size={13} /> Autorité et fraîcheur conservées dans le dossier</div></article>)}
+          {evidence.map(([title, detail, Icon, tone], index) => <article key={title} className={`relative overflow-hidden rounded-[30px] border border-slate-200 bg-white p-5 shadow-[0_18px_48px_rgba(15,23,42,.06)] ${index % 2 ? 'ml-5' : ''}`}><div className="flex items-start gap-4"><StrategyStaticIcon icon={Icon} tone={tone} /><div><p className="text-[9px] font-black uppercase tracking-[.15em] text-slate-500">Entrée {index + 1}</p><h3 className="mt-1 text-sm font-black">{title}</h3><p className="mt-2 text-[10px] leading-5 text-slate-500">{detail}</p></div></div><div className="mt-4 flex items-center gap-2 text-[9px] font-bold text-emerald-700"><CheckCircle2 size={13} /> Autorité et fraîcheur conservées dans le dossier</div></article>)}
           <div className="rounded-[30px] border border-amber-200 bg-amber-50 p-5"><div className="flex items-start gap-3"><TriangleAlert size={19} className="text-amber-700" /><div><h3 className="text-xs font-black text-amber-950">Frontière de vérité</h3><p className="mt-2 text-[10px] leading-5 text-amber-800">Aucune hypothèse n’est présentée comme preuve. Les manques, contradictions et risques proviennent uniquement des dossiers persistés.</p></div></div></div>
         </aside>
 
         <section className="relative min-h-[760px] overflow-hidden rounded-[48px] border border-violet-200 bg-white p-7 shadow-[0_32px_100px_rgba(76,29,149,.08)]">
           <div className={`absolute inset-0 opacity-40 ${sovereigntyStyles.dotField}`} />
-          <div className="relative flex items-start justify-between"><div><SChip tone="violet"><BrainCircuit size={11} /> Architecture du Strategy Brain</SChip><h2 className="mt-4 max-w-3xl text-4xl font-black tracking-[-.055em]">Une stratégie versionnée, comparable et soumise à autorité.</h2></div><SIcon icon={Sparkles} tone="violet" /></div>
+          <div className="relative flex items-start justify-between"><div><SChip tone="violet"><BrainCircuit size={11} /> Architecture du Strategy Brain</SChip><h2 className="mt-4 max-w-3xl text-4xl font-black tracking-[-.055em]">Une stratégie versionnée, comparable et soumise à autorité.</h2></div><StrategyStaticIcon icon={Sparkles} tone="violet" /></div>
           <div className="relative mt-10 grid gap-6 sm:grid-cols-2">
             {strategyBlocks.map(([title, detail], index) => <article key={title} className={`relative rounded-[32px] border bg-white/92 p-6 shadow-[0_16px_45px_rgba(15,23,42,.06)] backdrop-blur ${index % 4 === 0 ? 'border-blue-200 sm:-rotate-1' : index % 4 === 1 ? 'border-violet-200 sm:translate-y-8' : index % 4 === 2 ? 'border-emerald-200 sm:-translate-y-2' : 'border-amber-200 sm:rotate-1'}`}><div className="flex items-center justify-between"><span className="grid h-10 w-10 place-items-center rounded-2xl bg-slate-950 text-xs font-black text-white">{String(index + 1).padStart(2, '0')}</span><CircleDot size={18} className="text-violet-500" /></div><h3 className="mt-5 text-lg font-black">{title}</h3><p className="mt-2 text-xs leading-5 text-slate-500">{detail}</p>{index < strategyBlocks.length - 1 ? <ArrowRight size={17} className="absolute -right-3 top-1/2 z-10 hidden -translate-y-1/2 text-slate-300 sm:block" /> : null}</article>)}
           </div>
@@ -91,9 +109,24 @@ export default async function StrategyEnginePage() {
         </aside>
       </div>
 
-      <section className="mt-7 rounded-[44px] border border-slate-200 bg-white p-7"><div className="flex items-start gap-4"><SIcon icon={Layers3} tone="blue" /><div><SChip tone="blue">Chaîne stratégique opérationnelle</SChip><h2 className="mt-3 text-3xl font-black tracking-[-.05em]">Objectif → Stratégies → Conseil → Studio → Approbation → Compilation</h2><p className="mt-2 max-w-4xl text-xs leading-6 text-slate-500">Cette page lit maintenant les stratégies persistées. Elle ne remplace ni le Conseil, ni le Studio de décision, ni les gates de compilation.</p></div></div></section>
+      <section className="mt-7 rounded-[44px] border border-slate-200 bg-white p-7"><div className="flex items-start gap-4"><StrategyStaticIcon icon={Layers3} tone="blue" /><div><SChip tone="blue">Chaîne stratégique opérationnelle</SChip><h2 className="mt-3 text-3xl font-black tracking-[-.05em]">Objectif → Stratégies → Conseil → Studio → Approbation → Compilation</h2><p className="mt-2 max-w-4xl text-xs leading-6 text-slate-500">Cette page lit maintenant les stratégies persistées. Elle ne remplace ni le Conseil, ni le Studio de décision, ni les gates de compilation.</p></div></div></section>
     </main>
   )
+}
+
+const staticIconTone: Record<string, string> = {
+  navy: 'bg-slate-950 text-white',
+  blue: 'bg-blue-700 text-white',
+  cyan: 'bg-cyan-700 text-white',
+  emerald: 'bg-emerald-700 text-white',
+  amber: 'bg-amber-500 text-slate-950',
+  rose: 'bg-rose-700 text-white',
+  violet: 'bg-violet-700 text-white',
+  slate: 'bg-slate-700 text-white',
+}
+
+function StrategyStaticIcon({ icon: Icon, tone = 'navy', className = '' }: { icon: ElementType; tone?: string; className?: string }) {
+  return <span data-revenue-component="icon" data-tone={tone} className={`grid h-11 w-11 shrink-0 place-items-center rounded-2xl shadow-sm ${staticIconTone[tone] || staticIconTone.navy} ${className}`}><Icon size={19} aria-hidden="true" /></span>
 }
 
 function StrategyCard({ strategy, index }: { strategy: RevenueOsOperationalStrategy; index: number }) {

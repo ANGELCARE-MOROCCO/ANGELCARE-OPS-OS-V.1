@@ -1,7 +1,3 @@
-import RevenuePartnershipsV13ActionsWorkspace from "@/components/revenue-command-center/RevenuePartnershipsV13ActionsWorkspace"
-
-export const dynamic = "force-dynamic"
-
-export default function Page() {
-  return <RevenuePartnershipsV13ActionsWorkspace mode="proposals" />
-}
+import RevenueProposalWorkspace from "@/components/revenue-command-center/proposal-enterprise/RevenueProposalWorkspace"
+export const dynamic="force-dynamic"
+export default async function Page({params}:{params:Promise<{id:string}>}){const {id}=await params;return <RevenueProposalWorkspace experience="partnership-proposal-dossier" contextId={id} contextType="partnership"/>}

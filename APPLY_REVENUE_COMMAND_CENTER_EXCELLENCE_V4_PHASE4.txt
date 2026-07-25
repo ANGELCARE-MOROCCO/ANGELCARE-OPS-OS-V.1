@@ -1,0 +1,22 @@
+ANGELCARE Revenue Command Center Excellence v4 / Mega ZIP 4
+
+1. Extract this ZIP from the repository root.
+2. Run:
+   cd apps/ops-web
+   node scripts/verify-revenue-command-center-uiux-excellence.mjs
+   node scripts/verify-revenue-command-center-prospect-enterprise-phase2.mjs
+   node scripts/verify-revenue-command-center-execution-enterprise-phase4.mjs
+   npx tsc -p tsconfig.revenue-command-center-execution-phase4.json --pretty false
+
+3. In Supabase SQL Editor, run the READ-ONLY preflight:
+   apps/ops-web/supabase/revenue-command-center/preflight/20260725_execution_tasks_approvals_live_schema_preflight.sql
+
+4. Continue only when cutover_gate = READY. Back up production, then apply:
+   apps/ops-web/supabase/migrations/20260725_0200_revenue_execution_tasks_approvals_accountability_completion.sql
+
+5. Run the READ-ONLY post-migration verification:
+   apps/ops-web/supabase/revenue-command-center/verification/20260725_execution_tasks_approvals_rls_verification.sql
+
+6. Perform authenticated smoke tests before production acceptance.
+
+Do not run the migration when the preflight reports BLOCKED.

@@ -42,7 +42,7 @@ export default function SignalDrawer() {
 
   return <SovereignDrawerOverlay onClose={() => setSelected(null)} label={`Signal Intelligence Briefing — ${selected.code}`}>
     <SovereignDrawerPanel width="max-w-[900px]" dataId="MZ23-DRAWER-02-SIGNAL">
-      <header className="relative overflow-hidden bg-[linear-gradient(135deg,#04131d_0%,#083344_52%,#0f172a_100%)] px-5 py-6 text-white sm:px-7 sm:py-7">
+      <header data-drawer-surface="dark" className="relative overflow-hidden bg-[linear-gradient(135deg,#04131d_0%,#083344_52%,#0f172a_100%)] px-5 py-6 text-white sm:px-7 sm:py-7">
         <div className={`absolute inset-0 opacity-45 ${drawerStyles.fineGrid}`} />
         <div className="absolute -right-16 -top-24 h-72 w-72 rounded-full bg-cyan-400/15 blur-3xl" />
         <div className="relative grid gap-6 lg:grid-cols-[1fr_280px] lg:items-center">

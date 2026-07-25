@@ -140,3 +140,78 @@
     transform: none;
   }
 }
+
+/* =========================================================
+   Portal drawer contrast certification.
+   Drawers render under document.body, outside RevenueOsShell, so this
+   local contract must override the legacy global .bg-white descendant
+   selectors without modifying drawer geometry.
+   ========================================================= */
+.panel [data-drawer-surface="dark"],
+.panel [data-revenue-surface="dark"] {
+  color:#f8fafc !important;
+}
+
+.panel [data-drawer-surface="dark"] :where(h1,h2,h3,h4,h5,h6,strong) {
+  color:#fff !important;
+}
+
+.panel [data-drawer-surface="dark"] :where(p,small,label,li,dt,dd):not([class*="text-"]) {
+  color:#e2e8f0 !important;
+}
+
+.panel [data-drawer-surface="dark"] :where(.text-slate-500,.text-slate-400,.text-gray-500,.text-gray-400) {
+  color:#cbd5e1 !important;
+}
+
+.panel [data-drawer-surface="dark"] :where(.text-slate-600,.text-slate-700) {
+  color:#e2e8f0 !important;
+}
+
+.panel [data-drawer-surface="dark"] :where(.text-slate-200,.text-slate-300) {
+  color:#f1f5f9 !important;
+}
+
+.panel [data-revenue-surface="light"] :where(h1,h2,h3,h4,h5,h6,strong):not([class*="text-"]) {
+  color:#020617 !important;
+}
+
+.panel [data-revenue-surface="light"] :where(p,small,label,li,dt,dd):not([class*="text-"]) {
+  color:#334155 !important;
+}
+
+.panel [data-revenue-component="drawer-badge"] {
+  line-height:1.35;
+  text-shadow:none;
+}
+
+.panel [data-revenue-component="drawer-badge"][data-inverted="true"] {
+  color:#fff !important;
+  background:rgba(15,23,42,.48) !important;
+  border-color:rgba(255,255,255,.34) !important;
+}
+
+.panel [data-revenue-component="drawer-badge"][data-inverted="true"] * {
+  color:inherit !important;
+}
+
+.panel [data-revenue-component="drawer-action"][data-action-kind="primary"] {
+  color:#fff !important;
+}
+
+.panel [data-revenue-component="drawer-action"][data-action-kind="secondary"] {
+  color:#1e293b !important;
+}
+
+.panel [data-revenue-component="drawer-action"][data-action-kind="danger"] {
+  color:#881337 !important;
+}
+
+.panel [data-revenue-component="drawer-action"] svg {
+  color:currentColor !important;
+  stroke:currentColor;
+}
+
+.panel :where(button:disabled) {
+  opacity:.66;
+}

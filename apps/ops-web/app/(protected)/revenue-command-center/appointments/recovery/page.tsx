@@ -1,7 +1,7 @@
-import RevenueAppointmentsV12MegaWorkspace from "@/components/revenue-command-center/RevenueAppointmentsV12MegaWorkspace"
+import RevenueEngagementWorkspace from "@/components/revenue-command-center/engagement-enterprise/RevenueEngagementWorkspace"
 
 export const dynamic = "force-dynamic"
 
 export default function Page() {
-  return <RevenueAppointmentsV12MegaWorkspace mode="recovery" />
+  return <RevenueEngagementWorkspace experience="recovery" />
 }
