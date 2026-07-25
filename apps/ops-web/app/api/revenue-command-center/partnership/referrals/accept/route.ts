@@ -1,0 +1,5 @@
+import { fail,ok } from "@/lib/revenue-command-center/canonical-server"
+import { revenueAccessFailure } from "@/lib/revenue-command-center/api-access"
+import { cleanString } from "@/lib/revenue-command-center/canonical-server"
+import { partnershipContext } from "@/lib/revenue-command-center/partnership-enterprise/server"
+export async function POST(request:Request){try{const {access,supabase}=await partnershipContext("revenue.partnerships.referrals.convert"),body=await request.json(),referralId=cleanString(body.referralId);if(!referralId)return fail("referralId requis.",400);const rpc=await supabase.rpc("revenue_accept_partner_referral",{p_referral_id:referralId,p_actor_id:(access.user as any).id||null,p_convert_to_prospect:String(body.convertToProspect||"false")==="true",p_owner:cleanString(body.owner)||null});if(rpc.error)return fail(rpc.error);return ok({result:Array.isArray(rpc.data)?rpc.data[0]:rpc.data})}catch(error){const access=revenueAccessFailure(error);return access?fail(access.message,access.status):fail(error)}}

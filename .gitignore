@@ -139,3 +139,8 @@ RELEASES
 **/*.zip
 **/*.sha256.txt
 # END ANGELCARE LOCAL ARTIFACTS
+
+# ANGELCARE local desktop release state and generated packages
+.angelcare-mz*-release.json
+apps/angelcare-desktop/release/ANGELCARE-Desktop-*-Release/
+apps/angelcare-desktop/release/macos/

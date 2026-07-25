@@ -15,7 +15,7 @@
     "mailto:",
     "tel:"
   ],
-  "desktopContractVersion": "6.0.0",
+  "desktopContractVersion": "11.2.0",
   "whatsappPartition": "persist:angelcare-whatsapp-main",
   "whatsappHomeUrl": "https://web.whatsapp.com/",
   "whatsappDownloadDirectory": "ANGELCARE WhatsApp",
@@ -38,5 +38,6 @@
   "startupHealthyAfterMs": 45000,
   "corporateBrowserPartition": "persist:angelcare-corporate-browser",
   "stationPolicyRefreshSeconds": 60,
-  "stationHeartbeatSeconds": 30
+  "stationHeartbeatSeconds": 30,
+  "acPlusDashboardPath": "/dashboard"
 }

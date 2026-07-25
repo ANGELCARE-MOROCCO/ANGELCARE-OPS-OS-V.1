@@ -35,7 +35,13 @@ const DEFAULT_STATION_POLICY = Object.freeze({
   browser_history_retention_days: 30,
   clear_browser_data_on_logout: false,
   restore_tabs: true,
-  maximum_tabs: 12,
+  maximum_tabs: 14,
+  maximum_ac_plus_tabs: 12,
+  ac_plus_enabled: true,
+  ac_plus_allowed_modes: ["standard", "focus"],
+  split_enabled: true,
+  split_allowed_modes: ["standard", "focus"],
+  split_modes: [2, 3, 4],
   external_browser_policy: "deny",
   external_application_policy: "deny",
   screenshot_policy: "application-best-effort",
@@ -148,7 +154,13 @@ function normalizeStationPolicy(raw = {}, previous = null) {
     browser_history_retention_days: clampInteger(merged.browser_history_retention_days, 30, 0, 3650),
     clear_browser_data_on_logout: Boolean(merged.clear_browser_data_on_logout),
     restore_tabs: merged.restore_tabs !== false,
-    maximum_tabs: clampInteger(merged.maximum_tabs, 12, 2, 50),
+    maximum_tabs: clampInteger(merged.maximum_tabs, 14, 3, 50),
+    maximum_ac_plus_tabs: clampInteger(merged.maximum_ac_plus_tabs, 12, 1, 48),
+    ac_plus_enabled: merged.ac_plus_enabled !== false,
+    ac_plus_allowed_modes: normalizeStringList(merged.ac_plus_allowed_modes || ["standard", "focus"], 30).filter((entry) => ["standard", "focus", "locked"].includes(entry)),
+    split_enabled: merged.split_enabled !== false,
+    split_allowed_modes: normalizeStringList(merged.split_allowed_modes || ["standard", "focus"], 30).filter((entry) => ["standard", "focus", "locked"].includes(entry)),
+    split_modes: [...new Set((Array.isArray(merged.split_modes) ? merged.split_modes : [2, 3, 4]).map(Number).filter((entry) => [2, 3, 4].includes(entry)))],
     external_browser_policy: ["allow", "deny", "ask"].includes(merged.external_browser_policy) ? merged.external_browser_policy : "deny",
     external_application_policy: ["allow", "deny", "ask"].includes(merged.external_application_policy) ? merged.external_application_policy : "deny",
     browser: {
@@ -185,6 +197,11 @@ function normalizeStationPolicy(raw = {}, previous = null) {
     },
   };
   if (!normalized.browser.allowed_schemes.length) normalized.browser.allowed_schemes = ["https:"];
+  if (!normalized.ac_plus_allowed_modes.length) normalized.ac_plus_allowed_modes = ["standard", "focus"];
+  if (!normalized.split_allowed_modes.length) normalized.split_allowed_modes = ["standard"];
+  if (!normalized.split_modes.length) normalized.split_modes = [2, 3, 4];
+  normalized.maximum_ac_plus_tabs = Math.min(normalized.maximum_ac_plus_tabs, Math.max(1, normalized.maximum_tabs - 2));
+  normalized.maximum_tabs = Math.max(normalized.maximum_tabs, normalized.maximum_ac_plus_tabs + 2);
   return Object.freeze(normalized);
 }
 

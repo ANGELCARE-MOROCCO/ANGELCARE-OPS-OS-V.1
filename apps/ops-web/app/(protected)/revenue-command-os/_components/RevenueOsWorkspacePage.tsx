@@ -44,16 +44,17 @@ import { useRevenueOs } from './RevenueOsContext'
 import { SChip, SDataTruth, SEmpty, SIcon, SMetric, STraceLink, sovereigntyStyles } from './visual-sovereignty/SovereignPrimitives'
 import ApprovalCenterWorkspace from './approvals/ApprovalCenterWorkspace'
 import ChannelGovernancePanel from './ChannelGovernancePanel'
+import RevenueOperatingSpine from './operating-spine/RevenueOperatingSpine'
 import { AuditHero, ExceptionsHero, MissionsHero, ObjectivesHero, ProgramsHero, SettingsHero } from './hero-sovereignty/heroes'
 
 export default function RevenueOsWorkspacePage({ workspaceKey }: { workspaceKey: RevenueOsWorkspaceKey }) {
   switch (workspaceKey) {
-    case 'revenue-objectives': return <MandateLedger />
-    case 'active-programs': return <ProgramTerrain />
-    case 'compiled-missions': return <MissionBinders />
-    case 'approvals': return <ApprovalCenterWorkspace />
-    case 'exceptions': return <InterventionTower />
-    case 'audit': return <ForensicLedger />
+    case 'revenue-objectives': return <RevenueOperatingSpine focus="cockpit" />
+    case 'active-programs': return <RevenueOperatingSpine focus="programs" />
+    case 'compiled-missions': return <RevenueOperatingSpine focus="missions" />
+    case 'approvals': return <RevenueOperatingSpine focus="approvals" />
+    case 'exceptions': return <RevenueOperatingSpine focus="exceptions" />
+    case 'audit': return <RevenueOperatingSpine focus="audit" />
     case 'settings': return <GovernanceConstitution />
     default: return <UnsupportedWorkspace workspaceKey={workspaceKey} />
   }

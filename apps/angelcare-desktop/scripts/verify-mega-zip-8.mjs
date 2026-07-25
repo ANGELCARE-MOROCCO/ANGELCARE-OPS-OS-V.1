@@ -1,0 +1,21 @@
+import fs from "node:fs";
+import path from "node:path";
+import { spawnSync } from "node:child_process";
+import { fileURLToPath } from "node:url";
+const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),"..");
+const fail=(message)=>{console.error("MEGA_ZIP_8_VERIFY_FAILED: "+message);process.exit(1)};
+const read=(relative)=>{const file=path.join(root,relative);if(!fs.existsSync(file))fail("Missing "+relative);return fs.readFileSync(file,"utf8")};
+const pkg=JSON.parse(read("package.json"));
+if(!["1.5.2","1.6.0", "1.7.2"].includes(pkg.version))fail("Expected Desktop 1.5.2 or cumulative 1.6.0, found "+pkg.version);
+if(!String(pkg.scripts?.verify||"").includes("verify-unified-release-1.7.2.mjs"))fail("Unified 1.7.2 verifier is not wired into npm run verify");
+const main=read("src/main.cjs"), activation=read("src/whatsapp-activation/activation.js"), activationHtml=read("src/whatsapp-activation/index.html"), preload=read("src/whatsapp-activation-preload.cjs");
+for(const marker of ["WHATSAPP_LAZY_ACTIVATION_MZ9","function ensureWhatsappActivationView()","function selectWhatsappSystemTab()","async function activateWhatsappAfterConsent","WHATSAPP_EXPLICIT_ACTIVATION_REQUIRED",'ensureWhatsappView({ load: true, explicit: true })','whatsapp_explicit_activation_completed'])if(!main.includes(marker))fail("src/main.cjs is missing marker: "+marker);
+for(const marker of ["Ouvrir WhatsApp","Vérifier l’autorisation","Conservée, non connectée"])if(!activationHtml.includes(marker))fail("Activation surface missing: "+marker);
+if(!activation.includes('command("open")')||!activation.includes('command("refresh")'))fail("Activation surface does not expose explicit open and refresh controls");
+if(!preload.includes('new Set(["get-status","refresh","open"])'))fail("Activation preload allowlist is missing");
+const ensureDefinition=main.indexOf("async function ensureWhatsappView");
+const explicitCall=main.indexOf("ensureWhatsappView({ load: true, explicit: true })");
+if(ensureDefinition<0||explicitCall<ensureDefinition)fail("Explicit activation path is invalid");
+for(const file of ["src/main.cjs","src/whatsapp-activation/activation.js","src/whatsapp-activation-preload.cjs","scripts/verify-mega-zip-8.mjs"]){const result=spawnSync(process.execPath,["--check",path.join(root,file)],{encoding:"utf8"});if(result.status!==0)fail(file+" syntax failed: "+(result.stderr||result.stdout));}
+console.log("ANGELCARE Desktop Mega ZIP 8 protected WhatsApp governance remains cumulative.");
+console.log("Desktop 1.6.0 strengthens it with a dormant native launcher and explicit user activation before WhatsApp Web is created or loaded.");

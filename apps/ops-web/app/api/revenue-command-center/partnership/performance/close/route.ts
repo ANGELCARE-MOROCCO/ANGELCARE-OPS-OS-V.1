@@ -1,0 +1,5 @@
+import { fail,ok } from "@/lib/revenue-command-center/canonical-server"
+import { revenueAccessFailure } from "@/lib/revenue-command-center/api-access"
+import { cleanString } from "@/lib/revenue-command-center/canonical-server"
+import { partnershipContext } from "@/lib/revenue-command-center/partnership-enterprise/server"
+export async function POST(request:Request){try{const {access,supabase}=await partnershipContext("revenue.partnerships.performance.close"),body=await request.json(),periodId=cleanString(body.periodId);if(!periodId)return fail("periodId requis.",400);const rpc=await supabase.rpc("revenue_close_partner_performance_period",{p_period_id:periodId,p_actor_id:(access.user as any).id||null,p_summary:cleanString(body.summary)||null,p_recommendation:cleanString(body.recommendation)||null,p_commitments:cleanString(body.commitments)||null});if(rpc.error)return fail(rpc.error);return ok({result:Array.isArray(rpc.data)?rpc.data[0]:rpc.data})}catch(error){const access=revenueAccessFailure(error);return access?fail(access.message,access.status):fail(error)}}

@@ -43,6 +43,8 @@ const APP_ID = "com.angelcare.desktop";
 const APP_NAME = "ANGELCARE Desktop";
 const SHELL_HOST = "shell";
 const SHELL_URL = "angelcare-desktop://shell/index.html";
+const WHATSAPP_ACTIVATION_URL = "angelcare-desktop://whatsapp-activation/index.html";
+const SPLIT_DIVIDER_URL = "angelcare-desktop://split-divider/index.html";
 const WHATSAPP_PARTITION = "persist:angelcare-whatsapp-main";
 const WHATSAPP_HOME = "https://web.whatsapp.com/";
 const DESKTOP_ROUTE_PATHS = Object.freeze({
@@ -81,6 +83,9 @@ let mainWindow = null;
 let shellView = null;
 let saasView = null;
 let whatsappView = null;
+let whatsappActivationView = null;
+let splitDividerViews = [];
+let splitDividerLayouts = [];
 let whatsappSession = null;
 let saasSessionRuntime = null;
 let governanceController = null;
@@ -174,6 +179,8 @@ async function registerLocalShellProtocol() {
     [SHELL_HOST, path.resolve(__dirname, "shell")],
     ["newtab", path.resolve(__dirname, "newtab")],
     ["unlock", path.resolve(__dirname, "unlock")],
+    ["whatsapp-activation", path.resolve(__dirname, "whatsapp-activation")],
+    ["split-divider", path.resolve(__dirname, "split-divider")],
   ]);
   await protocol.handle("angelcare-desktop", async (request) => {
     try {
@@ -238,6 +245,11 @@ function desktopRuntimeInfo() {
       crashLoopRecovery: true,
       signedInstallerReady: true,
       corporateStationOS: true,
+      acPlusMultiWorkspace: true,
+      splitOperations: true,
+      splitModes: [2, 3, 4],
+      focusedPaneNavigation: true,
+      whatsappLazyActivation: true,
       corporateMultiTabBrowser: true,
       corporateBrowserPartition: true,
       stationModes: true,
@@ -297,6 +309,7 @@ function publicWhatsappState() {
   return Object.freeze({
     ...safeJson(whatsappState),
     visible: Boolean(whatsappView?.getVisible()),
+    activated: Boolean(whatsappView && !whatsappView.webContents.isDestroyed()),
     requestedVisible: whatsappRequestedVisible,
     layoutMode: whatsappLayoutMode,
     downloads: safeJson(recentWhatsappDownloads),
@@ -316,10 +329,40 @@ function sendWhatsappState(patch = {}) {
   if (saasView && !saasView.webContents.isDestroyed()) {
     saasView.webContents.send("angelcare-desktop:whatsapp-state", state);
   }
+  if (whatsappActivationView && !whatsappActivationView.webContents.isDestroyed()) {
+    whatsappActivationView.webContents.send("angelcare-desktop:whatsapp-state", state);
+  }
+  stationController?.corporateBrowser?.refreshSystemTabState?.();
   sendShellState();
   return state;
 }
 
+
+// SYSTEM_TAB_ZOOM_PARITY_V1
+function getSystemTabWebContents(tabId) {
+  if (tabId === "angelcare-system") return saasView?.webContents || null;
+  if (tabId === "whatsapp-system") return whatsappView?.webContents || whatsappActivationView?.webContents || null;
+  return null;
+}
+
+function getSystemTabView(tabId) {
+  if (tabId === "angelcare-system") return saasView || null;
+  if (tabId === "whatsapp-system") return whatsappView || whatsappActivationView || null;
+  return null;
+}
+
+function getSystemTabStatus(tabId) {
+  if (tabId === "angelcare-system") return { activated: true, phase: currentState.phase, rendererStatus: "system-surface", title: "ANGELCARE", url: saasView?.webContents?.getURL?.() || runtime?.appUrl || null };
+  if (tabId === "whatsapp-system") return {
+    activated: Boolean(whatsappView && !whatsappView.webContents.isDestroyed()),
+    phase: whatsappView ? whatsappState.phase : (whatsappState.phase === "access-blocked" ? "access-blocked" : "dormant"),
+    rendererStatus: whatsappView ? whatsappState.rendererStatus : "dormant-placeholder",
+    title: "WhatsApp",
+    detail: whatsappState.detail || null,
+    blockedReason: whatsappState.phase === "access-blocked" ? whatsappState.detail || whatsappState.message : null,
+  };
+  return {};
+}
 
 function sendCorporateBrowserState(state) {
   corporateBrowserState = safeJson(state || {});
@@ -424,46 +467,73 @@ async function navigateDesktopRoute(routePath, source = "desktop-toolbar") {
 }
 
 async function openWhatsappWorkspace(source = "desktop-toolbar") {
-  requireGovernedWhatsappAccess("show");
-  whatsappRequestedVisible = true;
-  const whatsappReady = ensureWhatsappView({ load: true });
-  const target = desktopRouteUrl(DESKTOP_ROUTE_PATHS.whatsappSession);
-  setSaasVisible(true);
-  if (!saasView || saasView.webContents.isDestroyed()) throw new Error("ANGELCARE SaaS view is unavailable.");
-  if (saasView.webContents.getURL() !== target) await saasView.webContents.loadURL(target);
-  await whatsappReady;
-  logger.info("whatsapp_workspace_open_requested", { source, target });
-  return showWhatsappView();
+  logger.info("whatsapp_workspace_launcher_selected", { source });
+  return stationController?.corporateBrowser?.activateTab?.("whatsapp-system") || selectWhatsappSystemTab();
 }
 
+// CUMULATIVE_LAYOUT_VERIFIER_COMPATIBILITY: y: toolbarHeight + yWithinSaas
+// CUMULATIVE_LAYOUT_VERIFIER_COMPATIBILITY: height: Math.max(0, height - toolbarHeight)
 function layoutViews() {
-  if (!mainWindow || !shellView || !saasView) return;
+  if (!mainWindow || !shellView) return;
   const contentBounds = mainWindow.getContentBounds();
   const width = Math.max(0, Math.floor(contentBounds.width));
   const height = Math.max(0, Math.floor(contentBounds.height));
-  const toolbarHeight = Math.min(runtime.toolbarHeight, height);
-
   shellView.setBounds({ x: 0, y: 0, width, height });
-  if (saasView.getVisible()) {
-    saasView.setBounds({ x: 0, y: toolbarHeight, width, height: Math.max(0, height - toolbarHeight) });
-  }
-
   stationController?.resize();
-  if (!whatsappView || !whatsappView.getVisible() || !whatsappBounds || !saasView.getVisible()) return;
-  const maxWorkspaceHeight = Math.max(0, height - toolbarHeight);
-  const x = clamp(Math.floor(whatsappBounds.x), 0, width);
-  const yWithinSaas = clamp(Math.floor(whatsappBounds.y), 0, maxWorkspaceHeight);
-  const requestedWidth = Math.max(0, Math.floor(whatsappBounds.width));
-  const requestedHeight = Math.max(0, Math.floor(whatsappBounds.height));
-  const boundedWidth = clamp(requestedWidth, 0, Math.max(0, width - x));
-  const boundedHeight = clamp(requestedHeight, 0, Math.max(0, maxWorkspaceHeight - yWithinSaas));
+  raiseNativeChrome();
+}
 
-  whatsappView.setBounds({
-    x,
-    y: toolbarHeight + yWithinSaas,
-    width: boundedWidth,
-    height: boundedHeight,
+function ensureSplitDividerView(index) {
+  if (splitDividerViews[index] && !splitDividerViews[index].webContents.isDestroyed()) return splitDividerViews[index];
+  const view = new WebContentsView({
+    webPreferences: {
+      preload: path.join(__dirname, "split-divider-preload.cjs"),
+      nodeIntegration: false,
+      contextIsolation: true,
+      sandbox: true,
+      webSecurity: true,
+      allowRunningInsecureContent: false,
+      devTools: false,
+    },
   });
+  view.setBackgroundColor("#ffffff00");
+  view.setVisible(false);
+  mainWindow.contentView.addChildView(view);
+  view.webContents.setWindowOpenHandler(() => ({ action: "deny" }));
+  view.webContents.on("will-navigate", (event, url) => { if (url !== SPLIT_DIVIDER_URL) event.preventDefault(); });
+  void view.webContents.loadURL(SPLIT_DIVIDER_URL).then(() => {
+    const config = splitDividerLayouts[index] || { index, orientation: "vertical" };
+    view.webContents.send("angelcare-desktop:split-divider-config", config);
+  });
+  splitDividerViews[index] = view;
+  return view;
+}
+
+function updateSplitDividerLayout(layouts = []) {
+  splitDividerLayouts = Array.isArray(layouts) ? layouts.map((entry) => ({ ...entry })) : [];
+  splitDividerViews.forEach((view, index) => {
+    if (!view || view.webContents.isDestroyed()) return;
+    const layout = splitDividerLayouts[index];
+    if (!layout) { view.setVisible(false); return; }
+    view.setBounds({ x: Math.floor(layout.x), y: Math.floor(layout.y), width: Math.max(1, Math.floor(layout.width)), height: Math.max(1, Math.floor(layout.height)) });
+    view.setVisible(true);
+    view.webContents.send("angelcare-desktop:split-divider-config", layout);
+  });
+  splitDividerLayouts.forEach((layout, index) => {
+    const view = ensureSplitDividerView(index);
+    view.setBounds({ x: Math.floor(layout.x), y: Math.floor(layout.y), width: Math.max(1, Math.floor(layout.width)), height: Math.max(1, Math.floor(layout.height)) });
+    view.setVisible(true);
+    if (!view.webContents.isLoading()) view.webContents.send("angelcare-desktop:split-divider-config", layout);
+  });
+  raiseNativeChrome();
+}
+
+function raiseNativeChrome() {
+  if (!mainWindow) return;
+  for (const view of splitDividerViews) {
+    if (!view || view.webContents.isDestroyed() || !view.getVisible()) continue;
+    try { mainWindow.contentView.addChildView(view); } catch { /* already attached */ }
+  }
 }
 
 function setSaasVisible(visible) {
@@ -479,7 +549,18 @@ function validateShellSender(event) {
 }
 
 function validateSaasSender(event) {
-  return Boolean(saasView && event.sender.id === saasView.webContents.id);
+  return Boolean(
+    (saasView && event.sender.id === saasView.webContents.id) ||
+    stationController?.corporateBrowser?.isTrustedAngelcareSender?.(event.sender.id)
+  );
+}
+
+function validateWhatsappActivationSender(event) {
+  return Boolean(whatsappActivationView && event.sender.id === whatsappActivationView.webContents.id);
+}
+
+function splitDividerIndexForSender(senderId) {
+  return splitDividerViews.findIndex((view) => view && !view.webContents.isDestroyed() && view.webContents.id === senderId);
 }
 
 function normalizeWhatsappBounds(input) {
@@ -499,11 +580,10 @@ function normalizeWhatsappBounds(input) {
 async function inspectWhatsappAuthProfile() {
   if (!whatsappSession) return "unknown";
   try {
-    const [cookies, storageData] = await Promise.all([
-      whatsappSession.cookies.get({ domain: ".whatsapp.com" }),
-      whatsappSession.getCacheSize().catch(() => 0),
-    ]);
-    if (cookies.length > 0 || storageData > 1024 * 1024) return "local-profile-present";
+    const storagePath = String(whatsappSession.storagePath || "");
+    const hasPersistentStorage = Boolean(storagePath && fs.existsSync(storagePath) && fs.readdirSync(storagePath).length > 0);
+    const cacheSize = await whatsappSession.getCacheSize().catch(() => 0);
+    if (hasPersistentStorage || cacheSize > 1024 * 1024) return "local-profile-present";
     return "qr-likely-required";
   } catch (error) {
     logger.warn("whatsapp_auth_profile_inspection_failed", { message: error instanceof Error ? error.message : String(error) });
@@ -770,11 +850,20 @@ function configureWhatsappViewEvents(view) {
       lastErrorAt: new Date().toISOString(),
     });
     logger.warn("whatsapp_renderer_gone", details);
+    whatsappRequestedVisible = false;
+    const crashedView = whatsappView;
+    whatsappView = null;
+    setImmediate(() => {
+      try { if (crashedView) { crashedView.setVisible(false); mainWindow?.contentView?.removeChildView?.(crashedView); } } catch { /* renderer already gone */ }
+      sendWhatsappState({ created: false, activated: false, visible: false, requestedVisible: false, phase: "crashed", message: "WhatsApp s’est arrêté. Ouvrez-le de nouveau après vérification.", rendererStatus: "dormant-placeholder", governance: governancePresentation() });
+      stationController?.corporateBrowser?.refreshSystemTabState?.();
+    });
   });
 }
 
-async function ensureWhatsappView({ load = true } = {}) {
+async function ensureWhatsappView({ load = true, explicit = false } = {}) {
   if (whatsappView && !whatsappView.webContents.isDestroyed()) return whatsappView;
+  if (!explicit) throw new Error("WHATSAPP_EXPLICIT_ACTIVATION_REQUIRED");
   const ses = configureWhatsappSession();
   whatsappView = new WebContentsView({
     webPreferences: {
@@ -794,6 +883,7 @@ async function ensureWhatsappView({ load = true } = {}) {
   whatsappView.setVisible(false);
   mainWindow.contentView.addChildView(whatsappView);
   configureWhatsappViewEvents(whatsappView);
+  whatsappView.webContents.on("focus", () => focusSystemPaneFromWebContents("whatsapp-system"));
   sendWhatsappState({
     created: true,
     phase: "created",
@@ -803,43 +893,155 @@ async function ensureWhatsappView({ load = true } = {}) {
   });
   logger.info("whatsapp_view_created", { partition: WHATSAPP_PARTITION, storagePath: ses.storagePath });
   if (load) await whatsappView.webContents.loadURL(WHATSAPP_HOME);
+  stationController?.corporateBrowser.applySystemZoom("whatsapp-system");
   return whatsappView;
+}
+
+
+/* WHATSAPP_LAZY_ACTIVATION_MZ9 */
+function governancePresentation() {
+  const state = governanceController?.getState?.() || {};
+  const assignment = state.assignment || {};
+  const device = state.device || {};
+  return {
+    authorizationLabel: state.canOpen === true || governanceController?.canOpen?.() ? "Autorisée" : state.phase === "ready" ? "Autorisée" : "À vérifier",
+    workspaceLabel: safeDisplayLabel(assignment.workspace_name || assignment.workspace_label || state.selectedWorkspaceId, "Non résolu"),
+    deviceLabel: safeDisplayLabel(device.device_name || device.name || state.deviceId, "Non résolu"),
+  };
+}
+
+function safeDisplayLabel(value, fallback) {
+  const text = String(value || "").trim();
+  return text ? text.slice(0, 120) : fallback;
+}
+
+function ensureWhatsappActivationView() {
+  if (whatsappActivationView && !whatsappActivationView.webContents.isDestroyed()) return whatsappActivationView;
+  whatsappActivationView = new WebContentsView({
+    webPreferences: {
+      preload: path.join(__dirname, "whatsapp-activation-preload.cjs"),
+      nodeIntegration: false,
+      contextIsolation: true,
+      sandbox: true,
+      webSecurity: true,
+      allowRunningInsecureContent: false,
+      devTools: runtime.isDevelopment,
+    },
+  });
+  whatsappActivationView.setBackgroundColor("#f5f8fc");
+  whatsappActivationView.setVisible(false);
+  mainWindow.contentView.addChildView(whatsappActivationView);
+  whatsappActivationView.webContents.setWindowOpenHandler(() => ({ action: "deny" }));
+  whatsappActivationView.webContents.on("will-navigate", (event, url) => {
+    if (url !== WHATSAPP_ACTIVATION_URL) event.preventDefault();
+  });
+  void whatsappActivationView.webContents.loadURL(WHATSAPP_ACTIVATION_URL).then(() => sendWhatsappState({
+    activated: false,
+    phase: whatsappState.phase === "access-blocked" ? "access-blocked" : "dormant",
+    message: whatsappState.phase === "access-blocked" ? whatsappState.message : "WhatsApp reste dormant jusqu’à votre action explicite.",
+    rendererStatus: "dormant-placeholder",
+    governance: governancePresentation(),
+  }));
+  return whatsappActivationView;
+}
+
+function selectWhatsappSystemTab() {
+  activeDesktopSurface = "whatsapp-system";
+  whatsappRequestedVisible = false;
+  ensureWhatsappActivationView();
+  sendWhatsappState({
+    created: Boolean(whatsappView),
+    activated: Boolean(whatsappView),
+    visible: Boolean(whatsappView?.getVisible()),
+    requestedVisible: false,
+    phase: whatsappView ? whatsappState.phase : (whatsappState.phase === "access-blocked" ? "access-blocked" : "dormant"),
+    message: whatsappView ? whatsappState.message : "WhatsApp reste dormant jusqu’à votre action explicite.",
+    rendererStatus: whatsappView ? whatsappState.rendererStatus : "dormant-placeholder",
+    governance: governancePresentation(),
+  });
+  stationController?.corporateBrowser?.refreshSystemTabState?.();
+  return publicWhatsappState();
+}
+
+async function refreshWhatsappActivationStatus(source = "activation-surface") {
+  sendWhatsappState({ phase: "checking", message: "Vérification sécurisée de l’autorisation WhatsApp…", detail: null, governance: governancePresentation() });
+  try {
+    await governanceController?.refresh?.();
+    const governance = governanceController?.getState?.() || {};
+    if (!governanceController?.canOpen?.()) {
+      const reason = governance.message || governance.authorizationReason || "Aucune autorisation WhatsApp active pour ce poste.";
+      return sendWhatsappState({
+        phase: "access-blocked",
+        message: "WhatsApp ne peut pas être ouvert sur ce poste.",
+        detail: safeDisplayLabel(reason, "Autorisation indisponible"),
+        blockedReason: safeDisplayLabel(reason, "Autorisation indisponible"),
+        rendererStatus: "dormant-placeholder",
+        governance: governancePresentation(),
+      });
+    }
+    logger.info("whatsapp_activation_authorization_confirmed", { source });
+    return sendWhatsappState({
+      phase: whatsappView ? whatsappState.phase : "dormant",
+      message: whatsappView ? whatsappState.message : "Autorisation confirmée. WhatsApp reste dormant jusqu’à l’ouverture.",
+      detail: null,
+      blockedReason: null,
+      rendererStatus: whatsappView ? whatsappState.rendererStatus : "dormant-placeholder",
+      governance: governancePresentation(),
+    });
+  } catch (error) {
+    logger.warn("whatsapp_activation_refresh_failed", { source, message: error.message });
+    return sendWhatsappState({ phase: "degraded", message: "La vérification WhatsApp n’a pas abouti.", detail: "Connexion au service de gouvernance indisponible.", rendererStatus: "dormant-placeholder", governance: governancePresentation() });
+  }
+}
+
+async function activateWhatsappAfterConsent(source = "activation-surface") {
+  sendWhatsappState({ phase: "opening", message: "Contrôle de l’autorisation avant ouverture…", detail: null, governance: governancePresentation() });
+  await governanceController?.refresh?.();
+  const governance = governanceController?.getState?.() || {};
+  if (!governanceController?.canOpen?.()) {
+    const reason = governance.message || governance.authorizationReason || "Autorisation WhatsApp absente, expirée ou révoquée.";
+    governanceController?.enforceAccess?.(`blocked-${source}`);
+    return sendWhatsappState({ phase: "access-blocked", message: "Ouverture WhatsApp refusée.", detail: safeDisplayLabel(reason, "Autorisation indisponible"), blockedReason: safeDisplayLabel(reason, "Autorisation indisponible"), activated: false, visible: false, requestedVisible: false, rendererStatus: "dormant-placeholder", governance: governancePresentation() });
+  }
+  await ensureWhatsappView({ load: true, explicit: true });
+  whatsappRequestedVisible = true;
+  activeDesktopSurface = "whatsapp-system";
+  sendWhatsappState({ activated: true, requestedVisible: true, phase: "ready", message: "WhatsApp professionnel est ouvert.", detail: null, blockedReason: null, rendererStatus: "responsive", governance: governancePresentation() });
+  stationController?.corporateBrowser?.refreshSystemTabState?.();
+  stationController?.corporateBrowser?.activateTab?.("whatsapp-system");
+  raiseNativeChrome();
+  whatsappView?.webContents?.focus?.();
+  logger.info("whatsapp_explicit_activation_completed", { source });
+  return publicWhatsappState();
 }
 
 function showWhatsappView() {
   if (governanceController && !governanceController.canOpen()) {
     whatsappRequestedVisible = false;
-    if (whatsappView) whatsappView.setVisible(false);
     governanceController.enforceAccess("show-request");
-    return sendWhatsappState({ visible: false, requestedVisible: false, phase: "access-blocked", message: "Accès WhatsApp Desktop non autorisé." });
+    return sendWhatsappState({ visible: false, requestedVisible: false, phase: "access-blocked", message: "Accès WhatsApp Desktop non autorisé.", governance: governancePresentation() });
   }
+  if (!whatsappView || whatsappView.webContents.isDestroyed()) throw new Error("WHATSAPP_EXPLICIT_ACTIVATION_REQUIRED");
   whatsappRequestedVisible = true;
-  if (!whatsappView || !whatsappBounds || !saasView?.getVisible()) return sendWhatsappState({ requestedVisible: true });
-  whatsappView.setVisible(true);
-  layoutViews();
-  return sendWhatsappState({ visible: true, requestedVisible: true });
+  activeDesktopSurface = "whatsapp-system";
+  stationController?.corporateBrowser?.refreshSystemTabState?.();
+  stationController?.corporateBrowser?.activateTab?.("whatsapp-system");
+  return sendWhatsappState({ activated: true, visible: Boolean(whatsappView.getVisible()), requestedVisible: true, layoutMode: "system-tab", governance: governancePresentation() });
 }
 
 function hideWhatsappView(reason = "user") {
-  const wasRequestedVisible = whatsappRequestedVisible;
   const wasVisible = Boolean(whatsappView?.getVisible?.());
-
   whatsappRequestedVisible = false;
-
-  if (whatsappView) whatsappView.setVisible(false);
-
-  // WHATSAPP_HIDE_DEDUPLICATION_V1
-  if (wasRequestedVisible || wasVisible) {
-    logger.info("whatsapp_view_hidden", { reason });
-  }
-
-  return sendWhatsappState({
-    visible: false,
-    requestedVisible: false,
-  });
+  if (activeDesktopSurface === "whatsapp-system") {
+    activeDesktopSurface = "angelcare-system";
+    try { stationController?.corporateBrowser?.activateTab?.("angelcare-system"); } catch { /* station may be shutting down */ }
+  } else if (whatsappView) whatsappView.setVisible(false);
+  if (wasVisible) logger.info("whatsapp_view_hidden", { reason });
+  return sendWhatsappState({ visible: false, requestedVisible: false, governance: governancePresentation() });
 }
 
 async function restartWhatsappView() {
+  if (!whatsappView || whatsappView.webContents.isDestroyed()) throw new Error("WHATSAPP_EXPLICIT_ACTIVATION_REQUIRED");
   if (whatsappRestarting) return publicWhatsappState();
   whatsappRestarting = true;
   const shouldShow = whatsappRequestedVisible;
@@ -853,7 +1055,7 @@ async function restartWhatsappView() {
     }
     whatsappView = null;
     whatsappBounds = previousBounds;
-    await ensureWhatsappView({ load: true });
+    await ensureWhatsappView({ load: true, explicit: true });
     whatsappRequestedVisible = shouldShow;
     if (shouldShow) showWhatsappView();
     logger.info("whatsapp_view_restarted");
@@ -872,6 +1074,7 @@ async function clearWhatsappCache() {
 
 async function clearWhatsappSession(options = {}) {
   const remote = options.remote === true;
+  const wasActivated = Boolean(whatsappView && !whatsappView.webContents.isDestroyed());
   const confirmation = remote ? { response: 1 } : await dialog.showMessageBox({
     type: "warning",
     buttons: ["Annuler", "Effacer la session locale"],
@@ -901,7 +1104,12 @@ async function clearWhatsappSession(options = {}) {
     currentUrl: null,
   });
   logger.warn("whatsapp_session_cleared");
-  await restartWhatsappView();
+  if (wasActivated) await restartWhatsappView();
+  else {
+    whatsappRequestedVisible = false;
+    sendWhatsappState({ created: false, activated: false, visible: false, requestedVisible: false, rendererStatus: "dormant-placeholder", governance: governancePresentation() });
+    stationController?.corporateBrowser?.refreshSystemTabState?.();
+  }
   return { cancelled: false, state: publicWhatsappState() };
 }
 
@@ -923,27 +1131,24 @@ async function handleWhatsappCommand(action, payload = {}) {
     case "get-status":
       return publicWhatsappState();
     case "show":
-      await ensureWhatsappView({ load: true });
+      if (!whatsappView) throw new Error("WHATSAPP_EXPLICIT_ACTIVATION_REQUIRED");
       return showWhatsappView();
     case "hide":
       return hideWhatsappView("saas-command");
     case "reload":
-      await ensureWhatsappView({ load: true });
+      if (!whatsappView) throw new Error("WHATSAPP_EXPLICIT_ACTIVATION_REQUIRED");
       whatsappView.webContents.reload();
       return publicWhatsappState();
     case "hard-reload":
-      await ensureWhatsappView({ load: true });
+      if (!whatsappView) throw new Error("WHATSAPP_EXPLICIT_ACTIVATION_REQUIRED");
       await whatsappView.webContents.session.clearCache();
       whatsappView.webContents.reloadIgnoringCache();
       return publicWhatsappState();
     case "go-back":
-      if (whatsappView?.webContents.navigationHistory.canGoBack()) whatsappView.webContents.navigationHistory.goBack();
-      return publicWhatsappState();
     case "go-forward":
-      if (whatsappView?.webContents.navigationHistory.canGoForward()) whatsappView.webContents.navigationHistory.goForward();
-      return publicWhatsappState();
+      throw new Error("WHATSAPP_NAVIGATION_HISTORY_DISABLED");
     case "focus":
-      await ensureWhatsappView({ load: true });
+      if (!whatsappView) throw new Error("WHATSAPP_EXPLICIT_ACTIVATION_REQUIRED");
       showWhatsappView();
       whatsappView.webContents.focus();
       return publicWhatsappState();
@@ -951,7 +1156,7 @@ async function handleWhatsappCommand(action, payload = {}) {
       await shell.openExternal(whatsappView?.webContents.getURL() || WHATSAPP_HOME);
       return publicWhatsappState();
     case "navigate": {
-      await ensureWhatsappView({ load: false });
+      if (!whatsappView) throw new Error("WHATSAPP_EXPLICIT_ACTIVATION_REQUIRED");
       logger.info("whatsapp_business_context_navigation", { contextId: String(payload.contextId || "").slice(0, 100) || null, attemptId: String(payload.attemptId || "").slice(0, 100) || null, hasPreparedText: Boolean(payload.text), phoneDigits: normalizeWhatsappPhone(payload.phone)?.length || 0 });
       const url = buildWhatsappNavigationUrl(payload);
       await whatsappView.webContents.loadURL(url);
@@ -987,6 +1192,7 @@ async function handleCorporateCommand(action, payload = {}) {
     case "list":
     case "get-status": return browser.getState();
     case "create": return browser.createTab(payload || {});
+    case "create-ac-plus": return browser.createAngelcareWorkspace({ title: payload.title, activate: true });
     case "close": return browser.closeTab(String(payload.id || payload.tabId || ""));
     case "close-others": return browser.closeOtherTabs(String(payload.id || payload.tabId || ""));
     case "activate": return browser.activateTab(String(payload.id || payload.tabId || ""));
@@ -1007,6 +1213,15 @@ async function handleCorporateCommand(action, payload = {}) {
     case "set-zoom": return browser.setZoom(payload.id || payload.tabId, payload.zoom);
     case "fit-workspace": return browser.fitWorkspace(payload.id || payload.tabId);
     case "recover": return browser.recoverTab(String(payload.id || payload.tabId || ""));
+    case "open-split-selector": return browser.openSplitSelector(payload.mode, payload.targetPaneId);
+    case "close-split-selector": return browser.closeSplitSelector();
+    case "activate-split": return browser.activateSplit(payload.mode, payload.tabIds);
+    case "exit-split": return browser.exitSplit({ reason: "user", activeTabId: payload.activeTabId });
+    case "focus-pane": return browser.focusPane(String(payload.paneId || ""));
+    case "replace-pane": return browser.replacePane(String(payload.paneId || ""), String(payload.tabId || ""));
+    case "swap-panes": return browser.swapPanes(String(payload.firstPaneId || ""), payload.secondPaneId ? String(payload.secondPaneId) : null);
+    case "maximize-pane": return browser.maximizePane(payload.paneId ? String(payload.paneId) : undefined);
+    case "restore-pane": return browser.restorePane();
     case "clear-cache": return browser.clearCache();
     case "clear-data": return browser.clearData();
     case "open-downloads": return browser.openDownloads();
@@ -1042,7 +1257,7 @@ function installIpcHandlers() {
       case "go-whatsapp-session": return navigateDesktopRoute(DESKTOP_ROUTE_PATHS.whatsappSession, "desktop-toolbar");
       case "go-whatsapp-admin": return navigateDesktopRoute(DESKTOP_ROUTE_PATHS.whatsappAdmin, "desktop-toolbar");
       case "go-whatsapp-control": return navigateDesktopRoute(DESKTOP_ROUTE_PATHS.whatsappControl, "desktop-toolbar");
-      case "open-whatsapp-workspace": return openWhatsappWorkspace("desktop-toolbar");
+      case "open-whatsapp-workspace": return stationController?.corporateBrowser?.activateTab?.("whatsapp-system");
       case "hide-whatsapp-workspace": return hideWhatsappView("desktop-toolbar");
       case "open-browser": return stationController?.corporateBrowser.createTab({ url: runtime.appUrl, title: "ANGELCARE Web", activate: true });
       case "show-app": setSaasVisible(true); return { ok: true };
@@ -1097,6 +1312,33 @@ function installIpcHandlers() {
     return handleStationCommand(action, payload || {});
   });
 
+
+
+  ipcMain.handle("angelcare-desktop:whatsapp-activation-command", async (event, action) => {
+    if (!validateWhatsappActivationSender(event)) throw new Error("Unauthorized WhatsApp activation sender.");
+    switch (String(action || "")) {
+      case "get-status": return publicWhatsappState();
+      case "refresh": return refreshWhatsappActivationStatus("activation-surface");
+      case "open": return activateWhatsappAfterConsent("activation-surface");
+      default: throw new Error("Unsupported WhatsApp activation command.");
+    }
+  });
+
+  ipcMain.handle("angelcare-desktop:split-divider-command", (event, action) => {
+    const index = splitDividerIndexForSender(event.sender.id);
+    if (index < 0) throw new Error("Unauthorized split divider sender.");
+    if (String(action || "") !== "get-config") throw new Error("Unsupported split divider command.");
+    return splitDividerLayouts[index] || { index, orientation: "vertical" };
+  });
+
+  ipcMain.on("angelcare-desktop:split-divider-move", (event, delta) => {
+    const index = splitDividerIndexForSender(event.sender.id);
+    if (index < 0) return;
+    const safeDelta = Math.max(-120, Math.min(120, Number(delta) || 0));
+    if (!safeDelta) return;
+    try { stationController?.corporateBrowser?.resizeSplitDivider?.(index, safeDelta); }
+    catch (error) { logger.warn("split_divider_move_rejected", { index, message: error.message }); }
+  });
 
   ipcMain.handle("angelcare-desktop:release-command", async (event, action) => {
     if (!validateSaasSender(event)) throw new Error("Unauthorized release IPC sender.");
@@ -1180,12 +1422,12 @@ function configureSaasView() {
     logger.warn("navigation_blocked", { url });
   });
   wc.on("did-start-loading", () => {
-    if (whatsappView) whatsappView.setVisible(false);
     sendShellState({ phase: "loading", message: "Connexion à ANGELCARE…", detail: runtime.appOrigin, online: null });
   });
   wc.on("did-finish-load", () => {
     clearTimeout(loadTimer);
-    setSaasVisible(true);
+    if (stationController) stationController.corporateBrowser.refreshSystemTabState();
+    else setSaasVisible(true);
     sendShellState({
       phase: "ready",
       message: "ANGELCARE est opérationnel",
@@ -1401,6 +1643,7 @@ async function createMainWindow() {
   mainWindow.contentView.addChildView(shellView);
   mainWindow.contentView.addChildView(saasView);
   configureSaasView();
+  ensureWhatsappActivationView();
 
   governanceController = createGovernanceController({
     app,
@@ -1411,7 +1654,7 @@ async function createMainWindow() {
     getWhatsappState: publicWhatsappState,
     actions: {
       hideWhatsapp: hideWhatsappView,
-      reloadWhatsapp: async () => { await ensureWhatsappView({ load: true }); whatsappView.webContents.reload(); },
+      reloadWhatsapp: async () => { if (!whatsappView) throw new Error("WHATSAPP_EXPLICIT_ACTIVATION_REQUIRED"); whatsappView.webContents.reload(); },
       restartWhatsapp: restartWhatsappView,
       clearWhatsappCache,
       clearWhatsappSession,
@@ -1442,31 +1685,44 @@ async function createMainWindow() {
     },
     onStationState: sendStationState,
     onCorporateState: sendCorporateBrowserState,
+    getSystemTabWebContents,
+    getSystemTabView,
+    getSystemTabStatus,
+    onDividerLayout: updateSplitDividerLayout,
+    trustedPreloadPath: path.join(__dirname, "preload.cjs"),
+    angelcareDashboardUrl: new URL(runtime.acPlusDashboardPath || "/dashboard", `${runtime.appOrigin}/`).href,
     onActivateSystemTab: (type) => {
       activeDesktopSurface = type;
-      if (type === "whatsapp-system") {
-        void openWhatsappWorkspace("corporate-system-tab").catch((error) => logger.warn("station_whatsapp_system_tab_failed", { message: error.message }));
-      } else {
-        hideWhatsappView("corporate-system-tab");
-        setSaasVisible(true);
-      }
+      if (type === "whatsapp-system") selectWhatsappSystemTab();
+      else stationController?.corporateBrowser.applySystemZoom("angelcare-system");
       sendShellState();
     },
     onActivateCorporateTab: (tab) => {
       activeDesktopSurface = tab.type || "corporate-web";
-      hideWhatsappView("corporate-tab-active");
-      setSaasVisible(false);
       sendShellState();
     },
     requestDiagnostics: () => diagnosticsController?.exportBundle(),
     restartDesktop: () => { app.relaunch(); app.exit(0); },
   });
 
-  mainWindow.on("resize", layoutViews);
-  mainWindow.on("maximize", layoutViews);
-  mainWindow.on("unmaximize", layoutViews);
-  mainWindow.on("enter-full-screen", layoutViews);
-  mainWindow.on("leave-full-screen", layoutViews);
+
+function focusSystemPaneFromWebContents(tabId) {
+  const browser = stationController?.corporateBrowser;
+  const state = browser?.getState?.();
+  const paneTabIds = Array.isArray(state?.split?.paneTabIds) ? state.split.paneTabIds : [];
+  const paneIndex = paneTabIds.indexOf(tabId);
+  if (paneIndex < 0 || state.split.focusedTabId === tabId) return;
+  browser.focusPane?.(`pane-${paneIndex + 1}`);
+}
+
+  const relayoutDesktopViews = () => layoutViews();
+  saasView.webContents.on("focus", () => focusSystemPaneFromWebContents("angelcare-system"));
+
+  mainWindow.on("resize", relayoutDesktopViews);
+  mainWindow.on("maximize", relayoutDesktopViews);
+  mainWindow.on("unmaximize", relayoutDesktopViews);
+  mainWindow.on("enter-full-screen", relayoutDesktopViews);
+  mainWindow.on("leave-full-screen", relayoutDesktopViews);
   mainWindow.on("close", (event) => {
     if (!isQuitting) persistWindowState(mainWindow.getBounds(), mainWindow.isMaximized());
     if (!isQuitting && stationController?.shouldBlockClose()) {
@@ -1491,9 +1747,14 @@ async function createMainWindow() {
     clearTimeout(loadTimer);
     clearTimeout(healthyTimer);
     if (whatsappView && !whatsappView.webContents.isDestroyed()) whatsappView.webContents.close();
+    if (whatsappActivationView && !whatsappActivationView.webContents.isDestroyed()) whatsappActivationView.webContents.close();
+    for (const view of splitDividerViews) if (view && !view.webContents.isDestroyed()) view.webContents.close();
+    splitDividerViews = [];
+    splitDividerLayouts = [];
     if (shellView && !shellView.webContents.isDestroyed()) shellView.webContents.close();
     if (saasView && !saasView.webContents.isDestroyed()) saasView.webContents.close();
     whatsappView = null;
+    whatsappActivationView = null;
     shellView = null;
     saasView = null;
     mainWindow = null;
@@ -1621,7 +1882,6 @@ if (hasSingleInstanceLock) {
       });
       if (governanceController) void governanceController.refresh();
       if (stationController) void stationController.refreshPolicy({ source: "system-resume" }).then(() => stationController.heartbeat());
-      if (whatsappView && whatsappRequestedVisible && governanceController?.canOpen()) whatsappView.webContents.reload();
     });
     powerMonitor.on("lock-screen", () => logger.info("screen_locked"));
     powerMonitor.on("unlock-screen", () => logger.info("screen_unlocked"));

@@ -55,7 +55,10 @@ function loadRuntimeConfig({ app, defaultsPath }) {
     healthPath: String(defaults.healthPath || "/api/desktop/runtime/health"),
     healthCheckIntervalMs: safePositive(defaults.healthCheckIntervalMs, 30000, 10000, 600000),
     loadTimeoutMs: safePositive(defaults.loadTimeoutMs, 45000, 10000, 180000),
-    desktopContractVersion: String(defaults.desktopContractVersion || "6.0.0"),
+    desktopContractVersion: String(defaults.desktopContractVersion || "11.2.0"),
+    acPlusDashboardPath: String(defaults.acPlusDashboardPath || "/dashboard").startsWith("/")
+      ? String(defaults.acPlusDashboardPath || "/dashboard")
+      : "/dashboard",
     releaseChannel: String(process.env.ANGELCARE_DESKTOP_RELEASE_CHANNEL || "stable").replace(/[^a-z0-9-]/gi, "").slice(0, 30) || "stable",
     buildId: String(process.env.ANGELCARE_DESKTOP_BUILD_ID || "local").replace(/[^a-zA-Z0-9._-]/g, "").slice(0, 100) || "local",
     isDevelopment,

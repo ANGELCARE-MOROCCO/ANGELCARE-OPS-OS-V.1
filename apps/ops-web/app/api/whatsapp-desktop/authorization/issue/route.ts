@@ -10,6 +10,7 @@ export async function POST(request: NextRequest) {
   const desktopVersion = String(body.desktop_version || "0.0.0")
   if (!installationId || !workspaceId) return fail("INSTALLATION_AND_WORKSPACE_REQUIRED")
   const result = await issueAuthorizationLease(context.supabase, { userId: context.userId, installationId, workspaceId, desktopVersion })
+  if (result.device?.id) await context.supabase.from("whatsapp_desktop_devices").update({ last_authorization_refresh_at: new Date().toISOString() }).eq("id", result.device.id)
   await accessEvent(context.supabase, { eventType: "authorization_issued", userId: context.userId, deviceId: result.device?.id, workspaceId, assignmentId: result.assignment?.id, outcome: result.authorized ? "authorized" : "denied", reason: result.reason, metadata: { desktop_version: desktopVersion }, ip: context.ip, userAgent: context.userAgent })
   if (!result.authorized) await securityEvent(context.supabase, { severity: result.reason.includes("REVOKED") || result.reason.includes("COMPROMISED") ? "high" : "attention", eventType: "authorization_denied", userId: context.userId, deviceId: result.device?.id, workspaceId, title: "Accès WhatsApp Desktop refusé", description: result.reason })
   return ok(result)

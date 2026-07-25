@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ANGELCARE WhatsApp</title><link rel="stylesheet" href="./styles.css"></head>
+<body>
+  <main class="activation-shell">
+    <section class="identity-card">
+      <div class="brand-mark">A</div>
+      <div><p class="eyebrow">ANGELCARE CORPORATE STATION OS</p><h1>WhatsApp professionnel</h1><p class="subtitle">Surface native protégée · connexion uniquement sur action explicite</p></div>
+    </section>
+    <section class="status-card" aria-live="polite">
+      <div class="status-row"><span id="status-dot" class="status-dot dormant"></span><div><p class="label">État actuel</p><h2 id="status-title">Non ouvert</h2></div><span id="status-badge" class="badge">En attente d’ouverture</span></div>
+      <p id="status-message" class="message">WhatsApp reste dormant. Aucune connexion n’est établie tant que vous ne l’ouvrez pas.</p>
+      <div class="context-grid">
+        <div><span>Autorisation</span><strong id="authorization">À vérifier</strong></div>
+        <div><span>Workspace</span><strong id="workspace">Non résolu</strong></div>
+        <div><span>Appareil</span><strong id="device">Non résolu</strong></div>
+        <div><span>Session</span><strong id="session">Conservée, non connectée</strong></div>
+      </div>
+      <p id="safe-reason" class="safe-reason" hidden></p>
+      <div class="actions">
+        <button id="open" class="primary" type="button">Ouvrir WhatsApp</button>
+        <button id="refresh" class="secondary" type="button">Vérifier l’autorisation</button>
+      </div>
+      <p class="security">La session WhatsApp reste isolée de votre session ANGELCARE. Aucun cookie n’est copié ou exporté.</p>
+    </section>
+  </main>
+  <script src="./activation.js"></script>
+</body></html>

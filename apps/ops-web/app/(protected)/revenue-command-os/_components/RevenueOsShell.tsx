@@ -20,7 +20,6 @@ import {
 import type { RevenueOsSearchResult } from '@/lib/revenue-command-os/types'
 import { useRevenueOs } from './RevenueOsContext'
 import RevenueOsIcon from './RevenueOsIcon'
-import ObjectiveComposer from './ObjectiveComposer'
 import { sovereigntyStyles } from './visual-sovereignty/SovereignPrimitives'
 import integrityStyles from './RevenueVisualIntegrity.module.css'
 
@@ -44,7 +43,6 @@ export default function RevenueOsShell({ children }: { children: React.ReactNode
   const [collapsed, setCollapsed] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
-  const [objectiveOpen, setObjectiveOpen] = useState(false)
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<RevenueOsSearchResult[]>([])
   const [searchBusy, setSearchBusy] = useState(false)
@@ -63,17 +61,16 @@ export default function RevenueOsShell({ children }: { children: React.ReactNode
       }
       if (event.key === 'Escape') {
         setSearchOpen(false)
-        setObjectiveOpen(false)
       }
     }
-    const openObjective = () => setObjectiveOpen(true)
+    const openObjective = () => router.push('/revenue-command-os?launch=1')
     window.addEventListener('keydown', onKeydown)
     window.addEventListener('revenue-os:open-objective', openObjective)
     return () => {
       window.removeEventListener('keydown', onKeydown)
       window.removeEventListener('revenue-os:open-objective', openObjective)
     }
-  }, [])
+  }, [router])
 
   useEffect(() => {
     if (!searchOpen) return
@@ -124,7 +121,7 @@ export default function RevenueOsShell({ children }: { children: React.ReactNode
 
           <div className={`mx-3 mt-4 grid gap-2 ${collapsed ? 'grid-cols-1' : 'grid-cols-2'}`}>
             <button onClick={() => setSearchOpen(true)} title="Recherche globale" className={`flex items-center rounded-2xl border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:border-blue-200 hover:text-blue-700 ${collapsed ? 'justify-center p-3' : 'gap-2 px-3 py-2.5'}`}><Search size={16} />{!collapsed ? <span className="text-[10px] font-black uppercase tracking-[.08em]">Recherche</span> : null}</button>
-            <button onClick={() => setObjectiveOpen(true)} title="Nouvel objectif" className={`flex items-center rounded-2xl bg-slate-950 text-white shadow-lg shadow-slate-900/10 transition hover:bg-blue-700 ${collapsed ? 'justify-center p-3' : 'gap-2 px-3 py-2.5'}`}><Plus size={16} />{!collapsed ? <span className="text-[10px] font-black uppercase tracking-[.08em]">Objectif</span> : null}</button>
+            <button onClick={() => router.push('/revenue-command-os?launch=1')} title="Nouvelle opération revenu" className={`flex items-center rounded-2xl bg-slate-950 text-white shadow-lg shadow-slate-900/10 transition hover:bg-blue-700 ${collapsed ? 'justify-center p-3' : 'gap-2 px-3 py-2.5'}`}><Plus size={16} />{!collapsed ? <span className="text-[10px] font-black uppercase tracking-[.08em]">Objectif</span> : null}</button>
           </div>
 
           <nav className="mt-4 flex-1 overflow-y-auto px-3 pb-6">
@@ -147,7 +144,7 @@ export default function RevenueOsShell({ children }: { children: React.ReactNode
             <div className={`rounded-2xl border border-slate-200 bg-gradient-to-br from-slate-50 to-white ${collapsed ? 'p-2' : 'p-3'}`}>
               <div className={`flex items-center ${collapsed ? 'justify-center' : 'gap-3'}`}>
                 <span className="relative grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-slate-950 text-white"><ShieldCheck size={17} /><span className="absolute -right-1 -top-1 h-2.5 w-2.5 rounded-full border-2 border-white bg-emerald-500" /></span>
-                {!collapsed ? <div className="min-w-0 flex-1"><p className="truncate text-[11px] font-black text-slate-900">Production gouvernée</p><p className="mt-0.5 truncate text-[9px] font-semibold uppercase tracking-[.1em] text-slate-500">Effets externes sur approbation</p></div> : null}
+                {!collapsed ? <div className="min-w-0 flex-1"><p className="truncate text-[11px] font-black text-slate-900">Production gouvernée</p><p className="mt-0.5 truncate text-[9px] font-black uppercase tracking-[.1em] text-blue-700">Phase 16 — Mega Production</p><p className="mt-0.5 truncate text-[9px] font-semibold uppercase tracking-[.1em] text-slate-500">Effets externes sur approbation</p></div> : null}
               </div>
             </div>
           </div>
@@ -168,7 +165,6 @@ export default function RevenueOsShell({ children }: { children: React.ReactNode
         </section>
       </div> : null}
 
-      <ObjectiveComposer open={objectiveOpen} onClose={() => setObjectiveOpen(false)} />
     </div>
   )
 }

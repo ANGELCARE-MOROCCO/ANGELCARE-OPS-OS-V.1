@@ -1,7 +1,8 @@
-import RevenuePartnershipsV13ActionsWorkspace from "@/components/revenue-command-center/RevenuePartnershipsV13ActionsWorkspace"
+import RevenuePartnershipWorkspace from "@/components/revenue-command-center/partnership-enterprise/RevenuePartnershipWorkspace"
 
 export const dynamic = "force-dynamic"
+export const revalidate = 0
 
 export default function Page() {
-  return <RevenuePartnershipsV13ActionsWorkspace mode="new" />
+  return <RevenuePartnershipWorkspace experience="create-partnership" />
 }

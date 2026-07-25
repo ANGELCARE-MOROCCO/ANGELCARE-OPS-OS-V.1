@@ -10,5 +10,6 @@ export async function POST(request: NextRequest) {
   const desktopVersion = String(body.desktop_version || "0.0.0")
   if (!installationId || !workspaceId) return fail("INSTALLATION_AND_WORKSPACE_REQUIRED")
   const result = await issueAuthorizationLease(context.supabase, { userId: context.userId, installationId, workspaceId, desktopVersion })
+  if (result.device?.id) await context.supabase.from("whatsapp_desktop_devices").update({ last_authorization_refresh_at: new Date().toISOString() }).eq("id", result.device.id)
   return ok(result)
 }

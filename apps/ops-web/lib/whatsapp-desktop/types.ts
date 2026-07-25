@@ -6,6 +6,7 @@ export type WhatsAppAssignmentRole = "owner" | "administrator" | "supervisor" | 
 export type WhatsAppAssignmentStatus = "pending" | "active" | "suspended" | "revoked" | "expired"
 export type WhatsAppDeviceApproval = "pending" | "approved" | "rejected" | "suspended" | "revoked" | "compromised"
 export type WhatsAppLinkState = "unknown" | "not_linked" | "qr_required" | "linked" | "logged_out"
+export type WhatsAppGovernanceSyncStatus = "synchronized" | "pending" | "drift" | "offline" | "blocked" | "unknown" | "error"
 export type WhatsAppRemoteCommand =
   | "HIDE_WHATSAPP_VIEW"
   | "SHOW_ACCESS_REVOKED_NOTICE"
@@ -95,8 +96,20 @@ export interface WhatsAppDesktopDevice {
   compromised_at?: string | null
   last_heartbeat_at: string | null
   last_seen_at: string | null
+  last_ip?: string | null
   runtime_health: JsonRecord
   metadata: JsonRecord
+  reported_state?: JsonRecord
+  synchronization_status?: WhatsAppGovernanceSyncStatus
+  governance_contract_version?: string | null
+  desktop_build_number?: number | null
+  last_configuration_pull_at?: string | null
+  last_command_poll_at?: string | null
+  last_authorization_refresh_at?: string | null
+  last_whatsapp_lease_renewal_at?: string | null
+  last_diagnostics_at?: string | null
+  client_clock_at?: string | null
+  clock_drift_seconds?: number | null
 }
 
 export interface WhatsAppAuthorizationResult {
@@ -130,6 +143,84 @@ export interface WhatsAppGovernanceAdminOverview {
 }
 
 
+export interface WhatsAppDeviceDesiredState extends JsonRecord {
+  id?: string
+  device_id: string
+  desired_state: JsonRecord
+  desired_revision: number
+  desired_policy_id?: string | null
+  desired_policy_version?: number
+  desired_mode: "standard" | "focus" | "locked"
+  desired_whatsapp_enabled: boolean
+  desired_ac_plus_enabled: boolean
+  desired_split_enabled: boolean
+  desired_maximum_tabs: number
+  reason?: string | null
+  updated_at?: string
+}
+
+export interface WhatsAppGovernanceAlert extends JsonRecord {
+  id: string
+  device_id?: string | null
+  workspace_id?: string | null
+  alert_type: string
+  severity: "informational" | "attention" | "high" | "critical"
+  status: "open" | "acknowledged" | "resolved" | "dismissed"
+  title: string
+  description?: string | null
+  assigned_to?: string | null
+  evidence?: JsonRecord
+  occurrences?: number
+  first_detected_at?: string
+  last_detected_at?: string
+}
+
+export interface WhatsAppControlPlaneDevice extends WhatsAppDesktopDevice {
+  user?: Record<string, any> | null
+  registered_user?: Record<string, any> | null
+  workspace_access?: Array<Record<string, any>>
+  desired_state?: WhatsAppDeviceDesiredState | null
+  sync_assessment?: Record<string, any>
+  effective_policy?: Record<string, any> | null
+  pending_command_count?: number
+  open_alert_count?: number
+  active_session_count?: number
+}
+
+export interface WhatsAppControlPlaneCommand extends Record<string, any> {
+  id: string
+  device_id: string
+  command_channel: "whatsapp" | "station"
+  command_type: string
+  status: string
+  reason?: string | null
+  issued_at?: string | null
+  delivered_at?: string | null
+  received_at?: string | null
+  completed_at?: string | null
+  failed_at?: string | null
+  failure_reason?: string | null
+  correlation_id?: string | null
+  priority?: string | null
+  retry_count?: number | null
+  max_retries?: number | null
+  device?: { id?: string; device_name?: string } | null
+}
+
+export interface WhatsAppControlPlaneOverview {
+  release: Record<string, any>
+  capabilities: Record<string, boolean>
+  counts: Record<string, number>
+  devices: WhatsAppControlPlaneDevice[]
+  alerts: WhatsAppGovernanceAlert[]
+  commands: WhatsAppControlPlaneCommand[]
+  station_commands: Array<Record<string, any>>
+  policies: Array<Record<string, any>>
+  workspaces: Array<Record<string, any>>
+  users: Array<Record<string, any>>
+  migration_error?: string | null
+}
+
 export interface WhatsAppDeviceLifecycleDossier {
   device: WhatsAppDesktopDevice & { online: boolean; available_actions: string[] }
   workspace_access: JsonRecord[]
@@ -138,4 +229,9 @@ export interface WhatsAppDeviceLifecycleDossier {
   heartbeats: JsonRecord[]
   audit_events: JsonRecord[]
   security_events: JsonRecord[]
+  desired_state?: WhatsAppDeviceDesiredState | null
+  sync_assessment?: JsonRecord
+  station_commands?: JsonRecord[]
+  station_events?: JsonRecord[]
+  alerts?: WhatsAppGovernanceAlert[]
 }

@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server"
 import { fail, governanceContext, ok, parseBody } from "@/lib/whatsapp-desktop/server"
+import { reconcileSynchronizationRun } from "@/lib/whatsapp-desktop/control-plane-server"
 
 export async function POST(request: NextRequest, routeContext: { params: Promise<{ id: string }> | { id: string } }) {
   const context = await governanceContext(request)
@@ -22,5 +23,6 @@ export async function POST(request: NextRequest, routeContext: { params: Promise
   const { data, error } = await context.supabase.from("whatsapp_desktop_commands").update(update).eq("id", id).select("*").single()
   if (error) return fail(error.message, 400)
   await context.supabase.from("whatsapp_desktop_command_receipts").insert({ command_id: id, device_id: device.id, state, detail: String(body.detail || "").slice(0, 2000) || null, evidence: body.evidence && typeof body.evidence === "object" ? body.evidence : {} })
+  await reconcileSynchronizationRun(context.supabase, device.id, command.correlation_id)
   return ok(data)
 }

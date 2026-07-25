@@ -1,6 +1,7 @@
 import type { NextRequest } from "next/server"
 import { auditEvent, fail, ok, revokeActiveLeases, securityEvent } from "@/lib/whatsapp-desktop/server"
 import type { WhatsAppDeviceApproval, WhatsAppRemoteCommand } from "@/lib/whatsapp-desktop/types"
+import { evaluateDeviceSynchronization } from "@/lib/whatsapp-desktop/control-plane"
 
 type Row = Record<string, any>
 
@@ -157,7 +158,7 @@ export async function reassignDevice(context: Row, deviceId: string, input: { us
 
 export async function loadDeviceLifecycle(supabase: any, deviceId: string) {
   const device = await loadDevice(supabase, deviceId)
-  const [access, sessions, commands, receipts, heartbeats, audit, security] = await Promise.all([
+  const [access, sessions, commands, receipts, heartbeats, audit, security, desired, stationCommands, stationEvents, alerts, assignments] = await Promise.all([
     supabase.from("whatsapp_desktop_device_workspace_access").select("*,workspace:whatsapp_desktop_workspaces(id,name,code)").eq("device_id", deviceId).order("created_at", { ascending: false }),
     supabase.from("whatsapp_desktop_device_sessions").select("*,workspace:whatsapp_desktop_workspaces(id,name,code)").eq("device_id", deviceId).order("issued_at", { ascending: false }).limit(250),
     supabase.from("whatsapp_desktop_commands").select("*,workspace:whatsapp_desktop_workspaces(id,name,code)").eq("device_id", deviceId).order("issued_at", { ascending: false }).limit(250),
@@ -165,19 +166,39 @@ export async function loadDeviceLifecycle(supabase: any, deviceId: string) {
     supabase.from("whatsapp_desktop_heartbeats").select("*").eq("device_id", deviceId).order("received_at", { ascending: false }).limit(100),
     supabase.from("whatsapp_desktop_audit_events").select("*").eq("device_id", deviceId).order("created_at", { ascending: false }).limit(250),
     supabase.from("whatsapp_desktop_security_events").select("*").eq("device_id", deviceId).order("created_at", { ascending: false }).limit(250),
+    supabase.from("whatsapp_desktop_device_governance_state").select("*").eq("device_id", deviceId).maybeSingle(),
+    supabase.from("desktop_station_commands").select("*").eq("device_id", deviceId).order("issued_at", { ascending: false }).limit(250),
+    supabase.from("desktop_station_events").select("*").eq("device_id", deviceId).order("created_at", { ascending: false }).limit(250),
+    supabase.from("whatsapp_desktop_governance_alerts").select("*").eq("device_id", deviceId).order("last_detected_at", { ascending: false }).limit(250),
+    supabase.from("whatsapp_desktop_assignments").select("*").in("user_id", [device.current_user_id, device.registered_user_id].filter(Boolean)).order("created_at", { ascending: false }),
   ])
-  const error = [access.error, sessions.error, commands.error, receipts.error, heartbeats.error, audit.error, security.error].find(Boolean)
+  const error = [access.error, sessions.error, commands.error, receipts.error, heartbeats.error, audit.error, security.error, desired.error, stationCommands.error, stationEvents.error, alerts.error, assignments.error].find(Boolean)
   if (error) throw error
   const commandReceipts = new Map<string, Row[]>()
   for (const receipt of receipts.data || []) commandReceipts.set(receipt.command_id, [...(commandReceipts.get(receipt.command_id) || []), receipt])
+  const whatsappCommandRows = (commands.data || []).map((command: Row) => ({ ...command, command_channel: "whatsapp", receipts: commandReceipts.get(command.id) || [] }))
+  const stationCommandRows = (stationCommands.data || []).map((command: Row) => ({ ...command, command_channel: "station" }))
+  const assessment = evaluateDeviceSynchronization({
+    device,
+    desiredState: desired.data,
+    workspaceAccess: access.data || [],
+    assignments: assignments.data || [],
+    activeSessions: (sessions.data || []).filter((row: Row) => ["active", "grace"].includes(row.status)),
+    pendingCommands: [...whatsappCommandRows, ...stationCommandRows],
+  })
   return {
     device: { ...device, online: deviceIsOnline(device), available_actions: DEVICE_ACTIONS_BY_STATE[device.approval_status as WhatsAppDeviceApproval] || [] },
     workspace_access: access.data || [],
     sessions: sessions.data || [],
-    commands: (commands.data || []).map((command: Row) => ({ ...command, receipts: commandReceipts.get(command.id) || [] })),
+    commands: whatsappCommandRows,
     heartbeats: heartbeats.data || [],
     audit_events: audit.data || [],
     security_events: security.data || [],
+    desired_state: desired.data || null,
+    sync_assessment: assessment,
+    station_commands: stationCommandRows,
+    station_events: stationEvents.data || [],
+    alerts: alerts.data || [],
   }
 }
 

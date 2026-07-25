@@ -65,10 +65,9 @@ module.exports = {
       config: {
         name: "ANGELCAREDesktop",
         authors: "ANGELCARE",
-        description: "Production-hardened ANGELCARE SaaS desktop runtime with governed WhatsApp Web.",
-        setupExe: "ANGELCARE Desktop Setup.exe",
+        description: "ANGELCARE executive operating station 1.7.2 with governed AC+ workspaces, split operations, explicit protected WhatsApp activation and premium Fleet Lifecycle command compatibility.",
+        setupExe: "ANGELCARE-Desktop-1.7.2-Windows-x64-Setup.exe",
         setupIcon: path.join(assets, "icon.ico"),
-        iconUrl: undefined,
         certificateFile: hasWindowsCertificate ? process.env.WINDOWS_CERTIFICATE_FILE : undefined,
         certificatePassword: hasWindowsCertificate ? process.env.WINDOWS_CERTIFICATE_PASSWORD : undefined,
         noMsi: true,

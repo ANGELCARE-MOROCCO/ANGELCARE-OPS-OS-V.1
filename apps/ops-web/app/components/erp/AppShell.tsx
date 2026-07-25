@@ -327,8 +327,11 @@ export default function AppShell({
   const pathname = usePathname()
   const commercialContext = getCommercialContext(pathname)
   const commercialMode = commercialContext !== null
-  const sidebarSuppressed = hideSidebar || commercialMode
+  const contentCommandMode = pathname === '/market-os/content-command-center' || pathname.startsWith('/market-os/content-command-center/')
+  const liberatedShellMode = commercialMode || contentCommandMode
+  const sidebarSuppressed = hideSidebar || liberatedShellMode
   const embeddedCommercialHeader = commercialMode && hasEmbeddedCommercialHeader(pathname)
+  const embeddedExperienceHeader = embeddedCommercialHeader || contentCommandMode
   const contextLinks = usePermissionNavigation()
   const [search, setSearch] = useState('')
   const [quickOpen, setQuickOpen] = useState(false)
@@ -367,7 +370,8 @@ export default function AppShell({
     <div
       data-hide-sidebar={sidebarSuppressed ? 'true' : 'false'}
       data-commercial-shell={commercialMode ? 'true' : undefined}
-      style={commercialMode ? commercialShellStyle : shellStyle}
+      data-content-command-shell={contentCommandMode ? 'true' : undefined}
+      style={liberatedShellMode ? commercialShellStyle : shellStyle}
     >
       {!sidebarSuppressed && (
 <aside style={{ ...sidebarStyle, width: collapsed ? 92 : 330, minWidth: collapsed ? 92 : 330 }}>
@@ -471,7 +475,7 @@ export default function AppShell({
 )}
 
       <div style={mainShellStyle}>
-        <header style={commercialMode ? commercialTopbarStyle : topbarStyle}>
+        <header style={liberatedShellMode ? commercialTopbarStyle : topbarStyle}>
           <div style={searchWrapStyle}>
             <span style={{ fontSize: 18 }}>⌘</span>
             <input
@@ -502,10 +506,10 @@ export default function AppShell({
           <div style={topbarActionsStyle}>
             {commercialMode ? <CommercialExperienceControls /> : null}
             <button type="button" onClick={() => setQuickOpen(!quickOpen)} style={quickButtonStyle}>
-              {commercialMode ? 'Créer' : '＋ Quick Create'}
+              {commercialMode ? 'Créer' : contentCommandMode ? 'Créer dans Market OS' : '＋ Quick Create'}
             </button>
-            {!commercialMode ? <Link href="/reports" style={iconButtonStyle}>📊</Link> : null}
-            {!commercialMode ? <Link href="/incidents" style={notificationButtonStyle}>🔔<span style={notificationDotStyle} /></Link> : null}
+            {!liberatedShellMode ? <Link href="/reports" style={iconButtonStyle}>📊</Link> : null}
+            {!liberatedShellMode ? <Link href="/incidents" style={notificationButtonStyle}>🔔<span style={notificationDotStyle} /></Link> : null}
             <Link href="/profile" style={profileButtonStyle}>
               <span style={avatarStyle}>A</span>
               <span>Profil</span>
@@ -553,7 +557,7 @@ export default function AppShell({
           </section>
         ) : null}
 
-        {!embeddedCommercialHeader ? <section data-commercial-page-header={commercialMode ? 'true' : undefined} data-commercial-focus-hide={commercialMode ? 'true' : undefined} style={commercialMode ? commercialPageHeaderStyle : pageHeaderStyle}>
+        {!embeddedExperienceHeader ? <section data-commercial-page-header={commercialMode ? 'true' : undefined} data-commercial-focus-hide={commercialMode ? 'true' : undefined} style={commercialMode ? commercialPageHeaderStyle : pageHeaderStyle}>
           <div>
             <div style={breadcrumbStyle}>
               <Link href="/" style={{ textDecoration: 'none', color: '#64748b' }}>Home</Link>
@@ -576,7 +580,7 @@ export default function AppShell({
           <div style={pageActionsStyle}>{actions}</div>
         </section> : null}
 
-        <main data-commercial-canvas={commercialMode ? 'true' : undefined} style={commercialMode ? commercialContentStyle : contentStyle}>{children}
+        <main data-commercial-canvas={commercialMode ? 'true' : undefined} data-content-command-canvas={contentCommandMode ? 'true' : undefined} style={contentCommandMode ? contentCommandContentStyle : commercialMode ? commercialContentStyle : contentStyle}>{children}
       <OperationCompletionEngine /></main>
       </div>
     </div>
@@ -652,6 +656,7 @@ const pageActionsStyle: React.CSSProperties = { display: 'flex', gap: 10, flexWr
 const contentStyle: React.CSSProperties = { padding: '0 28px 34px' }
 const commercialPageHeaderStyle: React.CSSProperties = { padding: '22px clamp(16px, 2vw, 34px) 12px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: 18, flexWrap: 'wrap', borderBottom: '1px solid rgba(203,213,225,.72)', background: 'rgba(248,251,254,.9)' }
 const commercialContentStyle: React.CSSProperties = { width: '100%', minWidth: 0, padding: '16px clamp(14px, 1.8vw, 32px) 40px', overflow: 'clip' }
+const contentCommandContentStyle: React.CSSProperties = { width: '100%', minWidth: 0, padding: 0, overflow: 'clip' }
 const commercialRouteBarStyle: React.CSSProperties = { position: 'sticky', top: OVERHEAD_HEIGHT + 74, zIndex: 32, display: 'flex', alignItems: 'center', gap: 18, width: '100%', minWidth: 0, padding: '10px clamp(16px, 2vw, 34px)', borderBottom: '1px solid #d7e3ee', background: 'rgba(247,250,253,.96)', backdropFilter: 'blur(16px)', boxShadow: '0 12px 28px rgba(15,40,78,.05)' }
 const commercialRouteIdentityStyle: React.CSSProperties = { display: 'grid', minWidth: 210, gap: 1 }
 const commercialRouteEyebrowStyle: React.CSSProperties = { color: '#2f6da8', fontSize: 9, fontWeight: 950, letterSpacing: '.12em', textTransform: 'uppercase' }

@@ -1,93 +1,30 @@
 <!doctype html>
-<html lang="fr">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>ANGELCARE Corporate Station OS</title>
-    <link rel="stylesheet" href="./styles.css" />
-  </head>
-  <body>
-    <header class="station-header" aria-label="ANGELCARE Corporate Station OS">
-      <div class="brand">
-        <img src="./logo.png" alt="ANGELCARE" class="logo" />
-        <span class="divider" aria-hidden="true"></span>
-        <div><div class="product">CORPORATE STATION OS</div><div class="edition">Desktop 1.5.0 · Secure workspace</div></div>
-      </div>
-      <div class="runtime-status" role="status" aria-live="polite">
-        <span id="status-dot" class="status-dot status-loading"></span>
-        <div><div id="status-label" class="status-label">Initialisation…</div><div id="status-detail" class="status-detail">Chargement du poste corporate</div></div>
-      </div>
-      <div class="station-actions">
-        <span id="browser-health" class="health-pill">Navigateur —</span>
-        <button id="mode-button" type="button" class="mode-pill" data-station-action="request-unlock" title="État et sortie du mode corporate"><span id="mode-icon">◉</span><span id="mode-label">Standard</span></button>
-        <button type="button" class="icon-button" data-station-action="refresh-policy" title="Actualiser la politique">↻</button>
-      </div>
-    </header>
-
-    <section class="corporate-toolbar" aria-label="Navigateur corporate ANGELCARE">
-      <div class="tab-row">
-        <div id="tab-strip" class="tab-strip" role="tablist" aria-label="Onglets corporate"></div>
-        <button type="button" id="new-tab" class="new-tab" title="Nouvel onglet (Ctrl/⌘ + T)">＋</button>
-        <button type="button" id="reopen-tab" class="tab-tool" title="Rouvrir le dernier onglet fermé">↶</button>
-        <span id="tab-limit" class="tab-limit">2 / 12</span>
-      </div>
-      <div class="navigation-row">
-        <div class="history-actions">
-          <button type="button" id="back" class="nav-icon" title="Précédent">←</button>
-          <button type="button" id="forward" class="nav-icon" title="Suivant">→</button>
-          <button type="button" id="reload" class="nav-icon" title="Actualiser">↻</button>
-          <button type="button" id="home" class="nav-icon" title="Nouvel onglet ANGELCARE">⌂</button>
-        </div>
-        <form id="address-form" class="address-form" autocomplete="off">
-          <span id="trust-indicator" class="trust-indicator trust-local" title="Niveau de confiance">◆</span>
-          <input id="address-input" type="text" spellcheck="false" autocomplete="off" placeholder="Rechercher sur Google ou saisir une adresse approuvée" aria-label="Adresse ou recherche corporate" />
-          <button type="submit" class="go-button">Ouvrir</button>
-        </form>
-        <div class="zoom-actions" aria-label="Zoom de l’onglet actif">
-          <button type="button" id="zoom-out" class="nav-icon" title="Réduire">−</button>
-          <button type="button" id="zoom-value" class="zoom-value" title="Réinitialiser">100%</button>
-          <button type="button" id="zoom-in" class="nav-icon" title="Agrandir">＋</button>
-        </div>
-        <button type="button" id="downloads" class="downloads-button" title="Téléchargements corporate">⇩ <span id="download-count">0</span></button>
-      </div>
-    </section>
-
-    <nav class="legacy-contract-actions" aria-hidden="true">
-      <button type="button" data-action="go-home" data-route="/">Accueil</button>
-      <button type="button" data-action="go-whatsapp-os" data-route="/whatsapp-os">WhatsApp OS</button>
-      <button type="button" data-action="go-whatsapp-session" data-route="/whatsapp-os/web-session">Session WhatsApp</button>
-      <button type="button" data-action="go-whatsapp-admin" data-route="/whatsapp-os/admin">Administration</button>
-      <button type="button" data-action="go-whatsapp-control" data-route="/whatsapp-os/session-control">Contrôle session</button>
-      <button type="button" data-action="open-whatsapp-workspace">Afficher le workspace</button>
-      <button type="button" data-action="hide-whatsapp-workspace">Masquer</button>
-      <button type="button" data-action="reload">Actualiser</button>
-      <button type="button" data-action="hard-reload">Sans cache</button>
-      <button type="button" data-action="open-browser">Navigateur</button>
-      <button type="button" data-action="go-back">Précédent</button>
-      <button type="button" data-action="go-forward">Suivant</button>
-    </nav>
-
-    <main class="fallback">
-      <section class="fallback-card" aria-labelledby="fallback-title">
-        <div class="shield" aria-hidden="true">A</div>
-        <p class="eyebrow">ANGELCARE CORPORATE STATION OS</p>
-        <h1 id="fallback-title">Votre environnement de travail gouverné</h1>
-        <p id="fallback-message" class="fallback-message">ANGELCARE prépare le SaaS, WhatsApp et le navigateur corporate sécurisé.</p>
-        <div class="fallback-actions">
-          <button type="button" data-action="retry" class="primary">Réessayer</button>
-          <button type="button" id="fallback-new-tab" class="outline">Ouvrir un onglet corporate</button>
-        </div>
-        <div class="diagnostic-grid">
-          <div><span>Version</span><strong id="runtime-version">—</strong></div>
-          <div><span>Plateforme</span><strong id="runtime-platform">—</strong></div>
-          <div><span>Mode</span><strong id="runtime-mode">—</strong></div>
-          <div><span>Politique</span><strong id="runtime-policy">—</strong></div>
-        </div>
-        <p class="security-note">Node.js désactivé · Context isolation · Sandbox Chromium · Partitions ANGELCARE / WhatsApp / Corporate séparées</p>
-      </section>
-    </main>
-    <div id="toast" class="toast" hidden role="alert"></div>
-    <script src="./shell.js"></script>
-  <nav class="desktop-menu" aria-hidden="true"></nav>
-</body>
-</html>
+<html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ANGELCARE Corporate Station OS</title><link rel="stylesheet" href="./styles.css"></head>
+<body>
+<header class="station-header">
+  <div class="brand"><img src="./logo.png" alt="ANGELCARE" class="logo"><span class="divider"></span><div><div class="product">CORPORATE STATION OS</div><div class="edition">Desktop 1.7.2 · AC+ Executive Operations</div></div></div>
+  <div class="runtime-status"><span id="status-dot" class="status-dot loading"></span><div><div id="status-label" class="status-label">Initialisation…</div><div id="status-detail" class="status-detail">Préparation de la station</div></div></div>
+  <div class="station-actions"><span id="browser-health" class="health-pill">Runtime —</span><button id="mode-button" class="mode-pill" data-station-action="request-unlock"><span>◉</span><span id="mode-label">Standard</span></button><button class="icon-button" data-station-action="refresh-policy" title="Actualiser la politique">↻</button></div>
+</header>
+<section class="corporate-toolbar">
+  <div class="tab-row"><div id="tab-strip" class="tab-strip" role="tablist"></div><button id="ac-plus" class="ac-plus" type="button" title="Créer un espace ANGELCARE gouverné">AC+</button><button id="split" class="split-button" type="button">Écrans</button><span id="tab-limit" class="tab-limit">2 / 14</span></div>
+  <div class="navigation-row">
+    <div class="history-actions"><button id="back" class="nav-icon" title="Précédent" aria-label="Page précédente">←</button><button id="forward" class="nav-icon" title="Suivant" aria-label="Page suivante">→</button><button id="reload" class="nav-icon" title="Actualiser" aria-label="Actualiser le panneau actif">↻</button><button id="home" class="nav-icon" title="Accueil ANGELCARE" aria-label="Accueil ANGELCARE du panneau actif">⌂</button></div>
+    <div class="route-display"><span id="trust-indicator" class="trust-indicator">◆</span><span id="route-title" class="route-title">ANGELCARE</span><span id="route-value" class="route-value">Espace principal</span></div>
+    <div id="split-tools" class="split-tools" hidden><button id="swap" type="button">Permuter</button><button id="replace" type="button">Remplacer</button><button id="maximize" type="button">Agrandir</button><button id="restore-pane" type="button" hidden>Restaurer</button><button id="exit-split" class="danger-soft" type="button">Quitter les écrans</button></div>
+    <div class="zoom-actions"><button id="zoom-out" class="nav-icon" aria-label="Réduire le zoom">−</button><button id="zoom-value" class="zoom-value" aria-label="Réinitialiser le zoom">100%</button><button id="zoom-in" class="nav-icon" aria-label="Augmenter le zoom">＋</button></div>
+  </div>
+</section>
+<input id="address-input" type="hidden" aria-hidden="true"><nav class="desktop-menu" aria-hidden="true"><button data-action="go-home"></button><button data-action="go-whatsapp-os"></button><button data-action="go-whatsapp-session"></button><button data-action="go-whatsapp-admin"></button><button data-action="go-whatsapp-control"></button><button data-action="open-whatsapp-workspace"></button><button data-action="hide-whatsapp-workspace"></button></nav>
+<main class="workspace-underlay">
+  <section id="fallback" class="fallback-card"><div class="shield">A</div><p class="eyebrow">ANGELCARE EXECUTIVE OPERATING STATION</p><h1>Plusieurs opérations. Une seule identité sécurisée.</h1><p id="fallback-message">Vos espaces ANGELCARE, WhatsApp protégé et opérations divisées sont gouvernés depuis cette station.</p><div class="fallback-actions"><button id="fallback-ac-plus" class="primary">Créer un espace AC+</button><button id="fallback-split" class="outline">Composer des écrans</button></div><div class="diagnostic-grid"><div><span>Version</span><strong id="runtime-version">—</strong></div><div><span>Plateforme</span><strong id="runtime-platform">—</strong></div><div><span>Mode</span><strong id="runtime-mode">—</strong></div><div><span>Politique</span><strong id="runtime-policy">—</strong></div></div></section>
+  <section id="split-selector" class="split-selector" role="dialog" aria-modal="true" aria-labelledby="split-selector-title" aria-describedby="selector-help" hidden>
+    <div class="selector-heading"><div><p class="eyebrow">COMPOSITION D’OPÉRATIONS</p><h2 id="split-selector-title">Choisir les écrans à afficher</h2><p id="selector-help">Sélectionnez un mode puis exactement le nombre d’espaces requis.</p></div><button id="selector-close" class="close-selector" aria-label="Fermer le sélecteur d’écrans">×</button></div>
+    <div id="mode-options" class="mode-options"></div><div id="eligible-tabs" class="eligible-tabs"></div>
+    <div class="selector-footer"><span id="selection-count">0 sélection</span><button id="confirm-split" class="primary" disabled>Activer les écrans</button></div>
+  </section>
+</main>
+<div id="replace-popover" class="replace-popover" hidden><label for="replace-select">Remplacer le panneau actif</label><select id="replace-select"></select><div><button id="replace-cancel">Annuler</button><button id="replace-confirm" class="primary">Remplacer</button></div></div>
+<div id="toast" class="toast" hidden role="alert"></div>
+<script src="./shell.js"></script>
+</body></html>

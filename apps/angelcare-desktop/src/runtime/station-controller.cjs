@@ -40,6 +40,12 @@ function createStationController(options) {
     onCorporateState = () => {},
     onActivateSystemTab = () => {},
     onActivateCorporateTab = () => {},
+    getSystemTabWebContents = () => null,
+    getSystemTabView = () => null,
+    getSystemTabStatus = () => null,
+    onDividerLayout = () => {},
+    trustedPreloadPath = null,
+    angelcareDashboardUrl = null,
     requestDiagnostics = async () => null,
     restartDesktop = () => app.relaunch() || app.exit(0),
   } = options;
@@ -124,8 +130,8 @@ function createStationController(options) {
     const unlockState = unlockController?.getStatus?.() || null;
     return Object.freeze({
       available: true,
-      contractVersion: "6.0.0",
-      stationVersion: "1.5.0",
+      contractVersion: "11.2.0",
+      stationVersion: app.getVersion(),
       installationId: getInstallationId(),
       deviceId: getDeviceId?.() || null,
       userId: getUserId?.() || null,
@@ -220,7 +226,17 @@ function createStationController(options) {
     onEvent: (event) => void reportEvent(event.event_type || "browser_event", event),
     onActivateSystemTab,
     onActivateCorporateTab,
+    getSystemTabWebContents,
+    getSystemTabView,
+    getSystemTabStatus,
+    onDividerLayout,
+    trustedAngelcareSession: saasSession,
+    trustedPreloadPath,
+    angelcareOrigin: runtime.appOrigin,
+    angelcareDashboardUrl: angelcareDashboardUrl || new URL("/dashboard", `${runtime.appOrigin}/`).href,
+    allowDevelopmentHttp: runtime.isDevelopment === true,
     allowDevTools: runtime.isDevelopment && currentMode !== "locked",
+    initialOperatingMode: currentMode,
   });
 
   const unlockController = createStationUnlockController({
@@ -304,6 +320,7 @@ function createStationController(options) {
       currentMode = target;
       if (!options.temporary) requiredMode = target;
       applyWindowMode(target);
+      corporateBrowser.applyOperatingMode(target, { source: options.source || "policy" });
       lastModeTransitionAt = nowIso();
       if (target === "locked") temporaryUnlockUntil = null;
       writeLocal();

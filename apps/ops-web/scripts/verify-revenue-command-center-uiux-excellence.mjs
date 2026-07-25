@@ -15,6 +15,10 @@ const requiredFiles = [
   "components/revenue-command-center/RevenuePartnershipsEnterpriseWorkspace.tsx",
   "components/revenue-command-center/RevenuePartnershipsEnterprisePage.tsx",
   "components/revenue-command-center/PartnershipsWhiteTextGuard.tsx",
+  "components/revenue-command-center/partnership-enterprise/RevenuePartnershipWorkspace.tsx",
+  "components/revenue-command-center/partnership-enterprise/RevenuePartnershipWorkspace.module.css",
+  "components/revenue-command-center/partnership-enterprise/route-contracts.ts",
+  "components/revenue-command-center/partnership-enterprise/types.ts",
   "components/revenue-command-center/RevenueAppointmentsV12MegaWorkspace.tsx",
   "components/revenue-command-center/engagement-enterprise/RevenueEngagementWorkspace.tsx",
   "components/revenue-command-center/engagement-enterprise/RevenueEngagementWorkspace.module.css",
@@ -150,12 +154,13 @@ const familyCounts = {
   RevenueExecutiveBriefingV11Workspace: 3,
   RevenuePredictiveV11Workspace: 3,
   RevenueSDRV11Workspace: 3,
-  RevenuePartnershipsEnterpriseWorkspace: 10,
+  RevenuePartnershipsEnterpriseWorkspace: 0,
   RevenueAppointmentsV12MegaWorkspace: 0,
   RevenueEngagementWorkspace: 24,
   RevenueDailyTasksV13McKinseyWorkspace: 0,
   RevenueExecutionWorkspace: 21,
-  RevenuePartnershipsV13ActionsWorkspace: 6,
+  RevenuePartnershipsV13ActionsWorkspace: 0,
+  RevenuePartnershipWorkspace: 18,
   RevenueProposalWorkspace: 8,
   RevenueContractWorkspace: 6,
   UltimateRevenueCommandPage: 7,
@@ -172,6 +177,10 @@ const transformedExperienceTargets = new Set([
   "components/revenue-command-center/RevenuePartnershipsEnterpriseWorkspace.tsx",
   "components/revenue-command-center/RevenuePartnershipsEnterprisePage.tsx",
   "components/revenue-command-center/PartnershipsWhiteTextGuard.tsx",
+  "components/revenue-command-center/partnership-enterprise/RevenuePartnershipWorkspace.tsx",
+  "components/revenue-command-center/partnership-enterprise/RevenuePartnershipWorkspace.module.css",
+  "components/revenue-command-center/partnership-enterprise/route-contracts.ts",
+  "components/revenue-command-center/partnership-enterprise/types.ts",
   "components/revenue-command-center/RevenueAppointmentsV12MegaWorkspace.tsx",
   "components/revenue-command-center/engagement-enterprise/RevenueEngagementWorkspace.tsx",
   "components/revenue-command-center/engagement-enterprise/RevenueEngagementWorkspace.module.css",
@@ -222,7 +231,7 @@ function reachesTransformedExperience(file, seen = new Set()) {
   return [...localDependencies(absolute)].some((dependency) => reachesTransformedExperience(dependency, seen));
 }
 const directlyTransformedRoutes = pages.filter((page) => reachesTransformedExperience(page)).length;
-check(directlyTransformedRoutes === 147, `direct/transitive premium route transformation: 147 (found ${directlyTransformedRoutes})`);
+check(directlyTransformedRoutes === 148, `direct/transitive premium route transformation: 148 (found ${directlyTransformedRoutes})`);
 
 const protectedPrefixes = [
   "app/api/",

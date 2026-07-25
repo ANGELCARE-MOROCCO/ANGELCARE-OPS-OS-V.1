@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server"
+import { ANGELCARE_DESKTOP_RELEASE } from "@/lib/desktop/release"
 
 export const dynamic = "force-dynamic"
 export const revalidate = 0
@@ -8,15 +9,24 @@ export async function GET() {
     {
       ok: true,
       data: {
-        desktop_version: "1.5.0",
-        desktop_contract: "6.0.0",
+        desktop_version: ANGELCARE_DESKTOP_RELEASE.version,
+        desktop_contract: ANGELCARE_DESKTOP_RELEASE.contract,
         service: "angelcare-ops-web",
         capability: "angelcare-desktop-runtime",
-        contractVersion: "2.0.0",
+        contractVersion: ANGELCARE_DESKTOP_RELEASE.governanceContract,
+        buildNumber: ANGELCARE_DESKTOP_RELEASE.buildNumber,
+        channel: ANGELCARE_DESKTOP_RELEASE.channel,
         desktopFeatures: {
           whatsappWebContentsView: true,
           whatsappPersistentSession: true,
           whatsappSessionControl: true,
+          whatsappExplicitActivation: true,
+          whatsappRegistrationRecovery: true,
+          whatsappCleanReenrolment: true,
+          acPlusWorkspaces: true,
+          runtimeModeAwareWorkspaceControls: true,
+          splitRecompositionWhileActive: true,
+          splitModes: [2, 3, 4],
           whatsappAutomation: false,
           whatsappDomAccess: false,
         },
@@ -29,7 +39,8 @@ export async function GET() {
       status: 200,
       headers: {
         "Cache-Control": "no-store, no-cache, must-revalidate",
-        "X-AngelCare-Desktop-Contract": "2.0.0",
+        "X-AngelCare-Desktop-Contract": ANGELCARE_DESKTOP_RELEASE.contract,
+        "X-AngelCare-Desktop-Version": ANGELCARE_DESKTOP_RELEASE.version,
       },
     },
   )

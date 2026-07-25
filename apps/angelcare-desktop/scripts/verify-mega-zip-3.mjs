@@ -109,8 +109,8 @@ const combined = [main, preload, governance, server, admin, gate].join("\n")
 for (const needle of forbidden) if (combined.includes(needle)) throw new Error(`Forbidden Mega ZIP 3 pattern detected: ${needle}`)
 
 const packageJson = JSON.parse(fs.readFileSync(path.join(desktopRoot, "package.json"), "utf8"))
-if (!["1.2.0", "1.3.0", "1.4.0", "1.5.0"].includes(packageJson.version)) throw new Error("Mega ZIP 3 requires desktop version 1.2.0 or a supported cumulative version.")
-if (!packageJson.scripts?.verify?.includes("verify-mega-zip-3.mjs")) throw new Error("Mega ZIP 3 verifier is not wired into npm run verify.")
+if (!["1.2.0", "1.3.0", "1.4.0", "1.5.0", "1.5.1", "1.5.2", "1.6.0", "1.7.2"].includes(packageJson.version)) throw new Error("Mega ZIP 3 requires desktop version 1.2.0 or a supported cumulative version.")
+if (!String(packageJson.scripts?.verify || "").includes("verify-unified-release-1.7.2.mjs")) throw new Error("Unified 1.7.2 verifier is not wired into npm run verify.")
 if (packageJson.devDependencies?.["@electron-forge/maker-dmg"] || packageJson.devDependencies?.appdmg || packageJson.devDependencies?.["macos-alias"]) throw new Error("Native hdiutil DMG pipeline must remain free of appdmg/macos-alias.")
 
 let typescript = null

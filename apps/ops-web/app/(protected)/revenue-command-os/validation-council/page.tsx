@@ -1,5 +1,9 @@
-import { CouncilWorkspace } from './_components/CouncilWorkspace'
+import { requireAccess } from '@/lib/auth/requireAccess'
+import RevenueOperatingSpine from '../_components/operating-spine/RevenueOperatingSpine'
 
-export default function ValidationCouncilPage() {
-  return <main className="min-h-screen bg-[#f6f8fc] px-4 py-6 text-slate-950 sm:px-6 lg:px-8"><CouncilWorkspace /></main>
+export const dynamic = 'force-dynamic'
+
+export default async function ValidationCouncilPage() {
+  await requireAccess(['revenue_os.council.view', 'revenue_os.council.run', 'revenue_os.manage'])
+  return <RevenueOperatingSpine focus="council" />
 }

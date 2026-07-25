@@ -1,200 +1,40 @@
 "use strict";
-
-const byId = (id) => document.getElementById(id);
-const statusDot = byId("status-dot");
-const statusLabel = byId("status-label");
-const statusDetail = byId("status-detail");
-const fallbackMessage = byId("fallback-message");
-const version = byId("runtime-version");
-const platform = byId("runtime-platform");
-const runtimeMode = byId("runtime-mode");
-const runtimePolicy = byId("runtime-policy");
-const modeLabel = byId("mode-label");
-const modeButton = byId("mode-button");
-const browserHealth = byId("browser-health");
-const tabStrip = byId("tab-strip");
-const tabLimit = byId("tab-limit");
-const addressInput = byId("address-input");
-const trustIndicator = byId("trust-indicator");
-const zoomValue = byId("zoom-value");
-const downloadCount = byId("download-count");
-const toast = byId("toast");
-let appState = {};
-let corporateState = { tabs: [] };
-let stationState = {};
-let draggedTabId = null;
-let toastTimer = null;
-
-function showToast(message, tone = "info") {
-  clearTimeout(toastTimer);
-  toast.hidden = false;
-  toast.className = `toast toast-${tone}`;
-  toast.textContent = message;
-  toastTimer = setTimeout(() => { toast.hidden = true; }, 5000);
-}
-
-function toneForPhase(phase) {
-  if (phase === "ready") return "ready";
-  if (["error", "crashed", "timeout"].includes(phase)) return "error";
-  if (["unresponsive", "diagnostics"].includes(phase)) return "warning";
-  return "loading";
-}
-
-function activeTab() { return (corporateState.tabs || []).find((tab) => tab.active) || null; }
-function isCorporate(tab) { return tab && !tab.protected; }
-
-function renderTabs() {
-  tabStrip.replaceChildren();
-  const tabs = Array.isArray(corporateState.tabs) ? corporateState.tabs : [];
-  for (const tab of tabs) {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = `browser-tab ${tab.active ? "active" : ""} ${tab.protected ? "system-tab" : "corporate-tab"}`;
-    button.setAttribute("role", "tab");
-    button.setAttribute("aria-selected", tab.active ? "true" : "false");
-    button.dataset.tabId = tab.id;
-    button.draggable = !tab.protected && !tab.mandatory;
-    const icon = document.createElement("span");
-    icon.className = `tab-icon trust-${tab.trust || (tab.type === "angelcare-system" ? "angelcare" : tab.type === "whatsapp-system" ? "whatsapp" : "corporate")}`;
-    icon.textContent = tab.phase === "loading" ? "◌" : tab.type === "angelcare-system" ? "A" : tab.type === "whatsapp-system" ? "W" : tab.favicon ? "●" : "◆";
-    const title = document.createElement("span");
-    title.className = "tab-title";
-    title.textContent = tab.title || "Nouvel onglet";
-    const pin = document.createElement("span");
-    pin.className = "tab-pin";
-    pin.textContent = tab.mandatory ? "▣" : tab.pinned ? "⌖" : "";
-    button.append(icon, title, pin);
-    if (!tab.protected && !tab.mandatory && !tab.pinned) {
-      const close = document.createElement("span");
-      close.className = "tab-close";
-      close.textContent = "×";
-      close.title = "Fermer";
-      close.addEventListener("click", (event) => { event.stopPropagation(); void command("close", { id: tab.id }); });
-      button.append(close);
-    }
-    button.addEventListener("click", () => void command("activate", { id: tab.id }));
-    button.addEventListener("dblclick", () => { if (!tab.protected) void command("pin", { id: tab.id, pinned: !tab.pinned }); });
-    button.addEventListener("dragstart", () => { draggedTabId = tab.id; });
-    button.addEventListener("dragover", (event) => event.preventDefault());
-    button.addEventListener("drop", (event) => {
-      event.preventDefault();
-      if (!draggedTabId || draggedTabId === tab.id) return;
-      const dynamic = tabs.filter((item) => !item.protected);
-      const targetIndex = dynamic.findIndex((item) => item.id === tab.id);
-      void command("reorder", { id: draggedTabId, targetIndex });
-      draggedTabId = null;
-    });
-    tabStrip.append(button);
+const $=(id)=>document.getElementById(id);
+let appState={}, corporateState={tabs:[],split:{}}, stationState={}, selectedMode=null, selectedTabs=new Set(), toastTimer=null;
+const command=(action,payload={})=>window.angelcareShell.corporate.command(action,payload).catch((error)=>{showToast(humanError(error),"error");throw error;});
+function humanError(error){const raw=String(error?.message||error||"");const map={AC_PLUS_DISABLED_BY_POLICY:"AC+ est désactivé par la politique de la station.",SPLIT_DISABLED_BY_POLICY:"Les écrans divisés ne sont pas disponibles actuellement.",SPLIT_MODE_NOT_AVAILABLE:"Ce mode d’écrans n’est pas disponible.",PROTECTED_SYSTEM_TAB:"Cet onglet système est protégé.",WHATSAPP_EXPLICIT_ACTIVATION_REQUIRED:"Ouvrez d’abord WhatsApp depuis son onglet protégé."};for(const [key,value] of Object.entries(map))if(raw.includes(key))return value;return raw.replace(/^Error invoking remote method '[^']+':\s*/,"")||"Action impossible.";}
+function showToast(message,tone="info"){clearTimeout(toastTimer);const node=$("toast");node.hidden=false;node.className=`toast ${tone}`;node.textContent=message;toastTimer=setTimeout(()=>node.hidden=true,4600);}
+function activeTab(){return (corporateState.tabs||[]).find((tab)=>tab.active)||null;}
+function focusedPaneId(){return corporateState.split?.focusedPaneId||null;}
+function renderTabs(){
+  const strip=$("tab-strip");strip.replaceChildren();
+  for(const tab of corporateState.tabs||[]){
+    const b=document.createElement("div");
+    b.className=["browser-tab",tab.active?"active":"",tab.protected?"system-tab":"",tab.splitMember?"split-member":"",tab.focusedPane?"focused-pane":"",tab.dormant?"dormant":"",tab.phase==="crashed"?"crashed":""].filter(Boolean).join(" ");
+    b.dataset.tabId=tab.id;b.setAttribute("role","tab");b.setAttribute("aria-selected",String(Boolean(tab.active)));b.setAttribute("aria-label",`${tab.title||"Espace"}${tab.dormant?", non ouvert":tab.focusedPane?", panneau actif":""}`);b.tabIndex=tab.active?0:-1;
+    const activate=()=>void command("activate",{id:tab.id});
+    b.addEventListener("click",activate);b.addEventListener("keydown",(event)=>{if(event.key==="Enter"||event.key===" "){event.preventDefault();activate();}});
+    const icon=document.createElement("span");icon.className=`tab-icon trust-${tab.trust||"corporate"}`;icon.setAttribute("aria-hidden","true");icon.textContent=tab.phase==="loading"?"◌":tab.type==="angelcare-system"?"A":tab.type==="whatsapp-system"?"W":"+";
+    const copy=document.createElement("span");copy.className="tab-copy";const title=document.createElement("strong");title.textContent=tab.title||"Espace";const meta=document.createElement("small");meta.textContent=tab.dormant?"Non ouvert":tab.focusedPane?"Panneau actif":tab.splitMember?"Dans les écrans":tab.type==="angelcare-workspace"?"Espace AC+":tab.protected?"Protégé":"Corporate";copy.append(title,meta);b.append(icon,copy);
+    if(tab.protected){const lock=document.createElement("span");lock.className="protected-mark";lock.setAttribute("aria-hidden","true");lock.textContent="◆";b.append(lock);}else{const close=document.createElement("button");close.type="button";close.className="tab-close";close.textContent="×";close.title=`Fermer ${tab.title||"cet espace"}`;close.setAttribute("aria-label",close.title);close.addEventListener("click",(event)=>{event.stopPropagation();void command("close",{id:tab.id});});b.append(close);}
+    strip.append(b);
   }
-  tabLimit.textContent = `${corporateState.totalTabCount || tabs.length} / ${corporateState.maximumTabs || stationState.maximumTabs || 12}`;
+  $("tab-limit").textContent=`${corporateState.totalTabCount||2} / ${corporateState.maximumTabs||14}`;
 }
-
-function renderNavigation() {
-  const tab = activeTab();
-  const corporate = isCorporate(tab);
-  byId("back").disabled = !corporate || tab.canGoBack !== true;
-  byId("forward").disabled = !corporate || tab.canGoForward !== true;
-  byId("reload").disabled = !corporate;
-  byId("home").disabled = !corporate;
-  addressInput.disabled = !corporate;
-  addressInput.value = corporate ? (tab.url || "") : tab?.type === "whatsapp-system" ? "https://web.whatsapp.com/" : appState.loadedUrl || appState.targetUrl || "";
-  zoomValue.textContent = `${Math.round(Number(tab?.zoom || 1) * 100)}%`;
-  byId("zoom-out").disabled = !corporate;
-  byId("zoom-in").disabled = !corporate;
-  zoomValue.disabled = !corporate;
-  const trust = tab?.trust || (tab?.type === "angelcare-system" ? "angelcare" : tab?.type === "whatsapp-system" ? "whatsapp" : "local");
-  trustIndicator.className = `trust-indicator trust-${trust}`;
-  trustIndicator.title = trust === "angelcare" ? "Domaine ANGELCARE approuvé" : trust === "whatsapp" ? "Surface WhatsApp protégée" : trust === "corporate" ? "Domaine corporate approuvé" : trust === "blocked" ? "Destination bloquée" : "Surface locale sécurisée";
-  downloadCount.textContent = String((corporateState.downloads || []).filter((entry) => entry.state === "progressing").length);
-}
-
-function renderStation() {
-  const mode = stationState.currentMode || stationState.requiredMode || "standard";
-  const labels = { standard: "Standard", focus: "Focus", locked: "Verrouillé" };
-  modeLabel.textContent = labels[mode] || mode;
-  modeButton.className = `mode-pill mode-${mode}`;
-  modeButton.title = mode === "locked" ? "Déverrouillage administrateur requis" : "État du poste corporate";
-  runtimeMode.textContent = labels[mode] || mode;
-  runtimePolicy.textContent = stationState.policyVersion ? `v${stationState.policyVersion}${stationState.policyAcknowledged ? " · appliquée" : " · en attente"}` : "Locale";
-  browserHealth.textContent = `Navigateur ${stationState.browserHealth || corporateState.browserHealth || "—"}`;
-  document.body.dataset.stationMode = mode;
-}
-
-function renderState(state = {}) {
-  appState = { ...appState, ...state };
-  if (state.corporateBrowser) corporateState = state.corporateBrowser;
-  if (state.station) stationState = state.station;
-  const tone = toneForPhase(appState.phase);
-  statusDot.className = `status-dot status-${tone}`;
-  statusLabel.textContent = appState.message || "ANGELCARE Corporate Station";
-  statusDetail.textContent = appState.detail || (appState.online === true ? "Connexion sécurisée active" : "Poste corporate sécurisé");
-  fallbackMessage.textContent = appState.detail || appState.message || "Connexion à la plateforme ANGELCARE.";
-  version.textContent = appState.appVersion || version.textContent || "—";
-  platform.textContent = appState.platform || platform.textContent || "—";
-  renderTabs(); renderNavigation(); renderStation();
-}
-
-async function command(action, payload = {}) {
-  try { return await window.angelcareShell.corporate.command(action, payload); }
-  catch (error) { showToast(error instanceof Error ? error.message : String(error), "error"); throw error; }
-}
-async function stationCommand(action, payload = {}) {
-  try { return await window.angelcareShell.station.command(action, payload); }
-  catch (error) { showToast(error instanceof Error ? error.message : String(error), "error"); throw error; }
-}
-
-for (const button of document.querySelectorAll("[data-action]")) {
-  button.addEventListener("click", async () => {
-    const action = button.getAttribute("data-action");
-    button.disabled = true;
-    try { await window.angelcareShell.action(action); }
-    catch (error) { showToast(error instanceof Error ? error.message : String(error), "error"); }
-    finally { button.disabled = false; }
-  });
-}
-
-byId("new-tab").addEventListener("click", () => void command("create", { activate: true }));
-byId("fallback-new-tab").addEventListener("click", () => void command("create", { activate: true }));
-byId("reopen-tab").addEventListener("click", () => void command("reopen-closed"));
-byId("back").addEventListener("click", () => void command("back", { id: activeTab()?.id }));
-byId("forward").addEventListener("click", () => void command("forward", { id: activeTab()?.id }));
-byId("reload").addEventListener("click", () => void command("reload", { id: activeTab()?.id }));
-byId("home").addEventListener("click", () => void command("home", { id: activeTab()?.id }));
-byId("zoom-out").addEventListener("click", () => void command("zoom-out", { id: activeTab()?.id }));
-byId("zoom-in").addEventListener("click", () => void command("zoom-in", { id: activeTab()?.id }));
-zoomValue.addEventListener("click", () => void command("zoom-reset", { id: activeTab()?.id }));
-byId("downloads").addEventListener("click", () => void command("open-downloads"));
-byId("address-form").addEventListener("submit", (event) => { event.preventDefault(); const tab = activeTab(); if (isCorporate(tab)) void command("navigate", { id: tab.id, input: addressInput.value }); });
-modeButton.addEventListener("click", () => { if ((stationState.currentMode || "standard") === "locked") void stationCommand("request-unlock"); else showToast(`Mode actuel : ${modeLabel.textContent}. Les changements sont gouvernés depuis /whatsapp-os/admin.`, "info"); });
-for (const button of document.querySelectorAll("[data-station-action]")) {
-  if (button === modeButton) continue;
-  button.addEventListener("click", () => void stationCommand(button.dataset.stationAction));
-}
-
-document.addEventListener("keydown", (event) => {
-  const modifier = navigator.platform.toLowerCase().includes("mac") ? event.metaKey : event.ctrlKey;
-  if (!modifier) return;
-  const key = event.key.toLowerCase();
-  if (key === "l") { event.preventDefault(); addressInput.focus(); addressInput.select(); }
-  else if (key === "t") { event.preventDefault(); void command("create", { activate: true }); }
-  else if (key === "w" && isCorporate(activeTab())) { event.preventDefault(); void command("close", { id: activeTab().id }); }
-  else if (key === "+" || key === "=") { event.preventDefault(); void command("zoom-in", { id: activeTab()?.id }); }
-  else if (key === "-") { event.preventDefault(); void command("zoom-out", { id: activeTab()?.id }); }
-  else if (key === "0") { event.preventDefault(); void command("zoom-reset", { id: activeTab()?.id }); }
-});
-
-window.angelcareShell.onState(renderState);
-window.angelcareShell.corporate.onStatus((state) => { corporateState = state || { tabs: [] }; renderTabs(); renderNavigation(); if (state?.notification?.message) showToast(state.notification.message, state.notification.tone === "blocked" ? "error" : "info"); if (state?.focusAddressBar) { addressInput.focus(); addressInput.select(); } });
-window.angelcareShell.station.onStatus((state) => { stationState = state || {}; renderStation(); });
-Promise.all([
-  window.angelcareShell.getRuntime(),
-  window.angelcareShell.corporate.command("get-status"),
-  window.angelcareShell.station.command("get-status"),
-]).then(([runtime, corporate, station]) => {
-  version.textContent = runtime.version;
-  platform.textContent = runtime.platform;
-  corporateState = corporate;
-  stationState = station;
-  document.body.dataset.platform = runtime.platform || "unknown";
-  renderTabs(); renderNavigation(); renderStation();
-}).catch((error) => showToast(String(error), "error"));
+function renderNavigation(){const tab=activeTab();const split=corporateState.split||{};$("back").disabled=!tab?.canGoBack;$("forward").disabled=!tab?.canGoForward;$("reload").disabled=tab?.type==="whatsapp-system"&&tab?.dormant;$("home").disabled=tab?.type==="whatsapp-system";$("zoom-out").disabled=!tab;$("zoom-in").disabled=!tab;$("zoom-value").disabled=!tab;$("zoom-value").textContent=`${Math.round(Number(tab?.zoom||1)*100)}%`;$("route-title").textContent=tab?.title||"ANGELCARE";let route="Espace principal";try{if(tab?.url){const url=new URL(tab.url);route=url.origin===appState.targetUrl?url.pathname:url.hostname;}}catch{}if(tab?.dormant)route="En attente d’ouverture explicite";$("route-value").textContent=route;$("trust-indicator").className=`trust-indicator trust-${tab?.trust||"local"}`;const splitActive=Number(split.mode||1)>1;$("split-tools").hidden=!splitActive;$("restore-pane").hidden=!split.maximizedPaneId;$("maximize").hidden=Boolean(split.maximizedPaneId);}
+function renderCapabilities(){const ac=corporateState.acPlus||{};$("ac-plus").disabled=!ac.enabled;$("ac-plus").title=ac.disabledReason||"Créer un espace ANGELCARE gouverné";const split=corporateState.split||{};$("split").disabled=!split.enabled||!(split.availableModes||[]).length;$("split").title=split.disabledReason||"Composer 2, 3 ou 4 écrans";$("browser-health").textContent=`Runtime · ${corporateState.browserHealth||"prêt"}`;}
+function renderStation(){const mode=stationState.currentMode||"standard";$("mode-label").textContent=mode==="locked"?"Verrouillé":mode==="focus"?"Focus":"Standard";$("mode-button").className=`mode-pill mode-${mode}`;$("runtime-mode").textContent=mode;$("runtime-policy").textContent=stationState.policyVersion?`v${stationState.policyVersion}`:"Locale";}
+function renderStatus(){const phase=appState.phase||"booting";$("status-dot").className=`status-dot ${phase==="ready"?"ready":["error","crashed","timeout"].includes(phase)?"error":"loading"}`;$("status-label").textContent=appState.message||"ANGELCARE";$("status-detail").textContent=appState.detail||`Version ${appState.appVersion||"1.7.2"}`;$("fallback-message").textContent=appState.message||"Station ANGELCARE prête.";}
+function renderSelector(){const selector=corporateState.split?.selector||{};const open=selector.open===true;$("split-selector").hidden=!open;$("fallback").hidden=open;if(!open)return;const available=corporateState.split?.availableModes||[];if(!selectedMode||!available.includes(selectedMode))selectedMode=selector.requestedMode&&available.includes(selector.requestedMode)?selector.requestedMode:available[0]||null;const modes=$("mode-options");modes.replaceChildren();for(const mode of [2,3,4]){const b=document.createElement("button");b.type="button";b.disabled=!available.includes(mode);b.className=selectedMode===mode?"selected":"";b.innerHTML=`<strong>Mode ${mode}</strong><span>${mode===2?"Deux opérations côte à côte":mode===3?"Trois opérations extensibles":"Grille exécutive 2 × 2"}</span>`;b.addEventListener("click",()=>{selectedMode=mode;selectedTabs.clear();renderSelector();});modes.append(b);}const list=$("eligible-tabs");list.replaceChildren();for(const tab of corporateState.split?.eligibleTabs||[]){const label=document.createElement("label");label.className=`eligible-card ${selectedTabs.has(tab.id)?"selected":""}`;const checkbox=document.createElement("input");checkbox.type="checkbox";checkbox.checked=selectedTabs.has(tab.id);checkbox.addEventListener("change",()=>{if(checkbox.checked){if(selectedTabs.size>=selectedMode){checkbox.checked=false;showToast(`Le mode ${selectedMode} accepte exactement ${selectedMode} espaces.`);return;}selectedTabs.add(tab.id);}else selectedTabs.delete(tab.id);renderSelector();});const icon=document.createElement("span");icon.className=`tab-icon trust-${tab.type==="whatsapp-system"?"whatsapp":tab.type.includes("angelcare")?"angelcare":"corporate"}`;icon.textContent=tab.type==="whatsapp-system"?"W":tab.type==="angelcare-system"?"A":"+";const copy=document.createElement("span");copy.innerHTML=`<strong>${escapeHtml(tab.title||"Espace")}</strong><small>${escapeHtml(tab.url||tab.type||"")}</small>`;label.append(checkbox,icon,copy);list.append(label);}const count=selectedTabs.size;$("selection-count").textContent=`${count} / ${selectedMode||0} sélectionnés`;$("confirm-split").disabled=!selectedMode||count!==selectedMode;}
+function escapeHtml(value){return String(value).replace(/[&<>"]/g,(c)=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+function render(){renderTabs();renderNavigation();renderCapabilities();renderStation();renderStatus();renderSelector();}
+function openReplacement(){const split=corporateState.split||{};if(Number(split.mode||1)<=1)return;const assigned=new Set(split.paneTabIds||[]),focused=split.focusedTabId;const select=$("replace-select");select.replaceChildren();for(const tab of split.eligibleTabs||[]){if(assigned.has(tab.id)&&tab.id!==focused)continue;const option=document.createElement("option");option.value=tab.id;option.textContent=tab.title||tab.id;select.append(option);}$("replace-popover").hidden=false;}
+$("ac-plus").addEventListener("click",()=>void command("create-ac-plus"));$("fallback-ac-plus").addEventListener("click",()=>void command("create-ac-plus"));
+$("split").addEventListener("click",()=>{selectedMode=null;selectedTabs.clear();void command("open-split-selector");});$("fallback-split").addEventListener("click",()=>{selectedMode=null;selectedTabs.clear();void command("open-split-selector");});
+$("selector-close").addEventListener("click",()=>void command("close-split-selector"));$("confirm-split").addEventListener("click",()=>void command("activate-split",{mode:selectedMode,tabIds:[...selectedTabs]}));
+$("back").addEventListener("click",()=>void command("back"));$("forward").addEventListener("click",()=>void command("forward"));$("reload").addEventListener("click",()=>void command("reload"));$("home").addEventListener("click",()=>void command("home"));$("zoom-in").addEventListener("click",()=>void command("zoom-in"));$("zoom-out").addEventListener("click",()=>void command("zoom-out"));$("zoom-value").addEventListener("click",()=>void command("zoom-reset"));
+$("exit-split").addEventListener("click",()=>void command("exit-split"));$("swap").addEventListener("click",()=>void command("swap-panes",{firstPaneId:focusedPaneId()}));$("maximize").addEventListener("click",()=>void command("maximize-pane",{paneId:focusedPaneId()}));$("restore-pane").addEventListener("click",()=>void command("restore-pane"));$("replace").addEventListener("click",openReplacement);$("replace-cancel").addEventListener("click",()=>$("replace-popover").hidden=true);$("replace-confirm").addEventListener("click",()=>{const tabId=$("replace-select").value;if(tabId)void command("replace-pane",{paneId:focusedPaneId(),tabId});$("replace-popover").hidden=true;});
+document.querySelectorAll("[data-station-action]").forEach((button)=>button.addEventListener("click",()=>window.angelcareShell.station.command(button.dataset.stationAction).catch((e)=>showToast(humanError(e),"error"))));
+document.addEventListener("keydown",(event)=>{const modifier=event.ctrlKey||event.metaKey;if(modifier&&event.shiftKey&&event.key.toLowerCase()==="t"){event.preventDefault();void command("create-ac-plus");}if(modifier&&event.shiftKey&&["2","3","4"].includes(event.key)){event.preventDefault();selectedMode=Number(event.key);selectedTabs.clear();void command("open-split-selector",{mode:selectedMode});}if(event.key==="Escape"&&!$("split-selector").hidden){event.preventDefault();void command("close-split-selector");}});
+window.angelcareShell.onState((state)=>{appState=state||{};render();});window.angelcareShell.corporate.onStatus((state)=>{corporateState=state||{tabs:[]};render();});window.angelcareShell.station.onStatus((state)=>{stationState=state||{};render();});
+Promise.all([window.angelcareShell.getRuntime(),command("get-status"),window.angelcareShell.station.command("get-status")]).then(([runtime,corporate,station])=>{appState={...appState,appVersion:runtime.version,targetUrl:runtime.targetOrigin};corporateState=corporate;stationState=station;$("runtime-version").textContent=runtime.version;$("runtime-platform").textContent=`${runtime.platform} · ${runtime.arch}`;render();}).catch((error)=>showToast(humanError(error),"error"));

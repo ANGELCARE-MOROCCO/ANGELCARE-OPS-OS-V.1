@@ -33,6 +33,12 @@ export const DEFAULT_EFFECTIVE_POLICY: EffectiveStationPolicy = {
   auto_relock_minutes: 15,
   restore_tabs: true,
   maximum_tabs: 8,
+  maximum_ac_plus_tabs: 6,
+  ac_plus_enabled: true,
+  ac_plus_allowed_modes: ["standard", "focus"],
+  split_enabled: true,
+  split_allowed_modes: ["standard", "focus"],
+  split_modes: [2, 3, 4],
   clear_browser_data_on_logout: false,
   browser_history_retention_days: 30,
   browser_policy: {
@@ -89,6 +95,12 @@ export function sanitizeStationPolicy(body: StationRow, current: StationRow = {}
     auto_relock_minutes: numberBetween(body.auto_relock_minutes ?? current.auto_relock_minutes, 15, 1, 1440),
     restore_tabs: Boolean(body.restore_tabs ?? current.restore_tabs ?? true),
     maximum_tabs: numberBetween(body.maximum_tabs ?? current.maximum_tabs, 8, 2, 50),
+    maximum_ac_plus_tabs: numberBetween(body.maximum_ac_plus_tabs ?? current.maximum_ac_plus_tabs, 6, 1, 48),
+    ac_plus_enabled: Boolean(body.ac_plus_enabled ?? current.ac_plus_enabled ?? true),
+    ac_plus_allowed_modes: list(body.ac_plus_allowed_modes ?? current.ac_plus_allowed_modes).filter((value) => ["standard", "focus", "locked"].includes(value)).length ? list(body.ac_plus_allowed_modes ?? current.ac_plus_allowed_modes).filter((value) => ["standard", "focus", "locked"].includes(value)) : ["standard", "focus"],
+    split_enabled: Boolean(body.split_enabled ?? current.split_enabled ?? true),
+    split_allowed_modes: list(body.split_allowed_modes ?? current.split_allowed_modes).filter((value) => ["standard", "focus", "locked"].includes(value)).length ? list(body.split_allowed_modes ?? current.split_allowed_modes).filter((value) => ["standard", "focus", "locked"].includes(value)) : ["standard", "focus"],
+    split_modes: (Array.isArray(body.split_modes ?? current.split_modes) ? (body.split_modes ?? current.split_modes) : [2, 3, 4]).map(Number).filter((value: number) => [2, 3, 4].includes(value)),
     clear_browser_data_on_logout: Boolean(body.clear_browser_data_on_logout ?? current.clear_browser_data_on_logout),
     browser_history_retention_days: numberBetween(body.browser_history_retention_days ?? current.browser_history_retention_days, 30, 0, 365),
     active: Boolean(body.active ?? current.active ?? true),
@@ -203,7 +215,23 @@ export async function resolveEffectivePolicy(context: any, installationId: strin
     const targets = Array.isArray(row.target_ids) ? row.target_ids.map(String) : []
     return !targets.length || targets.includes(String(device?.id || "")) || targets.includes(context.userId) || targets.includes(department) || targets.includes(workspaceId)
   })
-  return { policy: { ...DEFAULT_EFFECTIVE_POLICY, ...station, mode: normalizeMode(station.mode) as any, maximum_tabs: numberBetween(station.maximum_tabs, 8, 2, 50), lockout_duration_seconds: numberBetween(station.lockout_duration_minutes, 15, 1, 1440) * 60, browser_policy: browser, browser: nativeBrowserPolicy(browser, applicableTemplates), tab_templates: applicableTemplates }, device }
+  const maximumTabs = numberBetween(station.maximum_tabs, 8, 2, 50)
+  return { policy: {
+    ...DEFAULT_EFFECTIVE_POLICY,
+    ...station,
+    mode: normalizeMode(station.mode) as any,
+    maximum_tabs: maximumTabs,
+    maximum_ac_plus_tabs: Math.max(1, Math.min(Number(station.maximum_ac_plus_tabs || DEFAULT_EFFECTIVE_POLICY.maximum_ac_plus_tabs || 6), maximumTabs - 2)),
+    ac_plus_enabled: station.ac_plus_enabled !== false,
+    ac_plus_allowed_modes: Array.isArray(station.ac_plus_allowed_modes) && station.ac_plus_allowed_modes.length ? station.ac_plus_allowed_modes : ["standard", "focus"],
+    split_enabled: station.split_enabled !== false,
+    split_allowed_modes: Array.isArray(station.split_allowed_modes) && station.split_allowed_modes.length ? station.split_allowed_modes : ["standard", "focus"],
+    split_modes: Array.isArray(station.split_modes) && station.split_modes.length ? station.split_modes : [2, 3, 4],
+    lockout_duration_seconds: numberBetween(station.lockout_duration_minutes, 15, 1, 1440) * 60,
+    browser_policy: browser,
+    browser: nativeBrowserPolicy(browser, applicableTemplates),
+    tab_templates: applicableTemplates,
+  }, device }
 }
 
 export function validateCorporateUrl(input: unknown, browserPolicy: StationRow) {

@@ -1,0 +1,39 @@
+ANGELCARE REVENUE COMMAND CENTER — EXCELLENCE v8 / MEGA ZIP 8
+
+1. REQUIREMENTS
+- Excellence v1 through v7 already applied.
+- Phase 7 SQL compatibility hotfix already preserved.
+- Node 22.17+ or Node 24.
+- Current repository backup / Git branch.
+- Current Supabase backup before migration.
+
+2. EXTRACT FROM REPOSITORY ROOT
+
+cd ~/Desktop/angelcare-platform
+unzip -o ~/Downloads/ANGELCARE_REVENUE_COMMAND_CENTER_EXCELLENCE_v8_PARTNERSHIP_ENTERPRISE_PHASE8_PATCH.zip -d ~/Desktop/angelcare-platform
+
+3. INSTALL AND RUN THE NON-NEGOTIABLE PRODUCTION RELEASE GATE
+
+cd ~/Desktop/angelcare-platform/apps/ops-web
+npm ci
+npm run revenue-command-center:phase8:release
+
+Do not deploy unless it prints RELEASE GATE PASSED.
+
+4. DATABASE
+
+Run read-only preflight:
+apps/ops-web/supabase/revenue-command-center/preflight/20260725_partnership_referral_performance_live_schema_preflight.sql
+
+Continue only with CUTOVER_GATE = READY.
+
+Apply:
+apps/ops-web/supabase/migrations/20260725_0600_revenue_partnership_referral_performance_completion.sql
+
+Verify:
+apps/ops-web/supabase/revenue-command-center/verification/20260725_partnership_referral_performance_rls_verification.sql
+apps/ops-web/supabase/revenue-command-center/verification/20260725_partnership_referral_attribution_verification.sql
+apps/ops-web/supabase/revenue-command-center/verification/20260725_partnership_performance_calculation_verification.sql
+
+5. AUTHENTICATED E2E
+Follow REVENUE_PARTNERSHIP_PHASE8_E2E_ACCEPTANCE.md before production use.

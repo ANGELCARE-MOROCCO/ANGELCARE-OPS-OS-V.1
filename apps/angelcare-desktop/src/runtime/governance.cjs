@@ -58,17 +58,20 @@ function createGovernanceController(options) {
   let started = false;
   let processingCommands = false;
   let authorizationRequest = null;
+  let registrationRequest = null;
+  let lastRegistrationAttemptAt = 0;
   let lastAccessHideReason = null;
   // WHATSAPP_LEASE_STABILITY_V1
 
   let state = {
     available: true,
-    contractVersion: "3.0.0",
+    contractVersion: "3.1.0",
     phase: "initializing",
     message: "Initialisation du contrôle d’accès WhatsApp Desktop…",
     detail: null,
     installationId,
     deviceId: persisted.deviceId || null,
+    device: null,
     deviceName: persisted.deviceName || os.hostname() || "ANGELCARE Desktop",
     approvalStatus: persisted.approvalStatus || "unknown",
     selectedWorkspaceId: persisted.selectedWorkspaceId || null,
@@ -83,6 +86,8 @@ function createGovernanceController(options) {
     assignment: null,
     workspace: null,
     lastRegisteredAt: null,
+    lastRegistrationReason: null,
+    registrationRecovered: false,
     lastHeartbeatAt: null,
     lastAuthorizationAt: null,
     lastCommandAt: null,
@@ -198,232 +203,359 @@ function createGovernanceController(options) {
     return false;
   }
 
-  async function register() {
-    update({ phase: "registering", message: "Enregistrement de l’appareil ANGELCARE Desktop…", detail: null });
-    try {
-      const data = await api("/api/whatsapp-desktop/devices/register", {
-        method: "POST",
-        body: JSON.stringify({
-          installation_id: installationId,
-          device_name: state.deviceName,
-          platform: state.platform,
-          architecture: state.architecture,
-          desktop_version: app.getVersion(),
-          operating_system_version: state.operatingSystemVersion,
-          runtime_health: { phase: "running", packaged: app.isPackaged },
-          metadata: { release_channel: runtime.releaseChannel, build_id: runtime.buildId },
-        }),
-      });
-      update({
-        deviceId: data.id,
-        approvalStatus: data.approval_status,
-        phase: data.approval_status === "approved" ? "registered" : "device-pending",
-        message: data.approval_status === "approved" ? "Appareil ANGELCARE Desktop approuvé." : "Appareil enregistré. Approbation administrateur requise.",
-        lastRegisteredAt: nowIso(),
-        online: true,
-      });
-      return clone(state);
-    } catch (error) {
-      const status = Number(error.status || 0);
-      update({
-        phase: status === 401 ? "authentication-required" : "registration-error",
-        message: status === 401 ? "Connectez-vous à ANGELCARE pour enregistrer cet appareil." : "Impossible d’enregistrer l’appareil.",
-        detail: safeString(error.message, 1000),
-        lastErrorAt: nowIso(),
-        online: status === 401 ? true : false,
-      });
+  async function register(options = {}) {
+    const force = options.force === true;
+    const reason = safeString(options.reason || "runtime", 160) || "runtime";
+    if (registrationRequest) return registrationRequest;
+
+    const now = Date.now();
+    if (!force && state.deviceId && now - lastRegistrationAttemptAt < 3_000) {
       return clone(state);
     }
-  }
+    lastRegistrationAttemptAt = now;
 
-  async function requestAuthorization({ renew = false } = {}) {
-    if (authorizationRequest) return authorizationRequest;
-
-    authorizationRequest = (async () => {
-      if (!state.selectedWorkspaceId) {
-        return update({
-          authorized: false,
-          phase: "workspace-required",
-          message: "Sélectionnez un espace WhatsApp autorisé.",
-          authorizationReason: "WORKSPACE_REQUIRED",
-        });
-      }
-
-      if (!state.deviceId) await register();
-
-      const hadAuthorizedState = state.authorized;
-      const endpoint = renew
-        ? "/api/whatsapp-desktop/authorization/renew"
-        : "/api/whatsapp-desktop/authorization/issue";
-
+    registrationRequest = (async () => {
+      update({
+        phase: "registering",
+        message: "Enregistrement de l’appareil ANGELCARE Desktop…",
+        detail: null,
+        lastRegistrationReason: reason,
+      });
       try {
-        const result = await api(endpoint, {
+        const data = await api("/api/whatsapp-desktop/devices/register", {
           method: "POST",
           body: JSON.stringify({
             installation_id: installationId,
-            workspace_id: state.selectedWorkspaceId,
+            previous_device_id: state.deviceId,
+            device_name: state.deviceName,
+            platform: state.platform,
+            architecture: state.architecture,
             desktop_version: app.getVersion(),
+            desktop_contract_version: runtime.desktopContractVersion || "11.2.0",
+            operating_system_version: state.operatingSystemVersion,
+            selected_workspace_id: state.selectedWorkspaceId,
+            registration_reason: reason,
+            runtime_health: { phase: "running", packaged: app.isPackaged },
+            metadata: {
+              release_channel: runtime.releaseChannel,
+              build_id: runtime.buildId,
+              registration_recovery: force,
+            },
           }),
         });
+        const device = data?.device || data;
+        if (!device?.id) throw new Error("REGISTRATION_RESPONSE_INVALID");
+        const approvalStatus = device.approval_status || "pending";
+        update({
+          deviceId: device.id,
+          device,
+          approvalStatus,
+          authorizationReason: approvalStatus === "approved" ? "NOT_CHECKED" : "DEVICE_PENDING",
+          phase: approvalStatus === "approved" ? "registered" : "device-pending",
+          message: approvalStatus === "approved"
+            ? "Appareil ANGELCARE Desktop approuvé."
+            : "Appareil enregistré — en attente d’approbation administrative.",
+          detail: null,
+          lastRegisteredAt: nowIso(),
+          registrationRecovered: force,
+          online: true,
+        });
+        logger.info("whatsapp_governance_device_registered", {
+          reason,
+          force,
+          deviceId: device.id,
+          approvalStatus,
+          linkedRequestCount: Number(data?.linked_request_count || 0),
+          workspaceCandidates: Array.isArray(data?.workspace_candidates)
+            ? data.workspace_candidates.length
+            : 0,
+        });
+        return clone(state);
+      } catch (error) {
+        const status = Number(error.status || 0);
+        const code = safeString(error.message, 160);
+        const deviceMissing = code === "DEVICE_NOT_REGISTERED";
+        update({
+          deviceId: deviceMissing ? null : state.deviceId,
+          device: deviceMissing ? null : state.device,
+          approvalStatus: deviceMissing ? "unknown" : state.approvalStatus,
+          phase: status === 401 ? "authentication-required" : "registration-error",
+          message: status === 401
+            ? "Connectez-vous à ANGELCARE pour enregistrer cet appareil."
+            : "Impossible d’enregistrer l’appareil.",
+          authorizationReason: deviceMissing ? "DEVICE_NOT_REGISTERED" : state.authorizationReason,
+          detail: safeString(error.message, 1000),
+          lastErrorAt: nowIso(),
+          online: status === 401 ? true : false,
+        });
+        logger.warn("whatsapp_governance_device_registration_failed", {
+          reason,
+          force,
+          status,
+          message: code,
+        });
+        return clone(state);
+      }
+    })();
 
-        if (!result.authorized) {
-          lastAccessHideReason = null;
-          hideForAccess("authorization-denied");
+    try {
+      return await registrationRequest;
+    } finally {
+      registrationRequest = null;
+    }
+  }
 
-          logger.warn("whatsapp_governance_authorization_denied", {
-            renew,
-            reason: result.reason || "ACCESS_NOT_AUTHORIZED",
-          });
+  async function performAuthorization({ renew = false, allowRegistrationRecovery = true } = {}) {
+    if (!state.selectedWorkspaceId) {
+      return update({
+        authorized: false,
+        phase: "workspace-required",
+        message: "Sélectionnez un espace WhatsApp autorisé.",
+        authorizationReason: "WORKSPACE_REQUIRED",
+      });
+    }
 
+    if (!state.deviceId) {
+      await register({ force: true, reason: "authorization-missing-local-device" });
+    }
+
+    if (!state.deviceId) {
+      return update({
+        authorized: false,
+        phase: "registration-error",
+        message: "L’appareil doit être enregistré avant l’ouverture de WhatsApp.",
+        authorizationReason: "DEVICE_NOT_REGISTERED",
+      });
+    }
+
+    const hadAuthorizedState = state.authorized;
+    const endpoint = renew
+      ? "/api/whatsapp-desktop/authorization/renew"
+      : "/api/whatsapp-desktop/authorization/issue";
+
+    try {
+      const result = await api(endpoint, {
+        method: "POST",
+        body: JSON.stringify({
+          installation_id: installationId,
+          workspace_id: state.selectedWorkspaceId,
+          desktop_version: app.getVersion(),
+        }),
+      });
+
+      const reason = result.reason || "ACCESS_NOT_AUTHORIZED";
+      if (!result.authorized && reason === "DEVICE_NOT_REGISTERED" && allowRegistrationRecovery) {
+        logger.warn("whatsapp_governance_stale_device_identity_detected", {
+          localDeviceId: state.deviceId,
+          installationId,
+        });
+        update({
+          deviceId: null,
+          device: null,
+          approvalStatus: "unknown",
+          authorized: false,
+          authorizationReason: "DEVICE_NOT_REGISTERED",
+          phase: "registering",
+          message: "Réenregistrement sécurisé de cette installation…",
+        });
+        const registration = await register({
+          force: true,
+          reason: "authorization-device-not-registered",
+        });
+        if (!registration.deviceId) return registration;
+        if (registration.approvalStatus !== "approved") {
+          hideForAccess("device-pending-approval");
           return update({
             authorized: false,
-            approvalStatus:
-              result.device?.approval_status || state.approvalStatus,
-            authorizationReason:
-              result.reason || "ACCESS_NOT_AUTHORIZED",
-            phase: "blocked",
-            message: authorizationMessage(
-              result.reason || "ACCESS_NOT_AUTHORIZED",
-            ),
+            phase: "device-pending",
+            message: "Appareil enregistré — en attente d’approbation administrative.",
+            authorizationReason: "DEVICE_PENDING",
             leaseId: null,
             leaseExpiresAt: null,
             graceExpiresAt: null,
             offlineGraceActive: false,
-            policy: result.policy || null,
-            assignment: result.assignment || null,
-            workspace: result.workspace || null,
             online: true,
-            lastAuthorizationAt: nowIso(),
           });
         }
+        return performAuthorization({ renew: false, allowRegistrationRecovery: false });
+      }
 
-        const leaseExpiresAt = result.lease?.expires_at || null;
-        const graceExpiresAt = result.lease?.grace_expires_at || null;
-
-        if (!timestampValue(leaseExpiresAt)) {
-          const leaseError = new Error("AUTHORIZATION_LEASE_INVALID");
-          leaseError.status = 502;
-          throw leaseError;
-        }
-
+      if (!result.authorized) {
         lastAccessHideReason = null;
+        hideForAccess("authorization-denied");
 
-        logger.info("whatsapp_governance_authorization_granted", {
+        logger.warn("whatsapp_governance_authorization_denied", {
           renew,
-          leaseExpiresAt,
-          graceExpiresAt,
-        });
-
-        return update({
-          authorized: true,
-          authorizationReason: "AUTHORIZED",
-          approvalStatus:
-            result.device?.approval_status || "approved",
-          phase: "authorized",
-          message: "Accès WhatsApp Desktop autorisé.",
-          detail: null,
-          leaseId: result.lease?.id || null,
-          leaseExpiresAt,
-          graceExpiresAt,
-          offlineGraceActive: false,
-          policy: result.policy || null,
-          assignment: result.assignment || null,
-          workspace: result.workspace || null,
-          selectedWorkspaceName:
-            result.workspace?.name || state.selectedWorkspaceName,
-          online: true,
-          lastAuthorizationAt: nowIso(),
-        });
-      } catch (error) {
-        const status = Number(error.status || 0);
-        const detail = safeString(error.message, 1000);
-        const explicitDenial = [401, 403, 409, 410].includes(status);
-
-        if (!explicitDenial && authorizationStillValid()) {
-          logger.warn("whatsapp_governance_renewal_deferred", {
-            renew,
-            status,
-            leaseExpiresAt: state.leaseExpiresAt,
-            message: detail,
-          });
-
-          return update({
-            authorized: true,
-            offlineGraceActive: false,
-            phase: "authorized",
-            message: "Accès WhatsApp Desktop autorisé.",
-            detail:
-              "Renouvellement temporairement indisponible. "
-              + "Le bail actif reste valide.",
-            online: false,
-            lastErrorAt: nowIso(),
-          });
-        }
-
-        if (
-          !explicitDenial
-          && hadAuthorizedState
-          && graceStillValid()
-        ) {
-          logger.warn("whatsapp_governance_offline_grace_started", {
-            renew,
-            status,
-            graceExpiresAt: state.graceExpiresAt,
-            message: detail,
-          });
-
-          return update({
-            authorized: true,
-            offlineGraceActive: true,
-            phase: "offline-grace",
-            message:
-              "Connexion interrompue. Accès temporaire selon "
-              + "la période de grâce.",
-            detail,
-            online: false,
-            lastErrorAt: nowIso(),
-          });
-        }
-
-        const hideReason = explicitDenial
-          ? "authorization-denied"
-          : "authorization-network-failure";
-
-        hideForAccess(hideReason);
-
-        logger.warn("whatsapp_governance_authorization_closed", {
-          renew,
-          status,
-          reason: hideReason,
-          message: detail,
+          reason,
         });
 
         return update({
           authorized: false,
+          device: result.device || state.device,
+          deviceId: result.device?.id || state.deviceId,
+          approvalStatus: result.device?.approval_status || state.approvalStatus,
+          authorizationReason: reason,
+          phase: reason === "DEVICE_PENDING" ? "device-pending" : "blocked",
+          message: authorizationMessage(reason),
+          leaseId: null,
+          leaseExpiresAt: null,
+          graceExpiresAt: null,
           offlineGraceActive: false,
-          phase:
-            status === 401
-              ? "authentication-required"
-              : explicitDenial
-                ? "blocked"
-                : "authorization-error",
-          message:
-            status === 401
-              ? "Reconnectez-vous à ANGELCARE."
-              : explicitDenial
-                ? "Accès WhatsApp Desktop refusé."
-                : "Autorisation ANGELCARE indisponible.",
-          authorizationReason:
-            explicitDenial
-              ? safeString(error.message, 160)
-              : "AUTHORIZATION_UNAVAILABLE",
-          detail,
-          online: explicitDenial ? true : false,
+          policy: result.policy || null,
+          assignment: result.assignment || null,
+          workspace: result.workspace || null,
+          online: true,
+          lastAuthorizationAt: nowIso(),
+        });
+      }
+
+      const leaseExpiresAt = result.lease?.expires_at || null;
+      const graceExpiresAt = result.lease?.grace_expires_at || null;
+
+      if (!timestampValue(leaseExpiresAt)) {
+        const leaseError = new Error("AUTHORIZATION_LEASE_INVALID");
+        leaseError.status = 502;
+        throw leaseError;
+      }
+
+      lastAccessHideReason = null;
+
+      logger.info("whatsapp_governance_authorization_granted", {
+        renew,
+        leaseExpiresAt,
+        graceExpiresAt,
+      });
+
+      return update({
+        authorized: true,
+        authorizationReason: "AUTHORIZED",
+        device: result.device || state.device,
+        deviceId: result.device?.id || state.deviceId,
+        approvalStatus: result.device?.approval_status || "approved",
+        phase: "authorized",
+        message: "Accès WhatsApp Desktop autorisé.",
+        detail: null,
+        leaseId: result.lease?.id || null,
+        leaseExpiresAt,
+        graceExpiresAt,
+        offlineGraceActive: false,
+        policy: result.policy || null,
+        assignment: result.assignment || null,
+        workspace: result.workspace || null,
+        selectedWorkspaceName: result.workspace?.name || state.selectedWorkspaceName,
+        online: true,
+        lastAuthorizationAt: nowIso(),
+      });
+    } catch (error) {
+      const status = Number(error.status || 0);
+      const detail = safeString(error.message, 1000);
+      const missingDevice = detail === "DEVICE_NOT_REGISTERED";
+
+      if (missingDevice && allowRegistrationRecovery) {
+        update({
+          deviceId: null,
+          device: null,
+          approvalStatus: "unknown",
+          authorized: false,
+          authorizationReason: "DEVICE_NOT_REGISTERED",
+          phase: "registering",
+          message: "Réenregistrement sécurisé de cette installation…",
+        });
+        const registration = await register({
+          force: true,
+          reason: "authorization-api-device-not-registered",
+        });
+        if (!registration.deviceId || registration.approvalStatus !== "approved") {
+          hideForAccess("device-pending-approval");
+          return update({
+            authorized: false,
+            phase: registration.deviceId ? "device-pending" : registration.phase,
+            message: registration.deviceId
+              ? "Appareil enregistré — en attente d’approbation administrative."
+              : registration.message,
+            authorizationReason: registration.deviceId ? "DEVICE_PENDING" : "DEVICE_NOT_REGISTERED",
+          });
+        }
+        return performAuthorization({ renew: false, allowRegistrationRecovery: false });
+      }
+
+      const explicitDenial = [401, 403, 409, 410].includes(status);
+
+      if (!explicitDenial && authorizationStillValid()) {
+        logger.warn("whatsapp_governance_renewal_deferred", {
+          renew,
+          status,
+          leaseExpiresAt: state.leaseExpiresAt,
+          message: detail,
+        });
+
+        return update({
+          authorized: true,
+          offlineGraceActive: false,
+          phase: "authorized",
+          message: "Accès WhatsApp Desktop autorisé.",
+          detail: "Renouvellement temporairement indisponible. Le bail actif reste valide.",
+          online: false,
           lastErrorAt: nowIso(),
         });
       }
-    })();
 
+      if (!explicitDenial && hadAuthorizedState && graceStillValid()) {
+        logger.warn("whatsapp_governance_offline_grace_started", {
+          renew,
+          status,
+          graceExpiresAt: state.graceExpiresAt,
+          message: detail,
+        });
+
+        return update({
+          authorized: true,
+          offlineGraceActive: true,
+          phase: "offline-grace",
+          message: "Connexion interrompue. Accès temporaire selon la période de grâce.",
+          detail,
+          online: false,
+          lastErrorAt: nowIso(),
+        });
+      }
+
+      const hideReason = explicitDenial
+        ? "authorization-denied"
+        : "authorization-network-failure";
+
+      hideForAccess(hideReason);
+
+      logger.warn("whatsapp_governance_authorization_closed", {
+        renew,
+        status,
+        reason: hideReason,
+        message: detail,
+      });
+
+      return update({
+        authorized: false,
+        offlineGraceActive: false,
+        phase: status === 401
+          ? "authentication-required"
+          : explicitDenial
+            ? "blocked"
+            : "authorization-error",
+        message: status === 401
+          ? "Reconnectez-vous à ANGELCARE."
+          : explicitDenial
+            ? authorizationMessage(detail)
+            : "Autorisation ANGELCARE indisponible.",
+        authorizationReason: explicitDenial ? safeString(error.message, 160) : "AUTHORIZATION_UNAVAILABLE",
+        detail,
+        online: explicitDenial ? true : false,
+        lastErrorAt: nowIso(),
+      });
+    }
+  }
+
+  async function requestAuthorization(options = {}) {
+    if (authorizationRequest) return authorizationRequest;
+    authorizationRequest = performAuthorization(options);
     try {
       return await authorizationRequest;
     } finally {
@@ -455,7 +587,9 @@ function createGovernanceController(options) {
   }
 
   async function heartbeat() {
-    if (!state.deviceId) await register();
+    if (!state.deviceId || state.authorizationReason === "DEVICE_NOT_REGISTERED") {
+      await register({ force: true, reason: "heartbeat-registration-reconciliation" });
+    }
     if (!state.deviceId) return clone(state);
     const whatsapp = getWhatsappState();
     try {
@@ -471,12 +605,34 @@ function createGovernanceController(options) {
           runtime_health: { renderer_status: whatsapp?.rendererStatus || "unknown", whatsapp_phase: whatsapp?.phase || "unknown", online: whatsapp?.online },
         }),
       });
-      update({ lastHeartbeatAt: nowIso(), online: true, approvalStatus: result.device?.approval_status || state.approvalStatus, pendingCommands: result.commands?.length || 0 });
+      update({
+        device: result.device || state.device,
+        deviceId: result.device?.id || state.deviceId,
+        lastHeartbeatAt: nowIso(),
+        online: true,
+        approvalStatus: result.device?.approval_status || state.approvalStatus,
+        pendingCommands: result.commands?.length || 0,
+      });
       await executeCommands(result.commands || []);
     } catch (error) {
-      logger.warn("whatsapp_governance_heartbeat_failed", { message: error.message });
-      if (!authorizationStillValid() && !graceStillValid()) enforceAccess("heartbeat-expired");
-      else update({ online: false, lastErrorAt: nowIso(), detail: safeString(error.message, 1000) });
+      const code = safeString(error.message, 160);
+      logger.warn("whatsapp_governance_heartbeat_failed", { message: code });
+      if (code === "DEVICE_NOT_REGISTERED") {
+        update({
+          deviceId: null,
+          device: null,
+          approvalStatus: "unknown",
+          authorized: false,
+          authorizationReason: "DEVICE_NOT_REGISTERED",
+          phase: "registering",
+          message: "Réenregistrement sécurisé de cette installation…",
+        });
+        await register({ force: true, reason: "heartbeat-device-not-registered" });
+      } else if (!authorizationStillValid() && !graceStillValid()) {
+        enforceAccess("heartbeat-expired");
+      } else {
+        update({ online: false, lastErrorAt: nowIso(), detail: safeString(error.message, 1000) });
+      }
     }
     return clone(state);
   }
@@ -532,7 +688,12 @@ function createGovernanceController(options) {
       update({ pendingCommands: commands.length || 0, online: true });
       await executeCommands(commands);
     } catch (error) {
-      logger.warn("whatsapp_governance_command_poll_failed", { message: error.message });
+      const code = safeString(error.message, 160);
+      logger.warn("whatsapp_governance_command_poll_failed", { message: code });
+      if (code === "DEVICE_NOT_REGISTERED") {
+        update({ deviceId: null, device: null, approvalStatus: "unknown", authorizationReason: "DEVICE_NOT_REGISTERED" });
+        await register({ force: true, reason: "command-poll-device-not-registered" });
+      }
     }
   }
 
@@ -581,12 +742,12 @@ function createGovernanceController(options) {
 
   async function start() {
     if (started) {
-      await register();
+      await register({ force: true, reason: "runtime-restart" });
       if (state.selectedWorkspaceId) await requestAuthorization({ renew: false });
       return clone(state);
     }
     started = true;
-    await register();
+    await register({ force: true, reason: "runtime-start" });
     if (state.selectedWorkspaceId) await requestAuthorization({ renew: false });
     schedule();
     await heartbeat();
@@ -612,7 +773,11 @@ function createGovernanceController(options) {
     stop,
     register,
     heartbeat,
-    refresh: () => requestAuthorization({ renew: true }),
+    refresh: async () => {
+      await register({ force: true, reason: "explicit-authorization-refresh" });
+      if (!state.selectedWorkspaceId) return clone(state);
+      return requestAuthorization({ renew: false });
+    },
     selectWorkspace,
   });
 }

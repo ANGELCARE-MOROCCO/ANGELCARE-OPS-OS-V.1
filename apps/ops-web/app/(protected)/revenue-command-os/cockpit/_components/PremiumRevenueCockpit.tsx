@@ -252,7 +252,7 @@ function Overview({ dashboard, onOpenZone, onSelectException }: { dashboard: Coc
         </div>
       </Panel>
 
-      <Panel title="Interventions prioritaires" eyebrow="Revenue exceptions" action={<button onClick={() => onOpenZone('revenue-exceptions')} className="text-xs font-black text-red-700">Toutes les exceptions <ChevronRight className="inline" size={14} /></button>}>
+      <Panel title="Décision immédiate" eyebrow="Interventions prioritaires · Revenue exceptions" action={<button onClick={() => onOpenZone('revenue-exceptions')} className="text-xs font-black text-red-700">Toutes les exceptions <ChevronRight className="inline" size={14} /></button>}>
         <div className="space-y-3">
           {dashboard.exceptions.slice(0, 6).map((exception) => <button key={exception.id} onClick={() => onSelectException(exception)} className="w-full rounded-2xl border border-slate-200 p-4 text-left transition hover:border-red-200 hover:bg-red-50/30">
             <div className="flex items-start gap-3"><PriorityBadge value={exception.priority} /><div className="min-w-0 flex-1"><p className="text-sm font-black text-slate-950">{exception.title}</p><p className="mt-1 line-clamp-2 text-xs leading-5 text-slate-500">{exception.summary}</p><div className="mt-3 flex items-center justify-between"><span className="text-xs font-black text-red-700">{formatDh(exception.revenueAtRisk)} exposés</span><span className="text-[10px] font-bold uppercase text-slate-500">{exception.status}</span></div></div></div>
@@ -269,7 +269,7 @@ function Overview({ dashboard, onOpenZone, onSelectException }: { dashboard: Coc
       <Panel title="Programmes revenus" eyebrow="Strategy → Program → Campaign → Mission">
         <div className="space-y-3">{dashboard.programs.slice(0, 5).map((program) => <ProgramCompact key={program.id} program={program} />)}{!dashboard.programs.length ? <EmptyState icon={<Layers3 />} title="Aucun programme actif" text="Une stratégie approuvée doit être compilée en travail opérationnel." /> : null}</div>
       </Panel>
-      <Panel title="Exécution contrôlée" eyebrow="Execution governance · Adapters · Outcomes">
+      <Panel title="Ce qui se passe ensuite" eyebrow="Exécution contrôlée · Adapters · Outcomes">
         <ExecutionMini dashboard={dashboard} />
       </Panel>
     </div>

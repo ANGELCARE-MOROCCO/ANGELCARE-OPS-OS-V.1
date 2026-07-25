@@ -2,7 +2,6 @@
 
 import Link from "next/link"
 import * as React from "react"
-import { ContentCommandNavigation } from "./content-command-navigation"
 
 async function executeContentCommandSystemAction(action: string, payload: Record<string, unknown> = {}) {
   try {
@@ -243,7 +242,27 @@ export function useContentStore() {
 }
 
 export function statusLabel(value: string) {
-  return value.replace(/-/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase())
+  const labels: Record<string, string> = {
+    idea: "Idée",
+    brief: "Brief",
+    draft: "Brouillon",
+    review: "En révision",
+    approved: "Approuvé",
+    scheduled: "Planifié",
+    published: "Publié",
+    revision: "Correction requise",
+    archived: "Archivé",
+    todo: "À faire",
+    doing: "En cours",
+    done: "Terminé",
+    blocked: "Bloqué",
+    ready: "Prêt",
+    used: "Utilisé",
+    active: "Actif",
+    inactive: "Inactif",
+    "needs revision": "Correction requise",
+  }
+  return labels[value] || value.replace(/-/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase())
 }
 
 export function nextStatus(status: ContentStatus): ContentStatus {
@@ -276,20 +295,12 @@ export function isOverdue(date: string) {
 }
 
 export function Shell({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="min-h-screen overflow-x-hidden bg-[radial-gradient(circle_at_12%_0%,rgba(34,211,238,.10),transparent_28%),radial-gradient(circle_at_86%_0%,rgba(168,85,247,.10),transparent_32%),linear-gradient(180deg,#ffffff,#f8fafc)] text-slate-950">
-      <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_15%_0%,rgba(124,58,237,.22),transparent_30%),radial-gradient(circle_at_84%_4%,rgba(6,182,212,.18),transparent_28%),radial-gradient(circle_at_75%_86%,rgba(245,158,11,.10),transparent_30%),linear-gradient(180deg,#070b18_0%,#030612_58%,#01030a_100%)]" />
-      <ContentCommandNavigation />
-      <div className="relative min-w-0 xl:pl-[330px]">
-        {children}
-      </div>
-    </div>
-  )
+  return <div className="cc360-existing-workspace">{children}</div>
 }
 
 export function Panel({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <section className={`rounded-3xl border border-slate-200 bg-white shadow-sm shadow-slate-200/70 ${className}`}>
+    <section className={`cc360-panel rounded-[22px] border border-slate-200 bg-white shadow-[0_14px_38px_rgba(15,40,78,.065)] ${className}`}>
       {children}
     </section>
   )
@@ -297,54 +308,55 @@ export function Panel({ children, className = "" }: { children: React.ReactNode;
 
 export function Badge({ children, kind = "soft" }: { children: React.ReactNode; kind?: "soft" | "priority" | "success" | "warning" | "danger" | "dark" }) {
   const styles: Record<NonNullable<Parameters<typeof Badge>[0]["kind"]>, string> = {
-    soft: "border-slate-200 bg-slate-50 text-slate-700",
-    priority: "border-rose-200 bg-rose-50 text-rose-700",
-    success: "border-emerald-200 bg-emerald-50 text-emerald-700",
-    warning: "border-amber-200 bg-amber-50 text-amber-700",
-    danger: "border-red-200 bg-red-50 text-red-700",
-    dark: "border-slate-200 bg-slate-100 text-slate-950",
+    soft: "border-slate-200 bg-slate-50 text-slate-800",
+    priority: "border-rose-200 bg-rose-50 text-rose-800",
+    success: "border-emerald-200 bg-emerald-50 text-emerald-800",
+    warning: "border-amber-200 bg-amber-50 text-amber-800",
+    danger: "border-red-200 bg-red-50 text-red-800",
+    dark: "border-slate-900 bg-slate-900 text-white",
   }
-  return <span className={`inline-flex rounded-full border px-3 py-1 text-xs font-black uppercase tracking-wider ${styles[kind]}`}>{children}</span>
+  return <span className={`inline-flex items-center rounded-full border px-2.5 py-1 text-[10px] font-black uppercase tracking-[.08em] ${styles[kind]}`}>{children}</span>
 }
 
-export function Button({ children, onClick, href, kind = "soft", type = "button", disabled = false }: { children: React.ReactNode; onClick?: () => void; href?: string; kind?: "primary" | "soft" | "danger" | "dark"; type?: "button" | "submit"; disabled?: boolean }) {
-  const base = "inline-flex items-center justify-center rounded-2xl px-4 py-3 text-sm font-black transition"
+export function Button({ children, onClick, href, kind = "soft", type = "button", disabled = false }: { children: React.ReactNode; onClick?: () => void; href?: string; kind?: "primary" | "soft" | "light" | "danger" | "dark"; type?: "button" | "submit"; disabled?: boolean }) {
+  const base = "inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-black transition disabled:cursor-not-allowed disabled:opacity-50"
   const styles = {
-    primary: "bg-rose-600 text-slate-950 shadow-lg shadow-rose-200 hover:bg-rose-700",
-    soft: "border border-slate-200 bg-white text-slate-800 hover:bg-slate-50",
-    danger: "bg-red-600 text-slate-950 hover:bg-red-700",
-    dark: "bg-white text-slate-950 hover:bg-white",
+    primary: "border border-[#10345f] bg-[#10345f] text-white shadow-[0_10px_26px_rgba(16,52,95,.18)] hover:bg-[#0a2749]",
+    soft: "border border-slate-300 bg-white text-slate-950 hover:bg-slate-50",
+    light: "border border-white/25 bg-white/10 text-white hover:bg-white/15",
+    danger: "border border-red-700 bg-red-700 text-white hover:bg-red-800",
+    dark: "border border-slate-950 bg-slate-950 text-white hover:bg-slate-800",
   }
   if (href) return <Link href={href} className={`${base} ${styles[kind]}`}>{children}</Link>
   return <button type={type} onClick={onClick} disabled={disabled} className={`${base} ${styles[kind]}`}>{children}</button>
 }
 
-export function Field({ label, children }: { label: string; children: React.ReactNode }) {
-  return <label className="block space-y-2"><span className="text-xs font-black uppercase tracking-wider text-slate-500">{label}</span>{children}</label>
+export function Field({ label, children, hint }: { label: string; children: React.ReactNode; hint?: string }) {
+  return <label className="block space-y-2"><span className="text-xs font-black uppercase tracking-[.09em] text-slate-700">{label}</span>{children}{hint ? <small className="block text-xs font-semibold leading-5 text-slate-600">{hint}</small> : null}</label>
 }
 
 export function Input(props: React.InputHTMLAttributes<HTMLInputElement>) {
-  return <input {...props} className={`w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-slate-400 ${props.className ?? ""}`} />
+  return <input {...props} className={`w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm font-bold text-slate-950 outline-none transition placeholder:text-slate-500 focus:border-sky-600 focus:ring-4 focus:ring-sky-100 ${props.className ?? ""}`} />
 }
 
 export function Select(props: React.SelectHTMLAttributes<HTMLSelectElement>) {
-  return <select {...props} className={`w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-950 outline-none transition focus:border-slate-400 ${props.className ?? ""}`} />
+  return <select {...props} className={`w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm font-bold text-slate-950 outline-none transition focus:border-sky-600 focus:ring-4 focus:ring-sky-100 ${props.className ?? ""}`} />
 }
 
 export function Textarea(props: React.TextareaHTMLAttributes<HTMLTextAreaElement>) {
-  return <textarea {...props} rows={props.rows ?? 5} className={`w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold leading-6 text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-slate-400 ${props.className ?? ""}`} />
+  return <textarea {...props} rows={props.rows ?? 5} className={`w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm font-bold leading-6 text-slate-950 outline-none transition placeholder:text-slate-500 focus:border-sky-600 focus:ring-4 focus:ring-sky-100 ${props.className ?? ""}`} />
 }
 
 export function Meter({ value }: { value: number }) {
-  return <div className="h-2 overflow-hidden rounded-full bg-slate-100"><div className="h-full rounded-full bg-gradient-to-r from-rose-500 via-amber-400 to-emerald-400" style={{ width: `${Math.max(0, Math.min(100, value))}%` }} /></div>
+  return <div className="h-2 overflow-hidden rounded-full bg-slate-200"><div className="h-full rounded-full bg-gradient-to-r from-sky-700 via-blue-600 to-emerald-600" style={{ width: `${Math.max(0, Math.min(100, value))}%` }} /></div>
 }
 
 export function Metric({ label, value, sub }: { label: string; value: string; sub: string }) {
-  return <Panel className="p-5"><p className="text-xs font-black uppercase tracking-wider text-slate-500">{label}</p><p className="mt-2 text-3xl font-black">{value}</p><p className="mt-1 text-xs font-bold text-slate-500">{sub}</p></Panel>
+  return <Panel className="p-5"><p className="text-xs font-black uppercase tracking-[.09em] text-slate-700">{label}</p><p className="mt-2 text-3xl font-black text-slate-950">{value}</p><p className="mt-1 text-xs font-bold text-slate-600">{sub}</p></Panel>
 }
 
 export function PageHeader({ eyebrow, title, description, actions }: { eyebrow: string; title: string; description: string; actions?: React.ReactNode }) {
-  return <div className="flex flex-col gap-4 rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm lg:flex-row lg:items-end lg:justify-between"><div><p className="text-xs font-black uppercase tracking-[0.25em] text-rose-600">{eyebrow}</p><h1 className="mt-2 text-3xl font-black tracking-tight text-slate-950 lg:text-4xl">{title}</h1><p className="mt-3 max-w-3xl text-sm font-semibold leading-6 text-slate-600">{description}</p></div>{actions ? <div className="flex flex-wrap gap-2">{actions}</div> : null}</div>
+  return <header data-cc-dark className="cc360-page-header flex flex-col gap-5 rounded-[26px] border border-white/15 bg-[radial-gradient(circle_at_10%_0%,rgba(56,189,248,.18),transparent_30%),linear-gradient(135deg,#061224,#0b2748_56%,#123b66)] p-6 shadow-[0_22px_60px_rgba(5,18,36,.18)] lg:flex-row lg:items-end lg:justify-between"><div><p className="text-xs font-black uppercase tracking-[.18em] text-cyan-200">{eyebrow}</p><h1 className="mt-2 text-3xl font-black tracking-tight text-white lg:text-4xl">{title}</h1><p className="mt-3 max-w-3xl text-sm font-semibold leading-7 text-slate-100">{description}</p></div>{actions ? <div className="flex flex-wrap gap-2">{actions}</div> : null}</header>
 }
 
 export function contentTemplate(): ContentItem {
@@ -374,29 +386,79 @@ export function contentTemplate(): ContentItem {
   }
 }
 
-export function ContentForm({ initial, onSave, submitLabel = "Save content" }: { initial?: ContentItem; onSave: (item: ContentItem) => void; submitLabel?: string }) {
+export function ContentForm({ initial, onSave, submitLabel = "Enregistrer le contenu" }: { initial?: ContentItem; onSave: (item: ContentItem) => void; submitLabel?: string }) {
   const [form, setForm] = React.useState<ContentItem>(() => initial ?? contentTemplate())
+  const [stage, setStage] = React.useState(0)
   const set = <K extends keyof ContentItem>(key: K, value: ContentItem[K]) => setForm((prev) => ({ ...prev, [key]: value, updatedAt: nowISO() }))
-  return <form onSubmit={(event) => { event.preventDefault(); onSave({ ...form, title: form.title.trim(), updatedAt: nowISO() }) }} className="grid gap-4 lg:grid-cols-2">
-    <Field label="Title"><Input required value={form.title} onChange={(event) => set("title", event.target.value)} placeholder="Content title" /></Field>
-    <Field label="Type"><Input value={form.type} onChange={(event) => set("type", event.target.value)} placeholder="Carousel, brochure, landing, video..." /></Field>
-    <Field label="Channel"><Select value={form.channel} onChange={(event) => set("channel", event.target.value as Channel)}>{channels.map((channel) => <option key={channel}>{channel}</option>)}</Select></Field>
-    <Field label="Campaign link"><Input value={form.campaign} onChange={(event) => set("campaign", event.target.value)} placeholder="Linked campaign name" /></Field>
-    <Field label="Owner"><Select value={form.owner} onChange={(event) => set("owner", event.target.value)}>{owners.map((owner) => <option key={owner}>{owner}</option>)}</Select></Field>
-    <Field label="Reviewer"><Select value={form.reviewer} onChange={(event) => set("reviewer", event.target.value)}>{owners.map((owner) => <option key={owner}>{owner}</option>)}</Select></Field>
-    <Field label="Status"><Select value={form.status} onChange={(event) => set("status", event.target.value as ContentStatus)}>{[...statusFlow, "revision", "archived"].map((status) => <option key={status} value={status}>{statusLabel(status)}</option>)}</Select></Field>
-    <Field label="Priority"><Select value={form.priority} onChange={(event) => set("priority", event.target.value as Priority)}>{priorities.map((priority) => <option key={priority}>{priority}</option>)}</Select></Field>
-    <Field label="Due date"><Input type="date" value={form.dueDate} onChange={(event) => set("dueDate", event.target.value)} /></Field>
-    <Field label="Scheduled publish date"><Input type="date" value={form.scheduledDate} onChange={(event) => set("scheduledDate", event.target.value)} /></Field>
-    <Field label="Objective"><Input value={form.objective} onChange={(event) => set("objective", event.target.value)} placeholder="Qualified leads, awareness, partner support..." /></Field>
-    <Field label="Audience"><Input value={form.audience} onChange={(event) => set("audience", event.target.value)} placeholder="Who is this for?" /></Field>
-    <Field label="Strategic angle"><Input value={form.angle} onChange={(event) => set("angle", event.target.value)} placeholder="Why this content should win" /></Field>
-    <Field label="CTA"><Input value={form.cta} onChange={(event) => set("cta", event.target.value)} placeholder="Book, apply, call, message..." /></Field>
-    <Field label="SEO keyword"><Input value={form.seoKeyword} onChange={(event) => set("seoKeyword", event.target.value)} placeholder="Optional keyword" /></Field>
-    <Field label="Brand score"><Input type="number" min={0} max={100} value={form.brandScore} onChange={(event) => set("brandScore", Number(event.target.value))} /></Field>
-    <div className="lg:col-span-2"><Field label="Content body / production notes"><Textarea value={form.body} onChange={(event) => set("body", event.target.value)} placeholder="Write the content, brief, script, or production note here." /></Field></div>
-    <div className="lg:col-span-2"><Field label="Internal notes"><Textarea value={form.notes} onChange={(event) => set("notes", event.target.value)} placeholder="Review notes, risk, missing asset, approvals..." /></Field></div>
-    <div className="lg:col-span-2 flex flex-wrap gap-3"><Button kind="primary" type="submit">{submitLabel}</Button><Button href="/market-os/content-command-center">Back to workspace</Button></div>
+  const stages = ["Identité", "Audience", "Canal", "Gouvernance", "Contenu", "Revue"]
+  const required = [form.title, form.type, form.channel, form.owner, form.reviewer, form.dueDate, form.objective, form.audience]
+  const completion = Math.round((required.filter((value) => String(value || "").trim()).length / required.length) * 100)
+  const missing = [
+    !form.title.trim() ? "Titre" : null,
+    !form.objective.trim() ? "Objectif" : null,
+    !form.audience.trim() ? "Audience" : null,
+    !form.owner.trim() ? "Responsable" : null,
+    !form.reviewer.trim() ? "Validateur" : null,
+    !form.dueDate ? "Échéance" : null,
+  ].filter(Boolean) as string[]
+
+  return <form onSubmit={(event) => { event.preventDefault(); if (stage < stages.length - 1) { setStage((current) => current + 1); return }; onSave({ ...form, title: form.title.trim(), updatedAt: nowISO() }) }} className="cc360-form-studio">
+    <div className="cc360-form-main">
+      <nav className="cc360-form-stages" aria-label="Étapes du contenu">
+        {stages.map((label, index) => <button key={label} type="button" onClick={() => setStage(index)} className={stage === index ? "is-active" : index < stage ? "is-complete" : ""}><span>{String(index + 1).padStart(2, "0")}</span><strong>{label}</strong></button>)}
+      </nav>
+
+      <section className="cc360-form-stage">
+        {stage === 0 ? <div className="grid gap-4 lg:grid-cols-2">
+          <Field label="Titre"><Input required value={form.title} onChange={(event) => set("title", event.target.value)} placeholder="Titre opérationnel du contenu" /></Field>
+          <Field label="Type"><Input value={form.type} onChange={(event) => set("type", event.target.value)} placeholder="Carousel, brochure, landing, vidéo…" /></Field>
+          <Field label="Campagne"><Input value={form.campaign} onChange={(event) => set("campaign", event.target.value)} placeholder="Campagne rattachée" /></Field>
+          <Field label="Priorité"><Select value={form.priority} onChange={(event) => set("priority", event.target.value as Priority)}>{priorities.map((priority) => <option key={priority}>{priority}</option>)}</Select></Field>
+          <div className="lg:col-span-2"><Field label="Objectif"><Textarea rows={4} value={form.objective} onChange={(event) => set("objective", event.target.value)} placeholder="Résultat attendu, besoin business et critère de succès" /></Field></div>
+        </div> : null}
+
+        {stage === 1 ? <div className="grid gap-4 lg:grid-cols-2">
+          <Field label="Audience"><Textarea rows={4} value={form.audience} onChange={(event) => set("audience", event.target.value)} placeholder="Public, contexte, douleur et niveau de maturité" /></Field>
+          <Field label="Angle stratégique"><Textarea rows={4} value={form.angle} onChange={(event) => set("angle", event.target.value)} placeholder="Pourquoi ce contenu doit convaincre" /></Field>
+          <Field label="CTA"><Input value={form.cta} onChange={(event) => set("cta", event.target.value)} placeholder="Réserver, postuler, appeler, envoyer un message…" /></Field>
+          <Field label="Mot-clé SEO"><Input value={form.seoKeyword} onChange={(event) => set("seoKeyword", event.target.value)} placeholder="Mot-clé optionnel" /></Field>
+        </div> : null}
+
+        {stage === 2 ? <div className="grid gap-4 lg:grid-cols-2">
+          <Field label="Canal"><Select value={form.channel} onChange={(event) => set("channel", event.target.value as Channel)}>{channels.map((channel) => <option key={channel}>{channel}</option>)}</Select></Field>
+          <Field label="Date de publication planifiée" hint="Une date interne ne prouve pas une publication externe."><Input type="date" value={form.scheduledDate} onChange={(event) => set("scheduledDate", event.target.value)} /></Field>
+          <Field label="Statut"><Select value={form.status} onChange={(event) => set("status", event.target.value as ContentStatus)}>{[...statusFlow, "revision", "archived"].map((status) => <option key={status} value={status}>{statusLabel(status)}</option>)}</Select></Field>
+          <Field label="Score marque"><Input type="number" min={0} max={100} value={form.brandScore} onChange={(event) => set("brandScore", Number(event.target.value))} /></Field>
+        </div> : null}
+
+        {stage === 3 ? <div className="grid gap-4 lg:grid-cols-2">
+          <Field label="Responsable"><Select value={form.owner} onChange={(event) => set("owner", event.target.value)}>{owners.map((owner) => <option key={owner}>{owner}</option>)}</Select></Field>
+          <Field label="Validateur"><Select value={form.reviewer} onChange={(event) => set("reviewer", event.target.value)}>{owners.map((owner) => <option key={owner}>{owner}</option>)}</Select></Field>
+          <Field label="Échéance"><Input type="date" value={form.dueDate} onChange={(event) => set("dueDate", event.target.value)} /></Field>
+          <Field label="Assets liés" hint="Les références d’assets existantes restent préservées dans le record."><Input value={form.assets.join(", ")} readOnly /></Field>
+        </div> : null}
+
+        {stage === 4 ? <div className="grid gap-4">
+          <Field label="Contenu / script / note de production"><Textarea rows={14} value={form.body} onChange={(event) => set("body", event.target.value)} placeholder="Rédigez le contenu, le script, le brief ou les instructions de production." /></Field>
+          <Field label="Notes internes"><Textarea rows={6} value={form.notes} onChange={(event) => set("notes", event.target.value)} placeholder="Risques, remarques de révision, assets manquants et dépendances." /></Field>
+        </div> : null}
+
+        {stage === 5 ? <div className="cc360-form-review">
+          <header data-cc-dark><div><span>Final review</span><h2>{form.title || "Contenu sans titre"}</h2><p>Vérifiez la stratégie, la gouvernance et les prérequis avant l’enregistrement.</p></div><Badge kind={missing.length ? "warning" : "success"}>{missing.length ? `${missing.length} point(s) incomplet(s)` : "Prêt"}</Badge></header>
+          <dl><div><dt>Type / Canal</dt><dd>{form.type} · {form.channel}</dd></div><div><dt>Campagne</dt><dd>{form.campaign || "Non rattachée"}</dd></div><div><dt>Responsable / Validateur</dt><dd>{form.owner} · {form.reviewer}</dd></div><div><dt>Statut / Priorité</dt><dd>{statusLabel(form.status)} · {form.priority}</dd></div><div><dt>Échéance / Planification</dt><dd>{form.dueDate || "Non définie"} · {form.scheduledDate || "Non planifiée"}</dd></div><div><dt>Objectif</dt><dd>{form.objective || "Non défini"}</dd></div><div><dt>Audience</dt><dd>{form.audience || "Non définie"}</dd></div><div><dt>CTA</dt><dd>{form.cta || "Non défini"}</dd></div></dl>
+        </div> : null}
+      </section>
+
+      <footer className="cc360-form-footer"><Button type="button" disabled={stage === 0} onClick={() => setStage((current) => Math.max(0, current - 1))}>Précédent</Button><div><Button href="/market-os/content-command-center">Annuler</Button><Button kind="primary" type="submit">{stage === stages.length - 1 ? submitLabel : "Continuer"}</Button></div></footer>
+    </div>
+
+    <aside className="cc360-form-rail">
+      <div data-cc-dark><span>Content readiness</span><strong>{completion}%</strong><Meter value={completion} /></div>
+      <section><h3>Identité du contenu</h3><strong>{form.title || "Titre à définir"}</strong><p>{form.campaign || "Sans campagne"} · {form.channel}</p></section>
+      <section><h3>Gouvernance</h3><dl><div><dt>Responsable</dt><dd>{form.owner || "Non défini"}</dd></div><div><dt>Validateur</dt><dd>{form.reviewer || "Non défini"}</dd></div><div><dt>Échéance</dt><dd>{form.dueDate || "Non définie"}</dd></div><div><dt>Brand score</dt><dd>{form.brandScore}%</dd></div></dl></section>
+      <section><h3>Éléments manquants</h3>{missing.length ? <ul>{missing.map((label) => <li key={label}>{label}</li>)}</ul> : <p className="is-success">Les exigences essentielles sont renseignées.</p>}</section>
+      <section><h3>Vérité d’exécution</h3><p>Enregistrer ce record ne signifie pas qu’un message a été envoyé ou qu’une publication externe a été vérifiée.</p></section>
+    </aside>
   </form>
 }
 

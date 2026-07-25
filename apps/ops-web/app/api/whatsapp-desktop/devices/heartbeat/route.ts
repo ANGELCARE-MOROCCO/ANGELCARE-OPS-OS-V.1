@@ -11,6 +11,17 @@ export async function POST(request: NextRequest) {
   if (device.current_user_id && device.current_user_id !== context.userId) return fail("DEVICE_USER_MISMATCH", 403)
   const now = new Date().toISOString()
   const linkState = ["unknown", "not_linked", "qr_required", "linked", "logged_out"].includes(String(body.whatsapp_link_state)) ? body.whatsapp_link_state : "unknown"
+  const clientClock = body.client_time ? new Date(String(body.client_time)) : null
+  const clockDriftSeconds = clientClock && Number.isFinite(clientClock.getTime()) ? Math.round((clientClock.getTime() - Date.now()) / 1000) : null
+  const reportedState = {
+    ...(device.reported_state && typeof device.reported_state === "object" ? device.reported_state : {}),
+    whatsapp_visible: Boolean(body.whatsapp_visible),
+    whatsapp_link_state: linkState,
+    authorization_state: String(body.authorization_state || "unknown").slice(0, 80),
+    desktop_version: String(body.desktop_version || device.desktop_version || "").slice(0, 80),
+    governance_contract_version: String(body.governance_contract_version || device.governance_contract_version || "").slice(0, 80),
+    last_whatsapp_heartbeat_at: now,
+  }
   const { data: updated, error } = await context.supabase.from("whatsapp_desktop_devices").update({
     current_user_id: context.userId,
     desktop_version: String(body.desktop_version || device.desktop_version || "").slice(0, 80) || null,
@@ -19,6 +30,11 @@ export async function POST(request: NextRequest) {
     last_seen_at: now,
     last_ip: context.ip,
     runtime_health: body.runtime_health && typeof body.runtime_health === "object" ? body.runtime_health : {},
+    reported_state: reportedState,
+    governance_contract_version: String(body.governance_contract_version || device.governance_contract_version || "").slice(0, 80) || null,
+    desktop_build_number: Number.isFinite(Number(body.desktop_build_number)) ? Number(body.desktop_build_number) : device.desktop_build_number || null,
+    client_clock_at: clientClock && Number.isFinite(clientClock.getTime()) ? clientClock.toISOString() : null,
+    clock_drift_seconds: clockDriftSeconds,
   }).eq("id", device.id).select("*").single()
   if (error) return fail(error.message, 500)
   await context.supabase.from("whatsapp_desktop_heartbeats").insert({

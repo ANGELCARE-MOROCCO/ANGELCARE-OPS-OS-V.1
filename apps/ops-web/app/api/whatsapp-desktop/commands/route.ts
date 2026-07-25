@@ -9,6 +9,7 @@ export async function GET(request: NextRequest) {
     const { data: device } = await context.supabase.from("whatsapp_desktop_devices").select("id,current_user_id").eq("installation_id", installationId).maybeSingle()
     if (!device) return fail("DEVICE_NOT_REGISTERED", 404)
     if (device.current_user_id && device.current_user_id !== context.userId) return fail("DEVICE_USER_MISMATCH", 403)
+    await context.supabase.from("whatsapp_desktop_devices").update({ last_command_poll_at: new Date().toISOString() }).eq("id", device.id)
     return ok(await pendingCommands(context.supabase, device.id))
   }
   const role = String(context.user.role || "").toLowerCase()
@@ -28,7 +29,7 @@ export async function POST(request: NextRequest) {
   const reason = String(body.reason || "Commande distante ANGELCARE")
   if (!deviceId || !REMOTE_COMMANDS.has(commandType)) return fail("VALID_DEVICE_AND_COMMAND_REQUIRED")
   const expiresAt = body.expires_at || new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
-  const { data, error } = await context.supabase.from("whatsapp_desktop_commands").insert({ device_id: deviceId, workspace_id: body.workspace_id || null, command_type: commandType, payload: body.payload && typeof body.payload === "object" ? body.payload : {}, reason, issued_by: context.userId, expires_at: expiresAt }).select("*").single()
+  const { data, error } = await context.supabase.from("whatsapp_desktop_commands").insert({ device_id: deviceId, workspace_id: body.workspace_id || null, command_type: commandType, payload: body.payload && typeof body.payload === "object" ? body.payload : {}, reason, issued_by: context.userId, expires_at: expiresAt, correlation_id: body.correlation_id || null, priority: body.priority || "normal", max_retries: Math.max(0, Math.min(20, Number(body.max_retries ?? 3))), acknowledgement_deadline: body.acknowledgement_deadline || new Date(Date.now() + 10 * 60_000).toISOString() }).select("*").single()
   if (error) return fail(error.message, 400)
   await auditEvent(context.supabase, { actorUserId: context.userId, deviceId, workspaceId: body.workspace_id || null, action: "remote_command.issued", reason, newState: data, commandId: data.id, ip: context.ip, userAgent: context.userAgent })
   return ok(data, { status: 201 })

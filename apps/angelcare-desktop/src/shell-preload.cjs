@@ -2,7 +2,7 @@
 
 const { contextBridge, ipcRenderer } = require("electron");
 
-const corporateCommands = new Set(["list", "get-status", "create", "close", "close-others", "activate", "duplicate", "pin", "reorder", "reopen-closed", "navigate", "back", "forward", "reload", "reload-no-cache", "stop", "home", "zoom-in", "zoom-out", "zoom-reset", "set-zoom", "fit-workspace", "recover", "open-downloads"]);
+const corporateCommands = new Set(["list", "get-status", "create-ac-plus", "close", "close-others", "activate", "pin", "reorder", "reopen-closed", "back", "forward", "reload", "reload-no-cache", "stop", "home", "zoom-in", "zoom-out", "zoom-reset", "set-zoom", "fit-workspace", "recover", "open-split-selector", "close-split-selector", "activate-split", "exit-split", "focus-pane", "replace-pane", "swap-panes", "maximize-pane", "restore-pane", "open-downloads"]);
 const stationCommands = new Set(["get-status", "get-policy", "refresh-policy", "request-mode", "request-unlock", "get-lockout-status", "get-diagnostics"]);
 function invoke(channel, allowlist, action, payload = {}) {
   if (!allowlist.has(action)) return Promise.reject(new Error("Unsupported ANGELCARE Corporate Station command."));
