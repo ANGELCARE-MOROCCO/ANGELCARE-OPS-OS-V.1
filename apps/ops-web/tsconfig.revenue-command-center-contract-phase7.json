@@ -1,0 +1,23 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "incremental": false,
+    "noEmit": true,
+    "skipLibCheck": true
+  },
+  "include": [
+    "next-env.d.ts",
+    "app/(protected)/revenue-command-center/documents/**/*.tsx",
+    "app/(protected)/revenue-command-center/partnerships/agreements/**/*.tsx",
+    "app/(protected)/revenue-command-center/partnerships/[id]/agreement/**/*.tsx",
+    "app/(protected)/revenue-command-center/partnerships/activation/**/*.tsx",
+    "app/(protected)/revenue-command-center/partnerships/[id]/activation/**/*.tsx",
+    "app/(protected)/revenue-command-center/system-activation/**/*.tsx",
+    "app/api/revenue-command-center/contract/**/*.ts",
+    "components/revenue-command-center/contract-enterprise/**/*.ts",
+    "components/revenue-command-center/contract-enterprise/**/*.tsx",
+    "lib/revenue-command-center/contract-enterprise/**/*.ts",
+    "lib/revenue-command-center/api-access.ts",
+    "lib/revenue-command-center/canonical-server.ts"
+  ]
+}

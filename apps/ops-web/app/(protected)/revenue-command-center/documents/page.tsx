@@ -1,3 +1,4 @@
-import RevenueDocumentsSourceOfTruthWorkspace from "@/components/revenue-command-center/RevenueDocumentsSourceOfTruthWorkspace"
-export const dynamic = "force-dynamic"
-export default function Page(){ return <RevenueDocumentsSourceOfTruthWorkspace /> }
+import RevenueContractWorkspace from "@/components/revenue-command-center/contract-enterprise/RevenueContractWorkspace"
+export const dynamic="force-dynamic"
+export const revalidate=0
+export default function Page(){return <RevenueContractWorkspace experience="contract-command" contextType="system"/>}

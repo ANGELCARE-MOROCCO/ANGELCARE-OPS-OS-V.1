@@ -52,24 +52,6 @@
   line-height: 1;
 }
 
-:global(html[data-commercial-focus='true'] [data-commercial-focus-hide='true']) {
-  display: none !important;
-}
-
-:global(html[data-commercial-focus='true'] [data-commercial-canvas='true']) {
-  padding-top: 12px !important;
-}
-
-:global(html[data-commercial-density='compact'] [data-commercial-canvas='true'] table th),
-:global(html[data-commercial-density='compact'] [data-commercial-canvas='true'] table td) {
-  padding-top: 8px !important;
-  padding-bottom: 8px !important;
-}
-
-:global(html[data-commercial-density='compact'] [data-commercial-canvas='true'] article) {
-  --commercial-card-density: .84;
-}
-
 @media (max-width: 860px) {
   .controls { display: none; }
 }

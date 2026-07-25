@@ -1,0 +1,6 @@
+import { fail,ok } from "@/lib/revenue-command-center/canonical-server"
+import { revenueAccessFailure } from "@/lib/revenue-command-center/api-access"
+
+import { cleanString } from "@/lib/revenue-command-center/canonical-server"
+import { contractContext,getContract } from "@/lib/revenue-command-center/contract-enterprise/server"
+export async function POST(request:Request){try{const {access,supabase}=await contractContext("revenue.contracts.obligations.manage"),body=await request.json(),contract=await getContract(supabase,String(body.contractId||""));if(!contract)return fail("Contrat introuvable.",404);const row={contract_id:contract.id,title:cleanString(body.title),deliverable:cleanString(body.deliverable),acceptance_criteria:cleanString(body.acceptanceCriteria),owner:cleanString(body.owner),due_at:cleanString(body.dueAt)||null,payment_dependency:cleanString(body.paymentDependency,"none"),status:"planned",created_by:(access.user as any).id||null};if(!row.title)return fail("Jalon requis.",400);const {data,error}=await supabase.from("revenue_contract_milestones").insert(row).select("*").single();if(error)return fail(error);return ok({milestone:data})}catch(error){const access=revenueAccessFailure(error);return access?fail(access.message,access.status):fail(error)}}

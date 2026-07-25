@@ -22,6 +22,10 @@ const requiredFiles = [
   "components/revenue-command-center/engagement-enterprise/types.ts",
   "components/revenue-command-center/RevenueDailyTasksV13McKinseyWorkspace.tsx",
   "components/revenue-command-center/execution-enterprise/RevenueExecutionWorkspace.tsx",
+  "components/revenue-command-center/contract-enterprise/RevenueContractWorkspace.tsx",
+  "components/revenue-command-center/contract-enterprise/RevenueContractWorkspace.module.css",
+  "components/revenue-command-center/contract-enterprise/route-contracts.ts",
+  "components/revenue-command-center/contract-enterprise/types.ts",
   "components/revenue-command-center/RevenuePartnershipsV13ActionsWorkspace.tsx",
   "lib/revenue-command-center/route-registry.ts",
 ];
@@ -146,14 +150,15 @@ const familyCounts = {
   RevenueExecutiveBriefingV11Workspace: 3,
   RevenuePredictiveV11Workspace: 3,
   RevenueSDRV11Workspace: 3,
-  RevenuePartnershipsEnterpriseWorkspace: 12,
+  RevenuePartnershipsEnterpriseWorkspace: 10,
   RevenueAppointmentsV12MegaWorkspace: 0,
   RevenueEngagementWorkspace: 24,
   RevenueDailyTasksV13McKinseyWorkspace: 0,
   RevenueExecutionWorkspace: 21,
-  RevenuePartnershipsV13ActionsWorkspace: 8,
+  RevenuePartnershipsV13ActionsWorkspace: 6,
   RevenueProposalWorkspace: 8,
-  UltimateRevenueCommandPage: 8,
+  RevenueContractWorkspace: 6,
+  UltimateRevenueCommandPage: 7,
 };
 for (const [family, expected] of Object.entries(familyCounts)) {
   const count = routeFiles.filter(({ source }) => source.includes(family)).length;
@@ -174,10 +179,18 @@ const transformedExperienceTargets = new Set([
   "components/revenue-command-center/engagement-enterprise/types.ts",
   "components/revenue-command-center/RevenueDailyTasksV13McKinseyWorkspace.tsx",
   "components/revenue-command-center/execution-enterprise/RevenueExecutionWorkspace.tsx",
+  "components/revenue-command-center/contract-enterprise/RevenueContractWorkspace.tsx",
+  "components/revenue-command-center/contract-enterprise/RevenueContractWorkspace.module.css",
+  "components/revenue-command-center/contract-enterprise/route-contracts.ts",
+  "components/revenue-command-center/contract-enterprise/types.ts",
   "components/revenue-command-center/RevenuePartnershipsV13ActionsWorkspace.tsx",
   "components/revenue-command-center/prospects-enterprise/ProspectEnterpriseWorkspace.tsx",
   "components/revenue-command-center/prospects-enterprise/ProspectEnterpriseDossier.tsx",
   "components/revenue-command-center/proposal-enterprise/RevenueProposalWorkspace.tsx",
+  "components/revenue-command-center/contract-enterprise/RevenueContractWorkspace.tsx",
+  "components/revenue-command-center/contract-enterprise/RevenueContractWorkspace.module.css",
+  "components/revenue-command-center/contract-enterprise/route-contracts.ts",
+  "components/revenue-command-center/contract-enterprise/types.ts",
 ].map((file) => path.resolve(root, file)));
 
 const importPattern = /(?:import|export)\s+(?:[^"']*?\s+from\s+)?["']([^"']+)["']/g;
@@ -209,7 +222,7 @@ function reachesTransformedExperience(file, seen = new Set()) {
   return [...localDependencies(absolute)].some((dependency) => reachesTransformedExperience(dependency, seen));
 }
 const directlyTransformedRoutes = pages.filter((page) => reachesTransformedExperience(page)).length;
-check(directlyTransformedRoutes === 146, `direct/transitive premium route transformation: 146 (found ${directlyTransformedRoutes})`);
+check(directlyTransformedRoutes === 147, `direct/transitive premium route transformation: 147 (found ${directlyTransformedRoutes})`);
 
 const protectedPrefixes = [
   "app/api/",

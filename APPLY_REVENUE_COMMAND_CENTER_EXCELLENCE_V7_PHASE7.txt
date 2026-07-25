@@ -1,0 +1,74 @@
+ANGELCARE REVENUE COMMAND CENTER — EXCELLENCE v7 / MEGA ZIP 7
+
+PREREQUISITES
+- Excellence v1 through v6 already applied.
+- Current repository backup or clean Git state.
+- Current Supabase backup/snapshot before migration.
+- Do not convert public.revenue_prospects.id from TEXT.
+
+1. EXTRACT FROM THE REPOSITORY ROOT
+
+cd ~/Desktop/angelcare-platform
+unzip -o ~/Downloads/ANGELCARE_REVENUE_COMMAND_CENTER_EXCELLENCE_v7_CONTRACT_REALIZATION_PHASE7_PATCH.zip -d ~/Desktop/angelcare-platform
+
+2. RUN CUMULATIVE STATIC ACCEPTANCE
+
+cd ~/Desktop/angelcare-platform/apps/ops-web
+node scripts/verify-revenue-command-center-uiux-excellence.mjs
+node scripts/verify-revenue-command-center-prospect-enterprise-phase2.mjs
+node scripts/verify-revenue-command-center-execution-enterprise-phase4.mjs
+node scripts/verify-revenue-command-center-engagement-enterprise-phase5.mjs
+node scripts/verify-revenue-command-center-proposal-enterprise-phase6.mjs
+node scripts/verify-revenue-command-center-contract-enterprise-phase7.mjs
+
+Expected totals:
+- 122 global checks
+- 258 prospect checks
+- 193 execution checks
+- 296 engagement checks
+- 291 proposal checks
+- 403 contract/realization checks
+
+3. RUN THE FOCUSED TYPESCRIPT GATE
+
+npx tsc -p tsconfig.revenue-command-center-contract-phase7.json --pretty false
+
+A successful command returns silently.
+Do not run npm run build locally unless separately authorized.
+
+4. DATABASE PREFLIGHT
+
+Run the complete SQL file:
+apps/ops-web/supabase/revenue-command-center/preflight/20260725_contract_signature_payment_activation_live_schema_preflight.sql
+
+Continue only when CUTOVER_GATE = READY.
+Do not apply the migration when the result is BLOCKED.
+
+5. APPLY MIGRATION
+
+apps/ops-web/supabase/migrations/20260725_0500_revenue_contract_signature_payment_activation_realization.sql
+
+6. RUN ALL DATABASE VERIFICATIONS
+
+apps/ops-web/supabase/revenue-command-center/verification/20260725_contract_signature_payment_activation_rls_verification.sql
+apps/ops-web/supabase/revenue-command-center/verification/20260725_contract_gate_verification.sql
+apps/ops-web/supabase/revenue-command-center/verification/20260725_payment_gate_verification.sql
+apps/ops-web/supabase/revenue-command-center/verification/20260725_revenue_realization_verification.sql
+
+7. AUTHENTICATED END-TO-END TEST
+
+Complete one noncritical test journey:
+accepted proposal handoff -> contract -> version -> review -> approval -> signatories -> signature evidence -> conditions -> payment requirement -> Finance handoff -> authoritative payment confirmation -> effectiveness -> activation gates -> operational handoff -> activation -> revenue realization.
+
+8. INSPECT AND COMMIT
+
+cd ~/Desktop/angelcare-platform
+git diff --check
+git status --short
+git add .
+git commit -m "complete revenue contracts payment gates activation and realization"
+git push
+
+ROLLBACK
+Review and use only under controlled approval:
+apps/ops-web/supabase/revenue-command-center/rollback/20260725_revenue_contract_signature_payment_activation_rollback.sql

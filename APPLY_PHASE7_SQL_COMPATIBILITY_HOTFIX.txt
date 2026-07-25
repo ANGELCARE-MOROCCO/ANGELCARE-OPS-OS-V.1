@@ -1,0 +1,35 @@
+ANGELCARE Revenue Command Center — Mega ZIP 7 SQL Compatibility Hotfix
+Date: 2026-07-25
+
+WHY THIS HOTFIX EXISTS
+1. The Phase 7 migration failed inside its transaction because the live Phase 2
+   account table uses revenue_accounts.account_name, while the contract command
+   view referenced revenue_accounts.name.
+2. Because the transaction failed, all Phase 7 contract tables and views were
+   rolled back. The RLS and contract-gate verification files therefore correctly
+   reported that public.revenue_contracts did not exist.
+3. The original payment-gate verification placed FILTER after COALESCE, which is
+   invalid PostgreSQL syntax. It also joined several one-to-many tables in a way
+   that could inflate totals. The corrected query uses correlated aggregates.
+
+FILES REPLACED
+- apps/ops-web/supabase/migrations/20260725_0500_revenue_contract_signature_payment_activation_realization.sql
+- apps/ops-web/supabase/revenue-command-center/preflight/20260725_contract_signature_payment_activation_live_schema_preflight.sql
+- apps/ops-web/supabase/revenue-command-center/verification/20260725_payment_gate_verification.sql
+
+SAFE EXECUTION ORDER
+1. Extract this ZIP at the repository root.
+2. Confirm a current Supabase backup exists.
+3. Run the corrected preflight and require CUTOVER_GATE = READY.
+4. Run the corrected full Phase 7 migration. Expected: Success. No rows returned.
+5. Run:
+   a. 20260725_contract_signature_payment_activation_rls_verification.sql
+   b. 20260725_contract_gate_verification.sql
+   c. corrected 20260725_payment_gate_verification.sql
+   d. 20260725_revenue_realization_verification.sql
+
+DO NOT
+- Do not run only the failing view fragment.
+- Do not manually create the 28 tables one by one.
+- Do not convert revenue_prospects.id from TEXT.
+- Do not run verification files before the corrected migration commits.
