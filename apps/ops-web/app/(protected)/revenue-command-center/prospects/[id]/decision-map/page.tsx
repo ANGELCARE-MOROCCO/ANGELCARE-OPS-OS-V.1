@@ -1,7 +1,8 @@
-import RevenueProspectsV12MegaWorkspace from "@/components/revenue-command-center/RevenueProspectsV12MegaWorkspace"
+import ProspectEnterpriseDossier from "@/components/revenue-command-center/prospects-enterprise/ProspectEnterpriseDossier"
 
 export const dynamic = "force-dynamic"
 
-export default function Page() {
-  return <RevenueProspectsV12MegaWorkspace mode="decision-map" />
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  return <ProspectEnterpriseDossier prospectId={id} mode="decision-map" />
 }

@@ -5,8 +5,14 @@ import Link from 'next/link'
 import AppShell, { PageAction } from '@/app/components/erp/AppShell'
 import {
   ActionButton, ActionLink, CommercialNav, ContinuityRibbon, EmptyState, formatDate, formatDh,
-  HeroStat, Icon, MetricTile, Notice, Panel, Pill, SalesHero, SourceBadge, styles, toneForStatus,
+  HeroStat, Icon, Notice, Panel, Pill, SalesHero, SourceBadge, statusLabel, styles, toneForStatus,
 } from './_components/Sales360UI'
+import {
+  Metric,
+  MetricStrip,
+  SectionHeading,
+  TruthNotice,
+} from '@/components/commercial-core/CommercialCoreShell'
 
 type Client = { id: string; client_name: string; client_type?: string; phone?: string; email?: string; city?: string; status?: string; created_at?: string }
 type Order = { id: string; order_ref: string; client_id?: string; client_name: string; customer_type?: string; service_category?: string; service_type?: string; city?: string; total_amount?: number; status?: string; payment_status?: string; fulfillment_status?: string; next_action?: string; created_at?: string; service_date?: string }
@@ -47,6 +53,8 @@ export default function Sales360CommandPage() {
     ] as const
     const results = await Promise.allSettled(sources.map(([, url]) => fetch(url, { cache: 'no-store' }).then(readJson)))
     const missing: string[] = []
+    let loadedClients: Client[] = []
+    let loadedOrders: Order[] = []
     results.forEach((result, index) => {
       const key = sources[index][0]
       if (result.status !== 'fulfilled' || !result.value?.ok) {
@@ -54,8 +62,14 @@ export default function Sales360CommandPage() {
         return
       }
       const value = result.value
-      if (key === 'clients') setClients(value.data || [])
-      if (key === 'orders') setOrders(value.data || [])
+      if (key === 'clients') {
+        loadedClients = value.data || []
+        setClients(loadedClients)
+      }
+      if (key === 'orders') {
+        loadedOrders = value.data || []
+        setOrders(loadedOrders)
+      }
       if (key === 'options') setOptions(value.data || [])
       if (key === 'actions') setActions(value.data || [])
       if (key === 'communications') setCommunications(value.data || [])
@@ -64,7 +78,7 @@ export default function Sales360CommandPage() {
     setPartialSources(missing)
     setMessage(missing.includes('orders') || missing.includes('clients')
       ? 'Le périmètre principal est partiellement indisponible. Les chiffres visibles peuvent être incomplets.'
-      : `${orders.length || 0} commandes et ${clients.length || 0} clients synchronisés avec le Sales Terminal.`)
+      : `${loadedOrders.length} commandes et ${loadedClients.length} clients synchronisés avec le Sales Terminal.`)
     setLoading(false)
   }
 
@@ -110,122 +124,113 @@ export default function Sales360CommandPage() {
   const lastActivity = [...orders].sort((a, b) => String(b.created_at || '').localeCompare(String(a.created_at || '')))[0]?.created_at
 
   return <AppShell
-    title="Sales 360"
-    subtitle="Client Acquisition, Commercial Execution, Revenue Assurance & Operational Handoff Command Center."
-    breadcrumbs={[{ label: 'Sales 360' }]}
-    actions={<><PageAction href="/sales/clients">Nouveau client</PageAction><PageAction href="/sales/orders/new" variant="light">Nouvelle commande</PageAction><PageAction href="/sales/management" variant="light">Management</PageAction></>}
+    title="Sales"
+    subtitle="Conversion client, commandes et exécution commerciale"
+    breadcrumbs={[{ label: 'Commercial Core' }, { label: 'Sales' }]}
+    actions={<><PageAction href="/sales/clients">Nouveau client</PageAction><PageAction href="/sales/orders/new" variant="light">Nouvelle commande</PageAction></>}
   >
     <div className={styles.page}>
       <SalesHero
-        eyebrow="Revenue Command · Sales Terminal"
-        title="Transformer chaque demande en décision commerciale claire, sécurisée et transmissible."
-        text="Une vue consolidée des clients, commandes, devis, règlements déclarés et handoffs opérationnels, sans confondre documents commerciaux, paiements vérifiés ou activations réellement exécutées."
+        eyebrow="SANILA Sales Command · Daily Revenue Execution"
+        title="Ce qui doit avancer aujourd’hui pour transformer le pipeline en revenu exécutable."
+        text="Le Sales Terminal est recentré sur les décisions quotidiennes : devis à produire, clients à relancer, règlements à vérifier et commandes à transmettre aux opérations."
         actions={<><ActionLink href="/sales/clients" tone="light" icon="client">Créer ou qualifier un client</ActionLink><ActionLink href="/sales/orders/new" tone="blue" icon="plus">Composer une commande</ActionLink><ActionButton tone="navy" icon="refresh" onClick={() => void load()} disabled={loading}>Actualiser</ActionButton></>}
         aside={<>
-          <HeroStat label="Pipeline Sales Terminal" value={formatDh(stats.pipeline)} detail={`${orders.length} commandes visibles`} tone="blue" />
-          <HeroStat label="Revenue confirmé" value={formatDh(stats.confirmedValue)} detail={`${stats.confirmed.length} commandes commercialement actives`} tone="green" />
-          <HeroStat label="Exposition non réglée" value={formatDh(stats.exposure)} detail={`${stats.unpaidConfirmed.length} commandes confirmées`} tone={stats.unpaidConfirmed.length ? 'red' : 'green'} />
-          <HeroStat label="Dernier mouvement" value={formatDate(lastActivity, true)} detail={partialSources.length ? 'Sources partielles détectées' : 'Source Sales Terminal active'} tone={partialSources.length ? 'amber' : 'slate'} />
+          <HeroStat label="Pipeline ouvert" value={formatDh(stats.pipeline)} detail={`${orders.length} commandes visibles`} tone="blue" />
+          <HeroStat label="À sécuriser" value={formatDh(stats.exposure)} detail={`${stats.unpaidConfirmed.length} commandes confirmées non réglées`} tone={stats.unpaidConfirmed.length ? 'red' : 'green'} />
+          <HeroStat label="Actions du jour" value={actionQueue.length} detail="Devis, relances, paiement et handoff" tone={actionQueue.length ? 'amber' : 'green'} />
+          <HeroStat label="Dernier mouvement" value={formatDate(lastActivity, true)} detail={partialSources.length ? 'Sources partielles détectées' : 'Sales Terminal chargé'} tone={partialSources.length ? 'amber' : 'slate'} />
         </>}
       />
 
       <CommercialNav active="command" />
 
-      {partialSources.length ? <Notice tone="amber" icon="alert" title="Périmètre partiellement chargé" text={`Sources indisponibles ou distinctes : ${partialSources.join(', ')}. Les données Sales Execution OS ne doivent pas être interprétées comme le même pipeline que sales_terminal_*.`} /> : null}
+      {partialSources.length ? <Notice tone="amber" icon="alert" title="Périmètre partiellement chargé" text={`Sources indisponibles : ${partialSources.join(', ')}. Les chiffres visibles peuvent être incomplets.`} /> : null}
 
-      <div className={styles.metricsGrid}>
-        <MetricTile label="Clients" value={clients.length} detail="Dossiers Sales Terminal" icon="client" tone="blue" />
-        <MetricTile label="Pipeline" value={formatDh(stats.pipeline)} detail={`${stats.draft.length} brouillons · ${stats.quoted.length} devis`} icon="chart" tone="navy" />
-        <MetricTile label="À sécuriser" value={formatDh(stats.exposure)} detail={`${stats.unpaidConfirmed.length} confirmées non réglées`} icon="alert" tone={stats.unpaidConfirmed.length ? 'red' : 'green'} onClick={() => setFocus('unpaid')} />
-        <MetricTile label="Handoff prêt" value={stats.handoffReady.length} detail="Statut de transmission, pas preuve de mission" icon="handoff" tone="green" onClick={() => setFocus('handoff')} />
-      </div>
+      <MetricStrip>
+        <Metric label="Clients" value={clients.length} context="Dossiers Sales Terminal" tone="good" />
+        <Metric label="Brouillons" value={stats.draft.length} context="Devis à préparer" tone={stats.draft.length ? 'attention' : 'good'} />
+        <Metric label="Devis émis" value={stats.quoted.length} context="Relances potentielles" tone={stats.quoted.length ? 'attention' : 'neutral'} />
+        <Metric label="Confirmées" value={stats.confirmed.length} context={formatDh(stats.confirmedValue)} tone="good" />
+        <Metric label="Réglées" value={stats.paid.length} context={formatDh(stats.paidValue)} tone="good" />
+        <Metric label="Handoffs à préparer" value={stats.paid.filter(order => order.fulfillment_status !== 'handoff_ready').length} context="Paiement déclaré, transmission non prête" tone={stats.paid.some(order => order.fulfillment_status !== 'handoff_ready') ? 'attention' : 'good'} />
+      </MetricStrip>
 
       <ContinuityRibbon items={[
-        { label: 'Client', value: `${clients.length} dossiers`, tone: 'blue', href: '/sales/clients' },
-        { label: 'Services', value: 'Catalogue connecté', tone: 'green', href: '/services' },
-        { label: 'Commande', value: `${orders.length} visibles`, tone: 'blue', href: '/sales/orders' },
-        { label: 'Devis', value: `${stats.quoted.length} ouverts`, tone: stats.quoted.length ? 'amber' : 'slate' },
-        { label: 'Paiement', value: 'Statut déclaré', tone: stats.unpaidConfirmed.length ? 'amber' : 'green' },
-        { label: 'Handoff', value: `${stats.handoffReady.length} prêts`, tone: 'green' },
-        { label: 'Contrat', value: 'Lien non certifié', tone: 'slate' },
+        { label: 'Brouillons', value: `${stats.draft.length} · ${formatDh(stats.draft.reduce((sum, order) => sum + Number(order.total_amount || 0), 0))}`, tone: 'blue' },
+        { label: 'Devis', value: `${stats.quoted.length} · ${formatDh(stats.quoted.reduce((sum, order) => sum + Number(order.total_amount || 0), 0))}`, tone: 'amber' },
+        { label: 'Confirmées', value: `${stats.confirmed.length} · ${formatDh(stats.confirmedValue)}`, tone: 'green' },
+        { label: 'Réglées', value: `${stats.paid.length} · ${formatDh(stats.paidValue)}`, tone: 'green' },
+        { label: 'Handoff prêt', value: `${stats.handoffReady.length}`, tone: 'blue' },
         { label: 'Billing', value: 'Document ≠ facture Billing', tone: 'amber', href: '/billing' },
       ]} />
 
       <div className={styles.grid2}>
-        <Panel title="File d’exécution commerciale" subtitle="Priorités déterministes calculées depuis les statuts existants du Sales Terminal." action={<SourceBadge tone="green">Sales Terminal live</SourceBadge>}>
+        <Panel title="File d’exécution commerciale" subtitle="Les actions sont déduites des statuts existants du Sales Terminal, sans automatisation externe." action={<SourceBadge tone="green">Source Sales Terminal</SourceBadge>}>
           <div className={styles.recordList}>
-            {actionQueue.length === 0 ? <EmptyState title="Aucune intervention prioritaire" text="Aucune commande visible ne nécessite actuellement de devis, relance, sécurisation de règlement ou handoff." /> : actionQueue.map(item => <article key={item.id} className={styles.recordCard}>
+            {actionQueue.length === 0 ? <EmptyState title="Aucune intervention prioritaire" text="Aucune commande visible ne nécessite actuellement de devis, relance, vérification de règlement ou handoff." /> : actionQueue.map(item => <article key={item.id} className={styles.recordCard}>
               <div className={styles.recordMain}>
                 <div className={styles.recordTitle}><strong>{item.title}</strong><Pill tone={item.tone}>{item.order.order_ref}</Pill></div>
                 <div className={styles.recordMeta}><span>{item.order.client_name}</span><span>{item.order.service_type || 'Service non renseigné'}</span><span>{formatDh(item.order.total_amount)}</span></div>
                 <p className={styles.muted}>{item.reason}</p>
               </div>
-              <div className={styles.recordActions}><ActionLink href={`/sales/orders/${item.order.id}`} tone="light">Ouvrir</ActionLink></div>
+              <div className={styles.recordActions}><ActionLink href={`/sales/orders/${item.order.id}`} tone="navy">Traiter</ActionLink></div>
             </article>)}
           </div>
         </Panel>
 
         <div className={styles.stack}>
-          <Panel title="Brief direction commerciale" subtitle="Lecture immédiate des enjeux à traiter.">
+          <Panel title="Brief direction commerciale" subtitle="Une seule recommandation dominante, basée sur le portefeuille chargé.">
             <div className={styles.summaryGrid}>
-              <div className={styles.summaryCell}><small>Situation pipeline</small><strong>{stats.pipeline > 0 ? 'Portefeuille actif' : 'Aucune valeur visible'}</strong></div>
-              <div className={styles.summaryCell}><small>Encaissement déclaré</small><strong>{formatDh(stats.paidValue)}</strong></div>
+              <div className={styles.summaryCell}><small>Pipeline</small><strong>{formatDh(stats.pipeline)}</strong></div>
+              <div className={styles.summaryCell}><small>Exposition non réglée</small><strong>{formatDh(stats.exposure)}</strong></div>
               <div className={styles.summaryCell}><small>Devis à relancer</small><strong>{stats.quoted.length}</strong></div>
               <div className={styles.summaryCell}><small>Handoffs à préparer</small><strong>{stats.paid.filter(order => order.fulfillment_status !== 'handoff_ready').length}</strong></div>
-              <div className={`${styles.summaryCell} ${styles.summaryWide}`}><small>Action recommandée</small><strong>{stats.unpaidConfirmed.length ? 'Prioriser les commandes confirmées non réglées.' : stats.quoted.length ? 'Relancer les devis en attente de réponse.' : stats.draft.length ? 'Finaliser les commandes brouillon.' : 'Maintenir le suivi du portefeuille.'}</strong></div>
+              <div className={`${styles.summaryCell} ${styles.summaryWide}`}><small>Priorité recommandée</small><strong>{stats.unpaidConfirmed.length ? 'Sécuriser les commandes confirmées non réglées.' : stats.quoted.length ? 'Relancer les devis en attente de réponse.' : stats.draft.length ? 'Finaliser les commandes brouillon.' : 'Maintenir le suivi du portefeuille.'}</strong></div>
             </div>
           </Panel>
-          <Notice tone="blue" title="Vérité financière" text="Une commande marquée réglée représente un statut Sales Terminal. Elle ne constitue pas, à elle seule, une preuve bancaire ni un enregistrement Billing 360." />
-          <Notice tone="slate" title="Vérité opérationnelle" text="Le statut Handoff prêt signifie que la commande est prête à être transmise. Il ne prouve ni création de contrat, ni mission, ni dispatch." />
+          <TruthNotice title="Vérité financière" tone="attention">Une commande marquée réglée représente un statut Sales Terminal. Elle ne constitue pas une preuve bancaire ni une facture Billing 360.</TruthNotice>
+          <TruthNotice title="Vérité opérationnelle">Le statut Handoff prêt indique une transmission possible. Il ne prouve ni création de contrat, ni mission, ni dispatch.</TruthNotice>
         </div>
       </div>
 
-      <div style={{ height: 18 }} />
-
-      <Panel title="Portefeuille commercial récent" subtitle={message} action={<div className={styles.inlineActions}><ActionLink href="/sales/orders" tone="light">Toutes les commandes</ActionLink><ActionLink href="/sales/orders/new" tone="navy" icon="plus">Créer</ActionLink></div>}>
+      <Panel
+        title="Portefeuille commercial"
+        subtitle={message}
+        action={<div className={styles.inlineActions}><ActionLink href="/sales/orders" tone="light">Toutes les commandes</ActionLink><ActionLink href="/sales/orders/new" tone="navy" icon="plus">Créer</ActionLink></div>}
+      >
         <div className={styles.toolbar}>
           <div className={styles.searchWrap}><Icon name="search"/><input className={styles.input} value={query} onChange={event => setQuery(event.target.value)} placeholder="Référence, client, service, ville ou statut…" /></div>
           <select className={styles.select} value={focus} onChange={event => setFocus(event.target.value as Focus)} style={{ maxWidth: 210 }}>
             <option value="all">Vue consolidée</option><option value="draft">Brouillons</option><option value="quoted">Devis émis</option><option value="confirmed">Confirmées</option><option value="unpaid">Non réglées</option><option value="paid">Réglées</option><option value="handoff">Handoff prêt</option>
           </select>
         </div>
-        <div className={styles.recordList}>
-          {visibleOrders.length === 0 ? <EmptyState title="Aucune commande dans cette vue" text="Aucun élément ne correspond à la recherche et au périmètre sélectionnés." action={<ActionLink href="/sales/orders/new" tone="navy" icon="plus">Créer une commande</ActionLink>} /> : visibleOrders.map(order => <article key={order.id} className={styles.recordCard}>
-            <div className={styles.recordMain}>
-              <div className={styles.recordTitle}><strong>{order.order_ref}</strong><Pill tone={toneForStatus(order.status)}>{order.status ? order.status.replaceAll('_', ' ') : 'draft'}</Pill><Pill tone={toneForStatus(order.payment_status)}>{order.payment_status || 'unpaid'}</Pill></div>
-              <div className={styles.recordMeta}><span>{order.client_name}</span><span>{order.service_type || 'Service non renseigné'}</span><span>{order.city || 'Ville non renseignée'}</span><span>{formatDh(order.total_amount)}</span></div>
-              <div className={styles.recordTags}><SourceBadge tone="blue">Sales Terminal</SourceBadge><Pill tone={toneForStatus(order.fulfillment_status)}>{order.fulfillment_status || 'not_started'}</Pill></div>
-            </div>
-            <div className={styles.recordActions}><ActionLink href={`/sales/orders/${order.id}`} tone="navy">Piloter la commande</ActionLink></div>
-          </article>)}
-        </div>
+
+        {visibleOrders.length === 0 ? <EmptyState title="Aucune commande dans cette vue" text="Aucun élément ne correspond à la recherche et au périmètre sélectionnés." action={<ActionLink href="/sales/orders/new" tone="navy" icon="plus">Créer une commande</ActionLink>} /> : (
+          <div className={styles.tableWrap}>
+            <table className={styles.table}>
+              <thead><tr><th>Commande</th><th>Client</th><th>Service</th><th>Valeur</th><th>Étape commerciale</th><th>Paiement</th><th>Handoff</th><th>Prochaine action</th></tr></thead>
+              <tbody>{visibleOrders.map(order => <tr key={order.id}>
+                <td><Link href={`/sales/orders/${order.id}`} style={{ color: '#123e70', fontWeight: 900, textDecoration: 'none' }}>{order.order_ref}</Link></td>
+                <td>{order.client_name}</td>
+                <td>{order.service_type || 'Non renseigné'}</td>
+                <td><strong>{formatDh(order.total_amount)}</strong></td>
+                <td><Pill tone={toneForStatus(order.status)}>{statusLabel(order.status)}</Pill></td>
+                <td><Pill tone={toneForStatus(order.payment_status)}>{statusLabel(order.payment_status || 'unpaid')}</Pill></td>
+                <td><Pill tone={toneForStatus(order.fulfillment_status)}>{statusLabel(order.fulfillment_status || 'not_started')}</Pill></td>
+                <td><Link href={`/sales/orders/${order.id}`} style={{ color: '#1d4ed8', fontWeight: 850, textDecoration: 'none' }}>{order.next_action || 'Ouvrir le dossier'}</Link></td>
+              </tr>)}</tbody>
+            </table>
+          </div>
+        )}
       </Panel>
 
-      <div className={styles.grid3} style={{ marginTop: 18 }}>
-        <Panel title="Intelligence distincte" subtitle="Sales Execution OS — source potentiellement différente du Sales Terminal.">
-          <div className={styles.summaryGrid}>
-            <div className={styles.summaryCell}><small>Pipeline déclaré</small><strong>{insights ? formatDh(insights.pipeline_value) : 'Indisponible'}</strong></div>
-            <div className={styles.summaryCell}><small>Conversion</small><strong>{insights ? `${Number(insights.conversion_rate || 0).toFixed(1)} %` : 'Indisponible'}</strong></div>
-            <div className={styles.summaryCell}><small>Actions ouvertes</small><strong>{actions.filter(item => item.status === 'open').length || insights?.action_queue || 0}</strong></div>
-            <div className={styles.summaryCell}><small>Risque détecté</small><strong>{insights?.risk_orders ?? '—'}</strong></div>
-          </div>
-          <p className={styles.pageFooterNote}>Ces chiffres proviennent des endpoints d’intelligence existants et peuvent lire les tables sales_* plutôt que sales_terminal_*. Ils sont présentés comme une source distincte.</p>
-        </Panel>
-        <Panel title="Communications enregistrées" subtitle="Journal interne, sans présumer d’un envoi externe.">
-          <div className={styles.summaryGrid}>
-            <div className={styles.summaryCell}><small>Logs visibles</small><strong>{communications.length}</strong></div>
-            <div className={styles.summaryCell}><small>Canal dominant</small><strong>{communications[0]?.channel || 'Aucun'}</strong></div>
-            <div className={`${styles.summaryCell} ${styles.summaryWide}`}><small>Garantie</small><strong>Log enregistré ≠ message envoyé ou livré</strong></div>
-          </div>
-        </Panel>
-        <Panel title="Gouvernance du terminal" subtitle="Configuration et surfaces techniques clairement séparées.">
-          <div className={styles.summaryGrid}>
-            <div className={styles.summaryCell}><small>Options actives</small><strong>{configActive}</strong></div>
-            <div className={styles.summaryCell}><small>Sources partielles</small><strong>{partialSources.length}</strong></div>
-          </div>
-          <div className={styles.inlineActions} style={{ marginTop: 12 }}><ActionLink href="/sales/configuration" tone="light" icon="settings">Configuration</ActionLink><ActionLink href="/sales/qa" tone="light" icon="technical">Assurance technique</ActionLink></div>
-        </Panel>
-      </div>
+      <SectionHeading
+        eyebrow="Systèmes distincts"
+        title="Intelligence, communications et configuration restent séparées du pipeline principal."
+        description="Les endpoints d’intelligence peuvent lire des tables sales_* différentes. Les communications enregistrées ne prouvent pas un envoi externe."
+        actions={<><ActionLink href="/sales/management" tone="light">Management</ActionLink><ActionLink href="/sales/configuration" tone="light">Configuration</ActionLink></>}
+      />
     </div>
   </AppShell>
 }

@@ -273,7 +273,7 @@ export default function CanonicalRevenueWorkspace({
 
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_80%_-10%,rgba(65,151,221,.12),transparent_32%),linear-gradient(180deg,#f8fbfe_0%,#eef4f9_100%)] p-4 text-[#102a43] md:p-6 xl:p-8">
-      <section className="mx-auto w-full max-w-[1600px]">
+      <section className="w-full max-w-none">
         <header className="relative overflow-hidden rounded-[28px] border border-[#173b62]/10 bg-[linear-gradient(135deg,#0a2445_0%,#103c68_62%,#0d2b4d_100%)] p-7 text-white shadow-[0_28px_80px_rgba(14,48,82,.17)] md:p-9">
           <div className="pointer-events-none absolute -right-20 -top-24 h-72 w-72 rounded-full border border-white/10 shadow-[0_0_0_34px_rgba(255,255,255,.025),0_0_0_72px_rgba(255,255,255,.015)]" />
           <div className="relative flex flex-col gap-7 xl:flex-row xl:items-end xl:justify-between">

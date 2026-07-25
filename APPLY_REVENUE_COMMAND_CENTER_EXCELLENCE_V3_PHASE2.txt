@@ -1,0 +1,43 @@
+ANGELCARE Revenue Command Center — Excellence v3 / Phase 2
+Prospects, Accounts, Contacts & Opportunities
+
+PREREQUISITE
+Revenue Command Center Excellence v2 — Workspace Sovereignty must already be installed.
+
+1. Extract this ZIP from the repository root:
+
+   cd ~/Desktop/angelcare-platform
+   unzip -o ~/Downloads/ANGELCARE_REVENUE_COMMAND_CENTER_EXCELLENCE_v3_PROSPECT_ENTERPRISE_PHASE2_PATCH.zip -d ~/Desktop/angelcare-platform
+
+2. Run static acceptance:
+
+   cd ~/Desktop/angelcare-platform/apps/ops-web
+   node scripts/verify-revenue-command-center-uiux-excellence.mjs
+   node scripts/verify-revenue-command-center-prospect-enterprise-phase2.mjs
+
+Expected:
+   99 checks passed. No contract violation detected by the static acceptance gate.
+   258 checks passed. Prospect / Account / Opportunity Phase 2 is statically accepted.
+
+3. After dependencies are installed, run the focused TypeScript gate:
+
+   npx tsc -p tsconfig.revenue-command-center-prospect-phase2.json --pretty false
+
+4. DATABASE SAFETY — DO NOT APPLY THE MIGRATION BLINDLY.
+
+Run this read-only preflight first in Supabase SQL Editor:
+
+   supabase/revenue-command-center/preflight/20260725_prospect_enterprise_live_schema_preflight.sql
+
+Proceed only when the final CUTOVER_GATE is READY and public.revenue_prospects.id is uuid.
+If it is BLOCKED or text, stop and perform an approved legacy-ID reconciliation before migration.
+
+5. When the preflight is READY, back up the database, review policies, then apply:
+
+   supabase/migrations/20260725_0100_revenue_prospect_account_opportunity_enterprise_completion.sql
+
+6. Controlled rollback, only after backup and explicit approval:
+
+   supabase/revenue-command-center/rollback/20260725_revenue_prospect_enterprise_phase2_rollback.sql
+
+No npm run build was executed by this package.

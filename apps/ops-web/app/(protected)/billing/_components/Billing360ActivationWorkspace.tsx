@@ -7,6 +7,13 @@ import { useMemo, useState } from 'react'
 import type { ChangeEvent } from 'react'
 import styles from './billing360.module.css'
 import {
+  ActionLink as CoreActionLink,
+  CommandHeader,
+  CommercialCoreBar,
+  TruthNotice,
+  WorkspaceNav,
+} from '@/components/commercial-core/CommercialCoreShell'
+import {
   agingLabel,
   amount,
   BillingContract,
@@ -86,17 +93,25 @@ export default function Billing360ActivationWorkspace({
 
   return (
     <div className={styles.root}>
-      <section className={styles.hero}>
-        <div className={styles.heroIdentity}>
-          <div className={styles.brandLine}><div className={styles.logoPlate}><Image className={styles.logoImage} src="/logo.png" alt="ANGELCARE" width={260} height={90} priority /></div><div className={styles.brandCopy}><span className={styles.eyebrow}>ANGELCARE SANILA OS</span><strong>Billing 360 · Collections & Activation Control Tower</strong></div></div>
-          <h1>Transformer les échéances visibles en actions financières maîtrisées.</h1>
-          <p className={styles.heroLead}>Une file opérationnelle pour identifier les factures à suivre, les retards à traiter et le contrat à ouvrir avant toute action.</p>
-          <div className={styles.heroMeta}><span className={styles.metaPill}><ShieldCheck size={15} /> Accès CEO / Manager préservé</span><span className={styles.metaPill}><Clock3 size={15} /> {totals.pending} en attente</span></div>
-        </div>
-        <aside className={styles.heroFinance}><div><div className={styles.heroFinanceLabel}><span>Montant ouvert</span><WalletCards size={18} /></div><div className={styles.heroFinanceValue}>{formatDh(totals.open)}</div><div className={styles.heroFinanceSub}>{formatDh(totals.overdueAmount)} déjà en retard</div></div><div className={styles.heroMiniGrid}><div className={styles.heroMini}><span>Facturé</span><strong>{formatDh(totals.invoiced)}</strong></div><div className={styles.heroMini}><span>Encaissé</span><strong>{formatDh(totals.paid)}</strong></div></div></aside>
-      </section>
+      <CommercialCoreBar active="billing" />
 
-      {dataWarnings.length ? <div className={styles.warningBanner}><AlertTriangle size={20} /><div><strong>Couverture partielle.</strong> {dataWarnings.join(' ')}</div></div> : null}
+      <CommandHeader
+        eyebrow="SANILA Billing Control · Collections"
+        title="Une file d’encaissement claire, classée par urgence et exposition."
+        description="Cette vue opérationnelle organise les factures en attente, en retard ou réglées et ouvre le contexte contractuel avant toute action."
+        actions={<><CoreActionLink href="/billing">Accounts Receivable</CoreActionLink><CoreActionLink href="/billing/overview">Vue exécutive</CoreActionLink><CoreActionLink href="/contracts" primary>Ouvrir les contrats</CoreActionLink></>}
+        aside={<div style={{ display: 'grid', gap: 10 }}><span style={{ color: '#bfdbfe', fontSize: 10, fontWeight: 900, letterSpacing: '.1em', textTransform: 'uppercase' }}>Montant ouvert</span><strong style={{ fontSize: 36, letterSpacing: '-.04em' }}>{formatDh(totals.open)}</strong><span style={{ color: '#dbeafe', fontSize: 11 }}>{formatDh(totals.overdueAmount)} déjà en retard.</span></div>}
+        source="File opérationnelle calculée à partir des statuts et échéances existants."
+      />
+
+      <WorkspaceNav items={[
+        { href: '/billing', label: 'Accounts Receivable', description: 'Exposition & actions' },
+        { href: '/billing/overview', label: 'Executive Overview', description: 'Position financière' },
+        { href: '/billing/activation', label: 'Collections', description: 'Files d’encaissement' },
+        { href: '/contracts', label: 'Contrats', description: 'Base contractuelle' },
+      ]} activeHref="/billing/activation" />
+
+      {dataWarnings.length ? <TruthNotice title="Couverture partielle" tone="attention">{dataWarnings.join(' ')}</TruthNotice> : null}
 
       <section className={styles.kpiGrid}>
         <Kpi label="Factures" value={String(invoices.length)} sub="Périmètre chargé" />

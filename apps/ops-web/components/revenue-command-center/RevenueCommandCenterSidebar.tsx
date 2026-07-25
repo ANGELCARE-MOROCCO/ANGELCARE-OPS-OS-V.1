@@ -2,156 +2,311 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useMemo, useState } from "react";
 import {
   Activity,
   BarChart3,
+  BriefcaseBusiness,
   CalendarDays,
   CheckCircle2,
+  ChevronDown,
+  ChevronRight,
+  Command,
+  FileText,
+  Gauge,
   Handshake,
+  LayoutDashboard,
+  LineChart,
   MapPinned,
   Megaphone,
+  Menu,
   MessageCircle,
+  PanelLeftClose,
+  PanelLeftOpen,
+  Search,
   ShieldCheck,
+  Sparkles,
   Target,
   UsersRound,
+  Workflow,
+  X,
+  Zap,
+  type LucideIcon,
 } from "lucide-react";
 
-const navGroups = [
+type SidebarProps = {
+  collapsed?: boolean;
+  overlayOpen?: boolean;
+  onToggleCollapsed?: () => void;
+  onOpenOverlay?: () => void;
+  onCloseOverlay?: () => void;
+};
+
+type NavEntry = {
+  label: string;
+  href: string;
+  icon: LucideIcon;
+  aliases?: string[];
+};
+
+type NavGroup = {
+  id: string;
+  label: string;
+  icon: LucideIcon;
+  items: NavEntry[];
+};
+
+const navGroups: NavGroup[] = [
   {
-    label: "Pilotage",
+    id: "command",
+    label: "Pilotage exécutif",
+    icon: Gauge,
     items: [
-      {
-        label: "Poste de commandement",
-        href: "/revenue-command-center",
-        icon: Target,
-      },
-      {
-        label: "Briefing exécutif",
-        href: "/revenue-command-center/executive-briefing",
-        icon: ShieldCheck,
-      },
+      { label: "Poste de commandement", href: "/revenue-command-center", icon: LayoutDashboard },
+      { label: "Briefing de direction", href: "/revenue-command-center/executive-briefing", icon: BriefcaseBusiness },
+      { label: "Tour de contrôle", href: "/revenue-command-center/control-tower", icon: ShieldCheck },
+      { label: "Mon travail", href: "/revenue-command-center/my-work", icon: Target },
+      { label: "Poste quotidien", href: "/revenue-command-center/daily-desk", icon: Command },
     ],
   },
   {
+    id: "execution",
     label: "Exécution commerciale",
+    icon: CheckCircle2,
     items: [
-      {
-        label: "Prospects et comptes",
-        href: "/revenue-command-center/prospects/directory",
-        icon: UsersRound,
-      },
-      {
-        label: "Partenariats",
-        href: "/revenue-command-center/partnerships",
-        icon: Handshake,
-      },
-      {
-        label: "Tâches et actions",
-        href: "/revenue-command-center/daily-tasks",
-        icon: CheckCircle2,
-      },
-      {
-        label: "Rendez-vous",
-        href: "/revenue-command-center/appointments",
-        icon: CalendarDays,
-      },
-      {
-        label: "Campagnes",
-        href: "/revenue-command-center/campaigns",
-        icon: Megaphone,
-      },
-      {
-        label: "Relances",
-        href: "/revenue-command-center/follow-ups",
-        icon: MessageCircle,
-      },
+      { label: "Prospects et comptes", href: "/revenue-command-center/prospects/directory", icon: UsersRound, aliases: ["/revenue-command-center/prospects"] },
+      { label: "Tâches et actions", href: "/revenue-command-center/daily-tasks", icon: CheckCircle2, aliases: ["/revenue-command-center/tasks"] },
+      { label: "Rendez-vous", href: "/revenue-command-center/appointments", icon: CalendarDays },
+      { label: "Relances et récupération", href: "/revenue-command-center/follow-ups", icon: MessageCircle },
+      { label: "Documents commerciaux", href: "/revenue-command-center/documents", icon: FileText },
+      { label: "Parcours commercial B2C", href: "/revenue-command-center/b2c-workflow", icon: Workflow },
     ],
   },
   {
-    label: "Intelligence",
+    id: "growth",
+    label: "Croissance et marché",
+    icon: LineChart,
     items: [
-      {
-        label: "Cartographie marché",
-        href: "/revenue-command-center/market-mapping",
-        icon: MapPinned,
-      },
-      {
-        label: "Analytics revenu",
-        href: "/revenue-command-center/revenue-analytics",
-        icon: BarChart3,
-      },
-      {
-        label: "Chronologie d’activité",
-        href: "/revenue-command-center/activity-timeline",
-        icon: Activity,
-      },
+      { label: "Partenariats stratégiques", href: "/revenue-command-center/partnerships", icon: Handshake },
+      { label: "Campagnes", href: "/revenue-command-center/campaigns", icon: Megaphone },
+      { label: "Développement commercial", href: "/revenue-command-center/business-development", icon: BriefcaseBusiness },
+      { label: "Exécution SDR", href: "/revenue-command-center/sdr-execution", icon: Target },
+      { label: "Cartographie marché", href: "/revenue-command-center/market-mapping", icon: MapPinned },
+      { label: "Croissance", href: "/revenue-command-center/growth", icon: LineChart },
+    ],
+  },
+  {
+    id: "intelligence",
+    label: "Intelligence et contrôle",
+    icon: BarChart3,
+    items: [
+      { label: "Analytics revenu", href: "/revenue-command-center/revenue-analytics", icon: BarChart3 },
+      { label: "Chronologie d’activité", href: "/revenue-command-center/activity-timeline", icon: Activity },
+      { label: "Scoring et prédiction", href: "/revenue-command-center/ai-scoring", icon: Sparkles },
+      { label: "Performance équipe", href: "/revenue-command-center/team-performance", icon: UsersRound },
+      { label: "Équilibrage de charge", href: "/revenue-command-center/workload-balancer", icon: Gauge },
+      { label: "Alertes et notifications", href: "/revenue-command-center/notifications", icon: MessageCircle },
+    ],
+  },
+  {
+    id: "strategy",
+    label: "Stratégie et orchestration",
+    icon: Sparkles,
+    items: [
+      { label: "Strategy Room", href: "/revenue-command-center/strategy-room", icon: Sparkles },
+      { label: "Automation", href: "/revenue-command-center/automation", icon: Zap },
+      { label: "Activation système", href: "/revenue-command-center/system-activation", icon: ShieldCheck },
+      { label: "Master Command", href: "/revenue-command-center/master-command", icon: Command },
+      { label: "Elite Command", href: "/revenue-command-center/elite-command", icon: Target },
     ],
   },
 ];
 
-export function RevenueCommandCenterSidebar() {
-  const pathname = usePathname();
+function isActive(pathname: string, item: NavEntry) {
+  const candidates = [item.href, ...(item.aliases || [])];
+  return candidates.some((href) =>
+    href === "/revenue-command-center"
+      ? pathname === href
+      : pathname === href || pathname.startsWith(`${href}/`),
+  );
+}
+
+export function RevenueCommandCenterSidebar({
+  collapsed = false,
+  overlayOpen = false,
+  onToggleCollapsed,
+  onOpenOverlay,
+  onCloseOverlay,
+}: SidebarProps) {
+  const pathname = usePathname() || "/revenue-command-center";
+  const compact = collapsed && !overlayOpen;
+  const [query, setQuery] = useState("");
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(() =>
+    Object.fromEntries(navGroups.map((group) => [group.id, true])),
+  );
+
+  const filteredGroups = useMemo(() => {
+    const normalized = query.trim().toLocaleLowerCase("fr-FR");
+    if (!normalized) return navGroups;
+    return navGroups
+      .map((group) => ({
+        ...group,
+        items: group.items.filter((item) =>
+          `${item.label} ${item.href}`.toLocaleLowerCase("fr-FR").includes(normalized),
+        ),
+      }))
+      .filter((group) => group.items.length > 0);
+  }, [query]);
+
+  function closeAfterNavigation() {
+    onCloseOverlay?.();
+  }
 
   return (
-    <aside className="fixed left-0 top-0 z-[999] hidden h-screen w-[260px] flex-col overflow-hidden border-r border-white/10 bg-[radial-gradient(circle_at_10%_0%,rgba(67,144,215,.24),transparent_30%),linear-gradient(180deg,#0a2342_0%,#07172d_60%,#061326_100%)] text-white shadow-[18px_0_55px_rgba(19,47,76,.10)] xl:flex">
-      <div className="flex min-h-28 items-center gap-3 border-b border-white/10 px-5">
-        <div className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl border border-white/15 bg-white/[0.08] shadow-inner">
-          <span className="h-0 w-0 border-b-[20px] border-l-[12px] border-r-[12px] border-b-[#e2384f] border-l-transparent border-r-transparent drop-shadow-[0_7px_12px_rgba(226,56,79,.32)]" />
-        </div>
-        <div>
-          <div className="text-[17px] font-black tracking-[0.16em] text-white">
-            ANGELCARE
-          </div>
-          <div className="mt-1.5 text-[9px] font-black uppercase tracking-[0.13em] text-white/60">
-            Revenue Command OS
-          </div>
-        </div>
-      </div>
+    <>
+      <button
+        type="button"
+        aria-label="Ouvrir la navigation Revenue Command"
+        className="rcc-sovereignty-mobile-trigger"
+        onClick={onOpenOverlay}
+      >
+        <Menu aria-hidden="true" />
+      </button>
 
-      <nav className="min-h-0 flex-1 overflow-y-auto px-3 py-5">
-        {navGroups.map((group, groupIndex) => (
-          <div key={group.label} className={groupIndex ? "mt-6" : ""}>
-            <div className="px-3 pb-2 text-[9px] font-black uppercase tracking-[0.18em] text-white/38">
-              {group.label}
-            </div>
-            <div className="space-y-1">
-              {group.items.map((item) => {
-                const active =
-                  pathname === item.href ||
-                  (item.href !== "/revenue-command-center" &&
-                    pathname?.startsWith(item.href));
-                const Icon = item.icon;
+      <button
+        type="button"
+        aria-label="Fermer la navigation Revenue Command"
+        className="rcc-sovereignty-backdrop"
+        data-open={overlayOpen ? "true" : "false"}
+        onClick={onCloseOverlay}
+      />
 
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className={`flex min-h-11 items-center gap-3 rounded-xl border px-3 py-2.5 text-xs font-extrabold transition ${
-                      active
-                        ? "border-[#7bbeef]/20 bg-[linear-gradient(90deg,rgba(45,122,193,.48),rgba(38,93,151,.22))] text-white shadow-[inset_3px_0_0_#6fb5ef]"
-                        : "border-transparent text-white/70 hover:border-white/[0.08] hover:bg-white/[0.06] hover:text-white"
-                    }`}
+      <aside
+        aria-label="Navigation Revenue Command Center"
+        className="rcc-sovereignty-sidebar"
+        data-collapsed={compact ? "true" : "false"}
+        data-overlay-open={overlayOpen ? "true" : "false"}
+      >
+        <div className="rcc-sovereignty-brand">
+          <Link
+            href="/revenue-command-center"
+            className="rcc-sovereignty-brand-link"
+            onClick={closeAfterNavigation}
+            aria-label="Revenir au poste de commandement"
+          >
+            <span className="rcc-sovereignty-logo" aria-hidden="true">
+              <span className="rcc-sovereignty-triangle" />
+            </span>
+            <span className="rcc-sovereignty-brand-copy">
+              <strong>ANGELCARE</strong>
+              <small>Revenue Command OS</small>
+            </span>
+          </Link>
+
+          <div className="rcc-sovereignty-brand-actions">
+            <button
+              type="button"
+              className="rcc-sovereignty-icon-button rcc-sovereignty-desktop-control"
+              aria-label={collapsed ? "Déployer la barre latérale" : "Réduire la barre latérale"}
+              onClick={onToggleCollapsed}
+            >
+              {compact ? <PanelLeftOpen /> : <PanelLeftClose />}
+            </button>
+            <button
+              type="button"
+              className="rcc-sovereignty-icon-button rcc-sovereignty-overlay-close"
+              aria-label="Fermer la navigation"
+              onClick={onCloseOverlay}
+            >
+              <X />
+            </button>
+          </div>
+        </div>
+
+        {!compact && (
+          <div className="rcc-sovereignty-search-wrap">
+            <Search aria-hidden="true" />
+            <input
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Rechercher un espace…"
+              aria-label="Rechercher dans les espaces Revenue Command"
+            />
+          </div>
+        )}
+
+        <nav className="rcc-sovereignty-nav">
+          {filteredGroups.map((group) => {
+            const GroupIcon = group.icon;
+            const expanded = query ? true : expandedGroups[group.id] !== false;
+            const groupContainsActive = group.items.some((item) => isActive(pathname, item));
+
+            return (
+              <section className="rcc-sovereignty-group" key={group.id} data-active={groupContainsActive ? "true" : "false"}>
+                {!compact ? (
+                  <button
+                    type="button"
+                    className="rcc-sovereignty-group-button"
+                    onClick={() =>
+                      setExpandedGroups((current) => ({
+                        ...current,
+                        [group.id]: !expanded,
+                      }))
+                    }
+                    aria-expanded={expanded}
                   >
-                    <Icon className="h-4 w-4 shrink-0" />
-                    <span className="min-w-0 flex-1 truncate">{item.label}</span>
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-        ))}
-      </nav>
+                    <span>
+                      <GroupIcon aria-hidden="true" />
+                      {group.label}
+                    </span>
+                    <ChevronDown aria-hidden="true" data-expanded={expanded ? "true" : "false"} />
+                  </button>
+                ) : (
+                  <div className="rcc-sovereignty-group-marker" title={group.label}>
+                    <GroupIcon aria-hidden="true" />
+                  </div>
+                )}
 
-      <div className="m-3 rounded-2xl border border-emerald-300/15 bg-emerald-800/15 p-4">
-        <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.13em] text-white">
-          <span className="h-2 w-2 rounded-full bg-emerald-300 shadow-[0_0_0_4px_rgba(110,231,183,.10)]" />
-          Connexion active
+                {expanded && (
+                  <div className="rcc-sovereignty-items">
+                    {group.items.map((item) => {
+                      const active = isActive(pathname, item);
+                      const Icon = item.icon;
+                      return (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          onClick={closeAfterNavigation}
+                          className="rcc-sovereignty-nav-item"
+                          data-active={active ? "true" : "false"}
+                          aria-current={active ? "page" : undefined}
+                          title={compact ? item.label : undefined}
+                        >
+                          <span className="rcc-sovereignty-nav-icon">
+                            <Icon aria-hidden="true" />
+                          </span>
+                          {!compact && <span className="rcc-sovereignty-nav-label">{item.label}</span>}
+                          {!compact && <ChevronRight className="rcc-sovereignty-nav-arrow" aria-hidden="true" />}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                )}
+              </section>
+            );
+          })}
+        </nav>
+
+        <div className="rcc-sovereignty-footer">
+          <span className="rcc-sovereignty-status-dot" aria-hidden="true" />
+          {!compact && (
+            <span>
+              <strong>Connexion opérationnelle</strong>
+              <small>Routes, permissions et câblages existants préservés.</small>
+            </span>
+          )}
         </div>
-        <p className="mt-2 text-[10px] font-semibold leading-4 text-white/58">
-          Navigation reliée aux espaces existants, sans modification des règles
-          métier ni des permissions.
-        </p>
-      </div>
-    </aside>
+      </aside>
+    </>
   );
 }

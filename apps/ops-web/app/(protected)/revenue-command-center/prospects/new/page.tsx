@@ -1,7 +1,7 @@
-import RevenueProspectsV12MegaWorkspace from "@/components/revenue-command-center/RevenueProspectsV12MegaWorkspace"
+import ProspectEnterpriseWorkspace from "@/components/revenue-command-center/prospects-enterprise/ProspectEnterpriseWorkspace"
 
 export const dynamic = "force-dynamic"
 
 export default function Page() {
-  return <RevenueProspectsV12MegaWorkspace mode="new" />
+  return <ProspectEnterpriseWorkspace mode="new" />
 }

@@ -79,7 +79,7 @@ export async function PATCH(request: Request) {
       updated_at: new Date().toISOString(),
       updated_by: null,
     }
-    for (const [from, to] of Object.entries({ name:"name", company:"company", city:"city", source:"source", segment:"segment", stage:"stage", priority:"priority", score:"score", probability:"probability", owner:"owner", contactName:"contact_name", email:"email", phone:"phone", status:"status" })) {
+    for (const [from, to] of Object.entries({ name:"name", company:"company", city:"city", source:"source", segment:"segment", stage:"stage", priority:"priority", score:"score", probability:"probability", owner:"owner", contactName:"contact_name", email:"email", phone:"phone", status:"status", accountId:"account_id", contactId:"contact_id", nextActionAt:"next_action_at", lastActivityAt:"last_activity_at" })) {
       if (body[from] !== undefined) patch[to] = body[from]
     }
     if (body.valueMad !== undefined || body.value_mad !== undefined || body.value !== undefined) patch.value_mad = cleanNumber(body.valueMad ?? body.value_mad ?? body.value, 0)

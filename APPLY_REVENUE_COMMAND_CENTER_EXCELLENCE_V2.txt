@@ -1,0 +1,27 @@
+ANGELCARE Revenue Command Center Excellence v2
+Workspace Sovereignty Foundation
+
+PREREQUISITE
+The Excellence v1 Revenue Command Center patch must already be applied.
+
+APPLY FROM THE REPOSITORY ROOT
+
+  cd ~/Desktop/angelcare-platform
+  unzip -o ~/Downloads/ANGELCARE_REVENUE_COMMAND_CENTER_EXCELLENCE_v2_WORKSPACE_SOVEREIGNTY_PATCH.zip -d .
+
+VERIFY
+
+  cd apps/ops-web
+  node scripts/verify-revenue-command-center-uiux-excellence.mjs
+
+EXPECTED
+
+  98 checks passed. No contract violation detected by the static acceptance gate.
+
+INSPECT
+
+  cd ~/Desktop/angelcare-platform
+  git status --short
+
+This patch does not modify APIs, Supabase, migrations, authentication, permissions,
+workers, adapters, Revenue Command OS engines, Browser OS contracts or route files.

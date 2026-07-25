@@ -23,6 +23,15 @@ import { useMemo, useState } from 'react'
 import type { ChangeEvent, ReactNode } from 'react'
 import styles from './billing360.module.css'
 import {
+  ActionLink as CoreActionLink,
+  CommandHeader,
+  CommercialCoreBar,
+  Metric,
+  MetricStrip,
+  TruthNotice,
+  WorkspaceNav,
+} from '@/components/commercial-core/CommercialCoreShell'
+import {
   agingLabel,
   amount,
   BillingContract,
@@ -100,6 +109,21 @@ export default function Billing360CommandCenter({
   const dataQuality = useMemo(() => collectDataQuality(accounts, invoices), [accounts, invoices])
   const collectionRate = totals.invoiced > 0 ? Math.min(100, Math.max(0, (totals.paid / totals.invoiced) * 100)) : 0
 
+  const aging = useMemo(() => {
+    const buckets = { future: 0, today: 0, late7: 0, late30: 0, late30plus: 0, paid: 0 }
+    invoices.forEach((invoice) => {
+      const outstanding = Math.max(0, amount(invoice.amount) - amount(invoice.amount_paid))
+      if (isPaid(invoice)) { buckets.paid += amount(invoice.amount); return }
+      const label = agingLabel(invoice)
+      if (label === 'À venir' || label === 'Sans échéance') buckets.future += outstanding
+      else if (label === 'Échéance aujourd’hui') buckets.today += outstanding
+      else if (label === '1–7 jours de retard') buckets.late7 += outstanding
+      else if (label === '8–30 jours de retard') buckets.late30 += outstanding
+      else buckets.late30plus += outstanding
+    })
+    return buckets
+  }, [invoices])
+
   const views: Array<{ key: ViewKey; label: string }> = [
     { key: 'all', label: 'Vue consolidée' },
     { key: 'open', label: 'À encaisser' },
@@ -110,78 +134,68 @@ export default function Billing360CommandCenter({
     { key: 'events', label: 'Événements récents' },
   ]
 
+  const workspaceItems = [
+    { href: '/billing', label: 'Accounts Receivable', description: 'Exposition & actions' },
+    { href: '/billing/overview', label: 'Executive Overview', description: 'Position financière' },
+    { href: '/billing/activation', label: 'Collections', description: 'Files d’encaissement' },
+    { href: '/contracts', label: 'Contrats', description: 'Base contractuelle' },
+  ]
+
   return (
     <div className={styles.root}>
-      <section className={styles.hero}>
-        <div className={styles.heroIdentity}>
-          <div className={styles.brandLine}>
-            <div className={styles.logoPlate}>
-              <Image className={styles.logoImage} src="/logo.png" alt="ANGELCARE" width={260} height={90} priority />
-            </div>
-            <div className={styles.brandCopy}>
-              <span className={styles.eyebrow}>ANGELCARE SANILA OS</span>
-              <strong>Billing 360 · Contract Revenue Command</strong>
-            </div>
-          </div>
-          <h1>Le revenu contractuel, visible de la prestation à l’encaissement.</h1>
-          <p className={styles.heroLead}>
-            Une lecture exécutive des contrats, consommations, factures et risques de recouvrement — sans masquer la réalité opérationnelle derrière les chiffres.
-          </p>
-          <div className={styles.heroMeta}>
-            <span className={styles.metaPill}><ShieldCheck size={15} /> Périmètre financier contrôlé</span>
-            <span className={styles.metaPill}><BriefcaseBusiness size={15} /> {contracts.length} contrats chargés</span>
-            <span className={styles.metaPill}><ReceiptText size={15} /> {invoices.length} factures visibles</span>
-          </div>
-        </div>
+      <CommercialCoreBar active="billing" />
 
-        <aside className={styles.heroFinance}>
-          <div>
-            <div className={styles.heroFinanceLabel}><span>Solde ouvert à sécuriser</span><WalletCards size={18} /></div>
-            <div className={styles.heroFinanceValue}>{formatDh(totals.open)}</div>
-            <div className={styles.heroFinanceSub}>{totals.overdueCount} facture(s) en retard · {formatDh(totals.overdueAmount)} exposés</div>
-          </div>
-          <div>
-            <div className={styles.heroFinanceLabel}><span>Taux d’encaissement visible</span><strong>{Math.round(collectionRate)}%</strong></div>
+      <CommandHeader
+        eyebrow="SANILA Billing Control · Accounts Receivable"
+        title="Ce qui reste à encaisser, ce qui est en retard et où intervenir maintenant."
+        description="Billing est recentré sur le suivi des comptes contractuels : montant facturé, encaissé, solde ouvert, échéances et priorités de recouvrement."
+        actions={
+          <>
+            <CoreActionLink href="/billing/overview">Vue exécutive</CoreActionLink>
+            <CoreActionLink href="/billing/activation" primary>Ouvrir les collections</CoreActionLink>
+            <CoreActionLink href="/contracts">Contrats</CoreActionLink>
+          </>
+        }
+        aside={
+          <div style={{ display: 'grid', gap: 10 }}>
+            <span style={{ color: '#bfdbfe', fontSize: 10, fontWeight: 900, letterSpacing: '.1em', textTransform: 'uppercase' }}>Exposition ouverte</span>
+            <strong style={{ fontSize: 34, letterSpacing: '-.04em' }}>{formatDh(totals.open)}</strong>
+            <span style={{ color: '#dbeafe', fontSize: 11, lineHeight: 1.5 }}>{totals.overdueCount} facture(s) en retard · {formatDh(totals.overdueAmount)} exposés.</span>
             <div className={styles.progressTrack}><div className={styles.progressFill} style={{ width: `${collectionRate}%` }} /></div>
+            <span style={{ color: '#bfdbfe', fontSize: 10, fontWeight: 800 }}>Taux d’encaissement visible : {Math.round(collectionRate)}%</span>
           </div>
-          <div className={styles.heroMiniGrid}>
-            <div className={styles.heroMini}><span>Total facturé</span><strong>{formatDh(totals.invoiced)}</strong></div>
-            <div className={styles.heroMini}><span>Total encaissé</span><strong>{formatDh(totals.paid)}</strong></div>
-          </div>
-        </aside>
-      </section>
+        }
+        source="Sources : contracts, billing_invoices et contract_finance_events. Aucune écriture financière modifiée."
+      />
+
+      <WorkspaceNav items={workspaceItems} activeHref="/billing" />
 
       {dataWarnings.length > 0 ? (
-        <div className={styles.warningBanner}>
-          <AlertTriangle size={20} />
-          <div><strong>Couverture de données partielle.</strong> {dataWarnings.join(' ')}</div>
-        </div>
+        <TruthNotice title="Couverture de données partielle" tone="attention">{dataWarnings.join(' ')}</TruthNotice>
       ) : null}
 
-      <section className={styles.kpiGrid} aria-label="Indicateurs financiers">
-        <Kpi icon={<BriefcaseBusiness size={18} />} label="Contrats" value={String(contracts.length)} sub="Périmètre actif chargé" />
-        <Kpi icon={<TrendingUp size={18} />} label="Valeur contractuelle" value={formatDh(totals.contractValue)} sub="Base contractuelle visible" />
-        <Kpi icon={<FileText size={18} />} label="Total facturé" value={formatDh(totals.invoiced)} sub={`${invoices.length} documents`} />
-        <Kpi icon={<CheckCircle2 size={18} />} label="Total encaissé" value={formatDh(totals.paid)} sub={`${totals.paidCount} factures réglées`} />
-        <Kpi icon={<WalletCards size={18} />} label="Solde ouvert" value={formatDh(totals.open)} sub={`${totals.openCount} comptes concernés`} />
-        <Kpi icon={<AlertTriangle size={18} />} label="Montant en retard" value={formatDh(totals.overdueAmount)} sub={`${totals.overdueCount} factures`} />
-        <Kpi icon={<Clock3 size={18} />} label="En attente" value={String(totals.pendingCount)} sub="À suivre ou encaisser" />
-        <Kpi icon={<CircleDollarSign size={18} />} label="Contrats actifs" value={String(totals.activeContracts)} sub="Signed, active ou confirmed" />
-      </section>
+      <MetricStrip>
+        <Metric label="Valeur contractuelle" value={formatDh(totals.contractValue)} context={`${contracts.length} contrats`} tone="neutral" />
+        <Metric label="Total facturé" value={formatDh(totals.invoiced)} context={`${invoices.length} factures`} tone="neutral" />
+        <Metric label="Total encaissé" value={formatDh(totals.paid)} context={`${totals.paidCount} factures réglées`} tone="good" />
+        <Metric label="Solde ouvert" value={formatDh(totals.open)} context={`${totals.openCount} comptes`} tone={totals.open ? 'attention' : 'good'} />
+        <Metric label="En retard" value={formatDh(totals.overdueAmount)} context={`${totals.overdueCount} factures`} tone={totals.overdueCount ? 'risk' : 'good'} />
+        <Metric label="Contrats actifs" value={totals.activeContracts} context="Signed, active ou confirmed" tone="good" />
+      </MetricStrip>
 
-      <section className={styles.lifecycle} aria-label="Cycle contractuel et financier">
-        <Lifecycle index="01" label="Contrats actifs" value={String(totals.activeContracts)} />
-        <Lifecycle index="02" label="Services consommés" value="Contrats & missions" />
-        <Lifecycle index="03" label="Factures générées" value={String(invoices.length)} />
-        <Lifecycle index="04" label="Paiements ouverts" value={String(totals.openCount)} />
-        <Lifecycle index="05" label="Paiements reçus" value={String(totals.paidCount)} />
-        <Lifecycle index="06" label="Retards à traiter" value={String(totals.overdueCount)} />
+      <section className={styles.lifecycle} aria-label="Aging des encaissements">
+        <Lifecycle index="01" label="À venir / sans échéance" value={formatDh(aging.future)} />
+        <Lifecycle index="02" label="Échéance aujourd’hui" value={formatDh(aging.today)} />
+        <Lifecycle index="03" label="1–7 jours" value={formatDh(aging.late7)} />
+        <Lifecycle index="04" label="8–30 jours" value={formatDh(aging.late30)} />
+        <Lifecycle index="05" label="Plus de 30 jours" value={formatDh(aging.late30plus)} />
+        <Lifecycle index="06" label="Réglé" value={formatDh(aging.paid)} />
       </section>
 
       <section className={styles.controlBar} aria-label="Navigation du portefeuille financier">
         <label className={styles.searchBox}>
           <Search size={17} />
-          <input value={query} onChange={(event: ChangeEvent<HTMLInputElement>) => setQuery(event.target.value)} placeholder="Famille, contrat, facture, service…" />
+          <input value={query} onChange={(event: ChangeEvent<HTMLInputElement>) => setQuery(event.target.value)} placeholder="Famille, contrat, facture ou service…" />
         </label>
         <div className={styles.filterTabs}>
           {views.map((item) => (
@@ -190,18 +204,14 @@ export default function Billing360CommandCenter({
             </button>
           ))}
         </div>
-        <div className={styles.viewSwitcher}>
-          <button type="button" className={styles.viewButton} data-active={display === 'cards'} onClick={() => setDisplay('cards')} aria-label="Vue cartes"><Grid2X2 size={18} /></button>
-          <button type="button" className={styles.viewButton} data-active={display === 'table'} onClick={() => setDisplay('table')} aria-label="Vue tableau"><LayoutList size={18} /></button>
-        </div>
       </section>
 
       <section className={styles.mainGrid}>
         <div className={styles.contentColumn}>
           <div className={styles.sectionHeader}>
             <div>
-              <h2>{view === 'events' ? 'Événements financiers récents' : 'Portefeuille contractuel & recouvrement'}</h2>
-              <p>{view === 'events' ? 'Traçabilité métier des mouvements disponibles.' : 'Comptes consolidés par contrat, avec exposition et prochain point d’attention.'}</p>
+              <h2>{view === 'events' ? 'Événements financiers' : 'Comptes contractuels & recouvrement'}</h2>
+              <p>{view === 'events' ? 'Traçabilité des mouvements disponibles.' : 'Une ligne représente un compte contractuel et son exposition financière visible.'}</p>
             </div>
             <span className={styles.resultCount}>{view === 'events' ? events.length : filtered.length} résultat(s)</span>
           </div>
@@ -210,8 +220,6 @@ export default function Billing360CommandCenter({
             <FinanceEventFeed events={events} contracts={contracts} />
           ) : filtered.length === 0 ? (
             <EmptyState title="Aucun compte dans cette vue" text="Aucun contrat ne correspond actuellement au filtre ou à la recherche sélectionnée." />
-          ) : display === 'cards' ? (
-            <div className={styles.cardGrid}>{filtered.map((account) => <AccountCard key={String(account.contract.id)} account={account} />)}</div>
           ) : (
             <AccountTable accounts={filtered} />
           )}
@@ -219,20 +227,24 @@ export default function Billing360CommandCenter({
 
         <aside className={styles.rail}>
           <section className={styles.railPanel}>
-            <div className={styles.panelHeader}><h2>Priorités de recouvrement</h2><p>Exposition classée par retard puis solde ouvert.</p></div>
+            <div className={styles.panelHeader}><h2>Priorités de recouvrement</h2><p>Retards et soldes ouverts classés par exposition.</p></div>
             {priorities.length > 0 ? (
               <div className={styles.priorityList}>{priorities.map((account) => <PriorityItem key={String(account.contract.id)} account={account} />)}</div>
             ) : (
-              <EmptyState title="Aucune priorité critique" text="Aucune exposition ouverte significative n’est visible dans le périmètre chargé." compact />
+              <EmptyState title="Aucune priorité critique" text="Aucune exposition ouverte significative n’est visible." compact />
             )}
           </section>
+
+          <TruthNotice title="Séparation financière" tone="attention">
+            La consommation contractuelle décrit un service ou des sessions utilisés. Elle ne représente pas un paiement ni un mouvement bancaire.
+          </TruthNotice>
 
           <section className={styles.railPanel}>
             <div className={styles.panelHeader}><h2>Qualité des données</h2><p>Observations uniquement — aucune correction automatique.</p></div>
             {dataQuality.length > 0 ? (
-              <div className={styles.qualityList}>{dataQuality.slice(0, 8).map((item, index) => <div key={`${item.title}-${index}`} className={styles.qualityItem}><strong>{item.title}</strong><span>{item.detail}</span></div>)}</div>
+              <div className={styles.qualityList}>{dataQuality.slice(0, 6).map((item, index) => <div key={`${item.title}-${index}`} className={styles.qualityItem}><strong>{item.title}</strong><span>{item.detail}</span></div>)}</div>
             ) : (
-              <EmptyState title="Aucune incohérence évidente" text="Les contrôles de cohérence visibles n’ont détecté aucun signal majeur." compact />
+              <EmptyState title="Aucune incohérence évidente" text="Les contrôles visibles n’ont détecté aucun signal majeur." compact />
             )}
           </section>
         </aside>

@@ -151,6 +151,8 @@ export function normalizeRevenueProspectPayload(input: unknown, idFallback?: str
 
   return {
     id,
+    account_id: uuidOrNull(getPayloadValue(merged, ["accountId", "account_id"], null)),
+    contact_id: uuidOrNull(getPayloadValue(merged, ["contactId", "contact_id"], null)),
     name,
     company,
     city: cleanString(getPayloadValue(merged, ["city"], "Unassigned"), "Unassigned"),

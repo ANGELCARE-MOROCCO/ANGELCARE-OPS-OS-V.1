@@ -62,7 +62,14 @@ check(!/\bMAD\b/.test(dashboard), "French currency label standard uses Dh, not M
 check(!dashboard.includes("bg-[#050b16]"), "legacy dark-first dashboard foundation removed");
 
 const unified = read("app/(protected)/revenue-command-center/_shared/RevenueCommandUnifiedLayout.tsx");
-check(unified.includes('data-revenue-command-experience="premium-v1"'), "premium experience foundation applied globally");
+const experienceCss = read("app/(protected)/revenue-command-center/_shared/revenue-command-experience.css");
+const dashboardCss = read("app/(protected)/revenue-command-center/_central-core/CentralRevenueCoreDashboard.module.css");
+check(unified.includes('data-revenue-command-experience="premium-v2"'), "premium v2 experience foundation applied globally");
+check(unified.includes("SIDEBAR_STORAGE_KEY"), "sidebar collapse preference is frontend-persistent");
+check(unified.includes("onOpenOverlay") && unified.includes("onCloseOverlay"), "extractable overlay navigation is wired");
+check(experienceCss.includes("grid-template-columns: var(--rcc-sidebar-current) minmax(0, 1fr)"), "global shell allocates the remaining viewport to the workspace");
+check(experienceCss.includes(".rcc-sovereignty-mobile-trigger"), "mobile and tablet sidebar extraction control exists");
+check(dashboardCss.includes("width: 100%") && dashboardCss.includes("max-width: none"), "executive cockpit centered width ceiling removed");
 check(unified.includes("Aller au contenu principal"), "keyboard-accessible skip link included");
 
 const canonical = read("components/revenue-command-center/CanonicalRevenueWorkspace.tsx");
@@ -78,12 +85,12 @@ check(!guard.includes("color: #ffffff !important"), "forced global white text re
 check(guard.includes('data-partnerships-experience="premium-light-v1"'), "partnership light experience boundary present");
 
 const sidebar = read("components/revenue-command-center/RevenueCommandCenterSidebar.tsx");
-check(sidebar.includes("xl:flex"), "partnership sidebar is contained for responsive layouts");
+check(sidebar.includes("rcc-sovereignty-sidebar") && sidebar.includes("PanelLeftClose") && sidebar.includes("PanelLeftOpen"), "uniform collapsible Revenue Command sidebar installed");
 check(sidebar.includes("/revenue-command-center/revenue-analytics"), "correct revenue analytics destination preserved");
 check(sidebar.includes("/revenue-command-center/activity-timeline"), "correct activity timeline destination preserved");
 
 const partnershipPage = read("components/revenue-command-center/RevenuePartnershipsEnterprisePage.tsx");
-check(partnershipPage.includes("xl:ml-[260px]"), "partnership main surface responds to sidebar breakpoint");
+check(!partnershipPage.includes("xl:ml-[260px]") && !partnershipPage.includes("RevenueCommandCenterSidebar"), "partnership page uses the global full-width shell without a duplicate sidebar");
 check(!partnershipPage.includes('setModal("New Partnership")'), "partnership primary action is localized");
 check(!partnershipPage.includes("programs.length || 24"), "fabricated program fallback removed");
 check(partnershipPage.includes("stats.active / stats.total"), "active rate is derived from live records");
@@ -125,7 +132,8 @@ for (const route of expectedRoutes) {
 
 const routeFiles = pages.map((file) => ({ file, source: fs.readFileSync(file, "utf8") }));
 const familyCounts = {
-  RevenueProspectsV12MegaWorkspace: 18,
+  ProspectEnterpriseWorkspace: 15,
+  ProspectEnterpriseDossier: 6,
   RevenueB2CWorkflowV12MegaWorkspace: 26,
   RevenueCommandFinalWorkspace: 13,
   RevenueExecutiveBriefingV11Workspace: 3,
@@ -152,6 +160,8 @@ const transformedExperienceTargets = new Set([
   "components/revenue-command-center/RevenueAppointmentsV12MegaWorkspace.tsx",
   "components/revenue-command-center/RevenueDailyTasksV13McKinseyWorkspace.tsx",
   "components/revenue-command-center/RevenuePartnershipsV13ActionsWorkspace.tsx",
+  "components/revenue-command-center/prospects-enterprise/ProspectEnterpriseWorkspace.tsx",
+  "components/revenue-command-center/prospects-enterprise/ProspectEnterpriseDossier.tsx",
 ].map((file) => path.resolve(root, file)));
 
 const importPattern = /(?:import|export)\s+(?:[^"']*?\s+from\s+)?["']([^"']+)["']/g;
@@ -183,7 +193,7 @@ function reachesTransformedExperience(file, seen = new Set()) {
   return [...localDependencies(absolute)].some((dependency) => reachesTransformedExperience(dependency, seen));
 }
 const directlyTransformedRoutes = pages.filter((page) => reachesTransformedExperience(page)).length;
-check(directlyTransformedRoutes === 139, `direct/transitive premium route transformation: 139 (found ${directlyTransformedRoutes})`);
+check(directlyTransformedRoutes === 142, `direct/transitive premium route transformation: 142 (found ${directlyTransformedRoutes})`);
 
 const protectedPrefixes = [
   "app/api/",

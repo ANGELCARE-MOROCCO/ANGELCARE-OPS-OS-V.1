@@ -1,6 +1,15 @@
 import Link from 'next/link'
 import AppShell from '@/app/components/erp/AppShell'
 import {
+  ActionLink as CoreActionLink,
+  CommandHeader,
+  CommercialCoreBar,
+  Metric,
+  MetricStrip,
+  TruthNotice,
+  WorkspaceNav,
+} from '@/components/commercial-core/CommercialCoreShell'
+import {
   calculateServicePrice,
   getCityDeployments,
   getServiceBlueprints,
@@ -101,36 +110,67 @@ export default function ServiceOSWorkspacePage({ kind }: { kind: ServiceWorkspac
   const averageCapacity = deployments.length ? Math.round(deployments.reduce((sum: number, item: any) => sum + number(item.capacityScore ?? item.capacity, 0), 0) / deployments.length) : 0
   const highRiskCities = deployments.filter((item: any) => number(item.riskScore, 0) >= 60).length
 
+  const groupedNav = [
+    { href: '/services', label: 'Portfolio', description: 'Offre & readiness' },
+    { href: '/services/blueprints', label: 'Blueprints', description: 'Architecture de livraison' },
+    { href: '/services/pricing-engine', label: 'Tarification', description: 'Prix & règles' },
+    { href: '/services/operations', label: 'Delivery readiness', description: 'Opérations & capacité' },
+    { href: '/services/configuration', label: 'Gouvernance', description: 'Modules & règles' },
+    { href: '/services/enterprise', label: 'Executive', description: 'Vue ServiceOS' },
+  ]
+
+  const activeHref = kind === 'blueprints'
+    ? '/services/blueprints'
+    : ['pricing-engine'].includes(kind as string)
+      ? '/services/pricing-engine'
+      : ['operations', 'live-ops', 'capacity', 'expansion', 'incidents', 'workflows'].includes(kind)
+        ? '/services/operations'
+        : ['configuration', 'rules', 'compliance', 'contracts', 'client-journey'].includes(kind)
+          ? '/services/configuration'
+          : '/services/enterprise'
+
   return (
-    <AppShell title={meta.short} subtitle="ANGELCARE SANILA Services 360" breadcrumbs={[{ label: 'Services', href: '/services' }, { label: meta.short }]}>
+    <AppShell title={meta.short} subtitle="ANGELCARE SANILA Services OS" breadcrumbs={[{ label: 'Services', href: '/services' }, { label: meta.short }]}>
       <main className={styles.shell}>
-        <Services360Hero
-          eyebrow="Services 360 enterprise workspace"
+        <CommercialCoreBar active="services" />
+
+        <CommandHeader
+          eyebrow="SANILA Services OS · Workspace"
           title={meta.title}
-          subtitle={meta.description}
-          actions={<><SecondaryAction href="/services">Portfolio services</SecondaryAction><SecondaryAction href="/services/enterprise">Executive Command</SecondaryAction>{kind === 'blueprints' ? <PrimaryAction href="/services/blueprints/new">Créer un blueprint</PrimaryAction> : null}</>}
-          briefTitle={meta.brief}
-          briefRows={[
-            { label: 'Blueprints', value: blueprints.length },
-            { label: 'Modules / règles', value: `${modules.length} / ${rules.length}` },
-            { label: 'Déploiements', value: deployments.length },
-            { label: 'Missions visibles', value: missions.length },
-          ]}
-          provenance={[{ label: meta.source, tone: meta.tone }, { label: 'Backend & API contracts unchanged', tone: 'live' }]}
+          description={meta.description}
+          actions={
+            <>
+              <CoreActionLink href="/services">Retour au portfolio</CoreActionLink>
+              <CoreActionLink href="/services/blueprints">Blueprints</CoreActionLink>
+              {kind === 'blueprints' ? <CoreActionLink href="/services/blueprints/new" primary>Créer un blueprint</CoreActionLink> : null}
+            </>
+          }
+          aside={
+            <div style={{ display: 'grid', gap: 10 }}>
+              <span style={{ color: '#bfdbfe', fontSize: 10, fontWeight: 900, letterSpacing: '.1em', textTransform: 'uppercase' }}>Workspace truth</span>
+              <strong style={{ fontSize: 19 }}>{meta.brief}</strong>
+              <span style={{ color: '#dbeafe', fontSize: 11, lineHeight: 1.55 }}>Source : {meta.source}. La décision humaine reste requise.</span>
+            </div>
+          }
+          source={`Provenance : ${meta.tone === 'configured' ? 'données configurées' : 'simulation / intelligence interne'} · Backend inchangé.`}
         />
 
-        <Services360Nav items={serviceWorkspaceNav} />
+        <WorkspaceNav items={groupedNav} activeHref={activeHref} />
 
-        <KpiGrid>
-          <Kpi label="Blueprints" value={blueprints.length} helper={`${activeBlueprints} actifs dans le moteur partagé`} />
-          <Kpi label="Modules" value={modules.length} helper="Blocs configurables réutilisables" />
-          <Kpi label="Règles" value={rules.length} helper="Pricing, opérations et gouvernance" />
-          <Kpi label="Déploiements" value={deployments.length} helper={`Capacité moyenne ${averageCapacity}%`} />
-          <Kpi label="Missions" value={missions.length} helper={`${activeMissions} dans un état actif`} />
-          <Kpi label="Préparation" value={`${averageReadiness}%`} helper="Indicateur configuré / estimé" />
-        </KpiGrid>
+        {['simulation', 'fallback', 'legacy'].includes(meta.tone) ? (
+          <TruthNotice title="Source non certifiée comme registre opérationnel complet" tone="attention">
+            Cette vue exploite une couche {meta.tone}. Elle soutient l’analyse et la configuration, mais ne remplace pas automatiquement le catalogue, les contrats ou le registre principal des missions.
+          </TruthNotice>
+        ) : null}
 
-        <LifecycleRibbon items={serviceRelationshipNodes} />
+        <MetricStrip>
+          <Metric label="Blueprints" value={blueprints.length} context={`${activeBlueprints} actifs`} tone={blueprints.length ? 'good' : 'attention'} />
+          <Metric label="Modules" value={modules.length} context="Blocs configurables" tone={modules.length ? 'good' : 'attention'} />
+          <Metric label="Règles" value={rules.length} context="Pricing & gouvernance" tone={rules.length ? 'good' : 'attention'} />
+          <Metric label="Déploiements" value={deployments.length} context={`Capacité moyenne ${averageCapacity}%`} tone={deployments.length ? 'good' : 'attention'} />
+          <Metric label="Missions visibles" value={missions.length} context={`${activeMissions} actives`} tone={missions.length ? 'neutral' : 'attention'} />
+          <Metric label="Préparation" value={`${averageReadiness}%`} context="Configurée / estimée" tone={averageReadiness >= 75 ? 'good' : 'attention'} />
+        </MetricStrip>
 
         <div className={styles.grid2}>
           <div style={{ display: 'grid', gap: 18 }}>
@@ -139,21 +179,21 @@ export default function ServiceOSWorkspacePage({ kind }: { kind: ServiceWorkspac
           </div>
           <CommandRail>
             <DarkRailCard
-              title="Service Management Brief"
-              text="Synthèse déterministe construite à partir des données chargées dans ce workspace."
+              title="Décisions & vigilance"
+              text="Synthèse déterministe construite à partir des sources visibles dans ce workspace."
               alerts={buildAlerts(kind, { blueprints, modules, rules, deployments, missions, highRiskCities })}
             />
-            <LightRailCard title="Architecture & confiance">
+            <LightRailCard title="Architecture de confiance">
               <ReviewRow label="Source principale" value={meta.source} />
               <ReviewRow label="Provenance" value={meta.tone === 'configured' ? 'Configurée' : 'Simulation'} />
               <ReviewRow label="Écriture backend" value="Inchangée" />
               <ReviewRow label="Décision humaine" value="Requise" />
             </LightRailCard>
-            <LightRailCard title="Accès rapides">
-              <ReviewRow label="Catalogue" value={<Link className={styles.textLink} href="/services">Ouvrir</Link>} />
-              <ReviewRow label="Pricing Engine" value={<Link className={styles.textLink} href="/services/pricing-engine">Ouvrir</Link>} />
-              <ReviewRow label="Capacity" value={<Link className={styles.textLink} href="/services/capacity">Ouvrir</Link>} />
-              <ReviewRow label="Expansion" value={<Link className={styles.textLink} href="/services/expansion">Ouvrir</Link>} />
+            <LightRailCard title="Navigation structurée">
+              <ReviewRow label="Portfolio" value={<Link className={styles.textLink} href="/services">Ouvrir</Link>} />
+              <ReviewRow label="Tarification" value={<Link className={styles.textLink} href="/services/pricing-engine">Ouvrir</Link>} />
+              <ReviewRow label="Delivery readiness" value={<Link className={styles.textLink} href="/services/operations">Ouvrir</Link>} />
+              <ReviewRow label="Gouvernance" value={<Link className={styles.textLink} href="/services/configuration">Ouvrir</Link>} />
             </LightRailCard>
           </CommandRail>
         </div>

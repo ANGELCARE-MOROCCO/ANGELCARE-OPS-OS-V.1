@@ -3,7 +3,6 @@ import { shouldStartAutoRefresh, safeRefreshInterval } from '@/lib/runtime/clien
 
 import { useEffect, useMemo, useState, type ReactNode } from "react"
 import { Activity, ArrowRight, BarChart3, Bot, BriefcaseBusiness, Building2, CalendarDays, CircleDot, FileSignature, Handshake, HeartHandshake, MapPin, Megaphone, Network, Plus, RefreshCcw, Search, ShieldCheck, Sparkles, Stethoscope, Target, UsersRound, X } from "lucide-react"
-import { RevenueCommandCenterSidebar } from "./RevenueCommandCenterSidebar"
 import PartnershipProgramsWorkspace from "./PartnershipProgramsWorkspace"
 import PartnersDirectoryWorkspace from "./PartnersDirectoryWorkspace"
 
@@ -70,8 +69,7 @@ export default function RevenuePartnershipsEnterprisePage() {
   }, [partners])
 
   return <div className="min-h-screen w-full bg-[radial-gradient(circle_at_80%_-10%,rgba(65,151,221,.11),transparent_30%),linear-gradient(180deg,#f8fbfe_0%,#eef4f9_100%)] text-slate-900">
-    <RevenueCommandCenterSidebar />
-    <main className="min-h-screen w-full bg-transparent text-slate-900 xl:ml-[260px] xl:w-[calc(100%-260px)]">
+    <main className="min-h-screen w-full max-w-none bg-transparent text-slate-900">
       <header className="sticky top-0 z-40 w-full border-b border-slate-200 bg-white/92 px-8 py-5 text-slate-900 shadow-[0_8px_28px_rgba(24,52,80,.04)] backdrop-blur-xl">
         <div className="flex flex-wrap items-center justify-between gap-5"><div><p className="text-[10px] font-black uppercase tracking-[.18em] text-[#1768aa]">ANGELCARE Revenue Command OS</p><h1 className="mt-1 text-4xl font-black tracking-[-.05em] text-[#0b2345]">Commandement des partenariats</h1><p className="mt-2 text-sm font-semibold text-slate-500">Pilotage exécutif B2B synchronisé avec les données revenu existantes.</p></div><div className="flex gap-3"><Button onClick={load}><RefreshCcw className="h-4 w-4" /> Actualiser</Button><Button active onClick={() => setModal("Nouveau partenariat")}><Plus className="h-4 w-4" /> Nouveau partenariat</Button></div></div>
         <div className="mt-6 flex gap-3 overflow-x-auto pb-3">{tabs.map((tab) => { const Icon = tab.icon; return <Button key={tab.key} active={active === tab.key} onClick={() => setActive(tab.key)}><Icon className="h-4 w-4" />{tab.label}</Button> })}</div>

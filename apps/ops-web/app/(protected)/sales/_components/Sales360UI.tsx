@@ -3,6 +3,11 @@
 import Link from 'next/link'
 import type { ReactNode } from 'react'
 import styles from './Sales360.module.css'
+import {
+  CommandHeader,
+  CommercialCoreBar,
+  WorkspaceNav,
+} from '@/components/commercial-core/CommercialCoreShell'
 
 export { styles }
 
@@ -76,18 +81,17 @@ export function Icon({ name, size = 20, className = '' }: { name: string; size?:
 export function SalesHero({ eyebrow, title, text, actions, aside, technical = false }: {
   eyebrow: string; title: string; text: string; actions?: ReactNode; aside?: ReactNode; technical?: boolean
 }) {
-  return <section className={`${styles.hero} ${technical ? styles.heroTechnical : ''}`}>
-    <div className={styles.heroMain}>
-      <div className={styles.brandLine}>
-        <span className={styles.logoPlate}><img src="/logo.png" alt="ANGELCARE" /></span>
-        <span><b>ANGELCARE SANILA OS</b><small>{eyebrow}</small></span>
-      </div>
-      <h1>{title}</h1>
-      <p>{text}</p>
-      {actions ? <div className={styles.heroActions}>{actions}</div> : null}
-    </div>
-    {aside ? <div className={styles.heroAside}>{aside}</div> : null}
-  </section>
+  return <>
+    <CommercialCoreBar active="sales" />
+    <CommandHeader
+      eyebrow={technical ? 'SANILA Sales · Technical Assurance' : eyebrow}
+      title={title}
+      description={text}
+      actions={actions}
+      aside={aside}
+      source={technical ? 'Surface de diagnostic séparée des opérations commerciales.' : 'Source principale : Sales Terminal. Intelligence et systèmes externes présentés séparément.'}
+    />
+  </>
 }
 
 export function HeroStat({ label, value, detail, tone = 'blue' }: { label: string; value: ReactNode; detail?: string; tone?: Tone }) {
@@ -156,14 +160,15 @@ export function ContinuityRibbon({ items }: { items: Array<{ label: string; valu
 }
 
 export function CommercialNav({ active }: { active: 'command' | 'clients' | 'orders' | 'management' | 'configuration' | 'technical' }) {
-  const links = [
-    { key: 'command', label: 'Command Center', href: '/sales' },
-    { key: 'clients', label: 'Clients', href: '/sales/clients' },
-    { key: 'orders', label: 'Commandes', href: '/sales/orders' },
-    { key: 'management', label: 'Management', href: '/sales/management' },
-    { key: 'configuration', label: 'Configuration', href: '/sales/configuration' },
+  const items = [
+    { key: 'command', label: 'Revenue Command', description: 'Actions du jour', href: '/sales' },
+    { key: 'clients', label: 'Clients', description: 'Qualification & suivi', href: '/sales/clients' },
+    { key: 'orders', label: 'Commandes', description: 'Conversion & dossiers', href: '/sales/orders' },
+    { key: 'management', label: 'Management', description: 'Décisions & risques', href: '/sales/management' },
+    { key: 'configuration', label: 'Configuration', description: 'Référentiels', href: '/sales/configuration' },
   ]
-  return <nav className={styles.subnav}>{links.map(link => <Link key={link.key} href={link.href} className={active === link.key ? styles.subnavActive : ''}>{link.label}</Link>)}</nav>
+  const activeHref = items.find((item) => item.key === active)?.href
+  return <WorkspaceNav items={items.map(({ href, label, description }) => ({ href, label, description }))} activeHref={activeHref} />
 }
 
 export function Drawer({ open, title, subtitle, onClose, children }: { open: boolean; title: string; subtitle?: string; onClose: () => void; children: ReactNode }) {

@@ -33,6 +33,13 @@ import {
   statusLabel,
 } from '@/app/(protected)/billing/_components/billing360.types'
 import styles from './contract-finance-studio.module.css'
+import {
+  ActionLink as CoreActionLink,
+  CommandHeader,
+  CommercialCoreBar,
+  TruthNotice,
+  WorkspaceNav,
+} from '@/components/commercial-core/CommercialCoreShell'
 
 type ContractFamily = { family_name?: string | null; parent_name?: string | null; city?: string | null; phone?: string | null }
 type ContractRecord = Record<string, unknown> & {
@@ -106,17 +113,25 @@ export default function ContractFinanceStudio({
 
   return (
     <div className={styles.root}>
-      <section className={styles.hero}>
-        <div className={styles.heroMain}>
-          <div className={styles.brand}><div className={styles.logoPlate}><Image className={styles.logo} src="/logo.png" alt="ANGELCARE" width={260} height={90} priority /></div><div className={styles.brandCopy}><span>ANGELCARE SANILA OS</span><strong>Billing 360 · Contract Finance Execution Studio</strong></div></div>
-          <h1>{reference}</h1>
-          <p className={styles.heroLead}>{familyName} · {contract.service_type || 'Service non défini'} · cycle {String(contract.billing_cycle || 'one_time').replaceAll('_',' ')}</p>
-          <div className={styles.identityLine}><span className={styles.pill}><ShieldCheck size={14} /> Accès CEO / Manager</span><span className={styles.pill}><MapPin size={14} /> {family?.city || 'Ville non renseignée'}</span><span className={styles.pill}><Route size={14} /> {missions.length} mission(s) liée(s)</span></div>
-        </div>
-        <aside className={styles.heroBrief}><div><div className={styles.briefLabel}><span>Solde ouvert du contrat</span><WalletCards size={18} /></div><div className={styles.briefValue}>{formatDh(openAmount)}</div><div className={styles.briefSub}>{overdueInvoices.length} facture(s) en retard · statut {statusLabel(contract.payment_status)}</div></div><div className={styles.briefGrid}><div className={styles.briefMini}><span>Facturé</span><strong>{formatDh(totalInvoiced)}</strong></div><div className={styles.briefMini}><span>Encaissé</span><strong>{formatDh(totalPaid)}</strong></div></div></aside>
-      </section>
+      <CommercialCoreBar active="billing" />
 
-      {dataWarnings.length ? <div className={styles.warning}><AlertTriangle size={20} /><div><strong>Couverture partielle.</strong> {dataWarnings.join(' ')}</div></div> : null}
+      <CommandHeader
+        eyebrow="SANILA Billing Control · Contract Finance Dossier"
+        title={reference}
+        description={`${familyName} · ${String(contract.service_type || 'Service non défini')} · cycle ${String(contract.billing_cycle || 'one_time').replaceAll('_',' ')}`}
+        actions={<><CoreActionLink href="/billing">Accounts Receivable</CoreActionLink><CoreActionLink href="/billing/activation">Collections</CoreActionLink><CoreActionLink href={`/contracts/${contract.id}`} primary>Contrat</CoreActionLink></>}
+        aside={<div style={{ display: 'grid', gap: 10 }}><span style={{ color: '#bfdbfe', fontSize: 10, fontWeight: 900, letterSpacing: '.1em', textTransform: 'uppercase' }}>Solde ouvert du contrat</span><strong style={{ fontSize: 36, letterSpacing: '-.04em' }}>{formatDh(openAmount)}</strong><span style={{ color: '#dbeafe', fontSize: 11 }}>{overdueInvoices.length} facture(s) en retard · statut {statusLabel(contract.payment_status)}</span></div>}
+        source={`${missions.length} mission(s) liée(s) · ${family?.city || 'Ville non renseignée'} · actions backend existantes préservées.`}
+      />
+
+      <WorkspaceNav items={[
+        { href: '/billing', label: 'Accounts Receivable', description: 'Exposition & actions' },
+        { href: '/billing/overview', label: 'Executive Overview', description: 'Position financière' },
+        { href: '/billing/activation', label: 'Collections', description: 'Files d’encaissement' },
+        { href: '/contracts', label: 'Contrats', description: 'Base contractuelle' },
+      ]} activeHref="/contracts" />
+
+      {dataWarnings.length ? <TruthNotice title="Couverture partielle" tone="attention">{dataWarnings.join(' ')}</TruthNotice> : null}
 
       <section className={styles.kpis}>
         <Kpi icon={<BriefcaseBusiness size={17} />} label="Valeur du contrat" value={formatDh(contractValue)} sub="Base contractuelle visible" />

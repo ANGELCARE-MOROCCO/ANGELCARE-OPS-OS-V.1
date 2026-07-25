@@ -4,6 +4,13 @@ import { AlertTriangle, ArrowRight, Banknote, BriefcaseBusiness, CheckCircle2, C
 import type { ReactNode } from 'react'
 import styles from './billing360.module.css'
 import {
+  ActionLink as CoreActionLink,
+  CommandHeader,
+  CommercialCoreBar,
+  TruthNotice,
+  WorkspaceNav,
+} from '@/components/commercial-core/CommercialCoreShell'
+import {
   amount,
   BillingContract,
   BillingFinanceEvent,
@@ -52,23 +59,25 @@ export default function Billing360ExecutiveOverview({
 
   return (
     <div className={styles.root}>
-      <section className={styles.hero}>
-        <div className={styles.heroIdentity}>
-          <div className={styles.brandLine}>
-            <div className={styles.logoPlate}><Image className={styles.logoImage} src="/logo.png" alt="ANGELCARE" width={260} height={90} priority /></div>
-            <div className={styles.brandCopy}><span className={styles.eyebrow}>ANGELCARE SANILA OS</span><strong>Billing 360 · Executive Finance Brief</strong></div>
-          </div>
-          <h1>Une lecture direction claire de la valeur contractée, facturée et encaissée.</h1>
-          <p className={styles.heroLead}>Cette vue synthétise l’exposition financière visible et dirige l’attention vers les contrats qui exigent une décision ou un suivi.</p>
-          <div className={styles.heroMeta}><span className={styles.metaPill}><ShieldCheck size={15} /> Brief financier read-first</span><span className={styles.metaPill}><Clock3 size={15} /> Données chargées à l’ouverture</span></div>
-        </div>
-        <aside className={styles.heroFinance}>
-          <div><div className={styles.heroFinanceLabel}><span>Situation générale</span><TrendingUp size={18} /></div><div className={styles.heroFinanceValue}>{Math.round(collectionRate)}%</div><div className={styles.heroFinanceSub}>Taux d’encaissement sur le montant facturé visible</div></div>
-          <div className={styles.heroMiniGrid}><div className={styles.heroMini}><span>Solde ouvert</span><strong>{formatDh(openAmount)}</strong></div><div className={styles.heroMini}><span>En retard</span><strong>{formatDh(overdueAmount)}</strong></div></div>
-        </aside>
-      </section>
+      <CommercialCoreBar active="billing" />
 
-      {dataWarnings.length ? <div className={styles.warningBanner}><AlertTriangle size={20} /><div><strong>Vue partielle.</strong> {dataWarnings.join(' ')}</div></div> : null}
+      <CommandHeader
+        eyebrow="SANILA Billing Control · Executive Overview"
+        title="La position financière, sans les files opérationnelles."
+        description="Cette vue direction synthétise la valeur contractuelle, le facturé, l’encaissé, l’exposition ouverte et les contrats qui nécessitent une décision."
+        actions={<><CoreActionLink href="/billing">Accounts Receivable</CoreActionLink><CoreActionLink href="/billing/activation" primary>Collections</CoreActionLink><CoreActionLink href="/contracts">Contrats</CoreActionLink></>}
+        aside={<div style={{ display: 'grid', gap: 10 }}><span style={{ color: '#bfdbfe', fontSize: 10, fontWeight: 900, letterSpacing: '.1em', textTransform: 'uppercase' }}>Taux d’encaissement visible</span><strong style={{ fontSize: 38, letterSpacing: '-.04em' }}>{Math.round(collectionRate)}%</strong><span style={{ color: '#dbeafe', fontSize: 11 }}>{formatDh(openAmount)} ouverts · {formatDh(overdueAmount)} en retard.</span></div>}
+        source="Brief read-first : aucune action d’écriture financière dans cette vue."
+      />
+
+      <WorkspaceNav items={[
+        { href: '/billing', label: 'Accounts Receivable', description: 'Exposition & actions' },
+        { href: '/billing/overview', label: 'Executive Overview', description: 'Position financière' },
+        { href: '/billing/activation', label: 'Collections', description: 'Files d’encaissement' },
+        { href: '/contracts', label: 'Contrats', description: 'Base contractuelle' },
+      ]} activeHref="/billing/overview" />
+
+      {dataWarnings.length ? <TruthNotice title="Vue partielle" tone="attention">{dataWarnings.join(' ')}</TruthNotice> : null}
 
       <section className={styles.kpiGrid}>
         <Kpi icon={<BriefcaseBusiness size={18} />} label="Valeur contractuelle" value={formatDh(totalContractValue)} sub={`${contracts.length} contrats chargés`} />

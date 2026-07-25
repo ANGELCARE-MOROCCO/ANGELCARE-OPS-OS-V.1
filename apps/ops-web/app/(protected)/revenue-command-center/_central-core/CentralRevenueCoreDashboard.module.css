@@ -25,10 +25,11 @@
 .shell {
   display: grid;
   min-height: 100vh;
-  grid-template-columns: 286px minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .sidebar {
+  display: none !important;
   position: sticky;
   top: 0;
   z-index: 40;
@@ -255,7 +256,7 @@
 }
 
 .menuButton {
-  display: none;
+  display: none !important;
   width: 40px;
   height: 40px;
   place-items: center;
@@ -347,8 +348,9 @@
 }
 
 .content {
-  width: min(100%, 1680px);
-  margin: 0 auto;
+  width: 100%;
+  max-width: none;
+  margin: 0;
   padding: 28px 28px 48px;
 }
 
@@ -1326,7 +1328,7 @@
     background: rgba(5, 18, 34, 0.46);
     backdrop-filter: blur(3px);
   }
-  .menuButton { display: grid; }
+  .menuButton { display: none !important; }
   .loadingBar { left: 0; }
   .content { padding: 22px 20px 42px; }
   .topbar { padding: 0 20px; }

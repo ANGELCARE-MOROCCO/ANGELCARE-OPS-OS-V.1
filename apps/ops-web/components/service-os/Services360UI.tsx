@@ -19,6 +19,7 @@ import {
   UsersRound,
 } from 'lucide-react'
 import styles from './Services360.module.css'
+import { CommandHeader, CommercialCoreBar, WorkspaceNav } from '@/components/commercial-core/CommercialCoreShell'
 
 export type ProvenanceTone = 'live' | 'configured' | 'fallback' | 'simulation' | 'legacy' | 'unavailable'
 
@@ -48,41 +49,39 @@ export function Services360Hero({
   briefRows?: Array<{ label: ReactNode; value: ReactNode }>
   provenance?: Array<{ label: ReactNode; tone?: ProvenanceTone }>
 }) {
-  return (
-    <section className={styles.hero}>
-      <div>
-        <div className={styles.brandRow}>
-          <div className={styles.logoWrap}>
-            <Image className={styles.logo} src="/logo.png" alt="ANGELCARE" width={180} height={92} priority />
+  const source = provenance.length ? (
+    <div className={styles.sourceStrip}>
+      {provenance.map((item, index) => <SourceBadge key={index} label={item.label} tone={item.tone} />)}
+    </div>
+  ) : 'Source présentée selon son état réel : catalogue, ServiceOS, configuration, simulation ou fallback.'
+
+  const aside = briefRows.length ? (
+    <div>
+      <div className={styles.briefLabel}>Service governance</div>
+      <h3 className={styles.briefTitle}>{briefTitle}</h3>
+      <div className={styles.briefList}>
+        {briefRows.map((row, index) => (
+          <div className={styles.briefRow} key={index}>
+            <span>{row.label}</span>
+            <strong>{row.value}</strong>
           </div>
-          <div className={styles.brandCopy}>
-            <span className={styles.brandName}>ANGELCARE SANILA OS</span>
-            <span className={styles.brandSub}>Services 360 · Product & Delivery Operating System</span>
-          </div>
-        </div>
-        <span className={styles.eyebrow}><Sparkles size={14} />{eyebrow}</span>
-        <h2 className={styles.title}>{title}</h2>
-        <div className={styles.subtitle}>{subtitle}</div>
-        {actions ? <div className={styles.actions}>{actions}</div> : null}
-        {provenance.length ? (
-          <div className={styles.sourceStrip}>
-            {provenance.map((item, index) => <SourceBadge key={index} label={item.label} tone={item.tone} />)}
-          </div>
-        ) : null}
+        ))}
       </div>
-      <aside className={styles.heroBrief}>
-        <div className={styles.briefLabel}>Service governance</div>
-        <h3 className={styles.briefTitle}>{briefTitle}</h3>
-        <div className={styles.briefList}>
-          {briefRows.map((row, index) => (
-            <div className={styles.briefRow} key={index}>
-              <span>{row.label}</span>
-              <strong>{row.value}</strong>
-            </div>
-          ))}
-        </div>
-      </aside>
-    </section>
+    </div>
+  ) : null
+
+  return (
+    <>
+      <CommercialCoreBar active="services" />
+      <CommandHeader
+        eyebrow={eyebrow}
+        title={title}
+        description={subtitle}
+        actions={actions}
+        aside={aside}
+        source={source}
+      />
+    </>
   )
 }
 
@@ -100,12 +99,16 @@ export function Kpi({ label, value, helper }: { label: ReactNode; value: ReactNo
   )
 }
 
-export function Services360Nav({ items }: { items: Array<{ label: string; href: string }> }) {
-  return (
-    <nav className={styles.nav} aria-label="Services 360 workspace navigation">
-      {items.map((item) => <Link key={item.href} href={item.href} className={styles.navLink}>{item.label}</Link>)}
-    </nav>
-  )
+export function Services360Nav({ items: _items }: { items: Array<{ label: string; href: string }> }) {
+  const items = [
+    { href: '/services', label: 'Portfolio', description: 'Offres & préparation' },
+    { href: '/services/blueprints', label: 'Blueprints', description: 'Architecture de livraison' },
+    { href: '/services/pricing-engine', label: 'Tarification', description: 'Prix & simulations' },
+    { href: '/services/operations', label: 'Delivery readiness', description: 'Exécution & capacité' },
+    { href: '/services/configuration', label: 'Gouvernance', description: 'Modules, règles & conformité' },
+    { href: '/services/enterprise', label: 'Executive', description: 'Santé du portefeuille' },
+  ]
+  return <WorkspaceNav items={items} />
 }
 
 export function LifecycleRibbon({ items }: { items: Array<{ label: ReactNode; value: ReactNode }> }) {

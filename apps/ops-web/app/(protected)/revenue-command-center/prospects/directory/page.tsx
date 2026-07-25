@@ -1,11 +1,7 @@
-import ProspectsDirectoryCommandCenter from "@/components/revenue-command-center/ProspectsDirectoryCommandCenter"
+import ProspectEnterpriseWorkspace from "@/components/revenue-command-center/prospects-enterprise/ProspectEnterpriseWorkspace"
 
 export const dynamic = "force-dynamic"
 
 export default function Page() {
-  return (
-    <div className="min-h-screen w-full overflow-x-hidden bg-[#050b16]">
-      <ProspectsDirectoryCommandCenter />
-    </div>
-  )
+  return <ProspectEnterpriseWorkspace mode="directory" />
 }
