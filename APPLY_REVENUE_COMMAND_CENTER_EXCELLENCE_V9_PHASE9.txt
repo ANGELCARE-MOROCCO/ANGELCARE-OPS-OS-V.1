@@ -1,0 +1,52 @@
+ANGELCARE REVENUE COMMAND CENTER — EXCELLENCE v9 / MEGA ZIP 9
+APPLICATION AND RELEASE INSTRUCTIONS
+
+BASELINE
+- Excellence v1 through v8 must already be applied.
+- Keep the production TEXT prospect-ID compatibility.
+- Keep all Phase 7 and Phase 8 SQL compatibility corrections.
+
+APPLY FROM REPOSITORY ROOT
+
+cd ~/Desktop/angelcare-platform
+
+PATCH_ZIP="$(find ~/Downloads ~/Desktop -type f \
+  -iname 'ANGELCARE_REVENUE_COMMAND_CENTER_EXCELLENCE_v9_B2C_ENTERPRISE_PHASE9_PATCH*.zip' \
+  -print -quit)"
+
+echo "Patch found at: $PATCH_ZIP"
+
+test -n "$PATCH_ZIP" || {
+  echo "ERROR: Mega ZIP 9 patch not found."
+  exit 1
+}
+
+unzip -o "$PATCH_ZIP" -d ~/Desktop/angelcare-platform
+
+MANDATORY LOCAL RELEASE GATE
+
+cd ~/Desktop/angelcare-platform/apps/ops-web
+node -v
+npm ci
+npm run revenue-command-center:phase9:release
+
+DO NOT DEPLOY unless the final output states:
+
+RELEASE GATE PASSED
+This commit is eligible for deployment.
+
+DATABASE ACTIVATION
+
+1. Confirm a current Supabase backup.
+2. Run:
+   supabase/revenue-command-center/preflight/20260725_b2c_family_matching_retention_live_schema_preflight.sql
+3. Continue only when CUTOVER_GATE = READY.
+4. Apply:
+   supabase/migrations/20260725_0700_revenue_b2c_family_matching_retention_completion.sql
+5. Run:
+   supabase/revenue-command-center/verification/20260725_b2c_family_matching_retention_rls_verification.sql
+   supabase/revenue-command-center/verification/20260725_b2c_matching_integrity_verification.sql
+   supabase/revenue-command-center/verification/20260725_b2c_retention_recovery_verification.sql
+
+Never convert public.revenue_prospects.id away from TEXT.
+Do not create B2C support tables manually when preflight is BLOCKED.

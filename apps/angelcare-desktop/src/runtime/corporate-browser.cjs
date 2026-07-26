@@ -101,11 +101,11 @@ function createCorporateBrowser(options) {
 
   function policyMode() { return operatingMode || currentPolicy.mode || "standard"; }
   function acPlusAllowed() {
-    const modes = Array.isArray(currentPolicy.ac_plus_allowed_modes) ? currentPolicy.ac_plus_allowed_modes : ["standard"];
+    const modes = Array.isArray(currentPolicy.ac_plus_allowed_modes) ? currentPolicy.ac_plus_allowed_modes : ["standard", "focus", "locked"];
     return currentPolicy.ac_plus_enabled !== false && modes.includes(policyMode());
   }
   function splitAllowed() {
-    const modes = Array.isArray(currentPolicy.split_allowed_modes) ? currentPolicy.split_allowed_modes : ["standard", "focus"];
+    const modes = Array.isArray(currentPolicy.split_allowed_modes) ? currentPolicy.split_allowed_modes : ["standard", "focus", "locked"];
     return currentPolicy.split_enabled !== false && modes.includes(policyMode());
   }
   function acPlusDisabledReason() {

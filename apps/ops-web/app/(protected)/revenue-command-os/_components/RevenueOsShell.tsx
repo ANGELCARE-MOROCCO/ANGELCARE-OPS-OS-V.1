@@ -22,6 +22,7 @@ import { useRevenueOs } from './RevenueOsContext'
 import RevenueOsIcon from './RevenueOsIcon'
 import { sovereigntyStyles } from './visual-sovereignty/SovereignPrimitives'
 import integrityStyles from './RevenueVisualIntegrity.module.css'
+import RevenueActionCenter from './action-center/RevenueActionCenter'
 
 function activePath(pathname: string, href: string) {
   if (href === '/revenue-command-os') return pathname === href
@@ -30,7 +31,7 @@ function activePath(pathname: string, href: string) {
 
 function groupFor(href: string) {
   if (href.includes('cockpit') || href.includes('mega-production') || href.includes('digital-twin') || href.includes('revenue-objectives') || href.includes('signals')) return 'Commandement'
-  if (href.includes('strategy') || href.includes('validation-council') || href.includes('command-kernel')) return 'Intelligence & décision'
+  if (href.includes('strategy') || href.includes('validation-council') || href.includes('command-kernel') || href.includes('gemini-resources')) return 'Intelligence & décision'
   if (href.includes('mission-compiler') || href.includes('execution-autopilot') || href.includes('active-programs') || href.includes('compiled-missions') || href.includes('email-studio')) return 'Orchestration'
   if (href.includes('approvals') || href.includes('exceptions') || href.includes('memory-learning')) return 'Contrôle'
   return 'Gouvernance'
@@ -165,6 +166,7 @@ export default function RevenueOsShell({ children }: { children: React.ReactNode
         </section>
       </div> : null}
 
+      <RevenueActionCenter />
     </div>
   )
 }

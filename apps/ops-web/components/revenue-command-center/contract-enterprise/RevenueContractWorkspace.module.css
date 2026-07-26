@@ -10,7 +10,7 @@
 .shell :global(input:focus-visible),
 .shell :global(select:focus-visible),
 .shell :global(textarea:focus-visible) {
-  outline: 3px solid rgba(31, 132, 186, 0.34);
+  outline: 3px solid rgba(31,132,186,.34);
   outline-offset: 2px;
 }
 .trustLine{display:flex;align-items:center;gap:7px;margin:10px 0 0;color:#507084;font-size:10px;font-weight:750}

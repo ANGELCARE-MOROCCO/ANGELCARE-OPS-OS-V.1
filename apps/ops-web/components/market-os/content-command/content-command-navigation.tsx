@@ -45,7 +45,7 @@ export const contentCommandRoutes: readonly ContentCommandRoute[] = [
   { key: "performance", href: "/market-os/content-command-center#performance", label: "Performance", description: "Résultats et apprentissage", icon: <BarChart3 className="h-4 w-4" />, exact: true },
   { key: "governance", href: "/market-os/content-command-center/brand-governance", label: "Gouvernance", description: "Doctrine marque et conformité", icon: <BookOpenCheck className="h-4 w-4" /> },
   { key: "legacy", href: "/market-os/content-command-center/legacy-operations", label: "Cockpit existant", description: "Cockpit complet déjà construit, préservé", icon: <Sparkles className="h-4 w-4" /> },
-  { key: "ai", href: "#", label: "Directeur IA · Phase 2", description: "Couche exécutive Gemini gouvernée", icon: <BrainCircuit className="h-4 w-4" />, disabled: true },
+  { key: "ai", href: "/market-os/content-command-center/ai-director", label: "Directeur IA", description: "3 000 commandes, 60 compétences et orchestration Gemini", icon: <BrainCircuit className="h-4 w-4" /> },
 ] as const
 
 function routeIsActive(pathname: string, route: ContentCommandRoute) {

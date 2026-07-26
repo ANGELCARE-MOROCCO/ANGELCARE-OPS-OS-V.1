@@ -35,10 +35,10 @@ const admin = read('components/whatsapp-os/WhatsAppDesktopAdmin.tsx')
 for (const marker of ['MZ14', 'WhatsAppGovernanceControlPlane', 'Vue exécutive', 'Commandes distantes', 'Sécurité']) assert(admin.includes(marker), `ADMIN_MARKER_MISSING:${marker}`)
 assert(!admin.includes('JSON.stringify(row.new_state'), 'RAW_JSON_AUDIT_OUTPUT_REINTRODUCED')
 const ui = read('components/whatsapp-os/WhatsAppGovernanceControlPlane.tsx')
-for (const marker of ['État désiré', 'État signalé', 'Synchroniser maintenant', 'Demander un diagnostic', 'Chronologie des commandes', 'Prendre en charge', 'Clôturer avec preuve', 'Desktop 1.7.2 gelé']) assert(ui.includes(marker), `UI_MARKER_MISSING:${marker}`)
+for (const marker of ['État désiré', 'État signalé', 'Synchroniser maintenant', 'Demander un diagnostic', 'Chronologie des commandes', 'Prendre en charge', 'Clôturer avec preuve', 'Desktop 1.7.3 compatible']) assert(ui.includes(marker), `UI_MARKER_MISSING:${marker}`)
 assert(!/\bWindows,/.test(ui), 'INVALID_LUCIDE_WINDOWS_EXPORT_REINTRODUCED')
 const release = read('lib/desktop/release.ts')
-assert(release.includes('version: "1.7.2"'), 'DESKTOP_RELEASE_NOT_FROZEN_AT_1_7_2')
+assert(release.includes('version: "1.7.3"'), 'DESKTOP_RELEASE_NOT_SYNCHRONIZED_AT_1_7_3')
 
 const typesSource = read('lib/whatsapp-desktop/types.ts')
 assert(typesSource.includes('last_ip?: string | null'), 'DEVICE_LAST_IP_TYPE_MISSING')
@@ -67,7 +67,7 @@ const module = { exports: {} }
 vm.runInNewContext(`(function(module,exports,require){${pure}\n})(module,module.exports,require)`, { module, require, Date, Set, Object, Array, Number, String, Math, console })
 const { evaluateDeviceSynchronization } = module.exports
 const now = new Date().toISOString()
-const base = { device: { id: 'd1', device_name: 'POSTE-1', approval_status: 'approved', desktop_version: '1.7.2', last_heartbeat_at: now, reported_state: { station_mode: 'standard', policy_version: 3, whatsapp_visible: false, tab_count: 2, browser_health: 'healthy', authorization_state: 'authorized', desktop_version: '1.7.2' } }, desiredState: { desired_mode: 'standard', desired_policy_version: 3, desired_whatsapp_enabled: true, desired_ac_plus_enabled: true, desired_split_enabled: true, desired_maximum_tabs: 8 }, workspaceAccess: [{ status: 'approved' }], assignments: [{ status: 'active' }], pendingCommands: [] }
+const base = { device: { id: 'd1', device_name: 'POSTE-1', approval_status: 'approved', desktop_version: '1.7.3', last_heartbeat_at: now, reported_state: { station_mode: 'standard', policy_version: 3, whatsapp_visible: false, tab_count: 2, browser_health: 'healthy', authorization_state: 'authorized', desktop_version: '1.7.3' } }, desiredState: { desired_mode: 'standard', desired_policy_version: 3, desired_whatsapp_enabled: true, desired_ac_plus_enabled: true, desired_split_enabled: true, desired_maximum_tabs: 8 }, workspaceAccess: [{ status: 'approved' }], assignments: [{ status: 'active' }], pendingCommands: [] }
 const good = evaluateDeviceSynchronization(base)
 assert(good.status === 'synchronized' && good.score === 100, 'SYNC_BEHAVIOR_FAILED')
 const drift = evaluateDeviceSynchronization({ ...base, desiredState: { ...base.desiredState, desired_mode: 'locked' } })
@@ -77,5 +77,5 @@ assert(blocked.status === 'blocked', 'BLOCKER_BEHAVIOR_FAILED')
 
 console.log(`MZ14 TypeScript isolated syntax: ${tsFiles.length} files, 0 errors`)
 console.log('MZ14 desired/reported synchronization behavior verified.')
-console.log('MZ14 exact route /whatsapp-os/admin preserved; Desktop 1.7.2 frozen.')
+console.log('MZ14 exact route /whatsapp-os/admin preserved; Desktop 1.7.3 cumulative compatibility verified.')
 console.log('MZ14_WHATSAPP_ADMIN_GOVERNANCE_CONTROL_PLANE_VERIFIED')

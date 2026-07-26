@@ -1,0 +1,30 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "types": ["node"]
+  },
+  "include": [
+    "lib/revenue-command-os/**/*.ts",
+    "app/api/revenue-command-os/canonical-operations/**/*.ts",
+    "app/api/revenue-command-os/operating-spine/**/*.ts",
+    "app/(protected)/revenue-command-os/_components/**/*.ts",
+    "app/(protected)/revenue-command-os/_components/**/*.tsx",
+    "app/(protected)/revenue-command-os/cockpit/page.tsx",
+    "app/(protected)/revenue-command-os/strategy-engine/page.tsx",
+    "app/(protected)/revenue-command-os/validation-council/page.tsx",
+    "app/(protected)/revenue-command-os/strategy-studio/page.tsx",
+    "app/(protected)/revenue-command-os/mission-compiler/page.tsx",
+    "app/(protected)/revenue-command-os/execution-autopilot/page.tsx",
+    "app/(protected)/revenue-command-os/mega-production/page.tsx",
+    "app/(protected)/revenue-command-os/command-kernel/page.tsx",
+    "app/(protected)/revenue-command-os/command-kernel/[section]/page.tsx",
+    "app/(protected)/revenue-command-os/memory-learning/page.tsx",
+    "app/(protected)/revenue-command-os/memory-learning/[section]/page.tsx",
+    "app/(protected)/revenue-command-os/gemini-resources/**/*.tsx",
+    "app/(protected)/revenue-command-os/[workspace]/page.tsx",
+    "app/(protected)/revenue-command-os/intelligent-commands/page.tsx"
+  ]
+}

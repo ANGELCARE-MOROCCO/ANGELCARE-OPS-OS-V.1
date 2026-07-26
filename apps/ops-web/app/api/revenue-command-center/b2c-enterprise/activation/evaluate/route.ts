@@ -1,0 +1,4 @@
+import { fail, ok, cleanNumber, cleanString } from "@/lib/revenue-command-center/canonical-server"
+import { revenueAccessFailure } from "@/lib/revenue-command-center/api-access"
+import { b2cContext } from "@/lib/revenue-command-center/b2c-enterprise/server"
+export async function POST(request:Request){try{const {access,supabase}=await b2cContext("revenue.b2c.activation.evaluate"),body=await request.json(),caseId=cleanString(body.caseId||body.b2cCaseId);if(!caseId)return fail("caseId requis.",400);const result=await supabase.rpc("revenue_evaluate_b2c_activation",{p_case_id:caseId,p_actor_id:(access.user as any).id||null});if(result.error)return fail(result.error);return ok({result:Array.isArray(result.data)?result.data[0]:result.data})}catch(error){const access=revenueAccessFailure(error);return access?fail(access.message,access.status):fail(error)}}

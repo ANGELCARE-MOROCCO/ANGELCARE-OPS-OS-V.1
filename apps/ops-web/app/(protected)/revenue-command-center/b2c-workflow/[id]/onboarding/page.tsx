@@ -1,7 +1,8 @@
-import RevenueB2CWorkflowV12MegaWorkspace from "@/components/revenue-command-center/RevenueB2CWorkflowV12MegaWorkspace"
+import RevenueB2CWorkspace from "@/components/revenue-command-center/b2c-enterprise/RevenueB2CWorkspace"
 
 export const dynamic = "force-dynamic"
 
-export default function Page() {
-  return <RevenueB2CWorkflowV12MegaWorkspace mode="onboarding" />
+export default async function Page({ params }:{ params:Promise<{id:string}> }) {
+  const { id } = await params
+  return <RevenueB2CWorkspace experience="family-onboarding-dossier" contextId={id} />
 }

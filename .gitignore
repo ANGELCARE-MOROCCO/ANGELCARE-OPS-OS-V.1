@@ -144,3 +144,5 @@ RELEASES
 .angelcare-mz*-release.json
 apps/angelcare-desktop/release/ANGELCARE-Desktop-*-Release/
 apps/angelcare-desktop/release/macos/
+.vercel
+.env*

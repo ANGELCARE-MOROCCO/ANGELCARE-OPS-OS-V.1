@@ -1,7 +1,7 @@
-import RevenueB2CWorkflowV12MegaWorkspace from "@/components/revenue-command-center/RevenueB2CWorkflowV12MegaWorkspace"
+import RevenueB2CWorkspace from "@/components/revenue-command-center/b2c-enterprise/RevenueB2CWorkspace"
 
 export const dynamic = "force-dynamic"
 
 export default function Page() {
-  return <RevenueB2CWorkflowV12MegaWorkspace mode="high-value" />
+  return <RevenueB2CWorkspace experience="high-value-family-command" />
 }

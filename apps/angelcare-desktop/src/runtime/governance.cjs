@@ -231,7 +231,7 @@ function createGovernanceController(options) {
             platform: state.platform,
             architecture: state.architecture,
             desktop_version: app.getVersion(),
-            desktop_contract_version: runtime.desktopContractVersion || "11.2.0",
+            desktop_contract_version: runtime.desktopContractVersion || "11.3.0",
             operating_system_version: state.operatingSystemVersion,
             selected_workspace_id: state.selectedWorkspaceId,
             registration_reason: reason,

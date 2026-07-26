@@ -1,0 +1,3 @@
+import { apiErrorResponse, requireMarketingAiUser } from '@/lib/market-os/marketing-ai/auth'
+import { listDeadLetters, listJobs } from '@/lib/market-os/marketing-ai/phase3-repository'
+export async function GET(){try{await requireMarketingAiUser('view');const [deadLetters,jobs]=await Promise.all([listDeadLetters(),listJobs(250)]);return Response.json({ok:true,deadLetters,staleJobs:jobs.filter((job: import('@/lib/market-os/marketing-ai/phase3-types').Phase3ExecutionJob)=>['claimed','running'].includes(job.status)&&job.heartbeatAt&&Date.now()-new Date(job.heartbeatAt).getTime()>15*60*1000)})}catch(error){return apiErrorResponse(error)}}

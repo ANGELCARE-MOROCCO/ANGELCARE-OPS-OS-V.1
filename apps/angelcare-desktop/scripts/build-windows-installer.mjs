@@ -8,7 +8,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const pkg = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8"));
 const lock = JSON.parse(fs.readFileSync(path.join(root, "package-lock.json"), "utf8"));
 const arch = process.argv[2] || "x64";
-const expectedVersion = "1.7.2";
+const expectedVersion = "1.7.3";
 const exactName = `ANGELCARE-Desktop-${pkg.version}-Windows-x64-Setup.exe`;
 
 function fail(message) {
@@ -38,9 +38,9 @@ function walk(directory, output = []) {
 if (pkg.version !== expectedVersion) fail(`package.json must be ${expectedVersion}, found ${pkg.version}`);
 if (lock.version !== pkg.version || lock.packages?.[""]?.version !== pkg.version) fail("package-lock.json release identity is not synchronized");
 if (process.platform !== "win32") fail("The trusted Windows installer build must run on Windows");
-if (arch !== "x64") fail("ANGELCARE Desktop 1.7.2 supports the contracted Windows x64 installer target");
+if (arch !== "x64") fail("ANGELCARE Desktop 1.7.3 supports the contracted Windows x64 installer target");
 
-run(process.execPath, [path.join(root, "scripts", "verify-unified-release-1.7.2.mjs")]);
+run(process.execPath, [path.join(root, "scripts", "verify-unified-release-1.7.3.mjs")]);
 
 const forge = path.join(root, "node_modules", ".bin", "electron-forge.cmd");
 if (!fs.existsSync(forge)) fail("Electron Forge is not installed. Run npm ci inside apps/angelcare-desktop");
@@ -68,5 +68,5 @@ const metadata = {
   builtAt: new Date().toISOString(),
 };
 fs.writeFileSync(path.join(outputDir, `${exactName}.json`), `${JSON.stringify(metadata, null, 2)}\n`);
-console.log(`WINDOWS_INSTALLER_1_7_2_READY: ${output}`);
+console.log(`WINDOWS_INSTALLER_1_7_3_READY: ${output}`);
 console.log(`SHA256: ${digest}`);

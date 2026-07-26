@@ -130,7 +130,7 @@ function createStationController(options) {
     const unlockState = unlockController?.getStatus?.() || null;
     return Object.freeze({
       available: true,
-      contractVersion: "11.2.0",
+      contractVersion: "11.3.0",
       stationVersion: app.getVersion(),
       installationId: getInstallationId(),
       deviceId: getDeviceId?.() || null,

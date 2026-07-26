@@ -1,32 +1,32 @@
 {
   "schemaVersion": 1,
   "product": "ANGELCARE Desktop",
-  "version": "1.7.2",
-  "buildNumber": 172,
+  "version": "1.7.3",
+  "buildNumber": 173,
   "channel": "stable",
   "releaseDate": "2026-07-25T17:00:00.000Z",
   "minimumSupportedVersion": "1.5.0",
   "mandatory": false,
-  "releaseNotes": "ANGELCARE Desktop 1.7.2: AC+ and split controls now follow the actual operating mode, remain usable during approved Standard/Focus sessions, preserve the main dashboard unchanged, and retain explicit protected WhatsApp activation and clean re-enrolment.",
+  "releaseNotes": "ANGELCARE Desktop 1.7.3: AC+ and split controls now follow the actual operating mode, remain usable during approved Standard/Focus sessions, preserve the main dashboard unchanged, and retain explicit protected WhatsApp activation and clean re-enrolment.",
   "platforms": {
     "darwin": {
       "x64": {
-        "url": "https://opsmanagement.angelcarehub.com/desktop-updates/stable/ANGELCARE-Desktop-1.7.2-macOS-x64.dmg",
-        "filename": "ANGELCARE-Desktop-1.7.2-macOS-x64.dmg",
+        "url": "https://opsmanagement.angelcarehub.com/desktop-updates/stable/ANGELCARE-Desktop-1.7.3-macOS-x64.dmg",
+        "filename": "ANGELCARE-Desktop-1.7.3-macOS-x64.dmg",
         "size": 1,
         "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
       },
       "arm64": {
-        "url": "https://opsmanagement.angelcarehub.com/desktop-updates/stable/ANGELCARE-Desktop-1.7.2-macOS-arm64.dmg",
-        "filename": "ANGELCARE-Desktop-1.7.2-macOS-arm64.dmg",
+        "url": "https://opsmanagement.angelcarehub.com/desktop-updates/stable/ANGELCARE-Desktop-1.7.3-macOS-arm64.dmg",
+        "filename": "ANGELCARE-Desktop-1.7.3-macOS-arm64.dmg",
         "size": 1,
         "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
       }
     },
     "win32": {
       "x64": {
-        "url": "https://opsmanagement.angelcarehub.com/desktop-updates/stable/ANGELCARE-Desktop-1.7.2-Windows-x64-Setup.exe",
-        "filename": "ANGELCARE-Desktop-1.7.2-Windows-x64-Setup.exe",
+        "url": "https://opsmanagement.angelcarehub.com/desktop-updates/stable/ANGELCARE-Desktop-1.7.3-Windows-x64-Setup.exe",
+        "filename": "ANGELCARE-Desktop-1.7.3-Windows-x64-Setup.exe",
         "size": 1,
         "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
       }

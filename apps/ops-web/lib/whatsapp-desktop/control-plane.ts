@@ -3,6 +3,8 @@ import type { JsonRecord, WhatsAppDeviceApproval } from "@/lib/whatsapp-desktop/
 export type GovernanceSyncStatus = "synchronized" | "pending" | "drift" | "offline" | "blocked" | "unknown" | "error"
 export type GovernanceSeverity = "informational" | "attention" | "high" | "critical"
 
+export const MINIMUM_SAFE_LOCKED_DESKTOP_VERSION = "1.7.4"
+
 export interface DeviceDesiredState extends JsonRecord {
   station_mode: "standard" | "focus" | "locked"
   whatsapp_enabled: boolean
@@ -93,10 +95,10 @@ export function normalizeDesiredState(row: Row | null | undefined, policy: Row |
     ...desired,
     station_mode: mode(row?.desired_mode ?? desired.station_mode ?? policy?.mode),
     whatsapp_enabled: bool(row?.desired_whatsapp_enabled ?? desired.whatsapp_enabled, true),
-    ac_plus_enabled: bool(row?.desired_ac_plus_enabled ?? desired.ac_plus_enabled ?? policy?.ac_plus_enabled, policy?.mode !== "locked"),
-    split_enabled: bool(row?.desired_split_enabled ?? desired.split_enabled ?? policy?.split_enabled, policy?.mode !== "locked"),
+    ac_plus_enabled: bool(row?.desired_ac_plus_enabled ?? desired.ac_plus_enabled ?? policy?.ac_plus_enabled, true),
+    split_enabled: bool(row?.desired_split_enabled ?? desired.split_enabled ?? policy?.split_enabled, true),
     maximum_tabs: Math.max(2, Math.min(50, number(row?.desired_maximum_tabs ?? desired.maximum_tabs ?? policy?.maximum_tabs, 8))),
-    minimum_desktop_version: String(desired.minimum_desktop_version || policySecurity.minimum_desktop_version || "1.7.2"),
+    minimum_desktop_version: String(desired.minimum_desktop_version || policySecurity.minimum_desktop_version || "1.7.3"),
     policy_id: row?.desired_policy_id || desired.policy_id || policy?.id || null,
     policy_version: number(row?.desired_policy_version ?? desired.policy_version ?? policy?.policy_version, 0),
   }
@@ -155,6 +157,10 @@ export function evaluateDeviceSynchronization(input: {
   if (!online) blockers.push({ code: "DEVICE_OFFLINE", label: "Le poste ne répond pas au heartbeat attendu", layer: "Connectivité", severity: "attention" })
   if (compareVersions(reported.desktop_version, desired.minimum_desktop_version) < 0) {
     blockers.push({ code: "DESKTOP_VERSION_OUTDATED", label: `Desktop ${reported.desktop_version} inférieur au minimum ${desired.minimum_desktop_version}`, layer: "Conformité version", severity: "high" })
+  }
+  if (desired.station_mode === "locked" && compareVersions(reported.desktop_version, MINIMUM_SAFE_LOCKED_DESKTOP_VERSION) < 0) {
+    blockers.push({ code: "LOCKED_MODE_UNLOCK_PROTOCOL_UNSAFE", label: `Corporate Locked interdit sur Desktop ${reported.desktop_version}; niveau sûr requis ${MINIMUM_SAFE_LOCKED_DESKTOP_VERSION}`, layer: "Sécurité anti-verrouillage", severity: "critical" })
+    recommendations.add("ENTER_STANDARD_MODE")
   }
 
   if (reported.station_mode !== desired.station_mode) {

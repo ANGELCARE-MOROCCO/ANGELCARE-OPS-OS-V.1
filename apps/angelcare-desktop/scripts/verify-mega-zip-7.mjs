@@ -27,9 +27,9 @@ function assertIncludes(relativePath, markers) {
 }
 
 const packageJson = JSON.parse(read("package.json"));
-if (!["1.5.1", "1.5.2", "1.6.0", "1.7.2"].includes(packageJson.version)) fail(`Expected version 1.5.1 or a supported cumulative version, found ${packageJson.version}`);
-if (!String(packageJson.scripts?.verify || "").includes("verify-unified-release-1.7.2.mjs")) {
-  fail("Unified 1.7.2 verifier is not wired into npm run verify");
+if (!["1.5.1", "1.5.2", "1.6.0", "1.7.3"].includes(packageJson.version)) fail(`Expected version 1.5.1 or a supported cumulative version, found ${packageJson.version}`);
+if (!String(packageJson.scripts?.verify || "").includes("verify-unified-release-1.7.3.mjs")) {
+  fail("Unified 1.7.3 verifier is not wired into npm run verify");
 }
 
 const packageLock = JSON.parse(read("package-lock.json"));

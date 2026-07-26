@@ -1,8 +1,8 @@
 {
   "name": "@angelcare/desktop",
   "productName": "ANGELCARE Desktop",
-  "version": "1.7.2",
-  "description": "ANGELCARE Desktop Corporate Station OS 1.7.2 — unified Windows/macOS executive runtime with runtime-mode-aware AC+ workspaces, recomposable split operations, explicit dormant WhatsApp activation, clean device re-enrolment, premium fleet lifecycle compatibility, session isolation and hardened native packaging.",
+  "version": "1.7.3",
+  "description": "ANGELCARE Desktop Corporate Station OS 1.7.3 \u2014 unified Windows/macOS executive runtime where Corporate Locked security remains compatible with explicitly authorized AC+ workspaces and split operations, with dormant WhatsApp activation, clean device re-enrolment, session isolation and hardened native packaging.",
   "author": "ANGELCARE",
   "license": "UNLICENSED",
   "private": true,
@@ -14,7 +14,7 @@
     "start": "electron-forge start",
     "start:dev": "cross-env NODE_ENV=development ANGELCARE_DESKTOP_APP_URL=http://localhost:3000 electron-forge start",
     "start:production-preview": "cross-env NODE_ENV=production electron-forge start",
-    "verify": "node scripts/verify-unified-release-1.7.2.mjs",
+    "verify": "node scripts/verify-unified-release-1.7.3.mjs",
     "verify:cumulative": "npm run verify",
     "verify:security": "node scripts/smoke-runtime-security.mjs",
     "verify:release": "node scripts/verify-release.mjs",
@@ -38,10 +38,11 @@
     "clean": "node scripts/clean-output.mjs",
     "verify:mac-toolbar": "node scripts/verify-mac-horizontal-menu.mjs",
     "verify:mz9": "node scripts/verify-mega-zip-9.mjs",
-    "verify:mz11": "node scripts/verify-unified-release-1.7.2.mjs",
+    "verify:mz11": "node scripts/verify-unified-release-1.7.3.mjs",
     "release:bundle": "node scripts/assemble-release-bundle.mjs",
-    "verify:mz12": "node scripts/verify-unified-release-1.7.2.mjs",
-    "verify:mz13": "node scripts/verify-unified-release-1.7.2.mjs"
+    "verify:mz12": "node scripts/verify-unified-release-1.7.3.mjs",
+    "verify:mz13": "node scripts/verify-unified-release-1.7.3.mjs",
+    "verify:mz15": "node scripts/verify-unified-release-1.7.3.mjs"
   },
   "devDependencies": {
     "@electron-forge/cli": "7.11.2",

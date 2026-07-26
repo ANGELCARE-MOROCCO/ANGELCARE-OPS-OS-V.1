@@ -1,9 +1,9 @@
 export const ANGELCARE_DESKTOP_RELEASE = Object.freeze({
   product: "ANGELCARE Desktop",
-  version: "1.7.2",
-  contract: "11.2.0",
+  version: "1.7.3",
+  contract: "11.3.0",
   governanceContract: "3.1.0",
-  buildNumber: 172,
+  buildNumber: 173,
   channel: "stable",
 })
 

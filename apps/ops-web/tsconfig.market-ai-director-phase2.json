@@ -1,0 +1,24 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "skipLibCheck": true,
+    "incremental": false
+  },
+  "include": [
+    "next-env.d.ts",
+    "lib/market-os/marketing-ai/**/*.ts",
+    "components/market-os/content-command/marketing-ai/**/*.tsx",
+    "components/market-os/content-command/content-command-navigation.tsx",
+    "components/market-os/content-command/content-command-system.tsx",
+    "app/(protected)/market-os/content-command-center/ai-director/**/*.tsx",
+    "app/api/market-os/content-command/marketing-ai/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    ".next",
+    ".angelcare_backups",
+    "backups",
+    "_archive"
+  ]
+}

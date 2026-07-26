@@ -35,12 +35,12 @@ const pkg = json("package.json");
 const lock = json("package-lock.json");
 const defaults = json("config/defaults.json");
 const update = json("release/update-manifest.example.json");
-if (!["1.6.0", "1.7.2"].includes(pkg.version)) fail(`Expected package version 1.6.0 or cumulative 1.7.2, found ${pkg.version}`);
+if (!["1.6.0", "1.7.3"].includes(pkg.version)) fail(`Expected package version 1.6.0 or cumulative 1.7.3, found ${pkg.version}`);
 if (lock.version !== pkg.version || lock.packages?.[""]?.version !== pkg.version) fail("package-lock.json version identity is not synchronized");
-if (!["9.0.0", "11.2.0"].includes(defaults.desktopContractVersion)) fail(`Expected desktop contract 9.0.0 or cumulative 11.2.0, found ${defaults.desktopContractVersion}`);
+if (!["9.0.0", "11.3.0"].includes(defaults.desktopContractVersion)) fail(`Expected desktop contract 9.0.0 or cumulative 11.3.0, found ${defaults.desktopContractVersion}`);
 if (defaults.acPlusDashboardPath !== "/dashboard") fail("AC+ dashboard route is not /dashboard");
 if (pkg.scripts?.["verify:mz9"] !== "node scripts/verify-mega-zip-9.mjs") fail("verify:mz9 script is missing");
-if (update.version !== pkg.version || ![160,170,171,172].includes(update.buildNumber)) fail("Example update manifest is not synchronized to a supported cumulative release");
+if (update.version !== pkg.version || ![160,170,171,172,173].includes(update.buildNumber)) fail("Example update manifest is not synchronized to a supported cumulative release");
 if (update.platforms?.win32?.x64?.filename !== `ANGELCARE-Desktop-${pkg.version}-Windows-x64-Setup.exe`) fail("Windows update filename is not synchronized to the package version");
 
 const browser = requireMarkers("src/runtime/corporate-browser.cjs", [
@@ -98,16 +98,16 @@ requireMarkers("src/runtime/station-policy.cjs", [
   "maximum_ac_plus_tabs: 12", "ac_plus_enabled: true", "split_enabled: true", "split_modes: [2, 3, 4]",
 ]);
 requireMarkers("src/runtime/station-controller.cjs", [
-  "trustedAngelcareSession: saasSession", "getSystemTabView", "onDividerLayout", 'contractVersion: "11.2.0"',
+  "trustedAngelcareSession: saasSession", "getSystemTabView", "onDividerLayout", 'contractVersion: "11.3.0"',
 ]);
 requireMarkers("src/whatsapp-activation/index.html", ["Ouvrir WhatsApp", "Vérifier l’autorisation", "Conservée, non connectée"]);
 requireMarkers("src/whatsapp-activation-preload.cjs", ['new Set(["get-status","refresh","open"])']);
 requireMarkers("src/split-divider-preload.cjs", ["split-divider-command", "split-divider-move", "split-divider-config"]);
 const forge = requireMarkers("forge.config.cjs", [
-  'setupExe: "ANGELCARE-Desktop-1.7.2-Windows-x64-Setup.exe"', "FusesPlugin", "EnableCookieEncryption", "OnlyLoadAppFromAsar",
+  'setupExe: "ANGELCARE-Desktop-1.7.3-Windows-x64-Setup.exe"', "FusesPlugin", "EnableCookieEncryption", "OnlyLoadAppFromAsar",
 ]);
 requireMarkers("scripts/build-windows-installer.mjs", [
-  'const expectedVersion = "1.7.2"', "WINDOWS_INSTALLER_BUILD_FAILED", "ANGELCARE-Desktop-${pkg.version}-Windows-x64-Setup.exe", "verify-unified-release-1.7.2.mjs", ".sha256",
+  'const expectedVersion = "1.7.3"', "WINDOWS_INSTALLER_BUILD_FAILED", "ANGELCARE-Desktop-${pkg.version}-Windows-x64-Setup.exe", "verify-unified-release-1.7.3.mjs", ".sha256",
 ]);
 
 const createMainWindowStart = main.indexOf("async function createMainWindow()");

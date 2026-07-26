@@ -44,18 +44,18 @@ import { useRevenueOs } from './RevenueOsContext'
 import { SChip, SDataTruth, SEmpty, SIcon, SMetric, STraceLink, sovereigntyStyles } from './visual-sovereignty/SovereignPrimitives'
 import ApprovalCenterWorkspace from './approvals/ApprovalCenterWorkspace'
 import ChannelGovernancePanel from './ChannelGovernancePanel'
-import RevenueOperatingSpine from './operating-spine/RevenueOperatingSpine'
+import CanonicalCsvImportDock from './imports/CanonicalCsvImportDock'
 import { AuditHero, ExceptionsHero, MissionsHero, ObjectivesHero, ProgramsHero, SettingsHero } from './hero-sovereignty/heroes'
 
 export default function RevenueOsWorkspacePage({ workspaceKey }: { workspaceKey: RevenueOsWorkspaceKey }) {
   switch (workspaceKey) {
-    case 'revenue-objectives': return <RevenueOperatingSpine focus="cockpit" />
-    case 'active-programs': return <RevenueOperatingSpine focus="programs" />
-    case 'compiled-missions': return <RevenueOperatingSpine focus="missions" />
-    case 'approvals': return <RevenueOperatingSpine focus="approvals" />
-    case 'exceptions': return <RevenueOperatingSpine focus="exceptions" />
-    case 'audit': return <RevenueOperatingSpine focus="audit" />
-    case 'settings': return <GovernanceConstitution />
+    case 'revenue-objectives': return <div data-revenue-workspace="revenue-objectives"><MandateLedger /><CanonicalCsvImportDock kind="mandates" /></div>
+    case 'active-programs': return <div data-revenue-workspace="active-programs"><ProgramTerrain /></div>
+    case 'compiled-missions': return <div data-revenue-workspace="compiled-missions"><MissionBinders /></div>
+    case 'approvals': return <div data-revenue-workspace="approvals"><ApprovalCenterWorkspace /></div>
+    case 'exceptions': return <div data-revenue-workspace="exceptions"><InterventionTower /></div>
+    case 'audit': return <div data-revenue-workspace="audit"><ForensicLedger /></div>
+    case 'settings': return <div data-revenue-workspace="settings"><GovernanceConstitution /></div>
     default: return <UnsupportedWorkspace workspaceKey={workspaceKey} />
   }
 }

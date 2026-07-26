@@ -15,7 +15,7 @@
     "mailto:",
     "tel:"
   ],
-  "desktopContractVersion": "11.2.0",
+  "desktopContractVersion": "11.3.0",
   "whatsappPartition": "persist:angelcare-whatsapp-main",
   "whatsappHomeUrl": "https://web.whatsapp.com/",
   "whatsappDownloadDirectory": "ANGELCARE WhatsApp",

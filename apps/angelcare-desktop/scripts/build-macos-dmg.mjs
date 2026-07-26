@@ -53,12 +53,12 @@ for (const binary of ["/usr/bin/hdiutil", "/usr/bin/ditto", "/bin/ln"]) if (!fs.
 
 const pkg = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8"));
 const lock = JSON.parse(fs.readFileSync(path.join(root, "package-lock.json"), "utf8"));
-if (pkg.version !== "1.7.2") fail(`package.json must be 1.7.2, found ${pkg.version}`);
+if (pkg.version !== "1.7.3") fail(`package.json must be 1.7.3, found ${pkg.version}`);
 if (lock.version !== pkg.version || lock.packages?.[""]?.version !== pkg.version) fail("package-lock.json release identity is not synchronized");
 const productName = pkg.productName || "ANGELCARE Desktop";
 const exactName = `ANGELCARE-Desktop-${pkg.version}-macOS-${requestedArch}.dmg`;
 
-run(process.execPath, [path.join(root, "scripts", "verify-unified-release-1.7.2.mjs")]);
+run(process.execPath, [path.join(root, "scripts", "verify-unified-release-1.7.3.mjs")]);
 const forgeBinary = path.join(root, "node_modules", ".bin", "electron-forge");
 if (!fs.existsSync(forgeBinary)) fail("Electron Forge is not installed. Run npm ci inside apps/angelcare-desktop");
 run(forgeBinary, ["package", "--platform=darwin", `--arch=${requestedArch}`]);
@@ -97,5 +97,5 @@ const metadata = {
   builtAt: new Date().toISOString(),
 };
 fs.writeFileSync(path.join(outputDir, `${exactName}.json`), `${JSON.stringify(metadata, null, 2)}\n`);
-console.log(`MACOS_INSTALLER_1_7_2_READY: ${outputDmg}`);
+console.log(`MACOS_INSTALLER_1_7_3_READY: ${outputDmg}`);
 console.log(`SHA256: ${digest}`);

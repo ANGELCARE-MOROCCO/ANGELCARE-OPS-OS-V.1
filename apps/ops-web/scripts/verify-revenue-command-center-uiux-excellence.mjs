@@ -149,7 +149,8 @@ const routeFiles = pages.map((file) => ({ file, source: fs.readFileSync(file, "u
 const familyCounts = {
   ProspectEnterpriseWorkspace: 13,
   ProspectEnterpriseDossier: 4,
-  RevenueB2CWorkflowV12MegaWorkspace: 24,
+  RevenueB2CWorkflowV12MegaWorkspace: 0,
+  RevenueB2CWorkspace: 24,
   RevenueCommandFinalWorkspace: 12,
   RevenueExecutiveBriefingV11Workspace: 3,
   RevenuePredictiveV11Workspace: 3,
@@ -200,6 +201,10 @@ const transformedExperienceTargets = new Set([
   "components/revenue-command-center/contract-enterprise/RevenueContractWorkspace.module.css",
   "components/revenue-command-center/contract-enterprise/route-contracts.ts",
   "components/revenue-command-center/contract-enterprise/types.ts",
+  "components/revenue-command-center/b2c-enterprise/RevenueB2CWorkspace.tsx",
+  "components/revenue-command-center/b2c-enterprise/RevenueB2CWorkspace.module.css",
+  "components/revenue-command-center/b2c-enterprise/route-contracts.ts",
+  "components/revenue-command-center/b2c-enterprise/types.ts",
 ].map((file) => path.resolve(root, file)));
 
 const importPattern = /(?:import|export)\s+(?:[^"']*?\s+from\s+)?["']([^"']+)["']/g;

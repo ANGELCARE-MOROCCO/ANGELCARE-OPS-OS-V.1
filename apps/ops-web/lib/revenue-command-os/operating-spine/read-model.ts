@@ -450,6 +450,22 @@ function expectedBenefitOf(strategy?: RevenueOperatingStrategy): string {
   return `${scenario}: ${visible || 'résultats à confirmer'}`
 }
 
+function executiveText(value: unknown): string {
+  if (value == null) return ''
+  if (typeof value === 'string') return value.trim()
+  if (typeof value === 'number' || typeof value === 'boolean') return String(value)
+  if (Array.isArray(value)) return value.map(executiveText).filter(Boolean).join(' · ')
+  if (typeof value === 'object') {
+    const record = value as Record<string, unknown>
+    for (const key of ['message', 'detail', 'title', 'summary', 'code']) {
+      const resolved = executiveText(record[key])
+      if (resolved) return resolved
+    }
+    return Object.entries(record).slice(0, 4).map(([key, entry]) => `${key}: ${executiveText(entry) || 'non renseigné'}`).join(' · ')
+  }
+  return String(value)
+}
+
 function boardBriefOf(input: {
   objective: RevenueOperatingObjective | null
   aiRuns: RevenueAiRunLedger[]
@@ -476,8 +492,9 @@ function boardBriefOf(input: {
   const evidencePosition = leader
     ? `${leader.evidenceCount} preuve(s), ${leader.assumptions.length} hypothèse(s), ${leader.risks.length} risque(s), confiance ${leader.confidence}%.`
     : 'La position de preuve sera calculée après l’assemblage.'
-  const blockedOrAtRisk = warnings.length
-    ? warnings[0]
+  const normalizedWarnings = warnings.map(executiveText).filter(Boolean)
+  const blockedOrAtRisk = normalizedWarnings.length
+    ? normalizedWarnings[0]
     : council.blockingFindings
       ? `${council.blockingFindings} constat(s) Conseil bloquent la décision.`
       : execution.failed

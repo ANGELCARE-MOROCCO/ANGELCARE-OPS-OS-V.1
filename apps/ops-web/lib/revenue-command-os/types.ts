@@ -4,6 +4,7 @@ export type RevenueOsWorkspaceKey =
   | 'digital-twin'
   | 'revenue-objectives'
   | 'signals'
+  | 'gemini-resources'
   | 'strategies'
   | 'strategy-engine'
   | 'validation-council'

@@ -1,6 +1,6 @@
 import crypto from "node:crypto"
 import { ANGELCARE_DESKTOP_RELEASE } from "@/lib/desktop/release"
-import { evaluateDeviceSynchronization } from "@/lib/whatsapp-desktop/control-plane"
+import { MINIMUM_SAFE_LOCKED_DESKTOP_VERSION, compareVersions, evaluateDeviceSynchronization } from "@/lib/whatsapp-desktop/control-plane"
 import { auditEvent, getUserDirectory } from "@/lib/whatsapp-desktop/server"
 
 type Row = Record<string, any>
@@ -191,6 +191,9 @@ export async function saveDesiredState(context: Row, deviceId: string, body: Row
   if (!device) throw new Error("DEVICE_NOT_FOUND")
   const { data: current } = await context.supabase.from("whatsapp_desktop_device_governance_state").select("*").eq("device_id", deviceId).maybeSingle()
   const desiredMode = ["standard", "focus", "locked"].includes(String(body.desired_mode)) ? String(body.desired_mode) : String(current?.desired_mode || device.station_required_mode || "standard")
+  if (desiredMode === "locked" && compareVersions(String(device.desktop_version || "0"), MINIMUM_SAFE_LOCKED_DESKTOP_VERSION) < 0 && body.unsafe_override !== true) {
+    throw new Error(`LOCKED_MODE_CLIENT_NOT_CERTIFIED:${device.desktop_version || "unknown"}:${MINIMUM_SAFE_LOCKED_DESKTOP_VERSION}`)
+  }
   const maximumTabs = Math.max(2, Math.min(50, Number(body.desired_maximum_tabs ?? current?.desired_maximum_tabs ?? 8)))
   const next = {
     device_id: deviceId,
@@ -200,8 +203,8 @@ export async function saveDesiredState(context: Row, deviceId: string, body: Row
     desired_policy_version: Math.max(0, Number(body.desired_policy_version ?? current?.desired_policy_version ?? 0)),
     desired_mode: desiredMode,
     desired_whatsapp_enabled: body.desired_whatsapp_enabled !== false,
-    desired_ac_plus_enabled: desiredMode === "locked" ? false : body.desired_ac_plus_enabled !== false,
-    desired_split_enabled: desiredMode === "locked" ? false : body.desired_split_enabled !== false,
+    desired_ac_plus_enabled: body.desired_ac_plus_enabled !== false,
+    desired_split_enabled: body.desired_split_enabled !== false,
     desired_maximum_tabs: maximumTabs,
     reason: String(body.reason || "Mise à jour de l’état désiré MZ14").slice(0, 1000),
     updated_by: context.userId,
@@ -234,7 +237,9 @@ export async function queueSynchronization(context: Row, deviceId: string, reaso
   const recommendations = new Set(asArray<string>(assessment.recommended_actions))
   const desired: Row = assessment.desired && typeof assessment.desired === "object" ? assessment.desired as Row : {}
   const reported: Row = assessment.reported && typeof assessment.reported === "object" ? assessment.reported as Row : {}
-  if (recommendations.has("APPLY_STATION_MODE")) await insertStation(desired.station_mode === "locked" ? "ENTER_LOCKED_MODE" : desired.station_mode === "focus" ? "ENTER_FOCUS_MODE" : "ENTER_STANDARD_MODE")
+  const unsafeLocked = desired.station_mode === "locked" && compareVersions(String(reported.desktop_version || device.desktop_version || "0"), MINIMUM_SAFE_LOCKED_DESKTOP_VERSION) < 0
+  if (unsafeLocked) await insertStation("ENTER_STANDARD_MODE", { safety_override: "MZ16_LOCKOUT_PREVENTION", required_version: MINIMUM_SAFE_LOCKED_DESKTOP_VERSION })
+  else if (recommendations.has("APPLY_STATION_MODE")) await insertStation(desired.station_mode === "locked" ? "ENTER_LOCKED_MODE" : desired.station_mode === "focus" ? "ENTER_FOCUS_MODE" : "ENTER_STANDARD_MODE")
   if (recommendations.has("REFRESH_STATION_POLICY") || desired.policy_version !== reported.policy_version) await insertStation("REFRESH_STATION_POLICY")
   if (recommendations.has("REQUEST_STATION_DIAGNOSTICS")) await insertStation("REQUEST_STATION_DIAGNOSTICS")
   if (recommendations.has("REFRESH_AUTHORIZATION") || triggerType === "authorization") await insertWhatsApp("REFRESH_AUTHORIZATION")
