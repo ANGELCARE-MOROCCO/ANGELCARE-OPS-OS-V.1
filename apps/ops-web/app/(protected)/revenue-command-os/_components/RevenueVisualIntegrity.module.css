@@ -81,6 +81,34 @@
   text-decoration-thickness: from-font;
 }
 
+/* Shared interaction contract: every actionable surface has a visible keyboard
+   boundary without changing route-specific action wiring. */
+.visualIntegrity :where(button, a, input, textarea, select):focus-visible {
+  outline: 3px solid rgba(37, 99, 235, .34);
+  outline-offset: 2px;
+}
+.visualIntegrity :where(button, a):disabled,
+.visualIntegrity :where(button, a)[aria-disabled="true"] {
+  cursor: not-allowed;
+}
+.visualIntegrity :where(table) thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: #f1f5f9;
+  color: #334155;
+}
+.visualIntegrity :where(code, pre) {
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+.visualIntegrity[data-revenue-workspace-context="true"],
+.visualIntegrity [data-revenue-workspace-context="true"] {
+  position: sticky;
+  top: 86px;
+  z-index: 12;
+}
+
 .visualIntegrity :where([role="dialog"], [aria-modal="true"]) {
   isolation: isolate;
 }
@@ -110,6 +138,11 @@
 
   .visualIntegrity :where([class~="grid-cols-3"], [class~="grid-cols-4"], [class~="grid-cols-5"], [class~="grid-cols-6"]) {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .visualIntegrity[data-revenue-workspace-context="true"],
+  .visualIntegrity [data-revenue-workspace-context="true"] {
+    top: 86px;
   }
 }
 

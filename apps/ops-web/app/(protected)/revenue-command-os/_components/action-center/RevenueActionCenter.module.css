@@ -7,6 +7,10 @@
   pointer-events: none;
   font-family: inherit;
 }
+.center :where(button, a):focus-visible {
+  outline: 3px solid rgba(147, 197, 253, .9);
+  outline-offset: 2px;
+}
 .launcher {
   margin-left: auto;
   display: flex;
@@ -91,7 +95,7 @@
 .card[data-state="cancelled"] .icon { background: #f1f5f9; color: #475569; }
 .copy { min-width: 0; }
 .eyebrow { color: #64748b; font-size: 8px; font-weight: 900; letter-spacing: .13em; text-transform: uppercase; }
-.title { margin-top: 2px; overflow: hidden; color: #0f172a; font-size: 12px; font-weight: 900; line-height: 1.35; text-overflow: ellipsis; white-space: nowrap; }
+.title { margin-top: 2px; color: #0f172a; font-size: 12px; font-weight: 900; line-height: 1.35; overflow-wrap: anywhere; }
 .step { margin-top: 3px; color: #475569; font-size: 10px; font-weight: 650; line-height: 1.4; }
 .headerActions { display: flex; align-items: center; gap: 4px; }
 .iconButton {

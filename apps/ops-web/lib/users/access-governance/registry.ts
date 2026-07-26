@@ -56,6 +56,7 @@ const MODULE_GROUPS: Record<string, string> = {
   b2b_partnerships: 'partnerships',
   staff_portal: 'people',
   dashboard: 'workspace',
+  'ai-provider-control': 'administration',
 }
 
 const ACCESS_GOVERNANCE_ADMIN_ROLES = [

@@ -1,6 +1,7 @@
 import { GoogleGenAI, ThinkingLevel } from '@google/genai'
 import { assertMarketingAiConfigured, getMarketingAiConfig } from './config'
 import type { MarketingAiCommand, MarketingAiOutput } from './types'
+import { acquireGovernedProvider, failGovernedProvider, reconcileGovernedProvider, resolveGovernedProviderForHealth } from '@/lib/ai-provider-control/governor'
 
 const OUTPUT_SCHEMA = {
   type: 'object',
@@ -103,17 +104,26 @@ function extractGroundingEvidence(response: unknown) {
 export async function checkMarketingAiHealth(live = false) {
   const config = getMarketingAiConfig()
   if (!config.enabled) return { enabled: false, configured: Boolean(config.apiKey), available: false, model: config.primaryModel, message: 'Marketing AI désactivé.' }
-  if (!config.apiKey) return { enabled: true, configured: false, available: false, model: config.primaryModel, message: 'GEMINI_API_KEY absente.' }
-  if (!live) return { enabled: true, configured: true, available: true, model: config.primaryModel, message: 'Configuration Gemini prête; test live non demandé.' }
+  if (!live) {
+    try {
+      const governed = await resolveGovernedProviderForHealth({ moduleKey: 'marketing_ai', capability: 'health_check', requestedModel: config.primaryModel })
+      return { enabled: true, configured: Boolean(governed.apiKey || config.apiKey), available: Boolean(governed.apiKey || config.apiKey), model: governed.model || config.primaryModel, message: governed.governed ? 'Dossier fournisseur actif et prêt.' : 'Configuration Gemini bootstrap prête.' }
+    } catch (error) {
+      return { enabled: true, configured: Boolean(config.apiKey), available: false, model: config.primaryModel, message: error instanceof Error ? error.message : 'AI_PROVIDER_ROUTE_NOT_FOUND' }
+    }
+  }
   try {
-    const ai = new GoogleGenAI({ apiKey: config.apiKey })
+    const governed = await resolveGovernedProviderForHealth({ moduleKey: 'marketing_ai', capability: 'health_check', requestedModel: config.primaryModel })
+    const resolvedApiKey = governed.apiKey || config.apiKey
+    if (!resolvedApiKey) throw new Error('GEMINI_API_KEY_MISSING')
+    const ai = new GoogleGenAI({ apiKey: resolvedApiKey })
     const response = await ai.models.generateContent({
-      model: config.primaryModel,
+      model: governed.model || config.primaryModel,
       contents: 'Reply exactly MARKETING_AI_OK',
       config: { maxOutputTokens: 256, thinkingConfig: { thinkingLevel: ThinkingLevel.LOW } },
     })
     if (!response.text?.includes('MARKETING_AI_OK')) throw new Error('UNEXPECTED_HEALTH_OUTPUT')
-    return { enabled: true, configured: true, available: true, model: config.primaryModel, message: 'Connexion Gemini vérifiée.' }
+    return { enabled: true, configured: true, available: true, model: governed.model || config.primaryModel, message: governed.governed ? 'Connexion Gemini gouvernée vérifiée.' : 'Connexion Gemini bootstrap vérifiée.' }
   } catch (error) {
     return { enabled: true, configured: true, available: false, model: config.primaryModel, message: error instanceof Error ? error.message : 'GEMINI_HEALTH_FAILED' }
   }
@@ -142,7 +152,18 @@ export async function generateMarketingAiOutput(input: {
   const config = assertMarketingAiConfigured()
   const started = Date.now()
   const groundingRequested = Boolean(input.forceGrounding || input.command.tags.includes('research') || input.command.skillCode === 'LEARN-06' || input.command.code.includes('RESOURCE'))
-  const ai = new GoogleGenAI({ apiKey: config.apiKey })
+  const governed = await acquireGovernedProvider({
+    moduleKey: 'marketing_ai',
+    capability: groundingRequested ? 'grounded_research' : 'structured_content',
+    requestedModel: config.primaryModel,
+    estimatedRequests: groundingRequested ? 2 : 1,
+    estimatedOutputTokens: config.maxOutputTokens,
+    grounded: groundingRequested,
+    commandCode: input.command.code,
+  })
+  const resolvedApiKey = governed.apiKey || config.apiKey
+  if (!resolvedApiKey) throw new Error('GEMINI_API_KEY_MISSING')
+  const ai = new GoogleGenAI({ apiKey: resolvedApiKey })
   const payload = {
     command: {
       code: input.command.code,
@@ -164,7 +185,7 @@ export async function generateMarketingAiOutput(input: {
   const controller = new AbortController()
   const timer = setTimeout(() => controller.abort(), config.timeoutMs)
   try {
-    const models = [config.primaryModel, config.fallbackModel].filter((value, index, values) => Boolean(value) && values.indexOf(value) === index)
+    const models = (governed.governed ? [governed.model] : [config.primaryModel, config.fallbackModel]).filter((value, index, values) => Boolean(value) && values.indexOf(value) === index)
     let response: Awaited<ReturnType<typeof ai.models.generateContent>> | null = null
     let groundingEvidence: ReturnType<typeof extractGroundingEvidence> = { evidence: [], queries: [] }
     let selectedModel = config.primaryModel
@@ -264,6 +285,17 @@ export async function generateMarketingAiOutput(input: {
     parsed.confidence = Math.max(0, Math.min(1, Number(parsed.confidence || 0)))
     parsed.evidence = [...parsed.evidence, ...groundingEvidence.evidence]
     parsed.humanDecisionRequired = parsed.humanDecisionRequired || input.command.requiresHumanReview || input.authorityMode !== 'observe'
+    await reconcileGovernedProvider(governed, {
+      requestCount: groundingRequested && !isGemini3Series(selectedModel) ? 2 : 1,
+      groundedRequestCount: groundingEvidence.evidence.length > 0 ? 1 : 0,
+      inputTokens: totalInputTokens,
+      outputTokens: totalOutputTokens,
+      latencyMs: Date.now() - started,
+      httpStatus: 200,
+      outcome: 'completed',
+      commandCode: input.command.code,
+      metadata: { searchQueries: groundingEvidence.queries, modelVersion: response.modelVersion },
+    })
     return {
       output: parsed,
       model: response.modelVersion || selectedModel,
@@ -275,6 +307,11 @@ export async function generateMarketingAiOutput(input: {
       searchQueries: groundingEvidence.queries,
     }
   } catch (error) {
+    await failGovernedProvider(governed, error, {
+      latencyMs: Date.now() - started,
+      commandCode: input.command.code,
+      metadata: { groundingRequested },
+    })
     if (config.deterministicFallbackEnabled) {
       return { output: deterministicFallback(input.command, input.objective), model: 'deterministic-fallback', inputTokens: 0, outputTokens: 0, totalTokens: 0, latencyMs: Date.now() - started, grounded: false, searchQueries: [] }
     }

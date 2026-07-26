@@ -38,6 +38,7 @@ export function getMarketingAiConfig() {
 export function assertMarketingAiConfigured() {
   const config = getMarketingAiConfig()
   if (!config.enabled) throw new Error('MARKETING_AI_DISABLED')
-  if (!config.apiKey) throw new Error('GEMINI_API_KEY_MISSING')
+  // The runtime may resolve an active credential dynamically from the AI Provider Control Plane.
+  // GEMINI_API_KEY remains only a bootstrap fallback and is validated by the provider when needed.
   return config
 }

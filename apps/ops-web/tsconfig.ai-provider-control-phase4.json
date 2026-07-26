@@ -1,0 +1,17 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "skipLibCheck": true
+  },
+  "include": [
+    "app/(protected)/ai-provider-control/**/*.tsx",
+    "app/api/ai-provider-control/**/*.ts",
+    "components/ai-provider-control/**/*.tsx",
+    "lib/ai-provider-control/**/*.ts",
+    "lib/revenue-command-os/ai/gemini-provider.ts",
+    "lib/market-os/marketing-ai/provider.ts",
+    "lib/market-os/marketing-ai/config.ts"
+  ],
+  "exclude": ["node_modules", ".next"]
+}

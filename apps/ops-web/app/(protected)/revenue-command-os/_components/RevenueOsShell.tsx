@@ -54,6 +54,13 @@ export default function RevenueOsShell({ children }: { children: React.ReactNode
     return order.map((label) => ({ label, items: bootstrap.workspaces.filter((item) => groupFor(item.href) === label) })).filter((group) => group.items.length)
   }, [bootstrap.workspaces])
 
+  const currentWorkspace = useMemo(() => {
+    const candidates = bootstrap.workspaces
+      .filter((item) => item.href !== '/revenue-command-os' && activePath(pathname, item.href))
+      .sort((a, b) => b.href.length - a.href.length)
+    return candidates[0] || bootstrap.workspaces.find((item) => item.href === '/revenue-command-os/cockpit')
+  }, [bootstrap.workspaces, pathname])
+
   useEffect(() => {
     const onKeydown = (event: KeyboardEvent) => {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
@@ -131,7 +138,7 @@ export default function RevenueOsShell({ children }: { children: React.ReactNode
               <div className="space-y-1">
                 {group.items.map((item) => {
                   const active = activePath(pathname, item.href)
-                  return <Link key={item.key} href={item.href} title={collapsed ? item.label : undefined} onClick={() => setMobileOpen(false)} className={`group relative flex min-h-11 items-center rounded-2xl transition ${collapsed ? 'justify-center px-2' : 'gap-3 px-3'} ${active ? 'bg-slate-950 text-white shadow-[0_12px_28px_rgba(15,23,42,.16)]' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-950'}`}>
+                  return <Link key={item.key} href={item.href} title={collapsed ? item.label : undefined} aria-current={active ? 'page' : undefined} onClick={() => setMobileOpen(false)} className={`group relative flex min-h-11 items-center rounded-2xl transition ${collapsed ? 'justify-center px-2' : 'gap-3 px-3'} ${active ? 'bg-slate-950 text-white shadow-[0_12px_28px_rgba(15,23,42,.16)]' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-950'}`}>
                     {active ? <span className="absolute -left-3 h-7 w-1 rounded-r-full bg-blue-500" /> : null}
                     <RevenueOsIcon name={item.icon} size={18} strokeWidth={active ? 2.35 : 1.9} className="shrink-0" />
                     {!collapsed ? <><span className="min-w-0 flex-1 truncate text-[12px] font-extrabold">{item.shortLabel}</span><span className={`h-2 w-2 rounded-full ${active ? 'bg-emerald-300' : item.status === 'ready' ? 'bg-emerald-500' : 'bg-amber-400'}`} /></> : null}
@@ -153,6 +160,22 @@ export default function RevenueOsShell({ children }: { children: React.ReactNode
 
         <main className="min-w-0 flex-1">
           <button className="fixed left-4 top-[102px] z-30 rounded-2xl border border-slate-200 bg-white/90 p-3 text-slate-700 shadow-lg backdrop-blur lg:hidden" onClick={() => setMobileOpen(true)} aria-label="Ouvrir la navigation"><Menu size={19} /></button>
+          <div className="border-b border-slate-200/80 bg-white/88 px-4 py-3 backdrop-blur-xl sm:px-7 lg:px-10" data-revenue-workspace-context="true">
+            <div className="mx-auto flex max-w-[1740px] flex-wrap items-center justify-between gap-3">
+              <div className="flex min-w-0 items-center gap-3">
+                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-xl bg-blue-50 text-blue-700"><RevenueOsIcon name={currentWorkspace?.icon || 'Command'} size={15} /></span>
+                <div className="min-w-0">
+                  <p className="text-[9px] font-black uppercase tracking-[.16em] text-blue-700">Espace de travail · Revenue OS</p>
+                  <p className="truncate text-sm font-black text-slate-950">{currentWorkspace?.label || 'Revenue Command Cockpit'}</p>
+                </div>
+              </div>
+              <div className="flex flex-wrap items-center gap-2 text-[10px] font-bold text-slate-600">
+                <span className="rounded-full border border-slate-200 bg-white px-3 py-1.5">Mode {bootstrap.executionMode}</span>
+                <span className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-emerald-800">Effets externes sur approbation</span>
+                <Link href="/revenue-command-os/audit" className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-slate-700 transition hover:border-blue-300 hover:text-blue-800">Trace & audit <ChevronRight className="ml-1 inline" size={12} /></Link>
+              </div>
+            </div>
+          </div>
           {children}
         </main>
       </div>

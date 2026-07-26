@@ -1,5 +1,7 @@
-import RevenueCommandFinalWorkspace from '../../_final/RevenueCommandFinalWorkspace'
+import RevenueCampaignWorkspace from "@/components/revenue-command-center/campaign-enterprise/RevenueCampaignWorkspace"
+
+export const dynamic = "force-dynamic"
 
 export default function Page() {
-  return <RevenueCommandFinalWorkspace workspace="campaignBoard" />
+  return <RevenueCampaignWorkspace experience="campaign-board" />
 }

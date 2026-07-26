@@ -1,0 +1,17 @@
+{
+  "phase": "Mega ZIP 10",
+  "routes": 8,
+  "repository_files": 54,
+  "api_routes": 25,
+  "actions": 40,
+  "tables": 34,
+  "functions_and_triggers": 15,
+  "static_checks": 497,
+  "global_uiux_checks": 141,
+  "syntax_files": 41,
+  "syntax_errors": 0,
+  "clean_install_simulation": "PASS",
+  "sql_structural_audit": "PASS",
+  "exact_next_build": "PENDING_LOCAL_RELEASE_GATE",
+  "zip_sha256": "See ANGELCARE_REVENUE_COMMAND_CENTER_EXCELLENCE_v10_CAMPAIGN_ENTERPRISE_PHASE10_PATCH.zip.sha256"
+}

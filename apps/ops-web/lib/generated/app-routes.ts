@@ -903,6 +903,18 @@ export const APP_ROUTES = [
     "detectedSource": "app/(protected)/ai-command-center/revenue-copilot/page.tsx"
   },
   {
+    "label": "Ai Provider Control",
+    "shortLabel": "Ai Provider Control",
+    "href": "/ai-provider-control",
+    "routePattern": "/ai-provider-control",
+    "dynamic": false,
+    "module": "ai-provider-control",
+    "moduleLabel": "Ai Provider Control",
+    "permissionKey": "page:/ai-provider-control",
+    "modulePermissionKey": "ai-provider-control.view",
+    "detectedSource": "app/(protected)/ai-provider-control/page.tsx"
+  },
+  {
     "label": "Angelcare 360",
     "shortLabel": "Angelcare 360",
     "href": "/angelcare-360",
@@ -7599,6 +7611,18 @@ export const APP_ROUTES = [
     "detectedSource": "app/(protected)/market-os/ambassadors/create/page.tsx"
   },
   {
+    "label": "Market Os / Ambassadors / Data Lifecycle",
+    "shortLabel": "Data Lifecycle",
+    "href": "/market-os/ambassadors/data-lifecycle",
+    "routePattern": "/market-os/ambassadors/data-lifecycle",
+    "dynamic": false,
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "permissionKey": "page:/market-os/ambassadors/data-lifecycle",
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)/market-os/ambassadors/data-lifecycle/page.tsx"
+  },
+  {
     "label": "Market Os / Ambassadors / Data Sync",
     "shortLabel": "Data Sync",
     "href": "/market-os/ambassadors/data-sync",
@@ -8703,6 +8727,198 @@ export const APP_ROUTES = [
     "detectedSource": "app/(protected)/market-os/content-command-center/active-assets/page.tsx"
   },
   {
+    "label": "Market Os / Content Command Center / Ai Director",
+    "shortLabel": "Ai Director",
+    "href": "/market-os/content-command-center/ai-director",
+    "routePattern": "/market-os/content-command-center/ai-director",
+    "dynamic": false,
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "permissionKey": "page:/market-os/content-command-center/ai-director",
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)/market-os/content-command-center/ai-director/page.tsx"
+  },
+  {
+    "label": "Market Os / Content Command Center / Ai Director / Autopilot",
+    "shortLabel": "Autopilot",
+    "href": "/market-os/content-command-center/ai-director/autopilot",
+    "routePattern": "/market-os/content-command-center/ai-director/autopilot",
+    "dynamic": false,
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "permissionKey": "page:/market-os/content-command-center/ai-director/autopilot",
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)/market-os/content-command-center/ai-director/autopilot/page.tsx"
+  },
+  {
+    "label": "Market Os / Content Command Center / Ai Director / Commands",
+    "shortLabel": "Commands",
+    "href": "/market-os/content-command-center/ai-director/commands",
+    "routePattern": "/market-os/content-command-center/ai-director/commands",
+    "dynamic": false,
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "permissionKey": "page:/market-os/content-command-center/ai-director/commands",
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)/market-os/content-command-center/ai-director/commands/page.tsx"
+  },
+  {
+    "label": "Market Os / Content Command Center / Ai Director / Compiler",
+    "shortLabel": "Compiler",
+    "href": "/market-os/content-command-center/ai-director/compiler",
+    "routePattern": "/market-os/content-command-center/ai-director/compiler",
+    "dynamic": false,
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "permissionKey": "page:/market-os/content-command-center/ai-director/compiler",
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)/market-os/content-command-center/ai-director/compiler/page.tsx"
+  },
+  {
+    "label": "Market Os / Content Command Center / Ai Director / Decisions",
+    "shortLabel": "Decisions",
+    "href": "/market-os/content-command-center/ai-director/decisions",
+    "routePattern": "/market-os/content-command-center/ai-director/decisions",
+    "dynamic": false,
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "permissionKey": "page:/market-os/content-command-center/ai-director/decisions",
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)/market-os/content-command-center/ai-director/decisions/page.tsx"
+  },
+  {
+    "label": "Market Os / Content Command Center / Ai Director / Doctrine",
+    "shortLabel": "Doctrine",
+    "href": "/market-os/content-command-center/ai-director/doctrine",
+    "routePattern": "/market-os/content-command-center/ai-director/doctrine",
+    "dynamic": false,
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "permissionKey": "page:/market-os/content-command-center/ai-director/doctrine",
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)/market-os/content-command-center/ai-director/doctrine/page.tsx"
+  },
+  {
+    "label": "Market Os / Content Command Center / Ai Director / Integrations",
+    "shortLabel": "Integrations",
+    "href": "/market-os/content-command-center/ai-director/integrations",
+    "routePattern": "/market-os/content-command-center/ai-director/integrations",
+    "dynamic": false,
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "permissionKey": "page:/market-os/content-command-center/ai-director/integrations",
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)/market-os/content-command-center/ai-director/integrations/page.tsx"
+  },
+  {
+    "label": "Market Os / Content Command Center / Ai Director / Learning",
+    "shortLabel": "Learning",
+    "href": "/market-os/content-command-center/ai-director/learning",
+    "routePattern": "/market-os/content-command-center/ai-director/learning",
+    "dynamic": false,
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "permissionKey": "page:/market-os/content-command-center/ai-director/learning",
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)/market-os/content-command-center/ai-director/learning/page.tsx"
+  },
+  {
+    "label": "Market Os / Content Command Center / Ai Director / Missions",
+    "shortLabel": "Missions",
+    "href": "/market-os/content-command-center/ai-director/missions",
+    "routePattern": "/market-os/content-command-center/ai-director/missions",
+    "dynamic": false,
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "permissionKey": "page:/market-os/content-command-center/ai-director/missions",
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)/market-os/content-command-center/ai-director/missions/page.tsx"
+  },
+  {
+    "label": "Market Os / Content Command Center / Ai Director / Queue",
+    "shortLabel": "Queue",
+    "href": "/market-os/content-command-center/ai-director/queue",
+    "routePattern": "/market-os/content-command-center/ai-director/queue",
+    "dynamic": false,
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "permissionKey": "page:/market-os/content-command-center/ai-director/queue",
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)/market-os/content-command-center/ai-director/queue/page.tsx"
+  },
+  {
+    "label": "Market Os / Content Command Center / Ai Director / Recovery",
+    "shortLabel": "Recovery",
+    "href": "/market-os/content-command-center/ai-director/recovery",
+    "routePattern": "/market-os/content-command-center/ai-director/recovery",
+    "dynamic": false,
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "permissionKey": "page:/market-os/content-command-center/ai-director/recovery",
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)/market-os/content-command-center/ai-director/recovery/page.tsx"
+  },
+  {
+    "label": "Market Os / Content Command Center / Ai Director / Repository",
+    "shortLabel": "Repository",
+    "href": "/market-os/content-command-center/ai-director/repository",
+    "routePattern": "/market-os/content-command-center/ai-director/repository",
+    "dynamic": false,
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "permissionKey": "page:/market-os/content-command-center/ai-director/repository",
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)/market-os/content-command-center/ai-director/repository/page.tsx"
+  },
+  {
+    "label": "Market Os / Content Command Center / Ai Director / Runs",
+    "shortLabel": "Runs",
+    "href": "/market-os/content-command-center/ai-director/runs",
+    "routePattern": "/market-os/content-command-center/ai-director/runs",
+    "dynamic": false,
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "permissionKey": "page:/market-os/content-command-center/ai-director/runs",
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)/market-os/content-command-center/ai-director/runs/page.tsx"
+  },
+  {
+    "label": "Market Os / Content Command Center / Ai Director / Schedules",
+    "shortLabel": "Schedules",
+    "href": "/market-os/content-command-center/ai-director/schedules",
+    "routePattern": "/market-os/content-command-center/ai-director/schedules",
+    "dynamic": false,
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "permissionKey": "page:/market-os/content-command-center/ai-director/schedules",
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)/market-os/content-command-center/ai-director/schedules/page.tsx"
+  },
+  {
+    "label": "Market Os / Content Command Center / Ai Director / Settings",
+    "shortLabel": "Settings",
+    "href": "/market-os/content-command-center/ai-director/settings",
+    "routePattern": "/market-os/content-command-center/ai-director/settings",
+    "dynamic": false,
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "permissionKey": "page:/market-os/content-command-center/ai-director/settings",
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)/market-os/content-command-center/ai-director/settings/page.tsx"
+  },
+  {
+    "label": "Market Os / Content Command Center / Ai Director / Skills",
+    "shortLabel": "Skills",
+    "href": "/market-os/content-command-center/ai-director/skills",
+    "routePattern": "/market-os/content-command-center/ai-director/skills",
+    "dynamic": false,
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "permissionKey": "page:/market-os/content-command-center/ai-director/skills",
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)/market-os/content-command-center/ai-director/skills/page.tsx"
+  },
+  {
     "label": "Market Os / Content Command Center / Assets",
     "shortLabel": "Assets",
     "href": "/market-os/content-command-center/assets",
@@ -8761,6 +8977,18 @@ export const APP_ROUTES = [
     "permissionKey": "page:/market-os/content-command-center/create",
     "modulePermissionKey": "market-os.view",
     "detectedSource": "app/(protected)/market-os/content-command-center/create/page.tsx"
+  },
+  {
+    "label": "Market Os / Content Command Center / Legacy Operations",
+    "shortLabel": "Legacy Operations",
+    "href": "/market-os/content-command-center/legacy-operations",
+    "routePattern": "/market-os/content-command-center/legacy-operations",
+    "dynamic": false,
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "permissionKey": "page:/market-os/content-command-center/legacy-operations",
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)/market-os/content-command-center/legacy-operations/page.tsx"
   },
   {
     "label": "Market Os / Content Command Center / Publishing",
@@ -11175,6 +11403,18 @@ export const APP_ROUTES = [
     "detectedSource": "app/(protected)/revenue-command-os/digital-twin/[section]/page.tsx"
   },
   {
+    "label": "Revenue Command Os / Email Studio",
+    "shortLabel": "Email Studio",
+    "href": "/revenue-command-os/email-studio",
+    "routePattern": "/revenue-command-os/email-studio",
+    "dynamic": false,
+    "module": "revenue-command-os",
+    "moduleLabel": "Revenue Command Os",
+    "permissionKey": "page:/revenue-command-os/email-studio",
+    "modulePermissionKey": "revenue-command-os.view",
+    "detectedSource": "app/(protected)/revenue-command-os/email-studio/page.tsx"
+  },
+  {
     "label": "Revenue Command Os / Execution Autopilot",
     "shortLabel": "Execution Autopilot",
     "href": "/revenue-command-os/execution-autopilot",
@@ -11185,6 +11425,30 @@ export const APP_ROUTES = [
     "permissionKey": "page:/revenue-command-os/execution-autopilot",
     "modulePermissionKey": "revenue-command-os.view",
     "detectedSource": "app/(protected)/revenue-command-os/execution-autopilot/page.tsx"
+  },
+  {
+    "label": "Revenue Command Os / Gemini Resources",
+    "shortLabel": "Gemini Resources",
+    "href": "/revenue-command-os/gemini-resources",
+    "routePattern": "/revenue-command-os/gemini-resources",
+    "dynamic": false,
+    "module": "revenue-command-os",
+    "moduleLabel": "Revenue Command Os",
+    "permissionKey": "page:/revenue-command-os/gemini-resources",
+    "modulePermissionKey": "revenue-command-os.view",
+    "detectedSource": "app/(protected)/revenue-command-os/gemini-resources/page.tsx"
+  },
+  {
+    "label": "Revenue Command Os / Intelligent Commands",
+    "shortLabel": "Intelligent Commands",
+    "href": "/revenue-command-os/intelligent-commands",
+    "routePattern": "/revenue-command-os/intelligent-commands",
+    "dynamic": false,
+    "module": "revenue-command-os",
+    "moduleLabel": "Revenue Command Os",
+    "permissionKey": "page:/revenue-command-os/intelligent-commands",
+    "modulePermissionKey": "revenue-command-os.view",
+    "detectedSource": "app/(protected)/revenue-command-os/intelligent-commands/page.tsx"
   },
   {
     "label": "Revenue Command Os / Mega Production",
@@ -13701,6 +13965,16 @@ export const APP_ROUTE_PERMISSIONS = [
     "moduleLabel": "Ai Command Center",
     "href": "/ai-command-center/revenue-copilot",
     "routePattern": "/ai-command-center/revenue-copilot",
+    "dynamic": false
+  },
+  {
+    "value": "page:/ai-provider-control",
+    "label": "Ai Provider Control",
+    "shortLabel": "Ai Provider Control",
+    "module": "ai-provider-control",
+    "moduleLabel": "Ai Provider Control",
+    "href": "/ai-provider-control",
+    "routePattern": "/ai-provider-control",
     "dynamic": false
   },
   {
@@ -19284,6 +19558,16 @@ export const APP_ROUTE_PERMISSIONS = [
     "dynamic": false
   },
   {
+    "value": "page:/market-os/ambassadors/data-lifecycle",
+    "label": "Market Os / Ambassadors / Data Lifecycle",
+    "shortLabel": "Data Lifecycle",
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "href": "/market-os/ambassadors/data-lifecycle",
+    "routePattern": "/market-os/ambassadors/data-lifecycle",
+    "dynamic": false
+  },
+  {
     "value": "page:/market-os/ambassadors/data-sync",
     "label": "Market Os / Ambassadors / Data Sync",
     "shortLabel": "Data Sync",
@@ -20204,6 +20488,166 @@ export const APP_ROUTE_PERMISSIONS = [
     "dynamic": false
   },
   {
+    "value": "page:/market-os/content-command-center/ai-director",
+    "label": "Market Os / Content Command Center / Ai Director",
+    "shortLabel": "Ai Director",
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "href": "/market-os/content-command-center/ai-director",
+    "routePattern": "/market-os/content-command-center/ai-director",
+    "dynamic": false
+  },
+  {
+    "value": "page:/market-os/content-command-center/ai-director/autopilot",
+    "label": "Market Os / Content Command Center / Ai Director / Autopilot",
+    "shortLabel": "Autopilot",
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "href": "/market-os/content-command-center/ai-director/autopilot",
+    "routePattern": "/market-os/content-command-center/ai-director/autopilot",
+    "dynamic": false
+  },
+  {
+    "value": "page:/market-os/content-command-center/ai-director/commands",
+    "label": "Market Os / Content Command Center / Ai Director / Commands",
+    "shortLabel": "Commands",
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "href": "/market-os/content-command-center/ai-director/commands",
+    "routePattern": "/market-os/content-command-center/ai-director/commands",
+    "dynamic": false
+  },
+  {
+    "value": "page:/market-os/content-command-center/ai-director/compiler",
+    "label": "Market Os / Content Command Center / Ai Director / Compiler",
+    "shortLabel": "Compiler",
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "href": "/market-os/content-command-center/ai-director/compiler",
+    "routePattern": "/market-os/content-command-center/ai-director/compiler",
+    "dynamic": false
+  },
+  {
+    "value": "page:/market-os/content-command-center/ai-director/decisions",
+    "label": "Market Os / Content Command Center / Ai Director / Decisions",
+    "shortLabel": "Decisions",
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "href": "/market-os/content-command-center/ai-director/decisions",
+    "routePattern": "/market-os/content-command-center/ai-director/decisions",
+    "dynamic": false
+  },
+  {
+    "value": "page:/market-os/content-command-center/ai-director/doctrine",
+    "label": "Market Os / Content Command Center / Ai Director / Doctrine",
+    "shortLabel": "Doctrine",
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "href": "/market-os/content-command-center/ai-director/doctrine",
+    "routePattern": "/market-os/content-command-center/ai-director/doctrine",
+    "dynamic": false
+  },
+  {
+    "value": "page:/market-os/content-command-center/ai-director/integrations",
+    "label": "Market Os / Content Command Center / Ai Director / Integrations",
+    "shortLabel": "Integrations",
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "href": "/market-os/content-command-center/ai-director/integrations",
+    "routePattern": "/market-os/content-command-center/ai-director/integrations",
+    "dynamic": false
+  },
+  {
+    "value": "page:/market-os/content-command-center/ai-director/learning",
+    "label": "Market Os / Content Command Center / Ai Director / Learning",
+    "shortLabel": "Learning",
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "href": "/market-os/content-command-center/ai-director/learning",
+    "routePattern": "/market-os/content-command-center/ai-director/learning",
+    "dynamic": false
+  },
+  {
+    "value": "page:/market-os/content-command-center/ai-director/missions",
+    "label": "Market Os / Content Command Center / Ai Director / Missions",
+    "shortLabel": "Missions",
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "href": "/market-os/content-command-center/ai-director/missions",
+    "routePattern": "/market-os/content-command-center/ai-director/missions",
+    "dynamic": false
+  },
+  {
+    "value": "page:/market-os/content-command-center/ai-director/queue",
+    "label": "Market Os / Content Command Center / Ai Director / Queue",
+    "shortLabel": "Queue",
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "href": "/market-os/content-command-center/ai-director/queue",
+    "routePattern": "/market-os/content-command-center/ai-director/queue",
+    "dynamic": false
+  },
+  {
+    "value": "page:/market-os/content-command-center/ai-director/recovery",
+    "label": "Market Os / Content Command Center / Ai Director / Recovery",
+    "shortLabel": "Recovery",
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "href": "/market-os/content-command-center/ai-director/recovery",
+    "routePattern": "/market-os/content-command-center/ai-director/recovery",
+    "dynamic": false
+  },
+  {
+    "value": "page:/market-os/content-command-center/ai-director/repository",
+    "label": "Market Os / Content Command Center / Ai Director / Repository",
+    "shortLabel": "Repository",
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "href": "/market-os/content-command-center/ai-director/repository",
+    "routePattern": "/market-os/content-command-center/ai-director/repository",
+    "dynamic": false
+  },
+  {
+    "value": "page:/market-os/content-command-center/ai-director/runs",
+    "label": "Market Os / Content Command Center / Ai Director / Runs",
+    "shortLabel": "Runs",
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "href": "/market-os/content-command-center/ai-director/runs",
+    "routePattern": "/market-os/content-command-center/ai-director/runs",
+    "dynamic": false
+  },
+  {
+    "value": "page:/market-os/content-command-center/ai-director/schedules",
+    "label": "Market Os / Content Command Center / Ai Director / Schedules",
+    "shortLabel": "Schedules",
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "href": "/market-os/content-command-center/ai-director/schedules",
+    "routePattern": "/market-os/content-command-center/ai-director/schedules",
+    "dynamic": false
+  },
+  {
+    "value": "page:/market-os/content-command-center/ai-director/settings",
+    "label": "Market Os / Content Command Center / Ai Director / Settings",
+    "shortLabel": "Settings",
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "href": "/market-os/content-command-center/ai-director/settings",
+    "routePattern": "/market-os/content-command-center/ai-director/settings",
+    "dynamic": false
+  },
+  {
+    "value": "page:/market-os/content-command-center/ai-director/skills",
+    "label": "Market Os / Content Command Center / Ai Director / Skills",
+    "shortLabel": "Skills",
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "href": "/market-os/content-command-center/ai-director/skills",
+    "routePattern": "/market-os/content-command-center/ai-director/skills",
+    "dynamic": false
+  },
+  {
     "value": "page:/market-os/content-command-center/assets",
     "label": "Market Os / Content Command Center / Assets",
     "shortLabel": "Assets",
@@ -20251,6 +20695,16 @@ export const APP_ROUTE_PERMISSIONS = [
     "moduleLabel": "Market OS",
     "href": "/market-os/content-command-center/create",
     "routePattern": "/market-os/content-command-center/create",
+    "dynamic": false
+  },
+  {
+    "value": "page:/market-os/content-command-center/legacy-operations",
+    "label": "Market Os / Content Command Center / Legacy Operations",
+    "shortLabel": "Legacy Operations",
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "href": "/market-os/content-command-center/legacy-operations",
+    "routePattern": "/market-os/content-command-center/legacy-operations",
     "dynamic": false
   },
   {
@@ -22264,6 +22718,16 @@ export const APP_ROUTE_PERMISSIONS = [
     "dynamic": true
   },
   {
+    "value": "page:/revenue-command-os/email-studio",
+    "label": "Revenue Command Os / Email Studio",
+    "shortLabel": "Email Studio",
+    "module": "revenue-command-os",
+    "moduleLabel": "Revenue Command Os",
+    "href": "/revenue-command-os/email-studio",
+    "routePattern": "/revenue-command-os/email-studio",
+    "dynamic": false
+  },
+  {
     "value": "page:/revenue-command-os/execution-autopilot",
     "label": "Revenue Command Os / Execution Autopilot",
     "shortLabel": "Execution Autopilot",
@@ -22271,6 +22735,26 @@ export const APP_ROUTE_PERMISSIONS = [
     "moduleLabel": "Revenue Command Os",
     "href": "/revenue-command-os/execution-autopilot",
     "routePattern": "/revenue-command-os/execution-autopilot",
+    "dynamic": false
+  },
+  {
+    "value": "page:/revenue-command-os/gemini-resources",
+    "label": "Revenue Command Os / Gemini Resources",
+    "shortLabel": "Gemini Resources",
+    "module": "revenue-command-os",
+    "moduleLabel": "Revenue Command Os",
+    "href": "/revenue-command-os/gemini-resources",
+    "routePattern": "/revenue-command-os/gemini-resources",
+    "dynamic": false
+  },
+  {
+    "value": "page:/revenue-command-os/intelligent-commands",
+    "label": "Revenue Command Os / Intelligent Commands",
+    "shortLabel": "Intelligent Commands",
+    "module": "revenue-command-os",
+    "moduleLabel": "Revenue Command Os",
+    "href": "/revenue-command-os/intelligent-commands",
+    "routePattern": "/revenue-command-os/intelligent-commands",
     "dynamic": false
   },
   {

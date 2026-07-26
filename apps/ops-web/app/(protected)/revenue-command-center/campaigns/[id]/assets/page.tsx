@@ -1,5 +1,8 @@
-import RevenueCommandFinalWorkspace from '../../../_final/RevenueCommandFinalWorkspace'
+import RevenueCampaignWorkspace from "@/components/revenue-command-center/campaign-enterprise/RevenueCampaignWorkspace"
 
-export default function Page({ params }: { params: { id: string } }) {
-  return <RevenueCommandFinalWorkspace workspace="campaignAssets" recordId={params.id} />
+export const dynamic = "force-dynamic"
+
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  return <RevenueCampaignWorkspace experience="campaign-assets-studio" contextId={id} />
 }

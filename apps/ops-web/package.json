@@ -160,7 +160,10 @@
     "verify:revenue-os-mz17": "node scripts/revenue-command-os/verify-mz17-production-consistency-repair.mjs",
     "typecheck:revenue-os-mz17": "tsc -p tsconfig.revenue-os-mz17-repair.json --noEmit --pretty false",
     "revenue-command-center:phase8:release": "node scripts/release-revenue-command-center-partnership-phase8.mjs",
-    "revenue-command-center:phase9:release": "node scripts/release-revenue-command-center-b2c-phase9.mjs"
+    "revenue-command-center:phase9:release": "node scripts/release-revenue-command-center-b2c-phase9.mjs",
+    "revenue-command-center:phase10:verify": "node scripts/verify-revenue-command-center-campaign-enterprise-phase10.mjs",
+    "revenue-command-center:phase10:typecheck": "tsc -p tsconfig.revenue-command-center-campaign-phase10.json --pretty false",
+    "revenue-command-center:phase10:release": "node scripts/release-revenue-command-center-campaign-phase10.mjs"
   },
   "dependencies": {
     "@google/genai": "^2.12.0",

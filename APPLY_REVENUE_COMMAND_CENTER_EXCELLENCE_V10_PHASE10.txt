@@ -1,0 +1,50 @@
+ANGELCARE REVENUE COMMAND CENTER — MEGA ZIP 10 APPLICATION INSTRUCTIONS
+
+1. BACK UP
+   - Create a current Git branch/commit.
+   - Export or back up the Supabase database.
+
+2. INSTALL FROM REPOSITORY ROOT
+
+   cd ~/Desktop/angelcare-platform
+   unzip -o ~/Downloads/ANGELCARE_REVENUE_COMMAND_CENTER_EXCELLENCE_v10_CAMPAIGN_ENTERPRISE_PHASE10_PATCH.zip -d ~/Desktop/angelcare-platform
+
+3. APPLICATION RELEASE GATE
+
+   cd ~/Desktop/angelcare-platform/apps/ops-web
+   node -v
+   npm ci
+   npm run revenue-command-center:phase10:release
+
+   STOP unless the final result says RELEASE GATE PASSED and the build-proof JSON exists.
+
+4. DATABASE PREFLIGHT
+
+   Run the entire file in Supabase SQL Editor:
+   apps/ops-web/supabase/revenue-command-center/preflight/20260726_campaign_sdr_attribution_live_schema_preflight.sql
+
+   STOP if CUTOVER_GATE is not READY.
+
+5. MIGRATION
+
+   Run:
+   apps/ops-web/supabase/migrations/20260726_0800_revenue_campaign_sdr_attribution_completion.sql
+
+6. VERIFICATION
+
+   Run all four files:
+   apps/ops-web/supabase/revenue-command-center/verification/20260726_campaign_sdr_attribution_rls_verification.sql
+   apps/ops-web/supabase/revenue-command-center/verification/20260726_campaign_eligibility_sequence_integrity_verification.sql
+   apps/ops-web/supabase/revenue-command-center/verification/20260726_campaign_attribution_verification.sql
+   apps/ops-web/supabase/revenue-command-center/verification/20260726_campaign_performance_cost_verification.sql
+
+7. AUTHENTICATED E2E
+
+   Follow REVENUE_CAMPAIGN_PHASE10_E2E_ACCEPTANCE.md with controlled recipients.
+
+8. ROLLBACK
+
+   Application: revert the Git commit or apply the reversible unified patch in reverse.
+   Database: use the included rollback SQL only after reviewing live data created after cutover.
+
+Never run the migration twice under different filenames. Never bypass a BLOCKED preflight or failed production build.

@@ -1,7 +1,7 @@
-import RevenueSDRV11Workspace from "@/components/revenue-command-center/RevenueSDRV11Workspace"
+import RevenueCampaignWorkspace from "@/components/revenue-command-center/campaign-enterprise/RevenueCampaignWorkspace"
 
 export const dynamic = "force-dynamic"
 
 export default function Page() {
-  return <RevenueSDRV11Workspace mode="workspace" />
+  return <RevenueCampaignWorkspace experience="sdr-command" />
 }

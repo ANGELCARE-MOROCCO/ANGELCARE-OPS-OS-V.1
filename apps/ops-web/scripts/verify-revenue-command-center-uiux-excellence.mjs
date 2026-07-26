@@ -31,6 +31,10 @@ const requiredFiles = [
   "components/revenue-command-center/contract-enterprise/route-contracts.ts",
   "components/revenue-command-center/contract-enterprise/types.ts",
   "components/revenue-command-center/RevenuePartnershipsV13ActionsWorkspace.tsx",
+  "components/revenue-command-center/campaign-enterprise/RevenueCampaignWorkspace.tsx",
+  "components/revenue-command-center/campaign-enterprise/RevenueCampaignWorkspace.module.css",
+  "components/revenue-command-center/campaign-enterprise/route-contracts.ts",
+  "components/revenue-command-center/campaign-enterprise/types.ts",
   "lib/revenue-command-center/route-registry.ts",
 ];
 
@@ -151,10 +155,10 @@ const familyCounts = {
   ProspectEnterpriseDossier: 4,
   RevenueB2CWorkflowV12MegaWorkspace: 0,
   RevenueB2CWorkspace: 24,
-  RevenueCommandFinalWorkspace: 12,
+  RevenueCommandFinalWorkspace: 5,
   RevenueExecutiveBriefingV11Workspace: 3,
   RevenuePredictiveV11Workspace: 3,
-  RevenueSDRV11Workspace: 3,
+  RevenueSDRV11Workspace: 2,
   RevenuePartnershipsEnterpriseWorkspace: 0,
   RevenueAppointmentsV12MegaWorkspace: 0,
   RevenueEngagementWorkspace: 24,
@@ -162,6 +166,7 @@ const familyCounts = {
   RevenueExecutionWorkspace: 21,
   RevenuePartnershipsV13ActionsWorkspace: 0,
   RevenuePartnershipWorkspace: 18,
+  RevenueCampaignWorkspace: 8,
   RevenueProposalWorkspace: 8,
   RevenueContractWorkspace: 6,
   UltimateRevenueCommandPage: 7,
@@ -205,6 +210,10 @@ const transformedExperienceTargets = new Set([
   "components/revenue-command-center/b2c-enterprise/RevenueB2CWorkspace.module.css",
   "components/revenue-command-center/b2c-enterprise/route-contracts.ts",
   "components/revenue-command-center/b2c-enterprise/types.ts",
+  "components/revenue-command-center/campaign-enterprise/RevenueCampaignWorkspace.tsx",
+  "components/revenue-command-center/campaign-enterprise/RevenueCampaignWorkspace.module.css",
+  "components/revenue-command-center/campaign-enterprise/route-contracts.ts",
+  "components/revenue-command-center/campaign-enterprise/types.ts",
 ].map((file) => path.resolve(root, file)));
 
 const importPattern = /(?:import|export)\s+(?:[^"']*?\s+from\s+)?["']([^"']+)["']/g;
