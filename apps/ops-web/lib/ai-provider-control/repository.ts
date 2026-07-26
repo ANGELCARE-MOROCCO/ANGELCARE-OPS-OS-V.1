@@ -1,12 +1,13 @@
 import crypto from 'node:crypto'
-import { GoogleGenAI, ThinkingLevel } from '@google/genai'
 import { createServiceClient } from '@/lib/supabase/server'
 import type { AiProviderSnapshot, JsonRecord } from './types'
+import { estimateAiCostUsd } from './governor'
+import { invokeGeminiProvider } from './gemini-runtime'
 
 const now = () => new Date().toISOString()
 const clean = (value: unknown) => String(value ?? '').trim()
 const numberOrNull = (value: unknown) => value === '' || value == null ? null : Number(value)
-const asArray = <T>(value: unknown) => Array.isArray(value) ? value as T[] : []
+const asArray = <T>(value: unknown) => Array.isArray(value) ? value as T[] : typeof value === 'string' ? value.split(',').map((item) => item.trim()).filter(Boolean) as T[] : []
 
 async function admin() { return (await createServiceClient()) as any }
 
@@ -21,10 +22,20 @@ async function selectSafe(table: string, order = 'created_at', ascending = false
   return asArray<JsonRecord>(result.data)
 }
 
+
+async function selectPhase5Safe(table: string, order = 'created_at', ascending = false, limit = 500) {
+  try {
+    return await selectSafe(table, order, ascending, limit)
+  } catch (error) {
+    if (error instanceof Error && error.message === 'AI_PROVIDER_CONTROL_MIGRATION_REQUIRED') return []
+    throw error
+  }
+}
+
 export async function loadAiProviderSnapshot(): Promise<AiProviderSnapshot> {
   const supabase = await admin()
   const since = new Date(); since.setHours(0, 0, 0, 0)
-  const [dossiers, pools, credentials, models, assignments, routingRules, quotas, usage, healthChecks, incidents, alerts, configVersions, audit, emergencyResult] = await Promise.all([
+  const [dossiers, pools, credentials, models, assignments, routingRules, quotas, usage, healthChecks, incidents, alerts, configVersions, audit, commandPolicies, schedules, governedRequests, structuredCache, reuseEvents, emergencyResult] = await Promise.all([
     selectSafe('ai_provider_dossiers', 'created_at', false, 200),
     selectSafe('ai_provider_capacity_pools', 'created_at', false, 300),
     selectSafe('ai_provider_credentials', 'created_at', false, 500),
@@ -38,10 +49,21 @@ export async function loadAiProviderSnapshot(): Promise<AiProviderSnapshot> {
     selectSafe('ai_provider_alerts', 'created_at', false, 200),
     selectSafe('ai_provider_config_versions', 'version_number', false, 100),
     selectSafe('ai_provider_audit', 'created_at', false, 300),
+    selectPhase5Safe('ai_provider_command_policies', 'updated_at', false, 1000),
+    selectPhase5Safe('ai_provider_command_schedules', 'updated_at', false, 1000),
+    selectPhase5Safe('ai_provider_governed_requests', 'created_at', false, 5000),
+    selectPhase5Safe('ai_provider_structured_result_cache', 'updated_at', false, 2000),
+    selectPhase5Safe('ai_provider_reuse_events', 'created_at', false, 5000),
     supabase.from('ai_provider_emergency_state').select('*').eq('scope_key', '*').maybeSingle(),
   ])
   const todayUsage = usage.filter((row) => new Date(String(row.occurred_at || 0)) >= since)
+  const weekStart = new Date(); weekStart.setHours(0, 0, 0, 0); weekStart.setDate(weekStart.getDate() - ((weekStart.getDay() + 6) % 7))
+  const weekUsage = usage.filter((row) => new Date(String(row.occurred_at || 0)) >= weekStart)
   const sum = (key: string) => todayUsage.reduce((total, row) => total + Number(row[key] || 0), 0)
+  const weekSum = (key: string) => weekUsage.reduce((total, row) => total + Number(row[key] || 0), 0)
+  const avoidedRequests = reuseEvents.reduce((total, row) => total + Number(row.avoided_requests || 0), 0)
+  const avoidedTokens = reuseEvents.reduce((total, row) => total + Number(row.avoided_input_tokens || 0) + Number(row.avoided_output_tokens || 0), 0)
+  const avoidedCostUsd = reuseEvents.reduce((total, row) => total + Number(row.avoided_cost_usd || 0), 0)
   return {
     generatedAt: now(),
     emergency: emergencyResult.data || null,
@@ -58,6 +80,11 @@ export async function loadAiProviderSnapshot(): Promise<AiProviderSnapshot> {
     alerts,
     configVersions,
     audit,
+    commandPolicies: commandPolicies as any,
+    schedules: schedules as any,
+    governedRequests: governedRequests as any,
+    structuredCache: structuredCache as any,
+    reuseEvents,
     rollups: {
       todayRequests: sum('request_count'),
       todayGroundedRequests: sum('grounded_request_count'),
@@ -67,6 +94,18 @@ export async function loadAiProviderSnapshot(): Promise<AiProviderSnapshot> {
       activeDossiers: dossiers.filter((row) => row.is_enabled && ['ready', 'operating', 'limited'].includes(String(row.status))).length,
       operatingPools: pools.filter((row) => row.status === 'operating').length,
       activeCredentials: credentials.filter((row) => row.status === 'active').length,
+      weekRequests: weekSum('request_count'),
+      weekInputTokens: weekSum('input_tokens'),
+      weekOutputTokens: weekSum('output_tokens'),
+      weekCostUsd: weekSum('estimated_cost_usd'),
+      cacheHits: governedRequests.filter((row) => row.decision === 'REUSE_CACHED').length,
+      joinedRequests: governedRequests.filter((row) => row.decision === 'JOIN_IN_FLIGHT').length,
+      blockedRequests: governedRequests.filter((row) => ['blocked','deferred'].includes(String(row.status))).length,
+      avoidedRequests,
+      avoidedTokens,
+      avoidedCostUsd,
+      activeSchedules: schedules.filter((row) => row.enabled && row.status === 'active').length,
+      suspendedCommands: commandPolicies.filter((row) => row.enabled === false || row.ai_mode === 'ai_prohibited').length,
     },
   }
 }
@@ -139,279 +178,146 @@ export async function executeAiProviderAction(action: string, payload: JsonRecor
 
   if (action === 'test_credential') {
     const credentialId = clean(payload.credentialId)
-
-    if (!credentialId) {
-      throw new Error('CREDENTIAL_ID_REQUIRED')
-    }
-
-    const credentialResult = await supabase
-      .from('ai_provider_credentials')
-      .select('id,dossier_id,capacity_pool_id')
-      .eq('id', credentialId)
-      .single()
-
-    if (credentialResult.error) {
-      throw new Error(credentialResult.error.message)
-    }
-
+    if (!credentialId) throw new Error('CREDENTIAL_ID_REQUIRED')
+    const credentialResult = await supabase.from('ai_provider_credentials').select('id,dossier_id,capacity_pool_id').eq('id', credentialId).single()
+    if (credentialResult.error) throw new Error(credentialResult.error.message)
     const credential = credentialResult.data
 
-    /*
-     * Select only a model registered and enabled for this dossier.
-     * A requested model is accepted only when it belongs to this
-     * dossier's active model catalogue.
-     */
-    const modelsResult = await supabase
-      .from('ai_provider_models')
+    const modelsResult = await supabase.from('ai_provider_models')
       .select('model_code,primary_for_capability,enabled,created_at')
       .eq('dossier_id', credential.dossier_id)
       .eq('enabled', true)
       .order('primary_for_capability', { ascending: false })
       .order('created_at', { ascending: true })
-
-    if (modelsResult.error) {
-      throw new Error(modelsResult.error.message)
-    }
-
+    if (modelsResult.error) throw new Error(modelsResult.error.message)
     const registeredModels = asArray<JsonRecord>(modelsResult.data)
     const requestedModel = clean(payload.model)
-
-    const selectedModel =
-      (
-        requestedModel
-          ? registeredModels.find(
-              (row) => clean(row.model_code) === requestedModel,
-            )
-          : undefined
-      )
-      || registeredModels.find(
-        (row) => Boolean(row.primary_for_capability),
-      )
+    const selectedModel = (requestedModel
+      ? registeredModels.find((row) => clean(row.model_code) === requestedModel)
+      : undefined)
+      || registeredModels.find((row) => Boolean(row.primary_for_capability))
       || registeredModels[0]
-
     const model = clean(selectedModel?.model_code)
+    if (!model) throw new Error('NO_ACTIVE_MODEL_REGISTERED')
 
-    if (!model) {
-      throw new Error('NO_ACTIVE_MODEL_REGISTERED')
+    const retestStateResult = await supabase.from('ai_provider_credentials').update({
+      status: 'testing', failure_code: null, updated_at: now(),
+    }).eq('id', credentialId)
+    if (retestStateResult.error) throw new Error(retestStateResult.error.message)
+
+    const secretResult = await supabase.rpc('ai_provider_resolve_secret', { p_credential_id: credentialId })
+    if (secretResult.error) throw new Error(secretResult.error.message)
+    const secretData = Array.isArray(secretResult.data) ? secretResult.data[0] : secretResult.data
+    const apiKey = clean(secretData?.decrypted_secret || secretData)
+    if (!apiKey) throw new Error('CREDENTIAL_SECRET_UNAVAILABLE')
+    const policyResult = await supabase.from('ai_provider_command_policies').select('*')
+      .eq('module_key', 'ai_provider_control').eq('workspace_key', 'credential-health')
+      .eq('command_code', 'AI_PROVIDER_CREDENTIAL_TEST').maybeSingle()
+    if (policyResult.error) {
+      const message = String(policyResult.error.message || '')
+      if (message.includes('does not exist') || message.includes('schema cache')) throw new Error('AI_PROVIDER_SOVEREIGNTY_PHASE5_REQUIRED')
+      throw new Error(message)
+    }
+    const policy = policyResult.data
+    if (!policy?.enabled || policy.ai_mode === 'ai_prohibited' || !policy.manual_allowed) throw new Error('AI_PROVIDER_CREDENTIAL_TEST_POLICY_BLOCKED')
+
+    const dayStart = new Date(); dayStart.setHours(0, 0, 0, 0)
+    const weekStart = new Date(); weekStart.setHours(0, 0, 0, 0); weekStart.setDate(weekStart.getDate() - ((weekStart.getDay() + 6) % 7))
+    const usageResult = await supabase.from('ai_provider_usage_ledger')
+      .select('request_count,input_tokens,output_tokens,estimated_cost_usd,occurred_at,command_code')
+      .eq('module_key', 'ai_provider_control')
+      .gte('occurred_at', weekStart.toISOString())
+    if (usageResult.error) throw new Error(usageResult.error.message)
+    const moduleUsageRows = asArray<JsonRecord>(usageResult.data)
+    const usageRows = moduleUsageRows.filter((row) => row.command_code === 'AI_PROVIDER_CREDENTIAL_TEST')
+    const dayRows = usageRows.filter((row) => new Date(String(row.occurred_at || 0)) >= dayStart)
+    const countRows = (rows: JsonRecord[]) => rows.reduce((total, row) => total + Number(row.request_count || 0), 0)
+    const costRows = (rows: JsonRecord[]) => rows.reduce((total, row) => total + Number(row.estimated_cost_usd || 0), 0)
+    const estimatedInputTokens = 32
+    const estimatedOutputTokens = 64
+    const estimatedCostUsd = estimateAiCostUsd(estimatedInputTokens, estimatedOutputTokens)
+    const quotaResult = await supabase.from('ai_provider_quota_policies').select('*')
+      .eq('scope_type', 'module').eq('scope_key', 'ai_provider_control').maybeSingle()
+    if (quotaResult.error) throw new Error(quotaResult.error.message)
+    const quota = quotaResult.data
+    const moduleDayRows = moduleUsageRows.filter((row) => new Date(String(row.occurred_at || 0)) >= dayStart)
+    const moduleWeekInput = moduleUsageRows.reduce((total, row) => total + Number(row.input_tokens || 0), 0)
+    const moduleWeekOutput = moduleUsageRows.reduce((total, row) => total + Number(row.output_tokens || 0), 0)
+    if (quota?.hard_limit) {
+      if (quota.max_requests_per_day != null && countRows(moduleDayRows) + 1 > Number(quota.max_requests_per_day)) throw new Error('AI_PROVIDER_CONTROL_DAILY_REQUEST_BUDGET')
+      if (quota.max_requests_per_week != null && countRows(moduleUsageRows) + 1 > Number(quota.max_requests_per_week)) throw new Error('AI_PROVIDER_CONTROL_WEEKLY_REQUEST_BUDGET')
+      if (quota.max_input_tokens_per_week != null && moduleWeekInput + estimatedInputTokens > Number(quota.max_input_tokens_per_week)) throw new Error('AI_PROVIDER_CONTROL_WEEKLY_INPUT_TOKEN_BUDGET')
+      if (quota.max_output_tokens_per_week != null && moduleWeekOutput + estimatedOutputTokens > Number(quota.max_output_tokens_per_week)) throw new Error('AI_PROVIDER_CONTROL_WEEKLY_OUTPUT_TOKEN_BUDGET')
+      if (quota.max_total_tokens_per_week != null && moduleWeekInput + moduleWeekOutput + estimatedInputTokens + estimatedOutputTokens > Number(quota.max_total_tokens_per_week)) throw new Error('AI_PROVIDER_CONTROL_WEEKLY_TOTAL_TOKEN_BUDGET')
+      if (quota.max_estimated_cost_usd_per_day != null && costRows(moduleDayRows) + estimatedCostUsd > Number(quota.max_estimated_cost_usd_per_day)) throw new Error('AI_PROVIDER_CONTROL_DAILY_COST_BUDGET')
+      if (quota.max_estimated_cost_usd_per_week != null && costRows(moduleUsageRows) + estimatedCostUsd > Number(quota.max_estimated_cost_usd_per_week)) throw new Error('AI_PROVIDER_CONTROL_WEEKLY_COST_BUDGET')
+    }
+    if (policy.max_runs_per_day != null && countRows(dayRows) + 1 > Number(policy.max_runs_per_day)) throw new Error('AI_PROVIDER_CREDENTIAL_TEST_DAILY_LIMIT')
+    if (policy.max_runs_per_week != null && countRows(usageRows) + 1 > Number(policy.max_runs_per_week)) throw new Error('AI_PROVIDER_CREDENTIAL_TEST_WEEKLY_LIMIT')
+    if (policy.max_cost_usd_per_day != null && costRows(dayRows) + estimatedCostUsd > Number(policy.max_cost_usd_per_day)) throw new Error('AI_PROVIDER_CREDENTIAL_TEST_DAILY_COST_LIMIT')
+    if (policy.max_cost_usd_per_week != null && costRows(usageRows) + estimatedCostUsd > Number(policy.max_cost_usd_per_week)) throw new Error('AI_PROVIDER_CREDENTIAL_TEST_WEEKLY_COST_LIMIT')
+
+    const latestResult = await supabase.from('ai_provider_health_checks').select('checked_at')
+      .eq('credential_id', credentialId).order('checked_at', { ascending: false }).limit(1).maybeSingle()
+    if (latestResult.error) throw new Error(latestResult.error.message)
+    const latestAt = latestResult.data?.checked_at ? new Date(String(latestResult.data.checked_at)).getTime() : 0
+    if (Number(policy.minimum_interval_seconds || 0) > 0 && latestAt > Date.now() - Number(policy.minimum_interval_seconds) * 1000) {
+      throw new Error('AI_PROVIDER_CREDENTIAL_TEST_MINIMUM_INTERVAL')
     }
 
-    const secretResult = await supabase.rpc(
-      'ai_provider_resolve_secret',
-      { p_credential_id: credentialId },
-    )
-
-    if (secretResult.error) {
-      throw new Error(secretResult.error.message)
+    const requestFingerprint = crypto.createHash('sha256').update(`credential-health:${credentialId}:${model}:${Math.floor(Date.now() / Math.max(60_000, Number(policy.minimum_interval_seconds || 3600) * 1000))}`).digest('hex')
+    const requestId = crypto.randomUUID()
+    const requestInsert = await supabase.from('ai_provider_governed_requests').insert({
+      id: requestId, request_fingerprint: requestFingerprint, module_key: 'ai_provider_control', workspace_key: 'credential-health',
+      capability: 'health_check', command_code: 'AI_PROVIDER_CREDENTIAL_TEST', actor_id: actor.id, trigger_type: 'health_test',
+      requested_model: model, provider_type: 'gemini', model_code: model, decision: 'EXECUTE_NEW', status: 'running',
+      estimated_requests: 1, estimated_input_tokens: estimatedInputTokens, estimated_output_tokens: estimatedOutputTokens,
+      estimated_cost_usd: estimatedCostUsd, started_at: now(), metadata: { credentialId, dossierId: credential.dossier_id, explicitCredentialTest: true },
+    })
+    if (requestInsert.error) {
+      if (String(requestInsert.error.message || '').includes('duplicate')) throw new Error('AI_PROVIDER_CREDENTIAL_TEST_ALREADY_RUNNING')
+      throw new Error(requestInsert.error.message)
     }
-
-    const secretData = Array.isArray(secretResult.data)
-      ? secretResult.data[0]
-      : secretResult.data
-
-    const apiKey = clean(
-      secretData?.decrypted_secret || secretData,
-    )
-
-    if (!apiKey) {
-      throw new Error('CREDENTIAL_SECRET_UNAVAILABLE')
-    }
-
-    /*
-     * Clear the stale FAILED state before each genuine retest.
-     */
-    await supabase
-      .from('ai_provider_credentials')
-      .update({
-        status: 'testing',
-        failure_code: null,
-        updated_at: now(),
-      })
-      .eq('id', credentialId)
 
     const started = Date.now()
-
     try {
-      const ai = new GoogleGenAI({ apiKey })
-
-      const requestConfig: {
-        maxOutputTokens: number
-        thinkingConfig?: {
-          thinkingLevel: ThinkingLevel
-        }
-      } = {
-        maxOutputTokens: 64,
-      }
-
-      /*
-       * thinkingLevel belongs to Gemini 3.x.
-       * This keeps future Gemini 2.x catalogue entries compatible.
-       */
-      if (/^gemini-3(?:\.|$)/.test(model)) {
-        requestConfig.thinkingConfig = {
-          thinkingLevel: ThinkingLevel.LOW,
-        }
-      }
-
-      const response = await ai.models.generateContent({
-        model,
-        contents:
-          'Reply with exactly this text and nothing else: SANILA_PROVIDER_OK',
-        config: requestConfig,
+      const response = await invokeGeminiProvider({ apiKey, model, contents: 'Reply exactly SANILA_PROVIDER_OK', maxOutputTokens: 64, thinkingLevel: 'LOW' })
+      if (!response.text?.includes('SANILA_PROVIDER_OK')) throw new Error('PROVIDER_TEST_UNEXPECTED_OUTPUT')
+      const usage = response.usageMetadata as { promptTokenCount?: number; candidatesTokenCount?: number; totalTokenCount?: number } | undefined
+      const inputTokens = Number(usage?.promptTokenCount || 0)
+      const outputTokens = Number(usage?.candidatesTokenCount || 0)
+      const actualCostUsd = estimateAiCostUsd(inputTokens, outputTokens)
+      await supabase.from('ai_provider_credentials').update({ status: 'validated', validated_at: now(), last_success_at: now(), failure_code: null, updated_at: now() }).eq('id', credentialId)
+      await supabase.from('ai_provider_health_checks').insert({ dossier_id: credential.dossier_id, capacity_pool_id: credential.capacity_pool_id, credential_id: credentialId, model_code: model, status: 'healthy', latency_ms: Date.now() - started, checked_by: actor.id, details: { responseId: response.responseId, governedRequestId: requestId } })
+      await supabase.from('ai_provider_usage_ledger').insert({
+        module_key: 'ai_provider_control', capability: 'health_check', dossier_id: credential.dossier_id,
+        capacity_pool_id: credential.capacity_pool_id, credential_id: credentialId, model_code: model,
+        request_count: 1, grounded_request_count: 0, input_tokens: inputTokens,
+        output_tokens: outputTokens, latency_ms: Date.now() - started,
+        http_status: 200, outcome: 'completed', actor_id: actor.id, command_code: 'AI_PROVIDER_CREDENTIAL_TEST', estimated_cost_usd: actualCostUsd,
+        metadata: { source: 'credential_live_test', responseId: response.responseId, governedRequestId: requestId },
       })
-
-      const responseText = clean(response.text)
-
-      if (!responseText.includes('SANILA_PROVIDER_OK')) {
-        throw new Error('PROVIDER_TEST_UNEXPECTED_OUTPUT')
-      }
-
-      const usage = response.usageMetadata as {
-        promptTokenCount?: number
-        candidatesTokenCount?: number
-        totalTokenCount?: number
-      } | undefined
-
-      const completedAt = now()
-      const latencyMs = Date.now() - started
-
-      const credentialUpdate = await supabase
-        .from('ai_provider_credentials')
-        .update({
-          status: 'validated',
-          validated_at: completedAt,
-          last_success_at: completedAt,
-          failure_code: null,
-          updated_at: completedAt,
-        })
-        .eq('id', credentialId)
-
-      if (credentialUpdate.error) {
-        throw new Error(credentialUpdate.error.message)
-      }
-
-      await supabase
-        .from('ai_provider_health_checks')
-        .insert({
-          dossier_id: credential.dossier_id,
-          capacity_pool_id: credential.capacity_pool_id,
-          credential_id: credentialId,
-          model_code: model,
-          status: 'healthy',
-          latency_ms: latencyMs,
-          checked_by: actor.id,
-          details: {
-            responseId: response.responseId,
-            responseModel: response.modelVersion || model,
-          },
-        })
-
-      await supabase
-        .from('ai_provider_usage_ledger')
-        .insert({
-          module_key: 'ai_provider_control',
-          capability: 'health_check',
-          dossier_id: credential.dossier_id,
-          capacity_pool_id: credential.capacity_pool_id,
-          credential_id: credentialId,
-          model_code: model,
-          request_count: 1,
-          grounded_request_count: 0,
-          input_tokens: Number(
-            usage?.promptTokenCount || 0,
-          ),
-          output_tokens: Number(
-            usage?.candidatesTokenCount || 0,
-          ),
-          latency_ms: latencyMs,
-          http_status: 200,
-          outcome: 'completed',
-          actor_id: actor.id,
-          metadata: {
-            source: 'credential_live_test',
-            responseId: response.responseId,
-          },
-        })
-
-      await audit(
-        actor,
-        action,
-        'credential',
-        credentialId,
-        {
-          model,
-          latencyMs,
-        },
-      )
-
-      return {
-        ok: true,
-        model: response.modelVersion || model,
-        latencyMs,
-        usage,
-      }
+      await supabase.from('ai_provider_governed_requests').update({
+        status: 'completed', actual_input_tokens: inputTokens, actual_output_tokens: outputTokens, actual_cost_usd: actualCostUsd,
+        result_json: { ok: true, modelVersion: response.modelVersion || model }, result_hash: crypto.createHash('sha256').update(String(response.text || '')).digest('hex'),
+        completed_at: now(), updated_at: now(), metadata: { credentialId, responseId: response.responseId, explicitCredentialTest: true },
+      }).eq('id', requestId)
+      await audit(actor, action, 'credential', credentialId, { model, latencyMs: Date.now() - started, governedRequestId: requestId })
+      return { ok: true, model: response.modelVersion || model, latencyMs: Date.now() - started, usage, governedRequestId: requestId }
     } catch (error) {
-      const message =
-        error instanceof Error
-          ? error.message
-          : String(error)
-
-      const httpStatus =
-        Number(
-          message.match(
-            /\b(400|401|403|404|409|429|5\d\d)\b/,
-          )?.[1] || 0,
-        ) || null
-
-      const failedAt = now()
-
-      await supabase
-        .from('ai_provider_credentials')
-        .update({
-          status: 'failed',
-          last_failure_at: failedAt,
-          failure_code: message.slice(0, 500),
-          updated_at: failedAt,
-        })
-        .eq('id', credentialId)
-
-      await supabase
-        .from('ai_provider_health_checks')
-        .insert({
-          dossier_id: credential.dossier_id,
-          capacity_pool_id: credential.capacity_pool_id,
-          credential_id: credentialId,
-          model_code: model,
-          status: 'failed',
-          latency_ms: Date.now() - started,
-          checked_by: actor.id,
-          details: {
-            error: message.slice(0, 2000),
-          },
-        })
-
-      await supabase
-        .from('ai_provider_usage_ledger')
-        .insert({
-          module_key: 'ai_provider_control',
-          capability: 'health_check',
-          dossier_id: credential.dossier_id,
-          capacity_pool_id: credential.capacity_pool_id,
-          credential_id: credentialId,
-          model_code: model,
-          request_count: 1,
-          grounded_request_count: 0,
-          input_tokens: 0,
-          output_tokens: 0,
-          latency_ms: Date.now() - started,
-          http_status: httpStatus,
-          outcome: 'failed',
-          error_code: message.slice(0, 500),
-          actor_id: actor.id,
-          metadata: {
-            source: 'credential_live_test',
-          },
-        })
-
+      const message = error instanceof Error ? error.message : String(error)
+      const httpStatus = Number(message.match(/\b(401|403|404|429|5\d\d)\b/)?.[1] || 0) || null
+      await supabase.from('ai_provider_credentials').update({ status: 'failed', last_failure_at: now(), failure_code: message.slice(0, 160), updated_at: now() }).eq('id', credentialId)
+      await supabase.from('ai_provider_health_checks').insert({ dossier_id: credential.dossier_id, capacity_pool_id: credential.capacity_pool_id, credential_id: credentialId, model_code: model, status: 'failed', latency_ms: Date.now() - started, checked_by: actor.id, details: { error: message.slice(0, 1000), governedRequestId: requestId } })
+      await supabase.from('ai_provider_usage_ledger').insert({
+        module_key: 'ai_provider_control', capability: 'health_check', dossier_id: credential.dossier_id,
+        capacity_pool_id: credential.capacity_pool_id, credential_id: credentialId, model_code: model,
+        request_count: 1, grounded_request_count: 0, input_tokens: 0, output_tokens: 0,
+        latency_ms: Date.now() - started, http_status: httpStatus, outcome: 'failed',
+        error_code: message.slice(0, 160), actor_id: actor.id, command_code: 'AI_PROVIDER_CREDENTIAL_TEST', estimated_cost_usd: estimatedCostUsd,
+        metadata: { source: 'credential_live_test', governedRequestId: requestId },
+      })
+      await supabase.from('ai_provider_governed_requests').update({ status: 'failed', error_code: message.slice(0, 160), error_message: message.slice(0, 2000), completed_at: now(), updated_at: now() }).eq('id', requestId)
       throw error
     }
   }
@@ -468,9 +374,16 @@ export async function executeAiProviderAction(action: string, payload: JsonRecor
       max_requests_per_minute: numberOrNull(payload.maxRequestsPerMinute),
       max_requests_per_hour: numberOrNull(payload.maxRequestsPerHour),
       max_requests_per_day: numberOrNull(payload.maxRequestsPerDay),
+      max_requests_per_week: numberOrNull(payload.maxRequestsPerWeek),
       max_requests_per_month: numberOrNull(payload.maxRequestsPerMonth),
       max_input_tokens_per_day: numberOrNull(payload.maxInputTokensPerDay),
+      max_input_tokens_per_week: numberOrNull(payload.maxInputTokensPerWeek),
       max_output_tokens_per_day: numberOrNull(payload.maxOutputTokensPerDay),
+      max_output_tokens_per_week: numberOrNull(payload.maxOutputTokensPerWeek),
+      max_total_tokens_per_week: numberOrNull(payload.maxTotalTokensPerWeek),
+      max_estimated_cost_usd_per_day: numberOrNull(payload.maxEstimatedCostUsdPerDay),
+      max_estimated_cost_usd_per_week: numberOrNull(payload.maxEstimatedCostUsdPerWeek),
+      max_estimated_cost_usd_per_month: numberOrNull(payload.maxEstimatedCostUsdPerMonth),
       max_grounded_requests_per_day: numberOrNull(payload.maxGroundedRequestsPerDay),
       max_concurrent_requests: numberOrNull(payload.maxConcurrentRequests),
       emergency_reserve_requests: Number(payload.emergencyReserveRequests || 0),
@@ -482,6 +395,139 @@ export async function executeAiProviderAction(action: string, payload: JsonRecor
     if (result.error) throw new Error(result.error.message)
     await audit(actor, action, 'quota_policy', result.data.id, row)
     return result.data
+  }
+
+  if (action === 'save_command_policy') {
+    const moduleKey = clean(payload.moduleKey), commandCode = clean(payload.commandCode)
+    if (!moduleKey || !commandCode) throw new Error('COMMAND_POLICY_MODULE_AND_COMMAND_REQUIRED')
+    const row = {
+      module_key: moduleKey,
+      workspace_key: clean(payload.workspaceKey || '*'),
+      command_code: commandCode,
+      ai_mode: clean(payload.aiMode || 'ai_required'),
+      manual_allowed: payload.manualAllowed !== false,
+      scheduled_allowed: Boolean(payload.scheduledAllowed),
+      minimum_interval_seconds: Math.max(0, Number(payload.minimumIntervalSeconds || 0)),
+      max_runs_per_day: numberOrNull(payload.maxRunsPerDay),
+      max_runs_per_week: numberOrNull(payload.maxRunsPerWeek),
+      max_runs_per_month: numberOrNull(payload.maxRunsPerMonth),
+      max_input_tokens_per_run: numberOrNull(payload.maxInputTokensPerRun),
+      max_output_tokens_per_run: numberOrNull(payload.maxOutputTokensPerRun),
+      max_cost_usd_per_run: numberOrNull(payload.maxCostUsdPerRun),
+      max_cost_usd_per_day: numberOrNull(payload.maxCostUsdPerDay),
+      max_cost_usd_per_week: numberOrNull(payload.maxCostUsdPerWeek),
+      max_retries: Math.max(0, Number(payload.maxRetries || 0)),
+      cache_mode: clean(payload.cacheMode || 'until_source_changes'),
+      cache_ttl_seconds: Math.max(0, Number(payload.cacheTtlSeconds || 21600)),
+      duplicate_window_seconds: Math.max(0, Number(payload.duplicateWindowSeconds || 900)),
+      force_refresh_allowed: Boolean(payload.forceRefreshAllowed),
+      approval_class: clean(payload.approvalClass || 'none'),
+      allowed_provider_types: asArray<string>(payload.allowedProviderTypes),
+      allowed_models: asArray<string>(payload.allowedModels),
+      allowed_trigger_types: asArray<string>(payload.allowedTriggerTypes).length ? asArray<string>(payload.allowedTriggerTypes) : ['manual'],
+      execution_window: payload.executionWindow || {},
+      cooldown_after_failure_seconds: Math.max(0, Number(payload.cooldownAfterFailureSeconds || 300)),
+      consecutive_failure_suspend_threshold: Math.max(0, Number(payload.consecutiveFailureSuspendThreshold || 3)),
+      enabled: payload.enabled !== false,
+      metadata: payload.metadata || {},
+      updated_by: actor.id,
+      updated_at: now(),
+    }
+    const result = await supabase.from('ai_provider_command_policies').upsert(row, { onConflict: 'module_key,workspace_key,command_code' }).select('*').single()
+    if (result.error) throw new Error(result.error.message)
+    await audit(actor, action, 'command_policy', result.data.id, row)
+    return result.data
+  }
+
+  if (action === 'save_schedule') {
+    const scheduleKey = clean(payload.scheduleKey), moduleKey = clean(payload.moduleKey), commandCode = clean(payload.commandCode)
+    if (!scheduleKey || !moduleKey || !commandCode) throw new Error('SCHEDULE_IDENTITY_REQUIRED')
+    const row = {
+      schedule_key: scheduleKey,
+      module_key: moduleKey,
+      workspace_key: clean(payload.workspaceKey || '*'),
+      command_code: commandCode,
+      schedule_expression: clean(payload.scheduleExpression),
+      schedule_format: clean(payload.scheduleFormat || 'cron'),
+      timezone: clean(payload.timezone || 'Africa/Casablanca'),
+      enabled: Boolean(payload.enabled),
+      status: clean(payload.status || (payload.enabled ? 'active' : 'paused')),
+      priority: Number(payload.priority || 100),
+      freshness_seconds: Math.max(0, Number(payload.freshnessSeconds || 21600)),
+      duplicate_window_seconds: Math.max(0, Number(payload.duplicateWindowSeconds || 900)),
+      max_runs_per_day: numberOrNull(payload.maxRunsPerDay),
+      max_runs_per_week: numberOrNull(payload.maxRunsPerWeek),
+      estimated_input_tokens: Math.max(0, Number(payload.estimatedInputTokens || 0)),
+      estimated_output_tokens: Math.max(0, Number(payload.estimatedOutputTokens || 0)),
+      estimated_cost_usd: Math.max(0, Number(payload.estimatedCostUsd || 0)),
+      approval_required: Boolean(payload.approvalRequired),
+      provider_policy: payload.providerPolicy || {},
+      dependency_policy: payload.dependencyPolicy || {},
+      failure_policy: payload.failurePolicy || {},
+      next_run_at: clean(payload.nextRunAt) || null,
+      metadata: payload.metadata || {},
+      updated_by: actor.id,
+      updated_at: now(),
+    }
+    if (!row.schedule_expression) throw new Error('SCHEDULE_EXPRESSION_REQUIRED')
+    const result = await supabase.from('ai_provider_command_schedules').upsert(row, { onConflict: 'schedule_key' }).select('*').single()
+    if (result.error) throw new Error(result.error.message)
+    await audit(actor, action, 'command_schedule', result.data.id, row)
+    return result.data
+  }
+
+  if (action === 'set_schedule_status') {
+    const id = clean(payload.id), status = clean(payload.status)
+    if (!id || !status) throw new Error('SCHEDULE_ID_AND_STATUS_REQUIRED')
+    const updates = { status, enabled: status === 'active', updated_by: actor.id, updated_at: now() }
+    const result = await supabase.from('ai_provider_command_schedules').update(updates).eq('id', id).select('*').single()
+    if (result.error) throw new Error(result.error.message)
+    await audit(actor, action, 'command_schedule', id, updates)
+    return result.data
+  }
+
+  if (action === 'cancel_governed_request') {
+    const id = clean(payload.id)
+    if (!id) throw new Error('GOVERNED_REQUEST_ID_REQUIRED')
+    const current = await supabase.from('ai_provider_governed_requests').select('*').eq('id', id).single()
+    if (current.error) throw new Error(current.error.message)
+    if (!['queued', 'running', 'joined'].includes(String(current.data.status))) throw new Error('GOVERNED_REQUEST_NOT_CANCELLABLE')
+    if (current.data.reservation_id) {
+      const release = await supabase.rpc('ai_provider_fail_runtime_budget', {
+        p_reservation_id: current.data.reservation_id,
+        p_lease_id: current.data.lease_id || null,
+        p_http_status: null,
+        p_error_code: 'CANCELLED_BY_AUTHORIZED_USER',
+        p_latency_ms: null,
+        p_metadata: { governedRequestId: id, cancelledBy: actor.id },
+      })
+      if (release.error) throw new Error(release.error.message)
+    }
+    const result = await supabase.from('ai_provider_governed_requests').update({
+      status: 'cancelled', error_code: 'CANCELLED_BY_AUTHORIZED_USER',
+      error_message: clean(payload.reason || 'Annulée par un utilisateur autorisé.'), completed_at: now(), updated_at: now(),
+    }).eq('id', id).select('*').single()
+    if (result.error) throw new Error(result.error.message)
+    if (current.data.decision === 'EXECUTE_NEW') {
+      await supabase.from('ai_provider_governed_requests').update({
+        status: 'cancelled', error_code: 'SOURCE_REQUEST_CANCELLED', completed_at: now(), updated_at: now(),
+      }).eq('source_request_id', id).eq('status', 'joined')
+    }
+    await audit(actor, action, 'governed_request', id, { reason: clean(payload.reason), previousStatus: current.data.status })
+    return result.data
+  }
+
+  if (action === 'invalidate_cache') {
+    const fingerprint = clean(payload.requestFingerprint), reason = clean(payload.reason)
+    if (!fingerprint || !reason) throw new Error('CACHE_FINGERPRINT_AND_REASON_REQUIRED')
+    const result = await supabase.rpc('ai_provider_invalidate_structured_cache', {
+      p_request_fingerprint: fingerprint,
+      p_reason: reason,
+      p_actor_id: actor.id,
+    })
+    if (result.error) throw new Error(result.error.message)
+    await audit(actor, action, 'structured_result_cache', null, { fingerprint, reason, count: result.data })
+    return { invalidated: Number(result.data || 0) }
   }
 
   if (action === 'save_routing') {
@@ -535,6 +581,8 @@ export async function executeAiProviderAction(action: string, payload: JsonRecor
       assignments: current.assignments,
       routingRules: current.routingRules,
       quotas: current.quotas,
+      commandPolicies: current.commandPolicies,
+      schedules: current.schedules,
     }
     const latest = await supabase.from('ai_provider_config_versions').select('version_number').order('version_number', { ascending: false }).limit(1).maybeSingle()
     const versionNumber = Number(latest.data?.version_number || 0) + 1
@@ -552,7 +600,7 @@ export async function executeAiProviderAction(action: string, payload: JsonRecor
   if (action === 'rollback_configuration') {
     const versionId = clean(payload.versionId)
     if (!versionId) throw new Error('CONFIG_VERSION_ID_REQUIRED')
-    const result = await supabase.rpc('ai_provider_restore_configuration', {
+    const result = await supabase.rpc('ai_provider_restore_sovereign_configuration', {
       p_version_id: versionId,
       p_actor_id: actor.id,
     })

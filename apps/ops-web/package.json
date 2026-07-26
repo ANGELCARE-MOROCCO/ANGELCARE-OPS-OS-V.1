@@ -163,7 +163,12 @@
     "revenue-command-center:phase9:release": "node scripts/release-revenue-command-center-b2c-phase9.mjs",
     "revenue-command-center:phase10:verify": "node scripts/verify-revenue-command-center-campaign-enterprise-phase10.mjs",
     "revenue-command-center:phase10:typecheck": "tsc -p tsconfig.revenue-command-center-campaign-phase10.json --pretty false",
-    "revenue-command-center:phase10:release": "node scripts/release-revenue-command-center-campaign-phase10.mjs"
+    "revenue-command-center:phase10:release": "node scripts/release-revenue-command-center-campaign-phase10.mjs",
+    "ai-provider-control:phase5:verify": "node scripts/verify-ai-provider-sovereignty-phase5.mjs",
+    "ai-provider-control:phase5:typecheck": "tsc -p tsconfig.ai-provider-sovereignty-phase5.json --noEmit --pretty false",
+    "ai-provider-control:phase5:verify-sql": "node scripts/verify-ai-provider-sovereignty-phase5-sql.mjs",
+    "ai-provider-control:phase5:test": "node scripts/test-ai-provider-sovereignty-phase5.mjs",
+    "ai-provider-control:phase5:verify-syntax": "node scripts/verify-ai-provider-sovereignty-phase5-syntax.cjs"
   },
   "dependencies": {
     "@google/genai": "^2.12.0",

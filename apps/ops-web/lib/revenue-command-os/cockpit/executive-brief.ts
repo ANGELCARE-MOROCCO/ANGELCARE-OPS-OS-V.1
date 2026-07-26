@@ -1,8 +1,10 @@
-import { GoogleGenAI, ThinkingLevel } from '@google/genai'
 import { z } from 'zod'
 import { cockpitConfig } from './config'
 import { cockpitStableId, redactCockpitPayload } from './crypto'
 import type { ApprovalGovernanceSummary, CouncilSummary, ExecutiveBrief, ExecutionProgressSummary, ObjectiveCommandSummary, RevenueException, RevenueProgramSummary, StrategyAssemblySummary } from './types'
+import { estimateAiCostUsd, executeGovernedAiRequest } from '@/lib/ai-provider-control/governor'
+import { invokeGeminiProvider } from '@/lib/ai-provider-control/gemini-runtime'
+import crypto from 'node:crypto'
 
 interface BriefContext {
   objective: ObjectiveCommandSummary | null
@@ -38,90 +40,126 @@ const narrativeJsonSchema = {
   additionalProperties: false,
 } as const
 
+const stableHash = (value: unknown) => crypto.createHash('sha256').update(JSON.stringify(value)).digest('hex')
+
 export async function buildExecutiveBrief(context: BriefContext): Promise<ExecutiveBrief> {
   const deterministic = deterministicBrief(context)
   const config = cockpitConfig()
-  if (!config.geminiBriefEnabled || !process.env.GEMINI_API_KEY || !process.env.GEMINI_PRIMARY_MODEL) return deterministic
+  if (!config.geminiBriefEnabled) return deterministic
 
+  const minimized = redactCockpitPayload({
+    objective: context.objective ? {
+      title: context.objective.title,
+      revenueTarget: context.objective.revenueTarget,
+      actualRevenue: context.objective.actualRevenue,
+      qualifiedPipeline: context.objective.qualifiedPipeline,
+      forecastRevenue: context.objective.forecastRevenue,
+      forecastPercent: context.objective.forecastPercent,
+      confidence: context.objective.confidence,
+      blockers: context.objective.currentBlockers,
+      nextMilestone: context.objective.nextMilestone,
+    } : null,
+    strategy: context.strategy ? {
+      title: context.strategy.title,
+      thesis: context.strategy.thesis,
+      confidence: context.strategy.confidence,
+      assumptionsOpen: context.strategy.assumptionsOpen,
+      risksHigh: context.strategy.risksHigh,
+    } : null,
+    council: context.council ? {
+      classification: context.council.classification,
+      blockingFindings: context.council.blockingFindings,
+      contradictions: context.council.contradictions,
+      topFindings: context.council.topFindings,
+    } : null,
+    programs: context.programs.slice(0, 8).map(program => ({
+      title: program.title,
+      progressPercent: program.progressPercent,
+      forecastRevenue: program.forecastRevenue,
+      tasksBlocked: program.tasksBlocked,
+      capacityUtilization: program.capacityUtilization,
+    })),
+    criticalExceptions: context.exceptions.slice(0, 8).map(exception => ({
+      priority: exception.priority,
+      title: exception.title,
+      revenueAtRisk: exception.revenueAtRisk,
+      recommendedAction: exception.recommendedAction,
+    })),
+    approvals: context.approvals.slice(0, 8).map(approval => ({
+      type: approval.approvalType,
+      title: approval.title,
+      status: approval.status,
+      businessConsequence: approval.businessConsequence,
+    })),
+    execution: context.execution,
+  })
+
+  const serialized = JSON.stringify(minimized)
+  const estimatedInputTokens = Math.ceil(serialized.length / 4)
   try {
-    const minimized = redactCockpitPayload({
-      objective: context.objective ? {
-        title: context.objective.title,
-        revenueTarget: context.objective.revenueTarget,
-        actualRevenue: context.objective.actualRevenue,
-        qualifiedPipeline: context.objective.qualifiedPipeline,
-        forecastRevenue: context.objective.forecastRevenue,
-        forecastPercent: context.objective.forecastPercent,
-        confidence: context.objective.confidence,
-        blockers: context.objective.currentBlockers,
-        nextMilestone: context.objective.nextMilestone,
-      } : null,
-      strategy: context.strategy ? {
-        title: context.strategy.title,
-        thesis: context.strategy.thesis,
-        confidence: context.strategy.confidence,
-        assumptionsOpen: context.strategy.assumptionsOpen,
-        risksHigh: context.strategy.risksHigh,
-      } : null,
-      council: context.council ? {
-        classification: context.council.classification,
-        blockingFindings: context.council.blockingFindings,
-        contradictions: context.council.contradictions,
-        topFindings: context.council.topFindings,
-      } : null,
-      programs: context.programs.slice(0, 8).map((program) => ({
-        title: program.title,
-        progressPercent: program.progressPercent,
-        forecastRevenue: program.forecastRevenue,
-        tasksBlocked: program.tasksBlocked,
-        capacityUtilization: program.capacityUtilization,
-      })),
-      criticalExceptions: context.exceptions.slice(0, 8).map((exception) => ({
-        priority: exception.priority,
-        title: exception.title,
-        revenueAtRisk: exception.revenueAtRisk,
-        recommendedAction: exception.recommendedAction,
-      })),
-      approvals: context.approvals.slice(0, 8).map((approval) => ({
-        type: approval.approvalType,
-        title: approval.title,
-        status: approval.status,
-        businessConsequence: approval.businessConsequence,
-      })),
-      execution: context.execution,
+    const governed = await executeGovernedAiRequest<z.infer<typeof narrativeSchema>>({
+      moduleKey: 'revenue_os',
+      workspaceKey: 'executive-cockpit',
+      capability: 'structured_content',
+      commandCode: 'REVENUE_EXECUTIVE_BRIEF',
+      requestedModel: String(process.env.GEMINI_PRIMARY_MODEL || 'gemini-2.5-flash'),
+      promptVersion: 'executive-brief-15.1.0',
+      sourceRevision: stableHash(minimized),
+      requestPayload: minimized,
+      triggerType: 'system',
+      missionId: context.objective?.id || null,
+      mandateId: context.objective?.id || null,
+      estimatedRequests: 1,
+      estimatedInputTokens,
+      estimatedOutputTokens: 1800,
+      estimatedCostUsd: estimateAiCostUsd(estimatedInputTokens, 1800),
+      cacheTtlSeconds: 21600,
+      metadata: { timelineCount: context.timelineCount, deterministicBriefId: deterministic.id },
+      execute: async ({ apiKey, model }) => {
+        const started = Date.now()
+        const controller = new AbortController()
+        const timer = setTimeout(() => controller.abort(), 30000)
+        try {
+          const response = await invokeGeminiProvider({
+            apiKey,
+            model,
+            contents: serialized,
+            systemInstruction: 'Tu es le Chief Revenue Officer virtuel d’AngelCare. Rédige un brief exécutif factuel, direct et précis en français. N’invente aucun chiffre. Distingue clairement position, prévision, changements, risques et décision immédiate. Retourne uniquement le JSON demandé.',
+            responseMimeType: 'application/json',
+            responseJsonSchema: narrativeJsonSchema,
+            maxOutputTokens: 1800,
+            thinkingLevel: 'LOW',
+            abortSignal: controller.signal,
+          })
+          if (!response.text) throw new Error('EXECUTIVE_BRIEF_EMPTY_RESPONSE')
+          const parsed = narrativeSchema.parse(JSON.parse(response.text))
+          const usage = response.usageMetadata as { promptTokenCount?: number; candidatesTokenCount?: number } | undefined
+          const inputTokens = Number(usage?.promptTokenCount || 0)
+          const outputTokens = Number(usage?.candidatesTokenCount || 0)
+          return {
+            result: parsed,
+            requestCount: 1,
+            inputTokens,
+            outputTokens,
+            latencyMs: Date.now() - started,
+            estimatedCostUsd: estimateAiCostUsd(inputTokens, outputTokens),
+            metadata: { responseId: response.responseId, modelVersion: response.modelVersion },
+          }
+        } finally {
+          clearTimeout(timer)
+        }
+      },
     })
 
-    const client = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY })
-    const controller = new AbortController()
-    const timer = setTimeout(() => controller.abort(), 30000)
-    try {
-      const response = await client.models.generateContent({
-        model: process.env.GEMINI_PRIMARY_MODEL,
-        contents: JSON.stringify(minimized),
-        config: {
-          systemInstruction: 'Tu es le Chief Revenue Officer virtuel d’AngelCare. Rédige un brief exécutif factuel, direct et précis en français. N’invente aucun chiffre. Distingue clairement position, prévision, changements, risques et décision immédiate. Retourne uniquement le JSON demandé.',
-          responseMimeType: 'application/json',
-          responseJsonSchema: narrativeJsonSchema,
-          maxOutputTokens: 1800,
-          thinkingConfig: { thinkingLevel: ThinkingLevel.LOW },
-          abortSignal: controller.signal,
-        },
-      })
-      if (!response.text) return deterministic
-      const parsed = narrativeSchema.safeParse(JSON.parse(response.text))
-      if (!parsed.success) return deterministic
-      return {
-        ...deterministic,
-        currentPosition: parsed.data.currentPosition,
-        forecastStatement: parsed.data.forecastStatement,
-        materialChanges: parsed.data.materialChanges,
-        criticalRisks: parsed.data.criticalRisks,
-        immediateDecision: parsed.data.immediateDecision,
-        recommendedExecutiveAction: parsed.data.recommendedExecutiveAction,
-        provider: 'gemini-assisted',
-      }
-    } finally {
-      clearTimeout(timer)
+    return {
+      ...deterministic,
+      currentPosition: governed.result.currentPosition,
+      forecastStatement: governed.result.forecastStatement,
+      materialChanges: governed.result.materialChanges,
+      criticalRisks: governed.result.criticalRisks,
+      immediateDecision: governed.result.immediateDecision,
+      recommendedExecutiveAction: governed.result.recommendedExecutiveAction,
+      provider: 'gemini-assisted',
     }
   } catch {
     return deterministic

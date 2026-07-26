@@ -1,6 +1,6 @@
 import { getCurrentAppUser } from '@/lib/auth/session'
 
-export type AiProviderPermission = 'view' | 'manage' | 'credentials' | 'routing' | 'quota' | 'emergency' | 'audit'
+export type AiProviderPermission = 'view' | 'manage' | 'credentials' | 'routing' | 'quota' | 'schedules' | 'requests' | 'force_refresh' | 'emergency' | 'audit'
 
 const privilegedRoles = new Set([
   'ceo', 'owner', 'direction', 'admin', 'super_admin', 'root', 'root_admin',

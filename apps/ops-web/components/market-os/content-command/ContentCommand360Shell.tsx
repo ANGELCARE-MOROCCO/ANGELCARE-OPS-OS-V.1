@@ -209,8 +209,8 @@ export default function ContentCommand360Shell({ children }: { children: React.R
           </Link>
           <div className="cc360-command-brand-copy">
             <span className="cc360-eyebrow">SANILA MARKET OS</span>
-            <strong>Content Command 360</strong>
-            <small>{currentWorkspace(pathname)} · stratégie, production, gouvernance et publication</small>
+            <strong>Content Command Headquarters</strong>
+            <small>{currentWorkspace(pathname)} · intelligence, stratégie, missions, production, sources et diffusion</small>
           </div>
         </div>
 
@@ -243,7 +243,7 @@ export default function ContentCommand360Shell({ children }: { children: React.R
             <span>{density === "comfortable" ? "Vue confortable" : "Vue compacte"}</span>
           </button>
 
-          <Link href="/market-os/content-command-center/create" className="cc360-primary-action">
+          <Link href="/market-os/content-command-center/studio" className="cc360-primary-action">
             <Sparkles className="h-4 w-4" /> Créer un contenu
           </Link>
         </div>
@@ -253,9 +253,9 @@ export default function ContentCommand360Shell({ children }: { children: React.R
 
       <div className="cc360-operating-canvas">
         <div className="cc360-trust-strip">
-          <span><ShieldCheck className="h-4 w-4" /> Fonctionnalités existantes préservées</span>
-          <span>Données navigateur et données serveur clairement distinguées</span>
-          <span>Phase 1 · environnement humain final avant AI Director</span>
+          <span><ShieldCheck className="h-4 w-4" /> Backbone Content Command existant préservé</span>
+          <span>Provenance locale, canonique, AI et Bridge toujours visible</span>
+          <span>Phase 5 · département 360 sous autorité humaine</span>
         </div>
         {children}
       </div>
@@ -269,7 +269,7 @@ export default function ContentCommand360Shell({ children }: { children: React.R
             </header>
             <div className="cc360-palette-search">
               <Search className="h-5 w-5" />
-              <input ref={searchInputRef} value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Rechercher contenus, tâches, assets, briefs et workspaces…" />
+              <input ref={searchInputRef} value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Rechercher signaux, stratégies, missions, dossiers, preuves, sources et workspaces…" />
             </div>
             <div className="cc360-palette-results">
               {results.map((result) => (

@@ -11,7 +11,6 @@ import { resolveRevenueAiProvider, resolveDeterministicFallback } from '../ai/pr
 import { getRevenueAiConfig } from '../ai/config'
 import { STRATEGY_ASSEMBLY_PROMPT } from '../ai/prompt-registry'
 import {
-  assertAiQuota,
   createAiJob,
   persistAiAssembly,
   recordAiAttempt,
@@ -31,11 +30,6 @@ export async function runGeminiStrategyAssembly(input: {
     .update(`${objective.tenantId}:${objective.id}:${objective.status}`)
     .digest('hex')
 
-  await assertAiQuota(objective.tenantId, input.userId, {
-    minute: config.maxRequestsPerMinute,
-    day: config.maxRequestsPerDay,
-    concurrency: config.maxConcurrentRuns,
-  })
   const job = await createAiJob({
     tenantId: objective.tenantId,
     userId: input.userId,

@@ -34,25 +34,11 @@ async function client() {
 export async function assertAiQuota(
   tenantId: string,
   userId: string,
-  limits: { minute: number; day: number; concurrency: number },
+  _limits: { minute: number; day: number; concurrency: number },
 ) {
-  const c = await client()
-  const now = new Date()
-  const minute = new Date(now.getTime() - 60000).toISOString()
-  const day = new Date(now)
-  day.setUTCHours(0, 0, 0, 0)
-  const [minuteRows, dayRows, activeRows] = await Promise.all([
-    c.from('revenue_os_ai_quota_usage').select('id', { count: 'exact', head: true }).eq('tenant_id', tenantId).gte('created_at', minute),
-    c.from('revenue_os_ai_quota_usage').select('id', { count: 'exact', head: true }).eq('tenant_id', tenantId).gte('created_at', day.toISOString()),
-    c.from('revenue_os_ai_jobs').select('id', { count: 'exact', head: true }).eq('tenant_id', tenantId).in('status', active),
-  ])
-  if (minuteRows.error) throw minuteRows.error
-  if (dayRows.error) throw dayRows.error
-  if (activeRows.error) throw activeRows.error
-  if (Number(minuteRows.count || 0) >= limits.minute) throw Object.assign(new Error('AI_MINUTE_QUOTA_EXCEEDED'), { status: 429 })
-  if (Number(dayRows.count || 0) >= limits.day) throw Object.assign(new Error('AI_DAILY_QUOTA_EXCEEDED'), { status: 429 })
-  if (Number(activeRows.count || 0) >= limits.concurrency) throw Object.assign(new Error('AI_CONCURRENCY_LIMIT'), { status: 429 })
-  return { userId }
+  // Compatibility only. Enforcement is exclusively performed by AI Provider Control
+  // during ai_provider_begin_governed_request; Revenue OS keeps no second authority.
+  return { tenantId, userId, authority: 'ai-provider-control' as const }
 }
 
 export async function createAiJob(input: {
@@ -121,17 +107,6 @@ export async function recordAiAttempt(
   }
   const saved = await c.from('revenue_os_ai_run_attempts').insert(row)
   if (saved.error) throw saved.error
-  const quota = await c.from('revenue_os_ai_quota_usage').insert({
-    tenant_id: request.tenantId,
-    user_id: request.userId,
-    provider: row.provider,
-    model: row.model,
-    request_count: 1,
-    input_tokens: row.input_tokens,
-    output_tokens: row.output_tokens,
-    status: row.status,
-  })
-  if (quota.error) throw quota.error
 }
 
 function localResources(context: ContextSnapshot): string[] {
@@ -348,15 +323,19 @@ export async function saveProviderHealth(health: RevenueAiProviderHealth) {
   if (result.error) throw result.error
 }
 
-export async function getAiUsage(tenantId: string) {
+export async function getAiUsage(_tenantId: string) {
   const c = await client()
   const since = new Date()
   since.setUTCHours(0, 0, 0, 0)
-  const result = await c.from('revenue_os_ai_quota_usage')
-    .select('request_count,input_tokens,output_tokens,status,created_at')
-    .eq('tenant_id', tenantId)
-    .gte('created_at', since.toISOString())
-  if (result.error) throw result.error
+  const result = await c.from('ai_provider_usage_ledger')
+    .select('request_count,input_tokens,output_tokens,outcome,status:outcome,occurred_at,created_at')
+    .eq('module_key', 'revenue_os')
+    .gte('occurred_at', since.toISOString())
+  if (result.error) {
+    const message = String(result.error.message || '')
+    if (message.includes('does not exist') || message.includes('schema cache')) throw new Error('AI_PROVIDER_CONTROL_MIGRATION_REQUIRED')
+    throw result.error
+  }
   return result.data || []
 }
 

@@ -1,0 +1,4 @@
+rubric_code,name,family,category,dimension,weight,minimum_score,critical,rule,evidence_required,human_gate
+DIGITAL_SOCIAL_CORE,Digital Social Core,digital,*,brand_identity,15,80,true,"Official ANGELCARE identity, no invented logo or contact detail.",final_preview,true
+DIGITAL_SOCIAL_CORE,Digital Social Core,digital,*,contrast_readability,15,80,true,"White text on dark; thick black/deep navy on light.",mobile_preview,false
+DIGITAL_SOCIAL_CORE,Digital Social Core,digital,*,child_dignity_privacy,20,100,true,"Respect dignity, consent, privacy and safe representation.",rights_evidence,true

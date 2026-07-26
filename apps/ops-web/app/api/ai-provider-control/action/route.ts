@@ -6,7 +6,8 @@ const permissionByAction: Record<string, AiProviderPermission> = {
   test_credential: 'credentials', activate_credential: 'credentials', save_model: 'manage',
   save_assignment: 'routing', save_routing: 'routing', save_quota: 'quota',
   simulate_route: 'view', set_emergency: 'emergency', publish_configuration: 'manage',
-  rollback_configuration: 'manage',
+  rollback_configuration: 'manage', save_command_policy: 'quota', save_schedule: 'schedules',
+  set_schedule_status: 'schedules', cancel_governed_request: 'requests', invalidate_cache: 'force_refresh',
 }
 
 export async function POST(request: Request) {

@@ -3,6 +3,7 @@
 import { Bot, Boxes, BrainCircuit, CheckCircle2, Database, RefreshCw, ShieldCheck, Sparkles, Zap } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import CanonicalCsvImportDock from '../../_components/imports/CanonicalCsvImportDock'
+import AiSovereigntyGovernancePanel from './AiSovereigntyGovernancePanel'
 import styles from './GeminiResourcesWorkspace.module.css'
 
 type ListItem = { code: string; title: string; subtitle?: string; status?: string; version?: string }
@@ -22,21 +23,24 @@ export default function GeminiResourcesWorkspace() {
   const [runs, setRuns] = useState<RunItem[]>([])
   const [health, setHealth] = useState<any>(null)
   const [models, setModels] = useState<any[]>([])
+  const [governance, setGovernance] = useState<any>(null)
   const [loading, setLoading] = useState(true)
 
   const load = useCallback(async () => {
     setLoading(true)
     try {
-      const [resourceEnvelope, healthEnvelope, modelsEnvelope, spineEnvelope] = await Promise.all([
+      const [resourceEnvelope, healthEnvelope, modelsEnvelope, spineEnvelope, governanceEnvelope] = await Promise.all([
         fetch('/api/revenue-command-os/canonical-operations?kind=gemini-resources', { cache: 'no-store' }).then((response) => response.json()),
         fetch('/api/revenue-command-os/ai/health', { cache: 'no-store' }).then((response) => response.json()).catch(() => null),
         fetch('/api/revenue-command-os/ai/models', { cache: 'no-store' }).then((response) => response.json()).catch(() => null),
         fetch('/api/revenue-command-os/operating-spine', { cache: 'no-store' }).then((response) => response.json()).catch(() => null),
+        fetch('/api/revenue-command-os/ai/governance', { cache: 'no-store' }).then((response) => response.json()).catch(() => null),
       ])
       setResources(Array.isArray(resourceEnvelope?.data?.items) ? resourceEnvelope.data.items : [])
       setHealth(healthEnvelope?.data || null)
       setModels(Array.isArray(modelsEnvelope?.data) ? modelsEnvelope.data : Array.isArray(modelsEnvelope?.data?.models) ? modelsEnvelope.data.models : [])
       setRuns(Array.isArray(spineEnvelope?.data?.aiRuns) ? spineEnvelope.data.aiRuns : [])
+      setGovernance(governanceEnvelope?.data || null)
     } finally {
       setLoading(false)
     }
@@ -72,6 +76,8 @@ export default function GeminiResourcesWorkspace() {
           </aside>
         </div>
       </section>
+
+      <AiSovereigntyGovernancePanel governance={governance} />
 
       <div className={styles.body}>
         <section className={styles.panel}>
