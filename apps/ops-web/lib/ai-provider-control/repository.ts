@@ -138,50 +138,280 @@ export async function executeAiProviderAction(action: string, payload: JsonRecor
   }
 
   if (action === 'test_credential') {
-    const credentialId = clean(payload.credentialId), model = clean(payload.model || 'gemini-2.5-flash')
-    if (!credentialId) throw new Error('CREDENTIAL_ID_REQUIRED')
-    const credentialResult = await supabase.from('ai_provider_credentials').select('id,dossier_id,capacity_pool_id').eq('id', credentialId).single()
-    if (credentialResult.error) throw new Error(credentialResult.error.message)
+    const credentialId = clean(payload.credentialId)
+
+    if (!credentialId) {
+      throw new Error('CREDENTIAL_ID_REQUIRED')
+    }
+
+    const credentialResult = await supabase
+      .from('ai_provider_credentials')
+      .select('id,dossier_id,capacity_pool_id')
+      .eq('id', credentialId)
+      .single()
+
+    if (credentialResult.error) {
+      throw new Error(credentialResult.error.message)
+    }
+
     const credential = credentialResult.data
-    const secretResult = await supabase.rpc('ai_provider_resolve_secret', { p_credential_id: credentialId })
-    if (secretResult.error) throw new Error(secretResult.error.message)
-    const secretData = Array.isArray(secretResult.data) ? secretResult.data[0] : secretResult.data
-    const apiKey = clean(secretData?.decrypted_secret || secretData)
-    if (!apiKey) throw new Error('CREDENTIAL_SECRET_UNAVAILABLE')
+
+    /*
+     * Select only a model registered and enabled for this dossier.
+     * A requested model is accepted only when it belongs to this
+     * dossier's active model catalogue.
+     */
+    const modelsResult = await supabase
+      .from('ai_provider_models')
+      .select('model_code,primary_for_capability,enabled,created_at')
+      .eq('dossier_id', credential.dossier_id)
+      .eq('enabled', true)
+      .order('primary_for_capability', { ascending: false })
+      .order('created_at', { ascending: true })
+
+    if (modelsResult.error) {
+      throw new Error(modelsResult.error.message)
+    }
+
+    const registeredModels = asArray<JsonRecord>(modelsResult.data)
+    const requestedModel = clean(payload.model)
+
+    const selectedModel =
+      (
+        requestedModel
+          ? registeredModels.find(
+              (row) => clean(row.model_code) === requestedModel,
+            )
+          : undefined
+      )
+      || registeredModels.find(
+        (row) => Boolean(row.primary_for_capability),
+      )
+      || registeredModels[0]
+
+    const model = clean(selectedModel?.model_code)
+
+    if (!model) {
+      throw new Error('NO_ACTIVE_MODEL_REGISTERED')
+    }
+
+    const secretResult = await supabase.rpc(
+      'ai_provider_resolve_secret',
+      { p_credential_id: credentialId },
+    )
+
+    if (secretResult.error) {
+      throw new Error(secretResult.error.message)
+    }
+
+    const secretData = Array.isArray(secretResult.data)
+      ? secretResult.data[0]
+      : secretResult.data
+
+    const apiKey = clean(
+      secretData?.decrypted_secret || secretData,
+    )
+
+    if (!apiKey) {
+      throw new Error('CREDENTIAL_SECRET_UNAVAILABLE')
+    }
+
+    /*
+     * Clear the stale FAILED state before each genuine retest.
+     */
+    await supabase
+      .from('ai_provider_credentials')
+      .update({
+        status: 'testing',
+        failure_code: null,
+        updated_at: now(),
+      })
+      .eq('id', credentialId)
+
     const started = Date.now()
+
     try {
       const ai = new GoogleGenAI({ apiKey })
+
+      const requestConfig: {
+        maxOutputTokens: number
+        thinkingConfig?: {
+          thinkingLevel: ThinkingLevel
+        }
+      } = {
+        maxOutputTokens: 64,
+      }
+
+      /*
+       * thinkingLevel belongs to Gemini 3.x.
+       * This keeps future Gemini 2.x catalogue entries compatible.
+       */
+      if (/^gemini-3(?:\.|$)/.test(model)) {
+        requestConfig.thinkingConfig = {
+          thinkingLevel: ThinkingLevel.LOW,
+        }
+      }
+
       const response = await ai.models.generateContent({
-        model, contents: 'Reply exactly SANILA_PROVIDER_OK',
-        config: { maxOutputTokens: 64, thinkingConfig: { thinkingLevel: ThinkingLevel.LOW } },
+        model,
+        contents:
+          'Reply with exactly this text and nothing else: SANILA_PROVIDER_OK',
+        config: requestConfig,
       })
-      if (!response.text?.includes('SANILA_PROVIDER_OK')) throw new Error('PROVIDER_TEST_UNEXPECTED_OUTPUT')
-      const usage = response.usageMetadata as { promptTokenCount?: number; candidatesTokenCount?: number; totalTokenCount?: number } | undefined
-      await supabase.from('ai_provider_credentials').update({ status: 'validated', validated_at: now(), last_success_at: now(), failure_code: null, updated_at: now() }).eq('id', credentialId)
-      await supabase.from('ai_provider_health_checks').insert({ dossier_id: credential.dossier_id, capacity_pool_id: credential.capacity_pool_id, credential_id: credentialId, model_code: model, status: 'healthy', latency_ms: Date.now() - started, checked_by: actor.id, details: { responseId: response.responseId } })
-      await supabase.from('ai_provider_usage_ledger').insert({
-        module_key: 'ai_provider_control', capability: 'health_check', dossier_id: credential.dossier_id,
-        capacity_pool_id: credential.capacity_pool_id, credential_id: credentialId, model_code: model,
-        request_count: 1, grounded_request_count: 0, input_tokens: Number(usage?.promptTokenCount || 0),
-        output_tokens: Number(usage?.candidatesTokenCount || 0), latency_ms: Date.now() - started,
-        http_status: 200, outcome: 'completed', actor_id: actor.id,
-        metadata: { source: 'credential_live_test', responseId: response.responseId },
-      })
-      await audit(actor, action, 'credential', credentialId, { model, latencyMs: Date.now() - started })
-      return { ok: true, model: response.modelVersion || model, latencyMs: Date.now() - started, usage }
+
+      const responseText = clean(response.text)
+
+      if (!responseText.includes('SANILA_PROVIDER_OK')) {
+        throw new Error('PROVIDER_TEST_UNEXPECTED_OUTPUT')
+      }
+
+      const usage = response.usageMetadata as {
+        promptTokenCount?: number
+        candidatesTokenCount?: number
+        totalTokenCount?: number
+      } | undefined
+
+      const completedAt = now()
+      const latencyMs = Date.now() - started
+
+      const credentialUpdate = await supabase
+        .from('ai_provider_credentials')
+        .update({
+          status: 'validated',
+          validated_at: completedAt,
+          last_success_at: completedAt,
+          failure_code: null,
+          updated_at: completedAt,
+        })
+        .eq('id', credentialId)
+
+      if (credentialUpdate.error) {
+        throw new Error(credentialUpdate.error.message)
+      }
+
+      await supabase
+        .from('ai_provider_health_checks')
+        .insert({
+          dossier_id: credential.dossier_id,
+          capacity_pool_id: credential.capacity_pool_id,
+          credential_id: credentialId,
+          model_code: model,
+          status: 'healthy',
+          latency_ms: latencyMs,
+          checked_by: actor.id,
+          details: {
+            responseId: response.responseId,
+            responseModel: response.modelVersion || model,
+          },
+        })
+
+      await supabase
+        .from('ai_provider_usage_ledger')
+        .insert({
+          module_key: 'ai_provider_control',
+          capability: 'health_check',
+          dossier_id: credential.dossier_id,
+          capacity_pool_id: credential.capacity_pool_id,
+          credential_id: credentialId,
+          model_code: model,
+          request_count: 1,
+          grounded_request_count: 0,
+          input_tokens: Number(
+            usage?.promptTokenCount || 0,
+          ),
+          output_tokens: Number(
+            usage?.candidatesTokenCount || 0,
+          ),
+          latency_ms: latencyMs,
+          http_status: 200,
+          outcome: 'completed',
+          actor_id: actor.id,
+          metadata: {
+            source: 'credential_live_test',
+            responseId: response.responseId,
+          },
+        })
+
+      await audit(
+        actor,
+        action,
+        'credential',
+        credentialId,
+        {
+          model,
+          latencyMs,
+        },
+      )
+
+      return {
+        ok: true,
+        model: response.modelVersion || model,
+        latencyMs,
+        usage,
+      }
     } catch (error) {
-      const message = error instanceof Error ? error.message : String(error)
-      const httpStatus = Number(message.match(/\b(401|403|404|429|5\d\d)\b/)?.[1] || 0) || null
-      await supabase.from('ai_provider_credentials').update({ status: 'failed', last_failure_at: now(), failure_code: message.slice(0, 160), updated_at: now() }).eq('id', credentialId)
-      await supabase.from('ai_provider_health_checks').insert({ dossier_id: credential.dossier_id, capacity_pool_id: credential.capacity_pool_id, credential_id: credentialId, model_code: model, status: 'failed', latency_ms: Date.now() - started, checked_by: actor.id, details: { error: message.slice(0, 1000) } })
-      await supabase.from('ai_provider_usage_ledger').insert({
-        module_key: 'ai_provider_control', capability: 'health_check', dossier_id: credential.dossier_id,
-        capacity_pool_id: credential.capacity_pool_id, credential_id: credentialId, model_code: model,
-        request_count: 1, grounded_request_count: 0, input_tokens: 0, output_tokens: 0,
-        latency_ms: Date.now() - started, http_status: httpStatus, outcome: 'failed',
-        error_code: message.slice(0, 160), actor_id: actor.id,
-        metadata: { source: 'credential_live_test' },
-      })
+      const message =
+        error instanceof Error
+          ? error.message
+          : String(error)
+
+      const httpStatus =
+        Number(
+          message.match(
+            /\b(400|401|403|404|409|429|5\d\d)\b/,
+          )?.[1] || 0,
+        ) || null
+
+      const failedAt = now()
+
+      await supabase
+        .from('ai_provider_credentials')
+        .update({
+          status: 'failed',
+          last_failure_at: failedAt,
+          failure_code: message.slice(0, 500),
+          updated_at: failedAt,
+        })
+        .eq('id', credentialId)
+
+      await supabase
+        .from('ai_provider_health_checks')
+        .insert({
+          dossier_id: credential.dossier_id,
+          capacity_pool_id: credential.capacity_pool_id,
+          credential_id: credentialId,
+          model_code: model,
+          status: 'failed',
+          latency_ms: Date.now() - started,
+          checked_by: actor.id,
+          details: {
+            error: message.slice(0, 2000),
+          },
+        })
+
+      await supabase
+        .from('ai_provider_usage_ledger')
+        .insert({
+          module_key: 'ai_provider_control',
+          capability: 'health_check',
+          dossier_id: credential.dossier_id,
+          capacity_pool_id: credential.capacity_pool_id,
+          credential_id: credentialId,
+          model_code: model,
+          request_count: 1,
+          grounded_request_count: 0,
+          input_tokens: 0,
+          output_tokens: 0,
+          latency_ms: Date.now() - started,
+          http_status: httpStatus,
+          outcome: 'failed',
+          error_code: message.slice(0, 500),
+          actor_id: actor.id,
+          metadata: {
+            source: 'credential_live_test',
+          },
+        })
+
       throw error
     }
   }
