@@ -2,62 +2,153 @@
 
 import * as React from "react"
 import Link from "next/link"
-import { Archive, Boxes, CheckCircle2, FileArchive, FileSearch, Film, FolderTree, Grid3X3, ImageIcon, Layers3, Search, ShieldAlert, Sparkles, TableProperties } from "lucide-react"
-import { Badge, Empty, PageStatus, Progress, SectionHeader } from "./primitives"
-import { CONTENT_FAMILIES, formatDate, statusLabel, tone, useHeadquartersSnapshot } from "./client"
-import styles from "./content-command-headquarters.module.css"
+import {
+  AlertTriangle, Archive, ArrowLeftRight, BookOpenCheck, Boxes, CircleAlert, Copy, FileArchive,
+  FileCheck2, FileSearch, FolderTree, GitBranch, Grid3X3, History, Layers3, LibraryBig,
+  Network, Route, Search, ShieldAlert, Sparkles, TableProperties, Tags, Users,
+} from "lucide-react"
+import { PageStatus } from "./primitives"
+import { CONTENT_FAMILIES, formatDate, useHeadquartersSnapshot } from "./client"
+import {
+  EmptyKnowledge, IntegritySeal, KnowledgeMetric, KnowledgeTabs, RelationshipChain,
+  SectionTitle, StatusPill, TruthBoundary,
+} from "../knowledge/knowledge-ui"
+import { buildAtlasModel, knowledgeTone, readableStatus } from "../knowledge/knowledge-model"
+import styles from "../knowledge/knowledge-system.module.css"
 
-type Mode = "atlas" | "register" | "tree" | "integrity" | "reuse"
+type AtlasMode = "atlas" | "register" | "classification" | "relationships" | "reuse" | "integrity"
+
+const BASE = "/market-os/content-command-center"
 
 export default function DirectoryWorkspace() {
   const { snapshot, loading, error, refresh } = useHeadquartersSnapshot()
-  const [mode, setMode] = React.useState<Mode>("atlas")
+  const model = React.useMemo(() => buildAtlasModel(snapshot), [snapshot])
+  const [mode, setMode] = React.useState<AtlasMode>("atlas")
   const [query, setQuery] = React.useState("")
   const [family, setFamily] = React.useState("all")
-  const dossiers = (snapshot?.dossiers || []).filter((item) => {
-    const hay = `${item.content_code} ${item.title} ${item.category} ${item.subcategory} ${item.service_label} ${item.campaign_label || ""} ${item.audience} ${item.city} ${item.channel}`.toLowerCase()
-    return (family === "all" || item.family === family) && hay.includes(query.toLowerCase())
+  const normalizedQuery = query.trim().toLowerCase()
+  const entries = model.entries.filter((entry) => {
+    const haystack = [entry.code, entry.title, entry.family, entry.category, entry.subcategory, entry.service, entry.audience, entry.city, entry.language, entry.channel, entry.campaign, entry.owner].join(" ").toLowerCase()
+    return (family === "all" || entry.family === family) && (!normalizedQuery || haystack.includes(normalizedQuery))
   })
-  const currentSources = new Map((snapshot?.sources || []).filter((source) => source.is_current).map((source) => [source.dossier_id, source]))
+  const grouped = CONTENT_FAMILIES.map((item) => ({ ...item, entries: entries.filter((entry) => entry.family === item.id) }))
+  const selectedForLineage = entries[0]
 
   return <main className={styles.canvas}>
     <PageStatus loading={loading} error={error} migrationReady={snapshot?.migrationReady} refresh={refresh}/>
-    <section className={styles.atlasHero}>
-      <div><span className={styles.eyebrow}><FolderTree/> CONTENT ATLAS</span><h1>Le répertoire institutionnel où chaque contenu possède une place, une source et une histoire.</h1><p>Classification profonde, recherche croisée, intégrité source, réutilisation et provenance dans un environnement conçu pour des milliers de contenus.</p></div>
-      <div className={styles.atlasSearch}><Search/><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Code, service, campagne, format, audience, ville, channel…"/><span>{dossiers.length} résultats</span></div>
+    <section className={styles.hero}>
+      <div className={styles.heroIdentity}>
+        <span><LibraryBig/> CONTENT ATLAS · MÉMOIRE INSTITUTIONNELLE</span>
+        <h1>Tout ce qu’AngelCare a créé, relié à sa raison, sa source et son histoire.</h1>
+        <p>Explorez le patrimoine Content Command par classification, relations, lignée stratégique, intégrité source et potentiel de réutilisation — sans transformer les lacunes du modèle en données fictives.</p>
+      </div>
+      <div className={styles.heroActions}>
+        <Link href={`${BASE}/source-vault`}><FileArchive/> Ouvrir Source Vault</Link>
+        <Link href={`${BASE}/studio`}><Layers3/> Nouvelle production</Link>
+        <button type="button" onClick={refresh}><History/> Actualiser l’inventaire</button>
+      </div>
     </section>
 
-    <section className={styles.atlasModeRail}>
-      {([
-        ["atlas","Atlas visuel",Grid3X3], ["register","Registre",TableProperties], ["tree","Arbre",FolderTree], ["integrity","Intégrité source",ShieldAlert], ["reuse","Intelligence & réutilisation",Sparkles],
-      ] as const).map(([key,label,Icon]) => <button key={key} className={mode === key ? styles.isActive : ""} onClick={() => setMode(key)}><Icon/>{label}</button>)}
-      <select value={family} onChange={(e) => setFamily(e.target.value)}><option value="all">Toutes les familles</option>{CONTENT_FAMILIES.map((item) => <option key={item.id} value={item.id}>{item.label}</option>)}</select>
+    <div className={styles.searchBar} role="search">
+      <Search aria-hidden="true"/>
+      <input aria-label="Rechercher dans Content Atlas" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Code, titre, service, audience, campagne, ville, canal, responsable…"/>
+      <span aria-live="polite">{entries.length} contenus visibles</span>
+      <select aria-label="Filtrer par famille" value={family} onChange={(event) => setFamily(event.target.value)}>
+        <option value="all">Toutes les familles</option>
+        {CONTENT_FAMILIES.map((item) => <option key={item.id} value={item.id}>{item.label}</option>)}
+      </select>
+    </div>
+
+    <section className={styles.metrics} aria-label="État du patrimoine contenu">
+      <KnowledgeMetric icon={LibraryBig} label="Patrimoine visible" value={model.metrics.total} detail="Dossiers présents dans la source Headquarters." tone="info"/>
+      <KnowledgeMetric icon={Tags} label="Classifiés" value={model.metrics.classified} detail={`${model.metrics.unclassified} dossiers nécessitent encore une classification.`} tone={model.metrics.unclassified ? "warning" : "success"}/>
+      <KnowledgeMetric icon={FileCheck2} label="Sources vérifiées" value={model.metrics.verifiedSources} detail={`${model.metrics.missingSource} sources canoniques manquantes.`} tone={model.metrics.missingSource ? "danger" : "success"}/>
+      <KnowledgeMetric icon={Sparkles} label="Réutilisations déterministes" value={model.metrics.reuseCandidates} detail="Candidats fondés uniquement sur des métadonnées partagées." tone="neutral"/>
     </section>
 
-    {mode === "atlas" ? <section className={styles.contentAtlas}>
-      {CONTENT_FAMILIES.map((familyItem) => {
-        const familyDossiers = dossiers.filter((item) => item.family === familyItem.id)
-        return <article key={familyItem.id} className={`${styles.familyAtlas} ${styles[`family_${familyItem.id}`]}`}>
-          <header><div><span>{familyItem.id === "digital" ? <Film/> : familyItem.id === "print_offline" ? <Boxes/> : <FileArchive/>}</span><div><small>FAMILLE CANONIQUE</small><h2>{familyItem.label}</h2><p>{familyItem.short}</p></div></div><strong>{familyDossiers.length}</strong></header>
-          <div className={styles.familyCategoryRail}>{familyItem.categories.slice(0, 8).map((category) => <span key={category}>{category}<b>{familyDossiers.filter((item) => item.category === category).length}</b></span>)}</div>
-          <div className={styles.atlasCards}>
-            {familyDossiers.slice(0, 8).map((dossier) => <Link key={dossier.id} href={`/market-os/content-command-center/dossiers/${dossier.id}`} className={styles.atlasCard}>
-              <div className={styles.assetPreview}>{dossier.family === "digital" ? <ImageIcon/> : dossier.family === "print_offline" ? <Layers3/> : <FileArchive/>}<span>{dossier.category}</span></div>
-              <div><small>{dossier.content_code}</small><h3>{dossier.title}</h3><p>{dossier.service_label} · {dossier.city} · {dossier.channel}</p></div>
-              <footer><Badge tone={tone(dossier.status)}>{statusLabel(dossier.status)}</Badge><Progress value={dossier.readiness}/></footer>
-            </Link>)}
-            {!familyDossiers.length ? <Empty title={`Aucun ${familyItem.label}`} detail="Les dossiers de cette famille apparaîtront ici avec leurs classifications réelles." action="Créer" href="/market-os/content-command-center/studio"/> : null}
-          </div>
-        </article>
-      })}
+    <KnowledgeTabs value={mode} onChange={setMode} label="Modes Content Atlas" items={[
+      { value: "atlas", label: "Atlas visuel", icon: Grid3X3, count: entries.length },
+      { value: "register", label: "Registre", icon: TableProperties, count: entries.length },
+      { value: "classification", label: "Classification", icon: FolderTree, count: model.metrics.unclassified },
+      { value: "relationships", label: "Relations & lignée", icon: Network },
+      { value: "reuse", label: "Réutilisation", icon: Sparkles, count: model.metrics.reuseCandidates },
+      { value: "integrity", label: "Intégrité & risques", icon: ShieldAlert, count: model.risks.length },
+    ]}/>
+
+    {mode === "atlas" ? <section className={styles.atlasGrid}>
+      <article className={styles.atlasMap} aria-label="Atlas visuel avec résumé textuel disponible dans le registre">
+        <div className={styles.atlasCore}><LibraryBig/><strong>Content Atlas</strong><small>{entries.length} contenus</small></div>
+        <div className={styles.atlasNodes}>{grouped.flatMap((familyItem) => familyItem.entries.slice(0, 2)).slice(0, 6).map((entry) => <Link key={entry.id} href={`${BASE}/dossiers/${entry.id}`} className={styles.atlasNode}><Boxes/><b>{entry.assetCount + entry.taskCount}</b><strong>{entry.title}</strong><small>{entry.service || entry.category || "Classification à compléter"}</small></Link>)}</div>
+        {!entries.length ? <EmptyKnowledge title="Atlas vide" detail="Les dossiers classifiés apparaîtront ici avec leurs relations réelles." href={`${BASE}/studio`} action="Ouvrir les Studios"/> : null}
+      </article>
+      <aside className={styles.atlasRail}>
+        <SectionTitle eyebrow="RISQUES DE CONNAISSANCE" title="Ce qui menace la continuité" description="Risques calculés uniquement depuis les champs disponibles."/>
+        {model.risks.slice(0, 7).map((risk) => <Link key={risk.id} href={risk.href} className={`${styles.riskCard} ${styles[`tone_${risk.tone}`]}`}><AlertTriangle/><div><strong>{risk.title}</strong><p>{risk.detail}</p><small>Responsable: {risk.owner}</small></div><StatusPill tone={risk.tone}>{risk.category}</StatusPill></Link>)}
+        {!model.risks.length ? <TruthBoundary title="Aucun risque déterministe ouvert" detail="Cela ne constitue pas une certification exhaustive: seuls les champs exposés sont évalués." tone="success"/> : null}
+      </aside>
     </section> : null}
 
-    {mode === "register" ? <section className={styles.registerPanel}><SectionHeader eyebrow="REGISTRE ENTERPRISE" title="Inventaire complet" description="Vue dense pour audit, filtres, tri et ouverture du dossier 360."/><div className={styles.directoryTable}><header><span>Référence</span><span>Contenu</span><span>Classification</span><span>Responsabilité</span><span>État</span><span>Source</span></header>{dossiers.map((dossier) => { const source=currentSources.get(dossier.id); return <Link key={dossier.id} href={`/market-os/content-command-center/dossiers/${dossier.id}`}><span><strong>{dossier.content_code}</strong><small>{formatDate(dossier.created_at)}</small></span><span><strong>{dossier.title}</strong><small>{dossier.campaign_label || "Hors campagne"}</small></span><span><strong>{dossier.category}</strong><small>{dossier.subcategory}</small></span><span><strong>{dossier.owner_name || "Non assigné"}</strong><small>{dossier.reviewer_name || "Reviewer à nommer"}</small></span><span><Badge tone={tone(dossier.status)}>{statusLabel(dossier.status)}</Badge></span><span><Badge tone={source?.integrity_state === "verified" ? "success" : "warning"}>{source ? statusLabel(source.integrity_state) : "Source absente"}</Badge></span></Link>})}</div></section> : null}
+    {mode === "register" ? <section className={styles.section}>
+      <SectionTitle eyebrow="REGISTRE ENTERPRISE" title="Inventaire dense et fiable" description="Identité, classification, responsabilité, source et usage observé, sans interprétation opaque." action={<Link href={`${BASE}/source-vault`}>Contrôler les sources</Link>}/>
+      <div className={styles.register} role="table" aria-label="Registre institutionnel des contenus">
+        <div className={styles.registerHeader} role="row"><span>Référence</span><span>Contenu</span><span>Classification</span><span>Responsabilité</span><span>État</span><span>Source canonique</span><span>Usage</span></div>
+        {entries.map((entry) => <Link key={entry.id} href={`${BASE}/dossiers/${entry.id}`} className={styles.registerRow} role="row">
+          <span><strong>{entry.code}</strong><small>{formatDate(entry.createdAt)}</small></span>
+          <span><strong>{entry.title}</strong><small>{entry.campaign || "Hors campagne documentée"}</small></span>
+          <span><strong>{entry.category || "Catégorie absente"}</strong><small>{entry.service || entry.family || "Famille absente"}</small></span>
+          <span><strong>{entry.owner}</strong><small>{entry.reviewer}</small></span>
+          <span><StatusPill tone={knowledgeTone(entry.status)}>{readableStatus(entry.status)}</StatusPill></span>
+          <span><IntegritySeal verified={entry.sourceIntegrity === "verified"} label={entry.hasCurrentSource ? `${entry.sourceName} · v${entry.sourceVersion}` : "Source manquante"}/></span>
+          <span><strong>{entry.publicationCount} publication(s)</strong><small>{entry.assetCount} asset(s) · {entry.taskCount} tâche(s)</small></span>
+        </Link>)}
+      </div>
+      {!entries.length ? <EmptyKnowledge title="Aucun contenu correspondant" detail="Modifiez les filtres ou la recherche pour retrouver le patrimoine existant."/> : null}
+    </section> : null}
 
-    {mode === "tree" ? <section className={styles.classificationTree}><SectionHeader eyebrow="NAVIGATION TAXONOMIQUE" title="Famille → catégorie → sous-catégorie → dossier" description="Une lecture arborescente fidèle aux trois studios de création existants."/>{CONTENT_FAMILIES.map((familyItem) => <article key={familyItem.id}><h2><FolderTree/>{familyItem.label}<span>{dossiers.filter((d) => d.family === familyItem.id).length}</span></h2><div>{familyItem.categories.map((category) => { const subset=dossiers.filter((d) => d.family === familyItem.id && d.category === category); return <details key={category}><summary>{category}<b>{subset.length}</b></summary><ul>{familyItem.subcategories.map((sub) => <li key={sub}><span>{sub}</span><b>{subset.filter((d) => d.subcategory === sub).length}</b></li>)}</ul></details>})}</div></article>)}</section> : null}
+    {mode === "classification" ? <section className={styles.section}>
+      <SectionTitle eyebrow="ARBRE TAXONOMIQUE" title="Famille → catégorie → sous-catégorie" description="L’arbre suit strictement les taxonomies déjà exposées par Content Command."/>
+      <div className={styles.treeGrid}>{grouped.map((familyItem) => <article key={familyItem.id} className={styles.treeBranch}><header><span><FolderTree/></span><div><h3>{familyItem.label}</h3><p>{familyItem.entries.length} contenus visibles</p></div></header>{familyItem.categories.map((category) => { const subset = familyItem.entries.filter((entry) => entry.category === category); return <details key={category}><summary>{category}<b>{subset.length}</b></summary><ul>{familyItem.subcategories.map((subcategory) => <li key={subcategory}><span>{subcategory}</span><b>{subset.filter((entry) => entry.subcategory === subcategory).length}</b></li>)}</ul></details>})}</article>)}</div>
+      {model.metrics.unclassified ? <TruthBoundary title={`${model.metrics.unclassified} classification(s) incomplète(s)`} detail="Content Atlas signale les champs absents mais n’invente aucune catégorie de remplacement." tone="warning"/> : null}
+    </section> : null}
 
-    {mode === "integrity" ? <section className={styles.integrityBoard}><SectionHeader eyebrow="SOURCE INTEGRITY" title="Un code, une source canonique" description="Les renditions sont multiples; l’original éditable actif reste unique."/><div className={styles.integrityStats}><span><CheckCircle2/><strong>{[...currentSources.values()].filter((s) => s.integrity_state === "verified").length}</strong><small>Sources vérifiées</small></span><span><ShieldAlert/><strong>{dossiers.filter((d) => !currentSources.has(d.id)).length}</strong><small>Sources manquantes</small></span><span><Archive/><strong>{snapshot?.sources.filter((s) => !s.is_current).length || 0}</strong><small>Métadonnées historiques</small></span></div><div className={styles.integrityRows}>{dossiers.map((dossier) => { const source=currentSources.get(dossier.id); return <Link key={dossier.id} href={`/market-os/content-command-center/dossiers/${dossier.id}`}><FileSearch/><div><strong>{dossier.content_code} · {dossier.title}</strong><p>{source ? `${source.original_filename} · v${source.source_version} · ${(source.size_bytes/1024/1024).toFixed(1)} MB` : "Original source requis après validation"}</p></div><Badge tone={source?.integrity_state === "verified" ? "success" : "danger"}>{source ? statusLabel(source.integrity_state) : "MANQUANTE"}</Badge></Link>})}</div></section> : null}
+    {mode === "relationships" ? <section className={styles.section}>
+      <SectionTitle eyebrow="RELATIONS & LIGNÉE" title="Pourquoi ce contenu existe et où il mène" description="Une chaîne lisible relie le dossier à ses artefacts opérationnels réellement observables."/>
+      {selectedForLineage ? <>
+        <RelationshipChain stages={[
+          { label: "Stratégie", value: selectedForLineage.campaign || "Relation non exposée", href: `${BASE}/strategies`, state: selectedForLineage.campaign ? "info" : "warning" },
+          { label: "Dossier", value: selectedForLineage.code, href: `${BASE}/dossiers/${selectedForLineage.id}`, state: "success" },
+          { label: "Mission / tâches", value: `${selectedForLineage.taskCount} tâche(s)`, href: `${BASE}/tasks`, state: selectedForLineage.taskCount ? "info" : "warning" },
+          { label: "Asset", value: `${selectedForLineage.assetCount} asset(s)`, href: `${BASE}/assets`, state: selectedForLineage.assetCount ? "info" : "warning" },
+          { label: "Preuve / revue", value: `${selectedForLineage.evidenceCount} preuve(s) · ${selectedForLineage.reviewCount} revue(s)`, href: `${BASE}/evidence`, state: selectedForLineage.evidenceCount ? "info" : "warning" },
+          { label: "Source", value: selectedForLineage.sourceName || "Source absente", href: `${BASE}/source-vault`, state: selectedForLineage.hasCurrentSource ? "success" : "danger" },
+          { label: "Publication", value: `${selectedForLineage.publicationCount} publication(s)`, href: `${BASE}/publishing`, state: selectedForLineage.publicationCount ? "success" : "neutral" },
+        ]}/>
+        <div className={styles.relationshipGrid}>
+          <div className={styles.relationGraph}>{entries.slice(0, 8).map((entry, index) => <Link key={entry.id} href={`${BASE}/dossiers/${entry.id}`} className={styles.relationNode}><span>{index % 3 === 0 ? <Route/> : index % 3 === 1 ? <GitBranch/> : <FileArchive/>}</span><strong>{entry.code}</strong><p>{entry.title}</p><small>{entry.taskCount} tâches · {entry.assetCount} assets · {entry.publicationCount} publications</small></Link>)}</div>
+          <aside className={styles.atlasRail}><TruthBoundary title="Lignée partielle, jamais simulée" detail="Les étapes non exposées par le snapshot restent indiquées comme absentes; Content Atlas ne fabrique ni stratégie ni publication." tone="info"/>{model.risks.filter((risk) => ["source", "classification", "ownership"].includes(risk.category)).slice(0, 5).map((risk) => <Link className={`${styles.knowledgeCard} ${styles[`tone_${risk.tone}`]}`} href={risk.href} key={risk.id}><CircleAlert/><div><strong>{risk.title}</strong><p>{risk.detail}</p></div></Link>)}</aside>
+        </div>
+      </> : <EmptyKnowledge title="Aucune lignée disponible" detail="Le premier dossier correspondant à vos filtres servira de point de lecture."/>}
+    </section> : null}
 
-    {mode === "reuse" ? <section className={styles.reuseConstellation}><SectionHeader eyebrow="CONTENT INTELLIGENCE" title="Réutiliser sans dupliquer la pensée" description="Repérez les familles, formats et messages adaptables avant de produire à nouveau."/><div className={styles.reuseGrid}>{dossiers.slice(0, 12).map((dossier, index) => <Link key={dossier.id} href={`/market-os/content-command-center/dossiers/${dossier.id}`} style={{ ["--reuse-size" as string]: `${110 + (index%4)*18}px` } as React.CSSProperties}><Sparkles/><strong>{dossier.title}</strong><span>{dossier.service_label}</span><small>{dossier.category} · {dossier.channel}</small></Link>)}{!dossiers.length ? <Empty title="Aucune constellation" detail="Les liens de similarité seront produits à partir des contenus classifiés."/> : null}</div></section> : null}
+    {mode === "reuse" ? <section className={styles.section}>
+      <SectionTitle eyebrow="INTELLIGENCE DE RÉUTILISATION" title="Réutiliser sur des bases explicables" description="Les rapprochements utilisent uniquement des attributs partagés — jamais une similarité sémantique inventée."/>
+      <div className={styles.reuseGrid}>{model.reuse.filter((candidate) => entries.some((entry) => entry.id === candidate.left.id || entry.id === candidate.right.id)).slice(0, 12).map((candidate) => <article key={candidate.id} className={styles.comparisonCard}><Link href={`${BASE}/dossiers/${candidate.left.id}`}><small>{candidate.left.code}</small><strong>{candidate.left.title}</strong></Link><span><ArrowLeftRight/></span><Link href={`${BASE}/dossiers/${candidate.right.id}`}><small>{candidate.right.code}</small><strong>{candidate.right.title}</strong></Link><footer>{candidate.shared.map((item) => <StatusPill key={item} tone="info">{item}</StatusPill>)}</footer></article>)}</div>
+      {!model.reuse.length ? <EmptyKnowledge title="Aucun candidat déterministe" detail="Aucune paire ne partage actuellement au moins trois attributs institutionnels documentés."/> : null}
+      <SectionTitle eyebrow="DUPLICATES" title="Doublons à confirmer humainement" description="Aucune fusion automatique: chaque rapprochement affiche sa base observable."/>
+      <div className={styles.duplicateGrid}>{model.duplicates.map((candidate) => <article key={candidate.id} className={styles.comparisonCard}><Link href={`${BASE}/dossiers/${candidate.left.id}`}><small>{candidate.left.code}</small><strong>{candidate.left.title}</strong></Link><span><Copy/></span><Link href={`${BASE}/dossiers/${candidate.right.id}`}><small>{candidate.right.code}</small><strong>{candidate.right.title}</strong></Link><footer>{candidate.basis.map((item) => <StatusPill key={item} tone="warning">{item}</StatusPill>)}</footer></article>)}</div>
+      {!model.duplicates.length ? <TruthBoundary title="Aucun doublon exact détecté" detail="Cette conclusion porte seulement sur le code, le titre normalisé et l’empreinte source lorsqu’elle existe." tone="success"/> : null}
+    </section> : null}
+
+    {mode === "integrity" ? <section className={styles.section}>
+      <SectionTitle eyebrow="INTÉGRITÉ & MÉMOIRE" title="Le patrimoine qui doit rester récupérable" description="Sources canoniques, historique, risques de classification et usage observé." action={<Link href={`${BASE}/source-vault`}>Entrer dans Source Vault</Link>}/>
+      <div className={styles.sourceSummary}>
+        <article><FileCheck2/><strong>{model.metrics.verifiedSources}</strong><small>Sources courantes vérifiées</small></article>
+        <article><FileSearch/><strong>{model.metrics.missingSource}</strong><small>Sources canoniques manquantes</small></article>
+        <article><Archive/><strong>{model.metrics.historicalSources}</strong><small>Métadonnées de versions historiques</small></article>
+        <article><ShieldAlert/><strong>{model.risks.length}</strong><small>Risques de connaissance ouverts</small></article>
+      </div>
+      <div className={styles.usageGrid}>{entries.slice(0, 12).map((entry) => <article key={entry.id} className={styles.usageCard}><Users/><strong>{entry.title}</strong><p>{entry.publicationCount} publication(s) · {entry.assetCount} asset(s) · {entry.evidenceCount} preuve(s)</p><StatusPill tone={entry.hasCurrentSource ? knowledgeTone(entry.sourceIntegrity) : "danger"}>{entry.hasCurrentSource ? readableStatus(entry.sourceIntegrity) : "Source absente"}</StatusPill></article>)}</div>
+      <TruthBoundary title="Usage observé, pas comportemental" detail="Les volumes proviennent uniquement des relations persistées du snapshot; aucune consultation ou ouverture de page n’est comptée comme usage." tone="info"/>
+    </section> : null}
   </main>
 }

@@ -1,0 +1,31 @@
+{
+  "module": "AC CAPITAL OS",
+  "mega_zip": "13",
+  "name": "Full Production Wiring, Supabase Persistence, AI Provider Activation, Storage, Automation Gates, Reports & QA",
+  "contract_token": "MZ13_AC_CAPITAL_OS_FULL_PRODUCTION_WIRING",
+  "delivers": [
+    "Supabase live/fallback repository layer",
+    "AC Capital API route upgrade",
+    "safe write endpoints",
+    "AI Provider Control bridge",
+    "dry-run AI runner",
+    "research adapter",
+    "Data Room storage contract",
+    "report generation foundation",
+    "manual workflow gates",
+    "founder approval guard",
+    "audit helper",
+    "permission helper",
+    "QA scripts",
+    "MZ13 migration"
+  ],
+  "truth_boundary": [
+    "no automatic investor submission",
+    "no automatic sensitive email sending",
+    "no exposed API keys",
+    "no browser service-role key",
+    "no uncontrolled live AI calls",
+    "no fake production claim"
+  ],
+  "created_at": "2026-07-27T06:10:31.762620+00:00"
+}

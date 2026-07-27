@@ -1,0 +1,7 @@
+# Run from angelcare-platform repository root, NOT from apps/ops-web:
+unzip -o AC_CAPITAL_OS_MEGA_ULTRA_ZIP_01_FOUNDATION_PREMIUM_SHELL_PROTECTED_TARGET_FIX.zip -d .
+node ./AC_CAPITAL_OS_MZ1/scripts/apply_ac_capital_os_mz1.mjs
+node ./AC_CAPITAL_OS_MZ1/scripts/verify_ac_capital_os_mz1.mjs
+
+# Expected target route after apply:
+# apps/ops-web/app/(protected)/ac-capital-os/page.tsx

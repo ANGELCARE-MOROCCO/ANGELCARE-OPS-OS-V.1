@@ -1,0 +1,32 @@
+{
+  "module": "AC CAPITAL OS",
+  "mega_zip": "12",
+  "name": "Strategy Simulator + Executive Reports + SOP Manual + Production Readiness Control Plane",
+  "contract_token": "MZ12_AC_CAPITAL_OS_STRATEGY_PRODUCTION_COMMAND",
+  "canonical_route": "apps/ops-web/app/(protected)/ac-capital-os/page.tsx",
+  "workspace_route": "apps/ops-web/app/(protected)/ac-capital-os/strategy/page.tsx",
+  "api_route": "apps/ops-web/app/api/ac-capital-os/strategy-production-command/route.ts",
+  "migration": "supabase/migrations/20260727_ac_capital_os_mz12_strategy_production_command.sql",
+  "truth_boundary": {
+    "database_foundation": "activated",
+    "ui_api_contracts": "installed",
+    "live_persistence": "next phase",
+    "ai_execution": "next phase",
+    "file_storage": "next phase",
+    "automation": "disabled for safety"
+  },
+  "preserves": [
+    "MZ1 Foundation",
+    "MZ2 Capital Executive Cockpit",
+    "MZ3 Capital Radar",
+    "MZ4 Qualification Engine",
+    "MZ5 Funder Intelligence Room",
+    "MZ6 Capital Doctrine Vault",
+    "MZ7 Fundraising Case Builder",
+    "MZ8 Due Diligence Data Room",
+    "MZ9 Capital Pipeline CRM",
+    "MZ10 Human Coordinator Cockpit",
+    "MZ11 AI Command Center"
+  ],
+  "created_at": "2026-07-27T05:33:26.768250+00:00"
+}

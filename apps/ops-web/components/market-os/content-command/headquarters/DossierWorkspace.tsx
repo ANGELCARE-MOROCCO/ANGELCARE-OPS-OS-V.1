@@ -2,16 +2,93 @@
 
 import * as React from "react"
 import Link from "next/link"
-import { AlertTriangle, ArrowLeft, Bot, CheckCircle2, FileArchive, FileImage, Flag, ImagePlus, ShieldCheck, Sparkles, UploadCloud, UserCheck } from "lucide-react"
-import { Badge, Empty, PageStatus, Progress, SectionHeader } from "./primitives"
-import { formatDate, statusLabel, tone, useHeadquartersSnapshot } from "./client"
-import styles from "./content-command-headquarters.module.css"
+import { AlertTriangle, ArrowRight, LoaderCircle } from "lucide-react"
+import { useContentStore } from "../content-command-system"
+import { useHeadquartersSnapshot } from "./client"
+import {
+  buildLegacyDossierViewModel,
+  buildLiveDossierViewModel,
+  findLiveDossier,
+  record,
+} from "./mz2-view-models"
+import {
+  DossierActionRail,
+  DossierBrief,
+  DossierCollaborationAudit,
+  DossierConstitution,
+  DossierCreativeEvidence,
+  DossierDecisions,
+  DossierExecution,
+  DossierIdentityHeader,
+  DossierLifecycleSpine,
+  DossierLineageOwnership,
+  DossierSectionNavigation,
+  DossierSourcesDistribution,
+} from "./dossier/DossierSections"
+import styles from "./mz2-executive-dossier.module.css"
 
-export default function DossierWorkspace({dossierId}:{dossierId:string}){const {snapshot,loading,error,refresh}=useHeadquartersSnapshot();const dossier=snapshot?.dossiers.find((d)=>d.id===dossierId);const tasks=snapshot?.tasks.filter((t)=>t.dossier_id===dossierId)||[];const evidence=snapshot?.evidence.filter((e)=>e.dossier_id===dossierId)||[];const reviews=snapshot?.reviews.filter((r)=>r.dossier_id===dossierId)||[];const source=snapshot?.sources.find((s)=>s.dossier_id===dossierId&&s.is_current);const samples=snapshot?.generatedSamples.filter((s)=>s.dossier_id===dossierId)||[];const checkpoints=snapshot?.checkpoints.filter((c)=>c.dossier_id===dossierId)||[];const [busy,setBusy]=React.useState(false);async function sample(){setBusy(true);try{const response=await fetch("/api/market-os/content-command-headquarters/sample-generate",{method:"POST",headers:{"content-type":"application/json"},credentials:"include",body:JSON.stringify({dossierId,purpose:"Direction visuelle conforme au brief et à la doctrine ANGELCARE"})});const body=await response.json().catch(()=>({}));if(!response.ok||!body.ok)throw new Error(body.error||"SAMPLE_FAILED");await refresh()}finally{setBusy(false)}}if(!loading&&!dossier)return <main className={styles.canvas}><Empty title="Dossier introuvable" detail="Le record demandé n’est pas visible ou n’existe pas." action="Retour au répertoire" href="/market-os/content-command-center/directory"/></main>;return <main className={styles.canvas}><PageStatus loading={loading} error={error} migrationReady={snapshot?.migrationReady} refresh={refresh}/>{dossier?<>
-<section className={styles.dossierHero}><Link href="/market-os/content-command-center/directory"><ArrowLeft/> Répertoire</Link><div><span className={styles.eyebrow}>{dossier.content_code}</span><h1>{dossier.title}</h1><p>{dossier.service_label} · {dossier.category} · {dossier.subcategory} · {dossier.city}</p><div><Badge tone={tone(dossier.status)}>{statusLabel(dossier.status)}</Badge><Badge>{dossier.owner_name||"Owner à affecter"}</Badge><Badge>{dossier.ai_director_id?"AI supervised":"AI non affecté"}</Badge></div></div><aside><Progress value={dossier.progress} label="Progression"/><Progress value={dossier.readiness} label="Readiness"/><span><small>Échéance</small><strong>{formatDate(dossier.due_at)}</strong></span></aside></section>
-<section className={styles.dossierLayout}><aside className={styles.lifecycleRail}>{["opportunity","ideation","brief","scope_locked","planned","assigned","in_creation","checkpoint_review","draft_submitted","ai_review","human_review","validated","source_required","source_secured","classified","ready_distribution","scheduled","published","closed"].map((s,i)=><span key={s} className={s===dossier.status?styles.isCurrent:""}><b>{String(i+1).padStart(2,"0")}</b><strong>{statusLabel(s)}</strong></span>)}</aside><div className={styles.dossierCenter}>
-<article className={styles.scopePanel}><SectionHeader eyebrow="SCOPE CONSTITUTION" title="Ce qui doit être produit, et ce qui est interdit" description="L’AI supervisor utilise cette constitution pour empêcher la dérive."/><div><span><ShieldCheck/><strong>Objectif</strong><p>{dossier.objective}</p></span><span><Flag/><strong>Message</strong><p>{dossier.message_pillar}</p></span><span><CheckCircle2/><strong>CTA / Offre</strong><p>{dossier.cta||"CTA à formaliser"} · {dossier.offer||"Offre à formaliser"}</p></span><span><AlertTriangle/><strong>Contraintes</strong><p>{String(dossier.scope_constitution?.constraints||"Respect de la doctrine ANGELCARE et validation avant diffusion.")}</p></span></div></article>
-<article className={styles.checkpointPanel}><SectionHeader eyebrow="GUIDED EXECUTION" title="Checkpoints et tâches" description="Chaque étape annonce la preuve et la définition de complétion."/><div>{checkpoints.map((c)=><span key={c.id}><b>{c.sequence_number}</b><div><Badge tone={tone(c.status)}>{statusLabel(c.status)}</Badge><strong>{c.title}</strong><p>{c.instructions}</p></div></span>)}{!checkpoints.length&&tasks.map((t)=><span key={t.id}><b>{t.sequence_number}</b><div><Badge tone={tone(t.status)}>{statusLabel(t.status)}</Badge><strong>{t.title}</strong><p>{t.completion_definition}</p></div></span>)}{!checkpoints.length&&!tasks.length?<Empty title="Plan non compilé" detail="Créez une mission ou générez les checkpoints requis."/>:null}</div></article>
-<article className={styles.evidenceTimeline}><SectionHeader eyebrow="EVIDENCE & DECISIONS" title="Chronologie de production" description="Preuves, reviews AI, validations humaines et décisions de scope."/><div>{evidence.map((e)=><span key={e.id}><FileImage/><div><strong>{e.title}</strong><p>{e.note}</p><small>{formatDate(e.created_at,true)} · {e.filename}</small></div><Badge tone={tone(e.status)}>{statusLabel(e.status)}</Badge></span>)}{reviews.map((r)=><span key={r.id}>{r.review_type==="ai"?<Bot/>:<UserCheck/>}<div><strong>{r.review_type==="ai"?"AI review":"Human review"}</strong><p>{r.summary}</p><small>{formatDate(r.created_at,true)}</small></div><Badge tone={tone(r.result)}>{statusLabel(r.result)} · {r.score}</Badge></span>)}{!evidence.length&&!reviews.length?<Empty title="Aucune preuve" detail="Le premier checkpoint ouvrira la chronologie."/>:null}</div></article>
-</div><aside className={styles.aiSupervisorRail}><header><Bot/><div><small>AI SUPERVISOR</small><strong>{dossier.ai_director_id?"Directeur affecté":"Assistant gouverné"}</strong></div></header><div className={styles.nextMove}><Sparkles/><strong>Prochain mouvement</strong><p>{dossier.status==="in_creation"?"Soumettre une preuve du checkpoint actuel.":dossier.status==="validated"||dossier.status==="source_required"?"Charger la source originale canonique.":"Vérifier le prochain gate du dossier."}</p></div><div className={styles.sampleCredits}><ImagePlus/><strong>AI sample credits</strong><b>{Math.max(0,2-samples.filter((s)=>["generated","completed"].includes(s.status)).length)} / 2</b><button disabled={busy||samples.filter((s)=>["generated","completed"].includes(s.status)).length>=2} onClick={()=>void sample()}>Générer un sample</button></div><div className={styles.sampleStack}>{samples.map((s)=><span key={s.id}>{s.preview_data_url?<img src={s.preview_data_url} alt="AI concept"/>:<FileImage/>}<small>AI CONCEPT REFERENCE</small><strong>Credit {s.credit_number}</strong></span>)}</div><div className={styles.sourceStatus}><FileArchive/><strong>Source canonique</strong>{source?<><Badge tone={tone(source.integrity_state)}>{statusLabel(source.integrity_state)}</Badge><p>{source.original_filename} · v{source.source_version}</p></>:<><Badge tone="warning">ABSENTE</Badge><p>Requise après validation finale.</p></>}<Link href="/market-os/content-command-center/source-vault"><UploadCloud/> Source Vault</Link></div></aside></section>
-</>:null}</main>}
+export default function DossierWorkspace({ dossierId, compatibilityMode = false }: { dossierId: string; compatibilityMode?: boolean }) {
+  const { snapshot, loading, error, refresh } = useHeadquartersSnapshot()
+  const { store } = useContentStore()
+  const [storeReady, setStoreReady] = React.useState(false)
+  const [sampleBusy, setSampleBusy] = React.useState(false)
+  React.useEffect(() => setStoreReady(true), [])
+
+  const liveRecord = findLiveDossier(snapshot, dossierId)
+  const legacyItem = store.items.find((item) => item.id === dossierId)
+  const dossier = React.useMemo(() => {
+    if (liveRecord) return buildLiveDossierViewModel(snapshot, liveRecord)
+    if (legacyItem) return buildLegacyDossierViewModel({
+      item: record(legacyItem),
+      tasks: store.tasks.filter((task) => task.contentId === dossierId).map(record),
+      assets: store.assets.filter((asset) => asset.linkedContentId === dossierId || legacyItem.assets.includes(asset.id)).map(record),
+      briefs: store.briefs.map(record),
+      logs: store.logs.filter((entry) => entry.entity === dossierId || entry.detail.toLowerCase().includes(legacyItem.title.toLowerCase())).map(record),
+    })
+    return null
+  }, [dossierId, legacyItem, liveRecord, snapshot, store.assets, store.briefs, store.logs, store.tasks])
+
+  async function generateSample() {
+    if (!liveRecord || sampleBusy) return
+    setSampleBusy(true)
+    try {
+      const response = await fetch("/api/market-os/content-command-headquarters/sample-generate", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ dossierId, purpose: "Référence visuelle gouvernée selon le brief, la constitution et la doctrine ANGELCARE" }),
+      })
+      const body = await response.json().catch(() => ({}))
+      if (!response.ok || !body.ok) throw new Error(body.error || "SAMPLE_FAILED")
+      await refresh()
+    } finally {
+      setSampleBusy(false)
+    }
+  }
+
+  if ((loading || !storeReady) && !dossier) return <main className={styles.dossierCanvas}><div className={styles.routeLoading}><LoaderCircle/><strong>Ouverture du dossier institutionnel…</strong><span>Constitution, responsabilités, preuves, décisions, sources et diffusion sont consolidées.</span></div></main>
+
+  if (!dossier) return <main className={styles.dossierCanvas}><section className={styles.routeFailure}><AlertTriangle/><div><span>DOSSIER INTROUVABLE</span><h1>Aucun dossier visible pour cet identifiant.</h1><p>{error ? "La source Headquarters est indisponible et aucun enregistrement historique correspondant n’existe dans le registre local." : "Le record demandé n’existe pas ou n’est pas accessible avec la session actuelle."}</p><div><Link href="/market-os/content-command-center/directory">Retour au Content Atlas <ArrowRight/></Link><button type="button" onClick={refresh}>Réessayer</button></div></div></section></main>
+
+  const generatedSamples = dossier.assets.filter((asset) => asset.owner === "AI Director").length
+  return <main className={styles.dossierCanvas} data-mz2-dossier data-dossier-source={dossier.sourceType}>
+    {error && dossier.sourceType === "legacy" ? <div className={styles.compatibilityNotice}><AlertTriangle/><span><strong>Mode de compatibilité historique</strong>La source Headquarters n’est pas disponible. Le dossier utilise exclusivement les informations réellement présentes dans le registre historique local.</span></div> : null}
+    {compatibilityMode && dossier.sourceType === "headquarters" ? <div className={styles.compatibilityNotice}><AlertTriangle/><span><strong>URL historique préservée</strong>Ce lien ancien ouvre désormais l’expérience Dossier 360 canonique sans modifier l’adresse enregistrée.</span></div> : null}
+    <DossierIdentityHeader dossier={dossier}/>
+    <DossierSectionNavigation/>
+    <div className={styles.dossierOperatingLayout}>
+      <DossierLifecycleSpine dossier={dossier}/>
+      <div className={styles.dossierMainFlow}>
+        <DossierConstitution dossier={dossier}/>
+        <DossierLineageOwnership dossier={dossier}/>
+        <DossierBrief dossier={dossier}/>
+        <DossierExecution dossier={dossier}/>
+        <DossierCreativeEvidence dossier={dossier} canGenerateSample={generatedSamples < 2} sampleBusy={sampleBusy} onGenerateSample={() => void generateSample()}/>
+        <DossierDecisions dossier={dossier}/>
+        <DossierSourcesDistribution dossier={dossier}/>
+        <DossierCollaborationAudit dossier={dossier}/>
+      </div>
+      <DossierActionRail dossier={dossier}/>
+    </div>
+  </main>
+}

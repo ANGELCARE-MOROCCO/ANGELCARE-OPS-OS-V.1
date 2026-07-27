@@ -1,0 +1,50 @@
+{
+  "module": "AC CAPITAL OS",
+  "mega_zip": "11",
+  "name": "AI Command Center + Skills + Troubleshooting Control Plane",
+  "contract_token": "MZ11_AC_CAPITAL_OS_AI_COMMAND_CENTER",
+  "canonical_route": "apps/ops-web/app/(protected)/ac-capital-os/page.tsx",
+  "workspace_route": "apps/ops-web/app/(protected)/ac-capital-os/ai-command/page.tsx",
+  "api_route": "apps/ops-web/app/api/ac-capital-os/ai-command-center/route.ts",
+  "migration": "supabase/migrations/20260727_ac_capital_os_mz11_ai_command_center.sql",
+  "ai_provider_control_bridge": {
+    "route": "/ai-provider-control",
+    "snapshot_api": "/api/ai-provider-control/snapshot",
+    "action_api": "/api/ai-provider-control/action",
+    "module_keys": [
+      "ac_capital_os",
+      "ac_capital_os_radar",
+      "ac_capital_os_qualification",
+      "ac_capital_os_case_builder",
+      "ac_capital_os_coordinator",
+      "ac_capital_os_learning"
+    ],
+    "dossier_options": [
+      "same_ai_supplier",
+      "dedicated_gemini_api_dossier",
+      "hybrid_failover_manual"
+    ]
+  },
+  "preserves": [
+    "MZ1 Foundation",
+    "MZ2 Capital Executive Cockpit",
+    "MZ3 Capital Radar",
+    "MZ4 Qualification Engine",
+    "MZ5 Funder Intelligence Room",
+    "MZ6 Capital Doctrine Vault",
+    "MZ7 Fundraising Case Builder",
+    "MZ8 Due Diligence Data Room",
+    "MZ9 Capital Pipeline CRM",
+    "MZ10 Human Coordinator Cockpit"
+  ],
+  "truth_boundary": [
+    "seeded data contract",
+    "no live model calls",
+    "no exposed API keys",
+    "no web crawling",
+    "no automatic outreach",
+    "no automatic submission",
+    "no automatic doctrine activation"
+  ],
+  "created_at": "2026-07-27T04:48:44.922434+00:00"
+}

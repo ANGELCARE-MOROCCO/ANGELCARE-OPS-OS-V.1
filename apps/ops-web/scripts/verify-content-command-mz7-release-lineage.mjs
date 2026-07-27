@@ -1,0 +1,4 @@
+import fs from 'fs'; const files=['components/market-os/content-command/headquarters/ValidationWorkspace.tsx','components/market-os/content-command/headquarters/DistributionWorkspace.tsx','components/market-os/content-command/content-publishing-page.tsx']; const s=files.map(f=>fs.readFileSync(f,'utf8')).join('\n');
+for(const route of ['/market-os/content-command-center/dossiers/','/market-os/content-command-center/review','/market-os/content-command-center/distribution','/market-os/content-command-center/publishing']) if(!s.includes(route)) throw new Error(`Release lineage route missing: ${route}`);
+for(const token of ['Dossier 360','Source Gate','PublicationPackage']) if(!s.includes(token)) throw new Error(`Release lineage concept missing: ${token}`);
+console.log('PASS — Validation, Distribution and Publishing expose the governed release lineage and real destination routes');

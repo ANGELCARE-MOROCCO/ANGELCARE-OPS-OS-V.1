@@ -1,0 +1,7 @@
+cd ~/Desktop/angelcare-platform
+cp ~/Downloads/AC_CAPITAL_OS_MEGA_ULTRA_ZIP_04_QUALIFICATION_ENGINE.zip .
+unzip -o AC_CAPITAL_OS_MEGA_ULTRA_ZIP_04_QUALIFICATION_ENGINE.zip -d .
+node ./AC_CAPITAL_OS_MZ4/scripts/apply_ac_capital_os_mz4.mjs
+node ./AC_CAPITAL_OS_MZ4/scripts/verify_ac_capital_os_mz4.mjs
+cd apps/ops-web
+npx tsc -p tsconfig.json --noEmit --pretty false

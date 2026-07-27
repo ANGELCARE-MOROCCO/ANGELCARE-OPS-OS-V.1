@@ -1,0 +1,10 @@
+{
+  "name": "AC CAPITAL OS MZ13 Storage QA Verifier Fix",
+  "issue": "Storage verifier expected ac-capital-data-room literal only in storage.ts, while implementation stores bucket default in feature-flags.ts.",
+  "touched_files": [
+    "AC_CAPITAL_OS_MZ13/scripts/verify_ac_capital_os_storage_contract.mjs"
+  ],
+  "runtime_files_touched": [],
+  "verification_token": "AC_CAPITAL_OS_MZ13_STORAGE_QA_FIX_VERIFIED",
+  "created_at": "2026-07-27T06:14:34.052283+00:00"
+}

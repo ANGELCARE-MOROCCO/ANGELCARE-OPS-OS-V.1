@@ -1,0 +1,315 @@
+import type {
+  AcCapitalFunderContact,
+  AcCapitalFunderFollowUpAction,
+  AcCapitalFunderLikelyObjection,
+  AcCapitalFunderNarrativeRecommendation,
+  AcCapitalFunderOpportunityLink,
+  AcCapitalFunderProfile,
+  AcCapitalFunderPsychologyBrief,
+  AcCapitalFunderRelationshipEvent,
+  AcCapitalFunderStrategicSegment,
+} from './types';
+
+export const AC_CAPITAL_FUNDER_INTELLIGENCE_CONTRACT = {
+  token: 'MZ5_AC_CAPITAL_OS_FUNDER_INTELLIGENCE',
+  workspace: 'Funder Intelligence Room',
+  subtitle: 'Banks, VCs, Grants, Angels, Institutions & Strategic Capital Relationships',
+  mission:
+    'Profile every capital source with Investor Psychology, Likely Objections, Best AngelCare Narrative, Relationship Status, Relationship Temperature, Contact Strategy, Ticket Range, Funding Stage Focus, Strategic Priority, Follow-Up Due and Founder-Level Approach.',
+  safety:
+    'MZ5 prepares relationship intelligence only. It does not send outreach, scrape private contacts, guarantee investment, expose secrets or replace founder approval.',
+} as const;
+
+export const funderProfiles: AcCapitalFunderProfile[] = [
+  {
+    id: 'funder-tamwilcom-bank-route',
+    name: 'TAMWILCOM / Attijariwafa Bank ILAYKI route',
+    funderType: 'Guarantee-backed financing program',
+    country: 'Morocco',
+    region: 'Morocco',
+    ticketRange: 'up to structured bank financing need · AngelCare target 1.5 M Dh',
+    fundingStageFocus: 'women co-led Moroccan SME launch and accountable growth',
+    sectorFocus: ['women entrepreneurship', 'service modernization', 'job creation', 'structured operations'],
+    websiteUrl: 'seeded-sample-no-live-contact',
+    sourceConfidence: 92,
+    angelCareFitScore: 91,
+    fitLabel: 'Excellent',
+    relationshipStatus: 'Requested Documents',
+    relationshipTemperature: 'High Potential',
+    strategicPriority: 'critical',
+    recommendedNarrative: 'Bank-safe narrative · repayment discipline, cost control, 24-month principal deferral logic, women co-led governance and credible BFR discipline.',
+    owner: 'Founder / finance coordinator',
+    lastContact: 'Diagnostic funding discussion completed',
+    nextAction: 'Prepare bank-ready updated file and proof pack for founder review',
+    nextActionDueDate: 'Next 72 hours',
+    linkedOpportunities: ['ILAYKI guarantee-backed financing', 'AngelCare cost-control business plan'],
+    likelyObjectionCount: 5,
+    proofRequiredCount: 8,
+    founderLevelApproach: true,
+    summary:
+      'Highest immediate relationship priority because it matches the current Morocco financing track, Pamela women cofounder eligibility and AngelCare need for disciplined launch capital.',
+  },
+  {
+    id: 'funder-impact-education-grant',
+    name: 'International Child Development & Education Impact Grant',
+    funderType: 'Grant',
+    country: 'Global',
+    region: 'Global',
+    ticketRange: 'EUR / USD grant range to confirm by live source',
+    fundingStageFocus: 'impact, child development, education innovation and measurable social outcomes',
+    sectorFocus: ['education', 'child development', 'social impact', 'women empowerment'],
+    websiteUrl: 'seeded-sample-requires-source-confirmation',
+    sourceConfidence: 76,
+    angelCareFitScore: 84,
+    fitLabel: 'Strong',
+    relationshipStatus: 'Researching',
+    relationshipTemperature: 'Warm',
+    strategicPriority: 'high',
+    recommendedNarrative: 'Grant/impact narrative · children from birth to 12, Academy professionalization, SOP, Quality Check 360 and measurable family support outcomes.',
+    owner: 'Capital coordinator',
+    lastContact: 'Not contacted',
+    nextAction: 'Confirm eligibility and identify grant officer or application window',
+    nextActionDueDate: 'This week',
+    linkedOpportunities: ['Education / childcare impact funding from Capital Radar'],
+    likelyObjectionCount: 4,
+    proofRequiredCount: 9,
+    founderLevelApproach: false,
+    summary:
+      'Strong non-dilutive opportunity category if AngelCare proves measurable impact, child-safety governance, training outcomes and careful non-medical positioning.',
+  },
+  {
+    id: 'funder-saas-seed-vc',
+    name: 'MENA SaaS / Marketplace Seed VC Watchlist',
+    funderType: 'VC',
+    country: 'UAE / MENA',
+    region: 'Africa / MENA',
+    ticketRange: 'USD seed ticket · relationship nurture only until traction proof strengthens',
+    fundingStageFocus: 'seed-stage SaaS, marketplace, recurring revenue and defensible platform growth',
+    sectorFocus: ['SaaS', 'marketplace', 'AI-enabled operations', 'education technology'],
+    websiteUrl: 'seeded-sample-requires-live-research',
+    sourceConfidence: 69,
+    angelCareFitScore: 72,
+    fitLabel: 'Strategic Long-Term',
+    relationshipStatus: 'Strategic Watchlist',
+    relationshipTemperature: 'Nurture Later',
+    strategicPriority: 'medium',
+    recommendedNarrative: 'VC-scale narrative · Partner OS tenant monetization, marketplace expansion, Territory OS and recurring B2B SaaS potential.',
+    owner: 'Founder-level strategic relationship',
+    lastContact: 'No contact yet',
+    nextAction: 'Build relationship map and wait for stronger SaaS usage/traction proof',
+    nextActionDueDate: 'Next monthly capital review',
+    linkedOpportunities: ['MENA SaaS seed VC category', 'Partner OS monetization thesis'],
+    likelyObjectionCount: 6,
+    proofRequiredCount: 10,
+    founderLevelApproach: true,
+    summary:
+      'Strategically valuable but not immediate submission priority. It should be nurtured while AC CAPITAL OS strengthens SaaS proof, tenant pilots and recurring revenue metrics.',
+  },
+];
+
+export const funderContacts: AcCapitalFunderContact[] = [
+  {
+    funderId: 'funder-tamwilcom-bank-route',
+    contactName: 'Bank / Dar Al Moukawil relationship contact',
+    roleTitle: 'Financing advisor / program contact',
+    email: 'to be completed by coordinator',
+    phone: 'to be completed by coordinator',
+    preferredLanguage: 'FR',
+    communicationStyle: 'Formal, concise, bank-ready, documentation-first and founder-approved.',
+    relationshipStatus: 'Requested Documents',
+    lastContactAt: 'after diagnostic meeting',
+    nextContactAt: 'after updated package approval',
+  },
+  {
+    funderId: 'funder-impact-education-grant',
+    contactName: 'Grant officer / program desk',
+    roleTitle: 'Impact funding program contact',
+    email: 'source confirmation required',
+    phone: 'source confirmation required',
+    preferredLanguage: 'EN',
+    communicationStyle: 'Impact-oriented, measurable, careful on child-safety claims and outcomes.',
+    relationshipStatus: 'Researching',
+    lastContactAt: 'not contacted',
+    nextContactAt: 'after source confirmation',
+  },
+  {
+    funderId: 'funder-saas-seed-vc',
+    contactName: 'Investment associate / partner to identify',
+    roleTitle: 'VC relationship target',
+    email: 'not identified',
+    phone: 'not identified',
+    preferredLanguage: 'EN',
+    communicationStyle: 'Sharp, scalable, metric-driven and founder-led only when proof is ready.',
+    relationshipStatus: 'Strategic Watchlist',
+    lastContactAt: 'not contacted',
+    nextContactAt: 'after traction milestone',
+  },
+];
+
+export const funderPsychologyBriefs: AcCapitalFunderPsychologyBrief[] = [
+  {
+    funderId: 'funder-tamwilcom-bank-route',
+    decisionStyle: 'Conservative bank assessor: repayment capacity, founder seriousness, documentation completeness, use-of-funds clarity and risk control.',
+    likelyPriorities: ['founder governance', 'women co-led eligibility', 'BFR discipline', 'repayment comfort', 'cost optimization', 'clear SARL operational start'],
+    likelyConcerns: ['pre-establishing company', 'limited financial history', 'broad business model', 'variable field workforce cost model', 'documentation consistency'],
+    proofRequired: ['business plan', 'financial projections', 'founder bios', 'supplier quotes', 'use of funds', 'BFR explanation', 'risk plan', 'company documents'],
+    languageToUse: ['controlled launch', 'strict cost optimization', 'phased execution', 'bank-secured treasury discipline', 'measurable revenue streams'],
+    languageToAvoid: ['guaranteed success', 'uncontrolled international scaling', 'AI replaces human experts without governance', 'medical claims'],
+    founderLevelRequired: true,
+  },
+  {
+    funderId: 'funder-impact-education-grant',
+    decisionStyle: 'Impact committee: measurable outcomes, inclusion, child-development quality, professional training and governance.',
+    likelyPriorities: ['children 0-12 quality uplift', 'women empowerment', 'caregiver professionalization', 'Academy training', 'Quality Check 360', 'social and economic impact'],
+    likelyConcerns: ['impact metrics not yet measured', 'overclaiming child outcomes', 'lack of partner letters', 'need for safeguard language'],
+    proofRequired: ['impact framework', 'Academy materials', 'SOP samples', 'quality reports', 'pilot proof', 'B2B partnership proof'],
+    languageToUse: ['measurable family support', 'quality standardization', 'professionalization', 'safe non-medical support', 'inclusive job creation'],
+    languageToAvoid: ['clinical outcomes', 'unsupported learning guarantees', 'large-scale claims without evidence'],
+    founderLevelRequired: false,
+  },
+  {
+    funderId: 'funder-saas-seed-vc',
+    decisionStyle: 'Growth investor: traction, scalable software, repeatable acquisition, recurring revenue, defensibility and expansion velocity.',
+    likelyPriorities: ['Partner OS tenants', 'recurring SaaS revenue', 'marketplace liquidity', 'AI-enabled operations', 'international scalability', 'defensible data/workflow moat'],
+    likelyConcerns: ['too early for VC', 'service-heavy operations', 'unclear SaaS traction', 'founder focus across many modules', 'unit economics'],
+    proofRequired: ['tenant pilots', 'MRR or LOIs', 'SaaS screenshots', 'usage metrics', 'pipeline', 'market size logic', 'unit economics'],
+    languageToUse: ['platformization', 'tenant monetization', 'workflow moat', 'recurring revenue', 'marketplace expansion', 'territory scaling'],
+    languageToAvoid: ['bank-style repayment focus', 'slow operational bureaucracy', 'unvalidated global claims'],
+    founderLevelRequired: true,
+  },
+];
+
+export const funderLikelyObjections: AcCapitalFunderLikelyObjection[] = [
+  {
+    funderId: 'funder-tamwilcom-bank-route',
+    objectionTitle: 'No 3-year financial history',
+    severity: 'high',
+    whyItMayHappen: 'The new SARL operational start is planned from January 2027 and the bank may expect historical statements.',
+    bestAnswer: 'Position AngelCare through documented beta experience since 2022, disciplined projections, founder governance and supplier quotes while clearly explaining pre-establishment status.',
+    requiredProof: 'Beta proof, business plan, cost projections, founder bios and bank-ready annexes.',
+    owner: 'Founder / finance coordinator',
+    relatedDocument: 'Bank-ready business plan and financial annex',
+    founderReviewRequired: true,
+  },
+  {
+    funderId: 'funder-tamwilcom-bank-route',
+    objectionTitle: 'Business model appears broad',
+    severity: 'medium',
+    whyItMayHappen: 'AngelCare covers B2C, B2B, Academy, marketplace and SaaS, which can appear scattered if not framed correctly.',
+    bestAnswer: 'Explain the Kids 360 ecosystem as one controlled operating platform with phased revenue streams and shared SOP/Academy/Quality infrastructure.',
+    requiredProof: 'Business model map, revenue stream table, service segmentation and execution plan.',
+    owner: 'Capital coordinator',
+    relatedDocument: 'Business model section',
+    founderReviewRequired: true,
+  },
+  {
+    funderId: 'funder-impact-education-grant',
+    objectionTitle: 'Impact metrics need stronger evidence',
+    severity: 'medium',
+    whyItMayHappen: 'Grant assessors usually want quantified outcomes, not only strategy.',
+    bestAnswer: 'Show Quality Check 360, Academy training outputs, SOP structure, planned metrics and early proof while avoiding unsupported claims.',
+    requiredProof: 'Impact framework, SOP samples, training program, partner proof.',
+    owner: 'Quality / Academy coordinator',
+    relatedDocument: 'Impact and quality annex',
+    founderReviewRequired: false,
+  },
+  {
+    funderId: 'funder-saas-seed-vc',
+    objectionTitle: 'SaaS monetization needs proof',
+    severity: 'high',
+    whyItMayHappen: 'VCs will want tenant usage, MRR or signed pilots before treating Partner OS as investable SaaS.',
+    bestAnswer: 'Use this funder as a relationship nurture target until Partner OS pilots, screenshots and tenant metrics are available.',
+    requiredProof: 'Tenant pilots, Partner OS demo, SaaS metrics, LOIs.',
+    owner: 'Founder-level strategic relationship',
+    relatedDocument: 'SaaS traction pack',
+    founderReviewRequired: true,
+  },
+];
+
+export const funderNarrativeRecommendations: AcCapitalFunderNarrativeRecommendation[] = [
+  {
+    funderId: 'funder-tamwilcom-bank-route',
+    narrativeType: 'Bank-safe narrative',
+    recommendedAngle: 'AngelCare is a disciplined women co-led Moroccan company preparing a controlled launch with optimized use of funds, BFR discipline and multiple revenue routes.',
+    openingMessage: 'We are submitting an updated bank-ready financing file showing controlled execution, founder governance, cost optimization and clear repayment logic.',
+    proofToEmphasize: ['Pamela cofounder role', 'cost-control doctrine', 'BFR logic', 'supplier quotes', 'business plan', 'risk reserve governance'],
+    numbersToMentionCarefully: ['1.5 M Dh financing request', '2% HT interest', '24-month principal deferral', 'founder salaries and ANAPEC staff logic'],
+    risksToAvoidOverclaiming: ['guaranteed revenue', 'uncontrolled international expansion', 'unsupported SaaS traction'],
+    documentsToAttach: ['business plan', 'financial projections', 'use-of-funds note', 'founder bios', 'supplier quotes', 'risk plan'],
+    idealNextAction: 'Prepare updated package, founder review and formal follow-up with bank contact.',
+  },
+  {
+    funderId: 'funder-impact-education-grant',
+    narrativeType: 'Grant/impact narrative',
+    recommendedAngle: 'AngelCare elevates quality standards for children from birth to 12 through Academy, SOP, caregiver professionalization and Quality Check 360.',
+    openingMessage: 'AngelCare is building a measurable child and family support quality infrastructure with training, inclusion and professionalization outcomes.',
+    proofToEmphasize: ['Academy', 'SOP', 'Quality Check 360', 'child development kits', 'caregiver professionalization', 'women empowerment'],
+    numbersToMentionCarefully: ['job creation targets', 'training cohorts', 'cities covered', 'families/institutions supported'],
+    risksToAvoidOverclaiming: ['clinical claims', 'guaranteed child outcomes', 'unverified scale metrics'],
+    documentsToAttach: ['impact note', 'Academy outline', 'SOP samples', 'quality framework', 'pilot proof'],
+    idealNextAction: 'Confirm eligibility and prepare a concise impact concept note.',
+  },
+  {
+    funderId: 'funder-saas-seed-vc',
+    narrativeType: 'VC-scale narrative',
+    recommendedAngle: 'AngelCare is moving from service execution into a SaaS-enabled Kids 360 platform with Partner OS tenants, marketplace expansion and Territory OS scalability.',
+    openingMessage: 'We are developing a platform layer that monetizes private establishments through Partner OS while connecting services, marketplace, Academy and quality infrastructure.',
+    proofToEmphasize: ['Partner OS', 'tenant monetization', 'Marketplace', 'Territory OS', 'AI-enabled capital and operations systems', 'workflow moat'],
+    numbersToMentionCarefully: ['MRR only when proven', 'pipeline value only with source', 'market size only with assumptions'],
+    risksToAvoidOverclaiming: ['global domination without traction', 'VC readiness before pilots', 'unverified revenue multiples'],
+    documentsToAttach: ['SaaS demo pack', 'tenant pilot proof', 'product architecture', 'marketplace thesis', 'traction metrics'],
+    idealNextAction: 'Keep on strategic nurture and only approach founder-level after Partner OS proof strengthens.',
+  },
+];
+
+export const funderRelationshipHistory: AcCapitalFunderRelationshipEvent[] = [
+  { funderId: 'funder-tamwilcom-bank-route', eventDate: 'current cycle', eventType: 'meeting', title: 'Diagnostic funding need discussion', summary: 'Need for bank-ready proof, updated business plan and optimized supplier projections confirmed.', owner: 'Founder / finance coordinator' },
+  { funderId: 'funder-tamwilcom-bank-route', eventDate: 'next step', eventType: 'follow-up', title: 'Submit updated financing package', summary: 'Coordinator prepares documents, founders approve final version, then bank contact receives package.', owner: 'Capital coordinator' },
+  { funderId: 'funder-impact-education-grant', eventDate: 'radar stage', eventType: 'discovered', title: 'Impact grant category detected', summary: 'Needs live source confirmation and eligibility verification before outreach.', owner: 'Capital Radar / coordinator' },
+  { funderId: 'funder-saas-seed-vc', eventDate: 'watchlist stage', eventType: 'note', title: 'Strategic VC watchlist created', summary: 'Do not pitch until SaaS tenant proof and recurring revenue evidence are stronger.', owner: 'Founder-level strategic relationship' },
+];
+
+export const funderOpportunityLinks: AcCapitalFunderOpportunityLink[] = [
+  { funderId: 'funder-tamwilcom-bank-route', opportunityTitle: 'ILAYKI / guarantee-backed financing', radarOrigin: 'Capital Radar Morocco route', qualificationDecision: 'Pursue Immediately', fitScore: 91, status: 'linked to MZ4 Qualification Engine', nextAction: 'Prepare bank-ready package' },
+  { funderId: 'funder-impact-education-grant', opportunityTitle: 'Education / childcare impact funding', radarOrigin: 'Capital Radar International grant route', qualificationDecision: 'Strong — Prepare Package', fitScore: 84, status: 'needs eligibility confirmation', nextAction: 'Confirm source and build impact note' },
+  { funderId: 'funder-saas-seed-vc', opportunityTitle: 'MENA SaaS seed VC relationship', radarOrigin: 'Capital Radar VC watchlist', qualificationDecision: 'Strategic Watchlist', fitScore: 72, status: 'future relationship nurture', nextAction: 'Wait for SaaS traction pack' },
+];
+
+export const funderFollowUpActions: AcCapitalFunderFollowUpAction[] = [
+  { funderId: 'funder-tamwilcom-bank-route', title: 'Prepare founder-approved bank follow-up package', priority: 'critical', dueDate: 'Next 72 hours', owner: 'Capital coordinator', actionType: 'document-pack', instruction: 'Collect business plan, financial projections, use-of-funds note, supplier quotes and founder bios before sending.' },
+  { funderId: 'funder-impact-education-grant', title: 'Research live application window and contact route', priority: 'high', dueDate: 'This week', owner: 'Capital Radar coordinator', actionType: 'research', instruction: 'Confirm eligibility, source URL and submission channel before moving to Case Builder.' },
+  { funderId: 'funder-saas-seed-vc', title: 'Keep VC on nurture until Partner OS proof strengthens', priority: 'medium', dueDate: 'Next monthly review', owner: 'Founder-level strategic relationship', actionType: 'nurture', instruction: 'Do not send a pitch yet; wait for tenant, usage, MRR or LOI proof.' },
+];
+
+export const funderStrategicSegments: AcCapitalFunderStrategicSegment[] = [
+  { label: 'Morocco', count: 1, description: 'Bank, guarantee-backed and public routes currently highest immediate execution priority.', accent: 'green' },
+  { label: 'Africa / MENA', count: 1, description: 'VC and regional investor relationships kept as strategic nurture routes.', accent: 'purple' },
+  { label: 'Global impact', count: 1, description: 'Education, childcare and grant relationships need source confirmation and impact proof.', accent: 'blue' },
+  { label: 'Women founder', count: 2, description: 'Pamela cofounder and women co-led governance can strengthen eligibility and narrative.', accent: 'red' },
+  { label: 'SaaS / tech', count: 1, description: 'Partner OS narrative needs traction, demo and tenant evidence before active pitching.', accent: 'teal' },
+  { label: 'Follow-Up Due', count: 2, description: 'Coordinator must prepare package or verify source before moving forward.', accent: 'amber' },
+];
+
+export function getAcCapitalFunderIntelligenceSnapshot() {
+  const highFit = funderProfiles.filter((funder) => funder.angelCareFitScore >= 80).length;
+  const followUpsDue = funderFollowUpActions.filter((action) => ['critical', 'high'].includes(action.priority)).length;
+  const founderLevel = funderProfiles.filter((funder) => funder.founderLevelApproach).length;
+  return {
+    funderProfiles,
+    funderContacts,
+    funderRelationshipHistory,
+    funderPsychologyBriefs,
+    funderLikelyObjections,
+    funderNarrativeRecommendations,
+    funderOpportunityLinks,
+    funderFollowUpActions,
+    funderStrategicSegments,
+    metrics: {
+      totalFunders: funderProfiles.length,
+      highFit,
+      followUpsDue,
+      founderLevel,
+      averageFit: Math.round(funderProfiles.reduce((sum, funder) => sum + funder.angelCareFitScore, 0) / (funderProfiles.length || 1)),
+    },
+  };
+}

@@ -1,0 +1,16 @@
+{
+  "package": "AC_CAPITAL_OS_MEGA_ULTRA_ZIP_06_CAPITAL_DOCTRINE_VAULT",
+  "token": "MZ6_AC_CAPITAL_OS_CAPITAL_DOCTRINE",
+  "route": "apps/ops-web/app/(protected)/ac-capital-os/page.tsx",
+  "workspaceRoute": "apps/ops-web/app/(protected)/ac-capital-os/doctrine/page.tsx",
+  "api": "apps/ops-web/app/api/ac-capital-os/capital-doctrine/route.ts",
+  "migration": "supabase/migrations/20260727_ac_capital_os_mz6_capital_doctrine_vault.sql",
+  "preserves": [
+    "MZ1 foundation",
+    "MZ2 cockpit",
+    "MZ3 radar",
+    "MZ4 qualification",
+    "MZ5 funder intelligence"
+  ],
+  "acceptance": "MZ6_AC_CAPITAL_OS_CAPITAL_DOCTRINE_VERIFIED"
+}

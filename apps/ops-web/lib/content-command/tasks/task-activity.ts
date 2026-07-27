@@ -1,186 +1,249 @@
+"use client"
+
 import {
   loadStore,
-  saveStore,
   nowISO,
+  saveStore,
   uid,
   type ContentTask,
-  type ContentStore,
 } from "@/components/market-os/content-command/content-command-system"
+
+const TASK_ACTIVITY_KEY = "market_os_content_command_task_activity_v2"
+const TASK_CHECKLIST_KEY = "market_os_content_command_task_checklists_v2"
+const TASK_EXECUTION_META_KEY = "market_os_content_command_task_execution_meta_v1"
 
 export type TaskActivityEvent = {
   id: string
   taskId: string
-  timestamp: string
   action: string
   detail: string
+  timestamp: string
 }
-
-const ACTIVITY_KEY = "market_os_content_command_task_activity_v1"
-const CHECKLIST_KEY = "market_os_content_command_task_checklists_v1"
 
 export type TaskChecklistItem = {
   id: string
   taskId: string
   label: string
   done: boolean
+  required: boolean
+  evidenceLinked: boolean
+  createdAt: string
+  completedAt?: string
+}
+
+export type TaskEvidenceRecord = {
+  id: string
+  taskId: string
+  type: "capture" | "document" | "source" | "export" | "preview" | "video" | "link" | "confirmation"
+  label: string
+  url?: string
+  note?: string
+  state: "draft" | "submitted" | "accepted" | "rejected"
+  submittedAt?: string
+  reviewedAt?: string
+}
+
+export type TaskBlockerRecord = {
+  id: string
+  taskId: string
+  type: "information" | "approval" | "owner" | "source" | "asset" | "dependency" | "technical" | "brand" | "scope" | "capacity" | "review" | "external"
+  description: string
+  severity: "low" | "medium" | "high" | "critical"
+  owner: string
+  state: "open" | "waiting" | "resolved" | "reopened"
+  consequence?: string
+  openedAt: string
+  resolvedAt?: string
+}
+
+export type TaskClarificationRecord = {
+  id: string
+  taskId: string
+  question: string
+  requestedFrom: string
+  dueDate?: string
+  impactedArea?: string
+  response?: string
+  state: "open" | "answered" | "resolved" | "reopened"
   createdAt: string
 }
 
-export function readTaskActivity(): TaskActivityEvent[] {
-  if (typeof window === "undefined") return []
+export type TaskExecutionMeta = {
+  taskId: string
+  missionId?: string
+  reviewer?: string
+  objective?: string
+  requiredOutput?: string
+  scope?: string
+  outOfScope?: string
+  completionDefinition?: string
+  acceptanceCriteria?: string
+  qualityCriteria?: string
+  evidenceRequirement?: string
+  sourceRequirement?: string
+  reviewRequirement?: string
+  dependencyIds: string[]
+  successorIds: string[]
+  workState: "not_started" | "accepted" | "active" | "paused" | "blocked" | "awaiting_clarification" | "preparing_evidence" | "submitted" | "returned" | "completed"
+  startedAt?: string
+  pausedAt?: string
+  submittedAt?: string
+  amendmentReason?: string
+  updatedAt: string
+  evidences: TaskEvidenceRecord[]
+  blockers: TaskBlockerRecord[]
+  clarifications: TaskClarificationRecord[]
+}
 
+function readJson<T>(key: string, fallback: T): T {
+  if (typeof window === "undefined") return fallback
   try {
-    const raw = window.localStorage.getItem(ACTIVITY_KEY)
-    return raw ? JSON.parse(raw) : []
+    const raw = window.localStorage.getItem(key)
+    return raw ? (JSON.parse(raw) as T) : fallback
   } catch {
-    return []
+    return fallback
   }
 }
 
-export function writeTaskActivity(events: TaskActivityEvent[]) {
-  if (typeof window === "undefined") return
-  window.localStorage.setItem(ACTIVITY_KEY, JSON.stringify(events.slice(0, 500)))
+function writeJson<T>(key: string, value: T) {
+  if (typeof window !== "undefined") window.localStorage.setItem(key, JSON.stringify(value))
+}
+
+export function readTaskActivity() {
+  return readJson<TaskActivityEvent[]>(TASK_ACTIVITY_KEY, [])
 }
 
 export function addTaskActivity(taskId: string, action: string, detail: string) {
-  const events = readTaskActivity()
-
-  writeTaskActivity([
-    {
-      id: uid("task-activity"),
-      taskId,
-      timestamp: nowISO(),
-      action,
-      detail,
-    },
-    ...events,
-  ])
+  const next = [{ id: uid("task-event"), taskId, action, detail, timestamp: nowISO() }, ...readTaskActivity()].slice(0, 600)
+  writeJson(TASK_ACTIVITY_KEY, next)
+  return next[0]
 }
 
-export function readTaskChecklists(): TaskChecklistItem[] {
-  if (typeof window === "undefined") return []
+export function readTaskChecklists() {
+  return readJson<TaskChecklistItem[]>(TASK_CHECKLIST_KEY, [])
+}
 
-  try {
-    const raw = window.localStorage.getItem(CHECKLIST_KEY)
-    return raw ? JSON.parse(raw) : []
-  } catch {
-    return []
+export function addTaskChecklistItem(taskId: string, label: string, options?: { required?: boolean; evidenceLinked?: boolean }) {
+  const item: TaskChecklistItem = {
+    id: uid("task-check"),
+    taskId,
+    label,
+    done: false,
+    required: options?.required ?? true,
+    evidenceLinked: options?.evidenceLinked ?? false,
+    createdAt: nowISO(),
   }
-}
-
-export function writeTaskChecklists(items: TaskChecklistItem[]) {
-  if (typeof window === "undefined") return
-  window.localStorage.setItem(CHECKLIST_KEY, JSON.stringify(items))
-}
-
-export function addTaskChecklistItem(taskId: string, label: string) {
-  const items = readTaskChecklists()
-
-  const next = [
-    {
-      id: uid("check"),
-      taskId,
-      label,
-      done: false,
-      createdAt: nowISO(),
-    },
-    ...items,
-  ]
-
-  writeTaskChecklists(next)
-  addTaskActivity(taskId, "checklist item added", `Added checklist item: ${label}`)
-
-  return next
+  writeJson(TASK_CHECKLIST_KEY, [...readTaskChecklists(), item])
+  addTaskActivity(taskId, "checklist_item_added", `Étape ajoutée : ${label}`)
+  return item
 }
 
 export function toggleTaskChecklistItem(itemId: string) {
-  const items = readTaskChecklists()
-
-  const next = items.map((item) =>
-    item.id === itemId ? { ...item, done: !item.done } : item
-  )
-
-  writeTaskChecklists(next)
-
-  const item = next.find((candidate) => candidate.id === itemId)
-
-  if (item) {
-    addTaskActivity(
-      item.taskId,
-      "checklist updated",
-      `${item.done ? "Completed" : "Reopened"}: ${item.label}`
-    )
-  }
-
-  return next
+  const current = readTaskChecklists()
+  const item = current.find((candidate) => candidate.id === itemId)
+  if (!item) return null
+  const done = !item.done
+  const next = current.map((candidate) => candidate.id === itemId ? { ...candidate, done, completedAt: done ? nowISO() : undefined } : candidate)
+  writeJson(TASK_CHECKLIST_KEY, next)
+  addTaskActivity(item.taskId, done ? "checklist_item_completed" : "checklist_item_reopened", item.label)
+  return next.find((candidate) => candidate.id === itemId) ?? null
 }
 
 export function deleteTaskChecklistItem(itemId: string) {
-  const items = readTaskChecklists()
-  const item = items.find((candidate) => candidate.id === itemId)
+  const current = readTaskChecklists()
+  const item = current.find((candidate) => candidate.id === itemId)
+  writeJson(TASK_CHECKLIST_KEY, current.filter((candidate) => candidate.id !== itemId))
+  if (item) addTaskActivity(item.taskId, "checklist_item_removed", item.label)
+}
 
-  const next = items.filter((candidate) => candidate.id !== itemId)
-
-  writeTaskChecklists(next)
-
-  if (item) {
-    addTaskActivity(item.taskId, "checklist item deleted", `Deleted checklist item: ${item.label}`)
+export function defaultTaskExecutionMeta(taskId: string): TaskExecutionMeta {
+  return {
+    taskId,
+    dependencyIds: [],
+    successorIds: [],
+    workState: "not_started",
+    updatedAt: nowISO(),
+    evidences: [],
+    blockers: [],
+    clarifications: [],
   }
+}
 
+export function readTaskExecutionMetas() {
+  return readJson<Record<string, TaskExecutionMeta>>(TASK_EXECUTION_META_KEY, {})
+}
+
+export function readTaskExecutionMeta(taskId: string) {
+  return readTaskExecutionMetas()[taskId] ?? defaultTaskExecutionMeta(taskId)
+}
+
+export function saveTaskExecutionMeta(taskId: string, updater: TaskExecutionMeta | ((current: TaskExecutionMeta) => TaskExecutionMeta)) {
+  const metas = readTaskExecutionMetas()
+  const current = metas[taskId] ?? defaultTaskExecutionMeta(taskId)
+  const value = typeof updater === "function" ? updater(current) : updater
+  const next = { ...value, taskId, updatedAt: nowISO() }
+  writeJson(TASK_EXECUTION_META_KEY, { ...metas, [taskId]: next })
   return next
 }
 
-export function updateContentCommandTask(
-  taskId: string,
-  updater: (task: ContentTask) => ContentTask
-) {
+export function setTaskWorkState(taskId: string, workState: TaskExecutionMeta["workState"], note?: string) {
+  const next = saveTaskExecutionMeta(taskId, (current) => ({
+    ...current,
+    workState,
+    startedAt: workState === "active" && !current.startedAt ? nowISO() : current.startedAt,
+    pausedAt: workState === "paused" ? nowISO() : current.pausedAt,
+    submittedAt: workState === "submitted" ? nowISO() : current.submittedAt,
+  }))
+  addTaskActivity(taskId, "work_state_changed", note || `État d’exécution : ${workState}`)
+  return next
+}
+
+export function addTaskEvidence(taskId: string, evidence: Omit<TaskEvidenceRecord, "id" | "taskId">) {
+  const record: TaskEvidenceRecord = { ...evidence, id: uid("task-evidence"), taskId }
+  const next = saveTaskExecutionMeta(taskId, (current) => ({ ...current, evidences: [record, ...current.evidences] }))
+  addTaskActivity(taskId, "evidence_added", evidence.label)
+  return next
+}
+
+export function addTaskBlocker(taskId: string, blocker: Omit<TaskBlockerRecord, "id" | "taskId" | "openedAt">) {
+  const record: TaskBlockerRecord = { ...blocker, id: uid("task-blocker"), taskId, openedAt: nowISO() }
+  const next = saveTaskExecutionMeta(taskId, (current) => ({ ...current, blockers: [record, ...current.blockers], workState: "blocked" }))
+  updateContentCommandTask(taskId, (task) => ({ ...task, status: "blocked" }))
+  addTaskActivity(taskId, "blocker_opened", blocker.description)
+  return next
+}
+
+export function resolveTaskBlocker(taskId: string, blockerId: string) {
+  const next = saveTaskExecutionMeta(taskId, (current) => ({
+    ...current,
+    blockers: current.blockers.map((item) => item.id === blockerId ? { ...item, state: "resolved", resolvedAt: nowISO() } : item),
+  }))
+  addTaskActivity(taskId, "blocker_resolved", `Blocage ${blockerId} résolu`)
+  return next
+}
+
+export function addTaskClarification(taskId: string, clarification: Omit<TaskClarificationRecord, "id" | "taskId" | "createdAt">) {
+  const record: TaskClarificationRecord = { ...clarification, id: uid("task-question"), taskId, createdAt: nowISO() }
+  const next = saveTaskExecutionMeta(taskId, (current) => ({ ...current, clarifications: [record, ...current.clarifications], workState: "awaiting_clarification" }))
+  addTaskActivity(taskId, "clarification_requested", clarification.question)
+  return next
+}
+
+export function updateContentCommandTask(taskId: string, updater: (task: ContentTask) => ContentTask) {
   const store = loadStore()
-  const before = store.tasks.find((task) => task.id === taskId)
-
-  if (!before) return null
-
-  const after = updater(before)
-
-  const nextStore: ContentStore = {
-    ...store,
-    tasks: store.tasks.map((task) => (task.id === taskId ? after : task)),
-    logs: [
-      {
-        id: uid("log"),
-        timestamp: nowISO(),
-        action: "task update",
-        entity: "content-command-task",
-        detail: `Updated task ${after.title}`,
-      },
-      ...store.logs,
-    ].slice(0, 80),
-  }
-
-  saveStore(nextStore)
-  addTaskActivity(taskId, "task updated", `Updated task: ${after.title}`)
-
-  return after
+  const current = store.tasks.find((task) => task.id === taskId)
+  if (!current) return null
+  const updated = updater(current)
+  saveStore({ ...store, tasks: store.tasks.map((task) => task.id === taskId ? updated : task) })
+  return updated
 }
 
 export function deleteContentCommandTask(taskId: string) {
   const store = loadStore()
-  const task = store.tasks.find((candidate) => candidate.id === taskId)
-
-  const nextStore: ContentStore = {
-    ...store,
-    tasks: store.tasks.filter((candidate) => candidate.id !== taskId),
-    logs: [
-      {
-        id: uid("log"),
-        timestamp: nowISO(),
-        action: "task delete",
-        entity: "content-command-task",
-        detail: task ? `Deleted task ${task.title}` : `Deleted task ${taskId}`,
-      },
-      ...store.logs,
-    ].slice(0, 80),
-  }
-
-  saveStore(nextStore)
-  addTaskActivity(taskId, "task deleted", task ? `Deleted task: ${task.title}` : "Deleted task")
+  saveStore({ ...store, tasks: store.tasks.filter((task) => task.id !== taskId) })
+  writeJson(TASK_CHECKLIST_KEY, readTaskChecklists().filter((item) => item.taskId !== taskId))
+  writeJson(TASK_ACTIVITY_KEY, readTaskActivity().filter((item) => item.taskId !== taskId))
+  const metas = readTaskExecutionMetas()
+  delete metas[taskId]
+  writeJson(TASK_EXECUTION_META_KEY, metas)
 }

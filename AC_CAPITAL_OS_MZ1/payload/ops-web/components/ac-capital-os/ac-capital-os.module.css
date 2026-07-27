@@ -1,0 +1,481 @@
+.rootShell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: minmax(250px, 300px) minmax(0, 1fr);
+  background:
+    radial-gradient(circle at top left, rgba(46, 100, 181, 0.14), transparent 32rem),
+    radial-gradient(circle at 80% 10%, rgba(7, 138, 138, 0.10), transparent 26rem),
+    #f6f9fe;
+  color: #25324a;
+}
+
+.sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: auto;
+  padding: 24px 18px;
+  background: linear-gradient(180deg, #061b3f 0%, #0b2a5b 52%, #102f63 100%);
+  color: #ffffff;
+  border-right: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.sidebarBrand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.18);
+}
+
+.brandMark {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #ffffff, #d9e8ff);
+  color: #0b2a5b;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+}
+
+.brandTitle,
+.brandSubtitle,
+.eyebrow,
+.workspaceCard h3,
+.workspaceCard p,
+.sectionHeader h2,
+.sectionHeader p,
+.heroCopy h2,
+.heroCopy p,
+.readinessCard p,
+.readinessCard small,
+.commandCard p {
+  margin: 0;
+}
+
+.brandTitle {
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+}
+
+.brandSubtitle {
+  margin-top: 2px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.70);
+}
+
+.workspaceNav {
+  display: grid;
+  gap: 8px;
+  margin-top: 22px;
+}
+
+.workspaceNavItem {
+  display: grid;
+  grid-template-columns: 12px minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+  padding: 12px;
+  border-radius: 16px;
+  color: rgba(255, 255, 255, 0.78);
+  text-decoration: none;
+  border: 1px solid transparent;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.workspaceNavItem:hover,
+.workspaceNavItemReady {
+  border-color: rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+}
+
+.workspaceNavItem small {
+  grid-column: 2;
+  color: rgba(255, 255, 255, 0.56);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.navDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 99px;
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.08);
+}
+
+.mainSurface {
+  min-width: 0;
+  padding: 24px;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 18px;
+  margin-bottom: 20px;
+  padding: 20px 22px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid #d9e6f6;
+  box-shadow: 0 22px 70px rgba(18, 58, 118, 0.10);
+  backdrop-filter: blur(14px);
+}
+
+.topbar h1 {
+  margin: 4px 0 0;
+  color: #0b2a5b;
+  font-size: clamp(28px, 4vw, 48px);
+  letter-spacing: -0.06em;
+}
+
+.eyebrow {
+  color: #2e64b5;
+  font-size: 12px;
+  font-weight: 850;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.topbarActions,
+.heroActions,
+.workspaceMetaGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.secureBadge,
+.zipBadge,
+.workspaceMetaGrid span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 0 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+  border: 1px solid #c9d8ef;
+  background: #ffffff;
+  color: #0b2a5b;
+}
+
+.secureBadge {
+  border-color: #bfe6d5;
+  color: #14805d;
+  background: #ecf7f1;
+}
+
+.zipBadge {
+  border-color: #f1d8a9;
+  color: #9b640e;
+  background: #fff8ea;
+}
+
+.heroPanel {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(280px, 0.8fr);
+  gap: 20px;
+  padding: 28px;
+  border-radius: 30px;
+  background:
+    linear-gradient(135deg, rgba(11, 42, 91, 0.98), rgba(18, 58, 118, 0.94)),
+    radial-gradient(circle at top right, rgba(7, 138, 138, 0.35), transparent 20rem);
+  color: #ffffff;
+  box-shadow: 0 30px 90px rgba(11, 42, 91, 0.22);
+}
+
+.heroCopy h2 {
+  max-width: 980px;
+  margin-top: 10px;
+  font-size: clamp(34px, 4.4vw, 64px);
+  line-height: 0.94;
+  letter-spacing: -0.075em;
+}
+
+.heroCopy p {
+  max-width: 920px;
+  margin-top: 16px;
+  color: rgba(255, 255, 255, 0.80);
+  font-size: 16px;
+  line-height: 1.65;
+}
+
+.primaryAction,
+.secondaryAction {
+  margin-top: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  padding: 0 18px;
+  border-radius: 999px;
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.primaryAction {
+  background: #ffffff;
+  color: #0b2a5b;
+}
+
+.secondaryAction {
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.readinessCard {
+  padding: 22px;
+  border-radius: 26px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  align-self: stretch;
+}
+
+.readinessLabel {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 12px;
+  font-weight: 850;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.readinessCard strong {
+  display: block;
+  margin-top: 12px;
+  font-size: 56px;
+  letter-spacing: -0.08em;
+}
+
+.readinessCard p {
+  color: rgba(255, 255, 255, 0.82);
+  line-height: 1.5;
+}
+
+.readinessCard small {
+  display: block;
+  color: rgba(255, 255, 255, 0.70);
+  margin-top: 12px;
+}
+
+.readinessMeter {
+  height: 10px;
+  margin: 18px 0 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.20);
+  overflow: hidden;
+}
+
+.readinessMeter span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #2e64b5, #078a8a, #14805d);
+}
+
+.commandGrid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 20px;
+}
+
+.commandCard,
+.sectionBlock,
+.workspaceCard {
+  border: 1px solid #d9e6f6;
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 18px 54px rgba(18, 58, 118, 0.08);
+}
+
+.commandCard {
+  padding: 16px;
+  border-radius: 20px;
+}
+
+.commandCard span {
+  display: inline-grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  background: #edf4ff;
+  color: #2e64b5;
+  font-weight: 900;
+}
+
+.commandCard p {
+  margin-top: 12px;
+  color: #25324a;
+  font-weight: 850;
+  line-height: 1.35;
+}
+
+.sectionBlock {
+  margin-top: 20px;
+  padding: 22px;
+  border-radius: 28px;
+}
+
+.sectionHeader {
+  display: grid;
+  gap: 8px;
+  max-width: 980px;
+  margin-bottom: 18px;
+}
+
+.sectionHeader h2 {
+  color: #0b2a5b;
+  font-size: clamp(24px, 2.2vw, 36px);
+  letter-spacing: -0.045em;
+}
+
+.sectionHeader p {
+  color: #63708a;
+  line-height: 1.65;
+}
+
+.stateTable {
+  display: grid;
+  border: 1px solid #c9d8ef;
+  border-radius: 22px;
+  overflow: hidden;
+}
+
+.stateRow {
+  display: grid;
+  grid-template-columns: minmax(180px, 0.28fr) minmax(0, 1fr);
+  gap: 16px;
+  padding: 16px;
+  background: #ffffff;
+  border-bottom: 1px solid #e2ebf6;
+}
+
+.stateRow:last-child {
+  border-bottom: 0;
+}
+
+.stateRow strong {
+  color: #0b2a5b;
+}
+
+.stateRow span {
+  color: #63708a;
+}
+
+.workspaceGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.workspaceCard {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px;
+  border-radius: 24px;
+}
+
+.workspaceCardHeader {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.workspaceIcon {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 16px;
+  color: #ffffff;
+  font-weight: 950;
+  letter-spacing: -0.08em;
+  text-transform: uppercase;
+}
+
+.workspaceCard h3 {
+  color: #0b2a5b;
+  font-size: 18px;
+  letter-spacing: -0.03em;
+}
+
+.workspaceCardHeader p,
+.workspaceMission,
+.contractStack p {
+  color: #63708a;
+  line-height: 1.45;
+}
+
+.workspaceMission {
+  font-size: 14px;
+}
+
+.workspaceMetaGrid span {
+  min-height: 28px;
+  font-size: 11px;
+  text-transform: uppercase;
+}
+
+.contractStack {
+  display: grid;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid #e2ebf6;
+}
+
+.contractStack strong {
+  color: #0b2a5b;
+}
+
+.doctrineWall {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.doctrineWall p {
+  margin: 0;
+  padding: 16px;
+  border-radius: 18px;
+  background: #fff2f5;
+  border: 1px solid #f3cad3;
+  color: #9b1e38;
+  font-weight: 850;
+}
+
+.accent_navy { background: #0b2a5b; }
+.accent_blue { background: #2e64b5; }
+.accent_teal { background: #078a8a; }
+.accent_green { background: #14805d; }
+.accent_amber { background: #c98512; }
+.accent_red { background: #c73856; }
+.accent_purple { background: #6246a6; }
+
+@media (max-width: 1180px) {
+  .rootShell { grid-template-columns: 1fr; }
+  .sidebar { position: relative; height: auto; }
+  .workspaceNav { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .heroPanel { grid-template-columns: 1fr; }
+  .commandGrid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .workspaceGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 760px) {
+  .mainSurface { padding: 14px; }
+  .topbar { flex-direction: column; }
+  .workspaceNav, .commandGrid, .workspaceGrid, .doctrineWall { grid-template-columns: 1fr; }
+  .stateRow { grid-template-columns: 1fr; }
+  .heroPanel { padding: 20px; }
+}

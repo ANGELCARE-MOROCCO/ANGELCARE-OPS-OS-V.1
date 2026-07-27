@@ -1,0 +1,16 @@
+{
+  "name": "AC CAPITAL OS MZ12 Badge Children TS2322 Fix",
+  "issue": "Badge children typed as string received mixed JSX children string[] in app/(protected)/ac-capital-os/page.tsx",
+  "touched_files": [
+    "apps/ops-web/app/(protected)/ac-capital-os/page.tsx"
+  ],
+  "verification_token": "AC_CAPITAL_OS_MZ12_BADGE_CHILDREN_TS2322_FIX_VERIFIED",
+  "does_not_touch": [
+    "api routes",
+    "migrations",
+    "Market OS",
+    "AI Provider Control",
+    "Supabase"
+  ],
+  "created_at": "2026-07-27T05:52:32.485405+00:00"
+}

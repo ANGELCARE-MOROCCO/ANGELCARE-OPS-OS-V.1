@@ -35,7 +35,7 @@ async function selectPhase5Safe(table: string, order = 'created_at', ascending =
 export async function loadAiProviderSnapshot(): Promise<AiProviderSnapshot> {
   const supabase = await admin()
   const since = new Date(); since.setHours(0, 0, 0, 0)
-  const [dossiers, pools, credentials, models, assignments, routingRules, quotas, usage, healthChecks, incidents, alerts, configVersions, audit, commandPolicies, schedules, governedRequests, structuredCache, reuseEvents, emergencyResult] = await Promise.all([
+  const [dossiers, pools, credentials, models, assignments, routingRules, quotas, usage, healthChecks, incidents, alerts, configVersions, audit, commandPolicies, schedules, governedRequests, structuredCache, reuseEvents, phase6Incidents, phase6Changes, phase6Destructions, phase6Adapters, phase6Capabilities, phase6Modules, phase6SopArticles, phase6SopProgress, phase6Notes, phase6Jobs, phase6Tombstones, emergencyResult] = await Promise.all([
     selectSafe('ai_provider_dossiers', 'created_at', false, 200),
     selectSafe('ai_provider_capacity_pools', 'created_at', false, 300),
     selectSafe('ai_provider_credentials', 'created_at', false, 500),
@@ -54,6 +54,17 @@ export async function loadAiProviderSnapshot(): Promise<AiProviderSnapshot> {
     selectPhase5Safe('ai_provider_governed_requests', 'created_at', false, 5000),
     selectPhase5Safe('ai_provider_structured_result_cache', 'updated_at', false, 2000),
     selectPhase5Safe('ai_provider_reuse_events', 'created_at', false, 5000),
+    selectPhase5Safe('ai_ops_incident_cases', 'created_at', false, 500),
+    selectPhase5Safe('ai_ops_change_requests', 'created_at', false, 500),
+    selectPhase5Safe('ai_ops_destruction_requests', 'created_at', false, 500),
+    selectPhase5Safe('ai_ops_provider_adapters', 'display_name', true, 200),
+    selectPhase5Safe('ai_ops_capability_registry', 'display_name', true, 500),
+    selectPhase5Safe('ai_ops_module_registry', 'display_name', true, 500),
+    selectPhase5Safe('ai_ops_sop_articles', 'sort_order', true, 500),
+    selectPhase5Safe('ai_ops_sop_progress', 'updated_at', false, 2000),
+    selectPhase5Safe('ai_ops_operator_notes', 'created_at', false, 1000),
+    selectPhase5Safe('ai_ops_action_jobs', 'created_at', false, 1000),
+    selectPhase5Safe('ai_ops_entity_tombstones', 'destroyed_at', false, 500),
     supabase.from('ai_provider_emergency_state').select('*').eq('scope_key', '*').maybeSingle(),
   ])
   const todayUsage = usage.filter((row) => new Date(String(row.occurred_at || 0)) >= since)
@@ -85,6 +96,19 @@ export async function loadAiProviderSnapshot(): Promise<AiProviderSnapshot> {
     governedRequests: governedRequests as any,
     structuredCache: structuredCache as any,
     reuseEvents,
+    phase6: {
+      incidents: phase6Incidents,
+      changeRequests: phase6Changes,
+      destructionRequests: phase6Destructions,
+      providerAdapters: phase6Adapters,
+      capabilities: phase6Capabilities,
+      modules: phase6Modules,
+      sopArticles: phase6SopArticles,
+      sopProgress: phase6SopProgress,
+      operatorNotes: phase6Notes,
+      actionJobs: phase6Jobs,
+      tombstones: phase6Tombstones,
+    },
     rollups: {
       todayRequests: sum('request_count'),
       todayGroundedRequests: sum('grounded_request_count'),
@@ -281,14 +305,26 @@ export async function executeAiProviderAction(action: string, payload: JsonRecor
 
     const started = Date.now()
     try {
-      const response = await invokeGeminiProvider({ apiKey, model, contents: 'Reply exactly SANILA_PROVIDER_OK', maxOutputTokens: 64, thinkingLevel: 'LOW' })
-      if (!response.text?.includes('SANILA_PROVIDER_OK')) throw new Error('PROVIDER_TEST_UNEXPECTED_OUTPUT')
+      const response = await invokeGeminiProvider({
+        apiKey,
+        model,
+        contents: 'Return the health token SANILA_PROVIDER_OK.',
+        systemInstruction: 'This is a provider connectivity health check. Return only SANILA_PROVIDER_OK.',
+        maxOutputTokens: 256,
+        thinkingLevel: /^gemini-3(?:\.|$)/i.test(model) ? 'MINIMAL' : undefined,
+      })
+      const responseText = clean(response.text)
+      const firstCandidate = response.candidates?.[0]
+      const blockedReason = clean(response.promptFeedback?.blockReason)
+      if (blockedReason) throw new Error(`PROVIDER_TEST_BLOCKED:${blockedReason}`)
+      if (!response.responseId && !response.modelVersion && !firstCandidate) throw new Error('PROVIDER_TEST_NO_RESPONSE')
+      const healthTokenMatched = responseText.includes('SANILA_PROVIDER_OK')
       const usage = response.usageMetadata as { promptTokenCount?: number; candidatesTokenCount?: number; totalTokenCount?: number } | undefined
       const inputTokens = Number(usage?.promptTokenCount || 0)
       const outputTokens = Number(usage?.candidatesTokenCount || 0)
       const actualCostUsd = estimateAiCostUsd(inputTokens, outputTokens)
       await supabase.from('ai_provider_credentials').update({ status: 'validated', validated_at: now(), last_success_at: now(), failure_code: null, updated_at: now() }).eq('id', credentialId)
-      await supabase.from('ai_provider_health_checks').insert({ dossier_id: credential.dossier_id, capacity_pool_id: credential.capacity_pool_id, credential_id: credentialId, model_code: model, status: 'healthy', latency_ms: Date.now() - started, checked_by: actor.id, details: { responseId: response.responseId, governedRequestId: requestId } })
+      await supabase.from('ai_provider_health_checks').insert({ dossier_id: credential.dossier_id, capacity_pool_id: credential.capacity_pool_id, credential_id: credentialId, model_code: model, status: 'healthy', latency_ms: Date.now() - started, checked_by: actor.id, details: { responseId: response.responseId, governedRequestId: requestId, healthTokenMatched, finishReason: firstCandidate?.finishReason || null, responsePreview: responseText.slice(0, 160) } })
       await supabase.from('ai_provider_usage_ledger').insert({
         module_key: 'ai_provider_control', capability: 'health_check', dossier_id: credential.dossier_id,
         capacity_pool_id: credential.capacity_pool_id, credential_id: credentialId, model_code: model,
@@ -299,7 +335,7 @@ export async function executeAiProviderAction(action: string, payload: JsonRecor
       })
       await supabase.from('ai_provider_governed_requests').update({
         status: 'completed', actual_input_tokens: inputTokens, actual_output_tokens: outputTokens, actual_cost_usd: actualCostUsd,
-        result_json: { ok: true, modelVersion: response.modelVersion || model }, result_hash: crypto.createHash('sha256').update(String(response.text || '')).digest('hex'),
+        result_json: { ok: true, modelVersion: response.modelVersion || model, healthTokenMatched, finishReason: firstCandidate?.finishReason || null }, result_hash: crypto.createHash('sha256').update(String(response.text || '')).digest('hex'),
         completed_at: now(), updated_at: now(), metadata: { credentialId, responseId: response.responseId, explicitCredentialTest: true },
       }).eq('id', requestId)
       await audit(actor, action, 'credential', credentialId, { model, latencyMs: Date.now() - started, governedRequestId: requestId })
@@ -606,6 +642,202 @@ export async function executeAiProviderAction(action: string, payload: JsonRecor
     })
     if (result.error) throw new Error(result.error.message)
     await audit(actor, action, 'config_version', versionId, { reason: clean(payload.reason || 'Rollback administrateur') })
+    return result.data
+  }
+
+
+  if (action === 'phase6_set_dossier_state') {
+    const id = clean(payload.id), state = clean(payload.state)
+    if (!id || !state) throw new Error('DOSSIER_ID_AND_STATE_REQUIRED')
+    const allowed = ['draft','testing','ready','operating','limited','cooldown','suspended','draining','revoked','archived']
+    if (!allowed.includes(state)) throw new Error('INVALID_DOSSIER_STATE')
+    const result = await supabase.from('ai_provider_dossiers').update({
+      status: state, is_enabled: !['suspended','revoked','archived'].includes(state), updated_by: actor.id, updated_at: now(),
+    }).eq('id', id).select('*').single()
+    if (result.error) throw new Error(result.error.message)
+    await audit(actor, action, 'dossier', id, { state, reason: clean(payload.reason) })
+    return result.data
+  }
+
+  if (action === 'phase6_set_credential_state') {
+    const id = clean(payload.id), state = clean(payload.state)
+    if (!id || !state) throw new Error('CREDENTIAL_ID_AND_STATE_REQUIRED')
+    const allowed = ['testing','validated','active','standby','failed','revoked','archived']
+    if (!allowed.includes(state)) throw new Error('INVALID_CREDENTIAL_STATE')
+    const updates: JsonRecord = { status: state, updated_at: now() }
+    if (state === 'revoked') updates.revoked_at = now()
+    if (state === 'active') updates.activated_at = now()
+    const result = await supabase.from('ai_provider_credentials').update(updates).eq('id', id).select('*').single()
+    if (result.error) throw new Error(result.error.message)
+    await audit(actor, action, 'credential', id, { state, reason: clean(payload.reason) })
+    return result.data
+  }
+
+  if (action === 'phase6_update_alert') {
+    const id = clean(payload.id), status = clean(payload.status)
+    if (!id || !status) throw new Error('ALERT_ID_AND_STATUS_REQUIRED')
+    const updates: JsonRecord = { status }
+    if (status === 'acknowledged') { updates.acknowledged_at = now(); updates.acknowledged_by = actor.id }
+    const result = await supabase.from('ai_provider_alerts').update(updates).eq('id', id).select('*').single()
+    if (result.error) throw new Error(result.error.message)
+    await audit(actor, action, 'alert', id, { status })
+    return result.data
+  }
+
+  if (action === 'phase6_save_incident') {
+    const id = clean(payload.id)
+    const row: JsonRecord = {
+      incident_code: clean(payload.incidentCode) || `AI-INC-${Date.now()}`,
+      title: clean(payload.title), severity: clean(payload.severity || 'medium'),
+      category: clean(payload.category || 'operations'), status: clean(payload.status || 'open'),
+      provider_dossier_id: clean(payload.dossierId) || null, affected_modules: asArray<string>(payload.affectedModules),
+      summary: clean(payload.summary) || null, impact: clean(payload.impact) || null,
+      root_cause: clean(payload.rootCause) || null, resolution: clean(payload.resolution) || null,
+      prevention: clean(payload.prevention) || null, evidence: payload.evidence || {},
+      owner_id: clean(payload.ownerId || actor.id), updated_by: actor.id, updated_at: now(),
+    }
+    if (!row.title) throw new Error('INCIDENT_TITLE_REQUIRED')
+    const query = id ? supabase.from('ai_ops_incident_cases').update(row).eq('id', id) : supabase.from('ai_ops_incident_cases').insert({ ...row, opened_by: actor.id })
+    const result = await query.select('*').single()
+    if (result.error) throw new Error(result.error.message)
+    await audit(actor, action, 'incident_case', result.data.id, row)
+    return result.data
+  }
+
+  if (action === 'phase6_resolve_incident') {
+    const id = clean(payload.id), status = clean(payload.status || 'resolved')
+    if (!id) throw new Error('INCIDENT_ID_REQUIRED')
+    const result = await supabase.from('ai_ops_incident_cases').update({
+      status, resolution: clean(payload.resolution) || null, root_cause: clean(payload.rootCause) || null,
+      prevention: clean(payload.prevention) || null, resolved_by: actor.id,
+      resolved_at: status === 'resolved' ? now() : null, updated_by: actor.id, updated_at: now(),
+    }).eq('id', id).select('*').single()
+    if (result.error) throw new Error(result.error.message)
+    await audit(actor, action, 'incident_case', id, { status })
+    return result.data
+  }
+
+  if (action === 'phase6_save_change_request') {
+    const id = clean(payload.id)
+    const row: JsonRecord = {
+      change_code: clean(payload.changeCode) || `AI-CHG-${Date.now()}`,
+      title: clean(payload.title), reason: clean(payload.reason), status: clean(payload.status || 'draft'),
+      risk_level: clean(payload.riskLevel || 'medium'), affected_modules: asArray<string>(payload.affectedModules),
+      current_configuration: payload.currentConfiguration || {}, proposed_configuration: payload.proposedConfiguration || {},
+      impact_analysis: payload.impactAnalysis || {}, testing_evidence: payload.testingEvidence || {},
+      rollback_plan: clean(payload.rollbackPlan) || null, activation_mode: clean(payload.activationMode || 'manual'),
+      scheduled_for: clean(payload.scheduledFor) || null, requested_by: clean(payload.requestedBy || actor.id),
+      updated_by: actor.id, updated_at: now(),
+    }
+    if (!row.title || !row.reason) throw new Error('CHANGE_TITLE_AND_REASON_REQUIRED')
+    const query = id ? supabase.from('ai_ops_change_requests').update(row).eq('id', id) : supabase.from('ai_ops_change_requests').insert(row)
+    const result = await query.select('*').single()
+    if (result.error) throw new Error(result.error.message)
+    await audit(actor, action, 'change_request', result.data.id, row)
+    return result.data
+  }
+
+  if (action === 'phase6_update_change_status') {
+    const id = clean(payload.id), status = clean(payload.status)
+    if (!id || !status) throw new Error('CHANGE_ID_AND_STATUS_REQUIRED')
+    const updates: JsonRecord = { status, updated_by: actor.id, updated_at: now() }
+    if (status === 'approved') { updates.approved_by = actor.id; updates.approved_at = now() }
+    if (status === 'published') updates.published_at = now()
+    const result = await supabase.from('ai_ops_change_requests').update(updates).eq('id', id).select('*').single()
+    if (result.error) throw new Error(result.error.message)
+    await audit(actor, action, 'change_request', id, { status })
+    return result.data
+  }
+
+  if (action === 'phase6_request_destruction') {
+    const entityType = clean(payload.entityType), entityId = clean(payload.entityId), entityCode = clean(payload.entityCode)
+    if (!entityType || !entityId || !entityCode || !clean(payload.reason)) throw new Error('DESTRUCTION_REQUEST_INCOMPLETE')
+    const expected = `DESTROY ${entityCode}`
+    if (clean(payload.confirmationText) !== expected) throw new Error(`TYPE_CONFIRMATION_REQUIRED:${expected}`)
+    const snapshotResult = await supabase.rpc('ai_ops_dependency_snapshot', { p_entity_type: entityType, p_entity_id: entityId })
+    if (snapshotResult.error) throw new Error(snapshotResult.error.message)
+    const result = await supabase.from('ai_ops_destruction_requests').insert({
+      request_code: `AI-DEST-${Date.now()}`, entity_type: entityType, entity_id: entityId,
+      entity_code: entityCode, reason: clean(payload.reason), status: 'requested',
+      dependency_snapshot: snapshotResult.data || {}, confirmation_text: clean(payload.confirmationText),
+      requested_by: actor.id,
+    }).select('*').single()
+    if (result.error) throw new Error(result.error.message)
+    await audit(actor, action, entityType, entityId, { requestId: result.data.id, reason: clean(payload.reason) })
+    return result.data
+  }
+
+  if (action === 'phase6_approve_destruction') {
+    const id = clean(payload.id)
+    if (!id) throw new Error('DESTRUCTION_REQUEST_ID_REQUIRED')
+    const result = await supabase.from('ai_ops_destruction_requests').update({
+      status: 'approved', approved_by: actor.id, approved_at: now(), updated_at: now(),
+    }).eq('id', id).eq('status', 'requested').select('*').single()
+    if (result.error) throw new Error(result.error.message)
+    await audit(actor, action, 'destruction_request', id, {})
+    return result.data
+  }
+
+  if (action === 'phase6_execute_destruction') {
+    const id = clean(payload.id)
+    if (!id) throw new Error('DESTRUCTION_REQUEST_ID_REQUIRED')
+    const result = await supabase.rpc('ai_ops_execute_destruction', { p_request_id: id, p_actor_id: actor.id })
+    if (result.error) throw new Error(result.error.message)
+    await audit(actor, action, 'destruction_request', id, { result: result.data })
+    return result.data
+  }
+
+  if (action === 'phase6_save_registry') {
+    const registry = clean(payload.registry), id = clean(payload.id)
+    const table = registry === 'adapter' ? 'ai_ops_provider_adapters' : registry === 'capability' ? 'ai_ops_capability_registry' : registry === 'module' ? 'ai_ops_module_registry' : ''
+    if (!table) throw new Error('INVALID_REGISTRY')
+    const row: JsonRecord = {
+      registry_key: clean(payload.registryKey), display_name: clean(payload.displayName), status: clean(payload.status || 'active'),
+      description: clean(payload.description) || null, contract: payload.contract || {}, metadata: payload.metadata || {},
+      updated_by: actor.id, updated_at: now(),
+    }
+    if (!row.registry_key || !row.display_name) throw new Error('REGISTRY_KEY_AND_NAME_REQUIRED')
+    const query = id ? supabase.from(table).update(row).eq('id', id) : supabase.from(table).insert({ ...row, created_by: actor.id })
+    const result = await query.select('*').single()
+    if (result.error) throw new Error(result.error.message)
+    await audit(actor, action, registry, result.data.id, row)
+    return result.data
+  }
+
+  if (action === 'phase6_save_sop_progress') {
+    const articleKey = clean(payload.articleKey)
+    if (!articleKey) throw new Error('SOP_ARTICLE_KEY_REQUIRED')
+    const row = {
+      user_id: actor.id, article_key: articleKey, role_key: clean(payload.roleKey || 'operator'),
+      status: clean(payload.status || 'in_progress'), completion_percent: Math.max(0, Math.min(100, Number(payload.completionPercent || 0))),
+      checklist_state: payload.checklistState || {}, workbook_notes: clean(payload.workbookNotes) || null,
+      assessment_score: numberOrNull(payload.assessmentScore), supervisor_validation: payload.supervisorValidation || {},
+      updated_at: now(),
+    }
+    const result = await supabase.from('ai_ops_sop_progress').upsert(row, { onConflict: 'user_id,article_key' }).select('*').single()
+    if (result.error) throw new Error(result.error.message)
+    await audit(actor, action, 'sop_progress', result.data.id, { articleKey, status: row.status })
+    return result.data
+  }
+
+  if (action === 'phase6_save_operator_note') {
+    const result = await supabase.from('ai_ops_operator_notes').insert({
+      user_id: actor.id, entity_type: clean(payload.entityType || 'general'), entity_id: clean(payload.entityId) || null,
+      title: clean(payload.title), note: clean(payload.note), visibility: clean(payload.visibility || 'private'), tags: asArray<string>(payload.tags),
+    }).select('*').single()
+    if (result.error) throw new Error(result.error.message)
+    await audit(actor, action, 'operator_note', result.data.id, {})
+    return result.data
+  }
+
+  if (action === 'phase6_create_action_job') {
+    const result = await supabase.from('ai_ops_action_jobs').insert({
+      job_code: `AI-JOB-${Date.now()}`, job_type: clean(payload.jobType), entity_type: clean(payload.entityType) || null,
+      entity_id: clean(payload.entityId) || null, status: 'queued', priority: Number(payload.priority || 100),
+      input_payload: payload.inputPayload || {}, requested_by: actor.id,
+    }).select('*').single()
+    if (result.error) throw new Error(result.error.message)
+    await audit(actor, action, 'action_job', result.data.id, { jobType: clean(payload.jobType) })
     return result.data
   }
 

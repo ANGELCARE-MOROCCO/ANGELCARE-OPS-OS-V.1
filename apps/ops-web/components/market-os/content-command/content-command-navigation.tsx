@@ -1,34 +1,690 @@
-"use client"
+import type { LucideIcon } from "lucide-react"
+import {
+  Activity,
+  ArchiveRestore,
+  Images,
+  BadgeCheck,
+  BookOpenCheck,
+  Bot,
+  BrainCircuit,
+  CalendarDays,
+  ClipboardCheck,
+  ClipboardList,
+  CloudCog,
+  Command,
+  FileCheck2,
+  FilePenLine,
+  FileSearch,
+  Files,
+  FolderKanban,
+  FolderTree,
+  Gauge,
+  GitBranch,
+  Image,
+  LibraryBig,
+  ListChecks,
+  MonitorCog,
+  Network,
+  PackageCheck,
+  PanelTopOpen,
+  PlayCircle,
+  Radar,
+  RadioTower,
+  RefreshCcw,
+  Route,
+  Scale,
+  ScanSearch,
+  SearchCheck,
+  Settings2,
+  ShieldCheck,
+  Sparkles,
+  Target,
+  WandSparkles,
+  Workflow,
+  Wrench,
+} from "lucide-react"
+import type {
+  ContentCommandPermission,
+  ContentCommandRole,
+} from "@/lib/market-os/content-command/auth/permissions"
 
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import * as React from "react"
-import { Archive, BrainCircuit, FileCheck2, FolderTree, Gauge, Radar, RadioTower, Route, Scale, ScanSearch, Sparkles, Target } from "lucide-react"
+export type ContentCommandNavigationGroup =
+  | "command"
+  | "intelligence"
+  | "production"
+  | "library"
+  | "validation"
+  | "ai-director"
+  | "administration"
 
-export type ContentCommandRoute = { key:string; href:string; label:string; description:string; icon:React.ReactNode; disabled?:boolean; exact?:boolean }
+export type ContentCommandCounterKey =
+  | "blocked-missions"
+  | "overdue-tasks"
+  | "pending-review"
+  | "pending-validation"
+  | "publishing-failures"
+  | "ai-decisions"
+  | "ai-failures"
+  | "missing-sources"
 
-export const contentCommandRoutes: readonly ContentCommandRoute[] = [
-  { key:"command", href:"/market-os/content-command-center", label:"Commandement 360", description:"Signaux, anticipation et opérations", icon:<Gauge className="h-4 w-4"/>, exact:true },
-  { key:"signals", href:"/market-os/content-command-center/signals", label:"Observatoire", description:"Tendances, preuves et opportunités", icon:<Radar className="h-4 w-4"/> },
-  { key:"strategies", href:"/market-os/content-command-center/strategies", label:"Fabrique stratégique", description:"Stratégies et plans d’action", icon:<Target className="h-4 w-4"/> },
-  { key:"missions", href:"/market-os/content-command-center/missions", label:"Missions", description:"Assignations, tâches et preuves", icon:<Route className="h-4 w-4"/> },
-  { key:"directory", href:"/market-os/content-command-center/directory", label:"Content Atlas", description:"Répertoire méga-classifié", icon:<FolderTree className="h-4 w-4"/> },
-  { key:"studio", href:"/market-os/content-command-center/studio", label:"Studios création", description:"Digital, Print et Corporate", icon:<Sparkles className="h-4 w-4"/> },
-  { key:"evidence", href:"/market-os/content-command-center/evidence", label:"Evidence Lab", description:"Progression et analyse visuelle AI", icon:<ScanSearch className="h-4 w-4"/> },
-  { key:"validation", href:"/market-os/content-command-center/validation", label:"Validation", description:"AI, humain, source et autorité", icon:<Scale className="h-4 w-4"/> },
-  { key:"source-vault", href:"/market-os/content-command-center/source-vault", label:"Source Vault", description:"Original unique sur Windows Bridge", icon:<FileCheck2 className="h-4 w-4"/> },
-  { key:"distribution", href:"/market-os/content-command-center/distribution", label:"Tour diffusion", description:"Packages, planning et preuves", icon:<RadioTower className="h-4 w-4"/> },
-  { key:"ai-foundry", href:"/market-os/content-command-center/ai-foundry", label:"AI Director Foundry", description:"Directeurs, skills, commands et scans", icon:<BrainCircuit className="h-4 w-4"/> },
-  { key:"legacy", href:"/market-os/content-command-center/legacy-operations", label:"Opérations existantes", description:"Briefs, tasks, assets et legacy cockpit", icon:<Archive className="h-4 w-4"/> },
-] as const
-
-function routeIsActive(pathname:string, route:ContentCommandRoute){
-  if(route.disabled) return false
-  if(route.exact) return pathname===route.href
-  return pathname===route.href || pathname.startsWith(`${route.href}/`)
+export type ContentCommandRoute = {
+  key: string
+  href: string
+  label: string
+  shortLabel?: string
+  description: string
+  icon: LucideIcon
+  group: ContentCommandNavigationGroup
+  exact?: boolean
+  requiredPermissions?: ContentCommandPermission[]
+  allowedRoles?: ContentCommandRole[]
+  counterKey?: ContentCommandCounterKey
+  keywords: string[]
+  legacy?: boolean
+  order: number
 }
 
-export function ContentCommandNavigation(){
- const pathname=usePathname()
- return <nav className="cc360-workspace-nav" aria-label="Navigation ANGELCARE Content Command Headquarters"><div className="cc360-workspace-nav-scroll">{contentCommandRoutes.map((route)=>{const active=routeIsActive(pathname,route);return <Link key={route.key} href={route.href} className={`cc360-workspace-nav-link${active?" is-active":""}`} aria-current={active?"page":undefined} title={route.description}><span className="cc360-workspace-nav-icon" aria-hidden="true">{route.icon}</span><span className="cc360-workspace-nav-copy"><strong>{route.label}</strong><small>{route.description}</small></span></Link>})}</div></nav>
+export type ContentCommandNavigationGroupDefinition = {
+  key: ContentCommandNavigationGroup
+  label: string
+  shortLabel: string
+  description: string
+  icon: LucideIcon
+  order: number
+  defaultExpanded: boolean
+}
+
+export type ContentCommandContextRoute = {
+  key: string
+  pattern: RegExp
+  label: string
+  parentHref: string
+  parentLabel: string
+  icon: LucideIcon
+  segmentLabel?: string
+}
+
+export const CONTENT_COMMAND_ROOT = "/market-os/content-command-center"
+
+export const contentCommandNavigationGroups: readonly ContentCommandNavigationGroupDefinition[] = [
+  {
+    key: "command",
+    label: "Commandement",
+    shortLabel: "Command",
+    description: "Situation exécutive, arbitrages et dossiers actifs",
+    icon: Gauge,
+    order: 10,
+    defaultExpanded: true,
+  },
+  {
+    key: "intelligence",
+    label: "Intelligence & stratégie",
+    shortLabel: "Stratégie",
+    description: "Signaux, stratégies, briefs et planification",
+    icon: Radar,
+    order: 20,
+    defaultExpanded: true,
+  },
+  {
+    key: "production",
+    label: "Production & exécution",
+    shortLabel: "Production",
+    description: "Missions, tâches, studios et preuves",
+    icon: Workflow,
+    order: 30,
+    defaultExpanded: true,
+  },
+  {
+    key: "library",
+    label: "Bibliothèque & gouvernance",
+    shortLabel: "Gouvernance",
+    description: "Atlas, assets, doctrine et sources canoniques",
+    icon: LibraryBig,
+    order: 40,
+    defaultExpanded: false,
+  },
+  {
+    key: "validation",
+    label: "Validation & diffusion",
+    shortLabel: "Diffusion",
+    description: "Révision, autorité, packages et publication",
+    icon: BadgeCheck,
+    order: 50,
+    defaultExpanded: false,
+  },
+  {
+    key: "ai-director",
+    label: "AI Director",
+    shortLabel: "AI Director",
+    description: "Gouvernance, exécution, décisions et récupération IA",
+    icon: BrainCircuit,
+    order: 60,
+    defaultExpanded: false,
+  },
+  {
+    key: "administration",
+    label: "Administration & migration",
+    shortLabel: "Administration",
+    description: "Compatibilité, migration et contrôle historique",
+    icon: Settings2,
+    order: 70,
+    defaultExpanded: false,
+  },
+] as const
+
+export const contentCommandRoutes: readonly ContentCommandRoute[] = [
+  {
+    key: "command-360",
+    href: CONTENT_COMMAND_ROOT,
+    label: "Commandement 360",
+    shortLabel: "Commandement",
+    description: "Situation exécutive, priorités, risques et interventions",
+    icon: Gauge,
+    group: "command",
+    exact: true,
+    keywords: ["commandement", "direction", "executive", "situation", "priorités"],
+    order: 10,
+  },
+  {
+    key: "signals",
+    href: `${CONTENT_COMMAND_ROOT}/signals`,
+    label: "Observatoire",
+    description: "Signaux, tendances, preuves et opportunités",
+    icon: Radar,
+    group: "intelligence",
+    keywords: ["signaux", "veille", "observatoire", "opportunités", "sources"],
+    order: 10,
+  },
+  {
+    key: "strategies",
+    href: `${CONTENT_COMMAND_ROOT}/strategies`,
+    label: "Fabrique stratégique",
+    shortLabel: "Stratégies",
+    description: "Scénarios, stratégies, plans et libération des missions",
+    icon: Target,
+    group: "intelligence",
+    keywords: ["stratégie", "plans", "scénarios", "doctrine", "objectifs"],
+    order: 20,
+  },
+  {
+    key: "briefs",
+    href: `${CONTENT_COMMAND_ROOT}/briefs`,
+    label: "Briefing Suite",
+    shortLabel: "Briefs",
+    description: "Intake, complétude, versions et approbation des briefs",
+    icon: ClipboardList,
+    group: "intelligence",
+    keywords: ["brief", "demande", "cahier", "créatif", "approbation"],
+    order: 30,
+  },
+  {
+    key: "calendar",
+    href: `${CONTENT_COMMAND_ROOT}/calendar`,
+    label: "Planning éditorial",
+    shortLabel: "Planning",
+    description: "Production, révision, validation et publication dans le temps",
+    icon: CalendarDays,
+    group: "intelligence",
+    keywords: ["calendrier", "planning", "échéance", "publication", "capacité"],
+    order: 40,
+  },
+  {
+    key: "missions",
+    href: `${CONTENT_COMMAND_ROOT}/missions`,
+    label: "Mission Control",
+    shortLabel: "Missions",
+    description: "Constitution, assignation, checkpoints et clôture",
+    icon: Route,
+    group: "production",
+    counterKey: "blocked-missions",
+    keywords: ["mission", "exécution", "assignation", "checkpoint", "blocage"],
+    order: 10,
+  },
+  {
+    key: "tasks",
+    href: `${CONTENT_COMMAND_ROOT}/tasks`,
+    label: "Task Command",
+    shortLabel: "Tâches",
+    description: "Portefeuille, charge, échéances et preuves des tâches",
+    icon: ListChecks,
+    group: "production",
+    counterKey: "overdue-tasks",
+    keywords: ["tâches", "travail", "échéance", "assignation", "charge"],
+    order: 20,
+  },
+  {
+    key: "task-execution",
+    href: `${CONTENT_COMMAND_ROOT}/tasks/execution`,
+    label: "Exécution active",
+    shortLabel: "Exécution",
+    description: "Cockpit focalisé pour accomplir le travail actif",
+    icon: PlayCircle,
+    group: "production",
+    keywords: ["exécution", "focus", "travail actif", "checkpoint", "preuve"],
+    order: 30,
+  },
+  {
+    key: "studio",
+    href: `${CONTENT_COMMAND_ROOT}/studio`,
+    label: "Studios de création",
+    shortLabel: "Studios",
+    description: "Studios Digital, Print & Terrain et Documentation Corporate",
+    icon: Sparkles,
+    group: "production",
+    requiredPermissions: ["content:create"],
+    keywords: ["studio", "création", "digital", "print", "corporate"],
+    order: 40,
+  },
+  {
+    key: "create",
+    href: `${CONTENT_COMMAND_ROOT}/create`,
+    label: "Création rapide",
+    description: "Lancement guidé d’un contenu standard gouverné",
+    icon: FilePenLine,
+    group: "production",
+    requiredPermissions: ["content:create"],
+    keywords: ["créer", "nouveau", "contenu", "rapide", "template"],
+    order: 50,
+  },
+  {
+    key: "evidence",
+    href: `${CONTENT_COMMAND_ROOT}/evidence`,
+    label: "Evidence Lab",
+    description: "Inspection, comparaison, annotation et décision sur les preuves",
+    icon: ScanSearch,
+    group: "production",
+    keywords: ["preuve", "evidence", "capture", "analyse", "comparaison"],
+    order: 60,
+  },
+  {
+    key: "directory",
+    href: `${CONTENT_COMMAND_ROOT}/directory`,
+    label: "Content Atlas",
+    shortLabel: "Atlas",
+    description: "Répertoire, taxonomie, relations et intelligence de réemploi",
+    icon: FolderTree,
+    group: "library",
+    keywords: ["atlas", "répertoire", "taxonomie", "contenu", "réemploi"],
+    order: 10,
+  },
+  {
+    key: "assets",
+    href: `${CONTENT_COMMAND_ROOT}/assets`,
+    label: "Asset Library",
+    shortLabel: "Assets",
+    description: "Registre, droits, usages, versions et remplacement des assets",
+    icon: Images,
+    group: "library",
+    keywords: ["asset", "média", "image", "fichier", "droits"],
+    order: 20,
+  },
+  {
+    key: "active-assets",
+    href: `${CONTENT_COMMAND_ROOT}/active-assets`,
+    label: "Active Assets",
+    description: "Assets approuvés, actifs et sûrs pour l’exécution",
+    icon: Image,
+    group: "library",
+    keywords: ["assets actifs", "approuvé", "campagne", "expiration", "usage"],
+    order: 30,
+  },
+  {
+    key: "brand-governance",
+    href: `${CONTENT_COMMAND_ROOT}/brand-governance`,
+    label: "Brand Governance",
+    shortLabel: "Marque",
+    description: "Doctrine de marque, règles, exceptions et violations",
+    icon: ShieldCheck,
+    group: "library",
+    requiredPermissions: ["approval:review"],
+    keywords: ["brand", "marque", "gouvernance", "règles", "doctrine"],
+    order: 40,
+  },
+  {
+    key: "source-vault",
+    href: `${CONTENT_COMMAND_ROOT}/source-vault`,
+    label: "Source Vault",
+    description: "Sources canoniques, intégrité, versions, droits et rétention",
+    icon: FileCheck2,
+    group: "library",
+    counterKey: "missing-sources",
+    keywords: ["source", "original", "canonique", "version", "intégrité"],
+    order: 50,
+  },
+  {
+    key: "review",
+    href: `${CONTENT_COMMAND_ROOT}/review`,
+    label: "Review Workspace",
+    shortLabel: "Révision",
+    description: "File de révision opérationnelle, annotations et corrections",
+    icon: SearchCheck,
+    group: "validation",
+    requiredPermissions: ["approval:review"],
+    counterKey: "pending-review",
+    keywords: ["review", "révision", "correction", "commentaire", "sla"],
+    order: 10,
+  },
+  {
+    key: "validation",
+    href: `${CONTENT_COMMAND_ROOT}/validation`,
+    label: "Validation Chamber",
+    shortLabel: "Validation",
+    description: "Décision humaine, autorité, conditions et certificat",
+    icon: Scale,
+    group: "validation",
+    requiredPermissions: ["approval:review"],
+    counterKey: "pending-validation",
+    keywords: ["validation", "approbation", "autorité", "décision", "conditions"],
+    order: 20,
+  },
+  {
+    key: "distribution",
+    href: `${CONTENT_COMMAND_ROOT}/distribution`,
+    label: "Distribution Tower",
+    shortLabel: "Distribution",
+    description: "Packages, pré-vol, planning, collisions et autorisation",
+    icon: RadioTower,
+    group: "validation",
+    requiredPermissions: ["publishing:queue"],
+    keywords: ["distribution", "package", "canal", "planning", "pré-vol"],
+    order: 30,
+  },
+  {
+    key: "publishing",
+    href: `${CONTENT_COMMAND_ROOT}/publishing`,
+    label: "Publishing Operations",
+    shortLabel: "Publication",
+    description: "File de publication, preuve live, échecs et récupération",
+    icon: PackageCheck,
+    group: "validation",
+    requiredPermissions: ["publishing:queue"],
+    counterKey: "publishing-failures",
+    keywords: ["publishing", "publication", "live", "échec", "récupération"],
+    order: 40,
+  },
+  {
+    key: "ai-foundry",
+    href: `${CONTENT_COMMAND_ROOT}/ai-foundry`,
+    label: "AI Director Foundry",
+    shortLabel: "Foundry",
+    description: "Création et gouvernance des Directeurs IA",
+    icon: WandSparkles,
+    group: "ai-director",
+    requiredPermissions: ["admin:configure"],
+    keywords: ["ai", "ia", "director", "foundry", "agent"],
+    order: 10,
+  },
+  {
+    key: "ai-director",
+    href: `${CONTENT_COMMAND_ROOT}/ai-director`,
+    label: "Commandement IA",
+    description: "Santé, capacité, limites et travail actif de l’IA",
+    icon: BrainCircuit,
+    group: "ai-director",
+    exact: true,
+    keywords: ["ai", "ia", "commandement", "santé", "runtime"],
+    order: 20,
+  },
+  {
+    key: "ai-commands",
+    href: `${CONTENT_COMMAND_ROOT}/ai-director/commands`,
+    label: "Commands 3000",
+    shortLabel: "Commands",
+    description: "Registre souverain des commandes IA",
+    icon: Command,
+    group: "ai-director",
+    requiredPermissions: ["ai:run"],
+    keywords: ["commands", "commandes", "instruction", "prompt", "registre"],
+    order: 30,
+  },
+  {
+    key: "ai-skills",
+    href: `${CONTENT_COMMAND_ROOT}/ai-director/skills`,
+    label: "Skills",
+    description: "Architecture des capacités et niveaux de maturité",
+    icon: Wrench,
+    group: "ai-director",
+    keywords: ["skills", "capacités", "compétences", "maturité", "test"],
+    order: 40,
+  },
+  {
+    key: "ai-schedules",
+    href: `${CONTENT_COMMAND_ROOT}/ai-director/schedules`,
+    label: "Schedules",
+    description: "Calendrier, fréquence et autorité des automatisations",
+    icon: CalendarDays,
+    group: "ai-director",
+    keywords: ["schedule", "planning", "automation", "fréquence", "run"],
+    order: 50,
+  },
+  {
+    key: "ai-missions",
+    href: `${CONTENT_COMMAND_ROOT}/ai-director/missions`,
+    label: "Missions IA",
+    description: "Mandats, commandes, contraintes, sorties et audit",
+    icon: FolderKanban,
+    group: "ai-director",
+    keywords: ["mission ia", "mandat", "objectif", "sortie", "audit"],
+    order: 60,
+  },
+  {
+    key: "ai-runs",
+    href: `${CONTENT_COMMAND_ROOT}/ai-director/runs`,
+    label: "Runs",
+    description: "Exécutions, coûts, latence, grounding et résultats",
+    icon: Activity,
+    group: "ai-director",
+    keywords: ["run", "exécution", "tokens", "latence", "grounding"],
+    order: 70,
+  },
+  {
+    key: "ai-decisions",
+    href: `${CONTENT_COMMAND_ROOT}/ai-director/decisions`,
+    label: "Decision Center",
+    shortLabel: "Décisions",
+    description: "Propositions IA soumises à l’autorité humaine",
+    icon: ClipboardCheck,
+    group: "ai-director",
+    counterKey: "ai-decisions",
+    keywords: ["decision", "décision", "autorité", "approbation", "proposition"],
+    order: 80,
+  },
+  {
+    key: "ai-learning",
+    href: `${CONTENT_COMMAND_ROOT}/ai-director/learning`,
+    label: "Learning",
+    description: "Ressources, apprentissages et incorporation gouvernée",
+    icon: BookOpenCheck,
+    group: "ai-director",
+    keywords: ["learning", "apprentissage", "ressource", "mémoire", "proposition"],
+    order: 90,
+  },
+  {
+    key: "ai-doctrine",
+    href: `${CONTENT_COMMAND_ROOT}/ai-director/doctrine`,
+    label: "Doctrine",
+    description: "Constitution canonique, versions et amendements IA",
+    icon: Files,
+    group: "ai-director",
+    keywords: ["doctrine", "constitution", "canonique", "version", "amendement"],
+    order: 100,
+  },
+  {
+    key: "ai-autopilot",
+    href: `${CONTENT_COMMAND_ROOT}/ai-director/autopilot`,
+    label: "Autopilot",
+    description: "Automatisation active, décisions, échecs et intervention",
+    icon: Bot,
+    group: "ai-director",
+    keywords: ["autopilot", "automatisation", "intervention", "snapshot", "contrôle"],
+    order: 110,
+  },
+  {
+    key: "ai-compiler",
+    href: `${CONTENT_COMMAND_ROOT}/ai-director/compiler`,
+    label: "Compiler",
+    description: "Compilation des objectifs en plans d’exécution gouvernés",
+    icon: GitBranch,
+    group: "ai-director",
+    keywords: ["compiler", "compilation", "plan", "dépendances", "dry run"],
+    order: 120,
+  },
+  {
+    key: "ai-queue",
+    href: `${CONTENT_COMMAND_ROOT}/ai-director/queue`,
+    label: "Live Queue",
+    shortLabel: "Queue",
+    description: "Jobs en attente, actifs, bloqués, terminés ou échoués",
+    icon: PanelTopOpen,
+    group: "ai-director",
+    counterKey: "ai-failures",
+    keywords: ["queue", "job", "file", "heartbeat", "retry"],
+    order: 130,
+  },
+  {
+    key: "ai-integrations",
+    href: `${CONTENT_COMMAND_ROOT}/ai-director/integrations`,
+    label: "Propagation",
+    description: "Relations, synchronisation, conflits et réconciliation",
+    icon: Network,
+    group: "ai-director",
+    keywords: ["integration", "propagation", "sync", "conflit", "relation"],
+    order: 140,
+  },
+  {
+    key: "ai-repository",
+    href: `${CONTENT_COMMAND_ROOT}/ai-director/repository`,
+    label: "Repository",
+    description: "Objets, ressources, snapshots, versions et intégrité",
+    icon: CloudCog,
+    group: "ai-director",
+    keywords: ["repository", "ressource", "snapshot", "archive", "version"],
+    order: 150,
+  },
+  {
+    key: "ai-recovery",
+    href: `${CONTENT_COMMAND_ROOT}/ai-director/recovery`,
+    label: "Recovery",
+    description: "Triage, cause racine, reprise, quarantaine et clôture",
+    icon: RefreshCcw,
+    group: "ai-director",
+    counterKey: "ai-failures",
+    keywords: ["recovery", "échec", "retry", "incident", "quarantaine"],
+    order: 160,
+  },
+  {
+    key: "ai-settings",
+    href: `${CONTENT_COMMAND_ROOT}/ai-director/settings`,
+    label: "Configuration IA",
+    shortLabel: "Configuration",
+    description: "Providers, modèles, limites, sécurité et environnement",
+    icon: MonitorCog,
+    group: "ai-director",
+    requiredPermissions: ["admin:configure"],
+    keywords: ["settings", "configuration", "provider", "modèle", "sécurité"],
+    order: 170,
+  },
+  {
+    key: "legacy",
+    href: `${CONTENT_COMMAND_ROOT}/legacy-operations`,
+    label: "Migration & compatibilité",
+    shortLabel: "Migration",
+    description: "Conversion contrôlée des anciens enregistrements",
+    icon: ArchiveRestore,
+    group: "administration",
+    requiredPermissions: ["admin:configure"],
+    legacy: true,
+    keywords: ["legacy", "migration", "compatibilité", "ancien", "conversion"],
+    order: 10,
+  },
+] as const
+
+export const contentCommandContextRoutes: readonly ContentCommandContextRoute[] = [
+  {
+    key: "dossier-detail",
+    pattern: new RegExp(`^${CONTENT_COMMAND_ROOT}/dossiers/([^/]+)$`),
+    label: "Dossier opérationnel",
+    parentHref: CONTENT_COMMAND_ROOT,
+    parentLabel: "Dossiers opérationnels",
+    icon: FolderKanban,
+  },
+  {
+    key: "task-edit",
+    pattern: new RegExp(`^${CONTENT_COMMAND_ROOT}/tasks/([^/]+)/edit$`),
+    label: "Modifier la tâche",
+    parentHref: `${CONTENT_COMMAND_ROOT}/tasks`,
+    parentLabel: "Task Command",
+    icon: FilePenLine,
+    segmentLabel: "Modification",
+  },
+  {
+    key: "task-detail",
+    pattern: new RegExp(`^${CONTENT_COMMAND_ROOT}/tasks/([^/]+)$`),
+    label: "Tâche opérationnelle",
+    parentHref: `${CONTENT_COMMAND_ROOT}/tasks`,
+    parentLabel: "Task Command",
+    icon: ListChecks,
+  },
+  {
+    key: "legacy-content-edit",
+    pattern: new RegExp(`^${CONTENT_COMMAND_ROOT}/([^/]+)/edit$`),
+    label: "Modifier le contenu",
+    parentHref: `${CONTENT_COMMAND_ROOT}/directory`,
+    parentLabel: "Content Atlas",
+    icon: FilePenLine,
+    segmentLabel: "Modification",
+  },
+  {
+    key: "legacy-content-delete",
+    pattern: new RegExp(`^${CONTENT_COMMAND_ROOT}/([^/]+)/delete$`),
+    label: "Retrait contrôlé",
+    parentHref: `${CONTENT_COMMAND_ROOT}/directory`,
+    parentLabel: "Content Atlas",
+    icon: ShieldCheck,
+    segmentLabel: "Retrait contrôlé",
+  },
+  {
+    key: "legacy-content-detail",
+    pattern: new RegExp(`^${CONTENT_COMMAND_ROOT}/([^/]+)$`),
+    label: "Enregistrement de contenu",
+    parentHref: `${CONTENT_COMMAND_ROOT}/directory`,
+    parentLabel: "Content Atlas",
+    icon: FileSearch,
+  },
+] as const
+
+export function routeIsActive(pathname: string, route: ContentCommandRoute): boolean {
+  if (route.exact) return pathname === route.href
+  return pathname === route.href || pathname.startsWith(`${route.href}/`)
+}
+
+export function resolveContentCommandRoute(pathname: string): ContentCommandRoute | undefined {
+  return [...contentCommandRoutes]
+    .sort((left, right) => right.href.length - left.href.length)
+    .find((route) => routeIsActive(pathname, route))
+}
+
+export function resolveContentCommandContextRoute(
+  pathname: string,
+): { route: ContentCommandContextRoute; recordId?: string } | undefined {
+  if (contentCommandRoutes.some((route) => pathname === route.href)) return undefined
+  for (const route of contentCommandContextRoutes) {
+    const match = pathname.match(route.pattern)
+    if (match) return { route, recordId: match[1] }
+  }
+  return undefined
+}
+
+export function getContentCommandRoutesForGroup(
+  group: ContentCommandNavigationGroup,
+): ContentCommandRoute[] {
+  return contentCommandRoutes
+    .filter((route) => route.group === group)
+    .sort((left, right) => left.order - right.order)
+}
+
+export function getContentCommandNavigationGroup(
+  key: ContentCommandNavigationGroup,
+): ContentCommandNavigationGroupDefinition | undefined {
+  return contentCommandNavigationGroups.find((group) => group.key === key)
 }

@@ -1,0 +1,15 @@
+{
+  "name": "AC CAPITAL OS Mega Ultra ZIP 04 - Qualification Engine",
+  "contract_marker": "MZ4_AC_CAPITAL_OS_QUALIFICATION_ENGINE",
+  "module": "AC CAPITAL OS",
+  "route": "apps/ops-web/app/(protected)/ac-capital-os/page.tsx",
+  "qualification_route": "apps/ops-web/app/(protected)/ac-capital-os/qualification/page.tsx",
+  "api": "apps/ops-web/app/api/ac-capital-os/qualification-engine/route.ts",
+  "preserves": [
+    "MZ1 foundation",
+    "MZ2 executive cockpit",
+    "MZ3 capital radar"
+  ],
+  "no_build_no_git": true,
+  "verification": "node ./AC_CAPITAL_OS_MZ4/scripts/verify_ac_capital_os_mz4.mjs"
+}

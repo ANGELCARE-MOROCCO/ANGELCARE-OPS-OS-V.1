@@ -1,0 +1,9 @@
+{
+  "name": "AC CAPITAL OS MZ10 Coordinator Cockpit API Restore",
+  "reason": "MZ11 strict verifier failed because previous API apps/ops-web/app/api/ac-capital-os/coordinator-cockpit/route.ts was missing.",
+  "touched_files": [
+    "apps/ops-web/app/api/ac-capital-os/coordinator-cockpit/route.ts"
+  ],
+  "verification_token": "AC_CAPITAL_OS_MZ10_COORDINATOR_API_RESTORED_VERIFIED",
+  "created_at": "2026-07-27T04:51:34.189586+00:00"
+}

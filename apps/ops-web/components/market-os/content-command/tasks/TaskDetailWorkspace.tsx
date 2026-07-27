@@ -3,246 +3,223 @@
 import * as React from "react"
 import Link from "next/link"
 import {
-  Badge,
-  Button,
-  Panel,
+  AlertTriangle,
+  ArrowRight,
+  Check,
+  ClipboardList,
+  FileCheck2,
+  GitBranch,
+  History,
+  Link2,
+  MessageSquareText,
+  PencilLine,
+  ShieldCheck,
+  UserRoundCheck,
+} from "lucide-react"
+import {
   Shell,
-  statusLabel,
   loadStore,
+  statusLabel,
   type ContentItem,
   type ContentTask,
 } from "@/components/market-os/content-command/content-command-system"
 import {
   addTaskActivity,
   addTaskChecklistItem,
-  deleteTaskChecklistItem,
   readTaskActivity,
   readTaskChecklists,
+  readTaskExecutionMeta,
   toggleTaskChecklistItem,
   updateContentCommandTask,
   type TaskActivityEvent,
   type TaskChecklistItem,
+  type TaskExecutionMeta,
 } from "@/lib/content-command/tasks/task-activity"
+import { humanDate, taskLineage, taskNextAction, taskReadiness } from "../execution/task-operating-model"
+import {
+  EmptyState,
+  ExecutionBadge,
+  ExecutionPanel,
+  ProgressBar,
+  SectionHeading,
+  StatusMessage,
+  toneForStatus,
+} from "../execution/execution-ui"
+import styles from "../execution/execution-command.module.css"
 
 export function TaskDetailWorkspace({ taskId }: { taskId: string }) {
   const [task, setTask] = React.useState<ContentTask | null>(null)
   const [linkedContent, setLinkedContent] = React.useState<ContentItem | null>(null)
   const [activity, setActivity] = React.useState<TaskActivityEvent[]>([])
   const [checklist, setChecklist] = React.useState<TaskChecklistItem[]>([])
-  const [newCheck, setNewCheck] = React.useState("")
+  const [meta, setMeta] = React.useState<TaskExecutionMeta | null>(null)
   const [note, setNote] = React.useState("")
+  const [checkInput, setCheckInput] = React.useState("")
+  const [announcement, setAnnouncement] = React.useState("")
 
-  function reload() {
+  const reload = React.useCallback(() => {
     const store = loadStore()
     const found = store.tasks.find((candidate) => candidate.id === taskId) ?? null
     setTask(found)
     setLinkedContent(found ? store.items.find((item) => item.id === found.contentId) ?? null : null)
     setActivity(readTaskActivity().filter((event) => event.taskId === taskId))
     setChecklist(readTaskChecklists().filter((item) => item.taskId === taskId))
-  }
-
-  React.useEffect(() => {
-    reload()
+    setMeta(found ? readTaskExecutionMeta(taskId) : null)
   }, [taskId])
 
+  React.useEffect(() => { reload() }, [reload])
+
+  if (!task || !meta) {
+    return <Shell><main className={styles.root} data-market-os-root><section className={styles.hero}><div><span className={styles.eyebrow}><ClipboardList size={16}/> TASK DETAIL</span><h1>Tâche introuvable</h1><p>Aucune tâche ne correspond à l’identifiant demandé. Aucun enregistrement de remplacement n’est fabriqué.</p></div></section><div style={{ marginTop: 16 }}><EmptyState title="Tâche indisponible" detail={`Aucun objet n’existe avec l’identifiant ${taskId}.`} action="Retour à Task Command" href="/market-os/content-command-center/tasks"/></div></main></Shell>
+  }
+
+  const currentTask = task
+  const currentMeta = meta
+  const readiness = taskReadiness(currentTask, currentMeta, checklist)
+  const lineage = taskLineage(currentTask, linkedContent, currentMeta)
+  const openBlockers = currentMeta.blockers.filter((item) => item.state !== "resolved")
+  const openClarifications = currentMeta.clarifications.filter((item) => item.state === "open" || item.state === "reopened")
+
   function changeStatus(status: ContentTask["status"]) {
-    const updated = updateContentCommandTask(taskId, (current) => ({ ...current, status }))
-    if (updated) {
-      addTaskActivity(taskId, "status changed", `Status changed to ${statusLabel(status)}`)
-      reload()
-    }
+    updateContentCommandTask(currentTask.id, (current) => ({ ...current, status }))
+    addTaskActivity(currentTask.id, "status_changed", `Statut mis à jour : ${statusLabel(status)}`)
+    setAnnouncement(`Statut enregistré : ${statusLabel(status)}.`)
+    reload()
   }
 
   function addNote() {
     if (!note.trim()) return
-    updateContentCommandTask(taskId, (current) => ({
-      ...current,
-      notes: `${current.notes ? current.notes + "\n\n" : ""}${new Date().toISOString()} — ${note.trim()}`,
-    }))
-    addTaskActivity(taskId, "note added", note.trim())
+    updateContentCommandTask(currentTask.id, (current) => ({ ...current, notes: `${current.notes ? `${current.notes}\n\n` : ""}${new Date().toISOString()} — ${note.trim()}` }))
+    addTaskActivity(currentTask.id, "operational_note_added", note.trim())
     setNote("")
+    setAnnouncement("Note opérationnelle ajoutée à l’historique.")
     reload()
   }
 
   function addChecklist() {
-    if (!newCheck.trim()) return
-    addTaskChecklistItem(taskId, newCheck.trim())
-    setNewCheck("")
+    if (!checkInput.trim()) return
+    addTaskChecklistItem(currentTask.id, checkInput.trim(), { required: true })
+    setCheckInput("")
     reload()
   }
 
-  if (!task) {
-    return (
-      <Shell>
-        <main data-market-os-root className="mx-auto max-w-5xl p-6">
-          <Panel className="p-8">
-            <h1 className="text-3xl font-black">Task not found</h1>
-            <p className="mt-2 text-sm font-semibold text-slate-600">No task exists with ID {taskId}.</p>
-            <div className="mt-5">
-              <Button href="/market-os/content-command-center/tasks/execution" kind="primary">Back to Execution Center</Button>
-            </div>
-          </Panel>
-        </main>
-      </Shell>
-    )
-  }
+  return <Shell>
+    <main className={styles.root} data-market-os-root>
+      <section className={styles.hero}>
+        <div>
+          <span className={styles.eyebrow}><ClipboardList size={16}/> DOSSIER DE TÂCHE / TRAÇABILITÉ COMPLÈTE</span>
+          <h1>{task.title}</h1>
+          <p>{taskNextAction(task, meta)} Le dossier de tâche rassemble l’identité, la lignée, les instructions, les dépendances, les preuves, les décisions et l’historique.</p>
+        </div>
+        <div className={styles.heroActions}>
+          <Link className={styles.primaryButton} href={`/market-os/content-command-center/tasks/execution?task=${task.id}`}>Exécuter <ArrowRight size={15}/></Link>
+          <Link className={styles.secondaryButton} href={`/market-os/content-command-center/tasks/${task.id}/edit`}><PencilLine size={15}/>Modifier</Link>
+        </div>
+      </section>
 
-  const completedChecks = checklist.filter((item) => item.done).length
+      {announcement ? <StatusMessage kind="success">{announcement}</StatusMessage> : null}
 
-  return (
-    <Shell>
-      <main className="mx-auto max-w-[1500px] space-y-6 p-4 lg:p-8">
-        <section className="overflow-hidden rounded-[2rem] border border-slate-900 bg-[linear-gradient(135deg,#020617,#111827_55%,#7f1d1d)] p-8 text-slate-950 shadow-2xl">
-          <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
-            <div>
-              <p className="text-xs font-black uppercase tracking-[0.3em] text-rose-300">
-                Task Detail Workspace
-              </p>
-              <h1 className="mt-4 max-w-5xl text-4xl font-black tracking-tight">{task.title}</h1>
-              <div className="mt-5 flex flex-wrap gap-2">
-                <Badge kind="dark">{task.id}</Badge>
-                <Badge kind="dark">{statusLabel(task.status)}</Badge>
-                <Badge kind="dark">{task.priority}</Badge>
-                <Badge kind="dark">{task.owner}</Badge>
-              </div>
+      <div className={styles.lineage} style={{ marginTop: 16 }} aria-label="Lignée opérationnelle">
+        {lineage.map((node) => node.href ? <Link className={styles.lineageNode} href={node.href} key={node.label}><small>{node.label}</small><strong>{node.value}</strong></Link> : <div className={styles.lineageNode} key={node.label}><small>{node.label}</small><strong>{node.value}</strong></div>)}
+      </div>
+
+      <section className={styles.gridTwo}>
+        <ExecutionPanel>
+          <div className={styles.panelInner}>
+            <SectionHeading eyebrow="TASK IDENTITY" title="Responsabilité et état actuel" description="La priorité, l’échéance et le statut restent visibles, mais ne remplacent jamais les critères de réalisation."/>
+            <div className={styles.detailStrip}>
+              <div className={styles.detailCell}><small>Identité</small><strong>{task.id}</strong></div>
+              <div className={styles.detailCell}><small>Responsable</small><strong>{task.owner || "Non affectée"}</strong></div>
+              <div className={styles.detailCell}><small>Réviseur</small><strong>{meta.reviewer || "À désigner"}</strong></div>
+              <div className={styles.detailCell}><small>Priorité</small><strong>{task.priority}</strong></div>
+              <div className={styles.detailCell}><small>Échéance</small><strong>{humanDate(task.dueDate)}</strong></div>
             </div>
-            <div className="flex flex-wrap gap-2">
-              <Button href={`/market-os/content-command-center/tasks/${task.id}/edit`} kind="primary">Edit Task</Button>
-              <Button href="/market-os/content-command-center/tasks/execution" kind="dark">All Tasks</Button>
+            <div className={styles.filters}>{(["todo", "doing", "blocked", "done"] as const).map((status) => <button type="button" className={`${styles.filterButton} ${task.status === status ? styles.filterActive : ""}`} onClick={() => changeStatus(status)} key={status}>{statusLabel(status)}</button>)}</div>
+          </div>
+        </ExecutionPanel>
+
+        <ExecutionPanel>
+          <div className={styles.panelInner}>
+            <SectionHeading eyebrow="READINESS" title="Préparation et défauts observables" description="Le score découle uniquement des champs présents et des étapes obligatoires; il ne mesure pas la performance."/>
+            <ProgressBar value={readiness.score}/>
+            {readiness.missing.length ? <ul className={styles.missingList}>{readiness.missing.map((item) => <li key={item}><AlertTriangle size={13}/>{item}</li>)}</ul> : <StatusMessage kind="success">Les conditions observables sont prêtes.</StatusMessage>}
+          </div>
+        </ExecutionPanel>
+      </section>
+
+      <section className={styles.gridTwo}>
+        <ExecutionPanel>
+          <div className={styles.panelInner}>
+            <SectionHeading eyebrow="OBJECTIVE & SCOPE" title="Instructions opérationnelles" description="L’objectif, le périmètre et l’acceptation sont séparés pour empêcher une exécution ambiguë."/>
+            <div className={styles.scopeGrid}>
+              <div className={styles.scopeGood}><strong><UserRoundCheck size={15}/>Objectif</strong><p>{meta.objective || task.notes || "Objectif non formalisé."}</p></div>
+              <div className={styles.scopeGood}><strong><Check size={15}/>Définition de réalisation</strong><p>{meta.completionDefinition || "Manquante."}</p></div>
+              <div className={styles.scopeNeutral}><strong><ShieldCheck size={15}/>Critères d’acceptation</strong><p>{meta.acceptanceCriteria || "Manquants."}</p></div>
+              <div className={styles.scopeStop}><strong><AlertTriangle size={15}/>Hors périmètre</strong><p>{meta.outOfScope || "Toute activité étrangère au résultat exige un amendement."}</p></div>
             </div>
           </div>
-        </section>
+        </ExecutionPanel>
 
-        <section className="grid gap-5 lg:grid-cols-[1.1fr_.9fr]">
-          <Panel className="p-6">
-            <h2 className="text-2xl font-black">Execution controls</h2>
-            <p className="mt-2 text-sm font-semibold text-slate-600">
-              Change status and add operational notes directly from this task workspace.
-            </p>
-
-            <div className="mt-5 flex flex-wrap gap-2">
-              {(["todo", "doing", "blocked", "done"] as const).map((status) => (
-                <button
-                  key={status}
-                  onClick={() => changeStatus(status)}
-                  className={`rounded-2xl px-4 py-3 text-sm font-black ${
-                    task.status === status ? "bg-white text-slate-950" : "border border-slate-200 bg-white text-slate-700"
-                  }`}
-                >
-                  {statusLabel(status)}
-                </button>
-              ))}
+        <ExecutionPanel>
+          <div className={styles.panelInner}>
+            <SectionHeading eyebrow="DEPENDENCIES" title="Prédécesseurs et successeurs" description="La page expose les relations enregistrées et n’invente aucun chemin critique."/>
+            <div className={styles.commandQueue}>
+              <div className={styles.queueCard}><span>Prédécesseurs</span><strong>{meta.dependencyIds.length}</strong><p>{meta.dependencyIds.join(", ") || "Aucune dépendance renseignée"}</p></div>
+              <div className={styles.queueCard}><span>Successeurs</span><strong>{meta.successorIds.length}</strong><p>{meta.successorIds.join(", ") || "Aucun successeur renseigné"}</p></div>
+              <div className={styles.queueCard}><span>Mission</span><strong>{meta.missionId ? "1" : "0"}</strong><p>{meta.missionId || "Mission non renseignée"}</p></div>
             </div>
+          </div>
+        </ExecutionPanel>
+      </section>
 
-            <div className="mt-6 grid gap-4 md:grid-cols-2">
-              <Info label="Owner" value={task.owner} />
-              <Info label="Priority" value={task.priority} />
-              <Info label="Due Date" value={task.dueDate || "--"} />
-              <Info label="Linked Content" value={linkedContent?.title ?? task.contentId} />
-            </div>
+      <section className={styles.gridTwo}>
+        <ExecutionPanel>
+          <div className={styles.panelInner}>
+            <SectionHeading eyebrow="CHECKLIST" title="Étapes de réalisation" description="La checklist ne remplace ni la preuve ni la décision d’acceptation." action={<div style={{ display: "flex", gap: 7 }}><input className={styles.field} value={checkInput} onChange={(event) => setCheckInput(event.target.value)} placeholder="Nouvelle étape"/><button className={styles.quietButton} type="button" onClick={addChecklist}>Ajouter</button></div>}/>
+            <div className={styles.checkList}>{checklist.map((item) => <div className={`${styles.checkItem} ${item.done ? styles.checkDone : ""}`} key={item.id}><button type="button" className={styles.checkToggle} aria-pressed={item.done} onClick={() => { toggleTaskChecklistItem(item.id); reload() }}>{item.done ? <Check size={15}/> : null}</button><span><span className={styles.checkLabel}>{item.label}</span><span className={styles.checkMeta}>{item.required ? "Obligatoire" : "Optionnelle"}</span></span><ExecutionBadge tone={item.done ? "success" : "warning"}>{item.done ? "Réalisée" : "À faire"}</ExecutionBadge></div>)}{!checklist.length ? <EmptyState title="Checklist absente" detail="Ajoutez uniquement des étapes vérifiables et nécessaires."/> : null}</div>
+          </div>
+        </ExecutionPanel>
 
-            <div className="mt-6">
-              <h3 className="text-lg font-black">Notes</h3>
-              <pre className="mt-3 whitespace-pre-wrap rounded-3xl border border-slate-200 bg-slate-50 p-5 text-sm font-semibold leading-6 text-slate-700">
-                {task.notes || "No notes yet."}
-              </pre>
-              <textarea
-                value={note}
-                onChange={(event) => setNote(event.target.value)}
-                placeholder="Add operational note..."
-                className="mt-4 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold outline-none"
-                rows={4}
-              />
-              <button onClick={addNote} className="mt-3 rounded-2xl bg-rose-600 px-5 py-3 text-sm font-black text-slate-950">
-                Add Note
-              </button>
-            </div>
-          </Panel>
+        <ExecutionPanel>
+          <div className={styles.panelInner}>
+            <SectionHeading eyebrow="EVIDENCE" title="Preuves de réalisation" description="Les preuves restent versionnées et séparées des commentaires."/>
+            <div className={styles.evidenceList}>{meta.evidences.map((evidence) => <article className={styles.evidenceItem} key={evidence.id}><header><strong>{evidence.label}</strong><ExecutionBadge tone={toneForStatus(evidence.state)}>{evidence.state}</ExecutionBadge></header><p>{evidence.type} · {evidence.note || "Aucune note"}</p>{evidence.url ? <a href={evidence.url} target="_blank" rel="noreferrer" className={styles.quietButton}>Ouvrir</a> : null}</article>)}{!meta.evidences.length ? <EmptyState title="Aucune preuve" detail={meta.evidenceRequirement || "L’exigence de preuve n’est pas encore définie."} action="Ouvrir le poste d’exécution" href={`/market-os/content-command-center/tasks/execution?task=${task.id}`}/> : null}</div>
+          </div>
+        </ExecutionPanel>
+      </section>
 
-          <Panel className="p-6">
-            <h2 className="text-2xl font-black">Checklist</h2>
-            <p className="mt-2 text-sm font-semibold text-slate-600">
-              Completion: {completedChecks}/{checklist.length}
-            </p>
+      <section className={styles.gridThree}>
+        <ExecutionPanel><div className={styles.panelInner}><SectionHeading eyebrow="BLOCKERS" title="Blocages ouverts" description="Chaque blocage expose sa sévérité, son owner et sa conséquence."/><div className={styles.queueList}>{openBlockers.map((item) => <article className={styles.blockerItem} key={item.id}><header><strong>{item.description}</strong><ExecutionBadge tone="danger">{item.severity}</ExecutionBadge></header><p>{item.owner || "Owner non affecté"} · {item.consequence || "Conséquence non documentée"}</p></article>)}{!openBlockers.length ? <EmptyState title="Aucun blocage ouvert" detail="Aucun obstacle actif n’est enregistré pour cette tâche."/> : null}</div></div></ExecutionPanel>
+        <ExecutionPanel><div className={styles.panelInner}><SectionHeading eyebrow="CLARIFICATIONS" title="Questions ouvertes" description="La clarification ne doit pas être confondue avec un blocage."/><div className={styles.queueList}>{openClarifications.map((item) => <article className={styles.clarificationItem} key={item.id}><header><strong>{item.question}</strong><ExecutionBadge tone="warning">{item.state}</ExecutionBadge></header><p>Demandée à {item.requestedFrom || "une autorité à désigner"} · {humanDate(item.dueDate)}</p></article>)}{!openClarifications.length ? <EmptyState title="Aucune clarification ouverte" detail="Les instructions ne comportent actuellement aucune question formalisée."/> : null}</div></div></ExecutionPanel>
+        <ExecutionPanel><div className={styles.panelInner}><SectionHeading eyebrow="REVIEW HISTORY" title="Décision et gate" description="Une soumission ne devient jamais une acceptation par simple changement client."/><div className={styles.queueCard}><span>État de travail</span><strong style={{ fontSize: 17 }}>{meta.workState.replaceAll("_", " ")}</strong><p>Réviseur : {meta.reviewer || "À désigner"}</p></div></div></ExecutionPanel>
+      </section>
 
-            <div className="mt-5 flex gap-2">
-              <input
-                value={newCheck}
-                onChange={(event) => setNewCheck(event.target.value)}
-                placeholder="Add checklist item..."
-                className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold outline-none"
-              />
-              <button onClick={addChecklist} className="rounded-2xl bg-white px-5 py-3 text-sm font-black text-slate-950">
-                Add
-              </button>
-            </div>
+      <section className={styles.gridTwo}>
+        <ExecutionPanel>
+          <div className={styles.panelInner}>
+            <SectionHeading eyebrow="COLLABORATION" title="Notes opérationnelles" description="Les notes sont datées et ajoutées à l’historique, sans écraser les instructions."/>
+            <p style={{ whiteSpace: "pre-wrap", color: "#60758a", fontSize: 12, lineHeight: 1.65 }}>{task.notes || "Aucune note opérationnelle."}</p>
+            <textarea className={styles.textarea} value={note} onChange={(event) => setNote(event.target.value)} placeholder="Ajouter une note datée…"/>
+            <button type="button" className={styles.quietButton} onClick={addNote}><MessageSquareText size={14}/>Ajouter la note</button>
+          </div>
+        </ExecutionPanel>
 
-            <div className="mt-5 space-y-3">
-              {checklist.map((item) => (
-                <div key={item.id} className="flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                  <button onClick={() => { toggleTaskChecklistItem(item.id); reload() }} className={`text-left text-sm font-bold ${item.done ? "line-through text-slate-500" : "text-slate-800"}`}>
-                    {item.done ? "✅ " : "⬜ "} {item.label}
-                  </button>
-                  <button onClick={() => { deleteTaskChecklistItem(item.id); reload() }} className="text-xs font-black text-red-600">
-                    Delete
-                  </button>
-                </div>
-              ))}
-              {!checklist.length ? (
-                <p className="rounded-3xl border border-dashed border-slate-300 p-6 text-center text-sm font-bold text-slate-500">
-                  No checklist items yet.
-                </p>
-              ) : null}
-            </div>
-          </Panel>
-        </section>
+        <ExecutionPanel>
+          <div className={styles.panelInner}>
+            <SectionHeading eyebrow="CHANGE HISTORY" title="Chronologie traçable" description="Les événements proviennent des actions réellement enregistrées sur la tâche."/>
+            <div className={styles.timeline}>{activity.map((event) => <article className={styles.timelineItem} key={event.id}><small>{new Intl.DateTimeFormat("fr-FR", { dateStyle: "short", timeStyle: "short" }).format(new Date(event.timestamp))}</small><strong>{event.action.replaceAll("_", " ")}</strong><p>{event.detail}</p></article>)}{!activity.length ? <EmptyState title="Historique vide" detail="Aucune action n’a encore été enregistrée."/> : null}</div>
+          </div>
+        </ExecutionPanel>
+      </section>
 
-        <section className="grid gap-5 lg:grid-cols-[.8fr_1.2fr]">
-          <Panel className="p-6">
-            <h2 className="text-2xl font-black">Linked content</h2>
-            {linkedContent ? (
-              <Link href={`/market-os/content-command-center/${linkedContent.id}`} className="mt-4 block rounded-3xl border border-slate-200 bg-slate-50 p-5 hover:bg-white">
-                <h3 className="text-lg font-black text-slate-950">{linkedContent.title}</h3>
-                <p className="mt-2 text-sm font-semibold text-slate-600">{linkedContent.channel} · {linkedContent.campaign}</p>
-                <p className="mt-2 text-xs font-bold text-slate-500">{linkedContent.status} · {linkedContent.owner}</p>
-              </Link>
-            ) : (
-              <p className="mt-4 rounded-3xl border border-dashed border-slate-300 p-6 text-sm font-bold text-slate-500">
-                No linked content found. CSV imported tasks are attached to the fallback content item until assigned.
-              </p>
-            )}
-          </Panel>
-
-          <Panel className="p-6">
-            <h2 className="text-2xl font-black">Activity timeline</h2>
-            <div className="mt-5 space-y-3">
-              {activity.map((event) => (
-                <article key={event.id} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                  <p className="text-sm font-black text-slate-950">{statusLabel(event.action)}</p>
-                  <p className="mt-1 text-xs font-bold text-slate-500">{event.timestamp}</p>
-                  <p className="mt-2 text-sm font-semibold text-slate-700">{event.detail}</p>
-                </article>
-              ))}
-              {!activity.length ? (
-                <p className="rounded-3xl border border-dashed border-slate-300 p-6 text-center text-sm font-bold text-slate-500">
-                  No activity yet.
-                </p>
-              ) : null}
-            </div>
-          </Panel>
-        </section>
-      </main>
-    </Shell>
-  )
-}
-
-function Info({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-      <p className="text-xs font-black uppercase tracking-wider text-slate-500">{label}</p>
-      <p className="mt-2 text-sm font-black text-slate-900">{value}</p>
-    </div>
-  )
+      <section className={styles.panel} style={{ marginTop: 16 }}>
+        <div className={styles.panelInner}>
+          <SectionHeading eyebrow="AVAILABLE ACTIONS" title="Actions gouvernées" description="Les actions ouvrent les expériences dédiées sans forcer une décision d’acceptation."/>
+          <div className={styles.heroActions} style={{ justifyContent: "flex-start" }}><Link className={styles.quietButton} href={`/market-os/content-command-center/tasks/execution?task=${task.id}`}>Exécuter</Link><Link className={styles.quietButton} href={`/market-os/content-command-center/tasks/${task.id}/edit`}>Modifier</Link><Link className={styles.quietButton} href={linkedContent ? `/market-os/content-command-center/${linkedContent.id}` : "/market-os/content-command-center/directory"}><Link2 size={14}/>Dossier lié</Link><Link className={styles.quietButton} href="/market-os/content-command-center/evidence"><FileCheck2 size={14}/>Evidence Lab</Link><Link className={styles.quietButton} href="/market-os/content-command-center/tasks"><History size={14}/>Task Command</Link></div>
+        </div>
+      </section>
+    </main>
+  </Shell>
 }
 
 export default TaskDetailWorkspace

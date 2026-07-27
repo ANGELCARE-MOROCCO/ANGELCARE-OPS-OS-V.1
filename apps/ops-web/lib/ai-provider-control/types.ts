@@ -140,6 +140,21 @@ export type AiProviderUsageRow = {
   metadata: JsonRecord
 }
 
+
+export type AiOpsPhase6Snapshot = {
+  incidents: JsonRecord[]
+  changeRequests: JsonRecord[]
+  destructionRequests: JsonRecord[]
+  providerAdapters: JsonRecord[]
+  capabilities: JsonRecord[]
+  modules: JsonRecord[]
+  sopArticles: JsonRecord[]
+  sopProgress: JsonRecord[]
+  operatorNotes: JsonRecord[]
+  actionJobs: JsonRecord[]
+  tombstones: JsonRecord[]
+}
+
 export type AiProviderSnapshot = {
   generatedAt: string
   emergency: JsonRecord | null
@@ -161,6 +176,7 @@ export type AiProviderSnapshot = {
   governedRequests: AiProviderGovernedRequest[]
   structuredCache: AiProviderStructuredCache[]
   reuseEvents: JsonRecord[]
+  phase6: AiOpsPhase6Snapshot
   rollups: {
     todayRequests: number
     todayGroundedRequests: number

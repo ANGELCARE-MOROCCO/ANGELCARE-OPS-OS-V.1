@@ -1,0 +1,28 @@
+{
+  "module": "AC CAPITAL OS",
+  "mega_zip": "09",
+  "name": "Capital Pipeline CRM + Follow-Up Engine",
+  "contract_token": "MZ9_AC_CAPITAL_OS_CAPITAL_PIPELINE",
+  "canonical_route": "apps/ops-web/app/(protected)/ac-capital-os/page.tsx",
+  "workspace_route": "apps/ops-web/app/(protected)/ac-capital-os/pipeline/page.tsx",
+  "api_route": "apps/ops-web/app/api/ac-capital-os/capital-pipeline/route.ts",
+  "migration": "supabase/migrations/20260727_ac_capital_os_mz9_capital_pipeline_crm.sql",
+  "preserves": [
+    "MZ1 Foundation",
+    "MZ2 Capital Executive Cockpit",
+    "MZ3 Capital Radar",
+    "MZ4 Qualification Engine",
+    "MZ5 Funder Intelligence Room",
+    "MZ6 Capital Doctrine Vault",
+    "MZ7 Fundraising Case Builder",
+    "MZ8 Due Diligence Data Room"
+  ],
+  "truth_boundary": [
+    "seeded data contract",
+    "no live email sending",
+    "no calendar sync",
+    "no automatic investor submission",
+    "no legal or financial guarantee"
+  ],
+  "created_at": "2026-07-27T04:08:32.462388Z"
+}

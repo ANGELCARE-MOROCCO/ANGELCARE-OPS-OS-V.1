@@ -146,3 +146,6 @@ apps/angelcare-desktop/release/ANGELCARE-Desktop-*-Release/
 apps/angelcare-desktop/release/macos/
 .vercel
 .env*
+
+# Invalid local React/Lucide ambient declaration
+/apps/ops-web/scripts/ai-sovereignty-phase6-stubs.d.ts

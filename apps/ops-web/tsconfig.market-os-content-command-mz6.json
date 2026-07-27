@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "incremental": false
+  },
+  "files": [
+    "app/(protected)/market-os/content-command-center/directory/page.tsx",
+    "app/(protected)/market-os/content-command-center/source-vault/page.tsx",
+    "components/market-os/content-command/headquarters/DirectoryWorkspace.tsx",
+    "components/market-os/content-command/headquarters/SourceVaultWorkspace.tsx",
+    "components/market-os/content-command/knowledge/knowledge-model.ts",
+    "components/market-os/content-command/knowledge/knowledge-ui.tsx",
+    "components/market-os/content-command/knowledge/knowledge-system.module.css.d.ts"
+  ]
+}

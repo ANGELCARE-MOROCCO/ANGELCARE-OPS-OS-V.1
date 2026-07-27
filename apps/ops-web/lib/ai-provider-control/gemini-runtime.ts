@@ -1,6 +1,6 @@
 import { GoogleGenAI, ThinkingLevel } from '@google/genai'
 
-export type GeminiThinkingLevel = 'LOW' | 'MEDIUM' | 'HIGH'
+export type GeminiThinkingLevel = 'MINIMAL' | 'LOW' | 'MEDIUM' | 'HIGH'
 
 type GeminiProviderInvocation = {
   apiKey: string
@@ -15,6 +15,7 @@ type GeminiProviderInvocation = {
 }
 
 const thinking = (level: GeminiThinkingLevel | undefined) => {
+  if (level === 'MINIMAL') return ThinkingLevel.MINIMAL
   if (level === 'HIGH') return ThinkingLevel.HIGH
   if (level === 'MEDIUM') return ThinkingLevel.MEDIUM
   return ThinkingLevel.LOW
@@ -35,7 +36,9 @@ export async function invokeGeminiProvider(input: GeminiProviderInvocation) {
       ...(input.responseMimeType ? { responseMimeType: input.responseMimeType } : {}),
       ...(input.responseJsonSchema ? { responseJsonSchema: input.responseJsonSchema as never } : {}),
       ...(input.maxOutputTokens ? { maxOutputTokens: input.maxOutputTokens } : {}),
-      thinkingConfig: { thinkingLevel: thinking(input.thinkingLevel) },
+      ...(/^gemini-3(?:\.|$)/i.test(input.model)
+        ? { thinkingConfig: { thinkingLevel: thinking(input.thinkingLevel) } }
+        : {}),
       ...(input.abortSignal ? { abortSignal: input.abortSignal } : {}),
     },
   })

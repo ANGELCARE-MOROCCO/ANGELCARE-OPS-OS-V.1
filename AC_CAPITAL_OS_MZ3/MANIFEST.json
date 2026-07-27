@@ -1,0 +1,10 @@
+{
+  "module": "AC CAPITAL OS",
+  "megaZip": 3,
+  "name": "Capital Radar",
+  "verificationToken": "MZ3_AC_CAPITAL_OS_CAPITAL_RADAR_VERIFIED",
+  "protectedRoute": "apps/ops-web/app/(protected)/ac-capital-os/page.tsx",
+  "radarRoute": "apps/ops-web/app/(protected)/ac-capital-os/radar/page.tsx",
+  "apiRoute": "apps/ops-web/app/api/ac-capital-os/capital-radar/route.ts",
+  "strictBoundary": "No API keys, no autonomous submissions, no full qualification scoring until MZ4."
+}

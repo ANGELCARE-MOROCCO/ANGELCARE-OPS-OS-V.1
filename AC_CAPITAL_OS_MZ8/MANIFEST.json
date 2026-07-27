@@ -1,0 +1,20 @@
+{
+  "module": "AC CAPITAL OS",
+  "megaZip": 8,
+  "name": "Due Diligence Data Room + Capital Proof Vault",
+  "token": "MZ8_AC_CAPITAL_OS_DUE_DILIGENCE_DATA_ROOM",
+  "protectedRoute": "apps/ops-web/app/(protected)/ac-capital-os/page.tsx",
+  "workspaceRoute": "apps/ops-web/app/(protected)/ac-capital-os/data-room/page.tsx",
+  "apiRoute": "apps/ops-web/app/api/ac-capital-os/data-room/route.ts",
+  "migration": "supabase/migrations/20260727_ac_capital_os_mz8_due_diligence_data_room.sql",
+  "preserves": [
+    "MZ1",
+    "MZ2",
+    "MZ3",
+    "MZ4",
+    "MZ5",
+    "MZ6",
+    "MZ7"
+  ],
+  "safetyBoundary": "No real storage integration, no automatic PDF export, no automatic submission, no automatic signing/stamping."
+}

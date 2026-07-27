@@ -1,0 +1,20 @@
+{
+  "name": "AC CAPITAL OS Case Builder Status Fix V2",
+  "issue": "TS2322: Type 'Needs Finance Review' is not assignable to case-builder status union",
+  "scope": "apps/ops-web/lib/ac-capital-os/*.ts only",
+  "expected_changed_files": [
+    "apps/ops-web/lib/ac-capital-os/types.ts",
+    "apps/ops-web/lib/ac-capital-os/case-builder.ts"
+  ],
+  "does_not_touch": [
+    "app/(protected)/ac-capital-os/*",
+    "app/api/ac-capital-os/*",
+    "components/ac-capital-os/*",
+    "components/market-os/*"
+  ],
+  "verification_tokens": [
+    "AC_CAPITAL_OS_CASE_BUILDER_STATUS_FIX_V2_VERIFIED",
+    "AC_CAPITAL_OS_CASE_BUILDER_STATUS_FIX_V2_NOT_NEEDED_VERIFIED"
+  ],
+  "created_at": "2026-07-27T04:26:40.765566+00:00"
+}

@@ -1,0 +1,18 @@
+{
+  "package": "AC_CAPITAL_OS_MEGA_ULTRA_ZIP_07_FUNDRAISING_CASE_BUILDER",
+  "token": "MZ7_AC_CAPITAL_OS_FUNDRAISING_CASE_BUILDER",
+  "installsInto": "apps/ops-web/app/(protected)/ac-capital-os",
+  "api": "apps/ops-web/app/api/ac-capital-os/case-builder/route.ts",
+  "preserves": [
+    "MZ1 foundation",
+    "MZ2 executive cockpit",
+    "MZ3 capital radar",
+    "MZ4 qualification engine",
+    "MZ5 funder intelligence",
+    "MZ6 capital doctrine"
+  ],
+  "noBuild": true,
+  "noGitStage": true,
+  "noAutoEmail": true,
+  "noLiveAiExecution": true
+}

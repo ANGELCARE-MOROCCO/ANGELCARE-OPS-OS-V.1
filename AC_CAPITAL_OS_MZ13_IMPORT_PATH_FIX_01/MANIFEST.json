@@ -1,0 +1,12 @@
+{
+  "name": "AC CAPITAL OS MZ13 Nested API Import Path Fix",
+  "issue": "TS2307 cannot find server modules from deeper nested MZ13 API routes.",
+  "touched_files": [
+    "apps/ops-web/app/api/ac-capital-os/capital-radar/research/run/route.ts",
+    "apps/ops-web/app/api/ac-capital-os/coordinator-cockpit/email/mark-sent/route.ts",
+    "apps/ops-web/app/api/ac-capital-os/coordinator-cockpit/email/prepare/route.ts",
+    "apps/ops-web/app/api/ac-capital-os/coordinator-cockpit/workflow/complete-task/route.ts"
+  ],
+  "verification_token": "AC_CAPITAL_OS_MZ13_NESTED_API_IMPORT_PATH_FIX_VERIFIED",
+  "created_at": "2026-07-27T06:21:51.663177+00:00"
+}

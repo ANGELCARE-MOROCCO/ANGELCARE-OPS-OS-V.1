@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -euo pipefail
+node ./AC_CAPITAL_OS_MZ7/scripts/apply_ac_capital_os_mz7.mjs
+node ./AC_CAPITAL_OS_MZ7/scripts/verify_ac_capital_os_mz7.mjs

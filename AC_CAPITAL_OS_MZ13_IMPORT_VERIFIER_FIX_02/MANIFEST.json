@@ -1,0 +1,10 @@
+{
+  "name": "AC CAPITAL OS MZ13 Import Verifier False Positive Fix",
+  "issue": "Verifier searched for old import substring; old 5-level relative path is contained inside corrected 6-level path.",
+  "touched_files": [
+    "AC_CAPITAL_OS_MZ13_IMPORT_PATH_FIX_01/scripts/verify_mz13_nested_api_import_path_fix.mjs"
+  ],
+  "runtime_files_touched": [],
+  "verification_token": "AC_CAPITAL_OS_MZ13_IMPORT_VERIFIER_FALSE_POSITIVE_FIX_VERIFIED",
+  "created_at": "2026-07-27T06:27:41.711690+00:00"
+}

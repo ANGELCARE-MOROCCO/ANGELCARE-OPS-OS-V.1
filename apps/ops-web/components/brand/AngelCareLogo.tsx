@@ -1,32 +1,34 @@
-import Image from "next/image";
+import Image from "next/image"
 
 type AngelCareLogoProps = {
-  size?: "sm" | "md" | "lg";
-  className?: string;
-  showText?: boolean;
-};
+  size?: "sm" | "md" | "lg"
+  className?: string
+  showText?: boolean
+  priority?: boolean
+}
 
 const sizeMap = {
   sm: { width: 42, height: 42 },
   md: { width: 64, height: 64 },
   lg: { width: 96, height: 96 },
-};
+} as const
 
 export default function AngelCareLogo({
   size = "md",
   className = "",
   showText = false,
+  priority,
 }: AngelCareLogoProps) {
-  const dims = sizeMap[size];
+  const dims = sizeMap[size]
 
   return (
-    <div className={`inline-flex items-center gap-3 ${className}`}>
+    <div className={`inline-flex items-center gap-3 ${className}`} data-angelcare-official-logo>
       <Image
         src="/logo.png"
-        alt="AngelCare official logo"
+        alt="Logo officiel AngelCare"
         width={dims.width}
         height={dims.height}
-        priority={size === "lg"}
+        priority={priority ?? size === "lg"}
         className="shrink-0 object-contain"
       />
       {showText ? (
@@ -35,10 +37,10 @@ export default function AngelCareLogo({
             AngelCare
           </p>
           <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">
-            Operations System
+            SANILA Operations System
           </p>
         </div>
       ) : null}
     </div>
-  );
+  )
 }

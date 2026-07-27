@@ -1,0 +1,23 @@
+{
+  "package": "AC_CAPITAL_OS_MEGA_ULTRA_ZIP_05_FUNDER_INTELLIGENCE_ROOM",
+  "token": "MZ5_AC_CAPITAL_OS_FUNDER_INTELLIGENCE",
+  "target": "apps/ops-web/app/(protected)/ac-capital-os",
+  "api": "apps/ops-web/app/api/ac-capital-os/funder-intelligence/route.ts",
+  "preserves": [
+    "MZ1 Foundation",
+    "MZ2 Capital Executive Cockpit",
+    "MZ3 Capital Radar",
+    "MZ4 Qualification Engine"
+  ],
+  "adds": [
+    "Funder Intelligence Room",
+    "Investor Psychology",
+    "Likely Objections",
+    "Best AngelCare Narrative",
+    "Relationship Status",
+    "Contact Strategy",
+    "Opportunity Links"
+  ],
+  "noSecrets": true,
+  "noAutoOutreach": true
+}

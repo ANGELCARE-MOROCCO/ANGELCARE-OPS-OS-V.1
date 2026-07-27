@@ -8,6 +8,11 @@ const permissionByAction: Record<string, AiProviderPermission> = {
   simulate_route: 'view', set_emergency: 'emergency', publish_configuration: 'manage',
   rollback_configuration: 'manage', save_command_policy: 'quota', save_schedule: 'schedules',
   set_schedule_status: 'schedules', cancel_governed_request: 'requests', invalidate_cache: 'force_refresh',
+  phase6_set_dossier_state: 'manage', phase6_set_credential_state: 'credentials', phase6_update_alert: 'manage',
+  phase6_save_incident: 'manage', phase6_resolve_incident: 'manage', phase6_save_change_request: 'manage',
+  phase6_update_change_status: 'manage', phase6_request_destruction: 'manage', phase6_approve_destruction: 'manage',
+  phase6_execute_destruction: 'manage', phase6_save_registry: 'manage', phase6_save_sop_progress: 'view',
+  phase6_save_operator_note: 'view', phase6_create_action_job: 'manage',
 }
 
 export async function POST(request: Request) {
