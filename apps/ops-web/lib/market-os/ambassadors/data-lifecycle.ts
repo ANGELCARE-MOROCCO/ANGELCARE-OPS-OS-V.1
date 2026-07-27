@@ -245,6 +245,7 @@ async function resolveLifecycleActor(
   )
 
   if (
+    actor.role_key !== "ambassador_admin" &&
     !permissions.has("*") &&
     !permissions.has(requiredPermission)
   ) {

@@ -74,7 +74,7 @@ function persistenceError(area: string, error: { message?: string } | null): nev
 }
 
 function canAny(actor: AmbassadorActor, permissions: string[]): boolean {
-  return actor.permissions.has("*") || permissions.some((permission) => actor.permissions.has(permission))
+  return actor.roleKey === "ambassador_admin" || actor.permissions.has("*") || permissions.some((permission) => actor.permissions.has(permission))
 }
 
 function requireAny(actor: AmbassadorActor, permissions: string[], message: string): void {

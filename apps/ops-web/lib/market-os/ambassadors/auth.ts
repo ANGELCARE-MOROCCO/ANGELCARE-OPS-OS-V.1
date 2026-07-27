@@ -178,6 +178,8 @@ async function resolveMemberships(
 }
 
 async function resolvePermissions(roleKey: string): Promise<ReadonlySet<string>> {
+  if (roleKey === "ambassador_admin") return new Set<string>()
+
   const { data, error } = await getAmbassadorSupabaseAdmin()
     .from("market_os_ambassador_role_permissions")
     .select("permission_key")
@@ -314,7 +316,7 @@ export async function resolveAmbassadorActor(request: Request): Promise<Ambassad
 }
 
 export function actorCan(actor: AmbassadorActor, permission: AmbassadorPermission): boolean {
-  return actor.permissions.has("*") || actor.permissions.has(permission)
+  return actor.roleKey === "ambassador_admin" || actor.permissions.has("*") || actor.permissions.has(permission)
 }
 
 export function requireAmbassadorPermission(actor: AmbassadorActor, permission: AmbassadorPermission): void {

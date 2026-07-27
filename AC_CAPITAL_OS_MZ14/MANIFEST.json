@@ -1,0 +1,26 @@
+{
+  "module": "AC CAPITAL OS",
+  "mega_zip": 14,
+  "name": "Capital Command Institution Universe UX",
+  "verification_token": "MZ14_AC_CAPITAL_OS_CAPITAL_COMMAND_UNIVERSE_VERIFIED",
+  "routes": [
+    "/ac-capital-os",
+    "/ac-capital-os/radar",
+    "/ac-capital-os/qualification",
+    "/ac-capital-os/funders",
+    "/ac-capital-os/doctrine",
+    "/ac-capital-os/cases",
+    "/ac-capital-os/data-room",
+    "/ac-capital-os/pipeline",
+    "/ac-capital-os/coordinator",
+    "/ac-capital-os/ai-command",
+    "/ac-capital-os/strategy",
+    "/ac-capital-os/simulator",
+    "/ac-capital-os/reports",
+    "/ac-capital-os/manual",
+    "/ac-capital-os/approvals",
+    "/ac-capital-os/settings",
+    "/ac-capital-os/production"
+  ],
+  "created_at": "2026-07-27T07:49:16.180497+00:00"
+}
