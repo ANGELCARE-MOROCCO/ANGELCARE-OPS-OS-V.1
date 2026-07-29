@@ -1,0 +1,5 @@
+{
+  "scenarioKey": "deadline-change",
+  "purpose": "Prove source revalidation updates a deadline, reprioritizes work and avoids duplicate alerts.",
+  "expected": ["source change evidence", "before/after deadline", "pipeline priority update", "mission reschedule", "one governed notification"]
+}

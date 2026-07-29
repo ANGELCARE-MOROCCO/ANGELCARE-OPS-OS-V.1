@@ -1,0 +1,5 @@
+{
+  "scenarioKey": "artifact-integrity",
+  "formats": ["pdf", "docx", "xlsx", "csv", "json", "zip"],
+  "required": ["valid signature", "non-empty content", "matching SHA-256", "correct source version", "immutable approved snapshot"]
+}

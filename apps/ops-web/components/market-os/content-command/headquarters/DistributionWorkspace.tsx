@@ -3,111 +3,131 @@
 import * as React from "react"
 import Link from "next/link"
 import {
-  AlertTriangle,
-  ArrowRight,
-  CalendarClock,
-  CheckCircle2,
-  CircleDashed,
-  FileOutput,
-  Fingerprint,
-  Link2,
-  MapPin,
-  PackageCheck,
-  Plus,
-  RadioTower,
-  Route,
-  Send,
-  ShieldCheck,
-  Sparkles,
-  Users,
-  Waves,
+  AlertTriangle, ArrowRight, CalendarClock, CheckCircle2, CircleDashed, FileOutput,
+  Fingerprint, Link2, PackageCheck, Plus, RadioTower, Send, ShieldCheck, Users, Waves,
 } from "lucide-react"
 import { PageStatus } from "./primitives"
-import { formatDate, headquartersAction, statusLabel, tone, useHeadquartersSnapshot } from "./client"
-import type { PublicationPackage } from "@/lib/market-os/content-command-headquarters/types"
+import { formatDate, headquartersAction, tone, useHeadquartersSnapshot } from "./client"
+import type { ContentDossier, PublicationPackage } from "@/lib/market-os/content-command-headquarters/types"
+import {
+  deterministicCollisions, executionModeLabel, packageDominantAction, packageReadiness,
+  releaseBlockers, releaseManifest, requiredRenditions, statusLabel,
+  type Bulk6ExecutionMode,
+} from "../experience-bulk6/bulk6-release-model"
 import { Empty, Field, Metric, Modal, Pill, SectionTitle, toneClass, type ReleaseTone } from "../release/release-ui"
 import styles from "../release/mz7-release.module.css"
 
 const channels = ["Instagram", "Facebook", "LinkedIn", "Website", "WhatsApp", "Print", "Internal Workspace"]
+const defaultRenditions = "Portrait 1080×1350\nStory 1080×1920"
 
-function dayKey(value: string | null | undefined) {
-  return value ? value.slice(0, 10) : ""
+type PackageForm = {
+  dossierId: string; channel: string; scheduledAt: string; renditions: string; renditionsReady: boolean
+  copy: string; cta: string; audience: string; geography: string; language: string
+  trackingReference: string; executionMode: Bulk6ExecutionMode; proofExpectation: string; releaseNote: string
+}
+
+function emptyForm(): PackageForm {
+  return { dossierId: "", channel: "Instagram", scheduledAt: "", renditions: defaultRenditions, renditionsReady: false, copy: "", cta: "", audience: "", geography: "", language: "fr", trackingReference: "", executionMode: "manual", proofExpectation: "URL ou référence externe + capture contrôlée", releaseNote: "" }
+}
+
+function toLocalDateTime(value: string | null | undefined) {
+  if (!value) return ""
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return ""
+  const local = new Date(date.getTime() - date.getTimezoneOffset() * 60_000)
+  return local.toISOString().slice(0, 16)
+}
+
+function buildRenditions(form: PackageForm) {
+  return form.renditions.split("\n").map((name) => name.trim()).filter(Boolean).map((name, index) => ({ id: `rendition-${index + 1}`, name, required: true, status: form.renditionsReady ? "ready" : "required" }))
+}
+
+function buildManifest(form: PackageForm) {
+  return { copy: form.copy, cta: form.cta, audience: form.audience, geography: form.geography, language: form.language, trackingReference: form.trackingReference, executionMode: form.executionMode, proofExpectation: form.proofExpectation, releaseNote: form.releaseNote }
+}
+
+function formFromPackage(pkg: PublicationPackage, dossier?: ContentDossier | null): PackageForm {
+  const manifest = releaseManifest(pkg)
+  const renditions = requiredRenditions(pkg)
+  return {
+    dossierId: pkg.dossier_id,
+    channel: pkg.channel,
+    scheduledAt: toLocalDateTime(pkg.scheduled_at),
+    renditions: renditions.map((item) => item.name).join("\n") || defaultRenditions,
+    renditionsReady: renditions.length > 0 && renditions.every((item) => !item.required || ["ready", "approved", "available"].includes(item.status)),
+    copy: manifest?.copy || "",
+    cta: manifest?.cta || dossier?.cta || "",
+    audience: manifest?.audience || dossier?.audience || "",
+    geography: manifest?.geography || dossier?.city || "",
+    language: manifest?.language || dossier?.language || "fr",
+    trackingReference: manifest?.trackingReference || "",
+    executionMode: manifest?.executionMode || (pkg.channel === "Print" ? "print" : pkg.channel === "Internal Workspace" ? "internal" : "manual"),
+    proofExpectation: manifest?.proofExpectation || "URL ou référence externe + capture contrôlée",
+    releaseNote: manifest?.releaseNote || "",
+  }
 }
 
 export default function DistributionWorkspace() {
   const { snapshot, loading, error, refresh } = useHeadquartersSnapshot()
   const [selectedId, setSelectedId] = React.useState("")
-  const [createOpen, setCreateOpen] = React.useState(false)
+  const [builderOpen, setBuilderOpen] = React.useState(false)
+  const [editMode, setEditMode] = React.useState(false)
+  const [authorizeOpen, setAuthorizeOpen] = React.useState(false)
+  const [authorityReason, setAuthorityReason] = React.useState("")
   const [busy, setBusy] = React.useState("")
   const [notice, setNotice] = React.useState("")
-  const [form, setForm] = React.useState({ dossierId: "", channel: "Instagram", scheduledAt: "", renditions: "Portrait 1080×1350\nStory 1080×1920" })
+  const [form, setForm] = React.useState<PackageForm>(emptyForm)
 
   const packages = snapshot?.publicationPackages || []
   const selectedPackage = packages.find((pkg) => pkg.id === selectedId) || packages[0]
   const selectedDossier = snapshot?.dossiers.find((item) => item.id === selectedPackage?.dossier_id)
   const eligibleDossiers = snapshot?.dossiers.filter((dossier) => dossier.source_state === "secured" && ["source_secured", "classified", "ready_distribution", "scheduled", "published"].includes(dossier.status)) || []
+  const collisions = React.useMemo(() => deterministicCollisions(packages), [packages])
   const draftPackages = packages.filter((pkg) => pkg.status === "draft")
   const readyPackages = packages.filter((pkg) => ["ready", "scheduled"].includes(pkg.status))
-  const missingSchedule = packages.filter((pkg) => !pkg.scheduled_at)
   const sourceMismatch = packages.filter((pkg) => snapshot?.dossiers.find((dossier) => dossier.id === pkg.dossier_id)?.source_state !== "secured")
+  const selectedBlockers = selectedPackage ? releaseBlockers(selectedPackage, selectedDossier) : []
+  const selectedScore = selectedPackage ? packageReadiness(selectedPackage, selectedDossier) : 0
+  const selectedManifest = selectedPackage ? releaseManifest(selectedPackage) : null
+  const selectedRenditions = selectedPackage ? requiredRenditions(selectedPackage) : []
 
-  const collisions = React.useMemo(() => {
-    const output: Array<{ key: string; channel: string; day: string; packages: PublicationPackage[] }> = []
-    const groups = new Map<string, PublicationPackage[]>()
-    for (const pkg of packages) {
-      const day = dayKey(pkg.scheduled_at)
-      if (!day) continue
-      const key = `${pkg.channel}::${day}`
-      groups.set(key, [...(groups.get(key) || []), pkg])
-    }
-    for (const [key, group] of groups) {
-      if (group.length > 1) output.push({ key, channel: group[0].channel, day: dayKey(group[0].scheduled_at), packages: group })
-    }
-    return output
-  }, [packages])
-
-  const selectedRenditions = ((selectedPackage as PublicationPackage & { required_renditions?: Array<{ name?: string; required?: boolean; status?: string }> })?.required_renditions || [])
-  const packageDossier = selectedDossier
-  const preflight = selectedPackage && packageDossier ? [
-    { label: "Validation formelle", ok: ["validated", "source_required", "source_secured", "classified", "ready_distribution", "scheduled", "published"].includes(packageDossier.status), detail: "Le dossier expose un état post-validation." },
-    { label: "Source canonique", ok: packageDossier.source_state === "secured", detail: "La source doit être sécurisée dans Source Vault." },
-    { label: "Renditions", ok: selectedRenditions.length > 0, detail: "Les adaptations attendues sont déclarées dans le package." },
-    { label: "Canal", ok: Boolean(selectedPackage.channel), detail: "Un canal réel est associé au package." },
-    { label: "Horaire", ok: Boolean(selectedPackage.scheduled_at), detail: "La date de publication doit être persistée." },
-    { label: "Publisher / tracking", ok: false, detail: "Le modèle actuel ne fournit pas encore publisher, CTA et tracking persistés." },
-  ] : []
-  const selectedReady = preflight.length > 0 && preflight.slice(0, 5).every((gate) => gate.ok)
-
-  async function createPackage() {
-    if (!form.dossierId || !form.channel) return
-    setBusy("create")
-    setNotice("")
-    try {
-      await headquartersAction("create_publication_package", {
-        dossierId: form.dossierId,
-        channel: form.channel,
-        scheduledAt: form.scheduledAt ? new Date(form.scheduledAt).toISOString() : "",
-        requiredRenditions: form.renditions.split("\n").map((name) => name.trim()).filter(Boolean).map((name) => ({ name, required: true, status: "required" })),
-      })
-      setCreateOpen(false)
-      setForm({ dossierId: "", channel: "Instagram", scheduledAt: "", renditions: "Portrait 1080×1350\nStory 1080×1920" })
-      setNotice("Package de distribution créé dans le registre existant.")
-      await refresh()
-    } catch (nextError) {
-      setNotice(nextError instanceof Error ? nextError.message : "PUBLICATION_PACKAGE_FAILED")
-    } finally { setBusy("") }
+  function openCreate(dossier?: ContentDossier) {
+    const next = emptyForm()
+    if (dossier) Object.assign(next, { dossierId: dossier.id, channel: dossier.channel || "Instagram", audience: dossier.audience, geography: dossier.city, language: dossier.language || "fr", cta: dossier.cta })
+    setForm(next); setEditMode(false); setBuilderOpen(true)
   }
 
-  async function advancePackage(pkg: PublicationPackage, status: string) {
-    setBusy(pkg.id)
-    setNotice("")
-    try {
-      await headquartersAction("update_publication_package", { packageId: pkg.id, status, scheduledAt: pkg.scheduled_at || "" })
-      setNotice(status === "scheduled" ? "Package autorisé et transmis au runway Publishing." : "État du package mis à jour.")
-      await refresh()
-    } catch (nextError) {
-      setNotice(nextError instanceof Error ? nextError.message : "PUBLICATION_UPDATE_FAILED")
-    } finally { setBusy("") }
+  function openEdit() {
+    if (!selectedPackage) return
+    setForm(formFromPackage(selectedPackage, selectedDossier)); setEditMode(true); setBuilderOpen(true)
+  }
+
+  async function run(action: string, payload: Record<string, unknown>, success: string) {
+    setBusy(action); setNotice("")
+    try { await headquartersAction(action, payload); setNotice(success); await refresh() }
+    catch (nextError) { setNotice(nextError instanceof Error ? nextError.message : "BULK6_RELEASE_ACTION_FAILED") }
+    finally { setBusy("") }
+  }
+
+  async function savePackage() {
+    const scheduledAt = form.scheduledAt ? new Date(form.scheduledAt).toISOString() : ""
+    if (editMode && selectedPackage) {
+      await run("publication_save_manifest", { packageId: selectedPackage.id, scheduledAt, requiredRenditions: buildRenditions(form), manifest: buildManifest(form) }, "Constitution du package enregistrée et readiness recalculée.")
+    } else {
+      await run("create_publication_package", { dossierId: form.dossierId, channel: form.channel, scheduledAt, requiredRenditions: buildRenditions(form), manifest: buildManifest(form) }, "Package gouverné créé en brouillon. Aucune release n’a été autorisée.")
+    }
+    setBuilderOpen(false)
+  }
+
+  async function declareReady() {
+    if (!selectedPackage) return
+    await run("publication_declare_ready", { packageId: selectedPackage.id }, "Pre-flight complet: package déclaré prêt pour autorisation humaine.")
+  }
+
+  async function authorizeRelease() {
+    if (!selectedPackage) return
+    await run("publication_authorize_release", { packageId: selectedPackage.id, reason: authorityReason }, "Release autorisée et transmise à Publishing Operations.")
+    setAuthorizeOpen(false); setAuthorityReason("")
   }
 
   return <main className={styles.canvas}>
@@ -116,83 +136,69 @@ export default function DistributionWorkspace() {
     {notice ? <div className={styles.notice}>{notice}<button type="button" aria-label="Fermer la notification" onClick={() => setNotice("")}>×</button></div> : null}
 
     <section className={styles.hero}>
-      <div className={styles.heroCopy}><span className={styles.eyebrow}><RadioTower/> DISTRIBUTION TOWER</span><h1>Le package, le canal et le pre-flight avant toute publication.</h1><p>Chaque version validée devient un package traçable. La tour contrôle la source, les renditions, le canal, l’horaire, les collisions et l’autorisation avant le handover vers Publishing Operations.</p></div>
-      <aside className={styles.heroCommand}><div className={styles.heroStat}><span><Waves/></span><div><strong>{readyPackages.length}</strong><small>packages prêts ou planifiés</small></div><b>{packages.length} total</b></div><div className={styles.heroActions}><button type="button" className={styles.primary} onClick={() => setCreateOpen(true)}><Plus/> Nouveau package</button><Link className={styles.secondary} href="/market-os/content-command-center/publishing"><Send/> Publishing Operations</Link></div></aside>
+      <div className={styles.heroCopy}><span className={styles.eyebrow}><RadioTower/> DISTRIBUTION TOWER · BULK 6</span><h1>Constituer et autoriser la release avant toute exécution.</h1><p>La Tour verrouille la source canonique, la version, les renditions, le copy, le CTA, l’audience, le mode d’exécution, la preuve attendue, le calendrier et l’autorité. « Prêt » ne signifie jamais « publié ».</p></div>
+      <aside className={styles.heroCommand}><div className={styles.heroStat}><span><Waves/></span><div><strong>{readyPackages.length}</strong><small>prêts ou autorisés</small></div><b>{packages.length} package(s)</b></div><div className={styles.heroActions}><button type="button" className={styles.primary} onClick={() => openCreate()}><Plus/> Nouveau package</button><Link className={styles.secondary} href="/market-os/content-command-center/publishing"><Send/> Publishing Operations</Link></div></aside>
     </section>
 
     <section className={styles.metrics} aria-label="Indicateurs de distribution">
-      <Metric icon={<PackageCheck/>} label="En construction" value={draftPackages.length} detail="Packages encore à compléter ou autoriser." tone="info"/>
-      <Metric icon={<CalendarClock/>} label="Sans horaire" value={missingSchedule.length} detail="Aucun calendrier n’est inventé pour ces packages." tone={missingSchedule.length ? "warning" : "success"}/>
-      <Metric icon={<AlertTriangle/>} label="Collisions" value={collisions.length} detail="Même canal et même date, base déterministe uniquement." tone={collisions.length ? "danger" : "success"}/>
-      <Metric icon={<Fingerprint/>} label="Source bloquante" value={sourceMismatch.length} detail="Packages dont le dossier ne signale pas de source sécurisée." tone={sourceMismatch.length ? "danger" : "success"}/>
+      <Metric icon={<PackageCheck/>} label="En constitution" value={draftPackages.length} detail="Packages non autorisés, encore modifiables." tone="info"/>
+      <Metric icon={<ShieldCheck/>} label="Release autorisée" value={packages.filter((pkg) => pkg.status === "scheduled").length} detail="Packages ayant franchi l’autorité humaine." tone="authority"/>
+      <Metric icon={<AlertTriangle/>} label="Collisions exactes" value={collisions.length} detail="Même canal et même minute persistée uniquement." tone={collisions.length ? "danger" : "success"}/>
+      <Metric icon={<Fingerprint/>} label="Source bloquante" value={sourceMismatch.length} detail="Aucune source ou intégrité canonique suffisante." tone={sourceMismatch.length ? "danger" : "success"}/>
     </section>
 
     <section className={styles.section}>
-      <SectionTitle eyebrow="VALIDATED CONTENT INTAKE" title="Contenus éligibles au packaging" description="Seuls les dossiers dont la source est sécurisée apparaissent comme candidats. L’éligibilité n’est jamais confondue avec une autorisation de publication." action={{ onClick: () => setCreateOpen(true), label: "Construire un package" }}/>
-      <div className={styles.packageGrid}>{eligibleDossiers.map((dossier) => {
-        const linked = packages.filter((pkg) => pkg.dossier_id === dossier.id)
-        return <article key={dossier.id} className={styles.packageCard}><header><small>{dossier.content_code}</small><Pill tone="success">SOURCE OK</Pill></header><h3>{dossier.title}</h3><p>{dossier.service_label} · {dossier.channel || "Canal à définir"} · {dossier.campaign_label || "Hors campagne"}</p><div className={styles.progress}><span style={{ width: `${Math.max(0, Math.min(100, dossier.progress))}%` }}/></div><div className={styles.releaseActions}><button type="button" onClick={() => { setForm((current) => ({ ...current, dossierId: dossier.id, channel: dossier.channel || "Instagram" })); setCreateOpen(true) }}><Plus/> Package</button><Link href={`/market-os/content-command-center/dossiers/${dossier.id}`}>Dossier 360</Link><Pill tone={linked.length ? "info" : "neutral"}>{linked.length} package(s)</Pill></div></article>
-      })}{!eligibleDossiers.length ? <Empty title="Aucun contenu éligible" detail="Les dossiers validés et dotés d’une source canonique sécurisée arriveront ici."/> : null}</div>
+      <SectionTitle eyebrow="VALIDATED CONTENT INTAKE" title="Contenus admissibles au packaging" description="Le dossier doit être post-validation et sa source canonique doit être sécurisée. L’admissibilité ne vaut ni readiness ni autorisation." action={{ onClick: () => openCreate(), label: "Construire un package" }}/>
+      <div className={styles.packageGrid}>{eligibleDossiers.map((dossier) => { const linked = packages.filter((pkg) => pkg.dossier_id === dossier.id); return <article key={dossier.id} className={styles.packageCard}><header><small>{dossier.content_code}</small><Pill tone="success">SOURCE VERROUILLÉE</Pill></header><h3>{dossier.title}</h3><p>{dossier.service_label} · {dossier.audience || "Audience à confirmer"} · {dossier.city || "Géographie à confirmer"}</p><div className={styles.progress}><span style={{ width: `${Math.max(0, Math.min(100, dossier.readiness))}%` }}/></div><div className={styles.releaseActions}><button type="button" onClick={() => openCreate(dossier)}><Plus/> Constituer</button><Link href={`/market-os/content-command-center/dossiers/${dossier.id}`}>Dossier 360</Link><Pill tone={linked.length ? "info" : "neutral"}>{linked.length} package(s)</Pill></div></article> })}{!eligibleDossiers.length ? <Empty title="Aucun contenu admissible" detail="Les dossiers validés et dotés d’une source canonique vérifiée apparaîtront ici."/> : null}</div>
     </section>
 
     <section className={styles.split}>
       <aside className={styles.section}>
-        <SectionTitle eyebrow="PACKAGE REGISTER" title="Packages sous contrôle" description="État, canal, horaire et readiness observée."/>
-        <div className={styles.queue}>{packages.map((pkg) => {
-          const dossier = snapshot?.dossiers.find((item) => item.id === pkg.dossier_id)
-          const packageTone: ReleaseTone = pkg.status === "published" ? "success" : pkg.status === "scheduled" ? "info" : !pkg.scheduled_at ? "warning" : "neutral"
-          return <button type="button" key={pkg.id} className={`${styles.queueButton} ${selectedPackage?.id === pkg.id ? styles.queueSelected : ""}`} onClick={() => setSelectedId(pkg.id)}><span><small>{pkg.channel} · {formatDate(pkg.scheduled_at, true)}</small><strong>{dossier?.title || "Dossier non exposé"}</strong><small>{dossier?.content_code || pkg.dossier_id}</small></span><span><Pill tone={packageTone}>{statusLabel(pkg.status)}</Pill></span></button>
-        })}{!packages.length ? <Empty title="Aucun package" detail="Créez un package à partir d’un dossier validé et sourcé."/> : null}</div>
+        <SectionTitle eyebrow="PACKAGE REGISTER" title="Registre de release" description="Sélectionnez un package pour inspecter sa constitution réelle."/>
+        <div className={styles.queue}>{packages.map((pkg) => { const dossier = snapshot?.dossiers.find((item) => item.id === pkg.dossier_id); const score = packageReadiness(pkg, dossier); const packageTone: ReleaseTone = pkg.status === "verified" ? "success" : ["failed", "blocked", "verification_failed"].includes(pkg.status) ? "danger" : pkg.status === "scheduled" ? "authority" : score === 100 ? "info" : "warning"; return <button type="button" key={pkg.id} className={`${styles.queueButton} ${selectedPackage?.id === pkg.id ? styles.queueSelected : ""}`} onClick={() => setSelectedId(pkg.id)}><span><small>{pkg.channel} · {formatDate(pkg.scheduled_at, true)}</small><strong>{dossier?.title || "Dossier non exposé"}</strong><small>{packageDominantAction(pkg, dossier)}</small></span><Pill tone={packageTone}>{statusLabel(pkg.status)}</Pill></button> })}{!packages.length ? <Empty title="Aucun package" detail="Créez le premier package à partir d’un dossier admissible."/> : null}</div>
       </aside>
 
       <article className={`${styles.section} ${styles.case}`}>
-        {selectedPackage && packageDossier ? <>
-          <header className={styles.caseHeader}><div><small>{packageDossier.content_code} · PACKAGE {selectedPackage.id.slice(0, 8)}</small><h2>{packageDossier.title}</h2><p>{selectedPackage.channel} · {formatDate(selectedPackage.scheduled_at, true)} · {packageDossier.audience}</p></div><div className={styles.caseMeta}><Pill tone={tone(selectedPackage.status) as ReleaseTone}>{statusLabel(selectedPackage.status)}</Pill><Pill tone={packageDossier.source_state === "secured" ? "success" : "danger"}>{packageDossier.source_state === "secured" ? "SOURCE AUTHORITY" : "SOURCE BLOQUANTE"}</Pill><Pill tone={selectedPackage.package_readiness >= 80 ? "success" : "warning"}>{selectedPackage.package_readiness}% readiness</Pill></div></header>
-
-          <div className={styles.channelMatrix} role="table" aria-label="Matrice d’adaptation par canal"><div className={styles.matrixHeader} role="row"><span>Canal</span><span>Rendition</span><span>Copy / CTA</span><span>Audience</span><span>Horaire</span><span>État</span></div>{channels.map((channel) => {
-            const active = channel === selectedPackage.channel
-            const rendition = active ? selectedRenditions[0]?.name || "Rendition non exposée" : "Non requise dans ce package"
-            return <div className={styles.matrixRow} role="row" key={channel}><span><strong>{channel}</strong><small>{active ? "Canal autorisé dans ce package" : "Aucune adaptation persistée"}</small></span><span><strong>{rendition}</strong><small>{active ? `${selectedRenditions.length} rendition(s)` : "—"}</small></span><span><strong>{active ? "Modèle non exposé" : "—"}</strong><small>{active ? "Copy, CTA et tracking restent un boundary explicite." : ""}</small></span><span><strong>{active ? packageDossier.audience || "Audience non exposée" : "—"}</strong><small>{active ? packageDossier.city || "Géographie non exposée" : ""}</small></span><span><strong>{active ? formatDate(selectedPackage.scheduled_at, true) : "—"}</strong><small>{active && !selectedPackage.scheduled_at ? "Horaire requis" : ""}</small></span><span><Pill tone={active ? "info" : "neutral"}>{active ? statusLabel(selectedPackage.status) : "HORS PACKAGE"}</Pill></span></div>
-          })}</div>
-        </> : <Empty title="Package non sélectionné" detail="Sélectionnez un package pour inspecter sa constitution et son pre-flight."/>}
+        {selectedPackage && selectedDossier ? <>
+          <header className={styles.caseHeader}><div><small>{selectedDossier.content_code} · PACKAGE {selectedPackage.id.slice(0, 8)}</small><h2>{selectedDossier.title}</h2><p>{selectedPackage.channel} · {formatDate(selectedPackage.scheduled_at, true)} · {executionModeLabel(selectedManifest?.executionMode || "manual")}</p></div><div className={styles.caseMeta}><Pill tone={tone(selectedPackage.status) as ReleaseTone}>{statusLabel(selectedPackage.status)}</Pill><Pill tone={selectedDossier.source_state === "secured" ? "success" : "danger"}>SOURCE {selectedDossier.source_state}</Pill><Pill tone={selectedScore === 100 ? "success" : "warning"}>{selectedScore}% readiness</Pill></div></header>
+          <div className={styles.channelMatrix} role="table" aria-label="Constitution du package"><div className={styles.matrixHeader} role="row"><span>Canal</span><span>Renditions</span><span>Copy / CTA</span><span>Audience</span><span>Horaire</span><span>État</span></div><div className={styles.matrixRow} role="row"><span><strong>{selectedPackage.channel}</strong><small>{executionModeLabel(selectedManifest?.executionMode || "manual")}</small></span><span><strong>{selectedRenditions.length} rendition(s)</strong><small>{selectedRenditions.map((item) => `${item.name}: ${item.status}`).join(" · ") || "Aucune"}</small></span><span><strong>{selectedManifest?.copy || "Copy absent"}</strong><small>{selectedManifest?.cta ? `CTA: ${selectedManifest.cta}` : "CTA non confirmé"}</small></span><span><strong>{selectedManifest?.audience || selectedDossier.audience || "Non confirmée"}</strong><small>{selectedManifest?.geography || selectedDossier.city || "Géographie absente"}</small></span><span><strong>{formatDate(selectedPackage.scheduled_at, true)}</strong><small>{selectedManifest?.language || "Langue absente"}</small></span><span><Pill tone={selectedScore === 100 ? "success" : "warning"}>{selectedScore === 100 ? "PREFLIGHT COMPLET" : `${selectedBlockers.length} BLOCAGE(S)`}</Pill></span></div></div>
+          <div className={styles.releaseActions} style={{ marginTop: 14 }}><button type="button" className={styles.secondary} disabled={!(["draft", "ready"].includes(selectedPackage.status))} onClick={openEdit}><FileOutput/> Modifier la constitution</button><button type="button" className={styles.secondary} disabled={selectedPackage.status !== "draft" || selectedScore < 100 || Boolean(busy)} onClick={() => void declareReady()}><PackageCheck/> Déclarer prêt</button><button type="button" className={styles.primary} disabled={selectedPackage.status !== "ready" || Boolean(busy)} onClick={() => setAuthorizeOpen(true)}><ShieldCheck/> Autoriser la release</button><Link className={styles.quiet} href="/market-os/content-command-center/publishing">Publishing <ArrowRight/></Link></div>
+        </> : <Empty title="Package non sélectionné" detail="Sélectionnez un package pour inspecter la source, les adaptations et l’autorité."/>}
       </article>
     </section>
 
-    {selectedPackage && packageDossier ? <section className={styles.split}>
-      <article className={styles.section}>
-        <SectionTitle eyebrow="PRE-FLIGHT CHECKLIST" title="Readiness et autorisation" description="Le système contrôle uniquement les informations réellement persistées. Publisher, tracking et CTA restent signalés comme non modélisés."/>
-        <div className={styles.preflight}>{preflight.map((gate) => <div key={gate.label} className={`${styles.preflightItem} ${toneClass(gate.ok ? "success" : gate.label === "Publisher / tracking" ? "neutral" : "warning")}`}><span>{gate.ok ? <CheckCircle2/> : <CircleDashed/>}</span><div><strong>{gate.label}</strong><p>{gate.detail}</p></div><Pill tone={gate.ok ? "success" : gate.label === "Publisher / tracking" ? "neutral" : "warning"}>{gate.ok ? "PASS" : gate.label === "Publisher / tracking" ? "BOUNDARY" : "REQUIS"}</Pill></div>)}</div>
-        <div className={styles.releaseActions} style={{ marginTop: 12 }}><button type="button" className={styles.secondary} disabled={busy === selectedPackage.id} onClick={() => void advancePackage(selectedPackage, "ready")}><PackageCheck/> Marquer prêt</button><button type="button" className={styles.primary} disabled={!selectedReady || busy === selectedPackage.id} onClick={() => void advancePackage(selectedPackage, "scheduled")}><ShieldCheck/> Autoriser le handover</button><Link className={styles.quiet} href="/market-os/content-command-center/publishing"><ArrowRight/> Ouvrir Publishing</Link></div>
-      </article>
-
-      <aside className={styles.section}>
-        <SectionTitle eyebrow="SOURCE, COPY & ASSET AUTHORITY" title="Frontières de vérité" description="Distribution résume les autorités existantes sans simuler ce que le backend n’expose pas."/>
-        <div className={styles.inspectionRail}>
-          <div className={`${styles.truthCard} ${toneClass(packageDossier.source_state === "secured" ? "success" : "danger")}`}><span><Fingerprint/></span><div><strong>Source canonique</strong><p>{packageDossier.source_state === "secured" ? "Sécurisée selon le dossier." : "Bloquante: ouvrir Source Vault."}</p></div></div>
-          <div className={`${styles.truthCard} ${toneClass(selectedRenditions.length ? "success" : "warning")}`}><span><FileOutput/></span><div><strong>Renditions</strong><p>{selectedRenditions.length ? selectedRenditions.map((item) => item.name).filter(Boolean).join(", ") : "Aucune rendition persistée."}</p></div></div>
-          <div className={`${styles.truthCard} ${toneClass("neutral")}`}><span><Link2/></span><div><strong>Tracking & CTA</strong><p>Non exposés dans le modèle PublicationPackage actuel. Aucun lien de campagne n’est fabriqué.</p></div></div>
-          <div className={`${styles.truthCard} ${toneClass("info")}`}><span><Users/></span><div><strong>Audience</strong><p>{packageDossier.audience || "Audience non exposée"} · {packageDossier.city || "Géographie non exposée"}</p></div></div>
-        </div>
-      </aside>
+    {selectedPackage && selectedDossier ? <section className={styles.split}>
+      <article className={styles.section}><SectionTitle eyebrow="PRE-FLIGHT & BLOCKING REQUIREMENTS" title="Ce qui autorise — ou interdit — la release" description="Chaque blocage dérive des champs persistés. Aucun score AI ni provider fictif."/><div className={styles.preflight}>{[
+        { label: "Validation et source", ok: selectedDossier.source_state === "secured", detail: "Source canonique sécurisée et dossier post-validation." },
+        { label: "Version et renditions", ok: selectedRenditions.length > 0 && selectedRenditions.every((item) => !item.required || ["ready", "approved", "available"].includes(item.status)), detail: selectedRenditions.length ? selectedRenditions.map((item) => `${item.name}: ${item.status}`).join(" · ") : "Aucune rendition déclarée." },
+        { label: "Copy, CTA, audience", ok: Boolean(selectedManifest?.copy && selectedManifest?.audience && (selectedManifest?.cta || ["print", "internal"].includes(selectedManifest?.executionMode || "manual"))), detail: "Constitution spécifique au canal, sans contenu inventé." },
+        { label: "Horaire et preuve attendue", ok: Boolean(selectedPackage.scheduled_at && selectedManifest?.proofExpectation), detail: `${formatDate(selectedPackage.scheduled_at, true)} · ${selectedManifest?.proofExpectation || "Preuve non définie"}` },
+        { label: "Mode d’exécution honnête", ok: selectedManifest?.executionMode !== "unsupported", detail: executionModeLabel(selectedManifest?.executionMode || "manual") },
+      ].map((gate) => <div key={gate.label} className={`${styles.preflightItem} ${toneClass(gate.ok ? "success" : "warning")}`}><span>{gate.ok ? <CheckCircle2/> : <CircleDashed/>}</span><div><strong>{gate.label}</strong><p>{gate.detail}</p></div><Pill tone={gate.ok ? "success" : "warning"}>{gate.ok ? "PASS" : "BLOQUANT"}</Pill></div>)}</div>{selectedBlockers.length ? <div className={styles.collisionGrid} style={{ marginTop: 12 }}>{selectedBlockers.map((blocker) => <article className={`${styles.collisionCard} ${toneClass("danger")}`} key={blocker}><span><AlertTriangle/></span><div><strong>Release interdite</strong><p>{blocker}</p></div></article>)}</div> : null}</article>
+      <aside className={styles.section}><SectionTitle eyebrow="SOURCE & AUTHORITY BOUNDARY" title="Frontières de vérité" description="Les données non persistées restent explicitement absentes."/><div className={styles.inspectionRail}><div className={`${styles.truthCard} ${toneClass("success")}`}><span><Fingerprint/></span><div><strong>Source canonique</strong><p>{selectedManifest?.canonicalSourceId ? `Source ${selectedManifest.canonicalSourceId.slice(0, 8)} · version ${selectedManifest.canonicalSourceVersion || "—"}` : "La source sera capturée lors de la sauvegarde du manifest."}</p></div></div><div className={`${styles.truthCard} ${toneClass(selectedManifest?.trackingReference ? "success" : "neutral")}`}><span><Link2/></span><div><strong>Tracking</strong><p>{selectedManifest?.trackingReference || "Aucune référence de tracking déclarée; aucune n’est fabriquée."}</p></div></div><div className={`${styles.truthCard} ${toneClass("info")}`}><span><Users/></span><div><strong>Audience / géographie</strong><p>{selectedManifest?.audience || "—"} · {selectedManifest?.geography || "—"}</p></div></div></div></aside>
     </section> : null}
 
-    <section className={styles.section}>
-      <SectionTitle eyebrow="COLLISION & PRESSURE RADAR" title="Conflits déterministes" description="Même canal et même date constituent la seule collision calculée ici. Aucune pression audience ou prédiction AI n’est inventée."/>
-      <div className={styles.collisionGrid}>{collisions.map((collision) => <article key={collision.key} className={styles.collisionCard}><span><AlertTriangle/></span><div><strong>{collision.channel} · {collision.day}</strong><p>{collision.packages.length} packages partagent le même canal et la même date. Inspectez les horaires et la séquence avant autorisation.</p></div></article>)}{!collisions.length ? <Empty title="Aucune collision déterministe" detail="Aucun canal ne contient plusieurs packages sur la même date selon les données actuelles."/> : null}</div>
-    </section>
+    <section className={styles.section}><SectionTitle eyebrow="COLLISION & SCHEDULE RUNWAY" title="Conflits déterministes et handover" description="La collision existe uniquement lorsque le même canal partage exactement la même minute persistée."/><div className={styles.collisionGrid}>{collisions.map((collision) => <article key={collision.key} className={`${styles.collisionCard} ${toneClass("danger")}`}><span><AlertTriangle/></span><div><strong>{collision.channel} · {formatDate(collision.scheduledAt, true)}</strong><p>{collision.packages.length} packages se disputent le même créneau exact.</p></div></article>)}{!collisions.length ? <Empty title="Aucune collision exacte" detail="Aucun package ne partage actuellement le même canal et la même minute."/> : null}</div><div className={styles.runway} style={{ marginTop: 12 }}>{packages.filter((pkg) => pkg.scheduled_at).sort((a, b) => String(a.scheduled_at).localeCompare(String(b.scheduled_at))).map((pkg) => { const dossier = snapshot?.dossiers.find((item) => item.id === pkg.dossier_id); return <article className={styles.runwayItem} key={pkg.id}><time>{formatDate(pkg.scheduled_at, true)}</time><span><strong>{dossier?.title || "Dossier"}</strong><small>{pkg.channel} · {packageDominantAction(pkg, dossier)}</small></span><Pill tone={tone(pkg.status) as ReleaseTone}>{statusLabel(pkg.status)}</Pill><Pill tone={packageReadiness(pkg, dossier) === 100 ? "success" : "warning"}>{packageReadiness(pkg, dossier)}%</Pill><Link href="/market-os/content-command-center/publishing">Publishing <ArrowRight/></Link></article>})}</div></section>
 
-    <section className={styles.section}>
-      <SectionTitle eyebrow="SCHEDULE RUNWAY" title="Handover vers Publishing Operations" description="Le runway montre l’horaire, le canal, la source et l’état de transmission."/>
-      <div className={styles.runway}>{packages.filter((pkg) => pkg.scheduled_at).sort((a, b) => String(a.scheduled_at).localeCompare(String(b.scheduled_at))).map((pkg) => { const dossier = snapshot?.dossiers.find((item) => item.id === pkg.dossier_id); return <article className={styles.runwayItem} key={pkg.id}><time>{formatDate(pkg.scheduled_at, true)}</time><span><strong>{dossier?.title || "Dossier"}</strong><small>{dossier?.content_code || pkg.dossier_id}</small></span><Pill tone="info">{pkg.channel}</Pill><Pill tone={tone(pkg.status) as ReleaseTone}>{statusLabel(pkg.status)}</Pill><Link href="/market-os/content-command-center/publishing">Publishing <ArrowRight/></Link></article>})}{!packages.some((pkg) => pkg.scheduled_at) ? <Empty title="Runway vide" detail="Aucun package ne possède encore de date persistée."/> : null}</div>
-    </section>
-
-    <Modal open={createOpen} eyebrow="PACKAGE BUILDER" title="Créer un package de distribution gouverné" onClose={() => setCreateOpen(false)} footer={<><button type="button" className={styles.secondary} onClick={() => setCreateOpen(false)}>Annuler</button><button type="button" className={styles.primary} disabled={busy === "create" || !form.dossierId || !form.channel} onClick={() => void createPackage()}><Send/> Créer le package</button></>}>
+    <Modal open={builderOpen} eyebrow={editMode ? "PACKAGE ENGINEERING" : "GOVERNED PACKAGE BUILDER"} title={editMode ? "Modifier la constitution avant autorisation" : "Constituer un package de distribution"} onClose={() => setBuilderOpen(false)} footer={<><button type="button" className={styles.secondary} onClick={() => setBuilderOpen(false)}>Annuler</button><button type="button" className={styles.primary} disabled={Boolean(busy) || !form.dossierId || !form.channel} onClick={() => void savePackage()}><Send/> Enregistrer sans publier</button></>}>
       <div className={styles.formGrid}>
-        <Field label="Dossier source" wide><select value={form.dossierId} onChange={(event) => setForm({ ...form, dossierId: event.target.value })}><option value="">Sélectionner…</option>{eligibleDossiers.map((dossier) => <option key={dossier.id} value={dossier.id}>{dossier.content_code} · {dossier.title}</option>)}</select></Field>
-        <Field label="Canal"><select value={form.channel} onChange={(event) => setForm({ ...form, channel: event.target.value })}>{channels.map((channel) => <option key={channel}>{channel}</option>)}</select></Field>
-        <Field label="Horaire"><input type="datetime-local" value={form.scheduledAt} onChange={(event) => setForm({ ...form, scheduledAt: event.target.value })}/></Field>
-        <Field label="Renditions requises — une par ligne" wide><textarea rows={7} value={form.renditions} onChange={(event) => setForm({ ...form, renditions: event.target.value })}/></Field>
+        <Field label="Dossier source" wide><select disabled={editMode} value={form.dossierId} onChange={(event) => { const dossier = eligibleDossiers.find((item) => item.id === event.target.value); setForm({ ...form, dossierId: event.target.value, audience: dossier?.audience || form.audience, geography: dossier?.city || form.geography, language: dossier?.language || form.language, cta: dossier?.cta || form.cta }) }}><option value="">Sélectionner…</option>{eligibleDossiers.map((dossier) => <option key={dossier.id} value={dossier.id}>{dossier.content_code} · {dossier.title}</option>)}</select></Field>
+        <Field label="Canal"><select disabled={editMode} value={form.channel} onChange={(event) => setForm({ ...form, channel: event.target.value, executionMode: event.target.value === "Print" ? "print" : event.target.value === "Internal Workspace" ? "internal" : "manual" })}>{channels.map((channel) => <option key={channel}>{channel}</option>)}</select></Field>
+        <Field label="Horaire de release"><input type="datetime-local" value={form.scheduledAt} onChange={(event) => setForm({ ...form, scheduledAt: event.target.value })}/></Field>
+        <Field label="Mode d’exécution"><select value={form.executionMode} onChange={(event) => setForm({ ...form, executionMode: event.target.value as Bulk6ExecutionMode })}><option value="manual">Exécution manuelle contrôlée</option><option value="print">Handover print / physique</option><option value="internal">Release interne</option><option value="unsupported">Provider non supporté — bloquant</option></select></Field>
+        <Field label="Langue"><input value={form.language} onChange={(event) => setForm({ ...form, language: event.target.value })}/></Field>
+        <Field label="Audience"><input value={form.audience} onChange={(event) => setForm({ ...form, audience: event.target.value })}/></Field>
+        <Field label="Géographie"><input value={form.geography} onChange={(event) => setForm({ ...form, geography: event.target.value })}/></Field>
+        <Field label="Tracking / référence campagne"><input value={form.trackingReference} onChange={(event) => setForm({ ...form, trackingReference: event.target.value })} placeholder="Optionnel si réellement disponible"/></Field>
+        <Field label="Copy canal" wide><textarea rows={5} value={form.copy} onChange={(event) => setForm({ ...form, copy: event.target.value })}/></Field>
+        <Field label="CTA"><input value={form.cta} onChange={(event) => setForm({ ...form, cta: event.target.value })}/></Field>
+        <Field label="Preuve attendue"><input value={form.proofExpectation} onChange={(event) => setForm({ ...form, proofExpectation: event.target.value })}/></Field>
+        <Field label="Renditions requises — une par ligne" wide><textarea rows={6} value={form.renditions} onChange={(event) => setForm({ ...form, renditions: event.target.value })}/></Field>
+        <Field label="État réel des renditions" wide><select value={form.renditionsReady ? "ready" : "required"} onChange={(event) => setForm({ ...form, renditionsReady: event.target.value === "ready" })}><option value="required">Déclarées mais pas encore prêtes</option><option value="ready">Toutes vérifiées comme prêtes par l’opérateur</option></select></Field>
+        <Field label="Note de release" wide><textarea rows={4} value={form.releaseNote} onChange={(event) => setForm({ ...form, releaseNote: event.target.value })}/></Field>
       </div>
     </Modal>
+
+    <Modal open={authorizeOpen} eyebrow="HUMAN RELEASE AUTHORITY" title="Autoriser le handover vers Publishing" onClose={() => setAuthorizeOpen(false)} footer={<><button type="button" className={styles.secondary} onClick={() => setAuthorizeOpen(false)}>Annuler</button><button type="button" className={styles.primary} disabled={!authorityReason.trim() || Boolean(busy)} onClick={() => void authorizeRelease()}><ShieldCheck/> Autoriser formellement</button></>}><div className={styles.authorityBoundary}><ShieldCheck/><div><strong>Autorité résolue côté serveur</strong><p>Le rôle authentifié et la permission <code>govern</code> déterminent l’autorité. Aucun rôle librement saisi n’est accepté.</p></div></div><div className={styles.formGrid}><Field label="Décision et raison" wide><textarea rows={6} value={authorityReason} onChange={(event) => setAuthorityReason(event.target.value)} placeholder="Pourquoi ce package, cette version, ce canal et cet horaire sont autorisés."/></Field></div></Modal>
   </main>
 }

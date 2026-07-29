@@ -10,6 +10,7 @@ import SourceVaultWorkspace from "./SourceVaultWorkspace"
 import DistributionWorkspace from "./DistributionWorkspace"
 import AiFoundryWorkspace from "./AiFoundryWorkspace"
 import DossierWorkspace from "./DossierWorkspace"
+import { Bulk7AttributionChamber, Bulk7ImpactObservatory, Bulk7LearningChamber, Bulk7OptimizationFoundry } from "../experience-bulk7/Bulk7ImpactWorkspaces"
 import type { HeadquartersView } from "./client"
 
 export default function ContentCommandHeadquartersWorkspace({ view, dossierId }: { view: HeadquartersView; dossierId?: string }) {
@@ -22,6 +23,10 @@ export default function ContentCommandHeadquartersWorkspace({ view, dossierId }:
   if (view === "validation") return <ValidationWorkspace />
   if (view === "source-vault") return <SourceVaultWorkspace />
   if (view === "distribution") return <DistributionWorkspace />
+  if (view === "performance") return <Bulk7ImpactObservatory />
+  if (view === "attribution") return <Bulk7AttributionChamber />
+  if (view === "optimization") return <Bulk7OptimizationFoundry />
+  if (view === "learning") return <Bulk7LearningChamber />
   if (view === "ai-foundry") return <AiFoundryWorkspace />
   if (view === "dossier" && dossierId) return <DossierWorkspace dossierId={dossierId} />
   return <DashboardWorkspace />

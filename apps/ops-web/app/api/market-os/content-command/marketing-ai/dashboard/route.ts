@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { apiErrorResponse, requireMarketingAiUser } from '@/lib/market-os/marketing-ai/auth'
 import { getMarketingAiConfig } from '@/lib/market-os/marketing-ai/config'
+import { getMarketAiRuntimeStatus } from '@/lib/market-os/ai-runtime/gateway'
 import { getMarketingAiDashboard } from '@/lib/market-os/marketing-ai/repository'
 
 export const dynamic = 'force-dynamic'
@@ -8,7 +9,16 @@ export async function GET() {
   try {
     await requireMarketingAiUser('view')
     const config = getMarketingAiConfig()
-    const snapshot = await getMarketingAiDashboard({ enabled: config.enabled, configured: Boolean(config.apiKey), model: config.primaryModel, searchGrounding: config.searchGroundingEnabled, externalActionsAllowed: false })
-    return NextResponse.json({ ok: true, snapshot })
+    const runtime = await getMarketAiRuntimeStatus(false)
+    const structured = runtime.capabilities.find((item) => item.capability === 'structured_content')
+    const research = runtime.capabilities.find((item) => item.capability === 'web_research')
+    const snapshot = await getMarketingAiDashboard({
+      enabled: config.enabled,
+      configured: Boolean(structured?.configured || research?.configured),
+      model: structured?.model || config.primaryModel,
+      searchGrounding: Boolean(research?.configured),
+      externalActionsAllowed: false,
+    })
+    return NextResponse.json({ ok: true, snapshot: { ...snapshot, runtime } })
   } catch (error) { return apiErrorResponse(error) }
 }

@@ -1,0 +1,5 @@
+{
+  "scenarioKey": "rejection",
+  "purpose": "Prove a hard disqualifier blocks case/pipeline creation while preserving evidence and learning.",
+  "expected": { "caseCreated": false, "pipelineCreated": false, "rejectionReasonRequired": true }
+}

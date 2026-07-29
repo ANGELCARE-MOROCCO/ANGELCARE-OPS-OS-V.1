@@ -1,0 +1,21 @@
+{
+  "package": "AC_CAPITAL_OS_EXECUTIVE_ORCHESTRATOR_COMMAND_WORKBENCH_08",
+  "version": "08",
+  "sql_required": false,
+  "payload_files": 6,
+  "capabilities": [
+    "clickable-orchestrator-kpis",
+    "workflow-inspection-and-control",
+    "agent-registry-control",
+    "event-processing-retry-cancel",
+    "integrity-resolution",
+    "founder-approval-decisions",
+    "doctrine-inspection",
+    "command-result-evidence",
+    "resilient-snapshot-loading",
+    "async-supabase-client-repair",
+    "body-level-overlay-portals",
+    "global-overhead-offset",
+    "gpu-safe-overlays"
+  ]
+}

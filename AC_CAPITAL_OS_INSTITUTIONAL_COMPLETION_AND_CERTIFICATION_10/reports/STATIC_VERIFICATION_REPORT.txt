@@ -1,0 +1,34 @@
+AC CAPITAL OS IC10 STATIC VERIFICATION REPORT
+Generated: 2026-07-29
+
+AC_CAPITAL_OS_INSTITUTIONAL_COMPLETION_AND_CERTIFICATION_10_INSTALLED
+Repository root: /mnt/data/ic10_work/installtest
+Files installed: 16
+Existing files backed up: 7
+Backup: .angelcare_backups/ac-capital-ic10-2026-07-29T18-20-07-316Z
+SQL copied but NOT executed.
+No TypeScript, build, Git, provider request, commit, push or deployment command was performed.
+
+AC_CAPITAL_OS_INSTITUTIONAL_COMPLETION_AND_CERTIFICATION_10_STATIC_VERIFIED
+Installed payload hashes verified: 16
+TypeScript/TSX syntax-transpiled: 12
+PASS body-level overhead-safe GPU-safe overlays
+PASS atomic exact-version approval request and decision contracts
+PASS atomic proof-controlled submission contract
+PASS server-authoritative read-only certification RLS contract
+PASS honest five-state certification UI
+
+ADDITIONAL GATES
+PASS all package scripts node --check
+PASS TypeScript/TSX isolated syntax: 12 files, 0 errors
+PASS local import resolution: 0 missing
+PASS CSS-module resolution: 0 missing
+PASS SQL lexical/dollar-quote/self-comparison lint: 4 files, 0 errors
+PASS static design-contract audit: 16 distinct workspace interfaces, 0 duplicate CSS hashes
+
+NOT EXECUTED
+Database migration
+Live browser acceptance
+Live provider calls
+Production build
+Git actions or deployment

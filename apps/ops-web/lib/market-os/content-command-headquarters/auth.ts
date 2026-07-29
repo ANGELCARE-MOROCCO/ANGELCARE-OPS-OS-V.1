@@ -1,6 +1,6 @@
 import { getCurrentAppUser } from '@/lib/auth/session'
 
-export type ContentHeadquartersPermission = 'view' | 'operate' | 'review' | 'govern' | 'configure_ai' | 'manage_sources' | 'publish'
+export type ContentHeadquartersPermission = 'view' | 'operate' | 'review' | 'govern' | 'configure_ai' | 'manage_sources' | 'publish' | 'edit' | 'cancel' | 'archive' | 'restore' | 'delete' | 'purge' | 'reopen' | 'supersede'
 
 const privilegedRoles = new Set(['ceo', 'owner', 'direction', 'admin', 'super_admin', 'root', 'root_admin'])
 const marketingRoles = new Set(['marketing_director', 'marketing_manager', 'market_manager', 'brand_manager', 'content_manager', 'content_strategist', 'creative_director'])
@@ -21,6 +21,10 @@ export async function requireContentHeadquartersUser(permission: ContentHeadquar
     || (permission === 'configure_ai' && ['marketing_director', 'marketing_manager'].includes(role))
     || (permission === 'manage_sources' && ['marketing_director', 'marketing_manager', 'content_manager', 'brand_manager'].includes(role))
     || (permission === 'publish' && ['marketing_director', 'marketing_manager', 'content_manager', 'publishing_officer', 'community_manager'].includes(role))
+    || (['edit', 'cancel', 'archive', 'restore', 'reopen'].includes(permission) && (marketingRoles.has(role) || operatorRoles.has(role)))
+    || (permission === 'delete' && ['marketing_director', 'marketing_manager', 'content_manager'].includes(role))
+    || (permission === 'supersede' && ['marketing_director', 'marketing_manager'].includes(role))
+    || (permission === 'purge' && privilegedRoles.has(role))
   if (!allowed) throw new Error('FORBIDDEN')
   return {
     id: String(record.id || ''),
@@ -36,9 +40,9 @@ export function contentHeadquartersApiError(error: unknown) {
   const status = message === 'UNAUTHENTICATED' ? 401
     : message === 'FORBIDDEN' ? 403
     : message.includes('NOT_FOUND') ? 404
-    : message.includes('CONFLICT') || message.includes('ALREADY_') || message.includes('LIMIT_REACHED') ? 409
+    : message.includes('CONFLICT') || message.includes('ALREADY_') || message.includes('LIMIT_REACHED') || message.startsWith('ACTION_BLOCKED') ? 409
     : message.includes('MISSING') || message.includes('UNAVAILABLE') || message.includes('NOT_INSTALLED') ? 503
-    : message.startsWith('INVALID_') || message.endsWith('_REQUIRED') ? 400
+    : message.startsWith('INVALID_') || message.endsWith('_REQUIRED') || message.includes('CONFIRMATION_MISMATCH') ? 400
     : 500
   return Response.json({ ok: false, error: message }, { status })
 }

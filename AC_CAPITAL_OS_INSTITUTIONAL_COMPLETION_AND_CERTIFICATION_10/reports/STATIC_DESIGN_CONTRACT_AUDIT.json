@@ -1,0 +1,333 @@
+{
+  "generatedAt": "2026-07-29T18:16:42.111Z",
+  "scope": "Static design-contract audit only; not human visual certification.",
+  "workspaceCount": 16,
+  "passed": 16,
+  "failed": 0,
+  "exactDuplicateCssGroups": [],
+  "results": [
+    {
+      "key": "orchestrator",
+      "component": "apps/ops-web/components/ac-capital-os/pages/orchestrator/OrchestratorPage.tsx",
+      "css": "apps/ops-web/components/ac-capital-os/pages/orchestrator/orchestrator.module.css",
+      "componentExists": true,
+      "cssExists": true,
+      "componentBytes": 54010,
+      "cssBytes": 21430,
+      "usesShell": true,
+      "usesDedicatedCssModule": true,
+      "interactiveTokens": [
+        "onClick",
+        "button",
+        "Drawer",
+        "Dialog",
+        "fetch(",
+        "Link"
+      ],
+      "cssSha256": "932e24c248f32e580ed74c61ed693e357fb7dee367feb446cef43e0f891e045c",
+      "staticContractPassed": true
+    },
+    {
+      "key": "radar",
+      "component": "apps/ops-web/components/ac-capital-os/pages/radar/RadarPage.tsx",
+      "css": "apps/ops-web/components/ac-capital-os/pages/radar/radar.module.css",
+      "componentExists": true,
+      "cssExists": true,
+      "componentBytes": 54715,
+      "cssBytes": 12961,
+      "usesShell": true,
+      "usesDedicatedCssModule": true,
+      "interactiveTokens": [
+        "onClick",
+        "button",
+        "Drawer",
+        "Dialog",
+        "useAction",
+        "Link"
+      ],
+      "cssSha256": "473f3db0b3e484af1dbcb9890f429624f378c7359112e561333527a5a36a8784",
+      "staticContractPassed": true
+    },
+    {
+      "key": "funders",
+      "component": "apps/ops-web/components/ac-capital-os/pages/funders/FundersPage.tsx",
+      "css": "apps/ops-web/components/ac-capital-os/pages/funders/funders.module.css",
+      "componentExists": true,
+      "cssExists": true,
+      "componentBytes": 22291,
+      "cssBytes": 4535,
+      "usesShell": true,
+      "usesDedicatedCssModule": true,
+      "interactiveTokens": [
+        "onClick",
+        "button",
+        "Drawer",
+        "Dialog",
+        "useAction"
+      ],
+      "cssSha256": "fc4619269b3254ceb0bda469812c40c5eccd091767281ff88e10f2db333f13fc",
+      "staticContractPassed": true
+    },
+    {
+      "key": "qualification",
+      "component": "apps/ops-web/components/ac-capital-os/pages/qualification/QualificationPage.tsx",
+      "css": "apps/ops-web/components/ac-capital-os/pages/qualification/qualification.module.css",
+      "componentExists": true,
+      "cssExists": true,
+      "componentBytes": 21771,
+      "cssBytes": 5596,
+      "usesShell": true,
+      "usesDedicatedCssModule": true,
+      "interactiveTokens": [
+        "onClick",
+        "button",
+        "Drawer",
+        "Dialog",
+        "useAction"
+      ],
+      "cssSha256": "796e3e056dd31c7c6b4ce964743cde52d5f2930e370954d70aee256f124f1e1f",
+      "staticContractPassed": true
+    },
+    {
+      "key": "data-room",
+      "component": "apps/ops-web/components/ac-capital-os/pages/data-room/DataRoomPage.tsx",
+      "css": "apps/ops-web/components/ac-capital-os/pages/data-room/data-room.module.css",
+      "componentExists": true,
+      "cssExists": true,
+      "componentBytes": 19185,
+      "cssBytes": 4408,
+      "usesShell": true,
+      "usesDedicatedCssModule": true,
+      "interactiveTokens": [
+        "onClick",
+        "button",
+        "Drawer",
+        "Dialog",
+        "useAction"
+      ],
+      "cssSha256": "90186b273694318e154259034d5cb53a823e9a4e7e9d9519f19feedf132aee8f",
+      "staticContractPassed": true
+    },
+    {
+      "key": "cases",
+      "component": "apps/ops-web/components/ac-capital-os/pages/cases/CasesPage.tsx",
+      "css": "apps/ops-web/components/ac-capital-os/pages/cases/cases.module.css",
+      "componentExists": true,
+      "cssExists": true,
+      "componentBytes": 24159,
+      "cssBytes": 4515,
+      "usesShell": true,
+      "usesDedicatedCssModule": true,
+      "interactiveTokens": [
+        "onClick",
+        "button",
+        "Drawer",
+        "Dialog",
+        "useAction"
+      ],
+      "cssSha256": "b4985c9802ce8065c63bd5d8ccff2ac0cb679bae4dfe947bf263470be2bea7ef",
+      "staticContractPassed": true
+    },
+    {
+      "key": "pipeline",
+      "component": "apps/ops-web/components/ac-capital-os/pages/pipeline/PipelinePage.tsx",
+      "css": "apps/ops-web/components/ac-capital-os/pages/pipeline/pipeline.module.css",
+      "componentExists": true,
+      "cssExists": true,
+      "componentBytes": 25348,
+      "cssBytes": 4369,
+      "usesShell": true,
+      "usesDedicatedCssModule": true,
+      "interactiveTokens": [
+        "onClick",
+        "button",
+        "Drawer",
+        "Dialog",
+        "useAction"
+      ],
+      "cssSha256": "56ef007681c52ceec4eaf8e67cb978a04acfe1e8857b9f9122013cae6fdda52f",
+      "staticContractPassed": true
+    },
+    {
+      "key": "approvals",
+      "component": "apps/ops-web/components/ac-capital-os/pages/approvals/ApprovalsPage.tsx",
+      "css": "apps/ops-web/components/ac-capital-os/pages/approvals/approvals.module.css",
+      "componentExists": true,
+      "cssExists": true,
+      "componentBytes": 12154,
+      "cssBytes": 3386,
+      "usesShell": true,
+      "usesDedicatedCssModule": true,
+      "interactiveTokens": [
+        "onClick",
+        "button",
+        "Drawer",
+        "Dialog",
+        "useAction"
+      ],
+      "cssSha256": "a1dbacfa645b7d3b02711db4d809167f3f2db3cf2c45c12e35cd115d5951b3f8",
+      "staticContractPassed": true
+    },
+    {
+      "key": "coordinator",
+      "component": "apps/ops-web/components/ac-capital-os/pages/coordinator/CoordinatorPage.tsx",
+      "css": "apps/ops-web/components/ac-capital-os/pages/coordinator/coordinator.module.css",
+      "componentExists": true,
+      "cssExists": true,
+      "componentBytes": 20374,
+      "cssBytes": 3571,
+      "usesShell": true,
+      "usesDedicatedCssModule": true,
+      "interactiveTokens": [
+        "onClick",
+        "button",
+        "Drawer",
+        "Dialog",
+        "useAction"
+      ],
+      "cssSha256": "dd55607b55df9138a67210e30f2f968a7ccfa3ceea05ca50db58d4de3f1f96a5",
+      "staticContractPassed": true
+    },
+    {
+      "key": "artifacts",
+      "component": "apps/ops-web/components/ac-capital-os/pages/artifacts/ArtifactsPage.tsx",
+      "css": "apps/ops-web/components/ac-capital-os/pages/artifacts/artifacts.module.css",
+      "componentExists": true,
+      "cssExists": true,
+      "componentBytes": 13963,
+      "cssBytes": 6907,
+      "usesShell": true,
+      "usesDedicatedCssModule": true,
+      "interactiveTokens": [
+        "onClick",
+        "button",
+        "Drawer",
+        "Dialog",
+        "fetch(",
+        "Link"
+      ],
+      "cssSha256": "f7e4148f8e31bbbb81a53035e4441be7c0cffef81c75e38025710170cb88ba23",
+      "staticContractPassed": true
+    },
+    {
+      "key": "reports",
+      "component": "apps/ops-web/components/ac-capital-os/pages/reports/ReportsPage.tsx",
+      "css": "apps/ops-web/components/ac-capital-os/pages/reports/reports.module.css",
+      "componentExists": true,
+      "cssExists": true,
+      "componentBytes": 14973,
+      "cssBytes": 4455,
+      "usesShell": true,
+      "usesDedicatedCssModule": true,
+      "interactiveTokens": [
+        "onClick",
+        "button",
+        "Drawer",
+        "Dialog",
+        "useAction"
+      ],
+      "cssSha256": "be32ff06c39f285ae44a2d95f00b88b554c2fb10239b033945f045a25a405775",
+      "staticContractPassed": true
+    },
+    {
+      "key": "doctrine",
+      "component": "apps/ops-web/components/ac-capital-os/pages/doctrine/DoctrinePage.tsx",
+      "css": "apps/ops-web/components/ac-capital-os/pages/doctrine/doctrine.module.css",
+      "componentExists": true,
+      "cssExists": true,
+      "componentBytes": 17860,
+      "cssBytes": 4038,
+      "usesShell": true,
+      "usesDedicatedCssModule": true,
+      "interactiveTokens": [
+        "onClick",
+        "button",
+        "Drawer",
+        "Dialog",
+        "useAction"
+      ],
+      "cssSha256": "2943fce3479948a4a40a338e975130f2587f676053413db993bb44d51aaa6641",
+      "staticContractPassed": true
+    },
+    {
+      "key": "strategy",
+      "component": "apps/ops-web/components/ac-capital-os/pages/strategy/StrategyPage.tsx",
+      "css": "apps/ops-web/components/ac-capital-os/pages/strategy/strategy.module.css",
+      "componentExists": true,
+      "cssExists": true,
+      "componentBytes": 19589,
+      "cssBytes": 4850,
+      "usesShell": true,
+      "usesDedicatedCssModule": true,
+      "interactiveTokens": [
+        "onClick",
+        "button",
+        "Drawer",
+        "Dialog",
+        "useAction"
+      ],
+      "cssSha256": "5bc2a195d2ca7dbb97027802d6f0cb9120d8352c42eba596f179f3eb5764ca30",
+      "staticContractPassed": true
+    },
+    {
+      "key": "learning",
+      "component": "apps/ops-web/components/ac-capital-os/pages/learning/LearningPage.tsx",
+      "css": "apps/ops-web/components/ac-capital-os/pages/learning/learning.module.css",
+      "componentExists": true,
+      "cssExists": true,
+      "componentBytes": 13072,
+      "cssBytes": 3672,
+      "usesShell": true,
+      "usesDedicatedCssModule": true,
+      "interactiveTokens": [
+        "onClick",
+        "button",
+        "Drawer",
+        "Dialog",
+        "useAction",
+        "Link"
+      ],
+      "cssSha256": "41c920a1a2bf8661e44ae02da2258ca9b017030cdf260e880ff6ba72d402084c",
+      "staticContractPassed": true
+    },
+    {
+      "key": "ai-operations",
+      "component": "apps/ops-web/components/ac-capital-os/pages/ai-control/AiOperationsPage.tsx",
+      "css": "apps/ops-web/components/ac-capital-os/pages/ai-control/ai-operations.module.css",
+      "componentExists": true,
+      "cssExists": true,
+      "componentBytes": 57428,
+      "cssBytes": 13231,
+      "usesShell": true,
+      "usesDedicatedCssModule": true,
+      "interactiveTokens": [
+        "onClick",
+        "button",
+        "Drawer"
+      ],
+      "cssSha256": "f3be4b0dfb9e77d44e4369dc14929ae9c44260d36019758a0c8cc21744e41f6a",
+      "staticContractPassed": true
+    },
+    {
+      "key": "certification",
+      "component": "apps/ops-web/components/ac-capital-os/pages/certification/CertificationPage.tsx",
+      "css": "apps/ops-web/components/ac-capital-os/pages/certification/certification.module.css",
+      "componentExists": true,
+      "cssExists": true,
+      "componentBytes": 40568,
+      "cssBytes": 20735,
+      "usesShell": true,
+      "usesDedicatedCssModule": true,
+      "interactiveTokens": [
+        "onClick",
+        "button",
+        "Drawer",
+        "Dialog",
+        "fetch(",
+        "Link"
+      ],
+      "cssSha256": "f6dfc4b6af322e4fd40291b2bcfcb8c88244e59eba168abbdfa45a6d6c537761",
+      "staticContractPassed": true
+    }
+  ]
+}

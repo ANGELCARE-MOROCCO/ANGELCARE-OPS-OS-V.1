@@ -1,0 +1,35 @@
+{
+  "name": "AC CAPITAL OS MZ16 Final Institutional Command Experience",
+  "canonical_folder": "AC_CAPITAL_OS_MZ16_FINAL_INSTITUTIONAL_COMMAND_EXPERIENCE",
+  "created_at": "2026-07-28T03:10:38.635375+00:00",
+  "payload_files": [
+    "apps/ops-web/app/api/ac-capital-os/ai-command-center/run/route.ts",
+    "apps/ops-web/app/api/ac-capital-os/command-activity/route.ts",
+    "apps/ops-web/components/ac-capital-os/core/AcCapitalShell.tsx",
+    "apps/ops-web/components/ac-capital-os/core/FormParts.tsx",
+    "apps/ops-web/components/ac-capital-os/core/Overlay.tsx",
+    "apps/ops-web/components/ac-capital-os/core/WorkspaceParts.tsx",
+    "apps/ops-web/components/ac-capital-os/core/action-center.tsx",
+    "apps/ops-web/components/ac-capital-os/core/core.module.css",
+    "apps/ops-web/components/ac-capital-os/core/shell.module.css",
+    "apps/ops-web/components/ac-capital-os/core/types.ts",
+    "apps/ops-web/components/ac-capital-os/core/useAction.ts",
+    "apps/ops-web/components/ac-capital-os/core/useWorkspace.ts",
+    "apps/ops-web/components/ac-capital-os/core/workspace-parts.module.css",
+    "apps/ops-web/components/ac-capital-os/pages/ai-command/AiCommandPage.tsx",
+    "apps/ops-web/components/ac-capital-os/pages/ai-command/ai-command.module.css",
+    "apps/ops-web/components/ac-capital-os/pages/radar/RadarPage.tsx",
+    "apps/ops-web/components/ac-capital-os/pages/radar/radar.module.css",
+    "apps/ops-web/components/brand/AngelCareLogo.tsx"
+  ],
+  "sql": "supabase/migrations/20260728_ac_capital_os_mz16_institutional_command_experience.sql",
+  "static_verification_token": "AC_CAPITAL_OS_MZ16_INSTITUTIONAL_COMMAND_EXPERIENCE_STATIC_VERIFIED",
+  "database_verification_token": "AC_CAPITAL_OS_MZ16_DATABASE_VERIFIED",
+  "boundaries": [
+    "No production build",
+    "No automatic SQL execution",
+    "No git operations",
+    "No provider secret exposure",
+    "No autonomous external submission"
+  ]
+}

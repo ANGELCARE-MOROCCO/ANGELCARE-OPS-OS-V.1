@@ -29,12 +29,15 @@ export async function executeMarketingAiCommand(input: {
 }): Promise<MarketingAiRun> {
   const command = await findMarketingAiCommand(input.commandCode)
   if (!command) throw new Error(`COMMAND_NOT_FOUND:${input.commandCode}`)
-  if (command.status !== 'active' || !command.deployed) throw new Error(`COMMAND_NOT_DEPLOYED:${input.commandCode}`)
+  const runtimeContinuity = input.context.runtimeContinuity && typeof input.context.runtimeContinuity === 'object' ? input.context.runtimeContinuity as Record<string, unknown> : {}
+  const governedOverride = runtimeContinuity.overrideCommandState === true
+  if ((command.status !== 'active' || !command.deployed) && !governedOverride) throw new Error(`COMMAND_NOT_DEPLOYED:${input.commandCode}`)
   const authorityMode = input.authorityMode || command.authorityMode
   const serialized = JSON.stringify({ objective: input.objective, context: input.context, instruction: command.instruction })
-  if (EXTERNAL_ACTION_PATTERN.test(serialized)) {
-    await recordGuardrailEvent({ actorId: input.actor.id, commandCode: command.code, requestedAction: 'external_action', reason: 'External communication and publication are permanently blocked.', payload: { objective: input.objective } })
-    throw new Error('EXTERNAL_ACTION_BLOCKED')
+  const externalHandoffRequested = EXTERNAL_ACTION_PATTERN.test(serialized)
+  if (externalHandoffRequested) {
+    await recordGuardrailEvent({ actorId: input.actor.id, commandCode: command.code, requestedAction: 'external_handoff', reason: 'External execution converted into an internal preparation and human handoff.', payload: { objective: input.objective } })
+    input.context = { ...input.context, externalExecutionMode: 'prepare_human_handoff', externalHandoffRequested: true }
   }
   const config = getMarketingAiConfig()
   await assertMarketingAiRunBudget(input.actor.id, config.maxRunsPerHour, config.maxTokensPerDay)
@@ -44,10 +47,11 @@ export async function executeMarketingAiCommand(input: {
     for (const action of generated.output.internalActions) {
       if (EXTERNAL_ACTION_PATTERN.test(`${action.type} ${action.title} ${action.description} ${JSON.stringify(action.payload)}`)) {
         await recordGuardrailEvent({ actorId: input.actor.id, runId: run.id, commandCode: command.code, requestedAction: action.type, reason: 'Model proposed an external action; action removed.', payload: action.payload })
-        action.type = 'none'
-        action.title = 'Action externe bloquée'
-        action.description = 'La proposition a été neutralisée par la frontière d’autorité SANILA.'
-        action.payload = {}
+        const requested = action.type
+        action.type = requested.includes('publish') ? 'prepare_publishing_package' : 'create_task_plan'
+        action.title = `Handoff humain préparé · ${action.title}`
+        action.description = `${action.description} L’exécution externe n’est pas déclarée comme accomplie; un paquet ou une tâche humaine est créé pour continuer sans bloquer le dossier.`
+        action.payload = { ...action.payload, requestedExternalAction: requested, executionMode: 'human_handoff', overrideAvailable: true }
         action.requiresApproval = true
         generated.output.humanDecisionRequired = true
       }
@@ -58,7 +62,7 @@ export async function executeMarketingAiCommand(input: {
       await recordLearningEvent({ actorId: input.actor.id, runId: run.id, title: `Apprentissage · ${command.name}`, evidence: generated.output.evidence.map((item) => item.title), recommendation: generated.output.learningSignals.join('\n'), confidence: generated.output.confidence })
     }
     if (command.skillCode === 'LEARN-06' || input.forceGrounding) {
-      await recordResourceUpdate({ actorId: input.actor.id, runId: run.id, title: `Mise à jour ressources Gemini & marketing · ${new Date().toISOString().slice(0, 7)}`, domains: config.monthlyResourceDomains, summary: generated.output.executiveSummary, sources: generated.output.evidence, recommendations: generated.output.recommendations })
+      await recordResourceUpdate({ actorId: input.actor.id, runId: run.id, title: `Mise à jour ressources Tavily, OpenRouter & marketing · ${new Date().toISOString().slice(0, 7)}`, domains: config.monthlyResourceDomains, summary: generated.output.executiveSummary, sources: generated.output.evidence, recommendations: generated.output.recommendations })
     }
     return completed
   } catch (error) {

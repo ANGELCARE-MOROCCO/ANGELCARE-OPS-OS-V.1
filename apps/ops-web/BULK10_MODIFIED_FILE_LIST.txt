@@ -1,0 +1,14 @@
+app/api/market-os/content-command/marketing-ai/dashboard/route.ts
+app/api/market-os/content-command/marketing-ai/health/route.ts
+components/ai-provider-control/AiProviderControlWorkspace.tsx
+components/market-os/content-command/experience-bulk8/Bulk8AiExecutiveWorkspace.tsx
+components/market-os/content-command/experience-bulk8/bulk8-ai.module.css
+components/market-os/content-command/experience-bulk8/bulk8-ai.module.css.d.ts
+components/market-os/content-command/marketing-ai/MarketingAiDirectorWorkspace.tsx
+lib/ai-provider-control/repository.ts
+lib/market-os/content-command-headquarters/ai-supervision.ts
+lib/market-os/marketing-ai/auth.ts
+lib/market-os/marketing-ai/config.ts
+lib/market-os/marketing-ai/orchestrator.ts
+lib/market-os/marketing-ai/provider.ts
+lib/market-os/marketing-ai/types.ts

@@ -2,7 +2,7 @@ import crypto from 'node:crypto'
 import { createServiceClient } from '@/lib/supabase/server'
 import type { AiProviderSnapshot, JsonRecord } from './types'
 import { estimateAiCostUsd } from './governor'
-import { invokeGeminiProvider } from './gemini-runtime'
+import { invokeProviderHealth } from './provider-runtime'
 
 const now = () => new Date().toISOString()
 const clean = (value: unknown) => String(value ?? '').trim()
@@ -35,7 +35,7 @@ async function selectPhase5Safe(table: string, order = 'created_at', ascending =
 export async function loadAiProviderSnapshot(): Promise<AiProviderSnapshot> {
   const supabase = await admin()
   const since = new Date(); since.setHours(0, 0, 0, 0)
-  const [dossiers, pools, credentials, models, assignments, routingRules, quotas, usage, healthChecks, incidents, alerts, configVersions, audit, commandPolicies, schedules, governedRequests, structuredCache, reuseEvents, phase6Incidents, phase6Changes, phase6Destructions, phase6Adapters, phase6Capabilities, phase6Modules, phase6SopArticles, phase6SopProgress, phase6Notes, phase6Jobs, phase6Tombstones, emergencyResult] = await Promise.all([
+  const [dossiers, pools, credentials, models, assignments, routingRules, quotas, usage, healthChecks, incidents, alerts, configVersions, audit, commandPolicies, schedules, governedRequests, structuredCache, reuseEvents, acCapitalProviderLogs, phase6Incidents, phase6Changes, phase6Destructions, phase6Adapters, phase6Capabilities, phase6Modules, phase6SopArticles, phase6SopProgress, phase6Notes, phase6Jobs, phase6Tombstones, emergencyResult] = await Promise.all([
     selectSafe('ai_provider_dossiers', 'created_at', false, 200),
     selectSafe('ai_provider_capacity_pools', 'created_at', false, 300),
     selectSafe('ai_provider_credentials', 'created_at', false, 500),
@@ -54,6 +54,7 @@ export async function loadAiProviderSnapshot(): Promise<AiProviderSnapshot> {
     selectPhase5Safe('ai_provider_governed_requests', 'created_at', false, 5000),
     selectPhase5Safe('ai_provider_structured_result_cache', 'updated_at', false, 2000),
     selectPhase5Safe('ai_provider_reuse_events', 'created_at', false, 5000),
+    selectPhase5Safe('ac_capital_provider_execution_logs', 'created_at', false, 1000),
     selectPhase5Safe('ai_ops_incident_cases', 'created_at', false, 500),
     selectPhase5Safe('ai_ops_change_requests', 'created_at', false, 500),
     selectPhase5Safe('ai_ops_destruction_requests', 'created_at', false, 500),
@@ -96,6 +97,7 @@ export async function loadAiProviderSnapshot(): Promise<AiProviderSnapshot> {
     governedRequests: governedRequests as any,
     structuredCache: structuredCache as any,
     reuseEvents,
+    acCapitalProviderLogs,
     phase6: {
       incidents: phase6Incidents,
       changeRequests: phase6Changes,
@@ -148,7 +150,7 @@ export async function executeAiProviderAction(action: string, payload: JsonRecor
     const code = clean(payload.code || payload.name).toUpperCase().replace(/[^A-Z0-9]+/g, '_').replace(/^_|_$/g, '')
     if (!code || !clean(payload.name)) throw new Error('DOSSIER_NAME_REQUIRED')
     const dossierResult = await supabase.from('ai_provider_dossiers').insert({
-      code, name: clean(payload.name), provider_type: clean(payload.providerType || 'gemini'),
+      code, name: clean(payload.name), provider_type: clean(payload.providerType || 'openrouter'),
       status: 'draft', environment: clean(payload.environment || 'production'),
       account_label: clean(payload.accountLabel) || null,
       external_account_id: clean(payload.externalAccountId) || null,
@@ -206,6 +208,10 @@ export async function executeAiProviderAction(action: string, payload: JsonRecor
     const credentialResult = await supabase.from('ai_provider_credentials').select('id,dossier_id,capacity_pool_id').eq('id', credentialId).single()
     if (credentialResult.error) throw new Error(credentialResult.error.message)
     const credential = credentialResult.data
+    const dossierResult = await supabase.from('ai_provider_dossiers').select('id,provider_type,name,code,status').eq('id', credential.dossier_id).single()
+    if (dossierResult.error) throw new Error(dossierResult.error.message)
+    const providerType = clean(dossierResult.data?.provider_type || 'unknown').toLowerCase()
+    if (/gemini|google/.test(providerType) && ['marketing_ai','marketing_autopilot'].includes(clean(payload.moduleKey))) throw new Error('MARKET_OS_GEMINI_PROVIDER_RETIRED')
 
     const modelsResult = await supabase.from('ai_provider_models')
       .select('model_code,primary_for_capability,enabled,created_at')
@@ -294,7 +300,7 @@ export async function executeAiProviderAction(action: string, payload: JsonRecor
     const requestInsert = await supabase.from('ai_provider_governed_requests').insert({
       id: requestId, request_fingerprint: requestFingerprint, module_key: 'ai_provider_control', workspace_key: 'credential-health',
       capability: 'health_check', command_code: 'AI_PROVIDER_CREDENTIAL_TEST', actor_id: actor.id, trigger_type: 'health_test',
-      requested_model: model, provider_type: 'gemini', model_code: model, decision: 'EXECUTE_NEW', status: 'running',
+      requested_model: model, provider_type: providerType, model_code: model, decision: 'EXECUTE_NEW', status: 'running',
       estimated_requests: 1, estimated_input_tokens: estimatedInputTokens, estimated_output_tokens: estimatedOutputTokens,
       estimated_cost_usd: estimatedCostUsd, started_at: now(), metadata: { credentialId, dossierId: credential.dossier_id, explicitCredentialTest: true },
     })
@@ -305,41 +311,30 @@ export async function executeAiProviderAction(action: string, payload: JsonRecor
 
     const started = Date.now()
     try {
-      const response = await invokeGeminiProvider({
-        apiKey,
-        model,
-        contents: 'Return the health token SANILA_PROVIDER_OK.',
-        systemInstruction: 'This is a provider connectivity health check. Return only SANILA_PROVIDER_OK.',
-        maxOutputTokens: 256,
-        thinkingLevel: /^gemini-3(?:\.|$)/i.test(model) ? 'MINIMAL' : undefined,
-      })
+      const response = await invokeProviderHealth({ providerType, apiKey, model })
       const responseText = clean(response.text)
-      const firstCandidate = response.candidates?.[0]
-      const blockedReason = clean(response.promptFeedback?.blockReason)
-      if (blockedReason) throw new Error(`PROVIDER_TEST_BLOCKED:${blockedReason}`)
-      if (!response.responseId && !response.modelVersion && !firstCandidate) throw new Error('PROVIDER_TEST_NO_RESPONSE')
       const healthTokenMatched = responseText.includes('SANILA_PROVIDER_OK')
-      const usage = response.usageMetadata as { promptTokenCount?: number; candidatesTokenCount?: number; totalTokenCount?: number } | undefined
-      const inputTokens = Number(usage?.promptTokenCount || 0)
-      const outputTokens = Number(usage?.candidatesTokenCount || 0)
+      const inputTokens = Number(response.inputTokens || 0)
+      const outputTokens = Number(response.outputTokens || 0)
+      const usage = { promptTokenCount: inputTokens, candidatesTokenCount: outputTokens, totalTokenCount: inputTokens + outputTokens }
       const actualCostUsd = estimateAiCostUsd(inputTokens, outputTokens)
       await supabase.from('ai_provider_credentials').update({ status: 'validated', validated_at: now(), last_success_at: now(), failure_code: null, updated_at: now() }).eq('id', credentialId)
-      await supabase.from('ai_provider_health_checks').insert({ dossier_id: credential.dossier_id, capacity_pool_id: credential.capacity_pool_id, credential_id: credentialId, model_code: model, status: 'healthy', latency_ms: Date.now() - started, checked_by: actor.id, details: { responseId: response.responseId, governedRequestId: requestId, healthTokenMatched, finishReason: firstCandidate?.finishReason || null, responsePreview: responseText.slice(0, 160) } })
+      await supabase.from('ai_provider_health_checks').insert({ dossier_id: credential.dossier_id, capacity_pool_id: credential.capacity_pool_id, credential_id: credentialId, model_code: model, status: 'healthy', latency_ms: Date.now() - started, checked_by: actor.id, details: { responseId: response.responseId, governedRequestId: requestId, providerType: response.providerType, healthTokenMatched, ...response.details, responsePreview: responseText.slice(0, 160) } })
       await supabase.from('ai_provider_usage_ledger').insert({
         module_key: 'ai_provider_control', capability: 'health_check', dossier_id: credential.dossier_id,
         capacity_pool_id: credential.capacity_pool_id, credential_id: credentialId, model_code: model,
         request_count: 1, grounded_request_count: 0, input_tokens: inputTokens,
         output_tokens: outputTokens, latency_ms: Date.now() - started,
         http_status: 200, outcome: 'completed', actor_id: actor.id, command_code: 'AI_PROVIDER_CREDENTIAL_TEST', estimated_cost_usd: actualCostUsd,
-        metadata: { source: 'credential_live_test', responseId: response.responseId, governedRequestId: requestId },
+        metadata: { source: 'credential_live_test', providerType: response.providerType, responseId: response.responseId, governedRequestId: requestId },
       })
       await supabase.from('ai_provider_governed_requests').update({
         status: 'completed', actual_input_tokens: inputTokens, actual_output_tokens: outputTokens, actual_cost_usd: actualCostUsd,
-        result_json: { ok: true, modelVersion: response.modelVersion || model, healthTokenMatched, finishReason: firstCandidate?.finishReason || null }, result_hash: crypto.createHash('sha256').update(String(response.text || '')).digest('hex'),
+        result_json: { ok: true, providerType: response.providerType, modelVersion: response.modelVersion || model, healthTokenMatched, ...response.details }, result_hash: crypto.createHash('sha256').update(String(response.text || '')).digest('hex'),
         completed_at: now(), updated_at: now(), metadata: { credentialId, responseId: response.responseId, explicitCredentialTest: true },
       }).eq('id', requestId)
       await audit(actor, action, 'credential', credentialId, { model, latencyMs: Date.now() - started, governedRequestId: requestId })
-      return { ok: true, model: response.modelVersion || model, latencyMs: Date.now() - started, usage, governedRequestId: requestId }
+      return { ok: true, providerType: response.providerType, model: response.modelVersion || model, latencyMs: Date.now() - started, usage, governedRequestId: requestId }
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error)
       const httpStatus = Number(message.match(/\b(401|403|404|429|5\d\d)\b/)?.[1] || 0) || null
@@ -370,6 +365,408 @@ export async function executeAiProviderAction(action: string, payload: JsonRecor
     if (current.data.capacity_pool_id) await supabase.from('ai_provider_capacity_pools').update({ status: 'operating', updated_at: now() }).eq('id', current.data.capacity_pool_id)
     await audit(actor, action, 'credential', credentialId, { dossierId: current.data.dossier_id })
     return activated.data
+  }
+
+  if (action === 'apply_ac_capital_single_model_profile') {
+    const modelCode = clean(payload.modelCode || 'gemini-3.6-flash')
+    if (modelCode !== 'gemini-3.6-flash') throw new Error('AC_CAPITAL_SINGLE_MODEL_MUST_BE_GEMINI_3_6_FLASH')
+
+    const assignmentResult = await supabase.from('ai_provider_module_assignments')
+      .select('*')
+      .eq('module_key', 'ac_capital_os')
+      .eq('enabled', true)
+      .order('priority', { ascending: true })
+      .order('created_at', { ascending: true })
+      .limit(1)
+      .maybeSingle()
+    if (assignmentResult.error) throw new Error(assignmentResult.error.message)
+    const assignment = assignmentResult.data
+    if (!assignment?.id || !assignment?.dossier_id) throw new Error('AC_CAPITAL_ENABLED_ASSIGNMENT_REQUIRED')
+
+    let capacityPoolId = clean(assignment.capacity_pool_id) || null
+    if (!capacityPoolId) {
+      const poolResult = await supabase.from('ai_provider_capacity_pools')
+        .select('id')
+        .eq('dossier_id', assignment.dossier_id)
+        .order('created_at', { ascending: true })
+        .limit(1)
+        .maybeSingle()
+      if (poolResult.error) throw new Error(poolResult.error.message)
+      capacityPoolId = clean(poolResult.data?.id) || null
+    }
+
+    const capabilityAllowlist = Array.from(new Set([
+      ...asArray<string>(assignment.capability_allowlist),
+      'grounded_research',
+      'structured_content',
+    ]))
+
+    const assignmentUpdate = await supabase.from('ai_provider_module_assignments').update({
+      capacity_pool_id: capacityPoolId,
+      assignment_mode: 'primary',
+      priority: 1,
+      enabled: true,
+      capability_allowlist: capabilityAllowlist,
+      primary_model: modelCode,
+      fallback_model: null,
+      metadata: {
+        ...(assignment.metadata || {}),
+        acCapitalSingleModel: true,
+        selectedModel: modelCode,
+        internalWritesEnabled: true,
+        externalActionsEnabled: false,
+        source: 'AC_CAPITAL_SINGLE_MODEL_AI_CONTROL_04',
+      },
+      updated_by: actor.id,
+      updated_at: now(),
+    }).eq('id', assignment.id).select('*').single()
+    if (assignmentUpdate.error) throw new Error(assignmentUpdate.error.message)
+
+    const demoteModels = await supabase.from('ai_provider_models').update({
+      primary_for_capability: false,
+      updated_at: now(),
+    })
+      .eq('dossier_id', assignment.dossier_id)
+      .in('capability', ['grounded_research', 'structured_content'])
+      .contains('metadata', { moduleKey: 'ac_capital_os' })
+      .neq('model_code', modelCode)
+    if (demoteModels.error) throw new Error(demoteModels.error.message)
+
+    const modelRows = [
+      {
+        dossier_id: assignment.dossier_id,
+        model_code: modelCode,
+        display_name: 'Gemini 3.6 Flash — AC Capital Grounded Research',
+        capability: 'grounded_research',
+        enabled: true,
+        primary_for_capability: true,
+        grounding_allowed: true,
+        max_output_tokens: 6000,
+        metadata: {
+          moduleKey: 'ac_capital_os',
+          singleModelProfile: true,
+          providerTier: 'paid',
+          googleSearchGrounding: true,
+          source: 'AC_CAPITAL_SINGLE_MODEL_AI_CONTROL_04',
+        },
+        updated_at: now(),
+      },
+      {
+        dossier_id: assignment.dossier_id,
+        model_code: modelCode,
+        display_name: 'Gemini 3.6 Flash — AC Capital Intelligence',
+        capability: 'structured_content',
+        enabled: true,
+        primary_for_capability: true,
+        grounding_allowed: false,
+        max_output_tokens: 7000,
+        metadata: {
+          moduleKey: 'ac_capital_os',
+          singleModelProfile: true,
+          providerTier: 'paid',
+          googleSearchGrounding: false,
+          source: 'AC_CAPITAL_SINGLE_MODEL_AI_CONTROL_04',
+        },
+        updated_at: now(),
+      },
+    ]
+    const modelResult = await supabase.from('ai_provider_models')
+      .upsert(modelRows, { onConflict: 'dossier_id,model_code,capability' })
+      .select('*')
+    if (modelResult.error) throw new Error(modelResult.error.message)
+
+    const routeRows = ['grounded_research', 'structured_content'].map((capability) => ({
+      module_key: 'ac_capital_os',
+      capability,
+      routing_mode: 'exclusive',
+      primary_assignment_id: assignment.id,
+      fallback_assignment_ids: [],
+      sticky_mission: true,
+      enabled: true,
+      metadata: {
+        singleModelProfile: true,
+        modelCode,
+        externalActions: false,
+        source: 'AC_CAPITAL_SINGLE_MODEL_AI_CONTROL_04',
+      },
+      updated_by: actor.id,
+      updated_at: now(),
+    }))
+    const routeResult = await supabase.from('ai_provider_routing_rules')
+      .upsert(routeRows, { onConflict: 'module_key,capability' })
+      .select('*')
+    if (routeResult.error) throw new Error(routeResult.error.message)
+
+    const existingQuota = await supabase.from('ai_provider_quota_policies')
+      .select('*')
+      .eq('scope_type', 'module')
+      .eq('scope_key', 'ac_capital_os')
+      .maybeSingle()
+    if (existingQuota.error) throw new Error(existingQuota.error.message)
+    const quotaRow = {
+      scope_type: 'module',
+      scope_key: 'ac_capital_os',
+      max_requests_per_minute: 10,
+      max_requests_per_hour: 100,
+      max_requests_per_day: 500,
+      max_requests_per_week: 3500,
+      max_requests_per_month: 15000,
+      max_input_tokens_per_day: 2000000,
+      max_input_tokens_per_week: 14000000,
+      max_output_tokens_per_day: 1000000,
+      max_output_tokens_per_week: 7000000,
+      max_total_tokens_per_week: 21000000,
+      max_estimated_cost_usd_per_day: 10,
+      max_estimated_cost_usd_per_week: 40,
+      max_estimated_cost_usd_per_month: 120,
+      max_grounded_requests_per_day: 500,
+      max_concurrent_requests: 2,
+      emergency_reserve_requests: 0,
+      soft_threshold_percent: 80,
+      hard_limit: true,
+      reset_timezone: 'Africa/Casablanca',
+      enabled: true,
+      metadata: {
+        ...(existingQuota.data?.metadata || {}),
+        providerIncludedGroundedPromptsMonthly: 5000,
+        selectedModel: modelCode,
+        providerTier: 'paid',
+        source: 'AC_CAPITAL_SINGLE_MODEL_AI_CONTROL_04',
+      },
+      updated_by: actor.id,
+      updated_at: now(),
+    }
+    const quotaResult = await supabase.from('ai_provider_quota_policies')
+      .upsert(quotaRow, { onConflict: 'scope_type,scope_key' })
+      .select('*')
+      .single()
+    if (quotaResult.error) throw new Error(quotaResult.error.message)
+
+    // AC_CAPITAL_GLOBAL_GROUNDING_QUOTA
+    // The global governor is evaluated before the module quota.
+    // Keep it aligned when the AC Capital single-model profile is applied.
+    const existingGlobalQuota = await supabase
+      .from('ai_provider_quota_policies')
+      .select('*')
+      .eq('scope_type', 'global')
+      .eq('scope_key', '*')
+      .maybeSingle()
+
+    if (existingGlobalQuota.error) {
+      throw new Error(existingGlobalQuota.error.message)
+    }
+
+    const globalQuotaRow = {
+      scope_type: 'global',
+      scope_key: '*',
+      max_requests_per_minute: Math.max(
+        Number(existingGlobalQuota.data?.max_requests_per_minute || 0),
+        60,
+      ),
+      max_requests_per_hour: Math.max(
+        Number(existingGlobalQuota.data?.max_requests_per_hour || 0),
+        1000,
+      ),
+      max_requests_per_day: Math.max(
+        Number(existingGlobalQuota.data?.max_requests_per_day || 0),
+        5000,
+      ),
+      max_requests_per_week: Math.max(
+        Number(existingGlobalQuota.data?.max_requests_per_week || 0),
+        35000,
+      ),
+      max_requests_per_month: Math.max(
+        Number(existingGlobalQuota.data?.max_requests_per_month || 0),
+        150000,
+      ),
+      max_input_tokens_per_day: Math.max(
+        Number(existingGlobalQuota.data?.max_input_tokens_per_day || 0),
+        20000000,
+      ),
+      max_input_tokens_per_week: Math.max(
+        Number(existingGlobalQuota.data?.max_input_tokens_per_week || 0),
+        140000000,
+      ),
+      max_output_tokens_per_day: Math.max(
+        Number(existingGlobalQuota.data?.max_output_tokens_per_day || 0),
+        10000000,
+      ),
+      max_output_tokens_per_week: Math.max(
+        Number(existingGlobalQuota.data?.max_output_tokens_per_week || 0),
+        70000000,
+      ),
+      max_total_tokens_per_week: Math.max(
+        Number(existingGlobalQuota.data?.max_total_tokens_per_week || 0),
+        210000000,
+      ),
+      max_estimated_cost_usd_per_day: Math.max(
+        Number(existingGlobalQuota.data?.max_estimated_cost_usd_per_day || 0),
+        100,
+      ),
+      max_estimated_cost_usd_per_week: Math.max(
+        Number(existingGlobalQuota.data?.max_estimated_cost_usd_per_week || 0),
+        400,
+      ),
+      max_estimated_cost_usd_per_month: Math.max(
+        Number(existingGlobalQuota.data?.max_estimated_cost_usd_per_month || 0),
+        1200,
+      ),
+      max_grounded_requests_per_day: Math.max(
+        Number(existingGlobalQuota.data?.max_grounded_requests_per_day || 0),
+        500,
+      ),
+      max_concurrent_requests: Math.max(
+        Number(existingGlobalQuota.data?.max_concurrent_requests || 0),
+        10,
+      ),
+      emergency_reserve_requests: Number(
+        existingGlobalQuota.data?.emergency_reserve_requests || 0,
+      ),
+      soft_threshold_percent: Number(
+        existingGlobalQuota.data?.soft_threshold_percent || 80,
+      ),
+      hard_limit: true,
+      reset_timezone:
+        existingGlobalQuota.data?.reset_timezone || 'Africa/Casablanca',
+      enabled: true,
+      metadata: {
+        ...(existingGlobalQuota.data?.metadata || {}),
+        acCapitalSingleModelCompatible: true,
+        selectedModel: modelCode,
+        internalGroundingCeiling: 500,
+        externalActions: false,
+        source: 'AC_CAPITAL_SINGLE_MODEL_AI_CONTROL_04_GLOBAL_FIX',
+      },
+      updated_by: actor.id,
+      updated_at: now(),
+    }
+
+    const globalQuotaResult = await supabase
+      .from('ai_provider_quota_policies')
+      .upsert(globalQuotaRow, {
+        onConflict: 'scope_type,scope_key',
+      })
+      .select('*')
+      .single()
+
+    if (globalQuotaResult.error) {
+      throw new Error(globalQuotaResult.error.message)
+    }
+
+    if (capacityPoolId) {
+      const poolCurrent = await supabase.from('ai_provider_capacity_pools').select('metadata').eq('id', capacityPoolId).maybeSingle()
+      if (poolCurrent.error) throw new Error(poolCurrent.error.message)
+      const poolUpdate = await supabase.from('ai_provider_capacity_pools').update({
+        billing_tier: 'paid',
+        provider_rpd: null,
+        provider_grounded_rpd: null,
+        status: 'operating',
+        metadata: {
+          ...(poolCurrent.data?.metadata || {}),
+          selectedModel: modelCode,
+          providerIncludedGroundedPromptsMonthly: 5000,
+          source: 'AC_CAPITAL_SINGLE_MODEL_AI_CONTROL_04',
+        },
+        updated_by: actor.id,
+        updated_at: now(),
+      }).eq('id', capacityPoolId)
+      if (poolUpdate.error) throw new Error(poolUpdate.error.message)
+    }
+
+    const commandDefinitions = [
+      { workspaceKey: 'opportunity-radar', commandCode: 'AC_CAPITAL_RADAR_GROUNDED_RESEARCH', daily: 500, output: 6000 },
+      { workspaceKey: 'executive-report-studio', commandCode: 'AC_CAPITAL_REPORT_COMPOSE', daily: 500, output: 7000 },
+    ]
+    const commandPolicies: JsonRecord[] = []
+    for (const definition of commandDefinitions) {
+      const current = await supabase.from('ai_provider_command_policies').select('*')
+        .eq('module_key', 'ac_capital_os')
+        .eq('workspace_key', definition.workspaceKey)
+        .eq('command_code', definition.commandCode)
+        .maybeSingle()
+      if (current.error) throw new Error(current.error.message)
+      const row = {
+        module_key: 'ac_capital_os',
+        workspace_key: definition.workspaceKey,
+        command_code: definition.commandCode,
+        ai_mode: 'ai_required',
+        manual_allowed: true,
+        scheduled_allowed: false,
+        minimum_interval_seconds: 1,
+        max_runs_per_day: definition.daily,
+        max_runs_per_week: definition.daily * 7,
+        max_runs_per_month: definition.daily * 30,
+        max_input_tokens_per_run: 120000,
+        max_output_tokens_per_run: definition.output,
+        max_cost_usd_per_run: 2,
+        max_cost_usd_per_day: 10,
+        max_cost_usd_per_week: 40,
+        max_retries: 1,
+        cache_mode: 'no_cache',
+        cache_ttl_seconds: 0,
+        duplicate_window_seconds: 1,
+        force_refresh_allowed: true,
+        approval_class: 'executive',
+        allowed_provider_types: ['gemini'],
+        allowed_models: [modelCode],
+        allowed_trigger_types: ['manual', 'forced_refresh'],
+        execution_window: {},
+        cooldown_after_failure_seconds: 60,
+        consecutive_failure_suspend_threshold: 5,
+        enabled: true,
+        metadata: {
+          ...(current.data?.metadata || {}),
+          singleModelProfile: true,
+          selectedModel: modelCode,
+          internalWritesEnabled: true,
+          externalActions: false,
+          humanReviewRequiredForExternalRelease: true,
+          source: 'AC_CAPITAL_SINGLE_MODEL_AI_CONTROL_04',
+        },
+        updated_by: actor.id,
+        updated_at: now(),
+      }
+      const result = await supabase.from('ai_provider_command_policies')
+        .upsert(row, { onConflict: 'module_key,workspace_key,command_code' })
+        .select('*')
+        .single()
+      if (result.error) throw new Error(result.error.message)
+      commandPolicies.push(result.data)
+    }
+
+    await supabase.from('ac_capital_live_wiring_status').update({
+      ai_provider_mode: 'provider-control-live-single-model',
+      report_status: 'substantive-ai-composition',
+      updated_at: now(),
+      last_checked_at: now(),
+    }).in('workspace', ['capital-radar', 'strategy-production-command', 'executive-report-studio'])
+
+    await audit(actor, action, 'module_assignment', assignment.id, {
+      moduleKey: 'ac_capital_os',
+      modelCode,
+      capacityPoolId,
+      routes: routeRows.map((row) => row.capability),
+      quota: { maxGroundedRequestsPerDay: 500 },
+      externalActions: false,
+    })
+
+    return {
+      moduleKey: 'ac_capital_os',
+      modelCode,
+      assignment: assignmentUpdate.data,
+      models: modelResult.data,
+      routes: routeResult.data,
+      quota: quotaResult.data,
+      commandPolicies,
+      capacityPoolId,
+      internalActions: {
+        liveGroundedResearch: true,
+        sourcePersistence: true,
+        opportunityPersistence: true,
+        reportDrafting: true,
+      },
+      externalActions: false,
+    }
   }
 
   if (action === 'save_model') {

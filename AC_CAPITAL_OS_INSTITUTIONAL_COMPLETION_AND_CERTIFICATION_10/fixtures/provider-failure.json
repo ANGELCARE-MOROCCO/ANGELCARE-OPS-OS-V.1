@@ -1,0 +1,5 @@
+{
+  "scenarioKey": "provider-failure",
+  "purpose": "Prove honest failure, preserved evidence, retry/dead-letter behavior and no duplicate business records.",
+  "forbidden": ["completed status", "opportunity duplication", "silent fallback presented as provider success"]
+}

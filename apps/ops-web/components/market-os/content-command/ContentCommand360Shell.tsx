@@ -25,6 +25,7 @@ import ContentCommandCommandPalette, {
 } from "./shell/ContentCommandCommandPalette"
 import ContentCommandSidebar from "./shell/ContentCommandSidebar"
 import ContentCommandTopbar from "./shell/ContentCommandTopbar"
+import LifecycleControlDock from "./experience-bulk9/LifecycleControlDock"
 import {
   DEFAULT_CONTENT_COMMAND_PREFERENCES,
   readContentCommandShellPreferences,
@@ -385,9 +386,10 @@ export default function ContentCommand360Shell({ children }: { children: React.R
             <div className={styles.trustRail} aria-label="État de gouvernance du shell">
               <span><ShieldCheck aria-hidden="true" /> Identité officielle ANGELCARE active</span>
               <span>Autorité humaine et permissions plateforme préservées</span>
-              <span>38 workspaces permanents · 6 routes contextuelles</span>
+              <span>39 workspaces permanents · 6 routes contextuelles</span>
               <span>{resolveCurrentLabel(pathname)}</span>
             </div>
+            <LifecycleControlDock pathname={pathname} />
             {children}
           </main>
         </div>

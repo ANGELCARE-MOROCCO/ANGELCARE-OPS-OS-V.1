@@ -1,0 +1,35 @@
+AC CAPITAL OS RUNTIME TRUTH REPAIR 01 — STATIC VERIFICATION EVIDENCE
+Generated: 2026-07-28 (Africa/Casablanca context)
+
+AC_CAPITAL_OS_RUNTIME_TRUTH_REPAIR_01_STATIC_VERIFIED
+Detected mode: repository-root
+PASS shared body-level overlay and remaining-viewport offset
+PASS deterministic unique zone IDs and defensive React keys
+PASS governed Gemini Google Search call and grounding evidence extraction
+PASS source, opportunity, duplicate and rejection persistence contracts
+PASS substantive report composition and non-null output reference contract
+PASS provider request, tokens and estimated cost persistence contracts
+PASS no embedded Gemini credential pattern
+PASS all changed TypeScript/TSX files syntax-transpiled
+Database migration still must be applied before live execution.
+
+PACKAGE CHECKSUM VERIFICATION
+MANIFEST.json: OK
+README.md: OK
+docs/ACCEPTANCE_MATRIX.md: OK
+docs/KNOWN_BOUNDARIES.md: OK
+files/apps/ops-web/app/api/ac-capital-os/capital-radar/research/run/route.ts: OK
+files/apps/ops-web/app/api/ac-capital-os/capital-radar/route.ts: OK
+files/apps/ops-web/app/api/ac-capital-os/reports/generate/route.ts: OK
+files/apps/ops-web/components/ac-capital-os/core/AcCapitalShell.tsx: OK
+files/apps/ops-web/components/ac-capital-os/core/Overlay.tsx: OK
+files/apps/ops-web/components/ac-capital-os/core/core.module.css: OK
+files/apps/ops-web/components/ac-capital-os/core/shell.module.css: OK
+files/apps/ops-web/components/ac-capital-os/pages/radar/RadarPage.tsx: OK
+files/apps/ops-web/components/ac-capital-os/pages/reports/ReportsPage.tsx: OK
+files/apps/ops-web/lib/ac-capital-os/server/live-intelligence.ts: OK
+files/apps/ops-web/lib/ai-provider-control/gemini-runtime.ts: OK
+scripts/apply_ac_capital_os_runtime_truth_repair_01.mjs: OK
+scripts/verify_ac_capital_os_runtime_truth_repair_01.mjs: OK
+scripts/verify_ac_capital_os_runtime_truth_repair_01_db.mjs: OK
+supabase/migrations/20260728_ac_capital_os_runtime_truth_repair_01.sql: OK

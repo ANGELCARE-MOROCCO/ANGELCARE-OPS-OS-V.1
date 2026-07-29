@@ -1,0 +1,39 @@
+import type { NavigationItem } from "./types";
+
+export const capitalNavigation: NavigationItem[] = [
+  { key: "floor", label: "Capital Command Floor", href: "/ac-capital-os", group: "Executive" },
+  { key: "radar", label: "Opportunity Radar", href: "/ac-capital-os/radar", group: "Intelligence" },
+  { key: "qualification", label: "Qualification Committee", href: "/ac-capital-os/qualification", group: "Intelligence" },
+  { key: "funders", label: "Funder Intelligence", href: "/ac-capital-os/funders", group: "Intelligence" },
+  { key: "doctrine", label: "Doctrine Vault", href: "/ac-capital-os/doctrine", group: "Institutional Memory" },
+  { key: "cases", label: "Case Factory", href: "/ac-capital-os/cases", group: "Production" },
+  { key: "data-room", label: "Due Diligence Vault", href: "/ac-capital-os/data-room", group: "Production" },
+  { key: "pipeline", label: "Capital Pipeline", href: "/ac-capital-os/pipeline", group: "Execution" },
+  { key: "coordinator", label: "Coordinator Mission Desk", href: "/ac-capital-os/coordinator", group: "Execution" },
+  { key: "ai-command", label: "AI Capital Brain", href: "/ac-capital-os/ai-command", group: "Intelligence" },
+  { key: "strategy", label: "Strategy War Room", href: "/ac-capital-os/strategy", group: "Executive" },
+  { key: "simulator", label: "Capital Simulator", href: "/ac-capital-os/simulator", group: "Executive" },
+  { key: "reports", label: "Executive Report Studio", href: "/ac-capital-os/reports", group: "Governance" },
+  { key: "manual", label: "SOP Academy", href: "/ac-capital-os/manual", group: "Governance" },
+  { key: "approvals", label: "Founder Approval Chamber", href: "/ac-capital-os/approvals", group: "Governance", attention: true },
+  { key: "learning", label: "Learning & Memory", href: "/ac-capital-os/learning", group: "Institutional Memory" },
+  { key: "ai-operations", label: "AI Operations Control", href: "/ac-capital-os/ai-control", group: "System", attention: true },
+  { key: "settings", label: "Settings Control", href: "/ac-capital-os/settings", group: "System" },
+  { key: "production", label: "Production Tower", href: "/ac-capital-os/production", group: "System" },
+];
+
+export const commandPaletteItems = [
+  ["Create opportunity", "/ac-capital-os/radar?action=create"],
+  ["Validate source", "/ac-capital-os/radar?action=validate"],
+  ["Create funder", "/ac-capital-os/funders?action=create"],
+  ["Create qualification note", "/ac-capital-os/qualification?action=review"],
+  ["Create capital case", "/ac-capital-os/cases?action=create"],
+  ["Upload proof document", "/ac-capital-os/data-room?action=upload"],
+  ["Prepare manual email", "/ac-capital-os/coordinator?action=email"],
+  ["Request founder approval", "/ac-capital-os/approvals?action=create"],
+  ["Configure AI research agents", "/ac-capital-os/ai-control"],
+  ["Run AI dry test", "/ac-capital-os/ai-command?action=dry-run"],
+  ["Create strategy scenario", "/ac-capital-os/strategy?action=create"],
+  ["Generate report", "/ac-capital-os/reports?action=generate"],
+  ["Create production blocker", "/ac-capital-os/production?action=blocker"],
+] as const;

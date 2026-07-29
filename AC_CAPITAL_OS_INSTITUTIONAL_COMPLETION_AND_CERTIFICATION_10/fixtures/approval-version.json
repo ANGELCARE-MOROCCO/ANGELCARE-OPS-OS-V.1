@@ -1,0 +1,4 @@
+{
+  "scenarioKey": "approval-version",
+  "purpose": "Approve version N, materially edit to N+1 and prove old authority is superseded and submission blocked."
+}

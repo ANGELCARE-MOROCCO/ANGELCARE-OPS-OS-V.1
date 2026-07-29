@@ -418,6 +418,19 @@ export async function listLearningEvents(limit = 100) {
   return data || []
 }
 
+export async function governLearningEvent(input: { id: string; status: 'under_review' | 'accepted' | 'accepted_with_limitations' | 'rejected' | 'retired' | 'superseded'; reason: string; actorId: string; actorName: string }) {
+  const { data: current, error: readError } = await db().from('market_ai_learning_events').select('*').eq('id', input.id).maybeSingle()
+  if (readError) throw new Error(`LEARNING_READ_FAILED:${readError.message}`)
+  if (!current) throw new Error('LEARNING_NOT_FOUND')
+  const prior = current as Record<string, unknown>
+  const evidence = Array.isArray(prior.evidence) ? prior.evidence : []
+  if (['accepted', 'accepted_with_limitations'].includes(input.status) && evidence.length === 0) throw new Error('LEARNING_EVIDENCE_REQUIRED')
+  const governance = { status: input.status, reason: input.reason, actorId: input.actorId, actorName: input.actorName, decidedAt: new Date().toISOString(), priorStatus: String(prior.status || 'proposed'), doctrinePromoted: false }
+  const { data, error } = await db().from('market_ai_learning_events').update({ status: input.status, recommendation: `${String(prior.recommendation || '')}\n\n[Gouvernance humaine] ${input.reason}`, evidence: [...evidence, JSON.stringify(governance)] }).eq('id', input.id).select('*').single()
+  if (error) throw new Error(`LEARNING_GOVERNANCE_FAILED:${error.message}`)
+  return data
+}
+
 export async function listResourceUpdates(limit = 100) {
   const { data, error } = await db().from('market_ai_resource_updates').select('*').order('created_at', { ascending: false }).limit(limit)
   if (error) throw new Error(`RESOURCE_LIST_FAILED:${error.message}`)

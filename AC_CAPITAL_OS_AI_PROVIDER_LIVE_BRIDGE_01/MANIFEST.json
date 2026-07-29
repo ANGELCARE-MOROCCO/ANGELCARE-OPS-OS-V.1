@@ -1,0 +1,12 @@
+{
+  "name": "AC CAPITAL OS \u2194 AI Provider Control Live Bridge 01",
+  "version": "1.0.0",
+  "moduleKey": "ac_capital_os",
+  "providerDossier": "Gemini AC CAPITAL OS Production",
+  "primaryModel": "gemini-3.6-flash",
+  "fallbackModel": "gemini-3.5-flash-lite",
+  "createdAt": "2026-07-27T23:54:29.521116+00:00",
+  "sqlAutoExecuted": false,
+  "buildAutoExecuted": false,
+  "externalActionsEnabled": false
+}

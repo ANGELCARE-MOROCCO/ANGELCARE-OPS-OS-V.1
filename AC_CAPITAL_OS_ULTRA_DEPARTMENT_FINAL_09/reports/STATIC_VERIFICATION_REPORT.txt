@@ -1,0 +1,54 @@
+AC CAPITAL OS ULTRA DEPARTMENT FINAL 09 — STATIC VERIFICATION
+
+Authoritative source SHA-256:
+05972f22c221e7394913a9f150d4582ae581c516aef0472dd614952d161272c6
+
+Installer rehearsal:
+PASS — 30 files installed
+PASS — 13 existing files backed up in rehearsal
+PASS — no SQL, TypeScript, build, Git or provider command executed by installer
+
+Installed-payload hash verification:
+PASS — 30/30 exact SHA-256 matches
+
+TypeScript / TSX isolated syntax transpilation:
+FILES 23
+TRANSPILE_OK
+
+Local import resolution:
+LOCAL_IMPORTS_OK 25
+
+Named import / export audit:
+EXPORT_IMPORTS_OK 23
+
+CSS-module reference audit:
+CSS_MODULE_ERRORS 0
+
+JavaScript syntax:
+PASS installer
+PASS static verifier
+
+SQL structural verification:
+PASS migration transaction envelope
+PASS rollback transaction envelope
+PASS dollar-quote delimiters
+PASS PGRST schema reload notification contract
+
+Static contract verifier:
+AC_CAPITAL_OS_ULTRA_DEPARTMENT_FINAL_09_STATIC_VERIFIED
+PASS canonical lifecycle and optimistic version controls
+PASS eight executable OpenRouter/Tavily institutional agents
+PASS OpenRouter-only active AC Capital AI Command bridge
+PASS provider privacy sanitization boundary
+PASS durable leases, schedules, retries, dead letters and stale-lock recovery
+PASS PDF, DOCX, XLSX, CSV, JSON and ZIP artifact factory contracts
+PASS body-level overlay portal and AngelCare overhead offset
+
+Not performed during packaging:
+- Database migration
+- Live Tavily request
+- Live OpenRouter request
+- Browser end-to-end acceptance
+- Production build
+- Git stage, commit or push
+- Deployment

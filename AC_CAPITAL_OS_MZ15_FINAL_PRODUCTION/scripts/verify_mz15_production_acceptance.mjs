@@ -1,0 +1,10 @@
+import path from "node:path";
+import { assertFile, assertIncludes, detectRoots } from "./_lib.mjs";
+const { repoRoot, opsRoot }=detectRoots();
+const docs=["MZ15_FINAL_ACCEPTANCE_MATRIX.json","MZ15_FINAL_ENGINEERING_SELF_AUDIT.md","MZ15_FINAL_ROUTE_MATRIX.md","MZ15_FINAL_API_BINDING_MATRIX.md","MZ15_FINAL_WORKFLOW_MATRIX.md","MZ15_FINAL_VISUAL_QA_MATRIX.md","MZ15_FINAL_KNOWN_LIMITATIONS.md"];
+for(const doc of docs)assertFile(path.join(repoRoot,"AC_CAPITAL_OS_MZ15_FINAL_PRODUCTION","docs",doc),repoRoot);
+assertFile(path.join(repoRoot,"supabase","migrations","20260727_ac_capital_os_mz15_final_productization.sql"),repoRoot);
+assertFile(path.join(opsRoot,"app","api","ac-capital-os","browser-acceptance","route.ts"),repoRoot);
+assertIncludes(path.join(opsRoot,"components","ac-capital-os","pages","production","ProductionPage.tsx"),"this page does not claim they already ran in your machine",repoRoot);
+console.log("MZ15_STATIC_PRODUCTIZATION_ACCEPTANCE_VERIFIED");
+console.log("Boundary: this is static/package acceptance. App-level TypeScript, authenticated browser, Supabase migration and external dependency gates must still run in the installed repository.");

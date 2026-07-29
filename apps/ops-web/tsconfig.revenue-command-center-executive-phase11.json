@@ -1,0 +1,33 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "incremental": false,
+    "skipLibCheck": true,
+    "allowJs": false
+  },
+  "include": [
+    "next-env.d.ts",
+    "components/revenue-command-center/executive-enterprise/**/*.ts",
+    "components/revenue-command-center/executive-enterprise/**/*.tsx",
+    "lib/revenue-command-center/executive-enterprise/**/*.ts",
+    "app/api/revenue-command-center/executive-enterprise/**/*.ts",
+    "app/(protected)/revenue-command-center/page.tsx",
+    "app/(protected)/revenue-command-center/control-tower/page.tsx",
+    "app/(protected)/revenue-command-center/executive-briefing/page.tsx",
+    "app/(protected)/revenue-command-center/predictive/page.tsx",
+    "app/(protected)/revenue-command-center/strategy-room/page.tsx",
+    "app/(protected)/revenue-command-center/revenue-analytics/page.tsx",
+    "app/(protected)/revenue-command-center/team-performance/page.tsx",
+    "app/(protected)/revenue-command-center/overdue-heatmap/page.tsx",
+    "app/(protected)/revenue-command-center/workload-balancer/page.tsx",
+    "app/(protected)/revenue-command-center/management/page.tsx",
+    "lib/revenue-command-center/api-access.ts",
+    "lib/revenue-command-center/canonical-server.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    ".next",
+    "backups"
+  ]
+}

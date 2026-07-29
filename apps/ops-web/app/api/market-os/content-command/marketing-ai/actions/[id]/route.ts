@@ -5,14 +5,15 @@ import { storeMarketingAiBridgeJson } from '@/lib/market-os/marketing-ai/bridge'
 
 export async function PATCH(request: Request, context: { params: Promise<{ id: string }> }) {
   try {
-    const actor = await requireMarketingAiUser('manage')
     const { id } = await context.params
     const body = await request.json()
+    const actor = await requireMarketingAiUser(['approved', 'rejected'].includes(String(body.status)) ? 'govern' : body.status === 'executed' ? 'run' : 'manage')
     if (!['approved', 'rejected', 'executed', 'failed'].includes(body.status)) {
       return NextResponse.json({ ok: false, error: 'INVALID_ACTION_STATUS' }, { status: 400 })
     }
     const current = await getInternalAction(id)
     if (!current) return NextResponse.json({ ok: false, error: 'ACTION_NOT_FOUND' }, { status: 404 })
+    if (body.status === 'executed' && current.status !== 'approved') return NextResponse.json({ ok: false, error: 'ACTION_HUMAN_APPROVAL_REQUIRED' }, { status: 409 })
     let bridgeObject: unknown = null
     let bridgeError: string | null = null
     if (body.status === 'executed') {

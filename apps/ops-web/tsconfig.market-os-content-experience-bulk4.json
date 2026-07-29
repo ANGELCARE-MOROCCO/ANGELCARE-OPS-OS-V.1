@@ -1,0 +1,17 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "incremental": false,
+    "skipLibCheck": true
+  },
+  "include": [
+    "components/market-os/content-command/experience-bulk4/**/*.ts",
+    "components/market-os/content-command/experience-bulk4/**/*.tsx",
+    "components/market-os/content-command/experience-bulk1/Bulk1DossierWorkspace.tsx",
+    "components/market-os/content-command/experience-bulk3/Bulk3TaskExecutionWorkspace.tsx",
+    "app/(protected)/market-os/content-command-center/studio/**/*.tsx",
+    "app/(protected)/market-os/content-command-center/assets/page.tsx",
+    "app/(protected)/market-os/content-command-center/active-assets/page.tsx"
+  ]
+}

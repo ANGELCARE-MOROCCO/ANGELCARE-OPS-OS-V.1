@@ -1,0 +1,11 @@
+0fb9d29b044a0e6237412cd5d14f0e775e1edacbf6d839f9f3eb7299eb817641  MANIFEST.json
+547347935a1fece4271b7d72605209a0319c05bc6d6719d396b7e62c60944da6  README.md
+101cd176ef26006da038cc4ba173b7805480f29de787f100e1c27400e13c843d  payload/apps/ops-web/app/(protected)/ac-capital-os/orchestrator/page.tsx
+d6bcd45bb6f2479de8f0f53906daca4e34d85fdac6ea2f85e8d2245b3678423c  payload/apps/ops-web/app/api/ac-capital-os/orchestrator/route.ts
+eb5fafcf4b9cace829b601cbdc9fae95b554a68427b5fcc879e9e2e044dfc377  payload/apps/ops-web/app/api/ac-capital-os/orchestrator/tick/route.ts
+da04524506ecb02f6582ea9cf17f7bc45287086327c49946a3052bf3eb678008  payload/apps/ops-web/components/ac-capital-os/core/navigation.ts
+0d18f232eb4cdf79e8a3cc3bcd5f362ce62da05adae7059093d7898ce2a89d76  payload/apps/ops-web/components/ac-capital-os/pages/orchestrator/OrchestratorPage.tsx
+a1d9b47c21659a9f3bd4fda22b7694d0461605202859a059d1b908187bfb1338  payload/apps/ops-web/components/ac-capital-os/pages/orchestrator/orchestrator.module.css
+642a465c2d08069a3eeb5bee39b973cb26f7c231333989190645b0cef43048bb  payload/apps/ops-web/lib/ac-capital-os/server/capital-orchestrator.ts
+3991f30a0b4542738f5f283e011603a59c8c1caf48f80895cfa08dcc36981c17  payload/supabase/migrations/20260729_ac_capital_os_final_ai_operated_department_mega_07.sql
+959d84e7bd7505e138ceff5af3de8f76d3450aeb4a7dbc0644f50bf2ab1354dd  scripts/apply.mjs

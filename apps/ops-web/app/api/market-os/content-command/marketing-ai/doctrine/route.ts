@@ -16,8 +16,15 @@ export async function POST(request: Request) {
     const actor = await requireMarketingAiUser('govern')
     const body = await request.json()
     if (!body.code || !body.title || !body.category || !body.content) return NextResponse.json({ ok: false, error: 'DOCTRINE_FIELDS_REQUIRED' }, { status: 400 })
-    const { data, error } = await createContentCommandSupabaseServerClient().from('market_ai_doctrine_entries').upsert({
-      code: String(body.code).trim().toUpperCase(),
+    const client = createContentCommandSupabaseServerClient()
+    const code = String(body.code).trim().toUpperCase()
+    const { data: existing, error: existingError } = await client.from('market_ai_doctrine_entries').select('*').eq('code', code).maybeSingle()
+    if (existingError) throw existingError
+    if (existing && ['approved', 'adopted', 'canonical', 'effective'].includes(String(existing.authority_state || ''))) {
+      throw new Error('DOCTRINE_IMMUTABLE_NEW_VERSION_REQUIRED')
+    }
+    const { data, error } = await client.from('market_ai_doctrine_entries').upsert({
+      code,
       title: String(body.title).trim(),
       category: String(body.category).trim(),
       authority_state: body.authorityState || 'provisional',

@@ -1,7 +1,7 @@
-import RevenuePredictiveV11Workspace from "@/components/revenue-command-center/RevenuePredictiveV11Workspace"
+import RevenueExecutiveWorkspace from "@/components/revenue-command-center/executive-enterprise/RevenueExecutiveWorkspace"
 
 export const dynamic = "force-dynamic"
 
 export default function Page() {
-  return <RevenuePredictiveV11Workspace mode="predictive" />
+  return <RevenueExecutiveWorkspace experience="forecast-command" />
 }

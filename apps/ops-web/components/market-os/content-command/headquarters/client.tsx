@@ -27,7 +27,7 @@ export const CONTENT_FAMILIES = [
   },
 ] as const
 
-export type HeadquartersView = "command" | "signals" | "strategies" | "missions" | "directory" | "studio" | "evidence" | "validation" | "source-vault" | "distribution" | "ai-foundry" | "dossier"
+export type HeadquartersView = "command" | "signals" | "strategies" | "missions" | "directory" | "studio" | "evidence" | "validation" | "source-vault" | "distribution" | "performance" | "attribution" | "optimization" | "learning" | "ai-foundry" | "dossier"
 
 export function useHeadquartersSnapshot() {
   const [snapshot, setSnapshot] = React.useState<ContentHeadquartersSnapshot | null>(null)

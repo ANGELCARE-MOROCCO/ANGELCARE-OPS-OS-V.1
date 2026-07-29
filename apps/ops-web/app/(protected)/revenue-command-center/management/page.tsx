@@ -1,5 +1,7 @@
-import RevenueCommandFinalWorkspace from '../_final/RevenueCommandFinalWorkspace'
+import RevenueExecutiveWorkspace from "@/components/revenue-command-center/executive-enterprise/RevenueExecutiveWorkspace"
+
+export const dynamic = "force-dynamic"
 
 export default function Page() {
-  return <RevenueCommandFinalWorkspace workspace="management" />
+  return <RevenueExecutiveWorkspace experience="management-decision-room" />
 }

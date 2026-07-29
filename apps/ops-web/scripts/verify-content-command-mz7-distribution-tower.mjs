@@ -1,4 +1,5 @@
-import fs from 'fs'; const s=fs.readFileSync('components/market-os/content-command/headquarters/DistributionWorkspace.tsx','utf8');
-for(const token of ['DISTRIBUTION TOWER','VALIDATED CONTENT INTAKE','PACKAGE BUILDER','PACKAGE REGISTER','SOURCE, COPY & ASSET AUTHORITY','SCHEDULE RUNWAY','Publishing Operations']) if(!s.includes(token)) throw new Error(`Distribution Tower missing: ${token}`);
-for(const token of ['create_publication_package','update_publication_package']) if(!s.includes(token)) throw new Error(`Existing package action missing: ${token}`);
-console.log('PASS — Distribution Tower contains intake, package construction, channel control, source authority and runway');
+import fs from 'fs'
+const s=fs.readFileSync('components/market-os/content-command/headquarters/DistributionWorkspace.tsx','utf8')
+for(const token of ['DISTRIBUTION TOWER · BULK 6','VALIDATED CONTENT INTAKE','GOVERNED PACKAGE BUILDER','PACKAGE REGISTER','SOURCE & AUTHORITY BOUNDARY','COLLISION & SCHEDULE RUNWAY','Publishing Operations']) if(!s.includes(token)) throw new Error(`Distribution Tower missing: ${token}`)
+for(const action of ['create_publication_package','publication_save_manifest','publication_declare_ready','publication_authorize_release']) if(!s.includes(action)) throw new Error(`Package lifecycle action missing: ${action}`)
+console.log('PASS — Distribution Tower contains governed intake, package engineering, preflight and release authority')

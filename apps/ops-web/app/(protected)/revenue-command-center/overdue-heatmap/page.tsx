@@ -1,5 +1,7 @@
-import UltimateRevenueCommandPage from '../_v9/UltimateRevenueCommandPage'
+import RevenueExecutiveWorkspace from "@/components/revenue-command-center/executive-enterprise/RevenueExecutiveWorkspace"
+
+export const dynamic = "force-dynamic"
 
 export default function Page() {
-  return <UltimateRevenueCommandPage pageKey="overdue-heatmap" />
+  return <RevenueExecutiveWorkspace experience="overdue-heatmap" />
 }

@@ -1,7 +1,7 @@
-import RevenueExecutionWorkspace from "@/components/revenue-command-center/execution-enterprise/RevenueExecutionWorkspace"
+import RevenueExecutiveWorkspace from "@/components/revenue-command-center/executive-enterprise/RevenueExecutiveWorkspace"
 
 export const dynamic = "force-dynamic"
 
 export default function Page() {
-  return <RevenueExecutionWorkspace experience="workload-balancer" />
+  return <RevenueExecutiveWorkspace experience="workload-command" />
 }

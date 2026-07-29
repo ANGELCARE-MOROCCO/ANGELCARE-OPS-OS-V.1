@@ -1,7 +1,7 @@
-import RevenueExecutiveBriefingV11Workspace from "@/components/revenue-command-center/RevenueExecutiveBriefingV11Workspace"
+import RevenueExecutiveWorkspace from "@/components/revenue-command-center/executive-enterprise/RevenueExecutiveWorkspace"
 
 export const dynamic = "force-dynamic"
 
 export default function Page() {
-  return <RevenueExecutiveBriefingV11Workspace mode="briefing" />
+  return <RevenueExecutiveWorkspace experience="executive-briefing" />
 }

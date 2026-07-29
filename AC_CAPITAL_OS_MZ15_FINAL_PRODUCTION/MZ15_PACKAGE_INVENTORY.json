@@ -1,0 +1,672 @@
+{
+  "generated_at": "2026-07-27T18:22:08.128498+00:00",
+  "file_count": 133,
+  "total_bytes": 586241,
+  "files": [
+    {
+      "path": "MANIFEST.json",
+      "size_bytes": 950,
+      "sha256": "9afe8b4401e28cd6c36e3c3b4b3a6732cd6d97df47fce51974e94773c5276ae9"
+    },
+    {
+      "path": "README.md",
+      "size_bytes": 2665,
+      "sha256": "cdd5188adb59d01da4297475a227c659e87ad5d04c155c8dd6be4fba1f5c667c"
+    },
+    {
+      "path": "docs/MZ15_FINAL_ACCEPTANCE_MATRIX.json",
+      "size_bytes": 7061,
+      "sha256": "b88dd96875e3557e3dbf25dc75f8d5ba0895d307d3a552fb9596d7a2fec9225f"
+    },
+    {
+      "path": "docs/MZ15_FINAL_API_BINDING_MATRIX.md",
+      "size_bytes": 1988,
+      "sha256": "ab7b484209df223ff51ff9134b9b984e4a0ef8b2108258c81a89cbb5ac7532a3"
+    },
+    {
+      "path": "docs/MZ15_FINAL_ENGINEERING_SELF_AUDIT.md",
+      "size_bytes": 2319,
+      "sha256": "8ec0f7adff64ccb0a5627b6ad4c0332442d73a8a5449ba8e72adc67afa0e79d9"
+    },
+    {
+      "path": "docs/MZ15_FINAL_INSTALL_AND_ROLLBACK.md",
+      "size_bytes": 536,
+      "sha256": "f483478bc99efec81c88603f8c1fb06231dbd9597a0461e988d42225f327ca8f"
+    },
+    {
+      "path": "docs/MZ15_FINAL_KNOWN_LIMITATIONS.md",
+      "size_bytes": 1479,
+      "sha256": "1d395d551e19f5d36cb952fe6db4bdfda736082bea342d3cf205c43f6c8e831e"
+    },
+    {
+      "path": "docs/MZ15_FINAL_ROUTE_MATRIX.md",
+      "size_bytes": 3805,
+      "sha256": "6651b748e3e056bd8eabd475637e582c55c36b318eeaa711051307c99180ed4b"
+    },
+    {
+      "path": "docs/MZ15_FINAL_VISUAL_QA_MATRIX.md",
+      "size_bytes": 4091,
+      "sha256": "a34269e690f1d9a40a9fa267f6c11f1522ba23a8952f8e2f8c96ca63be08a68f"
+    },
+    {
+      "path": "docs/MZ15_FINAL_WORKFLOW_MATRIX.md",
+      "size_bytes": 1657,
+      "sha256": "ef99ca0372d48213a5cc28b650f444ce57605f6c6647552d857d79214d53e6a5"
+    },
+    {
+      "path": "docs/MZ15_SOURCE_BASIS.md",
+      "size_bytes": 861,
+      "sha256": "9de83d4065ff1e8b81ce2c12221096dc47bfa06fb890ddc7b42f16c3110805d4"
+    },
+    {
+      "path": "evidence/MZ15_STATIC_REHEARSAL.txt",
+      "size_bytes": 1626,
+      "sha256": "a784bd6b7214bb657948e18e8ca0c74d412e0403cd1e7afef6df533bfcd91aae"
+    },
+    {
+      "path": "files/apps/ops-web/app/(protected)/ac-capital-os/ai-command/page.tsx",
+      "size_bytes": 347,
+      "sha256": "8bd71b0887860794db03c29cd49bbc850fe5e790af0e99f56049cfaacc45ccb5"
+    },
+    {
+      "path": "files/apps/ops-web/app/(protected)/ac-capital-os/approvals/page.tsx",
+      "size_bytes": 346,
+      "sha256": "66cbe7b99b0093821366aa9ef1dc14ff202aa8690e2e5e77911b93ec85754138"
+    },
+    {
+      "path": "files/apps/ops-web/app/(protected)/ac-capital-os/cases/page.tsx",
+      "size_bytes": 330,
+      "sha256": "c8219e65ef842f3c809fe05cfa483751cf125a759e31d98b9101974a7a8112b8"
+    },
+    {
+      "path": "files/apps/ops-web/app/(protected)/ac-capital-os/coordinator/page.tsx",
+      "size_bytes": 354,
+      "sha256": "8b51041250cb051835266f2f5a965dff30d3fda96f2ba6f42d9490eff938fb2e"
+    },
+    {
+      "path": "files/apps/ops-web/app/(protected)/ac-capital-os/data-room/page.tsx",
+      "size_bytes": 343,
+      "sha256": "ef9967e365c7ccf465f048e909ce269da0a43e50eb44a0b9641753a23323067b"
+    },
+    {
+      "path": "files/apps/ops-web/app/(protected)/ac-capital-os/doctrine/page.tsx",
+      "size_bytes": 342,
+      "sha256": "819de0126bd3ccd9c2b8240aade9c043432c0fae4ebaf406cab118c47989710a"
+    },
+    {
+      "path": "files/apps/ops-web/app/(protected)/ac-capital-os/funders/page.tsx",
+      "size_bytes": 338,
+      "sha256": "c0124211be36266e7aa98a1d5e4b2c2daa6007233e64640b3131558171dae03c"
+    },
+    {
+      "path": "files/apps/ops-web/app/(protected)/ac-capital-os/learning/page.tsx",
+      "size_bytes": 342,
+      "sha256": "1212aaf5d29f6c7883afc06b6a553cedc11ddcc3e6ee2dc2a0de3d5ca8494539"
+    },
+    {
+      "path": "files/apps/ops-web/app/(protected)/ac-capital-os/manual/page.tsx",
+      "size_bytes": 334,
+      "sha256": "9155e4258a7d62dc268c529d3a6568b5ee2208c6aaf75fc7f1e7c2099bb1c1e9"
+    },
+    {
+      "path": "files/apps/ops-web/app/(protected)/ac-capital-os/page.tsx",
+      "size_bytes": 359,
+      "sha256": "18feca3fed53aaead0adcd916fcc4891c51c1e5376fa3aa8c06ce6c7dc6ae750"
+    },
+    {
+      "path": "files/apps/ops-web/app/(protected)/ac-capital-os/pipeline/page.tsx",
+      "size_bytes": 342,
+      "sha256": "620d24c053417fc9dde3d9812fcfdce22ffc6f126711f52e744a25c70fd8bdf6"
+    },
+    {
+      "path": "files/apps/ops-web/app/(protected)/ac-capital-os/production/page.tsx",
+      "size_bytes": 350,
+      "sha256": "280e3c8e5c8631c56b176d02a11706c5947ed92724080b469243fdc63e01c847"
+    },
+    {
+      "path": "files/apps/ops-web/app/(protected)/ac-capital-os/qualification/page.tsx",
+      "size_bytes": 362,
+      "sha256": "00fe582de7660b011167a71e317a05fafb7d3ae13a3908c97ed67ed607f3266a"
+    },
+    {
+      "path": "files/apps/ops-web/app/(protected)/ac-capital-os/radar/page.tsx",
+      "size_bytes": 330,
+      "sha256": "1777e57d6aef12180da531b49377210861a661b43bc0b4dabb7e213fd2a56509"
+    },
+    {
+      "path": "files/apps/ops-web/app/(protected)/ac-capital-os/reports/page.tsx",
+      "size_bytes": 338,
+      "sha256": "b6f92386c30f3ecf9131a14a07656a90d302450e3ef9de775206193e8960de5a"
+    },
+    {
+      "path": "files/apps/ops-web/app/(protected)/ac-capital-os/settings/page.tsx",
+      "size_bytes": 342,
+      "sha256": "02e810b7041de6afc094f2e359db63d553bb344e459937e44ae7ec3e375209a3"
+    },
+    {
+      "path": "files/apps/ops-web/app/(protected)/ac-capital-os/simulator/page.tsx",
+      "size_bytes": 346,
+      "sha256": "b9f7280759c7c5e12307daf5bc83b4ab5febede931c5647c3b1f8aafb8da153d"
+    },
+    {
+      "path": "files/apps/ops-web/app/(protected)/ac-capital-os/strategy/page.tsx",
+      "size_bytes": 342,
+      "sha256": "746f03b1e97d9356a88905b00a2c33294c1fef9ea61201a81871b315dd530067"
+    },
+    {
+      "path": "files/apps/ops-web/app/api/ac-capital-os/ai-command-center/issue/route.ts",
+      "size_bytes": 1091,
+      "sha256": "9f60956a291e1b4fe524342c439aba0a32bcd6fb68837876e6fd989b79eab318"
+    },
+    {
+      "path": "files/apps/ops-web/app/api/ac-capital-os/ai-command-center/route.ts",
+      "size_bytes": 2520,
+      "sha256": "ee4b148e9463b67c32cd3fcda1eb0dbab0090a8e828cabae7fff96a13612faa6"
+    },
+    {
+      "path": "files/apps/ops-web/app/api/ac-capital-os/ai-command-center/run/route.ts",
+      "size_bytes": 1968,
+      "sha256": "4f7d403a9ef81c0e366be99edd953f5fe18e6e72cc36e56720ae26aa2607bace"
+    },
+    {
+      "path": "files/apps/ops-web/app/api/ac-capital-os/approvals/[id]/decision/route.ts",
+      "size_bytes": 2062,
+      "sha256": "1ddf78f83154cc7e8ed5bc92a6bcf2fbf8023eb27fc400b3d06679ad6896ad9a"
+    },
+    {
+      "path": "files/apps/ops-web/app/api/ac-capital-os/approvals/route.ts",
+      "size_bytes": 2109,
+      "sha256": "f2742748d04d0e580a5c1427e87afaa56e841af289bb0350f1492553e8a6b495"
+    },
+    {
+      "path": "files/apps/ops-web/app/api/ac-capital-os/browser-acceptance/route.ts",
+      "size_bytes": 2021,
+      "sha256": "8ea482d6f8286826b3b93c769e6a80325671f7dda274a91ff72b2509a73ae16a"
+    },
+    {
+      "path": "files/apps/ops-web/app/api/ac-capital-os/capital-doctrine/route.ts",
+      "size_bytes": 4492,
+      "sha256": "5f1302b137874e557d00b9ed7e874c61f0d96600170b5ca702b86d7b3f85e5dc"
+    },
+    {
+      "path": "files/apps/ops-web/app/api/ac-capital-os/capital-pipeline/route.ts",
+      "size_bytes": 7928,
+      "sha256": "8e6a6df48337d79fec5bfce76bd059aba958b62ea10a0c232091d3355266749d"
+    },
+    {
+      "path": "files/apps/ops-web/app/api/ac-capital-os/capital-radar/research/run/route.ts",
+      "size_bytes": 1605,
+      "sha256": "8a51125343fe2aede2f14f28e602af162a3b9a978c6eb4ba9a24a87cae75aac0"
+    },
+    {
+      "path": "files/apps/ops-web/app/api/ac-capital-os/capital-radar/route.ts",
+      "size_bytes": 5365,
+      "sha256": "75c1f926c2433d19fd4c324115369099721b36a50a23615692e4ad3f9766bb37"
+    },
+    {
+      "path": "files/apps/ops-web/app/api/ac-capital-os/case-builder/route.ts",
+      "size_bytes": 6818,
+      "sha256": "b83a8e0c02b7fc5bf9da396328572b3ecfff7ba61e3cdff51d70129b7fc8d0cb"
+    },
+    {
+      "path": "files/apps/ops-web/app/api/ac-capital-os/command-floor/route.ts",
+      "size_bytes": 1016,
+      "sha256": "987a772e6a5e5829b47bfcdf9f7ff545865e42fd8879ca311e06b6c78a2beadf"
+    },
+    {
+      "path": "files/apps/ops-web/app/api/ac-capital-os/coordinator-cockpit/email/mark-sent/route.ts",
+      "size_bytes": 1318,
+      "sha256": "a910502c198f5f0b705a3c3d870887cdc43ad66ddf7c5f26836ae06ce7c74cd8"
+    },
+    {
+      "path": "files/apps/ops-web/app/api/ac-capital-os/coordinator-cockpit/email/prepare/route.ts",
+      "size_bytes": 1468,
+      "sha256": "f01f4550f498c94676ddd3d5fc663f06f82d88d140ebb65e64e59b04fc56a660"
+    },
+    {
+      "path": "files/apps/ops-web/app/api/ac-capital-os/coordinator-cockpit/route.ts",
+      "size_bytes": 3789,
+      "sha256": "57cfe500a062ffc036c3cb672dae6cc831ea14ca88e3d711cc27da810bcd4132"
+    },
+    {
+      "path": "files/apps/ops-web/app/api/ac-capital-os/coordinator-cockpit/workflow/complete-task/route.ts",
+      "size_bytes": 1223,
+      "sha256": "9bc073debe77d85fcf28360b748eb01045140843ce02a28b6eaee7a3b3da9308"
+    },
+    {
+      "path": "files/apps/ops-web/app/api/ac-capital-os/data-room/documents/route.ts",
+      "size_bytes": 32,
+      "sha256": "611a14c94771dd1e5a882509734e570c198dee33cc6d00ece05acfbba92cfaa4"
+    },
+    {
+      "path": "files/apps/ops-web/app/api/ac-capital-os/data-room/route.ts",
+      "size_bytes": 3372,
+      "sha256": "7ad26c5f6a02c5a354484e2a5703dfb4b7e4db87336aecfadbe2e3552299d1d1"
+    },
+    {
+      "path": "files/apps/ops-web/app/api/ac-capital-os/data-room/upload/route.ts",
+      "size_bytes": 3345,
+      "sha256": "fa6febe5d7a76fa8d159b87040edf32bd295580e0af37463fabae76ed28c15f9"
+    },
+    {
+      "path": "files/apps/ops-web/app/api/ac-capital-os/funder-intelligence/route.ts",
+      "size_bytes": 5373,
+      "sha256": "faccd36da3b8029bfdb696340ac1da3ef7ce9a1e853bb03484ed18ca0467dfd1"
+    },
+    {
+      "path": "files/apps/ops-web/app/api/ac-capital-os/learning/route.ts",
+      "size_bytes": 2813,
+      "sha256": "e7b3ff8170e9bb2045da8ad0fe9fc7d49f7ee3f513e3a9b248b8e634a1385b92"
+    },
+    {
+      "path": "files/apps/ops-web/app/api/ac-capital-os/manual/progress/route.ts",
+      "size_bytes": 1202,
+      "sha256": "2dd7a0c0cf125899a7f40e7ac67da7219d7af61161d9b8c31e78e85596a45921"
+    },
+    {
+      "path": "files/apps/ops-web/app/api/ac-capital-os/production-health/route.ts",
+      "size_bytes": 1366,
+      "sha256": "d181ade9d90d7d66d26650f0b96420890e874efe457388ff30465dfa5e5d0073"
+    },
+    {
+      "path": "files/apps/ops-web/app/api/ac-capital-os/qualification-engine/route.ts",
+      "size_bytes": 5210,
+      "sha256": "251866e425ab3554a106466eb6598b5b9d8ec2ad1ae812c6f72b0b9697a7c6ef"
+    },
+    {
+      "path": "files/apps/ops-web/app/api/ac-capital-os/reports/generate/route.ts",
+      "size_bytes": 2404,
+      "sha256": "1b60eb97dfe425d5426fb5ae2d77cac2b4113d87a883dea4a49e8b2bbf04f21a"
+    },
+    {
+      "path": "files/apps/ops-web/app/api/ac-capital-os/reports/list/route.ts",
+      "size_bytes": 505,
+      "sha256": "061979026f4c20496b71f7bebff78b0801a113788608f9ba7898130954abbca3"
+    },
+    {
+      "path": "files/apps/ops-web/app/api/ac-capital-os/search/route.ts",
+      "size_bytes": 1994,
+      "sha256": "66cd12b196a9b323f149c0f07818e7bd30b69d086d52a54ef431f52c6209b55e"
+    },
+    {
+      "path": "files/apps/ops-web/app/api/ac-capital-os/settings/route.ts",
+      "size_bytes": 2449,
+      "sha256": "8529f3c4109583b872f5c0ecfdb17cbc2074cccd1bbfdd4975041ec20d720378"
+    },
+    {
+      "path": "files/apps/ops-web/app/api/ac-capital-os/strategy-production-command/route.ts",
+      "size_bytes": 5020,
+      "sha256": "5b8354afefe66ec46e1494fd1b0a61a28bc24f2961ced19befa03e3bf33a87f6"
+    },
+    {
+      "path": "files/apps/ops-web/components/ac-capital-os/core/AcCapitalShell.tsx",
+      "size_bytes": 7448,
+      "sha256": "64a35702597bff48816e352c2584bf65ee2a5ee7152c3a295f4844fe2dd4e0da"
+    },
+    {
+      "path": "files/apps/ops-web/components/ac-capital-os/core/AsyncState.tsx",
+      "size_bytes": 1156,
+      "sha256": "bc97b710510d0c24d33adb48b6918a21eb95dbd43c7626e9a73e6323c2aea236"
+    },
+    {
+      "path": "files/apps/ops-web/components/ac-capital-os/core/FormParts.tsx",
+      "size_bytes": 582,
+      "sha256": "5e4b2126912218acd7abcd830e497ff7e6fbae9617bc37ed4fd773dac70316c8"
+    },
+    {
+      "path": "files/apps/ops-web/components/ac-capital-os/core/MetricTile.tsx",
+      "size_bytes": 369,
+      "sha256": "1c3f1abed795945d40dff632aec38eb7b0d185c72a3bfebe42b50b93934b63fb"
+    },
+    {
+      "path": "files/apps/ops-web/components/ac-capital-os/core/Overlay.tsx",
+      "size_bytes": 2539,
+      "sha256": "4a6ff943e715775b321a786fdc362304418a70470c3ad648da2ffe094d17a4d6"
+    },
+    {
+      "path": "files/apps/ops-web/components/ac-capital-os/core/StatusBadge.tsx",
+      "size_bytes": 827,
+      "sha256": "8692303fe8dc86c52e751499e16293f49f9bbb239f754d94c9e1462a0b09fe7b"
+    },
+    {
+      "path": "files/apps/ops-web/components/ac-capital-os/core/WorkspaceParts.tsx",
+      "size_bytes": 2248,
+      "sha256": "ad358c5569d85ce30b2634dfeb08ad729cdeb00a99b6a7436ab56cfac89c5596"
+    },
+    {
+      "path": "files/apps/ops-web/components/ac-capital-os/core/api.ts",
+      "size_bytes": 1575,
+      "sha256": "9c1b4000545301ecbf6e2a0e120af06fce726560419b83b7863d8d5c8d4ca6de"
+    },
+    {
+      "path": "files/apps/ops-web/components/ac-capital-os/core/core.module.css",
+      "size_bytes": 4728,
+      "sha256": "191bef9c8d2346929992bbeae959350734675f051d72b97a745f5741b7374346"
+    },
+    {
+      "path": "files/apps/ops-web/components/ac-capital-os/core/data.ts",
+      "size_bytes": 2474,
+      "sha256": "067ab3553012e9a6be38ec2ec2da5c4eb9e6af838fab22a9501044153b0c70ac"
+    },
+    {
+      "path": "files/apps/ops-web/components/ac-capital-os/core/navigation.ts",
+      "size_bytes": 2920,
+      "sha256": "4e20ebc9632dbc442e9792c87a41552166490785d7bd3b055fbba9d99b9d8edc"
+    },
+    {
+      "path": "files/apps/ops-web/components/ac-capital-os/core/role.ts",
+      "size_bytes": 2271,
+      "sha256": "8da83c0b1ea7a72910405a29086608352a6a5fd2073a7b2f2c978579821d605b"
+    },
+    {
+      "path": "files/apps/ops-web/components/ac-capital-os/core/shell.module.css",
+      "size_bytes": 8307,
+      "sha256": "fdc0d0d1f4b893f0df811229a3c08ab9f55e045b1a5b67e5f520a14003625e92"
+    },
+    {
+      "path": "files/apps/ops-web/components/ac-capital-os/core/types.ts",
+      "size_bytes": 1045,
+      "sha256": "6f927366be9ea29937c801951d760d2c441ebbfb522b5ea11c7c599bb166696b"
+    },
+    {
+      "path": "files/apps/ops-web/components/ac-capital-os/core/useAction.ts",
+      "size_bytes": 1104,
+      "sha256": "2cfb155414a7b973fa2d75fec09627fc8e62d5c2ac2a7370292e5c6cf28bcd12"
+    },
+    {
+      "path": "files/apps/ops-web/components/ac-capital-os/core/useActionQuery.ts",
+      "size_bytes": 553,
+      "sha256": "7453ed157c53c21da3b4bf2f72bfaa6968c60a410e306c73938a85df7674bf23"
+    },
+    {
+      "path": "files/apps/ops-web/components/ac-capital-os/core/useWorkspace.ts",
+      "size_bytes": 948,
+      "sha256": "25324bdb5e8098aa284d2a2fc82d15922cb30eef9a1d3a9b054c1876c6a6218b"
+    },
+    {
+      "path": "files/apps/ops-web/components/ac-capital-os/core/workspace-parts.module.css",
+      "size_bytes": 2286,
+      "sha256": "133b4282cfdcfab94269f2e135ac23b28bc1ad37b8e23f3ea28cdd955676c407"
+    },
+    {
+      "path": "files/apps/ops-web/components/ac-capital-os/pages/ai-command/AiCommandPage.tsx",
+      "size_bytes": 16768,
+      "sha256": "14c88456d458af83f6297701640724be6ea1183068e758a8b310888807c8a647"
+    },
+    {
+      "path": "files/apps/ops-web/components/ac-capital-os/pages/ai-command/ai-command.module.css",
+      "size_bytes": 4530,
+      "sha256": "ddbf86ddffc76ac51e46ad379aa82fac4f9c69495b178f530e7f4bf229ee0fd8"
+    },
+    {
+      "path": "files/apps/ops-web/components/ac-capital-os/pages/approvals/ApprovalsPage.tsx",
+      "size_bytes": 11501,
+      "sha256": "7c4d850283bf2207d5f950287acaf7368ed1138799f0dfc7d05d8fb9493e16a7"
+    },
+    {
+      "path": "files/apps/ops-web/components/ac-capital-os/pages/approvals/approvals.module.css",
+      "size_bytes": 3386,
+      "sha256": "a1dbacfa645b7d3b02711db4d809167f3f2db3cf2c45c12e35cd115d5951b3f8"
+    },
+    {
+      "path": "files/apps/ops-web/components/ac-capital-os/pages/cases/CasesPage.tsx",
+      "size_bytes": 24159,
+      "sha256": "32c74503ad375811cdb8060b091d690e48ab8d17e272f69a3caf615d0d6dbe23"
+    },
+    {
+      "path": "files/apps/ops-web/components/ac-capital-os/pages/cases/cases.module.css",
+      "size_bytes": 4515,
+      "sha256": "b4985c9802ce8065c63bd5d8ccff2ac0cb679bae4dfe947bf263470be2bea7ef"
+    },
+    {
+      "path": "files/apps/ops-web/components/ac-capital-os/pages/command-floor/CommandFloorPage.tsx",
+      "size_bytes": 15356,
+      "sha256": "0329956bfc4e8745f4e76de6318d356919de0b661f70808da0fbc0c7d7d4e6c9"
+    },
+    {
+      "path": "files/apps/ops-web/components/ac-capital-os/pages/command-floor/command-floor.module.css",
+      "size_bytes": 4918,
+      "sha256": "ae3eb004610eaddb40105dc8dd732d528de69b6b820ca3d0430597b1937d6b57"
+    },
+    {
+      "path": "files/apps/ops-web/components/ac-capital-os/pages/coordinator/CoordinatorPage.tsx",
+      "size_bytes": 20374,
+      "sha256": "3aa83e85b292a822a42abf7bd5584f00b7525936b299abd1299b8e12a3489c38"
+    },
+    {
+      "path": "files/apps/ops-web/components/ac-capital-os/pages/coordinator/coordinator.module.css",
+      "size_bytes": 3571,
+      "sha256": "dd55607b55df9138a67210e30f2f968a7ccfa3ceea05ca50db58d4de3f1f96a5"
+    },
+    {
+      "path": "files/apps/ops-web/components/ac-capital-os/pages/data-room/DataRoomPage.tsx",
+      "size_bytes": 19185,
+      "sha256": "61e469ed0cc77a6d0f904600929d03e54a858a6e6f84d7e11bd8565290dad80f"
+    },
+    {
+      "path": "files/apps/ops-web/components/ac-capital-os/pages/data-room/data-room.module.css",
+      "size_bytes": 4408,
+      "sha256": "90186b273694318e154259034d5cb53a823e9a4e7e9d9519f19feedf132aee8f"
+    },
+    {
+      "path": "files/apps/ops-web/components/ac-capital-os/pages/doctrine/DoctrinePage.tsx",
+      "size_bytes": 17860,
+      "sha256": "f2cf473d5ada11bef1d643494119c4ed204d9e5b020d6eed24796f1410753958"
+    },
+    {
+      "path": "files/apps/ops-web/components/ac-capital-os/pages/doctrine/doctrine.module.css",
+      "size_bytes": 4038,
+      "sha256": "2943fce3479948a4a40a338e975130f2587f676053413db993bb44d51aaa6641"
+    },
+    {
+      "path": "files/apps/ops-web/components/ac-capital-os/pages/funders/FundersPage.tsx",
+      "size_bytes": 22291,
+      "sha256": "01ac3f64b8df40ea08929f4c93f3d094a8e9ef531df280c5fa8103742e3766dd"
+    },
+    {
+      "path": "files/apps/ops-web/components/ac-capital-os/pages/funders/funders.module.css",
+      "size_bytes": 4535,
+      "sha256": "fc4619269b3254ceb0bda469812c40c5eccd091767281ff88e10f2db333f13fc"
+    },
+    {
+      "path": "files/apps/ops-web/components/ac-capital-os/pages/learning/LearningPage.tsx",
+      "size_bytes": 13072,
+      "sha256": "ac8dc118fee99c611d7cd57f109c555e4357cbf7080dde625c87001752768bd9"
+    },
+    {
+      "path": "files/apps/ops-web/components/ac-capital-os/pages/learning/learning.module.css",
+      "size_bytes": 3672,
+      "sha256": "41c920a1a2bf8661e44ae02da2258ca9b017030cdf260e880ff6ba72d402084c"
+    },
+    {
+      "path": "files/apps/ops-web/components/ac-capital-os/pages/manual/ManualPage.tsx",
+      "size_bytes": 11642,
+      "sha256": "e7ae07147f92bb40df0efacf5d02b3a47543b52aca217cf92b6086050c717f94"
+    },
+    {
+      "path": "files/apps/ops-web/components/ac-capital-os/pages/manual/manual.module.css",
+      "size_bytes": 4240,
+      "sha256": "645d94cc05fe712ddf49ae01c750db57db25572e19846a1c56e5b99ec2e69186"
+    },
+    {
+      "path": "files/apps/ops-web/components/ac-capital-os/pages/pipeline/PipelinePage.tsx",
+      "size_bytes": 25341,
+      "sha256": "eda4f653b2270cb52eb1f97ae8098697a70da69695f4f9eeb5a21984c5d2daeb"
+    },
+    {
+      "path": "files/apps/ops-web/components/ac-capital-os/pages/pipeline/pipeline.module.css",
+      "size_bytes": 4369,
+      "sha256": "56ef007681c52ceec4eaf8e67cb978a04acfe1e8857b9f9122013cae6fdda52f"
+    },
+    {
+      "path": "files/apps/ops-web/components/ac-capital-os/pages/production/ProductionPage.tsx",
+      "size_bytes": 13756,
+      "sha256": "9e2e4f6337cba0d25f809aa519cd4ecd7844569df0a41d9a6b434b3c45ae7ef8"
+    },
+    {
+      "path": "files/apps/ops-web/components/ac-capital-os/pages/production/production.module.css",
+      "size_bytes": 4133,
+      "sha256": "83dd4b9c059b547049450aaef82d546c6f8174256c488c95646a63aa0ce562e3"
+    },
+    {
+      "path": "files/apps/ops-web/components/ac-capital-os/pages/qualification/QualificationPage.tsx",
+      "size_bytes": 21771,
+      "sha256": "d64c4d7bda3ce3ad30a00bb7d54f78ec0598ed5f26fdaed1f76985ea18abd082"
+    },
+    {
+      "path": "files/apps/ops-web/components/ac-capital-os/pages/qualification/qualification.module.css",
+      "size_bytes": 5596,
+      "sha256": "796e3e056dd31c7c6b4ce964743cde52d5f2930e370954d70aee256f124f1e1f"
+    },
+    {
+      "path": "files/apps/ops-web/components/ac-capital-os/pages/radar/RadarPage.tsx",
+      "size_bytes": 21153,
+      "sha256": "0320cb1008d5423c9ac93397314f92f59f230c7d7ba05d1789e6835582bb9a46"
+    },
+    {
+      "path": "files/apps/ops-web/components/ac-capital-os/pages/radar/radar.module.css",
+      "size_bytes": 5949,
+      "sha256": "5e55497a3e63da27e91a1c95f5ecb711638e2350e5814927657cd12ce27fb731"
+    },
+    {
+      "path": "files/apps/ops-web/components/ac-capital-os/pages/reports/ReportsPage.tsx",
+      "size_bytes": 12918,
+      "sha256": "79d3cb520e2a6b1a4f57e6ff77e37e2377adca06c12cd673eb73a9c6997baa40"
+    },
+    {
+      "path": "files/apps/ops-web/components/ac-capital-os/pages/reports/reports.module.css",
+      "size_bytes": 4384,
+      "sha256": "804b9727b00d6f2fd2497471ac4398998232f9f81a0d36cbb35f8b0be4db94fc"
+    },
+    {
+      "path": "files/apps/ops-web/components/ac-capital-os/pages/settings/SettingsPage.tsx",
+      "size_bytes": 10747,
+      "sha256": "bcbd4dfeb149c93157264f7104ea9c491606d7b8a67e97f078a65690da6913c3"
+    },
+    {
+      "path": "files/apps/ops-web/components/ac-capital-os/pages/settings/settings.module.css",
+      "size_bytes": 3242,
+      "sha256": "c34d84d68002b0bc1f373efba9b4c67eba73b26bcc260f492917ad735c6cf835"
+    },
+    {
+      "path": "files/apps/ops-web/components/ac-capital-os/pages/simulator/SimulatorPage.tsx",
+      "size_bytes": 12260,
+      "sha256": "21d80766066b7830e6ce5438b56b3050773c9a8eba0420a26fb2b8f0b6affd43"
+    },
+    {
+      "path": "files/apps/ops-web/components/ac-capital-os/pages/simulator/simulator.module.css",
+      "size_bytes": 4289,
+      "sha256": "fc1159dae656251920fe92b8abda17d7a76fc71a7d0daab89cdf20eb71b1414c"
+    },
+    {
+      "path": "files/apps/ops-web/components/ac-capital-os/pages/strategy/StrategyPage.tsx",
+      "size_bytes": 19589,
+      "sha256": "bde71068bd779a1f5a37fd820d5b6f5675a6aa3616eaa772f6dc56075e8066d3"
+    },
+    {
+      "path": "files/apps/ops-web/components/ac-capital-os/pages/strategy/strategy.module.css",
+      "size_bytes": 4850,
+      "sha256": "5bc2a195d2ca7dbb97027802d6f0cb9120d8352c42eba596f179f3eb5764ca30"
+    },
+    {
+      "path": "files/apps/ops-web/lib/ac-capital-os/server/actor-context.ts",
+      "size_bytes": 754,
+      "sha256": "1be667d2cce3626282489bd50f5cf1ac2a0b8831973babc454e4c8939f5b1b2d"
+    },
+    {
+      "path": "files/apps/ops-web/lib/ac-capital-os/server/mz15-api.ts",
+      "size_bytes": 4358,
+      "sha256": "42daff7c4b99f0b254033ee5a16b832fb15d51f95b4f4d2240825584a242588c"
+    },
+    {
+      "path": "scripts/_lib.mjs",
+      "size_bytes": 2907,
+      "sha256": "9aeb38d3f61a2773021cb2a137111458eedcffe2df66737ac619f813b1837bb5"
+    },
+    {
+      "path": "scripts/apply_ac_capital_os_mz15_final.mjs",
+      "size_bytes": 2311,
+      "sha256": "61b40ca2afde4849268c65a1c5b9b505dbc4c0a3cf9785f54576bd5a2241713f"
+    },
+    {
+      "path": "scripts/run_mz15_browser_acceptance.mjs",
+      "size_bytes": 7123,
+      "sha256": "bfdc60338de495b4a32d54b7814fbc54c1ceeed3c2e3889e2ba9afb95bd0d704"
+    },
+    {
+      "path": "scripts/verify_ac_capital_os_mz15_final.mjs",
+      "size_bytes": 1095,
+      "sha256": "11cbf96cc4cd7b196333106582b8f1814c39ba984f0a8359cca74f5855edcd04"
+    },
+    {
+      "path": "scripts/verify_mz15_action_handlers.mjs",
+      "size_bytes": 2171,
+      "sha256": "b57098a70723f334e02fc2a891de35a61a54c9542995ddeda17b8643774db291"
+    },
+    {
+      "path": "scripts/verify_mz15_all_routes.mjs",
+      "size_bytes": 676,
+      "sha256": "a942eb85f60c0253181a32962f71424573cd109747d15d8185b6f00e093eb878"
+    },
+    {
+      "path": "scripts/verify_mz15_api_bindings.mjs",
+      "size_bytes": 2611,
+      "sha256": "836bbb459628de904396649d3bd0f93bd020168fcdf6de55a386ff2eb981fb58"
+    },
+    {
+      "path": "scripts/verify_mz15_backend_preservation.mjs",
+      "size_bytes": 1133,
+      "sha256": "45f748f465482d352f788ffb4100512c881cf05d2603a6e4723515c559318287"
+    },
+    {
+      "path": "scripts/verify_mz15_dedicated_page_architecture.mjs",
+      "size_bytes": 909,
+      "sha256": "1d5edfeb3c3a76e91b2a8389aa2bec90ed01f9e463122cbd5b787ca245de4c54"
+    },
+    {
+      "path": "scripts/verify_mz15_drawer_specialization.mjs",
+      "size_bytes": 404,
+      "sha256": "1ab7d7bcddfe879ad032463756bbf34753d6c9399a43f8dcd138bdbc60cf7178"
+    },
+    {
+      "path": "scripts/verify_mz15_modal_states.mjs",
+      "size_bytes": 640,
+      "sha256": "6db64d6295120eb5f6a756d6ed9a8134cc2bb1ce38ca49ea1e4ab944b41341eb"
+    },
+    {
+      "path": "scripts/verify_mz15_no_dead_buttons.mjs",
+      "size_bytes": 1033,
+      "sha256": "38d7cab5519525d582c56dea6b27d148107f2da2698a6f739ab7b7278084e393"
+    },
+    {
+      "path": "scripts/verify_mz15_no_generic_universe_regression.mjs",
+      "size_bytes": 806,
+      "sha256": "422780f56a59072c5e52fd6db501c111245a0092dbc29a10579216173a822323"
+    },
+    {
+      "path": "scripts/verify_mz15_no_secret_leak.mjs",
+      "size_bytes": 792,
+      "sha256": "2e57f04f4408326c2206f526ea261d66401bea0c4d3516d38e67817aa82907b8"
+    },
+    {
+      "path": "scripts/verify_mz15_package_syntax.mjs",
+      "size_bytes": 1046,
+      "sha256": "3329fa5ec6c85b218e6c3c84b20e2c07ffcbb6b8e0783c14bc9cb0b6055f3c4d"
+    },
+    {
+      "path": "scripts/verify_mz15_production_acceptance.mjs",
+      "size_bytes": 1168,
+      "sha256": "421a274edd130a202d44573a96a3dcf870b5d9b6b186102f14dc4c4b553784b7"
+    },
+    {
+      "path": "scripts/verify_mz15_schema_payload_compatibility.mjs",
+      "size_bytes": 2288,
+      "sha256": "f03675221fff4c4d03669b13f638619e75e84943bb5bcaca0c21745ad0676815"
+    },
+    {
+      "path": "supabase/migrations/20260727_ac_capital_os_mz15_final_productization.sql",
+      "size_bytes": 3165,
+      "sha256": "fe395e7b7a1675c1086ca5d09eca572f399450c6392e501cf2b68225a2587474"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "name": "AC CAPITAL OS MZ16 Verifier Case-Sensitivity Fix 01",
+  "issue": "Verifier required exact-capitalized 'Linked skills' while source contains lowercase 'linked skills.'",
+  "touched_files": [
+    "AC_CAPITAL_OS_MZ16_FINAL_INSTITUTIONAL_COMMAND_EXPERIENCE/scripts/verify_ac_capital_os_mz16.mjs"
+  ],
+  "application_files_touched": [],
+  "verification_token": "MZ16_VERIFIER_CASE_SENSITIVITY_FIX_VERIFIED",
+  "created_at": "2026-07-28T03:20:39.256787+00:00"
+}

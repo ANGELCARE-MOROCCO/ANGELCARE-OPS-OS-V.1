@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "incremental": false,
+    "pretty": false
+  },
+  "include": [
+    "components/market-os/content-command/experience-bulk1/**/*.ts",
+    "components/market-os/content-command/experience-bulk1/**/*.tsx",
+    "components/market-os/content-command/experience-bulk1/**/*.d.ts",
+    "components/market-os/content-command/headquarters/DashboardWorkspace.tsx",
+    "components/market-os/content-command/headquarters/DossierWorkspace.tsx",
+    "components/market-os/content-command/headquarters/mz2-view-models.ts"
+  ]
+}

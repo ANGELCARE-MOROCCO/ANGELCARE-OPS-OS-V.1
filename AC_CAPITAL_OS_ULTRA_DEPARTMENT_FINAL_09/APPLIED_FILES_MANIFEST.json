@@ -1,0 +1,167 @@
+{
+  "package": "AC_CAPITAL_OS_ULTRA_DEPARTMENT_FINAL_09",
+  "version": "09",
+  "source_authority": {
+    "name": "AC_CAPITAL_OS_FINAL_AUTHORITATIVE_SOURCE.zip",
+    "sha256": "05972f22c221e7394913a9f150d4582ae581c516aef0472dd614952d161272c6"
+  },
+  "install_files": [
+    {
+      "path": "apps/ops-web/app/(protected)/ac-capital-os/artifacts/page.tsx",
+      "sha256": "fd9e29a01f3a5d3abb4c0b2b5559beb04a63f86a367105913ae5565e65b50dc1",
+      "size_bytes": 346
+    },
+    {
+      "path": "apps/ops-web/app/(protected)/ac-capital-os/registry/page.tsx",
+      "sha256": "c3c178acf9f695e83ff1185b5d81ae0185f8f12af3d576572490eb9a1cf96ecd",
+      "size_bytes": 342
+    },
+    {
+      "path": "apps/ops-web/app/api/ac-capital-os/agents/run/route.ts",
+      "sha256": "b791736a7868b23b0ddd54991c3c7a6e0670d1ad64ecae746ded4467732748b7",
+      "size_bytes": 2662
+    },
+    {
+      "path": "apps/ops-web/app/api/ac-capital-os/ai-command-center/run/route.ts",
+      "sha256": "28a8f318107fe3956980056c211f40ae740c73e33c06c35c00acf46bd38132ed",
+      "size_bytes": 6351
+    },
+    {
+      "path": "apps/ops-web/app/api/ac-capital-os/artifacts/[id]/download/route.ts",
+      "sha256": "0d0ada4e19ff05186ce610e09190df6dcf2a341dfe1b5365d81ca084a9311835",
+      "size_bytes": 1425
+    },
+    {
+      "path": "apps/ops-web/app/api/ac-capital-os/artifacts/route.ts",
+      "sha256": "68e0fcfe26b5f239f1c75a55f647a21879ab7eb878c7e5409fd699fe5acc61a4",
+      "size_bytes": 4424
+    },
+    {
+      "path": "apps/ops-web/app/api/ac-capital-os/institutional/route.ts",
+      "sha256": "2278c704893074e31e27616239bc05f01c7213aee24d0388630828007dc10249",
+      "size_bytes": 1844
+    },
+    {
+      "path": "apps/ops-web/app/api/ac-capital-os/runtime/tick/route.ts",
+      "sha256": "3fed7272ba1081575e3fb8389ef2c53c6cfaa814e66643c7a2543bb87f4791b4",
+      "size_bytes": 2907
+    },
+    {
+      "path": "apps/ops-web/components/ac-capital-os/core/AcCapitalShell.tsx",
+      "sha256": "c14f46b2e324a58c459bc1a610ad17d089745653cc02f1002134b0647659fa01",
+      "size_bytes": 19503
+    },
+    {
+      "path": "apps/ops-web/components/ac-capital-os/core/navigation.ts",
+      "sha256": "dc43a615bc518c75ad6b35a3fcc35ed5be4dd97472d5326fd2cc830f5fac6dfe",
+      "size_bytes": 3793
+    },
+    {
+      "path": "apps/ops-web/components/ac-capital-os/pages/ai-command/AiCommandPage.tsx",
+      "sha256": "10fb368bd0f7d7d9458d1288cf49b3bbdbd0543bc1256d6705a9f9c03ac502b5",
+      "size_bytes": 17125
+    },
+    {
+      "path": "apps/ops-web/components/ac-capital-os/pages/artifacts/ArtifactsPage.tsx",
+      "sha256": "c7e2c82cd245c985f9930e03c477d90b2f3e7fba7638cb851a0ef2159fa5727e",
+      "size_bytes": 13963
+    },
+    {
+      "path": "apps/ops-web/components/ac-capital-os/pages/artifacts/artifacts.module.css",
+      "sha256": "f7e4148f8e31bbbb81a53035e4441be7c0cffef81c75e38025710170cb88ba23",
+      "size_bytes": 6907
+    },
+    {
+      "path": "apps/ops-web/components/ac-capital-os/pages/orchestrator/OrchestratorPage.tsx",
+      "sha256": "8b458a71fae4da7e922bbca436f8f33e6c9dd796dfa75419b06d58ec4a5389ec",
+      "size_bytes": 54010
+    },
+    {
+      "path": "apps/ops-web/components/ac-capital-os/pages/orchestrator/orchestrator.module.css",
+      "sha256": "932e24c248f32e580ed74c61ed693e357fb7dee367feb446cef43e0f891e045c",
+      "size_bytes": 21430
+    },
+    {
+      "path": "apps/ops-web/components/ac-capital-os/pages/registry/RegistryPage.tsx",
+      "sha256": "e035d12b66efd63f133e6d548e65e5689a003f2d9aeb53b3f564c916d95061e2",
+      "size_bytes": 18721
+    },
+    {
+      "path": "apps/ops-web/components/ac-capital-os/pages/registry/registry.module.css",
+      "sha256": "209e551debd52958ade38a1fc8a42827239ac7759a010fd9379357c302c04a81",
+      "size_bytes": 6117
+    },
+    {
+      "path": "apps/ops-web/components/ac-capital-os/pages/reports/ReportsPage.tsx",
+      "sha256": "4633fe5f998b9c2f7e9f3de29b809ba4d1310377e232a5a6616a3005f0ee3fd5",
+      "size_bytes": 14973
+    },
+    {
+      "path": "apps/ops-web/components/ac-capital-os/pages/reports/reports.module.css",
+      "sha256": "be32ff06c39f285ae44a2d95f00b88b554c2fb10239b033945f045a25a405775",
+      "size_bytes": 4455
+    },
+    {
+      "path": "apps/ops-web/lib/ac-capital-os/server/ai-provider-bridge.ts",
+      "sha256": "0df6264471dc681dd2af25a638d4af00432eafac7ecf48c619f74e6f2dd2450b",
+      "size_bytes": 5392
+    },
+    {
+      "path": "apps/ops-web/lib/ac-capital-os/server/ai-runner.ts",
+      "sha256": "c1b5c068e7458e46f792362eb15e0a15fa092eb81501dcd8762bf42842b6c385",
+      "size_bytes": 1930
+    },
+    {
+      "path": "apps/ops-web/lib/ac-capital-os/server/artifact-factory.ts",
+      "sha256": "34c64dbdeb260e9542b1a2c5dc4653f7ca7ab20a7cc919215c4d0e063d287641",
+      "size_bytes": 34185
+    },
+    {
+      "path": "apps/ops-web/lib/ac-capital-os/server/capital-agent-executors.ts",
+      "sha256": "dced00cd55778f22a3249fae2c1840b0ed52f9c70f05a29d9ede1f2fc5991710",
+      "size_bytes": 54184
+    },
+    {
+      "path": "apps/ops-web/lib/ac-capital-os/server/capital-orchestrator.ts",
+      "sha256": "95fe3f373b1d306cc994899fc8e9b3793655c9e18a6db0ddbcceeb6ac015b679",
+      "size_bytes": 40054
+    },
+    {
+      "path": "apps/ops-web/lib/ac-capital-os/server/free-provider-control.ts",
+      "sha256": "b9280fb2dbb592a6a8e8eec24cb2e5822a7a09cd3c29c3047090687da39acfc7",
+      "size_bytes": 32893
+    },
+    {
+      "path": "apps/ops-web/lib/ac-capital-os/server/free-provider-runtime.ts",
+      "sha256": "9465eb4cbdc0eb8c979a982538681f7a71a59da20bade2c8233dc2124cb1b605",
+      "size_bytes": 54537
+    },
+    {
+      "path": "apps/ops-web/lib/ac-capital-os/server/institutional-runtime.ts",
+      "sha256": "89b5db4b5d8eab901a64e96499c2c0f0f9072cf41035e3c148a4ddc34a74a85d",
+      "size_bytes": 27738
+    },
+    {
+      "path": "apps/ops-web/vercel.json",
+      "sha256": "eafdc471fd63504157582e64352d36ecf87b382a6be1e4f6e117a89b5c8f62ad",
+      "size_bytes": 112
+    },
+    {
+      "path": "supabase/migrations/20260729_ac_capital_os_ultra_department_final_09.sql",
+      "sha256": "890ac39d1adf4a420531930a84e2d8d5de06e2b5da34f498864d544c236123a6",
+      "size_bytes": 34855
+    },
+    {
+      "path": "supabase/migrations/20260729_ac_capital_os_ultra_department_final_09_rollback.sql",
+      "sha256": "76ff1e2f5a04590d706eef1ea54e165f9d7fbcb86e66dcbe2e2125aa298ef028",
+      "size_bytes": 2094
+    }
+  ],
+  "install_file_count": 30,
+  "installer": "scripts/apply_ac_capital_os_ultra_department_final_09.mjs",
+  "static_verifier": "scripts/verify_ac_capital_os_ultra_department_final_09.mjs",
+  "migration": "supabase/migrations/20260729_ac_capital_os_ultra_department_final_09.sql",
+  "rollback": "supabase/migrations/20260729_ac_capital_os_ultra_department_final_09_rollback.sql",
+  "database_verification": "reports/SQL_VERIFY.sql",
+  "truth_boundary": "Static and structural package verification only. Database, browser, scheduler and provider E2E acceptance must run after installation."
+}

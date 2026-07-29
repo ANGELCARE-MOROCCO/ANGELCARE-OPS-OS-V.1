@@ -1,0 +1,23 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "incremental": false,
+    "skipLibCheck": true,
+    "pretty": false
+  },
+  "files": [
+    "components/market-os/content-command/ai-director-universe/AiDirectorUniverseShell.tsx",
+    "components/market-os/content-command/marketing-ai/MarketingAiDirectorWorkspace.tsx",
+    "components/market-os/content-command/marketing-ai/MarketingAutopilotWorkspace.tsx",
+    "components/market-os/content-command/experience-bulk8/Bulk8AiExecutiveWorkspace.tsx",
+    "components/market-os/content-command/experience-bulk1/Bulk1DossierWorkspace.tsx",
+    "components/market-os/content-command/experience-bulk7/Bulk7ImpactWorkspaces.tsx",
+    "components/market-os/content-command/headquarters/DistributionWorkspace.tsx",
+    "components/market-os/content-command/release/mz7-release.module.css.d.ts",
+    "lib/market-os/ai-runtime/control-service.ts",
+    "lib/market-os/marketing-ai/provider.ts",
+    "lib/market-os/marketing-ai/types.ts"
+  ],
+  "exclude": ["node_modules", ".next", "_archive", "backups", ".angelcare_backups"]
+}

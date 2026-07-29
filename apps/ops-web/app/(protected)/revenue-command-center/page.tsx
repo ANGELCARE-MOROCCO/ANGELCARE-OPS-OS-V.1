@@ -1,7 +1,7 @@
-import CentralRevenueCoreDashboard from './_central-core/CentralRevenueCoreDashboard'
+import RevenueExecutiveWorkspace from "@/components/revenue-command-center/executive-enterprise/RevenueExecutiveWorkspace"
 
-export const dynamic = 'force-dynamic'
+export const dynamic = "force-dynamic"
 
 export default function Page() {
-  return <CentralRevenueCoreDashboard />
+  return <RevenueExecutiveWorkspace experience="executive-overview" />
 }

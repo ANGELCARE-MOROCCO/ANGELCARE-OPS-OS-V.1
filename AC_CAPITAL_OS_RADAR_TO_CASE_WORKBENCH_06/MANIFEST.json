@@ -1,0 +1,59 @@
+{
+  "package": "AC_CAPITAL_OS_RADAR_TO_CASE_WORKBENCH_06",
+  "contract": "External evidence to canonical opportunity, qualification, funding case, pipeline and coordinator missions",
+  "cumulative_over": [
+    "AC_CAPITAL_OS_RUNTIME_TRUTH_REPAIR_01",
+    "AC_CAPITAL_OS_FREE_PROVIDER_OPERATIONS_05"
+  ],
+  "external_actions_locked": true,
+  "payload_file_count": 9,
+  "payload_files": [
+    {
+      "path": "payload/apps/ops-web/app/api/ac-capital-os/capital-radar/research/run/route.ts",
+      "sha256": "691eb80009633fa581771898903dcffc4b43197c6154796c65e6c8a97da477e3",
+      "bytes": 6645
+    },
+    {
+      "path": "payload/apps/ops-web/app/api/ac-capital-os/capital-radar/route.ts",
+      "sha256": "3e671451aad481f79199598bb3b95d38730cf831d4f1120fb90949236bcae9f3",
+      "bytes": 2282
+    },
+    {
+      "path": "payload/apps/ops-web/components/ac-capital-os/pages/radar/RadarPage.tsx",
+      "sha256": "7960ec31ded2e20f7c8987bf315edc10dd9a75b71b0ebb980d08ae6172be7870",
+      "bytes": 54715
+    },
+    {
+      "path": "payload/apps/ops-web/components/ac-capital-os/pages/radar/radar.module.css",
+      "sha256": "473f3db0b3e484af1dbcb9890f429624f378c7359112e561333527a5a36a8784",
+      "bytes": 12961
+    },
+    {
+      "path": "payload/apps/ops-web/lib/ac-capital-os/server/free-provider-persistence.ts",
+      "sha256": "68f8bbb0f20040b541897cc9121abc390b77a0173b5aed57e59e95c2e4d844fa",
+      "bytes": 21942
+    },
+    {
+      "path": "payload/apps/ops-web/lib/ac-capital-os/server/free-provider-runtime.ts",
+      "sha256": "4a9f0fed71544ce93b06146a9b11748cf1222f31c5568248f5a973ea0a04a42c",
+      "bytes": 44950
+    },
+    {
+      "path": "payload/apps/ops-web/lib/ac-capital-os/server/free-provider-types.ts",
+      "sha256": "2d7614ad9f17d740ae82cec21b6f8f647568d7790bea8068078cda2433d70baf",
+      "bytes": 4348
+    },
+    {
+      "path": "payload/apps/ops-web/lib/ac-capital-os/server/radar-workbench.ts",
+      "sha256": "77bcce032712eb3526c3af0f8c193fbef2ccd647f001b21fc296d4de37222620",
+      "bytes": 51638
+    },
+    {
+      "path": "payload/supabase/migrations/20260729_ac_capital_os_radar_to_case_workbench_06.sql",
+      "sha256": "ede8f5fd086bf52b3df29b67099af4e96e2d52f0777de06e80fa37ce82154aed",
+      "bytes": 11992
+    }
+  ],
+  "install_boundary": "copy-and-backup-only",
+  "migration": "supabase/migrations/20260729_ac_capital_os_radar_to_case_workbench_06.sql"
+}

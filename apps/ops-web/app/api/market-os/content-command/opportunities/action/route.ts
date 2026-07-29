@@ -1,0 +1,15 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { requireContentHeadquartersUser, contentHeadquartersApiError, type ContentHeadquartersPermission } from '@/lib/market-os/content-command-headquarters/auth'
+import { convertOpportunityToWorkflow, createManualOpportunity, decideOpportunity, runOpportunityIntelligence, updateOpportunityProfile } from '@/lib/market-os/content-command-headquarters/opportunity-intelligence-service'
+import { executeRecordLifecycle } from '@/lib/market-os/content-command-headquarters/record-lifecycle-service'
+const clean=(v:unknown)=>String(v||'').trim();const list=(v:unknown)=>Array.isArray(v)?v.map(String).map(s=>s.trim()).filter(Boolean):[]
+export const dynamic='force-dynamic'
+export async function POST(request:NextRequest){try{const body=await request.json() as Record<string,unknown>;const action=clean(body.action);const permission:ContentHeadquartersPermission=action==='run_scan'?'configure_ai':action==='permanent_delete'?'purge':action==='archive'?'archive':action==='edit'?'edit':'operate';const actor=await requireContentHeadquartersUser(permission);let result:unknown
+ if(action==='run_scan')result=await runOpportunityIntelligence({actorId:actor.id,actorName:actor.name,reason:clean(body.reason),continuationMode:(clean(body.continuationMode)||'auto') as any,scanWeb:body.scanWeb!==false})
+ else if(action==='create_manual')result=await createManualOpportunity({actorId:actor.id,actorName:actor.name,title:clean(body.title),summary:clean(body.summary),reason:clean(body.reason)||'Opportunité constituée manuellement.',profilePatch:(body.profilePatch&&typeof body.profilePatch==='object'?body.profilePatch:{}) as Record<string,unknown>})
+ else if(action==='edit')result=await updateOpportunityProfile({actorId:actor.id,actorName:actor.name,signalId:clean(body.signalId),title:clean(body.title),summary:clean(body.summary),profilePatch:(body.profilePatch&&typeof body.profilePatch==='object'?body.profilePatch:{}) as Record<string,unknown>,reason:clean(body.reason)})
+ else if(['validate','select','defer','reject','expire','reopen'].includes(action))result=await decideOpportunity({actorId:actor.id,actorName:actor.name,signalId:clean(body.signalId),decision:action as any,reason:clean(body.reason),conditions:list(body.conditions)})
+ else if(action==='convert')result=await convertOpportunityToWorkflow({actorId:actor.id,actorName:actor.name,signalId:clean(body.signalId),mode:clean(body.mode)==='bundle'?'bundle':'single',reason:clean(body.reason),ownerId:clean(body.ownerId),ownerName:clean(body.ownerName),reviewerId:clean(body.reviewerId),reviewerName:clean(body.reviewerName),aiDirectorId:clean(body.aiDirectorId)})
+ else if(action==='archive'||action==='permanent_delete')result=await executeRecordLifecycle({actorId:actor.id,actorName:actor.name,entityType:'signal',entityId:clean(body.signalId),action:action==='archive'?'archive':'permanent_delete',reason:clean(body.reason),confirmation:clean(body.confirmation),patch:{}})
+ else throw new Error('OPPORTUNITY_ACTION_UNSUPPORTED')
+ return NextResponse.json({ok:true,result})}catch(error){return contentHeadquartersApiError(error)}}

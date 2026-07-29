@@ -3,6 +3,222 @@
 
 export const APP_ROUTES = [
   {
+    "label": "Ac Capital Os",
+    "shortLabel": "Ac Capital Os",
+    "href": "/ac-capital-os",
+    "routePattern": "/ac-capital-os",
+    "dynamic": false,
+    "module": "ac-capital-os",
+    "moduleLabel": "Ac Capital Os",
+    "permissionKey": "page:/ac-capital-os",
+    "modulePermissionKey": "ac-capital-os.view",
+    "detectedSource": "app/(protected)/ac-capital-os/page.tsx"
+  },
+  {
+    "label": "Ac Capital Os / Ai Command",
+    "shortLabel": "Ai Command",
+    "href": "/ac-capital-os/ai-command",
+    "routePattern": "/ac-capital-os/ai-command",
+    "dynamic": false,
+    "module": "ac-capital-os",
+    "moduleLabel": "Ac Capital Os",
+    "permissionKey": "page:/ac-capital-os/ai-command",
+    "modulePermissionKey": "ac-capital-os.view",
+    "detectedSource": "app/(protected)/ac-capital-os/ai-command/page.tsx"
+  },
+  {
+    "label": "Ac Capital Os / Approvals",
+    "shortLabel": "Approvals",
+    "href": "/ac-capital-os/approvals",
+    "routePattern": "/ac-capital-os/approvals",
+    "dynamic": false,
+    "module": "ac-capital-os",
+    "moduleLabel": "Ac Capital Os",
+    "permissionKey": "page:/ac-capital-os/approvals",
+    "modulePermissionKey": "ac-capital-os.view",
+    "detectedSource": "app/(protected)/ac-capital-os/approvals/page.tsx"
+  },
+  {
+    "label": "Ac Capital Os / Cases",
+    "shortLabel": "Cases",
+    "href": "/ac-capital-os/cases",
+    "routePattern": "/ac-capital-os/cases",
+    "dynamic": false,
+    "module": "ac-capital-os",
+    "moduleLabel": "Ac Capital Os",
+    "permissionKey": "page:/ac-capital-os/cases",
+    "modulePermissionKey": "ac-capital-os.view",
+    "detectedSource": "app/(protected)/ac-capital-os/cases/page.tsx"
+  },
+  {
+    "label": "Ac Capital Os / Coordinator",
+    "shortLabel": "Coordinator",
+    "href": "/ac-capital-os/coordinator",
+    "routePattern": "/ac-capital-os/coordinator",
+    "dynamic": false,
+    "module": "ac-capital-os",
+    "moduleLabel": "Ac Capital Os",
+    "permissionKey": "page:/ac-capital-os/coordinator",
+    "modulePermissionKey": "ac-capital-os.view",
+    "detectedSource": "app/(protected)/ac-capital-os/coordinator/page.tsx"
+  },
+  {
+    "label": "Ac Capital Os / Data Room",
+    "shortLabel": "Data Room",
+    "href": "/ac-capital-os/data-room",
+    "routePattern": "/ac-capital-os/data-room",
+    "dynamic": false,
+    "module": "ac-capital-os",
+    "moduleLabel": "Ac Capital Os",
+    "permissionKey": "page:/ac-capital-os/data-room",
+    "modulePermissionKey": "ac-capital-os.view",
+    "detectedSource": "app/(protected)/ac-capital-os/data-room/page.tsx"
+  },
+  {
+    "label": "Ac Capital Os / Doctrine",
+    "shortLabel": "Doctrine",
+    "href": "/ac-capital-os/doctrine",
+    "routePattern": "/ac-capital-os/doctrine",
+    "dynamic": false,
+    "module": "ac-capital-os",
+    "moduleLabel": "Ac Capital Os",
+    "permissionKey": "page:/ac-capital-os/doctrine",
+    "modulePermissionKey": "ac-capital-os.view",
+    "detectedSource": "app/(protected)/ac-capital-os/doctrine/page.tsx"
+  },
+  {
+    "label": "Ac Capital Os / Funders",
+    "shortLabel": "Funders",
+    "href": "/ac-capital-os/funders",
+    "routePattern": "/ac-capital-os/funders",
+    "dynamic": false,
+    "module": "ac-capital-os",
+    "moduleLabel": "Ac Capital Os",
+    "permissionKey": "page:/ac-capital-os/funders",
+    "modulePermissionKey": "ac-capital-os.view",
+    "detectedSource": "app/(protected)/ac-capital-os/funders/page.tsx"
+  },
+  {
+    "label": "Ac Capital Os / Learning",
+    "shortLabel": "Learning",
+    "href": "/ac-capital-os/learning",
+    "routePattern": "/ac-capital-os/learning",
+    "dynamic": false,
+    "module": "ac-capital-os",
+    "moduleLabel": "Ac Capital Os",
+    "permissionKey": "page:/ac-capital-os/learning",
+    "modulePermissionKey": "ac-capital-os.view",
+    "detectedSource": "app/(protected)/ac-capital-os/learning/page.tsx"
+  },
+  {
+    "label": "Ac Capital Os / Manual",
+    "shortLabel": "Manual",
+    "href": "/ac-capital-os/manual",
+    "routePattern": "/ac-capital-os/manual",
+    "dynamic": false,
+    "module": "ac-capital-os",
+    "moduleLabel": "Ac Capital Os",
+    "permissionKey": "page:/ac-capital-os/manual",
+    "modulePermissionKey": "ac-capital-os.view",
+    "detectedSource": "app/(protected)/ac-capital-os/manual/page.tsx"
+  },
+  {
+    "label": "Ac Capital Os / Pipeline",
+    "shortLabel": "Pipeline",
+    "href": "/ac-capital-os/pipeline",
+    "routePattern": "/ac-capital-os/pipeline",
+    "dynamic": false,
+    "module": "ac-capital-os",
+    "moduleLabel": "Ac Capital Os",
+    "permissionKey": "page:/ac-capital-os/pipeline",
+    "modulePermissionKey": "ac-capital-os.view",
+    "detectedSource": "app/(protected)/ac-capital-os/pipeline/page.tsx"
+  },
+  {
+    "label": "Ac Capital Os / Production",
+    "shortLabel": "Production",
+    "href": "/ac-capital-os/production",
+    "routePattern": "/ac-capital-os/production",
+    "dynamic": false,
+    "module": "ac-capital-os",
+    "moduleLabel": "Ac Capital Os",
+    "permissionKey": "page:/ac-capital-os/production",
+    "modulePermissionKey": "ac-capital-os.view",
+    "detectedSource": "app/(protected)/ac-capital-os/production/page.tsx"
+  },
+  {
+    "label": "Ac Capital Os / Qualification",
+    "shortLabel": "Qualification",
+    "href": "/ac-capital-os/qualification",
+    "routePattern": "/ac-capital-os/qualification",
+    "dynamic": false,
+    "module": "ac-capital-os",
+    "moduleLabel": "Ac Capital Os",
+    "permissionKey": "page:/ac-capital-os/qualification",
+    "modulePermissionKey": "ac-capital-os.view",
+    "detectedSource": "app/(protected)/ac-capital-os/qualification/page.tsx"
+  },
+  {
+    "label": "Ac Capital Os / Radar",
+    "shortLabel": "Radar",
+    "href": "/ac-capital-os/radar",
+    "routePattern": "/ac-capital-os/radar",
+    "dynamic": false,
+    "module": "ac-capital-os",
+    "moduleLabel": "Ac Capital Os",
+    "permissionKey": "page:/ac-capital-os/radar",
+    "modulePermissionKey": "ac-capital-os.view",
+    "detectedSource": "app/(protected)/ac-capital-os/radar/page.tsx"
+  },
+  {
+    "label": "Ac Capital Os / Reports",
+    "shortLabel": "Reports",
+    "href": "/ac-capital-os/reports",
+    "routePattern": "/ac-capital-os/reports",
+    "dynamic": false,
+    "module": "ac-capital-os",
+    "moduleLabel": "Ac Capital Os",
+    "permissionKey": "page:/ac-capital-os/reports",
+    "modulePermissionKey": "ac-capital-os.view",
+    "detectedSource": "app/(protected)/ac-capital-os/reports/page.tsx"
+  },
+  {
+    "label": "Ac Capital Os / Settings",
+    "shortLabel": "Settings",
+    "href": "/ac-capital-os/settings",
+    "routePattern": "/ac-capital-os/settings",
+    "dynamic": false,
+    "module": "ac-capital-os",
+    "moduleLabel": "Ac Capital Os",
+    "permissionKey": "page:/ac-capital-os/settings",
+    "modulePermissionKey": "ac-capital-os.view",
+    "detectedSource": "app/(protected)/ac-capital-os/settings/page.tsx"
+  },
+  {
+    "label": "Ac Capital Os / Simulator",
+    "shortLabel": "Simulator",
+    "href": "/ac-capital-os/simulator",
+    "routePattern": "/ac-capital-os/simulator",
+    "dynamic": false,
+    "module": "ac-capital-os",
+    "moduleLabel": "Ac Capital Os",
+    "permissionKey": "page:/ac-capital-os/simulator",
+    "modulePermissionKey": "ac-capital-os.view",
+    "detectedSource": "app/(protected)/ac-capital-os/simulator/page.tsx"
+  },
+  {
+    "label": "Ac Capital Os / Strategy",
+    "shortLabel": "Strategy",
+    "href": "/ac-capital-os/strategy",
+    "routePattern": "/ac-capital-os/strategy",
+    "dynamic": false,
+    "module": "ac-capital-os",
+    "moduleLabel": "Ac Capital Os",
+    "permissionKey": "page:/ac-capital-os/strategy",
+    "modulePermissionKey": "ac-capital-os.view",
+    "detectedSource": "app/(protected)/ac-capital-os/strategy/page.tsx"
+  },
+  {
     "label": "Academy",
     "shortLabel": "Academy",
     "href": "/academy",
@@ -913,6 +1129,30 @@ export const APP_ROUTES = [
     "permissionKey": "page:/ai-provider-control",
     "modulePermissionKey": "ai-provider-control.view",
     "detectedSource": "app/(protected)/ai-provider-control/page.tsx"
+  },
+  {
+    "label": "Ai Provider Control / Manual",
+    "shortLabel": "Manual",
+    "href": "/ai-provider-control/manual",
+    "routePattern": "/ai-provider-control/manual",
+    "dynamic": false,
+    "module": "ai-provider-control",
+    "moduleLabel": "Ai Provider Control",
+    "permissionKey": "page:/ai-provider-control/manual",
+    "modulePermissionKey": "ai-provider-control.view",
+    "detectedSource": "app/(protected)/ai-provider-control/manual/page.tsx"
+  },
+  {
+    "label": "Ai Provider Control / Runtime Core",
+    "shortLabel": "Runtime Core",
+    "href": "/ai-provider-control/runtime-core",
+    "routePattern": "/ai-provider-control/runtime-core",
+    "dynamic": false,
+    "module": "ai-provider-control",
+    "moduleLabel": "Ai Provider Control",
+    "permissionKey": "page:/ai-provider-control/runtime-core",
+    "modulePermissionKey": "ai-provider-control.view",
+    "detectedSource": "app/(protected)/ai-provider-control/runtime-core/page.tsx"
   },
   {
     "label": "Angelcare 360",
@@ -8919,6 +9159,18 @@ export const APP_ROUTES = [
     "detectedSource": "app/(protected)/market-os/content-command-center/ai-director/skills/page.tsx"
   },
   {
+    "label": "Market Os / Content Command Center / Ai Foundry",
+    "shortLabel": "Ai Foundry",
+    "href": "/market-os/content-command-center/ai-foundry",
+    "routePattern": "/market-os/content-command-center/ai-foundry",
+    "dynamic": false,
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "permissionKey": "page:/market-os/content-command-center/ai-foundry",
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)/market-os/content-command-center/ai-foundry/page.tsx"
+  },
+  {
     "label": "Market Os / Content Command Center / Assets",
     "shortLabel": "Assets",
     "href": "/market-os/content-command-center/assets",
@@ -8979,6 +9231,54 @@ export const APP_ROUTES = [
     "detectedSource": "app/(protected)/market-os/content-command-center/create/page.tsx"
   },
   {
+    "label": "Market Os / Content Command Center / Directory",
+    "shortLabel": "Directory",
+    "href": "/market-os/content-command-center/directory",
+    "routePattern": "/market-os/content-command-center/directory",
+    "dynamic": false,
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "permissionKey": "page:/market-os/content-command-center/directory",
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)/market-os/content-command-center/directory/page.tsx"
+  },
+  {
+    "label": "Market Os / Content Command Center / Distribution",
+    "shortLabel": "Distribution",
+    "href": "/market-os/content-command-center/distribution",
+    "routePattern": "/market-os/content-command-center/distribution",
+    "dynamic": false,
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "permissionKey": "page:/market-os/content-command-center/distribution",
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)/market-os/content-command-center/distribution/page.tsx"
+  },
+  {
+    "label": "Market Os / Content Command Center / Dossiers / [Id",
+    "shortLabel": "[Id",
+    "href": "/market-os/content-command-center/dossiers/[id]",
+    "routePattern": "/market-os/content-command-center/dossiers/:id",
+    "dynamic": true,
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "permissionKey": "page:/market-os/content-command-center/dossiers/[id]",
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)/market-os/content-command-center/dossiers/[id]/page.tsx"
+  },
+  {
+    "label": "Market Os / Content Command Center / Evidence",
+    "shortLabel": "Evidence",
+    "href": "/market-os/content-command-center/evidence",
+    "routePattern": "/market-os/content-command-center/evidence",
+    "dynamic": false,
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "permissionKey": "page:/market-os/content-command-center/evidence",
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)/market-os/content-command-center/evidence/page.tsx"
+  },
+  {
     "label": "Market Os / Content Command Center / Legacy Operations",
     "shortLabel": "Legacy Operations",
     "href": "/market-os/content-command-center/legacy-operations",
@@ -8989,6 +9289,18 @@ export const APP_ROUTES = [
     "permissionKey": "page:/market-os/content-command-center/legacy-operations",
     "modulePermissionKey": "market-os.view",
     "detectedSource": "app/(protected)/market-os/content-command-center/legacy-operations/page.tsx"
+  },
+  {
+    "label": "Market Os / Content Command Center / Missions",
+    "shortLabel": "Missions",
+    "href": "/market-os/content-command-center/missions",
+    "routePattern": "/market-os/content-command-center/missions",
+    "dynamic": false,
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "permissionKey": "page:/market-os/content-command-center/missions",
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)/market-os/content-command-center/missions/page.tsx"
   },
   {
     "label": "Market Os / Content Command Center / Publishing",
@@ -9013,6 +9325,54 @@ export const APP_ROUTES = [
     "permissionKey": "page:/market-os/content-command-center/review",
     "modulePermissionKey": "market-os.view",
     "detectedSource": "app/(protected)/market-os/content-command-center/review/page.tsx"
+  },
+  {
+    "label": "Market Os / Content Command Center / Signals",
+    "shortLabel": "Signals",
+    "href": "/market-os/content-command-center/signals",
+    "routePattern": "/market-os/content-command-center/signals",
+    "dynamic": false,
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "permissionKey": "page:/market-os/content-command-center/signals",
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)/market-os/content-command-center/signals/page.tsx"
+  },
+  {
+    "label": "Market Os / Content Command Center / Source Vault",
+    "shortLabel": "Source Vault",
+    "href": "/market-os/content-command-center/source-vault",
+    "routePattern": "/market-os/content-command-center/source-vault",
+    "dynamic": false,
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "permissionKey": "page:/market-os/content-command-center/source-vault",
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)/market-os/content-command-center/source-vault/page.tsx"
+  },
+  {
+    "label": "Market Os / Content Command Center / Strategies",
+    "shortLabel": "Strategies",
+    "href": "/market-os/content-command-center/strategies",
+    "routePattern": "/market-os/content-command-center/strategies",
+    "dynamic": false,
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "permissionKey": "page:/market-os/content-command-center/strategies",
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)/market-os/content-command-center/strategies/page.tsx"
+  },
+  {
+    "label": "Market Os / Content Command Center / Studio",
+    "shortLabel": "Studio",
+    "href": "/market-os/content-command-center/studio",
+    "routePattern": "/market-os/content-command-center/studio",
+    "dynamic": false,
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "permissionKey": "page:/market-os/content-command-center/studio",
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)/market-os/content-command-center/studio/page.tsx"
   },
   {
     "label": "Market Os / Content Command Center / Tasks",
@@ -9061,6 +9421,18 @@ export const APP_ROUTES = [
     "permissionKey": "page:/market-os/content-command-center/tasks/execution",
     "modulePermissionKey": "market-os.view",
     "detectedSource": "app/(protected)/market-os/content-command-center/tasks/execution/page.tsx"
+  },
+  {
+    "label": "Market Os / Content Command Center / Validation",
+    "shortLabel": "Validation",
+    "href": "/market-os/content-command-center/validation",
+    "routePattern": "/market-os/content-command-center/validation",
+    "dynamic": false,
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "permissionKey": "page:/market-os/content-command-center/validation",
+    "modulePermissionKey": "market-os.view",
+    "detectedSource": "app/(protected)/market-os/content-command-center/validation/page.tsx"
   },
   {
     "label": "Market Os / Marketing Home",
@@ -13218,6 +13590,186 @@ export const APP_ROUTES = [
 
 export const APP_ROUTE_PERMISSIONS = [
   {
+    "value": "page:/ac-capital-os",
+    "label": "Ac Capital Os",
+    "shortLabel": "Ac Capital Os",
+    "module": "ac-capital-os",
+    "moduleLabel": "Ac Capital Os",
+    "href": "/ac-capital-os",
+    "routePattern": "/ac-capital-os",
+    "dynamic": false
+  },
+  {
+    "value": "page:/ac-capital-os/ai-command",
+    "label": "Ac Capital Os / Ai Command",
+    "shortLabel": "Ai Command",
+    "module": "ac-capital-os",
+    "moduleLabel": "Ac Capital Os",
+    "href": "/ac-capital-os/ai-command",
+    "routePattern": "/ac-capital-os/ai-command",
+    "dynamic": false
+  },
+  {
+    "value": "page:/ac-capital-os/approvals",
+    "label": "Ac Capital Os / Approvals",
+    "shortLabel": "Approvals",
+    "module": "ac-capital-os",
+    "moduleLabel": "Ac Capital Os",
+    "href": "/ac-capital-os/approvals",
+    "routePattern": "/ac-capital-os/approvals",
+    "dynamic": false
+  },
+  {
+    "value": "page:/ac-capital-os/cases",
+    "label": "Ac Capital Os / Cases",
+    "shortLabel": "Cases",
+    "module": "ac-capital-os",
+    "moduleLabel": "Ac Capital Os",
+    "href": "/ac-capital-os/cases",
+    "routePattern": "/ac-capital-os/cases",
+    "dynamic": false
+  },
+  {
+    "value": "page:/ac-capital-os/coordinator",
+    "label": "Ac Capital Os / Coordinator",
+    "shortLabel": "Coordinator",
+    "module": "ac-capital-os",
+    "moduleLabel": "Ac Capital Os",
+    "href": "/ac-capital-os/coordinator",
+    "routePattern": "/ac-capital-os/coordinator",
+    "dynamic": false
+  },
+  {
+    "value": "page:/ac-capital-os/data-room",
+    "label": "Ac Capital Os / Data Room",
+    "shortLabel": "Data Room",
+    "module": "ac-capital-os",
+    "moduleLabel": "Ac Capital Os",
+    "href": "/ac-capital-os/data-room",
+    "routePattern": "/ac-capital-os/data-room",
+    "dynamic": false
+  },
+  {
+    "value": "page:/ac-capital-os/doctrine",
+    "label": "Ac Capital Os / Doctrine",
+    "shortLabel": "Doctrine",
+    "module": "ac-capital-os",
+    "moduleLabel": "Ac Capital Os",
+    "href": "/ac-capital-os/doctrine",
+    "routePattern": "/ac-capital-os/doctrine",
+    "dynamic": false
+  },
+  {
+    "value": "page:/ac-capital-os/funders",
+    "label": "Ac Capital Os / Funders",
+    "shortLabel": "Funders",
+    "module": "ac-capital-os",
+    "moduleLabel": "Ac Capital Os",
+    "href": "/ac-capital-os/funders",
+    "routePattern": "/ac-capital-os/funders",
+    "dynamic": false
+  },
+  {
+    "value": "page:/ac-capital-os/learning",
+    "label": "Ac Capital Os / Learning",
+    "shortLabel": "Learning",
+    "module": "ac-capital-os",
+    "moduleLabel": "Ac Capital Os",
+    "href": "/ac-capital-os/learning",
+    "routePattern": "/ac-capital-os/learning",
+    "dynamic": false
+  },
+  {
+    "value": "page:/ac-capital-os/manual",
+    "label": "Ac Capital Os / Manual",
+    "shortLabel": "Manual",
+    "module": "ac-capital-os",
+    "moduleLabel": "Ac Capital Os",
+    "href": "/ac-capital-os/manual",
+    "routePattern": "/ac-capital-os/manual",
+    "dynamic": false
+  },
+  {
+    "value": "page:/ac-capital-os/pipeline",
+    "label": "Ac Capital Os / Pipeline",
+    "shortLabel": "Pipeline",
+    "module": "ac-capital-os",
+    "moduleLabel": "Ac Capital Os",
+    "href": "/ac-capital-os/pipeline",
+    "routePattern": "/ac-capital-os/pipeline",
+    "dynamic": false
+  },
+  {
+    "value": "page:/ac-capital-os/production",
+    "label": "Ac Capital Os / Production",
+    "shortLabel": "Production",
+    "module": "ac-capital-os",
+    "moduleLabel": "Ac Capital Os",
+    "href": "/ac-capital-os/production",
+    "routePattern": "/ac-capital-os/production",
+    "dynamic": false
+  },
+  {
+    "value": "page:/ac-capital-os/qualification",
+    "label": "Ac Capital Os / Qualification",
+    "shortLabel": "Qualification",
+    "module": "ac-capital-os",
+    "moduleLabel": "Ac Capital Os",
+    "href": "/ac-capital-os/qualification",
+    "routePattern": "/ac-capital-os/qualification",
+    "dynamic": false
+  },
+  {
+    "value": "page:/ac-capital-os/radar",
+    "label": "Ac Capital Os / Radar",
+    "shortLabel": "Radar",
+    "module": "ac-capital-os",
+    "moduleLabel": "Ac Capital Os",
+    "href": "/ac-capital-os/radar",
+    "routePattern": "/ac-capital-os/radar",
+    "dynamic": false
+  },
+  {
+    "value": "page:/ac-capital-os/reports",
+    "label": "Ac Capital Os / Reports",
+    "shortLabel": "Reports",
+    "module": "ac-capital-os",
+    "moduleLabel": "Ac Capital Os",
+    "href": "/ac-capital-os/reports",
+    "routePattern": "/ac-capital-os/reports",
+    "dynamic": false
+  },
+  {
+    "value": "page:/ac-capital-os/settings",
+    "label": "Ac Capital Os / Settings",
+    "shortLabel": "Settings",
+    "module": "ac-capital-os",
+    "moduleLabel": "Ac Capital Os",
+    "href": "/ac-capital-os/settings",
+    "routePattern": "/ac-capital-os/settings",
+    "dynamic": false
+  },
+  {
+    "value": "page:/ac-capital-os/simulator",
+    "label": "Ac Capital Os / Simulator",
+    "shortLabel": "Simulator",
+    "module": "ac-capital-os",
+    "moduleLabel": "Ac Capital Os",
+    "href": "/ac-capital-os/simulator",
+    "routePattern": "/ac-capital-os/simulator",
+    "dynamic": false
+  },
+  {
+    "value": "page:/ac-capital-os/strategy",
+    "label": "Ac Capital Os / Strategy",
+    "shortLabel": "Strategy",
+    "module": "ac-capital-os",
+    "moduleLabel": "Ac Capital Os",
+    "href": "/ac-capital-os/strategy",
+    "routePattern": "/ac-capital-os/strategy",
+    "dynamic": false
+  },
+  {
     "value": "page:/academy",
     "label": "Academy",
     "shortLabel": "Academy",
@@ -13975,6 +14527,26 @@ export const APP_ROUTE_PERMISSIONS = [
     "moduleLabel": "Ai Provider Control",
     "href": "/ai-provider-control",
     "routePattern": "/ai-provider-control",
+    "dynamic": false
+  },
+  {
+    "value": "page:/ai-provider-control/manual",
+    "label": "Ai Provider Control / Manual",
+    "shortLabel": "Manual",
+    "module": "ai-provider-control",
+    "moduleLabel": "Ai Provider Control",
+    "href": "/ai-provider-control/manual",
+    "routePattern": "/ai-provider-control/manual",
+    "dynamic": false
+  },
+  {
+    "value": "page:/ai-provider-control/runtime-core",
+    "label": "Ai Provider Control / Runtime Core",
+    "shortLabel": "Runtime Core",
+    "module": "ai-provider-control",
+    "moduleLabel": "Ai Provider Control",
+    "href": "/ai-provider-control/runtime-core",
+    "routePattern": "/ai-provider-control/runtime-core",
     "dynamic": false
   },
   {
@@ -20648,6 +21220,16 @@ export const APP_ROUTE_PERMISSIONS = [
     "dynamic": false
   },
   {
+    "value": "page:/market-os/content-command-center/ai-foundry",
+    "label": "Market Os / Content Command Center / Ai Foundry",
+    "shortLabel": "Ai Foundry",
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "href": "/market-os/content-command-center/ai-foundry",
+    "routePattern": "/market-os/content-command-center/ai-foundry",
+    "dynamic": false
+  },
+  {
     "value": "page:/market-os/content-command-center/assets",
     "label": "Market Os / Content Command Center / Assets",
     "shortLabel": "Assets",
@@ -20698,6 +21280,46 @@ export const APP_ROUTE_PERMISSIONS = [
     "dynamic": false
   },
   {
+    "value": "page:/market-os/content-command-center/directory",
+    "label": "Market Os / Content Command Center / Directory",
+    "shortLabel": "Directory",
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "href": "/market-os/content-command-center/directory",
+    "routePattern": "/market-os/content-command-center/directory",
+    "dynamic": false
+  },
+  {
+    "value": "page:/market-os/content-command-center/distribution",
+    "label": "Market Os / Content Command Center / Distribution",
+    "shortLabel": "Distribution",
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "href": "/market-os/content-command-center/distribution",
+    "routePattern": "/market-os/content-command-center/distribution",
+    "dynamic": false
+  },
+  {
+    "value": "page:/market-os/content-command-center/dossiers/[id]",
+    "label": "Market Os / Content Command Center / Dossiers / [Id",
+    "shortLabel": "[Id",
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "href": "/market-os/content-command-center/dossiers/[id]",
+    "routePattern": "/market-os/content-command-center/dossiers/:id",
+    "dynamic": true
+  },
+  {
+    "value": "page:/market-os/content-command-center/evidence",
+    "label": "Market Os / Content Command Center / Evidence",
+    "shortLabel": "Evidence",
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "href": "/market-os/content-command-center/evidence",
+    "routePattern": "/market-os/content-command-center/evidence",
+    "dynamic": false
+  },
+  {
     "value": "page:/market-os/content-command-center/legacy-operations",
     "label": "Market Os / Content Command Center / Legacy Operations",
     "shortLabel": "Legacy Operations",
@@ -20705,6 +21327,16 @@ export const APP_ROUTE_PERMISSIONS = [
     "moduleLabel": "Market OS",
     "href": "/market-os/content-command-center/legacy-operations",
     "routePattern": "/market-os/content-command-center/legacy-operations",
+    "dynamic": false
+  },
+  {
+    "value": "page:/market-os/content-command-center/missions",
+    "label": "Market Os / Content Command Center / Missions",
+    "shortLabel": "Missions",
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "href": "/market-os/content-command-center/missions",
+    "routePattern": "/market-os/content-command-center/missions",
     "dynamic": false
   },
   {
@@ -20725,6 +21357,46 @@ export const APP_ROUTE_PERMISSIONS = [
     "moduleLabel": "Market OS",
     "href": "/market-os/content-command-center/review",
     "routePattern": "/market-os/content-command-center/review",
+    "dynamic": false
+  },
+  {
+    "value": "page:/market-os/content-command-center/signals",
+    "label": "Market Os / Content Command Center / Signals",
+    "shortLabel": "Signals",
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "href": "/market-os/content-command-center/signals",
+    "routePattern": "/market-os/content-command-center/signals",
+    "dynamic": false
+  },
+  {
+    "value": "page:/market-os/content-command-center/source-vault",
+    "label": "Market Os / Content Command Center / Source Vault",
+    "shortLabel": "Source Vault",
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "href": "/market-os/content-command-center/source-vault",
+    "routePattern": "/market-os/content-command-center/source-vault",
+    "dynamic": false
+  },
+  {
+    "value": "page:/market-os/content-command-center/strategies",
+    "label": "Market Os / Content Command Center / Strategies",
+    "shortLabel": "Strategies",
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "href": "/market-os/content-command-center/strategies",
+    "routePattern": "/market-os/content-command-center/strategies",
+    "dynamic": false
+  },
+  {
+    "value": "page:/market-os/content-command-center/studio",
+    "label": "Market Os / Content Command Center / Studio",
+    "shortLabel": "Studio",
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "href": "/market-os/content-command-center/studio",
+    "routePattern": "/market-os/content-command-center/studio",
     "dynamic": false
   },
   {
@@ -20765,6 +21437,16 @@ export const APP_ROUTE_PERMISSIONS = [
     "moduleLabel": "Market OS",
     "href": "/market-os/content-command-center/tasks/execution",
     "routePattern": "/market-os/content-command-center/tasks/execution",
+    "dynamic": false
+  },
+  {
+    "value": "page:/market-os/content-command-center/validation",
+    "label": "Market Os / Content Command Center / Validation",
+    "shortLabel": "Validation",
+    "module": "market-os",
+    "moduleLabel": "Market OS",
+    "href": "/market-os/content-command-center/validation",
+    "routePattern": "/market-os/content-command-center/validation",
     "dynamic": false
   },
   {

@@ -1,0 +1,5 @@
+{
+  "scenarioKey": "bank-financing",
+  "purpose": "Prove eligibility, proof readiness, bank dossier generation and approval-controlled human contact.",
+  "constraints": ["No automatic bank contact", "No raw bank/private document sent to free external AI", "All amounts preserve Dh unless source requires another currency"]
+}

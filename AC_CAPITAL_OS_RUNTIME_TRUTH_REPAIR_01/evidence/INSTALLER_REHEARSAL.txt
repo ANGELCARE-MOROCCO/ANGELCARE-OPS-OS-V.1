@@ -1,0 +1,10 @@
+AC CAPITAL OS Runtime Truth Repair 01 installed.
+Detected mode: repository-root
+Files installed: 12
+Backup creation: PASS
+SQL copied without execution: PASS
+Post-install static verifier: PASS
+Installed payload comparison against corrected working source: 12 checked, 0 mismatches
+
+Rehearsal target: a clean extracted copy of the uploaded source archive.
+No build, SQL execution, live Gemini call, deployment, git stage, commit or push was performed.

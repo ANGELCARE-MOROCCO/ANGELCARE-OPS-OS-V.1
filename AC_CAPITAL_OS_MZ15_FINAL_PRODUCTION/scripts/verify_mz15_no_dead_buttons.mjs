@@ -1,0 +1,5 @@
+import path from "node:path";
+import { assert, detectRoots, loadTypeScript, walk } from "./_lib.mjs";
+const ts=loadTypeScript();const { opsRoot }=detectRoots();const root=path.join(opsRoot,"components","ac-capital-os");const failures=[];
+for(const file of walk(root,f=>f.endsWith(".tsx"))){const source=ts.createSourceFile(file,await import("node:fs").then(m=>m.readFileSync(file,"utf8")),ts.ScriptTarget.Latest,true,ts.ScriptKind.TSX);function visit(node){if(ts.isJsxOpeningElement(node)||ts.isJsxSelfClosingElement(node)){if(node.tagName.getText(source)==="button"){const names=node.attributes.properties.filter(ts.isJsxAttribute).map(a=>a.name.getText(source));if(!names.some(n=>["onClick","type","disabled","formAction"].includes(n))){const pos=source.getLineAndCharacterOfPosition(node.getStart(source));failures.push(`${file}:${pos.line+1}`)}}}ts.forEachChild(node,visit)}visit(source)}
+assert(!failures.length,`buttons without behavior/disabled rule: ${failures.join(", ")}`);console.log("MZ15_NO_DEAD_BUTTONS_AST_VERIFIED");

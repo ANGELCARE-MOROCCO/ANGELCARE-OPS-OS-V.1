@@ -1,0 +1,97 @@
+{
+  "contract": "AC_CAPITAL_OS_FREE_PROVIDER_OPERATIONS_05",
+  "files": [
+    {
+      "path": "apps/ops-web/app/(protected)/ac-capital-os/ai-control/page.tsx",
+      "sha256": "38beddc257eea99c196c99e382d06bcd3af3d2e2f9587ba196cc5559c14481be",
+      "bytes": 356
+    },
+    {
+      "path": "apps/ops-web/app/api/ac-capital-os/ai-control/route.ts",
+      "sha256": "f3549d9baaa88dbfe4bcc1a1bcd8e7e2a6d7efcaf68807b6ded29ff05256fb2d",
+      "bytes": 1177
+    },
+    {
+      "path": "apps/ops-web/app/api/ac-capital-os/ai-control/scheduler/tick/route.ts",
+      "sha256": "d2580ca4a282c5506a664d58cdfb811565d38fef5ed3985fbcad5c151dfc1393",
+      "bytes": 557
+    },
+    {
+      "path": "apps/ops-web/app/api/ac-capital-os/capital-radar/research/run/route.ts",
+      "sha256": "691eb80009633fa581771898903dcffc4b43197c6154796c65e6c8a97da477e3",
+      "bytes": 6645
+    },
+    {
+      "path": "apps/ops-web/components/ac-capital-os/core/AcCapitalShell.tsx",
+      "sha256": "c565fe1b22b06da9e4361e296c6ebbaced9cb115979402d6ac77fc8cdd59b265",
+      "bytes": 18618
+    },
+    {
+      "path": "apps/ops-web/components/ac-capital-os/core/navigation.ts",
+      "sha256": "80aa3985b405e6f610170b80024e9a93ba0ca6e5d1a12f3e44609cb6621ce1ff",
+      "bytes": 3114
+    },
+    {
+      "path": "apps/ops-web/components/ac-capital-os/pages/ai-control/AiOperationsPage.tsx",
+      "sha256": "d08fe50f9d00f10583f5edf31cecbdc01cebd05fc237ccfc27abf82a3cc61e12",
+      "bytes": 44833
+    },
+    {
+      "path": "apps/ops-web/components/ac-capital-os/pages/ai-control/ai-operations.module.css",
+      "sha256": "93845813b8d3d7a57afb828530dadd48d4a4a84beaeb1d6ecb5e003bd0ae8256",
+      "bytes": 10234
+    },
+    {
+      "path": "apps/ops-web/components/ac-capital-os/pages/radar/RadarPage.tsx",
+      "sha256": "d8018c8b954e8161e1fe0112fbedb2a12d2d0f134df9a656c6dcf36ddb28f1eb",
+      "bytes": 21659
+    },
+    {
+      "path": "apps/ops-web/components/ai-provider-control/AcCapitalAiControlWorkspace.tsx",
+      "sha256": "1ba1acfef08627e5573b8eba428907090ec8568b2660b6b9bd0965ffccee916c",
+      "bytes": 5558
+    },
+    {
+      "path": "apps/ops-web/lib/ac-capital-os/routes.ts",
+      "sha256": "e39e11653c1eeddb5b18b8088137e8eb4d3f8dcb1e1e548243411387e2bc0fcd",
+      "bytes": 917
+    },
+    {
+      "path": "apps/ops-web/lib/ac-capital-os/server/free-provider-control.ts",
+      "sha256": "65c504b7701037ad3929a581b99e8eb0fe022affee23b7dfe7cdfb9821cc6003",
+      "bytes": 31484
+    },
+    {
+      "path": "apps/ops-web/lib/ac-capital-os/server/free-provider-persistence.ts",
+      "sha256": "3d7736fa0517bc0ae655c1c4fbfa15754acffbab14f21a44553a6ce3de94bc83",
+      "bytes": 15674
+    },
+    {
+      "path": "apps/ops-web/lib/ac-capital-os/server/free-provider-runtime.ts",
+      "sha256": "0828bc339430bba744f1bb3e48c292eea146fff088178a38b2434b6349c04241",
+      "bytes": 40459
+    },
+    {
+      "path": "apps/ops-web/lib/ac-capital-os/server/free-provider-types.ts",
+      "sha256": "23ccf185f6c65cbbba55b4a7ea0eb76493bd6d15cb84cb0e34909c46c4ab48fa",
+      "bytes": 3967
+    },
+    {
+      "path": "apps/ops-web/lib/ac-capital-os/server/live-intelligence.ts",
+      "sha256": "85c1ce9d9b09affea59a459900fd124c966dc55c334196877f06f9347dd5c5ae",
+      "bytes": 6958
+    },
+    {
+      "path": "apps/ops-web/lib/ac-capital-os/types.ts",
+      "sha256": "d89d4e580e9868569808d1e26086ae7214de06052144469f562a06886b61cc66",
+      "bytes": 18144
+    },
+    {
+      "path": "supabase/migrations/20260728_ac_capital_os_free_provider_operations_05.sql",
+      "sha256": "b372ee3097a6e8115c2e5c5d0651f488410330bf08a3e8419987e5b3a319b0a3",
+      "bytes": 27249
+    }
+  ],
+  "fileCount": 18,
+  "installerRunsNoBuildSqlGitOrProviderRequest": true
+}

@@ -168,7 +168,16 @@
     "ai-provider-control:phase5:typecheck": "tsc -p tsconfig.ai-provider-sovereignty-phase5.json --noEmit --pretty false",
     "ai-provider-control:phase5:verify-sql": "node scripts/verify-ai-provider-sovereignty-phase5-sql.mjs",
     "ai-provider-control:phase5:test": "node scripts/test-ai-provider-sovereignty-phase5.mjs",
-    "ai-provider-control:phase5:verify-syntax": "node scripts/verify-ai-provider-sovereignty-phase5-syntax.cjs"
+    "ai-provider-control:phase5:verify-syntax": "node scripts/verify-ai-provider-sovereignty-phase5-syntax.cjs",
+    "revenue-command-center:phase11:verify": "node scripts/verify-revenue-command-center-executive-enterprise-phase11.mjs",
+    "revenue-command-center:phase11:typecheck": "tsc -p tsconfig.revenue-command-center-executive-phase11.json --pretty false",
+    "revenue-command-center:phase11:local": "node scripts/release-revenue-command-center-executive-phase11.mjs --skip-build",
+    "revenue-command-center:phase11:release": "node scripts/release-revenue-command-center-executive-phase11.mjs",
+    "revenue-command-center:phase12:ledgers": "node scripts/generate-revenue-command-center-phase12-ledgers.mjs",
+    "revenue-command-center:phase12:verify": "node scripts/verify-revenue-command-center-final-certification-phase12.mjs",
+    "revenue-command-center:phase12:typecheck": "tsc -p tsconfig.revenue-command-center-phase12.json --pretty false",
+    "revenue-command-center:phase12:smoke": "node scripts/smoke-revenue-command-center-phase12.mjs",
+    "revenue-command-center:phase12:visual": "node scripts/capture-revenue-command-center-phase12-visual-evidence.mjs"
   },
   "dependencies": {
     "@google/genai": "^2.12.0",

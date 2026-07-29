@@ -151,6 +151,7 @@ export type DossierViewModel = {
   dueAt: string
   updatedAt: string
   currentStage: string
+  missionId: string
   constitution: {
     objective: string
     contentObjective: string
@@ -188,7 +189,7 @@ export type DossierViewModel = {
   decisions: DossierDecisionVM[]
   sources: DossierSourceVM[]
   assets: Array<{ id: string; title: string; type: string; status: string; url: string; owner: string }>
-  publications: Array<{ id: string; channel: string; status: string; scheduledAt: string; externalUrl: string; owner: string }>
+  publications: Array<{ id: string; channel: string; status: string; scheduledAt: string; publishedAt: string; externalUrl: string; owner: string; evidence: UnknownRecord[] }>
   activity: Array<{ id: string; action: string; detail: string; actor: string; timestamp: string }>
   nextAction: { label: string; detail: string; href: string }
 }
@@ -307,7 +308,9 @@ const COMMAND_LIFECYCLE = [
   { key: "validation", label: "Validation", statuses: ["validated", "approved"], href: "/market-os/content-command-center/validation" },
   { key: "source", label: "Source", statuses: ["source_required", "source_secured"], href: "/market-os/content-command-center/source-vault" },
   { key: "distribution", label: "Diffusion", statuses: ["classified", "ready_distribution", "scheduled"], href: "/market-os/content-command-center/distribution" },
-  { key: "publication", label: "Publication", statuses: ["published", "closed"], href: "/market-os/content-command-center/publishing" },
+  { key: "publication", label: "Publication", statuses: ["published"], href: "/market-os/content-command-center/publishing" },
+  { key: "performance", label: "Performance", statuses: ["performance_review"], href: "/market-os/content-command-center/performance" },
+  { key: "learning", label: "Apprentissage", statuses: ["closed"], href: "/market-os/content-command-center/learning" },
 ] as const
 
 function deadlineLabel(value: string): string {
@@ -395,6 +398,80 @@ export function buildCommandViewModel(snapshotValue: unknown): CommandViewModel 
       severity: "critical",
       href: "/market-os/content-command-center/publishing",
     })
+  }
+  for (const item of packages) {
+    const packageEvidence = array(item.evidence)
+    const latestEvent = (type: string) => [...packageEvidence].reverse().find((event) => text(event.type) === type)
+    const verification = latestEvent("publication_verification")
+    const observation = latestEvent("performance_observation")
+    const conclusion = latestEvent("performance_conclusion")
+    const attribution = latestEvent("attribution_conclusion")
+    const optimization = latestEvent("optimization_decision")
+    const lesson = latestEvent("institutional_lesson")
+    const governance = latestEvent("lesson_governance")
+    const verified = text(item.status) === "verified" && text(verification?.conclusion) === "verified"
+    const packageHref = `/market-os/content-command-center/performance?packageId=${encodeURIComponent(text(item.id))}`
+    if (verified && !observation) {
+      interventions.push({
+        id: `impact-observation-${text(item.id)}`,
+        category: "Observation post-publication",
+        title: text(item.title || item.channel, "Publication vérifiée sans observation"),
+        detail: "La vérité externe est confirmée, mais aucune fenêtre, provenance ou métrique réelle n’est encore constituée.",
+        consequence: "Le dossier ne peut pas produire de conclusion d’impact ni d’apprentissage institutionnel.",
+        owner: text(item.owner_name || item.owner, "Responsable impact non affecté"),
+        waitingLabel: "Observation à ouvrir",
+        severity: "warning",
+        href: packageHref,
+      })
+    } else if (observation && !conclusion) {
+      interventions.push({
+        id: `impact-conclusion-${text(item.id)}`,
+        category: "Suffisance de mesure",
+        title: text(item.title || item.channel, "Observation sans conclusion"),
+        detail: "Des métriques et leur provenance sont enregistrées, mais aucune autorité humaine n’a conclu leur suffisance.",
+        consequence: "Toute attribution ou affirmation d’impact reste interdite.",
+        owner: text(item.reviewer_name || item.owner_name || item.owner, "Réviseur impact non affecté"),
+        waitingLabel: "Conclusion requise",
+        severity: "warning",
+        href: packageHref,
+      })
+    } else if (text(conclusion?.conclusion) === "sufficient" && !attribution) {
+      interventions.push({
+        id: `attribution-${text(item.id)}`,
+        category: "Attribution à examiner",
+        title: text(item.title || item.channel, "Résultat sans attribution"),
+        detail: "La mesure est jugée suffisante, mais le lien entre contenu, parcours et issue métier reste à constituer.",
+        consequence: "Aucun revenu ni résultat métier ne doit être revendiqué comme attribué.",
+        owner: text(item.reviewer_name || item.owner_name || item.owner, "Autorité d’attribution non affectée"),
+        waitingLabel: "Examen humain requis",
+        severity: "info",
+        href: `/market-os/content-command-center/attribution?packageId=${encodeURIComponent(text(item.id))}`,
+      })
+    } else if (attribution && !optimization) {
+      interventions.push({
+        id: `optimization-${text(item.id)}`,
+        category: "Décision d’optimisation",
+        title: text(item.title || item.channel, "Impact sans prochaine décision"),
+        detail: "Le résultat est attribué ou explicitement non établi, mais aucune action gouvernée n’en découle encore.",
+        consequence: "Le prochain cycle ne bénéficie pas de la connaissance constituée.",
+        owner: text(item.owner_name || item.owner, "Autorité d’optimisation non affectée"),
+        waitingLabel: "Décision requise",
+        severity: "info",
+        href: `/market-os/content-command-center/optimization?packageId=${encodeURIComponent(text(item.id))}`,
+      })
+    } else if (optimization && (!lesson || !governance)) {
+      interventions.push({
+        id: `learning-${text(item.id)}`,
+        category: "Mémoire institutionnelle",
+        title: text(item.title || item.channel, "Décision sans leçon gouvernée"),
+        detail: lesson ? "Une leçon est rédigée mais n’a pas encore reçu de décision humaine." : "La décision d’optimisation n’a pas encore été transformée en apprentissage réutilisable.",
+        consequence: "Le dossier ne peut pas être clôturé comme mémoire institutionnelle complète.",
+        owner: text(item.reviewer_name || item.owner_name || item.owner, "Autorité d’apprentissage non affectée"),
+        waitingLabel: lesson ? "Gouvernance requise" : "Leçon à constituer",
+        severity: "warning",
+        href: `/market-os/content-command-center/learning?packageId=${encodeURIComponent(text(item.id))}`,
+      })
+    }
   }
 
   const decisions: CommandIntervention[] = decisionDossiers.slice(0, 8).map((item) => ({
@@ -552,7 +629,9 @@ function nextGateForStatus(status: string): string {
     classified: "Assembler la diffusion",
     ready_distribution: "Autoriser la distribution",
     scheduled: "Vérifier la publication",
-    published: "Clôturer et apprendre",
+    published: "Ouvrir l’observation",
+    performance_review: "Conclure, attribuer et apprendre",
+    closed: "Inspecter la mémoire",
   }
   return map[status] || "Vérifier le prochain gate"
 }
@@ -583,7 +662,8 @@ const DOSSIER_STAGES = [
   ["classified", "Classification"],
   ["ready_distribution", "Distribution"],
   ["scheduled", "Publication"],
-  ["closed", "Clôture"],
+  ["performance_review", "Performance"],
+  ["closed", "Apprentissage & clôture"],
 ] as const
 
 function normalizeDossierStatus(value: string): string {
@@ -663,6 +743,7 @@ export function buildLiveDossierViewModel(snapshotValue: unknown, dossierValue: 
     dueAt: safeDate(dossierValue.due_at),
     updatedAt: safeDate(dossierValue.updated_at || dossierValue.created_at),
     currentStage: normalizeDossierStatus(status),
+    missionId,
     constitution: {
       objective: text(dossierValue.objective || scope.objective, "Objectif métier non défini"),
       contentObjective: text(scope.content_objective || briefRecord.objective, "Objectif de contenu non défini"),
@@ -764,8 +845,10 @@ export function buildLiveDossierViewModel(snapshotValue: unknown, dossierValue: 
       channel: text(item.channel, "Canal non défini"),
       status: text(item.status, "draft"),
       scheduledAt: safeDate(item.scheduled_at),
-      externalUrl: text(item.external_url || item.publication_url),
+      publishedAt: safeDate(item.published_at),
+      externalUrl: text(item.external_reference || item.external_url || item.publication_url),
       owner: text(item.owner_name || item.publisher_name || item.owner, "Publisher non affecté"),
+      evidence: array(item.evidence),
     })),
     activity: [
       ...activities.map((item) => ({ id: text(item.id), action: humanStatus(text(item.action, "Activité")), detail: text(item.detail || item.summary, "Mise à jour"), actor: text(item.actor_name || item.actor, "Utilisateur autorisé"), timestamp: safeDate(item.created_at || item.timestamp) })),
@@ -816,6 +899,7 @@ export function buildLegacyDossierViewModel(input: {
     dueAt: safeDate(item.dueDate),
     updatedAt: safeDate(item.updatedAt || item.createdAt),
     currentStage: normalizeDossierStatus(status),
+    missionId: "",
     constitution: {
       objective: text(item.objective, "Objectif métier non défini"),
       contentObjective: text(relevantBrief.objective, "Objectif de contenu non documenté"),
@@ -887,7 +971,7 @@ export function buildLegacyDossierViewModel(input: {
       kind: index === 0 ? "canonical" : "rendition",
     })),
     assets: input.assets.map((asset) => ({ id: text(asset.id), title: text(asset.name, "Asset sans nom"), type: text(asset.type, "Asset"), status: text(asset.status, "draft"), url: text(asset.url), owner: text(asset.owner, "Non affecté") })),
-    publications: text(item.scheduledDate) || status === "published" ? [{ id: `legacy-publication-${id}`, channel: text(item.channel, "Canal non défini"), status: status === "published" ? "published" : "scheduled", scheduledAt: safeDate(item.scheduledDate), externalUrl: "", owner: text(item.owner, "Publisher non affecté") }] : [],
+    publications: text(item.scheduledDate) || status === "published" ? [{ id: `legacy-publication-${id}`, channel: text(item.channel, "Canal non défini"), status: status === "published" ? "published" : "scheduled", scheduledAt: safeDate(item.scheduledDate), publishedAt: "", externalUrl: "", owner: text(item.owner, "Publisher non affecté"), evidence: [] }] : [],
     activity: input.logs.map((log) => ({ id: text(log.id), action: humanStatus(text(log.action, "Activité")), detail: text(log.detail, "Mise à jour historique"), actor: "Registre historique", timestamp: safeDate(log.timestamp) })).filter((log) => log.timestamp),
     nextAction: nextActionForDossier(status, id, true),
   }
@@ -907,7 +991,9 @@ function nextActionForDossier(status: string, id: string, legacy = false): Dossi
     source_required: { label: "Déposer la source canonique", detail: "La classification et la distribution restent bloquées tant que la source manque.", href: "/market-os/content-command-center/source-vault" },
     ready_distribution: { label: "Assembler le package", detail: "Préparer les renditions, le copy et la fenêtre de diffusion.", href: "/market-os/content-command-center/distribution" },
     scheduled: { label: "Vérifier la publication", detail: "Contrôler la mise en ligne et capturer la preuve.", href: "/market-os/content-command-center/publishing" },
-    published: { label: "Clôturer le dossier", detail: "Consolider les preuves, la source et les enseignements.", href: "/market-os/content-command-center/publishing" },
+    published: { label: "Ouvrir l’observation", detail: "Documenter une fenêtre, une provenance et les métriques réellement disponibles.", href: "/market-os/content-command-center/performance" },
+    performance_review: { label: "Conclure l’impact", detail: "Examiner la suffisance, l’attribution, l’optimisation et la leçon institutionnelle.", href: "/market-os/content-command-center/performance" },
+    closed: { label: "Inspecter la mémoire", detail: "Relire la lignée complète et les leçons acceptées dans Content Atlas.", href: "/market-os/content-command-center/directory" },
   }
   return map[status] || { label: "Vérifier le prochain gate", detail: "Contrôler les conditions d’entrée, les responsabilités et les preuves requises.", href: `/market-os/content-command-center/dossiers/${id}` }
 }

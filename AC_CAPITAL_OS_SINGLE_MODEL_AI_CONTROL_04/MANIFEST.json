@@ -1,0 +1,20 @@
+{
+  "package": "AC_CAPITAL_OS_SINGLE_MODEL_AI_CONTROL_04",
+  "model": "gemini-2.5-flash",
+  "fallbackModel": null,
+  "files": [
+    "apps/ops-web/lib/ac-capital-os/server/live-intelligence.ts",
+    "apps/ops-web/app/api/ac-capital-os/capital-radar/research/run/route.ts",
+    "apps/ops-web/lib/ai-provider-control/types.ts",
+    "apps/ops-web/lib/ai-provider-control/repository.ts",
+    "apps/ops-web/app/api/ai-provider-control/action/route.ts",
+    "apps/ops-web/components/ai-provider-control/AiProviderControlWorkspace.tsx",
+    "apps/ops-web/components/ai-provider-control/AcCapitalAiControlWorkspace.tsx"
+  ],
+  "automaticCommands": {
+    "typescript": false,
+    "build": false,
+    "sql": false,
+    "git": false
+  }
+}

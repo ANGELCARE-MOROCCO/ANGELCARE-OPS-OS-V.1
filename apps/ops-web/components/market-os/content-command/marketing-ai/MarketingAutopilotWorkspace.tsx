@@ -8,6 +8,7 @@ import {
   Pause, Play, RefreshCw, RotateCcw, Search, ShieldCheck, Sparkles, Workflow, XCircle,
 } from 'lucide-react'
 import styles from './marketing-ai-phase3.module.css'
+import AiDirectorUniverseShell from '../ai-director-universe/AiDirectorUniverseShell'
 import {
   CONTENT_ASSETS_KEY,
   CONTENT_BRIEFS_KEY,
@@ -86,7 +87,7 @@ function Spinner(){return <LoaderCircle className={styles.spinner}/>}
 function Badge({children,tone='neutral'}:{children:React.ReactNode;tone?:'neutral'|'success'|'warning'|'danger'|'info'}){return <span className={`${styles.badge} ${styles[`badge_${tone}`]}`}>{children}</span>}
 function tone(status:string):'neutral'|'success'|'warning'|'danger'|'info'{if(['completed','materialized','linked','connected','approved','effective'].includes(status))return'success';if(['failed','dead_letter','blocked','cancelled','unavailable'].includes(status))return'danger';if(['awaiting_decision','awaiting_approval','retry_scheduled','partial','partially_executed'].includes(status))return'warning';if(['running','claimed','executing','queued'].includes(status))return'info';return'neutral'}
 function ErrorPanel({error,retry}:{error:string;retry:()=>void}){return <div className={styles.error}><CircleAlert/><div><strong>Zone indisponible</strong><p>{error}</p></div><button onClick={retry}><RefreshCw/>Réessayer</button></div>}
-function Nav({active}:{active:MarketingAutopilotView}){return <nav className={styles.nav}><div><Link className={styles.back} href={BASE}><ArrowRight/>Directeur IA</Link>{nav.map(item=><Link key={item.key} href={item.href} className={active===item.key?styles.active:''}><span>{item.icon}</span><span><strong>{item.label}</strong><small>{item.detail}</small></span></Link>)}</div></nav>}
+function Nav({active:_active}:{active:MarketingAutopilotView}){return null}
 function Hero({view,snapshot}:{view:MarketingAutopilotView;snapshot?:Snapshot|null}){const current=nav.find(item=>item.key===view);return <section className={styles.hero}><div className={styles.heroGrid}/><div className={styles.heroIdentity}><div className={styles.heroIcon}>{current?.icon}</div><div><span>SANILA MARKET OS · PHASE 3</span><h1>{current?.label}</h1><p>Marketing Operations Autopilot gouverné: compilation, matérialisation interne, synchronisation, récupération et apprentissage sous autorité humaine.</p></div></div><div className={styles.heroState}><div><span>Queue</span><strong>{snapshot?.totals.queuedJobs??'—'} en attente</strong></div><div><span>Décisions</span><strong>{snapshot?.totals.awaitingDecision??'—'} requises</strong></div><div><span>Externe</span><strong className={styles.locked}><LockKeyhole/>Bloqué</strong></div></div></section>}
 function Kpi({label,value,detail,icon,t='default'}:{label:string;value:React.ReactNode;detail:string;icon:React.ReactNode;t?:'default'|'warning'|'danger'|'success'}){return <article className={`${styles.kpi} ${styles[`kpi_${t}`]}`}><div>{icon}</div><span>{label}</span><strong>{value}</strong><small>{detail}</small></article>}
 function Empty({title,detail}:{title:string;detail:string}){return <div className={styles.empty}><Boxes/><strong>{title}</strong><p>{detail}</p></div>}
@@ -123,4 +124,14 @@ function Repository(){const objects=useApi<{objects:Array<Record<string,unknown>
 
 function Recovery(){const state=useApi<{deadLetters:Array<Record<string,unknown>>;staleJobs:Job[]}>(()=>api('/api/market-os/content-command/marketing-ai/recovery'),[]);return <><Nav active="recovery"/><main className={styles.canvas}><Hero view="recovery"/><section className={styles.recoveryBanner}><RotateCcw/><div><strong>Récupération sûre et idempotente</strong><p>Reprise depuis le dernier état sûr, verrouillage des doublons, tentatives limitées, dead-letter queue et intervention humaine.</p></div><button onClick={state.refresh}><RefreshCw/>Analyser</button></section><section className={styles.split}><article className={styles.panel}><header><div><span>DEAD LETTERS</span><h2>{state.data?.deadLetters.length||0} échecs terminaux</h2></div></header>{state.loading?<Spinner/>:state.data?.deadLetters.length?<div className={styles.list}>{state.data.deadLetters.map((entry,index)=><div key={String(entry.id||index)}><span className={styles.actionIcon}><AlertTriangle/></span><div><strong>{String(entry.reason||'Échec')}</strong><p>Job {String(entry.job_id||'—')}</p><small>{entry.created_at?new Date(String(entry.created_at)).toLocaleString('fr-FR'):'—'}</small></div><Badge tone="danger">{String(entry.status||'open')}</Badge></div>)}</div>:<Empty title="Aucune dead letter" detail="Aucun échec terminal n’est actuellement enregistré."/>}</article><article className={styles.panel}><header><div><span>STALE RUNS</span><h2>{state.data?.staleJobs.length||0} jobs sans heartbeat</h2></div></header>{state.data?.staleJobs.length?<div className={styles.jobTable}>{state.data.staleJobs.map(job=><div className={styles.tableRow} key={job.id}><div><strong>{job.toolName||job.jobType}</strong><small>{job.id}</small></div><Badge tone="warning">{job.status}</Badge><span>{job.heartbeatAt?new Date(job.heartbeatAt).toLocaleString('fr-FR'):'Sans heartbeat'}</span></div>)}</div>:<Empty title="Aucun job stale" detail="Les heartbeats actifs ne montrent aucune exécution abandonnée."/>}</article></section></main></>}
 
-export default function MarketingAutopilotWorkspace({view}:{view:MarketingAutopilotView}){if(view==='compiler')return <Compiler/>;if(view==='queue')return <Queue/>;if(view==='decisions')return <Decisions/>;if(view==='integrations')return <Integrations/>;if(view==='repository')return <Repository/>;if(view==='recovery')return <Recovery/>;return <Autopilot/>}
+export default function MarketingAutopilotWorkspace({view}:{view:MarketingAutopilotView}){
+  let workspace:React.ReactNode
+  if(view==='compiler')workspace=<Compiler/>
+  else if(view==='queue')workspace=<Queue/>
+  else if(view==='decisions')workspace=<Decisions/>
+  else if(view==='integrations')workspace=<Integrations/>
+  else if(view==='repository')workspace=<Repository/>
+  else if(view==='recovery')workspace=<Recovery/>
+  else workspace=<Autopilot/>
+  return <AiDirectorUniverseShell active={view}>{workspace}</AiDirectorUniverseShell>
+}

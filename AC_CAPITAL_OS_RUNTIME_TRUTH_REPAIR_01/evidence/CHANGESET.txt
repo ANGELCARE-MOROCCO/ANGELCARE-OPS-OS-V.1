@@ -1,0 +1,15 @@
+CHANGED RUNTIME FILES (10)
+apps/ops-web/lib/ai-provider-control/gemini-runtime.ts
+apps/ops-web/app/api/ac-capital-os/capital-radar/route.ts
+apps/ops-web/app/api/ac-capital-os/capital-radar/research/run/route.ts
+apps/ops-web/app/api/ac-capital-os/reports/generate/route.ts
+apps/ops-web/components/ac-capital-os/core/AcCapitalShell.tsx
+apps/ops-web/components/ac-capital-os/core/Overlay.tsx
+apps/ops-web/components/ac-capital-os/core/core.module.css
+apps/ops-web/components/ac-capital-os/core/shell.module.css
+apps/ops-web/components/ac-capital-os/pages/radar/RadarPage.tsx
+apps/ops-web/components/ac-capital-os/pages/reports/ReportsPage.tsx
+
+ADDED RUNTIME FILES (2)
+apps/ops-web/lib/ac-capital-os/server/live-intelligence.ts
+supabase/migrations/20260728_ac_capital_os_runtime_truth_repair_01.sql

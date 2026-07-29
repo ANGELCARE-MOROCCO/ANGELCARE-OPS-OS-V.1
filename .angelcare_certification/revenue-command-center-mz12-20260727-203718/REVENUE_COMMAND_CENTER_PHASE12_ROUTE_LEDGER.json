@@ -1,0 +1,2588 @@
+{
+  "summary": {
+    "generatedAt": "2026-07-27T19:37:19.381Z",
+    "opsRoot": "/Users/user/Desktop/angelcare-platform/apps/ops-web",
+    "routes": 151,
+    "routeTarget": 151,
+    "routeCountPass": true,
+    "staticAccepted": 150,
+    "redirects": 1,
+    "dynamicRoutes": 34,
+    "placeholderFailures": 0,
+    "genericRouteImports": 9,
+    "apiRoutes": 243,
+    "cssModules": 10,
+    "cssPurityIssues": 0,
+    "interactionFiles": 40,
+    "runtimeAuthority": "Vercel Preview + authenticated smoke testing"
+  },
+  "routes": [
+    {
+      "index": 1,
+      "route": "/revenue-command-center/activity-timeline",
+      "family": "activity-timeline",
+      "file": "app/(protected)/revenue-command-center/activity-timeline/page.tsx",
+      "sha256": "9a6b101eb30896c51b65657d6cdaefcc4f0a8bacf009356a0e67027caaacff16",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueExecutionWorkspace from @/components/revenue-command-center/execution-enterprise/RevenueExecutionWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 2,
+      "route": "/revenue-command-center/ai-scoring",
+      "family": "ai-scoring",
+      "file": "app/(protected)/revenue-command-center/ai-scoring/page.tsx",
+      "sha256": "0073df123a1e2468f1745ba24ee8a65e776a41d66f78fe21ad7c949f4caff2a0",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenuePredictiveV11Workspace from @/components/revenue-command-center/RevenuePredictiveV11Workspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 3,
+      "route": "/revenue-command-center/appointments/[id]",
+      "family": "appointments",
+      "file": "app/(protected)/revenue-command-center/appointments/[id]/page.tsx",
+      "sha256": "5c99b522d0c23421edbc57c0dd7ef7f83d493883b84db725a8f2ac0bb03d4627",
+      "dynamic": true,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueEngagementWorkspace from @/components/revenue-command-center/engagement-enterprise/RevenueEngagementWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED_DYNAMIC_RUNTIME_REQUIRED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 4,
+      "route": "/revenue-command-center/appointments/analytics",
+      "family": "appointments",
+      "file": "app/(protected)/revenue-command-center/appointments/analytics/page.tsx",
+      "sha256": "b174bbd602c7197177553da694db81c70d2b6bb9229e29232c77b7c910ddb8e0",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueEngagementWorkspace from @/components/revenue-command-center/engagement-enterprise/RevenueEngagementWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 5,
+      "route": "/revenue-command-center/appointments/briefing/[id]",
+      "family": "appointments",
+      "file": "app/(protected)/revenue-command-center/appointments/briefing/[id]/page.tsx",
+      "sha256": "ade561248f54abea58608eb6fe26a5163f9fe202372ac3c7b7a0967c6857befa",
+      "dynamic": true,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueEngagementWorkspace from @/components/revenue-command-center/engagement-enterprise/RevenueEngagementWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED_DYNAMIC_RUNTIME_REQUIRED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 6,
+      "route": "/revenue-command-center/appointments/calendar",
+      "family": "appointments",
+      "file": "app/(protected)/revenue-command-center/appointments/calendar/page.tsx",
+      "sha256": "0be02181d9788a6d2ba0a384b80d65a243b713c82bf7d69d40854f1f062b9d5c",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueEngagementWorkspace from @/components/revenue-command-center/engagement-enterprise/RevenueEngagementWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 7,
+      "route": "/revenue-command-center/appointments/command",
+      "family": "appointments",
+      "file": "app/(protected)/revenue-command-center/appointments/command/page.tsx",
+      "sha256": "f7696c06148cccb1e6bebaffce3adc70b3fc811432a9f4540b26b9f856511a08",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueEngagementWorkspace from @/components/revenue-command-center/engagement-enterprise/RevenueEngagementWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 8,
+      "route": "/revenue-command-center/appointments/control-tower",
+      "family": "appointments",
+      "file": "app/(protected)/revenue-command-center/appointments/control-tower/page.tsx",
+      "sha256": "ec78ffc5042e592ea070e0ff40f4c3c8b0ca30e5eb1c01cfa042e330b555d2ae",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueEngagementWorkspace from @/components/revenue-command-center/engagement-enterprise/RevenueEngagementWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 9,
+      "route": "/revenue-command-center/appointments/conversion",
+      "family": "appointments",
+      "file": "app/(protected)/revenue-command-center/appointments/conversion/page.tsx",
+      "sha256": "94112e9bb3f3c7edf7b32921ccbc4e41a4ee31e7cea3a1190e85f8cc47cddcbd",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueEngagementWorkspace from @/components/revenue-command-center/engagement-enterprise/RevenueEngagementWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 10,
+      "route": "/revenue-command-center/appointments/dashboard",
+      "family": "appointments",
+      "file": "app/(protected)/revenue-command-center/appointments/dashboard/page.tsx",
+      "sha256": "d2ac24da92ea432da939d657e0041ceedb1909afa004926f0026639413838c4a",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueEngagementWorkspace from @/components/revenue-command-center/engagement-enterprise/RevenueEngagementWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 11,
+      "route": "/revenue-command-center/appointments/escalations",
+      "family": "appointments",
+      "file": "app/(protected)/revenue-command-center/appointments/escalations/page.tsx",
+      "sha256": "f022b3219deb01f8934cd31b111b1c97539c14717a8e9c922ad53c6d143572d0",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueEngagementWorkspace from @/components/revenue-command-center/engagement-enterprise/RevenueEngagementWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 12,
+      "route": "/revenue-command-center/appointments/executive",
+      "family": "appointments",
+      "file": "app/(protected)/revenue-command-center/appointments/executive/page.tsx",
+      "sha256": "8daca75ff49b83b94b664afcc5c7007dda774f1a159be1f5a07e405fdd3e6213",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueEngagementWorkspace from @/components/revenue-command-center/engagement-enterprise/RevenueEngagementWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 13,
+      "route": "/revenue-command-center/appointments/follow-up/[id]",
+      "family": "appointments",
+      "file": "app/(protected)/revenue-command-center/appointments/follow-up/[id]/page.tsx",
+      "sha256": "58b581b56476ca32b2cb9a692b9296ed0ce75d200627a16884cbf41decd7f3fb",
+      "dynamic": true,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueEngagementWorkspace from @/components/revenue-command-center/engagement-enterprise/RevenueEngagementWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED_DYNAMIC_RUNTIME_REQUIRED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 14,
+      "route": "/revenue-command-center/appointments/high-value",
+      "family": "appointments",
+      "file": "app/(protected)/revenue-command-center/appointments/high-value/page.tsx",
+      "sha256": "5db453c1c8fc82665e8166a079e239e2835ce759493bbd8e0f216dfb2a4864fd",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueEngagementWorkspace from @/components/revenue-command-center/engagement-enterprise/RevenueEngagementWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 15,
+      "route": "/revenue-command-center/appointments/live/[id]",
+      "family": "appointments",
+      "file": "app/(protected)/revenue-command-center/appointments/live/[id]/page.tsx",
+      "sha256": "2a491c4eb9e7c2802a5a8e149c75b2325818d43e055766f189d468b42da13aa7",
+      "dynamic": true,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueEngagementWorkspace from @/components/revenue-command-center/engagement-enterprise/RevenueEngagementWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED_DYNAMIC_RUNTIME_REQUIRED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 16,
+      "route": "/revenue-command-center/appointments/live",
+      "family": "appointments",
+      "file": "app/(protected)/revenue-command-center/appointments/live/page.tsx",
+      "sha256": "559188b1f2d6b1c1217259f302d97c15dd574742133c861bf974aef3bc98ec38",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueEngagementWorkspace from @/components/revenue-command-center/engagement-enterprise/RevenueEngagementWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 17,
+      "route": "/revenue-command-center/appointments/new",
+      "family": "appointments",
+      "file": "app/(protected)/revenue-command-center/appointments/new/page.tsx",
+      "sha256": "ba544db19e379670ad6f001cbf315f4873523925f361b3baa78fd9af9f92eadb",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueEngagementWorkspace from @/components/revenue-command-center/engagement-enterprise/RevenueEngagementWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 18,
+      "route": "/revenue-command-center/appointments/no-shows",
+      "family": "appointments",
+      "file": "app/(protected)/revenue-command-center/appointments/no-shows/page.tsx",
+      "sha256": "f541bd9072d819601effde0ac57d8d89df253415af7f386cc88d40a5fe8ebc2f",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueEngagementWorkspace from @/components/revenue-command-center/engagement-enterprise/RevenueEngagementWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 19,
+      "route": "/revenue-command-center/appointments/outcome/[id]",
+      "family": "appointments",
+      "file": "app/(protected)/revenue-command-center/appointments/outcome/[id]/page.tsx",
+      "sha256": "7682a92b04bcf006390df6fd441f3f819191ad8ac12057749d994e120a42fc89",
+      "dynamic": true,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueEngagementWorkspace from @/components/revenue-command-center/engagement-enterprise/RevenueEngagementWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED_DYNAMIC_RUNTIME_REQUIRED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 20,
+      "route": "/revenue-command-center/appointments",
+      "family": "appointments",
+      "file": "app/(protected)/revenue-command-center/appointments/page.tsx",
+      "sha256": "b51b959cdccc9f1c1ebbef164e47a14738c334c9971361a946d69d57d051a2fa",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueEngagementWorkspace from @/components/revenue-command-center/engagement-enterprise/RevenueEngagementWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 21,
+      "route": "/revenue-command-center/appointments/performance",
+      "family": "appointments",
+      "file": "app/(protected)/revenue-command-center/appointments/performance/page.tsx",
+      "sha256": "81df1ab412665ae8c0c72ce8750aa89288e3c07fc58910b1416924270428d1f7",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueEngagementWorkspace from @/components/revenue-command-center/engagement-enterprise/RevenueEngagementWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 22,
+      "route": "/revenue-command-center/appointments/queue",
+      "family": "appointments",
+      "file": "app/(protected)/revenue-command-center/appointments/queue/page.tsx",
+      "sha256": "2eceb6789afee59fbba763f8bb6962faa503e9412bc2a59ac05a354939364db6",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueEngagementWorkspace from @/components/revenue-command-center/engagement-enterprise/RevenueEngagementWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 23,
+      "route": "/revenue-command-center/appointments/recovery",
+      "family": "appointments",
+      "file": "app/(protected)/revenue-command-center/appointments/recovery/page.tsx",
+      "sha256": "23157573cb5e3d4c702d41391de3797049fba9d4aff0dce23b3b704dff12215f",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueEngagementWorkspace from @/components/revenue-command-center/engagement-enterprise/RevenueEngagementWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 24,
+      "route": "/revenue-command-center/appointments/reschedules",
+      "family": "appointments",
+      "file": "app/(protected)/revenue-command-center/appointments/reschedules/page.tsx",
+      "sha256": "c4c207d2cc79c322873e4110fd03f5c07332033cf1b898fce18b6b668123f6e0",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueEngagementWorkspace from @/components/revenue-command-center/engagement-enterprise/RevenueEngagementWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 25,
+      "route": "/revenue-command-center/appointments/risk",
+      "family": "appointments",
+      "file": "app/(protected)/revenue-command-center/appointments/risk/page.tsx",
+      "sha256": "98a13a523d88353101a1906923f9b61eda8a43acdebb2e981653a7443ec79b20",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueEngagementWorkspace from @/components/revenue-command-center/engagement-enterprise/RevenueEngagementWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 26,
+      "route": "/revenue-command-center/appointments/schedule",
+      "family": "appointments",
+      "file": "app/(protected)/revenue-command-center/appointments/schedule/page.tsx",
+      "sha256": "03b80616b43dc36bd395e5befab7d5d3e1e54f10d5e84890943683d2dfe1a61f",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueEngagementWorkspace from @/components/revenue-command-center/engagement-enterprise/RevenueEngagementWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 27,
+      "route": "/revenue-command-center/automation",
+      "family": "automation",
+      "file": "app/(protected)/revenue-command-center/automation/page.tsx",
+      "sha256": "a3d912c364cf8047c7473120ccea9cf1895d1898c84611d82f30a429af960e73",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": true,
+      "imports": [
+        "RevenueCommandFinalWorkspace from ../_final/RevenueCommandFinalWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 28,
+      "route": "/revenue-command-center/b2c-workflow/[id]/care-start",
+      "family": "b2c-workflow",
+      "file": "app/(protected)/revenue-command-center/b2c-workflow/[id]/care-start/page.tsx",
+      "sha256": "cced67c14d09d6e1646ccd3d9f8a1a1365993a2f1f680e67ed2271f56d83e6bf",
+      "dynamic": true,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueB2CWorkspace from @/components/revenue-command-center/b2c-enterprise/RevenueB2CWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED_DYNAMIC_RUNTIME_REQUIRED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 29,
+      "route": "/revenue-command-center/b2c-workflow/[id]/consultation",
+      "family": "b2c-workflow",
+      "file": "app/(protected)/revenue-command-center/b2c-workflow/[id]/consultation/page.tsx",
+      "sha256": "0dfbf4dfceda5e661a0dcc8d32f771a3a08e7b8cdf21dd31aad8e01b43459a44",
+      "dynamic": true,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueB2CWorkspace from @/components/revenue-command-center/b2c-enterprise/RevenueB2CWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED_DYNAMIC_RUNTIME_REQUIRED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 30,
+      "route": "/revenue-command-center/b2c-workflow/[id]/intake",
+      "family": "b2c-workflow",
+      "file": "app/(protected)/revenue-command-center/b2c-workflow/[id]/intake/page.tsx",
+      "sha256": "1565e84b8cda346515b0449fe2138ab4da4ae4add09e02e79d7131c3d947f198",
+      "dynamic": true,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueB2CWorkspace from @/components/revenue-command-center/b2c-enterprise/RevenueB2CWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED_DYNAMIC_RUNTIME_REQUIRED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 31,
+      "route": "/revenue-command-center/b2c-workflow/[id]/matching",
+      "family": "b2c-workflow",
+      "file": "app/(protected)/revenue-command-center/b2c-workflow/[id]/matching/page.tsx",
+      "sha256": "15602c443d5c1d442c58a6cd8060338dc360c214b2c62409d34ebafa991c5e0b",
+      "dynamic": true,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueB2CWorkspace from @/components/revenue-command-center/b2c-enterprise/RevenueB2CWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED_DYNAMIC_RUNTIME_REQUIRED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 32,
+      "route": "/revenue-command-center/b2c-workflow/[id]/onboarding",
+      "family": "b2c-workflow",
+      "file": "app/(protected)/revenue-command-center/b2c-workflow/[id]/onboarding/page.tsx",
+      "sha256": "5178671253e5d99cf51e180989eaab90ac89a6284525db98f2397d5322061115",
+      "dynamic": true,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueB2CWorkspace from @/components/revenue-command-center/b2c-enterprise/RevenueB2CWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED_DYNAMIC_RUNTIME_REQUIRED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 33,
+      "route": "/revenue-command-center/b2c-workflow/[id]",
+      "family": "b2c-workflow",
+      "file": "app/(protected)/revenue-command-center/b2c-workflow/[id]/page.tsx",
+      "sha256": "84bbebdb40cd491c13ce5416757e96178ec004536f0a9f5f0271213599441399",
+      "dynamic": true,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueB2CWorkspace from @/components/revenue-command-center/b2c-enterprise/RevenueB2CWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED_DYNAMIC_RUNTIME_REQUIRED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 34,
+      "route": "/revenue-command-center/b2c-workflow/[id]/qualification",
+      "family": "b2c-workflow",
+      "file": "app/(protected)/revenue-command-center/b2c-workflow/[id]/qualification/page.tsx",
+      "sha256": "8e90409e4eed558cae13ca7fea6a4d5c1c3864c864e3cd9bccf5e3fa5ad7e7b1",
+      "dynamic": true,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueB2CWorkspace from @/components/revenue-command-center/b2c-enterprise/RevenueB2CWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED_DYNAMIC_RUNTIME_REQUIRED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 35,
+      "route": "/revenue-command-center/b2c-workflow/[id]/quote",
+      "family": "b2c-workflow",
+      "file": "app/(protected)/revenue-command-center/b2c-workflow/[id]/quote/page.tsx",
+      "sha256": "50f26cfd966166c9b57ab04f928c05c0bc646f35791c9f21edd6245abccb1831",
+      "dynamic": true,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueProposalWorkspace from @/components/revenue-command-center/proposal-enterprise/RevenueProposalWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED_DYNAMIC_RUNTIME_REQUIRED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 36,
+      "route": "/revenue-command-center/b2c-workflow/[id]/recovery",
+      "family": "b2c-workflow",
+      "file": "app/(protected)/revenue-command-center/b2c-workflow/[id]/recovery/page.tsx",
+      "sha256": "0470c560f3806334e957a58875a33ad43b877ea8d921c38b8302e801d8802d87",
+      "dynamic": true,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueB2CWorkspace from @/components/revenue-command-center/b2c-enterprise/RevenueB2CWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED_DYNAMIC_RUNTIME_REQUIRED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 37,
+      "route": "/revenue-command-center/b2c-workflow/active-clients",
+      "family": "b2c-workflow",
+      "file": "app/(protected)/revenue-command-center/b2c-workflow/active-clients/page.tsx",
+      "sha256": "a1705c734a853c0bcddbae60989ecd801ae60a31f8130fd537c5c1900b2bc485",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueB2CWorkspace from @/components/revenue-command-center/b2c-enterprise/RevenueB2CWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 38,
+      "route": "/revenue-command-center/b2c-workflow/analytics",
+      "family": "b2c-workflow",
+      "file": "app/(protected)/revenue-command-center/b2c-workflow/analytics/page.tsx",
+      "sha256": "fd85a73982e22065e737d68f51b5151dbc17c4717a824b1763a3ca7e9d1935f1",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueB2CWorkspace from @/components/revenue-command-center/b2c-enterprise/RevenueB2CWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 39,
+      "route": "/revenue-command-center/b2c-workflow/care-start",
+      "family": "b2c-workflow",
+      "file": "app/(protected)/revenue-command-center/b2c-workflow/care-start/page.tsx",
+      "sha256": "5c589c3ba0f0d8666e36462e526536372da02534d81e48811da87bd8b8819147",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueB2CWorkspace from @/components/revenue-command-center/b2c-enterprise/RevenueB2CWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 40,
+      "route": "/revenue-command-center/b2c-workflow/consultation",
+      "family": "b2c-workflow",
+      "file": "app/(protected)/revenue-command-center/b2c-workflow/consultation/page.tsx",
+      "sha256": "6c28b6ee73dd7f0a04a66c2f0ffa6f430a58f87206f0aa57cde5318014e16963",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueB2CWorkspace from @/components/revenue-command-center/b2c-enterprise/RevenueB2CWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 41,
+      "route": "/revenue-command-center/b2c-workflow/executive",
+      "family": "b2c-workflow",
+      "file": "app/(protected)/revenue-command-center/b2c-workflow/executive/page.tsx",
+      "sha256": "04b0e290e83f24588e4c7830dd4e7a8e191f51d7d7d5f5d72fda2f60899e4a47",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueB2CWorkspace from @/components/revenue-command-center/b2c-enterprise/RevenueB2CWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 42,
+      "route": "/revenue-command-center/b2c-workflow/high-value",
+      "family": "b2c-workflow",
+      "file": "app/(protected)/revenue-command-center/b2c-workflow/high-value/page.tsx",
+      "sha256": "e18c75f16665644b156961e534e493d4a2d10ccd32517e0b87bbc429da69eebf",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueB2CWorkspace from @/components/revenue-command-center/b2c-enterprise/RevenueB2CWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 43,
+      "route": "/revenue-command-center/b2c-workflow/intake",
+      "family": "b2c-workflow",
+      "file": "app/(protected)/revenue-command-center/b2c-workflow/intake/page.tsx",
+      "sha256": "a980928b2a60eba3e8d6af0ad941f25214005f92c7a6bace5379694e05a4b100",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueB2CWorkspace from @/components/revenue-command-center/b2c-enterprise/RevenueB2CWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 44,
+      "route": "/revenue-command-center/b2c-workflow/matching",
+      "family": "b2c-workflow",
+      "file": "app/(protected)/revenue-command-center/b2c-workflow/matching/page.tsx",
+      "sha256": "11078bbb36ad5b2a63dc981a9eed9c056d3696da4be9b52e16d06a7ac3da5315",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueB2CWorkspace from @/components/revenue-command-center/b2c-enterprise/RevenueB2CWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 45,
+      "route": "/revenue-command-center/b2c-workflow/new",
+      "family": "b2c-workflow",
+      "file": "app/(protected)/revenue-command-center/b2c-workflow/new/page.tsx",
+      "sha256": "f53e5bf3817c0caf0157ea4eff875f404d638f6c2ddf13691fa46d2631ddcf06",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueB2CWorkspace from @/components/revenue-command-center/b2c-enterprise/RevenueB2CWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 46,
+      "route": "/revenue-command-center/b2c-workflow/onboarding",
+      "family": "b2c-workflow",
+      "file": "app/(protected)/revenue-command-center/b2c-workflow/onboarding/page.tsx",
+      "sha256": "99188e853baa5f3f679137a21ef6f0db8905f7a425581c2e496cdfc893929559",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueB2CWorkspace from @/components/revenue-command-center/b2c-enterprise/RevenueB2CWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 47,
+      "route": "/revenue-command-center/b2c-workflow",
+      "family": "b2c-workflow",
+      "file": "app/(protected)/revenue-command-center/b2c-workflow/page.tsx",
+      "sha256": "546f6f17f14be77284be481083a09cafb55bd313c62c3280a6d12bfa0aff8a8c",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueB2CWorkspace from @/components/revenue-command-center/b2c-enterprise/RevenueB2CWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 48,
+      "route": "/revenue-command-center/b2c-workflow/pipeline",
+      "family": "b2c-workflow",
+      "file": "app/(protected)/revenue-command-center/b2c-workflow/pipeline/page.tsx",
+      "sha256": "0e61863c218a626ff8a7dd417d3852cafcc42fe9b0708191f55ac85b38b2a32d",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueB2CWorkspace from @/components/revenue-command-center/b2c-enterprise/RevenueB2CWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 49,
+      "route": "/revenue-command-center/b2c-workflow/qualification",
+      "family": "b2c-workflow",
+      "file": "app/(protected)/revenue-command-center/b2c-workflow/qualification/page.tsx",
+      "sha256": "680256c0ff1a4b73fbe083b3a1fde3ebc12c0ce95826c1319718f03985c10d74",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueB2CWorkspace from @/components/revenue-command-center/b2c-enterprise/RevenueB2CWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 50,
+      "route": "/revenue-command-center/b2c-workflow/quote",
+      "family": "b2c-workflow",
+      "file": "app/(protected)/revenue-command-center/b2c-workflow/quote/page.tsx",
+      "sha256": "22ecc3c9b75df79e15366d1dbd2051eccae269fd344c4d7743e20680160f1ce0",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueProposalWorkspace from @/components/revenue-command-center/proposal-enterprise/RevenueProposalWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 51,
+      "route": "/revenue-command-center/b2c-workflow/recovery",
+      "family": "b2c-workflow",
+      "file": "app/(protected)/revenue-command-center/b2c-workflow/recovery/page.tsx",
+      "sha256": "1457fdb7184880264f181db81fa646775c94a0e36401f4b8393ed3cebfd849f9",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueB2CWorkspace from @/components/revenue-command-center/b2c-enterprise/RevenueB2CWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 52,
+      "route": "/revenue-command-center/b2c-workflow/retention",
+      "family": "b2c-workflow",
+      "file": "app/(protected)/revenue-command-center/b2c-workflow/retention/page.tsx",
+      "sha256": "da68fa447a94046ad298dd22e1dcdefb1d5dff73a9ec239bc13c657690c8a45d",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueB2CWorkspace from @/components/revenue-command-center/b2c-enterprise/RevenueB2CWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 53,
+      "route": "/revenue-command-center/b2c-workflow/risk",
+      "family": "b2c-workflow",
+      "file": "app/(protected)/revenue-command-center/b2c-workflow/risk/page.tsx",
+      "sha256": "4756d37df65f57f44b884edefa9dffc7c4a270716711626f6a11c6c52075ec03",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueB2CWorkspace from @/components/revenue-command-center/b2c-enterprise/RevenueB2CWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 54,
+      "route": "/revenue-command-center/business-development",
+      "family": "business-development",
+      "file": "app/(protected)/revenue-command-center/business-development/page.tsx",
+      "sha256": "f16b2bc150b8edfae46a32637b1b5745681a08fbc4798a99eb7fdabf0407c0db",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": true,
+      "imports": [
+        "RevenueCommandFinalWorkspace from ../_final/RevenueCommandFinalWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 55,
+      "route": "/revenue-command-center/campaigns/[id]/assets",
+      "family": "campaigns",
+      "file": "app/(protected)/revenue-command-center/campaigns/[id]/assets/page.tsx",
+      "sha256": "b65cb3f4e73ba5b1be15e080092ed59f33dcd7391546f04661313ecf82f6fb83",
+      "dynamic": true,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueCampaignWorkspace from @/components/revenue-command-center/campaign-enterprise/RevenueCampaignWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED_DYNAMIC_RUNTIME_REQUIRED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 56,
+      "route": "/revenue-command-center/campaigns/[id]/execution",
+      "family": "campaigns",
+      "file": "app/(protected)/revenue-command-center/campaigns/[id]/execution/page.tsx",
+      "sha256": "f44517b657870ebfa829995b39a84e45a08e29fc661bab296567a026a7ab8d9b",
+      "dynamic": true,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueCampaignWorkspace from @/components/revenue-command-center/campaign-enterprise/RevenueCampaignWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED_DYNAMIC_RUNTIME_REQUIRED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 57,
+      "route": "/revenue-command-center/campaigns/[id]",
+      "family": "campaigns",
+      "file": "app/(protected)/revenue-command-center/campaigns/[id]/page.tsx",
+      "sha256": "4ead3a848bd952009ff4dd5de9d2db48cb7ed9caccb58a4b621c94f5489c9b3c",
+      "dynamic": true,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueCampaignWorkspace from @/components/revenue-command-center/campaign-enterprise/RevenueCampaignWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED_DYNAMIC_RUNTIME_REQUIRED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 58,
+      "route": "/revenue-command-center/campaigns/[id]/performance",
+      "family": "campaigns",
+      "file": "app/(protected)/revenue-command-center/campaigns/[id]/performance/page.tsx",
+      "sha256": "7ce33fc77a38b804f839c6fd8bd6f6c60d807ce592178db2417dd722408577dc",
+      "dynamic": true,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueCampaignWorkspace from @/components/revenue-command-center/campaign-enterprise/RevenueCampaignWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED_DYNAMIC_RUNTIME_REQUIRED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 59,
+      "route": "/revenue-command-center/campaigns/board",
+      "family": "campaigns",
+      "file": "app/(protected)/revenue-command-center/campaigns/board/page.tsx",
+      "sha256": "84092bac3a4aadb2a117ef1a4713bd29f2167df9af3ebe7880ce3161409fa122",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueCampaignWorkspace from @/components/revenue-command-center/campaign-enterprise/RevenueCampaignWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 60,
+      "route": "/revenue-command-center/campaigns/new",
+      "family": "campaigns",
+      "file": "app/(protected)/revenue-command-center/campaigns/new/page.tsx",
+      "sha256": "ba3bc769c1ca8fa8b5f55ad403fd21e72eaae333bd7c9cd24b74181326302585",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueCampaignWorkspace from @/components/revenue-command-center/campaign-enterprise/RevenueCampaignWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 61,
+      "route": "/revenue-command-center/campaigns",
+      "family": "campaigns",
+      "file": "app/(protected)/revenue-command-center/campaigns/page.tsx",
+      "sha256": "f9c4e3f75b22cdbcd6f742c0e18ee24adf0d0eeb75ff391ecf9de37c4ceeada5",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueCampaignWorkspace from @/components/revenue-command-center/campaign-enterprise/RevenueCampaignWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 62,
+      "route": "/revenue-command-center/cockpit",
+      "family": "cockpit",
+      "file": "app/(protected)/revenue-command-center/cockpit/page.tsx",
+      "sha256": "ce12b38389dc2f5d5af48cb23fc84d1487f1903a3e011787417d754ff95c6bdd",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": true,
+      "imports": [
+        "UltimateRevenueCommandPage from ../_v9/UltimateRevenueCommandPage"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 63,
+      "route": "/revenue-command-center/control-tower",
+      "family": "control-tower",
+      "file": "app/(protected)/revenue-command-center/control-tower/page.tsx",
+      "sha256": "f5e8fc918ac8ba40b70f77bc3f8cde0c951682babb49989ad59d48aa67d20d24",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueExecutiveWorkspace from @/components/revenue-command-center/executive-enterprise/RevenueExecutiveWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 64,
+      "route": "/revenue-command-center/daily-desk",
+      "family": "daily-desk",
+      "file": "app/(protected)/revenue-command-center/daily-desk/page.tsx",
+      "sha256": "0059e1135a11b78a3558c802f1dd1fe2e143763d716d4e0b150f590fa6e862d9",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueExecutionWorkspace from @/components/revenue-command-center/execution-enterprise/RevenueExecutionWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 65,
+      "route": "/revenue-command-center/daily-tasks/[id]",
+      "family": "daily-tasks",
+      "file": "app/(protected)/revenue-command-center/daily-tasks/[id]/page.tsx",
+      "sha256": "4441881782c4852968b8c700180bef72fe7cd3f1626f71ef865395ed85b1320d",
+      "dynamic": true,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueExecutionWorkspace from @/components/revenue-command-center/execution-enterprise/RevenueExecutionWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED_DYNAMIC_RUNTIME_REQUIRED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 66,
+      "route": "/revenue-command-center/daily-tasks/agents",
+      "family": "daily-tasks",
+      "file": "app/(protected)/revenue-command-center/daily-tasks/agents/page.tsx",
+      "sha256": "b9905e10722260fa190ab6d4e3103176c5d2cd191d26fb78eae7a46e7e89690e",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueExecutionWorkspace from @/components/revenue-command-center/execution-enterprise/RevenueExecutionWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 67,
+      "route": "/revenue-command-center/daily-tasks/analytics",
+      "family": "daily-tasks",
+      "file": "app/(protected)/revenue-command-center/daily-tasks/analytics/page.tsx",
+      "sha256": "4d46d14ca2f9816d012e13bbc4eaf0a83fce7619f14937a7b2eabc57f026f4fa",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueExecutionWorkspace from @/components/revenue-command-center/execution-enterprise/RevenueExecutionWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 68,
+      "route": "/revenue-command-center/daily-tasks/approvals",
+      "family": "daily-tasks",
+      "file": "app/(protected)/revenue-command-center/daily-tasks/approvals/page.tsx",
+      "sha256": "c7a214c426d459a4268b328c86398d7f2b117de6ea45bc0644b805fdb1c5cfe1",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueExecutionWorkspace from @/components/revenue-command-center/execution-enterprise/RevenueExecutionWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 69,
+      "route": "/revenue-command-center/daily-tasks/blocked",
+      "family": "daily-tasks",
+      "file": "app/(protected)/revenue-command-center/daily-tasks/blocked/page.tsx",
+      "sha256": "43932d4eae80eb56d5b669537715b75d24f6f8115d55dbae6c39ced336a642f5",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueExecutionWorkspace from @/components/revenue-command-center/execution-enterprise/RevenueExecutionWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 70,
+      "route": "/revenue-command-center/daily-tasks/board",
+      "family": "daily-tasks",
+      "file": "app/(protected)/revenue-command-center/daily-tasks/board/page.tsx",
+      "sha256": "90771e038b4904b616b625a77de97c1f1cbda819b5690798864993f6fc31a2df",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueExecutionWorkspace from @/components/revenue-command-center/execution-enterprise/RevenueExecutionWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 71,
+      "route": "/revenue-command-center/daily-tasks/calendar",
+      "family": "daily-tasks",
+      "file": "app/(protected)/revenue-command-center/daily-tasks/calendar/page.tsx",
+      "sha256": "89ab0f044b3cced40e774137ba60b81905e4595bfa34241f87e0aee3104a414b",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueExecutionWorkspace from @/components/revenue-command-center/execution-enterprise/RevenueExecutionWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 72,
+      "route": "/revenue-command-center/daily-tasks/focus",
+      "family": "daily-tasks",
+      "file": "app/(protected)/revenue-command-center/daily-tasks/focus/page.tsx",
+      "sha256": "5772d95082ae5a938075125dbd8e554aa6e37cce2fc62b3ab11a770baba863a2",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueExecutionWorkspace from @/components/revenue-command-center/execution-enterprise/RevenueExecutionWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 73,
+      "route": "/revenue-command-center/daily-tasks/list",
+      "family": "daily-tasks",
+      "file": "app/(protected)/revenue-command-center/daily-tasks/list/page.tsx",
+      "sha256": "d9a1ab731cad187d85c20fb16bc78677e7106bd614503f2e0af33d3f37acbe8d",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueExecutionWorkspace from @/components/revenue-command-center/execution-enterprise/RevenueExecutionWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 74,
+      "route": "/revenue-command-center/daily-tasks/new",
+      "family": "daily-tasks",
+      "file": "app/(protected)/revenue-command-center/daily-tasks/new/page.tsx",
+      "sha256": "34291f016a6c67f48d34497ab76a6097ce67c9a477ae668416825bd9da01e4de",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueExecutionWorkspace from @/components/revenue-command-center/execution-enterprise/RevenueExecutionWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 75,
+      "route": "/revenue-command-center/daily-tasks",
+      "family": "daily-tasks",
+      "file": "app/(protected)/revenue-command-center/daily-tasks/page.tsx",
+      "sha256": "745e9d7910c4696d5ebdfd792929ff836955f99a162cb5f6907ace2801748e40",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueExecutionWorkspace from @/components/revenue-command-center/execution-enterprise/RevenueExecutionWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 76,
+      "route": "/revenue-command-center/decision-maps",
+      "family": "decision-maps",
+      "file": "app/(protected)/revenue-command-center/decision-maps/page.tsx",
+      "sha256": "2eabca15a41ef20e7354a9e86fefc837cb448dabca046f894928880bdc500a4c",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "CentralRevenueCoreDashboard from ../_central-core/CentralRevenueCoreDashboard"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 77,
+      "route": "/revenue-command-center/documents",
+      "family": "documents",
+      "file": "app/(protected)/revenue-command-center/documents/page.tsx",
+      "sha256": "4063849450809b1cfd2004cd199be8a69093179bfe751f3e827d814e075f4b36",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueContractWorkspace from @/components/revenue-command-center/contract-enterprise/RevenueContractWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 78,
+      "route": "/revenue-command-center/elite-command",
+      "family": "elite-command",
+      "file": "app/(protected)/revenue-command-center/elite-command/page.tsx",
+      "sha256": "956905010ab3c17a8330a1eec5db71bc8fb684cf8f50f07ecbcb11a181850e4f",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": true,
+      "imports": [
+        "UltimateRevenueCommandPage from ../_v9/UltimateRevenueCommandPage"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 79,
+      "route": "/revenue-command-center/executive-briefing",
+      "family": "executive-briefing",
+      "file": "app/(protected)/revenue-command-center/executive-briefing/page.tsx",
+      "sha256": "63f9a9e92816af3d1c8c48f5fe9e333f059773d020387f55dccc642c4e3ef858",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueExecutiveWorkspace from @/components/revenue-command-center/executive-enterprise/RevenueExecutiveWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 80,
+      "route": "/revenue-command-center/follow-ups/overdue",
+      "family": "follow-ups",
+      "file": "app/(protected)/revenue-command-center/follow-ups/overdue/page.tsx",
+      "sha256": "39db94204830265c1d72059beb24f637cbf72405642b2ad0c5023742c9ebcccd",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueSDRV11Workspace from @/components/revenue-command-center/RevenueSDRV11Workspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 81,
+      "route": "/revenue-command-center/follow-ups",
+      "family": "follow-ups",
+      "file": "app/(protected)/revenue-command-center/follow-ups/page.tsx",
+      "sha256": "1aba0bfe0b873eaa40f6b6992f2f81d8ca2dec7f44a6c6493a2656e74933407c",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueSDRV11Workspace from @/components/revenue-command-center/RevenueSDRV11Workspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 82,
+      "route": "/revenue-command-center/growth",
+      "family": "growth",
+      "file": "app/(protected)/revenue-command-center/growth/page.tsx",
+      "sha256": "f55af970168c70c479885483ef911c08d89a1b5f9fc5337d24bf787bfb13d426",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": true,
+      "imports": [
+        "RevenueCommandFinalWorkspace from ../_final/RevenueCommandFinalWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 83,
+      "route": "/revenue-command-center/leads-impact",
+      "family": "leads-impact",
+      "file": "app/(protected)/revenue-command-center/leads-impact/page.tsx",
+      "sha256": "faa9d5ff0361661c2d9f6239f0045d4fb88c71828138b4751b741dab7c912635",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": true,
+      "imports": [
+        "UltimateRevenueCommandPage from ../_v9/UltimateRevenueCommandPage"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 84,
+      "route": "/revenue-command-center/management",
+      "family": "management",
+      "file": "app/(protected)/revenue-command-center/management/page.tsx",
+      "sha256": "87a07e8280d75a482b8e5a5bf337f87e65cda150f9ad0e329c499727978af44c",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueExecutiveWorkspace from @/components/revenue-command-center/executive-enterprise/RevenueExecutiveWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 85,
+      "route": "/revenue-command-center/market-insights",
+      "family": "market-insights",
+      "file": "app/(protected)/revenue-command-center/market-insights/page.tsx",
+      "sha256": "20d6198e68183cb2dbbe3ee6bbc5aa1b10e13258d0241d13073be7093da886f4",
+      "dynamic": false,
+      "redirected": true,
+      "genericImport": false,
+      "imports": [
+        "{ redirect } from next/navigation"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "INTENTIONAL_REDIRECT_REQUIRES_RUNTIME",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 86,
+      "route": "/revenue-command-center/market-mapping",
+      "family": "market-mapping",
+      "file": "app/(protected)/revenue-command-center/market-mapping/page.tsx",
+      "sha256": "33ddb0ff25c0318dd6e53381583bbfbc47bc042e7f32e49287fe0a60f355c891",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": true,
+      "imports": [
+        "UltimateRevenueCommandPage from ../_v9/UltimateRevenueCommandPage"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 87,
+      "route": "/revenue-command-center/master-command",
+      "family": "master-command",
+      "file": "app/(protected)/revenue-command-center/master-command/page.tsx",
+      "sha256": "956ea586d3c4643c84266552e59063a4faf57e585e4f4ceb575b5c3063719998",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": true,
+      "imports": [
+        "UltimateRevenueCommandPage from ../_v9/UltimateRevenueCommandPage"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 88,
+      "route": "/revenue-command-center/meta-readiness",
+      "family": "meta-readiness",
+      "file": "app/(protected)/revenue-command-center/meta-readiness/page.tsx",
+      "sha256": "7b2546e2e1cbaa62598347daec825e34649fc1028206db68653e3713e06f7322",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenuePredictiveV11Workspace from @/components/revenue-command-center/RevenuePredictiveV11Workspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 89,
+      "route": "/revenue-command-center/my-work",
+      "family": "my-work",
+      "file": "app/(protected)/revenue-command-center/my-work/page.tsx",
+      "sha256": "aa90910d41ac676e1ca3b7fc94504136db4c17d54973d415b12c3f7458ede20e",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueExecutionWorkspace from @/components/revenue-command-center/execution-enterprise/RevenueExecutionWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 90,
+      "route": "/revenue-command-center/notifications",
+      "family": "notifications",
+      "file": "app/(protected)/revenue-command-center/notifications/page.tsx",
+      "sha256": "283500a7a77006fd79141e433dae95a9087b18704ed83b5f5dc0967a083e9f3c",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": true,
+      "imports": [
+        "RevenueCommandFinalWorkspace from ../_final/RevenueCommandFinalWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 91,
+      "route": "/revenue-command-center/overdue-heatmap",
+      "family": "overdue-heatmap",
+      "file": "app/(protected)/revenue-command-center/overdue-heatmap/page.tsx",
+      "sha256": "b7ad7986eca18b7deb86d74ea9acb2f4479d4455f0d79980567d69280f8ef972",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueExecutiveWorkspace from @/components/revenue-command-center/executive-enterprise/RevenueExecutiveWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 92,
+      "route": "/revenue-command-center",
+      "family": "executive",
+      "file": "app/(protected)/revenue-command-center/page.tsx",
+      "sha256": "39bbba858eaa3e87dc38d37c252dd4e1211bd8263624dcead720c446b0a7971b",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueExecutiveWorkspace from @/components/revenue-command-center/executive-enterprise/RevenueExecutiveWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 93,
+      "route": "/revenue-command-center/partnerships/[id]/activation",
+      "family": "partnerships",
+      "file": "app/(protected)/revenue-command-center/partnerships/[id]/activation/page.tsx",
+      "sha256": "07a1bf8743cf22c515b88075c5ee83f8727e4bced3ab63b2be603a8ea5239c2c",
+      "dynamic": true,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueContractWorkspace from @/components/revenue-command-center/contract-enterprise/RevenueContractWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED_DYNAMIC_RUNTIME_REQUIRED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 94,
+      "route": "/revenue-command-center/partnerships/[id]/agreement",
+      "family": "partnerships",
+      "file": "app/(protected)/revenue-command-center/partnerships/[id]/agreement/page.tsx",
+      "sha256": "364ca768dba1dcc2f48b3df99d4832eb22972ebe707ccc03ffdfd6d94cfbed66",
+      "dynamic": true,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueContractWorkspace from @/components/revenue-command-center/contract-enterprise/RevenueContractWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED_DYNAMIC_RUNTIME_REQUIRED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 95,
+      "route": "/revenue-command-center/partnerships/[id]/decision-map",
+      "family": "partnerships",
+      "file": "app/(protected)/revenue-command-center/partnerships/[id]/decision-map/page.tsx",
+      "sha256": "3167b3e40fea98d25ac3764dabb2136f68a879886962ad4197026ccdfc2ce12e",
+      "dynamic": true,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenuePartnershipWorkspace from @/components/revenue-command-center/partnership-enterprise/RevenuePartnershipWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED_DYNAMIC_RUNTIME_REQUIRED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 96,
+      "route": "/revenue-command-center/partnerships/[id]",
+      "family": "partnerships",
+      "file": "app/(protected)/revenue-command-center/partnerships/[id]/page.tsx",
+      "sha256": "20b55dea72142b25451366e1b36cf8f6afd308b57b33093b66c4a1856d65fbba",
+      "dynamic": true,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenuePartnershipWorkspace from @/components/revenue-command-center/partnership-enterprise/RevenuePartnershipWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED_DYNAMIC_RUNTIME_REQUIRED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 97,
+      "route": "/revenue-command-center/partnerships/[id]/proposal",
+      "family": "partnerships",
+      "file": "app/(protected)/revenue-command-center/partnerships/[id]/proposal/page.tsx",
+      "sha256": "ab9e81ccd8069ca09e20bd16faa9418768f86557d19f180ed05ef9ef8196e34d",
+      "dynamic": true,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueProposalWorkspace from @/components/revenue-command-center/proposal-enterprise/RevenueProposalWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED_DYNAMIC_RUNTIME_REQUIRED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 98,
+      "route": "/revenue-command-center/partnerships/[id]/qualification",
+      "family": "partnerships",
+      "file": "app/(protected)/revenue-command-center/partnerships/[id]/qualification/page.tsx",
+      "sha256": "720ab870332b742b9577de8f628bc75ff68a62773f3c1eaf4042dfc4d1606783",
+      "dynamic": true,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenuePartnershipWorkspace from @/components/revenue-command-center/partnership-enterprise/RevenuePartnershipWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED_DYNAMIC_RUNTIME_REQUIRED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 99,
+      "route": "/revenue-command-center/partnerships/[id]/recovery",
+      "family": "partnerships",
+      "file": "app/(protected)/revenue-command-center/partnerships/[id]/recovery/page.tsx",
+      "sha256": "089f210a7ce9cf0729254d78affad5001875dffe43c195060de7c30bd3c41de6",
+      "dynamic": true,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenuePartnershipWorkspace from @/components/revenue-command-center/partnership-enterprise/RevenuePartnershipWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED_DYNAMIC_RUNTIME_REQUIRED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 100,
+      "route": "/revenue-command-center/partnerships/[id]/referrals",
+      "family": "partnerships",
+      "file": "app/(protected)/revenue-command-center/partnerships/[id]/referrals/page.tsx",
+      "sha256": "6cd41f154dc71460d670d3db3ab00ed5eff652cf98da58832010cbdd4546dfb8",
+      "dynamic": true,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenuePartnershipWorkspace from @/components/revenue-command-center/partnership-enterprise/RevenuePartnershipWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED_DYNAMIC_RUNTIME_REQUIRED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 101,
+      "route": "/revenue-command-center/partnerships/activation",
+      "family": "partnerships",
+      "file": "app/(protected)/revenue-command-center/partnerships/activation/page.tsx",
+      "sha256": "194a98773389f0d47123dab434449fa98d193e88c5b8cc5674bae8d4a790b716",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueContractWorkspace from @/components/revenue-command-center/contract-enterprise/RevenueContractWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 102,
+      "route": "/revenue-command-center/partnerships/agreements",
+      "family": "partnerships",
+      "file": "app/(protected)/revenue-command-center/partnerships/agreements/page.tsx",
+      "sha256": "d740dd3a0a4bd8512bdcb38a90ae42c06a7f592d7864c8a1eedb287c4fa6110b",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueContractWorkspace from @/components/revenue-command-center/contract-enterprise/RevenueContractWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 103,
+      "route": "/revenue-command-center/partnerships/decision-map",
+      "family": "partnerships",
+      "file": "app/(protected)/revenue-command-center/partnerships/decision-map/page.tsx",
+      "sha256": "75f5937e80745d510ce4caee936d1dbc9565e7b285996d2473bb8ec85dadbe1d",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenuePartnershipWorkspace from @/components/revenue-command-center/partnership-enterprise/RevenuePartnershipWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 104,
+      "route": "/revenue-command-center/partnerships/executive",
+      "family": "partnerships",
+      "file": "app/(protected)/revenue-command-center/partnerships/executive/page.tsx",
+      "sha256": "144410439698bb2cdb7c76ed67dd376d5978596e40692308901dda99a8db1a2f",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenuePartnershipWorkspace from @/components/revenue-command-center/partnership-enterprise/RevenuePartnershipWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 105,
+      "route": "/revenue-command-center/partnerships/growth",
+      "family": "partnerships",
+      "file": "app/(protected)/revenue-command-center/partnerships/growth/page.tsx",
+      "sha256": "9a8e282acb56ef37cea8e7addd84ed913b60cf223001de977d1ff8fc24a8628d",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenuePartnershipWorkspace from @/components/revenue-command-center/partnership-enterprise/RevenuePartnershipWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 106,
+      "route": "/revenue-command-center/partnerships/high-value",
+      "family": "partnerships",
+      "file": "app/(protected)/revenue-command-center/partnerships/high-value/page.tsx",
+      "sha256": "1d5e644ac4d7666428f641c3d7a24ccf8a6ed0ff6d75107c165436e6fc0e01b2",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenuePartnershipWorkspace from @/components/revenue-command-center/partnership-enterprise/RevenuePartnershipWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 107,
+      "route": "/revenue-command-center/partnerships/meetings",
+      "family": "partnerships",
+      "file": "app/(protected)/revenue-command-center/partnerships/meetings/page.tsx",
+      "sha256": "a8b1fdbad5e10bafad7cc536c76c76e655317d4f0923b0a68af1c300fb481aef",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenuePartnershipWorkspace from @/components/revenue-command-center/partnership-enterprise/RevenuePartnershipWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 108,
+      "route": "/revenue-command-center/partnerships/new",
+      "family": "partnerships",
+      "file": "app/(protected)/revenue-command-center/partnerships/new/page.tsx",
+      "sha256": "a370e1b46222db8f9cc4ed571cf65dbc9c9b0066cd67f26d2ff316961dc6c3ae",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenuePartnershipWorkspace from @/components/revenue-command-center/partnership-enterprise/RevenuePartnershipWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 109,
+      "route": "/revenue-command-center/partnerships",
+      "family": "partnerships",
+      "file": "app/(protected)/revenue-command-center/partnerships/page.tsx",
+      "sha256": "c2692cfde9ae7269dcb897bb088a40888d1f0e96114aed56774a36c0d284cc68",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenuePartnershipWorkspace from @/components/revenue-command-center/partnership-enterprise/RevenuePartnershipWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 110,
+      "route": "/revenue-command-center/partnerships/performance",
+      "family": "partnerships",
+      "file": "app/(protected)/revenue-command-center/partnerships/performance/page.tsx",
+      "sha256": "99e21ebcf87289457c85fa505cb40b88a1f9ffa985885dfce4d07f577efb19b3",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenuePartnershipWorkspace from @/components/revenue-command-center/partnership-enterprise/RevenuePartnershipWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 111,
+      "route": "/revenue-command-center/partnerships/pipeline",
+      "family": "partnerships",
+      "file": "app/(protected)/revenue-command-center/partnerships/pipeline/page.tsx",
+      "sha256": "27626bd0dbfabbba26dafc02c4feede3b68d4936eef72638aa5efc3392a8aa5a",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenuePartnershipWorkspace from @/components/revenue-command-center/partnership-enterprise/RevenuePartnershipWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 112,
+      "route": "/revenue-command-center/partnerships/proposals",
+      "family": "partnerships",
+      "file": "app/(protected)/revenue-command-center/partnerships/proposals/page.tsx",
+      "sha256": "47f5220ce6a0734b40ea1e239a67ea2d1a42ea753ec7624bcd74cc759aa09380",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueProposalWorkspace from @/components/revenue-command-center/proposal-enterprise/RevenueProposalWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 113,
+      "route": "/revenue-command-center/partnerships/qualification",
+      "family": "partnerships",
+      "file": "app/(protected)/revenue-command-center/partnerships/qualification/page.tsx",
+      "sha256": "fbf48f0ea6b7898646915ab0bb86fb7b44ebc5084ea40d2bfcdbdd8aa374e96f",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenuePartnershipWorkspace from @/components/revenue-command-center/partnership-enterprise/RevenuePartnershipWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 114,
+      "route": "/revenue-command-center/partnerships/recovery",
+      "family": "partnerships",
+      "file": "app/(protected)/revenue-command-center/partnerships/recovery/page.tsx",
+      "sha256": "dc164e85ebdcdf836bf797ca53d5860d8035879ae8d84b56c79a90097bf3b593",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenuePartnershipWorkspace from @/components/revenue-command-center/partnership-enterprise/RevenuePartnershipWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 115,
+      "route": "/revenue-command-center/partnerships/referrals",
+      "family": "partnerships",
+      "file": "app/(protected)/revenue-command-center/partnerships/referrals/page.tsx",
+      "sha256": "ec81f7427571b88935b6924167cc58ccc4db874303b1fa1f6357c1ec6a1ae42e",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenuePartnershipWorkspace from @/components/revenue-command-center/partnership-enterprise/RevenuePartnershipWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 116,
+      "route": "/revenue-command-center/partnerships/risk",
+      "family": "partnerships",
+      "file": "app/(protected)/revenue-command-center/partnerships/risk/page.tsx",
+      "sha256": "2b145bf211383b095ca1eecc5954e18e333aecc4b6a31af2d943e271df985f89",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenuePartnershipWorkspace from @/components/revenue-command-center/partnership-enterprise/RevenuePartnershipWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 117,
+      "route": "/revenue-command-center/predictive",
+      "family": "predictive",
+      "file": "app/(protected)/revenue-command-center/predictive/page.tsx",
+      "sha256": "87f66c3040aa1191d5ba8cfd36fde49a4e7b31dd9ad4e576e3e3d2ddf265a604",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueExecutiveWorkspace from @/components/revenue-command-center/executive-enterprise/RevenueExecutiveWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 118,
+      "route": "/revenue-command-center/prospects/[id]/decision-map",
+      "family": "prospects",
+      "file": "app/(protected)/revenue-command-center/prospects/[id]/decision-map/page.tsx",
+      "sha256": "d9b0cd3af36a998fbd89c6d3782cf443f40b5ba5cb81645e7cd4ba71f086e81b",
+      "dynamic": true,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "ProspectEnterpriseDossier from @/components/revenue-command-center/prospects-enterprise/ProspectEnterpriseDossier"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED_DYNAMIC_RUNTIME_REQUIRED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 119,
+      "route": "/revenue-command-center/prospects/[id]/negotiation",
+      "family": "prospects",
+      "file": "app/(protected)/revenue-command-center/prospects/[id]/negotiation/page.tsx",
+      "sha256": "b38f16b055404d1807c625e6beba5dfef329ac6d152fcaa5360a258f0fa2e095",
+      "dynamic": true,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueProposalWorkspace from @/components/revenue-command-center/proposal-enterprise/RevenueProposalWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED_DYNAMIC_RUNTIME_REQUIRED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 120,
+      "route": "/revenue-command-center/prospects/[id]",
+      "family": "prospects",
+      "file": "app/(protected)/revenue-command-center/prospects/[id]/page.tsx",
+      "sha256": "1d76a995f519db0edfb6602de05962f291668dd2af6d9ab3d0de16925e2829ef",
+      "dynamic": true,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "ProspectEnterpriseDossier from @/components/revenue-command-center/prospects-enterprise/ProspectEnterpriseDossier"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED_DYNAMIC_RUNTIME_REQUIRED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 121,
+      "route": "/revenue-command-center/prospects/[id]/proposal",
+      "family": "prospects",
+      "file": "app/(protected)/revenue-command-center/prospects/[id]/proposal/page.tsx",
+      "sha256": "c3ce12755912f11833be830ab5d319302063c2b3cf763e9b2ca140c0e37dd875",
+      "dynamic": true,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueProposalWorkspace from @/components/revenue-command-center/proposal-enterprise/RevenueProposalWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED_DYNAMIC_RUNTIME_REQUIRED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 122,
+      "route": "/revenue-command-center/prospects/[id]/qualification",
+      "family": "prospects",
+      "file": "app/(protected)/revenue-command-center/prospects/[id]/qualification/page.tsx",
+      "sha256": "1c839206c3e1a0c155b9f85150db1569a0acd96afe2cd6cedd566a9ff93fcbce",
+      "dynamic": true,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "ProspectEnterpriseDossier from @/components/revenue-command-center/prospects-enterprise/ProspectEnterpriseDossier"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED_DYNAMIC_RUNTIME_REQUIRED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 123,
+      "route": "/revenue-command-center/prospects/[id]/recovery",
+      "family": "prospects",
+      "file": "app/(protected)/revenue-command-center/prospects/[id]/recovery/page.tsx",
+      "sha256": "03b800efbf04a6d7e1de3b15fec2d5a89fefb9f19702fd6705be408e550d1e21",
+      "dynamic": true,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "ProspectEnterpriseDossier from @/components/revenue-command-center/prospects-enterprise/ProspectEnterpriseDossier"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED_DYNAMIC_RUNTIME_REQUIRED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 124,
+      "route": "/revenue-command-center/prospects/analytics",
+      "family": "prospects",
+      "file": "app/(protected)/revenue-command-center/prospects/analytics/page.tsx",
+      "sha256": "31811ac65543c46c8d8fabeaa7bc77aad7b00589ee7bd6528c4d8aaee46b1363",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "ProspectEnterpriseWorkspace from @/components/revenue-command-center/prospects-enterprise/ProspectEnterpriseWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 125,
+      "route": "/revenue-command-center/prospects/appointments",
+      "family": "prospects",
+      "file": "app/(protected)/revenue-command-center/prospects/appointments/page.tsx",
+      "sha256": "d905eaf854f8d442c80e0585b1cbf6e0bf09f0a6766706f84a699ddc71e3d936",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "ProspectEnterpriseWorkspace from @/components/revenue-command-center/prospects-enterprise/ProspectEnterpriseWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 126,
+      "route": "/revenue-command-center/prospects/decision-map",
+      "family": "prospects",
+      "file": "app/(protected)/revenue-command-center/prospects/decision-map/page.tsx",
+      "sha256": "e2b5f110a829687d7c0cd915ad1d01a1e1af1b9488db0ed8e60b8b1c8e56c9c1",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "ProspectEnterpriseWorkspace from @/components/revenue-command-center/prospects-enterprise/ProspectEnterpriseWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 127,
+      "route": "/revenue-command-center/prospects/directory",
+      "family": "prospects",
+      "file": "app/(protected)/revenue-command-center/prospects/directory/page.tsx",
+      "sha256": "3780dcb8d8d342ddefecf15a051fbbe9b8c5eddfff760405eac6c7c26cce89d8",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "ProspectEnterpriseWorkspace from @/components/revenue-command-center/prospects-enterprise/ProspectEnterpriseWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 128,
+      "route": "/revenue-command-center/prospects/executive",
+      "family": "prospects",
+      "file": "app/(protected)/revenue-command-center/prospects/executive/page.tsx",
+      "sha256": "0a24bb8e5643c9f5d0987ad96b0360f0c022c2fe7b11935df216b3ead5f63519",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "ProspectEnterpriseWorkspace from @/components/revenue-command-center/prospects-enterprise/ProspectEnterpriseWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 129,
+      "route": "/revenue-command-center/prospects/high-value",
+      "family": "prospects",
+      "file": "app/(protected)/revenue-command-center/prospects/high-value/page.tsx",
+      "sha256": "a1352c4ee6547e4e1cd57c4597d50939437b86c6cad22b70b11099404e9f1cc4",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "ProspectEnterpriseWorkspace from @/components/revenue-command-center/prospects-enterprise/ProspectEnterpriseWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 130,
+      "route": "/revenue-command-center/prospects/negotiation",
+      "family": "prospects",
+      "file": "app/(protected)/revenue-command-center/prospects/negotiation/page.tsx",
+      "sha256": "1570ca55ce1b4e5fdc297cdadb264c4bb22ed4f4f63b83c6d569893b3d99db83",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueProposalWorkspace from @/components/revenue-command-center/proposal-enterprise/RevenueProposalWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 131,
+      "route": "/revenue-command-center/prospects/new",
+      "family": "prospects",
+      "file": "app/(protected)/revenue-command-center/prospects/new/page.tsx",
+      "sha256": "6d771dd49c7aa5ff20c8ce3f80fb21a5c069fe851a164af5112246bdf274cb52",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "ProspectEnterpriseWorkspace from @/components/revenue-command-center/prospects-enterprise/ProspectEnterpriseWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 132,
+      "route": "/revenue-command-center/prospects",
+      "family": "prospects",
+      "file": "app/(protected)/revenue-command-center/prospects/page.tsx",
+      "sha256": "99733112c67be98f5738c702683a60135dc38c36b1b338129fe65edd07f76aa0",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "ProspectEnterpriseWorkspace from @/components/revenue-command-center/prospects-enterprise/ProspectEnterpriseWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 133,
+      "route": "/revenue-command-center/prospects/performance",
+      "family": "prospects",
+      "file": "app/(protected)/revenue-command-center/prospects/performance/page.tsx",
+      "sha256": "8a7f48b9cdfc93437b551a9fc3480bbf4e7c306a1fb88af0c6becc6198109a47",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "ProspectEnterpriseWorkspace from @/components/revenue-command-center/prospects-enterprise/ProspectEnterpriseWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 134,
+      "route": "/revenue-command-center/prospects/pipeline",
+      "family": "prospects",
+      "file": "app/(protected)/revenue-command-center/prospects/pipeline/page.tsx",
+      "sha256": "4603447254355c2fe0b70bb7d28fda51d054f77394131cba85b81c3f8f825b52",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "ProspectEnterpriseWorkspace from @/components/revenue-command-center/prospects-enterprise/ProspectEnterpriseWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 135,
+      "route": "/revenue-command-center/prospects/proposals",
+      "family": "prospects",
+      "file": "app/(protected)/revenue-command-center/prospects/proposals/page.tsx",
+      "sha256": "32e83155962e746144abbea286e944a456fa4a0bd68cbd14d6dfb04be4cb1bef",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueProposalWorkspace from @/components/revenue-command-center/proposal-enterprise/RevenueProposalWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 136,
+      "route": "/revenue-command-center/prospects/qualification",
+      "family": "prospects",
+      "file": "app/(protected)/revenue-command-center/prospects/qualification/page.tsx",
+      "sha256": "6b205a2ad42344d3d59a4bece9cca962a0e78692a0a0c318f3adc36e9b55194b",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "ProspectEnterpriseWorkspace from @/components/revenue-command-center/prospects-enterprise/ProspectEnterpriseWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 137,
+      "route": "/revenue-command-center/prospects/recovery",
+      "family": "prospects",
+      "file": "app/(protected)/revenue-command-center/prospects/recovery/page.tsx",
+      "sha256": "eaed71781422ca99b04e5d11e1b233a6092fd88e290e699271248b59f211a9f7",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "ProspectEnterpriseWorkspace from @/components/revenue-command-center/prospects-enterprise/ProspectEnterpriseWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 138,
+      "route": "/revenue-command-center/prospects/risk",
+      "family": "prospects",
+      "file": "app/(protected)/revenue-command-center/prospects/risk/page.tsx",
+      "sha256": "038453fea3b95070caadf5c8e59f3e02a8800f140fba5a9a60fd2a92365cb160",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "ProspectEnterpriseWorkspace from @/components/revenue-command-center/prospects-enterprise/ProspectEnterpriseWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 139,
+      "route": "/revenue-command-center/recovery-import",
+      "family": "recovery-import",
+      "file": "app/(protected)/revenue-command-center/recovery-import/page.tsx",
+      "sha256": "3ae58a3f89b67da1bda44bdeeb7e725045522c07b527b8c4c08f8f5e06f20eae",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "{ useEffect, useState } from react"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 140,
+      "route": "/revenue-command-center/revenue-analytics",
+      "family": "revenue-analytics",
+      "file": "app/(protected)/revenue-command-center/revenue-analytics/page.tsx",
+      "sha256": "dba3aa8ca5e64f143d87a9072ddd862ba1e2d272f4ec9d7fc1046362b8d5f420",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueExecutiveWorkspace from @/components/revenue-command-center/executive-enterprise/RevenueExecutiveWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 141,
+      "route": "/revenue-command-center/sdr-execution",
+      "family": "sdr-execution",
+      "file": "app/(protected)/revenue-command-center/sdr-execution/page.tsx",
+      "sha256": "a326b0f89cfe76600815b57ea0c3bb1850e4bf3b907222c59d26d058697b7663",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueCampaignWorkspace from @/components/revenue-command-center/campaign-enterprise/RevenueCampaignWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 142,
+      "route": "/revenue-command-center/strategy-room",
+      "family": "strategy-room",
+      "file": "app/(protected)/revenue-command-center/strategy-room/page.tsx",
+      "sha256": "beb8438cae9de17da958481e8ac0f5fb50618066d4f535acc22f59f776634607",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueExecutiveWorkspace from @/components/revenue-command-center/executive-enterprise/RevenueExecutiveWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 143,
+      "route": "/revenue-command-center/system-activation",
+      "family": "system-activation",
+      "file": "app/(protected)/revenue-command-center/system-activation/page.tsx",
+      "sha256": "bd9d14f42665728308c71ebbdf655fbc0297dc5d30b5e6eead33cff323140f5e",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueContractWorkspace from @/components/revenue-command-center/contract-enterprise/RevenueContractWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 144,
+      "route": "/revenue-command-center/tasks/[id]",
+      "family": "tasks",
+      "file": "app/(protected)/revenue-command-center/tasks/[id]/page.tsx",
+      "sha256": "ebf47380018c6b0bb5fe8fd4eaa6eaae65cd5f08a139ab4df60734b8ff982036",
+      "dynamic": true,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueExecutionWorkspace from @/components/revenue-command-center/execution-enterprise/RevenueExecutionWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED_DYNAMIC_RUNTIME_REQUIRED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 145,
+      "route": "/revenue-command-center/tasks/approvals",
+      "family": "tasks",
+      "file": "app/(protected)/revenue-command-center/tasks/approvals/page.tsx",
+      "sha256": "127444841ced9571d84575bff3e78da74aa1a68bb903b449531ac42fc4485f33",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueExecutionWorkspace from @/components/revenue-command-center/execution-enterprise/RevenueExecutionWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 146,
+      "route": "/revenue-command-center/tasks/blocked",
+      "family": "tasks",
+      "file": "app/(protected)/revenue-command-center/tasks/blocked/page.tsx",
+      "sha256": "696c6a1808bbc435e68a806d6b39ad199f71b426b0bd8e4e90e10f7e75947a84",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueExecutionWorkspace from @/components/revenue-command-center/execution-enterprise/RevenueExecutionWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 147,
+      "route": "/revenue-command-center/tasks/board",
+      "family": "tasks",
+      "file": "app/(protected)/revenue-command-center/tasks/board/page.tsx",
+      "sha256": "53a405e44909cccd2aeb9f817fd51d822f136e0f19351f3c464c5301fe73de44",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueExecutionWorkspace from @/components/revenue-command-center/execution-enterprise/RevenueExecutionWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 148,
+      "route": "/revenue-command-center/tasks/new",
+      "family": "tasks",
+      "file": "app/(protected)/revenue-command-center/tasks/new/page.tsx",
+      "sha256": "fdd8c34546ef97c0ae41902547c3c09784fec7b0f732e9e93fa1e0a01fd72b4a",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueExecutionWorkspace from @/components/revenue-command-center/execution-enterprise/RevenueExecutionWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 149,
+      "route": "/revenue-command-center/tasks",
+      "family": "tasks",
+      "file": "app/(protected)/revenue-command-center/tasks/page.tsx",
+      "sha256": "85d5db7b7eb3c6546a8c14924cf99a46397b42457b1235283403d1b3ff02ab9a",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueExecutionWorkspace from @/components/revenue-command-center/execution-enterprise/RevenueExecutionWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 150,
+      "route": "/revenue-command-center/team-performance",
+      "family": "team-performance",
+      "file": "app/(protected)/revenue-command-center/team-performance/page.tsx",
+      "sha256": "2130e84a9f48adcab21bfa3680e3b30eb4478a3d1f18205a3916d3be82185f01",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueExecutiveWorkspace from @/components/revenue-command-center/executive-enterprise/RevenueExecutiveWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    },
+    {
+      "index": 151,
+      "route": "/revenue-command-center/workload-balancer",
+      "family": "workload-balancer",
+      "file": "app/(protected)/revenue-command-center/workload-balancer/page.tsx",
+      "sha256": "5903f7d3eed305ea96f30a454bdfe9ea07c4ce54affd4e44806c6e46a2da9cdb",
+      "dynamic": false,
+      "redirected": false,
+      "genericImport": false,
+      "imports": [
+        "RevenueExecutiveWorkspace from @/components/revenue-command-center/executive-enterprise/RevenueExecutiveWorkspace"
+      ],
+      "defaultExport": true,
+      "placeholderMarkers": [],
+      "classification": "STATIC_ACCEPTED",
+      "runtimeStatus": "PENDING_AUTHENTICATED_PREVIEW"
+    }
+  ]
+}

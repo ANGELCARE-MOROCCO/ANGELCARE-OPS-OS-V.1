@@ -1,0 +1,4 @@
+{
+  "scenarioKey": "concurrency",
+  "purpose": "Start two ticks and prove one lease, one execution and no duplicate output."
+}

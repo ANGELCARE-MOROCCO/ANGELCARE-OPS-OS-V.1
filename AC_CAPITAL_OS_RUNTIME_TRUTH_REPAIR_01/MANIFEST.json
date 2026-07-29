@@ -1,0 +1,117 @@
+{
+  "package": "AC_CAPITAL_OS_RUNTIME_TRUTH_REPAIR_01",
+  "generatedAt": "2026-07-28",
+  "fileCount": 22,
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 2723,
+      "sha256": "eb7040b09cd8261c8f67c3d664ac6b75b5bc32f737b5d1e547b43f73446214df"
+    },
+    {
+      "path": "docs/ACCEPTANCE_MATRIX.md",
+      "bytes": 977,
+      "sha256": "f270be8430970432fcf013e99ab367f926a604df4e606ecef320bbb96bfe63a2"
+    },
+    {
+      "path": "docs/KNOWN_BOUNDARIES.md",
+      "bytes": 469,
+      "sha256": "fe497482713222d313c41e999dc44d59b456ebbb8e079714dc9850fb575abae3"
+    },
+    {
+      "path": "evidence/CHANGESET.txt",
+      "bytes": 795,
+      "sha256": "a103438f8c522d2cf4f94598a719e66a77a2b1a5dfd865b426cdbdbac271f3f8"
+    },
+    {
+      "path": "evidence/INPUT_ARCHIVE_VERIFICATION.txt",
+      "bytes": 291,
+      "sha256": "b6666502c5b2f4756c028c9e96ce6c2e6599a1f151cc7b04b5689d9c8b12488a"
+    },
+    {
+      "path": "evidence/INSTALLER_REHEARSAL.txt",
+      "bytes": 450,
+      "sha256": "d7e882f1a07f6f0708f0ee71c1b83df7b8efc99aeb48a0411806bc3c96301108"
+    },
+    {
+      "path": "evidence/STATIC_VERIFICATION.txt",
+      "bytes": 1947,
+      "sha256": "14a12adc563271474d89f4a4b570416cf8f93da0d7eb532e4fb61d740518986e"
+    },
+    {
+      "path": "files/apps/ops-web/app/api/ac-capital-os/capital-radar/research/run/route.ts",
+      "bytes": 8189,
+      "sha256": "9dfdcdf1afaddbaab91b8110d21b36bae74a0f9e7b93960769d3665600dd86c8"
+    },
+    {
+      "path": "files/apps/ops-web/app/api/ac-capital-os/capital-radar/route.ts",
+      "bytes": 5442,
+      "sha256": "bc85e53428640d4e52163d8b6881af1b73e1251bca91e58ef9535a2158c72e23"
+    },
+    {
+      "path": "files/apps/ops-web/app/api/ac-capital-os/reports/generate/route.ts",
+      "bytes": 11462,
+      "sha256": "9bae5df055db750db0155bd89b2d92ebcec34aebed9100b79e319c3b063185d4"
+    },
+    {
+      "path": "files/apps/ops-web/components/ac-capital-os/core/AcCapitalShell.tsx",
+      "bytes": 18472,
+      "sha256": "e9aed4b54464081bd2aa52a966094db9bd9bc9780e8886c7db7b870a88b9e966"
+    },
+    {
+      "path": "files/apps/ops-web/components/ac-capital-os/core/Overlay.tsx",
+      "bytes": 4461,
+      "sha256": "9a00d9be3f729c9cafc2b6a09b7a31d52c76a982e91a60fe96616f5bbfa4a564"
+    },
+    {
+      "path": "files/apps/ops-web/components/ac-capital-os/core/core.module.css",
+      "bytes": 9542,
+      "sha256": "1ea373748dc0a068c86ddeb88cdcb2c2e79bf3bba48005ff8be9e2999ed112ef"
+    },
+    {
+      "path": "files/apps/ops-web/components/ac-capital-os/core/shell.module.css",
+      "bytes": 21234,
+      "sha256": "3b16c75ffb6766a958d2d0b10d8437bed9448baad581004a912797eeef9c195c"
+    },
+    {
+      "path": "files/apps/ops-web/components/ac-capital-os/pages/radar/RadarPage.tsx",
+      "bytes": 21609,
+      "sha256": "0fe20bfaa550e221cca2d71e22766bbf13319114d868bf1d751f5af97f2fd23a"
+    },
+    {
+      "path": "files/apps/ops-web/components/ac-capital-os/pages/reports/ReportsPage.tsx",
+      "bytes": 13899,
+      "sha256": "6a2d2f65a88075cdac0981f08b3d86ab99781bb29ed8618ccec2c1a0654ed02c"
+    },
+    {
+      "path": "files/apps/ops-web/lib/ac-capital-os/server/live-intelligence.ts",
+      "bytes": 21094,
+      "sha256": "b278f80c7aace3b4a7d5756437ed857f28f4bd82aa38e70c3f2604e499beedaf"
+    },
+    {
+      "path": "files/apps/ops-web/lib/ai-provider-control/gemini-runtime.ts",
+      "bytes": 1871,
+      "sha256": "fcaab4c66371c80e083c73a094879a7d560843dea1e22ca6a2ed3885eb9cc8a4"
+    },
+    {
+      "path": "scripts/apply_ac_capital_os_runtime_truth_repair_01.mjs",
+      "bytes": 4245,
+      "sha256": "830ccee81648abc9bbe4d0348fb73d0d087cd0a3482e87d573a12613b0962db6"
+    },
+    {
+      "path": "scripts/verify_ac_capital_os_runtime_truth_repair_01.mjs",
+      "bytes": 6935,
+      "sha256": "ed3bce789e0638e93d7c9d64a9f3ce08d1e213cb2045ea6020d6c8e680f5b507"
+    },
+    {
+      "path": "scripts/verify_ac_capital_os_runtime_truth_repair_01_db.mjs",
+      "bytes": 3084,
+      "sha256": "a29433e8a3e7b51289414fc67ea9fad8f3657ca9b67fdaeffb38918496393813"
+    },
+    {
+      "path": "supabase/migrations/20260728_ac_capital_os_runtime_truth_repair_01.sql",
+      "bytes": 12504,
+      "sha256": "4a0b2e3a9543c971d57eeb059ba938ac9b191e8ce7b83539356d694566edaf81"
+    }
+  ]
+}

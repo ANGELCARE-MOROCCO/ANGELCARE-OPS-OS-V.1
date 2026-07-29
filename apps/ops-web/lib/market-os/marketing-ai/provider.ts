@@ -1,7 +1,8 @@
-import { GoogleGenAI, ThinkingLevel } from '@google/genai'
+import type { JsonRecord } from '@/lib/ai-provider-control/types'
+import { executeStructuredContent, getMarketAiRuntimeStatus } from '@/lib/market-os/ai-runtime/gateway'
+import type { RuntimeContinuationMode } from '@/lib/market-os/ai-runtime/types'
 import { assertMarketingAiConfigured, getMarketingAiConfig } from './config'
 import type { MarketingAiCommand, MarketingAiOutput } from './types'
-import { acquireGovernedProvider, failGovernedProvider, reconcileGovernedProvider, resolveGovernedProviderForHealth } from '@/lib/ai-provider-control/governor'
 
 const OUTPUT_SCHEMA = {
   type: 'object',
@@ -14,46 +15,16 @@ const OUTPUT_SCHEMA = {
     internalActions: {
       type: 'array',
       items: {
-        type: 'object',
-        additionalProperties: false,
+        type: 'object', additionalProperties: false,
         required: ['type', 'title', 'description', 'requiresApproval', 'payload'],
         properties: {
           type: { type: 'string', enum: ['create_brief', 'create_content_draft', 'create_task_plan', 'create_asset_requirement', 'request_review', 'propose_schedule', 'prepare_publishing_package', 'classify_content', 'record_learning', 'store_bridge_object', 'none'] },
-          title: { type: 'string' },
-          description: { type: 'string' },
-          requiresApproval: { type: 'boolean' },
-          payload: { type: 'object', additionalProperties: true },
+          title: { type: 'string' }, description: { type: 'string' }, requiresApproval: { type: 'boolean' }, payload: { type: 'object', additionalProperties: true },
         },
       },
     },
-    risks: {
-      type: 'array',
-      items: {
-        type: 'object',
-        additionalProperties: false,
-        required: ['title', 'level', 'mitigation'],
-        properties: {
-          title: { type: 'string' },
-          level: { type: 'string', enum: ['low', 'medium', 'high', 'critical'] },
-          mitigation: { type: 'string' },
-        },
-      },
-    },
-    evidence: {
-      type: 'array',
-      items: {
-        type: 'object',
-        additionalProperties: false,
-        required: ['title', 'sourceType'],
-        properties: {
-          title: { type: 'string' },
-          url: { type: 'string' },
-          sourceType: { type: 'string', enum: ['internal', 'external', 'gemini_grounding'] },
-          observedAt: { type: 'string' },
-          freshness: { type: 'string' },
-        },
-      },
-    },
+    risks: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['title', 'level', 'mitigation'], properties: { title: { type: 'string' }, level: { type: 'string', enum: ['low', 'medium', 'high', 'critical'] }, mitigation: { type: 'string' } } } },
+    evidence: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['title', 'sourceType'], properties: { title: { type: 'string' }, url: { type: 'string' }, sourceType: { type: 'string', enum: ['internal', 'external', 'tavily_search', 'tavily_extract', 'legacy_gemini_grounding'] }, observedAt: { type: 'string' }, freshness: { type: 'string' } } } },
     learningSignals: { type: 'array', items: { type: 'string' } },
     unresolvedQuestions: { type: 'array', items: { type: 'string' } },
     confidence: { type: 'number', minimum: 0, maximum: 1 },
@@ -62,83 +33,71 @@ const OUTPUT_SCHEMA = {
 } as const
 
 const SYSTEM_INSTRUCTION = `
-You are SANILA Marketing Director AI, the governed internal marketing executive for ANGELCARE.
-You operate only inside ANGELCARE Market OS Content Command 360.
-Be decisive, modern, premium corporate, culturally relevant to Morocco, evidence-driven and operationally precise.
-Every result must explain what matters, what is blocked, what happens next, who should own it, what evidence is missing and which human decision is required.
-Never send emails, WhatsApp messages, publish social media, activate ads, submit external forms, contact external people, issue public statements or execute public communication.
-You may only prepare internal briefs, drafts, task plans, asset requirements, review requests, schedules, publishing packages, classifications and learning proposals.
-Never claim a service, price, geographic availability, performance metric or external publication that is not present in the supplied evidence.
+You are SANILA Content Executive AI, the senior governed content operations executive for ANGELCARE Market OS Content Command Center 360.
+Your job is to move the complete internal content lifecycle forward: intelligence, strategy, briefs, missions, tasks, production requirements, review preparation, corrections, distribution packages, publication preparation, performance analysis, optimization and institutional learning.
+Be decisive, premium, operationally complete and faithful to the supplied dossier, doctrine, sources, versions, channels, audiences, objectives and authority state.
+Do not stop at general recommendations. Produce concrete internal actions that the operating system can materialize.
+When information is missing, identify it precisely and create a continuation route: use existing evidence, propose a task, request a source, switch provider, continue without research, or move to manual execution.
+Never convert a warning into a dead end. Every issue must include a resolution, delegation, override or manual continuation path.
+External delivery actions are prepared as governed handoffs: prepare the email, package, schedule, publishing instruction or human task; do not falsely claim it was sent or published.
+Never invent prices, services, availability, performance, source authority, publication or business outcomes.
 Treat unavailable data as unavailable, never as zero.
-Do not expose hidden chain-of-thought. Return concise decision rationale, evidence, assumptions and confidence.
-`;
+Do not expose hidden chain-of-thought. Return concise institutional rationale, evidence, assumptions, confidence and executable internal next actions.
+`
 
-function deterministicFallback(command: MarketingAiCommand, objective: string): MarketingAiOutput {
-  return {
-    executiveSummary: `Mode de secours déterministe: ${command.name}. L’objectif a été enregistré, mais Gemini n’a pas été exécuté.`,
-    findings: ['La configuration Gemini est indisponible ou le fournisseur a échoué.', 'Aucune action externe n’a été exécutée.', 'Le commandement reste disponible pour revue humaine.'],
-    recommendations: ['Vérifier GEMINI_API_KEY et les modèles configurés dans .env.local.', 'Relancer la commande après validation de la santé Gemini.', `Revoir manuellement l’objectif: ${objective}`],
-    internalActions: [{ type: 'none', title: 'Aucune écriture automatique', description: 'Le mode de secours ne modifie aucun dossier métier.', requiresApproval: true, payload: {} }],
-    risks: [{ title: 'Résultat non généré par Gemini', level: 'high', mitigation: 'Ne pas utiliser ce résultat comme recommandation de production.' }],
-    evidence: [],
-    learningSignals: [],
-    unresolvedQuestions: ['Gemini est-il correctement configuré dans .env.local ?'],
-    confidence: 0,
-    humanDecisionRequired: true,
-  }
+function continuationMode(context: Record<string, unknown>): RuntimeContinuationMode {
+  const runtime = context.runtimeContinuity && typeof context.runtimeContinuity === 'object' ? context.runtimeContinuity as Record<string, unknown> : {}
+  const value = String(runtime.mode || context.continuationMode || 'auto')
+  return ['auto','provider_only','without_research','manual'].includes(value) ? value as RuntimeContinuationMode : 'auto'
 }
 
-function extractGroundingEvidence(response: unknown) {
-  const candidate = (response as { candidates?: Array<{ groundingMetadata?: { groundingChunks?: Array<{ web?: { uri?: string; title?: string } }>; webSearchQueries?: string[] } }> }).candidates?.[0]
-  const metadata = candidate?.groundingMetadata
-  const evidence = (metadata?.groundingChunks || []).flatMap((chunk) => chunk.web?.uri ? [{
-    title: chunk.web.title || chunk.web.uri,
-    url: chunk.web.uri,
-    sourceType: 'gemini_grounding' as const,
-    observedAt: new Date().toISOString(),
-    freshness: 'live-search',
-  }] : [])
-  return { evidence, queries: metadata?.webSearchQueries || [] }
+function manualContinuation(command: MarketingAiCommand, objective: string, warnings: string[] = []): MarketingAiOutput {
+  return {
+    executiveSummary: `Continuité opérationnelle activée pour « ${command.name} ». Le fournisseur IA n’a pas produit de résultat exploitable, mais le dossier n’est pas bloqué: un plan de travail interne manuel est prêt à être matérialisé.`,
+    findings: warnings.length ? warnings : ['La capacité IA demandée est indisponible ou a été contournée par autorité humaine.'],
+    recommendations: [
+      'Ouvrir le plan de tâches généré et affecter le responsable compétent.',
+      'Choisir un autre fournisseur ou modèle depuis Integrations & Context si une exécution IA reste souhaitée.',
+      'Relancer la mission avec recherche désactivée lorsque les sources internes suffisent.',
+    ],
+    internalActions: [{
+      type: 'create_task_plan',
+      title: `Continuer manuellement · ${command.name}`,
+      description: `Exécuter l’objectif sans dépendance provider: ${objective}`,
+      requiresApproval: false,
+      payload: {
+        objective,
+        commandCode: command.code,
+        continuationMode: 'manual',
+        tasks: [
+          'Inspecter le dossier, le brief, les sources et les versions disponibles.',
+          'Produire le livrable interne attendu par le commandement.',
+          'Joindre les preuves et décisions requises.',
+          'Reprendre le workflow au prochain gate normal.',
+        ],
+      },
+    }],
+    risks: [{ title: 'Assistance IA indisponible', level: 'medium', mitigation: 'Le workflow continue via une tâche humaine traçable et réaffectable.' }],
+    evidence: [], learningSignals: [], unresolvedQuestions: ['Un autre provider ou modèle doit-il être sélectionné pour une nouvelle tentative ?'], confidence: 0, humanDecisionRequired: false,
+  }
 }
 
 export async function checkMarketingAiHealth(live = false) {
   const config = getMarketingAiConfig()
-  if (!config.enabled) return { enabled: false, configured: Boolean(config.apiKey), available: false, model: config.primaryModel, message: 'Marketing AI désactivé.' }
-  if (!live) {
-    try {
-      const governed = await resolveGovernedProviderForHealth({ moduleKey: 'marketing_ai', capability: 'health_check', requestedModel: config.primaryModel })
-      return { enabled: true, configured: Boolean(governed.apiKey || config.apiKey), available: Boolean(governed.apiKey || config.apiKey), model: governed.model || config.primaryModel, message: governed.governed ? 'Dossier fournisseur actif et prêt.' : 'Configuration Gemini bootstrap prête.' }
-    } catch (error) {
-      return { enabled: true, configured: Boolean(config.apiKey), available: false, model: config.primaryModel, message: error instanceof Error ? error.message : 'AI_PROVIDER_ROUTE_NOT_FOUND' }
-    }
-  }
-  try {
-    const governed = await resolveGovernedProviderForHealth({ moduleKey: 'marketing_ai', capability: 'health_check', requestedModel: config.primaryModel })
-    const resolvedApiKey = governed.apiKey || config.apiKey
-    if (!resolvedApiKey) throw new Error('GEMINI_API_KEY_MISSING')
-    const ai = new GoogleGenAI({ apiKey: resolvedApiKey })
-    const response = await ai.models.generateContent({
-      model: governed.model || config.primaryModel,
-      contents: 'Reply exactly MARKETING_AI_OK',
-      config: { maxOutputTokens: 256, thinkingConfig: { thinkingLevel: ThinkingLevel.LOW } },
-    })
-    if (!response.text?.includes('MARKETING_AI_OK')) throw new Error('UNEXPECTED_HEALTH_OUTPUT')
-    return { enabled: true, configured: true, available: true, model: governed.model || config.primaryModel, message: governed.governed ? 'Connexion Gemini gouvernée vérifiée.' : 'Connexion Gemini bootstrap vérifiée.' }
-  } catch (error) {
-    return { enabled: true, configured: true, available: false, model: config.primaryModel, message: error instanceof Error ? error.message : 'GEMINI_HEALTH_FAILED' }
-  }
-}
-
-function isGemini3Series(model: string) {
-  return /^gemini-3(?:\.|-|$)/i.test(model)
-}
-
-function usageFrom(response: unknown) {
-  const usage = (response as { usageMetadata?: { promptTokenCount?: number; candidatesTokenCount?: number; totalTokenCount?: number } }).usageMetadata
+  const runtime = await getMarketAiRuntimeStatus(live)
+  const structured = runtime.capabilities.find((item) => item.capability === 'structured_content')
+  const research = runtime.capabilities.find((item) => item.capability === 'web_research')
   return {
-    inputTokens: Number(usage?.promptTokenCount || 0),
-    outputTokens: Number(usage?.candidatesTokenCount || 0),
-    totalTokens: Number(usage?.totalTokenCount || 0),
+    enabled: config.enabled,
+    configured: runtime.summary.available > 0,
+    available: structured?.state === 'available',
+    model: structured?.model || config.primaryModel,
+    message: structured?.message || 'Runtime non exposé.',
+    provider: structured?.providerType || null,
+    researchProvider: research?.providerType || null,
+    manualContinuity: true,
+    gemini: runtime.gemini,
+    capabilities: runtime.capabilities,
   }
 }
 
@@ -152,171 +111,63 @@ export async function generateMarketingAiOutput(input: {
   const config = assertMarketingAiConfigured()
   const started = Date.now()
   const groundingRequested = Boolean(input.forceGrounding || input.command.tags.includes('research') || input.command.skillCode === 'LEARN-06' || input.command.code.includes('RESOURCE'))
-  const governed = await acquireGovernedProvider({
-    moduleKey: 'marketing_ai',
-    capability: groundingRequested ? 'grounded_research' : 'structured_content',
-    requestedModel: config.primaryModel,
-    estimatedRequests: groundingRequested ? 2 : 1,
-    estimatedOutputTokens: config.maxOutputTokens,
-    grounded: groundingRequested,
-    commandCode: input.command.code,
-  })
-  const resolvedApiKey = governed.apiKey || config.apiKey
-  if (!resolvedApiKey) throw new Error('GEMINI_API_KEY_MISSING')
-  const ai = new GoogleGenAI({ apiKey: resolvedApiKey })
-  const payload = {
-    command: {
-      code: input.command.code,
-      name: input.command.name,
-      category: input.command.category,
-      objective: input.command.objective,
-      instruction: input.command.instruction,
-      riskLevel: input.command.riskLevel,
-      requiresHumanReview: input.command.requiresHumanReview,
-    },
+  const runtimeContext = input.context.runtimeContinuity && typeof input.context.runtimeContinuity === 'object' ? input.context.runtimeContinuity as Record<string, unknown> : {}
+  const payload: JsonRecord = {
+    command: { code: input.command.code, name: input.command.name, category: input.command.category, objective: input.command.objective, instruction: input.command.instruction, riskLevel: input.command.riskLevel, requiresHumanReview: input.command.requiresHumanReview },
     mandateObjective: input.objective,
     authorityMode: input.authorityMode,
-    company: 'ANGELCARE / SANILA OS',
+    operatingSystem: 'ANGELCARE / SANILA Market OS Content Command Center 360',
     market: 'Morocco',
     language: 'French unless the mandate explicitly requests another language',
-    externalActionsAllowed: false,
+    externalExecutionMode: 'prepare_human_handoff',
     context: input.context,
   }
-  const controller = new AbortController()
-  const timer = setTimeout(() => controller.abort(), config.timeoutMs)
-  try {
-    const models = (governed.governed ? [governed.model] : [config.primaryModel, config.fallbackModel]).filter((value, index, values) => Boolean(value) && values.indexOf(value) === index)
-    let response: Awaited<ReturnType<typeof ai.models.generateContent>> | null = null
-    let groundingEvidence: ReturnType<typeof extractGroundingEvidence> = { evidence: [], queries: [] }
-    let selectedModel = config.primaryModel
-    let totalInputTokens = 0
-    let totalOutputTokens = 0
-    let totalTokens = 0
-    let lastError: unknown = null
-
-    for (const model of models) {
-      try {
-        let groundedResearch = ''
-        let modelInputTokens = 0
-        let modelOutputTokens = 0
-        let modelTotalTokens = 0
-        let modelGrounding: ReturnType<typeof extractGroundingEvidence> = { evidence: [], queries: [] }
-
-        // Google currently supports one-call structured outputs + built-in tools on Gemini 3.
-        // For older configured models, retain compatibility through a safe two-pass flow:
-        // grounded research first, then schema-constrained synthesis without tools.
-        if (groundingRequested && config.searchGroundingEnabled && !isGemini3Series(model)) {
-          const researchResponse = await ai.models.generateContent({
-            model,
-            contents: JSON.stringify({
-              mission: 'Research current, evidence-backed market and platform signals relevant to the supplied ANGELCARE mandate.',
-              command: payload.command,
-              mandateObjective: input.objective,
-              market: payload.market,
-              restrictions: ['No external action', 'No invented company facts', 'Return sources and dates where available'],
-            }),
-            config: {
-              systemInstruction: `${SYSTEM_INSTRUCTION}\nThis is the research pass. Return a concise evidence memorandum with source titles, URLs, dates, uncertainty and relevance.`,
-              maxOutputTokens: Math.min(config.maxOutputTokens, 4096),
-              thinkingConfig: { thinkingLevel: ThinkingLevel.MEDIUM },
-              tools: [{ googleSearch: {} }],
-              abortSignal: controller.signal,
-            },
-          })
-          groundedResearch = researchResponse.text || ''
-          modelGrounding = extractGroundingEvidence(researchResponse)
-          const usage = usageFrom(researchResponse)
-          modelInputTokens += usage.inputTokens
-          modelOutputTokens += usage.outputTokens
-          modelTotalTokens += usage.totalTokens
-        }
-
-        const structuredPayload = groundedResearch
-          ? { ...payload, groundedResearch: { memorandum: groundedResearch, evidence: modelGrounding.evidence, searchQueries: modelGrounding.queries } }
-          : payload
-
-        const structuredResponse = await ai.models.generateContent({
-          model,
-          contents: JSON.stringify(structuredPayload),
-          config: {
-            systemInstruction: SYSTEM_INSTRUCTION,
-            responseMimeType: 'application/json',
-            responseJsonSchema: OUTPUT_SCHEMA,
-            maxOutputTokens: config.maxOutputTokens,
-            thinkingConfig: { thinkingLevel: ThinkingLevel.MEDIUM },
-            tools: groundingRequested && config.searchGroundingEnabled && isGemini3Series(model) ? [{ googleSearch: {} }] : undefined,
-            abortSignal: controller.signal,
-          },
-        })
-        if (!structuredResponse.text) throw new Error(`GEMINI_EMPTY_OUTPUT:${model}`)
-
-        const finalGrounding = extractGroundingEvidence(structuredResponse)
-        modelGrounding = {
-          evidence: [...modelGrounding.evidence, ...finalGrounding.evidence],
-          queries: [...modelGrounding.queries, ...finalGrounding.queries],
-        }
-        const usage = usageFrom(structuredResponse)
-        modelInputTokens += usage.inputTokens
-        modelOutputTokens += usage.outputTokens
-        modelTotalTokens += usage.totalTokens
-
-        response = structuredResponse
-        groundingEvidence = modelGrounding
-        selectedModel = model
-        totalInputTokens = modelInputTokens
-        totalOutputTokens = modelOutputTokens
-        totalTokens = modelTotalTokens
-        break
-      } catch (error) {
-        lastError = error
-        if (controller.signal.aborted) throw error
-      }
-    }
-
-    if (!response?.text) throw lastError instanceof Error ? lastError : new Error('GEMINI_EMPTY_OUTPUT')
-    const parsed = JSON.parse(response.text) as MarketingAiOutput
-    if (!parsed || typeof parsed.executiveSummary !== 'string' || !Array.isArray(parsed.internalActions)) throw new Error('GEMINI_INVALID_STRUCTURED_OUTPUT')
-    parsed.findings = Array.isArray(parsed.findings) ? parsed.findings : []
-    parsed.recommendations = Array.isArray(parsed.recommendations) ? parsed.recommendations : []
-    parsed.risks = Array.isArray(parsed.risks) ? parsed.risks : []
-    parsed.evidence = Array.isArray(parsed.evidence) ? parsed.evidence : []
-    parsed.learningSignals = Array.isArray(parsed.learningSignals) ? parsed.learningSignals : []
-    parsed.unresolvedQuestions = Array.isArray(parsed.unresolvedQuestions) ? parsed.unresolvedQuestions : []
-    parsed.confidence = Math.max(0, Math.min(1, Number(parsed.confidence || 0)))
-    parsed.evidence = [...parsed.evidence, ...groundingEvidence.evidence]
-    parsed.humanDecisionRequired = parsed.humanDecisionRequired || input.command.requiresHumanReview || input.authorityMode !== 'observe'
-    await reconcileGovernedProvider(governed, {
-      requestCount: groundingRequested && !isGemini3Series(selectedModel) ? 2 : 1,
-      groundedRequestCount: groundingEvidence.evidence.length > 0 ? 1 : 0,
-      inputTokens: totalInputTokens,
-      outputTokens: totalOutputTokens,
-      latencyMs: Date.now() - started,
-      httpStatus: 200,
-      outcome: 'completed',
+  const researchQuery = groundingRequested && config.researchEnabled
+    ? `${input.objective}\nCommandement: ${input.command.name}. Rechercher des sources actuelles et directement utiles au dossier Content Command Center, au marché marocain, aux canaux, audiences, formats et objectifs indiqués.`
+    : undefined
+  const result = await executeStructuredContent<MarketingAiOutput & JsonRecord>({
+    context: {
+      actorId: typeof input.context.actorId === 'string' ? input.context.actorId : null,
+      missionId: typeof input.context.missionId === 'string' ? input.context.missionId : null,
       commandCode: input.command.code,
-      metadata: { searchQueries: groundingEvidence.queries, modelVersion: response.modelVersion },
-    })
-    return {
-      output: parsed,
-      model: response.modelVersion || selectedModel,
-      inputTokens: totalInputTokens,
-      outputTokens: totalOutputTokens,
-      totalTokens,
-      latencyMs: Date.now() - started,
-      grounded: groundingEvidence.evidence.length > 0,
-      searchQueries: groundingEvidence.queries,
-    }
-  } catch (error) {
-    await failGovernedProvider(governed, error, {
-      latencyMs: Date.now() - started,
-      commandCode: input.command.code,
-      metadata: { groundingRequested },
-    })
-    if (config.deterministicFallbackEnabled) {
-      return { output: deterministicFallback(input.command, input.objective), model: 'deterministic-fallback', inputTokens: 0, outputTokens: 0, totalTokens: 0, latencyMs: Date.now() - started, grounded: false, searchQueries: [] }
-    }
-    throw error
-  } finally {
-    clearTimeout(timer)
+      continuationMode: continuationMode(input.context),
+      overrideProviderType: typeof runtimeContext.providerType === 'string' ? runtimeContext.providerType : null,
+      overrideModel: typeof runtimeContext.model === 'string' ? runtimeContext.model : null,
+      reason: typeof runtimeContext.reason === 'string' ? runtimeContext.reason : null,
+    },
+    systemInstruction: SYSTEM_INSTRUCTION,
+    payload,
+    schema: OUTPUT_SCHEMA as unknown as JsonRecord,
+    schemaName: 'sanila_content_executive_output',
+    researchQuery,
+    maxOutputTokens: config.maxOutputTokens,
+  })
+  if (result.status !== 'completed' || !result.result) {
+    const output = manualContinuation(input.command, input.objective, result.warnings)
+    return { output, model: 'manual-continuity', provider: null, inputTokens: 0, outputTokens: 0, totalTokens: 0, latencyMs: Date.now() - started, grounded: result.sources.length > 0, searchQueries: researchQuery ? [researchQuery] : [], continuation: { mode: 'manual', alternatives: result.alternatives, warnings: result.warnings } }
+  }
+  const parsed = result.result as unknown as MarketingAiOutput
+  parsed.findings = Array.isArray(parsed.findings) ? parsed.findings : []
+  parsed.recommendations = Array.isArray(parsed.recommendations) ? parsed.recommendations : []
+  parsed.internalActions = Array.isArray(parsed.internalActions) ? parsed.internalActions : []
+  parsed.risks = Array.isArray(parsed.risks) ? parsed.risks : []
+  parsed.evidence = Array.isArray(parsed.evidence) ? parsed.evidence : []
+  parsed.learningSignals = Array.isArray(parsed.learningSignals) ? parsed.learningSignals : []
+  parsed.unresolvedQuestions = Array.isArray(parsed.unresolvedQuestions) ? parsed.unresolvedQuestions : []
+  parsed.confidence = Math.max(0, Math.min(1, Number(parsed.confidence || 0)))
+  parsed.evidence.push(...result.sources.map((source) => ({ title: source.title, url: source.url, sourceType: source.sourceType, observedAt: source.observedAt, freshness: source.freshness })))
+  parsed.findings.push(...result.warnings)
+  parsed.humanDecisionRequired = Boolean(parsed.humanDecisionRequired || input.command.requiresHumanReview || input.authorityMode === 'observe')
+  return {
+    output: parsed,
+    model: result.model || config.primaryModel,
+    provider: result.providerType,
+    inputTokens: result.usage.inputTokens,
+    outputTokens: result.usage.outputTokens,
+    totalTokens: result.usage.totalTokens,
+    latencyMs: result.usage.latencyMs,
+    grounded: result.sources.length > 0,
+    searchQueries: researchQuery ? [researchQuery] : [],
+    continuation: { mode: 'provider', alternatives: result.alternatives, warnings: result.warnings },
   }
 }

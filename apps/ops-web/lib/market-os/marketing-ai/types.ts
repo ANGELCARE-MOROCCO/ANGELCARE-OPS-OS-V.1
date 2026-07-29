@@ -110,7 +110,7 @@ export interface MarketingAiRun {
 export interface MarketingAiEvidence {
   title: string
   url?: string
-  sourceType: 'internal' | 'external' | 'gemini_grounding'
+  sourceType: 'internal' | 'external' | 'tavily_search' | 'tavily_extract' | 'manual_source' | 'legacy_gemini_grounding'
   observedAt?: string
   freshness?: string
 }

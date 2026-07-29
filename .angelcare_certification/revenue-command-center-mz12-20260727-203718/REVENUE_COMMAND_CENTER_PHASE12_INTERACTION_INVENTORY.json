@@ -1,0 +1,286 @@
+{
+  "generatedAt": "2026-07-27T19:37:19.381Z",
+  "count": 40,
+  "files": [
+    {
+      "file": "components/revenue-command-center/CentralRevenueCore.tsx",
+      "modalCount": 0,
+      "drawerCount": 0,
+      "buttonCount": 6,
+      "formCount": 0
+    },
+    {
+      "file": "components/revenue-command-center/PartnersDirectoryWorkspace.tsx",
+      "modalCount": 0,
+      "drawerCount": 0,
+      "buttonCount": 34,
+      "formCount": 0
+    },
+    {
+      "file": "components/revenue-command-center/PartnershipProgramsWorkspace.tsx",
+      "modalCount": 0,
+      "drawerCount": 0,
+      "buttonCount": 45,
+      "formCount": 0
+    },
+    {
+      "file": "components/revenue-command-center/ProspectFullProfileCommandCenter.tsx",
+      "modalCount": 0,
+      "drawerCount": 0,
+      "buttonCount": 44,
+      "formCount": 0
+    },
+    {
+      "file": "components/revenue-command-center/ProspectProfileAddTaskModal.tsx",
+      "modalCount": 0,
+      "drawerCount": 0,
+      "buttonCount": 4,
+      "formCount": 0
+    },
+    {
+      "file": "components/revenue-command-center/ProspectsAcquisitionCommandCenter.tsx",
+      "modalCount": 0,
+      "drawerCount": 0,
+      "buttonCount": 14,
+      "formCount": 0
+    },
+    {
+      "file": "components/revenue-command-center/ProspectsDirectoryCommandCenter.tsx",
+      "modalCount": 0,
+      "drawerCount": 0,
+      "buttonCount": 30,
+      "formCount": 0
+    },
+    {
+      "file": "components/revenue-command-center/RevenueAppointmentsProductionCommandCenter.tsx",
+      "modalCount": 0,
+      "drawerCount": 0,
+      "buttonCount": 7,
+      "formCount": 0
+    },
+    {
+      "file": "components/revenue-command-center/RevenueAppointmentsSourceOfTruthWorkspace.tsx",
+      "modalCount": 0,
+      "drawerCount": 0,
+      "buttonCount": 5,
+      "formCount": 0
+    },
+    {
+      "file": "components/revenue-command-center/RevenueAppointmentsV12MegaWorkspace.tsx",
+      "modalCount": 0,
+      "drawerCount": 0,
+      "buttonCount": 5,
+      "formCount": 1
+    },
+    {
+      "file": "components/revenue-command-center/RevenueCommandAnalyticsSourceOfTruthWorkspace.tsx",
+      "modalCount": 0,
+      "drawerCount": 0,
+      "buttonCount": 2,
+      "formCount": 0
+    },
+    {
+      "file": "components/revenue-command-center/RevenueCommandCenterSidebar.tsx",
+      "modalCount": 0,
+      "drawerCount": 0,
+      "buttonCount": 5,
+      "formCount": 0
+    },
+    {
+      "file": "components/revenue-command-center/RevenueDailyTasksProductionCommandCenter.tsx",
+      "modalCount": 0,
+      "drawerCount": 0,
+      "buttonCount": 25,
+      "formCount": 0
+    },
+    {
+      "file": "components/revenue-command-center/RevenueDailyTasksV13McKinseyWorkspace.tsx",
+      "modalCount": 0,
+      "drawerCount": 0,
+      "buttonCount": 4,
+      "formCount": 1
+    },
+    {
+      "file": "components/revenue-command-center/RevenueDocumentsSourceOfTruthWorkspace.tsx",
+      "modalCount": 0,
+      "drawerCount": 0,
+      "buttonCount": 3,
+      "formCount": 0
+    },
+    {
+      "file": "components/revenue-command-center/RevenueEnterpriseOperationsBridge.tsx",
+      "modalCount": 0,
+      "drawerCount": 0,
+      "buttonCount": 5,
+      "formCount": 1
+    },
+    {
+      "file": "components/revenue-command-center/RevenueEventTimelinePanel.tsx",
+      "modalCount": 0,
+      "drawerCount": 0,
+      "buttonCount": 3,
+      "formCount": 0
+    },
+    {
+      "file": "components/revenue-command-center/RevenuePartnershipsEnterpriseLivePage.tsx",
+      "modalCount": 2,
+      "drawerCount": 0,
+      "buttonCount": 3,
+      "formCount": 0
+    },
+    {
+      "file": "components/revenue-command-center/RevenuePartnershipsEnterprisePage.tsx",
+      "modalCount": 0,
+      "drawerCount": 0,
+      "buttonCount": 4,
+      "formCount": 0
+    },
+    {
+      "file": "components/revenue-command-center/RevenuePartnershipsEnterpriseWorkspace.tsx",
+      "modalCount": 0,
+      "drawerCount": 0,
+      "buttonCount": 4,
+      "formCount": 0
+    },
+    {
+      "file": "components/revenue-command-center/RevenuePartnershipsV13ActionsWorkspace.tsx",
+      "modalCount": 0,
+      "drawerCount": 0,
+      "buttonCount": 4,
+      "formCount": 1
+    },
+    {
+      "file": "components/revenue-command-center/RevenueProspectsLiveSyncCommandCenter.tsx",
+      "modalCount": 0,
+      "drawerCount": 0,
+      "buttonCount": 4,
+      "formCount": 0
+    },
+    {
+      "file": "components/revenue-command-center/RevenueTasksSourceOfTruthWorkspace.tsx",
+      "modalCount": 0,
+      "drawerCount": 0,
+      "buttonCount": 14,
+      "formCount": 0
+    },
+    {
+      "file": "components/revenue-command-center/appointments/AppointmentAdvancedControls.tsx",
+      "modalCount": 0,
+      "drawerCount": 0,
+      "buttonCount": 16,
+      "formCount": 0
+    },
+    {
+      "file": "components/revenue-command-center/appointments/appointment-command-widgets.tsx",
+      "modalCount": 0,
+      "drawerCount": 0,
+      "buttonCount": 7,
+      "formCount": 0
+    },
+    {
+      "file": "components/revenue-command-center/b2c-enterprise/RevenueB2CWorkspace.tsx",
+      "modalCount": 0,
+      "drawerCount": 0,
+      "buttonCount": 11,
+      "formCount": 1
+    },
+    {
+      "file": "components/revenue-command-center/campaign-enterprise/RevenueCampaignWorkspace.tsx",
+      "modalCount": 0,
+      "drawerCount": 0,
+      "buttonCount": 19,
+      "formCount": 0
+    },
+    {
+      "file": "components/revenue-command-center/contract-enterprise/RevenueContractWorkspace.tsx",
+      "modalCount": 0,
+      "drawerCount": 0,
+      "buttonCount": 51,
+      "formCount": 1
+    },
+    {
+      "file": "components/revenue-command-center/engagement-enterprise/RevenueEngagementWorkspace.tsx",
+      "modalCount": 0,
+      "drawerCount": 0,
+      "buttonCount": 51,
+      "formCount": 2
+    },
+    {
+      "file": "components/revenue-command-center/execution-enterprise/RevenueExecutionWorkspace.tsx",
+      "modalCount": 0,
+      "drawerCount": 0,
+      "buttonCount": 24,
+      "formCount": 2
+    },
+    {
+      "file": "components/revenue-command-center/executive-enterprise/RevenueExecutiveWorkspace.tsx",
+      "modalCount": 0,
+      "drawerCount": 0,
+      "buttonCount": 25,
+      "formCount": 0
+    },
+    {
+      "file": "components/revenue-command-center/final-certification/RevenueCertifiedWorkspace.tsx",
+      "modalCount": 0,
+      "drawerCount": 0,
+      "buttonCount": 9,
+      "formCount": 1
+    },
+    {
+      "file": "components/revenue-command-center/partnership-enterprise/RevenuePartnershipWorkspace.tsx",
+      "modalCount": 2,
+      "drawerCount": 0,
+      "buttonCount": 22,
+      "formCount": 2
+    },
+    {
+      "file": "components/revenue-command-center/partnerships/PartnersDirectoryWorkspace.tsx",
+      "modalCount": 0,
+      "drawerCount": 0,
+      "buttonCount": 7,
+      "formCount": 0
+    },
+    {
+      "file": "components/revenue-command-center/partnerships/PartnershipProgramsWorkspace.tsx",
+      "modalCount": 0,
+      "drawerCount": 0,
+      "buttonCount": 9,
+      "formCount": 0
+    },
+    {
+      "file": "components/revenue-command-center/partnerships/RevenuePartnershipsEnterprisePage.tsx",
+      "modalCount": 0,
+      "drawerCount": 0,
+      "buttonCount": 19,
+      "formCount": 0
+    },
+    {
+      "file": "components/revenue-command-center/proposal-enterprise/RevenueProposalWorkspace.tsx",
+      "modalCount": 0,
+      "drawerCount": 0,
+      "buttonCount": 38,
+      "formCount": 1
+    },
+    {
+      "file": "components/revenue-command-center/prospects-enterprise/DossierEnterpriseModals.tsx",
+      "modalCount": 0,
+      "drawerCount": 0,
+      "buttonCount": 3,
+      "formCount": 0
+    },
+    {
+      "file": "components/revenue-command-center/prospects-enterprise/ProspectEnterpriseDossier.tsx",
+      "modalCount": 0,
+      "drawerCount": 0,
+      "buttonCount": 12,
+      "formCount": 0
+    },
+    {
+      "file": "components/revenue-command-center/prospects-enterprise/ProspectEnterpriseWorkspace.tsx",
+      "modalCount": 0,
+      "drawerCount": 0,
+      "buttonCount": 12,
+      "formCount": 0
+    }
+  ]
+}

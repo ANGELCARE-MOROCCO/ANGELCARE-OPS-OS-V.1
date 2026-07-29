@@ -1,0 +1,158 @@
+{
+  "package": "AC CAPITAL OS MZ15 Final Production Capital Institution",
+  "generated_at": "2026-07-27T18:14:50.919930+00:00",
+  "contract_supersedes": "MZ14 as final front-end acceptance standard",
+  "static_package_gates": {
+    "18 dedicated routes": "PASS_STATIC_REHEARSAL",
+    "dedicated page architecture": "PASS_STATIC_REHEARSAL",
+    "no MZ14 universal route driver": "PASS_STATIC_REHEARSAL",
+    "API binding strings and route presence": "PASS_STATIC_REHEARSAL",
+    "action parity": "PASS_STATIC_REHEARSAL",
+    "modal async state architecture": "PASS_STATIC_REHEARSAL",
+    "specialized drawer architecture": "PASS_STATIC_REHEARSAL",
+    "no dead button AST scan": "PASS_STATIC_REHEARSAL",
+    "TypeScript syntax transpilation": "PASS_STATIC_REHEARSAL",
+    "no secret scan": "PASS_STATIC_REHEARSAL",
+    "backend preservation": "PASS_STATIC_REHEARSAL"
+  },
+  "repository_runtime_gates": {
+    "app_level_typescript": "PENDING_AFTER_INSTALLATION",
+    "supabase_migration": "PENDING_MANUAL_EXECUTION",
+    "authenticated_browser_acceptance": "PENDING_AFTER_APP_START",
+    "18_separate_full_page_screenshots": "PENDING_BROWSER_SCRIPT",
+    "storage_bucket": "EXTERNAL_CONFIGURATION_REQUIRED",
+    "live_ai_provider": "DISABLED_BY_DEFAULT",
+    "automatic_external_submission": "INTENTIONALLY_NOT_IMPLEMENTED",
+    "automatic_sensitive_email": "INTENTIONALLY_NOT_IMPLEMENTED"
+  },
+  "routes": [
+    {
+      "route": "/ac-capital-os",
+      "page": "Capital Command Floor",
+      "visual_concept": "Private capital headquarters",
+      "primary_api": "/api/ac-capital-os/command-floor",
+      "workflows": "Aggregate command graph, founder brief, approval request, coordinator mission"
+    },
+    {
+      "route": "/ac-capital-os/radar",
+      "page": "Opportunity Intelligence Radar",
+      "visual_concept": "Signal field and deadline horizon",
+      "primary_api": "/api/ac-capital-os/capital-radar",
+      "workflows": "Create, validate, research dry-run, monitor, handoff"
+    },
+    {
+      "route": "/ac-capital-os/qualification",
+      "page": "Investment Committee Qualification Room",
+      "visual_concept": "Committee scoring and decision chamber",
+      "primary_api": "/api/ac-capital-os/qualification-engine",
+      "workflows": "Dossier, evidence, criteria, decision, next action"
+    },
+    {
+      "route": "/ac-capital-os/funders",
+      "page": "Funder Intelligence Room",
+      "visual_concept": "Private banker dossier and psychology map",
+      "primary_api": "/api/ac-capital-os/funder-intelligence",
+      "workflows": "Funder, contacts, events, objections, narrative, follow-up"
+    },
+    {
+      "route": "/ac-capital-os/doctrine",
+      "page": "Capital Doctrine Vault",
+      "visual_concept": "Versioned doctrine vault and conflict control",
+      "primary_api": "/api/ac-capital-os/capital-doctrine",
+      "workflows": "Doctrine, prompt, skill, activate, rollback"
+    },
+    {
+      "route": "/ac-capital-os/cases",
+      "page": "Fundraising Case Factory",
+      "visual_concept": "Investment-bank case assembly line",
+      "primary_api": "/api/ac-capital-os/case-builder",
+      "workflows": "Case, sections, proof, approval, handover, lock"
+    },
+    {
+      "route": "/ac-capital-os/data-room",
+      "page": "Due Diligence Vault",
+      "visual_concept": "Institutional evidence shelves and package room",
+      "primary_api": "/api/ac-capital-os/data-room",
+      "workflows": "Upload, classify, missing evidence, package"
+    },
+    {
+      "route": "/ac-capital-os/pipeline",
+      "page": "Capital Deal Room",
+      "visual_concept": "Transaction stage board and proof lock",
+      "primary_api": "/api/ac-capital-os/capital-pipeline",
+      "workflows": "Deal, stage, communication, follow-up, submission, negotiation, outcome"
+    },
+    {
+      "route": "/ac-capital-os/coordinator",
+      "page": "Human Coordinator Mission Desk",
+      "visual_concept": "Airline-style execution desk",
+      "primary_api": "/api/ac-capital-os/coordinator-cockpit",
+      "workflows": "Mission, email prepare/mark sent, call, proof, completion, escalation"
+    },
+    {
+      "route": "/ac-capital-os/ai-command",
+      "page": "AI Capital Brain Control Lab",
+      "visual_concept": "Governed agent constellation and safety wall",
+      "primary_api": "/api/ac-capital-os/ai-command-center",
+      "workflows": "Dry-run, issue, pause, human approval queue"
+    },
+    {
+      "route": "/ac-capital-os/strategy",
+      "page": "Executive Strategy War Room",
+      "visual_concept": "Scenario lanes, comparison and Plan B/C/D",
+      "primary_api": "/api/ac-capital-os/strategy-production-command",
+      "workflows": "Scenario, stress test, report bridge"
+    },
+    {
+      "route": "/ac-capital-os/simulator",
+      "page": "Capital Scenario Simulator",
+      "visual_concept": "Interactive parameter model and saved snapshots",
+      "primary_api": "/api/ac-capital-os/strategy-production-command",
+      "workflows": "Live calculations, reset, save scenario, snapshot drawer"
+    },
+    {
+      "route": "/ac-capital-os/reports",
+      "page": "Executive Capital Report Studio",
+      "visual_concept": "Template gallery and publication preview",
+      "primary_api": "/api/ac-capital-os/reports/list",
+      "workflows": "Generate API draft, preview, markdown/HTML/JSON truth"
+    },
+    {
+      "route": "/ac-capital-os/manual",
+      "page": "SOP Academy & Execution Workbook",
+      "visual_concept": "Searchable operating manuals and checklists",
+      "primary_api": "/api/ac-capital-os/manual/progress",
+      "workflows": "Review, checklist, progress, evidence, escalation, launch workspace"
+    },
+    {
+      "route": "/ac-capital-os/approvals",
+      "page": "Founder Approval Chamber",
+      "visual_concept": "Risk lock and decision stamp",
+      "primary_api": "/api/ac-capital-os/approvals",
+      "workflows": "Create, approve, reject, request revision"
+    },
+    {
+      "route": "/ac-capital-os/learning",
+      "page": "Capital Learning & Memory Center",
+      "visual_concept": "Outcome-to-doctrine intelligence graph",
+      "primary_api": "/api/ac-capital-os/learning",
+      "workflows": "Capture learning, link context, convert to doctrine draft"
+    },
+    {
+      "route": "/ac-capital-os/settings",
+      "page": "Capital System Control Panel",
+      "visual_concept": "No-secret configuration and safety controls",
+      "primary_api": "/api/ac-capital-os/settings",
+      "workflows": "Inspect safe status, submit controlled change request"
+    },
+    {
+      "route": "/ac-capital-os/production",
+      "page": "Production Control Tower",
+      "visual_concept": "Live health probes and blocker wall",
+      "primary_api": "/api/ac-capital-os/production-health",
+      "workflows": "Refresh health, inspect evidence, create blocker"
+    }
+  ],
+  "static_rehearsal_evidence": "evidence/MZ15_STATIC_REHEARSAL.txt",
+  "static_rehearsal_scope": "Synthetic repository containing MZ3\u2013MZ13 AC Capital migrations and MZ13 backend foundation; not the user current repository runtime."
+}

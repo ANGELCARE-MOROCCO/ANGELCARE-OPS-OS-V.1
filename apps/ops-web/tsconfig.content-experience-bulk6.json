@@ -1,0 +1,18 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "incremental": false
+  },
+  "files": [
+    "app/api/market-os/content-command-headquarters/actions/route.ts",
+    "components/market-os/content-command/content-publishing-page.tsx",
+    "components/market-os/content-command/headquarters/DistributionWorkspace.tsx",
+    "components/market-os/content-command/experience-bulk1/Bulk1DossierWorkspace.tsx",
+    "components/market-os/content-command/experience-bulk6/bulk6-release-model.ts",
+    "components/market-os/content-command/release/release-ui.tsx",
+    "components/market-os/content-command/release/mz7-release.module.css.d.ts",
+    "lib/market-os/content-command-headquarters/publication-release-service.ts"
+  ],
+  "exclude": ["node_modules", ".next", "_archive", "backups", ".angelcare_backups"]
+}

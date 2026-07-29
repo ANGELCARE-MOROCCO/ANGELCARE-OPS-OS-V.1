@@ -1,4 +1,7 @@
-import fs from 'fs'; const s=fs.readFileSync('components/market-os/content-command/content-publishing-page.tsx','utf8');
-for(const token of ['FAILURE & RECOVERY COMMAND','failedPackages','Retry gouverné','Replanifier','No provider']) if(!s.includes(token) && token!=='No provider') throw new Error(`Publishing recovery missing: ${token}`);
-if(!s.includes('Aucun connecteur provider n’est simulé')) throw new Error('Provider truth boundary missing');
-console.log('PASS — publication failure, retry and recovery remain explicit without simulated providers');
+import fs from 'fs'
+const ui=fs.readFileSync('components/market-os/content-command/content-publishing-page.tsx','utf8')
+const service=fs.readFileSync('lib/market-os/content-command-headquarters/publication-release-service.ts','utf8')
+const s=ui+'\n'+service
+for(const token of ['FAILURE & RECOVERY COMMAND','FAILURE CONSTITUTION','RECOVERY AUTHORITY','WITHDRAWAL & SUPERSESSION','recordPublicationFailure','recoverPublicationPackage','governPublicationTermination']) if(!s.includes(token)) throw new Error(`Publishing recovery missing: ${token}`)
+if(!s.includes('previousStatus')) throw new Error('Recovery lineage does not preserve previous state')
+console.log('PASS — failure, recovery, withdrawal and supersession preserve decision lineage')

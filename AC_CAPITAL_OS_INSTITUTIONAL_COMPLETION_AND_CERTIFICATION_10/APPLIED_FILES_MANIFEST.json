@@ -1,0 +1,116 @@
+{
+  "package": "AC_CAPITAL_OS_INSTITUTIONAL_COMPLETION_AND_CERTIFICATION_10",
+  "contract": "IC10",
+  "generated_at": "2026-07-29T18:19:59.827384+00:00",
+  "truth_policy": [
+    "CERTIFIED",
+    "PARTIALLY CERTIFIED",
+    "BLOCKED",
+    "FAILED",
+    "NOT TESTED"
+  ],
+  "installer_scope": "files-only",
+  "files": [
+    {
+      "source": "payload/apps/ops-web/app/(protected)/ac-capital-os/certification/page.tsx",
+      "target": "apps/ops-web/app/(protected)/ac-capital-os/certification/page.tsx",
+      "sha256": "77b45b0de90eb27b15b38de87ee543d19f5755c1fd4add5f75aa7831c8000886",
+      "bytes": 362
+    },
+    {
+      "source": "payload/apps/ops-web/app/api/ac-capital-os/approvals/[id]/decision/route.ts",
+      "target": "apps/ops-web/app/api/ac-capital-os/approvals/[id]/decision/route.ts",
+      "sha256": "a1abe7963c907583b6bc467957a471822c8d74efbd60220607fb06f164e6a8ea",
+      "bytes": 4701
+    },
+    {
+      "source": "payload/apps/ops-web/app/api/ac-capital-os/approvals/route.ts",
+      "target": "apps/ops-web/app/api/ac-capital-os/approvals/route.ts",
+      "sha256": "6ca2ae0b374b3b82cc8402ae43c530f7e5a871d648c792d54fc9959bee84b414",
+      "bytes": 3747
+    },
+    {
+      "source": "payload/apps/ops-web/app/api/ac-capital-os/capital-pipeline/route.ts",
+      "target": "apps/ops-web/app/api/ac-capital-os/capital-pipeline/route.ts",
+      "sha256": "8e9f4fc788ad5fa2e7fcdc0399d78b56fcb9a30f2de2bd9f11ef64ca6b29b885",
+      "bytes": 13648
+    },
+    {
+      "source": "payload/apps/ops-web/app/api/ac-capital-os/case-builder/route.ts",
+      "target": "apps/ops-web/app/api/ac-capital-os/case-builder/route.ts",
+      "sha256": "d32c044d0c19bbce10474d0beab545eb3bed72d4cc633825c8183b4299e2c04b",
+      "bytes": 8627
+    },
+    {
+      "source": "payload/apps/ops-web/app/api/ac-capital-os/certification/route.ts",
+      "target": "apps/ops-web/app/api/ac-capital-os/certification/route.ts",
+      "sha256": "f99503035a6df9c6801b17fbc5fefff71a0647887d796a641f7cf266ab166d0f",
+      "bytes": 7747
+    },
+    {
+      "source": "payload/apps/ops-web/components/ac-capital-os/core/AcCapitalShell.tsx",
+      "target": "apps/ops-web/components/ac-capital-os/core/AcCapitalShell.tsx",
+      "sha256": "1adc223ecde646790bfa8a376e0de2ebcf6d8df11cbb20dff774903b126ceaf6",
+      "bytes": 19806
+    },
+    {
+      "source": "payload/apps/ops-web/components/ac-capital-os/core/CertificationPulse.tsx",
+      "target": "apps/ops-web/components/ac-capital-os/core/CertificationPulse.tsx",
+      "sha256": "c8ba138dda676ddfba8dfd06b5382886983f64068c152aad493de6f074ab56ab",
+      "bytes": 3150
+    },
+    {
+      "source": "payload/apps/ops-web/components/ac-capital-os/core/certification-pulse.module.css",
+      "target": "apps/ops-web/components/ac-capital-os/core/certification-pulse.module.css",
+      "sha256": "9040654c183e1727330696f19664ca13afd3980653cefa6bfb907f0fe7bc13ac",
+      "bytes": 1661
+    },
+    {
+      "source": "payload/apps/ops-web/components/ac-capital-os/core/navigation.ts",
+      "target": "apps/ops-web/components/ac-capital-os/core/navigation.ts",
+      "sha256": "4d479ec7344a2eb72d626194ef5ae7029cbe64316287e8918970a34f2585e506",
+      "bytes": 4007
+    },
+    {
+      "source": "payload/apps/ops-web/components/ac-capital-os/pages/approvals/ApprovalsPage.tsx",
+      "target": "apps/ops-web/components/ac-capital-os/pages/approvals/ApprovalsPage.tsx",
+      "sha256": "7a524f77e896b5eab11fc7859846baf89d78101e144dc76a9491701d1994eed5",
+      "bytes": 12154
+    },
+    {
+      "source": "payload/apps/ops-web/components/ac-capital-os/pages/certification/CertificationPage.tsx",
+      "target": "apps/ops-web/components/ac-capital-os/pages/certification/CertificationPage.tsx",
+      "sha256": "843a4adc27c245363c6fd3420ecb879b68cc8ad74746bdd80de3f5fbd84c9c90",
+      "bytes": 40568
+    },
+    {
+      "source": "payload/apps/ops-web/components/ac-capital-os/pages/certification/certification.module.css",
+      "target": "apps/ops-web/components/ac-capital-os/pages/certification/certification.module.css",
+      "sha256": "f6dfc4b6af322e4fd40291b2bcfcb8c88244e59eba168abbdfa45a6d6c537761",
+      "bytes": 20735
+    },
+    {
+      "source": "payload/apps/ops-web/lib/ac-capital-os/server/institutional-certification.ts",
+      "target": "apps/ops-web/lib/ac-capital-os/server/institutional-certification.ts",
+      "sha256": "dc38ca68ff8dd3e382b9680a5b135dfd3775a37ba3a2f3094a6b6ba21452154b",
+      "bytes": 46509
+    },
+    {
+      "source": "supabase/migrations/20260729_ac_capital_os_institutional_completion_certification_10.sql",
+      "target": "supabase/migrations/20260729_ac_capital_os_institutional_completion_certification_10.sql",
+      "sha256": "1eb62a92739461221d0097b7193e8eda0faa7a2136c0687355201b0932c55b67",
+      "bytes": 43977
+    },
+    {
+      "source": "supabase/migrations/20260729_ac_capital_os_institutional_completion_certification_10_backfill.sql",
+      "target": "supabase/migrations/20260729_ac_capital_os_institutional_completion_certification_10_backfill.sql",
+      "sha256": "4832261834988e3793d56e638aced89d4a86d7979b76786a58b6a7ce04d3c42f",
+      "bytes": 6271
+    }
+  ],
+  "counts": {
+    "payload_and_migrations": 16,
+    "typescript_tsx": 12,
+    "sql": 2
+  }
+}

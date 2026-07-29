@@ -1,0 +1,8 @@
+{
+  "name": "AC CAPITAL OS MZ15 Retire Obsolete MZ14 Universe",
+  "issue": "The no-dead-buttons verifier scanned inactive MZ14 generic facade code after MZ15 dedicated pages had replaced it.",
+  "retired_path": "apps/ops-web/components/ac-capital-os/universe",
+  "active_mz15_files_modified": [],
+  "verification_token": "MZ15_OBSOLETE_MZ14_UNIVERSE_RETIREMENT_VERIFIED",
+  "created_at": "2026-07-27T18:42:33.580957+00:00"
+}

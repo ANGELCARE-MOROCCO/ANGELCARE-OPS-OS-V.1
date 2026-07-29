@@ -8,6 +8,6 @@ export async function GET(request: Request) {
     await requireMarketingAiUser('view')
     const live = new URL(request.url).searchParams.get('live') === '1'
     const health = await checkMarketingAiHealth(live)
-    return NextResponse.json({ ok: true, health, externalActionsAllowed: false })
+    return NextResponse.json({ ok: true, health, manualContinuity: true, externalExecutionMode: 'prepare_human_handoff' })
   } catch (error) { return apiErrorResponse(error) }
 }

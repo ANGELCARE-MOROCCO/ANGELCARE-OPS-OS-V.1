@@ -1,0 +1,28 @@
+=== INSTALLER REHEARSAL ===
+AC CAPITAL OS MZ15 Final Productization installer
+Detected mode: repository-root
+Repository root: /tmp/mz15_final_rehearsal
+Ops-web root: /tmp/mz15_final_rehearsal/apps/ops-web
+Files copied: 104
+Existing files backed up: 22
+Backup: .angelcare_backups/ac-capital-os-mz15-final-2026-07-27T18-21-22-598Z
+Installed 18 dedicated protected pages, specialized workflows, API routes, server helpers, migration and evidence tooling.
+No SQL executed. No build. No git stage, commit or push. No live AI or automatic external action enabled.
+Next: node ./AC_CAPITAL_OS_MZ15_FINAL_PRODUCTION/scripts/verify_ac_capital_os_mz15_final.mjs
+=== STATIC VERIFIER REHEARSAL ===
+MZ15_ALL_18_PROTECTED_ROUTES_VERIFIED
+MZ15_DEDICATED_PAGE_ARCHITECTURE_VERIFIED
+MZ15_NO_GENERIC_UNIVERSE_REGRESSION_VERIFIED
+MZ15_REAL_API_BINDINGS_VERIFIED
+MZ15_ACTION_HANDLER_PARITY_VERIFIED
+MZ15_SCHEMA_PAYLOAD_COMPATIBILITY_VERIFIED (77 insert/update payloads against 120 tables)
+MZ15_MODAL_ASYNC_STATES_VERIFIED
+MZ15_SPECIALIZED_DRAWERS_VERIFIED
+MZ15_NO_DEAD_BUTTONS_AST_VERIFIED
+MZ15_PACKAGE_SYNTAX_VERIFIED (102 TypeScript files)
+MZ15_NO_SECRET_LEAK_VERIFIED
+MZ15_BACKEND_AND_SAFETY_BOUNDARIES_PRESERVED
+MZ15_STATIC_PRODUCTIZATION_ACCEPTANCE_VERIFIED
+Boundary: this is static/package acceptance. App-level TypeScript, authenticated browser, Supabase migration and external dependency gates must still run in the installed repository.
+MZ15_AC_CAPITAL_OS_FINAL_PRODUCTION_PACKAGE_STATICALLY_VERIFIED
+Next gates: apply SQL manually, run repository TypeScript, run authenticated browser acceptance and inspect all 18 separate screenshots.

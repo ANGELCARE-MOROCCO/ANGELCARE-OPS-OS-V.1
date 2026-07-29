@@ -3,7 +3,7 @@
 import * as React from "react"
 import Link from "next/link"
 import {
-  AlertTriangle, Archive, ArrowLeftRight, BookOpenCheck, Boxes, CircleAlert, Copy, FileArchive,
+  AlertTriangle, Archive, ArrowLeftRight, BarChart3, BookOpenCheck, Boxes, CircleAlert, Copy, FileArchive,
   FileCheck2, FileSearch, FolderTree, GitBranch, Grid3X3, History, Layers3, LibraryBig,
   Network, Route, Search, ShieldAlert, Sparkles, TableProperties, Tags, Users,
 } from "lucide-react"
@@ -15,8 +15,9 @@ import {
 } from "../knowledge/knowledge-ui"
 import { buildAtlasModel, knowledgeTone, readableStatus } from "../knowledge/knowledge-model"
 import styles from "../knowledge/knowledge-system.module.css"
+import { AtlasImpactLayer } from "../experience-bulk7/Bulk7ImpactWorkspaces"
 
-type AtlasMode = "atlas" | "register" | "classification" | "relationships" | "reuse" | "integrity"
+type AtlasMode = "atlas" | "register" | "classification" | "relationships" | "reuse" | "impact" | "integrity"
 
 const BASE = "/market-os/content-command-center"
 
@@ -72,6 +73,7 @@ export default function DirectoryWorkspace() {
       { value: "classification", label: "Classification", icon: FolderTree, count: model.metrics.unclassified },
       { value: "relationships", label: "Relations & lignée", icon: Network },
       { value: "reuse", label: "Réutilisation", icon: Sparkles, count: model.metrics.reuseCandidates },
+      { value: "impact", label: "Impact & apprentissage", icon: BarChart3 },
       { value: "integrity", label: "Intégrité & risques", icon: ShieldAlert, count: model.risks.length },
     ]}/>
 
@@ -138,6 +140,8 @@ export default function DirectoryWorkspace() {
       <div className={styles.duplicateGrid}>{model.duplicates.map((candidate) => <article key={candidate.id} className={styles.comparisonCard}><Link href={`${BASE}/dossiers/${candidate.left.id}`}><small>{candidate.left.code}</small><strong>{candidate.left.title}</strong></Link><span><Copy/></span><Link href={`${BASE}/dossiers/${candidate.right.id}`}><small>{candidate.right.code}</small><strong>{candidate.right.title}</strong></Link><footer>{candidate.basis.map((item) => <StatusPill key={item} tone="warning">{item}</StatusPill>)}</footer></article>)}</div>
       {!model.duplicates.length ? <TruthBoundary title="Aucun doublon exact détecté" detail="Cette conclusion porte seulement sur le code, le titre normalisé et l’empreinte source lorsqu’elle existe." tone="success"/> : null}
     </section> : null}
+
+    {mode === "impact" ? <AtlasImpactLayer snapshot={snapshot}/> : null}
 
     {mode === "integrity" ? <section className={styles.section}>
       <SectionTitle eyebrow="INTÉGRITÉ & MÉMOIRE" title="Le patrimoine qui doit rester récupérable" description="Sources canoniques, historique, risques de classification et usage observé." action={<Link href={`${BASE}/source-vault`}>Entrer dans Source Vault</Link>}/>

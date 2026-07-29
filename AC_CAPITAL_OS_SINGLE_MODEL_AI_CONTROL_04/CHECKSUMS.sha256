@@ -1,0 +1,8 @@
+16bf49d3cb01ba61a3b1bbc451a2e632a0f23a5f2b94ef93c0cf0e6a34738895  payload/apps/ops-web/app/api/ac-capital-os/capital-radar/research/run/route.ts
+aa5b439e5c19368865d3cb5c6635b331814893d58db43864a3ea8c4bf459b694  payload/apps/ops-web/app/api/ai-provider-control/action/route.ts
+bbd260eb94f275f18a24b7cc3ac85e0015c6dfbefcfd9be0a59da8c01b417fe4  payload/apps/ops-web/components/ai-provider-control/AcCapitalAiControlWorkspace.tsx
+f2a36f3733eebb53f04744013a985ee0771cca7efca397f7eb18d32bf64af105  payload/apps/ops-web/components/ai-provider-control/AiProviderControlWorkspace.tsx
+bbbd744a302ab0b3ca308af13010c64aa8d176ed20de07d9c3dccb642398960b  payload/apps/ops-web/lib/ac-capital-os/server/live-intelligence.ts
+58a21820bea4aad4c6b2e644be91611bb064e353e7bacb47a3fc1650e8bdd5d7  payload/apps/ops-web/lib/ai-provider-control/repository.ts
+888b517b38663d0059c63db937fa629c5a011401e29a62ae7b4bea3601a24ed9  payload/apps/ops-web/lib/ai-provider-control/types.ts
+9d9c25e824b2cec5641f89b48012e229efe319bf6a0a58107a7666d41f415888  scripts/apply_ac_capital_single_model_ai_control_04.mjs

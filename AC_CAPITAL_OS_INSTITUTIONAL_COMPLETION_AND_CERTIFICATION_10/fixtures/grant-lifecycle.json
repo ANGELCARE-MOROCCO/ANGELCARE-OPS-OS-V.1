@@ -1,0 +1,16 @@
+{
+  "scenarioKey": "grant-lifecycle",
+  "purpose": "Prove public research through authorized human submission proof and learning.",
+  "requiredEvidence": [
+    "Tavily request and returned authoritative URL",
+    "OpenRouter actual model and validated analysis",
+    "Validated source and canonical opportunity IDs",
+    "Qualification dossier, criteria and decision IDs",
+    "Proof requirements and Data Room readiness evidence",
+    "Case and generated PDF/DOCX artifact IDs",
+    "Exact-version approval ID",
+    "Coordinator mission ID",
+    "Manual submission proof ID",
+    "Outcome and learning IDs"
+  ]
+}

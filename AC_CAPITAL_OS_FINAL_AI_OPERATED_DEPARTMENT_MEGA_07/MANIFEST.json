@@ -1,0 +1,24 @@
+{
+  "package": "AC_CAPITAL_OS_FINAL_AI_OPERATED_DEPARTMENT_MEGA_07",
+  "files": [
+    "apps/ops-web/app/api/ac-capital-os/orchestrator/route.ts",
+    "apps/ops-web/app/api/ac-capital-os/orchestrator/tick/route.ts",
+    "apps/ops-web/app/(protected)/ac-capital-os/orchestrator/page.tsx",
+    "apps/ops-web/components/ac-capital-os/core/navigation.ts",
+    "apps/ops-web/components/ac-capital-os/pages/orchestrator/OrchestratorPage.tsx",
+    "apps/ops-web/components/ac-capital-os/pages/orchestrator/orchestrator.module.css",
+    "apps/ops-web/lib/ac-capital-os/server/capital-orchestrator.ts",
+    "supabase/migrations/20260729_ac_capital_os_final_ai_operated_department_mega_07.sql"
+  ],
+  "file_count": 8,
+  "contracts": [
+    "orchestrator",
+    "unified-agent-registry",
+    "doctrine-compiler",
+    "universal-approvals",
+    "integrity-scan",
+    "trace-graph",
+    "learning-loop"
+  ],
+  "external_actions": "locked"
+}

@@ -1,0 +1,25 @@
+{
+  "module": "AC CAPITAL OS",
+  "release": "MZ15 Final Production Capital Institution",
+  "supersedes": "MZ14 as final front-end acceptance standard",
+  "verification_token": "MZ15_AC_CAPITAL_OS_FINAL_PRODUCTION_PACKAGE_STATICALLY_VERIFIED",
+  "protected_routes": 18,
+  "dedicated_page_packages": 18,
+  "frontend_files": "components/ac-capital-os/core + components/ac-capital-os/pages",
+  "server_files": "lib/ac-capital-os/server",
+  "api_root": "app/api/ac-capital-os",
+  "migration": "supabase/migrations/20260727_ac_capital_os_mz15_final_productization.sql",
+  "boundaries": [
+    "no automatic external submission",
+    "no automatic sensitive email",
+    "no live AI by default",
+    "no exposed secrets",
+    "no fake production certification"
+  ],
+  "final_gates_not_preclaimed": [
+    "installed repository TypeScript",
+    "Supabase SQL execution",
+    "authenticated browser acceptance",
+    "storage/provider/deployment readiness"
+  ]
+}
