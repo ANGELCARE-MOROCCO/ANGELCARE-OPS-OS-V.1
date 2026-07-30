@@ -18,6 +18,11 @@ export type LifecycleAction =
   | "reject"
   | "execute"
   | "delete"
+  | "bulk_create"
+  | "bulk_preflight"
+  | "bulk_approve"
+  | "bulk_reject"
+  | "bulk_execute"
 
 type GenericRow = Record<string, any>
 
@@ -55,6 +60,11 @@ const PERMISSIONS: Record<
   reject: "ambassadors.delete.approve",
   execute: "ambassadors.delete.execute",
   delete: "ambassadors.delete.execute",
+  bulk_create: "ambassadors.delete.request",
+  bulk_preflight: "ambassadors.lifecycle.read",
+  bulk_approve: "ambassadors.delete.approve",
+  bulk_reject: "ambassadors.delete.approve",
+  bulk_execute: "ambassadors.delete.execute",
 }
 
 function normalizedText(value: unknown) {
@@ -280,6 +290,77 @@ async function resolveLifecycleActor(
   }
 }
 
+function isOptionalLifecycleRelationError(error: GenericRow | null | undefined) {
+  const code = normalizedText(error?.code).toUpperCase()
+  const message = normalizedText(error?.message).toLowerCase()
+
+  return (
+    code === "42P01" ||
+    code === "PGRST205" ||
+    message.includes("could not find the table") ||
+    message.includes("does not exist")
+  )
+}
+
+async function loadOptionalTable(
+  db: GenericRow,
+  tableName: string,
+  options: {
+    tenantId?: string
+    organizationId?: string
+    orderBy?: string
+    ascending?: boolean
+    limit?: number
+  } = {},
+) {
+  let query = db.from(tableName).select("*")
+
+  if (options.tenantId) {
+    query = query.eq("tenant_id", options.tenantId)
+  }
+
+  if (options.organizationId) {
+    query = query.eq("organization_id", options.organizationId)
+  }
+
+  if (options.orderBy) {
+    query = query.order(options.orderBy, {
+      ascending: options.ascending ?? false,
+    })
+  }
+
+  if (options.limit) {
+    query = query.limit(options.limit)
+  }
+
+  const result = await query
+
+  if (result.error) {
+    if (isOptionalLifecycleRelationError(result.error)) {
+      return {
+        available: false,
+        data: [] as GenericRow[],
+      }
+    }
+
+    throw new AmbassadorLifecycleError(
+      result.error.message,
+      503,
+      "LIFECYCLE_OPTIONAL_TABLE_LOAD_FAILED",
+      {
+        tableName,
+        databaseCode: result.error.code,
+        databaseDetails: result.error.details,
+      },
+    )
+  }
+
+  return {
+    available: true,
+    data: (result.data || []) as GenericRow[],
+  }
+}
+
 async function callRpc(
   db: GenericRow,
   functionName: string,
@@ -323,6 +404,10 @@ export async function loadLifecycleDashboard() {
     leads,
     requestsResult,
     eventsResult,
+    bulkJobsResult,
+    bulkItemsResult,
+    adaptersResult,
+    authoritiesResult,
   ] = await Promise.all([
     callRpc(
       context.db,
@@ -375,7 +460,45 @@ export async function loadLifecycleDashboard() {
       .order("created_at", {
         ascending: false,
       })
-      .limit(250),
+      .limit(500),
+    loadOptionalTable(
+      context.db,
+      "market_os_ambassador_bulk_purge_jobs",
+      {
+        tenantId: context.actor.tenantId,
+        organizationId: context.actor.organizationId,
+        orderBy: "created_at",
+        limit: 250,
+      },
+    ),
+    loadOptionalTable(
+      context.db,
+      "market_os_ambassador_bulk_purge_items",
+      {
+        tenantId: context.actor.tenantId,
+        organizationId: context.actor.organizationId,
+        orderBy: "created_at",
+        ascending: true,
+        limit: 2000,
+      },
+    ),
+    loadOptionalTable(
+      context.db,
+      "market_os_ambassador_purge_adapters",
+      {
+        orderBy: "execution_order",
+        ascending: true,
+        limit: 500,
+      },
+    ),
+    loadOptionalTable(
+      context.db,
+      "market_os_ambassador_lifecycle_authorities",
+      {
+        orderBy: "updated_at",
+        limit: 250,
+      },
+    ),
   ])
 
   if (requestsResult.error) {
@@ -409,6 +532,17 @@ export async function loadLifecycleDashboard() {
     },
     requests: requestsResult.data || [],
     events: eventsResult.data || [],
+    bulkJobs: bulkJobsResult.data,
+    bulkItems: bulkItemsResult.data,
+    adapters: adaptersResult.data,
+    authorities: authoritiesResult.data,
+    capabilities: {
+      bulkSchemaReady:
+        bulkJobsResult.available &&
+        bulkItemsResult.available &&
+        adaptersResult.available,
+      authoritiesReady: authoritiesResult.available,
+    },
   }
 }
 
@@ -517,6 +651,95 @@ export async function executeLifecycleAction(
     )
   }
 
+
+  if (action === "bulk_create") {
+    const selection = Array.isArray(input.selection)
+      ? input.selection
+      : []
+
+    if (selection.length < 1) {
+      throw new AmbassadorLifecycleError(
+        "Select at least one governed entity.",
+        400,
+        "BULK_SELECTION_REQUIRED",
+      )
+    }
+
+    return callRpc(
+      context.db,
+      "market_os_ambassador_bulk_purge_create",
+      {
+        ...commonActor,
+        p_title:
+          normalizedText(input.title) ||
+          "Suppression groupée",
+        p_reason_code:
+          normalizedText(input.reasonCode) ||
+          "administrative_request",
+        p_reason_detail: requireReason(input.reason),
+        p_selection: selection,
+      },
+    )
+  }
+
+  if (action === "bulk_preflight") {
+    return callRpc(
+      context.db,
+      "market_os_ambassador_bulk_purge_preflight",
+      {
+        ...commonActor,
+        p_job_id: requireIdentifier(
+          input.jobId,
+          "BULK_JOB_ID_REQUIRED",
+          "Bulk purge job identifier",
+        ),
+      },
+    )
+  }
+
+  if (
+    action === "bulk_approve" ||
+    action === "bulk_reject"
+  ) {
+    return callRpc(
+      context.db,
+      "market_os_ambassador_bulk_purge_decide",
+      {
+        ...commonActor,
+        p_job_id: requireIdentifier(
+          input.jobId,
+          "BULK_JOB_ID_REQUIRED",
+          "Bulk purge job identifier",
+        ),
+        p_decision:
+          action === "bulk_approve"
+            ? "approved"
+            : "rejected",
+        p_note: requireReason(input.reason),
+      },
+    )
+  }
+
+  if (action === "bulk_execute") {
+    return callRpc(
+      context.db,
+      "market_os_ambassador_bulk_purge_execute",
+      {
+        ...commonActor,
+        p_job_id: requireIdentifier(
+          input.jobId,
+          "BULK_JOB_ID_REQUIRED",
+          "Bulk purge job identifier",
+        ),
+        p_confirmation: requireIdentifier(
+          input.confirmation,
+          "CONFIRMATION_REQUIRED",
+          "Bulk purge confirmation",
+        ),
+        p_note: requireReason(input.reason),
+      },
+    )
+  }
 
   if (action === "delete") {
     return callRpc(

@@ -91,6 +91,7 @@ import {
   type DossierRequirement,
 } from "./bulk1-derivations"
 import { contextualHref, writeBulk1Context } from "./bulk1-context"
+import DossierRecoveryDock from "./DossierRecoveryDock"
 import styles from "./bulk1-experience.module.css"
 
 type ActionMode = "none" | "task" | "mission" | "review" | "publication"
@@ -484,6 +485,7 @@ export default function Bulk1DossierWorkspace({ dossierId, compatibilityMode = f
         <header className={styles.activeStageHeader}><div><span>ACTIVE STAGE WORKSPACE · {humanStatus(activeStage.state)}</span><h2>{stageLabel(selectedStage)}</h2><p>{stageDescription(selectedStage)}</p></div><div><DossierStatus severity={stageTone(activeStage)}>{activeStage.state === "current" ? "Gate actuel" : activeStage.state === "blocked" ? "Gate bloqué" : activeStage.state === "complete" ? "Gate franchi" : "Inspection contextuelle"}</DossierStatus><button type="button" onClick={() => void refresh()}><RefreshCcw/> Synchroniser</button></div></header>
         <ActiveStageWorkspace dossier={dossier} stage={selectedStage} busy={busy} onAction={setActionMode}/>
         <section className={styles.handoverDock}><div><Orbit/><span><small>HANDOVER CONTEXTUEL</small><strong>Le dossier reste le contexte de contrôle.</strong><p>Les workspaces spécialisés s’ouvrent avec l’identifiant du dossier, le stage et une route de retour explicite.</p></span></div><button type="button" onClick={() => navigate(dossier.nextAction.href)}><PanelRightOpen/> Ouvrir le spécialiste</button></section>
+        <DossierRecoveryDock dossier={dossier} onRefresh={refresh}/>
       </section>
       <ContextRail dossier={dossier} requirements={requirements} selectedStage={selectedStage} onNavigate={navigate}/>
     </section>

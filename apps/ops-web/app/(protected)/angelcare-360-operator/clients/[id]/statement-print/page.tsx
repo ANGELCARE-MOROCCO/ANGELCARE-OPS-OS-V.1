@@ -46,8 +46,8 @@ export default async function Angelcare360OperatorStatementPrintPage({ params }:
           <section style={kpiGridStyle}>
             <Angelcare360A4KpiBlock label="Factures récentes" value={String((client.invoices || []).length)} tone="primary" />
             <Angelcare360A4KpiBlock label="Paiements récents" value={String((client.payments || []).length)} tone="success" />
-            <Angelcare360A4KpiBlock label="Encaissé" value={`${(client.payments || []).filter((payment) => String(payment.status) === 'confirmed').reduce((sum, payment) => sum + Number(payment.amount_mad || 0), 0).toLocaleString('fr-FR')} MAD`} tone="success" />
-            <Angelcare360A4KpiBlock label="Solde affiché" value={`${Number(client.balance_due_mad || 0).toLocaleString('fr-FR')} MAD`} tone="warning" />
+            <Angelcare360A4KpiBlock label="Encaissé" value={`${(client.payments || []).filter((payment) => String(payment.status) === 'confirmed').reduce((sum, payment) => sum + Number(payment.amount_mad || 0), 0).toLocaleString('fr-FR')} Dh`} tone="success" />
+            <Angelcare360A4KpiBlock label="Solde affiché" value={`${Number(client.balance_due_mad || 0).toLocaleString('fr-FR')} Dh`} tone="warning" />
             <Angelcare360A4StatusStamp label={String(client.status || '—')} tone="neutral" />
           </section>
 
@@ -56,7 +56,7 @@ export default async function Angelcare360OperatorStatementPrintPage({ params }:
             rows={(client.invoices || []).slice(0, 8).map((invoice) => [
               String(invoice.invoice_number || invoice.id || '—'),
               String(invoice.status || '—'),
-              `${Number(invoice.balance_due_mad || 0).toLocaleString('fr-FR')} MAD`,
+              `${Number(invoice.balance_due_mad || 0).toLocaleString('fr-FR')} Dh`,
             ])}
           />
 
@@ -65,7 +65,7 @@ export default async function Angelcare360OperatorStatementPrintPage({ params }:
             rows={(client.payments || []).slice(0, 8).map((payment) => [
               String(payment.payment_reference || payment.id || '—'),
               String(payment.status || '—'),
-              `${Number(payment.amount_mad || 0).toLocaleString('fr-FR')} MAD`,
+              `${Number(payment.amount_mad || 0).toLocaleString('fr-FR')} Dh`,
             ])}
           />
 

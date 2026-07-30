@@ -181,7 +181,7 @@ export default async function Angelcare360OperatorClientDetailPage({ params }: P
       secondaryActions={
         <div style={secondaryActionsStyle}>
           <Link href={`/angelcare-360-operator/clients/${id}/statement-print`} style={secondaryLinkStyle}>État de compte A4</Link>
-          <span style={metaChipStyle}>Encours affiché: {Number(client.balance_due_mad || 0).toLocaleString('fr-FR')} MAD</span>
+          <span style={metaChipStyle}>Encours affiché: {Number(client.balance_due_mad || 0).toLocaleString('fr-FR')} Dh</span>
         </div>
       }
       contextRow={
@@ -380,8 +380,8 @@ export default async function Angelcare360OperatorClientDetailPage({ params }: P
               { name: 'status', label: 'Statut', kind: 'select', required: true, options: [{ label: 'Essai', value: 'trial' }, { label: 'Actif', value: 'active' }, { label: 'En retard', value: 'past_due' }, { label: 'Suspendu', value: 'suspended' }, { label: 'Annulé', value: 'cancelled' }, { label: 'Expiré', value: 'expired' }, { label: 'Archivé', value: 'archived' }] },
               { name: 'startDate', label: 'Date de début', kind: 'date', required: true },
               { name: 'billingCycle', label: 'Cycle de facturation', kind: 'text', required: true },
-              { name: 'billingAmountMad', label: 'Montant mensuel MAD', kind: 'number', required: true },
-              { name: 'discountAmountMad', label: 'Remise MAD', kind: 'number' },
+              { name: 'billingAmountMad', label: 'Montant mensuel (Dh)', kind: 'number', required: true },
+              { name: 'discountAmountMad', label: 'Remise (Dh)', kind: 'number' },
               { name: 'trialEndsAt', label: 'Fin d’essai', kind: 'date' },
               { name: 'currentPeriodStart', label: 'Début période', kind: 'date' },
               { name: 'currentPeriodEnd', label: 'Fin période', kind: 'date' },
@@ -433,7 +433,7 @@ export default async function Angelcare360OperatorClientDetailPage({ params }: P
               { name: 'invoiceId', label: 'Facture', kind: 'select', options: invoiceOptions },
               { name: 'paymentReference', label: 'Référence paiement', kind: 'text', required: true },
               { name: 'paymentDate', label: 'Date de paiement', kind: 'date', required: true },
-              { name: 'amountMad', label: 'Montant MAD', kind: 'number', required: true },
+              { name: 'amountMad', label: 'Montant (Dh)', kind: 'number', required: true },
               { name: 'method', label: 'Méthode', kind: 'select', required: true, options: [{ label: 'Virement bancaire', value: 'bank_transfer' }, { label: 'Espèces', value: 'cash' }, { label: 'Chèque', value: 'cheque' }, { label: 'Carte manuelle', value: 'card_manual' }, { label: 'Autre', value: 'other' }] },
               { name: 'status', label: 'Statut', kind: 'select', required: true, options: [{ label: 'En attente', value: 'pending' }, { label: 'Confirmé', value: 'confirmed' }, { label: 'Rejeté', value: 'rejected' }, { label: 'Remboursé', value: 'refunded' }, { label: 'Annulé', value: 'cancelled' }] },
               { name: 'notes', label: 'Notes', kind: 'textarea', rows: 2 },
@@ -548,7 +548,7 @@ export default async function Angelcare360OperatorClientDetailPage({ params }: P
               { name: 'renewalDate', label: 'Date de renouvellement', kind: 'date', required: true },
               { name: 'status', label: 'Statut', kind: 'select', required: true, options: [{ label: 'À venir', value: 'upcoming' }, { label: 'En discussion', value: 'in_discussion' }, { label: 'Proposition envoyée', value: 'proposal_sent' }, { label: 'Renouvelé', value: 'renewed' }, { label: 'À risque', value: 'at_risk' }, { label: 'Perdu', value: 'lost' }, { label: 'Annulé', value: 'cancelled' }] },
               { name: 'probability', label: 'Probabilité', kind: 'number' },
-              { name: 'expectedAmountMad', label: 'Montant attendu MAD', kind: 'number' },
+              { name: 'expectedAmountMad', label: 'Montant attendu (Dh)', kind: 'number' },
               { name: 'ownerId', label: 'Responsable', kind: 'text' },
               { name: 'notes', label: 'Notes', kind: 'textarea', rows: 3 },
             ],
@@ -567,7 +567,7 @@ export default async function Angelcare360OperatorClientDetailPage({ params }: P
               { name: 'subscriptionId', label: 'Abonnement', kind: 'select', options: subscriptionOptions },
               { name: 'gateCode', label: 'Code gate', kind: 'text', required: true },
               { name: 'status', label: 'Statut', kind: 'select', required: true, options: [{ label: 'Actif', value: 'active' }, { label: 'Traitement en ligne', value: 'online_processing' }, { label: 'Validation manuelle', value: 'manual_pending' }, { label: 'Traité', value: 'processed' }, { label: 'Levée', value: 'waived' }, { label: 'Annulé', value: 'cancelled' }, { label: 'Expiré', value: 'expired' }] },
-              { name: 'amountDueMad', label: 'Montant dû MAD', kind: 'number', required: true },
+              { name: 'amountDueMad', label: 'Montant dû (Dh)', kind: 'number', required: true },
               { name: 'currency', label: 'Devise', kind: 'text', placeholder: 'MAD' },
               { name: 'reason', label: 'Motif', kind: 'textarea', rows: 3, required: true },
               { name: 'dueDate', label: 'Date d’échéance', kind: 'date' },

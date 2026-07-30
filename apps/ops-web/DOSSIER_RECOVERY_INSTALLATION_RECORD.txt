@@ -1,0 +1,6 @@
+package=ANGELCARE_CONTENT_COMMAND_CENTER_DOSSIER_LIFECYCLE_RECOVERY_FIX_20260730-060650
+mode=shadow-wrapper-reconciliation
+installed_at=2026-07-30T06:28:58Z
+backup=/Users/user/Desktop/angelcare-platform/.angelcare_backups/content-command-dossier-recovery-shadow-wrapper-20260730-072856
+wrapper=components/market-os/content-command/content-briefs-page.tsx
+preserved_live_brief_page=components/market-os/content-command/content-briefs-page.dossier-recovery-base.tsx

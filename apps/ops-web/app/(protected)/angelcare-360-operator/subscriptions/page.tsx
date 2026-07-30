@@ -72,8 +72,8 @@ export default async function Angelcare360OperatorSubscriptionsPage() {
               { name: 'currentPeriodStart', label: 'Début période', kind: 'date' },
               { name: 'currentPeriodEnd', label: 'Fin période', kind: 'date' },
               { name: 'billingCycle', label: 'Cycle', kind: 'text', required: true, placeholder: 'monthly' },
-              { name: 'billingAmountMad', label: 'Montant MAD', kind: 'number', required: true },
-              { name: 'discountAmountMad', label: 'Remise MAD', kind: 'number' },
+              { name: 'billingAmountMad', label: 'Montant (Dh)', kind: 'number', required: true },
+              { name: 'discountAmountMad', label: 'Remise (Dh)', kind: 'number' },
               { name: 'cancellationReason', label: 'Motif annulation', kind: 'textarea', rows: 2 },
               { name: 'suspendedReason', label: 'Motif suspension', kind: 'textarea', rows: 2 },
             ],
@@ -97,8 +97,8 @@ export default async function Angelcare360OperatorSubscriptionsPage() {
               { name: 'currentPeriodStart', label: 'Début période', kind: 'date' },
               { name: 'currentPeriodEnd', label: 'Fin période', kind: 'date' },
               { name: 'billingCycle', label: 'Cycle', kind: 'text', required: true, placeholder: 'monthly' },
-              { name: 'billingAmountMad', label: 'Montant MAD', kind: 'number', required: true },
-              { name: 'discountAmountMad', label: 'Remise MAD', kind: 'number' },
+              { name: 'billingAmountMad', label: 'Montant (Dh)', kind: 'number', required: true },
+              { name: 'discountAmountMad', label: 'Remise (Dh)', kind: 'number' },
               { name: 'cancellationReason', label: 'Motif annulation', kind: 'textarea', rows: 2 },
               { name: 'suspendedReason', label: 'Motif suspension', kind: 'textarea', rows: 2 },
             ],
@@ -146,7 +146,7 @@ export default async function Angelcare360OperatorSubscriptionsPage() {
           { key: 'plan_id', label: 'Plan', render: (row) => planNameById.get(String((row as Record<string, unknown>).plan_id || '')) || '—' },
           { key: 'status', label: 'Statut', render: (row) => <Angelcare360OperatorStatusBadge status={String((row as Record<string, unknown>).status || '—')} /> },
           { key: 'billing_cycle', label: 'Périodicité', render: (row) => String((row as Record<string, unknown>).billing_cycle || '—') },
-          { key: 'billing_amount_mad', label: 'Montant', render: (row) => `${Number((row as Record<string, unknown>).billing_amount_mad || 0).toLocaleString('fr-FR')} MAD`, align: 'right' },
+          { key: 'billing_amount_mad', label: 'Montant', render: (row) => `${Number((row as Record<string, unknown>).billing_amount_mad || 0).toLocaleString('fr-FR')} Dh`, align: 'right' },
         ]}
       />
     </Angelcare360OperatorPageShell>

@@ -15,6 +15,7 @@ export default function Angelcare360OperatorAuditDrawer({ open, event, onClose }
   return (
     <Angelcare360OperatorDrawer
       open={open}
+      variant="governance"
       title={event ? `${event.module} · ${event.action}` : 'Événement d’audit'}
       subtitle={event ? `${event.entity_type} · ${event.created_at}` : 'Sélectionnez un événement pour voir son détail.'}
       onClose={onClose}

@@ -12,7 +12,7 @@ const frShortDate = new Intl.DateTimeFormat('fr-FR', {
 
 export function formatMad(value: number | string | null | undefined) {
   const amount = typeof value === 'number' ? value : Number(value || 0)
-  return `${Number.isFinite(amount) ? amount.toLocaleString('fr-FR') : '0'} MAD`
+  return `${Number.isFinite(amount) ? amount.toLocaleString('fr-FR') : '0'} Dh`
 }
 
 export function formatClientDate(value: string | null | undefined) {

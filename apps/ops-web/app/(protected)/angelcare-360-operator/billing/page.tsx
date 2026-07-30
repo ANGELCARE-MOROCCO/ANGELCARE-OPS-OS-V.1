@@ -61,8 +61,8 @@ export default async function Angelcare360OperatorBillingPage() {
         <>
           <span style={contextPillStyle}>Émises: {invoices.length}</span>
           <span style={contextPillStyle}>En retard: {overdueInvoices.length}</span>
-          <span style={contextPillStyle}>Encaissé: {totalPaid.toLocaleString('fr-FR')} MAD</span>
-          <span style={contextPillStyle}>Impayé: {unpaidBalance.toLocaleString('fr-FR')} MAD</span>
+          <span style={contextPillStyle}>Encaissé: {totalPaid.toLocaleString('fr-FR')} Dh</span>
+          <span style={contextPillStyle}>Impayé: {unpaidBalance.toLocaleString('fr-FR')} Dh</span>
         </>
       }
     >
@@ -87,11 +87,11 @@ export default async function Angelcare360OperatorBillingPage() {
               { name: 'dueDate', label: 'Date d’échéance', kind: 'date', required: true },
               { name: 'periodStart', label: 'Début période', kind: 'date' },
               { name: 'periodEnd', label: 'Fin période', kind: 'date' },
-              { name: 'subtotalMad', label: 'Sous-total MAD', kind: 'number', required: true },
-              { name: 'discountMad', label: 'Remise MAD', kind: 'number' },
-              { name: 'totalMad', label: 'Total MAD', kind: 'number', required: true },
-              { name: 'amountPaidMad', label: 'Montant payé MAD', kind: 'number' },
-              { name: 'balanceDueMad', label: 'Solde dû MAD', kind: 'number' },
+              { name: 'subtotalMad', label: 'Sous-total (Dh)', kind: 'number', required: true },
+              { name: 'discountMad', label: 'Remise (Dh)', kind: 'number' },
+              { name: 'totalMad', label: 'Total (Dh)', kind: 'number', required: true },
+              { name: 'amountPaidMad', label: 'Montant payé (Dh)', kind: 'number' },
+              { name: 'balanceDueMad', label: 'Solde dû (Dh)', kind: 'number' },
               { name: 'status', label: 'Statut', kind: 'select', required: true, options: [{ label: 'Brouillon', value: 'draft' }, { label: 'Émise', value: 'issued' }, { label: 'Partiellement payée', value: 'partially_paid' }, { label: 'Payée', value: 'paid' }, { label: 'En retard', value: 'overdue' }, { label: 'Annulée', value: 'cancelled' }, { label: 'Archivée', value: 'archived' }] },
               { name: 'notes', label: 'Notes', kind: 'textarea', rows: 3 },
             ],
@@ -119,7 +119,7 @@ export default async function Angelcare360OperatorBillingPage() {
               { name: 'invoiceId', label: 'Facture', kind: 'select', options: invoiceOptions },
               { name: 'paymentReference', label: 'Référence paiement', kind: 'text', required: true },
               { name: 'paymentDate', label: 'Date de paiement', kind: 'date', required: true },
-              { name: 'amountMad', label: 'Montant MAD', kind: 'number', required: true },
+              { name: 'amountMad', label: 'Montant (Dh)', kind: 'number', required: true },
               { name: 'method', label: 'Méthode', kind: 'select', required: true, options: [{ label: 'Virement bancaire', value: 'bank_transfer' }, { label: 'Espèces', value: 'cash' }, { label: 'Chèque', value: 'cheque' }, { label: 'Carte manuelle', value: 'card_manual' }, { label: 'Autre', value: 'other' }] },
               { name: 'status', label: 'Statut', kind: 'select', required: true, options: [{ label: 'En attente', value: 'pending' }, { label: 'Confirmé', value: 'confirmed' }, { label: 'Rejeté', value: 'rejected' }, { label: 'Remboursé', value: 'refunded' }, { label: 'Annulé', value: 'cancelled' }] },
               { name: 'notes', label: 'Notes', kind: 'textarea', rows: 2 },
@@ -236,7 +236,7 @@ export default async function Angelcare360OperatorBillingPage() {
               { name: 'subscriptionId', label: 'Abonnement', kind: 'select', options: subscriptionOptions },
               { name: 'gateCode', label: 'Code gate', kind: 'text', required: true },
               { name: 'status', label: 'Statut', kind: 'select', required: true, options: [{ label: 'Actif', value: 'active' }, { label: 'Traitement en ligne', value: 'online_processing' }, { label: 'Validation manuelle', value: 'manual_pending' }, { label: 'Traité', value: 'processed' }, { label: 'Levée', value: 'waived' }, { label: 'Annulé', value: 'cancelled' }, { label: 'Expiré', value: 'expired' }] },
-              { name: 'amountDueMad', label: 'Montant dû MAD', kind: 'number', required: true },
+              { name: 'amountDueMad', label: 'Montant dû (Dh)', kind: 'number', required: true },
               { name: 'currency', label: 'Devise', kind: 'text', placeholder: 'MAD' },
               { name: 'reason', label: 'Motif', kind: 'textarea', rows: 3, required: true },
               { name: 'dueDate', label: 'Date d’échéance', kind: 'date' },
@@ -296,9 +296,9 @@ export default async function Angelcare360OperatorBillingPage() {
         ]}
       />
       <section style={kpiGridStyle}>
-        <Angelcare360OperatorKpiCard label="Total facturé" value={`${totalBilled.toLocaleString('fr-FR')} MAD`} detail="Somme des factures générées." />
-        <Angelcare360OperatorKpiCard label="Total encaissé" value={`${totalPaid.toLocaleString('fr-FR')} MAD`} detail="Paiements confirmés manuellement." />
-        <Angelcare360OperatorKpiCard label="Impayés" value={`${unpaidBalance.toLocaleString('fr-FR')} MAD`} detail="Encours à suivre." />
+        <Angelcare360OperatorKpiCard label="Total facturé" value={`${totalBilled.toLocaleString('fr-FR')} Dh`} detail="Somme des factures générées." />
+        <Angelcare360OperatorKpiCard label="Total encaissé" value={`${totalPaid.toLocaleString('fr-FR')} Dh`} detail="Paiements confirmés manuellement." />
+        <Angelcare360OperatorKpiCard label="Impayés" value={`${unpaidBalance.toLocaleString('fr-FR')} Dh`} detail="Encours à suivre." />
         <Angelcare360OperatorKpiCard label="Factures en retard" value={String(overdueInvoices.length)} detail="Factures passées à échéance." />
       </section>
 
@@ -332,7 +332,7 @@ export default async function Angelcare360OperatorBillingPage() {
           { key: 'status', label: 'Statut', render: (row) => <Angelcare360OperatorStatusBadge status={String((row as Record<string, unknown>).status || '—')} /> },
           { key: 'issue_date', label: 'Émise le', render: (row) => String((row as Record<string, unknown>).issue_date || '—') },
           { key: 'due_date', label: 'Échéance', render: (row) => String((row as Record<string, unknown>).due_date || '—') },
-          { key: 'balance_due_mad', label: 'Solde dû', align: 'right', render: (row) => `${Number((row as Record<string, unknown>).balance_due_mad || 0).toLocaleString('fr-FR')} MAD` },
+          { key: 'balance_due_mad', label: 'Solde dû', align: 'right', render: (row) => `${Number((row as Record<string, unknown>).balance_due_mad || 0).toLocaleString('fr-FR')} Dh` },
         ]}
       />
 
@@ -347,7 +347,7 @@ export default async function Angelcare360OperatorBillingPage() {
           { key: 'client_id', label: 'Client', render: (row) => String((row as Record<string, unknown>).client_id || '—') },
           { key: 'status', label: 'Statut', render: (row) => <Angelcare360OperatorStatusBadge status={String((row as Record<string, unknown>).status || '—')} /> },
           { key: 'payment_date', label: 'Date', render: (row) => String((row as Record<string, unknown>).payment_date || '—') },
-          { key: 'amount_mad', label: 'Montant', align: 'right', render: (row) => `${Number((row as Record<string, unknown>).amount_mad || 0).toLocaleString('fr-FR')} MAD` },
+          { key: 'amount_mad', label: 'Montant', align: 'right', render: (row) => `${Number((row as Record<string, unknown>).amount_mad || 0).toLocaleString('fr-FR')} Dh` },
         ]}
       />
 
@@ -364,7 +364,7 @@ export default async function Angelcare360OperatorBillingPage() {
           { key: 'status', label: 'Statut', render: (row) => <Angelcare360OperatorStatusBadge status={String((row as Record<string, unknown>).status || '—')} /> },
           { key: 'lifecycle_stage', label: 'Cycle', render: (row) => String((row as Record<string, unknown>).lifecycle_stage || '—') },
           { key: 'active_subscription_status', label: 'Abonnement', render: (row) => String((row as Record<string, unknown>).active_subscription_status || '—') },
-          { key: 'balance_due_mad', label: 'Solde dû', align: 'right', render: (row) => `${Number((row as Record<string, unknown>).balance_due_mad || 0).toLocaleString('fr-FR')} MAD` },
+          { key: 'balance_due_mad', label: 'Solde dû', align: 'right', render: (row) => `${Number((row as Record<string, unknown>).balance_due_mad || 0).toLocaleString('fr-FR')} Dh` },
         ]}
       />
 
@@ -379,7 +379,7 @@ export default async function Angelcare360OperatorBillingPage() {
           { key: 'gate_code', label: 'Gate', render: (row) => String((row as Record<string, unknown>).gate_code || '—') },
           { key: 'client_display_name', label: 'Client', render: (row) => String((row as Record<string, unknown>).client_display_name || (row as Record<string, unknown>).client_id || '—') },
           { key: 'status', label: 'Statut', render: (row) => <Angelcare360OperatorStatusBadge status={String((row as Record<string, unknown>).status || '—')} /> },
-          { key: 'amount_due_mad', label: 'Montant', align: 'right', render: (row) => `${Number((row as Record<string, unknown>).amount_due_mad || 0).toLocaleString('fr-FR')} MAD` },
+          { key: 'amount_due_mad', label: 'Montant', align: 'right', render: (row) => `${Number((row as Record<string, unknown>).amount_due_mad || 0).toLocaleString('fr-FR')} Dh` },
           { key: 'due_date', label: 'Échéance', render: (row) => String((row as Record<string, unknown>).due_date || '—') },
         ]}
       />

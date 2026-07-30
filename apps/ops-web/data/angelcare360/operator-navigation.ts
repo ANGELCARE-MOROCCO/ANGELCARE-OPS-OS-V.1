@@ -27,7 +27,7 @@ export const ANGELCARE360_OPERATOR_NAVIGATION: Angelcare360OperatorNavigationSec
     label: 'Offre & monétisation',
     summary: 'Plans, packages, abonnements, modules et limites contractuelles.',
     items: [
-      { key: 'plans', label: 'Plans', href: '/angelcare-360-operator/plans', summary: 'Offres commerciales et tarification MAD.' },
+      { key: 'plans', label: 'Plans', href: '/angelcare-360-operator/plans', summary: 'Offres commerciales et tarification en Dh.' },
       { key: 'packages', label: 'Packages', href: '/angelcare-360-operator/packages', summary: 'Bundles modules et fonctionnalités.' },
       { key: 'subscriptions', label: 'Abonnements', href: '/angelcare-360-operator/subscriptions', summary: 'Cycle de facturation et état de souscription.' },
       { key: 'modules', label: 'Modules', href: '/angelcare-360-operator/modules', summary: 'Matrice d’activation client.' },

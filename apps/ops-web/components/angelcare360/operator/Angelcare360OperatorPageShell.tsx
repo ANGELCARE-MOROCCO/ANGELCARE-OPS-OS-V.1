@@ -1,5 +1,17 @@
+'use client'
+
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import type { ReactNode } from 'react'
-import { ANGELCARE360_OPERATOR_COLORS, operatorHeroBackground } from './Angelcare360OperatorVisualSystem'
+import { ArrowUpRight } from 'lucide-react'
+import { resolveOperatorExperience } from './Angelcare360OperatorExperience'
+import {
+  OperatorDecisionIcon,
+  OperatorDistrictIcon,
+  OperatorEvidenceIcon,
+  OperatorMissionIcon,
+} from './Angelcare360OperatorIcons'
+import styles from './Angelcare360OperatorExperience.module.css'
 
 type Props = {
   title: string
@@ -22,114 +34,63 @@ export default function Angelcare360OperatorPageShell({
   contextRow,
   children,
 }: Props) {
+  const pathname = usePathname() || '/angelcare-360-operator'
+  const profile = resolveOperatorExperience(pathname)
+
   return (
-    <section style={shellStyle}>
-      <header style={headerStyle}>
-        <div style={heroStyle}>
-          <div style={headingStyle}>
-            <div style={eyebrowRowStyle}>
-              {badge ? <span style={badgeStyle}>{badge}</span> : null}
-              {statusLabel ? <span style={statusStyle}>{statusLabel}</span> : null}
-            </div>
-            <h1 style={titleStyle}>{title}</h1>
-            <p style={subtitleStyle}>{subtitle}</p>
+    <section className={styles.pageShell}>
+      <header className={styles.hero}>
+        <div className={styles.heroCopy}>
+          <div className={styles.heroMeta}>
+            <span className={styles.heroBadge}>{badge || profile.districtLabel}</span>
+            {statusLabel ? <span className={styles.heroStatus}>{statusLabel}</span> : null}
           </div>
-          {primaryAction || secondaryActions ? <div style={actionsStyle}>{secondaryActions}{primaryAction}</div> : null}
+          <h1 className={styles.heroTitle}>{title}</h1>
+          <p className={styles.heroSubtitle}>{subtitle}</p>
+          {primaryAction || secondaryActions ? (
+            <div className={styles.heroActions}>
+              {primaryAction}
+              {secondaryActions}
+            </div>
+          ) : (
+            <div className={styles.heroActions}>
+              {profile.quickLinks.slice(0, 2).map((link) => (
+                <Link key={link.href} href={link.href} className={styles.actionButton + ' ' + styles.actionSecondary}>
+                  {link.label}<ArrowUpRight size={14} aria-hidden="true" />
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className={styles.heroSignature} aria-hidden="true">
+          <div className={styles.signatureCore}>
+            <span className={styles.signatureMark}><OperatorDistrictIcon district={profile.district} /></span>
+          </div>
+          <span className={styles.signatureLabel}>{profile.routeLabel}</span>
         </div>
       </header>
-      {contextRow ? <div style={contextStyle}>{contextRow}</div> : null}
-      <div style={contentStyle}>{children}</div>
+
+      <section className={styles.missionGrid} aria-label="Cadre de décision de la page">
+        <article className={styles.missionCell}>
+          <span className={styles.missionIcon}><OperatorMissionIcon size={15} aria-hidden="true" /></span>
+          <span className={styles.missionLabel}>Mission</span>
+          <span className={styles.missionText}>{profile.mission}</span>
+        </article>
+        <article className={styles.missionCell}>
+          <span className={styles.missionIcon}><OperatorDecisionIcon size={15} aria-hidden="true" /></span>
+          <span className={styles.missionLabel}>Décision clé</span>
+          <span className={styles.missionText}>{profile.decision}</span>
+        </article>
+        <article className={styles.missionCell}>
+          <span className={styles.missionIcon}><OperatorEvidenceIcon size={15} aria-hidden="true" /></span>
+          <span className={styles.missionLabel}>Preuve attendue</span>
+          <span className={styles.missionText}>{profile.evidence}</span>
+        </article>
+      </section>
+
+      {contextRow ? <div className={styles.contextRow}>{contextRow}</div> : null}
+      <div className={styles.content}>{children}</div>
     </section>
   )
-}
-
-const shellStyle: React.CSSProperties = {
-  display: 'grid',
-  gap: 20,
-}
-
-const headerStyle: React.CSSProperties = {
-  display: 'grid',
-  gap: 16,
-}
-
-const heroStyle: React.CSSProperties = {
-  ...operatorHeroBackground,
-  padding: 24,
-  display: 'grid',
-  gap: 16,
-}
-
-const headingStyle: React.CSSProperties = {
-  display: 'grid',
-  gap: 12,
-}
-
-const eyebrowRowStyle: React.CSSProperties = {
-  display: 'flex',
-  flexWrap: 'wrap',
-  gap: 8,
-}
-
-const badgeStyle: React.CSSProperties = {
-  display: 'inline-flex',
-  alignItems: 'center',
-  borderRadius: 999,
-  padding: '6px 10px',
-  background: ANGELCARE360_OPERATOR_COLORS.blueSoft,
-  color: ANGELCARE360_OPERATOR_COLORS.blue,
-  fontSize: 12,
-  fontWeight: 900,
-}
-
-const statusStyle: React.CSSProperties = {
-  display: 'inline-flex',
-  alignItems: 'center',
-  borderRadius: 999,
-  padding: '6px 10px',
-  background: ANGELCARE360_OPERATOR_COLORS.background,
-  color: ANGELCARE360_OPERATOR_COLORS.navy,
-  fontSize: 12,
-  fontWeight: 900,
-  border: `1px solid ${ANGELCARE360_OPERATOR_COLORS.borderSoft}`,
-}
-
-const titleStyle: React.CSSProperties = {
-  margin: 0,
-  color: ANGELCARE360_OPERATOR_COLORS.navy,
-  fontSize: 32,
-  lineHeight: 1.06,
-  fontWeight: 950,
-}
-
-const subtitleStyle: React.CSSProperties = {
-  margin: 0,
-  maxWidth: 980,
-  color: ANGELCARE360_OPERATOR_COLORS.slate,
-  fontSize: 15,
-  lineHeight: 1.7,
-  fontWeight: 600,
-}
-
-const actionsStyle: React.CSSProperties = {
-  display: 'flex',
-  flexWrap: 'wrap',
-  gap: 10,
-  justifyContent: 'end',
-}
-
-const contextStyle: React.CSSProperties = {
-  display: 'flex',
-  flexWrap: 'wrap',
-  gap: 10,
-  padding: 14,
-  borderRadius: 20,
-  background: ANGELCARE360_OPERATOR_COLORS.white,
-  border: `1px solid ${ANGELCARE360_OPERATOR_COLORS.borderSoft}`,
-  boxShadow: '0 14px 38px rgba(15,23,42,.04)',
-}
-
-const contentStyle: React.CSSProperties = {
-  display: 'grid',
-  gap: 16,
 }

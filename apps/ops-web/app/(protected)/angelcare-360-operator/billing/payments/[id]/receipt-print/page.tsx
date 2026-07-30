@@ -44,7 +44,7 @@ export default async function Angelcare360OperatorReceiptPrintPage({ params }: P
       <Angelcare360A4DocumentFrame model={model}>
         <div style={stackStyle}>
           <section style={kpiGridStyle}>
-            <Angelcare360A4KpiBlock label="Montant" value={`${Number(payment.amount_mad || 0).toLocaleString('fr-FR')} MAD`} tone="success" />
+            <Angelcare360A4KpiBlock label="Montant" value={`${Number(payment.amount_mad || 0).toLocaleString('fr-FR')} Dh`} tone="success" />
             <Angelcare360A4KpiBlock label="Méthode" value={String(payment.method || '—')} tone="primary" />
             <Angelcare360A4KpiBlock label="Référence" value={String(payment.payment_reference || payment.id)} tone="neutral" />
             <Angelcare360A4StatusStamp label={String(payment.status || '—')} tone="neutral" />

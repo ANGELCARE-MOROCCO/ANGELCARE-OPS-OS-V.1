@@ -45,9 +45,9 @@ export default async function Angelcare360OperatorInvoicePrintPage({ params }: P
       <Angelcare360A4DocumentFrame model={model}>
         <div style={stackStyle}>
           <section style={kpiGridStyle}>
-            <Angelcare360A4KpiBlock label="Total" value={`${Number(invoice.total_mad || 0).toLocaleString('fr-FR')} MAD`} tone="primary" />
-            <Angelcare360A4KpiBlock label="Payé" value={`${Number(invoice.amount_paid_mad || 0).toLocaleString('fr-FR')} MAD`} tone="success" />
-            <Angelcare360A4KpiBlock label="Solde dû" value={`${Number(invoice.balance_due_mad || 0).toLocaleString('fr-FR')} MAD`} tone="warning" />
+            <Angelcare360A4KpiBlock label="Total" value={`${Number(invoice.total_mad || 0).toLocaleString('fr-FR')} Dh`} tone="primary" />
+            <Angelcare360A4KpiBlock label="Payé" value={`${Number(invoice.amount_paid_mad || 0).toLocaleString('fr-FR')} Dh`} tone="success" />
+            <Angelcare360A4KpiBlock label="Solde dû" value={`${Number(invoice.balance_due_mad || 0).toLocaleString('fr-FR')} Dh`} tone="warning" />
             <Angelcare360A4StatusStamp label={String(invoice.status || '—')} tone="neutral" />
           </section>
 

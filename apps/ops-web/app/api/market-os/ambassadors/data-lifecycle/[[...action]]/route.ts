@@ -158,6 +158,50 @@ export async function POST(
       action = "delete"
     }
 
+    if (routeKey === "bulk/jobs") {
+      action = "bulk_create"
+    }
+
+    if (
+      segments[0] === "bulk" &&
+      segments[1] === "jobs" &&
+      segments[2] &&
+      segments[3] === "preflight"
+    ) {
+      action = "bulk_preflight"
+      body.jobId = segments[2]
+    }
+
+    if (
+      segments[0] === "bulk" &&
+      segments[1] === "jobs" &&
+      segments[2] &&
+      segments[3] === "approve"
+    ) {
+      action = "bulk_approve"
+      body.jobId = segments[2]
+    }
+
+    if (
+      segments[0] === "bulk" &&
+      segments[1] === "jobs" &&
+      segments[2] &&
+      segments[3] === "reject"
+    ) {
+      action = "bulk_reject"
+      body.jobId = segments[2]
+    }
+
+    if (
+      segments[0] === "bulk" &&
+      segments[1] === "jobs" &&
+      segments[2] &&
+      segments[3] === "execute"
+    ) {
+      action = "bulk_execute"
+      body.jobId = segments[2]
+    }
+
     if (
       segments[0] === "requests" &&
       segments[1] &&
@@ -203,7 +247,7 @@ export async function POST(
         action,
         body,
       ),
-      action === "request" ? 201 : 200,
+      action === "request" || action === "bulk_create" ? 201 : 200,
     )
   } catch (error) {
     return failure(error)

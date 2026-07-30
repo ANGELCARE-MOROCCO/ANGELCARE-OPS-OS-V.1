@@ -40,7 +40,7 @@ export function contentHeadquartersApiError(error: unknown) {
   const status = message === 'UNAUTHENTICATED' ? 401
     : message === 'FORBIDDEN' ? 403
     : message.includes('NOT_FOUND') ? 404
-    : message.includes('CONFLICT') || message.includes('ALREADY_') || message.includes('LIMIT_REACHED') || message.startsWith('ACTION_BLOCKED') ? 409
+    : message.includes('CONFLICT') || message.includes('ALREADY_') || message.includes('LIMIT_REACHED') || message.includes('INCOMPLETE') || message.includes('PENDING') || message.includes('IMMUTABLE') || message.includes('PURGE_BLOCKED') || message.startsWith('ACTION_BLOCKED') ? 409
     : message.includes('MISSING') || message.includes('UNAVAILABLE') || message.includes('NOT_INSTALLED') ? 503
     : message.startsWith('INVALID_') || message.endsWith('_REQUIRED') || message.includes('CONFIRMATION_MISMATCH') ? 400
     : 500

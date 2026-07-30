@@ -1,7 +1,9 @@
 'use client'
 
+import { useEffect } from 'react'
 import type { ReactNode } from 'react'
-import { ANGELCARE360_OPERATOR_COLORS, operatorButtonSecondary, operatorSectionBackground } from './Angelcare360OperatorVisualSystem'
+import { X } from 'lucide-react'
+import styles from './Angelcare360OperatorExperience.module.css'
 
 type Props = {
   open: boolean
@@ -10,105 +12,49 @@ type Props = {
   onClose: () => void
   children: ReactNode
   footer?: ReactNode
+  variant?: 'default' | 'finance' | 'commercial' | 'support' | 'infrastructure' | 'governance' | 'danger'
 }
 
-export default function Angelcare360OperatorDrawer({ open, title, subtitle, onClose, children, footer }: Props) {
+export default function Angelcare360OperatorDrawer({ open, title, subtitle, onClose, children, footer, variant = 'default' }: Props) {
+  useEffect(() => {
+    if (!open) return
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose()
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => {
+      document.body.style.overflow = previousOverflow
+      window.removeEventListener('keydown', onKeyDown)
+    }
+  }, [onClose, open])
+
   if (!open) return null
 
   return (
-    <div style={overlayStyle} role="presentation" onClick={onClose}>
-      <div style={drawerStyle} onClick={(event) => event.stopPropagation()}>
-        <header style={headerStyle}>
+    <div className={styles.drawerOverlay} role="presentation" onMouseDown={onClose}>
+      <section
+        className={styles.drawer}
+        data-variant={variant}
+        role="dialog"
+        aria-modal="true"
+        aria-label={title}
+        onMouseDown={(event) => event.stopPropagation()}
+      >
+        <header className={styles.drawerHeader}>
           <div>
-            <div style={eyebrowStyle}>Action opérateur</div>
-            <h3 style={titleStyle}>{title}</h3>
-            {subtitle ? <p style={subtitleStyle}>{subtitle}</p> : null}
+            <div className={styles.drawerEyebrow}>Chambre d’action opérateur</div>
+            <h3 className={styles.drawerTitle}>{title}</h3>
+            {subtitle ? <p className={styles.drawerSubtitle}>{subtitle}</p> : null}
           </div>
-          <button type="button" onClick={onClose} style={closeButtonStyle}>
-            Fermer
+          <button type="button" onClick={onClose} className={styles.drawerClose} aria-label="Fermer la chambre d’action">
+            <X size={19} aria-hidden="true" />
           </button>
         </header>
-        <div style={bodyStyle}>{children}</div>
-        {footer ? <footer style={footerStyle}>{footer}</footer> : null}
-      </div>
+        <div className={styles.drawerBody}>{children}</div>
+        {footer ? <footer className={styles.drawerFooter}>{footer}</footer> : null}
+      </section>
     </div>
   )
-}
-
-const overlayStyle: React.CSSProperties = {
-  position: 'fixed',
-  inset: 0,
-  zIndex: 70,
-  background: 'rgba(15,23,42,.34)',
-  backdropFilter: 'blur(10px)',
-  display: 'grid',
-  placeItems: 'end',
-  padding: 20,
-}
-
-const drawerStyle: React.CSSProperties = {
-  width: 'min(1040px, 100%)',
-  maxHeight: '92vh',
-  overflow: 'auto',
-  borderRadius: 30,
-  borderWidth: 1,
-  borderStyle: 'solid',
-  borderColor: ANGELCARE360_OPERATOR_COLORS.border,
-  background:
-    'linear-gradient(180deg, rgba(255,255,255,.99) 0%, rgba(248,250,252,.98) 100%)',
-  boxShadow: '0 36px 108px rgba(15,23,42,.20)',
-  padding: 24,
-  display: 'grid',
-  gap: 18,
-}
-
-const headerStyle: React.CSSProperties = {
-  display: 'flex',
-  justifyContent: 'space-between',
-  gap: 12,
-  alignItems: 'start',
-  paddingBottom: 14,
-  borderBottom: `1px solid ${ANGELCARE360_OPERATOR_COLORS.borderSoft}`,
-}
-
-const eyebrowStyle: React.CSSProperties = {
-  color: ANGELCARE360_OPERATOR_COLORS.blue,
-  textTransform: 'uppercase',
-  letterSpacing: 1.1,
-  fontSize: 11,
-  fontWeight: 900,
-}
-
-const titleStyle: React.CSSProperties = {
-  margin: '6px 0 0',
-  color: ANGELCARE360_OPERATOR_COLORS.navy,
-  fontSize: 24,
-  fontWeight: 950,
-}
-
-const subtitleStyle: React.CSSProperties = {
-  margin: '6px 0 0',
-  color: ANGELCARE360_OPERATOR_COLORS.slate,
-  lineHeight: 1.65,
-  fontWeight: 600,
-}
-
-const closeButtonStyle: React.CSSProperties = {
-  ...operatorButtonSecondary,
-  minHeight: 40,
-  padding: '8px 12px',
-}
-
-const footerStyle: React.CSSProperties = {
-  paddingTop: 4,
-  borderTop: `1px solid ${ANGELCARE360_OPERATOR_COLORS.borderSoft}`,
-  display: 'flex',
-  justifyContent: 'end',
-  gap: 10,
-}
-
-const bodyStyle: React.CSSProperties = {
-  ...operatorSectionBackground,
-  borderRadius: 24,
-  padding: 20,
 }

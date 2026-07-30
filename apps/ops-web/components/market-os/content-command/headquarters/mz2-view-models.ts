@@ -547,7 +547,7 @@ export function buildCommandViewModel(snapshotValue: unknown): CommandViewModel 
         readiness: numberValue(item.readiness),
         risk: blocker ? "critical" : isOverdue(dueAt) ? "critical" : severityFor(status),
         blocker: blocker ? text(blocker.title || blocker.blocker_reason, "Blocage déclaré") : "",
-        nextGate: nextGateForStatus(status),
+        nextGate: nextGateForStatus(status, item),
         href: `/market-os/content-command-center/dossiers/${id}`,
       }
     })
@@ -608,7 +608,35 @@ export function buildCommandViewModel(snapshotValue: unknown): CommandViewModel 
   }
 }
 
-function nextGateForStatus(status: string): string {
+function documentedBriefValue(value: unknown): boolean {
+  const normalized = text(value).toLocaleLowerCase("fr-FR")
+  if (!normalized) return false
+  return !["non défini", "non définie", "non documenté", "non documentée", "à constituer", "à sélectionner"].some((marker) => normalized.includes(marker))
+}
+
+function briefStateForDossier(dossierValue: UnknownRecord) {
+  const brief = record(dossierValue.brief)
+  const scope = record(dossierValue.scope_constitution)
+  const channels = stringArray(brief.channels || dossierValue.channel)
+  const checks = [
+    documentedBriefValue(brief.objective || dossierValue.objective),
+    documentedBriefValue(brief.audience || dossierValue.audience),
+    documentedBriefValue(brief.user_problem),
+    documentedBriefValue(brief.message || dossierValue.message_pillar),
+    documentedBriefValue(brief.format || scope.requiredOutput || scope.required_output),
+    channels.length > 0,
+    documentedBriefValue(brief.tone),
+    documentedBriefValue(brief.version || dossierValue.brief_version),
+  ]
+  return { exists: Object.keys(brief).length > 0, complete: checks.every(Boolean), completed: checks.filter(Boolean).length, total: checks.length }
+}
+
+function nextGateForStatus(status: string, dossierValue?: UnknownRecord): string {
+  if (status === "brief" && dossierValue) {
+    const state = briefStateForDossier(dossierValue)
+    if (!state.exists) return "Créer le brief lié"
+    if (!state.complete) return `Compléter le brief (${state.completed}/${state.total})`
+  }
   const map: Record<string, string> = {
     opportunity: "Constituer le brief",
     ideation: "Verrouiller le périmètre",
@@ -855,7 +883,7 @@ export function buildLiveDossierViewModel(snapshotValue: unknown, dossierValue: 
       ...evidence.map((item) => ({ id: `e-${text(item.id)}`, action: "Preuve déposée", detail: text(item.title || item.filename, "Preuve"), actor: text(item.owner_name || item.created_by, "Contributeur"), timestamp: safeDate(item.created_at) })),
       ...reviews.map((item) => ({ id: `r-${text(item.id)}`, action: text(item.review_type) === "ai" ? "Revue IA" : "Décision humaine", detail: text(item.summary, humanStatus(text(item.result))), actor: text(item.reviewer_name || item.actor, "Autorité"), timestamp: safeDate(item.created_at) })),
     ].filter((item) => item.timestamp).sort((a, b) => b.timestamp.localeCompare(a.timestamp)),
-    nextAction: nextActionForDossier(status, id),
+    nextAction: nextActionForDossier(status, id, false, dossierValue),
   }
 }
 
@@ -977,12 +1005,17 @@ export function buildLegacyDossierViewModel(input: {
   }
 }
 
-function nextActionForDossier(status: string, id: string, legacy = false): DossierViewModel["nextAction"] {
+function nextActionForDossier(status: string, id: string, legacy = false, dossierValue?: UnknownRecord): DossierViewModel["nextAction"] {
   if (legacy) return { label: "Compléter la gouvernance", detail: "Le dossier historique doit être enrichi avant d’être considéré comme pleinement institutionnel.", href: `/market-os/content-command-center/${id}/edit` }
   const map: Record<string, DossierViewModel["nextAction"]> = {
     opportunity: { label: "Constituer le brief", detail: "Formaliser l’objectif, l’audience, le message et le livrable attendu.", href: "/market-os/content-command-center/briefs" },
     ideation: { label: "Verrouiller le périmètre", detail: "Séparer clairement le travail autorisé du hors périmètre.", href: "/market-os/content-command-center/studio" },
-    brief: { label: "Confirmer la constitution", detail: "Valider les conditions d’entrée avant libération de la mission.", href: "/market-os/content-command-center/briefs" },
+    brief: (() => {
+      const state = briefStateForDossier(dossierValue || {})
+      if (!state.exists) return { label: "Créer le brief lié", detail: "Le dossier est au stade Brief mais aucun mandat structuré n’est encore persisté.", href: "/market-os/content-command-center/briefs" }
+      if (!state.complete) return { label: `Compléter le brief (${state.completed}/${state.total})`, detail: "Renseigner les conditions manquantes puis confirmer la constitution depuis le Brief Recovery Desk.", href: "/market-os/content-command-center/briefs" }
+      return { label: "Confirmer la constitution", detail: "Le brief est complet. Confirmer le gate pour avancer vers Constitution et fermer l’action dérivée.", href: "/market-os/content-command-center/briefs" }
+    })(),
     scope_locked: { label: "Créer la mission", detail: "Transformer le périmètre autorisé en exécution ordonnée.", href: "/market-os/content-command-center/missions" },
     in_creation: { label: "Soumettre une preuve", detail: "Déposer le checkpoint courant avant la prochaine décision.", href: "/market-os/content-command-center/evidence" },
     ai_review: { label: "Obtenir la décision humaine", detail: "La recommandation IA ne remplace pas l’autorité humaine.", href: "/market-os/content-command-center/review" },

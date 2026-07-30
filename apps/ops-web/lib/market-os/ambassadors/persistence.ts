@@ -38,9 +38,9 @@ export const ENTITY_CONFIG: Record<AmbassadorEntityKey, EntityConfig> = {
   territories: {
     table: "market_os_ambassador_territories",
     required: ["name"],
-    fields: [...COMMON_FIELDS, "name", "title", "city", "region", "zone", "manager_name", "assigned_owner", "coverage_goal", "active_ambassadors_count", "status", "notes", "metadata", "restrictions"],
-    numeric: ["coverage_goal", "active_ambassadors_count"],
-    json: ["metadata", "restrictions"],
+    fields: [...COMMON_FIELDS, "name", "title", "city", "region", "zone", "manager_name", "assigned_owner", "coverage_goal", "active_ambassadors_count", "status", "notes", "metadata", "restrictions", "center_latitude", "center_longitude", "radius_meters", "geometry_type", "geometry_geojson", "area_square_km", "osm_object_type", "osm_object_id", "osm_display_name", "geography_updated_at"],
+    numeric: ["coverage_goal", "active_ambassadors_count", "center_latitude", "center_longitude", "radius_meters", "area_square_km"],
+    json: ["metadata", "restrictions", "geometry_geojson"],
   },
   missions: {
     table: "market_os_ambassador_missions",

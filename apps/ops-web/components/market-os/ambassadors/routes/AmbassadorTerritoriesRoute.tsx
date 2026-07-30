@@ -7,6 +7,8 @@ import {
   Search, ShieldCheck, Target, Upload, UserCheck, Users, X, type LucideIcon,
 } from "lucide-react"
 import { downloadAmbassadorCsv, loadAmbassadorSnapshot } from "@/lib/market-os/ambassadors/client"
+import TerritoryLiveMap from "@/components/market-os/ambassadors/territories-map/TerritoryLiveMap"
+import type { TerritoryMapDatum, TerritoryMapGeometryDraft, TerritoryMapLayer } from "@/components/market-os/ambassadors/territories-map/contracts"
 
 type Row = Record<string, any>
 type DrawerMode = "assignment" | "territory"
@@ -46,6 +48,14 @@ type TerritoryConfig = {
   neighborhood: string
   boundaryMode: "administrative" | "radius" | "custom"
   radiusKm: number
+  centerLatitude: number | null
+  centerLongitude: number | null
+  geometryType: "radius" | "polygon" | "administrative" | "none"
+  geometryGeoJson: Record<string, unknown> | null
+  areaSquareKm: number
+  osmDisplayName: string
+  osmObjectType: string
+  osmObjectId: string
   addressableHouseholds: number
   addressableAccounts: number
   coveredHouseholds: number
@@ -83,6 +93,14 @@ type FormState = {
   neighborhood: string
   boundaryMode: "administrative" | "radius" | "custom"
   radiusKm: number
+  centerLatitude: number | null
+  centerLongitude: number | null
+  geometryType: "radius" | "polygon" | "administrative" | "none"
+  geometryGeoJson: Record<string, unknown> | null
+  areaSquareKm: number
+  osmDisplayName: string
+  osmObjectType: string
+  osmObjectId: string
   addressableHouseholds: number
   addressableAccounts: number
   ambassadorId: string
@@ -149,20 +167,10 @@ const REGIONS = [
   "Laâyoune-Sakia El Hamra", "Dakhla-Oued Ed-Dahab",
 ]
 
-const CITY_POINTS: Record<string, { x: number; y: number }> = {
-  tangier:{x:44,y:10}, tanger:{x:44,y:10}, tetouan:{x:50,y:12},
-  rabat:{x:40,y:25}, sale:{x:42,y:24}, temara:{x:38,y:27},
-  kenitra:{x:40,y:20}, casablanca:{x:33,y:34}, mohammedia:{x:36,y:31},
-  fes:{x:56,y:28}, meknes:{x:51,y:27}, oujda:{x:78,y:28},
-  marrakech:{x:39,y:51}, safi:{x:26,y:53}, essaouira:{x:25,y:57},
-  agadir:{x:27,y:68}, ouarzazate:{x:47,y:64}, errachidia:{x:61,y:55},
-  laayoune:{x:24,y:82}, dakhla:{x:21,y:96},
-}
-
-const MAP_OUTLINE = "M44 4 C53 7 57 12 60 19 C64 25 69 28 72 35 C75 42 70 46 66 52 C61 60 58 67 54 74 C49 83 45 91 38 98 L22 96 C19 88 18 81 20 73 C22 64 25 56 27 48 C29 40 31 33 34 27 C38 19 39 11 44 4 Z"
-
 const DEFAULT_CONFIG: TerritoryConfig = {
   version:2, prefecture:"", neighborhood:"", boundaryMode:"administrative", radiusKm:5,
+  centerLatitude:null, centerLongitude:null, geometryType:"none", geometryGeoJson:null,
+  areaSquareKm:0, osmDisplayName:"", osmObjectType:"", osmObjectId:"",
   addressableHouseholds:0, addressableAccounts:0, coveredHouseholds:0, coveredAccounts:0,
   targetAmbassadors:1, maxConcurrentMissions:4, targetLeads:0, targetQualifiedLeads:0,
   targetConversions:0, targetVisits:0, targetPartnerMeetings:0, targetConversionRate:0,
@@ -182,6 +190,21 @@ function txt(value: unknown): string { return String(value ?? "").trim() }
 function num(value: unknown, fallback=0): number {
   const parsed = Number(value)
   return Number.isFinite(parsed) ? parsed : fallback
+}
+function optNum(value: unknown): number | null {
+  if (value === null || value === undefined || value === "") return null
+  const parsed = Number(value)
+  return Number.isFinite(parsed) ? parsed : null
+}
+function jsonObject(value: unknown): Record<string, unknown> | null {
+  if (value && typeof value === "object" && !Array.isArray(value)) return value as Record<string, unknown>
+  if (typeof value === "string" && value.trim()) {
+    try {
+      const parsed = JSON.parse(value)
+      return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed as Record<string, unknown> : null
+    } catch { return null }
+  }
+  return null
 }
 function rid(row?: Row): string { return txt(row?.id || row?.uuid || row?.record_id) }
 function norm(value: unknown): string {
@@ -253,22 +276,12 @@ function statusClass(value: unknown): string {
   if (status.includes("archiv") || status.includes("inactive")) return "border-slate-300 bg-slate-100 text-slate-700"
   return "border-emerald-200 bg-emerald-50 text-emerald-800"
 }
-function coverageColor(value: number): string {
-  if (value >= 80) return "#059669"
-  if (value >= 60) return "#2563eb"
-  if (value >= 40) return "#d97706"
-  if (value > 0) return "#dc2626"
-  return "#64748b"
-}
 function coverageBg(value: number): string {
   if (value >= 80) return "border-emerald-200 bg-emerald-50"
   if (value >= 60) return "border-blue-200 bg-blue-50"
   if (value >= 40) return "border-amber-200 bg-amber-50"
   if (value > 0) return "border-rose-200 bg-rose-50"
   return "border-slate-200 bg-slate-100"
-}
-function pointFor(city: string, index: number): {x:number;y:number} {
-  return CITY_POINTS[norm(city)] || {x:33+(index%4)*8,y:22+Math.floor((index%8)/4)*30+(index%3)*4}
 }
 function coverageFor(row: Row, config: TerritoryConfig, activeCount: number): number {
   const explicit = num(row.coverage_percent || row.coverage_rate || row.current_coverage,-1)
@@ -287,6 +300,8 @@ function defaultForm(): FormState {
   return {
     territoryMode:"existing", existingTerritoryId:"", name:"", region:"", city:"",
     prefecture:"", zone:"", neighborhood:"", boundaryMode:"administrative", radiusKm:5,
+    centerLatitude:null,centerLongitude:null,geometryType:"none",geometryGeoJson:null,areaSquareKm:0,
+    osmDisplayName:"",osmObjectType:"",osmObjectId:"",
     addressableHouseholds:0, addressableAccounts:0, ambassadorId:"", backupAmbassadorId:"",
     assignmentType:"primary", targetAmbassadors:1, maxConcurrentMissions:4,
     targetLeads:0, targetQualifiedLeads:0, targetConversions:0, targetVisits:0,
@@ -357,7 +372,7 @@ export default function AmbassadorTerritoriesRoute() {
   const [selectedTerritoryId,setSelectedTerritoryId]=useState("")
   const [form,setForm]=useState<FormState>(defaultForm())
   const [modal,setModal]=useState<ModalMode>(null)
-  const [mapLayer,setMapLayer]=useState<"coverage"|"workload"|"leads"|"conversion">("coverage")
+  const [mapLayer,setMapLayer]=useState<TerritoryMapLayer>("coverage")
   const [showLabels,setShowLabels]=useState(true)
   const [csvText,setCsvText]=useState("")
   const [csvRows,setCsvRows]=useState<Row[]>([])
@@ -386,7 +401,19 @@ export default function AmbassadorTerritoriesRoute() {
   const territoryMetrics=useMemo<TerritoryMetric[]>(()=>territories
     .filter(row=>!norm(row.status).includes("archiv"))
     .map(row=>{
-      const id=rid(row), config=parseNotes(row.notes)
+      const id=rid(row), parsedConfig=parseNotes(row.notes)
+      const config: TerritoryConfig = {
+        ...parsedConfig,
+        centerLatitude: optNum(row.center_latitude) ?? parsedConfig.centerLatitude,
+        centerLongitude: optNum(row.center_longitude) ?? parsedConfig.centerLongitude,
+        radiusKm: num(row.radius_meters, 0) > 0 ? num(row.radius_meters) / 1000 : parsedConfig.radiusKm,
+        geometryType: (txt(row.geometry_type) || parsedConfig.geometryType || "none") as TerritoryConfig["geometryType"],
+        geometryGeoJson: jsonObject(row.geometry_geojson) || parsedConfig.geometryGeoJson,
+        areaSquareKm: num(row.area_square_km, parsedConfig.areaSquareKm),
+        osmDisplayName: txt(row.osm_display_name) || parsedConfig.osmDisplayName,
+        osmObjectType: txt(row.osm_object_type) || parsedConfig.osmObjectType,
+        osmObjectId: txt(row.osm_object_id) || parsedConfig.osmObjectId,
+      }
       const assigned=activeAmbassadors.filter(a=>territoryIdOf(a)===id)
       const relatedMissions=missions.filter(m=>territoryIdOf(m)===id)
       const relatedLeads=leads.filter(l=>territoryIdOf(l)===id)
@@ -426,6 +453,21 @@ export default function AmbassadorTerritoriesRoute() {
       return !needle||norm([t.name,t.region,t.city,t.zone,t.manager].join(" ")).includes(needle)
     })
   },[territoryMetrics,query,regionFilter,riskOnly])
+
+  const mapTerritories=useMemo<TerritoryMapDatum[]>(()=>filtered.map((territory)=>({
+    id:territory.id,name:territory.name,region:territory.region,city:territory.city,zone:territory.zone,
+    manager:territory.manager,status:territory.status,coveragePercent:territory.coveragePercent,
+    coverageTarget:territory.coverageTarget,workloadPercent:territory.workloadPercent,
+    activeAmbassadorCount:territory.activeAmbassadorCount,openMissionCount:territory.openMissions.length,
+    leadCount:territory.leads.length,conversionCount:territory.conversions.filter(isConverted).length,
+    conversionRate:territory.conversionRate,pendingAssignmentsCount:territory.pendingAssignments.length,
+    addressableHouseholds:territory.config.addressableHouseholds,addressableAccounts:territory.config.addressableAccounts,
+    risk:territory.risk,boundaryMode:territory.config.boundaryMode,radiusKm:territory.config.radiusKm,
+    centerLatitude:territory.config.centerLatitude,centerLongitude:territory.config.centerLongitude,
+    geometryType:territory.config.geometryType,geometryGeoJson:territory.config.geometryGeoJson,
+    areaSquareKm:territory.config.areaSquareKm,osmDisplayName:territory.config.osmDisplayName,
+    osmObjectType:territory.config.osmObjectType,osmObjectId:territory.config.osmObjectId,
+  })),[filtered])
 
   const selectedTerritory=useMemo(()=>territoryMetrics.find(t=>t.id===selectedTerritoryId)||null,[territoryMetrics,selectedTerritoryId])
   const selectedAmbassador=useMemo(()=>activeAmbassadors.find(a=>rid(a)===form.ambassadorId)||null,[activeAmbassadors,form.ambassadorId])
@@ -485,9 +527,7 @@ export default function AmbassadorTerritoriesRoute() {
   },[activeAmbassadors,missions])
   const workloadTotal=Math.max(1,workload.low+workload.optimal+workload.high+workload.overloaded)
 
-  const mapValue=(t:TerritoryMetric)=>mapLayer==="workload"?t.workloadPercent:
-    mapLayer==="leads"?(t.leads.length/Math.max(1,...territoryMetrics.map(x=>x.leads.length)))*100:
-    mapLayer==="conversion"?t.conversionRate:t.coveragePercent
+
 
   const openAssignment=(territory?:TerritoryMetric|null)=>{
     const next=defaultForm()
@@ -496,7 +536,11 @@ export default function AmbassadorTerritoriesRoute() {
         territoryMode:"existing",existingTerritoryId:territory.id,name:territory.name,region:territory.region,
         city:territory.city,prefecture:territory.config.prefecture,zone:territory.zone,
         neighborhood:territory.config.neighborhood,boundaryMode:territory.config.boundaryMode,
-        radiusKm:territory.config.radiusKm,addressableHouseholds:territory.config.addressableHouseholds,
+        radiusKm:territory.config.radiusKm,centerLatitude:territory.config.centerLatitude,
+        centerLongitude:territory.config.centerLongitude,geometryType:territory.config.geometryType,
+        geometryGeoJson:territory.config.geometryGeoJson,areaSquareKm:territory.config.areaSquareKm,
+        osmDisplayName:territory.config.osmDisplayName,osmObjectType:territory.config.osmObjectType,
+        osmObjectId:territory.config.osmObjectId,addressableHouseholds:territory.config.addressableHouseholds,
         addressableAccounts:territory.config.addressableAccounts,targetAmbassadors:territory.config.targetAmbassadors,
         maxConcurrentMissions:territory.config.maxConcurrentMissions,targetLeads:territory.config.targetLeads,
         targetQualifiedLeads:territory.config.targetQualifiedLeads,targetConversions:territory.config.targetConversions,
@@ -518,8 +562,10 @@ export default function AmbassadorTerritoriesRoute() {
     Object.assign(next,{
       territoryMode:"existing",existingTerritoryId:t.id,name:t.name,region:t.region,city:t.city,
       prefecture:t.config.prefecture,zone:t.zone,neighborhood:t.config.neighborhood,
-      boundaryMode:t.config.boundaryMode,radiusKm:t.config.radiusKm,
-      addressableHouseholds:t.config.addressableHouseholds,addressableAccounts:t.config.addressableAccounts,
+      boundaryMode:t.config.boundaryMode,radiusKm:t.config.radiusKm,centerLatitude:t.config.centerLatitude,
+      centerLongitude:t.config.centerLongitude,geometryType:t.config.geometryType,geometryGeoJson:t.config.geometryGeoJson,
+      areaSquareKm:t.config.areaSquareKm,osmDisplayName:t.config.osmDisplayName,osmObjectType:t.config.osmObjectType,
+      osmObjectId:t.config.osmObjectId,addressableHouseholds:t.config.addressableHouseholds,addressableAccounts:t.config.addressableAccounts,
       targetAmbassadors:t.config.targetAmbassadors,maxConcurrentMissions:t.config.maxConcurrentMissions,
       targetLeads:t.config.targetLeads,targetQualifiedLeads:t.config.targetQualifiedLeads,
       targetConversions:t.config.targetConversions,targetVisits:t.config.targetVisits,
@@ -568,7 +614,10 @@ export default function AmbassadorTerritoriesRoute() {
       }
       const config:TerritoryConfig={
         ...base,version:2,prefecture:form.prefecture,neighborhood:form.neighborhood,
-        boundaryMode:form.boundaryMode,radiusKm:form.radiusKm,
+        boundaryMode:form.boundaryMode,radiusKm:form.radiusKm,centerLatitude:form.centerLatitude,
+        centerLongitude:form.centerLongitude,geometryType:form.geometryType,geometryGeoJson:form.geometryGeoJson,
+        areaSquareKm:form.areaSquareKm,osmDisplayName:form.osmDisplayName,osmObjectType:form.osmObjectType,
+        osmObjectId:form.osmObjectId,
         addressableHouseholds:form.addressableHouseholds,addressableAccounts:form.addressableAccounts,
         targetAmbassadors:form.targetAmbassadors,maxConcurrentMissions:form.maxConcurrentMissions,
         targetLeads:form.targetLeads,targetQualifiedLeads:form.targetQualifiedLeads,
@@ -591,6 +640,11 @@ export default function AmbassadorTerritoriesRoute() {
             name:form.name.trim(),city:form.city.trim(),region:form.region.trim(),zone:form.zone.trim(),
             manager_name:form.approvalManager.trim(),coverage_goal:form.targetAmbassadors,
             active_ambassadors_count:0,status:"pending_approval",notes:serializeNotes(config),
+            center_latitude:config.centerLatitude,center_longitude:config.centerLongitude,
+            radius_meters:Math.round(Math.max(0,config.radiusKm)*1000),geometry_type:config.geometryType,
+            geometry_geojson:config.geometryGeoJson,area_square_km:config.areaSquareKm,
+            osm_display_name:config.osmDisplayName||null,osm_object_type:config.osmObjectType||null,
+            osm_object_id:config.osmObjectId||null,geography_updated_at:isoNow(),
           }),
         })
         const record=rec(created?.record||created?.data?.record||created?.data)
@@ -607,6 +661,11 @@ export default function AmbassadorTerritoriesRoute() {
             name:form.name||existing?.name,city:form.city||existing?.city,region:form.region||existing?.region,
             zone:form.zone||existing?.zone,manager_name:form.approvalManager.trim(),
             coverage_goal:form.targetAmbassadors,notes:serializeNotes(config),
+            center_latitude:config.centerLatitude,center_longitude:config.centerLongitude,
+            radius_meters:Math.round(Math.max(0,config.radiusKm)*1000),geometry_type:config.geometryType,
+            geometry_geojson:config.geometryGeoJson,area_square_km:config.areaSquareKm,
+            osm_display_name:config.osmDisplayName||null,osm_object_type:config.osmObjectType||null,
+            osm_object_id:config.osmObjectId||null,geography_updated_at:isoNow(),
           }),
         })
       }
@@ -685,6 +744,13 @@ export default function AmbassadorTerritoriesRoute() {
         const config:TerritoryConfig={
           ...DEFAULT_CONFIG,prefecture:txt(row.prefecture||row.commune||row.province),
           neighborhood:txt(row.neighborhood||row.quartier),
+          boundaryMode:txt(row.boundary_mode||row.mode_limite)==="custom"?"custom":txt(row.boundary_mode||row.mode_limite)==="radius"?"radius":"administrative",
+          radiusKm:Math.max(1,num(row.radius_km||row.rayon_km,5)),
+          centerLatitude:optNum(row.center_latitude||row.latitude||row.lat),
+          centerLongitude:optNum(row.center_longitude||row.longitude||row.lon||row.lng),
+          geometryType:txt(row.geometry_type)==="polygon"?"polygon":txt(row.geometry_type)==="administrative"?"administrative":optNum(row.latitude||row.lat)!==null?"radius":"none",
+          areaSquareKm:num(row.area_square_km||row.surface_km2),
+          osmDisplayName:txt(row.osm_display_name||row.adresse_osm),osmObjectType:txt(row.osm_object_type),osmObjectId:txt(row.osm_object_id),
           addressableHouseholds:num(row.addressable_households||row.menages_adressables||row.households),
           addressableAccounts:num(row.addressable_accounts||row.comptes_adressables||row.accounts),
           targetAmbassadors:Math.max(1,num(row.target_ambassadors||row.ambassadeurs_cibles||row.coverage_goal,1)),
@@ -699,7 +765,10 @@ export default function AmbassadorTerritoriesRoute() {
           await api("/api/market-os/ambassadors/territories",{method:"POST",body:JSON.stringify({
             name,city,region,zone,manager_name:config.approvalManager||null,
             coverage_goal:config.targetAmbassadors,active_ambassadors_count:0,status:"draft",
-            notes:serializeNotes(config),
+            notes:serializeNotes(config),center_latitude:config.centerLatitude,center_longitude:config.centerLongitude,
+            radius_meters:Math.round(Math.max(0,config.radiusKm)*1000),geometry_type:config.geometryType,
+            area_square_km:config.areaSquareKm,osm_display_name:config.osmDisplayName||null,
+            osm_object_type:config.osmObjectType||null,osm_object_id:config.osmObjectId||null,geography_updated_at:isoNow(),
           })})
           log.push(`Ligne ${row._row}: ${name} créée en brouillon.`)
         }catch(caught){log.push(`Ligne ${row._row}: échec — ${caught instanceof Error?caught.message:"erreur inconnue"}.`)}
@@ -725,6 +794,62 @@ export default function AmbassadorTerritoriesRoute() {
   const openDossier=(territory:TerritoryMetric)=>{
     setSelectedTerritoryId(territory.id);setDrawerMode("territory");setDrawerOpen(true);setError("")
   }
+
+  const prepareGeometryFromMap=useCallback((draft:TerritoryMapGeometryDraft)=>{
+    const next=defaultForm()
+    const address=draft.address||{}
+    const city=txt(address.city||address.town||address.village||address.municipality)
+    const region=txt(address.state||address.region)
+    const prefecture=txt(address.county||address.municipality)
+    const zone=txt(address.suburb||address.neighbourhood||address.road||city)||"Zone cartographique"
+    Object.assign(next,{
+      territoryMode:"new",existingTerritoryId:"",
+      name:city?`Territoire ${city} — ${zone}`:`Territoire ${draft.centerLatitude.toFixed(4)}, ${draft.centerLongitude.toFixed(4)}`,
+      region,city:city||"À confirmer",prefecture,zone,neighborhood:txt(address.neighbourhood),
+      boundaryMode:draft.geometryType==="radius"?"radius":draft.geometryType==="administrative"?"administrative":"custom",
+      radiusKm:draft.radiusKm||5,centerLatitude:draft.centerLatitude,centerLongitude:draft.centerLongitude,
+      geometryType:draft.geometryType,geometryGeoJson:draft.geometryGeoJson,areaSquareKm:draft.areaSquareKm,
+      osmDisplayName:draft.osmDisplayName,osmObjectType:draft.osmObjectType,osmObjectId:draft.osmObjectId,
+    })
+    setForm(next);setSelectedTerritoryId("");setDrawerMode("assignment");setDrawerOpen(true);setError("")
+    setNotice("Géométrie réelle capturée depuis OpenStreetMap. Complétez le dossier et soumettez-le au contrôle manager.")
+  },[])
+
+  const updateGeometryFromMap=useCallback(async(territoryId:string,draft:TerritoryMapGeometryDraft)=>{
+    const territory=territoryMetrics.find((item)=>item.id===territoryId)
+    if(!territory)throw new Error("Le territoire sélectionné est introuvable.")
+    setError("");setNotice("")
+    const config:TerritoryConfig={
+      ...territory.config,
+      boundaryMode:draft.geometryType==="radius"?"radius":draft.geometryType==="administrative"?"administrative":"custom",
+      radiusKm:draft.radiusKm||territory.config.radiusKm,centerLatitude:draft.centerLatitude,
+      centerLongitude:draft.centerLongitude,geometryType:draft.geometryType,geometryGeoJson:draft.geometryGeoJson,
+      areaSquareKm:draft.areaSquareKm,osmDisplayName:draft.osmDisplayName||territory.config.osmDisplayName,
+      osmObjectType:draft.osmObjectType||territory.config.osmObjectType,osmObjectId:draft.osmObjectId||territory.config.osmObjectId,
+      lastUpdatedAt:isoNow(),
+    }
+    try{
+      await api(`/api/market-os/ambassadors/territories/${territoryId}`,{
+        method:"PATCH",body:JSON.stringify({
+          notes:serializeNotes(config),center_latitude:config.centerLatitude,center_longitude:config.centerLongitude,
+          radius_meters:Math.round(Math.max(0,config.radiusKm)*1000),geometry_type:config.geometryType,
+          geometry_geojson:config.geometryGeoJson,area_square_km:config.areaSquareKm,
+          osm_display_name:config.osmDisplayName||null,osm_object_type:config.osmObjectType||null,osm_object_id:config.osmObjectId||null,
+          geography_updated_at:isoNow(),
+        }),
+      })
+      try{await api("/api/market-os/ambassadors/audit",{method:"POST",body:JSON.stringify({
+        entity_type:"territories",entity_id:territoryId,action:"territory_geometry_updated",
+        summary:`Périmètre cartographique mis à jour pour ${territory.name}`,
+        payload:{geometry_type:config.geometryType,radius_km:config.radiusKm,area_square_km:config.areaSquareKm,source:"OpenStreetMap"},
+      })})}catch{}
+      await refresh();setSelectedTerritoryId(territoryId);setDrawerMode("territory");setDrawerOpen(true)
+      setNotice("Périmètre géographique enregistré, normalisé et journalisé.")
+    }catch(caught){
+      const message=caught instanceof Error?caught.message:"La mise à jour cartographique a échoué."
+      setError(message);throw caught
+    }
+  },[territoryMetrics,refresh])
 
   return <div data-ambassador-territories-route="enterprise-territory-command-center" className="min-w-0 flex-1 bg-[#f1f4f7] p-4 text-slate-950 lg:p-5">
     <div className={`grid min-w-0 gap-4 ${drawerOpen?"2xl:grid-cols-[minmax(0,1fr)_430px]":"grid-cols-1"}`}>
@@ -807,44 +932,23 @@ export default function AmbassadorTerritoriesRoute() {
           </div>
 
           <Card className="min-w-0 overflow-hidden">
-            <div className="flex flex-col gap-3 border-b border-slate-100 p-4 lg:flex-row lg:items-center lg:justify-between">
-              <div><h2 className="text-lg font-black text-slate-950">Couverture du terrain</h2><div className="mt-2 flex flex-wrap gap-3 text-[9px] font-black uppercase tracking-[0.08em] text-slate-600">
-                {[["Excellente (80%+)","bg-emerald-500"],["Bonne (60–80%)","bg-blue-500"],["Moyenne (40–60%)","bg-amber-500"],["Faible (<40%)","bg-rose-500"],["Non configurée","bg-slate-400"]].map(([label,color])=><span key={label} className="inline-flex items-center gap-1.5"><span className={`h-2 w-2 rounded-sm ${color}`}/>{label}</span>)}
-              </div></div>
-              <div className="flex items-center gap-2">
-                <select value={mapLayer} onChange={e=>setMapLayer(e.target.value as any)} className="h-10 rounded-2xl border border-slate-200 bg-white px-3 text-xs font-black text-slate-950">
-                  <option value="coverage">Couche couverture</option><option value="workload">Couche charge</option><option value="leads">Couche leads</option><option value="conversion">Couche conversion</option>
-                </select>
-                <button type="button" onClick={()=>setModal("layers")} className="flex h-10 w-10 items-center justify-center rounded-2xl border border-slate-200 bg-white"><Layers3 className="h-4 w-4"/></button>
-              </div>
-            </div>
-
-            <div className="relative min-h-[530px] overflow-hidden bg-[radial-gradient(circle_at_28%_42%,#dbeafe_0,#eff6ff_24%,#f8fafc_64%)] p-4">
-              <svg viewBox="0 0 100 104" className="absolute inset-0 h-full w-full" aria-label="Carte opérationnelle simplifiée du Maroc">
-                <defs><linearGradient id="moroccoFill" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#f8fafc"/><stop offset="100%" stopColor="#e2e8f0"/></linearGradient><filter id="mapShadow"><feDropShadow dx="0" dy="2" stdDeviation="2" floodColor="#0f172a" floodOpacity="0.14"/></filter></defs>
-                <path d={MAP_OUTLINE} fill="url(#moroccoFill)" stroke="#94a3b8" strokeWidth="0.55" filter="url(#mapShadow)"/>
-                {[18,28,38,48,58,68,78].map(y=><path key={y} d={`M24 ${y} C38 ${y-5} 52 ${y+4} 66 ${y-2}`} fill="none" stroke="#cbd5e1" strokeWidth="0.25" strokeDasharray="1.5 1.5"/>)}
-              </svg>
-              <div className="absolute inset-0">
-                {filtered.map((t,index)=>{
-                  const point=pointFor(t.city,index),value=mapValue(t)
-                  const color=mapLayer==="coverage"?coverageColor(value):value>=80?"#dc2626":value>=60?"#d97706":value>0?"#2563eb":"#64748b"
-                  return <button key={t.id} type="button" onClick={()=>openDossier(t)} className="group absolute -translate-x-1/2 -translate-y-1/2" style={{left:`${point.x}%`,top:`${point.y}%`}}>
-                    <span className="relative flex h-10 w-10 items-center justify-center rounded-full border-4 border-white text-xs font-black !text-white shadow-[0_8px_20px_rgba(15,23,42,0.28)] transition group-hover:scale-110" style={{backgroundColor:color}}>
-                      {t.activeAmbassadorCount}
-                      {t.pendingAssignments.length?<span className="absolute -right-2 -top-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#0b3159] px-1 text-[9px] font-black !text-white ring-2 ring-white">{t.pendingAssignments.length}</span>:null}
-                    </span>
-                    {showLabels?<span className="mt-1 block max-w-[140px] rounded-xl border border-slate-200 bg-white/95 px-2 py-1 text-[9px] font-black text-slate-950 shadow-lg">{t.city||t.name} · {fmt(value)}{mapLayer==="leads"?"":"%"}</span>:null}
-                  </button>
-                })}
-              </div>
-              <div className="absolute bottom-4 left-4 rounded-2xl border border-slate-200 bg-white/95 p-3 shadow-lg"><p className="text-[9px] font-black uppercase tracking-[0.13em] text-slate-500">Source</p><p className="mt-1 text-xs font-black text-slate-950">Données réelles Ambassador OS</p><p className="mt-1 text-[9px] font-bold text-slate-500">Aucun chiffre injecté.</p></div>
-              <div className="absolute bottom-4 right-4 grid gap-2">
-                <button type="button" onClick={()=>setShowLabels(v=>!v)} className="flex h-10 w-10 items-center justify-center rounded-2xl border border-slate-200 bg-white shadow"><MapPin className="h-4 w-4"/></button>
-                <button type="button" onClick={()=>{setQuery("");setRegionFilter("all");setRiskOnly(false)}} className="flex h-10 w-10 items-center justify-center rounded-2xl border border-slate-200 bg-white shadow"><RefreshCw className="h-4 w-4"/></button>
-              </div>
-              {!loading&&!filtered.length?<div className="absolute inset-0 flex items-center justify-center"><div className="rounded-[24px] border border-slate-200 bg-white/95 p-8 text-center shadow-xl"><MapPin className="mx-auto h-9 w-9 text-blue-600"/><p className="mt-3 text-base font-black text-slate-950">Aucun territoire réel</p><p className="mt-1 text-xs font-semibold text-slate-500">Créez ou importez une zone pour démarrer.</p></div></div>:null}
-            </div>
+            <TerritoryLiveMap
+              territories={mapTerritories}
+              layer={mapLayer}
+              showLabels={showLabels}
+              loading={loading}
+              selectedTerritoryId={selectedTerritoryId}
+              lastSynchronizedAt={snapshot?.updatedAt}
+              onLayerChange={setMapLayer}
+              onShowLabelsChange={setShowLabels}
+              onRefresh={refresh}
+              onTerritoryOpen={(territoryId)=>{
+                const territory=territoryMetrics.find((item)=>item.id===territoryId)
+                if(territory)openDossier(territory)
+              }}
+              onCreateGeometry={prepareGeometryFromMap}
+              onUpdateGeometry={updateGeometryFromMap}
+            />
           </Card>
         </section>
 
@@ -930,8 +1034,14 @@ export default function AmbassadorTerritoriesRoute() {
                   <Field label="Commune / préfecture"><input value={form.prefecture} onChange={e=>setForm(v=>({...v,prefecture:e.target.value}))} className={inputClass}/></Field>
                   <Field label="Quartier / secteur" required><input value={form.zone} onChange={e=>setForm(v=>({...v,zone:e.target.value}))} className={inputClass}/></Field>
                   <Field label="Sous-zone"><input value={form.neighborhood} onChange={e=>setForm(v=>({...v,neighborhood:e.target.value}))} className={inputClass}/></Field>
-                  <Field label="Mode de limite"><select value={form.boundaryMode} onChange={e=>setForm(v=>({...v,boundaryMode:e.target.value as any}))} className={inputClass}><option value="administrative">Limites administratives</option><option value="radius">Rayon</option><option value="custom">Personnalisé</option></select></Field>
-                  <Field label="Rayon km"><input type="number" min="1" value={form.radiusKm} onChange={e=>setForm(v=>({...v,radiusKm:num(e.target.value,5)}))} className={inputClass}/></Field>
+                  <Field label="Mode de limite"><select value={form.boundaryMode} onChange={e=>{const boundaryMode=e.target.value as FormState["boundaryMode"];setForm(v=>({...v,boundaryMode,geometryType:boundaryMode==="radius"?"radius":boundaryMode==="administrative"?"administrative":"polygon"}))}} className={inputClass}><option value="administrative">Limites administratives</option><option value="radius">Rayon</option><option value="custom">Polygone personnalisé</option></select></Field>
+                  <Field label="Rayon km"><input type="number" min="1" step="0.5" value={form.radiusKm} onChange={e=>setForm(v=>({...v,radiusKm:num(e.target.value,5),geometryType:"radius",boundaryMode:"radius",areaSquareKm:Math.PI*Math.pow(num(e.target.value,5),2)}))} className={inputClass}/></Field>
+                  <Field label="Latitude centrale"><input type="number" step="0.000001" value={form.centerLatitude??""} onChange={e=>setForm(v=>({...v,centerLatitude:optNum(e.target.value)}))} placeholder="33.971590" className={inputClass}/></Field>
+                  <Field label="Longitude centrale"><input type="number" step="0.000001" value={form.centerLongitude??""} onChange={e=>setForm(v=>({...v,centerLongitude:optNum(e.target.value)}))} placeholder="-6.849813" className={inputClass}/></Field>
+                  <div className="sm:col-span-2 rounded-2xl border border-blue-200 bg-blue-50 p-4">
+                    <div className="flex items-start justify-between gap-4"><div><p className="text-[9px] font-black uppercase tracking-[0.12em] text-blue-700">Géométrie cartographique</p><p className="mt-1 text-xs font-black text-blue-950">{form.geometryType==="none"?"À définir depuis la carte":form.geometryType==="polygon"?"Polygone réel":form.geometryType==="administrative"?"Limite administrative":"Rayon réel"}</p><p className="mt-1 text-[10px] font-bold leading-5 text-blue-800">{form.osmDisplayName||"Positionnez ou recherchez la zone dans la carte OpenStreetMap."}</p></div><div className="text-right"><p className="text-[9px] font-black uppercase text-blue-700">Surface</p><p className="mt-1 text-lg font-black text-blue-950">{form.areaSquareKm?`${fmt(form.areaSquareKm)} km²`:"—"}</p></div></div>
+                    {form.osmObjectType||form.osmObjectId?<p className="mt-2 text-[9px] font-bold text-blue-700">Référence OSM : {form.osmObjectType||"objet"} {form.osmObjectId||"—"}</p>:null}
+                  </div>
                   <Field label="Ménages adressables"><input type="number" min="0" value={form.addressableHouseholds} onChange={e=>setForm(v=>({...v,addressableHouseholds:num(e.target.value)}))} className={inputClass}/></Field>
                   <Field label="Comptes B2B adressables"><input type="number" min="0" value={form.addressableAccounts} onChange={e=>setForm(v=>({...v,addressableAccounts:num(e.target.value)}))} className={inputClass}/></Field>
                 </div>
@@ -1013,7 +1123,7 @@ export default function AmbassadorTerritoriesRoute() {
     {modal==="import"?<ModalShell title="Importer des zones" subtitle="Import CSV contrôlé, sans seed ni activation automatique. Chaque ligne valide devient un territoire brouillon." icon={FileSpreadsheet} onClose={()=>setModal(null)} width="max-w-6xl"
       footer={<div className="flex items-center justify-between gap-3"><p className="text-xs font-black text-slate-600">{csvRows.length} ligne(s) détectée(s)</p><div className="flex gap-2"><button type="button" onClick={()=>setModal(null)} className="h-11 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-black">Fermer</button><button type="button" onClick={()=>void importZones()} disabled={busy||!csvRows.length} className="inline-flex h-11 items-center gap-2 rounded-2xl bg-blue-600 px-5 text-sm font-black !text-white disabled:bg-slate-200">{busy?<Loader2 className="h-4 w-4 animate-spin"/>:<Upload className="h-4 w-4"/>}Importer en brouillon</button></div></div>}>
       <div className="grid gap-5 lg:grid-cols-[0.8fr_1.2fr]">
-        <Card className="p-5"><h3 className="text-base font-black">Source CSV</h3><p className="mt-2 text-xs font-semibold leading-6 text-slate-500">Colonnes reconnues : name/nom, region, city/ville, zone, prefecture/commune, addressable_households, addressable_accounts, target_ambassadors, target_leads, target_conversions, sla_coverage, manager.</p>
+        <Card className="p-5"><h3 className="text-base font-black">Source CSV</h3><p className="mt-2 text-xs font-semibold leading-6 text-slate-500">Colonnes reconnues : name/nom, region, city/ville, zone, prefecture/commune, latitude, longitude, radius_km, boundary_mode, addressable_households, addressable_accounts, target_ambassadors, target_leads, target_conversions, sla_coverage, manager.</p>
           <textarea value={csvText} onChange={e=>{setCsvText(e.target.value);parseCsv(e.target.value)}} placeholder="name,region,city,zone,target_ambassadors,target_leads,sla_coverage,manager" className={`${textareaClass} mt-4 min-h-[360px] font-mono text-xs`}/>
         </Card>
         <Card className="overflow-hidden"><div className="border-b border-slate-100 p-4"><h3 className="text-base font-black">Prévisualisation</h3></div>
@@ -1041,9 +1151,13 @@ export default function AmbassadorTerritoriesRoute() {
       <div className="grid gap-3 sm:grid-cols-2">{([
         { value: "coverage", label: "Couverture", icon: Target },
         { value: "workload", label: "Charge opérationnelle", icon: Gauge },
-        { value: "leads", label: "Densité de leads", icon: Users },
+        { value: "ambassadors", label: "Ambassadeurs déployés", icon: Users },
+        { value: "missions", label: "Missions ouvertes", icon: MapPin },
+        { value: "leads", label: "Densité de leads", icon: Building2 },
         { value: "conversion", label: "Conversion", icon: BarChart3 },
-      ] satisfies Array<{ value: "coverage" | "workload" | "leads" | "conversion"; label: string; icon: LucideIcon }>).map(({ value, label, icon: Icon }) => <button key={value} type="button" onClick={()=>setMapLayer(value)} className={`rounded-2xl border p-5 text-left ${mapLayer===value?"border-blue-500 bg-blue-50":"border-slate-200 bg-white"}`}><Icon className="h-5 w-5 text-blue-700"/><p className="mt-3 text-sm font-black">{label}</p></button>)}</div>
+        { value: "potential", label: "Potentiel adressable", icon: MapIcon },
+        { value: "risk", label: "Risques territoriaux", icon: AlertTriangle },
+      ] satisfies Array<{ value: TerritoryMapLayer; label: string; icon: LucideIcon }>).map(({ value, label, icon: Icon }) => <button key={value} type="button" onClick={()=>setMapLayer(value)} className={`rounded-2xl border p-5 text-left ${mapLayer===value?"border-blue-500 bg-blue-50":"border-slate-200 bg-white"}`}><Icon className="h-5 w-5 text-blue-700"/><p className="mt-3 text-sm font-black">{label}</p></button>)}</div>
       <div className="mt-4 grid gap-2 sm:grid-cols-2"><button type="button" onClick={()=>setShowLabels(v=>!v)} className={`rounded-2xl border p-4 text-left ${showLabels?"border-emerald-300 bg-emerald-50":"border-slate-200 bg-white"}`}><p className="text-xs font-black">Libellés de carte</p><p className="mt-1 text-[10px] font-bold text-slate-500">{showLabels?"Affichés":"Masqués"}</p></button>
       <button type="button" onClick={()=>setRiskOnly(v=>!v)} className={`rounded-2xl border p-4 text-left ${riskOnly?"border-rose-300 bg-rose-50":"border-slate-200 bg-white"}`}><p className="text-xs font-black">Risques uniquement</p><p className="mt-1 text-[10px] font-bold text-slate-500">{riskOnly?"Actif":"Inactif"}</p></button></div>
     </ModalShell>:null}

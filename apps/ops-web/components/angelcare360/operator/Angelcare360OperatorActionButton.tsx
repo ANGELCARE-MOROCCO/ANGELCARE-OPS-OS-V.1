@@ -1,6 +1,7 @@
 'use client'
 
-import { operatorButtonBase, operatorButtonDanger, operatorButtonDisabled, operatorButtonGhost, operatorButtonSecondary } from './Angelcare360OperatorVisualSystem'
+import { ArrowRight, LockKeyhole, ShieldAlert } from 'lucide-react'
+import styles from './Angelcare360OperatorExperience.module.css'
 
 type Props = {
   label: string
@@ -11,16 +12,23 @@ type Props = {
   type?: 'button' | 'submit'
 }
 
-export default function Angelcare360OperatorActionButton({ label, tone = 'primary', disabled, disabledReason, onClick, type = 'button' }: Props) {
-  const style = disabled
-    ? operatorButtonDisabled
+export default function Angelcare360OperatorActionButton({
+  label,
+  tone = 'primary',
+  disabled,
+  disabledReason,
+  onClick,
+  type = 'button',
+}: Props) {
+  const toneClass = disabled
+    ? styles.actionDisabled
     : tone === 'secondary'
-      ? operatorButtonSecondary
+      ? styles.actionSecondary
       : tone === 'ghost'
-        ? operatorButtonGhost
+        ? styles.actionGhost
         : tone === 'danger'
-          ? operatorButtonDanger
-          : operatorButtonBase
+          ? styles.actionDanger
+          : styles.actionPrimary
 
   return (
     <button
@@ -29,9 +37,11 @@ export default function Angelcare360OperatorActionButton({ label, tone = 'primar
       disabled={disabled}
       title={disabled ? disabledReason || label : label}
       aria-disabled={disabled || undefined}
-      style={style}
+      className={`${styles.actionButton} ${toneClass}`}
     >
-      {label}
+      {disabled ? <LockKeyhole size={13} aria-hidden="true" /> : tone === 'danger' ? <ShieldAlert size={13} aria-hidden="true" /> : null}
+      <span>{label}</span>
+      {!disabled && tone !== 'danger' ? <ArrowRight size={13} aria-hidden="true" /> : null}
     </button>
   )
 }

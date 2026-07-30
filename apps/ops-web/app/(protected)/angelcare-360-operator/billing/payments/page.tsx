@@ -43,7 +43,7 @@ export default async function Angelcare360OperatorPaymentsPage() {
               { name: 'invoiceId', label: 'Facture', kind: 'select', options: invoiceOptions },
               { name: 'paymentReference', label: 'Référence paiement', kind: 'text', required: true },
               { name: 'paymentDate', label: 'Date de paiement', kind: 'date', required: true },
-              { name: 'amountMad', label: 'Montant MAD', kind: 'number', required: true },
+              { name: 'amountMad', label: 'Montant (Dh)', kind: 'number', required: true },
               { name: 'method', label: 'Méthode', kind: 'select', required: true, options: [{ label: 'Virement bancaire', value: 'bank_transfer' }, { label: 'Espèces', value: 'cash' }, { label: 'Chèque', value: 'cheque' }, { label: 'Carte manuelle', value: 'card_manual' }, { label: 'Autre', value: 'other' }] },
               { name: 'status', label: 'Statut', kind: 'select', required: true, options: [{ label: 'En attente', value: 'pending' }, { label: 'Confirmé', value: 'confirmed' }, { label: 'Rejeté', value: 'rejected' }, { label: 'Remboursé', value: 'refunded' }, { label: 'Annulé', value: 'cancelled' }] },
               { name: 'notes', label: 'Notes', kind: 'textarea', rows: 2 },
@@ -103,7 +103,7 @@ export default async function Angelcare360OperatorPaymentsPage() {
           { key: 'invoice_id', label: 'Facture', render: (row) => String((row as Record<string, unknown>).invoice_id || '—') },
           { key: 'status', label: 'Statut', render: (row) => <Angelcare360OperatorStatusBadge status={String((row as Record<string, unknown>).status || '—')} /> },
           { key: 'payment_date', label: 'Date', render: (row) => String((row as Record<string, unknown>).payment_date || '—') },
-          { key: 'amount_mad', label: 'Montant', align: 'right', render: (row) => `${Number((row as Record<string, unknown>).amount_mad || 0).toLocaleString('fr-FR')} MAD` },
+          { key: 'amount_mad', label: 'Montant', align: 'right', render: (row) => `${Number((row as Record<string, unknown>).amount_mad || 0).toLocaleString('fr-FR')} Dh` },
           {
             key: 'actions',
             label: 'Actions',

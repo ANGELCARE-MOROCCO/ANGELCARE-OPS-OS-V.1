@@ -31,7 +31,7 @@ export default async function Angelcare360OperatorBalancesPage() {
           { key: 'display_name', label: 'Client', render: (row) => String((row as Record<string, unknown>).display_name || '—') },
           { key: 'status', label: 'Statut', render: (row) => <Angelcare360OperatorStatusBadge status={String((row as Record<string, unknown>).status || '—')} /> },
           { key: 'lifecycle_stage', label: 'Cycle', render: (row) => String((row as Record<string, unknown>).lifecycle_stage || '—') },
-          { key: 'balance_due_mad', label: 'Solde dû', align: 'right', render: (row) => `${Number((row as Record<string, unknown>).balance_due_mad || 0).toLocaleString('fr-FR')} MAD` },
+          { key: 'balance_due_mad', label: 'Solde dû', align: 'right', render: (row) => `${Number((row as Record<string, unknown>).balance_due_mad || 0).toLocaleString('fr-FR')} Dh` },
           { key: 'support_count', label: 'Tickets', align: 'right', render: (row) => String((row as Record<string, unknown>).support_count || 0) },
         ]}
       />

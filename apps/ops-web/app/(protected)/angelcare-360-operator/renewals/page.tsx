@@ -43,7 +43,7 @@ export default async function Angelcare360OperatorRenewalsPage() {
               { name: 'renewalDate', label: 'Date de renouvellement', kind: 'date', required: true },
               { name: 'status', label: 'Statut', kind: 'select', required: true, options: [{ label: 'À venir', value: 'upcoming' }, { label: 'En discussion', value: 'in_discussion' }, { label: 'Proposition envoyée', value: 'proposal_sent' }, { label: 'Renouvelé', value: 'renewed' }, { label: 'À risque', value: 'at_risk' }, { label: 'Perdu', value: 'lost' }, { label: 'Annulé', value: 'cancelled' }] },
               { name: 'probability', label: 'Probabilité', kind: 'number' },
-              { name: 'expectedAmountMad', label: 'Montant attendu MAD', kind: 'number' },
+              { name: 'expectedAmountMad', label: 'Montant attendu (Dh)', kind: 'number' },
               { name: 'ownerId', label: 'Responsable', kind: 'text' },
               { name: 'notes', label: 'Notes', kind: 'textarea', rows: 3 },
             ],
@@ -73,7 +73,7 @@ export default async function Angelcare360OperatorRenewalsPage() {
           { key: 'renewal_date', label: 'Date', render: (row) => String((row as Record<string, unknown>).renewal_date || '—') },
           { key: 'status', label: 'Statut', render: (row) => <Angelcare360OperatorStatusBadge status={String((row as Record<string, unknown>).status || '—')} /> },
           { key: 'probability', label: 'Probabilité', render: (row) => `${String((row as Record<string, unknown>).probability ?? '—')}%` },
-          { key: 'expected_amount_mad', label: 'Montant attendu', align: 'right', render: (row) => `${Number((row as Record<string, unknown>).expected_amount_mad || 0).toLocaleString('fr-FR')} MAD` },
+          { key: 'expected_amount_mad', label: 'Montant attendu', align: 'right', render: (row) => `${Number((row as Record<string, unknown>).expected_amount_mad || 0).toLocaleString('fr-FR')} Dh` },
         ]}
       />
     </Angelcare360OperatorPageShell>

@@ -144,6 +144,7 @@ export default function Angelcare360OperatorInvoiceRowActions({
       {pendingAction ? (
         <Angelcare360OperatorDrawer
           open
+          variant="finance"
           title={pendingAction === 'send-email' ? 'Envoyer facture email' : 'Créer gate paiement'}
           subtitle={pendingAction === 'send-email'
             ? `Envoi de la facture ${invoiceNumber} au contact de ${clientLabel}.`
@@ -169,7 +170,7 @@ export default function Angelcare360OperatorInvoiceRowActions({
             title={pendingAction === 'send-email' ? 'Confirmation d’envoi' : 'Confirmation de gate'}
             message={pendingAction === 'send-email'
               ? `La facture sera envoyée à ${recipientEmail || 'l’adresse de facturation configurée'} pour le client ${clientLabel}.`
-              : `Le gate ${gateCode} sera créé avec un montant dû de ${balanceDueMad.toLocaleString('fr-FR')} MAD et l’échéance ${dueDate || 'non renseignée'}.`}
+              : `Le gate ${gateCode} sera créé avec un montant dû de ${balanceDueMad.toLocaleString('fr-FR')} Dh et l’échéance ${dueDate || 'non renseignée'}.`}
             confirmLabel={pendingAction === 'send-email' ? 'Confirmer l’envoi' : 'Créer le gate'}
             onConfirm={() => void runCurrentAction()}
             busy={busy}

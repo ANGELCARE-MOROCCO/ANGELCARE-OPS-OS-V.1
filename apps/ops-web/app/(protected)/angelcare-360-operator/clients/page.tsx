@@ -146,8 +146,8 @@ export default async function Angelcare360OperatorClientsPage() {
               { name: 'currentPeriodStart', label: 'Début période', kind: 'date' },
               { name: 'currentPeriodEnd', label: 'Fin période', kind: 'date' },
               { name: 'billingCycle', label: 'Cycle', kind: 'text', required: true, placeholder: 'monthly' },
-              { name: 'billingAmountMad', label: 'Montant MAD', kind: 'number', required: true },
-              { name: 'discountAmountMad', label: 'Remise MAD', kind: 'number' },
+              { name: 'billingAmountMad', label: 'Montant (Dh)', kind: 'number', required: true },
+              { name: 'discountAmountMad', label: 'Remise (Dh)', kind: 'number' },
               { name: 'cancellationReason', label: 'Motif annulation', kind: 'textarea', rows: 2 },
               { name: 'suspendedReason', label: 'Motif suspension', kind: 'textarea', rows: 2 },
             ],
@@ -204,7 +204,7 @@ export default async function Angelcare360OperatorClientsPage() {
           { key: 'lifecycle_stage', label: 'Cycle', render: (row) => String((row as Record<string, unknown>).lifecycle_stage || '—') },
           { key: 'city', label: 'Ville', render: (row) => String((row as Record<string, unknown>).city || '—') },
           { key: 'active_subscription_status', label: 'Abonnement', render: (row) => String((row as Record<string, unknown>).active_subscription_status || '—') },
-          { key: 'balance_due_mad', label: 'Solde dû', align: 'right', render: (row) => `${Number((row as Record<string, unknown>).balance_due_mad || 0).toLocaleString('fr-FR')} MAD` },
+          { key: 'balance_due_mad', label: 'Solde dû', align: 'right', render: (row) => `${Number((row as Record<string, unknown>).balance_due_mad || 0).toLocaleString('fr-FR')} Dh` },
           { key: 'support_count', label: 'Support', align: 'right', render: (row) => String((row as Record<string, unknown>).support_count || 0) },
         ]}
       />

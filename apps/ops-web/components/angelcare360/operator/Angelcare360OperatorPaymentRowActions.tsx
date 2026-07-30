@@ -92,6 +92,7 @@ export default function Angelcare360OperatorPaymentRowActions({
       {pendingAction ? (
         <Angelcare360OperatorDrawer
           open
+          variant="finance"
           title="Envoyer reçu email"
           subtitle={`Envoi du reçu du paiement ${paymentReference}.`}
           onClose={() => {
