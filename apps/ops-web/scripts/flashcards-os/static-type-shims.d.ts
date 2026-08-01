@@ -119,7 +119,6 @@ declare module 'lucide-react' {
   export const X: any
 }
 
-declare module '*.module.css' { const classes: Record<string, string>; export default classes }
 declare module 'bcryptjs' { const bcrypt: { hash(value: string, rounds: number): Promise<string>; compare(value: string, hash: string): Promise<boolean> }; export default bcrypt }
 declare module 'crypto' { const crypto: { randomBytes(size: number): { toString(encoding: string): string } }; export default crypto }
 

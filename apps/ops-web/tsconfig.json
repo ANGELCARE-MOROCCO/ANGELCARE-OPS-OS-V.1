@@ -51,6 +51,8 @@
     ".angelcare_backups/**",
     "deployment",
     "deployment/**",
+    "scripts/homeservice-design",
+    "scripts/homeservice-design/**",
     "scripts/flashcards-os/static-type-shims.d.ts"
   ]
 }
