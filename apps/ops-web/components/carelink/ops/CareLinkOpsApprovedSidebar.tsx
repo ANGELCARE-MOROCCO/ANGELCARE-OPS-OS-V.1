@@ -7,6 +7,7 @@ const CARELINK_OPS_MENU = [
   { label: 'Overview', href: '/carelink-ops' },
   { label: 'Dispatch', href: '/carelink-ops/dispatch' },
   { label: 'Missions', href: '/carelink-ops/missions' },
+  { label: 'Service Design OS', href: '/carelink-ops/service-design' },
   { label: 'Agents', href: '/carelink-ops/agents' },
   { label: 'Schedule', href: '/carelink-ops/schedule' },
   { label: 'Calendar', href: '/carelink-ops/calendar' },

@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": { "noEmit": true, "skipLibCheck": true },
+  "include": [
+    "angelcare-marketplace/css-modules.d.ts",
+    "angelcare-marketplace/homepage-flagship/**/*.ts",
+    "angelcare-marketplace/homepage-flagship/**/*.tsx",
+    "angelcare-marketplace/public-universe/components/GlobalPublicShell.tsx",
+    "angelcare-marketplace/shells/AdminNavigation.tsx",
+    "app/angelcare-marketplace/[locale]/[[...slug]]/page.tsx",
+    "app/angelcare-marketplace/(protected)/admin/experience/homepage/**/*.tsx",
+    "app/api/angelcare-marketplace/homepage/**/*.ts"
+  ],
+  "exclude": ["node_modules", ".next"]
+}

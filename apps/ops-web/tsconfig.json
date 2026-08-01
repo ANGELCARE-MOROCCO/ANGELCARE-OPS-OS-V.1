@@ -50,6 +50,7 @@
     "_archive/**",
     ".angelcare_backups/**",
     "deployment",
-    "deployment/**"
+    "deployment/**",
+    "scripts/flashcards-os/static-type-shims.d.ts"
   ]
 }

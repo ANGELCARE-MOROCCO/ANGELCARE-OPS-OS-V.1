@@ -225,7 +225,10 @@
     "flashcards-os:umz6:hardening": "node scripts/flashcards-os/verify-hardening-umz6.mjs",
     "flashcards-os:umz6:typecheck": "tsc -p tsconfig.flashcards-os-umz6.json --noEmit --pretty false",
     "flashcards-os:umz6:typecheck:static": "tsc -p tsconfig.flashcards-os-umz6.static.json --noEmit --pretty false",
-    "flashcards-os:umz6:gate": "npm run flashcards-os:umz6:verify"
+    "flashcards-os:umz6:gate": "npm run flashcards-os:umz6:verify",
+    "homeservice-design:umz1:verify": "node scripts/homeservice-design/verify-ultra-mega-zip1.mjs",
+    "homeservice-design:verify": "node scripts/homeservice-design/verify-ultra-mega-zip1.mjs",
+    "homeservice-design:umz3:verify": "node scripts/homeservice-design/verify-ultra-mega-zip3.mjs"
   },
   "dependencies": {
     "@google/genai": "^2.12.0",

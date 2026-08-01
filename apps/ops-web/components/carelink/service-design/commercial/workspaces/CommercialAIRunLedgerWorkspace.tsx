@@ -1,0 +1,2 @@
+import{SupportWorkspace}from'./SupportWorkspace'
+export function CommercialAIRunLedgerWorkspace(){return <SupportWorkspace eyebrow="AI Transparency Ledger" title="Registre OpenRouter Free commercial" description="Route, mod\u00e8le gratuit r\u00e9el, dur\u00e9e, tokens, statut et \u00e9chec explicite." primary="Ex\u00e9cutions commerciales" secondary="IA narrative uniquement" variant="ledger" items={[]}/>}

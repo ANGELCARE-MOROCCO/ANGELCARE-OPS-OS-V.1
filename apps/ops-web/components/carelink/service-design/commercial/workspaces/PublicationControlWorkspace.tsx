@@ -1,0 +1,2 @@
+import{SupportWorkspace}from'./SupportWorkspace'
+export function PublicationControlWorkspace(){return <SupportWorkspace eyebrow="Publication Control Room" title="Contr\u00f4le de publication des sellables" description="Publication apr\u00e8s plan approuv\u00e9, co\u00fbts complets, marge valide, termes et autorit\u00e9." primary="Runway de publication" secondary="Gate de publication" variant="control" items={["Plan technique approuvé", "Prix effectif", "Coûts complets", "Marge autorisée", "Termes validés", "Approbation commerciale", "Autorité de publication"]}/>}

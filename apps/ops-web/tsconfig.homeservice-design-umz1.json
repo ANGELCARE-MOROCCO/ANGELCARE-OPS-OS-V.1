@@ -1,0 +1,44 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "es2022"
+    ],
+    "allowJs": false,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "react-jsx",
+    "incremental": false,
+    "baseUrl": ".",
+    "paths": {
+      "@/lib/getUser": [
+        "./scripts/homeservice-design/shims/getUser.ts"
+      ],
+      "@/lib/supabase/server": [
+        "./scripts/homeservice-design/shims/supabaseServer.ts"
+      ],
+      "@/*": [
+        "./*"
+      ]
+    }
+  },
+  "include": [
+    "app/carelink-ops/service-design/**/*.ts",
+    "app/carelink-ops/service-design/**/*.tsx",
+    "app/api/carelink-ops/service-design/**/*.ts",
+    "components/carelink/service-design/**/*.tsx",
+    "lib/homeservice-design/**/*.ts",
+    "types/homeservice-design.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

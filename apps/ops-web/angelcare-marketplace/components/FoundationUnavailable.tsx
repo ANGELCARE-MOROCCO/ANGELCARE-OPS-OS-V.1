@@ -1,5 +1,6 @@
 import { DatabaseZap } from 'lucide-react'
-import { ButtonLink, Card } from '../design-system/ui'
+
+import { ButtonLink } from '../design-system/ui'
 import styles from '../design-system/marketplace.module.css'
 
 export function FoundationUnavailable({
@@ -10,18 +11,32 @@ export function FoundationUnavailable({
   message?: string
 }) {
   return (
-    <Card body={false}>
-      <div className={styles.errorState}>
-        <div>
-          <span className={styles.stateIcon}><DatabaseZap size={26} /></span>
-          <h2 className={styles.stateTitle}>{title}</h2>
-          <p className={styles.stateText}>{message}</p>
-          <div className={styles.stateActions}>
-            <ButtonLink href="/angelcare-marketplace/admin/readiness">Voir les contrôles de préparation</ButtonLink>
-            <ButtonLink href="/angelcare-marketplace" variant="secondary">Retour à l’entrée publique</ButtonLink>
+    <section className={styles.card}>
+      <div>
+        <div className={styles.errorState}>
+          <div>
+            <span className={styles.stateIcon}>
+              <DatabaseZap size={26} />
+            </span>
+
+            <h2 className={styles.stateTitle}>{title}</h2>
+            <p className={styles.stateText}>{message}</p>
+
+            <div className={styles.stateActions}>
+              <ButtonLink href="/angelcare-marketplace/admin/readiness">
+                Voir les contrôles de préparation
+              </ButtonLink>
+
+              <ButtonLink
+                href="/angelcare-marketplace"
+                variant="secondary"
+              >
+                Retour à l’entrée publique
+              </ButtonLink>
+            </div>
           </div>
         </div>
       </div>
-    </Card>
+    </section>
   )
 }

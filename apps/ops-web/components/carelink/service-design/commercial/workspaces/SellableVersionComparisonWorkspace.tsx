@@ -1,0 +1,2 @@
+import{SupportWorkspace}from'./SupportWorkspace'
+export function SellableVersionComparisonWorkspace(){return <SupportWorkspace eyebrow="Version Comparison Theatre" title="Comparaison des versions sellables" description="\u00c9carts regroup\u00e9s par contenu, staffing, s\u00e9curit\u00e9, prix, marge, termes et impact futur." primary="Versions compar\u00e9es" secondary="Cons\u00e9quences de changement" variant="theatre" items={["Promesse", "Contenu technique", "Staffing", "Sécurité", "Prix & marge", "Conditions"]}/>}
