@@ -1,0 +1,17 @@
+import { NextRequest } from 'next/server'
+import { acContext, audit, fail, hasAccountCapability, ok } from '@/lib/ac-whatsapp/server'
+export async function POST(request:NextRequest,{params}:{params:Promise<{id:string}>}){
+ const context=await acContext(request,'ac-whatsapp.campaign.launch');if('error'in context)return context.error;const {id}=await params
+ const campaign=await context.supabase.from('ac_whatsapp_campaigns').select('*,account:ac_whatsapp_accounts(*)').eq('id',id).maybeSingle();if(campaign.error)return fail(campaign.error.message,500);if(!campaign.data)return fail('CAMPAIGN_NOT_FOUND',404)
+ if(!hasAccountCapability(context,campaign.data.account_id,'campaign'))return fail('ACCOUNT_CAMPAIGN_ACCESS_DENIED',403)
+ const account:any=campaign.data.account;if(!account?.openwa_session_id)return fail('ACCOUNT_SESSION_NOT_CONFIGURED',409);if(account.campaigns_enabled===false||account.bulk_messaging_enabled===false)return fail('CAMPAIGNS_DISABLED_FOR_ACCOUNT',409);if(campaign.data.campaign_type==='cold_prospecting'&&account.cold_prospecting_enabled===false)return fail('COLD_PROSPECTING_DISABLED_FOR_ACCOUNT',409)
+ const recipients=await context.supabase.from('ac_whatsapp_campaign_recipients').select('*,contact:ac_whatsapp_contacts(*)').eq('campaign_id',id).in('status',['pending','failed']);if(recipients.error)return fail(recipients.error.message,500);if(!recipients.data?.length)return fail('NO_ELIGIBLE_RECIPIENTS',409)
+ const stopList=await context.supabase.from('ac_whatsapp_stop_list').select('contact_id,whatsapp_id').eq('active',true);if(stopList.error)return fail(stopList.error.message,500);const blockedContacts=new Set((stopList.data||[]).map((x:any)=>x.contact_id).filter(Boolean));const blockedIds=new Set((stopList.data||[]).map((x:any)=>x.whatsapp_id).filter(Boolean))
+ const eligible=recipients.data.filter((r:any)=>r.contact?.whatsapp_id&&!blockedContacts.has(r.contact_id)&&!blockedIds.has(r.contact.whatsapp_id));const excluded=recipients.data.filter((r:any)=>!eligible.includes(r))
+ if(excluded.length)await context.supabase.from('ac_whatsapp_campaign_recipients').update({status:'excluded',failure_reason:'STOP_LIST_OR_INVALID_CHAT_ID'}).in('id',excluded.map((x:any)=>x.id))
+ if(!eligible.length)return fail('NO_ELIGIBLE_RECIPIENTS_AFTER_EXCLUSIONS',409)
+ const now=Date.now();const pacing=campaign.data.pacing_config||{};const delay=Math.max(1000,Number(pacing.delay_ms||2500));const outbox=eligible.map((r:any,index:number)=>({client_message_id:crypto.randomUUID(),account_id:campaign.data.account_id,contact_id:r.contact_id,campaign_id:id,campaign_recipient_id:r.id,message_type:'text',chat_id:r.contact.whatsapp_id,body:r.rendered_body||campaign.data.message_body,status:'queued',priority:60,available_at:new Date(now+index*delay).toISOString(),created_by:context.user.id}))
+ const inserted=await context.supabase.from('ac_whatsapp_outbox').insert(outbox);if(inserted.error)return fail(inserted.error.message,500)
+ await Promise.all([context.supabase.from('ac_whatsapp_campaign_recipients').update({status:'queued'}).in('id',eligible.map((x:any)=>x.id)),context.supabase.from('ac_whatsapp_campaigns').update({status:'running',queued_count:outbox.length,started_at:new Date(now).toISOString(),updated_by:context.user.id}).eq('id',id)])
+ await audit(context,{action:'campaign.launch',entityType:'campaign',entityId:id,newState:{queued:outbox.length,excluded:excluded.length}});return ok({campaignId:id,queued:outbox.length,excluded:excluded.length,status:'running'})
+}

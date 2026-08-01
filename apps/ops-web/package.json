@@ -228,7 +228,8 @@
     "flashcards-os:umz6:gate": "npm run flashcards-os:umz6:verify",
     "homeservice-design:umz1:verify": "node scripts/homeservice-design/verify-ultra-mega-zip1.mjs",
     "homeservice-design:verify": "node scripts/homeservice-design/verify-ultra-mega-zip1.mjs",
-    "homeservice-design:umz3:verify": "node scripts/homeservice-design/verify-ultra-mega-zip3.mjs"
+    "homeservice-design:umz3:verify": "node scripts/homeservice-design/verify-ultra-mega-zip3.mjs",
+    "homeservice-design:umz4:verify": "node scripts/homeservice-design/verify-ultra-mega-zip4.mjs"
   },
   "dependencies": {
     "@google/genai": "^2.12.0",

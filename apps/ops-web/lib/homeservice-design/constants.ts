@@ -36,7 +36,14 @@ export const HSD_CONTEXT_NAV = {
   ],
   planning: [{ label: 'Runway de planification', href: `${HSD_ROUTE_ROOT}/planning` }],
   offers: [{ label: 'Runway commercial', href: `${HSD_ROUTE_ROOT}/offers` }],
-  vitrine: [{ label: 'Gouvernance vitrine', href: `${HSD_ROUTE_ROOT}/vitrine` }],
+  vitrine: [
+    { label: 'Vitrine B2C', href: `${HSD_ROUTE_ROOT}/vitrine` },
+    { label: 'Vitrine B2B', href: `${HSD_ROUTE_ROOT}/vitrine/b2b` },
+    { label: 'Handoffs CARELINK', href: `${HSD_ROUTE_ROOT}/handoffs` },
+    { label: 'Préflight', href: `${HSD_ROUTE_ROOT}/handoffs/preflight` },
+    { label: 'Ledger', href: `${HSD_ROUTE_ROOT}/handoffs/ledger` },
+    { label: 'Réconciliation', href: `${HSD_ROUTE_ROOT}/handoffs/reconciliation` },
+  ],
 } as const
 
 export const HSD_DOSSIER_SECTIONS = [

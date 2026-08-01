@@ -1,0 +1,1 @@
+import{get,post}from'@/lib/homeservice-handoff/server/api-command';export const dynamic='force-dynamic';export async function GET(){return get('handoffs')}export async function POST(r:Request){return post('handoffs',r)}

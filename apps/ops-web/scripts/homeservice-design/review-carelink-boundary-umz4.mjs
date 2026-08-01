@@ -1,0 +1,10 @@
+import fs from'node:fs';import path from'node:path';const root=process.cwd();let p=0,f=0;const read=x=>fs.readFileSync(path.join(root,x),'utf8'),check=(n,v)=>{console.log(`${v?'PASS':'FAIL'}  ${n}`);v?p++:f++};
+check("no browser mission insert",!Array.from(fs.readdirSync(path.join(root,'components/carelink/service-design/handoff/workspaces'))).some(x=>read('components/carelink/service-design/handoff/workspaces/'+x).includes(".from('missions')")));
+check("server-only mission projection",read('lib/homeservice-handoff/server/repository.ts').includes("patchMissionOrder"));
+check("CARELINK assignment untouched",!read('lib/homeservice-handoff/server/repository.ts').includes('caregiver_id:'));
+check("Tavily absent from handoff runtime",!Array.from(fs.readdirSync(path.join(root,'lib/homeservice-handoff/server'))).some(x=>read('lib/homeservice-handoff/server/'+x).toLowerCase().includes('tavily')));
+check("OpenRouter advisory route fixed",read('lib/homeservice-handoff/server/openrouter-free.ts').includes('model:FREE_ROUTE')&&read('lib/homeservice-handoff/constants.ts').includes("openrouter/free"));
+check("no named AI model identifiers",!/(openai\/|anthropic\/|google\/gemini|claude|gpt-)/i.test(Array.from(fs.readdirSync(path.join(root,'lib/homeservice-handoff/server'))).map(x=>read('lib/homeservice-handoff/server/'+x)).join('\n')));
+check("no synthetic AI success",read('lib/homeservice-handoff/server/openrouter-free.ts').includes('Aucun brief artificiel'));
+check("AI cannot commit mission",!read('lib/homeservice-handoff/server/openrouter-free.ts').includes('hsd_commit_carelink_handoff_core'));
+console.log(`\n${p}/${p+f} checks passed.`);if(f)process.exit(1);

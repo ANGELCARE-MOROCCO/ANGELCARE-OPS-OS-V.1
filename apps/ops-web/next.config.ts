@@ -2,6 +2,9 @@ import type { NextConfig } from "next";
 import path from "path";
 
 const nextConfig: NextConfig = {
+  // Disabled until the Next 16 next/link ReactNode typing defect is resolved.
+  typedRoutes: false,
+
   // AC360_BUILD_STABILITY_LOCK
   // Prevent Vercel/Next webpack cache serialization crashes caused by very large AC360 French cockpit bundles.
   experimental: {

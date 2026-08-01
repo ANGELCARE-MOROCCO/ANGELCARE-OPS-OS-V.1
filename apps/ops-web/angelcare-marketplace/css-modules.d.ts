@@ -1,4 +1,1 @@
-declare module '*.module.css' {
-  const classes: Readonly<Record<string, string>>
-  export default classes
-}
+// CSS Module declarations are provided by Next.js through next-env.d.ts.

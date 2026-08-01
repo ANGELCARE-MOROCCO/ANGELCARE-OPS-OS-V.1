@@ -1,0 +1,2 @@
+import{PreflightTheatreWorkspace}from'@/components/carelink/service-design/handoff/workspaces/PreflightTheatreWorkspace';import{HandoffActionConsole}from'@/components/carelink/service-design/handoff/HandoffActionConsole'
+export default async function Page({params}:{params:Promise<{handoffId:string}>}){const{id}= {id:(await params).handoffId};return <div className="space-y-6"><PreflightTheatreWorkspace/><HandoffActionConsole handoffId={id} action="preflight" label="Exécuter le préflight de ce dossier" permissionHint="run_handoff_preflight"/></div>}

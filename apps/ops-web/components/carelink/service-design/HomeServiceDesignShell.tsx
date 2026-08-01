@@ -13,7 +13,7 @@ function masterKey(pathname: string) {
   if (pathname.startsWith(`${HSD_ROUTE_ROOT}/standards`)) return 'standards'
   if (pathname.startsWith(`${HSD_ROUTE_ROOT}/planning`)) return 'planning'
   if (pathname.startsWith(`${HSD_ROUTE_ROOT}/offers`)) return 'offers'
-  if (pathname.startsWith(`${HSD_ROUTE_ROOT}/vitrine`)) return 'vitrine'
+  if (pathname.startsWith(`${HSD_ROUTE_ROOT}/vitrine`) || pathname.startsWith(`${HSD_ROUTE_ROOT}/handoffs`)) return 'vitrine'
   return 'command'
 }
 
@@ -40,6 +40,8 @@ export function HomeServiceDesignShell({ children, databaseReady = true, pending
     { label: 'Importer une configuration CSV', href: `${HSD_ROUTE_ROOT}/standards/imports`, description: 'Stager, valider et décider un lot.' },
     { label: 'Voir les validations', href: `${HSD_ROUTE_ROOT}/command/approvals`, description: 'Décisions techniques et commerciales.' },
     { label: 'Rechercher dans HomeService Design', href: `${HSD_ROUTE_ROOT}/command/search`, description: 'Catégories, règles, activités, risques et compétences.' },
+    { label: 'Préparer une transmission CARELINK', href: `${HSD_ROUTE_ROOT}/handoffs/new`, description: 'Transformer un sellable publié en blueprint opérationnel.' },
+    { label: 'Réconcilier les missions CARELINK', href: `${HSD_ROUTE_ROOT}/handoffs/reconciliation`, description: 'Comparer snapshot, parent, sous-missions, programmes et contrôles.' },
   ].filter((item) => `${item.label} ${item.description}`.toLowerCase().includes(query.toLowerCase())), [query])
 
   return (
