@@ -1,0 +1,2 @@
+import { requireMarketplacePageContext } from '@/angelcare-marketplace/auth/context';import { QuoteBasketBoard } from '@/angelcare-marketplace/marketplace-core/components/QuoteBasketBoard';import { listQuoteBaskets } from '@/angelcare-marketplace/marketplace-core/repository'
+export default async function Page(){const context=await requireMarketplacePageContext('marketplace.quote_basket.view');return <QuoteBasketBoard baskets={await listQuoteBaskets(context)}/>}

@@ -13,6 +13,7 @@ import AiDirectorUniverseShell from '../ai-director-universe/AiDirectorUniverseS
 import styles from './bulk8-ai.module.css'
 import { Boundary, EmptyState, ErrorState, LoadingState, StateBadge } from './bulk8-ui'
 import { authorityLabels, dateTime, list, object, shortId, text, type Bulk8View } from './bulk8-ai-model'
+import { contentCommandRequest } from '@/components/market-os/content-command/runtime/content-command-runtime'
 
 const BASE='/market-os/content-command-center/ai-director'
 
@@ -25,12 +26,7 @@ type RuntimeProviderDossierRecord=Record<string,unknown>&{id?:unknown;name?:unkn
 type RuntimeSnapshot={capabilities?:{capabilities?:RuntimeCapabilityRecord[]};assignments:RuntimeAssignmentRecord[];dossiers:RuntimeProviderDossierRecord[]}
 type RuntimeDialog={kind:'retire'|'edit'|'override'|'delete'|'dossier-edit'|'dossier-delete';record?:Record<string,unknown>}|null
 
-async function api<T>(path:string,init?:RequestInit):Promise<T>{
-  const response=await fetch(path,{credentials:'include',cache:'no-store',...init,headers:{Accept:'application/json',...(init?.body?{'Content-Type':'application/json'}:{}),...(init?.headers||{})}})
-  const payload=await response.json().catch(()=>({}))
-  if(!response.ok || payload.ok===false) throw new Error(payload.error||`HTTP_${response.status}`)
-  return payload as T
-}
+const api=contentCommandRequest
 function useApi<T>(loader:()=>Promise<T>,deps:React.DependencyList=[]){
   const [state,setState]=React.useState<ApiState<T>>({loading:true,error:'',data:null})
   const refresh=React.useCallback(async()=>{setState(s=>({...s,loading:true,error:''}));try{setState({loading:false,error:'',data:await loader()})}catch(error){setState({loading:false,error:error instanceof Error?error.message:'Erreur inconnue',data:null})}},deps)

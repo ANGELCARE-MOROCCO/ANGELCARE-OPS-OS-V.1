@@ -1,0 +1,5 @@
+import Link from 'next/link'
+import { requireMarketplacePageContext } from '@/angelcare-marketplace/auth/context'
+import { listMissions } from '@/angelcare-marketplace/family-experience/repository'
+import styles from '@/angelcare-marketplace/family-experience/family.module.css'
+export default async function Page(){const context=await requireMarketplacePageContext('marketplace.family.missions.view');const items=await listMissions(context);return <section className={styles.panel}><header className={styles.panelHeader}><div><h1>Missions</h1><p>Déroulement, preuves visibles et rapports publiés.</p></div></header><div className={styles.list}>{items.map(item=><Link className={styles.listRow} href={`/angelcare-marketplace/family/missions/${item.id}`} key={item.id}><div><div className={styles.listTitle}>{item.service_type}</div><div className={styles.listMeta}>{item.public_reference} · {item.starts_at?new Date(item.starts_at).toLocaleString('fr-FR'):'Planification en cours'}</div></div><span className={styles.status} data-status={item.status}>{item.status}</span></Link>)}</div></section>}

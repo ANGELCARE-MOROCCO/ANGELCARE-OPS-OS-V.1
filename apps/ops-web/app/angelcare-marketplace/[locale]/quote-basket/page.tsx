@@ -1,0 +1,2 @@
+import Link from 'next/link'
+export default function Page(){return <main style={{maxWidth:900,margin:'0 auto',padding:'70px 24px'}}><p style={{letterSpacing:'.18em',fontWeight:800,color:'#a51d2a'}}>QUOTE BASKET</p><h1 style={{fontSize:48,color:'#071d3d'}}>Préparer une demande multi-offres</h1><p>Le panier persistant est créé à la première sélection d’une offre publiée. Aucun prix ni disponibilité n’est simulé.</p><Link href="/angelcare-marketplace/fr/marketplace">Retour au Marketplace</Link></main>}

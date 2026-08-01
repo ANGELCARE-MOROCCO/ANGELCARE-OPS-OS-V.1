@@ -1,0 +1,5 @@
+import { NextResponse } from 'next/server'
+import { assertFlashcardsApiAccess } from '@/lib/flashcards-os/server/access'
+import { actorFromUser } from '@/lib/flashcards-os/production/server/repository'
+import { registerSourcePackage } from '@/lib/flashcards-os/production/server/asset-service'
+export async function POST(request:Request){const access=await assertFlashcardsApiAccess('flashcards_os.upload_sources');if(!access.ok)return NextResponse.json({error:access.message},{status:access.status});try{const body=await request.json();return NextResponse.json(await registerSourcePackage({collectionId:String(body.collectionId||''),commandId:String(body.commandId||''),externalJobId:String(body.externalJobId||''),producer:String(body.producer||''),environment:String(body.environment||''),storageObjectIds:Array.isArray(body.storageObjectIds)?body.storageObjectIds.map(String):[],manifestComplete:Boolean(body.manifestComplete)},actorFromUser(access.user)),{status:201})}catch(error){return NextResponse.json({error:error instanceof Error?error.message:'Source package registration failed.'},{status:400})}}

@@ -76,7 +76,7 @@ export default async function Angelcare360OperatorTenantsPage() {
         emptyDescription="Aucun espace client n’est encore lié."
         rowKey={(row) => String((row as Record<string, unknown>).id)}
         columns={[
-          { key: 'tenant_slug', label: 'Slug', render: (row) => String((row as Record<string, unknown>).tenant_slug || '—') },
+          { key: 'tenant_slug', label: 'Tenant Twin', render: (row) => <Link href={`/angelcare-360-operator/tenants/${String((row as Record<string, unknown>).id)}`} style={entityLinkStyle}>{String((row as Record<string, unknown>).tenant_slug || '—')}</Link> },
           { key: 'environment', label: 'Environnement', render: (row) => String((row as Record<string, unknown>).environment || '—') },
           { key: 'status', label: 'Statut', render: (row) => <Angelcare360OperatorStatusBadge status={String((row as Record<string, unknown>).status || '—')} /> },
           { key: 'provisioning_status', label: 'Provisioning', render: (row) => String((row as Record<string, unknown>).provisioning_status || '—') },
@@ -96,4 +96,13 @@ const linkStyle: React.CSSProperties = {
   textDecoration: 'none',
   padding: '10px 14px',
   fontWeight: 800,
+}
+
+const entityLinkStyle: React.CSSProperties = {
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: 6,
+  color: '#1d4ed8',
+  fontWeight: 900,
+  textDecoration: 'none',
 }

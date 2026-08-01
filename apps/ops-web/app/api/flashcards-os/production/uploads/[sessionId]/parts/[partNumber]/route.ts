@@ -1,0 +1,5 @@
+import { NextResponse } from 'next/server'
+import { assertFlashcardsApiAccess } from '@/lib/flashcards-os/server/access'
+import { actorFromUser } from '@/lib/flashcards-os/production/server/repository'
+import { uploadPart } from '@/lib/flashcards-os/production/server/vault-service'
+export async function PUT(request:Request,{params}:{params:Promise<{sessionId:string;partNumber:string}>}){const access=await assertFlashcardsApiAccess('flashcards_os.upload_deliverables');if(!access.ok)return NextResponse.json({error:access.message},{status:access.status});try{const {sessionId,partNumber}=await params;const checksum=request.headers.get('x-part-sha256')||'';if(!/^[a-f0-9]{64}$/i.test(checksum))throw new Error('Valid x-part-sha256 header is required.');const bytes=new Uint8Array(await request.arrayBuffer());return NextResponse.json(await uploadPart(decodeURIComponent(sessionId),Number(partNumber),bytes,checksum,actorFromUser(access.user)))}catch(error){return NextResponse.json({error:error instanceof Error?error.message:'Chunk upload failed.'},{status:400})}}

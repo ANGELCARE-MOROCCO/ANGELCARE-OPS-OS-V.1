@@ -1,0 +1,4 @@
+import { NextResponse } from 'next/server'
+import { assertFlashcardsApiAccess } from '@/lib/flashcards-os/server/access'
+import { actorFromUser, publishReadyPlan } from '@/lib/flashcards-os/solutions/server/repository'
+export async function POST(request:Request,{params}:{params:Promise<{planId:string}>}){const body=await request.json().catch(()=>({}));const permission=body.universe==='b2b'?'flashcards_os.publish_b2b_programmes':'flashcards_os.publish_b2c_plans';const access=await assertFlashcardsApiAccess(permission);if(!access.ok)return NextResponse.json({error:access.message},{status:access.status});try{const {planId}=await params;return NextResponse.json(await publishReadyPlan(planId,actorFromUser(access.user)))}catch(error){return NextResponse.json({error:error instanceof Error?error.message:'Ready plan publication failed.'},{status:400})}}

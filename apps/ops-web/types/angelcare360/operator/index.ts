@@ -170,6 +170,7 @@ export interface Angelcare360OperatorSubscriptionRecord {
   client_id: string
   tenant_id?: string | null
   plan_id: string
+  package_version_id?: string | null
   subscription_code: string
   status: Angelcare360OperatorSubscriptionStatus | string
   start_date: string
@@ -480,3 +481,20 @@ export interface Angelcare360OperatorNavigationSection {
   items: Angelcare360OperatorNavigationItem[]
 }
 
+export * from './product-kernel'
+
+export type {
+  GrowthMode,
+  GrowthSourceState,
+  GrowthProspectRecord,
+  GrowthContactRecord,
+  GrowthOpportunityRecord,
+  GrowthOfferRecord,
+  GrowthInteractionRecord,
+  GrowthExpansionRecord,
+  GrowthInterventionRecord,
+  GrowthMetric,
+  GrowthSourceReport,
+  GrowthProductOption,
+  GrowthWorkspaceSnapshot,
+} from './growth'

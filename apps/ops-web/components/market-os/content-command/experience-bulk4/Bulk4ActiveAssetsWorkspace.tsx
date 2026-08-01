@@ -20,6 +20,7 @@ import {
 } from "lucide-react"
 import { useBulk4Registry } from "./bulk4-api"
 import type { CreativeAssetRecord } from "./bulk4-types"
+import { ContentMediaPreview, contentMediaSourceFromAsset } from "../media-preview/ContentMediaPreview"
 import { Bulk4BrandCrown, Bulk4TruthState, EmptyCreativeState, SectionTitle, TonePill, styles } from "./Bulk4Shared"
 
 function metadataString(asset: CreativeAssetRecord, key: string) {
@@ -101,7 +102,7 @@ export default function Bulk4ActiveAssetsWorkspace() {
       <div className={styles.operationalShelf}>
         <SectionTitle eyebrow="TRUSTED OPERATIONAL SHELF" title={`${visible.length} actif(s) dans « ${shelf} »`} description="La readiness est dérivée de champs observables: statut, source, droits, template, dossier et expiration. Aucun score artificiel." />
         {visible.length ? <div className={styles.operationalAssetGrid}>{visible.map(({ asset, truth }) => <button key={asset.id} aria-pressed={selected?.id === asset.id} onClick={() => setSelectedId(asset.id)}>
-          <div className={styles.operationalPreview}>{asset.preview_url || metadataString(asset, "sourceUrl") ? <img src={asset.preview_url || metadataString(asset, "sourceUrl")} alt={`Aperçu ${asset.title}`}/> : <FileImage/>}<span>{asset.family}</span></div>
+          <div className={styles.operationalPreview}><ContentMediaPreview source={contentMediaSourceFromAsset(asset)} mode="card" interactive={false}/><span>{asset.family}</span></div>
           <header><TonePill tone={truth.ready ? "success" : truth.expired ? "danger" : "warning"}>{truth.ready ? "Ready now" : truth.expired ? "Expired" : `${truth.missing.length} restriction(s)`}</TonePill>{truth.rights ? <ShieldCheck/> : <ShieldAlert/>}</header>
           <strong>{asset.title}</strong><p>{asset.channel || "Canal absent"} · {metadataString(asset, "version") || "Version absente"}</p>
           <footer><small>{truth.expiration ? `Expire: ${truth.expiration}` : "Sans expiration documentée"}</small><ArrowRight/></footer>
@@ -111,7 +112,7 @@ export default function Bulk4ActiveAssetsWorkspace() {
       <aside className={styles.operationalInspector}>
         {selected && selectedTruth ? <>
           <header><span><ShieldCheck/><small>OPERATIONAL ASSET INSPECTOR</small></span><button onClick={() => void registry.refresh()}><RefreshCcw/></button></header>
-          <div className={styles.operationalInspectorPreview}>{selected.preview_url || metadataString(selected, "sourceUrl") ? <img src={selected.preview_url || metadataString(selected, "sourceUrl")} alt={`Aperçu ${selected.title}`}/> : <ImageIcon/>}</div>
+          <div className={styles.operationalInspectorPreview}><ContentMediaPreview source={contentMediaSourceFromAsset(selected)} mode="inspector" fit="contain"/></div>
           <section><small>{selected.id}</small><h2>{selected.title}</h2><p>{selected.category || "Catégorie non documentée"} · {selected.channel || "Canal non documenté"}</p><TonePill tone={selectedTruth.ready ? "success" : selectedTruth.expired ? "danger" : "warning"}>{selectedTruth.ready ? "Utilisable maintenant" : "Usage sous restriction"}</TonePill></section>
           <div className={styles.readinessDimensions}>{[
             ["Version approuvée", selectedTruth.approved],

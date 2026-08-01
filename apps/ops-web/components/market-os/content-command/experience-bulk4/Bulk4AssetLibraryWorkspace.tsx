@@ -27,9 +27,10 @@ import {
   Sparkles,
   Trash2,
 } from "lucide-react"
-import { loadStore } from "../content-command-system"
+import { useContentStore } from "../content-command-system"
 import { useBulk4Registry } from "./bulk4-api"
 import type { CreativeAssetRecord } from "./bulk4-types"
+import { ContentMediaPreview, contentMediaSourceFromAsset, detectContentMediaKind, type ContentMediaKind } from "../media-preview/ContentMediaPreview"
 import { Bulk4BrandCrown, Bulk4TruthState, EmptyCreativeState, SectionTitle, TonePill, styles } from "./Bulk4Shared"
 
 type View = "visual" | "register" | "relationships"
@@ -51,10 +52,12 @@ function normalizeStatus(status: string) {
 
 export default function Bulk4AssetLibraryWorkspace() {
   const registry = useBulk4Registry()
-  const [store] = React.useState(() => loadStore())
+  const { store } = useContentStore()
   const [view, setView] = React.useState<View>("visual")
   const [filter, setFilter] = React.useState<FilterMode>("all")
   const [query, setQuery] = React.useState("")
+  const [cardScale, setCardScale] = React.useState<"compact" | "standard" | "large" | "native">("standard")
+  const [mediaFilter, setMediaFilter] = React.useState<"all" | ContentMediaKind>("all")
   const [selectedId, setSelectedId] = React.useState<string>("")
   const [notice, setNotice] = React.useState("")
   const [busy, setBusy] = React.useState(false)
@@ -83,6 +86,8 @@ export default function Bulk4AssetLibraryWorkspace() {
     const source = asset.storage_path || asset.preview_url || metadataString(asset, "sourceUrl")
     const rights = metadataString(asset, "rightsState")
     const expiration = metadataString(asset, "expirationDate")
+    const mediaKind = detectContentMediaKind(contentMediaSourceFromAsset(asset))
+    if (mediaFilter !== "all" && mediaKind !== mediaFilter) return false
     if (filter === "approved" && !/approved|active/i.test(asset.status)) return false
     if (filter === "draft" && !/draft|working/i.test(asset.status)) return false
     if (filter === "revision" && !/revision|correction/i.test(asset.status)) return false
@@ -130,6 +135,8 @@ export default function Bulk4AssetLibraryWorkspace() {
     <section className={styles.assetCommandBar}>
       <label><Search/><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Rechercher titre, code, template, dossier, owner, canal…"/></label>
       <div><Filter/><select value={filter} onChange={(event) => setFilter(event.target.value as FilterMode)}><option value="all">Tous les actifs</option><option value="approved">Approuvés / actifs</option><option value="draft">Working / draft</option><option value="revision">Correction</option><option value="missing-source">Source absente</option><option value="rights-risk">Droits à traiter</option><option value="expiring">Expiration documentée</option></select></div>
+      <div><FileImage/><select aria-label="Filtrer par format média" value={mediaFilter} onChange={(event) => setMediaFilter(event.target.value as typeof mediaFilter)}><option value="all">Tous les formats</option><option value="image">Images</option><option value="pdf">PDF</option><option value="video">Vidéos</option><option value="audio">Audio</option><option value="document">Documents</option><option value="presentation">Présentations</option><option value="spreadsheet">Tableurs</option><option value="web">Liens web</option><option value="archive">Archives</option><option value="unknown">Format à qualifier</option></select></div>
+      <div><Grid3X3/><select aria-label="Taille des aperçus" value={cardScale} onChange={(event) => setCardScale(event.target.value as typeof cardScale)}><option value="compact">Cartes compactes</option><option value="standard">Cartes standard</option><option value="large">Grand aperçu</option><option value="native">Ratio natif</option></select></div>
       <div role="tablist"><button aria-selected={view === "visual"} onClick={() => setView("visual")}><Grid3X3/> Discovery</button><button aria-selected={view === "register"} onClick={() => setView("register")}><List/> Registre</button><button aria-selected={view === "relationships"} onClick={() => setView("relationships")}><Network/> Relations</button></div>
       <Link href="/market-os/content-command-center/studio/quick-create"><Sparkles/> Nouvelle production</Link>
     </section>
@@ -137,8 +144,8 @@ export default function Bulk4AssetLibraryWorkspace() {
     <section className={styles.assetLibraryDesk}>
       <div className={styles.assetResults}>
         <SectionTitle eyebrow={view === "visual" ? "DISCOVERY CANVAS" : view === "register" ? "ENTERPRISE REGISTER" : "RELATIONSHIP GRAPH"} title={`${visible.length} actif(s) dans cette vue`} description="Toutes les vues utilisent les mêmes records. Les assets legacy restent explicitement identifiés et non mutables par l’API moderne." />
-        {!visible.length ? <EmptyCreativeState title="Aucun actif visible" detail="Modifiez la recherche ou le filtre, ou créez une production gouvernée depuis Quick Create." href="/market-os/content-command-center/studio/quick-create" action="Lancer une production"/> : view === "visual" ? <div className={styles.assetDiscoveryGrid}>{visible.map((asset) => { const status = normalizeStatus(asset.status); const source = asset.preview_url || metadataString(asset, "sourceUrl"); return <button key={asset.id} type="button" aria-pressed={selected?.id === asset.id} onClick={() => setSelectedId(asset.id)}>
-          <div className={styles.assetVisual}>{source ? <img src={source} alt={`Aperçu ${asset.title}`}/> : <><FileImage/><span>Aperçu non documenté</span></>}<small>{asset.family}</small></div>
+        {!visible.length ? <EmptyCreativeState title="Aucun actif visible" detail="Modifiez la recherche ou le filtre, ou créez une production gouvernée depuis Quick Create." href="/market-os/content-command-center/studio/quick-create" action="Lancer une production"/> : view === "visual" ? <div className={styles.assetDiscoveryGrid} data-card-scale={cardScale}>{visible.map((asset) => { const status = normalizeStatus(asset.status); return <button key={asset.id} type="button" aria-pressed={selected?.id === asset.id} onClick={() => setSelectedId(asset.id)}>
+          <div className={styles.assetVisual}><ContentMediaPreview source={contentMediaSourceFromAsset(asset)} mode={cardScale === "compact" ? "compact" : "card"} fit={cardScale === "native" ? "contain" : "cover"} interactive={false}/><small>{asset.family}</small></div>
           <header><TonePill tone={status.tone}>{status.label}</TonePill>{metadataString(asset, "rightsState") === "valid" ? <ShieldCheck/> : <ShieldAlert/>}</header>
           <strong>{asset.title}</strong><p>{asset.category || "Sans catégorie"} · {asset.channel || "Canal absent"}</p><footer><span>{asset.owner || "Owner absent"}</span><small>{metadataString(asset, "version") || "Version non documentée"}</small></footer>
         </button>})}</div> : view === "register" ? <div className={styles.assetRegister}><table><thead><tr>{["Asset","Famille","Version","Owner","Source","Droits","Statut","Dossier"].map((label) => <th key={label}>{label}</th>)}</tr></thead><tbody>{visible.map((asset) => <tr key={asset.id} onClick={() => setSelectedId(asset.id)}><td><strong>{asset.title}</strong><small>{asset.id}</small></td><td>{asset.family}<small>{asset.category || "—"}</small></td><td>{metadataString(asset, "version") || "—"}</td><td>{asset.owner || "—"}</td><td>{asset.storage_path || asset.preview_url || metadataString(asset, "sourceUrl") ? "Référence présente" : "Absente"}</td><td>{metadataString(asset, "rightsState") || "Inconnus"}</td><td><TonePill tone={normalizeStatus(asset.status).tone}>{asset.status}</TonePill></td><td>{metadataString(asset, "dossierId") || metadataString(asset, "linkedContentId") || "Non lié"}</td></tr>)}</tbody></table></div> : <div className={styles.assetRelationshipGraph}>{visible.slice(0, 16).map((asset, index) => <article key={asset.id} className={index === 0 ? styles.relationshipMaster : ""} onClick={() => setSelectedId(asset.id)}><span><FileImage/></span><strong>{asset.title}</strong><small>{metadataString(asset, "templateCode") || asset.family}</small><div><i/><em>{metadataString(asset, "dossierId") || "Dossier non documenté"}</em></div></article>)}</div>}
@@ -147,7 +154,7 @@ export default function Bulk4AssetLibraryWorkspace() {
       <aside className={styles.assetInspector}>
         {selected ? <>
           <header><span><ImageIcon/><small>ASSET INSPECTOR</small></span><button onClick={() => void registry.refresh()}><RefreshCcw/></button></header>
-          <div className={styles.assetInspectorPreview}>{selected.preview_url || metadataString(selected, "sourceUrl") ? <img src={selected.preview_url || metadataString(selected, "sourceUrl")} alt={`Aperçu ${selected.title}`}/> : <FileStack/>}</div>
+          <div className={styles.assetInspectorPreview}><ContentMediaPreview source={contentMediaSourceFromAsset(selected)} mode="inspector" fit="contain"/></div>
           <section><small>{selected.id}</small><h2>{selected.title}</h2><p>{selected.category || "Catégorie non documentée"} · {selected.subcategory || "Sous-catégorie non documentée"}</p><div><TonePill tone={normalizeStatus(selected.status).tone}>{selected.status}</TonePill><TonePill tone={metadataString(selected, "rightsState") === "valid" ? "success" : "warning"}>{metadataString(selected, "rightsState") || "Droits inconnus"}</TonePill></div></section>
           <dl><div><dt>Famille</dt><dd>{selected.family}</dd></div><div><dt>Version</dt><dd>{metadataString(selected, "version") || "Non documentée"}</dd></div><div><dt>Template</dt><dd>{metadataString(selected, "templateCode") || "Non documenté"}</dd></div><div><dt>Dossier</dt><dd>{metadataString(selected, "dossierId") || metadataString(selected, "linkedContentId") || "Non lié"}</dd></div><div><dt>Source</dt><dd>{selected.storage_path || selected.preview_url || metadataString(selected, "sourceUrl") || "Absente"}</dd></div><div><dt>Expiration</dt><dd>{metadataString(selected, "expirationDate") || "Non modélisée"}</dd></div><div><dt>Reviewer</dt><dd>{metadataString(selected, "reviewer") || "Non documenté"}</dd></div><div><dt>Provenance</dt><dd>{selected.family === "legacy" ? "Legacy Content Store" : "Content Command Assets API"}</dd></div></dl>
           <section className={styles.assetLineage}><h3>Lineage observable</h3>{[["Source", selected.storage_path || metadataString(selected, "sourceUrl") || "Manquante"],["Template", metadataString(selected, "templateId") || "Non lié"],["Master / parent", metadataString(selected, "parentAssetId") || "Non documenté"],["Rendition", selected.output || "Non documentée"],["Usage", metadataString(selected, "usage") || "Non documenté"]].map(([label, value]) => <div key={label}><span><GitBranch/></span><strong>{label}</strong><small>{value}</small></div>)}</section>

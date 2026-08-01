@@ -21,7 +21,7 @@ import {
 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { headquartersAction, CONTENT_FAMILIES } from "../headquarters/client"
-import { loadStore, uid } from "../content-command-system"
+import { uid, useContentStore } from "../content-command-system"
 import { BULK4_TEMPLATE_ESTATE, templateById } from "./bulk4-template-estate"
 import { contextFromLocation, bulk4ContextHref, writeBulk4Context } from "./bulk4-context"
 import type { Bulk4TemplateFamily, PreflightCheck, TemplateDNA } from "./bulk4-types"
@@ -59,7 +59,7 @@ function familyForTemplate(template: TemplateDNA): "digital" | "print" | "docume
 export default function Bulk4QuickCreateWorkspace() {
   const router = useRouter()
   const context = React.useMemo(() => contextFromLocation("/market-os/content-command-center/studio"), [])
-  const [store] = React.useState(() => loadStore())
+  const { store } = useContentStore()
   const [step, setStep] = React.useState(0)
   const [origin, setOrigin] = React.useState<Origin>(context.dossierId ? "dossier" : context.taskId ? "task" : context.templateId ? "template" : "brief")
   const [objective, setObjective] = React.useState<Objective>("reassure")

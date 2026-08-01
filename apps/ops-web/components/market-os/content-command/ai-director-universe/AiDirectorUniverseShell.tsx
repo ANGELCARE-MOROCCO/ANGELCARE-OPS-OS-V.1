@@ -1,5 +1,6 @@
 'use client'
 
+import { contentCommandRequest } from '@/components/market-os/content-command/runtime/content-command-runtime'
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
@@ -177,21 +178,21 @@ export default function AiDirectorUniverseShell({ active, children }: { active: 
     setLoading(true)
     setError('')
     try {
-      const response = await fetch('/api/market-os/content-command-headquarters/snapshot', { credentials: 'include', cache: 'no-store' })
-      const payload = await response.json().catch(() => ({}))
-      if (!response.ok || payload.ok === false) throw new Error(payload.error || `HTTP_${response.status}`)
+      const payload = await contentCommandRequest<{ok:boolean;snapshot:HeadquartersSnapshot}>('/api/market-os/content-command-headquarters/snapshot')
       setSnapshot(payload.snapshot || null)
 
       if (active === 'research-control') {
-        const researchResponse = await fetch('/api/market-os/content-command/research-control/snapshot', { credentials: 'include', cache: 'no-store' })
-        const researchPayload = await researchResponse.json().catch(() => ({}))
+        let researchPayload: Record<string, any> = {}
+        let researchOk = true
+        try { researchPayload = await contentCommandRequest<Record<string, any>>('/api/market-os/content-command/research-control/snapshot') }
+        catch { researchOk = false }
         const researchSnapshot = researchPayload.snapshot || null
         const providers = Array.isArray(researchSnapshot?.providers) ? researchSnapshot.providers : []
         const tavily = providers.find((provider: { provider_key?: string }) => provider.provider_key === 'tavily')
         const openrouter = providers.find((provider: { provider_key?: string }) => provider.provider_key === 'openrouter')
         const credentials = researchSnapshot?.credentials || {}
         const available = Boolean(
-          researchResponse.ok &&
+          researchOk &&
           researchPayload.ok !== false &&
           tavily?.enabled && tavily?.status === 'active' && credentials.tavilyPresent &&
           openrouter?.enabled && openrouter?.status === 'active' && credentials.openrouterPresent

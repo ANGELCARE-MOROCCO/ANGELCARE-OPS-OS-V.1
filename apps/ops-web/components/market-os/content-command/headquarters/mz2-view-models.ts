@@ -337,13 +337,21 @@ export function buildCommandViewModel(snapshotValue: unknown): CommandViewModel 
   const mandateRecord = record(snapshot.mandate)
   const configuredMandate = Boolean(text(mandateRecord.title) || text(mandateRecord.objective))
 
-  const activeDossiers = dossiers.filter((item) => !["closed", "archived", "cancelled"].includes(text(item.status))).length
-  const blockedTasks = tasks.filter((item) => text(item.status) === "blocked")
-  const overdueTasks = tasks.filter((item) => !["done", "closed", "cancelled"].includes(text(item.status)) && isOverdue(safeDate(item.due_at || item.dueDate)))
-  const decisionDossiers = dossiers.filter((item) => ["human_review", "validated", "source_required", "revision_required"].includes(text(item.status)))
-  const evidenceGaps = dossiers.filter((item) => ["checkpoint_review", "draft_submitted", "submitted", "ai_review", "human_review"].includes(text(item.status)) && !evidence.some((proof) => text(proof.dossier_id) === text(item.id))).length
-  const sourceRisks = sources.filter((item) => bool(item.is_current) && !["verified", "healthy"].includes(text(item.integrity_state))).length + dossiers.filter((item) => text(item.status) === "source_required").length
-  const failedPublications = packages.filter((item) => ["failed", "error"].includes(text(item.status))).length
+  const terminalStatuses = new Set(["closed", "archived", "cancelled", "rejected", "expired", "converted", "completed", "done", "superseded", "retired", "withdrawn", "deleted"])
+  const operationalDossiers = dossiers.filter((item) => !terminalStatuses.has(text(item.status)))
+  const operationalDossierIds = new Set(operationalDossiers.map((item) => text(item.id)).filter(Boolean))
+  const operationalMissions = missions.filter((item) => !terminalStatuses.has(text(item.status)) && (!text(item.dossier_id) || operationalDossierIds.has(text(item.dossier_id))))
+  const operationalMissionIds = new Set(operationalMissions.map((item) => text(item.id)).filter(Boolean))
+  const operationalTasks = tasks.filter((item) => !terminalStatuses.has(text(item.status)) && (!text(item.dossier_id) || operationalDossierIds.has(text(item.dossier_id))) && (!text(item.mission_id) || operationalMissionIds.has(text(item.mission_id))))
+  const operationalPackages = packages.filter((item) => !terminalStatuses.has(text(item.status)))
+
+  const activeDossiers = operationalDossiers.length
+  const blockedTasks = operationalTasks.filter((item) => text(item.status) === "blocked")
+  const overdueTasks = operationalTasks.filter((item) => isOverdue(safeDate(item.due_at || item.dueDate)))
+  const decisionDossiers = operationalDossiers.filter((item) => ["human_review", "validated", "source_required", "revision_required"].includes(text(item.status)))
+  const evidenceGaps = operationalDossiers.filter((item) => ["checkpoint_review", "draft_submitted", "submitted", "ai_review", "human_review"].includes(text(item.status)) && !evidence.some((proof) => text(proof.dossier_id) === text(item.id))).length
+  const sourceRisks = sources.filter((item) => bool(item.is_current) && !["verified", "healthy"].includes(text(item.integrity_state))).length + operationalDossiers.filter((item) => text(item.status) === "source_required").length
+  const failedPublications = operationalPackages.filter((item) => ["failed", "error"].includes(text(item.status))).length
 
   const interventions: CommandIntervention[] = []
   for (const task of blockedTasks.slice(0, 6)) {
@@ -373,7 +381,7 @@ export function buildCommandViewModel(snapshotValue: unknown): CommandViewModel 
       href: text(task.id) ? `/market-os/content-command-center/tasks/${text(task.id)}` : "/market-os/content-command-center/tasks",
     })
   }
-  for (const dossier of dossiers.filter((item) => !text(item.owner_name || item.owner)).slice(0, 4)) {
+  for (const dossier of operationalDossiers.filter((item) => !text(item.owner_name || item.owner)).slice(0, 4)) {
     interventions.push({
       id: `owner-${text(dossier.id)}`,
       category: "Responsabilité manquante",
@@ -386,7 +394,7 @@ export function buildCommandViewModel(snapshotValue: unknown): CommandViewModel 
       href: `/market-os/content-command-center/dossiers/${text(dossier.id)}`,
     })
   }
-  for (const item of packages.filter((pkg) => ["failed", "error"].includes(text(pkg.status))).slice(0, 4)) {
+  for (const item of operationalPackages.filter((pkg) => ["failed", "error"].includes(text(pkg.status))).slice(0, 4)) {
     interventions.push({
       id: `publication-${text(item.id)}`,
       category: "Échec de publication",
@@ -399,7 +407,7 @@ export function buildCommandViewModel(snapshotValue: unknown): CommandViewModel 
       href: "/market-os/content-command-center/publishing",
     })
   }
-  for (const item of packages) {
+  for (const item of operationalPackages) {
     const packageEvidence = array(item.evidence)
     const latestEvent = (type: string) => [...packageEvidence].reverse().find((event) => text(event.type) === type)
     const verification = latestEvent("publication_verification")
@@ -501,7 +509,7 @@ export function buildCommandViewModel(snapshotValue: unknown): CommandViewModel 
       href: dossierId ? `/market-os/content-command-center/dossiers/${dossierId}` : "/market-os/content-command-center/source-vault",
     })
   }
-  for (const item of dossiers.filter((dossier) => text(dossier.status) === "source_required").slice(0, 6)) {
+  for (const item of operationalDossiers.filter((dossier) => text(dossier.status) === "source_required").slice(0, 6)) {
     integrity.push({
       id: `missing-source-${text(item.id)}`,
       category: "Source canonique absente",
@@ -515,7 +523,7 @@ export function buildCommandViewModel(snapshotValue: unknown): CommandViewModel 
     })
   }
 
-  const allLifecycleRecords = [...dossiers, ...missions, ...tasks]
+  const allLifecycleRecords = [...operationalDossiers, ...operationalMissions, ...operationalTasks]
   const lifecycle = COMMAND_LIFECYCLE.map((stage) => {
     const matches = allLifecycleRecords.filter((item) => stage.statuses.includes(text(item.status) as never))
     const blocked = matches.filter((item) => text(item.status) === "blocked" || text(item.blocker_reason)).length
@@ -527,11 +535,10 @@ export function buildCommandViewModel(snapshotValue: unknown): CommandViewModel 
     return { key: stage.key, label: stage.label, href: stage.href, active: matches.length, blocked, waiting, oldestLabel: oldest ? formatDateFr(oldest) : "Aucun élément" }
   })
 
-  const runway = dossiers
-    .filter((item) => !["closed", "archived", "cancelled"].includes(text(item.status)))
+  const runway = operationalDossiers
     .map<RunwayItemVM>((item) => {
       const id = text(item.id)
-      const relatedTasks = tasks.filter((task) => text(task.dossier_id) === id)
+      const relatedTasks = operationalTasks.filter((task) => text(task.dossier_id) === id)
       const blocker = relatedTasks.find((task) => text(task.status) === "blocked")
       const dueAt = safeDate(item.due_at)
       const status = text(item.status)
@@ -555,7 +562,7 @@ export function buildCommandViewModel(snapshotValue: unknown): CommandViewModel 
     .slice(0, 12)
 
   const capacityMap = new Map<string, { active: number; overdue: number; blocked: number }>()
-  for (const task of tasks.filter((item) => !["done", "closed", "cancelled"].includes(text(item.status)))) {
+  for (const task of operationalTasks) {
     const owner = text(task.owner_name || task.owner, "Non affecté")
     const current = capacityMap.get(owner) || { active: 0, overdue: 0, blocked: 0 }
     current.active += 1

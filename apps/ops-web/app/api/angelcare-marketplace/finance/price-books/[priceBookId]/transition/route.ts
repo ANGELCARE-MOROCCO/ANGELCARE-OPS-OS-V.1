@@ -1,0 +1,2 @@
+import { handlePriceBookTransition } from '@/angelcare-marketplace/finance-authority/api-handlers'
+export async function POST(request:Request,{params}:{params:Promise<{priceBookId:string}>}){return handlePriceBookTransition(request,(await params).priceBookId)}

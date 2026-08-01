@@ -8,10 +8,6 @@ import {
   type ContentTask,
 } from "@/components/market-os/content-command/content-command-system"
 
-const TASK_ACTIVITY_KEY = "market_os_content_command_task_activity_v2"
-const TASK_CHECKLIST_KEY = "market_os_content_command_task_checklists_v2"
-const TASK_EXECUTION_META_KEY = "market_os_content_command_task_execution_meta_v1"
-
 export type TaskActivityEvent = {
   id: string
   taskId: string
@@ -95,66 +91,18 @@ export type TaskExecutionMeta = {
   clarifications: TaskClarificationRecord[]
 }
 
-function readJson<T>(key: string, fallback: T): T {
-  if (typeof window === "undefined") return fallback
-  try {
-    const raw = window.localStorage.getItem(key)
-    return raw ? (JSON.parse(raw) as T) : fallback
-  } catch {
-    return fallback
-  }
+type TaskRuntimePayload = {
+  taskId: string
+  meta: TaskExecutionMeta
+  checklist: TaskChecklistItem[]
+  activity: TaskActivityEvent[]
 }
 
-function writeJson<T>(key: string, value: T) {
-  if (typeof window !== "undefined") window.localStorage.setItem(key, JSON.stringify(value))
-}
-
-export function readTaskActivity() {
-  return readJson<TaskActivityEvent[]>(TASK_ACTIVITY_KEY, [])
-}
-
-export function addTaskActivity(taskId: string, action: string, detail: string) {
-  const next = [{ id: uid("task-event"), taskId, action, detail, timestamp: nowISO() }, ...readTaskActivity()].slice(0, 600)
-  writeJson(TASK_ACTIVITY_KEY, next)
-  return next[0]
-}
-
-export function readTaskChecklists() {
-  return readJson<TaskChecklistItem[]>(TASK_CHECKLIST_KEY, [])
-}
-
-export function addTaskChecklistItem(taskId: string, label: string, options?: { required?: boolean; evidenceLinked?: boolean }) {
-  const item: TaskChecklistItem = {
-    id: uid("task-check"),
-    taskId,
-    label,
-    done: false,
-    required: options?.required ?? true,
-    evidenceLinked: options?.evidenceLinked ?? false,
-    createdAt: nowISO(),
-  }
-  writeJson(TASK_CHECKLIST_KEY, [...readTaskChecklists(), item])
-  addTaskActivity(taskId, "checklist_item_added", `Étape ajoutée : ${label}`)
-  return item
-}
-
-export function toggleTaskChecklistItem(itemId: string) {
-  const current = readTaskChecklists()
-  const item = current.find((candidate) => candidate.id === itemId)
-  if (!item) return null
-  const done = !item.done
-  const next = current.map((candidate) => candidate.id === itemId ? { ...candidate, done, completedAt: done ? nowISO() : undefined } : candidate)
-  writeJson(TASK_CHECKLIST_KEY, next)
-  addTaskActivity(item.taskId, done ? "checklist_item_completed" : "checklist_item_reopened", item.label)
-  return next.find((candidate) => candidate.id === itemId) ?? null
-}
-
-export function deleteTaskChecklistItem(itemId: string) {
-  const current = readTaskChecklists()
-  const item = current.find((candidate) => candidate.id === itemId)
-  writeJson(TASK_CHECKLIST_KEY, current.filter((candidate) => candidate.id !== itemId))
-  if (item) addTaskActivity(item.taskId, "checklist_item_removed", item.label)
-}
+let activityCache: TaskActivityEvent[] = []
+let checklistCache: TaskChecklistItem[] = []
+let metasCache: Record<string, TaskExecutionMeta> = {}
+let hydratedAll = false
+const hydratedTasks = new Set<string>()
 
 export function defaultTaskExecutionMeta(taskId: string): TaskExecutionMeta {
   return {
@@ -169,20 +117,117 @@ export function defaultTaskExecutionMeta(taskId: string): TaskExecutionMeta {
   }
 }
 
+function applyPayload(payload: TaskRuntimePayload) {
+  metasCache[payload.taskId] = payload.meta || defaultTaskExecutionMeta(payload.taskId)
+  checklistCache = [
+    ...checklistCache.filter((row) => row.taskId !== payload.taskId),
+    ...(Array.isArray(payload.checklist) ? payload.checklist : []),
+  ]
+  activityCache = [
+    ...activityCache.filter((row) => row.taskId !== payload.taskId),
+    ...(Array.isArray(payload.activity) ? payload.activity : []),
+  ].sort((a, b) => b.timestamp.localeCompare(a.timestamp)).slice(0, 1200)
+  hydratedTasks.add(payload.taskId)
+}
+
+export async function hydrateTaskRuntime(taskId?: string) {
+  if (taskId && hydratedTasks.has(taskId)) return
+  if (!taskId && hydratedAll) return
+  const query = taskId ? `?task_id=${encodeURIComponent(taskId)}` : ""
+  const response = await fetch(`/api/market-os/content-command-center/task-runtime${query}`, {
+    credentials: "include",
+    cache: "no-store",
+    headers: { Accept: "application/json" },
+  })
+  const payload = await response.json().catch(() => ({})) as { ok?: boolean; runtimes?: TaskRuntimePayload[]; error?: string }
+  if (!response.ok || !payload.ok) throw new Error(payload.error || `TASK_RUNTIME_${response.status}`)
+  for (const runtime of payload.runtimes || []) applyPayload(runtime)
+  if (taskId) hydratedTasks.add(taskId)
+  else hydratedAll = true
+}
+
+function runtimeFor(taskId: string): TaskRuntimePayload {
+  return {
+    taskId,
+    meta: metasCache[taskId] || defaultTaskExecutionMeta(taskId),
+    checklist: checklistCache.filter((row) => row.taskId === taskId),
+    activity: activityCache.filter((row) => row.taskId === taskId).slice(0, 300),
+  }
+}
+
+function persistTaskRuntime(taskId: string) {
+  const payload = runtimeFor(taskId)
+  void fetch("/api/market-os/content-command-center/task-runtime", {
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json", Accept: "application/json" },
+    body: JSON.stringify(payload),
+  }).then(async (response) => {
+    const result = await response.json().catch(() => ({})) as { ok?: boolean; runtime?: TaskRuntimePayload; error?: string }
+    if (!response.ok || !result.ok) throw new Error(result.error || `TASK_RUNTIME_SAVE_${response.status}`)
+    if (result.runtime) applyPayload(result.runtime)
+  }).catch((error) => console.error("[CONTENT_COMMAND_TASK_RUNTIME_SAVE_FAILED]", error))
+}
+
+export function readTaskActivity() {
+  return activityCache
+}
+
+export function addTaskActivity(taskId: string, action: string, detail: string) {
+  const event = { id: uid("task-event"), taskId, action, detail, timestamp: nowISO() }
+  activityCache = [event, ...activityCache].slice(0, 1200)
+  persistTaskRuntime(taskId)
+  return event
+}
+
+export function readTaskChecklists() {
+  return checklistCache
+}
+
+export function addTaskChecklistItem(taskId: string, label: string, options?: { required?: boolean; evidenceLinked?: boolean }) {
+  const item: TaskChecklistItem = {
+    id: uid("task-check"),
+    taskId,
+    label,
+    done: false,
+    required: options?.required ?? true,
+    evidenceLinked: options?.evidenceLinked ?? false,
+    createdAt: nowISO(),
+  }
+  checklistCache = [...checklistCache, item]
+  addTaskActivity(taskId, "checklist_item_added", `Étape ajoutée : ${label}`)
+  return item
+}
+
+export function toggleTaskChecklistItem(itemId: string) {
+  const item = checklistCache.find((candidate) => candidate.id === itemId)
+  if (!item) return null
+  const done = !item.done
+  checklistCache = checklistCache.map((candidate) => candidate.id === itemId ? { ...candidate, done, completedAt: done ? nowISO() : undefined } : candidate)
+  addTaskActivity(item.taskId, done ? "checklist_item_completed" : "checklist_item_reopened", item.label)
+  return checklistCache.find((candidate) => candidate.id === itemId) ?? null
+}
+
+export function deleteTaskChecklistItem(itemId: string) {
+  const item = checklistCache.find((candidate) => candidate.id === itemId)
+  checklistCache = checklistCache.filter((candidate) => candidate.id !== itemId)
+  if (item) addTaskActivity(item.taskId, "checklist_item_removed", item.label)
+}
+
 export function readTaskExecutionMetas() {
-  return readJson<Record<string, TaskExecutionMeta>>(TASK_EXECUTION_META_KEY, {})
+  return metasCache
 }
 
 export function readTaskExecutionMeta(taskId: string) {
-  return readTaskExecutionMetas()[taskId] ?? defaultTaskExecutionMeta(taskId)
+  return metasCache[taskId] ?? defaultTaskExecutionMeta(taskId)
 }
 
 export function saveTaskExecutionMeta(taskId: string, updater: TaskExecutionMeta | ((current: TaskExecutionMeta) => TaskExecutionMeta)) {
-  const metas = readTaskExecutionMetas()
-  const current = metas[taskId] ?? defaultTaskExecutionMeta(taskId)
+  const current = metasCache[taskId] ?? defaultTaskExecutionMeta(taskId)
   const value = typeof updater === "function" ? updater(current) : updater
   const next = { ...value, taskId, updatedAt: nowISO() }
-  writeJson(TASK_EXECUTION_META_KEY, { ...metas, [taskId]: next })
+  metasCache = { ...metasCache, [taskId]: next }
+  persistTaskRuntime(taskId)
   return next
 }
 
@@ -241,9 +286,12 @@ export function updateContentCommandTask(taskId: string, updater: (task: Content
 export function deleteContentCommandTask(taskId: string) {
   const store = loadStore()
   saveStore({ ...store, tasks: store.tasks.filter((task) => task.id !== taskId) })
-  writeJson(TASK_CHECKLIST_KEY, readTaskChecklists().filter((item) => item.taskId !== taskId))
-  writeJson(TASK_ACTIVITY_KEY, readTaskActivity().filter((item) => item.taskId !== taskId))
-  const metas = readTaskExecutionMetas()
-  delete metas[taskId]
-  writeJson(TASK_EXECUTION_META_KEY, metas)
+  checklistCache = checklistCache.filter((item) => item.taskId !== taskId)
+  activityCache = activityCache.filter((item) => item.taskId !== taskId)
+  const { [taskId]: _removed, ...rest } = metasCache
+  metasCache = rest
+  void fetch(`/api/market-os/content-command-center/task-runtime?task_id=${encodeURIComponent(taskId)}`, {
+    method: "DELETE",
+    credentials: "include",
+  }).catch((error) => console.error("[CONTENT_COMMAND_TASK_RUNTIME_ARCHIVE_FAILED]", error))
 }

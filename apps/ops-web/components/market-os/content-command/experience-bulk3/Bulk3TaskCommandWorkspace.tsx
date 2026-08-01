@@ -39,6 +39,7 @@ import {
   readTaskExecutionMetas,
   saveTaskExecutionMeta,
   type TaskExecutionMeta,
+  hydrateTaskRuntime,
 } from "@/lib/content-command/tasks/task-activity"
 import { humanDate, sortTasksForCommand, taskIsOverdue, taskQueueMatch, type TaskQueueKey } from "../execution/task-operating-model"
 import { bulk3ContextHref, contextFromLocation, writeBulk3Context } from "./bulk3-context"
@@ -99,6 +100,7 @@ export default function Bulk3TaskCommandWorkspace() {
 
   const refresh = React.useCallback(() => setMetas(readTaskExecutionMetas()), [])
   React.useEffect(() => { refresh(); setContext(contextFromLocation("/market-os/content-command-center")) }, [refresh, store.tasks.length])
+  React.useEffect(() => { void hydrateTaskRuntime().then(refresh).catch(() => undefined) }, [refresh])
   React.useEffect(() => { if (!form.contentId && store.items[0]?.id) setForm((current) => ({ ...current, contentId: store.items[0].id })) }, [store.items, form.contentId])
 
   const checklists = readTaskChecklists()

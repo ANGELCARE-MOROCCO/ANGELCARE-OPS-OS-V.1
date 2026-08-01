@@ -19,12 +19,13 @@ import {
   Shirt,
   Truck,
 } from "lucide-react"
-import { loadStore } from "../content-command-system"
+import { useContentStore } from "../content-command-system"
 import { templatesByFamily, templateById } from "./bulk4-template-estate"
 import { contextFromLocation, writeBulk4Context } from "./bulk4-context"
 import { useBulk4Registry } from "./bulk4-api"
 import type { CreativeAssetRecord, PreflightCheck } from "./bulk4-types"
 import { Bulk4BrandCrown, Bulk4TruthState, DominantAction, PreflightPanel, SectionTitle, TonePill, styles } from "./Bulk4Shared"
+import { ContentMediaPreview, contentMediaSourceFromAsset } from "../media-preview/ContentMediaPreview"
 
 type PrintDraft = {
   title: string
@@ -76,7 +77,7 @@ const initial: PrintDraft = {
 
 export default function Bulk4PrintStudioWorkspace() {
   const registry = useBulk4Registry()
-  const [store] = React.useState(() => loadStore())
+  const { store } = useContentStore()
   const context = React.useMemo(() => contextFromLocation("/market-os/content-command-center/studio"), [])
   const dossier = store.items.find((item) => item.id === context.dossierId) || store.items[0] || null
   const requested = templateById(context.templateId)
@@ -189,7 +190,7 @@ export default function Bulk4PrintStudioWorkspace() {
 
     <section className={styles.printLowerDeck}>
       <div><PreflightPanel checks={checks} title="Physical production preflight" /></div>
-      <div className={styles.productionSpecificationSheet}><SectionTitle eyebrow="PRODUCTION SPECIFICATION SHEET" title="Handover physique gouverné" description="La fiche regroupe la version, le format, les matériaux, le BAT, la source, l’autorité et la destination." /><dl><div><dt>Version</dt><dd>{String(existing?.metadata?.version || "v1.0")}</dd></div><div><dt>Format</dt><dd>{draft.format} · {draft.dimensions}</dd></div><div><dt>Pré-presse</dt><dd>{draft.colorMode} · {draft.resolution}</dd></div><div><dt>Support</dt><dd>{draft.material}</dd></div><div><dt>Finition</dt><dd>{draft.finishing}</dd></div><div><dt>Quantité</dt><dd>{draft.quantity}</dd></div><div><dt>BAT</dt><dd>{draft.proofState}</dd></div><div><dt>Authority</dt><dd>{draft.reviewer}</dd></div></dl><label>Source URL<input value={draft.sourceUrl} onChange={(event) => setDraft({ ...draft, sourceUrl: event.target.value })}/></label><label>Droits<select value={draft.rightsState} onChange={(event) => setDraft({ ...draft, rightsState: event.target.value })}><option value="unknown">Inconnus</option><option value="valid">Validés</option><option value="restricted">Restreints</option></select></label>{notice ? <div className={styles.inlineNotice} aria-live="polite">{notice}</div> : null}<DominantAction onClick={() => void save()} disabled={busy || !draft.title}>{busy ? "Enregistrement…" : "Enregistrer la spécification"}</DominantAction><Link className={styles.secondaryHandover} href="/market-os/content-command-center/evidence"><ClipboardCheck/> Préparer le BAT pour preuve <ArrowRight/></Link></div>
+      <div className={styles.productionSpecificationSheet}><SectionTitle eyebrow="PRODUCTION SPECIFICATION SHEET" title="Handover physique gouverné" description="La fiche regroupe la version, le format, les matériaux, le BAT, la source, l’autorité et la destination." /><div className={styles.studioSourcePreview}><ContentMediaPreview source={existing ? contentMediaSourceFromAsset(existing) : { title: draft.title || "Source print", url: draft.sourceUrl || null, filename: draft.sourceUrl || `${draft.format} ${draft.dimensions}`, sourceLabel: "Print Studio · Source / BAT" }} mode="studio" fit="contain"/></div><dl><div><dt>Version</dt><dd>{String(existing?.metadata?.version || "v1.0")}</dd></div><div><dt>Format</dt><dd>{draft.format} · {draft.dimensions}</dd></div><div><dt>Pré-presse</dt><dd>{draft.colorMode} · {draft.resolution}</dd></div><div><dt>Support</dt><dd>{draft.material}</dd></div><div><dt>Finition</dt><dd>{draft.finishing}</dd></div><div><dt>Quantité</dt><dd>{draft.quantity}</dd></div><div><dt>BAT</dt><dd>{draft.proofState}</dd></div><div><dt>Authority</dt><dd>{draft.reviewer}</dd></div></dl><label>Source URL<input value={draft.sourceUrl} onChange={(event) => setDraft({ ...draft, sourceUrl: event.target.value })}/></label><label>Droits<select value={draft.rightsState} onChange={(event) => setDraft({ ...draft, rightsState: event.target.value })}><option value="unknown">Inconnus</option><option value="valid">Validés</option><option value="restricted">Restreints</option></select></label>{notice ? <div className={styles.inlineNotice} aria-live="polite">{notice}</div> : null}<DominantAction onClick={() => void save()} disabled={busy || !draft.title}>{busy ? "Enregistrement…" : "Enregistrer la spécification"}</DominantAction><Link className={styles.secondaryHandover} href="/market-os/content-command-center/evidence"><ClipboardCheck/> Préparer le BAT pour preuve <ArrowRight/></Link></div>
     </section>
   </main>
 }

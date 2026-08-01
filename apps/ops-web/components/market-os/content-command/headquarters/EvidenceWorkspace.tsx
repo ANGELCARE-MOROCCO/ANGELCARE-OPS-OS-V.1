@@ -1,5 +1,6 @@
 "use client"
 
+import { contentCommandRequest, toContentCommandBlocker } from '@/components/market-os/content-command/runtime/content-command-runtime'
 import * as React from "react"
 import Link from "next/link"
 import {
@@ -32,6 +33,7 @@ import {
   TruthNotice,
   styles,
 } from "../production/production-ui"
+import { ContentMediaPreview } from "../media-preview/ContentMediaPreview"
 
 const rubric = [
   ["Brief", "Alignement avec l’objectif et la sortie autorisée"],
@@ -48,6 +50,7 @@ export default function EvidenceWorkspace() {
   const [note, setNote] = React.useState("")
   const [progress, setProgress] = React.useState(50)
   const [selectedId, setSelectedId] = React.useState("")
+  const [operationError, setOperationError] = React.useState("")
   const pending = snapshot?.evidence.filter((item) => item.status === "submitted") ?? []
   const reviewedIds = new Set(snapshot?.reviews.map((item) => item.evidence_id).filter(Boolean) ?? [])
   const selected = pending.find((item) => item.id === selectedId) ?? pending[0]
@@ -68,11 +71,12 @@ export default function EvidenceWorkspace() {
       body.set("note", note)
       body.set("progressPercent", String(progress))
       body.set("file", file)
-      const response = await fetch("/api/market-os/content-command-headquarters/source-upload?mode=evidence", { method: "POST", body, credentials: "include" })
-      const payload = await response.json().catch(() => ({}))
-      if (!response.ok || !payload.ok) throw new Error(payload.error || "UPLOAD_FAILED")
+      setOperationError("")
+      await contentCommandRequest("/api/market-os/content-command-headquarters/source-upload?mode=evidence", { method: "POST", body })
       setNote("")
       await refresh()
+    } catch (cause) {
+      setOperationError(toContentCommandBlocker(cause, "Evidence Lab · upload").message)
     } finally {
       setBusy("")
     }
@@ -81,15 +85,14 @@ export default function EvidenceWorkspace() {
   async function analyze(evidenceId: string) {
     setBusy(evidenceId)
     try {
-      const response = await fetch("/api/market-os/content-command-headquarters/actions", {
+      setOperationError("")
+      await contentCommandRequest("/api/market-os/content-command-headquarters/actions", {
         method: "POST",
-        headers: { "content-type": "application/json" },
-        credentials: "include",
         body: JSON.stringify({ action: "analyze_evidence", payload: { evidenceId } }),
       })
-      const body = await response.json().catch(() => ({}))
-      if (!response.ok || !body.ok) throw new Error(body.error || "AI_REVIEW_FAILED")
       await refresh()
+    } catch (cause) {
+      setOperationError(toContentCommandBlocker(cause, "Evidence Lab · analyse").message)
     } finally {
       setBusy("")
     }
@@ -97,6 +100,7 @@ export default function EvidenceWorkspace() {
 
   return <ProductionCanvas>
     <PageStatus loading={loading} error={error} migrationReady={snapshot?.migrationReady} refresh={refresh} />
+    {operationError ? <TruthNotice title="Action non exécutée" detail={operationError} tone="warning" /> : null}
     <CommandHero
       eyebrow="EVIDENCE LAB · PROOF INSPECTION"
       title="Une preuve inspectable, une provenance visible, une décision humaine distincte."
@@ -169,7 +173,7 @@ export default function EvidenceWorkspace() {
         {selected ? <article className={styles.inspectionCanvas}>
           <div className={styles.inspectionHeader}><div><StatusPill tone="info">{selected.evidence_type || "Evidence"}</StatusPill><h3>{selected.title}</h3><p>{selectedDossier?.content_code} · {selectedDossier?.title}</p></div><StatusPill tone={selectedReview ? tone(selectedReview.result) as "success" | "warning" | "danger" | "neutral" : "warning"}>{selectedReview ? statusLabel(selectedReview.result) : "À analyser"}</StatusPill></div>
           <div className={styles.inspectionPreview}>
-            {selected.content_type?.startsWith("image/") && selected.preview_url ? <img src={selected.preview_url} alt={`Preuve ${selected.title}`} /> : <FileImage />}
+            <ContentMediaPreview source={{ id: selected.id, title: selected.title, url: selected.preview_url, bridgeFileId: selected.bridge_file_id, storageKey: selected.storage_key, contentType: selected.content_type, filename: selected.filename, sizeBytes: selected.size_bytes, sourceLabel: "Evidence Workspace" }} mode="inspector" fit="contain"/>
           </div>
           <div className={styles.assetMeta}>
             <div><span>Fichier</span><strong>{selected.filename || "Non renseigné"}</strong></div>

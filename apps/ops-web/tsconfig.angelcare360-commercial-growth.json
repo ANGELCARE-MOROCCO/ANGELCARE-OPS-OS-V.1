@@ -1,0 +1,26 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "incremental": false
+  },
+  "include": [
+    "next-env.d.ts",
+    "app/(protected)/angelcare-360-operator/growth/page.tsx",
+    "app/api/angelcare360/operator/growth/route.ts",
+    "components/angelcare360/operator/growth/**/*.ts",
+    "components/angelcare360/operator/growth/**/*.tsx",
+    "components/angelcare360/operator/sovereign/SovereignWorkspaceRail.tsx",
+    "data/angelcare360/operator-sovereign-navigation.ts",
+    "lib/angelcare360/operator/growth.ts",
+    "lib/angelcare360/operator/product-kernel.ts",
+    "lib/angelcare360/operator/clients.ts",
+    "lib/angelcare360/operator/contracts.ts",
+    "lib/angelcare360/operator/shared.ts",
+    "lib/angelcare360/operator/access.ts",
+    "lib/angelcare360/operator/audit.ts",
+    "types/angelcare360/operator/growth.ts",
+    "types/angelcare360/operator/product-kernel.ts",
+    "types/angelcare360/operator/index.ts"
+  ]
+}

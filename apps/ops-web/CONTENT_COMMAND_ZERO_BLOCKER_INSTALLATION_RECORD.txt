@@ -1,0 +1,5 @@
+package=ANGELCARE_CONTENT_COMMAND_CENTER_ZERO_BLOCKER_RUNTIME_HARDENING_FINAL_20260730-231800
+installed_at=2026-07-30T23:00:16Z
+backup=/Users/user/Desktop/angelcare-platform/.angelcare_backups/content-command-zero-blocker-runtime-20260731-000005
+patch_paths=32
+mode=source-only-no-sql-no-build

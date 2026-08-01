@@ -14,7 +14,8 @@
     "components/market-os/ambassadors/territories-map/TerritoryLiveMap.tsx",
     "components/market-os/ambassadors/routes/AmbassadorTerritoriesRoute.tsx",
     "app/api/market-os/ambassadors/territories/geocode/route.ts",
-    "lib/market-os/ambassadors/persistence.ts"
+    "lib/market-os/ambassadors/persistence.ts",
+    "app/api/market-os/ambassadors/territories/tiles/[z]/[x]/[y]/route.ts"
   ],
   "include": []
 }

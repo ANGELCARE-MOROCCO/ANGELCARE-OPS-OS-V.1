@@ -1,0 +1,2 @@
+import { handleCapaTransition } from '@/angelcare-marketplace/trust-quality/api-handlers'
+export async function POST(request:Request,{params}:{params:Promise<{actionId:string}>}){return handleCapaTransition(request,(await params).actionId)}

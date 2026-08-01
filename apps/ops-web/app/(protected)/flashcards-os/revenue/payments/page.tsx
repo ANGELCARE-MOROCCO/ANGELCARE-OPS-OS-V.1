@@ -1,0 +1,4 @@
+import PaymentsReceivablesCockpit from '@/components/flashcards-os/revenue/PaymentsReceivablesCockpit'
+import { requireFlashcardsPageAccess } from '@/lib/flashcards-os/server/access'
+import { listB2BAccounts, listCustomerBalances, listHouseholds, listPayments } from '@/lib/flashcards-os/revenue/server/repository'
+export default async function Page(){await requireFlashcardsPageAccess('flashcards_os.view_receivables');const [payments,balances,households,accounts]=await Promise.all([listPayments(),listCustomerBalances(),listHouseholds(),listB2BAccounts()]);const customers=[...households.map(item=>({id:item.id,name:item.displayName,universe:'b2c' as const})),...accounts.map(item=>({id:item.id,name:item.commercialName,universe:'b2b' as const}))];return <PaymentsReceivablesCockpit payments={payments} balances={balances} customers={customers}/>}

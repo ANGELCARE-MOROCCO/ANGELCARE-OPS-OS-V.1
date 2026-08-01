@@ -1,36 +1,6 @@
-
 import { NextResponse } from "next/server"
-import { getContentCommandServerClient } from "@/lib/market-os/content-command-center/server"
-
-export const dynamic = "force-dynamic"
-
-export async function GET() {
-  const supabase = getContentCommandServerClient()
-  const { data, error } = await supabase
-    .from("content_command_activity")
-    .select("*")
-    .order("created_at", { ascending: false })
-    .limit(100)
-
-  if (error) return NextResponse.json({ ok: false, error: error.message, activity: [] }, { status: 500 })
-  return NextResponse.json({ ok: true, activity: data || [] })
-}
-
-export async function POST(request: Request) {
-  const payload = await request.json()
-  const supabase = getContentCommandServerClient()
-  const { data, error } = await supabase
-    .from("content_command_activity")
-    .insert({
-      entity_type: payload.entity_type || "workspace",
-      entity_id: payload.entity_id || "unknown",
-      action: payload.action || "command",
-      actor: payload.actor || "workspace-user",
-      payload: payload.payload || {},
-    })
-    .select("*")
-    .single()
-
-  if (error) return NextResponse.json({ ok: false, error: error.message }, { status: 500 })
-  return NextResponse.json({ ok: true, activity: data })
-}
+import { requireContentHeadquartersUser, contentHeadquartersApiError } from "@/lib/market-os/content-command-headquarters/auth"
+import { legacyWorkspace, recordLegacyCommand } from "@/lib/market-os/content-command-headquarters/canonical-legacy-api-service"
+export const dynamic="force-dynamic"
+export async function GET(){try{await requireContentHeadquartersUser("view");return NextResponse.json({ok:true,activity:(await legacyWorkspace()).activity,source:"market_content_audit"})}catch(error){return contentHeadquartersApiError(error)}}
+export async function POST(request:Request){try{const actor=await requireContentHeadquartersUser("operate");const activity=await recordLegacyCommand(actor,await request.json());return NextResponse.json({ok:true,activity,persisted:true})}catch(error){return contentHeadquartersApiError(error)}}

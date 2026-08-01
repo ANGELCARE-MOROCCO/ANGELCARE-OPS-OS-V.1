@@ -20,6 +20,7 @@ import {
   FolderTree,
   Gauge,
   GitBranch,
+  Home,
   Image,
   LibraryBig,
   ListChecks,
@@ -35,6 +36,7 @@ import {
   Scale,
   ScanSearch,
   SearchCheck,
+  ServerCog,
   Settings2,
   ShieldCheck,
   Sparkles,
@@ -185,6 +187,28 @@ export const contentCommandNavigationGroups: readonly ContentCommandNavigationGr
 ] as const
 
 export const contentCommandRoutes: readonly ContentCommandRoute[] = [
+  {
+    key: "my-role-home",
+    href: `${CONTENT_COMMAND_ROOT}/my-home`,
+    label: "Mon poste",
+    shortLabel: "Mon poste",
+    description: "Ouvrir le poste opérationnel configuré pour mon rôle",
+    icon: Home,
+    group: "command",
+    keywords: ["mon poste", "rôle", "home", "onboarding", "travail"],
+    order: 5,
+  },
+  {
+    key: "production-operations",
+    href: `${CONTENT_COMMAND_ROOT}/production-operations`,
+    label: "Production Operations",
+    shortLabel: "Production Ops",
+    description: "Release, switchboard, incidents, coûts, international et adoption",
+    icon: ServerCog,
+    group: "administration",
+    keywords: ["production", "release", "health", "budget", "incidents", "international", "roles"],
+    order: 5,
+  },
   {
     key: "command-360",
     href: CONTENT_COMMAND_ROOT,

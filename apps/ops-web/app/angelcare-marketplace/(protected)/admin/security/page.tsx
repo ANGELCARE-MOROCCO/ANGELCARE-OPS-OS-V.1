@@ -1,0 +1,4 @@
+import { requireMarketplacePageContext } from '@/angelcare-marketplace/auth/context'
+import { listAccessReviews,listIsolationTests,securitySummary } from '@/angelcare-marketplace/analytics-security/repository'
+import { SecurityCommand } from '@/angelcare-marketplace/analytics-security/components/SecurityCommand'
+export default async function Page(){const context=await requireMarketplacePageContext('marketplace.security.view');const [summary,reviews,tests]=await Promise.all([securitySummary(),listAccessReviews(context),listIsolationTests(context)]);return <SecurityCommand summary={summary} reviews={reviews} tests={tests}/>}

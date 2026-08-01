@@ -1,0 +1,2 @@
+import { requireMarketplacePageContext } from '@/angelcare-marketplace/auth/context';import { ActivityRegistry } from '@/angelcare-marketplace/development-engine/components/ActivityRegistry';import { listDevelopmentActivities } from '@/angelcare-marketplace/development-engine/repository'
+export default async function Page(){await requireMarketplacePageContext('marketplace.development.view');return <ActivityRegistry activities={await listDevelopmentActivities()}/>}

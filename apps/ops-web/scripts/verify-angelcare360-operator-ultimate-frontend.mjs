@@ -38,8 +38,8 @@ requiredFiles.forEach(requireFile)
 
 const routeRoot = join(root, 'app/(protected)/angelcare-360-operator')
 const routePages = walk(routeRoot).filter((path) => path.endsWith('/page.tsx'))
-if (routePages.length === 34) pass('34 Operator page routes preserved')
-else fail(`expected 34 Operator page routes, found ${routePages.length}`)
+if (routePages.length === 47) pass('47 cumulative Operator page routes preserved')
+else fail(`expected 47 Operator page routes, found ${routePages.length}`)
 
 const profileSource = text('components/angelcare360/operator/Angelcare360OperatorExperience.ts')
 const expectedProfiles = [
@@ -50,6 +50,8 @@ const expectedProfiles = [
   'fulfilment-queue', 'incident-room', 'service-mission-control', 'operator-commitments',
   'confidential-intelligence', 'contract-library', 'retention-horizon', 'health-observatory',
   'forensic-explorer', 'authority-architecture', 'governance-console', 'financial-document',
+  'wave1-executive-command', 'wave1-board-command', 'wave1-revenue-command', 'wave1-customer-value',
+  'wave1-service-command', 'wave1-decision-center', 'wave1-forward-horizon', 'wave1-accountability',
 ]
 for (const profile of expectedProfiles) {
   profileSource.includes(`'${profile}'`) ? pass(`experience: ${profile}`) : fail(`missing experience profile: ${profile}`)

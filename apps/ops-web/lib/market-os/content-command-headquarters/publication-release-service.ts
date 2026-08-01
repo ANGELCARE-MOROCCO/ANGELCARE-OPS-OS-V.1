@@ -1,6 +1,7 @@
 import { createServiceClient } from "@/lib/supabase/server"
 import { auditContentHeadquarters } from "./repository"
 import type { JsonRecord, PublicationPackage } from "./types"
+import { assertProductionCapability } from './production-operations-service'
 
 const PACKAGES = "market_content_publication_packages"
 const DOSSIERS = "market_content_dossiers"
@@ -142,6 +143,8 @@ export async function declarePublicationPackageReady(input: { actorId: string; a
 }
 
 export async function authorizePublicationPackage(input: { actorId: string; actorName: string; packageId: string; actorRole: string; reason: string }) {
+  const policy = await assertProductionCapability('publishing')
+  if (!policy.allowed) throw new Error(policy.reason)
   const { supabase, package: current } = await loadPackage(input.packageId)
   if (current.status !== "ready") throw new Error("RELEASE_AUTHORIZATION_REQUIRES_READY_PACKAGE")
   if (!current.scheduled_at) throw new Error("RELEASE_SCHEDULE_REQUIRED")

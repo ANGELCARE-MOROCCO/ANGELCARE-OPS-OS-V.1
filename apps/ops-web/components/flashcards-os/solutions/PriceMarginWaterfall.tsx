@@ -1,0 +1,9 @@
+import { CircleDollarSign, Scale } from 'lucide-react'
+import type { CommercialCalculation } from '@/lib/flashcards-os/solutions/types'
+import styles from './solutions-os.module.css'
+import { CalculationWarnings, money } from './SolutionPrimitives'
+
+export default function PriceMarginWaterfall({calculation,title='Price & Margin Waterfall'}:{calculation:CommercialCalculation;title?:string}){
+ const steps=[['Produits',calculation.productRevenueDh],['Packaging',calculation.packagingDh],['Handling',calculation.handlingDh],['Digital delivery',calculation.digitalDeliveryDh],['Support',calculation.supportDh],['Delivery',calculation.deliveryDh],['Licence',calculation.licenceDh],['Discount',-calculation.discountDh],['Tax',calculation.taxDh],['Total client',calculation.finalTotalDh]] as Array<[string,number]>;const max=Math.max(1,...steps.map(([,value])=>Math.abs(value)))
+ return <section className={styles.section}><div className={styles.sectionHeader}><div><span className={styles.eyebrow}>DETERMINISTIC COMMERCIAL TRUTH</span><h2>{title}</h2><p>Les montants ci-dessous proviennent du pricing kernel, jamais de la prose OpenRouter.</p></div><CircleDollarSign size={20}/></div><div className={styles.waterfall}><div className={styles.waterfallSteps}>{steps.map(([label,value])=><div className={styles.waterfallRow} key={label}><span>{label}</span><b>{money(value)}</b><div className={styles.waterfallBar}><span style={{width:`${Math.max(3,Math.abs(value)/max*100)}%`}}/></div></div>)}</div><aside className={styles.marginCard}><Scale size={22}/><span>Gross margin</span><strong>{calculation.grossMarginPercent.toFixed(1)}%</strong><p>{money(calculation.grossMarginDh)} après coût gouverné, avant tout effet comptable non inclus.</p><span>Threshold {calculation.minimumMarginPercent}%</span></aside></div><CalculationWarnings calculation={calculation}/></section>
+}

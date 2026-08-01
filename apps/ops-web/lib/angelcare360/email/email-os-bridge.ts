@@ -1,6 +1,8 @@
 import { mailboxIdFromEmail, resolveEmailOSMailboxIdentity } from '@/lib/email-os-core/multi-mailbox-resolver'
 import { sendEmailOSDirect } from '@/lib/email-os-core/send-mail'
+import { recordOutboundEmailCommand } from '@/lib/angelcare360/email/correspondence-ledger'
 import type { Angelcare360EmailDraft, Angelcare360EmailSendResult } from '@/types/angelcare360/email'
+import { renderAngelcare360BrandedEmail } from '@/lib/angelcare360/branding/email-template'
 
 const B2B_EMAIL = 'b2b@angelcarehub.ma'
 
@@ -28,13 +30,37 @@ function normalizeEmailError(error: unknown) {
 export async function sendAngelcare360Email(draft: Angelcare360EmailDraft): Promise<Angelcare360EmailSendResult> {
   const mailbox = getAngelcare360B2BMailboxEmail()
   try {
+    const metadata = draft.metadata || {}
+    const branded = await renderAngelcare360BrandedEmail({ subject: draft.subject, body: draft.body, bodyHtml: draft.bodyHtml, clientId: typeof metadata.clientId === 'string' ? metadata.clientId : null, tenantId: typeof metadata.tenantId === 'string' ? metadata.tenantId : null })
     const result = await sendEmailOSDirect({
       mailboxId: mailboxIdFromEmail(mailbox),
       fromEmail: mailbox,
       toEmail: draft.toEmail,
       subject: draft.subject,
       body: draft.body,
+      bodyHtml: branded.html,
+      bodyText: draft.body,
+      fromDisplayName: branded.runtime?.emailFromName || undefined,
       headers: draft.replyTo ? { 'Reply-To': draft.replyTo } : undefined,
+    })
+
+    await recordOutboundEmailCommand({
+      mailboxKey: String(metadata.mailboxKey || 'B2B'),
+      mailboxEmail: mailbox,
+      providerMessageId: result?.info?.messageId || null,
+      toEmail: draft.toEmail,
+      subject: draft.subject,
+      bodyText: draft.body,
+      status: 'smtp_accepted',
+      deliveryState: 'smtp_accepted',
+      templateCode: draft.templateKey,
+      clientId: typeof metadata.clientId === 'string' ? metadata.clientId : null,
+      contactId: typeof metadata.contactId === 'string' ? metadata.contactId : null,
+      institutionId: typeof metadata.institutionId === 'string' ? metadata.institutionId : null,
+      tenantId: typeof metadata.tenantId === 'string' ? metadata.tenantId : null,
+      relatedEntityType: typeof metadata.entityType === 'string' ? metadata.entityType : null,
+      relatedEntityId: typeof metadata.entityId === 'string' ? metadata.entityId : null,
+      metadata,
     })
 
     return {
@@ -44,6 +70,24 @@ export async function sendAngelcare360Email(draft: Angelcare360EmailDraft): Prom
       emailId: result?.info?.messageId || null,
     }
   } catch (error) {
+    const metadata = draft.metadata || {}
+    await recordOutboundEmailCommand({
+      mailboxKey: String(metadata.mailboxKey || 'B2B'),
+      mailboxEmail: mailbox,
+      toEmail: draft.toEmail,
+      subject: draft.subject,
+      bodyText: draft.body,
+      status: 'failed',
+      deliveryState: 'failed',
+      templateCode: draft.templateKey,
+      clientId: typeof metadata.clientId === 'string' ? metadata.clientId : null,
+      contactId: typeof metadata.contactId === 'string' ? metadata.contactId : null,
+      institutionId: typeof metadata.institutionId === 'string' ? metadata.institutionId : null,
+      tenantId: typeof metadata.tenantId === 'string' ? metadata.tenantId : null,
+      relatedEntityType: typeof metadata.entityType === 'string' ? metadata.entityType : null,
+      relatedEntityId: typeof metadata.entityId === 'string' ? metadata.entityId : null,
+      metadata: { ...metadata, error: normalizeEmailError(error) },
+    })
     return {
       ok: false,
       mailbox,

@@ -10,17 +10,13 @@ import {
 import styles from './marketing-ai-phase3.module.css'
 import AiDirectorUniverseShell from '../ai-director-universe/AiDirectorUniverseShell'
 import {
-  CONTENT_ASSETS_KEY,
-  CONTENT_BRIEFS_KEY,
-  CONTENT_ITEMS_KEY,
-  CONTENT_TASKS_KEY,
-  readJson,
-  writeJson,
+  commitCanonicalStoreChange,
   type ContentAsset,
   type ContentBrief,
   type ContentItem,
   type ContentTask,
 } from '../content-command-system'
+import { contentCommandRequest } from '@/components/market-os/content-command/runtime/content-command-runtime'
 
 export type MarketingAutopilotView = 'autopilot' | 'compiler' | 'queue' | 'decisions' | 'integrations' | 'repository' | 'recovery'
 
@@ -38,35 +34,51 @@ function normalizePriority(value: unknown): 'Low'|'Medium'|'High'|'Critical' {
   const normalized=String(value||'High').toLowerCase()
   return normalized==='critical'?'Critical':normalized==='low'?'Low':normalized==='medium'?'Medium':'High'
 }
-function importCanonicalRecordToLocalWorkspace(record: CanonicalRecord) {
-  const id=canonicalLocalId(record)
-  const metadata=record.metadata||{}
-  const dueDate=String(record.due_date||'').slice(0,10)
-  const recordType=record.record_type
-  if(recordType==='content_brief'||recordType==='campaign_plan'){
-    const rows=readJson<ContentBrief[]>(CONTENT_BRIEFS_KEY,[])
-    if(!rows.some(row=>row.id===id)) rows.unshift({id,title:record.title,campaign:String(metadata.campaign||metadata.campaignId||'Marketing Director AI'),audience:String(metadata.audience||'Audience à confirmer'),objective:String(metadata.objective||record.description||record.title),message:String(metadata.message||record.description||''),channel:String(metadata.channel||'LinkedIn') as ContentBrief['channel'],owner:String(record.owner_agent||'Marketing Director AI'),dueDate,status:'draft'})
-    writeJson(CONTENT_BRIEFS_KEY,rows)
-    return {targetType:'browser_content_brief',targetId:id,label:'Briefs'}
-  }
-  if(['content_draft','publishing_package','calendar_proposal','approval_package'].includes(recordType)){
-    const rows=readJson<ContentItem[]>(CONTENT_ITEMS_KEY,[])
-    if(!rows.some(row=>row.id===id)) rows.unshift({id,title:record.title,type:String(metadata.contentType||recordType),channel:String(metadata.channel||'LinkedIn') as ContentItem['channel'],campaign:String(metadata.campaign||metadata.campaignId||'Marketing Director AI'),owner:String(record.owner_agent||'Marketing Director AI'),reviewer:String(metadata.reviewer||'Brand Manager'),status:recordType==='publishing_package'?'approved':recordType==='calendar_proposal'?'scheduled':'draft',priority:normalizePriority(record.priority),dueDate,scheduledDate:String(metadata.scheduledDate||metadata.scheduleDate||''),body:String(metadata.body||metadata.content||record.description||''),objective:String(metadata.objective||record.description||''),audience:String(metadata.audience||''),angle:String(metadata.angle||''),cta:String(metadata.cta||''),assets:[],brandScore:Number(metadata.brandScore||0),seoKeyword:String(metadata.seoKeyword||''),notes:`Import canonique Phase 3 · ${record.id}`,createdAt:record.created_at,updatedAt:new Date().toISOString()})
-    writeJson(CONTENT_ITEMS_KEY,rows)
-    return {targetType:'browser_content_item',targetId:id,label:'Portefeuille'}
-  }
-  if(['content_task','content_dependency','content_review'].includes(recordType)){
-    const rows=readJson<ContentTask[]>(CONTENT_TASKS_KEY,[])
-    if(!rows.some(row=>row.id===id)) rows.unshift({id,contentId:String(metadata.contentId||metadata.content_id||''),title:record.title,owner:String(record.owner_agent||'Marketing Director AI'),status:recordType==='content_review'?'todo':record.status==='completed'?'done':'todo',dueDate,priority:normalizePriority(record.priority),notes:`${record.description||''}
-Import canonique Phase 3 · ${record.id}`.trim()})
-    writeJson(CONTENT_TASKS_KEY,rows)
-    return {targetType:'browser_content_task',targetId:id,label:'Tâches'}
-  }
-  const rows=readJson<ContentAsset[]>(CONTENT_ASSETS_KEY,[])
-  if(!rows.some(row=>row.id===id)) rows.unshift({id,name:record.title,type:'Other',channel:String(metadata.channel||'LinkedIn') as ContentAsset['channel'],linkedContentId:String(metadata.contentId||metadata.content_id||''),owner:String(record.owner_agent||'Marketing Director AI'),status:'draft',url:String(metadata.url||''),notes:`${record.description||''}
-Import canonique Phase 3 · ${record.id}`.trim()})
-  writeJson(CONTENT_ASSETS_KEY,rows)
-  return {targetType:'browser_content_asset',targetId:id,label:'Assets'}
+async function importCanonicalRecordToLocalWorkspace(record: CanonicalRecord) {
+  const localId = canonicalLocalId(record)
+  const metadata = record.metadata || {}
+  const dueDate = String(record.due_date || '').slice(0, 10)
+  const recordType = record.record_type
+  let targetType = 'content_asset'
+  let label = 'Assets'
+  const persisted = await commitCanonicalStoreChange((store) => {
+    if (recordType === 'content_brief' || recordType === 'campaign_plan') {
+      targetType = 'content_brief'; label = 'Briefs'
+      if (!store.briefs.some((row) => row.id === localId || row.title === record.title)) {
+        const row: ContentBrief = { id: localId, title: record.title, campaign: String(metadata.campaign || metadata.campaignId || 'Marketing Director AI'), audience: String(metadata.audience || 'Audience à confirmer'), objective: String(metadata.objective || record.description || record.title), message: String(metadata.message || record.description || ''), channel: String(metadata.channel || 'LinkedIn') as ContentBrief['channel'], owner: String(record.owner_agent || 'Marketing Director AI'), dueDate, status: 'draft' }
+        store.briefs.unshift(row)
+      }
+      return
+    }
+    if (['content_draft', 'publishing_package', 'calendar_proposal', 'approval_package'].includes(recordType)) {
+      targetType = 'content_dossier'; label = 'Portefeuille'
+      if (!store.items.some((row) => row.id === localId || row.title === record.title)) {
+        const row: ContentItem = { id: localId, title: record.title, type: String(metadata.contentType || recordType), channel: String(metadata.channel || 'LinkedIn') as ContentItem['channel'], campaign: String(metadata.campaign || metadata.campaignId || 'Marketing Director AI'), owner: String(record.owner_agent || 'Marketing Director AI'), reviewer: String(metadata.reviewer || 'Brand Manager'), status: recordType === 'publishing_package' ? 'approved' : recordType === 'calendar_proposal' ? 'scheduled' : 'draft', priority: normalizePriority(record.priority), dueDate, scheduledDate: String(metadata.scheduledDate || metadata.scheduleDate || ''), body: String(metadata.body || metadata.content || record.description || ''), objective: String(metadata.objective || record.description || ''), audience: String(metadata.audience || ''), angle: String(metadata.angle || ''), cta: String(metadata.cta || ''), assets: [], brandScore: Number(metadata.brandScore || 0), seoKeyword: String(metadata.seoKeyword || ''), notes: `Import canonique Phase 3 · ${record.id}`, createdAt: record.created_at, updatedAt: new Date().toISOString() }
+        store.items.unshift(row)
+      }
+      return
+    }
+    if (['content_task', 'content_dependency', 'content_review'].includes(recordType)) {
+      targetType = 'content_task'; label = 'Tâches'
+      if (!store.tasks.some((row) => row.id === localId || row.title === record.title)) {
+        const row: ContentTask = { id: localId, contentId: String(metadata.contentId || metadata.content_id || ''), title: record.title, owner: String(record.owner_agent || 'Marketing Director AI'), status: recordType === 'content_review' ? 'todo' : record.status === 'completed' ? 'done' : 'todo', dueDate, priority: normalizePriority(record.priority), notes: `${record.description || ''}\nImport canonique Phase 3 · ${record.id}`.trim() }
+        store.tasks.unshift(row)
+      }
+      return
+    }
+    if (!store.assets.some((row) => row.id === localId || row.name === record.title)) {
+      const row: ContentAsset = { id: localId, name: record.title, type: 'Other', channel: String(metadata.channel || 'LinkedIn') as ContentAsset['channel'], linkedContentId: String(metadata.contentId || metadata.content_id || ''), owner: String(record.owner_agent || 'Marketing Director AI'), status: 'draft', url: String(metadata.url || ''), notes: `${record.description || ''}\nImport canonique Phase 3 · ${record.id}`.trim() }
+      store.assets.unshift(row)
+    }
+  }, 'ai_canonical_record_import', `${record.record_type} · ${record.id}`)
+  const target = targetType === 'content_dossier'
+    ? persisted.items.find((row) => row.title === record.title)
+    : targetType === 'content_task'
+      ? persisted.tasks.find((row) => row.title === record.title)
+      : targetType === 'content_brief'
+        ? persisted.briefs.find((row) => row.title === record.title)
+        : persisted.assets.find((row) => row.name === record.title)
+  return { targetType, targetId: target?.id || record.id, label }
 }
 
 type ApiState<T>={loading:boolean;error:string;data:T|null}
@@ -81,7 +93,7 @@ const nav:Array<{key:MarketingAutopilotView;label:string;detail:string;href:stri
   {key:'recovery',label:'Failure & Recovery',detail:'Dead letters et reprise sûre',href:`${BASE}/recovery`,icon:<RotateCcw/>},
 ]
 
-async function api<T>(path:string,init?:RequestInit):Promise<T>{const response=await fetch(path,{credentials:'include',...init,headers:{Accept:'application/json',...(init?.body?{'Content-Type':'application/json'}:{}),...(init?.headers||{})}});const payload=await response.json().catch(()=>({}));if(!response.ok||payload.ok===false)throw new Error(payload.error||`HTTP_${response.status}`);return payload as T}
+const api=contentCommandRequest
 function useApi<T>(loader:()=>Promise<T>,deps:React.DependencyList=[]){const[state,setState]=React.useState<ApiState<T>>({loading:true,error:'',data:null});const refresh=React.useCallback(async()=>{setState(current=>({...current,loading:true,error:''}));try{setState({loading:false,error:'',data:await loader()})}catch(error){setState({loading:false,error:error instanceof Error?error.message:'Erreur inconnue',data:null})}},deps);React.useEffect(()=>{void refresh()},[refresh]);return{...state,refresh}}
 function Spinner(){return <LoaderCircle className={styles.spinner}/>}
 function Badge({children,tone='neutral'}:{children:React.ReactNode;tone?:'neutral'|'success'|'warning'|'danger'|'info'}){return <span className={`${styles.badge} ${styles[`badge_${tone}`]}`}>{children}</span>}
@@ -106,7 +118,7 @@ function Integrations(){
   const[message,setMessage]=React.useState('')
   async function promote(record:CanonicalRecord){
     try{
-      const local=importCanonicalRecordToLocalWorkspace(record)
+      const local=await importCanonicalRecordToLocalWorkspace(record)
       await api('/api/market-os/content-command/marketing-ai/sync',{method:'POST',body:JSON.stringify({sourceType:'market_os_records',sourceId:record.id,targetType:local.targetType,targetId:local.targetId,strategy:'link',payload:{localWorkspace:local.label,explicitHumanPromotion:true}})})
       setMessage(`${record.title} importé dans ${local.label}.`)
       await state.refresh()

@@ -3,6 +3,7 @@
 import * as React from "react"
 import { headquartersAction, useHeadquartersSnapshot } from "../headquarters/client"
 import { buildProofCases, normalizeSnapshot } from "./bulk5-model"
+import { contentCommandRequest } from '@/components/market-os/content-command/runtime/content-command-runtime'
 
 export function useBulk5ProofRegistry() {
   const source = useHeadquartersSnapshot()
@@ -42,9 +43,7 @@ export function useBulk5ProofRegistry() {
     body.set("note", input.note)
     body.set("progressPercent", String(input.progress))
     body.set("file", input.file)
-    const response = await fetch("/api/market-os/content-command-headquarters/source-upload?mode=evidence", { method: "POST", body, credentials: "include" })
-    const payload = await response.json().catch(() => ({}))
-    if (!response.ok || !payload?.ok) throw new Error(payload?.error || "EVIDENCE_UPLOAD_FAILED")
+    const payload = await contentCommandRequest<Record<string,unknown>>("/api/market-os/content-command-headquarters/source-upload?mode=evidence", { method: "POST", body })
     await source.refresh()
     return payload
   }, [source])

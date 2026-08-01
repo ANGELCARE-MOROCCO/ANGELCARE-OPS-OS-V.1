@@ -1,0 +1,6 @@
+const fs=require('fs'),path=require('path');
+let ts;try{ts=require('typescript')}catch{const {createRequire}=require('module');ts=createRequire(path.join(process.cwd(),'package.json'))('typescript')}
+const roots=['angelcare-marketplace/sovereign-control','angelcare-marketplace/experience-builder','angelcare-marketplace/public-universe','angelcare-marketplace/family-experience','app/angelcare-marketplace','app/api/angelcare-marketplace'];let files=[];
+function walk(p){if(!fs.existsSync(p))return;const st=fs.statSync(p);if(st.isDirectory())for(const n of fs.readdirSync(p))walk(path.join(p,n));else if(/\.(ts|tsx)$/.test(p))files.push(p)}roots.forEach(walk);let errors=[];
+for(const f of files){const r=ts.transpileModule(fs.readFileSync(f,'utf8'),{compilerOptions:{jsx:ts.JsxEmit.Preserve,target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.ESNext},reportDiagnostics:true,fileName:f});const d=(r.diagnostics||[]).filter(x=>x.category===ts.DiagnosticCategory.Error);if(d.length)errors.push([f,d])}
+console.log(`Syntax checked: ${files.length} TypeScript/TSX files`);if(errors.length){for(const [f,ds] of errors){console.error(f);for(const d of ds)console.error('  '+ts.flattenDiagnosticMessageText(d.messageText,' '))}process.exit(1)}console.log('PASS: 0 syntax diagnostics')

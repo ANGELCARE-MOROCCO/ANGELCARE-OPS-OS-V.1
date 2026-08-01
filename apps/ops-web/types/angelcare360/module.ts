@@ -43,6 +43,9 @@ export interface Angelcare360AccessProfile {
   canSeeConfiguration: boolean
   canSeePeopleData: boolean
   canSeeOperationalData: boolean
+  permissions: string[]
+  moduleKeys: string[]
+  deniedPermissions: string[]
 }
 
 export interface Angelcare360ModuleRecord {

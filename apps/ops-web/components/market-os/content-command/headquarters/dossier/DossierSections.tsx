@@ -52,6 +52,7 @@ import {
 import type { DossierDecisionVM, DossierLifecycleStage, DossierViewModel, Severity } from "../mz2-view-models"
 import { formatDateFr, humanStatus, severityFor } from "../mz2-view-models"
 import styles from "../mz2-executive-dossier.module.css"
+import { ContentMediaPreview } from "../../media-preview/ContentMediaPreview"
 
 function severityClass(value: Severity) {
   return styles[`severity_${value}`] || styles.severity_neutral
@@ -199,16 +200,16 @@ export function DossierCreativeEvidence({ dossier, canGenerateSample, sampleBusy
     <article id="creative" className={styles.creativeWorkbench}>
       <DossierSectionHeading eyebrow="CREATIVE WORKBENCH" title="Production courante" description="Versions, références et assets restent distincts de la source canonique." action={<Link className={styles.chamberLink} href="/market-os/content-command-center/studio">Ouvrir le Studio <ArrowRight/></Link>}/>
       {primaryAsset ? <>
-        <div className={styles.assetPreview}>{primaryAsset.url ? <img src={primaryAsset.url} alt={`Aperçu de ${primaryAsset.title}`}/> : <FileImage/>}<span>{primaryAsset.type}</span></div>
+        <div className={styles.assetPreview}><ContentMediaPreview source={{ id: primaryAsset.id, title: primaryAsset.title, url: primaryAsset.url, filename: primaryAsset.title, contentType: primaryAsset.type, sourceLabel: "Dossier 360 · Asset courant" }} mode="inspector" fit="contain"/><span>{primaryAsset.type}</span></div>
         <div className={styles.assetIdentity}><div><small>ASSET COURANT</small><strong>{primaryAsset.title}</strong><p>{primaryAsset.owner}</p></div><span className={severityClass(severityFor(primaryAsset.status))}>{humanStatus(primaryAsset.status)}</span></div>
-        <div className={styles.assetStrip}>{dossier.assets.slice(0, 6).map((asset) => <span key={asset.id}>{asset.url ? <img src={asset.url} alt=""/> : <FileImage/>}<small>{asset.type}</small><strong>{asset.title}</strong></span>)}</div>
+        <div className={styles.assetStrip}>{dossier.assets.slice(0, 6).map((asset) => <span key={asset.id}><ContentMediaPreview source={{ id: asset.id, title: asset.title, url: asset.url, filename: asset.title, contentType: asset.type }} mode="compact" interactive={false} showLabel={false}/><small>{asset.type}</small><strong>{asset.title}</strong></span>)}</div>
       </> : <EmptyChamber title="Aucune production créative visible" detail="Le dossier ne possède aucun asset ou sample dans la source consolidée." action="Ouvrir le Studio" href="/market-os/content-command-center/studio"/>}
       {dossier.sourceType === "headquarters" ? <button type="button" className={styles.sampleButton} disabled={!canGenerateSample || sampleBusy} onClick={onGenerateSample}><ImagePlus/>{sampleBusy ? "Génération…" : canGenerateSample ? "Générer une référence IA gouvernée" : "Crédits de référence épuisés"}</button> : null}
     </article>
     <article id="evidence" className={styles.evidenceChamber}>
       <DossierSectionHeading eyebrow="EVIDENCE CHAMBER" title="Preuve soumise et inspectable" description="La preuve est séparée de l’asset de travail et de la source éditable." action={<Link className={styles.chamberLink} href="/market-os/content-command-center/evidence">Evidence Lab <ArrowRight/></Link>}/>
       {primaryEvidence ? <>
-        <div className={styles.evidencePreview}>{primaryEvidence.previewUrl ? <img src={primaryEvidence.previewUrl} alt={`Preuve : ${primaryEvidence.title}`}/> : <FileCheck2/>}<span>{primaryEvidence.type}</span></div>
+        <div className={styles.evidencePreview}><ContentMediaPreview source={{ id: primaryEvidence.id, title: primaryEvidence.title, url: primaryEvidence.previewUrl, filename: primaryEvidence.filename, contentType: primaryEvidence.type, sourceLabel: "Dossier 360 · Preuve" }} mode="inspector" fit="contain"/><span>{primaryEvidence.type}</span></div>
         <div className={styles.evidencePrimary}><div><small>PREUVE PRINCIPALE</small><strong>{primaryEvidence.title}</strong><p>{primaryEvidence.note}</p><span>{primaryEvidence.actor} · {primaryEvidence.createdAt ? formatDateFr(primaryEvidence.createdAt, true) : "Date non disponible"}</span></div><span className={severityClass(severityFor(primaryEvidence.status))}>{humanStatus(primaryEvidence.status)}</span></div>
         <div className={styles.evidenceList}>{dossier.evidence.slice(0, 6).map((proof) => <div key={proof.id}><FileCheck2/><span><strong>{proof.title}</strong><small>{proof.filename}</small></span><b>{humanStatus(proof.status)}</b></div>)}</div>
       </> : <EmptyChamber title="Aucune preuve déposée" detail="Le prochain checkpoint doit produire une preuve identifiable avant décision." action="Déposer une preuve" href="/market-os/content-command-center/evidence"/>}

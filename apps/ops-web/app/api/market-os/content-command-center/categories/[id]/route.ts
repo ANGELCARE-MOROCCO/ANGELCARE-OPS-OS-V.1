@@ -1,25 +1,5 @@
-
 import { NextResponse } from "next/server"
-import { getContentCommandServerClient } from "@/lib/market-os/content-command-center/server"
-
+import { requireContentHeadquartersUser, contentHeadquartersApiError } from "@/lib/market-os/content-command-headquarters/auth"
+import { removeCanonicalCategory } from "@/lib/market-os/content-command-headquarters/canonical-legacy-api-service"
 export const dynamic = "force-dynamic"
-
-export async function DELETE(_request: Request, { params }: { params: Promise<{ id: string }> }) {
-  try {
-    const { id } = await params
-    const supabase = getContentCommandServerClient()
-    const { error } = await supabase.from("content_command_categories").delete().eq("id", id)
-    if (error) throw error
-
-    await supabase.from("content_command_activity").insert({
-      entity_type: "categories",
-      entity_id: id,
-      action: "delete",
-      payload: {},
-    })
-
-    return NextResponse.json({ ok: true })
-  } catch (error: any) {
-    return NextResponse.json({ ok: false, error: error?.message || "Failed to delete categories" }, { status: 500 })
-  }
-}
+export async function DELETE(_request:Request,{params}:{params:Promise<{id:string}>}){try{const actor=await requireContentHeadquartersUser("archive");const {id}=await params;await removeCanonicalCategory(actor,id);return NextResponse.json({ok:true,persisted:true,action:"archived",source:"market_content_canonical"})}catch(error){return contentHeadquartersApiError(error)}}

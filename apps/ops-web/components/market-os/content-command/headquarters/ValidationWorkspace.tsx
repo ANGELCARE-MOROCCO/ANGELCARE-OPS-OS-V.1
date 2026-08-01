@@ -25,6 +25,7 @@ import { PageStatus } from "./primitives"
 import { formatDate, headquartersAction, statusLabel, tone, useHeadquartersSnapshot } from "./client"
 import { Empty, Field, Metric, Modal, Pill, SectionTitle, toneClass, type ReleaseTone } from "../release/release-ui"
 import styles from "../release/mz7-release.module.css"
+import { ContentMediaPreview } from "../media-preview/ContentMediaPreview"
 
 type Decision = "approved" | "revision" | "blocked"
 
@@ -178,7 +179,7 @@ export default function ValidationWorkspace() {
 
           <div className={styles.inspectionGrid}>
             <section className={styles.preview} aria-label="Prévisualisation de la version soumise">
-              {lastEvidence?.content_type?.startsWith("image/") && lastEvidence.preview_url ? <img src={lastEvidence.preview_url} alt={`Preuve ${lastEvidence.title}`}/> : <div className={styles.previewFallback}><Eye/><strong>{lastEvidence?.title || "Prévisualisation indisponible"}</strong><p>{lastEvidence ? `${lastEvidence.filename || lastEvidence.evidence_type}. Le format ne fournit pas de preview web.` : "Aucune preuve n’est liée à cette soumission. Le dossier ne peut pas être présenté comme prêt."}</p></div>}
+              {lastEvidence ? <ContentMediaPreview source={{ id: lastEvidence.id, title: lastEvidence.title, url: lastEvidence.preview_url, bridgeFileId: lastEvidence.bridge_file_id, storageKey: lastEvidence.storage_key, contentType: lastEvidence.content_type, filename: lastEvidence.filename, sizeBytes: lastEvidence.size_bytes, sourceLabel: "Validation Workspace" }} mode="inspector" fit="contain"/> : <div className={styles.previewFallback}><Eye/><strong>Prévisualisation indisponible</strong><p>Aucune preuve n’est liée à cette soumission. Le dossier ne peut pas être présenté comme prêt.</p></div>}
             </section>
             <aside className={styles.inspectionRail}>
               <div className={`${styles.truthCard} ${toneClass(evidenceReady ? "success" : "danger")}`}><span><Eye/></span><div><strong>Evidence</strong><p>{evidenceReady ? `${evidence.length} preuve(s), dernière: ${lastEvidence?.title}` : "Preuve opérationnelle manquante."}</p></div></div>

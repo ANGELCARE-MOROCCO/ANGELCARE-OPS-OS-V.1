@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import Angelcare360OperatorActionDrawer from '@/components/angelcare360/operator/Angelcare360OperatorActionDrawer'
 import Angelcare360OperatorDataTable from '@/components/angelcare360/operator/Angelcare360OperatorDataTable'
@@ -67,7 +68,7 @@ export default async function Angelcare360OperatorIncidentsPage() {
         emptyDescription="Les incidents apparaîtront ici."
         rowKey={(row) => String((row as Record<string, unknown>).id)}
         columns={[
-          { key: 'title', label: 'Incident', render: (row) => String((row as Record<string, unknown>).title || '—') },
+          { key: 'title', label: 'War Room', render: (row) => <Link href={`/angelcare-360-operator/incidents/${String((row as Record<string, unknown>).id)}`} style={entityLinkStyle}>{String((row as Record<string, unknown>).title || '—')}</Link> },
           { key: 'severity', label: 'Sévérité', render: (row) => <Angelcare360OperatorStatusBadge status={String((row as Record<string, unknown>).severity || '—')} /> },
           { key: 'status', label: 'Statut', render: (row) => <Angelcare360OperatorStatusBadge status={String((row as Record<string, unknown>).status || '—')} /> },
           { key: 'started_at', label: 'Début', render: (row) => String((row as Record<string, unknown>).started_at || '—') },
@@ -75,4 +76,13 @@ export default async function Angelcare360OperatorIncidentsPage() {
       />
     </Angelcare360OperatorPageShell>
   )
+}
+
+const entityLinkStyle: React.CSSProperties = {
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: 6,
+  color: '#1d4ed8',
+  fontWeight: 900,
+  textDecoration: 'none',
 }

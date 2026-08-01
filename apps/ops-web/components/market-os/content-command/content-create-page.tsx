@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation"
 import { ArrowRight, ClipboardCheck, FilePlus2, Layers3, ShieldCheck, Sparkles } from "lucide-react"
 import { ContentForm, useContentStore } from "./content-command-system"
+import { headquartersAction } from "./headquarters/client"
 import {
   CommandHero,
   ProductionCanvas,
@@ -13,7 +14,7 @@ import {
 
 export default function ContentCreatePage() {
   const router = useRouter()
-  const { store, commit } = useContentStore()
+  const { store } = useContentStore()
   const requiredRules = store.rules.filter((rule) => rule.active && rule.required)
 
   return <ProductionCanvas>
@@ -24,7 +25,7 @@ export default function ContentCreatePage() {
       icon={FilePlus2}
       tone="navy"
       metrics={[
-        { label: "Briefs disponibles", value: store.briefs.filter((brief) => brief.status === "ready").length, detail: "Briefs marqués prêts dans le store existant" },
+        { label: "Briefs disponibles", value: store.briefs.filter((brief) => brief.status === "ready").length, detail: "Briefs prêts dans le backend canonique" },
         { label: "Règles obligatoires", value: requiredRules.length, detail: "Doctrine active réellement enregistrée" },
         { label: "Productions ouvertes", value: store.items.filter((item) => !["published", "archived"].includes(item.status)).length, detail: "Records non clôturés" },
       ]}
@@ -49,12 +50,44 @@ export default function ContentCreatePage() {
 
     <section className={styles.workbenchGrid} style={{ marginTop: 18 }}>
       <article className={styles.commandPanel}>
-        <SectionHeading eyebrow="QUICK CREATE WORKBENCH" title="Construire le record de production" description="Le composant ContentForm et son contrat de persistance sont conservés; seule l’expérience est replacée dans un environnement de constitution et de vérité opérationnelle." />
+        <SectionHeading eyebrow="QUICK CREATE WORKBENCH" title="Construire le record de production" description="Le formulaire premium est conservé; l’enregistrement crée désormais directement le dossier canonique et ouvre Dossier 360." />
         <ContentForm
           submitLabel="Créer le dossier contenu"
-          onSave={(item) => {
-            commit((draft) => { draft.items = [item, ...draft.items] }, "content create", `Created ${item.title}`)
-            router.push(`/market-os/content-command-center/${item.id}`)
+          onSave={async (item) => {
+            const dossier = await headquartersAction("create_dossier", {
+              title: item.title,
+              family: item.type.toLowerCase().includes("print") ? "print_offline" : item.type.toLowerCase().includes("document") ? "corporate_document" : "digital",
+              category: item.type || "Content",
+              subcategory: item.type || "Standard",
+              serviceKey: "angelcare",
+              serviceLabel: "AngelCare",
+              campaignLabel: item.campaign,
+              audience: item.audience,
+              city: "National",
+              language: "fr",
+              channel: item.channel,
+              journeyStage: "brief",
+              objective: item.objective,
+              messagePillar: item.angle,
+              cta: item.cta,
+              ownerName: item.owner,
+              reviewerName: item.reviewer,
+              dueAt: item.dueDate,
+              brief: {
+                title: item.title,
+                objective: item.objective,
+                audience: item.audience,
+                message: item.body || item.angle,
+                format: item.type,
+                channels: [item.channel],
+                tone: "Premium AngelCare",
+                version: "v1",
+                notes: item.notes,
+                seoKeyword: item.seoKeyword,
+              },
+            }) as { id?: string }
+            if (!dossier?.id) throw new Error("CANONICAL_DOSSIER_ID_MISSING")
+            router.push(`/market-os/content-command-center/dossiers/${dossier.id}`)
           }}
         />
       </article>
@@ -63,7 +96,7 @@ export default function ContentCreatePage() {
         <h3>Contrôle de sortie</h3>
         <p>La création rapide réduit le temps d’entrée, jamais le niveau de responsabilité. Les étapes aval restent obligatoires selon le dossier.</p>
         <dl>
-          <div><dt>Persistance</dt><dd>Store Content Command existant</dd></div>
+          <div><dt>Persistance</dt><dd>Backend canonique market_content_*</dd></div>
           <div><dt>Règles actives</dt><dd>{requiredRules.length} exigence(s) obligatoire(s)</dd></div>
           <div><dt>Review</dt><dd>Non accordée par cette page</dd></div>
           <div><dt>Validation</dt><dd>Destination distincte et future</dd></div>

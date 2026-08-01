@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import type { ApiTemplateRecord, CreativeAssetRecord, CreativeDocumentRecord } from "./bulk4-types"
+import { contentCommandRequest } from '@/components/market-os/content-command/runtime/content-command-runtime'
 
 type RegistryState = {
   templates: ApiTemplateRecord[]
@@ -11,16 +12,7 @@ type RegistryState = {
   error: string
 }
 
-async function jsonRequest<T>(url: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(url, {
-    credentials: "include",
-    headers: { Accept: "application/json", "Content-Type": "application/json", ...(init?.headers || {}) },
-    ...init,
-  })
-  const payload = await response.json().catch(() => ({}))
-  if (!response.ok || payload?.ok === false) throw new Error(payload?.error || `REQUEST_FAILED_${response.status}`)
-  return payload as T
-}
+const jsonRequest=contentCommandRequest
 
 export function useBulk4Registry() {
   const [state, setState] = React.useState<RegistryState>({ templates: [], assets: [], documents: [], loading: true, error: "" })

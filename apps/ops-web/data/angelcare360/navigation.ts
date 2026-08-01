@@ -1,5 +1,7 @@
 import type { Angelcare360ModuleSection } from '@/types/angelcare360/module'
 import { ANGELCARE360_MODULE_REGISTRY } from './module-registry'
+import { filterAngelcare360ModulesByEntitlement } from '@/lib/angelcare360/entitlements'
+import type { Angelcare360RuntimeEntitlements } from '@/types/angelcare360/entitlements'
 
 export const ANGELCARE360_NAV_SECTIONS: Omit<Angelcare360ModuleSection, 'items'>[] = [
   {
@@ -29,10 +31,11 @@ export const ANGELCARE360_NAV_SECTIONS: Omit<Angelcare360ModuleSection, 'items'>
   },
 ]
 
-export function getAngelcare360NavigationSections(): Angelcare360ModuleSection[] {
+export function getAngelcare360NavigationSections(runtime?: Angelcare360RuntimeEntitlements | null): Angelcare360ModuleSection[] {
+  const visibleModules = filterAngelcare360ModulesByEntitlement(ANGELCARE360_MODULE_REGISTRY, runtime)
   return ANGELCARE360_NAV_SECTIONS.map((section) => ({
     ...section,
-    items: ANGELCARE360_MODULE_REGISTRY.filter((module) => module.group === section.group),
+    items: visibleModules.filter((module) => module.group === section.group),
   }))
 }
 

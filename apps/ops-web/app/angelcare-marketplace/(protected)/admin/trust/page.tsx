@@ -1,0 +1,4 @@
+import { requireMarketplacePageContext } from '@/angelcare-marketplace/auth/context'
+import { listAssessments,listComplaints,listSops,trustSummary } from '@/angelcare-marketplace/trust-quality/repository'
+import { TrustCommand } from '@/angelcare-marketplace/trust-quality/components/TrustCommand'
+export default async function Page(){const context=await requireMarketplacePageContext('marketplace.trust.view');const [summary,sops,assessments,complaints]=await Promise.all([trustSummary(context),listSops(context),listAssessments(context),listComplaints(context)]);return <TrustCommand summary={summary} sops={sops} assessments={assessments} complaints={complaints}/>}

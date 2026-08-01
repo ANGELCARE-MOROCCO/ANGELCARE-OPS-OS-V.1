@@ -35,6 +35,9 @@ export type Bulk5Evidence = {
   evidence_type?: string
   content_type?: string
   preview_url?: string
+  bridge_file_id?: string
+  storage_key?: string
+  size_bytes?: number
   status?: string
   note?: string
   progress_percent?: number

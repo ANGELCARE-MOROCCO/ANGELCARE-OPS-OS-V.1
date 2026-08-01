@@ -167,5 +167,6 @@ declare const styles: {
   readonly "versionInspectionDeck": string;
   readonly "versionSide": string;
   readonly "wide": string;
+  readonly "studioSourcePreview": string;
 };
 export default styles;

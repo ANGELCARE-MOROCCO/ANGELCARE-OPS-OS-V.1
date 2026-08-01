@@ -1,0 +1,4 @@
+import { NextResponse } from 'next/server'
+import { assertFlashcardsApiAccess } from '@/lib/flashcards-os/server/access'
+import { actorFromUser, updateCommandSection } from '@/lib/flashcards-os/production/server/repository'
+export async function POST(request:Request,{params}:{params:Promise<{commandId:string}>}){const access=await assertFlashcardsApiAccess('flashcards_os.edit_commands');if(!access.ok)return NextResponse.json({error:access.message},{status:access.status});try{const body=await request.json();const {commandId}=await params;return NextResponse.json({command:await updateCommandSection(decodeURIComponent(commandId),String(body.sectionKey||''),String(body.content||''),actorFromUser(access.user))})}catch(error){return NextResponse.json({error:error instanceof Error?error.message:'Section update failed.'},{status:400})}}

@@ -74,6 +74,9 @@ export type SourceEntry = {
   rightsState: string
   retentionState: string
   storageState: string
+  bridgeFileId: string
+  storageKey: string
+  contentType: string
 }
 
 export type AtlasModel = {
@@ -166,6 +169,9 @@ function sourceFromRecord(sourceValue: unknown, dossierById: Map<string, Record<
     rightsState: rights || "not_documented",
     retentionState: retention || "not_documented",
     storageState: storage || "not_exposed",
+    bridgeFileId: text(source, "bridge_file_id", "bridgeFileId"),
+    storageKey: text(source, "storage_key", "storageKey"),
+    contentType: text(source, "content_type", "contentType"),
   }
 }
 

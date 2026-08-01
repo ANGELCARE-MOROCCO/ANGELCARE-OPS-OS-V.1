@@ -1,0 +1,5 @@
+import CommandCreateForm from '@/components/flashcards-os/production/CommandCreateForm'
+import styles from '@/components/flashcards-os/production/production-os.module.css'
+import { requireFlashcardsPageAccess } from '@/lib/flashcards-os/server/access'
+import { loadIntelligenceOverview } from '@/lib/flashcards-os/intelligence/server/repository'
+export default async function Page(){await requireFlashcardsPageAccess('flashcards_os.create_commands');const intelligence=await loadIntelligenceOverview();return <div className={styles.page}><section className={styles.hero}><div className={styles.heroCopy}><div className={styles.kicker}>NEW PRODUCTION COMMAND</div><h1>Sélectionner l’autorité Product Design et le format externe.</h1><p>Seuls les dossiers approuvés ou explicitement ready_for_umz3 peuvent entrer dans la Forge.</p></div><div className={styles.heroSeal}><span>GATED HANDOFF</span><strong>{intelligence.designs.filter(item=>['approved','ready_for_umz3'].includes(item.status)).length} DESIGNS</strong><i>NO ASSET GENERATION</i></div></section><section className={styles.section}><CommandCreateForm designs={intelligence.designs}/></section></div>}

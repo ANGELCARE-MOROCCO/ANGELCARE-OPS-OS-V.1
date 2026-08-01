@@ -1,5 +1,6 @@
 "use client"
 
+import { contentCommandRequest } from '@/components/market-os/content-command/runtime/content-command-runtime'
 import Link from "next/link"
 import * as React from "react"
 import {
@@ -157,10 +158,8 @@ export default function ContentCommand360Home() {
 
     const settled = await Promise.allSettled(
       endpoints.map(async ([key, endpoint]) => {
-        const response = await fetch(endpoint, { cache: "no-store", credentials: "include" })
-        const payload = await response.json().catch(() => ({}))
-        const list = Array.isArray(payload[key]) ? payload[key] : []
-        if (!response.ok) throw new Error(endpoint)
+        const payload = await contentCommandRequest<Record<string, unknown>>(endpoint)
+        const list = Array.isArray(payload[key]) ? payload[key] as unknown[] : []
         return [key, list.length] as const
       }),
     )
@@ -183,8 +182,9 @@ export default function ContentCommand360Home() {
     void loadRuntime()
   }, [loadRuntime])
 
-  const activeItems = store.items.filter((item) => item.status !== "archived")
-  const overdue = activeItems.filter((item) => isOverdue(item.dueDate) && !["published", "archived"].includes(item.status))
+  const terminalStatuses = new Set(["archived", "rejected", "cancelled", "expired", "converted", "closed", "completed", "superseded", "published"])
+  const activeItems = store.items.filter((item) => !terminalStatuses.has(String(item.status).toLowerCase()))
+  const overdue = activeItems.filter((item) => isOverdue(item.dueDate))
   const blockedContentIds = new Set(store.tasks.filter((task) => task.status === "blocked").map((task) => task.contentId))
   const blocked = activeItems.filter((item) => blockedContentIds.has(item.id))
   const review = activeItems.filter((item) => item.status === "review" || item.status === "revision")
@@ -218,7 +218,7 @@ export default function ContentCommand360Home() {
         <div className="cc360-hero-copy">
           <span className="cc360-hero-eyebrow">Executive Content Command</span>
           <h1>Diriger la production, la marque, la validation et la publication depuis une seule position de contrôle.</h1>
-          <p>Cette expérience organise toutes les fonctions déjà construites sans supprimer leurs workflows. Les chiffres issus du navigateur et les compteurs serveur restent explicitement séparés pour protéger la vérité opérationnelle.</p>
+          <p>Cette expérience concentre uniquement le travail encore exploitable. Les cas clôturés, rejetés, expirés, convertis, archivés ou supersédés quittent automatiquement les surfaces principales sans perdre leur traçabilité.</p>
           <div className="cc360-hero-actions">
             <Button href="/market-os/content-command-center/create" kind="primary"><Sparkles className="h-4 w-4" /> Créer un contenu</Button>
             <Button href="/market-os/content-command-center/tasks" kind="light"><Workflow className="h-4 w-4" /> Ouvrir la production</Button>
@@ -237,7 +237,7 @@ export default function ContentCommand360Home() {
             <div><dt>Catégories</dt><dd>{runtime.categories}</dd></div>
             <div><dt>Événements</dt><dd>{runtime.activity}</dd></div>
           </dl>
-          <p><ShieldCheck className="h-4 w-4" /> Les contenus, briefs, tâches et assets du workflow local sont conservés dans le navigateur par le système existant. Ils ne sont jamais présentés comme des enregistrements Supabase certifiés.</p>
+          <p><ShieldCheck className="h-4 w-4" /> Les surfaces actives sont recalculées depuis les états exploitables. Les objets historiques restent consultables dans leurs registres dédiés sans polluer le commandement quotidien.</p>
         </aside>
       </section>
 
@@ -271,7 +271,7 @@ export default function ContentCommand360Home() {
 
         <aside className="cc360-decision-rail cc360-secondary">
           <Panel className="cc360-decision-panel">
-            <header className="cc360-section-heading"><span className="cc360-section-icon"><Users className="h-5 w-5" /></span><div><h2>Position équipe</h2><p>Répartition d’après le workflow navigateur existant.</p></div></header>
+            <header className="cc360-section-heading"><span className="cc360-section-icon"><Users className="h-5 w-5" /></span><div><h2>Position équipe</h2><p>Répartition du portefeuille encore actif et exploitable.</p></div></header>
             <div className="cc360-owner-list">
               {Array.from(new Set(activeItems.map((item) => item.owner).filter(Boolean))).slice(0, 8).map((owner) => {
                 const owned = activeItems.filter((item) => item.owner === owner)
@@ -283,13 +283,13 @@ export default function ContentCommand360Home() {
           </Panel>
           <Panel className="cc360-decision-panel" data-cc-audit-only>
             <header className="cc360-section-heading"><span className="cc360-section-icon"><ShieldCheck className="h-5 w-5" /></span><div><h2>Audit & provenance</h2><p>Visibilité renforcée en mode Audit.</p></div></header>
-            <dl className="cc360-audit-list"><div><dt>Persistence contenus</dt><dd>Local Storage v2</dd></div><div><dt>API actions génériques</dt><dd>Contrat existant préservé</dd></div><div><dt>Source runtime</dt><dd>{runtime.state}</dd></div><div><dt>Brand rules actives</dt><dd>{store.rules.filter((rule) => rule.active).length}</dd></div></dl>
+            <dl className="cc360-audit-list"><div><dt>Surface opérationnelle</dt><dd>Actifs uniquement</dd></div><div><dt>États historiques exclus</dt><dd>Clôturés / rejetés / archivés</dd></div><div><dt>Source runtime</dt><dd>{runtime.state}</dd></div><div><dt>Brand rules actives</dt><dd>{store.rules.filter((rule) => rule.active).length}</dd></div></dl>
           </Panel>
         </aside>
       </section>
 
       <section id="portfolio" className="cc360-portfolio-section">
-        <header className="cc360-section-title"><div><span>Portefeuille contenu</span><h2>Inventaire opérationnel et prochaine action</h2><p>La table repose sur les contenus existants du workspace navigateur et ne prétend pas remplacer le futur runtime canonique.</p></div><div><Link href="/market-os/content-command-center/create" className="cc360-table-action">Créer</Link><Link href="/market-os/content-command-center/legacy-operations" className="cc360-table-action secondary">Cockpit existant</Link></div></header>
+        <header className="cc360-section-title"><div><span>Portefeuille contenu</span><h2>Inventaire opérationnel et prochaine action</h2><p>Cette table montre uniquement les contenus encore exploitables. Les objets terminés ou retirés sont conservés dans les registres historiques dédiés.</p></div><div><Link href="/market-os/content-command-center/create" className="cc360-table-action">Créer</Link><Link href="/market-os/content-command-center/legacy-operations" className="cc360-table-action secondary">Cockpit existant</Link></div></header>
         <div className="cc360-table-wrap">
           <table>
             <thead><tr><th>Contenu</th><th>Campagne / Canal</th><th>Responsable</th><th>Étape</th><th>Priorité</th><th>Échéance</th><th>Assets</th><th>Prochaine action</th></tr></thead>
@@ -315,8 +315,8 @@ export default function ContentCommand360Home() {
       <section id="performance" className="cc360-performance-section" data-cc-focus-hide>
         <header className="cc360-section-title"><div><span>Performance & intelligence</span><h2>État honnête de la disponibilité des résultats</h2><p>Phase 1 interdit aux métriques de démonstration de se présenter comme des performances certifiées.</p></div></header>
         <div className="cc360-performance-grid">
-          <article><BarChart3 className="h-6 w-6" /><strong>{published.length}</strong><span>contenus marqués « published » dans le workspace local</span><small>Ce statut ne prouve pas une publication externe vérifiée.</small></article>
-          <article><FolderKanban className="h-6 w-6" /><strong>{store.assets.length}</strong><span>assets enregistrés dans le workspace local</span><small>Les actifs serveur sont comptés séparément : {runtime.assets}.</small></article>
+          <article><BarChart3 className="h-6 w-6" /><strong>{published.length}</strong><span>contenus publiés sortis de la surface active</span><small>Ils restent disponibles dans les espaces de performance et d’historique.</small></article>
+          <article><FolderKanban className="h-6 w-6" /><strong>{store.assets.length}</strong><span>assets disponibles dans le portefeuille</span><small>Les actifs serveur recensés sont au nombre de {runtime.assets}.</small></article>
           <article><CalendarClock className="h-6 w-6" /><strong>{activeItems.filter((item) => item.scheduledDate).length}</strong><span>contenus avec date planifiée</span><small>Une date interne ne constitue pas une exécution externe.</small></article>
           <article><ShieldCheck className="h-6 w-6" /><strong>{store.rules.filter((rule) => rule.active).length}</strong><span>règles de marque actives</span><small>Leur présence ne remplace pas la décision humaine de validation.</small></article>
         </div>

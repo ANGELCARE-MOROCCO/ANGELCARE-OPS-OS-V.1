@@ -23,12 +23,13 @@ import {
   Sparkles,
   WandSparkles,
 } from "lucide-react"
-import { loadStore, type ContentItem } from "../content-command-system"
+import { type ContentItem, useContentStore } from "../content-command-system"
 import { templatesByFamily, templateById } from "./bulk4-template-estate"
 import { contextFromLocation, readBulk4Context, writeBulk4Context } from "./bulk4-context"
 import { useBulk4Registry } from "./bulk4-api"
 import type { CreativeAssetRecord, PreflightCheck, TemplateDNA } from "./bulk4-types"
 import { Bulk4BrandCrown, Bulk4TruthState, DominantAction, PreflightPanel, SectionTitle, TonePill, styles } from "./Bulk4Shared"
+import { ContentMediaPreview } from "../media-preview/ContentMediaPreview"
 
 const OUTPUTS = [
   { id: "instagram-square", label: "Instagram carré", dimensions: "1080×1080", channel: "Instagram", max: 90 },
@@ -81,7 +82,7 @@ function defaultDraft(item?: ContentItem | null, template?: TemplateDNA | null):
 
 export default function Bulk4DigitalStudioWorkspace() {
   const registry = useBulk4Registry()
-  const [store] = React.useState(() => loadStore())
+  const { store } = useContentStore()
   const locationContext = React.useMemo(() => contextFromLocation("/market-os/content-command-center/studio"), [])
   const remembered = React.useMemo(() => readBulk4Context(), [])
   const selectedItem = React.useMemo(() => {
@@ -224,7 +225,7 @@ export default function Bulk4DigitalStudioWorkspace() {
         <header><span><Palette/><small>MASTER COMPOSITION</small></span><div><button onClick={() => newBranch("channel")}><GitBranch/> Branche canal</button><button onClick={() => newBranch("language")}><Languages/> Localiser</button></div></header>
         <div className={styles.masterPreview}>
           <div className={styles.previewBrand}><img src="/logo.png" alt="AngelCare"/><span>{draft.service || "ANGELCARE"}</span></div>
-          <div className={styles.previewVisual}>{draft.sourceUrl ? <img src={draft.sourceUrl} alt="Aperçu source de production"/> : <><ImageIcon/><span>{draft.visualSubject || "Source visuelle à lier"}</span></>}</div>
+          <div className={styles.previewVisual}><ContentMediaPreview source={{ title: draft.title || draft.visualSubject || "Source de production", url: draft.sourceUrl || null, filename: draft.sourceUrl || draft.visualSubject || null, sourceLabel: "Digital Studio · Source de composition" }} mode="studio" fit="contain"/></div>
           <div className={styles.previewCopy}><small>{draft.city} · {draft.language.toUpperCase()}</small><h2>{draft.headline || "Headline à constituer"}</h2><p>{draft.supportingCopy || "Supporting copy non renseignée."}</p><strong>{draft.proofPoint || "Preuve ou bénéfice à documenter"}</strong><button>{draft.cta || "CTA requis"}</button></div>
           <footer><span>{version}</span><span>{template.code}</span><span>{draft.partnerName ? `Co-brand: ${draft.partnerName}` : "AngelCare master"}</span></footer>
         </div>

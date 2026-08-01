@@ -1,0 +1,4 @@
+package=ANGELCARE_CONTENT_COMMAND_CENTER_OWNER_CONTROLLED_CASCADE_ACTIVE_HYGIENE_FINAL_20260731-011900
+installed_at=2026-07-31T00:52:23Z
+backup=/Users/user/Desktop/angelcare-platform/.angelcare_backups/content-command-owner-cascade-20260731-015149
+sql_required=supabase/migrations/20260731_0115_content_command_owner_controlled_cascade.sql

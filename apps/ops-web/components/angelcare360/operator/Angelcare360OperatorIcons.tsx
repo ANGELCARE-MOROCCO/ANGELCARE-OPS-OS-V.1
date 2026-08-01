@@ -61,10 +61,27 @@ import {
   Waypoints,
   Workflow,
   Wrench,
+  Presentation,
+  Landmark,
+  Telescope,
+  Gavel,
+  UserRoundCheck,
 } from 'lucide-react'
 import type { Angelcare360OperatorDistrict } from './Angelcare360OperatorExperience'
 
 const iconByKey: Record<string, LucideIcon> = {
+  direction: Landmark,
+  growth: ChartNoAxesCombined,
+  revenue: CircleDollarSign,
+  platform: ShieldCheck,
+  executive: Command,
+  board: Presentation,
+  'executive-revenue': Landmark,
+  'executive-customers': ChartNoAxesCombined,
+  'executive-service': Activity,
+  'executive-decisions': Gavel,
+  'executive-horizon': Telescope,
+  'executive-accountability': UserRoundCheck,
   overview: LayoutDashboard,
   health: HeartPulse,
   service: Activity,

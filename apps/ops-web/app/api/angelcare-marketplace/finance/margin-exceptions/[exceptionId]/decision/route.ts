@@ -1,0 +1,2 @@
+import { handleMarginDecision } from '@/angelcare-marketplace/finance-authority/api-handlers'
+export async function POST(request:Request,{params}:{params:Promise<{exceptionId:string}>}){return handleMarginDecision(request,(await params).exceptionId)}

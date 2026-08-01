@@ -227,3 +227,47 @@
   .liveDot, .cityBeaconPulse, .zoneLow, .zonePending, .draftZone, .spin { animation: none !important; }
   .primaryCommand, .secondaryCommand, .iconCommand, .mapControls button { transition: none; }
 }
+
+/* ANGELCARE_LEAFLET_BASEMAP_VISIBILITY_FIX */
+
+.shell :global(.leaflet-container .leaflet-tile-pane) {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.shell :global(.leaflet-container .leaflet-tile-container) {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.shell :global(.leaflet-container img.leaflet-tile) {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+
+  width: 256px;
+  height: 256px;
+
+  max-width: none !important;
+  max-height: none !important;
+
+  margin: 0 !important;
+  padding: 0 !important;
+
+  object-fit: initial !important;
+  pointer-events: none;
+}
+
+.shell :global(.leaflet-container img.leaflet-tile-loaded) {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.shell :global(.leaflet-container .angelcare-osm-basemap-tile) {
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+

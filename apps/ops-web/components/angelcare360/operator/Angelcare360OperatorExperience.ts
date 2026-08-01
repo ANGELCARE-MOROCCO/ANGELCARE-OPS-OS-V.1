@@ -46,6 +46,14 @@ const palette: Record<Angelcare360OperatorDistrict, Pick<Angelcare360OperatorExp
 }
 
 const exactProfiles: Record<string, Angelcare360OperatorExperienceProfile> = Object.fromEntries([
+  entry('/executive', define('wave1-executive-command', 'command', 'Executive Intelligence', 'Executive Command Center', 'Unifier situation, valeur, risque, décisions, horizon et responsabilité management.', 'Choisir l’intervention de direction qui protège le plus de valeur et réduit le plus de risque.', 'Chaque signal ouvre sa cause, son propriétaire, son échéance et sa preuve.', 'executive-landscape', links('executive/board', 'executive/revenue', 'executive/decisions'))),
+  entry('/executive/board', define('wave1-board-command', 'governance', 'Board Command', 'Mode Conseil', 'Transformer les données opérationnelles en scènes stratégiques vérifiables.', 'Capturer les questions, décisions et engagements du conseil sans perdre la preuve.', 'Chaque scène reste reliée aux registres opérationnels.', 'board-scenes', links('executive', 'executive/decisions', 'audit'))),
+  entry('/executive/revenue', define('wave1-revenue-command', 'finance', 'Executive Intelligence', 'Revenue Command', 'Relier abonnement, facturation, encaissement, exposition et rétention.', 'Arbitrer collection, grâce, restriction ou intervention commerciale avec impact compris.', 'Chaque valeur expose sa définition et son registre source.', 'revenue-architecture', links('billing', 'billing/dunning', 'renewals'))),
+  entry('/executive/customers', define('wave1-customer-value', 'portfolio', 'Executive Intelligence', 'Customer Value Command', 'Comparer valeur, santé explicable, service, activation et renouvellement.', 'Prioriser le facteur relationnel réellement responsable du risque.', 'Chaque facteur ouvre la source qui le justifie.', 'customer-value-map', links('clients', 'customer-health', 'renewals'))),
+  entry('/executive/service', define('wave1-service-command', 'support', 'Executive Intelligence', 'Service Command', 'Relier pression service, durée, client, propriétaire et valeur exposée.', 'Commander la stabilisation avant que le service ne devienne un risque de revenu.', 'Tickets, incidents, demandes et blocages restent séparés et traçables.', 'service-pressure-field', links('support', 'incidents', 'service-operations'))),
+  entry('/executive/decisions', define('wave1-decision-center', 'governance', 'Executive Intelligence', 'Decision Center', 'Instruire les décisions avec situation, alternative, impact, autorité et preuve.', 'Approuver uniquement après compréhension des conséquences et de la non-action.', 'La mutation finale reste dans l’espace opérationnel protégé.', 'decision-chambers', links('audit', 'executive/accountability', 'service-operations'))),
+  entry('/executive/horizon', define('wave1-forward-horizon', 'retention', 'Executive Intelligence', 'Forward Horizon', 'Rendre visibles les obligations à 7, 30, 60, 90 et 180 jours.', 'Agir avant qu’une échéance ne devienne une urgence.', 'Date, valeur, risque, owner et préparation sont reliés.', 'forward-horizon', links('renewals', 'contracts', 'tasks'))),
+  entry('/executive/accountability', define('wave1-accountability', 'governance', 'Executive Intelligence', 'Management Accountability', 'Rendre visible chaque owner, sponsor, délai, preuve et outcome.', 'Escalader les engagements sans propriétaire, bloqués, dépassés ou non prouvés.', 'La tâche terminée reste distincte du résultat réellement obtenu.', 'accountability-system', links('tasks', 'executive/decisions', 'audit'))),
   entry('', define('executive-command', 'command', 'Commandement exécutif', 'Vue réseau SaaS', 'Orchestrer le portefeuille AngelCare 360 depuis une seule situation opérationnelle.', 'Choisir les interventions qui protègent revenu, activation et qualité de service.', 'Décisions, signaux et événements récents traçables.', 'constellation', links('clients', 'billing', 'service-operations'))),
   entry('/clients', define('customer-portfolio', 'portfolio', 'Portefeuille client', 'Paysage relationnel', 'Identifier immédiatement les comptes à développer, activer, sécuriser ou récupérer.', 'Prioriser les comptes selon santé, valeur et prochain engagement.', 'Cycle, abonnement, encours et activité sont reliés au compte.', 'landscape', links('customer-health', 'renewals', 'tenants'))),
   entry('/tenants', define('tenant-fleet', 'infrastructure', 'Infrastructure client', 'Flotte de tenants', 'Contrôler les environnements clients comme une flotte opérationnelle.', 'Activer, restreindre ou stabiliser le tenant exact.', 'Provisionnement, environnement, URL, accès et activité vérifiables.', 'topology', links('implementation', 'usage-limits', 'incidents'))),
@@ -78,6 +86,59 @@ const exactProfiles: Record<string, Angelcare360OperatorExperienceProfile> = Obj
   entry('/settings', define('governance-console', 'governance', 'Gouvernance plateforme', 'Console de règles', 'Gouverner les politiques qui déterminent le comportement du service AngelCare 360.', 'Modifier une règle seulement après compréhension de son impact réseau.', 'Valeur actuelle, portée, dépendances, verrous et audit.', 'console', links('operator-roles', 'audit', 'features'))),
 ] as Array<[string, Angelcare360OperatorExperienceProfile]>)
 
+
+
+const wave2CustomerProfile = hydrate(define(
+  'wave2-customer-command', 'portfolio', 'Entity Command', 'Customer Relationship Command Room',
+  'Unifier relation, valeur, finance, produit, service, renouvellement et preuves dans une autorité unique.',
+  'Diagnostiquer le facteur causal, nommer l’owner et choisir une intervention mesurable.',
+  'Chaque signal ouvre une preuve, une relation ou une decision chamber.',
+  'customer-operational-twin', links('clients', 'executive/customers', 'renewals'),
+))
+const wave2TenantProfile = hydrate(define(
+  'wave2-tenant-twin', 'infrastructure', 'Entity Command', 'Tenant Operational Twin',
+  'Contrôler le runtime, les capacités, l’usage, les restrictions et la pression service.',
+  'Simuler toute suspension ou restauration avant exécution.',
+  'État, abonnement, flags, usage, incidents et facturation restent reliés.',
+  'tenant-operational-twin', links('tenants', 'features', 'usage-limits'),
+))
+const wave2SubscriptionProfile = hydrate(define(
+  'wave2-subscription-command', 'commercial', 'Entity Command', 'Subscription Control Room',
+  'Gouverner valeur, package, entitlements, usage, facturation et renouvellement.',
+  'Comparer les scénarios et obtenir l’autorité avant modification.',
+  'Chaque capacité, facture, contrat et échéance reste probante.',
+  'subscription-control-room', links('subscriptions', 'plans', 'renewals'),
+))
+const wave2BillingProfile = hydrate(define(
+  'wave2-billing-command', 'finance', 'Entity Command', 'Billing Account Command Room',
+  'Unifier factures, paiements, encours, engagements, collection et restriction.',
+  'Protéger le cash sans ignorer la relation, le contrat et le runtime.',
+  'Chaque montant ouvre sa facture, son paiement et son client.',
+  'billing-account-command', links('billing/accounts', 'billing/invoices', 'billing/dunning'),
+))
+const wave2RenewalProfile = hydrate(define(
+  'wave2-renewal-strategy', 'retention', 'Entity Command', 'Renewal Strategy Room',
+  'Transformer l’échéance en mission de rétention, négociation et expansion.',
+  'Choisir un scénario approuvé après fermeture des risques service et finance.',
+  'Probabilité, valeur, contrats, incidents et décisionnaires restent expliqués.',
+  'renewal-strategy-room', links('renewals', 'contracts', 'customer-health'),
+))
+const wave2IncidentProfile = hydrate(define(
+  'wave2-incident-war-room', 'incident', 'Entity Command', 'Incident War Room',
+  'Commander impact, investigation, containment, recovery et post-incident.',
+  'Clôturer seulement après recovery prouvée, communication et follow-up attribué.',
+  'Timeline, tickets, actions, clients, tenants et valeur exposée restent reliés.',
+  'incident-war-room', links('incidents', 'support', 'service-operations'),
+))
+
+
+const sovereignDirectionProfile = hydrate(define('sovereign-direction', 'command', 'Sovereign Universe 01', 'Direction, stratégie & expansion', 'Gouverner performance, scénarios, risques, décisions et expansion mondiale.', 'Arbitrer les mouvements qui protègent la valeur et la capacité de croissance.', 'Atlas stratégique, horizon, owners et preuves reliées.', 'sovereign-atlas', links('executive', 'executive/board', 'executive/horizon')))
+const sovereignGrowthProfile = hydrate(define('sovereign-growth', 'commercial', 'Sovereign Universe 02', 'Croissance, commerce & portefeuille', 'Piloter acquisition, comptes stratégiques, contrats, renouvellements et expansion.', 'Choisir la prochaine intervention qui augmente valeur et rétention.', 'Dossiers, décideurs, contrats, santé et renouvellements reliés.', 'commercial-constellation', links('clients', 'contracts', 'renewals')))
+const sovereignTenantProfile = hydrate(define('sovereign-tenants', 'infrastructure', 'Sovereign Universe 03', 'Tenants, produit & infrastructure', 'Opérer la flotte de digital twins, ses droits, capacités, versions et accès.', 'Configurer ou restreindre après simulation de l’impact réel.', 'Tenant, abonnement, flags, limites, incidents et audit reliés.', 'digital-twin-fleet', links('tenants', 'features', 'usage-limits')))
+const sovereignRevenueProfile = hydrate(define('sovereign-revenue', 'finance', 'Sovereign Universe 04', 'Revenus, contrats & rentabilité', 'Relier pricing, abonnement, facture, cash, recouvrement et rentabilité.', 'Protéger le cash et la marge sans perdre la relation client.', 'Montants, pièces, échéances, engagements et décisions reliés.', 'revenue-circulation', links('billing', 'billing/invoices', 'billing/dunning')))
+const sovereignServiceProfile = hydrate(define('sovereign-service', 'support', 'Sovereign Universe 05', 'Déploiement, expérience & service', 'Conduire activation, adoption, support, SLA, incidents et qualité.', 'Stabiliser le client avec owner, preuve, communication et résultat.', 'Missions, tickets, incidents, clients et tenants reliés.', 'service-mission-network', links('onboarding', 'support', 'incidents')))
+const sovereignPlatformProfile = hydrate(define('sovereign-platform', 'governance', 'Sovereign Universe 06', 'Plateforme, confiance & gouvernance', 'Protéger identités, autorités, politiques, capacités, audit et santé plateforme.', 'Autoriser uniquement un changement compris, scoped et auditable.', 'Rôle, permission, feature, limite, événement et politique reliés.', 'control-lattice', links('operator-roles', 'audit', 'settings')))
+
 const dossierProfile = hydrate(define(
   'customer-dossier', 'portfolio', 'Relation client', 'Dossier client 360°',
   'Piloter la relation complète sans perdre le contexte commercial, financier ou opérationnel.',
@@ -95,8 +156,19 @@ const printProfile = hydrate(define(
 ))
 
 export function resolveOperatorExperience(pathname: string): Angelcare360OperatorExperienceProfile {
+  if (pathname === `${base}/direction` || pathname.startsWith(`${base}/direction/`)) return sovereignDirectionProfile
+  if (pathname === `${base}/growth` || pathname.startsWith(`${base}/growth/`)) return sovereignGrowthProfile
+  if (pathname === `${base}/tenants-product` || pathname.startsWith(`${base}/tenants-product/`)) return sovereignTenantProfile
+  if (pathname === `${base}/revenue` || pathname.startsWith(`${base}/revenue/`)) return sovereignRevenueProfile
+  if (pathname === `${base}/service` || pathname.startsWith(`${base}/service/`)) return sovereignServiceProfile
+  if (pathname === `${base}/platform` || pathname.startsWith(`${base}/platform/`)) return sovereignPlatformProfile
   if (pathname.includes('/print') || pathname.includes('statement-print') || pathname.includes('receipt-print')) return printProfile
-  if (pathname.startsWith(`${base}/clients/`)) return dossierProfile
+  if (pathname.startsWith(`${base}/clients/`)) return wave2CustomerProfile
+  if (pathname.startsWith(`${base}/tenants/`)) return wave2TenantProfile
+  if (pathname.startsWith(`${base}/subscriptions/`)) return wave2SubscriptionProfile
+  if (pathname.startsWith(`${base}/billing/accounts/`)) return wave2BillingProfile
+  if (pathname.startsWith(`${base}/renewals/`)) return wave2RenewalProfile
+  if (pathname.startsWith(`${base}/incidents/`)) return wave2IncidentProfile
   return exactProfiles[pathname] || exactProfiles[base]
 }
 
@@ -135,6 +207,7 @@ function labelFor(suffix: string) {
     'customer-health': 'Santé clients', renewals: 'Renouvellements', subscriptions: 'Abonnements', support: 'Support', incidents: 'Incidents', implementation: 'Implémentation', onboarding: 'Onboarding', tasks: 'Tâches',
     plans: 'Plans', packages: 'Packages', modules: 'Modules', features: 'Fonctionnalités', 'usage-limits': 'Limites d’usage', audit: 'Audit', settings: 'Paramètres', 'operator-roles': 'Rôles opérateur',
     'service-operations': 'Opérations service', 'service-requests': 'Demandes service', contracts: 'Contrats', 'billing/balances': 'Soldes',
+    'executive': 'Executive Command', 'executive/board': 'Board Mode', 'executive/revenue': 'Revenue Command', 'executive/customers': 'Customer Value', 'executive/service': 'Service Command', 'executive/decisions': 'Decision Center', 'executive/horizon': 'Forward Horizon', 'executive/accountability': 'Accountability',
   }
   return labels[suffix] || suffix
 }

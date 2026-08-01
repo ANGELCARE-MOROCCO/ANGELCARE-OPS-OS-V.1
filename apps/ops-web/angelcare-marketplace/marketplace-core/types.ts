@@ -1,0 +1,7 @@
+export type CatalogKind='service'|'product'|'training'|'audit'|'saas_module'|'kit'
+export type CatalogStatus='draft'|'review'|'approved'|'published'|'paused'|'archived'
+export interface CatalogItem{id:string;public_reference:string;item_key:string;slug:string;kind:CatalogKind;name_fr:string;short_description_fr:string|null;description_fr:string|null;status:CatalogStatus;territory_id:string|null;currency_label:string;price_mode:'fixed'|'starting_from'|'quote_only'|'subscription';price_amount:number|null;featured:boolean;availability_status:string;updated_at:string}
+export interface Supplier{id:string;public_reference:string;supplier_code:string;legal_name:string;display_name:string;status:string;territory_id:string|null;quality_status:string;catalog_offer_count?:number;updated_at:string}
+export interface QuoteBasket{id:string;public_reference:string;basket_status:string;currency_label:string;territory_id:string|null;family_account_id:string|null;tenant_id:string|null;subtotal:number;discount_total:number;tax_total:number;grand_total:number;expires_at:string|null;updated_at:string;items?:QuoteBasketItem[]}
+export interface QuoteBasketItem{id:string;catalog_item_id:string;quantity:number;unit_price:number|null;line_total:number|null;configuration:Record<string,unknown>}
+export interface CatalogSummary{publishedItems:number;draftItems:number;services:number;products:number;training:number;saasModules:number;activeSuppliers:number;openBaskets:number}

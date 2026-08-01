@@ -1,32 +1,8 @@
 "use client"
 
+import { contentCommandRequest } from '@/components/market-os/content-command/runtime/content-command-runtime'
 import Link from "next/link"
 import * as React from "react"
-
-async function executeContentCommandSystemAction(action: string, payload: Record<string, unknown> = {}) {
-  try {
-    const response = await fetch("/api/market-os/content-command-center/actions", {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      body: JSON.stringify({
-        action,
-        payload,
-        source: "content-command-system",
-      }),
-    })
-
-    return await response.json().catch(() => null)
-  } catch (error) {
-    console.error("[CONTENT_COMMAND_SYSTEM_ACTION_ERROR]", action, error)
-    return null
-  }
-}
-
-
 
 export const CONTENT_ITEMS_KEY = "market_os_content_command_items_v2"
 export const CONTENT_TASKS_KEY = "market_os_content_command_tasks_v2"
@@ -145,100 +121,192 @@ export function nowISO() {
   return new Date().toISOString()
 }
 
+export const seedItems: ContentItem[] = []
+export const seedTasks: ContentTask[] = []
+export const seedAssets: ContentAsset[] = []
+export const seedBriefs: ContentBrief[] = []
+export const seedRules: BrandRule[] = []
+
+export function defaultStore(): ContentStore {
+  return { items: [], tasks: [], assets: [], briefs: [], rules: [], logs: [] }
+}
+
+let canonicalStoreCache: ContentStore | null = null
+
+function safeArray<T>(value: unknown): T[] {
+  return Array.isArray(value) ? value as T[] : []
+}
+
+function normalizeStore(value: unknown): ContentStore {
+  const row = value && typeof value === "object" ? value as Partial<ContentStore> : {}
+  return {
+    items: safeArray<ContentItem>(row.items),
+    tasks: safeArray<ContentTask>(row.tasks),
+    assets: safeArray<ContentAsset>(row.assets),
+    briefs: safeArray<ContentBrief>(row.briefs),
+    rules: safeArray<BrandRule>(row.rules),
+    logs: safeArray<ContentLog>(row.logs),
+  }
+}
+
 export function readJson<T>(key: string, fallback: T): T {
   if (typeof window === "undefined") return fallback
   try {
     const raw = window.localStorage.getItem(key)
-    return raw ? (JSON.parse(raw) as T) : fallback
+    return raw ? JSON.parse(raw) as T : fallback
   } catch {
     return fallback
   }
 }
 
-export function writeJson<T>(key: string, value: T) {
-  if (typeof window !== "undefined") window.localStorage.setItem(key, JSON.stringify(value))
-}
-
-export const seedItems: ContentItem[] = []
-
-export const seedTasks: ContentTask[] = []
-
-export const seedAssets: ContentAsset[] = []
-
-export const seedBriefs: ContentBrief[] = []
-
-export const seedRules: BrandRule[] = [
-  { id: "rule-001", title: "Avoid medical promises that imply diagnosis or guaranteed outcomes", category: "Medical sensitivity", required: true, active: true, notes: "Use care support language and approved service wording." },
-  { id: "rule-002", title: "Every lead-generation asset must include one clear CTA", category: "CTA", required: true, active: true, notes: "CTA must match the campaign objective." },
-  { id: "rule-003", title: "Tone must be warm, professional, reassuring, and premium", category: "Tone", required: true, active: true, notes: "Avoid aggressive sales copy." },
-]
-
-export function defaultStore(): ContentStore {
-  return {
-    items: seedItems,
-    tasks: seedTasks,
-    assets: seedAssets,
-    briefs: seedBriefs,
-    rules: seedRules,
-    logs: [{ id: uid("log"), timestamp: nowISO(), action: "live contract", entity: "workspace", detail: "Content Command Center initialized." }],
-  }
-}
-
-export function loadStore(): ContentStore {
+/**
+ * Browser storage is read only for explicit migration/recovery. It is no longer
+ * an operational Content Command source of truth.
+ */
+export function readLegacyStoreForMigration(): ContentStore {
   return {
     items: readJson(CONTENT_ITEMS_KEY, seedItems),
     tasks: readJson(CONTENT_TASKS_KEY, seedTasks),
     assets: readJson(CONTENT_ASSETS_KEY, seedAssets),
     briefs: readJson(CONTENT_BRIEFS_KEY, seedBriefs),
     rules: readJson(CONTENT_RULES_KEY, seedRules),
-    logs: readJson(CONTENT_LOGS_KEY, defaultStore().logs),
+    logs: readJson(CONTENT_LOGS_KEY, [] as ContentLog[]),
   }
 }
 
-export function saveStore(store: ContentStore) {
-  writeJson(CONTENT_ITEMS_KEY, store.items)
-  writeJson(CONTENT_TASKS_KEY, store.tasks)
-  writeJson(CONTENT_ASSETS_KEY, store.assets)
-  writeJson(CONTENT_BRIEFS_KEY, store.briefs)
-  writeJson(CONTENT_RULES_KEY, store.rules)
-  writeJson(CONTENT_LOGS_KEY, store.logs)
+export function clearLegacyBusinessStore() {
+  if (typeof window === "undefined") return
+  for (const key of [CONTENT_ITEMS_KEY, CONTENT_TASKS_KEY, CONTENT_ASSETS_KEY, CONTENT_BRIEFS_KEY, CONTENT_RULES_KEY, CONTENT_LOGS_KEY]) {
+    window.localStorage.removeItem(key)
+  }
+}
+
+/** @deprecated Business records are canonical server records. */
+export function writeJson<T>(_key: string, _value: T) {
+  console.warn("[CONTENT_COMMAND_LOCAL_WRITE_RETIRED] Business records are persisted through the canonical Headquarters runtime.")
+}
+
+export function loadStore(): ContentStore {
+  return canonicalStoreCache || defaultStore()
+}
+
+export async function fetchCanonicalContentStore(): Promise<ContentStore> {
+  const payload = await contentCommandRequest<{ ok: boolean; store: unknown }>("/api/market-os/content-command-center/data")
+  const store = normalizeStore(payload.store)
+  canonicalStoreCache = store
+  return store
+}
+
+export async function persistCanonicalCommit(before: ContentStore, after: ContentStore, mutationAction: string, detail: string) {
+  const payload = await contentCommandRequest<{ ok: boolean; store: unknown }>("/api/market-os/content-command-center/actions", {
+    method: "POST",
+    body: JSON.stringify({
+      action: "canonical_store_commit",
+      source: "content-command-system",
+      payload: { before, after, mutationAction, detail },
+    }),
+  })
+  const store = normalizeStore(payload.store)
+  canonicalStoreCache = store
+  return store
+}
+
+
+export async function commitCanonicalStoreChange(
+  updater: (draft: ContentStore) => ContentStore | void,
+  action = "update",
+  detail = "Updated content command store",
+): Promise<ContentStore> {
+  const before = normalizeStore(canonicalStoreCache || await fetchCanonicalContentStore())
+  const copy: ContentStore = {
+    items: [...before.items],
+    tasks: [...before.tasks],
+    assets: [...before.assets],
+    briefs: [...before.briefs],
+    rules: [...before.rules],
+    logs: [...before.logs],
+  }
+  const updated = updater(copy)
+  const result: ContentStore = updated === undefined ? copy : updated
+  return persistCanonicalCommit(before, result, action, detail)
+}
+
+/**
+ * Compatibility bridge for evolved workspaces that still call saveStore().
+ * The save is canonical and asynchronous; no browser business record is written.
+ */
+export function saveStore(next: ContentStore) {
+  const before = normalizeStore(canonicalStoreCache || defaultStore())
+  canonicalStoreCache = normalizeStore(next)
+  void persistCanonicalCommit(before, canonicalStoreCache, "compatibility_save", "Canonical compatibility workspace save")
+    .catch((error) => console.error("[CONTENT_COMMAND_CANONICAL_SAVE_FAILED]", error))
 }
 
 export function useContentStore() {
-  const [store, setStore] = React.useState<ContentStore>(defaultStore())
+  const [store, setStore] = React.useState<ContentStore>(() => canonicalStoreCache || defaultStore())
+  const [loading, setLoading] = React.useState(!canonicalStoreCache)
+  const [syncing, setSyncing] = React.useState(false)
+  const [error, setError] = React.useState("")
+  const mounted = React.useRef(true)
+
+  const refresh = React.useCallback(async () => {
+    setLoading(true)
+    setError("")
+    try {
+      const next = await fetchCanonicalContentStore()
+      if (mounted.current) setStore(next)
+      return next
+    } catch (nextError) {
+      if (mounted.current) setError(nextError instanceof Error ? nextError.message : "CONTENT_COMMAND_LOAD_FAILED")
+      return canonicalStoreCache || defaultStore()
+    } finally {
+      if (mounted.current) setLoading(false)
+    }
+  }, [])
 
   React.useEffect(() => {
-    setStore(loadStore())
-  }, [])
+    mounted.current = true
+    void refresh()
+    return () => { mounted.current = false }
+  }, [refresh])
 
   const commit = React.useCallback((updater: (draft: ContentStore) => ContentStore | void, action = "update", detail = "Updated content command store") => {
-    setStore(() => {
-      const base = typeof window === "undefined" ? defaultStore() : loadStore()
+    setStore((current) => {
+      const before = normalizeStore(current)
       const copy: ContentStore = {
-        items: [...base.items],
-        tasks: [...base.tasks],
-        assets: [...base.assets],
-        briefs: [...base.briefs],
-        rules: [...base.rules],
-        logs: [...base.logs],
+        items: [...before.items],
+        tasks: [...before.tasks],
+        assets: [...before.assets],
+        briefs: [...before.briefs],
+        rules: [...before.rules],
+        logs: [...before.logs],
       }
-      const result = updater(copy) ?? copy
-      const next: ContentStore = {
+      const updated = updater(copy)
+      const result: ContentStore = updated === undefined ? copy : updated
+      const optimistic: ContentStore = {
         ...result,
-        logs: [{ id: uid("log"), timestamp: nowISO(), action, entity: "content-command", detail }, ...result.logs].slice(0, 80),
+        logs: [{ id: uid("pending"), timestamp: nowISO(), action, entity: "content-command", detail: `${detail} · synchronisation en cours` }, ...result.logs].slice(0, 120),
       }
-      saveStore(next)
-      return next
+      canonicalStoreCache = optimistic
+      setSyncing(true)
+      setError("")
+      void persistCanonicalCommit(before, optimistic, action, detail)
+        .then((persisted) => { if (mounted.current) setStore(persisted) })
+        .catch(async (nextError) => {
+          if (mounted.current) setError(nextError instanceof Error ? nextError.message : "CONTENT_COMMAND_COMMIT_FAILED")
+          const restored = await refresh()
+          if (mounted.current) setStore(restored)
+        })
+        .finally(() => { if (mounted.current) setSyncing(false) })
+      return optimistic
     })
-  }, [])
+  }, [refresh])
 
   const reset = React.useCallback(() => {
-    const next = defaultStore()
-    saveStore(next)
-    setStore(next)
-  }, [])
+    void refresh()
+  }, [refresh])
 
-  return { store, commit, reset }
+  return { store, commit, reset, refresh, loading, syncing, error }
 }
 
 export function statusLabel(value: string) {

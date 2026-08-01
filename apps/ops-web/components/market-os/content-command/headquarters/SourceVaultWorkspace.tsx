@@ -1,5 +1,6 @@
 "use client"
 
+import { contentCommandRequest, toContentCommandBlocker } from '@/components/market-os/content-command/runtime/content-command-runtime'
 import * as React from "react"
 import Link from "next/link"
 import {
@@ -16,6 +17,7 @@ import {
 } from "../knowledge/knowledge-ui"
 import { buildAtlasModel, formatBytes, knowledgeTone, readableStatus } from "../knowledge/knowledge-model"
 import styles from "../knowledge/knowledge-system.module.css"
+import { ContentMediaPreview } from "../media-preview/ContentMediaPreview"
 
 type VaultMode = "register" | "missing" | "versions" | "classes" | "replacement" | "rights" | "incidents" | "audit"
 type ReplacementDossier = { id: string; content_code: string; title: string }
@@ -59,16 +61,14 @@ export default function SourceVaultWorkspace() {
         body.set("confirmation", confirmation)
       }
       const endpoint = uploadMode === "replace" ? "/api/market-os/content-command-headquarters/source-replace" : "/api/market-os/content-command-headquarters/source-upload?mode=source"
-      const response = await fetch(endpoint, { method: "POST", body, credentials: "include" })
-      const payload = await response.json().catch(() => ({}))
-      if (!response.ok || !payload.ok) throw new Error(payload.error || "SOURCE_OPERATION_FAILED")
+      await contentCommandRequest(endpoint, { method: "POST", body })
       setReplacement(null)
       setReplacementReason("")
       setConfirmation("")
       setOperationMessage(uploadMode === "replace" ? "La nouvelle source a été traitée par le workflow de remplacement existant." : "La source a été transmise au workflow d’intégrité existant.")
       await refresh()
     } catch (nextError) {
-      setOperationError(nextError instanceof Error ? nextError.message : "SOURCE_OPERATION_FAILED")
+      setOperationError(toContentCommandBlocker(nextError, "Source Vault").message)
     } finally {
       setBusy("")
     }
@@ -125,6 +125,7 @@ export default function SourceVaultWorkspace() {
           const source = currentByDossier.get(dossier.id)
           return <article key={dossier.id} className={styles.sourceRow}>
             <div className={styles.sourceIdentity}><span><FileArchive/></span><div><small>{dossier.content_code}</small><strong>{dossier.title}</strong><small>{dossier.category} · {dossier.service_label}</small></div></div>
+            <div className={styles.sourceMediaPreview}>{source ? <ContentMediaPreview source={{ id: source.id, title: source.original_filename || dossier.title, bridgeFileId: source.bridge_file_id, storageKey: source.storage_key, contentType: source.content_type, filename: source.original_filename, sizeBytes: source.size_bytes, sourceLabel: `${dossier.content_code} · Source canonique` }} mode="compact" fit="contain"/> : <ContentMediaPreview source={{ title: dossier.title, filename: "Source manquante" }} mode="compact" interactive={false}/>}</div>
             <div className={styles.sourceFile}>{source ? <><strong>{source.original_filename}</strong><small>{formatBytes(source.size_bytes)} · v{source.source_version}</small></> : <><strong>Original non sécurisé</strong><small>La source est requise par le cycle gouverné.</small></>}</div>
             <IntegritySeal verified={source?.integrity_state === "verified"} label={source ? readableStatus(source.integrity_state) : "Source manquante"}/>
             <StatusPill tone={source ? "info" : "danger"}>{source ? "Canonique courante" : "À constituer"}</StatusPill>
@@ -148,7 +149,7 @@ export default function SourceVaultWorkspace() {
 
     {mode === "versions" ? <section className={styles.section}>
       <SectionTitle eyebrow="VERSION LINEAGE" title="Chaque version reste identifiable" description="Les versions courantes, historiques et états d’intégrité sont ordonnés par dossier sans effacer les prédécesseurs."/>
-      <div className={styles.versionTimeline}>{Array.from(model.sourceVersions.entries()).flatMap(([dossierId, versions]) => versions.map((source) => <article key={source.id} className={styles.versionItem}><span>v{source.version}</span><div><small>{source.contentCode} · {source.contentTitle}</small><strong>{source.filename}</strong><p>{formatBytes(source.sizeBytes)} · {source.createdAt ? formatDate(source.createdAt, true) : "Date non exposée"} · {source.owner}</p></div><div><StatusPill tone={source.current ? "info" : "neutral"}>{source.current ? "Courante" : "Historique"}</StatusPill><StatusPill tone={knowledgeTone(source.integrity)}>{readableStatus(source.integrity)}</StatusPill></div></article>))}</div>
+      <div className={styles.versionTimeline}>{Array.from(model.sourceVersions.entries()).flatMap(([dossierId, versions]) => versions.map((source) => <article key={source.id} className={styles.versionItem}><span>v{source.version}</span><div className={styles.versionMediaPreview}><ContentMediaPreview source={{ id: source.id, title: source.filename, bridgeFileId: source.bridgeFileId, storageKey: source.storageKey, contentType: source.contentType, filename: source.filename, sizeBytes: source.sizeBytes, sourceLabel: `${source.contentCode} · v${source.version}` }} mode="compact" fit="contain"/></div><div><small>{source.contentCode} · {source.contentTitle}</small><strong>{source.filename}</strong><p>{formatBytes(source.sizeBytes)} · {source.createdAt ? formatDate(source.createdAt, true) : "Date non exposée"} · {source.owner}</p></div><div><StatusPill tone={source.current ? "info" : "neutral"}>{source.current ? "Courante" : "Historique"}</StatusPill><StatusPill tone={knowledgeTone(source.integrity)}>{readableStatus(source.integrity)}</StatusPill></div></article>))}</div>
       {!model.sources.length ? <EmptyKnowledge title="Aucune version disponible" detail="La lignée apparaîtra après les premiers uploads ou remplacements persistés."/> : null}
     </section> : null}
 

@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import Angelcare360OperatorActionDrawer from '@/components/angelcare360/operator/Angelcare360OperatorActionDrawer'
 import Angelcare360OperatorDataTable from '@/components/angelcare360/operator/Angelcare360OperatorDataTable'
@@ -18,6 +19,7 @@ export default async function Angelcare360OperatorRenewalsPage() {
   const renewalOptions = renewals.map((renewal) => ({ label: `${String(renewal.renewal_date || renewal.id)} · ${String(renewal.status || '—')}`, value: String(renewal.id) }))
   const clientOptions = clients.map((client) => ({ label: `${String(client.display_name || 'Client')} · ${String(client.client_code || client.id)}`, value: String(client.id) }))
   const subscriptionOptions = subscriptions.map((subscription) => ({ label: `${String(subscription.subscription_code || subscription.id)} · ${String(subscription.status || '—')}`, value: String(subscription.id) }))
+  const clientNameById = new Map(clients.map((client) => [client.id, client.display_name || client.legal_name || client.client_code]))
 
   return (
     <Angelcare360OperatorPageShell
@@ -69,7 +71,7 @@ export default async function Angelcare360OperatorRenewalsPage() {
         emptyDescription="Les renouvellements à suivre apparaîtront ici."
         rowKey={(row) => String((row as Record<string, unknown>).id)}
         columns={[
-          { key: 'client_id', label: 'Client', render: (row) => String((row as Record<string, unknown>).client_id || '—') },
+          { key: 'client_id', label: 'Strategy Room', render: (row) => <Link href={`/angelcare-360-operator/renewals/${String((row as Record<string, unknown>).id)}`} style={entityLinkStyle}>{clientNameById.get(String((row as Record<string, unknown>).client_id || '')) || 'Client non disponible'}</Link> },
           { key: 'renewal_date', label: 'Date', render: (row) => String((row as Record<string, unknown>).renewal_date || '—') },
           { key: 'status', label: 'Statut', render: (row) => <Angelcare360OperatorStatusBadge status={String((row as Record<string, unknown>).status || '—')} /> },
           { key: 'probability', label: 'Probabilité', render: (row) => `${String((row as Record<string, unknown>).probability ?? '—')}%` },
@@ -78,4 +80,13 @@ export default async function Angelcare360OperatorRenewalsPage() {
       />
     </Angelcare360OperatorPageShell>
   )
+}
+
+const entityLinkStyle: React.CSSProperties = {
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: 6,
+  color: '#1d4ed8',
+  fontWeight: 900,
+  textDecoration: 'none',
 }

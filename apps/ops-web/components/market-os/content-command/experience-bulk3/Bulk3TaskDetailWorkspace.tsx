@@ -14,8 +14,8 @@ import {
   Target,
   Workflow,
 } from "lucide-react"
-import { Shell, loadStore } from "../content-command-system"
-import { readTaskActivity, readTaskChecklists, readTaskExecutionMeta } from "@/lib/content-command/tasks/task-activity"
+import { Shell, useContentStore } from "../content-command-system"
+import { hydrateTaskRuntime, readTaskActivity, readTaskChecklists, readTaskExecutionMeta } from "@/lib/content-command/tasks/task-activity"
 import { humanDate } from "../execution/task-operating-model"
 import { bulk3ContextHref, contextFromLocation, writeBulk3Context } from "./bulk3-context"
 import { taskOperatingState } from "./bulk3-derivations"
@@ -33,10 +33,11 @@ import {
 import styles from "./bulk3-experience.module.css"
 
 export default function Bulk3TaskDetailWorkspace({ taskId }: { taskId: string }) {
+  const { store } = useContentStore()
   const [version, setVersion] = React.useState(0)
   const [context, setContext] = React.useState<ReturnType<typeof contextFromLocation>>({ returnTo: "/market-os/content-command-center/tasks" })
   React.useEffect(() => { setContext(contextFromLocation("/market-os/content-command-center/tasks")) }, [])
-  const store = typeof window === "undefined" ? { tasks: [], items: [] } : loadStore()
+  React.useEffect(() => { void hydrateTaskRuntime(taskId).then(() => setContext((current) => ({ ...current }))).catch(() => undefined) }, [taskId])
   const task = store.tasks.find((candidate) => candidate.id === taskId)
   const item = task ? store.items.find((candidate) => candidate.id === task.contentId) : null
   const meta = task ? readTaskExecutionMeta(task.id) : null

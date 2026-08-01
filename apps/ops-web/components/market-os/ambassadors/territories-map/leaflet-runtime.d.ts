@@ -1,4 +1,1 @@
-declare module "leaflet" {
-  const leaflet: any
-  export = leaflet
-}
+declare module "leaflet";

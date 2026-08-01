@@ -1,0 +1,5 @@
+import QuotationDocumentStudio from '@/components/flashcards-os/revenue/QuotationDocumentStudio'
+import { RevenuePage } from '@/components/flashcards-os/revenue/RevenuePrimitives'
+import { requireFlashcardsPageAccess } from '@/lib/flashcards-os/server/access'
+import { listB2BAccounts, listHouseholds } from '@/lib/flashcards-os/revenue/server/repository'
+export default async function Page(){await requireFlashcardsPageAccess('flashcards_os.create_quotations');const [households,accounts]=await Promise.all([listHouseholds(),listB2BAccounts()]);const customers=[...households.map(h=>({id:h.id,name:h.displayName,universe:'b2c' as const,billingContact:h.primaryGuardianName,deliveryContact:h.primaryGuardianName})),...accounts.map(a=>({id:a.id,name:a.commercialName,universe:'b2b' as const,billingContact:a.legalName,deliveryContact:a.sites[0]?.operationalContact||a.legalName}))];return <RevenuePage><QuotationDocumentStudio customers={customers}/></RevenuePage>}

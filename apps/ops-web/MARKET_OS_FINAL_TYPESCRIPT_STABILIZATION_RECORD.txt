@@ -1,0 +1,3 @@
+installed_at=2026-08-01T06:22:40Z
+backup=/Users/user/Desktop/angelcare-platform/.angelcare_backups/market-os-final-ts-stabilization-20260801-072211
+scope=leaflet,content-command-shell,bulk5-media-contract

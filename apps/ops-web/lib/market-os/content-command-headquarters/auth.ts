@@ -1,4 +1,5 @@
 import { getCurrentAppUser } from '@/lib/auth/session'
+import { serializeContentCommandError } from './runtime-errors'
 
 export type ContentHeadquartersPermission = 'view' | 'operate' | 'review' | 'govern' | 'configure_ai' | 'manage_sources' | 'publish' | 'edit' | 'cancel' | 'archive' | 'restore' | 'delete' | 'purge' | 'reopen' | 'supersede'
 
@@ -36,13 +37,6 @@ export async function requireContentHeadquartersUser(permission: ContentHeadquar
 }
 
 export function contentHeadquartersApiError(error: unknown) {
-  const message = error instanceof Error ? error.message : 'UNKNOWN_ERROR'
-  const status = message === 'UNAUTHENTICATED' ? 401
-    : message === 'FORBIDDEN' ? 403
-    : message.includes('NOT_FOUND') ? 404
-    : message.includes('CONFLICT') || message.includes('ALREADY_') || message.includes('LIMIT_REACHED') || message.includes('INCOMPLETE') || message.includes('PENDING') || message.includes('IMMUTABLE') || message.includes('PURGE_BLOCKED') || message.startsWith('ACTION_BLOCKED') ? 409
-    : message.includes('MISSING') || message.includes('UNAVAILABLE') || message.includes('NOT_INSTALLED') ? 503
-    : message.startsWith('INVALID_') || message.endsWith('_REQUIRED') || message.includes('CONFIRMATION_MISMATCH') ? 400
-    : 500
-  return Response.json({ ok: false, error: message }, { status })
+  const serialized = serializeContentCommandError(error)
+  return Response.json(serialized, { status: serialized.status })
 }

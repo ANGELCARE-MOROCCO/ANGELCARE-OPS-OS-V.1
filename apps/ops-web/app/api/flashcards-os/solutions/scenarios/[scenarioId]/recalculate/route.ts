@@ -1,0 +1,4 @@
+import { NextResponse } from 'next/server'
+import { assertFlashcardsApiAccess } from '@/lib/flashcards-os/server/access'
+import { actorFromUser, recalculateScenarioById } from '@/lib/flashcards-os/solutions/server/repository'
+export async function POST(request:Request,{params}:{params:Promise<{scenarioId:string}>}){const access=await assertFlashcardsApiAccess('flashcards_os.edit_solution_scenarios');if(!access.ok)return NextResponse.json({error:access.message},{status:access.status});try{const {scenarioId}=await params;const body=await request.json();return NextResponse.json(await recalculateScenarioById(scenarioId,Number(body.discountPercent||0),actorFromUser(access.user)))}catch(error){return NextResponse.json({error:error instanceof Error?error.message:'Scenario recalculation failed.'},{status:400})}}

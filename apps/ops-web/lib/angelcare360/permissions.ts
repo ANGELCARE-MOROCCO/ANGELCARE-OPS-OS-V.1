@@ -68,6 +68,10 @@ export function getAngelcare360AccessLevel(user: Angelcare360SessionUser | null 
 
 export function buildAngelcare360AccessProfile(user: Angelcare360SessionUser | null | undefined): Angelcare360AccessProfile {
   const accessLevel = getAngelcare360AccessLevel(user)
+  const rawPermissions = Array.isArray(user?.permissions) ? user.permissions.map(String) : []
+  const moduleKeys = rawPermissions.filter((value) => value.startsWith('module:')).map((value) => value.slice(7))
+  const deniedPermissions = rawPermissions.filter((value) => value.startsWith('deny:')).map((value) => value.slice(5))
+  const permissions = rawPermissions.filter((value) => !value.startsWith('module:') && !value.startsWith('deny:'))
   const roleLabel = getAngelcare360RoleLabel(user)
   const scopeLabel =
     accessLevel === 'super_admin'
@@ -93,6 +97,9 @@ export function buildAngelcare360AccessProfile(user: Angelcare360SessionUser | n
     canSeeConfiguration: ['super_admin', 'direction', 'administration', 'qualite', 'support'].includes(accessLevel),
     canSeePeopleData: ['super_admin', 'direction', 'administration', 'reception', 'enseignant', 'comptabilite', 'rh'].includes(accessLevel),
     canSeeOperationalData: true,
+    permissions,
+    moduleKeys,
+    deniedPermissions,
   }
 }
 

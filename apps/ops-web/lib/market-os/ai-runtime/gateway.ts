@@ -1,3 +1,4 @@
+import { assertProductionCapability, recordAiUsage, recordProductionIncident } from '@/lib/market-os/content-command-headquarters/production-operations-service'
 import type { JsonRecord } from '@/lib/ai-provider-control/types'
 import { AiRuntimeContinuityError, defaultRuntimeAlternatives, runtimeMessage } from './runtime-errors'
 import { openRouterImage, openRouterStructured, openRouterVision } from './openrouter'
@@ -15,11 +16,14 @@ export async function executeStructuredContent<T extends JsonRecord>(input: {
   maxOutputTokens?: number
 }): Promise<StructuredRuntimeResult<T>> {
   const mode = input.context.continuationMode || 'auto'
+  const aiPolicy = await assertProductionCapability('ai')
+  if (!aiPolicy.allowed) return { status: 'manual_required', result: null, providerType: null, model: null, usage: { inputTokens: 0, outputTokens: 0, totalTokens: 0, latencyMs: 0 }, sources: [], warnings: [aiPolicy.reason], alternatives: defaultRuntimeAlternatives('structured_content') }
   if (mode === 'manual') return { status: 'manual_required', result: null, providerType: null, model: null, usage: { inputTokens: 0, outputTokens: 0, totalTokens: 0, latencyMs: 0 }, sources: [], warnings: ['Mode manuel explicitement sélectionné.'], alternatives: defaultRuntimeAlternatives('structured_content') }
 
   let sources: RuntimeSource[] = []
   const warnings: string[] = []
-  if (input.researchQuery && mode !== 'without_research') {
+  const tavilyPolicy = await assertProductionCapability('tavily')
+  if (input.researchQuery && mode !== 'without_research' && tavilyPolicy.allowed) {
     try { sources = (await tavilySearch({ query: input.researchQuery, context: input.context, maxResults: 8, searchDepth: 'advanced' })).sources }
     catch (error) {
       if (mode === 'provider_only') throw error
@@ -28,28 +32,36 @@ export async function executeStructuredContent<T extends JsonRecord>(input: {
   }
 
   try {
+    const openRouterPolicy = await assertProductionCapability('openrouter')
+    if (!openRouterPolicy.allowed) return { status: 'manual_required', result: null, providerType: null, model: null, usage: { inputTokens: 0, outputTokens: 0, totalTokens: 0, latencyMs: 0 }, sources, warnings: [...warnings, openRouterPolicy.reason], alternatives: defaultRuntimeAlternatives('structured_content') }
     const result = await openRouterStructured<T>({ capability: 'structured_content', context: input.context, systemInstruction: input.systemInstruction, payload: input.payload, schema: input.schema, schemaName: input.schemaName, sources, maxOutputTokens: input.maxOutputTokens })
     result.warnings.push(...warnings)
+    await recordAiUsage({ actorId: input.context.actorId, provider: result.providerType, model: result.model, capability: 'structured_content', inputTokens: result.usage.inputTokens, outputTokens: result.usage.outputTokens, latencyMs: result.usage.latencyMs, estimatedCostDh: Number(result.usage.costUsd || 0) * 10 })
     return result
   } catch (error) {
+    await recordProductionIncident({ sourceType: 'ai_runtime', sourceId: input.context.commandCode || input.schemaName, incidentType: 'structured_content_failure', severity: 'high', summary: 'Échec du runtime de contenu structuré', detail: runtimeMessage(error), nextAction: 'Retry ou continuité manuelle', sourceHref: '/market-os/content-command-center/production-operations' })
     if (mode === 'provider_only') throw error
     return { status: 'manual_required', result: null, providerType: null, model: null, usage: { inputTokens: 0, outputTokens: 0, totalTokens: 0, latencyMs: 0 }, sources, warnings: [...warnings, runtimeMessage(error)], alternatives: error instanceof AiRuntimeContinuityError ? error.alternatives : defaultRuntimeAlternatives('structured_content') }
   }
 }
 
 export async function executeMultimodalAnalysis<T extends JsonRecord>(input: { context: RuntimeExecutionContext; instruction: string; bytes: Uint8Array; contentType: string; schema: JsonRecord; schemaName: string; maxOutputTokens?: number }): Promise<StructuredRuntimeResult<T>> {
-  if (input.context.continuationMode === 'manual') return { status: 'manual_required', result: null, providerType: null, model: null, usage: { inputTokens: 0, outputTokens: 0, totalTokens: 0, latencyMs: 0 }, sources: [], warnings: ['Inspection humaine sélectionnée.'], alternatives: defaultRuntimeAlternatives('multimodal_analysis') }
-  try { return await openRouterVision<T>(input) }
+  const policy = await assertProductionCapability('openrouter')
+  if (!policy.allowed || input.context.continuationMode === 'manual') return { status: 'manual_required', result: null, providerType: null, model: null, usage: { inputTokens: 0, outputTokens: 0, totalTokens: 0, latencyMs: 0 }, sources: [], warnings: [policy.allowed ? 'Inspection humaine sélectionnée.' : policy.reason], alternatives: defaultRuntimeAlternatives('multimodal_analysis') }
+  try { const result=await openRouterVision<T>(input);await recordAiUsage({actorId:input.context.actorId,provider:result.providerType,model:result.model,capability:'multimodal_analysis',missionId:input.context.missionId||undefined,inputTokens:result.usage.inputTokens,outputTokens:result.usage.outputTokens,latencyMs:result.usage.latencyMs,estimatedCostDh:Number(result.usage.costUsd||0)*10});return result }
   catch (error) {
+    await recordProductionIncident({sourceType:'ai_runtime',sourceId:input.context.commandCode||input.schemaName,incidentType:'multimodal_failure',severity:'high',summary:'Échec inspection multimodale',detail:runtimeMessage(error),nextAction:'Inspection manuelle ou retry',sourceHref:'/market-os/content-command-center/production-operations'})
     if (input.context.continuationMode === 'provider_only') throw error
     return { status: 'manual_required', result: null, providerType: null, model: null, usage: { inputTokens: 0, outputTokens: 0, totalTokens: 0, latencyMs: 0 }, sources: [], warnings: [runtimeMessage(error)], alternatives: error instanceof AiRuntimeContinuityError ? error.alternatives : defaultRuntimeAlternatives('multimodal_analysis') }
   }
 }
 
 export async function executeImageGeneration(input: { context: RuntimeExecutionContext; prompt: string; aspectRatio?: string; quality?: string; outputFormat?: 'png'|'jpeg'|'webp' }): Promise<ImageRuntimeResult> {
-  if (input.context.continuationMode === 'manual') return { status: 'manual_required', providerType: null, model: null, image: null, usage: { inputTokens: 0, outputTokens: 0, totalTokens: 0, latencyMs: 0 }, warnings: ['Production manuelle sélectionnée.'], alternatives: defaultRuntimeAlternatives('image_generation') }
-  try { return await openRouterImage(input) }
+  const policy = await assertProductionCapability('openrouter')
+  if (!policy.allowed || input.context.continuationMode === 'manual') return { status: 'manual_required', providerType: null, model: null, image: null, usage: { inputTokens: 0, outputTokens: 0, totalTokens: 0, latencyMs: 0 }, warnings: [policy.allowed ? 'Production manuelle sélectionnée.' : policy.reason], alternatives: defaultRuntimeAlternatives('image_generation') }
+  try { const result=await openRouterImage(input);await recordAiUsage({actorId:input.context.actorId,provider:result.providerType,model:result.model,capability:'image_generation',missionId:input.context.missionId||undefined,inputTokens:result.usage.inputTokens,outputTokens:result.usage.outputTokens,latencyMs:result.usage.latencyMs,estimatedCostDh:Number(result.usage.costUsd||0)*10});return result }
   catch (error) {
+    await recordProductionIncident({sourceType:'ai_runtime',sourceId:input.context.commandCode||'image_generation',incidentType:'image_generation_failure',severity:'high',summary:'Échec génération visuelle',detail:runtimeMessage(error),nextAction:'Production manuelle ou retry',sourceHref:'/market-os/content-command-center/production-operations'})
     if (input.context.continuationMode === 'provider_only') throw error
     return { status: 'manual_required', providerType: null, model: null, image: null, usage: { inputTokens: 0, outputTokens: 0, totalTokens: 0, latencyMs: 0 }, warnings: [runtimeMessage(error)], alternatives: error instanceof AiRuntimeContinuityError ? error.alternatives : defaultRuntimeAlternatives('image_generation') }
   }

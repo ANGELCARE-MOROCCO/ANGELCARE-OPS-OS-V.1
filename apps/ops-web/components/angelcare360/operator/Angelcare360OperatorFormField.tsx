@@ -1,5 +1,6 @@
 'use client'
 
+import type { ChangeEvent } from 'react'
 import styles from './Angelcare360OperatorExperience.module.css'
 
 export type Angelcare360OperatorFormFieldOption = {
@@ -47,7 +48,7 @@ export default function Angelcare360OperatorFormField({ field, value, onChange, 
       {field.kind === 'textarea' ? (
         <textarea
           {...commonProps}
-          onChange={(event) => onChange(field.name, event.target.value)}
+          onChange={(event: ChangeEvent<HTMLTextAreaElement>) => onChange(field.name, event.target.value)}
           placeholder={field.placeholder}
           rows={field.rows || 4}
           className={styles.fieldInput}
@@ -55,7 +56,7 @@ export default function Angelcare360OperatorFormField({ field, value, onChange, 
       ) : field.kind === 'select' ? (
         <select
           {...commonProps}
-          onChange={(event) => onChange(field.name, event.target.value)}
+          onChange={(event: ChangeEvent<HTMLSelectElement>) => onChange(field.name, event.target.value)}
           className={styles.fieldInput}
         >
           <option value="">{field.placeholder || 'Sélectionner une valeur'}</option>
@@ -71,7 +72,7 @@ export default function Angelcare360OperatorFormField({ field, value, onChange, 
         <input
           {...commonProps}
           type={field.kind}
-          onChange={(event) => onChange(field.name, event.target.value)}
+          onChange={(event: ChangeEvent<HTMLInputElement>) => onChange(field.name, event.target.value)}
           placeholder={field.placeholder}
           className={styles.fieldInput}
         />

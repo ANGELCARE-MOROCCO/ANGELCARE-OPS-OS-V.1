@@ -1,0 +1,4 @@
+import DocumentList from '@/components/flashcards-os/revenue/DocumentList'
+import { requireFlashcardsPageAccess } from '@/lib/flashcards-os/server/access'
+import { listQuotations } from '@/lib/flashcards-os/revenue/server/repository'
+export default async function Page(){await requireFlashcardsPageAccess('flashcards_os.create_quotations');const rows=(await listQuotations()).map(d=>({id:d.id,number:d.number,customer:d.customerName,status:d.status,total:d.calculation.totalDh,detail:`v${d.version} · ${d.expiryDate}`,href:`/flashcards-os/revenue/devis/${d.id}`}));return <DocumentList eyebrow="Revenue · Devis" title="Quotation control and customer decisions" description="Versions, pricing snapshots, approvals, A4 PDF and customer decisions." label="Quotations" rows={rows} newHref="/flashcards-os/revenue/devis/new"/>}

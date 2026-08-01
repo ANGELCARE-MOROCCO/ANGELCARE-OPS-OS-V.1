@@ -1,0 +1,2 @@
+import { notFound } from 'next/navigation';import { PublicCatalogDetail } from '@/angelcare-marketplace/marketplace-core/components/PublicCatalogDetail';import { getCatalogItemBySlug } from '@/angelcare-marketplace/marketplace-core/repository'
+export default async function Page({params}:{params:Promise<{locale:string;slug:string}>}){const {slug}=await params;const item=await getCatalogItemBySlug({slug,publicOnly:true});if(!item)notFound();return <PublicCatalogDetail item={item}/>}

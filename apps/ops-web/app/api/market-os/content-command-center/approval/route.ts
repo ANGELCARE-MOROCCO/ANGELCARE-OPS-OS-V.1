@@ -1,36 +1,5 @@
-
 import { NextResponse } from "next/server"
-import { getContentCommandServerClient } from "@/lib/market-os/content-command-center/server"
-
-export const dynamic = "force-dynamic"
-
-export async function POST(request: Request) {
-  try {
-    const payload = await request.json()
-    const supabase = getContentCommandServerClient()
-    const taskId = payload.task_id || `approval-${Date.now()}`
-
-    await supabase.from("content_command_tasks").upsert({
-      id: taskId,
-      entity_type: payload.entity_type || "asset",
-      entity_id: payload.entity_id,
-      title: payload.title || "Approval requested",
-      status: "review",
-      owner: payload.owner || "Marketing Director",
-      priority: payload.priority || "high",
-      payload: { approval: true, ...payload },
-    }, { onConflict: "id" })
-
-    await supabase.from("content_command_activity").insert({
-      entity_type: payload.entity_type || "asset",
-      entity_id: payload.entity_id || taskId,
-      action: "approval-requested",
-      actor: payload.actor || "workspace-user",
-      payload,
-    })
-
-    return NextResponse.json({ ok: true, taskId })
-  } catch (error: any) {
-    return NextResponse.json({ ok: false, error: error?.message || "Approval request failed" }, { status: 500 })
-  }
-}
+import { requireContentHeadquartersUser, contentHeadquartersApiError } from "@/lib/market-os/content-command-headquarters/auth"
+import { upsertLegacyTask, saveCanonicalComment } from "@/lib/market-os/content-command-headquarters/canonical-legacy-api-service"
+export const dynamic="force-dynamic"
+export async function POST(request:Request){try{const actor=await requireContentHeadquartersUser("review");const payload=await request.json();const task=await upsertLegacyTask(actor,{id:payload.task_id,title:payload.title||"Approval requested",dossier_id:payload.entity_id,status:"todo",owner:payload.owner||actor.name,priority:payload.priority||"High",notes:payload.reason||"Approval request"});await saveCanonicalComment(actor,{entity_id:payload.entity_id,note_type:"approval_request",body:payload.reason||payload.title||"Approval requested",metadata:payload});return NextResponse.json({ok:true,taskId:task.id,task,persisted:true,source:"market_content_canonical"})}catch(error){return contentHeadquartersApiError(error)}}

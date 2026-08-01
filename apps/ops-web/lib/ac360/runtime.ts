@@ -46,6 +46,41 @@ export async function getAc360CurrentContext(orgId?: string) {
   const db = await createClient()
   const user = (await getCurrentUser().catch(() => null)) as Ac360CurrentUser
 
+  let tenantAccess: Record<string, any> | null = null
+  if (user?.id && !isAc360RuntimeAdmin(user)) {
+    try {
+      const accessResult = await db
+        .from('angelcare360_operator_tenant_access_accounts')
+        .select('*')
+        .eq('app_user_id', user.id)
+        .order('updated_at', { ascending: false })
+        .limit(1)
+        .maybeSingle()
+      tenantAccess = accessResult.data || null
+    } catch {
+      // Compatibility mode before the additive Tenant Identity migration is applied.
+      tenantAccess = null
+    }
+
+    if (tenantAccess) {
+      const now = Date.now()
+      const startsAt = tenantAccess.access_starts_at ? new Date(tenantAccess.access_starts_at).getTime() : null
+      const expiresAt = tenantAccess.access_expires_at ? new Date(tenantAccess.access_expires_at).getTime() : null
+      if (tenantAccess.status !== 'active') {
+        return { ok: false, error: `Tenant administrator access is ${tenantAccess.status}. Contact AngelCare support.`, user, context: null, accessState: tenantAccess.status }
+      }
+      if (startsAt && startsAt > now) {
+        return { ok: false, error: 'Tenant administrator access is not active yet.', user, context: null, accessState: 'scheduled' }
+      }
+      if (expiresAt && expiresAt <= now) {
+        return { ok: false, error: 'Tenant administrator access has expired.', user, context: null, accessState: 'expired' }
+      }
+      if (orgId && tenantAccess.organization_id && String(orgId) !== String(tenantAccess.organization_id)) {
+        return { ok: false, error: 'Requested organization is outside the administrator access scope.', user, context: null, accessState: 'scope_denied' }
+      }
+    }
+  }
+
   if (!user?.id && !orgId) {
     return { ok: false, error: 'No signed-in user or orgId supplied.', user: null, context: null }
   }
@@ -58,7 +93,10 @@ export async function getAc360CurrentContext(orgId?: string) {
     .limit(1) as any
 
   if (orgId) membershipQuery = membershipQuery.eq('org_id', orgId)
-  else membershipQuery = membershipQuery.eq('app_user_id', user?.id)
+  else {
+    membershipQuery = membershipQuery.eq('app_user_id', user?.id)
+    if (tenantAccess?.organization_id) membershipQuery = membershipQuery.eq('org_id', tenantAccess.organization_id)
+  }
 
   const { data: memberships, error: membershipError } = await membershipQuery
   if (membershipError) return { ok: false, error: membershipError.message, user, context: null }
@@ -93,6 +131,17 @@ export async function getAc360CurrentContext(orgId?: string) {
       wallet: walletRes.data || null,
       restrictions: restrictionsRes.data || [],
       recommendations: recommendationsRes.data || [],
+      tenantAccess: tenantAccess ? {
+        id: tenantAccess.id,
+        tenantId: tenantAccess.tenant_id,
+        clientId: tenantAccess.client_id,
+        roleTemplate: tenantAccess.role_template,
+        scopeMode: tenantAccess.scope_mode,
+        moduleKeys: tenantAccess.module_keys || [],
+        explicitPermissions: tenantAccess.explicit_permissions || [],
+        deniedPermissions: tenantAccess.denied_permissions || [],
+        securityPolicy: tenantAccess.security_policy || {},
+      } : null,
     },
     needsBootstrap: false,
   }

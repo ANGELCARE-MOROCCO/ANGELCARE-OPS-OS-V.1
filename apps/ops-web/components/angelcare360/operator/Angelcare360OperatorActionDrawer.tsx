@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
+import type { FormEvent } from 'react'
 import { useRouter } from 'next/navigation'
 import { CircleDot, LockKeyhole, ShieldCheck } from 'lucide-react'
 import Angelcare360OperatorDrawer from './Angelcare360OperatorDrawer'
@@ -57,7 +58,10 @@ export default function Angelcare360OperatorActionDrawer({ title = 'Actions opé
 
   useEffect(() => {
     if (!currentAction) return
-    setFormValues(currentAction.defaultValues || {})
+    setFormValues({
+      ...Object.fromEntries(currentAction.fields.map((field) => [field.name, field.defaultValue ?? ''])),
+      ...(currentAction.defaultValues || {}),
+    })
     setConfirming(false)
     setBanner({ kind: 'idle', message: null })
   }, [currentAction])
@@ -74,7 +78,7 @@ export default function Angelcare360OperatorActionDrawer({ title = 'Actions opé
         body: JSON.stringify({
           operation: currentAction.operation,
           entity: currentAction.entity,
-          payload: formValues,
+          payload: normalizeActionPayload(currentAction.fields, formValues),
         }),
       })
       const payload = await response.json().catch(() => ({}))
@@ -196,7 +200,7 @@ export default function Angelcare360OperatorActionDrawer({ title = 'Actions opé
           }
         >
           <form
-            onSubmit={(event) => {
+            onSubmit={(event: FormEvent<HTMLFormElement>) => {
               event.preventDefault()
               void submitCurrentAction()
             }}
@@ -238,7 +242,7 @@ export default function Angelcare360OperatorActionDrawer({ title = 'Actions opé
                     key={field.name}
                     field={field}
                     value={formValues[field.name] ?? field.defaultValue ?? ''}
-                    onChange={(name, value) => setFormValues((current) => ({ ...current, [name]: value }))}
+                    onChange={(name: string, value: string) => setFormValues((current) => ({ ...current, [name]: value }))}
                     disabled={busy || (currentAction.confirmMessage ? !confirming : false)}
                   />
                 ))}
@@ -260,4 +264,19 @@ function resolveActionVariant(action: Angelcare360OperatorActionDescriptor): 'de
   if (scope.includes('support') || scope.includes('service') || scope.includes('incident') || scope.includes('task')) return 'support'
   if (scope.includes('audit') || scope.includes('setting') || scope.includes('role')) return 'governance'
   return 'default'
+}
+
+
+function normalizeActionPayload(fields: Angelcare360OperatorFormFieldConfig[], values: Record<string, string>) {
+  const fieldMap = new Map(fields.map((field) => [field.name, field]))
+  const arrayFields = new Set(['includedModules', 'includedFeatures', 'moduleKeys', 'featureKeys'])
+  const booleanFields = new Set(['enabled', 'blocking'])
+  return Object.fromEntries(Object.entries(values).map(([name, rawValue]) => {
+    const field = fieldMap.get(name)
+    const trimmed = typeof rawValue === 'string' ? rawValue.trim() : rawValue
+    if (arrayFields.has(name)) return [name, String(trimmed || '').split(',').map((value) => value.trim()).filter(Boolean)]
+    if (booleanFields.has(name)) return [name, trimmed === 'true']
+    if (field?.kind === 'number') return [name, trimmed === '' ? null : Number(trimmed)]
+    return [name, trimmed === '' ? null : trimmed]
+  }))
 }

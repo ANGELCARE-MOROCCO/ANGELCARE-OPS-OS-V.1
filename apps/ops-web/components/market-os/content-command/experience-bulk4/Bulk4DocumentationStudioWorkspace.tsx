@@ -20,12 +20,13 @@ import {
   Table2,
   TextQuote,
 } from "lucide-react"
-import { loadStore } from "../content-command-system"
+import { useContentStore } from "../content-command-system"
 import { templatesByFamily, templateById } from "./bulk4-template-estate"
 import { contextFromLocation, writeBulk4Context } from "./bulk4-context"
 import { useBulk4Registry } from "./bulk4-api"
 import type { CreativeDocumentRecord, PreflightCheck } from "./bulk4-types"
 import { Bulk4BrandCrown, Bulk4TruthState, DominantAction, PreflightPanel, SectionTitle, TonePill, styles } from "./Bulk4Shared"
+import { ContentMediaPreview } from "../media-preview/ContentMediaPreview"
 
 type DocumentSection = { id: string; title: string; kind: "cover" | "summary" | "section" | "table" | "approval" | "revision"; content: string; required: boolean }
 
@@ -63,7 +64,7 @@ const defaultSections: DocumentSection[] = [
 
 export default function Bulk4DocumentationStudioWorkspace() {
   const registry = useBulk4Registry()
-  const [store] = React.useState(() => loadStore())
+  const { store } = useContentStore()
   const context = React.useMemo(() => contextFromLocation("/market-os/content-command-center/studio"), [])
   const dossier = store.items.find((item) => item.id === context.dossierId) || store.items[0] || null
   const requested = templateById(context.templateId)
@@ -183,6 +184,7 @@ export default function Bulk4DocumentationStudioWorkspace() {
 
       <div className={styles.activePageWorkbench}>
         <header><span><PanelTop/><small>ACTIVE PAGE WORKBENCH</small></span><strong>{selectedSection.title}</strong><div role="group"><button aria-pressed={previewMode === "page"} onClick={() => setPreviewMode("page")}><FileText/> Page</button><button aria-pressed={previewMode === "spread"} onClick={() => setPreviewMode("spread")}><Rows3/> Spread</button><button aria-pressed={previewMode === "continuous"} onClick={() => setPreviewMode("continuous")}><LayoutList/> Continu</button><button aria-pressed={previewMode === "mobile"} onClick={() => setPreviewMode("mobile")}><Maximize2/> Mobile</button></div></header>
+        {existing?.storage_path || typeof existing?.metadata?.sourceUrl === "string" ? <div className={styles.studioSourcePreview}><ContentMediaPreview source={{ id: existing.id, title: existing.title, url: typeof existing.metadata?.sourceUrl === "string" ? existing.metadata.sourceUrl : null, storagePath: existing.storage_path, contentType: typeof existing.metadata?.contentType === "string" ? existing.metadata.contentType : null, filename: typeof existing.metadata?.filename === "string" ? existing.metadata.filename : existing.title, sourceLabel: "Documentation Studio · Fichier réel" }} mode="studio" fit="contain"/></div> : null}
         <div className={`${styles.documentPreviewRoom} ${styles[`preview_${previewMode}`]}`}>
           <article className={styles.a4Page}>
             <header><img src="/logo.png" alt="AngelCare"/><div><small>{draft.classification}</small><span>{draft.version}</span></div></header>

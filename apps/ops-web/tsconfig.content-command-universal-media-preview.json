@@ -1,0 +1,30 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "skipLibCheck": true
+  },
+  "include": [
+    "next-env.d.ts",
+    "components/market-os/content-command/media-preview/ContentMediaPreview.tsx",
+    "lib/market-os/content-command-headquarters/media-preview-service.ts",
+    "app/api/market-os/content-command-headquarters/media-preview/route.ts",
+    "components/market-os/content-command/experience-bulk4/Bulk4AssetLibraryWorkspace.tsx",
+    "components/market-os/content-command/experience-bulk4/Bulk4ActiveAssetsWorkspace.tsx",
+    "components/market-os/content-command/experience-bulk4/Bulk4VersionControlWorkspace.tsx",
+    "components/market-os/content-command/experience-bulk4/Bulk4DigitalStudioWorkspace.tsx",
+    "components/market-os/content-command/experience-bulk4/Bulk4PrintStudioWorkspace.tsx",
+    "components/market-os/content-command/experience-bulk4/Bulk4DocumentationStudioWorkspace.tsx",
+    "components/market-os/content-command/headquarters/SourceVaultWorkspace.tsx",
+    "components/market-os/content-command/headquarters/EvidenceWorkspace.tsx",
+    "components/market-os/content-command/headquarters/ValidationWorkspace.tsx",
+    "components/market-os/content-command/headquarters/DistributionWorkspace.tsx",
+    "components/market-os/content-command/content-publishing-page.tsx",
+    "components/market-os/content-command/headquarters/dossier/DossierSections.tsx",
+    "components/market-os/content-command/experience-bulk1/Bulk1DossierWorkspace.tsx",
+    "components/market-os/content-command/experience-bulk5/Bulk5EvidenceLabWorkspace.tsx",
+    "components/market-os/content-command/experience-bulk5/Bulk5ReviewCommandWorkspace.tsx",
+    "components/market-os/content-command/experience-bulk5/Bulk5ValidationChamber.tsx",
+    "components/market-os/content-command/knowledge/knowledge-model.ts"
+  ]
+}

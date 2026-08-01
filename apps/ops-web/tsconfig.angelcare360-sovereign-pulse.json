@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "skipLibCheck": true
+  },
+  "include": [
+    "types/angelcare360/operator/sovereign-pulse-css.d.ts",
+    "app/(protected)/angelcare-360-operator/page.tsx",
+    "app/api/angelcare360/operator/sovereign-pulse/route.ts",
+    "components/angelcare360/operator/sovereign-pulse/**/*.tsx",
+    "lib/angelcare360/operator/sovereign-pulse.ts",
+    "types/angelcare360/operator/sovereign-pulse.ts"
+  ]
+}

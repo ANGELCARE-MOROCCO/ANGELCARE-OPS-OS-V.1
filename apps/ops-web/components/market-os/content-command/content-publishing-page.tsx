@@ -17,6 +17,7 @@ import {
 } from "./experience-bulk6/bulk6-release-model"
 import { Empty, Field, Metric, Modal, Pill, SectionTitle, toneClass, type ReleaseTone } from "./release/release-ui"
 import styles from "./release/mz7-release.module.css"
+import { ContentMediaPreview } from "./media-preview/ContentMediaPreview"
 
 type ActiveModal = "execute" | "verify" | "failure" | "recovery" | "terminate" | null
 
@@ -63,6 +64,8 @@ export default function ContentPublishingPage() {
   const packages = snapshot?.publicationPackages || []
   const selected = packages.find((pkg) => pkg.id === selectedId) || packages[0]
   const dossier = snapshot?.dossiers.find((item) => item.id === selected?.dossier_id)
+  const dossierSource = snapshot?.sources.find((item) => item.dossier_id === selected?.dossier_id && item.is_current) || snapshot?.sources.find((item) => item.dossier_id === selected?.dossier_id)
+  const dossierEvidence = snapshot?.evidence.filter((item) => item.dossier_id === selected?.dossier_id).sort((a, b) => b.created_at.localeCompare(a.created_at))[0]
   const manifest = selected ? releaseManifest(selected) : null
   const proof = selected ? publicationProof(selected) : null
   const verification = selected ? verificationRecord(selected) : null
@@ -157,7 +160,7 @@ export default function ContentPublishingPage() {
     {selected && dossier ? <section className={styles.section}>
       <SectionTitle eyebrow="ACTIVE PUBLICATION COCKPIT" title={dossier.title} description={`${dossier.content_code} · ${selected.channel} · ${executionModeLabel(manifest?.executionMode || "manual")}`} action={{ href: `/market-os/content-command-center/dossiers/${selected.dossier_id}`, label: "Ouvrir Dossier 360" }}/>
       <div className={styles.inspectionGrid}>
-        <div className={styles.preview}><div className={styles.previewFallback}><Radio/><strong>{statusLabel(selected.status)}</strong><p>{selected.external_reference || "Aucun résultat externe n’est enregistré. Le système ne prétend pas que ce contenu est en ligne."}</p><Pill tone={statusTone(selected)}>{verificationState(selected).replaceAll("_", " ").toUpperCase()}</Pill></div></div>
+        <div className={styles.preview}>{dossierSource ? <ContentMediaPreview source={{ id: dossierSource.id, title: dossierSource.original_filename || dossier.title, bridgeFileId: dossierSource.bridge_file_id, storageKey: dossierSource.storage_key, contentType: dossierSource.content_type, filename: dossierSource.original_filename, sizeBytes: dossierSource.size_bytes, sourceLabel: `Publishing · ${dossier.content_code}` }} mode="inspector" fit="contain"/> : dossierEvidence ? <ContentMediaPreview source={{ id: dossierEvidence.id, title: dossierEvidence.title || dossier.title, url: dossierEvidence.preview_url, bridgeFileId: dossierEvidence.bridge_file_id, storageKey: dossierEvidence.storage_key, contentType: dossierEvidence.content_type, filename: dossierEvidence.filename, sizeBytes: dossierEvidence.size_bytes, sourceLabel: `Publishing Evidence · ${dossier.content_code}` }} mode="inspector" fit="contain"/> : <div className={styles.previewFallback}><Radio/><strong>{statusLabel(selected.status)}</strong><p>{selected.external_reference || "Aucun fichier source ou résultat externe n’est enregistré. Le système ne prétend pas que ce contenu est en ligne."}</p><Pill tone={statusTone(selected)}>{verificationState(selected).replaceAll("_", " ").toUpperCase()}</Pill></div>}</div>
         <aside className={styles.inspectionRail}>
           <div className={`${styles.truthCard} ${toneClass("info")}`}><span><CalendarClock/></span><div><strong>Runway</strong><p>{formatDate(selected.scheduled_at, true)}</p></div></div>
           <div className={`${styles.truthCard} ${toneClass(renditions.length ? "success" : "warning")}`}><span><FileCheck2/></span><div><strong>Version / renditions</strong><p>{manifest?.canonicalSourceVersion ? `Source V${manifest.canonicalSourceVersion}` : "Version non exposée"} · {renditions.map((item) => item.name).join(", ") || "Aucune rendition"}</p></div></div>

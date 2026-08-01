@@ -1,0 +1,4 @@
+import { hasMarketplacePermission, requireMarketplacePageContext } from '@/angelcare-marketplace/auth/context'
+import { TerritorySettingsClient } from '@/angelcare-marketplace/territory-os/components/TerritorySettingsClient'
+import { getTerritoryByCode, listTerritorySettings } from '@/angelcare-marketplace/territory-os/repository'
+export default async function Page({params}:{params:Promise<{territoryCode:string}>}){const context=await requireMarketplacePageContext('marketplace.territory_settings.view');const {territoryCode}=await params;const territory=await getTerritoryByCode(context,territoryCode);return <TerritorySettingsClient territory={territory} settings={await listTerritorySettings(context,territory.id)} canManage={hasMarketplacePermission(context,'marketplace.territory_settings.manage')}/>}

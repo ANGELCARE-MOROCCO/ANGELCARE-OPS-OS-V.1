@@ -1,0 +1,1 @@
+import styles from '../provider.module.css';export function OnboardingRegistry(){return <section className={styles.panel}><div className={styles.panelHead}><h2>Onboarding runway</h2></div><div className={styles.panelBody}><p>Identité, contrats, documents, Academy, zones, consentements et compensation sont suivis par owner, blocker et prochaine action.</p></div></section>}

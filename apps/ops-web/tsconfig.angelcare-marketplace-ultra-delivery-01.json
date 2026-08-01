@@ -1,0 +1,24 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "skipLibCheck": true
+  },
+  "include": [
+    "angelcare-marketplace/sovereign-control/**/*.ts",
+    "angelcare-marketplace/sovereign-control/**/*.tsx",
+    "angelcare-marketplace/experience-builder/**/*.ts",
+    "angelcare-marketplace/experience-builder/**/*.tsx",
+    "angelcare-marketplace/public-universe/**/*.ts",
+    "angelcare-marketplace/public-universe/**/*.tsx",
+    "angelcare-marketplace/family-experience/**/*.ts",
+    "angelcare-marketplace/family-experience/**/*.tsx",
+    "app/angelcare-marketplace/**/*.ts",
+    "app/angelcare-marketplace/**/*.tsx",
+    "app/api/angelcare-marketplace/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    ".next"
+  ]
+}

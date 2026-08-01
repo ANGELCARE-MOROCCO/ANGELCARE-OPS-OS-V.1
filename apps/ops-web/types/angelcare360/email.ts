@@ -9,6 +9,7 @@ export interface Angelcare360EmailDraft {
   templateKey: Angelcare360EmailTemplateKey
   subject: string
   body: string
+  bodyHtml?: string | null
   toEmail: string
   replyTo?: string | null
   metadata?: Record<string, unknown> | null

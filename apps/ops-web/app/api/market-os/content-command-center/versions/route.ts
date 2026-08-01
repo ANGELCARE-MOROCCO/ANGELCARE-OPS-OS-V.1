@@ -1,24 +1,6 @@
-
 import { NextResponse } from "next/server"
-import { getContentCommandServerClient } from "@/lib/market-os/content-command-center/server"
-
-export const dynamic = "force-dynamic"
-
-export async function GET(request: Request) {
-  const supabase = getContentCommandServerClient()
-  const { searchParams } = new URL(request.url)
-  const entityId = searchParams.get("entity_id")
-  let query = supabase.from("content_command_versions").select("*").order("created_at", { ascending: false })
-  if (entityId) query = query.eq("entity_id", entityId)
-  const { data, error } = await query.limit(100)
-  if (error) return NextResponse.json({ ok: false, error: error.message, versions: [] }, { status: 500 })
-  return NextResponse.json({ ok: true, versions: data || [] })
-}
-
-export async function POST(request: Request) {
-  const payload = await request.json()
-  const supabase = getContentCommandServerClient()
-  const { data, error } = await supabase.from("content_command_versions").insert(payload).select("*").single()
-  if (error) return NextResponse.json({ ok: false, error: error.message }, { status: 500 })
-  return NextResponse.json({ ok: true, version: data })
-}
+import { requireContentHeadquartersUser, contentHeadquartersApiError } from "@/lib/market-os/content-command-headquarters/auth"
+import { canonicalVersions, saveCanonicalComment } from "@/lib/market-os/content-command-headquarters/canonical-legacy-api-service"
+export const dynamic="force-dynamic"
+export async function GET(request:Request){try{await requireContentHeadquartersUser("view");const id=new URL(request.url).searchParams.get("entity_id")||undefined;return NextResponse.json({ok:true,versions:await canonicalVersions(id),source:"market_content_canonical"})}catch(error){return contentHeadquartersApiError(error)}}
+export async function POST(request:Request){try{const actor=await requireContentHeadquartersUser("operate");const payload=await request.json();const version=await saveCanonicalComment(actor,{...payload,note_type:"version_note",body:payload.body||payload.description||payload.note||"Version enregistrée"});return NextResponse.json({ok:true,version,persisted:true,source:"market_content_notes"})}catch(error){return contentHeadquartersApiError(error)}}

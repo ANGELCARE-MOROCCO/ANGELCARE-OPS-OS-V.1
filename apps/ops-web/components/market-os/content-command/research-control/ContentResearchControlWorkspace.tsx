@@ -59,6 +59,7 @@ import type {
   ResearchRunEvent,
 } from '@/lib/market-os/content-research/types'
 import styles from './research-control.module.css'
+import { contentCommandRequest } from '@/components/market-os/content-command/runtime/content-command-runtime'
 
 type TabKey = 'cockpit' | 'chain' | 'agents' | 'providers' | 'frequency' | 'quotas' | 'policies' | 'materialization' | 'runs' | 'alerts' | 'audit'
 type ApiPayload = { ok: boolean; snapshot?: ResearchControlSnapshot & { audit?: Array<Record<string, unknown>> }; runtimeDefaults?: JsonRecord; result?: unknown; health?: JsonRecord; error?: string }
@@ -195,21 +196,7 @@ function statusTone(status: string) {
   return styles.statusInfo
 }
 
-async function api(path: string, init?: RequestInit): Promise<ApiPayload> {
-  const response = await fetch(path, {
-    credentials: 'include',
-    cache: 'no-store',
-    ...init,
-    headers: {
-      Accept: 'application/json',
-      ...(init?.body ? { 'Content-Type': 'application/json' } : {}),
-      ...(init?.headers || {}),
-    },
-  })
-  const payload = await response.json().catch(() => ({})) as ApiPayload
-  if (!response.ok || payload.ok === false) throw new Error(payload.error || `HTTP_${response.status}`)
-  return payload
-}
+const api=(path:string,init?:RequestInit)=>contentCommandRequest<ApiPayload>(path,init)
 
 function agentToForm(agent: ResearchAgent): AgentForm {
   const schedule = asRecord(agent.schedule_policy)

@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import AngelCareLogo from '@/components/brand/AngelCareLogo'
+import TenantBrandHeaderIdentity from '@/components/brand/TenantBrandHeaderIdentity'
 import type { Angelcare360AccessProfile, Angelcare360SessionUser } from '@/types/angelcare360/module'
 import {
   ANGELCARE360_COLORS,
@@ -31,11 +31,7 @@ export default function Angelcare360Header({ user, access, pathname, onToggleSid
           <div aria-hidden="true" style={menuSpacerStyle} />
         )}
         <Link href="/angelcare-360-command-center" style={brandLinkStyle} aria-label="Retour au cockpit d’AngelCare 360">
-          <AngelCareLogo size="sm" showText />
-          <div style={brandCopyStyle}>
-            <div style={brandTitleStyle}>ANGELCARE 360 COMMAND CENTER</div>
-            <div style={brandSubtitleStyle}>Pilotage scolaire français, lecture consolidée et contrôle des accès</div>
-          </div>
+          <TenantBrandHeaderIdentity />
         </Link>
       </div>
 

@@ -1,0 +1,4 @@
+import { NextResponse } from 'next/server'
+import { assertFlashcardsApiAccess } from '@/lib/flashcards-os/server/access'
+import { actorFromUser, createPriceBook } from '@/lib/flashcards-os/solutions/server/repository'
+export async function POST(request:Request){const access=await assertFlashcardsApiAccess('flashcards_os.manage_price_books');if(!access.ok)return NextResponse.json({error:access.message},{status:access.status});try{const body=await request.json();return NextResponse.json(await createPriceBook({code:String(body.code||''),label:String(body.label||''),universe:body.universe==='b2b'?'b2b':'b2c',effectiveFrom:String(body.effectiveFrom||new Date().toISOString()),effectiveUntil:body.effectiveUntil?String(body.effectiveUntil):null},actorFromUser(access.user)),{status:201})}catch(error){return NextResponse.json({error:error instanceof Error?error.message:'Price book creation failed.'},{status:400})}}

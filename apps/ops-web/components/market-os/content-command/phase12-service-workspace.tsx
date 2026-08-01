@@ -22,17 +22,17 @@ export function ContentCommandPhase12ServiceWorkspace(): React.ReactElement {
   function handleSaveSnapshot(): void {
     const payload = buildPhase12ExportPayload();
     const saved = savePhase12PayloadToLocalStorage(payload);
-    setMessage(saved ? `Snapshot saved locally with ${payload.entities.length} entities.` : 'Local storage is unavailable in this environment.');
+    setMessage(saved ? `Transient export snapshot prepared with ${payload.entities.length} entities.` : 'The export snapshot could not be prepared.');
   }
 
   function handleReadSnapshot(): void {
     const payload = readPhase12PayloadFromLocalStorage();
-    setMessage(payload ? `Snapshot found from ${payload.exportedAt}.` : 'No local snapshot found.');
+    setMessage(payload ? `Snapshot found from ${payload.exportedAt}.` : 'No transient export snapshot is available.');
   }
 
   function handleClearSnapshot(): void {
     const cleared = clearPhase12PayloadFromLocalStorage();
-    setMessage(cleared ? 'Local snapshot cleared.' : 'Local storage is unavailable in this environment.');
+    setMessage(cleared ? 'Transient export snapshot cleared.' : 'The export snapshot could not be prepared.');
   }
 
   return (
@@ -43,7 +43,7 @@ export function ContentCommandPhase12ServiceWorkspace(): React.ReactElement {
         </p>
         <h2 className="mt-2 text-2xl font-bold text-slate-950">Phase 12 Service Layer</h2>
         <p className="mt-2 max-w-3xl text-sm text-slate-600">
-          Integration-ready service foundation for repositories, local persistence, activity logs, import/export payloads, and service health.
+          Integration-ready service foundation for canonical repositories, transient export snapshots, activity logs, import/export payloads, and service health.
         </p>
         <div className="mt-5 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm font-medium text-slate-700">
           {message}

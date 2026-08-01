@@ -2,12 +2,13 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { usePathname } from 'next/navigation'
-import type { CSSProperties, ReactNode } from 'react'
+import type { CSSProperties, ReactNode, MouseEvent } from 'react'
 import { ANGELCARE360_OPERATOR_NAVIGATION } from '@/data/angelcare360/operator-navigation'
 import type { Angelcare360AccessProfile, Angelcare360SessionUser } from '@/types/angelcare360/module'
 import Angelcare360OperatorCommandPalette from './Angelcare360OperatorCommandPalette'
 import Angelcare360OperatorHeader from './Angelcare360OperatorHeader'
 import Angelcare360OperatorSidebar from './Angelcare360OperatorSidebar'
+import SovereignWorkspaceRail from './sovereign/SovereignWorkspaceRail'
 import { resolveOperatorExperience } from './Angelcare360OperatorExperience'
 import styles from './Angelcare360OperatorExperience.module.css'
 
@@ -89,7 +90,7 @@ export default function Angelcare360OperatorShell({ children, user, access }: Pr
 
         {isMobile && sidebarOpen ? (
           <div className={styles.mobileOverlay} role="presentation" onClick={() => setSidebarOpen(false)}>
-            <div className={styles.mobilePanel} onClick={(event) => event.stopPropagation()}>
+            <div className={styles.mobilePanel} onClick={(event: MouseEvent<HTMLDivElement>) => event.stopPropagation()}>
               <Angelcare360OperatorSidebar
                 open
                 onClose={() => setSidebarOpen(false)}
@@ -111,6 +112,7 @@ export default function Angelcare360OperatorShell({ children, user, access }: Pr
             onOpenCommand={() => setCommandOpen(true)}
             showMenuButton={isMobile}
           />
+          <SovereignWorkspaceRail />
           <main className={styles.main}>{children}</main>
         </div>
       </div>

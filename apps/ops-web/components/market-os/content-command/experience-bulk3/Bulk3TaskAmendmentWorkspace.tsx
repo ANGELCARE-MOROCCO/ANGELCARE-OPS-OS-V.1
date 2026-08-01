@@ -14,13 +14,14 @@ import {
   Trash2,
   Workflow,
 } from "lucide-react"
-import { Shell, loadStore, priorities, saveStore, type ContentTask } from "../content-command-system"
+import { Shell, priorities, saveStore, useContentStore, type ContentTask } from "../content-command-system"
 import {
   addTaskActivity,
   deleteContentCommandTask,
   readTaskExecutionMeta,
   saveTaskExecutionMeta,
   type TaskExecutionMeta,
+  hydrateTaskRuntime,
 } from "@/lib/content-command/tasks/task-activity"
 import { humanDate } from "../execution/task-operating-model"
 import { bulk3ContextHref, contextFromLocation, writeBulk3Context } from "./bulk3-context"
@@ -42,6 +43,7 @@ function cloneMeta(value: TaskExecutionMeta): TaskExecutionMeta {
 }
 
 export default function Bulk3TaskAmendmentWorkspace({ taskId }: { taskId: string }) {
+  const { store } = useContentStore()
   const router = useRouter()
   const [currentTask, setCurrentTask] = React.useState<ContentTask | null>(null)
   const [proposedTask, setProposedTask] = React.useState<ContentTask | null>(null)
@@ -53,8 +55,15 @@ export default function Bulk3TaskAmendmentWorkspace({ taskId }: { taskId: string
   const [deleteConfirm, setDeleteConfirm] = React.useState("")
 
   React.useEffect(() => {
+    void hydrateTaskRuntime(taskId).then(() => {
+      const meta = readTaskExecutionMeta(taskId)
+      setCurrentMeta(cloneMeta(meta))
+      setProposedMeta(cloneMeta(meta))
+    }).catch(() => undefined)
+  }, [taskId])
+
+  React.useEffect(() => {
     const location = contextFromLocation("/market-os/content-command-center/tasks")
-    const store = loadStore()
     const task = store.tasks.find((candidate) => candidate.id === taskId) || null
     const meta = task ? readTaskExecutionMeta(task.id) : null
     setContext(location)
@@ -62,7 +71,7 @@ export default function Bulk3TaskAmendmentWorkspace({ taskId }: { taskId: string
     setProposedTask(task ? { ...task } : null)
     setCurrentMeta(meta ? cloneMeta(meta) : null)
     setProposedMeta(meta ? cloneMeta(meta) : null)
-  }, [taskId])
+  }, [taskId, store.tasks])
 
   React.useEffect(() => {
     if (!currentTask || !currentMeta) return
@@ -90,7 +99,6 @@ export default function Bulk3TaskAmendmentWorkspace({ taskId }: { taskId: string
       setNotice(!changed ? "Aucun changement matériel n’est détecté." : "Le motif d’amendement est obligatoire.")
       return
     }
-    const store = loadStore()
     saveStore({ ...store, tasks: store.tasks.map((task) => task.id === currentTask.id ? proposedTask : task) })
     saveTaskExecutionMeta(currentTask.id, proposedMeta)
     addTaskActivity(currentTask.id, "task_amended", `${amendmentClass} · autorité attendue : ${authority} · motif : ${proposedMeta.amendmentReason}`)

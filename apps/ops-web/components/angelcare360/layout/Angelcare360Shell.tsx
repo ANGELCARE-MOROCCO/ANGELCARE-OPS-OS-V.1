@@ -8,6 +8,8 @@ import type { Angelcare360AccessProfile, Angelcare360SessionUser } from '@/types
 import Angelcare360Header from './Angelcare360Header'
 import Angelcare360Sidebar from './Angelcare360Sidebar'
 import Angelcare360PaymentGateProvider from '@/components/angelcare360/payment/Angelcare360PaymentGateProvider'
+import Angelcare360EntitlementGate from './Angelcare360EntitlementGate'
+import type { Angelcare360RuntimeEntitlements } from '@/types/angelcare360/entitlements'
 import {
   ANGELCARE360_COLORS,
   angelcare360PageBackdropStyle,
@@ -17,13 +19,14 @@ type Angelcare360ShellProps = {
   children: ReactNode
   user: Angelcare360SessionUser
   access: Angelcare360AccessProfile
+  runtimeEntitlements: Angelcare360RuntimeEntitlements
 }
 
-export default function Angelcare360Shell({ children, user, access }: Angelcare360ShellProps) {
+export default function Angelcare360Shell({ children, user, access, runtimeEntitlements }: Angelcare360ShellProps) {
   const pathname = usePathname() || '/angelcare-360-command-center'
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
-  const sections = getAngelcare360NavigationSections()
+  const sections = getAngelcare360NavigationSections(runtimeEntitlements)
 
   useEffect(() => {
     const mediaQuery = window.matchMedia('(max-width: 1100px)')
@@ -80,7 +83,7 @@ export default function Angelcare360Shell({ children, user, access }: Angelcare3
             onToggleSidebar={() => setSidebarOpen((current) => !current)}
             showMenuButton={isMobile}
           />
-          <main style={mainStyle}>{children}</main>
+          <main style={mainStyle}><Angelcare360EntitlementGate pathname={pathname} runtime={runtimeEntitlements}>{children}</Angelcare360EntitlementGate></main>
         </div>
       </div>
       </Angelcare360PaymentGateProvider>

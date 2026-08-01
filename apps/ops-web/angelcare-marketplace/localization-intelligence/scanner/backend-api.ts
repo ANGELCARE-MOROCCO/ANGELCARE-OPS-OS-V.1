@@ -1,0 +1,2 @@
+import { scanSourceAst } from './source-ast'; import type { DiscoveredCandidate } from '../types'
+export async function scanBackendApi(filePath:string,appRoot:string):Promise<DiscoveredCandidate[]>{ const candidates=await scanSourceAst(filePath,appRoot); return candidates.filter(c=>/api|server|validation|error|repository|handler/i.test(c.sourcePath||'')).map(c=>({...c,sourceType:'backend_api' as const,contentType:`backend_${c.contentType}`,confidence:.95})) }

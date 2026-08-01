@@ -1,0 +1,2 @@
+import { notFound } from 'next/navigation';import { PublicMarketplace } from '@/angelcare-marketplace/marketplace-core/components/PublicMarketplace';import { listCatalogItems } from '@/angelcare-marketplace/marketplace-core/repository'
+export default async function Page({params}:{params:Promise<{locale:string}>}){const {locale}=await params;if(!['fr','en','ar'].includes(locale))notFound();return <PublicMarketplace locale={locale as 'fr'|'en'|'ar'} items={await listCatalogItems({publicOnly:true})}/>}

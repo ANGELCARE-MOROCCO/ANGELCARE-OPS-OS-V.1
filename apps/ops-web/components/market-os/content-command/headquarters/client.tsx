@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import type { ContentHeadquartersSnapshot } from "@/lib/market-os/content-command-headquarters/types"
+import { contentCommandRequest } from '@/components/market-os/content-command/runtime/content-command-runtime'
 
 export const CONTENT_FAMILIES = [
   {
@@ -38,10 +39,8 @@ export function useHeadquartersSnapshot() {
     setLoading(true)
     setError("")
     try {
-      const response = await fetch("/api/market-os/content-command-headquarters/snapshot", { cache: "no-store", credentials: "include" })
-      const payload = await response.json().catch(() => ({}))
-      if (!response.ok || !payload.ok) throw new Error(payload.error || `SNAPSHOT_${response.status}`)
-      setSnapshot(payload.snapshot as ContentHeadquartersSnapshot)
+      const payload = await contentCommandRequest<{ok:boolean;snapshot:ContentHeadquartersSnapshot}>("/api/market-os/content-command-headquarters/snapshot")
+      setSnapshot(payload.snapshot)
     } catch (nextError) {
       setError(nextError instanceof Error ? nextError.message : "CONTENT_HEADQUARTERS_UNAVAILABLE")
     } finally {
@@ -54,14 +53,10 @@ export function useHeadquartersSnapshot() {
 }
 
 export async function headquartersAction(action: string, payload: Record<string, unknown>) {
-  const response = await fetch("/api/market-os/content-command-headquarters/actions", {
+  const body = await contentCommandRequest<{ok:boolean;result:unknown}>("/api/market-os/content-command-headquarters/actions", {
     method: "POST",
-    headers: { "content-type": "application/json" },
-    credentials: "include",
     body: JSON.stringify({ action, payload }),
   })
-  const body = await response.json().catch(() => ({}))
-  if (!response.ok || !body.ok) throw new Error(body.error || `ACTION_${response.status}`)
   return body.result
 }
 

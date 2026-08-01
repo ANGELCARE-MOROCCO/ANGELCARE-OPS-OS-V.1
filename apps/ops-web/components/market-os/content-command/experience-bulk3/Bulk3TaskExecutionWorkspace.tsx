@@ -26,7 +26,7 @@ import {
   Target,
   Workflow,
 } from "lucide-react"
-import { Shell, loadStore, type ContentItem, type ContentTask } from "../content-command-system"
+import { Shell, useContentStore, type ContentItem, type ContentTask } from "../content-command-system"
 import {
   addTaskActivity,
   addTaskBlocker,
@@ -42,6 +42,7 @@ import {
   updateContentCommandTask,
   type TaskChecklistItem,
   type TaskExecutionMeta,
+  hydrateTaskRuntime,
 } from "@/lib/content-command/tasks/task-activity"
 import { humanDate, sortTasksForCommand } from "../execution/task-operating-model"
 import { bulk3ContextHref, contextFromLocation, writeBulk3Context } from "./bulk3-context"
@@ -80,6 +81,7 @@ function workTone(state: TaskExecutionMeta["workState"]): "neutral" | "success" 
 }
 
 export default function Bulk3TaskExecutionWorkspace() {
+  const { store } = useContentStore()
   const [tasks, setTasks] = React.useState<ContentTask[]>([])
   const [items, setItems] = React.useState<ContentItem[]>([])
   const [selectedId, setSelectedId] = React.useState("")
@@ -97,7 +99,6 @@ export default function Bulk3TaskExecutionWorkspace() {
   const [clarificationForm, setClarificationForm] = React.useState({ question: "", requestedFrom: "", dueDate: "", impactedArea: "" })
 
   const reload = React.useCallback((preferred?: string) => {
-    const store = loadStore()
     const metas = readTaskExecutionMetas()
     const ordered = sortTasksForCommand(store.tasks, metas)
     const location = contextFromLocation("/market-os/content-command-center/tasks")
@@ -110,9 +111,10 @@ export default function Bulk3TaskExecutionWorkspace() {
     setSelectedId(nextId)
     setMeta(nextId ? readTaskExecutionMeta(nextId) : null)
     setChecklist(nextId ? readTaskChecklists().filter((item) => item.taskId === nextId) : [])
-  }, [])
+  }, [store.items, store.tasks])
 
   React.useEffect(() => { reload() }, [reload])
+  React.useEffect(() => { void hydrateTaskRuntime().then(() => reload()).catch(() => undefined) }, [reload])
   const task = tasks.find((candidate) => candidate.id === selectedId) || null
   const item = task ? items.find((candidate) => candidate.id === task.contentId) || null : null
   const operating = task && meta ? taskOperatingState(task, item, meta, checklist) : null

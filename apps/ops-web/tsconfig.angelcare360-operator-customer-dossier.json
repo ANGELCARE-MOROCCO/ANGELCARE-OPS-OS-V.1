@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.angelcare360-operator-sovereign.json",
+  "compilerOptions": { "noEmit": true, "incremental": false },
+  "include": [
+    "next-env.d.ts",
+    "app/(protected)/angelcare-360-operator/clients/[id]/page.tsx",
+    "app/(protected)/angelcare-360-operator/clients/[id]/not-found.tsx",
+    "components/angelcare360/operator/customer-dossier/**/*.ts",
+    "components/angelcare360/operator/customer-dossier/**/*.tsx",
+    "components/angelcare360/operator/sovereign/SovereignPortal.tsx",
+    "components/angelcare360/operator/wave2/Wave2CommandData.ts",
+    "components/angelcare360/operator/wave2/Wave2CommandTypes.ts",
+    "types/angelcare360/operator/**/*.ts",
+    "types/angelcare360/payment-gates.ts"
+  ]
+}

@@ -1,44 +1,32 @@
-import Image from "next/image";
+
+import Image from 'next/image'
 
 type AngelCareLogoProps = {
-  size?: "sm" | "md" | "lg";
-  className?: string;
-  showText?: boolean;
-};
+  size?: 'xs' | 'sm' | 'md' | 'lg'
+  className?: string
+  showText?: boolean
+  priority?: boolean
+  inverse?: boolean
+}
 
 const sizeMap = {
-  sm: { width: 42, height: 42 },
-  md: { width: 64, height: 64 },
-  lg: { width: 96, height: 96 },
-};
+  xs: { width: 54, height: 40 },
+  sm: { width: 72, height: 52 },
+  md: { width: 108, height: 78 },
+  lg: { width: 164, height: 120 },
+}
 
-export default function AngelCareLogo({
-  size = "md",
-  className = "",
-  showText = false,
-}: AngelCareLogoProps) {
-  const dims = sizeMap[size];
-
+export default function AngelCareLogo({ size = 'sm', className = '', showText = false, priority = false, inverse = false }: AngelCareLogoProps) {
+  const dims = sizeMap[size]
   return (
-    <div className={`inline-flex items-center gap-3 ${className}`}>
-      <Image
-        src="/logo.png"
-        alt="AngelCare official logo"
-        width={dims.width}
-        height={dims.height}
-        priority={size === "lg"}
-        className="shrink-0 object-contain"
-      />
-      {showText ? (
-        <div className="leading-tight">
-          <p className="text-sm font-black uppercase tracking-[0.18em] text-slate-950">
-            AngelCare
-          </p>
-          <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">
-            Operations System
-          </p>
-        </div>
-      ) : null}
+    <div className={`inline-flex min-w-0 items-center gap-3 ${className}`} data-angelcare-official-brand="true">
+      <span className="relative inline-flex shrink-0 overflow-hidden rounded-xl bg-white/95 shadow-[0_8px_28px_rgba(15,23,42,.10)] ring-1 ring-slate-200/80" style={{ width: dims.width, height: dims.height }}>
+        <Image src="/brand/angelcare-official.webp" alt="AngelCare — identité officielle" fill sizes={`${dims.width}px`} priority={priority || size === 'lg'} className="object-contain p-1.5" />
+      </span>
+      {showText ? <span className="min-w-0 leading-tight">
+        <strong className={`block truncate text-[11px] font-black uppercase tracking-[0.18em] ${inverse ? 'text-white' : 'text-slate-950'}`}>AngelCare</strong>
+        <small className={`block truncate text-[9px] font-bold uppercase tracking-[0.13em] ${inverse ? 'text-white/65' : 'text-slate-500'}`}>Operations System</small>
+      </span> : null}
     </div>
-  );
+  )
 }

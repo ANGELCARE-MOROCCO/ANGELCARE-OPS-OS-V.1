@@ -1,4 +1,5 @@
 import type { Angelcare360A4DocumentModel } from '@/types/angelcare360/documents'
+import AngelCareLogo from '@/components/brand/AngelCareLogo'
 import {
   ANGELCARE360_COLORS,
   angelcare360SectionBackdropStyle,
@@ -13,7 +14,7 @@ export default function Angelcare360A4Header({ model }: Props) {
   return (
     <header style={headerStyle}>
       <div style={brandStyle}>
-        <div style={brandMarkStyle}>ANGELCARE 360</div>
+        <div style={brandIdentityStyle}><AngelCareLogo size="xs" />{model.brandLogoUrl && model.brandMode !== 'angelcare_only' ? <><span style={brandDividerStyle}/>{/* eslint-disable-next-line @next/next/no-img-element */}<img src={model.brandLogoUrl} alt={model.brandName || 'Logo client'} style={customerLogoStyle}/></> : null}</div>
         <div style={brandCopyStyle}>
           <div style={titleStyle}>{model.title}</div>
           <div style={subtitleStyle}>{model.family}</div>
@@ -107,3 +108,7 @@ const metaValueStyle: React.CSSProperties = {
   lineHeight: 1.45,
 }
 
+
+const brandIdentityStyle: React.CSSProperties = { display: 'flex', alignItems: 'center', gap: 10 }
+const brandDividerStyle: React.CSSProperties = { width: 1, height: 34, background: ANGELCARE360_COLORS.borderSoft }
+const customerLogoStyle: React.CSSProperties = { width: 86, height: 46, objectFit: 'contain' }

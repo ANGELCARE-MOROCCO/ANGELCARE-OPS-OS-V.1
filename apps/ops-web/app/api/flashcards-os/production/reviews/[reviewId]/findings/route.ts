@@ -1,0 +1,5 @@
+import { NextResponse } from 'next/server'
+import { assertFlashcardsApiAccess } from '@/lib/flashcards-os/server/access'
+import { actorFromUser } from '@/lib/flashcards-os/production/server/repository'
+import { raiseFinding } from '@/lib/flashcards-os/production/server/asset-service'
+export async function POST(request:Request,{params}:{params:Promise<{reviewId:string}>}){const access=await assertFlashcardsApiAccess('flashcards_os.resolve_findings');if(!access.ok)return NextResponse.json({error:access.message},{status:access.status});try{const body=await request.json();const {reviewId}=await params;return NextResponse.json(await raiseFinding({reviewId:decodeURIComponent(reviewId),discipline:body.discipline,severity:body.severity,title:String(body.title||''),detail:String(body.detail||''),locator:body.locator?String(body.locator):undefined,expectedCorrection:String(body.expectedCorrection||''),responsibleParty:String(body.responsibleParty||''),dueDate:body.dueDate?String(body.dueDate):undefined},actorFromUser(access.user)),{status:201})}catch(error){return NextResponse.json({error:error instanceof Error?error.message:'Finding creation failed.'},{status:400})}}

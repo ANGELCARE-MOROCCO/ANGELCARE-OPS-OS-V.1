@@ -1,0 +1,2 @@
+import { requireMarketplacePageContext } from '@/angelcare-marketplace/auth/context';import { CatalogRegistry } from '@/angelcare-marketplace/marketplace-core/components/CatalogRegistry';import { listCatalogItems } from '@/angelcare-marketplace/marketplace-core/repository'
+export default async function Page(){await requireMarketplacePageContext('marketplace.catalog.view');return <CatalogRegistry items={await listCatalogItems()}/>}

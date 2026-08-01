@@ -41,6 +41,7 @@ export default async function Angelcare360OperatorSubscriptionsPage() {
   }))
 
   const planNameById = new Map(plans.map((plan) => [plan.id, plan.name]))
+  const clientNameById = new Map(clients.map((client) => [client.id, client.display_name || client.legal_name || client.client_code]))
 
   return (
     <Angelcare360OperatorPageShell
@@ -141,8 +142,8 @@ export default async function Angelcare360OperatorSubscriptionsPage() {
         emptyDescription="Les abonnements SaaS des clients apparaîtront ici."
         rowKey={(row) => String((row as Record<string, unknown>).id)}
         columns={[
-          { key: 'subscription_code', label: 'Abonnement', render: (row) => String((row as Record<string, unknown>).subscription_code || '—') },
-          { key: 'client_id', label: 'Client', render: (row) => String((row as Record<string, unknown>).client_id || '—') },
+          { key: 'subscription_code', label: 'Control Room', render: (row) => <Link href={`/angelcare-360-operator/subscriptions/${String((row as Record<string, unknown>).id)}`} style={entityLinkStyle}>{String((row as Record<string, unknown>).subscription_code || '—')}</Link> },
+          { key: 'client_id', label: 'Client', render: (row) => clientNameById.get(String((row as Record<string, unknown>).client_id || '')) || 'Client non disponible' },
           { key: 'plan_id', label: 'Plan', render: (row) => planNameById.get(String((row as Record<string, unknown>).plan_id || '')) || '—' },
           { key: 'status', label: 'Statut', render: (row) => <Angelcare360OperatorStatusBadge status={String((row as Record<string, unknown>).status || '—')} /> },
           { key: 'billing_cycle', label: 'Périodicité', render: (row) => String((row as Record<string, unknown>).billing_cycle || '—') },
@@ -162,4 +163,13 @@ const linkStyle: React.CSSProperties = {
   textDecoration: 'none',
   padding: '10px 14px',
   fontWeight: 800,
+}
+
+const entityLinkStyle: React.CSSProperties = {
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: 6,
+  color: '#1d4ed8',
+  fontWeight: 900,
+  textDecoration: 'none',
 }

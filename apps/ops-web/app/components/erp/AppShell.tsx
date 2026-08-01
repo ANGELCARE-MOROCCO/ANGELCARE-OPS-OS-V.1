@@ -379,7 +379,7 @@ export default function AppShell({
           <Link href="/" style={brandStyle} aria-label="Go to AngelCare dashboard">
             <div style={logoWrapperStyle}>
               <Image
-                src="/logo.png"
+                src="/brand/angelcare-official.webp"
                 alt="AngelCare"
                 width={250}
                 height={96}

@@ -62,5 +62,8 @@ export interface Angelcare360A4DocumentModel {
   signatureLabel?: string | null
   signatureName?: string | null
   isPrintPreview?: boolean
+  brandMode?: 'angelcare_only' | 'cobrand' | 'customer_primary' | 'white_label'
+  brandName?: string | null
+  brandLogoUrl?: string | null
 }
 

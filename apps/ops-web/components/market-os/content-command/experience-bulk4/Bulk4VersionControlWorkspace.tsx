@@ -17,6 +17,7 @@ import {
 } from "lucide-react"
 import { useBulk4Registry } from "./bulk4-api"
 import type { CreativeAssetRecord } from "./bulk4-types"
+import { ContentMediaPreview, contentMediaSourceFromAsset } from "../media-preview/ContentMediaPreview"
 import { Bulk4BrandCrown, Bulk4TruthState, EmptyCreativeState, SectionTitle, TonePill, styles } from "./Bulk4Shared"
 
 function meta(asset: CreativeAssetRecord | null, key: string) {
@@ -59,9 +60,9 @@ export default function Bulk4VersionControlWorkspace() {
 
     {!left || !right ? <EmptyCreativeState title="Deux versions requises" detail="Le registre doit contenir au moins deux assets pour permettre une comparaison réelle." href="/market-os/content-command-center/studio/quick-create" action="Créer une production"/> : <>
       <section className={styles.versionComparisonStage}>
-        <article className={styles.versionSide}><header><span><small>VERSION A</small><strong>{meta(left, "version") || "Non documentée"}</strong></span><TonePill tone="neutral">{left.status}</TonePill></header><div>{left.preview_url || meta(left, "sourceUrl") ? <img src={left.preview_url || meta(left, "sourceUrl")} alt={`Aperçu ${left.title}`}/> : <FileImage/>}</div><h2>{left.title}</h2><p>{left.category} · {left.channel}</p><dl><div><dt>Owner</dt><dd>{left.owner || "Absent"}</dd></div><div><dt>Template</dt><dd>{meta(left, "templateCode") || "Absent"}</dd></div><div><dt>Dossier</dt><dd>{meta(left, "dossierId") || "Absent"}</dd></div></dl></article>
+        <article className={styles.versionSide}><header><span><small>VERSION A</small><strong>{meta(left, "version") || "Non documentée"}</strong></span><TonePill tone="neutral">{left.status}</TonePill></header><div><ContentMediaPreview source={contentMediaSourceFromAsset(left)} mode="inspector" fit="contain"/></div><h2>{left.title}</h2><p>{left.category} · {left.channel}</p><dl><div><dt>Owner</dt><dd>{left.owner || "Absent"}</dd></div><div><dt>Template</dt><dd>{meta(left, "templateCode") || "Absent"}</dd></div><div><dt>Dossier</dt><dd>{meta(left, "dossierId") || "Absent"}</dd></div></dl></article>
         <div className={styles.versionDelta}><FileDiff/><strong>{changes.length}</strong><span>différence(s) observable(s)</span><i/></div>
-        <article className={styles.versionSide}><header><span><small>VERSION B</small><strong>{meta(right, "version") || "Non documentée"}</strong></span><TonePill tone="info">{right.status}</TonePill></header><div>{right.preview_url || meta(right, "sourceUrl") ? <img src={right.preview_url || meta(right, "sourceUrl")} alt={`Aperçu ${right.title}`}/> : <FileImage/>}</div><h2>{right.title}</h2><p>{right.category} · {right.channel}</p><dl><div><dt>Owner</dt><dd>{right.owner || "Absent"}</dd></div><div><dt>Template</dt><dd>{meta(right, "templateCode") || "Absent"}</dd></div><div><dt>Dossier</dt><dd>{meta(right, "dossierId") || "Absent"}</dd></div></dl></article>
+        <article className={styles.versionSide}><header><span><small>VERSION B</small><strong>{meta(right, "version") || "Non documentée"}</strong></span><TonePill tone="info">{right.status}</TonePill></header><div><ContentMediaPreview source={contentMediaSourceFromAsset(right)} mode="inspector" fit="contain"/></div><h2>{right.title}</h2><p>{right.category} · {right.channel}</p><dl><div><dt>Owner</dt><dd>{right.owner || "Absent"}</dd></div><div><dt>Template</dt><dd>{meta(right, "templateCode") || "Absent"}</dd></div><div><dt>Dossier</dt><dd>{meta(right, "dossierId") || "Absent"}</dd></div></dl></article>
       </section>
 
       <section className={styles.versionInspectionDeck}>

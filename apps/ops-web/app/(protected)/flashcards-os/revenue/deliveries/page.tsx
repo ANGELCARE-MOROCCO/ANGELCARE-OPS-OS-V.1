@@ -1,0 +1,4 @@
+import DocumentList from '@/components/flashcards-os/revenue/DocumentList'
+import { requireFlashcardsPageAccess } from '@/lib/flashcards-os/server/access'
+import { listDeliveries } from '@/lib/flashcards-os/revenue/server/repository'
+export default async function Page(){await requireFlashcardsPageAccess('flashcards_os.create_delivery_notes');const rows=(await listDeliveries()).map(d=>({id:d.id,number:d.number,customer:d.customerName,status:d.status,total:d.lines.reduce((s,l)=>s+l.totalDh,0),detail:`${d.lines.length} lignes · ${d.invoicingEligible?'invoice eligible':'not eligible'}`,href:`/flashcards-os/revenue/deliveries/${d.id}`}));return <DocumentList eyebrow="Revenue · Delivery Notes" title="Delivery obligations and evidence" description="Exact order lines, partial quantities, customer evidence and invoicing eligibility." label="Delivery notes" rows={rows}/>}

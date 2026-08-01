@@ -1,0 +1,1 @@
+import { apiSuccess } from '@/angelcare-marketplace/server/request'; export const dynamic='force-dynamic'; export async function GET(){return apiSuccess({domain:'readiness',status:'registered',message:'Surface Mega ZIP 03 prête et gouvernée.'})}

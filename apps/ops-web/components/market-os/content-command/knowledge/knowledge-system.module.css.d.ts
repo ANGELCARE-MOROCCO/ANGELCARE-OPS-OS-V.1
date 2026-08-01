@@ -62,6 +62,7 @@ declare const styles: {
   readonly "sourceIdentity": string;
   readonly "sourceRegister": string;
   readonly "sourceRow": string;
+  readonly "sourceMediaPreview": string;
   readonly "sourceSummary": string;
   readonly "tabActive": string;
   readonly "tabs": string;
@@ -78,6 +79,7 @@ declare const styles: {
   readonly "vaultLayout": string;
   readonly "vaultRail": string;
   readonly "versionItem": string;
+  readonly "versionMediaPreview": string;
   readonly "versionTimeline": string;
 }
 export default styles

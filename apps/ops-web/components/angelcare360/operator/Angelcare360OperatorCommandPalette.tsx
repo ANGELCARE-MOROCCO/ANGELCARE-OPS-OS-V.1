@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { ArrowRight, CornerDownLeft, Search } from 'lucide-react'
 import { ANGELCARE360_OPERATOR_NAVIGATION } from '@/data/angelcare360/operator-navigation'
 import { OperatorNavigationIcon } from './Angelcare360OperatorIcons'
+import OperatorOverlayPortal from './OperatorOverlayPortal'
 import styles from './Angelcare360OperatorExperience.module.css'
 
 type Props = {
@@ -78,7 +79,8 @@ export default function Angelcare360OperatorCommandPalette({ open, onClose, path
   if (!open) return null
 
   return (
-    <div className={styles.paletteOverlay} role="presentation" onMouseDown={onClose}>
+    <OperatorOverlayPortal>
+      <div className={styles.paletteOverlay} role="presentation" onMouseDown={onClose}>
       <section
         className={styles.palette}
         role="dialog"
@@ -130,7 +132,8 @@ export default function Angelcare360OperatorCommandPalette({ open, onClose, path
           <span>Échap pour fermer</span>
         </footer>
       </section>
-    </div>
+      </div>
+    </OperatorOverlayPortal>
   )
 }
 

@@ -1,6 +1,7 @@
 import { createServiceClient } from '@/lib/supabase/server'
 import { runContentResearchAgent } from '@/lib/market-os/content-research/orchestrator'
 import { auditContentHeadquarters } from './repository'
+import { assertProductionCapability } from './production-operations-service'
 import type { AiDirectorProfile } from './types'
 
 export async function runMarketIntelligenceScan(input: {
@@ -9,6 +10,8 @@ export async function runMarketIntelligenceScan(input: {
   directorId?: string
   reason?: string
 }) {
+  const policy = await assertProductionCapability(input.reason?.startsWith('scheduled') ? 'scheduled_scan' : 'tavily')
+  if (!policy.allowed) throw new Error(policy.reason)
   const supabase = await createServiceClient() as any
   let query = supabase
     .from('market_content_ai_directors')

@@ -1,0 +1,1 @@
+import styles from '../academy.module.css';export function B2BTrainingBoard(){return <section className={styles.panel}><div className={styles.panelHead}><h2>B2B Training Orders</h2></div><div className={styles.panelBody}><p>Organisations, sièges contractés, cohortes, preuves et renouvellements conservent leur lignée CRM et Partner OS.</p></div></section>}

@@ -1,3 +1,4 @@
+/// <reference path="./leaflet-runtime.d.ts" />
 "use client"
 
 import {
@@ -74,8 +75,7 @@ const MOROCCO_BOUNDS: [[number, number], [number, number]] = [
 ]
 
 const TILE_URL =
-  process.env.NEXT_PUBLIC_AMBASSADOR_MAP_TILE_URL ||
-  "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+  "/api/market-os/ambassadors/territories/tiles/{z}/{x}/{y}"
 
 const TILE_ATTRIBUTION =
   process.env.NEXT_PUBLIC_AMBASSADOR_MAP_ATTRIBUTION ||
@@ -389,14 +389,31 @@ export default function TerritoryLiveMap({
         mapRef.current = map
         map.fitBounds(MOROCCO_BOUNDS, { padding: [18, 18], animate: false })
 
-        L.tileLayer(TILE_URL, {
+        const baseTileLayer = L.tileLayer(TILE_URL, {
           attribution: TILE_ATTRIBUTION,
           maxZoom: 19,
           minZoom: 3,
-          crossOrigin: true,
-          updateWhenIdle: true,
-          keepBuffer: 3,
-        }).addTo(map)
+          tileSize: 256,
+          updateWhenIdle: false,
+          updateWhenZooming: true,
+          keepBuffer: 4,
+          className: "angelcare-osm-basemap-tile",
+        })
+
+        baseTileLayer.on("tileerror", (event: any) => {
+          console.error(
+            "[Ambassador Territory Map] Basemap tile failed",
+            event?.tile?.src || event,
+          )
+        })
+
+        baseTileLayer.addTo(map)
+
+        window.setTimeout(() => {
+          map?.invalidateSize({
+            animate: false,
+          })
+        }, 0)
 
         territoryLayerRef.current = L.layerGroup().addTo(map)
         draftLayerRef.current = L.layerGroup().addTo(map)

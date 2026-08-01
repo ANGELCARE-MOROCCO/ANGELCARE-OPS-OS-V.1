@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import Angelcare360OperatorActionDrawer from '@/components/angelcare360/operator/Angelcare360OperatorActionDrawer'
 import Angelcare360OperatorDataTable from '@/components/angelcare360/operator/Angelcare360OperatorDataTable'
@@ -76,7 +77,7 @@ export default async function Angelcare360OperatorBillingAccountsPage() {
         emptyDescription="Les comptes de facturation clients seront suivis ici."
         rowKey={(row) => String((row as Record<string, unknown>).id)}
         columns={[
-          { key: 'billing_name', label: 'Nom de facturation', render: (row) => String((row as Record<string, unknown>).billing_name || '—') },
+          { key: 'billing_name', label: 'Command Room', render: (row) => <Link href={`/angelcare-360-operator/billing/accounts/${String((row as Record<string, unknown>).id)}`} style={entityLinkStyle}>{String((row as Record<string, unknown>).billing_name || '—')}</Link> },
           { key: 'billing_email', label: 'Email', render: (row) => String((row as Record<string, unknown>).billing_email || '—') },
           { key: 'payment_terms_days', label: 'Délais', render: (row) => `${Number((row as Record<string, unknown>).payment_terms_days || 0)} j` },
           { key: 'tax_identifier', label: 'Identifiant fiscal', render: (row) => String((row as Record<string, unknown>).tax_identifier || '—') },
@@ -85,4 +86,13 @@ export default async function Angelcare360OperatorBillingAccountsPage() {
       />
     </Angelcare360OperatorPageShell>
   )
+}
+
+const entityLinkStyle: React.CSSProperties = {
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: 6,
+  color: '#1d4ed8',
+  fontWeight: 900,
+  textDecoration: 'none',
 }

@@ -1,10 +1,8 @@
-'use client'
-
-import { useMemo, useState } from 'react'
 import type { ReactNode } from 'react'
-import Link from 'next/link'
-import { ArrowUpRight, Inbox, LayoutGrid, Search, Table2 } from 'lucide-react'
-import styles from './Angelcare360OperatorExperience.module.css'
+import Angelcare360OperatorDataTableClient, {
+  type Angelcare360OperatorPreparedColumn,
+  type Angelcare360OperatorPreparedRow,
+} from './Angelcare360OperatorDataTableClient'
 
 export type Angelcare360OperatorTableColumn = {
   key: string
@@ -25,6 +23,14 @@ type Props = {
   minWidth?: number
 }
 
+/**
+ * Server-side adapter for the interactive Operator data table.
+ *
+ * The route pages are Server Components and define render/rowKey/hrefKey
+ * callbacks. Next.js cannot serialize those functions into a Client Component.
+ * This adapter executes every callback on the server, then sends only prepared,
+ * serializable columns, rows, links and React nodes to the client renderer.
+ */
 export default function Angelcare360OperatorDataTable({
   title,
   description,
@@ -36,145 +42,54 @@ export default function Angelcare360OperatorDataTable({
   hrefKey,
   minWidth = 900,
 }: Props) {
-  const [query, setQuery] = useState('')
-  const [view, setView] = useState<'table' | 'cards'>('table')
+  const preparedColumns: Angelcare360OperatorPreparedColumn[] = columns.map((column) => ({
+    key: column.key,
+    label: column.label,
+    align: column.align,
+  }))
 
-  const filteredRows = useMemo(() => {
-    const normalized = normalize(query)
-    if (!normalized) return rows
-    return rows.filter((row) => normalize(searchableRow(row)).includes(normalized))
-  }, [query, rows])
+  const preparedRows: Angelcare360OperatorPreparedRow[] = rows.map((row, index) => {
+    const record = toRecord(row)
+    const id = rowKey?.(row) || stableKey(record, index)
+    const href = hrefKey?.(row) || null
+
+    return {
+      id,
+      href,
+      searchText: searchableRow(record),
+      cells: columns.map((column) => {
+        const rendered = column.render(record)
+        const content = sanitizeRenderedReference(rendered, column.label)
+        const primitive = renderPrimitive(content, record[column.key])
+
+        return {
+          key: column.key,
+          content,
+          primitive,
+          isPrimitive: typeof content === 'string' || typeof content === 'number',
+        }
+      }),
+    }
+  })
 
   return (
-    <section className={styles.dataCard}>
-      <div className={styles.panelHeader}>
-        <div>
-          <div className={styles.panelEyebrow}>Instrument de lecture</div>
-          <h2 className={styles.panelTitle}>{title}</h2>
-          {description ? <p className={styles.panelDescription}>{description}</p> : null}
-        </div>
-        <span className={styles.rowCount}>{filteredRows.length} / {rows.length}</span>
-      </div>
-
-      {rows.length ? (
-        <div className={styles.tableToolbar}>
-          <label className={styles.searchWrap}>
-            <Search className={styles.searchIcon} size={15} aria-hidden="true" />
-            <input
-              className={styles.searchInput}
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              placeholder={`Rechercher dans ${title.toLowerCase()}…`}
-              aria-label={`Rechercher dans ${title}`}
-            />
-          </label>
-          <div className={styles.viewControls} aria-label="Mode d’affichage">
-            <button
-              type="button"
-              className={`${styles.viewButton} ${view === 'table' ? styles.viewButtonActive : ''}`}
-              onClick={() => setView('table')}
-              title="Vue tableau"
-              aria-pressed={view === 'table'}
-            >
-              <Table2 size={15} aria-hidden="true" />
-            </button>
-            <button
-              type="button"
-              className={`${styles.viewButton} ${view === 'cards' ? styles.viewButtonActive : ''}`}
-              onClick={() => setView('cards')}
-              title="Vue portefeuille"
-              aria-pressed={view === 'cards'}
-            >
-              <LayoutGrid size={15} aria-hidden="true" />
-            </button>
-          </div>
-        </div>
-      ) : null}
-
-      {rows.length === 0 ? (
-        <EmptyState title={emptyTitle} description={emptyDescription} />
-      ) : filteredRows.length === 0 ? (
-        <EmptyState title="Aucun résultat dans cette vue" description="Modifiez la recherche pour réafficher les éléments disponibles." />
-      ) : view === 'cards' ? (
-        <div className={styles.cardGrid}>
-          {filteredRows.map((row, index) => {
-            const href = hrefKey?.(row) || null
-            const id = rowKey?.(row) || stableKey(row, index)
-            const firstCell = renderPrimitive(columns[0], row) || `Élément ${index + 1}`
-            const content = (
-              <>
-                <div className={styles.entityCardTop}>
-                  <span className={styles.entityCardTitle}>{firstCell}</span>
-                  <span className={styles.entityCardIndex}>{String(index + 1).padStart(2, '0')}</span>
-                </div>
-                <div className={styles.entityCardFields}>
-                  {columns.slice(1, 4).map((column) => (
-                    <div key={column.key} className={styles.entityField}>
-                      <span className={styles.entityFieldLabel}>{column.label}</span>
-                      <span className={styles.entityFieldValue}>{renderPrimitive(column, row) || '—'}</span>
-                    </div>
-                  ))}
-                </div>
-              </>
-            )
-            return href ? (
-              <Link key={id} href={href} className={styles.entityCard}>{content}</Link>
-            ) : (
-              <article key={id} className={styles.entityCard}>{content}</article>
-            )
-          })}
-        </div>
-      ) : (
-        <div className={styles.tableWrapper}>
-          <table className={styles.table} style={{ minWidth }}>
-            <thead>
-              <tr>
-                {columns.map((column) => (
-                  <th key={column.key} className={styles.th} style={{ textAlign: column.align || 'left' }}>
-                    {column.label}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {filteredRows.map((row, index) => {
-                const rowHref = hrefKey?.(row) || null
-                const rowId = rowKey?.(row) || stableKey(row, index)
-                return (
-                  <tr key={rowId} className={styles.tr}>
-                    {columns.map((column) => {
-                      const cell = column.render(row)
-                      return (
-                        <td key={column.key} className={styles.td} style={{ textAlign: column.align || 'left' }}>
-                          {rowHref && column.key === columns[0]?.key && (typeof cell === 'string' || typeof cell === 'number') ? (
-                            <Link href={rowHref} className={styles.detailLink}>
-                              {cell}<ArrowUpRight size={13} aria-hidden="true" />
-                            </Link>
-                          ) : cell}
-                        </td>
-                      )
-                    })}
-                  </tr>
-                )
-              })}
-            </tbody>
-          </table>
-        </div>
-      )}
-    </section>
+    <Angelcare360OperatorDataTableClient
+      title={title}
+      description={description}
+      columns={preparedColumns}
+      rows={preparedRows}
+      emptyTitle={emptyTitle}
+      emptyDescription={emptyDescription}
+      minWidth={minWidth}
+    />
   )
 }
 
-function EmptyState({ title, description }: { title: string; description: string }) {
-  return (
-    <div className={styles.empty}>
-      <div>
-        <span className={styles.emptyIcon}><Inbox size={22} aria-hidden="true" /></span>
-        <div className={styles.emptyTitle}>{title}</div>
-        <div className={styles.emptyDescription}>{description}</div>
-      </div>
-    </div>
-  )
+function toRecord(value: unknown): Record<string, unknown> {
+  if (value && typeof value === 'object' && !Array.isArray(value)) {
+    return value as Record<string, unknown>
+  }
+  return { value }
 }
 
 function searchableRow(row: Record<string, unknown>) {
@@ -182,6 +97,7 @@ function searchableRow(row: Record<string, unknown>) {
     return JSON.stringify(row, (_key, value) => {
       if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') return value
       if (value === null || value === undefined) return ''
+      if (typeof value === 'bigint') return value.toString()
       return value
     })
   } catch {
@@ -189,23 +105,33 @@ function searchableRow(row: Record<string, unknown>) {
   }
 }
 
-function normalize(value: string) {
-  return value
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase()
-    .trim()
-}
-
-function renderPrimitive(column: Angelcare360OperatorTableColumn, row: Record<string, unknown>) {
-  const rendered = column.render(row)
-  if (typeof rendered === 'string' || typeof rendered === 'number') return String(rendered)
-  const raw = row[column.key]
-  if (typeof raw === 'string' || typeof raw === 'number' || typeof raw === 'boolean') return String(raw)
+function renderPrimitive(content: ReactNode, raw: unknown) {
+  if (typeof content === 'string' || typeof content === 'number') return String(content)
+  if (typeof raw === 'string' || typeof raw === 'number' || typeof raw === 'boolean' || typeof raw === 'bigint') {
+    return String(raw)
+  }
   return null
 }
 
 function stableKey(row: Record<string, unknown>, index: number) {
   const id = row.id || row.code || row.slug || row.reference || row.invoice_number
   return id ? String(id) : `operator-row-${index}`
+}
+
+
+function sanitizeRenderedReference(content: ReactNode, label: string): ReactNode {
+  if (typeof content !== 'string') return content
+  if (!isTechnicalIdentifier(content)) return content
+  const normalized = label.toLowerCase()
+  if (normalized.includes('client')) return 'Client lié'
+  if (normalized.includes('tenant')) return 'Tenant lié'
+  if (normalized.includes('facture')) return 'Facture liée'
+  if (normalized.includes('abonnement')) return 'Abonnement lié'
+  if (normalized.includes('assign')) return 'Opérateur assigné'
+  return 'Référence protégée'
+}
+
+function isTechnicalIdentifier(value: string) {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value.trim())
+    || /^00000000-0000-0000-0000-[0-9a-f]{12}$/i.test(value.trim())
 }

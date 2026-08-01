@@ -2,12 +2,18 @@ import { createContentCommandSupabaseServerClient } from '@/lib/market-os/conten
 import type { Phase3ContextPackage, Phase3ContextSource } from './phase3-types'
 
 const SOURCE_DEFINITIONS = [
-  { key: 'doctrine', label: 'Doctrine Marketing AI', table: 'market_ai_doctrine_entries', select: 'code,title,category,authority_state,version,updated_at', limit: 200 },
+  { key: 'doctrine', label: 'Doctrine Marketing AI', table: 'market_ai_doctrine_entries', select: 'id,code,title,category,authority_state,content,version,source,effective_at,updated_at', limit: 200 },
   { key: 'services', label: 'Services 360', table: 'service_catalog', select: 'id,name,code,status,category,base_price,updated_at', limit: 200 },
   { key: 'campaigns', label: 'Campaign Lifecycle', table: 'market_os_campaigns', select: 'id,title,status,start_date,end_date,updated_at', limit: 100 },
-  { key: 'content', label: 'Content Command', table: 'content_command_documents', select: '*', limit: 100 },
-  { key: 'tasks', label: 'Tâches Content Command', table: 'content_command_tasks', select: '*', limit: 100 },
-  { key: 'assets', label: 'Assets Content Command', table: 'content_command_assets', select: '*', limit: 100 },
+  { key: 'signals', label: 'Signaux Content Command', table: 'market_content_signals', select: '*', limit: 200 },
+  { key: 'strategies', label: 'Stratégies Content Command', table: 'market_content_strategies', select: '*', limit: 150 },
+  { key: 'content', label: 'Dossiers Content Command', table: 'market_content_dossiers', select: '*', limit: 250 },
+  { key: 'missions', label: 'Missions Content Command', table: 'market_content_missions', select: '*', limit: 200 },
+  { key: 'tasks', label: 'Tâches Content Command', table: 'market_content_mission_tasks', select: '*', limit: 300 },
+  { key: 'assets', label: 'Preuves et assets Content Command', table: 'market_content_evidence', select: '*', limit: 250 },
+  { key: 'sources', label: 'Sources canoniques Content Command', table: 'market_content_source_objects', select: '*', limit: 150 },
+  { key: 'publications', label: 'Publication Content Command', table: 'market_content_publication_packages', select: '*', limit: 150 },
+  { key: 'reviews', label: 'Revues humaines Content Command', table: 'market_content_human_reviews', select: '*', limit: 150 },
   { key: 'sales', label: 'Sales Terminal', table: 'sales_terminal_orders', select: 'id,reference,status,payment_status,total,service_name,created_at', limit: 100 },
   { key: 'market_records', label: 'Market OS Records', table: 'market_os_records', select: 'id,record_type,engine,pipeline,title,status,priority,stage,due_date,updated_at,metadata', limit: 200 },
 ] as const

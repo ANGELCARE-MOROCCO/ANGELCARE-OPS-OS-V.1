@@ -1,38 +1,28 @@
-import { NextResponse } from "next/server"
+import { NextResponse } from 'next/server'
+import { contentHeadquartersApiError, requireContentHeadquartersUser } from '@/lib/market-os/content-command-headquarters/auth'
+import { getCanonicalCompatibilityStore } from '@/lib/market-os/content-command-headquarters/canonical-compatibility-service'
 
-type ContentCommandDataResponse = {
-  ok: boolean
-  source: "live-contract"
-  tasks: unknown[]
-  assets: unknown[]
-  briefs: unknown[]
-  rules: unknown[]
-  logs: unknown[]
-  items: unknown[]
-  loadedAt: string
-  message: string
-}
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
-/*
-  Content Command Center live-data contract.
-
-  This endpoint intentionally returns empty arrays until the real database
-  repository is wired. This is production-safer than rendering fake seed
-  business records as if they were live operational data.
-*/
 export async function GET() {
-  const response: ContentCommandDataResponse = {
-    ok: true,
-    source: "live-contract",
-    tasks: [],
-    assets: [],
-    briefs: [],
-    rules: [],
-    logs: [],
-    items: [],
-    loadedAt: new Date().toISOString(),
-    message: "Content Command live-data contract active. No production records returned yet.",
+  try {
+    await requireContentHeadquartersUser('view')
+    const store = await getCanonicalCompatibilityStore()
+    return NextResponse.json({
+      ok: true,
+      source: 'market_content_canonical',
+      store,
+      items: store.items,
+      tasks: store.tasks,
+      assets: store.assets,
+      briefs: store.briefs,
+      rules: store.rules,
+      logs: store.logs,
+      loadedAt: new Date().toISOString(),
+      message: 'Content Command canonical compatibility contract active.',
+    })
+  } catch (error) {
+    return contentHeadquartersApiError(error)
   }
-
-  return NextResponse.json(response)
 }

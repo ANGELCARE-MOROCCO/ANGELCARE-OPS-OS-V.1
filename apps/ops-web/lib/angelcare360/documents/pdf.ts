@@ -1,4 +1,6 @@
 import { PDFDocument, StandardFonts, rgb } from 'pdf-lib'
+import { readFile } from 'node:fs/promises'
+import path from 'node:path'
 import type { Angelcare360A4DocumentModel } from '@/types/angelcare360/documents'
 import { getAngelcare360ConfidentialityLabel } from './a4-reference'
 
@@ -102,16 +104,17 @@ export async function generateAngelcare360A4PdfBytes(model: Angelcare360A4Docume
     color: rgb(0.93, 0.96, 1),
   })
 
-  page.drawText('ANGELCARE 360', {
-    x: margin,
-    y: cursorY,
-    size: 20,
-    font: bold,
-    color: rgb(0.07, 0.12, 0.22),
-  })
+  try {
+    const logoBytes = await readFile(path.join(process.cwd(), 'public', 'logo.png'))
+    const logo = await pdf.embedPng(logoBytes)
+    const scale = Math.min(1, 118 / logo.width, 58 / logo.height)
+    page.drawImage(logo, { x: margin, y: cursorY - 42, width: logo.width * scale, height: logo.height * scale })
+  } catch {
+    page.drawText('ANGELCARE 360', { x: margin, y: cursorY, size: 20, font: bold, color: rgb(0.07, 0.12, 0.22) })
+  }
   page.drawText(text(model.title), {
-    x: margin,
-    y: cursorY - 24,
+    x: margin + 132,
+    y: cursorY - 8,
     size: 16,
     font: bold,
     color: rgb(0.1, 0.2, 0.48),

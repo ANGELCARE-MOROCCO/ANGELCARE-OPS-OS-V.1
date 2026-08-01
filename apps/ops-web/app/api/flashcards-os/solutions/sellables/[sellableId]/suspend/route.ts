@@ -1,0 +1,4 @@
+import { NextResponse } from 'next/server'
+import { assertFlashcardsApiAccess } from '@/lib/flashcards-os/server/access'
+import { actorFromUser, suspendSellable } from '@/lib/flashcards-os/solutions/server/repository'
+export async function POST(request:Request,{params}:{params:Promise<{sellableId:string}>}){const body=await request.json();const universe=body.universe==='b2b'?'b2b':'b2c';const permission=universe==='b2b'?'flashcards_os.publish_b2b_sellables':'flashcards_os.publish_b2c_sellables';const access=await assertFlashcardsApiAccess(permission);if(!access.ok)return NextResponse.json({error:access.message},{status:access.status});try{const {sellableId}=await params;return NextResponse.json(await suspendSellable(sellableId,universe,String(body.reason||'Suspended by authorised operator.'),actorFromUser(access.user)))}catch(error){return NextResponse.json({error:error instanceof Error?error.message:'Sellable suspension failed.'},{status:400})}}

@@ -21,6 +21,14 @@ const INTERNAL_OPERATOR_ROLES = new Set<Angelcare360OperatorRole>([
 
 const INTERNAL_OPERATOR_PERMISSION_KEYS = new Set<string>(['operator.*', 'angelcare360.operator.*', '*'])
 
+function hasOperatorPermissionNamespace(permissions: Set<string>) {
+  return [...permissions].some((permission) =>
+    INTERNAL_OPERATOR_PERMISSION_KEYS.has(permission)
+    || permission.startsWith('operator.')
+    || permission.startsWith('angelcare360.operator.'),
+  )
+}
+
 function getOperatorRole(user: Angelcare360SessionUser): Angelcare360OperatorRole {
   const role = String(user.role || user.role_key || '').toLowerCase()
   if (role === 'super_admin' || role === 'ceo' || role === 'owner') return 'super_admin'
@@ -41,7 +49,9 @@ export async function requireAngelcare360OperatorSession(): Promise<Angelcare360
   const operatorRole = getOperatorRole(user)
   const permissions = new Set((user.permissions || []).map((permission) => String(permission)))
 
-  const allowed = access.accessLevel === 'super_admin' || [...permissions].some((permission) => INTERNAL_OPERATOR_PERMISSION_KEYS.has(permission))
+  const allowed = access.accessLevel === 'super_admin'
+    || operatorRole !== 'read_only'
+    || hasOperatorPermissionNamespace(permissions)
   if (!allowed) return null
 
   return {
@@ -72,6 +82,7 @@ export function hasAngelcare360OperatorAccess(user: Partial<Angelcare360SessionU
   if (!normalized) return false
   const access = buildAngelcare360AccessProfile(normalized)
   const permissions = new Set((normalized.permissions || []).map((permission) => String(permission)))
-  return access.accessLevel === 'super_admin' || [...permissions].some((permission) => INTERNAL_OPERATOR_PERMISSION_KEYS.has(permission))
+  const role = getOperatorRole(normalized)
+  return access.accessLevel === 'super_admin' || role !== 'read_only' || hasOperatorPermissionNamespace(permissions)
 }
 

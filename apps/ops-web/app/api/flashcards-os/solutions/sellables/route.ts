@@ -1,0 +1,4 @@
+import { NextResponse } from 'next/server'
+import { assertFlashcardsApiAccess } from '@/lib/flashcards-os/server/access'
+import { actorFromUser, createSellableFromScenario } from '@/lib/flashcards-os/solutions/server/repository'
+export async function POST(request:Request){const access=await assertFlashcardsApiAccess('flashcards_os.approve_solution_scenarios');if(!access.ok)return NextResponse.json({error:access.message},{status:access.status});try{const body=await request.json();const universe=body.universe==='b2b'?'b2b':'b2c';return NextResponse.json(await createSellableFromScenario(String(body.scenarioId||''),universe,String(body.name||'Confirmed sellable'),actorFromUser(access.user)),{status:201})}catch(error){return NextResponse.json({error:error instanceof Error?error.message:'Sellable creation failed.'},{status:400})}}

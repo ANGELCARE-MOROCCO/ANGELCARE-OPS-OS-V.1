@@ -11,14 +11,8 @@ import {
   type ContentCommandNavigationGroup,
 } from "./content-command-navigation"
 import {
-  CONTENT_ASSETS_KEY,
-  CONTENT_BRIEFS_KEY,
-  CONTENT_ITEMS_KEY,
-  CONTENT_TASKS_KEY,
-  type ContentAsset,
-  type ContentBrief,
-  type ContentItem,
-  type ContentTask,
+  fetchCanonicalContentStore,
+  type ContentStore,
 } from "./content-command-system"
 import ContentCommandCommandPalette, {
   type ContentCommandSearchResult,
@@ -26,6 +20,7 @@ import ContentCommandCommandPalette, {
 import ContentCommandSidebar from "./shell/ContentCommandSidebar"
 import ContentCommandTopbar from "./shell/ContentCommandTopbar"
 import LifecycleControlDock from "./experience-bulk9/LifecycleControlDock"
+import ContentCommandRuntimeGuard from "./runtime/ContentCommandRuntimeGuard"
 import {
   DEFAULT_CONTENT_COMMAND_PREFERENCES,
   readContentCommandShellPreferences,
@@ -39,60 +34,46 @@ import type {
 } from "./shell/content-command-shell-types"
 import styles from "./shell/content-command-shell.module.css"
 
-function safelyReadArray<T>(key: string): T[] {
-  if (typeof window === "undefined") return []
-  try {
-    const parsed: unknown = JSON.parse(window.localStorage.getItem(key) || "[]")
-    return Array.isArray(parsed) ? (parsed as T[]) : []
-  } catch {
-    return []
-  }
-}
 
 function cleanText(value: unknown, fallback: string): string {
   return typeof value === "string" && value.trim() ? value.trim() : fallback
 }
 
-function buildDataSearchIndex(): ContentCommandSearchResult[] {
-  const items = safelyReadArray<ContentItem>(CONTENT_ITEMS_KEY)
-  const tasks = safelyReadArray<ContentTask>(CONTENT_TASKS_KEY)
-  const assets = safelyReadArray<ContentAsset>(CONTENT_ASSETS_KEY)
-  const briefs = safelyReadArray<ContentBrief>(CONTENT_BRIEFS_KEY)
-
-  const contentResults = items.map<ContentCommandSearchResult>((item) => ({
+function buildDataSearchIndex(store: ContentStore): ContentCommandSearchResult[] {
+  const contentResults = store.items.map<ContentCommandSearchResult>((item) => ({
     id: item.id,
     type: "Contenu",
     title: cleanText(item.title, "Contenu sans titre"),
     detail: `${cleanText(item.campaign, "Sans campagne")} · ${cleanText(item.channel, "Canal non défini")} · ${cleanText(item.status, "État non défini")}`,
     href: `/market-os/content-command-center/${item.id}`,
-    provenance: "Données locales",
+    provenance: "Backend canonique",
   }))
 
-  const taskResults = tasks.map<ContentCommandSearchResult>((task) => ({
+  const taskResults = store.tasks.map<ContentCommandSearchResult>((task) => ({
     id: task.id,
     type: "Tâche",
     title: cleanText(task.title, "Tâche sans titre"),
     detail: `${cleanText(task.owner, "Responsable non défini")} · ${cleanText(task.status, "État non défini")} · ${cleanText(task.dueDate, "Sans échéance")}`,
     href: `/market-os/content-command-center/tasks/${task.id}`,
-    provenance: "Données locales",
+    provenance: "Backend canonique",
   }))
 
-  const assetResults = assets.map<ContentCommandSearchResult>((asset) => ({
+  const assetResults = store.assets.map<ContentCommandSearchResult>((asset) => ({
     id: asset.id,
     type: "Asset",
     title: cleanText(asset.name, "Asset sans nom"),
     detail: `${cleanText(asset.type, "Type non défini")} · ${cleanText(asset.channel, "Canal non défini")} · ${cleanText(asset.status, "État non défini")}`,
     href: "/market-os/content-command-center/assets",
-    provenance: "Données locales",
+    provenance: "Backend canonique",
   }))
 
-  const briefResults = briefs.map<ContentCommandSearchResult>((brief) => ({
+  const briefResults = store.briefs.map<ContentCommandSearchResult>((brief) => ({
     id: brief.id,
     type: "Brief",
     title: cleanText(brief.title, "Brief sans titre"),
     detail: `${cleanText(brief.campaign, "Sans campagne")} · ${cleanText(brief.owner, "Responsable non défini")} · ${cleanText(brief.status, "État non défini")}`,
     href: "/market-os/content-command-center/briefs",
-    provenance: "Données locales",
+    provenance: "Backend canonique",
   }))
 
   return [...contentResults, ...taskResults, ...assetResults, ...briefResults]
@@ -179,7 +160,11 @@ export default function ContentCommand360Shell({ children }: { children: React.R
 
   React.useEffect(() => {
     if (!paletteOpen) return
-    setDataSearchIndex(buildDataSearchIndex())
+    let active = true
+    void fetchCanonicalContentStore()
+      .then((store) => { if (active) setDataSearchIndex(buildDataSearchIndex(store)) })
+      .catch(() => { if (active) setDataSearchIndex([]) })
+    return () => { active = false }
   }, [paletteOpen])
 
   React.useEffect(() => {
@@ -394,6 +379,8 @@ export default function ContentCommand360Shell({ children }: { children: React.R
           </main>
         </div>
       </div>
+
+      <ContentCommandRuntimeGuard />
 
       <ContentCommandCommandPalette
         open={paletteOpen}

@@ -11,7 +11,7 @@ export type ContentCommandSearchResult = {
   detail: string
   href?: string
   action?: () => void
-  provenance: "Workspace" | "Données locales" | "Action shell"
+  provenance: "Workspace" | "Données locales" | "Action shell" | "Backend canonique"
 }
 
 type ContentCommandCommandPaletteProps = {

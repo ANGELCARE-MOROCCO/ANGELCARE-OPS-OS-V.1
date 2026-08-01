@@ -1,0 +1,4 @@
+import { NextResponse } from 'next/server'
+import { assertFlashcardsApiAccess } from '@/lib/flashcards-os/server/access'
+import { actorFromUser, createProductionCommand } from '@/lib/flashcards-os/production/server/repository'
+export async function POST(request:Request){const access=await assertFlashcardsApiAccess('flashcards_os.create_commands');if(!access.ok)return NextResponse.json({error:access.message},{status:access.status});try{const body=await request.json();return NextResponse.json(await createProductionCommand({designId:String(body.designId||''),outputType:body.outputType,edition:String(body.edition||''),variant:String(body.variant||''),externalProfile:String(body.externalProfile||''),title:body.title?String(body.title):undefined},actorFromUser(access.user)),{status:201})}catch(error){return NextResponse.json({error:error instanceof Error?error.message:'Command creation failed.'},{status:400})}}

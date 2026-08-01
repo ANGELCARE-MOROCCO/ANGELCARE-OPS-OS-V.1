@@ -36,22 +36,17 @@ import {
 import styles from './marketing-ai-director.module.css'
 import AiDirectorUniverseShell from '../ai-director-universe/AiDirectorUniverseShell'
 import {
-  CONTENT_ASSETS_KEY,
-  CONTENT_BRIEFS_KEY,
-  CONTENT_ITEMS_KEY,
-  CONTENT_LOGS_KEY,
-  CONTENT_TASKS_KEY,
   type ContentAsset,
   type ContentBrief,
   type ContentItem,
   type ContentLog,
   type ContentTask,
+  commitCanonicalStoreChange,
   nowISO,
-  readJson,
   todayISO,
   uid,
-  writeJson,
 } from '../content-command-system'
+import { contentCommandRequest } from '@/components/market-os/content-command/runtime/content-command-runtime'
 
 export type MarketingAiView = 'command' | 'research-control' | 'commands' | 'skills' | 'schedules' | 'missions' | 'runs' | 'learning' | 'doctrine' | 'settings' | 'autopilot' | 'compiler' | 'queue' | 'decisions' | 'integrations' | 'repository' | 'recovery'
 
@@ -103,12 +98,7 @@ const frequencyLabels: Record<string, string> = {
 const authorityLabels: Record<string, string> = { observe: 'Observer', advise: 'Conseiller', prepare: 'Préparer', orchestrate_internal: 'Orchestrer en interne' }
 const statusLabels: Record<string, string> = { active: 'Active', draft: 'Brouillon', paused: 'Suspendue', retired: 'Retirée', running: 'En cours', needs_review: 'Décision requise', completed: 'Terminée', failed: 'Échec', blocked: 'Bloquée', approved: 'Approuvée', awaiting_approval: 'Approbation requise', prepared: 'Préparée', executed: 'Matérialisée', rejected: 'Rejetée' }
 
-async function api<T>(path: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(path, { credentials: 'include', ...init, headers: { Accept: 'application/json', ...(init?.body && !(init.body instanceof FormData) ? { 'Content-Type': 'application/json' } : {}), ...(init?.headers || {}) } })
-  const payload = await response.json().catch(() => ({}))
-  if (!response.ok || payload.ok === false) throw new Error(payload.error || `HTTP_${response.status}`)
-  return payload as T
-}
+const api=contentCommandRequest
 
 function useApiState<T>(loader: () => Promise<T>, deps: React.DependencyList = []) {
   const [state, setState] = React.useState<ApiState<T>>({ loading: true, error: '', data: null })
@@ -303,28 +293,25 @@ function MissionsView() {
   return <><AiNav active="missions" /><main className={styles.canvas}><section className={styles.pageIntro}><div><span>MANDATS MULTIDIMENSIONNELS</span><h1>Missions du Directeur Marketing IA</h1><p>Combinez plusieurs commandes cerveau dans un mandat unique. AI provider recherche, analyse, prépare et orchestre les actions internes selon l’autorité choisie.</p></div><Badge tone="warning">Maximum configurable · 12 commandes par mission</Badge></section>{notice ? <div className={styles.toast}>{notice}<button onClick={() => setNotice('')}><X /></button></div> : null}<section className={styles.executiveGrid}><article className={styles.primaryPanel}><div className={styles.sectionHeader}><div><span>PORTEFEUILLE DE MANDATS</span><h2>Missions existantes</h2></div></div>{missions.error ? <PanelError error={missions.error} retry={missions.refresh} /> : missions.loading ? <Spinner /> : missions.data?.missions.length ? <div className={styles.missionList}>{missions.data.missions.map((mission) => <article key={mission.id}><div className={styles.missionIdentity}><span className={styles.code}>{mission.id.slice(0, 8)}</span><div><h3>{mission.title}</h3><p>{mission.objective}</p><small>{mission.commandCodes.length} commandes · Sponsor: {mission.sponsor} · {authorityLabels[mission.authorityMode]}</small></div></div><div className={styles.missionActions}><Badge tone={mission.status === 'completed' ? 'success' : mission.status === 'failed' ? 'danger' : mission.status === 'needs_review' ? 'warning' : 'info'}>{statusLabels[mission.status] || mission.status}</Badge><button onClick={() => void run(mission)} disabled={mission.status === 'running'}><Play /> Exécuter</button></div></article>)}</div> : <div className={styles.empty}><Workflow /><strong>Aucun mandat</strong><p>Créez un mandat avec un objectif clair et une sélection de commandes.</p></div>}</article><aside className={styles.formPanel}><div className={styles.sectionHeader}><div><span>NOUVEAU MANDAT</span><h2>Compiler une mission</h2></div></div><label className={styles.field}><span>Titre</span><input value={form.title} onChange={(event) => setForm({ ...form, title: event.target.value })} placeholder="Domination contenu rentrée Rabat" /></label><label className={styles.field}><span>Objectif exécutif</span><textarea value={form.objective} onChange={(event) => setForm({ ...form, objective: event.target.value })} rows={6} placeholder="Analyser le marché, construire la stratégie, préparer les briefs et tâches internes…" /></label><div className={styles.fieldGrid}><label className={styles.field}><span>Autorité</span><select value={form.authorityMode} onChange={(event) => setForm({ ...form, authorityMode: event.target.value })}>{Object.entries(authorityLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label><label className={styles.field}><span>Priorité</span><select value={form.priority} onChange={(event) => setForm({ ...form, priority: event.target.value })}><option value="medium">Moyenne</option><option value="high">Haute</option><option value="critical">Critique</option></select></label></div><label className={styles.field}><span>Codes commandes, séparés par virgule</span><textarea value={form.commandCodes} onChange={(event) => setForm({ ...form, commandCodes: event.target.value })} rows={3} /></label><button className={styles.primaryButton} disabled={!form.title || form.objective.length < 12} onClick={() => void create()}><Rocket /> Créer le mandat</button></aside></section></main></>
 }
 
-function materializeAction(action: ActionRecord) {
+async function materializeAction(action: ActionRecord) {
   const payload = action.payload || {}
-  const logs = readJson<ContentLog[]>(CONTENT_LOGS_KEY, [])
-  const log: ContentLog = { id: uid('log'), timestamp: nowISO(), action: 'ai_materialized', entity: action.action_type, detail: `${action.title} · ${action.command_code}` }
-  if (action.action_type === 'create_brief') {
-    const records = readJson<ContentBrief[]>(CONTENT_BRIEFS_KEY, [])
-    const record: ContentBrief = { id: uid('brief-ai'), title: String(payload.title || action.title), campaign: String(payload.campaign || 'Mission IA'), audience: String(payload.audience || 'Audience à confirmer'), objective: String(payload.objective || action.description), message: String(payload.message || action.description), channel: (payload.channel as ContentBrief['channel']) || 'LinkedIn', owner: String(payload.owner || 'Content Lead'), dueDate: String(payload.dueDate || todayISO(7)), status: 'draft' }
-    writeJson(CONTENT_BRIEFS_KEY, [record, ...records])
-  } else if (action.action_type === 'create_content_draft' || action.action_type === 'prepare_publishing_package') {
-    const records = readJson<ContentItem[]>(CONTENT_ITEMS_KEY, [])
-    const record: ContentItem = { id: uid('content-ai'), title: String(payload.title || action.title), type: String(payload.type || 'AI prepared draft'), channel: (payload.channel as ContentItem['channel']) || 'LinkedIn', campaign: String(payload.campaign || 'Mission IA'), owner: String(payload.owner || 'Content Lead'), reviewer: String(payload.reviewer || 'Brand Manager'), status: 'draft', priority: 'High', dueDate: String(payload.dueDate || todayISO(7)), scheduledDate: '', body: String(payload.body || action.description), objective: String(payload.objective || action.description), audience: String(payload.audience || 'À confirmer'), angle: String(payload.angle || ''), cta: String(payload.cta || ''), assets: [], brandScore: 0, seoKeyword: String(payload.seoKeyword || ''), notes: `Préparé par SANILA Marketing Director AI · ${action.command_code}`, createdAt: nowISO(), updatedAt: nowISO() }
-    writeJson(CONTENT_ITEMS_KEY, [record, ...records])
-  } else if (action.action_type === 'create_task_plan' || action.action_type === 'request_review' || action.action_type === 'propose_schedule') {
-    const records = readJson<ContentTask[]>(CONTENT_TASKS_KEY, [])
-    const record: ContentTask = { id: uid('task-ai'), contentId: String(payload.contentId || ''), title: String(payload.title || action.title), owner: String(payload.owner || 'Content Lead'), status: 'todo', dueDate: String(payload.dueDate || todayISO(5)), priority: action.requires_approval ? 'High' : 'Medium', notes: `${action.description}\nPréparé par ${action.command_code}` }
-    writeJson(CONTENT_TASKS_KEY, [record, ...records])
-  } else if (action.action_type === 'create_asset_requirement') {
-    const records = readJson<ContentAsset[]>(CONTENT_ASSETS_KEY, [])
-    const record: ContentAsset = { id: uid('asset-ai'), name: String(payload.name || action.title), type: (payload.type as ContentAsset['type']) || 'Other', channel: (payload.channel as ContentAsset['channel']) || 'LinkedIn', linkedContentId: String(payload.contentId || ''), owner: String(payload.owner || 'Creative Producer'), status: 'draft', url: '', notes: `${action.description}\nPréparé par ${action.command_code}` }
-    writeJson(CONTENT_ASSETS_KEY, [record, ...records])
-  }
-  writeJson(CONTENT_LOGS_KEY, [log, ...logs].slice(0, 100))
+  await commitCanonicalStoreChange((store) => {
+    const log: ContentLog = { id: uid('log'), timestamp: nowISO(), action: 'ai_materialized', entity: action.action_type, detail: `${action.title} · ${action.command_code}` }
+    if (action.action_type === 'create_brief') {
+      const record: ContentBrief = { id: uid('brief-ai'), title: String(payload.title || action.title), campaign: String(payload.campaign || 'Mission IA'), audience: String(payload.audience || 'Audience à confirmer'), objective: String(payload.objective || action.description), message: String(payload.message || action.description), channel: (payload.channel as ContentBrief['channel']) || 'LinkedIn', owner: String(payload.owner || 'Content Lead'), dueDate: String(payload.dueDate || todayISO(7)), status: 'draft' }
+      store.briefs.unshift(record)
+    } else if (action.action_type === 'create_content_draft' || action.action_type === 'prepare_publishing_package') {
+      const record: ContentItem = { id: uid('content-ai'), title: String(payload.title || action.title), type: String(payload.type || 'AI prepared draft'), channel: (payload.channel as ContentItem['channel']) || 'LinkedIn', campaign: String(payload.campaign || 'Mission IA'), owner: String(payload.owner || 'Content Lead'), reviewer: String(payload.reviewer || 'Brand Manager'), status: action.action_type === 'prepare_publishing_package' ? 'approved' : 'draft', priority: 'High', dueDate: String(payload.dueDate || todayISO(7)), scheduledDate: '', body: String(payload.body || action.description), objective: String(payload.objective || action.description), audience: String(payload.audience || 'À confirmer'), angle: String(payload.angle || ''), cta: String(payload.cta || ''), assets: [], brandScore: 0, seoKeyword: String(payload.seoKeyword || ''), notes: `Préparé par SANILA Marketing Director AI · ${action.command_code}`, createdAt: nowISO(), updatedAt: nowISO() }
+      store.items.unshift(record)
+    } else if (action.action_type === 'create_task_plan' || action.action_type === 'request_review' || action.action_type === 'propose_schedule') {
+      const record: ContentTask = { id: uid('task-ai'), contentId: String(payload.contentId || ''), title: String(payload.title || action.title), owner: String(payload.owner || 'Content Lead'), status: 'todo', dueDate: String(payload.dueDate || todayISO(5)), priority: action.requires_approval ? 'High' : 'Medium', notes: `${action.description}\nPréparé par ${action.command_code}` }
+      store.tasks.unshift(record)
+    } else if (action.action_type === 'create_asset_requirement') {
+      const record: ContentAsset = { id: uid('asset-ai'), name: String(payload.name || action.title), type: (payload.type as ContentAsset['type']) || 'Other', channel: (payload.channel as ContentAsset['channel']) || 'LinkedIn', linkedContentId: String(payload.contentId || ''), owner: String(payload.owner || 'Creative Producer'), status: 'draft', url: '', notes: `${action.description}\nPréparé par ${action.command_code}` }
+      store.assets.unshift(record)
+    }
+    store.logs = [log, ...store.logs].slice(0, 100)
+  }, 'ai_materialized', `${action.title} · ${action.command_code}`)
 }
 
 function RunsView() {
@@ -333,8 +320,8 @@ function RunsView() {
   const [notice, setNotice] = React.useState('')
   async function decide(action: ActionRecord, status: 'approved' | 'rejected' | 'executed') {
     try {
-      const result = await api<{ bridgeObject?: unknown; bridgeError?: string | null }>(`/api/market-os/content-command/marketing-ai/actions/${action.id}`, { method: 'PATCH', body: JSON.stringify({ status, executionResult: status === 'executed' ? { target: 'content_command_phase1_workspace', executedAt: nowISO() } : {} }) })
-      if (status === 'executed') materializeAction(action)
+      const result = await api<{ bridgeObject?: unknown; bridgeError?: string | null }>(`/api/market-os/content-command/marketing-ai/actions/${action.id}`, { method: 'PATCH', body: JSON.stringify({ status, executionResult: status === 'executed' ? { target: 'content_command_canonical_runtime', executedAt: nowISO() } : {} }) })
+      if (status === 'executed') await materializeAction(action)
       setNotice(status === 'executed'
         ? `Action matérialisée dans Content Command 360${result.bridgeObject ? ' et archivée dans le Bridge Windows' : result.bridgeError ? ` · Bridge: ${result.bridgeError}` : ''}.`
         : `Action ${status === 'approved' ? 'approuvée' : 'rejetée'}.`)

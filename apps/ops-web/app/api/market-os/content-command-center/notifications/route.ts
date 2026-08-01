@@ -1,5 +1,4 @@
-
-import { NextResponse } from 'next/server'
-export async function GET(){
- return NextResponse.json({ok:true,notifications:[]})
-}
+import { NextResponse } from "next/server"
+import { requireContentHeadquartersUser, contentHeadquartersApiError } from "@/lib/market-os/content-command-headquarters/auth"
+import { listLegacyTasks } from "@/lib/market-os/content-command-headquarters/canonical-legacy-api-service"
+export async function GET(){try{await requireContentHeadquartersUser("view");const tasks=await listLegacyTasks();const notifications=tasks.filter((row:any)=>row.status==="blocked"||row.status==="todo").slice(0,100).map((row:any)=>({id:`task:${row.id}`,type:row.status==="blocked"?"blocking":"action_required",title:row.title,detail:row.notes,entity_id:row.dossier_id||row.content_id,status:"open"}));return NextResponse.json({ok:true,notifications,source:"market_content_mission_tasks"})}catch(error){return contentHeadquartersApiError(error)}}
