@@ -292,7 +292,7 @@ function csvCell(value: unknown): string {
   return `"${normalized.replaceAll('"', '""')}"`
 }
 
-export async function handleAuditExportGet(request: Request): Promise<NextResponse> {
+export async function handleAuditExportGet(request: Request): Promise<Response> {
   const id = requestId(request)
   try {
     const context = await requireMarketplaceApiContext('marketplace.audit.export')
@@ -329,7 +329,7 @@ export async function handleAuditExportGet(request: Request): Promise<NextRespon
       reason: 'Export autorisé depuis le Master Backoffice.',
     })
 
-    return new NextResponse(csv, {
+    return new Response(csv, {
       status: 200,
       headers: {
         'content-type': 'text/csv; charset=utf-8',
