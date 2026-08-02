@@ -61,13 +61,20 @@ export type AcWhatsAppConversation = {
   message_count: number; last_message_preview?: string | null; last_message_direction?: string | null
   last_message_at?: string | null; sla_first_response_due_at?: string | null; sla_resolution_due_at?: string | null
   contact?: AcWhatsAppContact | null; account?: AcWhatsAppAccount | null; queue?: AcWhatsAppQueue | null
-  assigned_user?: Record<string, unknown> | null; labels?: Array<{ label?: Record<string, unknown> | null }>
+  assigned_user?: Record<string, unknown> | null; labels?: Array<{ label_id?: string; label?: Record<string, unknown> | null }>
+  last_message_sender_display_name_snapshot?: string | null; last_message_sender_type?: string | null
+  last_read_at?: string | null; last_read_by_user_id?: string | null; metadata?: Record<string, unknown>
 }
 
 export type AcWhatsAppMessage = {
   id: string; conversation_id: string; external_message_id?: string | null; client_message_id?: string | null
   direction: 'inbound' | 'outbound' | 'internal'; message_type: string; body?: string | null; caption?: string | null
   status: AcWhatsAppMessageStatus; sender_user_id?: string | null; error_message?: string | null
+  sender_display_name_snapshot?: string | null; sender_role_snapshot?: string | null; sender_type?: string | null
+  message_origin?: string | null; campaign_id?: string | null; campaign_name_snapshot?: string | null
+  automation_name_snapshot?: string | null; responsible_user_id?: string | null
+  sender_identity?: { display_name: string; role?: string | null; type: string; origin?: string | null }
+  responsible_identity?: { display_name: string; role?: string | null } | null
   sent_at?: string | null; delivered_at?: string | null; read_at?: string | null; received_at?: string | null
   created_at: string; attachments?: Array<Record<string, unknown>>
 }
@@ -85,7 +92,7 @@ export type AcWhatsAppBootstrap = {
   actor: { id: string; name: string; role: string; permissions: string[] }
   accounts: AcWhatsAppAccount[]; queues: AcWhatsAppQueue[]; conversations: AcWhatsAppConversation[]
   campaigns: AcWhatsAppCampaign[]; contacts: AcWhatsAppContact[]; templates: Array<Record<string, unknown>>
-  memberships: Array<Record<string, unknown>>; users: Array<Record<string, unknown>>; securityEvents: Array<Record<string, unknown>>
+  memberships: Array<Record<string, unknown>>; users: Array<Record<string, unknown>>; labelsCatalog: Array<Record<string, unknown>>; securityEvents: Array<Record<string, unknown>>
   auditEvents: Array<Record<string, unknown>>; presence: Array<Record<string, unknown>>
   counts: Record<string, number>; health: { configured: boolean; openwaReachable: boolean; error?: string }
 }

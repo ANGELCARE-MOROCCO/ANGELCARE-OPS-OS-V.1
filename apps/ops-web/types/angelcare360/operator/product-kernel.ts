@@ -1,6 +1,6 @@
 export type ProductKernelPublicationStatus = 'draft' | 'review' | 'published' | 'suspended' | 'deprecated' | 'retired' | 'archived'
 export type ProductKernelRuntimeMaturity = 'operational' | 'configuration_dependent' | 'backend_ready' | 'frontend_only' | 'integration_dependent' | 'locked' | 'deprecated' | 'unverified'
-export type ProductKernelItemType = 'module' | 'feature' | 'addon' | 'meter'
+export type ProductKernelItemType = 'module' | 'capability' | 'feature' | 'addon' | 'meter' | 'service'
 export type ProductKernelEffectiveState = 'enabled' | 'disabled' | 'suspended' | 'locked' | 'requires_configuration'
 
 export interface ProductModuleRecord {

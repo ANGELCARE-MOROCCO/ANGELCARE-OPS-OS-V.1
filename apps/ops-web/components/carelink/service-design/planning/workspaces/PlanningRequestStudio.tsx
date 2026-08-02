@@ -1,9 +1,18 @@
 'use client'
-import { ShieldCheck } from 'lucide-react'
-import { Action, Empty, StageHeader, Stat, Status, Surface } from '../PlanningUI'
-const rows=[
-  {code:'HSD-REQUEST-01',label:'Référence opérationnelle',status:'ready',detail:'Standards UMZ1 disponibles et contrôlés.'},
-  {code:'HSD-REQUEST-02',label:'Décision requise',status:'validation_required',detail:'Une autorité humaine doit confirmer la prochaine étape.'},
-  {code:'HSD-REQUEST-03',label:'Préparation CARELINK',status:'conditional',detail:'Aucune écriture mission avant UMZ4.'},
-]
-export function PlanningRequestStudio(){return <div className="space-y-6"><StageHeader eyebrow="HomeService · Mission Plan Studio" title="Studio de demande mission" description="Un parcours guidé et configurable capture le service, les bénéficiaires, objectifs, dates, environnement et contraintes avec un minimum de texte libre." actions={<><Action tone="slate">Vue enregistrée</Action><Action>Action principale</Action></>}/><div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4"><Stat label="Éléments actifs" value="12" detail="Valeur illustrative de structure; les métriques réelles viennent de la base."/><Stat label="Prêts" value="7" detail="Conformes aux contrôles déterministes." tone="emerald"/><Stat label="À valider" value="4" detail="Décision humaine nécessaire." tone="amber"/><Stat label="Bloqués" value="1" detail="Raison et récupération visibles." tone="rose"/></div><div className="grid gap-6 xl:grid-cols-[1.4fr_.8fr]"><Surface title="Architecture opérationnelle" subtitle="Une identité de workspace distincte avec des états explicites."><div className="space-y-3">{rows.map(r=><article key={r.code} className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-200 p-4"><div><p className="text-[10px] font-black uppercase tracking-[.18em] text-blue-600">{r.code}</p><h3 className="mt-1 font-black text-slate-900">{r.label}</h3><p className="mt-1 text-xs font-semibold text-slate-500">{r.detail}</p></div><Status value={r.status}/></article>)}</div></Surface><Surface title="Décision & intégrité" subtitle="Aucune autorité n’est transférée à l’IA."><div className="space-y-4"><div className="rounded-2xl bg-slate-950 p-5 text-white"><p className="text-[10px] font-black uppercase tracking-[.2em] text-blue-300">Doctrine</p><p className="mt-3 text-sm font-bold leading-6">OpenRouter Free compose. Les règles déterministes valident. L’humain approuve. CARELINK exécute plus tard.</p></div><Empty title="Aucun résultat simulé" detail="Les états vides et erreurs restent honnêtes jusqu’à réception de données réelles."/></div></Surface></div></div>}
+
+import { ClipboardList } from 'lucide-react'
+import { PurposeBuiltPlanningWorkspace } from '../PurposeBuiltPlanningWorkspace'
+
+export function PlanningRequestStudio() {
+  return <PurposeBuiltPlanningWorkspace
+    eyebrow='ANGELCARE · Planning Request Studio'
+    title='Demande de planification structurée'
+    description='Assemblez catégorie, scénario, bénéficiaire, dates et objectifs sans questionnaire narratif générique.'
+    icon={ClipboardList}
+    tone='blue'
+    stages={[{ label: 'Catégorie', detail: 'Configurer' }, { label: 'Scénario', detail: 'Structurer' }, { label: 'Bénéficiaire', detail: 'Contrôler' }, { label: 'Dates', detail: 'Comparer' }, { label: 'Génération', detail: 'Décider' }]}
+    canvasTitle='Request Configuration Canvas'
+    canvasDetail='Le dossier se pré-remplit depuis le blueprint et le preset choisis.'
+    principles={[{ title: '95% de choix contrôlés', detail: 'La donnée locale reste la source de vérité.' }, { title: 'Dates et heures restent explicites', detail: 'Le système expose les limites et les écarts.' }, { title: 'Le prompt technique est compilé par le système', detail: 'La décision finale reste humaine et traçable.' }]}
+  />
+}

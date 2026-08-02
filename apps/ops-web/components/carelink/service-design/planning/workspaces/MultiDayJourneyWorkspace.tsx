@@ -1,9 +1,18 @@
 'use client'
-import { Scale } from 'lucide-react'
-import { Action, Empty, StageHeader, Stat, Status, Surface } from '../PlanningUI'
-const rows=[
-  {code:'HSD-MULTI-01',label:'Référence opérationnelle',status:'ready',detail:'Standards UMZ1 disponibles et contrôlés.'},
-  {code:'HSD-MULTI-02',label:'Décision requise',status:'validation_required',detail:'Une autorité humaine doit confirmer la prochaine étape.'},
-  {code:'HSD-MULTI-03',label:'Préparation CARELINK',status:'conditional',detail:'Aucune écriture mission avant UMZ4.'},
-]
-export function MultiDayJourneyWorkspace(){return <div className="space-y-6"><StageHeader eyebrow="HomeService · Mission Plan Studio" title="Théâtre parcours multi-jours" description="Les journées sont organisées en progression cohérente avec continuité, variation, objectifs, ressources et revues intermédiaires." actions={<><Action tone="slate">Vue enregistrée</Action><Action>Action principale</Action></>}/><div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4"><Stat label="Éléments actifs" value="12" detail="Valeur illustrative de structure; les métriques réelles viennent de la base."/><Stat label="Prêts" value="7" detail="Conformes aux contrôles déterministes." tone="emerald"/><Stat label="À valider" value="4" detail="Décision humaine nécessaire." tone="amber"/><Stat label="Bloqués" value="1" detail="Raison et récupération visibles." tone="rose"/></div><div className="grid gap-6 xl:grid-cols-[1.4fr_.8fr]"><Surface title="Architecture opérationnelle" subtitle="Une identité de workspace distincte avec des états explicites."><div className="space-y-3">{rows.map(r=><article key={r.code} className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-200 p-4"><div><p className="text-[10px] font-black uppercase tracking-[.18em] text-blue-600">{r.code}</p><h3 className="mt-1 font-black text-slate-900">{r.label}</h3><p className="mt-1 text-xs font-semibold text-slate-500">{r.detail}</p></div><Status value={r.status}/></article>)}</div></Surface><Surface title="Décision & intégrité" subtitle="Aucune autorité n’est transférée à l’IA."><div className="space-y-4"><div className="rounded-2xl bg-slate-950 p-5 text-white"><p className="text-[10px] font-black uppercase tracking-[.2em] text-blue-300">Doctrine</p><p className="mt-3 text-sm font-bold leading-6">OpenRouter Free compose. Les règles déterministes valident. L’humain approuve. CARELINK exécute plus tard.</p></div><Empty title="Aucun résultat simulé" detail="Les états vides et erreurs restent honnêtes jusqu’à réception de données réelles."/></div></Surface></div></div>}
+
+import { Milestone } from 'lucide-react'
+import { PurposeBuiltPlanningWorkspace } from '../PurposeBuiltPlanningWorkspace'
+
+export function MultiDayJourneyWorkspace() {
+  return <PurposeBuiltPlanningWorkspace
+    eyebrow='ANGELCARE · Multi-Day Journey Theatre'
+    title='Théâtre parcours multi-jours'
+    description='Visualisez la progression entre familiarisation, routine, participation, autonomie et consolidation.'
+    icon={Milestone}
+    tone='violet'
+    stages={[{ label: 'Jour 1', detail: 'Configurer' }, { label: 'Progression', detail: 'Structurer' }, { label: 'Variation', detail: 'Contrôler' }, { label: 'Continuité', detail: 'Comparer' }, { label: 'Clôture', detail: 'Décider' }]}
+    canvasTitle='Programme Ribbon'
+    canvasDetail='Chaque journée réelle apparaîtra avec sa timeline, son objectif et sa relation aux autres jours.'
+    principles={[{ title: 'Progression visible', detail: 'La donnée locale reste la source de vérité.' }, { title: 'Répétition contrôlée', detail: 'Le système expose les limites et les écarts.' }, { title: 'Chaque jour conserve ses IDs locaux', detail: 'La décision finale reste humaine et traçable.' }]}
+  />
+}

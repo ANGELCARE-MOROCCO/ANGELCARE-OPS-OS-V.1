@@ -111,6 +111,16 @@ export function actorName(user: any) {
   return user.display_name || user.full_name || user.name || [user.first_name,user.last_name].filter(Boolean).join(' ') || user.email || user.id
 }
 
+export function actorRole(user: any) {
+  return String(user?.job_title || user?.title || user?.role_name || user?.role_key || user?.role || 'Membre AngelCare')
+}
+
+export function humanContactType(value: unknown) {
+  const key=String(value||'').trim().toLowerCase()
+  const labels:Record<string,string>={prospect:'Prospect',customer:'Client',client:'Client',partner:'Partenaire',family:'Famille',parent:'Parent',organization:'Organisation',unqualified:'Contact non qualifié',unknown:'Contact non qualifié'}
+  return labels[key] || (key ? key.replaceAll('_',' ') : 'Contact non qualifié')
+}
+
 export function normalizeOpenWAAccountStatus(value: unknown, fallback = 'degraded') {
   const status = String(value || '').trim().toLowerCase().replace(/[\s-]+/g, '_')
   const map: Record<string, string> = {

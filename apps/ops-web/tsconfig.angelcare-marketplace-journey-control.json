@@ -1,0 +1,22 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "incremental": false,
+    "composite": false,
+    "skipLibCheck": false
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.d.ts",
+    "angelcare-marketplace/journey-control/**/*.ts",
+    "angelcare-marketplace/journey-control/**/*.tsx",
+    "angelcare-marketplace/domain/types.ts",
+    "angelcare-marketplace/permissions/permission-catalog.ts",
+    "angelcare-marketplace/shells/AdminNavigation.tsx",
+    "app/angelcare-marketplace/[locale]/account/**/*.tsx",
+    "app/angelcare-marketplace/(protected)/admin/journeys/**/*.tsx",
+    "app/api/angelcare-marketplace/journeys/**/*.ts"
+  ],
+  "exclude": ["node_modules", ".next", ".git", ".angelcare-marketplace-backups"]
+}

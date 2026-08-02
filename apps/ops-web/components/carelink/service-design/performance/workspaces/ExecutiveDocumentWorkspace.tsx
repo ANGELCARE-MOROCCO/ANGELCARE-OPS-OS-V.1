@@ -1,6 +1,30 @@
-import{performanceData}from'../load'
-import{PerformanceWorkspace,Panel,EmptyState,MetricCard,Badge,SignalList,CaseList,DecisionRunway,HealthMatrix,ReadinessRail,WarningBanner}from'../PerformanceUI'
-export default async function ExecutiveDocumentWorkspace(){
- const data=await performanceData()
- return <PerformanceWorkspace data={data} eyebrow="Documents exécutifs" title="Executive Document Studio" description="Composer des rapports A4 attribuables, versionnés, imprimables et sans signature artificielle." variant="document" primary={<><div className="grid gap-6 xl:grid-cols-[320px_minmax(0,1fr)]"><Panel title="Configuration document" subtitle="Rapport, période, confidentialité et version."><div className="space-y-3">{['Executive performance','Scorecard catégorie','Customer experience','Qualité & amélioration','Readiness & sécurité'].map(x=><button key={x} className="w-full rounded-xl border border-slate-200 px-4 py-3 text-left text-xs font-black hover:border-blue-300 hover:bg-blue-50">{x}</button>)}</div></Panel><section className="aspect-[1.414/1] min-h-[520px] rounded-[18px] border border-slate-300 bg-white p-10 shadow-[0_24px_70px_rgba(15,23,42,.14)]"><div className="flex justify-between border-b border-slate-200 pb-5"><div><p className="text-[10px] font-black uppercase tracking-[.3em] text-blue-700">ANGELCARE · HOMESERVICE OS</p><h2 className="mt-2 text-3xl font-black">Rapport exécutif</h2></div><Badge tone="navy">A4 · Versionné</Badge></div><div className="mt-8 grid gap-4 md:grid-cols-3"><MetricCard label="Missions" value="—" detail="Source réelle requise."/><MetricCard label="Satisfaction" value="—" detail="Feedback réel requis."/><MetricCard label="Readiness" value={`${data.readinessControls.filter(x=>x.status==='passed').length}/24`} detail="Contrôles probants."/></div><p className="mt-10 text-sm font-semibold leading-7 text-slate-600">Prévisualisation print-safe. Aucune signature, aucun sceau artificiel, aucune donnée simulée.</p></section></div></>} aside={<><><Panel title="Autorité humaine" subtitle="Les décisions restent séparées de l’analyse."><div className="space-y-3"><div className="rounded-xl bg-slate-950 p-4 text-white"><p className="text-xs font-black">OpenRouter Free · consultatif</p><p className="mt-2 text-[11px] font-semibold text-slate-300">Aucune approbation, suspension, jugement RH ou certification.</p></div><div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4"><p className="text-xs font-black text-emerald-900">CARELINK · vérité terrain</p><p className="mt-2 text-[11px] font-semibold text-emerald-700">Missions, présence, rapports, incidents et paiements restent souverains.</p></div></div></Panel><Panel title="Readiness" subtitle="Evidence before confidence."><ReadinessRail data={data}/></Panel></></>}/>
+import { performanceData } from '../load'
+import { ServiceDocumentStudio } from '@/components/carelink/service-design/documents/ServiceDocumentStudio'
+import { blankServiceDocumentSource } from '@/components/carelink/service-design/documents/sourceNormalization'
+
+export default async function ExecutiveDocumentWorkspace() {
+  const data = await performanceData()
+  const raw = data as unknown as Record<string, unknown>
+  const readiness = Array.isArray(raw.readinessControls) ? raw.readinessControls as Array<Record<string, unknown>> : []
+  const health = Array.isArray(raw.healthChecks) ? raw.healthChecks as Array<Record<string, unknown>> : []
+  const signals = Array.isArray(raw.qualitySignals) ? raw.qualitySignals as Array<Record<string, unknown>> : []
+  const source = {
+    ...blankServiceDocumentSource('executive'),
+    title: 'Rapport exécutif HomeService Design OS',
+    subtitle: 'Performance, qualité, readiness et souveraineté opérationnelle',
+    reference: `HSD-EXEC-${new Date().toISOString().slice(0, 10).replaceAll('-', '')}`,
+    version: 'Live',
+    status: 'Prévisualisation exécutive',
+    generatedAt: new Date().toISOString(),
+    executiveSummary: 'Rapport de gouvernance produit depuis les indicateurs réellement disponibles. Les valeurs absentes restent explicitement non renseignées.',
+    metrics: [
+      { label: 'Readiness', value: `${readiness.filter((item) => String(item.status) === 'passed').length}/${readiness.length || 24}`, detail: 'Contrôles avec preuve' },
+      { label: 'Santé opérationnelle', value: String(health.filter((item) => ['healthy', 'passed'].includes(String(item.status))).length), detail: 'Contrôles sains' },
+      { label: 'Signaux qualité', value: String(signals.length), detail: 'Signaux actuellement chargés' },
+    ],
+    warnings: readiness.filter((item) => !['passed', 'not_applicable'].includes(String(item.status))).slice(0, 12).map((item) => String(item.name || item.label || item.code || 'Contrôle readiness non satisfait')),
+    lineage: [{ label: 'Source', value: 'HomeService Performance Dashboard' }, { label: 'Généré le', value: new Date().toLocaleString('fr-FR') }],
+    raw,
+  }
+  return <ServiceDocumentStudio sourceKind="executive" initialSource={source} initialTemplateId="complete-service-dossier" />
 }

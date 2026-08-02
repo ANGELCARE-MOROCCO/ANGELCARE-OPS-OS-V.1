@@ -1,165 +1,22 @@
 'use client'
-
 import { usePathname } from 'next/navigation'
-import { useEffect, useState } from 'react'
-import type { ReactNode } from 'react'
+import { useEffect, useState, type CSSProperties, type ReactNode } from 'react'
 import { getAngelcare360NavigationSections } from '@/data/angelcare360/navigation'
 import type { Angelcare360AccessProfile, Angelcare360SessionUser } from '@/types/angelcare360/module'
+import type { Angelcare360RuntimeEntitlements } from '@/types/angelcare360/entitlements'
 import Angelcare360Header from './Angelcare360Header'
 import Angelcare360Sidebar from './Angelcare360Sidebar'
 import Angelcare360PaymentGateProvider from '@/components/angelcare360/payment/Angelcare360PaymentGateProvider'
 import Angelcare360EntitlementGate from './Angelcare360EntitlementGate'
-import type { Angelcare360RuntimeEntitlements } from '@/types/angelcare360/entitlements'
-import {
-  ANGELCARE360_COLORS,
-  angelcare360PageBackdropStyle,
-} from '@/components/angelcare360/ui/Angelcare360VisualSystem'
+import CustomerExperienceProvider from '@/components/angelcare360/customer-experience/CustomerExperienceProvider'
+import CustomerFooter from '@/components/angelcare360/customer-experience/CustomerFooter'
+import styles from './Angelcare360CustomerShell.module.css'
 
-type Angelcare360ShellProps = {
-  children: ReactNode
-  user: Angelcare360SessionUser
-  access: Angelcare360AccessProfile
-  runtimeEntitlements: Angelcare360RuntimeEntitlements
-}
-
-export default function Angelcare360Shell({ children, user, access, runtimeEntitlements }: Angelcare360ShellProps) {
-  const pathname = usePathname() || '/angelcare-360-command-center'
-  const [sidebarOpen, setSidebarOpen] = useState(false)
-  const [isMobile, setIsMobile] = useState(false)
-  const sections = getAngelcare360NavigationSections(runtimeEntitlements)
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(max-width: 1100px)')
-
-    const updateMobileState = () => {
-      const matches = mediaQuery.matches
-      setIsMobile(matches)
-      if (!matches) {
-        setSidebarOpen(false)
-      }
-    }
-
-    updateMobileState()
-    mediaQuery.addEventListener('change', updateMobileState)
-
-    return () => mediaQuery.removeEventListener('change', updateMobileState)
-  }, [])
-
-  return (
-    <div style={shellStyle}>
-      <div style={shellBackdropStyle} />
-      <div style={shellGlowStyle} />
-      <Angelcare360PaymentGateProvider pathname={pathname}>
-      <div style={isMobile ? shellStackStyle : shellGridStyle}>
-        {!isMobile ? (
-          <div style={sidebarWrapperStyle}>
-            <Angelcare360Sidebar
-              open
-              onClose={() => setSidebarOpen(false)}
-              sections={sections}
-              pathname={pathname}
-              showCloseButton={false}
-            />
-          </div>
-        ) : null}
-        {isMobile && sidebarOpen ? (
-          <div style={mobileSidebarStyle} role="presentation" onClick={() => setSidebarOpen(false)}>
-            <div style={mobileSidebarPanelStyle} onClick={(event) => event.stopPropagation()}>
-              <Angelcare360Sidebar
-                open
-                onClose={() => setSidebarOpen(false)}
-                sections={sections}
-                pathname={pathname}
-                showCloseButton
-              />
-            </div>
-          </div>
-        ) : null}
-        <div style={contentShellStyle}>
-          <Angelcare360Header
-            user={user}
-            access={access}
-            pathname={pathname}
-            onToggleSidebar={() => setSidebarOpen((current) => !current)}
-            showMenuButton={isMobile}
-          />
-          <main style={mainStyle}><Angelcare360EntitlementGate pathname={pathname} runtime={runtimeEntitlements}>{children}</Angelcare360EntitlementGate></main>
-        </div>
-      </div>
-      </Angelcare360PaymentGateProvider>
-    </div>
-  )
-}
-
-const shellStyle: React.CSSProperties = {
-  minHeight: '100vh',
-  ...angelcare360PageBackdropStyle,
-  position: 'relative',
-  background:
-    'radial-gradient(circle at top left, rgba(59,130,246,.11), transparent 26%), radial-gradient(circle at top right, rgba(14,165,233,.08), transparent 20%), linear-gradient(180deg, #f8fafc 0%, #edf4fb 100%)',
-  color: ANGELCARE360_COLORS.navy,
-}
-
-const shellBackdropStyle: React.CSSProperties = {
-  position: 'fixed',
-  inset: 0,
-  pointerEvents: 'none',
-  background: 'linear-gradient(135deg, rgba(255,255,255,.72) 0%, rgba(255,255,255,.26) 100%)',
-}
-
-const shellGlowStyle: React.CSSProperties = {
-  position: 'fixed',
-  inset: 0,
-  pointerEvents: 'none',
-  background:
-    'radial-gradient(circle at 20% 0%, rgba(29,78,216,.08), transparent 22%), radial-gradient(circle at 90% 8%, rgba(14,165,233,.08), transparent 18%)',
-}
-
-const shellGridStyle: React.CSSProperties = {
-  position: 'relative',
-  zIndex: 1,
-  display: 'grid',
-  gridTemplateColumns: '344px minmax(0,1fr)',
-  minHeight: '100vh',
-}
-
-const shellStackStyle: React.CSSProperties = {
-  position: 'relative',
-  zIndex: 1,
-  display: 'grid',
-  gridTemplateColumns: 'minmax(0,1fr)',
-  minHeight: '100vh',
-}
-
-const sidebarWrapperStyle: React.CSSProperties = {
-  display: 'block',
-}
-
-const mobileSidebarStyle: React.CSSProperties = {
-  position: 'fixed',
-  inset: 0,
-  zIndex: 40,
-  display: 'flex',
-  justifyContent: 'flex-start',
-  background: 'rgba(15, 23, 42, 0.32)',
-  backdropFilter: 'blur(10px)',
-}
-
-const mobileSidebarPanelStyle: React.CSSProperties = {
-  width: 'min(100vw, 360px)',
-  maxWidth: '100%',
-  height: '100%',
-  background: '#fff',
-  boxShadow: '18px 0 56px rgba(15,23,42,.18)',
-}
-
-const contentShellStyle: React.CSSProperties = {
-  minWidth: 0,
-  display: 'grid',
-  gridTemplateRows: 'auto minmax(0,1fr)',
-}
-
-const mainStyle: React.CSSProperties = {
-  minWidth: 0,
-  padding: 28,
+type Props={children:ReactNode;user:Angelcare360SessionUser;access:Angelcare360AccessProfile;runtimeEntitlements:Angelcare360RuntimeEntitlements;schoolName?:string|null;academicYearLabel?:string|null}
+const STORAGE_KEY='angelcare360.customer.sidebar'
+export default function Angelcare360Shell({children,user,access,runtimeEntitlements,schoolName,academicYearLabel}:Props){
+ const pathname=usePathname()||'/angelcare-360-command-center';const [mobileOpen,setMobileOpen]=useState(false);const [mobile,setMobile]=useState(false);const [collapsed,setCollapsed]=useState(false);const sections=getAngelcare360NavigationSections(runtimeEntitlements)
+ useEffect(()=>{const saved=window.localStorage.getItem(STORAGE_KEY);setCollapsed(saved==='collapsed');const mq=window.matchMedia('(max-width:1100px)');const update=()=>{setMobile(mq.matches);if(!mq.matches)setMobileOpen(false)};update();mq.addEventListener('change',update);return()=>mq.removeEventListener('change',update)},[])
+ function toggleCollapsed(){setCollapsed((current)=>{const next=!current;window.localStorage.setItem(STORAGE_KEY,next?'collapsed':'expanded');return next})}
+ return <CustomerExperienceProvider><div className={styles.shell} style={{'--sidebar-width':collapsed?'88px':'310px'} as CSSProperties}><Angelcare360PaymentGateProvider pathname={pathname}><div className={styles.grid}>{!mobile?<Angelcare360Sidebar open onClose={()=>setMobileOpen(false)} sections={sections} pathname={pathname} showCloseButton={false} collapsed={collapsed} onToggleCollapse={toggleCollapsed}/>:null}{mobile&&mobileOpen?<div className={styles.mobileBackdrop} onClick={()=>setMobileOpen(false)}><div className={styles.mobilePanel} onClick={(event)=>event.stopPropagation()}><Angelcare360Sidebar open onClose={()=>setMobileOpen(false)} sections={sections} pathname={pathname} showCloseButton collapsed={false}/></div></div>:null}<div className={styles.content}><Angelcare360Header user={user} access={access} pathname={pathname} runtime={runtimeEntitlements} schoolName={schoolName} academicYearLabel={academicYearLabel} onToggleSidebar={()=>mobile?setMobileOpen(true):toggleCollapsed()} showMenuButton={mobile} collapsed={collapsed}/><main className={styles.main}><div className={styles.page}><Angelcare360EntitlementGate pathname={pathname} runtime={runtimeEntitlements}>{children}</Angelcare360EntitlementGate></div><CustomerFooter/></main></div></div></Angelcare360PaymentGateProvider></div></CustomerExperienceProvider>
 }

@@ -1,2 +1,5 @@
-import{SupportWorkspace}from'./SupportWorkspace'
-export function CommercialDocumentStudioWorkspace(){return <SupportWorkspace eyebrow="Commercial Document Studio" title="Documents commerciaux versionn\u00e9s" description="Fiches B2C/B2B, bundle, prix interne et snapshot approuv\u00e9." primary="Configuration" secondary="Aper\u00e7u A4" variant="document" items={["Fiche service", "Présentation B2C", "Présentation B2B", "Résumé bundle", "Fiche tarifaire interne"]}/>}
+import { ServiceDocumentStudio } from '@/components/carelink/service-design/documents/ServiceDocumentStudio'
+
+export function CommercialDocumentStudioWorkspace({ sellableId }: { sellableId?: string }) {
+  return <ServiceDocumentStudio sourceKind="sellable" sourceId={sellableId} initialTemplateId="b2c-service-presentation" />
+}

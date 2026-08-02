@@ -4,9 +4,9 @@ import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { useEffect, useMemo, useRef, useState } from "react"
 import {
-  Activity, AlertTriangle, Bell, BriefcaseBusiness, ChevronRight, Command, ContactRound,
-  Gauge, LayoutGrid, Menu, MessageCircleMore, RadioTower, RefreshCw, Search, Settings2,
-  ShieldCheck, Sparkles, UsersRound, X,
+  Activity, AlertTriangle, Bell, BriefcaseBusiness, ChevronRight, ChevronsLeft, ChevronsRight,
+  Command, ContactRound, Gauge, LayoutGrid, Menu, MessageCircleMore, RadioTower, RefreshCw,
+  Search, Settings2, ShieldCheck, Sparkles, UsersRound, X,
 } from "lucide-react"
 import { cx, HealthBadge, LiveDot, StatusPill } from "./ACWhatsAppUI"
 import { formatRelative, initials, useAcWhatsApp } from "./useAcWhatsApp"
@@ -20,6 +20,42 @@ const masters = [
   { href: "/ac-whatsapp/executive", label: "Executive Control", caption: "Pilotage, risques et audit", icon: Gauge, number: "06" },
 ]
 
+const SIDEBAR_STORAGE_KEY = "ac-whatsapp:sidebar-collapsed"
+
+const privilegedSidebarRoles = new Set([
+  "ceo",
+  "owner",
+  "direction",
+  "executive",
+  "executif",
+  "administrator",
+  "administrators",
+  "administrateur",
+  "admin",
+  "super_admin",
+  "platform_administrator",
+  "account_administrator",
+  "whatsapp_director",
+  "auditor",
+  "auditeur",
+  "root",
+  "root_admin",
+])
+
+function normalizeIdentity(value: unknown) {
+  return String(value || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim()
+    .toLowerCase()
+    .replace(/[\s-]+/g, "_")
+}
+
+function isAissaouiIlyass(value: unknown) {
+  const identity = normalizeIdentity(value).replaceAll("_", " ")
+  return identity.includes("aissaoui") && identity.includes("ilyass")
+}
+
 type SearchResult = { id: string; type: "conversation" | "contact" | "campaign" | "account" | "navigation"; title: string; subtitle: string; href: string; status?: string }
 
 export default function ACWhatsAppShell({ children }: { children: React.ReactNode }) {
@@ -29,9 +65,13 @@ export default function ACWhatsAppShell({ children }: { children: React.ReactNod
   const [paletteOpen, setPaletteOpen] = useState(false)
   const [notificationsOpen, setNotificationsOpen] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [query, setQuery] = useState("")
   const [syncing, setSyncing] = useState(false)
   const searchRef = useRef<HTMLInputElement | null>(null)
+  const actorRole = normalizeIdentity(data?.actor.role)
+  const hasPrivilegedSidebar = isAissaouiIlyass(data?.actor.name) || privilegedSidebarRoles.has(actorRole)
+  const visibleMasters = hasPrivilegedSidebar ? masters : masters.slice(0, 3)
   const activeMaster = masters.find((item) => pathname.startsWith(item.href)) || masters[0]
   const ActiveMasterIcon = activeMaster.icon
   const securityEvents = data?.securityEvents || []
@@ -61,26 +101,215 @@ export default function ACWhatsAppShell({ children }: { children: React.ReactNod
 
   useEffect(() => { if (paletteOpen) window.setTimeout(() => searchRef.current?.focus(), 60); else setQuery("") }, [paletteOpen])
 
+  useEffect(() => {
+    try {
+      setSidebarCollapsed(window.localStorage.getItem(SIDEBAR_STORAGE_KEY) === "true")
+    } catch {}
+  }, [])
+
+  function toggleSidebar() {
+    setSidebarCollapsed((current) => {
+      const next = !current
+      try { window.localStorage.setItem(SIDEBAR_STORAGE_KEY, String(next)) } catch {}
+      return next
+    })
+  }
+
   async function synchronize() { if (syncing) return; setSyncing(true); try { await refresh() } catch {} finally { setSyncing(false) } }
   function navigate(href: string) { setPaletteOpen(false); setMobileOpen(false); router.push(href) }
 
-  const Sidebar = (
-    <div className="flex h-full flex-col bg-white px-3 pb-3 pt-4">
-      <Link href="/ac-whatsapp/live" onClick={() => setMobileOpen(false)} className="relative overflow-hidden rounded-[28px] border border-slate-200 bg-[radial-gradient(circle_at_18%_0%,#fff1f2_0,#ffffff_42%,#f8fafc_100%)] p-4 shadow-[0_18px_50px_rgba(15,23,42,.065)]">
-        <div className="absolute -right-10 -top-10 h-28 w-28 rounded-full border border-rose-100 bg-rose-50/60" />
-        <div className="relative flex items-center gap-3"><div className="relative grid h-12 w-12 shrink-0 place-items-center rounded-[18px] bg-slate-950 text-white shadow-lg shadow-slate-950/15"><MessageCircleMore className="h-5 w-5" /><span className={cx("absolute -right-1 -top-1 h-3.5 w-3.5 rounded-full border-2 border-white", data?.health.openwaReachable ? "bg-emerald-500" : "bg-rose-600")} /></div><div className="min-w-0"><p className="text-[8px] font-black uppercase tracking-[.22em] text-rose-600">ANGELCARE</p><p className="mt-1 truncate text-lg font-black tracking-[-.04em] text-slate-950">AC WhatsApp Live</p><p className="mt-1 text-[9px] font-bold text-slate-400">Communications Command Universe</p></div></div>
-        <div className="relative mt-4 flex items-center justify-between rounded-2xl border border-slate-100 bg-white/85 px-3 py-2.5 backdrop-blur"><LiveDot online={Boolean(data?.health.openwaReachable)} /><span className="text-[9px] font-black text-slate-400">{data?.counts.connectedAccounts || 0}/{data?.counts.accounts || 0} comptes</span></div>
-      </Link>
-      <div className="mt-5 flex items-center justify-between px-2"><p className="text-[8px] font-black uppercase tracking-[.2em] text-slate-400">Master workspaces</p><span className="rounded-full bg-slate-100 px-2 py-1 text-[8px] font-black text-slate-500">06</span></div>
-      <nav className="mt-2 space-y-1.5">{masters.map((item) => { const active = pathname.startsWith(item.href); const Icon = item.icon; return <Link key={item.href} href={item.href} onClick={() => setMobileOpen(false)} className={cx("group flex items-center gap-3 rounded-[18px] border px-3 py-3 transition duration-200", active ? "border-slate-950 bg-slate-950 text-white shadow-[0_12px_28px_rgba(15,23,42,.18)]" : "border-transparent text-slate-600 hover:border-slate-200 hover:bg-slate-50 hover:text-slate-950")}><div className={cx("grid h-9 w-9 shrink-0 place-items-center rounded-xl", active ? "bg-white/10 text-white" : "bg-slate-100 text-slate-600 group-hover:bg-white")}><Icon className="h-4 w-4" /></div><div className="min-w-0 flex-1"><div className="flex items-center gap-2"><span className={cx("text-[8px] font-black", active ? "text-rose-300" : "text-slate-300")}>{item.number}</span><p className="truncate text-xs font-black">{item.label}</p></div><p className={cx("mt-1 truncate text-[9px] font-bold", active ? "text-white/50" : "text-slate-400")}>{item.caption}</p></div><ChevronRight className={cx("h-3.5 w-3.5", active ? "text-white" : "text-slate-300")} /></Link> })}</nav>
-      <div className="mt-auto space-y-2 pt-4"><div className="rounded-[20px] border border-slate-200 bg-slate-50 p-3"><div className="flex items-center justify-between"><div className="flex items-center gap-2"><Activity className="h-3.5 w-3.5 text-emerald-600" /><span className="text-[9px] font-black text-slate-700">Pulse opérationnel</span></div><span className="text-[8px] font-black text-slate-400">LIVE</span></div><div className="mt-3 grid grid-cols-3 gap-1.5"><Pulse label="Non lus" value={data?.counts.unread || 0} /><Pulse label="À assigner" value={data?.counts.unassigned || 0} /><Pulse label="Risques" value={data?.counts.securityOpen || 0} /></div></div><Link href="/whatsapp-os/admin" className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-3 py-3 text-xs font-black text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"><LayoutGrid className="h-4 w-4" />WhatsApp Desktop Admin</Link><button type="button" onClick={() => void synchronize()} className="flex w-full items-center gap-3 rounded-2xl bg-slate-100 px-3 py-3 text-xs font-black text-slate-600 transition hover:bg-slate-200"><RefreshCw className={cx("h-4 w-4", syncing && "animate-spin")} />{syncing ? "Synchronisation…" : "Synchroniser maintenant"}</button></div>
-    </div>
-  )
+  function renderSidebar(collapsed: boolean) {
+    return (
+      <div className={cx(
+        "flex h-full min-h-0 flex-col overflow-hidden bg-[linear-gradient(180deg,#ffffff_0%,#fbfdff_55%,#f6f9fd_100%)] pb-3 transition-[padding] duration-300",
+        collapsed ? "px-2 pt-3" : "px-3 pt-4",
+      )}>
+        <div className="relative">
+          <Link
+            href="/ac-whatsapp/live"
+            onClick={() => setMobileOpen(false)}
+            title={collapsed ? "AC WhatsApp Live" : undefined}
+            className={cx(
+              "relative block overflow-hidden border border-slate-200 bg-[radial-gradient(circle_at_18%_0%,#fff1f2_0,#ffffff_42%,#f8fafc_100%)] shadow-[0_18px_50px_rgba(15,23,42,.065)] transition-all duration-300",
+              collapsed ? "rounded-[22px] p-2.5" : "rounded-[28px] p-4",
+            )}
+          >
+            <div className="absolute -right-10 -top-10 h-28 w-28 rounded-full border border-rose-100 bg-rose-50/60" />
+            <div className={cx("relative flex items-center", collapsed ? "justify-center" : "gap-3")}>
+              <div className={cx(
+                "relative grid shrink-0 place-items-center bg-slate-950 text-white shadow-lg shadow-slate-950/15 transition-all duration-300",
+                collapsed ? "h-11 w-11 rounded-2xl" : "h-12 w-12 rounded-[18px]",
+              )}>
+                <MessageCircleMore className="h-5 w-5" />
+                <span className={cx(
+                  "absolute -right-1 -top-1 h-3.5 w-3.5 rounded-full border-2 border-white",
+                  data?.health.openwaReachable ? "bg-emerald-500" : "bg-rose-600",
+                )} />
+              </div>
+              {!collapsed ? (
+                <div className="min-w-0">
+                  <p className="text-[8px] font-black uppercase tracking-[.22em] text-rose-600">ANGELCARE</p>
+                  <p className="mt-1 truncate text-lg font-black tracking-[-.04em] text-slate-950">AC WhatsApp Live</p>
+                  <p className="mt-1 text-[9px] font-bold text-slate-400">Communications Command Universe</p>
+                </div>
+              ) : null}
+            </div>
+            <div className={cx(
+              "relative mt-4 flex items-center rounded-2xl border border-slate-100 bg-white/85 backdrop-blur",
+              collapsed ? "justify-center px-1.5 py-2" : "justify-between px-3 py-2.5",
+            )}>
+              <LiveDot online={Boolean(data?.health.openwaReachable)} />
+              {!collapsed ? <span className="text-[9px] font-black text-slate-400">{data?.counts.connectedAccounts || 0}/{data?.counts.accounts || 0} comptes</span> : null}
+            </div>
+          </Link>
 
-  return <div className="min-h-screen bg-[#f3f6fb] text-slate-950">
-    <div className="fixed inset-y-0 left-0 z-40 hidden w-[300px] border-r border-slate-200 bg-white xl:block">{Sidebar}</div>
-    {mobileOpen ? <div className="fixed inset-0 z-[70] xl:hidden"><button type="button" aria-label="Fermer la navigation" onClick={() => setMobileOpen(false)} className="absolute inset-0 bg-slate-950/45 backdrop-blur-sm" /><div className="relative h-full w-[min(92vw,320px)] border-r border-slate-200 bg-white shadow-2xl">{Sidebar}</div></div> : null}
-    <div className="xl:pl-[300px]">
+          <button
+            type="button"
+            onClick={toggleSidebar}
+            aria-label={collapsed ? "Déployer la navigation AC WhatsApp" : "Réduire la navigation AC WhatsApp"}
+            title={collapsed ? "Déployer la navigation" : "Réduire la navigation"}
+            className={cx(
+              "absolute z-10 grid h-9 w-9 place-items-center rounded-xl border border-slate-200 bg-white text-slate-600 shadow-[0_10px_24px_rgba(15,23,42,.12)] transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-950 focus:outline-none focus:ring-2 focus:ring-rose-200",
+              collapsed ? "-right-4 top-5" : "right-3 top-3",
+            )}
+          >
+            {collapsed ? <ChevronsRight className="h-4 w-4" /> : <ChevronsLeft className="h-4 w-4" />}
+          </button>
+        </div>
+
+        <div className={cx("mt-5 flex items-center", collapsed ? "justify-center" : "justify-between px-2")}>
+          {!collapsed ? <p className="text-[8px] font-black uppercase tracking-[.2em] text-slate-400">Master workspaces</p> : <span className="sr-only">Master workspaces</span>}
+          <span
+            title={`${visibleMasters.length} espaces visibles`}
+            className={cx(
+              "grid place-items-center rounded-full bg-slate-100 font-black text-slate-500",
+              collapsed ? "h-8 w-8 text-[9px]" : "px-2 py-1 text-[8px]",
+            )}
+          >
+            {String(visibleMasters.length).padStart(2, "0")}
+          </span>
+        </div>
+
+        <nav className={cx("mt-2 min-h-0 flex-1 overflow-y-auto", collapsed ? "space-y-2 px-0.5" : "space-y-1.5 pr-1")}>
+          {visibleMasters.map((item) => {
+            const active = pathname.startsWith(item.href)
+            const Icon = item.icon
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setMobileOpen(false)}
+                title={collapsed ? `${item.number} · ${item.label} — ${item.caption}` : undefined}
+                aria-label={collapsed ? item.label : undefined}
+                className={cx(
+                  "group relative flex items-center border transition duration-200 focus:outline-none focus:ring-2 focus:ring-rose-200",
+                  collapsed ? "h-14 justify-center rounded-2xl px-2" : "gap-3 rounded-[18px] px-3 py-3",
+                  active
+                    ? "border-slate-950 bg-slate-950 text-white shadow-[0_12px_28px_rgba(15,23,42,.18)]"
+                    : "border-transparent text-slate-600 hover:border-slate-200 hover:bg-white hover:text-slate-950 hover:shadow-[0_10px_24px_rgba(15,23,42,.07)]",
+                )}
+              >
+                {active ? <span className={cx("absolute rounded-full bg-rose-500", collapsed ? "-right-1 top-4 h-6 w-1" : "left-0 top-3 h-9 w-1")} /> : null}
+                <div className={cx(
+                  "grid shrink-0 place-items-center rounded-xl transition",
+                  collapsed ? "h-10 w-10" : "h-9 w-9",
+                  active ? "bg-white/10 text-white" : "bg-slate-100 text-slate-600 group-hover:bg-slate-50",
+                )}>
+                  <Icon className="h-4 w-4" />
+                </div>
+                {!collapsed ? (
+                  <>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2">
+                        <span className={cx("text-[8px] font-black", active ? "text-rose-300" : "text-slate-300")}>{item.number}</span>
+                        <p className="truncate text-xs font-black">{item.label}</p>
+                      </div>
+                      <p className={cx("mt-1 truncate text-[9px] font-bold", active ? "text-white/55" : "text-slate-400")}>{item.caption}</p>
+                    </div>
+                    <ChevronRight className={cx("h-3.5 w-3.5", active ? "text-white" : "text-slate-300")} />
+                  </>
+                ) : (
+                  <span className={cx(
+                    "absolute bottom-1.5 right-1.5 text-[7px] font-black",
+                    active ? "text-rose-300" : "text-slate-300",
+                  )}>{item.number}</span>
+                )}
+              </Link>
+            )
+          })}
+        </nav>
+
+        <div className={cx("mt-auto space-y-2 pt-3", collapsed && "px-0.5")}>
+          {!collapsed ? (
+            <div className="rounded-[20px] border border-slate-200 bg-white/80 p-3 shadow-[0_10px_28px_rgba(15,23,42,.045)]">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2"><Activity className="h-3.5 w-3.5 text-emerald-600" /><span className="text-[9px] font-black text-slate-700">Pulse opérationnel</span></div>
+                <span className="text-[8px] font-black text-slate-400">LIVE</span>
+              </div>
+              <div className="mt-3 grid grid-cols-3 gap-1.5">
+                <Pulse label="Non lus" value={data?.counts.unread || 0} />
+                <Pulse label="À assigner" value={data?.counts.unassigned || 0} />
+                <Pulse label="Risques" value={data?.counts.securityOpen || 0} />
+              </div>
+            </div>
+          ) : (
+            <div
+              title={`Pulse opérationnel · ${data?.counts.unread || 0} non lus · ${data?.counts.unassigned || 0} à assigner · ${data?.counts.securityOpen || 0} risques`}
+              className="grid min-h-14 place-items-center rounded-2xl border border-slate-200 bg-white text-emerald-600 shadow-[0_8px_22px_rgba(15,23,42,.05)]"
+            >
+              <Activity className="h-5 w-5" />
+              <span className="text-[8px] font-black text-slate-600">{data?.counts.unread || 0}</span>
+            </div>
+          )}
+
+          <Link
+            href="/whatsapp-os/admin"
+            title={collapsed ? "WhatsApp Desktop Admin" : undefined}
+            aria-label={collapsed ? "WhatsApp Desktop Admin" : undefined}
+            className={cx(
+              "flex items-center rounded-2xl border border-slate-200 bg-white text-xs font-black text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-rose-200",
+              collapsed ? "h-12 justify-center px-2" : "gap-3 px-3 py-3",
+            )}
+          >
+            <LayoutGrid className="h-4 w-4 shrink-0" />
+            {!collapsed ? "WhatsApp Desktop Admin" : null}
+          </Link>
+
+          <button
+            type="button"
+            onClick={() => void synchronize()}
+            title={collapsed ? (syncing ? "Synchronisation…" : "Synchroniser maintenant") : undefined}
+            aria-label={collapsed ? "Synchroniser maintenant" : undefined}
+            className={cx(
+              "flex w-full items-center rounded-2xl bg-slate-100 text-xs font-black text-slate-600 transition hover:bg-slate-200 focus:outline-none focus:ring-2 focus:ring-rose-200",
+              collapsed ? "h-12 justify-center px-2" : "gap-3 px-3 py-3",
+            )}
+          >
+            <RefreshCw className={cx("h-4 w-4 shrink-0", syncing && "animate-spin")} />
+            {!collapsed ? (syncing ? "Synchronisation…" : "Synchroniser maintenant") : null}
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  return <div className="min-h-[calc(100vh-86px)] bg-[#f3f6fb] text-slate-950">
+    <div
+      className={cx(
+        "fixed bottom-0 left-0 z-40 hidden border-r border-slate-200 bg-white shadow-[12px_0_40px_rgba(15,23,42,.045)] transition-[width] duration-300 xl:block",
+        sidebarCollapsed ? "w-[96px]" : "w-[300px]",
+      )}
+      style={{ top: 86 }}
+    >
+      {renderSidebar(sidebarCollapsed)}
+    </div>
+    {mobileOpen ? (
+      <div className="fixed bottom-0 left-0 right-0 z-[70] xl:hidden" style={{ top: 86 }}>
+        <button type="button" aria-label="Fermer la navigation" onClick={() => setMobileOpen(false)} className="absolute inset-0 bg-slate-950/45 backdrop-blur-sm" />
+        <div className="relative h-full w-[min(92vw,320px)] border-r border-slate-200 bg-white shadow-2xl">{renderSidebar(false)}</div>
+      </div>
+    ) : null}
+    <div className={cx("transition-[padding] duration-300", sidebarCollapsed ? "xl:pl-[96px]" : "xl:pl-[300px]")}>
       <header className="sticky top-0 z-30 border-b border-slate-200/90 bg-white/94 backdrop-blur-xl">
         <div className="flex min-h-[66px] items-center justify-between gap-4 px-4 lg:px-7"><div className="flex min-w-0 items-center gap-3"><button type="button" onClick={() => setMobileOpen(true)} className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-slate-200 text-slate-600 xl:hidden"><Menu className="h-4 w-4" /></button><div className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-rose-600 text-white shadow-lg shadow-rose-600/20"><ActiveMasterIcon className="h-4 w-4" /></div><div className="min-w-0"><p className="truncate text-[8px] font-black uppercase tracking-[.18em] text-slate-400">Communications Operating System · Master {activeMaster.number}</p><p className="mt-0.5 truncate text-sm font-black text-slate-950">{activeMaster.label}<span className="font-semibold text-slate-400"> · {data?.actor.role || "Accès protégé"}</span></p></div></div>
           <button type="button" onClick={() => setPaletteOpen(true)} className="hidden min-w-[260px] max-w-[460px] flex-1 items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-left text-[10px] font-bold text-slate-400 transition hover:border-slate-300 hover:bg-white lg:flex"><Search className="h-4 w-4" /><span className="flex-1">Rechercher conversation, contact, campagne…</span><span className="rounded-lg border border-slate-200 bg-white px-2 py-1 text-[8px] font-black text-slate-500">⌘ K</span></button>

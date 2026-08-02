@@ -31,14 +31,18 @@ const LABELS: Record<string, string> = {
   scheduled_followup: "Relance programmée", sent: "Envoyé", starting: "Démarrage",
   suspended: "Suspendu", unassigned: "Non attribuée", waiting_customer: "Attente client",
   waiting_internal: "Attente interne", warning: "Attention", critical: "Critique",
+  normal: "Normale", low: "Basse", high: "Élevée", urgent: "Urgente", vip: "VIP",
+  customer: "Client", prospect: "Prospect", partner: "Partenaire", unqualified: "Contact non qualifié",
+  muted: "Silencieuse", pinned: "Épinglée", restored: "Restaurée",
 }
 
 const GOOD = new Set(["active", "approved", "completed", "connected", "delivered", "online", "read", "received", "resolved", "running", "sent"])
-const BAD = new Set(["authentication_lost", "cancelled", "critical", "disconnected", "error", "failed", "offline", "suspended"])
-const WARNING = new Set(["authenticating", "degraded", "escalated", "pairing_required", "paused", "processing", "qr_required", "queued", "rate_limited", "reconnecting", "scheduled", "scheduled_followup", "starting", "waiting_customer", "waiting_internal", "warning"])
+const BAD = new Set(["authentication_lost", "cancelled", "critical", "urgent", "disconnected", "error", "failed", "offline", "suspended"])
+const WARNING = new Set(["authenticating", "degraded", "escalated", "high", "pairing_required", "paused", "processing", "qr_required", "queued", "rate_limited", "reconnecting", "scheduled", "scheduled_followup", "starting", "waiting_customer", "waiting_internal", "warning"])
 
 export function statusLabel(status?: string | null) {
   const key = String(status || "unknown").toLowerCase()
+  if (["unknown", "undefined", "null", "n/a"].includes(key)) return "À confirmer"
   return LABELS[key] || key.replaceAll("_", " ")
 }
 
@@ -53,14 +57,14 @@ export function statusTone(status?: string | null) {
 export function StatusPill({ status, label, compact = false }: { status: string; label?: string; compact?: boolean }) {
   const tone = statusTone(status)
   const classes = tone === "good"
-    ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+    ? "border-emerald-300 bg-emerald-100 text-emerald-950"
     : tone === "bad"
-      ? "border-rose-200 bg-rose-50 text-rose-700"
+      ? "border-rose-300 bg-rose-100 text-rose-950"
       : tone === "warning"
-        ? "border-amber-200 bg-amber-50 text-amber-700"
-        : "border-slate-200 bg-slate-50 text-slate-600"
+        ? "border-amber-300 bg-amber-100 text-amber-950"
+        : "border-slate-300 bg-white text-slate-950"
   return (
-    <span className={cx("inline-flex shrink-0 items-center rounded-full border font-black uppercase tracking-[.12em]", compact ? "gap-1 px-2 py-1 text-[8px]" : "gap-1.5 px-2.5 py-1.5 text-[9px]", classes)}>
+    <span className={cx("inline-flex shrink-0 items-center rounded-full border font-black uppercase tracking-[.11em] shadow-sm", compact ? "gap-1 px-2 py-1 text-[8px]" : "gap-1.5 px-2.5 py-1.5 text-[9px]", classes)}>
       {tone === "good" ? <CheckCircle2 className="h-3 w-3" /> : tone === "bad" ? <AlertTriangle className="h-3 w-3" /> : tone === "warning" ? <Clock3 className="h-3 w-3" /> : <Circle className="h-2.5 w-2.5 fill-current opacity-45" />}
       {label || statusLabel(status)}
     </span>
