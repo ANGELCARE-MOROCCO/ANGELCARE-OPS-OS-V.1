@@ -16,6 +16,12 @@ export const HSD_MASTER_UNIVERSES = [
 export const HSD_CONTEXT_NAV = {
   command: [
     { label: 'Vue exécutive', href: HSD_ROUTE_ROOT },
+    { label: 'Intelligence exécutive', href: `${HSD_ROUTE_ROOT}/performance` },
+    { label: 'Plan vs Actual', href: `${HSD_ROUTE_ROOT}/performance/missions` },
+    { label: 'Expérience client', href: `${HSD_ROUTE_ROOT}/customer-experience` },
+    { label: 'Qualité & évolution', href: `${HSD_ROUTE_ROOT}/quality/signals` },
+    { label: 'Santé opérationnelle', href: `${HSD_ROUTE_ROOT}/operations/health` },
+    { label: 'Readiness', href: `${HSD_ROUTE_ROOT}/operations/readiness` },
     { label: 'Validations', href: `${HSD_ROUTE_ROOT}/command/approvals` },
     { label: 'Recherche', href: `${HSD_ROUTE_ROOT}/command/search` },
     { label: 'Audit', href: `${HSD_ROUTE_ROOT}/command/audit` },

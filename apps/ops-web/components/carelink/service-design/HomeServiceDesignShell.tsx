@@ -9,6 +9,7 @@ import { HSD_CONTEXT_NAV, HSD_MASTER_UNIVERSES, HSD_ROUTE_ROOT } from '@/lib/hom
 import { cx } from './DesignSystem'
 
 function masterKey(pathname: string) {
+  if (pathname.startsWith(`${HSD_ROUTE_ROOT}/performance`) || pathname.startsWith(`${HSD_ROUTE_ROOT}/quality`) || pathname.startsWith(`${HSD_ROUTE_ROOT}/customer-experience`) || pathname.startsWith(`${HSD_ROUTE_ROOT}/operations`)) return 'command'
   if (pathname.startsWith(`${HSD_ROUTE_ROOT}/catalogue`)) return 'catalogue'
   if (pathname.startsWith(`${HSD_ROUTE_ROOT}/standards`)) return 'standards'
   if (pathname.startsWith(`${HSD_ROUTE_ROOT}/planning`)) return 'planning'
@@ -39,6 +40,7 @@ export function HomeServiceDesignShell({ children, databaseReady = true, pending
     { label: 'Créer une catégorie', href: `${HSD_ROUTE_ROOT}/catalogue/categories?create=1`, description: 'Ouvrir le studio de création de catégorie.' },
     { label: 'Importer une configuration CSV', href: `${HSD_ROUTE_ROOT}/standards/imports`, description: 'Stager, valider et décider un lot.' },
     { label: 'Voir les validations', href: `${HSD_ROUTE_ROOT}/command/approvals`, description: 'Décisions techniques et commerciales.' },
+    { label: 'Ouvrir l’Executive Intelligence Theatre', href: `${HSD_ROUTE_ROOT}/performance`, description: 'Performance, expérience client, qualité et readiness.' },
     { label: 'Rechercher dans HomeService Design', href: `${HSD_ROUTE_ROOT}/command/search`, description: 'Catégories, règles, activités, risques et compétences.' },
     { label: 'Préparer une transmission CARELINK', href: `${HSD_ROUTE_ROOT}/handoffs/new`, description: 'Transformer un sellable publié en blueprint opérationnel.' },
     { label: 'Réconcilier les missions CARELINK', href: `${HSD_ROUTE_ROOT}/handoffs/reconciliation`, description: 'Comparer snapshot, parent, sous-missions, programmes et contrôles.' },
