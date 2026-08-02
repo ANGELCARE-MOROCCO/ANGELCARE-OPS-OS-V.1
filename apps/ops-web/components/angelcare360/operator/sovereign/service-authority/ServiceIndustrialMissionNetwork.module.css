@@ -307,7 +307,7 @@
 @keyframes finite-pulse { 0% { box-shadow:0 0 0 0 rgba(25,167,206,.24); } 75%,100% { box-shadow:0 0 0 12px rgba(25,167,206,0); } }
 @keyframes blast-once { 0% { opacity:0; transform:translate(-50%,-50%) scale(.48); } 35% { opacity:.7; } 100% { opacity:.12; transform:translate(-50%,-50%) scale(1); } }
 
-[data-motion='paused'] * { animation-play-state: paused !important; }
+.network[data-motion="paused"] * { animation-play-state: paused !important; }
 @media (prefers-reduced-motion: reduce) { .network *, .network *::before, .network *::after { animation:none !important; transition:none !important; scroll-behavior:auto !important; } }
 @media (max-width: 1380px) {
   .authorityCrown { grid-template-columns:minmax(250px,.9fr) minmax(440px,1.35fr); }
