@@ -1,10 +1,9 @@
 import { requireHomeServiceAccess } from '@/lib/homeservice-design/server/auth'
-import { getServiceDesignSnapshot } from '@/lib/homeservice-design/server/repository'
-import { DoctrineStandardsWorkspace } from '@/components/carelink/service-design/workspaces/DoctrineStandardsWorkspace'
+import { loadFactoryCatalogue } from '@/lib/homeservice-factory/server/catalogue'
+import { DoctrineCommandWorkspace } from '@/components/carelink/service-design/factory/DoctrineCommandWorkspace'
 
 export const dynamic = 'force-dynamic'
 export default async function Page() {
-  await requireHomeServiceAccess('homeservice_design.manage_doctrine')
-  const snapshot = await getServiceDesignSnapshot()
-  return <DoctrineStandardsWorkspace snapshot={snapshot} />
+  await requireHomeServiceAccess('homeservice_design.view')
+  return <DoctrineCommandWorkspace catalogue={await loadFactoryCatalogue()} />
 }

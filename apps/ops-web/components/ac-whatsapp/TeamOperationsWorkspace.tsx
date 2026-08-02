@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useState } from "react"
 import {
   Activity, BadgeCheck, BriefcaseBusiness, CheckCircle2, Clock3, Gauge, Plus, Search,
   ShieldCheck, UserRoundCog, UsersRound, Workflow,
@@ -34,12 +34,12 @@ export default function TeamOperationsWorkspace() {
   const escalated = open.filter((row) => row.status === "escalated").length
   const online = memberships.filter((member: any) => onlineIds.has(member.user_id)).length
 
-  const queueStats = useMemo(() => queues.map((queue) => {
+  const queueStats = queues.map((queue) => {
     const rows = open.filter((row) => row.queue_id === queue.id)
     const members = memberships.filter((member: any) => (member.queue_memberships || []).some((item: any) => item.queue_id === queue.id))
     const capacity = members.reduce((sum: number, member: any) => sum + Number((member.queue_memberships || []).find((item: any) => item.queue_id === queue.id)?.capacity || 0), 0)
     return { queue, rows, members, capacity }
-  }), [queues, open, memberships])
+  })
 
   return <div className="space-y-5">
     <SectionTitle eyebrow="Master Workspace 04 · Team Operations" title="Rendre la capacité, la responsabilité et les handovers immédiatement visibles." description="Superviser les opérateurs, équilibrer les files, prévenir les conversations sans propriétaire et transmettre le contexte sans rupture." action={<button type="button" onClick={() => { setSelectedMember(null); setEditorOpen(true) }} className="inline-flex items-center gap-2 rounded-2xl bg-rose-600 px-4 py-3 text-[10px] font-black text-white shadow-lg shadow-rose-600/20"><Plus className="h-4 w-4" />Configurer un membre</button>} />

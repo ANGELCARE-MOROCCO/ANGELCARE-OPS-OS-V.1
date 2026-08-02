@@ -1,0 +1,6 @@
+import { Send, BriefcaseBusiness, ShieldCheck } from 'lucide-react'
+import type { ConceptLayoutProps } from '../types'
+
+export function HospitalitySuiteConcept({ blueprint, renderSection }: ConceptLayoutProps) {
+  return <div className="space-y-5"><div className="grid gap-4 lg:grid-cols-[320px_1fr]"><aside className="rounded-[30px] border border-sky-200 bg-gradient-to-b from-sky-950 to-blue-950 p-6 text-white"><BriefcaseBusiness size={30} className="text-sky-300" /><h3 className="mt-5 text-2xl font-black">Hospitality Suite</h3><p className="mt-2 text-xs font-semibold leading-5 text-sky-200">Discrétion, accès, concierge, expérience premium et transmission parent.</p><div className="mt-6 space-y-2"><span className="flex items-center gap-2 rounded-xl bg-white/10 p-3 text-xs font-bold"><ShieldCheck size={15} />Accès contrôlé</span><span className="flex items-center gap-2 rounded-xl bg-white/10 p-3 text-xs font-bold"><Send size={15} />Coordination hôtel</span></div></aside><div className="space-y-5">{blueprint.sections.slice(0, 2).map((section) => <div key={section.code}>{renderSection(section)}</div>)}</div></div>{blueprint.sections.slice(2).map((section) => <div key={section.code}>{renderSection(section)}</div>)}</div>
+}

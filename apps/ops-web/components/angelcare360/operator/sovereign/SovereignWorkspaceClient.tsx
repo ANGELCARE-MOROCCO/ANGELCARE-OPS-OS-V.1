@@ -14,6 +14,7 @@ import GrowthSovereignScene from './GrowthSovereignScene'
 import TenantSovereignScene from './TenantSovereignScene'
 import RevenueAuthorityCommandDeck from './revenue-authority/RevenueAuthorityCommandDeck'
 import ServiceIndustrialMissionNetwork from './service-authority/ServiceIndustrialMissionNetwork'
+import PlatformSovereignFabric from './platform-authority/PlatformSovereignFabric'
 import PlatformSovereignScene from './PlatformSovereignScene'
 import styles from './SovereignExperience.module.css'
 
@@ -46,6 +47,15 @@ export default function SovereignWorkspaceClient({ snapshot }: { snapshot:Sovere
     return (
       <section className={styles.workspace} style={{'--tower':tower.accent,'--tower-deep':tower.accentDeep} as CSSProperties}>
         <ServiceIndustrialMissionNetwork snapshot={snapshot} onOpen={setSelected}/>
+        <SovereignEntityPortal entity={selected} snapshot={snapshot} onClose={()=>setSelected(null)}/>
+      </section>
+    )
+  }
+
+  if (snapshot.tower === 'platform') {
+    return (
+      <section className={styles.workspace} style={{'--tower':tower.accent,'--tower-deep':tower.accentDeep} as CSSProperties}>
+        <PlatformSovereignFabric snapshot={snapshot} onOpen={setSelected}/>
         <SovereignEntityPortal entity={selected} snapshot={snapshot} onClose={()=>setSelected(null)}/>
       </section>
     )

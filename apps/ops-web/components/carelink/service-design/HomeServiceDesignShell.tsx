@@ -9,13 +9,12 @@ import { HSD_CONTEXT_NAV, HSD_MASTER_UNIVERSES, HSD_ROUTE_ROOT } from '@/lib/hom
 import { cx } from './DesignSystem'
 
 function masterKey(pathname: string) {
-  if (pathname.startsWith(`${HSD_ROUTE_ROOT}/performance`) || pathname.startsWith(`${HSD_ROUTE_ROOT}/quality`) || pathname.startsWith(`${HSD_ROUTE_ROOT}/customer-experience`) || pathname.startsWith(`${HSD_ROUTE_ROOT}/operations`)) return 'command'
-  if (pathname.startsWith(`${HSD_ROUTE_ROOT}/catalogue`)) return 'catalogue'
-  if (pathname.startsWith(`${HSD_ROUTE_ROOT}/standards`)) return 'standards'
-  if (pathname.startsWith(`${HSD_ROUTE_ROOT}/planning`)) return 'planning'
-  if (pathname.startsWith(`${HSD_ROUTE_ROOT}/offers`)) return 'offers'
-  if (pathname.startsWith(`${HSD_ROUTE_ROOT}/vitrine`) || pathname.startsWith(`${HSD_ROUTE_ROOT}/handoffs`)) return 'vitrine'
-  return 'command'
+  if (pathname === HSD_ROUTE_ROOT || pathname.startsWith(`${HSD_ROUTE_ROOT}/factory`)) return 'factory'
+  if (pathname.startsWith(`${HSD_ROUTE_ROOT}/catalogue`) || pathname.startsWith(`${HSD_ROUTE_ROOT}/standards`)) return 'catalogue'
+  if (pathname.startsWith(`${HSD_ROUTE_ROOT}/planning`) || pathname.startsWith(`${HSD_ROUTE_ROOT}/offers`) || pathname.startsWith(`${HSD_ROUTE_ROOT}/bundles`)) return 'results'
+  if (pathname.startsWith(`${HSD_ROUTE_ROOT}/vitrine`)) return 'vitrine'
+  if (pathname.startsWith(`${HSD_ROUTE_ROOT}/handoffs`)) return 'carelink'
+  return 'advanced'
 }
 
 export function HomeServiceDesignShell({ children, databaseReady = true, pendingApprovals = 0 }: { children: ReactNode; databaseReady?: boolean; pendingApprovals?: number }) {
@@ -37,13 +36,14 @@ export function HomeServiceDesignShell({ children, databaseReady = true, pending
 
   const commands = useMemo(() => [
     ...HSD_MASTER_UNIVERSES.map((item) => ({ label: `Ouvrir · ${item.label}`, href: item.href, description: item.description })),
-    { label: 'Créer une catégorie', href: `${HSD_ROUTE_ROOT}/catalogue/categories?create=1`, description: 'Ouvrir le studio de création de catégorie.' },
-    { label: 'Importer une configuration CSV', href: `${HSD_ROUTE_ROOT}/standards/imports`, description: 'Stager, valider et décider un lot.' },
-    { label: 'Voir les validations', href: `${HSD_ROUTE_ROOT}/command/approvals`, description: 'Décisions techniques et commerciales.' },
-    { label: 'Ouvrir l’Executive Intelligence Theatre', href: `${HSD_ROUTE_ROOT}/performance`, description: 'Performance, expérience client, qualité et readiness.' },
-    { label: 'Rechercher dans HomeService Design', href: `${HSD_ROUTE_ROOT}/command/search`, description: 'Catégories, règles, activités, risques et compétences.' },
-    { label: 'Préparer une transmission CARELINK', href: `${HSD_ROUTE_ROOT}/handoffs/new`, description: 'Transformer un sellable publié en blueprint opérationnel.' },
-    { label: 'Réconcilier les missions CARELINK', href: `${HSD_ROUTE_ROOT}/handoffs/reconciliation`, description: 'Comparer snapshot, parent, sous-missions, programmes et contrôles.' },
+    { label: 'Créer une mission HomeService', href: HSD_ROUTE_ROOT, description: 'Composer immédiatement depuis la catégorie locale.' },
+    { label: 'Créer un programme multi-missions', href: `${HSD_ROUTE_ROOT}/planning/new`, description: 'Plusieurs journées avec déroulé exact.' },
+    { label: 'Composer un package commercial', href: `${HSD_ROUTE_ROOT}/offers/new`, description: 'Service, options, prix et Vitrine.' },
+    { label: 'Importer une ressource précise', href: `${HSD_ROUTE_ROOT}/factory/import`, description: 'Doctrine, activité, capacité, prix ou autre ressource ciblée.' },
+    { label: 'Ouvrir la Vitrine B2C', href: `${HSD_ROUTE_ROOT}/vitrine`, description: 'Références publiées pour les familles.' },
+    { label: 'Ouvrir la Vitrine B2B', href: `${HSD_ROUTE_ROOT}/vitrine/b2b`, description: 'Références publiées pour les institutions.' },
+    { label: 'Créer un dossier CARELINK', href: `${HSD_ROUTE_ROOT}/handoffs/new`, description: 'Action finale volontaire vers l’exécution.' },
+    { label: 'Ouvrir les opérations avancées', href: `${HSD_ROUTE_ROOT}/advanced`, description: 'Qualité, performance, readiness et audit hors du chemin principal.' },
   ].filter((item) => `${item.label} ${item.description}`.toLowerCase().includes(query.toLowerCase())), [query])
 
   return (

@@ -5,50 +5,58 @@ export const HSD_ROUTE_ROOT = '/carelink-ops/service-design'
 export const HSD_TABLE_PREFIX = 'hsd_'
 
 export const HSD_MASTER_UNIVERSES = [
-  { key: 'command', label: 'Command', href: HSD_ROUTE_ROOT, description: 'Pilotage exécutif, décisions, risques et pression de préparation.' },
-  { key: 'catalogue', label: 'Catalogue services', href: `${HSD_ROUTE_ROOT}/catalogue`, description: 'Familles, catégories, références, versions et dossiers techniques.' },
-  { key: 'standards', label: 'Standards & capacités', href: `${HSD_ROUTE_ROOT}/standards`, description: 'Doctrine, capacité, activités, compétences, sécurité et imports.' },
-  { key: 'planning', label: 'Mission Plan Studio', href: `${HSD_ROUTE_ROOT}/planning`, description: 'Préparation de l’architecture de planification technique UMZ2.' },
-  { key: 'offers', label: 'Offres & bundles', href: `${HSD_ROUTE_ROOT}/offers`, description: 'Architecture commerciale, tarification et composition UMZ3.' },
-  { key: 'vitrine', label: 'Vitrine vendable', href: `${HSD_ROUTE_ROOT}/vitrine`, description: 'Références validées, versionnées et prêtes pour CARELINK.' },
+  { key: 'factory', label: 'Créer', href: HSD_ROUTE_ROOT, description: 'Mission unique, programme multi-missions ou package commercial.' },
+  { key: 'catalogue', label: 'Catalogue & doctrine', href: `${HSD_ROUTE_ROOT}/catalogue`, description: 'Catégories et ressources locales qui alimentent directement la Factory.' },
+  { key: 'results', label: 'Plans & packages', href: `${HSD_ROUTE_ROOT}/planning`, description: 'Demandes, résultats générés, comparaison et historiques.' },
+  { key: 'vitrine', label: 'Vitrine', href: `${HSD_ROUTE_ROOT}/vitrine`, description: 'Références B2C et B2B publiées.' },
+  { key: 'carelink', label: 'CARELINK', href: `${HSD_ROUTE_ROOT}/handoffs`, description: 'Créer volontairement les dossiers opérationnels.' },
+  { key: 'advanced', label: 'Avancé', href: `${HSD_ROUTE_ROOT}/advanced`, description: 'Qualité, performance, readiness, audit et gouvernance.' },
 ] as const
 
 export const HSD_CONTEXT_NAV = {
-  command: [
-    { label: 'Vue exécutive', href: HSD_ROUTE_ROOT },
-    { label: 'Intelligence exécutive', href: `${HSD_ROUTE_ROOT}/performance` },
-    { label: 'Plan vs Actual', href: `${HSD_ROUTE_ROOT}/performance/missions` },
-    { label: 'Expérience client', href: `${HSD_ROUTE_ROOT}/customer-experience` },
-    { label: 'Qualité & évolution', href: `${HSD_ROUTE_ROOT}/quality/signals` },
-    { label: 'Santé opérationnelle', href: `${HSD_ROUTE_ROOT}/operations/health` },
-    { label: 'Readiness', href: `${HSD_ROUTE_ROOT}/operations/readiness` },
-    { label: 'Validations', href: `${HSD_ROUTE_ROOT}/command/approvals` },
-    { label: 'Recherche', href: `${HSD_ROUTE_ROOT}/command/search` },
-    { label: 'Audit', href: `${HSD_ROUTE_ROOT}/command/audit` },
+  factory: [
+    { label: 'Créer maintenant', href: HSD_ROUTE_ROOT },
+    { label: 'Mission unique', href: `${HSD_ROUTE_ROOT}/factory` },
+    { label: 'Programme multi-missions', href: `${HSD_ROUTE_ROOT}/planning/new` },
+    { label: 'Package commercial', href: `${HSD_ROUTE_ROOT}/offers/new` },
+    { label: 'Importer doctrine & ressources', href: `${HSD_ROUTE_ROOT}/factory/import` },
   ],
   catalogue: [
-    { label: 'Paysage portefeuille', href: `${HSD_ROUTE_ROOT}/catalogue` },
-    { label: 'Taxonomie', href: `${HSD_ROUTE_ROOT}/catalogue/taxonomy` },
+    { label: 'Catalogue', href: `${HSD_ROUTE_ROOT}/catalogue` },
     { label: 'Catégories', href: `${HSD_ROUTE_ROOT}/catalogue/categories` },
-  ],
-  standards: [
-    { label: 'Centre standards', href: `${HSD_ROUTE_ROOT}/standards` },
-    { label: 'Doctrine', href: `${HSD_ROUTE_ROOT}/standards/doctrine` },
-    { label: 'Capacité', href: `${HSD_ROUTE_ROOT}/standards/capacity` },
+    { label: 'Taxonomie', href: `${HSD_ROUTE_ROOT}/catalogue/taxonomy` },
+    { label: 'Doctrine & import', href: `${HSD_ROUTE_ROOT}/standards/doctrine` },
     { label: 'Activités', href: `${HSD_ROUTE_ROOT}/standards/activities` },
+    { label: 'Capacité', href: `${HSD_ROUTE_ROOT}/standards/capacity` },
     { label: 'Compétences', href: `${HSD_ROUTE_ROOT}/standards/staffing` },
     { label: 'Sécurité', href: `${HSD_ROUTE_ROOT}/standards/safety` },
-    { label: 'Imports CSV', href: `${HSD_ROUTE_ROOT}/standards/imports` },
   ],
-  planning: [{ label: 'Runway de planification', href: `${HSD_ROUTE_ROOT}/planning` }],
-  offers: [{ label: 'Runway commercial', href: `${HSD_ROUTE_ROOT}/offers` }],
+  results: [
+    { label: 'Plans', href: `${HSD_ROUTE_ROOT}/planning` },
+    { label: 'Nouvelle composition', href: `${HSD_ROUTE_ROOT}/factory` },
+    { label: 'Offres', href: `${HSD_ROUTE_ROOT}/offers` },
+    { label: 'Bundles', href: `${HSD_ROUTE_ROOT}/bundles` },
+  ],
   vitrine: [
     { label: 'Vitrine B2C', href: `${HSD_ROUTE_ROOT}/vitrine` },
     { label: 'Vitrine B2B', href: `${HSD_ROUTE_ROOT}/vitrine/b2b` },
-    { label: 'Handoffs CARELINK', href: `${HSD_ROUTE_ROOT}/handoffs` },
-    { label: 'Préflight', href: `${HSD_ROUTE_ROOT}/handoffs/preflight` },
+    { label: 'Publication avancée', href: `${HSD_ROUTE_ROOT}/vitrine/publication` },
+  ],
+  carelink: [
+    { label: 'Handoffs', href: `${HSD_ROUTE_ROOT}/handoffs` },
+    { label: 'Créer un dossier', href: `${HSD_ROUTE_ROOT}/handoffs/new` },
     { label: 'Ledger', href: `${HSD_ROUTE_ROOT}/handoffs/ledger` },
     { label: 'Réconciliation', href: `${HSD_ROUTE_ROOT}/handoffs/reconciliation` },
+  ],
+  advanced: [
+    { label: 'Commande exécutive', href: `${HSD_ROUTE_ROOT}/advanced` },
+    { label: 'Performance', href: `${HSD_ROUTE_ROOT}/performance` },
+    { label: 'Expérience client', href: `${HSD_ROUTE_ROOT}/customer-experience` },
+    { label: 'Qualité', href: `${HSD_ROUTE_ROOT}/quality/signals` },
+    { label: 'Santé opérationnelle', href: `${HSD_ROUTE_ROOT}/operations/health` },
+    { label: 'Readiness', href: `${HSD_ROUTE_ROOT}/operations/readiness` },
+    { label: 'Validations', href: `${HSD_ROUTE_ROOT}/command/approvals` },
+    { label: 'Audit', href: `${HSD_ROUTE_ROOT}/command/audit` },
   ],
 } as const
 

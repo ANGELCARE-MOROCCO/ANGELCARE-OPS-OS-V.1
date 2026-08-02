@@ -1,0 +1,4 @@
+import {NextResponse} from 'next/server'
+import {searchDiscovery} from '@/angelcare-marketplace/catalog-discovery/repository'
+import type {CatalogLocale} from '@/angelcare-marketplace/catalog-discovery/types'
+export async function GET(request:Request){const url=new URL(request.url);const locale=(url.searchParams.get('locale')||'fr') as CatalogLocale;const data=await searchDiscovery({locale,query:url.searchParams.get('q')||undefined,territoryCode:url.searchParams.get('territory'),kind:url.searchParams.get('kind'),category:url.searchParams.get('category'),availability:url.searchParams.get('availability'),sort:url.searchParams.get('sort'),limit:Number(url.searchParams.get('limit')||120)});return NextResponse.json({ok:true,data})}

@@ -11,6 +11,7 @@ import Angelcare360OperatorSidebar from './Angelcare360OperatorSidebar'
 import SovereignWorkspaceRail from './sovereign/SovereignWorkspaceRail'
 import { resolveOperatorExperience } from './Angelcare360OperatorExperience'
 import styles from './Angelcare360OperatorExperience.module.css'
+import AngelCareOwnershipFooter from '@/components/brand/AngelCareOwnershipFooter'
 
 type Props = {
   children: ReactNode
@@ -114,6 +115,7 @@ export default function Angelcare360OperatorShell({ children, user, access }: Pr
           />
           <SovereignWorkspaceRail />
           <main className={styles.main}>{children}</main>
+          <AngelCareOwnershipFooter />
         </div>
       </div>
 

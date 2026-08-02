@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useState } from "react"
 import {
   AlertTriangle, BarChart3, BriefcaseBusiness, CheckCircle2, CircleGauge, Download,
   MessageCircleMore, RadioTower, RefreshCw, ShieldAlert, ShieldCheck, Target, TrendingUp,
@@ -47,7 +47,7 @@ export default function ExecutiveControlWorkspace() {
   const responseRate = percentage(a?.campaigns.replies || 0, a?.campaigns.sent || 0)
   const conversionRate = percentage(a?.campaigns.conversions || 0, a?.campaigns.replies || 0)
   const resolutionRate = percentage(a?.conversations.resolved || 0, a?.conversations.total || 0)
-  const criticalRisks = useMemo(() => {
+  const criticalRisks = (() => {
     const risks: Array<{ title: string; description: string; severity: string; owner: string }> = []
     if (!data?.health.openwaReachable) risks.push({ title: "Gateway OpenWA indisponible", description: "Les commandes de session et messages directs ne sont pas garanties.", severity: "critical", owner: "IT Infrastructure" })
     if ((a?.delivery.failed || 0) > 0) risks.push({ title: "Échecs dans la file durable", description: `${a?.delivery.failed || 0} message(s) requièrent diagnostic ou reprise.`, severity: "high", owner: "Runtime Operations" })
@@ -55,7 +55,7 @@ export default function ExecutiveControlWorkspace() {
     if ((data?.counts.unassigned || 0) > 0) risks.push({ title: "Conversations sans propriétaire", description: `${data?.counts.unassigned || 0} conversation(s) ne disposent pas d’un responsable identifiable.`, severity: "warning", owner: "Team Operations" })
     if ((data?.counts.connectedAccounts || 0) < (data?.counts.accounts || 0)) risks.push({ title: "Flotte partiellement connectée", description: `${data?.counts.connectedAccounts || 0}/${data?.counts.accounts || 0} comptes sont connectés.`, severity: "warning", owner: "Account Administrator" })
     return risks
-  }, [a, data])
+  })()
 
   async function synchronize() { await Promise.all([refresh().catch(() => undefined), loadAnalytics()]); setNotice({ tone: "success", title: "Executive Control synchronisé", description: "Les indicateurs et les signaux de risque ont été actualisés." }) }
   function exportSnapshot() {
