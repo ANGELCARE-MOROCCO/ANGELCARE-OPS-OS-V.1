@@ -1,4 +1,4 @@
-import SolutionsCommandBridge from '@/components/flashcards-os/solutions/SolutionsCommandBridge'
+import FlashcardsProductFactory from '@/components/flashcards-os/catalogue-composer/FlashcardsProductFactory'
+import { loadCatalogueComposerOptions } from '@/lib/flashcards-os/catalogue-composer/source'
 import { requireFlashcardsPageAccess } from '@/lib/flashcards-os/server/access'
-import { loadSolutionsOverview } from '@/lib/flashcards-os/solutions/server/repository'
-export default async function FlashcardsSolutionsPage(){await requireFlashcardsPageAccess('flashcards_os.view_solutions');return <SolutionsCommandBridge data={await loadSolutionsOverview()}/>}
+export default async function FlashcardsSolutionsPage(){await requireFlashcardsPageAccess('flashcards_os.view_solutions');return <FlashcardsProductFactory options={await loadCatalogueComposerOptions('b2c')}/>}

@@ -1,4 +1,4 @@
-import ConstraintArchitectureStudio from '@/components/flashcards-os/solutions/ConstraintArchitectureStudio'
+import CataloguePackageComposer from '@/components/flashcards-os/catalogue-composer/CataloguePackageComposer'
+import { loadCatalogueComposerOptions } from '@/lib/flashcards-os/catalogue-composer/source'
 import { requireFlashcardsPageAccess } from '@/lib/flashcards-os/server/access'
-import { loadSolutionsOverview } from '@/lib/flashcards-os/solutions/server/repository'
-export default async function FlashcardsSolutionComposerPage(){await requireFlashcardsPageAccess('flashcards_os.create_solution_requests');const data=await loadSolutionsOverview();return <ConstraintArchitectureStudio releases={data.releases} ontology={data.ontology}/>}
+export default async function FlashcardsSolutionComposerPage(){await requireFlashcardsPageAccess('flashcards_os.create_solution_requests');return <CataloguePackageComposer options={await loadCatalogueComposerOptions('b2c')}/>}

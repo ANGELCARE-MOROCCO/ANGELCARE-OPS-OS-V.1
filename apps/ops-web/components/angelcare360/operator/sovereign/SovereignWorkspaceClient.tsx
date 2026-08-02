@@ -12,8 +12,8 @@ import SovereignActionDeck from './SovereignActionDeck'
 import DirectionSovereignScene from './DirectionSovereignScene'
 import GrowthSovereignScene from './GrowthSovereignScene'
 import TenantSovereignScene from './TenantSovereignScene'
-import RevenueSovereignScene from './RevenueSovereignScene'
-import ServiceSovereignScene from './ServiceSovereignScene'
+import RevenueAuthorityCommandDeck from './revenue-authority/RevenueAuthorityCommandDeck'
+import ServiceIndustrialMissionNetwork from './service-authority/ServiceIndustrialMissionNetwork'
 import PlatformSovereignScene from './PlatformSovereignScene'
 import styles from './SovereignExperience.module.css'
 
@@ -32,7 +32,26 @@ export default function SovereignWorkspaceClient({ snapshot }: { snapshot:Sovere
   const tower=resolveSovereignTower(`/angelcare-360-operator/${snapshot.tower==='tenants'?'tenants-product':snapshot.tower}`)
   const relationshipCount=useMemo(()=>Object.values(snapshot.relationships).reduce((sum,ids)=>sum+ids.length,0),[snapshot.relationships])
   const sceneProps={snapshot,onOpen:setSelected}
-  const Scene=snapshot.tower==='direction'?DirectionSovereignScene:snapshot.tower==='growth'?GrowthSovereignScene:snapshot.tower==='tenants'?TenantSovereignScene:snapshot.tower==='revenue'?RevenueSovereignScene:snapshot.tower==='service'?ServiceSovereignScene:PlatformSovereignScene
+
+  if (snapshot.tower === 'revenue') {
+    return (
+      <section className={styles.workspace} style={{'--tower':tower.accent,'--tower-deep':tower.accentDeep} as CSSProperties}>
+        <RevenueAuthorityCommandDeck snapshot={snapshot} onOpen={setSelected}/>
+        <SovereignEntityPortal entity={selected} snapshot={snapshot} onClose={()=>setSelected(null)}/>
+      </section>
+    )
+  }
+
+  if (snapshot.tower === 'service') {
+    return (
+      <section className={styles.workspace} style={{'--tower':tower.accent,'--tower-deep':tower.accentDeep} as CSSProperties}>
+        <ServiceIndustrialMissionNetwork snapshot={snapshot} onOpen={setSelected}/>
+        <SovereignEntityPortal entity={selected} snapshot={snapshot} onClose={()=>setSelected(null)}/>
+      </section>
+    )
+  }
+
+  const Scene=snapshot.tower==='direction'?DirectionSovereignScene:snapshot.tower==='growth'?GrowthSovereignScene:snapshot.tower==='tenants'?TenantSovereignScene:PlatformSovereignScene
 
   return (
     <section className={styles.workspace} style={{'--tower':tower.accent,'--tower-deep':tower.accentDeep} as CSSProperties}>

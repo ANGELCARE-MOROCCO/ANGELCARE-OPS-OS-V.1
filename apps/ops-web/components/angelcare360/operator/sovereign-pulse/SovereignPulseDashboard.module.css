@@ -749,3 +749,16 @@
   .customerSceneHead { left: 10px; right: 10px; top: 10px; align-items: flex-start; min-height: 88px; padding: 10px; }
   .customerLegend { max-width: 45%; justify-content: flex-end; }
 }
+
+
+/* OSM Retina stability: initialise Leaflet on a non-transforming customer canvas. */
+.root[data-scene="customers"] .sceneCanvas {
+  animation: none !important;
+  transform: none !important;
+  will-change: auto !important;
+}
+.root[data-scene="customers"] .ambientGrid,
+.root[data-scene="customers"] .ambientOrbOne,
+.root[data-scene="customers"] .ambientOrbTwo {
+  animation: none !important;
+}

@@ -1,4 +1,4 @@
-import LearningJourneyRequestStudio from '@/components/flashcards-os/solutions/LearningJourneyRequestStudio'
+import CatalogueJourneyComposer from '@/components/flashcards-os/catalogue-composer/CatalogueJourneyComposer'
+import { loadCatalogueComposerOptions } from '@/lib/flashcards-os/catalogue-composer/source'
 import { requireFlashcardsPageAccess } from '@/lib/flashcards-os/server/access'
-import { loadSolutionsOverview } from '@/lib/flashcards-os/solutions/server/repository'
-export default async function NewJourneyPage(){await requireFlashcardsPageAccess('flashcards_os.create_journey_requests');const data=await loadSolutionsOverview();return <LearningJourneyRequestStudio ontology={data.ontology} releases={data.releases}/>}
+export default async function NewLearningJourneyPage(){await requireFlashcardsPageAccess('flashcards_os.create_journey_requests');return <CatalogueJourneyComposer options={await loadCatalogueComposerOptions('b2c')}/>}

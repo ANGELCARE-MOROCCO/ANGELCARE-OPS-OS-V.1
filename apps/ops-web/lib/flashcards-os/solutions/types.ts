@@ -200,6 +200,10 @@ export type Sellable = {
   learnerProfile: string
   scenarioId: string
   releaseIds: string[]
+  collectionIds: string[]
+  collectionVersionIds: string[]
+  collectionNames: Record<string, string>
+  collectionVersionLabels: Record<string, string>
   readyPlanId: string | null
   priceDh: number
   grossMarginPercent: number
@@ -341,6 +345,10 @@ export type ReadyLearningPlan = {
   learnerProfile: string
   objectives: string[]
   releaseIds: string[]
+  collectionIds: string[]
+  collectionVersionIds: string[]
+  collectionNames: Record<string, string>
+  collectionVersionLabels: Record<string, string>
   durationDays: number
   totalSessions: number
   totalMinutes: number

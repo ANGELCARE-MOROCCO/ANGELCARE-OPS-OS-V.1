@@ -111,6 +111,24 @@ export function actorName(user: any) {
   return user.display_name || user.full_name || user.name || [user.first_name,user.last_name].filter(Boolean).join(' ') || user.email || user.id
 }
 
+export function normalizeOpenWAAccountStatus(value: unknown, fallback = 'degraded') {
+  const status = String(value || '').trim().toLowerCase().replace(/[\s-]+/g, '_')
+  const map: Record<string, string> = {
+    draft: 'draft', created: 'draft',
+    starting: 'starting', initializing: 'starting',
+    authenticating: 'authenticating',
+    qr_required: 'qr_required', qr_ready: 'qr_required',
+    pairing_required: 'pairing_required', action_required: 'pairing_required',
+    connected: 'connected', ready: 'connected',
+    reconnecting: 'reconnecting', reconnect_loop: 'reconnecting',
+    degraded: 'degraded', rate_limited: 'rate_limited',
+    disconnected: 'disconnected', authentication_lost: 'authentication_lost',
+    paused: 'paused', suspended: 'suspended',
+    error: 'error', failed: 'error',
+  }
+  return map[status] || fallback
+}
+
 export function normalizePhone(value: unknown) {
   const raw = String(value || '').trim()
   const digits = raw.replace(/\D/g,'')

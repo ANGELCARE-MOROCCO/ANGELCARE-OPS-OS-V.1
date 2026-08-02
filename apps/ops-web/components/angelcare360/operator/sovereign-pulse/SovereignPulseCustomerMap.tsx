@@ -156,8 +156,10 @@ function SovereignPulseCustomerMap({ nodes, privacy, mode, onInspect }: Props) {
 
       const map = L.map(container, {
         center: MOROCCO_CENTER,
-        zoom: 5.5,
+        zoom: 6,
         minZoom: 4,
+        zoomSnap: 1,
+        zoomDelta: 1,
         maxZoom: 18,
         zoomControl: false,
         attributionControl: true,
@@ -165,19 +167,25 @@ function SovereignPulseCustomerMap({ nodes, privacy, mode, onInspect }: Props) {
         dragging: initialModeRef.current !== 'wall',
         doubleClickZoom: initialModeRef.current !== 'wall',
         keyboard: initialModeRef.current !== 'wall',
-        preferCanvas: true,
+        preferCanvas: false,
         fadeAnimation: false,
         zoomAnimation: false,
         markerZoomAnimation: false,
       })
 
-      L.tileLayer(tileUrl, {
+      const tileLayer = L.tileLayer(tileUrl, {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>',
         maxZoom: 19,
         updateWhenIdle: true,
         updateWhenZooming: false,
-        keepBuffer: 1,
+        keepBuffer: 0,
+        detectRetina: false,
+        updateInterval: 1000,
       }).addTo(map)
+
+      tileLayer.once('load', () => {
+        window.requestAnimationFrame(() => map.invalidateSize({ animate: false }))
+      })
 
       L.control.zoom({ position: 'bottomright' }).addTo(map)
       L.control.scale({ position: 'bottomleft', imperial: false }).addTo(map)
@@ -213,7 +221,6 @@ function SovereignPulseCustomerMap({ nodes, privacy, mode, onInspect }: Props) {
       layerGroupRef.current = null
       mapRef.current = null
       leafletRef.current = null
-      setMapReady(false)
     }
   }, [tileUrl])
 
@@ -314,14 +321,14 @@ function SovereignPulseCustomerMap({ nodes, privacy, mode, onInspect }: Props) {
     })
 
     if (!filteredNodes.length) {
-      map.setView(MOROCCO_CENTER, 5.5, { animate: false })
+      map.setView(MOROCCO_CENTER, 6, { animate: false })
       return
     }
 
     const selected = selectedId ? filteredNodes.find((node) => node.id === selectedId) : null
     if (filteredNodes.length === 1) {
       const node = filteredNodes[0]
-      map.setView([node.latitude, node.longitude], mode === 'wall' ? 8.6 : 9.4, { animate: false })
+      map.setView([node.latitude, node.longitude], mode === 'wall' ? 8 : 9, { animate: false })
       return
     }
     if (selected) {

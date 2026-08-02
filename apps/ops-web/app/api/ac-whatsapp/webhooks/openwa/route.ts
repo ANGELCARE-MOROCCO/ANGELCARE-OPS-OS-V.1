@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/server'
-import { fail, ok } from '@/lib/ac-whatsapp/server'
+import { fail, normalizeOpenWAAccountStatus, ok } from '@/lib/ac-whatsapp/server'
 import { mapAckStatus, normalizeOpenWAEvent, verifyOpenWASignature } from '@/lib/ac-whatsapp/webhook'
 
 export const runtime = 'nodejs'
@@ -40,7 +40,7 @@ export async function POST(request:NextRequest){
   const accountResult=sid?await supabase.from('ac_whatsapp_accounts').select('*').eq('openwa_session_id',sid).maybeSingle():{data:null,error:null};if(accountResult.error)throw accountResult.error
   const account:any=accountResult.data
   if(eventType.startsWith('session.')){
-   if(account){const statusMap:Record<string,string>={'session.authenticated':'connected','session.disconnected':'disconnected','session.reconnect_loop':'reconnecting','session.qr':'qr_required'};const status=statusMap[eventType]||String(normalized.root?.status||payload?.status||account.status);await supabase.from('ac_whatsapp_accounts').update({status,runtime_metadata:safeRawPayload(payload),last_activity_at:new Date().toISOString(),last_error:eventType==='session.disconnected'?String(payload?.error||payload?.reason||'Disconnected'):null,connected_at:eventType==='session.authenticated'?new Date().toISOString():account.connected_at}).eq('id',account.id)}
+   if(account){const statusMap:Record<string,string>={'session.authenticated':'connected','session.disconnected':'disconnected','session.reconnect_loop':'reconnecting','session.qr':'qr_required'};const status=normalizeOpenWAAccountStatus(statusMap[eventType]||normalized.root?.status||payload?.status,account.status);await supabase.from('ac_whatsapp_accounts').update({status,runtime_metadata:safeRawPayload(payload),last_activity_at:new Date().toISOString(),last_error:eventType==='session.disconnected'?String(payload?.error||payload?.reason||'Disconnected'):null,connected_at:eventType==='session.authenticated'?new Date().toISOString():account.connected_at}).eq('id',account.id)}
   }else if(eventType==='message.ack'||eventType==='message.failed'||eventType==='message.revoked'){
    const external=normalized.externalMessageId;if(account&&external){const status=eventType==='message.failed'?'failed':eventType==='message.revoked'?'revoked':mapAckStatus(normalized.ack);const patch:any={status,updated_at:new Date().toISOString()};if(status==='delivered')patch.delivered_at=new Date().toISOString();if(status==='read')patch.read_at=new Date().toISOString();if(status==='failed')patch.error_message=String(payload?.error||payload?.reason||'Delivery failed');await supabase.from('ac_whatsapp_messages').update(patch).eq('account_id',account.id).eq('external_message_id',external);await supabase.from('ac_whatsapp_campaign_recipients').update(status==='read'?{status:'read',read_at:new Date().toISOString()}:status==='delivered'?{status:'delivered',delivered_at:new Date().toISOString()}:status==='failed'?{status:'failed',failure_reason:patch.error_message}:{status:'sent'}).eq('external_message_id',external)}
   }else if(['message.received','message.sent','message.edited','message.reaction'].includes(eventType)){

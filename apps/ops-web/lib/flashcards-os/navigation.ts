@@ -122,15 +122,13 @@ export const DELIVERY_NAVIGATION = [
 
 
 export const SOLUTIONS_NAVIGATION = [
-  { href: '/flashcards-os/solutions', label: 'Command Bridge', description: 'Demandes, décisions, vitrines, parcours et alertes commerciales.' },
-  { href: '/flashcards-os/solutions/composer', label: 'Solution Composer', description: 'Contraintes, éligibilité et génération de scénarios.' },
-  { href: '/flashcards-os/solutions/requests', label: 'Scenario Operations', description: 'Demandes, alternatives, comparaison et assemblage.' },
-  { href: '/flashcards-os/solutions/b2c', label: 'B2C Vitrine', description: 'Packs familiaux confirmés, versionnés et publiables.' },
-  { href: '/flashcards-os/solutions/b2b', label: 'B2B Portfolio', description: 'Solutions institutionnelles, volumes, licences et déploiement.' },
-  { href: '/flashcards-os/solutions/learning-journeys', label: 'Learning Journeys', description: 'Demandes, plans, timeline, mapping et validation.' },
-  { href: '/flashcards-os/solutions/ready-plans', label: 'Ready Plans', description: 'Programmes B2C/B2B approuvés et prêts pour UMZ5.' },
-  { href: '/flashcards-os/solutions/pricing', label: 'Pricing Control', description: 'Price books, cost books, margins, discounts et taxes.' },
-  { href: '/flashcards-os/solutions/governance/objectives', label: 'Objective Ontology', description: 'Cinq dimensions gouvernées et administrativement extensibles.' },
+  { href: '/flashcards-os/solutions', label: 'Product Factory', description: 'Point de départ direct depuis les catégories et collections locales.' },
+  { href: '/flashcards-os/solutions/composer', label: 'Composer un package', description: 'Packages et bundles B2C/B2B depuis le catalogue source de vérité.' },
+  { href: '/flashcards-os/solutions/learning-journeys/new', label: 'Créer un programme', description: 'Programmes jour/session citant chaque collection exacte.' },
+  { href: '/flashcards-os/solutions/b2c', label: 'Vitrine B2C', description: 'Packages et programmes familiaux sélectionnés et publiés.' },
+  { href: '/flashcards-os/solutions/b2b', label: 'Vitrine B2B', description: 'Solutions institutionnelles sélectionnées et publiées.' },
+  { href: '/flashcards-os/product/collections', label: 'Catalogue Collections', description: 'Registre local qui alimente directement les deux composers.' },
+  { href: '/flashcards-os/solutions/advanced', label: 'Opérations avancées', description: 'Anciens contrôles, pricing, ontologies et gouvernance sans bloquer la composition.' },
 ] as const
 
 

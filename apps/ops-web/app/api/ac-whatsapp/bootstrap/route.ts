@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
     can('ac-whatsapp.security.manage') ? context.supabase.from('ac_whatsapp_security_events').select('*').order('created_at',{ascending:false}).limit(200) : Promise.resolve({data:[],error:null}),
     can('ac-whatsapp.audit.view') ? context.supabase.from('ac_whatsapp_audit_events').select('*').order('created_at',{ascending:false}).limit(200) : Promise.resolve({data:[],error:null}),
     can('ac-whatsapp.members.manage') || can('ac-whatsapp.analytics.view') ? context.supabase.from('ac_whatsapp_operator_presence').select('*').order('last_seen_at',{ascending:false}) : Promise.resolve({data:[],error:null}),
-    can('ac-whatsapp.members.manage') ? context.supabase.from('app_users').select('id,email,display_name,full_name,first_name,last_name,role,role_key,status').order('email') : Promise.resolve({data:[],error:null}),
+    can('ac-whatsapp.members.manage') ? context.supabase.from('app_users').select('*').order('email') : Promise.resolve({data:[],error:null}),
   ])
   const error = [accounts,queues,conversations,campaigns,contacts,templates,memberships,securityEvents,auditEvents,presence,users].find(x=>x.error)?.error
   if (error) return fail(error.message,500)

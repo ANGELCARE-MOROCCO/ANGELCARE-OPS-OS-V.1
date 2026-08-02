@@ -4,7 +4,7 @@ export async function GET(request:NextRequest){
  const context=await acContext(request,'ac-whatsapp.members.manage');if('error'in context)return context.error
  const [members,users,access,queues]=await Promise.all([
   context.supabase.from('ac_whatsapp_memberships').select('*'),
-  context.supabase.from('app_users').select('id,email,display_name,full_name,first_name,last_name,role,role_key,status'),
+  context.supabase.from('app_users').select('*'),
   context.supabase.from('ac_whatsapp_account_access').select('*'),
   context.supabase.from('ac_whatsapp_queue_memberships').select('*'),
  ])

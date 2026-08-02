@@ -1,4 +1,5 @@
- 'use client'
+'use client'
+
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { CheckCircle2, PauseCircle, Send } from 'lucide-react'
@@ -6,5 +7,114 @@ import type { EligibleRelease, ReadyLearningPlan, Sellable } from '@/lib/flashca
 import styles from './solutions-os.module.css'
 import { StatusPill, money } from './SolutionPrimitives'
 
-export default function SellableDossier({sellable,releases,readyPlans}:{sellable:Sellable;releases:EligibleRelease[];readyPlans:ReadyLearningPlan[]}){const router=useRouter();const [note,setNote]=useState('Approved under UMZ4 commercial authority.');const [message,setMessage]=useState('');const releaseMap=new Map(releases.map((item)=>[item.id,item]));async function action(kind:'approve'|'publish'|'suspend'){const response=await fetch(`/api/flashcards-os/solutions/sellables/${sellable.id}/${kind}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({universe:sellable.universe,note,reason:note})});const payload=await response.json().catch(()=>({}));setMessage(response.ok?`${kind} completed.`:String(payload.error||`${kind} failed.`));if(response.ok)router.refresh()}
- return <div className={styles.page}><section className={styles.hero}><div><div className={styles.kicker}>{sellable.universe.toUpperCase()} SELLABLE DOSSIER · VERSION {sellable.version}</div><h1>{sellable.name}</h1><p>{sellable.promise}</p><div className={styles.heroActions}><StatusPill value={sellable.status}/><span className={styles.tag}>{sellable.code}</span></div></div><aside className={styles.heroSeal}><span>COMMERCIAL RELEASE</span><strong>{money(sellable.priceDh)}</strong><small>Gross margin {sellable.grossMarginPercent.toFixed(1)}% · {sellable.releaseIds.length} exact releases.</small></aside></section><section className={styles.commandGrid}><article className={styles.section}><div className={styles.sectionHeader}><div><span className={styles.eyebrow}>PRODUCT COMPOSITION</span><h2>Exact release dependencies</h2></div></div><div className={styles.itemList}>{sellable.releaseIds.map((id)=><div className={styles.item} key={id}><strong>{releaseMap.get(id)?.collectionName||id}</strong><span>{releaseMap.get(id)?.code||'Release metadata unavailable'} · v{releaseMap.get(id)?.releaseVersion||'?'}</span></div>)}</div>{sellable.readyPlanId?<p className={styles.notice}>Linked programme: {readyPlans.find((item)=>item.id===sellable.readyPlanId)?.name||sellable.readyPlanId}</p>:null}</article><aside className={styles.section}><div className={styles.sectionHeader}><div><span className={styles.eyebrow}>PUBLICATION AUTHORITY</span><h2>Human gates</h2></div></div><div className={styles.field}><label>Decision note</label><textarea value={note} onChange={(event:any)=>setNote(event.target.value)}/></div><div className={styles.inlineActions}><button className={styles.secondary} type="button" onClick={()=>action('approve')}><CheckCircle2 size={14}/> Approve</button><button className={styles.primary} type="button" onClick={()=>action('publish')}><Send size={14}/> Publish</button><button className={styles.dangerButton} type="button" onClick={()=>action('suspend')}><PauseCircle size={14}/> Suspend</button></div>{message?<p className={styles.notice}>{message}</p>:null}</aside></section><section className={styles.section}><div className={styles.sellableMeta}><div><span>Target</span><strong>{sellable.targetSegment}</strong></div><div><span>Learner</span><strong>{sellable.learnerProfile}</strong></div><div><span>Delivery</span><strong>{sellable.deliveryMode}</strong></div><div><span>Minimum order</span><strong>{sellable.minimumOrder}</strong></div><div><span>Licence</span><strong>{sellable.licenceTerms}</strong></div><div><span>Fulfilment</span><strong>{sellable.fulfilmentModel}</strong></div></div></section></div>}
+export default function SellableDossier({
+  sellable,
+  releases,
+  readyPlans,
+}: {
+  sellable: Sellable
+  releases: EligibleRelease[]
+  readyPlans: ReadyLearningPlan[]
+}) {
+  const router = useRouter()
+  const [note, setNote] = useState('Approved under human commercial authority.')
+  const [message, setMessage] = useState('')
+  const releaseMap = new Map(releases.map((item) => [item.id, item]))
+  const catalogueBacked = sellable.collectionIds.length > 0
+  const compositionIds = catalogueBacked ? sellable.collectionIds : sellable.releaseIds
+
+  async function action(kind: 'approve' | 'publish' | 'suspend') {
+    const response = await fetch(`/api/flashcards-os/solutions/sellables/${sellable.id}/${kind}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ universe: sellable.universe, note, reason: note }),
+    })
+    const payload = await response.json().catch(() => ({}))
+    setMessage(response.ok ? `${kind} completed.` : String(payload.error || `${kind} failed.`))
+    if (response.ok) router.refresh()
+  }
+
+  return (
+    <div className={styles.page}>
+      <section className={styles.hero}>
+        <div>
+          <div className={styles.kicker}>{sellable.universe.toUpperCase()} SELLABLE DOSSIER · VERSION {sellable.version}</div>
+          <h1>{sellable.name}</h1>
+          <p>{sellable.promise}</p>
+          <div className={styles.heroActions}>
+            <StatusPill value={sellable.status} />
+            <span className={styles.tag}>{sellable.code}</span>
+            <span className={styles.tag}>{catalogueBacked ? 'Catalogue local' : 'Production release'}</span>
+          </div>
+        </div>
+        <aside className={styles.heroSeal}>
+          <span>COMMERCIAL REFERENCE</span>
+          <strong>{money(sellable.priceDh)}</strong>
+          <small>Gross margin {sellable.grossMarginPercent.toFixed(1)}% · {compositionIds.length} exact {catalogueBacked ? 'catalogue collections' : 'production releases'}.</small>
+        </aside>
+      </section>
+
+      <section className={styles.commandGrid}>
+        <article className={styles.section}>
+          <div className={styles.sectionHeader}>
+            <div>
+              <span className={styles.eyebrow}>PRODUCT COMPOSITION</span>
+              <h2>{catalogueBacked ? 'Exact local catalogue dependencies' : 'Exact production-release dependencies'}</h2>
+            </div>
+          </div>
+          <div className={styles.itemList}>
+            {compositionIds.map((id, index) => {
+              const release = releaseMap.get(id)
+              const collectionName = sellable.collectionNames[id]
+              const versionLabel = sellable.collectionVersionLabels[id]
+              const versionId = sellable.collectionVersionIds[index]
+              return (
+                <div className={styles.item} key={id}>
+                  <strong>{catalogueBacked ? (collectionName || id) : (release?.collectionName || id)}</strong>
+                  <span>
+                    {catalogueBacked
+                      ? `${versionLabel || 'Current catalogue version'}${versionId ? ` · ${versionId}` : ''}`
+                      : `${release?.code || 'Release metadata unavailable'} · v${release?.releaseVersion || '?'}`}
+                  </span>
+                </div>
+              )
+            })}
+          </div>
+          {sellable.readyPlanId ? (
+            <p className={styles.notice}>Linked programme: {readyPlans.find((item) => item.id === sellable.readyPlanId)?.name || sellable.readyPlanId}</p>
+          ) : null}
+        </article>
+
+        <aside className={styles.section}>
+          <div className={styles.sectionHeader}>
+            <div>
+              <span className={styles.eyebrow}>PUBLICATION AUTHORITY</span>
+              <h2>Human gates</h2>
+            </div>
+          </div>
+          <div className={styles.field}>
+            <label>Decision note</label>
+            <textarea value={note} onChange={(event: any) => setNote(event.target.value)} />
+          </div>
+          <div className={styles.inlineActions}>
+            <button className={styles.secondary} type="button" onClick={() => action('approve')}><CheckCircle2 size={14} /> Approve</button>
+            <button className={styles.primary} type="button" onClick={() => action('publish')}><Send size={14} /> Publish</button>
+            <button className={styles.dangerButton} type="button" onClick={() => action('suspend')}><PauseCircle size={14} /> Suspend</button>
+          </div>
+          {message ? <p className={styles.notice}>{message}</p> : null}
+        </aside>
+      </section>
+
+      <section className={styles.section}>
+        <div className={styles.sellableMeta}>
+          <div><span>Target</span><strong>{sellable.targetSegment}</strong></div>
+          <div><span>Learner</span><strong>{sellable.learnerProfile}</strong></div>
+          <div><span>Delivery</span><strong>{sellable.deliveryMode}</strong></div>
+          <div><span>Minimum order</span><strong>{sellable.minimumOrder}</strong></div>
+          <div><span>Licence</span><strong>{sellable.licenceTerms}</strong></div>
+          <div><span>Fulfilment</span><strong>{sellable.fulfilmentModel}</strong></div>
+        </div>
+      </section>
+    </div>
+  )
+}
