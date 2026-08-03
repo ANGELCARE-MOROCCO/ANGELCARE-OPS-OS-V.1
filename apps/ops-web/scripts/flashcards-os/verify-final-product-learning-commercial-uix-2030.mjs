@@ -1,0 +1,141 @@
+#!/usr/bin/env node
+import fs from 'node:fs'
+import path from 'node:path'
+import crypto from 'node:crypto'
+import { spawnSync } from 'node:child_process'
+import { createRequire } from 'node:module'
+
+const root=process.argv[2]?path.resolve(process.argv[2]):process.cwd()
+const exists=(p)=>fs.existsSync(path.join(root,p))
+const read=(p)=>exists(p)?fs.readFileSync(path.join(root,p),'utf8'):''
+const sha=(p)=>crypto.createHash('sha256').update(fs.readFileSync(path.join(root,p))).digest('hex')
+const checks=[]
+function check(label,condition,detail=''){const ok=Boolean(condition);checks.push({label,ok,detail});console.log(`${ok?'PASS':'FAIL'}  ${label}${detail?` — ${detail}`:''}`)}
+function run(command,args){const result=spawnSync(command,args,{cwd:root,encoding:'utf8'});const output=[result.stdout,result.stderr,result.error?.message].filter(Boolean).join('\n').trim();return{ok:result.status===0,output,status:result.status}}
+
+const shell=read('components/flashcards-os/studio/FlashcardsStudioFrame.tsx')
+const nav=read('lib/flashcards-os/studio-navigation.ts')
+const hall=read('components/flashcards-os/studio/FlashcardsCommandHall2030.tsx')
+const constellation=read('components/flashcards-os/CollectionRegistry.tsx')
+const dossier=read('components/flashcards-os/CollectionDossier.tsx')
+const cards=read('components/flashcards-os/CardContentRegistry.tsx')
+const workbench=read('components/flashcards-os/px/FlashcardsDirectWorkbench.tsx')
+const compare=read('components/flashcards-os/catalogue-composer/CatalogueScenarioCompare2030.tsx')
+const results=read('components/flashcards-os/catalogue-composer/CatalogueResultsTheatre.tsx')
+const myWork=read('components/flashcards-os/px/FlashcardsMyWork.tsx')
+const publishing=read('components/flashcards-os/documents/FlashcardsPublishingHouse.tsx')
+const templates=read('lib/flashcards-os/documents/templates.ts')
+const pdf=read('lib/flashcards-os/documents/server/pdf.ts')
+const source=read('lib/flashcards-os/documents/server/source.ts')
+const pxRepo=read('lib/flashcards-os/px/repository.ts')
+const transform=read('app/api/flashcards-os/px/transform/route.ts')
+const merge=read('app/api/flashcards-os/px/merge/route.ts')
+const sql=read('supabase/migrations/20260803_flashcards_os_2030_final_product_learning_commercial_uix_closure.sql')
+const cardRoute=read('app/api/flashcards-os/collections/[collectionId]/cards/[cardId]/route.ts')
+const staticShims=read('scripts/flashcards-os/static-type-shims.d.ts')
+const cssModuleTypes=read('components/flashcards-os/flashcards-css-modules.d.ts')
+const syntaxGate=read('scripts/flashcards-os/typescript-syntax-gate.mjs')
+const officialLogo='public/b2b-plaquette-partenaires/assets/angelcare-original-logo.png'
+const expectedLogoSha='1cc97b1e2824f15883f2d8c796b07efc994173e49f5d30ea86319e214c5c4df4'
+
+check('official original AngelCare PNG logo remains present',exists(officialLogo))
+check('official logo bytes are unchanged',exists(officialLogo)&&sha(officialLogo)===expectedLogoSha,exists(officialLogo)?sha(officialLogo):'missing')
+check('premium Flashcards Studio shell is active',shell.includes('Product & Learning Studio')&&shell.includes('FlashcardsProductPulse'))
+check('studio shell uses official repository logo',shell.includes('/b2b-plaquette-partenaires/assets/angelcare-original-logo.png'))
+check('studio shell has compact navigation',shell.includes('PanelLeftClose')&&shell.includes('PanelLeftOpen'))
+check('studio shell has focus mode',shell.includes('Focus Studio'))
+check('studio shell has density control',shell.includes("'compact'|'standard'|'comfortable'"))
+check('studio shell has command palette shortcut',shell.includes("event.key.toLowerCase() === 'k'"))
+check('workspace preferences persist to database API',shell.includes('/api/flashcards-os/px/preferences')&&exists('app/api/flashcards-os/px/preferences/route.ts'))
+check('global Flashcards navigation exposes product chain',nav.includes('Collection Constellation')&&nav.includes('Bundle Engineering')&&nav.includes('Learning Journey')&&nav.includes('A4/PDF Publishing House'))
+check('advanced operations remain outside primary creation path',nav.includes('Advanced Operations')&&nav.indexOf('Advanced Operations')>nav.indexOf('Mon travail'))
+check('Command Hall exposes collection package and programme starts',hall.includes('Créer une collection')&&hall.includes('Composer un package')&&hall.includes('Construire un programme'))
+check('Command Hall uses real dashboard values',hall.includes('dashboard.collections')&&hall.includes('dashboard.expectedCards')&&hall.includes('experience.metrics.ordersReady'))
+
+check('Collection Constellation is visual and horizontally structured',constellation.includes('COLLECTION CONSTELLATION 2030')&&constellation.includes('constellation'))
+check('Collection cards are clickable',constellation.includes('onClick={()=>setSelectedId(collection.id)}'))
+check('Collection Constellation exposes real favorites',constellation.includes('/api/flashcards-os/px/favorites'))
+check('Collection Constellation links to package programme and PDF actions',constellation.includes('/solutions/composer')&&constellation.includes('/solutions/learning-journeys/new')&&constellation.includes('/documents?sourceType=collection'))
+check('Collection creation no longer requires narrative objective',constellation.includes('Objectif principal facultatif')&&!constellation.includes('name="primaryObjective" required'))
+check('Collection Product Atelier replaces future-engine placeholders',dossier.includes('Collection Product Atelier')&&!dossier.includes('Architecture reserved'))
+check('Collection Product Atelier links to live command and vault workspaces',dossier.includes('Créer une commande de production')&&dossier.includes('Ouvrir le Deliverable Vault'))
+check('Collection Product Atelier exposes real dependency-aware permanent deletion',dossier.includes('deleteCollection')&&dossier.includes('Supprimer définitivement')&&read('app/api/flashcards-os/collections/[collectionId]/route.ts').includes('inspectCollectionDeletion'))
+check('Card Architecture Laboratory is a storyboard',cards.includes('HORIZONTAL PRODUCT STORYBOARD'))
+check('Card create action is real',cards.includes("method:modal==='edit'?'PATCH':'POST'"))
+check('Card edit action is real',cardRoute.includes('export async function PATCH'))
+check('Applicable card permanent delete is real',cardRoute.includes('export async function DELETE')&&cards.includes('Supprimer définitivement'))
+check('approved-card integrity is protected without approval workflow',read('lib/flashcards-os/server/repository.ts').includes('An approved card cannot be deleted permanently'))
+
+check('catalogue result theatre opens persistent workbenches',results.includes('/px/workbenches/from-scenario')&&results.includes('Ouvrir Workbench'))
+check('catalogue result theatre exposes visual comparison',results.includes('Comparer')&&exists('app/(protected)/flashcards-os/solutions/catalogue-results/[requestId]/compare/page.tsx'))
+check('comparison theatre supports two to four scenarios',compare.includes('current.length<4')&&compare.includes('selected.length<2'))
+check('comparison theatre creates a real merged workbench',compare.includes('/api/flashcards-os/px/merge'))
+check('comparison uses exact collection presence',compare.includes('scenario.collectionIds.includes(id)'))
+
+check('direct package workbench supports quantities',workbench.includes('onQuantity')&&workbench.includes('quantityControl'))
+check('direct journey workbench supports duration editing',workbench.includes('onDuration')&&workbench.includes('durationMinutes'))
+check('workbench supports move reorder lock and delete',workbench.includes('onMove')&&workbench.includes('onLock')&&workbench.includes('removeItem'))
+check('workbench direct manipulation supports catalogue drag and real day/session creation',workbench.includes("startsWith('catalogue:')")&&workbench.includes('addJourneyDay')&&workbench.includes('addJourneySession'))
+check('workbench supports undo and redo',workbench.includes('undoStack')&&workbench.includes('redoStack'))
+check('workbench supports duplication',workbench.includes('/duplicate'))
+check('workbench supports permanent draft deletion',workbench.includes("method:'DELETE'")&&workbench.includes('Supprimer définitivement'))
+check('workbench offers multi-audience preview',workbench.includes("type Audience='designer'|'b2c'|'b2b'|'facilitator'|'commercial'|'pdf'"))
+check('workbench opens contextual item inspector',workbench.includes('ITEM PEEK INSPECTOR'))
+check('workbench integrates A4/PDF publishing',workbench.includes('/flashcards-os/documents?sourceType=workbench'))
+check('workbench persistence is database-backed',pxRepo.includes("table(client, 'px_workbenches')")&&pxRepo.includes("table(client, 'px_workbench_items')"))
+check('My Work shows persistent drafts favorites views and PDFs',myWork.includes('data.workbenches')&&myWork.includes('data.favorites')&&myWork.includes('data.views')&&myWork.includes('data.documents'))
+
+check('controlled AI transformations use central OpenRouter Free adapter',transform.includes('openRouterFreeCompletion'))
+check('AI transformations validate exact local collection IDs',transform.includes('unknown local collection'))
+check('AI transformations cannot author price or authority',transform.includes('Never invent price')&&transform.includes('approval'))
+check('Tavily is absent from ordinary workbench transformation',!transform.toLowerCase().includes('tavily'))
+check('scenario merge is deterministic and persistent',merge.includes('createWorkbench')&&merge.includes('recordScenarioComposition'))
+check('no paid or named model is hardcoded in new intelligence runtime',!/(?:gpt-|gemini|claude|anthropic\/|openai\/|google\/)/i.test(`${transform}\n${merge}\n${workbench}`))
+
+const templateCodes=[...templates.matchAll(/code:\s*'FC-[A-Z0-9-]+'/g)].map((match)=>match[0])
+check('sixteen unique Flashcards A4/PDF templates exist',new Set(templateCodes).size===16,String(new Set(templateCodes).size))
+check('Publishing House supports portrait and landscape',publishing.includes('A4 portrait')&&publishing.includes('A4 paysage'))
+check('Publishing House supports compact standard detailed density',publishing.includes('Compacte')&&publishing.includes('Détaillée'))
+check('Publishing House supports reorderable and hideable sections',publishing.includes('function move(key:string')&&publishing.includes('setHidden'))
+check('Publishing House provides real paginated A4 preview',publishing.includes('LIVE A4 CANVAS')&&publishing.includes('Page {pageIndex+1} / {pages.length}'))
+check('Publishing House prints and downloads',publishing.includes('window.print()')&&publishing.includes('/api/flashcards-os/documents/render'))
+check('PDF engine uses pdf-lib',pdf.includes("from 'pdf-lib'"))
+check('PDF engine embeds official PNG logo',pdf.includes('angelcare-original-logo.png')&&pdf.includes('embedPng'))
+check('PDF engine produces ISO A4 portrait and landscape geometry',pdf.includes('595.28,841.89')&&pdf.includes('841.89,595.28'))
+check('PDF footer contains broad AngelCare references',pdf.includes('www.angelcarehub.com')&&pdf.includes('backoffice@angelcarehub.com')&&pdf.includes('+212 537 581 462'))
+check('PDF engine includes reference confidentiality and pagination',pdf.includes('documentReference')&&pdf.includes('input.confidentiality.toUpperCase()')&&pdf.includes('Page ${pageNumber}'))
+check('document source resolver never invents missing records',source.includes("throw new Error('Collection source not found.')")&&source.includes("throw new Error('Sellable source not found.')"))
+check('document source supports collection workbench sellable plan and quotation',source.includes("sourceType==='collection'")&&source.includes("sourceType==='workbench'")&&source.includes("sourceType==='ready_plan'")&&source.includes("sourceType==='quotation'"))
+check('generated PDFs are registered with checksum',pdf.includes("createHash('sha256')")&&pxRepo.includes("table(client, 'px_document_registry')"))
+
+const tables=['px_workbenches','px_workbench_items','px_scenario_compositions','px_favorites','px_saved_views','px_recent_items','px_annotations','px_document_registry','px_workspace_preferences','px_operation_history']
+check('one additive migration creates ten product-experience tables',tables.every((table)=>sql.includes(`flashcards_os.${table}`)),`${tables.filter((table)=>sql.includes(`flashcards_os.${table}`)).length}/10`)
+check('migration is transactional and advisory-locked',sql.includes('begin;')&&sql.includes('pg_advisory_xact_lock(84732030)')&&sql.trimEnd().endsWith('commit;'))
+check('migration contains no destructive table drop',!/drop\s+table/i.test(sql))
+check('migration enables RLS on every new relation',sql.includes('enable row level security')&&tables.every((table)=>sql.includes(`'${table}'`)))
+check('new mutation views are service-role-only',sql.includes('from authenticated, anon')&&sql.includes('to service_role'))
+check('migration adds no approval or governance table',!sql.includes('px_approval')&&!sql.includes('px_governance'))
+check('existing catalogue composition rescue migration remains present',exists('supabase/migrations/20260802_flashcards_os_catalogue_composition_rescue.sql'))
+check('existing AI free-provider alignment migration remains present',exists('supabase/migrations/20260801_flashcards_os_ai_free_provider_alignment.sql'))
+check('existing UMZ6 fulfilment and CX migration remains present',exists('supabase/migrations/20260801_flashcards_os_ultra_mega_zip6_fulfilment_cx_hardening.sql'))
+check('final asset generation remains outside Flashcards OS',!exists('app/api/flashcards-os/generate-image/route.ts')&&!exists('app/api/flashcards-os/generate-video/route.ts'))
+check('production command system remains external-command only',read('components/flashcards-os/production/ProductionCommandForge.tsx').toLowerCase().includes('external'))
+check('Windows Vault integration remains present',exists('components/flashcards-os/production/StorageOperationsConsole.tsx')&&exists('lib/flashcards-os/production/server/vault-service.ts'))
+check('B2C and B2B vitrines remain separate',exists('components/flashcards-os/solutions/B2CVitrineCommand.tsx')&&exists('components/flashcards-os/solutions/B2BSolutionPortfolio.tsx'))
+check('B2C and B2B CRM remain separate',exists('components/flashcards-os/revenue/B2CHousehold360.tsx')&&exists('components/flashcards-os/revenue/B2BAccountArchitecture.tsx'))
+check('commercial document chain remains present',['devis','orders','deliveries','invoices','payments'].every((part)=>exists(`app/(protected)/flashcards-os/revenue/${part}/page.tsx`)))
+check('returns complaints refunds and feedback remain present',exists('app/(protected)/flashcards-os/delivery/returns/page.tsx')&&exists('app/(protected)/flashcards-os/delivery/refunds/page.tsx')&&exists('app/(protected)/flashcards-os/delivery/customer-experience/page.tsx'))
+check('static auth compatibility shims preserve legacy and current repository exports',staticShims.includes('export function createClient(): Promise<any>')&&staticShims.includes('export const APP_SESSION_COOKIE: string')&&staticShims.includes('export function createServiceClient(): Promise<any>'))
+check('dependency-backed TypeScript recognises every Flashcards CSS Module import',cssModuleTypes.includes("declare module '*.module.css'")&&cssModuleTypes.includes('Readonly<Record<string, string>>'))
+check('syntax gate parses declaration files without requesting JavaScript emission',syntaxGate.includes("file.endsWith('.d.ts')")&&syntaxGate.includes('sourceFile.parseDiagnostics')&&syntaxGate.includes('declaration files parsed without emission'))
+
+const syntax=run(process.execPath,['scripts/flashcards-os/typescript-syntax-gate.mjs'])
+check('TypeScript syntax and local imports resolve',syntax.ok,syntax.ok?'passed':syntax.output.slice(-900))
+const require=createRequire(import.meta.url);let tscEntry='';try{tscEntry=require.resolve('typescript/bin/tsc',{paths:[root]})}catch{}
+const staticRun=tscEntry?run(process.execPath,[tscEntry,'-p','tsconfig.flashcards-os-2030.static.json','--pretty','false']):run(process.platform==='win32'?'npx.cmd':'npx',['--no-install','tsc','-p','tsconfig.flashcards-os-2030.static.json','--pretty','false'])
+check('strict isolated static TypeScript passes',staticRun.ok,staticRun.ok?'0 errors':staticRun.output.slice(-1200))
+if(exists('node_modules/typescript/bin/tsc')){const dependency=run(process.execPath,['node_modules/typescript/bin/tsc','-p','tsconfig.flashcards-os-2030.json','--pretty','false']);check('dependency-backed strict TypeScript passes',dependency.ok,dependency.ok?'0 errors':dependency.output.slice(-1200))}else{console.log('INFO  dependency-backed strict TypeScript will run automatically in the installed repository; node_modules is absent from this bounded source.')}
+
+const failures=checks.filter((item)=>!item.ok)
+console.log(`\n${checks.length-failures.length}/${checks.length} Flashcards OS 2030 closure checks passed.`)
+if(failures.length){console.error('\nFailures:');for(const item of failures)console.error(`- ${item.label}${item.detail?`: ${item.detail}`:''}`);process.exit(1)}

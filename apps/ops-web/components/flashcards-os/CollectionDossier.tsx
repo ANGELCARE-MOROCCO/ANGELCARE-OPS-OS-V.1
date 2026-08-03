@@ -19,6 +19,11 @@ import {
   ShieldCheck,
   Sparkles,
   UsersRound,
+  FileText,
+  PackagePlus,
+  WandSparkles,
+  HardDrive,
+  Trash2,
 } from 'lucide-react'
 import type { CollectionDossier as CollectionDossierType, TaxonomyNode } from '@/lib/flashcards-os/types'
 import styles from './flashcards-os.module.css'
@@ -110,6 +115,34 @@ export default function CollectionDossier({
     }
   }
 
+
+  async function deleteCollection() {
+    const response = await fetch(`/api/flashcards-os/collections/${encodeURIComponent(dossier.code)}`)
+    const inspection = await response.json().catch(() => ({}))
+    if (!response.ok) {
+      window.alert(inspection.error || 'Impossible d’inspecter les dépendances de la collection.')
+      return
+    }
+    if (!inspection.canDelete) {
+      const dependencies = Array.isArray(inspection.dependencies)
+        ? inspection.dependencies.map((item: any) => `${item.label}: ${item.count}`).join('\n')
+        : ''
+      window.alert(inspection.protectedLifecycle
+        ? `Cette collection est au lifecycle ${inspection.collection?.lifecycle}. Elle doit être remplacée ou archivée, pas effacée.`
+        : `Suppression définitive impossible tant que ces dépendances existent:\n${dependencies}`)
+      return
+    }
+    if (!window.confirm(`Supprimer définitivement « ${dossier.name} » ? Cette action efface le dossier vide et ne peut pas être annulée.`)) return
+    const deletion = await fetch(`/api/flashcards-os/collections/${encodeURIComponent(dossier.code)}`, { method: 'DELETE' })
+    const payload = await deletion.json().catch(() => ({}))
+    if (!deletion.ok) {
+      window.alert(payload.error || 'Suppression définitive impossible.')
+      return
+    }
+    router.push('/flashcards-os/product/collections')
+    router.refresh()
+  }
+
   function renderIdentity() {
     if (edit) {
       return (
@@ -129,7 +162,7 @@ export default function CollectionDossier({
             <label className={`${styles.field} ${styles.fieldWide}`}><span className={styles.fieldLabel}>Objectif principal</span><textarea className={styles.fieldTextarea} name="primaryObjective" defaultValue={dossier.primaryObjective} /></label>
             <label className={`${styles.field} ${styles.fieldWide}`}><span className={styles.fieldLabel}>Audiences</span><input className={styles.fieldInput} name="audiences" defaultValue={dossier.audiences.join(', ')} /></label>
             <label className={`${styles.field} ${styles.fieldWide}`}><span className={styles.fieldLabel}>Contextes d’usage</span><input className={styles.fieldInput} name="usageContexts" defaultValue={dossier.usageContexts.join(', ')} /></label>
-            <label className={`${styles.field} ${styles.fieldWide}`}><span className={styles.fieldLabel}>Notes de gouvernance</span><textarea className={styles.fieldTextarea} name="notes" defaultValue={dossier.notes} /></label>
+            <label className={`${styles.field} ${styles.fieldWide}`}><span className={styles.fieldLabel}>Notes produit facultatives</span><textarea className={styles.fieldTextarea} name="notes" defaultValue={dossier.notes} /></label>
           </div>
           {message ? <div className={message.includes('mis à jour') ? styles.formSuccess : styles.formError}>{message}</div> : null}
           <div className={styles.modalFooter} style={{ paddingInline: 0 }}><button className={styles.ghostButton} type="button" onClick={() => setEdit(false)}>Annuler</button><button className={styles.actionButton} disabled={saving} type="submit"><Save size={14} /> {saving ? 'Sauvegarde…' : 'Sauvegarder le dossier'}</button></div>
@@ -220,17 +253,30 @@ export default function CollectionDossier({
   }
 
   function renderFuture() {
-    return (
-      <div className={styles.futurePanel}>
-        <div className={styles.futurePanelInner}>
-          <span className={styles.futureIcon}>{section === 'vault' ? <Archive size={25} /> : section === 'performance' ? <UsersRound size={25} /> : <Sparkles size={25} />}</span>
-          <h3 className={styles.futureTitle}>{guidance.title}</h3>
-          <p className={styles.futureCopy}>{guidance.lead}</p>
-          <p className={styles.futureCopy}><strong>Contracted activation: Ultra Mega ZIP {guidance.delivery}.</strong> The data boundary and dossier position are reserved now, but no fake engine or decorative output has been inserted.</p>
-          <span className={styles.statusPill} style={{ marginTop: 14 }}><LockKeyhole size={11} /> Architecture reserved</span>
-        </div>
-      </div>
-    )
+    const destinations: Record<string, Array<{label:string;detail:string;href:string;icon:'spark'|'vault'|'file'}>> = {
+      research: [
+        {label:'Ouvrir Research Observatory',detail:'Créer ou consulter les missions Tavily rattachées au produit.',href:'/flashcards-os/intelligence/research',icon:'spark'},
+        {label:'Evidence Observatory',detail:'Inspecter les sources et la synthèse sans quitter la lignée produit.',href:'/flashcards-os/intelligence/evidence',icon:'file'},
+      ],
+      design: [
+        {label:'Product Design Portfolio',detail:'Ouvrir les designs et alternatives directement exploitables.',href:'/flashcards-os/intelligence/product-design',icon:'spark'},
+        {label:'Composer un package',detail:'Consommer cette collection depuis le catalogue local.',href:`/flashcards-os/solutions/composer?collection=${encodeURIComponent(dossier.id)}`,icon:'file'},
+      ],
+      commands: [
+        {label:'Créer une commande de production',detail:'Compiler une commande externe PDF, MP4 ou classroom sans générer l’asset.',href:`/flashcards-os/intelligence/production-commands/new?collectionId=${encodeURIComponent(dossier.id)}`,icon:'spark'},
+        {label:'Portfolio des commandes',detail:'Comparer, copier et relier les commandes existantes.',href:'/flashcards-os/intelligence/production-commands',icon:'file'},
+      ],
+      vault: [
+        {label:'Ouvrir le Deliverable Vault',detail:'Prévisualiser, versionner et relier les PDF/MP4 stockés sur le Windows Node.',href:`/flashcards-os/delivery/vault/collections/${encodeURIComponent(dossier.id)}`,icon:'vault'},
+        {label:'Station d’upload',detail:'Déposer une source ou un livrable final avec progression réelle.',href:'/flashcards-os/delivery/uploads',icon:'vault'},
+      ],
+      performance: [
+        {label:'Customer Experience',detail:'Consulter retours, réclamations, qualité et usage commercial.',href:'/flashcards-os/delivery/customer-experience',icon:'file'},
+        {label:'Product Quality Signals',detail:'Voir les signaux rattachés à la collection et à ses ventes.',href:'/flashcards-os/delivery/quality-signals',icon:'spark'},
+      ],
+    }
+    const items=destinations[section]||[]
+    return <div className={styles.sectionGrid}>{items.map((item)=><Link className={`${styles.sectionCard} ${styles.sectionCardWide}`} href={item.href} key={item.href}><div className={styles.sectionLabel}>{item.icon==='vault'?<Archive size={16}/>:item.icon==='spark'?<Sparkles size={16}/>:<FileText size={16}/>} {item.label}</div><div className={styles.sectionValue}>{item.detail}</div></Link>)}</div>
   }
 
   const renderSection = () => {
@@ -248,14 +294,17 @@ export default function CollectionDossier({
     <>
       <header className={styles.pageHeader}>
         <div>
-          <p className={styles.eyebrow}>Product · Collection dossier</p>
-          <h1 className={styles.pageTitle}>Product Passport</h1>
-          <p className={styles.pageLead}>Un dossier de gouvernance complet, séparant la vérité produit, les versions, les formats, le contenu structuré et les futurs livrables.</p>
+          <p className={styles.eyebrow}>Collection Product Atelier · Source locale</p>
+          <h1 className={styles.pageTitle}>Collection Product Atelier</h1>
+          <p className={styles.pageLead}>Concevoir, éditer, versionner, produire et commercialiser la collection depuis un atelier unique relié à ses cartes, commandes externes, livrables et solutions.</p>
         </div>
         <div className={styles.headerActions}>
           <span className={styles.sourceBanner}><Database size={13} /> {sourceMode === 'database' ? 'Live record' : 'Seed evidence mode'}</span>
-          <Link className={styles.secondaryButton} href={`/flashcards-os/product/collections/${dossier.code.toLowerCase()}/cards`}><Layers3 size={14} /> Card Registry</Link>
-          <button className={styles.actionButton} type="button" onClick={() => { setSection('identity'); setEdit(true) }}><Edit3 size={14} /> Edit dossier</button>
+          <Link className={styles.secondaryButton} href={`/flashcards-os/product/collections/${dossier.code.toLowerCase()}/cards`}><Layers3 size={14} /> Architecture cartes</Link>
+          <Link className={styles.secondaryButton} href={`/flashcards-os/solutions/composer?collection=${encodeURIComponent(dossier.id)}`}><PackagePlus size={14} /> Package</Link>
+          <Link className={styles.secondaryButton} href={`/flashcards-os/documents?sourceType=collection&sourceId=${encodeURIComponent(dossier.id)}`}><FileText size={14} /> A4/PDF</Link>
+          <button className={styles.actionButton} type="button" onClick={() => { setSection('identity'); setEdit(true) }}><Edit3 size={14} /> Modifier réellement</button>
+          <button className={styles.secondaryButton} type="button" onClick={deleteCollection}><Trash2 size={14} /> Supprimer définitivement</button>
         </div>
       </header>
 
@@ -295,7 +344,7 @@ export default function CollectionDossier({
 
           <article className={styles.dossierWorkspace}>
             <div className={styles.workspaceHeader}>
-              <div><p className={styles.eyebrow}>Section {String(dossier.sections.findIndex((item) => item.key === section) + 1).padStart(2, '0')} · U{guidance.delivery}</p><h3 className={styles.workspaceTitle}>{guidance.title}</h3><p className={styles.workspaceLead}>{guidance.lead}</p></div>
+              <div><p className={styles.eyebrow}>Section {String(dossier.sections.findIndex((item) => item.key === section) + 1).padStart(2, '0')} · Atelier actif</p><h3 className={styles.workspaceTitle}>{guidance.title}</h3><p className={styles.workspaceLead}>{guidance.lead}</p></div>
               <span className={activeSection.status === 'future_engine' ? styles.statusPill : activeSection.status === 'ready' ? `${styles.statusPill} ${styles.statusGood}` : `${styles.statusPill} ${styles.statusReview}`}>{activeSection.status.replace(/_/g, ' ')}</span>
             </div>
             {renderSection()}

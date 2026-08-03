@@ -355,6 +355,14 @@ export const PERMISSION_CATALOG: PermissionDefinition[] = [
   { key: 'marketplace.launch.pause', label: 'Mettre en pause', category: 'Final Launch Authority', sensitive: true },
   { key: 'marketplace.launch.rollback_authorize', label: 'Autoriser le rollback', category: 'Final Launch Authority', sensitive: true },
   { key: 'marketplace.launch.post_launch.manage', label: 'Gérer', category: 'Final Launch Authority', sensitive: true },
+  { key: 'marketplace.intelligence.view', label: 'Voir Executive Intelligence', category: 'Intelligence', sensitive: false },
+  { key: 'marketplace.intelligence.metrics.manage', label: 'Gérer les métriques', category: 'Intelligence', sensitive: true },
+  { key: 'marketplace.growth.view', label: 'Voir Growth Command', category: 'Growth', sensitive: false },
+  { key: 'marketplace.growth.experiments.manage', label: 'Gérer les expériences', category: 'Growth', sensitive: true },
+  { key: 'marketplace.performance.view', label: 'Voir Performance Command', category: 'Performance', sensitive: false },
+  { key: 'marketplace.security.assess', label: 'Évaluer les contrôles sécurité', category: 'Security', sensitive: true },
+  { key: 'marketplace.launch.approve', label: 'Approuver une release', category: 'Launch', sensitive: true },
+  { key: 'marketplace.launch.monitoring', label: 'Voir le monitoring post-launch', category: 'Launch', sensitive: false },
 ]
 
 export const PERMISSION_KEYS = PERMISSION_CATALOG.map((definition) => definition.key)

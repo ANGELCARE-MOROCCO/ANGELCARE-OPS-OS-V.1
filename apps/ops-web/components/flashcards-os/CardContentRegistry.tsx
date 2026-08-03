@@ -1,162 +1,19 @@
 'use client'
 
+import Link from 'next/link'
 import { useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { AlertTriangle, BookOpenCheck, Database, Plus, ShieldCheck, X } from 'lucide-react'
-import type { CollectionDossier } from '@/lib/flashcards-os/types'
-import styles from './flashcards-os.module.css'
+import { ArrowLeft, BookOpenCheck, Copy, Edit3, FileText, GripVertical, Plus, Save, ShieldCheck, Trash2, X } from 'lucide-react'
+import type { CollectionCard, CollectionDossier } from '@/lib/flashcards-os/types'
+import styles from './card-architecture-lab-2030.module.css'
 
-export default function CardContentRegistry({ dossier, sourceMode }: { dossier: CollectionDossier; sourceMode: 'database' | 'catalogue_seed' }) {
-  const router = useRouter()
-  const [modal, setModal] = useState(false)
-  const [saving, setSaving] = useState(false)
-  const [message, setMessage] = useState('')
-  const [selected, setSelected] = useState(dossier.cards[0]?.id || '')
-  const selectedCard = dossier.cards.find((card) => card.id === selected)
-  const expected = dossier.expectedCardCount || 0
-  const sequenceSlots = useMemo(() => Array.from({ length: Math.min(expected || 0, 120) }, (_, index) => index + 1), [expected])
-  const nextSequence = dossier.cards.length ? Math.max(...dossier.cards.map((card) => card.sequence)) + 1 : 1
-
-  async function createCard(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault()
-    setSaving(true)
-    setMessage('')
-    const data = new FormData(event.currentTarget)
-    try {
-      const response = await fetch(`/api/flashcards-os/collections/${encodeURIComponent(dossier.code)}/cards`, {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({
-          sequence: Number(data.get('sequence')),
-          concept: String(data.get('concept') || ''),
-          frontText: String(data.get('frontText') || ''),
-          backGuidance: String(data.get('backGuidance') || ''),
-          language: String(data.get('language') || 'fr'),
-          translation: String(data.get('translation') || ''),
-          pronunciation: String(data.get('pronunciation') || ''),
-          example: String(data.get('example') || ''),
-          activity: String(data.get('activity') || ''),
-          difficulty: String(data.get('difficulty') || 'foundation'),
-          imageBrief: String(data.get('imageBrief') || ''),
-        }),
-      })
-      const payload = await response.json()
-      if (!response.ok) throw new Error(payload.error || 'La carte n’a pas pu être créée.')
-      setMessage('Carte structurée ajoutée au registre.')
-      router.refresh()
-      setTimeout(() => setModal(false), 650)
-    } catch (error) {
-      setMessage(error instanceof Error ? error.message : 'Erreur inconnue.')
-    } finally {
-      setSaving(false)
-    }
-  }
-
-  return (
-    <>
-      <header className={styles.pageHeader}>
-        <div>
-          <p className={styles.eyebrow}>Product · Editorial operating surface</p>
-          <h1 className={styles.pageTitle}>Card Content Registry</h1>
-          <p className={styles.pageLead}>
-            {dossier.code} · {dossier.name}. Chaque carte devient un enregistrement stable, ordonné et révisable — jamais une ligne anonyme enfermée dans un PDF.
-          </p>
-        </div>
-        <div className={styles.headerActions}>
-          <span className={styles.sourceBanner}><Database size={13} /> {sourceMode === 'database' ? 'Live editorial registry' : 'Seed evidence mode'}</span>
-          <button className={styles.actionButton} type="button" onClick={() => setModal(true)}><Plus size={15} /> Structurer une carte</button>
-        </div>
-      </header>
-
-      <section className={styles.cardsLayout}>
-        <aside className={styles.sequenceRail}>
-          <div className={styles.sequenceSummary}>
-            <div className={styles.sequenceValue}>{dossier.cards.length}/{dossier.expectedCardCount ?? 'N/A'}</div>
-            <div className={styles.sequenceLabel}>Structured card sequence</div>
-          </div>
-          {sequenceSlots.length ? (
-            <div className={styles.sequenceSlots}>
-              {sequenceSlots.map((slot) => {
-                const card = dossier.cards.find((item) => item.sequence === slot)
-                return <button className={`${styles.sequenceSlot} ${card ? styles.sequenceSlotDone : ''}`} type="button" key={slot} onClick={() => card && setSelected(card.id)} title={card?.concept || `Slot ${slot} non structuré`}>{slot}</button>
-              })}
-            </div>
-          ) : (
-            <div className={styles.inspectorAlert} style={{ marginTop: 13 }}>Le nombre attendu est N/A dans le catalogue historique. Validez d’abord la spécification produit.</div>
-          )}
-        </aside>
-
-        <article className={styles.cardMatrix}>
-          <div className={styles.cardMatrixHead}>
-            <div><h2 className={styles.panelTitle}>Editorial matrix</h2><p className={styles.panelSubtitle}>Concept, recto, verso, langue, traduction, activité, difficulté, brief visuel et droits.</p></div>
-            <span className={styles.statusPill}>{dossier.cards.length} records</span>
-          </div>
-          {dossier.cards.length ? (
-            <div className={styles.tableWrap}>
-              <table className={styles.registryTable}>
-                <thead><tr><th>#</th><th>Concept</th><th>Recto</th><th>Langue</th><th>Difficulté</th><th>Approval</th></tr></thead>
-                <tbody>{dossier.cards.map((card) => <tr key={card.id} onClick={() => setSelected(card.id)} style={{ cursor: 'pointer' }}><td><strong>{card.sequence}</strong></td><td>{card.concept || 'Non renseigné'}</td><td>{card.frontText || 'Non renseigné'}</td><td>{card.language.toUpperCase()}</td><td>{card.difficulty}</td><td><span className={styles.statusPill}>{card.approvalStatus}</span></td></tr>)}</tbody>
-              </table>
-            </div>
-          ) : (
-            <div className={styles.emptyRegistry}>
-              <div className={styles.emptyRegistryInner}>
-                <span className={styles.emptyRegistryIcon}><BookOpenCheck size={28} /></span>
-                <h3 className={styles.emptyRegistryTitle}>Le registre carte par carte n’est pas présent dans le catalogue fourni.</h3>
-                <p className={styles.emptyRegistryCopy}>
-                  Le document source indique le nom de la collection, une quantité et un prix historique. Il ne fournit pas les concepts, textes, traductions, activités ou briefs visuels des cartes. Flashcards OS conserve donc un registre vide au lieu de fabriquer un faux contenu.
-                </p>
-                <button className={styles.actionButton} type="button" onClick={() => setModal(true)} style={{ marginTop: 16 }}><Plus size={15} /> Commencer la structuration réelle</button>
-              </div>
-            </div>
-          )}
-        </article>
-
-        <aside className={styles.cardInspector}>
-          <div className={styles.panelHeader} style={{ padding: 0, paddingBottom: 14 }}><div><h3 className={styles.panelTitle}>Card inspector</h3><p className={styles.panelSubtitle}>Détail éditorial du record sélectionné.</p></div><ShieldCheck size={17} color="#3150b5" /></div>
-          {selectedCard ? (
-            <div className={styles.sectionGrid} style={{ gridTemplateColumns: '1fr' }}>
-              <div className={styles.sectionCard}><div className={styles.sectionLabel}>Concept</div><div className={styles.sectionValue}>{selectedCard.concept || 'Non renseigné'}</div></div>
-              <div className={styles.sectionCard}><div className={styles.sectionLabel}>Recto</div><div className={styles.sectionValue}>{selectedCard.frontText || 'Non renseigné'}</div></div>
-              <div className={styles.sectionCard}><div className={styles.sectionLabel}>Verso / guidance</div><div className={styles.sectionValue}>{selectedCard.backGuidance || 'Non renseigné'}</div></div>
-              <div className={styles.sectionCard}><div className={styles.sectionLabel}>Brief visuel</div><div className={styles.sectionValue}>{selectedCard.imageBrief || 'Non renseigné'}</div></div>
-            </div>
-          ) : (
-            <>
-              <div className={styles.inspectorAlert}><AlertTriangle size={14} style={{ verticalAlign: 'middle', marginRight: 6 }} />Aucun record structuré sélectionné.</div>
-              <p className={styles.inspectorCopy}>L’inspecteur affichera le contenu, les traductions, les activités, le statut de droits et la décision d’approbation.</p>
-            </>
-          )}
-        </aside>
-      </section>
-
-      {modal ? (
-        <div className={styles.modalBackdrop} role="dialog" aria-modal="true" aria-label="Structurer une carte">
-          <form className={styles.modal} onSubmit={createCard}>
-            <div className={styles.modalHeader}>
-              <div><h2 className={styles.modalTitle}>Créer un record carte</h2><p className={styles.modalCopy}>Saisir uniquement le contenu réel et vérifié. Les champs non connus peuvent rester vides.</p></div>
-              <button className={styles.iconButton} type="button" onClick={() => setModal(false)}><X size={16} /></button>
-            </div>
-            <div className={styles.modalBody}>
-              <div className={styles.formGrid}>
-                <label className={styles.field}><span className={styles.fieldLabel}>Séquence</span><input className={styles.fieldInput} name="sequence" type="number" min="1" defaultValue={nextSequence} required /></label>
-                <label className={styles.field}><span className={styles.fieldLabel}>Langue</span><input className={styles.fieldInput} name="language" defaultValue="fr" required /></label>
-                <label className={`${styles.field} ${styles.fieldWide}`}><span className={styles.fieldLabel}>Concept canonique</span><input className={styles.fieldInput} name="concept" required /></label>
-                <label className={`${styles.field} ${styles.fieldWide}`}><span className={styles.fieldLabel}>Texte recto</span><input className={styles.fieldInput} name="frontText" /></label>
-                <label className={`${styles.field} ${styles.fieldWide}`}><span className={styles.fieldLabel}>Guidance verso</span><textarea className={styles.fieldTextarea} name="backGuidance" /></label>
-                <label className={styles.field}><span className={styles.fieldLabel}>Traduction</span><input className={styles.fieldInput} name="translation" /></label>
-                <label className={styles.field}><span className={styles.fieldLabel}>Prononciation</span><input className={styles.fieldInput} name="pronunciation" /></label>
-                <label className={`${styles.field} ${styles.fieldWide}`}><span className={styles.fieldLabel}>Exemple</span><textarea className={styles.fieldTextarea} name="example" /></label>
-                <label className={`${styles.field} ${styles.fieldWide}`}><span className={styles.fieldLabel}>Activité</span><textarea className={styles.fieldTextarea} name="activity" /></label>
-                <label className={styles.field}><span className={styles.fieldLabel}>Difficulté</span><select className={styles.fieldSelect} name="difficulty"><option value="foundation">Foundation</option><option value="developing">Developing</option><option value="advanced">Advanced</option></select></label>
-                <label className={`${styles.field} ${styles.fieldWide}`}><span className={styles.fieldLabel}>Brief visuel</span><textarea className={styles.fieldTextarea} name="imageBrief" /></label>
-              </div>
-              {message ? <div className={message.includes('ajoutée') ? styles.formSuccess : styles.formError}>{message}</div> : null}
-            </div>
-            <div className={styles.modalFooter}><button className={styles.ghostButton} type="button" onClick={() => setModal(false)}>Annuler</button><button className={styles.actionButton} disabled={saving} type="submit"><Plus size={15} /> {saving ? 'Enregistrement…' : 'Ajouter au registre'}</button></div>
-          </form>
-        </div>
-      ) : null}
-    </>
-  )
+type Mode='create'|'edit'
+export default function CardContentRegistry({dossier,sourceMode}:{dossier:CollectionDossier;sourceMode:'database'|'catalogue_seed'}){
+ const router=useRouter();const[modal,setModal]=useState<Mode|null>(null);const[saving,setSaving]=useState(false);const[message,setMessage]=useState('');const[selected,setSelected]=useState(dossier.cards[0]?.id||'');const selectedCard=dossier.cards.find((card)=>card.id===selected)||null;const expected=dossier.expectedCardCount||0;const sequenceSlots=useMemo(()=>Array.from({length:Math.min(expected||0,160)},(_,index)=>index+1),[expected]);const nextSequence=dossier.cards.length?Math.max(...dossier.cards.map((card)=>card.sequence))+1:1
+ async function submit(event:React.FormEvent<HTMLFormElement>){event.preventDefault();setSaving(true);setMessage('');const data=new FormData(event.currentTarget);const body={sequence:Number(data.get('sequence')),concept:String(data.get('concept')||''),frontText:String(data.get('frontText')||''),backGuidance:String(data.get('backGuidance')||''),language:String(data.get('language')||'fr'),translation:String(data.get('translation')||''),pronunciation:String(data.get('pronunciation')||''),example:String(data.get('example')||''),activity:String(data.get('activity')||''),difficulty:String(data.get('difficulty')||'foundation'),imageBrief:String(data.get('imageBrief')||''),rightsStatus:String(data.get('rightsStatus')||'unverified'),approvalStatus:String(data.get('approvalStatus')||'draft')};try{const url=modal==='edit'&&selectedCard?`/api/flashcards-os/collections/${encodeURIComponent(dossier.code)}/cards/${selectedCard.id}`:`/api/flashcards-os/collections/${encodeURIComponent(dossier.code)}/cards`;const response=await fetch(url,{method:modal==='edit'?'PATCH':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});const payload=await response.json();if(!response.ok)throw new Error(payload.error||'Action impossible.');setMessage(modal==='edit'?'Carte mise à jour.':'Carte ajoutée au registre.');router.refresh();setTimeout(()=>setModal(null),500)}catch(error){setMessage(error instanceof Error?error.message:'Erreur inconnue.')}finally{setSaving(false)}}
+ async function duplicate(card:CollectionCard){setSaving(true);try{const response=await fetch(`/api/flashcards-os/collections/${encodeURIComponent(dossier.code)}/cards`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sequence:nextSequence,concept:`${card.concept||'Carte'} · Copie`,frontText:card.frontText,backGuidance:card.backGuidance,language:card.language,translation:card.translation,pronunciation:card.pronunciation,example:card.example,activity:card.activity,difficulty:card.difficulty,imageBrief:card.imageBrief})});const payload=await response.json();if(!response.ok)throw new Error(payload.error||'Duplication impossible.');router.refresh()}catch(error){window.alert(error instanceof Error?error.message:'Duplication impossible.')}finally{setSaving(false)}}
+ async function remove(card:CollectionCard){if(!window.confirm(`Supprimer définitivement la carte #${card.sequence} « ${card.concept||''} » ?`))return;const response=await fetch(`/api/flashcards-os/collections/${encodeURIComponent(dossier.code)}/cards/${card.id}`,{method:'DELETE'});const payload=await response.json().catch(()=>({}));if(!response.ok){window.alert(payload.error||'Suppression impossible.');return}setSelected('');router.refresh()}
+ return <div className={styles.page}><header className={styles.hero}><div><Link href={`/flashcards-os/product/collections/${dossier.code.toLowerCase()}`}><ArrowLeft size={15}/> Collection Product Atelier</Link><span>CARD ARCHITECTURE LABORATORY</span><h1>{dossier.name}</h1><p>Construisez la séquence carte par carte avec une lignée stable, une vue storyboard et des actions réelles de création, modification, duplication et suppression applicable.</p></div><aside><strong>{dossier.cards.length}/{dossier.expectedCardCount??'—'}</strong><span>cartes structurées</span><small>{sourceMode==='database'?'Registre live':'Mode preuve catalogue'}</small><button type="button" onClick={()=>setModal('create')}><Plus size={15}/> Ajouter une carte</button></aside></header>
+ <section className={styles.layout}><aside className={styles.sequenceRail}><span>SEQUENCE MAP</span><div className={styles.sequenceProgress}><i style={{height:`${expected?Math.min(100,dossier.cards.length/expected*100):0}%`}}/></div><div className={styles.slots}>{sequenceSlots.length?sequenceSlots.map((slot)=>{const card=dossier.cards.find((item)=>item.sequence===slot);return <button type="button" key={slot} data-filled={Boolean(card)} data-active={selected===card?.id} onClick={()=>card&&setSelected(card.id)} title={card?.concept||`Emplacement ${slot}`}>{slot}</button>}):<p>Définissez le nombre de cartes attendu dans le dossier.</p>}</div></aside><main className={styles.storyboard}><header><div><span>HORIZONTAL PRODUCT STORYBOARD</span><h2>Recto, guidance, activité et production visuelle</h2></div><div><Link href={`/flashcards-os/documents?sourceType=collection&sourceId=${dossier.id}`}><FileText size={14}/> A4/PDF</Link><button type="button" onClick={()=>setModal('create')}><Plus size={14}/> Carte</button></div></header>{dossier.cards.length?<div className={styles.cardStrip}>{[...dossier.cards].sort((a,b)=>a.sequence-b.sequence).map((card)=><article key={card.id} data-active={selected===card.id} onClick={()=>setSelected(card.id)}><div className={styles.cardTop}><GripVertical size={15}/><span>#{String(card.sequence).padStart(2,'0')}</span><b>{card.language.toUpperCase()}</b></div><div className={styles.cardFace}><small>RECTO</small><strong>{card.frontText||card.concept||'Texte à structurer'}</strong></div><div className={styles.cardBack}><small>VERSO / GUIDANCE</small><p>{card.backGuidance||'Aucune guidance enregistrée.'}</p></div><footer><span>{card.difficulty}</span><span>{card.approvalStatus}</span></footer></article>)}</div>:<div className={styles.empty}><BookOpenCheck size={34}/><h2>Aucune carte structurée</h2><p>Le catalogue source ne contient pas le contenu carte par carte. Commencez uniquement avec du contenu réel.</p><button type="button" onClick={()=>setModal('create')}><Plus size={15}/> Créer la première carte</button></div>}</main><aside className={styles.inspector}>{selectedCard?<><div className={styles.inspectorTitle}><span>CARD INSPECTOR</span><ShieldCheck size={17}/></div><h2>{selectedCard.concept||`Carte ${selectedCard.sequence}`}</h2><dl><div><dt>Recto</dt><dd>{selectedCard.frontText||'Non renseigné'}</dd></div><div><dt>Verso</dt><dd>{selectedCard.backGuidance||'Non renseigné'}</dd></div><div><dt>Traduction</dt><dd>{selectedCard.translation||'Non renseignée'}</dd></div><div><dt>Activité</dt><dd>{selectedCard.activity||'Non renseignée'}</dd></div><div><dt>Brief visuel</dt><dd>{selectedCard.imageBrief||'Non renseigné'}</dd></div></dl><div className={styles.actions}><button type="button" onClick={()=>setModal('edit')}><Edit3 size={14}/> Modifier</button><button type="button" onClick={()=>duplicate(selectedCard)} disabled={saving}><Copy size={14}/> Dupliquer</button><button type="button" className={styles.danger} onClick={()=>remove(selectedCard)}><Trash2 size={14}/> Supprimer définitivement</button></div></>:<div className={styles.emptyInspector}>Sélectionnez une carte.</div>}</aside></section>
+ {modal?<div className={styles.backdrop}><form className={styles.modal} onSubmit={submit}><header><div><span>{modal==='edit'?'EDIT CARD':'CREATE CARD'}</span><h2>{modal==='edit'?'Modifier le record':'Ajouter un record réel'}</h2></div><button type="button" onClick={()=>setModal(null)}><X/></button></header><div className={styles.formGrid}><label>Séquence<input name="sequence" type="number" min="1" required defaultValue={modal==='edit'?selectedCard?.sequence:nextSequence}/></label><label>Langue<input name="language" required defaultValue={modal==='edit'?selectedCard?.language:'fr'}/></label><label className={styles.wide}>Concept<input name="concept" required defaultValue={modal==='edit'?selectedCard?.concept||'':''}/></label><label className={styles.wide}>Texte recto<input name="frontText" defaultValue={modal==='edit'?selectedCard?.frontText||'':''}/></label><label className={styles.wide}>Guidance verso<textarea name="backGuidance" defaultValue={modal==='edit'?selectedCard?.backGuidance||'':''}/></label><label>Traduction<input name="translation" defaultValue={modal==='edit'?selectedCard?.translation||'':''}/></label><label>Prononciation<input name="pronunciation" defaultValue={modal==='edit'?selectedCard?.pronunciation||'':''}/></label><label className={styles.wide}>Exemple<textarea name="example" defaultValue={modal==='edit'?selectedCard?.example||'':''}/></label><label className={styles.wide}>Activité<textarea name="activity" defaultValue={modal==='edit'?selectedCard?.activity||'':''}/></label><label>Difficulté<select name="difficulty" defaultValue={modal==='edit'?selectedCard?.difficulty:'foundation'}><option value="foundation">Foundation</option><option value="developing">Developing</option><option value="advanced">Advanced</option></select></label><label>Droits<select name="rightsStatus" defaultValue={modal==='edit'?selectedCard?.rightsStatus:'unverified'}><option value="unverified">Non vérifiés</option><option value="cleared">Cleared</option><option value="restricted">Restreints</option></select></label><label>État<select name="approvalStatus" defaultValue={modal==='edit'?selectedCard?.approvalStatus:'draft'}><option value="draft">Brouillon</option><option value="review">À relire</option><option value="approved">Approuvée</option><option value="rejected">Rejetée</option></select></label><label className={styles.wide}>Brief visuel<textarea name="imageBrief" defaultValue={modal==='edit'?selectedCard?.imageBrief||'':''}/></label></div>{message?<div className={styles.message}>{message}</div>:null}<footer><button type="button" onClick={()=>setModal(null)}>Annuler</button><button type="submit" disabled={saving}><Save size={14}/>{saving?'Enregistrement…':modal==='edit'?'Enregistrer':'Créer la carte'}</button></footer></form></div>:null}</div>
 }

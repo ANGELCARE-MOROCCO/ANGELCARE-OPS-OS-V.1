@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation'
 import {
   BookOpenCheck,
   Bot,
+  BriefcaseBusiness,
   Boxes,
   ChevronLeft,
   ChevronRight,
@@ -25,6 +26,7 @@ import { sd2030 } from './ServiceDesignStudio2030'
 
 const dockItems = [
   { href: '/carelink-ops/service-design', label: 'Créer', detail: 'Mission, programme ou package', icon: Sparkles, match: ['/carelink-ops/service-design', '/carelink-ops/service-design/factory'] },
+  { href: '/carelink-ops/service-design/my-work', label: 'Mon travail', detail: 'Drafts, favoris, vues et PDF', icon: BriefcaseBusiness, match: ['/carelink-ops/service-design/my-work', '/carelink-ops/service-design/workbench', '/carelink-ops/service-design/compare'] },
   { href: '/carelink-ops/service-design/catalogue', label: 'Catalogue', detail: 'Catégories et portefeuille', icon: Boxes, match: ['/carelink-ops/service-design/catalogue'] },
   { href: '/carelink-ops/service-design/standards/doctrine', label: 'Doctrine', detail: 'Règles, activités et capacités', icon: BookOpenCheck, match: ['/carelink-ops/service-design/standards'] },
   { href: '/carelink-ops/service-design/planning', label: 'Mission Studio', detail: 'Plans et timelines', icon: Layers3, match: ['/carelink-ops/service-design/planning'] },

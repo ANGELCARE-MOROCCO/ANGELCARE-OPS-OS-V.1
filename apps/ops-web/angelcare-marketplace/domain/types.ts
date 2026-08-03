@@ -372,6 +372,14 @@ export type MarketplacePermission =
   | 'marketplace.launch.pause'
   | 'marketplace.launch.rollback_authorize'
   | 'marketplace.launch.post_launch.manage'
+  | 'marketplace.intelligence.view'
+  | 'marketplace.intelligence.metrics.manage'
+  | 'marketplace.growth.view'
+  | 'marketplace.growth.experiments.manage'
+  | 'marketplace.performance.view'
+  | 'marketplace.security.assess'
+  | 'marketplace.launch.approve'
+  | 'marketplace.launch.monitoring'
 export interface MarketplaceActor {
   id: string
   email: string | null

@@ -2,7 +2,7 @@
 import { useMemo, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, Check, CheckCircle2, ChevronDown, ChevronRight, LibraryBig, PackageCheck, ShieldCheck, Sparkles } from 'lucide-react'
+import { ArrowLeft, Check, CheckCircle2, ChevronDown, ChevronRight, GitCompareArrows, LibraryBig, PackageCheck, PanelsTopLeft, ShieldCheck, Sparkles } from 'lucide-react'
 import type { CatalogueCompositionResult, CatalogueCompositionScenario, CatalogueJourneyScenario, CataloguePackageScenario } from '@/lib/flashcards-os/catalogue-composer/types'
 import styles from './catalogue-composer.module.css'
 import { money, sourceLabel } from './ComposerPrimitives'
@@ -12,6 +12,7 @@ export default function CatalogueResultsTheatre({result}:{result:CatalogueCompos
   const [selected,setSelected]=useState<string[]>([])
   const [expanded,setExpanded]=useState<string|null>(result.scenarios[0]?.id||null)
   const [working,setWorking]=useState(false)
+  const [opening,setOpening]=useState<string|null>(null)
   const [error,setError]=useState('')
   const collectionMap=useMemo(()=>new Map(result.collections.map((item)=>[item.id,item])),[result.collections])
   function toggle(id:string){setSelected((current)=>current.includes(id)?current.filter((item)=>item!==id):[...current,id])}
@@ -22,16 +23,19 @@ export default function CatalogueResultsTheatre({result}:{result:CatalogueCompos
     router.push(result.universe==='b2b'?'/flashcards-os/solutions/b2b':'/flashcards-os/solutions/b2c')
     router.refresh()
   }catch(e){setError(e instanceof Error?e.message:'Publication impossible.');setWorking(false)}}
+
+  async function openWorkbench(scenarioId:string){setOpening(scenarioId);setError('');try{const response=await fetch('/api/flashcards-os/px/workbenches/from-scenario',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({scenarioId})});const payload=await response.json().catch(()=>({}));if(!response.ok)throw new Error(String(payload.error||'Workbench impossible.'));router.push(`/flashcards-os/workbench/${payload.workbench.kind}/${payload.workbench.id}`)}catch(e){setError(e instanceof Error?e.message:'Workbench impossible.');setOpening(null)}}
+  function compare(){const ids=(selected.length?selected:result.scenarios.slice(0,Math.min(4,result.scenarios.length)).map((item)=>item.id)).slice(0,4);router.push(`/flashcards-os/solutions/catalogue-results/${result.requestId}/compare?ids=${encodeURIComponent(ids.join(','))}`)}
   return <div className={styles.page}>
     <section className={styles.resultsHero}><div><Link className={styles.backLink} href={result.mode==='package'?'/flashcards-os/solutions/composer':'/flashcards-os/solutions/learning-journeys/new'}><ArrowLeft size={15}/> Nouvelle compilation</Link><div className={styles.kicker}><Sparkles size={16}/> CATALOGUE COMPOSITION THEATRE</div><h1>{result.title}</h1><p>{result.scenarios.length} proposition(s) compilée(s) à partir du registre local. Sélectionnez une ou plusieurs références pour publication immédiate dans la vitrine {result.universe.toUpperCase()}.</p></div><aside className={styles.sourceSeal}><strong>LOCAL CATALOGUE ONLY</strong><span>{sourceLabel(result.sourceMode)}</span><small>{result.requestCode} · IDs de collections validés · prix calculés côté serveur</small></aside></section>
-    <section className={styles.resultCommand}><div><strong>{selected.length}</strong><span>sélection(s)</span></div><div><strong>{result.scenarios.length}</strong><span>propositions</span></div><div><strong>{new Set(result.scenarios.flatMap((item)=>item.collectionIds)).size}</strong><span>collections utilisées</span></div><div className={styles.commandGrow}><ShieldCheck size={17}/><span>OpenRouter conseille. Le catalogue, les prix et votre décision font autorité.</span></div><button className={styles.publishButton} disabled={!selected.length||working} onClick={publish}><PackageCheck size={17}/>{working?'Publication…':`Publier ${selected.length||''} sélection${selected.length>1?'s':''}`}</button></section>
+    <section className={styles.resultCommand}><div><strong>{selected.length}</strong><span>sélection(s)</span></div><div><strong>{result.scenarios.length}</strong><span>propositions</span></div><div><strong>{new Set(result.scenarios.flatMap((item)=>item.collectionIds)).size}</strong><span>collections utilisées</span></div><div className={styles.commandGrow}><ShieldCheck size={17}/><span>OpenRouter conseille. Le catalogue, les prix et votre décision font autorité.</span></div><button className={styles.secondaryAction} disabled={result.scenarios.length<2} onClick={compare}><GitCompareArrows size={17}/> Comparer {selected.length>=2?selected.length:'les propositions'}</button><button className={styles.publishButton} disabled={!selected.length||working} onClick={publish}><PackageCheck size={17}/>{working?'Publication…':`Publier ${selected.length||''} sélection${selected.length>1?'s':''}`}</button></section>
     {error?<div className={styles.errorBox}>{error}</div>:null}
     <section className={styles.scenarioGrid}>{result.scenarios.map((scenario,index)=><article key={scenario.id} className={`${styles.scenarioCard} ${selected.includes(scenario.id)?styles.scenarioSelected:''}`}>
       <header><button className={styles.selectScenario} onClick={()=>toggle(scenario.id)}>{selected.includes(scenario.id)?<CheckCircle2 size={21}/>:<span>{index+1}</span>}</button><div><span>{result.mode==='package'?'PACKAGE':'PROGRAMME'} · {scenario.collectionIds.length} COLLECTIONS</span><h2>{scenario.name}</h2><p>{scenario.mode==='package'?scenario.positioning:scenario.thesis}</p></div><button className={styles.expandButton} onClick={()=>setExpanded(expanded===scenario.id?null:scenario.id)}>{expanded===scenario.id?<ChevronDown/>:<ChevronRight/>}</button></header>
       <div className={styles.scenarioMetrics}><div><span>Total</span><strong>{money(scenario.commercial.finalTotalDh)}</strong></div><div><span>Collections</span><strong>{scenario.collectionIds.length}</strong></div><div><span>IA réelle</span><strong>{scenario.modelUsed||'OpenRouter Free'}</strong></div><div><span>Prix</span><strong>Déterministe</strong></div></div>
       <div className={styles.collectionPills}>{scenario.collectionIds.map((id)=><span key={id}><LibraryBig size={12}/>{collectionMap.get(id)?.name||id}<small>v{collectionMap.get(id)?.versionLabel||'catalogue'}</small></span>)}</div>
       {expanded===scenario.id?<ScenarioDetail scenario={scenario} collectionMap={collectionMap}/>:null}
-      <footer><button onClick={()=>toggle(scenario.id)} className={selected.includes(scenario.id)?styles.selectedAction:styles.secondaryAction}>{selected.includes(scenario.id)?<><Check size={15}/> Sélectionné</>:<>Sélectionner cette proposition</>}</button></footer>
+      <footer><button type="button" onClick={()=>openWorkbench(scenario.id)} className={styles.secondaryAction} disabled={opening===scenario.id}><PanelsTopLeft size={15}/>{opening===scenario.id?'Ouverture…':'Ouvrir Workbench'}</button><button onClick={()=>toggle(scenario.id)} className={selected.includes(scenario.id)?styles.selectedAction:styles.secondaryAction}>{selected.includes(scenario.id)?<><Check size={15}/> Sélectionné</>:<>Sélectionner cette proposition</>}</button></footer>
     </article>)}</section>
   </div>
 }

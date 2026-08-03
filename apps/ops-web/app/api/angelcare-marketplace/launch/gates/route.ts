@@ -1,2 +1,1 @@
-import { handleLaunchGates } from '@/angelcare-marketplace/launch-assurance/api-handlers'
-export const GET=handleLaunchGates
+export {handleLaunch as GET} from '@/angelcare-marketplace/final-authority/api-handlers'

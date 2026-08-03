@@ -1,4 +1,4 @@
-import { requireMarketplacePageContext } from '@/angelcare-marketplace/auth/context'
-import { listPostLaunchReviews } from '@/angelcare-marketplace/launch-assurance/repository'
-import { PostLaunchAuthority } from '@/angelcare-marketplace/launch-assurance/components/LaunchRegisters'
-export default async function Page(){await requireMarketplacePageContext('marketplace.launch.view');return <PostLaunchAuthority items={await listPostLaunchReviews()}/>}
+import {requireMarketplacePageContext} from '@/angelcare-marketplace/auth/context'
+import {AuthorityWorkspace} from '@/angelcare-marketplace/final-authority/components/AuthorityWorkspace'
+import {listMonitoring} from '@/angelcare-marketplace/final-authority/repository'
+export default async function Page(){const c=await requireMarketplacePageContext('marketplace.launch.view');return <AuthorityWorkspace eyebrow="GOVERNED CONTROL SURFACE" title="Launch · Monitoring" copy="Evidence, owner, status, expiry and action remain persistent and auditable." items={await listMonitoring(c)}/>}

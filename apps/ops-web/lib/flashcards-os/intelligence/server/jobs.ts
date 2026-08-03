@@ -334,7 +334,7 @@ async function processMissionAcquisition(client: Awaited<ReturnType<typeof creat
         includeRawContent: mission.mode === 'deep_evidence' || mission.mode === 'known_source',
       })
       usedCredits += response.credits
-      const persisted = []
+      const persisted: any[] = []
       for (const result of response.results) {
         const source = await persistSearchSource(client, mission, result, response.requestId, String(queryRow.id))
         persisted.push(source)

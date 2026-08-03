@@ -1,2 +1,1 @@
-import { handleDefects } from '@/angelcare-marketplace/launch-assurance/api-handlers'
-export const GET=handleDefects
+export {handleDefects as GET} from '@/angelcare-marketplace/final-authority/api-handlers'

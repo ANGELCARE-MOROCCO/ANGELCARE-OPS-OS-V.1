@@ -66,6 +66,18 @@ export type AcWhatsAppConversation = {
   last_read_at?: string | null; last_read_by_user_id?: string | null; metadata?: Record<string, unknown>
 }
 
+export type AcWhatsAppAttachment = {
+  id: string
+  message_id: string
+  storage_provider?: string | null
+  storage_path?: string | null
+  source_url?: string | null
+  file_name?: string | null
+  mime_type?: string | null
+  size_bytes?: number | null
+  metadata?: Record<string, unknown> | null
+}
+
 export type AcWhatsAppMessage = {
   id: string; conversation_id: string; external_message_id?: string | null; client_message_id?: string | null
   direction: 'inbound' | 'outbound' | 'internal'; message_type: string; body?: string | null; caption?: string | null
@@ -76,7 +88,7 @@ export type AcWhatsAppMessage = {
   sender_identity?: { display_name: string; role?: string | null; type: string; origin?: string | null }
   responsible_identity?: { display_name: string; role?: string | null } | null
   sent_at?: string | null; delivered_at?: string | null; read_at?: string | null; received_at?: string | null
-  created_at: string; attachments?: Array<Record<string, unknown>>
+  created_at: string; attachments?: AcWhatsAppAttachment[]
 }
 
 export type AcWhatsAppCampaign = {

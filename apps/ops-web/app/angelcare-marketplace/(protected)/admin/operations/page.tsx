@@ -1,4 +1,4 @@
-import { requireMarketplacePageContext } from '@/angelcare-marketplace/auth/context'
-import { listMissions,operationsSummary } from '@/angelcare-marketplace/operations-execution/repository'
-import { OperationsCommand } from '@/angelcare-marketplace/operations-execution/components/OperationsCommand'
-export default async function Page(){const context=await requireMarketplacePageContext('marketplace.operations.view');const [summary,missions]=await Promise.all([operationsSummary(context),listMissions(context)]);return <OperationsCommand summary={summary} missions={missions}/>}
+import {requireMarketplacePageContext} from '@/angelcare-marketplace/auth/context'
+import {OperationsCommerceCommand} from '@/angelcare-marketplace/operations-reconciliation/components/OperationsCommerceCommand'
+import {operationsCommerceSummary} from '@/angelcare-marketplace/operations-reconciliation/repository'
+export default async function Page(){const c=await requireMarketplacePageContext('marketplace.operations.view');return <OperationsCommerceCommand data={await operationsCommerceSummary(c)}/>}

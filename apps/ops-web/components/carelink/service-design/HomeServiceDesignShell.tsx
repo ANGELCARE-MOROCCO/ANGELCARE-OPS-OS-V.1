@@ -18,6 +18,9 @@ function masterKey(pathname: string) {
 
 function routeTitle(pathname: string, fallback: string) {
   const labels: Array<[string, string, string]> = [
+    [`${HSD_ROUTE_ROOT}/workbench`, 'Direct Manipulation Workbench', 'Timeline éditable, autosave, transformations et multi-audience'],
+    [`${HSD_ROUTE_ROOT}/my-work`, 'Mon travail Service Design', 'Drafts, favoris, vues sauvegardées et documents'],
+    [`${HSD_ROUTE_ROOT}/compare`, 'Visual Difference Engine', 'Comparaison, différences et fusion de scénarios'],
     [`${HSD_ROUTE_ROOT}/factory/category`, 'Category Experience Studio', 'Configuration métier, scénario prérempli et génération contrôlée'],
     [`${HSD_ROUTE_ROOT}/factory/import`, 'Import Intelligence Studio', 'Import ciblé par catégorie et ressource'],
     [`${HSD_ROUTE_ROOT}/catalogue/categories`, 'Service Portfolio Landscape', 'Catégories, readiness et dossiers produit'],

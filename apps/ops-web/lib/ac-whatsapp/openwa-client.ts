@@ -44,12 +44,12 @@ export const openwa = {
   createSession: (input: { name: string; config?: Record<string, unknown> }) => request<Record<string, unknown>>('/sessions', { method: 'POST', body: input }),
   startSession: (id: string) => request<Record<string, unknown>>(`/sessions/${encodeURIComponent(id)}/start`, { method: 'POST', timeoutMs: 45_000 }),
   stopSession: (id: string) => request<Record<string, unknown>>(`/sessions/${encodeURIComponent(id)}/stop`, { method: 'POST' }),
-  deleteSession: (id: string) => request<void>(`/sessions/${encodeURIComponent(id)}`, { method: 'DELETE' }),
   logoutSession: (id: string) => request<Record<string, unknown>>(`/sessions/${encodeURIComponent(id)}/logout`, { method: 'POST', timeoutMs: 45_000 }),
   getQr: (id: string) => request<Record<string, unknown>>(`/sessions/${encodeURIComponent(id)}/qr`),
   pairingCode: (id: string, phoneNumber: string) => request<Record<string, unknown>>(`/sessions/${encodeURIComponent(id)}/pairing-code`, { method: 'POST', body: { phoneNumber } }),
   listChats: (id: string) => request<Array<Record<string, unknown>>>(`/sessions/${encodeURIComponent(id)}/chats?limit=1000`),
   listMessages: (id: string, chatId?: string, limit = 100) => request<Array<Record<string, unknown>>>(`/sessions/${encodeURIComponent(id)}/messages?limit=${limit}${chatId ? `&chatId=${encodeURIComponent(chatId)}` : ''}`),
+  getChatHistory: (id: string, chatId: string, limit = 100, includeMedia = false) => request<Array<Record<string, unknown>>>(`/sessions/${encodeURIComponent(id)}/messages/${encodeURIComponent(chatId)}/history?limit=${Math.max(1, Math.min(limit, 100))}&includeMedia=${includeMedia ? 'true' : 'false'}`, { timeoutMs: includeMedia ? 120_000 : 45_000 }),
   sendText: (id: string, chatId: string, text: string) => request<Record<string, unknown>>(`/sessions/${encodeURIComponent(id)}/messages/send-text`, { method: 'POST', body: { chatId, text }, timeoutMs: 45_000 }),
   sendImage: (id: string, payload: Record<string, unknown>) => request<Record<string, unknown>>(`/sessions/${encodeURIComponent(id)}/messages/send-image`, { method: 'POST', body: payload, timeoutMs: 90_000 }),
   sendVideo: (id: string, payload: Record<string, unknown>) => request<Record<string, unknown>>(`/sessions/${encodeURIComponent(id)}/messages/send-video`, { method: 'POST', body: payload, timeoutMs: 120_000 }),
@@ -60,6 +60,7 @@ export const openwa = {
     if (type === 'image') return request<Record<string, unknown>>(`/sessions/${encodeURIComponent(id)}/messages/send-image`, { method: 'POST', body: payload, timeoutMs: 90_000 })
     if (type === 'video') return request<Record<string, unknown>>(`/sessions/${encodeURIComponent(id)}/messages/send-video`, { method: 'POST', body: payload, timeoutMs: 120_000 })
     if (type === 'audio') return request<Record<string, unknown>>(`/sessions/${encodeURIComponent(id)}/messages/send-audio`, { method: 'POST', body: payload, timeoutMs: 120_000 })
+    if (type === 'voice') return request<Record<string, unknown>>(`/sessions/${encodeURIComponent(id)}/messages/send-audio`, { method: 'POST', body: { ...payload, ptt: true }, timeoutMs: 120_000 })
     if (type === 'document') return request<Record<string, unknown>>(`/sessions/${encodeURIComponent(id)}/messages/send-document`, { method: 'POST', body: payload, timeoutMs: 120_000 })
     throw new OpenWAError(`UNSUPPORTED_MEDIA_TYPE:${type}`, 422)
   },

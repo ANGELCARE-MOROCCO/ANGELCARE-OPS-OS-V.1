@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { revalidatePath } from 'next/cache'
 import { assertFlashcardsApiAccess } from '@/lib/flashcards-os/server/access'
-import { recordFlashcardsAudit, updateCollection } from '@/lib/flashcards-os/server/repository'
+import { deleteCollectionPermanently, inspectCollectionDeletion, recordFlashcardsAudit, updateCollection } from '@/lib/flashcards-os/server/repository'
 
 export async function PATCH(request: Request, context: { params: Promise<{ collectionId: string }> }) {
   const access = await assertFlashcardsApiAccess('flashcards_os.manage_collections')
@@ -49,5 +49,45 @@ export async function PATCH(request: Request, context: { params: Promise<{ colle
     return NextResponse.json({ collection })
   } catch (error) {
     return NextResponse.json({ error: error instanceof Error ? error.message : 'Unable to update collection.' }, { status: 500 })
+  }
+}
+
+
+export async function GET(_request: Request, context: { params: Promise<{ collectionId: string }> }) {
+  const access = await assertFlashcardsApiAccess('flashcards_os.manage_collections')
+  if (!access.ok) return NextResponse.json({ error: access.message }, { status: access.status })
+  try {
+    const { collectionId } = await context.params
+    return NextResponse.json(await inspectCollectionDeletion(decodeURIComponent(collectionId)))
+  } catch (error) {
+    return NextResponse.json({ error: error instanceof Error ? error.message : 'Unable to inspect collection deletion.' }, { status: 500 })
+  }
+}
+
+export async function DELETE(_request: Request, context: { params: Promise<{ collectionId: string }> }) {
+  const access = await assertFlashcardsApiAccess('flashcards_os.manage_collections')
+  if (!access.ok) return NextResponse.json({ error: access.message }, { status: access.status })
+  try {
+    const { collectionId } = await context.params
+    const decoded = decodeURIComponent(collectionId)
+    const inspection = await inspectCollectionDeletion(decoded)
+    if (!inspection.canDelete) return NextResponse.json({ error: inspection.protectedLifecycle ? `Lifecycle protégé: ${inspection.collection.lifecycle}` : 'La collection possède des dépendances actives.', ...inspection }, { status: 409 })
+    const collection = await deleteCollectionPermanently(decoded)
+    await recordFlashcardsAudit({
+      actorId: String((access.user as any).id || ''),
+      actorName: String((access.user as any).full_name || (access.user as any).email || ''),
+      actionKey: 'collection.deleted_permanently',
+      actionLabel: 'Collection supprimée définitivement',
+      entityType: 'collection',
+      entityId: String(collection.id),
+      summary: `Suppression définitive de ${collection.code} · ${collection.name}`,
+      before: collection,
+    })
+    revalidatePath('/flashcards-os')
+    revalidatePath('/flashcards-os/product')
+    revalidatePath('/flashcards-os/product/collections')
+    return NextResponse.json({ deleted: true, collection })
+  } catch (error) {
+    return NextResponse.json({ error: error instanceof Error ? error.message : 'Unable to delete collection.' }, { status: 500 })
   }
 }

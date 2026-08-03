@@ -1,0 +1,5 @@
+import { NextResponse } from 'next/server'
+import { assertFlashcardsApiAccess } from '@/lib/flashcards-os/server/access'
+import { actorFromPxUser, createAnnotation, listAnnotations } from '@/lib/flashcards-os/px/repository'
+export async function GET(request:Request){const access=await assertFlashcardsApiAccess('flashcards_os.view');if(!access.ok)return NextResponse.json({error:access.message},{status:access.status});const url=new URL(request.url);try{return NextResponse.json({annotations:await listAnnotations(String(url.searchParams.get('entityType')||''),String(url.searchParams.get('entityId')||''))})}catch(error){return NextResponse.json({error:error instanceof Error?error.message:'Annotation list failed.'},{status:400})}}
+export async function POST(request:Request){const access=await assertFlashcardsApiAccess('flashcards_os.view');if(!access.ok)return NextResponse.json({error:access.message},{status:access.status});try{return NextResponse.json(await createAnnotation(await request.json(),actorFromPxUser(access.user)),{status:201})}catch(error){return NextResponse.json({error:error instanceof Error?error.message:'Annotation creation failed.'},{status:400})}}

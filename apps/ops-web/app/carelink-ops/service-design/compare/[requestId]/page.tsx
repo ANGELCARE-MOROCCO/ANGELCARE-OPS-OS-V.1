@@ -1,0 +1,2 @@
+import { ScenarioComparisonTheatre } from '@/components/carelink/service-design/product-experience/ScenarioComparisonTheatre'
+export default async function Page({params}:{params:Promise<{requestId:string}>}){const {requestId}=await params;return <ScenarioComparisonTheatre requestId={requestId}/>}

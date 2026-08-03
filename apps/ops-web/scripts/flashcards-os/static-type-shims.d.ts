@@ -123,11 +123,11 @@ declare module '*.module.css' { const classes: Record<string, string>; export de
 declare module 'bcryptjs' { const bcrypt: { hash(value: string, rounds: number): Promise<string>; compare(value: string, hash: string): Promise<boolean> }; export default bcrypt }
 declare module 'crypto' { const crypto: { randomBytes(size: number): { toString(encoding: string): string } }; export default crypto }
 
-declare const process: { env: Record<string, string | undefined>; pid: number }
+declare const process: { env: Record<string, string | undefined>; pid: number; cwd(): string }
 
 declare module 'node:crypto' {
   export function randomUUID(): string
-  export function createHash(algorithm: string): { update(value: string): any; digest(encoding: string): string }
+  export function createHash(algorithm: string): { update(value: any): any; digest(encoding: string): string }
 }
 
 declare module 'lucide-react' {
@@ -181,10 +181,92 @@ declare module 'pdf-lib' {
   export class PDFDocument {
     static create(): Promise<PDFDocument>
     embedFont(font:any): Promise<any>
+    embedPng(bytes:any): Promise<any>
     addPage(size?:[number,number]): any
     getPages(): any[]
     save(): Promise<Uint8Array>
+    setTitle(value:string):void
+    setSubject(value:string):void
+    setAuthor(value:string):void
+    setCreator(value:string):void
+    setProducer(value:string):void
+    setCreationDate(value:Date):void
   }
 }
 declare module 'lucide-react' { export const Bot: any; export const FileLock2: any; export const Fingerprint: any }
 declare module 'lucide-react' { export const LibraryBig: any; export const PackagePlus: any; export const Check: any }
+
+declare namespace React {
+  interface KeyboardEvent<T = Element> { key: string; metaKey: boolean; ctrlKey: boolean; shiftKey: boolean; altKey: boolean; preventDefault(): void; stopPropagation(): void; currentTarget: T; target: EventTarget & T }
+  interface DragEvent<T = Element> { dataTransfer: any; preventDefault(): void; stopPropagation(): void; currentTarget: T; target: EventTarget & T }
+  interface FocusEvent<T = Element> { currentTarget: T; target: EventTarget & T }
+  interface RefObject<T> { current: T | null }
+}
+
+declare module 'react' {
+  export type KeyboardEvent<T = Element> = React.KeyboardEvent<T>
+  export type DragEvent<T = Element> = React.DragEvent<T>
+  export type FocusEvent<T = Element> = React.FocusEvent<T>
+  export function useEffect(effect: () => void | (() => void), dependencies?: readonly unknown[]): void
+  export function useRef<T>(initialValue: T): { current: T }
+  export function useCallback<T extends (...args:any[])=>any>(callback:T, dependencies:readonly unknown[]):T
+  export function useReducer<R extends (state:any, action:any)=>any>(reducer:R, initialState:any):[ReturnType<R>, (action:Parameters<R>[1])=>void]
+  export function useTransition(): [boolean, (callback:()=>void)=>void]
+  export function useId(): string
+}
+
+declare module 'lucide-react' {
+  export const ArrowDown: any
+  export const ArrowUp: any
+  export const Bookmark: any
+  export const BriefcaseBusiness: any
+  export const ChevronLeft: any
+  export const Eye: any
+  export const FolderClock: any
+  export const FolderOpen: any
+  export const GalleryVerticalEnd: any
+  export const GraduationCap: any
+  export const GripVertical: any
+  export const LayoutGrid: any
+  export const Lock: any
+  export const Menu: any
+  export const Minus: any
+  export const PanelLeftClose: any
+  export const PanelLeftOpen: any
+  export const PanelsTopLeft: any
+  export const Printer: any
+  export const Redo2: any
+  export const RotateCcw: any
+  export const Undo2: any
+  export const Unlock: any
+  export const WandSparkles: any
+}
+
+declare module 'node:fs/promises' {
+  export function readFile(path:string): Promise<Uint8Array>
+}
+declare module 'node:path' {
+  const path:{join(...parts:string[]):string}
+  export default path
+}
+
+declare module '@/lib/supabase/server' {
+  export function createClient(): Promise<any>
+  export function createSupabaseServerClient(): Promise<any>
+  export function createUserClient(): Promise<any>
+  export function createServiceClient(): Promise<any>
+}
+declare module '@/lib/getUser' {
+  export function getUser(): Promise<any>
+  export function getCurrentUser(): Promise<any>
+}
+declare module '@/lib/auth/session' {
+  export const APP_SESSION_COOKIE: string
+  export function getCurrentUser(): Promise<any>
+  export function getCurrentAppUser(): Promise<any>
+  export function requireUser(): Promise<any>
+  export function requireRole(allowedRoles: string[]): Promise<any>
+}
+declare module '@/lib/supabase/env' { export const supabaseUrl:string; export const supabaseAnonKey:string }
+declare module 'lucide-react' { export const Grid3X3:any; export const Table2:any }
+declare module 'lucide-react' { export const WandSparkles:any; export const HardDrive:any }

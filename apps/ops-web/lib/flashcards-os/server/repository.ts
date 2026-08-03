@@ -443,6 +443,76 @@ export async function updateCollection(codeOrId: string, input: CollectionMutati
   return data
 }
 
+
+export type CollectionDeletionDependency = { table: string; label: string; count: number }
+
+export async function inspectCollectionDeletion(codeOrId: string) {
+  const client = await createServiceClient()
+  const { data: existing, error: findError } = await table(client, 'collections')
+    .select('id,code,name,lifecycle,status')
+    .eq('tenant_key', TENANT_KEY)
+    .or(`id.eq.${codeOrId},code.eq.${codeOrId.toUpperCase()}`)
+    .maybeSingle()
+  if (findError || !existing) throw new Error(findError?.message || 'Collection not found.')
+
+  const definitions = [
+    ['collection_versions', 'Versions de collection', 'collection_id'],
+    ['editions', 'Éditions', 'collection_id'],
+    ['formats', 'Formats', 'collection_id'],
+    ['variants', 'Variantes', 'collection_id'],
+    ['cards', 'Cartes', 'collection_id'],
+    ['import_issues', 'Anomalies importées', 'collection_id'],
+    ['production_commands', 'Commandes de production', 'collection_id'],
+    ['external_production_jobs', 'Jobs de production externes', 'collection_id'],
+    ['upload_sessions', 'Sessions d’upload', 'collection_id'],
+    ['storage_objects', 'Objets Windows Node', 'collection_id'],
+    ['source_packages', 'Packages source', 'collection_id'],
+    ['deliverables', 'Livrables', 'collection_id'],
+    ['product_releases', 'Releases produit', 'collection_id'],
+    ['product_quality_signals', 'Signaux qualité', 'collection_id'],
+    ['catalogue_collection_commercials', 'Configuration commerciale catalogue', 'collection_id'],
+    ['catalogue_solution_items', 'Packages et solutions', 'collection_id'],
+    ['catalogue_journey_items', 'Programmes d’apprentissage', 'collection_id'],
+    ['catalogue_journey_activity_links', 'Activités de programme', 'collection_id'],
+    ['catalogue_sellable_items', 'Sellables publiés', 'collection_id'],
+  ] as const
+  const dependencies: CollectionDeletionDependency[] = []
+  for (const [tableName, label, column] of definitions) {
+    const { count, error } = await table(client, tableName)
+      .select('id', { count: 'exact', head: true })
+      .eq('tenant_key', TENANT_KEY)
+      .eq(column, existing.id)
+    if (error) throw new Error(`Unable to inspect ${tableName}: ${error.message}`)
+    if (Number(count || 0) > 0) dependencies.push({ table: tableName, label, count: Number(count) })
+  }
+  const { count: relationshipCount, error: relationshipError } = await table(client, 'collection_relationships')
+    .select('id', { count: 'exact', head: true })
+    .or(`source_collection_id.eq.${existing.id},target_collection_id.eq.${existing.id}`)
+  if (relationshipError) throw new Error(`Unable to inspect collection relationships: ${relationshipError.message}`)
+  if (Number(relationshipCount || 0) > 0) dependencies.push({ table: 'collection_relationships', label: 'Relations entre collections', count: Number(relationshipCount) })
+
+  const lifecycle = String(existing.lifecycle || '')
+  const protectedLifecycle = ['approved', 'published', 'archived'].includes(lifecycle)
+  return { collection: existing, dependencies, canDelete: !protectedLifecycle && dependencies.length === 0, protectedLifecycle }
+}
+
+export async function deleteCollectionPermanently(codeOrId: string) {
+  const inspection = await inspectCollectionDeletion(codeOrId)
+  if (inspection.protectedLifecycle) throw new Error(`La collection est au lifecycle ${inspection.collection.lifecycle}. Créez une version de remplacement au lieu de supprimer l’historique.`)
+  if (inspection.dependencies.length) {
+    const detail = inspection.dependencies.map((item) => `${item.label}: ${item.count}`).join(' · ')
+    throw new Error(`Suppression bloquée par des dépendances actives — ${detail}`)
+  }
+  const client = await createServiceClient()
+  const { error: sectionsError } = await table(client, 'collection_dossier_sections')
+    .delete().eq('collection_id', inspection.collection.id)
+  if (sectionsError) throw new Error(`Unable to delete collection dossier sections: ${sectionsError.message}`)
+  const { error } = await table(client, 'collections')
+    .delete().eq('tenant_key', TENANT_KEY).eq('id', inspection.collection.id)
+  if (error) throw new Error(`Permanent deletion blocked by an active dependency: ${error.message}`)
+  return inspection.collection
+}
+
 export async function createCard(collectionCodeOrId: string, input: Partial<CollectionCard> & { sequence: number }) {
   const client = await createServiceClient()
   const { data: collection, error: findError } = await table(client, 'collections').select('id').eq('tenant_key', TENANT_KEY).or(`id.eq.${collectionCodeOrId},code.eq.${collectionCodeOrId.toUpperCase()}`).maybeSingle()
@@ -469,6 +539,41 @@ export async function createCard(collectionCodeOrId: string, input: Partial<Coll
   if (error) throw new Error(error.message)
   await client.rpc('fc_os_refresh_collection_structured_card_count', { target_collection_id: collection.id })
   return data
+}
+
+
+export async function updateCard(cardId: string, input: Partial<CollectionCard> & { sequence?: number }) {
+  const client = await createServiceClient()
+  const { data: existing, error: findError } = await table(client, 'cards').select('*').eq('tenant_key', TENANT_KEY).eq('id', cardId).maybeSingle()
+  if (findError || !existing) throw new Error(findError?.message || 'Card not found.')
+  const payload: Record<string, unknown> = {}
+  if (input.sequence !== undefined) payload.sequence_no = input.sequence
+  if (input.concept !== undefined) payload.concept = input.concept || null
+  if (input.frontText !== undefined) payload.front_text = input.frontText || null
+  if (input.backGuidance !== undefined) payload.back_guidance = input.backGuidance || null
+  if (input.language !== undefined) payload.language = input.language || 'fr'
+  if (input.translation !== undefined) payload.translation = input.translation || null
+  if (input.pronunciation !== undefined) payload.pronunciation = input.pronunciation || null
+  if (input.example !== undefined) payload.example_text = input.example || null
+  if (input.activity !== undefined) payload.activity_instruction = input.activity || null
+  if (input.difficulty !== undefined) payload.difficulty = input.difficulty
+  if (input.imageBrief !== undefined) payload.image_brief = input.imageBrief || null
+  if (input.rightsStatus !== undefined) payload.rights_status = input.rightsStatus
+  if (input.approvalStatus !== undefined) payload.approval_status = input.approvalStatus
+  const { data, error } = await table(client, 'cards').update(payload).eq('tenant_key', TENANT_KEY).eq('id', cardId).select('*').single()
+  if (error) throw new Error(error.message)
+  return data
+}
+
+export async function deleteCardPermanently(cardId: string) {
+  const client = await createServiceClient()
+  const { data: existing, error: findError } = await table(client, 'cards').select('*').eq('tenant_key', TENANT_KEY).eq('id', cardId).maybeSingle()
+  if (findError || !existing) throw new Error(findError?.message || 'Card not found.')
+  if (String(existing.approval_status || 'draft') === 'approved') throw new Error('An approved card cannot be deleted permanently. Create a replacement version instead.')
+  const { error } = await table(client, 'cards').delete().eq('tenant_key', TENANT_KEY).eq('id', cardId)
+  if (error) throw new Error(`Permanent deletion blocked by an active dependency: ${error.message}`)
+  await client.rpc('fc_os_refresh_collection_structured_card_count', { target_collection_id: existing.collection_id })
+  return existing
 }
 
 

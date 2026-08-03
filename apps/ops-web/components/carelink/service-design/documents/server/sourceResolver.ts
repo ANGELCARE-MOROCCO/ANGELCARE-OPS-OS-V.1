@@ -81,7 +81,56 @@ async function tryRows(client: SupabaseClient, tables: string[], keys: string[],
 
 export async function resolveServiceDocumentSource(client: SupabaseClient, kind: ServiceDocumentSourceKind, unsafeId: string) {
   const id = safeId(unsafeId)
-  if (!id || kind === 'custom') return { source: normalizeServiceDocumentSource(kind, id, {}, {}, undefined), table: null, relatedTables: [] as string[] }
+  if (!id) return { source: normalizeServiceDocumentSource(kind, id, {}, {}, undefined), table: null, relatedTables: [] as string[] }
+  if (kind === 'custom') {
+    const draftResult = await client.from('hsd_px_workbench_drafts').select('*').eq('id', id).limit(1).maybeSingle()
+    if (!draftResult.error && draftResult.data) {
+      const daysResult = await client.from('hsd_px_timeline_days').select('*').eq('draft_id', id).order('sort_order')
+      const dayRows = Array.isArray(daysResult.data) ? daysResult.data as AnyRow[] : []
+      const dayIds = dayRows.map((day) => String(day.id || '')).filter(Boolean)
+      const blocksResult = dayIds.length ? await client.from('hsd_px_timeline_blocks').select('*').in('day_id', dayIds).order('start_minute') : { data: [], error: null }
+      const blocks = Array.isArray(blocksResult.data) ? blocksResult.data as AnyRow[] : []
+      const state = draftResult.data.state && typeof draftResult.data.state === 'object' ? draftResult.data.state as AnyRow : {}
+      const days = dayRows.map((day) => ({
+        ...day,
+        date: day.service_date,
+        start_time: `${String(Math.floor(Number(day.start_minute || 0) / 60)).padStart(2, '0')}:${String(Number(day.start_minute || 0) % 60).padStart(2, '0')}`,
+        end_time: `${String(Math.floor(Number(day.end_minute || 0) / 60)).padStart(2, '0')}:${String(Number(day.end_minute || 0) % 60).padStart(2, '0')}`,
+        blocks: blocks.filter((block) => String(block.day_id || '') === String(day.id || '')).map((block) => ({
+          ...block,
+          start_time: `${String(Math.floor(Number(block.start_minute || 0) / 60)).padStart(2, '0')}:${String(Number(block.start_minute || 0) % 60).padStart(2, '0')}`,
+          end_time: `${String(Math.floor((Number(block.start_minute || 0) + Number(block.duration_minutes || 0)) / 60)).padStart(2, '0')}:${String((Number(block.start_minute || 0) + Number(block.duration_minutes || 0)) % 60).padStart(2, '0')}`,
+          activity_code: block.source_code,
+        })),
+      }))
+      const root: AnyRow = {
+        ...state,
+        id,
+        title: draftResult.data.title,
+        code: draftResult.data.workspace_key,
+        status: draftResult.data.is_dirty ? 'draft_dirty' : 'draft_saved',
+        version: draftResult.data.revision,
+        generated_at: draftResult.data.updated_at,
+        category_code: state.categoryCode,
+        universe: state.universe,
+        promise: state.promise,
+        objectives: state.objectives,
+        outcomes: state.outcomes,
+        pain_points: state.painPoints,
+        contexts: state.contexts,
+        routines: state.routines,
+        warnings: state.warnings,
+        total: (state.price as AnyRow | undefined)?.customerTotalDh,
+        cost: (state.price as AnyRow | undefined)?.costTotalDh,
+        margin: (state.price as AnyRow | undefined)?.marginPercent,
+        days,
+      }
+      const source = normalizeServiceDocumentSource(kind, id, root, { days }, 'hsd_px_workbench_drafts')
+      source.lineage.unshift({ label: 'Workbench', value: String(draftResult.data.workspace_key || id) })
+      return { source, table: 'hsd_px_workbench_drafts', relatedTables: ['hsd_px_timeline_days', 'hsd_px_timeline_blocks'] }
+    }
+    return null
+  }
   let root: AnyRow | null = null
   let table: string | null = null
   for (const candidate of ROOT_TABLES[kind]) {

@@ -161,7 +161,9 @@ export function ServiceDocumentStudio({ sourceKind = 'custom', sourceId, initial
       anchor.remove()
       URL.revokeObjectURL(href)
       const checksum = response.headers.get('x-document-sha256')
-      setDownloadMessage(`PDF généré${checksum ? ` · SHA-256 ${checksum.slice(0, 16)}…` : ''}`)
+      const fileName = `${(settings.documentReference || source.reference || source.code || 'ANGELCARE-SERVICE-DESIGN').replace(/[^a-zA-Z0-9_-]+/g, '-')}.pdf`
+      await fetch('/api/carelink-ops/service-design/product-experience/documents', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ sourceType: sourceKind, sourceId: sourceId || source.sourceId || null, templateId: settings.templateId, documentReference: settings.documentReference || source.reference || source.code || 'ANGELCARE-SERVICE-DESIGN', title: settings.documentTitle || source.title || template.name, fileName, checksumSha256: checksum, settings, metadata: { audience: settings.audience, confidentiality: settings.confidentiality, orientation: settings.orientation, density: settings.density } }) }).catch(() => undefined)
+      setDownloadMessage(`PDF généré et enregistré dans Mon travail${checksum ? ` · SHA-256 ${checksum.slice(0, 16)}…` : ''}`)
     } catch (error) { setDownloadMessage(error instanceof Error ? error.message : 'Échec explicite de génération PDF.') }
     finally { setDownloading(false) }
   }

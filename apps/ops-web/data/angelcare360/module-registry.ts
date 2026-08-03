@@ -254,3 +254,13 @@ export const ANGELCARE360_MODULE_REGISTRY: Angelcare360ModuleRecord[] = [
     ]
   }
 ]
+
+export function getAngelcare360ModuleById(
+  moduleId: string | null | undefined,
+): Angelcare360ModuleRecord | null {
+  return (
+    ANGELCARE360_MODULE_REGISTRY.find(
+      (module) => module.id === moduleId,
+    ) ?? null
+  )
+}

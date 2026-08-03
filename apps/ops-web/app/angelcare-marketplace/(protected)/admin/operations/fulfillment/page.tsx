@@ -1,0 +1,4 @@
+import {requireMarketplacePageContext} from '@/angelcare-marketplace/auth/context'
+import {OperationsQueuePage} from '@/angelcare-marketplace/operations-reconciliation/components/OperationsQueuePage'
+import {listFulfillmentCases} from '@/angelcare-marketplace/operations-reconciliation/repository'
+export default async function Page({searchParams}:{searchParams:Promise<Record<string,string|undefined>>}){const c=await requireMarketplacePageContext('marketplace.operations.view');const p=await searchParams;return <OperationsQueuePage title="Fulfillment Command" eyebrow="POST-CONVERSION OBLIGATION PORTFOLIO" description="Chaque promesse devient une obligation acceptée, allouée, exécutée, prouvée, validée et réconciliée." items={await listFulfillmentCases(c,{status:p.status,kind:p.kind,risk:p.risk,query:p.q})}/>}

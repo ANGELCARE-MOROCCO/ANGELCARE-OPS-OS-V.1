@@ -1,0 +1,3 @@
+import FlashcardsPublishingHouse from '@/components/flashcards-os/documents/FlashcardsPublishingHouse'
+import { requireFlashcardsPageAccess } from '@/lib/flashcards-os/server/access'
+export default async function FlashcardsDocumentsPage({searchParams}:{searchParams:Promise<Record<string,string|string[]|undefined>>}){await requireFlashcardsPageAccess('flashcards_os.view');const params=await searchParams;return <FlashcardsPublishingHouse initialSourceType={typeof params.sourceType==='string'?params.sourceType:'custom'} initialSourceId={typeof params.sourceId==='string'?params.sourceId:'custom'}/>} 

@@ -24,7 +24,11 @@ export function normalizeOpenWAEvent(eventType: string, payload: any) {
   const to = String(pick(message, ['to','recipient']) || '')
   const chatId = String(pick(message, ['chatId','from','key.remoteJid']) || from || to)
   const body = String(pick(message, ['body','text','message.conversation','message.extendedTextMessage.text','caption']) || '')
-  const type = String(pick(message, ['type','messageType','mimetype']) || 'text')
+  const rawType = String(pick(message, ['type','messageType','mimetype']) || 'text').toLowerCase()
+  const ptt = Boolean(pick(message, ['ptt','media.ptt','message.audioMessage.ptt']))
+  const type = ptt && (rawType === 'audio' || rawType.startsWith('audio/'))
+    ? 'voice'
+    : rawType.startsWith('audio/') ? 'audio' : rawType
   const timestampRaw = pick(message, ['timestamp','messageTimestamp','createdAt'])
   const timestamp = typeof timestampRaw === 'number'
     ? new Date(timestampRaw < 10_000_000_000 ? timestampRaw * 1000 : timestampRaw).toISOString()

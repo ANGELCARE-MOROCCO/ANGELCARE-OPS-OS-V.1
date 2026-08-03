@@ -1,0 +1,6 @@
+import { NextResponse } from 'next/server'
+import { assertFlashcardsApiAccess } from '@/lib/flashcards-os/server/access'
+import { actorFromPxUser, getWorkspacePreference, setWorkspacePreference } from '@/lib/flashcards-os/px/repository'
+const KEY='flashcards-studio-2030'
+export async function GET(){const access=await assertFlashcardsApiAccess('flashcards_os.view');if(!access.ok)return NextResponse.json({error:access.message},{status:access.status});try{return NextResponse.json({value:await getWorkspacePreference(KEY,actorFromPxUser(access.user))})}catch(error){return NextResponse.json({error:error instanceof Error?error.message:'Preference read failed.'},{status:400})}}
+export async function PUT(request:Request){const access=await assertFlashcardsApiAccess('flashcards_os.view');if(!access.ok)return NextResponse.json({error:access.message},{status:access.status});try{const body=await request.json();const value=body&&typeof body.value==='object'&&!Array.isArray(body.value)?body.value:{};return NextResponse.json({preference:await setWorkspacePreference(KEY,value,actorFromPxUser(access.user))})}catch(error){return NextResponse.json({error:error instanceof Error?error.message:'Preference save failed.'},{status:400})}}

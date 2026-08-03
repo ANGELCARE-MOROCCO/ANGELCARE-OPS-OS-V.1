@@ -1,0 +1,42 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": [
+      "ES2022",
+      "DOM"
+    ],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "jsx": "preserve",
+    "strict": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "allowJs": false,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./*"
+      ],
+      "@/lib/auth/session": [
+        "scripts/homeservice-design/final-product-experience/shims/auth.ts"
+      ],
+      "@/lib/supabase/server": [
+        "scripts/homeservice-design/final-product-experience/shims/supabase.ts"
+      ]
+    },
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true
+  },
+  "include": [
+    "scripts/homeservice-design/final-product-experience/verify-shims.d.ts",
+    "scripts/homeservice-design/final-product-experience/shims/*.ts",
+    "types/service-design-product-experience.ts",
+    "lib/service-design-product-experience/**/*.ts",
+    "app/api/carelink-ops/service-design/product-experience/**/*.ts",
+    "components/carelink/service-design/product-experience/**/*.tsx",
+    "app/carelink-ops/service-design/workbench/**/*.tsx",
+    "app/carelink-ops/service-design/my-work/**/*.tsx",
+    "app/carelink-ops/service-design/compare/**/*.tsx",
+    "components/carelink/service-design/documents/server/sourceResolver.ts"
+  ]
+}

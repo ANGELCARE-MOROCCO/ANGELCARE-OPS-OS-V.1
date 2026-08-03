@@ -163,6 +163,17 @@ export const FAMILY_PERMISSIONS: MarketplacePermission[] = [
 ]
 
 
+export const FINAL_AUTHORITY_PERMISSIONS: MarketplacePermission[] = [
+  'marketplace.intelligence.view',
+  'marketplace.intelligence.metrics.manage',
+  'marketplace.growth.view',
+  'marketplace.growth.experiments.manage',
+  'marketplace.performance.view',
+  'marketplace.security.assess',
+  'marketplace.launch.approve',
+  'marketplace.launch.monitoring',
+]
+
 export const MARKETPLACE_PERMISSIONS: MarketplacePermission[] = [
   ...FOUNDATION_PERMISSIONS,
   ...TERRITORY_PERMISSIONS,
@@ -171,6 +182,7 @@ export const MARKETPLACE_PERMISSIONS: MarketplacePermission[] = [
   ...CMS_PERMISSIONS,
   ...PUBLIC_UNIVERSE_PERMISSIONS,
   ...FAMILY_PERMISSIONS,
+  ...FINAL_AUTHORITY_PERMISSIONS,
 ]
 
 const MANAGER_PERMISSIONS: MarketplacePermission[] = [

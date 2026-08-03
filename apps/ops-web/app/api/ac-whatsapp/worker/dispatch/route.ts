@@ -24,9 +24,17 @@ export async function POST(request: NextRequest) {
     try {
       if (!account.data?.openwa_session_id) throw new Error('ACCOUNT_SESSION_NOT_CONFIGURED')
       if (account.data.outbound_enabled === false) throw new Error('ACCOUNT_OUTBOUND_PAUSED')
+      let transportMedia = item.media_payload || {}
+      if (transportMedia.storagePath) {
+        const signed = await supabase.storage.from('ac-whatsapp-media').createSignedUrl(String(transportMedia.storagePath), 15 * 60)
+        if (signed.error) throw new Error(signed.error.message)
+        transportMedia = { ...transportMedia, url: signed.data.signedUrl }
+        delete transportMedia.storagePath
+        delete transportMedia.base64
+      }
       const sent: any = item.message_type === 'text'
         ? await openwa.sendText(account.data.openwa_session_id, item.chat_id, item.body || '')
-        : await openwa.sendMedia(account.data.openwa_session_id, item.message_type, item.chat_id, item.media_payload || {}, item.body || '')
+        : await openwa.sendMedia(account.data.openwa_session_id, item.message_type, item.chat_id, transportMedia, item.body || '')
       const external = externalId(sent)
       const sentAt = new Date().toISOString()
       let message: any = null
