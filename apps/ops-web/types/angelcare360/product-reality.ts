@@ -13,6 +13,7 @@ export type ProductRealityDomain =
   | 'assessment'
   | 'report_cards'
   | 'capacity'
+  | 'finance'
 
 export type ProductRealityExecutionState =
   | 'requested'
