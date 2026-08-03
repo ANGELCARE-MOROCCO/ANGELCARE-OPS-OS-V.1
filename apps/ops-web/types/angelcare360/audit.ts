@@ -26,6 +26,7 @@ export type Angelcare360AuditCategory =
   | 'timetable'
   | 'settings'
   | 'security'
+  | 'product_reality'
 
 export interface Angelcare360AuditRecord {
   id: Angelcare360UUID

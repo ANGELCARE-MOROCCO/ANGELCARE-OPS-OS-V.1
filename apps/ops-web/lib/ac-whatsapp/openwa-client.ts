@@ -44,6 +44,7 @@ export const openwa = {
   createSession: (input: { name: string; config?: Record<string, unknown> }) => request<Record<string, unknown>>('/sessions', { method: 'POST', body: input }),
   startSession: (id: string) => request<Record<string, unknown>>(`/sessions/${encodeURIComponent(id)}/start`, { method: 'POST', timeoutMs: 45_000 }),
   stopSession: (id: string) => request<Record<string, unknown>>(`/sessions/${encodeURIComponent(id)}/stop`, { method: 'POST' }),
+  deleteSession: (id: string) => request<void>(`/sessions/${encodeURIComponent(id)}`, { method: 'DELETE', timeoutMs: 45_000 }),
   logoutSession: (id: string) => request<Record<string, unknown>>(`/sessions/${encodeURIComponent(id)}/logout`, { method: 'POST', timeoutMs: 45_000 }),
   getQr: (id: string) => request<Record<string, unknown>>(`/sessions/${encodeURIComponent(id)}/qr`),
   pairingCode: (id: string, phoneNumber: string) => request<Record<string, unknown>>(`/sessions/${encodeURIComponent(id)}/pairing-code`, { method: 'POST', body: { phoneNumber } }),

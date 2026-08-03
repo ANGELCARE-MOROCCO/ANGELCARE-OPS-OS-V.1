@@ -33,6 +33,8 @@ type SourceResult<T> = { rows: T[]; source: SourceState }
 
 const TABLES = {
   modules: 'angelcare360_operator_product_modules',
+  capabilities: 'angelcare360_operator_product_capabilities',
+  services: 'angelcare360_operator_product_services',
   features: 'angelcare360_operator_product_features',
   addons: 'angelcare360_operator_product_addons',
   meters: 'angelcare360_operator_product_meters',
@@ -1294,13 +1296,18 @@ async function restoreTenantBaseline(payload: Row) {
   return { ...result, ok: true, revokedOverrides: overrideRows.length }
 }
 
-export async function compileTenantEntitlements(rawPayload: unknown) {
+export async function compileTenantEntitlements(
+  rawPayload: unknown,
+  trustedAuthority?: { actorUserId: string; client?: Awaited<ReturnType<typeof getOperatorClient>>; skipOperatorAudit?: boolean },
+) {
   const payload = toRecord(rawPayload)
-  const session = await requireAngelcare360OperatorPermission('operator.features.update')
+  const session = trustedAuthority
+    ? { user: { id: trustedAuthority.actorUserId } }
+    : await requireAngelcare360OperatorPermission('operator.features.update')
   const clientId = required(payload, 'clientId', 'Le client')
   const tenantId = required(payload, 'tenantId', 'Le tenant')
   const subscriptionId = required(payload, 'subscriptionId', "L'abonnement")
-  const supabase = await getOperatorClient()
+  const supabase = trustedAuthority?.client ?? await getOperatorClient()
   const [{ data: subscription, error: subscriptionError }, { data: tenant, error: tenantError }] = await Promise.all([
     supabase.from('angelcare360_operator_subscriptions').select('*').eq('id', subscriptionId).single(),
     supabase.from('angelcare360_operator_tenants').select('*').eq('id', tenantId).single(),
@@ -1329,8 +1336,12 @@ export async function compileTenantEntitlements(rawPayload: unknown) {
   const overrideRows = ((overrides || []) as Row[]).filter((item: Row) => !item.expires_at || Date.parse(asString(item.expires_at)) >= now)
 
   const moduleIds = packageItemRows.filter((item: Row) => item.item_type === 'module').map((item: Row) => asString(item.item_id)).filter(Boolean)
+  const capabilityIds = packageItemRows.filter((item: Row) => item.item_type === 'capability').map((item: Row) => asString(item.item_id)).filter(Boolean)
   const directFeatureIds = packageItemRows.filter((item: Row) => item.item_type === 'feature').map((item: Row) => asString(item.item_id)).filter(Boolean)
+  const serviceIds = packageItemRows.filter((item: Row) => item.item_type === 'service').map((item: Row) => asString(item.item_id)).filter(Boolean)
   const modules = await fetchByIds(supabase, TABLES.modules, moduleIds)
+  const capabilities = await fetchByIds(supabase, TABLES.capabilities, capabilityIds)
+  const services = await fetchByIds(supabase, TABLES.services, serviceIds)
   const directFeatures = await fetchByIds(supabase, TABLES.features, directFeatureIds)
   let inheritedFeatures: Row[] = []
   if (moduleIds.length) {
@@ -1347,6 +1358,8 @@ export async function compileTenantEntitlements(rawPayload: unknown) {
   const moduleById = new Map<string, Row>(modules.map((module: Row) => [asString(module.id), module]))
   const rows: Row[] = []
   for (const module of modules) rows.push(entitlementRow('module', module, packageItemMap.get(`module:${asString(module.id)}`), 'package'))
+  for (const capability of capabilities) rows.push(entitlementRow('capability', capability, packageItemMap.get(`capability:${asString(capability.id)}`), 'package'))
+  for (const service of services) rows.push(entitlementRow('service', service, packageItemMap.get(`service:${asString(service.id)}`), 'package'))
   for (const feature of features) {
     const directItem = packageItemMap.get(`feature:${asString(feature.id)}`)
     const row = entitlementRow('feature', feature, directItem, directItem ? 'package' : 'module_inheritance')
@@ -1380,7 +1393,7 @@ export async function compileTenantEntitlements(rawPayload: unknown) {
   const accessSuspended = ['suspended', 'cancelled', 'expired', 'archived'].includes(subscriptionStatus) || ['suspended', 'archived'].includes(tenantStatus)
   if (accessSuspended) {
     for (const row of rows) {
-      if (row.item_type === 'module' || row.item_type === 'feature') {
+      if (['module', 'capability', 'feature', 'service'].includes(asString(row.item_type))) {
         row.effective_state = 'suspended'
         row.origin = 'payment_gate'
         row.reason = `Accès suspendu: abonnement ${subscriptionStatus}, tenant ${tenantStatus}.`
@@ -1408,7 +1421,9 @@ export async function compileTenantEntitlements(rawPayload: unknown) {
   }
   await supabase.from(TABLES.entitlementSnapshots).update({ status: 'superseded', superseded_at: new Date().toISOString() }).eq('tenant_id', tenantId).eq('status', 'active').neq('id', snapshotId)
   await supabase.from(TABLES.entitlementSnapshots).update({ status: 'active', activated_at: new Date().toISOString() }).eq('id', snapshotId)
-  await audit('product.entitlements.compiled', TABLES.entitlementSnapshots, snapshotId, { source_signature: signature, item_count: rows.length }, null, { clientId, tenantId })
+  if (!trustedAuthority?.skipOperatorAudit) {
+    await audit('product.entitlements.compiled', TABLES.entitlementSnapshots, snapshotId, { source_signature: signature, item_count: rows.length }, null, { clientId, tenantId })
+  }
   return { ok: true, snapshot: { ...(snapshot as Row), status: 'active' }, itemCount: rows.length, sourceSignature: signature }
 }
 
@@ -1420,11 +1435,24 @@ async function fetchByIds(supabase: Awaited<ReturnType<typeof getOperatorClient>
   return (data || []) as Row[]
 }
 function entitlementRow(type: ProductKernelItemType, record: Row, item: Row | undefined, origin: string, quantity?: number): Row {
-  const key = type === 'module' ? asString(record.module_key) : type === 'feature' ? asString(record.feature_key) : type === 'addon' ? asString(record.addon_code) : asString(record.meter_key)
-  return { item_type: type, item_id: record.id, item_key: key, item_label: asString(record.name, key), module_key: type === 'feature' ? null : type === 'module' ? key : null, effective_state: record.configuration_required ? 'requires_configuration' : 'enabled', origin, quantity: quantity ?? item?.quantity ?? null, configuration: item?.configuration || {}, reason: null }
+  const key = type === 'module'
+    ? asString(record.module_key)
+    : type === 'capability'
+      ? asString(record.capability_key)
+      : type === 'feature'
+        ? asString(record.feature_key)
+        : type === 'service'
+          ? asString(record.service_key, asString(record.service_code))
+          : type === 'addon'
+            ? asString(record.addon_code)
+            : asString(record.meter_key)
+  const moduleKey = type === 'module'
+    ? key
+    : asString(record.module_key, asString(record.parent_module_key)) || null
+  return { item_type: type, item_id: record.id, item_key: key, item_label: asString(record.name, key), module_key: moduleKey, effective_state: record.configuration_required ? 'requires_configuration' : 'enabled', origin, quantity: quantity ?? item?.quantity ?? null, unit: type === 'meter' ? asString(record.unit) || null : null, configuration: item?.configuration || {}, reason: null }
 }
 async function syncLegacyRuntime(supabase: Awaited<ReturnType<typeof getOperatorClient>>, clientId: string, tenantId: string, rows: Row[]) {
-  const featureRows = rows.filter((row) => row.item_type === 'module' || row.item_type === 'feature').map((row) => {
+  const featureRows = rows.filter((row) => ['module', 'capability', 'feature', 'service'].includes(asString(row.item_type))).map((row) => {
     const effectiveState = asString(row.effective_state)
     const legacyStatus = effectiveState === 'enabled' ? 'enabled' : effectiveState === 'requires_configuration' ? 'requires_configuration' : effectiveState === 'locked' || effectiveState === 'suspended' ? 'locked' : 'disabled'
     return {

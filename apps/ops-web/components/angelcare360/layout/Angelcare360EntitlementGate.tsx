@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { AlertTriangle, CheckCircle2, Clock3, Gauge, Link2Off, LockKeyhole, PackageCheck, Settings2, ShieldAlert } from 'lucide-react'
 import type { ReactNode } from 'react'
 import type { Angelcare360RuntimeEntitlements } from '@/types/angelcare360/entitlements'
-import { getAngelcare360ModuleKeyForPath, isAngelcare360ModuleEnabled } from '@/lib/angelcare360/entitlements'
+import { getAngelcare360ModuleKeyForPath, isAngelcare360CapabilityEnabled, isAngelcare360FeatureEnabled, isAngelcare360ModuleEnabled } from '@/lib/angelcare360/entitlements'
 import { getAngelcare360RouteBinding } from '@/data/angelcare360/product-constitution'
 import styles from './Angelcare360EntitlementGate.module.css'
 
@@ -14,11 +14,14 @@ export default function Angelcare360EntitlementGate({ children, pathname, runtim
   if (!runtime.enforced) return <>{children}</>
 
   const moduleEnabled = isAngelcare360ModuleEnabled(runtime, moduleKey)
-  const featureRestriction = runtime.restrictedFeatures.find((item) => item.key === route?.featureKey || item.key === route?.capabilityKey)
-  if (moduleEnabled && !featureRestriction) return <>{children}</>
+  const capabilityEnabled = isAngelcare360CapabilityEnabled(runtime, route?.capabilityKey)
+  const featureEnabled = isAngelcare360FeatureEnabled(runtime, route?.featureKey)
+  const capabilityRestriction = runtime.restrictedCapabilities.find((item) => item.key === route?.capabilityKey)
+  const featureRestriction = runtime.restrictedFeatures.find((item) => item.key === route?.featureKey)
+  if (moduleEnabled && capabilityEnabled && featureEnabled && !capabilityRestriction && !featureRestriction) return <>{children}</>
 
   const moduleRestriction = runtime.restrictedModules.find((item) => item.key === moduleKey)
-  const restriction = featureRestriction || moduleRestriction
+  const restriction = featureRestriction || capabilityRestriction || moduleRestriction
   const state = String(restriction?.state || runtime.state || 'not_included').toLowerCase()
   const configuration = /config/.test(state)
   const pending = /pending|compiled|provision/.test(state)

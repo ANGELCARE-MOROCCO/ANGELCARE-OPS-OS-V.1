@@ -11,3 +11,51 @@ export function getAngelcare360ModuleKeyForPermission(permissionKey:string):stri
 const ALIASES:Record<string,string[]>={claims:['claims','communications'],reports:['reports','intelligence'],communications:['communications'],administration:['administration','core_foundation']}
 export function isAngelcare360ModuleEnabled(runtime:Angelcare360RuntimeEntitlements|null|undefined,moduleKey:string|null){if(!moduleKey||!runtime?.enforced)return true;return (ALIASES[moduleKey]||[moduleKey]).some(key=>runtime.enabledModules.includes(key))}
 export function filterAngelcare360ModulesByEntitlement(modules:Angelcare360ModuleRecord[],runtime:Angelcare360RuntimeEntitlements|null|undefined){if(!runtime?.enforced)return modules;return modules.filter(module=>isAngelcare360ModuleEnabled(runtime,ANGELCARE360_REGISTRY_MODULE_MAP[module.id]??null))}
+
+function isRuntimeKeyEnabled(
+  runtime: Angelcare360RuntimeEntitlements | null | undefined,
+  key: string | null | undefined,
+  enabled: string[],
+  restricted: Array<{ key: string; state: string }>,
+) {
+  if (!key || !runtime?.enforced) return true
+  if (enabled.length === 0 && restricted.length === 0) return true
+  if (restricted.some((item) => item.key === key && item.state !== 'enabled')) return false
+  return enabled.includes(key)
+}
+
+export function isAngelcare360CapabilityEnabled(
+  runtime: Angelcare360RuntimeEntitlements | null | undefined,
+  capabilityKey: string | null | undefined,
+) {
+  return isRuntimeKeyEnabled(
+    runtime,
+    capabilityKey,
+    runtime?.enabledCapabilities || [],
+    runtime?.restrictedCapabilities || [],
+  )
+}
+
+export function isAngelcare360FeatureEnabled(
+  runtime: Angelcare360RuntimeEntitlements | null | undefined,
+  featureKey: string | null | undefined,
+) {
+  return isRuntimeKeyEnabled(
+    runtime,
+    featureKey,
+    runtime?.enabledFeatures || [],
+    runtime?.restrictedFeatures || [],
+  )
+}
+
+export function isAngelcare360OperationEnabled(
+  runtime: Angelcare360RuntimeEntitlements | null | undefined,
+  operationKey: string | null | undefined,
+) {
+  return isRuntimeKeyEnabled(
+    runtime,
+    operationKey,
+    runtime?.enabledOperations || [],
+    runtime?.restrictedOperations || [],
+  )
+}
