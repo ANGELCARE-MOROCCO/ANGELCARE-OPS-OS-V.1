@@ -5,7 +5,6 @@ import {
   Gauge, LoaderCircle, Mic, Pause, Play, RotateCcw, Send, Square, Trash2, Volume2,
 } from "lucide-react"
 import type { AcWhatsAppMessage } from "@/lib/ac-whatsapp/types"
-import { createClient } from "@/lib/supabase/client"
 import { cx } from "./ACWhatsAppUI"
 import { acApi } from "./useAcWhatsApp"
 
@@ -217,7 +216,15 @@ export function VoiceMessageStudio({
       const mimeType = recordedBlob.type || "audio/webm;codecs=opus"
       const extension = extensionForMime(mimeType)
       const fileName = `voice-note-${new Date().toISOString().replace(/[:.]/g, "-")}.${extension}`
-      const ticket = await acApi<{ bucket: string; path: string; token: string }>("/api/ac-whatsapp/attachments/voice-upload", {
+      const ticket = await acApi<{
+        uploadUrl: string
+        storageKey: string
+        storageProvider: "windows"
+        headers: Record<string, string>
+        fileName: string
+        mimeType: string
+        sizeBytes: number
+      }>("/api/ac-whatsapp/attachments/voice-upload", {
         method: "POST",
         body: JSON.stringify({
           conversationId,
@@ -226,24 +233,35 @@ export function VoiceMessageStudio({
           sizeBytes: recordedBlob.size,
         }),
       })
-      const supabase = createClient()
-      const uploaded = await supabase.storage.from(ticket.bucket).uploadToSignedUrl(
-        ticket.path,
-        ticket.token,
-        recordedBlob,
-        { contentType: mimeType },
-      )
-      if (uploaded.error) throw new Error(uploaded.error.message)
+      const uploadResponse = await fetch(ticket.uploadUrl, {
+        method: "PUT",
+        headers: ticket.headers,
+        body: recordedBlob,
+      })
+      const uploadPayload = await uploadResponse.json().catch(() => null)
+      if (!uploadResponse.ok || !uploadPayload?.ok || !uploadPayload?.data) {
+        throw new Error(uploadPayload?.error || `MEDIA_VAULT_UPLOAD_${uploadResponse.status}`)
+      }
+      const receipt = uploadPayload.data as {
+        storageKey: string
+        sha256: string
+        sizeBytes: number
+        mimeType: string
+        fileName: string
+      }
       await acApi("/api/ac-whatsapp/messages/send", {
         method: "POST",
         body: JSON.stringify({
           conversationId,
           messageType: "voice",
           media: {
-            storagePath: ticket.path,
-            mimetype: mimeType,
-            filename: fileName,
-            size: recordedBlob.size,
+            storageProvider: "windows",
+            storageKey: receipt.storageKey,
+            storagePath: receipt.storageKey,
+            sha256: receipt.sha256,
+            mimetype: receipt.mimeType || mimeType,
+            filename: receipt.fileName || fileName,
+            size: receipt.sizeBytes || recordedBlob.size,
             ptt: true,
           },
         }),

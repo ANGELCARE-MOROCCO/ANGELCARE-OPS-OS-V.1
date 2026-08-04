@@ -75,6 +75,10 @@ export type AcWhatsAppAttachment = {
   file_name?: string | null
   mime_type?: string | null
   size_bytes?: number | null
+  checksum?: string | null
+  storage_host?: string | null
+  verified_at?: string | null
+  migration_status?: string | null
   metadata?: Record<string, unknown> | null
 }
 

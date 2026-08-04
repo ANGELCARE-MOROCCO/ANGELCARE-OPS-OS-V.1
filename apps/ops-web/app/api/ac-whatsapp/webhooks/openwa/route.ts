@@ -2,29 +2,61 @@ import { NextRequest } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/server'
 import { fail, normalizeOpenWAAccountStatus, ok } from '@/lib/ac-whatsapp/server'
 import { mapAckStatus, normalizeOpenWAEvent, verifyOpenWASignature } from '@/lib/ac-whatsapp/webhook'
+import { ingestOpenWAMedia, mediaVaultStorageKey } from '@/lib/ac-whatsapp/media-vault'
 
 export const runtime = 'nodejs'
-const MEDIA_BUCKET = 'ac-whatsapp-media'
 
 function sessionIdFrom(payload:any, normalized:any, request:NextRequest){return String(payload?.sessionId||payload?.session?.id||payload?.data?.sessionId||normalized?.root?.sessionId||request.headers.get('x-openwa-session-id')||'')}
 function safeRawPayload(payload:any){try{return JSON.parse(JSON.stringify(payload,(key,value)=>key==='data'&&typeof value==='string'&&value.length>10000?`[base64 omitted:${value.length} chars]`:value))}catch{return{unserializable:true}}}
 function mediaEnvelope(normalized:any){return normalized?.message?.media||normalized?.root?.media||normalized?.root?.message?.media||null}
 function extension(filename:string|undefined,mime:string|undefined){if(filename?.includes('.'))return filename.split('.').pop()!.replace(/[^a-z0-9]/gi,'').slice(0,10)||'bin';const map:Record<string,string>={'image/jpeg':'jpg','image/png':'png','image/webp':'webp','video/mp4':'mp4','audio/ogg':'ogg','audio/mpeg':'mp3','application/pdf':'pdf'};return map[String(mime||'').toLowerCase()]||'bin'}
-async function persistMedia(supabase:any,input:{accountId:string;conversationId:string;messageId:string;externalId:string|null;media:any}){
- const media=input.media;if(!media)return
- const filename=String(media.filename||`${input.externalId||input.messageId}.${extension(undefined,media.mimetype)}`)
- let storagePath:string|null=null;let size=Number(media.sizeBytes||0)||null;let metadata:any={omitted:Boolean(media.omitted)}
- if(typeof media.data==='string'&&media.data){
-  try{
-   const buffer=Buffer.from(media.data,'base64');size=buffer.length
-   if(buffer.length<=52_428_800){
-    storagePath=`${input.accountId}/${input.conversationId}/${input.messageId}-${filename.replace(/[^a-zA-Z0-9._-]/g,'_')}`
-    const upload=await supabase.storage.from(MEDIA_BUCKET).upload(storagePath,buffer,{contentType:media.mimetype||'application/octet-stream',upsert:true})
-    if(upload.error){metadata={...metadata,storage_error:upload.error.message};storagePath=null}
-   }else metadata={...metadata,storage_error:'MEDIA_OVER_50MB'}
-  }catch(cause){metadata={...metadata,storage_error:cause instanceof Error?cause.message:String(cause)}}
+async function persistMedia(supabase:any,input:{
+ accountId:string
+ conversationId:string
+ messageId:string
+ externalId:string|null
+ media:any
+ hasMedia:boolean
+ sessionId:string
+ chatId:string
+}){
+ const media=input.media
+ if(!media&&!input.hasMedia)return
+ const mimeType=String(media?.mimetype||'application/octet-stream')
+ const fileName=String(media?.filename||`${input.externalId||input.messageId}.${extension(undefined,mimeType)}`).replace(/[^a-zA-Z0-9._-]/g,'_').slice(0,180)
+ const storageKey=mediaVaultStorageKey({accountId:input.accountId,conversationId:input.conversationId,category:'inbound',objectId:input.messageId,fileName})
+ const inserted=await supabase.from('ac_whatsapp_attachments').insert({
+  message_id:input.messageId,
+  storage_provider:'windows_pending',
+  storage_path:storageKey,
+  storage_host:process.env.AC_WHATSAPP_MEDIA_VAULT_BASE_URL||null,
+  file_name:fileName,
+  mime_type:mimeType,
+  size_bytes:Number(media?.sizeBytes||0)||null,
+  migration_status:'pending_ingest',
+  metadata:{omitted:Boolean(media?.omitted),primary_storage:'windows'},
+ }).select('id').single()
+ if(inserted.error)throw inserted.error
+ if(!input.sessionId||!input.chatId||!input.externalId)return
+ try{
+  const receipt=await ingestOpenWAMedia({storageKey,sessionId:input.sessionId,chatId:input.chatId,externalMessageId:input.externalId,fileName,mimeType,maxBytes:52_428_800})
+  await supabase.from('ac_whatsapp_attachments').update({
+   storage_provider:'windows',
+   storage_path:receipt.storageKey,
+   file_name:receipt.fileName,
+   mime_type:receipt.mimeType,
+   size_bytes:receipt.sizeBytes,
+   checksum:receipt.sha256,
+   verified_at:new Date().toISOString(),
+   migration_status:'ready',
+   metadata:{omitted:false,primary_storage:'windows',ingested_from_openwa_at:new Date().toISOString()},
+  }).eq('id',inserted.data.id)
+ }catch(cause){
+  await supabase.from('ac_whatsapp_attachments').update({
+   migration_status:'pending_ingest',
+   metadata:{omitted:Boolean(media?.omitted),primary_storage:'windows',ingest_error:cause instanceof Error?cause.message:String(cause),ingest_last_attempt_at:new Date().toISOString()},
+  }).eq('id',inserted.data.id)
  }
- await supabase.from('ac_whatsapp_attachments').insert({message_id:input.messageId,storage_provider:storagePath?'supabase':'openwa',storage_path:storagePath,file_name:filename,mime_type:media.mimetype||null,size_bytes:size,metadata})
 }
 
 export async function POST(request:NextRequest){
@@ -58,7 +90,7 @@ export async function POST(request:NextRequest){
    let campaignIdentity:any=null
    if(normalized.fromMe&&normalized.externalMessageId){const campaignLink=await supabase.from('ac_whatsapp_campaign_recipients').select('campaign_id,campaign:ac_whatsapp_campaigns(name,owner_user_id)').eq('external_message_id',normalized.externalMessageId).maybeSingle();if(!campaignLink.error)campaignIdentity=campaignLink.data}
    const insert=await supabase.from('ac_whatsapp_messages').insert({account_id:account.id,conversation_id:conv.data.id,contact_id:contactUpsert.data.id,external_message_id:normalized.externalMessageId,direction:normalized.fromMe?'outbound':'inbound',message_type:normalized.type,body:normalized.body,caption:normalized.message?.caption||null,quoted_external_message_id:normalized.message?.quotedMessage?.id||null,status:normalized.fromMe?'sent':'received',sender_whatsapp_id:normalized.from,recipient_whatsapp_id:normalized.to,sender_display_name_snapshot:campaignIdentity?.campaign?.name?`Campagne · ${campaignIdentity.campaign.name}`:senderDisplayName,sender_role_snapshot:normalized.fromMe?(campaignIdentity?'Automatisation commerciale':'Compte WhatsApp mobile'):'Contact',sender_type:campaignIdentity?'automation':senderType,message_origin:campaignIdentity?'campaign':'whatsapp_webhook',campaign_id:campaignIdentity?.campaign_id||null,campaign_name_snapshot:campaignIdentity?.campaign?.name||null,responsible_user_id:campaignIdentity?.campaign?.owner_user_id||null,raw_payload:safeRawPayload(payload),sent_at:normalized.fromMe?normalized.timestamp:null,received_at:normalized.fromMe?null:normalized.timestamp,created_at:normalized.timestamp}).select('id').single();if(insert.error)throw insert.error
-   await persistMedia(supabase,{accountId:account.id,conversationId:conv.data.id,messageId:insert.data.id,externalId:normalized.externalMessageId,media:mediaEnvelope(normalized)})
+   await persistMedia(supabase,{accountId:account.id,conversationId:conv.data.id,messageId:insert.data.id,externalId:normalized.externalMessageId,media:mediaEnvelope(normalized),hasMedia:normalized.hasMedia,sessionId:sid,chatId:remote})
    if(!normalized.fromMe){const recent=await supabase.from('ac_whatsapp_campaign_recipients').select('id,campaign_id,external_message_id').eq('contact_id',contactUpsert.data.id).in('status',['sent','delivered','read']).order('sent_at',{ascending:false}).limit(1).maybeSingle();if(recent.error)throw recent.error;if(recent.data)await supabase.from('ac_whatsapp_campaign_recipients').update({status:'replied',replied_at:normalized.timestamp}).eq('id',recent.data.id)}
   }
   await supabase.from('ac_whatsapp_webhook_events').update({processing_status:'processed',processed_at:new Date().toISOString()}).eq('delivery_id',deliveryId)

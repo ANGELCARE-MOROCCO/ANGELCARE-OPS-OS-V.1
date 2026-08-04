@@ -2,6 +2,7 @@ import { NextRequest } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/server'
 import { fail, ok } from '@/lib/ac-whatsapp/server'
 import { openwa } from '@/lib/ac-whatsapp/openwa-client'
+import { createMediaVaultDownloadUrl } from '@/lib/ac-whatsapp/media-vault'
 
 function externalId(sent: any) { return String(sent?.messageId?._serialized || sent?.messageId || sent?.id?._serialized || sent?.id || sent?._serialized || '') || null }
 
@@ -24,12 +25,23 @@ export async function POST(request: NextRequest) {
     try {
       if (!account.data?.openwa_session_id) throw new Error('ACCOUNT_SESSION_NOT_CONFIGURED')
       if (account.data.outbound_enabled === false) throw new Error('ACCOUNT_OUTBOUND_PAUSED')
-      let transportMedia = item.media_payload || {}
-      if (transportMedia.storagePath) {
-        const signed = await supabase.storage.from('ac-whatsapp-media').createSignedUrl(String(transportMedia.storagePath), 15 * 60)
+      let transportMedia: Record<string, any> = item.media_payload ? { ...item.media_payload } : {}
+      const storageKey = String(transportMedia.storageKey || transportMedia.storagePath || '')
+      const provider = String(transportMedia.storageProvider || (storageKey ? 'supabase' : ''))
+      if (storageKey && provider === 'windows') {
+        const signed = createMediaVaultDownloadUrl(storageKey, { expiresInSeconds: 15 * 60, disposition: 'inline' })
+        transportMedia = { ...transportMedia, url: signed.url }
+        delete transportMedia.storageKey
+        delete transportMedia.storagePath
+        delete transportMedia.storageProvider
+        delete transportMedia.base64
+      } else if (storageKey) {
+        const signed = await supabase.storage.from('ac-whatsapp-media').createSignedUrl(storageKey, 15 * 60)
         if (signed.error) throw new Error(signed.error.message)
         transportMedia = { ...transportMedia, url: signed.data.signedUrl }
+        delete transportMedia.storageKey
         delete transportMedia.storagePath
+        delete transportMedia.storageProvider
         delete transportMedia.base64
       }
       const sent: any = item.message_type === 'text'

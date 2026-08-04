@@ -1,10 +1,11 @@
 import { NextRequest } from 'next/server'
 import { acContext, actorName, actorRole, audit, canAccessConversationRow, fail, hasAccountCapability, ok } from '@/lib/ac-whatsapp/server'
 import { openwa } from '@/lib/ac-whatsapp/openwa-client'
+import { createMediaVaultDownloadUrl } from '@/lib/ac-whatsapp/media-vault'
 
 export const runtime = 'nodejs'
 
-const MEDIA_BUCKET = 'ac-whatsapp-media'
+const LEGACY_MEDIA_BUCKET = 'ac-whatsapp-media'
 const MEDIA_TYPES = new Set(['image', 'video', 'audio', 'voice', 'document'])
 const MAX_MEDIA_BYTES = 50 * 1024 * 1024
 
@@ -41,46 +42,28 @@ async function persistOutboundAttachment(
   const { media, messageId, accountId, conversationId, messageType } = input
   const fallbackExtension = messageType === 'voice' ? 'webm' : 'bin'
   const fileName = sanitizeFileName(media.filename, `${messageId}.${fallbackExtension}`)
+  const storageKey = String(media.storageKey || media.storagePath || '') || null
+  const storageProvider = String(media.storageProvider || (storageKey ? 'supabase' : media.url ? 'remote' : 'inline'))
+  const sizeBytes = Number(media.size || media.sizeBytes || 0) || null
+  const checksum = String(media.sha256 || media.checksum || '') || null
   const metadata: Record<string, unknown> = {
     outbound: true,
     ptt: messageType === 'voice' || media.ptt === true,
-  }
-  let storagePath: string | null = typeof media.storagePath === 'string' && media.storagePath ? media.storagePath : null
-  let storageProvider = storagePath ? 'supabase' : media.url ? 'remote' : 'inline'
-  let sizeBytes = Number(media.size || media.sizeBytes || 0) || null
-
-  if (!storagePath && typeof media.base64 === 'string' && media.base64) {
-    try {
-      const buffer = decodeBase64(media.base64)
-      sizeBytes = buffer.length
-      if (buffer.length > MAX_MEDIA_BYTES) {
-        metadata.storage_error = 'MEDIA_OVER_50MB'
-      } else {
-        storagePath = `${accountId}/${conversationId}/${messageId}-${fileName}`
-        const uploaded = await context.supabase.storage.from(MEDIA_BUCKET).upload(storagePath, buffer, {
-          contentType: String(media.mimetype || 'application/octet-stream'),
-          upsert: true,
-        })
-        if (uploaded.error) {
-          metadata.storage_error = uploaded.error.message
-          storagePath = null
-        } else {
-          storageProvider = 'supabase'
-        }
-      }
-    } catch (cause) {
-      metadata.storage_error = cause instanceof Error ? cause.message : String(cause)
-    }
+    primary_storage: storageProvider === 'windows',
   }
 
   const attachment = await context.supabase.from('ac_whatsapp_attachments').insert({
     message_id: messageId,
     storage_provider: storageProvider,
-    storage_path: storagePath,
-    source_url: media.url || null,
+    storage_path: storageKey,
+    storage_host: storageProvider === 'windows' ? process.env.AC_WHATSAPP_MEDIA_VAULT_BASE_URL || null : null,
+    source_url: storageProvider === 'remote' ? media.url || null : null,
     file_name: fileName,
     mime_type: media.mimetype || null,
     size_bytes: sizeBytes,
+    checksum,
+    verified_at: storageProvider === 'windows' ? new Date().toISOString() : null,
+    migration_status: storageProvider === 'windows' ? 'ready' : 'legacy',
     metadata,
   })
 
@@ -88,10 +71,10 @@ async function persistOutboundAttachment(
     await context.supabase.from('ac_whatsapp_security_events').insert({
       severity: 'medium',
       event_type: 'media.outbound_persistence_failed',
-      title: 'Copie locale du média non conservée',
+      title: 'Métadonnées du média non conservées',
       description: attachment.error.message,
       account_id: accountId,
-      metadata: { messageId, conversationId, messageType },
+      metadata: { messageId, conversationId, messageType, storageProvider },
     })
   }
 }
@@ -112,16 +95,17 @@ export async function POST(request: NextRequest) {
 
   if (!conversationId) return fail('CONVERSATION_REQUIRED', 422)
   if ((messageType === 'text' || internalNote) && !text) return fail('TEXT_REQUIRED', 422)
-  if (!internalNote && messageType !== 'text' && (!MEDIA_TYPES.has(messageType) || !media || (!media.url && !media.base64 && !media.storagePath))) return fail('VALID_MEDIA_REQUIRED', 422)
+  if (!internalNote && messageType !== 'text' && (!MEDIA_TYPES.has(messageType) || !media || (!media.url && !media.base64 && !media.storagePath && !media.storageKey))) return fail('VALID_MEDIA_REQUIRED', 422)
   if (typeof media?.base64 === 'string' && media.base64.length > 70_000_000) return fail('MEDIA_TOO_LARGE', 413)
 
   const conv = await context.supabase.from('ac_whatsapp_conversations').select('*,account:ac_whatsapp_accounts(*),contact:ac_whatsapp_contacts(*)').eq('id', conversationId).maybeSingle()
   if (conv.error) return fail(conv.error.message, 500)
   if (!conv.data) return fail('CONVERSATION_NOT_FOUND', 404)
   if (!canAccessConversationRow(context, conv.data)) return fail('CONVERSATION_ACCESS_DENIED', 403)
-  if (media?.storagePath) {
+  const mediaStorageKey = String(media?.storageKey || media?.storagePath || '')
+  if (mediaStorageKey) {
     const requiredPrefix = `${conv.data.account_id}/${conversationId}/`
-    if (!String(media.storagePath).startsWith(requiredPrefix)) return fail('INVALID_MEDIA_STORAGE_PATH', 403)
+    if (!mediaStorageKey.startsWith(requiredPrefix)) return fail('INVALID_MEDIA_STORAGE_PATH', 403)
   }
 
   const now = new Date().toISOString()
@@ -207,12 +191,22 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    let transportMedia = media || {}
-    if (media?.storagePath) {
-      const signed = await context.supabase.storage.from(MEDIA_BUCKET).createSignedUrl(String(media.storagePath), 15 * 60)
-      if (signed.error) throw new Error(signed.error.message)
-      transportMedia = { ...media, url: signed.data.signedUrl }
+    let transportMedia: Record<string, any> = media ? { ...media } : {}
+    const provider = String(media?.storageProvider || (mediaStorageKey ? 'supabase' : ''))
+    if (mediaStorageKey && provider === 'windows') {
+      const signed = createMediaVaultDownloadUrl(mediaStorageKey, { expiresInSeconds: 15 * 60, disposition: 'inline' })
+      transportMedia = { ...transportMedia, url: signed.url }
+      delete transportMedia.storageKey
       delete transportMedia.storagePath
+      delete transportMedia.storageProvider
+      delete transportMedia.base64
+    } else if (mediaStorageKey) {
+      const signed = await context.supabase.storage.from(LEGACY_MEDIA_BUCKET).createSignedUrl(mediaStorageKey, 15 * 60)
+      if (signed.error) throw new Error(signed.error.message)
+      transportMedia = { ...transportMedia, url: signed.data.signedUrl }
+      delete transportMedia.storageKey
+      delete transportMedia.storagePath
+      delete transportMedia.storageProvider
       delete transportMedia.base64
     }
     const sent: any = messageType === 'text'

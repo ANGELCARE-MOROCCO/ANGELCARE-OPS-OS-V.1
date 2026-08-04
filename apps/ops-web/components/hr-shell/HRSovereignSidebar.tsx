@@ -47,7 +47,7 @@ export default function HRSovereignSidebar({
   const pathname = usePathname();
   const [query, setQuery] = useState("");
   const activeGroupKey = useMemo(() => HR_NAVIGATION_GROUPS.find((group) => group.items.some((item) => isNavigationItemActive(pathname, item)))?.key || "command", [pathname]);
-  const [openGroups, setOpenGroups] = useState<string[]>([activeGroupKey]);
+  const [openGroups, setOpenGroups] = useState<string[]>(HR_NAVIGATION_GROUPS.map((group) => group.key));
 
   useEffect(() => {
     setOpenGroups((current) => current.includes(activeGroupKey) ? current : [...current, activeGroupKey]);
@@ -104,11 +104,7 @@ export default function HRSovereignSidebar({
 
         <nav className={styles.navScroll}>
           {visibleGroups.map((group) => {
-            const open =
-              collapsed ||
-              Boolean(query.trim()) ||
-              openGroups.includes(group.key) ||
-              group.key === activeGroupKey;
+            const open = collapsed || Boolean(query.trim()) || openGroups.includes(group.key) || group.key === activeGroupKey;
             const GroupIcon = group.icon;
             return (
               <section className={styles.navGroup} key={group.key}>

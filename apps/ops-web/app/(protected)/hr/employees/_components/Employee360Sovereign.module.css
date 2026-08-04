@@ -9,7 +9,7 @@
 .modalBackdrop {
   position: fixed;
   inset: 0;
-  z-index: 90;
+  z-index: 2147483500;
   display: grid;
   place-items: center;
   padding: 18px;
@@ -115,7 +115,7 @@
 .dialogBackdrop {
   position: fixed;
   inset: 0;
-  z-index: 120;
+  z-index: 2147483550;
   display: grid;
   place-items: center;
   padding: 18px;

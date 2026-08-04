@@ -129,16 +129,26 @@
 
 .mobileBackdrop { display: none; }
 
-/* Remove only legacy full-height HR navigation sidebars. Operational content rails and modal asides remain untouched. */
-.content :global(aside[class*="h-screen"][class*="border-r"]) { display: none !important; }
-.content :global(aside[class*="min-w-[250px]"][class*="border-r"]) { display: none !important; }
-.content :global([class*="grid-cols-[248px_1fr]"]),
-.content :global([class*="grid-cols-[250px_1fr]"]),
-.content :global([class*="grid-cols-[280px_1fr]"]),
-.content :global([class*="grid-cols-[286px_1fr]"]),
-.content :global([class*="grid-cols-[290px_1fr]"]) { grid-template-columns: minmax(0,1fr) !important; }
-.content :global(main[class*="fixed"][class*="inset-x-0"][class*="top-[112px]"]) { position: relative !important; inset: auto !important; z-index: auto !important; min-height: 100dvh !important; overflow: visible !important; }
-.content :global(main[class*="fixed"][class*="inset-x-0"][class*="top-[112px]"] > div[class*="grid-cols-[250px_1fr]"]) { display: block !important; height: auto !important; min-height: 100dvh !important; }
+/* Page and modal geometry is preserved. No descendant sidebar, grid, table, or modal is globally rewritten. */
+
+/* Pages with a fixed command bridge receive space for the 58px HR snapshot ribbon. */
+.shellCommandBridge .content { padding-top: 104px; }
+.shellCommandBridge .content > :global(div[class*="fixed"][class*="top-[124px]"]) {
+  top: 182px !important;
+  left: calc(var(--hr-sidebar-width) + 20px) !important;
+}
+.shellCollapsed.shellCommandBridge .content > :global(div[class*="fixed"][class*="top-[124px]"]) {
+  left: calc(104px + 20px) !important;
+}
+
+/* The legacy HR home owns a fixed viewport main; scope the correction to /hr only. */
+.shellHome .content :global(main[class*="fixed"][class*="top-[112px]"]) {
+  position: relative !important;
+  inset: auto !important;
+  z-index: auto !important;
+  min-height: calc(100dvh - 58px) !important;
+  overflow: visible !important;
+}
 
 @media (max-width: 1180px) {
   .shell, .shellCollapsed { grid-template-columns: minmax(0,1fr); }

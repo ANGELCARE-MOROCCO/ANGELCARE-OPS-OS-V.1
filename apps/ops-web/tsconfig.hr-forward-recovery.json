@@ -1,0 +1,33 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "incremental": false,
+    "skipLibCheck": true
+  },
+  "include": [
+    "next-env.d.ts",
+    "app/(protected)/hr/layout.tsx",
+    "components/hr-shell/**/*.tsx",
+    "lib/hr-shell/**/*.ts",
+    "app/(protected)/hr/onboarding/page.tsx",
+    "app/(protected)/hr/onboarding/_actions.ts",
+    "app/(protected)/hr/onboarding/_components/OnboardingCommandCenter.tsx",
+    "app/(protected)/hr/employees/_components/Employee360DossierModal.tsx",
+    "app/(protected)/hr/employees/_components/Employee360NativeCommand.tsx",
+    "app/(protected)/hr/employees/[id]/page.tsx",
+    "components/hr-production/Staff360ProductionView.tsx",
+    "lib/hr-onboarding/**/*.ts",
+    "lib/hr-employee-360/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    ".next",
+    ".turbo",
+    ".vercel",
+    ".angelcare_backups",
+    "**/*.before-*",
+    "**/*.backup.*",
+    "**/*.bak.*"
+  ]
+}

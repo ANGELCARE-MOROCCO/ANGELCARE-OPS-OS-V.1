@@ -1,10 +1,10 @@
 import { NextRequest } from 'next/server'
 import { acContext, canAccessConversationRow, fail, ok } from '@/lib/ac-whatsapp/server'
-import { openwa } from '@/lib/ac-whatsapp/openwa-client'
+import { createMediaVaultDownloadUrl, ingestOpenWAMedia, mediaVaultStorageKey } from '@/lib/ac-whatsapp/media-vault'
 
 export const runtime = 'nodejs'
 
-const MEDIA_BUCKET = 'ac-whatsapp-media'
+const LEGACY_MEDIA_BUCKET = 'ac-whatsapp-media'
 const MAX_MEDIA_BYTES = 50 * 1024 * 1024
 
 function safeFileName(value: unknown, fallback: string) {
@@ -16,24 +16,16 @@ function extension(mimeType: unknown) {
   if (mime.includes('ogg')) return 'ogg'
   if (mime.includes('webm')) return 'webm'
   if (mime.includes('mpeg')) return 'mp3'
-  if (mime.includes('mp4')) return 'm4a'
-  if (mime.includes('wav')) return 'wav'
+  if (mime.includes('mp4')) return 'mp4'
+  if (mime.includes('jpeg')) return 'jpg'
+  if (mime.includes('png')) return 'png'
+  if (mime.includes('pdf')) return 'pdf'
   return 'bin'
 }
 
-function externalMessageId(item: Record<string, any>) {
-  return String(item.id || item.messageId || item.waMessageId || item.key?.id || '')
-}
-
-function decodeBase64(value: string) {
-  const normalized = value.includes(',') ? value.slice(value.indexOf(',') + 1) : value
-  return Buffer.from(normalized, 'base64')
-}
-
-async function signedUrl(context: any, storagePath: string, fileName?: string | null, mimeType?: string | null) {
-  const signed = await context.supabase.storage.from(MEDIA_BUCKET).createSignedUrl(storagePath, 300)
-  if (signed.error) return { error: signed.error.message } as const
-  return { data: { url: signed.data.signedUrl, fileName: fileName || null, mimeType: mimeType || null, expiresIn: 300 } } as const
+function responseForWindows(storageKey: string, fileName?: string | null, mimeType?: string | null) {
+  const signed = createMediaVaultDownloadUrl(storageKey, { expiresInSeconds: 300, disposition: 'inline' })
+  return { url: signed.url, fileName: fileName || null, mimeType: mimeType || null, expiresIn: signed.expiresIn }
 }
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -54,55 +46,78 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   const conversation = message?.conversation
   if (!canAccessConversationRow(context, conversation)) return fail('ATTACHMENT_ACCESS_DENIED', 403)
 
-  if (row.data.source_url) return ok({ url: row.data.source_url, fileName: row.data.file_name, mimeType: row.data.mime_type })
-  if (row.data.storage_path) {
-    const signed = await signedUrl(context, row.data.storage_path, row.data.file_name, row.data.mime_type)
-    if ('error' in signed) return fail(signed.error, 500)
-    return ok(signed.data)
+  const provider = String(row.data.storage_provider || '')
+  if (row.data.storage_path && provider === 'windows') {
+    return ok(responseForWindows(row.data.storage_path, row.data.file_name, row.data.mime_type))
+  }
+
+  if (row.data.source_url && provider === 'remote') {
+    return ok({ url: row.data.source_url, fileName: row.data.file_name, mimeType: row.data.mime_type })
+  }
+
+  if (row.data.storage_path && provider === 'supabase') {
+    const signed = await context.supabase.storage.from(LEGACY_MEDIA_BUCKET).createSignedUrl(row.data.storage_path, 300)
+    if (signed.error) return fail(signed.error.message, 500)
+    return ok({ url: signed.data.signedUrl, fileName: row.data.file_name, mimeType: row.data.mime_type, expiresIn: 300 })
   }
 
   const sessionId = String(conversation?.account?.openwa_session_id || '')
   const chatId = String(conversation?.remote_chat_id || '')
-  const messageId = String(message?.external_message_id || '')
-  if (!sessionId || !chatId || !messageId) return fail('ATTACHMENT_BINARY_UNAVAILABLE', 404)
+  const externalMessageId = String(message?.external_message_id || '')
+  if (!sessionId || !chatId || !externalMessageId) return fail('ATTACHMENT_BINARY_UNAVAILABLE', 404)
+
+  const mimeType = String(row.data.mime_type || 'application/octet-stream')
+  const fileName = safeFileName(row.data.file_name, `${externalMessageId}.${extension(mimeType)}`)
+  const storageKey = String(row.data.storage_path || '') || mediaVaultStorageKey({
+    accountId: conversation.account_id,
+    conversationId: conversation.id,
+    category: 'inbound',
+    objectId: message.id,
+    fileName,
+  })
 
   try {
-    const history = await openwa.getChatHistory(sessionId, chatId, 100, true)
-    const source = history.find((item) => externalMessageId(item as Record<string, any>) === messageId) as Record<string, any> | undefined
-    const media = source?.media as Record<string, any> | undefined
-    if (!media?.data || typeof media.data !== 'string') return fail('ATTACHMENT_BINARY_UNAVAILABLE', 404, { mediaOmitted: Boolean(media?.omitted) })
-
-    const buffer = decodeBase64(media.data)
-    if (!buffer.length) return fail('ATTACHMENT_BINARY_UNAVAILABLE', 404)
-    if (buffer.length > MAX_MEDIA_BYTES) return fail('ATTACHMENT_TOO_LARGE', 413)
-
-    const mimeType = String(media.mimetype || row.data.mime_type || 'application/octet-stream')
-    const fileName = safeFileName(media.filename || row.data.file_name, `${messageId}.${extension(mimeType)}`)
-    const storagePath = `${conversation.account_id}/${conversation.id}/${message.id}-${fileName}`
-    const upload = await context.supabase.storage.from(MEDIA_BUCKET).upload(storagePath, buffer, {
-      contentType: mimeType,
-      upsert: true,
+    const receipt = await ingestOpenWAMedia({
+      storageKey,
+      sessionId,
+      chatId,
+      externalMessageId,
+      fileName,
+      mimeType,
+      maxBytes: MAX_MEDIA_BYTES,
     })
-    if (upload.error) return fail(upload.error.message, 500)
 
     const updated = await context.supabase.from('ac_whatsapp_attachments').update({
-      storage_provider: 'supabase',
-      storage_path: storagePath,
-      file_name: fileName,
-      mime_type: mimeType,
-      size_bytes: buffer.length,
+      storage_provider: 'windows',
+      storage_path: receipt.storageKey,
+      storage_host: process.env.AC_WHATSAPP_MEDIA_VAULT_BASE_URL || null,
+      file_name: receipt.fileName || fileName,
+      mime_type: receipt.mimeType || mimeType,
+      size_bytes: receipt.sizeBytes,
+      checksum: receipt.sha256,
+      verified_at: new Date().toISOString(),
+      migration_status: 'ready',
       metadata: {
         ...(row.data.metadata || {}),
         omitted: false,
         hydrated_from_openwa_at: new Date().toISOString(),
+        primary_storage: 'windows',
       },
     }).eq('id', id)
     if (updated.error) return fail(updated.error.message, 500)
 
-    const signed = await signedUrl(context, storagePath, fileName, mimeType)
-    if ('error' in signed) return fail(signed.error, 500)
-    return ok(signed.data)
+    return ok(responseForWindows(receipt.storageKey, receipt.fileName, receipt.mimeType))
   } catch (cause) {
+    await context.supabase.from('ac_whatsapp_attachments').update({
+      storage_provider: 'windows_pending',
+      storage_path: storageKey,
+      migration_status: 'ingest_failed',
+      metadata: {
+        ...(row.data.metadata || {}),
+        ingest_error: cause instanceof Error ? cause.message : String(cause),
+        ingest_last_attempt_at: new Date().toISOString(),
+      },
+    }).eq('id', id)
     return fail('ATTACHMENT_REHYDRATION_FAILED', 502, cause instanceof Error ? cause.message : String(cause))
   }
 }

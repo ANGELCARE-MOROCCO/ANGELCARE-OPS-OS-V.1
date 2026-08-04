@@ -31,18 +31,22 @@ function FeedTrack({ snapshot, copy }: { snapshot: HRShellSnapshot; copy: number
 export default function HRLiveBroadcastBar({
   snapshot,
   onOpenNavigation,
+  navigationAvailable = true,
 }: {
   snapshot: HRShellSnapshot;
   onOpenNavigation: () => void;
+  navigationAvailable?: boolean;
 }) {
   const durationSeconds = Math.max(72, Math.min(132, snapshot.factors.reduce((sum, factor) => sum + factor.sentence.length, 0) / 18));
   const animationStyle = { "--hr-feed-duration": `${durationSeconds}s` } as CSSProperties;
   return (
     <section className={styles.broadcast} aria-label="Diffusion instantanée des indicateurs RH">
       <div className={styles.broadcastIdentity}>
-        <button className={styles.mobileMenuButton} onClick={onOpenNavigation} aria-label="Ouvrir la navigation RH" type="button">
-          <Menu size={18} />
-        </button>
+        {navigationAvailable ? (
+          <button className={styles.mobileMenuButton} onClick={onOpenNavigation} aria-label="Ouvrir la navigation RH" type="button">
+            <Menu size={18} />
+          </button>
+        ) : null}
         <span className={styles.livePulse}><Radio size={15} /></span>
         <span>
           <strong>HR LIVE</strong>

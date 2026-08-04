@@ -1,23 +1,13 @@
 import type { LucideIcon } from "lucide-react";
 import {
-  Activity,
-  BadgeCheck,
-  BarChart3,
   BriefcaseBusiness,
   Building2,
   CalendarClock,
-  CalendarDays,
   ClipboardCheck,
   FileCheck2,
   FileText,
-  Gauge,
-  GraduationCap,
   LayoutDashboard,
   Network,
-  Settings,
-  ShieldCheck,
-  Stethoscope,
-  TimerReset,
   UserCheck,
   Users,
   Workflow,
@@ -51,19 +41,20 @@ export type HRNavigationGroup = {
   items: HRNavigationItem[];
 };
 
-const all: HRNavigationRole[] = [
+const hrCore: HRNavigationRole[] = ["hr_admin", "hr_manager"];
+const employeeAccess: HRNavigationRole[] = [
   "hr_admin",
   "hr_manager",
   "operations_manager",
   "finance",
   "compliance",
-  "team_lead",
-  "staff",
 ];
-const hrCore: HRNavigationRole[] = ["hr_admin", "hr_manager"];
-const hrOps: HRNavigationRole[] = ["hr_admin", "hr_manager", "operations_manager"];
-const hrGovernance: HRNavigationRole[] = ["hr_admin", "hr_manager", "compliance"];
 
+/**
+ * Locked HR navigation authority.
+ * This is intentionally limited to the original final sidebar inventory.
+ * Questionnaires is the only retained addition requested by management.
+ */
 export const HR_NAVIGATION_GROUPS: HRNavigationGroup[] = [
   {
     key: "command",
@@ -73,20 +64,12 @@ export const HR_NAVIGATION_GROUPS: HRNavigationGroup[] = [
     items: [
       {
         key: "command-center",
-        label: "Cockpit RH",
+        label: "Commandement RH",
         href: "/hr",
-        description: "Vue exécutive et signaux opérationnels",
+        description: "Administration RH",
         icon: LayoutDashboard,
         roles: ["hr_admin", "hr_manager", "operations_manager"],
         badge: "live",
-      },
-      {
-        key: "approvals",
-        label: "Approbations",
-        href: "/hr/approvals",
-        description: "Décisions et validations en attente",
-        icon: BadgeCheck,
-        roles: ["hr_admin", "hr_manager", "operations_manager", "finance", "compliance"],
       },
     ],
   },
@@ -102,7 +85,7 @@ export const HR_NAVIGATION_GROUPS: HRNavigationGroup[] = [
         href: "/hr/employees",
         description: "Dossiers collaborateurs et Employee 360",
         icon: Users,
-        roles: ["hr_admin", "hr_manager", "operations_manager", "finance", "compliance"],
+        roles: employeeAccess,
       },
       {
         key: "staff",
@@ -142,7 +125,7 @@ export const HR_NAVIGATION_GROUPS: HRNavigationGroup[] = [
         href: "/hr/documents",
         description: "Pièces, conformité et expirations",
         icon: FileText,
-        roles: hrGovernance,
+        roles: ["hr_admin", "hr_manager", "compliance"],
       },
     ],
   },
@@ -197,170 +180,40 @@ export const HR_NAVIGATION_GROUPS: HRNavigationGroup[] = [
       },
     ],
   },
-  {
-    key: "operations",
-    label: "Temps & opérations",
-    description: "Présence, planning et charge",
-    icon: CalendarDays,
-    items: [
-      {
-        key: "attendance",
-        label: "Présence",
-        href: "/hr/attendance",
-        description: "Pointage, anomalies et validation",
-        icon: Activity,
-        roles: ["hr_admin", "hr_manager", "operations_manager", "finance", "team_lead"],
-      },
-      {
-        key: "work-schedules",
-        label: "Plannings",
-        href: "/hr/work-schedules",
-        description: "Rosters, shifts et couverture",
-        icon: CalendarDays,
-        roles: hrOps,
-      },
-      {
-        key: "rosters",
-        label: "Rosters",
-        href: "/hr/rosters",
-        description: "Affectations et disponibilité",
-        icon: CalendarClock,
-        roles: hrOps,
-      },
-      {
-        key: "leave",
-        label: "Congés & absences",
-        href: "/hr/leave",
-        description: "Demandes, soldes et décisions",
-        icon: TimerReset,
-        roles: ["hr_admin", "hr_manager", "operations_manager", "team_lead", "staff"],
-      },
-      {
-        key: "time-tracking",
-        label: "Temps de travail",
-        href: "/hr/time-tracking",
-        description: "Temps, heures et risques de dépassement",
-        icon: Gauge,
-        roles: ["hr_admin", "hr_manager", "operations_manager", "finance", "team_lead"],
-      },
-    ],
-  },
-  {
-    key: "development",
-    label: "Performance & développement",
-    description: "Compétences et progression",
-    icon: GraduationCap,
-    items: [
-      {
-        key: "training",
-        label: "Formation",
-        href: "/hr/training",
-        description: "Plans, sessions et certifications",
-        icon: GraduationCap,
-        roles: ["hr_admin", "hr_manager", "operations_manager", "team_lead"],
-      },
-      {
-        key: "performance-matrix",
-        label: "Performance",
-        href: "/hr/performance-matrix",
-        description: "Évaluations, calibration et coaching",
-        icon: BarChart3,
-        roles: ["hr_admin", "hr_manager", "operations_manager", "team_lead"],
-      },
-    ],
-  },
-  {
-    key: "governance",
-    label: "Pilotage & administration",
-    description: "Contrôle, audit et santé système",
-    icon: ShieldCheck,
-    items: [
-      {
-        key: "compliance",
-        label: "Conformité",
-        href: "/hr/compliance",
-        description: "Obligations, risques et preuves",
-        icon: ShieldCheck,
-        roles: hrGovernance,
-      },
-      {
-        key: "reports",
-        label: "Rapports",
-        href: "/hr/reports",
-        description: "Analyses, exports et décisions",
-        icon: BarChart3,
-        roles: ["hr_admin", "hr_manager", "finance", "compliance"],
-      },
-      {
-        key: "audit",
-        label: "Audit RH",
-        href: "/hr/audit",
-        description: "Évidence et historique opérationnel",
-        icon: Stethoscope,
-        roles: ["hr_admin", "hr_manager", "compliance"],
-      },
-      {
-        key: "sync-center",
-        label: "Centre de synchronisation",
-        href: "/hr/sync-center",
-        description: "Cohérence, réparation et contrôle",
-        icon: Network,
-        roles: ["hr_admin"],
-        badge: "control",
-      },
-      {
-        key: "system-health",
-        label: "Santé système",
-        href: "/hr/system-health",
-        description: "Sources, incidents et disponibilité",
-        icon: Activity,
-        roles: ["hr_admin"],
-      },
-      {
-        key: "settings",
-        label: "Paramètres RH",
-        href: "/hr/settings",
-        description: "Configuration et gouvernance",
-        icon: Settings,
-        roles: ["hr_admin"],
-      },
-    ],
-  },
 ];
 
-export function isNavigationItemActive(pathname: string, item: HRNavigationItem) {
-  if (item.href === "/hr") return pathname === "/hr";
-  if (pathname === item.href || pathname.startsWith(`${item.href}/`)) return true;
-  return (item.aliases || []).some((alias) => pathname === alias || pathname.startsWith(`${alias}/`));
+export function normalizeNavigationRole(role: string): HRNavigationRole {
+  const value = role.trim().toLowerCase().replace(/[\s-]+/g, "_");
+  if (["hr_admin", "admin", "administrator", "super_admin", "owner", "direction"].includes(value)) return "hr_admin";
+  if (["hr_manager", "manager_hr", "human_resources_manager"].includes(value)) return "hr_manager";
+  if (["operations_manager", "ops_manager", "operations"].includes(value)) return "operations_manager";
+  if (["finance", "finance_manager", "cfo"].includes(value)) return "finance";
+  if (["compliance", "compliance_manager"].includes(value)) return "compliance";
+  if (["team_lead", "supervisor"].includes(value)) return "team_lead";
+  return "staff";
 }
 
-function permissionCandidates(item: HRNavigationItem) {
-  const route = item.href.replace(/^\//, "");
-  const dotted = route.replaceAll("/", ".");
-  const underscored = route.replaceAll("/", "_");
-  return [
-    item.href,
-    route,
-    dotted,
-    underscored,
-    `${dotted}.view`,
-    `${underscored}.view`,
-    `route:${item.href}`,
-  ];
-}
-
-export function canSeeNavigationItem(input: {
+export function canSeeNavigationItem({
+  item,
+  role,
+  permissions,
+  sovereign,
+}: {
   item: HRNavigationItem;
   role: string;
   permissions: string[];
   sovereign: boolean;
-}) {
-  if (input.sovereign) return true;
-  const normalizedRole = input.role.trim().toLowerCase() as HRNavigationRole;
-  if (input.item.roles.includes(normalizedRole)) return true;
-  const normalizedPermissions = input.permissions.map((permission) => permission.trim().toLowerCase());
-  if (normalizedPermissions.some((permission) => permission === "*" || permission === "hr.*" || permission === "hr.full")) return true;
-  return permissionCandidates(input.item).some((candidate) => normalizedPermissions.includes(candidate.toLowerCase()));
+}): boolean {
+  if (sovereign) return true;
+  const normalizedRole = normalizeNavigationRole(role);
+  if (item.roles.includes(normalizedRole)) return true;
+  const routePermission = `route:${item.href}`;
+  return permissions.includes(routePermission) || permissions.includes("hr.*") || permissions.includes("hr.view");
+}
+
+export function isNavigationItemActive(pathname: string, item: HRNavigationItem): boolean {
+  const candidates = [item.href, ...(item.aliases ?? [])];
+  return candidates.some((candidate) => pathname === candidate || pathname.startsWith(`${candidate}/`));
 }
 
 export const HR_NAVIGATION_ROLE_LABELS: Record<HRNavigationRole, string> = {
@@ -373,22 +226,12 @@ export const HR_NAVIGATION_ROLE_LABELS: Record<HRNavigationRole, string> = {
   staff: "Collaborateur",
 };
 
-export function normalizeNavigationRole(value: unknown): HRNavigationRole {
-  const role = typeof value === "string" ? value.trim().toLowerCase() : "";
-  if (["ceo", "owner", "super_admin", "superadmin", "admin", "administrator"].includes(role)) return "hr_admin";
-  if (role === "hr_admin" || role === "rh_admin") return "hr_admin";
-  if (role === "hr_manager" || role === "rh_manager" || role.includes("human_resources") || role.includes("ressources_humaines") || /(^|[\s_/-])rh([\s_/-]|$)/.test(role)) return "hr_manager";
-  if (role === "operations_manager" || role.includes("operations")) return "operations_manager";
-  if (role === "finance" || role.includes("financial") || role.includes("payroll")) return "finance";
-  if (role === "compliance" || role.includes("quality") || role.includes("audit")) return "compliance";
-  if (role === "team_lead" || role.includes("manager") || role.includes("lead")) return "team_lead";
-  return "staff";
-}
-
-export function isSovereignRole(value: unknown) {
+export function isSovereignRole(value: unknown): boolean {
   const role = typeof value === "string" ? value.trim().toLowerCase() : "";
   return ["ceo", "owner", "super_admin", "superadmin"].includes(role);
 }
 
-export const HR_NAVIGATION_TOTAL_ITEMS = HR_NAVIGATION_GROUPS.reduce((sum, group) => sum + group.items.length, 0);
-export const HR_NAVIGATION_ALL_ROLES = all;
+export const HR_NAVIGATION_TOTAL_ITEMS = HR_NAVIGATION_GROUPS.reduce(
+  (total, group) => total + group.items.length,
+  0,
+);
