@@ -349,7 +349,17 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; animation-duration: .001ms !important; animation-iteration-count: 1 !important; }
+  .shell,
+  .shell *,
+  .shell::before,
+  .shell::after,
+  .shell *::before,
+  .shell *::after {
+    scroll-behavior: auto !important;
+    transition: none !important;
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+  }
 }
 
 .manifestControl {
