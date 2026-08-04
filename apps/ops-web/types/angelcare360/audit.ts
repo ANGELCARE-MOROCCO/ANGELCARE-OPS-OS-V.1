@@ -27,6 +27,8 @@ export type Angelcare360AuditCategory =
   | 'settings'
   | 'security'
   | 'product_reality'
+  | 'direction_command'
+  | 'payroll_sovereign'
 
 export interface Angelcare360AuditRecord {
   id: Angelcare360UUID

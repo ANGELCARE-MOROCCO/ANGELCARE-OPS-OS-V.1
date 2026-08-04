@@ -3,7 +3,6 @@ import { getWindowsNodeRequestIp, requireWindowsNodeAdmin } from "@/app/api/opso
 import { buildWindowsNodeApiErrorFromBridgeResult, callWindowsBridgeAdmin } from "@/lib/opsos/windows-node"
 import type { WindowsStorageBrowseResult } from "@/lib/opsos/windows-node-types"
 
-export const dynamic = "force-dynamic"
 
 function bounded(value: string | null, fallback = 150) {
   const parsed = Number(value || fallback)

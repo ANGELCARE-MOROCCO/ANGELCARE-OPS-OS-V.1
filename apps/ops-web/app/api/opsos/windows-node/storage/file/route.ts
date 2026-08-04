@@ -4,7 +4,6 @@ import { auditWindowsNodeEvent } from "@/app/api/opsos/windows-node/_shared"
 import { buildWindowsNodeApiErrorFromBridgeResult, callWindowsBridgeAdmin } from "@/lib/opsos/windows-node"
 import type { WindowsStorageFileDossier } from "@/lib/opsos/windows-node-types"
 
-export const dynamic = "force-dynamic"
 
 export async function GET(request: Request) {
   const auth = await requireWindowsNodeAdmin(request)

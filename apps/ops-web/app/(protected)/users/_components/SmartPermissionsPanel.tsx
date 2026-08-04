@@ -47,7 +47,7 @@ function titleCase(value: string) {
 }
 
 function moduleLabel(value: string) {
-  if (value === LEGACY_MODULE_KEY) return 'Legacy / Unknown assigned permissions'
+  if (value === LEGACY_MODULE_KEY) return 'Legacy mappings · navigation compatibility only'
   return titleCase(value)
 }
 
@@ -347,7 +347,7 @@ export default function SmartPermissionsPanel({
           <div style={eyebrowStyle}>SANILA access governance · {mode === 'edit' ? 'change control' : 'identity clearance'}</div>
           <h2 style={titleStyle}>{mode === 'edit' ? 'Govern visible workspaces, routes and sensitive access' : 'Define the member’s operational clearance'}</h2>
           <p style={textStyle}>
-            The live registry remains the source of truth. Role templates are informative only: no access is granted silently, and legacy permissions remain protected until deliberately removed.
+            The live registry remains the source of truth. Role templates are informative only: no access is granted silently, and legacy mappings are navigation compatibility only—not operational authority.
           </p>
           {catalog.message ? <div style={noticeStyle}>{catalog.message}</div> : null}
           {catalog.error ? <div style={errorStyle}>{catalog.error}</div> : null}

@@ -2,7 +2,6 @@ import { NextResponse } from "next/server"
 import { requireWindowsNodeAdmin } from "@/app/api/opsos/windows-node/_shared"
 import { listDestructionEvents, loadDestructionCertificate, loadDestructionRequest } from "@/lib/opsos/storage-destruction"
 
-export const dynamic = "force-dynamic"
 export async function GET(request: Request, { params }: { params: Promise<{ requestId: string }> }) {
   const auth = await requireWindowsNodeAdmin(request)
   if (!auth.ok) return auth.response

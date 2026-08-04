@@ -11,7 +11,6 @@ import type {
   WindowsSmtpDiagnostic,
 } from "@/lib/opsos/windows-node-types"
 
-export const dynamic = "force-dynamic"
 
 type StepResult = { name: string; ok: boolean; summary: string }
 

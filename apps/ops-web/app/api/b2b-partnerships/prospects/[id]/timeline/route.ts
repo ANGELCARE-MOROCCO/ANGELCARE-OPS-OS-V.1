@@ -2,15 +2,15 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getCurrentB2BAppUser, getServerB2BDatabaseClient } from '@/lib/b2b-partnerships/runtime'
 import { requireB2BPermission } from '@/lib/b2b-partnerships/permissions'
 
-export async function GET(_: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params
     const db = await getServerB2BDatabaseClient()
     const actor = await getCurrentB2BAppUser()
     if (!actor?.id) return NextResponse.json({ ok: false, error: 'Authentication required.' }, { status: 401 })
     const permission = requireB2BPermission('read', { actorId: actor.id, actorRole: actor.role || actor.role_key })
     if (!permission.ok) return NextResponse.json({ ok: false, error: permission.error }, { status: permission.status })
 
-    const id = params.id
     const [activities, outreach, calls, meetings, tasks, proposals, direct] = await Promise.all([
       db.from('b2b_activities').select('*').eq('prospect_id', id).order('created_at', { ascending: false }).limit(80),
       db.from('b2b_outreach_logs').select('*').eq('prospect_id', id).order('created_at', { ascending: false }).limit(50),

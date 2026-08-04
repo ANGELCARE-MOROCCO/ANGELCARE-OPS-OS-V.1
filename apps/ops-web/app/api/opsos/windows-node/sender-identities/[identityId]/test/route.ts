@@ -2,7 +2,6 @@ import { actorFromSenderIdentityAuth, requireSenderIdentityAdmin, senderIdentity
 import { getSenderIdentityDossier, markSenderIdentityTestResult } from "@/lib/email-os-core/sender-identity"
 import { sendEmailOSDirect } from "@/lib/email-os-core/send-mail"
 
-export const dynamic = "force-dynamic"
 
 function clean(value: unknown) {
   return String(value ?? "").trim()

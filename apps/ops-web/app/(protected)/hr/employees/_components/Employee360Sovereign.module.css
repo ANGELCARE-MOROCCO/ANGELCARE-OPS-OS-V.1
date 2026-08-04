@@ -1,0 +1,165 @@
+.surface {
+  --employee360-navy: #07172d;
+  --employee360-violet: #6d28d9;
+  --employee360-cyan: #0891b2;
+  --employee360-border: rgba(148, 163, 184, 0.28);
+  color: #0f172a;
+}
+
+.modalBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background: rgba(2, 8, 23, 0.76);
+  backdrop-filter: blur(14px);
+}
+
+.modalShell {
+  width: min(1680px, 98vw);
+  height: min(960px, 95vh);
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.48);
+  border-radius: 34px;
+  background: #f8fafc;
+  box-shadow: 0 38px 100px rgba(2, 8, 23, 0.42);
+}
+
+.fullPageShell {
+  min-height: calc(100vh - 96px);
+  overflow: hidden;
+  border: 1px solid var(--employee360-border);
+  border-radius: 32px;
+  background: #f8fafc;
+  box-shadow: 0 25px 80px rgba(15, 23, 42, 0.12);
+}
+
+.commandGrid {
+  display: grid;
+  grid-template-columns: 278px minmax(0, 1fr);
+  height: 100%;
+}
+
+.contentGrid {
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  min-width: 0;
+  min-height: 0;
+}
+
+.mainScroll {
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(100, 116, 139, 0.45) transparent;
+}
+
+.mainScroll::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+
+.mainScroll::-webkit-scrollbar-thumb {
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background: rgba(100, 116, 139, 0.42);
+  background-clip: padding-box;
+}
+
+.sideRail {
+  min-height: 0;
+  overflow: auto;
+  border-right: 1px solid rgba(148, 163, 184, 0.2);
+  background:
+    radial-gradient(circle at 20% 10%, rgba(124, 58, 237, 0.25), transparent 34%),
+    radial-gradient(circle at 80% 72%, rgba(6, 182, 212, 0.16), transparent 38%),
+    linear-gradient(180deg, #07172d 0%, #081224 100%);
+  color: white;
+}
+
+.headerMesh {
+  background:
+    radial-gradient(circle at 8% 20%, rgba(124, 58, 237, 0.13), transparent 30%),
+    radial-gradient(circle at 90% 25%, rgba(8, 145, 178, 0.11), transparent 35%),
+    linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+}
+
+.healthPulse {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: #34d399;
+  box-shadow: 0 0 0 5px rgba(52, 211, 153, 0.14);
+}
+
+.tabRow {
+  display: flex;
+  gap: 7px;
+  overflow-x: auto;
+  padding-bottom: 3px;
+  scrollbar-width: none;
+}
+
+.tabRow::-webkit-scrollbar {
+  display: none;
+}
+
+.recordGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 14px;
+}
+
+.dialogBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background: rgba(2, 8, 23, 0.62);
+  backdrop-filter: blur(10px);
+}
+
+.dialog {
+  width: min(880px, 96vw);
+  max-height: 92vh;
+  overflow: auto;
+  border: 1px solid rgba(255, 255, 255, 0.58);
+  border-radius: 30px;
+  background: #fff;
+  box-shadow: 0 36px 100px rgba(2, 8, 23, 0.36);
+}
+
+.progressBar {
+  height: 5px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e2e8f0;
+}
+
+.progressBar > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #6d28d9, #0891b2);
+  transition: width 240ms ease;
+}
+
+@media (max-width: 1100px) {
+  .commandGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .sideRail {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .progressBar > span {
+    transition: none;
+  }
+}

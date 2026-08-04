@@ -3,7 +3,6 @@ import { auditWindowsNodeEvent, requireWindowsNodeAdmin } from "@/app/api/opsos/
 import { actorId } from "@/app/api/opsos/windows-node/storage/quarantine/_shared"
 import { getQuarantinePolicy, saveQuarantinePolicy } from "@/lib/opsos/storage-quarantine"
 
-export const dynamic = "force-dynamic"
 
 export async function GET(request: Request) {
   const auth = await requireWindowsNodeAdmin(request)

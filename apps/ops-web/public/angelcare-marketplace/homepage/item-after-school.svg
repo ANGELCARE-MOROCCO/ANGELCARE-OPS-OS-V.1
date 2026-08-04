@@ -1,1 +1,18 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="760" viewBox="0 0 1000 760" role="img"><defs><linearGradient id="bg9c02f39b" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#1d506e"/><stop offset="1" stop-color="#4d94aa"/></linearGradient><linearGradient id="accent" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f5be69"/><stop offset="1" stop-color="#fff"/></linearGradient><radialGradient id="warm"><stop stop-color="#ffe9d0"/><stop offset="1" stop-color="#f4a95d"/></radialGradient><pattern id="dots9c02f39b" width="34" height="34" patternUnits="userSpaceOnUse"><circle cx="3" cy="3" r="2" fill="#fff" opacity=".09"/></pattern></defs><rect width="1000" height="760" fill="url(#bg9c02f39b)"/><rect width="1000" height="760" fill="url(#dots9c02f39b)"/><circle cx="180" cy="110" r="310" fill="#fff" opacity=".035"/><circle cx="270" cy="640" r="420" fill="none" stroke="#fff" stroke-width="2" opacity=".08"/><path d="M0 585.2C200.0 440.79999999999995 360.0 722.0 570.0 577.6S830.0 471.2 1000 577.6V760H0Z" fill="#fff" opacity=".04"/><circle cx="1130" cy="290" r="150" fill="url(#warm)"/><circle cx="1130" cy="260" r="58" fill="#fff" opacity=".94"/><path d="M1010 570c22-152 80-225 120-225s98 73 120 225" fill="#fff" opacity=".92"/><circle cx="1320" cy="350" r="42" fill="#fff" opacity=".85"/><path d="M1245 580c16-112 45-168 75-168s59 56 75 168" fill="#fff" opacity=".83"/><path d="M810 190c-90 100-116 222-44 310 50 62 130 80 205 47" fill="none" stroke="#fff" stroke-width="8" opacity=".18"/><path d="M70 86h210" stroke="#f5be69" stroke-width="7" stroke-linecap="round"/><path d="M70 112h128" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".6"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="800" viewBox="0 0 1000 800" role="img" aria-labelledby="title-9c02f39b">
+<title id="title-9c02f39b">After-school learning support</title>
+<defs>
+<linearGradient id="bg9c02f39b" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#10243d"/><stop offset=".58" stop-color="#4b7f73"/><stop offset="1" stop-color="#10243d"/></linearGradient>
+<radialGradient id="glow9c02f39b" cx="50%" cy="50%" r="50%"><stop stop-color="#d7f0e7" stop-opacity=".92"/><stop offset="1" stop-color="#f0b35d" stop-opacity=".08"/></radialGradient>
+<linearGradient id="glass9c02f39b" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff" stop-opacity=".36"/><stop offset="1" stop-color="#fff" stop-opacity=".08"/></linearGradient>
+<pattern id="grid9c02f39b" width="42" height="42" patternUnits="userSpaceOnUse"><path d="M42 0H0V42" fill="none" stroke="#fff" stroke-opacity=".045"/></pattern>
+<filter id="shadow9c02f39b" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="22" stdDeviation="24" flood-color="#000" flood-opacity=".28"/></filter>
+</defs>
+<rect width="1000" height="800" fill="url(#bg9c02f39b)"/>
+<rect width="1000" height="800" fill="url(#grid9c02f39b)"/>
+<circle cx="780" cy="200" r="224" fill="url(#glow9c02f39b)" opacity=".62"/>
+<circle cx="120" cy="688" r="304" fill="none" stroke="#fff" stroke-opacity=".07" stroke-width="2"/>
+<path d="M0 624 C 200 496, 380 752, 580 592 S 860 512, 1000 624 V 800 H0Z" fill="#fff" opacity=".035"/>
+<path d="M45 84H180" stroke="#f0b35d" stroke-width="7" stroke-linecap="round"/>
+<path d="M45 112H130" stroke="#fff" stroke-opacity=".55" stroke-width="4" stroke-linecap="round"/>
+<g filter="url(#shadow9c02f39b)"><path d="M504 272Q624 200 720 288Q816 200 936 272V536Q816 464 720 552Q624 464 504 536Z" fill="#fff" opacity=".92"/><path d="M720 288V552" stroke="#4b7f73" stroke-opacity=".45" stroke-width="3"/><circle cx="920" cy="224" r="72" fill="#f0b35d"/><path d="M920 184V232L960 256" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/></g>
+</svg>

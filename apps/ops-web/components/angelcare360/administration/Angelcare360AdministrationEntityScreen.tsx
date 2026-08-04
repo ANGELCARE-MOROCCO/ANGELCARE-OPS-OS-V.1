@@ -1,7 +1,7 @@
 'use client'
 
-import { useDeferredValue, useMemo, useState, useTransition } from 'react'
-import { useRouter } from 'next/navigation'
+import { useDeferredValue, useEffect, useMemo, useState, useTransition } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import type { ReactNode } from 'react'
 import type {
   Angelcare360AdminEntityConfig,
@@ -59,6 +59,7 @@ export default function Angelcare360AdministrationEntityScreen({
   extraHeaderActions,
 }: Angelcare360AdministrationEntityScreenProps) {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [search, setSearch] = useState('')
   const deferredSearch = useDeferredValue(search)
   const [filterState, setFilterState] = useState<Record<string, string>>({})
@@ -90,6 +91,18 @@ export default function Angelcare360AdministrationEntityScreen({
     setSelectedRecord(row)
     setDrawerMode('edit')
   }
+
+  useEffect(() => {
+    const requestedEntityId = searchParams.get('entity')
+    if (!requestedEntityId) return
+    const record = rows.find((item) => String(item.id || '') === requestedEntityId)
+    if (!record) {
+      setFeedback('Le dossier exact demandé n’est plus disponible dans ce scope.')
+      return
+    }
+    setSelectedRecord(record)
+    setDrawerMode('edit')
+  }, [rows, searchParams])
 
   const closeDrawer = () => {
     setDrawerMode(null)

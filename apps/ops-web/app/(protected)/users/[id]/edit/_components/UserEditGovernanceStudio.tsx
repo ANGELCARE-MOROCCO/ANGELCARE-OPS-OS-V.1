@@ -37,6 +37,7 @@ import UserProfilePhotoField, {
   type UserProfilePhotoState,
 } from '@/app/(protected)/users/_components/UserProfilePhotoField'
 import styles from '@/app/(protected)/users/_components/UserIdentityStudio.module.css'
+import { AMBASSADOR_PERMISSIONS } from '@/lib/market-os/ambassadors/contracts'
 
 type RoleOption = { value: string; label: string; department: string }
 
@@ -63,6 +64,8 @@ type Props = {
   defaultPermissions: string[]
   roleTemplates: Record<string, string[]>
   existingPhotoUrl: string | null
+  ambassadorAccessMode?: 'full' | 'view_only' | 'custom' | 'none'
+  ambassadorCustomPermissions?: string[]
 }
 
 type Stage = 1 | 2 | 3 | 4 | 5
@@ -104,7 +107,7 @@ function SubmitButton({ disabled }: { disabled: boolean }) {
   )
 }
 
-export default function UserEditGovernanceStudio({ action, user, roles, departments, positions, defaultPermissions, roleTemplates, existingPhotoUrl }: Props) {
+export default function UserEditGovernanceStudio({ action, user, roles, departments, positions, defaultPermissions, roleTemplates, existingPhotoUrl, ambassadorAccessMode: initialAmbassadorAccessMode, ambassadorCustomPermissions: initialAmbassadorCustomPermissions = [] }: Props) {
   const formRef = useRef<HTMLFormElement | null>(null)
   const [activeStage, setActiveStage] = useState<Stage>(1)
   const [fullName, setFullName] = useState(user.full_name || '')
@@ -116,6 +119,10 @@ export default function UserEditGovernanceStudio({ action, user, roles, departme
   const [role, setRole] = useState(String(user.role || 'staff').toLowerCase())
   const [status, setStatus] = useState(user.status || 'active')
   const [language, setLanguage] = useState(user.language || 'fr')
+  const [ambassadorAccessMode, setAmbassadorAccessMode] = useState<'full' | 'view_only' | 'custom' | 'none'>(
+    initialAmbassadorAccessMode || (defaultPermissions.includes('market_os.ambassadors.view') ? 'full' : 'none'),
+  )
+  const [ambassadorCustomPermissions, setAmbassadorCustomPermissions] = useState<string[]>(initialAmbassadorCustomPermissions)
   const [accessSummary, setAccessSummary] = useState<PermissionSelectionSummary>(() => ({
     ...emptyAccessSummary,
     selectedCount: defaultPermissions.length,
@@ -312,6 +319,19 @@ export default function UserEditGovernanceStudio({ action, user, roles, departme
                 <ChangeCard value={accessSummary.selectedCount} label="Droits après validation" tone="neutral" />
               </div>
               <SmartPermissionsPanel defaultPermissions={defaultPermissions} roleTemplates={roleTemplates} mode="edit" onSummaryChange={handleAccessSummary} />
+              <div className={styles.panelSoft} style={{ marginTop: 18 }}>
+                <div className={styles.sectionHeader}>
+                  <div><div className={styles.eyebrow}>Ambassadors · Native authorization</div><h3 className={styles.sectionTitle}>Access mode</h3><p className={styles.sectionText}>The legacy route permission remains navigation-only; this mode synchronizes the native Ambassador actor authorization.</p></div>
+                </div>
+                <select name="ambassador_access_mode" value={ambassadorAccessMode} onChange={(event) => setAmbassadorAccessMode(event.target.value as 'full' | 'view_only' | 'custom' | 'none')} className={styles.select}>
+                  <option value="full">Full access — default</option>
+                  <option value="view_only">View only</option>
+                  <option value="custom">Custom</option>
+                  <option value="none">No access</option>
+                </select>
+                {ambassadorAccessMode === 'full' ? <p className={styles.help}>Accès opérationnel complet au module Ambassadors, y compris les nouvelles permissions ajoutées ultérieurement.</p> : null}
+                {ambassadorAccessMode === 'custom' ? <div className={styles.changeGrid} style={{ marginTop: 12 }}>{AMBASSADOR_PERMISSIONS.map((permission) => <label key={permission} className={styles.field}><span className={styles.label}><input type="checkbox" name="ambassador_custom_permission" value={permission} checked={ambassadorCustomPermissions.includes(permission)} onChange={(event) => setAmbassadorCustomPermissions((current) => event.target.checked ? [...new Set([...current, permission])] : current.filter((item) => item !== permission))} /> {permission}</span></label>)}</div> : null}
+              </div>
             </div>
           </section>
 

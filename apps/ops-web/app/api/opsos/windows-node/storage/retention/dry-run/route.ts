@@ -5,7 +5,6 @@ import { actorId } from "@/app/api/opsos/windows-node/storage/quarantine/_shared
 import { createEmailOSCoreDb } from "@/lib/email-os-core/db"
 import { simulateRetentionPolicy } from "@/lib/opsos/storage-destruction"
 
-export const dynamic = "force-dynamic"
 function clean(value: unknown) { return String(value ?? "").trim() }
 export async function POST(request: Request) {
   const auth = await requireWindowsNodeAdmin(request)

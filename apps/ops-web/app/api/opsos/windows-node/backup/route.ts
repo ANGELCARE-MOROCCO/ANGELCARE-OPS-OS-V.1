@@ -2,7 +2,6 @@ import { NextResponse } from "next/server"
 import { auditWindowsNodeEvent, getWindowsNodeRequestIp, requireWindowsNodeAdmin } from "@/app/api/opsos/windows-node/_shared"
 import { buildWindowsNodeApiErrorResponse, callWindowsBridgeAdmin } from "@/lib/opsos/windows-node"
 
-export const dynamic = "force-dynamic"
 
 type BackupCreateResult = {
   backupId?: string
@@ -55,4 +54,3 @@ export async function POST(request: Request) {
 
   return NextResponse.json({ ok: true, data: result.data }, { headers: { "cache-control": "no-store" } })
 }
-

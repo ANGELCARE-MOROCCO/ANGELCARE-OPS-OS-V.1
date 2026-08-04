@@ -2,7 +2,6 @@ import { NextResponse } from "next/server"
 import { auditWindowsNodeEvent, requireWindowsNodeAdmin } from "@/app/api/opsos/windows-node/_shared"
 import { actorId } from "@/app/api/opsos/windows-node/storage/quarantine/_shared"
 import { createLegalHold, listLegalHolds } from "@/lib/opsos/storage-destruction"
-export const dynamic = "force-dynamic"
 function clean(value: unknown) { return String(value ?? "").trim() }
 export async function GET(request: Request) {
   const auth = await requireWindowsNodeAdmin(request)

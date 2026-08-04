@@ -363,6 +363,20 @@ export const PERMISSION_CATALOG: PermissionDefinition[] = [
   { key: 'marketplace.security.assess', label: 'Évaluer les contrôles sécurité', category: 'Security', sensitive: true },
   { key: 'marketplace.launch.approve', label: 'Approuver une release', category: 'Launch', sensitive: true },
   { key: 'marketplace.launch.monitoring', label: 'Voir le monitoring post-launch', category: 'Launch', sensitive: false },
+  { key: 'marketplace.commerce.view', label: 'Voir Commerce Studio', category: 'Commerce Studio', sensitive: false },
+  { key: 'marketplace.media.view', label: 'Voir Media Library', category: 'Commerce Studio', sensitive: false },
+  { key: 'marketplace.media.manage', label: 'Gérer les médias', category: 'Commerce Studio', sensitive: true },
+  { key: 'marketplace.homepage.view', label: 'Voir Homepage Composer', category: 'Commerce Studio', sensitive: false },
+  { key: 'marketplace.homepage.manage', label: 'Gérer et publier la homepage', category: 'Commerce Studio', sensitive: true },
+  { key: 'marketplace.navigation.view', label: 'Voir Navigation Studio', category: 'Commerce Studio', sensitive: false },
+  { key: 'marketplace.navigation.manage', label: 'Gérer et publier la navigation', category: 'Commerce Studio', sensitive: true },
+  { key: 'marketplace.categories.manage', label: 'Gérer les catégories', category: 'Commerce Studio', sensitive: true },
+  { key: 'marketplace.merchandising.view', label: 'Voir Merchandising Studio', category: 'Commerce Studio', sensitive: false },
+  { key: 'marketplace.merchandising.manage', label: 'Gérer le merchandising', category: 'Commerce Studio', sensitive: true },
+  { key: 'marketplace.publication.manage', label: 'Publier et restaurer immédiatement', category: 'Commerce Studio', sensitive: true },
+  { key: 'marketplace.seo.manage', label: 'Gérer SEO commercial', category: 'Commerce Studio', sensitive: true },
+  { key: 'marketplace.commerce.export', label: 'Exporter le commerce', category: 'Commerce Studio', sensitive: true },
+  { key: 'marketplace.commerce.import', label: 'Importer le commerce', category: 'Commerce Studio', sensitive: true },
 ]
 
 export const PERMISSION_KEYS = PERMISSION_CATALOG.map((definition) => definition.key)

@@ -3,7 +3,6 @@ import { getWindowsNodeRequestIp, requireWindowsNodeAdmin } from "@/app/api/opso
 import { actorId } from "@/app/api/opsos/windows-node/storage/quarantine/_shared"
 import { createDedupPlan, listDedupPlans } from "@/lib/opsos/storage-lifecycle"
 import { callWindowsBridgeAdmin } from "@/lib/opsos/windows-node"
-export const dynamic = "force-dynamic"
 export async function GET(request: Request) {
   const auth = await requireWindowsNodeAdmin(request)
   if (!auth.ok) return auth.response

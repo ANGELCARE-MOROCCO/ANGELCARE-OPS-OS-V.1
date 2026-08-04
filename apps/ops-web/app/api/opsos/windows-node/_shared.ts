@@ -17,10 +17,15 @@ export function getWindowsNodeRequestIp(request: Request) {
   return request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || request.headers.get("cf-connecting-ip") || ""
 }
 
+function windowsNodeAuthorizationResponse(error: WindowsNodeApiError) {
+  const status = error.responseStatus || (error.errorName === "Unauthorized" ? 401 : 403)
+  return NextResponse.json(error, { status })
+}
+
 export async function requireWindowsNodeAdmin(request: Request) {
   const auth = await authorizeInfrastructureAdminRequest(request)
   if (!auth.ok) {
-    return { ok: false as const, response: auth.response }
+    return { ok: false as const, response: windowsNodeAuthorizationResponse(auth.response) }
   }
   return { ok: true as const, context: { operator: auth.operator, user: auth.user } satisfies RequestContext }
 }

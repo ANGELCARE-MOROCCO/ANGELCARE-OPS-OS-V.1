@@ -1,0 +1,24 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "incremental": false
+  },
+  "include": [
+    "next-env.d.ts",
+    "lib/hr-recruitment/interviews/**/*.ts",
+    "app/(protected)/hr/recruitment/interviews/**/*.tsx",
+    "app/(protected)/hr/recruitment/_actions.ts",
+    "app/api/hr/recruitment/interviews/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    ".next",
+    ".next/**",
+    ".angelcare_backups",
+    ".angelcare_backups/**",
+    "**/*.before-*",
+    "**/*.bak.*",
+    "**/*.log"
+  ]
+}

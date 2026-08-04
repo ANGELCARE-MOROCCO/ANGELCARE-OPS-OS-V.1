@@ -1,7 +1,6 @@
 import { actorFromSenderIdentityAuth, requireSenderIdentityAdmin, senderIdentityError, senderIdentityOk } from "@/app/api/opsos/windows-node/sender-identities/_shared"
 import { listSenderIdentityRegistry, saveSenderIdentityDraft } from "@/lib/email-os-core/sender-identity"
 
-export const dynamic = "force-dynamic"
 
 export async function GET(request: Request) {
   const auth = await requireSenderIdentityAdmin(request)

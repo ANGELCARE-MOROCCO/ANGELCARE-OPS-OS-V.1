@@ -2,14 +2,15 @@ import { NextResponse } from 'next/server'
 import { getCurrentB2BAppUser, getServerB2BDatabaseClient } from '@/lib/b2b-partnerships/runtime'
 import { requireB2BPermission } from '@/lib/b2b-partnerships/permissions'
 
-export async function POST(_: Request, { params }: { params: { id: string } }) {
+export async function POST(_: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params
     const db = await getServerB2BDatabaseClient()
     const actor = await getCurrentB2BAppUser()
     if (!actor?.id) return NextResponse.json({ ok:false, error:'Authentication required.' }, { status:401 })
     const permission = requireB2BPermission('update', { actorId: actor.id, actorRole: actor.role || actor.role_key })
     if (!permission.ok) return NextResponse.json({ ok:false, error:permission.error }, { status:permission.status })
-    const { data: enrolled } = await db.from('b2b_campaign_prospects').select('*').eq('campaign_id', params.id).in('status', ['Enrolled','In Progress']).limit(100)
+    const { data: enrolled } = await db.from('b2b_campaign_prospects').select('*').eq('campaign_id', id).in('status', ['Enrolled','In Progress']).limit(100)
     let createdTasks = 0
     for (const row of enrolled || []) {
       const nextOrder = Number(row.current_step_order || 0) + 1
@@ -22,7 +23,7 @@ export async function POST(_: Request, { params }: { params: { id: string } }) {
         assigned_to: prospect?.assigned_owner_id || actor.id,
         priority: 'High',
         status: 'To Do',
-        description: `Execute next campaign sequence step for campaign ${params.id}.`,
+        description: `Execute next campaign sequence step for campaign ${id}.`,
         created_by: actor.id,
       })
       createdTasks++

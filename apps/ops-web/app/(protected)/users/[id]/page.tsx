@@ -490,6 +490,7 @@ export default async function UserProfilePage({
   const activityTo = getParam('activityTo')
   const activityAction = getParam('activityAction')
   const activitySearch = getParam('activitySearch')
+  const ambassadorNativeSync = getParam('ambassador_native') === 'synchronized'
 
   const supabase = await createClient()
 
@@ -705,6 +706,7 @@ export default async function UserProfilePage({
 
   const overview = (
     <div style={dossierStackStyle}>
+      {ambassadorNativeSync ? <div style={alertGreenStyle}>Global module assignment: synchronized · Ambassador native authorization: synchronized</div> : null}
       <div style={executiveGridStyle}>
         <section style={executiveCardStyle}>
           <span style={cardEyebrowStyle}>Lecture direction</span>
@@ -1095,4 +1097,3 @@ const embeddedSystemStyle: CSSProperties = { padding: 14, borderTop: '1px solid 
 const compactFilterStyle: CSSProperties = { display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: 8, marginBottom: 14 }
 const dangerDetailsStyle: CSSProperties = { border: '1px solid #fecaca', borderRadius: 18, overflow: 'hidden', background: '#fffafa' }
 const dangerSummaryStyle: CSSProperties = { padding: 18, color: '#991b1b', fontWeight: 900, cursor: 'pointer' }
-

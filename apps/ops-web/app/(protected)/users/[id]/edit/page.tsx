@@ -1,7 +1,8 @@
 import AppShell, { PageAction } from '@/app/components/erp/AppShell'
 import { notFound, redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import { requireRole } from '@/lib/auth/session'
+import { getCurrentAppUser, requireRole } from '@/lib/auth/session'
+import { synchronizeAmbassadorAccess, type AmbassadorAccessMode } from '@/lib/users/ambassador-access'
 import UserEditGovernanceStudio from '@/app/(protected)/users/[id]/edit/_components/UserEditGovernanceStudio'
 import {
   ROLE_PERMISSION_TEMPLATES,
@@ -15,7 +16,7 @@ import {
   validateUserProfilePhoto,
 } from '@/lib/users/profile-photo'
 
-type AnyRow = Record<string, any>
+type AnyRow = Record<string, unknown>
 
 async function readList(supabase: any, table: string, columns = '*') {
   try {
@@ -53,6 +54,15 @@ export default async function EditUserPage({ params }: { params: Promise<{ id: s
 
   if (error || !user) notFound()
 
+  const { data: ambassadorMembership } = await supabase
+    .from('market_os_ambassador_module_memberships')
+    .select('access_mode,grant_permissions,active')
+    .eq('app_user_id', id)
+    .eq('module_key', 'market_os_ambassadors')
+    .order('updated_at', { ascending: false })
+    .limit(1)
+    .maybeSingle()
+
   const permissions: string[] = Array.isArray(user.permissions) ? user.permissions : []
   const existingPermissions = [...permissions]
   const existingPhotoPath = String((user as AnyRow).profile_photo_path || '')
@@ -88,6 +98,12 @@ export default async function EditUserPage({ params }: { params: Promise<{ id: s
     }
 
     const permissions = Array.from(new Set(formData.getAll('permissions').map(String).filter(Boolean)))
+    const ambassadorAccessMode = String(formData.get('ambassador_access_mode') || 'none') as AmbassadorAccessMode
+    const ambassadorCustomPermissions = Array.from(new Set(formData.getAll('ambassador_custom_permission').map(String).filter(Boolean)))
+    const ambassadorAssigned = ambassadorAccessMode !== 'none'
+    const nextPermissions = ambassadorAssigned
+      ? Array.from(new Set([...permissions, 'market_os.ambassadors.view']))
+      : permissions.filter((permission) => permission !== 'market_os.ambassadors.view')
     const roleOption = getRoleOption(role)
 
     const payload: Record<string, unknown> = {
@@ -100,7 +116,7 @@ export default async function EditUserPage({ params }: { params: Promise<{ id: s
       email: String(formData.get('email') || ''),
       department: String(formData.get('department') || roleOption?.department || ''),
       job_title: String(formData.get('job_title') || ''),
-      permissions,
+      permissions: nextPermissions,
       updated_at: new Date().toISOString(),
     }
 
@@ -118,8 +134,27 @@ export default async function EditUserPage({ params }: { params: Promise<{ id: s
         payload.profile_photo_path = null
       }
 
-      const { error } = await supabase.from('app_users').update(payload).eq('id', id)
-      if (error) throw new Error(error.message)
+      const { permissions: _globalPermissions, ...profilePayload } = payload
+      const { error: profileError } = await supabase.from('app_users').update(profilePayload).eq('id', id)
+      if (profileError) throw new Error(profileError.message)
+
+      const actor = await getCurrentAppUser()
+      if (!actor) throw new Error('Authentication required.')
+      const { data: targetUser, error: targetError } = await supabase
+        .from('app_users')
+        .select('tenant_id,organization_id')
+        .eq('id', id)
+        .maybeSingle()
+      if (targetError) throw new Error(targetError.message)
+      await synchronizeAmbassadorAccess(supabase, {
+        appUserId: id,
+        assignedBy: String(actor.id),
+        accessMode: ambassadorAccessMode,
+        customPermissions: ambassadorCustomPermissions,
+        globalPermissions: nextPermissions,
+        tenantId: typeof targetUser?.tenant_id === 'string' ? targetUser.tenant_id : null,
+        organizationId: typeof targetUser?.organization_id === 'string' ? targetUser.organization_id : null,
+      })
 
       if (photoChanged && existingPhotoPath && existingPhotoPath !== nextPhotoPath) {
         await removeUserProfilePhoto(supabase, existingPhotoPath).catch(() => undefined)
@@ -142,14 +177,16 @@ export default async function EditUserPage({ params }: { params: Promise<{ id: s
           role: payload.role,
           department: payload.department,
           permissions_before_count: existingPermissions.length,
-          permissions_after_count: permissions.length,
+          permissions_after_count: nextPermissions.length,
+          ambassador_access_mode: ambassadorAccessMode,
+          ambassador_native_authorization: 'synchronized',
           profile_photo_changed: photoChanged,
           profile_photo_present: Boolean(nextPhotoPath),
         },
       },
     ])
 
-    redirect(`/users/${id}`)
+    redirect(`/users/${id}?access=updated&ambassador_native=synchronized`)
   }
 
   return (
@@ -186,6 +223,8 @@ export default async function EditUserPage({ params }: { params: Promise<{ id: s
         defaultPermissions={permissions}
         roleTemplates={ROLE_PERMISSION_TEMPLATES}
         existingPhotoUrl={existingPhotoUrl}
+        ambassadorAccessMode={ambassadorMembership?.active ? ambassadorMembership.access_mode : 'none'}
+        ambassadorCustomPermissions={Array.isArray(ambassadorMembership?.grant_permissions) ? ambassadorMembership.grant_permissions.filter((permission): permission is string => typeof permission === 'string') : []}
       />
     </AppShell>
   )

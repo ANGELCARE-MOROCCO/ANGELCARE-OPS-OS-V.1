@@ -205,13 +205,14 @@ export default function GlobalAccessRegistryScannerModal({ open, canManage, onCl
         <header style={headerStyle}>
           <div style={{ minWidth: 0 }}>
             <div style={eyebrowStyle}>Users Management · Global Access Governance</div>
-            <h2 style={titleStyle}>Global Access Registry & Route-Family Scanner</h2>
-            <p style={subtitleStyle}>Discover every application surface—not only protected modules—classify independent families, review assignability, publish a recoverable registry version, and expose authorized families on staff dashboards.</p>
+            <h2 style={titleStyle}>Global Authorization Intelligence & Reconciliation Command</h2>
+            <p style={subtitleStyle}>Run the quick registry scan here, then open the Sovereign Studio for source intelligence, native-authority topology, global-to-native reconciliation, controlled execution, and recovery.</p>
           </div>
           <div style={headerActionsStyle}>
             <button type="button" onClick={runDryScan} disabled={!canManage || Boolean(busy)} style={primaryButtonStyle}>
               {busy === 'scan' ? 'Synchronizing Entire App…' : summary ? 'Run Fresh Integrity Scan' : 'Start Global Integrity Scan'}
             </button>
+            <button type="button" onClick={() => window.location.assign('/users/access-governance')} style={studioButtonStyle}>Open Sovereign Studio</button>
             <button type="button" onClick={onClose} style={closeButtonStyle}>Close</button>
           </div>
         </header>
@@ -558,6 +559,7 @@ const tabStyle: CSSProperties = { border: '1px solid #dbe4ef', borderRadius: 999
 const activeTabStyle: CSSProperties = { ...tabStyle, background: '#eaf2ff', color: '#1d4ed8', borderColor: '#93c5fd' }
 const bodyStyle: CSSProperties = { flex: 1, minHeight: 0, overflow: 'auto', padding: 22 }
 const primaryButtonStyle: CSSProperties = { border: 0, borderRadius: 14, padding: '11px 16px', background: '#2563eb', color: '#fff', fontWeight: 900, cursor: 'pointer' }
+const studioButtonStyle: CSSProperties = { border: '1px solid #9bb9df', borderRadius: 14, padding: '11px 16px', background: '#eff6ff', color: '#174c91', fontWeight: 900, cursor: 'pointer' }
 const dangerButtonStyle: CSSProperties = { ...primaryButtonStyle, background: '#0f172a', padding: '13px 18px' }
 const closeButtonStyle: CSSProperties = { border: '1px solid #cbd5e1', borderRadius: 14, padding: '11px 15px', background: '#fff', color: '#334155', fontWeight: 900, cursor: 'pointer' }
 const errorStyle: CSSProperties = { margin: '12px 22px 0', border: '1px solid #fecaca', borderRadius: 14, background: '#fef2f2', color: '#991b1b', padding: 12, fontWeight: 800 }

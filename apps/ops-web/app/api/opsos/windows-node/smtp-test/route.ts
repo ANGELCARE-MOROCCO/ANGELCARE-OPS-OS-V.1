@@ -3,7 +3,6 @@ import { auditWindowsNodeEvent, getWindowsNodeRequestIp, requireWindowsNodeAdmin
 import { buildWindowsNodeApiErrorFromBridgeResult, callWindowsBridgeAdmin } from "@/lib/opsos/windows-node"
 import type { WindowsNodeStatus } from "@/lib/opsos/windows-node-types"
 
-export const dynamic = "force-dynamic"
 
 type SmtpTestResult = {
   host?: string

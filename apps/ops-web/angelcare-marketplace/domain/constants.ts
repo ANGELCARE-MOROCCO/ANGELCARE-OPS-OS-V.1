@@ -163,6 +163,23 @@ export const FAMILY_PERMISSIONS: MarketplacePermission[] = [
 ]
 
 
+export const COMMERCE_STUDIO_PERMISSIONS: MarketplacePermission[] = [
+  'marketplace.commerce.view',
+  'marketplace.media.view',
+  'marketplace.media.manage',
+  'marketplace.homepage.view',
+  'marketplace.homepage.manage',
+  'marketplace.navigation.view',
+  'marketplace.navigation.manage',
+  'marketplace.categories.manage',
+  'marketplace.merchandising.view',
+  'marketplace.merchandising.manage',
+  'marketplace.publication.manage',
+  'marketplace.seo.manage',
+  'marketplace.commerce.export',
+  'marketplace.commerce.import',
+]
+
 export const FINAL_AUTHORITY_PERMISSIONS: MarketplacePermission[] = [
   'marketplace.intelligence.view',
   'marketplace.intelligence.metrics.manage',
@@ -182,6 +199,7 @@ export const MARKETPLACE_PERMISSIONS: MarketplacePermission[] = [
   ...CMS_PERMISSIONS,
   ...PUBLIC_UNIVERSE_PERMISSIONS,
   ...FAMILY_PERMISSIONS,
+  ...COMMERCE_STUDIO_PERMISSIONS,
   ...FINAL_AUTHORITY_PERMISSIONS,
 ]
 
@@ -197,6 +215,7 @@ const MANAGER_PERMISSIONS: MarketplacePermission[] = [
   ...CMS_PERMISSIONS.filter((permission) => !permission.endsWith('.publish')),
   ...PUBLIC_UNIVERSE_PERMISSIONS,
   ...FAMILY_PERMISSIONS.filter((permission) => permission.includes('.view') || permission.endsWith('.manage') || permission.endsWith('.qualify')),
+  ...COMMERCE_STUDIO_PERMISSIONS,
 ]
 
 export const ROLE_PERMISSION_FALLBACK: Record<string, MarketplacePermission[]> = {

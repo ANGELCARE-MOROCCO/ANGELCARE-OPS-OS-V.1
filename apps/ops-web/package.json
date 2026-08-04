@@ -230,7 +230,9 @@
     "homeservice-design:verify": "node scripts/homeservice-design/verify-ultra-mega-zip1.mjs",
     "homeservice-design:umz3:verify": "node scripts/homeservice-design/verify-ultra-mega-zip3.mjs",
     "homeservice-design:umz4:verify": "node scripts/homeservice-design/verify-ultra-mega-zip4.mjs",
-    "homeservice-design:umz5:verify": "node scripts/homeservice-design/verify-ultra-mega-zip5.mjs"
+    "homeservice-design:umz5:verify": "node scripts/homeservice-design/verify-ultra-mega-zip5.mjs",
+    "access-governance:command:verify": "node deployment/users-global-access-registry/verify-global-authorization-command.mjs",
+    "access-governance:command:typecheck": "NODE_OPTIONS=--max-old-space-size=8192 tsc -p tsconfig.access-governance-command.json --pretty false"
   },
   "dependencies": {
     "@google/genai": "^2.12.0",

@@ -1,7 +1,7 @@
 "use client"
 
 import Link from 'next/link'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import type { ChangeEvent, CSSProperties, FormEvent } from 'react'
 import {
   ArrowRight, BadgeCheck, BookOpenCheck, Building2, CalendarDays, Check, ChevronLeft, ChevronRight,
@@ -57,9 +57,9 @@ function ItemCard({ item, locale, saved, compared, onSave, onCompare, variant = 
   </article>
 }
 
-function Rail({ title, subtitle, items, locale, saved, compared, toggle }: { title: string; subtitle?: string | null; items: HomepageItem[]; locale: HomepageLocale; saved: Set<string>; compared: Set<string>; toggle: (type: 'saved' | 'compare', item: HomepageItem) => void }) {
+function Rail({ title, subtitle, items, locale, saved, compared, toggle, sectionKey }: { title: string; subtitle?: string | null; items: HomepageItem[]; locale: HomepageLocale; saved: Set<string>; compared: Set<string>; toggle: (type: 'saved' | 'compare', item: HomepageItem) => void; sectionKey: string }) {
   if (!items.length) return null
-  return <section className={styles.railSection}>
+  return <section className={styles.railSection} data-section-key={sectionKey}>
     <div className={styles.sectionHeading}><div><span>ANGELCARE CURATION</span><h2>{title}</h2>{subtitle ? <p>{subtitle}</p> : null}</div><Link href={`/angelcare-marketplace/${locale}/marketplace`}>{homepageCopy(locale).viewAll}<ArrowRight size={16}/></Link></div>
     <div className={styles.itemRail}>{items.map((item) => <ItemCard key={item.id} item={item} locale={locale} saved={saved.has(item.id)} compared={compared.has(item.id)} onSave={() => toggle('saved', item)} onCompare={() => toggle('compare', item)} variant={item.kind === 'kit' || item.kind === 'product' ? 'product' : item.kind === 'training' ? 'academy' : item.kind === 'saas_module' ? 'saas' : item.metadata.audience === 'organization' ? 'programme' : 'service'} />)}</div>
   </section>
@@ -83,6 +83,7 @@ export function HomepageFlagship({ experience }: { experience: HomepageExperienc
   const [date, setDate] = useState('')
   const [saved, setSaved] = useState(() => new Set(experience.selection.saved))
   const [compared, setCompared] = useState(() => new Set(experience.selection.compare))
+  const mainRef = useRef<HTMLElement | null>(null)
   const campaigns = experience.campaigns
   const activeCampaign = campaigns[campaignIndex] || null
 
@@ -93,7 +94,20 @@ export function HomepageFlagship({ experience }: { experience: HomepageExperienc
     return () => window.clearInterval(timer)
   }, [campaigns.length, experience.territory?.territory_code, locale])
 
-  const topItems = useMemo(() => experience.collections.find((collection) => collection.collection_key.includes('top-picks'))?.items || experience.featuredItems.slice(0, 10), [experience.collections, experience.featuredItems])
+  useEffect(() => {
+    const main = mainRef.current
+    if (!main || !experience.composition.length) return
+    const config = new Map(experience.composition.map((section) => [section.section_key, section]))
+    const children = Array.from(main.querySelectorAll<HTMLElement>(':scope > [data-section-key]'))
+    children.sort((left, right) => (config.get(left.dataset.sectionKey || '')?.sort_order ?? 999) - (config.get(right.dataset.sectionKey || '')?.sort_order ?? 999))
+    for (const child of children) {
+      const section = config.get(child.dataset.sectionKey || '')
+      child.hidden = section ? !section.visible : false
+      main.appendChild(child)
+    }
+  }, [experience.composition])
+
+  const topItems = useMemo(() => experience.bestPickItems.length ? experience.bestPickItems : experience.collections.find((collection) => collection.collection_key.includes('top-picks'))?.items || experience.featuredItems.slice(0, 10), [experience.bestPickItems, experience.collections, experience.featuredItems])
   const territoryItems = useMemo(() => experience.collections.find((collection) => collection.collection_key.includes('territory'))?.items || experience.availableItems.slice(0, 10), [experience.availableItems, experience.collections])
 
   function toggle(type: 'saved' | 'compare', item: HomepageItem) {
@@ -157,53 +171,58 @@ export function HomepageFlagship({ experience }: { experience: HomepageExperienc
 
     <div className={styles.livePulse}><span><span className={styles.pulseDot}/>{c.livePulse}</span><div><Link href={`/angelcare-marketplace/${locale}/marketplace`}>{experience.featuredItems.length} {locale === 'ar' ? 'عروض مميزة' : locale === 'en' ? 'featured offers' : 'offres mises en avant'}</Link><Link href={`/angelcare-marketplace/${locale}/academy`}>{experience.academyCohorts.length} {locale === 'ar' ? 'دفعات أكاديمية' : locale === 'en' ? 'academy cohorts' : 'cohortes Academy'}</Link><Link href={`/angelcare-marketplace/${locale}/trust`}>{experience.trustSignals.length} {locale === 'ar' ? 'إشارات ثقة عامة' : locale === 'en' ? 'public trust signals' : 'preuves publiques actives'}</Link></div></div>
 
-    <main className={styles.marketMain}>
-      <section className={styles.audienceGateway}>{audienceCards.map(({ key, title, icon: Icon, text: description, href }, index) => <Link key={key} href={href} className={styles.audienceCard} data-tone={key} onMouseEnter={() => setAudience(key)}><div className={styles.audienceNumber}>0{index + 1}</div><Icon size={28}/><h2>{title}</h2><p>{description}</p><span>{c.open}<ArrowRight size={17}/></span></Link>)}</section>
+    <main className={styles.marketMain} ref={mainRef}>
+      <section className={styles.audienceGateway} data-section-key="audience-gateway">{audienceCards.map(({ key, title, icon: Icon, text: description, href }, index) => <Link key={key} href={href} className={styles.audienceCard} data-tone={key} onMouseEnter={() => setAudience(key)}><div className={styles.audienceNumber}>0{index + 1}</div><Icon size={28}/><h2>{title}</h2><p>{description}</p><span>{c.open}<ArrowRight size={17}/></span></Link>)}</section>
 
-      <section className={styles.categoryExchange}>
+      <section className={styles.categoryExchange} data-section-key="category-mosaic">
         <div className={styles.sectionHeading}><div><span>MEGA MARKETPLACE DIRECTORY</span><h2>{c.categories}</h2><p>{c.categoriesLead}</p></div><Link href={`/angelcare-marketplace/${locale}/marketplace`}>{c.viewAll}<ArrowRight size={16}/></Link></div>
         <div className={styles.categoryMosaic}>{experience.categories.slice(0, 9).map((category, index) => <Link key={category.id} href={`/angelcare-marketplace/${locale}/marketplace?category=${category.category_key}`} className={styles.categoryTile} data-size={index === 0 || index === 5 ? 'large' : index === 1 || index === 6 ? 'wide' : 'standard'} data-theme={category.visual_theme}><img src={category.cover_asset_url || '/angelcare-marketplace/homepage/category-universal.svg'} alt="" loading="lazy"/><div><span>{category.item_count} {locale === 'ar' ? 'عرض' : locale === 'en' ? 'offers' : 'offres'}</span><h3>{category.title}</h3><p>{category.short_description}</p><b>{c.open}<ArrowRight size={15}/></b></div></Link>)}</div>
       </section>
 
-      <Rail title={c.featured} subtitle={c.featuredLead} items={experience.featuredItems} locale={locale} saved={saved} compared={compared} toggle={toggle}/>
-      <Rail title={c.topPicks} items={topItems} locale={locale} saved={saved} compared={compared} toggle={toggle}/>
-      <Rail title={c.territory} items={territoryItems} locale={locale} saved={saved} compared={compared} toggle={toggle}/>
-      <Rail title={c.availableNow} items={experience.availableItems} locale={locale} saved={saved} compared={compared} toggle={toggle}/>
+      <Rail sectionKey="featured-products" title={c.featured} subtitle={c.featuredLead} items={experience.featuredItems} locale={locale} saved={saved} compared={compared} toggle={toggle}/>
+      <Rail sectionKey="best-picks" title={c.topPicks} items={topItems} locale={locale} saved={saved} compared={compared} toggle={toggle}/>
+      <Rail sectionKey="territory-picks" title={c.territory} items={territoryItems} locale={locale} saved={saved} compared={compared} toggle={toggle}/>
+      <Rail sectionKey="available-now" title={c.availableNow} items={experience.availableItems} locale={locale} saved={saved} compared={compared} toggle={toggle}/>
 
-      <section className={styles.familyShowcase}>
+      {experience.popularItems.length ? <Rail sectionKey="popular-now" title={locale === 'ar' ? 'الأكثر رواجاً' : locale === 'en' ? 'Popular now' : 'Populaires maintenant'} items={experience.popularItems} locale={locale} saved={saved} compared={compared} toggle={toggle}/> : null}
+      {experience.newArrivalItems.length ? <Rail sectionKey="new-arrivals" title={locale === 'ar' ? 'وصل حديثاً' : locale === 'en' ? 'New arrivals' : 'Nouveautés'} items={experience.newArrivalItems} locale={locale} saved={saved} compared={compared} toggle={toggle}/> : null}
+
+      <section className={styles.familyShowcase} data-section-key="family-services">
         <div className={styles.showcaseVisual}><img src="/angelcare-marketplace/homepage/family-showcase.svg" alt="" loading="lazy"/><div className={styles.visualSeal}><ShieldCheck size={21}/><span>ANGELCARE<br/>FAMILY JOURNEY</span></div></div>
         <div className={styles.showcaseBody}><span>FAMILY COMMERCE CONCIERGE</span><h2>{c.familyTitle}</h2><p>{c.familyLead}</p><div className={styles.needChips}>{['Garde à domicile','Accompagnement récurrent','Après-école','Vacances scolaires','Montessori','Événements'].map((label) => <Link key={label} href={`/angelcare-marketplace/${locale}/marketplace?q=${encodeURIComponent(label)}`}>{label}</Link>)}</div><div className={styles.showcaseActions}><Link href={`/angelcare-marketplace/${locale}/${locale === 'fr' ? 'familles' : 'families'}`}>{c.viewAll}<ArrowRight size={18}/></Link><Link href="/angelcare-marketplace/family/request">{c.continueJourney}</Link></div></div>
         <div className={styles.familyMiniRail}>{experience.familyItems.slice(0, 3).map((item) => <Link href={itemHref(item, locale)} key={item.id}><div>{item.media_url ? <img src={item.media_url} alt=""/> : <Sparkles/>}</div><span>{item.name}</span><strong>{priceLabel(item, locale)}</strong></Link>)}</div>
       </section>
 
-      <Rail title={c.development} items={experience.developmentItems} locale={locale} saved={saved} compared={compared} toggle={toggle}/>
+      <Rail sectionKey="development-montessori" title={c.development} items={experience.developmentItems} locale={locale} saved={saved} compared={compared} toggle={toggle}/>
 
-      <section className={styles.academyLive}>
+      <section className={styles.academyLive} data-section-key="academy">
         <div className={styles.academyIntro}><span>ANGELCARE ACADEMY LIVE</span><h2>{c.academy}</h2><p>{locale === 'ar' ? 'برامج وتدريب وشهادات مرتبطة فعليا بالأهلية المهنية.' : locale === 'en' ? 'Programs, cohorts and credentials connected to real professional eligibility.' : 'Programmes, cohortes et certifications réellement reliés à l’éligibilité professionnelle.'}</p><Link href={`/angelcare-marketplace/${locale}/academy`}>{c.viewAll}<ArrowRight size={17}/></Link></div>
         <div className={styles.cohortBoard}>{experience.academyCohorts.length ? experience.academyCohorts.slice(0, 4).map((cohort) => <Link href={`/angelcare-marketplace/${locale}/academy/programs/${cohort.course_slug}`} key={cohort.id}><div className={styles.cohortDate}><CalendarDays size={17}/><span>{cohort.starts_at ? new Intl.DateTimeFormat(locale, { day: '2-digit', month: 'short' }).format(new Date(cohort.starts_at)) : '—'}</span></div><div><small>{cohort.delivery_mode}</small><h3>{cohort.course_title || cohort.name}</h3><p>{cohort.enrolled_count}/{cohort.capacity} {locale === 'ar' ? 'مسجل' : locale === 'en' ? 'enrolled' : 'inscrits'}</p></div><ArrowRight size={18}/></Link>) : experience.academyItems.slice(0, 4).map((item) => <Link href={itemHref(item, locale)} key={item.id}><BookOpenCheck size={24}/><div><small>{item.public_reference}</small><h3>{item.name}</h3><p>{item.short_description}</p></div><ArrowRight size={18}/></Link>)}</div>
       </section>
 
-      <section className={styles.b2bExchange}>
+      <section className={styles.b2bExchange} data-section-key="b2b-verticals">
         <div className={styles.sectionHeading}><div><span>B2B VERTICAL EXCHANGE</span><h2>{c.organizationsTitle}</h2><p>{locale === 'ar' ? 'أربع تجارب تجارية متخصصة، كل واحدة مرتبطة بتشخيصها وبرامجها ومسارها التجاري.' : locale === 'en' ? 'Four purpose-built commercial universes, each connected to its own diagnostic, programs and conversion path.' : 'Quatre univers commerciaux dédiés, chacun relié à son diagnostic, ses programmes et son parcours de conversion.'}</p></div></div>
         <div className={styles.b2bGrid}>{b2b.map(({ key, title, icon: Icon, href, tone }, index) => { const count = experience.organizationItems.filter((item) => item.category_key === key).length; return <Link href={href} key={key} data-tone={tone}><div className={styles.b2bTop}><span>0{index + 1}</span><Icon size={28}/></div><h3>{title}</h3><p>{count} {locale === 'ar' ? 'حلول منشورة' : locale === 'en' ? 'published solutions' : 'solutions publiées'}</p><b>{c.open}<ArrowRight size={17}/></b></Link> })}</div>
       </section>
 
-      <section className={styles.partnerShowcase}>
+      <section className={styles.partnerShowcase} data-section-key="partner-os">
         <div className={styles.partnerCopy}><span>PARTNER OS · MULTI-TENANT SAAS</span><h2>{c.partnerOs}</h2><p>{locale === 'ar' ? 'خطط ووحدات وتهيئة المؤسسات ضمن منصة تشغيل واحدة.' : locale === 'en' ? 'Plans, modules and organization onboarding inside one operational SaaS platform.' : 'Plans, modules et onboarding institutionnel dans une seule plateforme SaaS opérationnelle.'}</p><Link href={`/angelcare-marketplace/${locale}/partner-os`}>{c.viewAll}<ArrowRight size={18}/></Link></div>
         <div className={styles.planGrid}>{experience.partnerPlans.slice(0, 3).map((plan, index) => <article key={plan.id} data-featured={index === 1}><div className={styles.planHead}><span>{plan.plan_key}</span>{index === 1 ? <Star size={17} fill="currentColor"/> : null}</div><h3>{plan.name}</h3><p>{plan.description}</p><ul>{plan.modules.slice(0, 5).map((module) => <li key={module}><Check size={14}/>{module.replaceAll('_',' ')}</li>)}</ul><div><strong>{plan.base_price === null ? c.quote : `${plan.base_price} ${plan.currency_label}`}</strong><Link href={`/angelcare-marketplace/${locale}/partner-os/contact`}>{c.open}<ArrowRight size={15}/></Link></div></article>)}</div>
       </section>
 
-      <section className={styles.trustAuthority}>
+      <section className={styles.trustAuthority} data-section-key="trust-evidence">
         <div className={styles.trustIntro}><span>TRUST & QUALITY AUTHORITY</span><h2>{c.trust}</h2><p>{locale === 'ar' ? 'لا تظهر أي شارة إلا إذا كانت مرتبطة بدليل صالح ونشر معتمد.' : locale === 'en' ? 'No badge appears unless it is connected to current evidence and approved public wording.' : 'Aucun badge n’apparaît sans preuve en cours de validité et formulation publique approuvée.'}</p><Link href={`/angelcare-marketplace/${locale}/trust`}>{c.trustCenter}<ArrowRight size={17}/></Link></div>
         <div className={styles.trustGrid}>{experience.trustSignals.length ? experience.trustSignals.map((signal) => <Link key={signal.id} href={`/angelcare-marketplace/${locale}/trust/verification/${signal.verification_reference}`}><BadgeCheck size={30}/><h3>{signal.name}</h3><p>{signal.public_claims.join(' · ') || signal.verification_reference}</p><span>{signal.valid_until ? new Intl.DateTimeFormat(locale).format(new Date(signal.valid_until)) : '—'}</span></Link>) : <><Link href={`/angelcare-marketplace/${locale}/trust/quality`}><ClipboardCheck size={30}/><h3>Quality Check 360</h3><p>{locale === 'ar' ? 'أطر تقييم وأدلة وإجراءات تصحيحية.' : locale === 'en' ? 'Assessment frameworks, evidence and corrective action.' : 'Référentiels, preuves et actions correctives.'}</p></Link><Link href={`/angelcare-marketplace/${locale}/trust/providers`}><ShieldCheck size={30}/><h3>{locale === 'ar' ? 'منهجية التحقق' : locale === 'en' ? 'Verification methodology' : 'Méthode de vérification'}</h3><p>{c.noBadge}</p></Link><Link href={`/angelcare-marketplace/${locale}/trust/complaints`}><UsersRound size={30}/><h3>{locale === 'ar' ? 'مسار الشكايات' : locale === 'en' ? 'Complaint pathway' : 'Parcours réclamation'}</h3><p>{locale === 'ar' ? 'استلام، تحقيق، حل وتتبع.' : locale === 'en' ? 'Intake, investigation, resolution and traceability.' : 'Réception, investigation, résolution et traçabilité.'}</p></Link></>}</div>
       </section>
 
-      <section className={styles.territoryAtlas}>
+      <section className={styles.territoryAtlas} data-section-key="territory-atlas">
         <div className={styles.atlasMap}><div className={styles.mapShape}/>{experience.territory?.cities.map((city, index) => <span key={city.id} style={{ '--x': `${18 + (index * 19) % 68}%`, '--y': `${20 + (index * 27) % 62}%` } as CSSProperties} data-status={city.coverage_status}><i/>{city.city_name}</span>)}</div>
         <div className={styles.atlasCopy}><span>TERRITORY OS · LIVE SCOPE</span><h2>{c.atlas}</h2><div className={styles.territoryIdentity}><MapPin size={24}/><div><strong>{experience.territory?.name || 'Morocco'}</strong><small>{experience.territory?.territory_code || 'MA-MASTER'} · {experience.territory?.currency_label || 'Dh'} · {experience.territory?.status || 'configuration'}</small></div></div><div className={styles.readiness}><div><span>{locale === 'ar' ? 'جاهزية النطاق' : locale === 'en' ? 'Territory readiness' : 'Readiness territoire'}</span><b>{experience.territory?.readiness_score || 0}%</b></div><i><span style={{ width: `${experience.territory?.readiness_score || 0}%` }}/></i></div>{experience.territory?.cities.length ? <div className={styles.cityList}>{experience.territory.cities.map((city) => <span key={city.id}>{city.city_name}<b>{city.coverage_status}</b></span>)}</div> : <p className={styles.cityPending}>{c.cityPending}</p>}<Link href={`/angelcare-marketplace/${locale}/marketplace?territory=${experience.territory?.territory_code || 'MA-MASTER'}`}>{c.viewAll}<ArrowRight size={17}/></Link></div>
       </section>
 
-      <section className={styles.finalCommerceBand}><div><span>ANGELCARE MARKETPLACE</span><h2>{locale === 'ar' ? 'ابدأ من الحاجة. تابع حتى التنفيذ.' : locale === 'en' ? 'Start with the need. Continue through execution.' : 'Partez du besoin. Continuez jusqu’à l’exécution.'}</h2><p>{locale === 'ar' ? 'بحث، مقارنة، طلب عرض، تشخيص، تأهيل ومتابعة ضمن نفس النظام.' : locale === 'en' ? 'Search, compare, request a quote, qualify and continue inside the same operating system.' : 'Recherchez, comparez, demandez un devis, qualifiez et continuez dans le même système opérationnel.'}</p></div><div><Link href={`/angelcare-marketplace/${locale}/marketplace`}><ShoppingBag size={20}/>{c.viewAll}</Link><Link href={`/angelcare-marketplace/${locale}/contact`}>{c.continueJourney}<ArrowRight size={18}/></Link></div></section>
+      {experience.composition.filter((section) => section.section_type.startsWith('custom_')).map((section) => <section key={section.id} data-section-key={section.section_key} className={styles.customCommerceSection} data-accent={section.accent} data-background={section.background_variant}><div className={styles.sectionHeading}><div><span>ANGELCARE EDITORIAL COMMERCE</span><h2>{section.title}</h2>{section.subtitle ? <p>{section.subtitle}</p> : null}</div></div>{section.items.length ? <div className={styles.itemRail}>{section.items.slice(0, Number(section.settings.item_limit || 12)).map((item) => <ItemCard key={item.id} item={item} locale={locale} saved={saved.has(item.id)} compared={compared.has(item.id)} onSave={() => toggle('saved', item)} onCompare={() => toggle('compare', item)}/>)}</div> : <div className={styles.customEditorialBody}>{String(section.settings.body || '')}</div>}</section>)}
+
+      <section className={styles.finalCommerceBand} data-section-key="final-commerce-band"><div><span>ANGELCARE MARKETPLACE</span><h2>{locale === 'ar' ? 'ابدأ من الحاجة. تابع حتى التنفيذ.' : locale === 'en' ? 'Start with the need. Continue through execution.' : 'Partez du besoin. Continuez jusqu’à l’exécution.'}</h2><p>{locale === 'ar' ? 'بحث، مقارنة، طلب عرض، تشخيص، تأهيل ومتابعة ضمن نفس النظام.' : locale === 'en' ? 'Search, compare, request a quote, qualify and continue inside the same operating system.' : 'Recherchez, comparez, demandez un devis, qualifiez et continuez dans le même système opérationnel.'}</p></div><div><Link href={`/angelcare-marketplace/${locale}/marketplace`}><ShoppingBag size={20}/>{c.viewAll}</Link><Link href={`/angelcare-marketplace/${locale}/contact`}>{c.continueJourney}<ArrowRight size={18}/></Link></div></section>
     </main>
 
     <aside className={styles.floatingCommerce} aria-label="Marketplace quick actions"><Link href={`/angelcare-marketplace/${locale}/marketplace?saved=1`}><Heart size={18}/><span>{saved.size}</span></Link><Link href={`/angelcare-marketplace/${locale}/marketplace?compare=1`}><GitCompareArrows size={18}/><span>{compared.size}</span></Link><Link href={`/angelcare-marketplace/${locale}/quote-basket`}><ShoppingBag size={18}/></Link></aside>

@@ -74,9 +74,10 @@ function buildUpdate(body: any) {
   return update
 }
 
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    if (!isValidUuid(params.id)) {
+    const { id } = await params
+    if (!isValidUuid(id)) {
       return NextResponse.json({ ok: false, error: 'Invalid proposal id.' }, { status: 400 })
     }
     const db = await getServerB2BDatabaseClient()
@@ -92,13 +93,13 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
     }
 
     const body = await req.json()
-    const { data: existing } = await db.from('b2b_proposals').select('*').eq('id', params.id).single()
+    const { data: existing } = await db.from('b2b_proposals').select('*').eq('id', id).single()
     const update = buildUpdate(body)
 
     const { data, error } = await db
       .from('b2b_proposals')
       .update(update)
-      .eq('id', params.id)
+      .eq('id', id)
       .select('*')
       .single()
 
@@ -138,8 +139,9 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   }
 }
 
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params
     const db = await getServerB2BDatabaseClient()
     const actor = await getCurrentB2BAppUser()
 
@@ -155,7 +157,7 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
     let body: any = {}
     try { body = await req.json() } catch {}
 
-    let proposalId = isValidUuid(params.id) ? params.id : ''
+    let proposalId = isValidUuid(id) ? id : ''
 
     if (!proposalId) {
       const title =

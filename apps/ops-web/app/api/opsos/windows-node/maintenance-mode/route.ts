@@ -3,7 +3,6 @@ import { auditWindowsNodeEvent, getWindowsNodeRequestIp, requireWindowsNodeAdmin
 import { buildWindowsNodeApiErrorResponse, callWindowsBridgeAdmin } from "@/lib/opsos/windows-node"
 import type { MaintenanceModeState } from "@/lib/opsos/windows-node-types"
 
-export const dynamic = "force-dynamic"
 
 export async function GET(request: Request) {
   const auth = await requireWindowsNodeAdmin(request)
@@ -95,4 +94,3 @@ export async function POST(request: Request) {
 
   return NextResponse.json({ ok: true, data: result.data }, { headers: { "cache-control": "no-store" } })
 }
-

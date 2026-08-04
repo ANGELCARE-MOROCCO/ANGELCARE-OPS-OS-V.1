@@ -3,7 +3,6 @@ import { auditWindowsNodeEvent, getWindowsNodeRequestIp, requireWindowsNodeAdmin
 import { buildWindowsNodeApiErrorFromBridgeResult, callWindowsBridgeAdmin } from "@/lib/opsos/windows-node"
 import type { WindowsStorageInventory } from "@/lib/opsos/windows-node-types"
 
-export const dynamic = "force-dynamic"
 
 function csvCell(value: unknown) {
   const text = String(value ?? "")

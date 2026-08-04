@@ -4,7 +4,6 @@ import { actorId } from "@/app/api/opsos/windows-node/storage/quarantine/_shared
 import { analyzeDestructionEligibility, createDestructionRequest, listDestructionRegistry } from "@/lib/opsos/storage-destruction"
 import type { WindowsStorageDestructionScope } from "@/lib/opsos/windows-node-types"
 
-export const dynamic = "force-dynamic"
 function clean(value: unknown) { return String(value ?? "").trim() }
 
 export async function GET(request: Request) {

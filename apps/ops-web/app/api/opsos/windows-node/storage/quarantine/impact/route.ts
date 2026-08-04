@@ -2,7 +2,6 @@ import { NextResponse } from "next/server"
 import { auditWindowsNodeEvent, getWindowsNodeRequestIp, requireWindowsNodeAdmin } from "@/app/api/opsos/windows-node/_shared"
 import { analyzeQuarantineImpact } from "@/app/api/opsos/windows-node/storage/quarantine/_shared"
 
-export const dynamic = "force-dynamic"
 
 function clean(value: unknown) {
   return String(value ?? "").trim()

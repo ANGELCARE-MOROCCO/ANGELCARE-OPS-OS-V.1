@@ -4,7 +4,6 @@ import { actorId, analyzeQuarantineImpact } from "@/app/api/opsos/windows-node/s
 import { createQuarantineCase, listQuarantineCases } from "@/lib/opsos/storage-quarantine"
 import type { WindowsStorageQuarantineMode } from "@/lib/opsos/windows-node-types"
 
-export const dynamic = "force-dynamic"
 
 function clean(value: unknown) { return String(value ?? "").trim() }
 

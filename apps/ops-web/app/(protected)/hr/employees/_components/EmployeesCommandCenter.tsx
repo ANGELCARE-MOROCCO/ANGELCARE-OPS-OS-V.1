@@ -2,6 +2,7 @@
 import { shouldStartAutoRefresh, safeRefreshInterval } from '@/lib/runtime/client-live-governor'
 
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
 import HRModuleCommandBridge from '@/components/hr-production/HRModuleCommandBridge'
 import { Activity, AlertTriangle, ArrowUpRight, BadgeCheck, BarChart3, BriefcaseBusiness, CalendarCheck, CheckCircle2, ChevronRight, ClipboardCheck, Clock3, DatabaseZap, FileBadge2, FileText, Fingerprint, Gauge, GraduationCap, Home, Layers3, MapPinned, Network, Plus, Search, ShieldCheck, Sparkles, UserCheck, UserCog, UserRoundCheck, Users, WalletCards, Workflow, Zap, X, Save, Mail, Phone, MapPin, CalendarDays, IdCard, Building2, Banknote, FileUp, Check, Bell, Settings, LayoutDashboard } from 'lucide-react'
@@ -692,11 +693,12 @@ function EmployeesLiveMapPanel({ command }: { command: any }) {
 }
 
 export default function EmployeesCommandCenter({ command }: { command: Command }) {
+  const router = useRouter()
   const [query, setQuery] = useState('')
   const [department, setDepartment] = useState('all')
   const [status, setStatus] = useState('all')
   const [addOpen, setAddOpen] = useState(false)
-  const [selectedEmployee, setSelectedEmployee] = useState<any | null>(null)
+  const [selectedEmployee, setSelectedEmployee] = useState<Record<string, unknown> | null>(null)
   const [communicationEmployee, setCommunicationEmployee] = useState<any>(null)
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -724,7 +726,14 @@ export default function EmployeesCommandCenter({ command }: { command: Command }
     open={Boolean(selectedEmployee)}
     employee={selectedEmployee}
     onClose={() => setSelectedEmployee(null)}
-    onSaved={() => window.location.reload()}
+    onSaved={(updated) => {
+      if (updated) {
+        setSelectedEmployee((current) =>
+          current ? { ...current, ...updated } : current,
+        )
+      }
+      router.refresh()
+    }}
   />
   <main className="min-h-screen bg-[radial-gradient(circle_at_top_left,#ede9fe,transparent_34%),linear-gradient(135deg,#f8fafc,#eef2ff_45%,#f8fafc)] text-slate-950">
     <div className="flex min-h-screen">

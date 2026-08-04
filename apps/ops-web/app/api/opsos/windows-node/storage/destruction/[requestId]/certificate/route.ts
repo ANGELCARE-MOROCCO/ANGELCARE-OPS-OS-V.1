@@ -3,7 +3,6 @@ import { NextResponse } from "next/server"
 import { requireWindowsNodeAdmin } from "@/app/api/opsos/windows-node/_shared"
 import { loadDestructionCertificate } from "@/lib/opsos/storage-destruction"
 
-export const dynamic = "force-dynamic"
 function csv(value: unknown) { return `"${String(value ?? "").replaceAll('"', '""')}"` }
 function bytes(value: number) { const units = ["B", "KB", "MB", "GB", "TB"]; let n = Number(value || 0); let i = 0; while (n >= 1024 && i < units.length - 1) { n /= 1024; i += 1 } return `${n.toFixed(i >= 3 ? 1 : 0)} ${units[i]}` }
 

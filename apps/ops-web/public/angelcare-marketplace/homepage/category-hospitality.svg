@@ -1,1 +1,18 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="900" height="700" viewBox="0 0 900 700" role="img"><defs><linearGradient id="bg6cb21380" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#3d2817"/><stop offset="1" stop-color="#9e7041"/></linearGradient><linearGradient id="accent" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#e4bc75"/><stop offset="1" stop-color="#fff"/></linearGradient><radialGradient id="warm"><stop stop-color="#ffe9d0"/><stop offset="1" stop-color="#f4a95d"/></radialGradient><pattern id="dots6cb21380" width="34" height="34" patternUnits="userSpaceOnUse"><circle cx="3" cy="3" r="2" fill="#fff" opacity=".09"/></pattern></defs><rect width="900" height="700" fill="url(#bg6cb21380)"/><rect width="900" height="700" fill="url(#dots6cb21380)"/><circle cx="180" cy="110" r="310" fill="#fff" opacity=".035"/><circle cx="270" cy="640" r="420" fill="none" stroke="#fff" stroke-width="2" opacity=".08"/><path d="M0 539.0C180.0 406.0 324.0 665.0 513.0 532.0S747.0 434.0 900 532.0V700H0Z" fill="#fff" opacity=".04"/><circle cx="1130" cy="290" r="150" fill="url(#warm)"/><circle cx="1130" cy="260" r="58" fill="#fff" opacity=".94"/><path d="M1010 570c22-152 80-225 120-225s98 73 120 225" fill="#fff" opacity=".92"/><circle cx="1320" cy="350" r="42" fill="#fff" opacity=".85"/><path d="M1245 580c16-112 45-168 75-168s59 56 75 168" fill="#fff" opacity=".83"/><path d="M810 190c-90 100-116 222-44 310 50 62 130 80 205 47" fill="none" stroke="#fff" stroke-width="8" opacity=".18"/><path d="M70 86h210" stroke="#e4bc75" stroke-width="7" stroke-linecap="round"/><path d="M70 112h128" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".6"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900" role="img" aria-labelledby="title-6cb21380">
+<title id="title-6cb21380">Hospitality programmes category</title>
+<defs>
+<linearGradient id="bg6cb21380" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#1b1a33"/><stop offset=".58" stop-color="#806147"/><stop offset="1" stop-color="#1b1a33"/></linearGradient>
+<radialGradient id="glow6cb21380" cx="50%" cy="50%" r="50%"><stop stop-color="#fff0dc" stop-opacity=".92"/><stop offset="1" stop-color="#e9b875" stop-opacity=".08"/></radialGradient>
+<linearGradient id="glass6cb21380" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff" stop-opacity=".36"/><stop offset="1" stop-color="#fff" stop-opacity=".08"/></linearGradient>
+<pattern id="grid6cb21380" width="42" height="42" patternUnits="userSpaceOnUse"><path d="M42 0H0V42" fill="none" stroke="#fff" stroke-opacity=".045"/></pattern>
+<filter id="shadow6cb21380" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="22" stdDeviation="24" flood-color="#000" flood-opacity=".28"/></filter>
+</defs>
+<rect width="1200" height="900" fill="url(#bg6cb21380)"/>
+<rect width="1200" height="900" fill="url(#grid6cb21380)"/>
+<circle cx="936" cy="225" r="252" fill="url(#glow6cb21380)" opacity=".62"/>
+<circle cx="144" cy="774" r="342" fill="none" stroke="#fff" stroke-opacity=".07" stroke-width="2"/>
+<path d="M0 702 C 240 558, 456 846, 696 666 S 1032 576, 1200 702 V 900 H0Z" fill="#fff" opacity=".035"/>
+<path d="M54 94H216" stroke="#e9b875" stroke-width="7" stroke-linecap="round"/>
+<path d="M54 126H156" stroke="#fff" stroke-opacity=".55" stroke-width="4" stroke-linecap="round"/>
+<g filter="url(#shadow6cb21380)"><rect x="612" y="225" width="504" height="423" rx="36" fill="#fff" opacity=".93"/><path d="M612 324H1116" stroke="#e9b875" stroke-width="8"/><path d="M765 648V459Q864 360 963 459V648" fill="#806147" opacity=".78"/><circle cx="684" cy="405" r="22" fill="#1b1a33" opacity=".55"/><circle cx="747" cy="405" r="22" fill="#1b1a33" opacity=".55"/><circle cx="981" cy="405" r="22" fill="#1b1a33" opacity=".55"/><circle cx="1044" cy="405" r="22" fill="#1b1a33" opacity=".55"/></g>
+</svg>

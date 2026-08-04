@@ -1,1 +1,18 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="760" viewBox="0 0 1000 760" role="img"><defs><linearGradient id="bgf43a66b1" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#101d43"/><stop offset="1" stop-color="#5065a4"/></linearGradient><linearGradient id="accent" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#edb961"/><stop offset="1" stop-color="#fff"/></linearGradient><radialGradient id="warm"><stop stop-color="#ffe9d0"/><stop offset="1" stop-color="#f4a95d"/></radialGradient><pattern id="dotsf43a66b1" width="34" height="34" patternUnits="userSpaceOnUse"><circle cx="3" cy="3" r="2" fill="#fff" opacity=".09"/></pattern></defs><rect width="1000" height="760" fill="url(#bgf43a66b1)"/><rect width="1000" height="760" fill="url(#dotsf43a66b1)"/><circle cx="180" cy="110" r="310" fill="#fff" opacity=".035"/><circle cx="270" cy="640" r="420" fill="none" stroke="#fff" stroke-width="2" opacity=".08"/><path d="M0 585.2C200.0 440.79999999999995 360.0 722.0 570.0 577.6S830.0 471.2 1000 577.6V760H0Z" fill="#fff" opacity=".04"/><path d="M890 530V265l230-115 230 115v265" fill="#fff" opacity=".1"/><path d="M930 500V290h380v210" fill="#fff" opacity=".9"/><path d="M1060 500V350h120v150" fill="url(#accent)"/><path d="M870 270l250-135 250 135" fill="none" stroke="#fff" stroke-width="22" stroke-linecap="round"/><circle cx="1120" cy="240" r="28" fill="url(#accent)"/><path d="M815 565h610" stroke="#fff" stroke-width="12" stroke-linecap="round" opacity=".8"/><path d="M70 86h210" stroke="#edb961" stroke-width="7" stroke-linecap="round"/><path d="M70 112h128" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".6"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="800" viewBox="0 0 1000 800" role="img" aria-labelledby="title-f43a66b1">
+<title id="title-f43a66b1">Academy child-safety training</title>
+<defs>
+<linearGradient id="bgf43a66b1" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#071b35"/><stop offset=".58" stop-color="#3b5da9"/><stop offset="1" stop-color="#071b35"/></linearGradient>
+<radialGradient id="glowf43a66b1" cx="50%" cy="50%" r="50%"><stop stop-color="#e8f1ff" stop-opacity=".92"/><stop offset="1" stop-color="#e5b85c" stop-opacity=".08"/></radialGradient>
+<linearGradient id="glassf43a66b1" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff" stop-opacity=".36"/><stop offset="1" stop-color="#fff" stop-opacity=".08"/></linearGradient>
+<pattern id="gridf43a66b1" width="42" height="42" patternUnits="userSpaceOnUse"><path d="M42 0H0V42" fill="none" stroke="#fff" stroke-opacity=".045"/></pattern>
+<filter id="shadowf43a66b1" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="22" stdDeviation="24" flood-color="#000" flood-opacity=".28"/></filter>
+</defs>
+<rect width="1000" height="800" fill="url(#bgf43a66b1)"/>
+<rect width="1000" height="800" fill="url(#gridf43a66b1)"/>
+<circle cx="780" cy="200" r="224" fill="url(#glowf43a66b1)" opacity=".62"/>
+<circle cx="120" cy="688" r="304" fill="none" stroke="#fff" stroke-opacity=".07" stroke-width="2"/>
+<path d="M0 624 C 200 496, 380 752, 580 592 S 860 512, 1000 624 V 800 H0Z" fill="#fff" opacity=".035"/>
+<path d="M45 84H180" stroke="#e5b85c" stroke-width="7" stroke-linecap="round"/>
+<path d="M45 112H130" stroke="#fff" stroke-opacity=".55" stroke-width="4" stroke-linecap="round"/>
+<path d="M608 240L720 192L832 240L720 288Z" fill="#e5b85c"/><g filter="url(#shadowf43a66b1)"><path d="M720 176L904 248V392C904 504 816 568 720 616C624 568 536 504 536 392V248Z" fill="#fff" opacity=".94"/><path d="M648 392l56 56l120-136" fill="none" stroke="#3b5da9" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/></g>
+</svg>

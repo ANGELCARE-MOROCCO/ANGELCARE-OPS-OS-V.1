@@ -4,6 +4,8 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { requireRole } from "@/lib/auth/session";
 import { HR_TABLES, logHRActivity } from "@/lib/hr-production/repository";
+import { createInterview } from "@/lib/hr-recruitment/interviews/server";
+import type { InterviewType } from "@/lib/hr-recruitment/interviews/types";
 
 const text = (fd: FormData, key: string, fallback = "") =>
   String(fd.get(key) || fallback).trim();
@@ -110,114 +112,55 @@ export async function addRecruitmentComment(formData: FormData) {
 }
 
 export async function scheduleRecruitmentInterview(formData: FormData) {
-  const user = await actor();
-  const supabase = await createClient();
-  const candidateId = text(formData, "candidate_id");
-  const slot = normalizeInterviewDateTime(formData);
-  const owner = text(formData, "owner") || text(formData, "selected_interviewer") || "Recruitment";
-  const payload = clean({
-    full_name: text(formData, "full_name"),
-    email: text(formData, "email"),
-    phone: text(formData, "phone"),
-    city: text(formData, "city"),
-    desired_position: text(formData, "desired_position"),
-    pipeline_stage: text(formData, "pipeline_stage", "interview"),
-    source: text(formData, "interview_type", "HR Interview"),
-    interview_date: slot.date,
-    interview_time: slot.time,
-    interview_datetime: slot.casablancaTz,
-    scheduled_at: slot.casablancaTz,
+  await actor();
+  const rawType = text(formData, "interview_type", "HR Interview").toLowerCase();
+  const interviewType: InterviewType = rawType.includes("technical")
+    ? "technical"
+    : rawType.includes("screen")
+      ? "screening"
+      : rawType.includes("assessment")
+        ? "assessment"
+        : rawType.includes("final")
+          ? "final_interview"
+          : rawType.includes("panel")
+            ? "panel_interview"
+            : "hr_interview";
+  const meetingUrl = text(formData, "meeting_url");
+  await createInterview({
+    candidateId: text(formData, "candidate_id") || null,
+    newCandidate: text(formData, "candidate_id")
+      ? null
+      : {
+          fullName: text(formData, "full_name"),
+          email: text(formData, "email") || null,
+          phone: text(formData, "phone") || null,
+          city: text(formData, "city") || null,
+          positionTitle: text(formData, "desired_position"),
+        },
+    candidateName: text(formData, "full_name") || null,
+    candidateEmail: text(formData, "email") || null,
+    candidatePhone: text(formData, "phone") || null,
+    city: text(formData, "city") || null,
+    positionTitle: text(formData, "desired_position"),
+    interviewType,
+    status: "scheduled",
+    scheduledLocal: text(formData, "interview_date"),
+    durationMinutes: Math.max(15, num(formData, "duration_minutes", 60)),
+    timezone: "Africa/Casablanca",
+    mode: meetingUrl ? "video" : "onsite",
+    location: text(formData, "location") || text(formData, "city") || null,
+    meetingUrl: meetingUrl || null,
+    leadInterviewer: text(formData, "owner") || text(formData, "selected_interviewer") || "Équipe RH",
+    panelMembers: [],
+    priority: text(formData, "priority", "high") as "normal" | "high" | "urgent",
+    pipelineStageAfter: text(formData, "pipeline_stage", "interview"),
+    decision: text(formData, "decision", "pending") as "pending" | "shortlisted" | "assessment" | "offer" | "on_hold" | "rejected" | "another_interview",
     score: num(formData, "score", 0),
-    expected_salary: num(formData, "expected_salary", 0),
-    notes: text(formData, "notes"),
-    decision: text(formData, "decision", "pending"),
-    owner,
-    interviewer: owner,
-    meeting_url: text(formData, "meeting_url"),
+    scorecard: {},
+    notes: text(formData, "notes") || null,
+    createPreparationTask: true,
+    preparationTaskTitle: text(formData, "task_title") || null,
   });
-
-  const fallbackPayload = clean({
-    full_name: payload.full_name,
-    email: payload.email,
-    phone: payload.phone,
-    city: payload.city,
-    desired_position: payload.desired_position,
-    pipeline_stage: payload.pipeline_stage,
-    source: payload.source,
-    interview_date: payload.interview_date,
-    score: payload.score,
-    expected_salary: payload.expected_salary,
-    notes: [
-      payload.notes,
-      `Interview time: ${slot.time}`,
-      owner ? `Lead interviewer: ${owner}` : "",
-      payload.meeting_url ? `Meeting: ${payload.meeting_url}` : "",
-    ]
-      .filter(Boolean)
-      .join("\n"),
-    decision: payload.decision,
-  });
-
-  let recordId = candidateId;
-  if (candidateId) {
-    const first = await supabase
-      .from(HR_TABLES.candidates)
-      .update(payload)
-      .eq("id", candidateId);
-    if (first.error) {
-      const retry = await supabase
-        .from(HR_TABLES.candidates)
-        .update(fallbackPayload)
-        .eq("id", candidateId);
-      if (retry.error) throw new Error(retry.error.message);
-    }
-  } else {
-    const first = await supabase
-      .from(HR_TABLES.candidates)
-      .insert(payload)
-      .select("id")
-      .single();
-    if (first.error) {
-      const retry = await supabase
-        .from(HR_TABLES.candidates)
-        .insert(fallbackPayload)
-        .select("id")
-        .single();
-      if (retry.error) throw new Error(retry.error.message);
-      recordId = retry.data?.id;
-    } else {
-      recordId = first.data?.id;
-    }
-  }
-
-  const taskTitle =
-    text(formData, "task_title") ||
-    `Prepare interview: ${payload.full_name || "Candidate"}`;
-  await supabase.from(HR_TABLES.tasks).insert(
-    clean({
-      task_type: "interview_preparation",
-      title: taskTitle,
-      owner,
-      priority: text(formData, "priority", "high"),
-      status: "open",
-      due_date: slot.date || null,
-      related_module: "recruitment_interviews",
-      related_record_id: recordId || null,
-      description: text(formData, "notes"),
-    }),
-  );
-
-  await logHRActivity({
-    actor_user_id: user?.id,
-    actor_label: user?.full_name || user?.email || user?.role,
-    source_table: HR_TABLES.candidates,
-    record_id: recordId,
-    action: "interview_scheduled",
-    module: "recruitment",
-    details: payload,
-  });
-  revalidatePath("/hr/recruitment");
-  revalidatePath("/hr/recruitment/interviews");
 }
 
 export async function quickCandidateDecision(formData: FormData) {

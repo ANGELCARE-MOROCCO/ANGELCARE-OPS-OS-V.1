@@ -12,7 +12,6 @@ import {
 } from "@/lib/opsos/storage-destruction"
 import type { WindowsStorageDestructionJobResult } from "@/lib/opsos/windows-node-types"
 
-export const dynamic = "force-dynamic"
 
 export async function POST(request: Request, { params }: { params: Promise<{ requestId: string }> }) {
   const auth = await requireWindowsNodeAdmin(request)

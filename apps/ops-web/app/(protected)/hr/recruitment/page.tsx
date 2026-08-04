@@ -1194,18 +1194,6 @@ export default async function Page({
                   skills, departments...
                 </a>
                 <Link
-                  href="/hr/recruitment/candidates"
-                  className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-xs font-black text-slate-700"
-                >
-                  Candidates
-                </Link>
-                <Link
-                  href="/hr/recruitment/kanban"
-                  className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-xs font-black text-slate-700"
-                >
-                  Pipeline
-                </Link>
-                <Link
                   href="/hr/recruitment/interviews"
                   className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-xs font-black text-violet-700"
                 >

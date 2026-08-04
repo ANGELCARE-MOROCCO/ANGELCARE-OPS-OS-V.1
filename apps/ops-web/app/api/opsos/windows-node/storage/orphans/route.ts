@@ -3,7 +3,6 @@ import { getWindowsNodeRequestIp, requireWindowsNodeAdmin } from "@/app/api/opso
 import { buildWindowsNodeApiErrorFromBridgeResult, callWindowsBridgeAdmin } from "@/lib/opsos/windows-node"
 import type { WindowsStorageOrphanInvestigation } from "@/lib/opsos/windows-node-types"
 
-export const dynamic = "force-dynamic"
 
 export async function GET(request: Request) {
   const auth = await requireWindowsNodeAdmin(request)

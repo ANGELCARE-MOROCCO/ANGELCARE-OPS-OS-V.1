@@ -5,7 +5,12 @@ export const HR_CANONICAL_TABLES = {
   staff: 'hr_staff_profiles',
   candidates: 'hr_candidates',
   openings: 'hr_opening_jobs',
-  onboarding: 'hr_onboarding_tasks',
+  onboarding: 'hr_onboarding_journeys',
+  onboardingJourneys: 'hr_onboarding_journeys',
+  onboardingTasks: 'hr_onboarding_tasks',
+  onboardingDocuments: 'hr_onboarding_documents',
+  onboardingChecklists: 'hr_onboarding_checklists',
+  onboardingActivity: 'hr_onboarding_activity',
   attendance: 'hr_attendance_records',
   rosters: 'hr_roster_assignments',
   departments: 'hr_departments',
@@ -33,14 +38,35 @@ export const HR_CANONICAL_TABLES = {
 } as const
 
 export type HRCanonicalKey = keyof typeof HR_CANONICAL_TABLES
-export type HRCanonicalRow = Record<string, any>
+export type HRCanonicalRow = Record<string, unknown>
 
-export function normalizeHRName(row: HRCanonicalRow) {
-  return row.full_name || row.name || [row.first_name, row.last_name].filter(Boolean).join(' ') || row.email || 'Unknown HR record'
+function value(row: HRCanonicalRow, key: string): unknown {
+  return row[key]
 }
 
-export function normalizeStaffId(row: HRCanonicalRow) {
-  return row.staff_id || row.employee_id || row.profile_id || row.user_id || row.id || null
+function optionalText(input: unknown): string | null {
+  const text = String(input ?? '').trim()
+  return text || null
+}
+
+export function normalizeHRName(row: HRCanonicalRow): string {
+  const direct = optionalText(value(row, 'full_name') ?? value(row, 'name'))
+  if (direct) return direct
+  const combined = [value(row, 'first_name'), value(row, 'last_name')]
+    .map(optionalText)
+    .filter((item): item is string => Boolean(item))
+    .join(' ')
+  return combined || optionalText(value(row, 'email')) || 'Unknown HR record'
+}
+
+export function normalizeStaffId(row: HRCanonicalRow): string | null {
+  return optionalText(
+    value(row, 'staff_id')
+      ?? value(row, 'employee_id')
+      ?? value(row, 'profile_id')
+      ?? value(row, 'user_id')
+      ?? value(row, 'id'),
+  )
 }
 
 export async function selectHR<K extends HRCanonicalKey>(key: K, limit = 500) {
@@ -48,16 +74,28 @@ export async function selectHR<K extends HRCanonicalKey>(key: K, limit = 500) {
   const table = HR_CANONICAL_TABLES[key]
   const { data, error } = await supabase.from(table).select('*').limit(limit)
   if (error) return { table, data: [] as HRCanonicalRow[], error: error.message }
-  return { table, data: (data || []) as HRCanonicalRow[], error: null as string | null }
+  return { table, data: Array.isArray(data) ? data as HRCanonicalRow[] : [], error: null as string | null }
 }
 
 export async function insertHR<K extends HRCanonicalKey>(key: K, row: HRCanonicalRow, auditAction?: string) {
   const supabase = await createClient()
   const table = HR_CANONICAL_TABLES[key]
-  const payload = { ...row, created_at: row.created_at || new Date().toISOString(), updated_at: new Date().toISOString() }
-  const { data, error } = await supabase.from(table).insert(payload).select('*').maybeSingle()
+  const payload = {
+    ...row,
+    created_at: row.created_at || new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  }
+  const { data: rawData, error } = await supabase.from(table).insert(payload).select('*').maybeSingle()
+  const data = (rawData ?? null) as HRCanonicalRow | null
   if (!error && auditAction) {
-    await logHRActivity({ action: auditAction, entity_type: key, entity_id: data?.id, source_table: table, after: data, severity: 'info' })
+    await logHRActivity({
+      action: auditAction,
+      entity_type: key,
+      entity_id: optionalText(data?.id) ?? undefined,
+      source_table: table,
+      after: data,
+      severity: 'info',
+    })
   }
   return { data, error: error?.message || null, table }
 }
@@ -65,10 +103,25 @@ export async function insertHR<K extends HRCanonicalKey>(key: K, row: HRCanonica
 export async function updateHR<K extends HRCanonicalKey>(key: K, id: string, patch: HRCanonicalRow, auditAction?: string) {
   const supabase = await createClient()
   const table = HR_CANONICAL_TABLES[key]
-  const { data: before } = await supabase.from(table).select('*').eq('id', id).maybeSingle()
-  const { data, error } = await supabase.from(table).update({ ...patch, updated_at: new Date().toISOString() }).eq('id', id).select('*').maybeSingle()
+  const { data: rawBefore } = await supabase.from(table).select('*').eq('id', id).maybeSingle()
+  const before = (rawBefore ?? null) as HRCanonicalRow | null
+  const { data: rawData, error } = await supabase
+    .from(table)
+    .update({ ...patch, updated_at: new Date().toISOString() })
+    .eq('id', id)
+    .select('*')
+    .maybeSingle()
+  const data = (rawData ?? null) as HRCanonicalRow | null
   if (!error && auditAction) {
-    await logHRActivity({ action: auditAction, entity_type: key, entity_id: id, source_table: table, before, after: data, severity: 'info' })
+    await logHRActivity({
+      action: auditAction,
+      entity_type: key,
+      entity_id: id,
+      source_table: table,
+      before,
+      after: data,
+      severity: 'info',
+    })
   }
   return { data, error: error?.message || null, table }
 }

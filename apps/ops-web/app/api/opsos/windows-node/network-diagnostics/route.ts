@@ -3,7 +3,6 @@ import { auditWindowsNodeEvent, getWindowsNodeRequestIp, requireWindowsNodeAdmin
 import { buildWindowsNodeApiErrorFromBridgeResult, callWindowsBridgeAdmin } from "@/lib/opsos/windows-node"
 import type { WindowsNetworkDiagnostic } from "@/lib/opsos/windows-node-types"
 
-export const dynamic = "force-dynamic"
 
 async function runDiagnostic(request: Request) {
   const auth = await requireWindowsNodeAdmin(request)
@@ -43,4 +42,3 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   return runDiagnostic(request)
 }
-

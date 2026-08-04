@@ -7,7 +7,6 @@ import type {
   WindowsStorageMessageRecord,
 } from "@/lib/opsos/windows-node-types"
 
-export const dynamic = "force-dynamic"
 
 type AnyRow = Record<string, any>
 

@@ -3,7 +3,6 @@ import { auditWindowsNodeEvent, getWindowsNodeRequestIp, requireWindowsNodeAdmin
 import { buildWindowsNodeApiErrorResponse, callWindowsBridgeAdmin, normalizeLines } from "@/lib/opsos/windows-node"
 import type { WindowsAuditEvent } from "@/lib/opsos/windows-node-types"
 
-export const dynamic = "force-dynamic"
 
 export async function GET(request: Request) {
   const auth = await requireWindowsNodeAdmin(request)

@@ -1,2385 +1,663 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState, useTransition } from "react";
+import { useMemo, useRef, useState } from "react";
 import {
   Activity,
   AlertTriangle,
-  BarChart3,
-  Building2,
-  DatabaseZap,
-  FileBadge2,
-  Gauge,
-  Network,
-  Workflow,
+  Archive,
   ArrowRight,
+  BadgeCheck,
   Bell,
   Briefcase,
+  Building2,
   CalendarDays,
+  Check,
   CheckCircle2,
   ChevronRight,
   ClipboardCheck,
-  Clock,
+  Clock3,
   Download,
   Edit3,
+  FileBadge2,
   FileCheck2,
   FileText,
   Filter,
+  Gauge,
   GraduationCap,
   LayoutDashboard,
+  LoaderCircle,
+  LockKeyhole,
   Mail,
   MapPin,
-  MessageCircle,
+  MessageSquareText,
   MoreHorizontal,
-  Paperclip,
+  Network,
+  PauseCircle,
+  Phone,
   Plus,
   RefreshCw,
+  RotateCcw,
   Search,
-  Send,
   Settings,
   ShieldCheck,
   Sparkles,
   Trash2,
   Upload,
-  User,
   UserCheck,
   Users,
+  Workflow,
   X,
   Zap,
 } from "lucide-react";
-import {
-  addOnboardingNote,
-  createOnboardingDocument,
-  createOnboardingJourney,
-  createOnboardingReminder,
-  createOnboardingTask,
-  deleteOnboardingDocument,
-  deleteOnboardingJourney,
-  deleteOnboardingTask,
-  reassignOnboardingOwner,
-  updateOnboardingDocument,
-  updateOnboardingJourney,
-  updateOnboardingTask,
-} from "../_actions";
+import type {
+  JsonObject,
+  OnboardingActivity,
+  OnboardingChecklist,
+  OnboardingDocument,
+  OnboardingJourney,
+  OnboardingMutationResponse,
+  OnboardingTask,
+  OnboardingWorkspace,
+} from "@/lib/hr-onboarding/types";
+import { ONBOARDING_PHASES } from "@/lib/hr-onboarding/types";
 
-type Journey = {
-  id: string;
-  title: string;
-  position: string;
-  status: string;
-  startDate: string;
-  department: string;
-  manager: string;
-  location: string;
-  employmentType: string;
-  email: string;
-  phone: string;
-  progress: number;
-  owner: string;
-};
-type Row = Record<string, any>;
-export type OnboardingSeedData = {
-  journeys: Journey[];
-  tasks: Row[];
-  documents: Row[];
-  activity: Row[];
+export type OnboardingSeedData = OnboardingWorkspace;
+
+type ModalKind =
+  | null
+  | "createJourney"
+  | "editJourney"
+  | "task"
+  | "document"
+  | "note"
+  | "reassign"
+  | "archive"
+  | "cancel"
+  | "override"
+  | "upload"
+  | "taskArchive"
+  | "documentArchive";
+
+type MutationStage = { label: string; state: "pending" | "running" | "done" | "failed" };
+type ApiEnvelope = OnboardingMutationResponse & { workspace?: OnboardingWorkspace };
+
+const PHASE_LABELS: Record<string, string> = {
+  offer_accepted: "Offre & acceptation",
+  preboarding: "Préboarding",
+  documents: "Documents",
+  orientation: "Orientation",
+  training_setup: "Formation & accès",
+  integration: "Intégration",
+  probation: "Période d’essai",
+  completed: "Terminé",
 };
 
-const fallbackJourneys: Journey[] = [
-  {
-    id: "onb-imane",
-    title: "Imane Lahlou",
-    position: "HR Business Partner",
-    status: "In Progress",
-    startDate: "2025-05-20",
-    department: "Human Resources",
-    manager: "Salma El Alami",
-    location: "Casablanca HQ",
-    employmentType: "Full Time",
-    email: "imane.lahlou@angelcare.ma",
-    phone: "+212 6 77 88 99 00",
-    progress: 42,
-    owner: "Salma El Alami",
-  },
-  {
-    id: "onb-mehdi",
-    title: "Mehdi Tazi",
-    position: "Business Analyst",
-    status: "In Progress",
-    startDate: "2025-05-20",
-    department: "Operations",
-    manager: "Ahmed Benali",
-    location: "Rabat",
-    employmentType: "Full Time",
-    email: "mehdi.tazi@angelcare.ma",
-    phone: "+212 6 70 11 22 33",
-    progress: 38,
-    owner: "Imane Lahlou",
-  },
-  {
-    id: "onb-sara",
-    title: "Sara Bennani",
-    position: "Customer Care Agent",
-    status: "Document Collection",
-    startDate: "2025-05-21",
-    department: "Customer Care",
-    manager: "Imane Lahlou",
-    location: "Casablanca",
-    employmentType: "Full Time",
-    email: "sara.bennani@angelcare.ma",
-    phone: "+212 6 55 44 33 22",
-    progress: 28,
-    owner: "Imane Lahlou",
-  },
-];
-const phases = [
-  "Offer & Acceptance",
-  "Pre-Boarding",
-  "Document Collection",
-  "Orientation",
-  "Training & Setup",
-  "Integration",
-  "Probation & Review",
-];
-const tabs = [
-  "Tasks",
-  "Documents",
-  "Timeline",
-  "Checklist",
-  "Notes",
-  "Activity",
-];
-const groups = [
-  [
-    "Personal Information",
-    [
-      "Provide personal information",
-      "Emergency contact details",
-      "ID card copy",
-    ],
-  ],
-  [
-    "Contract & Legal Documents",
-    ["Employment contract", "Sign company policies", "NDA agreement"],
-  ],
-  [
-    "Company Setup",
-    [
-      "IT equipment setup",
-      "System access provisioning",
-      "Email & communication setup",
-    ],
-  ],
-  [
-    "Training & Compliance",
-    [
-      "Compliance training",
-      "Role-specific training",
-      "Safety & quality briefing",
-    ],
-  ],
-];
+const STATUS_LABELS: Record<string, string> = {
+  draft: "Brouillon",
+  active: "Actif",
+  paused: "En pause",
+  completed: "Terminé",
+  cancelled: "Annulé",
+  archived: "Archivé",
+  pending: "À faire",
+  in_progress: "En cours",
+  blocked: "Bloqué",
+  waived: "Dispensé",
+  required: "Requis",
+  requested: "Demandé",
+  uploaded: "Téléversé",
+  validated: "Validé",
+  rejected: "Rejeté",
+  expired: "Expiré",
+};
+
+const tabs = ["Tâches", "Documents", "Timeline", "Checklist", "Notes", "Activité"] as const;
+type Tab = (typeof tabs)[number];
+
 const navGroups = [
-  { label: "Overview", items: [
-    { label: "Dashboard", href: "/hr", icon: LayoutDashboard },
-  ]},
-  { label: "People", items: [
-    { label: "Employees", href: "/hr/employees", icon: Users },
-    { label: "Teams & Departments", href: "/hr/departments", icon: Building2 },
-    { label: "Recruitment", href: "/hr/recruitment", icon: UserCheck },
-    { label: "Onboarding", href: "/hr/onboarding", icon: ClipboardCheck },
-    { label: "Performance", href: "/hr/performance-matrix", icon: Gauge },
-    { label: "Learning & Development", href: "/hr/training", icon: GraduationCap },
-  ]},
-  { label: "Operations", items: [
-    { label: "Attendance", href: "/hr/attendance", icon: CalendarDays },
-    { label: "Leave Management", href: "/hr/approvals", icon: Clock },
-    { label: "Work Schedules", href: "/hr/work-schedules", icon: Workflow },
-    { label: "Time Tracking", href: "/hr/workforce-ops", icon: Activity },
-  ]},
-  { label: "Compliance & Documents", items: [
-    { label: "Documents", href: "/hr/documents", icon: FileBadge2 },
-    { label: "Compliance Dashboard", href: "/hr/compliance", icon: AlertTriangle },
-  ]},
-  { label: "System", items: [
-    { label: "Integrations", href: "/hr/sync-center", icon: Sparkles },
-    { label: "Settings", href: "/hr/settings", icon: Settings },
-  ]},
+  { label: "Vue générale", items: [{ label: "Dashboard", href: "/hr", icon: LayoutDashboard }] },
+  {
+    label: "Capital humain",
+    items: [
+      { label: "Collaborateurs", href: "/hr/employees", icon: Users },
+      { label: "Équipes & départements", href: "/hr/departments", icon: Building2 },
+      { label: "Recrutement", href: "/hr/recruitment", icon: UserCheck },
+      { label: "Onboarding", href: "/hr/onboarding", icon: ClipboardCheck },
+      { label: "Performance", href: "/hr/performance-matrix", icon: Gauge },
+      { label: "Learning & Development", href: "/hr/training", icon: GraduationCap },
+    ],
+  },
+  {
+    label: "Opérations",
+    items: [
+      { label: "Présence", href: "/hr/attendance", icon: CalendarDays },
+      { label: "Planning", href: "/hr/work-schedules", icon: Workflow },
+      { label: "Documents", href: "/hr/documents", icon: FileBadge2 },
+      { label: "Conformité", href: "/hr/compliance", icon: ShieldCheck },
+    ],
+  },
+  {
+    label: "Système",
+    items: [
+      { label: "Synchronisation", href: "/hr/sync-center", icon: Network },
+      { label: "Paramètres", href: "/hr/settings", icon: Settings },
+    ],
+  },
 ] as const;
-function cn(...c: Array<string | false | undefined | null>) {
-  return c.filter(Boolean).join(" ");
-}
-function d(v: any) {
-  return String(v || "").slice(0, 10) || "Pending";
-}
-function initials(n: string) {
-  return n
-    .split(" ")
-    .map((x) => x[0])
-    .slice(0, 2)
-    .join("")
-    .toUpperCase();
+
+function cn(...values: Array<string | false | null | undefined>): string {
+  return values.filter(Boolean).join(" ");
 }
 
-export default function OnboardingCommandCenter({
-  initialData,
-}: {
-  initialData: OnboardingSeedData;
-}) {
-  const [journeys, setJourneys] = useState<Journey[]>(
-    initialData.journeys.length ? initialData.journeys : fallbackJourneys,
-  );
-  const [tasksLive, setTasksLive] = useState<Row[]>(initialData.tasks || []);
-  const [docsLive, setDocsLive] = useState<Row[]>(initialData.documents || []);
-  const [feed, setFeed] = useState<Row[]>(initialData.activity || []);
-  const [selectedId, setSelectedId] = useState(
-    (initialData.journeys[0] || fallbackJourneys[0]).id,
-  );
-  const [activeTab, setActiveTab] = useState("Tasks");
+function initials(name: string): string {
+  return name.split(/\s+/).filter(Boolean).map((part) => part[0]).slice(0, 2).join("").toUpperCase();
+}
+
+function formatDate(value: string | null): string {
+  if (!value) return "Non planifiée";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value.slice(0, 10);
+  return new Intl.DateTimeFormat("fr-MA", { day: "2-digit", month: "short", year: "numeric" }).format(date);
+}
+
+function formatTime(value: string): string {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return new Intl.DateTimeFormat("fr-MA", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" }).format(date);
+}
+
+function statusTone(status: string): string {
+  if (["completed", "validated", "done"].includes(status)) return "border-emerald-200 bg-emerald-50 text-emerald-700";
+  if (["blocked", "rejected", "cancelled", "critical", "expired"].includes(status)) return "border-rose-200 bg-rose-50 text-rose-700";
+  if (["paused", "pending", "required", "requested"].includes(status)) return "border-amber-200 bg-amber-50 text-amber-700";
+  if (status === "archived") return "border-slate-200 bg-slate-100 text-slate-600";
+  return "border-violet-200 bg-violet-50 text-violet-700";
+}
+
+async function apiRequest<T>(url: string, init?: RequestInit): Promise<T> {
+  const controller = new AbortController();
+  const timeout = window.setTimeout(() => controller.abort(), 30000);
+  try {
+    const response = await fetch(url, {
+      ...init,
+      cache: "no-store",
+      signal: controller.signal,
+      headers: init?.body instanceof FormData
+        ? init.headers
+        : { "content-type": "application/json", ...(init?.headers ?? {}) },
+    });
+    const body = await response.json() as Record<string, unknown>;
+    if (!response.ok || body.ok === false) throw new Error(String(body.error ?? `Erreur HTTP ${response.status}`));
+    return body as T;
+  } finally {
+    window.clearTimeout(timeout);
+  }
+}
+
+export default function OnboardingCommandCenter({ initialData }: { initialData: OnboardingSeedData }) {
+  const [workspace, setWorkspace] = useState<OnboardingWorkspace>(initialData);
+  const [selectedKey, setSelectedKey] = useState<string | null>(initialData.selectedJourneyKey);
   const [query, setQuery] = useState("");
-  const [filter, setFilter] = useState("All");
-  const [modal, setModal] = useState<
-    | null
-    | "journey"
-    | "editJourney"
-    | "task"
-    | "document"
-    | "note"
-    | "reminder"
-    | "reassign"
-    | "timeline"
-    | "profile"
-  >(null);
-  const [taskOverrides, setTaskOverrides] = useState<Record<string, Row>>({});
-  const [deletedTaskIds, setDeletedTaskIds] = useState<Record<string, true>>({});
-  const [toast, setToast] = useState("Live sync ready");
-  const [isPending, startTransition] = useTransition();
-  const selected = journeys.find((j) => j.id === selectedId) || journeys[0];
-  const filtered = journeys.filter((j) =>
-    `${j.title} ${j.position} ${j.status} ${j.department}`
-      .toLowerCase()
-      .includes(query.toLowerCase()),
-  );
+  const [statusFilter, setStatusFilter] = useState("active");
+  const [tab, setTab] = useState<Tab>("Tâches");
+  const [modal, setModal] = useState<ModalKind>(null);
+  const [editingTask, setEditingTask] = useState<OnboardingTask | null>(null);
+  const [editingDocument, setEditingDocument] = useState<OnboardingDocument | null>(null);
+  const [toast, setToast] = useState("Synchronisation Supabase active");
+  const [busy, setBusy] = useState(false);
+  const [stages, setStages] = useState<MutationStage[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  const generated = useMemo(
-    () =>
-      groups.flatMap(([g, items], gi) =>
-        (items as string[]).map((title, i) => ({
-          id: `${selected?.id}-${gi}-${i}`,
-          journey_id: selected?.id,
-          group: g,
-          title,
-          due_at: `2025-05-${String(20 + gi + i).padStart(2, "0")}`,
-          owner:
-            gi < 2 ? selected?.owner : gi === 2 ? "IT Team" : "Training Team",
-          status:
-            gi === 0
-              ? "Completed"
-              : gi === 1 && i === 0
-                ? "In Progress"
-                : "Pending",
-          priority: gi === 1 ? "High" : "Normal",
-        })),
-      ),
-    [selected],
-  );
-  const persistedTasks = tasksLive.filter(
-    (t) => String(t.journey_id || "") === String(selected?.id) && !deletedTaskIds[String(t.id)],
-  );
-  const generatedTasks = generated
-    .map((task) => ({ ...task, ...(taskOverrides[String(task.id)] || {}) }))
-    .filter((task) => !deletedTaskIds[String(task.id)]);
-  const persistedIds = new Set(persistedTasks.map((task) => String(task.id)));
-  const allTasks = [
-    ...persistedTasks,
-    ...generatedTasks.filter((task) => !persistedIds.has(String(task.id))),
-  ];
-  const visibleTasks = allTasks.filter(
-    (t) => filter === "All" || String(t.status) === filter,
-  );
-  const completed = allTasks.filter(
-    (t) => String(t.status) === "Completed",
-  ).length;
-  const docs = docsLive.filter(
-    (x) => String(x.journey_id || "") === String(selected?.id),
-  );
-  const completion = Math.round(
-    (completed / Math.max(1, allTasks.length)) * 100,
-  );
+  const selected = workspace.journeys.find((item) => item.journeyKey === selectedKey) ?? workspace.journeys[0] ?? null;
+  const filteredJourneys = useMemo(() => workspace.journeys.filter((journey) => {
+    const matchesQuery = `${journey.title} ${journey.position ?? ""} ${journey.department ?? ""} ${journey.owner ?? ""}`.toLowerCase().includes(query.toLowerCase());
+    const matchesStatus = statusFilter === "all" || journey.status === statusFilter;
+    return matchesQuery && matchesStatus;
+  }), [workspace.journeys, query, statusFilter]);
 
-  function refreshOnboardingClientState() {
-    if (typeof window !== "undefined") {
-      window.setTimeout(() => {
-        window.location.reload();
-      }, 250);
+  const tasks = useMemo(() => selected ? workspace.tasks.filter((item) => item.journeyKey === selected.journeyKey) : [], [workspace.tasks, selected]);
+  const documents = useMemo(() => selected ? workspace.documents.filter((item) => item.journeyKey === selected.journeyKey) : [], [workspace.documents, selected]);
+  const activity = useMemo(() => selected ? workspace.activity.filter((item) => item.journeyKey === selected.journeyKey) : [], [workspace.activity, selected]);
+  const notes = activity.filter((item) => ["note", "manager_instruction", "escalation", "decision"].includes(item.type));
+  const completedTasks = tasks.filter((item) => item.status === "completed" || item.status === "waived").length;
+  const validatedDocuments = documents.filter((item) => item.status === "validated" || item.status === "waived").length;
+  const activeCount = workspace.journeys.filter((item) => item.status === "active").length;
+  const atRisk = workspace.journeys.filter((item) => ["high", "critical"].includes(item.riskLevel)).length;
+  const blockedTasks = workspace.tasks.filter((item) => item.status === "blocked").length;
+  const missingDocs = workspace.documents.filter((item) => item.required && !["validated", "waived"].includes(item.status)).length;
+
+  async function refresh(preferredKey?: string | null): Promise<void> {
+    const target = preferredKey ?? selectedKey;
+    const response = await apiRequest<{ ok: true; workspace: OnboardingWorkspace }>(`/api/hr/onboarding/workspace${target ? `?selected=${encodeURIComponent(target)}` : ""}`);
+    setWorkspace(response.workspace);
+    setSelectedKey(response.workspace.selectedJourneyKey);
+  }
+
+  function openModal(kind: ModalKind): void {
+    setError(null);
+    setModal(kind);
+  }
+
+  async function runMutation(options: {
+    title: string;
+    stageLabels: string[];
+    request: () => Promise<ApiEnvelope>;
+    preferredKey?: string | null;
+    closeOnSuccess?: boolean;
+  }): Promise<void> {
+    setBusy(true);
+    setError(null);
+    setStages(options.stageLabels.map((label, index) => ({ label, state: index === 0 ? "running" : "pending" })));
+    try {
+      for (let index = 1; index < options.stageLabels.length; index += 1) {
+        await new Promise((resolve) => window.setTimeout(resolve, 90));
+        setStages((current) => current.map((stage, stageIndex) => ({ ...stage, state: stageIndex < index ? "done" : stageIndex === index ? "running" : "pending" })));
+      }
+      const response = await options.request();
+      setStages((current) => current.map((stage) => ({ ...stage, state: "done" })));
+      if (response.workspace) {
+        setWorkspace(response.workspace);
+        setSelectedKey(response.workspace.selectedJourneyKey);
+      } else {
+        await refresh(options.preferredKey);
+      }
+      setToast(`${options.title} · ${response.message}`);
+      if (options.closeOnSuccess !== false) window.setTimeout(() => setModal(null), 450);
+    } catch (caught) {
+      const message = caught instanceof Error ? caught.message : "L’opération a échoué.";
+      setError(message);
+      setStages((current) => current.map((stage) => stage.state === "running" ? { ...stage, state: "failed" } : stage));
+    } finally {
+      setBusy(false);
     }
   }
 
-  function log(title: string) {
-    setToast(`${title} · synced ${new Date().toLocaleTimeString()}`);
-    setFeed((f) => [
-      {
-        id: `local-${Date.now()}`,
-        title,
-        body: `${selected.title} · ${new Date().toLocaleTimeString()}`,
-        type: "activity",
-      },
-      ...f,
-    ]);
-  }
-  function toggleTask(task: Row) {
-    const next = task.status === "Completed" ? "In Progress" : "Completed";
-    const updated = { ...task, status: next, updated_at: new Date().toISOString() };
-    setTaskOverrides((current) => ({ ...current, [String(task.id)]: updated }));
-    setTasksLive((list) => {
-      const exists = list.some((x) => String(x.id) === String(task.id));
-      return exists
-        ? list.map((x) => (String(x.id) === String(task.id) ? { ...x, status: next } : x))
-        : [updated, ...list];
-    });
-    startTransition(() => {
-      void (async () => {
-        const existing = tasksLive.some((x) => String(x.id) === String(task.id));
-        if (existing && !String(task.id).startsWith(`${selected?.id}-`)) {
-          await updateOnboardingTask(String(task.id), { status: next });
-        } else {
-          await createOnboardingTask({ ...updated, journey_id: selected?.id });
-        }
-        log(`Task ${next.toLowerCase()}: ${task.title}`);
-      })();
-    });
-  }
-  function deleteTask(task: Row) {
-    setDeletedTaskIds((current) => ({ ...current, [String(task.id)]: true }));
-    setTasksLive((list) => list.filter((x) => String(x.id) !== String(task.id)));
-    startTransition(() => {
-      void (async () => {
-        if (!String(task.id).startsWith(`${selected?.id}-`)) {
-          await deleteOnboardingTask(String(task.id));
-        }
-        await addOnboardingNote({
-          journey_id: selected?.id,
-          title: `Task deleted: ${task.title}`,
-          body: `Removed by onboarding operator from ${task.group || "task board"}.`,
-          type: "task_delete",
-        });
-        log(`Task deleted: ${task.title}`);
-      })();
-    });
-  }
-  function completePhase() {
-    const onboardingStages = [
-      "Offer & Acceptance",
-      "Pre-Boarding",
-      "Document Collection",
-      "Orientation",
-      "Training & Setup",
-      "Integration",
-      "Probation & Review",
-    ];
-
-    const currentProgress = Number(selected.progress || 0);
-    const nextProgress = Math.min(100, currentProgress + 14);
-
-    const currentStatus = String(selected.status || "Offer & Acceptance");
-    const currentStageIndex = onboardingStages.findIndex(
-      (stageName) => stageName.toLowerCase() === currentStatus.toLowerCase(),
-    );
-
-    const nextStage =
-      onboardingStages[
-        Math.min(
-          onboardingStages.length - 1,
-          Math.max(0, currentStageIndex === -1 ? 0 : currentStageIndex + 1),
-        )
-      ] || "In Progress";
-
-    const nextStatus = nextProgress >= 100 ? "Completed" : nextStage;
-
-    const updatedJourney = {
-      progress: nextProgress,
-      status: nextStatus,
+  async function submitJourney(form: FormData, editing: boolean): Promise<void> {
+    const personKey = String(form.get("personKey") ?? "");
+    const person = [...workspace.candidates, ...workspace.staff].find((item) => item.key === personKey);
+    const ownerKey = String(form.get("ownerKey") ?? "");
+    const managerKey = String(form.get("managerKey") ?? "");
+    const owner = workspace.owners.find((item) => item.key === ownerKey);
+    const manager = workspace.owners.find((item) => item.key === managerKey);
+    const payload: JsonObject = {
+      candidateKey: person?.kind === "candidate" ? person.key : null,
+      staffKey: person?.kind === "staff" ? person.key : null,
+      title: String(form.get("title") ?? person?.fullName ?? ""),
+      position: String(form.get("position") ?? person?.position ?? ""),
+      department: String(form.get("department") ?? person?.department ?? ""),
+      startDate: String(form.get("startDate") ?? "") || null,
+      manager: manager?.fullName ?? null,
+      managerKey: managerKey || null,
+      location: String(form.get("location") ?? "") || null,
+      employmentType: String(form.get("employmentType") ?? "") || null,
+      email: String(form.get("email") ?? person?.email ?? "") || null,
+      phone: String(form.get("phone") ?? person?.phone ?? "") || null,
+      owner: owner?.fullName ?? null,
+      ownerKey: ownerKey || null,
+      priority: String(form.get("priority") ?? "normal"),
+      riskLevel: String(form.get("riskLevel") ?? "normal"),
+      riskNotes: String(form.get("riskNotes") ?? "") || null,
+      checklistKey: String(form.get("checklistKey") ?? "") || null,
+      notes: String(form.get("notes") ?? "") || null,
+      idempotencyKey: crypto.randomUUID(),
     };
+    if (editing && selected) payload.version = selected.version;
 
-    setJourneys((j) =>
-      j.map((x) =>
-        String(x.id) === String(selected.id)
-          ? {
-              ...x,
-              ...updatedJourney,
-            }
-          : x,
-      ),
-    );
-
-    startTransition(() => {
-      void (async () => {
-        const result = await updateOnboardingJourney(selected.id, updatedJourney);
-
-        if (!result?.ok) {
-          console.error("[ONBOARDING PHASE SAVE FAILED]", result?.error);
-          setToast(`Stage save failed · ${result?.error || "database rejected update"}`);
-          return;
-        }
-
-        log(`Journey phase advanced to ${nextStatus}`);
-        window.setTimeout(() => window.location.reload(), 250);
-      })();
+    await runMutation({
+      title: editing ? "Parcours mis à jour" : "Parcours créé",
+      stageLabels: editing
+        ? ["Validation", "Contrôle de version", "Mise à jour", "Recalcul des gates", "Synchronisation"]
+        : ["Validation", "Création du parcours", "Affectation checklist", "Génération des tâches", "Demandes documentaires", "Audit", "Synchronisation"],
+      request: () => apiRequest<ApiEnvelope>(editing && selected ? `/api/hr/onboarding/journeys/${encodeURIComponent(selected.journeyKey)}` : "/api/hr/onboarding/journeys", {
+        method: editing ? "PATCH" : "POST",
+        body: JSON.stringify(payload),
+      }),
+      preferredKey: selected?.journeyKey,
     });
   }
 
-  function deleteJourney() {
-    const rest = journeys.filter((j) => j.id !== selected.id);
-    setJourneys(rest.length ? rest : fallbackJourneys);
-    setSelectedId((rest[0] || fallbackJourneys[0]).id);
-    startTransition(() => {
-      void (async () => {
-        await deleteOnboardingJourney(selected.id);
-        log("Onboarding journey removed");
-      })();
+  async function submitTask(form: FormData): Promise<void> {
+    if (!selected) return;
+    const ownerKey = String(form.get("ownerKey") ?? "");
+    const owner = workspace.owners.find((item) => item.key === ownerKey);
+    const payload: JsonObject = {
+      title: String(form.get("title") ?? ""),
+      groupName: String(form.get("groupName") ?? "Général"),
+      phase: String(form.get("phase") ?? selected.phase),
+      status: String(form.get("status") ?? "pending"),
+      owner: owner?.fullName ?? null,
+      ownerKey: ownerKey || null,
+      priority: String(form.get("priority") ?? "normal"),
+      dueAt: String(form.get("dueAt") ?? "") || null,
+      notes: String(form.get("notes") ?? "") || null,
+      required: form.get("required") === "on",
+      idempotencyKey: crypto.randomUUID(),
+    };
+    if (editingTask) payload.version = editingTask.version;
+    await runMutation({
+      title: editingTask ? "Tâche mise à jour" : "Tâche créée",
+      stageLabels: ["Validation", "Persistance", "Recalcul du progrès", "Audit", "Synchronisation"],
+      request: () => apiRequest<ApiEnvelope>(editingTask ? `/api/hr/onboarding/tasks/${encodeURIComponent(editingTask.taskKey)}` : `/api/hr/onboarding/journeys/${encodeURIComponent(selected.journeyKey)}/tasks`, {
+        method: editingTask ? "PATCH" : "POST",
+        body: JSON.stringify(payload),
+      }),
+      preferredKey: selected.journeyKey,
+    });
+    setEditingTask(null);
+  }
+
+  async function submitDocument(form: FormData): Promise<void> {
+    if (!selected) return;
+    const ownerKey = String(form.get("ownerKey") ?? "");
+    const owner = workspace.owners.find((item) => item.key === ownerKey);
+    const payload: JsonObject = {
+      title: String(form.get("title") ?? ""),
+      category: String(form.get("category") ?? "Général"),
+      documentType: String(form.get("documentType") ?? "") || null,
+      status: String(form.get("status") ?? "requested"),
+      owner: owner?.fullName ?? null,
+      ownerKey: ownerKey || null,
+      required: form.get("required") === "on",
+      dueDate: String(form.get("dueDate") ?? "") || null,
+      expiresAt: String(form.get("expiresAt") ?? "") || null,
+      rejectedReason: String(form.get("rejectedReason") ?? "") || null,
+      notes: String(form.get("notes") ?? "") || null,
+      idempotencyKey: crypto.randomUUID(),
+    };
+    if (editingDocument) payload.version = editingDocument.version;
+    await runMutation({
+      title: editingDocument ? "Document mis à jour" : "Demande documentaire créée",
+      stageLabels: ["Validation", "Persistance", "Recalcul des gates", "Audit", "Synchronisation"],
+      request: () => apiRequest<ApiEnvelope>(editingDocument ? `/api/hr/onboarding/documents/${encodeURIComponent(editingDocument.documentKey)}` : `/api/hr/onboarding/journeys/${encodeURIComponent(selected.journeyKey)}/documents`, {
+        method: editingDocument ? "PATCH" : "POST",
+        body: JSON.stringify(payload),
+      }),
+      preferredKey: selected.journeyKey,
+    });
+    setEditingDocument(null);
+  }
+
+  async function submitActivity(form: FormData): Promise<void> {
+    if (!selected) return;
+    const type = String(form.get("type") ?? "note");
+    await runMutation({
+      title: "Événement enregistré",
+      stageLabels: ["Validation", "Écriture de la timeline", "Audit", "Synchronisation"],
+      request: () => apiRequest<ApiEnvelope>(`/api/hr/onboarding/journeys/${encodeURIComponent(selected.journeyKey)}/activity`, {
+        method: "POST",
+        body: JSON.stringify({ type, title: String(form.get("title") ?? ""), body: String(form.get("body") ?? ""), status: "recorded" }),
+      }),
+      preferredKey: selected.journeyKey,
     });
   }
 
+  async function journeyAction(action: string, payload: JsonObject = {}): Promise<void> {
+    if (!selected) return;
+    await runMutation({
+      title: "Parcours synchronisé",
+      stageLabels: ["Contrôle d’autorisation", "Vérification des gates", "Mutation transactionnelle", "Recalcul du progrès", "Audit", "Synchronisation"],
+      request: () => apiRequest<ApiEnvelope>(`/api/hr/onboarding/journeys/${encodeURIComponent(selected.journeyKey)}/actions`, {
+        method: "POST",
+        body: JSON.stringify({ action, version: selected.version, ...payload }),
+      }),
+      preferredKey: selected.journeyKey,
+    });
+  }
+
+  async function quickTaskStatus(task: OnboardingTask, status: string): Promise<void> {
+    await runMutation({
+      title: "Tâche synchronisée",
+      stageLabels: ["Validation", "Mise à jour", "Recalcul du parcours", "Audit"],
+      request: () => apiRequest<ApiEnvelope>(`/api/hr/onboarding/tasks/${encodeURIComponent(task.taskKey)}`, {
+        method: "PATCH",
+        body: JSON.stringify({ version: task.version, status }),
+      }),
+      preferredKey: selected?.journeyKey,
+      closeOnSuccess: false,
+    });
+  }
+
+  async function quickDocumentStatus(document: OnboardingDocument, status: string): Promise<void> {
+    await runMutation({
+      title: "Document synchronisé",
+      stageLabels: ["Validation", "Mise à jour", "Recalcul des gates", "Audit"],
+      request: () => apiRequest<ApiEnvelope>(`/api/hr/onboarding/documents/${encodeURIComponent(document.documentKey)}`, {
+        method: "PATCH",
+        body: JSON.stringify({ version: document.version, status }),
+      }),
+      preferredKey: selected?.journeyKey,
+      closeOnSuccess: false,
+    });
+  }
+
+  async function uploadFile(file: File): Promise<void> {
+    if (!editingDocument) return;
+    const form = new FormData();
+    form.append("file", file);
+    form.append("version", String(editingDocument.version));
+    await runMutation({
+      title: "Fichier téléversé",
+      stageLabels: ["Validation du fichier", "Téléversement sécurisé", "Liaison au document", "Audit", "Synchronisation"],
+      request: () => apiRequest<ApiEnvelope>(`/api/hr/onboarding/documents/${encodeURIComponent(editingDocument.documentKey)}/upload`, { method: "POST", body: form }),
+      preferredKey: selected?.journeyKey,
+    });
+    setEditingDocument(null);
+  }
+
+  const empty = workspace.journeys.length === 0;
+
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,#eef2ff,transparent_34%),#f7f8fc] text-slate-950">
-      <UiStyles />
-      <div className="flex">
-        <aside className="sticky top-0 hidden h-screen w-[286px] shrink-0 overflow-y-auto border-r border-white/70 bg-white/92 p-4 shadow-2xl shadow-slate-200/60 backdrop-blur-2xl xl:block">
-          <Link href="/hr" className="flex items-center gap-3 rounded-[26px] bg-gradient-to-br from-violet-600 via-indigo-600 to-slate-950 p-4 text-white shadow-2xl shadow-violet-200">
-            <div className="grid h-11 w-11 place-items-center rounded-2xl bg-white/15 ring-1 ring-white/20"><Sparkles className="h-5 w-5" /></div>
-            <div>
-              <div className="text-[10px] font-black uppercase tracking-[0.24em] text-violet-100">AngelCare</div>
-              <div className="text-lg font-black tracking-tight">HR Command OS</div>
+    <div className="min-h-screen bg-[#f4f7fb] text-slate-950">
+      <div className="flex min-h-screen">
+        <aside className="hidden w-[250px] shrink-0 border-r border-slate-200 bg-white xl:block">
+          <div className="sticky top-0 flex h-screen flex-col overflow-y-auto px-4 py-5">
+            <div className="rounded-[24px] bg-gradient-to-br from-slate-950 via-indigo-950 to-violet-900 p-4 text-white shadow-xl shadow-indigo-950/10">
+              <div className="flex items-center gap-3">
+                <div className="grid h-10 w-10 place-items-center rounded-2xl bg-white/12"><ClipboardCheck className="h-5 w-5" /></div>
+                <div><p className="text-[10px] font-black uppercase tracking-[0.24em] text-cyan-200">AngelCare HR</p><h2 className="font-black">Onboarding OS</h2></div>
+              </div>
+              <div className="mt-4 flex items-center gap-2 rounded-2xl border border-white/10 bg-white/8 px-3 py-2 text-xs text-slate-200"><ShieldCheck className="h-4 w-4 text-emerald-300" /> Source de vérité Supabase</div>
             </div>
-          </Link>
-
-          <div className="mt-5 space-y-5">
-            {navGroups.map((group) => (
-              <div key={group.label}>
-                <div className="mb-2 px-2 text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">{group.label}</div>
-                <div className="space-y-1">
-                  {group.items.map((item) => {
-                    const Icon = item.icon;
-                    const active = item.href === "/hr/onboarding";
-                    return (
-                      <Link
-                        key={`${group.label}-${item.label}`}
-                        href={item.href}
-                        className={cn(
-                          "group flex items-center gap-3 rounded-2xl px-3 py-2.5 text-[13px] font-black transition",
-                          active
-                            ? "bg-violet-50 text-violet-700 ring-1 ring-violet-100 shadow-sm"
-                            : "text-slate-600 hover:bg-slate-50 hover:text-slate-950",
-                        )}
-                      >
-                        <Icon className={cn("h-4 w-4", active ? "text-violet-600" : "text-slate-400 group-hover:text-violet-600")} />
-                        <span className="min-w-0 flex-1 truncate">{item.label}</span>
-                        {active ? <span className="h-2 w-2 rounded-full bg-violet-500 shadow-[0_0_14px_rgba(139,92,246,0.7)]" /> : null}
-                      </Link>
-                    );
-                  })}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-6 rounded-[24px] border border-violet-100 bg-gradient-to-br from-violet-50 via-white to-cyan-50 p-4 shadow-lg shadow-violet-100/50">
-            <div className="flex items-center gap-2 text-sm font-black text-violet-800"><DatabaseZap className="h-4 w-4" />Onboarding sync layer</div>
-            <p className="mt-2 text-xs font-bold leading-5 text-slate-600">Same HR navigation as the main module. Onboarding stays connected to candidates, employees, tasks, documents, WhatsApp reminders, owners and activity logs.</p>
-            <div className="mt-3 rounded-2xl bg-white/80 px-3 py-2 text-xs font-black text-slate-600 ring-1 ring-violet-100">{toast}</div>
-          </div>
-        </aside>
-
-        <main className="min-w-0 flex-1 p-5">
-          <header className="sticky top-0 z-40 -mx-5 -mt-5 mb-5 border-b border-slate-200/80 bg-white/85 px-6 py-4 backdrop-blur-xl">
-            <div className="flex flex-wrap items-center justify-between gap-4">
-              <div>
-                <div className="text-xs font-black tracking-[0.24em] text-violet-600">
-                  HR / CANDIDATE ONBOARDING
-                </div>
-                <h1 className="text-3xl font-black tracking-tight">
-                  Onboarding Command Center
-                </h1>
-                <p className="text-sm font-semibold text-slate-500">
-                  Every journey, task, document, reminder, note and escalation
-                  works from one live workspace.
-                </p>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                <button
-                  onClick={() => setModal("timeline")}
-                  className="btn-lite"
-                >
-                  <Activity className="h-4 w-4" />
-                  View Timeline
-                </button>
-                <button
-                  onClick={() => setModal("editJourney")}
-                  className="btn-lite"
-                >
-                  <Edit3 className="h-4 w-4" />
-                  Edit Journey
-                </button>
-                <button
-                  onClick={() => setModal("journey")}
-                  className="btn-lite"
-                >
-                  <Plus className="h-4 w-4" />
-                  New Journey
-                </button>
-                <button
-                  onClick={() => setModal("task")}
-                  className="btn-primary"
-                >
-                  <Plus className="h-4 w-4" />
-                  Add Task
-                </button>
-              </div>
-            </div>
-          </header>
-
-          <section className="mb-5 grid gap-4 md:grid-cols-4">
-            <Kpi label="Active journeys" value={journeys.length} icon={Users} />
-            <Kpi
-              label="Tasks completed"
-              value={`${completed}/${allTasks.length}`}
-              icon={CheckCircle2}
-            />
-            <Kpi label="Documents" value={docs.length || 4} icon={FileCheck2} />
-            <Kpi label="Avg. progress" value={`${completion}%`} icon={Zap} />
-          </section>
-
-          <section className="grid gap-4 lg:grid-cols-[320px_1fr] 2xl:grid-cols-[320px_1fr_370px]">
-            <div className="card p-4">
-              <div className="grid grid-cols-2 rounded-2xl bg-slate-100 p-1 text-sm font-black">
-                <button className="rounded-xl bg-white py-2 text-violet-700 shadow-sm">
-                  All Onboardings
-                </button>
-                <button
-                  onClick={() => setQuery(selected.owner)}
-                  className="rounded-xl py-2 text-slate-500 hover:bg-white"
-                >
-                  My Onboardings
-                </button>
-              </div>
-              <div className="mt-4 flex gap-2">
-                <div className="flex flex-1 items-center gap-2 rounded-2xl border border-slate-200 bg-white px-3 py-2.5">
-                  <Search className="h-4 w-4 text-slate-400" />
-                  <input
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    placeholder="Search candidate, position..."
-                    className="w-full bg-transparent text-sm font-semibold outline-none"
-                  />
-                </div>
-                <button
-                  onClick={() => setQuery("")}
-                  className="rounded-2xl border px-3"
-                >
-                  <Filter className="h-4 w-4" />
-                </button>
-              </div>
-              <div className="mt-4 max-h-[740px] space-y-2 overflow-auto pr-1">
-                {filtered.map((j) => (
-                  <button
-                    key={j.id}
-                    onClick={() => setSelectedId(j.id)}
-                    className={cn(
-                      "group w-full rounded-[26px] border p-3 text-left transition hover:-translate-y-0.5 hover:shadow-xl",
-                      selected.id === j.id
-                        ? "border-violet-200 bg-violet-50 shadow-violet-100"
-                        : "border-transparent bg-white hover:border-slate-200",
-                    )}
-                  >
-                    <div className="flex gap-3">
-                      <div className="grid h-12 w-12 place-items-center rounded-full bg-gradient-to-br from-violet-200 to-cyan-100 text-sm font-black text-violet-700">
-                        {initials(j.title)}
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <div className="truncate font-black">{j.title}</div>
-                        <div className="truncate text-xs font-bold text-slate-500">
-                          {j.position}
-                        </div>
-                        <span className="mt-1 inline-flex rounded-full bg-violet-100 px-2 py-1 text-[11px] font-black text-violet-700">
-                          {j.status}
-                        </span>
-                        <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-100">
-                          <div
-                            className="h-full rounded-full bg-gradient-to-r from-violet-500 to-cyan-400"
-                            style={{ width: `${j.progress}%` }}
-                          />
-                        </div>
-                      </div>
-                      <ChevronRight className="mt-4 h-4 w-4 text-slate-300 group-hover:text-violet-500" />
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <div className="grid gap-4 lg:grid-cols-[320px_1fr]">
-                <ProfileCard selected={selected} onDelete={deleteJourney} />
-                <JourneyStepper
-                  progress={selected.progress}
-                  onAdvance={completePhase}
-                />
-              </div>
-              <div className="card p-4">
-                <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-3">
-                  <div className="flex flex-wrap gap-2">
-                    {tabs.map((t) => (
-                      <button
-                        key={t}
-                        onClick={() => setActiveTab(t)}
-                        className={cn(
-                          "rounded-2xl px-4 py-2 text-sm font-black transition",
-                          activeTab === t
-                            ? "bg-violet-600 text-white shadow-lg shadow-violet-100"
-                            : "bg-slate-50 text-slate-500 hover:bg-slate-100",
-                        )}
-                      >
-                        {t}
-                      </button>
-                    ))}
-                  </div>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => {
-                        setToast("Refreshing live onboarding data...");
-                        window.location.reload();
-                      }}
-                      className="btn-mini"
-                    >
-                      <RefreshCw className="h-3.5 w-3.5" />
-                      Refresh
-                    </button>
-                    <button
-                      onClick={() => setModal("note")}
-                      className="btn-mini"
-                    >
-                      <MessageCircle className="h-3.5 w-3.5" />
-                      Comment
-                    </button>
-                  </div>
-                </div>
-                {activeTab === "Tasks" ? (
-                  <TasksBoard
-                    tasks={visibleTasks}
-                    allTasks={allTasks}
-                    filter={filter}
-                    setFilter={setFilter}
-                    toggleTask={toggleTask}
-                    deleteTask={deleteTask}
-                    setModal={setModal}
-                  />
-                ) : (
-                  <Workspace
-                    tab={activeTab}
-                    selected={selected}
-                    docs={docs}
-                    feed={feed}
-                    setModal={setModal}
-                    setDocsLive={setDocsLive}
-                  />
-                )}
-              </div>
-            </div>
-
-            <aside className="space-y-4 lg:col-span-2 2xl:col-span-1">
-              <SummaryPanel
-                progress={selected.progress}
-                completed={completed}
-                total={allTasks.length}
-              />
-              <DocumentsPanel
-                docs={docs}
-                setModal={setModal}
-                setDocsLive={setDocsLive}
-              />
-              <ActivityPanel
-                feed={feed}
-                selected={selected}
-                setModal={setModal}
-              />
-              <QuickActions selected={selected} setModal={setModal} />
-            </aside>
-          </section>
-        </main>
-      </div>
-      {modal && (
-        <ExecutionModal
-          modal={modal}
-          selected={selected}
-          isPending={isPending}
-          onClose={() => setModal(null)}
-          onCreateJourney={(j: Journey) => {
-            setJourneys([j, ...journeys]);
-            setSelectedId(j.id);
-            setModal(null);
-            log("Journey created live");
-          }}
-          onCreateTask={(t: Row) => {
-            setTasksLive([t, ...tasksLive]);
-            setModal(null);
-            log("Task created live");
-          }}
-          onCreateDoc={(x: Row) => {
-            setDocsLive([x, ...docsLive]);
-            setModal(null);
-            log("Document added live");
-          }}
-          onNote={(x: Row) => {
-            setFeed([x, ...feed]);
-            setModal(null);
-            log("Note saved live");
-          }}
-          onReassign={(owner: string) => {
-            setJourneys((j) =>
-              j.map((x) => (x.id === selected.id ? { ...x, owner } : x)),
-            );
-            setModal(null);
-            startTransition(() => {
-              void reassignOnboardingOwner(selected.id, owner);
-            });
-            log("Owner reassigned");
-          }}
-        />
-      )}
-    </div>
-  );
-}
-
-function Kpi({ label, value, icon: Icon }: any) {
-  return (
-    <div className="card flex items-center gap-4 p-5">
-      <div className="grid h-12 w-12 place-items-center rounded-2xl bg-violet-50 text-violet-700">
-        <Icon className="h-5 w-5" />
-      </div>
-      <div>
-        <div className="text-2xl font-black">{value}</div>
-        <div className="text-xs font-black text-slate-500">{label}</div>
-      </div>
-    </div>
-  );
-}
-function ProfileCard({ selected, onDelete }: any) {
-  return (
-    <div className="card overflow-hidden">
-      <div className="bg-gradient-to-r from-violet-700 via-indigo-600 to-cyan-500 p-5 text-white">
-        <div className="flex items-center gap-3">
-          <div className="grid h-16 w-16 place-items-center rounded-full bg-white/20 text-xl font-black">
-            {initials(selected.title)}
-          </div>
-          <div>
-            <div className="text-xl font-black">{selected.title}</div>
-            <div className="font-semibold text-white/75">
-              {selected.position}
-            </div>
-            <span className="mt-2 inline-flex rounded-full bg-white/20 px-3 py-1 text-xs font-black">
-              {selected.status}
-            </span>
-          </div>
-        </div>
-      </div>
-      <div className="space-y-4 p-5 text-sm font-semibold">
-        {[
-          ["Onboarding ID", selected.id],
-          ["Start Date", d(selected.startDate)],
-          ["Department", selected.department],
-          ["Manager", selected.manager],
-          ["Location", selected.location],
-          ["Employment Type", selected.employmentType],
-        ].map(([a, b]) => (
-          <div key={a} className="flex justify-between gap-4">
-            <span className="text-slate-500">{a}</span>
-            <b className="text-right">{b}</b>
-          </div>
-        ))}
-        <button
-          onClick={onDelete}
-          className="mt-2 flex w-full items-center justify-center gap-2 rounded-2xl border border-rose-200 bg-rose-50 py-3 text-xs font-black text-rose-600 hover:bg-rose-100"
-        >
-          <Trash2 className="h-4 w-4" />
-          Archive journey
-        </button>
-      </div>
-    </div>
-  );
-}
-function JourneyStepper({ progress, onAdvance }: any) {
-  return (
-    <div className="card p-5">
-      <div className="mb-5 flex items-center justify-between">
-        <div>
-          <h2 className="text-xl font-black">Onboarding Journey</h2>
-          <p className="text-sm font-semibold text-slate-500">
-            Operational phase control and completion tracking
-          </p>
-        </div>
-        <button onClick={onAdvance} className="btn-primary">
-          <CheckCircle2 className="h-4 w-4" />
-          Advance Phase
-        </button>
-      </div>
-      <div className="relative grid grid-cols-7 gap-2">
-        <div className="absolute left-8 right-8 top-5 h-1 rounded-full bg-slate-100">
-          <div
-            className="h-full rounded-full bg-gradient-to-r from-emerald-500 via-cyan-400 to-violet-600"
-            style={{ width: `${progress}%` }}
-          />
-        </div>
-        {phases.map((p, i) => {
-          const done = progress >= (i + 1) * 14;
-          const active = !done && progress >= i * 14;
-          return (
-            <div key={p} className="relative text-center">
-              <div
-                className={cn(
-                  "relative z-10 mx-auto grid h-10 w-10 place-items-center rounded-full text-sm font-black shadow-sm",
-                  done
-                    ? "bg-emerald-500 text-white"
-                    : active
-                      ? "bg-violet-600 text-white"
-                      : "bg-slate-200 text-slate-500",
-                )}
-              >
-                {done ? "✓" : i + 1}
-              </div>
-              <div className="mt-3 text-xs font-black text-slate-600">{p}</div>
-              <div
-                className={cn(
-                  "mt-1 text-[11px] font-black",
-                  done
-                    ? "text-emerald-600"
-                    : active
-                      ? "text-violet-600"
-                      : "text-slate-400",
-                )}
-              >
-                {done ? "Completed" : active ? "In Progress" : "Pending"}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-function TasksBoard({
-  tasks,
-  allTasks,
-  filter,
-  setFilter,
-  toggleTask,
-  deleteTask,
-  setModal,
-}: any) {
-  const done = allTasks.filter((t: any) => t.status === "Completed").length;
-  return (
-    <div className="pt-4">
-      <div className="mb-4 flex flex-wrap items-center gap-3">
-        <b>
-          {done} of {allTasks.length} tasks completed
-        </b>
-        <div className="h-2 w-44 overflow-hidden rounded-full bg-slate-100">
-          <div
-            className="h-full rounded-full bg-gradient-to-r from-emerald-500 to-cyan-400"
-            style={{ width: `${(done / Math.max(1, allTasks.length)) * 100}%` }}
-          />
-        </div>
-        {["All", "Completed", "In Progress", "Pending"].map((f) => (
-          <button
-            key={f}
-            onClick={() => setFilter(f)}
-            className={cn(
-              "rounded-xl px-3 py-1.5 text-xs font-black",
-              filter === f
-                ? "bg-violet-100 text-violet-700"
-                : "bg-slate-50 text-slate-500",
-            )}
-          >
-            {f}
-          </button>
-        ))}
-      </div>
-      <div className="space-y-3">
-        {groups.map(([group]) => (
-          <div
-            key={group as string}
-            className="overflow-hidden rounded-[26px] border border-slate-200 bg-white"
-          >
-            <div className="flex items-center justify-between bg-slate-50 px-4 py-3">
-              <b>{group as string}</b>
-              <button
-                onClick={() => setModal("task")}
-                className="text-xs font-black text-violet-600"
-              >
-                + add
-              </button>
-            </div>
-            {tasks
-              .filter((t: any) => t.group === group || !t.group)
-              .slice(0, 8)
-              .map((task: any) => (
-                <div
-                  key={task.id}
-                  className="grid grid-cols-[1fr_120px_120px_88px] items-center gap-3 border-t border-slate-100 px-4 py-3 text-sm"
-                >
-                  <button
-                    onClick={() => { toggleTask(task); }}
-                    className="flex items-center gap-3 text-left"
-                  >
-                    <CheckCircle2
-                      className={cn(
-                        "h-5 w-5",
-                        task.status === "Completed"
-                          ? "text-emerald-500"
-                          : task.status === "In Progress"
-                            ? "text-violet-500"
-                            : "text-slate-300",
-                      )}
-                    />
-                    <span>
-                      <b>{task.title}</b>
-                      <br />
-                      <span className="text-xs font-semibold text-slate-500">
-                        {task.status} · {task.priority || "Normal"}
-                      </span>
-                    </span>
-                  </button>
-                  <span className="font-semibold text-slate-500">
-                    {d(task.due_at)}
-                  </span>
-                  <span className="font-semibold text-slate-500">
-                    {task.owner}
-                  </span>
-                  <div className="flex gap-2">
-                    <button
-                      title="Toggle task status live"
-                      onClick={() => { toggleTask(task); }}
-                      className="rounded-xl bg-slate-50 p-2 transition hover:bg-emerald-50 hover:text-emerald-600"
-                    >
-                      <CheckCircle2 className="h-4 w-4" />
-                    </button>
-                    <button
-                      title="Delete task live"
-                      onClick={() => { deleteTask(task); }}
-                      className="rounded-xl bg-rose-50 p-2 text-rose-600 transition hover:bg-rose-100"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
+            <nav className="mt-5 space-y-5">
+              {navGroups.map((group) => (
+                <div key={group.label}>
+                  <p className="px-3 text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">{group.label}</p>
+                  <div className="mt-2 space-y-1">
+                    {group.items.map((item) => {
+                      const Icon = item.icon;
+                      const active = item.href === "/hr/onboarding";
+                      return <Link key={item.href} href={item.href} className={cn("flex items-center gap-3 rounded-2xl px-3 py-2.5 text-sm font-bold transition", active ? "bg-violet-50 text-violet-700 ring-1 ring-violet-100" : "text-slate-600 hover:bg-slate-50 hover:text-slate-950")}><Icon className="h-4 w-4" />{item.label}</Link>;
+                    })}
                   </div>
                 </div>
               ))}
+            </nav>
           </div>
-        ))}
-      </div>
-      <button
-        onClick={() => setModal("task")}
-        className="mt-4 w-full rounded-2xl border border-violet-200 py-3 text-sm font-black text-violet-700 hover:bg-violet-50"
-      >
-        <Plus className="mr-2 inline h-4 w-4" />
-        Add Task
-      </button>
-    </div>
-  );
-}
-function SummaryPanel({ progress, completed, total }: any) {
-  return (
-    <div className="card p-5">
-      <h3 className="font-black">Onboarding Summary</h3>
-      <div className="mt-4 flex items-center gap-5">
-        <div
-          className="grid h-28 w-28 place-items-center rounded-full bg-[conic-gradient(#7c3aed_var(--p),#e5e7eb_0)]"
-          style={{ "--p": `${progress}%` } as any}
-        >
-          <div className="grid h-20 w-20 place-items-center rounded-full bg-white text-center">
-            <b className="text-2xl">{progress}%</b>
-            <span className="text-[10px] font-black text-slate-400">
-              Complete
-            </span>
-          </div>
-        </div>
-        <div className="space-y-2 text-sm font-semibold">
-          <div>
-            Completed <b>{completed}</b>
-          </div>
-          <div>
-            Remaining <b>{Math.max(0, total - completed)}</b>
-          </div>
-          <div>
-            Risk <b className="text-emerald-600">Controlled</b>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-function DocumentsPanel({ docs, setModal, setDocsLive }: any) {
-  async function del(x: any) {
-    setDocsLive((d: Row[]) => d.filter((y) => y.id !== x.id));
-    await deleteOnboardingDocument(String(x.id));
-  }
-  return (
-    <div className="card p-5">
-      <div className="mb-3 flex justify-between">
-        <h3 className="font-black">Important Documents</h3>
-        <button
-          onClick={() => setModal("document")}
-          className="text-xs font-black text-violet-600"
-        >
-          Add
-        </button>
-      </div>
-      {(docs.length
-        ? docs
-        : [
-            { id: "doc-1", title: "Employment Contract", status: "Uploaded" },
-            { id: "doc-2", title: "ID Card Copy", status: "Required" },
-            { id: "doc-3", title: "Diploma & Certificates", status: "Pending" },
-          ]
-      ).map((doc: any) => (
-        <div
-          key={doc.id}
-          className="flex items-center justify-between border-t border-slate-100 py-3"
-        >
-          <div className="flex gap-3">
-            <div className="grid h-9 w-9 place-items-center rounded-xl bg-blue-50 text-blue-600">
-              <FileCheck2 className="h-4 w-4" />
-            </div>
-            <div>
-              <b className="text-sm">{doc.title}</b>
-              <div className="text-xs font-semibold text-slate-400">
-                {doc.status}
-              </div>
-            </div>
-          </div>
-          <div className="flex gap-2">
-            <button
-              onClick={async () => {
-                setDocsLive((d: Row[]) =>
-                  d.map((x) =>
-                    String(x.id) === String(doc.id)
-                      ? { ...x, status: "Downloaded", updated_at: new Date().toISOString() }
-                      : x,
-                  ),
-                );
-                await updateOnboardingDocument(String(doc.id), {
-                  status: "Downloaded",
-                  updated_at: new Date().toISOString(),
-                });
-              }}
-              className="rounded-xl bg-slate-50 p-2"
-            >
-              <Download className="h-4 w-4" />
-            </button>
-            {String(doc.id).startsWith("doc-") ? null : (
-              <button
-                onClick={() => del(doc)}
-                className="rounded-xl bg-rose-50 p-2 text-rose-600"
-              >
-                <Trash2 className="h-4 w-4" />
-              </button>
-            )}
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
-function ActivityPanel({ feed, selected, setModal }: any) {
-  return (
-    <div className="card p-5">
-      <div className="mb-3 flex justify-between">
-        <h3 className="font-black">Activity Feed</h3>
-        <button
-          onClick={() => setModal("note")}
-          className="text-xs font-black text-violet-600"
-        >
-          Add note
-        </button>
-      </div>
-      {(feed.length
-        ? feed
-        : [
-            {
-              id: "a1",
-              title: `${selected.title} uploaded ID Card Copy`,
-              body: "May 21, 2025 · 10:30 AM",
-            },
-            {
-              id: "a2",
-              title: "IT Team started equipment setup",
-              body: "May 21, 2025 · 02:20 PM",
-            },
-          ]
-      )
-        .slice(0, 5)
-        .map((a: any) => (
-          <div
-            key={a.id || a.title}
-            className="flex gap-3 border-t border-slate-100 py-3"
-          >
-            <div className="grid h-8 w-8 place-items-center rounded-xl bg-violet-50 text-violet-600">
-              <Activity className="h-4 w-4" />
-            </div>
-            <p className="text-sm font-semibold">
-              <b>{a.title}</b>
-              <br />
-              <span className="text-xs text-slate-400">
-                {a.body || a.created_at || "Live activity"}
-              </span>
-            </p>
-          </div>
-        ))}
-    </div>
-  );
-}
-function QuickActions({ selected, setModal }: any) {
-  return (
-    <div className="card p-5">
-      <div className="mb-3 flex items-center justify-between">
-        <h3 className="font-black">Quick Actions</h3>
-        <Settings className="h-4 w-4 text-slate-400" />
-      </div>
-      <div className="grid grid-cols-2 gap-2 text-xs font-black">
-        <button onClick={() => setModal("reminder")} className="qa">
-          <Send />
-          Send Reminder
-        </button>
-        <button onClick={() => setModal("document")} className="qa">
-          <Upload />
-          Add Document
-        </button>
-        <button onClick={() => setModal("reassign")} className="qa">
-          <UserCheck />
-          Reassign Owner
-        </button>
-        <button onClick={() => setModal("profile")} className="qa">
-          <User />
-          View Profile
-        </button>
-      </div>
-    </div>
-  );
-}
-function Workspace({ tab, selected, docs, feed, setModal, setDocsLive }: any) {
-  if (tab === "Documents")
-    return (
-      <div className="pt-4">
-        <DocumentsPanel
-          docs={docs}
-          setModal={setModal}
-          setDocsLive={setDocsLive}
-        />
-      </div>
-    );
-  if (tab === "Activity")
-    return (
-      <div className="pt-4">
-        <ActivityPanel feed={feed} selected={selected} setModal={setModal} />
-      </div>
-    );
-  return (
-    <div className="pt-4">
-      <div className="rounded-[28px] border border-dashed border-violet-200 bg-gradient-to-br from-violet-50 via-white to-cyan-50 p-8">
-        <div className="mb-3 grid h-12 w-12 place-items-center rounded-2xl bg-white text-violet-600 shadow-sm">
-          <ClipboardCheck className="h-6 w-6" />
-        </div>
-        <h3 className="text-xl font-black">{tab} workspace</h3>
-        <p className="mt-2 max-w-2xl text-sm font-semibold text-slate-500">
-          Live execution space for {selected.title}. Manage ownership, due
-          dates, audit trail, attachments, comments and escalations.
-        </p>
-        <div className="mt-5 flex flex-wrap gap-2">
-          <button
-            onClick={() => setModal(tab === "Notes" ? "note" : "timeline")}
-            className="btn-primary"
-          >
-            Launch action <ArrowRight className="h-4 w-4" />
-          </button>
-          <button onClick={() => setModal("document")} className="btn-lite">
-            <Paperclip className="h-4 w-4" />
-            Attach
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-function ExecutionModal({
-  modal,
-  selected,
-  isPending,
-  onClose,
-  onCreateJourney,
-  onCreateTask,
-  onCreateDoc,
-  onNote,
-  onReassign,
-}: any) {
-  const [candidateName, setCandidateName] = useState(selected.title || "");
-  const [position, setPosition] = useState(selected.position || "");
-  const [department, setDepartment] = useState(
-    selected.department || "Human Resources",
-  );
-  const [location, setLocation] = useState(
-    selected.location || "Casablanca HQ",
-  );
-  const [employmentType, setEmploymentType] = useState(
-    selected.employmentType || "Full Time",
-  );
-  const [owner, setOwner] = useState(selected.owner || "HR Team");
-  const [manager, setManager] = useState(selected.manager || "Salma El Alami");
-  const [stage, setStage] = useState(
-    phases.includes(selected.status) ? selected.status : "Pre-Boarding",
-  );
-  const [priority, setPriority] = useState("Normal priority");
-  const [due, setDue] = useState(new Date().toISOString().slice(0, 10));
-  const [progress, setProgress] = useState(Number(selected.progress || 0));
-  const [note, setNote] = useState("");
-  const [risk, setRisk] = useState("");
-  const [activePanel, setActivePanel] = useState<
-    "stages" | "tasks" | "documents" | "automation" | "governance"
-  >("stages");
-  const [timelineDraft, setTimelineDraft] = useState("");
-  const [evidenceOpen, setEvidenceOpen] = useState<string | null>(null);
-  const [commentOpen, setCommentOpen] = useState<string | null>(null);
-  const [escalationOpen, setEscalationOpen] = useState<string | null>(null);
-  const [localEvents, setLocalEvents] = useState<Row[]>([]);
-  const isTimeline = modal === "timeline";
-  const isEdit = modal === "editJourney";
-  const isJourney = modal === "journey";
-  const isTask = modal === "task";
-  const isDocument = modal === "document";
-  const isReminder = modal === "reminder";
-  const isReassign = modal === "reassign";
-  const isProfile = modal === "profile";
-  const isQuickAction = isDocument || isReminder || isReassign || isProfile;
-  const title = isTimeline
-    ? "Onboarding Timeline Control Room"
-    : isEdit
-      ? "Edit Current Onboarding Journey"
-      : isJourney
-        ? "Create Candidate Onboarding Journey"
-        : isDocument
-          ? "Add Onboarding Document"
-          : isReminder
-            ? "Send Onboarding Reminder"
-            : isReassign
-              ? "Reassign Onboarding Owner"
-              : isProfile
-                ? "Candidate / Employee Profile Control"
-                : "Create Onboarding Task";
-  const subtitle = isTimeline
-    ? "Operate the same timeline used by the main onboarding journey: milestones, evidence, comments, escalations, owners, blockers and audit trail."
-    : isEdit
-      ? "Edit the selected journey using the exact stages, task groups, documents, owner model and progress logic used on the main onboarding page."
-      : isJourney
-        ? "Create a new journey from the same Angelcare onboarding lifecycle: offer, pre-boarding, documents, orientation, training, integration and probation."
-        : isDocument
-          ? "Upload or register a required onboarding document, link it to the selected journey, assign an owner, set evidence status and write to the activity trail."
-          : isReminder
-            ? "Send an operational reminder to the candidate, onboarding owner, manager or compliance team and record it in the onboarding activity feed."
-            : isReassign
-              ? "Move ownership with reason, SLA impact, manager visibility and audit log so the onboarding journey remains fully controlled."
-              : isProfile
-                ? "Preview the selected joiner profile, onboarding status, role, contact, manager, documents, risks and direct operational navigation."
-                : "Create a task inside the same grouped task structure visible on the onboarding page.";
+        </aside>
 
-  const stageMeta = phases.map((p, i) => ({
-    name: p,
-    percent: Math.min(100, Math.round(((i + 1) / phases.length) * 100)),
-    owner:
-      i < 2
-        ? owner
-        : i === 2
-          ? "HR Ops / Compliance"
-          : i === 3
-            ? manager
-            : i === 4
-              ? "IT + Training Team"
-              : i === 5
-                ? manager
-                : "HR + Manager",
-    docs:
-      i === 0
-        ? "Offer confirmation + contract intent"
-        : i === 1
-          ? "Welcome pack + start checklist"
-          : i === 2
-            ? "CIN, contract, diploma, emergency forms"
-            : i === 3
-              ? "Orientation agenda + first week plan"
-              : i === 4
-                ? "Access, equipment, training proof"
-                : i === 5
-                  ? "Team handoff + integration notes"
-                  : "30/60/90 review evidence",
-    tasks:
-      i === 0
-        ? 2
-        : i === 1
-          ? 4
-          : i === 2
-            ? 6
-            : i === 3
-              ? 3
-              : i === 4
-                ? 5
-                : i === 5
-                  ? 4
-                  : 3,
-  }));
-  const selectedStageMeta =
-    stageMeta.find((s) => s.name === stage) || stageMeta[1];
-  const automationRules = [
-    "Create audit activity instantly",
-    "Notify onboarding owner",
-    "Notify reporting manager",
-    "Attach default document pack",
-    "Generate first-week checklist",
-    "Create compliance evidence trail",
-    "Refresh dashboard widgets",
-    "Keep candidate profile linked",
-  ];
-  const defaultDocs = [
-    "CIN / Passport copy",
-    "Employment contract",
-    "CNSS / AMO details",
-    "Diploma & certificates",
-    "Emergency contact form",
-    "Company policy acknowledgement",
-  ];
-  const defaultTasks = groups.flatMap(([group, items]) =>
-    (items as string[]).map((title) => `${group} · ${title}`),
-  );
-  const timelineRows = stageMeta.map((m, i) => [
-    m.name,
-    progress >= m.percent
-      ? "Completed"
-      : stage === m.name
-        ? "In Progress"
-        : "Pending",
-    `${m.docs}. Owner: ${m.owner}. ${m.tasks} operational tasks linked to this phase.`,
-    m.owner,
-    progress >= m.percent
-      ? "Evidence ready"
-      : stage === m.name
-        ? "Active control"
-        : "Waiting phase",
-  ]);
-
-  const reminderTemplates = [
-    {
-      id: "documents",
-      label: "Documents manquants",
-      tone: "Priorité conformité",
-      stage: "Document Collection",
-      message: `Bonjour ${candidateName || selected.title}, ici l’équipe RH Angelcare. Afin de finaliser votre intégration, merci de nous envoyer aujourd’hui les documents restants liés à votre dossier d’onboarding. En cas de difficulté, répondez directement à ce message. Merci.`
-    },
-    {
-      id: "welcome",
-      label: "Bienvenue & prochaines étapes",
-      tone: "Accueil candidat",
-      stage: "Pre-Boarding",
-      message: `Bonjour ${candidateName || selected.title}, bienvenue chez Angelcare. Votre parcours d’intégration est en cours. Nous vous confirmerons les prochaines étapes, les documents requis et votre planning de démarrage. Merci de rester disponible sur WhatsApp.`
-    },
-    {
-      id: "orientation",
-      label: "Rappel orientation",
-      tone: "Rendez-vous onboarding",
-      stage: "Orientation",
-      message: `Bonjour ${candidateName || selected.title}, nous vous rappelons votre session d’orientation Angelcare. Merci de confirmer votre disponibilité et d’arriver à l’heure prévue. L’équipe RH reste disponible pour toute question.`
-    },
-    {
-      id: "training",
-      label: "Formation & accès",
-      tone: "Setup opérationnel",
-      stage: "Training & Setup",
-      message: `Bonjour ${candidateName || selected.title}, votre phase de formation et de configuration des accès est en cours. Merci de confirmer la réception de vos accès, supports et consignes de formation afin que nous puissions valider l’étape.`
-    },
-    {
-      id: "probation",
-      label: "Suivi période d’essai",
-      tone: "Gouvernance RH",
-      stage: "Probation & Review",
-      message: `Bonjour ${candidateName || selected.title}, dans le cadre du suivi de votre intégration Angelcare, nous préparons votre point de période d’essai. Merci de partager tout retour, besoin d’accompagnement ou blocage avant notre échange.`
-    },
-    {
-      id: "custom",
-      label: "Message personnalisé",
-      tone: "Libre",
-      stage,
-      message: note || `Bonjour ${candidateName || selected.title}, l’équipe RH Angelcare vous contacte concernant votre onboarding. Merci de revenir vers nous dès que possible.`
-    },
-  ];
-  const [selectedReminderId, setSelectedReminderId] = useState("documents");
-  const selectedReminder = reminderTemplates.find((template) => template.id === selectedReminderId) || reminderTemplates[0];
-  const [whatsappMessage, setWhatsappMessage] = useState(selectedReminder.message);
-  const candidatePhone = String(selected.phone || selected.mobile || selected.whatsapp || "+212 6 77 88 99 00");
-  const normalizedWhatsappPhone = candidatePhone.replace(/[^0-9]/g, "").replace(/^0/, "212");
-  const whatsappHref = `https://wa.me/${normalizedWhatsappPhone}?text=${encodeURIComponent(whatsappMessage)}`;
-
-  function selectReminderTemplate(id: string) {
-    const template = reminderTemplates.find((item) => item.id === id) || reminderTemplates[0];
-    setSelectedReminderId(template.id);
-    setStageAndProgress(template.stage);
-    setWhatsappMessage(template.message);
-    setNote(template.message);
-    setPriority("Candidate");
-  }
-
-  function setStageAndProgress(next: string) {
-    setStage(next);
-    const meta = stageMeta.find((s) => s.name === next);
-    if (meta) setProgress(meta.percent);
-  }
-  async function pushEvent(title: string, body: string, type = "activity") {
-    const event = {
-      id: `local-event-${Date.now()}-${Math.random().toString(16).slice(2)}`,
-      journey_id: selected.id,
-      title,
-      body,
-      type,
-      created_at: new Date().toISOString(),
-    };
-    setLocalEvents((e) => [event, ...e]);
-    await addOnboardingNote(event);
-    return event;
-  }
-  async function save() {
-    if (isJourney) {
-      const j: Journey = {
-        id: `local-${Date.now()}`,
-        title: candidateName || "New Angelcare Joiner",
-        position: position || "Role to define",
-        status: stage,
-        startDate: due,
-        department,
-        manager,
-        location,
-        employmentType,
-        email: `${(candidateName || "new.joiner").toLowerCase().replace(/\s+/g, ".")}@angelcare.ma`,
-        phone: "+212 6 00 00 00 00",
-        progress: progress || selectedStageMeta.percent,
-        owner,
-      };
-      const createdJourney = await createOnboardingJourney({
-        ...j,
-        candidate_name: j.title,
-        job_title: j.position,
-        priority,
-        risk_notes: risk,
-        launch_note: note,
-        current_phase: stage,
-        stage,
-        completion: progress || selectedStageMeta.percent,
-        completion_percent: progress || selectedStageMeta.percent,
-        stage_pack: selectedStageMeta,
-      });
-
-      if (!createdJourney?.ok) {
-        console.error("[ONBOARDING JOURNEY CREATE FAILED]", createdJourney?.error);
-        alert(`Journey save failed: ${createdJourney?.error || "unknown error"}`);
-        return;
-      }
-
-      const persistedJourney = createdJourney.data || j;
-      const persistedJourneyId = String(persistedJourney.id || j.id);
-
-      await Promise.all(
-        groups.flatMap(([group, items], gi) =>
-          (items as string[]).map((task, i) =>
-            createOnboardingTask({
-              journey_id: persistedJourneyId,
-              title: task,
-              group,
-              owner: gi < 2 ? owner : gi === 2 ? "IT Team" : "Training Team",
-              priority: gi < 2 ? "High" : "Normal",
-              status:
-                gi === 0 && stageMeta.findIndex((x) => x.name === stage) > 1
-                  ? "Completed"
-                  : "Pending",
-              due_at: due,
-            }),
-          ),
-        ),
-      );
-      await Promise.all(
-        defaultDocs.map((doc, i) =>
-          createOnboardingDocument({
-            journey_id: j.id,
-            title: doc,
-            owner: i < 3 ? owner : "Compliance Team",
-            status: i < 2 ? "Required" : "Pending",
-          }),
-        ),
-      );
-      await addOnboardingNote({
-        journey_id: persistedJourneyId,
-        title: "Journey launched from onboarding lifecycle modal",
-        body: `${j.title} · ${stage} · ${progress || selectedStageMeta.percent}% · ${priority}`,
-        type: "journey_create",
-      });
-      onCreateJourney({ ...j, ...persistedJourney, id: persistedJourneyId });
-      window.setTimeout(() => window.location.reload(), 250);
-      return;
-    }
-    if (isEdit) {
-      const nextProgress = Number(progress || selected.progress || 0);
-      const updatedJourney = {
-        title: candidateName || selected.title,
-        position,
-        status: stage,
-        department,
-        location,
-        employment_type: employmentType,
-        owner,
-        manager,
-        progress: nextProgress,
-        risk_notes: risk,
-      };
-
-      const result = await updateOnboardingJourney(selected.id, updatedJourney);
-
-      if (!result?.ok) {
-        console.error("[ONBOARDING JOURNEY UPDATE FAILED]", result?.error);
-        alert(`Journey update failed: ${result?.error || "database rejected update"}`);
-        return;
-      }
-
-      await pushEvent(
-        "Journey updated from lifecycle control",
-        `${candidateName || selected.title} moved/control set to ${stage} · ${nextProgress}% · owner ${owner} · manager ${manager}`,
-        "journey_update",
-      );
-
-      onClose();
-      window.setTimeout(() => window.location.reload(), 250);
-      return;
-    }
-    if (isDocument) {
-      const doc = {
-        id: `local-doc-${Date.now()}`,
-        journey_id: selected.id,
-        title: note || `${stage} document evidence`,
-        owner,
-        status: priority.includes("critical") ? "Compliance review" : "Uploaded",
-        category: stage,
-        due_at: due,
-        comment: risk || "Document registered from onboarding quick action.",
-      };
-      await createOnboardingDocument(doc);
-      await addOnboardingNote({
-        journey_id: selected.id,
-        title: "Document added from quick action",
-        body: `${doc.title} · owner ${owner} · status ${doc.status}`,
-        type: "document",
-      });
-      onCreateDoc(doc);
-      return;
-    }
-    if (isReminder) {
-      const reminder = {
-        id: `local-reminder-${Date.now()}`,
-        journey_id: selected.id,
-        title: `WhatsApp · ${selectedReminder.label}`,
-        body: whatsappMessage,
-        target: "Candidate WhatsApp",
-        channel: "whatsapp",
-        phone: candidatePhone,
-        wa_url: whatsappHref,
-        stage,
-        due_at: due,
-        created_at: new Date().toISOString(),
-      };
-      await createOnboardingReminder(reminder);
-      onNote(reminder);
-      window.open(whatsappHref, "_blank", "noopener,noreferrer");
-      return;
-    }
-    if (isReassign) {
-      await reassignOnboardingOwner(selected.id, owner);
-      await addOnboardingNote({
-        journey_id: selected.id,
-        title: "Owner reassigned from quick action",
-        body: `${selected.title} reassigned to ${owner}. Reason: ${risk || note || "Operational continuity"}`,
-        type: "reassign",
-      });
-      onReassign(owner);
-      return;
-    }
-    if (isProfile) {
-      await addOnboardingNote({
-        journey_id: selected.id,
-        title: "Profile reviewed from quick action",
-        body: `${selected.title} profile opened and reviewed by onboarding operator.`,
-        type: "profile_review",
-      });
-      window.location.href = `/hr/employees?search=${encodeURIComponent(selected.title)}`;
-      return;
-    }
-    if (isTask) {
-      const t = {
-        id: `local-task-${Date.now()}`,
-        journey_id: selected.id,
-        group: stage,
-        title: note || `${stage} execution task`,
-        owner,
-        priority,
-        status: "Pending",
-        due_at: due,
-        comment: risk || "Created from the onboarding stage-aware task modal.",
-      };
-      await createOnboardingTask(t);
-      onCreateTask(t);
-      return;
-    }
-    const n = {
-      id: `local-timeline-${Date.now()}`,
-      journey_id: selected.id,
-      title: "Timeline note saved",
-      body:
-        timelineDraft || `Timeline checkpoint recorded for ${selected.title}`,
-      type: "timeline_note",
-      created_at: new Date().toISOString(),
-    };
-    await addOnboardingNote(n);
-    onNote(n);
-  }
-  async function timelineAction(kind: string, milestone: string) {
-    const label =
-      kind === "evidence"
-        ? "Evidence opened"
-        : kind === "comment"
-          ? "Comment added"
-          : "Escalation launched";
-    const body = `${milestone} · ${kind === "evidence" ? "Document pack, owner proof, files and compliance evidence reviewed." : kind === "comment" ? timelineDraft || "Operational comment captured and attached to this milestone." : "Escalation routed to owner, manager and compliance watchlist."}`;
-    if (kind === "evidence") setEvidenceOpen(milestone);
-    if (kind === "comment") setCommentOpen(milestone);
-    if (kind === "escalate") setEscalationOpen(milestone);
-    await pushEvent(label, body, kind);
-  }
-
-  const modalIcon = isTimeline
-    ? Activity
-    : isEdit
-      ? Edit3
-      : isJourney
-        ? Plus
-        : isDocument
-          ? Upload
-          : isReminder
-            ? Send
-            : isReassign
-              ? UserCheck
-              : isProfile
-                ? User
-                : ClipboardCheck;
-  const ModalIcon = modalIcon;
-
-  return (
-    <div className="fixed inset-x-0 bottom-0 top-[132px] z-[95] bg-slate-950/35 p-4 backdrop-blur-md">
-      <div className="mx-auto flex h-full max-w-7xl flex-col overflow-hidden rounded-[36px] border border-white/60 bg-white shadow-2xl shadow-slate-900/20">
-        <div className="flex items-center justify-between border-b border-slate-100 bg-gradient-to-r from-white via-violet-50/70 to-cyan-50/80 p-6">
-          <div className="flex items-center gap-4">
-            <div className="grid h-14 w-14 place-items-center rounded-3xl bg-gradient-to-br from-violet-600 to-cyan-500 text-white shadow-lg shadow-violet-200">
-              <ModalIcon className="h-6 w-6" />
-            </div>
-            <div>
-              <div className="text-xs font-black tracking-[0.25em] text-violet-600">
-                ONBOARDING LIFECYCLE MODAL
-              </div>
-              <h2 className="text-2xl font-black tracking-tight">{title}</h2>
-              <p className="max-w-4xl text-sm font-semibold text-slate-500">
-                {subtitle}
-              </p>
-            </div>
-          </div>
-          <button
-            onClick={onClose}
-            className="rounded-full border border-slate-200 bg-white p-3 shadow-sm hover:bg-slate-50"
-          >
-            <X className="h-5 w-5" />
-          </button>
-        </div>
-
-        <div className="min-h-0 flex-1 overflow-auto p-6">
-          {isTimeline ? (
-            <div className="grid gap-5 xl:grid-cols-[1.25fr_.75fr]">
-              <div className="rounded-[32px] border border-slate-200 bg-white p-5 shadow-sm">
-                <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-                  <div>
-                    <h3 className="text-xl font-black">
-                      Live Journey Timeline
-                    </h3>
-                    <p className="text-sm font-semibold text-slate-500">
-                      Every row mirrors the main onboarding stages and writes to
-                      the audit trail.
-                    </p>
-                  </div>
-                  <button
-                    onClick={() =>
-                      pushEvent(
-                        "Timeline synced",
-                        "Manual timeline sync completed from control room.",
-                        "sync",
-                      )
-                    }
-                    className="btn-mini"
-                  >
-                    <RefreshCw className="h-4 w-4" />
-                    Sync now
-                  </button>
+        <main className="min-w-0 flex-1 p-4 md:p-6 xl:p-8">
+          <header className="overflow-hidden rounded-[30px] border border-slate-200 bg-white shadow-[0_18px_70px_rgba(15,23,42,0.08)]">
+            <div className="bg-gradient-to-r from-slate-950 via-indigo-950 to-violet-900 px-6 py-6 text-white md:px-8">
+              <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+                <div>
+                  <div className="flex flex-wrap items-center gap-2 text-[11px] font-black uppercase tracking-[0.18em] text-cyan-200"><Sparkles className="h-4 w-4" /> Commandement Onboarding & Activation</div>
+                  <h1 className="mt-2 text-2xl font-black tracking-tight md:text-3xl">Onboarding Production Command</h1>
+                  <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-300">Parcours, tâches, documents, checklists, preuves et synchronisations RH dans une autorité unique — sans données fictives ni stockage navigateur.</p>
                 </div>
-                <div className="relative space-y-4 before:absolute before:left-5 before:top-3 before:h-[calc(100%-24px)] before:w-0.5 before:bg-gradient-to-b before:from-emerald-400 before:via-violet-400 before:to-slate-200">
-                  {timelineRows.map(
-                    ([name, status, body, ownerName, signal], i) => (
-                      <div
-                        key={`${name}-${i}`}
-                        className="relative flex gap-4 rounded-3xl border border-slate-100 bg-slate-50/70 p-4 transition hover:border-violet-200 hover:bg-white hover:shadow-md"
-                      >
-                        <div
-                          className={cn(
-                            "z-10 grid h-10 w-10 place-items-center rounded-2xl text-white shadow-sm",
-                            status === "Completed"
-                              ? "bg-emerald-500"
-                              : status === "In Progress"
-                                ? "bg-violet-600"
-                                : "bg-slate-300",
-                          )}
-                        >
-                          {status === "Completed" ? (
-                            <CheckCircle2 className="h-5 w-5" />
-                          ) : status === "In Progress" ? (
-                            <Zap className="h-5 w-5" />
-                          ) : (
-                            <Clock className="h-5 w-5" />
-                          )}
-                        </div>
-                        <div className="flex-1">
-                          <div className="flex flex-wrap items-center justify-between gap-2">
-                            <b>{name}</b>
-                            <span className="rounded-full bg-white px-3 py-1 text-xs font-black text-slate-500">
-                              {status}
-                            </span>
-                          </div>
-                          <p className="mt-1 text-sm font-semibold text-slate-500">
-                            {body}
-                          </p>
-                          <div className="mt-3 grid gap-2 sm:grid-cols-3">
-                            <div className="rounded-2xl bg-white p-3 text-xs font-black text-slate-500">
-                              Owner
-                              <br />
-                              <span className="text-slate-900">
-                                {ownerName}
-                              </span>
-                            </div>
-                            <div className="rounded-2xl bg-white p-3 text-xs font-black text-slate-500">
-                              Evidence
-                              <br />
-                              <span className="text-slate-900">{signal}</span>
-                            </div>
-                            <div className="rounded-2xl bg-white p-3 text-xs font-black text-slate-500">
-                              SLA
-                              <br />
-                              <span className="text-emerald-600">On track</span>
-                            </div>
-                          </div>
-                          <div className="mt-3 flex flex-wrap gap-2">
-                            <button
-                              onClick={() =>
-                                timelineAction("evidence", String(name))
-                              }
-                              className="btn-mini"
-                            >
-                              <FileCheck2 className="h-3.5 w-3.5" />
-                              Open evidence
-                            </button>
-                            <button
-                              onClick={() =>
-                                timelineAction("comment", String(name))
-                              }
-                              className="btn-mini"
-                            >
-                              <MessageCircle className="h-3.5 w-3.5" />
-                              Add comment
-                            </button>
-                            <button
-                              onClick={() =>
-                                timelineAction("escalate", String(name))
-                              }
-                              className="btn-mini"
-                            >
-                              <Bell className="h-3.5 w-3.5" />
-                              Escalate
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    ),
-                  )}
-                </div>
-              </div>
-              <div className="space-y-4">
-                <div className="rounded-[32px] border border-violet-100 bg-violet-50 p-5">
-                  <h3 className="font-black text-violet-900">
-                    Timeline Health
-                  </h3>
-                  <div className="mt-4 grid grid-cols-2 gap-3 text-sm font-black">
-                    <div className="rounded-2xl bg-white p-4">
-                      Progress
-                      <br />
-                      <input
-                        type="range"
-                        min="0"
-                        max="100"
-                        value={progress}
-                        onChange={(e) => setProgress(Number(e.target.value))}
-                        className="mt-2 w-full accent-violet-600"
-                      />
-                      <span className="text-2xl text-violet-700">
-                        {progress}%
-                      </span>
-                    </div>
-                    <div className="rounded-2xl bg-white p-4">
-                      Open risks
-                      <br />
-                      <span className="text-2xl text-orange-500">
-                        {risk ? 1 : 0}
-                      </span>
-                    </div>
-                    <div className="rounded-2xl bg-white p-4">
-                      Evidence
-                      <br />
-                      <span className="text-2xl text-cyan-600">
-                        {evidenceOpen ? "Open" : "Ready"}
-                      </span>
-                    </div>
-                    <div className="rounded-2xl bg-white p-4">
-                      SLA
-                      <br />
-                      <span className="text-2xl text-emerald-600">
-                        On track
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                {(evidenceOpen || commentOpen || escalationOpen) && (
-                  <div className="rounded-[28px] border border-slate-200 bg-white p-4 shadow-sm">
-                    <div className="text-sm font-black text-slate-900">
-                      Active operational panel
-                    </div>
-                    <p className="mt-1 text-sm font-semibold text-slate-500">
-                      {evidenceOpen
-                        ? `Evidence room for ${evidenceOpen}: documents, proof, contracts and compliance files.`
-                        : commentOpen
-                          ? `Comment thread for ${commentOpen}: decision notes, mentions and manager instruction.`
-                          : `Escalation room for ${escalationOpen}: owner alert, risk reason, SLA and follow-up task.`}
-                    </p>
-                    <div className="mt-3 flex gap-2">
-                      <button
-                        onClick={() => {
-                          setEvidenceOpen(null);
-                          setCommentOpen(null);
-                          setEscalationOpen(null);
-                        }}
-                        className="btn-mini"
-                      >
-                        Close panel
-                      </button>
-                      <button
-                        onClick={() =>
-                          pushEvent(
-                            "Panel action confirmed",
-                            "Operational panel action confirmed and attached to the audit trail.",
-                            "panel",
-                          )
-                        }
-                        className="btn-mini"
-                      >
-                        Confirm action
-                      </button>
-                    </div>
-                  </div>
-                )}
-                <textarea
-                  value={timelineDraft}
-                  onChange={(e) => setTimelineDraft(e.target.value)}
-                  className="input min-h-44 w-full"
-                  placeholder="Add timeline note, decision, blocker, manager instruction, mention, or compliance observation..."
-                />
-                <input
-                  value={risk}
-                  onChange={(e) => setRisk(e.target.value)}
-                  className="input w-full"
-                  placeholder="Risk / blocker / escalation reason"
-                />
-                <div className="rounded-[28px] border border-slate-200 bg-white p-4">
-                  <div className="mb-3 text-sm font-black">
-                    Live events from this session
-                  </div>
-                  {localEvents.length ? (
-                    localEvents.slice(0, 5).map((e) => (
-                      <div
-                        key={e.id}
-                        className="mb-2 rounded-2xl bg-slate-50 p-3 text-xs font-bold"
-                      >
-                        <b>{e.title}</b>
-                        <br />
-                        <span className="text-slate-500">{e.body}</span>
-                      </div>
-                    ))
-                  ) : (
-                    <p className="text-sm font-semibold text-slate-400">
-                      No local actions yet.
-                    </p>
-                  )}
+                <div className="flex flex-wrap gap-2">
+                  <button onClick={() => void refresh()} className="inline-flex items-center gap-2 rounded-2xl border border-white/15 bg-white/10 px-4 py-2.5 text-sm font-black hover:bg-white/15"><RefreshCw className="h-4 w-4" /> Actualiser</button>
+                  <Link href="/hr/onboarding/checklists" className="inline-flex items-center gap-2 rounded-2xl border border-white/15 bg-white/10 px-4 py-2.5 text-sm font-black hover:bg-white/15"><ClipboardCheck className="h-4 w-4" /> Checklists</Link>
+                  {workspace.capabilities.canManage && <button onClick={() => openModal("createJourney")} className="inline-flex items-center gap-2 rounded-2xl bg-white px-4 py-2.5 text-sm font-black text-indigo-950 shadow-lg"><Plus className="h-4 w-4" /> Nouveau parcours</button>}
                 </div>
               </div>
             </div>
-          ) : isQuickAction ? (
-            <div className="grid gap-5 xl:grid-cols-[1.05fr_.95fr]">
-              <div className="rounded-[32px] border border-slate-200 bg-white p-6 shadow-sm">
-                <div className="mb-5 flex items-start gap-4">
-                  <div className="grid h-12 w-12 place-items-center rounded-2xl bg-violet-50 text-violet-700">
-                    {isDocument ? <Upload className="h-6 w-6" /> : isReminder ? <Send className="h-6 w-6" /> : isReassign ? <UserCheck className="h-6 w-6" /> : <User className="h-6 w-6" />}
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-black">{title}</h3>
-                    <p className="mt-1 text-sm font-semibold text-slate-500">{subtitle}</p>
-                  </div>
-                </div>
-                {isProfile ? (
-                  <div className="grid gap-4 md:grid-cols-2">
-                    {[["Name", selected.title], ["Role", selected.position], ["Department", selected.department], ["Manager", selected.manager], ["Owner", selected.owner], ["Location", selected.location], ["Employment type", selected.employmentType], ["Progress", `${selected.progress}%`]].map(([k,v]) => (
-                      <div key={k} className="rounded-2xl border border-slate-100 bg-slate-50 p-4 text-sm font-bold">
-                        <span className="text-slate-400">{k}</span><br/><span className="text-slate-900">{v}</span>
-                      </div>
-                    ))}
-                  </div>
-                ) : isReminder ? (
-                  <div className="space-y-5">
-                    <div className="rounded-[28px] border border-emerald-100 bg-gradient-to-br from-emerald-50 via-white to-cyan-50 p-5">
-                      <div className="flex flex-wrap items-center justify-between gap-3">
-                        <div>
-                          <div className="text-xs font-black tracking-[0.22em] text-emerald-600">WHATSAPP CANDIDAT</div>
-                          <h3 className="mt-1 text-2xl font-black text-slate-950">Rappels automatiques en français</h3>
-                          <p className="mt-1 text-sm font-semibold text-slate-500">Sélectionnez un scénario, vérifiez le message préinstallé, puis envoyez directement sur le numéro WhatsApp du candidat.</p>
-                        </div>
-                        <div className="rounded-2xl bg-white px-4 py-3 text-right text-xs font-black text-slate-500 shadow-sm">
-                          Mobile lié<br/><span className="text-base text-emerald-700">{candidatePhone}</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="grid gap-3 md:grid-cols-2">
-                      {reminderTemplates.map((template) => (
-                        <button
-                          key={template.id}
-                          type="button"
-                          onClick={() => selectReminderTemplate(template.id)}
-                          className={cn(
-                            "rounded-3xl border p-4 text-left transition hover:-translate-y-0.5 hover:shadow-lg",
-                            selectedReminderId === template.id
-                              ? "border-emerald-300 bg-emerald-50 shadow-emerald-100"
-                              : "border-slate-200 bg-white hover:border-violet-200"
-                          )}
-                        >
-                          <div className="flex items-center justify-between gap-3">
-                            <span className="text-sm font-black text-slate-950">{template.label}</span>
-                            <span className="rounded-full bg-white px-2.5 py-1 text-[11px] font-black text-emerald-700">{template.tone}</span>
-                          </div>
-                          <p className="mt-2 line-clamp-2 text-xs font-semibold leading-5 text-slate-500">{template.message}</p>
-                        </button>
-                      ))}
-                    </div>
-                    <div className="grid gap-4 md:grid-cols-2">
-                      <input className="input w-full" value={candidateName} onChange={(e)=>setCandidateName(e.target.value)} placeholder="Candidat" />
-                      <input className="input w-full" value={candidatePhone} readOnly placeholder="Téléphone WhatsApp" />
-                      <select className="input w-full" value={stage} onChange={(e)=>setStageAndProgress(e.target.value)}>{phases.map(p=><option key={p}>{p}</option>)}</select>
-                      <input className="input w-full" type="date" value={due} onChange={(e)=>setDue(e.target.value)} />
-                      <textarea className="input min-h-44 w-full md:col-span-2" value={whatsappMessage} onChange={(e)=>{setWhatsappMessage(e.target.value); setNote(e.target.value)}} />
-                      <textarea className="input min-h-24 w-full md:col-span-2" value={risk} onChange={(e)=>setRisk(e.target.value)} placeholder="Note interne RH, risque, blocage ou consigne manager — non envoyée au candidat." />
-                    </div>
-                    <div className="rounded-[26px] border border-slate-200 bg-slate-950 p-4 text-sm font-bold text-white/80">
-                      <div className="mb-2 flex items-center gap-2 text-white"><MessageCircle className="h-4 w-4 text-emerald-300" /> Aperçu action</div>
-                      Le bouton d’envoi ouvre WhatsApp avec le message français déjà prérempli pour <b>{selected.title}</b>. L’action est aussi enregistrée dans l’activité onboarding avec numéro, étape, date, modèle et contenu envoyé.
-                    </div>
-                  </div>
-                ) : (
-                  <div className="grid gap-4 md:grid-cols-2">
-                    <input className="input w-full" value={candidateName} onChange={(e)=>setCandidateName(e.target.value)} placeholder="Candidate / employee" />
-                    <input className="input w-full" value={owner} onChange={(e)=>setOwner(e.target.value)} placeholder="Owner / assignee" />
-                    <select className="input w-full" value={stage} onChange={(e)=>setStageAndProgress(e.target.value)}>{phases.map(p=><option key={p}>{p}</option>)}</select>
-                    <input className="input w-full" type="date" value={due} onChange={(e)=>setDue(e.target.value)} />
-                    <select className="input w-full" value={priority} onChange={(e)=>setPriority(e.target.value)}><option>Normal priority</option><option>High priority</option><option>Compliance critical</option><option>Executive escalation</option></select>
-                    <input className="input w-full" value={manager} onChange={(e)=>setManager(e.target.value)} placeholder="Manager / validator" />
-                    <textarea className="input min-h-36 w-full md:col-span-2" value={note} onChange={(e)=>setNote(e.target.value)} placeholder={isDocument ? "Document title, file reference, expiry date, validation notes..." : "Reassignment instruction, operational reason, handoff notes..."} />
-                    <textarea className="input min-h-24 w-full md:col-span-2" value={risk} onChange={(e)=>setRisk(e.target.value)} placeholder="Risk, blocker, compliance observation, manager instruction or escalation note..." />
-                  </div>
-                )}
-              </div>
-              <div className="space-y-4">
-                <div className="rounded-[32px] border border-violet-100 bg-gradient-to-br from-violet-50 via-white to-cyan-50 p-5">
-                  <h3 className="font-black text-slate-900">Production execution checklist</h3>
-                  <div className="mt-4 space-y-3">
-                    {[
-                      isDocument ? 'Attach document to selected onboarding journey' : isReminder ? 'Create reminder activity and notify target' : isReassign ? 'Update owner on the journey live' : 'Open synced employee profile workspace',
-                      'Write immutable activity/audit trail',
-                      'Refresh onboarding page state immediately',
-                      'Keep candidate, owner, manager and stage linked',
-                      'Preserve compliance evidence and SLA context',
-                    ].map((x,i)=>(
-                      <label key={x} className="flex items-center gap-3 rounded-2xl bg-white p-3 text-sm font-black">
-                        <input type="checkbox" defaultChecked className="h-4 w-4 accent-violet-600" /> {x}
-                      </label>
-                    ))}
-                  </div>
-                </div>
-                <div className="rounded-[32px] border border-slate-200 bg-white p-5 shadow-sm">
-                  <h3 className="font-black">Selected onboarding context</h3>
-                  <div className="mt-4 space-y-2 text-sm font-bold text-slate-500">
-                    <p><b className="text-slate-900">{selected.title}</b> · {selected.position}</p>
-                    <p>{selected.status} · {selected.progress}% complete · {selected.location}</p>
-                    <p>Owner: {owner} · Manager: {manager}</p>
-                    <div className="mt-3 h-2 rounded-full bg-slate-100"><div className="h-2 rounded-full bg-gradient-to-r from-violet-600 to-cyan-500" style={{width:`${Math.min(100, Math.max(0, progress))}%`}} /></div>
-                  </div>
-                </div>
-              </div>
+            <div className="grid gap-px bg-slate-200 sm:grid-cols-2 xl:grid-cols-4">
+              <Kpi label="Parcours actifs" value={activeCount} icon={Workflow} tone="violet" />
+              <Kpi label="Risques élevés" value={atRisk} icon={AlertTriangle} tone="rose" />
+              <Kpi label="Tâches bloquées" value={blockedTasks} icon={LockKeyhole} tone="amber" />
+              <Kpi label="Documents incomplets" value={missingDocs} icon={FileBadge2} tone="cyan" />
             </div>
-          ) : (
-            <div className="grid gap-5 xl:grid-cols-[.9fr_1.15fr_.95fr]">
-              <div className="space-y-5">
-                <div className="rounded-[32px] border border-slate-200 bg-white p-5 shadow-sm">
-                  <h3 className="mb-1 text-lg font-black">
-                    {isJourney
-                      ? "Candidate from recruitment/onboarding"
-                      : "Selected journey identity"}
-                  </h3>
-                  <p className="mb-4 text-sm font-semibold text-slate-500">
-                    This uses the same person, role, manager, location and
-                    status shown in the left onboarding profile panel.
-                  </p>
-                  <div className="space-y-3">
-                    <input
-                      className="input w-full"
-                      value={candidateName}
-                      onChange={(e) => setCandidateName(e.target.value)}
-                      placeholder="Candidate / employee name"
-                    />
-                    <input
-                      className="input w-full"
-                      value={position}
-                      onChange={(e) => setPosition(e.target.value)}
-                      placeholder="Position / role"
-                    />
-                    <input
-                      className="input w-full"
-                      value={department}
-                      onChange={(e) => setDepartment(e.target.value)}
-                      placeholder="Department"
-                    />
-                    <input
-                      className="input w-full"
-                      value={location}
-                      onChange={(e) => setLocation(e.target.value)}
-                      placeholder="Location / branch"
-                    />
-                    <select
-                      className="input w-full"
-                      value={employmentType}
-                      onChange={(e) => setEmploymentType(e.target.value)}
-                    >
-                      <option>Full Time</option>
-                      <option>Part Time</option>
-                      <option>Internship</option>
-                      <option>Contractor</option>
-                      <option>Remote</option>
-                      <option>Temporary reinforcement</option>
-                    </select>
-                    <input
-                      className="input w-full"
-                      type="date"
-                      value={due}
-                      onChange={(e) => setDue(e.target.value)}
-                    />
-                  </div>
-                </div>
-                <div className="rounded-[32px] border border-slate-200 bg-slate-50 p-5">
-                  <h3 className="text-lg font-black">Main page alignment</h3>
-                  <div className="mt-4 grid grid-cols-2 gap-3 text-sm font-black">
-                    <div className="rounded-2xl bg-white p-4">
-                      Current stage
-                      <br />
-                      <span className="text-violet-700">{stage}</span>
-                    </div>
-                    <div className="rounded-2xl bg-white p-4">
-                      Progress
-                      <br />
-                      <span className="text-cyan-600">{progress}%</span>
-                    </div>
-                    <div className="rounded-2xl bg-white p-4">
-                      Owner
-                      <br />
-                      <span className="text-slate-900">{owner}</span>
-                    </div>
-                    <div className="rounded-2xl bg-white p-4">
-                      Manager
-                      <br />
-                      <span className="text-slate-900">{manager}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="rounded-[32px] border border-violet-100 bg-gradient-to-br from-violet-50 via-white to-cyan-50 p-5 shadow-sm">
-                <h3 className="mb-1 text-lg font-black">
-                  Seven-stage Onboarding Control
-                </h3>
-                <p className="mb-4 text-sm font-semibold text-slate-500">
-                  Select the same lifecycle stage used in the page stepper.
-                  Progress and task packs update from this selection.
-                </p>
-                <div className="mb-4 grid gap-2 md:grid-cols-2">
-                  {stageMeta.map((m, i) => (
-                    <button
-                      key={m.name}
-                      onClick={() => setStageAndProgress(m.name)}
-                      className={cn(
-                        "rounded-3xl border p-4 text-left transition",
-                        stage === m.name
-                          ? "border-violet-300 bg-white shadow-lg shadow-violet-100"
-                          : "border-white bg-white/60 hover:border-violet-200 hover:bg-white",
-                      )}
-                    >
-                      <div className="flex items-center justify-between gap-2">
-                        <b className="text-sm">
-                          {i + 1}. {m.name}
-                        </b>
-                        <span
-                          className={cn(
-                            "rounded-full px-2.5 py-1 text-[11px] font-black",
-                            progress >= m.percent
-                              ? "bg-emerald-50 text-emerald-700"
-                              : stage === m.name
-                                ? "bg-violet-50 text-violet-700"
-                                : "bg-slate-100 text-slate-500",
-                          )}
-                        >
-                          {progress >= m.percent
-                            ? "Completed"
-                            : stage === m.name
-                              ? "Active"
-                              : "Pending"}
-                        </span>
-                      </div>
-                      <p className="mt-2 text-xs font-semibold text-slate-500">
-                        {m.docs}
-                      </p>
-                      <div className="mt-3 flex items-center justify-between text-[11px] font-black text-slate-400">
-                        <span>{m.owner}</span>
-                        <span>{m.tasks} tasks</span>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-                <div className="space-y-3">
-                  <input
-                    className="input w-full"
-                    value={owner}
-                    onChange={(e) => setOwner(e.target.value)}
-                    placeholder="Onboarding owner"
-                  />
-                  <input
-                    className="input w-full"
-                    value={manager}
-                    onChange={(e) => setManager(e.target.value)}
-                    placeholder="Reporting manager"
-                  />
-                  <select
-                    className="input w-full"
-                    value={priority}
-                    onChange={(e) => setPriority(e.target.value)}
-                  >
-                    <option>High priority</option>
-                    <option>Normal priority</option>
-                    <option>Compliance critical</option>
-                    <option>Executive escalation</option>
-                    <option>Urgent branch launch</option>
-                  </select>
-                  <label className="block rounded-2xl bg-white p-3 text-sm font-black">
-                    Progress {progress}%
-                    <input
-                      type="range"
-                      min="0"
-                      max="100"
-                      value={progress}
-                      onChange={(e) => setProgress(Number(e.target.value))}
-                      className="mt-2 w-full accent-violet-600"
-                    />
-                  </label>
-                  <textarea
-                    className="input min-h-24 w-full"
-                    value={note}
-                    onChange={(e) => setNote(e.target.value)}
-                    placeholder={
-                      isTask
-                        ? "Task title / action to execute"
-                        : "Journey note matching the selected onboarding stage..."
-                    }
-                  />
-                  <textarea
-                    className="input min-h-20 w-full"
-                    value={risk}
-                    onChange={(e) => setRisk(e.target.value)}
-                    placeholder="Stage blockers, compliance risks, manager constraints, document gaps..."
-                  />
-                </div>
-              </div>
-              <div className="rounded-[32px] border border-slate-200 bg-white p-5 shadow-sm">
-                <h3 className="mb-1 text-lg font-black">
-                  Stage-linked execution packs
-                </h3>
-                <p className="mb-4 text-sm font-semibold text-slate-500">
-                  These controls mirror the page tabs: Tasks, Documents,
-                  Timeline, Checklist, Notes and Activity.
-                </p>
-                <div className="mb-4 flex flex-wrap gap-2">
-                  {(
-                    [
-                      "stages",
-                      "tasks",
-                      "documents",
-                      "automation",
-                      "governance",
-                    ] as const
-                  ).map((p) => (
-                    <button
-                      key={p}
-                      onClick={() => setActivePanel(p)}
-                      className={cn(
-                        "rounded-2xl px-3 py-2 text-xs font-black",
-                        activePanel === p
-                          ? "bg-violet-600 text-white"
-                          : "bg-slate-50 text-slate-500",
-                      )}
-                    >
-                      {p}
-                    </button>
-                  ))}
-                </div>
-                <div className="space-y-3">
-                  {(activePanel === "tasks"
-                    ? defaultTasks
-                    : activePanel === "documents"
-                      ? defaultDocs
-                      : activePanel === "automation"
-                        ? automationRules
-                        : activePanel === "governance"
-                          ? [
-                              "Owner SLA locked",
-                              "Manager handoff required",
-                              "Compliance evidence mandatory",
-                              "Probation checkpoints created",
-                              "Activity audit enabled",
-                            ]
-                          : phases
-                  ).map((x, i) => (
-                    <label
-                      key={x}
-                      className="flex items-center gap-3 rounded-2xl border border-slate-100 bg-slate-50 p-3 text-sm font-bold"
-                    >
-                      <input
-                        type="checkbox"
-                        defaultChecked={
-                          i < 4 ||
-                          (activePanel === "stages" &&
-                            progress >= ((i + 1) / phases.length) * 100)
-                        }
-                        className="h-4 w-4 accent-violet-600"
-                      />
-                      {x}
-                    </label>
-                  ))}
-                </div>
-                <div className="mt-4 rounded-3xl bg-slate-950 p-4 text-xs font-bold text-white/80">
-                  <div className="mb-2 text-white">Live sync contract</div>Save
-                  updates the selected journey, stage/progress, owner/manager,
-                  task/document packs and activity trail used on the main
-                  onboarding page.
-                </div>
-              </div>
+          </header>
+
+          {workspace.diagnostics.warnings.length > 0 && (
+            <div className="mt-5 rounded-[22px] border border-amber-200 bg-amber-50 px-5 py-4 text-sm text-amber-900">
+              <div className="flex items-start gap-3"><AlertTriangle className="mt-0.5 h-5 w-5 shrink-0" /><div><p className="font-black">Diagnostic de sources optionnelles</p><p className="mt-1 font-semibold">Certaines sources périphériques sont indisponibles. Les parcours canoniques restent opérationnels, mais les listes de candidats, collaborateurs ou owners peuvent être incomplètes.</p><ul className="mt-2 list-disc space-y-1 pl-5 text-xs font-semibold">{workspace.diagnostics.warnings.map((warning) => <li key={warning}>{warning}</li>)}</ul></div></div>
             </div>
           )}
-        </div>
 
-        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 bg-white p-5">
-          <div className="flex items-center gap-2 text-sm font-bold text-slate-500">
-            <ShieldCheck className="h-4 w-4 text-emerald-500" />{" "}
-            {isDocument
-              ? "Document will be attached and logged live"
-              : isReminder
-                ? "WhatsApp reminder will open with French message and save activity"
-                : isReassign
-                  ? "Owner will be reassigned and audited"
-                  : isProfile
-                    ? "Profile workspace will open with selected person context"
-                    : isJourney
-                      ? "Create a journey aligned to the same onboarding stages"
-                      : "Update the selected journey without changing the page model"}{" "}
-            for {candidateName || selected.title}
+          <div className="mt-5 flex flex-col gap-4 rounded-[24px] border border-slate-200 bg-white p-4 shadow-sm lg:flex-row lg:items-center lg:justify-between">
+            <div className="relative min-w-0 flex-1"><Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" /><input value={query} onChange={(event: React.ChangeEvent<HTMLInputElement>) => setQuery(event.target.value)} placeholder="Rechercher un collaborateur, poste, département, owner…" className="h-11 w-full rounded-2xl border border-slate-200 bg-slate-50 pl-11 pr-4 text-sm font-semibold outline-none focus:border-violet-300 focus:bg-white focus:ring-4 focus:ring-violet-100" /></div>
+            <div className="flex flex-wrap items-center gap-2"><Filter className="h-4 w-4 text-slate-400" />{["all", "active", "paused", "completed", "archived"].map((status) => <button key={status} onClick={() => setStatusFilter(status)} className={cn("rounded-xl px-3 py-2 text-xs font-black", statusFilter === status ? "bg-slate-950 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200")}>{status === "all" ? "Tous" : STATUS_LABELS[status]}</button>)}</div>
           </div>
-          <div className="flex gap-3">
-            <button
-              onClick={onClose}
-              className="rounded-2xl border border-slate-200 bg-white px-5 py-3 font-black hover:bg-slate-50"
-            >
-              Cancel
-            </button>
-            <button
-              disabled={isPending}
-              onClick={save}
-              className="rounded-2xl bg-gradient-to-r from-violet-600 to-cyan-500 px-6 py-3 font-black text-white shadow-lg shadow-violet-200"
-            >
-              {isTimeline
-                ? "Save Timeline Note"
-                : isDocument
-                  ? "Add Document Live"
-                  : isReminder
-                    ? "Envoyer via WhatsApp"
-                    : isReassign
-                      ? "Reassign Owner Live"
-                      : isProfile
-                        ? "Open Profile"
-                        : isEdit
-                          ? "Save Stage-Aware Journey"
-                          : isTask
-                            ? "Create Task Live"
-                            : "Create Stage-Aware Journey"}{" "}
-              <CheckCircle2 className="ml-2 inline h-4 w-4" />
-            </button>
-          </div>
-        </div>
+
+          {empty ? (
+            <EmptyState canManage={workspace.capabilities.canManage} onCreate={() => openModal("createJourney")} />
+          ) : (
+            <div className="mt-5 grid gap-5 2xl:grid-cols-[340px_minmax(0,1fr)]">
+              <section className="rounded-[28px] border border-slate-200 bg-white p-3 shadow-sm">
+                <div className="flex items-center justify-between px-3 py-2"><div><p className="text-xs font-black uppercase tracking-[0.15em] text-slate-400">Portefeuille</p><h2 className="font-black">Parcours onboarding</h2></div><span className="rounded-xl bg-slate-100 px-2.5 py-1 text-xs font-black text-slate-500">{filteredJourneys.length}</span></div>
+                <div className="mt-2 max-h-[760px] space-y-2 overflow-y-auto pr-1">
+                  {filteredJourneys.map((journey) => <JourneyCard key={journey.journeyKey} journey={journey} active={journey.journeyKey === selected?.journeyKey} onSelect={() => { setSelectedKey(journey.journeyKey); setTab("Tâches"); }} />)}
+                  {!filteredJourneys.length && <div className="rounded-2xl border border-dashed border-slate-200 p-6 text-center text-sm font-semibold text-slate-500">Aucun parcours ne correspond aux filtres.</div>}
+                </div>
+              </section>
+
+              {selected && (
+                <section className="min-w-0 space-y-5">
+                  <JourneyHero journey={selected} tasks={tasks} documents={documents} canManage={workspace.capabilities.canManage} canOverride={workspace.capabilities.canOverride} onEdit={() => openModal("editJourney")} onAdvance={() => void journeyAction("advance")} onPause={() => void journeyAction(selected.status === "paused" ? "resume" : "pause", { reason: selected.status === "paused" ? "Reprise du parcours" : "Pause opérationnelle" })} onReassign={() => openModal("reassign")} onCancel={() => openModal("cancel")} onRestore={() => void journeyAction("restore", { reason: "Restauration contrôlée du parcours" })} onOverride={() => openModal("override")} onArchive={() => openModal("archive")} />
+
+                  <div className="rounded-[28px] border border-slate-200 bg-white shadow-sm">
+                    <div className="border-b border-slate-200 px-4 pt-4 md:px-6">
+                      <div className="flex gap-1 overflow-x-auto">{tabs.map((item) => <button key={item} onClick={() => setTab(item)} className={cn("border-b-2 px-4 py-3 text-sm font-black whitespace-nowrap", tab === item ? "border-violet-600 text-violet-700" : "border-transparent text-slate-500 hover:text-slate-900")}>{item}</button>)}</div>
+                    </div>
+                    <div className="p-4 md:p-6">
+                      {tab === "Tâches" && <TasksView tasks={tasks} canManage={workspace.capabilities.canManage} onCreate={() => { setEditingTask(null); openModal("task"); }} onEdit={(task) => { setEditingTask(task); openModal("task"); }} onStatus={(task, status) => void quickTaskStatus(task, status)} onArchive={(task) => { setEditingTask(task); openModal("taskArchive"); }} />}
+                      {tab === "Documents" && <DocumentsView documents={documents} canManage={workspace.capabilities.canManageDocuments} onCreate={() => { setEditingDocument(null); openModal("document"); }} onEdit={(document) => { setEditingDocument(document); openModal("document"); }} onUpload={(document) => { setEditingDocument(document); openModal("upload"); }} onStatus={(document, status) => void quickDocumentStatus(document, status)} onArchive={(document) => { setEditingDocument(document); openModal("documentArchive"); }} />}
+                      {tab === "Timeline" && <TimelineView activity={activity} onAdd={() => openModal("note")} />}
+                      {tab === "Checklist" && <ChecklistView journey={selected} tasks={tasks} documents={documents} checklists={workspace.checklists} canManage={workspace.capabilities.canManage} onAssign={(checklist) => void journeyAction("assign_checklist", { checklistKey: checklist.checklistKey })} />}
+                      {tab === "Notes" && <NotesView notes={notes} canManage={workspace.capabilities.canManage} onAdd={() => openModal("note")} />}
+                      {tab === "Activité" && <ActivityView activity={activity} />}
+                    </div>
+                  </div>
+
+                  <div className="grid gap-5 lg:grid-cols-3">
+                    <SummaryCard title="Exécution" icon={Zap} rows={[["Tâches", `${completedTasks}/${tasks.length}`], ["Documents", `${validatedDocuments}/${documents.length}`], ["Progression", `${selected.progress}%`]]} />
+                    <SummaryCard title="Gouvernance" icon={ShieldCheck} rows={[["Owner", selected.owner || "Non affecté"], ["Manager", selected.manager || "Non affecté"], ["Version", `v${selected.version}`]]} />
+                    <SummaryCard title="Identité" icon={UserCheck} rows={[["Email", selected.email || "Non renseigné"], ["Téléphone", selected.phone || "Non renseigné"], ["Démarrage", formatDate(selected.startDate)]]} />
+                  </div>
+                </section>
+              )}
+            </div>
+          )}
+
+          <footer className="mt-6 flex flex-col gap-2 rounded-2xl border border-slate-200 bg-white px-5 py-4 text-xs font-semibold text-slate-500 md:flex-row md:items-center md:justify-between"><span>{toast}</span><span>Schéma: {workspace.diagnostics.schemaVersion} · Scope {workspace.diagnostics.scopeResolved ? "résolu" : "non résolu"} · Alertes {workspace.diagnostics.warnings.length} · {new Date(workspace.loadedAt).toLocaleTimeString("fr-MA")}</span></footer>
+        </main>
       </div>
+
+      {modal && <ModalShell title={modalTitle(modal, editingTask, editingDocument)} onClose={() => { if (!busy) { setModal(null); setError(null); setEditingTask(null); setEditingDocument(null); } }} busy={busy}>
+        {stages.length > 0 && busy ? <ProgressPanel stages={stages} error={error} /> : null}
+        {error && !busy ? <ErrorPanel message={error} /> : null}
+        {!busy && modal === "createJourney" && <JourneyForm workspace={workspace} onSubmit={(form: FormData) => void submitJourney(form, false)} />}
+        {!busy && modal === "editJourney" && selected && <JourneyForm workspace={workspace} journey={selected} onSubmit={(form: FormData) => void submitJourney(form, true)} />}
+        {!busy && modal === "task" && selected && <TaskForm task={editingTask} journey={selected} owners={workspace.owners} onSubmit={(form: FormData) => void submitTask(form)} />}
+        {!busy && modal === "document" && selected && <DocumentForm document={editingDocument} owners={workspace.owners} onSubmit={(form: FormData) => void submitDocument(form)} />}
+        {!busy && modal === "note" && <ActivityForm onSubmit={(form: FormData) => void submitActivity(form)} />}
+        {!busy && modal === "reassign" && selected && <ReassignForm owners={workspace.owners} journey={selected} onSubmit={(form: FormData) => { const nextOwnerKey = String(form.get("ownerKey") ?? ""); const nextManagerKey = String(form.get("managerKey") ?? ""); const nextOwner = workspace.owners.find((item) => item.key === nextOwnerKey); const nextManager = workspace.owners.find((item) => item.key === nextManagerKey); void journeyAction("reassign", { owner: nextOwner?.fullName ?? null, ownerKey: nextOwnerKey || null, manager: nextManager?.fullName ?? null, managerKey: nextManagerKey || null }); }} />}
+        {!busy && modal === "archive" && selected && <ReasonForm label="Archiver ce parcours" warning="Le parcours disparaîtra des vues actives, mais son historique, ses tâches, documents et preuves seront conservés." onSubmit={(form: FormData) => void runMutation({ title: "Parcours archivé", stageLabels: ["Autorisation", "Contrôle de version", "Archivage", "Audit", "Synchronisation"], request: () => apiRequest<ApiEnvelope>(`/api/hr/onboarding/journeys/${encodeURIComponent(selected.journeyKey)}`, { method: "DELETE", body: JSON.stringify({ version: selected.version, reason: String(form.get("reason") ?? "") }) }) })} />}
+        {!busy && modal === "cancel" && selected && <ReasonForm label="Annuler le parcours" warning="L’annulation préserve toute la traçabilité et bloque l’avancement opérationnel." onSubmit={(form: FormData) => void journeyAction("cancel", { reason: String(form.get("reason") ?? "") })} />}
+        {!busy && modal === "override" && selected && <OverrideForm journey={selected} onSubmit={(form: FormData) => void journeyAction("override_progress", { reason: String(form.get("reason") ?? ""), progress: Number(form.get("progress")), force: true })} />}
+        {!busy && modal === "upload" && editingDocument && <UploadForm document={editingDocument} inputRef={fileInputRef} onSubmit={(file) => void uploadFile(file)} />}
+        {!busy && modal === "taskArchive" && editingTask && <ReasonForm label="Archiver la tâche" warning="La tâche sera retirée du tableau actif, sans suppression de son historique." onSubmit={(form: FormData) => void runMutation({ title: "Tâche archivée", stageLabels: ["Autorisation", "Archivage", "Recalcul du progrès", "Audit"], request: () => apiRequest<ApiEnvelope>(`/api/hr/onboarding/tasks/${encodeURIComponent(editingTask.taskKey)}`, { method: "DELETE", body: JSON.stringify({ version: editingTask.version, reason: String(form.get("reason") ?? "") }) }), preferredKey: selected?.journeyKey })} />}
+        {!busy && modal === "documentArchive" && editingDocument && <ReasonForm label="Archiver le document" warning="Le document est conservé dans l’historique et retiré des exigences actives." onSubmit={(form: FormData) => void runMutation({ title: "Document archivé", stageLabels: ["Autorisation", "Archivage", "Recalcul des gates", "Audit"], request: () => apiRequest<ApiEnvelope>(`/api/hr/onboarding/documents/${encodeURIComponent(editingDocument.documentKey)}`, { method: "DELETE", body: JSON.stringify({ version: editingDocument.version, reason: String(form.get("reason") ?? "") }) }), preferredKey: selected?.journeyKey })} />}
+      </ModalShell>}
     </div>
   );
 }
 
-function UiStyles() {
-  return (
-    <style>{`
-.card{border:1px solid rgb(226 232 240 / .9);background:rgb(255 255 255 / .92);border-radius:28px;box-shadow:0 14px 34px rgb(15 23 42 / .06)}
-.btn-lite{display:inline-flex;align-items:center;gap:.5rem;border:1px solid rgb(226 232 240);background:white;border-radius:1rem;padding:.75rem 1rem;font-size:.875rem;font-weight:900;box-shadow:0 1px 2px rgb(15 23 42 / .06)}
-.btn-lite:hover{background:#f8fafc;transform:translateY(-1px)}
-.btn-primary{display:inline-flex;align-items:center;gap:.5rem;border-radius:1rem;padding:.75rem 1rem;font-size:.875rem;font-weight:900;color:white;background:linear-gradient(90deg,#7c3aed,#06b6d4);box-shadow:0 16px 28px rgb(124 58 237 / .22)}
-.btn-primary:hover{transform:translateY(-1px) scale(1.01)}
-.btn-mini{display:inline-flex;align-items:center;gap:.35rem;border:1px solid rgb(226 232 240);border-radius:1rem;padding:.55rem .8rem;font-size:.75rem;font-weight:900;background:white}
-.input{border:1px solid rgb(226 232 240);border-radius:1rem;padding:1rem;font-weight:700;outline:none;background:white}
-.input:focus{border-color:#8b5cf6;box-shadow:0 0 0 4px rgb(139 92 246 / .12)}
-.qa{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.5rem;border:1px solid rgb(226 232 240);border-radius:1rem;padding:1rem;background:white;color:#334155;min-height:86px}
-.qa svg{height:1.25rem;width:1.25rem;color:#7c3aed}
-.qa:hover{background:#f5f3ff;border-color:#ddd6fe;transform:translateY(-1px)}
-`}</style>
-  );
+function Kpi({ label, value, icon: Icon, tone }: { label: string; value: number; icon: typeof Workflow; tone: "violet" | "rose" | "amber" | "cyan" }) {
+  const tones = { violet: "text-violet-700 bg-violet-50", rose: "text-rose-700 bg-rose-50", amber: "text-amber-700 bg-amber-50", cyan: "text-cyan-700 bg-cyan-50" };
+  return <div className="flex items-center gap-4 bg-white px-6 py-4"><div className={cn("grid h-11 w-11 place-items-center rounded-2xl", tones[tone])}><Icon className="h-5 w-5" /></div><div><p className="text-2xl font-black">{value}</p><p className="text-xs font-bold text-slate-500">{label}</p></div></div>;
+}
+
+function EmptyState({ canManage, onCreate }: { canManage: boolean; onCreate: () => void }) {
+  return <div className="mt-5 rounded-[30px] border border-dashed border-slate-300 bg-white p-12 text-center shadow-sm"><div className="mx-auto grid h-16 w-16 place-items-center rounded-3xl bg-violet-50 text-violet-700"><ClipboardCheck className="h-8 w-8" /></div><h2 className="mt-5 text-xl font-black">Aucun parcours onboarding enregistré</h2><p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-slate-500">La base ne contient aucun parcours actif. Aucun collaborateur, document, événement ou tâche fictive n’est injecté dans l’interface.</p>{canManage && <button onClick={onCreate} className="mt-6 inline-flex items-center gap-2 rounded-2xl bg-slate-950 px-5 py-3 text-sm font-black text-white"><Plus className="h-4 w-4" /> Créer le premier parcours</button>}</div>;
+}
+
+function JourneyCard({ journey, active, onSelect }: { journey: OnboardingJourney; active: boolean; onSelect: () => void }) {
+  return <button onClick={onSelect} className={cn("w-full rounded-[22px] border p-4 text-left transition", active ? "border-violet-200 bg-gradient-to-br from-violet-50 to-cyan-50 shadow-sm" : "border-transparent bg-slate-50 hover:border-slate-200 hover:bg-white")}><div className="flex gap-3"><div className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-slate-950 text-xs font-black text-white">{initials(journey.title)}</div><div className="min-w-0 flex-1"><div className="flex items-start justify-between gap-2"><div><h3 className="truncate font-black">{journey.title}</h3><p className="truncate text-xs font-semibold text-slate-500">{journey.position || "Poste non renseigné"}</p></div><ChevronRight className={cn("h-4 w-4 shrink-0", active ? "text-violet-600" : "text-slate-300")} /></div><div className="mt-3 flex flex-wrap items-center gap-2"><span className={cn("rounded-lg border px-2 py-1 text-[10px] font-black", statusTone(journey.status))}>{STATUS_LABELS[journey.status] || journey.status}</span><span className="text-[10px] font-bold text-slate-400">{PHASE_LABELS[journey.phase]}</span></div><div className="mt-3 h-1.5 overflow-hidden rounded-full bg-white"><div className="h-full rounded-full bg-gradient-to-r from-violet-600 to-cyan-500" style={{ width: `${journey.progress}%` }} /></div></div></div></button>;
+}
+
+function JourneyHero({ journey, tasks, documents, canManage, canOverride, onEdit, onAdvance, onPause, onReassign, onCancel, onRestore, onOverride, onArchive }: { journey: OnboardingJourney; tasks: OnboardingTask[]; documents: OnboardingDocument[]; canManage: boolean; canOverride: boolean; onEdit: () => void; onAdvance: () => void; onPause: () => void; onReassign: () => void; onCancel: () => void; onRestore: () => void; onOverride: () => void; onArchive: () => void }) {
+  const requiredTasks = tasks.filter((item) => item.required);
+  const requiredDocs = documents.filter((item) => item.required);
+  const taskCompletion = requiredTasks.length ? Math.round(requiredTasks.filter((item) => ["completed", "waived"].includes(item.status)).length / requiredTasks.length * 100) : 100;
+  const docCompletion = requiredDocs.length ? Math.round(requiredDocs.filter((item) => ["validated", "waived"].includes(item.status)).length / requiredDocs.length * 100) : 100;
+  return <div className="overflow-hidden rounded-[30px] border border-slate-200 bg-white shadow-sm"><div className="bg-gradient-to-br from-slate-950 via-indigo-950 to-violet-900 p-6 text-white md:p-8"><div className="flex flex-col gap-6 xl:flex-row xl:items-start xl:justify-between"><div className="flex gap-4"><div className="grid h-16 w-16 shrink-0 place-items-center rounded-3xl border border-white/10 bg-white/10 text-lg font-black">{initials(journey.title)}</div><div><div className="flex flex-wrap items-center gap-2"><h2 className="text-2xl font-black">{journey.title}</h2><span className={cn("rounded-xl border px-2.5 py-1 text-[10px] font-black", statusTone(journey.status))}>{STATUS_LABELS[journey.status] || journey.status}</span></div><p className="mt-1 font-semibold text-slate-300">{journey.position || "Poste non renseigné"} · {journey.department || "Département non renseigné"}</p><div className="mt-4 flex flex-wrap gap-3 text-xs font-semibold text-slate-300"><span className="inline-flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5" /> {journey.location || "Lieu non renseigné"}</span><span className="inline-flex items-center gap-1.5"><CalendarDays className="h-3.5 w-3.5" /> {formatDate(journey.startDate)}</span><span className="inline-flex items-center gap-1.5"><Briefcase className="h-3.5 w-3.5" /> {journey.employmentType || "Contrat non renseigné"}</span></div></div></div>{canManage && <div className="flex flex-wrap gap-2"><button onClick={onEdit} className="inline-flex items-center gap-2 rounded-2xl border border-white/15 bg-white/10 px-4 py-2.5 text-sm font-black hover:bg-white/15"><Edit3 className="h-4 w-4" /> Modifier</button>{journey.status === "archived" ? <button onClick={onRestore} className="inline-flex items-center gap-2 rounded-2xl bg-emerald-500 px-4 py-2.5 text-sm font-black text-white"><RotateCcw className="h-4 w-4" /> Restaurer</button> : <button onClick={onPause} className="inline-flex items-center gap-2 rounded-2xl border border-white/15 bg-white/10 px-4 py-2.5 text-sm font-black hover:bg-white/15"><PauseCircle className="h-4 w-4" /> {journey.status === "paused" ? "Reprendre" : "Pause"}</button>}<button onClick={onReassign} className="inline-flex items-center gap-2 rounded-2xl border border-white/15 bg-white/10 px-4 py-2.5 text-sm font-black hover:bg-white/15"><UserCheck className="h-4 w-4" /> Réaffecter</button><button onClick={onCancel} disabled={["archived", "cancelled", "completed"].includes(journey.status)} className="inline-flex items-center gap-2 rounded-2xl border border-rose-300/30 bg-rose-500/15 px-4 py-2.5 text-sm font-black hover:bg-rose-500/25 disabled:opacity-40"><X className="h-4 w-4" /> Annuler</button>{canOverride && <button onClick={onOverride} className="inline-flex items-center gap-2 rounded-2xl border border-amber-300/30 bg-amber-500/15 px-4 py-2.5 text-sm font-black hover:bg-amber-500/25"><Gauge className="h-4 w-4" /> Override</button>}<button onClick={onAdvance} disabled={["archived", "cancelled", "completed"].includes(journey.status)} className="inline-flex items-center gap-2 rounded-2xl bg-white px-4 py-2.5 text-sm font-black text-indigo-950 disabled:cursor-not-allowed disabled:opacity-50"><ArrowRight className="h-4 w-4" /> Avancer la phase</button><button onClick={onArchive} className="grid h-11 w-11 place-items-center rounded-2xl border border-white/15 bg-white/10 hover:bg-rose-500/25" title="Archiver"><Archive className="h-4 w-4" /></button></div>}</div><div className="mt-7 grid gap-3 md:grid-cols-[1.4fr_1fr_1fr]"><ProgressBlock label="Progression consolidée" value={journey.progress} /><ProgressBlock label="Tâches obligatoires" value={taskCompletion} /><ProgressBlock label="Documents requis" value={docCompletion} /></div></div><div className="grid gap-px bg-slate-200 md:grid-cols-4"><HeroMeta label="Phase" value={PHASE_LABELS[journey.phase]} /><HeroMeta label="Owner" value={journey.owner || "Non affecté"} /><HeroMeta label="Manager" value={journey.manager || "Non affecté"} /><HeroMeta label="Risque" value={journey.riskLevel} /></div></div>;
+}
+
+function ProgressBlock({ label, value }: { label: string; value: number }) { return <div className="rounded-2xl border border-white/10 bg-white/8 p-4"><div className="flex items-center justify-between text-xs font-black uppercase tracking-[0.1em] text-slate-300"><span>{label}</span><span>{value}%</span></div><div className="mt-3 h-2 overflow-hidden rounded-full bg-white/10"><div className="h-full rounded-full bg-gradient-to-r from-violet-400 via-cyan-300 to-emerald-300" style={{ width: `${value}%` }} /></div></div>; }
+function HeroMeta({ label, value }: { label: string; value: string }) { return <div className="bg-white px-5 py-4"><p className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">{label}</p><p className="mt-1 truncate text-sm font-black text-slate-800">{value}</p></div>; }
+
+function TasksView({ tasks, canManage, onCreate, onEdit, onStatus, onArchive }: { tasks: OnboardingTask[]; canManage: boolean; onCreate: () => void; onEdit: (task: OnboardingTask) => void; onStatus: (task: OnboardingTask, status: string) => void; onArchive: (task: OnboardingTask) => void }) {
+  const groups = Array.from(new Set(tasks.map((item) => item.groupName)));
+  return <div><SectionHeader eyebrow="Exécution persistée" title="Tâches onboarding" action={canManage ? <button onClick={onCreate} className="inline-flex items-center gap-2 rounded-xl bg-slate-950 px-3.5 py-2 text-xs font-black text-white"><Plus className="h-4 w-4" /> Ajouter</button> : null} />{!tasks.length ? <MiniEmpty icon={ClipboardCheck} title="Aucune tâche" text="Aucune tâche n’est générée en mémoire. Affectez une checklist ou créez une tâche persistée." /> : <div className="mt-5 space-y-5">{groups.map((group) => <div key={group}><div className="mb-2 flex items-center gap-2"><div className="h-2 w-2 rounded-full bg-violet-500" /><h4 className="text-xs font-black uppercase tracking-[0.14em] text-slate-500">{group}</h4></div><div className="space-y-2">{tasks.filter((item) => item.groupName === group).sort((a, b) => a.sortOrder - b.sortOrder).map((task) => <div key={task.taskKey} className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-slate-50/70 p-4 md:flex-row md:items-center"><button disabled={!canManage} onClick={() => onStatus(task, task.status === "completed" ? "in_progress" : "completed")} className={cn("grid h-9 w-9 shrink-0 place-items-center rounded-xl border", task.status === "completed" ? "border-emerald-200 bg-emerald-100 text-emerald-700" : "border-slate-200 bg-white text-slate-400")}>{task.status === "completed" ? <Check className="h-4 w-4" /> : <Clock3 className="h-4 w-4" />}</button><div className="min-w-0 flex-1"><div className="flex flex-wrap items-center gap-2"><h5 className="font-black">{task.title}</h5>{task.required && <span className="rounded-lg bg-rose-50 px-2 py-1 text-[9px] font-black text-rose-600">OBLIGATOIRE</span>}<span className={cn("rounded-lg border px-2 py-1 text-[9px] font-black", statusTone(task.status))}>{STATUS_LABELS[task.status] || task.status}</span></div><div className="mt-1 flex flex-wrap gap-3 text-xs font-semibold text-slate-500"><span>{PHASE_LABELS[task.phase]}</span><span>{task.owner || "Owner non affecté"}</span><span>{task.dueAt ? formatDate(task.dueAt) : "Sans échéance"}</span>{task.blockerReason && <span className="text-rose-600">Blocage: {task.blockerReason}</span>}</div></div>{canManage && <div className="flex gap-1"><button onClick={() => onEdit(task)} className="grid h-9 w-9 place-items-center rounded-xl text-slate-500 hover:bg-white hover:text-slate-950"><Edit3 className="h-4 w-4" /></button>{task.status !== "blocked" && <button onClick={() => onStatus(task, "blocked")} className="grid h-9 w-9 place-items-center rounded-xl text-amber-600 hover:bg-amber-50" title="Bloquer"><LockKeyhole className="h-4 w-4" /></button>}<button onClick={() => onArchive(task)} className="grid h-9 w-9 place-items-center rounded-xl text-rose-500 hover:bg-rose-50"><Archive className="h-4 w-4" /></button></div>}</div>)}</div></div>)}</div>}</div>;
+}
+
+function DocumentsView({ documents, canManage, onCreate, onEdit, onUpload, onStatus, onArchive }: { documents: OnboardingDocument[]; canManage: boolean; onCreate: () => void; onEdit: (document: OnboardingDocument) => void; onUpload: (document: OnboardingDocument) => void; onStatus: (document: OnboardingDocument, status: string) => void; onArchive: (document: OnboardingDocument) => void }) {
+  return <div><SectionHeader eyebrow="Dossier documentaire" title="Documents onboarding" action={canManage ? <button onClick={onCreate} className="inline-flex items-center gap-2 rounded-xl bg-slate-950 px-3.5 py-2 text-xs font-black text-white"><Plus className="h-4 w-4" /> Demander</button> : null} />{!documents.length ? <MiniEmpty icon={FileBadge2} title="Aucun document demandé" text="Ajoutez une demande documentaire réelle ou affectez une checklist publiée." /> : <div className="mt-5 grid gap-3 xl:grid-cols-2">{documents.map((document) => <div key={document.documentKey} className="rounded-2xl border border-slate-200 bg-slate-50/70 p-4"><div className="flex items-start gap-3"><div className="grid h-11 w-11 place-items-center rounded-2xl bg-white text-violet-700 shadow-sm"><FileText className="h-5 w-5" /></div><div className="min-w-0 flex-1"><div className="flex flex-wrap items-center gap-2"><h4 className="font-black">{document.title}</h4>{document.required && <span className="rounded-lg bg-rose-50 px-2 py-1 text-[9px] font-black text-rose-600">REQUIS</span>}</div><p className="mt-1 text-xs font-semibold text-slate-500">{document.category} · {document.owner || "Owner non affecté"}</p><div className="mt-3 flex flex-wrap items-center gap-2"><span className={cn("rounded-lg border px-2 py-1 text-[10px] font-black", statusTone(document.status))}>{STATUS_LABELS[document.status] || document.status}</span>{document.fileSize !== null && <span className="text-[10px] font-bold text-slate-400">{Math.round(document.fileSize / 1024)} Ko</span>}{document.verifiedAt && <span className="text-[10px] font-bold text-emerald-600">Vérifié {formatDate(document.verifiedAt)}</span>}</div></div></div>{canManage && <div className="mt-4 flex flex-wrap gap-2"><button onClick={() => onEdit(document)} className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-black"><Edit3 className="h-3.5 w-3.5" /> Modifier</button><button onClick={() => onUpload(document)} className="inline-flex items-center gap-1.5 rounded-xl border border-violet-200 bg-violet-50 px-3 py-2 text-xs font-black text-violet-700"><Upload className="h-3.5 w-3.5" /> Téléverser</button>{document.storagePath && <a href={`/api/hr/onboarding/documents/${encodeURIComponent(document.documentKey)}/download`} className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-black"><Download className="h-3.5 w-3.5" /> Télécharger</a>}{document.status === "uploaded" && <button onClick={() => onStatus(document, "validated")} className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 px-3 py-2 text-xs font-black text-white"><BadgeCheck className="h-3.5 w-3.5" /> Valider</button>}<button onClick={() => onArchive(document)} className="grid h-9 w-9 place-items-center rounded-xl text-rose-500 hover:bg-rose-50"><Archive className="h-4 w-4" /></button></div>}</div>)}</div>}</div>;
+}
+
+function TimelineView({ activity, onAdd }: { activity: OnboardingActivity[]; onAdd?: () => void }) { return <div><SectionHeader eyebrow="Traçabilité immuable" title="Timeline du parcours" action={onAdd ? <button onClick={onAdd} className="inline-flex items-center gap-2 rounded-xl bg-slate-950 px-3.5 py-2 text-xs font-black text-white"><Plus className="h-4 w-4" /> Ajouter une preuve</button> : null} />{!activity.length ? <MiniEmpty icon={Activity} title="Aucune activité" text="La timeline affichera uniquement les opérations et notes réellement persistées." /> : <div className="mt-5 space-y-0">{activity.map((event, index) => <div key={event.activityKey} className="relative flex gap-4 pb-6"><div className="relative z-10 grid h-10 w-10 shrink-0 place-items-center rounded-2xl border border-violet-100 bg-violet-50 text-violet-700"><Activity className="h-4 w-4" /></div>{index < activity.length - 1 && <div className="absolute bottom-0 left-5 top-10 w-px bg-slate-200" />}<div className="min-w-0 flex-1 rounded-2xl border border-slate-200 bg-slate-50/60 p-4"><div className="flex flex-wrap items-start justify-between gap-2"><div><h4 className="font-black">{event.title}</h4><p className="mt-1 text-sm text-slate-600">{event.body || "Aucun détail complémentaire."}</p></div><span className="text-[10px] font-bold text-slate-400">{formatTime(event.createdAt)}</span></div><div className="mt-3 flex flex-wrap gap-2 text-[10px] font-black text-slate-500"><span className="rounded-lg bg-white px-2 py-1">{event.type}</span><span className="rounded-lg bg-white px-2 py-1">{event.actorName || "Système"}</span></div></div></div>)}</div>}</div>; }
+
+function ChecklistView({ journey, tasks, documents, checklists, canManage, onAssign }: { journey: OnboardingJourney; tasks: OnboardingTask[]; documents: OnboardingDocument[]; checklists: OnboardingChecklist[]; canManage: boolean; onAssign: (checklist: OnboardingChecklist) => void }) {
+  const assigned = checklists.find((item) => item.checklistKey === journey.checklistAssignmentKey) ?? null;
+  return <div><SectionHeader eyebrow="Matrice de gates" title="Checklist affectée" action={<Link href="/hr/onboarding/checklists" className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-black"><ClipboardCheck className="h-4 w-4" /> Bibliothèque</Link>} />{assigned ? <div className="mt-5 rounded-2xl border border-violet-200 bg-violet-50/60 p-5"><div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between"><div><p className="text-xs font-black uppercase tracking-[0.15em] text-violet-500">Version figée</p><h4 className="mt-1 text-lg font-black">{assigned.name} · v{assigned.version}</h4><p className="mt-1 text-sm text-slate-600">{assigned.items.length} exigences · {tasks.length} tâches · {documents.length} documents instanciés.</p></div><span className="rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-black text-emerald-700">Affectation active</span></div></div> : <MiniEmpty icon={ClipboardCheck} title="Aucune checklist affectée" text="Affectez une checklist publiée pour instancier les exigences persistées de ce parcours." />}{canManage && <div className="mt-5 grid gap-3 md:grid-cols-2">{checklists.filter((item) => item.isPublished && item.status === "published").map((checklist) => <button key={checklist.checklistKey} disabled={checklist.checklistKey === assigned?.checklistKey} onClick={() => onAssign(checklist)} className="rounded-2xl border border-slate-200 bg-white p-4 text-left hover:border-violet-200 hover:bg-violet-50 disabled:cursor-not-allowed disabled:opacity-50"><div className="flex items-center justify-between"><h4 className="font-black">{checklist.name}</h4><span className="text-xs font-black text-violet-600">v{checklist.version}</span></div><p className="mt-1 text-xs font-semibold text-slate-500">{checklist.items.length} étapes · {checklist.roleKey || "tous rôles"}</p></button>)}</div>}</div>;
+}
+
+function NotesView({ notes, canManage, onAdd }: { notes: OnboardingActivity[]; canManage: boolean; onAdd: () => void }) { return <div><SectionHeader eyebrow="Notes persistées" title="Instructions, risques & décisions" action={canManage ? <button onClick={onAdd} className="inline-flex items-center gap-2 rounded-xl bg-slate-950 px-3.5 py-2 text-xs font-black text-white"><MessageSquareText className="h-4 w-4" /> Ajouter</button> : null} />{!notes.length ? <MiniEmpty icon={MessageSquareText} title="Aucune note" text="Les notes et décisions apparaissent ici uniquement après persistance serveur." /> : <div className="mt-5 grid gap-3 md:grid-cols-2">{notes.map((note) => <div key={note.activityKey} className="rounded-2xl border border-slate-200 bg-slate-50 p-4"><div className="flex items-start justify-between gap-3"><h4 className="font-black">{note.title}</h4><span className="text-[10px] font-bold text-slate-400">{formatDate(note.createdAt)}</span></div><p className="mt-2 text-sm leading-6 text-slate-600">{note.body || "—"}</p><p className="mt-3 text-[10px] font-black uppercase tracking-[0.12em] text-violet-600">{note.type} · {note.actorName || "Système"}</p></div>)}</div>}</div>; }
+function ActivityView({ activity }: { activity: OnboardingActivity[] }) { return <TimelineView activity={activity} />; }
+
+function SectionHeader({ eyebrow, title, action }: { eyebrow: string; title: string; action?: React.ReactNode }) { return <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between"><div><p className="text-[10px] font-black uppercase tracking-[0.16em] text-violet-500">{eyebrow}</p><h3 className="mt-1 text-lg font-black">{title}</h3></div>{action}</div>; }
+function MiniEmpty({ icon: Icon, title, text }: { icon: typeof ClipboardCheck; title: string; text: string }) { return <div className="mt-5 rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-8 text-center"><div className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-white text-violet-700 shadow-sm"><Icon className="h-5 w-5" /></div><h4 className="mt-4 font-black">{title}</h4><p className="mx-auto mt-2 max-w-lg text-sm leading-6 text-slate-500">{text}</p></div>; }
+function SummaryCard({ title, icon: Icon, rows }: { title: string; icon: typeof Zap; rows: string[][] }) { return <div className="rounded-[24px] border border-slate-200 bg-white p-5 shadow-sm"><div className="flex items-center gap-3"><div className="grid h-10 w-10 place-items-center rounded-2xl bg-violet-50 text-violet-700"><Icon className="h-4 w-4" /></div><h3 className="font-black">{title}</h3></div><div className="mt-4 space-y-3">{rows.map(([label, value]) => <div key={label} className="flex items-center justify-between gap-3 text-sm"><span className="font-semibold text-slate-500">{label}</span><span className="truncate font-black text-slate-800">{value}</span></div>)}</div></div>; }
+
+function ModalShell({ title, onClose, busy, children }: { title: string; onClose: () => void; busy: boolean; children: React.ReactNode }) { return <div className="fixed inset-0 z-[100] grid place-items-center bg-slate-950/45 p-3 backdrop-blur-sm"><div className="max-h-[94vh] w-full max-w-3xl overflow-hidden rounded-[30px] border border-white/40 bg-white shadow-2xl"><div className="flex items-center justify-between border-b border-slate-200 bg-gradient-to-r from-slate-950 via-indigo-950 to-violet-900 px-6 py-5 text-white"><div><p className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-200">Onboarding Production Command</p><h2 className="mt-1 text-xl font-black">{title}</h2></div><button disabled={busy} onClick={onClose} className="grid h-10 w-10 place-items-center rounded-2xl border border-white/15 bg-white/10 disabled:opacity-40"><X className="h-5 w-5" /></button></div><div className="max-h-[calc(94vh-88px)] overflow-y-auto p-6">{children}</div></div></div>; }
+function ProgressPanel({ stages, error }: { stages: MutationStage[]; error: string | null }) { return <div className="space-y-3"><div className="rounded-2xl border border-violet-200 bg-violet-50 p-4"><div className="flex items-center gap-3"><LoaderCircle className="h-5 w-5 animate-spin text-violet-700" /><div><h3 className="font-black">Exécution transactionnelle</h3><p className="text-xs font-semibold text-slate-500">Ne fermez pas cette fenêtre avant la confirmation serveur.</p></div></div></div>{stages.map((stage, index) => <div key={`${stage.label}-${index}`} className="flex items-center gap-3 rounded-2xl border border-slate-200 p-3"><div className={cn("grid h-8 w-8 place-items-center rounded-xl", stage.state === "done" ? "bg-emerald-100 text-emerald-700" : stage.state === "failed" ? "bg-rose-100 text-rose-700" : stage.state === "running" ? "bg-violet-100 text-violet-700" : "bg-slate-100 text-slate-400")}>{stage.state === "done" ? <Check className="h-4 w-4" /> : stage.state === "failed" ? <X className="h-4 w-4" /> : stage.state === "running" ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <span className="text-xs font-black">{index + 1}</span>}</div><span className="text-sm font-black">{stage.label}</span></div>)}{error && <ErrorPanel message={error} />}</div>; }
+function ErrorPanel({ message }: { message: string }) { return <div className="mb-4 rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm font-bold text-rose-700"><div className="flex gap-2"><AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" /><span>{message}</span></div></div>; }
+
+function BaseForm({ onSubmit, children, submitLabel = "Enregistrer" }: { onSubmit: (form: FormData) => void; children: React.ReactNode; submitLabel?: string }) { return <form action={(form: FormData) => onSubmit(form)} className="space-y-5">{children}<div className="flex justify-end border-t border-slate-200 pt-5"><button type="submit" className="inline-flex items-center gap-2 rounded-2xl bg-slate-950 px-5 py-3 text-sm font-black text-white"><CheckCircle2 className="h-4 w-4" /> {submitLabel}</button></div></form>; }
+function Field({ label, name, defaultValue, type = "text", required = false, placeholder, children }: { label: string; name: string; defaultValue?: string | number | null; type?: string; required?: boolean; placeholder?: string; children?: React.ReactNode }) { return <label className="block"><span className="mb-1.5 block text-xs font-black text-slate-600">{label}{required && <span className="text-rose-500"> *</span>}</span>{children ?? <input name={name} type={type} required={required} defaultValue={defaultValue ?? ""} placeholder={placeholder} className="h-11 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 text-sm font-semibold outline-none focus:border-violet-300 focus:bg-white focus:ring-4 focus:ring-violet-100" />}</label>; }
+function SelectField({ label, name, defaultValue, options, required = false }: { label: string; name: string; defaultValue?: string | null; options: Array<{ value: string; label: string }>; required?: boolean }) { return <Field label={label} name={name} required={required}><select name={name} required={required} defaultValue={defaultValue ?? ""} className="h-11 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 text-sm font-semibold outline-none focus:border-violet-300 focus:bg-white focus:ring-4 focus:ring-violet-100"><option value="">Sélectionner</option>{options.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select></Field>; }
+function TextAreaField({ label, name, defaultValue, required = false, placeholder }: { label: string; name: string; defaultValue?: string | null; required?: boolean; placeholder?: string }) { return <label className="block"><span className="mb-1.5 block text-xs font-black text-slate-600">{label}{required && <span className="text-rose-500"> *</span>}</span><textarea name={name} required={required} defaultValue={defaultValue ?? ""} placeholder={placeholder} rows={4} className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold outline-none focus:border-violet-300 focus:bg-white focus:ring-4 focus:ring-violet-100" /></label>; }
+
+function JourneyForm({ workspace, journey, onSubmit }: { workspace: OnboardingWorkspace; journey?: OnboardingJourney; onSubmit: (form: FormData) => void }) { const people = [...workspace.candidates, ...workspace.staff]; return <BaseForm onSubmit={onSubmit} submitLabel={journey ? "Mettre à jour" : "Créer le bundle onboarding"}><div className="grid gap-4 md:grid-cols-2">{!journey && <SelectField label="Candidat ou collaborateur existant" name="personKey" options={people.map((person) => ({ value: person.key, label: `${person.fullName} · ${person.kind === "candidate" ? "Candidat" : "Collaborateur"}` }))} />}<Field label="Nom complet" name="title" defaultValue={journey?.title} required /><Field label="Poste" name="position" defaultValue={journey?.position} /><Field label="Département" name="department" defaultValue={journey?.department} /><Field label="Date de démarrage" name="startDate" type="date" defaultValue={journey?.startDate} /><SelectField label="Manager" name="managerKey" defaultValue={journey?.managerKey} options={workspace.owners.map((owner) => ({ value: owner.key, label: owner.fullName }))} /><Field label="Lieu" name="location" defaultValue={journey?.location} /><Field label="Type d’emploi" name="employmentType" defaultValue={journey?.employmentType} /><Field label="Email" name="email" type="email" defaultValue={journey?.email} /><Field label="Téléphone" name="phone" defaultValue={journey?.phone} /><SelectField label="Owner RH" name="ownerKey" defaultValue={journey?.ownerKey} options={workspace.owners.map((owner) => ({ value: owner.key, label: owner.fullName }))} /><SelectField label="Priorité" name="priority" defaultValue={journey?.priority ?? "normal"} options={["low", "normal", "high", "critical"].map((value) => ({ value, label: value }))} /><SelectField label="Niveau de risque" name="riskLevel" defaultValue={journey?.riskLevel ?? "normal"} options={["low", "normal", "high", "critical"].map((value) => ({ value, label: value }))} />{!journey && <SelectField label="Checklist publiée" name="checklistKey" options={workspace.checklists.filter((item) => item.isPublished).map((item) => ({ value: item.checklistKey, label: `${item.name} · v${item.version}` }))} />}</div><TextAreaField label="Risques / vigilance" name="riskNotes" defaultValue={journey?.riskNotes} /><TextAreaField label="Notes initiales" name="notes" /></BaseForm>; }
+
+function TaskForm({ task, journey, owners, onSubmit }: { task: OnboardingTask | null; journey: OnboardingJourney; owners: OnboardingWorkspace["owners"]; onSubmit: (form: FormData) => void }) { return <BaseForm onSubmit={onSubmit} submitLabel={task ? "Mettre à jour" : "Créer la tâche"}><div className="rounded-2xl border border-violet-100 bg-violet-50 p-4 text-sm font-bold text-violet-800">Parcours: {journey.title}</div><div className="grid gap-4 md:grid-cols-2"><Field label="Titre" name="title" defaultValue={task?.title} required /><Field label="Groupe" name="groupName" defaultValue={task?.groupName ?? "Général"} required /><SelectField label="Phase" name="phase" defaultValue={task?.phase ?? journey.phase} options={ONBOARDING_PHASES.map((value) => ({ value, label: PHASE_LABELS[value] }))} /><SelectField label="Statut" name="status" defaultValue={task?.status ?? "pending"} options={["pending", "in_progress", "completed", "blocked", "waived"].map((value) => ({ value, label: STATUS_LABELS[value] }))} /><SelectField label="Owner" name="ownerKey" defaultValue={task?.ownerKey} options={owners.map((owner) => ({ value: owner.key, label: owner.fullName }))} /><SelectField label="Priorité" name="priority" defaultValue={task?.priority ?? "normal"} options={["low", "normal", "high", "critical"].map((value) => ({ value, label: value }))} /><Field label="Échéance" name="dueAt" type="datetime-local" defaultValue={task?.dueAt ? task.dueAt.slice(0, 16) : ""} /></div><label className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm font-black"><input type="checkbox" name="required" defaultChecked={task?.required ?? true} className="h-4 w-4" /> Tâche obligatoire pour le passage de gate</label><TextAreaField label="Notes / blocage / preuve" name="notes" defaultValue={task?.notes} /></BaseForm>; }
+
+function DocumentForm({ document, owners, onSubmit }: { document: OnboardingDocument | null; owners: OnboardingWorkspace["owners"]; onSubmit: (form: FormData) => void }) { return <BaseForm onSubmit={onSubmit} submitLabel={document ? "Mettre à jour" : "Créer la demande"}><div className="grid gap-4 md:grid-cols-2"><Field label="Titre" name="title" defaultValue={document?.title} required /><Field label="Catégorie" name="category" defaultValue={document?.category ?? "Administratif"} required /><Field label="Type documentaire" name="documentType" defaultValue={document?.documentType} /><SelectField label="Statut" name="status" defaultValue={document?.status ?? "requested"} options={["required", "requested", "uploaded", "validated", "rejected", "waived"].map((value) => ({ value, label: STATUS_LABELS[value] }))} /><SelectField label="Owner" name="ownerKey" defaultValue={document?.ownerKey} options={owners.map((owner) => ({ value: owner.key, label: owner.fullName }))} /><Field label="Échéance" name="dueDate" type="date" defaultValue={document?.dueDate} /><Field label="Expiration" name="expiresAt" type="datetime-local" defaultValue={document?.expiresAt ? document.expiresAt.slice(0, 16) : ""} /></div><label className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm font-black"><input type="checkbox" name="required" defaultChecked={document?.required ?? true} className="h-4 w-4" /> Document obligatoire pour le passage de gate</label><TextAreaField label="Motif de rejet" name="rejectedReason" defaultValue={document?.rejectedReason} /><TextAreaField label="Notes" name="notes" defaultValue={document?.notes} /></BaseForm>; }
+
+function ActivityForm({ onSubmit }: { onSubmit: (form: FormData) => void }) { return <BaseForm onSubmit={onSubmit} submitLabel="Ajouter à la timeline"><SelectField label="Type d’événement" name="type" defaultValue="note" options={[{ value: "note", label: "Note interne" }, { value: "manager_instruction", label: "Instruction manager" }, { value: "decision", label: "Décision" }, { value: "escalation", label: "Escalade" }, { value: "risk", label: "Risque" }, { value: "evidence", label: "Preuve" }]} /><Field label="Titre" name="title" required /><TextAreaField label="Détail" name="body" required /></BaseForm>; }
+function ReassignForm({ owners, journey, onSubmit }: { owners: OnboardingWorkspace["owners"]; journey: OnboardingJourney; onSubmit: (form: FormData) => void }) { return <BaseForm onSubmit={onSubmit} submitLabel="Réaffecter"><SelectField label="Owner RH" name="ownerKey" defaultValue={journey.ownerKey} options={owners.map((owner) => ({ value: owner.key, label: owner.fullName }))} /><SelectField label="Manager" name="managerKey" defaultValue={journey.managerKey} options={owners.map((owner) => ({ value: owner.key, label: owner.fullName }))} /></BaseForm>; }
+function ReasonForm({ label, warning, onSubmit }: { label: string; warning: string; onSubmit: (form: FormData) => void }) { return <BaseForm onSubmit={onSubmit} submitLabel={label}><div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm font-bold text-amber-800"><AlertTriangle className="mr-2 inline h-4 w-4" />{warning}</div><TextAreaField label="Motif obligatoire" name="reason" required /></BaseForm>; }
+function OverrideForm({ journey, onSubmit }: { journey: OnboardingJourney; onSubmit: (form: FormData) => void }) { return <BaseForm onSubmit={onSubmit} submitLabel="Appliquer l’override"><div className="rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm font-bold text-rose-800">Override réservé aux administrateurs HR. Toute modification est auditée.</div><Field label="Progression" name="progress" type="number" defaultValue={journey.progress} required /><TextAreaField label="Justification obligatoire" name="reason" required /></BaseForm>; }
+function UploadForm({ document, inputRef, onSubmit }: { document: OnboardingDocument; inputRef: React.RefObject<HTMLInputElement | null>; onSubmit: (file: File) => void }) { const [file, setFile] = useState<File | null>(null); return <div className="space-y-5"><div className="rounded-2xl border border-violet-200 bg-violet-50 p-4"><h3 className="font-black">{document.title}</h3><p className="mt-1 text-xs font-semibold text-slate-500">PDF, JPG, PNG, WEBP ou DOCX · 20 Mo maximum</p></div><input ref={inputRef} type="file" accept=".pdf,.jpg,.jpeg,.png,.webp,.doc,.docx" onChange={(event: React.ChangeEvent<HTMLInputElement>) => setFile(event.target.files?.[0] ?? null)} className="block w-full rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm font-semibold" />{file && <div className="rounded-2xl border border-slate-200 p-4 text-sm"><p className="font-black">{file.name}</p><p className="text-slate-500">{Math.round(file.size / 1024)} Ko · {file.type}</p></div>}<div className="flex justify-end"><button disabled={!file} onClick={() => file && onSubmit(file)} className="inline-flex items-center gap-2 rounded-2xl bg-slate-950 px-5 py-3 text-sm font-black text-white disabled:opacity-40"><Upload className="h-4 w-4" /> Téléverser</button></div></div>; }
+
+function modalTitle(modal: ModalKind, task: OnboardingTask | null, document: OnboardingDocument | null): string {
+  const labels: Record<Exclude<ModalKind, null>, string> = {
+    createJourney: "Créer un parcours onboarding",
+    editJourney: "Modifier le parcours",
+    task: task ? "Modifier la tâche" : "Créer une tâche",
+    document: document ? "Modifier le document" : "Créer une demande documentaire",
+    note: "Ajouter à la timeline",
+    reassign: "Réaffecter le parcours",
+    archive: "Archiver le parcours",
+    cancel: "Annuler le parcours",
+    override: "Override de progression",
+    upload: "Téléverser un document",
+    taskArchive: "Archiver la tâche",
+    documentArchive: "Archiver le document",
+  };
+  return modal ? labels[modal] : "Onboarding";
 }

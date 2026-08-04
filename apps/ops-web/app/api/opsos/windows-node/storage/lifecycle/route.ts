@@ -4,7 +4,6 @@ import { actorId } from "@/app/api/opsos/windows-node/storage/quarantine/_shared
 import { createLifecycleRun, executeLifecycleRun, listLifecycleRegistry } from "@/lib/opsos/storage-lifecycle"
 import type { WindowsStorageLifecycleAction } from "@/lib/opsos/windows-node-types"
 
-export const dynamic = "force-dynamic"
 export async function GET(request: Request) {
   const auth = await requireWindowsNodeAdmin(request)
   if (!auth.ok) return auth.response

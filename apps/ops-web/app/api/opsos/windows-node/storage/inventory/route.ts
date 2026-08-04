@@ -10,7 +10,6 @@ import {
 } from "@/lib/opsos/windows-node"
 import type { WindowsStorageInventory } from "@/lib/opsos/windows-node-types"
 
-export const dynamic = "force-dynamic"
 
 function modeFromUrl(url: URL) {
   return url.searchParams.get("mode") === "deep" ? "deep" : "summary"

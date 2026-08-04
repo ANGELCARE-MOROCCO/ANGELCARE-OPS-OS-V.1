@@ -5,7 +5,6 @@ import { buildWindowsNodeApiErrorFromBridgeResult, callWindowsBridgeAdmin } from
 import { createRestoreJob, loadQuarantineCase, recordQuarantineEvent, updateQuarantineCase, updateQuarantineItemStatus, updateRestoreJob, updateStorageRecordForQuarantine } from "@/lib/opsos/storage-quarantine"
 import type { WindowsStorageQuarantineJobResult } from "@/lib/opsos/windows-node-types"
 
-export const dynamic = "force-dynamic"
 function clean(value: unknown) { return String(value ?? "").trim() }
 
 export async function POST(request: Request, { params }: { params: Promise<{ caseId: string }> }) {

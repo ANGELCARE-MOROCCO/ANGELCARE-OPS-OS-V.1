@@ -15,6 +15,7 @@ import type {
   HomepageItem,
   HomepageLocale,
   HomepagePartnerPlan,
+  HomepageSectionDefinition,
   HomepageTerritory,
   HomepageTrustSignal,
 } from './types'
@@ -119,13 +120,15 @@ export async function getHomepageExperience(input: { locale: HomepageLocale; ter
   const { data: campaignRows, error: campaignError } = await campaignQuery.order('priority').limit(8)
   if (campaignError) throw homepageFailure('charger les campagnes', campaignError)
 
-  const [{ data: categoryRows }, { data: itemRows }, { data: mediaRows }, { data: linkRows }, { data: collectionRows }, { data: collectionItemRows }] = await Promise.all([
+  const [{ data: categoryRows }, { data: itemRows }, { data: mediaRows }, { data: linkRows }, { data: collectionRows }, { data: collectionItemRows }, { data: sectionRows }, { data: placementRows }] = await Promise.all([
     supabase.from('angelcare_marketplace_catalog_categories').select('*').eq('locale', locale).eq('status', 'published').order('sort_order'),
     supabase.from('angelcare_marketplace_catalog_items').select('*').eq('status', 'published').order('featured', { ascending: false }).order('updated_at', { ascending: false }).limit(120),
     supabase.from('angelcare_marketplace_catalog_item_media').select('*').eq('status', 'active').order('sort_order'),
     supabase.from('angelcare_marketplace_catalog_item_categories').select('*'),
     supabase.from('angelcare_marketplace_homepage_collections').select('*').eq('locale', locale).eq('status', 'active').order('sort_order'),
     supabase.from('angelcare_marketplace_homepage_collection_items').select('*').eq('status', 'active').order('sort_order'),
+    supabase.from('angelcare_marketplace_homepage_sections').select('*').eq('locale', locale).eq('status', 'active').eq('visible', true).lte('starts_at', now).or(`ends_at.is.null,ends_at.gte.${now}`).order('sort_order'),
+    supabase.from('angelcare_marketplace_homepage_placements').select('*').eq('locale', locale).eq('status', 'active').lte('starts_at', now).or(`ends_at.is.null,ends_at.gte.${now}`).order('priority').order('sort_order'),
   ])
 
   const itemRowsSafe = rows(itemRows)
@@ -158,6 +161,30 @@ export async function getHomepageExperience(input: { locale: HomepageLocale; ter
     items: collectionLinks.filter((link) => text(link.collection_id) === text(row.id)).map((link) => itemById.get(text(link.catalog_item_id))).filter((item): item is HomepageItem => Boolean(item)),
   }))
 
+  const placementRowsSafe = rows(placementRows)
+  const placementItems = (badge: string): HomepageItem[] => placementRowsSafe
+    .filter((placement) => text(placement.merchandising_badge) === badge)
+    .map((placement) => itemById.get(text(placement.catalog_item_id)))
+    .filter((item): item is HomepageItem => Boolean(item))
+  const sectionPlacements = new Map<string, HomepageItem[]>()
+  for (const placement of placementRowsSafe) {
+    const sectionId = text(placement.section_id)
+    const item = itemById.get(text(placement.catalog_item_id))
+    if (!sectionId || !item) continue
+    sectionPlacements.set(sectionId, [...(sectionPlacements.get(sectionId) || []), item])
+  }
+  const collectionById = new Map(collections.map((collection) => [collection.id, collection]))
+  const composition: HomepageSectionDefinition[] = rows(sectionRows).map((row) => {
+    const settings = recordValue(row.settings)
+    const collection = collectionById.get(text(settings.collection_id))
+    return {
+      id: text(row.id), section_key: text(row.section_key), section_type: text(row.section_type), title: text(row.title),
+      subtitle: nullableText(row.subtitle), sort_order: numberValue(row.sort_order), layout_variant: text(row.layout_variant),
+      visible: row.visible !== false, accent: text(row.accent) || 'navy', background_variant: text(row.background_variant) || 'white',
+      settings, items: sectionPlacements.get(text(row.id)) || collection?.items || [],
+    }
+  })
+
   const [{ data: cohortsRaw }, { data: coursesRaw }, { data: plansRaw }, { data: planModulesRaw }, { data: badgeDefinitionsRaw }] = await Promise.all([
     supabase.from('angelcare_marketplace_academy_cohorts').select('id,name,status,capacity,enrolled_count,starts_at,course_id').in('status', ['enrollment_open', 'scheduled', 'active']).order('starts_at').limit(8),
     supabase.from('angelcare_marketplace_academy_courses').select('id,title_fr,slug,delivery_mode,status').eq('status', 'published'),
@@ -182,7 +209,8 @@ export async function getHomepageExperience(input: { locale: HomepageLocale; ter
   const published = items.filter((item) => !territoryId || !item.territory_id || item.territory_id === territoryId)
 
   return {
-    locale, territory, navigation, campaigns: rows(campaignRows).map(mapCampaign), categories, collections,
+    locale, territory, navigation, campaigns: rows(campaignRows).map(mapCampaign), categories, collections, composition,
+    popularItems: placementItems('popular'), bestPickItems: placementItems('best-pick'), newArrivalItems: placementItems('new-arrival'),
     featuredItems: published.filter((item) => item.featured).slice(0, 14),
     availableItems: published.filter((item) => item.availability_status === 'available').slice(0, 12),
     familyItems: published.filter((item) => item.metadata.audience === 'family' || item.category_key === 'family-services').slice(0, 10),

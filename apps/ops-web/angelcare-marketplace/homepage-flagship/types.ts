@@ -110,6 +110,22 @@ export interface HomepageTerritory {
   cities: Array<{ id: string; city_name: string; zone_name: string | null; coverage_status: string }>
 }
 
+
+export interface HomepageSectionDefinition {
+  id: string
+  section_key: string
+  section_type: string
+  title: string
+  subtitle: string | null
+  sort_order: number
+  layout_variant: string
+  visible: boolean
+  accent: string
+  background_variant: string
+  settings: Record<string, unknown>
+  items: HomepageItem[]
+}
+
 export interface HomepageExperience {
   locale: HomepageLocale
   territory: HomepageTerritory | null
@@ -117,6 +133,10 @@ export interface HomepageExperience {
   campaigns: HomepageCampaign[]
   categories: HomepageCategory[]
   collections: HomepageCollection[]
+  composition: HomepageSectionDefinition[]
+  popularItems: HomepageItem[]
+  bestPickItems: HomepageItem[]
+  newArrivalItems: HomepageItem[]
   featuredItems: HomepageItem[]
   availableItems: HomepageItem[]
   familyItems: HomepageItem[]

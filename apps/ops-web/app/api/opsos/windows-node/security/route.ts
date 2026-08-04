@@ -3,7 +3,6 @@ import { auditWindowsNodeEvent, getWindowsNodeRequestIp, requireWindowsNodeAdmin
 import { buildWindowsNodeApiErrorFromBridgeResult, callWindowsBridgeAdmin } from "@/lib/opsos/windows-node"
 import type { WindowsNodeStatus } from "@/lib/opsos/windows-node-types"
 
-export const dynamic = "force-dynamic"
 
 const TOKEN_ROTATION_CHECKLIST = [
   "Generate new token securely",
@@ -55,4 +54,3 @@ export async function GET(request: Request) {
     },
   }, { headers: { "cache-control": "no-store" } })
 }
-

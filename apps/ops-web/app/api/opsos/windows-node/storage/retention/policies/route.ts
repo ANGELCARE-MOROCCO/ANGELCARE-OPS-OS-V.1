@@ -3,7 +3,6 @@ import { requireWindowsNodeAdmin } from "@/app/api/opsos/windows-node/_shared"
 import { actorId } from "@/app/api/opsos/windows-node/storage/quarantine/_shared"
 import { getDestructionPolicy, listRetentionPolicies, saveDestructionPolicy, saveRetentionPolicy } from "@/lib/opsos/storage-destruction"
 
-export const dynamic = "force-dynamic"
 export async function GET(request: Request) {
   const auth = await requireWindowsNodeAdmin(request)
   if (!auth.ok) return auth.response

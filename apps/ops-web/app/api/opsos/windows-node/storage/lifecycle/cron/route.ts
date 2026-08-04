@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server"
 import { createLifecycleRun, executeLifecycleRun, getLifecyclePolicy, listLifecycleRuns } from "@/lib/opsos/storage-lifecycle"
-export const dynamic = "force-dynamic"
 function clean(value: unknown) { return String(value ?? "").trim() }
 export async function POST(request: Request) {
   const secret = clean(process.env.OPSOS_STORAGE_LIFECYCLE_SECRET || process.env.CRON_SECRET)

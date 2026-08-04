@@ -3,7 +3,6 @@ import { auditWindowsNodeEvent, getWindowsNodeRequestIp, requireWindowsNodeAdmin
 import { buildWindowsNodeApiErrorResponse, callWindowsBridgeAdmin } from "@/lib/opsos/windows-node"
 import type { WindowsNodeActionResult } from "@/lib/opsos/windows-node-types"
 
-export const dynamic = "force-dynamic"
 
 const ALLOWED_SERVICES = new Set(["angelcare-email-bridge", "angelcare-caddy"])
 const ALLOWED_ACTIONS = new Set(["start", "stop", "restart"])
@@ -84,4 +83,3 @@ export async function POST(request: Request) {
 
   return NextResponse.json({ ok: true, data: result.data }, { headers: { "cache-control": "no-store" } })
 }
-

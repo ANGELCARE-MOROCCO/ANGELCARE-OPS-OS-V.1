@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
 import {
   AtSign,
@@ -9,14 +9,18 @@ import {
   Building2,
   CalendarClock,
   CalendarDays,
+  CheckCircle2,
+  Circle,
   Copy,
   FileText,
   GraduationCap,
   HeartHandshake,
+  LoaderCircle,
   Mail,
   MapPin,
   MessageSquare,
   Phone,
+  RefreshCw,
   Search,
   Send,
   ShieldCheck,
@@ -25,6 +29,7 @@ import {
   UserPlus,
   Users,
   WalletCards,
+  XCircle,
 } from 'lucide-react'
 
 type EmployeeRecord = Record<string, any>
@@ -277,6 +282,57 @@ type Props = {
   onSelectEmployee: (employee: EmployeeRecord | null) => void
 }
 
+type EmailSendStage =
+  | 'preparing'
+  | 'validating_employee'
+  | 'resolving_rh_mailbox'
+  | 'recording_outbox'
+  | 'sending_to_bridge'
+  | 'provider_accepted'
+  | 'sent'
+  | 'failed'
+
+type EmailSendProgress = {
+  operationId: string
+  stage: EmailSendStage
+  status: 'running' | 'sent' | 'failed'
+  progress: number
+  employeeEmail: string
+  employeeName: string
+  fromEmail: string
+  fromName: string
+  outboxId: string
+  providerMessageId: string
+  error: string
+}
+
+const EMAIL_SEND_STEPS: Array<{ stage: Exclude<EmailSendStage, 'failed'>; label: string }> = [
+  { stage: 'preparing', label: 'Préparation sécurisée du message' },
+  { stage: 'validating_employee', label: 'Vérification du dossier collaborateur' },
+  { stage: 'resolving_rh_mailbox', label: 'Connexion à la boîte RH Email OS' },
+  { stage: 'recording_outbox', label: 'Création de l’envoi dans l’outbox' },
+  { stage: 'sending_to_bridge', label: 'Transmission au pont de messagerie AngelCare' },
+  { stage: 'provider_accepted', label: 'Confirmation du serveur Menara' },
+  { stage: 'sent', label: 'Email envoyé avec succès' },
+]
+
+function initialEmailSendProgress(): EmailSendProgress {
+  return {
+    operationId: '',
+    stage: 'preparing',
+    status: 'running',
+    progress: 0,
+    employeeEmail: '',
+    employeeName: '',
+    fromEmail: '',
+    fromName: '',
+    outboxId: '',
+    providerMessageId: '',
+    error: '',
+  }
+}
+
+
 export default function HREmployeeCommunicationHub({
   employees,
   selectedEmployee,
@@ -287,6 +343,10 @@ export default function HREmployeeCommunicationHub({
   const [activeTemplateIndex, setActiveTemplateIndex] = useState(0)
   const [subject, setSubject] = useState('')
   const [body, setBody] = useState('')
+  const [emailSendOpen, setEmailSendOpen] = useState(false)
+  const [emailSendProgress, setEmailSendProgress] = useState<EmailSendProgress>(() => initialEmailSendProgress())
+  const emailPollRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const emailSendRequestRef = useRef<AbortController | null>(null)
 
   const employeeOptions = useMemo(() => {
     const q = employeeQuery.trim().toLowerCase()
@@ -355,9 +415,8 @@ export default function HREmployeeCommunicationHub({
   const whatsappHref = employeePhone
     ? `https://wa.me/${employeePhone.replace(/^\+/, '')}?text=${encodeURIComponent(body)}`
     : ''
-  const emailHref = employeeEmail
-    ? `mailto:${employeeEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
-    : ''
+  const emailAvailable = Boolean(employeeEmail)
+  const emailSending = emailSendProgress.status === 'running' && Boolean(emailSendProgress.operationId)
   const phoneHref = employeePhone ? `tel:${employeePhone}` : ''
   const profileHref = employeeId ? `/hr/employees/${employeeId}` : '/hr/employees'
 
@@ -373,7 +432,128 @@ export default function HREmployeeCommunicationHub({
     }
   }
 
+  function stopEmailPolling() {
+    if (emailPollRef.current) {
+      clearInterval(emailPollRef.current)
+      emailPollRef.current = null
+    }
+  }
+
+  function applyEmailStatus(payload: any) {
+    const data = payload?.data || payload || {}
+    const stage = String(data.stage || 'preparing') as EmailSendStage
+    const status = String(data.status || (stage === 'sent' ? 'sent' : stage === 'failed' ? 'failed' : 'running')) as EmailSendProgress['status']
+
+    setEmailSendProgress((current) => ({
+      ...current,
+      stage,
+      status,
+      progress: Math.max(current.progress, Math.min(100, Number(data.progress || 0))),
+      employeeEmail: String(data.employee_email || data.employeeEmail || current.employeeEmail || employeeEmail),
+      employeeName: String(data.employeeName || data.diagnostics?.employeeName || current.employeeName || employeeName),
+      fromEmail: String(data.from_email || data.fromEmail || current.fromEmail),
+      fromName: String(data.fromName || data.diagnostics?.fromName || current.fromName),
+      outboxId: String(data.outbox_id || data.outboxId || current.outboxId),
+      providerMessageId: String(data.provider_message_id || data.providerMessageId || current.providerMessageId),
+      error: String(data.error_message || data.error || current.error),
+    }))
+
+    if (status === 'sent' || status === 'failed') stopEmailPolling()
+  }
+
+  async function pollEmailStatus(operationId: string) {
+    try {
+      const response = await fetch(
+        `/api/hr/employees/communications/send-email/status?operationId=${encodeURIComponent(operationId)}`,
+        { cache: 'no-store' },
+      )
+      const payload = await response.json().catch(() => ({}))
+      if (response.ok || response.status === 202) applyEmailStatus(payload)
+    } catch {
+      // The primary POST request remains authoritative. Polling retries automatically.
+    }
+  }
+
+  async function handleEmailSend() {
+    if (!emailAvailable || emailSending) return
+
+    const operationId = crypto.randomUUID()
+    stopEmailPolling()
+    emailSendRequestRef.current?.abort()
+    emailSendRequestRef.current = new AbortController()
+
+    setEmailSendProgress({
+      ...initialEmailSendProgress(),
+      operationId,
+      stage: 'preparing',
+      status: 'running',
+      progress: 5,
+      employeeEmail,
+      employeeName,
+    })
+    setEmailSendOpen(true)
+
+    emailPollRef.current = setInterval(() => {
+      void pollEmailStatus(operationId)
+    }, 700)
+
+    void pollEmailStatus(operationId)
+
+    try {
+      const response = await fetch('/api/hr/employees/communications/send-email', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        cache: 'no-store',
+        signal: emailSendRequestRef.current.signal,
+        body: JSON.stringify({
+          operationId,
+          employeeId,
+          employeeEmail,
+          subject,
+          message: body,
+          categoryKey: activeCategory.key,
+          templateId: currentTemplate?.id || null,
+          templateTitle: currentTemplate?.title || null,
+        }),
+      })
+      const payload = await response.json().catch(() => ({}))
+
+      if (!response.ok || !payload?.ok) {
+        stopEmailPolling()
+        setEmailSendProgress((current) => ({
+          ...current,
+          stage: 'failed',
+          status: 'failed',
+          progress: 100,
+          error: String(payload?.error || 'Email OS n’a pas confirmé l’envoi.'),
+        }))
+        return
+      }
+
+      applyEmailStatus(payload)
+    } catch (error) {
+      if (error instanceof DOMException && error.name === 'AbortError') return
+      stopEmailPolling()
+      setEmailSendProgress((current) => ({
+        ...current,
+        stage: 'failed',
+        status: 'failed',
+        progress: 100,
+        error: error instanceof Error ? error.message : 'La demande d’envoi a échoué.',
+      }))
+    }
+  }
+
+  useEffect(() => {
+    return () => {
+      stopEmailPolling()
+      emailSendRequestRef.current?.abort()
+    }
+  }, [])
+
+
   return (
+    <>
     <section className="mt-6 rounded-[34px] border border-white/80 bg-white/95 p-6 shadow-2xl shadow-slate-200/70">
       <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
         <div className="max-w-4xl">
@@ -542,24 +722,19 @@ export default function HREmployeeCommunicationHub({
                     </button>
                   )}
 
-                  {emailHref ? (
-                    <a
-                      href={emailHref}
-                      className="rounded-2xl bg-slate-950 px-4 py-2 text-sm font-black text-white shadow-sm transition hover:bg-slate-800"
-                    >
-                      <Mail className="mr-2 inline h-4 w-4" />
-                      Email
-                    </a>
-                  ) : (
-                    <button
-                      type="button"
-                      disabled
-                      className="cursor-not-allowed rounded-2xl bg-slate-200 px-4 py-2 text-sm font-black text-slate-400"
-                    >
-                      <Mail className="mr-2 inline h-4 w-4" />
-                      Email
-                    </button>
-                  )}
+                  <button
+                    type="button"
+                    onClick={handleEmailSend}
+                    disabled={!emailAvailable || emailSending}
+                    className={
+                      emailAvailable && !emailSending
+                        ? 'rounded-2xl bg-slate-950 px-4 py-2 text-sm font-black text-white shadow-sm transition hover:bg-slate-800'
+                        : 'cursor-not-allowed rounded-2xl bg-slate-200 px-4 py-2 text-sm font-black text-slate-400'
+                    }
+                  >
+                    {emailSending ? <LoaderCircle className="mr-2 inline h-4 w-4 animate-spin" /> : <Mail className="mr-2 inline h-4 w-4" />}
+                    {emailSending ? 'Envoi…' : 'Email'}
+                  </button>
 
                   {phoneHref ? (
                     <a
@@ -720,22 +895,18 @@ export default function HREmployeeCommunicationHub({
                     Ouvrir fiche 360
                   </Link>
 
-                  {emailHref ? (
-                    <a
-                      href={emailHref}
-                      className="rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-center text-sm font-black text-slate-700 transition hover:border-violet-200 hover:bg-violet-50"
-                    >
-                      Envoyer email
-                    </a>
-                  ) : (
-                    <button
-                      type="button"
-                      disabled
-                      className="cursor-not-allowed rounded-2xl bg-slate-200 px-4 py-2.5 text-center text-sm font-black text-slate-400"
-                    >
-                      Envoyer email
-                    </button>
-                  )}
+                  <button
+                    type="button"
+                    onClick={handleEmailSend}
+                    disabled={!emailAvailable || emailSending}
+                    className={
+                      emailAvailable && !emailSending
+                        ? 'rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-center text-sm font-black text-slate-700 transition hover:border-violet-200 hover:bg-violet-50'
+                        : 'cursor-not-allowed rounded-2xl bg-slate-200 px-4 py-2.5 text-center text-sm font-black text-slate-400'
+                    }
+                  >
+                    {emailSending ? 'Envoi…' : 'Envoyer email'}
+                  </button>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2">
@@ -792,5 +963,153 @@ export default function HREmployeeCommunicationHub({
         </div>
       )}
     </section>
+
+    {emailSendOpen ? (
+      <div
+        className="fixed inset-0 z-[120] flex items-center justify-center bg-slate-950/55 p-4 backdrop-blur-sm"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="hr-email-send-title"
+      >
+        <div className="w-full max-w-2xl overflow-hidden rounded-[32px] border border-white/80 bg-white shadow-2xl shadow-slate-950/30">
+          <div className="border-b border-slate-200 bg-gradient-to-r from-slate-950 via-slate-900 to-violet-950 px-6 py-5 text-white">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-[11px] font-black uppercase tracking-[0.24em] text-cyan-200">Email OS · Boîte RH</p>
+                <h3 id="hr-email-send-title" className="mt-2 text-2xl font-black">Envoi de la communication RH</h3>
+                <p className="mt-2 text-sm font-semibold text-slate-300">
+                  {employeeName} · {employeeEmail}
+                </p>
+              </div>
+              {emailSendProgress.status !== 'running' ? (
+                <button
+                  type="button"
+                  onClick={() => setEmailSendOpen(false)}
+                  className="rounded-full border border-white/20 bg-white/10 p-2 text-white transition hover:bg-white/20"
+                  aria-label="Fermer"
+                >
+                  <XCircle className="h-5 w-5" />
+                </button>
+              ) : null}
+            </div>
+          </div>
+
+          <div className="p-6">
+            <div className="overflow-hidden rounded-full bg-slate-100">
+              <div
+                className={
+                  emailSendProgress.status === 'failed'
+                    ? 'h-3 rounded-full bg-rose-500 transition-all duration-500'
+                    : emailSendProgress.status === 'sent'
+                      ? 'h-3 rounded-full bg-emerald-500 transition-all duration-500'
+                      : 'h-3 rounded-full bg-violet-600 transition-all duration-500'
+                }
+                style={{ width: `${Math.max(4, emailSendProgress.progress)}%` }}
+              />
+            </div>
+            <div className="mt-2 flex items-center justify-between text-xs font-black text-slate-500">
+              <span>Progression réelle Email OS</span>
+              <span>{Math.round(emailSendProgress.progress)}%</span>
+            </div>
+
+            <div className="mt-6 space-y-3">
+              {EMAIL_SEND_STEPS.map((step, index) => {
+                const currentIndex = EMAIL_SEND_STEPS.findIndex((item) => item.stage === emailSendProgress.stage)
+                const completed = emailSendProgress.status === 'sent' || (currentIndex >= 0 && index < currentIndex)
+                const active = emailSendProgress.status === 'running' && step.stage === emailSendProgress.stage
+                const failed = emailSendProgress.status === 'failed' && index === Math.max(0, currentIndex)
+
+                return (
+                  <div
+                    key={step.stage}
+                    className={
+                      completed
+                        ? 'flex items-center gap-3 rounded-2xl border border-emerald-100 bg-emerald-50 px-4 py-3'
+                        : active
+                          ? 'flex items-center gap-3 rounded-2xl border border-violet-200 bg-violet-50 px-4 py-3'
+                          : failed
+                            ? 'flex items-center gap-3 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3'
+                            : 'flex items-center gap-3 rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3'
+                    }
+                  >
+                    {completed ? (
+                      <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-600" />
+                    ) : active ? (
+                      <LoaderCircle className="h-5 w-5 shrink-0 animate-spin text-violet-600" />
+                    ) : failed ? (
+                      <XCircle className="h-5 w-5 shrink-0 text-rose-600" />
+                    ) : (
+                      <Circle className="h-5 w-5 shrink-0 text-slate-300" />
+                    )}
+                    <span className={completed ? 'text-sm font-black text-emerald-900' : active ? 'text-sm font-black text-violet-950' : failed ? 'text-sm font-black text-rose-900' : 'text-sm font-bold text-slate-500'}>
+                      {step.label}
+                    </span>
+                  </div>
+                )
+              })}
+            </div>
+
+            {emailSendProgress.status === 'sent' ? (
+              <div className="mt-6 rounded-[24px] border border-emerald-200 bg-emerald-50 p-5">
+                <div className="flex items-start gap-3">
+                  <CheckCircle2 className="mt-0.5 h-6 w-6 shrink-0 text-emerald-600" />
+                  <div>
+                    <p className="text-lg font-black text-emerald-950">Email envoyé avec succès</p>
+                    <div className="mt-3 space-y-1 text-sm font-bold text-emerald-800">
+                      <p>Destinataire : {emailSendProgress.employeeEmail || employeeEmail}</p>
+                      <p>Expéditeur : {emailSendProgress.fromName || 'ANGELCARE Ressources Humaines'}{emailSendProgress.fromEmail ? ` · ${emailSendProgress.fromEmail}` : ''}</p>
+                      {emailSendProgress.providerMessageId ? <p>Confirmation fournisseur : {emailSendProgress.providerMessageId}</p> : null}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : null}
+
+            {emailSendProgress.status === 'failed' ? (
+              <div className="mt-6 rounded-[24px] border border-rose-200 bg-rose-50 p-5">
+                <div className="flex items-start gap-3">
+                  <XCircle className="mt-0.5 h-6 w-6 shrink-0 text-rose-600" />
+                  <div>
+                    <p className="text-lg font-black text-rose-950">Échec de l’envoi</p>
+                    <p className="mt-2 text-sm font-bold leading-6 text-rose-800">
+                      {emailSendProgress.error || 'Le serveur de messagerie n’a pas confirmé l’envoi.'}
+                    </p>
+                    <p className="mt-2 text-xs font-bold text-rose-700">Aucun faux statut « envoyé » n’a été affiché.</p>
+                  </div>
+                </div>
+              </div>
+            ) : null}
+
+            <div className="mt-6 flex flex-wrap justify-end gap-3">
+              {emailSendProgress.status === 'failed' ? (
+                <button
+                  type="button"
+                  onClick={handleEmailSend}
+                  className="rounded-2xl bg-rose-600 px-5 py-3 text-sm font-black text-white transition hover:bg-rose-700"
+                >
+                  <RefreshCw className="mr-2 inline h-4 w-4" />
+                  Réessayer
+                </button>
+              ) : null}
+              {emailSendProgress.status !== 'running' ? (
+                <button
+                  type="button"
+                  onClick={() => setEmailSendOpen(false)}
+                  className="rounded-2xl bg-slate-950 px-5 py-3 text-sm font-black text-white transition hover:bg-slate-800"
+                >
+                  Fermer
+                </button>
+              ) : (
+                <div className="rounded-2xl border border-violet-200 bg-violet-50 px-5 py-3 text-sm font-black text-violet-800">
+                  <LoaderCircle className="mr-2 inline h-4 w-4 animate-spin" />
+                  Envoi sécurisé en cours…
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    ) : null}
+    </>
   )
 }

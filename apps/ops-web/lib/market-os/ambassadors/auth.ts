@@ -57,7 +57,7 @@ function decodeCookieValue(value: string): string {
 function tokenFromStructuredCookie(value: string): string | null {
   const decoded = decodeCookieValue(value)
   try {
-    const parsed = JSON.parse(decoded) as unknown
+    const parsed: unknown = JSON.parse(decoded)
     if (Array.isArray(parsed) && typeof parsed[0] === "string") return parsed[0]
     if (parsed && typeof parsed === "object") {
       const token = (parsed as Record<string, unknown>).access_token
@@ -177,8 +177,23 @@ async function resolveMemberships(
   return selectedScope(request, (data || []) as ActorRoleRow[])
 }
 
-async function resolvePermissions(roleKey: string): Promise<ReadonlySet<string>> {
-  if (roleKey === "ambassador_admin") return new Set<string>()
+async function resolvePermissions(roleKey: string, appUserId: string | null, tenantId: string, organizationId: string): Promise<ReadonlySet<string>> {
+  if (roleKey === "ambassador_admin" || roleKey === "AMBASSADOR_MODULE_ADMINISTRATOR") return new Set<string>()
+
+  if (roleKey === "AMBASSADOR_MODULE_CUSTOM" && appUserId) {
+    const { data, error } = await getAmbassadorSupabaseAdmin()
+      .from("market_os_ambassador_module_memberships")
+      .select("grant_permissions")
+      .eq("app_user_id", appUserId)
+      .eq("tenant_id", tenantId)
+      .eq("organization_id", organizationId)
+      .eq("module_key", "market_os_ambassadors")
+      .eq("active", true)
+      .maybeSingle()
+    if (error) throw new AmbassadorServiceError("PERSISTENCE_ERROR", `Unable to resolve Ambassador custom permissions: ${error.message}`, 503)
+    const values = data?.grant_permissions
+    return new Set<string>(Array.isArray(values) ? values.filter((value): value is string => typeof value === "string" && value.length > 0) : [])
+  }
 
   const { data, error } = await getAmbassadorSupabaseAdmin()
     .from("market_os_ambassador_role_permissions")
@@ -230,7 +245,7 @@ async function resolveSupabaseActor(request: Request, token: string): Promise<Am
   }
 
   const membership = await resolveMemberships(request, "auth_user_id", user.id)
-  const permissions = await resolvePermissions(membership.role_key)
+  const permissions = await resolvePermissions(membership.role_key, null, membership.tenant_id, membership.organization_id)
   return actorResult(request, membership, {
     authenticationSource: "supabase_auth",
     authUserId: user.id,
@@ -280,7 +295,7 @@ async function resolveOpsSessionActor(request: Request, sessionToken: string): P
   }
 
   const membership = await resolveMemberships(request, "app_user_id", appUserId)
-  const permissions = await resolvePermissions(membership.role_key)
+  const permissions = await resolvePermissions(membership.role_key, appUserId, membership.tenant_id, membership.organization_id)
   return actorResult(request, membership, {
     authenticationSource: "ops_session",
     authUserId: null,
@@ -316,7 +331,7 @@ export async function resolveAmbassadorActor(request: Request): Promise<Ambassad
 }
 
 export function actorCan(actor: AmbassadorActor, permission: AmbassadorPermission): boolean {
-  return actor.roleKey === "ambassador_admin" || actor.permissions.has("*") || actor.permissions.has(permission)
+  return actor.roleKey === "ambassador_admin" || actor.roleKey === "AMBASSADOR_MODULE_ADMINISTRATOR" || actor.permissions.has("*") || actor.permissions.has(permission)
 }
 
 export function requireAmbassadorPermission(actor: AmbassadorActor, permission: AmbassadorPermission): void {

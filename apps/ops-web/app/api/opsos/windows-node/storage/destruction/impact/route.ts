@@ -4,7 +4,6 @@ import { analyzeDestructionEligibility } from "@/lib/opsos/storage-destruction"
 import { buildWindowsNodeApiErrorFromBridgeResult, callWindowsBridgeAdmin } from "@/lib/opsos/windows-node"
 import type { WindowsStorageDestructionImpact } from "@/lib/opsos/windows-node-types"
 
-export const dynamic = "force-dynamic"
 function clean(value: unknown) { return String(value ?? "").trim() }
 
 export async function POST(request: Request) {

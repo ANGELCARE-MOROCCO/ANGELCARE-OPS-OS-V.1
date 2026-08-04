@@ -1,0 +1,30 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "incremental": false,
+    "skipLibCheck": true
+  },
+  "include": [
+    "next-env.d.ts",
+    "lib/hr-onboarding/**/*.ts",
+    "lib/hr-production/source-of-truth.ts",
+    "lib/hr-production/lifecycle.ts",
+    "app/api/hr/onboarding/**/*.ts",
+    "app/(protected)/hr/onboarding/**/*.ts",
+    "app/(protected)/hr/onboarding/**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    ".next",
+    ".next/**",
+    ".angelcare_backups",
+    ".angelcare_backups/**",
+    "**/*.before-*",
+    "**/*.backup.*",
+    "**/*.bak.*",
+    "**/*.orig.*",
+    "**/*.log",
+    "**/*.tsbuildinfo"
+  ]
+}

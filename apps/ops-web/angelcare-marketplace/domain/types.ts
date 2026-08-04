@@ -380,6 +380,20 @@ export type MarketplacePermission =
   | 'marketplace.security.assess'
   | 'marketplace.launch.approve'
   | 'marketplace.launch.monitoring'
+  | 'marketplace.commerce.view'
+  | 'marketplace.media.view'
+  | 'marketplace.media.manage'
+  | 'marketplace.homepage.view'
+  | 'marketplace.homepage.manage'
+  | 'marketplace.navigation.view'
+  | 'marketplace.navigation.manage'
+  | 'marketplace.categories.manage'
+  | 'marketplace.merchandising.view'
+  | 'marketplace.merchandising.manage'
+  | 'marketplace.publication.manage'
+  | 'marketplace.seo.manage'
+  | 'marketplace.commerce.export'
+  | 'marketplace.commerce.import'
 export interface MarketplaceActor {
   id: string
   email: string | null

@@ -2,7 +2,6 @@ import { NextResponse } from "next/server"
 import { getWindowsNodeRequestIp, requireWindowsNodeAdmin } from "@/app/api/opsos/windows-node/_shared"
 import { buildWindowsNodeApiErrorFromBridgeResult, callWindowsBridgeAdmin } from "@/lib/opsos/windows-node"
 import { listCleanupProfiles } from "@/lib/opsos/storage-destruction"
-export const dynamic = "force-dynamic"
 function clean(value: unknown) { return String(value ?? "").trim() }
 export async function POST(request: Request) {
   const auth = await requireWindowsNodeAdmin(request)

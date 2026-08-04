@@ -1,0 +1,1089 @@
+{
+  "programme": "ANGELCARE Marketplace SQL & Security Assurance",
+  "startedAt": "2026-08-04T03:31:13.691Z",
+  "completedAt": "2026-08-04T03:31:13.744Z",
+  "status": "PASS",
+  "summary": {
+    "migrations": 29,
+    "rollbackFiles": 13,
+    "createdMarketplaceTables": 319,
+    "rlsTables": 319,
+    "revokedTables": 320,
+    "serviceRoleTables": 321,
+    "protectedPages": 330,
+    "mutationApis": 116,
+    "criticalFailures": 0,
+    "warnings": 0
+  },
+  "checks": [
+    {
+      "id": "migration chronology present",
+      "passed": true,
+      "details": "29 ordered Marketplace migrations",
+      "severity": "critical"
+    },
+    {
+      "id": "rollback estate present",
+      "passed": true,
+      "details": "13 data-preserving rollback files",
+      "severity": "critical"
+    },
+    {
+      "id": "non-destructive migrations",
+      "passed": true,
+      "details": "0 destructive statements",
+      "severity": "critical"
+    },
+    {
+      "id": "RLS coverage",
+      "passed": true,
+      "details": "319 created Marketplace tables · 0 missing",
+      "severity": "critical"
+    },
+    {
+      "id": "anon/auth direct-access revocation",
+      "passed": true,
+      "details": "0 tables without explicit cumulative revocation",
+      "severity": "warning"
+    },
+    {
+      "id": "service-role data authority",
+      "passed": true,
+      "details": "0 tables without explicit cumulative grant",
+      "severity": "warning"
+    },
+    {
+      "id": "Final Authority permission persistence",
+      "passed": true,
+      "details": "0 missing permission keys",
+      "severity": "critical"
+    },
+    {
+      "id": "cumulative canonical authority tables",
+      "passed": true,
+      "details": "0 required authorities missing",
+      "severity": "critical"
+    },
+    {
+      "id": "Final Authority canonical module schema",
+      "passed": true,
+      "details": "",
+      "severity": "critical"
+    },
+    {
+      "id": "post-MZ20 module sequence compatibility",
+      "passed": true,
+      "details": "",
+      "severity": "critical"
+    },
+    {
+      "id": "release registry compatibility evolution",
+      "passed": true,
+      "details": "",
+      "severity": "critical"
+    },
+    {
+      "id": "evidence-backed launch gate schema",
+      "passed": true,
+      "details": "",
+      "severity": "critical"
+    },
+    {
+      "id": "protected page server authorization markers",
+      "passed": true,
+      "details": "330 pages · 50 inherit guarded layout · 0 unguarded",
+      "severity": "warning"
+    },
+    {
+      "id": "mutation API authorization/error boundary",
+      "passed": true,
+      "details": "116 mutation APIs · 116 delegated to guarded handlers · 0 unguarded",
+      "severity": "warning"
+    },
+    {
+      "id": "client service-role secret boundary",
+      "passed": true,
+      "details": "0 findings",
+      "severity": "critical"
+    }
+  ],
+  "findings": [
+    {
+      "category": "inherited-page-guard",
+      "file": "app/angelcare-marketplace/(protected)/admin/analytics/executive/page.tsx",
+      "layout": "app/angelcare-marketplace/(protected)/admin/layout.tsx"
+    },
+    {
+      "category": "inherited-page-guard",
+      "file": "app/angelcare-marketplace/(protected)/admin/catalog/categories/page.tsx",
+      "layout": "app/angelcare-marketplace/(protected)/admin/layout.tsx"
+    },
+    {
+      "category": "inherited-page-guard",
+      "file": "app/angelcare-marketplace/(protected)/admin/catalog/collections/page.tsx",
+      "layout": "app/angelcare-marketplace/(protected)/admin/layout.tsx"
+    },
+    {
+      "category": "inherited-page-guard",
+      "file": "app/angelcare-marketplace/(protected)/admin/catalog/items/page.tsx",
+      "layout": "app/angelcare-marketplace/(protected)/admin/layout.tsx"
+    },
+    {
+      "category": "inherited-page-guard",
+      "file": "app/angelcare-marketplace/(protected)/admin/catalog/localization/page.tsx",
+      "layout": "app/angelcare-marketplace/(protected)/admin/layout.tsx"
+    },
+    {
+      "category": "inherited-page-guard",
+      "file": "app/angelcare-marketplace/(protected)/admin/catalog/media/page.tsx",
+      "layout": "app/angelcare-marketplace/(protected)/admin/layout.tsx"
+    },
+    {
+      "category": "inherited-page-guard",
+      "file": "app/angelcare-marketplace/(protected)/admin/catalog/page.tsx",
+      "layout": "app/angelcare-marketplace/(protected)/admin/layout.tsx"
+    },
+    {
+      "category": "inherited-page-guard",
+      "file": "app/angelcare-marketplace/(protected)/admin/catalog/publication/page.tsx",
+      "layout": "app/angelcare-marketplace/(protected)/admin/layout.tsx"
+    },
+    {
+      "category": "inherited-page-guard",
+      "file": "app/angelcare-marketplace/(protected)/admin/catalog/search/page.tsx",
+      "layout": "app/angelcare-marketplace/(protected)/admin/layout.tsx"
+    },
+    {
+      "category": "inherited-page-guard",
+      "file": "app/angelcare-marketplace/(protected)/admin/catalog/trust/page.tsx",
+      "layout": "app/angelcare-marketplace/(protected)/admin/layout.tsx"
+    },
+    {
+      "category": "inherited-page-guard",
+      "file": "app/angelcare-marketplace/(protected)/admin/experience/homepage/analytics/page.tsx",
+      "layout": "app/angelcare-marketplace/(protected)/admin/layout.tsx"
+    },
+    {
+      "category": "inherited-page-guard",
+      "file": "app/angelcare-marketplace/(protected)/admin/experience/homepage/audiences/page.tsx",
+      "layout": "app/angelcare-marketplace/(protected)/admin/layout.tsx"
+    },
+    {
+      "category": "inherited-page-guard",
+      "file": "app/angelcare-marketplace/(protected)/admin/experience/homepage/campaigns/page.tsx",
+      "layout": "app/angelcare-marketplace/(protected)/admin/layout.tsx"
+    },
+    {
+      "category": "inherited-page-guard",
+      "file": "app/angelcare-marketplace/(protected)/admin/experience/homepage/collections/page.tsx",
+      "layout": "app/angelcare-marketplace/(protected)/admin/layout.tsx"
+    },
+    {
+      "category": "inherited-page-guard",
+      "file": "app/angelcare-marketplace/(protected)/admin/experience/homepage/hero/page.tsx",
+      "layout": "app/angelcare-marketplace/(protected)/admin/layout.tsx"
+    },
+    {
+      "category": "inherited-page-guard",
+      "file": "app/angelcare-marketplace/(protected)/admin/experience/homepage/media/page.tsx",
+      "layout": "app/angelcare-marketplace/(protected)/admin/layout.tsx"
+    },
+    {
+      "category": "inherited-page-guard",
+      "file": "app/angelcare-marketplace/(protected)/admin/experience/homepage/page.tsx",
+      "layout": "app/angelcare-marketplace/(protected)/admin/layout.tsx"
+    },
+    {
+      "category": "inherited-page-guard",
+      "file": "app/angelcare-marketplace/(protected)/admin/experience/homepage/placements/page.tsx",
+      "layout": "app/angelcare-marketplace/(protected)/admin/layout.tsx"
+    },
+    {
+      "category": "inherited-page-guard",
+      "file": "app/angelcare-marketplace/(protected)/admin/experience/homepage/preview/page.tsx",
+      "layout": "app/angelcare-marketplace/(protected)/admin/layout.tsx"
+    },
+    {
+      "category": "inherited-page-guard",
+      "file": "app/angelcare-marketplace/(protected)/admin/experience/homepage/sections/page.tsx",
+      "layout": "app/angelcare-marketplace/(protected)/admin/layout.tsx"
+    },
+    {
+      "category": "inherited-page-guard",
+      "file": "app/angelcare-marketplace/(protected)/admin/experience/homepage/territories/page.tsx",
+      "layout": "app/angelcare-marketplace/(protected)/admin/layout.tsx"
+    },
+    {
+      "category": "inherited-page-guard",
+      "file": "app/angelcare-marketplace/(protected)/admin/finance/commissions/page.tsx",
+      "layout": "app/angelcare-marketplace/(protected)/admin/layout.tsx"
+    },
+    {
+      "category": "inherited-page-guard",
+      "file": "app/angelcare-marketplace/(protected)/admin/finance/discounts/page.tsx",
+      "layout": "app/angelcare-marketplace/(protected)/admin/layout.tsx"
+    },
+    {
+      "category": "inherited-page-guard",
+      "file": "app/angelcare-marketplace/(protected)/admin/finance/exceptions/page.tsx",
+      "layout": "app/angelcare-marketplace/(protected)/admin/layout.tsx"
+    },
+    {
+      "category": "inherited-page-guard",
+      "file": "app/angelcare-marketplace/(protected)/admin/finance/reports/page.tsx",
+      "layout": "app/angelcare-marketplace/(protected)/admin/layout.tsx"
+    },
+    {
+      "category": "inherited-page-guard",
+      "file": "app/angelcare-marketplace/(protected)/admin/launch/blockers/page.tsx",
+      "layout": "app/angelcare-marketplace/(protected)/admin/layout.tsx"
+    },
+    {
+      "category": "inherited-page-guard",
+      "file": "app/angelcare-marketplace/(protected)/admin/launch/post-launch/page.tsx",
+      "layout": "app/angelcare-marketplace/(protected)/admin/layout.tsx"
+    },
+    {
+      "category": "inherited-page-guard",
+      "file": "app/angelcare-marketplace/(protected)/admin/localization/csv/page.tsx",
+      "layout": "app/angelcare-marketplace/(protected)/admin/layout.tsx"
+    },
+    {
+      "category": "inherited-page-guard",
+      "file": "app/angelcare-marketplace/(protected)/admin/localization/glossary/page.tsx",
+      "layout": "app/angelcare-marketplace/(protected)/admin/layout.tsx"
+    },
+    {
+      "category": "inherited-page-guard",
+      "file": "app/angelcare-marketplace/(protected)/admin/localization/imports/page.tsx",
+      "layout": "app/angelcare-marketplace/(protected)/admin/layout.tsx"
+    },
+    {
+      "category": "inherited-page-guard",
+      "file": "app/angelcare-marketplace/(protected)/admin/localization/inventory/page.tsx",
+      "layout": "app/angelcare-marketplace/(protected)/admin/layout.tsx"
+    },
+    {
+      "category": "inherited-page-guard",
+      "file": "app/angelcare-marketplace/(protected)/admin/localization/memory/page.tsx",
+      "layout": "app/angelcare-marketplace/(protected)/admin/layout.tsx"
+    },
+    {
+      "category": "inherited-page-guard",
+      "file": "app/angelcare-marketplace/(protected)/admin/localization/page.tsx",
+      "layout": "app/angelcare-marketplace/(protected)/admin/layout.tsx"
+    },
+    {
+      "category": "inherited-page-guard",
+      "file": "app/angelcare-marketplace/(protected)/admin/localization/readiness/page.tsx",
+      "layout": "app/angelcare-marketplace/(protected)/admin/layout.tsx"
+    },
+    {
+      "category": "inherited-page-guard",
+      "file": "app/angelcare-marketplace/(protected)/admin/localization/reviews/page.tsx",
+      "layout": "app/angelcare-marketplace/(protected)/admin/layout.tsx"
+    },
+    {
+      "category": "inherited-page-guard",
+      "file": "app/angelcare-marketplace/(protected)/admin/localization/rtl-lab/page.tsx",
+      "layout": "app/angelcare-marketplace/(protected)/admin/layout.tsx"
+    },
+    {
+      "category": "inherited-page-guard",
+      "file": "app/angelcare-marketplace/(protected)/admin/localization/scanner/page.tsx",
+      "layout": "app/angelcare-marketplace/(protected)/admin/layout.tsx"
+    },
+    {
+      "category": "inherited-page-guard",
+      "file": "app/angelcare-marketplace/(protected)/admin/localization/seo/page.tsx",
+      "layout": "app/angelcare-marketplace/(protected)/admin/layout.tsx"
+    },
+    {
+      "category": "inherited-page-guard",
+      "file": "app/angelcare-marketplace/(protected)/admin/localization/sources/page.tsx",
+      "layout": "app/angelcare-marketplace/(protected)/admin/layout.tsx"
+    },
+    {
+      "category": "inherited-page-guard",
+      "file": "app/angelcare-marketplace/(protected)/admin/localization/translations/page.tsx",
+      "layout": "app/angelcare-marketplace/(protected)/admin/layout.tsx"
+    },
+    {
+      "category": "inherited-page-guard",
+      "file": "app/angelcare-marketplace/(protected)/admin/quality-assurance/runs/page.tsx",
+      "layout": "app/angelcare-marketplace/(protected)/admin/layout.tsx"
+    },
+    {
+      "category": "inherited-page-guard",
+      "file": "app/angelcare-marketplace/(protected)/admin/security/permissions/page.tsx",
+      "layout": "app/angelcare-marketplace/(protected)/admin/layout.tsx"
+    },
+    {
+      "category": "inherited-page-guard",
+      "file": "app/angelcare-marketplace/(protected)/admin/security/reviews/page.tsx",
+      "layout": "app/angelcare-marketplace/(protected)/admin/layout.tsx"
+    },
+    {
+      "category": "inherited-page-guard",
+      "file": "app/angelcare-marketplace/(protected)/admin/security/roles/page.tsx",
+      "layout": "app/angelcare-marketplace/(protected)/admin/layout.tsx"
+    },
+    {
+      "category": "inherited-page-guard",
+      "file": "app/angelcare-marketplace/(protected)/admin/security/secrets/page.tsx",
+      "layout": "app/angelcare-marketplace/(protected)/admin/layout.tsx"
+    },
+    {
+      "category": "inherited-page-guard",
+      "file": "app/angelcare-marketplace/(protected)/admin/security/sessions/page.tsx",
+      "layout": "app/angelcare-marketplace/(protected)/admin/layout.tsx"
+    },
+    {
+      "category": "inherited-page-guard",
+      "file": "app/angelcare-marketplace/(protected)/admin/trust/audits/page.tsx",
+      "layout": "app/angelcare-marketplace/(protected)/admin/layout.tsx"
+    },
+    {
+      "category": "inherited-page-guard",
+      "file": "app/angelcare-marketplace/(protected)/admin/trust/command/page.tsx",
+      "layout": "app/angelcare-marketplace/(protected)/admin/layout.tsx"
+    },
+    {
+      "category": "inherited-page-guard",
+      "file": "app/angelcare-marketplace/(protected)/admin/trust/investigations/page.tsx",
+      "layout": "app/angelcare-marketplace/(protected)/admin/layout.tsx"
+    },
+    {
+      "category": "inherited-page-guard",
+      "file": "app/angelcare-marketplace/(protected)/admin/trust/reports/page.tsx",
+      "layout": "app/angelcare-marketplace/(protected)/admin/layout.tsx"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/academy/assessment-results/route.ts",
+      "handler": "angelcare-marketplace/academy-engine/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/academy/attendance/route.ts",
+      "handler": "angelcare-marketplace/academy-engine/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/academy/certificates/[certificateId]/decision/route.ts",
+      "handler": "angelcare-marketplace/academy-engine/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/academy/cohorts/route.ts",
+      "handler": "angelcare-marketplace/academy-engine/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/admin/family-requests/[requestId]/qualify/route.ts",
+      "handler": "angelcare-marketplace/family-experience/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/analytics/refresh/route.ts",
+      "handler": "angelcare-marketplace/analytics-security/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/b2b/corporates/quotas/[quotaId]/consume/route.ts",
+      "handler": "angelcare-marketplace/b2b-verticals/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/b2b/diagnostics/[diagnosticId]/convert/route.ts",
+      "handler": "angelcare-marketplace/b2b-verticals/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/b2b/diagnostics/[diagnosticId]/transition/route.ts",
+      "handler": "angelcare-marketplace/b2b-verticals/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/b2b/diagnostics/route.ts",
+      "handler": "angelcare-marketplace/b2b-verticals/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/b2b/organizations/route.ts",
+      "handler": "angelcare-marketplace/b2b-verticals/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/b2b/programs/[programId]/transition/route.ts",
+      "handler": "angelcare-marketplace/b2b-verticals/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/b2b/public/diagnostics/route.ts",
+      "handler": "angelcare-marketplace/b2b-verticals/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/backoffice/actions/[actionId]/route.ts",
+      "handler": "angelcare-marketplace/sovereign-control/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/backoffice/approvals/[approvalId]/decision/route.ts",
+      "handler": "angelcare-marketplace/sovereign-control/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/backoffice/approvals/route.ts",
+      "handler": "angelcare-marketplace/sovereign-control/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/backoffice/objects/[objectType]/[objectId]/comments/route.ts",
+      "handler": "angelcare-marketplace/sovereign-control/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/catalog/[itemId]/transition/route.ts",
+      "handler": "angelcare-marketplace/marketplace-core/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/catalog/route.ts",
+      "handler": "angelcare-marketplace/marketplace-core/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/cms/pages/[pageId]/blocks/route.ts",
+      "handler": "angelcare-marketplace/experience-builder/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/cms/pages/[pageId]/preview/route.ts",
+      "handler": "angelcare-marketplace/experience-builder/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/cms/pages/[pageId]/rollback/route.ts",
+      "handler": "angelcare-marketplace/experience-builder/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/cms/pages/[pageId]/route.ts",
+      "handler": "angelcare-marketplace/experience-builder/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/cms/pages/[pageId]/transition/route.ts",
+      "handler": "angelcare-marketplace/experience-builder/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/cms/pages/route.ts",
+      "handler": "angelcare-marketplace/experience-builder/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/conversion/admin/sessions/[sessionId]/recover/route.ts",
+      "handler": "angelcare-marketplace/conversion-universe/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/conversion/basket/[basketId]/checkout/route.ts",
+      "handler": "angelcare-marketplace/conversion-universe/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/conversion/basket/[basketId]/items/route.ts",
+      "handler": "angelcare-marketplace/conversion-universe/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/conversion/basket/route.ts",
+      "handler": "angelcare-marketplace/conversion-universe/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/conversion/sessions/[sessionKey]/availability/route.ts",
+      "handler": "angelcare-marketplace/conversion-universe/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/conversion/sessions/[sessionKey]/confirm/route.ts",
+      "handler": "angelcare-marketplace/conversion-universe/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/conversion/sessions/[sessionKey]/consent/route.ts",
+      "handler": "angelcare-marketplace/conversion-universe/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/conversion/sessions/[sessionKey]/price/route.ts",
+      "handler": "angelcare-marketplace/conversion-universe/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/conversion/sessions/[sessionKey]/route.ts",
+      "handler": "angelcare-marketplace/conversion-universe/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/conversion/sessions/route.ts",
+      "handler": "angelcare-marketplace/conversion-universe/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/crm/leads/route.ts",
+      "handler": "angelcare-marketplace/commercial-pipeline/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/crm/opportunities/[opportunityId]/transition/route.ts",
+      "handler": "angelcare-marketplace/commercial-pipeline/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/crm/opportunities/route.ts",
+      "handler": "angelcare-marketplace/commercial-pipeline/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/crm/quotes/route.ts",
+      "handler": "angelcare-marketplace/commercial-pipeline/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/development/activities/[activityId]/transition/route.ts",
+      "handler": "angelcare-marketplace/development-engine/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/development/activities/route.ts",
+      "handler": "angelcare-marketplace/development-engine/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/family/account/route.ts",
+      "handler": "angelcare-marketplace/family-experience/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/family/children/route.ts",
+      "handler": "angelcare-marketplace/family-experience/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/family/diagnostics/route.ts",
+      "handler": "angelcare-marketplace/family-experience/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/family/requests/route.ts",
+      "handler": "angelcare-marketplace/family-experience/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/family/support/[ticketId]/messages/route.ts",
+      "handler": "angelcare-marketplace/family-experience/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/family/support/route.ts",
+      "handler": "angelcare-marketplace/family-experience/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/finance/invoice-readiness/evaluate/route.ts",
+      "handler": "angelcare-marketplace/finance-authority/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/finance/margin-exceptions/[exceptionId]/decision/route.ts",
+      "handler": "angelcare-marketplace/finance-authority/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/finance/price-books/[priceBookId]/transition/route.ts",
+      "handler": "angelcare-marketplace/finance-authority/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/finance/price-books/route.ts",
+      "handler": "angelcare-marketplace/finance-authority/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/finance/price-rules/[priceRuleId]/evaluate/route.ts",
+      "handler": "angelcare-marketplace/finance-authority/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/foundation/configuration/[key]/route.ts",
+      "handler": "angelcare-marketplace/api/handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/foundation/feature-flags/[flagKey]/route.ts",
+      "handler": "angelcare-marketplace/api/handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/foundation/feature-flags/route.ts",
+      "handler": "angelcare-marketplace/api/handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/foundation/modules/[moduleKey]/route.ts",
+      "handler": "angelcare-marketplace/api/handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/foundation/modules/[moduleKey]/transition/route.ts",
+      "handler": "angelcare-marketplace/api/handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/foundation/modules/route.ts",
+      "handler": "angelcare-marketplace/api/handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/foundation/readiness/[checkKey]/route.ts",
+      "handler": "angelcare-marketplace/api/handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/foundation/readiness/sign-off/route.ts",
+      "handler": "angelcare-marketplace/api/handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/growth/experiments/[experimentId]/transition/route.ts",
+      "handler": "angelcare-marketplace/final-authority/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/homepage/[kind]/route.ts",
+      "handler": "angelcare-marketplace/homepage-flagship/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/homepage/engagement/route.ts",
+      "handler": "angelcare-marketplace/homepage-flagship/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/journeys/[journeyId]/actions/[actionId]/complete/route.ts",
+      "handler": "angelcare-marketplace/journey-control/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/journeys/[journeyId]/change-requests/route.ts",
+      "handler": "angelcare-marketplace/journey-control/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/journeys/[journeyId]/recovery/route.ts",
+      "handler": "angelcare-marketplace/journey-control/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/journeys/admin/[journeyId]/route.ts",
+      "handler": "angelcare-marketplace/journey-control/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/journeys/notifications/[notificationId]/acknowledge/route.ts",
+      "handler": "angelcare-marketplace/journey-control/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/launch/gates/[gateId]/update/route.ts",
+      "handler": "angelcare-marketplace/launch-assurance/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/launch/releases/[releaseId]/transition/route.ts",
+      "handler": "angelcare-marketplace/final-authority/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/localization/scans/route.ts",
+      "handler": "angelcare-marketplace/localization-intelligence/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/operations/check-events/route.ts",
+      "handler": "angelcare-marketplace/operations-execution/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/operations/daily-closures/route.ts",
+      "handler": "angelcare-marketplace/operations-execution/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/operations/disputes/route.ts",
+      "handler": "angelcare-marketplace/operations-reconciliation/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/operations/fulfillment/[caseId]/evidence/route.ts",
+      "handler": "angelcare-marketplace/operations-reconciliation/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/operations/fulfillment/[caseId]/transition/route.ts",
+      "handler": "angelcare-marketplace/operations-reconciliation/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/operations/incidents/route.ts",
+      "handler": "angelcare-marketplace/operations-execution/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/operations/missions/[missionId]/dispatch/route.ts",
+      "handler": "angelcare-marketplace/operations-execution/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/operations/missions/[missionId]/transition/route.ts",
+      "handler": "angelcare-marketplace/operations-execution/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/operations/missions/route.ts",
+      "handler": "angelcare-marketplace/operations-execution/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/operations/proposals/[proposalId]/decision/route.ts",
+      "handler": "angelcare-marketplace/operations-execution/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/operations/reconciliation/[caseId]/handover/route.ts",
+      "handler": "angelcare-marketplace/operations-reconciliation/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/operations/recovery/route.ts",
+      "handler": "angelcare-marketplace/operations-reconciliation/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/partner-os/tenants/[tenantId]/transition/route.ts",
+      "handler": "angelcare-marketplace/partner-os/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/partner-os/tenants/route.ts",
+      "handler": "angelcare-marketplace/partner-os/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/providers/[providerId]/availability/route.ts",
+      "handler": "angelcare-marketplace/provider-workforce/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/providers/[providerId]/documents/[documentId]/review/route.ts",
+      "handler": "angelcare-marketplace/provider-workforce/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/providers/[providerId]/eligibility/recalculate/route.ts",
+      "handler": "angelcare-marketplace/provider-workforce/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/providers/payable/[payableId]/decision/route.ts",
+      "handler": "angelcare-marketplace/provider-workforce/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/providers/route.ts",
+      "handler": "angelcare-marketplace/provider-workforce/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/public/events/route.ts",
+      "handler": "angelcare-marketplace/public-universe/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/public/inquiries/route.ts",
+      "handler": "angelcare-marketplace/public-universe/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/qa/defects/[defectId]/transition/route.ts",
+      "handler": "angelcare-marketplace/final-authority/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/quote-baskets/[basketId]/items/route.ts",
+      "handler": "angelcare-marketplace/marketplace-core/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/quote-baskets/route.ts",
+      "handler": "angelcare-marketplace/marketplace-core/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/security/isolation-tests/[testId]/execute/route.ts",
+      "handler": "angelcare-marketplace/analytics-security/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/security/recovery-tests/[testId]/transition/route.ts",
+      "handler": "angelcare-marketplace/analytics-security/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/territories/[territoryCode]/health/route.ts",
+      "handler": "angelcare-marketplace/territory-os/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/territories/[territoryCode]/overrides/route.ts",
+      "handler": "angelcare-marketplace/territory-os/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/territories/[territoryCode]/readiness/[gateKey]/route.ts",
+      "handler": "angelcare-marketplace/territory-os/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/territories/[territoryCode]/readiness/sign-off/route.ts",
+      "handler": "angelcare-marketplace/territory-os/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/territories/[territoryCode]/readiness/validate/route.ts",
+      "handler": "angelcare-marketplace/territory-os/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/territories/[territoryCode]/route.ts",
+      "handler": "angelcare-marketplace/territory-os/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/territories/[territoryCode]/settings/[settingKey]/route.ts",
+      "handler": "angelcare-marketplace/territory-os/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/territories/[territoryCode]/transition/route.ts",
+      "handler": "angelcare-marketplace/territory-os/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/territories/clone/route.ts",
+      "handler": "angelcare-marketplace/territory-os/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/territories/route.ts",
+      "handler": "angelcare-marketplace/territory-os/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/territory-overrides/[overrideId]/review/route.ts",
+      "handler": "angelcare-marketplace/territory-os/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/territory-overrides/[overrideId]/rollback/route.ts",
+      "handler": "angelcare-marketplace/territory-os/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/trust/assessments/[assessmentId]/recalculate/route.ts",
+      "handler": "angelcare-marketplace/trust-quality/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/trust/assessments/[assessmentId]/transition/route.ts",
+      "handler": "angelcare-marketplace/trust-quality/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/trust/capa/[actionId]/transition/route.ts",
+      "handler": "angelcare-marketplace/trust-quality/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/trust/complaints/[complaintId]/transition/route.ts",
+      "handler": "angelcare-marketplace/trust-quality/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/trust/sensitive-reviews/[reviewId]/approve/route.ts",
+      "handler": "angelcare-marketplace/trust-quality/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/trust/sops/[sopId]/transition/route.ts",
+      "handler": "angelcare-marketplace/trust-quality/api-handlers.ts"
+    },
+    {
+      "category": "delegated-api-guard",
+      "file": "app/api/angelcare-marketplace/trust/sops/route.ts",
+      "handler": "angelcare-marketplace/trust-quality/api-handlers.ts"
+    }
+  ],
+  "migrations": [
+    {
+      "file": "supabase/migrations/20260731040000_angelcare_marketplace_mega_zip_02_territory_os.sql",
+      "creates": 13,
+      "bytes": 36687
+    },
+    {
+      "file": "supabase/migrations/20260731203000_angelcare_marketplace_mega_zip_03_localization_intelligence_os.sql",
+      "creates": 17,
+      "bytes": 16996
+    },
+    {
+      "file": "supabase/migrations/20260731_angelcare_marketplace_mega_zip_01_foundation.sql",
+      "creates": 11,
+      "bytes": 38921
+    },
+    {
+      "file": "supabase/migrations/20260801010000_angelcare_marketplace_ultra_01_mz04_sovereign_control.sql",
+      "creates": 8,
+      "bytes": 11869
+    },
+    {
+      "file": "supabase/migrations/20260801020000_angelcare_marketplace_ultra_01_mz05_experience_cms.sql",
+      "creates": 10,
+      "bytes": 15767
+    },
+    {
+      "file": "supabase/migrations/20260801030000_angelcare_marketplace_ultra_01_mz06_public_universe.sql",
+      "creates": 2,
+      "bytes": 6067
+    },
+    {
+      "file": "supabase/migrations/20260801040000_angelcare_marketplace_ultra_01_mz07_family_engine.sql",
+      "creates": 12,
+      "bytes": 17739
+    },
+    {
+      "file": "supabase/migrations/20260801050000_angelcare_marketplace_ultra_02_mz08_child_development.sql",
+      "creates": 9,
+      "bytes": 9938
+    },
+    {
+      "file": "supabase/migrations/20260801060000_angelcare_marketplace_ultra_02_mz09_marketplace_core.sql",
+      "creates": 9,
+      "bytes": 10921
+    },
+    {
+      "file": "supabase/migrations/20260801070000_angelcare_marketplace_ultra_02_mz10_crm_sales_pipeline.sql",
+      "creates": 11,
+      "bytes": 12533
+    },
+    {
+      "file": "supabase/migrations/20260801080000_angelcare_marketplace_ultra_02_mz11_partner_tenant_saas.sql",
+      "creates": 11,
+      "bytes": 14788
+    },
+    {
+      "file": "supabase/migrations/20260801090000_angelcare_marketplace_ultra_03_mz12_establishments.sql",
+      "creates": 19,
+      "bytes": 28986
+    },
+    {
+      "file": "supabase/migrations/20260801100000_angelcare_marketplace_ultra_03_mz13_hospitality.sql",
+      "creates": 5,
+      "bytes": 6262
+    },
+    {
+      "file": "supabase/migrations/20260801110000_angelcare_marketplace_ultra_03_mz14_health_adjacent.sql",
+      "creates": 5,
+      "bytes": 6839
+    },
+    {
+      "file": "supabase/migrations/20260801120000_angelcare_marketplace_ultra_03_mz15_corporate_hr.sql",
+      "creates": 7,
+      "bytes": 10000
+    },
+    {
+      "file": "supabase/migrations/20260801130000_angelcare_marketplace_ultra_04_mz16_academy.sql",
+      "creates": 14,
+      "bytes": 23321
+    },
+    {
+      "file": "supabase/migrations/20260801140000_angelcare_marketplace_ultra_04_mz17_provider_workforce.sql",
+      "creates": 10,
+      "bytes": 17988
+    },
+    {
+      "file": "supabase/migrations/20260801150000_angelcare_marketplace_ultra_04_mz18_operations_execution.sql",
+      "creates": 18,
+      "bytes": 34619
+    },
+    {
+      "file": "supabase/migrations/20260801160000_angelcare_marketplace_ultra_05_mz19_trust_quality_compliance.sql",
+      "creates": 23,
+      "bytes": 33839
+    },
+    {
+      "file": "supabase/migrations/20260801170000_angelcare_marketplace_ultra_05_mz20_finance_authority.sql",
+      "creates": 9,
+      "bytes": 18097
+    },
+    {
+      "file": "supabase/migrations/20260801180000_angelcare_marketplace_ultra_05_mz20_analytics_security_recovery.sql",
+      "creates": 9,
+      "bytes": 20475
+    },
+    {
+      "file": "supabase/migrations/20260801190000_angelcare_marketplace_ultra_05_mz20_qa_final_launch.sql",
+      "creates": 12,
+      "bytes": 24298
+    },
+    {
+      "file": "supabase/migrations/20260801200000_angelcare_marketplace_public_route_registry_hotfix.sql",
+      "creates": 0,
+      "bytes": 22797
+    },
+    {
+      "file": "supabase/migrations/20260801210000_angelcare_marketplace_homepage_flagship_storefront.sql",
+      "creates": 14,
+      "bytes": 56557
+    },
+    {
+      "file": "supabase/migrations/20260802060000_angelcare_marketplace_catalog_discovery_experience_universe.sql",
+      "creates": 5,
+      "bytes": 20068
+    },
+    {
+      "file": "supabase/migrations/20260802090000_angelcare_marketplace_conversion_universe.sql",
+      "creates": 8,
+      "bytes": 17424
+    },
+    {
+      "file": "supabase/migrations/20260802190000_angelcare_marketplace_journey_control_universe.sql",
+      "creates": 14,
+      "bytes": 25935
+    },
+    {
+      "file": "supabase/migrations/20260802210000_angelcare_marketplace_operations_reconciliation_universe.sql",
+      "creates": 18,
+      "bytes": 25894
+    },
+    {
+      "file": "supabase/migrations/20260803013000_angelcare_marketplace_final_launch_authority_universe.sql",
+      "creates": 20,
+      "bytes": 28740
+    }
+  ]
+}
