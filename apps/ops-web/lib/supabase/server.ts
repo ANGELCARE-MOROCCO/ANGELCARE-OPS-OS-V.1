@@ -1,4 +1,5 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
+import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 import { cookies } from 'next/headers'
 import { getMissingSupabaseServerEnv, getSupabaseEnv } from './env'
 
@@ -60,7 +61,13 @@ export async function createServiceClient() {
     )
   }
 
-  return createServerClient(env.url, env.serviceRoleKey, { cookies: await cookieAdapter() })
+  return createSupabaseClient(env.url, env.serviceRoleKey, {
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false,
+      detectSessionInUrl: false,
+    },
+  })
 }
 
 /** @deprecated Prefer createUserClient() or createServiceClient() explicitly. */
