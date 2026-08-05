@@ -1,5 +1,3 @@
 import { NextResponse } from 'next/server'
-const response=(request:Request,method:string)=>NextResponse.json({ok:true,method,path:new URL(request.url).pathname,boundary:'HomeService Design OS UMZ2',carelinkWrite:false,providerRoute:'openrouter/free'})
-export async function GET(request:Request){return response(request,'GET')}
-export async function POST(request:Request){return response(request,'POST')}
-export async function PATCH(request:Request){return response(request,'PATCH')}
+import { errorPayload, runMasteryAction } from '@/lib/service-design-mastery/server'
+export async function POST(request:Request,{params}:{params:Promise<{id:string}>}){try{const body=await request.json().catch(()=>({}));return NextResponse.json({ok:true,data:await runMasteryAction('planning_request',(await params).id,{action:'run_feasibility',...body})})}catch(e){const p=errorPayload(e);return NextResponse.json(p.body,{status:p.status})}}

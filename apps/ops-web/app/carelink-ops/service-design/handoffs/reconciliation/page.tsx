@@ -1,2 +1,2 @@
-import{ReconciliationControlWorkspace}from'@/components/carelink/service-design/handoff/workspaces/ReconciliationControlWorkspace'
-export default function Page(){return <ReconciliationControlWorkspace/>}
+import { HandoffOperationalWorkspace } from '@/components/carelink/service-design/mastery/HandoffOperationalWorkspace'
+export default function Page() { return <HandoffOperationalWorkspace section="reconciliation" /> }

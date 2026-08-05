@@ -1,2 +1,2 @@
-import { ScenarioComparisonWorkspace } from '@/components/carelink/service-design/planning/workspaces/ScenarioComparisonWorkspace'
-export default function Page(){return <ScenarioComparisonWorkspace/>}
+import { MasteryRegistryWorkspace } from '@/components/carelink/service-design/mastery/MasteryRegistryWorkspace'
+export default function Page(){return <MasteryRegistryWorkspace domain="planning_request"/>}

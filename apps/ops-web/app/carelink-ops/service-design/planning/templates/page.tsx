@@ -1,2 +1,3 @@
-import { PlanningTemplateLibraryWorkspace } from '@/components/carelink/service-design/planning/workspaces/PlanningTemplateLibraryWorkspace'
-export default function Page(){return <PlanningTemplateLibraryWorkspace/>}
+import { PlanningOperationsWorkspace } from '@/components/carelink/service-design/mastery/PlanningOperationsWorkspace'
+export const dynamic='force-dynamic'
+export default function Page(){return <PlanningOperationsWorkspace kind="templates"/>}

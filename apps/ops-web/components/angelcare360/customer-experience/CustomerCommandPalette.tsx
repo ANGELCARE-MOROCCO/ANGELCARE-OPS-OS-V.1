@@ -4,7 +4,8 @@ import Link from 'next/link'
 import { Search, X } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { ANGELCARE360_ROUTE_BINDINGS } from '@/data/angelcare360/product-constitution'
-import CustomerOverlayPortal from './CustomerOverlayPortal'
+import CustomerOverlaySurface from './CustomerOverlaySurface'
+import { customerModuleLabel, humanizeTechnicalLabel } from '@/data/angelcare360/customer-language'
 import styles from './CustomerCommandPalette.module.css'
 
 const EVENT_NAME = 'angelcare360:command-palette'
@@ -25,7 +26,6 @@ export default function CustomerCommandPalette() {
         event.preventDefault()
         setOpen(true)
       }
-      if (event.key === 'Escape') setOpen(false)
     }
     window.addEventListener(EVENT_NAME, openPalette)
     window.addEventListener('keydown', onKeyDown)
@@ -35,13 +35,6 @@ export default function CustomerCommandPalette() {
     }
   }, [])
 
-  useEffect(() => {
-    if (!open) return
-    const previous = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
-    window.setTimeout(() => inputRef.current?.focus(), 0)
-    return () => { document.body.style.overflow = previous }
-  }, [open])
 
   const routes = useMemo(() => {
     const normalized = query.trim().toLowerCase()
@@ -57,23 +50,21 @@ export default function CustomerCommandPalette() {
 
   if (!open) return null
 
-  return <CustomerOverlayPortal>
-    <div className={styles.backdrop} role="presentation" onMouseDown={() => setOpen(false)}>
+  return <CustomerOverlaySurface kind="palette" onClose={() => setOpen(false)} className={styles.backdrop} ariaLabel="Recherche AngelCare 360">
       <section className={styles.palette} role="dialog" aria-modal="true" aria-label="Recherche AngelCare 360" onMouseDown={(event) => event.stopPropagation()}>
         <header className={styles.header}>
           <Search size={20} />
-          <input ref={inputRef} value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Rechercher un espace, une capacité ou une opération…" aria-label="Rechercher dans AngelCare 360" />
+          <input ref={inputRef} data-overlay-autofocus value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Trouver un enfant, une classe, une inscription, un paiement…" aria-label="Rechercher dans l’école" />
           <button type="button" onClick={() => setOpen(false)} aria-label="Fermer la recherche"><X size={18} /></button>
         </header>
         <div className={styles.results}>
           {routes.length ? routes.map((route) => <Link key={route.route} href={route.route} onClick={() => setOpen(false)}>
-            <span className={styles.module}>{route.moduleKey.replaceAll('_', ' ')}</span>
+            <span className={styles.module}>{customerModuleLabel(route.moduleKey)}</span>
             <strong>{route.label}</strong>
-            <small>{route.capabilityKey.replaceAll('.', ' · ')}</small>
-          </Link>) : <div className={styles.empty}><strong>Aucun espace correspondant</strong><span>Vérifiez le terme recherché ou utilisez la navigation principale.</span></div>}
+            <small>{humanizeTechnicalLabel(route.capabilityKey)}</small>
+          </Link>) : <div className={styles.empty}><strong>Aucun résultat correspondant</strong><span>Essayez le nom d’un enfant, d’une classe, d’un parent ou d’un espace de gestion.</span></div>}
         </div>
-        <footer className={styles.footer}><span>⌘ K pour ouvrir</span><span>Échap pour fermer</span><span>{routes.length} résultats</span></footer>
+        <footer className={styles.footer}><span>⌘ K pour rechercher</span><span>Échap pour fermer</span><span>{routes.length} résultats</span></footer>
       </section>
-    </div>
-  </CustomerOverlayPortal>
+  </CustomerOverlaySurface>
 }

@@ -1,2 +1,2 @@
-import{BundleCompositionWorkspace}from'@/components/carelink/service-design/commercial/workspaces/BundleCompositionWorkspace'
-export default function Page(){return <BundleCompositionWorkspace/>}
+import { MasteryRegistryWorkspace } from '@/components/carelink/service-design/mastery/MasteryRegistryWorkspace'
+export default function Page(){return <MasteryRegistryWorkspace domain="bundle"/>}

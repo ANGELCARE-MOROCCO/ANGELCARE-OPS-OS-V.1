@@ -1,2 +1,2 @@
-import{ChecklistEvidenceWorkspace}from'@/components/carelink/service-design/handoff/workspaces/ChecklistEvidenceWorkspace'
-export default function Page(){return <ChecklistEvidenceWorkspace/>}
+import { HandoffOperationalWorkspace } from '@/components/carelink/service-design/mastery/HandoffOperationalWorkspace'
+export default function Page() { return <HandoffOperationalWorkspace section="checklists" /> }

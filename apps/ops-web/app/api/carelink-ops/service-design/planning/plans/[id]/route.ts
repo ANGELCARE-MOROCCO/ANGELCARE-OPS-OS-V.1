@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
-const response=(request:Request,method:string)=>NextResponse.json({ok:true,method,path:new URL(request.url).pathname,boundary:'HomeService Design OS UMZ2',carelinkWrite:false,providerRoute:'openrouter/free'})
-export async function GET(request:Request){return response(request,'GET')}
-export async function POST(request:Request){return response(request,'POST')}
-export async function PATCH(request:Request){return response(request,'PATCH')}
+import { deleteMasteryRecord, errorPayload, getMasteryRecord, updateMasteryRecord } from '@/lib/service-design-mastery/server'
+type C={params:Promise<{id:string}>}
+export async function GET(_:Request,c:C){try{return NextResponse.json({ok:true,data:await getMasteryRecord('planning_plan',(await c.params).id)})}catch(e){const p=errorPayload(e);return NextResponse.json(p.body,{status:p.status})}}
+export async function PATCH(r:Request,c:C){try{return NextResponse.json({ok:true,data:await updateMasteryRecord('planning_plan',(await c.params).id,await r.json())})}catch(e){const p=errorPayload(e);return NextResponse.json(p.body,{status:p.status})}}
+export async function DELETE(_:Request,c:C){try{return NextResponse.json({ok:true,data:await deleteMasteryRecord('planning_plan',(await c.params).id)})}catch(e){const p=errorPayload(e);return NextResponse.json(p.body,{status:p.status})}}

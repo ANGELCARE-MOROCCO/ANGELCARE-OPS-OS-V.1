@@ -2,7 +2,7 @@
 
 import { useMemo, useState, type ReactNode } from 'react'
 import Link from 'next/link'
-import { AlertTriangle, Blocks, BookOpenCheck, CheckCircle2, ChevronRight, FileSpreadsheet, Gauge, ShieldAlert, Sparkles } from 'lucide-react'
+import { AlertTriangle, Blocks, BookOpenCheck, CheckCircle2, ChevronRight, FileSpreadsheet, Gauge, ShieldAlert, Sparkles, X } from 'lucide-react'
 import type { FactoryCataloguePayload } from '@/types/homeservice-factory'
 import { DoctrineImportStudio } from './DoctrineImportStudio'
 import { FactoryHero, FactorySurface, Signal, cx } from './FactoryUI'
@@ -30,7 +30,7 @@ export function DoctrineCommandWorkspace({ catalogue }: { catalogue: FactoryCata
   if (!category) return <Signal tone="amber" title="Catalogue vide" detail="Importez ou créez d’abord une catégorie de service." />
 
   return <div className="space-y-6">
-    <FactoryHero eyebrow="Doctrine opérationnelle directe" title="Une doctrine lisible, ciblée et immédiatement exploitable." description="Consultez les règles réelles de chaque catégorie, identifiez les trous de configuration et importez uniquement la ressource voulue. Une doctrine incomplète avertit la Factory; elle ne bloque plus la création d’un brouillon mission ou package." actions={<><Link href="/carelink-ops/service-design/factory" className="inline-flex min-h-11 items-center gap-2 rounded-2xl bg-blue-600 px-4 text-xs font-black text-white"><Sparkles size={15}/> Ouvrir la Factory</Link><button onClick={() => setShowImport((value) => !value)} className="inline-flex min-h-11 items-center gap-2 rounded-2xl border border-white/15 bg-white/10 px-4 text-xs font-black text-white"><FileSpreadsheet size={15}/> {showImport ? 'Fermer l’import' : 'Importer une ressource'}</button></>} />
+    <FactoryHero eyebrow="Doctrine opérationnelle directe" title="Une doctrine lisible, ciblée et immédiatement exploitable." description="Consultez les règles réelles de chaque catégorie, identifiez les trous de configuration et importez uniquement la ressource voulue. Une doctrine incomplète avertit la Factory; elle ne bloque plus la création d’un brouillon mission ou package." actions={<><Link href="/carelink-ops/service-design/factory" className="inline-flex min-h-11 items-center gap-2 rounded-2xl bg-blue-600 px-4 text-xs font-black text-white"><Sparkles size={15}/> Ouvrir la Factory</Link><button type="button" aria-expanded={showImport} onClick={() => setShowImport(true)} className="inline-flex min-h-11 items-center gap-2 rounded-2xl border border-white/15 bg-white/10 px-4 text-xs font-black text-white"><FileSpreadsheet size={15}/>Importer une ressource</button></>} />
 
     <section className="grid gap-4 lg:grid-cols-[340px_1fr]">
       <FactorySurface title="Catégories locales" subtitle="Choisissez la catégorie dont vous voulez gouverner la doctrine.">
@@ -59,7 +59,7 @@ export function DoctrineCommandWorkspace({ catalogue }: { catalogue: FactoryCata
       </div>
     </section>
 
-    {showImport ? <FactorySurface title="Import ciblé immédiat" subtitle="La catégorie active est présélectionnée. Chaque ligne valide est appliquée sans staging général."><DoctrineImportStudio catalogue={catalogue} initialCategoryId={category.id} embedded /></FactorySurface> : null}
+    {showImport ? <div className="fixed inset-0 z-[205] bg-slate-950/45 backdrop-blur-sm" onMouseDown={() => setShowImport(false)}><aside className="ml-auto h-full w-full max-w-[1320px] overflow-y-auto border-l border-slate-200 bg-[#f3f6fb] shadow-2xl" onMouseDown={(event) => event.stopPropagation()}><header className="sticky top-0 z-20 flex items-start justify-between gap-4 border-b border-slate-200 bg-white/95 px-5 py-4 backdrop-blur-xl sm:px-7"><div><p className="text-[9px] font-black uppercase tracking-[.22em] text-blue-600">Import ciblé immédiat</p><h2 className="mt-1 text-2xl font-black tracking-[-.04em] text-slate-950">{category.commercialName}</h2><p className="mt-1 text-xs font-semibold text-slate-500">La catégorie est présélectionnée. Les lignes valides alimentent immédiatement la Factory.</p></div><button type="button" onClick={() => setShowImport(false)} className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl border border-slate-200 bg-white text-slate-500 shadow-sm" aria-label="Fermer l’import"><X size={17}/></button></header><div className="p-5 sm:p-7"><DoctrineImportStudio catalogue={catalogue} initialCategoryId={category.id} initialImportType="doctrine_rules" embedded /></div></aside></div> : null}
   </div>
 }
 

@@ -1,2 +1,2 @@
-import{BundleBuilderWorkspace}from'@/components/carelink/service-design/commercial/workspaces/BundleBuilderWorkspace'
-export default function Page(){return <BundleBuilderWorkspace/>}
+import { CommercialCreationWorkspace } from '@/components/carelink/service-design/mastery/CommercialCreationWorkspace'
+export default function Page(){return <CommercialCreationWorkspace mode="bundle"/>}

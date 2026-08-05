@@ -4,6 +4,8 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import { AlertTriangle, CheckCircle2, CircleAlert, LoaderCircle, X, type LucideIcon } from 'lucide-react'
 import type { CustomerToastInput, CustomerToastRecord } from '@/types/angelcare360/customer-experience'
 import CustomerCommandPalette from './CustomerCommandPalette'
+import CustomerOverlayPortal from './CustomerOverlayPortal'
+import CustomerOverlayProvider from './CustomerOverlayProvider'
 import styles from './CustomerExperience.module.css'
 
 type ContextValue = { notify: (input: CustomerToastInput) => string; update: (id: string, input: Partial<CustomerToastInput>) => void; dismiss: (id: string) => void }
@@ -93,7 +95,7 @@ export default function CustomerExperienceProvider({ children }: { children: Rea
   }, [notify, update])
 
   const value = useMemo(() => ({ notify, update, dismiss }), [notify, update, dismiss])
-  return <Context.Provider value={value}>{children}<CustomerCommandPalette/><ToastViewport toasts={toasts} dismiss={dismiss} /></Context.Provider>
+  return <CustomerOverlayProvider><Context.Provider value={value}>{children}<CustomerCommandPalette/><CustomerOverlayPortal><ToastViewport toasts={toasts} dismiss={dismiss} /></CustomerOverlayPortal></Context.Provider></CustomerOverlayProvider>
 }
 
 function ToastViewport({ toasts, dismiss }: { toasts: CustomerToastRecord[]; dismiss: (id: string) => void }) {

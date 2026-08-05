@@ -1,2 +1,2 @@
-import{ParentBlueprintWorkspace}from'@/components/carelink/service-design/handoff/workspaces/ParentBlueprintWorkspace'
-export default function Page(){return <ParentBlueprintWorkspace/>}
+import { HandoffOperationalWorkspace } from '@/components/carelink/service-design/mastery/HandoffOperationalWorkspace'
+export default function Page() { return <HandoffOperationalWorkspace section="overview" /> }

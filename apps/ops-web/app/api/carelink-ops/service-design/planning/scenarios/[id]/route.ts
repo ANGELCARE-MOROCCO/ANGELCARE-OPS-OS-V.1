@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server'
-const response=(request:Request,method:string)=>NextResponse.json({ok:true,method,path:new URL(request.url).pathname,boundary:'HomeService Design OS UMZ2',carelinkWrite:false,providerRoute:'openrouter/free'})
-export async function GET(request:Request){return response(request,'GET')}
-export async function POST(request:Request){return response(request,'POST')}
-export async function PATCH(request:Request){return response(request,'PATCH')}
+import { errorPayload, masteryClient } from '@/lib/service-design-mastery/server'
+import { requireHomeServiceApi } from '@/lib/homeservice-design/server/auth'
+export async function GET(_:Request,{params}:{params:Promise<{id:string}>}){try{await requireHomeServiceApi('homeservice_design.view');const client=await masteryClient(false);const id=(await params).id;const scenario=await client.from('hsd_plan_scenarios').select('*').eq('id',id).single();if(scenario.error)throw scenario.error;const days=await client.from('hsd_plan_scenario_days').select('*').eq('scenario_id',id).order('day_number');if(days.error)throw days.error;const dayIds=(days.data||[]).map((x:any)=>x.id);let blocks:any[]=[];if(dayIds.length){const result=await client.from('hsd_plan_scenario_blocks').select('*').in('day_id',dayIds).order('sort_order');if(result.error)throw result.error;blocks=result.data||[]}return NextResponse.json({ok:true,data:{scenario:scenario.data,days:days.data||[],blocks}})}catch(e){const p=errorPayload(e);return NextResponse.json(p.body,{status:p.status})}}

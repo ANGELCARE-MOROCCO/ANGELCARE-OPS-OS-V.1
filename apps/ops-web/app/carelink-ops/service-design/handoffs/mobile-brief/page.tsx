@@ -1,2 +1,2 @@
-import{MobileBriefPreviewWorkspace}from'@/components/carelink/service-design/handoff/workspaces/MobileBriefPreviewWorkspace'
-export default function Page(){return <MobileBriefPreviewWorkspace/>}
+import { HandoffOperationalWorkspace } from '@/components/carelink/service-design/mastery/HandoffOperationalWorkspace'
+export default function Page() { return <HandoffOperationalWorkspace section="mobile_brief" /> }

@@ -1,2 +1,2 @@
-import{CustomerConfirmationWorkspace}from'@/components/carelink/service-design/handoff/workspaces/CustomerConfirmationWorkspace'
-export default function Page(){return <CustomerConfirmationWorkspace/>}
+import { HandoffOperationalWorkspace } from '@/components/carelink/service-design/mastery/HandoffOperationalWorkspace'
+export default function Page() { return <HandoffOperationalWorkspace section="customer" /> }

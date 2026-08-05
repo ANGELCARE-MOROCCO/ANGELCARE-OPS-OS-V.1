@@ -1509,12 +1509,11 @@
 
 .drawerOverlay,
 .studioOverlay {
-  position: fixed;
+  position: absolute;
   inset: 0;
-  z-index: 200;
   display: flex;
   justify-content: flex-end;
-  background: rgba(4, 18, 31, 0.34);
+  background: rgba(4, 18, 31, 0.48);
   backdrop-filter: blur(6px);
   animation: fadeIn 170ms ease both;
 }
@@ -1526,10 +1525,12 @@
 .matterDrawer {
   display: grid;
   grid-template-rows: auto auto auto minmax(0, 1fr) auto;
-  width: min(96vw, 930px);
+  width: min(96vw, 1040px);
   height: 100%;
   overflow: hidden;
-  border-left: 1px solid rgba(255, 255, 255, 0.24);
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  border-right: 0;
+  border-radius: 28px 0 0 28px;
   background: #f7f9fc;
   box-shadow: -28px 0 75px rgba(5, 20, 35, 0.24);
   animation: slideIn 220ms cubic-bezier(.22,.8,.28,1) both;
@@ -1537,7 +1538,7 @@
 
 .matterDrawer_peek { width: min(96vw, 480px); }
 .matterDrawer_detail { width: min(96vw, 930px); }
-.matterDrawer_focus { width: calc(100vw - 54px); max-width: none; }
+.matterDrawer_focus { width: 100%; max-width: none; border-radius: 22px 0 0 22px; }
 
 .drawerHeader {
   display: flex;
@@ -1905,7 +1906,7 @@
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) auto;
   width: min(1500px, 98vw);
-  height: min(900px, 95vh);
+  height: min(900px, calc(100% - 8px));
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.25);
   border-radius: 24px;
@@ -2232,10 +2233,9 @@
 }
 
 .toast {
-  position: fixed;
+  position: absolute;
   right: 22px;
   bottom: 22px;
-  z-index: 300;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -2330,7 +2330,7 @@
   .impactMap { grid-template-columns: 1fr; }
   .drawerFooter { grid-template-columns: 1fr; }
   .studioOverlay { padding: 0; }
-  .commandStudio { width: 100vw; height: 100vh; border-radius: 0; }
+  .commandStudio { width: 100%; height: 100%; border-radius: 0; }
   .studioColumns { display: block; overflow-y: auto; }
   .templateColumn,
   .constructionColumn { border-right: 0; border-bottom: 1px solid var(--slate-200); }
@@ -2406,4 +2406,8 @@
 
 @media (max-width: 860px) {
   .commitmentStudioGrid { display: block; overflow-y: auto; }
+}
+
+@media (max-width: 720px) {
+  .matterDrawer, .matterDrawer_peek, .matterDrawer_detail, .matterDrawer_focus { width: 100%; border-radius: 0; }
 }

@@ -1,5 +1,6 @@
 import OnboardingCommandCenter, { type OnboardingSeedData } from "./_components/OnboardingCommandCenter";
 import { getOnboardingWorkspace } from "@/lib/hr-onboarding/server";
+import { getInterviewCommandSnapshot } from "@/lib/hr-recruitment/interviews/server";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -25,7 +26,15 @@ const taskLabels: Record<string, string> = {
 };
 
 export default async function OnboardingPage() {
-  const workspace = await getOnboardingWorkspace();
+  const [workspace, recruitment] = await Promise.all([
+    getOnboardingWorkspace(),
+    getInterviewCommandSnapshot().catch((error: unknown) => ({
+      candidates: [],
+      interviews: [],
+      openings: [],
+      warnings: [error instanceof Error ? error.message : "Recruitment candidate and interview data is unavailable."],
+    })),
+  ]);
 
   const seed: OnboardingSeedData = {
     journeys: workspace.journeys.map((journey) => ({
@@ -42,6 +51,9 @@ export default async function OnboardingPage() {
       phone: journey.phone ?? "",
       progress: journey.progress,
       owner: journey.owner ?? "",
+      candidateId: journey.candidateKey ?? undefined,
+      interviewId: typeof journey.metadata.interviewId === "string" ? journey.metadata.interviewId : undefined,
+      openingId: typeof journey.metadata.openingId === "string" ? journey.metadata.openingId : undefined,
       version: journey.version,
     })),
     tasks: workspace.tasks.map((task) => ({
@@ -82,6 +94,10 @@ export default async function OnboardingPage() {
       actor_name: activity.actorName,
       created_at: activity.createdAt,
     })),
+    candidates: recruitment.candidates,
+    interviews: recruitment.interviews,
+    openings: recruitment.openings,
+    recruitmentWarnings: recruitment.warnings,
   };
 
   return <OnboardingCommandCenter initialData={seed} />;

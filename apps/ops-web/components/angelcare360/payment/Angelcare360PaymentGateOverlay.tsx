@@ -2,6 +2,9 @@
 
 import Link from 'next/link'
 import { useMemo } from 'react'
+import CustomerOverlaySurface from '@/components/angelcare360/customer-experience/CustomerOverlaySurface'
+import { SchoolAdminImpactPreview, SchoolAdminSituationSummary } from '@/components/angelcare360/customer-experience/SchoolAdminWorkbench'
+import { schoolStatusLabel } from '@/data/angelcare360/customer-language'
 import type { Angelcare360PaymentGateRecord } from '@/types/angelcare360/payment-gates'
 import {
   ANGELCARE360_COLORS,
@@ -20,42 +23,55 @@ export default function Angelcare360PaymentGateOverlay({ gate, providerConfigure
   const establishmentLabel = gate.school_name || gate.client_display_name || gate.tenant_slug || gate.client_id
 
   return (
-    <div style={overlayRootStyle} role="presentation" aria-hidden={false}>
+    <CustomerOverlaySurface kind="confirmation" dismissible={false} backdropDismiss={false} className="angelcare360-payment-gate-surface" ariaLabel="Contrôle de paiement">
       <div style={overlayBackdropStyle} />
-      <div style={overlayCardStyle} role="dialog" aria-modal="true" aria-labelledby="angelcare360-payment-gate-title">
+      <div style={overlayRootStyle}><div style={overlayCardStyle} role="dialog" aria-modal="true" aria-labelledby="angelcare360-payment-gate-title">
         <div style={eyebrowStyle}>Contrôle de paiement</div>
-        <h2 id="angelcare360-payment-gate-title" style={titleStyle}>Paiement AngelCare 360 requis</h2>
+        <h2 id="angelcare360-payment-gate-title" style={titleStyle}>Votre abonnement AngelCare 360 doit être régularisé</h2>
         <p style={descriptionStyle}>
-          L’accès au portail est temporairement suspendu tant que le règlement n’est pas validé par AngelCare.
+          L’accès aux fonctions de gestion est temporairement limité jusqu’à la vérification du règlement par AngelCare.
         </p>
+
+        <SchoolAdminSituationSummary
+          summary="Un règlement lié à votre abonnement reste à vérifier."
+          reason="Cette fenêtre apparaît pour éviter que l’école continue à utiliser des fonctions payantes sans situation de paiement claire."
+          consequence="Les dossiers de l’école restent conservés. Les fonctions de gestion seront rétablies après validation du règlement."
+          tone="warning"
+        />
 
         <div style={summaryGridStyle}>
           <Info label="Établissement" value={String(establishmentLabel)} />
           <Info label="Référence facture" value={gate.invoice_number || gate.invoice_id || '—'} />
-          <Info label="Montant dû" value={`${dueAmount} MAD`} />
+          <Info label="Montant dû" value={`${dueAmount} Dh`} />
           <Info label="Échéance" value={dueDate} />
           <Info label="Motif" value={gate.reason} />
-          <Info label="Statut" value={String(gate.status).replace(/_/g, ' ')} />
+          <Info label="Statut" value={schoolStatusLabel(String(gate.status))} />
         </div>
+
+        <SchoolAdminImpactPreview items={[
+          { key: 'data', label: 'Les dossiers et l’historique de l’école restent conservés' },
+          { key: 'access', label: 'Les fonctions seront rétablies après validation du règlement' },
+          { key: 'help', label: 'L’équipe AngelCare peut vous aider depuis la rubrique Réclamations' },
+        ]} tone="warning" />
 
         <div style={calloutStyle}>
           <strong>Contact AngelCare</strong>
-          <span>Le blocage ne peut pas être fermé par l’utilisateur. L’équipe AngelCare suit la validation manuelle.</span>
+          <span>Cette fenêtre restera ouverte jusqu’à la régularisation. L’équipe AngelCare peut vérifier un règlement manuel ou vous aider à choisir la bonne démarche.</span>
         </div>
 
         <div style={actionsStyle}>
           <button type="button" disabled={!providerConfigured} style={providerConfigured ? primaryButtonStyle : lockedButtonStyle} title={providerConfigured ? 'Paiement en ligne disponible' : providerReason}>
-            {providerConfigured ? 'Paiement en ligne' : 'Passerelle de paiement non configurée.'}
+            {providerConfigured ? 'Régler en ligne' : 'Paiement en ligne indisponible'}
           </button>
           <Link href="/angelcare-360-command-center/reclamations" style={secondaryButtonStyle}>Contacter AngelCare</Link>
         </div>
 
         {!providerConfigured ? <div style={lockedNoteStyle}>{providerReason}</div> : null}
         {String(gate.status) === 'manual_pending' ? (
-          <div style={manualStateStyle}>Paiement manuel en cours de validation par AngelCare.</div>
+          <div style={manualStateStyle}>Votre règlement manuel est en cours de vérification par AngelCare. Vous n’avez aucune autre action à effectuer pour le moment.</div>
         ) : null}
-      </div>
-    </div>
+      </div></div>
+    </CustomerOverlaySurface>
   )
 }
 
@@ -69,9 +85,8 @@ function Info({ label, value }: { label: string; value: string }) {
 }
 
 const overlayRootStyle: React.CSSProperties = {
-  position: 'fixed',
+  position: 'absolute',
   inset: 0,
-  zIndex: 80,
   display: 'grid',
   placeItems: 'center',
   padding: 20,

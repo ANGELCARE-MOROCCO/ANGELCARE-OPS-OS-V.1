@@ -7,12 +7,6 @@ import {
   Activity,
   AlertTriangle,
   BarChart3,
-  Building2,
-  DatabaseZap,
-  FileBadge2,
-  Gauge,
-  Network,
-  Workflow,
   ArrowRight,
   Bell,
   Briefcase,
@@ -27,7 +21,6 @@ import {
   FileText,
   Filter,
   GraduationCap,
-  LayoutDashboard,
   Mail,
   MapPin,
   MessageCircle,
@@ -39,7 +32,6 @@ import {
   Send,
   Settings,
   ShieldCheck,
-  Sparkles,
   Trash2,
   Upload,
   User,
@@ -48,6 +40,11 @@ import {
   X,
   Zap,
 } from "lucide-react";
+import type {
+  InterviewCandidate,
+  InterviewOpening,
+  InterviewRecord,
+} from "@/lib/hr-recruitment/interviews/types";
 import {
   addOnboardingNote,
   advanceOnboardingJourney,
@@ -77,6 +74,9 @@ type Journey = {
   phone: string;
   progress: number;
   owner: string;
+  candidateId?: string;
+  interviewId?: string;
+  openingId?: string;
   version?: number;
 };
 type Row = Record<string, any>;
@@ -85,6 +85,10 @@ export type OnboardingSeedData = {
   tasks: Row[];
   documents: Row[];
   activity: Row[];
+  candidates: InterviewCandidate[];
+  interviews: InterviewRecord[];
+  openings: InterviewOpening[];
+  recruitmentWarnings: string[];
 };
 
 const phases = [
@@ -134,33 +138,6 @@ const groups = [
     ],
   ],
 ];
-const navGroups = [
-  { label: "Overview", items: [
-    { label: "Dashboard", href: "/hr", icon: LayoutDashboard },
-  ]},
-  { label: "People", items: [
-    { label: "Employees", href: "/hr/employees", icon: Users },
-    { label: "Teams & Departments", href: "/hr/departments", icon: Building2 },
-    { label: "Recruitment", href: "/hr/recruitment", icon: UserCheck },
-    { label: "Onboarding", href: "/hr/onboarding", icon: ClipboardCheck },
-    { label: "Performance", href: "/hr/performance-matrix", icon: Gauge },
-    { label: "Learning & Development", href: "/hr/training", icon: GraduationCap },
-  ]},
-  { label: "Operations", items: [
-    { label: "Attendance", href: "/hr/attendance", icon: CalendarDays },
-    { label: "Leave Management", href: "/hr/approvals", icon: Clock },
-    { label: "Work Schedules", href: "/hr/work-schedules", icon: Workflow },
-    { label: "Time Tracking", href: "/hr/workforce-ops", icon: Activity },
-  ]},
-  { label: "Compliance & Documents", items: [
-    { label: "Documents", href: "/hr/documents", icon: FileBadge2 },
-    { label: "Compliance Dashboard", href: "/hr/compliance", icon: AlertTriangle },
-  ]},
-  { label: "System", items: [
-    { label: "Integrations", href: "/hr/sync-center", icon: Sparkles },
-    { label: "Settings", href: "/hr/settings", icon: Settings },
-  ]},
-] as const;
 function cn(...c: Array<string | false | undefined | null>) {
   return c.filter(Boolean).join(" ");
 }
@@ -175,6 +152,13 @@ function initials(n: string) {
     .join("")
     .toUpperCase();
 }
+
+type RecruitmentData = {
+  candidates: InterviewCandidate[];
+  interviews: InterviewRecord[];
+  openings: InterviewOpening[];
+  warnings: string[];
+};
 
 export default function OnboardingCommandCenter({
   initialData,
@@ -251,6 +235,9 @@ export default function OnboardingCommandCenter({
       progress: 0,
       owner: "",
       version: 1,
+      candidateId: undefined,
+      interviewId: undefined,
+      openingId: undefined,
     };
 
     return (
@@ -337,6 +324,17 @@ export default function OnboardingCommandCenter({
             onCreateDoc={() => undefined}
             onNote={() => undefined}
             onReassign={() => undefined}
+            onOpenExistingJourney={(id: string) => {
+              setSelectedId(id);
+              setModal(null);
+            }}
+            recruitment={{
+              candidates: initialData.candidates,
+              interviews: initialData.interviews,
+              openings: initialData.openings,
+              warnings: initialData.recruitmentWarnings,
+            }}
+            existingJourneys={journeys}
           />
         ) : null}
       </div>
@@ -406,54 +404,7 @@ export default function OnboardingCommandCenter({
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,#eef2ff,transparent_34%),#f7f8fc] text-slate-950">
       <UiStyles />
-      <div className="flex">
-        <aside className="hidden">
-          <Link href="/hr" className="flex items-center gap-3 rounded-[26px] bg-gradient-to-br from-violet-600 via-indigo-600 to-slate-950 p-4 text-white shadow-2xl shadow-violet-200">
-            <div className="grid h-11 w-11 place-items-center rounded-2xl bg-white/15 ring-1 ring-white/20"><Sparkles className="h-5 w-5" /></div>
-            <div>
-              <div className="text-[10px] font-black uppercase tracking-[0.24em] text-violet-100">AngelCare</div>
-              <div className="text-lg font-black tracking-tight">HR Command OS</div>
-            </div>
-          </Link>
-
-          <div className="mt-5 space-y-5">
-            {navGroups.map((group) => (
-              <div key={group.label}>
-                <div className="mb-2 px-2 text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">{group.label}</div>
-                <div className="space-y-1">
-                  {group.items.map((item) => {
-                    const Icon = item.icon;
-                    const active = item.href === "/hr/onboarding";
-                    return (
-                      <Link
-                        key={`${group.label}-${item.label}`}
-                        href={item.href}
-                        className={cn(
-                          "group flex items-center gap-3 rounded-2xl px-3 py-2.5 text-[13px] font-black transition",
-                          active
-                            ? "bg-violet-50 text-violet-700 ring-1 ring-violet-100 shadow-sm"
-                            : "text-slate-600 hover:bg-slate-50 hover:text-slate-950",
-                        )}
-                      >
-                        <Icon className={cn("h-4 w-4", active ? "text-violet-600" : "text-slate-400 group-hover:text-violet-600")} />
-                        <span className="min-w-0 flex-1 truncate">{item.label}</span>
-                        {active ? <span className="h-2 w-2 rounded-full bg-violet-500 shadow-[0_0_14px_rgba(139,92,246,0.7)]" /> : null}
-                      </Link>
-                    );
-                  })}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-6 rounded-[24px] border border-violet-100 bg-gradient-to-br from-violet-50 via-white to-cyan-50 p-4 shadow-lg shadow-violet-100/50">
-            <div className="flex items-center gap-2 text-sm font-black text-violet-800"><DatabaseZap className="h-4 w-4" />Onboarding sync layer</div>
-            <p className="mt-2 text-xs font-bold leading-5 text-slate-600">Same HR navigation as the main module. Onboarding stays connected to candidates, employees, tasks, documents, WhatsApp reminders, owners and activity logs.</p>
-            <div className="mt-3 rounded-2xl bg-white/80 px-3 py-2 text-xs font-black text-slate-600 ring-1 ring-violet-100">{toast}</div>
-          </div>
-        </aside>
-
-        <main className="min-w-0 flex-1 p-5">
+      <main className="min-w-0 p-5">
           <header className="sticky top-0 z-40 -mx-5 -mt-5 mb-5 border-b border-slate-200/80 bg-white/85 px-6 py-4 backdrop-blur-xl">
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div>
@@ -668,8 +619,7 @@ export default function OnboardingCommandCenter({
               <QuickActions selected={selected} setModal={setModal} />
             </aside>
           </section>
-        </main>
-      </div>
+      </main>
       {modal && (
         <ExecutionModal
           modal={modal}
@@ -702,6 +652,17 @@ export default function OnboardingCommandCenter({
             log("Owner reassigned");
             router.refresh();
           }}
+          onOpenExistingJourney={(id: string) => {
+            setSelectedId(id);
+            setModal(null);
+          }}
+          recruitment={{
+            candidates: initialData.candidates,
+            interviews: initialData.interviews,
+            openings: initialData.openings,
+            warnings: initialData.recruitmentWarnings,
+          }}
+          existingJourneys={journeys}
         />
       )}
     </div>
@@ -1153,7 +1114,23 @@ function ExecutionModal({
   onCreateDoc,
   onNote,
   onReassign,
-}: any) {
+  onOpenExistingJourney,
+  recruitment,
+  existingJourneys,
+}: {
+  modal: string;
+  selected: Journey;
+  isPending: boolean;
+  onClose: () => void;
+  onCreateJourney: (journey: Journey) => void;
+  onCreateTask: (payload?: Record<string, unknown>) => void;
+  onCreateDoc: (payload?: Record<string, unknown>) => void;
+  onNote: (payload?: Record<string, unknown>) => void;
+  onReassign: (owner?: string) => void;
+  onOpenExistingJourney: (id: string) => void;
+  recruitment: RecruitmentData;
+  existingJourneys: Journey[];
+}) {
   const router = useRouter();
   const [candidateName, setCandidateName] = useState(selected.title || "");
   const [position, setPosition] = useState(selected.position || "");
@@ -1183,6 +1160,9 @@ function ExecutionModal({
   const [evidenceOpen, setEvidenceOpen] = useState<string | null>(null);
   const [commentOpen, setCommentOpen] = useState<string | null>(null);
   const [escalationOpen, setEscalationOpen] = useState<string | null>(null);
+  const [candidateQuery, setCandidateQuery] = useState("");
+  const [selectedCandidateId, setSelectedCandidateId] = useState(selected.candidateId || "");
+  const [selectedInterviewId, setSelectedInterviewId] = useState(selected.interviewId || "");
   const isTimeline = modal === "timeline";
   const isEdit = modal === "editJourney";
   const isJourney = modal === "journey";
@@ -1192,6 +1172,38 @@ function ExecutionModal({
   const isReassign = modal === "reassign";
   const isProfile = modal === "profile";
   const isQuickAction = isDocument || isReminder || isReassign || isProfile;
+  const filteredCandidates = recruitment.candidates.filter((candidate) => {
+    const opening = recruitment.openings.find((item) => item.id === candidate.openingId);
+    const haystack = [
+      candidate.fullName,
+      candidate.email,
+      candidate.phone,
+      candidate.positionTitle,
+      candidate.pipelineStage,
+      candidate.status,
+      opening?.title,
+    ].filter(Boolean).join(" ").toLowerCase();
+    return haystack.includes(candidateQuery.trim().toLowerCase());
+  });
+  const selectedCandidate = recruitment.candidates.find((candidate) => candidate.id === selectedCandidateId);
+  const candidateInterviews = recruitment.interviews
+    .filter((interview) => interview.candidateId === selectedCandidateId)
+    .sort((a, b) => b.scheduledAt.localeCompare(a.scheduledAt));
+  const selectedInterview = candidateInterviews.find((interview) => interview.id === selectedInterviewId) || candidateInterviews[0];
+  const selectedOpening = selectedCandidate?.openingId
+    ? recruitment.openings.find((opening) => opening.id === selectedCandidate.openingId)
+    : selectedInterview?.openingId
+      ? recruitment.openings.find((opening) => opening.id === selectedInterview.openingId)
+      : undefined;
+  const duplicateJourneys = existingJourneys.filter((journey) =>
+    journey.candidateId === selectedCandidate?.id && journey.status !== "Cancelled",
+  );
+  const journeyBlockedByDuplicate = isJourney && duplicateJourneys.length > 0;
+  const journeyTitle = selectedCandidate?.fullName || "";
+  const journeyPosition = selectedCandidate?.positionTitle || selectedOpening?.title || "";
+  const journeyEmail = selectedCandidate?.email || "";
+  const journeyPhone = selectedCandidate?.phone || "";
+  const journeyDepartment = selectedOpening?.department || department;
   const title = isTimeline
     ? "Onboarding Timeline Control Room"
     : isEdit
@@ -1353,7 +1365,7 @@ function ExecutionModal({
   const [selectedReminderId, setSelectedReminderId] = useState("documents");
   const selectedReminder = reminderTemplates.find((template) => template.id === selectedReminderId) || reminderTemplates[0];
   const [whatsappMessage, setWhatsappMessage] = useState(selectedReminder.message);
-  const candidatePhone = String(selected.phone || selected.mobile || selected.whatsapp || "+212 6 77 88 99 00");
+  const candidatePhone = String(selected.phone || "");
   const normalizedWhatsappPhone = candidatePhone.replace(/[^0-9]/g, "").replace(/^0/, "212");
   const whatsappHref = `https://wa.me/${normalizedWhatsappPhone}?text=${encodeURIComponent(whatsappMessage)}`;
 
@@ -1384,25 +1396,40 @@ function ExecutionModal({
   }
   async function save() {
     if (isJourney) {
+      if (!selectedCandidate) {
+        alert("Sélectionnez un candidat réel depuis le recrutement avant de créer le parcours.");
+        return;
+      }
+      if (journeyBlockedByDuplicate) {
+        alert("Ce candidat possède déjà un parcours onboarding qui bloque une nouvelle création.");
+        return;
+      }
       const j: Journey = {
         id: "",
-        title: candidateName || "New Angelcare Joiner",
-        position: position || "Role to define",
+        title: journeyTitle,
+        position: journeyPosition,
         status: stage,
         startDate: due,
-        department,
+        department: journeyDepartment,
         manager,
         location,
         employmentType,
-        email: `${(candidateName || "new.joiner").toLowerCase().replace(/\s+/g, ".")}@angelcare.ma`,
-        phone: "+212 6 00 00 00 00",
+        email: journeyEmail,
+        phone: journeyPhone,
         progress: progress || selectedStageMeta.percent,
         owner,
+        candidateId: selectedCandidate.id,
+        interviewId: selectedInterview?.id,
+        openingId: selectedOpening?.id,
       };
       const createdJourney = await createOnboardingJourney({
         ...j,
-        candidate_name: j.title,
-        job_title: j.position,
+        candidateKey: selectedCandidate.id,
+        candidate_id: selectedCandidate.id,
+        interviewId: selectedInterview?.id,
+        interview_id: selectedInterview?.id,
+        openingId: selectedOpening?.id,
+        opening_id: selectedOpening?.id,
         priority,
         risk_notes: risk,
         launch_note: note,
@@ -1426,10 +1453,10 @@ function ExecutionModal({
       await addOnboardingNote({
         journey_id: persistedJourneyId,
         title: "Journey launched from onboarding lifecycle modal",
-        body: `${j.title} · ${stage} · ${progress || selectedStageMeta.percent}% · ${priority}`,
+        body: `${j.title} · ${stage} · ${progress || selectedStageMeta.percent}% · ${priority} · candidate=${selectedCandidate.id}${selectedInterview?.id ? ` · interview=${selectedInterview.id}` : ""}${selectedOpening?.id ? ` · opening=${selectedOpening.id}` : ""}`,
         type: "journey_create",
       });
-      onCreateJourney({ ...j, ...persistedJourney, id: persistedJourneyId });
+      onCreateJourney({ ...j, id: persistedJourneyId });
       router.refresh();
       return;
     }
@@ -1599,7 +1626,7 @@ function ExecutionModal({
   const ModalIcon = modalIcon;
 
   return (
-    <div className="fixed inset-x-0 bottom-0 top-[132px] z-[95] bg-slate-950/35 p-4 backdrop-blur-md">
+    <div className="onboarding-modal fixed inset-x-0 bottom-0 top-[132px] z-[95] bg-slate-950/35 p-4 backdrop-blur-md">
       <div className="mx-auto flex h-full max-w-7xl flex-col overflow-hidden rounded-[36px] border border-white/60 bg-white shadow-2xl shadow-slate-900/20">
         <div className="flex items-center justify-between border-b border-slate-100 bg-gradient-to-r from-white via-violet-50/70 to-cyan-50/80 p-6">
           <div className="flex items-center gap-4">
@@ -1611,9 +1638,19 @@ function ExecutionModal({
                 ONBOARDING LIFECYCLE MODAL
               </div>
               <h2 className="text-2xl font-black tracking-tight">{title}</h2>
-              <p className="max-w-4xl text-sm font-semibold text-slate-500">
+              <p className="max-w-4xl text-sm font-semibold text-slate-700">
                 {subtitle}
               </p>
+              {isJourney ? (
+                <div className="mt-3 inline-flex rounded-full bg-white px-3 py-2 text-xs font-black text-slate-950 shadow-sm ring-1 ring-slate-200">
+                  {selectedCandidate ? (journeyBlockedByDuplicate ? "Éligibilité bloquée" : "Candidat prêt") : "Sélection requise"}
+                </div>
+              ) : null}
+              {isJourney ? (
+                <div className="mt-3 inline-flex rounded-full bg-white px-3 py-2 text-xs font-black text-slate-950 shadow-sm ring-1 ring-slate-200">
+                  {selectedCandidate ? (journeyBlockedByDuplicate ? "Éligibilité bloquée" : "Candidat prêt") : "Sélection requise"}
+                </div>
+              ) : null}
             </div>
           </div>
           <button
@@ -1959,10 +1996,139 @@ function ExecutionModal({
                       ? "Candidate from recruitment/onboarding"
                       : "Selected journey identity"}
                   </h3>
-                  <p className="mb-4 text-sm font-semibold text-slate-500">
-                    This uses the same person, role, manager, location and
-                    status shown in the left onboarding profile panel.
+                  <p className="mb-4 text-sm font-semibold text-slate-700">
+                    {isJourney
+                      ? "Sélectionnez une candidature réelle et son élément de preuve d’entretien. L’identité importée reste verrouillée."
+                      : "This uses the same person, role, manager, location and status shown in the left onboarding profile panel."}
                   </p>
+                  {isJourney ? (
+                    <div className="space-y-4">
+                      <label className="block text-sm font-black text-slate-950" htmlFor="onboarding-candidate-search">
+                        Rechercher une candidature
+                        <div className="mt-2 flex items-center gap-2 rounded-2xl border border-slate-300 bg-white px-3 py-2.5">
+                          <Search className="h-4 w-4 text-slate-700" />
+                          <input
+                            id="onboarding-candidate-search"
+                            className="min-w-0 flex-1 bg-transparent text-sm font-bold text-slate-950 outline-none placeholder:text-slate-600"
+                            value={candidateQuery}
+                            onChange={(event) => setCandidateQuery(event.target.value)}
+                            placeholder="Nom, email, téléphone, poste ou étape"
+                            autoComplete="off"
+                          />
+                        </div>
+                      </label>
+                      {recruitment.warnings.length > 0 ? (
+                        <div className="rounded-2xl border border-amber-300 bg-amber-50 p-3 text-sm font-bold text-amber-950" role="alert">
+                          <div>Données recrutement indisponibles ou partielles: {recruitment.warnings.join(" · ")}</div>
+                          <button type="button" className="btn-mini mt-3 text-slate-950" onClick={() => router.refresh()}>Réessayer</button>
+                        </div>
+                      ) : null}
+                      <div className="max-h-56 overflow-auto rounded-2xl border border-slate-200 bg-slate-50 p-2" role="listbox" aria-label="Candidats recrutement">
+                        {recruitment.candidates.length === 0 ? (
+                          <div className="p-5 text-center text-sm font-bold text-slate-800">
+                            Chargement terminé: aucun candidat réel disponible.
+                          </div>
+                        ) : filteredCandidates.length === 0 ? (
+                          <div className="p-5 text-center text-sm font-bold text-slate-800">Aucun résultat pour cette recherche.</div>
+                        ) : (
+                          filteredCandidates.slice(0, 50).map((candidate) => {
+                            const opening = recruitment.openings.find((item) => item.id === candidate.openingId);
+                            const latestInterview = recruitment.interviews
+                              .filter((interview) => interview.candidateId === candidate.id)
+                              .sort((a, b) => b.scheduledAt.localeCompare(a.scheduledAt))[0];
+                            return (
+                              <button
+                                key={candidate.id}
+                                type="button"
+                                role="option"
+                                aria-selected={candidate.id === selectedCandidateId}
+                                onClick={() => {
+                                  setSelectedCandidateId(candidate.id);
+                                  setSelectedInterviewId(latestInterview?.id || "");
+                                }}
+                                className={cn(
+                                  "mb-2 w-full rounded-2xl border p-3 text-left transition last:mb-0",
+                                  candidate.id === selectedCandidateId
+                                    ? "border-violet-400 bg-violet-50 shadow-sm"
+                                    : "border-slate-200 bg-white hover:border-violet-300",
+                                )}
+                              >
+                                <div className="flex items-start justify-between gap-3">
+                                  <span className="font-black text-slate-950">{candidate.fullName}</span>
+                                  <span className="rounded-full bg-slate-100 px-2 py-1 text-[10px] font-black text-slate-800">{candidate.pipelineStage || candidate.status || "Stage non renseignée"}</span>
+                                </div>
+                                <div className="mt-1 text-xs font-semibold text-slate-800">
+                                  {[opening?.title || candidate.positionTitle, candidate.email || candidate.phone, latestInterview ? `Entretien: ${latestInterview.decision} · ${d(latestInterview.scheduledAt)}` : "Aucun entretien"].filter(Boolean).join(" · ")}
+                                </div>
+                              </button>
+                            );
+                          })
+                        )}
+                      </div>
+                      {selectedCandidate ? (
+                        <div className="rounded-[26px] border border-violet-200 bg-gradient-to-br from-violet-50 via-white to-cyan-50 p-4" aria-live="polite">
+                          <div className="flex flex-wrap items-start justify-between gap-3">
+                            <div>
+                              <div className="text-[10px] font-black uppercase tracking-[0.2em] text-violet-800">Candidate authority card</div>
+                              <h4 className="mt-1 text-xl font-black text-slate-950">{selectedCandidate.fullName}</h4>
+                              <p className="text-sm font-bold text-slate-800">ID candidat: {selectedCandidate.id}</p>
+                            </div>
+                            <button type="button" className="btn-mini text-slate-950" onClick={() => { setSelectedCandidateId(""); setSelectedInterviewId(""); }}>
+                              Changer de candidat
+                            </button>
+                          </div>
+                          <div className="mt-4 grid gap-2 text-sm font-bold text-slate-800 sm:grid-cols-2">
+                            <div>Email: <span className="text-slate-950">{selectedCandidate.email || "Non renseigné"}</span></div>
+                            <div>Téléphone: <span className="text-slate-950">{selectedCandidate.phone || "Non renseigné"}</span></div>
+                            <div>Poste: <span className="text-slate-950">{journeyPosition || "Non renseigné"}</span></div>
+                            <div>Département: <span className="text-slate-950">{selectedOpening?.department || "Non renseigné"}</span></div>
+                            <div>Ville: <span className="text-slate-950">{selectedCandidate.city || "Non renseignée"}</span></div>
+                            <div>Étape: <span className="text-slate-950">{selectedCandidate.pipelineStage || "Non renseignée"}</span></div>
+                            <div>Décision: <span className="text-slate-950">{selectedCandidate.decision || "Non renseignée"}</span></div>
+                            <div>Source: <span className="text-slate-950">Dossier recrutement canonique</span></div>
+                          </div>
+                          <div className="mt-4 rounded-2xl border border-cyan-200 bg-white p-3 text-sm font-bold text-slate-800">
+                            <div className="font-black text-slate-950">Preuve d’entretien</div>
+                            {selectedInterview ? (
+                              <>
+                                {candidateInterviews.length > 1 ? (
+                                  <label className="mt-2 block text-xs font-black text-slate-950">
+                                    Sélectionner l’entretien réel
+                                    <select className="input mt-1 w-full" value={selectedInterview.id} onChange={(event) => setSelectedInterviewId(event.target.value)}>
+                                      {candidateInterviews.map((interview) => <option key={interview.id} value={interview.id}>{d(interview.scheduledAt)} · {interview.status} · {interview.decision} · {interview.leadInterviewer}</option>)}
+                                    </select>
+                                  </label>
+                                ) : null}
+                                <div className="mt-2 grid gap-2 sm:grid-cols-2">
+                                  <span>ID entretien: {selectedInterview.id}</span>
+                                  <span>Statut: {selectedInterview.status}</span>
+                                  <span>Décision: {selectedInterview.decision}</span>
+                                  <span>Date: {d(selectedInterview.scheduledAt)}</span>
+                                  <span>Interviewer: {selectedInterview.leadInterviewer}</span>
+                                  <span>Ouverture: {selectedOpening?.title || "Non renseignée"}</span>
+                                </div>
+                              </>
+                            ) : (
+                              <p className="mt-2 text-amber-950">Aucun entretien canonique n’est enregistré pour ce candidat.</p>
+                            )}
+                          </div>
+                          {duplicateJourneys.length > 0 ? (
+                            <div className="mt-4 rounded-2xl border border-rose-300 bg-rose-50 p-3 text-sm font-bold text-rose-950" role="alert">
+                              <div>Création bloquée: un parcours existant affecte l’éligibilité actuelle.</div>
+                              {duplicateJourneys.map((journey) => (
+                                <div key={journey.id} className="mt-2 flex flex-wrap items-center justify-between gap-2">
+                                  <span>{journey.status} · {journey.title} · étape {journey.status}</span>
+                                  <button type="button" className="btn-mini text-slate-950" onClick={() => onOpenExistingJourney(journey.id)}>Ouvrir le parcours</button>
+                                </div>
+                              ))}
+                            </div>
+                          ) : null}
+                        </div>
+                      ) : (
+                        <div className="rounded-2xl border border-dashed border-violet-300 bg-violet-50 p-4 text-sm font-bold text-violet-950">Aucun candidat sélectionné. La création reste verrouillée.</div>
+                      )}
+                    </div>
+                  ) : (
                   <div className="space-y-3">
                     <input
                       className="input w-full"
@@ -2007,6 +2173,7 @@ function ExecutionModal({
                       onChange={(e) => setDue(e.target.value)}
                     />
                   </div>
+                  )}
                 </div>
                 <div className="rounded-[32px] border border-slate-200 bg-slate-50 p-5">
                   <h3 className="text-lg font-black">Main page alignment</h3>
@@ -2229,7 +2396,7 @@ function ExecutionModal({
                     : isJourney
                       ? "Create a journey aligned to the same onboarding stages"
                       : "Update the selected journey without changing the page model"}{" "}
-            for {candidateName || selected.title}
+            for {isJourney ? journeyTitle || "candidate selection required" : candidateName || selected.title}
           </div>
           <div className="flex gap-3">
             <button
@@ -2239,7 +2406,7 @@ function ExecutionModal({
               Cancel
             </button>
             <button
-              disabled={isPending}
+              disabled={isPending || (isJourney && (!selectedCandidate || journeyBlockedByDuplicate))}
               onClick={save}
               className="rounded-2xl bg-gradient-to-r from-violet-600 to-cyan-500 px-6 py-3 font-black text-white shadow-lg shadow-violet-200"
             >
@@ -2277,6 +2444,10 @@ function UiStyles() {
 .btn-primary:hover{transform:translateY(-1px) scale(1.01)}
 .btn-mini{display:inline-flex;align-items:center;gap:.35rem;border:1px solid rgb(226 232 240);border-radius:1rem;padding:.55rem .8rem;font-size:.75rem;font-weight:900;background:white}
 .input{border:1px solid rgb(226 232 240);border-radius:1rem;padding:1rem;font-weight:700;outline:none;background:white}
+.onboarding-modal{color:#070a0f}
+.onboarding-modal input,.onboarding-modal select,.onboarding-modal textarea{color:#070a0f}
+.onboarding-modal input::placeholder,.onboarding-modal textarea::placeholder{color:#334155;opacity:1}
+.onboarding-modal .text-slate-400,.onboarding-modal .text-slate-500{color:#334155!important}
 .input:focus{border-color:#8b5cf6;box-shadow:0 0 0 4px rgb(139 92 246 / .12)}
 .qa{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.5rem;border:1px solid rgb(226 232 240);border-radius:1rem;padding:1rem;background:white;color:#334155;min-height:86px}
 .qa svg{height:1.25rem;width:1.25rem;color:#7c3aed}

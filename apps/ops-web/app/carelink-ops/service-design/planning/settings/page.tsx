@@ -1,2 +1,3 @@
-import { PlanningSettingsWorkspace } from '@/components/carelink/service-design/planning/workspaces/PlanningSettingsWorkspace'
-export default function Page(){return <PlanningSettingsWorkspace/>}
+import { PlanningOperationsWorkspace } from '@/components/carelink/service-design/mastery/PlanningOperationsWorkspace'
+export const dynamic='force-dynamic'
+export default function Page(){return <PlanningOperationsWorkspace kind="settings"/>}

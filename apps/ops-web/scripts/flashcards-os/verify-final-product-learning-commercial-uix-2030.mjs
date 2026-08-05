@@ -14,6 +14,7 @@ function check(label,condition,detail=''){const ok=Boolean(condition);checks.pus
 function run(command,args){const result=spawnSync(command,args,{cwd:root,encoding:'utf8'});const output=[result.stdout,result.stderr,result.error?.message].filter(Boolean).join('\n').trim();return{ok:result.status===0,output,status:result.status}}
 
 const shell=read('components/flashcards-os/studio/FlashcardsStudioFrame.tsx')
+const studioCss=read('components/flashcards-os/studio/flashcards-studio-2030.module.css')
 const nav=read('lib/flashcards-os/studio-navigation.ts')
 const hall=read('components/flashcards-os/studio/FlashcardsCommandHall2030.tsx')
 const constellation=read('components/flashcards-os/CollectionRegistry.tsx')
@@ -44,6 +45,7 @@ check('premium Flashcards Studio shell is active',shell.includes('Product & Lear
 check('studio shell uses official repository logo',shell.includes('/b2b-plaquette-partenaires/assets/angelcare-original-logo.png'))
 check('studio shell has compact navigation',shell.includes('PanelLeftClose')&&shell.includes('PanelLeftOpen'))
 check('studio shell has focus mode',shell.includes('Focus Studio'))
+check('focus mode removes the sidebar from grid flow without pushing the workspace below the viewport',studioCss.includes('.studio[data-focus=\"true\"]{grid-template-columns:minmax(0,1fr)}')&&studioCss.includes('.studio[data-focus=\"true\"] .sidebar{display:none')&&studioCss.includes('.studio[data-focus=\"true\"] .workspace{grid-column:1}')&&!studioCss.includes('.studio[data-focus=\"true\"]{grid-template-columns:0 minmax(0,1fr)}'))
 check('studio shell has density control',shell.includes("'compact'|'standard'|'comfortable'"))
 check('studio shell has command palette shortcut',shell.includes("event.key.toLowerCase() === 'k'"))
 check('workspace preferences persist to database API',shell.includes('/api/flashcards-os/px/preferences')&&exists('app/api/flashcards-os/px/preferences/route.ts'))

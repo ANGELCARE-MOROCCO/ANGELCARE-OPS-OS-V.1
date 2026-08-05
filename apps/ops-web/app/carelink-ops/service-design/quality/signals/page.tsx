@@ -1,2 +1,2 @@
-import QualitySignalWorkspace from '@/components/carelink/service-design/performance/workspaces/QualitySignalWorkspace'
-export default function Page(){return <QualitySignalWorkspace/>}
+import { MasteryRegistryWorkspace } from '@/components/carelink/service-design/mastery/MasteryRegistryWorkspace'
+export default function Page(){return <MasteryRegistryWorkspace domain="quality_signal"/>}

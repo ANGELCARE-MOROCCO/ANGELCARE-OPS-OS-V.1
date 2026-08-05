@@ -90,9 +90,9 @@ export function DecisionButton({ children, tone = 'blue', disabled, type = 'butt
   return <button type={type} disabled={disabled} onClick={onClick} className={cx('inline-flex items-center justify-center gap-2 rounded-2xl px-4 py-2.5 text-xs font-black transition duration-200 disabled:cursor-not-allowed disabled:opacity-50', tone === 'navy' ? 'bg-slate-950 text-white shadow-[0_12px_28px_rgba(15,23,42,.18)] hover:bg-slate-800' : tone === 'emerald' ? 'bg-emerald-600 text-white shadow-[0_12px_28px_rgba(5,150,105,.18)] hover:bg-emerald-700' : tone === 'rose' ? 'bg-rose-600 text-white hover:bg-rose-700' : tone === 'amber' ? 'bg-amber-500 text-slate-950 hover:bg-amber-400' : 'bg-blue-600 text-white shadow-[0_12px_28px_rgba(37,99,235,.18)] hover:bg-blue-700')}>{children}</button>
 }
 
-export function OutlineButton({ children, href }: { children: ReactNode; href?: string }) {
-  const className = 'inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-black text-slate-700 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700'
-  return href ? <a href={href} className={className}>{children}<ArrowUpRight size={14} /></a> : <button className={className}>{children}</button>
+export function OutlineButton({ children, href, onClick }: { children: ReactNode; href?: string; onClick?: () => void }) {
+  const className = 'inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-black text-slate-700 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700 disabled:cursor-not-allowed disabled:opacity-45'
+  return href ? <a href={href} className={className}>{children}<ArrowUpRight size={14} /></a> : <button type="button" onClick={onClick} disabled={!onClick} title={!onClick ? 'Action indisponible dans ce contexte.' : undefined} className={className}>{children}</button>
 }
 
 export function StatusIcon({ status }: { status: string }) {

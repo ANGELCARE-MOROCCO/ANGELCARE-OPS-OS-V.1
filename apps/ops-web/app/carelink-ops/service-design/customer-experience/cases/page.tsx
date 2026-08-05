@@ -1,2 +1,2 @@
-import CustomerExperienceCaseWorkspace from '@/components/carelink/service-design/performance/workspaces/CustomerExperienceCaseWorkspace'
-export default function Page(){return <CustomerExperienceCaseWorkspace/>}
+import { MasteryRegistryWorkspace } from '@/components/carelink/service-design/mastery/MasteryRegistryWorkspace'
+export default function Page(){return <MasteryRegistryWorkspace domain="customer_case"/>}

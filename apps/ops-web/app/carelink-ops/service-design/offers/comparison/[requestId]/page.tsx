@@ -1,2 +1,8 @@
-import{CommercialComparisonWorkspace}from'@/components/carelink/service-design/commercial/workspaces/CommercialComparisonWorkspace'
-export default function Page(){return <CommercialComparisonWorkspace/>}
+import { MasteryRecordWorkspace } from '@/components/carelink/service-design/mastery/MasteryRecordWorkspace'
+
+export const dynamic = 'force-dynamic'
+
+export default async function Page({ params }: { params: Promise<{ requestId: string }> }) {
+  const { requestId } = await params
+  return <MasteryRecordWorkspace domain="commercial_request" id={requestId} />
+}

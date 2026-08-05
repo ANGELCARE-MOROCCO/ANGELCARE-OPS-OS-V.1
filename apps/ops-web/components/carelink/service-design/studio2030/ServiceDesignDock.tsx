@@ -82,7 +82,7 @@ export function ServiceDesignDock({ contextLinks }: { contextLinks: ReadonlyArra
 export function ServiceDesignPulseRail({ databaseReady, pendingApprovals }: { databaseReady: boolean; pendingApprovals: number }) {
   const items = [
     { label: databaseReady ? 'Catalogue opérationnel' : 'Configuration base requise', detail: databaseReady ? 'Source locale disponible' : 'Vérifier la connexion', tone: databaseReady ? 'emerald' : 'rose', href: '/carelink-ops/service-design/catalogue' },
-    { label: `${pendingApprovals} validation${pendingApprovals === 1 ? '' : 's'}`, detail: pendingApprovals ? 'Autorité humaine requise' : 'Aucune décision urgente', tone: pendingApprovals ? 'amber' : 'emerald', href: '/carelink-ops/service-design/command/approvals' },
+    { label: `${pendingApprovals} élément${pendingApprovals === 1 ? '' : 's'} à traiter`, detail: pendingApprovals ? 'Ouvrir la file de travail' : 'Aucune action urgente', tone: pendingApprovals ? 'amber' : 'emerald', href: '/carelink-ops/service-design/my-work' },
     { label: 'OpenRouter Free', detail: 'Advisory only', tone: 'violet', href: '/carelink-ops/service-design/advanced' },
     { label: 'CARELINK souverain', detail: 'Exécution terrain préservée', tone: 'blue', href: '/carelink-ops/service-design/handoffs' },
   ]

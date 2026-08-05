@@ -4,10 +4,9 @@ import type { ReactNode } from 'react'
 
 import { useMemo, useState } from 'react'
 import Link from 'next/link'
-import { Activity, ArrowLeft, BriefcaseBusiness, CheckCircle2, ChevronRight, ClipboardCheck, FileWarning, Gauge, Layers3, LockKeyhole, MapPinned, PackageCheck, ShieldAlert, Sparkles, UsersRound } from 'lucide-react'
+import { Activity, ArrowLeft, BriefcaseBusiness, CheckCircle2, ChevronRight, ClipboardCheck, Database, Gauge, Layers3, LockKeyhole, MapPinned, PackageCheck, ShieldAlert, Sparkles, UsersRound } from 'lucide-react'
 import type { CategoryDossier } from '@/types/homeservice-design'
 import { readinessBand, statusLabel } from '@/lib/homeservice-design/constants'
-import { RequestApprovalAction } from '../MutationPanels'
 import { Badge, EmptyState, MetricCard, Panel, ProgressBar, WarningBanner, WorkspaceTitle, cx } from '../DesignSystem'
 
 const sectionIcons: Record<string, ReactNode> = {
@@ -51,7 +50,8 @@ export function CategoryDossierWorkspace({ dossier }: { dossier: CategoryDossier
           <div className="flex flex-col gap-2 sm:min-w-[230px]">
             <Link href={`/carelink-ops/service-design/factory/category/${dossier.code}?mode=single_mission`} className="inline-flex items-center justify-center gap-2 rounded-2xl bg-blue-600 px-5 py-3 text-sm font-black text-white shadow-[0_16px_34px_rgba(37,99,235,0.35)] transition hover:bg-blue-500"><Sparkles size={17} /> Concevoir une mission</Link>
             <Link href={`/carelink-ops/service-design/factory/category/${dossier.code}?mode=multi_mission`} className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/15 bg-white/10 px-5 py-3 text-sm font-black text-white transition hover:bg-white/15"><Layers3 size={17} /> Créer un programme</Link>
-            <RequestApprovalAction entityType="service_category" entityId={dossier.id} entityLabel={dossier.commercialNameFr} blockers={dossier.blockers}/>
+            <Link href={`/carelink-ops/service-design/factory/category/${dossier.code}?mode=commercial_package`} className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/15 bg-white/10 px-5 py-3 text-sm font-black text-white transition hover:bg-white/15"><PackageCheck size={17} /> Composer un package</Link>
+            <Link href={`/carelink-ops/service-design/factory/import?category=${encodeURIComponent(dossier.id)}&type=doctrine_rules`} className="inline-flex items-center justify-center gap-2 rounded-2xl border border-cyan-300/25 bg-cyan-300/10 px-5 py-3 text-sm font-black text-cyan-100 transition hover:bg-cyan-300/15"><Database size={17} /> Importer les ressources</Link>
           </div>
         </div>
       </section>

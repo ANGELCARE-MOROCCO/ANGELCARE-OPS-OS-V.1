@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
-const response=(request:Request,method:string)=>NextResponse.json({ok:true,method,path:new URL(request.url).pathname,boundary:'HomeService Design OS UMZ2',carelinkWrite:false,providerRoute:'openrouter/free'})
-export async function GET(request:Request){return response(request,'GET')}
-export async function POST(request:Request){return response(request,'POST')}
-export async function PATCH(request:Request){return response(request,'PATCH')}
+import { generatePlanningScenarios } from '@/lib/service-design-mastery/planning'
+import { errorPayload } from '@/lib/service-design-mastery/server'
+import { requireHomeServiceApi } from '@/lib/homeservice-design/server/auth'
+export const maxDuration=220
+export async function POST(request:Request,{params}:{params:Promise<{id:string}>}){try{const actor=await requireHomeServiceApi(['homeservice_design.create_planning_requests','homeservice_design.manage_categories']);const body=await request.json().catch(()=>({}));return NextResponse.json({ok:true,data:await generatePlanningScenarios((await params).id,actor,body)},{status:201})}catch(e){const p=errorPayload(e);return NextResponse.json(p.body,{status:p.status})}}

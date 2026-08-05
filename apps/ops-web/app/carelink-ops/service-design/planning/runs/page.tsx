@@ -1,2 +1,3 @@
-import { AIRunLedgerWorkspace } from '@/components/carelink/service-design/planning/workspaces/AIRunLedgerWorkspace'
-export default function Page(){return <AIRunLedgerWorkspace/>}
+import { PlanningOperationsWorkspace } from '@/components/carelink/service-design/mastery/PlanningOperationsWorkspace'
+export const dynamic='force-dynamic'
+export default function Page(){return <PlanningOperationsWorkspace kind="runs"/>}

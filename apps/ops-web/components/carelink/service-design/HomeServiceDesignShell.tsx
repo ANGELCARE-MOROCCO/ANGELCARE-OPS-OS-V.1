@@ -3,9 +3,10 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import type { ReactNode } from 'react'
-import { Bot, Database, ShieldCheck, Sparkles } from 'lucide-react'
+import { Bot, BriefcaseBusiness, Database, Sparkles } from 'lucide-react'
 import { HSD_CONTEXT_NAV, HSD_MASTER_UNIVERSES, HSD_ROUTE_ROOT } from '@/lib/homeservice-design/constants'
 import { ServiceDesignDock, ServiceDesignPulseRail, sd2030 } from './studio2030'
+import { ServiceDesignActionProvider } from './feedback/ServiceDesignActionCenter'
 
 function masterKey(pathname: string) {
   if (pathname === HSD_ROUTE_ROOT || pathname.startsWith(`${HSD_ROUTE_ROOT}/factory`)) return 'factory'
@@ -48,6 +49,7 @@ export function HomeServiceDesignShell({ children, databaseReady = true, pending
   const identity = routeTitle(pathname, activeUniverse?.label || 'Service Design OS')
 
   return (
+    <ServiceDesignActionProvider>
     <main className="service-design-2030 min-h-screen overflow-x-clip bg-[#f3f6fb] text-slate-950">
       <section className="relative border-b border-slate-200 bg-white/88 px-4 py-4 backdrop-blur-xl sm:px-6 xl:px-8">
         <div className="pointer-events-none absolute inset-0 opacity-55 [background-image:radial-gradient(circle_at_12%_0%,rgba(59,130,246,.11),transparent_26%),radial-gradient(circle_at_92%_120%,rgba(34,211,238,.10),transparent_30%)]" />
@@ -60,7 +62,7 @@ export function HomeServiceDesignShell({ children, databaseReady = true, pending
           <div className="ml-auto flex items-center gap-2">
             <div title={databaseReady ? 'Données opérationnelles disponibles' : 'Configuration base requise'} className={sd2030('hidden h-10 items-center gap-2 rounded-2xl border px-3 text-[9px] font-black uppercase tracking-[.12em] sm:flex', databaseReady ? 'border-emerald-200 bg-emerald-50 text-emerald-700' : 'border-rose-200 bg-rose-50 text-rose-700')}><Database size={14} />{databaseReady ? 'Catalogue live' : 'Base requise'}</div>
             <div title="OpenRouter Free" className="hidden h-10 items-center gap-2 rounded-2xl border border-violet-200 bg-violet-50 px-3 text-[9px] font-black uppercase tracking-[.12em] text-violet-700 lg:flex"><Bot size={14} />Advisory AI</div>
-            <Link href={`${HSD_ROUTE_ROOT}/command/approvals`} className="flex h-10 items-center gap-2 rounded-2xl border border-slate-200 bg-white px-3 text-[9px] font-black uppercase tracking-[.12em] text-slate-600 shadow-sm transition hover:border-blue-200 hover:text-blue-700"><ShieldCheck size={14} />{pendingApprovals > 0 ? `${pendingApprovals} validation${pendingApprovals > 1 ? 's' : ''}` : 'Intégrité'}</Link>
+            <Link href={`${HSD_ROUTE_ROOT}/my-work`} className="flex h-10 items-center gap-2 rounded-2xl border border-slate-200 bg-white px-3 text-[9px] font-black uppercase tracking-[.12em] text-slate-600 shadow-sm transition hover:border-blue-200 hover:text-blue-700"><BriefcaseBusiness size={14} />Mon travail</Link>
           </div>
         </div>
       </section>
@@ -90,5 +92,6 @@ export function HomeServiceDesignShell({ children, databaseReady = true, pending
         }
       `}</style>
     </main>
+    </ServiceDesignActionProvider>
   )
 }

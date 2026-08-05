@@ -55,7 +55,7 @@ export function StudioAction({ href, children, tone = 'blue', icon, compact = fa
     tone === 'slate' ? 'border border-slate-200 bg-white text-slate-700 shadow-sm hover:border-blue-200 hover:text-blue-700' : tone === 'navy' ? 'border border-white/15 bg-white/10 text-white hover:bg-white/15' : toneClasses[tone].strong,
   )
   const content = <>{icon}{children}</>
-  return href ? <Link href={href} className={className}>{content}</Link> : <button type="button" className={className}>{content}</button>
+  return href ? <Link href={href} className={className}>{content}</Link> : <button type="button" disabled title="Sélectionnez un dossier réel pour activer cette action." className={`${className} cursor-not-allowed opacity-45`}>{content}</button>
 }
 
 export function StudioChip({ children, tone = 'slate' }: { children: ReactNode; tone?: StudioTone }) {

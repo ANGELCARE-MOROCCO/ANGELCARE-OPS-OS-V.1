@@ -1,2 +1,2 @@
-import{CommercialCommandWorkspace}from'@/components/carelink/service-design/commercial/workspaces/CommercialCommandWorkspace'
-export default function Page(){return <CommercialCommandWorkspace/>}
+import { MasteryRegistryWorkspace } from '@/components/carelink/service-design/mastery/MasteryRegistryWorkspace'
+export default function Page(){return <MasteryRegistryWorkspace domain="commercial_request"/>}

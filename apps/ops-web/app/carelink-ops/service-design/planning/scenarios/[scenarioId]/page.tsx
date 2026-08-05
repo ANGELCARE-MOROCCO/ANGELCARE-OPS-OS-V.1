@@ -1,2 +1,6 @@
-import { TechnicalPlanDossierWorkspace } from '@/components/carelink/service-design/planning/workspaces/TechnicalPlanDossierWorkspace'
-export default function Page(){return <TechnicalPlanDossierWorkspace/>}
+import { MissionWorkbench } from '@/components/carelink/service-design/product-experience/MissionWorkbench'
+
+export default async function Page({ params }: { params: Promise<{ scenarioId: string }> }) {
+  const { scenarioId } = await params
+  return <MissionWorkbench scenarioId={scenarioId} />
+}

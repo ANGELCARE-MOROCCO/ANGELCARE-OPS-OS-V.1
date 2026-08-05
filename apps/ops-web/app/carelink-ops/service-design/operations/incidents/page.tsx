@@ -1,2 +1,2 @@
-import IncidentCommandWorkspace from '@/components/carelink/service-design/performance/workspaces/IncidentCommandWorkspace'
-export default function Page(){return <IncidentCommandWorkspace/>}
+import { MasteryRegistryWorkspace } from '@/components/carelink/service-design/mastery/MasteryRegistryWorkspace'
+export default function Page(){return <MasteryRegistryWorkspace domain="incident"/>}

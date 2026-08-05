@@ -55,7 +55,6 @@ export const HSD_CONTEXT_NAV = {
     { label: 'Qualité', href: `${HSD_ROUTE_ROOT}/quality/signals` },
     { label: 'Santé opérationnelle', href: `${HSD_ROUTE_ROOT}/operations/health` },
     { label: 'Readiness', href: `${HSD_ROUTE_ROOT}/operations/readiness` },
-    { label: 'Validations', href: `${HSD_ROUTE_ROOT}/command/approvals` },
     { label: 'Audit', href: `${HSD_ROUTE_ROOT}/command/audit` },
   ],
 } as const

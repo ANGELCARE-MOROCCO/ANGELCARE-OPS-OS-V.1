@@ -1,2 +1,2 @@
-import ImprovementProposalWorkspace from '@/components/carelink/service-design/performance/workspaces/ImprovementProposalWorkspace'
-export default function Page(){return <ImprovementProposalWorkspace/>}
+import { MasteryRegistryWorkspace } from '@/components/carelink/service-design/mastery/MasteryRegistryWorkspace'
+export default function Page(){return <MasteryRegistryWorkspace domain="improvement"/>}

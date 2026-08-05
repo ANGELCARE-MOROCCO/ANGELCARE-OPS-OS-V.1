@@ -1,2 +1,2 @@
-import{ProgrammeMappingWorkspace}from'@/components/carelink/service-design/handoff/workspaces/ProgrammeMappingWorkspace'
-export default function Page(){return <ProgrammeMappingWorkspace/>}
+import { HandoffOperationalWorkspace } from '@/components/carelink/service-design/mastery/HandoffOperationalWorkspace'
+export default function Page() { return <HandoffOperationalWorkspace section="programmes" /> }

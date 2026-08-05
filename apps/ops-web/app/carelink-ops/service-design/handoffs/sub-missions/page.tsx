@@ -1,2 +1,2 @@
-import{SubMissionMatrixWorkspace}from'@/components/carelink/service-design/handoff/workspaces/SubMissionMatrixWorkspace'
-export default function Page(){return <SubMissionMatrixWorkspace/>}
+import { HandoffOperationalWorkspace } from '@/components/carelink/service-design/mastery/HandoffOperationalWorkspace'
+export default function Page() { return <HandoffOperationalWorkspace section="sub_missions" /> }

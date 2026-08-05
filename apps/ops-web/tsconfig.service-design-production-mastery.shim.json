@@ -1,0 +1,45 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "jsx": "preserve",
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/lib/service-design-mastery/*": ["lib/service-design-mastery/*"],
+      "@/components/carelink/service-design/mastery/*": ["components/carelink/service-design/mastery/*"],
+      "@/components/carelink/service-design/feedback/client": ["components/carelink/service-design/feedback/client.ts"],
+      "@/components/carelink/service-design/feedback/ServiceDesignActionCenter": ["components/carelink/service-design/feedback/ServiceDesignActionCenter.tsx"]
+    }
+  },
+  "files": [
+    "scripts/homeservice-design/production-mastery/isolated-shims.d.ts",
+    "lib/service-design-mastery/server.ts",
+    "lib/service-design-mastery/planning.ts",
+    "components/carelink/service-design/feedback/client.ts",
+    "components/carelink/service-design/feedback/ServiceDesignActionCenter.tsx",
+    "components/carelink/service-design/mastery/types.ts",
+    "components/carelink/service-design/mastery/client.ts",
+    "components/carelink/service-design/mastery/MasteryRecordWorkspace.tsx",
+    "components/carelink/service-design/mastery/MasteryRegistryWorkspace.tsx",
+    "components/carelink/service-design/mastery/CommercialCreationWorkspace.tsx",
+    "components/carelink/service-design/mastery/HandoffOperationalWorkspace.tsx",
+    "components/carelink/service-design/mastery/PlanningOperationsWorkspace.tsx",
+    "app/api/carelink-ops/service-design/mastery/[domain]/route.ts",
+    "app/api/carelink-ops/service-design/mastery/[domain]/[id]/route.ts",
+    "app/api/carelink-ops/service-design/mastery/[domain]/[id]/action/route.ts",
+    "app/api/carelink-ops/service-design/planning/requests/route.ts",
+    "app/api/carelink-ops/service-design/planning/requests/[id]/route.ts",
+    "app/api/carelink-ops/service-design/planning/requests/[id]/generate/route.ts",
+    "app/api/carelink-ops/service-design/planning/requests/[id]/feasibility/route.ts",
+    "app/api/carelink-ops/service-design/planning/plans/[id]/route.ts",
+    "app/api/carelink-ops/service-design/planning/plans/[id]/submit/route.ts",
+    "app/api/carelink-ops/service-design/planning/scenarios/[id]/route.ts"
+  ]
+}

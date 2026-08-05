@@ -1,2 +1,2 @@
-import{ReportRequirementWorkspace}from'@/components/carelink/service-design/handoff/workspaces/ReportRequirementWorkspace'
-export default function Page(){return <ReportRequirementWorkspace/>}
+import { HandoffOperationalWorkspace } from '@/components/carelink/service-design/mastery/HandoffOperationalWorkspace'
+export default function Page() { return <HandoffOperationalWorkspace section="reports" /> }
