@@ -30,7 +30,7 @@ export default function CommandSchedulesExperience({ data, commands, loading, wa
       </div>
     </CommandPanel>
 
-    <div className="grid gap-4 lg:grid-cols-3"><CommandStat label="Heures ouvrées" value={schedules.filter((schedule) => schedule.businessHoursOnly).length} tone="blue" /><CommandStat label="Mode Shadow" value={schedules.filter((schedule) => schedule.executionMode === 'shadow').length} tone="cyan" /><CommandStat label="Aucun effet externe" value="Verrouillé" note="La planification n’active pas l’exécution externe" tone="emerald" /></div>
+    <div className="grid gap-4 lg:grid-cols-3"><CommandStat label="Heures ouvrées" value={schedules.filter((schedule) => schedule.businessHoursOnly).length} tone="blue" /><CommandStat label="Mode LIVE" value={schedules.length} tone="emerald" /><CommandStat label="Exécution" value="Directe" note="Chaque planning actif lance sa commande à l’échéance." tone="blue" /></div>
     <CommandPanel title="Constitution temporelle" eyebrow="Sécurité" icon={ShieldCheck} tone="emerald"><p className="text-sm font-semibold leading-7 text-slate-700">Une date planifiée décrit une intention temporelle. L’éligibilité, le contexte, l’autorité et les garde-fous sont toujours réévalués au moment réel de l’exécution.</p></CommandPanel>
   </div>
 }

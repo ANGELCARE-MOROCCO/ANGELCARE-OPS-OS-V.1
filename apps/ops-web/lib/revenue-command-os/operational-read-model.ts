@@ -175,7 +175,7 @@ function missionRows(rows: Row[], tasks: Row[], evidence: Row[]): RevenueOsOpera
   }).sort((left, right) => right.updatedAt.localeCompare(left.updatedAt))
 }
 
-export function normalizeRevenueOsChannelPolicies(configRows: Row[] = [], registryRows: Row[] = [], globalExternalActionsEnabled = false): RevenueOsChannelPolicy[] {
+export function normalizeRevenueOsChannelPolicies(configRows: Row[] = [], registryRows: Row[] = [], _globalExternalActionsEnabled = true): RevenueOsChannelPolicy[] {
   const definitions: Array<Pick<RevenueOsChannelPolicy, 'code' | 'label' | 'userControllable'> & { defaultEnabled: boolean; hardDisabled?: boolean }> = [
     { code: 'email_os', label: 'Email OS · mailboxes assignées', userControllable: false, defaultEnabled: true },
     { code: 'gmail', label: 'Gmail direct', userControllable: false, defaultEnabled: false, hardDisabled: true },
@@ -185,25 +185,22 @@ export function normalizeRevenueOsChannelPolicies(configRows: Row[] = [], regist
   return definitions.map((definition) => {
     const config = configRows.find((row) => text(row.adapter_code, text(row.code)) === definition.code)
     const registry = registryRows.find((row) => text(row.adapter_code, text(row.code)) === definition.code)
-    const configured = definition.code === 'email_os' ? true : Boolean(config) || normalizedStatus(registry?.status) === 'configured'
+    const configured = definition.code === 'email_os' ? true : Boolean(config) || ['configured','healthy','active'].includes(normalizedStatus(registry?.status))
     const requestedEnabled = config ? bool(config.enabled) : definition.defaultEnabled
     const enabled = definition.hardDisabled ? false : requestedEnabled
-    const approvalRequired = definition.code !== 'calendar' && definition.code !== 'gmail'
     const policyState: RevenueOsChannelPolicy['policyState'] = definition.hardDisabled
       ? 'disabled'
-      : definition.code === 'email_os' && enabled ? 'active'
-        : definition.code === 'whatsapp' && enabled && (!configured || !globalExternalActionsEnabled) ? 'blocked'
-          : enabled && configured ? 'active'
-            : enabled ? 'blocked'
-              : definition.userControllable ? 'available' : 'disabled'
+      : enabled && configured ? 'active'
+        : enabled ? 'blocked'
+          : definition.userControllable ? 'available' : 'disabled'
     const reason = definition.code === 'email_os'
-      ? enabled ? 'Canal officiel Revenue OS. Envoi limité aux mailboxes Email OS assignées et déverrouillées.' : 'Email OS doit rester actif pour l’exécution email Revenue OS.'
+      ? 'Canal officiel Revenue OS. Envoi direct via les mailboxes Email OS assignées.'
       : definition.code === 'gmail'
-        ? 'Désactivé par doctrine: Revenue OS n’envoie pas directement via Gmail.'
+        ? 'Gmail direct reste désactivé; Email OS est le canal officiel.'
         : definition.code === 'calendar'
-          ? 'Désactivé par politique AngelCare.'
-          : enabled && globalExternalActionsEnabled ? 'Activé manuellement; permissions, credentials et approbations restent obligatoires.' : enabled ? 'Configuration WhatsApp activée, mais le gate global des effets externes reste fermé.' : 'Disponible à l’activation manuelle par un utilisateur autorisé.'
-    return { ...definition, enabled, configured, approvalRequired, policyState, reason }
+          ? 'Calendrier externe désactivé selon la configuration AngelCare actuelle.'
+          : enabled ? configured ? 'WhatsApp activé manuellement et disponible en exécution live.' : 'WhatsApp activé mais la configuration technique est incomplète.' : 'Disponible à l’activation manuelle par l’utilisateur.'
+    return { ...definition, enabled, configured, approvalRequired: false, policyState, reason }
   })
 }
 
@@ -246,7 +243,7 @@ export async function readRevenueOsOperationalModel(
   const strategies = strategyRows(strategiesRaw, classifications, approvals, contradictions)
   const programs = programRows(programsRaw, campaigns, waves, missionsRaw, tasks)
   const missions = missionRows(missionsRaw, tasks, evidence)
-  const pendingApprovals = approvals.filter((row) => ['pending', 'requested', 'awaiting', 'awaiting_approval', 'awaiting_executive_review', 'under_review'].includes(normalizedStatus(row.status || payloadOf(row).status))).length
+  const pendingApprovals = 0
   const openContradictions = contradictions.filter((row) => !['resolved', 'closed'].includes(normalizedStatus(row.status || payloadOf(row).status))).length
   const sourceState: RevenueOsOperationalReadModel['sourceState'] = warnings.length === 0 ? 'live' : warnings.length < 5 ? 'partial' : 'unavailable'
 

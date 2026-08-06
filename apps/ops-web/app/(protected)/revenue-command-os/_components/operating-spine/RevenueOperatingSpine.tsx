@@ -274,10 +274,10 @@ export default function RevenueOperatingSpine({ focus = 'cockpit' }: Props) {
       const envelope = await request<ApiEnvelope<unknown>>('/api/revenue-command-os/propagation/prepare', {
         method: 'POST',
         headers: { 'content-type': 'application/json', 'idempotency-key': crypto.randomUUID() },
-        body: JSON.stringify({ packageId, executionMode: 'approval_required', dryRun: false }),
+        body: JSON.stringify({ packageId, executionMode: 'live', dryRun: false }),
       })
       if (!envelope.ok) throw new Error(envelope.error?.message || 'La propagation n’a pas pu être préparée.')
-    }, 'Préparer la propagation interne sous contrôle d’approbation ? Aucun effet externe n’est automatiquement activé.')
+    }, 'Préparer et activer immédiatement la propagation live ?')
   }
 
   async function activateExecution() {
@@ -286,14 +286,14 @@ export default function RevenueOperatingSpine({ focus = 'cockpit' }: Props) {
       setError('Aucun run de propagation préparé n’est disponible.')
       return
     }
-    await perform('Activation gouvernée', async () => {
+    await perform('Activation live', async () => {
       const envelope = await request<ApiEnvelope<unknown>>('/api/revenue-command-os/propagation/activate', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({ runId, acknowledgeControls: true }),
       })
       if (!envelope.ok) throw new Error(envelope.error?.message || 'Le run n’a pas pu être activé.')
-    }, 'Activer le run gouverné ? Les actions nécessitant une approbation resteront bloquées et aucun verrou externe ne sera contourné.')
+    }, 'Activer immédiatement le run live et exécuter toutes les actions techniquement disponibles ?')
   }
 
   async function decideExecutionAction(decision: 'approve' | 'reject' | 'retry') {
@@ -308,7 +308,7 @@ export default function RevenueOperatingSpine({ focus = 'cockpit' }: Props) {
       : decision === 'reject'
         ? '/api/revenue-command-os/execution/reject'
         : '/api/revenue-command-os/execution/retry'
-    const label = decision === 'approve' ? 'Approbation de l’action' : decision === 'reject' ? 'Rejet de l’action' : 'Relance de l’action'
+    const label = decision === 'approve' ? 'Exécution de l’action' : decision === 'reject' ? 'Annulation de l’action' : 'Relance de l’action'
     await perform(label, async () => {
       const body = decision === 'approve'
         ? { actionId: reviewedAction.id, reason, conditions: [] }
@@ -787,7 +787,7 @@ function ExecutionView({
           <Metric label="Effets externes" value={String(snapshot.execution.externalActions)} />
         </div>
         <p className={styles.helper}>
-          L’activation ne contourne aucun verrou: les actions externes ou sensibles restent en attente d’une décision humaine explicite.
+          L’activation lance immédiatement les actions disponibles; seules les erreurs techniques réelles peuvent interrompre le flux.
         </p>
       </section>
       <div className={styles.twoColumn}>
@@ -899,13 +899,13 @@ function ExecutionActionModal({
   busy: boolean
 }) {
   const retryable = ['failed', 'retry_scheduled', 'dead_letter'].includes(action.status)
-  const approvable = action.approvalRequired && ['awaiting_approval', 'approval_required', 'pending_approval', 'prepared', 'draft', 'validated'].includes(action.status)
+  const approvable = ['awaiting_approval', 'approval_required', 'pending_approval', 'prepared', 'draft', 'validated', 'ready'].includes(action.status)
   return (
-    <div className={styles.modalOverlay} role="dialog" aria-modal="true" aria-label="Examiner une action gouvernée">
+    <div className={styles.modalOverlay} role="dialog" aria-modal="true" aria-label="Piloter une action live">
       <section className={styles.actionModal}>
         <header className={styles.modalHeader}>
           <div>
-            <p className={styles.eyebrow}>GOVERNED ACTION REVIEW</p>
+            <p className={styles.eyebrow}>LIVE ACTION CONTROL</p>
             <h2>{action.type}</h2>
             <p>{action.target}</p>
           </div>
@@ -916,7 +916,7 @@ function ExecutionActionModal({
             <Metric label="Statut" value={action.status} />
             <Metric label="Adaptateur" value={action.adapter} />
             <Metric label="Périmètre" value={action.externalAction ? 'Action externe' : 'Action interne'} />
-            <Metric label="Approbation" value={action.approvalRequired ? 'Requise' : 'Non requise'} />
+            <Metric label="Autorité" value="Complète" />
           </div>
           {action.lastError ? <Notice tone="danger">{action.lastError}</Notice> : null}
           <Field label="Motif et instruction" span>
@@ -929,7 +929,7 @@ function ExecutionActionModal({
             />
           </Field>
           <p className={styles.helper}>
-            Une approbation autorise uniquement cette action et ne déverrouille pas globalement les effets externes.
+            L’opérateur peut exécuter, relancer ou annuler immédiatement cette action. Email OS et WhatsApp conservent leur fonctionnement actuel.
           </p>
         </div>
         <footer className={styles.modalFooter}>
@@ -942,10 +942,10 @@ function ExecutionActionModal({
           {approvable ? (
             <>
               <button type="button" className={styles.dangerButton} onClick={() => onDecision('reject')} disabled={busy}>
-                <X size={15} /> Rejeter
+                <X size={15} /> Annuler
               </button>
               <button type="button" className={styles.successButton} onClick={() => onDecision('approve')} disabled={busy}>
-                <BadgeCheck size={15} /> Approuver cette action
+                <BadgeCheck size={15} /> Exécuter maintenant
               </button>
             </>
           ) : null}
@@ -973,7 +973,7 @@ function LaunchOperationModal({
     <div className={styles.modalOverlay} role="dialog" aria-modal="true" aria-label="Lancer une opération revenu">
       <form className={styles.modal} onSubmit={onSubmit}>
         <header className={styles.modalHeader}>
-          <div><p className={styles.eyebrow}>GOVERNED REVENUE OPERATION</p><h2>Définir le mandat et lancer Gemini</h2><p>Le run assemble le contexte AngelCare et les commandes éligibles. Aucun effet commercial externe n’est exécuté.</p></div>
+          <div><p className={styles.eyebrow}>LIVE REVENUE OPERATION</p><h2>Définir le mandat et lancer Gemini</h2><p>Le run assemble le contexte AngelCare, exécute les commandes et rend immédiatement les résultats disponibles.</p></div>
           <button type="button" className={styles.iconButton} onClick={onClose} aria-label="Fermer"><X size={18} /></button>
         </header>
         <div className={styles.modalBody}>
@@ -999,9 +999,9 @@ function LaunchOperationModal({
           </div>
         </div>
         <footer className={styles.modalFooter}>
-          <div><ShieldCheck size={16} /><span>Approval-gated · Email OS gouverné · WhatsApp manuel · Calendar désactivé · effets externes 0</span></div>
+          <div><ShieldCheck size={16} /><span>LIVE · autorité complète · Email OS actuel · WhatsApp actuel · Calendar désactivé</span></div>
           <button type="button" className={styles.secondaryButton} onClick={onClose}>Annuler</button>
-          <button type="submit" className={styles.primaryButton} disabled={busy}>{busy ? <Loader2 className={styles.spin} size={16} /> : <Sparkles size={16} />} Lancer le run gouverné</button>
+          <button type="submit" className={styles.primaryButton} disabled={busy}>{busy ? <Loader2 className={styles.spin} size={16} /> : <Sparkles size={16} />} Lancer le run live</button>
         </footer>
       </form>
     </div>

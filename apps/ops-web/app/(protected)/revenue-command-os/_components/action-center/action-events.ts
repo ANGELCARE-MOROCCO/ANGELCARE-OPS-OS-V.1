@@ -4,7 +4,6 @@ export type RevenueActionState =
   | 'queued'
   | 'validating'
   | 'running'
-  | 'approval'
   | 'success'
   | 'partial'
   | 'failure'

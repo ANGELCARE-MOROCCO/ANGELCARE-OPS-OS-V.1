@@ -1,4 +1,4 @@
-import type { ApprovalClass, StudioStatus } from '../strategy-studio/types'
+import type { StudioStatus } from '../strategy-studio/types'
 
 export type ApprovalDeskAction = 'approve' | 'request_correction' | 'reject'
 
@@ -10,7 +10,7 @@ export interface ApprovalDeskItem {
   title: string
   category: string
   status: StudioStatus
-  approvalClass: ApprovalClass
+  approvalClass: 'none'
   impact: string
   deadline: string
   risk: string
@@ -21,14 +21,14 @@ export interface ApprovalDeskItem {
   exitCondition: string
   conditionsText: string
   traceId: string
-  canDecide: boolean
-  externalActions: 0
+  canDecide: true
+  externalActions: number
 }
 
 export interface ApprovalDeskResponse {
   ok: true
   data: ApprovalDeskItem[]
   warnings: string[]
-  mode: 'live-shadow'
-  externalActions: 0
+  mode: 'live'
+  externalActions: number
 }

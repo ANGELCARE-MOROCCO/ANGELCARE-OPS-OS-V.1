@@ -14,10 +14,10 @@ export const GOVERNANCE_PLANES: Array<{
   description: string
   localNavigation: string[]
 }> = [
-  { key: 'institutions', label: 'Commandement institutions & sites', shortLabel: 'Institutions', description: 'Readiness, activation, suspension, fermeture et architecture multi-sites.', localNavigation: ['Vue réseau', 'Établissements', 'Sites', 'Readiness', 'Activations', 'Suspensions', 'Fermetures', 'Historique'] },
-  { key: 'academic-structure', label: 'Structure académique souveraine', shortLabel: 'Structure académique', description: 'Années, périodes, publication, clôture et rollover gouverné.', localNavigation: ['Années scolaires', 'Périodes', 'Calendrier', 'Publication', 'Clôture', 'Rollover', 'Exceptions', 'Historique'] },
-  { key: 'classes-capacity', label: 'Classes, sections & capacité', shortLabel: 'Classes & capacité', description: 'Occupation réelle, mouvements, conflits, réservations et projections.', localNavigation: ['Commandement', 'Classes', 'Sections', 'Capacité', 'Occupation', 'Conflits', 'Mouvements', 'Projections', 'Historique'] },
-  { key: 'subjects', label: 'Matières & couverture pédagogique', shortLabel: 'Matières', description: 'Catalogue versionné, niveaux, curriculum, couverture et conflits.', localNavigation: ['Catalogue', 'Versions', 'Niveaux', 'Classes', 'Curriculum links', 'Enseignants', 'Couverture', 'Conflits', 'Audit'] },
+  { key: 'institutions', label: 'Commandement institutions & sites', shortLabel: 'Établissements', description: 'Readiness, activation, suspension, fermeture et architecture multi-sites.', localNavigation: ['Vue réseau', 'Établissements', 'Sites', 'Readiness', 'Activations', 'Suspensions', 'Fermetures', 'Historique'] },
+  { key: 'academic-structure', label: 'Année scolaire & calendrier', shortLabel: 'Année scolaire', description: 'Préparez les périodes, clôturez l’année et organisez le passage des enfants vers l’année suivante.', localNavigation: ['Aujourd’hui', 'Années scolaires', 'Périodes', 'Calendrier', 'Préparation', 'Clôture', 'Année suivante', 'À régler', 'Historique'] },
+  { key: 'classes-capacity', label: 'Classes & places', shortLabel: 'Classes & places', description: 'Répartition des enfants, places disponibles, réservations, mouvements et prévisions.', localNavigation: ['Aujourd’hui', 'Classes', 'Sections', 'Places disponibles', 'Demandes en attente', 'Mouvements d’enfants', 'À régler', 'Prévisions', 'Historique'] },
+  { key: 'subjects', label: 'Matières & programme pédagogique', shortLabel: 'Programme pédagogique', description: 'Matières, domaines d’apprentissage, programmes, objectifs, évaluations, ressources et versions.', localNavigation: ['Aujourd’hui', 'Matières & domaines', 'Programmes', 'Niveaux & classes', 'Couverture pédagogique', 'Évaluations', 'Ressources', 'À régler', 'Historique'] },
   { key: 'assignments', label: 'Affectations & couverture enseignants', shortLabel: 'Affectations', description: 'Charge, conflits, remplacements, changements et historique effectif.', localNavigation: ['Commandement', 'Enseignants', 'Classes', 'Matières', 'Charge', 'Conflits', 'Remplacements', 'Changements', 'Historique'] },
   { key: 'roles-permissions', label: 'Rôles, permissions & délégations', shortLabel: 'Rôles & permissions', description: 'Bundles versionnés, scopes, simulations, délégations et accès sensibles.', localNavigation: ['Rôles', 'Permission bundles', 'Utilisateurs', 'Délégations', 'Scopes', 'Simulations', 'Changements', 'Exceptions', 'Audit'] },
   { key: 'settings', label: 'Configuration & changements publiés', shortLabel: 'Paramètres', description: 'Ownership, changesets, versions, publication et rollback.', localNavigation: ['Configuration registry', 'Institution settings', 'Academic settings', 'Operational settings', 'Ownership', 'Draft changes', 'Publication', 'Versions', 'Rollback', 'Audit'] },
@@ -28,15 +28,15 @@ export const GOVERNANCE_COMMANDS = [
   { key: 'institution', label: 'Créer un établissement', description: 'Ouvrir un dossier institutionnel avec readiness et propriétaire.', plane: 'institutions' as GovernancePlaneKey },
   { key: 'academic_year', label: 'Créer une année scolaire', description: 'Préparer la structure et la publication du prochain cycle.', plane: 'academic-structure' as GovernancePlaneKey },
   { key: 'period', label: 'Configurer les périodes', description: 'Créer et ordonner les périodes de l’année active.', plane: 'academic-structure' as GovernancePlaneKey },
-  { key: 'class', label: 'Créer une classe', description: 'Créer une structure de capacité dans l’année active.', plane: 'classes-capacity' as GovernancePlaneKey },
-  { key: 'section', label: 'Créer une section', description: 'Étendre une classe avec capacité et contexte propre.', plane: 'classes-capacity' as GovernancePlaneKey },
-  { key: 'subject', label: 'Créer une matière', description: 'Publier une matière versionnée et sa couverture.', plane: 'subjects' as GovernancePlaneKey },
+  { key: 'class', label: 'Créer une classe', description: 'Créer une classe avec son niveau, ses places et son organisation.', plane: 'classes-capacity' as GovernancePlaneKey },
+  { key: 'section', label: 'Créer une section', description: 'Répartir les enfants d’un même niveau dans une section distincte.', plane: 'classes-capacity' as GovernancePlaneKey },
+  { key: 'subject', label: 'Créer une matière ou un domaine', description: 'Préparer une définition versionnée, ses niveaux, objectifs et évaluations.', plane: 'subjects' as GovernancePlaneKey },
   { key: 'assignment', label: 'Créer une affectation', description: 'Affecter un enseignant après contrôle des conflits.', plane: 'assignments' as GovernancePlaneKey },
   { key: 'role', label: 'Réviser un rôle', description: 'Construire une version et simuler son impact.', plane: 'roles-permissions' as GovernancePlaneKey },
   { key: 'delegation', label: 'Déléguer une autorité', description: 'Créer une délégation bornée, révisable et révocable.', plane: 'roles-permissions' as GovernancePlaneKey },
   { key: 'configuration', label: 'Publier une configuration', description: 'Préparer un changeset, valider l’impact et publier.', plane: 'settings' as GovernancePlaneKey },
   { key: 'readiness', label: 'Lancer une revue readiness', description: 'Recalculer les exigences et ouvrir les findings exacts.', plane: 'institutions' as GovernancePlaneKey },
-  { key: 'rollover', label: 'Préparer le rollover', description: 'Prévisualiser la population et isoler les exceptions.', plane: 'academic-structure' as GovernancePlaneKey },
+  { key: 'rollover', label: 'Préparer l’année suivante', description: 'Préparer les destinations des enfants et isoler les dossiers à vérifier.', plane: 'academic-structure' as GovernancePlaneKey },
 ]
 
 export const GOVERNANCE_OPERATIONS: Array<{

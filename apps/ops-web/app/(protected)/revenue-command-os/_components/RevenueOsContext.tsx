@@ -1,7 +1,7 @@
 'use client'
 
 import { fetchRevenueOsJson } from '@/lib/revenue-command-os/client-http'
-import { createContext, useCallback, useContext, useMemo, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import type { RevenueOsFoundationBootstrap, RevenueOsObjective, RevenueOsObjectiveInput } from '@/lib/revenue-command-os/types'
 
 type RevenueOsContextValue = {
@@ -24,6 +24,7 @@ export function RevenueOsProvider({
   const [bootstrap, setBootstrap] = useState(initialBootstrap)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const refreshTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const refresh = useCallback(async () => {
     setBusy(true)
@@ -38,6 +39,18 @@ export function RevenueOsProvider({
       setBusy(false)
     }
   }, [])
+
+  useEffect(() => {
+    const synchronize = () => {
+      if (refreshTimer.current) clearTimeout(refreshTimer.current)
+      refreshTimer.current = setTimeout(() => { void refresh() }, 180)
+    }
+    window.addEventListener('revenue-os:operation-completed', synchronize)
+    return () => {
+      window.removeEventListener('revenue-os:operation-completed', synchronize)
+      if (refreshTimer.current) clearTimeout(refreshTimer.current)
+    }
+  }, [refresh])
 
   const createObjective = useCallback(async (input: RevenueOsObjectiveInput) => {
     setBusy(true)

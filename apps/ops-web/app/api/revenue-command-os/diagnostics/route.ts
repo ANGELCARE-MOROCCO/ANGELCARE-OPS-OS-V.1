@@ -78,7 +78,7 @@ export async function GET() {
       diagnostics,
       generatedAt,
       fingerprint: createHash('sha256').update(JSON.stringify({ diagnostics, generatedAt })).digest('hex'),
-      externalActionsEnabled: false,
+      externalActionsEnabled: true,
     })
   } catch (error) {
     return revenueOsErrorResponse(error)

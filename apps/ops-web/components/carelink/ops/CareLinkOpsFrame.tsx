@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useMemo, useState, type ReactNode } from 'react'
+import { useEffect, useMemo, useState, type CSSProperties, type ReactNode } from 'react'
 import { usePathname } from 'next/navigation'
 import { BellRing, ChevronRight, Command, Menu, Search, ShieldCheck } from 'lucide-react'
 import { CareLinkOpsApprovedSidebar, initialCareLinkSidebarCollapsed } from './CareLinkOpsApprovedSidebar'
@@ -56,7 +56,7 @@ export function CareLinkOpsFrame({ children }: { children: ReactNode }) {
   }, [pathname])
 
   return (
-    <main className="min-h-screen bg-[#f4f7fb] text-slate-950">
+    <main data-carelink-sidebar-state={collapsed ? 'collapsed' : 'expanded'} style={{ '--carelink-sidebar-current-width': collapsed ? '84px' : '292px' } as CSSProperties} className="min-h-screen bg-[#f4f7fb] text-slate-950">
       <CareLinkOpsApprovedSidebar collapsed={collapsed} onCollapsedChange={setCollapsed} mobileOpen={mobileOpen} onMobileOpenChange={setMobileOpen} onOpenPalette={() => setPaletteOpen(true)} />
 
       <section className={`min-h-screen transition-[padding] duration-300 ${collapsed ? 'lg:pl-[84px]' : 'lg:pl-[292px]'}`}>
@@ -91,7 +91,7 @@ export function CareLinkOpsFrame({ children }: { children: ReactNode }) {
         .carelink-ops-page-host > main > aside,
         .carelink-ops-page-host > div > aside { display: none !important; }
         .carelink-ops-page-host > main,
-        .carelink-ops-page-host > div { margin-left: 0 !important; padding-left: 0 !important; width: 100% !important; max-width: none !important; }
+        .carelink-ops-page-host > div:not([data-service-design-overlay]) { margin-left: 0 !important; padding-left: 0 !important; width: 100% !important; max-width: none !important; }
         .carelink-ops-page-host .pl-72,
         .carelink-ops-page-host .pl-\[220px\],
         .carelink-ops-page-host .pl-\[240px\],
@@ -104,7 +104,6 @@ export function CareLinkOpsFrame({ children }: { children: ReactNode }) {
         .carelink-ops-page-host .ml-\[260px\],
         .carelink-ops-page-host .ml-\[280px\],
         .carelink-ops-page-host .ml-\[300px\] { padding-left: 0 !important; margin-left: 0 !important; }
-        .carelink-ops-page-host [class*="max-w-"] { max-width: none; }
         .carelink-ops-page-host header.sticky { position: relative !important; top: auto !important; }
         .carelink-sidebar-scroll { scrollbar-width: thin; scrollbar-color: rgb(203 213 225) transparent; }
         .carelink-sidebar-scroll::-webkit-scrollbar { width: 6px; }

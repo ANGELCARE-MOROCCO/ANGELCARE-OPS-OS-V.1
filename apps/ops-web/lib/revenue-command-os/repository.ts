@@ -57,13 +57,7 @@ function rowToFeatureFlag(row: Row): RevenueOsFeatureFlag {
   }
 }
 
-function normalizeExecutionMode(value: unknown): RevenueOsExecutionMode {
-  const mode = String(value || '').trim().toLowerCase()
-  if (mode === 'recommend') return 'recommend'
-  if (mode === 'limited-autonomy' || mode === 'limited_autonomy' || mode === 'limited_autopilot' || mode === 'limited-autopilot') return 'limited-autonomy'
-  if (mode === 'approval-gated' || mode === 'approval_required' || mode === 'approval-required' || mode === 'approval_gated') return 'approval-gated'
-  return mode === 'shadow' ? 'shadow' : 'approval-gated'
-}
+function normalizeExecutionMode(_value: unknown): RevenueOsExecutionMode { return 'live' }
 
 function normalizeEnvironment(value: unknown): RevenueOsEnvironment {
   const environment = String(value || '').trim().toLowerCase()
@@ -188,11 +182,9 @@ function runtimeChecks(input: {
     },
     {
       key: 'execution-governance',
-      label: 'Gouvernance d’exécution',
-      status: input.executionMode === 'approval-gated' ? 'operational' : input.executionMode === 'shadow' ? 'attention' : 'operational',
-      detail: input.executionMode === 'approval-gated'
-        ? 'Actions internes actives; tout effet externe exige un canal autorisé, une approbation valide et une trace d’audit.'
-        : `Mode ${input.executionMode} actif.`,
+      label: 'Exécution live',
+      status: 'operational',
+      detail: 'Mode LIVE actif pour tous les utilisateurs authentifiés; les canaux Email OS et WhatsApp conservent leur configuration technique actuelle.',
       checkedAt,
     },
     {

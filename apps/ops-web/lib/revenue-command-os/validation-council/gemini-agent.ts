@@ -5,7 +5,6 @@ import { redactSensitiveValues } from '../ai/sensitive-value-redactor'
 import { councilReviewDraft, COUNCIL_REVIEW_JSON_SCHEMA } from './schemas'
 import type { CouncilReviewDraft } from './schemas'
 import { councilPrompt } from './prompts'
-import { deterministicCouncilReview } from './deterministic-agent'
 import type { CouncilAgentInput, CouncilReview } from './types'
 import { estimateAiCostUsd, executeGovernedAiRequest } from '@/lib/ai-provider-control/governor'
 import { invokeGeminiProvider } from '@/lib/ai-provider-control/gemini-runtime'
@@ -33,7 +32,7 @@ export async function runCouncilAgent(input: CouncilAgentInput): Promise<Council
   })
   const serialized = JSON.stringify(payload)
   const requestHash = h(payload)
-  if (!config.enabled) return deterministicCouncilReview(input)
+  if (!config.enabled) throw new Error('COUNCIL_GEMINI_DISABLED')
 
   try {
     const estimatedInputTokens = Math.ceil(serialized.length / 4)
@@ -135,7 +134,8 @@ export async function runCouncilAgent(input: CouncilAgentInput): Promise<Council
       externalActions: 0,
       reviewedAt: now(),
     }
-  } catch {
-    return deterministicCouncilReview(input)
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    throw new Error(`COUNCIL_GEMINI_EXECUTION_FAILED:${message}`)
   }
 }

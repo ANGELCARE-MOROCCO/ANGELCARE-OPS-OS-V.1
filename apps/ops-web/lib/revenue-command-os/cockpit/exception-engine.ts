@@ -122,35 +122,6 @@ export function buildRevenueExceptions(context: ExceptionContext): RevenueExcept
     }))
   }
 
-  for (const row of context.sources.approvalRequests) {
-    const status = text(row.status, text(rowPayload(row).status, 'pending'))
-    if (!['pending','requested','awaiting','awaiting_approval'].includes(status)) continue
-    const expiresAt = isoDate(row.expires_at || rowPayload(row).expiresAt)
-    const expired = expiresAt ? new Date(expiresAt).getTime() < Date.now() : false
-    generated.push(exceptionRecord({
-      key: `approval:${row.id}`,
-      type: expired ? 'approval_expired' : 'approval_required',
-      title: expired ? 'Approbation expirée' : 'Décision exécutive requise',
-      summary: text(rowPayload(row).title, text(row.approval_class, 'Une action gouvernée attend une décision.')),
-      priority: expired ? 'P1' : 'P2',
-      severity: expired ? 'high' : 'medium',
-      businessImpact: text(rowPayload(row).businessConsequence, 'Le processus reste bloqué tant que la décision n’est pas enregistrée.'),
-      revenueAtRisk: numberValue(rowPayload(row).revenueAtRisk),
-      rootCause: expired ? 'La fenêtre d’autorité a expiré.' : 'L’action dépasse la classe d’autorité automatique.',
-      entityType: 'approval_request',
-      entityId: String(row.id || ''),
-      entityLabel: text(row.approval_class, 'Approbation'),
-      evidence: [],
-      recommendedAction: expired ? 'Renouveler ou rejeter explicitement la demande.' : 'Ouvrir la gouvernance et décider avec le contexte complet.',
-      allowedActions: ['open_approval','approve','reject','request_evidence'],
-      sourceZone: 'approvals-governance',
-      sourceRecordId: String(row.id || ''),
-      createdAt: text(row.created_at, now),
-      observedAt: text(row.updated_at, text(row.created_at, now)),
-      dueAt: expiresAt,
-    }))
-  }
-
   for (const row of context.sources.deadLetters) {
     const payload = rowPayload(row)
     const status = text(row.status, text(payload.status, 'open'))
@@ -164,12 +135,12 @@ export function buildRevenueExceptions(context: ExceptionContext): RevenueExcept
       severity: 'high',
       businessImpact: text(payload.businessImpact, 'L’étape opérationnelle et ses dépendances restent bloquées.'),
       revenueAtRisk: numberValue(payload.revenueAtRisk),
-      rootCause: text(row.reason, text(payload.lastError, 'Échec technique ou gouvernance non résolue.')),
+      rootCause: text(row.reason, text(payload.lastError, 'Échec technique non résolu.')),
       entityType: 'execution_action',
       entityId: text(row.action_id, text(payload.actionId)),
       entityLabel: text(payload.actionType, text(row.adapter_code, 'Action MZ14')),
       evidence: [`Tentatives: ${numberValue(row.attempts, numberValue(payload.attempts))}`],
-      recommendedAction: 'Examiner le payload redacted, l’adaptateur et l’approbation avant retry ou compensation.',
+      recommendedAction: 'Examiner le payload, l’adaptateur et le résultat technique avant retry ou compensation.',
       allowedActions: ['retry_adapter','compensate','suspend_adapter','open_execution'],
       sourceZone: 'execution-progress',
       sourceRecordId: text(row.action_id, String(row.id || '')),

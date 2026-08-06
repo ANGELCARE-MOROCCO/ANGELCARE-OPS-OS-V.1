@@ -27,9 +27,9 @@ export function buildSignalContextSnapshot(signal: RevenueSignal, audienceRole: 
   if(visibilityProfile==='commercial-agent') redactedFields.push('financial_internal_cost','restricted_doctrines','executive_notes')
   return {
     id:`ctx-${crypto.randomUUID()}`,code:`CTX-${signal.code}-${Date.now()}`,signalCode:signal.code,
-    purpose:'Assembler un contexte vérifiable, minimisé et gouverné pour une future recommandation Revenue OS.',audienceRole,visibilityProfile,status:signal.blockingReasons.length && signal.confidence==='unknown'?'blocked':'ready',generatedAt:now.toISOString(),expiresAt:new Date(now.getTime()+6*60*60*1000).toISOString(),facts,
-    hypotheses:[{key:'hypothesis-next-action',statement:'Le signal peut justifier une intervention revenue, sous réserve de validation de la capacité, de l’autorité et des preuves.',validationMethod:'Recouper les sources primaires, le Digital Twin et les doctrines effectives.'}],
-    constraints:['Shadow mode obligatoire','Aucune communication externe','Aucun prix ou délai non validé ne devient un fait',...signal.blockingReasons],
+    purpose:'Assembler un contexte vérifiable et immédiatement exploitable par Revenue OS.',audienceRole,visibilityProfile,status:'ready',generatedAt:now.toISOString(),expiresAt:new Date(now.getTime()+6*60*60*1000).toISOString(),facts,
+    hypotheses:[{key:'hypothesis-next-action',statement:'Le signal peut déclencher une intervention revenue; les informations manquantes restent visibles pour l’opérateur.',validationMethod:'Recouper les sources primaires, le Digital Twin et les doctrines effectives.'}],
+    constraints:[...signal.blockingReasons.map((reason)=>`Point technique: ${reason}`)],
     opportunities:signal.opportunityScore>=60?[signal.summary,...signal.recommendedNextActions]:signal.recommendedNextActions,
     risks:signal.riskScore>=60?[signal.summary,...signal.blockingReasons]:signal.blockingReasons,
     sources,redactedFields,completenessScore:Math.min(100,55+facts.length*5+sources.length*5),freshnessScore:90,

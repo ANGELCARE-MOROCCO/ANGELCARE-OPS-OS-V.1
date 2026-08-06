@@ -26,7 +26,7 @@ export default function RevenueCommandOsLoading() {
             })}
           </div>
         </div>
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 rounded-full border border-slate-200 bg-white/90 px-5 py-2 text-[10px] font-black uppercase tracking-[.16em] text-slate-500 backdrop-blur">Initialisation des sources, permissions et preuves</div>
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 rounded-full border border-slate-200 bg-white/90 px-5 py-2 text-[10px] font-black uppercase tracking-[.16em] text-slate-500 backdrop-blur">Initialisation des sources, commandes et preuves</div>
       </section>
     </div>
   )

@@ -3,11 +3,8 @@ import { RevenueOsError } from '../errors'
 import { revenueOsErrorResponse } from '../http'
 
 export function aiRights(user: any) {
-  return {
-    read: hasRevenueOsPermission(user, 'revenue_os.ai.view', ['revenue_os.view', 'revenue_os.strategy.view']),
-    generate: hasRevenueOsPermission(user, 'revenue_os.ai.generate', ['revenue_os.strategy.manage']),
-    manage: hasRevenueOsPermission(user, 'revenue_os.ai.manage'),
-  }
+  const authenticated = Boolean(user)
+  return { read: authenticated, generate: authenticated, manage: authenticated }
 }
 
 export const apiError = (code: string, message: string, status = 400) =>

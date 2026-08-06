@@ -74,8 +74,14 @@ export function HomeServiceDesignShell({ children, databaseReady = true, pending
       </div>
 
       <style>{`
-        .service-design-2030 { --sd-navy:#07142b; --sd-blue:#2563eb; --sd-cyan:#22d3ee; }
-        .service-design-2030 .sd2030-workspace { animation: sd2030-enter .32s ease-out both; }
+        .service-design-2030 { --sd-navy:#07142b; --sd-blue:#2563eb; --sd-cyan:#22d3ee; --sd-dark-surface:#07142b; --sd-dark-surface-elevated:#0c1f3d; --sd-dark-surface-border:#1f3657; --sd-dark-text-primary:#ffffff; --sd-dark-text-secondary:#dbe7f7; --sd-dark-text-muted:#a9bad0; --sd-dark-link:#8fd8ff; --sd-dark-icon:#b8e8ff; --sd-dark-progress-track:rgba(255,255,255,.20); --sd-dark-progress-value:#48c8ff; --service-design-shell-offset:100px; min-width:0; }
+        .service-design-2030 .sd2030-workspace { min-width:0; animation: sd2030-enter .32s ease-out both; }
+        .service-design-2030 .sd2030-hero { min-width:0; color:var(--sd-dark-text-primary); }
+        .service-design-2030 .sd2030-hero p { overflow-wrap:anywhere; }
+        .service-design-2030 .sd2030-dock { max-width:100%; }
+        .service-design-2030 [data-service-design-overlay="true"] { color-scheme:dark; }
+        [data-carelink-sidebar-state="expanded"] .service-design-2030 { --service-design-available-width:calc(100vw - 292px); }
+        [data-carelink-sidebar-state="collapsed"] .service-design-2030 { --service-design-available-width:calc(100vw - 84px); }
         .service-design-2030 .sd2030-workspace input,
         .service-design-2030 .sd2030-workspace select,
         .service-design-2030 .sd2030-workspace textarea { transition:border-color .18s ease, box-shadow .18s ease, background .18s ease; }
@@ -87,6 +93,10 @@ export function HomeServiceDesignShell({ children, databaseReady = true, pending
         [data-service-design-focus="1"] .service-design-2030 .sd2030-pulse { display:none; }
         [data-service-design-focus="1"] .service-design-2030 .sd2030-workspace { max-width:1920px; margin-inline:auto; }
         @keyframes sd2030-enter { from { opacity:.25; transform:translateY(6px); } to { opacity:1; transform:none; } }
+        @media (max-width: 1366px) {
+          .service-design-2030 .sd2030-hero { border-radius:28px; padding:24px; }
+          .service-design-2030 .sd2030-hero h1 { font-size:clamp(2rem,4vw,3rem); }
+        }
         @media (prefers-reduced-motion: reduce) {
           .service-design-2030 *, .service-design-2030 *::before, .service-design-2030 *::after { animation-duration:.01ms !important; animation-iteration-count:1 !important; scroll-behavior:auto !important; transition-duration:.01ms !important; }
         }

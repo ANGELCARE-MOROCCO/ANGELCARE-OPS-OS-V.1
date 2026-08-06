@@ -157,7 +157,7 @@ export default function RevenueEmailStudio() {
     try {
       const endpoint = mode === 'send' ? '/api/email-os/compose/send' : '/api/email-os/compose/draft'
       const scheduledAt = mode === 'schedule' ? new Date(form.scheduledAt).toISOString() : undefined
-      await requestJson(endpoint, {
+      const emailResult = await requestJson<any>(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -176,6 +176,15 @@ export default function RevenueEmailStudio() {
           diagnostics: { source: 'revenue-command-os', studio: 'revenue-email-studio', businessPurpose: 'revenue-operations', relatedEntity: { type: form.contextType, reference: form.contextReference || null }, nextFollowUpAt: form.followUpAt ? new Date(form.followUpAt).toISOString() : null },
         }),
       })
+      await fetch('/api/revenue-command-os/email-studio/audit', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({
+          mode, mailboxId: selected.mailboxId, toEmail: form.toEmail, subject: form.subject,
+          bodyText: form.bodyHtml.replace(/<[^>]*>/g, ' '), contextType: form.contextType,
+          contextReference: form.contextReference || null, scheduledAt, followUpAt: form.followUpAt || null,
+          externalReference: emailResult?.id || emailResult?.messageId || emailResult?.draftId || emailResult?.externalReference || null,
+        }),
+      }).catch(() => null)
+      window.dispatchEvent(new CustomEvent('revenue-os:operation-completed', { detail: { id: crypto.randomUUID(), title: mode === 'send' ? 'Email envoyé via Email OS' : mode === 'schedule' ? 'Email programmé' : 'Brouillon enregistré', status: 'success', result: emailResult } }))
       setNotice(mode === 'send' ? 'Email confié à Email OS pour envoi et suivi.' : mode === 'schedule' ? 'Email programmé dans la file Email OS.' : 'Brouillon enregistré dans Email OS.')
       if (mode === 'send' || mode === 'schedule') setForm(EMPTY_FORM)
       await loadWorkspace(selected.mailboxId)
@@ -196,7 +205,7 @@ export default function RevenueEmailStudio() {
       <header className="relative overflow-hidden rounded-[40px] border border-blue-200 bg-white p-7 shadow-[0_28px_90px_rgba(15,23,42,.08)] sm:p-9">
         <div className="absolute inset-y-0 right-0 w-[38%] bg-gradient-to-bl from-blue-100/80 via-cyan-50/50 to-transparent" />
         <div className="relative flex flex-col justify-between gap-7 xl:flex-row xl:items-end">
-          <div className="max-w-4xl"><div className="flex flex-wrap items-center gap-2"><span className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-[9px] font-black uppercase tracking-[.16em] text-emerald-800"><CheckCircle2 size={13} /> Email OS opérationnel</span><span className="rounded-full border border-blue-200 bg-blue-50 px-3 py-1.5 text-[9px] font-black uppercase tracking-[.16em] text-blue-800">Approval-gated</span></div><p className="mt-6 text-[10px] font-black uppercase tracking-[.2em] text-blue-700">ANGELCARE Revenue Command OS</p><h1 className="mt-3 text-4xl font-black tracking-[-.055em] sm:text-5xl">Revenue Email Studio</h1><p className="mt-4 max-w-3xl text-sm leading-7 text-slate-600">Composer, programmer, envoyer, contrôler et suivre les emails Revenue OS exclusivement depuis les mailboxes Email OS réellement assignées à l’opérateur.</p></div>
+          <div className="max-w-4xl"><div className="flex flex-wrap items-center gap-2"><span className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-[9px] font-black uppercase tracking-[.16em] text-emerald-800"><CheckCircle2 size={13} /> Email OS opérationnel</span><span className="rounded-full border border-blue-200 bg-blue-50 px-3 py-1.5 text-[9px] font-black uppercase tracking-[.16em] text-blue-800">LIVE · AUTORITÉ COMPLÈTE</span></div><p className="mt-6 text-[10px] font-black uppercase tracking-[.2em] text-blue-700">ANGELCARE Revenue Command OS</p><h1 className="mt-3 text-4xl font-black tracking-[-.055em] sm:text-5xl">Revenue Email Studio</h1><p className="mt-4 max-w-3xl text-sm leading-7 text-slate-600">Composer, programmer, envoyer, contrôler et suivre les emails Revenue OS exclusivement depuis les mailboxes Email OS réellement assignées à l’opérateur.</p></div>
           <div className="rounded-[26px] border border-slate-200 bg-slate-950 p-5 text-white"><p className="text-[9px] font-black uppercase tracking-[.16em] text-blue-300">Autorité d’envoi</p><p className="mt-2 text-lg font-black">{operatorName}</p><p className="mt-2 text-xs text-slate-300">Gmail direct désactivé · Calendar désactivé · tracking Email OS conservé</p></div>
         </div>
       </header>

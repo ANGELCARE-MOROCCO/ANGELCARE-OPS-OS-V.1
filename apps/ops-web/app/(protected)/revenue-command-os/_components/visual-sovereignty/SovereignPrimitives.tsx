@@ -54,7 +54,7 @@ export function SDataTruth({ mode, warnings = [], traceId, freshness }: { mode?:
           : is('preview', 'seed', 'contract', 'foundation', 'fallback')
             ? { tone: 'violet' as SovereignTone, icon: Eye, label: 'Aperçu contractuel', spin: false }
             : is('shadow')
-              ? { tone: 'cyan' as SovereignTone, icon: ShieldCheck, label: 'Données live · mode Shadow', spin: false }
+              ? { tone: 'cyan' as SovereignTone, icon: ShieldCheck, label: 'Données live · exécution LIVE', spin: false }
               : is('empty')
                 ? { tone: 'blue' as SovereignTone, icon: Circle, label: 'Source saine · aucun enregistrement', spin: false }
                 : { tone: 'emerald' as SovereignTone, icon: Radio, label: 'Données live', spin: false }

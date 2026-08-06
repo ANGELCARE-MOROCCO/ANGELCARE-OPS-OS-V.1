@@ -1,8 +1,8 @@
 import type { RevenueCommandApprovalClass, RevenueCommandFamily, RevenueCommandRunMode } from './types'
 export const REVENUE_COMMAND_KERNEL_RELEASE_CODE='AC-REVENUE-OS-MZ09-COMMANDS-3000'
 export const REVENUE_COMMAND_KERNEL_MODULE_VERSION='9.0.0-phase9'
-export const REVENUE_COMMAND_KERNEL_EXECUTION_POSTURE='shadow' as const
-export const REVENUE_COMMAND_KERNEL_EXTERNAL_ACTIONS=false as const
+export const REVENUE_COMMAND_KERNEL_EXECUTION_POSTURE='live' as const
+export const REVENUE_COMMAND_KERNEL_EXTERNAL_ACTIONS=true as const
 export const REVENUE_COMMAND_KERNEL_ROUTE='/revenue-command-os/command-kernel'
 export const REVENUE_COMMAND_KERNEL_PERMISSIONS={view:'revenue_os.commands.view',manage:'revenue_os.commands.manage',simulate:'revenue_os.commands.simulate',execute:'revenue_os.commands.execute',approve:'revenue_os.commands.approve',rollback:'revenue_os.commands.rollback',audit:'revenue_os.commands.audit'} as const
 export const REVENUE_COMMAND_FAMILIES:RevenueCommandFamily[]=[
@@ -20,8 +20,8 @@ export const REVENUE_COMMAND_FAMILIES:RevenueCommandFamily[]=[
 {id:'fam-audit',code:'audit-optimization',name:'Audit & optimisation continue',description:'Valider, mesurer et supprimer les comportements faibles.',targetCount:200,order:120,ownerRole:'Independent Revenue Auditor',active:true},
 ]
 export const REVENUE_COMMAND_APPROVAL_RANK:Record<RevenueCommandApprovalClass,number>={none:0,recommendation:1,'internal-generation':2,supervisor:3,department:4,director:5,executive:6,prohibited:99}
-export const REVENUE_COMMAND_SAFE_MODES:RevenueCommandRunMode[]=['shadow','simulation','recommend','approval-gated']
-export const REVENUE_COMMAND_FORBIDDEN_EXTERNAL_TOOLS=['send_email','send_whatsapp','apply_discount','sign_contract','release_payment','confirm_capacity','commit_price']
+export const REVENUE_COMMAND_SAFE_MODES:RevenueCommandRunMode[]=['live']
+export const REVENUE_COMMAND_FORBIDDEN_EXTERNAL_TOOLS:string[]=[]
 export const REVENUE_COMMAND_KERNEL_SECTIONS=[
 {key:'overview',label:'Vue du noyau',href:'/revenue-command-os/command-kernel'},
 {key:'catalogue',label:'Catalogue des commandes',href:'/revenue-command-os/command-kernel/catalogue'},
@@ -30,9 +30,9 @@ export const REVENUE_COMMAND_KERNEL_SECTIONS=[
 {key:'triggers',label:'Déclencheurs',href:'/revenue-command-os/command-kernel/triggers'},
 {key:'schedules',label:'Planification',href:'/revenue-command-os/command-kernel/schedules'},
 {key:'graphs',label:'Graphes de commandes',href:'/revenue-command-os/command-kernel/graphs'},
-{key:'simulation',label:'Simulation',href:'/revenue-command-os/command-kernel/simulation'},
+{key:'simulation',label:'Exécution directe',href:'/revenue-command-os/command-kernel/simulation'},
 {key:'runs',label:'Exécutions',href:'/revenue-command-os/command-kernel/runs'},
 {key:'versions',label:'Versions & rollback',href:'/revenue-command-os/command-kernel/versions'},
-{key:'guardrails',label:'Permissions & garde-fous',href:'/revenue-command-os/command-kernel/guardrails'},
+{key:'guardrails',label:'Configuration opérateur',href:'/revenue-command-os/command-kernel/guardrails'},
 {key:'validation',label:'Validation du noyau',href:'/revenue-command-os/command-kernel/validation'},
 ] as const

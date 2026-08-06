@@ -61,14 +61,14 @@ export function ServiceDesignDock({ contextLinks }: { contextLinks: ReadonlyArra
   }
 
   return <>
-    <section className="sd2030-dock sticky top-[100px] z-[780] mb-5 rounded-[28px] border border-slate-200/90 bg-white/90 p-2 shadow-[0_18px_55px_rgba(15,23,42,.10)] backdrop-blur-xl">
-      <div className="flex items-center gap-2 overflow-x-auto">
+    <section className="sd2030-dock sticky top-[100px] z-[780] mb-5 max-w-full overflow-hidden rounded-[28px] border border-slate-200/90 bg-white/95 p-2 shadow-[0_18px_55px_rgba(15,23,42,.10)] backdrop-blur-xl">
+      <div className="flex min-w-0 items-center gap-2">
         <div className="flex shrink-0 items-center gap-2 rounded-[20px] bg-slate-950 px-3 py-2 text-white">
           <div className="grid h-9 w-9 place-items-center rounded-2xl bg-gradient-to-br from-blue-600 to-cyan-400 shadow-lg"><WandSparkles size={16} /></div>
           {!compact ? <div className="pr-2"><p className="text-[9px] font-black uppercase tracking-[.2em] text-blue-300">Service Intelligence</p><p className="text-xs font-black">Studio 2030</p></div> : null}
         </div>
-        <nav className="flex min-w-0 flex-1 items-center gap-1" aria-label="Service Design Studio Dock">
-          {dockItems.map((item) => { const active = item === activeItem; const Icon = item.icon; return <Link key={item.href} href={item.href} title={compact ? `${item.label} — ${item.detail}` : undefined} className={sd2030('group flex shrink-0 items-center gap-2 rounded-2xl border px-3 py-2.5 transition', active ? 'border-blue-200 bg-blue-50 text-blue-950 shadow-sm' : 'border-transparent text-slate-500 hover:border-slate-200 hover:bg-slate-50 hover:text-slate-900')}><Icon size={15} className={active ? 'text-blue-600' : 'text-slate-400 group-hover:text-blue-600'} />{!compact ? <span className="text-[10px] font-black uppercase tracking-[.1em]">{item.label}</span> : null}</Link> })}
+        <nav className="flex min-w-0 flex-1 items-center gap-1 overflow-x-auto overscroll-x-contain [scrollbar-width:thin]" aria-label="Service Design Studio Dock">
+          {dockItems.map((item) => { const active = item === activeItem; const Icon = item.icon; return <Link key={item.href} href={item.href} title={compact ? `${item.label} — ${item.detail}` : undefined} className={sd2030('group flex shrink-0 items-center gap-2 rounded-2xl border px-3 py-2.5 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400', active ? 'border-blue-200 bg-blue-50 text-blue-950 shadow-sm' : 'border-transparent text-slate-500 hover:border-slate-200 hover:bg-slate-50 hover:text-slate-900')}><Icon size={15} className={active ? 'text-blue-600' : 'text-slate-400 group-hover:text-blue-600'} />{!compact ? <span className="text-[10px] font-black uppercase tracking-[.1em]">{item.label}</span> : null}</Link> })}
         </nav>
         <button type="button" onClick={() => setContextOpen((value) => !value)} className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl border border-slate-200 bg-white text-slate-600" title="Navigation contextuelle"><Search size={15} /></button>
         <button type="button" onClick={() => setFocus((value) => !value)} className={sd2030('grid h-10 w-10 shrink-0 place-items-center rounded-2xl border', focus ? 'border-blue-600 bg-blue-600 text-white' : 'border-slate-200 bg-white text-slate-600')} title={focus ? 'Quitter le mode Focus' : 'Mode Focus Studio'}>{focus ? <X size={16} /> : <Focus size={16} />}</button>

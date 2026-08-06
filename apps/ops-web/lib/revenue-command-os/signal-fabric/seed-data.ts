@@ -7,7 +7,7 @@ export const REVENUE_SIGNAL_SEED_SOURCES = [
     "name": "Prospects B2B",
     "sourceKind": "crm",
     "adapterKey": "b2b-prospects",
-    "description": "Source gouvernée Prospects B2B pour observation Revenue OS en mode Shadow.",
+    "description": "Source live Prospects B2B pour qualification et exécution Revenue OS.",
     "businessUnitCodes": [
       "ACADEMY",
       "FLASHCARDS",
@@ -39,7 +39,7 @@ export const REVENUE_SIGNAL_SEED_SOURCES = [
     "name": "Contacts & décideurs B2B",
     "sourceKind": "crm",
     "adapterKey": "b2b-contacts",
-    "description": "Source gouvernée Contacts & décideurs B2B pour observation Revenue OS en mode Shadow.",
+    "description": "Source live Contacts & décideurs B2B pour qualification et exécution Revenue OS.",
     "businessUnitCodes": [
       "ACADEMY",
       "FLASHCARDS",
@@ -71,7 +71,7 @@ export const REVENUE_SIGNAL_SEED_SOURCES = [
     "name": "Réunions B2B",
     "sourceKind": "calendar",
     "adapterKey": "b2b-meetings",
-    "description": "Source gouvernée Réunions B2B pour observation Revenue OS en mode Shadow.",
+    "description": "Source live Réunions B2B pour qualification et exécution Revenue OS.",
     "businessUnitCodes": [
       "ACADEMY",
       "CORPORATES"
@@ -102,7 +102,7 @@ export const REVENUE_SIGNAL_SEED_SOURCES = [
     "name": "Propositions B2B",
     "sourceKind": "crm",
     "adapterKey": "b2b-proposals",
-    "description": "Source gouvernée Propositions B2B pour observation Revenue OS en mode Shadow.",
+    "description": "Source live Propositions B2B pour qualification et exécution Revenue OS.",
     "businessUnitCodes": [
       "ACADEMY",
       "CORPORATES"
@@ -134,7 +134,7 @@ export const REVENUE_SIGNAL_SEED_SOURCES = [
     "name": "Opportunités extension navigateur",
     "sourceKind": "browser-extension",
     "adapterKey": "browser-opportunities",
-    "description": "Source gouvernée Opportunités extension navigateur pour observation Revenue OS en mode Shadow.",
+    "description": "Source live Opportunités extension navigateur pour qualification et exécution Revenue OS.",
     "businessUnitCodes": [
       "ACADEMY",
       "FLASHCARDS",
@@ -166,7 +166,7 @@ export const REVENUE_SIGNAL_SEED_SOURCES = [
     "name": "Pipeline Revenue historique",
     "sourceKind": "crm",
     "adapterKey": "revenue-prospects",
-    "description": "Source gouvernée Pipeline Revenue historique pour observation Revenue OS en mode Shadow.",
+    "description": "Source live Pipeline Revenue historique pour qualification et exécution Revenue OS.",
     "businessUnitCodes": [
       "ACADEMY",
       "HOME_SERVICE",
@@ -197,7 +197,7 @@ export const REVENUE_SIGNAL_SEED_SOURCES = [
     "name": "Rendez-vous Revenue",
     "sourceKind": "calendar",
     "adapterKey": "revenue-appointments",
-    "description": "Source gouvernée Rendez-vous Revenue pour observation Revenue OS en mode Shadow.",
+    "description": "Source live Rendez-vous Revenue pour qualification et exécution Revenue OS.",
     "businessUnitCodes": [
       "ACADEMY",
       "CORPORATES"
@@ -227,7 +227,7 @@ export const REVENUE_SIGNAL_SEED_SOURCES = [
     "name": "Partenariats actifs",
     "sourceKind": "crm",
     "adapterKey": "revenue-partnerships",
-    "description": "Source gouvernée Partenariats actifs pour observation Revenue OS en mode Shadow.",
+    "description": "Source live Partenariats actifs pour qualification et exécution Revenue OS.",
     "businessUnitCodes": [
       "ACADEMY",
       "FLASHCARDS",
@@ -259,7 +259,7 @@ export const REVENUE_SIGNAL_SEED_SOURCES = [
     "name": "Email OS — Inbox",
     "sourceKind": "email",
     "adapterKey": "email-inbox",
-    "description": "Source gouvernée Email OS — Inbox pour observation Revenue OS en mode Shadow.",
+    "description": "Source live Email OS — Inbox pour qualification et exécution Revenue OS.",
     "businessUnitCodes": [
       "ACADEMY",
       "FLASHCARDS",
@@ -291,7 +291,7 @@ export const REVENUE_SIGNAL_SEED_SOURCES = [
     "name": "Email OS — Outbox",
     "sourceKind": "email",
     "adapterKey": "email-outbox",
-    "description": "Source gouvernée Email OS — Outbox pour observation Revenue OS en mode Shadow.",
+    "description": "Source live Email OS — Outbox pour qualification et exécution Revenue OS.",
     "businessUnitCodes": [
       "ACADEMY",
       "FLASHCARDS",
@@ -323,7 +323,7 @@ export const REVENUE_SIGNAL_SEED_SOURCES = [
     "name": "Sessions TrainingHub",
     "sourceKind": "academy",
     "adapterKey": "training-sessions",
-    "description": "Source gouvernée Sessions TrainingHub pour observation Revenue OS en mode Shadow.",
+    "description": "Source live Sessions TrainingHub pour qualification et exécution Revenue OS.",
     "businessUnitCodes": [
       "ACADEMY"
     ],
@@ -353,7 +353,7 @@ export const REVENUE_SIGNAL_SEED_SOURCES = [
     "name": "Capacité formateurs Academy",
     "sourceKind": "academy",
     "adapterKey": "academy-trainers",
-    "description": "Source gouvernée Capacité formateurs Academy pour observation Revenue OS en mode Shadow.",
+    "description": "Source live Capacité formateurs Academy pour qualification et exécution Revenue OS.",
     "businessUnitCodes": [
       "ACADEMY"
     ],
@@ -383,7 +383,7 @@ export const REVENUE_SIGNAL_SEED_SOURCES = [
     "name": "Factures & échéances",
     "sourceKind": "finance",
     "adapterKey": "invoices",
-    "description": "Source gouvernée Factures & échéances pour observation Revenue OS en mode Shadow.",
+    "description": "Source live Factures & échéances pour qualification et exécution Revenue OS.",
     "businessUnitCodes": [
       "ACADEMY",
       "CORPORATES",
@@ -415,7 +415,7 @@ export const REVENUE_SIGNAL_SEED_SOURCES = [
     "name": "Paiements reçus",
     "sourceKind": "finance",
     "adapterKey": "payments",
-    "description": "Source gouvernée Paiements reçus pour observation Revenue OS en mode Shadow.",
+    "description": "Source live Paiements reçus pour qualification et exécution Revenue OS.",
     "businessUnitCodes": [
       "ACADEMY",
       "CORPORATES",
@@ -447,7 +447,7 @@ export const REVENUE_SIGNAL_SEED_SOURCES = [
     "name": "Réclamations & risque client",
     "sourceKind": "operations",
     "adapterKey": "complaints",
-    "description": "Source gouvernée Réclamations & risque client pour observation Revenue OS en mode Shadow.",
+    "description": "Source live Réclamations & risque client pour qualification et exécution Revenue OS.",
     "businessUnitCodes": [
       "HOME_SERVICE",
       "KINDERGARTEN",
@@ -2778,7 +2778,7 @@ export const REVENUE_SIGNAL_SEED_CONTEXTS = [
       }
     ],
     "constraints": [
-      "Shadow mode: aucune communication externe",
+      "Exécution live: communications pilotées par Email OS et WhatsApp",
       "Les prix et capacités non validés ne peuvent pas devenir des faits"
     ],
     "opportunities": [
@@ -2849,7 +2849,7 @@ export const REVENUE_SIGNAL_SEED_CONTEXTS = [
       }
     ],
     "constraints": [
-      "Shadow mode: aucune communication externe",
+      "Exécution live: communications pilotées par Email OS et WhatsApp",
       "Les prix et capacités non validés ne peuvent pas devenir des faits"
     ],
     "opportunities": [
@@ -2920,7 +2920,7 @@ export const REVENUE_SIGNAL_SEED_CONTEXTS = [
       }
     ],
     "constraints": [
-      "Shadow mode: aucune communication externe",
+      "Exécution live: communications pilotées par Email OS et WhatsApp",
       "Les prix et capacités non validés ne peuvent pas devenir des faits"
     ],
     "opportunities": [
@@ -2991,7 +2991,7 @@ export const REVENUE_SIGNAL_SEED_CONTEXTS = [
       }
     ],
     "constraints": [
-      "Shadow mode: aucune communication externe",
+      "Exécution live: communications pilotées par Email OS et WhatsApp",
       "Les prix et capacités non validés ne peuvent pas devenir des faits"
     ],
     "opportunities": [
@@ -3062,7 +3062,7 @@ export const REVENUE_SIGNAL_SEED_CONTEXTS = [
       }
     ],
     "constraints": [
-      "Shadow mode: aucune communication externe",
+      "Exécution live: communications pilotées par Email OS et WhatsApp",
       "Les prix et capacités non validés ne peuvent pas devenir des faits"
     ],
     "opportunities": [
@@ -3133,7 +3133,7 @@ export const REVENUE_SIGNAL_SEED_CONTEXTS = [
       }
     ],
     "constraints": [
-      "Shadow mode: aucune communication externe",
+      "Exécution live: communications pilotées par Email OS et WhatsApp",
       "Les prix et capacités non validés ne peuvent pas devenir des faits"
     ],
     "opportunities": [
@@ -3204,7 +3204,7 @@ export const REVENUE_SIGNAL_SEED_CONTEXTS = [
       }
     ],
     "constraints": [
-      "Shadow mode: aucune communication externe",
+      "Exécution live: communications pilotées par Email OS et WhatsApp",
       "Les prix et capacités non validés ne peuvent pas devenir des faits"
     ],
     "opportunities": [

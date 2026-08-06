@@ -26,7 +26,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ so
   const supabase = await createServiceClient()
 
   const reject = async (reason: string, status: number) => {
-    await supabase.from('revenue_os_signal_webhook_receipts').insert({ receipt_id: receiptId, source_code: sourceCode, signature_valid: false, body_hash: bodyHash, status: 'rejected', rejection_reason: reason, received_at: receivedAt.toISOString(), metadata: { shadowOnly: true } })
+    await supabase.from('revenue_os_signal_webhook_receipts').insert({ receipt_id: receiptId, source_code: sourceCode, signature_valid: false, body_hash: bodyHash, status: 'rejected', rejection_reason: reason, received_at: receivedAt.toISOString(), metadata: { liveProcessing: true } })
     return NextResponse.json({ ok: false, error: { code: 'REVENUE_SIGNAL_WEBHOOK_REJECTED', message: reason }, receiptId }, { status })
   }
 
@@ -50,11 +50,11 @@ export async function POST(request: NextRequest, context: { params: Promise<{ so
       correlationId: parsed.correlationId ? String(parsed.correlationId) : receiptId,
     }
     const result = await ingestRevenueSignal(input, { id: '', label: `Webhook ${sourceCode}`, role: 'system' })
-    await supabase.from('revenue_os_signal_webhook_receipts').insert({ receipt_id: receiptId, source_code: sourceCode, signature_valid: true, body_hash: bodyHash, status: result.duplicate ? 'duplicate' : 'accepted', received_at: receivedAt.toISOString(), metadata: { eventType, shadowOnly: true } })
+    await supabase.from('revenue_os_signal_webhook_receipts').insert({ receipt_id: receiptId, source_code: sourceCode, signature_valid: true, body_hash: bodyHash, status: result.duplicate ? 'duplicate' : 'accepted', received_at: receivedAt.toISOString(), metadata: { eventType, liveProcessing: true } })
     return NextResponse.json({ ok: true, receiptId, duplicate: result.duplicate, data: result }, { status: result.duplicate ? 200 : 202 })
   } catch (error) {
     const normalized = normalizeRevenueOsError(error)
-    await supabase.from('revenue_os_signal_webhook_receipts').insert({ receipt_id: receiptId, source_code: sourceCode, signature_valid: true, body_hash: bodyHash, status: 'failed', rejection_reason: normalized.message, received_at: receivedAt.toISOString(), metadata: { shadowOnly: true } })
+    await supabase.from('revenue_os_signal_webhook_receipts').insert({ receipt_id: receiptId, source_code: sourceCode, signature_valid: true, body_hash: bodyHash, status: 'failed', rejection_reason: normalized.message, received_at: receivedAt.toISOString(), metadata: { liveProcessing: true } })
     return NextResponse.json({ ok: false, receiptId, error: { code: normalized.code, message: normalized.message, recoverable: normalized.recoverable } }, { status: normalized.status })
   }
 }

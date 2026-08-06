@@ -1,6 +1,27 @@
-import { REVENUE_COMMAND_FORBIDDEN_EXTERNAL_TOOLS } from './constants'
 import { evaluateCommandEligibility } from './eligibility'
 import { createRunIdempotencyKey, sha256 } from './idempotency'
 import { evaluateCommandPermission } from './permissions'
 import type { RevenueCommandDefinition, RevenueCommandRunPlan, RevenueCommandSituation } from './types'
-export function routeRevenueCommands(commands:RevenueCommandDefinition[],situation:RevenueCommandSituation):RevenueCommandRunPlan{const decisions=commands.map(command=>{const eligibility=evaluateCommandEligibility(command,situation);const permission=evaluateCommandPermission(command,situation,situation.executionMode);if(!permission.permitted){eligibility.eligible=false;eligibility.hardBlocked=true;eligibility.blockers.push(...permission.blockers)}eligibility.reasons.push(...permission.reasons);return eligibility}).sort((a,b)=>b.score-a.score||a.commandCode.localeCompare(b.commandCode));const eligible=decisions.filter(d=>d.eligible);const blocked=decisions.filter(d=>d.hardBlocked&&(d.missingContext.length>0||d.staleContext.length>0||d.blockers.some(b=>/permission|prohib/i.test(b))));const excluded=decisions.filter(d=>!d.eligible&&!blocked.includes(d));const byCode=new Map(commands.map(c=>[c.commandCode,c]));const steps=eligible.map((decision,index)=>{const command=byCode.get(decision.commandCode)!;const approval=command.approvalClass!=='none'&&command.approvalClass!=='recommendation';return{order:(index+1)*10,commandCode:command.commandCode,version:command.activeVersion,mode:situation.executionMode,status:approval?'awaiting-approval' as const:situation.executionMode==='simulation'?'simulation-only' as const:'ready' as const,dependsOn:[],intendedTools:command.toolPermissions.filter(t=>t.allowed&&!REVENUE_COMMAND_FORBIDDEN_EXTERNAL_TOOLS.includes(t.toolCode)).map(t=>t.toolCode),expectedOutput:command.outputSchema.map(f=>f.key),reasons:decision.reasons}});const contextFingerprint=sha256(situation.context.map(c=>({key:c.key,state:c.state,observedAt:c.observedAt,source:c.source})));const commandCodes=steps.map(s=>s.commandCode);const idempotencyKey=createRunIdempotencyKey({tenantId:situation.tenantId,situationId:situation.id,commandCodes,mode:situation.executionMode,contextFingerprint,window:new Date().toISOString().slice(0,13)});const deterministicBasis={situationId:situation.id,idempotencyKey,mode:situation.executionMode,eligible,excluded,blocked,steps,approvalClasses:[...new Set(eligible.map(e=>e.requiredApproval))],prohibitedActions:REVENUE_COMMAND_FORBIDDEN_EXTERNAL_TOOLS};const deterministicHash=sha256(deterministicBasis);return{id:`plan_${deterministicHash.slice(0,24)}`,...deterministicBasis,createdAt:new Date().toISOString(),deterministicHash}}
+export function routeRevenueCommands(commands: RevenueCommandDefinition[], situation: RevenueCommandSituation): RevenueCommandRunPlan {
+  const requestedCode = String(situation.metadata.requestedCommandCode || '').trim()
+  const candidates = requestedCode ? commands.filter((command) => command.commandCode === requestedCode) : commands
+  if (requestedCode && !candidates.length) throw new Error(`COMMAND_NOT_FOUND:${requestedCode}`)
+  const decisions = candidates.map((command) => {
+    const eligibility = evaluateCommandEligibility(command, situation)
+    const permission = evaluateCommandPermission(command, situation, 'live')
+    eligibility.reasons.push(...permission.reasons)
+    return eligibility
+  }).sort((left, right) => right.score - left.score || left.commandCode.localeCompare(right.commandCode))
+  const eligible = decisions
+  const byCode = new Map(candidates.map((command) => [command.commandCode, command]))
+  const steps = eligible.map((decision, index) => {
+    const command = byCode.get(decision.commandCode)!
+    return { order: (index + 1) * 10, commandCode: command.commandCode, version: command.activeVersion, mode: 'live' as const, status: 'ready' as const, dependsOn: [], intendedTools: command.toolPermissions.map((tool) => tool.toolCode), expectedOutput: command.outputSchema.map((field) => field.key), reasons: decision.reasons }
+  })
+  const contextFingerprint = sha256(situation.context.map((context) => ({ key: context.key, state: context.state, value: context.value, observedAt: context.observedAt, source: context.source })))
+  const commandCodes = steps.map((step) => step.commandCode)
+  const idempotencyKey = createRunIdempotencyKey({ tenantId: situation.tenantId, situationId: situation.id, commandCodes, mode: 'live', contextFingerprint, window: new Date().toISOString().slice(0, 13) })
+  const deterministicBasis = { situationId: situation.id, idempotencyKey, mode: 'live' as const, eligible, excluded: [], blocked: [], steps, approvalClasses: ['none' as const], prohibitedActions: [] as string[] }
+  const deterministicHash = sha256(deterministicBasis)
+  return { id: `plan_${deterministicHash.slice(0, 24)}`, ...deterministicBasis, createdAt: new Date().toISOString(), deterministicHash }
+}

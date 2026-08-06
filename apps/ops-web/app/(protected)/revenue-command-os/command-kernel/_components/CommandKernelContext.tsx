@@ -10,7 +10,7 @@ type State = {
   loading: boolean
   error: string | null
   refresh: () => Promise<void>
-  simulate: (payload?: Record<string, unknown>) => Promise<any>
+  execute: (payload: Record<string, unknown>) => Promise<any>
 }
 
 
@@ -42,16 +42,16 @@ export function CommandKernelProvider({ children }: { children: ReactNode }) {
     void refresh()
   }, [refresh])
 
-  const simulate = useCallback(async (payload: Record<string, unknown> = {}) => {
+  const execute = useCallback(async (payload: Record<string, unknown>) => {
     const body = await fetchRevenueOsJson<unknown>('/api/revenue-command-os/command-kernel', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'simulate', payload }),
-    }, { fallbackMessage: 'Simulation impossible.' })
+      body: JSON.stringify({ action: 'execute', payload }),
+    }, { fallbackMessage: 'Exécution de la commande impossible.' })
     return body.data
   }, [])
 
-  const value = useMemo(() => ({ data, warnings, loading, error, refresh, simulate }), [data, warnings, loading, error, refresh, simulate])
+  const value = useMemo(() => ({ data, warnings, loading, error, refresh, execute }), [data, warnings, loading, error, refresh, execute])
   return <Context.Provider value={value}>{children}</Context.Provider>
 }
 

@@ -14,7 +14,7 @@ export default function DataAccessExperience() {
 
   return <div className={`${signalExperienceStyles.routeShell} space-y-5`} data-signal-route-id="MZ26-SIGNAL-DATA-ACCESS">
     <SignalRouteMasthead eyebrow="Accès & confidentialité" title="Intelligence Access Authority" subtitle="Les profils de visibilité, sources sensibles, redactions et permissions sont exposés comme une constitution d’accès, pas comme un décor cybersécurité." concept="Commercial Intelligence Access Authority" icon={FileKey2} tone="violet" mode={signalTruthMode(fabric,warnings,error)} warnings={error ? [error,...warnings] : warnings} freshness={fabric.generatedAt} authority="Minimisation · RLS · tenant" secondary={{ label: 'Snapshots de contexte', href: '/revenue-command-os/signals/context-snapshots' }}>
-      <SignalLifecycle current="governance" />
+      <SignalLifecycle current="execution" />
     </SignalRouteMasthead>
 
     <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4"><SignalStat label="Sources sensibles" value={sensitive.length} note="Minimisation requise" tone={sensitive.length ? 'amber' : 'emerald'}/><SignalStat label="Profils visibles" value={profiles.length} note="Snapshots déclarés" tone="violet"/><SignalStat label="Champs redacted" value={redacted} note="Somme des snapshots" tone="blue"/><SignalStat label="Écarts privacy" value={privacyIssues.filter((issue) => issue.status !== 'resolved').length} note="Ouverts ou reconnus" tone={privacyIssues.some((issue) => issue.status !== 'resolved') ? 'rose' : 'emerald'}/></section>

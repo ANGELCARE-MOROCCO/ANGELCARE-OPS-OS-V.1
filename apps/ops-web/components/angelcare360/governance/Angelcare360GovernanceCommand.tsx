@@ -97,10 +97,58 @@ import type {
   GovernanceSubjectRecord,
   GovernanceTone,
 } from '@/types/angelcare360/governance-command'
+import InstitutionsSitesArea from './InstitutionsSitesArea'
+import AcademicStructureArea from './AcademicStructureArea'
+import ClassesCapacityArea from './ClassesCapacityArea'
+import CurriculumArea from './CurriculumArea'
+import AssignmentsArea from './AssignmentsArea'
+import AccessArea from './AccessArea'
+import SettingsArea from './SettingsArea'
+import AuditArea from './AuditArea'
+import type { InstitutionAreaSnapshot, InstitutionAreaView, InstitutionDossierTab, InstitutionKind } from '@/types/angelcare360/institutions-sites'
+import type { AcademicDossierKind, AcademicDossierTab, AcademicStructureSnapshot, AcademicStructureView } from '@/types/angelcare360/academic-structure-area'
+import type { CapacityDossierKind, CapacityDossierTab, ClassesCapacitySnapshot, ClassesCapacityView } from '@/types/angelcare360/classes-capacity-area'
+import type { CurriculumDossierKind, CurriculumDossierTab, CurriculumSnapshot, CurriculumView } from '@/types/angelcare360/curriculum-area'
+import type { AssignmentDossierKind, AssignmentDossierTab, AssignmentSnapshot, AssignmentView } from '@/types/angelcare360/assignments-area'
+import type { AccessAreaSnapshot, AccessAreaView, AccessDossierKind, AccessDossierTab } from '@/types/angelcare360/access-area'
+import type { SettingsAreaSnapshot, SettingsView, SettingsDossierKind, SettingsDossierTab } from '@/types/angelcare360/settings-area'
+import type { AuditAreaSnapshot, AuditView, AuditDossierKind, AuditDossierTab } from '@/types/angelcare360/audit-area'
 import styles from './Angelcare360GovernanceCommand.module.css'
 
 type Props = {
   initialSnapshot: GovernanceCommandSnapshot
+  initialInstitutionSnapshot: InstitutionAreaSnapshot
+  initialAcademicSnapshot: AcademicStructureSnapshot
+  initialAcademicView: AcademicStructureView
+  initialAcademicTab: AcademicDossierTab | null
+  initialAcademicEntityKind: AcademicDossierKind | null
+  initialCapacitySnapshot: ClassesCapacitySnapshot
+  initialCapacityView: ClassesCapacityView
+  initialCapacityTab: CapacityDossierTab | null
+  initialCapacityEntityKind: CapacityDossierKind | null
+  initialCurriculumSnapshot: CurriculumSnapshot
+  initialCurriculumView: CurriculumView
+  initialCurriculumTab: CurriculumDossierTab | null
+  initialCurriculumEntityKind: CurriculumDossierKind | null
+  initialAssignmentSnapshot: AssignmentSnapshot
+  initialAssignmentView: AssignmentView
+  initialAssignmentTab: AssignmentDossierTab | null
+  initialAssignmentEntityKind: AssignmentDossierKind | null
+  initialAccessSnapshot: AccessAreaSnapshot
+  initialAccessView: AccessAreaView
+  initialAccessTab: AccessDossierTab | null
+  initialAccessEntityKind: AccessDossierKind | null
+  initialSettingsSnapshot: SettingsAreaSnapshot
+  initialSettingsView: SettingsView
+  initialSettingsTab: SettingsDossierTab | null
+  initialSettingsEntityKind: SettingsDossierKind | null
+  initialAuditSnapshot: AuditAreaSnapshot
+  initialAuditView: AuditView
+  initialAuditTab: AuditDossierTab | null
+  initialAuditEntityKind: AuditDossierKind | null
+  initialInstitutionView: InstitutionAreaView
+  initialInstitutionTab: InstitutionDossierTab | null
+  initialInstitutionKind: InstitutionKind | null
   initialPlane: GovernancePlaneKey
   initialEntityId: string | null
   initialEntityType: GovernanceEntityType | null
@@ -244,11 +292,43 @@ function createActionChamber(operationKey: GovernanceOperationKey, record: Gover
 
 export default function Angelcare360GovernanceCommand({
   initialSnapshot,
+  initialInstitutionSnapshot,
+  initialAcademicSnapshot,
+  initialAcademicView,
+  initialAcademicTab,
+  initialAcademicEntityKind,
+  initialCapacitySnapshot,
+  initialCapacityView,
+  initialCapacityTab,
+  initialCapacityEntityKind,
+  initialInstitutionView,
+  initialInstitutionTab,
+  initialInstitutionKind,
   initialPlane,
   initialEntityId,
   initialEntityType,
   initialDrawer,
   initialFocus,
+  initialCurriculumSnapshot,
+  initialCurriculumView,
+  initialCurriculumTab,
+  initialCurriculumEntityKind,
+  initialAssignmentSnapshot,
+  initialAssignmentView,
+  initialAssignmentTab,
+  initialAssignmentEntityKind,
+  initialAccessSnapshot,
+  initialAccessView,
+  initialAccessTab,
+  initialAccessEntityKind,
+  initialSettingsSnapshot,
+  initialSettingsView,
+  initialSettingsTab,
+  initialSettingsEntityKind,
+  initialAuditSnapshot,
+  initialAuditView,
+  initialAuditTab,
+  initialAuditEntityKind,
 }: Props) {
   const router = useRouter()
   const pathname = usePathname()
@@ -284,10 +364,10 @@ export default function Angelcare360GovernanceCommand({
   ], [snapshot])
 
   useEffect(() => {
-    if (!initialEntityId) return
+    if (initialPlane === 'institutions' || !initialEntityId) return
     const record = allEntities.find((item) => item.id === initialEntityId && (!initialEntityType || item.type === initialEntityType))
     if (record) setSelectedEntity({ type: record.type, record, mode: initialDrawer === 'focus' ? 'focus' : initialDrawer === 'peek' ? 'peek' : 'dossier' })
-  }, [allEntities, initialDrawer, initialEntityId, initialEntityType])
+  }, [allEntities, initialDrawer, initialEntityId, initialEntityType, initialPlane])
 
   useEffect(() => {
     if (!toast) return
@@ -315,6 +395,9 @@ export default function Angelcare360GovernanceCommand({
     params.delete('entity')
     params.delete('type')
     params.delete('drawer')
+    params.delete('view')
+    params.delete('tab')
+    params.delete('focus')
     for (const [key, value] of Object.entries(extras || {})) {
       if (value) params.set(key, value)
       else params.delete(key)
@@ -479,6 +562,122 @@ export default function Angelcare360GovernanceCommand({
   const filteredMatters = activeMatters.filter((matter) => !search || `${matter.title} ${matter.summary} ${matter.sourceLabel}`.toLowerCase().includes(search.toLowerCase()))
   const selectedEntityMatters = selectedEntity ? snapshot.matters.filter((matter) => matter.sourceId === selectedEntity.record.id || matter.linkedRecords.some((item) => item.id === selectedEntity.record.id)) : []
 
+  const institutionPlaneNavigation = <nav className={styles.planeNavigation} aria-label="Espaces d’administration">
+    {GOVERNANCE_PLANES.map((item) => {
+      const Icon = PLANE_ICONS[item.key]
+      return <button key={item.key} type="button" className={styles.planeButton} data-active={plane === item.key} onClick={() => choosePlane(item.key)}><Icon size={17} /><span>{item.shortLabel}</span></button>
+    })}
+  </nav>
+
+  if (plane === 'institutions') {
+    return <main className={styles.workspace} data-plane={plane}>
+      {institutionPlaneNavigation}
+      <InstitutionsSitesArea
+        initialSnapshot={initialInstitutionSnapshot}
+        initialView={initialInstitutionView}
+        initialEntityId={initialEntityId}
+        initialEntityKind={initialInstitutionKind}
+        initialTab={initialInstitutionTab}
+      />
+    </main>
+  }
+
+  if (plane === 'academic-structure') {
+    return <main className={styles.workspace} data-plane={plane}>
+      {institutionPlaneNavigation}
+      <AcademicStructureArea
+        initialSnapshot={initialAcademicSnapshot}
+        initialView={initialAcademicView}
+        initialEntityId={initialEntityId}
+        initialEntityKind={initialAcademicEntityKind}
+        initialTab={initialAcademicTab}
+      />
+    </main>
+  }
+
+  if (plane === 'classes-capacity') {
+    return <main className={styles.workspace} data-plane={plane}>
+      {institutionPlaneNavigation}
+      <ClassesCapacityArea
+        initialSnapshot={initialCapacitySnapshot}
+        initialView={initialCapacityView}
+        initialEntityId={initialEntityId}
+        initialEntityKind={initialCapacityEntityKind}
+        initialTab={initialCapacityTab}
+      />
+    </main>
+  }
+
+
+  if (plane === 'subjects') {
+    return <main className={styles.workspace} data-plane={plane}>
+      {institutionPlaneNavigation}
+      <CurriculumArea
+        initialSnapshot={initialCurriculumSnapshot}
+        initialView={initialCurriculumView}
+        initialEntityId={initialEntityId}
+        initialEntityKind={initialCurriculumEntityKind}
+        initialTab={initialCurriculumTab}
+      />
+    </main>
+  }
+
+
+  if (plane === 'assignments') {
+    return <main className={styles.workspace} data-plane={plane}>
+      {institutionPlaneNavigation}
+      <AssignmentsArea
+        initialSnapshot={initialAssignmentSnapshot}
+        initialView={initialAssignmentView}
+        initialEntityId={initialEntityId}
+        initialEntityKind={initialAssignmentEntityKind}
+        initialTab={initialAssignmentTab}
+      />
+    </main>
+  }
+
+
+  if (plane === 'roles-permissions') {
+    return <main className={styles.workspace} data-plane={plane}>
+      {institutionPlaneNavigation}
+      <AccessArea
+        initialSnapshot={initialAccessSnapshot}
+        initialView={initialAccessView}
+        initialEntityId={initialEntityId}
+        initialEntityKind={initialAccessEntityKind}
+        initialTab={initialAccessTab}
+      />
+    </main>
+  }
+
+
+  if (plane === 'settings') {
+    return <main className={styles.workspace} data-plane={plane}>
+      {institutionPlaneNavigation}
+      <SettingsArea
+        initialSnapshot={initialSettingsSnapshot}
+        initialView={initialSettingsView}
+        initialEntityId={initialEntityId}
+        initialEntityKind={initialSettingsEntityKind}
+        initialTab={initialSettingsTab}
+      />
+    </main>
+  }
+
+
+  if (plane === 'audit') {
+    return <main className={styles.workspace} data-plane={plane}>
+      {institutionPlaneNavigation}
+      <AuditArea
+        initialSnapshot={initialAuditSnapshot}
+        initialView={initialAuditView}
+        initialEntityId={initialEntityId}
+        initialEntityKind={initialAuditEntityKind}
+        initialTab={initialAuditTab}
+      />
+    </main>
+  }
+
   return (
     <main className={styles.workspace} data-plane={plane}>
       <section className={styles.commandCrown}>
@@ -567,7 +766,7 @@ export default function Angelcare360GovernanceCommand({
         </div>
       </section>
 
-      {plane === 'institutions' || initialFocus ? (
+      {initialFocus ? (
         <section className={styles.priorityRunway}>
           <RunwayLane label="Ouverture bloquée" icon={LockKeyhole} tone="critical" matters={matterLanes.activation} onOpen={setSelectedMatter} />
           <RunwayLane label="Décision requise" icon={ClipboardCheck} tone="decision" matters={matterLanes.decision} onOpen={setSelectedMatter} />
@@ -578,13 +777,8 @@ export default function Angelcare360GovernanceCommand({
 
       <section className={styles.commandBody} data-expanded={expandedMatrix}>
         <div className={styles.primaryCanvas}>
-          <Toolbar search={search} onSearch={setSearch} tone={toneFilter} onTone={setToneFilter} count={plane === 'institutions' ? snapshot.institutions.length : plane === 'academic-structure' ? snapshot.academicYears.length + snapshot.terms.length : plane === 'classes-capacity' ? snapshot.capacities.length : plane === 'subjects' ? snapshot.subjects.length : plane === 'assignments' ? snapshot.assignments.length : plane === 'roles-permissions' ? snapshot.roles.length + snapshot.delegations.length : plane === 'settings' ? snapshot.configurations.length : snapshot.activity.length} />
-          {plane === 'institutions' ? <InstitutionsPlane records={filtered(snapshot.institutions)} matters={filteredMatters} onOpen={showEntity} onMatter={setSelectedMatter} onAction={(key, record) => setActionChamber(createActionChamber(key, record))} /> : null}
-          {plane === 'academic-structure' ? <AcademicPlane years={filtered(snapshot.academicYears)} terms={filtered(snapshot.terms)} matters={filteredMatters} onOpen={showEntity} onMatter={setSelectedMatter} onAction={(key, record) => setActionChamber(createActionChamber(key, record))} /> : null}
-          {plane === 'classes-capacity' ? <CapacityPlane records={filtered(snapshot.capacities)} matters={filteredMatters} onOpen={showEntity} onMatter={setSelectedMatter} onAction={(key, record) => setActionChamber(createActionChamber(key, record))} /> : null}
-          {plane === 'subjects' ? <SubjectsPlane records={filtered(snapshot.subjects)} matters={filteredMatters} onOpen={showEntity} onMatter={setSelectedMatter} onAction={(key, record) => setActionChamber(createActionChamber(key, record))} /> : null}
+          <Toolbar search={search} onSearch={setSearch} tone={toneFilter} onTone={setToneFilter} count={plane === 'settings' ? snapshot.configurations.length : snapshot.activity.length} />
           {plane === 'assignments' ? <AssignmentsPlane records={filtered(snapshot.assignments)} matters={filteredMatters} onOpen={showEntity} onMatter={setSelectedMatter} onAction={(key, record) => setActionChamber(createActionChamber(key, record))} /> : null}
-          {plane === 'roles-permissions' ? <AccessPlane roles={filtered(snapshot.roles)} delegations={filtered(snapshot.delegations)} matters={filteredMatters} onOpen={showEntity} onMatter={setSelectedMatter} onAction={(key, record) => setActionChamber(createActionChamber(key, record))} /> : null}
           {plane === 'settings' ? <SettingsPlane records={filtered(snapshot.configurations)} matters={filteredMatters} onOpen={showEntity} onMatter={setSelectedMatter} onAction={(key, record) => setActionChamber(createActionChamber(key, record))} /> : null}
           {plane === 'audit' ? <AuditPlane events={snapshot.activity} onOpen={(event) => {
             const record = allEntities.find((item) => item.id === event.entityId)

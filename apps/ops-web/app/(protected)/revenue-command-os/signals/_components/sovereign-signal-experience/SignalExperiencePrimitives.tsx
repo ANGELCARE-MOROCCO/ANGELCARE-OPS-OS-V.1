@@ -83,12 +83,12 @@ export function SignalEmpty({ title, description, locked = false }: { title: str
   return <div className={`rounded-[26px] border p-7 text-center ${locked ? 'border-amber-200 bg-amber-50' : 'border-slate-200 bg-slate-50'}`}><SIcon icon={Icon} tone={locked ? 'amber' : 'slate'} className="mx-auto" /><h3 className="mt-4 text-base font-black text-slate-950">{title}</h3><p className="mx-auto mt-2 max-w-xl text-sm font-semibold leading-6 text-slate-700">{description}</p></div>
 }
 
-export function SignalSafetyBanner({ detail = 'Mode Shadow actif : le tissu observe, qualifie et distribue l’intelligence en interne sans déclencher de communication, transaction ou engagement externe.' }: { detail?: string }) {
-  return <div className="flex items-start gap-3 rounded-[24px] border border-cyan-200 bg-cyan-50 p-4 text-cyan-950"><ShieldCheck size={18} className="mt-0.5 shrink-0 text-cyan-700" /><div><p className="text-xs font-black">Signal Fabric protégé</p><p className="mt-1 text-[11px] font-semibold leading-5 text-cyan-900">{detail}</p></div></div>
+export function SignalSafetyBanner({ detail = 'Signal Fabric live : chaque signal qualifié peut alimenter immédiatement un mandat, une commande, une mission ou une action opérateur.' }: { detail?: string }) {
+  return <div className="flex items-start gap-3 rounded-[24px] border border-cyan-200 bg-cyan-50 p-4 text-cyan-950"><ShieldCheck size={18} className="mt-0.5 shrink-0 text-cyan-700" /><div><p className="text-xs font-black">Signal Fabric live</p><p className="mt-1 text-[11px] font-semibold leading-5 text-cyan-900">{detail}</p></div></div>
 }
 
-export function SignalLifecycle({ current }: { current: 'source' | 'intake' | 'qualification' | 'context' | 'routing' | 'governance' }) {
-  const stages = ['source','intake','qualification','context','routing','governance'] as const
+export function SignalLifecycle({ current }: { current: 'source' | 'intake' | 'qualification' | 'context' | 'routing' | 'execution' }) {
+  const stages = ['source','intake','qualification','context','routing','execution'] as const
   return <div className="grid grid-cols-3 gap-2 sm:grid-cols-6">{stages.map((stage, index) => <div key={stage} className={`rounded-2xl border p-2 text-center ${stage === current ? 'border-cyan-300 bg-cyan-50' : 'border-slate-200 bg-white'}`}><RadioTower size={13} className={`mx-auto ${stage === current ? 'text-cyan-700' : 'text-slate-500'}`} /><p className={`mt-1 text-[8px] font-black uppercase ${stage === current ? 'text-cyan-900' : 'text-slate-600'}`}>{index + 1}. {stage}</p></div>)}</div>
 }
 

@@ -69,7 +69,7 @@ export function CommandEmpty({ title, description, locked = false }: { title: st
   return <div className={`rounded-[26px] border p-7 text-center ${locked ? 'border-amber-200 bg-amber-50' : 'border-slate-200 bg-slate-50'}`}><SIcon icon={Icon} tone={locked ? 'amber' : 'slate'} className="mx-auto" /><h3 className="mt-4 text-base font-black text-slate-950">{title}</h3><p className="mx-auto mt-2 max-w-xl text-sm font-semibold leading-6 text-slate-600">{description}</p></div>
 }
 
-export function SafetyLockBanner({ detail = 'Mode Shadow actif : aucune communication, transaction, engagement contractuel ou autre effet externe ne peut être exécuté.' }: { detail?: string }) {
+export function SafetyLockBanner({ detail = 'Mode LIVE actif : les commandes s’exécutent directement et les erreurs techniques restent visibles et réessayables.' }: { detail?: string }) {
   return <div className="flex items-start gap-3 rounded-[24px] border border-cyan-200 bg-cyan-50 p-4 text-cyan-950"><ShieldCheck size={18} className="mt-0.5 shrink-0 text-cyan-700" /><div><p className="text-xs font-black">Périmètre d’exécution protégé</p><p className="mt-1 text-[11px] font-semibold leading-5 text-cyan-900">{detail}</p></div></div>
 }
 

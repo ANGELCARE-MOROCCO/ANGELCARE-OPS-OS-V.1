@@ -71,7 +71,11 @@ function mapItem(row: DbRow, locale: HomepageLocale, mediaUrl: string | null, ca
     currency_label: text(row.currency_label) || 'Dh', price_mode: text(row.price_mode) as HomepageItem['price_mode'],
     price_amount: nullableNumber(row.price_amount), featured: Boolean(row.featured), availability_status: text(row.availability_status),
     category_key: category?.category_key || null, category_title: category?.title || null, media_url: mediaUrl,
-    trust_labels: trustLabels, metadata: recordValue(row.commercial_metadata),
+    trust_labels: trustLabels,
+    metadata: { ...recordValue(row.commercial_metadata), ...recordValue(row.attributes) },
+    experience_schema_key: nullableText(row.experience_schema_key) || nullableText(recordValue(row.commercial_metadata).experience_schema_key),
+    experience_schema_version: Number(row.experience_schema_version || 1),
+    experience_configuration: recordValue(row.experience_configuration),
   }
 }
 

@@ -134,6 +134,21 @@ check('success toasts auto-dismiss after three seconds with hover/focus pause', 
 check('errors remain manually dismissible and include recovery instructions', contains(feedback,['record.instruction','record.preserved','onDismiss']))
 check('Service Design shell mounts the action provider and Action Centre', contains('components/carelink/service-design/HomeServiceDesignShell.tsx',['ServiceDesignActionProvider']) && contains(feedback,['<ActionCentre']))
 
+
+const experienceImportRoute='app/api/carelink-ops/service-design/factory/import/route.ts'
+const experienceImportUi='components/carelink/service-design/factory/DoctrineImportStudio.tsx'
+check('experience importer intercepts the five dependent resource families', contains(experienceImportRoute,["'experience_blueprints'","'experience_sections'","'experience_fields'","'experience_options'","'experience_presets'"]))
+check('existing blueprint versions are resolved by tenant category and version', contains(experienceImportRoute,["eq('category_id', category.id)","eq('version_number', version)",'tenant_id,category_id,version_number']))
+check('sections fields options and presets resolve their exact parent records', contains(experienceImportRoute,['BLUEPRINT_REQUIRED','SECTION_REQUIRED','FIELD_REQUIRED','tenant_id,blueprint_id,code','tenant_id,section_id,code','tenant_id,field_id,code']))
+check('experience import returns row-level business corrections', contains(experienceImportRoute,['errors.push({ row: rowNumber','Ligne ${rowNumber}','EXPERIENCE_UPSERT_FAILED']))
+check('guided five-file experience import is available', contains(experienceImportUi,['applyExperienceBundle','Choisir les 5 CSV','EXPERIENCE_ORDER','identifyExperienceType']))
+check('experience import exposes explicit version modes', contains(experienceImportUi,["'update_existing'","'create_version'","'replace_draft'",'Mettre à jour V1']))
+check('CARELINK host excludes Service Design overlays from legacy width normalization', contains('components/carelink/ops/CareLinkOpsFrame.tsx',['data-service-design-overlay',':not([data-service-design-overlay])','--carelink-sidebar-current-width']))
+check('dark-surface semantic tokens are defined centrally', contains('components/carelink/service-design/HomeServiceDesignShell.tsx',['--sd-dark-surface','--sd-dark-text-primary','--sd-dark-text-secondary','--sd-dark-progress-track']))
+check('dark heroes consume semantic foreground tokens', contains('components/carelink/service-design/studio2030/ServiceDesignStudio2030.tsx',['var(--sd-dark-surface)','var(--sd-dark-text-primary)','var(--sd-dark-text-secondary)']))
+check('routine action feedback remains compact and overlay-safe', contains(feedback,['data-service-design-overlay="true"','max-h-[210px]','w-[min(480px','top-[160px]']))
+check('Service Design dock contains horizontal overflow without widening the page', contains('components/carelink/service-design/studio2030/ServiceDesignDock.tsx',['max-w-full overflow-hidden','overflow-x-auto overscroll-x-contain']))
+
 // Detect visually active buttons with no handler, submit behavior, or explicit disabled state.
 const componentRoot=file('components/carelink/service-design')
 const componentFiles=[]

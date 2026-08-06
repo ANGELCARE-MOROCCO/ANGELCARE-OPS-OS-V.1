@@ -377,6 +377,12 @@ export const PERMISSION_CATALOG: PermissionDefinition[] = [
   { key: 'marketplace.seo.manage', label: 'Gérer SEO commercial', category: 'Commerce Studio', sensitive: true },
   { key: 'marketplace.commerce.export', label: 'Exporter le commerce', category: 'Commerce Studio', sensitive: true },
   { key: 'marketplace.commerce.import', label: 'Importer le commerce', category: 'Commerce Studio', sensitive: true },
+  { key: 'marketplace.experience_schema.view', label: 'Voir Experience Schema Registry', category: 'Category-Native Commerce', sensitive: false },
+  { key: 'marketplace.experience_schema.manage', label: 'Gérer et publier les schémas', category: 'Category-Native Commerce', sensitive: true },
+  { key: 'marketplace.archetype.view', label: 'Voir les studios par archétype', category: 'Category-Native Commerce', sensitive: false },
+  { key: 'marketplace.archetype.manage', label: 'Gérer les studios par archétype', category: 'Category-Native Commerce', sensitive: true },
+  { key: 'marketplace.category_native_import.view', label: 'Voir Category-Native Import', category: 'Category-Native Commerce', sensitive: false },
+  { key: 'marketplace.category_native_import.manage', label: 'Valider, exécuter et restaurer les imports', category: 'Category-Native Commerce', sensitive: true },
 ]
 
 export const PERMISSION_KEYS = PERMISSION_CATALOG.map((definition) => definition.key)

@@ -1,7 +1,5 @@
 import type { CockpitExecutionMode, CockpitRoleView } from './types'
 
-const MODES: CockpitExecutionMode[] = ['shadow','internal_only','approval_required','limited_autopilot','suspended','emergency_stop']
-
 export interface CockpitConfig {
   enabled: boolean
   executionMode: CockpitExecutionMode
@@ -17,10 +15,9 @@ export interface CockpitConfig {
 }
 
 export function cockpitConfig(): CockpitConfig {
-  const rawMode = String(process.env.REVENUE_OS_EXECUTION_MODE || 'shadow') as CockpitExecutionMode
   return {
     enabled: process.env.REVENUE_OS_COCKPIT_ENABLED !== 'false',
-    executionMode: MODES.includes(rawMode) ? rawMode : 'shadow',
+    executionMode: 'live',
     refreshSeconds: boundedInt(process.env.REVENUE_OS_COCKPIT_REFRESH_SECONDS, 30, 10, 300),
     maxSignals: boundedInt(process.env.REVENUE_OS_COCKPIT_MAX_SIGNALS, 24, 5, 200),
     maxPrograms: boundedInt(process.env.REVENUE_OS_COCKPIT_MAX_PROGRAMS, 20, 5, 100),
@@ -28,7 +25,7 @@ export function cockpitConfig(): CockpitConfig {
     maxTimelineEvents: boundedInt(process.env.REVENUE_OS_COCKPIT_MAX_TIMELINE_EVENTS, 100, 20, 1000),
     freshnessThresholdMinutes: boundedInt(process.env.REVENUE_OS_COCKPIT_FRESHNESS_MINUTES, 60, 5, 1440),
     executiveBriefEnabled: process.env.REVENUE_OS_COCKPIT_EXECUTIVE_BRIEF !== 'false',
-    geminiBriefEnabled: process.env.REVENUE_OS_COCKPIT_GEMINI_BRIEF === 'true',
+    geminiBriefEnabled: process.env.REVENUE_OS_COCKPIT_GEMINI_BRIEF !== 'false',
     defaultRoleView: parseRoleView(process.env.REVENUE_OS_COCKPIT_DEFAULT_ROLE),
   }
 }

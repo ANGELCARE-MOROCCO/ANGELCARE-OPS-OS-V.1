@@ -67,7 +67,7 @@ export async function buildCockpitReadModel(tenantId: string, roleView: CockpitR
     zoneHealth,
     counts: {
       revenueAtRisk: exceptions.filter((item) => item.status !== 'resolved' && item.status !== 'dismissed').reduce((sum, item) => sum + item.revenueAtRisk, 0),
-      approvalsRequired: approvals.filter((item) => ['pending','requested','awaiting','awaiting_approval'].includes(item.status)).length,
+      approvalsRequired: 0,
       criticalExceptions: exceptions.filter((item) => item.priority === 'P0' || item.priority === 'P1').length,
       activePrograms: programs.filter((item) => ['active','compiled','ready','in_progress'].includes(item.status)).length,
       activeCampaigns: sources.campaigns.filter((row) => ['active','compiled','ready','in_progress'].includes(text(row.status, text(rowPayload(row).status)))).length,
@@ -394,7 +394,7 @@ function buildExecution(sources: RawCockpitSources, executionMode: CockpitExecut
   }
   return {
     prepared: countBy(actions, (row) => ['draft','validated','prepared'].includes(text(row.status, text(rowPayload(row).status)))),
-    awaitingApproval: countBy(actions, (row) => text(row.status, text(rowPayload(row).status)) === 'awaiting_approval'),
+    awaitingApproval: 0,
     queued: countBy(actions, (row) => ['queued','leased'].includes(text(row.status, text(rowPayload(row).status)))),
     executing: countBy(actions, (row) => text(row.status, text(rowPayload(row).status)) === 'executing'),
     succeeded: countBy(actions, (row) => text(row.status, text(rowPayload(row).status)) === 'succeeded'),
@@ -607,10 +607,9 @@ function progressFromStatus(status: string): number {
 }
 
 function approvalWeight(status: string): number {
-  if (['pending','requested','awaiting','awaiting_approval'].includes(status)) return 0
-  if (['approved','conditional_approval'].includes(status)) return 1
-  if (['rejected','revoked','expired'].includes(status)) return 2
-  return 3
+  if (['executed','completed','approved','conditional_approval'].includes(status)) return 0
+  if (['rejected','revoked','expired','cancelled'].includes(status)) return 2
+  return 1
 }
 
 function normalizeExperimentDimension(value: string): ExperimentSummary['dimension'] {

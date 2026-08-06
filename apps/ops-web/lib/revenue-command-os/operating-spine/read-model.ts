@@ -631,8 +631,8 @@ export async function readRevenueOperatingSpine(tenantId: string): Promise<Reven
     .map(([source, health]) => `${source}: ${health.message || 'source indisponible'}`)
   const installation = data.installations[0]
   const installationPayload = payload(installation)
-  const executionMode = stringValue(installation?.execution_mode, installationPayload.executionMode, 'approval-gated')
-  const externalActionsEnabled = Boolean(installation?.external_actions_enabled || installationPayload.externalActionsEnabled)
+  const executionMode = 'live'
+  const externalActionsEnabled = true
 
   const objective = objectiveOf(data)
   const strategies = strategiesOf(data, objective?.id)

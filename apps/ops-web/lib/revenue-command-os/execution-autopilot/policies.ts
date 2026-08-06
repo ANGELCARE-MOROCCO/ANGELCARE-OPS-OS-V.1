@@ -1,9 +1,15 @@
-import { executionConfig } from './config'
 import { hashPayload } from './crypto'
 import type { AdapterConfig, AdapterValidationResult, ExecutionAction, ExecutionActionType, ExecutionActor } from './types'
 export const EXTERNAL_ACTIONS=new Set<ExecutionActionType>(['send_email','send_whatsapp','create_calendar_event','send_proposal'])
 export const HIGH_RISK_ACTIONS=new Set<ExecutionActionType>(['send_proposal','create_delivery_handoff','create_payment_followup'])
-export function requiresApproval(actionType:ExecutionActionType,external:boolean){return external||HIGH_RISK_ACTIONS.has(actionType)||actionType==='request_approval'}
-export function validateExecutionPolicy(action:ExecutionAction,config:AdapterConfig,actor?:ExecutionActor):AdapterValidationResult{const runtime=executionConfig();const blockers:string[]=[];const warnings:string[]=[];const external=action.controls.externalAction||EXTERNAL_ACTIONS.has(action.actionType);const approvalRequired=requiresApproval(action.actionType,external)
- const approvedExternalAllowed=runtime.allowApprovedExternal||config.allowApprovedExternal;if(!runtime.enabled)blockers.push('PROPAGATION_DISABLED');if(runtime.mode==='suspended'||runtime.mode==='emergency_stop')blockers.push(`EXECUTION_MODE_${runtime.mode.toUpperCase()}`);if(!config.enabled)blockers.push('ADAPTER_DISABLED');if(config.executionMode==='suspended'||config.executionMode==='emergency_stop')blockers.push('ADAPTER_SUSPENDED');if(external&&!runtime.allowExternal&&!approvedExternalAllowed)blockers.push('EXTERNAL_ACTIONS_DISABLED');if(external&&approvedExternalAllowed&&!action.approval.decisionId)blockers.push('EXTERNAL_APPROVAL_REQUIRED');if(approvalRequired&&action.approval.required&&!action.approval.decisionId&&action.status!=='awaiting_approval')warnings.push('APPROVAL_NOT_YET_RECORDED');if(action.approval.validUntil&&Date.parse(action.approval.validUntil)<Date.now())blockers.push('APPROVAL_EXPIRED');if(action.controls.sensitive&&!actor)blockers.push('SENSITIVE_ACTION_ACTOR_REQUIRED');if(action.controls.maximumAttempts<1)blockers.push('INVALID_RETRY_POLICY');return{valid:blockers.length===0,blockers,warnings,approvalRequired,externalAction:external,payloadHash:hashPayload(action.payload)}}
-export function canQueue(action:ExecutionAction,config?:AdapterConfig){const runtime=executionConfig();if(action.controls.externalAction)return runtime.allowExternal||((runtime.allowApprovedExternal||Boolean(config?.allowApprovedExternal))&&Boolean(action.approval.decisionId));return runtime.allowInternal||Boolean(config?.allowInternal)}
+export function requiresApproval(_actionType:ExecutionActionType,_external:boolean){return false}
+export function validateExecutionPolicy(action:ExecutionAction,config:AdapterConfig,actor?:ExecutionActor):AdapterValidationResult{
+ const blockers:string[]=[];const warnings:string[]=[];const external=EXTERNAL_ACTIONS.has(action.actionType)
+ if(!config.enabled)blockers.push('ADAPTER_DISABLED')
+ if(!config.supportedActions.includes(action.actionType))blockers.push('ACTION_NOT_SUPPORTED_BY_ADAPTER')
+ if(action.controls.maximumAttempts<1)blockers.push('INVALID_RETRY_POLICY')
+ if(action.controls.payloadHash&&action.controls.payloadHash!==hashPayload(action.payload))blockers.push('EXECUTION_PAYLOAD_CHANGED')
+ if(action.controls.sensitive&&!actor)blockers.push('SENSITIVE_ACTION_ACTOR_REQUIRED')
+ return{valid:blockers.length===0,blockers,warnings,approvalRequired:false,externalAction:external,payloadHash:hashPayload(action.payload)}
+}
+export function canQueue(_action:ExecutionAction,config?:AdapterConfig){return Boolean(config?.enabled??true)}

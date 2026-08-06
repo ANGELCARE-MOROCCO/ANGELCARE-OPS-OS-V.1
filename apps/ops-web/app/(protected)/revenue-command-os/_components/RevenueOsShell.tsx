@@ -33,8 +33,8 @@ function groupFor(href: string) {
   if (href.includes('cockpit') || href.includes('mega-production') || href.includes('digital-twin') || href.includes('revenue-objectives') || href.includes('signals')) return 'Commandement'
   if (href.includes('strategy') || href.includes('validation-council') || href.includes('command-kernel') || href.includes('gemini-resources')) return 'Intelligence & décision'
   if (href.includes('mission-compiler') || href.includes('execution-autopilot') || href.includes('active-programs') || href.includes('compiled-missions') || href.includes('email-studio')) return 'Orchestration'
-  if (href.includes('approvals') || href.includes('exceptions') || href.includes('memory-learning')) return 'Contrôle'
-  return 'Gouvernance'
+  if (href.includes('approvals') || href.includes('exceptions') || href.includes('memory-learning')) return 'Décisions & apprentissage'
+  return 'Configuration'
 }
 
 export default function RevenueOsShell({ children }: { children: React.ReactNode }) {
@@ -50,7 +50,7 @@ export default function RevenueOsShell({ children }: { children: React.ReactNode
   const searchRef = useRef<HTMLInputElement>(null)
 
   const groups = useMemo(() => {
-    const order = ['Commandement', 'Intelligence & décision', 'Orchestration', 'Contrôle', 'Gouvernance']
+    const order = ['Commandement', 'Intelligence & décision', 'Orchestration', 'Décisions & apprentissage', 'Configuration']
     return order.map((label) => ({ label, items: bootstrap.workspaces.filter((item) => groupFor(item.href) === label) })).filter((group) => group.items.length)
   }, [bootstrap.workspaces])
 
@@ -152,7 +152,7 @@ export default function RevenueOsShell({ children }: { children: React.ReactNode
             <div className={`rounded-2xl border border-slate-200 bg-gradient-to-br from-slate-50 to-white ${collapsed ? 'p-2' : 'p-3'}`}>
               <div className={`flex items-center ${collapsed ? 'justify-center' : 'gap-3'}`}>
                 <span className="relative grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-slate-950 text-white"><ShieldCheck size={17} /><span className="absolute -right-1 -top-1 h-2.5 w-2.5 rounded-full border-2 border-white bg-emerald-500" /></span>
-                {!collapsed ? <div className="min-w-0 flex-1"><p className="truncate text-[11px] font-black text-slate-900">Production gouvernée</p><p className="mt-0.5 truncate text-[9px] font-black uppercase tracking-[.1em] text-blue-700">Phase 16 — Mega Production</p><p className="mt-0.5 truncate text-[9px] font-semibold uppercase tracking-[.1em] text-slate-500">Effets externes sur approbation</p></div> : null}
+                {!collapsed ? <div className="min-w-0 flex-1"><p className="truncate text-[11px] font-black text-slate-900">Production centralisée</p><p className="mt-0.5 truncate text-[9px] font-black uppercase tracking-[.1em] text-blue-700">Phase 16 — Mega Production</p><p className="mt-0.5 truncate text-[9px] font-semibold uppercase tracking-[.1em] text-slate-500">Exécution directe et traçable</p></div> : null}
               </div>
             </div>
           </div>
@@ -171,7 +171,7 @@ export default function RevenueOsShell({ children }: { children: React.ReactNode
               </div>
               <div className="flex flex-wrap items-center gap-2 text-[10px] font-bold text-slate-600">
                 <span className="rounded-full border border-slate-200 bg-white px-3 py-1.5">Mode {bootstrap.executionMode}</span>
-                <span className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-emerald-800">Effets externes sur approbation</span>
+                <span className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-emerald-800">Exécution directe et traçable</span>
                 <Link href="/revenue-command-os/audit" className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-slate-700 transition hover:border-blue-300 hover:text-blue-800">Trace & audit <ChevronRight className="ml-1 inline" size={12} /></Link>
               </div>
             </div>

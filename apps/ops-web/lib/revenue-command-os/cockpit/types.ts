@@ -20,7 +20,7 @@ export type CockpitSeverity = 'critical' | 'high' | 'medium' | 'low' | 'info'
 export type CockpitPriority = 'P0' | 'P1' | 'P2' | 'P3' | 'P4'
 export type FreshnessState = 'live' | 'fresh' | 'aging' | 'stale' | 'unknown'
 export type InterventionStatus = 'open' | 'acknowledged' | 'assigned' | 'in_progress' | 'resolved' | 'dismissed'
-export type CockpitExecutionMode = 'shadow' | 'internal_only' | 'approval_required' | 'limited_autopilot' | 'suspended' | 'emergency_stop'
+export type CockpitExecutionMode = 'live' | 'shadow' | 'internal_only' | 'approval_required' | 'limited_autopilot' | 'suspended' | 'emergency_stop'
 
 export interface CockpitActor {
   id: string

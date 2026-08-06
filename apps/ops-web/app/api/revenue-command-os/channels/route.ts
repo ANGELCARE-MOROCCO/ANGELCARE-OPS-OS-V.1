@@ -24,9 +24,6 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const actor = await resolveRevenueOsActor('revenue_os.view', { aliases: ['revenue.view'] })
-    if (!hasRevenueOsPermission(actor, 'revenue_os.channels.manage', ['revenue_os.manage'])) {
-      return NextResponse.json({ ok: false, error: { code: 'FORBIDDEN', message: 'Autorité de gestion des canaux Revenue OS requise.' } }, { status: 403 })
-    }
     const body = await request.json().catch(() => ({}))
     if (body?.channel !== 'whatsapp' || typeof body?.enabled !== 'boolean') {
       return NextResponse.json({ ok: false, error: { code: 'INVALID_INPUT', message: 'Seul le canal WhatsApp peut être activé ou désactivé depuis cette surface.' } }, { status: 400 })

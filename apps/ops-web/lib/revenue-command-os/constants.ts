@@ -11,7 +11,7 @@ export const REVENUE_OS_PHASE3_RELEASE_CODE = 'AC-REVENUE-OS-MZ03-DOCTRINE-MEMOR
 export const REVENUE_OS_PHASE3_MODULE_VERSION = '3.0.0-phase3'
 export const REVENUE_OS_RELEASE_CODE = 'AC-REVENUE-OS-MZ16-MEGA-PRODUCTION'
 export const REVENUE_OS_MODULE_VERSION = '16.0.0-phase16'
-export const REVENUE_OS_DEFAULT_EXECUTION_MODE: RevenueOsExecutionMode = 'approval-gated'
+export const REVENUE_OS_DEFAULT_EXECUTION_MODE: RevenueOsExecutionMode = 'live'
 
 export const REVENUE_OS_PERMISSIONS = {
   view: 'revenue_os.view',
@@ -62,7 +62,7 @@ export const REVENUE_OS_WORKSPACES: RevenueOsWorkspaceDefinition[] = [
     key: 'strategic-view',
     label: 'Revenue Command Cockpit',
     shortLabel: 'Cockpit exécutif',
-    description: 'Le système stratégique final qui unifie objectifs, signaux, stratégie, Conseil, programmes, exécution, exceptions, apprentissage et gouvernance.',
+    description: 'Le système stratégique final qui unifie objectifs, signaux, stratégie, Conseil, programmes, exécution, exceptions et apprentissage.',
     href: '/revenue-command-os/cockpit',
     icon: 'Command',
     order: 10,
@@ -127,7 +127,7 @@ export const REVENUE_OS_WORKSPACES: RevenueOsWorkspaceDefinition[] = [
     key: 'gemini-resources',
     label: 'Gemini & ressources',
     shortLabel: 'Gemini & ressources',
-    description: 'Registre gouverné des modèles, adaptateurs de contexte, prompts, outils, schémas, tests et runs Gemini AngelCare.',
+    description: 'Registre opérationnel des modèles, adaptateurs de contexte, prompts, outils, schémas, tests et runs Gemini AngelCare.',
     href: '/revenue-command-os/gemini-resources',
     icon: 'BrainCircuit',
     order: 45,
@@ -166,7 +166,7 @@ export const REVENUE_OS_WORKSPACES: RevenueOsWorkspaceDefinition[] = [
     key: 'strategy-studio',
     label: 'Strategy Studio',
     shortLabel: 'Studio de décision',
-    description: 'Workspace exécutif de compréhension, simulation, décision, approbation et note de décision.',
+    description: 'Workspace exécutif de compréhension, comparaison, décision immédiate et note de décision.',
     href: '/revenue-command-os/strategy-studio',
     icon: 'BadgeCheck',
     order: 58,
@@ -192,7 +192,7 @@ export const REVENUE_OS_WORKSPACES: RevenueOsWorkspaceDefinition[] = [
     key: 'active-programs',
     label: 'Programmes actifs',
     shortLabel: 'Programmes',
-    description: 'Programmes revenus approuvés et chaînes d’exécution propagées vers les modules opérationnels.',
+    description: 'Programmes revenus actifs et chaînes d’exécution propagées vers les modules opérationnels.',
     href: '/revenue-command-os/active-programs',
     icon: 'Layers3',
     order: 70,
@@ -264,7 +264,7 @@ export const REVENUE_OS_WORKSPACES: RevenueOsWorkspaceDefinition[] = [
     permission: REVENUE_OS_PERMISSIONS.knowledge,
     status: 'ready',
     accent: 'green',
-    contractScope: ['Doctrine approuvée', 'Preuves', 'Scripts', 'Playbooks', 'Restrictions', 'Versions', 'Conflits', 'Indexation'],
+    contractScope: ['Doctrine active', 'Preuves', 'Scripts', 'Playbooks', 'Repères', 'Versions', 'Conflits', 'Indexation'],
   },
   {
     key: 'audit',
@@ -305,8 +305,8 @@ export const REVENUE_OS_FEATURE_FLAGS: RevenueOsFeatureFlag[] = [
     riskClass: 'low',
   },
   {
-    key: 'revenue_os.shadow_mode',
-    label: 'Mode Shadow',
+    key: 'revenue_os.live_mode',
+    label: 'Mode Live',
     description: 'Compatibilité de simulation conservée; la posture active est désormais l’exécution interne gouvernée et l’approbation avant tout effet externe.',
     enabled: false,
     locked: false,
@@ -352,7 +352,7 @@ export const REVENUE_OS_FEATURE_FLAGS: RevenueOsFeatureFlag[] = [
   {
     key: 'revenue_os.signal_fabric',
     label: 'Live Revenue Signal Fabric',
-    description: 'Active les sources gouvernées, la normalisation, la déduplication, les scans et les snapshots de contexte en observation Shadow.',
+    description: 'Active les sources gouvernées, la normalisation, la déduplication, les scans et les snapshots de contexte en observation live.',
     enabled: true,
     locked: true,
     environment: 'all',
@@ -379,7 +379,7 @@ export const REVENUE_OS_FEATURE_FLAGS: RevenueOsFeatureFlag[] = [
   {
     key: 'revenue_os.command_kernel',
     label: 'Noyau gouverné des commandes',
-    description: 'Active le registre, le routage, les graphes, la simulation et les contrôles MZ05 en Shadow.',
+    description: 'Active le registre, le routage, les graphes, la simulation et les contrôles MZ05 en exécution live.',
     enabled: true,
     locked: true,
     environment: 'all',
@@ -392,7 +392,7 @@ export const REVENUE_OS_FEATURE_FLAGS: RevenueOsFeatureFlag[] = [
     enabled: false,
     locked: true,
     environment: 'all',
-    riskClass: 'restricted',
+    riskClass: 'controlled',
   },
   {
     key: 'revenue_os.strategy_execution',
@@ -401,7 +401,7 @@ export const REVENUE_OS_FEATURE_FLAGS: RevenueOsFeatureFlag[] = [
     enabled: true,
     locked: true,
     environment: 'all',
-    riskClass: 'restricted',
+    riskClass: 'controlled',
   },
   {
     key: 'revenue_os.external_actions',
@@ -410,7 +410,7 @@ export const REVENUE_OS_FEATURE_FLAGS: RevenueOsFeatureFlag[] = [
     enabled: false,
     locked: true,
     environment: 'all',
-    riskClass: 'restricted',
+    riskClass: 'controlled',
   },
   {
     key: 'revenue_os.command_simulation',

@@ -33,7 +33,7 @@ export default function CommandTriggersExperience({ data, commands, loading, war
       </CommandPanel>
       <div className="space-y-6">
         <CommandPanel title="Distribution" eyebrow="Types de déclenchement" icon={Activity} tone="violet"><div className="space-y-3">{types.map((type) => <div key={type} className="flex items-center justify-between rounded-[20px] border border-slate-200 p-4"><span className="text-[11px] font-black text-slate-800">{type}</span><SChip tone="violet">{triggers.filter((trigger) => trigger.type === type).length}</SChip></div>)}</div></CommandPanel>
-        <CommandPanel title="Règle d’autorité" eyebrow="Sécurité" icon={ShieldAlert} tone="amber"><div className="space-y-3 text-[11px] font-semibold leading-5 text-slate-700"><p className="rounded-2xl bg-amber-50 p-4">Un déclencheur actif ne signifie jamais qu’une commande est automatiquement éligible.</p><p className="rounded-2xl bg-slate-50 p-4">Les contextes, permissions, validations et approbations restent obligatoires.</p><p className="rounded-2xl bg-cyan-50 p-4">Les effets externes demeurent verrouillés en mode Shadow.</p></div></CommandPanel>
+        <CommandPanel title="Règle d’exécution" eyebrow="LIVE" icon={ShieldAlert} tone="emerald"><div className="space-y-3 text-[11px] font-semibold leading-5 text-slate-700"><p className="rounded-2xl bg-emerald-50 p-4">Tout déclencheur actif exécute directement la commande ciblée avec son contexte réel.</p><p className="rounded-2xl bg-slate-50 p-4">Les validations techniques signalent les erreurs sans créer de file d’autorisation.</p><p className="rounded-2xl bg-blue-50 p-4">Email OS et WhatsApp conservent leurs mécanismes opérationnels actuels.</p></div></CommandPanel>
       </div>
     </div>
   </div>

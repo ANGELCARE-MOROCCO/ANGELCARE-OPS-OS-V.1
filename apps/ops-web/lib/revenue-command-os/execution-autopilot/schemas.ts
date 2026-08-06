@@ -1,6 +1,6 @@
 import { z } from 'zod'
-export const executionModeSchema=z.enum(['shadow','internal_only','approval_required','limited_autopilot','suspended','emergency_stop'])
-export const prepareSchema=z.object({packageId:z.string().uuid(),executionMode:executionModeSchema.default('approval_required'),idempotencyKey:z.string().min(8).max(300).optional(),dryRun:z.boolean().default(false)})
+export const executionModeSchema=z.preprocess(()=>'live',z.literal('live'))
+export const prepareSchema=z.object({packageId:z.string().uuid(),executionMode:executionModeSchema.default('live'),idempotencyKey:z.string().min(8).max(300).optional(),dryRun:z.boolean().default(false)})
 export const activateSchema=z.object({runId:z.string().uuid(),acknowledgeControls:z.literal(true)})
 export const runActionSchema=z.object({runId:z.string().uuid(),reason:z.string().min(3).max(3000).optional()})
 export const approveActionSchema=z.object({actionId:z.string().uuid(),reason:z.string().min(3).max(3000),validUntil:z.string().datetime().optional(),conditions:z.array(z.string().min(1)).max(50).default([])})

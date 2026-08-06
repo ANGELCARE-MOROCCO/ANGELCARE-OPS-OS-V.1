@@ -3,7 +3,7 @@ import type { RevenueSignalSectionDefinition } from '../types'
 export const REVENUE_SIGNAL_RELEASE_CODE = 'AC-REVENUE-OS-MZ04-SIGNAL-FABRIC'
 export const REVENUE_SIGNAL_MODULE_VERSION = '4.0.0-phase4'
 export const REVENUE_SIGNAL_MODEL_VERSION = 'AC-REVENUE-SIGNAL-FABRIC-2026.07-V1'
-export const REVENUE_SIGNAL_EXECUTION_POSTURE = 'shadow-observation' as const
+export const REVENUE_SIGNAL_EXECUTION_POSTURE = 'live-observation' as const
 
 export const REVENUE_SIGNAL_SECTIONS: RevenueSignalSectionDefinition[] = [
   { key: 'overview', label: 'Vue d’ensemble', description: 'Lecture exécutive des signaux, de leur origine, de leur fiabilité et de leur disponibilité pour les futures commandes.', href: '/revenue-command-os/signals', icon: 'RadioTower', status: 'ready' },

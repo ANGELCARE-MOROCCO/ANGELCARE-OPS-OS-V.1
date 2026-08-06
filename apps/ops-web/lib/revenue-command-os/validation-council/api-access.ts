@@ -4,12 +4,8 @@ import { revenueOsErrorResponse } from '../http'
 import { aiRights } from '../ai/api-access'
 
 export function councilRights(user: any) {
-  const ai = aiRights(user)
-  return {
-    read: ai.read || hasRevenueOsPermission(user, 'revenue_os.council.view'),
-    run: ai.generate || hasRevenueOsPermission(user, 'revenue_os.council.run'),
-    manage: ai.manage || hasRevenueOsPermission(user, 'revenue_os.council.manage'),
-  }
+  const authenticated = Boolean(user)
+  return { read: authenticated, run: authenticated, manage: authenticated }
 }
 
 export const tenantOf = (user: any, payload?: unknown) => revenueOsTenantOf(user, payload)

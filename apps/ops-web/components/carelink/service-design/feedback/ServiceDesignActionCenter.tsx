@@ -139,7 +139,7 @@ export function ServiceDesignActionProvider({ children }: { children: ReactNode 
     <button
       type="button"
       onClick={() => setCentreOpen((value) => !value)}
-      className="fixed right-5 top-[146px] z-[214] inline-flex h-10 items-center gap-2 rounded-2xl border border-slate-700 bg-slate-950 px-3 text-[10px] font-black uppercase tracking-[.12em] text-white shadow-[0_16px_45px_rgba(15,23,42,.28)] transition hover:-translate-y-0.5"
+      data-service-design-overlay="true" className="fixed right-5 top-[112px] z-[940] inline-flex h-10 items-center gap-2 rounded-2xl border border-slate-700 bg-[#07142b] px-3 text-[10px] font-black uppercase tracking-[.12em] text-white shadow-[0_16px_45px_rgba(15,23,42,.28)] transition hover:-translate-y-0.5"
       aria-expanded={centreOpen}
       aria-label="Ouvrir le centre des actions Service Design"
     >
@@ -148,7 +148,7 @@ export function ServiceDesignActionProvider({ children }: { children: ReactNode 
       {centreOpen ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
     </button>
 
-    <div className="pointer-events-none fixed right-5 top-[194px] z-[215] flex w-[min(420px,calc(100vw-24px))] flex-col gap-3" aria-live="polite" aria-atomic="false">
+    <div data-service-design-overlay="true" className="pointer-events-none fixed right-5 top-[160px] z-[941] flex w-[min(480px,calc(100vw-var(--carelink-sidebar-current-width,0px)-40px))] max-w-[calc(100vw-40px)] flex-col gap-3" aria-live="polite" aria-atomic="false">
       {visible.map((record) => <ActionToast key={record.id} record={record} onDismiss={() => dismiss(record.id)} />)}
     </div>
 
@@ -187,13 +187,13 @@ function ActionToast({ record, onDismiss }: { record: ServiceDesignActionRecord;
   const tone = record.status === 'success'
     ? 'border-emerald-400/35 bg-[#071b20]'
     : record.status === 'error'
-      ? 'border-rose-400/45 bg-[#210b18]'
-      : 'border-blue-400/35 bg-[#07142b]'
+      ? 'border-rose-300/45 bg-[#28101d]'
+      : 'border-blue-300/35 bg-[#071a36]'
   const progressTone = record.status === 'success' ? 'bg-emerald-400' : record.status === 'error' ? 'bg-rose-400' : 'bg-gradient-to-r from-blue-500 to-cyan-300'
   const Icon = record.status === 'success' ? CheckCircle2 : record.status === 'error' ? CircleX : Loader2
 
   return <article
-    className={`pointer-events-auto relative overflow-hidden rounded-[24px] border ${tone} p-4 text-white shadow-[0_22px_70px_rgba(2,6,23,.38)] backdrop-blur-xl`}
+    className={`pointer-events-auto relative max-h-[210px] overflow-y-auto rounded-[24px] border ${tone} p-4 text-white shadow-[0_22px_70px_rgba(2,6,23,.38)] backdrop-blur-xl [scrollbar-width:thin]`}
     onMouseEnter={() => setPaused(true)}
     onMouseLeave={() => setPaused(false)}
     onFocus={() => setPaused(true)}
@@ -205,22 +205,22 @@ function ActionToast({ record, onDismiss }: { record: ServiceDesignActionRecord;
         <Icon size={18} className={record.status === 'working' ? 'animate-spin' : ''} />
       </div>
       <div className="min-w-0 flex-1">
-        <p className="text-[9px] font-black uppercase tracking-[.18em] text-slate-400">Service Design · Action live</p>
+        <p className="text-[9px] font-black uppercase tracking-[.18em] text-slate-300">Service Design · Action live</p>
         <h3 className="mt-1 text-sm font-black leading-5">{record.title}</h3>
         {record.objectLabel ? <p className="mt-1 truncate text-[11px] font-bold text-blue-200">{record.objectLabel}</p> : null}
       </div>
       <button type="button" onClick={onDismiss} className="grid h-8 w-8 shrink-0 place-items-center rounded-xl border border-white/10 bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white" aria-label="Fermer la notification"><X size={14} /></button>
     </div>
 
-    <p className="mt-3 text-xs font-semibold leading-5 text-slate-200">{record.detail}</p>
+    <p className="mt-3 text-xs font-semibold leading-5 text-slate-100">{record.detail}</p>
     {record.currentStep ? <p className="mt-2 text-[10px] font-black uppercase tracking-[.12em] text-cyan-200">{record.currentStep}</p> : null}
     {record.instruction ? <div className="mt-3 rounded-2xl border border-rose-300/20 bg-rose-100/5 p-3"><p className="text-[9px] font-black uppercase tracking-[.14em] text-rose-300">Action à effectuer</p><p className="mt-1 text-[11px] font-bold leading-5 text-rose-100">{record.instruction}</p></div> : null}
-    {record.preserved ? <p className="mt-2 text-[10px] font-semibold leading-4 text-slate-400">{record.preserved}</p> : null}
+    {record.preserved ? <p className="mt-2 text-[10px] font-semibold leading-4 text-slate-300">{record.preserved}</p> : null}
 
-    <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-white/10">
+    <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-white/20">
       <div className={`h-full rounded-full transition-[width] duration-300 ${progressTone}`} style={{ width: record.status === 'success' ? `${Math.max(0, remaining / 30)}%` : `${record.progress}%` }} />
     </div>
-    <div className="mt-2 flex items-center justify-between text-[9px] font-black uppercase tracking-[.1em] text-slate-400">
+    <div className="mt-2 flex items-center justify-between text-[9px] font-black uppercase tracking-[.1em] text-slate-300">
       <span>{record.status === 'success' ? paused ? 'Fermeture en pause' : 'Fermeture dans 3 secondes' : record.status === 'error' ? 'Reste visible jusqu’à fermeture' : `${Math.round(record.progress)}%`}</span>
       <span>{new Date(record.startedAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>
     </div>
@@ -228,7 +228,7 @@ function ActionToast({ record, onDismiss }: { record: ServiceDesignActionRecord;
 }
 
 function ActionCentre({ records, onClose, onDismiss }: { records: ServiceDesignActionRecord[]; onClose: () => void; onDismiss: (id: string) => void }) {
-  return <div className="fixed inset-0 z-[216] bg-slate-950/35 backdrop-blur-sm" onMouseDown={onClose}>
+  return <div data-service-design-overlay="true" className="fixed inset-0 z-[942] bg-slate-950/35 backdrop-blur-sm" onMouseDown={onClose}>
     <aside className="ml-auto h-full w-full max-w-[460px] overflow-y-auto border-l border-slate-700 bg-[#07142b] text-white shadow-2xl" onMouseDown={(event: any) => event.stopPropagation()}>
       <header className="sticky top-0 z-10 flex items-start justify-between gap-4 border-b border-white/10 bg-[#07142b]/95 px-5 py-5 backdrop-blur-xl">
         <div><p className="text-[9px] font-black uppercase tracking-[.22em] text-cyan-300">Action Centre</p><h2 className="mt-1 text-2xl font-black tracking-[-.04em]">Activité opérationnelle</h2><p className="mt-1 text-xs font-semibold text-slate-400">Progression, réussites et erreurs actionnables de cette session.</p></div>

@@ -1,7 +1,7 @@
 import crypto from 'node:crypto'
 import { NextRequest, NextResponse } from 'next/server'
 import { getCurrentUser } from '@/lib/getUser'
-import { aiRights, apiError, tenantOf } from '@/lib/revenue-command-os/ai/api-access'
+import { apiError, tenantOf } from '@/lib/revenue-command-os/ai/api-access'
 import { createRevenueOsObjective } from '@/lib/revenue-command-os/repository'
 import { runGeminiStrategyAssembly } from '@/lib/revenue-command-os/strategy-brain/ai-orchestration'
 import { mapFoundationObjectiveToStrategyObjective } from '@/lib/revenue-command-os/operating-spine/objective-mapper'
@@ -48,11 +48,6 @@ function launchInput(value: any): RevenueOperationLaunchInput {
   const approvedChannels = list(value?.approvedChannels)
   const successDefinition = list(value?.successDefinition)
   const failureDefinition = list(value?.failureDefinition)
-  if (!targetSegments.length) throw Object.assign(new Error('Au moins un segment cible est requis.'), { status: 422 })
-  if (!territories.length) throw Object.assign(new Error('Au moins un territoire est requis.'), { status: 422 })
-  if (!approvedChannels.length) throw Object.assign(new Error('Au moins un canal autorisé est requis.'), { status: 422 })
-  if (!successDefinition.length) throw Object.assign(new Error('Au moins un critère de succès est requis.'), { status: 422 })
-  if (!failureDefinition.length) throw Object.assign(new Error('Au moins une condition d’échec est requise.'), { status: 422 })
 
   const marginPercent = optionalNumber(value?.marginTarget)
   return {
@@ -83,7 +78,6 @@ function launchInput(value: any): RevenueOperationLaunchInput {
 export async function GET() {
   const user = await getCurrentUser()
   if (!user) return apiError('UNAUTHENTICATED', 'Authentification requise.', 401)
-  if (!aiRights(user).read) return apiError('FORBIDDEN', 'Permission Revenue Operating Spine requise.', 403)
   try {
     const tenantId = tenantOf(user)
     const data = await readRevenueOperatingSpine(tenantId)
@@ -96,8 +90,6 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   const user = await getCurrentUser()
   if (!user) return apiError('UNAUTHENTICATED', 'Authentification requise.', 401)
-  if (!aiRights(user).generate) return apiError('FORBIDDEN', 'Permission de génération stratégique requise.', 403)
-
   try {
     const body = await request.json()
     if (body?.action !== 'launch_operation') return apiError('INVALID_ACTION', 'Action Operating Spine non supportée.', 422)
@@ -113,7 +105,7 @@ export async function POST(request: NextRequest) {
       targetMarket: input.targetMarket,
       horizon: input.horizon,
       priority: foundationPriority,
-      executionMode: 'approval-gated',
+      executionMode: 'live',
     }, { id: userId, label: actorLabelOf(user) })
 
     const strategyObjective = mapFoundationObjectiveToStrategyObjective(objective, input, tenantId, userId)
@@ -126,8 +118,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       ok: true,
       data: { objective, run: result, snapshot },
-      mode: 'approval-gated',
-      externalActions: 0,
+      mode: 'live',
+      externalActions: true,
     }, { status: 201 })
   } catch (error) {
     const typed = error as { status?: number; message?: string }

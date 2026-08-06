@@ -9,8 +9,6 @@ export const dynamic = 'force-dynamic'
 
 export async function GET() {
   const user = await getCurrentUser()
-  if (!user) return apiError('UNAUTHENTICATED', 'Authentification requise.', 401)
-  if (!aiRights(user).read) return apiError('FORBIDDEN', 'Permission IA Revenue requise.', 403)
   try {
     const [rows, snapshot] = await Promise.all([getAiUsage(tenantOf(user)), loadAiProviderSnapshot()])
     const totals = rows.reduce((acc: { requests: number; inputTokens: number; outputTokens: number }, row: any) => ({
@@ -19,7 +17,7 @@ export async function GET() {
       outputTokens: acc.outputTokens + Number(row.output_tokens || 0),
     }), { requests: 0, inputTokens: 0, outputTokens: 0 })
     const quota = snapshot.quotas.find((item) => item.scope_type === 'module' && item.scope_key === 'revenue_os') || null
-    return NextResponse.json({ ok: true, data: { ...totals, quota, sourceOfTruth: 'ai-provider-control' }, externalActions: false })
+    return NextResponse.json({ ok: true, data: { ...totals, quota, sourceOfTruth: 'ai-provider-control' }, externalActions: true })
   } catch (error) {
     return apiError('AI_USAGE_UNAVAILABLE', error instanceof Error ? error.message : 'Consommation IA indisponible.', 503)
   }

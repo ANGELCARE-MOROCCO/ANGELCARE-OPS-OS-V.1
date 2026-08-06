@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
   }
   try {
     const data = await runAllRevenueSignalScans({ id: '', label: 'Revenue Signal Scheduler', role: 'system' })
-    return NextResponse.json({ ok: true, executionPosture: 'shadow-observation', data }, { headers: { 'Cache-Control': 'no-store' } })
+    return NextResponse.json({ ok: true, executionPosture: 'live-observation', data }, { headers: { 'Cache-Control': 'no-store' } })
   } catch (error) {
     const normalized = normalizeRevenueOsError(error)
     return NextResponse.json({ ok: false, error: { code: normalized.code, message: normalized.message, recoverable: normalized.recoverable } }, { status: normalized.status })

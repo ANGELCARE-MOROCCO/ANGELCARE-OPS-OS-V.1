@@ -4,6 +4,7 @@ import { Bot, Boxes, BrainCircuit, CheckCircle2, Database, RefreshCw, ShieldChec
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import CanonicalCsvImportDock from '../../_components/imports/CanonicalCsvImportDock'
 import AiSovereigntyGovernancePanel from './AiSovereigntyGovernancePanel'
+import AiResourceManagementPanel from './AiResourceManagementPanel'
 import styles from './GeminiResourcesWorkspace.module.css'
 
 type ListItem = { code: string; title: string; subtitle?: string; status?: string; version?: string }
@@ -58,11 +59,11 @@ export default function GeminiResourcesWorkspace() {
           <div>
             <p className={styles.kicker}>AI Resource & Orchestration Authority</p>
             <h1 className={styles.title}>Gemini & ressources AngelCare</h1>
-            <p className={styles.lead}>Gouverner les modèles, prompts, cadres analytiques, context adapters et schémas de sortie utilisés par le moteur stratégique—avec version, permission, coût, preuve et traçabilité.</p>
+            <p className={styles.lead}>Créer, versionner, tester, activer et exploiter les modèles, prompts, context adapters et schémas de sortie utilisés par le moteur stratégique—avec coût, preuve et traçabilité.</p>
             <div className={styles.badges}>
-              <span className={styles.badge}><ShieldCheck size={12} /> Approval-gated</span>
-              <span className={styles.badge}><Database size={12} /> Sources internes gouvernées</span>
-              <span className={styles.badge}><Zap size={12} /> Aucun effet externe automatique</span>
+              <span className={styles.badge}><ShieldCheck size={12} /> Exécution live</span>
+              <span className={styles.badge}><Database size={12} /> Sources internes opérationnelles</span>
+              <span className={styles.badge}><Zap size={12} /> Effets externes suivis et tracés</span>
             </div>
           </div>
           <aside className={styles.runtime}>
@@ -92,7 +93,7 @@ export default function GeminiResourcesWorkspace() {
                   <span className={styles.resourceIcon}>{index % 3 === 0 ? <BrainCircuit size={17} /> : index % 3 === 1 ? <Boxes size={17} /> : <Sparkles size={17} />}</span>
                   <div><h3>{resource.title}</h3><code>{resource.code}</code></div>
                 </div>
-                <p>{resource.subtitle || 'Ressource Gemini gouvernée et traçable.'}</p>
+                <p>{resource.subtitle || 'Ressource Gemini opérationnelle et traçable.'}</p>
                 <div className={styles.resourceFoot}><span className={styles.smallPill}>{resource.status || 'draft'}</span><span className={styles.version}>Version {resource.version || '1.0'}</span></div>
               </article>)}
             </div>
@@ -102,10 +103,10 @@ export default function GeminiResourcesWorkspace() {
         </section>
 
         <aside className={styles.panel}>
-          <div className={styles.panelHead}><div><p>AI Orchestration Ledger</p><h2>Derniers runs gouvernés</h2></div></div>
+          <div className={styles.panelHead}><div><p>AI Orchestration Ledger</p><h2>Derniers runs live</h2></div></div>
           <div className={styles.ledger}>
-            {runs.slice(0, 8).map((run) => <article key={run.id} className={styles.run}><span className={styles.runIcon}><Bot size={15} /></span><div><h3>{run.provider || 'Gemini'} · {run.model || 'modèle gouverné'}</h3><p>{run.strategyCount} stratégie(s) · {run.selectedCommandCount} commande(s) · {run.contextFactCount} fait(s)</p></div><span className={styles.runStatus}>{run.status}</span></article>)}
-            {!runs.length ? <div className={styles.empty}><div><span className={styles.emptyIcon}><Bot size={20} /></span><h3>Aucun run Gemini gouverné</h3><p>Importez ou sélectionnez des ressources, puis utilisez l’onglet « Exécuter & observer » du studio.</p></div></div> : null}
+            {runs.slice(0, 8).map((run) => <article key={run.id} className={styles.run}><span className={styles.runIcon}><Bot size={15} /></span><div><h3>{run.provider || 'Gemini'} · {run.model || 'modèle actif'}</h3><p>{run.strategyCount} stratégie(s) · {run.selectedCommandCount} commande(s) · {run.contextFactCount} fait(s)</p></div><span className={styles.runStatus}>{run.status}</span></article>)}
+            {!runs.length ? <div className={styles.empty}><div><span className={styles.emptyIcon}><Bot size={20} /></span><h3>Aucun run Gemini exécuté</h3><p>Importez ou sélectionnez des ressources, puis utilisez l’onglet « Exécuter & observer » du studio.</p></div></div> : null}
           </div>
           <div className={styles.principles}>
             <div className={styles.principle}><CheckCircle2 size={16} /><div><strong>Adapters internes séparés</strong><span>Les lectures AngelCare ne sont jamais présentées comme des appels d’outils natifs Gemini.</span></div></div>
@@ -115,6 +116,7 @@ export default function GeminiResourcesWorkspace() {
         </aside>
       </div>
 
+      <AiResourceManagementPanel onChanged={() => void load()} />
       <CanonicalCsvImportDock kind="gemini-resources" />
     </main>
   )

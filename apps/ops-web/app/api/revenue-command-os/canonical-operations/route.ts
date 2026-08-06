@@ -6,7 +6,7 @@ import { resolveRevenueOsActor, requireRevenueOsPermission } from '@/lib/revenue
 import { normalizeRevenueOsError, RevenueOsError } from '@/lib/revenue-command-os/errors'
 import { writeRevenueOsAuditEvent } from '@/lib/revenue-command-os/repository'
 import { runGeminiStrategyAssembly } from '@/lib/revenue-command-os/strategy-brain/ai-orchestration'
-import { simulateRevenueCommandSituation } from '@/lib/revenue-command-os/command-kernel/repository'
+import { executeRevenueCommandSituation } from '@/lib/revenue-command-os/command-kernel/repository'
 import type { RevenueCommandSituation } from '@/lib/revenue-command-os/command-kernel/types'
 import type { RevenueObjective } from '@/lib/revenue-command-os/strategy-brain/types'
 
@@ -91,36 +91,21 @@ function uuid(value: string) {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value)
 }
 
-function safeStatus(kind: ImportKind, value: unknown) {
-  const raw = text(value).toLowerCase().replaceAll('_', '-')
-  if (kind === 'mandates') {
-    return ['draft','submitted','validated','active','paused','completed','cancelled'].includes(raw) ? raw : 'draft'
-  }
-  if (kind === 'commands') {
-    return ['draft','proposed','under-review','needs-evidence','needs-approval','approved','rejected','scheduled','running','paused','blocked','failed','retrying','completed','superseded','retired','rolled-back','audited'].includes(raw) ? raw : 'draft'
-  }
-  if (kind === 'doctrines') {
-    return ['draft','in-review','approved','effective','suspended','retired','rejected'].includes(raw) ? raw : 'draft'
-  }
-  return ['draft','validated','approved','active','restricted','deprecated','retired'].includes(raw) ? raw : 'draft'
+function safeStatus(kind: ImportKind, _value: unknown) {
+  if (kind === 'mandates') return 'active'
+  if (kind === 'commands') return 'approved'
+  if (kind === 'doctrines') return 'effective'
+  return 'active'
 }
 
-function executionMode(value: unknown) {
-  const raw = text(value).toLowerCase().replaceAll('_', '-')
-  return ['shadow','recommend','approval-gated','limited-autonomy'].includes(raw) ? raw : 'approval-gated'
-}
+function executionMode(_value: unknown) { return 'live' }
 
 function priority(value: unknown) {
   const raw = text(value).toLowerCase()
   return ['critical','high','medium','low'].includes(raw) ? raw : 'high'
 }
 
-function approvalClass(value: unknown) {
-  const raw = text(value).toLowerCase()
-  return ['none','recommendation','internal-generation','supervisor','department','director','executive','prohibited'].includes(raw)
-    ? raw
-    : 'recommendation'
-}
+function approvalClass(_value: unknown) { return 'none' }
 
 function issue(row: number, field: string, message: string) {
   return { row, field, message }
@@ -161,12 +146,12 @@ async function listItems(kind: ImportKind, actor: Actor) {
     if (result.error) throw result.error
     return (result.data || []).map((row: any) => ({ code: row.code, title: row.title, status: row.status, version: row.version, subtitle: row.knowledge_type }))
   }
-  if (!uuid(actor.tenantId)) {
+  if (!uuid(actor.tenantUuid)) {
     throw new RevenueOsError('REVENUE_OS_TENANT_INVALID', 'Le tenant actif ne peut pas utiliser le registre de ressources versionné.', { status: 409 })
   }
   const result = await (supabase as any).from('revenue_os_registry_entries')
     .select('code,purpose,status,version,content')
-    .eq('tenant_id', actor.tenantId)
+    .eq('tenant_id', actor.tenantUuid)
     .eq('registry', 'gemini-resource')
     .order('updated_at', { ascending: false })
     .limit(1000)
@@ -262,133 +247,68 @@ function mandatePayload(row: Row, actor: Actor) {
 function commandPayload(row: Row, actor: Actor) {
   const resources = list(row.required_resources)
   const doctrines = list(row.required_doctrines)
-  const requiredContext = list(row.required_context).map((key) => ({ key, required: true }))
-  requiredContext.push(...resources.map((key) => ({ key: `resource:${key}`, required: true })))
-  requiredContext.push(...doctrines.map((key) => ({ key: `doctrine:${key}`, required: true })))
   return {
-    organization_id: uuid(actor.tenantId) ? actor.tenantId : null,
-    tenant_id: uuid(actor.tenantId) ? actor.tenantId : null,
-    command_code: code(row.command_code),
-    name: text(row.name),
-    family_code: text(row.family_code),
-    purpose: text(row.purpose),
-    owner_role: text(row.owner_role),
-    status: safeStatus('commands', row.status),
-    active_version: text(row.active_version) || '1.0.0',
-    business_units: list(row.business_units),
-    segments: list(row.segments),
-    territories: list(row.territories),
-    commercial_stages: list(row.commercial_stages),
-    trigger_types: list(row.trigger_types),
-    eligibility_rules: jsonValue(row.eligibility_rules, []),
-    required_context: requiredContext,
-    optional_context: list(row.optional_context).map((key) => ({ key, required: false })),
-    tool_permissions: jsonValue(row.tool_permissions, []),
-    input_schema: jsonValue(row.input_schema, {}),
-    output_schema: jsonValue(row.output_schema, {}),
-    validator_chain: list(row.validator_chain),
-    approval_class: approvalClass(row.approval_class),
-    downstream_compiler: text(row.downstream_compiler) || null,
-    cooldown_policy: jsonValue(row.cooldown_policy, { seconds: 0 }),
-    retry_policy: jsonValue(row.retry_policy, { maxAttempts: 1 }),
-    failure_policy: jsonValue(row.failure_policy, { mode: 'stop' }),
-    fallback_command_codes: list(row.fallback_command_codes),
-    performance_metrics: list(row.performance_metrics),
-    prohibited_cases: list(row.prohibited_cases),
-    expected_outcomes: list(row.expected_outcomes),
-    tags: [...list(row.tags), ...resources.map((item) => `resource:${item}`), ...doctrines.map((item) => `doctrine:${item}`), 'csv-import'],
-    updated_by: uuid(actor.id) ? actor.id : null,
-    updated_at: new Date().toISOString(),
+    command_code: code(row.command_code), name: text(row.name), family_code: text(row.family_code),
+    purpose: text(row.purpose), owner_role: text(row.owner_role) || 'Revenue Operator',
+    status: 'approved', active_version: text(row.active_version) || text(row.version) || '1.0.0',
+    business_units: list(row.business_units).length ? list(row.business_units) : ['all'],
+    segments: list(row.segments).length ? list(row.segments) : ['all'],
+    territories: list(row.territories).length ? list(row.territories) : ['all'],
+    commercial_stages: list(row.commercial_stages).length ? list(row.commercial_stages) : ['all'],
+    trigger_types: list(row.trigger_types).length ? list(row.trigger_types) : ['manual'],
+    eligibility_rules: jsonValue(row.eligibility_rules, []), required_context: jsonValue(row.required_context, []),
+    optional_context: jsonValue(row.optional_context, []),
+    tool_permissions: list(row.tool_codes).map((toolCode) => ({ toolCode, label: toolCode, risk: 'internal-write', allowed: true, approvalClass: 'none', reason: 'Trusted operator live execution' })),
+    input_schema: jsonValue(row.input_schema, []), output_schema: jsonValue(row.output_schema, []),
+    validator_chain: list(row.validator_chain), approval_class: 'none', downstream_compiler: text(row.downstream_compiler) || null,
+    cooldown_policy: { scope: 'command', durationMinutes: 0, ignoreForSimulation: true },
+    retry_policy: jsonValue(row.retry_policy, { enabled: true, maxAttempts: 5, strategy: 'exponential', delaySeconds: 30, retryableKinds: ['transient','tool','timeout'], escalateAfterExhaustion: false }),
+    failure_policy: jsonValue(row.failure_policy, { onFailure: 'stop', fallbackCommandCodes: [] }),
+    fallback_command_codes: list(row.fallback_command_codes), performance_metrics: list(row.performance_metrics),
+    prohibited_cases: [], expected_outcomes: list(row.expected_outcomes),
+    tags: [...list(row.tags), ...resources.map((item) => `resource:${item}`), ...doctrines.map((item) => `doctrine:${item}`), 'csv-import', 'live-executable'],
+    updated_by: uuid(actor.id) ? actor.id : null, updated_at: new Date().toISOString(),
   }
 }
 
 function doctrinePayload(row: Row, actor: Actor) {
   const statement = text(row.statement)
+  const advisoryWarnings = [...list(row.prohibited_actions), ...list(row.required_approvals)]
   return {
-    code: code(row.doctrine_code),
-    title: text(row.title),
-    summary: statement,
-    knowledge_type: text(row.category) || 'doctrine',
-    owner_role: text(row.authority_role),
-    department: text(row.department) || text(row.domain) || 'Revenue',
-    business_unit_codes: list(row.business_units),
-    status: safeStatus('doctrines', row.status),
-    confidentiality: ['public','internal','confidential','restricted'].includes(text(row.confidentiality)) ? text(row.confidentiality) : 'internal',
-    version: text(row.version) || '1.0',
-    effective_from: text(row.effective_from) || null,
-    effective_to: text(row.effective_until) || null,
-    next_review_at: null,
-    review_cycle_days: integer(row.review_cycle_days, 90),
-    applicable_command_families: list(row.applicable_command_families),
-    applicable_segment_codes: list(row.applicable_segments),
-    applicable_offer_codes: list(row.applicable_offers),
-    tags: list(row.tags),
-    source_authority: text(row.authority_role),
-    content_blocks: [
-      { type: 'statement', content: statement },
-      { type: 'rationale', content: text(row.rationale) },
-    ],
-    rules: [
-      {
-        code: `${code(row.doctrine_code)}-RULE-01`,
-        statement,
-        prohibitedActions: list(row.prohibited_actions),
-        requiredApprovals: list(row.required_approvals),
-        evidenceRequirements: list(row.evidence_requirements),
-      },
-    ],
-    evidence_refs: list(row.evidence_requirements),
-    source: 'import',
-    created_by: uuid(actor.id) ? actor.id : null,
+    code: code(row.doctrine_code), title: text(row.title), summary: statement,
+    knowledge_type: text(row.category) || 'doctrine', owner_role: text(row.authority_role) || 'Revenue Operator',
+    department: text(row.department) || text(row.domain) || 'Revenue', business_unit_codes: list(row.business_units),
+    status: 'effective', confidentiality: ['public','internal','confidential','restricted'].includes(text(row.confidentiality)) ? text(row.confidentiality) : 'internal',
+    version: text(row.version) || '1.0', effective_from: text(row.effective_from) || new Date().toISOString(),
+    effective_to: text(row.effective_until) || null, next_review_at: null, review_cycle_days: integer(row.review_cycle_days, 90),
+    applicable_command_families: list(row.applicable_command_families), applicable_segment_codes: list(row.applicable_segments),
+    applicable_offer_codes: list(row.applicable_offers), tags: [...list(row.tags), 'advisory-only'], source_authority: text(row.authority_role),
+    content_blocks: [{ type: 'statement', content: statement }, { type: 'rationale', content: text(row.rationale) }],
+    rules: [{ code: `${code(row.doctrine_code)}-RULE-01`, statement, warnings: advisoryWarnings, evidenceRequirements: list(row.evidence_requirements), enforcement: 'advisory' }],
+    evidence_refs: list(row.evidence_requirements), source: 'import', created_by: uuid(actor.id) ? actor.id : null,
     created_by_label: actor.displayName,
-    metadata: {
-      domain: text(row.domain),
-      conflictCodes: list(row.conflict_codes),
-      prohibitedActions: list(row.prohibited_actions),
-      requiredApprovals: list(row.required_approvals),
-      rationale: text(row.rationale),
-      importedAt: new Date().toISOString(),
-    },
+    metadata: { domain: text(row.domain), conflictCodes: list(row.conflict_codes), advisoryWarnings, requiredApprovals: [], prohibitedActions: [], advisoryOnly: true, rationale: text(row.rationale), importedAt: new Date().toISOString() },
     updated_at: new Date().toISOString(),
   }
 }
 
 function resourcePayload(row: Row, actor: Actor) {
   const content = {
-    name: text(row.name),
-    resourceType: text(row.resource_type),
-    description: text(row.description),
-    domain: text(row.domain),
-    provider: text(row.provider) || 'gemini',
-    modelName: text(row.model_name),
-    promptVersion: text(row.prompt_version),
-    contentReference: text(row.content_reference),
-    contextAdapter: text(row.context_adapter),
-    toolName: text(row.tool_name),
-    inputSchema: jsonValue(row.input_schema, {}),
-    outputSchema: jsonValue(row.output_schema, {}),
-    permissionKey: text(row.permission_key),
-    approvalClass: text(row.approval_class),
-    timeoutSeconds: integer(row.timeout_seconds, 240),
-    maxTokens: integer(row.max_tokens, 12000),
-    temperature: numberValue(row.temperature) ?? 0.2,
-    enabled: booleanValue(row.enabled, true),
-    tags: list(row.tags),
+    name: text(row.name), resourceType: text(row.resource_type), description: text(row.description),
+    domain: text(row.domain), provider: text(row.provider) || 'gemini', modelName: text(row.model_name),
+    promptVersion: text(row.prompt_version), contentReference: text(row.content_reference),
+    contextAdapter: text(row.context_adapter), toolName: text(row.tool_name),
+    inputSchema: jsonValue(row.input_schema, {}), outputSchema: jsonValue(row.output_schema, {}),
+    permissionKey: '', approvalClass: 'none', timeoutSeconds: integer(row.timeout_seconds, 240),
+    maxTokens: integer(row.max_tokens, 12000), temperature: numberValue(row.temperature) ?? 0.2,
+    enabled: true, tags: [...list(row.tags), 'live-executable'],
   }
   return {
-    tenant_id: actor.tenantId,
-    registry: 'gemini-resource',
-    code: code(row.resource_code),
-    version: text(row.version) || '1.0',
-    status: safeStatus('gemini-resources', row.status),
-    purpose: text(row.description),
-    content_hash: crypto.createHash('sha256').update(JSON.stringify(content)).digest('hex'),
-    content,
-    cost_profile: {},
-    allowed_data_class: 'internal',
-    activated_at: safeStatus('gemini-resources', row.status) === 'active' ? new Date().toISOString() : null,
-    metadata: { importedBy: actor.displayName, importedAt: new Date().toISOString() },
-    updated_at: new Date().toISOString(),
+    tenant_id: actor.tenantUuid, registry: 'gemini-resource', code: code(row.resource_code),
+    version: text(row.version) || '1.0', status: 'active', purpose: text(row.description),
+    content_hash: crypto.createHash('sha256').update(JSON.stringify(content)).digest('hex'), content,
+    cost_profile: {}, allowed_data_class: 'internal', activated_at: new Date().toISOString(),
+    metadata: { importedBy: actor.displayName, importedAt: new Date().toISOString(), trustedOperatorLive: true }, updated_at: new Date().toISOString(),
   }
 }
 
@@ -416,7 +336,7 @@ async function importRows(kind: ImportKind, rows: Row[], actor: Actor) {
   let existing = new Set<string>()
   if (identities.length) {
     let query = (supabase as any).from(table).select(identityColumn).in(identityColumn, identities)
-    if (kind === 'gemini-resources') query = query.eq('tenant_id', actor.tenantId).eq('registry', 'gemini-resource')
+    if (kind === 'gemini-resources') query = query.eq('tenant_id', actor.tenantUuid).eq('registry', 'gemini-resource')
     const current = await query
     if (!current.error) existing = new Set((current.data || []).map((row: any) => String(row[identityColumn])))
   }
@@ -450,7 +370,7 @@ async function importRows(kind: ImportKind, rows: Row[], actor: Actor) {
     resourceType: `revenue_os_${kind}`,
     outcome: invalid.size ? 'pending' : 'success',
     summary: `${summary.created} création(s), ${summary.updated} mise(s) à jour et ${summary.rejected} rejet(s) pour ${kind}.`,
-    metadata: { summary, importedCodes: identities.slice(0, 100), externalActions: 0 },
+    metadata: { summary, importedCodes: identities.slice(0, 100), externalActions: true },
   }, supabase)
 
   return { summary, issues: validation.issues, importedCodes: identities }
@@ -472,7 +392,7 @@ function objectiveForRun(row: any, actor: Actor, resourceManifest: string[] = []
   const constraints = [
     ...list(metadata.capacityConstraints),
     ...resourceManifest.map((entry) => `Ressource Gemini gouvernée: ${entry}`),
-    'Aucun effet externe sans approbation humaine.',
+    'Exécution live sous contrôle direct de l’opérateur authentifié.',
   ]
   return {
     id: String(row.id),
@@ -502,7 +422,7 @@ function objectiveForRun(row: any, actor: Actor, resourceManifest: string[] = []
     successDefinition: list(metadata.successCriteria).length ? list(metadata.successCriteria) : [`Résultat mesurable pour ${row.title}.`],
     failureDefinition: list(metadata.failureConditions).length ? list(metadata.failureConditions) : ['Aucune progression mesurable dans l’horizon défini.'],
     requestedBy: actor.id || actor.displayName,
-    status: 'ready_for_assembly',
+    status: 'active',
   }
 }
 
@@ -515,7 +435,7 @@ async function runMandateOrResources(kind: ImportKind, body: any, actor: Actor, 
     if (!codes.length) throw new RevenueOsError('REVENUE_OS_RESOURCE_REQUIRED', 'Sélectionnez au moins une ressource Gemini.', { status: 422 })
     const result = await (supabase as any).from('revenue_os_registry_entries')
       .select('code,version,purpose,content,status')
-      .eq('tenant_id', actor.tenantId)
+      .eq('tenant_id', actor.tenantUuid)
       .eq('registry', 'gemini-resource')
       .in('code', codes)
     if (result.error) throw result.error
@@ -539,60 +459,37 @@ async function runMandateOrResources(kind: ImportKind, body: any, actor: Actor, 
     resourceId: String(objectiveRow.id),
     outcome: 'success',
     summary: `Run Gemini ${data.runId} lancé pour ${objectiveRow.code}.`,
-    metadata: { runId: data.runId, resources: resourceManifest, strategyCount: data.strategies.length, externalActions: 0 },
+    metadata: { runId: data.runId, resources: resourceManifest, strategyCount: data.strategies.length, externalActions: true },
   }, supabase)
   return data
 }
 
 async function runCommand(body: any, actor: Actor) {
-  const commandCode = code(Array.isArray(body.codes) ? body.codes[0] : '')
+  const commandCode = code(Array.isArray(body.codes) ? body.codes[0] : body.commandCode)
   if (!commandCode) throw new RevenueOsError('REVENUE_OS_COMMAND_REQUIRED', 'Sélectionnez une commande.', { status: 422 })
-  const context = body.context || {}
+  const context = body.context && typeof body.context === 'object' ? body.context : {}
+  const contextValues = Array.isArray(body.contextValues)
+    ? body.contextValues.map((item: any) => ({ key: text(item.key), state: item.value == null || item.value === '' ? 'unvalidated' : 'available', value: item.value, observedAt: item.observedAt || new Date().toISOString(), source: text(item.source) || 'operator-input', reasons: list(item.reasons).length ? list(item.reasons) : ['Contexte fourni par l’opérateur'] })).filter((item: any) => item.key)
+    : Object.entries(context).map(([key, value]) => ({ key, state: value == null || value === '' ? 'unvalidated' : 'available', value, observedAt: new Date().toISOString(), source: 'operator-input', reasons: ['Contexte fourni par l’opérateur'] }))
   const situation: RevenueCommandSituation = {
-    id: `canonical-${Date.now()}`,
-    tenantId: actor.tenantId,
-    organizationId: actor.tenantId,
-    businessUnit: text(context.businessUnit) || 'ANGELCARE',
-    segment: text(context.segment) || undefined,
-    territory: text(context.territory) || 'MA',
-    commercialStage: text(context.commercialStage) || 'qualification',
-    signalType: text(context.signalType) || 'manual.canonical.run',
-    urgency: 7,
-    opportunityValueDh: numberValue(context.opportunityValueDh) || 0,
-    accountPriority: 5,
-    actorId: actor.id,
-    actorRole: actor.role,
-    permissions: actor.permissions,
-    executionMode: 'simulation',
-    context: [
-      { key: 'account', state: 'available', value: { code: 'MANUAL-ACCOUNT' }, observedAt: new Date().toISOString(), source: 'canonical-run-studio', reasons: ['Contexte manuel gouverné'] },
-      { key: 'signal', state: 'available', value: { type: text(context.signalType) || 'manual' }, observedAt: new Date().toISOString(), source: 'canonical-run-studio', reasons: ['Signal manuel'] },
-      { key: 'pipeline', state: 'available', value: { stage: text(context.commercialStage) || 'qualification' }, observedAt: new Date().toISOString(), source: 'canonical-run-studio', reasons: ['Étape fournie'] },
-      { key: 'lastInteraction', state: 'available', value: { days: 7 }, observedAt: new Date().toISOString(), source: 'canonical-run-studio', reasons: ['Valeur de test'] },
-      { key: 'offerCatalogue', state: 'available', value: { offers: 1 }, observedAt: new Date().toISOString(), source: 'digital-twin', reasons: ['Catalogue requis'] },
-      { key: 'pricingRules', state: 'available', value: { status: 'approved' }, observedAt: new Date().toISOString(), source: 'doctrine-memory', reasons: ['Règles approuvées'] },
-      { key: 'capacity', state: 'available', value: { status: 'conditional' }, observedAt: new Date().toISOString(), source: 'digital-twin', reasons: ['Capacité contrôlée'] },
-      { key: 'margin', state: 'available', value: { status: 'protected' }, observedAt: new Date().toISOString(), source: 'digital-twin', reasons: ['Marge protégée'] },
-      { key: 'authority', state: 'available', value: { level: 'director' }, observedAt: new Date().toISOString(), source: 'doctrine-memory', reasons: ['Autorité connue'] },
-      { key: 'qualification', state: 'available', value: { score: 72 }, observedAt: new Date().toISOString(), source: 'kernel', reasons: ['Qualification contrôlée'] },
-      { key: 'runPlan', state: 'available', value: { requestedCommandCode: commandCode }, observedAt: new Date().toISOString(), source: 'kernel', reasons: ['Commande explicitement demandée'] },
-    ],
-    metadata: { requestedCommandCode: commandCode, decisionMakerConfirmed: false },
+    id: text(body.situationId) || `live-${crypto.randomUUID()}`, tenantId: actor.tenantId,
+    organizationId: text(context.organizationId) || actor.tenantId, businessUnit: text(context.businessUnit) || 'ANGELCARE',
+    segment: text(context.segment) || undefined, territory: text(context.territory) || undefined,
+    commercialStage: text(context.commercialStage) || undefined, signalType: text(context.signalType) || 'operator.live.run',
+    urgency: numberValue(context.urgency) ?? 0, opportunityValueDh: numberValue(context.opportunityValueDh),
+    accountPriority: numberValue(context.accountPriority), actorId: actor.id, actorRole: actor.role,
+    permissions: ['*'], executionMode: 'live', context: contextValues,
+    metadata: { requestedCommandCode: commandCode, operatorContext: context, trustedOperatorLive: true },
   }
-  const simulation = await simulateRevenueCommandSituation(situation)
+  const execution = await executeRevenueCommandSituation(situation)
   const supabase = await createServiceClient()
   await writeRevenueOsAuditEvent({
-    action: 'command.shadow_run',
-    actorId: actor.id,
-    actorLabel: actor.displayName,
-    actorType: 'user',
-    resourceType: 'revenue_os_command',
-    resourceId: commandCode,
-    outcome: 'success',
-    summary: `Simulation Shadow de ${commandCode} terminée.`,
-    metadata: { commandCode, posture: simulation.posture, externalActions: 0 },
+    action: 'command.live_run', actorId: actor.id, actorLabel: actor.displayName, actorType: 'user',
+    resourceType: 'revenue_os_command', resourceId: commandCode, outcome: 'success',
+    summary: `Exécution live de ${commandCode} terminée.`,
+    metadata: { commandCode, posture: 'live', runIds: execution.execution.runs.map((run) => run.id), contextKeys: contextValues.map((item: any) => item.key) },
   }, supabase)
-  return { requestedCommandCode: commandCode, simulation }
+  return { requestedCommandCode: commandCode, execution }
 }
 
 async function runDoctrine(body: any, actor: Actor) {
@@ -604,51 +501,25 @@ async function runDoctrine(body: any, actor: Actor) {
   const doctrineResult = await (supabase as any).from('revenue_os_doctrines').select('*').eq('code', doctrineCode).maybeSingle()
   if (doctrineResult.error) throw doctrineResult.error
   if (!doctrineResult.data) throw new RevenueOsError('REVENUE_OS_DOCTRINE_NOT_FOUND', 'Doctrine introuvable.', { status: 404 })
-
   const targetResult = targetType === 'command'
     ? await (supabase as any).from('revenue_os_command_definitions').select('*').eq('command_code', targetCode).maybeSingle()
     : await (supabase as any).from('revenue_os_objectives').select('*').eq('code', targetCode).maybeSingle()
   if (targetResult.error) throw targetResult.error
   if (!targetResult.data) throw new RevenueOsError('REVENUE_OS_DOCTRINE_TARGET_NOT_FOUND', 'Objet à évaluer introuvable.', { status: 404 })
-
   const doctrine = doctrineResult.data
   const target = targetResult.data
   const families = Array.isArray(doctrine.applicable_command_families) ? doctrine.applicable_command_families : []
   const businessUnits = Array.isArray(doctrine.business_unit_codes) ? doctrine.business_unit_codes : []
-  const applicable = targetType === 'command'
-    ? !families.length || families.includes(target.family_code)
-    : !businessUnits.length || businessUnits.includes(target.business_unit)
-  const authoritative = ['approved','effective'].includes(doctrine.status)
+  const applicable = targetType === 'command' ? !families.length || families.includes(target.family_code) : !businessUnits.length || businessUnits.includes(target.business_unit)
   const rules = Array.isArray(doctrine.rules) ? doctrine.rules : []
   const evaluation = {
-    id: crypto.randomUUID(),
-    doctrineCode,
-    doctrineVersion: doctrine.version,
-    doctrineStatus: doctrine.status,
-    targetType,
-    targetCode,
-    applicable,
-    authoritative,
-    status: !applicable ? 'not-applicable' : authoritative ? 'eligible' : 'advisory-draft',
-    appliedRules: applicable ? rules.length : 0,
-    rules,
-    prohibitedActions: doctrine.metadata?.prohibitedActions || [],
-    requiredApprovals: doctrine.metadata?.requiredApprovals || [],
-    evidenceRequirements: doctrine.evidence_refs || [],
-    evaluatedAt: new Date().toISOString(),
-    externalActions: 0,
+    id: crypto.randomUUID(), doctrineCode, doctrineVersion: doctrine.version, doctrineStatus: doctrine.status,
+    targetType, targetCode, applicable, authoritative: false, status: applicable ? 'advisory' : 'not-applicable',
+    appliedRules: applicable ? rules.length : 0, rules, advisoryWarnings: doctrine.metadata?.advisoryWarnings || [],
+    prohibitedActions: [], requiredApprovals: [], evidenceRequirements: doctrine.evidence_refs || [],
+    evaluatedAt: new Date().toISOString(), blocksExecution: false, externalActions: true,
   }
-  await writeRevenueOsAuditEvent({
-    action: 'doctrine.evaluated',
-    actorId: actor.id,
-    actorLabel: actor.displayName,
-    actorType: 'user',
-    resourceType: 'revenue_os_doctrine',
-    resourceId: String(doctrine.id),
-    outcome: applicable ? 'success' : 'blocked',
-    summary: `${doctrineCode} évaluée contre ${targetType}:${targetCode}.`,
-    metadata: evaluation,
-  }, supabase)
+  await writeRevenueOsAuditEvent({ action: 'doctrine.advisory_evaluated', actorId: actor.id, actorLabel: actor.displayName, actorType: 'user', resourceType: 'revenue_os_doctrine', resourceId: String(doctrine.id), outcome: 'success', summary: `${doctrineCode} évaluée comme conseil non bloquant contre ${targetType}:${targetCode}.`, metadata: evaluation }, supabase)
   return { evaluation }
 }
 

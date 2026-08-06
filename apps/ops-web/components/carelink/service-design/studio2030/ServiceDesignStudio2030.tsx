@@ -31,18 +31,18 @@ const toneClasses: Record<StudioTone, { soft: string; strong: string; text: stri
 export function StudioHero({ eyebrow, title, description, actions, chips, tone = 'navy' }: { eyebrow: string; title: string; description: string; actions?: ReactNode; chips?: ReactNode; tone?: StudioTone }) {
   const dark = tone === 'navy'
   return (
-    <section className={sd2030('sd2030-hero relative isolate overflow-hidden rounded-[36px] border px-6 py-7 shadow-[0_32px_90px_rgba(15,23,42,.18)] sm:px-8 sm:py-9 xl:px-10', dark ? 'border-slate-800 bg-slate-950 text-white' : toneClasses[tone].soft)}>
+    <section className={sd2030('sd2030-hero relative isolate overflow-hidden rounded-[36px] border px-6 py-7 shadow-[0_32px_90px_rgba(15,23,42,.18)] sm:px-8 sm:py-9 xl:px-10', dark ? 'border-[var(--sd-dark-surface-border)] bg-[var(--sd-dark-surface)] text-[var(--sd-dark-text-primary)]' : toneClasses[tone].soft)}>
       <div className="pointer-events-none absolute inset-0 opacity-80 [background-image:radial-gradient(circle_at_85%_15%,rgba(59,130,246,.22),transparent_31%),radial-gradient(circle_at_8%_92%,rgba(34,211,238,.13),transparent_35%)]" />
       <div className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full border-[44px] border-white/[0.035]" />
       <div className={sd2030('absolute inset-y-0 left-0 w-1.5 bg-gradient-to-b', toneClasses[tone].line)} />
       <div className="relative flex flex-wrap items-start justify-between gap-7">
         <div className="max-w-5xl">
-          <p className={sd2030('text-[10px] font-black uppercase tracking-[.34em]', dark ? 'text-blue-300' : toneClasses[tone].text)}>{eyebrow}</p>
-          <h1 className="mt-3 max-w-5xl text-4xl font-black tracking-[-.058em] sm:text-5xl xl:text-[58px] xl:leading-[1.02]">{title}</h1>
-          <p className={sd2030('mt-4 max-w-4xl text-sm font-semibold leading-7', dark ? 'text-slate-300' : 'text-slate-600')}>{description}</p>
+          <p className={sd2030('text-[10px] font-black uppercase tracking-[.34em]', dark ? 'text-[var(--sd-dark-link)]' : toneClasses[tone].text)}>{eyebrow}</p>
+          <h1 className="mt-3 max-w-5xl break-words text-4xl font-black leading-[1.05] tracking-[-.052em] text-[var(--sd-dark-text-primary)] sm:text-5xl xl:text-[56px]">{title}</h1>
+          <p className={sd2030('mt-4 max-w-4xl text-sm font-semibold leading-7', dark ? 'text-[var(--sd-dark-text-secondary)]' : 'text-slate-600')}>{description}</p>
           {chips ? <div className="mt-6 flex flex-wrap gap-2">{chips}</div> : null}
         </div>
-        {actions ? <div className="flex flex-wrap items-center gap-2">{actions}</div> : null}
+        {actions ? <div className="flex max-w-full flex-wrap items-center gap-2">{actions}</div> : null}
       </div>
     </section>
   )

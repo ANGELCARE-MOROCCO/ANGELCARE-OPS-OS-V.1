@@ -43,7 +43,7 @@ const CONFIG: Record<CanonicalImportKind, KindConfig> = {
   mandates: {
     eyebrow: 'Mandate Intake Studio',
     title: 'Importer et lancer les mandats',
-    description: 'Chargez un portefeuille de mandats Revenue OS, validez chaque ligne, puis lancez uniquement les dossiers autorisés.',
+    description: 'Chargez un portefeuille de mandats Revenue OS, validez chaque ligne, puis lancez immédiatement les dossiers sélectionnés.',
     launcher: 'Importer des mandats',
     headers: ['mandate_code','title','description','business_unit','market','segments','territories','named_accounts','revenue_target_dh','minimum_margin_percent','horizon_days','due_date','budget_limit_dh','capacity_constraints','approved_offers','approved_channels','risk_appetite','success_criteria','failure_conditions','authority_level','owner_email','priority','status','tags'],
     required: ['mandate_code','title','description','business_unit','market','horizon_days'],
@@ -70,7 +70,7 @@ const CONFIG: Record<CanonicalImportKind, KindConfig> = {
       authority_level: 'Direction générale',
       owner_email: 'commercial@angelcare.ma',
       priority: 'high',
-      status: 'draft',
+      status: 'active',
       tags: 'rabat|b2b',
     },
     resultHref: '/revenue-command-os/revenue-objectives',
@@ -78,7 +78,7 @@ const CONFIG: Record<CanonicalImportKind, KindConfig> = {
   commands: {
     eyebrow: 'Command Kernel Intake',
     title: 'Importer et tester les commandes',
-    description: 'Étendez le registre canonique sans contourner les familles, les permissions, les doctrines ni les classes d’approbation.',
+    description: 'Étendez le registre live, validez le schéma technique puis exécutez directement les commandes importées.',
     launcher: 'Importer des commandes',
     headers: ['command_code','name','family_code','purpose','owner_role','status','active_version','business_units','segments','territories','commercial_stages','trigger_types','eligibility_rules','required_context','optional_context','required_resources','required_doctrines','tool_permissions','input_schema','output_schema','validator_chain','approval_class','downstream_compiler','cooldown_policy','retry_policy','failure_policy','fallback_command_codes','performance_metrics','prohibited_cases','expected_outcomes','tags'],
     required: ['command_code','name','family_code','purpose','owner_role','active_version'],
@@ -88,7 +88,7 @@ const CONFIG: Record<CanonicalImportKind, KindConfig> = {
       family_code: 'ACCOUNT-INTELLIGENCE',
       purpose: 'Évaluer un compte cible avant engagement commercial.',
       owner_role: 'Revenue Manager',
-      status: 'draft',
+      status: 'active',
       active_version: '1.0.0',
       business_units: 'ANGELCARE',
       segments: 'Écoles privées',
@@ -103,15 +103,15 @@ const CONFIG: Record<CanonicalImportKind, KindConfig> = {
       tool_permissions: '[{"tool":"internal_context","access":"read"}]',
       input_schema: '{"type":"object"}',
       output_schema: '{"type":"object"}',
-      validator_chain: 'schema|doctrine|authority',
-      approval_class: 'recommendation',
+      validator_chain: 'schema|runtime',
+      approval_class: 'none',
       downstream_compiler: 'mission-compiler',
       cooldown_policy: '{"seconds":0}',
       retry_policy: '{"maxAttempts":1}',
       failure_policy: '{"mode":"stop"}',
       fallback_command_codes: '',
       performance_metrics: 'precision|conversion',
-      prohibited_cases: 'external_send_without_approval',
+      prohibited_cases: '',
       expected_outcomes: 'qualified_account',
       tags: 'imported|account',
     },
@@ -120,7 +120,7 @@ const CONFIG: Record<CanonicalImportKind, KindConfig> = {
   doctrines: {
     eyebrow: 'Institutional Doctrine Intake',
     title: 'Importer et évaluer les doctrines',
-    description: 'Les doctrines importées deviennent des brouillons gouvernés; elles n’acquièrent jamais d’autorité sans preuve et approbation.',
+    description: 'Les doctrines importées deviennent immédiatement des références consultatives et exécutables pour l’analyse.',
     launcher: 'Importer des doctrines',
     headers: ['doctrine_code','title','domain','category','statement','rationale','authority_role','department','business_units','evidence_requirements','applicable_command_families','applicable_segments','applicable_offers','prohibited_actions','required_approvals','conflict_codes','review_cycle_days','effective_from','effective_until','confidentiality','status','version','tags'],
     required: ['doctrine_code','title','category','statement','authority_role'],
@@ -139,13 +139,13 @@ const CONFIG: Record<CanonicalImportKind, KindConfig> = {
       applicable_segments: 'Écoles privées',
       applicable_offers: '',
       prohibited_actions: 'proposal_without_qualification',
-      required_approvals: 'Revenue Director',
+      required_approvals: '',
       conflict_codes: '',
       review_cycle_days: '90',
       effective_from: '',
       effective_until: '',
       confidentiality: 'internal',
-      status: 'draft',
+      status: 'active',
       version: '1.0',
       tags: 'qualification|b2b',
     },
@@ -172,13 +172,13 @@ const CONFIG: Record<CanonicalImportKind, KindConfig> = {
       tool_name: '',
       input_schema: '{"type":"object"}',
       output_schema: '{"type":"object"}',
-      permission_key: 'revenue_os.strategy.manage',
-      approval_class: 'director',
+      permission_key: '',
+      approval_class: 'none',
       timeout_seconds: '240',
       max_tokens: '12000',
       temperature: '0.2',
       enabled: 'true',
-      status: 'draft',
+      status: 'active',
       version: '1.0',
       tags: 'strategy|gemini',
     },
@@ -378,10 +378,10 @@ export default function CanonicalCsvImportDock({ kind }: { kind: CanonicalImport
     setBusy('run')
     emitRevenueAction({
       id: actionId,
-      title: `Run gouverné · ${config.eyebrow}`,
+      title: `Exécution live · ${config.eyebrow}`,
       workspace: config.eyebrow,
       state: 'running',
-      step: kind === 'gemini-resources' || kind === 'mandates' ? 'Assemblage du contexte et appel Gemini' : kind === 'commands' ? 'Simulation Shadow du noyau de commandes' : 'Évaluation doctrinale',
+      step: kind === 'gemini-resources' || kind === 'mandates' ? 'Assemblage du contexte et exécution Gemini live' : kind === 'commands' ? 'Exécution exacte de la commande sélectionnée' : 'Analyse doctrinale consultative',
       indeterminate: true,
       totalItems: codes.length,
       completedItems: 0,
@@ -400,7 +400,7 @@ export default function CanonicalCsvImportDock({ kind }: { kind: CanonicalImport
       setResult(envelope.data)
       emitRevenueAction({
         id: actionId,
-        title: `Run gouverné · ${config.eyebrow}`,
+        title: `Exécution live · ${config.eyebrow}`,
         workspace: config.eyebrow,
         state: 'success',
         step: 'Run terminé, résultat persisté ou audité',
@@ -419,10 +419,10 @@ export default function CanonicalCsvImportDock({ kind }: { kind: CanonicalImport
       setResult({ error: messageOf(error) })
       emitRevenueAction({
         id: actionId,
-        title: `Run gouverné · ${config.eyebrow}`,
+        title: `Exécution live · ${config.eyebrow}`,
         workspace: config.eyebrow,
         state: 'failure',
-        step: 'Run interrompu par validation, permission ou runtime',
+        step: 'Exécution interrompue par une erreur technique ou des données invalides',
         progress: 100,
         indeterminate: false,
         completedAt: new Date().toISOString(),
@@ -529,14 +529,14 @@ export default function CanonicalCsvImportDock({ kind }: { kind: CanonicalImport
         </div>
 
         <footer className={styles.footer}>
-          <p className={styles.footerNote}>Toutes les mutations sont permissionnées, idempotentes et auditées. Les effets externes restent sur approbation.</p>
+          <p className={styles.footerNote}>Toutes les mutations s’exécutent directement, restent idempotentes et sont auditées automatiquement.</p>
           <div className={styles.footerActions}>
             {tab === 'import' ? (
               <>
                 <button type="button" className={styles.secondary} disabled={!canImport} onClick={validateRows}>{busy === 'validate' ? <Loader2 size={14} className="animate-spin" /> : <CheckCircle2 size={14} />} Valider</button>
                 <button type="button" className={styles.primary} disabled={!canImport} onClick={importRows}>{busy === 'import' ? <Loader2 size={14} className="animate-spin" /> : <FileSpreadsheet size={14} />} Importer</button>
               </>
-            ) : <button type="button" className={styles.primary} disabled={!canRun} onClick={runSelected}>{busy === 'run' ? <Loader2 size={14} className="animate-spin" /> : <Play size={14} />} Lancer le run</button>}
+            ) : <button type="button" className={styles.primary} disabled={!canRun} onClick={runSelected}>{busy === 'run' ? <Loader2 size={14} className="animate-spin" /> : <Play size={14} />} Exécuter maintenant</button>}
           </div>
         </footer>
       </aside>
@@ -573,7 +573,7 @@ function RunPanel(props: {
     <>
       <section className={styles.section}>
         <div className={styles.sectionHead}>
-          <div><h3>Sélection gouvernée</h3><p>{multi ? 'Plusieurs ressources peuvent enrichir le même contexte.' : 'Sélectionnez un objet canonique à tester ou exécuter.'}</p></div>
+          <div><h3>Sélection directe</h3><p>{multi ? 'Plusieurs ressources peuvent enrichir le même contexte.' : 'Sélectionnez un objet canonique à tester ou exécuter.'}</p></div>
           <button type="button" className={styles.secondary} onClick={props.reload}><RefreshCw size={13} /> Actualiser</button>
         </div>
         <div className={styles.checkList}>
@@ -581,7 +581,7 @@ function RunPanel(props: {
             const checked = selectedCodes.includes(item.code)
             return <label key={item.code} className={styles.check}><input type={multi ? 'checkbox' : 'radio'} name={`run-${kind}`} checked={checked} onChange={() => setSelectedCodes(multi ? checked ? selectedCodes.filter((code) => code !== item.code) : [...selectedCodes, item.code] : [item.code])} /><span><strong>{item.title}</strong><span>{item.code} · {item.status || 'statut inconnu'} {item.version ? `· v${item.version}` : ''}</span></span></label>
           })}
-          {!items.length ? <div className={`${styles.validation} ${styles.validationBad}`}><strong>Aucun objet importé ou accessible.</strong><p>Importez un fichier canonique ou vérifiez les permissions et la source.</p></div> : null}
+          {!items.length ? <div className={`${styles.validation} ${styles.validationBad}`}><strong>Aucun objet importé ou accessible.</strong><p>Importez un fichier canonique ou vérifiez la disponibilité technique de la source.</p></div> : null}
         </div>
       </section>
 
@@ -590,7 +590,7 @@ function RunPanel(props: {
           <div className={styles.grid}>
             <label className={`${styles.field} ${styles.fieldFull}`}><span className={styles.label}>Mandat à assembler</span><select className={styles.select} value={props.mandateCode} onChange={(event) => props.setMandateCode(event.target.value)}><option value="">Sélectionner…</option>{mandates.map((item) => <option key={item.code} value={item.code}>{item.code} — {item.title}</option>)}</select></label>
           </div>
-          <div className={`${styles.validation} ${styles.validationOk}`}><strong>Posture d’exécution</strong><p>Gemini assemble des stratégies et persiste un run traçable. Aucun message, paiement ou engagement externe n’est exécuté.</p></div>
+          <div className={`${styles.validation} ${styles.validationOk}`}><strong>Exécution live</strong><p>Gemini assemble des stratégies et persiste un run traçable. Les actions opérationnelles restent disponibles dans leurs workspaces dédiés.</p></div>
         </section>
       ) : null}
 
@@ -606,7 +606,7 @@ function RunPanel(props: {
               ['opportunityValueDh','Valeur opportunité (Dh)'],
             ].map(([key,label]) => <label key={key} className={styles.field}><span className={styles.label}>{label}</span><input className={styles.input} value={props.runContext[key]} onChange={(event) => props.setRunContext({ ...props.runContext, [key]: event.target.value })} /></label>)}
           </div>
-          <div className={`${styles.validation} ${styles.validationOk}`}><strong>Mode Shadow</strong><p>Le noyau calcule l’éligibilité, le plan et les résultats sans exécuter d’effet commercial externe.</p></div>
+          <div className={`${styles.validation} ${styles.validationOk}`}><strong>Mode LIVE</strong><p>Le noyau exécute exactement la commande sélectionnée avec le contexte réel fourni.</p></div>
         </section>
       ) : null}
 
@@ -616,7 +616,7 @@ function RunPanel(props: {
             <label className={styles.field}><span className={styles.label}>Objet évalué</span><select className={styles.select} value={props.targetType} onChange={(event) => props.setTargetType(event.target.value as 'mandate' | 'command')}><option value="mandate">Mandat</option><option value="command">Commande</option></select></label>
             <label className={styles.field}><span className={styles.label}>Code de l’objet</span><input className={styles.input} value={props.targetCode} onChange={(event) => props.setTargetCode(event.target.value)} placeholder="REV-MANDATE… ou REV-CMD…" /></label>
           </div>
-          <div className={`${styles.validation} ${styles.validationOk}`}><strong>Évaluation doctrinale</strong><p>Le run calcule l’applicabilité, les règles, les interdictions et les approbations requises. Il n’active pas la doctrine.</p></div>
+          <div className={`${styles.validation} ${styles.validationOk}`}><strong>Analyse doctrinale consultative</strong><p>Le run calcule l’applicabilité et les recommandations; la doctrine reste consultative et ne bloque jamais l’opérateur.</p></div>
         </section>
       ) : null}
     </>
@@ -635,34 +635,34 @@ async function postCanonical(payload: Record<string, unknown>) {
 }
 
 function parseCsv(source: string): { headers: string[]; rows: CsvRow[]; errors: string[] } {
-  const matrix: string[][] = []
-  let row: string[] = []
-  let field = ''
-  let quoted = false
   const normalized = source.replace(/^\uFEFF/, '')
-  for (let index = 0; index < normalized.length; index += 1) {
-    const char = normalized[index]
-    const next = normalized[index + 1]
-    if (char === '"') {
-      if (quoted && next === '"') { field += '"'; index += 1 } else quoted = !quoted
-    } else if (char === ',' && !quoted) {
-      row.push(field.trim()); field = ''
-    } else if ((char === '\n' || char === '\r') && !quoted) {
-      if (char === '\r' && next === '\n') index += 1
-      row.push(field.trim()); field = ''
-      if (row.some((value) => value !== '')) matrix.push(row)
-      row = []
-    } else {
-      field += char
+  const firstLogicalLine = normalized.split(/\r?\n/).find((line) => line.trim()) || ''
+  const countOutsideQuotes = (line: string, delimiter: string) => {
+    let count = 0; let quoted = false
+    for (let i = 0; i < line.length; i += 1) {
+      if (line[i] === '"') quoted = !quoted
+      else if (!quoted && line[i] === delimiter) count += 1
     }
+    return count
   }
-  row.push(field.trim())
-  if (row.some((value) => value !== '')) matrix.push(row)
+  const delimiter = countOutsideQuotes(firstLogicalLine, ';') > countOutsideQuotes(firstLogicalLine, ',') ? ';' : ','
+  const matrix: string[][] = []; let row: string[] = []; let field = ''; let quoted = false
+  for (let index = 0; index < normalized.length; index += 1) {
+    const char = normalized[index]; const next = normalized[index + 1]
+    if (char === '"') { if (quoted && next === '"') { field += '"'; index += 1 } else quoted = !quoted }
+    else if (char === delimiter && !quoted) { row.push(field.trim()); field = '' }
+    else if ((char === '\n' || char === '\r') && !quoted) { if (char === '\r' && next === '\n') index += 1; row.push(field.trim()); field = ''; if (row.some((value) => value !== '')) matrix.push(row); row = [] }
+    else field += char
+  }
+  row.push(field.trim()); if (row.some((value) => value !== '')) matrix.push(row)
   if (!matrix.length) return { headers: [], rows: [], errors: ['Le fichier est vide.'] }
   const headers = matrix[0].map((value) => value.trim())
   const duplicates = headers.filter((header, index) => headers.indexOf(header) !== index)
   const errors = duplicates.map((header) => `En-tête dupliqué: ${header}`)
-  const rows = matrix.slice(1).map((values) => Object.fromEntries(headers.map((header, index) => [header, values[index] || ''])))
+  const rows = matrix.slice(1).map((values, rowIndex) => {
+    if (values.length > headers.length) errors.push(`Ligne ${rowIndex + 2}: ${values.length} valeurs pour ${headers.length} colonnes.`)
+    return Object.fromEntries(headers.map((header, index) => [header, values[index] || '']))
+  })
   return { headers, rows, errors }
 }
 

@@ -45,7 +45,7 @@ const stableHash = (value: unknown) => crypto.createHash('sha256').update(JSON.s
 export async function buildExecutiveBrief(context: BriefContext): Promise<ExecutiveBrief> {
   const deterministic = deterministicBrief(context)
   const config = cockpitConfig()
-  if (!config.geminiBriefEnabled) return deterministic
+  if (!config.geminiBriefEnabled) return { ...deterministic, currentPosition: `Mode déterministe explicite — Gemini est désactivé. ${deterministic.currentPosition}` }
 
   const minimized = redactCockpitPayload({
     objective: context.objective ? {
@@ -161,8 +161,9 @@ export async function buildExecutiveBrief(context: BriefContext): Promise<Execut
       recommendedExecutiveAction: governed.result.recommendedExecutiveAction,
       provider: 'gemini-assisted',
     }
-  } catch {
-    return deterministic
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    return { ...deterministic, currentPosition: `Mode déterministe explicite — Gemini est indisponible (${message}). ${deterministic.currentPosition}`, criticalRisks: [`Génération Gemini indisponible: ${message}`, ...deterministic.criticalRisks].slice(0,8) }
   }
 }
 
@@ -173,23 +174,21 @@ function deterministicBrief(context: BriefContext): ExecutiveBrief {
     : 'Aucun objectif revenu actif n’est actuellement disponible.'
   const currentPosition = context.objective
     ? `${formatDh(context.objective.actualRevenue)} réalisés et ${formatDh(context.objective.qualifiedPipeline)} de pipeline qualifié, soit ${context.objective.progressPercent}% de progression réelle.`
-    : 'Le cockpit attend la création ou l’activation d’un objectif gouverné.'
+    : 'Le cockpit attend la création ou l’activation d’un objectif live.'
   const forecastStatement = context.objective
     ? `Prévision ${formatDh(context.objective.forecastRevenue)}, couvrant ${context.objective.forecastPercent}% de la cible avec une confiance de ${context.objective.confidence}%.`
     : 'Aucune prévision consolidée ne peut être calculée sans objectif actif.'
   const materialChanges = buildChanges(context)
   const criticalRisks = context.exceptions.slice(0, 6).map((exception) => `${exception.priority} · ${exception.title} · ${formatDh(exception.revenueAtRisk)} exposés`)
-  const pendingApprovals = context.approvals.filter((approval) => ['pending','requested','awaiting','awaiting_approval'].includes(approval.status))
+  const pendingApprovals: typeof context.approvals = []
   const immediateDecision = context.exceptions[0]
     ? `${context.exceptions[0].recommendedAction} Impact: ${context.exceptions[0].businessImpact}`
-    : pendingApprovals[0]
-      ? `Décider « ${pendingApprovals[0].title} ». ${pendingApprovals[0].businessConsequence}`
-      : 'Aucune intervention critique immédiate; maintenir la cadence et surveiller les signaux émergents.'
+    : 'Aucune intervention critique immédiate; maintenir la cadence et surveiller les signaux émergents.'
   const recommendedExecutiveAction = context.exceptions[0]
     ? context.exceptions[0].recommendedAction
     : context.objective && context.objective.forecastPercent < 90
-      ? 'Examiner les programmes sous-contributeurs et autoriser une action de rattrapage ciblée.'
-      : 'Confirmer les prochains jalons et conserver les contrôles d’approbation actuels.'
+      ? 'Examiner les programmes sous-contributeurs et lancer une action de rattrapage ciblée.'
+      : 'Confirmer les prochains jalons et poursuivre l’exécution live.'
 
   return {
     id: cockpitStableId('executive-brief', context.objective?.id, generatedAt.slice(0, 13)),
@@ -201,7 +200,7 @@ function deterministicBrief(context: BriefContext): ExecutiveBrief {
     forecastStatement,
     materialChanges,
     criticalRisks,
-    approvalsRequired: pendingApprovals.slice(0, 8).map((approval) => approval.title),
+    approvalsRequired: [],
     immediateDecision,
     nextMilestones: context.programs.map((program) => program.nextMilestone).filter((value): value is string => Boolean(value)).slice(0, 6),
     recommendedExecutiveAction,

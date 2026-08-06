@@ -40,14 +40,47 @@ for (const [relative, tokens] of Object.entries(canonicalPages)) {
 }
 
 requireText('app/(protected)/revenue-command-os/_components/RevenueOsWorkspacePage.tsx', [
-  '<MandateLedger />',
-  '<ProgramTerrain />',
-  '<MissionBinders />',
+  '<ObjectivePortfolioWorkspace />',
+  '<ProgramsPortfolioWorkspace />',
+  '<MissionsOperationsWorkspace />',
   '<ApprovalCenterWorkspace />',
-  '<InterventionTower />',
+  '<ExceptionsRecoveryWorkspace />',
   '<ForensicLedger />',
   '<GovernanceConstitution />',
+])
+requireText('app/(protected)/revenue-command-os/_components/operational-depth/ObjectivePortfolioWorkspace.tsx', [
   'CanonicalCsvImportDock kind="mandates"',
+  'MandateArchitectureDossier',
+  'CreateLiveEntityButton',
+])
+requireText('app/(protected)/revenue-command-os/_components/operational-depth/ProgramsPortfolioWorkspace.tsx', [
+  'CreateLiveEntityButton',
+  'LiveEntityActions',
+  'ProgramValueRealizationDossier',
+])
+requireText('app/(protected)/revenue-command-os/_components/operational-depth/MissionsOperationsWorkspace.tsx', [
+  'CreateLiveEntityButton',
+  'LiveEntityActions',
+  'MissionControlDossier',
+])
+requireText('app/(protected)/revenue-command-os/_components/operational-depth/ExceptionsRecoveryWorkspace.tsx', [
+  'CreateLiveEntityButton',
+  'LiveEntityActions',
+  'RevenueIncidentDossier',
+])
+requireText('app/api/revenue-command-os/operational-depth/route.ts', [
+  'readOperationalDepth',
+  'executeOperationalDepth',
+])
+requireText('app/api/revenue-command-os/command-schedules/route.ts', [
+  'executeRevenueCommandSituation',
+  "action === 'run_now'",
+  ".eq('tenant_id', actor.tenantUuid)",
+])
+requireText('app/api/revenue-command-os/ai-resources/route.ts', [
+  "registry', 'gemini-resource'",
+  "action === 'test'",
+  ".eq('tenant_id', actor.tenantUuid)",
 ])
 
 requireText('app/(protected)/revenue-command-os/intelligent-commands/page.tsx', [
@@ -69,8 +102,8 @@ requireText('app/api/revenue-command-os/canonical-operations/route.ts', [
   "if (action === 'import')",
   "if (action === 'run')",
   'runGeminiStrategyAssembly',
-  'simulateRevenueCommandSituation',
-  "action: 'doctrine.evaluated'",
+  'executeRevenueCommandSituation',
+  "action: 'doctrine.advisory_evaluated'",
 ])
 requireText('app/(protected)/revenue-command-os/_components/action-center/RevenueActionCenter.tsx', [
   'data-revenue-action-center="v1"',
@@ -106,7 +139,7 @@ const oldGenericRoutes = Object.keys(canonicalPages).filter((relative) => exists
 for (const relative of oldGenericRoutes) failures.push(`${relative}:old-generic-focus-remains`)
 
 const result = {
-  contract: 'AC-RCOS-CANONICAL-WORKSPACE-FINAL-CLOSURE-2026.07',
+  contract: 'AC-RCOS-FOUR-SOVEREIGN-WORKSPACES-MASTER-CLOSURE-2026.08',
   passed: pass.length,
   failed: failures.length,
   failures,

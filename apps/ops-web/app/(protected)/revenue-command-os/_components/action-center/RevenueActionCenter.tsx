@@ -11,7 +11,6 @@ import {
   FileDown,
   Loader2,
   PanelTopOpen,
-  ShieldCheck,
   X,
   Zap,
 } from 'lucide-react'
@@ -36,7 +35,6 @@ function stateIcon(state: RevenueActionState) {
   if (state === 'success') return CheckCircle2
   if (state === 'failure' || state === 'partial') return AlertTriangle
   if (state === 'cancelled') return CircleStop
-  if (state === 'approval') return ShieldCheck
   if (state === 'queued') return Clock3
   return Loader2
 }
@@ -46,7 +44,6 @@ function stateLabel(state: RevenueActionState) {
     queued: 'En attente',
     validating: 'Validation',
     running: 'En cours',
-    approval: 'Approbation requise',
     success: 'Terminé',
     partial: 'Terminé avec réserves',
     failure: 'Échec',
@@ -63,15 +60,15 @@ function inferAction(url: string, init?: RequestInit) {
   const known: Record<string, string> = {
     launch_operation: 'Assemblage stratégique Gemini',
     simulate: 'Simulation de commande',
-    validate: 'Validation gouvernée',
+    validate: 'Validation technique',
     compile: 'Compilation stratégique',
     prepare: 'Préparation de propagation',
-    activate: 'Activation gouvernée',
-    approve: 'Approbation',
-    reject: 'Rejet contrôlé',
+    activate: 'Activation live',
+    approve: 'Exécution immédiate',
+    reject: 'Annulation',
     retry: 'Nouvelle tentative',
     import: 'Import Revenue OS',
-    run: 'Exécution gouvernée',
+    run: 'Exécution live',
   }
   return {
     title: known[action] || action.replaceAll('_', ' ') || route.replaceAll('/', ' · ').replaceAll('-', ' '),
@@ -95,7 +92,18 @@ export default function RevenueActionCenter() {
   const [expanded, setExpanded] = useState<string>('')
   const originalFetch = useRef<typeof window.fetch | null>(null)
 
-  useEffect(() => setItems(loadStored()), [])
+  useEffect(() => {
+    const local = loadStored()
+    setItems(local)
+    void fetch('/api/revenue-command-os/action-center', { cache: 'no-store' }).then(response => response.json()).then(body => {
+      if (!body?.ok || !Array.isArray(body.data?.rows)) return
+      setItems(current => {
+        const combined = [...current, ...body.data.rows].filter((item,index,array) => array.findIndex(candidate => candidate.id === item.id) === index).sort((a,b)=>b.updatedAt.localeCompare(a.updatedAt)).slice(0,MAX_ITEMS)
+        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(combined))
+        return combined
+      })
+    }).catch(() => null)
+  }, [])
 
   useEffect(() => {
     const receive = (event: Event) => {
@@ -152,8 +160,8 @@ export default function RevenueActionCenter() {
           id,
           title: inferred.title,
           workspace: inferred.workspace,
-          state: ok ? 'success' : 'failure',
-          step: ok ? 'Action persistée et registre actualisé' : 'Le service a refusé ou interrompu l’action',
+          state: ok ? stateFrom(envelope?.data) : 'failure',
+          step: ok ? truthfulStep(envelope?.data) : 'Le service a refusé ou interrompu l’action',
           progress: 100,
           indeterminate: false,
           completedAt: new Date().toISOString(),
@@ -220,7 +228,7 @@ export default function RevenueActionCenter() {
             return (
               <article key={item.id} className={styles.card} data-state={item.state}>
                 <div className={styles.header}>
-                  <span className={styles.icon}><Icon size={17} className={!isTerminal(item.state) && item.state !== 'approval' ? 'animate-spin' : ''} /></span>
+                  <span className={styles.icon}><Icon size={17} className={!isTerminal(item.state) ? 'animate-spin' : ''} /></span>
                   <div className={styles.copy}>
                     <p className={styles.eyebrow}>{item.workspace} · {stateLabel(item.state)}</p>
                     <h3 className={styles.title}>{item.title}</h3>
@@ -258,6 +266,30 @@ export default function RevenueActionCenter() {
       ) : null}
     </aside>
   )
+}
+
+function statusFrom(data: unknown) {
+  if (!data || typeof data !== 'object') return ''
+  const record = data as Record<string, unknown>
+  const nested = record.run && typeof record.run === 'object' ? record.run as Record<string, unknown> : null
+  const action = record.action && typeof record.action === 'object' ? record.action as Record<string, unknown> : null
+  return String(record.status || nested?.status || action?.status || '')
+}
+function stateFrom(data: unknown): RevenueActionState {
+  const status = statusFrom(data).toLowerCase()
+  if (/failed|dead_letter|error/.test(status)) return 'failure'
+  if (/partial/.test(status)) return 'partial'
+  if (/cancel/.test(status)) return 'cancelled'
+  if (/queued|prepared|ready|scheduled/.test(status)) return 'queued'
+  if (/running|active|executing|leased|activating/.test(status)) return 'running'
+  return 'success'
+}
+function truthfulStep(data: unknown) {
+  const status = statusFrom(data)
+  if (/queued|prepared|ready|scheduled/i.test(status)) return `État technique enregistré: ${status}`
+  if (/running|active|executing|leased|activating/i.test(status)) return `Exécution active: ${status}`
+  if (/succeeded|completed|sent|delivered/i.test(status)) return `Opération terminée: ${status}`
+  return status ? `Réponse Revenue OS: ${status}` : 'Réponse technique reçue; le résultat détaillé reste consultable dans l’audit'
 }
 
 function messageFrom(data: unknown) {

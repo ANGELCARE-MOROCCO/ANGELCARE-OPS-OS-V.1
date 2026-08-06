@@ -56,7 +56,7 @@ export async function createAiJob(input: {
     idempotency_key: input.idempotencyKey,
     lease_expires_at: new Date(Date.now() + 180000).toISOString(),
     payload: {
-      executionMode: 'approval-gated',
+      executionMode: 'live',
       externalActions: 0,
       operatingSpine: true,
     },

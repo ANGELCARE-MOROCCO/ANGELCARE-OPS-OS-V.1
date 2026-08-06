@@ -1,9 +1,10 @@
 import type { RevenueOsEnvironment } from './types'
+import { REVENUE_OS_LIVE_MODE } from './runtime-authority'
 
 export type RevenueOsEnvironmentConfig = {
   environment: RevenueOsEnvironment
   enabled: boolean
-  executionMode: 'shadow' | 'recommend' | 'approval-gated' | 'limited-autonomy'
+  executionMode: typeof REVENUE_OS_LIVE_MODE
   allowExternalActions: boolean
   auditRetentionDays: number
 }
@@ -20,22 +21,21 @@ export function getRevenueOsEnvironmentConfig(): RevenueOsEnvironmentConfig {
     : rawEnvironment === 'staging'
       ? 'staging'
       : 'development'
-  const executionModeRaw = String(process.env.REVENUE_OS_EXECUTION_MODE || 'approval-gated').trim().toLowerCase()
-  const executionMode = executionModeRaw === 'approval_required' || executionModeRaw === 'approval-required' || executionModeRaw === 'approval_gated'
-    ? 'approval-gated'
-    : executionModeRaw === 'limited_autopilot' || executionModeRaw === 'limited-autopilot'
-      ? 'limited-autonomy'
-      : executionModeRaw === 'recommend' || executionModeRaw === 'approval-gated' || executionModeRaw === 'limited-autonomy'
-        ? executionModeRaw
-        : executionModeRaw === 'shadow' ? 'shadow' : 'approval-gated'
 
   return {
     environment,
     enabled: booleanEnv(process.env.REVENUE_OS_ENABLED, true),
-    executionMode,
-    allowExternalActions: booleanEnv(process.env.REVENUE_OS_ALLOW_EXTERNAL_ACTIONS, false),
+    executionMode: REVENUE_OS_LIVE_MODE,
+    // Channel-specific state still decides whether Email OS / WhatsApp can dispatch.
+    allowExternalActions: true,
     auditRetentionDays: Math.max(365, Number(process.env.REVENUE_OS_AUDIT_RETENTION_DAYS || 2555)),
   }
 }
 
-export const REVENUE_OS_ENV_EXAMPLE = `# ANGELCARE Revenue Command OS — Phase 2 cumulative\nREVENUE_OS_ENABLED=true\nREVENUE_OS_ENVIRONMENT=development\nREVENUE_OS_EXECUTION_MODE=shadow\nREVENUE_OS_ALLOW_EXTERNAL_ACTIONS=false\nREVENUE_OS_AUDIT_RETENTION_DAYS=2555\n`
+export const REVENUE_OS_ENV_EXAMPLE = `# ANGELCARE Revenue Command OS — Trusted Operator Live Production
+REVENUE_OS_ENABLED=true
+REVENUE_OS_ENVIRONMENT=production
+REVENUE_OS_EXECUTION_MODE=live
+REVENUE_OS_ALLOW_EXTERNAL_ACTIONS=true
+REVENUE_OS_AUDIT_RETENTION_DAYS=2555
+`

@@ -28,8 +28,40 @@ function availabilityLabel(item: HomepageItem, locale: HomepageLocale): string {
 }
 
 function itemHref(item: HomepageItem, locale: HomepageLocale): string {
-  if (item.kind === 'training') return `/angelcare-marketplace/${locale}/academy/programs/${item.slug}`
-  return `/angelcare-marketplace/${locale}/marketplace/${item.slug}`
+  return `/angelcare-marketplace/${locale}/experience/${item.slug}`
+}
+
+
+function nativeSignals(item: HomepageItem, locale: HomepageLocale): string[] {
+  const config = { ...item.metadata, ...item.experience_configuration }
+  const value = (key: string) => {
+    const raw = config[key]
+    if (Array.isArray(raw)) return raw.filter(Boolean).slice(0, 2).join(' · ')
+    if (raw === null || raw === undefined || raw === '') return ''
+    return String(raw)
+  }
+  const schema = item.experience_schema_key || ''
+  const candidates = schema.includes('flashcards')
+    ? [['age_min','age_max'],['language'],['number_of_cards']]
+    : schema.includes('montessori-development-kit')
+      ? [['age_min','age_max'],['kit_type'],['component_count']]
+      : schema.includes('home-childcare') || schema.includes('care')
+        ? [['territory_codes'],['minimum_duration_hours'],['caregiver_language_options']]
+        : schema.includes('academy') || schema.includes('cohort') || schema.includes('certification')
+          ? [['level'],['delivery_mode'],['starts_at']]
+          : schema.includes('programme') || schema.includes('partner') || schema.includes('quality') || schema.includes('managed')
+            ? [['organization_type'],['site_count'],['pricing_mode']]
+            : [['age_min','age_max'],['language'],['duration']]
+  const labels: string[] = []
+  for (const group of candidates) {
+    if (group.length === 2 && value(group[0]) && value(group[1])) {
+      labels.push(locale === 'ar' ? `${value(group[0])}–${value(group[1])} سنة` : `${value(group[0])}–${value(group[1])} ans`)
+    } else {
+      const found = group.map(value).find(Boolean)
+      if (found) labels.push(found)
+    }
+  }
+  return labels.slice(0, 3)
 }
 
 function track(payload: Record<string, unknown>) {
@@ -38,7 +70,8 @@ function track(payload: Record<string, unknown>) {
 
 function ItemCard({ item, locale, saved, compared, onSave, onCompare, variant = 'service' }: { item: HomepageItem; locale: HomepageLocale; saved: boolean; compared: boolean; onSave: () => void; onCompare: () => void; variant?: 'service' | 'product' | 'academy' | 'programme' | 'saas' }) {
   const c = homepageCopy(locale)
-  return <article className={styles.itemCard} data-variant={variant}>
+  const signals = nativeSignals(item, locale)
+  return <article className={styles.itemCard} data-variant={variant} data-experience-schema={item.experience_schema_key || 'legacy'}>
     <div className={styles.itemMedia}>
       {item.media_url ? <img src={item.media_url} alt={item.name} loading="lazy" /> : <div className={styles.mediaFallback}><Sparkles size={28}/></div>}
       <div className={styles.cardActions}>
@@ -52,6 +85,7 @@ function ItemCard({ item, locale, saved, compared, onSave, onCompare, variant = 
       <div className={styles.itemMeta}><span>{item.public_reference}</span><span data-availability={item.availability_status}>{availabilityLabel(item, locale)}</span></div>
       <h3><Link href={itemHref(item, locale)} onClick={() => track({ event_name: 'item.opened', locale, catalog_item_id: item.id, route: itemHref(item, locale) })}>{item.name}</Link></h3>
       <p>{item.short_description}</p>
+      {signals.length ? <div className={styles.nativeSignals}>{signals.map((signal) => <span key={signal}>{signal}</span>)}</div> : null}
       <div className={styles.itemFoot}><strong>{priceLabel(item, locale)}</strong><Link href={itemHref(item, locale)} aria-label={`${c.open}: ${item.name}`}><ArrowRight size={17}/></Link></div>
     </div>
   </article>

@@ -84,7 +84,7 @@ export function TwinEmpty({ title, description, locked = false }: { title: strin
   return <div className={`rounded-[26px] border p-7 text-center ${locked ? 'border-amber-200 bg-amber-50' : 'border-slate-200 bg-slate-50'}`}><SIcon icon={Icon} tone={locked ? 'amber' : 'slate'} className="mx-auto" /><h3 className="mt-4 text-base font-black text-slate-950">{title}</h3><p className="mx-auto mt-2 max-w-xl text-sm font-semibold leading-6 text-slate-700">{description}</p></div>
 }
 
-export function TwinSafetyBanner({ detail = 'Mode Shadow actif : le jumeau structure et valide le modèle commercial sans déclencher de communication, transaction ou engagement externe.' }: { detail?: string }) {
+export function TwinSafetyBanner({ detail = 'Mode LIVE actif : le jumeau alimente immédiatement les stratégies, commandes, programmes et missions.' }: { detail?: string }) {
   return <div className="flex items-start gap-3 rounded-[24px] border border-cyan-200 bg-cyan-50 p-4 text-cyan-950"><ShieldCheck size={18} className="mt-0.5 shrink-0 text-cyan-700" /><div><p className="text-xs font-black">World model protégé</p><p className="mt-1 text-[11px] font-semibold leading-5 text-cyan-900">{detail}</p></div></div>
 }
 

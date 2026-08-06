@@ -23,7 +23,7 @@ export type RevenueOsHealthStatus = 'operational' | 'degraded' | 'attention' | '
 export type RevenueOsMaturityStatus = 'locked' | 'ready' | 'foundation' | 'planned'
 export type RevenueOsPriority = 'critical' | 'high' | 'medium' | 'low'
 export type RevenueOsObjectiveStatus = 'draft' | 'submitted' | 'validated' | 'active' | 'paused' | 'completed' | 'cancelled'
-export type RevenueOsExecutionMode = 'shadow' | 'recommend' | 'approval-gated' | 'limited-autonomy'
+export type RevenueOsExecutionMode = 'live' | 'shadow' | 'recommend' | 'approval-gated' | 'limited-autonomy'
 export type RevenueOsEnvironment = 'development' | 'staging' | 'production'
 
 export type RevenueOsWorkspaceDefinition = {
@@ -215,7 +215,7 @@ export type RevenueOsFoundationBootstrap = {
 
 export type RevenueOsSearchResult = {
   id: string
-  type: 'workspace' | 'objective' | 'audit' | 'feature-flag' | 'status' | 'digital-twin' | 'doctrine' | 'knowledge-asset' | 'playbook' | 'knowledge-conflict' | 'revenue-signal' | 'signal-source' | 'context-snapshot' | 'revenue-command' | 'command-run'
+  type: 'workspace' | 'objective' | 'strategy' | 'program' | 'mission' | 'task' | 'exception' | 'ai-resource' | 'command-schedule' | 'audit' | 'feature-flag' | 'status' | 'digital-twin' | 'doctrine' | 'knowledge-asset' | 'playbook' | 'knowledge-conflict' | 'revenue-signal' | 'signal-source' | 'context-snapshot' | 'revenue-command' | 'command-run'
   title: string
   subtitle: string
   href: string
@@ -1274,7 +1274,7 @@ export type RevenueSignalBootstrap = {
   moduleVersion: string
   generatedAt: string
   storageMode: 'supabase' | 'contract-seed'
-  executionPosture: 'shadow-observation'
+  executionPosture: 'live-observation'
   sections: RevenueSignalSectionDefinition[]
   sources: RevenueSignalSource[]
   signals: RevenueSignal[]

@@ -180,6 +180,28 @@ export const COMMERCE_STUDIO_PERMISSIONS: MarketplacePermission[] = [
   'marketplace.commerce.import',
 ]
 
+export const LIVE_EXPERIENCE_PERMISSIONS: MarketplacePermission[] = [
+  'marketplace.live_experience.view',
+  'marketplace.live_experience.manage',
+  'marketplace.live_experience.publish',
+  'marketplace.popup.manage',
+  'marketplace.broadcast.manage',
+  'marketplace.proof_widget.manage',
+  'marketplace.audience.manage',
+  'marketplace.experiment.manage',
+  'marketplace.live_experience.analytics.view',
+  'marketplace.emergency_broadcast.manage',
+]
+
+export const CATEGORY_NATIVE_PERMISSIONS: MarketplacePermission[] = [
+  'marketplace.experience_schema.view',
+  'marketplace.experience_schema.manage',
+  'marketplace.archetype.view',
+  'marketplace.archetype.manage',
+  'marketplace.category_native_import.view',
+  'marketplace.category_native_import.manage',
+]
+
 export const FINAL_AUTHORITY_PERMISSIONS: MarketplacePermission[] = [
   'marketplace.intelligence.view',
   'marketplace.intelligence.metrics.manage',
@@ -200,6 +222,8 @@ export const MARKETPLACE_PERMISSIONS: MarketplacePermission[] = [
   ...PUBLIC_UNIVERSE_PERMISSIONS,
   ...FAMILY_PERMISSIONS,
   ...COMMERCE_STUDIO_PERMISSIONS,
+  ...CATEGORY_NATIVE_PERMISSIONS,
+  ...LIVE_EXPERIENCE_PERMISSIONS,
   ...FINAL_AUTHORITY_PERMISSIONS,
 ]
 
@@ -216,6 +240,7 @@ const MANAGER_PERMISSIONS: MarketplacePermission[] = [
   ...PUBLIC_UNIVERSE_PERMISSIONS,
   ...FAMILY_PERMISSIONS.filter((permission) => permission.includes('.view') || permission.endsWith('.manage') || permission.endsWith('.qualify')),
   ...COMMERCE_STUDIO_PERMISSIONS,
+  ...LIVE_EXPERIENCE_PERMISSIONS.filter((permission) => permission !== 'marketplace.emergency_broadcast.manage'),
 ]
 
 export const ROLE_PERMISSION_FALLBACK: Record<string, MarketplacePermission[]> = {
