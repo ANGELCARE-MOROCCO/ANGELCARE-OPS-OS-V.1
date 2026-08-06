@@ -55,9 +55,6 @@ export interface HomepageItem {
   media_url: string | null
   trust_labels: string[]
   metadata: Record<string, unknown>
-  experience_schema_key: string | null
-  experience_schema_version: number
-  experience_configuration: Record<string, unknown>
 }
 
 export interface HomepageCollection {

@@ -1,6 +1,6 @@
-import { requireCustomerPageContext } from '@/angelcare-marketplace/customer-commerce/customer-auth'
-import { getCustomerPortfolio } from '@/angelcare-marketplace/customer-commerce/repository'
-import { CustomerPortfolioWorkspace } from '@/angelcare-marketplace/customer-commerce/components/CustomerPortfolioWorkspace'
-import type { CatalogLocale } from '@/angelcare-marketplace/catalog-discovery/types'
-export const dynamic='force-dynamic'
-export default async function Page({params}:{params:Promise<{locale:string}>}){const{locale:raw}=await params;const locale=(raw==='en'||raw==='ar'?raw:'fr') as CatalogLocale;const context=await requireCustomerPageContext(locale);return <CustomerPortfolioWorkspace data={await getCustomerPortfolio(context,'b2b_quotation' as any,locale)}/>}
+import Link from 'next/link'
+import { requireMarketplacePageContext } from '@/angelcare-marketplace/auth/context'
+import { getCustomerAccountSummary } from '@/angelcare-marketplace/journey-control/repository'
+import { journeyTypeLabels,statusLabels } from '@/angelcare-marketplace/journey-control/content'
+import styles from '@/angelcare-marketplace/journey-control/journey.module.css'
+export default async function Page({params}:{params:Promise<{locale:string}>}){const {locale:raw}=await params;const locale=raw==='en'||raw==='ar'?raw:'fr';const data=await getCustomerAccountSummary(await requireMarketplacePageContext(),locale);const journeys=data.active.concat(data.completed);return <main className={styles.accountShell} dir={locale==='ar'?'rtl':'ltr'}><section className={styles.adminDetailHero}><div><span>MON ANGELCARE</span><h1>Devis & propositions</h1><p>Une vue gouvernée, reliée aux autorités opérationnelles et commerciales.</p></div><div><strong>{journeys.length}</strong><span>éléments</span></div></section><section className={styles.activeJourneySection}><div className={styles.journeyPortfolio}>{journeys.map(journey=><Link className={styles.journeyCard} href={`/angelcare-marketplace/${locale}/account/journeys/${journey.id}`} key={journey.id}><div className={styles.journeyCardTop}><span>{journeyTypeLabels[locale][journey.journey_type]}</span><small>{journey.public_reference}</small></div><h3>{journey.title}</h3><p>{statusLabels[locale][journey.status]} · {journey.current_authority}</p><div className={styles.progressTrack}><span style={{width:`${journey.completion_percent}%`}}/></div></Link>)}</div></section></main>}

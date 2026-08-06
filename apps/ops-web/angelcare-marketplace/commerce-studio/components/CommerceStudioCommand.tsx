@@ -5,8 +5,7 @@ import type { CommerceStudioData } from '../types'
 
 const studios = [
   ['/angelcare-marketplace/admin/media','Media Library','Uploader, recadrer, réutiliser et gouverner tous les médias.',ImagePlus],
-  ['/angelcare-marketplace/admin/homepage/composer','Homepage Designer 2.0','Canvas visuel, category-aware, responsive et publication instantanée.',LayoutDashboard],
-  ['/angelcare-marketplace/admin/category-native','Category-Native Engine','Schémas, studios verticaux et CSV Factory par archétype.',Sparkles],
+  ['/angelcare-marketplace/admin/homepage/composer','Homepage Composer','Composer, ordonner et publier chaque section du storefront.',LayoutDashboard],
   ['/angelcare-marketplace/admin/navigation/header','Navigation Studio','Contrôler header, mega-menu, mobile et footer.',Menu],
   ['/angelcare-marketplace/admin/catalog/items/new','Product Studio','Créer produits, services, kits, programmes, plans et variantes.',PackagePlus],
   ['/angelcare-marketplace/admin/catalog/categories/new','Category Studio','Créer hiérarchies, storefronts et assignations produits.',Tags],
