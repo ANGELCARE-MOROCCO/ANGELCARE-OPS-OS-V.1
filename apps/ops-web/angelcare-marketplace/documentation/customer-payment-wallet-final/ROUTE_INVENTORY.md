@@ -1,0 +1,35 @@
+# Route Inventory
+
+- `/angelcare-marketplace/(family)/family/account`
+- `/angelcare-marketplace/(protected)/account`
+- `/angelcare-marketplace/(protected)/admin/orders`
+- `/angelcare-marketplace/(protected)/admin/payments`
+- `/angelcare-marketplace/(protected)/admin/wallet/customers`
+- `/angelcare-marketplace/(protected)/admin/wallet`
+- `/angelcare-marketplace/(protected)/admin/wallet/policies`
+- `/angelcare-marketplace/(protected)/admin/wallet/reconciliation`
+- `/angelcare-marketplace/(protected)/admin/wallet/risk`
+- `/angelcare-marketplace/[locale]/account/action-center`
+- `/angelcare-marketplace/[locale]/account/assessments`
+- `/angelcare-marketplace/[locale]/account/bookings`
+- `/angelcare-marketplace/[locale]/account/documents`
+- `/angelcare-marketplace/[locale]/account/enrollments`
+- `/angelcare-marketplace/[locale]/account/journeys/[journeyId]`
+- `/angelcare-marketplace/[locale]/account/journeys`
+- `/angelcare-marketplace/[locale]/account/notifications`
+- `/angelcare-marketplace/[locale]/account/orders`
+- `/angelcare-marketplace/[locale]/account`
+- `/angelcare-marketplace/[locale]/account/payments`
+- `/angelcare-marketplace/[locale]/account/quotations`
+- `/angelcare-marketplace/[locale]/account/settings`
+- `/angelcare-marketplace/[locale]/account/subscriptions`
+- `/angelcare-marketplace/[locale]/account/support`
+- `/angelcare-marketplace/[locale]/account/wallet`
+- `/angelcare-marketplace/[locale]/account/wallet/privileges`
+- `/angelcare-marketplace/[locale]/account/wallet/top-up`
+- `/angelcare-marketplace/[locale]/account/wallet/transactions`
+- `/angelcare-marketplace/[locale]/auth/login`
+- `/angelcare-marketplace/[locale]/auth/recover`
+- `/angelcare-marketplace/[locale]/auth/register`
+- `/angelcare-marketplace/[locale]/auth/reset`
+- `/angelcare-marketplace/[locale]/auth/verified`

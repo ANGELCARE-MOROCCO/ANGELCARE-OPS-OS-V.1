@@ -1,5 +1,6 @@
-import {notFound} from 'next/navigation'
-import {ItemDetail} from '@/angelcare-marketplace/catalog-discovery/components/ItemDetail'
-import {getDiscoveryItem} from '@/angelcare-marketplace/catalog-discovery/repository'
-import type {CatalogLocale} from '@/angelcare-marketplace/catalog-discovery/types'
-export default async function Page({params}:{params:Promise<{locale:string;itemSlug:string}>}){const {locale,itemSlug}=await params;if(!['fr','en','ar'].includes(locale))notFound();const item=await getDiscoveryItem({locale:locale as CatalogLocale,slug:itemSlug});if(!item)notFound();return <ItemDetail item={item} locale={locale as CatalogLocale}/>}
+import { notFound } from 'next/navigation'
+import { AdaptiveExperience } from '@/angelcare-marketplace/category-native-experience/components/AdaptiveExperience'
+import { getAdaptiveExperience } from '@/angelcare-marketplace/category-native-experience/repository'
+import { categoryNativeLocale } from '@/angelcare-marketplace/category-native-experience/validation'
+export const dynamic = 'force-dynamic'
+export default async function Page({params}:{params:Promise<{locale:string;itemSlug:string}>}){const {locale,itemSlug}=await params;const safe=categoryNativeLocale(locale);const data=await getAdaptiveExperience({locale:safe,slug:itemSlug});if(!data){notFound()}return <AdaptiveExperience data={data}/>}
