@@ -1173,7 +1173,7 @@ export function CareLinkOpsProductionDashboard({ initialPayload }: { initialPayl
       overview: '/carelink-ops',
       dispatch: '/carelink-ops/dispatch',
       missions: '/carelink-ops/missions',
-      agents: '/caregivers',
+      agents: '/carelink-ops/agents',
       schedule: '/carelink-ops/schedule',
       incidents: '/carelink-ops/incidents',
       reports: '/carelink-ops/reports',
@@ -1198,7 +1198,7 @@ export function CareLinkOpsProductionDashboard({ initialPayload }: { initialPayl
       const clickableTextForAgents = (clickable.textContent || '').trim().toLowerCase()
       if (clickableTextForAgents === 'agents' || clickableTextForAgents.includes('agents')) {
         event.preventDefault()
-        window.location.href = '/caregivers'
+        window.location.href = '/carelink-ops/agents'
         return
       }
       const match = Object.entries(routes).find(([key]) => label === key || label.includes(key))
@@ -1575,7 +1575,7 @@ const [loading, setLoading] = useState(false)
             <div className="mt-3 text-2xl font-black tracking-[-0.03em] text-white"><span style={{ color: "#ffffff" }}><span className="!text-white" style={{ color: "#ffffff" }}>Operational shortcuts</span></span></div>
             <p className="mt-1 text-sm font-medium text-slate-200"><span style={{ color: "#e2e8f0" }}><span className="!text-white" style={{ color: "#ffffff" }}>Premium jump actions across the CareLink operational chain.</span></span></p>
             <div className="mt-4 grid gap-2 sm:grid-cols-2">
-              <a href="/caregivers" className="rounded-2xl border border-white/15 bg-white/10 px-4 py-3 text-sm font-black text-white shadow-sm transition hover:border-white/25 hover:bg-white/15"><span className="text-white"><span className="!text-white" style={{ color: "#ffffff" }}>Workforce command</span></span></a>
+              <a href="/carelink-ops/agents" className="rounded-2xl border border-white/15 bg-white/10 px-4 py-3 text-sm font-black text-white shadow-sm transition hover:border-white/25 hover:bg-white/15"><span className="text-white"><span className="!text-white" style={{ color: "#ffffff" }}>Workforce command</span></span></a>
               <a href="/carelink-ops/schedule" className="rounded-2xl border border-white/15 bg-white/10 px-4 py-3 text-sm font-black text-white shadow-sm transition hover:border-white/25 hover:bg-white/15"><span className="text-white"><span className="!text-white" style={{ color: "#ffffff" }}>Schedule & coverage</span></span></a>
               <a href="/carelink-ops/reports" className="rounded-2xl border border-white/15 bg-white/10 px-4 py-3 text-sm font-black text-white shadow-sm transition hover:border-white/25 hover:bg-white/15"><span className="text-white"><span className="!text-white" style={{ color: "#ffffff" }}>Reports validation</span></span></a>
               <a href="/carelink-ops/incidents" className="rounded-2xl border border-white/15 bg-white/10 px-4 py-3 text-sm font-black text-white shadow-sm transition hover:border-white/25 hover:bg-white/15"><span className="text-white"><span className="!text-white" style={{ color: "#ffffff" }}>Incidents & alerts</span></span></a>

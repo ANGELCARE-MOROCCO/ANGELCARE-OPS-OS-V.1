@@ -52,16 +52,16 @@ const sidebarMain = [
   ['Sales Pipeline', '/sales', '🚀', 'Sync'],
   ['Voice Center', '/voice-center', '☎', 'Live'],
   ['Tasks & Approvals', '/revenue-command-center/tasks', '☑', '23'],
-  ['Reports & Analytics', '/reports', '▥', ''],
-  ['Intelligence Hub', '/reports', '◎', ''],
+  ['Reports & Analytics', '/csa-home', '▥', ''],
+  ['Intelligence Hub', '/csa-home', '◎', ''],
 ]
 
 const sidebarOps = [
   ['Recovery Operations', '/revenue-command-center', '✧', ''],
-  ['Escalations Board', '/incidents', '▣', '11'],
+  ['Escalations Board', '/services/incidents', '▣', '11'],
   ['CSA Workflows', '/services', '⌬', ''],
   ['Sales Executive Control', '/sales', '🚀', 'Live'],
-  ['Knowledge Base', '/staff-services', '▤', ''],
+  ['Knowledge Base', '/csa-home', '▤', ''],
 ]
 
 const kpis = [

@@ -731,7 +731,6 @@ export default function ProspectsDirectoryCommandCenter() {
           <CommandNavButton href="/revenue-command-center/prospects/directory" icon={<MapPinned />} label="Directory" detail={`${cityStats.length} active cities`} active />
           <CommandNavButton href="/revenue-command-center/prospects/pipeline" icon={<Layers3 />} label="Pipeline" detail={`${mad(totals.totalValue)} weighted`} />
           <CommandNavButton href="/revenue-command-center/appointments" icon={<CalendarDays />} label="Appointments" detail={`${selectedCityStats.city} schedule`} />
-          <CommandNavButton href="/production-persistence-center" icon={<DatabaseZap />} label="Persistence" detail={lastSync ? lastSync.toLocaleTimeString() : "syncing"} />
         </section>
 
         <section className="mb-4 grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-[1fr_1fr_1fr_1fr]">

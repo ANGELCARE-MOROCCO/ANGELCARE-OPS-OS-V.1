@@ -31,12 +31,11 @@ export const DEFAULT_MODULES: FactoryModule[] = [
   { key: 'connect', label: 'AngelCare Connect', route_prefix: '/connect', owner_team: 'Engineering / Communication', status: 'operational', visibility: 'visible', rollout_stage: 'production', requires_realtime: true, requires_external_service: true, description: 'Rooms, chat, calls, tasks, notifications, LiveKit, and user collaboration.' },
   { key: 'operations', label: 'Operations', route_prefix: '/operations', owner_team: 'Operations', status: 'operational', visibility: 'visible', rollout_stage: 'production', requires_realtime: true, description: 'Missions, availability, replacements, pointage and operational execution.' },
   { key: 'billing', label: 'Billing', route_prefix: '/billing', owner_team: 'Finance', status: 'warning', visibility: 'visible', rollout_stage: 'production', description: 'Invoices, activation, contract billing, finance reports, and payment readiness.' },
-  { key: 'staff_portal', label: 'Staff Portal', route_prefix: '/staff-home', owner_team: 'Staff Operations', status: 'operational', visibility: 'visible', rollout_stage: 'production', requires_realtime: true, description: 'Staff services, memos, command, intelligence, access check and field staff home.' },
 ]
 
 export const DEFAULT_OPTION_GROUPS: FactoryOptionGroup[] = [
   { key: 'cities', label: 'Cities', description: 'Global cities available across Revenue, HR, Academy, Market OS, Service OS and operations.', module_scope: ['revenue_command_center', 'market_os', 'hr', 'academy', 'service_os', 'operations'], is_global: true, is_enabled: true },
-  { key: 'departments', label: 'Departments', description: 'Departments used in HR, staff portal, permissions, connect tasks and assignment flows.', module_scope: ['hr', 'staff_portal', 'connect', 'operations'], is_global: true, is_enabled: true },
+  { key: 'departments', label: 'Departments', description: 'Departments used in HR, permissions, connect tasks and assignment flows.', module_scope: ['hr', 'connect', 'operations'], is_global: true, is_enabled: true },
   { key: 'service_categories', label: 'Service Categories', description: 'Service catalog categories exposed to services, market, revenue, and operations.', module_scope: ['service_os', 'revenue_command_center', 'market_os', 'operations'], is_global: true, is_enabled: true },
   { key: 'lead_sources', label: 'Lead Sources', description: 'Revenue and market acquisition channels.', module_scope: ['revenue_command_center', 'market_os'], is_global: false, is_enabled: true },
   { key: 'task_priorities', label: 'Task Priorities', description: 'Shared priority model for tasks, incidents, revenue, connect and HR work.', module_scope: ['connect', 'hr', 'revenue_command_center', 'incidents'], is_global: true, is_enabled: true },
@@ -48,8 +47,8 @@ export const DEFAULT_OPTIONS: FactoryOption[] = [
   { group_key: 'cities', value: 'casablanca', label: 'Casablanca', description: 'Primary AngelCare operating city', availability_scope: ['revenue_command_center', 'market_os', 'hr', 'academy', 'service_os'], metadata_json: { country: 'Morocco', region: 'Grand Casablanca' }, is_enabled: true, is_default: true, sort_order: 10 },
   { group_key: 'cities', value: 'rabat', label: 'Rabat', description: 'Capital region operations', availability_scope: ['revenue_command_center', 'market_os', 'hr', 'academy', 'service_os'], metadata_json: { country: 'Morocco', region: 'Rabat-Salé-Kénitra' }, is_enabled: true, sort_order: 20 },
   { group_key: 'cities', value: 'marrakech', label: 'Marrakech', description: 'Expansion city', availability_scope: ['revenue_command_center', 'market_os', 'service_os'], metadata_json: { country: 'Morocco', region: 'Marrakech-Safi' }, is_enabled: true, sort_order: 30 },
-  { group_key: 'departments', value: 'direction', label: 'Direction', availability_scope: ['hr', 'staff_portal', 'connect'], is_enabled: true, sort_order: 10 },
-  { group_key: 'departments', value: 'human_resources', label: 'Human Resources', availability_scope: ['hr', 'staff_portal', 'connect'], is_enabled: true, sort_order: 20 },
+  { group_key: 'departments', value: 'direction', label: 'Direction', availability_scope: ['hr', 'connect'], is_enabled: true, sort_order: 10 },
+  { group_key: 'departments', value: 'human_resources', label: 'Human Resources', availability_scope: ['hr', 'connect'], is_enabled: true, sort_order: 20 },
   { group_key: 'departments', value: 'operations', label: 'Operations', availability_scope: ['operations', 'hr', 'connect'], is_enabled: true, sort_order: 30 },
   { group_key: 'departments', value: 'academy', label: 'Academy', availability_scope: ['academy', 'hr', 'connect'], is_enabled: true, sort_order: 40 },
   { group_key: 'task_priorities', value: 'urgent', label: 'Urgent', color: '#ef4444', is_enabled: true, sort_order: 10 },

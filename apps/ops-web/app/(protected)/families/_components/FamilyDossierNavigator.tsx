@@ -266,9 +266,9 @@ export default function FamilyDossierNavigator({ data, canEdit = true, canArchiv
 
       {tab === 'incidents' ? (
         <section className={styles.workspacePanel}>
-          <PanelHeader title="Incidents & protection de la relation" text="Événements explicitement rattachés à la famille." action={<Link href="/incidents/new" className={styles.inlineAction}>Déclarer un incident<ArrowRight size={14} /></Link>} />
+          <PanelHeader title="Incidents & protection de la relation" text="Événements explicitement rattachés à la famille." action={<Link href="/services/incidents" className={styles.inlineAction}>Déclarer un incident<ArrowRight size={14} /></Link>} />
           <div className={styles.relatedList}>
-            {incidents.map((incident) => <RelatedItem key={incident.id} href={`/incidents/${incident.id}`} title={`Incident #${incident.id} · ${text(incident.title || incident.incident_type, 'Événement opérationnel')}`} status={incident.status || incident.severity} date={incident.created_at || incident.incident_date} meta={`${text(incident.severity || incident.priority, 'Sévérité non renseignée')} · ${formatDate(incident.created_at || incident.incident_date, true)}`} />)}
+            {incidents.map((incident) => <RelatedItem key={incident.id} href="/services/incidents" title={`Incident #${incident.id} · ${text(incident.title || incident.incident_type, 'Événement opérationnel')}`} status={incident.status || incident.severity} date={incident.created_at || incident.incident_date} meta={`${text(incident.severity || incident.priority, 'Sévérité non renseignée')} · ${formatDate(incident.created_at || incident.incident_date, true)}`} />)}
             {!incidents.length ? <EmptyState title="Aucun incident rattaché" text="Aucun événement qualité ou sécurité n’est directement lié à cette famille dans les données chargées." /> : null}
           </div>
         </section>

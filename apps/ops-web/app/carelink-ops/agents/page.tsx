@@ -418,7 +418,7 @@ export default async function CareLinkOpsAgentsPage({
                     <td><span className={`rounded-full border px-3 py-1 text-xs font-black ${statusTone(statusOf(c))}`}>{statusOf(c)}</span></td>
                     <td className="font-black text-slate-950">{readiness.score}%</td>
                     <td className="max-w-[260px] truncate font-bold text-slate-500">{skillsOf(c).join(', ') || '—'}</td>
-                    <td><Link href={`/caregivers/${c.id}`} className="rounded-xl bg-slate-950 px-3 py-2 text-xs font-black text-white">Open</Link></td>
+                    <td><Link href={`/carelink-ops/agents?caregiver_id=${c.id}`} className="rounded-xl bg-slate-950 px-3 py-2 text-xs font-black text-white">Open</Link></td>
                   </tr>
                 )
               })}

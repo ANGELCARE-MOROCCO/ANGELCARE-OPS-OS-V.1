@@ -136,9 +136,7 @@ export function buildOpsosRuntimeSnapshot(): OpsosRuntimeSnapshot {
     { id: 'r3', route: '/patients', page: 'Patients', module: 'Operations', status: 'degraded', loadTimeMs: 1400, memoryMb: 238, crashes24h: 2, apiCalls: 28, slowInteractions: 4, jsRisk: 'Medium', safeMode: true, lastDeploy: '2h ago' },
     { id: 'r4', route: '/appointments', page: 'Appointments', module: 'Planning', status: 'healthy', loadTimeMs: 682, memoryMb: 132, crashes24h: 0, apiCalls: 12, slowInteractions: 0, jsRisk: 'Low', safeMode: false, lastDeploy: '2h ago' },
     { id: 'r5', route: '/billing', page: 'Billing', module: 'Finance', status: 'healthy', loadTimeMs: 812, memoryMb: 164, crashes24h: 0, apiCalls: 16, slowInteractions: 0, jsRisk: 'Low', safeMode: false, lastDeploy: '2h ago' },
-    { id: 'r6', route: '/reports', page: 'Reports', module: 'Analytics', status: 'warning', loadTimeMs: 2100, memoryMb: 312, crashes24h: 3, apiCalls: 36, slowInteractions: 18, jsRisk: 'Medium', safeMode: false, lastDeploy: '2h ago' },
     { id: 'r7', route: '/settings', page: 'Settings', module: 'Admin', status: 'healthy', loadTimeMs: 598, memoryMb: 118, crashes24h: 0, apiCalls: 9, slowInteractions: 0, jsRisk: 'Low', safeMode: false, lastDeploy: '2h ago' },
-    { id: 'r8', route: '/profile', page: 'Profile', module: 'Identity', status: 'healthy', loadTimeMs: 576, memoryMb: 104, crashes24h: 0, apiCalls: 11, slowInteractions: 0, jsRisk: 'Low', safeMode: false, lastDeploy: '2h ago' },
     { id: 'r9', route: '/market-os/campaign-lifecycle', page: 'Campaign Lifecycle', module: 'Market OS', status: 'warning', loadTimeMs: 4860, memoryMb: 512, crashes24h: 5, apiCalls: 152, slowInteractions: 27, jsRisk: 'High', safeMode: true, lastDeploy: '30 sec ago' },
   ]
 
@@ -167,7 +165,6 @@ export function buildOpsosRuntimeSnapshot(): OpsosRuntimeSnapshot {
   ]
 
   const repairQueue: OpsosRepairQueueItem[] = [
-    { id: 'q1', priority: 'Critical', type: 'Freeze', target: '/reports', issue: 'High error rate (5xx)', detected: '2m ago', status: 'pending', rollback: true },
     { id: 'q2', priority: 'High', type: 'Memory', target: 'Dashboard', issue: 'Heap leak suspected', detected: '5m ago', status: 'simulated', rollback: true },
     { id: 'q3', priority: 'High', type: 'Modal', target: 'PatientSearchModal', issue: 'Z-index conflict', detected: '8m ago', status: 'pending', rollback: true },
     { id: 'q4', priority: 'Medium', type: 'Performance', target: '/patients', issue: 'Slow load P95 > 1.5s', detected: '12m ago', status: 'pending', rollback: true },
@@ -176,7 +173,6 @@ export function buildOpsosRuntimeSnapshot(): OpsosRuntimeSnapshot {
   ]
 
   const audit: OpsosAuditEvent[] = [
-    { id: 'a1', time: '12:01:22', operator: 'System', category: 'Runtime', event: 'Route recovery executed', target: '/reports', status: 'success' },
     { id: 'a2', time: '12:01:01', operator: 'A. Patel', category: 'Memory', event: 'Optimization applied', target: 'Dashboard', status: 'success' },
     { id: 'a3', time: '12:00:45', operator: 'S. Kim', category: 'Feature Flag', event: 'Rollout updated to 75%', target: 'new_nav_experience', status: 'success' },
     { id: 'a4', time: '12:00:12', operator: 'System', category: 'Alert', event: 'High memory risk detected', target: 'Dashboard', status: 'warning' },

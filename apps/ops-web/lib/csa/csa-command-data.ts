@@ -53,7 +53,7 @@ export const csaWorkstreams = [
   },
   {
     title: 'Quality & Escalations',
-    href: '/incidents',
+    href: '/services/incidents',
     module: 'Quality',
     description: 'Track complaints, urgent service problems, family concerns and internal resolution ownership.',
     priority: 'high',

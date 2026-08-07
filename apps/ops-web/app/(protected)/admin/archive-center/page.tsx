@@ -86,7 +86,7 @@ export default async function ArchiveCenterPage() {
         tableName="caregivers"
         getLabel={(item: any) => item.full_name || `Caregiver #${item.id}`}
         getMeta={(item: any) => `${item.city || 'Ville inconnue'} • ${item.current_status || item.status || '—'}`}
-        hrefBuilder={(item: any) => `/caregivers/${item.id}`}
+        hrefBuilder={(item: any) => `/carelink-ops/agents?caregiver_id=${item.id}`}
       />
 
       <ArchiveSection

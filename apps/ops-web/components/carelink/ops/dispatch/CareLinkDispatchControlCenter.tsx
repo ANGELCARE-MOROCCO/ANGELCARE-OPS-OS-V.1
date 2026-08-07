@@ -1173,7 +1173,7 @@ const CARELINK_OPS_SIDE_NAV = [
   { label: 'Overview', href: '/carelink-ops' },
   { label: 'Dispatch', href: '/carelink-ops/dispatch' },
   { label: 'Missions', href: '/carelink-ops/missions' },
-  { label: 'Agents', href: '/caregivers' },
+  { label: 'Agents', href: '/carelink-ops/agents' },
   { label: 'Schedule', href: '/carelink-ops/schedule' },
   { label: 'Incidents', href: '/carelink-ops/incidents' },
   { label: 'Reports', href: '/carelink-ops/reports' },

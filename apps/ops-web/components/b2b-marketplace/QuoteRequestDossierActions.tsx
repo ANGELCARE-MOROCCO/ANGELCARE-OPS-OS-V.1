@@ -93,7 +93,7 @@ export default function QuoteRequestDossierActions({ id, currentStatus, assigned
   function prepareAndPrint() {
     startTransition(() => { void run('Devis A4 préparé', async () => {
       await requestJSON(`/api/b2b-marketplace/admin/quote-requests/${id}/devis`, { method: 'POST', body: JSON.stringify({ print: true, total_mad: computedTotal }) })
-      window.open(`/devis-b2b/${id}`, '_blank', 'noopener,noreferrer')
+      window.open(`/admin/b2b-marketplace/quote-requests/${id}`, '_blank', 'noopener,noreferrer')
     }, { reload: false }) })
   }
 

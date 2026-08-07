@@ -153,7 +153,7 @@ export async function getCSADeepOperationalSnapshot() {
     ...openIncidents.slice(0, 3).map((incident) => ({
       title: `Escalation: ${String(pick(incident, ['title', 'type', 'description'], 'incident'))}`,
       time: String(pick(incident, ['updated_at', 'created_at'], 'live')),
-      href: '/incidents',
+      href: '/services/incidents',
     })),
     ...openServices.slice(0, 3).map((service) => ({
       title: `Service activation: ${String(pick(service, ['title', 'name', 'service_name'], 'service'))}`,
@@ -171,7 +171,7 @@ export async function getCSADeepOperationalSnapshot() {
     { label: 'Priority Families', value: String(familyRiskBoard.length || openFamilies.length || 0), href: '/families', icon: '👥' },
     { label: 'Lead Follow-ups', value: String(openLeads.length), href: '/leads', icon: '👤' },
     { label: 'Active Services', value: String(openServices.length), href: '/services', icon: '🧩' },
-    { label: 'Open Incidents', value: String(openIncidents.length), href: '/incidents', icon: '⚠️' },
+    { label: 'Open Incidents', value: String(openIncidents.length), href: '/services/incidents', icon: '⚠️' },
     { label: 'Revenue at Risk', value: revenueCommand.valueAtRisk, href: '/revenue-command-center', icon: '💰' },
     { label: 'Sales Handoffs', value: String(openSales.length), href: '/sales', icon: '🚀' },
   ]
@@ -190,7 +190,7 @@ export async function getCSADeepOperationalSnapshot() {
     { module: 'Leads Module', count: leads.length, href: '/leads', status: 'connected' },
     { module: 'Services Module', count: services.length, href: '/services', status: 'connected' },
     { module: 'Sales Module', count: sales.length, href: '/sales', status: 'connected' },
-    { module: 'Complaints & Escalations', count: incidents.length, href: '/incidents', status: 'connected' },
+    { module: 'Complaints & Escalations', count: incidents.length, href: '/services/incidents', status: 'connected' },
     { module: 'Voice Center', count: voiceLogs.length, href: '/voice-center', status: 'connected' },
   ]
 
@@ -216,7 +216,7 @@ export async function getCSADeepOperationalSnapshot() {
     {
       title: 'Escalation Control',
       detail: `${openIncidents.length} incidents need closure ownership.`,
-      href: '/incidents',
+      href: '/services/incidents',
       severity: openIncidents.length > 0 ? 'high' : 'stable',
     },
   ]

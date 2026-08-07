@@ -294,7 +294,7 @@ export function CareLinkCaregiverPremiumGrid({ caregivers }: { caregivers: AnyRe
                 </button>
 
                 <Link
-                  href={`/operations/replacements?caregiver_id=${caregiver.id}`}
+                  href={`/carelink-ops/agents?caregiver_id=${caregiver.id}`}
                   onClick={(event) => event.stopPropagation()}
                   className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-black text-slate-700 hover:bg-slate-50"
                 >

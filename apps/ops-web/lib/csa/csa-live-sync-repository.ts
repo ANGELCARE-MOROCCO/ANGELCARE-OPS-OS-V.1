@@ -25,7 +25,7 @@ function hrefFor(source: string) {
   if (source === 'services') return '/services'
   if (source === 'sales') return '/sales'
   if (source === 'revenue') return '/revenue-command-center'
-  if (source === 'incidents') return '/incidents'
+  if (source === 'incidents') return '/services/incidents'
   return '/csa-home'
 }
 
@@ -78,7 +78,7 @@ export async function getCsaLiveSnapshot() {
     ...openIncidents.slice(0, 3).map((incident) => ({
       title: `Escalation: ${text(first(incident, ['title', 'type', 'description'], 'incident'))}`,
       time: text(first(incident, ['updated_at', 'created_at'], 'recent')),
-      href: '/incidents',
+      href: '/services/incidents',
     })),
     ...pendingServices.slice(0, 3).map((service) => ({
       title: `Service activation: ${text(first(service, ['title', 'name', 'service_name'], 'service'))}`,
@@ -92,7 +92,7 @@ export async function getCsaLiveSnapshot() {
     { label: 'Lead Follow-ups', value: String(openLeads.length || csaPortalData.kpis[1].value), href: '/leads', icon: '📞' },
     { label: 'Revenue at Risk', value: csaPortalData.kpis[2].value, href: '/revenue-command-center', icon: '💎' },
     { label: 'Service Activations', value: String(pendingServices.length || csaPortalData.kpis[3].value), href: '/services', icon: '🧩' },
-    { label: 'Open Escalations', value: String(openIncidents.length || csaPortalData.kpis[4].value), href: '/incidents', icon: '🚨' },
+    { label: 'Open Escalations', value: String(openIncidents.length || csaPortalData.kpis[4].value), href: '/services/incidents', icon: '🚨' },
   ]
 
   return {
@@ -119,7 +119,7 @@ export async function getCsaLiveSnapshot() {
       { module: 'Families', table: 'families', count: families.length, href: '/families' },
       { module: 'Services', table: 'services', count: services.length, href: '/services' },
       { module: 'Sales', table: 'sales', count: sales.length, href: '/sales' },
-      { module: 'Incidents', table: 'incidents', count: incidents.length, href: '/incidents' },
+      { module: 'Incidents', table: 'incidents', count: incidents.length, href: '/services/incidents' },
       { module: 'Tasks', table: 'tasks', count: tasks.length, href: '/revenue-command-center/tasks' },
     ],
   }

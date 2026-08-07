@@ -4,12 +4,12 @@ export const csaPortalData = {
     { label: 'Lead Follow-ups', value: '47', href: '/leads', icon: '📞' },
     { label: 'Revenue at Risk', value: '41.8K MAD', href: '/revenue-command-center', icon: '💎' },
     { label: 'Service Activations', value: '22', href: '/services', icon: '🧩' },
-    { label: 'Open Escalations', value: '11', href: '/incidents', icon: '🚨' }
+    { label: 'Open Escalations', value: '11', href: '/services/incidents', icon: '🚨' }
   ],
   nav: [
     ['C.S.A Home','/csa-home','🎧'], ['Families','/families','🏡'], ['Leads','/leads','📈'],
     ['Services','/services','🧩'], ['Sales','/sales','🚀'], ['Revenue','/revenue-command-center','💎'],
-    ['Complaints','/incidents','🚨'], ['Voice','/voice-center','☎️'], ['Tasks','/revenue-command-center/tasks','✅'], ['Reports','/reports','📊']
+    ['Complaints','/services/incidents','🚨'], ['Voice','/voice-center','☎️'], ['Tasks','/revenue-command-center/tasks','✅'], ['Reports','/csa-home','📊']
   ],
   familyQueue: [
     ['Famille Benali','Service start confirmation','Critical','/services'],
@@ -23,7 +23,7 @@ export const csaPortalData = {
     ['Service Activation Desk','/services','Start conditions, missing info, activation blockers and launch confirmation.'],
     ['Revenue Risk Radar','/revenue-command-center','Late decisions, payment risk, objections and deal recovery.'],
     ['Sales Handoff Board','/sales','Qualified leads, proposal handoff, sales notes and conversion support.'],
-    ['Complaints & Escalations','/incidents','Urgent problems, service quality issues and closure ownership.']
+    ['Complaints & Escalations','/services/incidents','Urgent problems, service quality issues and closure ownership.']
   ],
   ai: [
     'Call Famille El Mansouri before 12:30 to recover proposal delay.',
@@ -33,7 +33,7 @@ export const csaPortalData = {
   ],
   activity: [
     ['New lead assigned from Facebook campaign','3 min ago','/leads'],
-    ['Family complaint marked high priority','18 min ago','/incidents'],
+    ['Family complaint marked high priority','18 min ago','/services/incidents'],
     ['Service activation approved','42 min ago','/services'],
     ['Revenue recovery task created','1h ago','/revenue-command-center/tasks']
   ]

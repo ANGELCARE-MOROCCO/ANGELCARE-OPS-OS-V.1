@@ -9,7 +9,7 @@ export default function PrintButtonInterceptor() {
     if (!pathname || pathname.includes('/devis-print')) return
     const id = pathname.split('/quote-requests/')[1]?.split('/')[0]
     if (!id) return
-    const openPrint = () => window.open(`/devis-b2b/${id}`, '_blank', 'noopener,noreferrer')
+    const openPrint = () => window.open(`/admin/b2b-marketplace/quote-requests/${id}`, '_blank', 'noopener,noreferrer')
     const onClick = (event: MouseEvent) => {
       const target = event.target as HTMLElement | null
       const button = target?.closest('button, a') as HTMLElement | null

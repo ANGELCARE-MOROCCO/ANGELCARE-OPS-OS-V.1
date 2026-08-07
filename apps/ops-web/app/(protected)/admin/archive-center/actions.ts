@@ -37,7 +37,7 @@ export async function restoreArchivedRecord(formData: FormData) {
 
   revalidatePath('/admin/archive-center')
   revalidatePath('/missions')
-  revalidatePath('/caregivers')
+  revalidatePath('/carelink-ops/agents')
   revalidatePath('/leads')
   revalidatePath('/families')
   revalidatePath('/incidents')

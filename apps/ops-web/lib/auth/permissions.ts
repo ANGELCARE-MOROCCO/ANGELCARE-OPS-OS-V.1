@@ -328,12 +328,8 @@ export const ROLE_PERMISSION_TEMPLATES: Record<string, string[]> = {
 
 export const MODULE_ACCESS_LINKS = [
   { label: 'Executive Dashboard', href: '/', permission: 'profile.view', group: 'Control Center', icon: '📡', badge: 'Home', order: 1 },
-  { label: 'Profile', href: '/profile', permission: 'profile.view', group: 'Control Center', icon: '👤', order: 2 },
-  { label: 'Reports', href: '/reports', permission: 'reports.view', group: 'Control Center', icon: '📊', order: 3 },
 
   { label: 'Sales Cockpit', href: '/sales', permission: 'sales.view', group: 'Sales CRM', icon: '🚀', order: 10 },
-  { label: 'Leads', href: '/leads', permission: 'leads.view', group: 'Sales CRM', icon: '📈', order: 11 },
-  { label: 'Leads Command Center', href: '/leads/command-center', permission: 'leads.view', group: 'Sales CRM', icon: '🎯', order: 12 },
   { label: 'Familles', href: '/families', permission: 'families.view', group: 'Sales CRM', icon: '🏡', order: 13 },
   { label: 'Family Intelligence', href: '/families/intelligence', permission: 'families.view', group: 'Sales CRM', icon: '🧠', order: 14 },
 
@@ -383,12 +379,6 @@ export const MODULE_ACCESS_LINKS = [
   { label: 'Équipements interventions', href: '/interventions/equipements', permission: 'interventions.view', group: 'Interventions OS', icon: '🩺', order: 49.8 },
   { label: 'Facturation interventions', href: '/interventions/facturation', permission: 'interventions.billing', group: 'Interventions OS', icon: '💳', order: 49.9 },
 
-  { label: 'Operations', href: '/operations', permission: 'operations.view', group: 'Operations', icon: '🧭', order: 50 },
-  { label: 'Disponibilités', href: '/operations/availability', permission: 'operations.view', group: 'Operations', icon: '🟢', order: 51 },
-  { label: 'Remplacements', href: '/operations/replacements', permission: 'operations.view', group: 'Operations', icon: '🔄', order: 52 },
-  { label: 'Missions', href: '/missions', permission: 'missions.view', group: 'Operations', icon: '🛫', order: 53 },
-  { label: 'Mission Command Center', href: '/missions/command-center', permission: 'missions.view', group: 'Operations', icon: '📍', order: 54 },
-  { label: 'Pointage', href: '/pointage', permission: 'pointage.view', group: 'Operations', icon: '🕒', order: 55 },
 
   { label: 'Contrats', href: '/contracts', permission: 'contracts.view', group: 'Contracts & Billing', icon: '📦', order: 60 },
   { label: 'Contracts Command Center', href: '/contracts/command-center', permission: 'contracts.view', group: 'Contracts & Billing', icon: '🏛️', order: 61 },
@@ -403,26 +393,16 @@ export const MODULE_ACCESS_LINKS = [
   { label: 'Recruitment', href: '/hr/recruitment', permission: 'hr.recruitment.view', group: 'Workforce & HR', icon: '🧲', order: 73 },
   { label: 'Interview Questionnaires', href: '/hr/recruitment/questionnaires', permission: 'hr.recruitment.questionnaires.view', group: 'Workforce & HR', icon: '🧾', order: 73.1 },
   { label: 'Employees', href: '/hr/employees', permission: 'hr.staff.view', group: 'Workforce & HR', icon: '🪪', order: 74 },
-  { label: 'Intervenantes', href: '/caregivers', permission: 'caregivers.view', group: 'Workforce & HR', icon: '👩‍👧', order: 75 },
-  { label: 'Workforce', href: '/caregivers/workforce', permission: 'caregivers.view', group: 'Workforce & HR', icon: '📋', order: 76 },
   { label: 'Academy', href: '/academy', permission: 'academy.view', group: 'Workforce & HR', icon: '🎓', order: 77 },
 
   { label: 'Services', href: '/services', permission: 'services.view', group: 'Products & Services', icon: '🧩', order: 80 },
   { label: 'Voice Center', href: '/voice-center', permission: 'voice.view', group: 'Products & Services', icon: '☎️', order: 81 },
   { label: 'AngelCare Connect', href: '/voice-center', permission: 'voice.view', group: 'Products & Services', icon: '💬', order: 82 },
 
-  { label: 'Incidents', href: '/incidents', permission: 'incidents.view', group: 'Quality & Risk', icon: '🚨', order: 90 },
   { label: 'Admin Archive Center', href: '/admin/archive-center', permission: 'admin.view', group: 'Quality & Risk', icon: '🗄️', order: 91 },
 
-  { label: 'Staff Portal', href: '/staff-home', permission: 'staff_portal.view', group: 'Staff Portal', icon: '🏠', order: 100 },
-  { label: 'Staff Services', href: '/staff-services', permission: 'staff_services.view', group: 'Staff Portal', icon: '🧰', order: 101 },
-  { label: 'Staff Services Admin', href: '/staff-services/admin', permission: 'staff_services.admin', group: 'Staff Portal', icon: '🔧', order: 102 },
-  { label: 'Staff Memos', href: '/staff-memos', permission: 'staff_memos.admin', group: 'Staff Portal', icon: '📝', order: 103 },
-  { label: 'Team Command', href: '/team-command', permission: 'staff_portal.manager', group: 'Staff Portal', icon: '🧑‍💼', order: 104 },
-  { label: 'Staff Portal Intelligence', href: '/staff-portal-intelligence', permission: 'staff_portal.intelligence', group: 'Staff Portal', icon: '🧠', order: 105 },
 
   { label: 'Administration', href: '/users', permission: 'users.view', group: 'Administration', icon: '🔐', order: 120 },
-  { label: 'Locations', href: '/locations', permission: 'locations.view', group: 'Administration', icon: '📍', order: 121 },
 ] as const
 
 export type ModuleKey = keyof typeof MODULE_PERMISSIONS
@@ -430,11 +410,8 @@ export type ModuleKey = keyof typeof MODULE_PERMISSIONS
 export const MODULE_ACCESS = [
   { key: 'csa.home', href: '/csa-home' },
   { key: 'marketing.home', href: '/market-os/marketing-home' },
-  { key: 'profile.view', href: '/profile' },
-  { key: 'staff_portal.view', href: '/staff-home' },
   { key: 'market_os.view', href: '/market-os' },
   { key: 'hr.view', href: '/hr' },
-  { key: 'operations.view', href: '/operations' },
   { key: 'interventions.view', href: '/interventions/command' },
   { key: 'voice.view', href: '/voice-center' },
   { key: 'revenue_os.view', href: '/revenue-command-os' },
@@ -448,9 +425,6 @@ export const MODULE_ACCESS = [
   { key: 'billing.view', href: '/billing' },
   { key: 'academy.view', href: '/academy' },
   { key: 'users.view', href: '/users' },
-  { key: 'staff_services.view', href: '/staff-services' },
-  { key: 'staff_portal.manager', href: '/team-command' },
-  { key: 'staff_memos.admin', href: '/staff-memos' },
 ] as const
 
 function normalizeRole(userOrRole: any) {

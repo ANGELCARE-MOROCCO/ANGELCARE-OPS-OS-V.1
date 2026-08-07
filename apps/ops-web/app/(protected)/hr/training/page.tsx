@@ -1054,7 +1054,7 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
     </nav>
-    <Link href="/ai-command-center/hr-copilot" className="mt-4 flex items-center justify-between rounded-2xl border border-violet-200 bg-violet-50 px-4 py-3 text-sm font-black text-violet-700 shadow-sm"><span>Ask Angel AI</span><Sparkles className="h-4 w-4" /></Link>
+    <Link href="/ai-provider-control" className="mt-4 flex items-center justify-between rounded-2xl border border-violet-200 bg-violet-50 px-4 py-3 text-sm font-black text-violet-700 shadow-sm"><span>Ask Angel AI</span><Sparkles className="h-4 w-4" /></Link>
   </aside>
 }
 

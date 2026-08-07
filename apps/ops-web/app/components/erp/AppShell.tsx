@@ -43,8 +43,6 @@ const NAV_GROUPS: NavGroup[] = [
     accent: '#38bdf8',
     items: [
       { label: 'Dashboard', href: '/', icon: '📡', badge: 'Live', keywords: ['home', 'command', 'overview'] },
-      { label: 'Operations Hub', href: '/operations', icon: '🧭', keywords: ['ops', 'field', 'dispatch'] },
-      { label: 'Reports', href: '/reports', icon: '📊', keywords: ['analytics', 'reporting', 'metrics'] },
     ],
   },
   {
@@ -52,7 +50,6 @@ const NAV_GROUPS: NavGroup[] = [
     accent: '#f97316',
     items: [
       { label: 'Sales Cockpit', href: '/sales', icon: '🚀', badge: 'New', keywords: ['sales', 'crm', 'pipeline'] },
-      { label: 'Leads', href: '/leads', icon: '📈', keywords: ['prospects', 'inquiries'] },
       { label: 'Families CRM', href: '/families', icon: '🏡', keywords: ['parents', 'customers', 'clients'] },
       { label: 'Institutions', href: '/sales#institutions', icon: '🏫', keywords: ['schools', 'partners', 'b2b'] },
       { label: 'Orders', href: '/sales/orders', icon: '🧾', keywords: ['orders', 'sales orders'] },
@@ -88,10 +85,6 @@ const NAV_GROUPS: NavGroup[] = [
     group: 'Operations',
     accent: '#06b6d4',
     items: [
-      { label: 'Missions', href: '/missions', icon: '🛫', keywords: ['missions', 'dispatch'] },
-      { label: 'Pointage', href: '/pointage', icon: '🕒', keywords: ['attendance', 'time'] },
-      { label: 'Availability', href: '/operations/availability', icon: '🟢', keywords: ['availability'] },
-      { label: 'Replacements', href: '/operations/replacements', icon: '🔄', keywords: ['replacement', 'swap'] },
     ],
   },
   {
@@ -107,7 +100,6 @@ const NAV_GROUPS: NavGroup[] = [
     group: 'Workforce',
     accent: '#ec4899',
     items: [
-      { label: 'Caregivers', href: '/caregivers', icon: '👩‍👧', keywords: ['staff', 'caregivers'] },
       { label: 'Field Portal', href: '/my-space', icon: '📱', keywords: ['field', 'portal'] },
       { label: 'Academy Hub', href: '/academy', icon: '🎓', keywords: ['training', 'academy'] },
     ],
@@ -116,7 +108,6 @@ const NAV_GROUPS: NavGroup[] = [
     group: 'Quality & Incidents',
     accent: '#ef4444',
     items: [
-      { label: 'Incidents', href: '/incidents', icon: '🚨', keywords: ['incident', 'quality'] },
       { label: 'Risk Signals', href: '/market-os/risk-signals', icon: '🛡️', keywords: ['risk', 'signals'] },
       { label: 'Archive Center', href: '/admin/archive-center', icon: '🗄️', keywords: ['archive'] },
     ],
@@ -135,19 +126,14 @@ const NAV_GROUPS: NavGroup[] = [
     items: [
       { label: 'Users', href: '/users', icon: '🔐', keywords: ['users', 'permissions'] },
       { label: 'B2B Partnerships', href: '/b2b-partnerships', icon: '🤝', keywords: ['b2b', 'partnerships', 'hotels', 'clinics', 'prospects', 'campaigns'] },
-      { label: 'Profile', href: '/profile', icon: '👤', keywords: ['profile', 'account'] },
-      { label: 'Locations', href: '/locations', icon: '📍', keywords: ['locations'] },
       { label: 'Config Admin', href: '/market-os/config-admin-control', icon: '🧰', keywords: ['settings', 'admin', 'config'] },
     ],
   },
 ]
 
 const QUICK_CREATE = [
-  { label: 'Mission', href: '/missions/new', icon: '🛫' },
   { label: 'Contract', href: '/contracts/new', icon: '📦' },
-  { label: 'Lead', href: '/leads/new', icon: '📈' },
   { label: 'Family', href: '/families/new', icon: '🏡' },
-  { label: 'Incident', href: '/incidents/new', icon: '🚨' },
   { label: 'Campaign', href: '/market-os/campaign-lifecycle/new', icon: '🎯' },
   { label: 'Service', href: '/services/new', icon: '🧩' },
 ]
@@ -508,12 +494,6 @@ export default function AppShell({
             <button type="button" onClick={() => setQuickOpen(!quickOpen)} style={quickButtonStyle}>
               {commercialMode ? 'Créer' : contentCommandMode ? 'Créer dans Market OS' : '＋ Quick Create'}
             </button>
-            {!liberatedShellMode ? <Link href="/reports" style={iconButtonStyle}>📊</Link> : null}
-            {!liberatedShellMode ? <Link href="/incidents" style={notificationButtonStyle}>🔔<span style={notificationDotStyle} /></Link> : null}
-            <Link href="/profile" style={profileButtonStyle}>
-              <span style={avatarStyle}>A</span>
-              <span>Profil</span>
-            </Link>
           </div>
 
           {quickOpen ? (

@@ -11,10 +11,10 @@ const NON_ASSIGNABLE_ROOTS = new Set([
 ])
 const FORMAL_MODULE_ROOTS = new Set([
   'admin', 'academy', 'angelcare-360', 'angelcare-360-command-center', 'b2b-partnerships',
-  'billing', 'capital-command-center', 'caregivers', 'carelink-ops', 'contracts', 'csa',
-  'email-os', 'families', 'hr', 'interventions', 'market-os', 'missions', 'operations',
+  'billing', 'capital-command-center', 'carelink-ops', 'contracts', 'csa',
+  'email-os', 'families', 'hr', 'interventions', 'market-os',
   'opsos-control-plane', 'pacojaco-ops', 'revenue-command-center', 'sales', 'service-os',
-  'services', 'staff-portal', 'traininghub', 'users', 'voice-center', 'whatsapp-os',
+  'services', 'traininghub', 'users', 'voice-center', 'whatsapp-os',
 ])
 const MODULE_PATTERNS = [/\bos\b/i, /command-center/i, /control-plane/i, /traininghub/i, /carelink/i]
 const RISK_SEGMENTS = new Set(['settings', 'permissions', 'governance', 'security', 'payouts', 'payments', 'billing', 'delete', 'admin'])
