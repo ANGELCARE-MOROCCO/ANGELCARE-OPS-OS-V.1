@@ -1,4 +1,0 @@
-import { requireMarketplacePageContext } from '@/angelcare-marketplace/auth/context'
-import { listMetricDefinitions,listSnapshots } from '@/angelcare-marketplace/analytics-security/repository'
-import { MetricRegistry } from '@/angelcare-marketplace/analytics-security/components/MetricRegistry'
-export default async function Page(){const context=await requireMarketplacePageContext('marketplace.analytics.view');const [definitions,snapshots]=await Promise.all([listMetricDefinitions(),listSnapshots(context,'b2b')]);return <MetricRegistry definitions={definitions} snapshots={snapshots} domain="b2b"/>}

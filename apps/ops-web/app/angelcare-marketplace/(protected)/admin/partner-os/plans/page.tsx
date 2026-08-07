@@ -1,2 +1,0 @@
-import { requireMarketplacePageContext } from '@/angelcare-marketplace/auth/context';import { PlanSubscriptionBoard } from '@/angelcare-marketplace/partner-os/components/PlanSubscriptionBoard';import { listPlans,listSubscriptions } from '@/angelcare-marketplace/partner-os/repository'
-export default async function Page(){await requireMarketplacePageContext('marketplace.partner_os.plans.view');const [plans,subscriptions]=await Promise.all([listPlans(),listSubscriptions()]);return <PlanSubscriptionBoard plans={plans} subscriptions={subscriptions}/>}

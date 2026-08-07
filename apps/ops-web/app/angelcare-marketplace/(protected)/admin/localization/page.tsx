@@ -1,1 +1,0 @@
-import { LocalizationCockpit } from '@/angelcare-marketplace/localization-intelligence/components/LocalizationCockpit'; import { localizationSummary } from '@/angelcare-marketplace/localization-intelligence/repository'; export default async function Page(){ return <LocalizationCockpit summary={await localizationSummary()}/> }

@@ -1,2 +1,0 @@
-import { requireMarketplacePageContext } from '@/angelcare-marketplace/auth/context';import { SupplierCommand } from '@/angelcare-marketplace/marketplace-core/components/SupplierCommand';import { listSuppliers } from '@/angelcare-marketplace/marketplace-core/repository'
-export default async function Page(){await requireMarketplacePageContext('marketplace.catalog.suppliers.view');return <SupplierCommand suppliers={await listSuppliers()}/>}

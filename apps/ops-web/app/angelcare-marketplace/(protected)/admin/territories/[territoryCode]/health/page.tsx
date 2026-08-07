@@ -1,4 +1,0 @@
-import { hasMarketplacePermission, requireMarketplacePageContext } from '@/angelcare-marketplace/auth/context'
-import { TerritoryHealthClient } from '@/angelcare-marketplace/territory-os/components/TerritoryHealthClient'
-import { getTerritoryByCode, listTerritoryHealthEvents } from '@/angelcare-marketplace/territory-os/repository'
-export default async function Page({params}:{params:Promise<{territoryCode:string}>}){const context=await requireMarketplacePageContext('marketplace.territory_health.view');const {territoryCode}=await params;const territory=await getTerritoryByCode(context,territoryCode);return <TerritoryHealthClient territory={territory} events={await listTerritoryHealthEvents(context,territory.id)} canManage={hasMarketplacePermission(context,'marketplace.territory_health.manage')}/>}

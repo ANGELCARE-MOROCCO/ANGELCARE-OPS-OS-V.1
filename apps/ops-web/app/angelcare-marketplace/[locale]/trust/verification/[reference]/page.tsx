@@ -1,3 +1,0 @@
-import { publicVerification } from '@/angelcare-marketplace/trust-quality/repository'
-import { PublicVerification } from '@/angelcare-marketplace/trust-quality/components/PublicVerification'
-export default async function Page({params}:{params:Promise<{locale:string;reference:string}>}){const {locale,reference}=await params;const safe=locale==='ar'||locale==='en'?locale:'fr';return <PublicVerification data={await publicVerification(reference)} locale={safe}/>}

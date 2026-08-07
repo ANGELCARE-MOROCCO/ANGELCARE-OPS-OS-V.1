@@ -1,2 +1,0 @@
-import { handleGateUpdate } from '@/angelcare-marketplace/launch-assurance/api-handlers'
-export async function POST(request:Request,{params}:{params:Promise<{gateId:string}>}){return handleGateUpdate(request,(await params).gateId)}

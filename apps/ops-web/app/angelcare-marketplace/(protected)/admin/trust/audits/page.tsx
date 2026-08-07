@@ -1,1 +1,0 @@
-export { default } from '../quality-check-360/page'
