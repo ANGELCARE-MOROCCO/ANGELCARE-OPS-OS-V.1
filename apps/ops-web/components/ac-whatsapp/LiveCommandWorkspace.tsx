@@ -1,6 +1,6 @@
 "use client"
 import { NativeResizeHandle, useNativeTheatreLayout } from "./NativeTheatreLayout"
-import { mergeConversationSnapshot, normalizeConversationSnapshot, stableMessageKey } from "@/lib/ac-whatsapp/stability"
+import { canonicalTimelineMessageType, isRenderableTimelineMessage, mergeConversationSnapshot, normalizeConversationSnapshot, stableMessageKey, timelineMessagePreview } from "@/lib/ac-whatsapp/stability"
 import { ACWhatsAppContrastGuard } from "./ACWhatsAppContrastGuard"
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
@@ -140,8 +140,10 @@ export default function LiveCommandWorkspace() {
   const [draftStatus, setDraftStatus] = useState<"saved" | "saving" | "idle">("idle")
   const timelineRef = useRef<HTMLDivElement | null>(null)
   const messageSearchRef = useRef<HTMLInputElement | null>(null)
+  const conversationsRef = useRef<AcWhatsAppConversation[]>([])
 
   const conversations = data?.conversations || []
+  useEffect(() => { conversationsRef.current = conversations }, [conversations])
   const selected = detail?.conversation || conversations.find((row) => row.id === selectedId) || null
   const selectedMetadata = (selected?.metadata || {}) as Record<string, any>
   const selectedLabels = labelIds(selected)
@@ -169,7 +171,7 @@ export default function LiveCommandWorkspace() {
   useEffect(() => {
     if (!selectedId) { setDetail(null); return }
     let active = true
-    const row = conversations.find((item) => item.id === selectedId)
+    const row = conversationsRef.current.find((item) => item.id === selectedId)
     setDetailLoading(true)
     ;(async () => {
       try {
@@ -182,7 +184,7 @@ export default function LiveCommandWorkspace() {
           } : current)
           await acApi(`/api/ac-whatsapp/conversations/${selectedId}`, { method: "PATCH", body: JSON.stringify({ action: "mark_read", reason: "Conversation ouverte dans Live Command" }) })
         }
-        const next = await acApi<ConversationDetail>(`/api/ac-whatsapp/conversations/${selectedId}`)
+        const next = normalizeConversationSnapshot(await acApi<ConversationDetail>(`/api/ac-whatsapp/conversations/${selectedId}`))
         if (active) setDetail(next)
       } catch (cause) {
         if (active) {
@@ -194,7 +196,23 @@ export default function LiveCommandWorkspace() {
       }
     })()
     return () => { active = false }
-  }, [selectedId, conversations, refresh, setData])
+  }, [selectedId, refresh, setData])
+
+  useEffect(() => {
+    if (!selectedId) return
+    let active = true
+    const sync = async () => {
+      if (document.visibilityState !== "visible") return
+      try {
+        const next = normalizeConversationSnapshot(await acApi<ConversationDetail>(`/api/ac-whatsapp/conversations/${selectedId}`))
+        if (active) setDetail((current) => mergeConversationSnapshot(current, next))
+      } catch {
+        // Silent refresh never blanks a conversation that is already visible.
+      }
+    }
+    const timer = window.setInterval(() => { void sync() }, 7000)
+    return () => { active = false; window.clearInterval(timer) }
+  }, [selectedId])
 
   async function reloadSelected() {
     if (!selectedId) return
@@ -202,7 +220,8 @@ export default function LiveCommandWorkspace() {
       acApi<ConversationDetail>(`/api/ac-whatsapp/conversations/${selectedId}`),
       refresh(),
     ])
-    setDetail(next)
+    const normalized = normalizeConversationSnapshot(next)
+    setDetail((current) => mergeConversationSnapshot(current, normalized))
   }
 
 
@@ -313,10 +332,12 @@ export default function LiveCommandWorkspace() {
     if (!selectedId || !text || sending) return
     setSending(true)
     try {
-      await acApi("/api/ac-whatsapp/messages/send", { method: "POST", body: JSON.stringify({ conversationId: selectedId, text, messageType: noteMode ? "internal" : "text", internalNote: noteMode }) })
+      const result = await acApi<any>("/api/ac-whatsapp/messages/send", { method: "POST", body: JSON.stringify({ conversationId: selectedId, text, messageType: noteMode ? "internal" : "text", internalNote: noteMode }) })
       setComposer("")
       await reloadSelected()
-      setNotice({ tone: "success", title: noteMode ? "Note interne conservée" : "Message pris en charge", description: noteMode ? "La note est visible uniquement par les utilisateurs AngelCare autorisés et porte votre identité réelle." : "Le message a été remis au transport OpenWA ou placé dans la file durable de reprise." })
+      if (noteMode) setNotice({ tone: "success", title: "Note interne conservée", description: "La note est visible uniquement par les utilisateurs AngelCare autorisés et porte votre identité réelle." })
+      else if (String(result?.status || "").toLowerCase() === "queued") setNotice({ tone: "warning", title: "Message en file d’envoi", description: result?.error_message ? `WhatsApp n’a pas encore confirmé l’envoi : ${result.error_message}` : "Le message est conservé dans la file durable et attend une nouvelle tentative de transport." })
+      else setNotice({ tone: "success", title: "Message accepté par WhatsApp", description: "OpenWA a accepté le message et son identifiant de transport a été enregistré." })
     } catch (cause) { setNotice({ ...friendlyAcError(cause), tone: "danger" }) }
     finally { setSending(false) }
   }
@@ -358,7 +379,7 @@ export default function LiveCommandWorkspace() {
   const canDelete = Boolean(data?.actor.permissions.includes("ac-whatsapp.message.delete") || data?.actor.permissions.includes("ac-whatsapp.*") || data?.actor.permissions.includes("*"))
 
   const activeArtifacts = theatre.artifacts.filter((artifact) => !["completed", "cancelled", "closed"].includes(artifact.status))
-  const latestInbound = [...(detail?.messages || [])].reverse().find((message) => message.direction === "inbound")
+  const latestInbound = [...(detail?.messages || [])].reverse().find((message) => message.direction === "inbound" && isRenderableTimelineMessage(message))
   const relationshipScore = Math.min(100, 28
     + (selected?.contact?.display_name ? 12 : 0)
     + (selected?.contact?.organization_name ? 10 : 0)
@@ -413,7 +434,7 @@ export default function LiveCommandWorkspace() {
           </div>
 
           <div ref={timelineRef} className="min-h-0 flex-1 overflow-y-auto overscroll-contain bg-[#f3f5f8] px-4 py-6 [background-image:radial-gradient(circle_at_1px_1px,rgba(15,23,42,.035)_1px,transparent_0)] [background-size:24px_24px] [scrollbar-gutter:stable]">
-            <div className="mx-auto max-w-[920px] space-y-4">{detailLoading ? <div className="grid min-h-64 place-items-center"><div className="rounded-2xl border border-slate-200 bg-white px-5 py-4 text-[10px] font-black text-slate-600 shadow-sm">Chargement sécurisé de la chronologie…</div></div> : detail?.messages.length ? renderMessageTimeline(detail.messages, { onQuote: (message) => setComposer((current) => `${current ? `${current}\n\n` : ""}> ${String(message.body || message.caption || "Message").replaceAll("\n", "\n> ")}\n\n`), onArtifact: (type, message) => void createArtifact(type, featureTitle(type), message.id, { excerpt: String(message.body || message.caption || "").slice(0, 800) }), onTranslate: (message) => void runAi("translate", String(message.body || message.caption || "")) }) : <EmptyState compact title="Conversation prête" description="Aucun message n’est encore enregistré." icon={MessageCircleMore} />}</div>
+            <div className="mx-auto max-w-[920px] space-y-4">{detailLoading ? <div className="grid min-h-64 place-items-center"><div className="rounded-2xl border border-slate-200 bg-white px-5 py-4 text-[10px] font-black text-slate-600 shadow-sm">Chargement sécurisé de la chronologie…</div></div> : detail?.messages.some(isRenderableTimelineMessage) ? renderMessageTimeline(detail.messages, { onQuote: (message) => setComposer((current) => `${current ? `${current}\n\n` : ""}> ${String(message.body || message.caption || "Message").replaceAll("\n", "\n> ")}\n\n`), onArtifact: (type, message) => void createArtifact(type, featureTitle(type), message.id, { excerpt: String(message.body || message.caption || "").slice(0, 800) }), onTranslate: (message) => void runAi("translate", String(message.body || message.caption || "")) }) : <EmptyState compact title="Conversation prête" description="Aucun message n’est encore enregistré." icon={MessageCircleMore} />}</div>
           </div>
 
           {theatre.presence.length > 1 ? <div className="shrink-0 border-t border-amber-200 bg-amber-50 px-4 py-2"><div className="mx-auto flex max-w-[920px] items-center gap-2 text-[8px] font-black text-amber-950"><Radio className="h-3.5 w-3.5" />{theatre.presence.length} opérateurs consultent cette conversation. Vérifiez la présence avant d’envoyer pour éviter une réponse simultanée.</div></div> : null}
@@ -514,39 +535,41 @@ function TimelineJump({ label, onClick }: { label: string; onClick: () => void }
 
 function renderMessageTimeline(messages: AcWhatsAppMessage[], callbacks: { onQuote: (message: AcWhatsAppMessage) => void; onArtifact: (type: string, message: AcWhatsAppMessage) => void; onTranslate: (message: AcWhatsAppMessage) => void }) {
   let previousDate = ""
-  return messages.map((message) => {
+  return messages.filter(isRenderableTimelineMessage).map((message, index) => {
     const date = new Date(message.sent_at || message.received_at || message.created_at).toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" })
     const separator = date !== previousDate
     previousDate = date
-    return <div key={message.id}>{separator ? <div className="my-5 flex items-center gap-3"><span className="h-px flex-1 bg-slate-300" /><span className="rounded-full border border-slate-300 bg-white px-3 py-1.5 text-[8px] font-black uppercase tracking-[.1em] text-slate-600">{date}</span><span className="h-px flex-1 bg-slate-300" /></div> : null}<TheatreMessageBubble message={message} {...callbacks} /></div>
+    return <div key={stableMessageKey(message, index)}>{separator ? <div className="my-5 flex items-center gap-3"><span className="h-px flex-1 bg-slate-300" /><span className="rounded-full border border-slate-300 bg-white px-3 py-1.5 text-[8px] font-black uppercase tracking-[.1em] text-slate-600">{date}</span><span className="h-px flex-1 bg-slate-300" /></div> : null}<TheatreMessageBubble message={message} {...callbacks} /></div>
   })
 }
 
 function TheatreMessageBubble({ message, onQuote, onArtifact, onTranslate }: { message: AcWhatsAppMessage; onQuote: (message: AcWhatsAppMessage) => void; onArtifact: (type: string, message: AcWhatsAppMessage) => void; onTranslate: (message: AcWhatsAppMessage) => void }) {
   const outbound = message.direction === "outbound"
   const internal = message.direction === "internal"
-  const voice = ["voice", "audio"].includes(String(message.message_type || "").toLowerCase())
-  const visualMedia = ["image", "video", "document"].includes(String(message.message_type || "").toLowerCase())
+  const normalizedType = canonicalTimelineMessageType(message)
+  const voice = ["voice", "audio"].includes(normalizedType)
+  const visualMedia = ["image", "video", "document"].includes(normalizedType)
+  const readableBody = timelineMessagePreview(message)
   const [open, setOpen] = useState(false)
   const identity = message.sender_identity || { display_name: message.sender_display_name_snapshot || (outbound ? "Opérateur AngelCare" : internal ? "Membre AngelCare" : "Contact non identifié"), role: message.sender_role_snapshot || (outbound ? "Membre AngelCare" : internal ? "Note interne" : "Contact") }
   const searchable = String(message.body || message.caption || "").toLowerCase()
   return <div data-message-id={message.id} data-message-direction={message.direction} data-message-search={searchable} className={cx("group flex", outbound ? "justify-end" : "justify-start")}>
     <div className={cx("relative max-w-[76%] rounded-[20px] border px-4 py-3 shadow-[0_8px_24px_rgba(15,23,42,.06)]", outbound ? "rounded-br-md border-[#071022] bg-[#071022] text-white" : internal ? "border-violet-300 bg-violet-50 text-slate-950" : "rounded-bl-md border-slate-200 bg-white text-slate-950")}>
       <button type="button" onClick={() => setOpen((value) => !value)} className={cx("absolute right-2 top-2 grid h-7 w-7 place-items-center rounded-lg opacity-0 transition group-hover:opacity-100", outbound ? "bg-white/10 text-white" : "bg-slate-100 text-slate-700")}><MoreHorizontal className="h-3.5 w-3.5" /></button>
-      {open ? <div className="absolute right-2 top-10 z-30 w-56 rounded-2xl border border-slate-300 bg-white p-1.5 text-slate-950 shadow-[0_18px_55px_rgba(15,23,42,.22)] acw-floating-surface acw-message-menu acw-floating-surface"><MessageAction label="Répondre / citer" icon={MessageSquareQuote} onClick={() => { onQuote(message); setOpen(false) }} /><MessageAction label="Traduire" icon={Languages} onClick={() => { onTranslate(message); setOpen(false) }} /><MessageAction label="Épingler comme jalon" icon={Milestone} onClick={() => { onArtifact("milestone", message); setOpen(false) }} /><MessageAction label="Extraire un engagement" icon={ClipboardCheck} onClick={() => { onArtifact("commitment", message); setOpen(false) }} /><MessageAction label="Marquer comme preuve" icon={Eye} onClick={() => { onArtifact("evidence", message); setOpen(false) }} /><MessageAction label="Créer une mission" icon={ListChecks} onClick={() => { onArtifact("task", message); setOpen(false) }} /><MessageAction label="Copier" icon={Copy} onClick={() => { void navigator.clipboard.writeText(String(message.body || message.caption || "")); setOpen(false) }} /></div> : null}
+      {open ? <div role="menu" className="absolute right-2 top-10 z-[140] w-64 rounded-2xl border border-slate-300 !bg-white p-1.5 !text-slate-950 shadow-[0_18px_55px_rgba(15,23,42,.22)] acw-floating-surface acw-message-menu" style={{ color: "#0f172a", WebkitTextFillColor: "#0f172a", backgroundColor: "#ffffff" }}><MessageAction label="Répondre / citer" icon={MessageSquareQuote} onClick={() => { onQuote(message); setOpen(false) }} /><MessageAction label="Traduire" icon={Languages} onClick={() => { onTranslate(message); setOpen(false) }} /><MessageAction label="Épingler comme jalon" icon={Milestone} onClick={() => { onArtifact("milestone", message); setOpen(false) }} /><MessageAction label="Extraire un engagement" icon={ClipboardCheck} onClick={() => { onArtifact("commitment", message); setOpen(false) }} /><MessageAction label="Marquer comme preuve" icon={Eye} onClick={() => { onArtifact("evidence", message); setOpen(false) }} /><MessageAction label="Créer une mission" icon={ListChecks} onClick={() => { onArtifact("task", message); setOpen(false) }} /><MessageAction label="Copier" icon={Copy} onClick={() => { void navigator.clipboard.writeText(String(message.body || message.caption || "")); setOpen(false) }} /></div> : null}
       <div className={cx("mb-2 flex flex-wrap items-center gap-2 border-b pb-2 pr-8", outbound ? "border-white/15" : internal ? "border-violet-200" : "border-slate-200")}><span className={cx("text-[9px] font-black", outbound ? "text-sky-200" : "text-slate-950")}>{identity.display_name}</span><span className={cx("text-[8px] font-bold", outbound ? "text-slate-300" : "text-slate-600")}>{identity.role}</span>{internal ? <span className="rounded-md bg-violet-200 px-2 py-1 text-[7px] font-black text-violet-950">INTERNE · INVISIBLE AU CONTACT</span> : null}</div>
-      {voice ? <VoiceMessagePlayer message={message} inverted={outbound} /> : visualMedia ? <MessageAttachmentPreview message={message} inverted={outbound} /> : <div className="whitespace-pre-wrap text-[13px] font-semibold leading-6">{message.body || message.caption || `[${message.message_type}]`}</div>}
+      {voice ? <VoiceMessagePlayer message={message} inverted={outbound} /> : visualMedia ? <MessageAttachmentPreview message={message} inverted={outbound} /> : readableBody ? <div className="whitespace-pre-wrap text-[13px] font-semibold leading-6">{readableBody}</div> : null}
       {(voice || visualMedia) && (message.caption || message.body) ? <p className={cx("mt-2 text-[10px] font-semibold", outbound ? "text-slate-300" : "text-slate-700")}>{message.caption || message.body}</p> : null}
       <div className={cx("mt-2 flex items-center justify-end gap-2 text-[8px] font-bold", outbound ? "text-slate-300" : "text-slate-500")}><span>{formatDateTime(message.sent_at || message.received_at || message.created_at)}</span>{outbound ? <><StatusPill status={message.status} compact />{["delivered", "read"].includes(message.status) ? <CheckCheck className="h-3.5 w-3.5" /> : null}</> : null}</div>
     </div>
   </div>
 }
 
-function MessageAction({ label, icon: Icon, onClick }: { label: string; icon: typeof Copy; onClick: () => void }) { return <button type="button" onClick={onClick} className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-[9px] font-black text-slate-800 hover:bg-slate-100"><Icon className="h-3.5 w-3.5" />{label}</button> }
+function MessageAction({ label, icon: Icon, onClick }: { label: string; icon: typeof Copy; onClick: () => void }) { return <button role="menuitem" type="button" onClick={onClick} className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-[9px] font-black !text-slate-950 hover:!bg-slate-100" style={{ color: "#0f172a", WebkitTextFillColor: "#0f172a" }}><Icon className="h-3.5 w-3.5 !text-slate-700" style={{ color: "#334155" }} /><span style={{ color: "#0f172a", WebkitTextFillColor: "#0f172a" }}>{label}</span></button> }
 
-function ResponseCommandDeck({ selected, actorName, composer, setComposer, noteMode, setNoteMode, sending, draftStatus, onSend, onAi, onFollowup, onOpenTools, onSent, onNotice }: { selected: AcWhatsAppConversation; actorName: string; composer: string; setComposer: (value: string) => void; noteMode: boolean; setNoteMode: (value: boolean) => void; sending: boolean; draftStatus: string; onSend: () => void; onAi: (action: string) => void; onFollowup: () => void; onOpenTools: () => void; onSent: () => Promise<void>; onNotice: (tone: "success" | "danger", title: string, description: string) => void }) {
+function ResponseCommandDeck({ selected, actorName, composer, setComposer, noteMode, setNoteMode, sending, draftStatus, onSend, onAi, onFollowup, onOpenTools, onSent, onNotice }: { selected: AcWhatsAppConversation; actorName: string; composer: string; setComposer: (value: string) => void; noteMode: boolean; setNoteMode: (value: boolean) => void; sending: boolean; draftStatus: string; onSend: () => void; onAi: (action: string) => void; onFollowup: () => void; onOpenTools: () => void; onSent: () => Promise<void>; onNotice: (tone: "success" | "danger" | "warning" | "info", title: string, description: string) => void }) {
   return <div className="shrink-0 border-t border-slate-200 bg-white px-4 py-3"><div className="mx-auto max-w-[920px]"><div className="mb-2 flex flex-wrap items-center justify-between gap-2"><div className="flex items-center gap-1 rounded-xl border border-slate-200 bg-slate-50 p-1"><button type="button" onClick={() => setNoteMode(false)} className={cx("rounded-lg px-3 py-1.5 text-[9px] font-black", !noteMode ? "bg-[#071022] text-white" : "text-slate-700")}>Message client</button><button type="button" onClick={() => setNoteMode(true)} className={cx("rounded-lg px-3 py-1.5 text-[9px] font-black", noteMode ? "bg-violet-600 text-white" : "text-slate-700")}>Note interne</button></div><div className="flex items-center gap-2 text-[8px] font-bold text-slate-500"><span>Auteur : {actorName}</span><span>·</span><span>{selected.account?.name || "Compte WhatsApp"}</span><span>·</span><span className={cx(draftStatus === "saved" ? "text-emerald-700" : draftStatus === "saving" ? "text-amber-700" : "text-slate-500")}>{draftStatus === "saved" ? "Brouillon sauvegardé" : draftStatus === "saving" ? "Sauvegarde…" : "Brouillon prêt"}</span></div></div>
-    <div className={cx("overflow-hidden rounded-[20px] border shadow-[0_10px_34px_rgba(15,23,42,.07)]", noteMode ? "border-violet-300 bg-violet-50" : "border-slate-300 bg-white")}><textarea value={composer} onChange={(event) => setComposer(event.target.value)} onKeyDown={(event) => { if ((event.metaKey || event.ctrlKey) && event.key === "Enter") onSend() }} rows={3} placeholder={noteMode ? "Note interne — invisible au contact" : "Rédiger une réponse précise, humaine et orientée prochaine action…"} className="max-h-52 min-h-[88px] w-full resize-y bg-transparent px-4 py-3 text-[13px] font-semibold leading-6 text-slate-950 outline-none placeholder:text-slate-500" /><div className="flex flex-wrap items-center justify-between gap-2 border-t border-slate-200 bg-white/80 px-2 py-2"><div className="flex flex-wrap items-center gap-1"><AttachmentMessageStudio conversationId={selected.id} disabled={noteMode || sending} onSent={onSent} onSuccess={(title, description) => onNotice("success", title, description)} onError={(title, description) => onNotice("danger", title, description)} /><ComposerButton icon={FileText} label="Modèle" /><VoiceMessageStudio conversationId={selected.id} disabled={noteMode || sending} onSent={onSent} onSuccess={(title, description) => onNotice("success", title, description)} onError={(title, description) => onNotice("danger", title, description)} /><button type="button" onClick={() => onAi("reply_matrix")} className="inline-flex items-center gap-1.5 rounded-xl border border-violet-200 bg-violet-50 px-2.5 py-2 text-[8px] font-black text-violet-950 hover:bg-violet-100"><WandSparkles className="h-3.5 w-3.5" />Réponse Studio</button><button type="button" onClick={onFollowup} className="inline-flex items-center gap-1.5 rounded-xl px-2.5 py-2 text-[8px] font-black text-slate-700 hover:bg-slate-100"><AlarmClock className="h-3.5 w-3.5" />Relance</button><button type="button" onClick={onOpenTools} className="inline-flex items-center gap-1.5 rounded-xl px-2.5 py-2 text-[8px] font-black text-slate-700 hover:bg-slate-100"><SlidersHorizontal className="h-3.5 w-3.5" />Plus</button></div><button type="button" onClick={onSend} disabled={!composer.trim() || sending} className={cx("inline-flex h-10 items-center gap-2 rounded-xl px-5 text-[9px] font-black shadow-lg disabled:cursor-not-allowed disabled:opacity-40", noteMode ? "bg-violet-600 text-white shadow-violet-600/20" : "bg-rose-600 text-white shadow-rose-600/20")}><Send className="h-4 w-4" />{sending ? "Traitement…" : noteMode ? "Conserver la note" : "Envoyer"}</button></div></div></div></div>
+    <div className={cx("overflow-hidden rounded-[20px] border shadow-[0_10px_34px_rgba(15,23,42,.07)]", noteMode ? "border-violet-300 bg-violet-50" : "border-slate-300 bg-white")}><textarea value={composer} onChange={(event) => setComposer(event.target.value)} onKeyDown={(event) => { if ((event.metaKey || event.ctrlKey) && event.key === "Enter") onSend() }} rows={3} placeholder={noteMode ? "Note interne — invisible au contact" : "Rédiger une réponse précise, humaine et orientée prochaine action…"} className="max-h-52 min-h-[88px] w-full resize-y bg-transparent px-4 py-3 text-[13px] font-semibold leading-6 text-slate-950 outline-none placeholder:text-slate-500" /><div className="flex flex-wrap items-center justify-between gap-2 border-t border-slate-200 bg-white/80 px-2 py-2"><div className="flex flex-wrap items-center gap-1"><AttachmentMessageStudio conversationId={selected.id} disabled={noteMode || sending} onSent={onSent} onSuccess={(title, description) => onNotice("success", title, description)} onQueued={(title, description) => onNotice("warning", title, description)} onError={(title, description) => onNotice("danger", title, description)} /><ComposerButton icon={FileText} label="Modèle" /><VoiceMessageStudio conversationId={selected.id} disabled={noteMode || sending} onSent={onSent} onSuccess={(title, description) => onNotice("success", title, description)} onQueued={(title, description) => onNotice("warning", title, description)} onError={(title, description) => onNotice("danger", title, description)} /><button type="button" onClick={() => onAi("reply_matrix")} className="inline-flex items-center gap-1.5 rounded-xl border border-violet-200 bg-violet-50 px-2.5 py-2 text-[8px] font-black text-violet-950 hover:bg-violet-100"><WandSparkles className="h-3.5 w-3.5" />Réponse Studio</button><button type="button" onClick={onFollowup} className="inline-flex items-center gap-1.5 rounded-xl px-2.5 py-2 text-[8px] font-black text-slate-700 hover:bg-slate-100"><AlarmClock className="h-3.5 w-3.5" />Relance</button><button type="button" onClick={onOpenTools} className="inline-flex items-center gap-1.5 rounded-xl px-2.5 py-2 text-[8px] font-black text-slate-700 hover:bg-slate-100"><SlidersHorizontal className="h-3.5 w-3.5" />Plus</button></div><button type="button" onClick={onSend} disabled={!composer.trim() || sending} className={cx("inline-flex h-10 items-center gap-2 rounded-xl px-5 text-[9px] font-black shadow-lg disabled:cursor-not-allowed disabled:opacity-40", noteMode ? "bg-violet-600 text-white shadow-violet-600/20" : "bg-rose-600 text-white shadow-rose-600/20")}><Send className="h-4 w-4" />{sending ? "Traitement…" : noteMode ? "Conserver la note" : "Envoyer"}</button></div></div></div></div>
 }
 
 function IntelligenceDock({ tab, selected, detail, theatre, latestInbound, relationshipScore, onAi, onArtifact, onAssign, onFollowup, onUpdate }: { tab: DockTab; selected: AcWhatsAppConversation; detail: ConversationDetail | null; theatre: TheatreData; latestInbound?: AcWhatsAppMessage; relationshipScore: number; onAi: (action: string) => void; onArtifact: (type: string, title: string) => void; onAssign: () => void; onFollowup: () => void; onUpdate: (patch: Record<string, unknown>, success: string) => void }) {

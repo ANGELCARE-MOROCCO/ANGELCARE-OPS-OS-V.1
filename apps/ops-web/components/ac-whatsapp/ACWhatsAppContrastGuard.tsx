@@ -63,7 +63,14 @@ export function ACWhatsAppContrastGuard() {
         width:100%; min-height:42px; border-radius:12px; padding:10px 12px;
         text-align:left; font-weight:750; line-height:1.2;
       }
-      [data-acw-live="true"] .acw-message-menu svg { color:#475569; }
+      html[data-acw-live="true"] body .acw-message-menu.acw-floating-surface,
+      html[data-acw-live="true"] body .acw-message-menu.acw-floating-surface button,
+      html[data-acw-live="true"] body .acw-message-menu.acw-floating-surface button span {
+        color:#0f172a!important; -webkit-text-fill-color:#0f172a!important; text-shadow:none!important;
+      }
+      html[data-acw-live="true"] body .acw-message-menu.acw-floating-surface svg {
+        color:#334155!important; -webkit-text-fill-color:#334155!important;
+      }
 
       [data-acw-live="true"] .acw-command-modal {
         color:var(--acw-ink)!important; background:#fff!important; border:1px solid #dbe3ee!important;
@@ -71,8 +78,8 @@ export function ACWhatsAppContrastGuard() {
       }
       [data-acw-live="true"] .acw-command-modal h1,
       [data-acw-live="true"] .acw-command-modal h2,
-      [data-acw-live="true"] .acw-command-modal h3 { color:#020617!important; }
-      [data-acw-live="true"] .acw-command-modal p { color:#475569; }
+      [data-acw-live="true"] .acw-command-modal h3 { color:#020617!important; -webkit-text-fill-color:#020617!important; }
+      [data-acw-live="true"] .acw-command-modal p { color:#475569!important; -webkit-text-fill-color:#475569!important; }
 
       [data-acw-live="true"] .acw-attachment-action {
         color:#0f172a!important; background:#fff!important; border:1px solid #cbd5e1!important;

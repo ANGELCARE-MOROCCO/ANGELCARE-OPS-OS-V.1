@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react"
 import type { AcWhatsAppBootstrap } from "@/lib/ac-whatsapp/types"
+import { normalizeConversationSnapshot } from "@/lib/ac-whatsapp/stability"
 
 type Notice = { title: string; description: string; reference?: string }
 
@@ -33,7 +34,7 @@ export function useAcWhatsApp(refreshMs = 20000) {
 
   const refresh = useCallback(async () => {
     try {
-      const next = await acApi<AcWhatsAppBootstrap>("/api/ac-whatsapp/bootstrap")
+      const next = normalizeConversationSnapshot(await acApi<AcWhatsAppBootstrap>("/api/ac-whatsapp/bootstrap"))
       setData(next)
       setError(null)
       return next
