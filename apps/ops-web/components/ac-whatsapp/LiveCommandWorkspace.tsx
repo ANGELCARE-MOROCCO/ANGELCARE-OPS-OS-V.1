@@ -349,8 +349,7 @@ export default function LiveCommandWorkspace() {
     } catch (cause) { setNotice({ ...friendlyAcError(cause), tone: "danger" }) }
   }
 
-  if (loading && !data) return <LoadingPanel label="Ouverture du Live Command" / data-acw-live="true">
-      <ACWhatsAppContrastGuard />
+  if (loading && !data) return <LoadingPanel label="Ouverture du Live Command" />
 
   const openCount = conversations.filter((row) => !["resolved", "closed", "archived"].includes(row.status)).length
   const waitingCount = conversations.filter((row) => row.status === "waiting_customer").length
@@ -368,6 +367,7 @@ export default function LiveCommandWorkspace() {
     + Math.min(20, activeArtifacts.length * 4))
 
   return <div className="space-y-3">
+    <ACWhatsAppContrastGuard />
     {error ? <NoticeBanner tone="danger" {...friendlyAcError(error)} /> : null}
     {notice ? <NoticeBanner tone={notice.tone || "info"} title={notice.title} description={notice.description} reference={notice.reference} onClose={() => setNotice(null)} /> : null}
 

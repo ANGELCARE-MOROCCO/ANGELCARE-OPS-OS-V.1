@@ -1,11 +1,22 @@
 "use client"
 
+
+import { useEffect } from "react"
 /**
  * MZ7.1 — Deterministic Contrast & Floating Surface Integrity
  * React-rendered style contract scoped to AC WhatsApp Live only.
  * No MutationObserver, DOM scanning, runtime class mutation, or backend behavior.
  */
 export function ACWhatsAppContrastGuard() {
+  useEffect(() => {
+    const root = document.documentElement
+    const previous = root.getAttribute("data-acw-live")
+    root.setAttribute("data-acw-live", "true")
+    return () => {
+      if (previous === null) root.removeAttribute("data-acw-live")
+      else root.setAttribute("data-acw-live", previous)
+    }
+  }, [])
   return (
     <style>{`
       [data-acw-live="true"] {
@@ -36,18 +47,6 @@ export function ACWhatsAppContrastGuard() {
       [data-acw-live="true"] .acw-floating-surface button:disabled {
         color:#94a3b8!important; background-color:#f8fafc!important; cursor:not-allowed;
       }
-
-      [data-acw-live="true"] [class~="bg-white"][class~="text-white"],
-      [data-acw-live="true"] [class~="bg-slate-50"][class~="text-white"],
-      [data-acw-live="true"] [class~="bg-slate-100"][class~="text-white"] { color:var(--acw-ink)!important; }
-      [data-acw-live="true"] [class~="bg-amber-50"][class~="text-white"],
-      [data-acw-live="true"] [class~="bg-amber-100"][class~="text-white"],
-      [data-acw-live="true"] [class~="bg-yellow-50"][class~="text-white"],
-      [data-acw-live="true"] [class~="bg-yellow-100"][class~="text-white"] { color:var(--acw-amber-ink)!important; }
-      [data-acw-live="true"] [class~="bg-emerald-50"][class~="text-white"],
-      [data-acw-live="true"] [class~="bg-emerald-100"][class~="text-white"] { color:var(--acw-green-ink)!important; }
-      [data-acw-live="true"] [class~="bg-rose-50"][class~="text-white"],
-      [data-acw-live="true"] [class~="bg-rose-100"][class~="text-white"] { color:var(--acw-rose-ink)!important; }
 
       [data-acw-live="true"] .acw-status-warning { color:var(--acw-amber-ink)!important; background:var(--acw-amber-bg)!important; border-color:var(--acw-amber-line)!important; font-weight:900!important; }
       [data-acw-live="true"] .acw-status-success { color:var(--acw-green-ink)!important; background:var(--acw-green-bg)!important; border-color:var(--acw-green-line)!important; font-weight:900!important; }
