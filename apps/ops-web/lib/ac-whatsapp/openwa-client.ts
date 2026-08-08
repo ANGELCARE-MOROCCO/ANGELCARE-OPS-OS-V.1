@@ -57,12 +57,66 @@ export const openwa = {
   sendAudio: (id: string, payload: Record<string, unknown>) => request<Record<string, unknown>>(`/sessions/${encodeURIComponent(id)}/messages/send-audio`, { method: 'POST', body: payload, timeoutMs: 120_000 }),
   sendDocument: (id: string, payload: Record<string, unknown>) => request<Record<string, unknown>>(`/sessions/${encodeURIComponent(id)}/messages/send-document`, { method: 'POST', body: payload, timeoutMs: 120_000 }),
   sendMedia: (id: string, type: string, chatId: string, media: Record<string, unknown>, caption?: string) => {
-    const payload = { chatId, ...media, caption: caption || media.caption || undefined }
-    if (type === 'image') return request<Record<string, unknown>>(`/sessions/${encodeURIComponent(id)}/messages/send-image`, { method: 'POST', body: payload, timeoutMs: 90_000 })
-    if (type === 'video') return request<Record<string, unknown>>(`/sessions/${encodeURIComponent(id)}/messages/send-video`, { method: 'POST', body: payload, timeoutMs: 120_000 })
-    if (type === 'audio') return request<Record<string, unknown>>(`/sessions/${encodeURIComponent(id)}/messages/send-audio`, { method: 'POST', body: payload, timeoutMs: 120_000 })
-    if (type === 'voice') return request<Record<string, unknown>>(`/sessions/${encodeURIComponent(id)}/messages/send-audio`, { method: 'POST', body: { ...payload, ptt: true }, timeoutMs: 120_000 })
-    if (type === 'document') return request<Record<string, unknown>>(`/sessions/${encodeURIComponent(id)}/messages/send-document`, { method: 'POST', body: payload, timeoutMs: 120_000 })
+    const url = typeof media.url === 'string' && media.url ? media.url : undefined
+    const base64 = typeof media.base64 === 'string' && media.base64 ? media.base64 : undefined
+    const mimetype = typeof media.mimetype === 'string' && media.mimetype ? media.mimetype : undefined
+    const filename = typeof media.filename === 'string' && media.filename ? media.filename : undefined
+    const finalCaption = String(caption || media.caption || '').trim() || undefined
+
+    if (!url && !base64) throw new OpenWAError('OPENWA_MEDIA_SOURCE_REQUIRED', 422)
+
+    if (type === 'image') {
+      const payload = {
+        chatId,
+        ...(url ? { url } : { base64 }),
+        ...(base64 && mimetype ? { mimetype } : {}),
+        ...(finalCaption ? { caption: finalCaption } : {}),
+      }
+      return request<Record<string, unknown>>(
+        `/sessions/${encodeURIComponent(id)}/messages/send-image`,
+        { method: 'POST', body: payload, timeoutMs: 90_000 },
+      )
+    }
+
+    if (type === 'video') {
+      const payload = {
+        chatId,
+        ...(url ? { url } : { base64 }),
+        ...(base64 && mimetype ? { mimetype } : {}),
+        ...(finalCaption ? { caption: finalCaption } : {}),
+      }
+      return request<Record<string, unknown>>(
+        `/sessions/${encodeURIComponent(id)}/messages/send-video`,
+        { method: 'POST', body: payload, timeoutMs: 120_000 },
+      )
+    }
+
+    if (type === 'audio' || type === 'voice') {
+      const payload = {
+        chatId,
+        ...(url ? { url } : { base64 }),
+        ...(mimetype ? { mimetype } : {}),
+        ...(type === 'voice' ? { ptt: true } : {}),
+      }
+      return request<Record<string, unknown>>(
+        `/sessions/${encodeURIComponent(id)}/messages/send-audio`,
+        { method: 'POST', body: payload, timeoutMs: 120_000 },
+      )
+    }
+
+    if (type === 'document') {
+      const payload = {
+        chatId,
+        ...(url ? { url } : { base64 }),
+        ...(filename ? { filename } : {}),
+        ...(mimetype ? { mimetype } : {}),
+      }
+      return request<Record<string, unknown>>(
+        `/sessions/${encodeURIComponent(id)}/messages/send-document`,
+        { method: 'POST', body: payload, timeoutMs: 120_000 },
+      )
+    }
+
     throw new OpenWAError(`UNSUPPORTED_MEDIA_TYPE:${type}`, 422)
   },
   sendBulk: (id: string, payload: Record<string, unknown>) => request<Record<string, unknown>>(`/sessions/${encodeURIComponent(id)}/messages/send-bulk`, { method: 'POST', body: payload, timeoutMs: 60_000 }),

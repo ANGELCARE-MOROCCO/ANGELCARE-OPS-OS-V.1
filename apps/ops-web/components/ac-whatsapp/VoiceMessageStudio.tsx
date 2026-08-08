@@ -289,7 +289,7 @@ export function VoiceMessageStudio({
       <Mic className="h-3.5 w-3.5" />Message vocal
     </button>
 
-    {phase !== "idle" ? <div className="absolute bottom-12 left-0 z-50 w-[min(430px,82vw)] rounded-[24px] border border-slate-300 bg-white p-4 shadow-[0_28px_80px_rgba(15,23,42,.24)]">
+    {phase !== "idle" ? <div className="absolute bottom-12 left-0 z-50 w-[min(430px,82vw)] rounded-[24px] border border-slate-300 bg-white p-4 shadow-[0_28px_80px_rgba(15,23,42,.24)] acw-floating-surface">
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="text-[8px] font-black uppercase tracking-[.16em] text-slate-600">Voice Message Studio</p>
