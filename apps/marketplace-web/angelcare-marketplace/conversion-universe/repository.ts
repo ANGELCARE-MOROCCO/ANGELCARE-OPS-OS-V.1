@@ -570,6 +570,7 @@ export async function confirmPublicConversion(input: {
   sessionKey: string
   visitorReference: string
   idempotencyKey: string
+  paymentIntentId?: string | null
 }): Promise<ConversionOutcome> {
   const db = await createServiceClient()
   const hash = visitorHash(input.visitorReference)
@@ -596,6 +597,55 @@ export async function confirmPublicConversion(input: {
   const identity = objectValue(row.identity_context)
   const configuration = objectValue(row.configuration)
   const journey = text(row.journey) as ConversionJourney
+
+  // Financial authority: a transactional checkout cannot become a canonical
+  // outcome until its payment is captured. Wallet-only payments are authorized
+  // at reservation time and committed atomically here before confirmation.
+  let confirmedPaymentIntentId: string | null = null
+  let confirmedPaymentMetadata: Record<string, unknown> = {}
+  if (journey === 'product_checkout' && numberValue(price.grand_total) > 0) {
+    if (!input.paymentIntentId) {
+      throw new MarketplaceError('VALIDATION_ERROR', 'Une preuve de paiement capturé est requise avant confirmation de la commande.')
+    }
+    const paymentResult = await db
+      .from('angelcare_marketplace_payment_intents')
+      .select('*')
+      .eq('id', input.paymentIntentId)
+      .eq('conversion_session_id', text(row.id))
+      .maybeSingle()
+    if (paymentResult.error) throw fail('vérifier le paiement de la conversion', paymentResult.error)
+    if (!paymentResult.data) throw new MarketplaceError('CONFLICT', 'Le paiement ne correspond pas à cette session de conversion.')
+    const payment = paymentResult.data as Row
+    if (Math.abs(numberValue(payment.expected_amount) - numberValue(price.grand_total)) > 0.02) {
+      throw new MarketplaceError('CONFLICT', 'Le montant du paiement ne correspond pas au prix verrouillé de la conversion.')
+    }
+    const paymentStatus = text(payment.status)
+    if (text(payment.provider_key) === 'ac_wallet' && paymentStatus === 'authorized') {
+      const reservationId = nullableText(payment.wallet_reservation_id)
+      if (!reservationId) throw new MarketplaceError('CONFLICT', 'La réservation AC Wallet requise est absente.')
+      const committed = await db.rpc('angelcare_marketplace_wallet_commit_reservation', {
+        p_reservation_id: reservationId,
+        p_order_reference: text(payment.public_reference),
+        p_payment_reference: text(payment.provider_reference) || text(payment.public_reference),
+      })
+      if (committed.error) throw fail('capturer la réservation AC Wallet', committed.error)
+      const captured = await db
+        .from('angelcare_marketplace_payment_intents')
+        .update({
+          status: 'captured',
+          authorized_amount: numberValue(payment.expected_amount),
+          captured_amount: numberValue(payment.expected_amount),
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', text(payment.id))
+      if (captured.error) throw fail('finaliser le paiement AC Wallet', captured.error)
+    } else if (!['captured', 'reconciled'].includes(paymentStatus)) {
+      throw new MarketplaceError('DEPENDENCY_BLOCKED', `Le paiement doit être capturé avant confirmation (état actuel : ${paymentStatus || 'inconnu'}).`)
+    }
+    confirmedPaymentIntentId = text(payment.id)
+    confirmedPaymentMetadata = objectValue(payment.metadata)
+  }
+
   let canonicalObjectType = 'marketplace_conversion_handover'
   let canonicalObjectId: string | null = null
   let publicReference = text(row.public_reference)
@@ -709,6 +759,23 @@ export async function confirmPublicConversion(input: {
     .select('*')
     .single()
   if (error || !data) throw fail('enregistrer le résultat de conversion', error)
+
+  if (confirmedPaymentIntentId) {
+    const paymentBind = await db
+      .from('angelcare_marketplace_payment_intents')
+      .update({
+        canonical_object_type: canonicalObjectType,
+        canonical_object_id: canonicalObjectId,
+        metadata: {
+          ...confirmedPaymentMetadata,
+          conversion_outcome_id: data.id,
+          conversion_outcome_type: outcomeType,
+        },
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', confirmedPaymentIntentId)
+    if (paymentBind.error) throw fail('lier le paiement au résultat canonique', paymentBind.error)
+  }
 
   await db
     .from('angelcare_marketplace_conversion_sessions')

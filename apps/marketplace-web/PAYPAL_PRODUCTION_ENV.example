@@ -1,0 +1,11 @@
+ANGELCARE_PAYMENT_PROVIDER=paypal
+PAYPAL_ENV=live
+PAYPAL_CLIENT_ID=
+PAYPAL_CLIENT_SECRET=
+PAYPAL_WEBHOOK_ID=
+PAYPAL_CURRENCY=EUR
+# Controlled commercial conversion policy: number of Moroccan dirhams represented by 1 EUR.
+# Example format only: 10.80. Do not copy an example as a production rate without approval.
+PAYPAL_DH_PER_PAYPAL_UNIT=
+PAYPAL_TIMEOUT_MS=15000
+MARKETPLACE_BASE_URL=https://my.angelcarehub.com/angelcare-marketplace
