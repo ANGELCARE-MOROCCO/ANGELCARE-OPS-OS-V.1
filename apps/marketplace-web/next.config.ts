@@ -2,6 +2,20 @@ import type { NextConfig } from "next";
 import path from "path";
 
 const nextConfig: NextConfig = {
+  async rewrites() {
+    return {
+      beforeFiles: [
+        {
+          source: '/',
+          destination: '/angelcare-marketplace/fr',
+        },
+      ],
+      afterFiles: [],
+      fallback: [],
+    }
+  },
+
+
   // Standalone Marketplace production TypeScript boundary.
   // Type checking remains ENABLED; this does not ignore errors.
   typescript: {
