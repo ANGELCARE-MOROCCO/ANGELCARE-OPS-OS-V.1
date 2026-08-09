@@ -13,6 +13,7 @@ import type {
   MarketplaceRoleAssignment,
 } from '../domain/types'
 import { MarketplaceError } from '../server/errors'
+import { getCustomerContext } from '../customer-commerce/customer-auth'
 
 type CurrentAppUser = Record<string, unknown> & {
   id?: string
@@ -138,10 +139,33 @@ export function hasMarketplacePermission(
   return context.permissions.includes(permission)
 }
 
+
+const FAMILY_CUSTOMER_SELF_SERVICE_PERMISSIONS = new Set<MarketplacePermission>([
+  'marketplace.family.access',
+  'marketplace.family.dashboard',
+  'marketplace.family.profile.view',
+  'marketplace.family.profile.manage',
+  'marketplace.family.children.view',
+  'marketplace.family.children.manage',
+  'marketplace.family.diagnostics.create',
+  'marketplace.family.diagnostics.view',
+  'marketplace.family.requests.create',
+  'marketplace.family.requests.view',
+  'marketplace.family.missions.view',
+  'marketplace.family.support.create',
+  'marketplace.family.support.view',
+])
+
+async function familyCustomerContext(permission?: MarketplacePermission): Promise<MarketplaceRequestContext | null> {
+  if (!permission || !FAMILY_CUSTOMER_SELF_SERVICE_PERMISSIONS.has(permission)) return null
+  const customer = await getCustomerContext().catch(() => null)
+  return customer?.marketplace || null
+}
+
 export async function requireMarketplaceApiContext(
   permission?: MarketplacePermission,
 ): Promise<MarketplaceRequestContext> {
-  const context = await getMarketplaceContext()
+  const context = await getMarketplaceContext() || await familyCustomerContext(permission)
   if (!context) {
     throw new MarketplaceError('AUTHENTICATION_REQUIRED', 'Authentification ANGELCARE requise.')
   }
@@ -173,7 +197,7 @@ export async function requireMarketplaceApiContext(
 export async function requireMarketplacePageContext(
   permission?: MarketplacePermission,
 ): Promise<MarketplaceRequestContext> {
-  const context = await getMarketplaceContext()
+  const context = await getMarketplaceContext() || await familyCustomerContext(permission)
   if (!context) {
     redirect(`/login?returnTo=${encodeURIComponent('/angelcare-marketplace/workspace')}`)
     throw new MarketplaceError('AUTHENTICATION_REQUIRED', 'Authentification ANGELCARE requise.')

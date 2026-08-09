@@ -20,7 +20,6 @@
     "angelcare-marketplace/**/*.ts",
     "angelcare-marketplace/**/*.tsx",
     "middleware.ts",
-    "proxy.ts",
     "instrumentation.ts",
     "instrumentation-client.ts",
     "types/angelcare-desktop.d.ts"
