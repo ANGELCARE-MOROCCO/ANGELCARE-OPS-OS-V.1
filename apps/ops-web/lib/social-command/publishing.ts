@@ -74,32 +74,63 @@ async function reconcilePublication(publicationId: string) {
   return status
 }
 
-export async function processExecutionJob(jobId: string) {
+async function claimExecutionJob(jobId: string) {
   const db = await socialDb()
-  const startedAt = nowIso()
-  const bundle = await loadExecutionBundle(jobId)
-  if (["published", "cancelled"].includes(bundle.job.status)) return { skipped: true, status: bundle.job.status }
+  const { data: current, error } = await db.from("social_command_execution_jobs")
+    .select("id,status,locked_at,attempt_count,max_attempts").eq("id", jobId).maybeSingle()
+  if (error) throw error
+  if (!current) throw new Error("Execution job not found")
+  if (["published", "cancelled", "failed"].includes(String(current.status))) return { claimed: false as const, status: String(current.status), job: current }
 
   const lockCutoff = new Date(Date.now() - 2 * 60 * 1000).toISOString()
-  if (bundle.job.locked_at && bundle.job.locked_at > lockCutoff && ["preparing", "publishing"].includes(bundle.job.status)) {
-    return { skipped: true, status: "locked" }
+  if (["preparing", "publishing"].includes(String(current.status)) && current.locked_at && String(current.locked_at) > lockCutoff) {
+    return { claimed: false as const, status: "locked", job: current }
   }
-
-  const attemptNo = Number(bundle.job.attempt_count || 0) + 1
-  await db.from("social_command_execution_jobs").update({
+  const attemptNo = Number(current.attempt_count || 0) + 1
+  let query = db.from("social_command_execution_jobs").update({
     status: "preparing",
-    locked_at: startedAt,
+    locked_at: nowIso(),
     attempt_count: attemptNo,
-    updated_at: startedAt,
+    updated_at: nowIso(),
   }).eq("id", jobId)
+  if (["preparing", "publishing"].includes(String(current.status))) {
+    query = query.in("status", ["preparing", "publishing"]).lt("locked_at", lockCutoff)
+  } else {
+    query = query.in("status", ["queued", "retrying", "confirming"])
+  }
+  const { data: claimed, error: claimError } = await query.select("*").maybeSingle()
+  if (claimError) throw claimError
+  if (!claimed) return { claimed: false as const, status: "contended", job: current }
+  return { claimed: true as const, status: "preparing", job: claimed, attemptNo }
+}
+
+async function recoverStaleExecutionLocks() {
+  const db = await socialDb()
+  const cutoff = new Date(Date.now() - 2 * 60 * 1000).toISOString()
+  const now = nowIso()
+  const { data, error } = await db.from("social_command_execution_jobs").update({
+    status: "retrying", locked_at: null, next_attempt_at: now,
+    last_error: "Recovered stale Social Command worker lock", updated_at: now,
+  }).in("status", ["preparing", "publishing"]).lt("locked_at", cutoff).select("id")
+  if (error) throw error
+  return (data || []).length
+}
+
+export async function processExecutionJob(jobId: string) {
+  const db = await socialDb()
+  const claim = await claimExecutionJob(jobId)
+  if (!claim.claimed) return { skipped: true, status: claim.status }
+  const startedAt = nowIso()
+  const bundle = await loadExecutionBundle(jobId)
+  const attemptNo = claim.attemptNo
 
   try {
     const connection = await getActiveConnectionWithSecrets()
     if (!connection) throw new Error("No active Meta connection")
     if (bundle.media.some((asset) => asset.status !== "ready")) throw new Error("Publication contains media that is not ready")
 
-    await db.from("social_command_execution_jobs").update({ status: "publishing", updated_at: nowIso() }).eq("id", jobId)
-    const liveJob = { ...bundle.job, attempt_count: attemptNo }
+    await db.from("social_command_execution_jobs").update({ status: "publishing", updated_at: nowIso() }).eq("id", jobId).eq("status", "preparing")
+    const liveJob = { ...bundle.job, status: "publishing" as const, attempt_count: attemptNo }
     const result = bundle.job.channel === "instagram"
       ? await publishInstagram({ connection, publication: bundle.publication, media: bundle.media, job: liveJob })
       : await publishFacebook({ connection, publication: bundle.publication, media: bundle.media, job: liveJob })
@@ -168,6 +199,7 @@ export async function processExecutionJob(jobId: string) {
 
 export async function processDueJobs(limit = 8) {
   const db = await socialDb()
+  await recoverStaleExecutionLocks()
   const now = nowIso()
   const { data, error } = await db.from("social_command_execution_jobs")
     .select("id,status,due_at,next_attempt_at")

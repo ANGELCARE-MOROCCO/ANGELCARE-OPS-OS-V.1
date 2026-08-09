@@ -173,7 +173,13 @@ export type SocialBootstrap = {
     publicUrl: string | null
     rootLabel?: string | null
     freeBytes?: number | null
+    totalBytes?: number | null
     usedBytes?: number | null
+    freeRatio?: number | null
+    minFreeBytes?: number | null
+    degraded?: boolean
+    warnings?: string[]
+    temporaryFiles?: number | null
     error?: string | null
   }
   stats: {
@@ -362,6 +368,28 @@ export type SocialWebhookHealth = {
   failed24h: number
   lastLatencyMs: number | null
   endpoint: string | null
+  signature: {
+    configured: boolean
+    candidateCount: number
+    candidateSources: string[]
+    dedicatedSigningSecretConfigured: boolean
+    lastRejectionReason: string | null
+    lastRejectionAt: string | null
+    rejectionCounts: Record<string, number>
+    lastDiagnostics: Record<string, unknown>
+  }
+  subscriptions: {
+    state?: string
+    checkedAt?: string | null
+    host?: string | null
+    expectedFields?: string[]
+    subscribedFields?: string[]
+    missingFields?: string[]
+    extraFields?: string[]
+    appIds?: string[]
+    error?: string | null
+  }
+  replayableEvents: Array<{ id: string; eventType: string; error: string | null; receivedAt: string }>
 }
 
 export type SocialPerformanceSummary = {

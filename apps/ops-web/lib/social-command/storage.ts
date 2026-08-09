@@ -77,11 +77,17 @@ export async function fetchGatewayHealth() {
     const payload = await response.json().catch(() => ({}))
     return {
       configured: true,
-      healthy: response.ok && payload?.ok !== false,
+      healthy: response.ok && payload?.ok !== false && payload?.data?.healthy !== false,
+      degraded: payload?.data?.healthy === false || Boolean(payload?.data?.warnings?.length),
       publicUrl: root,
       rootLabel: payload?.data?.rootLabel || null,
       freeBytes: payload?.data?.freeBytes ?? null,
+      totalBytes: payload?.data?.totalBytes ?? null,
       usedBytes: payload?.data?.usedBytes ?? null,
+      freeRatio: payload?.data?.freeRatio ?? null,
+      minFreeBytes: payload?.data?.minFreeBytes ?? null,
+      warnings: Array.isArray(payload?.data?.warnings) ? payload.data.warnings.map(String) : [],
+      temporaryFiles: payload?.data?.temporaryFiles ?? null,
       error: response.ok ? null : String(payload?.error || `HTTP ${response.status}`),
     }
   } catch (error) {

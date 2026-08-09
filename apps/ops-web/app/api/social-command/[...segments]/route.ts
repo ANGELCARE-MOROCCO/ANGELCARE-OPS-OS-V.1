@@ -1,14 +1,14 @@
 import crypto from "node:crypto"
 import { NextResponse } from "next/server"
-import { requireSocialCommandActor, socialError, socialOk } from "@/lib/social-command/auth"
-import { decryptSecret, encryptSecret, randomState } from "@/lib/social-command/crypto"
+import { requireSocialCommandActor, requireSocialCommandRoutePermission, socialCommandSecurityHealth, socialError, socialOk } from "@/lib/social-command/auth"
+import { decryptSecret, encryptSecret, randomState, socialCommandEncryptionHealth } from "@/lib/social-command/crypto"
 import { cleanString, jsonObject, nowIso, socialDb, stringArray } from "@/lib/social-command/db"
 import {
   auditSocial, completeMediaAsset, createBulkPlan, createCampaign, createJobsForPublication,
   createMediaPlaceholder, createOperation, createPublication, getActiveConnection, listCampaigns,
   listJobs, listMedia, listOperations, listPublications, replaceFutureJobs, updateOperation, updatePublication,
 } from "@/lib/social-command/repository"
-import { buildMetaLoginUrl, discoverMetaPages, exchangeMetaCode, getMetaGrantedScopes, saveMetaConnection, verifyMetaConnection } from "@/lib/social-command/meta"
+import { autoReconcileMetaWebhookSubscriptionsEnabled, buildMetaLoginUrl, cleanupExpiredMetaOAuthSessions, discoverMetaPages, exchangeMetaCode, getMetaGrantedScopes, inspectMetaWebhookSubscriptions, reconcileMetaWebhookSubscriptions, rotateStoredMetaSecrets, saveMetaConnection, verifyMetaConnection } from "@/lib/social-command/meta"
 import { createUploadSession, deleteGatewayAsset, fetchGatewayAsset, fetchGatewayHealth } from "@/lib/social-command/storage"
 import { processDueJobs, processExecutionJob } from "@/lib/social-command/publishing"
 import { mz2Bootstrap } from "@/lib/social-command/mz2"
@@ -16,7 +16,7 @@ import { bulkConversationAction, getConversation, listComments, listConversation
 import { listAutomations, listAutomationRuns, processAutomationTick, runAutomation, updateAutomation } from "@/lib/social-command/automation"
 import { aiUsageSummary, suggestDmReply } from "@/lib/social-command/ai"
 import { capabilityMatrix, performanceSummary, reconcilePublishedProviderState, syncProviderMetrics } from "@/lib/social-command/intelligence"
-import { processMetaWebhookPayload, recordRejectedWebhook, recordWebhookVerification, verifyMetaWebhookSignature, verifyWebhookChallenge, webhookHealth } from "@/lib/social-command/webhook"
+import { processMetaWebhookPayload, recordRejectedWebhook, recordWebhookVerification, replayMetaWebhookEvent, runWebhookSignatureSelfTest, verifyMetaWebhookSignatureDetailed, verifyWebhookChallenge, webhookHealth } from "@/lib/social-command/webhook"
 import type { BulkSlotDraft, SocialChannel, SocialFormat, SocialPublication } from "@/lib/social-command/types"
 
 export const dynamic = "force-dynamic"
@@ -90,6 +90,7 @@ export async function GET(request: Request, context: RouteContext) {
     if (key === "meta/callback") {
       const url = new URL(request.url); const state = cleanString(url.searchParams.get("state"), 500); const code = cleanString(url.searchParams.get("code"), 5000)
       const auth = await requireActor(); if (!auth.ok) return auth.response
+      const access = requireSocialCommandRoutePermission(auth.actor, "GET", "meta/connect"); if (!access.ok) return access.response
       if (!state || !code) throw new Error("Meta OAuth callback is incomplete")
       const db = await socialDb(); const { data: session, error } = await db.from("social_command_oauth_sessions").select("*").eq("state_hash", hashState(state)).eq("actor_user_id", auth.actor.id).maybeSingle()
       if (error || !session) throw new Error("Meta OAuth state is invalid or expired")
@@ -105,6 +106,7 @@ export async function GET(request: Request, context: RouteContext) {
     }
 
     const auth = await requireActor(); if (!auth.ok) return auth.response
+    const access = requireSocialCommandRoutePermission(auth.actor, "GET", key); if (!access.ok) return access.response
     if (key === "bootstrap") return socialOk(await bootstrap())
     if (key === "media") return socialOk(await listMedia())
     if (key === "campaigns") return socialOk(await listCampaigns())
@@ -115,6 +117,7 @@ export async function GET(request: Request, context: RouteContext) {
       const db=await socialDb(); const {data,error}=await db.from("social_command_audit_events").select("*").order("created_at",{ascending:false}).limit(250); if(error)throw error; return socialOk(data||[])
     }
     if (key === "meta/connect") {
+      await cleanupExpiredMetaOAuthSessions().catch(() => ({ expired: 0 }))
       const state=randomState(); const db=await socialDb(); const id=crypto.randomUUID(); const now=nowIso()
       const {error}=await db.from("social_command_oauth_sessions").insert({id,state_hash:hashState(state),actor_user_id:auth.actor.id,status:"initiated",expires_at:new Date(Date.now()+15*60*1000).toISOString(),metadata:{},created_at:now,updated_at:now})
       if(error) throw error
@@ -140,6 +143,7 @@ export async function GET(request: Request, context: RouteContext) {
     if (key === "automation-runs") return socialOk(await listAutomationRuns())
     if (key === "control/capabilities") return socialOk(await capabilityMatrix())
     if (key === "control/webhook-health") return socialOk(await webhookHealth())
+    if (key === "control/security-health") return socialOk({ ...socialCommandSecurityHealth(auth.actor), encryption: socialCommandEncryptionHealth() })
     if (key === "control/ai-usage") return socialOk(await aiUsageSummary())
     if (key === "intelligence/performance") return socialOk(await performanceSummary())
     if (key === "storage/health") return socialOk(await fetchGatewayHealth())
@@ -153,21 +157,29 @@ export async function POST(request: Request, context: RouteContext) {
     if (key === "meta/webhooks") {
       const rawBody = await request.text()
       const signature = request.headers.get("x-hub-signature-256")
-      if (!verifyMetaWebhookSignature(rawBody, signature)) {
-        await recordRejectedWebhook(rawBody, "invalid_signature")
+      const signatureCheck = verifyMetaWebhookSignatureDetailed(rawBody, signature)
+      if (!signatureCheck.valid) {
+        await recordRejectedWebhook(rawBody, signatureCheck.reason, signatureCheck)
         return new NextResponse("Invalid webhook signature", { status: 401 })
       }
       let payload: Record<string, unknown>
       try { payload = JSON.parse(rawBody) as Record<string, unknown> }
-      catch { await recordRejectedWebhook(rawBody, "invalid_json"); return new NextResponse("Invalid webhook payload", { status: 400 }) }
-      return socialOk(await processMetaWebhookPayload(payload, rawBody))
+      catch { await recordRejectedWebhook(rawBody, "invalid_json", signatureCheck); return new NextResponse("Invalid webhook payload", { status: 400 }) }
+      return socialOk(await processMetaWebhookPayload(payload, rawBody, signatureCheck))
     }
     if (key === "worker/tick") {
       if(!workerAuthorized(request)) return socialError("WORKER_UNAUTHORIZED",401)
       const body=await request.json().catch(()=>({})); const publishing=await processDueJobs(Math.max(1,Math.min(20,Number(body?.limit||8)))); let automation:unknown=null; try{automation=await processAutomationTick()}catch(error){automation={error:error instanceof Error?error.message:String(error)}}; return socialOk({publishing,automation})
     }
     const auth=await requireActor(); if(!auth.ok) return auth.response
+    const access=requireSocialCommandRoutePermission(auth.actor,"POST",key); if(!access.ok) return access.response
     const body=await request.json().catch(()=>({})) as Record<string,unknown>
+
+    if(key==="control/webhook-self-test"){const result=await runWebhookSignatureSelfTest();await auditSocial(auth.actor.id,"webhook.self_test","webhook",null,{ok:result.ok});return socialOk(result)}
+    if(key==="control/webhook-subscriptions/inspect"){const connection=await activeConnectionRaw();if(!connection)throw new Error("No active Meta connection");const result=await inspectMetaWebhookSubscriptions(connection);await auditSocial(auth.actor.id,"webhook.subscriptions.inspect","connection",connection.id,{state:result.state});return socialOk(result)}
+    if(key==="control/webhook-subscriptions/reconcile"){const connection=await activeConnectionRaw();if(!connection)throw new Error("No active Meta connection");const result=await reconcileMetaWebhookSubscriptions(connection);await auditSocial(auth.actor.id,"webhook.subscriptions.reconcile","connection",connection.id,{state:result.state,missingFields:result.missingFields});return socialOk(result)}
+    if(key==="control/webhook-replay"){const eventId=cleanString(body.eventId,120);if(!eventId)throw new Error("eventId required");const result=await replayMetaWebhookEvent(eventId);await auditSocial(auth.actor.id,"webhook.replayed","webhook_event",eventId,{normalized:result.normalized,kind:result.kind});return socialOk(result)}
+    if(key==="control/crypto-rotate"){const result=await rotateStoredMetaSecrets();await auditSocial(auth.actor.id,"crypto.tokens_rotated","social_command",null,result);return socialOk(result)}
 
     const conversationReply=/^conversations\/([^/]+)\/reply$/.exec(key)
     if(conversationReply){const result=await sendConversationReply(conversationReply[1],body.text,auth.actor.id);await auditSocial(auth.actor.id,"conversation.reply","conversation",conversationReply[1]);return socialOk(result)}
@@ -199,8 +211,10 @@ export async function POST(request: Request, context: RouteContext) {
         ["instagram","messages",scopes.includes("instagram_manage_messages")],
       ]
       for(const [channel,capability,supported] of caps){await db.from("social_command_channel_capabilities").upsert({connection_id:connection.id,channel,capability,supported,source:"meta_scope",reason:supported?null:(channel==="facebook"&&capability==="story"?"No verified Facebook Page Story adapter in MZ1":"Required permission is not granted"),checked_at:nowIso()},{onConflict:"connection_id,channel,capability"})}
-      await auditSocial(auth.actor.id,"meta.connected","connection",connection.id,{pageId:connection.facebook_page_id,instagram:connection.instagram_username,scopes})
-      return socialOk({connection})
+      let webhookSubscriptions:unknown=null
+      if(autoReconcileMetaWebhookSubscriptionsEnabled()&&connection.instagram_business_id){try{const active=await activeConnectionRaw();if(!active)throw new Error("Active Meta connection could not be reloaded after authorization");webhookSubscriptions=await reconcileMetaWebhookSubscriptions(active)}catch(error){webhookSubscriptions={state:"degraded",error:error instanceof Error?error.message:String(error)}}}
+      await auditSocial(auth.actor.id,"meta.connected","connection",connection.id,{pageId:connection.facebook_page_id,instagram:connection.instagram_username,scopes,webhookSubscriptions})
+      return socialOk({connection,webhookSubscriptions})
     }
     if (key === "meta/disconnect") {
       const db=await socialDb(); const connection=await activeConnectionRaw(); if(!connection) return socialOk({disconnected:false})
@@ -273,7 +287,7 @@ export async function POST(request: Request, context: RouteContext) {
 
 export async function PATCH(request: Request, context: RouteContext) {
   const {segments=[]}=await context.params; const key=pathKey(segments)
-  try{const auth=await requireActor();if(!auth.ok)return auth.response;const body=await request.json().catch(()=>({})) as Record<string,unknown>
+  try{const auth=await requireActor();if(!auth.ok)return auth.response;const access=requireSocialCommandRoutePermission(auth.actor,"PATCH",key);if(!access.ok)return access.response;const body=await request.json().catch(()=>({})) as Record<string,unknown>
     const automation=/^automations\/([^/]+)$/.exec(key);if(automation){const a=await updateAutomation(automation[1],body,auth.actor.id);await auditSocial(auth.actor.id,"automation.updated","automation",a.id);return socialOk(a)}
     const conversation=/^conversations\/([^/]+)$/.exec(key);if(conversation){const c=await updateConversationState(conversation[1],body,auth.actor.id);await auditSocial(auth.actor.id,"conversation.updated","conversation",conversation[1]);return socialOk(c)}
     const comment=/^comments\/([^/]+)$/.exec(key);if(comment){const c=await updateCommentState(comment[1],body);await auditSocial(auth.actor.id,"comment.updated","comment",comment[1]);return socialOk(c)}
@@ -284,5 +298,5 @@ export async function PATCH(request: Request, context: RouteContext) {
 
 export async function DELETE(request: Request, context: RouteContext) {
   const {segments=[]}=await context.params; const key=pathKey(segments)
-  try{const auth=await requireActor();if(!auth.ok)return auth.response;const media=/^media\/([^/]+)$/.exec(key);if(media){const db=await socialDb();const id=media[1];await deleteGatewayAsset(id);await db.from("social_command_media_assets").update({status:"deleted",archived_at:nowIso()}).eq("id",id);await auditSocial(auth.actor.id,"media.deleted","media_asset",id);return socialOk({deleted:true,id})}return socialError("SOCIAL_COMMAND_ROUTE_NOT_FOUND",404,{path:key})}catch(error){return socialError(error,500,{path:key})}
+  try{const auth=await requireActor();if(!auth.ok)return auth.response;const access=requireSocialCommandRoutePermission(auth.actor,"DELETE",key);if(!access.ok)return access.response;const media=/^media\/([^/]+)$/.exec(key);if(media){const db=await socialDb();const id=media[1];await deleteGatewayAsset(id);await db.from("social_command_media_assets").update({status:"deleted",archived_at:nowIso()}).eq("id",id);await auditSocial(auth.actor.id,"media.deleted","media_asset",id);return socialOk({deleted:true,id})}return socialError("SOCIAL_COMMAND_ROUTE_NOT_FOUND",404,{path:key})}catch(error){return socialError(error,500,{path:key})}
 }

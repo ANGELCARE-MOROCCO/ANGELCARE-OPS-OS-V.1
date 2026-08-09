@@ -13,6 +13,8 @@ const SIGNING_SECRET = String(process.env.SOCIAL_COMMAND_MEDIA_SIGNING_SECRET ||
 const ADMIN_TOKEN = String(process.env.SOCIAL_COMMAND_MEDIA_GATEWAY_ADMIN_TOKEN || '')
 const ALLOWED_ORIGIN = String(process.env.SOCIAL_COMMAND_MEDIA_ALLOWED_ORIGIN || '').replace(/\/$/, '')
 const DEFAULT_MAX_BYTES = Number(process.env.SOCIAL_COMMAND_MEDIA_MAX_BYTES || 1024 * 1024 * 1024)
+const MIN_FREE_BYTES = Number(process.env.SOCIAL_COMMAND_MEDIA_MIN_FREE_BYTES || 10 * 1024 * 1024 * 1024)
+const TEMP_RETENTION_HOURS = Number(process.env.SOCIAL_COMMAND_MEDIA_TEMP_RETENTION_HOURS || 24)
 const ALLOWED_MIME = new Set((process.env.SOCIAL_COMMAND_MEDIA_ALLOWED_MIME || 'image/jpeg,image/png,image/webp,video/mp4,video/quicktime').split(',').map(v=>v.trim()).filter(Boolean))
 
 if (!SIGNING_SECRET || !ADMIN_TOKEN) {
@@ -30,7 +32,7 @@ const dirs = {
 for (const dir of Object.values(dirs)) fs.mkdirSync(dir,{recursive:true})
 
 function json(res,status,payload,extra={}) {
-  res.writeHead(status,{...corsHeaders(),...extra,'content-type':'application/json; charset=utf-8','cache-control':'no-store'})
+  res.writeHead(status,{...corsHeaders(),...extra,'content-type':'application/json; charset=utf-8','cache-control':'no-store','x-content-type-options':'nosniff'})
   res.end(JSON.stringify(payload))
 }
 function corsHeaders() {
@@ -93,8 +95,27 @@ function allowedExtensionForMime(filename,mime){
 async function diskUsage(){
   try {
     const stat=await fsp.statfs(ROOT)
-    return {freeBytes:Number(stat.bavail)*Number(stat.bsize), totalBytes:Number(stat.blocks)*Number(stat.bsize)}
-  } catch { return {freeBytes:null,totalBytes:null} }
+    const freeBytes=Number(stat.bavail)*Number(stat.bsize)
+    const totalBytes=Number(stat.blocks)*Number(stat.bsize)
+    const usedBytes=Math.max(0,totalBytes-freeBytes)
+    const freeRatio=totalBytes>0?freeBytes/totalBytes:null
+    return {freeBytes,totalBytes,usedBytes,freeRatio}
+  } catch { return {freeBytes:null,totalBytes:null,usedBytes:null,freeRatio:null} }
+}
+async function listTemporaryFiles(){
+  try{return (await fsp.readdir(dirs.temporary,{withFileTypes:true})).filter(entry=>entry.isFile()).length}catch{return 0}
+}
+async function cleanupTemporaryFiles(){
+  const cutoff=Date.now()-Math.max(1,TEMP_RETENTION_HOURS)*60*60*1000
+  let removed=0,kept=0
+  let entries=[]
+  try{entries=await fsp.readdir(dirs.temporary,{withFileTypes:true})}catch{return {removed,kept}}
+  for(const entry of entries){
+    if(!entry.isFile())continue
+    const target=path.join(dirs.temporary,entry.name)
+    try{const st=await fsp.stat(target);if(st.mtimeMs<cutoff){await fsp.rm(target,{force:true});removed++}else kept++}catch{}
+  }
+  return {removed,kept}
 }
 async function handleUpload(req,res,assetId,url){
   let claims
@@ -105,6 +126,8 @@ async function handleUpload(req,res,assetId,url){
   const declared=Number(req.headers['content-length']||0)
   const maxBytes=Math.min(Number(claims.maxBytes||DEFAULT_MAX_BYTES),DEFAULT_MAX_BYTES)
   if(declared && declared>maxBytes) return json(res,413,{ok:false,error:'File exceeds allowed size'})
+  const disk=await diskUsage()
+  if(disk.freeBytes!=null && disk.freeBytes-Math.max(0,declared)<MIN_FREE_BYTES) return json(res,507,{ok:false,error:'Windows media vault free-space reserve would be violated'})
   const id=safeId(assetId); if(!id) return json(res,400,{ok:false,error:'Invalid asset id'})
   const name=safeName(claims.filename)
   const dir=assetDir(id); await fsp.mkdir(dir,{recursive:true})
@@ -115,6 +138,12 @@ async function handleUpload(req,res,assetId,url){
   try {
     await pipeline(req,fs.createWriteStream(tmp,{flags:'wx'}))
     if(bytes>maxBytes) throw new Error('File exceeds allowed size')
+    const diskAfterUpload=await diskUsage()
+    if(diskAfterUpload.freeBytes!=null && diskAfterUpload.freeBytes<MIN_FREE_BYTES) {
+      const reserveError=new Error('Windows media vault free-space reserve was reached during upload')
+      reserveError.statusCode=507
+      throw reserveError
+    }
     const detectedMime=await detectMime(tmp)
     if(!detectedMime||!ALLOWED_MIME.has(detectedMime)) throw new Error('Media signature is not supported')
     if(detectedMime!==contentType) throw new Error(`Media signature does not match declared MIME (${detectedMime} != ${contentType})`)
@@ -124,7 +153,7 @@ async function handleUpload(req,res,assetId,url){
     const meta={assetId:id,storageKey:`assets/${id}/${name}`,safeFilename:name,mimeType:contentType,sizeBytes:bytes,sha256:digest,actorUserId:String(claims.actorUserId||''),createdAt:new Date().toISOString(),metadata:{windowsRootLabel:path.parse(ROOT).root}}
     await writeMeta(id,meta)
     return json(res,201,{ok:true,data:meta})
-  } catch(e){await fsp.rm(tmp,{force:true}).catch(()=>{});return json(res,e.message.includes('exceeds')?413:500,{ok:false,error:e.message})}
+  } catch(e){await fsp.rm(tmp,{force:true}).catch(()=>{});return json(res,Number(e.statusCode)|| (e.message.includes('exceeds')?413:500),{ok:false,error:e.message})}
 }
 async function handleDelivery(req,res,assetId,url){
   try{verifySigned(url.searchParams.get('token'),'delivery',assetId)}catch(e){return json(res,403,{ok:false,error:e.message})}
@@ -154,10 +183,17 @@ const server=http.createServer(async(req,res)=>{
     const url=new URL(req.url,`http://${req.headers.host||'localhost'}`)
     const parts=url.pathname.split('/').filter(Boolean)
     if(url.pathname==='/health'){
-      const disk=await diskUsage();return json(res,200,{ok:true,data:{service:'angelcare-social-command-media-gateway',rootLabel:path.parse(ROOT).root||'windows',freeBytes:disk.freeBytes,totalBytes:disk.totalBytes,serverTime:new Date().toISOString()}})
+      const disk=await diskUsage();const temporaryFiles=await listTemporaryFiles();const warnings=[]
+      if(disk.freeBytes!=null&&disk.freeBytes<MIN_FREE_BYTES)warnings.push('free_space_below_reserve')
+      return json(res,200,{ok:true,data:{service:'angelcare-social-command-media-gateway',healthy:warnings.length===0,rootLabel:path.parse(ROOT).root||'windows',freeBytes:disk.freeBytes,totalBytes:disk.totalBytes,usedBytes:disk.usedBytes,freeRatio:disk.freeRatio,minFreeBytes:MIN_FREE_BYTES,temporaryFiles,warnings,serverTime:new Date().toISOString()}})
     }
     if(parts[0]==='upload'&&parts[1]) return handleUpload(req,res,parts[1],url)
     if(parts[0]==='media'&&parts[1]) return handleDelivery(req,res,parts[1],url)
+    if(parts[0]==='admin'&&parts[1]==='maintenance'){
+      if(!isAdmin(req)) return json(res,401,{ok:false,error:'Admin token required'})
+      if(req.method!=='POST') return json(res,405,{ok:false,error:'POST required'})
+      const cleanup=await cleanupTemporaryFiles();const disk=await diskUsage();return json(res,200,{ok:true,data:{cleanup,disk}})
+    }
     if(parts[0]==='admin'&&parts[1]==='assets'&&parts[2]){
       if(!isAdmin(req)) return json(res,401,{ok:false,error:'Admin token required'})
       const id=safeId(parts[2])
@@ -171,4 +207,7 @@ const server=http.createServer(async(req,res)=>{
 })
 server.requestTimeout=15*60*1000
 server.headersTimeout=65*1000
+cleanupTemporaryFiles().catch(()=>{})
+const maintenanceTimer=setInterval(()=>cleanupTemporaryFiles().catch(()=>{}),30*60*1000)
+maintenanceTimer.unref?.()
 server.listen(PORT,HOST,()=>console.log(`AngelCare Social Command Media Gateway listening on ${HOST}:${PORT} root=${ROOT}`))

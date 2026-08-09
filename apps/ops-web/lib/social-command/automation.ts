@@ -1,7 +1,7 @@
 import crypto from "node:crypto"
 import { cleanString, jsonObject, nowIso, socialDb } from "@/lib/social-command/db"
 import { getActiveConnectionWithSecrets } from "@/lib/social-command/repository"
-import { verifyMetaConnection } from "@/lib/social-command/meta"
+import { autoReconcileMetaWebhookSubscriptionsEnabled, reconcileMetaWebhookSubscriptions, verifyMetaConnection } from "@/lib/social-command/meta"
 import { classifyConversationText } from "@/lib/social-command/engagement"
 import type { SocialAutomation, SocialAutomationRun } from "@/lib/social-command/types"
 
@@ -100,21 +100,34 @@ async function runCredentialHealth(automation: SocialAutomation) {
     if (!connection) return finishRun(automation, runId, { status: "skipped", decision: "No active Meta connection" })
     const db = await socialDb()
     const now = nowIso()
+    const expiryAt = connection.token_expires_at ? new Date(connection.token_expires_at).getTime() : null
+    const remainingMs = expiryAt ? expiryAt - Date.now() : null
+    const remainingDays = remainingMs == null ? null : remainingMs / (24 * 60 * 60 * 1000)
+    if (remainingMs != null && remainingMs <= 0) throw new Error("Meta user token has expired; reconnect required")
     try {
       const identity = await verifyMetaConnection(connection)
-      await db.from("social_command_connections").update({ connection_health: "healthy", last_verified_at: now, updated_at: now }).eq("id", connection.id)
+      let subscription: unknown = null
+      let subscriptionWarning: string | null = null
+      if (autoReconcileMetaWebhookSubscriptionsEnabled() && connection.instagram_business_id) {
+        try { subscription = await reconcileMetaWebhookSubscriptions(connection) }
+        catch (error) { subscriptionWarning = error instanceof Error ? error.message : String(error) }
+      }
+      const warning = remainingDays != null && remainingDays <= 7
+      const health = warning || subscriptionWarning ? "warning" : "healthy"
+      await db.from("social_command_connections").update({ connection_health: health, last_verified_at: now, updated_at: now }).eq("id", connection.id)
       await db.from("social_command_channel_health_events").insert({
-        id: crypto.randomUUID(), connection_id: connection.id, channel: "meta", health_state: "healthy", reason: null,
-        details: { identity }, observed_at: now, created_at: now,
+        id: crypto.randomUUID(), connection_id: connection.id, channel: "meta", health_state: health,
+        reason: warning ? `Token expires in ${Math.max(0, remainingDays || 0).toFixed(1)} day(s)` : subscriptionWarning,
+        details: { identity, tokenRemainingDays: remainingDays, webhookSubscriptions: subscription, subscriptionWarning }, observed_at: now, created_at: now,
       })
-      await action(runId, "connection.health", "connection", connection.id, "completed", { health: "healthy" })
-      return finishRun(automation, runId, { status: "completed", decision: "Connection healthy", actions: [{ health: "healthy" }] })
+      await action(runId, "connection.health", "connection", connection.id, "completed", { health, tokenRemainingDays: remainingDays, subscriptionWarning })
+      return finishRun(automation, runId, { status: "completed", decision: health === "healthy" ? "Connection healthy" : "Connection warning", actions: [{ health, tokenRemainingDays: remainingDays, subscriptionWarning }] })
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error)
       await db.from("social_command_connections").update({ connection_health: "unhealthy", last_verified_at: now, updated_at: now }).eq("id", connection.id)
       await db.from("social_command_channel_health_events").insert({
         id: crypto.randomUUID(), connection_id: connection.id, channel: "meta", health_state: "requires_reconnect", reason: message,
-        details: {}, observed_at: now, created_at: now,
+        details: { tokenRemainingDays: remainingDays }, observed_at: now, created_at: now,
       })
       await action(runId, "connection.health", "connection", connection.id, "completed", { health: "requires_reconnect", reason: message })
       return finishRun(automation, runId, { status: "completed", decision: "Reconnect required", actions: [{ health: "requires_reconnect", reason: message }] })

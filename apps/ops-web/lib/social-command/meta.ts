@@ -163,7 +163,11 @@ export async function saveMetaConnection(input: {
 }) {
   const db = await socialDb()
   const now = nowIso()
-  await db.from("social_command_connections").update({ status: "disconnected", disconnected_at: now, connection_health: "disconnected", updated_at: now }).eq("status", "connected")
+  // Superseded connections are deliberately stripped of provider credentials.
+  await db.from("social_command_connections").update({
+    status: "disconnected", disconnected_at: now, connection_health: "disconnected",
+    encrypted_user_token: null, encrypted_page_token: null, updated_at: now,
+  }).eq("status", "connected")
   const tokenExpiresAt = input.userTokenExpiresIn && input.userTokenExpiresIn > 0
     ? new Date(Date.now() + input.userTokenExpiresIn * 1000).toISOString()
     : null
@@ -238,6 +242,141 @@ export async function verifyMetaConnection(connection: any) {
     instagram = await parseJson(await fetch(igUrl, { cache: "no-store" }))
   }
   return { page, instagram }
+}
+
+
+export const DEFAULT_META_WEBHOOK_FIELDS = [
+  "comments", "live_comments", "messages", "messaging_postbacks", "messaging_seen", "mentions",
+] as const
+
+function truthyEnv(value: string | undefined) {
+  return /^(1|true|yes|on)$/i.test(String(value || ""))
+}
+
+export function metaWebhookFields() {
+  const configured = String(process.env.SOCIAL_COMMAND_META_WEBHOOK_FIELDS || "").trim()
+  if (!configured) return [...DEFAULT_META_WEBHOOK_FIELDS]
+  return [...new Set(configured.split(/[\s,;]+/).map((value) => cleanString(value, 120)).filter(Boolean))]
+}
+
+function subscriptionHosts() {
+  const configured = String(process.env.SOCIAL_COMMAND_META_SUBSCRIPTION_HOSTS || process.env.SOCIAL_COMMAND_META_SUBSCRIPTION_HOST || "").trim()
+  const defaults = ["https://graph.facebook.com", "https://graph.instagram.com"]
+  const hosts = configured ? configured.split(/[\s,;]+/).map((value) => value.trim().replace(/\/+$/, "")).filter(Boolean) : defaults
+  return [...new Set(hosts)]
+}
+
+async function subscriptionRequest(connection: any, method: "GET" | "POST", fields?: string[]) {
+  const cfg = assertMetaConfig()
+  const { pageToken } = getConnectionSecrets(connection)
+  const igId = cleanString(connection?.instagram_business_id, 200)
+  if (!pageToken || !igId) throw new Error("Instagram account or Page token is unavailable for webhook subscription reconciliation")
+  const errors: string[] = []
+  for (const host of subscriptionHosts()) {
+    try {
+      const url = new URL(`${host}/${cfg.graphVersion}/${encodeURIComponent(igId)}/subscribed_apps`)
+      if (method === "POST" && fields?.length) url.searchParams.set("subscribed_fields", fields.join(","))
+      const response = await fetch(url, {
+        method,
+        headers: { Authorization: `Bearer ${pageToken}` },
+        cache: "no-store",
+      })
+      const payload = await parseJson(response)
+      return { host, payload }
+    } catch (error) {
+      errors.push(`${host}: ${error instanceof Error ? error.message : String(error)}`)
+    }
+  }
+  throw new Error(`Meta webhook subscription API unavailable (${errors.join(" | ")})`)
+}
+
+async function persistSubscriptionSnapshot(connectionId: string, snapshot: Record<string, unknown>) {
+  const db = await socialDb()
+  const { data, error } = await db.from("social_command_connections").select("meta_json").eq("id", connectionId).maybeSingle()
+  if (error) throw error
+  const metaJson = jsonObject(data?.meta_json)
+  const { error: updateError } = await db.from("social_command_connections").update({
+    meta_json: { ...metaJson, webhookSubscriptions: snapshot }, updated_at: nowIso(),
+  }).eq("id", connectionId)
+  if (updateError) throw updateError
+}
+
+export function storedMetaWebhookSubscriptionSnapshot(connection: any) {
+  return jsonObject(jsonObject(connection?.meta_json).webhookSubscriptions)
+}
+
+export async function inspectMetaWebhookSubscriptions(connection: any) {
+  const expected = metaWebhookFields()
+  try {
+    const { host, payload } = await subscriptionRequest(connection, "GET")
+    const rows = Array.isArray(payload?.data) ? payload.data : []
+    const fields: string[] = [...new Set<string>(rows.flatMap((row: any): string[] => Array.isArray(row?.subscribed_fields) ? row.subscribed_fields.map(String) : []))]
+    const snapshot = {
+      checkedAt: nowIso(), state: "live", host, expectedFields: expected, subscribedFields: fields,
+      missingFields: expected.filter((field) => !fields.includes(field)), extraFields: fields.filter((field) => !expected.includes(field)),
+      appIds: rows.map((row: any) => cleanString(row?.id, 200)).filter(Boolean), error: null,
+    }
+    if (connection?.id) await persistSubscriptionSnapshot(connection.id, snapshot)
+    return snapshot
+  } catch (error) {
+    const snapshot = {
+      checkedAt: nowIso(), state: "unavailable", expectedFields: expected, subscribedFields: [], missingFields: expected,
+      extraFields: [], appIds: [], error: error instanceof Error ? error.message : String(error),
+    }
+    if (connection?.id) await persistSubscriptionSnapshot(connection.id, snapshot).catch(() => {})
+    return snapshot
+  }
+}
+
+export async function reconcileMetaWebhookSubscriptions(connection: any) {
+  const expected = metaWebhookFields()
+  await subscriptionRequest(connection, "POST", expected)
+  return inspectMetaWebhookSubscriptions(connection)
+}
+
+export function autoReconcileMetaWebhookSubscriptionsEnabled() {
+  return truthyEnv(process.env.SOCIAL_COMMAND_AUTO_RECONCILE_WEBHOOK_SUBSCRIPTIONS)
+}
+
+export async function cleanupExpiredMetaOAuthSessions() {
+  const db = await socialDb()
+  const now = nowIso()
+  const { data, error } = await db.from("social_command_oauth_sessions")
+    .update({ status: "expired", encrypted_user_token: null, updated_at: now })
+    .in("status", ["initiated", "authorized"])
+    .lt("expires_at", now)
+    .select("id")
+  if (error) throw error
+  return { expired: (data || []).length }
+}
+
+export async function rotateStoredMetaSecrets() {
+  const db = await socialDb()
+  const [{ data: connections, error: connectionError }, { data: sessions, error: sessionError }] = await Promise.all([
+    db.from("social_command_connections").select("id,encrypted_user_token,encrypted_page_token"),
+    db.from("social_command_oauth_sessions").select("id,encrypted_user_token").not("encrypted_user_token", "is", null),
+  ])
+  if (connectionError) throw connectionError
+  if (sessionError) throw sessionError
+  const preparedConnections = (connections || []).filter((row: any) => row.encrypted_user_token || row.encrypted_page_token).map((row: any) => ({
+    id: row.id,
+    user: row.encrypted_user_token ? decryptSecret(row.encrypted_user_token) : "",
+    page: row.encrypted_page_token ? decryptSecret(row.encrypted_page_token) : "",
+  }))
+  const preparedSessions = (sessions || []).map((row: any) => ({ id: row.id, user: decryptSecret(row.encrypted_user_token) }))
+  for (const row of preparedConnections) {
+    const { error } = await db.from("social_command_connections").update({
+      encrypted_user_token: row.user ? encryptSecret(row.user) : null,
+      encrypted_page_token: row.page ? encryptSecret(row.page) : null,
+      updated_at: nowIso(),
+    }).eq("id", row.id)
+    if (error) throw error
+  }
+  for (const row of preparedSessions) {
+    const { error } = await db.from("social_command_oauth_sessions").update({ encrypted_user_token: encryptSecret(row.user), updated_at: nowIso() }).eq("id", row.id)
+    if (error) throw error
+  }
+  return { connections: preparedConnections.length, oauthSessions: preparedSessions.length }
 }
 
 function captionFor(publication: SocialPublication, channel: "facebook" | "instagram") {
