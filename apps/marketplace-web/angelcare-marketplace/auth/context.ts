@@ -207,3 +207,20 @@ export async function requireMarketplacePageContext(
   }
   return context
 }
+
+export async function requireMarketplaceAdminPageContext(
+  permission: MarketplacePermission = 'marketplace.admin.access',
+): Promise<MarketplaceRequestContext> {
+  const context = await getMarketplaceContext()
+  if (!context) {
+    redirect(`/admin?returnTo=${encodeURIComponent('/angelcare-marketplace/admin')}`)
+    throw new MarketplaceError('AUTHENTICATION_REQUIRED', 'Authentification Marketplace Admin requise.')
+  }
+  if (!hasMarketplacePermission(context, 'marketplace.admin.access')) {
+    redirect('/angelcare-marketplace/access-denied')
+  }
+  if (permission && !hasMarketplacePermission(context, permission)) {
+    redirect('/angelcare-marketplace/access-denied')
+  }
+  return context
+}

@@ -22,7 +22,9 @@
     "middleware.ts",
     "instrumentation.ts",
     "instrumentation-client.ts",
-    "types/angelcare-desktop.d.ts"
+    "types/angelcare-desktop.d.ts",
+    "app/admin/**/*.ts",
+    "app/admin/**/*.tsx"
   ],
   "exclude": [
     "node_modules",

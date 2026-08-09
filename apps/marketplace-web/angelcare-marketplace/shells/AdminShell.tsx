@@ -4,6 +4,7 @@ import { Globe2, ShieldCheck } from 'lucide-react'
 import type { MarketplaceRequestContext } from '../domain/types'
 import styles from '../design-system/marketplace.module.css'
 import { AdminNavigation } from './AdminNavigation'
+import { AdminLogoutButton } from '../auth/admin/AdminLogoutButton'
 
 export function AdminShell({ context, children }: { context: MarketplaceRequestContext; children: ReactNode }) {
   return (
@@ -23,6 +24,7 @@ export function AdminShell({ context, children }: { context: MarketplaceRequestC
               {context.roleKeys.join(' · ')}<br />
               {context.actor.email || 'Identité interne'}
             </div>
+            <AdminLogoutButton />
           </div>
         </div>
       </aside>
