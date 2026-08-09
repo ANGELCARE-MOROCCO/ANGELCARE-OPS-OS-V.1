@@ -136,6 +136,24 @@ export function hasMarketplacePermission(
   context: MarketplaceRequestContext,
   permission: MarketplacePermission,
 ): boolean {
+  // Canonical authority doctrine:
+  // marketplace_admin is the highest Marketplace authority.
+  // It must never be denied because of registry drift, a newly introduced
+  // permission, a partial role-permission read, or a workspace-specific key.
+  if (context.roleKeys.includes('marketplace_admin')) {
+    return true
+  }
+
+  // Source-role fail-safe. CEO/admin identities remain absolute authorities
+  // even if the persisted Marketplace assignment cannot be resolved.
+  if (
+    context.actor.sourceRole === 'ceo' ||
+    context.actor.sourceRole === 'admin' ||
+    context.actor.sourceRole === 'super_admin'
+  ) {
+    return true
+  }
+
   return context.permissions.includes(permission)
 }
 
