@@ -1,0 +1,4 @@
+-- SAFE NON-DESTRUCTIVE ROLLBACK: disable Ultra Delivery 1/5 while preserving all records.
+update public.angelcare_marketplace_feature_flags set enabled=false,status='inactive',reason='Ultra Delivery 1/5 safe rollback',updated_at=now() where flag_key in('marketplace.master-backoffice.enabled','marketplace.experience-builder.enabled','marketplace.public-universe.enabled','marketplace.family-experience.enabled');
+update public.angelcare_marketplace_modules set enabled=false,status='disabled',health_status='degraded',updated_at=now() where introduced_by_mega_zip between 4 and 7;
+update public.angelcare_marketplace_cms_publication_jobs set status='blocked',blockers=coalesce(blockers,'[]'::jsonb)||jsonb_build_array('Ultra Delivery 1/5 safe rollback') where status in('queued','validating','approved','scheduled','publishing');

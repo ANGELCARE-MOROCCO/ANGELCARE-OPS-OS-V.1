@@ -1,0 +1,27 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "incremental": false
+  },
+  "include": [
+    "next-env.d.ts",
+    "app/(protected)/angelcare-360-operator/email-command/page.tsx",
+    "app/api/angelcare360/operator/email-command/route.ts",
+    "app/api/angelcare360/email-command/worker/route.ts",
+    "app/api/angelcare360/email-command/inbound/route.ts",
+    "components/angelcare360/operator/email-command/**/*.ts",
+    "components/angelcare360/operator/email-command/**/*.tsx",
+    "components/angelcare360/operator/growth/CustomerSovereignCommandRoom.tsx",
+    "components/angelcare360/operator/growth/GrowthContract.ts",
+    "components/angelcare360/operator/OperatorOverlayPortal.tsx",
+    "data/angelcare360/operator-sovereign-navigation.ts",
+    "lib/angelcare360/email/email-os-bridge.ts",
+    "lib/angelcare360/email/correspondence-ledger.ts",
+    "lib/angelcare360/operator/email-command.ts",
+    "lib/angelcare360/operator/tenant-access.ts",
+    "lib/email-os-core/send-mail.ts",
+    "lib/email-os-core/multi-mailbox-resolver.ts",
+    "types/angelcare360/operator/email-command.ts"
+  ]
+}

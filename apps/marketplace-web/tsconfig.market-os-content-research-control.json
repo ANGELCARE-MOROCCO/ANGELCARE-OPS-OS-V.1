@@ -1,0 +1,27 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "incremental": false,
+    "pretty": false
+  },
+  "files": [
+    "next-env.d.ts",
+    "lib/market-os/content-research/types.ts",
+    "lib/market-os/content-research/config.ts",
+    "lib/market-os/content-research/policy.ts",
+    "lib/market-os/content-research/providers/tavily.ts",
+    "lib/market-os/content-research/providers/openrouter.ts",
+    "lib/market-os/content-research/repository.ts",
+    "lib/market-os/content-research/orchestrator.ts",
+    "lib/market-os/content-command-headquarters/market-scan.ts",
+    "app/api/market-os/content-command/research-control/snapshot/route.ts",
+    "app/api/market-os/content-command/research-control/action/route.ts",
+    "app/api/market-os/content-command/research-control/cron/route.ts",
+    "app/(protected)/market-os/content-command-center/ai-director/research-control/page.tsx",
+    "components/market-os/content-command/research-control/ContentResearchControlWorkspace.tsx",
+    "components/market-os/content-command/research-control/research-control.module.css.d.ts",
+    "components/market-os/content-command/content-command-navigation.tsx",
+    "components/market-os/content-command/marketing-ai/MarketingAiDirectorWorkspace.tsx"
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "locale": "fr",
+  "territoryId": "",
+  "category": {
+    "categoryKey": "",
+    "titleFr": "",
+    "titleEn": "",
+    "titleAr": "",
+    "slug": "",
+    "shortDescription": "",
+    "coverMediaPath": ""
+  },
+  "offers": [
+    {
+      "itemKey": "",
+      "sku": "",
+      "slug": "",
+      "kind": "product",
+      "sellableType": "physical_product",
+      "nameFr": "",
+      "nameEn": "",
+      "nameAr": "",
+      "shortDescriptionFr": "",
+      "descriptionFr": "",
+      "priceMode": "fixed",
+      "priceAmount": null,
+      "currencyLabel": "Dh",
+      "availabilityStatus": "available",
+      "media": [
+        {
+          "path": "",
+          "altTextFr": ""
+        }
+      ],
+      "variants": [],
+      "availability": {
+        "available": true,
+        "capacityLimit": null
+      },
+      "merchandisingBadges": [
+        "best_pick"
+      ]
+    }
+  ],
+  "homepageCollection": {
+    "collectionKey": "",
+    "title": "",
+    "subtitle": "",
+    "layoutVariant": "product_cards"
+  },
+  "navigation": {
+    "menuKey": "header-main",
+    "labelFr": "",
+    "labelEn": "",
+    "labelAr": "",
+    "href": ""
+  }
+}

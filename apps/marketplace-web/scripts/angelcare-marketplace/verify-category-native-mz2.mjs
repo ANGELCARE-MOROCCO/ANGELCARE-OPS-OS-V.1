@@ -1,0 +1,39 @@
+import fs from 'node:fs';import path from 'node:path'
+const app=process.cwd();let pass=0,fail=0;const failures=[]
+function ok(c,l){if(c){pass++;console.log(`PASS ${String(pass).padStart(3,'0')}  ${l}`)}else{fail++;failures.push(l);console.log(`FAIL      ${l}`)}}
+const exists=(r)=>fs.existsSync(path.join(app,r));const read=(r)=>fs.readFileSync(path.join(app,r),'utf8');const has=(r,m)=>exists(r)&&read(r).includes(m)
+console.log('======================================================================');console.log(' ANGELCARE MARKETPLACE — CATEGORY-NATIVE MZ2 CONTRACTUAL VERIFIER');console.log('======================================================================')
+const core=['types.ts','registry.ts','content.ts','validation.ts','repository.ts','api-handlers.ts','experience.module.css','experience.manifest.json']
+for(const f of core)ok(exists(`angelcare-marketplace/category-native-experience/${f}`),`core ${f}`)
+const components=['AdaptiveExperience','ExperienceConfigurator','ExperienceHero','ExperienceMediaGallery','ExperienceFieldMatrix','ExperienceFamilySections','ExperienceTrustPanel','CategoryNativeCard','CategoryNativeCompare','CategoryNativeFilters']
+for(const f of components)ok(exists(`angelcare-marketplace/category-native-experience/components/${f}.tsx`),`component ${f}`)
+const pages=['app/angelcare-marketplace/[locale]/experience/[itemSlug]/page.tsx','app/angelcare-marketplace/[locale]/experience/[itemSlug]/configure/page.tsx','app/angelcare-marketplace/[locale]/marketplace/item/[itemSlug]/page.tsx','app/angelcare-marketplace/[locale]/marketplace/[slug]/page.tsx','app/angelcare-marketplace/[locale]/marketplace/compare/page.tsx','app/angelcare-marketplace/[locale]/marketplace/category-native/page.tsx','app/angelcare-marketplace/[locale]/booking/[itemSlug]/page.tsx','app/angelcare-marketplace/[locale]/enrollment/[itemSlug]/page.tsx','app/angelcare-marketplace/[locale]/quotation/[itemSlug]/page.tsx','app/angelcare-marketplace/[locale]/subscription/[itemSlug]/page.tsx','app/angelcare-marketplace/[locale]/my-angelcare/journeys/[journeyId]/configuration/page.tsx']
+for(const f of pages)ok(exists(f),`page ${f}`)
+const api=[];function walk(d){if(!fs.existsSync(d))return;for(const e of fs.readdirSync(d,{withFileTypes:true})){const p=path.join(d,e.name);if(e.isDirectory())walk(p);else if(e.name==='route.ts')api.push(path.relative(app,p))}}
+walk(path.join(app,'app/api/angelcare-marketplace/public/experience'));walk(path.join(app,'app/api/angelcare-marketplace/public/discovery'));walk(path.join(app,'app/api/angelcare-marketplace/conversion/category-native'));walk(path.join(app,'app/api/angelcare-marketplace/journeys/category-native'))
+ok(api.length>=13,`${api.length} MZ2 API routes`)
+for(const f of api.filter((x)=>x.includes('['))){const s=read(f);ok(s.includes('params:Promise<')&&s.includes('context.params'),`Next context ${f}`)}
+const manifest=JSON.parse(read('angelcare-marketplace/category-native-experience/experience.manifest.json'));ok(manifest.experiences.length===31,'31 public experience definitions')
+for(const d of manifest.experiences)ok(Boolean(d.schema_key&&d.family&&d.public_experience_template&&d.conversion_template&&d.operations_handover_type),`continuity ${d.schema_key}`)
+const families=new Set(manifest.experiences.map((d)=>d.family));ok(families.size===31,'31 differentiated experience families')
+const adaptive=read('angelcare-marketplace/category-native-experience/components/AdaptiveExperience.tsx');for(const m of ['ExperienceHero','ExperienceConfigurator','ExperienceFamilySections','ExperienceTrustPanel'])ok(adaptive.includes(m),`adaptive composition ${m}`)
+const config=read('angelcare-marketplace/category-native-experience/components/ExperienceConfigurator.tsx');for(const m of ['date','time','select','checkbox','textarea','revalidate','commit'])ok(config.toLowerCase().includes(m),`configurator authority ${m}`)
+const repo=read('angelcare-marketplace/category-native-experience/repository.ts');for(const m of ['experience_schema_key','conversion_session_key','createPublicConversionSession','revalidateConversionPrice','revalidateConversionAvailability','confirmPublicConversion','experience_handover_events'])ok(repo.includes(m),`repository continuity ${m}`)
+ok(has('angelcare-marketplace/homepage-flagship/components/HomepageFlagship.tsx','nativeSignals'),'homepage category-native metadata')
+ok(has('angelcare-marketplace/homepage-flagship/types.ts','experience_schema_key'),'homepage schema continuity')
+ok(has('angelcare-marketplace/homepage-flagship/repository.ts','experience_configuration'),'homepage configuration continuity')
+ok(has('angelcare-marketplace/catalog-discovery/components/MarketplaceIndex.tsx','CategoryNativeFilters'),'discovery native filter integration')
+ok(has('angelcare-marketplace/catalog-discovery/components/MarketplaceIndex.tsx','CategoryNativeCard'),'discovery native card integration')
+ok(has('app/angelcare-marketplace/[locale]/marketplace/search/page.tsx','filter_'),'category-native search execution')
+ok(has('angelcare-marketplace/catalog-discovery/repository.ts','experience_schema_key'),'discovery schema continuity')
+ok(has('angelcare-marketplace/category-native-experience/components/ExperienceConfigurator.tsx','termsAccepted'),'explicit terms consent')
+ok(has('angelcare-marketplace/category-native-experience/components/ExperienceConfigurator.tsx','identityReady'),'customer identity continuity')
+ok(has('angelcare-marketplace/category-native-experience/repository.ts','input.consents.terms'),'server consent enforcement')
+const css=read('angelcare-marketplace/category-native-experience/experience.module.css');for(const m of ['@media','prefers-reduced-motion','[dir="rtl"]','focus-visible'])ok(css.includes(m),`UIX CSS ${m}`)
+const migration='supabase/migrations/20260806090000_angelcare_marketplace_category_native_adaptive_customer_experience_mz2.sql';ok(exists(migration),'additive migration');const sql=read(migration).toLowerCase();for(const t of ['experience_sessions','experience_configuration_snapshots','experience_price_results','experience_availability_results','experience_handover_events','experience_render_events','experience_errors'])ok(sql.includes(t),`SQL ${t}`);ok(!/\b(drop table|truncate table|delete from)\b/.test(sql),'no destructive SQL')
+ok(exists('angelcare-marketplace/database/rollback/20260806090000_angelcare_marketplace_category_native_mz2_SAFE_ROLLBACK.sql'),'data-preserving rollback')
+const sourceFiles=[];function collect(d){if(!fs.existsSync(d))return;for(const e of fs.readdirSync(d,{withFileTypes:true})){const p=path.join(d,e.name);if(e.isDirectory())collect(p);else if(/\.(ts|tsx)$/.test(e.name))sourceFiles.push(p)}}collect(path.join(app,'angelcare-marketplace/category-native-experience'));collect(path.join(app,'app/angelcare-marketplace/[locale]/experience'));collect(path.join(app,'app/api/angelcare-marketplace/conversion/category-native'))
+for(const f of sourceFiles){const s=fs.readFileSync(f,'utf8');ok(!s.includes('@ts-ignore')&&!s.includes('@ts-nocheck')&&!s.includes(' as any'),`no suppression ${path.relative(app,f)}`)}
+const docs=['FINAL_ACCEPTANCE_REPORT.md','IMPLEMENTATION_REPORT.md','OPERATOR_GUIDE.md','EXPERIENCE_TEMPLATE_REGISTER.md','SCHEMA_TO_TEMPLATE_MATRIX.md','CONFIGURATOR_REGISTER.md','OPERATIONAL_HANDOVER_MATRIX.md','API_ROUTE_REGISTER.md','ROUTE_INVENTORY.md','LOCALIZATION_RTL_MATRIX.md','ACCESSIBILITY_REPORT.md','PERFORMANCE_REPORT.md','SECURITY_EVIDENCE.md','RUNTIME_EVIDENCE_PLAN.md','VISUAL_EVIDENCE_REGISTER.md','KNOWN_DEPENDENCIES.md','CONTRACTUAL_ACCEPTANCE_MATRIX.md']
+for(const f of docs)ok(exists(`angelcare-marketplace/documentation/category-native-mz2/${f}`),`documentation ${f}`)
+console.log(`PASS ${pass}`);console.log(`FAIL ${fail}`);if(fail){console.error(failures.join('\n'));process.exit(1)}console.log('RESULT: CATEGORY-NATIVE MZ2 CONTRACTUAL ACCEPTANCE PASSED')

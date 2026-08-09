@@ -1,0 +1,2 @@
+import{SupportWorkspace}from'./SupportWorkspace'
+export function PriceBookControlWorkspace(){return <SupportWorkspace eyebrow="Pricing Authority" title="Centre de contr\u00f4le des grilles tarifaires" description="Versions, p\u00e9riodes d\u2019effet, quantit\u00e9, zone et univers commercial." primary="Livres de prix" secondary="Version & validit\u00e9" variant="matrix" items={["B2C standard", "B2C premium", "B2B institutionnel", "Volume & multi-sites", "Zones géographiques", "Périodes promotionnelles"]}/>}

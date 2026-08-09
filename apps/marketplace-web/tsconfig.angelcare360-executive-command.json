@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "incremental": false,
+    "skipLibCheck": true
+  },
+  "include": [
+    "types/angelcare360/operator/executive-command-css.d.ts",
+    "types/angelcare360/operator/executive-command.ts",
+    "lib/angelcare360/operator/executive-command.ts",
+    "app/api/angelcare360/operator/executive-command/route.ts",
+    "app/(protected)/angelcare-360-operator/executive/page.tsx",
+    "components/angelcare360/operator/executive-command/ExecutiveCommandCabinet.tsx"
+  ]
+}

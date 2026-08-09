@@ -1,0 +1,4 @@
+node_type,stable_key,parent_stable_key,label,status,metadata_json
+family,digital,,Contenu digital,active,"{\"canonical\":true}"
+category,publication_reel,digital,Publication Reel,active,"{\"family\":\"digital\"}"
+subcategory,academy,publication_reel,A.A ANGELCARE ACADEMY,active,"{}"

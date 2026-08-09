@@ -1,0 +1,39 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "skipLibCheck": false,
+    "incremental": false
+  },
+  "include": [
+    "angelcare-marketplace/commerce-studio/**/*.ts",
+    "angelcare-marketplace/commerce-studio/**/*.tsx",
+    "angelcare-marketplace/homepage-flagship/types.ts",
+    "angelcare-marketplace/homepage-flagship/repository.ts",
+    "angelcare-marketplace/homepage-flagship/components/HomepageFlagship.tsx",
+    "angelcare-marketplace/domain/types.ts",
+    "angelcare-marketplace/domain/constants.ts",
+    "angelcare-marketplace/permissions/permission-catalog.ts",
+    "angelcare-marketplace/shells/AdminNavigation.tsx",
+    "app/angelcare-marketplace/(protected)/admin/commerce-studio/**/*.tsx",
+    "app/angelcare-marketplace/(protected)/admin/media/**/*.tsx",
+    "app/angelcare-marketplace/(protected)/admin/homepage/**/*.tsx",
+    "app/angelcare-marketplace/(protected)/admin/navigation/**/*.tsx",
+    "app/angelcare-marketplace/(protected)/admin/catalog/items/**/*.tsx",
+    "app/angelcare-marketplace/(protected)/admin/catalog/categories/**/*.tsx",
+    "app/angelcare-marketplace/(protected)/admin/merchandising/**/*.tsx",
+    "app/angelcare-marketplace/(protected)/admin/publication/**/*.tsx",
+    "app/api/angelcare-marketplace/admin/commerce/**/*.ts",
+    "app/api/angelcare-marketplace/admin/media/**/*.ts",
+    "app/api/angelcare-marketplace/admin/homepage/**/*.ts",
+    "app/api/angelcare-marketplace/admin/navigation/**/*.ts",
+    "app/api/angelcare-marketplace/admin/catalog/**/*.ts",
+    "app/api/angelcare-marketplace/admin/merchandising/**/*.ts",
+    "app/api/angelcare-marketplace/admin/publication/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    ".next",
+    ".angelcare-marketplace-backups"
+  ]
+}

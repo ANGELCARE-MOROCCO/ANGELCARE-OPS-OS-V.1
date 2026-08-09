@@ -1,0 +1,1079 @@
+@import "tailwindcss";
+@import './styles/enterprise-contrast-fix.css';
+
+/* =========================================================
+   AngelCare Global Theme + Contrast Safety Layer
+   Purpose:
+   - Corporate ERP visual foundation
+   - Prevent dark text on dark buttons/cards
+   - Prevent global heading/text rules from breaking dark sections
+   - Preserve voice-terminal dark widget styles
+   ========================================================= */
+
+:root {
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --muted-foreground: #475569;
+  --card-background: #ffffff;
+  --border-color: #e2e8f0;
+
+  --angelcare-primary: #1d4ed8;
+  --angelcare-primary-dark: #0f172a;
+  --angelcare-success: #047857;
+  --angelcare-danger: #be123c;
+  --angelcare-warning: #b45309;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+html[data-commercial-focus="true"] [data-commercial-focus-hide="true"] {
+  display: none !important;
+}
+
+html[data-commercial-focus="true"] [data-commercial-canvas="true"] {
+  padding-top: 12px !important;
+}
+
+html[data-commercial-density="compact"] [data-commercial-canvas="true"] table th,
+html[data-commercial-density="compact"] [data-commercial-canvas="true"] table td {
+  padding-top: 8px !important;
+  padding-bottom: 8px !important;
+}
+
+html[data-commercial-density="compact"] [data-commercial-canvas="true"] article {
+  --commercial-card-density: .84;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+p,
+span,
+div,
+label,
+td,
+th,
+li {
+  color: inherit;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: inherit;
+  font-weight: 700;
+  margin-top: 0;
+}
+
+small {
+  color: var(--muted-foreground);
+}
+
+input,
+select,
+textarea,
+button {
+  font: inherit;
+}
+
+input,
+select,
+textarea {
+  color: #0f172a;
+  background-color: #ffffff;
+}
+
+::placeholder {
+  color: #94a3b8;
+  opacity: 1;
+}
+
+/* =========================================================
+   GLOBAL CONTRAST SAFETY
+   Fixes recurring problem:
+   dark buttons/cards receiving dark inherited text.
+   ========================================================= */
+
+button[class*="bg-slate-950"],
+button[class*="bg-slate-900"],
+button[class*="bg-black"],
+button[class*="bg-blue-700"],
+button[class*="bg-blue-800"],
+button[class*="bg-indigo-700"],
+button[class*="bg-indigo-800"],
+button[class*="bg-violet-700"],
+button[class*="bg-violet-800"],
+button[class*="bg-red-700"],
+button[class*="bg-red-800"],
+button[class*="bg-rose-600"],
+button[class*="bg-rose-700"],
+button[class*="bg-emerald-600"],
+button[class*="bg-emerald-700"],
+button[class*="bg-cyan-600"],
+button[class*="bg-cyan-700"],
+button[class*="bg-sky-600"],
+button[class*="bg-sky-700"],
+a[class*="bg-slate-950"],
+a[class*="bg-slate-900"],
+a[class*="bg-black"],
+a[class*="bg-blue-700"],
+a[class*="bg-blue-800"],
+a[class*="bg-indigo-700"],
+a[class*="bg-indigo-800"],
+a[class*="bg-violet-700"],
+a[class*="bg-violet-800"],
+a[class*="bg-red-700"],
+a[class*="bg-red-800"],
+a[class*="bg-rose-600"],
+a[class*="bg-rose-700"],
+a[class*="bg-emerald-600"],
+a[class*="bg-emerald-700"],
+a[class*="bg-cyan-600"],
+a[class*="bg-cyan-700"],
+a[class*="bg-sky-600"],
+a[class*="bg-sky-700"] {
+  color: #ffffff !important;
+}
+
+/* Ensure children inside dark buttons/links stay readable */
+button[class*="bg-slate-950"] *,
+button[class*="bg-slate-900"] *,
+button[class*="bg-black"] *,
+button[class*="bg-blue-700"] *,
+button[class*="bg-blue-800"] *,
+button[class*="bg-indigo-700"] *,
+button[class*="bg-indigo-800"] *,
+button[class*="bg-violet-700"] *,
+button[class*="bg-violet-800"] *,
+button[class*="bg-red-700"] *,
+button[class*="bg-red-800"] *,
+button[class*="bg-rose-600"] *,
+button[class*="bg-rose-700"] *,
+button[class*="bg-emerald-600"] *,
+button[class*="bg-emerald-700"] *,
+a[class*="bg-slate-950"] *,
+a[class*="bg-slate-900"] *,
+a[class*="bg-black"] *,
+a[class*="bg-blue-700"] *,
+a[class*="bg-blue-800"] *,
+a[class*="bg-indigo-700"] *,
+a[class*="bg-indigo-800"] *,
+a[class*="bg-violet-700"] *,
+a[class*="bg-violet-800"] *,
+a[class*="bg-red-700"] *,
+a[class*="bg-red-800"] *,
+a[class*="bg-rose-600"] *,
+a[class*="bg-rose-700"] *,
+a[class*="bg-emerald-600"] *,
+a[class*="bg-emerald-700"] * {
+  color: #ffffff !important;
+}
+
+/* Dark panels/gradient heroes: stop global h1/h2 from becoming dark */
+[class*="bg-slate-950"],
+[class*="bg-slate-900"],
+[class*="bg-black"],
+[class*="from-slate-950"],
+[class*="from-slate-900"],
+[class*="to-black"],
+[class*="via-slate-950"],
+[class*="via-slate-900"] {
+  color: #ffffff;
+}
+
+[class*="bg-slate-950"] h1,
+[class*="bg-slate-950"] h2,
+[class*="bg-slate-950"] h3,
+[class*="bg-slate-950"] h4,
+[class*="bg-slate-950"] h5,
+[class*="bg-slate-950"] h6,
+[class*="bg-slate-900"] h1,
+[class*="bg-slate-900"] h2,
+[class*="bg-slate-900"] h3,
+[class*="bg-slate-900"] h4,
+[class*="bg-slate-900"] h5,
+[class*="bg-slate-900"] h6,
+[class*="bg-black"] h1,
+[class*="bg-black"] h2,
+[class*="bg-black"] h3,
+[class*="bg-black"] h4,
+[class*="bg-black"] h5,
+[class*="bg-black"] h6,
+[class*="from-slate-950"] h1,
+[class*="from-slate-950"] h2,
+[class*="from-slate-950"] h3,
+[class*="from-slate-950"] h4,
+[class*="from-slate-950"] h5,
+[class*="from-slate-950"] h6,
+[class*="to-black"] h1,
+[class*="to-black"] h2,
+[class*="to-black"] h3,
+[class*="to-black"] h4,
+[class*="to-black"] h5,
+[class*="to-black"] h6 {
+  color: #ffffff !important;
+}
+
+/* White/light buttons must keep dark text */
+button[class*="bg-white"],
+button[class*="bg-slate-50"],
+a[class*="bg-white"],
+a[class*="bg-slate-50"] {
+  color: #0f172a !important;
+}
+
+button[class*="bg-white"] *,
+button[class*="bg-slate-50"] *,
+a[class*="bg-white"] *,
+a[class*="bg-slate-50"] * {
+  color: inherit !important;
+}
+
+/* Disabled buttons stay readable */
+button:disabled,
+button[disabled] {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Tables/cards consistency */
+table {
+  border-collapse: collapse;
+}
+
+.card,
+[class*="rounded-"][class*="bg-white"] {
+  color: #0f172a;
+}
+
+/* =========================================================
+   AngelCare ERP 2026 visual foundation
+   ========================================================= */
+
+@media (max-width: 1100px) {
+  aside {
+    display: none !important;
+  }
+
+  main {
+    width: 100%;
+  }
+}
+
+@media (max-width: 900px) {
+  [style*="grid-template-columns:repeat(5"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  [style*="grid-template-columns:'repeat(5"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media print {
+  aside,
+  header,
+  button,
+  a[href] {
+    box-shadow: none !important;
+  }
+
+  body {
+    background: #fff !important;
+  }
+}
+
+/* =========================================================
+   Voice Telephone Widget
+   Keep this section dark intentionally.
+   ========================================================= */
+
+.voice-terminal {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  width: 340px;
+  background: linear-gradient(180deg, #101827, #060913);
+  color: #f8fafc;
+  border: 1px solid rgba(255, 255, 255, .12);
+  border-radius: 22px;
+  padding: 14px;
+  z-index: 9999;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, .42);
+  font-family: Inter, system-ui, sans-serif;
+  transition: width .18s ease, transform .18s ease, box-shadow .18s ease;
+}
+
+.voice-terminal.is-storage-loading {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.voice-terminal,
+.voice-terminal * {
+  color: inherit;
+}
+
+.voice-terminal.is-minimized {
+  width: 245px;
+  cursor: pointer;
+}
+
+.voice-terminal.is-minimized:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 28px 78px rgba(0, 0, 0, .5);
+}
+
+.voice-terminal.is-minimized .vt-topbar {
+  margin-bottom: 0;
+}
+
+.vt-topbar,
+.vt-actions,
+.vt-input-row,
+.vt-transfer,
+.vt-footer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.vt-topbar {
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.vt-title {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 14px;
+  font-weight: 800;
+  color: #f8fafc;
+}
+
+.vt-status {
+  margin-top: 4px;
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+.vt-idle { color: #94a3b8; }
+.vt-calling { color: #facc15; }
+.vt-active { color: #22c55e; }
+.vt-hold { color: #fb923c; }
+
+.vt-icon-btn {
+  background: rgba(255, 255, 255, .08);
+  border: 0;
+  color: white;
+  width: 30px;
+  height: 30px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.vt-display {
+  background: rgba(255, 255, 255, .06);
+  border: 1px solid rgba(255, 255, 255, .08);
+  border-radius: 18px;
+  padding: 14px;
+  margin-bottom: 12px;
+}
+
+.vt-label {
+  font-size: 11px;
+  color: #94a3b8;
+  margin-bottom: 6px;
+}
+
+.vt-number {
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: .4px;
+  color: #f8fafc;
+}
+
+.vt-bars {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.vt-bars div {
+  background: rgba(255, 255, 255, .055);
+  border-radius: 14px;
+  padding: 9px;
+}
+
+.vt-bars span {
+  display: block;
+  font-size: 10px;
+  color: #94a3b8;
+}
+
+.vt-bars b {
+  font-size: 12px;
+  color: #f8fafc;
+}
+
+.vt-input-row input,
+.vt-transfer input {
+  flex: 1;
+  background: #020617;
+  border: 1px solid rgba(255, 255, 255, .12);
+  color: white !important;
+  border-radius: 13px;
+  padding: 11px;
+  outline: none;
+}
+
+.vt-input-row button,
+.vt-transfer button {
+  background: rgba(255, 255, 255, .09);
+  border: 0;
+  color: white !important;
+  border-radius: 13px;
+  padding: 11px;
+  cursor: pointer;
+}
+
+.vt-keypad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 9px;
+  margin: 12px 0;
+}
+
+.vt-keypad button {
+  height: 42px;
+  border: 0;
+  border-radius: 15px;
+  background: rgba(255, 255, 255, .075);
+  color: white !important;
+  font-size: 17px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.vt-keypad button:hover,
+.vt-icon-btn:hover,
+.vt-input-row button:hover,
+.vt-transfer button:hover {
+  background: rgba(255, 255, 255, .14);
+}
+
+.vt-actions {
+  margin-bottom: 10px;
+}
+
+.vt-actions button {
+  flex: 1;
+  height: 42px;
+  border: 0;
+  border-radius: 15px;
+  color: white !important;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+}
+
+.vt-call {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+}
+
+.vt-hangup {
+  background: linear-gradient(135deg, #ef4444, #b91c1c);
+}
+
+.vt-secondary {
+  background: rgba(255, 255, 255, .1);
+}
+
+.vt-secondary:disabled {
+  opacity: .35;
+  cursor: not-allowed;
+}
+
+.vt-transfer {
+  margin-bottom: 12px;
+}
+
+.vt-footer {
+  justify-content: space-between;
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+.vt-footer span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.vt-lead-card {
+  margin: -4px 0 12px;
+  padding: 12px;
+  border-radius: 16px;
+  background: rgba(34, 197, 94, .12);
+  border: 1px solid rgba(34, 197, 94, .25);
+  display: grid;
+  gap: 3px;
+}
+
+.vt-lead-card b {
+  color: #dcfce7;
+  font-size: 13px;
+}
+
+.vt-lead-card span {
+  color: #bbf7d0;
+  font-size: 12px;
+}
+
+.vt-lead-card small {
+  color: #86efac;
+  font-size: 11px;
+}
+
+.vt-control-panel {
+  margin: 12px 0;
+  display: grid;
+  gap: 9px;
+}
+
+.vt-queue {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(59, 130, 246, .12);
+  border: 1px solid rgba(59, 130, 246, .25);
+  border-radius: 14px;
+  padding: 9px 11px;
+}
+
+.vt-queue span {
+  color: #bfdbfe;
+  font-size: 11px;
+}
+
+.vt-queue b {
+  color: #dbeafe;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.vt-control-panel textarea {
+  width: 100%;
+  min-height: 58px;
+  resize: none;
+  background: #020617;
+  border: 1px solid rgba(255, 255, 255, .12);
+  color: white !important;
+  border-radius: 14px;
+  padding: 10px;
+  outline: none;
+  font-family: inherit;
+  font-size: 12px;
+}
+
+.vt-outcomes {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 7px;
+}
+
+.vt-outcomes button {
+  border: 0;
+  border-radius: 12px;
+  padding: 8px;
+  background: rgba(255, 255, 255, .08);
+  color: #cbd5e1 !important;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.vt-outcomes button.active {
+  background: linear-gradient(135deg, #2563eb, #7c3aed);
+  color: white !important;
+  font-weight: 800;
+}
+
+.vt-inbound-test {
+  margin: 10px 0;
+  padding: 10px;
+  border-radius: 16px;
+  background: rgba(14, 165, 233, .12);
+  border: 1px solid rgba(14, 165, 233, .25);
+  display: grid;
+  gap: 8px;
+}
+
+.vt-inbound-test div {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.vt-inbound-test span {
+  color: #bae6fd;
+  font-size: 11px;
+}
+
+.vt-inbound-test b {
+  color: #e0f2fe;
+  font-size: 12px;
+}
+
+.vt-inbound-test button {
+  border: 0;
+  border-radius: 12px;
+  padding: 9px;
+  background: rgba(255, 255, 255, .1);
+  color: white !important;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.vt-inbound-test button:hover {
+  background: rgba(255, 255, 255, .18);
+}
+
+.vt-incoming-popup {
+  position: fixed;
+  right: 22px;
+  bottom: 420px;
+  width: 330px;
+  background: linear-gradient(180deg, #020617, #0f172a);
+  color: white;
+  border: 1px solid rgba(56, 189, 248, .35);
+  border-radius: 22px;
+  padding: 14px;
+  z-index: 10000;
+  box-shadow: 0 20px 60px rgba(14, 165, 233, .25);
+  display: grid;
+  gap: 12px;
+}
+
+.vt-radar {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  border: 1px solid rgba(56, 189, 248, .5);
+  position: relative;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+.vt-radar::before {
+  content: "";
+  position: absolute;
+  width: 90px;
+  height: 90px;
+  background: conic-gradient(from 0deg, rgba(56, 189, 248, .6), transparent 45%, transparent);
+  animation: vtRadarSpin 1.4s linear infinite;
+}
+
+.vt-radar span {
+  width: 12px;
+  height: 12px;
+  background: #38bdf8;
+  border-radius: 50%;
+  z-index: 2;
+  box-shadow: 0 0 20px #38bdf8;
+}
+
+@keyframes vtRadarSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.vt-incoming-popup small {
+  color: #7dd3fc;
+  font-size: 10px;
+  letter-spacing: .12em;
+  font-weight: 900;
+}
+
+.vt-incoming-popup b {
+  display: block;
+  margin-top: 4px;
+  font-size: 19px;
+  color: #ffffff;
+}
+
+.vt-incoming-popup p {
+  margin: 4px 0 0;
+  color: #94a3b8;
+  font-size: 12px;
+}
+
+.vt-popup-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.vt-popup-actions button {
+  border: 0;
+  border-radius: 14px;
+  padding: 10px;
+  color: white !important;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.vt-popup-actions button:first-child {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+}
+
+.vt-popup-actions button:last-child {
+  background: linear-gradient(135deg, #ef4444, #b91c1c);
+}
+/* CareLink live radar map safety */
+.carelink-radar-map .leaflet-container {
+  z-index: 1 !important;
+}
+
+.carelink-radar-map .leaflet-pane,
+.carelink-radar-map .leaflet-top,
+.carelink-radar-map .leaflet-bottom,
+.carelink-radar-map .leaflet-control {
+  z-index: 1 !important;
+}
+
+/* CareLink radar clickable point safety */
+.carelink-radar-map .leaflet-overlay-pane svg,
+.carelink-radar-map .leaflet-pane svg {
+  pointer-events: auto !important;
+}
+
+.carelink-radar-map .leaflet-interactive.carelink-radar-click-point {
+  cursor: pointer !important;
+  pointer-events: auto !important;
+}
+
+.carelink-radar-map .leaflet-pane[name="carelink-radar-halos"],
+.carelink-radar-map .carelink-radar-halo {
+  pointer-events: none !important;
+}
+
+/* =========================================================
+   MARKET OS — LOCAL WHITE THEME STABILIZATION
+   Scoped safety layer. Does not affect other modules.
+   ========================================================= */
+
+body:has([data-market-os-root]) {
+  background: #ffffff;
+}
+
+[data-market-os-root] {
+  background: #ffffff !important;
+  color: #020617;
+}
+
+[data-market-os-root] .market-os-surface,
+[data-market-os-root] .market-os-card,
+[data-market-os-root] .market-os-panel {
+  background: #ffffff;
+  color: #020617;
+  border-color: #e2e8f0;
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+}
+
+[data-market-os-root] .market-os-muted {
+  color: #64748b;
+}
+
+[data-market-os-root] .market-os-subtle {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+}
+
+
+/* ANGELCARE HR TRAINING MODAL TITLES — readable modal headers */
+[data-hr-training-modal-title="true"],
+[data-hr-training-modal-title="true"] * {
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  background-image: none !important;
+  text-shadow: none !important;
+}
+
+
+/* ANGELCARE HR TRAINING — course/resource titles on white cards must be black */
+[data-hr-training-course-title="true"],
+[data-hr-training-course-title="true"] * {
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  background-image: none !important;
+  text-shadow: none !important;
+  user-select: none !important;
+}
+
+[data-hr-training-course-title="true"]::selection,
+[data-hr-training-course-title="true"] *::selection {
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  background: transparent !important;
+}
+
+
+/* =========================================================
+   ANGELCARE 360 — DIRECTION COCKPIT PREMIUM BUTTON SYSTEM
+   Client-facing SaaS button polish. Scoped only to Cockpit de Direction.
+   Purpose: eliminate premature/plain buttons and enforce a premium
+   corporate action language without touching other app modules.
+   ========================================================= */
+
+[data-ac360-direction-cockpit="true"] button {
+  position: relative;
+  isolation: isolate;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  border-radius: 18px;
+  letter-spacing: .005em;
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease,
+    border-color 160ms ease,
+    background 160ms ease,
+    color 160ms ease,
+    opacity 160ms ease;
+}
+
+[data-ac360-direction-cockpit="true"] button:not(:disabled):hover {
+  transform: translateY(-1px);
+}
+
+[data-ac360-direction-cockpit="true"] button:not(:disabled):active {
+  transform: translateY(0);
+}
+
+[data-ac360-direction-cockpit="true"] button:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, .22);
+  outline-offset: 3px;
+}
+
+[data-ac360-direction-cockpit="true"] button:disabled {
+  cursor: not-allowed;
+  filter: saturate(.7);
+}
+
+/* Primary executive action buttons */
+[data-ac360-direction-cockpit="true"] button[class*="bg-blue-700"],
+[data-ac360-direction-cockpit="true"] button[class*="bg-blue-600"] {
+  color: #ffffff !important;
+  border: 1px solid rgba(37, 99, 235, .72) !important;
+  background:
+    radial-gradient(circle at 18% 12%, rgba(255,255,255,.34), transparent 28%),
+    linear-gradient(135deg, #1d4ed8 0%, #2563eb 42%, #0f4fd6 100%) !important;
+  box-shadow:
+    0 18px 34px rgba(37, 99, 235, .24),
+    0 6px 12px rgba(15, 23, 42, .08),
+    inset 0 1px 0 rgba(255, 255, 255, .35) !important;
+}
+
+[data-ac360-direction-cockpit="true"] button[class*="bg-blue-700"]:not(:disabled):hover,
+[data-ac360-direction-cockpit="true"] button[class*="bg-blue-600"]:not(:disabled):hover {
+  background:
+    radial-gradient(circle at 18% 12%, rgba(255,255,255,.42), transparent 30%),
+    linear-gradient(135deg, #1e40af 0%, #2563eb 48%, #1d4ed8 100%) !important;
+  box-shadow:
+    0 22px 42px rgba(37, 99, 235, .30),
+    0 10px 18px rgba(15, 23, 42, .10),
+    inset 0 1px 0 rgba(255, 255, 255, .38) !important;
+}
+
+/* Premium secondary buttons — white, dimensional, not flat */
+[data-ac360-direction-cockpit="true"] button[class*="bg-white"],
+[data-ac360-direction-cockpit="true"] button[class*="border-slate-200"],
+[data-ac360-direction-cockpit="true"] button[class*="border-slate-100"] {
+  border-color: rgba(203, 213, 225, .92) !important;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(248,250,252,.96) 100%) !important;
+  box-shadow:
+    0 12px 28px rgba(15, 23, 42, .055),
+    0 1px 0 rgba(255, 255, 255, .95) inset !important;
+}
+
+[data-ac360-direction-cockpit="true"] button[class*="bg-white"]:not(:disabled):hover,
+[data-ac360-direction-cockpit="true"] button[class*="border-slate-200"]:not(:disabled):hover,
+[data-ac360-direction-cockpit="true"] button[class*="border-slate-100"]:not(:disabled):hover {
+  border-color: rgba(37, 99, 235, .35) !important;
+  background:
+    linear-gradient(180deg, #ffffff 0%, #f8fbff 100%) !important;
+  box-shadow:
+    0 18px 34px rgba(15, 23, 42, .08),
+    0 8px 18px rgba(37, 99, 235, .07),
+    inset 0 1px 0 rgba(255, 255, 255, .95) !important;
+}
+
+/* Text/link actions become executive micro-pills */
+[data-ac360-direction-cockpit="true"] button[class*="text-blue-700"]:not([class*="bg-blue-700"]):not([class*="bg-blue-600"]) {
+  color: #1d4ed8 !important;
+  border: 1px solid rgba(191, 219, 254, .95) !important;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.98) 0%, rgba(239,246,255,.86) 100%) !important;
+  box-shadow:
+    0 8px 18px rgba(37, 99, 235, .075),
+    inset 0 1px 0 rgba(255, 255, 255, .9) !important;
+  padding: 6px 11px !important;
+  border-radius: 999px !important;
+  font-weight: 900 !important;
+}
+
+[data-ac360-direction-cockpit="true"] button[class*="text-blue-700"]:not([class*="bg-blue-700"]):not([class*="bg-blue-600"]):hover {
+  color: #1e40af !important;
+  border-color: rgba(37, 99, 235, .45) !important;
+  box-shadow:
+    0 12px 24px rgba(37, 99, 235, .12),
+    inset 0 1px 0 rgba(255, 255, 255, .95) !important;
+}
+
+/* Soft colored command buttons in execution/reality strips */
+[data-ac360-direction-cockpit="true"] button[class*="bg-emerald-50"],
+[data-ac360-direction-cockpit="true"] button[class*="bg-amber-50"],
+[data-ac360-direction-cockpit="true"] button[class*="bg-violet-50"],
+[data-ac360-direction-cockpit="true"] button[class*="bg-blue-50"],
+[data-ac360-direction-cockpit="true"] button[class*="bg-cyan-50"],
+[data-ac360-direction-cockpit="true"] button[class*="bg-orange-50"],
+[data-ac360-direction-cockpit="true"] button[class*="bg-rose-50"] {
+  box-shadow:
+    0 14px 28px rgba(15, 23, 42, .055),
+    inset 0 1px 0 rgba(255, 255, 255, .78) !important;
+}
+
+[data-ac360-direction-cockpit="true"] button[class*="bg-emerald-50"]:hover,
+[data-ac360-direction-cockpit="true"] button[class*="bg-amber-50"]:hover,
+[data-ac360-direction-cockpit="true"] button[class*="bg-violet-50"]:hover,
+[data-ac360-direction-cockpit="true"] button[class*="bg-blue-50"]:hover,
+[data-ac360-direction-cockpit="true"] button[class*="bg-cyan-50"]:hover,
+[data-ac360-direction-cockpit="true"] button[class*="bg-orange-50"]:hover,
+[data-ac360-direction-cockpit="true"] button[class*="bg-rose-50"]:hover {
+  box-shadow:
+    0 18px 36px rgba(15, 23, 42, .085),
+    inset 0 1px 0 rgba(255, 255, 255, .9) !important;
+}
+
+/* Report-template and selectable cards should feel clickable but elegant */
+[data-ac360-direction-cockpit="true"] button.text-left,
+[data-ac360-direction-cockpit="true"] button[class*="p-4"][class*="border"] {
+  background:
+    linear-gradient(180deg, #ffffff 0%, #fbfdff 100%) !important;
+  border-color: rgba(226, 232, 240, .95) !important;
+  box-shadow:
+    0 12px 30px rgba(15, 23, 42, .05),
+    inset 0 1px 0 rgba(255, 255, 255, .9) !important;
+}
+
+[data-ac360-direction-cockpit="true"] button.text-left:hover,
+[data-ac360-direction-cockpit="true"] button[class*="p-4"][class*="border"]:hover {
+  border-color: rgba(37, 99, 235, .36) !important;
+  box-shadow:
+    0 20px 40px rgba(15, 23, 42, .09),
+    0 10px 22px rgba(37, 99, 235, .07),
+    inset 0 1px 0 rgba(255, 255, 255, .95) !important;
+}
+
+/* Modal close / compact icon buttons */
+[data-ac360-direction-cockpit="true"] button[aria-label],
+[data-ac360-direction-cockpit="true"] button:has(+ .sr-only) {
+  min-height: 38px;
+  min-width: 38px;
+}
+
+/* Fixed mobile action dock — high confidence command buttons */
+[data-ac360-direction-cockpit="true"] .fixed.bottom-4 button {
+  min-width: 86px;
+  box-shadow:
+    0 16px 34px rgba(37, 99, 235, .26),
+    inset 0 1px 0 rgba(255, 255, 255, .35) !important;
+}
+
+/* =========================================================
+   EMAIL-OS — ENTERPRISE DRAWER WHITE-SURFACE TEXT CONTRACT
+   White/light drawer surfaces must never inherit white or transparent text.
+   Colored icon tiles and primary action buttons remain intentionally white.
+   ========================================================= */
+
+[data-emailos-enterprise-drawer="true"] [data-emailos-white-surface="true"] {
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  text-shadow: none !important;
+}
+
+[data-emailos-enterprise-drawer="true"] [data-emailos-strong-text="true"] {
+  color: #020617 !important;
+  -webkit-text-fill-color: #020617 !important;
+  background-image: none !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+  font-weight: 900 !important;
+}
+
+[data-emailos-enterprise-drawer="true"] [data-emailos-support-text="true"] {
+  color: #334155 !important;
+  -webkit-text-fill-color: #334155 !important;
+  background-image: none !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+  font-weight: 700 !important;
+}
+
+[data-emailos-enterprise-drawer="true"] [data-emailos-label-text="true"] {
+  color: #475569 !important;
+  -webkit-text-fill-color: #475569 !important;
+  background-image: none !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+  font-weight: 900 !important;
+}
+
+[data-emailos-enterprise-drawer="true"] input,
+[data-emailos-enterprise-drawer="true"] textarea,
+[data-emailos-enterprise-drawer="true"] select,
+[data-emailos-enterprise-drawer="true"] option {
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  caret-color: #0284c7;
+}
+
+[data-emailos-enterprise-drawer="true"] input::placeholder,
+[data-emailos-enterprise-drawer="true"] textarea::placeholder {
+  color: #94a3b8 !important;
+  -webkit-text-fill-color: #94a3b8 !important;
+  opacity: 1 !important;
+}
+
+[data-emailos-enterprise-drawer="true"] [data-emailos-strong-text="true"]::selection,
+[data-emailos-enterprise-drawer="true"] [data-emailos-support-text="true"]::selection,
+[data-emailos-enterprise-drawer="true"] [data-emailos-label-text="true"]::selection {
+  color: #020617 !important;
+  -webkit-text-fill-color: #020617 !important;
+  background: #bfdbfe !important;
+}

@@ -1,0 +1,6 @@
+\set ON_ERROR_STOP on
+SELECT installation_key,release_code,module_version,execution_mode,contract_locked,external_actions_enabled,metadata->>'currentPhase' AS current_phase,metadata->>'geminiGateway' AS gemini_gateway,metadata->>'providerNeutral' AS provider_neutral FROM public.revenue_os_installations WHERE installation_key='revenue-command-os';
+SELECT count(*) AS provider_tables FROM information_schema.tables WHERE table_schema='public' AND table_name IN('revenue_os_ai_providers','revenue_os_ai_models','revenue_os_ai_prompt_versions','revenue_os_ai_run_attempts','revenue_os_ai_quota_usage','revenue_os_ai_provider_health','revenue_os_ai_response_cache','revenue_os_ai_jobs');
+SELECT provider_code,status,execution_mode,external_actions_enabled FROM public.revenue_os_ai_providers ORDER BY provider_code;
+SELECT prompt_code,version,provider_code,status FROM public.revenue_os_ai_prompt_versions WHERE prompt_code='revenue-strategy-assembly';
+DO $$ BEGIN IF (SELECT count(*) FROM information_schema.tables WHERE table_schema='public' AND table_name LIKE 'revenue_os_ai_%')<8 THEN RAISE EXCEPTION 'Expected 8 MZ10.1 AI tables';END IF;IF EXISTS(SELECT 1 FROM public.revenue_os_ai_providers WHERE external_actions_enabled) THEN RAISE EXCEPTION 'External action lock violated';END IF;END $$;

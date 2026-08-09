@@ -1,0 +1,36 @@
+import 'server-only'
+import { readFile } from 'node:fs/promises'
+import path from 'node:path'
+import { PDFDocument, StandardFonts, rgb } from 'pdf-lib'
+import { createHash } from 'node:crypto'
+import type { FlashcardsDocumentConfidentiality, FlashcardsDocumentDensity, FlashcardsDocumentOrientation, FlashcardsDocumentSource } from '../types'
+import { getFlashcardsDocumentTemplate } from '../templates'
+
+const A4_PORTRAIT:[number,number]=[595.28,841.89]
+const A4_LANDSCAPE:[number,number]=[841.89,595.28]
+const COLORS={navy:rgb(.035,.105,.21),blue:rgb(.12,.29,.68),ink:rgb(.08,.12,.22),muted:rgb(.38,.44,.55),line:rgb(.84,.87,.92),soft:rgb(.96,.97,.99),red:rgb(.73,.08,.14),white:rgb(1,1,1)}
+function clean(value:unknown){return String(value??'').replace(/\s+/g,' ').trim()}
+function wrap(text:string,font:any,size:number,maxWidth:number){const words=clean(text).split(' ').filter(Boolean);const lines:string[]=[];let line='';for(const word of words){const next=line?`${line} ${word}`:word;if(font.widthOfTextAtSize(next,size)<=maxWidth)line=next;else{if(line)lines.push(line);line=word}}if(line)lines.push(line);return lines}
+function rowToText(row:Record<string,unknown>){return Object.entries(row).map(([key,value])=>`${key}: ${Array.isArray(value)?value.join(', '):clean(value)}`).join('  ·  ')}
+export async function renderFlashcardsPdf(input:{source:FlashcardsDocumentSource;templateCode:string;orientation:FlashcardsDocumentOrientation;density:FlashcardsDocumentDensity;confidentiality:FlashcardsDocumentConfidentiality;sectionKeys?:string[];documentReference?:string;includeLogo?:boolean}){
+ const template=getFlashcardsDocumentTemplate(input.templateCode);const orientation=input.orientation||template.defaultOrientation;const size=orientation==='landscape'?A4_LANDSCAPE:A4_PORTRAIT;const doc=await PDFDocument.create();doc.setTitle(input.source.title);doc.setSubject(`${template.name} · ${input.source.sourceType}`);doc.setAuthor('ANGELCARE Flashcards OS');doc.setCreator('ANGELCARE Flashcards Product & Learning Studio 2030');doc.setProducer('ANGELCARE Flashcards PDF Engine');doc.setCreationDate(new Date())
+ const regular=await doc.embedFont(StandardFonts.Helvetica);const bold=await doc.embedFont(StandardFonts.HelveticaBold);let logo:any=null;if(input.includeLogo!==false){try{const bytes=await readFile(path.join(process.cwd(),'public/b2b-plaquette-partenaires/assets/angelcare-original-logo.png'));logo=await doc.embedPng(bytes)}catch{logo=null}}
+ const margin=orientation==='landscape'?40:42;const top=orientation==='landscape'?52:58;const bottom=46;const lineHeight=input.density==='compact'?11:input.density==='detailed'?15:13;const bodySize=input.density==='compact'?8:input.density==='detailed'?10:9;const sectionGap=input.density==='compact'?12:18;const documentReference=input.documentReference||input.source.reference
+ let page=doc.addPage(size);let y=size[1]-top;let pageNumber=1
+ const drawHeader=()=>{page.drawRectangle({x:0,y:size[1]-37,width:size[0],height:37,color:COLORS.navy});if(logo){const dims=logo.scale(.13);page.drawImage(logo,{x:margin,y:size[1]-32,width:dims.width,height:dims.height})}page.drawText('ANGELCARE FLASHCARDS PRODUCT & LEARNING STUDIO',{x:logo?margin+64:margin,y:size[1]-23,size:8,font:bold,color:COLORS.white});page.drawText(template.name.toUpperCase(),{x:size[0]-margin-bold.widthOfTextAtSize(template.name.toUpperCase(),7),y:size[1]-23,size:7,font:bold,color:rgb(.7,.8,.95)})}
+ const drawFooter=()=>{page.drawLine({start:{x:margin,y:30},end:{x:size[0]-margin,y:30},thickness:.6,color:COLORS.line});page.drawText('ANGELCARE UNITÉ D’AFFAIRE ARTAB S.A.R.L (A.U)  ·  www.angelcarehub.com  ·  backoffice@angelcarehub.com  ·  +212 537 581 462',{x:margin,y:18,size:5.7,font:regular,color:COLORS.muted});const right=`${documentReference} · ${input.confidentiality.toUpperCase()} · Page ${pageNumber}`;page.drawText(right,{x:size[0]-margin-regular.widthOfTextAtSize(right,5.7),y:18,size:5.7,font:regular,color:COLORS.muted})}
+ const newPage=()=>{drawFooter();page=doc.addPage(size);pageNumber+=1;drawHeader();y=size[1]-top}
+ const ensure=(height:number)=>{if(y-height<bottom)newPage()}
+ drawHeader()
+ ensure(90);page.drawText(input.source.title,{x:margin,y:y-12,size:orientation==='landscape'?25:22,font:bold,color:COLORS.navy,maxWidth:size[0]-margin*2});y-=35;page.drawText(input.source.subtitle,{x:margin,y,size:10,font:regular,color:COLORS.blue});y-=18;const summaryLines=wrap(input.source.summary,regular,bodySize,size[0]-margin*2);for(const line of summaryLines.slice(0,8)){page.drawText(line,{x:margin,y,size:bodySize,font:regular,color:COLORS.ink});y-=lineHeight}y-=8
+ if(input.source.facts.length){ensure(45);const width=(size[0]-margin*2-8*(input.source.facts.length-1))/Math.max(1,input.source.facts.length);input.source.facts.slice(0,5).forEach((fact,index)=>{const x=margin+index*(width+8);page.drawRectangle({x,y:y-38,width,height:38,color:COLORS.soft,borderColor:COLORS.line,borderWidth:.6});page.drawText(clean(fact.label).toUpperCase(),{x:x+8,y:y-12,size:5.8,font:bold,color:COLORS.muted});page.drawText(clean(fact.value),{x:x+8,y:y-28,size:10,font:bold,color:COLORS.ink,maxWidth:width-16})});y-=52}
+ const chosen=input.sectionKeys?.length?input.sectionKeys:template.sectionKeys;const sections=chosen.map((key)=>input.source.sections.find((section)=>section.key===key)).filter(Boolean) as any[]
+ for(const section of sections){ensure(48);page.drawRectangle({x:margin,y:y-22,width:3,height:18,color:COLORS.blue});page.drawText(clean(section.title),{x:margin+10,y:y-16,size:12,font:bold,color:COLORS.navy});y-=30;if(section.description){for(const line of wrap(section.description,regular,bodySize,size[0]-margin*2)){ensure(lineHeight);page.drawText(line,{x:margin,y,size:bodySize,font:regular,color:COLORS.muted});y-=lineHeight}y-=4}
+  if(section.content){for(const line of wrap(section.content,regular,bodySize,size[0]-margin*2)){ensure(lineHeight);page.drawText(line,{x:margin,y,size:bodySize,font:regular,color:COLORS.ink});y-=lineHeight}}
+  if(Array.isArray(section.items)){for(const item of section.items){const lines=wrap(`• ${clean(item)}`,regular,bodySize,size[0]-margin*2-8);ensure(lines.length*lineHeight+2);for(const line of lines){page.drawText(line,{x:margin+6,y,size:bodySize,font:regular,color:COLORS.ink});y-=lineHeight}y-=2}}
+  if(Array.isArray(section.rows)){for(const row of section.rows){const lines=wrap(rowToText(row),regular,bodySize,size[0]-margin*2-18);ensure(lines.length*lineHeight+12);page.drawRectangle({x:margin,y:y-lines.length*lineHeight-7,width:size[0]-margin*2,height:lines.length*lineHeight+10,color:COLORS.soft,borderColor:COLORS.line,borderWidth:.4});let localY=y-4;for(const line of lines){page.drawText(line,{x:margin+8,y:localY,size:bodySize,font:regular,color:COLORS.ink});localY-=lineHeight}y-=lines.length*lineHeight+14}}
+  y-=sectionGap
+ }
+ drawFooter();const total=doc.getPages().length;doc.getPages().forEach((current,index)=>{const text=`${index+1} / ${total}`;current.drawText(text,{x:size[0]-margin-regular.widthOfTextAtSize(text,5.7),y:8,size:5.7,font:regular,color:COLORS.muted})})
+ const bytes=await doc.save();const checksum=createHash('sha256').update(bytes).digest('hex');return{bytes,checksum,fileName:`${documentReference.replace(/[^a-zA-Z0-9_-]+/g,'_')}_${template.code}.pdf`}
+}

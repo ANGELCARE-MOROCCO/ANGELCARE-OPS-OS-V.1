@@ -1,0 +1,116 @@
+{
+  "version": "4.0.0",
+  "name": "Mega ZIP 4 — B2B Proposal, Pricing, Negotiation, Closing & Revenue Protection",
+  "canonicalCapabilityCount": 45,
+  "implementedCapabilityIds": [
+    "B2B-020",
+    "B2B-021",
+    "B2B-022",
+    "B2B-023",
+    "B2B-024",
+    "B2B-025",
+    "B2B-026",
+    "B2B-027",
+    "B2B-028",
+    "B2B-029"
+  ],
+  "scope": [
+    "proposal_studio",
+    "offer_configuration",
+    "pricing_model_selection",
+    "cost_margin_engine",
+    "margin_guardrails",
+    "discount_governance",
+    "approval_workflow",
+    "proposal_version_control",
+    "proposal_delivery",
+    "negotiation_deal_room",
+    "negotiation_history",
+    "counteroffer_studio",
+    "objection_intelligence",
+    "objection_pattern_intelligence",
+    "closing_readiness",
+    "closing_room",
+    "contract_gates",
+    "payment_gates",
+    "payment_promise_control",
+    "revenue_rescue",
+    "executive_intervention"
+  ],
+  "commands": [
+    "b2b.offer.configure",
+    "b2b.proposal.create",
+    "b2b.proposal.update",
+    "b2b.proposal.version_create",
+    "b2b.proposal.submit_approval",
+    "b2b.proposal.approve",
+    "b2b.proposal.reject",
+    "b2b.proposal.mark_delivered",
+    "b2b.pricing.model_recommend",
+    "b2b.pricing.calculate",
+    "b2b.margin.evaluate",
+    "b2b.discount.request",
+    "b2b.discount.approve",
+    "b2b.discount.reject",
+    "b2b.negotiation.open",
+    "b2b.negotiation.change_record",
+    "b2b.counteroffer.prepare",
+    "b2b.objection.record",
+    "b2b.objection.resolve",
+    "b2b.closing.readiness",
+    "b2b.closing.gate_check",
+    "b2b.contract.requirement_create",
+    "b2b.contract.status_update",
+    "b2b.payment.gate_check",
+    "b2b.payment_promise.create",
+    "b2b.payment_promise.verify_request",
+    "b2b.revenue_rescue.create",
+    "b2b.executive_intervention.prepare"
+  ],
+  "acceptanceScenarios": [
+    {
+      "id": "M4-A01",
+      "title": "Proposal generation"
+    },
+    {
+      "id": "M4-A02",
+      "title": "Margin protection"
+    },
+    {
+      "id": "M4-A03",
+      "title": "Discount governance"
+    },
+    {
+      "id": "M4-A04",
+      "title": "Negotiation impact"
+    },
+    {
+      "id": "M4-A05",
+      "title": "Objection resolution"
+    },
+    {
+      "id": "M4-A06",
+      "title": "Closing governance"
+    },
+    {
+      "id": "M4-A07",
+      "title": "Payment promise"
+    },
+    {
+      "id": "M4-A08",
+      "title": "Executive rescue"
+    },
+    {
+      "id": "M4-A09",
+      "title": "Access control"
+    },
+    {
+      "id": "M4-A10",
+      "title": "Access revocation"
+    }
+  ],
+  "externalSending": "user-confirmed only",
+  "paymentConfirmation": "finance-or-authorized-role only",
+  "contractSignature": "evidence-only, never fabricated",
+  "bulkMessaging": false
+}

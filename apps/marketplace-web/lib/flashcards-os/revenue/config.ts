@@ -1,0 +1,9 @@
+export const REVENUE_TENANT_KEY = 'angelcare-internal'
+export const REVENUE_VIEW_PREFIX = 'fc_os_'
+export const MAX_QUOTATION_LINES = 100
+export const MAX_DISCOUNT_PERCENT = 100
+export const MIN_MARGIN_OVERRIDE_PERCENT = -100
+export const DEFAULT_DOCUMENT_TEMPLATE_VERSION = 'FC-COMMERCIAL-A4-v1'
+export const DOCUMENT_NUMBER_PREFIX:Record<string,string>={quotation:'DEV-FC',sales_order:'CMD-FC',delivery_note:'BL-FC',invoice:'FAC-FC',credit_note:'AV-FC',payment_receipt:'REC-FC',payment:'PAY-FC'}
+export function clampProbability(value:unknown){const n=Number(value);return Number.isFinite(n)?Math.min(100,Math.max(0,n)):0}
+export function money(value:unknown){const n=Number(value);return Number.isFinite(n)?Math.round((n+Number.EPSILON)*100)/100:0}

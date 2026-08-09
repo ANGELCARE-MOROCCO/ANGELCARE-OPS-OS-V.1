@@ -1,0 +1,21 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": { "incremental": false, "noEmit": true, "skipLibCheck": true },
+  "include": [
+    "next-env.d.ts",
+    "lib/desktop/release.ts",
+    "lib/desktop-stations/server.ts",
+    "lib/desktop-stations/lock-safety.ts",
+    "lib/whatsapp-desktop/types.ts",
+    "lib/whatsapp-desktop/server.ts",
+    "lib/whatsapp-desktop/control-plane.ts",
+    "lib/whatsapp-desktop/control-plane-server.ts",
+    "components/whatsapp-os/WhatsAppDesktopAdmin.tsx",
+    "components/whatsapp-os/WhatsAppGovernanceControlPlane.tsx",
+    "components/whatsapp-os/CorporateStationAdmin.tsx",
+    "components/whatsapp-os/StationLockSafetyPanel.tsx",
+    "app/(protected)/whatsapp-os/admin/page.tsx",
+    "app/api/desktop-stations/**/*.ts"
+  ],
+  "exclude": ["node_modules", ".next", "backups", "deployment"]
+}

@@ -1,0 +1,65 @@
+-- REVIEW AND REPLACE EVERY PLACEHOLDER BEFORE EXECUTION.
+-- This file is an operator template and is not executed by the migration.
+begin;
+
+-- 1) Backfill the exact approved legacy scope. Do not run across mixed tenants.
+do $$
+declare table_name text;
+begin
+  foreach table_name in array array[
+    'market_os_ambassadors','market_os_ambassador_territories','market_os_ambassador_missions',
+    'market_os_ambassador_recruitment','market_os_ambassador_leads','market_os_ambassador_conversions',
+    'market_os_ambassador_onboarding','market_os_ambassador_training','market_os_ambassador_goals',
+    'market_os_ambassador_incentives','market_os_ambassador_proofs','market_os_ambassador_payouts',
+    'market_os_ambassador_reports','market_os_ambassador_settings','market_os_ambassador_audit_logs'
+  ] loop
+    execute format(
+      'update public.%I set tenant_id = %L, organization_id = %L where tenant_id is null and organization_id is null',
+      table_name, '<TENANT_ID>', '<ORGANIZATION_ID>'
+    );
+  end loop;
+end $$;
+
+-- Re-key identities inside the now-explicit scope. Temporary unique values avoid transient conflicts.
+do $$
+declare table_name text;
+begin
+  foreach table_name in array array['market_os_ambassadors','market_os_ambassador_recruitment'] loop
+    execute format(
+      'update public.%I set identity_hash = coalesce(public.market_os_ambassador_identity_hash(email, phone), id::text) || '':rekey:'' || id::text where tenant_id = %L and organization_id = %L',
+      table_name, '<TENANT_ID>', '<ORGANIZATION_ID>'
+    );
+    execute format($sql$
+      with ranked as (
+        select id,
+               public.market_os_ambassador_identity_hash(email, phone) as base_hash,
+               row_number() over (
+                 partition by tenant_id, organization_id, public.market_os_ambassador_identity_hash(email, phone)
+                 order by created_at nulls last, id
+               ) as duplicate_rank
+        from public.%I
+        where tenant_id = %L and organization_id = %L
+          and public.market_os_ambassador_identity_hash(email, phone) is not null
+      )
+      update public.%I target
+      set identity_hash = case when ranked.duplicate_rank = 1 then ranked.base_hash else ranked.base_hash || ':legacy:' || target.id::text end
+      from ranked where target.id = ranked.id
+    $sql$, table_name, '<TENANT_ID>', '<ORGANIZATION_ID>', table_name);
+  end loop;
+end $$;
+
+-- 2) Explicitly grant a reviewed role to a real Supabase auth user.
+insert into public.market_os_ambassador_actor_roles (
+  auth_user_id, tenant_id, organization_id, role_key, display_name, status
+) values (
+  '<AUTH_USER_UUID>'::uuid,
+  '<TENANT_ID>',
+  '<ORGANIZATION_ID>',
+  'ambassador_admin',
+  '<DISPLAY_NAME>',
+  'active'
+)
+on conflict (auth_user_id, tenant_id, organization_id, role_key)
+do update set display_name = excluded.display_name, status = 'active', updated_at = now();
+
+commit;

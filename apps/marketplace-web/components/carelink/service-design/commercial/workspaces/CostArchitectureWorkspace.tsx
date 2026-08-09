@@ -1,0 +1,2 @@
+import{SupportWorkspace}from'./SupportWorkspace'
+export function CostArchitectureWorkspace(){return <SupportWorkspace eyebrow="Cost Authority" title="Chambre d\u2019architecture des co\u00fbts" description="Co\u00fbt connu, estim\u00e9, manquant ou non applicable \u2014 jamais z\u00e9ro par d\u00e9faut." primary="Couches de co\u00fbt" secondary="Doctrine de v\u00e9rit\u00e9" variant="matrix" items={["Compensation caregiver", "Supervision & backup", "Transport & logistique", "Matériel & consommables", "Coordination & support", "Réserve de risque"]}/>}

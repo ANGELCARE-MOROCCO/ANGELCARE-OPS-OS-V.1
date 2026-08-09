@@ -1,0 +1,1194 @@
+{
+  "contract": "ANGELCARE Revenue Command Browser OS \u2014 B2B Partnerships",
+  "version": "1.6.0",
+  "signedApproved": true,
+  "capabilityCount": 45,
+  "capabilities": [
+    {
+      "id": "B2B-001",
+      "key": "b2b.browser_context_understanding",
+      "title": "Browser Context Understanding",
+      "module": "revenue_b2b",
+      "contractVersion": "1.0.0",
+      "deliveryWave": 1,
+      "commands": [
+        "b2b.context.resolve",
+        "b2b.territory.inspect"
+      ],
+      "permission": "extension.b2b.browser_context_understanding",
+      "auditRequired": true,
+      "approvalMode": "SERVER_POLICY",
+      "patch01Status": "foundation",
+      "acceptanceTests": [
+        "B2B-001-A",
+        "B2B-001-B"
+      ],
+      "patch02Status": "implemented",
+      "patch03Status": "preserved",
+      "patch04Status": "future",
+      "patch05Status": "preserved",
+      "patch06Status": "preserved"
+    },
+    {
+      "id": "B2B-002",
+      "key": "b2b.organization_identity_resolution",
+      "title": "Organization Identity Resolution",
+      "module": "revenue_b2b",
+      "contractVersion": "1.0.0",
+      "deliveryWave": 2,
+      "commands": [
+        "b2b.account.recognize",
+        "b2b.account.search",
+        "b2b.account.match_candidates"
+      ],
+      "permission": "extension.b2b.organization_identity_resolution",
+      "auditRequired": true,
+      "approvalMode": "SERVER_POLICY",
+      "patch01Status": "registered",
+      "acceptanceTests": [
+        "B2B-002-A",
+        "B2B-002-B"
+      ],
+      "patch02Status": "implemented",
+      "patch03Status": "preserved",
+      "patch04Status": "future",
+      "patch05Status": "preserved",
+      "patch06Status": "preserved"
+    },
+    {
+      "id": "B2B-003",
+      "key": "b2b.prospect_capture",
+      "title": "Prospect Capture",
+      "module": "revenue_b2b",
+      "contractVersion": "1.0.0",
+      "deliveryWave": 2,
+      "commands": [
+        "b2b.prospect.create",
+        "b2b.prospect.branch_create",
+        "b2b.prospect.merge_request",
+        "b2b.territory.target_capture"
+      ],
+      "permission": "extension.b2b.prospect_capture",
+      "auditRequired": true,
+      "approvalMode": "SERVER_POLICY",
+      "patch01Status": "registered",
+      "acceptanceTests": [
+        "B2B-003-A",
+        "B2B-003-B"
+      ],
+      "patch02Status": "implemented",
+      "patch03Status": "preserved",
+      "patch04Status": "future",
+      "patch05Status": "preserved",
+      "patch06Status": "preserved"
+    },
+    {
+      "id": "B2B-004",
+      "key": "b2b.account_enrichment",
+      "title": "Account Enrichment",
+      "module": "revenue_b2b",
+      "contractVersion": "1.0.0",
+      "deliveryWave": 2,
+      "commands": [
+        "b2b.prospect.enrich",
+        "b2b.evidence.capture"
+      ],
+      "permission": "extension.b2b.account_enrichment",
+      "auditRequired": true,
+      "approvalMode": "SERVER_POLICY",
+      "patch01Status": "registered",
+      "acceptanceTests": [
+        "B2B-004-A",
+        "B2B-004-B"
+      ],
+      "patch02Status": "implemented",
+      "patch03Status": "preserved",
+      "patch04Status": "future",
+      "patch05Status": "preserved",
+      "patch06Status": "preserved"
+    },
+    {
+      "id": "B2B-005",
+      "key": "b2b.vertical_specific_intelligence",
+      "title": "Vertical-Specific Intelligence",
+      "module": "revenue_b2b",
+      "contractVersion": "1.0.0",
+      "deliveryWave": 2,
+      "commands": [
+        "b2b.intelligence.vertical.evaluate"
+      ],
+      "permission": "extension.b2b.vertical_specific_intelligence",
+      "auditRequired": true,
+      "approvalMode": "SERVER_POLICY",
+      "patch01Status": "registered",
+      "acceptanceTests": [
+        "B2B-005-A",
+        "B2B-005-B"
+      ],
+      "patch02Status": "implemented",
+      "patch03Status": "preserved",
+      "patch04Status": "future",
+      "patch05Status": "preserved",
+      "patch06Status": "preserved"
+    },
+    {
+      "id": "B2B-006",
+      "key": "b2b.account_scoring",
+      "title": "Account Scoring",
+      "module": "revenue_b2b",
+      "contractVersion": "1.0.0",
+      "deliveryWave": 2,
+      "commands": [
+        "b2b.account.score"
+      ],
+      "permission": "extension.b2b.account_scoring",
+      "auditRequired": true,
+      "approvalMode": "SERVER_POLICY",
+      "patch01Status": "registered",
+      "acceptanceTests": [
+        "B2B-006-A",
+        "B2B-006-B"
+      ],
+      "patch02Status": "implemented",
+      "patch03Status": "preserved",
+      "patch04Status": "future",
+      "patch05Status": "preserved",
+      "patch06Status": "preserved"
+    },
+    {
+      "id": "B2B-007",
+      "key": "b2b.account_plan_builder",
+      "title": "Account Plan Builder",
+      "module": "revenue_b2b",
+      "contractVersion": "1.0.0",
+      "deliveryWave": 2,
+      "commands": [
+        "b2b.account_plan.create"
+      ],
+      "permission": "extension.b2b.account_plan_builder",
+      "auditRequired": true,
+      "approvalMode": "SERVER_POLICY",
+      "patch01Status": "registered",
+      "acceptanceTests": [
+        "B2B-007-A",
+        "B2B-007-B"
+      ],
+      "patch02Status": "implemented",
+      "patch03Status": "preserved",
+      "patch04Status": "future",
+      "patch05Status": "preserved",
+      "patch06Status": "preserved"
+    },
+    {
+      "id": "B2B-008",
+      "key": "b2b.contact_capture_management",
+      "title": "Contact Capture and Management",
+      "module": "revenue_b2b",
+      "contractVersion": "1.0.0",
+      "deliveryWave": 2,
+      "commands": [
+        "b2b.contact.create",
+        "b2b.contact.update",
+        "b2b.contact.classify"
+      ],
+      "permission": "extension.b2b.contact_capture_management",
+      "auditRequired": true,
+      "approvalMode": "SERVER_POLICY",
+      "patch01Status": "registered",
+      "acceptanceTests": [
+        "B2B-008-A",
+        "B2B-008-B"
+      ],
+      "patch02Status": "implemented",
+      "patch03Status": "preserved",
+      "patch04Status": "future",
+      "patch05Status": "preserved",
+      "patch06Status": "preserved"
+    },
+    {
+      "id": "B2B-009",
+      "key": "b2b.decision_maker_research",
+      "title": "Decision-Maker Research Missions",
+      "module": "revenue_b2b",
+      "contractVersion": "1.0.0",
+      "deliveryWave": 2,
+      "commands": [
+        "b2b.decision_maker.research",
+        "b2b.buying_committee.read",
+        "b2b.buying_committee.update",
+        "b2b.territory.mission_create"
+      ],
+      "permission": "extension.b2b.decision_maker_research",
+      "auditRequired": true,
+      "approvalMode": "SERVER_POLICY",
+      "patch01Status": "registered",
+      "acceptanceTests": [
+        "B2B-009-A",
+        "B2B-009-B"
+      ],
+      "patch02Status": "implemented",
+      "patch03Status": "preserved",
+      "patch04Status": "future",
+      "patch05Status": "preserved",
+      "patch06Status": "preserved"
+    },
+    {
+      "id": "B2B-010",
+      "key": "b2b.opportunity_creation",
+      "title": "Opportunity Creation",
+      "module": "revenue_b2b",
+      "contractVersion": "1.0.0",
+      "deliveryWave": 3,
+      "commands": [
+        "b2b.opportunity.create",
+        "b2b.opportunity.update"
+      ],
+      "permission": "extension.b2b.opportunity_creation",
+      "auditRequired": true,
+      "approvalMode": "SERVER_POLICY",
+      "patch01Status": "registered",
+      "acceptanceTests": [
+        "B2B-010-A",
+        "B2B-010-B"
+      ],
+      "patch03Status": "implemented",
+      "patch04Status": "future",
+      "patch05Status": "preserved",
+      "patch06Status": "preserved"
+    },
+    {
+      "id": "B2B-011",
+      "key": "b2b.intelligent_pipeline_management",
+      "title": "Intelligent Pipeline Management",
+      "module": "revenue_b2b",
+      "contractVersion": "1.0.0",
+      "deliveryWave": 3,
+      "commands": [
+        "b2b.opportunity.stage_recommend",
+        "b2b.opportunity.stage_change",
+        "b2b.pipeline.read",
+        "b2b.pipeline.risk_detect",
+        "b2b.followup.create",
+        "b2b.followup.complete"
+      ],
+      "permission": "extension.b2b.intelligent_pipeline_management",
+      "auditRequired": true,
+      "approvalMode": "SERVER_POLICY",
+      "patch01Status": "registered",
+      "acceptanceTests": [
+        "B2B-011-A",
+        "B2B-011-B"
+      ],
+      "patch03Status": "implemented",
+      "patch04Status": "future",
+      "patch05Status": "preserved",
+      "patch06Status": "preserved"
+    },
+    {
+      "id": "B2B-012",
+      "key": "b2b.outreach_strategy_builder",
+      "title": "Outreach Strategy Builder",
+      "module": "revenue_b2b",
+      "contractVersion": "1.0.0",
+      "deliveryWave": 3,
+      "commands": [
+        "b2b.outreach.strategy_prepare",
+        "b2b.communication.prepare",
+        "b2b.communication.log"
+      ],
+      "permission": "extension.b2b.outreach_strategy_builder",
+      "auditRequired": true,
+      "approvalMode": "SERVER_POLICY",
+      "patch01Status": "registered",
+      "acceptanceTests": [
+        "B2B-012-A",
+        "B2B-012-B"
+      ],
+      "patch03Status": "implemented",
+      "patch04Status": "future",
+      "patch05Status": "preserved",
+      "patch06Status": "preserved"
+    },
+    {
+      "id": "B2B-013",
+      "key": "b2b.gmail_assisted_operations",
+      "title": "Gmail-Assisted Commercial Operations",
+      "module": "revenue_b2b",
+      "contractVersion": "1.0.0",
+      "deliveryWave": 3,
+      "commands": [
+        "b2b.gmail.thread_resolve",
+        "b2b.gmail.reply_prepare"
+      ],
+      "permission": "extension.b2b.gmail_assisted_operations",
+      "auditRequired": true,
+      "approvalMode": "SERVER_POLICY",
+      "patch01Status": "registered",
+      "acceptanceTests": [
+        "B2B-013-A",
+        "B2B-013-B"
+      ],
+      "patch03Status": "implemented",
+      "patch04Status": "future",
+      "patch05Status": "preserved",
+      "patch06Status": "preserved"
+    },
+    {
+      "id": "B2B-014",
+      "key": "b2b.whatsapp_assisted_operations",
+      "title": "WhatsApp-Assisted Operations",
+      "module": "revenue_b2b",
+      "contractVersion": "1.0.0",
+      "deliveryWave": 3,
+      "commands": [
+        "b2b.whatsapp.context_resolve",
+        "b2b.whatsapp.message_prepare"
+      ],
+      "permission": "extension.b2b.whatsapp_assisted_operations",
+      "auditRequired": true,
+      "approvalMode": "SERVER_POLICY",
+      "patch01Status": "registered",
+      "acceptanceTests": [
+        "B2B-014-A",
+        "B2B-014-B"
+      ],
+      "patch03Status": "implemented",
+      "patch04Status": "future",
+      "patch05Status": "preserved",
+      "patch06Status": "preserved"
+    },
+    {
+      "id": "B2B-015",
+      "key": "b2b.call_preparation",
+      "title": "Call Preparation",
+      "module": "revenue_b2b",
+      "contractVersion": "1.0.0",
+      "deliveryWave": 3,
+      "commands": [
+        "b2b.call.prepare",
+        "b2b.call.result_record"
+      ],
+      "permission": "extension.b2b.call_preparation",
+      "auditRequired": true,
+      "approvalMode": "SERVER_POLICY",
+      "patch01Status": "registered",
+      "acceptanceTests": [
+        "B2B-015-A",
+        "B2B-015-B"
+      ],
+      "patch03Status": "implemented",
+      "patch04Status": "future",
+      "patch05Status": "preserved",
+      "patch06Status": "preserved"
+    },
+    {
+      "id": "B2B-016",
+      "key": "b2b.field_visit_mode",
+      "title": "Field Visit Mode",
+      "module": "revenue_b2b",
+      "contractVersion": "1.0.0",
+      "deliveryWave": 3,
+      "commands": [
+        "b2b.field_visit.create",
+        "b2b.field_visit.result_record"
+      ],
+      "permission": "extension.b2b.field_visit_mode",
+      "auditRequired": true,
+      "approvalMode": "SERVER_POLICY",
+      "patch01Status": "registered",
+      "acceptanceTests": [
+        "B2B-016-A",
+        "B2B-016-B"
+      ],
+      "patch03Status": "implemented",
+      "patch04Status": "future",
+      "patch05Status": "preserved",
+      "patch06Status": "preserved"
+    },
+    {
+      "id": "B2B-017",
+      "key": "b2b.meeting_preparation",
+      "title": "Meeting Preparation",
+      "module": "revenue_b2b",
+      "contractVersion": "1.0.0",
+      "deliveryWave": 3,
+      "commands": [
+        "b2b.meeting.prepare",
+        "b2b.meeting.create"
+      ],
+      "permission": "extension.b2b.meeting_preparation",
+      "auditRequired": true,
+      "approvalMode": "SERVER_POLICY",
+      "patch01Status": "registered",
+      "acceptanceTests": [
+        "B2B-017-A",
+        "B2B-017-B"
+      ],
+      "patch03Status": "implemented",
+      "patch04Status": "future",
+      "patch05Status": "preserved",
+      "patch06Status": "preserved"
+    },
+    {
+      "id": "B2B-018",
+      "key": "b2b.live_meeting_assistance",
+      "title": "Live Meeting Assistance",
+      "module": "revenue_b2b",
+      "contractVersion": "1.0.0",
+      "deliveryWave": 3,
+      "commands": [
+        "b2b.meeting.assist"
+      ],
+      "permission": "extension.b2b.live_meeting_assistance",
+      "auditRequired": true,
+      "approvalMode": "SERVER_POLICY",
+      "patch01Status": "registered",
+      "acceptanceTests": [
+        "B2B-018-A",
+        "B2B-018-B"
+      ],
+      "patch03Status": "implemented",
+      "patch04Status": "future",
+      "patch05Status": "preserved",
+      "patch06Status": "preserved"
+    },
+    {
+      "id": "B2B-019",
+      "key": "b2b.post_meeting_conversion",
+      "title": "Post-Meeting Conversion",
+      "module": "revenue_b2b",
+      "contractVersion": "1.0.0",
+      "deliveryWave": 3,
+      "commands": [
+        "b2b.meeting.summary_prepare",
+        "b2b.meeting.outcome_apply"
+      ],
+      "permission": "extension.b2b.post_meeting_conversion",
+      "auditRequired": true,
+      "approvalMode": "SERVER_POLICY",
+      "patch01Status": "registered",
+      "acceptanceTests": [
+        "B2B-019-A",
+        "B2B-019-B"
+      ],
+      "patch03Status": "implemented",
+      "patch04Status": "future",
+      "patch05Status": "preserved",
+      "patch06Status": "preserved"
+    },
+    {
+      "id": "B2B-020",
+      "key": "b2b.proposal_studio",
+      "title": "Proposal Studio",
+      "module": "revenue_b2b",
+      "contractVersion": "1.0.0",
+      "deliveryWave": 4,
+      "commands": [
+        "b2b.offer.configure",
+        "b2b.proposal.create",
+        "b2b.proposal.update",
+        "b2b.proposal.version_create",
+        "b2b.proposal.submit_approval",
+        "b2b.proposal.approve",
+        "b2b.proposal.reject",
+        "b2b.proposal.mark_delivered"
+      ],
+      "permission": "extension.b2b.proposal_studio",
+      "auditRequired": true,
+      "approvalMode": "SERVER_POLICY",
+      "patch01Status": "registered",
+      "acceptanceTests": [
+        "B2B-020-A",
+        "B2B-020-B"
+      ],
+      "patch03Status": "future",
+      "patch04Status": "implemented",
+      "patch05Status": "preserved",
+      "patch06Status": "preserved"
+    },
+    {
+      "id": "B2B-021",
+      "key": "b2b.pricing_model_selection",
+      "title": "Pricing Model Selection",
+      "module": "revenue_b2b",
+      "contractVersion": "1.0.0",
+      "deliveryWave": 4,
+      "commands": [
+        "b2b.pricing.model_recommend",
+        "b2b.pricing.calculate"
+      ],
+      "permission": "extension.b2b.pricing_model_selection",
+      "auditRequired": true,
+      "approvalMode": "SERVER_POLICY",
+      "patch01Status": "registered",
+      "acceptanceTests": [
+        "B2B-021-A",
+        "B2B-021-B"
+      ],
+      "patch03Status": "future",
+      "patch04Status": "implemented",
+      "patch05Status": "preserved",
+      "patch06Status": "preserved"
+    },
+    {
+      "id": "B2B-022",
+      "key": "b2b.pricing_margin_protection",
+      "title": "Pricing and Margin Protection",
+      "module": "revenue_b2b",
+      "contractVersion": "1.0.0",
+      "deliveryWave": 4,
+      "commands": [
+        "b2b.margin.evaluate",
+        "b2b.discount.request",
+        "b2b.discount.approve",
+        "b2b.discount.reject"
+      ],
+      "permission": "extension.b2b.pricing_margin_protection",
+      "auditRequired": true,
+      "approvalMode": "SERVER_POLICY",
+      "patch01Status": "registered",
+      "acceptanceTests": [
+        "B2B-022-A",
+        "B2B-022-B"
+      ],
+      "patch03Status": "future",
+      "patch04Status": "implemented",
+      "patch05Status": "preserved",
+      "patch06Status": "preserved"
+    },
+    {
+      "id": "B2B-023",
+      "key": "b2b.negotiation_deal_room",
+      "title": "Negotiation Deal Room",
+      "module": "revenue_b2b",
+      "contractVersion": "1.0.0",
+      "deliveryWave": 4,
+      "commands": [
+        "b2b.negotiation.open",
+        "b2b.negotiation.change_record",
+        "b2b.counteroffer.prepare"
+      ],
+      "permission": "extension.b2b.negotiation_deal_room",
+      "auditRequired": true,
+      "approvalMode": "SERVER_POLICY",
+      "patch01Status": "registered",
+      "acceptanceTests": [
+        "B2B-023-A",
+        "B2B-023-B"
+      ],
+      "patch03Status": "future",
+      "patch04Status": "implemented",
+      "patch05Status": "preserved",
+      "patch06Status": "preserved"
+    },
+    {
+      "id": "B2B-024",
+      "key": "b2b.objection_intelligence",
+      "title": "Objection Intelligence",
+      "module": "revenue_b2b",
+      "contractVersion": "1.0.0",
+      "deliveryWave": 4,
+      "commands": [
+        "b2b.objection.record",
+        "b2b.objection.resolve"
+      ],
+      "permission": "extension.b2b.objection_intelligence",
+      "auditRequired": true,
+      "approvalMode": "SERVER_POLICY",
+      "patch01Status": "registered",
+      "acceptanceTests": [
+        "B2B-024-A",
+        "B2B-024-B"
+      ],
+      "patch03Status": "future",
+      "patch04Status": "implemented",
+      "patch05Status": "preserved",
+      "patch06Status": "preserved"
+    },
+    {
+      "id": "B2B-025",
+      "key": "b2b.closing_room",
+      "title": "Closing Room",
+      "module": "revenue_b2b",
+      "contractVersion": "1.0.0",
+      "deliveryWave": 4,
+      "commands": [
+        "b2b.closing.readiness",
+        "b2b.closing.gate_check"
+      ],
+      "permission": "extension.b2b.closing_room",
+      "auditRequired": true,
+      "approvalMode": "SERVER_POLICY",
+      "patch01Status": "registered",
+      "acceptanceTests": [
+        "B2B-025-A",
+        "B2B-025-B"
+      ],
+      "patch03Status": "future",
+      "patch04Status": "implemented",
+      "patch05Status": "preserved",
+      "patch06Status": "preserved"
+    },
+    {
+      "id": "B2B-026",
+      "key": "b2b.contract_payment_gates",
+      "title": "Contract and Payment Gates",
+      "module": "revenue_b2b",
+      "contractVersion": "1.0.0",
+      "deliveryWave": 4,
+      "commands": [
+        "b2b.contract.requirement_create",
+        "b2b.contract.status_update",
+        "b2b.payment.gate_check"
+      ],
+      "permission": "extension.b2b.contract_payment_gates",
+      "auditRequired": true,
+      "approvalMode": "SERVER_POLICY",
+      "patch01Status": "registered",
+      "acceptanceTests": [
+        "B2B-026-A",
+        "B2B-026-B"
+      ],
+      "patch03Status": "future",
+      "patch04Status": "implemented",
+      "patch05Status": "preserved",
+      "patch06Status": "preserved"
+    },
+    {
+      "id": "B2B-027",
+      "key": "b2b.payment_promise_control",
+      "title": "Payment-Promise Control",
+      "module": "revenue_b2b",
+      "contractVersion": "1.0.0",
+      "deliveryWave": 4,
+      "commands": [
+        "b2b.payment_promise.create",
+        "b2b.payment_promise.verify_request"
+      ],
+      "permission": "extension.b2b.payment_promise_control",
+      "auditRequired": true,
+      "approvalMode": "SERVER_POLICY",
+      "patch01Status": "registered",
+      "acceptanceTests": [
+        "B2B-027-A",
+        "B2B-027-B"
+      ],
+      "patch03Status": "future",
+      "patch04Status": "implemented",
+      "patch05Status": "preserved",
+      "patch06Status": "preserved"
+    },
+    {
+      "id": "B2B-028",
+      "key": "b2b.revenue_rescue",
+      "title": "Revenue Rescue",
+      "module": "revenue_b2b",
+      "contractVersion": "1.0.0",
+      "deliveryWave": 4,
+      "commands": [
+        "b2b.revenue_rescue.create"
+      ],
+      "permission": "extension.b2b.revenue_rescue",
+      "auditRequired": true,
+      "approvalMode": "SERVER_POLICY",
+      "patch01Status": "registered",
+      "acceptanceTests": [
+        "B2B-028-A",
+        "B2B-028-B"
+      ],
+      "patch03Status": "future",
+      "patch04Status": "implemented",
+      "patch05Status": "preserved",
+      "patch06Status": "preserved"
+    },
+    {
+      "id": "B2B-029",
+      "key": "b2b.executive_intervention",
+      "title": "Executive Intervention",
+      "module": "revenue_b2b",
+      "contractVersion": "1.0.0",
+      "deliveryWave": 4,
+      "commands": [
+        "b2b.executive_intervention.prepare"
+      ],
+      "permission": "extension.b2b.executive_intervention",
+      "auditRequired": true,
+      "approvalMode": "SERVER_POLICY",
+      "patch01Status": "registered",
+      "acceptanceTests": [
+        "B2B-029-A",
+        "B2B-029-B"
+      ],
+      "patch03Status": "future",
+      "patch04Status": "implemented",
+      "patch05Status": "preserved",
+      "patch06Status": "preserved"
+    },
+    {
+      "id": "B2B-030",
+      "key": "b2b.operational_handoff",
+      "title": "Operational Handoff",
+      "module": "revenue_b2b",
+      "contractVersion": "1.0.0",
+      "deliveryWave": 5,
+      "commands": [
+        "b2b.handoff.generate",
+        "b2b.handoff.validate",
+        "b2b.handoff.accept",
+        "b2b.handoff.request_correction"
+      ],
+      "permission": "extension.b2b.operational_handoff",
+      "auditRequired": true,
+      "approvalMode": "SERVER_POLICY",
+      "patch01Status": "registered",
+      "acceptanceTests": [
+        "B2B-030-A",
+        "B2B-030-B"
+      ],
+      "patch03Status": "future",
+      "patch04Status": "future",
+      "patch05Status": "implemented",
+      "patch06Status": "preserved"
+    },
+    {
+      "id": "B2B-031",
+      "key": "b2b.partner_activation",
+      "title": "Partner Activation",
+      "module": "revenue_b2b",
+      "contractVersion": "1.0.0",
+      "deliveryWave": 5,
+      "commands": [
+        "b2b.partner.activate",
+        "b2b.partner.read",
+        "b2b.partner.update",
+        "b2b.partner.site_create",
+        "b2b.partner.service_configure",
+        "b2b.onboarding.create",
+        "b2b.onboarding.task_complete",
+        "b2b.activation.readiness_calculate",
+        "b2b.activation.approve",
+        "b2b.first_service.prepare",
+        "b2b.first_service.outcome_record",
+        "b2b.hypercare.create"
+      ],
+      "permission": "extension.b2b.partner_activation",
+      "auditRequired": true,
+      "approvalMode": "SERVER_POLICY",
+      "patch01Status": "registered",
+      "acceptanceTests": [
+        "B2B-031-A",
+        "B2B-031-B"
+      ],
+      "patch03Status": "future",
+      "patch04Status": "future",
+      "patch05Status": "implemented",
+      "patch06Status": "preserved"
+    },
+    {
+      "id": "B2B-032",
+      "key": "b2b.partner_performance",
+      "title": "Partner Performance",
+      "module": "revenue_b2b",
+      "contractVersion": "1.0.0",
+      "deliveryWave": 5,
+      "commands": [
+        "b2b.partner_performance.read",
+        "b2b.partner_health.calculate",
+        "b2b.partner_issue.create",
+        "b2b.partner_issue.escalate",
+        "b2b.corrective_action.create",
+        "b2b.corrective_action.close",
+        "b2b.partner_review.prepare",
+        "b2b.qbr.generate"
+      ],
+      "permission": "extension.b2b.partner_performance",
+      "auditRequired": true,
+      "approvalMode": "SERVER_POLICY",
+      "patch01Status": "registered",
+      "acceptanceTests": [
+        "B2B-032-A",
+        "B2B-032-B"
+      ],
+      "patch03Status": "future",
+      "patch04Status": "future",
+      "patch05Status": "implemented",
+      "patch06Status": "preserved"
+    },
+    {
+      "id": "B2B-033",
+      "key": "b2b.upsell_cross_sell",
+      "title": "Upsell and Cross-Sell Intelligence",
+      "module": "revenue_b2b",
+      "contractVersion": "1.0.0",
+      "deliveryWave": 5,
+      "commands": [
+        "b2b.upsell.detect",
+        "b2b.upsell.create",
+        "b2b.cross_sell.detect",
+        "b2b.expansion.site_detect",
+        "b2b.expansion.plan_create"
+      ],
+      "permission": "extension.b2b.upsell_cross_sell",
+      "auditRequired": true,
+      "approvalMode": "SERVER_POLICY",
+      "patch01Status": "registered",
+      "acceptanceTests": [
+        "B2B-033-A",
+        "B2B-033-B"
+      ],
+      "patch03Status": "future",
+      "patch04Status": "future",
+      "patch05Status": "implemented",
+      "patch06Status": "preserved"
+    },
+    {
+      "id": "B2B-034",
+      "key": "b2b.renewal_management",
+      "title": "Renewal Management",
+      "module": "revenue_b2b",
+      "contractVersion": "1.0.0",
+      "deliveryWave": 5,
+      "commands": [
+        "b2b.renewal.readiness_calculate",
+        "b2b.renewal.plan_create",
+        "b2b.renewal.proposal_prepare",
+        "b2b.churn_risk.detect",
+        "b2b.partner_rescue.create"
+      ],
+      "permission": "extension.b2b.renewal_management",
+      "auditRequired": true,
+      "approvalMode": "SERVER_POLICY",
+      "patch01Status": "registered",
+      "acceptanceTests": [
+        "B2B-034-A",
+        "B2B-034-B"
+      ],
+      "patch03Status": "future",
+      "patch04Status": "future",
+      "patch05Status": "implemented",
+      "patch06Status": "preserved"
+    },
+    {
+      "id": "B2B-035",
+      "key": "b2b.tender_rfp_intelligence",
+      "title": "Tender and RFP Intelligence",
+      "module": "revenue_b2b",
+      "contractVersion": "1.0.0",
+      "deliveryWave": 5,
+      "commands": [
+        "b2b.tender.create",
+        "b2b.tender.requirements_extract",
+        "b2b.tender.bid_decision",
+        "b2b.tender.compliance_update",
+        "b2b.tender.submit",
+        "b2b.tender.outcome_record"
+      ],
+      "permission": "extension.b2b.tender_rfp_intelligence",
+      "auditRequired": true,
+      "approvalMode": "SERVER_POLICY",
+      "patch01Status": "registered",
+      "acceptanceTests": [
+        "B2B-035-A",
+        "B2B-035-B"
+      ],
+      "patch03Status": "future",
+      "patch04Status": "future",
+      "patch05Status": "implemented",
+      "patch06Status": "preserved"
+    },
+    {
+      "id": "B2B-036",
+      "key": "b2b.campaign_association",
+      "title": "Campaign Association",
+      "module": "revenue_b2b",
+      "contractVersion": "1.0.0",
+      "deliveryWave": 3,
+      "commands": [
+        "b2b.campaign.attribute"
+      ],
+      "permission": "extension.b2b.campaign_association",
+      "auditRequired": true,
+      "approvalMode": "SERVER_POLICY",
+      "patch01Status": "registered",
+      "acceptanceTests": [
+        "B2B-036-A",
+        "B2B-036-B"
+      ],
+      "patch03Status": "implemented",
+      "patch04Status": "future",
+      "patch05Status": "preserved",
+      "patch06Status": "preserved"
+    },
+    {
+      "id": "B2B-037",
+      "key": "b2b.referral_source_management",
+      "title": "Referral Source Management",
+      "module": "revenue_b2b",
+      "contractVersion": "1.0.0",
+      "deliveryWave": 3,
+      "commands": [
+        "b2b.referral_source.record"
+      ],
+      "permission": "extension.b2b.referral_source_management",
+      "auditRequired": true,
+      "approvalMode": "SERVER_POLICY",
+      "patch01Status": "registered",
+      "acceptanceTests": [
+        "B2B-037-A",
+        "B2B-037-B"
+      ],
+      "patch03Status": "implemented",
+      "patch04Status": "future",
+      "patch05Status": "preserved",
+      "patch06Status": "preserved"
+    },
+    {
+      "id": "B2B-038",
+      "key": "b2b.daily_revenue_command",
+      "title": "Daily Revenue Command",
+      "module": "revenue_b2b",
+      "contractVersion": "1.0.0",
+      "deliveryWave": 3,
+      "commands": [
+        "b2b.daily_command.read",
+        "b2b.next_action.read",
+        "b2b.next_action.complete",
+        "b2b.timeline.read"
+      ],
+      "permission": "extension.b2b.daily_revenue_command",
+      "auditRequired": true,
+      "approvalMode": "SERVER_POLICY",
+      "patch01Status": "registered",
+      "acceptanceTests": [
+        "B2B-038-A",
+        "B2B-038-B"
+      ],
+      "patch03Status": "implemented",
+      "patch04Status": "future",
+      "patch05Status": "preserved",
+      "patch06Status": "preserved"
+    },
+    {
+      "id": "B2B-039",
+      "key": "b2b.manager_control",
+      "title": "Manager Control",
+      "module": "revenue_b2b",
+      "contractVersion": "6.0.0",
+      "deliveryWave": 6,
+      "commands": [
+        "b2b.ai_director.review_account",
+        "b2b.ai_director.review_pipeline",
+        "b2b.ai_director.review_partner",
+        "b2b.ai_director.review_renewal",
+        "b2b.ai_director.recommend_action",
+        "b2b.ai_director.refresh_recommendation",
+        "b2b.ai_director.accept_recommendation",
+        "b2b.ai_director.reject_recommendation",
+        "b2b.management.priority_assign",
+        "b2b.management.account_reassign",
+        "b2b.management.opportunity_reassign",
+        "b2b.management.correction_request",
+        "b2b.management.action_freeze",
+        "b2b.management.intervention_create",
+        "b2b.management.intervention_close",
+        "b2b.pipeline_truth.assess",
+        "b2b.pipeline_truth.stage_recommend",
+        "b2b.pipeline_truth.correction_apply",
+        "b2b.forecast.calculate",
+        "b2b.forecast.snapshot_create",
+        "b2b.forecast.override_request",
+        "b2b.forecast.override_approve",
+        "b2b.revenue_risk.detect",
+        "b2b.revenue_risk.assign",
+        "b2b.revenue_risk.escalate",
+        "b2b.revenue_risk.resolve",
+        "b2b.proposal_recovery.create",
+        "b2b.payment_recovery.create",
+        "b2b.renewal_rescue.create",
+        "b2b.partner_health_rescue.create",
+        "b2b.report.payment_recovery_generate"
+      ],
+      "permission": "extension.b2b.manager_control",
+      "auditRequired": true,
+      "approvalMode": "SERVER_POLICY",
+      "patch01Status": "registered",
+      "acceptanceTests": [
+        "B2B-039-A",
+        "B2B-039-B"
+      ],
+      "patch03Status": "future",
+      "patch04Status": "future",
+      "patch05Status": "future",
+      "patch06Status": "implemented"
+    },
+    {
+      "id": "B2B-040",
+      "key": "b2b.staff_execution_quality",
+      "title": "Staff Execution Quality",
+      "module": "revenue_b2b",
+      "contractVersion": "6.0.0",
+      "deliveryWave": 6,
+      "commands": [
+        "b2b.execution_quality.assess",
+        "b2b.execution_quality.pattern_detect",
+        "b2b.coaching.create",
+        "b2b.coaching.assign",
+        "b2b.coaching.complete",
+        "b2b.coaching.review",
+        "b2b.coaching.outcome_record"
+      ],
+      "permission": "extension.b2b.staff_execution_quality",
+      "auditRequired": true,
+      "approvalMode": "SERVER_POLICY",
+      "patch01Status": "registered",
+      "acceptanceTests": [
+        "B2B-040-A",
+        "B2B-040-B"
+      ],
+      "patch03Status": "future",
+      "patch04Status": "future",
+      "patch05Status": "future",
+      "patch06Status": "implemented"
+    },
+    {
+      "id": "B2B-041",
+      "key": "b2b.b2b_reporting",
+      "title": "B2B Reporting",
+      "module": "revenue_b2b",
+      "contractVersion": "6.0.0",
+      "deliveryWave": 6,
+      "commands": [
+        "b2b.territory_intelligence.calculate",
+        "b2b.territory_intelligence.coverage_read",
+        "b2b.territory_intelligence.gap_detect",
+        "b2b.vertical_intelligence.performance_read",
+        "b2b.report.daily_revenue_generate",
+        "b2b.report.weekly_commercial_generate",
+        "b2b.report.pipeline_truth_generate",
+        "b2b.report.margin_protection_generate",
+        "b2b.report.payment_recovery_generate",
+        "b2b.report.partner_health_generate",
+        "b2b.report.renewal_exposure_generate",
+        "b2b.report.territory_generate",
+        "b2b.report.staff_execution_generate",
+        "b2b.report.automation_generate"
+      ],
+      "permission": "extension.b2b.b2b_reporting",
+      "auditRequired": true,
+      "approvalMode": "SERVER_POLICY",
+      "patch01Status": "registered",
+      "acceptanceTests": [
+        "B2B-041-A",
+        "B2B-041-B"
+      ],
+      "patch03Status": "future",
+      "patch04Status": "future",
+      "patch05Status": "future",
+      "patch06Status": "implemented"
+    },
+    {
+      "id": "B2B-042",
+      "key": "b2b.evidence_audit",
+      "title": "Evidence and Audit",
+      "module": "revenue_b2b",
+      "contractVersion": "1.0.0",
+      "deliveryWave": 1,
+      "commands": [
+        "b2b.audit.read"
+      ],
+      "permission": "extension.b2b.evidence_audit",
+      "auditRequired": true,
+      "approvalMode": "SERVER_POLICY",
+      "patch01Status": "foundation",
+      "acceptanceTests": [
+        "B2B-042-A",
+        "B2B-042-B"
+      ],
+      "patch02Status": "implemented",
+      "patch03Status": "preserved",
+      "patch04Status": "future",
+      "patch05Status": "preserved",
+      "patch06Status": "preserved"
+    },
+    {
+      "id": "B2B-043",
+      "key": "b2b.command_palette",
+      "title": "Command Palette",
+      "module": "revenue_b2b",
+      "contractVersion": "1.0.0",
+      "deliveryWave": 6,
+      "commands": [
+        "b2b.command.execute"
+      ],
+      "permission": "extension.b2b.command_palette",
+      "auditRequired": true,
+      "approvalMode": "SERVER_POLICY",
+      "patch01Status": "registered",
+      "acceptanceTests": [
+        "B2B-043-A",
+        "B2B-043-B"
+      ],
+      "patch03Status": "future",
+      "patch04Status": "future",
+      "patch05Status": "future",
+      "patch06Status": "preserved"
+    },
+    {
+      "id": "B2B-044",
+      "key": "b2b.controlled_automation",
+      "title": "Controlled Automation",
+      "module": "revenue_b2b",
+      "contractVersion": "6.0.0",
+      "deliveryWave": 1,
+      "commands": [
+        "b2b.automation.create",
+        "b2b.automation.update",
+        "b2b.automation.enable",
+        "b2b.automation.pause",
+        "b2b.automation.approval_request",
+        "b2b.automation.approval_decide",
+        "b2b.automation.execute",
+        "b2b.automation.retry",
+        "b2b.automation.kill",
+        "b2b.automation.audit_read"
+      ],
+      "permission": "extension.b2b.controlled_automation",
+      "auditRequired": true,
+      "approvalMode": "SERVER_POLICY",
+      "patch01Status": "foundation",
+      "acceptanceTests": [
+        "B2B-044-A",
+        "B2B-044-B"
+      ],
+      "patch03Status": "implemented",
+      "patch04Status": "future",
+      "patch05Status": "preserved",
+      "patch06Status": "implemented"
+    },
+    {
+      "id": "B2B-045",
+      "key": "b2b.dynamic_user_loading",
+      "title": "Dynamic User-Specific Loading",
+      "module": "revenue_b2b",
+      "contractVersion": "1.0.0",
+      "deliveryWave": 1,
+      "commands": [
+        "extension.capabilities.bootstrap"
+      ],
+      "permission": "extension.b2b.dynamic_user_loading",
+      "auditRequired": true,
+      "approvalMode": "SERVER_POLICY",
+      "patch01Status": "foundation",
+      "acceptanceTests": [
+        "B2B-045-A",
+        "B2B-045-B"
+      ],
+      "patch02Status": "implemented",
+      "patch03Status": "preserved",
+      "patch04Status": "future",
+      "patch05Status": "preserved",
+      "patch06Status": "preserved"
+    }
+  ],
+  "operationalCapabilityCount": 45
+}

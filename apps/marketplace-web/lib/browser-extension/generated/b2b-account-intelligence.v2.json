@@ -1,0 +1,86 @@
+{
+  "version": "2.0.0",
+  "name": "Mega ZIP 2 \u2014 B2B Account Discovery & Commercial Intelligence",
+  "canonicalCapabilityCount": 45,
+  "scope": [
+    "browser_context_understanding",
+    "organization_identity_resolution",
+    "universal_account_recognition",
+    "prospect_capture",
+    "duplicate_prevention",
+    "account_enrichment",
+    "vertical_specific_intelligence",
+    "explainable_account_scoring",
+    "account_plan_generation",
+    "contact_capture",
+    "buying_committee_mapping",
+    "decision_maker_research_missions",
+    "google_maps_territory_sweep",
+    "evidence_traceability"
+  ],
+  "commands": [
+    "b2b.context.resolve",
+    "b2b.account.recognize",
+    "b2b.account.search",
+    "b2b.account.match_candidates",
+    "b2b.prospect.create",
+    "b2b.prospect.branch_create",
+    "b2b.prospect.merge_request",
+    "b2b.prospect.enrich",
+    "b2b.intelligence.vertical.evaluate",
+    "b2b.account.score",
+    "b2b.account_plan.create",
+    "b2b.contact.create",
+    "b2b.contact.update",
+    "b2b.contact.classify",
+    "b2b.buying_committee.read",
+    "b2b.buying_committee.update",
+    "b2b.decision_maker.research",
+    "b2b.evidence.capture",
+    "b2b.territory.inspect",
+    "b2b.territory.target_capture",
+    "b2b.territory.mission_create"
+  ],
+  "acceptanceScenarios": [
+    {
+      "id": "M2-A01",
+      "title": "Unknown company website"
+    },
+    {
+      "id": "M2-A02",
+      "title": "Existing prospect recognition"
+    },
+    {
+      "id": "M2-A03",
+      "title": "Duplicate prevention and branch review"
+    },
+    {
+      "id": "M2-A04",
+      "title": "Read-only permission restriction"
+    },
+    {
+      "id": "M2-A05",
+      "title": "Adapter restriction"
+    },
+    {
+      "id": "M2-A06",
+      "title": "Territory restriction"
+    },
+    {
+      "id": "M2-A07",
+      "title": "Evidence confirmation"
+    },
+    {
+      "id": "M2-A08",
+      "title": "Buying committee mission loop"
+    },
+    {
+      "id": "M2-A09",
+      "title": "Google Maps territory sweep"
+    },
+    {
+      "id": "M2-A10",
+      "title": "Access revocation"
+    }
+  ]
+}

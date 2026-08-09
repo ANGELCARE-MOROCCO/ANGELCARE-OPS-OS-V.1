@@ -1,0 +1,4 @@
+MZ07 French Command Kernel UI/API transpile
+Files: 9
+Errors: 0
+Result: PASS

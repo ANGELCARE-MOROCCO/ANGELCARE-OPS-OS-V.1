@@ -1,0 +1,6 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {"noEmit": true,"incremental": false,"plugins": []},
+  "include": ["next-env.d.ts","app/(protected)/flashcards-os/**/*.ts","app/(protected)/flashcards-os/**/*.tsx","app/api/flashcards-os/**/*.ts","components/flashcards-os/**/*.ts","components/flashcards-os/**/*.tsx","lib/flashcards-os/**/*.ts","lib/getUser.ts","lib/auth/session.ts","lib/supabase/env.ts","lib/supabase/server.ts"],
+  "exclude": ["node_modules",".next","deployment","backups","_archive"]
+}

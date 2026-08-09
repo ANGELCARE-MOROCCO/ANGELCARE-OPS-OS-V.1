@@ -1,0 +1,10 @@
+{
+  "releaseCode": "AC-REVENUE-OS-MZ08-COMMANDS-2000",
+  "commands": 2000,
+  "newCommands": 1000,
+  "domains": 23,
+  "contractCases": 30000,
+  "routingCases": 160000,
+  "adversarialCases": 100000,
+  "externalActions": 0
+}

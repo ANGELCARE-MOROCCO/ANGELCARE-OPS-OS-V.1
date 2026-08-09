@@ -1,0 +1,3 @@
+import fs from 'node:fs'
+const required=['components/service-os/ServiceOSPrimitives.tsx','components/service-os/ServiceOSEnterpriseHub.tsx','lib/service-os/types.ts','lib/service-os/seed.ts','lib/service-os/blueprint-engine.ts','app/(protected)/services/blueprints/page.tsx','app/(protected)/services/configuration/page.tsx','app/(protected)/services/rules/page.tsx','app/(protected)/services/enterprise/page.tsx']
+const missing=required.filter(f=>!fs.existsSync(f)); if(missing.length){console.error('Missing ServiceOS Phase1 files:',missing); process.exit(1)} console.log('ServiceOS Phase1 files present.')

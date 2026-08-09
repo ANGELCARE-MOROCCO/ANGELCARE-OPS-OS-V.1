@@ -1,0 +1,11 @@
+create index if not exists idx_ambassador_profiles_city on ambassador_profiles(city);
+create index if not exists idx_ambassador_profiles_status on ambassador_profiles(status);
+create index if not exists idx_ambassador_missions_status on ambassador_missions(status);
+create index if not exists idx_ambassador_missions_city on ambassador_missions(city);
+create index if not exists idx_ambassador_proofs_status on ambassador_proofs(status);
+create index if not exists idx_ambassador_payouts_status on ambassador_payouts(status);
+create index if not exists idx_ambassador_events_event_name on ambassador_events(event_name);
+create index if not exists idx_ambassador_events_entity on ambassador_events(entity_type, entity_id);
+create index if not exists idx_ambassador_audit_entity on ambassador_audit_logs(entity, entity_id);
+create index if not exists idx_ambassador_jobs_status on ambassador_execution_jobs(status, run_after);
+create index if not exists idx_ambassador_notifications_status on ambassador_notifications(status);

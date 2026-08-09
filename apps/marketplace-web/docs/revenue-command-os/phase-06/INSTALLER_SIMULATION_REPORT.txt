@@ -1,0 +1,18 @@
+ANGELCARE REVENUE COMMAND OS MZ06 INSTALLER SIMULATION
+Date: 2026-07-20
+Target: fresh copy of the signed MZ05 cumulative handoff
+Checksum handling: PASS
+Manifest copy: PASS
+Exact-file timestamped backup: PASS
+MZ04 static regression: PASS
+MZ05 static regression: PASS
+MZ05 70,000-case corpus: PASS
+MZ06 5,143 static checks: PASS
+MZ06 33,600-case corpus: PASS
+Targeted TypeScript: PASS
+UI/API syntax: PASS
+Application rollback: PASS
+Original MZ05 seed hash restored exactly: PASS
+Database migration applied: NO
+Git staged or committed: NO
+Production build run: NO

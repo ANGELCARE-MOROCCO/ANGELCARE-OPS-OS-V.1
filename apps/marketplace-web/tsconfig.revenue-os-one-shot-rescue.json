@@ -1,0 +1,28 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "types": [
+      "node"
+    ]
+  },
+  "include": [
+    "lib/revenue-command-os/operating-spine/**/*.ts",
+    "lib/revenue-command-os/ai/repository.ts",
+    "lib/revenue-command-os/strategy-brain/ai-orchestration.ts",
+    "app/api/revenue-command-os/operating-spine/**/*.ts",
+    "app/(protected)/revenue-command-os/_components/operating-spine/**/*.tsx",
+    "app/(protected)/revenue-command-os/_components/RevenueOsWorkspacePage.tsx",
+    "app/(protected)/revenue-command-os/_components/RevenueOsShell.tsx",
+    "app/(protected)/revenue-command-os/page.tsx",
+    "app/(protected)/revenue-command-os/cockpit/page.tsx",
+    "app/(protected)/revenue-command-os/strategy-engine/page.tsx",
+    "app/(protected)/revenue-command-os/validation-council/page.tsx",
+    "app/(protected)/revenue-command-os/strategy-studio/page.tsx",
+    "app/(protected)/revenue-command-os/mission-compiler/page.tsx",
+    "app/(protected)/revenue-command-os/execution-autopilot/page.tsx",
+    "app/(protected)/revenue-command-os/mega-production/page.tsx"
+  ]
+}

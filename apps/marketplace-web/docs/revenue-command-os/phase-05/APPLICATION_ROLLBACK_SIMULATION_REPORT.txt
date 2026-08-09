@@ -1,0 +1,4 @@
+
+MZ05 application rollback restored from:
+  /mnt/data/revenue_mz05_work/installer_sim_target/backups/revenue-command-os/mz05-20260720-150955
+Database was not changed by this script. Apply the MZ05 ROLLBACK.sql manually only if required.

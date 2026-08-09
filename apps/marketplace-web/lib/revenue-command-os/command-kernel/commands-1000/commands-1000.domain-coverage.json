@@ -1,0 +1,486 @@
+[
+  {
+    "coverageDomain": "academy",
+    "label": "Academy",
+    "newCommandCount": 32,
+    "families": [
+      "audit-optimization",
+      "campaign-go-to-market",
+      "executive-forecasting",
+      "market-sensing",
+      "meetings-diagnostics",
+      "offer-pricing",
+      "outreach-channel",
+      "pipeline-rescue",
+      "proposal-negotiation-closing",
+      "qualification-progression",
+      "renewal-expansion-referral",
+      "segmentation-account-discovery"
+    ],
+    "segments": [
+      "academy-partner"
+    ]
+  },
+  {
+    "coverageDomain": "creches",
+    "label": "crèches",
+    "newCommandCount": 32,
+    "families": [
+      "audit-optimization",
+      "campaign-go-to-market",
+      "executive-forecasting",
+      "market-sensing",
+      "meetings-diagnostics",
+      "offer-pricing",
+      "outreach-channel",
+      "pipeline-rescue",
+      "proposal-negotiation-closing",
+      "qualification-progression",
+      "renewal-expansion-referral",
+      "segmentation-account-discovery"
+    ],
+    "segments": [
+      "creche"
+    ]
+  },
+  {
+    "coverageDomain": "maternelles",
+    "label": "maternelles",
+    "newCommandCount": 32,
+    "families": [
+      "audit-optimization",
+      "campaign-go-to-market",
+      "executive-forecasting",
+      "market-sensing",
+      "meetings-diagnostics",
+      "offer-pricing",
+      "outreach-channel",
+      "pipeline-rescue",
+      "proposal-negotiation-closing",
+      "qualification-progression",
+      "renewal-expansion-referral",
+      "segmentation-account-discovery"
+    ],
+    "segments": [
+      "maternelle"
+    ]
+  },
+  {
+    "coverageDomain": "preschools",
+    "label": "preschools",
+    "newCommandCount": 32,
+    "families": [
+      "audit-optimization",
+      "campaign-go-to-market",
+      "executive-forecasting",
+      "market-sensing",
+      "meetings-diagnostics",
+      "offer-pricing",
+      "outreach-channel",
+      "pipeline-rescue",
+      "proposal-negotiation-closing",
+      "qualification-progression",
+      "renewal-expansion-referral",
+      "segmentation-account-discovery"
+    ],
+    "segments": [
+      "preschool"
+    ]
+  },
+  {
+    "coverageDomain": "private-schools",
+    "label": "écoles privées",
+    "newCommandCount": 32,
+    "families": [
+      "audit-optimization",
+      "campaign-go-to-market",
+      "executive-forecasting",
+      "market-sensing",
+      "meetings-diagnostics",
+      "offer-pricing",
+      "outreach-channel",
+      "pipeline-rescue",
+      "proposal-negotiation-closing",
+      "qualification-progression",
+      "renewal-expansion-referral",
+      "segmentation-account-discovery"
+    ],
+    "segments": [
+      "school"
+    ]
+  },
+  {
+    "coverageDomain": "maternity-clinics",
+    "label": "cliniques de maternité",
+    "newCommandCount": 32,
+    "families": [
+      "audit-optimization",
+      "campaign-go-to-market",
+      "executive-forecasting",
+      "market-sensing",
+      "meetings-diagnostics",
+      "offer-pricing",
+      "outreach-channel",
+      "pipeline-rescue",
+      "proposal-negotiation-closing",
+      "qualification-progression",
+      "renewal-expansion-referral",
+      "segmentation-account-discovery"
+    ],
+    "segments": [
+      "maternity"
+    ]
+  },
+  {
+    "coverageDomain": "pediatric-clinics",
+    "label": "cliniques pédiatriques",
+    "newCommandCount": 32,
+    "families": [
+      "audit-optimization",
+      "campaign-go-to-market",
+      "executive-forecasting",
+      "market-sensing",
+      "meetings-diagnostics",
+      "offer-pricing",
+      "outreach-channel",
+      "pipeline-rescue",
+      "proposal-negotiation-closing",
+      "qualification-progression",
+      "renewal-expansion-referral",
+      "segmentation-account-discovery"
+    ],
+    "segments": [
+      "pediatric"
+    ]
+  },
+  {
+    "coverageDomain": "orthophonists",
+    "label": "orthophonistes",
+    "newCommandCount": 32,
+    "families": [
+      "audit-optimization",
+      "campaign-go-to-market",
+      "executive-forecasting",
+      "market-sensing",
+      "meetings-diagnostics",
+      "offer-pricing",
+      "outreach-channel",
+      "pipeline-rescue",
+      "proposal-negotiation-closing",
+      "qualification-progression",
+      "renewal-expansion-referral",
+      "segmentation-account-discovery"
+    ],
+    "segments": [
+      "orthophonist"
+    ]
+  },
+  {
+    "coverageDomain": "hotels",
+    "label": "hôtels",
+    "newCommandCount": 32,
+    "families": [
+      "audit-optimization",
+      "campaign-go-to-market",
+      "executive-forecasting",
+      "market-sensing",
+      "meetings-diagnostics",
+      "offer-pricing",
+      "outreach-channel",
+      "pipeline-rescue",
+      "proposal-negotiation-closing",
+      "qualification-progression",
+      "renewal-expansion-referral",
+      "segmentation-account-discovery"
+    ],
+    "segments": [
+      "hotel"
+    ]
+  },
+  {
+    "coverageDomain": "corporate-childcare",
+    "label": "childcare corporate",
+    "newCommandCount": 32,
+    "families": [
+      "audit-optimization",
+      "campaign-go-to-market",
+      "executive-forecasting",
+      "market-sensing",
+      "meetings-diagnostics",
+      "offer-pricing",
+      "outreach-channel",
+      "pipeline-rescue",
+      "proposal-negotiation-closing",
+      "qualification-progression",
+      "renewal-expansion-referral",
+      "segmentation-account-discovery"
+    ],
+    "segments": [
+      "corporate"
+    ]
+  },
+  {
+    "coverageDomain": "events",
+    "label": "événements",
+    "newCommandCount": 32,
+    "families": [
+      "audit-optimization",
+      "campaign-go-to-market",
+      "executive-forecasting",
+      "market-sensing",
+      "meetings-diagnostics",
+      "offer-pricing",
+      "outreach-channel",
+      "pipeline-rescue",
+      "proposal-negotiation-closing",
+      "qualification-progression",
+      "renewal-expansion-referral",
+      "segmentation-account-discovery"
+    ],
+    "segments": [
+      "event-operator"
+    ]
+  },
+  {
+    "coverageDomain": "geographic-capture",
+    "label": "capture géographique",
+    "newCommandCount": 32,
+    "families": [
+      "audit-optimization",
+      "campaign-go-to-market",
+      "executive-forecasting",
+      "market-sensing",
+      "meetings-diagnostics",
+      "offer-pricing",
+      "outreach-channel",
+      "pipeline-rescue",
+      "proposal-negotiation-closing",
+      "qualification-progression",
+      "renewal-expansion-referral",
+      "segmentation-account-discovery"
+    ],
+    "segments": [
+      "all"
+    ]
+  },
+  {
+    "coverageDomain": "seasonal-campaigns",
+    "label": "campagnes saisonnières",
+    "newCommandCount": 32,
+    "families": [
+      "audit-optimization",
+      "campaign-go-to-market",
+      "executive-forecasting",
+      "market-sensing",
+      "meetings-diagnostics",
+      "offer-pricing",
+      "outreach-channel",
+      "pipeline-rescue",
+      "proposal-negotiation-closing",
+      "qualification-progression",
+      "renewal-expansion-referral",
+      "segmentation-account-discovery"
+    ],
+    "segments": [
+      "all"
+    ]
+  },
+  {
+    "coverageDomain": "territory-waves",
+    "label": "vagues territoriales",
+    "newCommandCount": 32,
+    "families": [
+      "audit-optimization",
+      "campaign-go-to-market",
+      "executive-forecasting",
+      "market-sensing",
+      "meetings-diagnostics",
+      "offer-pricing",
+      "outreach-channel",
+      "pipeline-rescue",
+      "proposal-negotiation-closing",
+      "qualification-progression",
+      "renewal-expansion-referral",
+      "segmentation-account-discovery"
+    ],
+    "segments": [
+      "all"
+    ]
+  },
+  {
+    "coverageDomain": "group-network-accounts",
+    "label": "groupes et réseaux",
+    "newCommandCount": 32,
+    "families": [
+      "audit-optimization",
+      "campaign-go-to-market",
+      "executive-forecasting",
+      "market-sensing",
+      "meetings-diagnostics",
+      "offer-pricing",
+      "outreach-channel",
+      "pipeline-rescue",
+      "proposal-negotiation-closing",
+      "qualification-progression",
+      "renewal-expansion-referral",
+      "segmentation-account-discovery"
+    ],
+    "segments": [
+      "network"
+    ]
+  },
+  {
+    "coverageDomain": "cold-account-activation",
+    "label": "activation de comptes froids",
+    "newCommandCount": 32,
+    "families": [
+      "audit-optimization",
+      "campaign-go-to-market",
+      "executive-forecasting",
+      "market-sensing",
+      "meetings-diagnostics",
+      "offer-pricing",
+      "outreach-channel",
+      "pipeline-rescue",
+      "proposal-negotiation-closing",
+      "qualification-progression",
+      "renewal-expansion-referral",
+      "segmentation-account-discovery"
+    ],
+    "segments": [
+      "cold-account"
+    ]
+  },
+  {
+    "coverageDomain": "warm-lead-acceleration",
+    "label": "accélération de leads chauds",
+    "newCommandCount": 32,
+    "families": [
+      "audit-optimization",
+      "campaign-go-to-market",
+      "executive-forecasting",
+      "market-sensing",
+      "meetings-diagnostics",
+      "offer-pricing",
+      "outreach-channel",
+      "pipeline-rescue",
+      "proposal-negotiation-closing",
+      "qualification-progression",
+      "renewal-expansion-referral",
+      "segmentation-account-discovery"
+    ],
+    "segments": [
+      "warm-lead"
+    ]
+  },
+  {
+    "coverageDomain": "complex-stakeholder-maps",
+    "label": "cartographies complexes de parties prenantes",
+    "newCommandCount": 32,
+    "families": [
+      "audit-optimization",
+      "campaign-go-to-market",
+      "executive-forecasting",
+      "market-sensing",
+      "meetings-diagnostics",
+      "offer-pricing",
+      "outreach-channel",
+      "pipeline-rescue",
+      "proposal-negotiation-closing",
+      "qualification-progression",
+      "renewal-expansion-referral",
+      "segmentation-account-discovery"
+    ],
+    "segments": [
+      "complex-account"
+    ]
+  },
+  {
+    "coverageDomain": "multi-site-operators",
+    "label": "opérateurs multi-sites",
+    "newCommandCount": 31,
+    "families": [
+      "audit-optimization",
+      "campaign-go-to-market",
+      "executive-forecasting",
+      "market-sensing",
+      "meetings-diagnostics",
+      "offer-pricing",
+      "outreach-channel",
+      "pipeline-rescue",
+      "proposal-negotiation-closing",
+      "qualification-progression",
+      "renewal-expansion-referral",
+      "segmentation-account-discovery"
+    ],
+    "segments": [
+      "multi-site"
+    ]
+  },
+  {
+    "coverageDomain": "competitive-displacement",
+    "label": "déplacement concurrentiel",
+    "newCommandCount": 31,
+    "families": [
+      "audit-optimization",
+      "campaign-go-to-market",
+      "executive-forecasting",
+      "market-sensing",
+      "meetings-diagnostics",
+      "offer-pricing",
+      "outreach-channel",
+      "pipeline-rescue",
+      "proposal-negotiation-closing",
+      "qualification-progression",
+      "renewal-expansion-referral",
+      "segmentation-account-discovery"
+    ],
+    "segments": [
+      "competitive-account"
+    ]
+  },
+  {
+    "coverageDomain": "dormant-account-revival",
+    "label": "réactivation de comptes dormants",
+    "newCommandCount": 31,
+    "families": [
+      "audit-optimization",
+      "campaign-go-to-market",
+      "executive-forecasting",
+      "market-sensing",
+      "meetings-diagnostics",
+      "offer-pricing",
+      "outreach-channel",
+      "pipeline-rescue",
+      "proposal-negotiation-closing",
+      "qualification-progression",
+      "renewal-expansion-referral",
+      "segmentation-account-discovery"
+    ],
+    "segments": [
+      "dormant-account"
+    ]
+  },
+  {
+    "coverageDomain": "underused-capacity",
+    "label": "monétisation de capacité sous-utilisée",
+    "newCommandCount": 31,
+    "families": [
+      "audit-optimization",
+      "campaign-go-to-market",
+      "executive-forecasting",
+      "market-sensing",
+      "meetings-diagnostics",
+      "offer-pricing",
+      "outreach-channel",
+      "pipeline-rescue",
+      "proposal-negotiation-closing",
+      "qualification-progression",
+      "renewal-expansion-referral",
+      "segmentation-account-discovery"
+    ],
+    "segments": [
+      "capacity-opportunity"
+    ]
+  }
+]

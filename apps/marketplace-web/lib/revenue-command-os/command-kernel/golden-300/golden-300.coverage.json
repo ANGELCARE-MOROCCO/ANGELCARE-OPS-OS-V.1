@@ -1,0 +1,275 @@
+[
+  {
+    "family": "market-sensing",
+    "count": 25,
+    "targetForMZ06": 25,
+    "approved": 25,
+    "commandsWithExactSchemas": 25,
+    "commandsWithTests": 25,
+    "commandsWithProhibitedCases": 25,
+    "approvalClasses": {
+      "recommendation": 25
+    },
+    "segments": [
+      "academy-partner",
+      "all",
+      "clinic",
+      "corporate",
+      "creche",
+      "event-operator",
+      "hospitality",
+      "hotel",
+      "maternelle",
+      "maternity",
+      "multi-site",
+      "network",
+      "orthophonist",
+      "pediatric",
+      "preschool",
+      "reseller",
+      "school"
+    ]
+  },
+  {
+    "family": "segmentation-account-discovery",
+    "count": 25,
+    "targetForMZ06": 25,
+    "approved": 25,
+    "commandsWithExactSchemas": 25,
+    "commandsWithTests": 25,
+    "commandsWithProhibitedCases": 25,
+    "approvalClasses": {
+      "recommendation": 25
+    },
+    "segments": [
+      "academy-partner",
+      "clinic",
+      "corporate",
+      "creche",
+      "event-operator",
+      "hospitality",
+      "hotel",
+      "maternelle",
+      "maternity",
+      "multi-site",
+      "network",
+      "orthophonist",
+      "pediatric",
+      "preschool",
+      "reseller",
+      "school"
+    ]
+  },
+  {
+    "family": "offer-pricing",
+    "count": 25,
+    "targetForMZ06": 25,
+    "approved": 25,
+    "commandsWithExactSchemas": 25,
+    "commandsWithTests": 25,
+    "commandsWithProhibitedCases": 25,
+    "approvalClasses": {
+      "recommendation": 19,
+      "director": 6
+    },
+    "segments": [
+      "academy-partner",
+      "all",
+      "corporate",
+      "creche",
+      "hospitality",
+      "hotel",
+      "maternelle",
+      "multi-site",
+      "network",
+      "preschool",
+      "reseller",
+      "school"
+    ]
+  },
+  {
+    "family": "campaign-go-to-market",
+    "count": 25,
+    "targetForMZ06": 25,
+    "approved": 25,
+    "commandsWithExactSchemas": 25,
+    "commandsWithTests": 25,
+    "commandsWithProhibitedCases": 25,
+    "approvalClasses": {
+      "internal-generation": 24,
+      "department": 1
+    },
+    "segments": [
+      "academy-partner",
+      "all",
+      "clinic",
+      "corporate",
+      "creche",
+      "event-operator",
+      "hospitality",
+      "hotel",
+      "maternelle",
+      "maternity",
+      "multi-site",
+      "network",
+      "pediatric",
+      "preschool",
+      "reseller",
+      "school"
+    ]
+  },
+  {
+    "family": "outreach-channel",
+    "count": 25,
+    "targetForMZ06": 25,
+    "approved": 25,
+    "commandsWithExactSchemas": 25,
+    "commandsWithTests": 25,
+    "commandsWithProhibitedCases": 25,
+    "approvalClasses": {
+      "recommendation": 25
+    },
+    "segments": [
+      "academy-partner",
+      "all",
+      "corporate",
+      "creche",
+      "hospitality",
+      "hotel",
+      "maternelle",
+      "preschool",
+      "school"
+    ]
+  },
+  {
+    "family": "qualification-progression",
+    "count": 25,
+    "targetForMZ06": 25,
+    "approved": 25,
+    "commandsWithExactSchemas": 25,
+    "commandsWithTests": 25,
+    "commandsWithProhibitedCases": 25,
+    "approvalClasses": {
+      "recommendation": 25
+    },
+    "segments": [
+      "all",
+      "multi-site",
+      "network"
+    ]
+  },
+  {
+    "family": "meetings-diagnostics",
+    "count": 25,
+    "targetForMZ06": 25,
+    "approved": 25,
+    "commandsWithExactSchemas": 25,
+    "commandsWithTests": 25,
+    "commandsWithProhibitedCases": 25,
+    "approvalClasses": {
+      "recommendation": 25
+    },
+    "segments": [
+      "academy-partner",
+      "all",
+      "clinic",
+      "corporate",
+      "creche",
+      "hospitality",
+      "hotel",
+      "maternelle",
+      "maternity",
+      "pediatric",
+      "preschool",
+      "school"
+    ]
+  },
+  {
+    "family": "proposal-negotiation-closing",
+    "count": 25,
+    "targetForMZ06": 25,
+    "approved": 25,
+    "commandsWithExactSchemas": 25,
+    "commandsWithTests": 25,
+    "commandsWithProhibitedCases": 25,
+    "approvalClasses": {
+      "recommendation": 18,
+      "director": 7
+    },
+    "segments": [
+      "all",
+      "multi-site",
+      "network"
+    ]
+  },
+  {
+    "family": "pipeline-rescue",
+    "count": 25,
+    "targetForMZ06": 25,
+    "approved": 25,
+    "commandsWithExactSchemas": 25,
+    "commandsWithTests": 25,
+    "commandsWithProhibitedCases": 25,
+    "approvalClasses": {
+      "recommendation": 21,
+      "director": 4
+    },
+    "segments": [
+      "all"
+    ]
+  },
+  {
+    "family": "renewal-expansion-referral",
+    "count": 25,
+    "targetForMZ06": 25,
+    "approved": 25,
+    "commandsWithExactSchemas": 25,
+    "commandsWithTests": 25,
+    "commandsWithProhibitedCases": 25,
+    "approvalClasses": {
+      "recommendation": 25
+    },
+    "segments": [
+      "academy-partner",
+      "all",
+      "corporate",
+      "event-operator",
+      "multi-site",
+      "network",
+      "preschool",
+      "reseller",
+      "school"
+    ]
+  },
+  {
+    "family": "executive-forecasting",
+    "count": 25,
+    "targetForMZ06": 25,
+    "approved": 25,
+    "commandsWithExactSchemas": 25,
+    "commandsWithTests": 25,
+    "commandsWithProhibitedCases": 25,
+    "approvalClasses": {
+      "executive": 7,
+      "director": 18
+    },
+    "segments": [
+      "all"
+    ]
+  },
+  {
+    "family": "audit-optimization",
+    "count": 25,
+    "targetForMZ06": 25,
+    "approved": 25,
+    "commandsWithExactSchemas": 25,
+    "commandsWithTests": 25,
+    "commandsWithProhibitedCases": 25,
+    "approvalClasses": {
+      "none": 25
+    },
+    "segments": [
+      "all"
+    ]
+  }
+]

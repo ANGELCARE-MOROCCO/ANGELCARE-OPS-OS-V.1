@@ -1,0 +1,11 @@
+import fs from 'node:fs';import path from 'node:path';import process from 'node:process'
+const root=process.cwd();const required=[
+'angelcare-marketplace/production-activation/types.ts','angelcare-marketplace/production-activation/repository.ts','angelcare-marketplace/production-activation/api-handlers.ts','angelcare-marketplace/production-activation/admin-page.tsx','angelcare-marketplace/production-activation/components/ActivationCommand.tsx','angelcare-marketplace/production-activation/production-activation.module.css','app/angelcare-marketplace/(protected)/admin/activation/page.tsx','app/api/angelcare-marketplace/admin/activation/summary/route.ts','app/api/angelcare-marketplace/admin/activation/run/route.ts','supabase/migrations/20260804080000_angelcare_marketplace_production_activation_acceptance.sql','scripts/angelcare-marketplace/activate-real-marketplace-content.mjs','scripts/angelcare-marketplace/marketplace-final-go-live-gate.mjs']
+const checks=[];for(const file of required)checks.push([`required ${file}`,fs.existsSync(path.join(root,file))])
+const migration=fs.readFileSync(path.join(root,'supabase/migrations/20260804080000_angelcare_marketplace_production_activation_acceptance.sql'),'utf8')
+for(const marker of ['angelcare_marketplace_activation_runs','angelcare_marketplace_activation_checks','angelcare_marketplace_activation_readiness_v','production-activation-acceptance','introduced_by_mega_zip >= 1'])checks.push([`migration ${marker}`,migration.includes(marker)])
+checks.push(['no drop table',!/drop\s+table/i.test(migration)]);checks.push(['no truncate',!/truncate/i.test(migration)])
+const component=fs.readFileSync(path.join(root,'angelcare-marketplace/production-activation/components/ActivationCommand.tsx'),'utf8')
+for(const marker of ['Production Activation Command','Aucun statut vert','Créer la première offre réelle'])checks.push([`UI ${marker}`,component.includes(marker)])
+let pass=0;for(const [label,ok] of checks){console.log(`${ok?'  ✓':'  ✗'} ${label}`);if(ok)pass++}
+console.log(`\nPASS ${pass}/${checks.length}`);if(pass!==checks.length){console.log('RESULT: PRODUCTION ACTIVATION ACCEPTANCE FAILED');process.exit(1)}console.log('RESULT: PRODUCTION ACTIVATION STATIC CONTRACTUAL ACCEPTANCE PASSED')

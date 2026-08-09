@@ -1,0 +1,2 @@
+code,name,skill_code,category,objective,instruction,default_frequency,authority_mode,risk_level,requires_human_review,status,tags
+CUSTOM-MKT-0001,Audit premium du portefeuille contenu,STRATEGY-01,Stratégie exécutive,Auditer le portefeuille et produire les priorités exécutives des 30 prochains jours.,Analyser les contenus campagnes tâches et performances disponibles. Produire décisions risques propriétaires délais critères d'arrêt et preuves.,monthly,advise,high,true,draft,custom|portfolio|executive

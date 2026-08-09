@@ -1,0 +1,2 @@
+import { scanSourceAst } from './source-ast'; import type { DiscoveredCandidate } from '../types'
+export async function scanSeoMetadata(filePath:string,appRoot:string):Promise<DiscoveredCandidate[]>{ const rows=await scanSourceAst(filePath,appRoot); return rows.filter(r=>/metadata|title|description|open.?graph|canonical/i.test(r.contentType)).map(r=>({...r,sourceType:'seo_metadata' as const,contentType:'seo_metadata',confidence:.96})) }

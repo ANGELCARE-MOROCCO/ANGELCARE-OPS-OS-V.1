@@ -1,0 +1,1 @@
+import styles from '../academy.module.css';export function AttendanceCommand(){return <section className={styles.panel}><div className={styles.panelHead}><h2>Attendance Evidence</h2></div><div className={styles.panelBody}><p>Présence, retard, absence autorisée, départ anticipé et verrouillage de session alimentent la complétion réelle.</p></div></section>}

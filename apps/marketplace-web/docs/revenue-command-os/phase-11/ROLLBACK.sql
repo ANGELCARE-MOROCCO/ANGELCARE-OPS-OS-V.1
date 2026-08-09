@@ -1,0 +1,18 @@
+BEGIN;
+DROP TABLE IF EXISTS public.revenue_os_council_audit_events CASCADE;
+DROP TABLE IF EXISTS public.revenue_os_council_classifications CASCADE;
+DROP TABLE IF EXISTS public.revenue_os_council_strategy_corrections CASCADE;
+DROP TABLE IF EXISTS public.revenue_os_council_optimization_runs CASCADE;
+DROP TABLE IF EXISTS public.revenue_os_council_red_team_attacks CASCADE;
+DROP TABLE IF EXISTS public.revenue_os_council_resolutions CASCADE;
+DROP TABLE IF EXISTS public.revenue_os_council_disagreements CASCADE;
+DROP TABLE IF EXISTS public.revenue_os_council_scores CASCADE;
+DROP TABLE IF EXISTS public.revenue_os_council_contradictions CASCADE;
+DROP TABLE IF EXISTS public.revenue_os_council_evidence_checks CASCADE;
+DROP TABLE IF EXISTS public.revenue_os_council_findings CASCADE;
+DROP TABLE IF EXISTS public.revenue_os_council_reviews CASCADE;
+DROP TABLE IF EXISTS public.revenue_os_council_runs CASCADE;
+DROP TABLE IF EXISTS public.revenue_os_council_agent_versions CASCADE;
+DROP TABLE IF EXISTS public.revenue_os_council_agents CASCADE;
+UPDATE public.revenue_os_installations SET release_code='AC-REVENUE-OS-MZ10.1-GEMINI-STABILIZATION',module_version='10.1.0',metadata=coalesce(metadata,'{}'::jsonb)||jsonb_build_object('currentPhase','MZ10.1','validationCouncil',false),external_actions_enabled=false,updated_at=now() WHERE installation_key='revenue-command-os';
+COMMIT;

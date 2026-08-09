@@ -1,0 +1,26 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "skipLibCheck": true
+  },
+  "include": [
+    "angelcare-marketplace/css-modules.d.ts",
+    "types.d.ts",
+    "angelcare-marketplace/domain/types.ts",
+    "angelcare-marketplace/permissions/permission-catalog.ts",
+    "angelcare-marketplace/shells/AdminNavigation.tsx",
+    "angelcare-marketplace/b2b-verticals/**/*.ts",
+    "angelcare-marketplace/b2b-verticals/**/*.tsx",
+    "app/angelcare-marketplace/(protected)/admin/verticals/**/*.tsx",
+    "app/angelcare-marketplace/[locale]/establishments/**/*.tsx",
+    "app/angelcare-marketplace/[locale]/hospitality/**/*.tsx",
+    "app/angelcare-marketplace/[locale]/health-partners/**/*.tsx",
+    "app/angelcare-marketplace/[locale]/corporates/**/*.tsx",
+    "app/api/angelcare-marketplace/b2b/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    ".next"
+  ]
+}

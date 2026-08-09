@@ -1,0 +1,3 @@
+source_key,source_label,source_type,authority_tier,domain_or_module,services,audiences,cities,scan_frequency,freshness_days,grounding_required,human_verification,status
+GOOGLE_TRENDS_MA,Google Trends Morocco,public_trend,A,Google Trends,"Home Service|Academy","Parents|Schools","Morocco",weekly,14,true,true,active
+SALES_OBJECTIONS,Revenue OS objections,internal_signal,A,revenue-command-center,"All","Prospects|Decision makers","All",daily,7,false,true,active

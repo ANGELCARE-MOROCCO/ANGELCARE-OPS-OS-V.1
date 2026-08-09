@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title-4ffaa325">
+<title id="title-4ffaa325">Partner OS SaaS marketplace</title>
+<defs>
+<linearGradient id="bg4ffaa325" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#061a33"/><stop offset=".58" stop-color="#176da1"/><stop offset="1" stop-color="#061a33"/></linearGradient>
+<radialGradient id="glow4ffaa325" cx="50%" cy="50%" r="50%"><stop stop-color="#d8f8f1" stop-opacity=".92"/><stop offset="1" stop-color="#51c6b1" stop-opacity=".08"/></radialGradient>
+<linearGradient id="glass4ffaa325" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff" stop-opacity=".36"/><stop offset="1" stop-color="#fff" stop-opacity=".08"/></linearGradient>
+<pattern id="grid4ffaa325" width="42" height="42" patternUnits="userSpaceOnUse"><path d="M42 0H0V42" fill="none" stroke="#fff" stroke-opacity=".045"/></pattern>
+<filter id="shadow4ffaa325" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="22" stdDeviation="24" flood-color="#000" flood-opacity=".28"/></filter>
+</defs>
+<rect width="1600" height="900" fill="url(#bg4ffaa325)"/>
+<rect width="1600" height="900" fill="url(#grid4ffaa325)"/>
+<circle cx="1248" cy="225" r="252" fill="url(#glow4ffaa325)" opacity=".62"/>
+<circle cx="192" cy="774" r="342" fill="none" stroke="#fff" stroke-opacity=".07" stroke-width="2"/>
+<path d="M0 702 C 320 558, 608 846, 928 666 S 1376 576, 1600 702 V 900 H0Z" fill="#fff" opacity=".035"/>
+<path d="M72 94H288" stroke="#51c6b1" stroke-width="7" stroke-linecap="round"/>
+<path d="M72 126H208" stroke="#fff" stroke-opacity=".55" stroke-width="4" stroke-linecap="round"/>
+<g filter="url(#shadow4ffaa325)"><rect x="846" y="216" width="612" height="432" rx="40" fill="url(#glass4ffaa325)" stroke="#fff" stroke-opacity=".3"/><rect x="900" y="279" width="144" height="306" rx="18" fill="#fff" opacity=".12"/><rect x="1089" y="279" width="306" height="108" rx="18" fill="#fff" opacity=".9"/><rect x="1089" y="432" width="135" height="153" rx="18" fill="#d8f8f1" opacity=".9"/><rect x="1260" y="432" width="135" height="153" rx="18" fill="#51c6b1" opacity=".75"/></g>
+</svg>

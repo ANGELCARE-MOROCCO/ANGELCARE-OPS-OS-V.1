@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="800" viewBox="0 0 1000 800" role="img" aria-labelledby="title-108e7ae6">
+<title id="title-108e7ae6">Quality Check 360 assessment</title>
+<defs>
+<linearGradient id="bg108e7ae6" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0c2730"/><stop offset=".58" stop-color="#1b726d"/><stop offset="1" stop-color="#0c2730"/></linearGradient>
+<radialGradient id="glow108e7ae6" cx="50%" cy="50%" r="50%"><stop stop-color="#d9f4ee" stop-opacity=".92"/><stop offset="1" stop-color="#e0b04b" stop-opacity=".08"/></radialGradient>
+<linearGradient id="glass108e7ae6" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff" stop-opacity=".36"/><stop offset="1" stop-color="#fff" stop-opacity=".08"/></linearGradient>
+<pattern id="grid108e7ae6" width="42" height="42" patternUnits="userSpaceOnUse"><path d="M42 0H0V42" fill="none" stroke="#fff" stroke-opacity=".045"/></pattern>
+<filter id="shadow108e7ae6" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="22" stdDeviation="24" flood-color="#000" flood-opacity=".28"/></filter>
+</defs>
+<rect width="1000" height="800" fill="url(#bg108e7ae6)"/>
+<rect width="1000" height="800" fill="url(#grid108e7ae6)"/>
+<circle cx="780" cy="200" r="224" fill="url(#glow108e7ae6)" opacity=".62"/>
+<circle cx="120" cy="688" r="304" fill="none" stroke="#fff" stroke-opacity=".07" stroke-width="2"/>
+<path d="M0 624 C 200 496, 380 752, 580 592 S 860 512, 1000 624 V 800 H0Z" fill="#fff" opacity=".035"/>
+<path d="M45 84H180" stroke="#e0b04b" stroke-width="7" stroke-linecap="round"/>
+<path d="M45 112H130" stroke="#fff" stroke-opacity=".55" stroke-width="4" stroke-linecap="round"/>
+<g filter="url(#shadow108e7ae6)"><path d="M720 176L904 248V392C904 504 816 568 720 616C624 568 536 504 536 392V248Z" fill="#fff" opacity=".94"/><path d="M648 392l56 56l120-136" fill="none" stroke="#1b726d" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/></g><path d="M864 304l20 20l40-44" fill="none" stroke="#d9f4ee" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M864 384l20 20l40-44" fill="none" stroke="#d9f4ee" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M864 464l20 20l40-44" fill="none" stroke="#d9f4ee" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

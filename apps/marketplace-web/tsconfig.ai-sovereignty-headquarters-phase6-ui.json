@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "baseUrl": ".",
+    "paths": { "@/*": ["./*"] },
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true
+  },
+  "files": [
+    "scripts/ai-sovereignty-phase6-stubs.d.ts",
+    "components/ai-provider-control/headquarters/headquarters-primitives.tsx",
+    "components/ai-provider-control/headquarters/headquarters-types.ts",
+    "components/ai-provider-control/headquarters/AiSovereigntyOperationsHeadquarters.tsx",
+    "components/ai-provider-control/headquarters/AiSovereigntyOperatorAcademy.tsx",
+    "components/ai-provider-control/headquarters/ai-sovereignty-headquarters.module.css.d.ts",
+    "lib/ai-provider-control/types.ts"
+  ]
+}

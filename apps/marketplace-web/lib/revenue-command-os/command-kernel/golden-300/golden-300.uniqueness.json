@@ -1,0 +1,4502 @@
+[
+  {
+    "commandCode": "REV-G300-MKT-001-SEASONAL_DEMAND_WINDOW",
+    "family": "market-sensing",
+    "fingerprint": "c2aa70b9f1eb81e406754ff1517a83d54955197d09b220f740af187f49f19ef6",
+    "intent": "seasonal-demand-window",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-MKT-002-MATERNITY_NEWBORN_SIGNAL",
+    "family": "market-sensing",
+    "fingerprint": "f8412509eeff95514ab6c0fbacc0a23b2b7962c1a27003cde12ca596b8cc30cc",
+    "intent": "maternity-newborn-signal",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-MKT-003-BACK_TO_SCHOOL_WINDOW",
+    "family": "market-sensing",
+    "fingerprint": "d2d8794bf0d89bcc0b6b93c41b0e5f1defdcc502ad701c0a12c62b741cfc9e83",
+    "intent": "back-to-school-window",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-MKT-004-HOTEL_FAMILY_SEASON",
+    "family": "market-sensing",
+    "fingerprint": "a24b7d7a5383710269cf62677058ab730437996e22b8561fbd9dc50879f0346e",
+    "intent": "hotel-family-season",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-MKT-005-CORPORATE_TENDER_SIGNAL",
+    "family": "market-sensing",
+    "fingerprint": "8d27677964a64ca8bbf2114fb026bcde10f282e774355dc42bc96560f54694ad",
+    "intent": "corporate-tender-signal",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-MKT-006-UNDERSERVED_ZONE_MAP",
+    "family": "market-sensing",
+    "fingerprint": "3737dce5a5f9280d59d2aaad8b5c96a58310c276dad18e9ff7052421bc3286fb",
+    "intent": "underserved-zone-map",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-MKT-007-COMPETITOR_WITHDRAWAL",
+    "family": "market-sensing",
+    "fingerprint": "29953e6ba766f2a6838dedf92ff218d20a8ca8bebd4e4eded1da0fc68e53e964",
+    "intent": "competitor-withdrawal",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-MKT-008-NEW_PRESCHOOL_OPENING",
+    "family": "market-sensing",
+    "fingerprint": "d0c8f7e4fbd8d3523a6548159016009611530e04e3f96c6fc5e2ea456a95e9ba",
+    "intent": "new-preschool-opening",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-MKT-009-MULTI_SITE_EXPANSION_SIGNAL",
+    "family": "market-sensing",
+    "fingerprint": "c8c4d965e409b0094638cf1c7f88512daa91e585031c7696ef8b0ba4c7bdca37",
+    "intent": "multi-site-expansion-signal",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-MKT-010-PEDIATRIC_PARTNERSHIP_SIGNAL",
+    "family": "market-sensing",
+    "fingerprint": "56f63c206ee3ae4df973db5c81dfe5e09d08389d5b2afdb0bdc0307cb4c7bf84",
+    "intent": "pediatric-partnership-signal",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-MKT-011-SPEECH_THERAPY_NETWORK",
+    "family": "market-sensing",
+    "fingerprint": "fc567d0dbea2b22ea23645a992e331bd5cecf4cf4a0aa53b39cd7d68841bf8be",
+    "intent": "speech-therapy-network",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-MKT-012-EVENT_CHILDCARE_DEMAND",
+    "family": "market-sensing",
+    "fingerprint": "11804466ebd7e5fd6c1b17becbe81df1e3c8c801dbb5ab8ee22b4cfee4276e79",
+    "intent": "event-childcare-demand",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-MKT-013-UNUSED_ACADEMY_CAPACITY",
+    "family": "market-sensing",
+    "fingerprint": "dac11c3599b17b9007dc1927f2ed613331eab936aed415308af9dbba88275a44",
+    "intent": "unused-academy-capacity",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-MKT-014-CAREGIVER_CAPACITY_WINDOW",
+    "family": "market-sensing",
+    "fingerprint": "39cdcde87f3df724ca73fc07ab576d84af28c1c15c2b36888c6d5ad1900231db",
+    "intent": "caregiver-capacity-window",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-MKT-015-FLASHCARDS_SEASONAL_DEMAND",
+    "family": "market-sensing",
+    "fingerprint": "569e4b4f540d7c1064cb1007f81c3389ccc258f0b7a294b81c54a3dd72b88a09",
+    "intent": "flashcards-seasonal-demand",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-MKT-016-BUSINESS_CALENDAR_OPPORTUNITY",
+    "family": "market-sensing",
+    "fingerprint": "465f99784baa307f070e52617e47e0279b48e668553631bea164dd65474a7ee7",
+    "intent": "business-calendar-opportunity",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-MKT-017-INBOUND_INTEREST_SURGE",
+    "family": "market-sensing",
+    "fingerprint": "9625dada0864539cf7ff71baab4c4d3b8c3d4868a4f7d76e615a17a37e907101",
+    "intent": "inbound-interest-surge",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-MKT-018-POSITIVE_REPLY_CLUSTER",
+    "family": "market-sensing",
+    "fingerprint": "8f4a5b1bf5866102c0346e6f8e4b5e0cf3cbc0083a1f821a440a98b831bd0aed",
+    "intent": "positive-reply-cluster",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-MKT-019-REFERRAL_MOMENTUM",
+    "family": "market-sensing",
+    "fingerprint": "bdf7663c92636530e5a9642349044a8b03a8411e281195bcc515cda403a60844",
+    "intent": "referral-momentum",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-MKT-020-LOST_ACCOUNT_RETURN",
+    "family": "market-sensing",
+    "fingerprint": "d95f7afebec7e9c3f20e7d44116848023b28b7e9acef37d70eea3f3df2c0ee99",
+    "intent": "lost-account-return",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-MKT-021-PRICE_SENSITIVITY_SHIFT",
+    "family": "market-sensing",
+    "fingerprint": "321036cf9daa7f33cd56d71382234d5cf69b0afc0407befb2196bfcab5e32707",
+    "intent": "price-sensitivity-shift",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-MKT-022-PAYMENT_RISK_PATTERN",
+    "family": "market-sensing",
+    "fingerprint": "277f8653d366aef36601e013c4cbde512778b08edf92f30a7b1305e23d74d5e5",
+    "intent": "payment-risk-pattern",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-MKT-023-TERRITORY_SATURATION",
+    "family": "market-sensing",
+    "fingerprint": "01e9456200e232928770760cd928db284832a393d524c967093be82d481aec30",
+    "intent": "territory-saturation",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-MKT-024-CROSS_UNIT_DEMAND",
+    "family": "market-sensing",
+    "fingerprint": "27be969e2bd65718d50433ef822804474d180f9e5ccc1f33f072524242e654ef",
+    "intent": "cross-unit-demand",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-MKT-025-OPPORTUNITY_EVIDENCE_FRESHNESS",
+    "family": "market-sensing",
+    "fingerprint": "c95411d247c35e851df916d51211fda61bdd1146fb9215f2df5d9c994ca08e35",
+    "intent": "opportunity-evidence-freshness",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-ACC-001-PRESCHOOL_ICP",
+    "family": "segmentation-account-discovery",
+    "fingerprint": "aeab3f3c619c7561dbb815efd09205f64c79a547db463b65b1ecd6120fbdbbb1",
+    "intent": "preschool-icp",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-ACC-002-ACADEMY_PARTNER_ICP",
+    "family": "segmentation-account-discovery",
+    "fingerprint": "ef528667500be45fd5e474d1e3271674b914d3ec3d5f1ce247557a5bc4694b80",
+    "intent": "academy-partner-icp",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-ACC-003-HOTEL_ICP",
+    "family": "segmentation-account-discovery",
+    "fingerprint": "2fef5dc97a5333fa302d5a1232bcc828135945910f83bac46e103f1cf07b1ed5",
+    "intent": "hotel-icp",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-ACC-004-CORPORATE_ICP",
+    "family": "segmentation-account-discovery",
+    "fingerprint": "475ac6a8ef5e217608ab4efdfc692e48ad732b418f4f7f05fab887b313f41d2a",
+    "intent": "corporate-icp",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-ACC-005-CLINIC_ICP",
+    "family": "segmentation-account-discovery",
+    "fingerprint": "5b8b2c0440f835aa794c3be679567cf92d27e50e2d722ba1154984be37bf7a91",
+    "intent": "clinic-icp",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-ACC-006-ORTHOPHONIST_ICP",
+    "family": "segmentation-account-discovery",
+    "fingerprint": "d4fc236ff360199410d3ecd62d178bdc0f3639715c3d7109a3cbdf0b6a58e8b1",
+    "intent": "orthophonist-icp",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-ACC-007-EVENT_OPERATOR_ICP",
+    "family": "segmentation-account-discovery",
+    "fingerprint": "dad6960f35381d7021935a01d23c029a296d9afcb2410a7c65dfcaf6871fc41b",
+    "intent": "event-operator-icp",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-ACC-008-FLASHCARDS_RESELLER_ICP",
+    "family": "segmentation-account-discovery",
+    "fingerprint": "24aff7228b2692842aa24ae0d6fba3df0f099b602a74980e05012fe027e34aa2",
+    "intent": "flashcards-reseller-icp",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-ACC-009-MULTI_SITE_OPERATOR_ICP",
+    "family": "segmentation-account-discovery",
+    "fingerprint": "a22f72e086b236553caf827e685bf7e1f8883671fdcede636a0dc93e1ab02ffb",
+    "intent": "multi-site-operator-icp",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-ACC-010-TRUST_INSTITUTION_PRIORITY",
+    "family": "segmentation-account-discovery",
+    "fingerprint": "04399c3abbe9e603c8584aad554de70afb75f09eb32ace31e045f2fa91150cd2",
+    "intent": "trust-institution-priority",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-ACC-011-HIGH_FREQUENCY_NEED",
+    "family": "segmentation-account-discovery",
+    "fingerprint": "496e5d6812da3c55cc7266c1a1bbf12fa8fd368fe7c51ce782e4d290dad5c387",
+    "intent": "high-frequency-need",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-ACC-012-FAST_DECISION_CYCLE",
+    "family": "segmentation-account-discovery",
+    "fingerprint": "9715b44a6bc5328cba63aa0e4b695ba0b2bd54dc79e2d813266f57a9ba68875e",
+    "intent": "fast-decision-cycle",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-ACC-013-HIGH_LTV_ACCOUNT",
+    "family": "segmentation-account-discovery",
+    "fingerprint": "24c311d94945d706e4992d21539b72b322ba69c612cdb89e9bc71dd57e951b63",
+    "intent": "high-ltv-account",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-ACC-014-REFERRAL_RICH_ACCOUNT",
+    "family": "segmentation-account-discovery",
+    "fingerprint": "24a72292e06dd430f34ddb1b5c6c81026c2a9981545b3a9867fd49ade0a55511",
+    "intent": "referral-rich-account",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-ACC-015-BUDGET_AUTHORITY",
+    "family": "segmentation-account-discovery",
+    "fingerprint": "42b29d0ae2d0e6886e2fe853b9bb077ce91ef17a2a9a2b75588c414a1b33b575",
+    "intent": "budget-authority",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-ACC-016-OPERATIONAL_SPONSOR",
+    "family": "segmentation-account-discovery",
+    "fingerprint": "191273c7998da3acb8d4faaedafc744d5690b7428ac71b9dd73537e82ee0f7cc",
+    "intent": "operational-sponsor",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-ACC-017-STAKEHOLDER_MAP",
+    "family": "segmentation-account-discovery",
+    "fingerprint": "eee71ded6c33d31228cabb0c505703ad225a8e09a2b7ca11de57db898b3f50b9",
+    "intent": "stakeholder-map",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-ACC-018-DECISION_MAKER_CONFIRMATION",
+    "family": "segmentation-account-discovery",
+    "fingerprint": "5b50712771e127f108d813a113a2d1f0a6694e56872306971078878f04b540a5",
+    "intent": "decision-maker-confirmation",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-ACC-019-INFLUENCER_BLOCKER_MAP",
+    "family": "segmentation-account-discovery",
+    "fingerprint": "7eee062d5f75ffa9e1b1eec2fd14c6ae66caf58da35053f80e43a508989bd0c1",
+    "intent": "influencer-blocker-map",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-ACC-020-CONTACT_COMPLETENESS",
+    "family": "segmentation-account-discovery",
+    "fingerprint": "39ba46bbca016d37747b6286efe2f1c693710b11002e90f22267fa83582f68ed",
+    "intent": "contact-completeness",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-ACC-021-DUPLICATE_ACCOUNT_RESOLUTION",
+    "family": "segmentation-account-discovery",
+    "fingerprint": "dfc198fff1c526480512330becc5d67e665095afa7aaddc20fae04a98a4115ee",
+    "intent": "duplicate-account-resolution",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-ACC-022-ACCOUNT_READINESS",
+    "family": "segmentation-account-discovery",
+    "fingerprint": "a1f4cfe6ad85384b0393bc7ffe5b80911a021777ca69a9ae3928937559d8a7c3",
+    "intent": "account-readiness",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-ACC-023-DORMANT_ACCOUNT_REDISCOVERY",
+    "family": "segmentation-account-discovery",
+    "fingerprint": "d6b8d356e22ccf826e88de8d0db7e22f84b44d2616478eba3336369cd9c9fe9e",
+    "intent": "dormant-account-rediscovery",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-ACC-024-NETWORK_HIERARCHY",
+    "family": "segmentation-account-discovery",
+    "fingerprint": "48bdf4f6e51169ab43e9e97feffe8791196debd4ed259843ca604cd91ecdc369",
+    "intent": "network-hierarchy",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-ACC-025-ACCOUNT_EVIDENCE_CONFIDENCE",
+    "family": "segmentation-account-discovery",
+    "fingerprint": "6d382f10d8846d63cb6eb3cae547b064f66d9c6b71f724134d31e8bd48e5211e",
+    "intent": "account-evidence-confidence",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-OFR-001-NEED_TO_APPROVED_OFFER",
+    "family": "offer-pricing",
+    "fingerprint": "f6a6e21d4ea4a3b152d00bc68ed3a95aed647a9bc5acc43198b6e27b0bde4751",
+    "intent": "need-to-approved-offer",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-OFR-002-ACADEMY_SUBSCRIPTION_VS_CREDITS",
+    "family": "offer-pricing",
+    "fingerprint": "c2f6164d9f581e3e562643a118b91d2a6d22d9129b81f1f96f38098ea6d1aab1",
+    "intent": "academy-subscription-vs-credits",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-OFR-003-PRESCHOOL_SERVICE_BUNDLE",
+    "family": "offer-pricing",
+    "fingerprint": "912c70a3311f0116f10a6ead75190e6eae64aefb4ef7f95439eee4215de129ae",
+    "intent": "preschool-service-bundle",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-OFR-004-CORPORATE_FAMILY_BENEFIT_BUNDLE",
+    "family": "offer-pricing",
+    "fingerprint": "5c313dd8c5eab231a7ec621bbdb44a0a17a9ae3f0d1f9863c3ad24753c36b0dd",
+    "intent": "corporate-family-benefit-bundle",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-OFR-005-HOSPITALITY_KIDS_FRIENDLY_BUNDLE",
+    "family": "offer-pricing",
+    "fingerprint": "b6273dcc782e98a847241446030e8c21f924977e39d9330cfc04b20d9420b2d5",
+    "intent": "hospitality-kids-friendly-bundle",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-OFR-006-FLASHCARDS_RESELLER_PACK",
+    "family": "offer-pricing",
+    "fingerprint": "3fba649bf6396662074fc81b226aa43e92c2d96ae3c3e81de52607dbf52549ac",
+    "intent": "flashcards-reseller-pack",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-OFR-007-ACADEMY_SERVICE_CROSS_SELL",
+    "family": "offer-pricing",
+    "fingerprint": "78754b11919cd98d903f128246a138cb4f454de870fc42edf35a7249de967848",
+    "intent": "academy-service-cross-sell",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-OFR-008-RECURRING_VS_ONE_OFF",
+    "family": "offer-pricing",
+    "fingerprint": "bad7774ca55bbb211b50266f8502d16ea01fd54c7478c4b2abaf151f789701f0",
+    "intent": "recurring-vs-one-off",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-OFR-009-MINIMUM_MARGIN_PROTECTION",
+    "family": "offer-pricing",
+    "fingerprint": "bc49732e23ff339d2ae88c138df05189169d9ec6835444cc9e7405ad6102bb0f",
+    "intent": "minimum-margin-protection",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-OFR-010-STANDARD_PRICE_VALIDATION",
+    "family": "offer-pricing",
+    "fingerprint": "e4653ca323ae700edfe96cafc1343f58c31b30d127f519cc2cc309bac8e5f3b6",
+    "intent": "standard-price-validation",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-OFR-011-DISCOUNT_REQUEST_DOSSIER",
+    "family": "offer-pricing",
+    "fingerprint": "09ed352c6f8416e073c49f93da32be7402973acef6f348c1b85e57ca42ddf5e1",
+    "intent": "discount-request-dossier",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-OFR-012-VOLUME_PRICING_RECOMMENDATION",
+    "family": "offer-pricing",
+    "fingerprint": "dfe42e0cdc65ffadd03ab0c70212d360b2f50ce73fe7d0a6ccdb18a1d8befed3",
+    "intent": "volume-pricing-recommendation",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-OFR-013-MULTI_SITE_PRICING",
+    "family": "offer-pricing",
+    "fingerprint": "35f09e7d9dfbb787e2b3cf866b0ec2a23b291e2470f2249f684d3e63f9110b2c",
+    "intent": "multi-site-pricing",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-OFR-014-PILOT_OFFER",
+    "family": "offer-pricing",
+    "fingerprint": "c160185defa4b4a2dbf3f0d9661f3c09f2da9fb5a77e363c8cf664f5356a58e1",
+    "intent": "pilot-offer",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-OFR-015-RENEWAL_OFFER",
+    "family": "offer-pricing",
+    "fingerprint": "78fcdfff90bf35bad2a5d69ffa83080f3e67ff5e19d91f531d05d6777ba5dfc7",
+    "intent": "renewal-offer",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-OFR-016-REFERRAL_INCENTIVE_POLICY",
+    "family": "offer-pricing",
+    "fingerprint": "a5970cfe77c69a8f3edb70d05f2c5cd993f4f131b5aaf10d75c029851b493bec",
+    "intent": "referral-incentive-policy",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-OFR-017-CAPACITY_CONSTRAINED_OFFER",
+    "family": "offer-pricing",
+    "fingerprint": "b54c71cc7488300eae207ea36b941d7997b7c17c513253fbd1fcee875ab3f975",
+    "intent": "capacity-constrained-offer",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-OFR-018-SEASONAL_OFFER",
+    "family": "offer-pricing",
+    "fingerprint": "137251f9f6417134a4a27b7ac9bf3709eda7eaef6bd7e36d843c28efc46b0015",
+    "intent": "seasonal-offer",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-OFR-019-PREMIUM_DIFFERENTIATION",
+    "family": "offer-pricing",
+    "fingerprint": "385099d73b824d8c7e54bf722908397d9e25f5194cf29a324eea0dea33928bce",
+    "intent": "premium-differentiation",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-OFR-020-TRUST_PROOF_SELECTION",
+    "family": "offer-pricing",
+    "fingerprint": "87ec8b3c65a9d150870f2629872f3a0e70506a4d29667b798c6e0f25e6b9a2fe",
+    "intent": "trust-proof-selection",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-OFR-021-PROPOSAL_PACKAGE_COMPLETENESS",
+    "family": "offer-pricing",
+    "fingerprint": "746e37537524ffd62336dcfe3e946be004ea6629d5e17e6ea9ebcd805fff5e6c",
+    "intent": "proposal-package-completeness",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-OFR-022-OFFER_ALTERNATIVE_COMPARISON",
+    "family": "offer-pricing",
+    "fingerprint": "51c59ee7462400b8051626f5b801df727bce33668d9c0e62735b399acf9e7f3b",
+    "intent": "offer-alternative-comparison",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-OFR-023-REVENUE_LEAKAGE_DETECTION",
+    "family": "offer-pricing",
+    "fingerprint": "23a3f93e735971c331cac0db975a29c38db4073e021ceedb36ce86211f341b1e",
+    "intent": "revenue-leakage-detection",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-OFR-024-BUNDLE_CANNIBALIZATION",
+    "family": "offer-pricing",
+    "fingerprint": "3cefecfb5a775da9d8683f4a89fb5494430907048c0637ca8ed919ec13c3e647",
+    "intent": "bundle-cannibalization",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-OFR-025-PRICE_CONFIDENCE",
+    "family": "offer-pricing",
+    "fingerprint": "2768fbe6084e03464f6d309d7e16ad0ebf125d34a422158ede8b40b8c7a9f1fb",
+    "intent": "price-confidence",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-GTM-001-ACADEMY_PARTNER_ACTIVATION",
+    "family": "campaign-go-to-market",
+    "fingerprint": "e5a84cb5d4686b4c71b9e144682dd07e92e8a509c5a82978bb901af1956aa8ee",
+    "intent": "academy-partner-activation",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-GTM-002-PRESCHOOL_ACQUISITION_WAVE",
+    "family": "campaign-go-to-market",
+    "fingerprint": "f399a556ab1ce25dcebaa594c671a745dc7353da76706d3c41019ac8f1a02b06",
+    "intent": "preschool-acquisition-wave",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-GTM-003-HOTEL_FAMILY_SEASON_CAMPAIGN",
+    "family": "campaign-go-to-market",
+    "fingerprint": "a98ce4a9cb1c0101872544cf23b5ee61d3c11b7b93371a1ee8b8ba79cc7cf181",
+    "intent": "hotel-family-season-campaign",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-GTM-004-CLINIC_REFERRAL_CAMPAIGN",
+    "family": "campaign-go-to-market",
+    "fingerprint": "c3b3195b67fa034dfef3790bb56ba8c016af962a77ed84a5fb004fa0499bb347",
+    "intent": "clinic-referral-campaign",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-GTM-005-CORPORATE_HR_CAMPAIGN",
+    "family": "campaign-go-to-market",
+    "fingerprint": "70e17d146b9f0f5be01e393380d4c26d3617ca57b2280ac6bf8c2b4b7ffcc0c7",
+    "intent": "corporate-hr-campaign",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-GTM-006-FLASHCARDS_RETAIL_CAMPAIGN",
+    "family": "campaign-go-to-market",
+    "fingerprint": "328097de8845f8d541f8fce9a9e9dc4f65e7d3fb5699d211237f2e259b67bada",
+    "intent": "flashcards-retail-campaign",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-GTM-007-DORMANT_ACCOUNT_REVIVAL",
+    "family": "campaign-go-to-market",
+    "fingerprint": "7a1f30978c1637716d97c9d782f6b036863b763049b6b4c31d6382d32cf30d57",
+    "intent": "dormant-account-revival",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-GTM-008-NEW_TERRITORY_LAUNCH",
+    "family": "campaign-go-to-market",
+    "fingerprint": "e3fab39ae66150e722f9cbcc8a6629ed04195a2bc610e5374187fefeae887b74",
+    "intent": "new-territory-launch",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-GTM-009-NEIGHBORHOOD_SATURATION_WAVE",
+    "family": "campaign-go-to-market",
+    "fingerprint": "aa9e6f5e60917b1d7b12b98c4cfbc0c35084f94d95ba53ba0b417cc158958121",
+    "intent": "neighborhood-saturation-wave",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-GTM-010-NETWORK_ACCOUNT_ATTACK",
+    "family": "campaign-go-to-market",
+    "fingerprint": "d32a4de5d08ee1c6792772e8e65c5677fad09ac70727cdfb7c0e84035f72f3c8",
+    "intent": "network-account-attack",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-GTM-011-BACK_TO_SCHOOL_CAMPAIGN",
+    "family": "campaign-go-to-market",
+    "fingerprint": "1ed286453464c71794f3595c1ce4853e16a1b2ec19fbf1c4166addf78e016872",
+    "intent": "back-to-school-campaign",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-GTM-012-SUMMER_HOME_CHILDCARE",
+    "family": "campaign-go-to-market",
+    "fingerprint": "9c9fb912142e2856fdbac8bb8298f1410f6e36905a44b60726e9df824323e4c8",
+    "intent": "summer-home-childcare",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-GTM-013-RAMADAN_FAMILY_SUPPORT",
+    "family": "campaign-go-to-market",
+    "fingerprint": "3d08cc0b462aab10439fe70bbd2dbf568f20f85f4066d8b259fdb88733f618a1",
+    "intent": "ramadan-family-support",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-GTM-014-EVENT_SEASON_CAMPAIGN",
+    "family": "campaign-go-to-market",
+    "fingerprint": "0f39839456925cc61d41d7002baa90a02f9b1fb64318c7fd3f203c2047e2d8b8",
+    "intent": "event-season-campaign",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-GTM-015-EMPLOYER_BENEFIT_ROLLOUT",
+    "family": "campaign-go-to-market",
+    "fingerprint": "ac2f07d5397b414bd850530d8bb255611b51da568885cf00691f1e2a92a26589",
+    "intent": "employer-benefit-rollout",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-GTM-016-DIAGNOSTIC_WEBINAR_CAMPAIGN",
+    "family": "campaign-go-to-market",
+    "fingerprint": "6865fcd36994cde10c84fb2ce928515c681e97767b7cf09d456bb3539da015a0",
+    "intent": "diagnostic-webinar-campaign",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-GTM-017-CUSTOMER_REFERRAL_WAVE",
+    "family": "campaign-go-to-market",
+    "fingerprint": "702f54db8867200367979bfddee2ba304f77adac301abfc77d33de7e4fe2f194",
+    "intent": "customer-referral-wave",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-GTM-018-PARTNER_CO_MARKETING",
+    "family": "campaign-go-to-market",
+    "fingerprint": "26ea25c5b142d5b96e0fbfd691ac62287b5f5a35e5ce0d5c70f7c44e7f507c35",
+    "intent": "partner-co-marketing",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-GTM-019-EXECUTIVE_ACCOUNT_CAMPAIGN",
+    "family": "campaign-go-to-market",
+    "fingerprint": "6a430ff1349ceb53007581d3806fbb8e84a32c6c3fc984451df3ca5dacf34545",
+    "intent": "executive-account-campaign",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-GTM-020-COMPETITIVE_DISPLACEMENT",
+    "family": "campaign-go-to-market",
+    "fingerprint": "c096865c9567e5efb634b8b2b59af88b10c4f5a86891d763570d21647b1296e8",
+    "intent": "competitive-displacement",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-GTM-021-LOW_CAPACITY_SELECTIVE_CAMPAIGN",
+    "family": "campaign-go-to-market",
+    "fingerprint": "545711a957c820cff39c3f4b10776b1eb7cd21a2e7dc084a8ae97e41f79d4452",
+    "intent": "low-capacity-selective-campaign",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-GTM-022-PIPELINE_ACCELERATION_SPRINT",
+    "family": "campaign-go-to-market",
+    "fingerprint": "b5ef8ffb3301cb8edc9371e2b4088da6a29d8e890980e362d66d5ac4f946943d",
+    "intent": "pipeline-acceleration-sprint",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-GTM-023-PAYMENT_RECOVERY_WAVE",
+    "family": "campaign-go-to-market",
+    "fingerprint": "ad0f05fdbcdfcdc06f6e6c8c8ea6851cbb5c467448bd879e46e002785c73afbf",
+    "intent": "payment-recovery-wave",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-GTM-024-RENEWAL_WAVE",
+    "family": "campaign-go-to-market",
+    "fingerprint": "209dc66ab34d3da76a22c2eb6ed013a02e63491b84cf376998759229263f789e",
+    "intent": "renewal-wave",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-GTM-025-CAMPAIGN_GO_NO_GO",
+    "family": "campaign-go-to-market",
+    "fingerprint": "b5720398ca2860214fd4e8ce4e17a3267b08611eaf8dac3474ef4bbb9bd40ee4",
+    "intent": "campaign-go-no-go",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-OUT-001-WHATSAPP_INITIAL_APPROACH",
+    "family": "outreach-channel",
+    "fingerprint": "6761a48c00da1228f9db3b80884eddb0e44e7c2021a3dcf87179c92a84e0117b",
+    "intent": "whatsapp-initial-approach",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-OUT-002-WHATSAPP_REFERRAL_INTRO",
+    "family": "outreach-channel",
+    "fingerprint": "29085170949cc237428640beb0e911e95296250ef3e7e3341f72122c84c96163",
+    "intent": "whatsapp-referral-intro",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-OUT-003-WHATSAPP_WARM_FOLLOWUP",
+    "family": "outreach-channel",
+    "fingerprint": "60a184bd304725a248d304db5afec7dab9d060fdddd84951b29e3bb99ef66ee9",
+    "intent": "whatsapp-warm-followup",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-OUT-004-WHATSAPP_POST_CALL",
+    "family": "outreach-channel",
+    "fingerprint": "7bec450e490ac470a46f78631ad00eba967121d6ec521aa251aaf5864186210e",
+    "intent": "whatsapp-post-call",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-OUT-005-WHATSAPP_MEETING_CONFIRMATION",
+    "family": "outreach-channel",
+    "fingerprint": "4a46fa863c158bb7d14aad72d2576a6f11da5d12aef53c4a7593fa38d8a99199",
+    "intent": "whatsapp-meeting-confirmation",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-OUT-006-WHATSAPP_PROPOSAL_FOLLOWUP",
+    "family": "outreach-channel",
+    "fingerprint": "41980f55dd5af1e9358da5f7df317c6e88ac30f653163dd6473fb84c2307624c",
+    "intent": "whatsapp-proposal-followup",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-OUT-007-WHATSAPP_OBJECTION_RESPONSE",
+    "family": "outreach-channel",
+    "fingerprint": "345e7b6ac393922945874a0e9f9895b27f3c53b2a96bf81207f801f1678f6eb3",
+    "intent": "whatsapp-objection-response",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-OUT-008-WHATSAPP_STALLED_RESCUE",
+    "family": "outreach-channel",
+    "fingerprint": "b70d98f20c7149444b25233bcfb117921caedd48c021f8a4279f1c3c3b02f2be",
+    "intent": "whatsapp-stalled-rescue",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-OUT-009-EMAIL_DECISION_MAKER_INTRO",
+    "family": "outreach-channel",
+    "fingerprint": "ce2fd5728e1297ae7ea14fdda070559058b84b09f953550bf00fe8f0e9464c1e",
+    "intent": "email-decision-maker-intro",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-OUT-010-EMAIL_ACADEMY_SEQUENCE",
+    "family": "outreach-channel",
+    "fingerprint": "c1df25a262a348e39ec87412b9c38b36e66085153d7489695f43cd54e27171eb",
+    "intent": "email-academy-sequence",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-OUT-011-EMAIL_PRESCHOOL_SEQUENCE",
+    "family": "outreach-channel",
+    "fingerprint": "455572c47e5607fc624eb3c139d8050bd5f2cb892089abdb1e4629775d609494",
+    "intent": "email-preschool-sequence",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-OUT-012-EMAIL_HOTEL_CORPORATE_SEQUENCE",
+    "family": "outreach-channel",
+    "fingerprint": "26e3c1e30e1c561e0ef49b4f5b82cf2509ee7410bd6d79af4f64620a08933f29",
+    "intent": "email-hotel-corporate-sequence",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-OUT-013-EMAIL_PROPOSAL_PROGRESSION",
+    "family": "outreach-channel",
+    "fingerprint": "4861a94a527b55f9ab6bb223ef9e954607eacf4312722fe0ab86c6bd5343bbfa",
+    "intent": "email-proposal-progression",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-OUT-014-EMAIL_RENEWAL_SEQUENCE",
+    "family": "outreach-channel",
+    "fingerprint": "22326dc05afde44a3c40a1fca9a01ccbdcc67260663f10b8dbae46998dbfefad",
+    "intent": "email-renewal-sequence",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-OUT-015-TELEPHONE_FIRST_CALL",
+    "family": "outreach-channel",
+    "fingerprint": "96e4b836f2f953489f22688683fc860814635366cf7eb7b3fc7b82f2e1d109b4",
+    "intent": "telephone-first-call",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-OUT-016-TELEPHONE_AFTER_EMAIL",
+    "family": "outreach-channel",
+    "fingerprint": "b3cdcbf83c2963d78468a65035d088674fc0b8105cf0656fe8a839ea63388ead",
+    "intent": "telephone-after-email",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-OUT-017-TELEPHONE_NO_RESPONSE_RESCUE",
+    "family": "outreach-channel",
+    "fingerprint": "c8952e03e784f764bceda1dc830f77e2a6d0aeab250942cfcfbcc39bf037896b",
+    "intent": "telephone-no-response-rescue",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-OUT-018-TELEPHONE_ROUTING_TO_DECISION_MAKER",
+    "family": "outreach-channel",
+    "fingerprint": "6bf28f972e1ac8bebc7a2b482ec2b53aa2033529c86c738d49bbd26981d517fa",
+    "intent": "telephone-routing-to-decision-maker",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-OUT-019-CHANNEL_PREFERENCE_SELECTION",
+    "family": "outreach-channel",
+    "fingerprint": "c1616a0de585a63fbcf8f435ac759bac72cdb893b6bb88f670c85a7d903f3a95",
+    "intent": "channel-preference-selection",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-OUT-020-MULTICHANNEL_SEQUENCE",
+    "family": "outreach-channel",
+    "fingerprint": "e929e9fa949e8215d500b969a6cb3b4f819637cd49ea26d2931557af73c9bea5",
+    "intent": "multichannel-sequence",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-OUT-021-OPT_OUT_STOP",
+    "family": "outreach-channel",
+    "fingerprint": "4dea6214146dd86f96bac09408fe04976666b203bcfcfe9767d75af28c4f6172",
+    "intent": "opt-out-stop",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-OUT-022-OUTREACH_COOLDOWN",
+    "family": "outreach-channel",
+    "fingerprint": "1b7603a36dff52d4116e25f20cb314081f85c42ce593df2a232e74e74819b8ea",
+    "intent": "outreach-cooldown",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-OUT-023-TRUST_PROOF_PERSONALIZATION",
+    "family": "outreach-channel",
+    "fingerprint": "5579425ecbbe2b00280bb2a3bf008f52c6cf9bb0c05f695d2085bd08a0e06345",
+    "intent": "trust-proof-personalization",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-OUT-024-LANGUAGE_SELECTION",
+    "family": "outreach-channel",
+    "fingerprint": "c581d06329c9c33f03ae06befb4dc073c25c2d70e2adc7aea954099f0670405d",
+    "intent": "language-selection",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-OUT-025-OUTREACH_COMPLIANCE_AUDIT",
+    "family": "outreach-channel",
+    "fingerprint": "b6449b12a113d1789a29bf6b3cc009f889bf966dc8b9642a09473c1e9e30fc07",
+    "intent": "outreach-compliance-audit",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-QLF-001-B2B_FIT",
+    "family": "qualification-progression",
+    "fingerprint": "6d6f27d102c2d7747e6d16c8d6248a1953c627395d03e84c71b487801b8e0268",
+    "intent": "b2b-fit",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-QLF-002-NEED_SEVERITY",
+    "family": "qualification-progression",
+    "fingerprint": "f27837ae9b3ad2a0a35be0690b0e7b348a68a47e012f990b87521fbb5839b1f9",
+    "intent": "need-severity",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-QLF-003-BUDGET_CONFIDENCE",
+    "family": "qualification-progression",
+    "fingerprint": "f14312c3728c27013d2fe188666c8419b76fe41bfa1b5b381aeb1d64bcdb9473",
+    "intent": "budget-confidence",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-QLF-004-AUTHORITY_CONFIDENCE",
+    "family": "qualification-progression",
+    "fingerprint": "1cf0d81ab13b9a30af1b848948f9b985d796a2767cba907d32200fe6690fa809",
+    "intent": "authority-confidence",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-QLF-005-TIMING_READINESS",
+    "family": "qualification-progression",
+    "fingerprint": "180bf433f459224e1c2846aa4c17a5d1bdf245109092b248fe315f7c2948358a",
+    "intent": "timing-readiness",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-QLF-006-TERRITORY_FEASIBILITY",
+    "family": "qualification-progression",
+    "fingerprint": "3565e8de4c727960da99c1607b12eb8e151dc51bbcb7a224bd5a0eca79cf0e9c",
+    "intent": "territory-feasibility",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-QLF-007-CAPACITY_FEASIBILITY",
+    "family": "qualification-progression",
+    "fingerprint": "6d6049126dd15085136266165d6e081473bd4d7a2d648a9480605557c68df747",
+    "intent": "capacity-feasibility",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-QLF-008-SERVICE_FIT",
+    "family": "qualification-progression",
+    "fingerprint": "011ee4bd1161e195842fc884513f18b0626e6dba0aff3d9749301e6988e2c027",
+    "intent": "service-fit",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-QLF-009-STRATEGIC_VALUE",
+    "family": "qualification-progression",
+    "fingerprint": "1382953fe14a3c8c21851abab0a2c2c6a79fed56dbfe08d08b309103449bbb25",
+    "intent": "strategic-value",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-QLF-010-MARGIN_FIT",
+    "family": "qualification-progression",
+    "fingerprint": "6d683e45ea56f1328edbf2dc3dae7f4c0dd51c3b6287891d3856518151d38921",
+    "intent": "margin-fit",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-QLF-011-STAKEHOLDER_COMPLEXITY",
+    "family": "qualification-progression",
+    "fingerprint": "4e3283f7f4a3bbfcc15ef4d870813f69b09d50c48454a5942e3b2f8252868a26",
+    "intent": "stakeholder-complexity",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-QLF-012-MEETING_READINESS",
+    "family": "qualification-progression",
+    "fingerprint": "161c028443c2665edee3a19fd1cd7104eb2b105e29dfc635f5b6a619d4d1e897",
+    "intent": "meeting-readiness",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-QLF-013-DIAGNOSTIC_READINESS",
+    "family": "qualification-progression",
+    "fingerprint": "fd65ae4cfb38f424eab4c6a85f7ebb2e47e377ad59db96245fd448e5dbd16cea",
+    "intent": "diagnostic-readiness",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-QLF-014-PROPOSAL_READINESS",
+    "family": "qualification-progression",
+    "fingerprint": "7f865d896eb2ec678fc023ee67335f833f8c7f3d8ef365a0228fd2fe5b4f9493",
+    "intent": "proposal-readiness",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-QLF-015-POSITIVE_REPLY_TRIAGE",
+    "family": "qualification-progression",
+    "fingerprint": "39de48ca2e714a0222f6071ee159ec8c1755a9bcfd097f35f8e1942edf8c13ba",
+    "intent": "positive-reply-triage",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-QLF-016-INBOUND_LEAD",
+    "family": "qualification-progression",
+    "fingerprint": "4a30a1a7eee7e48ab26e7fd67727603ebdd6893ee0f379224b117849fd712aa4",
+    "intent": "inbound-lead",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-QLF-017-REFERRAL_LEAD",
+    "family": "qualification-progression",
+    "fingerprint": "8e0490388972a059da7c601bb212b53b682bba26c61084465e5879ab91831230",
+    "intent": "referral-lead",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-QLF-018-GROUP_ACCOUNT",
+    "family": "qualification-progression",
+    "fingerprint": "cca5bd34262c2d6c055e6e67599b12f177ff7addc99ac8fbbbd8b52f89e29ebb",
+    "intent": "group-account",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-QLF-019-MULTI_SITE_OPPORTUNITY",
+    "family": "qualification-progression",
+    "fingerprint": "b5162b7f934f388f2d2dc1da18737be2b5372f5656cbb33b4201506ea91ba8f7",
+    "intent": "multi-site-opportunity",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-QLF-020-DISQUALIFICATION",
+    "family": "qualification-progression",
+    "fingerprint": "3ee72e96c21438be31d7cba6534ed5865e3fe258d573a1bad573db92b3f2fd5e",
+    "intent": "disqualification",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-QLF-021-MISSING_EVIDENCE_REQUEST",
+    "family": "qualification-progression",
+    "fingerprint": "584c06dc627dc46b6ba0840d905828a0101179e1e293d54deb0d5c2561e4945c",
+    "intent": "missing-evidence-request",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-QLF-022-CONTRADICTION_RESOLUTION",
+    "family": "qualification-progression",
+    "fingerprint": "df3f6763270be96fb58f734cacd66d3c9712da9792cb5748ee6f8bfe5940fde4",
+    "intent": "contradiction-resolution",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-QLF-023-STAGE_ADVANCE",
+    "family": "qualification-progression",
+    "fingerprint": "dd9b7dd9397cc5846205599b3987ca273353aebff57402f3311216554ae47869",
+    "intent": "stage-advance",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-QLF-024-STAGE_REGRESSION",
+    "family": "qualification-progression",
+    "fingerprint": "f487af7c14c4dc56c28570bdb0ddd49d69c3cef2b610628af83116ec2ddbac53",
+    "intent": "stage-regression",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-QLF-025-NEXT_BEST_ACTION",
+    "family": "qualification-progression",
+    "fingerprint": "9ddd81f0cdf6d6e3b8e2d845fb3c82b3b0c3c48bcc3b84a104d01eeb568d971e",
+    "intent": "next-best-action",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-MTG-001-MEETING_REQUEST_READINESS",
+    "family": "meetings-diagnostics",
+    "fingerprint": "eefee3fd9adda6f2d82e73d2b14a47a2c46f9f883677b42e7bc0cdeacea0e2b8",
+    "intent": "meeting-request-readiness",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-MTG-002-PARTICIPANT_PLAN",
+    "family": "meetings-diagnostics",
+    "fingerprint": "c5ae3940476be3ddc8c88951fcb26a01abad025826b2f902c6da35a4688b6dc6",
+    "intent": "participant-plan",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-MTG-003-AGENDA_DESIGN",
+    "family": "meetings-diagnostics",
+    "fingerprint": "7da60c2453a1c15f355564a74f312f4a9cb23cd69283c49449e6d49545c0aaf5",
+    "intent": "agenda-design",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-MTG-004-ACCOUNT_BRIEF",
+    "family": "meetings-diagnostics",
+    "fingerprint": "05c6c5357e22c049a6401925d83e239ec7b755495cf33855fe13bedcac3baccf",
+    "intent": "account-brief",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-MTG-005-PRESCHOOL_DISCOVERY_QUESTIONS",
+    "family": "meetings-diagnostics",
+    "fingerprint": "e555248878c392896696ff13dc3174bec7ca67875acc355e9a76d7a69eeea224",
+    "intent": "preschool-discovery-questions",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-MTG-006-ACADEMY_PARTNER_DIAGNOSTIC",
+    "family": "meetings-diagnostics",
+    "fingerprint": "900978895305424453fb496fb544da409e72d4e91c3f07ffd5bf93aabe955b10",
+    "intent": "academy-partner-diagnostic",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-MTG-007-CORPORATE_HR_DIAGNOSTIC",
+    "family": "meetings-diagnostics",
+    "fingerprint": "7cdf6a6e2e1b7a9ea9b5be07de031248d5cbf9d919c1d67f97932f26b4520b8f",
+    "intent": "corporate-hr-diagnostic",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-MTG-008-HOTEL_DIAGNOSTIC",
+    "family": "meetings-diagnostics",
+    "fingerprint": "164e57db4fadda44235ec4dd49b1d4671d58850fedae8de683a20d32bd99e5e3",
+    "intent": "hotel-diagnostic",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-MTG-009-CLINIC_DIAGNOSTIC",
+    "family": "meetings-diagnostics",
+    "fingerprint": "758a8214f3fa847c8cee96e61fee8b4d90d9de269ebd354161088159dce8ea14",
+    "intent": "clinic-diagnostic",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-MTG-010-STAKEHOLDER_INTERVIEW_PLAN",
+    "family": "meetings-diagnostics",
+    "fingerprint": "af6abfed36eee3f40e6ac3f945cccb3494e0d53c2de365e263e795c6a90f78d1",
+    "intent": "stakeholder-interview-plan",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-MTG-011-DEMO_SELECTION",
+    "family": "meetings-diagnostics",
+    "fingerprint": "f9c4200574427e36f03df71688c2fc64d1be7fefdfe0d4cae8fab5b7b1b61321",
+    "intent": "demo-selection",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-MTG-012-TRUST_PROOF_PACK",
+    "family": "meetings-diagnostics",
+    "fingerprint": "4fd3beecb86e00e45bee45af506f807febf5779563c0272bd234cb5865fd0659",
+    "intent": "trust-proof-pack",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-MTG-013-CAPACITY_CAVEAT",
+    "family": "meetings-diagnostics",
+    "fingerprint": "3dd3586f2de0b50c723c37802a969f5bb43330a939e6bfab2609f376e64251ca",
+    "intent": "capacity-caveat",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-MTG-014-PRICING_BOUNDARY",
+    "family": "meetings-diagnostics",
+    "fingerprint": "0a3ed644164efaf0f177feace7449a81f78af5671233d3fe6c28d5ec96540e65",
+    "intent": "pricing-boundary",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-MTG-015-OBJECTION_PREPARATION",
+    "family": "meetings-diagnostics",
+    "fingerprint": "2eab8db8ad3e36abff805ff0824292ba6aeead4a303d7cd08be585cae7d5a87f",
+    "intent": "objection-preparation",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-MTG-016-MEETING_CONFIRMATION",
+    "family": "meetings-diagnostics",
+    "fingerprint": "6205cdf8a3ccd2ea15e2279b54b4296dc9d4e3b013b04e449d954bf4eda435e3",
+    "intent": "meeting-confirmation",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-MTG-017-NO_SHOW_RECOVERY",
+    "family": "meetings-diagnostics",
+    "fingerprint": "5e4ddcd5b0df2c299a885a875a3955400abfdffa8950af2fd5e83ed20b2a5c2c",
+    "intent": "no-show-recovery",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-MTG-018-MEETING_NOTE_VALIDATION",
+    "family": "meetings-diagnostics",
+    "fingerprint": "d95ebf7fb8128e98c516dabf00d7aa95625c83d8cbf6011f8c6100eac4c2b236",
+    "intent": "meeting-note-validation",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-MTG-019-DECISION_SUMMARY",
+    "family": "meetings-diagnostics",
+    "fingerprint": "9939156acd68ebeba7d0c66e118e8bc4dfb2894d55b17309528788a725006879",
+    "intent": "decision-summary",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-MTG-020-FOLLOW_UP_PLAN",
+    "family": "meetings-diagnostics",
+    "fingerprint": "1cbeeb777cbd033234d8844291f199ec0d38055572e8385dfc06beefde6e2743",
+    "intent": "follow-up-plan",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-MTG-021-MEETING_OUTCOME_CLASSIFICATION",
+    "family": "meetings-diagnostics",
+    "fingerprint": "b117e98b37671b5187ca822bd82d8fad55d8e79e15ba4aac9c8952c3de5ccfd1",
+    "intent": "meeting-outcome-classification",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-MTG-022-PROPOSAL_HANDOFF",
+    "family": "meetings-diagnostics",
+    "fingerprint": "96834a2820e132896a1915d78ccdc22dc3ae6e0df4f63669104526ef0987f173",
+    "intent": "proposal-handoff",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-MTG-023-EXECUTIVE_ATTENDANCE",
+    "family": "meetings-diagnostics",
+    "fingerprint": "5c0fdb2c92bbb48a034ce92bcdaf219b197b11c2f76423af8a925b902d1b3285",
+    "intent": "executive-attendance",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-MTG-024-SITE_VISIT_PLAN",
+    "family": "meetings-diagnostics",
+    "fingerprint": "c6d4d1043db4802d2804bc2c6852593d00006dafd2b4ed6bc15056f88f9e2e45",
+    "intent": "site-visit-plan",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-MTG-025-MEETING_QUALITY_AUDIT",
+    "family": "meetings-diagnostics",
+    "fingerprint": "52510abe7292a7d0f302e15d06db1e95fd747f12d95b01ac7283e4a212692f6c",
+    "intent": "meeting-quality-audit",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-CLS-001-PROPOSAL_READINESS",
+    "family": "proposal-negotiation-closing",
+    "fingerprint": "09b53eb8407f10e9e245b0765c0aa07887c0658e7b19b58b6310067a54f03fd7",
+    "intent": "proposal-readiness",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-CLS-002-PROPOSAL_STRUCTURE",
+    "family": "proposal-negotiation-closing",
+    "fingerprint": "baab102de7aa61cec49169645ae8df1fd933ebead3429a0ba999743f0842569a",
+    "intent": "proposal-structure",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-CLS-003-VALUE_CASE",
+    "family": "proposal-negotiation-closing",
+    "fingerprint": "72e8a12319e7b0e22b0d93cb20964d8ce7d4a5ac4178fd8ef12c13e8fc796db2",
+    "intent": "value-case",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-CLS-004-PROOF_SELECTION",
+    "family": "proposal-negotiation-closing",
+    "fingerprint": "8c403d44cc0f37acafdc4c4e57752e753d8b208f5bb8f485153ac88d6616b0af",
+    "intent": "proof-selection",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-CLS-005-PRICING_APPROVAL",
+    "family": "proposal-negotiation-closing",
+    "fingerprint": "9428cd63793a54b74dc0334f2508b19a9475edd6894831da90e8d949a5977cbe",
+    "intent": "pricing-approval",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-CLS-006-DISCOUNT_BOUNDARY",
+    "family": "proposal-negotiation-closing",
+    "fingerprint": "2fba5c145dd8618250d99e13e79c61e1d1685281d0ea0905c7a3f6fe768ec119",
+    "intent": "discount-boundary",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-CLS-007-NEGOTIATION_PLAN",
+    "family": "proposal-negotiation-closing",
+    "fingerprint": "aaf9d1c167701f45a8e35f93b00689d24e41b1cce3dba635b40bffcca7c24f26",
+    "intent": "negotiation-plan",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-CLS-008-PRICE_OBJECTION",
+    "family": "proposal-negotiation-closing",
+    "fingerprint": "a7c45e2020949bdeeeebc9622b419d7e5b5324aadaf903139d6b37e64af11791",
+    "intent": "price-objection",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-CLS-009-TRUST_OBJECTION",
+    "family": "proposal-negotiation-closing",
+    "fingerprint": "c91dab5f44c4c5e4f153cb8ef69a44680f4bbafb232ca4b0750f04321491d7a2",
+    "intent": "trust-objection",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-CLS-010-CAPACITY_OBJECTION",
+    "family": "proposal-negotiation-closing",
+    "fingerprint": "c1e00d8291c226bc487b40f03703397e4ba6f6cf7fdd28aab3cd6b5b7e38543c",
+    "intent": "capacity-objection",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-CLS-011-EXISTING_SUPPLIER_OBJECTION",
+    "family": "proposal-negotiation-closing",
+    "fingerprint": "2d5bed2f59aa22453d0fa9156415212be13c68d8cc05adeb119f15d8d6b7c680",
+    "intent": "existing-supplier-objection",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-CLS-012-TIMING_OBJECTION",
+    "family": "proposal-negotiation-closing",
+    "fingerprint": "a3efd53342d7683c6f768fef0d7e89ef4019cae2d4faf52d0e762eb57ac413dc",
+    "intent": "timing-objection",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-CLS-013-CONTRACT_RISK",
+    "family": "proposal-negotiation-closing",
+    "fingerprint": "955bfefd594168838b4511bc5fafc215ffb37d410558583ff62a7c4b5480dcd9",
+    "intent": "contract-risk",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-CLS-014-STAKEHOLDER_SIGNOFF",
+    "family": "proposal-negotiation-closing",
+    "fingerprint": "5b493a0fc55cbbced7053ae03f2f7a5b55f3d724329237aee843ef0e52f2296c",
+    "intent": "stakeholder-signoff",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-CLS-015-PROPOSAL_REVISION",
+    "family": "proposal-negotiation-closing",
+    "fingerprint": "627f8a738bb5e0eb3ace53499c79b5251e92be73a217f594103f65b00160c07a",
+    "intent": "proposal-revision",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-CLS-016-CLOSING_NEXT_STEP",
+    "family": "proposal-negotiation-closing",
+    "fingerprint": "ad3b012579fb3d5538e3268627e14643a1b60319307cd630239902553ca285dc",
+    "intent": "closing-next-step",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-CLS-017-VERBAL_COMMITMENT_VALIDATION",
+    "family": "proposal-negotiation-closing",
+    "fingerprint": "4cb7468d532e6d6d6e4b88ac930610c976ec1f81e6534801f9ad141c979c0bd6",
+    "intent": "verbal-commitment-validation",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-CLS-018-PROCUREMENT_HANDOFF",
+    "family": "proposal-negotiation-closing",
+    "fingerprint": "7fbeacf9b356170bb2373775c4b627fe7d2491ccdb106af6447a2cba08e7e0c7",
+    "intent": "procurement-handoff",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-CLS-019-CONTRACT_APPROVAL_GATE",
+    "family": "proposal-negotiation-closing",
+    "fingerprint": "1d8bec2ffb0172d00508deab44db7497b3f2ac9aa1df84886fdb8dd0baf5e9e1",
+    "intent": "contract-approval-gate",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-CLS-020-PAYMENT_TERMS_APPROVAL",
+    "family": "proposal-negotiation-closing",
+    "fingerprint": "15a2b5c28fda044015e5ca653aa6c8d44c73180acd47450b973adcfd2cb5b8b1",
+    "intent": "payment-terms-approval",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-CLS-021-PILOT_CLOSING",
+    "family": "proposal-negotiation-closing",
+    "fingerprint": "203e7f56f00ed73758440945853d823bb068d85153f346683214106a136be7ec",
+    "intent": "pilot-closing",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-CLS-022-MULTI_SITE_CLOSING",
+    "family": "proposal-negotiation-closing",
+    "fingerprint": "b0e741137ca1470455f1e65aab2866488e6ecff4f7daf7cefbce2be60b8956bb",
+    "intent": "multi-site-closing",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-CLS-023-COMPETITIVE_DISPLACEMENT_CLOSE",
+    "family": "proposal-negotiation-closing",
+    "fingerprint": "86be1ca5059c2a3ef0533bd9ff01cf583a8aea9a2e8c4ab0e901149a36ca23c1",
+    "intent": "competitive-displacement-close",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-CLS-024-LOST_DEAL_CLASSIFICATION",
+    "family": "proposal-negotiation-closing",
+    "fingerprint": "171b5c9129dddef912dc219ef195800138f65bc887838b722bca171da8c8e1e4",
+    "intent": "lost-deal-classification",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-CLS-025-CLOSE_PROBABILITY",
+    "family": "proposal-negotiation-closing",
+    "fingerprint": "c32e19331ecd98389bb701184441a3c3c7d868974768cbabd09ee5f102517f66",
+    "intent": "close-probability",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-RSC-001-STALE_THREE_DAYS",
+    "family": "pipeline-rescue",
+    "fingerprint": "35606a12d94b9ca6a22e87469574584bba9755a9643497f6be2fc7fefe7e5fce",
+    "intent": "stale-three-days",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-RSC-002-STALE_SEVEN_DAYS",
+    "family": "pipeline-rescue",
+    "fingerprint": "ecf33dc6822a1721443b8bbbe6f86eb0a4347e6c2d610bba037007dbfb192c96",
+    "intent": "stale-seven-days",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-RSC-003-STALE_FOURTEEN_DAYS",
+    "family": "pipeline-rescue",
+    "fingerprint": "e04629df342d075d8485e588ef87aae3bbc1b8e82bb2b7f81c0287722e0aef6b",
+    "intent": "stale-fourteen-days",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-RSC-004-MISSING_DECISION_MAKER",
+    "family": "pipeline-rescue",
+    "fingerprint": "c3c9cf2478ec3c74ea722dc036da97a6d4f8c59053c0497eb6c414c84a0727b7",
+    "intent": "missing-decision-maker",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-RSC-005-NO_RESPONSE",
+    "family": "pipeline-rescue",
+    "fingerprint": "d644c4ae451259651dbbf2c133b7b7e3edba646ffec6ec5dfcbf5c206e99ac37",
+    "intent": "no-response",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-RSC-006-PROPOSAL_SILENCE",
+    "family": "pipeline-rescue",
+    "fingerprint": "3d5b32bfda574c5be4b2d7eccc9db45e5e1bfd228336d759b972267ff99e95f6",
+    "intent": "proposal-silence",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-RSC-007-PRICE_RESISTANCE",
+    "family": "pipeline-rescue",
+    "fingerprint": "3e23d25503240898d2d8310f5e88cd47f98ea8675f74aafe3bfe38b0e5b485ce",
+    "intent": "price-resistance",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-RSC-008-CAPACITY_CONCERN",
+    "family": "pipeline-rescue",
+    "fingerprint": "3679afe1673df4fcad8cf28d2d99e5a044dd10b357369dd34095004c10595529",
+    "intent": "capacity-concern",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-RSC-009-COMPETITOR_RISK",
+    "family": "pipeline-rescue",
+    "fingerprint": "114f6ed127948f4a49705944584906cb1794203a96753c03191a6c1924a95c4a",
+    "intent": "competitor-risk",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-RSC-010-INTERNAL_CLIENT_BLOCKER",
+    "family": "pipeline-rescue",
+    "fingerprint": "c2eb7841b0ddefd8445cc02778518396b26218fe7f1c60e72d53ffc63feab31c",
+    "intent": "internal-client-blocker",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-RSC-011-MISSING_NEXT_ACTION",
+    "family": "pipeline-rescue",
+    "fingerprint": "a8a0a168da4d71020924402c4b63334966bcc62bd9eebf332e2311bc601ed757",
+    "intent": "missing-next-action",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-RSC-012-BROKEN_FOLLOWUP",
+    "family": "pipeline-rescue",
+    "fingerprint": "fc8673a721317695e7716da5200fbc66a5e7a76051b9a7c40c8b4467d2f2aa1a",
+    "intent": "broken-followup",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-RSC-013-MEETING_NO_SHOW",
+    "family": "pipeline-rescue",
+    "fingerprint": "2f9f0c7574b27cd4335dbdf1b0a311b110ca95ede2de4ef5e7d7881823052b05",
+    "intent": "meeting-no-show",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-RSC-014-LEGAL_STALL",
+    "family": "pipeline-rescue",
+    "fingerprint": "73192bb87cb1df0e9f632ed7b9c3d41db00e370e3106d5596dc4cdf365e88373",
+    "intent": "legal-stall",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-RSC-015-PROCUREMENT_STALL",
+    "family": "pipeline-rescue",
+    "fingerprint": "411c12dadbb49288468467ce9ccb4f395769ff494f8cc452c88af7719f29fdfb",
+    "intent": "procurement-stall",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-RSC-016-PAYMENT_PROMISE_BREACH",
+    "family": "pipeline-rescue",
+    "fingerprint": "9a02c444964f2248194c15c216be04754d360bc121c2ad9d680feec117a54d72",
+    "intent": "payment-promise-breach",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-RSC-017-INVOICE_DISPUTE",
+    "family": "pipeline-rescue",
+    "fingerprint": "ff86ac5eaf0cdffe0c8e6e306f0ed0ab0c4b87dc59bf317343037dbc1cf3c131",
+    "intent": "invoice-dispute",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-RSC-018-HIGH_VALUE_AT_RISK",
+    "family": "pipeline-rescue",
+    "fingerprint": "790a35d95bdeb41a1a2338cc338bdfd8eca580717210efe9967cd6829ac1c6d1",
+    "intent": "high-value-at-risk",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-RSC-019-RENEWAL_AT_RISK",
+    "family": "pipeline-rescue",
+    "fingerprint": "454f7a8d434d9c679025de0a8b915e0fac6f132b321e0f21d1cbd57ea1df5990",
+    "intent": "renewal-at-risk",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-RSC-020-RESCUE_ROUTE_SELECTION",
+    "family": "pipeline-rescue",
+    "fingerprint": "3ffae6e56fde7719954cc898d4037ec989fd6f0bfad08b409eb8205b6754a620",
+    "intent": "rescue-route-selection",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-RSC-021-FALLBACK_AFTER_FAILURE",
+    "family": "pipeline-rescue",
+    "fingerprint": "811047c65321182cd5dc42ae1184a8670aba2a94f1fc4accd001e797a5b0dabf",
+    "intent": "fallback-after-failure",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-RSC-022-EXECUTIVE_ESCALATION",
+    "family": "pipeline-rescue",
+    "fingerprint": "f30fae5ba0f7dd02340241a1f57534f28428a78502daa77490a836d1266f39e1",
+    "intent": "executive-escalation",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-RSC-023-PARK_OR_KILL",
+    "family": "pipeline-rescue",
+    "fingerprint": "caf62b90662d7816de28696b381ee2d87bc619861612e79c0c705fbf4a3dfdc6",
+    "intent": "park-or-kill",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-RSC-024-REACTIVATE_AFTER_COOLDOWN",
+    "family": "pipeline-rescue",
+    "fingerprint": "73c65c57ca2d64a7f4c66e962cb4996e9e3fc5a5291fbc9c2632386e7c234290",
+    "intent": "reactivate-after-cooldown",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-RSC-025-RESCUE_EFFECTIVENESS_AUDIT",
+    "family": "pipeline-rescue",
+    "fingerprint": "a9b5f41b1f0ba55d4ebd3dbf038e0c3b0872e0b4c74d3b84c75bf00fcd05c06b",
+    "intent": "rescue-effectiveness-audit",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-EXP-001-RENEWAL_READINESS",
+    "family": "renewal-expansion-referral",
+    "fingerprint": "29b81877f05547153e56c4f6a247a84f7416b4865cddc4e6afb40ff93d4ec74d",
+    "intent": "renewal-readiness",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-EXP-002-RENEWAL_RISK",
+    "family": "renewal-expansion-referral",
+    "fingerprint": "5c7bf54c5d669498f27abba0ee98ae443ffc4cc6b72fcdbfe4487f041e605bf5",
+    "intent": "renewal-risk",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-EXP-003-RENEWAL_OFFER",
+    "family": "renewal-expansion-referral",
+    "fingerprint": "0fed7424f53d55ea6643e922c76e38bf81ff1041bf4263ba4a1e3689b0e19507",
+    "intent": "renewal-offer",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-EXP-004-RENEWAL_MEETING",
+    "family": "renewal-expansion-referral",
+    "fingerprint": "1479e726e208532bda3c76e3d551e9142b767f26b3c842c1e17ade573641d8d1",
+    "intent": "renewal-meeting",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-EXP-005-ACADEMY_CREDITS_UPSELL",
+    "family": "renewal-expansion-referral",
+    "fingerprint": "3c3f36df095191d9410af3d4904db082785eb739d0b98398a8a7978bedecfc10",
+    "intent": "academy-credits-upsell",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-EXP-006-ACADEMY_SUBSCRIPTION_UPSELL",
+    "family": "renewal-expansion-referral",
+    "fingerprint": "b4e9db301b056a34a21dd80cad02f09e5d2d2da91948b103b02f6d7a62b5a15c",
+    "intent": "academy-subscription-upsell",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-EXP-007-HOME_SERVICE_CROSS_SELL",
+    "family": "renewal-expansion-referral",
+    "fingerprint": "8aaeebe48d5e2f97d058dfa4ab4b185633c617dcdf23077d521a0cc1d6dc66eb",
+    "intent": "home-service-cross-sell",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-EXP-008-FLASHCARDS_CROSS_SELL",
+    "family": "renewal-expansion-referral",
+    "fingerprint": "f5219375e343ade6e1b4dbece2f41358040d745cd4245e80a2cac164bc4ba0ed",
+    "intent": "flashcards-cross-sell",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-EXP-009-CORPORATE_CROSS_SELL",
+    "family": "renewal-expansion-referral",
+    "fingerprint": "2227a74844cea60e8572418b85868cbb347342c5167d76893f101bb92ba76a96",
+    "intent": "corporate-cross-sell",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-EXP-010-MULTI_SITE_EXPANSION",
+    "family": "renewal-expansion-referral",
+    "fingerprint": "0ffa21f17f0bf3614adf118fe419aead677777a351edf5efc4cda51bac4606c0",
+    "intent": "multi-site-expansion",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-EXP-011-CITY_EXPANSION",
+    "family": "renewal-expansion-referral",
+    "fingerprint": "2c4fb9ed0f6ff59d90fe7a28a9640529a835f1b4a39f7d283efa607c8eceac01",
+    "intent": "city-expansion",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-EXP-012-SERVICE_LINE_EXPANSION",
+    "family": "renewal-expansion-referral",
+    "fingerprint": "782309e580669749c023f18570cd7891565b161f68af79cf765355ac77663b91",
+    "intent": "service-line-expansion",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-EXP-013-REFERRAL_READINESS",
+    "family": "renewal-expansion-referral",
+    "fingerprint": "09bb705b608cd0f4684b8ce1666a432f702432fe1538b70b98d29a1c5e5a20a3",
+    "intent": "referral-readiness",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-EXP-014-REFERRAL_APPROACH",
+    "family": "renewal-expansion-referral",
+    "fingerprint": "c4d30897c72ff921815e5fdccc937418d6434d0767e09c3b00f194bdb264e05d",
+    "intent": "referral-approach",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-EXP-015-PARTNER_INTRODUCTION_MAP",
+    "family": "renewal-expansion-referral",
+    "fingerprint": "289dba1c3ec327e024d8117e5e2ffd44e6aec37104bbe85bc3476bf3df417468",
+    "intent": "partner-introduction-map",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-EXP-016-CUSTOMER_ADVOCATE",
+    "family": "renewal-expansion-referral",
+    "fingerprint": "5c16f15850cd87dd72dec2ef28c5b88cfd68b23b3969fd7295b9f3e91aa55c6d",
+    "intent": "customer-advocate",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-EXP-017-TESTIMONIAL_READINESS",
+    "family": "renewal-expansion-referral",
+    "fingerprint": "66e01a12fe50671575f7e1d34be02ff5fe0b2d305cf3c5e34f7570effd7987e5",
+    "intent": "testimonial-readiness",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-EXP-018-SATISFACTION_EVIDENCE",
+    "family": "renewal-expansion-referral",
+    "fingerprint": "7b1cc70c1b0ea35c61c2d8015ec1b3f2049bdce421e350e1d3a14540e3409e71",
+    "intent": "satisfaction-evidence",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-EXP-019-UNRESOLVED_ISSUE_BLOCK",
+    "family": "renewal-expansion-referral",
+    "fingerprint": "be72749142fbe68a3b857f0f7a628064d842b06f32f67a894c90d6e6fca24edc",
+    "intent": "unresolved-issue-block",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-EXP-020-USAGE_BASED_EXPANSION",
+    "family": "renewal-expansion-referral",
+    "fingerprint": "ebc720d88890a2909fb81f9da4f6b9d2918592af0458a7b31815c8b0ac4d37b7",
+    "intent": "usage-based-expansion",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-EXP-021-UNDERUTILIZATION_RESCUE",
+    "family": "renewal-expansion-referral",
+    "fingerprint": "4871135d214e46fc8223599a1b39499635cc14cca39d281ade87bb2be00ed879",
+    "intent": "underutilization-rescue",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-EXP-022-LIFETIME_VALUE_PLAN",
+    "family": "renewal-expansion-referral",
+    "fingerprint": "85677950f3ea87708dc713df635afa8ac1f63aa4cb15cfdb7c440f66f365ce01",
+    "intent": "lifetime-value-plan",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-EXP-023-CHURN_PREVENTION",
+    "family": "renewal-expansion-referral",
+    "fingerprint": "cdc0559b6bff7f3ccb3877e21fb7e3a112f32acb4f6113136e12130e8b34ec91",
+    "intent": "churn-prevention",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-EXP-024-RENEWAL_FORECAST",
+    "family": "renewal-expansion-referral",
+    "fingerprint": "f2b0d88bf78ab3f540ec177cf6731720f64ae02b239a6e58a13c73553c917e7c",
+    "intent": "renewal-forecast",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-EXP-025-EXPANSION_SUCCESS_AUDIT",
+    "family": "renewal-expansion-referral",
+    "fingerprint": "f78bacbf6709c17ea78fc6b9305a444ad0c9bf72020325092b6336d4ed860dc6",
+    "intent": "expansion-success-audit",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-EXE-001-INTERVENTION_THRESHOLD",
+    "family": "executive-forecasting",
+    "fingerprint": "a41c7578fe1354094c52e6048c83755d97a57e755429d8f550f30c6406d04036",
+    "intent": "intervention-threshold",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-EXE-002-STRATEGIC_ACCOUNT_ESCALATION",
+    "family": "executive-forecasting",
+    "fingerprint": "72fa90959332328916ce086ccd4fabe5226b870922f6cefce78e4da023bfe9d6",
+    "intent": "strategic-account-escalation",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-EXE-003-PRICING_EXCEPTION_EXECUTIVE",
+    "family": "executive-forecasting",
+    "fingerprint": "6ec600e2658ca11079da3a3a82c3966c179073559ea0c06d1fd73cb4a1783975",
+    "intent": "pricing-exception-executive",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-EXE-004-CAPACITY_CONFLICT_EXECUTIVE",
+    "family": "executive-forecasting",
+    "fingerprint": "7f13e5ac5a6dc651200ba3ddafa7ce389742e9b2ffdb0244a1f117d081419d0d",
+    "intent": "capacity-conflict-executive",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-EXE-005-HIGH_VALUE_DEAL_FORECAST",
+    "family": "executive-forecasting",
+    "fingerprint": "f408a842e62362ff75c5a82b0137475d7646edddc969252ea95664297e40fca2",
+    "intent": "high-value-deal-forecast",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-EXE-006-FAST_CONVERSION_SCENARIO",
+    "family": "executive-forecasting",
+    "fingerprint": "421902b5bd2dbfc384998c288cb46739296125193d9e9ce8b9aeaee0e17dfc48",
+    "intent": "fast-conversion-scenario",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-EXE-007-PREMIUM_DIFFERENTIATION_SCENARIO",
+    "family": "executive-forecasting",
+    "fingerprint": "7db5946f8acb6baf40c7a4895c30e11f339aa1639f6db08aeca8ca7a0e6b65e4",
+    "intent": "premium-differentiation-scenario",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-EXE-008-PARTNERSHIP_LED_SCENARIO",
+    "family": "executive-forecasting",
+    "fingerprint": "28e74d33b85e0c9ec6445f01a0d04affda0bd69e7dd64aec0d2c3dbbe0760c9d",
+    "intent": "partnership-led-scenario",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-EXE-009-SEASONAL_URGENCY_SCENARIO",
+    "family": "executive-forecasting",
+    "fingerprint": "231d6ee88644b5b3470ef21414ca939e89e78506f4f82b082cb1ae79a88c6ae1",
+    "intent": "seasonal-urgency-scenario",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-EXE-010-BUNDLED_MONETIZATION_SCENARIO",
+    "family": "executive-forecasting",
+    "fingerprint": "a8d1c97d65f82cc2cf37c92da374274a54222e16ea1b927e0ec5d94307106dc1",
+    "intent": "bundled-monetization-scenario",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-EXE-011-TERRITORY_FORECAST",
+    "family": "executive-forecasting",
+    "fingerprint": "cf69db5b9665fc9ebe7c451ee7daaa52d83983d015247c4498989dfabe715677",
+    "intent": "territory-forecast",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-EXE-012-SEGMENT_FORECAST",
+    "family": "executive-forecasting",
+    "fingerprint": "c9ab895de09a31bbe433363680f9523b054a0956861a082d854be314c5bd507a",
+    "intent": "segment-forecast",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-EXE-013-PIPELINE_FORECAST",
+    "family": "executive-forecasting",
+    "fingerprint": "e3fcfd29dc842a352719504d8a24c22d5e684d14955c78e0e68ed33655af103e",
+    "intent": "pipeline-forecast",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-EXE-014-CONVERSION_FORECAST",
+    "family": "executive-forecasting",
+    "fingerprint": "f2187d34c8eb42ac099465330cf42332536f43400e318df7e64abee49dedfdab",
+    "intent": "conversion-forecast",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-EXE-015-REVENUE_RISK_MAP",
+    "family": "executive-forecasting",
+    "fingerprint": "293444031ec55fc95ccb962e05404e9aa619c01ce8aa9bece46f65af3643c609",
+    "intent": "revenue-risk-map",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-EXE-016-MARGIN_RISK",
+    "family": "executive-forecasting",
+    "fingerprint": "6dcffe5a58fd6d6b4a2570b5c00c7455ba904717bff7ce376181681a93c24120",
+    "intent": "margin-risk",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-EXE-017-CAPACITY_REVENUE_SCENARIO",
+    "family": "executive-forecasting",
+    "fingerprint": "d1aefeace41faf23085573abcf9a3e4f12e8c68f432f9239946bda067afb07af",
+    "intent": "capacity-revenue-scenario",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-EXE-018-DOWNSIDE_SCENARIO",
+    "family": "executive-forecasting",
+    "fingerprint": "2815673bc2f32cc55a58438bd4446defb28b732979c37fb46cf5e0f0d7e47622",
+    "intent": "downside-scenario",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-EXE-019-UPSIDE_SCENARIO",
+    "family": "executive-forecasting",
+    "fingerprint": "b8be3e12ed7a88943e3a6aa4d4ae40cbc3770a3b852344f5981f4ed98e828a5d",
+    "intent": "upside-scenario",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-EXE-020-STOP_CONDITION",
+    "family": "executive-forecasting",
+    "fingerprint": "970dee57129a7623c917713a8a766355a3220354b030e7787866ca429052c1a1",
+    "intent": "stop-condition",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-EXE-021-RESOURCE_INVESTMENT_DECISION",
+    "family": "executive-forecasting",
+    "fingerprint": "c3968c2db4eeadbfe9440079ed0343459339c840ecbcf2e650c561fdb6144341",
+    "intent": "resource-investment-decision",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-EXE-022-WEEKLY_COMMAND_MEMO",
+    "family": "executive-forecasting",
+    "fingerprint": "6faab9affa68fbf2dbdc88a75c3b9fff166f63b48dd97665347d615c5fb357bc",
+    "intent": "weekly-command-memo",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-EXE-023-BOARD_DECISION_MEMO",
+    "family": "executive-forecasting",
+    "fingerprint": "a979b13dd91b8ccec9c8c5cb675f3ab4f719ae86e180bb4398f4ca021939c854",
+    "intent": "board-decision-memo",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-EXE-024-EXECUTIVE_INTERVENTION_BRIEF",
+    "family": "executive-forecasting",
+    "fingerprint": "02c03b330f2dc38b59ca773ddb17cd5be44b0b936b8f9d665e0392eec2b06bc1",
+    "intent": "executive-intervention-brief",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-EXE-025-FORECAST_CONFIDENCE_CALIBRATION",
+    "family": "executive-forecasting",
+    "fingerprint": "68dede12983ae9b0f052e38a2ac45faf47a4bfcdbc865343ec28dc0af3f71529",
+    "intent": "forecast-confidence-calibration",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-AUD-001-SCHEMA_AUDIT",
+    "family": "audit-optimization",
+    "fingerprint": "dcd7998fafff6ac6011af10632fc4cbcad6a8f4a31dea1888a710beb8d94086b",
+    "intent": "schema-audit",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-AUD-002-CONTEXT_COMPLETENESS_AUDIT",
+    "family": "audit-optimization",
+    "fingerprint": "0ae77bb753b5afcbb73b1c9440c2bf2d2621eb7e1bbbadb98e9c54205f82d5f0",
+    "intent": "context-completeness-audit",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-AUD-003-EVIDENCE_FRESHNESS_AUDIT",
+    "family": "audit-optimization",
+    "fingerprint": "ae572d6153b8ac8c12448d81f69c08b9619d71d46bfc3a584e8163d89d9c0c76",
+    "intent": "evidence-freshness-audit",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-AUD-004-FACT_HYPOTHESIS_SEPARATION",
+    "family": "audit-optimization",
+    "fingerprint": "5915cd261d718246ca860b15719ba2ae8d73dceb50ae92295d43774dd8f3f650",
+    "intent": "fact-hypothesis-separation",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-AUD-005-TOOL_PERMISSION_AUDIT",
+    "family": "audit-optimization",
+    "fingerprint": "65053de5492965f8320f7e8c8f7f385bed52cfeaf8999eef2ff4ff7df26c41bf",
+    "intent": "tool-permission-audit",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-AUD-006-APPROVAL_BOUNDARY_AUDIT",
+    "family": "audit-optimization",
+    "fingerprint": "ce5780cb22730b4e1c47b59326f92625f7366692ebdab457d297b2994c2d1f26",
+    "intent": "approval-boundary-audit",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-AUD-007-IDEMPOTENCY_AUDIT",
+    "family": "audit-optimization",
+    "fingerprint": "2f086a2554a73f2ce3e1426c4151254664ebdaefa622f3cd63aa15818ed338fe",
+    "intent": "idempotency-audit",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-AUD-008-ROUTING_DETERMINISM_AUDIT",
+    "family": "audit-optimization",
+    "fingerprint": "d3af022d24c44f5d449e67c9140bd4749a00a9b2c65d01095412ccf56778d2bc",
+    "intent": "routing-determinism-audit",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-AUD-009-SEMANTIC_DUPLICATE_DETECTION",
+    "family": "audit-optimization",
+    "fingerprint": "7d16ba083c756c478e5d2849b33d50cd945f3f30383fdc01291aa1a8656f9536",
+    "intent": "semantic-duplicate-detection",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-AUD-010-FAMILY_COVERAGE_AUDIT",
+    "family": "audit-optimization",
+    "fingerprint": "c0f810bf9621528eac73104bf065e75e432c14d2d28c43b7e6ea3d4967c9e55a",
+    "intent": "family-coverage-audit",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-AUD-011-STALE_COMMAND_DETECTION",
+    "family": "audit-optimization",
+    "fingerprint": "ef9776a191b4f0f75918b6c9b10667c86958d39e883062c4ad063aaef95d04f9",
+    "intent": "stale-command-detection",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-AUD-012-LOW_PERFORMANCE_COMMAND",
+    "family": "audit-optimization",
+    "fingerprint": "2e802eb08d01aacef80282af65ca465c5dc77850efb7088c29f565a0ea1343ff",
+    "intent": "low-performance-command",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-AUD-013-COMMAND_HEALTH",
+    "family": "audit-optimization",
+    "fingerprint": "5e9bc4277b129a95c43d6672aa387c0381dc39103eb3bdd921d702d1a9cdad84",
+    "intent": "command-health",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-AUD-014-EVALUATION_COVERAGE",
+    "family": "audit-optimization",
+    "fingerprint": "c1a2a11f412438e4dc9df548906cdca8357af88b266132471383be2ed261867b",
+    "intent": "evaluation-coverage",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-AUD-015-PROHIBITED_ACTION_TEST",
+    "family": "audit-optimization",
+    "fingerprint": "eaeff496dabd6f75871e5f3df6119a7a7275de57a4cf313204dc465ef51f01db",
+    "intent": "prohibited-action-test",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-AUD-016-TENANT_ISOLATION",
+    "family": "audit-optimization",
+    "fingerprint": "2cd4e4619a41bbc7683f476c2fec8dd6b340bef12d368117634bbe3644b00213",
+    "intent": "tenant-isolation",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-AUD-017-RLS_SERVICE_ONLY",
+    "family": "audit-optimization",
+    "fingerprint": "6d76cb7ce33abd584e69a0b2b4b9c34acd0de9a178329d9435b99c893f18fdad",
+    "intent": "rls-service-only",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-AUD-018-SECRET_LEAKAGE",
+    "family": "audit-optimization",
+    "fingerprint": "21f515ee21737dd197b14385378f896eb5f2ce471e9630f67cbd3e82f1daf389",
+    "intent": "secret-leakage",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-AUD-019-DATA_MINIMIZATION",
+    "family": "audit-optimization",
+    "fingerprint": "b56a87f256a3bfd79c874bb292d43701ad2f2c3bae3508ce08d3262b5d22d138",
+    "intent": "data-minimization",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-AUD-020-VERSION_ROLLBACK_READINESS",
+    "family": "audit-optimization",
+    "fingerprint": "cf974ba524d3a89fc57809096602cc60ebee7b748308b9250f59c5f9443c73bb",
+    "intent": "version-rollback-readiness",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-AUD-021-RETIREMENT_INTEGRITY",
+    "family": "audit-optimization",
+    "fingerprint": "fc93dbb549b8586c4512b3d43f57e8a24a53fdad594593fd930f69834be14bda",
+    "intent": "retirement-integrity",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-AUD-022-FALLBACK_CHAIN_SAFETY",
+    "family": "audit-optimization",
+    "fingerprint": "3068379a93734580cd49c60fd3ce169079cd0fb9b6ef068df5d2ff105e76baf5",
+    "intent": "fallback-chain-safety",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-AUD-023-COOLDOWN_RETRY_SAFETY",
+    "family": "audit-optimization",
+    "fingerprint": "58a608b777e9d994a5b7657aed0702e6d0a0e557e77ab397b34718f0baa37a75",
+    "intent": "cooldown-retry-safety",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-AUD-024-OUTCOME_ATTRIBUTION_READINESS",
+    "family": "audit-optimization",
+    "fingerprint": "7cbcbfd54b6a6bcf7ed8e99acf09e7e6488391d0d43e961a7ae228f87aa13dea",
+    "intent": "outcome-attribution-readiness",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  },
+  {
+    "commandCode": "REV-G300-AUD-025-GOLDEN_300_RELEASE_INTEGRITY",
+    "family": "audit-optimization",
+    "fingerprint": "4d973fdaf7e2aee2383ed5934f008f0fdc6de185390cbffd379b74e8ca81f1ed",
+    "intent": "golden-300-release-integrity",
+    "differenceDimensions": [
+      "purpose",
+      "routing-intent",
+      "context",
+      "trigger",
+      "output",
+      "approval",
+      "outcome"
+    ]
+  }
+]

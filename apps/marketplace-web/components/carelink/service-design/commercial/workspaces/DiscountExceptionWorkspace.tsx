@@ -1,0 +1,2 @@
+import{SupportWorkspace}from'./SupportWorkspace'
+export function DiscountExceptionWorkspace(){return <SupportWorkspace eyebrow="Discount Governance" title="Chambre des exceptions de remise" description="Seuil, justification, preuve, marge apr\u00e8s remise et d\u00e9cision s\u00e9par\u00e9e." primary="File des exceptions" secondary="R\u00e8gles non n\u00e9gociables" variant="control" items={["Plafond de remise", "Plancher de marge", "Interdiction de cumul", "Justification obligatoire", "Séparation demandeur/approbateur", "Période et limite"]}/>}

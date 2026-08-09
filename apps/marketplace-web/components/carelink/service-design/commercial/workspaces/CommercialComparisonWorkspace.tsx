@@ -1,0 +1,2 @@
+import{SupportWorkspace}from'./SupportWorkspace'
+export function CommercialComparisonWorkspace(){return <SupportWorkspace eyebrow="Comparison Theatre" title="Th\u00e9\u00e2tre de comparaison commerciale" description="Promesse, couverture, complexit\u00e9, prix, co\u00fbt, marge et potentiel de renouvellement." primary="Sc\u00e9narios s\u00e9lectionn\u00e9s" secondary="Lentilles de d\u00e9cision" variant="theatre" items={["Promesse client", "Couverture technique", "Prix client", "Marge", "Complexité", "Capacité"]}/>}

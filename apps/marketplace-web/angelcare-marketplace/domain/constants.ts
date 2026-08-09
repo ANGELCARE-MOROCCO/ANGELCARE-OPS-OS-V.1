@@ -1,0 +1,314 @@
+import type { MarketplaceModuleStatus, MarketplacePermission, MarketplaceReadinessStatus } from './types'
+
+export const MARKETPLACE_BASE_ROUTE = '/angelcare-marketplace'
+export const MARKETPLACE_API_ROUTE = '/api/angelcare-marketplace/foundation'
+export const MARKETPLACE_SCHEMA_PREFIX = 'angelcare_marketplace'
+
+export const FOUNDATION_PERMISSIONS: MarketplacePermission[] = [
+  'marketplace.foundation.view',
+  'marketplace.workspace.access',
+  'marketplace.admin.access',
+  'marketplace.modules.view',
+  'marketplace.modules.create',
+  'marketplace.modules.update',
+  'marketplace.modules.enable',
+  'marketplace.modules.disable',
+  'marketplace.modules.archive',
+  'marketplace.feature_flags.view',
+  'marketplace.feature_flags.manage',
+  'marketplace.configuration.view',
+  'marketplace.configuration.manage',
+  'marketplace.audit.view',
+  'marketplace.audit.export',
+  'marketplace.security.view',
+  'marketplace.security.manage',
+  'marketplace.readiness.view',
+  'marketplace.readiness.update',
+  'marketplace.readiness.review',
+  'marketplace.readiness.sign_off',
+]
+
+export const TERRITORY_PERMISSIONS: MarketplacePermission[] = [
+  'marketplace.territories.view',
+  'marketplace.territories.create',
+  'marketplace.territories.update',
+  'marketplace.territories.clone',
+  'marketplace.territories.submit_review',
+  'marketplace.territories.approve_soft_launch',
+  'marketplace.territories.approve_live',
+  'marketplace.territories.pause',
+  'marketplace.territories.resume',
+  'marketplace.territories.archive',
+  'marketplace.territories.preview',
+  'marketplace.territories.export',
+  'marketplace.territory_settings.view',
+  'marketplace.territory_settings.manage',
+  'marketplace.territory_overrides.view',
+  'marketplace.territory_overrides.create',
+  'marketplace.territory_overrides.review',
+  'marketplace.territory_overrides.approve',
+  'marketplace.territory_overrides.reject',
+  'marketplace.territory_overrides.rollback',
+  'marketplace.territory_readiness.view',
+  'marketplace.territory_readiness.manage',
+  'marketplace.territory_readiness.review',
+  'marketplace.territory_readiness.sign_off',
+  'marketplace.territory_health.view',
+  'marketplace.territory_health.manage',
+]
+
+export const LOCALIZATION_PERMISSIONS: MarketplacePermission[] = [
+  'marketplace.localization.access',
+  'marketplace.localization.scans.view',
+  'marketplace.localization.scans.run',
+  'marketplace.localization.scans.cancel',
+  'marketplace.localization.scans.configure',
+  'marketplace.localization.inventory.view',
+  'marketplace.localization.inventory.classify',
+  'marketplace.localization.inventory.export',
+  'marketplace.localization.translations.view',
+  'marketplace.localization.translations.create',
+  'marketplace.localization.translations.edit',
+  'marketplace.localization.translations.assign',
+  'marketplace.localization.translations.submit',
+  'marketplace.localization.translations.review',
+  'marketplace.localization.translations.approve',
+  'marketplace.localization.translations.publish',
+  'marketplace.localization.translations.archive',
+  'marketplace.localization.csv.export',
+  'marketplace.localization.csv.import',
+  'marketplace.localization.csv.validate',
+  'marketplace.localization.csv.apply',
+  'marketplace.localization.csv.rollback',
+  'marketplace.localization.glossary.view',
+  'marketplace.localization.glossary.manage',
+  'marketplace.localization.memory.view',
+  'marketplace.localization.memory.curate',
+  'marketplace.localization.sensitive.review',
+  'marketplace.localization.sensitive.approve',
+  'marketplace.localization.seo.view',
+  'marketplace.localization.seo.manage',
+  'marketplace.localization.rules.view',
+  'marketplace.localization.rules.manage',
+  'marketplace.localization.sources.view',
+  'marketplace.localization.sources.manage',
+  'marketplace.localization.readiness.view',
+  'marketplace.localization.audit.export',
+]
+
+export const BACKOFFICE_PERMISSIONS: MarketplacePermission[] = [
+  'marketplace.backoffice.command.view',
+  'marketplace.backoffice.search',
+  'marketplace.backoffice.actions.view',
+  'marketplace.backoffice.actions.manage',
+  'marketplace.backoffice.approvals.view',
+  'marketplace.backoffice.approvals.create',
+  'marketplace.backoffice.approvals.review',
+  'marketplace.backoffice.approvals.decide',
+  'marketplace.backoffice.approvals.override',
+  'marketplace.backoffice.briefs.view',
+  'marketplace.backoffice.briefs.create',
+  'marketplace.backoffice.briefs.publish',
+  'marketplace.backoffice.objects.view',
+  'marketplace.backoffice.objects.comment',
+  'marketplace.backoffice.objects.export',
+]
+
+export const CMS_PERMISSIONS: MarketplacePermission[] = [
+  'marketplace.cms.view',
+  'marketplace.cms.create',
+  'marketplace.cms.edit',
+  'marketplace.cms.submit',
+  'marketplace.cms.review',
+  'marketplace.cms.approve',
+  'marketplace.cms.publish',
+  'marketplace.cms.schedule',
+  'marketplace.cms.rollback',
+  'marketplace.cms.archive',
+  'marketplace.cms.blocks.manage',
+  'marketplace.cms.menus.manage',
+  'marketplace.cms.ctas.manage',
+  'marketplace.cms.preview',
+  'marketplace.cms.redirects.manage',
+]
+
+export const PUBLIC_UNIVERSE_PERMISSIONS: MarketplacePermission[] = [
+  'marketplace.public.inquiries.view',
+  'marketplace.public.inquiries.manage',
+  'marketplace.public.inquiries.export',
+  'marketplace.public.analytics.view',
+]
+
+export const FAMILY_PERMISSIONS: MarketplacePermission[] = [
+  'marketplace.family.dashboard',
+  'marketplace.family.profile.view',
+  'marketplace.family.profile.manage',
+  'marketplace.family.children.view',
+  'marketplace.family.children.manage',
+  'marketplace.family.diagnostics.create',
+  'marketplace.family.diagnostics.view',
+  'marketplace.family.requests.create',
+  'marketplace.family.requests.view',
+  'marketplace.family.requests.manage',
+  'marketplace.family.requests.qualify',
+  'marketplace.family.missions.view',
+  'marketplace.family.reports.view',
+  'marketplace.family.support.create',
+  'marketplace.family.support.view',
+  'marketplace.family.support.manage',
+  'marketplace.family.documents.view',
+  'marketplace.family.documents.manage',
+  'marketplace.family.feedback.create',
+  'marketplace.family.feedback.view',
+]
+
+
+export const COMMERCE_STUDIO_PERMISSIONS: MarketplacePermission[] = [
+  'marketplace.commerce.view',
+  'marketplace.media.view',
+  'marketplace.media.manage',
+  'marketplace.homepage.view',
+  'marketplace.homepage.manage',
+  'marketplace.navigation.view',
+  'marketplace.navigation.manage',
+  'marketplace.categories.manage',
+  'marketplace.merchandising.view',
+  'marketplace.merchandising.manage',
+  'marketplace.publication.manage',
+  'marketplace.seo.manage',
+  'marketplace.commerce.export',
+  'marketplace.commerce.import',
+]
+
+export const LIVE_EXPERIENCE_PERMISSIONS: MarketplacePermission[] = [
+  'marketplace.live_experience.view',
+  'marketplace.live_experience.manage',
+  'marketplace.live_experience.publish',
+  'marketplace.popup.manage',
+  'marketplace.broadcast.manage',
+  'marketplace.proof_widget.manage',
+  'marketplace.audience.manage',
+  'marketplace.experiment.manage',
+  'marketplace.live_experience.analytics.view',
+  'marketplace.emergency_broadcast.manage',
+]
+
+export const CATEGORY_NATIVE_PERMISSIONS: MarketplacePermission[] = [
+  'marketplace.experience_schema.view',
+  'marketplace.experience_schema.manage',
+  'marketplace.archetype.view',
+  'marketplace.archetype.manage',
+  'marketplace.category_native_import.view',
+  'marketplace.category_native_import.manage',
+]
+
+export const FINAL_AUTHORITY_PERMISSIONS: MarketplacePermission[] = [
+  'marketplace.intelligence.view',
+  'marketplace.intelligence.metrics.manage',
+  'marketplace.growth.view',
+  'marketplace.growth.experiments.manage',
+  'marketplace.performance.view',
+  'marketplace.security.assess',
+  'marketplace.launch.approve',
+  'marketplace.launch.monitoring',
+]
+
+export const MARKETPLACE_PERMISSIONS: MarketplacePermission[] = [
+  ...FOUNDATION_PERMISSIONS,
+  ...TERRITORY_PERMISSIONS,
+  ...LOCALIZATION_PERMISSIONS,
+  ...BACKOFFICE_PERMISSIONS,
+  ...CMS_PERMISSIONS,
+  ...PUBLIC_UNIVERSE_PERMISSIONS,
+  ...FAMILY_PERMISSIONS,
+  ...COMMERCE_STUDIO_PERMISSIONS,
+  ...CATEGORY_NATIVE_PERMISSIONS,
+  ...LIVE_EXPERIENCE_PERMISSIONS,
+  ...FINAL_AUTHORITY_PERMISSIONS,
+]
+
+const MANAGER_PERMISSIONS: MarketplacePermission[] = [
+  'marketplace.foundation.view',
+  'marketplace.workspace.access',
+  'marketplace.admin.access',
+  'marketplace.modules.view',
+  'marketplace.audit.view',
+  ...TERRITORY_PERMISSIONS.filter((permission) => !permission.includes('approve_live')),
+  ...LOCALIZATION_PERMISSIONS.filter((permission) => !permission.endsWith('.approve') && !permission.endsWith('.publish')),
+  ...BACKOFFICE_PERMISSIONS.filter((permission) => !permission.endsWith('.override')),
+  ...CMS_PERMISSIONS.filter((permission) => !permission.endsWith('.publish')),
+  ...PUBLIC_UNIVERSE_PERMISSIONS,
+  ...FAMILY_PERMISSIONS.filter((permission) => permission.includes('.view') || permission.endsWith('.manage') || permission.endsWith('.qualify')),
+  ...COMMERCE_STUDIO_PERMISSIONS,
+  ...LIVE_EXPERIENCE_PERMISSIONS.filter((permission) => permission !== 'marketplace.emergency_broadcast.manage'),
+]
+
+export const ROLE_PERMISSION_FALLBACK: Record<string, MarketplacePermission[]> = {
+  marketplace_executive: MARKETPLACE_PERMISSIONS,
+  marketplace_admin: MARKETPLACE_PERMISSIONS,
+  marketplace_security: [
+    'marketplace.foundation.view','marketplace.workspace.access','marketplace.admin.access',
+    'marketplace.audit.view','marketplace.audit.export','marketplace.security.view','marketplace.security.manage',
+    'marketplace.backoffice.command.view','marketplace.backoffice.search','marketplace.backoffice.approvals.view',
+    'marketplace.backoffice.objects.view','marketplace.cms.view','marketplace.public.inquiries.view',
+    'marketplace.family.requests.view','marketplace.family.support.view',
+  ],
+  marketplace_manager: MANAGER_PERMISSIONS,
+  marketplace_territory_director: MANAGER_PERMISSIONS,
+  marketplace_localization_manager: [
+    'marketplace.foundation.view','marketplace.admin.access','marketplace.territories.view','marketplace.territories.preview',
+    ...LOCALIZATION_PERMISSIONS,
+  ],
+  marketplace_content_director: [
+    'marketplace.foundation.view','marketplace.admin.access','marketplace.backoffice.command.view',
+    'marketplace.backoffice.search','marketplace.backoffice.approvals.view','marketplace.backoffice.approvals.create',
+    ...CMS_PERMISSIONS,
+    'marketplace.public.inquiries.view','marketplace.public.analytics.view',
+  ],
+  marketplace_family_coordinator: [
+    'marketplace.foundation.view','marketplace.admin.access','marketplace.backoffice.command.view',
+    'marketplace.backoffice.search','marketplace.backoffice.actions.view','marketplace.backoffice.actions.manage',
+    'marketplace.family.requests.view','marketplace.family.requests.manage','marketplace.family.requests.qualify',
+    'marketplace.family.missions.view','marketplace.family.reports.view','marketplace.family.support.view',
+    'marketplace.family.support.manage','marketplace.family.documents.view','marketplace.family.documents.manage',
+  ],
+  marketplace_parent: [
+    'marketplace.foundation.view','marketplace.workspace.access','marketplace.family.dashboard',
+    'marketplace.family.profile.view','marketplace.family.profile.manage','marketplace.family.children.view',
+    'marketplace.family.children.manage','marketplace.family.diagnostics.create','marketplace.family.diagnostics.view',
+    'marketplace.family.requests.create','marketplace.family.requests.view','marketplace.family.missions.view',
+    'marketplace.family.reports.view','marketplace.family.support.create','marketplace.family.support.view',
+    'marketplace.family.documents.view','marketplace.family.feedback.create',
+  ],
+  marketplace_tenant: ['marketplace.foundation.view','marketplace.workspace.access'],
+  marketplace_provider: ['marketplace.foundation.view','marketplace.workspace.access'],
+  marketplace_supplier: ['marketplace.foundation.view','marketplace.workspace.access'],
+  marketplace_viewer: ['marketplace.foundation.view'],
+}
+
+export const SOURCE_ROLE_TO_MARKETPLACE_ROLE: Record<string, string> = {
+  ceo:'marketplace_executive',owner:'marketplace_executive',founder:'marketplace_executive',
+  managing_director:'marketplace_executive',super_admin:'marketplace_executive',admin:'marketplace_admin',
+  security:'marketplace_security',compliance:'marketplace_security',manager:'marketplace_manager',
+  operations:'marketplace_manager',quality:'marketplace_manager',finance:'marketplace_manager',
+  territory_manager:'marketplace_territory_director',territory_director:'marketplace_territory_director',
+  localization:'marketplace_localization_manager',content:'marketplace_content_director',
+  marketing:'marketplace_content_director',family_coordinator:'marketplace_family_coordinator',
+  customer_care:'marketplace_family_coordinator',parent:'marketplace_parent',family:'marketplace_parent',
+  customer:'marketplace_parent',tenant:'marketplace_tenant',partner:'marketplace_tenant',
+  provider:'marketplace_provider',caregiver:'marketplace_provider',trainer:'marketplace_provider',
+  supplier:'marketplace_supplier',vendor:'marketplace_supplier',
+}
+
+export const MODULE_TRANSITIONS: Record<MarketplaceModuleStatus, MarketplaceModuleStatus[]> = {
+  registered:['disabled','enabled','blocked','archived'],not_installed:['registered','blocked','archived'],
+  disabled:['enabled','blocked','deprecated','archived'],enabled:['disabled','blocked','degraded','deprecated'],
+  blocked:['disabled','enabled','archived'],degraded:['enabled','disabled','blocked','deprecated'],
+  deprecated:['disabled','archived'],archived:[],
+}
+
+export const READINESS_TRANSITIONS: Record<MarketplaceReadinessStatus, MarketplaceReadinessStatus[]> = {
+  not_started:['in_progress','ready','blocked','not_applicable'],in_progress:['ready','blocked','not_applicable'],
+  ready:['in_progress','blocked'],blocked:['in_progress','ready','not_applicable'],
+  not_applicable:['not_started','in_progress'],
+}

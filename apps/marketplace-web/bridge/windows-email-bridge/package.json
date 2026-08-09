@@ -1,0 +1,14 @@
+{
+  "name": "angelcare-windows-email-bridge",
+  "private": true,
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "check": "node --check server.js"
+  },
+  "dependencies": {
+    "nodemailer": "^8.0.7"
+  }
+}
+

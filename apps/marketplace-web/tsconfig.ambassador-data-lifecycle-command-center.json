@@ -1,0 +1,19 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "incremental": false,
+    "skipLibCheck": true
+  },
+  "files": [
+    "next-env.d.ts",
+    "app/(protected)/market-os/ambassadors/data-lifecycle/page.tsx",
+    "app/api/market-os/ambassadors/data-lifecycle/[[...action]]/route.ts",
+    "components/market-os/ambassadors/data-lifecycle/AmbassadorDataLifecycleControlCenter.tsx",
+    "components/market-os/ambassadors/ambassador-market-sidebar.tsx",
+    "lib/market-os/ambassadors/data-lifecycle.ts",
+    "lib/auth/session.ts",
+    "lib/supabase/server.ts"
+  ],
+  "include": []
+}

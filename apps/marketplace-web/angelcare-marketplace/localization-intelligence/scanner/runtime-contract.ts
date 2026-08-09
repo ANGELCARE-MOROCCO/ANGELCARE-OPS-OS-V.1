@@ -1,0 +1,3 @@
+export interface RuntimeTextNode { route:string; selector:string; text:string; tag:string; ariaLabel?:string; visible:boolean; locale:string; territoryCode?:string }
+export interface RuntimeScanPayload { snapshotId:string; capturedAt:string; route:string; locale:string; territoryCode?:string; nodes:RuntimeTextNode[]; errors:string[] }
+export function validateRuntimePayload(payload:RuntimeScanPayload){ if(!payload.route.startsWith('/angelcare-marketplace')) throw new Error('Route runtime hors périmètre.'); if(payload.errors.length) return {complete:false,reason:'Le rendu contient des erreurs.'}; return {complete:true,reason:null} }

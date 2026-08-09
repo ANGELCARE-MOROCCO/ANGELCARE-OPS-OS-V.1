@@ -1,0 +1,10 @@
+{
+  "dependencies_to_confirm": {
+    "nodemailer": "latest",
+    "imapflow": "latest",
+    "lucide-react": "latest"
+  },
+  "dev_dependencies_to_confirm": {
+    "@types/nodemailer": "latest"
+  }
+}

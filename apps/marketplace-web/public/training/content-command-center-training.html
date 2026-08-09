@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>AngelCare Content Command Center — Académie de Formation Premium</title>
+<style>
+:root{--bg:#f6f7fb;--panel:#fff;--ink:#0f172a;--muted:#64748b;--line:#e2e8f0;--red:#b91c1c;--red2:#7f1d1d;--shadow:0 28px 80px rgba(15,23,42,.12);--r:26px}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:linear-gradient(135deg,#fff 0%,#f8fafc 40%,#fff1f2 100%);color:var(--ink);line-height:1.55}a{color:inherit;text-decoration:none}.layout{display:grid;grid-template-columns:370px 1fr;min-height:100vh}
+aside{position:sticky;top:0;height:100vh;overflow:auto;background:linear-gradient(180deg,#0f172a,#1e1b4b 56%,#7f1d1d);color:white;padding:28px 22px}.brand{display:flex;gap:13px;align-items:center;margin-bottom:22px}.mark{width:50px;height:50px;border-radius:18px;background:linear-gradient(135deg,#ef4444,#f59e0b);display:grid;place-items:center;font-weight:950;box-shadow:0 12px 30px rgba(0,0,0,.25)}.brand h1{font-size:15px;margin:0}.brand p{margin:2px 0 0;color:#cbd5e1;font-size:12px}.nav-title{margin:18px 0 8px;color:#fecaca;text-transform:uppercase;letter-spacing:.16em;font-size:10px;font-weight:900}nav{display:flex;flex-direction:column;gap:7px}nav a{padding:10px 12px;border-radius:14px;color:#e5e7eb;font-size:13px;font-weight:800;border:1px solid transparent;transition:.2s}nav a:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.16);transform:translateX(2px)}.side-card{margin-top:18px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);border-radius:20px;padding:15px;font-size:12px;color:#e2e8f0}
+main{padding:34px;max-width:1720px}.hero{position:relative;overflow:hidden;color:white;background:radial-gradient(circle at 82% 10%,rgba(250,204,21,.34),transparent 28%),linear-gradient(135deg,#111827,#7f1d1d 68%,#b45309);border-radius:38px;padding:48px;box-shadow:var(--shadow)}.hero:before{content:"";position:absolute;inset:auto -90px -120px auto;width:420px;height:420px;border-radius:999px;background:rgba(255,255,255,.1)}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.24em;font-weight:950;color:#fed7aa}.hero h2{font-size:54px;line-height:1.02;margin:12px 0 14px;max-width:1120px}.hero p{max-width:1020px;font-size:18px;color:#ffedd5}.hero-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:28px}.hero-grid div{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(10px);border-radius:22px;padding:16px}.hero-grid b{font-size:26px;display:block}.hero-grid span{font-size:12px;color:#ffedd5}
+section{margin-top:30px}.section-title{display:flex;align-items:flex-end;justify-content:space-between;gap:22px;margin-bottom:15px}.section-title h2{font-size:30px;margin:0}.section-title p{margin:0;color:var(--muted);font-size:14px;max-width:820px}.grid{display:grid;gap:18px}.g2{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}.g5{grid-template-columns:repeat(5,1fr)}.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:22px;box-shadow:0 12px 35px rgba(15,23,42,.06)}.card h3{font-size:19px;margin:0 0 8px}.card p{margin:0;color:var(--muted);font-size:14px}.badge{display:inline-flex;align-items:center;border:1px solid var(--line);background:#f8fafc;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:900;color:#334155;margin:10px 4px 0 0}
+.flow{display:grid;grid-template-columns:repeat(8,1fr);gap:12px}.flow .node{position:relative;background:white;border:1px solid var(--line);border-radius:22px;padding:16px;min-height:142px}.flow .node:after{content:"→";position:absolute;right:-13px;top:42%;font-weight:950;color:#94a3b8}.flow .node:last-child:after{display:none}.node b{display:block;font-size:22px}.node span{font-size:12px;color:var(--muted)}.module-map{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}.module-map div{padding:14px;border-radius:18px;border:1px solid var(--line);background:#fff;min-height:110px}.module-map b{display:block;margin-bottom:5px}.module-map span{font-size:12px;color:var(--muted)}.table{width:100%;border-collapse:collapse;background:white;border-radius:20px;overflow:hidden}.table th,.table td{border-bottom:1px solid var(--line);padding:13px;text-align:left;vertical-align:top;font-size:14px}.table th{background:#f8fafc;text-transform:uppercase;letter-spacing:.08em;font-size:12px;color:#334155}.timeline{position:relative;padding-left:24px}.timeline:before{content:"";position:absolute;left:8px;top:6px;bottom:6px;width:2px;background:#fecaca}.tl{position:relative;margin:0 0 16px;background:white;border:1px solid var(--line);border-radius:20px;padding:16px}.tl:before{content:"";position:absolute;left:-25px;top:18px;width:14px;height:14px;background:#b91c1c;border-radius:999px;border:3px solid white;box-shadow:0 0 0 1px #fecaca}.tl h3{margin:0 0 5px;font-size:17px}.tl p{margin:0;color:var(--muted);font-size:14px}.scenario{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:14px}.scenario>div{background:#f8fafc;border:1px solid var(--line);border-radius:18px;padding:16px}.scenario h4{margin:0 0 8px}.callout{border-radius:24px;padding:22px;border:1px solid #fecaca;background:#fff1f2;color:#7f1d1d}.callout b{display:block;margin-bottom:6px}.checklist label{display:flex;gap:10px;align-items:flex-start;background:#f8fafc;border:1px solid var(--line);border-radius:15px;padding:12px;margin:8px 0;font-size:14px}input[type=checkbox]{accent-color:#b91c1c;margin-top:3px}.kbd{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#0f172a;color:#e2e8f0;border-radius:8px;padding:2px 7px;font-size:12px}.bar{height:12px;background:#e2e8f0;border-radius:99px;overflow:hidden;margin-top:10px}.bar i{display:block;height:100%;background:linear-gradient(90deg,#ef4444,#f59e0b);border-radius:99px}.mini-chart{display:flex;align-items:end;gap:8px;height:130px;margin-top:14px}.mini-chart div{flex:1;border-radius:10px 10px 0 0;background:linear-gradient(180deg,#ef4444,#7f1d1d);min-height:15px;position:relative}.mini-chart div span{position:absolute;bottom:100%;left:50%;transform:translateX(-50%);font-size:10px;font-weight:900;color:#64748b}.footer{text-align:center;color:var(--muted);font-size:13px;margin:42px 0 12px}
+@media(max-width:1250px){.layout{grid-template-columns:1fr}aside{position:relative;height:auto}.hero h2{font-size:36px}.hero-grid,.g2,.g3,.g4,.g5,.flow,.scenario,.module-map{grid-template-columns:1fr}.flow .node:after{display:none}}@media print{aside{display:none}.layout{display:block}body{background:white}main{padding:0}.card,.hero{box-shadow:none;break-inside:avoid}}
+</style>
+</head>
+<body>
+<div class="layout">
+<aside><div class="brand"><div class="mark">AC</div><div><h1>AngelCare Academy</h1><p>Content Command Center</p></div></div><div class="nav-title">Fondations</div><nav><a href="#intro">Vue d’ensemble</a><a href="#mission">Mission du module</a><a href="#mental-model">Modèle mental</a><a href="#vocabulaire">Vocabulaire</a><a href="#navigation">Navigation complète</a><a href="#roles">Rôles</a></nav><div class="nav-title">Opérations</div><nav><a href="#cycle">Cycle de vie</a><a href="#journee">Journée type</a><a href="#creation">SOP création</a><a href="#brief">SOP brief</a><a href="#calendrier">SOP calendrier</a><a href="#approbation">SOP approbation</a><a href="#publication">SOP publication</a><a href="#media">SOP médias</a><a href="#ia">SOP IA</a></nav><div class="nav-title">Maîtrise</div><nav><a href="#variantes">Variantes par contenu</a><a href="#scenarios">Scénarios</a><a href="#matrices">Matrices</a><a href="#kpi">KPI &amp; lecture</a><a href="#qualite">Contrôle qualité</a><a href="#gouvernance">Gouvernance</a><a href="#incidents">Incidents</a><a href="#certification">Certification</a></nav><div class="nav-title">Production</div><nav><a href="#rituels">Rituels d’équipe</a><a href="#templates">Templates prêts</a><a href="#erreurs">Erreurs à éviter</a><a href="#admin">Guide admin</a><a href="#faq">FAQ</a><a href="#final">Standard 100%</a></nav>
+<div class="side-card">
+  <b>Objectif formation</b><br/>
+  Transformer un utilisateur qui ne connaît rien au Content Command Center en opérateur marketing autonome,
+  rigoureux, capable de créer, contrôler, planifier, escalader et livrer du contenu prêt production.
+</div>
+<div class="side-card">
+  <b>Règle d’or</b><br/>
+  Aucun contenu ne doit être publié s’il n’est pas clair, validé, planifié, traçable et conforme à la marque.
+</div>
+</aside>
+<main>
+
+<header class="hero" id="intro">
+  <div class="eyebrow">AngelCare · Market OS · Académie interne</div>
+  <h2>Content Command Center — Manuel complet de formation, SOP et exécution production</h2>
+  <p>
+    Cette page forme les utilisateurs à comprendre, piloter et exécuter le sous-module Content Command Center.
+    Elle part de zéro : pourquoi le module existe, comment il structure le marketing, comment créer un contenu,
+    comment le faire valider, comment le planifier, comment utiliser l’IA sans perdre le contrôle, comment gérer les blocages,
+    comment lire les KPI, et comment atteindre un niveau opérationnel expert.
+  </p>
+  <div class="hero-grid">
+    <div><b>0→100%</b><span>Parcours utilisateur complet</span></div>
+    <div><b>30+</b><span>Sections, SOP, scénarios</span></div>
+    <div><b>8</b><span>Phases du cycle contenu</span></div>
+    <div><b>IA</b><span>Usage contrôlé et validé</span></div>
+    <div><b>Prod</b><span>Discipline entreprise</span></div>
+  </div>
+</header>
+
+<section id="mission">
+  <div class="section-title">
+    <h2>1. Mission du Content Command Center</h2>
+    <p>Le module n’est pas un simple calendrier. C’est le poste de commande opérationnel du contenu marketing AngelCare.</p>
+  </div>
+  <div class="grid g4">
+    
+    <article class="card ">
+      <h3>Centraliser</h3>
+      <p>Rassembler posts, briefs, visuels, campagnes, dates, statuts, médias, approbations et priorités dans un espace unique.</p>
+      <span class="badge ">Contrôle</span>
+    </article>
+    
+    
+    <article class="card ">
+      <h3>Exécuter</h3>
+      <p>Transformer les idées marketing en contenus réels, suivis, datés, assignés, validés et prêts à être utilisés.</p>
+      <span class="badge ">Production</span>
+    </article>
+    
+    
+    <article class="card ">
+      <h3>Sécuriser</h3>
+      <p>Éviter les publications non validées, les promesses risquées, les visuels non conformes et les contenus incohérents.</p>
+      <span class="badge ">Gouvernance</span>
+    </article>
+    
+    
+    <article class="card ">
+      <h3>Mesurer</h3>
+      <p>Relier le contenu aux campagnes, aux résultats, aux apprentissages et aux décisions marketing.</p>
+      <span class="badge ">Performance</span>
+    </article>
+    
+  </div>
+</section>
+
+<section id="mental-model">
+  <div class="section-title">
+    <h2>2. Modèle mental : comment penser le module</h2>
+    <p>Un utilisateur doit comprendre que chaque contenu est une mini-opération avec un objectif, un propriétaire, un statut et un risque.</p>
+  </div>
+  <div class="flow">
+    <div class="node"><b>01</b><h3>Besoin</h3><span>Une opportunité marketing, un service à promouvoir, une campagne ou un message.</span></div>
+    <div class="node"><b>02</b><h3>Brief</h3><span>Objectif, audience, canal, ton, CTA, contrainte et deadline.</span></div>
+    <div class="node"><b>03</b><h3>Création</h3><span>Texte, visuel, fiche service, script, post ou message.</span></div>
+    <div class="node"><b>04</b><h3>Qualité</h3><span>Correction, clarté, cohérence, structure, promesse.</span></div>
+    <div class="node"><b>05</b><h3>Validation</h3><span>Revue humaine, marque, conformité, décision.</span></div>
+    <div class="node"><b>06</b><h3>Planification</h3><span>Date interne, date publication, canal et priorité.</span></div>
+    <div class="node"><b>07</b><h3>Diffusion</h3><span>Handoff contrôlé vers le canal prévu.</span></div>
+    <div class="node"><b>08</b><h3>Apprentissage</h3><span>Résultat, performance, amélioration et prochaine action.</span></div>
+  </div>
+</section>
+<section id="vocabulaire"><div class="section-title"><h2>3. Vocabulaire essentiel</h2><p>Un langage commun réduit les erreurs et accélère l’exécution.</p></div><div class="grid g5">
+    <article class="card ">
+      <h3>Asset contenu</h3>
+      <p>Tout contenu marketing géré dans le module : post, vidéo, visuel, fiche service, email, message WhatsApp, script, article.</p>
+      
+    </article>
+    
+    <article class="card ">
+      <h3>Campagne</h3>
+      <p>Initiative marketing structurée avec objectif, audience, calendrier, canaux et résultats attendus.</p>
+      
+    </article>
+    
+    <article class="card ">
+      <h3>Canal</h3>
+      <p>Lieu d’utilisation : Meta, LinkedIn, WhatsApp, TikTok, email, site web, Google Business, support commercial.</p>
+      
+    </article>
+    
+    <article class="card ">
+      <h3>Statut</h3>
+      <p>État opérationnel du contenu : brouillon, revue, approuvé, planifié, publié, bloqué, archivé.</p>
+      
+    </article>
+    
+    <article class="card ">
+      <h3>Date due</h3>
+      <p>Date à laquelle le contenu doit être prêt en interne.</p>
+      
+    </article>
+    
+    <article class="card ">
+      <h3>Date planifiée</h3>
+      <p>Date prévue pour publication ou utilisation.</p>
+      
+    </article>
+    
+    <article class="card ">
+      <h3>Blocage</h3>
+      <p>Obstacle empêchant le contenu d’avancer. Il doit avoir une raison, un propriétaire et une action.</p>
+      
+    </article>
+    
+    <article class="card ">
+      <h3>Audit</h3>
+      <p>Trace des décisions et actions : qui a fait quoi, quand et pourquoi.</p>
+      
+    </article>
+    
+    <article class="card ">
+      <h3>Handoff</h3>
+      <p>Transmission contrôlée d’un contenu approuvé vers publication ou utilisation.</p>
+      
+    </article>
+    
+    <article class="card ">
+      <h3>SLA</h3>
+      <p>Délai attendu pour traiter une action : validation, correction, publication, résolution de blocage.</p>
+      
+    </article>
+    </div></section><section id="navigation"><div class="section-title"><h2>4. Navigation complète du sous-module</h2><p>Cette carte aide l’utilisateur à choisir immédiatement la bonne zone selon sa tâche.</p></div><div class="module-map"><div><b>Dashboard principal</b><span>Vue commandement : volumes, statuts, blocages, priorités, risques, actions du jour.</span></div><div><b>Créer contenu</b><span>Création d’un asset avec métadonnées opérationnelles : titre, canal, campagne, dates, propriétaire.</span></div><div><b>Calendrier</b><span>Vision mensuelle des dates dues, dates planifiées, pression publication et trous de planning.</span></div><div><b>Détail contenu</b><span>Page de lecture d’un contenu : statut, historique, actions, médias, commentaires.</span></div><div><b>Édition</b><span>Modification contrôlée avec logique de statut et mise à jour d’audit.</span></div><div><b>Approbations</b><span>File de validation : approuver, rejeter, demander une correction.</span></div><div><b>Publication</b><span>Queue de publication : uniquement contenu approuvé et prêt canal.</span></div><div><b>Médias</b><span>Gestion des visuels, PDFs, vidéos, versions, formats et conformité marque.</span></div><div><b>IA</b><span>Assistance rédaction, traduction, SEO, scoring qualité, mais jamais approbation finale.</span></div><div><b>Analytics</b><span>Performance, apprentissage, attribution, efficacité par canal.</span></div><div><b>Gouvernance</b><span>Rôles, permissions, règles de marque, sécurité et escalade.</span></div><div><b>Runtime</b><span>API, Supabase, audit, événements realtime et préparation production.</span></div></div></section><section id="roles"><div class="section-title"><h2>5. Rôles, responsabilités et limites</h2><p>Chaque rôle a une mission claire. Cela évite les erreurs de publication et les décisions non autorisées.</p></div><table class="table"><thead><tr><th>Rôle</th><th>Mission</th><th>Autorisé</th><th>Non autorisé</th><th>Escalade</th></tr></thead><tbody><tr><td><b>Viewer</b></td><td>Observer le contenu et le calendrier.</td><td>Lire les contenus, comprendre les statuts.</td><td>Modifier, valider, publier.</td><td>Information incorrecte ou date manquante.</td></tr><tr><td><b>Créateur</b></td><td>Produire les contenus.</td><td>Créer, éditer, utiliser l’IA, demander revue.</td><td>Approuver final, publier, contourner la marque.</td><td>Contenu sensible, retard, blocage.</td></tr><tr><td><b>Reviewer</b></td><td>Contrôler la qualité.</td><td>Valider, rejeter, demander correction.</td><td>Publier ou modifier règles de marque.</td><td>Promesse risquée, ton incohérent.</td></tr><tr><td><b>Brand Manager</b></td><td>Protéger la marque.</td><td>Valider le ton, les visuels, les claims.</td><td>Ignorer audit ou approbations.</td><td>Risque image ou réputation.</td></tr><tr><td><b>Publisher</b></td><td>Préparer la diffusion.</td><td>Planifier, vérifier format, queue publication.</td><td>Publier un brouillon ou contenu non approuvé.</td><td>Approbation ou média manquant.</td></tr><tr><td><b>Marketing Director</b></td><td>Piloter priorités et blocages.</td><td>Réassigner, escalader, arbitrer.</td><td>Court-circuiter gouvernance.</td><td>SLA dépassé, surcharge, risque campagne.</td></tr><tr><td><b>Executive</b></td><td>Superviser les décisions critiques.</td><td>Voir risques et valider orientations majeures.</td><td>Micro-manager les brouillons.</td><td>Impact réputation, marché ou revenu.</td></tr></tbody></table></section>
+<section id="cycle">
+  <div class="section-title"><h2>6. Cycle de vie complet d’un contenu</h2><p>Tout contenu doit avancer dans une séquence maîtrisée. Sauter une étape crée du risque.</p></div>
+  <div class="timeline">
+    <div class="tl"><h3>1. Identification du besoin</h3><p>Une campagne, un service, une opportunité commerciale ou une nécessité de communication déclenche le contenu.</p></div>
+    <div class="tl"><h3>2. Brief opérationnel</h3><p>On définit l’objectif, l’audience, le canal, le format, la date due, la date planifiée, le ton, le CTA et le propriétaire.</p></div>
+    <div class="tl"><h3>3. Création</h3><p>Le créateur produit le contenu : texte, visuel, fiche, script, message ou support.</p></div>
+    <div class="tl"><h3>4. Pré-contrôle</h3><p>Avant revue, le créateur vérifie clarté, orthographe, cohérence, métadonnées et format.</p></div>
+    <div class="tl"><h3>5. Revue</h3><p>Le reviewer ou brand manager vérifie qualité, ton, promesses, conformité, marque et destination.</p></div>
+    <div class="tl"><h3>6. Correction</h3><p>Si nécessaire, le contenu retourne au créateur avec une demande claire et actionnable.</p></div>
+    <div class="tl"><h3>7. Approbation</h3><p>Le contenu devient utilisable uniquement après validation humaine appropriée.</p></div>
+    <div class="tl"><h3>8. Planification</h3><p>Le contenu est placé dans le calendrier avec date, canal et priorité.</p></div>
+    <div class="tl"><h3>9. Handoff publication</h3><p>Le publisher vérifie tous les prérequis et prépare la diffusion.</p></div>
+    <div class="tl"><h3>10. Analyse</h3><p>Après utilisation, les résultats sont observés pour améliorer les prochains contenus.</p></div>
+  </div>
+</section>
+<section id="journee"><div class="section-title"><h2>7. Journée type d’un utilisateur opérationnel</h2><p>Un bon opérateur suit un rythme. Il ne travaille pas au hasard.</p></div><div class="grid g3">
+    <article class="card ">
+      <h3>08:30 — Ouverture commandement</h3>
+      <p>Lire les contenus urgents, les blocages, les validations en attente, les publications du jour.</p>
+      <span class="badge ">Rituel</span>
+    </article>
+    
+    <article class="card ">
+      <h3>09:00 — Priorisation</h3>
+      <p>Classer les actions : urgent, important, bloqué, à déléguer, à escalader.</p>
+      <span class="badge ">Rituel</span>
+    </article>
+    
+    <article class="card ">
+      <h3>10:00 — Production</h3>
+      <p>Créer ou finaliser les contenus prévus.</p>
+      <span class="badge ">Rituel</span>
+    </article>
+    
+    <article class="card ">
+      <h3>12:00 — Revue rapide</h3>
+      <p>Envoyer les contenus prêts en validation. Ne pas attendre la fin de journée.</p>
+      <span class="badge ">Rituel</span>
+    </article>
+    
+    <article class="card ">
+      <h3>15:00 — Calendrier</h3>
+      <p>Vérifier demain, cette semaine et les lancements de campagne.</p>
+      <span class="badge ">Rituel</span>
+    </article>
+    
+    <article class="card ">
+      <h3>16:30 — Déblocage</h3>
+      <p>Résoudre les points bloquants ou escalader clairement.</p>
+      <span class="badge ">Rituel</span>
+    </article>
+    
+    <article class="card ">
+      <h3>17:30 — Clôture</h3>
+      <p>Documenter les décisions, mettre à jour les statuts et préparer le lendemain.</p>
+      <span class="badge ">Rituel</span>
+    </article>
+    </div></section><section id="creation"><div class="section-title"><h2>8. SOP création de contenu</h2><p>Procédure standard à suivre pour garantir qualité, contrôle et exécution.</p></div><div class="timeline"><div class="tl"><h3>1. Choisir le bon type</h3><p>Post, fiche service, message WhatsApp, email, script vidéo, article, support commercial.</p></div><div class="tl"><h3>2. Définir l’objectif</h3><p>Notoriété, acquisition, confiance, conversion, éducation, recrutement, partenariat.</p></div><div class="tl"><h3>3. Remplir les champs clés</h3><p>Titre, campagne, canal, propriétaire, date due, date planifiée, statut, priorité.</p></div><div class="tl"><h3>4. Rédiger le contenu</h3><p>Adapter le ton au canal et à l’audience. Le contenu doit être clair, utile et actionnable.</p></div><div class="tl"><h3>5. Contrôler avant revue</h3><p>Corriger, vérifier CTA, éviter promesses risquées, compléter médias et contexte.</p></div><div class="tl"><h3>6. Passer en revue</h3><p>Quand le contenu est réellement prêt à être évalué.</p></div></div></section><section id="brief"><div class="section-title"><h2>9. SOP brief marketing</h2><p>Procédure standard à suivre pour garantir qualité, contrôle et exécution.</p></div><div class="timeline"><div class="tl"><h3>1. Contexte</h3><p>Pourquoi ce contenu est nécessaire maintenant.</p></div><div class="tl"><h3>2. Audience</h3><p>À qui s’adresse le message : familles, partenaires, candidats, clients, institutions.</p></div><div class="tl"><h3>3. Message clé</h3><p>Une idée centrale, pas cinq messages concurrents.</p></div><div class="tl"><h3>4. Canal</h3><p>Le format doit être pensé pour le canal dès le départ.</p></div><div class="tl"><h3>5. CTA</h3><p>L’action attendue : appeler, demander info, réserver, lire, partager, visiter.</p></div><div class="tl"><h3>6. Contraintes</h3><p>Deadline, langue, visuel, conformité, ton, service concerné.</p></div></div></section><section id="calendrier"><div class="section-title"><h2>10. SOP calendrier et planification</h2><p>Procédure standard à suivre pour garantir qualité, contrôle et exécution.</p></div><div class="timeline"><div class="tl"><h3>1. Lire la semaine</h3><p>Observer les contenus dus, planifiés, approuvés, bloqués et manquants.</p></div><div class="tl"><h3>2. Identifier les risques</h3><p>Date proche + statut non approuvé = risque.</p></div><div class="tl"><h3>3. Planifier proprement</h3><p>La date planifiée doit être réaliste selon validation, média et canal.</p></div><div class="tl"><h3>4. Éviter la surcharge</h3><p>Ne pas concentrer trop de publications sur le même jour sans stratégie.</p></div><div class="tl"><h3>5. Mettre à jour</h3><p>Chaque changement de date doit être volontaire et visible.</p></div><div class="tl"><h3>6. Clôturer</h3><p>Aucun contenu urgent ne doit rester sans prochaine action.</p></div></div></section><section id="approbation"><div class="section-title"><h2>11. SOP approbation</h2><p>Procédure standard à suivre pour garantir qualité, contrôle et exécution.</p></div><div class="timeline"><div class="tl"><h3>1. Recevoir la demande</h3><p>Lire objectif, canal, campagne, date et contenu.</p></div><div class="tl"><h3>2. Vérifier la clarté</h3><p>Le message est-il compréhensible en moins de quelques secondes ?</p></div><div class="tl"><h3>3. Vérifier la marque</h3><p>Ton, visuel, promesse et posture sont-ils AngelCare ?</p></div><div class="tl"><h3>4. Vérifier le risque</h3><p>Aucun claim exagéré, aucune ambiguïté, aucune incohérence service.</p></div><div class="tl"><h3>5. Décider</h3><p>Approuver, rejeter ou demander révision avec instruction précise.</p></div><div class="tl"><h3>6. Tracer</h3><p>La décision doit être claire pour le prochain utilisateur.</p></div></div></section><section id="publication"><div class="section-title"><h2>12. SOP publication</h2><p>Procédure standard à suivre pour garantir qualité, contrôle et exécution.</p></div><div class="timeline"><div class="tl"><h3>1. Vérifier statut</h3><p>Publier seulement si approuvé.</p></div><div class="tl"><h3>2. Vérifier canal</h3><p>Format, dimensions, longueur, CTA, timing et version finale.</p></div><div class="tl"><h3>3. Vérifier média</h3><p>Le bon visuel, la bonne vidéo, le bon PDF, la bonne version.</p></div><div class="tl"><h3>4. Queue publication</h3><p>Le contenu entre en file contrôlée.</p></div><div class="tl"><h3>5. Surveiller</h3><p>Si échec ou blocage, documenter et escalader.</p></div><div class="tl"><h3>6. Analyser</h3><p>Après publication, capter performance et apprentissage.</p></div></div></section><section id="media"><div class="section-title"><h2>13. SOP médias et assets</h2><p>Procédure standard à suivre pour garantir qualité, contrôle et exécution.</p></div><div class="timeline"><div class="tl"><h3>1. Nommer proprement</h3><p>Nom de fichier clair : campagne_canal_format_version.</p></div><div class="tl"><h3>2. Contrôler qualité</h3><p>Résolution, lisibilité, format, charte visuelle.</p></div><div class="tl"><h3>3. Versionner</h3><p>Ne pas mélanger brouillon et final.</p></div><div class="tl"><h3>4. Lier au contenu</h3><p>Le média doit être attaché au bon asset.</p></div><div class="tl"><h3>5. Archiver</h3><p>Les anciennes versions doivent rester traçables mais non actives.</p></div><div class="tl"><h3>6. Valider marque</h3><p>Aucun média sensible sans validation marque.</p></div></div></section><section id="ia"><div class="section-title"><h2>14. SOP usage IA</h2><p>Procédure standard à suivre pour garantir qualité, contrôle et exécution.</p></div><div class="timeline"><div class="tl"><h3>1. Utiliser pour accélérer</h3><p>Réécriture, traduction, SEO, captions, idées, scoring qualité.</p></div><div class="tl"><h3>2. Limiter l’autorité</h3><p>L’IA ne valide pas, ne publie pas et ne remplace pas le reviewer.</p></div><div class="tl"><h3>3. Contrôler la sortie</h3><p>Vérifier ton, exactitude, claims, CTA et adaptation canal.</p></div><div class="tl"><h3>4. Envoyer en revue</h3><p>Tout contenu IA destiné au public doit passer par revue humaine.</p></div><div class="tl"><h3>5. Auditer</h3><p>Les sorties IA importantes doivent être traçables.</p></div><div class="tl"><h3>6. Refuser le risque</h3><p>Si le résultat semble trop fort ou flou, ne pas l’utiliser tel quel.</p></div></div></section><section id="analytics"><div class="section-title"><h2>15. SOP analytics</h2><p>Procédure standard à suivre pour garantir qualité, contrôle et exécution.</p></div><div class="timeline"><div class="tl"><h3>1. Lire la portée</h3><p>Combien de personnes ont vu le contenu.</p></div><div class="tl"><h3>2. Lire l’engagement</h3><p>Réactions, commentaires, clics, partages.</p></div><div class="tl"><h3>3. Lire la conversion</h3><p>Leads, appels, demandes, rendez-vous, intérêt réel.</p></div><div class="tl"><h3>4. Comparer au contexte</h3><p>Un bon résultat dépend du canal, de l’audience et de l’objectif.</p></div><div class="tl"><h3>5. Extraire une leçon</h3><p>Continuer, corriger, arrêter ou amplifier.</p></div><div class="tl"><h3>6. Transformer en action</h3><p>L’analyse doit créer une prochaine décision.</p></div></div></section><section id="variantes"><div class="section-title"><h2>16. Variantes de processus par type de contenu</h2><p>Chaque contenu n’a pas le même risque ni le même circuit de validation.</p></div><table class="table"><thead><tr><th>Type</th><th>Création</th><th>Revue</th><th>Publication</th><th>Risque spécial</th></tr></thead><tbody><tr><td>Post Meta</td><td>Caption + visuel + CTA</td><td>Reviewer + brand si sensible</td><td>Planification réseau social</td><td>Ton, promesse, visuel</td></tr><tr><td>LinkedIn</td><td>Post professionnel + preuve + crédibilité</td><td>Brand + direction si stratégique</td><td>Publication business</td><td>Posture faible ou trop commerciale</td></tr><tr><td>WhatsApp</td><td>Message court + CTA direct</td><td>Reviewer clarté</td><td>Diffusion manuelle ou liste</td><td>Pression excessive ou message flou</td></tr><tr><td>Email</td><td>Objet + corps + CTA</td><td>Conversion + qualité</td><td>Email OS</td><td>Spammy, faible CTA</td></tr><tr><td>Fiche service</td><td>Bénéfices + audience + détails service</td><td>Brand + opérationnel</td><td>PDF, site, sales</td><td>Promesse incorrecte</td></tr><tr><td>Script vidéo</td><td>Hook + séquence + message + CTA</td><td>Créatif + brand</td><td>Production vidéo</td><td>Coût si erreur brief</td></tr><tr><td>Article site</td><td>SEO + structure + confiance</td><td>SEO + brand</td><td>CMS/site web</td><td>Mauvais positionnement public</td></tr><tr><td>Support commercial</td><td>Argumentaire + objections + preuve</td><td>Sales + marketing</td><td>Utilisation interne</td><td>Données obsolètes</td></tr><tr><td>Campagne urgente</td><td>Version minimale contrôlée</td><td>Revue accélérée</td><td>Publication priorisée</td><td>Risque de sauter QA</td></tr><tr><td>Contenu sensible</td><td>Brief détaillé + précautions</td><td>Brand + direction</td><td>Publication contrôlée</td><td>Réputation et conformité</td></tr></tbody></table></section><section id="scenarios"><div class="section-title"><h2>17. Bibliothèque de scénarios opérationnels</h2><p>Ces situations entraînent l’utilisateur à réagir sans hésitation.</p></div><div class="grid"><div class="card"><h3>Scénario 1 — Publication demain encore en brouillon</h3><div class="scenario"><div><h4>Signal</h4><p>Le calendrier affiche demain, mais le statut est brouillon.</p></div><div><h4>Action</h4><p>Finaliser ou replanifier immédiatement.</p></div><div><h4>Escalade</h4><p>Marketing Director si campagne impactée.</p></div><div><h4>Prévention</h4><p>Contrôle calendrier quotidien.</p></div></div></div><div class="card"><h3>Scénario 2 — IA trop persuasive</h3><div class="scenario"><div><h4>Signal</h4><p>Le texte promet trop ou semble sensible.</p></div><div><h4>Action</h4><p>Envoyer en revue humaine et marque.</p></div><div><h4>Escalade</h4><p>Brand Manager.</p></div><div><h4>Prévention</h4><p>IA jamais finale.</p></div></div></div><div class="card"><h3>Scénario 3 — Visuel prêt, texte manquant</h3><div class="scenario"><div><h4>Signal</h4><p>Le média est final mais le contenu bloque.</p></div><div><h4>Action</h4><p>Assigner un propriétaire texte.</p></div><div><h4>Escalade</h4><p>Marketing Director si date proche.</p></div><div><h4>Prévention</h4><p>Brief complet dès le départ.</p></div></div></div><div class="card"><h3>Scénario 4 — Publisher reçoit un contenu non approuvé</h3><div class="scenario"><div><h4>Signal</h4><p>Statut ≠ approuvé.</p></div><div><h4>Action</h4><p>Refuser handoff et retourner en revue.</p></div><div><h4>Escalade</h4><p>Gouvernance si pression.</p></div><div><h4>Prévention</h4><p>Checklist publication.</p></div></div></div><div class="card"><h3>Scénario 5 — Trop d’urgences sur une personne</h3><div class="scenario"><div><h4>Signal</h4><p>Surcharge visible et SLA en danger.</p></div><div><h4>Action</h4><p>Réassigner tâches simples.</p></div><div><h4>Escalade</h4><p>Marketing Director.</p></div><div><h4>Prévention</h4><p>Revue charge hebdomadaire.</p></div></div></div><div class="card"><h3>Scénario 6 — Contenu sans propriétaire</h3><div class="scenario"><div><h4>Signal</h4><p>Asset créé mais personne responsable.</p></div><div><h4>Action</h4><p>Assigner ou bloquer.</p></div><div><h4>Escalade</h4><p>Marketing Ops.</p></div><div><h4>Prévention</h4><p>Aucun asset sans owner.</p></div></div></div><div class="card"><h3>Scénario 7 — Changement de date campagne</h3><div class="scenario"><div><h4>Signal</h4><p>Planning devient faux.</p></div><div><h4>Action</h4><p>Mettre à jour toutes les dates liées.</p></div><div><h4>Escalade</h4><p>Marketing Director.</p></div><div><h4>Prévention</h4><p>Source calendrier unique.</p></div></div></div><div class="card"><h3>Scénario 8 — Erreur post-publication</h3><div class="scenario"><div><h4>Signal</h4><p>Erreur détectée après handoff.</p></div><div><h4>Action</h4><p>Pause, corriger, documenter.</p></div><div><h4>Escalade</h4><p>Publisher + Brand.</p></div><div><h4>Prévention</h4><p>QA finale.</p></div></div></div><div class="card"><h3>Scénario 9 — Performance faible</h3><div class="scenario"><div><h4>Signal</h4><p>Engagement ou conversion bas.</p></div><div><h4>Action</h4><p>Analyser message, CTA, audience, timing.</p></div><div><h4>Escalade</h4><p>Marketing Director si répétitif.</p></div><div><h4>Prévention</h4><p>Post-mortem campagne.</p></div></div></div><div class="card"><h3>Scénario 10 — Reviewer absent</h3><div class="scenario"><div><h4>Signal</h4><p>File approbation bloquée.</p></div><div><h4>Action</h4><p>Assigner reviewer backup.</p></div><div><h4>Escalade</h4><p>Marketing Director.</p></div><div><h4>Prévention</h4><p>Plan backup.</p></div></div></div><div class="card"><h3>Scénario 11 — Média non conforme</h3><div class="scenario"><div><h4>Signal</h4><p>Logo, couleur ou format incorrect.</p></div><div><h4>Action</h4><p>Bloquer et renvoyer au design.</p></div><div><h4>Escalade</h4><p>Brand Manager.</p></div><div><h4>Prévention</h4><p>Bibliothèque média validée.</p></div></div></div><div class="card"><h3>Scénario 12 — Campagne sans contenu suffisant</h3><div class="scenario"><div><h4>Signal</h4><p>Lancement proche mais assets incomplets.</p></div><div><h4>Action</h4><p>Lister manquants et prioriser minimum viable.</p></div><div><h4>Escalade</h4><p>Direction marketing.</p></div><div><h4>Prévention</h4><p>Plan contenu par campagne.</p></div></div></div></div></section><section id="templates"><div class="section-title"><h2>18. Templates prêts à utiliser</h2><p>Langage standard pour accélérer les échanges sans perdre en qualité.</p></div><div class="grid g2"><div class="card"><h3>Demande de validation</h3><p><span class="kbd">Merci de vérifier ce contenu : clarté, ton AngelCare, CTA, risque de promesse, format canal. Campagne : [campagne]. Date : [date].</span></p></div><div class="card"><h3>Demande de correction</h3><p><span class="kbd">Correction demandée : [problème]. Merci de modifier [élément] avant [deadline] puis remettre en revue.</span></p></div><div class="card"><h3>Note de blocage</h3><p><span class="kbd">Bloqué car : [raison]. Propriétaire : [nom]. Action requise : [action]. Escalade si non résolu avant : [date/heure].</span></p></div><div class="card"><h3>Handoff publication</h3><p><span class="kbd">Contenu approuvé et prêt. Canal : [canal]. Date : [date]. Version finale : [lien]. CTA : [CTA].</span></p></div><div class="card"><h3>Escalade direction</h3><p><span class="kbd">Risque opérationnel : [impact]. Décision requise de [rôle] avant [heure/date]. Options : [A/B/C].</span></p></div><div class="card"><h3>Note IA</h3><p><span class="kbd">Contenu assisté par IA. À vérifier : exactitude, ton, claims, CTA, adaptation canal.</span></p></div><div class="card"><h3>Post-mortem performance</h3><p><span class="kbd">Résultat : [KPI]. Lecture : [analyse]. Action suivante : [continuer/corriger/arrêter/amplifier].</span></p></div><div class="card"><h3>Demande média</h3><p><span class="kbd">Besoin média : [format]. Canal : [canal]. Deadline : [date]. Contraintes : [dimensions/texte/logo].</span></p></div></div></section><section id="kpi"><div class="section-title"><h2>19. Lecture KPI et graphiques d’apprentissage</h2><p>Un utilisateur expert sait transformer les KPI en actions.</p></div><div class="grid g5"><div class="card"><h3>Vélocité contenu</h3><p>78% indicateur formation</p><div class="bar"><i style="width:78%"></i></div></div><div class="card"><h3>SLA validation</h3><p>64% indicateur formation</p><div class="bar"><i style="width:64%"></i></div></div><div class="card"><h3>Readiness publication</h3><p>83% indicateur formation</p><div class="bar"><i style="width:83%"></i></div></div><div class="card"><h3>Pression blocage</h3><p>35% indicateur formation</p><div class="bar"><i style="width:35%"></i></div></div><div class="card"><h3>Sécurité marque</h3><p>91% indicateur formation</p><div class="bar"><i style="width:91%"></i></div></div><div class="card"><h3>Discipline IA</h3><p>74% indicateur formation</p><div class="bar"><i style="width:74%"></i></div></div><div class="card"><h3>Exactitude calendrier</h3><p>86% indicateur formation</p><div class="bar"><i style="width:86%"></i></div></div><div class="card"><h3>Audit complet</h3><p>79% indicateur formation</p><div class="bar"><i style="width:79%"></i></div></div><div class="card"><h3>Santé campagne</h3><p>72% indicateur formation</p><div class="bar"><i style="width:72%"></i></div></div><div class="card"><h3>Équilibre charge</h3><p>58% indicateur formation</p><div class="bar"><i style="width:58%"></i></div></div></div><div class="grid g2" style="margin-top:18px"><div class="card"><h3>Pression hebdomadaire contenu</h3><p>Exemple de charge visible sur une semaine.</p><div class="mini-chart"><div style="height:32%"><span>Lun</span></div><div style="height:55%"><span>Mar</span></div><div style="height:72%"><span>Mer</span></div><div style="height:60%"><span>Jeu</span></div><div style="height:94%"><span>Ven</span></div><div style="height:78%"><span>Sam</span></div><div style="height:66%"><span>Dim</span></div></div></div><div class="card"><h3>Interprétation</h3><p>Si la pression monte avant vendredi, il faut avancer les validations, réduire les contenus non prioritaires et réassigner les tâches simples.</p></div></div></section><section id="qualite"><div class="section-title"><h2>20. Contrôle qualité par étape</h2><p>La qualité se construit à chaque phase, pas seulement juste avant publication.</p></div><div class="grid g3"><div class="card checklist"><h3>Avant revue</h3><label><input type="checkbox"/> Titre clair</label><label><input type="checkbox"/> Campagne sélectionnée</label><label><input type="checkbox"/> Propriétaire assigné</label><label><input type="checkbox"/> Canal sélectionné</label><label><input type="checkbox"/> Date due remplie</label><label><input type="checkbox"/> Date planifiée remplie</label><label><input type="checkbox"/> Brief complet</label><label><input type="checkbox"/> Média attaché si requis</label></div><div class="card checklist"><h3>Avant approbation</h3><label><input type="checkbox"/> Copie complète</label><label><input type="checkbox"/> Visuel final ou version claire</label><label><input type="checkbox"/> Claims sûrs</label><label><input type="checkbox"/> CTA clair</label><label><input type="checkbox"/> Ton marque correct</label><label><input type="checkbox"/> Sortie IA contrôlée</label><label><input type="checkbox"/> Aucun contexte manquant</label><label><input type="checkbox"/> Format canal respecté</label></div><div class="card checklist"><h3>Avant publication</h3><label><input type="checkbox"/> Statut approuvé</label><label><input type="checkbox"/> Canal correct</label><label><input type="checkbox"/> Version finale utilisée</label><label><input type="checkbox"/> Date confirmée</label><label><input type="checkbox"/> Audit clair</label><label><input type="checkbox"/> Aucun blocage ouvert</label><label><input type="checkbox"/> Publisher identifié</label><label><input type="checkbox"/> Checklist finale terminée</label></div></div></section>
+<section id="gouvernance">
+  <div class="section-title"><h2>21. Gouvernance et sécurité opérationnelle</h2><p>Le module doit rester contrôlé même quand l’équipe accélère.</p></div>
+  <div class="grid g4">
+    <div class="card"><h3>Approbation humaine</h3><p>L’IA ne peut pas approuver, publier ou contourner la gouvernance.</p><span class="badge red">Non négociable</span></div>
+    <div class="card"><h3>Traçabilité</h3><p>Les actions importantes doivent avoir propriétaire, date, raison et historique.</p><span class="badge green">Entreprise</span></div>
+    <div class="card"><h3>Frontières de rôle</h3><p>Le créateur crée, le reviewer valide, le publisher queue, le directeur arbitre.</p><span class="badge blue">Contrôle</span></div>
+    <div class="card"><h3>Rollback</h3><p>Si erreur : pause, correction, archivage, note audit, notification.</p><span class="badge gold">Récupération</span></div>
+  </div>
+</section>
+<section id="incidents"><div class="section-title"><h2>22. Incidents, dépannage et escalade</h2><p>Quand le système bloque, l’utilisateur doit savoir quoi faire immédiatement.</p></div><table class="table"><thead><tr><th>Problème</th><th>Cause probable</th><th>Première action</th><th>Escalade</th></tr></thead><tbody><tr><td>Item absent du calendrier</td><td>Date due ou planifiée absente</td><td>Corriger la date</td><td>Owner contenu</td></tr><tr><td>Publication impossible</td><td>Approbation absente</td><td>Retour revue</td><td>Reviewer / Brand</td></tr><tr><td>Contenu bloqué</td><td>Texte, visuel, validation ou décision manquante</td><td>Ajouter raison + owner</td><td>Marketing Director</td></tr><tr><td>Sortie IA risquée</td><td>Claim ou ton sensible</td><td>Ne pas publier</td><td>Brand Manager</td></tr><tr><td>Trop d’overdue</td><td>Surcharge ou manque d’arbitrage</td><td>Réassigner et prioriser</td><td>Marketing Director</td></tr><tr><td>Données non sauvegardées</td><td>API/Supabase/permission</td><td>Screenshot + étapes</td><td>Admin technique</td></tr><tr><td>Média mauvais format</td><td>Asset non adapté canal</td><td>Demander nouveau format</td><td>Design / Brand</td></tr><tr><td>Conflit de planning</td><td>Trop de contenus même date</td><td>Réordonner calendrier</td><td>Marketing Ops</td></tr></tbody></table></section><section id="rituels"><div class="section-title"><h2>23. Rituels d’équipe recommandés</h2><p>Sans rituels, le module devient une base de données. Avec rituels, il devient un système d’exécution.</p></div><div class="grid g3">
+    <article class="card ">
+      <h3>Daily 10 minutes</h3>
+      <p>Chaque matin : urgences, blocages, approbations, publications du jour.</p>
+      <span class="badge ">Rituel</span>
+    </article>
+    
+    <article class="card ">
+      <h3>Weekly planning</h3>
+      <p>Chaque semaine : calendrier, campagnes, charge équipe, risques, priorités.</p>
+      <span class="badge ">Rituel</span>
+    </article>
+    
+    <article class="card ">
+      <h3>Approval cleanup</h3>
+      <p>Deux fois par semaine : vider la file de revue et décider.</p>
+      <span class="badge ">Rituel</span>
+    </article>
+    
+    <article class="card ">
+      <h3>Campaign readiness</h3>
+      <p>Avant lancement : vérifier assets, dates, canaux, médias, CTA, approbations.</p>
+      <span class="badge ">Rituel</span>
+    </article>
+    
+    <article class="card ">
+      <h3>Post-publication review</h3>
+      <p>Après publication : résultat, apprentissage, prochaine action.</p>
+      <span class="badge ">Rituel</span>
+    </article>
+    
+    <article class="card ">
+      <h3>Monthly governance</h3>
+      <p>Contrôler qualité, erreurs récurrentes, rôle, audit, sécurité IA.</p>
+      <span class="badge ">Rituel</span>
+    </article>
+    </div></section><section id="erreurs"><div class="section-title"><h2>24. Erreurs classiques à éviter</h2><p>Ces erreurs détruisent la discipline opérationnelle.</p></div><div class="grid g4">
+    <article class="card ">
+      <h3>Créer sans propriétaire</h3>
+      <p>Chaque asset doit avoir un owner.</p>
+      <span class="badge ">À éviter</span>
+    </article>
+    
+    <article class="card ">
+      <h3>Confondre due date et scheduled date</h3>
+      <p>La première est interne, la deuxième concerne usage/publication.</p>
+      <span class="badge ">À éviter</span>
+    </article>
+    
+    <article class="card ">
+      <h3>Publier sans approbation</h3>
+      <p>Interdit, même si le contenu semble prêt.</p>
+      <span class="badge ">À éviter</span>
+    </article>
+    
+    <article class="card ">
+      <h3>Utiliser l’IA comme vérité finale</h3>
+      <p>L’IA assiste, l’humain valide.</p>
+      <span class="badge ">À éviter</span>
+    </article>
+    
+    <article class="card ">
+      <h3>Laisser un blocage vague</h3>
+      <p>Un blocage doit avoir raison, owner, action et deadline.</p>
+      <span class="badge ">À éviter</span>
+    </article>
+    
+    <article class="card ">
+      <h3>Oublier le canal</h3>
+      <p>Un contenu sans canal ne peut pas être préparé correctement.</p>
+      <span class="badge ">À éviter</span>
+    </article>
+    
+    <article class="card ">
+      <h3>Ne pas archiver les anciennes versions</h3>
+      <p>Crée confusion et risque d’utiliser le mauvais asset.</p>
+      <span class="badge ">À éviter</span>
+    </article>
+    
+    <article class="card ">
+      <h3>Ignorer les KPI</h3>
+      <p>Sans apprentissage, l’équipe répète les mêmes erreurs.</p>
+      <span class="badge ">À éviter</span>
+    </article>
+    </div></section><section id="admin"><div class="section-title"><h2>25. Guide rapide administrateur</h2><p>Pour maintenir le module en production, l’admin doit contrôler ces points.</p></div><div class="grid g4">
+    <article class="card ">
+      <h3>Vérifier les routes</h3>
+      <p>Main, calendar, create, detail, edit, APIs.</p>
+      <span class="badge ">Admin</span>
+    </article>
+    
+    <article class="card ">
+      <h3>Vérifier Supabase</h3>
+      <p>Tables, colonnes, RLS, audit, événements.</p>
+      <span class="badge ">Admin</span>
+    </article>
+    
+    <article class="card ">
+      <h3>Vérifier permissions</h3>
+      <p>Rôles et accès cohérents.</p>
+      <span class="badge ">Admin</span>
+    </article>
+    
+    <article class="card ">
+      <h3>Vérifier build</h3>
+      <p>npm run build doit passer.</p>
+      <span class="badge ">Admin</span>
+    </article>
+    
+    <article class="card ">
+      <h3>Vérifier API</h3>
+      <p>/api/market-os/content-command/assets doit retourner JSON.</p>
+      <span class="badge ">Admin</span>
+    </article>
+    
+    <article class="card ">
+      <h3>Vérifier audit</h3>
+      <p>Les mutations importantes doivent écrire une trace.</p>
+      <span class="badge ">Admin</span>
+    </article>
+    
+    <article class="card ">
+      <h3>Vérifier IA</h3>
+      <p>Clés serveur uniquement, sortie en revue.</p>
+      <span class="badge ">Admin</span>
+    </article>
+    
+    <article class="card ">
+      <h3>Vérifier publication</h3>
+      <p>Queue humaine, pas publication directe client.</p>
+      <span class="badge ">Admin</span>
+    </article>
+    </div></section><section id="faq"><div class="section-title"><h2>26. FAQ utilisateur</h2><p>Réponses simples aux questions fréquentes.</p></div><table class="table"><thead><tr><th>Question</th><th>Réponse</th></tr></thead><tbody><tr><td>Pourquoi mon contenu n’apparaît pas dans le calendrier ?</td><td>Parce qu’il manque probablement une date due ou planifiée.</td></tr><tr><td>Puis-je publier un contenu en brouillon ?</td><td>Non. Il doit être approuvé.</td></tr><tr><td>Puis-je utiliser l’IA pour finaliser un contenu ?</td><td>Oui pour aider, non pour valider seule.</td></tr><tr><td>Qui décide en cas de conflit de priorité ?</td><td>Marketing Director.</td></tr><tr><td>Que faire si je ne sais pas le bon canal ?</td><td>Demander au responsable campagne ou marketing.</td></tr><tr><td>Que faire si le contenu est urgent mais incomplet ?</td><td>Marquer le risque, compléter minimum viable, escalader.</td></tr><tr><td>Pourquoi l’audit est important ?</td><td>Pour savoir qui a décidé quoi et éviter les erreurs répétées.</td></tr><tr><td>Quand archiver un contenu ?</td><td>Quand il n’est plus actif ou a été remplacé.</td></tr></tbody></table></section><section id="certification"><div class="section-title"><h2>27. Certification interne utilisateur</h2><p>Un utilisateur expert sait agir sans attendre qu’on lui dise quoi faire.</p></div><div class="grid g5">
+    <article class="card ">
+      <h3>Niveau 1 — Débutant</h3>
+      <p>Comprend l’objectif, les statuts, la navigation, la création et le calendrier.</p>
+      <span class="badge ">Base</span>
+    </article>
+    
+    <article class="card ">
+      <h3>Niveau 2 — Opérateur</h3>
+      <p>Crée, planifie, demande revue, corrige et met à jour les statuts.</p>
+      <span class="badge ">Opérationnel</span>
+    </article>
+    
+    <article class="card ">
+      <h3>Niveau 3 — Producteur</h3>
+      <p>Gère plusieurs types de contenu et prépare la publication.</p>
+      <span class="badge ">Production</span>
+    </article>
+    
+    <article class="card ">
+      <h3>Niveau 4 — Superviseur</h3>
+      <p>Lit les KPI, arbitre, débloque, réassigne et escalade.</p>
+      <span class="badge ">Leadership</span>
+    </article>
+    
+    <article class="card ">
+      <h3>Niveau 5 — Expert</h3>
+      <p>Utilise IA avec sécurité, maintient audit, forme les autres et améliore les processus.</p>
+      <span class="badge ">Expert</span>
+    </article>
+    </div></section>
+<section id="final">
+  <div class="section-title"><h2>28. Standard final 100% opérationnel</h2><p>Le niveau final attendu pour utiliser le module en production.</p></div>
+  <div class="callout">
+    <b>Promesse opérationnelle finale</b>
+    Un utilisateur formé doit être capable de regarder n’importe quel contenu et de comprendre immédiatement :
+    son objectif, son propriétaire, son statut, sa date due, sa date planifiée, son canal, son risque, son blocage,
+    son niveau d’approbation, sa readiness publication, et la prochaine action à exécuter.
+  </div>
+</section>
+
+<div class="footer">AngelCare Content Command Center · Académie Premium · Manuel SOP + Workflows + Scénarios · Version 4.0</div>
+</main>
+</div>
+</body>
+</html>

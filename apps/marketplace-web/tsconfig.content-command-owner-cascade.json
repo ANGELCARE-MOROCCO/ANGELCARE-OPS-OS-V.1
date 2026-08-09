@@ -1,0 +1,24 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "skipLibCheck": true,
+    "incremental": false
+  },
+  "include": [
+    "app/api/market-os/content-command/campaigns/action/route.ts",
+    "app/api/market-os/content-command/opportunities/action/route.ts",
+    "app/api/market-os/content-command-headquarters/record-governance/route.ts",
+    "components/market-os/content-command/ContentCommand360Home.tsx",
+    "components/market-os/content-command/experience-bulk11/Bulk11OpportunityCommandWorkspace.tsx",
+    "components/market-os/content-command/experience-bulk11/bulk11-opportunity-model.ts",
+    "components/market-os/content-command/headquarters/mz2-view-models.ts",
+    "components/market-os/content-command/experience-bulk9/bulk9-governance-model.ts",
+    "components/market-os/content-command/experience-bulk9/RecordGovernanceAuthority.tsx",
+    "components/market-os/content-command/experience-bulk12/Bulk12CampaignOperatingWorkspace.tsx",
+    "components/market-os/content-command/runtime/CascadeDisposalPanel.tsx",
+    "lib/market-os/content-command-headquarters/campaign-orchestration-service.ts",
+    "lib/market-os/content-command-headquarters/opportunity-intelligence-service.ts",
+    "lib/market-os/content-command-headquarters/record-lifecycle-service.ts"
+  ]
+}

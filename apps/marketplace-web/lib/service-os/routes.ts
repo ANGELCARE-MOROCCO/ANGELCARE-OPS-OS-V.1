@@ -1,0 +1,18 @@
+export const serviceOSRoutes = [
+  { label: 'Enterprise Command', href: '/services/enterprise', role: 'executive' },
+  { label: 'Blueprints', href: '/services/blueprints', role: 'ops' },
+  { label: 'Configuration', href: '/services/configuration', role: 'admin' },
+  { label: 'Rules', href: '/services/rules', role: 'admin' },
+  { label: 'Operations', href: '/services/operations', role: 'ops' },
+  { label: 'Workflows', href: '/services/workflows', role: 'ops' },
+  { label: 'Incidents', href: '/services/incidents', role: 'quality' },
+  { label: 'Commercial', href: '/services/commercial', role: 'sales' },
+  { label: 'Pricing Engine', href: '/services/pricing-engine', role: 'finance' },
+  { label: 'Subscriptions', href: '/services/subscriptions', role: 'finance' },
+  { label: 'Live Ops', href: '/services/live-ops', role: 'ops' },
+  { label: 'Capacity', href: '/services/capacity', role: 'ops' },
+  { label: 'Expansion', href: '/services/expansion', role: 'executive' },
+  { label: 'AI Matching', href: '/services/ai-matching', role: 'ops' },
+  { label: 'AI Strategy', href: '/services/ai-strategy', role: 'executive' },
+  { label: 'Market Intelligence', href: '/services/market-intelligence', role: 'marketing' },
+]

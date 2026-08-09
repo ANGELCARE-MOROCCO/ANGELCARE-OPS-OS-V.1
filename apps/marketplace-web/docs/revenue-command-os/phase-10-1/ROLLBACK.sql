@@ -1,0 +1,11 @@
+BEGIN;
+DROP TABLE IF EXISTS public.revenue_os_ai_jobs;
+DROP TABLE IF EXISTS public.revenue_os_ai_response_cache;
+DROP TABLE IF EXISTS public.revenue_os_ai_provider_health;
+DROP TABLE IF EXISTS public.revenue_os_ai_quota_usage;
+DROP TABLE IF EXISTS public.revenue_os_ai_run_attempts;
+DROP TABLE IF EXISTS public.revenue_os_ai_prompt_versions;
+DROP TABLE IF EXISTS public.revenue_os_ai_models;
+DROP TABLE IF EXISTS public.revenue_os_ai_providers;
+UPDATE public.revenue_os_installations SET release_code='AC-REVENUE-OS-MZ10-STRATEGY-BRAIN',module_version='10.0.0-phase10',execution_mode='shadow',external_actions_enabled=false,metadata=coalesce(metadata,'{}'::jsonb)-'currentPhase'-'geminiGateway'-'providerNeutral',updated_at=now() WHERE installation_key='revenue-command-os';
+COMMIT;

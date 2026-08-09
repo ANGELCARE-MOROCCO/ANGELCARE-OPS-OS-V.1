@@ -1,0 +1,83 @@
+export const B2B_PARTNERSHIPS_PERMISSIONS = [
+  {
+    key: 'b2b_partnerships.access',
+    label: 'Access B2B Partnerships',
+    description: 'Open the B2B Partnerships module.',
+    group: 'B2B Partnerships',
+  },
+  {
+    key: 'b2b_partnerships.read',
+    label: 'Read B2B Partnerships',
+    description: 'View B2B prospects, pipeline, tasks, meetings, proposals and reports.',
+    group: 'B2B Partnerships',
+  },
+  {
+    key: 'b2b_partnerships.create',
+    label: 'Create B2B Records',
+    description: 'Create prospects, contacts, tasks, meetings, campaigns and proposals.',
+    group: 'B2B Partnerships',
+  },
+  {
+    key: 'b2b_partnerships.update',
+    label: 'Update B2B Records',
+    description: 'Edit B2B records, workflow states and follow-up actions.',
+    group: 'B2B Partnerships',
+  },
+  {
+    key: 'b2b_partnerships.delete',
+    label: 'Delete / Archive B2B Records',
+    description: 'Archive or delete B2B records when allowed.',
+    group: 'B2B Partnerships',
+  },
+  {
+    key: 'b2b_partnerships.manage_templates',
+    label: 'Manage B2B Templates',
+    description: 'Create and edit emails, WhatsApp messages, call scripts and LinkedIn templates.',
+    group: 'B2B Partnerships',
+  },
+  {
+    key: 'b2b_partnerships.manage_campaigns',
+    label: 'Manage B2B Campaigns',
+    description: 'Create campaigns, sequences and prospect enrollment.',
+    group: 'B2B Partnerships',
+  },
+  {
+    key: 'b2b_partnerships.manage_automation',
+    label: 'Manage B2B Automation',
+    description: 'Configure scoring rules, automation rules and triggers.',
+    group: 'B2B Partnerships',
+  },
+  {
+    key: 'b2b_partnerships.manage_reports',
+    label: 'Manage B2B Reports',
+    description: 'Generate and manage B2B reports and KPI views.',
+    group: 'B2B Partnerships',
+  },
+  {
+    key: 'b2b_partnerships.manage_settings',
+    label: 'Manage B2B Settings',
+    description: 'Configure statuses, channels, categories, targets and governance.',
+    group: 'B2B Partnerships',
+  },
+] as const
+
+export const B2B_PARTNERSHIPS_ROUTE_PERMISSIONS = [
+  { path: '/b2b-partnerships', label: 'B2B Partnerships', permissionKey: 'b2b_partnerships.access', group: 'Business Development' },
+  { path: '/b2b-partnerships/prospects', label: 'B2B Prospect Directory', permissionKey: 'b2b_partnerships.read', group: 'Business Development' },
+  { path: '/b2b-partnerships/pipeline', label: 'B2B Pipeline Board', permissionKey: 'b2b_partnerships.read', group: 'Business Development' },
+  { path: '/b2b-partnerships/outreach', label: 'B2B Outreach Cockpit', permissionKey: 'b2b_partnerships.read', group: 'Business Development' },
+  { path: '/b2b-partnerships/templates', label: 'B2B Templates & Scripts', permissionKey: 'b2b_partnerships.manage_templates', group: 'Business Development' },
+  { path: '/b2b-partnerships/campaigns', label: 'B2B Campaigns & Sequences', permissionKey: 'b2b_partnerships.manage_campaigns', group: 'Business Development' },
+  { path: '/b2b-partnerships/imports', label: 'B2B Import Hub', permissionKey: 'b2b_partnerships.create', group: 'Business Development' },
+  { path: '/b2b-partnerships/automation', label: 'B2B Automation & Scoring', permissionKey: 'b2b_partnerships.manage_automation', group: 'Business Development' },
+  { path: '/b2b-partnerships/meetings', label: 'B2B Meetings & Follow-ups', permissionKey: 'b2b_partnerships.read', group: 'Business Development' },
+  { path: '/b2b-partnerships/tasks', label: 'B2B Tasks & Assignments', permissionKey: 'b2b_partnerships.read', group: 'Business Development' },
+  { path: '/b2b-partnerships/execution', label: 'B2B Intern Execution OS', permissionKey: 'b2b_partnerships.read', group: 'Business Development' },
+  { path: '/b2b-partnerships/proposals', label: 'B2B Partnership Proposals', permissionKey: 'b2b_partnerships.read', group: 'Business Development' },
+  { path: '/b2b-partnerships/programs', label: 'B2B Partner Programs', permissionKey: 'b2b_partnerships.read', group: 'Business Development' },
+  { path: '/b2b-partnerships/reports', label: 'B2B Reports & KPIs', permissionKey: 'b2b_partnerships.manage_reports', group: 'Business Development' },
+  { path: '/b2b-partnerships/settings', label: 'B2B Settings & Controls', permissionKey: 'b2b_partnerships.manage_settings', group: 'Business Development' },
+  { path: '/b2b-partnerships/integration', label: 'B2B Integration Hub', permissionKey: 'b2b_partnerships.update', group: 'Business Development' },
+  { path: '/b2b-partnerships/intelligence', label: 'B2B Executive Intelligence', permissionKey: 'b2b_partnerships.manage_reports', group: 'Business Development' },
+  { path: '/b2b-partnerships/quality', label: 'B2B QA Health Center', permissionKey: 'b2b_partnerships.manage_settings', group: 'Business Development' },
+] as const

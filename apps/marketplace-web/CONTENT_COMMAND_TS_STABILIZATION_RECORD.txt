@@ -1,0 +1,6 @@
+installed_at=2026-07-29T19:35:42Z
+backup=/Users/user/Desktop/angelcare-platform/.angelcare_backups/content-command-ts-stabilization-20260729-203542
+package=/Users/user/Downloads/ANGELCARE_CONTENT_COMMAND_CENTER_TYPESCRIPT_STABILIZATION_20260729-202659
+scope=reported-content-command-typescript-diagnostics
+sql=not-run
+build=not-run

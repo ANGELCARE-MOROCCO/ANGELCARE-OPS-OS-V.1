@@ -1,0 +1,3 @@
+import type {RevenueObjective,RevenueStrategy,StrategyComparison,ContextSnapshot} from './types';
+export interface StrategyRepository {createObjective(o:RevenueObjective):Promise<void>;getObjective(id:string,tenantId:string):Promise<RevenueObjective|null>;saveContext(c:ContextSnapshot):Promise<void>;saveStrategies(s:RevenueStrategy[]):Promise<void>;saveComparison(c:StrategyComparison):Promise<void>;listStrategies(objectiveId:string,tenantId:string):Promise<RevenueStrategy[]>;archiveStrategy(strategyId:string,tenantId:string,reason:string):Promise<void>;}
+export function requireTenant<T extends {tenantId:string}>(row:T,tenantId:string){if(row.tenantId!==tenantId)throw new Error('TENANT_BOUNDARY_VIOLATION');return row}

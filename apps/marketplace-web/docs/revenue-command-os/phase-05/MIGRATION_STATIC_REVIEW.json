@@ -1,0 +1,52 @@
+{
+  "generatedAt": "2026-07-20T15:12:31.279761+00:00",
+  "migration": "apps/ops-web/supabase/migrations/20260720_revenue_command_os_phase5_command_kernel.sql",
+  "mode": "static review only; no live database migration applied",
+  "result": "PASS",
+  "checks": {
+    "transactionBegin": true,
+    "transactionCommit": true,
+    "balancedDollarQuoteMarkers": true,
+    "tablesCreated": 23,
+    "tableNamesUnique": true,
+    "rlsEnableLoopPresent": true,
+    "clientRolesRevoked": true,
+    "serviceRoleGranted": true,
+    "permissionRegistryCompatibility": true,
+    "featureFlagRegistryCompatibility": true,
+    "installationRegistryCompatibility": true,
+    "shadowModePersisted": true,
+    "externalActionsDisabled": false,
+    "noNextPublicSecrets": true,
+    "rollbackSqlPresent": true
+  },
+  "tables": [
+    "revenue_os_command_families",
+    "revenue_os_command_definitions",
+    "revenue_os_command_versions",
+    "revenue_os_command_eligibility_rules",
+    "revenue_os_command_context_contracts",
+    "revenue_os_command_tool_permissions",
+    "revenue_os_command_triggers",
+    "revenue_os_command_schedules",
+    "revenue_os_command_graphs",
+    "revenue_os_command_graph_nodes",
+    "revenue_os_command_run_plans",
+    "revenue_os_command_runs",
+    "revenue_os_command_run_steps",
+    "revenue_os_command_idempotency",
+    "revenue_os_command_approval_classes",
+    "revenue_os_command_permission_evaluations",
+    "revenue_os_command_output_validations",
+    "revenue_os_command_rollbacks",
+    "revenue_os_command_retirements",
+    "revenue_os_command_test_cases",
+    "revenue_os_command_test_runs",
+    "revenue_os_command_kernel_validation_issues",
+    "revenue_os_command_kernel_snapshots"
+  ],
+  "limitations": [
+    "PostgreSQL execution was not performed because no live Supabase database was connected.",
+    "The migration remains manual by contract and must be applied through Supabase SQL Editor."
+  ]
+}

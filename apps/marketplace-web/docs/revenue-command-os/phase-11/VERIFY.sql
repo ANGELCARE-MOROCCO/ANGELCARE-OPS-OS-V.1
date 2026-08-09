@@ -1,0 +1,6 @@
+\set ON_ERROR_STOP on
+SELECT installation_key,release_code,module_version,execution_mode,contract_locked,external_actions_enabled,metadata->>'currentPhase' AS current_phase,metadata->>'validationCouncil' AS validation_council,metadata->>'mandatoryAgents' AS mandatory_agents FROM public.revenue_os_installations WHERE installation_key='revenue-command-os';
+SELECT count(*) AS council_tables FROM information_schema.tables WHERE table_schema='public' AND table_name LIKE 'revenue_os_council_%';
+SELECT agent_code,display_name,run_order,status,execution_mode,external_actions_enabled FROM public.revenue_os_council_agents ORDER BY run_order;
+SELECT count(*) AS active_agents FROM public.revenue_os_council_agents WHERE status='active';
+DO $$ BEGIN IF (SELECT count(*) FROM public.revenue_os_council_agents WHERE status='active')<>10 THEN RAISE EXCEPTION 'Expected 10 active MZ11 agents';END IF;IF (SELECT count(*) FROM information_schema.tables WHERE table_schema='public' AND table_name LIKE 'revenue_os_council_%')<15 THEN RAISE EXCEPTION 'Expected at least 15 MZ11 council tables';END IF;IF EXISTS(SELECT 1 FROM public.revenue_os_council_agents WHERE external_actions_enabled) THEN RAISE EXCEPTION 'External actions enabled in MZ11';END IF;END $$;

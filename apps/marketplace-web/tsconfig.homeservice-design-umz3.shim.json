@@ -1,0 +1,11 @@
+{
+  "extends":"./tsconfig.homeservice-design-umz2.shim.json",
+  "include":[
+    "types/homeservice-design.ts","types/homeservice-planning.ts","types/homeservice-commercial.ts",
+    "lib/homeservice-design/**/*.ts","lib/homeservice-planning/**/*.ts","lib/homeservice-commercial/**/*.ts",
+    "components/carelink/service-design/**/*.tsx",
+    "app/carelink-ops/service-design/**/*.ts","app/carelink-ops/service-design/**/*.tsx",
+    "app/api/carelink-ops/service-design/**/*.ts",
+    "scripts/homeservice-design/verify-shims.d.ts","scripts/homeservice-design/umz2-shims.d.ts","scripts/homeservice-design/umz3-shims.d.ts"
+  ]
+}

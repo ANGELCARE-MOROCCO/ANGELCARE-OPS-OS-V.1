@@ -1,0 +1,35 @@
+{
+  "phase": "MZ16",
+  "tenant": "00000000-0000-0000-0000-000000000016",
+  "outcomes": [
+    {
+      "strategy": "STRAT-ACADEMY-RABAT-CASA",
+      "plannedRevenue": 1800000,
+      "actualRevenue": 1420000,
+      "executionCompleteness": 0.92,
+      "classification": "partial_success"
+    }
+  ],
+  "experiments": [
+    {
+      "code": "EXP-MSG-001",
+      "type": "message",
+      "control": true,
+      "variants": 2,
+      "sampleSize": 200
+    }
+  ],
+  "queues": [
+    {
+      "name": "revenue-learning",
+      "depth": 42,
+      "oldestJobAgeSeconds": 68,
+      "status": "healthy"
+    }
+  ],
+  "activation": {
+    "level": 4,
+    "mode": "approval_required",
+    "externalActions": false
+  }
+}

@@ -1,0 +1,7 @@
+release=AC-CONTENT-COMMAND-PRODUCTION-OPERATIONS-1.0
+installed_at=2026-08-01T02:51:35Z
+backup=/Users/user/Desktop/angelcare-platform/.angelcare_backups/content-command-production-operations-20260801-035132
+installer_mode=owner-cascade-compatible-v2-phantom-filtered
+controlled_preservation_exception=components/market-os/content-command/experience-bulk11/bulk11-opportunity.module.css.d.ts
+controlled_preservation_sha256=0c93d02d4bb86017fc77fac2ed8702c01c4c7678e4d186127671e9e2e024d53b
+sql_required=20260801_0300_content_command_production_operations_release_control.sql

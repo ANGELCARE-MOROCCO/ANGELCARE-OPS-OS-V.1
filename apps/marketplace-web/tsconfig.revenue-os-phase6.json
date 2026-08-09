@@ -1,0 +1,28 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "strict": true,
+    "skipLibCheck": true
+  },
+  "include": [
+    "lib/revenue-command-os/command-kernel/types.ts",
+    "lib/revenue-command-os/command-kernel/constants.ts",
+    "lib/revenue-command-os/command-kernel/golden-300/**/*.ts",
+    "lib/revenue-command-os/command-kernel/seed-data.ts",
+    "lib/revenue-command-os/command-kernel/eligibility.ts",
+    "lib/revenue-command-os/command-kernel/permissions.ts",
+    "lib/revenue-command-os/command-kernel/idempotency.ts",
+    "lib/revenue-command-os/command-kernel/router.ts",
+    "lib/revenue-command-os/command-kernel/graph.ts",
+    "lib/revenue-command-os/command-kernel/scheduler.ts",
+    "lib/revenue-command-os/command-kernel/runtime.ts",
+    "lib/revenue-command-os/command-kernel/validation.ts",
+    "app/api/revenue-command-os/command-kernel/golden-300/route.ts",
+    "app/(protected)/revenue-command-os/command-kernel/**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    ".next"
+  ]
+}

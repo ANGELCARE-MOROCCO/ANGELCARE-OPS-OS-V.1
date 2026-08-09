@@ -1,0 +1,21 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "strict": true,
+    "skipLibCheck": true
+  },
+  "include": [
+    "app/carelink-ops/service-design/**/*.ts",
+    "app/carelink-ops/service-design/**/*.tsx",
+    "app/api/carelink-ops/service-design/**/*.ts",
+    "app/api/carelink-ops/service-design/**/*.tsx",
+    "components/carelink/service-design/**/*.ts",
+    "components/carelink/service-design/**/*.tsx",
+    "lib/homeservice-design/**/*.ts",
+    "lib/homeservice-factory/**/*.ts",
+    "lib/service-design-product-experience/**/*.ts",
+    "lib/service-design-documents/**/*.ts",
+    "lib/service-design-mastery/**/*.ts"
+  ]
+}

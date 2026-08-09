@@ -1,0 +1,13 @@
+{
+  "extends":"./tsconfig.json",
+  "compilerOptions":{"noEmit":true,"skipLibCheck":true,"incremental":false,"composite":false},
+  "include":[
+    "app/(protected)/market-os/content-command-center/campaigns/**/*.tsx",
+    "app/api/market-os/content-command/campaigns/**/*.ts",
+    "components/market-os/content-command/experience-bulk12/**/*.ts",
+    "components/market-os/content-command/experience-bulk12/**/*.tsx",
+    "components/market-os/content-command/content-command-navigation.tsx",
+    "components/market-os/content-command/experience-bulk11/Bulk11OpportunityCommandWorkspace.tsx",
+    "lib/market-os/content-command-headquarters/campaign-orchestration-service.ts"
+  ]
+}

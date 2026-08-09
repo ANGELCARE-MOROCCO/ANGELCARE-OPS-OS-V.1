@@ -1,0 +1,18 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "incremental": false,
+    "noEmit": true,
+    "skipLibCheck": true
+  },
+  "include": [
+    "next-env.d.ts",
+    "app/(protected)/revenue-command-center/appointments/**/*.tsx",
+    "app/api/revenue-command-center/engagement/**/*.ts",
+    "components/revenue-command-center/engagement-enterprise/**/*.ts",
+    "components/revenue-command-center/engagement-enterprise/**/*.tsx",
+    "lib/revenue-command-center/engagement-enterprise/**/*.ts",
+    "lib/revenue-command-center/api-access.ts",
+    "lib/revenue-command-center/canonical-server.ts"
+  ]
+}

@@ -1,0 +1,3 @@
+export const FREE_ROUTE='openrouter/free' as const
+export const SCENARIO_LIMIT=10
+export const EVENTS={requestCreated:'homeservice.commercial.request_created',pricingCalculated:'homeservice.commercial.pricing_calculated',marginBlocked:'homeservice.commercial.margin_blocked',offerSubmitted:'homeservice.commercial.offer_submitted',offerApproved:'homeservice.commercial.offer_approved',offerRejected:'homeservice.commercial.offer_rejected',bundleApproved:'homeservice.commercial.bundle_approved',sellablePublished:'homeservice.sellable.published',sellableSuspended:'homeservice.sellable.suspended',sellableSuperseded:'homeservice.sellable.superseded'} as const

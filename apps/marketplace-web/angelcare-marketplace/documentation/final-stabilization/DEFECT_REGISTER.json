@@ -1,0 +1,38 @@
+{
+  "programme": "ANGELCARE Marketplace Final Stabilization",
+  "status": "SOURCE_DEFECTS_RESOLVED_ENVIRONMENTAL_EVIDENCE_PENDING",
+  "defects": [
+    {
+      "id": "STAB-001",
+      "severity": "high",
+      "domain": "Discovery API",
+      "title": "Discovery search adapter exceeded thin-adapter contract",
+      "status": "verified",
+      "resolution": "Reduced to three non-empty lines without changing repository behavior."
+    },
+    {
+      "id": "STAB-002",
+      "severity": "high",
+      "domain": "Homepage UIX",
+      "title": "Twenty-six responsive commercial assets were missing",
+      "status": "verified",
+      "resolution": "Created a complete local 29-SVG Homepage visual estate."
+    },
+    {
+      "id": "STAB-003",
+      "severity": "medium",
+      "domain": "Homepage CSS",
+      "title": "heroEyebrow CSS Module class was referenced but absent",
+      "status": "verified",
+      "resolution": "Added the scoped class without changing the accepted composition."
+    },
+    {
+      "id": "STAB-004",
+      "severity": "medium",
+      "domain": "Homepage media",
+      "title": "Two legacy SVGs rendered intended content outside the viewport",
+      "status": "verified",
+      "resolution": "Corrected SVG composition and viewport placement."
+    }
+  ]
+}

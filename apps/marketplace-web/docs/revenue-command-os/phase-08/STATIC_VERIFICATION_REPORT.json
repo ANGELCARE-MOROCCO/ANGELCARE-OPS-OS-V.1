@@ -1,0 +1,9 @@
+{
+  "phase": "MZ08",
+  "passed": 30006,
+  "failed": 0,
+  "commands": 2000,
+  "newCommands": 1000,
+  "domains": 23,
+  "externalActions": 0
+}

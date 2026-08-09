@@ -1,0 +1,6 @@
+import { Sparkles, Clock3, CircleAlert } from 'lucide-react'
+import type { ConceptLayoutProps } from '../types'
+
+export function NewbornCalmConcept({ blueprint, renderSection }: ConceptLayoutProps) {
+  return <div className="space-y-5"><div className="rounded-[30px] border border-cyan-200 bg-gradient-to-r from-cyan-50 via-white to-sky-50 p-5"><div className="flex flex-wrap items-center gap-4"><div className="grid h-14 w-14 place-items-center rounded-full bg-cyan-600 text-white"><Sparkles size={24} /></div><div><p className="text-[10px] font-black uppercase tracking-[.2em] text-cyan-700">Rythmes calmes et non médicaux</p><h3 className="mt-1 text-2xl font-black text-slate-950">Alimentation · change · sommeil · éveil doux</h3></div><div className="ml-auto flex gap-2"><span className="rounded-full bg-white px-3 py-2 text-xs font-black text-cyan-800"><Clock3 className="mr-1 inline" size={14} />Rythme</span><span className="rounded-full bg-white px-3 py-2 text-xs font-black text-cyan-800"><CircleAlert className="mr-1 inline" size={14} />Apaisement</span></div></div></div><div className="grid gap-5 xl:grid-cols-2">{blueprint.sections.slice(0, 4).map((section) => <div key={section.code}>{renderSection(section)}</div>)}</div>{blueprint.sections.slice(4).map((section) => <div key={section.code}>{renderSection(section)}</div>)}</div>
+}

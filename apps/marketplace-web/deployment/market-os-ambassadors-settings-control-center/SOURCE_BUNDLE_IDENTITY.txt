@@ -1,0 +1,8 @@
+Exclusive source bundle:
+ANGELCARE_MARKET_OS_AMBASSADORS_FINAL_STABILIZED_SETTINGS_SOURCE_20260721-065047.zip
+
+Authorized route:
+apps/ops-web/app/(protected)/market-os/ambassadors/settings/page.tsx
+
+Build doctrine:
+Additive Settings Control Center over the final stabilized Ambassador baseline.

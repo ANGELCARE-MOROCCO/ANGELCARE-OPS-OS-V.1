@@ -1,0 +1,3 @@
+import fs from 'fs'; const files=['components/market-os/content-command/release/release-ui.tsx','components/market-os/content-command/headquarters/ValidationWorkspace.tsx','components/market-os/content-command/headquarters/DistributionWorkspace.tsx','components/market-os/content-command/content-publishing-page.tsx','components/market-os/content-command/release/mz7-release.module.css']; const s=files.map(f=>fs.readFileSync(f,'utf8')).join('\n');
+for(const token of ['aria-live','role="dialog"','aria-modal="true"','aria-label','Escape','prefers-reduced-motion']) if(!s.includes(token)) throw new Error(`Accessibility provision missing: ${token}`);
+console.log('PASS — MZ7 provides keyboard labels, live announcements, dialog semantics and reduced-motion support');

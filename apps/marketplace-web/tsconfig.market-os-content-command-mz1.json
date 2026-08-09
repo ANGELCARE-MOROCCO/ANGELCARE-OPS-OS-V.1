@@ -1,0 +1,25 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "incremental": false
+  },
+  "include": [
+    "app/(protected)/market-os/content-command-center/layout.tsx",
+    "components/brand/AngelCareLogo.tsx",
+    "components/market-os/content-command/ContentCommand360Shell.tsx",
+    "components/market-os/content-command/content-command-navigation.tsx",
+    "components/market-os/content-command/content-command-system.tsx",
+    "components/market-os/content-command/shell/**/*.ts",
+    "components/market-os/content-command/shell/**/*.tsx",
+    "components/market-os/content-command/shell/**/*.d.ts",
+    "lib/market-os/content-command/auth/permissions.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    ".next",
+    "deployment",
+    "backups",
+    ".angelcare_backups"
+  ]
+}

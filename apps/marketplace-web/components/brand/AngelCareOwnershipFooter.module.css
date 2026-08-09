@@ -1,0 +1,20 @@
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  min-height: 66px;
+  margin: 12px 22px 18px;
+  padding: 12px 16px;
+  border-top: 1px solid rgba(148, 163, 184, .24);
+  color: #334155;
+}
+.brand { display: inline-flex; align-items: center; flex: 0 0 auto; }
+.copy { display: grid; gap: 2px; text-align: right; line-height: 1.25; }
+.copy strong { font-size: 9px; letter-spacing: .16em; font-weight: 950; color: #0f172a; }
+.copy span { font-size: 8px; letter-spacing: .11em; font-weight: 820; color: #475569; }
+.copy small { font-size: 8px; letter-spacing: .10em; font-weight: 760; color: #64748b; }
+@media (max-width: 720px) {
+  .footer { justify-content: center; margin-inline: 12px; }
+  .copy { text-align: left; }
+}

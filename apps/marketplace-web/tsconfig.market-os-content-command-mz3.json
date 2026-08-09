@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "incremental": false
+  },
+  "files": [
+    "components/market-os/content-command/headquarters/SignalsWorkspace.tsx",
+    "components/market-os/content-command/headquarters/StrategyWorkspace.tsx",
+    "components/market-os/content-command/content-briefs-page.tsx",
+    "components/market-os/content-command/content-calendar-page.tsx",
+    "components/market-os/content-command/content-brand-governance-page.tsx"
+  ]
+}

@@ -1,0 +1,29 @@
+OBJET : Confirmation rendez-vous — action requise
+
+Bonjour,
+
+Dans le cadre de « Confirmation rendez-vous », merci de traiter le sujet suivant : [SUJET À MODIFIER].
+
+Contexte opérationnel :
+- Client / entreprise / personne concernée : [NOM À MODIFIER]
+- Service ou projet : [SERVICE / PROJET À MODIFIER]
+- Responsable : [RESPONSABLE À MODIFIER]
+- Priorité : [PRIORITÉ À MODIFIER]
+- Date limite : [DATE LIMITE À MODIFIER]
+
+Points importants :
+- [POINT 1 À MODIFIER]
+- [POINT 2 À MODIFIER]
+- [POINT 3 À MODIFIER]
+
+Action demandée :
+Merci de confirmer la prise en charge et de transmettre un retour clair avant [DATE / HEURE À MODIFIER].
+
+Prochaine étape :
+Après validation, l’équipe AngelCare procédera à [PROCHAINE ACTION À MODIFIER].
+
+Cordialement,
+AngelCare
+
+INSTRUCTIONS :
+Remplacer tous les champs entre crochets avant envoi. Vérifier destinataire, priorité et contexte.

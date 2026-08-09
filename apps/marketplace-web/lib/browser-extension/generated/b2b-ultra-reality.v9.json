@@ -1,0 +1,292 @@
+{
+  "contractId": "AC-BROWSER-OS-B2B-ULTRA-REALITY-COMPLETION",
+  "package": "ANGELCARE_BROWSER_OS_B2B_ULTRA_REALITY_COMPLETION_RC.zip",
+  "version": "0.9.0",
+  "releaseStatus": "release_candidate_source_delivery_live_acceptance_required",
+  "baseline": "0.7.1",
+  "mega8Boundary": "Revenue B2B only; no Capital Command Center, Market OS, Ambassadors, Campaign Lifecycle or SEO Blog federation.",
+  "truthBoundary": {
+    "assignedIsNotReady": true,
+    "sourceCompleteIsNotProductionReady": true,
+    "stableVersion": "1.0.0 only after deployed live acceptance, migration validation, telemetry, rollback rehearsal and approval",
+    "deterministicRulesLabel": "Deterministic commercial intelligence active",
+    "unconfiguredAiLabel": "Governed AI unavailable"
+  },
+  "scopes": [
+    {
+      "id": "A",
+      "name": "Account Command Launchpad",
+      "commands": [
+        "b2b.ultra.launchpad.read"
+      ],
+      "persistence": [
+        "existing B2B and Revenue Command tables",
+        "browser_extension_ultra_commercial_id_map"
+      ],
+      "acceptance": "Authorized existing accounts are searchable and only mapped accounts can establish canonical context."
+    },
+    {
+      "id": "B",
+      "name": "Canonical Commercial Data Bridge",
+      "commands": [
+        "b2b.ultra.bridge.status"
+      ],
+      "persistence": [
+        "browser_extension_ultra_bridge_runs",
+        "browser_extension_ultra_commercial_id_map",
+        "browser_extension_ultra_bridge_conflicts"
+      ],
+      "acceptance": "Dry-run, conflicts, safe backfill and run-scoped rollback preserve owners, territories and historical IDs without parallel CRM."
+    },
+    {
+      "id": "C",
+      "name": "Persistent Commercial Context",
+      "commands": [
+        "b2b.ultra.context.set",
+        "b2b.ultra.context.read"
+      ],
+      "persistence": [
+        "browser_extension_ultra_contexts",
+        "chrome.storage.local workspace v9"
+      ],
+      "acceptance": "Account, opportunity, contact, partner, contract, site, meeting, proposal, issue, renewal and scan context survive extension lifecycle transitions."
+    },
+    {
+      "id": "D",
+      "name": "Guided Revenue Journey",
+      "commands": [
+        "b2b.ultra.journey.read"
+      ],
+      "persistence": [
+        "existing evidence, committee, opportunity, proposal, pricing, closing, payment and partner lifecycle records"
+      ],
+      "acceptance": "Prospect, opportunity and partner journeys expose current step, blockers, evidence and next action from persisted facts."
+    },
+    {
+      "id": "E",
+      "name": "Contact and Buying Committee Intelligence",
+      "commands": [
+        "b2b.contact.create",
+        "b2b.contact.update",
+        "b2b.contact.classify",
+        "b2b.buying_committee.read",
+        "b2b.buying_committee.update",
+        "b2b.research_mission.create"
+      ],
+      "persistence": [
+        "b2b_contacts",
+        "browser_extension_b2b_buying_committee",
+        "browser_extension_b2b_research_missions"
+      ],
+      "acceptance": "Public contacts and buying roles retain verification state; guessed identity is never verified automatically."
+    },
+    {
+      "id": "F",
+      "name": "Vertical Commercial Doctrines",
+      "commands": [
+        "b2b.vertical.evaluate",
+        "b2b.ultra.ai.reason"
+      ],
+      "persistence": [
+        "code-versioned doctrine registry",
+        "browser_extension_ultra_ai_runs"
+      ],
+      "acceptance": "Six verticals use distinct signals, questions, roles, offers, pricing hypotheses, risks and readiness gates."
+    },
+    {
+      "id": "G",
+      "name": "Governed Evidence-bound AI",
+      "commands": [
+        "b2b.ultra.ai.reason"
+      ],
+      "persistence": [
+        "browser_extension_ultra_ai_runs"
+      ],
+      "acceptance": "Provider-neutral structured output requires evidence IDs; disabled or failed provider returns truthful deterministic fallback."
+    },
+    {
+      "id": "H",
+      "name": "Opportunity and Pipeline Reality",
+      "commands": [
+        "b2b.opportunity.create",
+        "b2b.opportunity.stage_change",
+        "b2b.pipeline.read",
+        "b2b.pipeline.risk_detect"
+      ],
+      "persistence": [
+        "browser_extension_b2b_opportunities",
+        "browser_extension_b2b_opportunity_stage_history"
+      ],
+      "acceptance": "Real stages, next actions, closing/payment gates and false-won protection are preserved and surfaced by journey/data quality."
+    },
+    {
+      "id": "I",
+      "name": "Daily Revenue Execution",
+      "commands": [
+        "b2b.daily_command.read",
+        "b2b.next_action.read",
+        "b2b.next_action.complete",
+        "b2b.ultra.report.generate"
+      ],
+      "persistence": [
+        "browser_extension_b2b_next_best_actions",
+        "browser_extension_ultra_reports"
+      ],
+      "acceptance": "Priorities, overdue work, meetings, proposals, payments, partner risk and missing data are generated from real records."
+    },
+    {
+      "id": "J",
+      "name": "Communications Calls Meetings Field",
+      "commands": [
+        "b2b.gmail.reply_prepare",
+        "b2b.whatsapp.message_prepare",
+        "b2b.call.prepare",
+        "b2b.call.result_record",
+        "b2b.meeting.prepare",
+        "b2b.meeting.outcome_apply",
+        "b2b.field_visit.create",
+        "b2b.field_visit.result_record"
+      ],
+      "persistence": [
+        "existing communication, call, meeting, field visit and follow-up tables"
+      ],
+      "acceptance": "All external communication remains user-confirmed and outcomes create auditable next steps."
+    },
+    {
+      "id": "K",
+      "name": "Proposal Pricing Negotiation Closing",
+      "commands": [
+        "b2b.proposal.create",
+        "b2b.pricing.calculate",
+        "b2b.negotiation.open",
+        "b2b.closing.gate_check",
+        "b2b.payment_promise.create"
+      ],
+      "persistence": [
+        "existing proposal, pricing, negotiation, closing, contract and payment tables"
+      ],
+      "acceptance": "Verbal interest cannot become won; margin, approval, contract and verified payment gates remain enforced."
+    },
+    {
+      "id": "L",
+      "name": "Partner Operations Integration",
+      "commands": [
+        "b2b.handoff.generate",
+        "b2b.partner.activate",
+        "b2b.partner_health.calculate",
+        "b2b.renewal.plan_create",
+        "b2b.ultra.partner_operations.read"
+      ],
+      "persistence": [
+        "existing handoff and Partner 360 tables",
+        "commercial bridge historical IDs"
+      ],
+      "acceptance": "Revenue partnerships enter pending handoff only; exact operational links are authoritative, name matches remain review candidates, and activation/payment/delivery remain human/governance gated."
+    },
+    {
+      "id": "M",
+      "name": "Territory Management Reporting",
+      "commands": [
+        "b2b.ultra.launchpad.read",
+        "b2b.ultra.report.generate",
+        "b2b.forecast.calculate",
+        "b2b.pipeline_truth.assess"
+      ],
+      "persistence": [
+        "browser_extension_ultra_reports",
+        "existing management snapshots"
+      ],
+      "acceptance": "Portfolio reports expose missing sources, mapping gaps, quality risks and evidence timestamps."
+    },
+    {
+      "id": "N",
+      "name": "Real Automation Scheduler",
+      "commands": [
+        "b2b.ultra.scheduler.status",
+        "b2b.ultra.scheduler.enqueue",
+        "b2b.ultra.scheduler.control",
+        "b2b.ultra.scheduler.tick"
+      ],
+      "persistence": [
+        "browser_extension_ultra_scheduler_control",
+        "browser_extension_ultra_schedules",
+        "browser_extension_ultra_jobs",
+        "browser_extension_ultra_job_runs"
+      ],
+      "acceptance": "Low-risk jobs use locks, idempotency, retry/backoff, rate limits, pause/kill switch and history; high-risk actions are unsupported."
+    },
+    {
+      "id": "O",
+      "name": "Workflow UX Reconstruction",
+      "commands": [
+        "b2b.ultra.launchpad.read",
+        "b2b.ultra.journey.read",
+        "b2b.ultra.data_quality.scan",
+        "b2b.ultra.bridge.status",
+        "b2b.ultra.ai.reason"
+      ],
+      "persistence": [
+        "server context plus extension workspace v9"
+      ],
+      "acceptance": "The side panel begins with discovery/search/resume and explains empty, error, success, blocker and next-step states."
+    },
+    {
+      "id": "P",
+      "name": "Unified Timeline and Data Quality",
+      "commands": [
+        "b2b.ultra.timeline.read",
+        "b2b.ultra.data_quality.scan",
+        "b2b.ultra.data_quality.resolve"
+      ],
+      "persistence": [
+        "browser_extension_ultra_data_quality_issues",
+        "browser_extension_ultra_data_quality_history",
+        "existing domain event tables"
+      ],
+      "acceptance": "Timeline aggregates source records and quality issues retain severity, owner, correction, evidence and resolution history."
+    }
+  ],
+  "newCommands": [
+    "b2b.ultra.launchpad.read",
+    "b2b.ultra.context.set",
+    "b2b.ultra.context.read",
+    "b2b.ultra.journey.read",
+    "b2b.ultra.timeline.read",
+    "b2b.ultra.data_quality.scan",
+    "b2b.ultra.data_quality.resolve",
+    "b2b.ultra.bridge.status",
+    "b2b.ultra.ai.reason",
+    "b2b.ultra.report.generate",
+    "b2b.ultra.scheduler.tick",
+    "b2b.ultra.partner_operations.read",
+    "b2b.ultra.scheduler.status",
+    "b2b.ultra.scheduler.enqueue",
+    "b2b.ultra.scheduler.control"
+  ],
+  "acceptanceLayers": [
+    "extension typecheck/build",
+    "Gateway authorization and audit",
+    "service integration regression",
+    "SQL static/migration/rollback review",
+    "data bridge dry-run/backfill/rollback",
+    "RLS and secret scan",
+    "browser/API/database live harness",
+    "device revocation and denial"
+  ],
+  "requiredArtifacts": [
+    "migration",
+    "schema rollback",
+    "dry-run",
+    "safe backfill",
+    "conflict report",
+    "run-scoped backfill rollback",
+    "injection command",
+    "source backup",
+    "restoration command",
+    "applied-files manifest",
+    "implementation report",
+    "verification evidence",
+    "known limitations",
+    "live acceptance checklist"
+  ]
+}

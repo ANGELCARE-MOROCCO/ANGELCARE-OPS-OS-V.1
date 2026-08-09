@@ -1,0 +1,1 @@
+import styles from '../provider.module.css';export function DocumentsBoard(){return <section className={styles.panel}><div className={styles.panelHead}><h2>Document governance</h2></div><div className={styles.panelBody}><p>Versions, autorité émettrice, expiration, rejet, remplacement et impact d’éligibilité restent audités.</p></div></section>}

@@ -1,0 +1,16 @@
+{
+  "app/api/market-os/content-command/marketing-ai/dashboard/route.ts": "1d6b42560f72cf2370be4328f381cacb3d81547d64899049521b7a91dfd224ec",
+  "app/api/market-os/content-command/marketing-ai/health/route.ts": "0cf65d4412d15ef9440cdd70bffddccfbe17c811cf6dd0d76ad2d49f3a424c76",
+  "components/ai-provider-control/AiProviderControlWorkspace.tsx": "f2a36f3733eebb53f04744013a985ee0771cca7efca397f7eb18d32bf64af105",
+  "components/market-os/content-command/experience-bulk8/Bulk8AiExecutiveWorkspace.tsx": "acb8d39a0ad5cc109a38d9cea82793faf2b99d5914d746c648d75c7b6b6486d0",
+  "components/market-os/content-command/experience-bulk8/bulk8-ai.module.css": "fcabbafd94b713bb0d820db39249a4666d27e7ce12a2a635f33ce90d7b0c3466",
+  "components/market-os/content-command/experience-bulk8/bulk8-ai.module.css.d.ts": "bfb65844d9554e57e28c8072831d5f5ca1bedba2540e725948cf10122870ba96",
+  "components/market-os/content-command/marketing-ai/MarketingAiDirectorWorkspace.tsx": "e88ccc91e158e396d4c434a10eedc93734fc5ec79bb8bf248b812bb4dbf1141c",
+  "lib/ai-provider-control/repository.ts": "1114a49a27d6b3da1735fb5c263c3cc6194d2a064170ef266816725766d916a4",
+  "lib/market-os/content-command-headquarters/ai-supervision.ts": "979e4781fddc279a168f393e0c02ce235dbcc426aeecfc00fdb98c3dea561004",
+  "lib/market-os/marketing-ai/auth.ts": "fac993542d68704819d90ad48cf63856a1e0c0b7d774a20de460eddaf22de28f",
+  "lib/market-os/marketing-ai/config.ts": "8dc04b79f78dd6e70bcfc9e4d828df5d3edf6d25cdf24f0a5d5eb465f9a0dbf4",
+  "lib/market-os/marketing-ai/orchestrator.ts": "29b0627bd915adb2bb3d37f5d14cbd70ccd7bd1423479f39b2fcdf5873bd699b",
+  "lib/market-os/marketing-ai/provider.ts": "9009a3f400f24ff455e31dfe3442d8541365dfcf4fbce3d3ef427a089978b5ee",
+  "lib/market-os/marketing-ai/types.ts": "0699f0e8511b7857600c351575ba672ba53712fedcd9da9a811c79ed0253ef82"
+}

@@ -1,0 +1,14 @@
+import fs from'node:fs';import path from'node:path';const root=process.cwd();let p=0,f=0;const read=x=>fs.readFileSync(path.join(root,x),'utf8'),check=(n,v)=>{console.log(`${v?'PASS':'FAIL'}  ${n}`);v?p++:f++};
+check("transactional migration",read('supabase/migrations/20260801_homeservice_design_os_ultra_mega_zip4_carelink_handoff.sql').includes('BEGIN;')&&read('supabase/migrations/20260801_homeservice_design_os_ultra_mega_zip4_carelink_handoff.sql').includes('COMMIT;'));
+check("advisory lock 84746004",read('supabase/migrations/20260801_homeservice_design_os_ultra_mega_zip4_carelink_handoff.sql').includes('pg_advisory_xact_lock(84746004)'));
+check("UMZ1-UMZ3 baseline gate",read('supabase/migrations/20260801_homeservice_design_os_ultra_mega_zip4_carelink_handoff.sql').includes('UMZ1-UMZ3 HomeService baseline missing'));
+check("CARELINK canonical table gate",read('supabase/migrations/20260801_homeservice_design_os_ultra_mega_zip4_carelink_handoff.sql').includes("to_regclass('public.missions')"));
+check("missions id type gate",read('supabase/migrations/20260801_homeservice_design_os_ultra_mega_zip4_carelink_handoff.sql').includes("missions.id must be bigint/integer"));
+check("governance tables created",(read('supabase/migrations/20260801_homeservice_design_os_ultra_mega_zip4_carelink_handoff.sql').match(/CREATE TABLE IF NOT EXISTS public\.hsd_handoff_/g)||[]).length>=35);
+check("RLS enabled",(read('supabase/migrations/20260801_homeservice_design_os_ultra_mega_zip4_carelink_handoff.sql').match(/ENABLE ROW LEVEL SECURITY/g)||[]).length>=35);
+check("service role authority",read('supabase/migrations/20260801_homeservice_design_os_ultra_mega_zip4_carelink_handoff.sql').includes('GRANT ALL ON public.hsd_handoff_requests TO service_role'));
+check("no duplicate mission table",!read('supabase/migrations/20260801_homeservice_design_os_ultra_mega_zip4_carelink_handoff.sql').includes('CREATE TABLE IF NOT EXISTS public.missions'));
+check("atomic commit RPC",read('supabase/migrations/20260801_homeservice_design_os_ultra_mega_zip4_carelink_handoff.sql').includes('hsd_commit_carelink_handoff_core'));
+check("reconciliation RPC",read('supabase/migrations/20260801_homeservice_design_os_ultra_mega_zip4_carelink_handoff.sql').includes('hsd_reconcile_carelink_handoff'));
+check("permissions seeded",(read('supabase/migrations/20260801_homeservice_design_os_ultra_mega_zip4_carelink_handoff.sql').match(/homeservice_design\.[a-z_]+handoff[a-z_]*/g)||[]).length>=23&&read('supabase/migrations/20260801_homeservice_design_os_ultra_mega_zip4_carelink_handoff.sql').includes('homeservice_design.manage_mobile_briefs'));
+console.log(`\n${p}/${p+f} checks passed.`);if(f)process.exit(1);

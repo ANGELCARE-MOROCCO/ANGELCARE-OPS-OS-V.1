@@ -1,0 +1,24 @@
+begin;
+-- MZ07 rollback: remove only 700 MZ07 commands and restore MZ06 release identity.
+drop view if exists public.revenue_os_command_library_active;
+delete from public.revenue_os_command_test_runs where case_id in(select id from public.revenue_os_command_test_cases where case_code like 'MZ07-EVAL-%');
+delete from public.revenue_os_command_test_cases where case_code like 'MZ07-EVAL-%';
+delete from public.revenue_os_command_graph_nodes where graph_id in(select id from public.revenue_os_command_graphs where code like 'GRAPH-MZ07-%');
+delete from public.revenue_os_command_graphs where code like 'GRAPH-MZ07-%';
+delete from public.revenue_os_command_schedules where code like 'SCH-MZ07-%';
+delete from public.revenue_os_command_triggers where code like 'TRG-MZ07-%';
+delete from public.revenue_os_command_versions where command_code like 'REV-MZ07-%';
+delete from public.revenue_os_command_semantic_reviews where release_code='AC-REVENUE-OS-MZ07-COMMANDS-1000';
+delete from public.revenue_os_command_definitions where command_code like 'REV-MZ07-%';
+delete from public.revenue_os_command_routing_health where release_code='AC-REVENUE-OS-MZ07-COMMANDS-1000';
+delete from public.revenue_os_command_domain_coverage where release_code='AC-REVENUE-OS-MZ07-COMMANDS-1000';
+delete from public.revenue_os_command_benchmarks where release_code='AC-REVENUE-OS-MZ07-COMMANDS-1000';
+delete from public.revenue_os_command_coverage where release_code='AC-REVENUE-OS-MZ07-COMMANDS-1000';
+delete from public.revenue_os_command_releases where release_code='AC-REVENUE-OS-MZ07-COMMANDS-1000';
+delete from public.revenue_os_permission_registry where permission_key in('revenue_os.commands.1000.view','revenue_os.commands.1000.audit');
+delete from public.revenue_os_feature_flags where flag_key='revenue_os.commands_1000';
+update public.revenue_os_workspaces set label='Golden 300 · Commandes',short_label='Golden 300',description='300 commandes revenus gouvernées, profondément testées, routables et simulables en Shadow.',href='/revenue-command-os/command-kernel',permission_key='revenue_os.commands.view',maturity_status='ready',updated_at=timezone('utc',now()) where workspace_key='intelligent-commands';
+update public.revenue_os_installations set release_code='AC-REVENUE-OS-MZ06-GOLDEN-300',module_version='6.0.0-phase6',execution_mode='shadow',contract_locked=true,external_actions_enabled=false,metadata=jsonb_build_object('cumulativeOver',jsonb_build_array('MZ01','MZ02','MZ03','MZ04','MZ05'),'externalActions',false,'goldenCommands',300,'families',12,'contractEvaluations',3600,'benchmarkCases',30000,'openAiStrategyGeneration',false),updated_at=timezone('utc',now()) where installation_key='revenue-command-os';
+insert into public.revenue_os_audit_events(event_id,action,actor_label,actor_type,resource_type,outcome,summary,metadata) values('REVOS-MZ07-ROLLBACK-'||replace(gen_random_uuid()::text,'-',''),'command.library1000.rolled_back','Revenue OS Rollback','migration','commands_1000','success','MZ07 retiré; Golden 300 MZ06 préservées.',jsonb_build_object('externalActions',false));
+drop table if exists public.revenue_os_command_semantic_reviews;drop table if exists public.revenue_os_command_routing_health;drop table if exists public.revenue_os_command_domain_coverage;
+commit;

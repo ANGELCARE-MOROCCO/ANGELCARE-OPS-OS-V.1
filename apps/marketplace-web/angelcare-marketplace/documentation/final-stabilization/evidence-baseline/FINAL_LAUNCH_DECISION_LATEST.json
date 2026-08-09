@@ -1,0 +1,89 @@
+{
+  "programme": "ANGELCARE Marketplace Final Launch Decision",
+  "startedAt": "2026-08-04T03:34:06.055Z",
+  "completedAt": "2026-08-04T03:34:06.059Z",
+  "status": "BLOCKED",
+  "rationale": "Required environmental evidence is incomplete.",
+  "gates": [
+    {
+      "label": "Static cumulative authority",
+      "key": "static",
+      "status": "PASS",
+      "accepted": true,
+      "evidence": "/mnt/data/final_stabilization_evidence_build/STATIC_ACCEPTANCE_LATEST.json"
+    },
+    {
+      "label": "SQL and source-security authority",
+      "key": "sqlSecurity",
+      "status": "PASS",
+      "accepted": true,
+      "evidence": "/mnt/data/final_stabilization_evidence_build/SQL_SECURITY_ASSURANCE_LATEST.json"
+    },
+    {
+      "label": "Route and navigation integrity",
+      "key": "routes",
+      "status": "PASS",
+      "accepted": true,
+      "evidence": "/mnt/data/final_stabilization_evidence_build/ROUTE_INVENTORY_LATEST.json"
+    },
+    {
+      "label": "UI/UIX source matrix",
+      "key": "uiuxMatrix",
+      "status": "SOURCE_ACCEPTED_RUNTIME_PENDING",
+      "accepted": true,
+      "evidence": "/mnt/data/final_stabilization_evidence_build/UIUX_ACCEPTANCE_MATRIX_LATEST.json"
+    },
+    {
+      "label": "Marketplace TypeScript authority",
+      "key": "typescript",
+      "status": "MISSING",
+      "accepted": false,
+      "evidence": "/mnt/data/final_stabilization_evidence_build/TYPESCRIPT_AUTHORITY_LATEST.json"
+    },
+    {
+      "label": "Runtime route/API smoke",
+      "key": "runtime",
+      "status": "MISSING",
+      "accepted": false,
+      "evidence": "/mnt/data/final_stabilization_evidence_build/RUNTIME_SMOKE_LATEST.json"
+    },
+    {
+      "label": "Browser visual and responsive acceptance",
+      "key": "visual",
+      "status": "MISSING",
+      "accepted": false,
+      "evidence": "/mnt/data/final_stabilization_evidence_build/VISUAL_ACCEPTANCE_LATEST.json"
+    },
+    {
+      "label": "Selected Supabase database preflight",
+      "key": "database",
+      "status": "MISSING",
+      "accepted": false,
+      "evidence": "/mnt/data/final_stabilization_evidence_build/DATABASE_PREFLIGHT_LATEST.json"
+    },
+    {
+      "label": "Accessibility acceptance",
+      "key": "accessibility",
+      "status": "MISSING",
+      "accepted": false,
+      "evidence": "/mnt/data/final_stabilization_evidence_build/ACCESSIBILITY_ACCEPTANCE_LATEST.json"
+    },
+    {
+      "label": "Performance acceptance",
+      "key": "performance",
+      "status": "MISSING",
+      "accepted": false,
+      "evidence": "/mnt/data/final_stabilization_evidence_build/PERFORMANCE_ACCEPTANCE_LATEST.json"
+    },
+    {
+      "label": "Backup and restore-test evidence",
+      "key": "backupRestore",
+      "status": "MISSING",
+      "accepted": false,
+      "evidence": "/mnt/data/final_stabilization_evidence_build/BACKUP_RESTORE_EVIDENCE_LATEST.json"
+    }
+  ],
+  "criticalDefects": [],
+  "productionLaunchExecuted": false,
+  "executiveApprovalRecorded": false
+}

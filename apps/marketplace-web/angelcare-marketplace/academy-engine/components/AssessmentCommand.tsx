@@ -1,0 +1,1 @@
+import styles from '../academy.module.css';export function AssessmentCommand(){return <section className={styles.panel}><div className={styles.panelHead}><h2>Assessment Control</h2></div><div className={styles.panelBody}><p>Rubriques, preuves pratiques, remédiations, réévaluations et appels sont gouvernés comme des décisions traçables.</p></div></section>}

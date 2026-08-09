@@ -1,0 +1,20 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "incremental": false,
+    "skipLibCheck": true
+  },
+  "include": [
+    "components/market-os/content-command/experience-bulk3/**/*.ts",
+    "components/market-os/content-command/experience-bulk3/**/*.tsx",
+    "components/market-os/content-command/headquarters/MissionsWorkspace.tsx",
+    "components/market-os/content-command/content-tasks-page.tsx",
+    "components/market-os/content-command/tasks/TaskExecutionCommandCenter.tsx",
+    "components/market-os/content-command/tasks/TaskDetailWorkspace.tsx",
+    "components/market-os/content-command/tasks/TaskEditWorkspace.tsx",
+    "components/market-os/content-command/experience-bulk1/Bulk1DossierWorkspace.tsx",
+    "components/market-os/content-command/experience-bulk1/Bulk1CommandementWorkspace.tsx",
+    "components/market-os/content-command/experience-bulk2/Bulk2PlanningWorkspace.tsx"
+  ]
+}

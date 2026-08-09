@@ -1,0 +1,20 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {"noEmit": true, "incremental": false, "skipLibCheck": true},
+  "include": [
+    "next-env.d.ts",
+    "app/(protected)/market-os/content-command-center/my-home/page.tsx",
+    "app/(protected)/market-os/content-command-center/production-operations/page.tsx",
+    "app/api/market-os/content-command-headquarters/production-operations/route.ts",
+    "app/api/market-os/content-command/marketing-ai/cron/route.ts",
+    "app/api/market-os/content-command/research-control/cron/route.ts",
+    "components/market-os/content-command/content-command-navigation.tsx",
+    "components/market-os/content-command/production-operations/**/*.tsx",
+    "components/market-os/content-command/production-operations/**/*.d.ts",
+    "lib/market-os/ai-runtime/gateway.ts",
+    "lib/market-os/content-command-headquarters/market-scan.ts",
+    "lib/market-os/content-command-headquarters/opportunity-intelligence-service.ts",
+    "lib/market-os/content-command-headquarters/production-operations-*.ts",
+    "lib/market-os/content-command-headquarters/publication-release-service.ts"
+  ]
+}

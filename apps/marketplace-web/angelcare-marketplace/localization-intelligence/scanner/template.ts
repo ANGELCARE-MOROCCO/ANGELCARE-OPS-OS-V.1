@@ -1,0 +1,2 @@
+import { scanContentFile } from './content-files'; import type { DiscoveredCandidate } from '../types'
+export async function scanCommunicationTemplate(filePath:string,appRoot:string):Promise<DiscoveredCandidate[]>{ const rows=await scanContentFile(filePath,appRoot); return rows.filter(r=>/template|email|sms|whatsapp|notification|certificate|report/i.test(r.sourcePath||'')).map(r=>({...r,sourceType:'communication_template' as const,contentType:'communication_template',confidence:.9})) }

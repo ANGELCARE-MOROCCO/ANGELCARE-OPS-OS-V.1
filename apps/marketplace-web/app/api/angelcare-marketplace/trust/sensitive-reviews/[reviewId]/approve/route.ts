@@ -1,0 +1,2 @@
+import { handleSensitiveApproval } from '@/angelcare-marketplace/trust-quality/api-handlers'
+export async function POST(request:Request,{params}:{params:Promise<{reviewId:string}>}){return handleSensitiveApproval(request,(await params).reviewId)}

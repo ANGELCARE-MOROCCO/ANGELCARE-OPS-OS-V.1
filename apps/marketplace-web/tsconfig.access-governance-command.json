@@ -1,0 +1,38 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "incremental": false,
+    "tsBuildInfoFile": null
+  },
+  "include": [
+    "next-env.d.ts",
+    "lib/users/access-governance/universal/**/*.ts",
+    "app/api/users/access-governance/command/**/*.ts",
+    "app/(protected)/users/access-governance/**/*.tsx",
+    "app/(protected)/users/_components/GlobalAccessRegistryScannerModal.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    ".next",
+    ".next/**",
+    ".turbo",
+    ".vercel",
+    ".cache",
+    "coverage",
+    "dist",
+    "out",
+    "tmp",
+    "temp",
+    "_archive",
+    ".angelcare_backups",
+    "**/*-backups/**",
+    "**/*_backups/**",
+    "**/*.before-*",
+    "**/*.backup.*",
+    "**/*.log",
+    "**/*.tsbuildinfo",
+    "scripts/**/static-type-shims.d.ts",
+    "deployment/**"
+  ]
+}

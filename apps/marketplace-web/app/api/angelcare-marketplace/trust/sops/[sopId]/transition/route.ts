@@ -1,0 +1,2 @@
+import { handleSopTransition } from '@/angelcare-marketplace/trust-quality/api-handlers'
+export async function POST(request:Request,{params}:{params:Promise<{sopId:string}>}){return handleSopTransition(request,(await params).sopId)}

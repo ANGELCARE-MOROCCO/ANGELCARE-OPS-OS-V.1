@@ -1,0 +1,306 @@
+ANGELCARE REVENUE COMMAND OS — MEGA ZIP 2 FINAL VERIFICATION
+Generated: 2026-07-20T04:26:26Z
+
+== Phase 1 Regression Verification ==
+
+> angelcare-platform@1.0.0 revenue-os:phase1:verify
+> npm --prefix apps/ops-web run revenue-os:phase1:verify
+
+
+> angelcare-opsos-app@0.1.0 revenue-os:phase1:verify
+> node scripts/revenue-command-os/verify-phase1.mjs
+
+
+ANGELCARE Revenue Command OS Phase 1 Verification
+Passes: 64
+Failures: 0
+
+  ✓ Required file: app/(protected)/revenue-command-os/layout.tsx
+  ✓ Required file: app/(protected)/revenue-command-os/page.tsx
+  ✓ Required file: app/(protected)/revenue-command-os/[workspace]/page.tsx
+  ✓ Required file: app/(protected)/revenue-command-os/error.tsx
+  ✓ Required file: app/(protected)/revenue-command-os/loading.tsx
+  ✓ Required file: app/(protected)/revenue-command-os/not-found.tsx
+  ✓ Required file: app/(protected)/revenue-command-os/_components/RevenueOsShell.tsx
+  ✓ Required file: app/(protected)/revenue-command-os/_components/RevenueOsDashboard.tsx
+  ✓ Required file: app/(protected)/revenue-command-os/_components/RevenueOsWorkspacePage.tsx
+  ✓ Required file: app/(protected)/revenue-command-os/_components/ObjectiveComposer.tsx
+  ✓ Required file: app/api/revenue-command-os/foundation/route.ts
+  ✓ Required file: app/api/revenue-command-os/search/route.ts
+  ✓ Required file: lib/revenue-command-os/types.ts
+  ✓ Required file: lib/revenue-command-os/constants.ts
+  ✓ Required file: lib/revenue-command-os/repository.ts
+  ✓ Required file: lib/revenue-command-os/event-contracts.ts
+  ✓ Required file: lib/revenue-command-os/errors.ts
+  ✓ Required file: lib/revenue-command-os/search.ts
+  ✓ Required file: supabase/migrations/20260720_revenue_command_os_phase1_foundation.sql
+  ✓ Required file: docs/revenue-command-os/phase-01/CANONICAL_BUILD_CONTRACT_LOCK.md
+  ✓ Required file: docs/revenue-command-os/phase-01/ACCEPTANCE.md
+  ✓ Required file: docs/revenue-command-os/phase-01/ROLLBACK.sql
+  ✓ Required file: tsconfig.revenue-os-phase1.json
+  ✓ Required file: tsconfig.revenue-os-integration.json
+  ✓ Canonical contract version locked
+  ✓ Phase 1 release code locked
+  ✓ Workspace and feature flag registry populated
+  ✓ Original twelve Revenue OS workspace routes remain registered
+  ✓ Execution mode contract begins in Shadow
+  ✓ External action feature flag exists
+  ✓ Restricted features are disabled
+  ✓ Protected layout enforces Revenue OS access
+  ✓ Global command search keyboard handling exists
+  ✓ Objective composer is mounted in shell
+  ✓ Main cockpit is strategy-to-execution oriented
+  ✓ Main Phase 1 cockpit does not degrade into a money dashboard
+  ✓ API action is allow-listed
+  ✓ API blocks autonomous modes in Phase 1
+  ✓ Scoped Revenue OS permissions registered
+  ✓ Route access-control registry updated
+  ✓ Global app navigation entry added
+  ✓ Workspace module registry updated
+  ✓ Migration table: revenue_os_installations
+  ✓ Migration table: revenue_os_permission_registry
+  ✓ Migration table: revenue_os_workspaces
+  ✓ Migration table: revenue_os_feature_flags
+  ✓ Migration table: revenue_os_status_dictionary
+  ✓ Migration table: revenue_os_system_checks
+  ✓ Migration table: revenue_os_objectives
+  ✓ Migration table: revenue_os_business_events
+  ✓ Migration table: revenue_os_event_outbox
+  ✓ Migration table: revenue_os_audit_events
+  ✓ Append-only audit trigger included
+  ✓ RLS enabled across Revenue OS tables
+  ✓ Direct client access revoked
+  ✓ Database execution posture includes Shadow
+  ✓ External actions remain disabled at installation
+  ✓ Migration seed operations are idempotent
+  ✓ Fixture expects twelve workspaces
+  ✓ Fixture locks Shadow mode
+  ✓ Fixture covers eight scoped permissions
+  ✓ Objective tests include valid case
+  ✓ Objective tests include prohibited autonomy case
+  ✓ Legacy Revenue Command Center remains present
+
+PHASE 1 STATIC ACCEPTANCE: PASS
+
+
+== Phase 2 Static Verification ==
+
+> angelcare-platform@1.0.0 revenue-os:phase2:verify
+> npm --prefix apps/ops-web run revenue-os:phase2:verify
+
+
+> angelcare-opsos-app@0.1.0 revenue-os:phase2:verify
+> node scripts/revenue-command-os/verify-phase2.mjs
+
+
+ANGELCARE Revenue Command OS Mega ZIP 2 Verification
+Passes: 192
+Failures: 0
+
+  ✓ Required file: app/(protected)/revenue-command-os/digital-twin/layout.tsx
+  ✓ Required file: app/(protected)/revenue-command-os/digital-twin/page.tsx
+  ✓ Required file: app/(protected)/revenue-command-os/digital-twin/[section]/page.tsx
+  ✓ Required file: app/(protected)/revenue-command-os/digital-twin/_components/DigitalTwinContext.tsx
+  ✓ Required file: app/(protected)/revenue-command-os/digital-twin/_components/DigitalTwinFrame.tsx
+  ✓ Required file: app/(protected)/revenue-command-os/digital-twin/_components/DigitalTwinWorkspace.tsx
+  ✓ Required file: app/(protected)/revenue-command-os/digital-twin/_components/DigitalTwinEntityDrawer.tsx
+  ✓ Required file: app/api/revenue-command-os/digital-twin/route.ts
+  ✓ Required file: lib/revenue-command-os/digital-twin/constants.ts
+  ✓ Required file: lib/revenue-command-os/digital-twin/seed-data.ts
+  ✓ Required file: lib/revenue-command-os/digital-twin/validation.ts
+  ✓ Required file: lib/revenue-command-os/digital-twin/repository.ts
+  ✓ Required file: supabase/migrations/20260720_revenue_command_os_phase2_digital_twin.sql
+  ✓ Required file: docs/revenue-command-os/phase-02/CANONICAL_BUILD_CONTRACT_LOCK.md
+  ✓ Required file: docs/revenue-command-os/phase-02/ARCHITECTURE.md
+  ✓ Required file: docs/revenue-command-os/phase-02/DATA_DICTIONARY.md
+  ✓ Required file: docs/revenue-command-os/phase-02/API_CONTRACT.md
+  ✓ Required file: docs/revenue-command-os/phase-02/ACCEPTANCE.md
+  ✓ Required file: docs/revenue-command-os/phase-02/INSTALLATION.md
+  ✓ Required file: docs/revenue-command-os/phase-02/ROLLBACK.sql
+  ✓ Required file: tests/revenue-command-os/fixtures/phase2-digital-twin.json
+  ✓ Required file: tests/revenue-command-os/fixtures/phase2-validation-cases.json
+  ✓ Required file: tests/revenue-command-os/fixtures/phase2-mutation-cases.json
+  ✓ Required file: tsconfig.revenue-os-phase2.json
+  ✓ Mega ZIP 2 release code locked
+  ✓ Mega ZIP 1 release history preserved
+  ✓ Digital Twin workspace registered
+  ✓ Digital Twin route registered
+  ✓ Digital Twin workspace is operational
+  ✓ Shadow remains default execution posture
+  ✓ External actions remain disabled
+  ✓ Strategy execution remains locked
+  ✓ Governed Digital Twin mutation flag exists
+  ✓ Digital Twin permission registered
+  ✓ Digital Twin route access registered
+  ✓ Workspace launcher integration registered
+  ✓ Digital Twin model version locked
+  ✓ Twin section registered: overview
+  ✓ Twin section registered: business-units
+  ✓ Twin section registered: offers-services
+  ✓ Twin section registered: bundles-combinations
+  ✓ Twin section registered: customer-segments
+  ✓ Twin section registered: decision-makers
+  ✓ Twin section registered: markets-territories
+  ✓ Twin section registered: channels-journeys
+  ✓ Twin section registered: pricing-margins
+  ✓ Twin section registered: capacity-constraints
+  ✓ Twin section registered: seasonality
+  ✓ Twin section registered: expansion-renewal
+  ✓ Twin section registered: revenue-dependencies
+  ✓ Twin section registered: model-validation
+  ✓ Exactly fourteen purpose-built Digital Twin sections registered
+  ✓ Seed business unit: BU-ACADEMY
+  ✓ Seed business unit: BU-HOME-SERVICE
+  ✓ Seed business unit: BU-FLASHCARDS
+  ✓ Seed business unit: BU-KINDERGARTEN
+  ✓ Seed business unit: BU-HOSPITALITY
+  ✓ Seed business unit: BU-CORPORATES
+  ✓ Seed business unit: BU-EVENTS
+  ✓ Seed business unit: BU-REFFERQ
+  ✓ Seed market city: Casablanca
+  ✓ Seed market city: Rabat
+  ✓ Seed market city: Kénitra
+  ✓ Seed market city: Tanger
+  ✓ Seed market city: Marrakech
+  ✓ Seed market city: Fès
+  ✓ Seed market city: Agadir
+  ✓ Seed offer: OFF-ACADEMY-ONSITE
+  ✓ Seed offer: OFF-ACADEMY-ELEARNING
+  ✓ Seed offer: OFF-HOME-RECURRING
+  ✓ Seed offer: OFF-FLASHCARDS-PLV
+  ✓ Seed offer: OFF-HOSPITALITY-KIDS-FRIENDLY
+  ✓ Seed offer: OFF-CORPORATE-CHILDCARE
+  ✓ Seed customer segment: SEG-PRESCHOOL-PRIVATE
+  ✓ Seed customer segment: SEG-MATERNITY
+  ✓ Seed customer segment: SEG-ORTHOPHONISTS
+  ✓ Seed customer segment: SEG-HOTELS
+  ✓ Seed customer segment: SEG-CORPORATES
+  ✓ Seed decision-maker: DM-OWNER
+  ✓ Seed decision-maker: DM-SCHOOL-DIRECTOR
+  ✓ Seed decision-maker: DM-PEDAGOGICAL
+  ✓ Seed decision-maker: DM-HR
+  ✓ Seed decision-maker: DM-PROCUREMENT
+  ✓ Casablanca caregiver capacity represented
+  ✓ Rabat caregiver capacity represented
+  ✓ Kénitra caregiver capacity represented
+  ✓ Known caregiver hourly cost signal represented
+  ✓ Unknown commercial data remains explicitly unvalidated
+  ✓ Contract seed provenance is explicit
+  ✓ Validation category covered: pricing
+  ✓ Validation category covered: capacity
+  ✓ Validation category covered: territory
+  ✓ Validation category covered: governance
+  ✓ Validation category covered: completeness
+  ✓ Validation category covered: journey
+  ✓ Validation category covered: dependency
+  ✓ Completeness engine implemented
+  ✓ Contradiction engine implemented
+  ✓ Missing pricing detection implemented
+  ✓ Capacity contradiction detection implemented
+  ✓ Dependency integrity detection implemented
+  ✓ Sales journey validation implemented
+  ✓ Bundle relationship validation implemented
+  ✓ Repository is server-only
+  ✓ Mutation table allow-list enforced
+  ✓ Mutation field allow-list enforced
+  ✓ Bundle and offer-relationship management implemented
+  ✓ Source provenance is added only to compatible tables
+  ✓ Capacity retirement uses availability instead of an invalid status column
+  ✓ Mutation operations are allow-listed
+  ✓ Digital Twin mutations are audited
+  ✓ Validation snapshots can be persisted
+  ✓ Digital Twin version snapshots are persisted
+  ✓ Repository does not expose secrets
+  ✓ API validation action allow-listed
+  ✓ API validation status action allow-listed
+  ✓ API governed mutation action allow-listed
+  ✓ API requires Digital Twin authority
+  ✓ API has no external communication execution
+  ✓ API returns normalized controlled failures
+  ✓ Premium Digital Twin frame communicates purpose
+  ✓ Premium Digital Twin frame exposes safe posture
+  ✓ Overview is business-model oriented
+  ✓ Pricing workspace implemented
+  ✓ Capacity workspace implemented
+  ✓ Dependency workspace implemented
+  ✓ Expansion paths workspace implemented
+  ✓ Model validation action exposed
+  ✓ Governed mutation UX implemented
+  ✓ Bundle and relationship editors exposed
+  ✓ Bundle workspace provides governed management actions
+  ✓ Mutation entity narrowing is explicit
+  ✓ Migration table: revenue_os_business_units
+  ✓ Migration table: revenue_os_offer_families
+  ✓ Migration table: revenue_os_offers
+  ✓ Migration table: revenue_os_offer_versions
+  ✓ Migration table: revenue_os_offer_formats
+  ✓ Migration table: revenue_os_offer_bundles
+  ✓ Migration table: revenue_os_offer_bundle_items
+  ✓ Migration table: revenue_os_offer_relationships
+  ✓ Migration table: revenue_os_customer_segments
+  ✓ Migration table: revenue_os_segment_needs
+  ✓ Migration table: revenue_os_segment_pain_points
+  ✓ Migration table: revenue_os_segment_offer_fit
+  ✓ Migration table: revenue_os_decision_maker_profiles
+  ✓ Migration table: revenue_os_regions
+  ✓ Migration table: revenue_os_cities
+  ✓ Migration table: revenue_os_territories
+  ✓ Migration table: revenue_os_markets
+  ✓ Migration table: revenue_os_offer_territory_availability
+  ✓ Migration table: revenue_os_sales_channels
+  ✓ Migration table: revenue_os_sales_journeys
+  ✓ Migration table: revenue_os_sales_journey_stages
+  ✓ Migration table: revenue_os_stage_requirements
+  ✓ Migration table: revenue_os_price_books
+  ✓ Migration table: revenue_os_pricing_models
+  ✓ Migration table: revenue_os_offer_prices
+  ✓ Migration table: revenue_os_cost_models
+  ✓ Migration table: revenue_os_margin_rules
+  ✓ Migration table: revenue_os_discount_rules
+  ✓ Migration table: revenue_os_capacity_types
+  ✓ Migration table: revenue_os_capacity_requirements
+  ✓ Migration table: revenue_os_delivery_constraints
+  ✓ Migration table: revenue_os_revenue_dependencies
+  ✓ Migration table: revenue_os_seasonal_windows
+  ✓ Migration table: revenue_os_growth_paths
+  ✓ Migration table: revenue_os_cross_sell_paths
+  ✓ Migration table: revenue_os_upsell_paths
+  ✓ Migration table: revenue_os_renewal_paths
+  ✓ Migration table: revenue_os_referral_paths
+  ✓ Migration table: revenue_os_digital_twin_validations
+  ✓ Migration table: revenue_os_digital_twin_gaps
+  ✓ Migration table: revenue_os_digital_twin_versions
+  ✓ Migration table: revenue_os_digital_twin_change_log
+  ✓ Migration table: revenue_os_model_owners
+  ✓ Migration table: revenue_os_model_approval_requests
+  ✓ Fixture and migration table contract agree
+  ✓ RLS enabled across Digital Twin tables
+  ✓ Direct client table access revoked
+  ✓ Seeds are idempotent
+  ✓ Database permission registry extended
+  ✓ Database workspace registry extended
+  ✓ Database feature flag registered
+  ✓ Model change log table included
+  ✓ Model approval workflow table included
+  ✓ Installation is recorded in immutable audit
+  ✓ Migration does not destroy Phase 1 tables
+  ✓ Validation regression cases provided
+  ✓ Autonomous pricing blocker tested
+  ✓ Capacity commitment blocker tested
+  ✓ Invalid mutation cases provided
+  ✓ Safe retirement mutation covered
+
+MEGA ZIP 2 STATIC ACCEPTANCE: PASS
+
+
+== Phase 2 Targeted TypeScript Verification ==
+
+> angelcare-platform@1.0.0 revenue-os:phase2:typecheck
+> npm --prefix apps/ops-web run revenue-os:phase2:typecheck
+
+
+> angelcare-opsos-app@0.1.0 revenue-os:phase2:typecheck
+> NODE_OPTIONS="--max-old-space-size=4096" tsc -p tsconfig.revenue-os-phase2.json --pretty false && NODE_OPTIONS="--max-old-space-size=4096" tsc -p tsconfig.revenue-os-integration.json --pretty false
+
+
+== Seed Runtime Inspection ==

@@ -1,0 +1,38 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "skipLibCheck": true
+  },
+  "include": [
+    "lib/market-os/marketing-ai/phase3-types.ts",
+    "lib/market-os/marketing-ai/phase3-schemas.ts",
+    "lib/market-os/marketing-ai/phase3-repository.ts",
+    "lib/market-os/marketing-ai/context-assembler.ts",
+    "lib/market-os/marketing-ai/compiler.ts",
+    "lib/market-os/marketing-ai/tool-gateway.ts",
+    "lib/market-os/marketing-ai/queue-engine.ts",
+    "lib/market-os/marketing-ai/autopilot.ts",
+    "lib/market-os/marketing-ai/auth.ts",
+    "components/market-os/content-command/marketing-ai/MarketingAiDirectorWorkspace.tsx",
+    "components/market-os/content-command/marketing-ai/MarketingAutopilotWorkspace.tsx",
+    "app/(protected)/market-os/content-command-center/ai-director/autopilot/page.tsx",
+    "app/(protected)/market-os/content-command-center/ai-director/compiler/page.tsx",
+    "app/(protected)/market-os/content-command-center/ai-director/queue/page.tsx",
+    "app/(protected)/market-os/content-command-center/ai-director/decisions/page.tsx",
+    "app/(protected)/market-os/content-command-center/ai-director/integrations/page.tsx",
+    "app/(protected)/market-os/content-command-center/ai-director/repository/page.tsx",
+    "app/(protected)/market-os/content-command-center/ai-director/recovery/page.tsx",
+    "app/api/market-os/content-command/marketing-ai/autopilot/dashboard/route.ts",
+    "app/api/market-os/content-command/marketing-ai/bridge/versions/route.ts",
+    "app/api/market-os/content-command/marketing-ai/canonical-records/route.ts",
+    "app/api/market-os/content-command/marketing-ai/compilations/**/*.ts",
+    "app/api/market-os/content-command/marketing-ai/cron/route.ts",
+    "app/api/market-os/content-command/marketing-ai/decisions/route.ts",
+    "app/api/market-os/content-command/marketing-ai/integrations/route.ts",
+    "app/api/market-os/content-command/marketing-ai/queue/**/*.ts",
+    "app/api/market-os/content-command/marketing-ai/recovery/route.ts",
+    "app/api/market-os/content-command/marketing-ai/sync/route.ts",
+    "app/api/market-os/content-command/marketing-ai/tools/route.ts"
+  ]
+}

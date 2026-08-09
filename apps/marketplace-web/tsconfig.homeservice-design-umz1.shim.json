@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.homeservice-design-umz1.json",
+  "compilerOptions": {
+    "types": []
+  },
+  "include": [
+    "app/carelink-ops/service-design/**/*.ts",
+    "app/carelink-ops/service-design/**/*.tsx",
+    "app/api/carelink-ops/service-design/**/*.ts",
+    "components/carelink/service-design/**/*.tsx",
+    "lib/homeservice-design/**/*.ts",
+    "types/homeservice-design.ts",
+    "scripts/homeservice-design/verify-shims.d.ts"
+  ]
+}

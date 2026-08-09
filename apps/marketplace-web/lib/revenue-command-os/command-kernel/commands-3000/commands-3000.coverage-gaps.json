@@ -1,0 +1,470 @@
+[
+  {
+    "dimension": "family",
+    "key": "market-sensing",
+    "expected": 250,
+    "actual": 250,
+    "gap": 0,
+    "severity": "none",
+    "status": "closed"
+  },
+  {
+    "dimension": "family",
+    "key": "segmentation-account-discovery",
+    "expected": 300,
+    "actual": 300,
+    "gap": 0,
+    "severity": "none",
+    "status": "closed"
+  },
+  {
+    "dimension": "family",
+    "key": "offer-pricing",
+    "expected": 250,
+    "actual": 250,
+    "gap": 0,
+    "severity": "none",
+    "status": "closed"
+  },
+  {
+    "dimension": "family",
+    "key": "campaign-go-to-market",
+    "expected": 300,
+    "actual": 300,
+    "gap": 0,
+    "severity": "none",
+    "status": "closed"
+  },
+  {
+    "dimension": "family",
+    "key": "outreach-channel",
+    "expected": 400,
+    "actual": 400,
+    "gap": 0,
+    "severity": "none",
+    "status": "closed"
+  },
+  {
+    "dimension": "family",
+    "key": "qualification-progression",
+    "expected": 250,
+    "actual": 250,
+    "gap": 0,
+    "severity": "none",
+    "status": "closed"
+  },
+  {
+    "dimension": "family",
+    "key": "meetings-diagnostics",
+    "expected": 200,
+    "actual": 200,
+    "gap": 0,
+    "severity": "none",
+    "status": "closed"
+  },
+  {
+    "dimension": "family",
+    "key": "proposal-negotiation-closing",
+    "expected": 250,
+    "actual": 250,
+    "gap": 0,
+    "severity": "none",
+    "status": "closed"
+  },
+  {
+    "dimension": "family",
+    "key": "pipeline-rescue",
+    "expected": 250,
+    "actual": 250,
+    "gap": 0,
+    "severity": "none",
+    "status": "closed"
+  },
+  {
+    "dimension": "family",
+    "key": "renewal-expansion-referral",
+    "expected": 200,
+    "actual": 200,
+    "gap": 0,
+    "severity": "none",
+    "status": "closed"
+  },
+  {
+    "dimension": "family",
+    "key": "executive-forecasting",
+    "expected": 150,
+    "actual": 150,
+    "gap": 0,
+    "severity": "none",
+    "status": "closed"
+  },
+  {
+    "dimension": "family",
+    "key": "audit-optimization",
+    "expected": 200,
+    "actual": 200,
+    "gap": 0,
+    "severity": "none",
+    "status": "closed"
+  },
+  {
+    "dimension": "domain",
+    "key": "national-market-pulse",
+    "expectedMinimum": 12,
+    "actual": 27,
+    "gap": 0,
+    "severity": "none",
+    "status": "covered"
+  },
+  {
+    "dimension": "domain",
+    "key": "micro-segment-whitespace",
+    "expectedMinimum": 12,
+    "actual": 25,
+    "gap": 0,
+    "severity": "none",
+    "status": "covered"
+  },
+  {
+    "dimension": "domain",
+    "key": "territory-density",
+    "expectedMinimum": 12,
+    "actual": 25,
+    "gap": 0,
+    "severity": "none",
+    "status": "covered"
+  },
+  {
+    "dimension": "domain",
+    "key": "decision-network-depth",
+    "expectedMinimum": 12,
+    "actual": 26,
+    "gap": 0,
+    "severity": "none",
+    "status": "covered"
+  },
+  {
+    "dimension": "domain",
+    "key": "buyer-readiness",
+    "expectedMinimum": 12,
+    "actual": 26,
+    "gap": 0,
+    "severity": "none",
+    "status": "covered"
+  },
+  {
+    "dimension": "domain",
+    "key": "offer-fit-gap",
+    "expectedMinimum": 12,
+    "actual": 26,
+    "gap": 0,
+    "severity": "none",
+    "status": "covered"
+  },
+  {
+    "dimension": "domain",
+    "key": "trust-evidence-architecture",
+    "expectedMinimum": 12,
+    "actual": 25,
+    "gap": 0,
+    "severity": "none",
+    "status": "covered"
+  },
+  {
+    "dimension": "domain",
+    "key": "channel-sequencing",
+    "expectedMinimum": 12,
+    "actual": 24,
+    "gap": 0,
+    "severity": "none",
+    "status": "covered"
+  },
+  {
+    "dimension": "domain",
+    "key": "account-research-depth",
+    "expectedMinimum": 12,
+    "actual": 22,
+    "gap": 0,
+    "severity": "none",
+    "status": "covered"
+  },
+  {
+    "dimension": "domain",
+    "key": "strategic-introduction",
+    "expectedMinimum": 12,
+    "actual": 23,
+    "gap": 0,
+    "severity": "none",
+    "status": "covered"
+  },
+  {
+    "dimension": "domain",
+    "key": "qualification-confidence",
+    "expectedMinimum": 12,
+    "actual": 22,
+    "gap": 0,
+    "severity": "none",
+    "status": "covered"
+  },
+  {
+    "dimension": "domain",
+    "key": "meeting-diagnostic-depth",
+    "expectedMinimum": 12,
+    "actual": 22,
+    "gap": 0,
+    "severity": "none",
+    "status": "covered"
+  },
+  {
+    "dimension": "domain",
+    "key": "proposal-decision-path",
+    "expectedMinimum": 12,
+    "actual": 23,
+    "gap": 0,
+    "severity": "none",
+    "status": "covered"
+  },
+  {
+    "dimension": "domain",
+    "key": "objection-resolution",
+    "expectedMinimum": 12,
+    "actual": 23,
+    "gap": 0,
+    "severity": "none",
+    "status": "covered"
+  },
+  {
+    "dimension": "domain",
+    "key": "negotiation-control",
+    "expectedMinimum": 12,
+    "actual": 23,
+    "gap": 0,
+    "severity": "none",
+    "status": "covered"
+  },
+  {
+    "dimension": "domain",
+    "key": "closing-readiness",
+    "expectedMinimum": 12,
+    "actual": 24,
+    "gap": 0,
+    "severity": "none",
+    "status": "covered"
+  },
+  {
+    "dimension": "domain",
+    "key": "pipeline-friction",
+    "expectedMinimum": 12,
+    "actual": 24,
+    "gap": 0,
+    "severity": "none",
+    "status": "covered"
+  },
+  {
+    "dimension": "domain",
+    "key": "executive-escalation",
+    "expectedMinimum": 12,
+    "actual": 24,
+    "gap": 0,
+    "severity": "none",
+    "status": "covered"
+  },
+  {
+    "dimension": "domain",
+    "key": "renewal-risk",
+    "expectedMinimum": 12,
+    "actual": 24,
+    "gap": 0,
+    "severity": "none",
+    "status": "covered"
+  },
+  {
+    "dimension": "domain",
+    "key": "expansion-whitespace",
+    "expectedMinimum": 12,
+    "actual": 24,
+    "gap": 0,
+    "severity": "none",
+    "status": "covered"
+  },
+  {
+    "dimension": "domain",
+    "key": "referral-readiness",
+    "expectedMinimum": 12,
+    "actual": 24,
+    "gap": 0,
+    "severity": "none",
+    "status": "covered"
+  },
+  {
+    "dimension": "domain",
+    "key": "forecast-confidence",
+    "expectedMinimum": 12,
+    "actual": 25,
+    "gap": 0,
+    "severity": "none",
+    "status": "covered"
+  },
+  {
+    "dimension": "domain",
+    "key": "command-governance",
+    "expectedMinimum": 12,
+    "actual": 25,
+    "gap": 0,
+    "severity": "none",
+    "status": "covered"
+  },
+  {
+    "dimension": "domain",
+    "key": "coverage-integrity",
+    "expectedMinimum": 12,
+    "actual": 25,
+    "gap": 0,
+    "severity": "none",
+    "status": "covered"
+  },
+  {
+    "dimension": "domain",
+    "key": "performance-remediation",
+    "expectedMinimum": 12,
+    "actual": 25,
+    "gap": 0,
+    "severity": "none",
+    "status": "covered"
+  },
+  {
+    "dimension": "domain",
+    "key": "staleness-control",
+    "expectedMinimum": 12,
+    "actual": 25,
+    "gap": 0,
+    "severity": "none",
+    "status": "covered"
+  },
+  {
+    "dimension": "domain",
+    "key": "dependency-integrity",
+    "expectedMinimum": 12,
+    "actual": 25,
+    "gap": 0,
+    "severity": "none",
+    "status": "covered"
+  },
+  {
+    "dimension": "domain",
+    "key": "schedule-collision",
+    "expectedMinimum": 12,
+    "actual": 26,
+    "gap": 0,
+    "severity": "none",
+    "status": "covered"
+  },
+  {
+    "dimension": "domain",
+    "key": "trigger-quality",
+    "expectedMinimum": 12,
+    "actual": 26,
+    "gap": 0,
+    "severity": "none",
+    "status": "covered"
+  },
+  {
+    "dimension": "domain",
+    "key": "output-contract",
+    "expectedMinimum": 12,
+    "actual": 26,
+    "gap": 0,
+    "severity": "none",
+    "status": "covered"
+  },
+  {
+    "dimension": "domain",
+    "key": "validation-chain",
+    "expectedMinimum": 12,
+    "actual": 27,
+    "gap": 0,
+    "severity": "none",
+    "status": "covered"
+  },
+  {
+    "dimension": "domain",
+    "key": "authority-compatibility",
+    "expectedMinimum": 12,
+    "actual": 27,
+    "gap": 0,
+    "severity": "none",
+    "status": "covered"
+  },
+  {
+    "dimension": "domain",
+    "key": "tool-compatibility",
+    "expectedMinimum": 12,
+    "actual": 26,
+    "gap": 0,
+    "severity": "none",
+    "status": "covered"
+  },
+  {
+    "dimension": "domain",
+    "key": "tenant-boundary",
+    "expectedMinimum": 12,
+    "actual": 27,
+    "gap": 0,
+    "severity": "none",
+    "status": "covered"
+  },
+  {
+    "dimension": "domain",
+    "key": "margin-evidence",
+    "expectedMinimum": 12,
+    "actual": 27,
+    "gap": 0,
+    "severity": "none",
+    "status": "covered"
+  },
+  {
+    "dimension": "domain",
+    "key": "capacity-evidence",
+    "expectedMinimum": 12,
+    "actual": 27,
+    "gap": 0,
+    "severity": "none",
+    "status": "covered"
+  },
+  {
+    "dimension": "domain",
+    "key": "commercial-stop-condition",
+    "expectedMinimum": 12,
+    "actual": 27,
+    "gap": 0,
+    "severity": "none",
+    "status": "covered"
+  },
+  {
+    "dimension": "domain",
+    "key": "next-best-command",
+    "expectedMinimum": 12,
+    "actual": 26,
+    "gap": 0,
+    "severity": "none",
+    "status": "covered"
+  },
+  {
+    "dimension": "domain",
+    "key": "multi-scenario-comparison",
+    "expectedMinimum": 12,
+    "actual": 26,
+    "gap": 0,
+    "severity": "none",
+    "status": "covered"
+  },
+  {
+    "dimension": "domain",
+    "key": "learning-readiness",
+    "expectedMinimum": 12,
+    "actual": 26,
+    "gap": 0,
+    "severity": "none",
+    "status": "covered"
+  }
+]

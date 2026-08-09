@@ -1,0 +1,285 @@
+✓ ZIP checksum verified: ccf28d25e5c693c1da15d710aaed7bb8562840f83a8634bc3044b26562de7deb
+Patched /mnt/data/revenue_mz05_work/installer_sim_target/package.json
+Patched /mnt/data/revenue_mz05_work/installer_sim_target/apps/ops-web/package.json
+
+Installer simulation mode: validating MZ05 copy, backup, package patch, static acceptance and corpus.
+
+MZ05 STATIC ACCEPTANCE
+Passes: 171
+Failures: 0
+  ✓ Fichier requis: app/(protected)/revenue-command-os/command-kernel/page.tsx
+  ✓ Fichier requis: app/(protected)/revenue-command-os/command-kernel/[section]/page.tsx
+  ✓ Fichier requis: app/api/revenue-command-os/command-kernel/route.ts
+  ✓ Fichier requis: lib/revenue-command-os/command-kernel/types.ts
+  ✓ Fichier requis: lib/revenue-command-os/command-kernel/constants.ts
+  ✓ Fichier requis: lib/revenue-command-os/command-kernel/seed-data.ts
+  ✓ Fichier requis: lib/revenue-command-os/command-kernel/eligibility.ts
+  ✓ Fichier requis: lib/revenue-command-os/command-kernel/permissions.ts
+  ✓ Fichier requis: lib/revenue-command-os/command-kernel/router.ts
+  ✓ Fichier requis: lib/revenue-command-os/command-kernel/graph.ts
+  ✓ Fichier requis: lib/revenue-command-os/command-kernel/scheduler.ts
+  ✓ Fichier requis: lib/revenue-command-os/command-kernel/runtime.ts
+  ✓ Fichier requis: lib/revenue-command-os/command-kernel/validation.ts
+  ✓ Fichier requis: lib/revenue-command-os/command-kernel/repository.ts
+  ✓ Fichier requis: supabase/migrations/20260720_revenue_command_os_phase5_command_kernel.sql
+  ✓ Fichier requis: docs/revenue-command-os/phase-05/ROLLBACK.sql
+  ✓ Contrat type RevenueCommandDefinition
+  ✓ Contrat type RevenueCommandVersion
+  ✓ Contrat type RevenueCommandSituation
+  ✓ Contrat type RevenueCommandEligibilityDecision
+  ✓ Contrat type RevenueCommandRunPlan
+  ✓ Contrat type RevenueCommandGraph
+  ✓ Contrat type RevenueCommandKernelBootstrap
+  ✓ Preuve seed manual
+  ✓ Preuve seed scheduled
+  ✓ Preuve seed event
+  ✓ Preuve seed condition
+  ✓ Preuve seed chained
+  ✓ Preuve seed fallback
+  ✓ Preuve seed approval
+  ✓ Preuve seed rejected
+  ✓ Preuve seed simulation
+  ✓ Routage déterministe et idempotent
+  ✓ Aucune action externe
+  ✓ API allow-list MZ05
+  ✓ Workspace Vue du noyau
+  ✓ Workspace Catalogue des commandes
+  ✓ Workspace Familles & taxonomie
+  ✓ Workspace Routage & éligibilité
+  ✓ Workspace Déclencheurs
+  ✓ Workspace Planification
+  ✓ Workspace Graphes de commandes
+  ✓ Workspace Simulation
+  ✓ Workspace Exécutions
+  ✓ Workspace Versions & rollback
+  ✓ Workspace Permissions & garde-fous
+  ✓ Workspace Validation du noyau
+  ✓ Migration revenue_os_command_families
+  ✓ Rollback revenue_os_command_families
+  ✓ Migration revenue_os_command_definitions
+  ✓ Rollback revenue_os_command_definitions
+  ✓ Migration revenue_os_command_versions
+  ✓ Rollback revenue_os_command_versions
+  ✓ Migration revenue_os_command_eligibility_rules
+  ✓ Rollback revenue_os_command_eligibility_rules
+  ✓ Migration revenue_os_command_context_contracts
+  ✓ Rollback revenue_os_command_context_contracts
+  ✓ Migration revenue_os_command_tool_permissions
+  ✓ Rollback revenue_os_command_tool_permissions
+  ✓ Migration revenue_os_command_triggers
+  ✓ Rollback revenue_os_command_triggers
+  ✓ Migration revenue_os_command_schedules
+  ✓ Rollback revenue_os_command_schedules
+  ✓ Migration revenue_os_command_graphs
+  ✓ Rollback revenue_os_command_graphs
+  ✓ Migration revenue_os_command_graph_nodes
+  ✓ Rollback revenue_os_command_graph_nodes
+  ✓ Migration revenue_os_command_run_plans
+  ✓ Rollback revenue_os_command_run_plans
+  ✓ Migration revenue_os_command_runs
+  ✓ Rollback revenue_os_command_runs
+  ✓ Migration revenue_os_command_run_steps
+  ✓ Rollback revenue_os_command_run_steps
+  ✓ Migration revenue_os_command_idempotency
+  ✓ Rollback revenue_os_command_idempotency
+  ✓ Migration revenue_os_command_approval_classes
+  ✓ Rollback revenue_os_command_approval_classes
+  ✓ Migration revenue_os_command_permission_evaluations
+  ✓ Rollback revenue_os_command_permission_evaluations
+  ✓ Migration revenue_os_command_output_validations
+  ✓ Rollback revenue_os_command_output_validations
+  ✓ Migration revenue_os_command_rollbacks
+  ✓ Rollback revenue_os_command_rollbacks
+  ✓ Migration revenue_os_command_retirements
+  ✓ Rollback revenue_os_command_retirements
+  ✓ Migration revenue_os_command_test_cases
+  ✓ Rollback revenue_os_command_test_cases
+  ✓ Migration revenue_os_command_test_runs
+  ✓ Rollback revenue_os_command_test_runs
+  ✓ Migration revenue_os_command_kernel_validation_issues
+  ✓ Rollback revenue_os_command_kernel_validation_issues
+  ✓ Migration revenue_os_command_kernel_snapshots
+  ✓ Rollback revenue_os_command_kernel_snapshots
+  ✓ RLS activé
+  ✓ Accès client révoqué
+  ✓ Accès service_role
+  ✓ Contrats MZ01 de permissions et feature flags respectés
+  ✓ Seed représentatif déclaré
+  ✓ Posture Shadow persistée
+  ✓ Outils externes enregistrés uniquement comme interdits
+  ✓ MZ04 préservé
+  ✓ MZ03 préservé
+  ✓ MZ02 préservé
+  ✓ MZ01 préservé
+  ✓ Corpus d’évaluation présent
+  ✓ Corpus réel >30 MB (56360267)
+  ✓ Corpus >=30 000 cas (30000)
+  ✓ Cas corpus structuré
+  ✓ Cas corpus structuré
+  ✓ Cas corpus structuré
+  ✓ Cas corpus structuré
+  ✓ Cas corpus structuré
+  ✓ Cas corpus structuré
+  ✓ Cas corpus structuré
+  ✓ Cas corpus structuré
+  ✓ Cas corpus structuré
+  ✓ Cas corpus structuré
+  ✓ Cas corpus structuré
+  ✓ Cas corpus structuré
+  ✓ Cas corpus structuré
+  ✓ Cas corpus structuré
+  ✓ Cas corpus structuré
+  ✓ Cas corpus structuré
+  ✓ Cas corpus structuré
+  ✓ Cas corpus structuré
+  ✓ Cas corpus structuré
+  ✓ Cas corpus structuré
+  ✓ Corpus adversarial présent
+  ✓ Corpus adversarial >100 MB (123316006)
+  ✓ Corpus adversarial >=40 000 cas (40000)
+  ✓ Cas adversarial structuré
+  ✓ Cas adversarial sans action externe
+  ✓ Cas adversarial structuré
+  ✓ Cas adversarial sans action externe
+  ✓ Cas adversarial structuré
+  ✓ Cas adversarial sans action externe
+  ✓ Cas adversarial structuré
+  ✓ Cas adversarial sans action externe
+  ✓ Cas adversarial structuré
+  ✓ Cas adversarial sans action externe
+  ✓ Cas adversarial structuré
+  ✓ Cas adversarial sans action externe
+  ✓ Cas adversarial structuré
+  ✓ Cas adversarial sans action externe
+  ✓ Cas adversarial structuré
+  ✓ Cas adversarial sans action externe
+  ✓ Cas adversarial structuré
+  ✓ Cas adversarial sans action externe
+  ✓ Cas adversarial structuré
+  ✓ Cas adversarial sans action externe
+  ✓ Cas adversarial structuré
+  ✓ Cas adversarial sans action externe
+  ✓ Cas adversarial structuré
+  ✓ Cas adversarial sans action externe
+  ✓ Cas adversarial structuré
+  ✓ Cas adversarial sans action externe
+  ✓ Cas adversarial structuré
+  ✓ Cas adversarial sans action externe
+  ✓ Cas adversarial structuré
+  ✓ Cas adversarial sans action externe
+  ✓ Cas adversarial structuré
+  ✓ Cas adversarial sans action externe
+  ✓ Cas adversarial structuré
+  ✓ Cas adversarial sans action externe
+  ✓ Cas adversarial structuré
+  ✓ Cas adversarial sans action externe
+  ✓ Cas adversarial structuré
+  ✓ Cas adversarial sans action externe
+  ✓ Cas adversarial structuré
+  ✓ Cas adversarial sans action externe
+  ✓ Aucun fichier de police inclus
+
+MEGA ZIP 5 STATIC ACCEPTANCE: PASS
+
+{
+  "suite": "MZ05 kernel and adversarial corpora",
+  "files": [
+    "tests/revenue-command-os/evaluations/mz05-routing-corpus.ndjson",
+    "tests/revenue-command-os/evaluations/mz05-adversarial-integrity-corpus.ndjson"
+  ],
+  "cases": 70000,
+  "failures": 0,
+  "families": [
+    "market-sensing",
+    "segmentation-account-discovery",
+    "offer-pricing",
+    "campaign-go-to-market",
+    "outreach-channel",
+    "qualification-progression",
+    "meetings-diagnostics",
+    "proposal-negotiation-closing",
+    "pipeline-rescue",
+    "renewal-expansion-referral",
+    "executive-forecasting",
+    "audit-optimization"
+  ],
+  "modes": [
+    "shadow",
+    "simulation",
+    "recommend",
+    "approval-gated"
+  ],
+  "outcomes": [
+    "eligible",
+    "excluded",
+    "blocked-context",
+    "blocked-permission",
+    "awaiting-approval",
+    "simulation-only",
+    "block",
+    "exclude",
+    "simulate",
+    "await-approval",
+    "retry",
+    "fallback"
+  ],
+  "categories": [
+    "normal",
+    "complex",
+    "incomplete",
+    "contradictory",
+    "prohibited",
+    "retry",
+    "fallback",
+    "approval",
+    "idempotency",
+    "idempotency-replay",
+    "schema-tampering",
+    "rollback-trace",
+    "tool-prohibition",
+    "approval-bypass",
+    "hash-stability",
+    "graph-cycle-attack",
+    "sensitive-field-redaction",
+    "context-staleness",
+    "tenant-isolation",
+    "permission-escalation",
+    "fallback-exhaustion"
+  ]
+}
+
+ANGELCARE Revenue Command OS MZ05 installed successfully.
+
+Backup:
+  /mnt/data/revenue_mz05_work/installer_sim_target/backups/revenue-command-os/mz05-20260720-150955
+
+Migration to apply manually in Supabase SQL Editor:
+  /mnt/data/revenue_mz05_work/installer_sim_target/apps/ops-web/supabase/migrations/20260720_revenue_command_os_phase5_command_kernel.sql
+
+Application rollback:
+  bash "/mnt/data/revenue_mz05_work/installer_sim_target/rollback_revenue_os_mz05_application.sh" "/mnt/data/revenue_mz05_work/installer_sim_target" "/mnt/data/revenue_mz05_work/installer_sim_target/backups/revenue-command-os/mz05-20260720-150955"
+
+Database rollback SQL (manual only):
+  /mnt/data/revenue_mz05_work/installer_sim_target/apps/ops-web/docs/revenue-command-os/phase-05/ROLLBACK.sql
+
+Post-install commands:
+  cd "/mnt/data/revenue_mz05_work/installer_sim_target"
+  npm run revenue-os:phase05:typecheck
+  npm run revenue-os:phase05:verify
+  npm run revenue-os:phase05:test
+
+Development route:
+  /revenue-command-os/command-kernel
+
+No database migration was applied.
+No Git files were staged or committed.
+No production build was run.
+External actions remain disabled in Shadow mode.
+
+SIMULATION_ASSERTIONS: PASS
+BACKUP_PATH: /mnt/data/revenue_mz05_work/installer_sim_target/backups/revenue-command-os/mz05-20260720-150955
+PACKAGE_SCRIPT_PATCH: PASS
+EXISTING_FILE_BACKUP: PASS
+NEW_FILE_TRACKING: PASS
+APPLICATION_ROLLBACK: PASS
+ORIGINAL_MARKER_RESTORED: PASS

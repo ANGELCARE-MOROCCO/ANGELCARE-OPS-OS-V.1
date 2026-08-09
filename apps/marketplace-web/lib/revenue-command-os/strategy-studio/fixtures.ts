@@ -1,0 +1,5 @@
+import type { ApprovalClass } from './types'
+export const STUDIO_NAVIGATION=[
+['executive_overview','Vue exécutive'],['revenue_objective','Objectif revenu'],['live_situation','Brief de situation'],['strategy_assembly','Stratégie'],['strategy_comparison','Comparaison'],['assumption_inspector','Hypothèses'],['evidence_viewer','Preuves'],['red_team_findings','Red Team'],['capacity_simulation','Capacité'],['constraint_simulation','Contraintes'],['outcome_simulation','Résultats'],['optimization_history','Optimisations'],['approval_center','Approbations'],['version_timeline','Versions'],['executive_decision_memo','Note de décision'],['audit','Audit'],
+] as const
+export const APPROVAL_CLASS_LABELS:Record<ApprovalClass,string>={standard:'Approbation stratégique standard',financial:'Approbation financière requise',capacity:'Approbation capacité requise',managing_director:'Approbation Direction Générale',multi_director:'Approbation multi-direction',conditional_pilot:'Approbation conditionnelle pilote',high_risk_exception:'Approbation exceptionnelle à risque élevé'}

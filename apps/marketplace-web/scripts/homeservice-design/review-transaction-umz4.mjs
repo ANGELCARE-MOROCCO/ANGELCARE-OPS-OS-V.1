@@ -1,0 +1,10 @@
+import fs from'node:fs';import path from'node:path';const root=process.cwd();let p=0,f=0;const read=x=>fs.readFileSync(path.join(root,x),'utf8'),check=(n,v)=>{console.log(`${v?'PASS':'FAIL'}  ${n}`);v?p++:f++};
+check("Prepare Preflight Commit doctrine",read('lib/homeservice-handoff/constants.ts').includes("['prepare','preflight','commit']"));
+check("commit requires approved state",read('lib/homeservice-handoff/server/repository.ts').includes("req.status!=='approved'"));
+check("commit requires preflight ready",read('lib/homeservice-handoff/server/repository.ts').includes("req.preflight_status!=='ready'"));
+check("SQL row lock",read('supabase/migrations/20260801_homeservice_design_os_ultra_mega_zip4_carelink_handoff.sql').includes('FOR UPDATE'));
+check("parent and sub-missions inside RPC",read('supabase/migrations/20260801_homeservice_design_os_ultra_mega_zip4_carelink_handoff.sql').includes("'dossier'")&&read('supabase/migrations/20260801_homeservice_design_os_ultra_mega_zip4_carelink_handoff.sql').includes("'sub_mission'"));
+check("atomic count assertion",read('supabase/migrations/20260801_homeservice_design_os_ultra_mega_zip4_carelink_handoff.sql').includes('Atomic mission count mismatch'));
+check("projection failure explicit",read('lib/homeservice-handoff/server/repository.ts').includes('committed_with_projection_failure'));
+check("retry projection dedicated",read('lib/homeservice-handoff/server/repository.ts').includes('retryProjection'));
+console.log(`\n${p}/${p+f} checks passed.`);if(f)process.exit(1);

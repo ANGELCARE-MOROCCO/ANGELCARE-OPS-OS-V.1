@@ -1,0 +1,7 @@
+import { carelinkMissions } from '@/lib/carelink/seed'
+import { detectScheduleConflicts } from '@/lib/carelink/schedule-conflicts'
+import { CareLinkOpsShell } from './CareLinkOpsShell'
+import { OpsPanel } from './OpsPrimitives'
+import { StatusPill } from '@/components/carelink/shared/CareLinkPrimitives'
+
+export function OpsScheduleBoard(){const conflicts=detectScheduleConflicts(carelinkMissions); return <CareLinkOpsShell title="Enterprise scheduling" subtitle="Planning agents, capacité zones, buffers, conflits et coverage gaps."><div className="grid grid-cols-4 gap-6"><OpsPanel title="Conflits détectés"><div className="space-y-3">{conflicts.length?conflicts.map(c=><div key={c.message} className="rounded-3xl bg-amber-50 p-4 text-sm font-bold text-amber-800">{c.message}</div>):<p className="text-sm font-semibold text-slate-500">Aucun conflit critique.</p>}</div></OpsPanel><div className="col-span-3"><OpsPanel title="Timeline opérations"><div className="space-y-3">{carelinkMissions.map(m=><div key={m.id} className="grid grid-cols-5 items-center gap-4 rounded-3xl bg-slate-50 p-4"><p className="font-black text-blue-600">{new Date(m.scheduledStart).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}</p><p className="col-span-2 font-black text-slate-950">{m.serviceType}</p><p className="font-bold text-slate-500">{m.zone}</p><StatusPill tone={m.readinessStatus==='ready'?'green':'amber'}>{m.readinessScore}%</StatusPill></div>)}</div></OpsPanel></div></div></CareLinkOpsShell>}
