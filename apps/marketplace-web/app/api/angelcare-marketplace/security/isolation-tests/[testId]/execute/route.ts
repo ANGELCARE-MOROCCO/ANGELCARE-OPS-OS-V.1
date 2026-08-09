@@ -1,0 +1,2 @@
+import { handleIsolationExecution } from '@/angelcare-marketplace/analytics-security/api-handlers'
+export async function POST(request:Request,{params}:{params:Promise<{testId:string}>}){return handleIsolationExecution(request,(await params).testId)}

@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {"noEmit": true, "skipLibCheck": true, "incremental": false, "composite": false},
+  "include": [
+    "app/(protected)/market-os/content-command-center/opportunities/page.tsx",
+    "app/api/market-os/content-command/opportunities/**/*.ts",
+    "app/api/market-os/content-command/research-control/cron/route.ts",
+    "components/market-os/content-command/experience-bulk11/**/*.ts",
+    "components/market-os/content-command/experience-bulk11/**/*.tsx",
+    "components/market-os/content-command/content-command-navigation.tsx",
+    "components/market-os/content-command/experience-bulk9/LifecycleControlDock.tsx",
+    "lib/market-os/content-command-headquarters/opportunity-intelligence-service.ts",
+    "lib/market-os/content-command-headquarters/market-scan.ts"
+  ]
+}

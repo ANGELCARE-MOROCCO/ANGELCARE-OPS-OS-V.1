@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900" role="img" aria-labelledby="title-e528cbf0">
+<title id="title-e528cbf0">Non-medical health-adjacent support category</title>
+<defs>
+<linearGradient id="bge528cbf0" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#3b2442"/><stop offset=".58" stop-color="#a45c74"/><stop offset="1" stop-color="#3b2442"/></linearGradient>
+<radialGradient id="glowe528cbf0" cx="50%" cy="50%" r="50%"><stop stop-color="#ffe0ea" stop-opacity=".92"/><stop offset="1" stop-color="#ef8e9c" stop-opacity=".08"/></radialGradient>
+<linearGradient id="glasse528cbf0" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff" stop-opacity=".36"/><stop offset="1" stop-color="#fff" stop-opacity=".08"/></linearGradient>
+<pattern id="gride528cbf0" width="42" height="42" patternUnits="userSpaceOnUse"><path d="M42 0H0V42" fill="none" stroke="#fff" stroke-opacity=".045"/></pattern>
+<filter id="shadowe528cbf0" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="22" stdDeviation="24" flood-color="#000" flood-opacity=".28"/></filter>
+</defs>
+<rect width="1200" height="900" fill="url(#bge528cbf0)"/>
+<rect width="1200" height="900" fill="url(#gride528cbf0)"/>
+<circle cx="936" cy="225" r="252" fill="url(#glowe528cbf0)" opacity=".62"/>
+<circle cx="144" cy="774" r="342" fill="none" stroke="#fff" stroke-opacity=".07" stroke-width="2"/>
+<path d="M0 702 C 240 558, 456 846, 696 666 S 1032 576, 1200 702 V 900 H0Z" fill="#fff" opacity=".035"/>
+<path d="M54 94H216" stroke="#ef8e9c" stroke-width="7" stroke-linecap="round"/>
+<path d="M54 126H156" stroke="#fff" stroke-opacity=".55" stroke-width="4" stroke-linecap="round"/>
+<g filter="url(#shadowe528cbf0)"><circle cx="864" cy="432" r="225" fill="url(#glasse528cbf0)" stroke="#fff" stroke-opacity=".32"/><path d="M747 495C792 315 909 288 981 387C1044 477 972 603 864 603C801 603 756 567 747 495Z" fill="#fff" opacity=".94"/><circle cx="891" cy="423" r="50" fill="#ffe0ea"/></g>
+</svg>

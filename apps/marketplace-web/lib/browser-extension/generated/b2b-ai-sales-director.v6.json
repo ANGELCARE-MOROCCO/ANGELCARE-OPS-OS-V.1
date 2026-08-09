@@ -1,0 +1,193 @@
+{
+  "version": "6.0.0",
+  "name": "Mega ZIP 6 \u2014 AI Sales Director, Management Command and Controlled Automation",
+  "canonicalCapabilityCount": 45,
+  "operationalCapabilityCount": 45,
+  "implementedCapabilityIds": [
+    "B2B-039",
+    "B2B-040",
+    "B2B-041",
+    "B2B-044"
+  ],
+  "scope": [
+    "ai_sales_director",
+    "evidence_retrieval",
+    "decision_trace",
+    "truth_classification",
+    "management_command",
+    "pipeline_truth",
+    "explainable_forecasting",
+    "revenue_risk_command",
+    "staff_execution_quality",
+    "coaching_missions",
+    "territory_vertical_intelligence",
+    "executive_reporting",
+    "controlled_automation",
+    "human_approval_gates",
+    "automation_kill_switch",
+    "user_profile_access"
+  ],
+  "commands": [
+    "b2b.ai_director.review_account",
+    "b2b.ai_director.review_pipeline",
+    "b2b.ai_director.review_partner",
+    "b2b.ai_director.review_renewal",
+    "b2b.ai_director.recommend_action",
+    "b2b.ai_director.refresh_recommendation",
+    "b2b.ai_director.accept_recommendation",
+    "b2b.ai_director.reject_recommendation",
+    "b2b.management.priority_assign",
+    "b2b.management.account_reassign",
+    "b2b.management.opportunity_reassign",
+    "b2b.management.correction_request",
+    "b2b.management.action_freeze",
+    "b2b.management.intervention_create",
+    "b2b.management.intervention_close",
+    "b2b.pipeline_truth.assess",
+    "b2b.pipeline_truth.stage_recommend",
+    "b2b.pipeline_truth.correction_apply",
+    "b2b.forecast.calculate",
+    "b2b.forecast.snapshot_create",
+    "b2b.forecast.override_request",
+    "b2b.forecast.override_approve",
+    "b2b.revenue_risk.detect",
+    "b2b.revenue_risk.assign",
+    "b2b.revenue_risk.escalate",
+    "b2b.revenue_risk.resolve",
+    "b2b.proposal_recovery.create",
+    "b2b.payment_recovery.create",
+    "b2b.renewal_rescue.create",
+    "b2b.partner_health_rescue.create",
+    "b2b.execution_quality.assess",
+    "b2b.execution_quality.pattern_detect",
+    "b2b.coaching.create",
+    "b2b.coaching.assign",
+    "b2b.coaching.complete",
+    "b2b.coaching.review",
+    "b2b.coaching.outcome_record",
+    "b2b.territory_intelligence.calculate",
+    "b2b.territory_intelligence.coverage_read",
+    "b2b.territory_intelligence.gap_detect",
+    "b2b.vertical_intelligence.performance_read",
+    "b2b.report.daily_revenue_generate",
+    "b2b.report.weekly_commercial_generate",
+    "b2b.report.pipeline_truth_generate",
+    "b2b.report.margin_protection_generate",
+    "b2b.report.payment_recovery_generate",
+    "b2b.report.partner_health_generate",
+    "b2b.report.renewal_exposure_generate",
+    "b2b.report.territory_generate",
+    "b2b.report.staff_execution_generate",
+    "b2b.report.automation_generate",
+    "b2b.automation.create",
+    "b2b.automation.update",
+    "b2b.automation.enable",
+    "b2b.automation.pause",
+    "b2b.automation.approval_request",
+    "b2b.automation.approval_decide",
+    "b2b.automation.execute",
+    "b2b.automation.retry",
+    "b2b.automation.kill",
+    "b2b.automation.audit_read"
+  ],
+  "focusWorkspaces": [
+    "AI Sales Director",
+    "Management Command",
+    "Pipeline Truth & Forecast",
+    "Revenue Risk Command",
+    "Team Execution Quality",
+    "Coaching Mission Command",
+    "Territory & Vertical Intelligence",
+    "Executive Reporting Studio",
+    "Controlled Automation Center",
+    "Executive Intervention Room"
+  ],
+  "truthClassifications": [
+    "verified_fact",
+    "evidence_backed_inference",
+    "commercial_hypothesis",
+    "missing_information",
+    "user_reported_statement",
+    "client_reported_statement",
+    "ai_recommendation",
+    "approved_management_decision"
+  ],
+  "forecastCategories": [
+    "committed",
+    "probable",
+    "possible",
+    "at_risk",
+    "unqualified",
+    "stale"
+  ],
+  "automationModes": [
+    "disabled",
+    "suggest_only",
+    "user_confirmation",
+    "manager_approval",
+    "safe_automation",
+    "paused",
+    "suspended",
+    "failed",
+    "completed"
+  ],
+  "highRiskHumanControlled": [
+    "external_communication",
+    "discounts",
+    "proposal_approval",
+    "contract_changes",
+    "payment_confirmation",
+    "partner_launch",
+    "tender_submission",
+    "opportunity_won",
+    "renewal_approval",
+    "executive_commitment",
+    "client_facing_promise"
+  ],
+  "acceptanceScenarios": [
+    {
+      "id": "M6-A01",
+      "title": "AI Sales Director evidence-backed review"
+    },
+    {
+      "id": "M6-A02",
+      "title": "Pipeline truth and forecast"
+    },
+    {
+      "id": "M6-A03",
+      "title": "Revenue rescue and intervention"
+    },
+    {
+      "id": "M6-A04",
+      "title": "Staff coaching with completion proof"
+    },
+    {
+      "id": "M6-A05",
+      "title": "Territory-scoped management intelligence"
+    },
+    {
+      "id": "M6-A06",
+      "title": "Evidence-backed executive reporting"
+    },
+    {
+      "id": "M6-A07",
+      "title": "Safe controlled automation"
+    },
+    {
+      "id": "M6-A08",
+      "title": "High-risk action protection"
+    },
+    {
+      "id": "M6-A09",
+      "title": "Access revocation and stale capability denial"
+    },
+    {
+      "id": "M6-A10",
+      "title": "45/45 cumulative capability verification"
+    }
+  ],
+  "externalCommunication": "user-confirmed only",
+  "aiTruthPolicy": "never_fabricate_label_inference_and_missing_data",
+  "secretSurveillance": false,
+  "crossTerritoryLeakage": false
+}

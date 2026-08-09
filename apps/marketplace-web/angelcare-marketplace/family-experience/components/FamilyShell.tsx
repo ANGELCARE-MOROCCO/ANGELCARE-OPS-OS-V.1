@@ -1,0 +1,4 @@
+import Link from 'next/link'
+import type { ReactNode } from 'react'
+import styles from '../family.module.css'
+export function FamilyShell({children}:{children:ReactNode}){return <div className={styles.familyRoot}><header className={styles.familyHeader}><div className={styles.familyHeaderInner}><nav className={styles.familyNav} aria-label="Espace famille"><strong>ANGELCARE · Espace Famille</strong><Link href="/angelcare-marketplace/family/dashboard">Aujourd’hui</Link><Link href="/angelcare-marketplace/family/children">Enfants</Link><Link href="/angelcare-marketplace/family/diagnostic">Diagnostic</Link><Link href="/angelcare-marketplace/family/request">Demande</Link><Link href="/angelcare-marketplace/family/missions">Missions</Link><Link href="/angelcare-marketplace/family/support">Support</Link></nav></div></header><main className={styles.familyMain}>{children}</main></div>}

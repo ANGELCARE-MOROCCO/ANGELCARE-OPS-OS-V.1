@@ -1,0 +1,32 @@
+[
+  {
+    "file": "apps/ops-web/app/components/erp/AppShell.tsx",
+    "before_sha256": "a95abf5648724d0f2d7a9be5463c56f9fd04a59a6dfd36d0c6ca8ef971d69e3b",
+    "after_sha256": "8f54236afc0adf6f071f700c7ad3f14df82240a407b7bcb2f008129a13d2b3b9"
+  },
+  {
+    "file": "apps/ops-web/lib/access-control.ts",
+    "before_sha256": "6bc253cf84bc79825b44a9d6623aab082c15ec209366f6147bc47065c6d9bc3f",
+    "after_sha256": "2f704fb520eaddfe99dd189956690f6cdeb7ed0749dea7fe5797accbf1d9edc5"
+  },
+  {
+    "file": "apps/ops-web/lib/auth/permissions.ts",
+    "before_sha256": "eaee36a7fdfca73329186156882585a1b0653524f5cc835d44702c47c7162667",
+    "after_sha256": "16aebf61d994c4293d28dcbae709f168ed9d13ccbc035e230fa2969629dd5472"
+  },
+  {
+    "file": "apps/ops-web/lib/workspace/workspace-modules.ts",
+    "before_sha256": "b0788219756b1689c4bcfb36129726208edbda278dd0d9696dbaa277ef16faae",
+    "after_sha256": "7373b21dcc11e359d1da196c567dfe34f233e71345ba46500cd748a40d969488"
+  },
+  {
+    "file": "apps/ops-web/package.json",
+    "before_sha256": "8c90590ab37f0fe9ba296a87b4d4910769a8d3b4a0b2d116ece1ddbda6c8bf0b",
+    "after_sha256": "833391307d1936ba68daf21a8e7093ae78891f59a51d31ffc94d96450ea0302c"
+  },
+  {
+    "file": "package.json",
+    "before_sha256": "54c4fe623b4273c5c85ce53b73bcae5c9bb64bb458c36519e9000ecf35055433",
+    "after_sha256": "c507dae10dced94424c960172f9ae0a0b7291c5fa2b8b331d63d2ae237e3db79"
+  }
+]

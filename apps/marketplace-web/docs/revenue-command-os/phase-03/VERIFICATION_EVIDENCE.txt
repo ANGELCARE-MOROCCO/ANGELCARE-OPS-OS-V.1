@@ -1,0 +1,17 @@
+ANGELCARE Revenue Command OS — Mega ZIP 3 Verification Evidence
+Release: AC-REVENUE-OS-MZ03-DOCTRINE-MEMORY
+
+Phase 1 regression: 64 passed / 0 failed
+Phase 2 regression: 192 passed / 0 failed
+Phase 3 static acceptance: 321 passed / 0 failed
+Targeted Phase 3 TypeScript check: PASS
+Revenue OS integration TypeScript check: PASS
+
+Safety assertions:
+- Shadow mode preserved.
+- External actions disabled.
+- No OpenAI runtime invocation in MZ03.
+- No WhatsApp/email send tool in MZ03.
+- Server-only repository, RLS and direct-client revocation included.
+- Database migration not executed by the installer.
+- Git staging and commit not performed by the installer.

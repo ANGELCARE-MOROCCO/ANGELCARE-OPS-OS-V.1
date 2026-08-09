@@ -1,0 +1,2 @@
+import { requireMarketplacePageContext } from '@/angelcare-marketplace/auth/context';import { KitPortfolio } from '@/angelcare-marketplace/development-engine/components/KitPortfolio';import { listDevelopmentKits } from '@/angelcare-marketplace/development-engine/repository'
+export default async function Page(){await requireMarketplacePageContext('marketplace.development.kits.view');return <KitPortfolio kits={await listDevelopmentKits()}/>}

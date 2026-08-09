@@ -1,0 +1,15 @@
+{
+  "app/api/market-os/content-command-headquarters/actions/route.ts": "92d0942be5fbbd69ae074df7f9371665a9c778fa841732b67011f7ce4b45abc3",
+  "components/market-os/content-command/content-publishing-page.tsx": "017018bdbf1b3382651f536aeb1137560aae11705abf818a1bdc063f9b96257c",
+  "components/market-os/content-command/experience-bulk1/Bulk1DossierWorkspace.tsx": "79e3e3e6bd9fdf30ac98c6bee1d7274e00a43ab93f5da3b3e49fcf8d72cb67c2",
+  "components/market-os/content-command/headquarters/DistributionWorkspace.tsx": "806bdceff1f30d9cd3148ea09d6e681fae0883898144feb1e2f70225fa6ab374",
+  "scripts/verify-content-command-mz7-backend-boundaries.mjs": "64489a358abbb453177e772da3d4041157b8cf91847b7c34bc2150ac0d34c3ce",
+  "scripts/verify-content-command-mz7-distribution-preflight.mjs": "ada2811122b19b7ed8b635b6e1818f3c9910e0f3f405bc52df5a4c25776ec521",
+  "scripts/verify-content-command-mz7-distribution-tower.mjs": "243f923198f8aac7fcf92a45ea6abdb6d66e4673c063d7c17104c5a84d001f36",
+  "scripts/verify-content-command-mz7-mz1-mz6-preservation.mjs": "36b646d192017685b6fad2522b9a7d6c8a5c38ec4e6dc59f676422b1c6db154e",
+  "scripts/verify-content-command-mz7-no-fabricated-release.mjs": "ed9e1d83d35d10674cf1b4866c26ac2559af91ef19694498317c999e1cb9253b",
+  "scripts/verify-content-command-mz7-portability.mjs": "9a691c1070d817b16a8e2f897fe39a8fe967c1ebe7b9f537133ff6e32c76ca71",
+  "scripts/verify-content-command-mz7-publication-recovery.mjs": "d24fab83a4c66838dbf8181c3dabf80e6044cd9a46cc3cac5d50c8a247795232",
+  "scripts/verify-content-command-mz7-publishing-operations.mjs": "a42e65a391fcb1da5c66413a56acba42b2c3d83f55d083c9161a5c558dda58c1",
+  "scripts/verify-content-command-mz7-route-scope.mjs": "e939001f4dd4380ca7e3a2ffb36fa380afac719197b4988ddd351be4d73ca0f9"
+}

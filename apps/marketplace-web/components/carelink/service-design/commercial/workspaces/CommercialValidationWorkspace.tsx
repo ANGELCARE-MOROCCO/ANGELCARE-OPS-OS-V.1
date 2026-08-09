@@ -1,0 +1,2 @@
+import{SupportWorkspace}from'./SupportWorkspace'
+export function CommercialValidationWorkspace(){return <SupportWorkspace eyebrow="Commercial Validation Chamber" title="Validation commerciale formelle" description="Un blocage technique, co\u00fbt manquant ou marge interdite ne peut pas \u00eatre masqu\u00e9." primary="Dossiers \u00e0 d\u00e9cider" secondary="Disciplines de validation" variant="matrix" items={["Plan technique", "Univers client", "Inclusions & options", "Prix & coûts", "Taxe & marge", "Capacité & sécurité", "Préparation client", "Version"]}/>}

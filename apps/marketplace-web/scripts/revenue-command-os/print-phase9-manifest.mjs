@@ -1,0 +1,1 @@
+import fs from 'node:fs';import path from 'node:path';const base=process.argv[2]||process.cwd();function walk(d){return fs.readdirSync(d,{withFileTypes:true}).flatMap(x=>x.isDirectory()?walk(path.join(d,x.name)):[path.join(d,x.name)])}for(const f of walk(base).sort())console.log(path.relative(base,f));

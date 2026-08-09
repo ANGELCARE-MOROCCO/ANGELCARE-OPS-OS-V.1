@@ -1,0 +1,39 @@
+{
+  "version": 1,
+  "updatedAt": "2026-07-03T10:00:51.430Z",
+  "tables": {
+    "b2b_marketplace_theme_settings": [
+      {
+        "theme_key": "angelcare-premium-white",
+        "name": "AngelCare Premium White — Catalogue Integrity",
+        "primary_color": "#0f2f5f",
+        "accent_color": "#d6a84f",
+        "background_style": "white-corporate-showroom",
+        "card_radius": "24px",
+        "button_style": "filled-primary-outline-secondary",
+        "hero_style": "editorial-marketplace",
+        "product_card_style": "premium-b2b-card",
+        "grid_density": "comfortable",
+        "marketplace_mode": "premium",
+        "logo_url": "/b2b-plaquette-partenaires/assets/angelcare-original-logo.png",
+        "logo_alt": "AngelCare",
+        "logo_width_px": 100,
+        "logo_height_px": 150,
+        "logo_display_mode": "symbol-only",
+        "customer_logo_max_width_px": 250,
+        "announcement_enabled": true,
+        "announcement_text": "test",
+        "announcement_cta_label": "Demande rapide",
+        "announcement_cta_href": "/b2b-marketplace/request-quote",
+        "announcement_background": "#092e63",
+        "announcement_text_color": "#ffffff",
+        "header_layout": "centered",
+        "menu_style": "mega",
+        "sticky_quote_enabled": true,
+        "is_active": true,
+        "id": "b2b_marketplace_theme_settings-1783072851430",
+        "updated_at": "2026-07-03T10:00:51.430Z"
+      }
+    ]
+  }
+}

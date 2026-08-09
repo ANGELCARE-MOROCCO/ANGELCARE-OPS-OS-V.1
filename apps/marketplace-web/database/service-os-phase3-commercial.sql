@@ -1,0 +1,3 @@
+create table if not exists service_pricing_rules (id uuid primary key default gen_random_uuid(), service_code text, rule_name text, condition jsonb default '{}', modifier numeric default 1, active boolean default true, created_at timestamptz default now());
+create table if not exists service_packages (id text primary key, name text not null, monthly_mad numeric, includes jsonb default '[]', target text, active boolean default true, created_at timestamptz default now());
+create table if not exists service_margin_snapshots (id uuid primary key default gen_random_uuid(), service_code text, revenue_mad numeric, staff_cost_mad numeric, transport_cost_mad numeric, ops_cost_mad numeric, margin_mad numeric, margin_pct numeric, created_at timestamptz default now());

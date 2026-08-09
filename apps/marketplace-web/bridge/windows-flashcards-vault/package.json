@@ -1,0 +1,1 @@
+{"name":"angelcare-flashcards-vault-node","version":"3.0.0","private":true,"type":"commonjs","scripts":{"start":"node server.js","check":"node --check server.js"},"engines":{"node":">=20"}}

@@ -1,0 +1,23 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "strict": true,
+    "skipLibCheck": true
+  },
+  "include": [
+    "components/carelink/service-design/feedback/**/*.ts",
+    "components/carelink/service-design/feedback/**/*.tsx",
+    "components/carelink/service-design/HomeServiceDesignShell.tsx",
+    "components/carelink/service-design/factory/CategoryMasterExperienceWorkspace.tsx",
+    "components/carelink/service-design/factory/DoctrineCommandWorkspace.tsx",
+    "components/carelink/service-design/factory/DoctrineImportStudio.tsx",
+    "components/carelink/service-design/planning/workspaces/MultiDayJourneyWorkspace.tsx",
+    "components/carelink/service-design/workspaces/CategoryDossierWorkspace.tsx",
+    "app/carelink-ops/service-design/factory/import/page.tsx",
+    "app/carelink-ops/service-design/planning/multi-day/[scenarioId]/page.tsx",
+    "app/carelink-ops/service-design/planning/scenarios/[scenarioId]/page.tsx",
+    "app/api/carelink-ops/service-design/factory/generate/route.ts",
+    "app/api/carelink-ops/service-design/factory/validate/route.ts"
+  ]
+}

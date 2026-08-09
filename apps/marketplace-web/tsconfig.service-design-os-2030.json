@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "skipLibCheck": true,
+    "strict": true
+  },
+  "include": [
+    "app/carelink-ops/service-design/**/*.ts",
+    "app/carelink-ops/service-design/**/*.tsx",
+    "components/carelink/service-design/**/*.ts",
+    "components/carelink/service-design/**/*.tsx"
+  ]
+}

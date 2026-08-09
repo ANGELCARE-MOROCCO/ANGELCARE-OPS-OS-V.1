@@ -1,0 +1,28 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "incremental": false
+  },
+  "include": [
+    "next-env.d.ts",
+    "app/(protected)/angelcare-360-command-center/layout.tsx",
+    "app/angelcare-360-access/**/*.tsx",
+    "app/api/angelcare360/access/**/*.ts",
+    "app/api/angelcare360/operator/tenant-access/route.ts",
+    "components/angelcare360/access/**/*.tsx",
+    "components/angelcare360/operator/tenant-access/**/*.tsx",
+    "components/angelcare360/operator/growth/CustomerSovereignCommandRoom.tsx",
+    "components/angelcare360/operator/product-kernel/ProductKernelStudio.tsx",
+    "components/angelcare360/operator/OperatorOverlayPortal.tsx",
+    "lib/ac360/runtime.ts",
+    "lib/angelcare360/module-access.ts",
+    "lib/angelcare360/operator/tenant-access.ts",
+    "lib/angelcare360/permissions.ts",
+    "lib/angelcare360/server/context.ts",
+    "lib/auth/session.ts",
+    "lib/getUser.ts",
+    "types/angelcare360/module.ts",
+    "types/angelcare360/operator/tenant-access.ts"
+  ]
+}

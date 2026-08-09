@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="800" viewBox="0 0 1000 800" role="img" aria-labelledby="title-e408e474">
+<title id="title-e408e474">Home care service</title>
+<defs>
+<linearGradient id="bge408e474" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#071b35"/><stop offset=".58" stop-color="#2476a6"/><stop offset="1" stop-color="#071b35"/></linearGradient>
+<radialGradient id="glowe408e474" cx="50%" cy="50%" r="50%"><stop stop-color="#ffe0c2" stop-opacity=".92"/><stop offset="1" stop-color="#ef6570" stop-opacity=".08"/></radialGradient>
+<linearGradient id="glasse408e474" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff" stop-opacity=".36"/><stop offset="1" stop-color="#fff" stop-opacity=".08"/></linearGradient>
+<pattern id="gride408e474" width="42" height="42" patternUnits="userSpaceOnUse"><path d="M42 0H0V42" fill="none" stroke="#fff" stroke-opacity=".045"/></pattern>
+<filter id="shadowe408e474" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="22" stdDeviation="24" flood-color="#000" flood-opacity=".28"/></filter>
+</defs>
+<rect width="1000" height="800" fill="url(#bge408e474)"/>
+<rect width="1000" height="800" fill="url(#gride408e474)"/>
+<circle cx="780" cy="200" r="224" fill="url(#glowe408e474)" opacity=".62"/>
+<circle cx="120" cy="688" r="304" fill="none" stroke="#fff" stroke-opacity=".07" stroke-width="2"/>
+<path d="M0 624 C 200 496, 380 752, 580 592 S 860 512, 1000 624 V 800 H0Z" fill="#fff" opacity=".035"/>
+<path d="M45 84H180" stroke="#ef6570" stroke-width="7" stroke-linecap="round"/>
+<path d="M45 112H130" stroke="#fff" stroke-opacity=".55" stroke-width="4" stroke-linecap="round"/>
+<g filter="url(#shadowe408e474)"><path d="M464 360L720 176L976 360" fill="none" stroke="#ffe0c2" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/><rect x="520" y="336" width="400" height="240" rx="28" fill="#fff" opacity=".93"/><circle cx="720" cy="400" r="44" fill="#ef6570"/><path d="M632 576Q656 456 720 456T808 576" fill="#2476a6" opacity=".75"/></g>
+</svg>

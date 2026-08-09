@@ -1,0 +1,29 @@
+# Copy or generate this as shopify.app.toml with real values before running `shopify app deploy`.
+name = "AngelCare Dashboard"
+handle = "angelcare-dashboard"
+client_id = "replace-with-shopify-client-id"
+application_url = "https://your-public-api-domain.example"
+embedded = false
+web_directories = ["."]
+
+[access_scopes]
+scopes = "read_orders,read_products,read_customers,read_inventory,write_inventory,read_locations,read_reports"
+use_legacy_install_flow = false
+
+[auth]
+redirect_urls = ["https://your-public-api-domain.example/api/auth/callback"]
+
+[webhooks]
+api_version = "2026-04"
+
+[[webhooks.subscriptions]]
+topics = ["app/uninstalled"]
+compliance_topics = ["customers/redact", "customers/data_request", "shop/redact"]
+uri = "/api/webhooks/shopify"
+
+[app_preferences]
+url = "https://your-public-api-domain.example/dashboard"
+
+[build]
+automatically_update_urls_on_dev = false
+

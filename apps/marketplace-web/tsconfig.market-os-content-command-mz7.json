@@ -1,0 +1,22 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "incremental": false
+  },
+  "include": [
+    "next-env.d.ts",
+    "app/(protected)/market-os/content-command-center/validation/**/*.ts",
+    "app/(protected)/market-os/content-command-center/validation/**/*.tsx",
+    "app/(protected)/market-os/content-command-center/distribution/**/*.ts",
+    "app/(protected)/market-os/content-command-center/distribution/**/*.tsx",
+    "app/(protected)/market-os/content-command-center/publishing/**/*.ts",
+    "app/(protected)/market-os/content-command-center/publishing/**/*.tsx",
+    "components/market-os/content-command/headquarters/ValidationWorkspace.tsx",
+    "components/market-os/content-command/headquarters/DistributionWorkspace.tsx",
+    "components/market-os/content-command/content-publishing-page.tsx",
+    "components/market-os/content-command/release/**/*.ts",
+    "components/market-os/content-command/release/**/*.tsx"
+  ],
+  "exclude": ["node_modules", ".next"]
+}

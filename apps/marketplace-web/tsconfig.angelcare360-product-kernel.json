@@ -1,0 +1,27 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "incremental": false
+  },
+  "include": [
+    "next-env.d.ts",
+    "app/api/angelcare360/operator/product-kernel/route.ts",
+    "app/(protected)/angelcare-360-operator/tenants-product/page.tsx",
+    "components/angelcare360/operator/product-kernel/**/*.ts",
+    "components/angelcare360/operator/product-kernel/**/*.tsx",
+    "components/angelcare360/operator/customer-dossier/CustomerDossierScenes.tsx",
+    "components/angelcare360/layout/Angelcare360EntitlementGate.tsx",
+    "components/angelcare360/layout/Angelcare360Shell.tsx",
+    "app/(protected)/angelcare-360-command-center/layout.tsx",
+    "data/angelcare360/navigation.ts",
+    "data/angelcare360/operator-sovereign-navigation.ts",
+    "lib/angelcare360/operator/product-kernel.ts",
+    "lib/angelcare360/entitlements.ts",
+    "lib/angelcare360/server/entitlements.ts",
+    "lib/angelcare360/server/context.ts",
+    "types/angelcare360/entitlements.ts",
+    "types/angelcare360/operator/product-kernel.ts",
+    "types/angelcare360/operator/index.ts"
+  ]
+}

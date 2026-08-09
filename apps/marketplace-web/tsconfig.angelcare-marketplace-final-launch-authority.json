@@ -1,0 +1,25 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "incremental": false,
+    "skipLibCheck": false
+  },
+  "include": [
+    "next-env.d.ts",
+    "angelcare-marketplace/final-authority/**/*.ts",
+    "angelcare-marketplace/final-authority/**/*.tsx",
+    "app/angelcare-marketplace/(protected)/admin/intelligence/**/*.tsx",
+    "app/angelcare-marketplace/(protected)/admin/growth/**/*.tsx",
+    "app/angelcare-marketplace/(protected)/admin/platform-performance/**/*.tsx",
+    "app/angelcare-marketplace/(protected)/admin/security/**/*.tsx",
+    "app/angelcare-marketplace/(protected)/admin/qa/**/*.tsx",
+    "app/angelcare-marketplace/(protected)/admin/launch/**/*.tsx",
+    "app/api/angelcare-marketplace/intelligence/**/*.ts",
+    "app/api/angelcare-marketplace/growth/**/*.ts",
+    "app/api/angelcare-marketplace/performance/**/*.ts",
+    "app/api/angelcare-marketplace/security/**/*.ts",
+    "app/api/angelcare-marketplace/qa/**/*.ts",
+    "app/api/angelcare-marketplace/launch/**/*.ts"
+  ]
+}

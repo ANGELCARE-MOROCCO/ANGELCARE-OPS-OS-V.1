@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="800" viewBox="0 0 1000 800" role="img" aria-labelledby="title-a9762165">
+<title id="title-a9762165">School diagnostic programme</title>
+<defs>
+<linearGradient id="bga9762165" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#10243d"/><stop offset=".58" stop-color="#3f718c"/><stop offset="1" stop-color="#10243d"/></linearGradient>
+<radialGradient id="glowa9762165" cx="50%" cy="50%" r="50%"><stop stop-color="#dcecf5" stop-opacity=".92"/><stop offset="1" stop-color="#d93246" stop-opacity=".08"/></radialGradient>
+<linearGradient id="glassa9762165" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff" stop-opacity=".36"/><stop offset="1" stop-color="#fff" stop-opacity=".08"/></linearGradient>
+<pattern id="grida9762165" width="42" height="42" patternUnits="userSpaceOnUse"><path d="M42 0H0V42" fill="none" stroke="#fff" stroke-opacity=".045"/></pattern>
+<filter id="shadowa9762165" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="22" stdDeviation="24" flood-color="#000" flood-opacity=".28"/></filter>
+</defs>
+<rect width="1000" height="800" fill="url(#bga9762165)"/>
+<rect width="1000" height="800" fill="url(#grida9762165)"/>
+<circle cx="780" cy="200" r="224" fill="url(#glowa9762165)" opacity=".62"/>
+<circle cx="120" cy="688" r="304" fill="none" stroke="#fff" stroke-opacity=".07" stroke-width="2"/>
+<path d="M0 624 C 200 496, 380 752, 580 592 S 860 512, 1000 624 V 800 H0Z" fill="#fff" opacity=".035"/>
+<path d="M45 84H180" stroke="#d93246" stroke-width="7" stroke-linecap="round"/>
+<path d="M45 112H130" stroke="#fff" stroke-opacity=".55" stroke-width="4" stroke-linecap="round"/>
+<g filter="url(#shadowa9762165)"><path d="M464 336L720 176L976 336Z" fill="#dcecf5"/><rect x="504" y="336" width="432" height="232" rx="16" fill="#fff" opacity=".94"/><rect x="676" y="424" width="88" height="144" rx="12" fill="#d93246" opacity=".85"/><rect x="560" y="392" width="56" height="56" rx="6" fill="#3f718c" opacity=".7"/><rect x="632" y="392" width="56" height="56" rx="6" fill="#3f718c" opacity=".7"/><rect x="824" y="392" width="56" height="56" rx="6" fill="#3f718c" opacity=".7"/><rect x="896" y="392" width="56" height="56" rx="6" fill="#3f718c" opacity=".7"/></g><g transform="translate(872 224)"><rect width="160" height="144" rx="14" fill="#d93246" opacity=".95"/><path d="M32 104l32-40l32 16l32-56" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></g>
+</svg>

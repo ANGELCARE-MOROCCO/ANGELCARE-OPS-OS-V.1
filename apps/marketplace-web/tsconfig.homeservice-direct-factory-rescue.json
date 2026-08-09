@@ -1,0 +1,23 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": { "noEmit": true, "skipLibCheck": true, "strict": true },
+  "include": [
+    "types/homeservice-factory.ts",
+    "lib/homeservice-factory/**/*.ts",
+    "components/carelink/service-design/factory/**/*.tsx",
+    "components/carelink/service-design/HomeServiceDesignShell.tsx",
+    "lib/homeservice-design/constants.ts",
+    "lib/homeservice-commercial/server/repository.ts",
+    "components/carelink/service-design/commercial/workspaces/B2CVitrineWorkspace.tsx",
+    "components/carelink/service-design/commercial/workspaces/B2BVitrineWorkspace.tsx",
+    "app/carelink-ops/service-design/page.tsx",
+    "app/carelink-ops/service-design/factory/**/*.tsx",
+    "app/carelink-ops/service-design/advanced/page.tsx",
+    "app/carelink-ops/service-design/standards/doctrine/page.tsx",
+    "app/carelink-ops/service-design/standards/imports/page.tsx",
+    "app/carelink-ops/service-design/planning/new/page.tsx",
+    "app/carelink-ops/service-design/offers/new/page.tsx",
+    "app/api/carelink-ops/service-design/factory/**/*.ts"
+  ],
+  "exclude": ["node_modules"]
+}

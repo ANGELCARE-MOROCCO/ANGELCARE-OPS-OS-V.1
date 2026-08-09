@@ -1,0 +1,4 @@
+MZ07 strict kernel TypeScript: PASS
+Diagnostics: 0
+Production build: NOT RUN
+Full-monorepo integration TypeScript: delegated to the live surgical installer because the focused cumulative package does not contain the unrelated full application tsconfig/dependency surface.

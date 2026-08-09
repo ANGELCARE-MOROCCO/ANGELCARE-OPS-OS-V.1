@@ -1,0 +1,21 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "incremental": false,
+    "strict": true,
+    "skipLibCheck": true,
+    "types": ["node"]
+  },
+  "include": [
+    "lib/revenue-command-os/**/*.ts",
+    "app/api/revenue-command-os/**/*.ts",
+    "app/(protected)/revenue-command-os/**/*.ts",
+    "app/(protected)/revenue-command-os/**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    ".next",
+    "**/*.tsbuildinfo"
+  ]
+}

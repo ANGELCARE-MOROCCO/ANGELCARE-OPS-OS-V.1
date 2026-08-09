@@ -1,0 +1,4 @@
+import type { BrowserExtensionActor } from './types'
+export async function writeExtensionAudit(db:any,input:{actor?:BrowserExtensionActor|null;deviceId?:string|null;eventType:string;moduleKey?:string|null;commandKey?:string|null;targetType?:string|null;targetId?:string|null;result?:string;severity?:string;sourceOrigin?:string|null;metadata?:Record<string,unknown>}){
+  await db.from('browser_extension_audit_logs').insert({actor_user_id:input.actor?.id||null,device_id:input.deviceId||null,event_type:input.eventType,module_key:input.moduleKey||null,command_key:input.commandKey||null,target_type:input.targetType||null,target_id:input.targetId||null,result:input.result||'ok',severity:input.severity||'info',source_origin:input.sourceOrigin||null,metadata:input.metadata||{}}).then(()=>undefined)
+}

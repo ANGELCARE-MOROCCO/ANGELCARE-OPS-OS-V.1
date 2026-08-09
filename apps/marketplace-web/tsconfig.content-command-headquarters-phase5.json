@@ -1,0 +1,24 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": { "noEmit": true, "incremental": false, "pretty": false },
+  "include": [
+    "components/market-os/content-command/headquarters/**/*.tsx",
+    "components/market-os/content-command/headquarters/**/*.d.ts",
+    "components/market-os/content-command/ContentCommand360Shell.tsx",
+    "components/market-os/content-command/content-command-navigation.tsx",
+    "lib/market-os/content-command-headquarters/**/*.ts",
+    "app/api/market-os/content-command-headquarters/**/*.ts",
+    "app/(protected)/market-os/content-command-center/page.tsx",
+    "app/(protected)/market-os/content-command-center/signals/page.tsx",
+    "app/(protected)/market-os/content-command-center/strategies/page.tsx",
+    "app/(protected)/market-os/content-command-center/missions/page.tsx",
+    "app/(protected)/market-os/content-command-center/directory/page.tsx",
+    "app/(protected)/market-os/content-command-center/studio/page.tsx",
+    "app/(protected)/market-os/content-command-center/evidence/page.tsx",
+    "app/(protected)/market-os/content-command-center/validation/page.tsx",
+    "app/(protected)/market-os/content-command-center/source-vault/page.tsx",
+    "app/(protected)/market-os/content-command-center/distribution/page.tsx",
+    "app/(protected)/market-os/content-command-center/ai-foundry/page.tsx",
+    "app/(protected)/market-os/content-command-center/dossiers/[id]/page.tsx"
+  ]
+}

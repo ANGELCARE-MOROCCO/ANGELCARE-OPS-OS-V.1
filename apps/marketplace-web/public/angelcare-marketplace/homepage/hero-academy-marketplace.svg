@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title-7a70bace">
+<title id="title-7a70bace">Academy programmes and certification</title>
+<defs>
+<linearGradient id="bg7a70bace" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#071b35"/><stop offset=".58" stop-color="#3b5da9"/><stop offset="1" stop-color="#071b35"/></linearGradient>
+<radialGradient id="glow7a70bace" cx="50%" cy="50%" r="50%"><stop stop-color="#e8f1ff" stop-opacity=".92"/><stop offset="1" stop-color="#e5b85c" stop-opacity=".08"/></radialGradient>
+<linearGradient id="glass7a70bace" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff" stop-opacity=".36"/><stop offset="1" stop-color="#fff" stop-opacity=".08"/></linearGradient>
+<pattern id="grid7a70bace" width="42" height="42" patternUnits="userSpaceOnUse"><path d="M42 0H0V42" fill="none" stroke="#fff" stroke-opacity=".045"/></pattern>
+<filter id="shadow7a70bace" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="22" stdDeviation="24" flood-color="#000" flood-opacity=".28"/></filter>
+</defs>
+<rect width="1600" height="900" fill="url(#bg7a70bace)"/>
+<rect width="1600" height="900" fill="url(#grid7a70bace)"/>
+<circle cx="1248" cy="225" r="252" fill="url(#glow7a70bace)" opacity=".62"/>
+<circle cx="192" cy="774" r="342" fill="none" stroke="#fff" stroke-opacity=".07" stroke-width="2"/>
+<path d="M0 702 C 320 558, 608 846, 928 666 S 1376 576, 1600 702 V 900 H0Z" fill="#fff" opacity=".035"/>
+<path d="M72 94H288" stroke="#e5b85c" stroke-width="7" stroke-linecap="round"/>
+<path d="M72 126H208" stroke="#fff" stroke-opacity=".55" stroke-width="4" stroke-linecap="round"/>
+<g filter="url(#shadow7a70bace)"><path d="M882 315L1152 189L1422 315L1152 441Z" fill="#fff" opacity=".94"/><path d="M990 387V522Q1152 630 1314 522V387" fill="#e8f1ff" opacity=".9"/><path d="M1422 315V540" stroke="#e5b85c" stroke-width="6" stroke-linecap="round"/><circle cx="1422" cy="576" r="22" fill="#e5b85c"/></g>
+</svg>

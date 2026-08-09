@@ -1,0 +1,36 @@
+-- CONTROLLED ROLLBACK — destructive for Mega ZIP 6 data.
+-- Use only after backup, explicit approval and confirmation that no contract handoff must be retained.
+begin;
+drop view if exists public.revenue_negotiation_command_view;
+drop view if exists public.revenue_proposal_command_view;
+drop function if exists public.revenue_apply_commercial_outcome(uuid,jsonb,uuid);
+drop function if exists public.revenue_create_proposal_version(uuid,text,text,text,uuid);
+drop function if exists public.revenue_mz6_status_history();
+drop function if exists public.revenue_mz6_recalculate_line_trigger();
+drop function if exists public.revenue_recalculate_proposal(uuid);
+drop function if exists public.revenue_mz6_touch_updated_at();
+drop table if exists public.revenue_contract_handoffs cascade;
+drop table if exists public.revenue_commercial_outcomes cascade;
+drop table if exists public.revenue_proposal_status_history cascade;
+drop table if exists public.revenue_negotiation_decisions cascade;
+drop table if exists public.revenue_concession_requests cascade;
+drop table if exists public.revenue_counteroffers cascade;
+drop table if exists public.revenue_proposal_objections cascade;
+drop table if exists public.revenue_negotiation_positions cascade;
+drop table if exists public.revenue_negotiation_rounds cascade;
+drop table if exists public.revenue_negotiations cascade;
+drop table if exists public.revenue_proposal_responses cascade;
+drop table if exists public.revenue_proposal_delivery_events cascade;
+drop table if exists public.revenue_proposal_transmissions cascade;
+drop table if exists public.revenue_proposal_recipients cascade;
+drop table if exists public.revenue_proposal_documents cascade;
+drop table if exists public.revenue_margin_exceptions cascade;
+drop table if exists public.revenue_discount_requests cascade;
+drop table if exists public.revenue_proposal_approval_requests cascade;
+drop table if exists public.revenue_pricing_scenarios cascade;
+drop table if exists public.revenue_proposal_line_items cascade;
+drop table if exists public.revenue_proposal_sections cascade;
+drop table if exists public.revenue_proposal_versions cascade;
+drop table if exists public.revenue_proposals cascade;
+drop sequence if exists public.revenue_proposal_reference_seq;
+commit;

@@ -1,0 +1,15 @@
+{
+  "commands": 12,
+  "eligible": 11,
+  "blocked": 1,
+  "steps": 11,
+  "deterministic": true,
+  "idempotent": true,
+  "externalActionsPerformed": 0,
+  "runStatuses": [
+    "simulated",
+    "awaiting-approval"
+  ],
+  "validationIssues": 5,
+  "readiness": 100
+}

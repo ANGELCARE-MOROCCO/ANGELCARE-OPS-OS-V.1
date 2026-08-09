@@ -1,0 +1,1 @@
+import { InventoryTable } from '@/angelcare-marketplace/localization-intelligence/components/InventoryTable'; import { listInventory } from '@/angelcare-marketplace/localization-intelligence/repository'; export default async function Page(){ const result=await listInventory({pageSize:100}); return <InventoryTable rows={result.rows}/> }

@@ -1,0 +1,30 @@
+ANGELCARE MARKETPLACE STANDALONE EXTRACTION
+
+Source repository:
+/Users/user/Desktop/angelcare-platform
+
+Canonical source commit:
+59c5bc70664d33cdea74f05bbf0e61a696377ab9
+
+Canonical commit subject:
+feat: finalize production updates
+
+Current working branch at extraction time:
+ops-production-without-marketplace-20260807-211639
+
+Current working HEAD at extraction time:
+c3d0fc5aab90cd1fa56003c1c68e8d2094460854
+
+Extraction mode:
+COPY ONLY
+
+apps/ops-web modified by extraction:
+NO
+
+Marketplace source commit intentionally excludes:
+Experimental Footer Studio [section] compaction
+Experimental Live Experience [section] compaction
+
+Marketplace Part 2 migrations required by source selection:
+20260806160000_angelcare_marketplace_footer_command_studio.sql
+20260806190000_angelcare_marketplace_live_experience_command.sql

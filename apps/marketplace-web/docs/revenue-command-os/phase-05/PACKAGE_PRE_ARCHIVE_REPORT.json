@@ -1,0 +1,13 @@
+{
+  "generatedAt": "2026-07-20T15:13:13.033895+00:00",
+  "result": "PASS",
+  "packageFileCountBeforeFinalManifests": 218,
+  "uncompressedBytesBeforeFinalManifests": 181943878,
+  "fontFiles": [],
+  "nextBuildArtifacts": [],
+  "archiveDirectories": [],
+  "externalActionsEnabled": false,
+  "productionBuildRun": false,
+  "databaseMigrationApplied": false,
+  "gitMutationPerformed": false
+}

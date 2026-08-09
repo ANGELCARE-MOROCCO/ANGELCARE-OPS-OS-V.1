@@ -1,0 +1,21 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "incremental": false
+  },
+  "include": [
+    "next-env.d.ts",
+    "app/(protected)/hr/layout.tsx",
+    "components/hr-shell/**/*.tsx",
+    "lib/hr-shell/**/*.ts",
+    "components/brand/AngelCareLogo.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    ".next",
+    ".angelcare_backups",
+    "**/*.backup.*",
+    "**/*.before-*"
+  ]
+}

@@ -1,0 +1,3 @@
+# Native Vercel Cron only: set this to the exact same value already used by MARKETING_AI_CRON_SECRET.
+# Vercel sends CRON_SECRET automatically as Authorization: Bearer <value> to configured cron routes.
+CRON_SECRET=SAME_VALUE_AS_MARKETING_AI_CRON_SECRET

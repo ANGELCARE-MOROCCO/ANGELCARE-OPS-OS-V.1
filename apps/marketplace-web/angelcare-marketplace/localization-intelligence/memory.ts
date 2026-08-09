@@ -1,0 +1,3 @@
+function tokens(text:string){ return new Set(text.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().split(/[^a-z0-9]+/).filter(Boolean)) }
+export function similarity(a:string,b:string){ const x=tokens(a),y=tokens(b); if(!x.size&&!y.size)return 1; let common=0; for(const t of x)if(y.has(t))common++; return common/(x.size+y.size-common) }
+export function rankMemory(source:string,entries:Array<{source_text_fr:string;target_text:string;domain:string;approved:boolean}>){ return entries.filter(e=>e.approved).map(e=>({...e,similarity:similarity(source,e.source_text_fr)})).filter(e=>e.similarity>=.45).sort((a,b)=>b.similarity-a.similarity).slice(0,10) }

@@ -1,0 +1,3 @@
+const secretKeyPattern=/(sk-[A-Za-z0-9_-]{12,}|AIza[A-Za-z0-9_-]{20,}|postgres(?:ql)?:\/\/[^\s"']+|service[_-]?role[^\s"']*)/gi
+const keyNamePattern=/(password|secret|token|api[_-]?key|authorization|cookie)/i
+export function redactSensitiveValues(value:unknown):unknown{if(typeof value==='string')return value.replace(secretKeyPattern,'[REDACTED]');if(Array.isArray(value))return value.map(redactSensitiveValues);if(value&&typeof value==='object'){return Object.fromEntries(Object.entries(value as Record<string,unknown>).map(([k,v])=>[k,keyNamePattern.test(k)?'[REDACTED]':redactSensitiveValues(v)]))}return value}

@@ -1,0 +1,3 @@
+components/market-os/content-command/content-command-navigation.tsx
+components/market-os/content-command/experience-bulk11/Bulk11OpportunityCommandWorkspace.tsx
+components/market-os/content-command/experience-bulk11/bulk11-opportunity.module.css

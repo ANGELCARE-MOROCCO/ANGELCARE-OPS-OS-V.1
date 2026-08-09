@@ -1,0 +1,17 @@
+import fs from'node:fs';import path from'node:path';const root=process.cwd();let p=0,f=0;const read=x=>fs.readFileSync(path.join(root,x),'utf8'),check=(n,v)=>{console.log(`${v?'PASS':'FAIL'}  ${n}`);v?p++:f++};
+check("22 purpose-built workspaces",fs.readdirSync(path.join(root,'components/carelink/service-design/handoff/workspaces')).filter(x=>x.endsWith('Workspace.tsx')).length>=22);
+check("Command Bridge unique layout",read('components/carelink/service-design/handoff/workspaces/HandoffCommandWorkspace.tsx').includes('Runway des transmissions'));
+check("Calendar unique layout",read('components/carelink/service-design/handoff/workspaces/MissionCalendarWorkspace.tsx').includes('MissionTree'));
+check("Parent Blueprint unique layout",read('components/carelink/service-design/handoff/workspaces/ParentBlueprintWorkspace.tsx').includes('Matrice source → CARELINK'));
+check("Sub-Mission Matrix unique layout",read('components/carelink/service-design/handoff/workspaces/SubMissionMatrixWorkspace.tsx').includes('Sub-Mission Matrix'));
+check("Programme Mapping unique layout",read('components/carelink/service-design/handoff/workspaces/ProgrammeMappingWorkspace.tsx').includes('Inspecteur de traduction'));
+check("Checklist Composer unique layout",read('components/carelink/service-design/handoff/workspaces/ChecklistEvidenceWorkspace.tsx').includes('Avant départ'));
+check("Mobile Preview unique layout",read('components/carelink/service-design/handoff/workspaces/MobileBriefPreviewWorkspace.tsx').includes('Mobile Mission Brief Preview'));
+check("Preflight Theatre unique layout",read('components/carelink/service-design/handoff/workspaces/PreflightTheatreWorkspace.tsx').includes('Disciplines de contrôle'));
+check("Transmission Room unique layout",read('components/carelink/service-design/handoff/workspaces/TransmissionControlWorkspace.tsx').includes('Consequence Preview'));
+check("Amendment Chamber unique layout",read('components/carelink/service-design/handoff/workspaces/AmendmentControlWorkspace.tsx').includes('Future-only propagation'));
+check("Reconciliation Room unique layout",read('components/carelink/service-design/handoff/workspaces/ReconciliationControlWorkspace.tsx').includes('expected / actual'));
+check("French enterprise language",read('components/carelink/service-design/handoff/workspaces/HandoffCommandWorkspace.tsx').includes('Commandement des transmissions'));
+check("white premium shell",read('components/carelink/service-design/handoff/HandoffUI.tsx').includes('bg-white')&&read('components/carelink/service-design/handoff/HandoffUI.tsx').includes('bg-slate-950'));
+check("six master universes preserved",(read('lib/homeservice-design/constants.ts').match(/key: '/g)||[]).length===6);
+console.log(`\n${p}/${p+f} checks passed.`);if(f)process.exit(1);

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900" role="img" aria-labelledby="title-6cb21380">
+<title id="title-6cb21380">Hospitality programmes category</title>
+<defs>
+<linearGradient id="bg6cb21380" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#1b1a33"/><stop offset=".58" stop-color="#806147"/><stop offset="1" stop-color="#1b1a33"/></linearGradient>
+<radialGradient id="glow6cb21380" cx="50%" cy="50%" r="50%"><stop stop-color="#fff0dc" stop-opacity=".92"/><stop offset="1" stop-color="#e9b875" stop-opacity=".08"/></radialGradient>
+<linearGradient id="glass6cb21380" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff" stop-opacity=".36"/><stop offset="1" stop-color="#fff" stop-opacity=".08"/></linearGradient>
+<pattern id="grid6cb21380" width="42" height="42" patternUnits="userSpaceOnUse"><path d="M42 0H0V42" fill="none" stroke="#fff" stroke-opacity=".045"/></pattern>
+<filter id="shadow6cb21380" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="22" stdDeviation="24" flood-color="#000" flood-opacity=".28"/></filter>
+</defs>
+<rect width="1200" height="900" fill="url(#bg6cb21380)"/>
+<rect width="1200" height="900" fill="url(#grid6cb21380)"/>
+<circle cx="936" cy="225" r="252" fill="url(#glow6cb21380)" opacity=".62"/>
+<circle cx="144" cy="774" r="342" fill="none" stroke="#fff" stroke-opacity=".07" stroke-width="2"/>
+<path d="M0 702 C 240 558, 456 846, 696 666 S 1032 576, 1200 702 V 900 H0Z" fill="#fff" opacity=".035"/>
+<path d="M54 94H216" stroke="#e9b875" stroke-width="7" stroke-linecap="round"/>
+<path d="M54 126H156" stroke="#fff" stroke-opacity=".55" stroke-width="4" stroke-linecap="round"/>
+<g filter="url(#shadow6cb21380)"><rect x="612" y="225" width="504" height="423" rx="36" fill="#fff" opacity=".93"/><path d="M612 324H1116" stroke="#e9b875" stroke-width="8"/><path d="M765 648V459Q864 360 963 459V648" fill="#806147" opacity=".78"/><circle cx="684" cy="405" r="22" fill="#1b1a33" opacity=".55"/><circle cx="747" cy="405" r="22" fill="#1b1a33" opacity=".55"/><circle cx="981" cy="405" r="22" fill="#1b1a33" opacity=".55"/><circle cx="1044" cy="405" r="22" fill="#1b1a33" opacity=".55"/></g>
+</svg>

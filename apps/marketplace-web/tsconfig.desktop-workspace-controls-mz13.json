@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "incremental": false,
+    "skipLibCheck": true
+  },
+  "include": [
+    "lib/desktop/release.ts",
+    "lib/desktop-stations/server.ts",
+    "app/api/desktop/runtime/health/route.ts"
+  ]
+}

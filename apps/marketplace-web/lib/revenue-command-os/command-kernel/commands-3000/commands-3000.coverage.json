@@ -1,0 +1,36 @@
+{
+  "releaseCode": "AC-REVENUE-OS-MZ09-COMMANDS-3000",
+  "existingCommands": 2000,
+  "newCommands": 1000,
+  "exactCommandCount": 3000,
+  "familyCounts": {
+    "market-sensing": 250,
+    "segmentation-account-discovery": 300,
+    "offer-pricing": 250,
+    "campaign-go-to-market": 300,
+    "outreach-channel": 400,
+    "qualification-progression": 250,
+    "meetings-diagnostics": 200,
+    "proposal-negotiation-closing": 250,
+    "pipeline-rescue": 250,
+    "renewal-expansion-referral": 200,
+    "executive-forecasting": 150,
+    "audit-optimization": 200
+  },
+  "canonicalTargets": {
+    "market-sensing": 250,
+    "segmentation-account-discovery": 300,
+    "offer-pricing": 250,
+    "campaign-go-to-market": 300,
+    "outreach-channel": 400,
+    "qualification-progression": 250,
+    "meetings-diagnostics": 200,
+    "proposal-negotiation-closing": 250,
+    "pipeline-rescue": 250,
+    "renewal-expansion-referral": 200,
+    "executive-forecasting": 150,
+    "audit-optimization": 200
+  },
+  "familyReclassifications": 109,
+  "externalActionsEnabled": false
+}

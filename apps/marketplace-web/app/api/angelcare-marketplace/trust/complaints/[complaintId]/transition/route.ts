@@ -1,0 +1,2 @@
+import { handleComplaintTransition } from '@/angelcare-marketplace/trust-quality/api-handlers'
+export async function POST(request:Request,{params}:{params:Promise<{complaintId:string}>}){return handleComplaintTransition(request,(await params).complaintId)}

@@ -1,0 +1,19 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "incremental": false
+  },
+  "include": [
+    "next-env.d.ts",
+    "app/(protected)/angelcare-360-operator/**/*.ts",
+    "app/(protected)/angelcare-360-operator/**/*.tsx",
+    "components/angelcare360/operator/**/*.ts",
+    "components/angelcare360/operator/**/*.tsx",
+    "components/brand/AngelCareLogo.tsx",
+    "data/angelcare360/operator-navigation.ts",
+    "types/angelcare360/**/*.ts",
+    "lib/angelcare360/operator/**/*.ts",
+    "app/api/angelcare360/operator/**/*.ts"
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "packageId": "00000000-0000-4000-a000-000000000014",
+  "compilationRunId": "00000000-0000-4000-a000-000000000013",
+  "strategyVersion": "1.0.0",
+  "status": "prepared_shadow",
+  "expectedAdapters": 16,
+  "expectedMandatoryActions": 15,
+  "externalActionsExecuted": 0
+}

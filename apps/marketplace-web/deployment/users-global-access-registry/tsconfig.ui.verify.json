@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "noImplicitAny": false,
+    "skipLibCheck": true,
+    "baseUrl": "../..",
+    "paths": { "@/*": ["*"] },
+    "jsx": "react-jsx",
+    "lib": ["ES2022", "DOM"],
+    "noEmit": true
+  },
+  "files": [
+    "verification/ui-stubs.d.ts",
+    "../../lib/users/access-governance/types.ts",
+    "../../lib/workspace-hub/authorized-resources.ts",
+    "../../app/(protected)/users/_components/GlobalAccessRegistryScannerModal.tsx",
+    "../../components/workspace-hub/AuthorizedResourceFamilyCards.tsx"
+  ]
+}

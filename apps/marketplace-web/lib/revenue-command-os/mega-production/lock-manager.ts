@@ -1,0 +1,3 @@
+import type { DistributedLock } from './types'
+export function acquireLock(existing:DistributedLock|undefined,lockKey:string,owner:string,ttlSeconds:number):DistributedLock{const now=new Date();if(existing&&existing.status==='active'&&new Date(existing.expiresAt)>now&&existing.owner!==owner)throw new Error('lock_conflict');return{lockKey,owner,fencingToken:(existing?.fencingToken??0)+1,acquiredAt:now.toISOString(),heartbeatAt:now.toISOString(),expiresAt:new Date(now.getTime()+ttlSeconds*1000).toISOString(),status:'active'}}
+export function validateFencing(lock:DistributedLock,token:number):boolean{return lock.status==='active'&&lock.fencingToken===token&&new Date(lock.expiresAt)>new Date()}

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900" role="img" aria-labelledby="title-928d14bd">
+<title id="title-928d14bd">Schools and institutions category</title>
+<defs>
+<linearGradient id="bg928d14bd" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#10243d"/><stop offset=".58" stop-color="#3f718c"/><stop offset="1" stop-color="#10243d"/></linearGradient>
+<radialGradient id="glow928d14bd" cx="50%" cy="50%" r="50%"><stop stop-color="#dcecf5" stop-opacity=".92"/><stop offset="1" stop-color="#d93246" stop-opacity=".08"/></radialGradient>
+<linearGradient id="glass928d14bd" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff" stop-opacity=".36"/><stop offset="1" stop-color="#fff" stop-opacity=".08"/></linearGradient>
+<pattern id="grid928d14bd" width="42" height="42" patternUnits="userSpaceOnUse"><path d="M42 0H0V42" fill="none" stroke="#fff" stroke-opacity=".045"/></pattern>
+<filter id="shadow928d14bd" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="22" stdDeviation="24" flood-color="#000" flood-opacity=".28"/></filter>
+</defs>
+<rect width="1200" height="900" fill="url(#bg928d14bd)"/>
+<rect width="1200" height="900" fill="url(#grid928d14bd)"/>
+<circle cx="936" cy="225" r="252" fill="url(#glow928d14bd)" opacity=".62"/>
+<circle cx="144" cy="774" r="342" fill="none" stroke="#fff" stroke-opacity=".07" stroke-width="2"/>
+<path d="M0 702 C 240 558, 456 846, 696 666 S 1032 576, 1200 702 V 900 H0Z" fill="#fff" opacity=".035"/>
+<path d="M54 94H216" stroke="#d93246" stroke-width="7" stroke-linecap="round"/>
+<path d="M54 126H156" stroke="#fff" stroke-opacity=".55" stroke-width="4" stroke-linecap="round"/>
+<g filter="url(#shadow928d14bd)"><path d="M576 378L864 198L1152 378Z" fill="#dcecf5"/><rect x="621" y="378" width="486" height="261" rx="18" fill="#fff" opacity=".94"/><rect x="814" y="477" width="99" height="162" rx="14" fill="#d93246" opacity=".85"/><rect x="684" y="441" width="63" height="63" rx="6" fill="#3f718c" opacity=".7"/><rect x="765" y="441" width="63" height="63" rx="6" fill="#3f718c" opacity=".7"/><rect x="981" y="441" width="63" height="63" rx="6" fill="#3f718c" opacity=".7"/><rect x="1062" y="441" width="63" height="63" rx="6" fill="#3f718c" opacity=".7"/></g>
+</svg>

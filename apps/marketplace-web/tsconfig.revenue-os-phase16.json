@@ -1,0 +1,20 @@
+{
+  "extends":"./tsconfig.json",
+  "compilerOptions":{"noEmit":true,"strict":true,"skipLibCheck":true,"types":["node"]},
+  "include":[
+    "lib/revenue-command-os/mega-production/**/*.ts",
+    "lib/revenue-command-os/cockpit/**/*.ts",
+    "lib/revenue-command-os/execution-autopilot/**/*.ts",
+    "app/api/revenue-command-os/mega-production/**/*.ts",
+    "app/api/revenue-command-os/learning/**/*.ts",
+    "app/api/revenue-command-os/experiments/**/*.ts",
+    "app/api/revenue-command-os/attribution/**/*.ts",
+    "app/api/revenue-command-os/forecast-calibration/**/*.ts",
+    "app/api/revenue-command-os/anomalies/**/*.ts",
+    "app/api/revenue-command-os/production/**/*.ts",
+    "app/api/revenue-command-os/registries/**/*.ts",
+    "app/api/revenue-command-os/evaluations/**/*.ts",
+    "app/(protected)/revenue-command-os/mega-production/**/*.tsx",
+    "app/(protected)/revenue-command-os/_components/RevenueOsShell.tsx"
+  ]
+}

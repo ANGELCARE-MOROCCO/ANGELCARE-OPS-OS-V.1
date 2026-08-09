@@ -1,0 +1,7 @@
+{
+  "extends": "./tsconfig.angelcare360-operator-ultimate-ui.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "incremental": false
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "skipLibCheck": true
+  },
+  "include": [
+    "angelcare-marketplace/css-modules.d.ts",
+    "angelcare-marketplace/domain/types.ts",
+    "angelcare-marketplace/permissions/permission-catalog.ts",
+    "angelcare-marketplace/shells/AdminNavigation.tsx",
+    "angelcare-marketplace/development-engine/**/*.ts",
+    "angelcare-marketplace/development-engine/**/*.tsx",
+    "angelcare-marketplace/marketplace-core/**/*.ts",
+    "angelcare-marketplace/marketplace-core/**/*.tsx",
+    "angelcare-marketplace/commercial-pipeline/**/*.ts",
+    "angelcare-marketplace/commercial-pipeline/**/*.tsx",
+    "angelcare-marketplace/partner-os/**/*.ts",
+    "angelcare-marketplace/partner-os/**/*.tsx",
+    "app/angelcare-marketplace/(protected)/admin/development/**/*.tsx",
+    "app/angelcare-marketplace/(protected)/admin/marketplace/**/*.tsx",
+    "app/angelcare-marketplace/(protected)/admin/catalog/**/*.tsx",
+    "app/angelcare-marketplace/(protected)/admin/suppliers/**/*.tsx",
+    "app/angelcare-marketplace/(protected)/admin/quote-baskets/**/*.tsx",
+    "app/angelcare-marketplace/(protected)/admin/commercial/**/*.tsx",
+    "app/angelcare-marketplace/(protected)/admin/partner-os/**/*.tsx",
+    "app/angelcare-marketplace/[locale]/development/**/*.tsx",
+    "app/angelcare-marketplace/[locale]/marketplace/**/*.tsx",
+    "app/angelcare-marketplace/[locale]/quote-basket/**/*.tsx",
+    "app/angelcare-marketplace/[locale]/partner-os/**/*.tsx",
+    "app/angelcare-marketplace/(tenant)/partner/**/*.tsx",
+    "app/api/angelcare-marketplace/development/**/*.ts",
+    "app/api/angelcare-marketplace/catalog/**/*.ts",
+    "app/api/angelcare-marketplace/public/catalog/**/*.ts",
+    "app/api/angelcare-marketplace/suppliers/**/*.ts",
+    "app/api/angelcare-marketplace/quote-baskets/**/*.ts",
+    "app/api/angelcare-marketplace/crm/**/*.ts",
+    "app/api/angelcare-marketplace/partner-os/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    ".next"
+  ]
+}

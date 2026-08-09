@@ -1,0 +1,32 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "incremental": false
+  },
+  "include": [
+    "app/api/market-os/content-command/opportunities/action/route.ts",
+    "components/market-os/content-command/ContentCommand360Home.tsx",
+    "components/market-os/content-command/ContentCommand360Shell.tsx",
+    "components/market-os/content-command/ai-director-universe/AiDirectorUniverseShell.tsx",
+    "components/market-os/content-command/content-command-system.tsx",
+    "components/market-os/content-command/experience-bulk11/Bulk11OpportunityCommandWorkspace.tsx",
+    "components/market-os/content-command/experience-bulk12/Bulk12CampaignOperatingWorkspace.tsx",
+    "components/market-os/content-command/experience-bulk4/bulk4-api.tsx",
+    "components/market-os/content-command/experience-bulk5/bulk5-api.tsx",
+    "components/market-os/content-command/experience-bulk8/Bulk8AiExecutiveWorkspace.tsx",
+    "components/market-os/content-command/experience-bulk9/RecordGovernanceAuthority.tsx",
+    "components/market-os/content-command/headquarters/EvidenceWorkspace.tsx",
+    "components/market-os/content-command/headquarters/SourceVaultWorkspace.tsx",
+    "components/market-os/content-command/headquarters/client.tsx",
+    "components/market-os/content-command/marketing-ai/MarketingAiDirectorWorkspace.tsx",
+    "components/market-os/content-command/marketing-ai/MarketingAutopilotWorkspace.tsx",
+    "components/market-os/content-command/research-control/ContentResearchControlWorkspace.tsx",
+    "components/market-os/content-command/runtime/ContentCommandRuntimeGuard.tsx",
+    "components/market-os/content-command/runtime/content-command-runtime.ts",
+    "lib/market-os/content-command-headquarters/auth.ts",
+    "lib/market-os/content-command-headquarters/opportunity-intelligence-service.ts",
+    "lib/market-os/content-command-headquarters/record-lifecycle-service.ts",
+    "lib/market-os/content-command-headquarters/runtime-errors.ts"
+  ]
+}

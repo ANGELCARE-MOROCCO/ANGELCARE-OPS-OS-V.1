@@ -1,0 +1,20 @@
+ANGELCARE REVENUE COMMAND OS — MZ07 CUMULATIVE REGRESSION
+
+Focused cumulative package checks:
+- Cumulative MZ01–MZ07 migration and asset presence: PASS
+- MZ04 static acceptance: 328 passes, 0 failures
+- MZ05 static acceptance: 171 passes, 0 failures
+- MZ06 static acceptance: 5,143 passes, 0 failures
+- MZ07 static acceptance: 9,855 passes, 0 failures
+- MZ05 evaluation corpus: 70,000 cases, 0 failures
+- MZ06 evaluation corpus: 33,600 cases, 0 failures
+- MZ07 evaluation corpus: 117,500 cases, 0 failures
+- Cumulative MZ05–MZ07 evaluation cases: 221,100
+- Pairwise semantic review: 499,500 pairs, 61 documented variants, 0 undocumented duplicates
+- SQL structural review: 21 checks, 21 passes
+- Strict MZ07 kernel TypeScript: PASS
+- MZ07 UI/API transpile: 9 files, 0 errors
+- External actions performed: 0
+
+Live installer boundary:
+MZ01–MZ03 static scripts depend on unrelated global monorepo files that are intentionally absent from the focused cumulative handoff (for example global permission/access-control registries). The live installer executes MZ01–MZ07 against the user's complete monorepo and aborts on any failure. No unavailable check is represented as passed.

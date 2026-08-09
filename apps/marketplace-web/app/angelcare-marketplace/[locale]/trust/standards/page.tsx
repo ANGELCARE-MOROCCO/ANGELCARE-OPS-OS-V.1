@@ -1,0 +1,2 @@
+import { PublicTrustTopic } from '@/angelcare-marketplace/trust-quality/components/PublicTrustTopic'
+export default async function Page({params}:{params:Promise<{locale:string}>}){const locale=(await params).locale;const safe=locale==='ar'||locale==='en'?locale:'fr';return <PublicTrustTopic locale={safe} topic="standards"/>}

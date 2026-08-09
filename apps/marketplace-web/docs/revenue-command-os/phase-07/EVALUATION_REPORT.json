@@ -1,0 +1,13 @@
+{
+  "releaseCode": "AC-REVENUE-OS-MZ07-COMMANDS-1000",
+  "mz05Cases": 70000,
+  "mz06Cases": 33600,
+  "mz07Cases": 117500,
+  "cumulativeCases": 221100,
+  "failures": 0,
+  "externalActions": 0,
+  "semanticPairsReviewed": 499500,
+  "documentedHighSimilarityVariants": 61,
+  "undocumentedSemanticDuplicates": 0,
+  "status": "pass"
+}

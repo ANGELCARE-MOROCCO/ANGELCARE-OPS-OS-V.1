@@ -1,0 +1,24 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "skipLibCheck": true,
+    "incremental": false
+  },
+  "include": [
+    "next-env.d.ts",
+    "components/carelink/service-design/documents/**/*.ts",
+    "components/carelink/service-design/documents/**/*.tsx",
+    "components/carelink/service-design/planning/workspaces/A4DocumentStudioWorkspace.tsx",
+    "components/carelink/service-design/commercial/workspaces/CommercialDocumentStudioWorkspace.tsx",
+    "components/carelink/service-design/performance/workspaces/ExecutiveDocumentWorkspace.tsx",
+    "components/carelink/service-design/studio2030/ServiceDesignDock.tsx",
+    "components/carelink/service-design/HomeServiceDesignShell.tsx",
+    "app/carelink-ops/service-design/documents/page.tsx",
+    "app/carelink-ops/service-design/planning/documents/[planId]/page.tsx",
+    "app/carelink-ops/service-design/vitrine/[sellableId]/documents/page.tsx",
+    "app/api/carelink-ops/service-design/documents/source/route.ts",
+    "app/api/carelink-ops/service-design/documents/render/route.ts"
+  ],
+  "exclude": ["node_modules", ".next", "backups", ".angelcare_backups"]
+}

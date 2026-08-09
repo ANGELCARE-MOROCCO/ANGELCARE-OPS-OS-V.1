@@ -1,0 +1,33 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "incremental": false,
+    "composite": false,
+    "skipLibCheck": false
+  },
+  "include": [
+    "next-env.d.ts",
+    "angelcare-marketplace/conversion-universe/**/*.ts",
+    "angelcare-marketplace/conversion-universe/**/*.tsx",
+    "angelcare-marketplace/catalog-discovery/components/ItemDetail.tsx",
+    "angelcare-marketplace/domain/types.ts",
+    "angelcare-marketplace/permissions/permission-catalog.ts",
+    "angelcare-marketplace/shells/AdminNavigation.tsx",
+    "app/angelcare-marketplace/[locale]/basket/**/*.tsx",
+    "app/angelcare-marketplace/[locale]/quote-basket/**/*.tsx",
+    "app/angelcare-marketplace/[locale]/checkout/**/*.tsx",
+    "app/angelcare-marketplace/[locale]/booking/**/*.tsx",
+    "app/angelcare-marketplace/[locale]/enrollment/**/*.tsx",
+    "app/angelcare-marketplace/[locale]/quotation/**/*.tsx",
+    "app/angelcare-marketplace/[locale]/subscription/**/*.tsx",
+    "app/angelcare-marketplace/(protected)/admin/conversion/**/*.tsx",
+    "app/api/angelcare-marketplace/conversion/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules/.cache",
+    ".next",
+    ".git",
+    ".angelcare-marketplace-backups"
+  ]
+}

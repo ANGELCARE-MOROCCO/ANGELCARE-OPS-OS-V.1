@@ -1,0 +1,48 @@
+{
+  "jobId": "opjob_1783174157029_14e1166f",
+  "createdAt": "2026-07-04T14:09:17.029Z",
+  "mode": "controlled",
+  "dryRun": true,
+  "selectedModules": [
+    "carelink-ops",
+    "carelink",
+    "users",
+    "ac360",
+    "email-os",
+    "operation-completion",
+    "b2b-partnerships",
+    "market-os",
+    "capital-command-center",
+    "academy"
+  ],
+  "selectedAreas": [
+    "ui-actions",
+    "forms",
+    "api-routes",
+    "data-sync",
+    "runtime-policy",
+    "security"
+  ],
+  "safeguards": [
+    "No shell execution is used by the web route.",
+    "Source write is blocked unless OPERATION_COMPLETION_ALLOW_SOURCE_WRITE=true and the request explicitly asks for sourceWrite.",
+    "Critical actions are converted to approval-required steps unless autonomous mode is explicitly selected.",
+    "Every source-write run creates a rollback snapshot before modifying a file.",
+    "Production-safe default is dry-run planning plus DB/runtime policy persistence."
+  ],
+  "runtimePolicy": {
+    "operationTracking": true,
+    "apiProgressTracking": true,
+    "criticalApprovalRequired": true,
+    "selectedModuleCount": 10,
+    "selectedAreaCount": 6
+  },
+  "summary": {
+    "totalSteps": 260,
+    "automatic": 98,
+    "approvalRequired": 160,
+    "manualReview": 2,
+    "blockedCritical": 7,
+    "estimatedCoverageGain": 38
+  }
+}

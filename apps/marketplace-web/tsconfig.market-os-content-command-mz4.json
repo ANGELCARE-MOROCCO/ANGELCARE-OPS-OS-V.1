@@ -1,0 +1,17 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "incremental": false
+  },
+  "files": [
+    "components/market-os/content-command/headquarters/MissionsWorkspace.tsx",
+    "components/market-os/content-command/content-tasks-page.tsx",
+    "components/market-os/content-command/tasks/TaskExecutionCommandCenter.tsx",
+    "components/market-os/content-command/tasks/TaskDetailWorkspace.tsx",
+    "components/market-os/content-command/tasks/TaskEditWorkspace.tsx",
+    "components/market-os/content-command/execution/execution-ui.tsx",
+    "components/market-os/content-command/execution/task-operating-model.ts",
+    "lib/content-command/tasks/task-activity.ts"
+  ]
+}

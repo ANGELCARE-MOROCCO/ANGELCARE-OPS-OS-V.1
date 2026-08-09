@@ -1,0 +1,5 @@
+"use client"
+import type { PartnershipActionKey, PartnershipStoreV13 } from "@/lib/revenue-command-center/partnerships-v13"
+export async function fetchPartnershipStoreV13(): Promise<PartnershipStoreV13 | null> { try { const r=await fetch("/api/revenue-command-center/partnerships/v13",{cache:"no-store"}); const p=await r.json(); return p?.ok ? p.data as PartnershipStoreV13 : null } catch { return null } }
+export async function runPartnershipActionV13(action: PartnershipActionKey, partnerId: string, payload: Record<string, unknown> = {}): Promise<PartnershipStoreV13 | null> { try { const r=await fetch("/api/revenue-command-center/partnerships/v13",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action,partnerId,payload})}); const p=await r.json(); return p?.ok ? p.data as PartnershipStoreV13 : null } catch { return null } }
+export async function resetPartnershipStoreV13(): Promise<PartnershipStoreV13 | null> { try { const r=await fetch("/api/revenue-command-center/partnerships/v13",{method:"DELETE"}); const p=await r.json(); return p?.ok ? p.data as PartnershipStoreV13 : null } catch { return null } }

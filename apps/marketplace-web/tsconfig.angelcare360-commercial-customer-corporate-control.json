@@ -1,0 +1,17 @@
+{
+  "extends": "./tsconfig.angelcare360-commercial-growth.json",
+  "compilerOptions": { "noEmit": true, "incremental": false },
+  "include": [
+    "next-env.d.ts",
+    "app/(protected)/angelcare-360-operator/growth/page.tsx",
+    "app/api/angelcare360/operator/growth/route.ts",
+    "components/angelcare360/operator/growth/**/*.ts",
+    "components/angelcare360/operator/growth/**/*.tsx",
+    "components/angelcare360/operator/OperatorOverlayPortal.tsx",
+    "components/angelcare360/operator/product-kernel/CustomerProductControlPanel.tsx",
+    "lib/angelcare360/operator/growth.ts",
+    "lib/angelcare360/operator/product-kernel.ts",
+    "types/angelcare360/operator/growth.ts",
+    "types/angelcare360/operator/product-kernel.ts"
+  ]
+}

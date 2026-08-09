@@ -1,0 +1,354 @@
+{
+  "patch_id": "ANGELCARE-MARKET-OS-AMBASSADORS-PRODUCTION-HARDENING-20260721",
+  "version": "1.0.0",
+  "generated_at": "2026-07-21T00:34:02+00:00",
+  "authoritative_source": {
+    "name": "AMBASSADORS_FULL_SOURCE_BUNDLE(1).txt",
+    "sha256": "c5194462961b17da3785a68f2463fc7c3174e94c4f92abde368bac189f91be7b",
+    "bytes": 7135460,
+    "line_count": 128968,
+    "reconstructed_file_sections": 430,
+    "exclusive_source_of_truth": true
+  },
+  "target_root": "repository root",
+  "payload_root": "apps/ops-web",
+  "frozen_ui": {
+    "tsx_modified": false,
+    "visual_routes_modified": false,
+    "modals_modified": false,
+    "sidebars_modified": false,
+    "layouts_or_styling_modified": false
+  },
+  "implemented_controls": [
+    "canonical typed Ambassador domain contracts",
+    "authenticated Supabase actor resolution",
+    "fail-closed scoped RBAC",
+    "Supabase-only production persistence with no local success fallback",
+    "candidate identity normalization and deduplication",
+    "idempotent transactional candidate conversion",
+    "leads and conversions in unified snapshot",
+    "normalized multi-ambassador mission assignments",
+    "normalized territory assignment history",
+    "controlled lifecycle transitions at TypeScript and database layers",
+    "proof, reward, approval and payout gates",
+    "immutable actor-backed audit",
+    "scoped RLS replacing permissive authenticated_all policies",
+    "additive SQL migration",
+    "static TypeScript verification and backend invariant verification",
+    "apply, scope bootstrap and guarded rollback instructions"
+  ],
+  "verification": {
+    "typescript_command": "tsc -p deployment/market-os-ambassadors-production-hardening/tsconfig.verify.json --pretty false",
+    "typescript_result": "PASS",
+    "api_routes_actor_protected": 42,
+    "git_diff_check": "PASS for source payload",
+    "tsx_diff_count": 0,
+    "build_run": false,
+    "database_migration_executed": false,
+    "note": "The migration was statically inspected and packaged; no live Supabase database was available or modified."
+  },
+  "deployment_requirements": [
+    "Back up the production database.",
+    "Apply the additive migration.",
+    "Explicitly backfill tenant_id and organization_id for legacy rows.",
+    "Explicitly insert active actor-role memberships.",
+    "Set server-only Supabase service-role environment.",
+    "Run the included no-build static verification."
+  ],
+  "files": [
+    {
+      "path": "apps/ops-web/app/api/market-os/ambassadors/ambassadors/[id]/route.ts",
+      "change": "M",
+      "bytes": 674,
+      "sha256": "b163077a541faa25539f891247ceb2897bc93273652821a8ee9ed441022a55ea"
+    },
+    {
+      "path": "apps/ops-web/app/api/market-os/ambassadors/conversions/[id]/route.ts",
+      "change": "M",
+      "bytes": 674,
+      "sha256": "9a85f66ed3e74bd12c8d14e21c0dd6c3f5f29fdd89a5292484b1b194ba8e4c78"
+    },
+    {
+      "path": "apps/ops-web/app/api/market-os/ambassadors/conversions/decision/route.ts",
+      "change": "M",
+      "bytes": 346,
+      "sha256": "fd0cfce209a40998f044b3cd0111c9e3384de1e0b4e9a07fcd35903429483a22"
+    },
+    {
+      "path": "apps/ops-web/app/api/market-os/ambassadors/goals/[id]/route.ts",
+      "change": "M",
+      "bytes": 656,
+      "sha256": "cc7f8112da4c56da9572a1d92a92ca9c82b70eaf9b6bfa54bdebb5fba270c1b2"
+    },
+    {
+      "path": "apps/ops-web/app/api/market-os/ambassadors/goals/recalculate/route.ts",
+      "change": "M",
+      "bytes": 344,
+      "sha256": "2ba9aef30c9c607e809882f0e01fbdcd4aee93a44f8348eadf2f43a38e9f3073"
+    },
+    {
+      "path": "apps/ops-web/app/api/market-os/ambassadors/incentives/[id]/route.ts",
+      "change": "M",
+      "bytes": 671,
+      "sha256": "7cd2974a5dfec08dc0c8caddd5c6ef98160f1dc9ead8312fa29e3fecd7a27c0d"
+    },
+    {
+      "path": "apps/ops-web/app/api/market-os/ambassadors/incentives/approve/route.ts",
+      "change": "M",
+      "bytes": 356,
+      "sha256": "01a38c005e19edf9a0b20b4ce4fe9fa80de226614d40da9b68f46da39e8b7fc0"
+    },
+    {
+      "path": "apps/ops-web/app/api/market-os/ambassadors/incentives/pay/route.ts",
+      "change": "M",
+      "bytes": 352,
+      "sha256": "2ce4502df922e6902dcd36b81975193267f48eaf8d3763c3498d9b8763ca9dab"
+    },
+    {
+      "path": "apps/ops-web/app/api/market-os/ambassadors/incentives/reject/route.ts",
+      "change": "M",
+      "bytes": 356,
+      "sha256": "1524789acb43759d15bf8dcd7b1073115397614c0f63a828287c495575173587"
+    },
+    {
+      "path": "apps/ops-web/app/api/market-os/ambassadors/leads/[id]/route.ts",
+      "change": "M",
+      "bytes": 656,
+      "sha256": "e51c00b45af857dc7d176eb951e8399c89b28ff45dc1a80dc2ca9172943ef3de"
+    },
+    {
+      "path": "apps/ops-web/app/api/market-os/ambassadors/missions/[id]/route.ts",
+      "change": "M",
+      "bytes": 665,
+      "sha256": "eba3d9b30b2c57d269339c6ab6c2b92b1c0370102451d48a6a99fbeb97943389"
+    },
+    {
+      "path": "apps/ops-web/app/api/market-os/ambassadors/missions/assign/route.ts",
+      "change": "M",
+      "bytes": 363,
+      "sha256": "28b167fd983c7f18fa48b5c2dabba0194ae5360a6e3dfb054c6c0b60cd1ae0a3"
+    },
+    {
+      "path": "apps/ops-web/app/api/market-os/ambassadors/missions/status/route.ts",
+      "change": "M",
+      "bytes": 352,
+      "sha256": "79f7c848ee8a9130c7e6dbebad903b8d40efd26d793c7358c3a80f8b31febe70"
+    },
+    {
+      "path": "apps/ops-web/app/api/market-os/ambassadors/onboarding/[id]/route.ts",
+      "change": "M",
+      "bytes": 671,
+      "sha256": "84dbb8b5d93c359c88ad2ed95a04f133270268be78e0088d4f3936e163185dae"
+    },
+    {
+      "path": "apps/ops-web/app/api/market-os/ambassadors/onboarding/complete-step/route.ts",
+      "change": "M",
+      "bytes": 358,
+      "sha256": "8514da13736c561f897169104e973528eea3244a057d71b96fbabeb45928a37f"
+    },
+    {
+      "path": "apps/ops-web/app/api/market-os/ambassadors/operations/route.ts",
+      "change": "M",
+      "bytes": 899,
+      "sha256": "68be3ec3effa7bfd2ee644a2aa0a432cdcf5ccd2a08a67b090a130e84fb1f5b1"
+    },
+    {
+      "path": "apps/ops-web/app/api/market-os/ambassadors/payouts/[id]/route.ts",
+      "change": "A",
+      "bytes": 274,
+      "sha256": "b080956de1ee2b6fb5bc2799288ef42402a839ddb5dbae2b8c9dee20592fb848"
+    },
+    {
+      "path": "apps/ops-web/app/api/market-os/ambassadors/payouts/route.ts",
+      "change": "A",
+      "bytes": 188,
+      "sha256": "873b5a05fc4df1d8c89887187c9d319be1ba3e7860c0173f0c4a0922ef4c266e"
+    },
+    {
+      "path": "apps/ops-web/app/api/market-os/ambassadors/proofs/[id]/route.ts",
+      "change": "A",
+      "bytes": 658,
+      "sha256": "65e80f7a8ab4322cab6198d1a6372850562e2a51ccd31982877df38f2fe6d0f7"
+    },
+    {
+      "path": "apps/ops-web/app/api/market-os/ambassadors/proofs/decision/route.ts",
+      "change": "A",
+      "bytes": 336,
+      "sha256": "e053cf89898b8e545410e7b629cad9dcc3441cf9f0ff47591b239a2d882ce2f9"
+    },
+    {
+      "path": "apps/ops-web/app/api/market-os/ambassadors/proofs/route.ts",
+      "change": "A",
+      "bytes": 290,
+      "sha256": "5fd7eefa9ed08e8846a3c2acc31db376aef620e185cda0bebeef10350eee82b3"
+    },
+    {
+      "path": "apps/ops-web/app/api/market-os/ambassadors/recruitment/[id]/route.ts",
+      "change": "M",
+      "bytes": 674,
+      "sha256": "07e741396c96c34894fdd09a301818cda6684f7624122a5889dcd3d6e78d9bc0"
+    },
+    {
+      "path": "apps/ops-web/app/api/market-os/ambassadors/recruitment/stage/route.ts",
+      "change": "M",
+      "bytes": 354,
+      "sha256": "66068ee08c0dd2d3b252bc69f7356d9ead383654f8eb36f36cf031ed314fe545"
+    },
+    {
+      "path": "apps/ops-web/app/api/market-os/ambassadors/reports/export/route.ts",
+      "change": "M",
+      "bytes": 1036,
+      "sha256": "a74cf8b2ace74aaae5ca83defe1520c4f8a11cc08ddb90fa3e2d9127f37b80f8"
+    },
+    {
+      "path": "apps/ops-web/app/api/market-os/ambassadors/route.ts",
+      "change": "M",
+      "bytes": 543,
+      "sha256": "41655344d1e2411336beaa0449b1ac7a64ce73a2b22d1862df60e3b1a6362810"
+    },
+    {
+      "path": "apps/ops-web/app/api/market-os/ambassadors/settings/route.ts",
+      "change": "M",
+      "bytes": 513,
+      "sha256": "385af2346e9178d5db1359df4c84e3387facd4930020b0e045ba826b7f37f3cc"
+    },
+    {
+      "path": "apps/ops-web/app/api/market-os/ambassadors/territories/[id]/route.ts",
+      "change": "M",
+      "bytes": 674,
+      "sha256": "ec0a856af88c7dfeddcf76a4a66e82ee75bd0f7bd56f9885c6667d831bafba9d"
+    },
+    {
+      "path": "apps/ops-web/app/api/market-os/ambassadors/territories/approve/route.ts",
+      "change": "M",
+      "bytes": 363,
+      "sha256": "4c03647b2393d469e3c1f022c4fdfa7a40cd45a56499ca9034095cef56c46f83"
+    },
+    {
+      "path": "apps/ops-web/app/api/market-os/ambassadors/territories/assign/route.ts",
+      "change": "M",
+      "bytes": 363,
+      "sha256": "62b94ce14ccc2780f84ead6032e001fbd0cd24be7774f4546c20082d0431fce9"
+    },
+    {
+      "path": "apps/ops-web/app/api/market-os/ambassadors/training/[id]/route.ts",
+      "change": "M",
+      "bytes": 665,
+      "sha256": "3d443ef73d7d920ef82a887097a80ba27bc10ed60bc70112964332aa4e8b81e1"
+    },
+    {
+      "path": "apps/ops-web/database/market-os-ambassadors/20260721_market_os_ambassadors_production_hardening.sql",
+      "change": "A",
+      "bytes": 53100,
+      "sha256": "289b88d9b28ce113361962a751dd71580eb9a53317e78118df99f2fbb62b24d4"
+    },
+    {
+      "path": "apps/ops-web/deployment/market-os-ambassadors-production-hardening/APPLY.md",
+      "change": "A",
+      "bytes": 2613,
+      "sha256": "25fe15996da75076906488aaf38a4c01135a793b8116ad487d452c9573f72cf4"
+    },
+    {
+      "path": "apps/ops-web/deployment/market-os-ambassadors-production-hardening/ROLLBACK.md",
+      "change": "A",
+      "bytes": 1366,
+      "sha256": "b92eaefc7bb03593e33ae7a41f77dd2e27f31a52340ba54d4a3cb5518417d922"
+    },
+    {
+      "path": "apps/ops-web/deployment/market-os-ambassadors-production-hardening/SCOPE_AND_ROLE_BOOTSTRAP.sql.example",
+      "change": "A",
+      "bytes": 2906,
+      "sha256": "0a0b7c888e0e65e01f8e7b800be5bdf83f832eb91423d6f24902d0d18efd1de3"
+    },
+    {
+      "path": "apps/ops-web/deployment/market-os-ambassadors-production-hardening/STATIC_VERIFICATION_REPORT.txt",
+      "change": "A",
+      "bytes": 7348,
+      "sha256": "e747598fb86413061e1937de41c294e29db0f9d9818072ac7cdaa22e0acd7d2c"
+    },
+    {
+      "path": "apps/ops-web/deployment/market-os-ambassadors-production-hardening/patches/market-os-ambassadors-production-hardening.patch",
+      "change": "A",
+      "bytes": 259783,
+      "sha256": "020372d097eab6e3a88fcabef70afdb165da8afad56d186732451e759545f59b"
+    },
+    {
+      "path": "apps/ops-web/deployment/market-os-ambassadors-production-hardening/patches/market-os-ambassadors-production-hardening.reverse.patch",
+      "change": "A",
+      "bytes": 259629,
+      "sha256": "892438e17afd21901ac9d4918397278c4c90e6c28dfdaf175c342fb60be82adf"
+    },
+    {
+      "path": "apps/ops-web/deployment/market-os-ambassadors-production-hardening/rollback.sql",
+      "change": "A",
+      "bytes": 2074,
+      "sha256": "dc039941e2b2b4b5aa9d26183284ccede0135e559646a7d99e0a99835895c7f0"
+    },
+    {
+      "path": "apps/ops-web/deployment/market-os-ambassadors-production-hardening/static-stubs.d.ts",
+      "change": "A",
+      "bytes": 738,
+      "sha256": "6011c8cc882c9313e50afe1fec87bfc504b308358eeb3cc703aa20740a774eeb"
+    },
+    {
+      "path": "apps/ops-web/deployment/market-os-ambassadors-production-hardening/tsconfig.verify.json",
+      "change": "A",
+      "bytes": 553,
+      "sha256": "01c5b5dab63fbc3e6ede96eb11e077f5d0349ca72800195324cc4b080e3f1ea0"
+    },
+    {
+      "path": "apps/ops-web/deployment/market-os-ambassadors-production-hardening/verify-production-hardening.mjs",
+      "change": "A",
+      "bytes": 4464,
+      "sha256": "613367bbc679daed86125f76f0210c6dd3f718535b423cc11129e2bcb2277002"
+    },
+    {
+      "path": "apps/ops-web/lib/market-os/ambassadors/api.ts",
+      "change": "M",
+      "bytes": 3624,
+      "sha256": "601afcdbfe2733bf54d03727874b2714ec15f558bbca128f5c83ee9e696c9b71"
+    },
+    {
+      "path": "apps/ops-web/lib/market-os/ambassadors/auth.ts",
+      "change": "A",
+      "bytes": 6323,
+      "sha256": "b69f49a452776f6c6d34790a3558b53b0e47363a622638127ca687512dfb362e"
+    },
+    {
+      "path": "apps/ops-web/lib/market-os/ambassadors/contracts.ts",
+      "change": "A",
+      "bytes": 9815,
+      "sha256": "537c86ea1dea585ed1d17ed4b59dde5f3308321115ed78a97fdd918747190a7e"
+    },
+    {
+      "path": "apps/ops-web/lib/market-os/ambassadors/errors.ts",
+      "change": "A",
+      "bytes": 753,
+      "sha256": "a8539c1f456c2eee0b28eb1906ea0245c20e22438c11d10ccb548ba2ffabc0a3"
+    },
+    {
+      "path": "apps/ops-web/lib/market-os/ambassadors/persistence.ts",
+      "change": "A",
+      "bytes": 14975,
+      "sha256": "3864cbff1fe2d166b7a6da03bbbea8a2038a4945029fe29ebb8d945a046b0371"
+    },
+    {
+      "path": "apps/ops-web/lib/market-os/ambassadors/server.ts",
+      "change": "M",
+      "bytes": 62295,
+      "sha256": "ebb6443a062ee4debb9348ca7c62632f5075ec37f36825b3448f2482104e9244"
+    },
+    {
+      "path": "apps/ops-web/lib/market-os/ambassadors/supabase.ts",
+      "change": "A",
+      "bytes": 964,
+      "sha256": "e2a837d9b871c2ff4b847a748ac933d00202a2723f5a1f0c46ade73e4837d81b"
+    },
+    {
+      "path": "apps/ops-web/lib/market-os/ambassadors/types.ts",
+      "change": "M",
+      "bytes": 2892,
+      "sha256": "2e56c563bdf39684ce82ebb578f945a127bbfa25a613e640ea1f335a008e9a09"
+    }
+  ]
+}

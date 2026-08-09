@@ -1,0 +1,24 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "skipLibCheck": true
+  },
+  "include": [
+    "lib/market-os/ai-runtime/**/*.ts",
+    "lib/market-os/marketing-ai/types.ts",
+    "lib/market-os/marketing-ai/config.ts",
+    "lib/market-os/marketing-ai/provider.ts",
+    "lib/market-os/marketing-ai/orchestrator.ts",
+    "lib/market-os/marketing-ai/auth.ts",
+    "lib/market-os/content-command-headquarters/ai-supervision.ts",
+    "lib/ai-provider-control/provider-runtime.ts",
+    "lib/ai-provider-control/repository.ts",
+    "app/api/market-os/content-command/ai-runtime/**/*.ts",
+    "app/api/market-os/content-command/marketing-ai/dashboard/route.ts",
+    "app/api/market-os/content-command/marketing-ai/health/route.ts",
+    "components/market-os/content-command/experience-bulk8/Bulk8AiExecutiveWorkspace.tsx",
+    "components/ai-provider-control/AiProviderControlWorkspace.tsx",
+    "components/market-os/content-command/marketing-ai/MarketingAiDirectorWorkspace.tsx"
+  ]
+}

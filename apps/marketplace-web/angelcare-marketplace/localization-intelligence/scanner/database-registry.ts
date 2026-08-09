@@ -1,0 +1,3 @@
+export interface DatabaseTranslationSource { schema:string; table:string; primaryKey:string; fields:string[]; localeField?:string; territoryField?:string; tenantField?:string; contentType:string; sensitivity:string; enabled:boolean }
+export const DENIED_FIELD_PATTERNS=[/password/i,/token/i,/secret/i,/private.?key/i,/child.*note/i,/incident.*narrative/i]
+export function validateDatabaseSource(source:DatabaseTranslationSource){ if(source.schema!=='public') throw new Error('Seul le schéma public explicitement enregistré est autorisé.'); for(const field of source.fields){ if(DENIED_FIELD_PATTERNS.some(p=>p.test(field))) throw new Error(`Champ interdit au scanner: ${field}`) } }

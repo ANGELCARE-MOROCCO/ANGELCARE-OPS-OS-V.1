@@ -1,0 +1,543 @@
+{
+  "version": "1.3.0",
+  "modules": [
+    {
+      "key": "revenue_b2b",
+      "label": "Revenue B2B Partnerships",
+      "route": "/b2b-partnerships",
+      "group": "revenue",
+      "defaultEnabled": false,
+      "submodules": [
+        {
+          "key": "today",
+          "label": "Today"
+        },
+        {
+          "key": "account_recognition",
+          "label": "Account Recognition"
+        },
+        {
+          "key": "duplicate_review",
+          "label": "Duplicate Review"
+        },
+        {
+          "key": "prospects",
+          "label": "Prospects"
+        },
+        {
+          "key": "accounts",
+          "label": "Accounts"
+        },
+        {
+          "key": "contacts",
+          "label": "Contacts"
+        },
+        {
+          "key": "decision_makers",
+          "label": "Decision Makers"
+        },
+        {
+          "key": "territory_sweep",
+          "label": "Territory Sweep"
+        },
+        {
+          "key": "evidence",
+          "label": "Evidence"
+        },
+        {
+          "key": "opportunities",
+          "label": "Opportunities"
+        },
+        {
+          "key": "pipeline",
+          "label": "Pipeline"
+        },
+        {
+          "key": "outreach",
+          "label": "Outreach"
+        },
+        {
+          "key": "communications",
+          "label": "Communications"
+        },
+        {
+          "key": "meetings",
+          "label": "Meetings"
+        },
+        {
+          "key": "tasks",
+          "label": "Tasks"
+        },
+        {
+          "key": "account_plans",
+          "label": "Account Plans"
+        },
+        {
+          "key": "partner_programs",
+          "label": "Partner Programs"
+        },
+        {
+          "key": "proposal_studio",
+          "label": "Proposal Studio"
+        },
+        {
+          "key": "negotiation_deal_room",
+          "label": "Negotiation Deal Room"
+        },
+        {
+          "key": "pricing_margin",
+          "label": "Pricing Margin"
+        },
+        {
+          "key": "closing_room",
+          "label": "Closing Room"
+        },
+        {
+          "key": "contracts",
+          "label": "Contracts"
+        },
+        {
+          "key": "payment_promises",
+          "label": "Payment Promises"
+        },
+        {
+          "key": "revenue_rescue",
+          "label": "Revenue Rescue"
+        },
+        {
+          "key": "operational_handoff",
+          "label": "Operational Handoff"
+        },
+        {
+          "key": "partner_activation",
+          "label": "Partner Activation"
+        },
+        {
+          "key": "partner_performance",
+          "label": "Partner Performance"
+        },
+        {
+          "key": "upsell",
+          "label": "Upsell"
+        },
+        {
+          "key": "renewals",
+          "label": "Renewals"
+        },
+        {
+          "key": "tenders",
+          "label": "Tenders"
+        },
+        {
+          "key": "intelligence",
+          "label": "Intelligence"
+        },
+        {
+          "key": "team_execution",
+          "label": "Team Execution"
+        },
+        {
+          "key": "reports",
+          "label": "Reports"
+        },
+        {
+          "key": "audit",
+          "label": "Audit"
+        },
+        {
+          "key": "calls",
+          "label": "Calls"
+        },
+        {
+          "key": "field_visits",
+          "label": "Field Visits"
+        },
+        {
+          "key": "sequences",
+          "label": "Sequences"
+        },
+        {
+          "key": "campaign_attribution",
+          "label": "Campaign Attribution"
+        },
+        {
+          "key": "referral_sources",
+          "label": "Referral Sources"
+        },
+        {
+          "key": "activity_timeline",
+          "label": "Activity Timeline"
+        },
+        {
+          "key": "handoff_acceptance",
+          "label": "Handoff Acceptance"
+        },
+        {
+          "key": "partner_onboarding",
+          "label": "Partner Onboarding"
+        },
+        {
+          "key": "activation_management",
+          "label": "Activation Management"
+        },
+        {
+          "key": "launch_approval",
+          "label": "Launch Approval"
+        },
+        {
+          "key": "first_service",
+          "label": "First Service"
+        },
+        {
+          "key": "hypercare",
+          "label": "Hypercare"
+        },
+        {
+          "key": "issue_management",
+          "label": "Issue Management"
+        },
+        {
+          "key": "corrective_actions",
+          "label": "Corrective Actions"
+        },
+        {
+          "key": "partner_reviews",
+          "label": "Partner Reviews"
+        },
+        {
+          "key": "cross_sell",
+          "label": "Cross-Sell"
+        },
+        {
+          "key": "multi_site_expansion",
+          "label": "Multi-site Expansion"
+        },
+        {
+          "key": "renewal_approval",
+          "label": "Renewal Approval"
+        },
+        {
+          "key": "tender_management",
+          "label": "Tender Management"
+        },
+        {
+          "key": "tender_submission",
+          "label": "Tender Submission"
+        },
+        {
+          "key": "partner_documents",
+          "label": "Partner Documents"
+        },
+        {
+          "key": "partner_timeline",
+          "label": "Partner Timeline"
+        },
+        {
+          "key": "ai_sales_director",
+          "label": "AI Sales Director"
+        },
+        {
+          "key": "management_command",
+          "label": "Management Command"
+        },
+        {
+          "key": "team_priority_management",
+          "label": "Team Priority Management"
+        },
+        {
+          "key": "account_reassignment",
+          "label": "Account Reassignment"
+        },
+        {
+          "key": "pipeline_truth",
+          "label": "Pipeline Truth"
+        },
+        {
+          "key": "forecast_management",
+          "label": "Forecast Management"
+        },
+        {
+          "key": "forecast_override_approval",
+          "label": "Forecast Override Approval"
+        },
+        {
+          "key": "revenue_risk_command",
+          "label": "Revenue Risk Command"
+        },
+        {
+          "key": "executive_intervention",
+          "label": "Executive Intervention"
+        },
+        {
+          "key": "staff_execution_quality",
+          "label": "Staff Execution Quality"
+        },
+        {
+          "key": "coaching_missions",
+          "label": "Coaching Missions"
+        },
+        {
+          "key": "coaching_review",
+          "label": "Coaching Review"
+        },
+        {
+          "key": "territory_intelligence",
+          "label": "Territory Intelligence"
+        },
+        {
+          "key": "vertical_intelligence",
+          "label": "Vertical Intelligence"
+        },
+        {
+          "key": "executive_reporting",
+          "label": "Executive Reporting"
+        },
+        {
+          "key": "automation_center",
+          "label": "Controlled Automation Center"
+        },
+        {
+          "key": "automation_approval",
+          "label": "Automation Approval"
+        },
+        {
+          "key": "automation_administration",
+          "label": "Automation Administration"
+        },
+        {
+          "key": "automation_kill_switch",
+          "label": "Automation Kill Switch"
+        }
+      ]
+    },
+    {
+      "key": "capital_command",
+      "label": "Capital Command Center",
+      "route": "/capital-command-center",
+      "group": "capital",
+      "defaultEnabled": false,
+      "submodules": [
+        {
+          "key": "investor_crm",
+          "label": "Investor Crm"
+        },
+        {
+          "key": "fundraising_pipeline",
+          "label": "Fundraising Pipeline"
+        },
+        {
+          "key": "deal_room",
+          "label": "Deal Room"
+        },
+        {
+          "key": "tasks_command",
+          "label": "Tasks Command"
+        },
+        {
+          "key": "due_diligence",
+          "label": "Due Diligence"
+        },
+        {
+          "key": "commitments",
+          "label": "Commitments"
+        },
+        {
+          "key": "capital_ledger",
+          "label": "Capital Ledger"
+        },
+        {
+          "key": "data_room",
+          "label": "Data Room"
+        },
+        {
+          "key": "board_reporting",
+          "label": "Board Reporting"
+        }
+      ]
+    },
+    {
+      "key": "market_os",
+      "label": "Market OS",
+      "route": "/market-os",
+      "group": "market",
+      "defaultEnabled": false,
+      "submodules": [
+        {
+          "key": "market_signals",
+          "label": "Market Signals"
+        },
+        {
+          "key": "market_intelligence",
+          "label": "Market Intelligence"
+        },
+        {
+          "key": "competitor_intelligence",
+          "label": "Competitor Intelligence"
+        },
+        {
+          "key": "research_missions",
+          "label": "Research Missions"
+        },
+        {
+          "key": "positioning_response",
+          "label": "Positioning Response"
+        }
+      ]
+    },
+    {
+      "key": "ambassadors",
+      "label": "Ambassadors",
+      "route": "/market-os/ambassadors",
+      "group": "market",
+      "defaultEnabled": false,
+      "submodules": [
+        {
+          "key": "recruitment",
+          "label": "Recruitment"
+        },
+        {
+          "key": "onboarding",
+          "label": "Onboarding"
+        },
+        {
+          "key": "training",
+          "label": "Training"
+        },
+        {
+          "key": "territories",
+          "label": "Territories"
+        },
+        {
+          "key": "missions",
+          "label": "Missions"
+        },
+        {
+          "key": "leads",
+          "label": "Leads"
+        },
+        {
+          "key": "proofs",
+          "label": "Proofs"
+        },
+        {
+          "key": "conversions",
+          "label": "Conversions"
+        },
+        {
+          "key": "incentives",
+          "label": "Incentives"
+        },
+        {
+          "key": "payouts",
+          "label": "Payouts"
+        },
+        {
+          "key": "reports",
+          "label": "Reports"
+        }
+      ]
+    },
+    {
+      "key": "campaign_lifecycle",
+      "label": "Campaign Lifecycle",
+      "route": "/market-os/campaign-lifecycle",
+      "group": "market",
+      "defaultEnabled": false,
+      "submodules": [
+        {
+          "key": "planning",
+          "label": "Planning"
+        },
+        {
+          "key": "production",
+          "label": "Production"
+        },
+        {
+          "key": "approval",
+          "label": "Approval"
+        },
+        {
+          "key": "launch_ready",
+          "label": "Launch Ready"
+        },
+        {
+          "key": "live",
+          "label": "Live"
+        },
+        {
+          "key": "optimization",
+          "label": "Optimization"
+        },
+        {
+          "key": "assets",
+          "label": "Assets"
+        },
+        {
+          "key": "budget",
+          "label": "Budget"
+        },
+        {
+          "key": "calendar",
+          "label": "Calendar"
+        },
+        {
+          "key": "risks",
+          "label": "Risks"
+        },
+        {
+          "key": "performance",
+          "label": "Performance"
+        }
+      ]
+    },
+    {
+      "key": "seo_blog",
+      "label": "SEO Blog Workspace",
+      "route": "/market-os/seo-blog-workspace",
+      "group": "market",
+      "defaultEnabled": false,
+      "submodules": [
+        {
+          "key": "articles",
+          "label": "Articles"
+        },
+        {
+          "key": "keywords",
+          "label": "Keywords"
+        },
+        {
+          "key": "clusters",
+          "label": "Clusters"
+        },
+        {
+          "key": "content_briefs",
+          "label": "Content Briefs"
+        },
+        {
+          "key": "brand_governance",
+          "label": "Brand Governance"
+        },
+        {
+          "key": "internal_links",
+          "label": "Internal Links"
+        },
+        {
+          "key": "publishing",
+          "label": "Publishing"
+        },
+        {
+          "key": "content_calendar",
+          "label": "Content Calendar"
+        },
+        {
+          "key": "analytics",
+          "label": "Analytics"
+        },
+        {
+          "key": "logs",
+          "label": "Logs"
+        }
+      ]
+    }
+  ]
+}

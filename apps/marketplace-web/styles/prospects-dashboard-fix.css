@@ -1,0 +1,19 @@
+/* Contrast stabilization */
+
+.prospect-card-title {
+  color: #f8fafc;
+}
+
+.prospect-card-subtitle {
+  color: #cbd5e1;
+}
+
+.live-panel {
+  border: 1px solid rgba(59,130,246,.25);
+  background: linear-gradient(180deg,#071224,#020817);
+}
+
+.market-map-shell {
+  min-height: 640px;
+  overflow: hidden;
+}

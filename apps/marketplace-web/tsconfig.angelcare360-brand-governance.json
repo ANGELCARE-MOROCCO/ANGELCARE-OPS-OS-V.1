@@ -1,0 +1,31 @@
+
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": { "noEmit": true, "incremental": false },
+  "include": [
+    "next-env.d.ts",
+    "app/(protected)/angelcare-360-operator/brand-governance/page.tsx",
+    "app/api/angelcare360/operator/branding/route.ts",
+    "app/api/angelcare360/branding/current/route.ts",
+    "app/api/angelcare360/branding/assets/[id]/route.ts",
+    "app/api/angelcare360/access/activate/route.ts",
+    "app/api/angelcare360/access/mfa/route.ts",
+    "app/angelcare-360-access/mfa/page.tsx",
+    "components/brand/**/*.tsx",
+    "components/angelcare360/operator/branding/**/*.ts",
+    "components/angelcare360/operator/branding/**/*.tsx",
+    "components/angelcare360/operator/growth/CustomerSovereignCommandRoom.tsx",
+    "components/angelcare360/layout/Angelcare360Header.tsx",
+    "components/angelcare360/operator/Angelcare360OperatorHeader.tsx",
+    "components/angelcare360/access/TenantAccessActivationClient.tsx",
+    "components/angelcare360/documents/Angelcare360A4Header.tsx",
+    "data/angelcare360/operator-sovereign-navigation.ts",
+    "lib/angelcare360/operator/branding.ts",
+    "lib/angelcare360/branding/email-template.ts",
+    "lib/angelcare360/email/email-os-bridge.ts",
+    "lib/angelcare360/documents/pdf.ts",
+    "types/angelcare360/operator/branding.ts",
+    "types/angelcare360/documents.ts",
+    "types/angelcare360/email.ts"
+  ]
+}

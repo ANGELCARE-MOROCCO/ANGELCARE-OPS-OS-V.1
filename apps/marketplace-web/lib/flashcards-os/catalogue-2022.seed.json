@@ -1,0 +1,4620 @@
+{
+  "schemaVersion": "1.0.0",
+  "portfolio": {
+    "id": "portfolio-flashcards",
+    "code": "FC-PORTFOLIO",
+    "name": "ANGELCARE Flashcards & Nomenclatures",
+    "status": "active"
+  },
+  "family": {
+    "id": "family-learning-cards",
+    "code": "FC",
+    "name": "Collections pédagogiques Flashcards",
+    "status": "active"
+  },
+  "categories": [
+    {
+      "id": "cat-language",
+      "code": "LANG",
+      "name": "Langage, parole & communication",
+      "shortName": "Langage",
+      "parentId": null,
+      "order": 10,
+      "status": "active",
+      "accent": "indigo",
+      "description": "Acquisition linguistique, vocabulaire, expression, compréhension, phonologie et communication."
+    },
+    {
+      "id": "cat-mathematics",
+      "code": "MATH",
+      "name": "Mathématiques & pensée logique",
+      "shortName": "Mathématiques",
+      "parentId": null,
+      "order": 20,
+      "status": "active",
+      "accent": "blue",
+      "description": "Nombres, quantités, formes, logique, séquençage, mesure et raisonnement."
+    },
+    {
+      "id": "cat-geography",
+      "code": "GEO",
+      "name": "Géographie, monde & cultures",
+      "shortName": "Géographie",
+      "parentId": null,
+      "order": 30,
+      "status": "active",
+      "accent": "emerald",
+      "description": "Continents, pays, capitales, cultures, repères territoriaux et ouverture internationale."
+    },
+    {
+      "id": "cat-nature",
+      "code": "NATURE",
+      "name": "Animaux, nature & environnement",
+      "shortName": "Nature",
+      "parentId": null,
+      "order": 40,
+      "status": "active",
+      "accent": "green",
+      "description": "Zoologie, habitats, biodiversité, végétaux, saisons et environnement."
+    },
+    {
+      "id": "cat-general",
+      "code": "CULT",
+      "name": "Société, culture & connaissances générales",
+      "shortName": "Culture générale",
+      "parentId": null,
+      "order": 50,
+      "status": "active",
+      "accent": "amber",
+      "description": "Culture, métiers, sports, arts, découvertes, société et connaissances transversales."
+    },
+    {
+      "id": "cat-science",
+      "code": "SCI",
+      "name": "Sciences & découverte",
+      "shortName": "Sciences",
+      "parentId": null,
+      "order": 60,
+      "status": "ready_for_growth",
+      "accent": "cyan",
+      "description": "Corps humain, espace, matière, énergie, technologie et expérimentation."
+    },
+    {
+      "id": "cat-autonomy",
+      "code": "AUTO",
+      "name": "Vie quotidienne & autonomie",
+      "shortName": "Autonomie",
+      "parentId": null,
+      "order": 70,
+      "status": "ready_for_growth",
+      "accent": "rose",
+      "description": "Routines, sécurité, hygiène, responsabilités et indépendance progressive."
+    },
+    {
+      "id": "cat-social-emotional",
+      "code": "SEL",
+      "name": "Développement émotionnel, social & comportemental",
+      "shortName": "Socio-émotionnel",
+      "parentId": null,
+      "order": 80,
+      "status": "ready_for_growth",
+      "accent": "violet",
+      "description": "Émotions, relations, régulation, confiance, coopération et situations sociales."
+    },
+    {
+      "id": "cat-montessori",
+      "code": "MONT",
+      "name": "Petite enfance & développement Montessori",
+      "shortName": "Montessori",
+      "parentId": null,
+      "order": 90,
+      "status": "ready_for_growth",
+      "accent": "orange",
+      "description": "Nomenclatures, vie pratique, sensoriel, classification et progression Montessori."
+    },
+    {
+      "id": "cat-inclusive",
+      "code": "INCL",
+      "name": "Apprentissages inclusifs & thérapeutiques",
+      "shortName": "Inclusion",
+      "parentId": null,
+      "order": 100,
+      "status": "ready_for_growth",
+      "accent": "teal",
+      "description": "Orthophonie, autisme, besoins spécifiques, réhabilitation et supports visuels."
+    },
+    {
+      "id": "sub-lang-foundations",
+      "code": "LANG-FOND",
+      "name": "Fondamentaux linguistiques",
+      "shortName": "Fondamentaux linguistiques",
+      "parentId": "cat-language",
+      "order": 10,
+      "status": "active",
+      "accent": "slate",
+      "description": "Sous-domaine opérationnel de la nomenclature importée et future."
+    },
+    {
+      "id": "sub-lang-daily",
+      "code": "LANG-DAILY",
+      "name": "Vocabulaire du quotidien",
+      "shortName": "Vocabulaire du quotidien",
+      "parentId": "cat-language",
+      "order": 20,
+      "status": "active",
+      "accent": "slate",
+      "description": "Sous-domaine opérationnel de la nomenclature importée et future."
+    },
+    {
+      "id": "sub-lang-expression",
+      "code": "LANG-EXPR",
+      "name": "Expression & communication",
+      "shortName": "Expression & communication",
+      "parentId": "cat-language",
+      "order": 30,
+      "status": "active",
+      "accent": "slate",
+      "description": "Sous-domaine opérationnel de la nomenclature importée et future."
+    },
+    {
+      "id": "sub-math-foundations",
+      "code": "MATH-FOND",
+      "name": "Nombres, formes & premiers raisonnements",
+      "shortName": "Nombres, formes & premiers raisonnements",
+      "parentId": "cat-mathematics",
+      "order": 10,
+      "status": "active",
+      "accent": "slate",
+      "description": "Sous-domaine opérationnel de la nomenclature importée et future."
+    },
+    {
+      "id": "sub-math-materials",
+      "code": "MATH-MAT",
+      "name": "Matériels, tracés & manipulations",
+      "shortName": "Matériels, tracés & manipulations",
+      "parentId": "cat-mathematics",
+      "order": 20,
+      "status": "active",
+      "accent": "slate",
+      "description": "Sous-domaine opérationnel de la nomenclature importée et future."
+    },
+    {
+      "id": "sub-geo-world",
+      "code": "GEO-WORLD",
+      "name": "Monde, continents & pays",
+      "shortName": "Monde, continents & pays",
+      "parentId": "cat-geography",
+      "order": 10,
+      "status": "active",
+      "accent": "slate",
+      "description": "Sous-domaine opérationnel de la nomenclature importée et future."
+    },
+    {
+      "id": "sub-geo-capitals",
+      "code": "GEO-CAP",
+      "name": "Capitales & repères",
+      "shortName": "Capitales & repères",
+      "parentId": "cat-geography",
+      "order": 20,
+      "status": "active",
+      "accent": "slate",
+      "description": "Sous-domaine opérationnel de la nomenclature importée et future."
+    },
+    {
+      "id": "sub-geo-biodiversity",
+      "code": "GEO-BIO",
+      "name": "Biodiversité par continent",
+      "shortName": "Biodiversité par continent",
+      "parentId": "cat-geography",
+      "order": 30,
+      "status": "active",
+      "accent": "slate",
+      "description": "Sous-domaine opérationnel de la nomenclature importée et future."
+    },
+    {
+      "id": "sub-nature-regions",
+      "code": "NATURE-REG",
+      "name": "Animaux par région",
+      "shortName": "Animaux par région",
+      "parentId": "cat-nature",
+      "order": 10,
+      "status": "active",
+      "accent": "slate",
+      "description": "Sous-domaine opérationnel de la nomenclature importée et future."
+    },
+    {
+      "id": "sub-nature-features",
+      "code": "NATURE-FEAT",
+      "name": "Familles & caractéristiques animales",
+      "shortName": "Familles & caractéristiques animales",
+      "parentId": "cat-nature",
+      "order": 20,
+      "status": "active",
+      "accent": "slate",
+      "description": "Sous-domaine opérationnel de la nomenclature importée et future."
+    },
+    {
+      "id": "sub-culture-world",
+      "code": "CULT-WORLD",
+      "name": "Monde, peuples & cultures",
+      "shortName": "Monde, peuples & cultures",
+      "parentId": "cat-general",
+      "order": 10,
+      "status": "active",
+      "accent": "slate",
+      "description": "Sous-domaine opérationnel de la nomenclature importée et future."
+    },
+    {
+      "id": "sub-culture-discovery",
+      "code": "CULT-DISC",
+      "name": "Arts, sciences & société",
+      "shortName": "Arts, sciences & société",
+      "parentId": "cat-general",
+      "order": 20,
+      "status": "active",
+      "accent": "slate",
+      "description": "Sous-domaine opérationnel de la nomenclature importée et future."
+    }
+  ],
+  "collections": [
+    {
+      "id": "fc-lang-001",
+      "code": "FC-LANG-001",
+      "name": "Les alphabets (ARA)",
+      "slug": "les-alphabets-ara",
+      "categoryId": "sub-lang-foundations",
+      "legacyDomain": "LANG",
+      "legacyNumber": "1",
+      "expectedCardCount": 28,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 52,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 6,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 3,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-lang-002",
+      "code": "FC-LANG-002",
+      "name": "Les alphabets (FRA)",
+      "slug": "les-alphabets-fra",
+      "categoryId": "sub-lang-foundations",
+      "legacyDomain": "LANG",
+      "legacyNumber": "2",
+      "expectedCardCount": 26,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 52,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 6,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 3,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-lang-003",
+      "code": "FC-LANG-003",
+      "name": "Les alphabets (ENG)",
+      "slug": "les-alphabets-eng",
+      "categoryId": "sub-lang-foundations",
+      "legacyDomain": "LANG",
+      "legacyNumber": "3",
+      "expectedCardCount": 26,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 52,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 6,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 3,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-lang-004",
+      "code": "FC-LANG-004",
+      "name": "Les couleurs basiques",
+      "slug": "les-couleurs-basiques",
+      "categoryId": "sub-lang-foundations",
+      "legacyDomain": "LANG",
+      "legacyNumber": "4",
+      "expectedCardCount": 10,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 20,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 6,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 3,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-lang-005",
+      "code": "FC-LANG-005",
+      "name": "Fournitures scolaires",
+      "slug": "fournitures-scolaires",
+      "categoryId": "sub-lang-daily",
+      "legacyDomain": "LANG",
+      "legacyNumber": "5",
+      "expectedCardCount": 20,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 40,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 6,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 3,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-lang-006",
+      "code": "FC-LANG-006",
+      "name": "Les parties de la journée",
+      "slug": "les-parties-de-la-journee",
+      "categoryId": "sub-lang-daily",
+      "legacyDomain": "LANG",
+      "legacyNumber": "6",
+      "expectedCardCount": 4,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 8,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 6,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 3,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-lang-007",
+      "code": "FC-LANG-007",
+      "name": "Les chiffres",
+      "slug": "les-chiffres",
+      "categoryId": "sub-lang-foundations",
+      "legacyDomain": "LANG",
+      "legacyNumber": "7",
+      "expectedCardCount": 10,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 20,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 6,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 3,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-lang-008",
+      "code": "FC-LANG-008",
+      "name": "Les jours de la semaine",
+      "slug": "les-jours-de-la-semaine",
+      "categoryId": "sub-lang-foundations",
+      "legacyDomain": "LANG",
+      "legacyNumber": "8",
+      "expectedCardCount": 7,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 14,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 6,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 3,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-lang-009",
+      "code": "FC-LANG-009",
+      "name": "Les mois de l'année",
+      "slug": "les-mois-de-l-annee",
+      "categoryId": "sub-lang-foundations",
+      "legacyDomain": "LANG",
+      "legacyNumber": "9",
+      "expectedCardCount": 12,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 24,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 6,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 3,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-lang-010",
+      "code": "FC-LANG-010",
+      "name": "Les parties du corps",
+      "slug": "les-parties-du-corps",
+      "categoryId": "sub-lang-daily",
+      "legacyDomain": "LANG",
+      "legacyNumber": "10",
+      "expectedCardCount": 12,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 24,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 6,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 3,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-lang-011",
+      "code": "FC-LANG-011",
+      "name": "Les métiers du monde",
+      "slug": "les-metiers-du-monde",
+      "categoryId": "sub-lang-daily",
+      "legacyDomain": "LANG",
+      "legacyNumber": "11",
+      "expectedCardCount": 30,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 60,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 6,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 3,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-lang-012",
+      "code": "FC-LANG-012",
+      "name": "Les émotions",
+      "slug": "les-emotions",
+      "categoryId": "sub-lang-expression",
+      "legacyDomain": "LANG",
+      "legacyNumber": "12",
+      "expectedCardCount": 17,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 34,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 6,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 3,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-lang-013",
+      "code": "FC-LANG-013",
+      "name": "Les types de lignes",
+      "slug": "les-types-de-lignes",
+      "categoryId": "sub-lang-foundations",
+      "legacyDomain": "LANG",
+      "legacyNumber": "13",
+      "expectedCardCount": 17,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 34,
+      "primaryFormat": "flashcards",
+      "status": "needs_review",
+      "readiness": 28,
+      "ageMinMonths": 6,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 3,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [
+        "taxonomy_review"
+      ],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-lang-014",
+      "code": "FC-LANG-014",
+      "name": "Les 4 saisons",
+      "slug": "les-4-saisons",
+      "categoryId": "sub-lang-daily",
+      "legacyDomain": "LANG",
+      "legacyNumber": "14",
+      "expectedCardCount": 4,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 8,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 6,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 3,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-lang-015",
+      "code": "FC-LANG-015",
+      "name": "La météo",
+      "slug": "la-meteo",
+      "categoryId": "sub-lang-daily",
+      "legacyDomain": "LANG",
+      "legacyNumber": "15",
+      "expectedCardCount": 10,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 20,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 6,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 3,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-lang-016",
+      "code": "FC-LANG-016",
+      "name": "Les vêtements",
+      "slug": "les-vetements",
+      "categoryId": "sub-lang-daily",
+      "legacyDomain": "LANG",
+      "legacyNumber": "16",
+      "expectedCardCount": 20,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 40,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 6,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 3,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-lang-017",
+      "code": "FC-LANG-017",
+      "name": "Mélange Fruits",
+      "slug": "melange-fruits",
+      "categoryId": "sub-lang-daily",
+      "legacyDomain": "LANG",
+      "legacyNumber": "17",
+      "expectedCardCount": 15,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 30,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 6,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 3,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-lang-018",
+      "code": "FC-LANG-018",
+      "name": "Mélange légumes",
+      "slug": "melange-legumes",
+      "categoryId": "sub-lang-daily",
+      "legacyDomain": "LANG",
+      "legacyNumber": "18",
+      "expectedCardCount": 15,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 30,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 6,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 3,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-lang-019",
+      "code": "FC-LANG-019",
+      "name": "Les vêtements",
+      "slug": "les-vetements",
+      "categoryId": "sub-lang-daily",
+      "legacyDomain": "LANG",
+      "legacyNumber": "17",
+      "expectedCardCount": 20,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 40,
+      "primaryFormat": "flashcards",
+      "status": "needs_review",
+      "readiness": 28,
+      "ageMinMonths": 6,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 3,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [
+        "duplicate_name",
+        "duplicate_legacy_concept"
+      ],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-lang-020",
+      "code": "FC-LANG-020",
+      "name": "Les pièces de la maison",
+      "slug": "les-pieces-de-la-maison",
+      "categoryId": "sub-lang-daily",
+      "legacyDomain": "LANG",
+      "legacyNumber": "18",
+      "expectedCardCount": 20,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 40,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 6,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 3,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-lang-021",
+      "code": "FC-LANG-021",
+      "name": "Les véhicules",
+      "slug": "les-vehicules",
+      "categoryId": "sub-lang-daily",
+      "legacyDomain": "LANG",
+      "legacyNumber": "19",
+      "expectedCardCount": 20,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 40,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 6,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 3,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-lang-022",
+      "code": "FC-LANG-022",
+      "name": "Les membres de la famille",
+      "slug": "les-membres-de-la-famille",
+      "categoryId": "sub-lang-daily",
+      "legacyDomain": "LANG",
+      "legacyNumber": "20",
+      "expectedCardCount": 9,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 18,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 6,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 3,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-geo-001",
+      "code": "FC-GEO-001",
+      "name": "Continents du monde",
+      "slug": "continents-du-monde",
+      "categoryId": "sub-geo-world",
+      "legacyDomain": "GEO",
+      "legacyNumber": "1",
+      "expectedCardCount": 7,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 14,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 4,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-geo-002",
+      "code": "FC-GEO-002",
+      "name": "Les pays d’Afrique",
+      "slug": "les-pays-dafrique",
+      "categoryId": "sub-geo-world",
+      "legacyDomain": "GEO",
+      "legacyNumber": "2",
+      "expectedCardCount": 20,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 40,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 4,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-geo-003",
+      "code": "FC-GEO-003",
+      "name": "Les pays d’Europe",
+      "slug": "les-pays-deurope",
+      "categoryId": "sub-geo-world",
+      "legacyDomain": "GEO",
+      "legacyNumber": "3",
+      "expectedCardCount": 20,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 40,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 4,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-geo-004",
+      "code": "FC-GEO-004",
+      "name": "Les pays d’Asie",
+      "slug": "les-pays-dasie",
+      "categoryId": "sub-geo-world",
+      "legacyDomain": "GEO",
+      "legacyNumber": "4",
+      "expectedCardCount": 20,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 40,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 4,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-geo-005",
+      "code": "FC-GEO-005",
+      "name": "Les pays d’Océanie",
+      "slug": "les-pays-doceanie",
+      "categoryId": "sub-geo-world",
+      "legacyDomain": "GEO",
+      "legacyNumber": "5",
+      "expectedCardCount": 10,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 20,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 4,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-geo-006",
+      "code": "FC-GEO-006",
+      "name": "Les pays d’Amérique du Sud",
+      "slug": "les-pays-damerique-du-sud",
+      "categoryId": "sub-geo-world",
+      "legacyDomain": "GEO",
+      "legacyNumber": "6",
+      "expectedCardCount": 13,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 26,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 4,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-geo-007",
+      "code": "FC-GEO-007",
+      "name": "Les pays d’Amérique du Nord",
+      "slug": "les-pays-damerique-du-nord",
+      "categoryId": "sub-geo-world",
+      "legacyDomain": "GEO",
+      "legacyNumber": "7",
+      "expectedCardCount": 15,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 30,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 4,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-geo-008",
+      "code": "FC-GEO-008",
+      "name": "Capitales du monde",
+      "slug": "capitales-du-monde",
+      "categoryId": "sub-geo-capitals",
+      "legacyDomain": "GEO",
+      "legacyNumber": "8",
+      "expectedCardCount": 27,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 54,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 4,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-geo-009",
+      "code": "FC-GEO-009",
+      "name": "Capitales d’Afrique",
+      "slug": "capitales-dafrique",
+      "categoryId": "sub-geo-capitals",
+      "legacyDomain": "GEO",
+      "legacyNumber": "9",
+      "expectedCardCount": 20,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 40,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 4,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-geo-010",
+      "code": "FC-GEO-010",
+      "name": "Capitales d’Europe",
+      "slug": "capitales-deurope",
+      "categoryId": "sub-geo-capitals",
+      "legacyDomain": "GEO",
+      "legacyNumber": "10",
+      "expectedCardCount": 20,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 40,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 4,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-geo-011",
+      "code": "FC-GEO-011",
+      "name": "Capitales d’Asie",
+      "slug": "capitales-dasie",
+      "categoryId": "sub-geo-capitals",
+      "legacyDomain": "GEO",
+      "legacyNumber": "11",
+      "expectedCardCount": 20,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 40,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 4,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-geo-012",
+      "code": "FC-GEO-012",
+      "name": "Capitales d’Océanie",
+      "slug": "capitales-doceanie",
+      "categoryId": "sub-geo-capitals",
+      "legacyDomain": "GEO",
+      "legacyNumber": "12",
+      "expectedCardCount": 10,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 20,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 4,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-geo-013",
+      "code": "FC-GEO-013",
+      "name": "Animaux d’Afrique",
+      "slug": "animaux-dafrique",
+      "categoryId": "sub-geo-biodiversity",
+      "legacyDomain": "GEO",
+      "legacyNumber": "13",
+      "expectedCardCount": 15,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 30,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 4,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-geo-014",
+      "code": "FC-GEO-014",
+      "name": "Animaux d’Europe",
+      "slug": "animaux-deurope",
+      "categoryId": "sub-geo-biodiversity",
+      "legacyDomain": "GEO",
+      "legacyNumber": "14",
+      "expectedCardCount": 15,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 30,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 4,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-geo-015",
+      "code": "FC-GEO-015",
+      "name": "Animaux d’Asie",
+      "slug": "animaux-dasie",
+      "categoryId": "sub-geo-biodiversity",
+      "legacyDomain": "GEO",
+      "legacyNumber": "15",
+      "expectedCardCount": 15,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 30,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 4,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-geo-016",
+      "code": "FC-GEO-016",
+      "name": "Animaux d’Australie",
+      "slug": "animaux-daustralie",
+      "categoryId": "sub-geo-biodiversity",
+      "legacyDomain": "GEO",
+      "legacyNumber": "16",
+      "expectedCardCount": 15,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 30,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 4,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-geo-017",
+      "code": "FC-GEO-017",
+      "name": "Animaux d’Amérique du Sud",
+      "slug": "animaux-damerique-du-sud",
+      "categoryId": "sub-geo-biodiversity",
+      "legacyDomain": "GEO",
+      "legacyNumber": "17",
+      "expectedCardCount": 15,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 30,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 4,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-geo-018",
+      "code": "FC-GEO-018",
+      "name": "Animaux d’Amérique du Nord",
+      "slug": "animaux-damerique-du-nord",
+      "categoryId": "sub-geo-biodiversity",
+      "legacyDomain": "GEO",
+      "legacyNumber": "18",
+      "expectedCardCount": 15,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 30,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 4,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-geo-019",
+      "code": "FC-GEO-019",
+      "name": "Animaux de l’Antarctique",
+      "slug": "animaux-de-lantarctique",
+      "categoryId": "sub-geo-biodiversity",
+      "legacyDomain": "GEO",
+      "legacyNumber": "19",
+      "expectedCardCount": 15,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 30,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 4,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-geo-020",
+      "code": "FC-GEO-020",
+      "name": "Légumes d’Afrique",
+      "slug": "legumes-dafrique",
+      "categoryId": "sub-geo-biodiversity",
+      "legacyDomain": "GEO",
+      "legacyNumber": "20",
+      "expectedCardCount": 10,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 20,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 4,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-geo-021",
+      "code": "FC-GEO-021",
+      "name": "Légumes d’Europe",
+      "slug": "legumes-deurope",
+      "categoryId": "sub-geo-biodiversity",
+      "legacyDomain": "GEO",
+      "legacyNumber": "21",
+      "expectedCardCount": 10,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 20,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 4,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-geo-022",
+      "code": "FC-GEO-022",
+      "name": "Légumes d’Amérique du Sud",
+      "slug": "legumes-damerique-du-sud",
+      "categoryId": "sub-geo-biodiversity",
+      "legacyDomain": "GEO",
+      "legacyNumber": "22",
+      "expectedCardCount": 10,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 20,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 4,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-geo-023",
+      "code": "FC-GEO-023",
+      "name": "Légumes d’Amérique du Nord",
+      "slug": "legumes-damerique-du-nord",
+      "categoryId": "sub-geo-biodiversity",
+      "legacyDomain": "GEO",
+      "legacyNumber": "23",
+      "expectedCardCount": 10,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 20,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 4,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-geo-024",
+      "code": "FC-GEO-024",
+      "name": "Légumes d’Asie",
+      "slug": "legumes-dasie",
+      "categoryId": "sub-geo-biodiversity",
+      "legacyDomain": "GEO",
+      "legacyNumber": "24",
+      "expectedCardCount": 10,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 20,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 4,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-geo-025",
+      "code": "FC-GEO-025",
+      "name": "Légumes d’Australie",
+      "slug": "legumes-daustralie",
+      "categoryId": "sub-geo-biodiversity",
+      "legacyDomain": "GEO",
+      "legacyNumber": "25",
+      "expectedCardCount": 10,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 20,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 4,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-geo-026",
+      "code": "FC-GEO-026",
+      "name": "Fruits d’Afrique",
+      "slug": "fruits-dafrique",
+      "categoryId": "sub-geo-biodiversity",
+      "legacyDomain": "GEO",
+      "legacyNumber": "26",
+      "expectedCardCount": 10,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 20,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 4,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-geo-027",
+      "code": "FC-GEO-027",
+      "name": "Fruits d’Europe",
+      "slug": "fruits-deurope",
+      "categoryId": "sub-geo-biodiversity",
+      "legacyDomain": "GEO",
+      "legacyNumber": "27",
+      "expectedCardCount": 10,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 20,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 4,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-geo-028",
+      "code": "FC-GEO-028",
+      "name": "Fruits d’Asie",
+      "slug": "fruits-dasie",
+      "categoryId": "sub-geo-biodiversity",
+      "legacyDomain": "GEO",
+      "legacyNumber": "28",
+      "expectedCardCount": 10,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 20,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 4,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-geo-029",
+      "code": "FC-GEO-029",
+      "name": "Fruits d’Afrique",
+      "slug": "fruits-dafrique",
+      "categoryId": "sub-geo-biodiversity",
+      "legacyDomain": "GEO",
+      "legacyNumber": "29",
+      "expectedCardCount": 10,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 20,
+      "primaryFormat": "flashcards",
+      "status": "needs_review",
+      "readiness": 28,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 4,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [
+        "duplicate_name",
+        "probable_source_label_error"
+      ],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-geo-030",
+      "code": "FC-GEO-030",
+      "name": "Fruits d’Amérique",
+      "slug": "fruits-damerique",
+      "categoryId": "sub-geo-biodiversity",
+      "legacyDomain": "GEO",
+      "legacyNumber": "30",
+      "expectedCardCount": 10,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 20,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 4,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-math-001",
+      "code": "FC-MATH-001",
+      "name": "Les formes géométriques basiques",
+      "slug": "les-formes-geometriques-basiques",
+      "categoryId": "sub-math-foundations",
+      "legacyDomain": "MATH",
+      "legacyNumber": "1",
+      "expectedCardCount": 11,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 22,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 5,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-math-002",
+      "code": "FC-MATH-002",
+      "name": "Les formes solides",
+      "slug": "les-formes-solides",
+      "categoryId": "sub-math-foundations",
+      "legacyDomain": "MATH",
+      "legacyNumber": "2",
+      "expectedCardCount": 9,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 18,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 5,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-math-003",
+      "code": "FC-MATH-003",
+      "name": "Types de lignes",
+      "slug": "types-de-lignes",
+      "categoryId": "sub-math-foundations",
+      "legacyDomain": "MATH",
+      "legacyNumber": "3",
+      "expectedCardCount": 17,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 34,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 5,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-math-004",
+      "code": "FC-MATH-004",
+      "name": "Planche des chiffres 1 à 100 (A3)",
+      "slug": "planche-des-chiffres-1-a-100-a3",
+      "categoryId": "sub-math-materials",
+      "legacyDomain": "MATH",
+      "legacyNumber": "4",
+      "expectedCardCount": 5,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 48,
+      "primaryFormat": "a3_board",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 5,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-math-005",
+      "code": "FC-MATH-005",
+      "name": "Puzzle des chiffres pairs 2 à 20",
+      "slug": "puzzle-des-chiffres-pairs-2-a-20",
+      "categoryId": "sub-math-materials",
+      "legacyDomain": "MATH",
+      "legacyNumber": "5",
+      "expectedCardCount": null,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 15,
+      "primaryFormat": "puzzle",
+      "status": "needs_review",
+      "readiness": 28,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 5,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [
+        "missing_card_count"
+      ],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-math-006",
+      "code": "FC-MATH-006",
+      "name": "Puzzle des chiffres impairs 1 à 19",
+      "slug": "puzzle-des-chiffres-impairs-1-a-19",
+      "categoryId": "sub-math-materials",
+      "legacyDomain": "MATH",
+      "legacyNumber": "6",
+      "expectedCardCount": null,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 15,
+      "primaryFormat": "puzzle",
+      "status": "needs_review",
+      "readiness": 28,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 5,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [
+        "missing_card_count"
+      ],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-math-007",
+      "code": "FC-MATH-007",
+      "name": "Puzzle des chiffres ascendants 1 à 10",
+      "slug": "puzzle-des-chiffres-ascendants-1-a-10",
+      "categoryId": "sub-math-materials",
+      "legacyDomain": "MATH",
+      "legacyNumber": "7",
+      "expectedCardCount": null,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 15,
+      "primaryFormat": "puzzle",
+      "status": "needs_review",
+      "readiness": 28,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 5,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [
+        "missing_card_count"
+      ],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-math-008",
+      "code": "FC-MATH-008",
+      "name": "Puzzle des chiffres ascendants 11 à 20",
+      "slug": "puzzle-des-chiffres-ascendants-11-a-20",
+      "categoryId": "sub-math-materials",
+      "legacyDomain": "MATH",
+      "legacyNumber": "8",
+      "expectedCardCount": null,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 15,
+      "primaryFormat": "puzzle",
+      "status": "needs_review",
+      "readiness": 28,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 5,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [
+        "missing_card_count"
+      ],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-math-009",
+      "code": "FC-MATH-009",
+      "name": "Puzzle des chiffres ascendants 21 à 30",
+      "slug": "puzzle-des-chiffres-ascendants-21-a-30",
+      "categoryId": "sub-math-materials",
+      "legacyDomain": "MATH",
+      "legacyNumber": "9",
+      "expectedCardCount": null,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 15,
+      "primaryFormat": "puzzle",
+      "status": "needs_review",
+      "readiness": 28,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 5,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [
+        "missing_card_count"
+      ],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-math-010",
+      "code": "FC-MATH-010",
+      "name": "Puzzle des chiffres ascendants 5 à 50 (+5)",
+      "slug": "puzzle-des-chiffres-ascendants-5-a-50-5",
+      "categoryId": "sub-math-materials",
+      "legacyDomain": "MATH",
+      "legacyNumber": "10",
+      "expectedCardCount": null,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 15,
+      "primaryFormat": "puzzle",
+      "status": "needs_review",
+      "readiness": 28,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 5,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [
+        "missing_card_count"
+      ],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-math-011",
+      "code": "FC-MATH-011",
+      "name": "Planche de Seguin 10",
+      "slug": "planche-de-seguin-10",
+      "categoryId": "sub-math-materials",
+      "legacyDomain": "MATH",
+      "legacyNumber": "11",
+      "expectedCardCount": null,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 25,
+      "primaryFormat": "board",
+      "status": "needs_review",
+      "readiness": 28,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 5,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [
+        "missing_card_count"
+      ],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-math-012",
+      "code": "FC-MATH-012",
+      "name": "Planche de Seguin 20",
+      "slug": "planche-de-seguin-20",
+      "categoryId": "sub-math-materials",
+      "legacyDomain": "MATH",
+      "legacyNumber": "12",
+      "expectedCardCount": null,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 25,
+      "primaryFormat": "board",
+      "status": "needs_review",
+      "readiness": 28,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 5,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [
+        "missing_card_count"
+      ],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-math-013",
+      "code": "FC-MATH-013",
+      "name": "Planche de Seguin 10–100",
+      "slug": "planche-de-seguin-10100",
+      "categoryId": "sub-math-materials",
+      "legacyDomain": "MATH",
+      "legacyNumber": "13",
+      "expectedCardCount": null,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 25,
+      "primaryFormat": "board",
+      "status": "needs_review",
+      "readiness": 28,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 5,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [
+        "missing_card_count"
+      ],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-math-014",
+      "code": "FC-MATH-014",
+      "name": "Planche de traçage des chiffres 0 à 9",
+      "slug": "planche-de-tracage-des-chiffres-0-a-9",
+      "categoryId": "sub-math-materials",
+      "legacyDomain": "MATH",
+      "legacyNumber": "14",
+      "expectedCardCount": 10,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 35,
+      "primaryFormat": "tracing_board",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 5,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-math-015",
+      "code": "FC-MATH-015",
+      "name": "Planche de traçage — 7 types de lignes",
+      "slug": "planche-de-tracage-7-types-de-lignes",
+      "categoryId": "sub-math-materials",
+      "legacyDomain": "MATH",
+      "legacyNumber": "15",
+      "expectedCardCount": 7,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 28,
+      "primaryFormat": "tracing_board",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 5,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-math-016",
+      "code": "FC-MATH-016",
+      "name": "Apprendre à compter : nombres, symboles et quantités 1 à 20",
+      "slug": "apprendre-a-compter-nombres-symboles-et-quantites-1-a-20",
+      "categoryId": "sub-math-foundations",
+      "legacyDomain": "MATH",
+      "legacyNumber": "16",
+      "expectedCardCount": 20,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 32,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 5,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-math-017",
+      "code": "FC-MATH-017",
+      "name": "Planche de traçage — 7 types de lignes",
+      "slug": "planche-de-tracage-7-types-de-lignes",
+      "categoryId": "sub-math-materials",
+      "legacyDomain": "MATH",
+      "legacyNumber": "17",
+      "expectedCardCount": 7,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 28,
+      "primaryFormat": "tracing_board",
+      "status": "needs_review",
+      "readiness": 28,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 5,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [
+        "duplicate_name",
+        "duplicate_source_line"
+      ],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-math-018",
+      "code": "FC-MATH-018",
+      "name": "Planche nombres, symboles + quantités à remplir avec jetons (A3)",
+      "slug": "planche-nombres-symboles-quantites-a-remplir-avec-jetons-a3",
+      "categoryId": "sub-math-materials",
+      "legacyDomain": "MATH",
+      "legacyNumber": "18",
+      "expectedCardCount": 5,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 48,
+      "primaryFormat": "a3_board",
+      "status": "needs_review",
+      "readiness": 28,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 5,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [
+        "legacy_numbering_gap"
+      ],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-zoo-001",
+      "code": "FC-ZOO-001",
+      "name": "Animaux d’Afrique",
+      "slug": "animaux-dafrique",
+      "categoryId": "sub-nature-regions",
+      "legacyDomain": "ZOO",
+      "legacyNumber": "1",
+      "expectedCardCount": 15,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 30,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 6,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-zoo-002",
+      "code": "FC-ZOO-002",
+      "name": "Animaux d’Europe",
+      "slug": "animaux-deurope",
+      "categoryId": "sub-nature-regions",
+      "legacyDomain": "ZOO",
+      "legacyNumber": "2",
+      "expectedCardCount": 15,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 30,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 6,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-zoo-003",
+      "code": "FC-ZOO-003",
+      "name": "Animaux d’Asie",
+      "slug": "animaux-dasie",
+      "categoryId": "sub-nature-regions",
+      "legacyDomain": "ZOO",
+      "legacyNumber": "3",
+      "expectedCardCount": 15,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 30,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 6,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-zoo-004",
+      "code": "FC-ZOO-004",
+      "name": "Animaux d’Australie",
+      "slug": "animaux-daustralie",
+      "categoryId": "sub-nature-regions",
+      "legacyDomain": "ZOO",
+      "legacyNumber": "4",
+      "expectedCardCount": 15,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 30,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 6,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-zoo-005",
+      "code": "FC-ZOO-005",
+      "name": "Animaux d’Amérique du Sud",
+      "slug": "animaux-damerique-du-sud",
+      "categoryId": "sub-nature-regions",
+      "legacyDomain": "ZOO",
+      "legacyNumber": "5",
+      "expectedCardCount": 15,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 30,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 6,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-zoo-006",
+      "code": "FC-ZOO-006",
+      "name": "Animaux d’Amérique du Nord",
+      "slug": "animaux-damerique-du-nord",
+      "categoryId": "sub-nature-regions",
+      "legacyDomain": "ZOO",
+      "legacyNumber": "6",
+      "expectedCardCount": 15,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 30,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 6,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-zoo-007",
+      "code": "FC-ZOO-007",
+      "name": "Animaux de l’Antarctique",
+      "slug": "animaux-de-lantarctique",
+      "categoryId": "sub-nature-regions",
+      "legacyDomain": "ZOO",
+      "legacyNumber": "7",
+      "expectedCardCount": 15,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 30,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 6,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-zoo-008",
+      "code": "FC-ZOO-008",
+      "name": "Animaux de savane",
+      "slug": "animaux-de-savane",
+      "categoryId": "sub-nature-regions",
+      "legacyDomain": "ZOO",
+      "legacyNumber": "8",
+      "expectedCardCount": 15,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 30,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 6,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-zoo-009",
+      "code": "FC-ZOO-009",
+      "name": "Mélange d’animaux",
+      "slug": "melange-danimaux",
+      "categoryId": "sub-nature-features",
+      "legacyDomain": "ZOO",
+      "legacyNumber": "9",
+      "expectedCardCount": 23,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 46,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 6,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-zoo-010",
+      "code": "FC-ZOO-010",
+      "name": "Mélange de poissons",
+      "slug": "melange-de-poissons",
+      "categoryId": "sub-nature-features",
+      "legacyDomain": "ZOO",
+      "legacyNumber": "10",
+      "expectedCardCount": 15,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 30,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 6,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-zoo-011",
+      "code": "FC-ZOO-011",
+      "name": "Mélange d’insectes",
+      "slug": "melange-dinsectes",
+      "categoryId": "sub-nature-features",
+      "legacyDomain": "ZOO",
+      "legacyNumber": "11",
+      "expectedCardCount": 20,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 40,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 6,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-zoo-012",
+      "code": "FC-ZOO-012",
+      "name": "Animaux avec plume",
+      "slug": "animaux-avec-plume",
+      "categoryId": "sub-nature-features",
+      "legacyDomain": "ZOO",
+      "legacyNumber": "12",
+      "expectedCardCount": 10,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 20,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 6,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-zoo-013",
+      "code": "FC-ZOO-013",
+      "name": "Animaux avec écaille",
+      "slug": "animaux-avec-ecaille",
+      "categoryId": "sub-nature-features",
+      "legacyDomain": "ZOO",
+      "legacyNumber": "13",
+      "expectedCardCount": 10,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 20,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 6,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-zoo-014",
+      "code": "FC-ZOO-014",
+      "name": "Animaux à fourrure",
+      "slug": "animaux-a-fourrure",
+      "categoryId": "sub-nature-features",
+      "legacyDomain": "ZOO",
+      "legacyNumber": "14",
+      "expectedCardCount": 10,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 20,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 6,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-zoo-015",
+      "code": "FC-ZOO-015",
+      "name": "Animaux herbivores",
+      "slug": "animaux-herbivores",
+      "categoryId": "sub-nature-features",
+      "legacyDomain": "ZOO",
+      "legacyNumber": "15",
+      "expectedCardCount": 10,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 20,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 6,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-zoo-016",
+      "code": "FC-ZOO-016",
+      "name": "Animaux omnivores",
+      "slug": "animaux-omnivores",
+      "categoryId": "sub-nature-features",
+      "legacyDomain": "ZOO",
+      "legacyNumber": "16",
+      "expectedCardCount": 10,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 20,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 6,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-zoo-017",
+      "code": "FC-ZOO-017",
+      "name": "Animaux carnivores",
+      "slug": "animaux-carnivores",
+      "categoryId": "sub-nature-features",
+      "legacyDomain": "ZOO",
+      "legacyNumber": "17",
+      "expectedCardCount": 10,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 20,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 6,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-cult-001",
+      "code": "FC-CULT-001",
+      "name": "Mélange culture générale",
+      "slug": "melange-culture-generale",
+      "categoryId": "sub-culture-world",
+      "legacyDomain": "CULT",
+      "legacyNumber": "1",
+      "expectedCardCount": 20,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 40,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 7,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-cult-002",
+      "code": "FC-CULT-002",
+      "name": "Les langues du monde",
+      "slug": "les-langues-du-monde",
+      "categoryId": "sub-culture-world",
+      "legacyDomain": "CULT",
+      "legacyNumber": "2",
+      "expectedCardCount": 25,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 30,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 7,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-cult-003",
+      "code": "FC-CULT-003",
+      "name": "Monnaies du monde",
+      "slug": "monnaies-du-monde",
+      "categoryId": "sub-culture-world",
+      "legacyDomain": "CULT",
+      "legacyNumber": "3",
+      "expectedCardCount": 27,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 54,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 7,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-cult-004",
+      "code": "FC-CULT-004",
+      "name": "Instruments de musique",
+      "slug": "instruments-de-musique",
+      "categoryId": "sub-culture-world",
+      "legacyDomain": "CULT",
+      "legacyNumber": "4",
+      "expectedCardCount": 20,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 40,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 7,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-cult-005",
+      "code": "FC-CULT-005",
+      "name": "Mélange de sports",
+      "slug": "melange-de-sports",
+      "categoryId": "sub-culture-world",
+      "legacyDomain": "CULT",
+      "legacyNumber": "5",
+      "expectedCardCount": 20,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 40,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 7,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-cult-006",
+      "code": "FC-CULT-006",
+      "name": "Cuisine du monde",
+      "slug": "cuisine-du-monde",
+      "categoryId": "sub-culture-world",
+      "legacyDomain": "CULT",
+      "legacyNumber": "6",
+      "expectedCardCount": 17,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 34,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 7,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-cult-007",
+      "code": "FC-CULT-007",
+      "name": "Costumes traditionnels",
+      "slug": "costumes-traditionnels",
+      "categoryId": "sub-culture-world",
+      "legacyDomain": "CULT",
+      "legacyNumber": "7",
+      "expectedCardCount": 17,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 34,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 7,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-cult-008",
+      "code": "FC-CULT-008",
+      "name": "Les personnes qui ont marqué le monde",
+      "slug": "les-personnes-qui-ont-marque-le-monde",
+      "categoryId": "sub-culture-world",
+      "legacyDomain": "CULT",
+      "legacyNumber": "8",
+      "expectedCardCount": 17,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 34,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 7,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-cult-009",
+      "code": "FC-CULT-009",
+      "name": "Les merveilles du monde",
+      "slug": "les-merveilles-du-monde",
+      "categoryId": "sub-culture-world",
+      "legacyDomain": "CULT",
+      "legacyNumber": "9",
+      "expectedCardCount": 7,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 14,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 7,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-cult-010",
+      "code": "FC-CULT-010",
+      "name": "Les différentes sources d’énergie",
+      "slug": "les-differentes-sources-denergie",
+      "categoryId": "sub-culture-discovery",
+      "legacyDomain": "CULT",
+      "legacyNumber": "10",
+      "expectedCardCount": 10,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 20,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 7,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-cult-011",
+      "code": "FC-CULT-011",
+      "name": "Les types de métaux",
+      "slug": "les-types-de-metaux",
+      "categoryId": "sub-culture-discovery",
+      "legacyDomain": "CULT",
+      "legacyNumber": "11",
+      "expectedCardCount": 15,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 30,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 7,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-cult-012",
+      "code": "FC-CULT-012",
+      "name": "Les pierres précieuses",
+      "slug": "les-pierres-precieuses",
+      "categoryId": "sub-culture-discovery",
+      "legacyDomain": "CULT",
+      "legacyNumber": "11",
+      "expectedCardCount": 15,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 30,
+      "primaryFormat": "flashcards",
+      "status": "needs_review",
+      "readiness": 28,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 7,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [
+        "duplicate_legacy_number"
+      ],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-cult-013",
+      "code": "FC-CULT-013",
+      "name": "Les types de boissons",
+      "slug": "les-types-de-boissons",
+      "categoryId": "sub-culture-discovery",
+      "legacyDomain": "CULT",
+      "legacyNumber": "12",
+      "expectedCardCount": 9,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 18,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 7,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-cult-014",
+      "code": "FC-CULT-014",
+      "name": "Les moyens de communication",
+      "slug": "les-moyens-de-communication",
+      "categoryId": "sub-culture-discovery",
+      "legacyDomain": "CULT",
+      "legacyNumber": "13",
+      "expectedCardCount": 10,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 20,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 7,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-cult-015",
+      "code": "FC-CULT-015",
+      "name": "Les volcans du monde",
+      "slug": "les-volcans-du-monde",
+      "categoryId": "sub-culture-discovery",
+      "legacyDomain": "CULT",
+      "legacyNumber": "14",
+      "expectedCardCount": 10,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 20,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 7,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    },
+    {
+      "id": "fc-cult-016",
+      "code": "FC-CULT-016",
+      "name": "Ustensiles de cuisine",
+      "slug": "ustensiles-de-cuisine",
+      "categoryId": "sub-culture-discovery",
+      "legacyDomain": "CULT",
+      "legacyNumber": "15",
+      "expectedCardCount": 15,
+      "structuredCardCount": 0,
+      "historicalPriceDh": 30,
+      "primaryFormat": "flashcards",
+      "status": "needs_structuring",
+      "readiness": 36,
+      "ageMinMonths": 36,
+      "ageMaxMonths": 144,
+      "languages": [
+        "fr"
+      ],
+      "methodologies": [
+        "Montessori",
+        "Freinet",
+        "Steiner-Waldorf"
+      ],
+      "sourcePage": 7,
+      "sourceLabel": "NEW VERSION OF CATALOGUE FC 2022",
+      "issues": [],
+      "notes": "",
+      "primaryObjective": "À structurer depuis le contenu source complet; le catalogue 2022 fournit le titre, la quantité et le prix historique, mais pas le registre carte par carte.",
+      "audiences": [
+        "B2C Familles",
+        "B2B Écoles & crèches"
+      ],
+      "usageContexts": [
+        "Maison",
+        "Classe",
+        "Atelier éducatif"
+      ],
+      "version": "0.1-legacy-import",
+      "owner": "Direction Produit",
+      "lifecycle": "legacy_intake"
+    }
+  ]
+}

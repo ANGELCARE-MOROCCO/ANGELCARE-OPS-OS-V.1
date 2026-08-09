@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "strict": true,
+    "noImplicitAny": false,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "jsx": "react-jsx",
+    "baseUrl": "../..",
+    "paths": { "@/*": ["*"] }
+  },
+  "include": [
+    "../../components/market-os/ambassadors/settings/**/*.tsx",
+    "../../components/market-os/ambassadors/ambassador-market-sidebar.tsx",
+    "../../app/(protected)/market-os/ambassadors/settings/page.tsx",
+    "../../lib/market-os/ambassadors/settings/client.ts",
+    "../../lib/market-os/ambassadors/settings/contracts.ts",
+    "../../lib/market-os/ambassadors/settings/defaults.ts",
+    "./ui-stubs.d.ts"
+  ]
+}

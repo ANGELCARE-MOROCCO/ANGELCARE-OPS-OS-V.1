@@ -1,0 +1,1 @@
+console.log('ServiceOS seed loader: run database/serviceos/501_serviceos_production_schema.sql first. Then use the ServiceOS API or forms to insert/modify seed blueprints. This script is intentionally safe and does not mutate DB without credentials.')

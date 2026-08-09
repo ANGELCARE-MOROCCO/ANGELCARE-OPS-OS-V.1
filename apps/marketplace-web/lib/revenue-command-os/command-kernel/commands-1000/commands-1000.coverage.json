@@ -1,0 +1,134 @@
+[
+  {
+    "family": "market-sensing",
+    "goldenCount": 25,
+    "newCount": 58,
+    "cumulativeCount": 83,
+    "targetMZ07": 83,
+    "approved": 83,
+    "schemaComplete": 83,
+    "tested": 83,
+    "prohibitedCaseComplete": 83
+  },
+  {
+    "family": "segmentation-account-discovery",
+    "goldenCount": 25,
+    "newCount": 75,
+    "cumulativeCount": 100,
+    "targetMZ07": 100,
+    "approved": 100,
+    "schemaComplete": 100,
+    "tested": 100,
+    "prohibitedCaseComplete": 100
+  },
+  {
+    "family": "offer-pricing",
+    "goldenCount": 25,
+    "newCount": 58,
+    "cumulativeCount": 83,
+    "targetMZ07": 83,
+    "approved": 83,
+    "schemaComplete": 83,
+    "tested": 83,
+    "prohibitedCaseComplete": 83
+  },
+  {
+    "family": "campaign-go-to-market",
+    "goldenCount": 25,
+    "newCount": 75,
+    "cumulativeCount": 100,
+    "targetMZ07": 100,
+    "approved": 100,
+    "schemaComplete": 100,
+    "tested": 100,
+    "prohibitedCaseComplete": 100
+  },
+  {
+    "family": "outreach-channel",
+    "goldenCount": 25,
+    "newCount": 108,
+    "cumulativeCount": 133,
+    "targetMZ07": 133,
+    "approved": 133,
+    "schemaComplete": 133,
+    "tested": 133,
+    "prohibitedCaseComplete": 133
+  },
+  {
+    "family": "qualification-progression",
+    "goldenCount": 25,
+    "newCount": 58,
+    "cumulativeCount": 83,
+    "targetMZ07": 83,
+    "approved": 83,
+    "schemaComplete": 83,
+    "tested": 83,
+    "prohibitedCaseComplete": 83
+  },
+  {
+    "family": "meetings-diagnostics",
+    "goldenCount": 25,
+    "newCount": 42,
+    "cumulativeCount": 67,
+    "targetMZ07": 67,
+    "approved": 67,
+    "schemaComplete": 67,
+    "tested": 67,
+    "prohibitedCaseComplete": 67
+  },
+  {
+    "family": "proposal-negotiation-closing",
+    "goldenCount": 25,
+    "newCount": 59,
+    "cumulativeCount": 84,
+    "targetMZ07": 84,
+    "approved": 84,
+    "schemaComplete": 84,
+    "tested": 84,
+    "prohibitedCaseComplete": 84
+  },
+  {
+    "family": "pipeline-rescue",
+    "goldenCount": 25,
+    "newCount": 58,
+    "cumulativeCount": 83,
+    "targetMZ07": 83,
+    "approved": 83,
+    "schemaComplete": 83,
+    "tested": 83,
+    "prohibitedCaseComplete": 83
+  },
+  {
+    "family": "renewal-expansion-referral",
+    "goldenCount": 25,
+    "newCount": 42,
+    "cumulativeCount": 67,
+    "targetMZ07": 67,
+    "approved": 67,
+    "schemaComplete": 67,
+    "tested": 67,
+    "prohibitedCaseComplete": 67
+  },
+  {
+    "family": "executive-forecasting",
+    "goldenCount": 25,
+    "newCount": 25,
+    "cumulativeCount": 50,
+    "targetMZ07": 50,
+    "approved": 50,
+    "schemaComplete": 50,
+    "tested": 50,
+    "prohibitedCaseComplete": 50
+  },
+  {
+    "family": "audit-optimization",
+    "goldenCount": 25,
+    "newCount": 42,
+    "cumulativeCount": 67,
+    "targetMZ07": 67,
+    "approved": 67,
+    "schemaComplete": 67,
+    "tested": 67,
+    "prohibitedCaseComplete": 67
+  }
+]

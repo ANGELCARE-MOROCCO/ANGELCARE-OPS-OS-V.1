@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "app/(protected)/interventions/**/*.tsx",
+    "app/api/interventions/**/*.ts",
+    "lib/interventions/**/*.ts"
+  ],
+  "exclude": []
+}

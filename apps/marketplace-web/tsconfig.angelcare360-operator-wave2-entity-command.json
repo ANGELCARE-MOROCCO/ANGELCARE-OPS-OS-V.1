@@ -1,0 +1,7 @@
+{
+  "extends": "./tsconfig.angelcare360-operator-wave1-executive.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "incremental": false
+  }
+}

@@ -1,0 +1,751 @@
+{
+  "releaseCode": "AC-REVENUE-OS-MZ07-COMMANDS-1000",
+  "exactCommandCount": 1000,
+  "newCommandCount": 700,
+  "exactCodeDuplicates": 0,
+  "exactNameDuplicates": 0,
+  "exactPurposeDuplicates": 0,
+  "fingerprintDuplicates": 0,
+  "pairwiseMethod": "Jaccard similarity over governed functional dimensions: family, domain/intent tags, triggers, segments, territories, stages, required context, output schema, allowed tools and approval class",
+  "reviewThreshold": 0.92,
+  "reviewedPairs": 499500,
+  "highSimilarityPairs": 61,
+  "documentedVariants": 61,
+  "reviewRequired": 0,
+  "undocumentedSemanticDuplicates": 0,
+  "status": "pass",
+  "reviewedCandidates": [
+    {
+      "leftCommandCode": "REV-MZ07-MKT-007-PEDIATRIC_CLINICS-MESURER_LA_DENSITE_D_OPPORTUNITE",
+      "rightCommandCode": "REV-MZ07-MKT-029-PEDIATRIC_CLINICS-REPERER_LE_CHANGEMENT_DE_MARCHE",
+      "similarity": 0.941176,
+      "reviewStatus": "documented-variant",
+      "differenceDimensions": [
+        "purpose",
+        "intent",
+        "trigger",
+        "routing-role"
+      ]
+    },
+    {
+      "leftCommandCode": "REV-MZ07-MKT-014-TERRITORY_WAVES-MESURER_LA_FEN_TRE_D_OPPORTUNITE",
+      "rightCommandCode": "REV-MZ07-MKT-036-TERRITORY_WAVES-IDENTIFIER_LA_CAPACITE_MONETISABLE",
+      "similarity": 0.945946,
+      "reviewStatus": "documented-variant",
+      "differenceDimensions": [
+        "purpose",
+        "intent",
+        "trigger",
+        "routing-role"
+      ]
+    },
+    {
+      "leftCommandCode": "REV-MZ07-MKT-021-DORMANT_ACCOUNT_REVIVAL-REPERER_LE_BESOIN_NON_SERVI",
+      "rightCommandCode": "REV-MZ07-MKT-043-DORMANT_ACCOUNT_REVIVAL-MESURER_LA_DENSITE_D_OPPORTUNITE",
+      "similarity": 0.935484,
+      "reviewStatus": "documented-variant",
+      "differenceDimensions": [
+        "purpose",
+        "intent",
+        "trigger",
+        "routing-role"
+      ]
+    },
+    {
+      "leftCommandCode": "REV-MZ07-MKT-028-MATERNITY_CLINICS-EVALUER_LA_PRESSION_CONCURRENTIELLE",
+      "rightCommandCode": "REV-MZ07-MKT-050-MATERNITY_CLINICS-MESURER_LA_FEN_TRE_D_OPPORTUNITE",
+      "similarity": 0.941176,
+      "reviewStatus": "documented-variant",
+      "differenceDimensions": [
+        "purpose",
+        "intent",
+        "trigger",
+        "routing-role"
+      ]
+    },
+    {
+      "leftCommandCode": "REV-MZ07-MKT-035-SEASONAL_CAMPAIGNS-DETECTER_LE_MOUVEMENT_DE_RESEAU",
+      "rightCommandCode": "REV-MZ07-MKT-057-SEASONAL_CAMPAIGNS-REPERER_LE_BESOIN_NON_SERVI",
+      "similarity": 0.935484,
+      "reviewStatus": "documented-variant",
+      "differenceDimensions": [
+        "purpose",
+        "intent",
+        "trigger",
+        "routing-role"
+      ]
+    },
+    {
+      "leftCommandCode": "REV-MZ07-ACC-005-MULTI_SITE_OPERATORS-SEGMENTER_LES_COMPTES_PAR_POTENTIEL",
+      "rightCommandCode": "REV-MZ07-ACC-027-MULTI_SITE_OPERATORS-DECOUVRIR_LES_COMPTES_PRIORITAIRES",
+      "similarity": 0.9375,
+      "reviewStatus": "documented-variant",
+      "differenceDimensions": [
+        "purpose",
+        "intent",
+        "trigger",
+        "routing-role"
+      ]
+    },
+    {
+      "leftCommandCode": "REV-MZ07-ACC-012-PRESCHOOLS-PRIORISER_LES_COMPTES_MULTI_SITES",
+      "rightCommandCode": "REV-MZ07-ACC-034-PRESCHOOLS-EVALUER_LA_QUALITE_DES_COORDONNEES",
+      "similarity": 0.941176,
+      "reviewStatus": "documented-variant",
+      "differenceDimensions": [
+        "purpose",
+        "intent",
+        "trigger",
+        "routing-role"
+      ]
+    },
+    {
+      "leftCommandCode": "REV-MZ07-ACC-019-EVENTS-DETECTER_LES_RESEAUX_PERTINENTS",
+      "rightCommandCode": "REV-MZ07-ACC-041-EVENTS-RESOUDRE_L_IDENTITE_DU_COMPTE",
+      "similarity": 0.944444,
+      "reviewStatus": "documented-variant",
+      "differenceDimensions": [
+        "purpose",
+        "intent",
+        "trigger",
+        "routing-role"
+      ]
+    },
+    {
+      "leftCommandCode": "REV-MZ07-ACC-026-COMPLEX_STAKEHOLDER_MAPS-CARTOGRAPHIER_LES_GROUPES",
+      "rightCommandCode": "REV-MZ07-ACC-048-COMPLEX_STAKEHOLDER_MAPS-CLASSER_LES_COMPTES_PAR_MATURITE",
+      "similarity": 0.935484,
+      "reviewStatus": "documented-variant",
+      "differenceDimensions": [
+        "purpose",
+        "intent",
+        "trigger",
+        "routing-role"
+      ]
+    },
+    {
+      "leftCommandCode": "REV-MZ07-ACC-033-MATERNELLES-IDENTIFIER_LES_SITES_RATTACHES",
+      "rightCommandCode": "REV-MZ07-ACC-055-MATERNELLES-QUALIFIER_LE_PROFIL_ICP",
+      "similarity": 0.941176,
+      "reviewStatus": "documented-variant",
+      "differenceDimensions": [
+        "purpose",
+        "intent",
+        "trigger",
+        "routing-role"
+      ]
+    },
+    {
+      "leftCommandCode": "REV-MZ07-ACC-040-CORPORATE_CHILDCARE-DECOUVRIR_LES_COMPTES_PRIORITAIRES",
+      "rightCommandCode": "REV-MZ07-ACC-062-CORPORATE_CHILDCARE-IDENTIFIER_LES_INFLUENCEURS",
+      "similarity": 0.942857,
+      "reviewStatus": "documented-variant",
+      "differenceDimensions": [
+        "purpose",
+        "intent",
+        "trigger",
+        "routing-role"
+      ]
+    },
+    {
+      "leftCommandCode": "REV-MZ07-ACC-047-WARM_LEAD_ACCELERATION-EVALUER_LA_QUALITE_DES_COORDONNEES",
+      "rightCommandCode": "REV-MZ07-ACC-069-WARM_LEAD_ACCELERATION-CARTOGRAPHIER_LES_DECIDEURS",
+      "similarity": 0.935484,
+      "reviewStatus": "documented-variant",
+      "differenceDimensions": [
+        "purpose",
+        "intent",
+        "trigger",
+        "routing-role"
+      ]
+    },
+    {
+      "leftCommandCode": "REV-MZ07-OFR-001-CRECHES-RECOMMANDER_L_OFFRE_COMPATIBLE",
+      "rightCommandCode": "REV-MZ07-OFR-023-CRECHES-COMPARER_LES_OPTIONS_APPROUVEES",
+      "similarity": 0.944444,
+      "reviewStatus": "documented-variant",
+      "differenceDimensions": [
+        "purpose",
+        "intent",
+        "trigger",
+        "routing-role"
+      ]
+    },
+    {
+      "leftCommandCode": "REV-MZ07-OFR-008-HOTELS-IDENTIFIER_LE_CROSS_SELL_COMPATIBLE",
+      "rightCommandCode": "REV-MZ07-OFR-030-HOTELS-EVALUER_LA_CAPACITE_REQUISE",
+      "similarity": 0.947368,
+      "reviewStatus": "documented-variant",
+      "differenceDimensions": [
+        "purpose",
+        "intent",
+        "trigger",
+        "routing-role"
+      ]
+    },
+    {
+      "leftCommandCode": "REV-MZ07-OFR-015-COLD_ACCOUNT_ACTIVATION-VALIDER_LE_MODELE_DE_VALEUR",
+      "rightCommandCode": "REV-MZ07-OFR-037-COLD_ACCOUNT_ACTIVATION-RECOMMANDER_L_OFFRE_COMPATIBLE",
+      "similarity": 0.939394,
+      "reviewStatus": "documented-variant",
+      "differenceDimensions": [
+        "purpose",
+        "intent",
+        "trigger",
+        "routing-role"
+      ]
+    },
+    {
+      "leftCommandCode": "REV-MZ07-OFR-022-ACADEMY-CONTROLER_LES_RESTRICTIONS_D_OFFRE",
+      "rightCommandCode": "REV-MZ07-OFR-044-ACADEMY-IDENTIFIER_LE_CROSS_SELL_COMPATIBLE",
+      "similarity": 0.945946,
+      "reviewStatus": "documented-variant",
+      "differenceDimensions": [
+        "purpose",
+        "intent",
+        "trigger",
+        "routing-role"
+      ]
+    },
+    {
+      "leftCommandCode": "REV-MZ07-OFR-029-ORTHOPHONISTS-PROTEGER_LA_MARGE_CIBLE",
+      "rightCommandCode": "REV-MZ07-OFR-051-ORTHOPHONISTS-VALIDER_LE_MODELE_DE_VALEUR",
+      "similarity": 0.944444,
+      "reviewStatus": "documented-variant",
+      "differenceDimensions": [
+        "purpose",
+        "intent",
+        "trigger",
+        "routing-role"
+      ]
+    },
+    {
+      "leftCommandCode": "REV-MZ07-OFR-036-GROUP_NETWORK_ACCOUNTS-PREPARER_LA_POSTURE_DE_VALEUR",
+      "rightCommandCode": "REV-MZ07-OFR-058-GROUP_NETWORK_ACCOUNTS-CONTROLER_LES_RESTRICTIONS_D_OFFRE",
+      "similarity": 0.941176,
+      "reviewStatus": "documented-variant",
+      "differenceDimensions": [
+        "purpose",
+        "intent",
+        "trigger",
+        "routing-role"
+      ]
+    },
+    {
+      "leftCommandCode": "REV-MZ07-GTM-007-UNDERUSED_CAPACITY-ORCHESTRER_LE_LANCEMENT_DE_SEGMENT",
+      "rightCommandCode": "REV-MZ07-GTM-029-UNDERUSED_CAPACITY-DEFINIR_LA_SEQUENCE_DE_MARCHE",
+      "similarity": 0.939394,
+      "reviewStatus": "documented-variant",
+      "differenceDimensions": [
+        "purpose",
+        "intent",
+        "trigger",
+        "routing-role"
+      ]
+    },
+    {
+      "leftCommandCode": "REV-MZ07-GTM-014-PEDIATRIC_CLINICS-CONCEVOIR_LA_VAGUE_DE_COMPTES",
+      "rightCommandCode": "REV-MZ07-GTM-036-PEDIATRIC_CLINICS-PREPARER_LE_PLAN_DE_REPLI",
+      "similarity": 0.945946,
+      "reviewStatus": "documented-variant",
+      "differenceDimensions": [
+        "purpose",
+        "intent",
+        "trigger",
+        "routing-role"
+      ]
+    },
+    {
+      "leftCommandCode": "REV-MZ07-GTM-021-TERRITORY_WAVES-SELECTIONNER_LES_COMPTES_DE_LA_VAGUE",
+      "rightCommandCode": "REV-MZ07-GTM-043-TERRITORY_WAVES-ASSEMBLER_LE_PLAN_DE_CAPTURE",
+      "similarity": 0.95,
+      "reviewStatus": "documented-variant",
+      "differenceDimensions": [
+        "purpose",
+        "intent",
+        "trigger",
+        "routing-role"
+      ]
+    },
+    {
+      "leftCommandCode": "REV-MZ07-GTM-028-DORMANT_ACCOUNT_REVIVAL-PRIORISER_LA_CAMPAGNE_TERRITORIALE",
+      "rightCommandCode": "REV-MZ07-GTM-050-DORMANT_ACCOUNT_REVIVAL-ORGANISER_LE_PILOTE_DE_TERRITOIRE",
+      "similarity": 0.941176,
+      "reviewStatus": "documented-variant",
+      "differenceDimensions": [
+        "purpose",
+        "intent",
+        "trigger",
+        "routing-role"
+      ]
+    },
+    {
+      "leftCommandCode": "REV-MZ07-GTM-035-MATERNITY_CLINICS-DEFINIR_LES_CRITERES_D_ARR_T",
+      "rightCommandCode": "REV-MZ07-GTM-057-MATERNITY_CLINICS-PREPARER_LA_CAMPAGNE_SAISONNIERE",
+      "similarity": 0.945946,
+      "reviewStatus": "documented-variant",
+      "differenceDimensions": [
+        "purpose",
+        "intent",
+        "trigger",
+        "routing-role"
+      ]
+    },
+    {
+      "leftCommandCode": "REV-MZ07-GTM-042-SEASONAL_CAMPAIGNS-DEFINIR_LA_SEQUENCE_DE_MARCHE",
+      "rightCommandCode": "REV-MZ07-GTM-064-SEASONAL_CAMPAIGNS-CONSTRUIRE_LA_CAMPAGNE_RESEAU",
+      "similarity": 0.939394,
+      "reviewStatus": "documented-variant",
+      "differenceDimensions": [
+        "purpose",
+        "intent",
+        "trigger",
+        "routing-role"
+      ]
+    },
+    {
+      "leftCommandCode": "REV-MZ07-GTM-049-COMPETITIVE_DISPLACEMENT-PREPARER_LE_PLAN_DE_REPLI",
+      "rightCommandCode": "REV-MZ07-GTM-071-COMPETITIVE_DISPLACEMENT-DEFINIR_LA_CADENCE_DE_PROSPECTION",
+      "similarity": 0.941176,
+      "reviewStatus": "documented-variant",
+      "differenceDimensions": [
+        "purpose",
+        "intent",
+        "trigger",
+        "routing-role"
+      ]
+    },
+    {
+      "leftCommandCode": "REV-MZ07-OUT-005-PEDIATRIC_CLINICS-PREPARER_L_INTRODUCTION_PAR_RECOMMANDATION",
+      "rightCommandCode": "REV-MZ07-OUT-027-PEDIATRIC_CLINICS-CONTROLER_LA_PRESSION_DE_CONTACT",
+      "similarity": 0.945946,
+      "reviewStatus": "documented-variant",
+      "differenceDimensions": [
+        "purpose",
+        "intent",
+        "trigger",
+        "routing-role"
+      ]
+    },
+    {
+      "leftCommandCode": "REV-MZ07-OUT-012-TERRITORY_WAVES-PREPARER_LE_MESSAGE_DE_REACTIVATION",
+      "rightCommandCode": "REV-MZ07-OUT-034-TERRITORY_WAVES-ADAPTER_LE_MESSAGE_AU_DECIDEUR",
+      "similarity": 0.952381,
+      "reviewStatus": "documented-variant",
+      "differenceDimensions": [
+        "purpose",
+        "intent",
+        "trigger",
+        "routing-role"
+      ]
+    },
+    {
+      "leftCommandCode": "REV-MZ07-OUT-019-DORMANT_ACCOUNT_REVIVAL-PREPARER_L_INTRODUCTION_PAR_RECOMMANDATION",
+      "rightCommandCode": "REV-MZ07-OUT-041-DORMANT_ACCOUNT_REVIVAL-CONTROLER_LA_PRESSION_DE_CONTACT",
+      "similarity": 0.941176,
+      "reviewStatus": "documented-variant",
+      "differenceDimensions": [
+        "purpose",
+        "intent",
+        "trigger",
+        "routing-role"
+      ]
+    },
+    {
+      "leftCommandCode": "REV-MZ07-OUT-026-MATERNITY_CLINICS-PREPARER_LE_MESSAGE_DE_REACTIVATION",
+      "rightCommandCode": "REV-MZ07-OUT-048-MATERNITY_CLINICS-ADAPTER_LE_MESSAGE_AU_DECIDEUR",
+      "similarity": 0.945946,
+      "reviewStatus": "documented-variant",
+      "differenceDimensions": [
+        "purpose",
+        "intent",
+        "trigger",
+        "routing-role"
+      ]
+    },
+    {
+      "leftCommandCode": "REV-MZ07-OUT-033-SEASONAL_CAMPAIGNS-PREPARER_L_INTRODUCTION_PAR_RECOMMANDATION",
+      "rightCommandCode": "REV-MZ07-OUT-055-SEASONAL_CAMPAIGNS-CONTROLER_LA_PRESSION_DE_CONTACT",
+      "similarity": 0.942857,
+      "reviewStatus": "documented-variant",
+      "differenceDimensions": [
+        "purpose",
+        "intent",
+        "trigger",
+        "routing-role"
+      ]
+    },
+    {
+      "leftCommandCode": "REV-MZ07-OUT-040-COMPETITIVE_DISPLACEMENT-PREPARER_LE_MESSAGE_DE_REACTIVATION",
+      "rightCommandCode": "REV-MZ07-OUT-062-COMPETITIVE_DISPLACEMENT-ADAPTER_LE_MESSAGE_AU_DECIDEUR",
+      "similarity": 0.941176,
+      "reviewStatus": "documented-variant",
+      "differenceDimensions": [
+        "purpose",
+        "intent",
+        "trigger",
+        "routing-role"
+      ]
+    },
+    {
+      "leftCommandCode": "REV-MZ07-OUT-047-PRIVATE_SCHOOLS-PREPARER_L_INTRODUCTION_PAR_RECOMMANDATION",
+      "rightCommandCode": "REV-MZ07-OUT-069-PRIVATE_SCHOOLS-CONTROLER_LA_PRESSION_DE_CONTACT",
+      "similarity": 0.95122,
+      "reviewStatus": "documented-variant",
+      "differenceDimensions": [
+        "purpose",
+        "intent",
+        "trigger",
+        "routing-role"
+      ]
+    },
+    {
+      "leftCommandCode": "REV-MZ07-OUT-054-GEOGRAPHIC_CAPTURE-PREPARER_LE_MESSAGE_DE_REACTIVATION",
+      "rightCommandCode": "REV-MZ07-OUT-076-GEOGRAPHIC_CAPTURE-ADAPTER_LE_MESSAGE_AU_DECIDEUR",
+      "similarity": 0.952381,
+      "reviewStatus": "documented-variant",
+      "differenceDimensions": [
+        "purpose",
+        "intent",
+        "trigger",
+        "routing-role"
+      ]
+    },
+    {
+      "leftCommandCode": "REV-MZ07-OUT-061-MULTI_SITE_OPERATORS-PREPARER_L_INTRODUCTION_PAR_RECOMMANDATION",
+      "rightCommandCode": "REV-MZ07-OUT-083-MULTI_SITE_OPERATORS-CONTROLER_LA_PRESSION_DE_CONTACT",
+      "similarity": 0.942857,
+      "reviewStatus": "documented-variant",
+      "differenceDimensions": [
+        "purpose",
+        "intent",
+        "trigger",
+        "routing-role"
+      ]
+    },
+    {
+      "leftCommandCode": "REV-MZ07-OUT-068-PRESCHOOLS-PREPARER_LE_MESSAGE_DE_REACTIVATION",
+      "rightCommandCode": "REV-MZ07-OUT-090-PRESCHOOLS-ADAPTER_LE_MESSAGE_AU_DECIDEUR",
+      "similarity": 0.945946,
+      "reviewStatus": "documented-variant",
+      "differenceDimensions": [
+        "purpose",
+        "intent",
+        "trigger",
+        "routing-role"
+      ]
+    },
+    {
+      "leftCommandCode": "REV-MZ07-OUT-075-EVENTS-PREPARER_L_INTRODUCTION_PAR_RECOMMANDATION",
+      "rightCommandCode": "REV-MZ07-OUT-097-EVENTS-CONTROLER_LA_PRESSION_DE_CONTACT",
+      "similarity": 0.948718,
+      "reviewStatus": "documented-variant",
+      "differenceDimensions": [
+        "purpose",
+        "intent",
+        "trigger",
+        "routing-role"
+      ]
+    },
+    {
+      "leftCommandCode": "REV-MZ07-OUT-082-COMPLEX_STAKEHOLDER_MAPS-PREPARER_LE_MESSAGE_DE_REACTIVATION",
+      "rightCommandCode": "REV-MZ07-OUT-104-COMPLEX_STAKEHOLDER_MAPS-ADAPTER_LE_MESSAGE_AU_DECIDEUR",
+      "similarity": 0.941176,
+      "reviewStatus": "documented-variant",
+      "differenceDimensions": [
+        "purpose",
+        "intent",
+        "trigger",
+        "routing-role"
+      ]
+    },
+    {
+      "leftCommandCode": "REV-MZ07-QLF-003-MATERNELLES-VALIDER_LE_TIMING_D_ACHAT",
+      "rightCommandCode": "REV-MZ07-QLF-025-MATERNELLES-QUALIFIER_LE_BESOIN_COMMERCIAL",
+      "similarity": 0.942857,
+      "reviewStatus": "documented-variant",
+      "differenceDimensions": [
+        "purpose",
+        "intent",
+        "trigger",
+        "routing-role"
+      ]
+    },
+    {
+      "leftCommandCode": "REV-MZ07-QLF-010-CORPORATE_CHILDCARE-CONTROLER_LES_INFORMATIONS_MANQUANTES",
+      "rightCommandCode": "REV-MZ07-QLF-032-CORPORATE_CHILDCARE-VALIDER_LA_PREUVE_DE_BUDGET",
+      "similarity": 0.944444,
+      "reviewStatus": "documented-variant",
+      "differenceDimensions": [
+        "purpose",
+        "intent",
+        "trigger",
+        "routing-role"
+      ]
+    },
+    {
+      "leftCommandCode": "REV-MZ07-QLF-017-WARM_LEAD_ACCELERATION-CLASSIFIER_LA_MATURITE_DU_LEAD",
+      "rightCommandCode": "REV-MZ07-QLF-039-WARM_LEAD_ACCELERATION-VALIDER_LE_TIMING_D_ACHAT",
+      "similarity": 0.9375,
+      "reviewStatus": "documented-variant",
+      "differenceDimensions": [
+        "purpose",
+        "intent",
+        "trigger",
+        "routing-role"
+      ]
+    },
+    {
+      "leftCommandCode": "REV-MZ07-QLF-024-CRECHES-PREPARER_LE_PASSAGE_A_LA_PROPOSITION",
+      "rightCommandCode": "REV-MZ07-QLF-046-CRECHES-CONTROLER_LES_INFORMATIONS_MANQUANTES",
+      "similarity": 0.942857,
+      "reviewStatus": "documented-variant",
+      "differenceDimensions": [
+        "purpose",
+        "intent",
+        "trigger",
+        "routing-role"
+      ]
+    },
+    {
+      "leftCommandCode": "REV-MZ07-QLF-031-HOTELS-DEFINIR_LA_PROCHAINE_ETAPE",
+      "rightCommandCode": "REV-MZ07-QLF-053-HOTELS-CLASSIFIER_LA_MATURITE_DU_LEAD",
+      "similarity": 0.945946,
+      "reviewStatus": "documented-variant",
+      "differenceDimensions": [
+        "purpose",
+        "intent",
+        "trigger",
+        "routing-role"
+      ]
+    },
+    {
+      "leftCommandCode": "REV-MZ07-MTG-001-GROUP_NETWORK_ACCOUNTS-EVALUER_LA_PREPARATION_DE_REUNION",
+      "rightCommandCode": "REV-MZ07-MTG-023-GROUP_NETWORK_ACCOUNTS-DEFINIR_LA_PREUVE_DE_SUCCES",
+      "similarity": 0.941176,
+      "reviewStatus": "documented-variant",
+      "differenceDimensions": [
+        "purpose",
+        "intent",
+        "trigger",
+        "routing-role"
+      ]
+    },
+    {
+      "leftCommandCode": "REV-MZ07-MTG-008-UNDERUSED_CAPACITY-PREPARER_LA_VISITE_DE_SITE",
+      "rightCommandCode": "REV-MZ07-MTG-030-UNDERUSED_CAPACITY-DEFINIR_LE_RESULTAT_ATTENDU",
+      "similarity": 0.941176,
+      "reviewStatus": "documented-variant",
+      "differenceDimensions": [
+        "purpose",
+        "intent",
+        "trigger",
+        "routing-role"
+      ]
+    },
+    {
+      "leftCommandCode": "REV-MZ07-MTG-015-PEDIATRIC_CLINICS-SELECTIONNER_LES_PARTICIPANTS_REQUIS",
+      "rightCommandCode": "REV-MZ07-MTG-037-PEDIATRIC_CLINICS-EVALUER_LA_PREPARATION_DE_REUNION",
+      "similarity": 0.944444,
+      "reviewStatus": "documented-variant",
+      "differenceDimensions": [
+        "purpose",
+        "intent",
+        "trigger",
+        "routing-role"
+      ]
+    },
+    {
+      "leftCommandCode": "REV-MZ07-CLS-007-MULTI_SITE_OPERATORS-EVALUER_LA_PROBABILITE_DE_CLOSING",
+      "rightCommandCode": "REV-MZ07-CLS-029-MULTI_SITE_OPERATORS-PROTEGER_LA_MARGE_EN_NEGOCIATION",
+      "similarity": 0.942857,
+      "reviewStatus": "documented-variant",
+      "differenceDimensions": [
+        "purpose",
+        "intent",
+        "trigger",
+        "routing-role"
+      ]
+    },
+    {
+      "leftCommandCode": "REV-MZ07-CLS-014-PRESCHOOLS-CONTROLER_LES_ELEMENTS_DE_PROPOSITION",
+      "rightCommandCode": "REV-MZ07-CLS-036-PRESCHOOLS-CONTROLER_LES_CONDITIONS_DE_PAIEMENT",
+      "similarity": 0.947368,
+      "reviewStatus": "documented-variant",
+      "differenceDimensions": [
+        "purpose",
+        "intent",
+        "trigger",
+        "routing-role"
+      ]
+    },
+    {
+      "leftCommandCode": "REV-MZ07-CLS-021-EVENTS-PREPARER_LE_PILOTE_DE_CLOSING",
+      "rightCommandCode": "REV-MZ07-CLS-043-EVENTS-EVALUER_LA_PROBABILITE_DE_CLOSING",
+      "similarity": 0.948718,
+      "reviewStatus": "documented-variant",
+      "differenceDimensions": [
+        "purpose",
+        "intent",
+        "trigger",
+        "routing-role"
+      ]
+    },
+    {
+      "leftCommandCode": "REV-MZ07-CLS-028-COMPLEX_STAKEHOLDER_MAPS-CLASSIFIER_L_OBJECTION_DE_PRIX",
+      "rightCommandCode": "REV-MZ07-CLS-050-COMPLEX_STAKEHOLDER_MAPS-CONTROLER_LES_ELEMENTS_DE_PROPOSITION",
+      "similarity": 0.942857,
+      "reviewStatus": "documented-variant",
+      "differenceDimensions": [
+        "purpose",
+        "intent",
+        "trigger",
+        "routing-role"
+      ]
+    },
+    {
+      "leftCommandCode": "REV-MZ07-CLS-035-MATERNELLES-PREPARER_L_ESCALADE_D_AUTORITE",
+      "rightCommandCode": "REV-MZ07-CLS-057-MATERNELLES-PREPARER_LE_PILOTE_DE_CLOSING",
+      "similarity": 0.947368,
+      "reviewStatus": "documented-variant",
+      "differenceDimensions": [
+        "purpose",
+        "intent",
+        "trigger",
+        "routing-role"
+      ]
+    },
+    {
+      "leftCommandCode": "REV-MZ07-RSC-006-EVENTS-DETECTER_LA_PROMESSE_ROMPUE",
+      "rightCommandCode": "REV-MZ07-RSC-028-EVENTS-PREPARER_LA_RELANCE_DE_RECUPERATION",
+      "similarity": 0.948718,
+      "reviewStatus": "documented-variant",
+      "differenceDimensions": [
+        "purpose",
+        "intent",
+        "trigger",
+        "routing-role"
+      ]
+    },
+    {
+      "leftCommandCode": "REV-MZ07-RSC-013-COMPLEX_STAKEHOLDER_MAPS-DETECTER_LA_STAGNATION",
+      "rightCommandCode": "REV-MZ07-RSC-035-COMPLEX_STAKEHOLDER_MAPS-DETERMINER_LA_MISE_EN_PAUSE",
+      "similarity": 0.942857,
+      "reviewStatus": "documented-variant",
+      "differenceDimensions": [
+        "purpose",
+        "intent",
+        "trigger",
+        "routing-role"
+      ]
+    },
+    {
+      "leftCommandCode": "REV-MZ07-RSC-020-MATERNELLES-EVALUER_LA_PERTE_PROBABLE",
+      "rightCommandCode": "REV-MZ07-RSC-042-MATERNELLES-DETECTER_LA_PROMESSE_ROMPUE",
+      "similarity": 0.947368,
+      "reviewStatus": "documented-variant",
+      "differenceDimensions": [
+        "purpose",
+        "intent",
+        "trigger",
+        "routing-role"
+      ]
+    },
+    {
+      "leftCommandCode": "REV-MZ07-RSC-027-CORPORATE_CHILDCARE-SELECTIONNER_LA_ROUTE_DE_RESCUE",
+      "rightCommandCode": "REV-MZ07-RSC-049-CORPORATE_CHILDCARE-DETECTER_LA_STAGNATION",
+      "similarity": 0.948718,
+      "reviewStatus": "documented-variant",
+      "differenceDimensions": [
+        "purpose",
+        "intent",
+        "trigger",
+        "routing-role"
+      ]
+    },
+    {
+      "leftCommandCode": "REV-MZ07-RSC-034-WARM_LEAD_ACCELERATION-PREPARER_L_ESCALADE_EXECUTIVE",
+      "rightCommandCode": "REV-MZ07-RSC-056-WARM_LEAD_ACCELERATION-EVALUER_LA_PERTE_PROBABLE",
+      "similarity": 0.942857,
+      "reviewStatus": "documented-variant",
+      "differenceDimensions": [
+        "purpose",
+        "intent",
+        "trigger",
+        "routing-role"
+      ]
+    },
+    {
+      "leftCommandCode": "REV-MZ07-EXP-002-DORMANT_ACCOUNT_REVIVAL-DETECTER_LE_RISQUE_DE_CHURN",
+      "rightCommandCode": "REV-MZ07-EXP-024-DORMANT_ACCOUNT_REVIVAL-PREPARER_L_EXPANSION_TERRITORIALE",
+      "similarity": 0.941176,
+      "reviewStatus": "documented-variant",
+      "differenceDimensions": [
+        "purpose",
+        "intent",
+        "trigger",
+        "routing-role"
+      ]
+    },
+    {
+      "leftCommandCode": "REV-MZ07-EXP-009-MATERNITY_CLINICS-EVALUER_LA_SATISFACTION_EXPLOITABLE",
+      "rightCommandCode": "REV-MZ07-EXP-031-MATERNITY_CLINICS-DETECTER_LA_SOUS_UTILISATION",
+      "similarity": 0.945946,
+      "reviewStatus": "documented-variant",
+      "differenceDimensions": [
+        "purpose",
+        "intent",
+        "trigger",
+        "routing-role"
+      ]
+    },
+    {
+      "leftCommandCode": "REV-MZ07-EXP-016-SEASONAL_CAMPAIGNS-IDENTIFIER_LE_CROSS_SELL_PERTINENT",
+      "rightCommandCode": "REV-MZ07-EXP-038-SEASONAL_CAMPAIGNS-DETECTER_LE_RISQUE_DE_CHURN",
+      "similarity": 0.942857,
+      "reviewStatus": "documented-variant",
+      "differenceDimensions": [
+        "purpose",
+        "intent",
+        "trigger",
+        "routing-role"
+      ]
+    },
+    {
+      "leftCommandCode": "REV-MZ07-AUD-003-ACADEMY-AUDITER_LA_FRAICHEUR_DES_PREUVES",
+      "rightCommandCode": "REV-MZ07-AUD-025-ACADEMY-AUDITER_LA_COHERENCE_DU_ROUTAGE",
+      "similarity": 0.944444,
+      "reviewStatus": "documented-variant",
+      "differenceDimensions": [
+        "purpose",
+        "intent",
+        "trigger",
+        "routing-role"
+      ]
+    },
+    {
+      "leftCommandCode": "REV-MZ07-AUD-010-ORTHOPHONISTS-AUDITER_LA_COUVERTURE_DE_TESTS",
+      "rightCommandCode": "REV-MZ07-AUD-032-ORTHOPHONISTS-EVALUER_LA_SANTE_DE_COMMANDE",
+      "similarity": 0.944444,
+      "reviewStatus": "documented-variant",
+      "differenceDimensions": [
+        "purpose",
+        "intent",
+        "trigger",
+        "routing-role"
+      ]
+    },
+    {
+      "leftCommandCode": "REV-MZ07-AUD-017-GROUP_NETWORK_ACCOUNTS-AUDITER_LES_PERMISSIONS_OUTILS",
+      "rightCommandCode": "REV-MZ07-AUD-039-GROUP_NETWORK_ACCOUNTS-AUDITER_LA_FRAICHEUR_DES_PREUVES",
+      "similarity": 0.939394,
+      "reviewStatus": "documented-variant",
+      "differenceDimensions": [
+        "purpose",
+        "intent",
+        "trigger",
+        "routing-role"
+      ]
+    }
+  ]
+}

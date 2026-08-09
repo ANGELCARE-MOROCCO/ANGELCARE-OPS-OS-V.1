@@ -1,0 +1,3 @@
+import { requireMarketplaceApiContext } from '@/angelcare-marketplace/auth/context'
+import { apiFailure, apiSuccess, requestId } from '@/angelcare-marketplace/server/request'
+export async function GET(request:Request){const rid=requestId(request);try{await requireMarketplaceApiContext('marketplace.publication.manage');const url=new URL(request.url);const locale=url.searchParams.get('locale')||'fr';const territory=url.searchParams.get('territory')||null;return apiSuccess({locale,territory,homepage:`/angelcare-marketplace/${locale}`,marketplace:`/angelcare-marketplace/${locale}/marketplace`,generated_at:new Date().toISOString()},{requestId:rid})}catch(error){return apiFailure(error,rid)}}

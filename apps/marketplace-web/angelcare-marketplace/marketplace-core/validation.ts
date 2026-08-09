@@ -1,0 +1,4 @@
+import { MarketplaceError } from '../server/errors';import type { CatalogStatus } from './types'
+const transitions:Record<CatalogStatus,CatalogStatus[]>={draft:['review','archived'],review:['draft','approved'],approved:['review','published'],published:['paused','archived'],paused:['review','published','archived'],archived:[]}
+export function assertCatalogTransition(current:CatalogStatus,target:CatalogStatus){if(!transitions[current].includes(target))throw new MarketplaceError('INVALID_STATE_TRANSITION',`Transition catalogue ${current} → ${target} interdite.`)}
+export function assertPublishedItem(item:{status:string;availability_status:string}){if(item.status!=='published'||item.availability_status!=='available')throw new MarketplaceError('DEPENDENCY_BLOCKED','Cet élément n’est pas disponible pour un panier de devis.')}

@@ -1,0 +1,25 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "incremental": false,
+    "noEmit": true,
+    "skipLibCheck": true
+  },
+  "include": [
+    "next-env.d.ts",
+    "app/(protected)/revenue-command-center/prospects/proposals/**/*.tsx",
+    "app/(protected)/revenue-command-center/prospects/negotiation/**/*.tsx",
+    "app/(protected)/revenue-command-center/prospects/[id]/proposal/**/*.tsx",
+    "app/(protected)/revenue-command-center/prospects/[id]/negotiation/**/*.tsx",
+    "app/(protected)/revenue-command-center/partnerships/proposals/**/*.tsx",
+    "app/(protected)/revenue-command-center/partnerships/[id]/proposal/**/*.tsx",
+    "app/(protected)/revenue-command-center/b2c-workflow/quote/**/*.tsx",
+    "app/(protected)/revenue-command-center/b2c-workflow/[id]/quote/**/*.tsx",
+    "app/api/revenue-command-center/proposal/**/*.ts",
+    "components/revenue-command-center/proposal-enterprise/**/*.ts",
+    "components/revenue-command-center/proposal-enterprise/**/*.tsx",
+    "lib/revenue-command-center/proposal-enterprise/**/*.ts",
+    "lib/revenue-command-center/api-access.ts",
+    "lib/revenue-command-center/canonical-server.ts"
+  ]
+}

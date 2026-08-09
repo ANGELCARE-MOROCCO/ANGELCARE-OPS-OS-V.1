@@ -1,0 +1,6 @@
+{
+  "migrationBytes": 34174965,
+  "checks": 21,
+  "passes": 21,
+  "failures": []
+}

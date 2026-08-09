@@ -1,0 +1,5 @@
+import type { DurableJob } from './types'
+export function canLease(job:DurableJob,now=new Date()):boolean{return['queued','retry_scheduled'].includes(job.status)&&new Date(job.scheduledAt)<=now&&(!job.leaseExpiresAt||new Date(job.leaseExpiresAt)<=now)&&job.attempts<job.maxAttempts}
+export function leaseJob(job:DurableJob,workerId:string,leaseSeconds:number):DurableJob{if(!canLease(job))throw new Error('job_not_leaseable');const now=new Date();return{...job,status:'leased',leaseOwner:workerId,leaseExpiresAt:new Date(now.getTime()+leaseSeconds*1000).toISOString(),fencingToken:(job.fencingToken??0)+1,attempts:job.attempts+1,updatedAt:now.toISOString()}}
+export function nextRetry(attempt:number,baseSeconds=30,maxSeconds=3600):number{return Math.min(maxSeconds,baseSeconds*Math.pow(2,Math.max(0,attempt-1)))}
+export function shouldDeadLetter(job:DurableJob,errorCode:string):boolean{return job.attempts>=job.maxAttempts||['invalid_payload','permission_denied','cross_tenant','approval_missing','security_block'].includes(errorCode)}

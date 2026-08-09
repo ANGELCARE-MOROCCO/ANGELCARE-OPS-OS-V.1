@@ -1,0 +1,3 @@
+create table if not exists service_missions (id text primary key, service_code text not null, client_name text, city text, status text, owner text, risk int default 0, sla_hours_left numeric default 0, revenue_mad numeric default 0, next_action text, staff_fit int default 0, created_at timestamptz default now());
+create table if not exists service_incidents (id text primary key, service_code text, mission_id text, type text, severity text, root_cause text, owner text, corrective_action text, status text default 'open', created_at timestamptz default now());
+create table if not exists service_workflow_templates (id text primary key, service_code text, steps jsonb default '[]', total_sla_hours numeric default 0, active boolean default true);

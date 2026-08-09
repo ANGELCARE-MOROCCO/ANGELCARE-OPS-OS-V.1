@@ -1,0 +1,5 @@
+import Link from 'next/link'
+import { requireMarketplacePageContext } from '@/angelcare-marketplace/auth/context'
+import { listQuoteRequests } from '@/angelcare-marketplace/family-experience/repository'
+import styles from '@/angelcare-marketplace/family-experience/family.module.css'
+export default async function Page(){const context=await requireMarketplacePageContext('marketplace.family.requests.view');const items=await listQuoteRequests(context);return <section className={styles.panel}><header className={styles.panelHeader}><div><h1>Demandes et propositions</h1><p>Statut réel et prochaine action visible.</p></div><Link className={styles.primary} href="/angelcare-marketplace/family/request">Nouvelle demande</Link></header><div className={styles.list}>{items.map(item=><Link className={styles.listRow} href={`/angelcare-marketplace/family/requests/${item.id}`} key={item.id}><div><div className={styles.listTitle}>{item.service_family}</div><div className={styles.listMeta}>{item.public_reference} · {item.next_action||'Qualification en cours'}</div></div><span className={styles.status} data-status={item.status}>{item.status}</span></Link>)}</div></section>}

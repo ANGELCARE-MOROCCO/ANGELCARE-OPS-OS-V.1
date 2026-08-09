@@ -1,0 +1,29 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "incremental": false
+  },
+  "include": [
+    "next-env.d.ts",
+    "lib/hr-employee-360/**/*.ts",
+    "app/api/hr/employees/route.ts",
+    "app/api/hr/employees/[id]/360/route.ts",
+    "app/api/hr/employees/[id]/360/actions/route.ts",
+    "app/api/hr/employees/[id]/360/documents/upload/route.ts",
+    "app/api/hr/employees/[id]/360/documents/[documentId]/download/route.ts",
+    "app/(protected)/hr/employees/_components/Employee360DossierModal.tsx",
+    "components/hr-production/Staff360ProductionView.tsx",
+    "app/(protected)/hr/employees/[id]/page.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    ".next",
+    ".turbo",
+    ".vercel",
+    ".angelcare_backups",
+    "**/*.before-*",
+    "**/*.backup.*",
+    "**/*.bak.*"
+  ]
+}

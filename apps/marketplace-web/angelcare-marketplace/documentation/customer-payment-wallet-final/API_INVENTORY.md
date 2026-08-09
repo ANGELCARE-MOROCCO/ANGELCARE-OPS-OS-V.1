@@ -1,0 +1,31 @@
+# API Inventory
+
+- `/api/angelcare-marketplace/admin/orders/[orderId]/lines`
+- `/api/angelcare-marketplace/admin/orders/[orderId]`
+- `/api/angelcare-marketplace/admin/orders`
+- `/api/angelcare-marketplace/admin/payments/[paymentIntentId]/refund`
+- `/api/angelcare-marketplace/admin/wallet/accounts/[walletId]/adjustment`
+- `/api/angelcare-marketplace/admin/wallet/accounts/[walletId]/restriction`
+- `/api/angelcare-marketplace/admin/wallet/imports`
+- `/api/angelcare-marketplace/admin/wallet/policies/[policyId]`
+- `/api/angelcare-marketplace/admin/wallet/policies`
+- `/api/angelcare-marketplace/admin/wallet/simulations`
+- `/api/angelcare-marketplace/admin/wallet/summary`
+- `/api/angelcare-marketplace/checkout/payment-methods`
+- `/api/angelcare-marketplace/customer/auth/login`
+- `/api/angelcare-marketplace/customer/auth/logout`
+- `/api/angelcare-marketplace/customer/auth/magic-link`
+- `/api/angelcare-marketplace/customer/auth/password`
+- `/api/angelcare-marketplace/customer/auth/phone-otp`
+- `/api/angelcare-marketplace/customer/auth/recover`
+- `/api/angelcare-marketplace/customer/auth/register`
+- `/api/angelcare-marketplace/customer/me`
+- `/api/angelcare-marketplace/customer/portfolio`
+- `/api/angelcare-marketplace/customer/sessions`
+- `/api/angelcare-marketplace/payments/intents`
+- `/api/angelcare-marketplace/payments/webhooks/[provider]`
+- `/api/angelcare-marketplace/wallet/comparison`
+- `/api/angelcare-marketplace/wallet`
+- `/api/angelcare-marketplace/wallet/topups/quote`
+- `/api/angelcare-marketplace/wallet/topups`
+- `/api/angelcare-marketplace/wallet/transactions`

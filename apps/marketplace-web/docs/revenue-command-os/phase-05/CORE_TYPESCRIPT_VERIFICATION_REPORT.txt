@@ -1,0 +1,23 @@
+ANGELCARE REVENUE COMMAND OS — MZ05 CORE TYPESCRIPT VERIFICATION
+Generated: 2026-07-20T15:12:31.279761+00:00
+
+Scope:
+- Strict TypeScript compile of the framework-independent command-kernel runtime.
+- Files: types, constants, schemas, seed-data, eligibility, permissions, idempotency,
+  router, graph, scheduler, runtime and validation.
+- Compiler: locally available tsc.
+- Options: strict=true, target=ES2022, isolated output.
+
+Result:
+PASS
+Exit code: 0
+Compiler diagnostics: none
+
+Boundary:
+The focused MZ01–MZ04 handoff is not the complete AngelCare monorepo and does not
+contain all Next.js/framework dependencies or shared repository files. The release
+installer therefore performs the canonical targeted full integration typecheck on
+the real monorepo after installation:
+  npm run revenue-os:phase05:typecheck
+
+No production build was run.

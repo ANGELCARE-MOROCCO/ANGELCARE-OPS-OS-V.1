@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/market-os/content-command/marketing-ai/cron",
+      "schedule": "0 * * * *"
+    }
+  ]
+}
