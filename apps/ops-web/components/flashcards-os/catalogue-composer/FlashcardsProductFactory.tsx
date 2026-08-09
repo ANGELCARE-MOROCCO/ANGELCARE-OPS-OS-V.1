@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { ArrowRight, BookOpenCheck, Boxes, BrainCircuit, LibraryBig, PackagePlus, ShieldCheck, Sparkles } from 'lucide-react'
 import type { CatalogueComposerOptions } from '@/lib/flashcards-os/catalogue-composer/types'
 import styles from './catalogue-composer.module.css'
-import { sourceLabel } from './ComposerPrimitives'
+import { sourceLabel } from '@/lib/flashcards-os/catalogue-composer/presentation'
 
 export default function FlashcardsProductFactory({options}:{options:CatalogueComposerOptions}){
   const active=options.collections.filter((item)=>item.status!=='archived'&&item.commercialStatus==='active')

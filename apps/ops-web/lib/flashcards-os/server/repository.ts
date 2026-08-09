@@ -16,6 +16,8 @@ import type {
 } from '@/lib/flashcards-os/types'
 
 const seed = catalogueSeedJson as CatalogueSeed
+function catalogueSeedAllowed(){return process.env.FLASHCARDS_OS_DEMO_MODE==='true'&&process.env.NODE_ENV!=='production'}
+function catalogueUnavailable(area:string){const ref=`FC-CATALOGUE-${Date.now().toString(36).toUpperCase()}`;return new Error(`Catalogue Flashcards indisponible (${area}). Référence ${ref}. Aucune donnée de démonstration n’a été substituée.`)}
 const VIEW_PREFIX = 'fc_os_'
 const TENANT_KEY = 'angelcare-internal'
 
@@ -141,6 +143,7 @@ function dossierFromSeed(item: CollectionSummary): CollectionDossier {
   return {
     ...item,
     cards: [],
+    commercials: [],
     sections: dossierSections(item),
     editions: item.languages.map((language) => ({ id: `${item.id}-${language}`, language, status: 'legacy_intake', version: item.version })),
     formats: [{ id: `${item.id}-${item.primaryFormat}`, format: item.primaryFormat, status: 'legacy_intake' }],
@@ -229,17 +232,18 @@ async function databaseCollections(): Promise<CollectionSummary[] | null> {
 export async function loadCollections(): Promise<{ sourceMode: 'database' | 'catalogue_seed'; collections: CollectionSummary[] }> {
   const database = await databaseCollections()
   if (database) return { sourceMode: 'database', collections: database }
-  return { sourceMode: 'catalogue_seed', collections: allSeedSummaries() }
+  if(catalogueSeedAllowed()) return { sourceMode: 'catalogue_seed', collections: allSeedSummaries() }
+  throw catalogueUnavailable('collections')
 }
 
 export async function loadTaxonomyAtlas(): Promise<{ sourceMode: 'database' | 'catalogue_seed'; nodes: TaxonomyNode[] }> {
   const database = await databaseCollections()
-  if (!database) return { sourceMode: 'catalogue_seed', nodes: buildTaxonomy(seed.categories, seed.collections) }
+  if (!database) { if(catalogueSeedAllowed()) return { sourceMode: 'catalogue_seed', nodes: buildTaxonomy(seed.categories, seed.collections) }; throw catalogueUnavailable('taxonomy') }
 
   try {
     const client = await createServiceClient()
     const { data: categoryRows, error } = await table(client, 'categories').select('*').eq('tenant_key', TENANT_KEY).order('sort_order')
-    if (error || !categoryRows) return { sourceMode: 'catalogue_seed', nodes: buildTaxonomy(seed.categories, seed.collections) }
+    if (error || !categoryRows) { if(catalogueSeedAllowed()) return { sourceMode: 'catalogue_seed', nodes: buildTaxonomy(seed.categories, seed.collections) }; throw catalogueUnavailable('taxonomy categories') }
     const seedLikeCategories: CatalogueSeedCategory[] = categoryRows.map((row: any) => ({
       id: String(row.id),
       code: String(row.code),
@@ -253,8 +257,9 @@ export async function loadTaxonomyAtlas(): Promise<{ sourceMode: 'database' | 'c
     }))
     const nodes = buildTaxonomy(seedLikeCategories, database.map((item) => ({ ...item })) as CatalogueSeedCollection[])
     return { sourceMode: 'database', nodes }
-  } catch {
-    return { sourceMode: 'catalogue_seed', nodes: buildTaxonomy(seed.categories, seed.collections) }
+  } catch (error) {
+    if(catalogueSeedAllowed()) return { sourceMode: 'catalogue_seed', nodes: buildTaxonomy(seed.categories, seed.collections) }
+    throw error instanceof Error?error:catalogueUnavailable('taxonomy')
   }
 }
 
@@ -298,25 +303,28 @@ export async function loadCollectionDossier(idOrCode: string): Promise<{ sourceM
   if (sourceMode === 'database') {
     try {
       const client = await createServiceClient()
-      const [{ data: cards }, { data: editions }, { data: formats }, { data: timeline }] = await Promise.all([
+      const [{ data: cards }, { data: editions }, { data: formats }, { data: timeline }, { data: commercials }] = await Promise.all([
         table(client, 'cards').select('*').eq('tenant_key', TENANT_KEY).eq('collection_id', item.id).order('sequence_no'),
         table(client, 'editions').select('*').eq('tenant_key', TENANT_KEY).eq('collection_id', item.id).order('language_code'),
         table(client, 'formats').select('*').eq('tenant_key', TENANT_KEY).eq('collection_id', item.id).order('format_key'),
         table(client, 'audit_events').select('*').eq('tenant_key', TENANT_KEY).eq('entity_type', 'collection').eq('entity_id', item.id).order('created_at', { ascending: false }).limit(12),
+        table(client, 'catalogue_collection_commercials').select('*').eq('tenant_key', TENANT_KEY).eq('collection_id', item.id).order('universe'),
       ])
       return {
         sourceMode,
         dossier: {
           ...item,
           cards: (cards || []).map(mapDbCard),
+          commercials: (commercials || []).map((row:any)=>({id:String(row.id),universe:row.universe,basePriceDh:row.base_price_dh==null?null:Number(row.base_price_dh),unitCostDh:row.unit_cost_dh==null?null:Number(row.unit_cost_dh),minimumQuantity:Number(row.minimum_quantity||1),taxPercent:Number(row.tax_percent||0),volumeTiers:Array.isArray(row.volume_tiers)?row.volume_tiers:[],status:row.status,authoritySource:String(row.authority_source||row.metadata?.authority_source||row.metadata?.seed_source||'unconfigured'),confirmedAt:row.confirmed_at?String(row.confirmed_at):null,confirmedBy:row.confirmed_by?String(row.confirmed_by):null})),
           sections: dossierSections(item),
           editions: (editions || []).map((row: any) => ({ id: String(row.id), language: String(row.language_code), status: String(row.status), version: String(row.version_label || item.version) })),
           formats: (formats || []).map((row: any) => ({ id: String(row.id), format: String(row.format_key), status: String(row.status) })),
           timeline: (timeline || []).map((row: any) => ({ id: String(row.id), label: String(row.action_label || row.action_key), detail: String(row.summary || ''), date: String(row.created_at), tone: row.risk_level === 'high' ? 'warning' : 'neutral' })),
         },
       }
-    } catch {
-      return { sourceMode: 'catalogue_seed', dossier: dossierFromSeed(item) }
+    } catch (error) {
+      if(catalogueSeedAllowed()) return { sourceMode: 'catalogue_seed', dossier: dossierFromSeed(item) }
+      throw error instanceof Error?error:catalogueUnavailable('collection dossier')
     }
   }
 

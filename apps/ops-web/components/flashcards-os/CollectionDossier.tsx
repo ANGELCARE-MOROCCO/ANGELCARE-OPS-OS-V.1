@@ -26,6 +26,7 @@ import {
   Trash2,
 } from 'lucide-react'
 import type { CollectionDossier as CollectionDossierType, TaxonomyNode } from '@/lib/flashcards-os/types'
+import { useFlashcardsActions } from './studio/FlashcardsActionFeedback'
 import styles from './flashcards-os.module.css'
 
 const SECTION_GUIDANCE: Record<string, { title: string; lead: string; delivery: number }> = {
@@ -245,9 +246,10 @@ export default function CollectionDossier({
   function renderCommercial() {
     return (
       <div className={styles.sectionGrid}>
-        <div className={styles.sectionCard}><div className={styles.sectionLabel}>Historical catalogue price</div><div className={styles.sectionValue}>{dossier.historicalPriceDh == null ? 'Non renseigné' : `${dossier.historicalPriceDh} Dh`}</div></div>
-        <div className={styles.sectionCard}><div className={styles.sectionLabel}>Commercial status</div><div className={styles.sectionValue}>Legacy reference only · not approved as current price book.</div></div>
-        <div className={`${styles.sectionCard} ${styles.sectionCardWide}`}><div className={styles.sectionLabel}>Deterministic pricing doctrine</div><div className={styles.sectionValue}>Le prix historique est préservé comme preuve. Coûts, marge, taxes, conditionnement, remises et prix B2C/B2B seront gérés par le moteur commercial déterministe; aucune valeur financière ne sera inventée par l’IA.</div></div>
+        <div className={`${styles.sectionCard} ${styles.sectionCardWide}`}><div className={styles.sectionLabel}>Référence historique</div><div className={styles.sectionValue}>{dossier.historicalPriceDh == null ? 'Non renseigné' : `${dossier.historicalPriceDh} Dh`} · preuve historique uniquement, jamais activation automatique.</div></div>
+        <CommercialCard dossier={dossier} universe="b2c" onDone={()=>router.refresh()} />
+        <CommercialCard dossier={dossier} universe="b2b" onDone={()=>router.refresh()} />
+        <div className={`${styles.sectionCard} ${styles.sectionCardWide}`}><div className={styles.sectionLabel}>Autorité commerciale déterministe</div><div className={styles.sectionValue}>Le prix actif vient exclusivement de catalogue_collection_commercials. Utilisez le prix historique comme point de départ seulement si vous le confirmez explicitement. Publication B2C/B2B disponible directement depuis ce dossier.</div></div>
       </div>
     )
   }
@@ -261,6 +263,7 @@ export default function CollectionDossier({
       design: [
         {label:'Product Design Portfolio',detail:'Ouvrir les designs et alternatives directement exploitables.',href:'/flashcards-os/intelligence/product-design',icon:'spark'},
         {label:'Composer un package',detail:'Consommer cette collection depuis le catalogue local.',href:`/flashcards-os/solutions/composer?collection=${encodeURIComponent(dossier.id)}`,icon:'file'},
+        {label:'Créer un programme',detail:'Préselectionner cette collection dans le Learning Programme Composer.',href:`/flashcards-os/solutions/learning-journeys/new?collection=${encodeURIComponent(dossier.id)}`,icon:'spark'},
       ],
       commands: [
         {label:'Créer une commande de production',detail:'Compiler une commande externe PDF, MP4 ou classroom sans générer l’asset.',href:`/flashcards-os/intelligence/production-commands/new?collectionId=${encodeURIComponent(dossier.id)}`,icon:'spark'},
@@ -268,7 +271,7 @@ export default function CollectionDossier({
       ],
       vault: [
         {label:'Ouvrir le Deliverable Vault',detail:'Prévisualiser, versionner et relier les PDF/MP4 stockés sur le Windows Node.',href:`/flashcards-os/delivery/vault/collections/${encodeURIComponent(dossier.id)}`,icon:'vault'},
-        {label:'Station d’upload',detail:'Déposer une source ou un livrable final avec progression réelle.',href:'/flashcards-os/delivery/uploads',icon:'vault'},
+        {label:'Station d’upload',detail:'Déposer une source ou un livrable final avec progression réelle.',href:`/flashcards-os/delivery/uploads?collection=${encodeURIComponent(dossier.id)}`,icon:'vault'},
       ],
       performance: [
         {label:'Customer Experience',detail:'Consulter retours, réclamations, qualité et usage commercial.',href:'/flashcards-os/delivery/customer-experience',icon:'file'},
@@ -302,6 +305,7 @@ export default function CollectionDossier({
           <span className={styles.sourceBanner}><Database size={13} /> {sourceMode === 'database' ? 'Live record' : 'Seed evidence mode'}</span>
           <Link className={styles.secondaryButton} href={`/flashcards-os/product/collections/${dossier.code.toLowerCase()}/cards`}><Layers3 size={14} /> Architecture cartes</Link>
           <Link className={styles.secondaryButton} href={`/flashcards-os/solutions/composer?collection=${encodeURIComponent(dossier.id)}`}><PackagePlus size={14} /> Package</Link>
+          <Link className={styles.secondaryButton} href={`/flashcards-os/solutions/learning-journeys/new?collection=${encodeURIComponent(dossier.id)}`}><WandSparkles size={14} /> Programme</Link>
           <Link className={styles.secondaryButton} href={`/flashcards-os/documents?sourceType=collection&sourceId=${encodeURIComponent(dossier.id)}`}><FileText size={14} /> A4/PDF</Link>
           <button className={styles.actionButton} type="button" onClick={() => { setSection('identity'); setEdit(true) }}><Edit3 size={14} /> Modifier réellement</button>
           <button className={styles.secondaryButton} type="button" onClick={deleteCollection}><Trash2 size={14} /> Supprimer définitivement</button>
@@ -379,4 +383,12 @@ export default function CollectionDossier({
       </section>
     </>
   )
+}
+
+function CommercialCard({dossier,universe,onDone}:{dossier:CollectionDossierType;universe:'b2c'|'b2b';onDone:()=>void}){
+  const actions=useFlashcardsActions()
+  const current=dossier.commercials.find((item)=>item.universe===universe);const [price,setPrice]=useState(String(current?.basePriceDh??dossier.historicalPriceDh??''));const [cost,setCost]=useState(String(current?.unitCostDh??''));const [minimum,setMinimum]=useState(String(current?.minimumQuantity??1));const [busy,setBusy]=useState('')
+  async function save(status:'draft'|'active'|'inactive'){setBusy(status);const actionId=actions.start(`${status==='active'?'Activation':'Configuration'} ${universe.toUpperCase()} · ${dossier.name}`,'Validation de la vérité commerciale…');try{actions.update(actionId,35,'Écriture de la configuration commerciale…');const response=await fetch(`/api/flashcards-os/collections/${encodeURIComponent(dossier.id)}/commercials`,{method:'PUT',headers:{'content-type':'application/json'},body:JSON.stringify({universe,basePriceDh:price===''?null:Number(price),unitCostDh:cost===''?null:Number(cost),minimumQuantity:Number(minimum||1),taxPercent:current?.taxPercent||0,volumeTiers:current?.volumeTiers||[],status})});const payload=await response.json();if(!response.ok)throw new Error(payload.error||'Configuration impossible.');actions.update(actionId,85,'Actualisation du dossier collection…');onDone();actions.success(actionId,status==='active'?`${universe.toUpperCase()} activé avec autorité commerciale confirmée.`:'Configuration enregistrée sans activation.')}catch(error){actions.error(actionId,error instanceof Error?error.message:'Erreur commerciale.','Corrigez le prix ou la configuration puis réessayez.','Le dossier collection et les autres univers commerciaux n’ont pas été modifiés.')}finally{setBusy('')}}
+  async function publish(){setBusy('publish');const actionId=actions.start(`Publication ${universe.toUpperCase()} · ${dossier.name}`,'Création du sellable avec snapshot commercial…');try{actions.update(actionId,40,'Résolution de la collection et du prix actif…');const response=await fetch(`/api/flashcards-os/collections/${encodeURIComponent(dossier.id)}/publish`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({universe})});const payload=await response.json();if(!response.ok)throw new Error(payload.error||'Publication impossible.');actions.update(actionId,88,'Enregistrement de la lignée sellable…');onDone();actions.success(actionId,`Produit ${universe.toUpperCase()} publié · ${payload.code||'référence créée'}.`)}catch(error){actions.error(actionId,error instanceof Error?error.message:'Publication impossible.','Activez d’abord un prix commercial valide puis réessayez.','La collection et ses prix existants ont été conservés.')}finally{setBusy('')}}
+  return <div className={styles.sectionCard}><div className={styles.sectionLabel}>{universe.toUpperCase()} · contrôle commercial</div><div className={styles.sectionValue}>{current?.status==='active'?`ACTIF · ${current.basePriceDh} Dh`:`${current?.status||'NON CONFIGURÉ'}`}</div><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,marginTop:12}}><label className={styles.field}><span className={styles.fieldLabel}>Prix Dh</span><input className={styles.fieldInput} type="number" min="0" step="0.01" value={price} onChange={(e)=>setPrice(e.target.value)}/></label><label className={styles.field}><span className={styles.fieldLabel}>Coût Dh</span><input className={styles.fieldInput} type="number" min="0" step="0.01" value={cost} onChange={(e)=>setCost(e.target.value)}/></label><label className={styles.field}><span className={styles.fieldLabel}>Quantité min.</span><input className={styles.fieldInput} type="number" min="1" value={minimum} onChange={(e)=>setMinimum(e.target.value)}/></label></div><div style={{display:'flex',gap:8,flexWrap:'wrap',marginTop:12}}><button type="button" className={styles.secondaryButton} disabled={!!busy} onClick={()=>save('draft')}>Enregistrer</button><button type="button" className={styles.actionButton} disabled={!!busy} onClick={()=>save('active')}>Activer {universe.toUpperCase()}</button><button type="button" className={styles.secondaryButton} disabled={!!busy||current?.status!=='active'} onClick={publish}>Publier {universe.toUpperCase()}</button></div></div>
 }
