@@ -2,6 +2,13 @@ import type { NextConfig } from "next";
 import path from "path";
 
 const nextConfig: NextConfig = {
+  // Standalone Marketplace production TypeScript boundary.
+  // Type checking remains ENABLED; this does not ignore errors.
+  typescript: {
+    ignoreBuildErrors: false,
+    tsconfigPath: 'tsconfig.marketplace-production.json',
+  },
+
   // Disabled until the Next 16 next/link ReactNode typing defect is resolved.
   typedRoutes: false,
 

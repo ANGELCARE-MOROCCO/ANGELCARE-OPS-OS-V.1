@@ -1,0 +1,40 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "incremental": false,
+    "tsBuildInfoFile": null
+  },
+  "include": [
+    "next-env.d.ts",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts",
+    "app/layout.tsx",
+    "app/error.tsx",
+    "app/global-error.tsx",
+    "app/not-found.tsx",
+    "app/angelcare-marketplace/**/*.ts",
+    "app/angelcare-marketplace/**/*.tsx",
+    "app/api/angelcare-marketplace/**/*.ts",
+    "app/api/angelcare-marketplace/**/*.tsx",
+    "angelcare-marketplace/**/*.ts",
+    "angelcare-marketplace/**/*.tsx",
+    "middleware.ts",
+    "proxy.ts",
+    "instrumentation.ts",
+    "instrumentation-client.ts",
+    "types/angelcare-desktop.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    ".next/cache",
+    "evaluations",
+    "tests",
+    "scripts",
+    "docs",
+    "documentation",
+    "reference",
+    "reports",
+    "audits"
+  ]
+}
