@@ -1,2 +1,2 @@
-import {FinalVerticalPage} from '@/angelcare-marketplace/final-vertical/admin-page'
-export default function Page(){return <FinalVerticalPage workspaceKey="launch.defects"/>}
+import {RealityCompletionPage} from '@/angelcare-marketplace/reality-completion/admin-page'
+export default function Page(){return <RealityCompletionPage workspaceKey="launch.defects"/>}

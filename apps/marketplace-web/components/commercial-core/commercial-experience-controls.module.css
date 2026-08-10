@@ -1,0 +1,57 @@
+.controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px;
+  border: 1px solid #d5e0eb;
+  border-radius: 14px;
+  background: #f7fafc;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.9);
+}
+
+.button,
+.activeButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 34px;
+  padding: 7px 10px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  color: #52657d;
+  background: transparent;
+  font: inherit;
+  font-size: 10px;
+  font-weight: 900;
+  cursor: pointer;
+  transition: background .16s ease, color .16s ease, border-color .16s ease, box-shadow .16s ease;
+}
+
+.button:hover {
+  border-color: #c2d4e5;
+  color: #163e69;
+  background: #fff;
+}
+
+.activeButton {
+  border-color: #0d315c;
+  color: #fff;
+  background: #0d315c;
+  box-shadow: 0 7px 16px rgba(13,49,92,.16);
+}
+
+.controlMark {
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 6px;
+  background: rgba(255,255,255,.16);
+  font-size: 10px;
+  line-height: 1;
+}
+
+@media (max-width: 860px) {
+  .controls { display: none; }
+}

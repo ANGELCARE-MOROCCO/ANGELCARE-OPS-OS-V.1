@@ -6,6 +6,7 @@ import type { ChangeEvent, FormEvent } from 'react'
 import { Activity, Archive, BarChart3, Boxes, CalendarClock, CheckCircle2, ChevronRight, Eye, FileImage, Globe2, Layers3, LayoutDashboard, Loader2, Megaphone, Monitor, MousePointerClick, Plus, RefreshCw, Save, Smartphone, Tablet, Target } from 'lucide-react'
 import type { HomepageAdminData, HomepageAdminKind, HomepageAdminRecord } from '../types'
 import styles from '../homepage-admin.module.css'
+import { GovernedCommandDialog } from '../../reality-completion/components/GovernedCommandDialog'
 
 const tabs = [
   ['overview','Vue commandement',LayoutDashboard],['hero','Hero',Megaphone],['campaigns','Campagnes',Megaphone],['sections','Sections',Layers3],['collections','Collections',Boxes],['placements','Placements',Target],['audiences','Audiences',Activity],['territories','Territoires',Globe2],['media','Médias',FileImage],['preview','Preview',Eye],['analytics','Analytics',BarChart3],
@@ -104,11 +105,11 @@ export function HomepageAdminCommand({ initialData, mode }: { initialData: Homep
     } catch (error) { setMessage(error instanceof Error ? error.message : 'Erreur') } finally { setSaving(false) }
   }
 
-  async function archive(row: HomepageAdminRecord) {
-    if (!kind || !window.confirm(`Archiver ${titleOf(row)} ?`)) return
+  async function archive(row: HomepageAdminRecord, reason: string) {
+    if (!kind) return
     setSaving(true)
     try {
-      const response = await fetch(`/api/angelcare-marketplace/homepage/${kind}`, { method: 'DELETE', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ id: row.id }) })
+      const response = await fetch(`/api/angelcare-marketplace/homepage/${kind}`, { method: 'DELETE', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ id: row.id, reason }) })
       const json = await response.json()
       if (!response.ok) throw new Error(json.error?.message || 'Archivage impossible')
       await refresh(); setMessage('Élément archivé sans suppression de données.')
@@ -132,7 +133,7 @@ export function HomepageAdminCommand({ initialData, mode }: { initialData: Homep
     {mode === 'overview' ? <Overview data={data}/> : null}
     {mode === 'preview' ? <PreviewPanel/> : null}
     {mode === 'analytics' ? <AnalyticsPanel interactions={data.interactions}/> : null}
-    {kind ? <section className={styles.workspaceGrid}><div className={styles.registry}><div className={styles.panelHead}><div><h2>{tabs.find(([key])=>key===mode)?.[1] || 'Registre'}</h2><p>{rows.length} enregistrements · publication et archivage auditables</p></div><button type="button" onClick={refresh} disabled={saving}>{saving ? <Loader2 className={styles.spin} size={16}/> : <RefreshCw size={16}/>}</button></div><div className={styles.recordList}>{rows.map((row) => <article key={row.id}><div className={styles.recordIcon}>{mode === 'media' ? <FileImage/> : mode === 'placements' ? <Target/> : mode === 'sections' ? <Layers3/> : <Megaphone/>}</div><div><h3>{titleOf(row)}</h3><p>{detailOf(row)}</p><small>{String(row.locale || 'global')} · {String(row.status || 'configured')} · {row.updated_at ? new Date(String(row.updated_at)).toLocaleString('fr-FR') : '—'}</small></div><div className={styles.rowActions}><select value={String(row.status || statusOptions(mode)[0])} onChange={(event: ChangeEvent<HTMLSelectElement>)=>changeStatus(row,event.target.value)}>{statusOptions(mode).map((status)=><option value={status} key={status}>{status}</option>)}</select><button type="button" onClick={()=>archive(row)} aria-label="Archiver"><Archive size={15}/></button></div></article>)}{!rows.length ? <div className={styles.empty}>Aucun enregistrement dans ce registre. Créez le premier élément gouverné.</div> : null}</div></div><CreatePanel mode={mode} data={data} onSubmit={submit} saving={saving}/></section> : null}
+    {kind ? <section className={styles.workspaceGrid}><div className={styles.registry}><div className={styles.panelHead}><div><h2>{tabs.find(([key])=>key===mode)?.[1] || 'Registre'}</h2><p>{rows.length} enregistrements · publication et archivage auditables</p></div><button type="button" onClick={refresh} disabled={saving}>{saving ? <Loader2 className={styles.spin} size={16}/> : <RefreshCw size={16}/>}</button></div><div className={styles.recordList}>{rows.map((row) => <article key={row.id}><div className={styles.recordIcon}>{mode === 'media' ? <FileImage/> : mode === 'placements' ? <Target/> : mode === 'sections' ? <Layers3/> : <Megaphone/>}</div><div><h3>{titleOf(row)}</h3><p>{detailOf(row)}</p><small>{String(row.locale || 'global')} · {String(row.status || 'configured')} · {row.updated_at ? new Date(String(row.updated_at)).toLocaleString('fr-FR') : '—'}</small></div><div className={styles.rowActions}><select value={String(row.status || statusOptions(mode)[0])} onChange={(event: ChangeEvent<HTMLSelectElement>)=>changeStatus(row,event.target.value)}>{statusOptions(mode).map((status)=><option value={status} key={status}>{status}</option>)}</select><GovernedCommandDialog title={`Archiver ${titleOf(row)}`} triggerLabel="Archiver" danger fields={[]} onSubmit={async(_values,reason)=>archive(row,reason)}/></div></article>)}{!rows.length ? <div className={styles.empty}>Aucun enregistrement dans ce registre. Créez le premier élément gouverné.</div> : null}</div></div><CreatePanel mode={mode} data={data} onSubmit={submit} saving={saving}/></section> : null}
   </div>
 }
 

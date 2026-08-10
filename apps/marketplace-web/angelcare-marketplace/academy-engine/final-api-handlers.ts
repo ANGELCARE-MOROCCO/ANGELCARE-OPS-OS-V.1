@@ -1,6 +1,6 @@
 import {requireMarketplaceWorkspaceApiContext} from '../auth/context'
 import {apiFailure,apiSuccess,cleanOptionalText,parseJsonObject,requestId,requireText} from '../server/request'
-import {academyFinalSnapshot,createAcademyAssessment,createAcademyRemediation,createAcademySession,reviewAssessmentResult,transitionAcademyB2B,transitionAcademyCohort,transitionAcademyPublication,transitionAcademyRemediation,transitionAcademySession} from './final-repository'
+import {academyFinalSnapshot,assignAcademyTrainer,createAcademyAssessment,createAcademyRemediation,createAcademySession,reviewAssessmentResult,transitionAcademyB2B,transitionAcademyCohort,transitionAcademyPublication,transitionAcademyRemediation,transitionAcademySession} from './final-repository'
 const obj=(v:unknown):Record<string,unknown>=>v&&typeof v==='object'&&!Array.isArray(v)?v as Record<string,unknown>:{}
 export async function handleAcademyFinalSnapshot(request:Request){const id=requestId(request);try{return apiSuccess(await academyFinalSnapshot(await requireMarketplaceWorkspaceApiContext('academy.command','marketplace.academy.view')),{requestId:id})}catch(e){return apiFailure(e,id)}}
 export async function handleAcademySessionCreate(request:Request){const id=requestId(request);try{const c=await requireMarketplaceWorkspaceApiContext('academy.sessions','marketplace.academy.sessions.manage'),b=await parseJsonObject(request);return apiSuccess(await createAcademySession({cohortId:requireText(b.cohortId,'cohortId','Cohorte',100),title:requireText(b.title,'title','Titre',300),startsAt:requireText(b.startsAt,'startsAt','Début',100),endsAt:requireText(b.endsAt,'endsAt','Fin',100),deliveryMode:requireText(b.deliveryMode,'deliveryMode','Mode',50),trainerId:cleanOptionalText(b.trainerId,100),location:obj(b.location)},c,id,request),{requestId:id,status:201})}catch(e){return apiFailure(e,id)}}
@@ -13,3 +13,13 @@ export async function handleAcademyAssessmentCreate(request:Request){const rid=r
 export async function handleAssessmentResultReview(request:Request,idValue:string){const rid=requestId(request);try{const c=await requireMarketplaceWorkspaceApiContext('academy.assessments','marketplace.academy.assessments.manage'),b=await parseJsonObject(request),decision=String(b.decision);if(decision!=='approved'&&decision!=='rejected')throw new Error('Décision invalide');return apiSuccess(await reviewAssessmentResult(idValue,decision,requireText(b.reason,'reason','Raison',2000),c,rid,request),{requestId:rid})}catch(e){return apiFailure(e,rid)}}
 export async function handleAcademyRemediationCreate(request:Request){const rid=requestId(request);try{const c=await requireMarketplaceWorkspaceApiContext('academy.assessments','marketplace.academy.assessments.manage'),b=await parseJsonObject(request);return apiSuccess(await createAcademyRemediation({enrollmentId:requireText(b.enrollmentId,'enrollmentId','Inscription',100),assessmentResultId:cleanOptionalText(b.assessmentResultId,100),reason:requireText(b.reason,'reason','Raison',2000),actionPlan:requireText(b.actionPlan,'actionPlan','Plan',4000),dueAt:cleanOptionalText(b.dueAt,100)},c,rid,request),{requestId:rid,status:201})}catch(e){return apiFailure(e,rid)}}
 export async function handleAcademyPublicationTransition(request:Request,kind:'program'|'course',idValue:string){const rid=requestId(request);try{const c=await requireMarketplaceWorkspaceApiContext(kind==='program'?'academy.programs':'academy.courses','marketplace.academy.catalog.manage'),b=await parseJsonObject(request);return apiSuccess(await transitionAcademyPublication(kind,idValue,requireText(b.nextStatus,'nextStatus','Statut',80),requireText(b.reason,'reason','Raison',2000),c,rid,request),{requestId:rid})}catch(e){return apiFailure(e,rid)}}
+
+
+export async function handleAcademyTrainerAssignment(request:Request,cohortId:string){
+ const rid=requestId(request)
+ try{
+  const c=await requireMarketplaceWorkspaceApiContext('academy.trainers','marketplace.academy.cohorts.manage')
+  const b=await parseJsonObject(request)
+  return apiSuccess(await assignAcademyTrainer(cohortId,requireText(b.trainerId,'trainerId','Trainer',100),requireText(b.reason,'reason','Raison',2000),c,rid,request),{requestId:rid})
+ }catch(e){return apiFailure(e,rid)}
+}
