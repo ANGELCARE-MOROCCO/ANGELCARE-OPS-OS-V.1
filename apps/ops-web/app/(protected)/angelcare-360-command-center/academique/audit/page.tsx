@@ -1,4 +1,5 @@
 import Angelcare360AcademicPageShell from '@/components/angelcare360/academics/Angelcare360AcademicPageShell'
+import AcademicZoneAR3Experience from '@/components/angelcare360/zone-a-academic/AcademicZoneAR3Experience'
 import { ANGELCARE360_ACADEMICS_NAVIGATION } from '@/data/angelcare360/academics-navigation'
 import { getAngelcare360AccessContext } from '@/lib/angelcare360/server'
 import { listAngelcare360AcademicAuditEvents } from '@/lib/angelcare360/server/academics'
@@ -33,6 +34,20 @@ export default async function Angelcare360AuditAcademiquePage({ searchParams }: 
       subtitle="Consultation des opérations, blocages et événements critiques du moteur académique."
       badge="Audit"
       statusLabel={`${events.length} événement(s)`}
+      experience={<AcademicZoneAR3Experience
+        variant="history"
+        eyebrow="Academic History Lens"
+        title="Chronologie académique reconstructible"
+        description="Les opérations sont présentées comme une histoire institutionnelle lisible, sans exposer les identifiants techniques comme langage principal."
+        metrics={[
+          { label: 'Événements', value: events.length, tone: 'graphite' },
+          { label: 'Alertes', value: events.filter((item) => ['warning','critical','error'].includes(String(item.severity || '').toLowerCase())).length, tone: 'coral' },
+          { label: 'Acteurs', value: new Set(events.map((item) => item.actor_role).filter(Boolean)).size, tone: 'cyan' },
+          { label: 'Domaines', value: new Set(events.map((item) => item.module).filter(Boolean)).size, tone: 'indigo' },
+        ]}
+        items={events.map((item) => ({ id: item.id, title: `${item.module} · ${item.action}`, meta: `${item.actor_role || 'Acteur système'} · ${item.created_at}`, secondary: item.entity_type ? `Dossier ${item.entity_type}` : 'Événement académique', status: item.severity || 'info', attention: ['warning','critical','error'].includes(String(item.severity || '').toLowerCase()) }))}
+        emptyLabel="Aucun événement d’audit ne correspond aux filtres courants."
+      />}
       navigationItems={ANGELCARE360_ACADEMICS_NAVIGATION}
     >
       <section style={panelStyle}>
@@ -47,8 +62,7 @@ export default async function Angelcare360AuditAcademiquePage({ searchParams }: 
           <Input name="module" placeholder="Module" defaultValue={filters.module || ''} />
           <Input name="action" placeholder="Action" defaultValue={filters.action || ''} />
           <Input name="severity" placeholder="Sévérité" defaultValue={filters.severity || ''} />
-          <Input name="entityType" placeholder="Entité" defaultValue={filters.entityType || ''} />
-          <Input name="entityId" placeholder="ID entité" defaultValue={filters.entityId || ''} />
+          <Input name="entityType" placeholder="Type de dossier" defaultValue={filters.entityType || ''} />
           <Input name="actorRole" placeholder="Rôle acteur" defaultValue={filters.actorRole || ''} />
           <Input name="from" type="date" defaultValue={filters.from || ''} />
           <Input name="to" type="date" defaultValue={filters.to || ''} />
@@ -72,7 +86,7 @@ export default async function Angelcare360AuditAcademiquePage({ searchParams }: 
               <article key={event.id} style={rowStyle}>
                 <div style={rowMainStyle}>
                   <div style={rowTitleStyle}>{event.module} · {event.action}</div>
-                  <div style={rowMetaStyle}>{event.entity_type || '—'} · {event.entity_id || '—'}</div>
+                  <div style={rowMetaStyle}>{event.entity_type ? `Dossier ${event.entity_type}` : 'Dossier académique'}</div>
                   <div style={rowMetaStyle}>{event.actor_role || '—'} · {event.severity || 'info'} · {event.created_at}</div>
                 </div>
                 <div style={rowActionsStyle}>

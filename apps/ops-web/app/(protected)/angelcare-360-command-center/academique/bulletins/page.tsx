@@ -2,10 +2,11 @@ import Link from 'next/link'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import Angelcare360AcademicPageShell from '@/components/angelcare360/academics/Angelcare360AcademicPageShell'
+import AcademicZoneAR3Experience from '@/components/angelcare360/zone-a-academic/AcademicZoneAR3Experience'
 import { ANGELCARE360_ACADEMICS_NAVIGATION } from '@/data/angelcare360/academics-navigation'
 import { getAngelcare360AccessContext } from '@/lib/angelcare360/server'
 import { createAngelcare360ReportCardDraft, listAngelcare360ReportCards } from '@/lib/angelcare360/server/academics'
-import { listAngelcare360AcademicYears, listAngelcare360Classes } from '@/lib/angelcare360/server/queries'
+import { listAngelcare360AcademicYears, listAngelcare360Classes, listAngelcare360Students } from '@/lib/angelcare360/server/queries'
 import { listAngelcare360Sections, listAngelcare360Terms } from '@/lib/angelcare360/server/administration'
 import { formGridStyle, optionValue, primaryLinkStyle } from '../_utils'
 import Angelcare360EmptyState from '@/components/angelcare360/states/Angelcare360EmptyState'
@@ -47,12 +48,13 @@ export default async function Angelcare360BulletinsPage({ searchParams }: { sear
   const status = optionValue(searchParams?.status as FormDataEntryValue | null)
   const errorMessage = optionValue(searchParams?.error as FormDataEntryValue | null)
 
-  const [reportCards, years, classes, sections, terms] = await Promise.all([
+  const [reportCards, years, classes, sections, terms, students] = await Promise.all([
     listAngelcare360ReportCards({ schoolId: context.school.id, academicYearId: academicYearId || null, termId, classId, sectionId, studentId, status }),
     listAngelcare360AcademicYears(context.school.id),
     listAngelcare360Classes(context.school.id, academicYearId || context.academicYear?.id || null),
     listAngelcare360Sections(context.school.id, academicYearId || context.academicYear?.id || null),
     listAngelcare360Terms(context.school.id, academicYearId || context.academicYear?.id || null),
+    listAngelcare360Students(context.school.id),
   ])
 
   return (
@@ -61,6 +63,20 @@ export default async function Angelcare360BulletinsPage({ searchParams }: { sear
       subtitle="Brouillons, lignes, appréciations et statuts de validation des bulletins."
       badge="Académique"
       statusLabel={`${reportCards.length} bulletin(s)`}
+      experience={<AcademicZoneAR3Experience
+        variant="bulletins"
+        eyebrow="Bulletin Atelier"
+        title="Publication readiness"
+        description="Chaque bulletin traverse un cycle explicite de calcul, revue, approbation et publication."
+        metrics={[
+          { label: 'Brouillons', value: reportCards.filter((item) => item.status === 'draft').length, tone: 'graphite' },
+          { label: 'À revoir', value: reportCards.filter((item) => ['calculated','reviewed'].includes(String(item.status))).length, tone: 'amber' },
+          { label: 'Approuvés', value: reportCards.filter((item) => item.status === 'approved').length, tone: 'purple' },
+          { label: 'Publiés', value: reportCards.filter((item) => item.status === 'published').length, tone: 'green' },
+        ]}
+        items={reportCards.map((item) => ({ id: item.id, title: item.student_full_name || 'Élève', meta: item.term_label || 'Période non résolue', status: item.status, value: item.overall_average ?? null, attention: !item.ready_for_calculation && item.status !== 'published', href: `/angelcare-360-command-center/academique/bulletins/${item.id}` }))}
+        emptyLabel="Aucun bulletin ne correspond aux filtres courants."
+      />}
       navigationItems={ANGELCARE360_ACADEMICS_NAVIGATION}
       primaryAction={<Link href="#nouveau-bulletin" style={primaryLinkStyle}>Nouveau bulletin</Link>}
       contextRow={
@@ -83,7 +99,7 @@ export default async function Angelcare360BulletinsPage({ searchParams }: { sear
           <Select name="termId" defaultValue={termId || ''}><option value="">Toutes les périodes</option>{terms.map((term) => <option key={term.id} value={term.id}>{term.label}</option>)}</Select>
           <Select name="classId" defaultValue={classId || ''}><option value="">Toutes les classes</option>{classes.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</Select>
           <Select name="sectionId" defaultValue={sectionId || ''}><option value="">Toutes les sections</option>{sections.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</Select>
-          <Input name="studentId" defaultValue={studentId || ''} placeholder="ID élève" />
+          <Select name="studentId" defaultValue={studentId || ''}><option value="">Tous les élèves</option>{students.map((item) => <option key={item.id} value={item.id}>{item.full_name || item.student_code || 'Élève'}</option>)}</Select>
           <Select name="status" defaultValue={status || ''}>
             <option value="">Tous les statuts</option>
             <option value="draft">Brouillon</option>
@@ -115,7 +131,7 @@ export default async function Angelcare360BulletinsPage({ searchParams }: { sear
         ) : (
           <form action={createReportCardAction} style={formGridStyle}>
             <Select name="academicYearId" defaultValue={years[0]?.id || ''}>{years.map((year) => <option key={year.id} value={year.id}>{year.label}</option>)}</Select>
-            <Input name="studentId" placeholder="ID élève" required />
+            <Select name="studentId" defaultValue="" required><option value="" disabled>Sélectionner un élève</option>{students.map((item) => <option key={item.id} value={item.id}>{item.full_name || item.student_code || 'Élève'}</option>)}</Select>
             <Select name="classId" defaultValue={classes[0]?.id || ''}>{classes.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</Select>
             <Select name="sectionId" defaultValue=""><option value="">Aucune section</option>{sections.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</Select>
             <Select name="termId" defaultValue={terms[0]?.id || ''}>{terms.map((term) => <option key={term.id} value={term.id}>{term.label}</option>)}</Select>
@@ -141,8 +157,8 @@ export default async function Angelcare360BulletinsPage({ searchParams }: { sear
             {reportCards.map((card) => (
               <article key={card.id} style={rowStyle}>
                 <div style={rowMainStyle}>
-                  <div style={rowTitleStyle}>{card.student_full_name || card.student_code || card.student_id}</div>
-                  <div style={rowMetaStyle}>{card.report_card_code} · {card.term_label || card.term_id || 'Sans période'}</div>
+                  <div style={rowTitleStyle}>{card.student_full_name || card.student_code || 'Élève'}</div>
+                  <div style={rowMetaStyle}>{card.report_card_code} · {card.term_label || 'Sans période'}</div>
                   <div style={rowMetaStyle}>Moyenne: {card.overall_average ?? '—'} · Lignes: {card.line_count || 0}</div>
                 </div>
                 <div style={rowActionsStyle}>

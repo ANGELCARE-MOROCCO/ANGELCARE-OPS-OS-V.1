@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "incremental": false,
+    "skipLibCheck": true
+  },
+  "include": [
+    "next-env.d.ts",
+    "lib/social-command/instagram-engagement-mz6.ts",
+    "app/api/social-command/engagement-mz6/[...segments]/route.ts",
+    "app/(protected)/social-command/_components/EngagementCommandMZ6.tsx",
+    "app/(protected)/social-command/_components/SocialCommandClient.tsx"
+  ],
+  "exclude": ["node_modules", ".next", ".angelcare_backups", "backups", "_archive"]
+}

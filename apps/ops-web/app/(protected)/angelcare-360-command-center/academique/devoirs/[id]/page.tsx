@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { revalidatePath } from 'next/cache'
 import { notFound, redirect } from 'next/navigation'
 import Angelcare360AcademicPageShell from '@/components/angelcare360/academics/Angelcare360AcademicPageShell'
+import AcademicZoneAR3Experience from '@/components/angelcare360/zone-a-academic/AcademicZoneAR3Experience'
 import { ANGELCARE360_ACADEMICS_NAVIGATION } from '@/data/angelcare360/academics-navigation'
 import { getAngelcare360AccessContext } from '@/lib/angelcare360/server'
 import { changeAngelcare360AssignmentStatus, getAngelcare360AssignmentById, updateAngelcare360Assignment } from '@/lib/angelcare360/server/academics'
@@ -78,12 +79,30 @@ export default async function Angelcare360DevoirDetailPage({ params }: PageProps
       subtitle="Détail du devoir, remises et statut de publication contrôlés côté serveur."
       badge="Devoir"
       statusLabel={assignment.status}
+      experience={<AcademicZoneAR3Experience
+        variant="homework-detail"
+        eyebrow="Homework Dossier"
+        title={assignment.title}
+        description="Consigne, échéance, remises et état de publication sont réunis avant toute modification."
+        metrics={[
+          { label: 'Remises', value: detail.submissions.length, tone: 'cyan' },
+          { label: 'À corriger', value: detail.submissions.filter((item) => ['submitted','late'].includes(String(item.status))).length, tone: 'amber' },
+          { label: 'Corrigées', value: detail.submissions.filter((item) => ['reviewed','graded'].includes(String(item.status))).length, tone: 'green' },
+          { label: 'Échéance', value: assignment.due_on || 'Non fixée', tone: 'indigo' },
+        ]}
+        items={[
+          { id: 'instruction', title: 'Consigne', meta: assignment.description || 'Aucune consigne détaillée', status: assignment.description ? 'Renseignée' : 'À compléter', attention: !assignment.description },
+          { id: 'publication', title: 'Publication', meta: `État actuel : ${assignment.status}`, status: assignment.status },
+          { id: 'submissions', title: 'Remises élèves', meta: `${detail.submissions.length} remise(s) enregistrée(s)`, status: detail.submissions.length ? 'Actives' : 'En attente', href: `/angelcare-360-command-center/academique/soumissions?assignmentId=${assignment.id}` },
+          { id: 'class', title: 'Classe & matière', meta: `${assignment.class_name || 'Classe non résolue'} · ${assignment.subject_name || 'Matière non résolue'}`, status: 'Contexte' },
+        ]}
+      />}
       navigationItems={ANGELCARE360_ACADEMICS_NAVIGATION}
       primaryAction={<Link href="/angelcare-360-command-center/academique/devoirs" style={secondaryLinkStyle}>Retour</Link>}
       contextRow={
         <>
-          <Badge label={assignment.class_name || assignment.class_id} />
-          <Badge label={assignment.subject_name || assignment.subject_id} />
+          <Badge label={assignment.class_name || 'Classe non résolue'} />
+          <Badge label={assignment.subject_name || 'Matière non résolue'} />
           <Badge label={`${detail.submissions.length} remise(s)`} />
         </>
       }
@@ -115,7 +134,7 @@ export default async function Angelcare360DevoirDetailPage({ params }: PageProps
             <Select name="classId" defaultValue={assignment.class_id}>{classes.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</Select>
             <Select name="sectionId" defaultValue={assignment.section_id || ''}><option value="">Aucune section</option>{sections.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</Select>
             <Select name="subjectId" defaultValue={assignment.subject_id}>{subjects.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</Select>
-            <Select name="staffId" defaultValue={assignment.created_by_staff_id || ''}><option value="">Responsable non renseigné</option>{teachers.map((item) => <option key={item.id} value={item.staff_id}>{relatedLabel(item.staff) || item.staff_id}</option>)}</Select>
+            <Select name="staffId" defaultValue={assignment.created_by_staff_id || ''}><option value="">Responsable non renseigné</option>{teachers.map((item) => <option key={item.id} value={item.staff_id}>{relatedLabel(item.staff) || 'Enseignant non résolu'}</option>)}</Select>
             <Input name="assignmentCode" defaultValue={assignment.assignment_code} />
             <Input name="title" defaultValue={assignment.title} />
             <Textarea name="description" defaultValue={assignment.description || ''} />
@@ -165,7 +184,7 @@ export default async function Angelcare360DevoirDetailPage({ params }: PageProps
             {detail.submissions.map((submission) => (
               <article key={submission.id} style={rowStyle}>
                 <div style={rowMainStyle}>
-                  <div style={rowTitleStyle}>{submission.student_full_name || submission.student_code || submission.student_id}</div>
+                  <div style={rowTitleStyle}>{submission.student_full_name || submission.student_code || 'Élève'}</div>
                   <div style={rowMetaStyle}>{submission.status} · {submission.submitted_at || 'Non remis'}</div>
                 </div>
                 <div style={rowActionsStyle}>

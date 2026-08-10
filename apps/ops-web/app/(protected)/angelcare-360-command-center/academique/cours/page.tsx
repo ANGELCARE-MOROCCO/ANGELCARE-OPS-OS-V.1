@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import Angelcare360AcademicPageShell from '@/components/angelcare360/academics/Angelcare360AcademicPageShell'
+import AcademicZoneAR3Experience from '@/components/angelcare360/zone-a-academic/AcademicZoneAR3Experience'
 import { ANGELCARE360_ACADEMICS_NAVIGATION } from '@/data/angelcare360/academics-navigation'
 import { getAngelcare360AccessContext } from '@/lib/angelcare360/server'
 import { listAngelcare360Lessons, createAngelcare360Lesson } from '@/lib/angelcare360/server/academics'
@@ -65,6 +66,20 @@ export default async function Angelcare360CoursPage({ searchParams }: { searchPa
       subtitle="Gestion des séances, contenus pédagogiques, devoirs liés et audit des modifications de cours."
       badge="Académique"
       statusLabel={`${lessons.length} cours`}
+      experience={<AcademicZoneAR3Experience
+        variant="courses"
+        eyebrow="Teaching Delivery Command"
+        title="Flux réel des séances"
+        description="Les cours sont organisés par état de préparation et de réalisation, avec accès direct au dossier de séance."
+        metrics={[
+          { label: 'À préparer', value: lessons.filter((item) => item.status === 'draft').length, tone: 'indigo' },
+          { label: 'Planifiés', value: lessons.filter((item) => item.status === 'planned').length, tone: 'cyan' },
+          { label: 'Réalisés', value: lessons.filter((item) => item.status === 'completed').length, tone: 'green' },
+          { label: 'À reprendre', value: lessons.filter((item) => item.status === 'cancelled').length, tone: 'coral' },
+        ]}
+        items={lessons.map((lesson) => ({ id: lesson.id, title: lesson.topic, meta: `${lesson.lesson_date} · ${lesson.class_name || 'Classe non résolue'} · ${lesson.subject_name || 'Matière non résolue'}`, secondary: lesson.staff_full_name || 'Enseignant non affecté', status: lesson.status, attention: lesson.status === 'cancelled', href: `/angelcare-360-command-center/academique/cours/${lesson.id}` }))}
+        emptyLabel="Aucune séance ne correspond aux filtres courants."
+      />}
       navigationItems={ANGELCARE360_ACADEMICS_NAVIGATION}
       contextRow={
         <>
@@ -132,7 +147,7 @@ export default async function Angelcare360CoursPage({ searchParams }: { searchPa
             <Select name="subjectId" defaultValue={subjects[0]?.id || ''}>{subjects.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</Select>
             <Select name="staffId" defaultValue="">
               <option value="">Enseignant non renseigné</option>
-              {assignments.map((assignment) => <option key={assignment.id} value={assignment.staff_id}>{relatedLabel(assignment.staff) || assignment.staff_id}</option>)}
+              {assignments.map((assignment) => <option key={assignment.id} value={assignment.staff_id}>{relatedLabel(assignment.staff) || 'Enseignant non résolu'}</option>)}
             </Select>
             <Input name="lessonDate" type="date" />
             <Input name="title" placeholder="Titre du cours" />
@@ -165,7 +180,7 @@ export default async function Angelcare360CoursPage({ searchParams }: { searchPa
               <article key={lesson.id} style={rowStyle}>
                 <div style={rowMainStyle}>
                   <div style={rowTitleStyle}>{lesson.topic}</div>
-                  <div style={rowMetaStyle}>{lesson.lesson_date} · {lesson.class_name || lesson.class_id} · {lesson.subject_name || lesson.subject_id}</div>
+                  <div style={rowMetaStyle}>{lesson.lesson_date} · {lesson.class_name || 'Classe non résolue'} · {lesson.subject_name || 'Matière non résolue'}</div>
                   <div style={rowMetaStyle}>{lesson.staff_full_name || 'Enseignant non rattaché'}</div>
                 </div>
                 <div style={rowActionsStyle}>
