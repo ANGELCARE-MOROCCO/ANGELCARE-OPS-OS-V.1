@@ -67,21 +67,34 @@ function phoneDigits(value: unknown): string {
 }
 
 
-const MEDIA_BASE64_FALLBACK_MAX_BYTES = 16 * 1024 * 1024
+const MEDIA_BASE64_FALLBACK_DEFAULT_MAX_BYTES = 16 * 1024 * 1024
+const MEDIA_BASE64_FALLBACK_HARD_MAX_BYTES = 48 * 1024 * 1024
+const MEDIA_URL_FALLBACK_STATUSES = new Set([400, 408, 422, 502, 504])
 
-async function downloadMediaForFallback(url: string, declaredMimeType?: string) {
+function configuredBase64FallbackMaxBytes() {
+  const configured = Number(process.env.AC_WHATSAPP_MEDIA_BASE64_MAX_BYTES || MEDIA_BASE64_FALLBACK_DEFAULT_MAX_BYTES)
+  if (!Number.isFinite(configured) || configured <= 0) return MEDIA_BASE64_FALLBACK_DEFAULT_MAX_BYTES
+  return Math.max(1024 * 1024, Math.min(Math.floor(configured), MEDIA_BASE64_FALLBACK_HARD_MAX_BYTES))
+}
+
+function declaredMediaSize(media: Record<string, unknown>) {
+  const value = Number(media.size ?? media.sizeBytes ?? 0)
+  return Number.isFinite(value) && value > 0 ? Math.floor(value) : 0
+}
+
+async function downloadMediaForFallback(url: string, declaredMimeType?: string, maxBytes = configuredBase64FallbackMaxBytes()) {
   const controller = new AbortController()
   const timeout = setTimeout(() => controller.abort(), 45_000)
   try {
     const response = await fetch(url, { method: 'GET', cache: 'no-store', signal: controller.signal })
     if (!response.ok) throw new OpenWAError(`MEDIA_SOURCE_HTTP_${response.status}`, 502)
     const length = Number(response.headers.get('content-length') || 0)
-    if (length > MEDIA_BASE64_FALLBACK_MAX_BYTES) throw new OpenWAError('MEDIA_URL_RETRY_TOO_LARGE', 413)
+    if (length > maxBytes) throw new OpenWAError('MEDIA_URL_RETRY_TOO_LARGE', 413)
     const buffer = Buffer.from(await response.arrayBuffer())
     if (!buffer.length) throw new OpenWAError('MEDIA_SOURCE_EMPTY', 422)
-    if (buffer.length > MEDIA_BASE64_FALLBACK_MAX_BYTES) throw new OpenWAError('MEDIA_URL_RETRY_TOO_LARGE', 413)
+    if (buffer.length > maxBytes) throw new OpenWAError('MEDIA_URL_RETRY_TOO_LARGE', 413)
     const mimetype = String(declaredMimeType || response.headers.get('content-type') || 'application/octet-stream').split(';')[0].trim() || 'application/octet-stream'
-    return { base64: buffer.toString('base64'), mimetype }
+    return { base64: buffer.toString('base64'), mimetype, sizeBytes: buffer.length }
   } catch (error) {
     if (error instanceof OpenWAError) throw error
     if ((error as any)?.name === 'AbortError') throw new OpenWAError('MEDIA_SOURCE_TIMEOUT', 504)
@@ -89,16 +102,52 @@ async function downloadMediaForFallback(url: string, declaredMimeType?: string) 
   } finally { clearTimeout(timeout) }
 }
 
-async function requestMediaWithUrlFallback<T>(path: string, payload: Record<string, unknown>, timeoutMs: number) {
+async function requestMediaWithUrlFallback<T>(
+  path: string,
+  payload: Record<string, unknown>,
+  timeoutMs: number,
+  fallbackMaxBytes = configuredBase64FallbackMaxBytes(),
+) {
   try {
     return await request<T>(path, { method: 'POST', body: payload, timeoutMs })
   } catch (error) {
-    if (!(error instanceof OpenWAError) || ![400, 422].includes(error.status) || typeof payload.url !== 'string' || !payload.url) throw error
-    const source = await downloadMediaForFallback(payload.url, typeof payload.mimetype === 'string' ? payload.mimetype : undefined)
+    if (
+      !(error instanceof OpenWAError)
+      || !MEDIA_URL_FALLBACK_STATUSES.has(error.status)
+      || typeof payload.url !== 'string'
+      || !payload.url
+    ) throw error
+
+    const source = await downloadMediaForFallback(
+      payload.url,
+      typeof payload.mimetype === 'string' ? payload.mimetype : undefined,
+      fallbackMaxBytes,
+    )
     const retryPayload: Record<string, unknown> = { ...payload, base64: source.base64, mimetype: source.mimetype }
     delete retryPayload.url
     return request<T>(path, { method: 'POST', body: retryPayload, timeoutMs })
   }
+}
+
+async function prepareMediaSource(media: Record<string, unknown>) {
+  let url = typeof media.url === 'string' && media.url ? media.url : undefined
+  let base64 = typeof media.base64 === 'string' && media.base64 ? media.base64 : undefined
+  let mimetype = typeof media.mimetype === 'string' && media.mimetype ? media.mimetype : undefined
+  const sizeBytes = declaredMediaSize(media)
+  const maxBytes = configuredBase64FallbackMaxBytes()
+
+  // Windows Media Vault files already carry a trusted size. For files that fit safely
+  // under OpenWA's default JSON body limit, fetch them from the public Vault in Next.js
+  // and send Base64 directly. This avoids asking OpenWA on the Windows host to hairpin
+  // through its own public DuckDNS/Caddy address just to read a local file.
+  if (url && !base64 && sizeBytes > 0 && sizeBytes <= maxBytes) {
+    const source = await downloadMediaForFallback(url, mimetype, maxBytes)
+    url = undefined
+    base64 = source.base64
+    mimetype = source.mimetype
+  }
+
+  return { url, base64, mimetype, maxBytes }
 }
 
 async function resolveContactPhone(id: string, contactId: string) {
@@ -146,9 +195,10 @@ export const openwa = {
   sendDocument: (id: string, payload: Record<string, unknown>) => request<Record<string, unknown>>(`/sessions/${encodeURIComponent(id)}/messages/send-document`, { method: 'POST', body: payload, timeoutMs: 120_000 }),
   sendMedia: async (id: string, type: string, chatId: string, media: Record<string, unknown>, caption?: string) => {
     const resolvedChatId = await resolveChatId(id, chatId)
-    const url = typeof media.url === 'string' && media.url ? media.url : undefined
-    const base64 = typeof media.base64 === 'string' && media.base64 ? media.base64 : undefined
-    const mimetype = typeof media.mimetype === 'string' && media.mimetype ? media.mimetype : undefined
+    const prepared = await prepareMediaSource(media)
+    const url = prepared.url
+    const base64 = prepared.base64
+    const mimetype = prepared.mimetype
     const filename = typeof media.filename === 'string' && media.filename ? media.filename : undefined
     const finalCaption = String(caption || media.caption || '').trim() || undefined
 
@@ -162,7 +212,7 @@ export const openwa = {
         ...(finalCaption ? { caption: finalCaption } : {}),
       }
       return requestMediaWithUrlFallback<Record<string, unknown>>(
-        `/sessions/${encodeURIComponent(id)}/messages/send-image`, payload, 90_000,
+        `/sessions/${encodeURIComponent(id)}/messages/send-image`, payload, 90_000, prepared.maxBytes,
       )
     }
 
@@ -174,7 +224,7 @@ export const openwa = {
         ...(finalCaption ? { caption: finalCaption } : {}),
       }
       return requestMediaWithUrlFallback<Record<string, unknown>>(
-        `/sessions/${encodeURIComponent(id)}/messages/send-video`, payload, 120_000,
+        `/sessions/${encodeURIComponent(id)}/messages/send-video`, payload, 120_000, prepared.maxBytes,
       )
     }
 
@@ -186,7 +236,7 @@ export const openwa = {
         ...(type === 'voice' ? { ptt: true } : {}),
       }
       return requestMediaWithUrlFallback<Record<string, unknown>>(
-        `/sessions/${encodeURIComponent(id)}/messages/send-audio`, payload, 120_000,
+        `/sessions/${encodeURIComponent(id)}/messages/send-audio`, payload, 120_000, prepared.maxBytes,
       )
     }
 
@@ -198,7 +248,7 @@ export const openwa = {
         ...(mimetype ? { mimetype } : {}),
       }
       return requestMediaWithUrlFallback<Record<string, unknown>>(
-        `/sessions/${encodeURIComponent(id)}/messages/send-document`, payload, 120_000,
+        `/sessions/${encodeURIComponent(id)}/messages/send-document`, payload, 120_000, prepared.maxBytes,
       )
     }
 

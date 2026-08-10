@@ -14,6 +14,8 @@ export async function POST(request: NextRequest) {
   const body = await request.json().catch(() => ({}))
   const workerId = String(body.workerId || 'angelcare-worker')
   const limit = Math.max(1, Math.min(Number(body.limit || 25), 100))
+  const legacyRetryCutoffHours = Math.max(1, Math.min(168, Number(process.env.AC_WHATSAPP_WORKER_LEGACY_RETRY_CUTOFF_HOURS || 6)))
+  const legacyRetryCutoffMs = legacyRetryCutoffHours * 60 * 60 * 1000
   await supabase.rpc('ac_whatsapp_release_stale_outbox', { p_age_minutes: 10 })
   const claimed = await supabase.rpc('ac_whatsapp_claim_outbox', { p_worker_id: workerId, p_limit: limit })
   if (claimed.error) return fail(claimed.error.message, 500)
@@ -22,6 +24,31 @@ export async function POST(request: NextRequest) {
   for (const item of claimed.data || []) {
     const account = await supabase.from('ac_whatsapp_accounts').select('*').eq('id', item.account_id).maybeSingle()
     const startedAt = new Date().toISOString()
+
+    // A timeout is ambiguous: WhatsApp may have accepted the media even when the HTTP response
+    // never reached Next.js. Never auto-replay stale historical media days later and risk a
+    // surprise duplicate. Direct-send failures start at attempt_count=1; the claim RPC increments
+    // them to >1. Only retry those automatically while they are still inside the bounded window.
+    const createdAtMs = Date.parse(String(item.created_at || ''))
+    const isLegacyMediaRetry = Boolean(
+      item.media_payload
+      && Number(item.attempt_count || 0) > 1
+      && Number.isFinite(createdAtMs)
+      && Date.now() - createdAtMs > legacyRetryCutoffMs
+    )
+    if (isLegacyMediaRetry) {
+      const reason = 'LEGACY_MEDIA_RETRY_REQUIRES_REVIEW'
+      const completedAt = new Date().toISOString()
+      await Promise.all([
+        supabase.from('ac_whatsapp_outbox').update({ status: 'failed', locked_at: null, locked_by: null, last_error: reason }).eq('id', item.id),
+        supabase.from('ac_whatsapp_outbox_attempts').insert({ outbox_id: item.id, attempt_number: item.attempt_count, request_payload: { chatId: item.chat_id, type: item.message_type, hasMedia: true, legacyRetryCutoffHours }, status: 'failed', error_message: reason, started_at: startedAt, completed_at: completedAt }),
+        item.conversation_id ? supabase.from('ac_whatsapp_messages').update({ status: 'failed', error_message: reason }).eq('client_message_id', item.client_message_id) : Promise.resolve(),
+        item.campaign_recipient_id ? supabase.from('ac_whatsapp_campaign_recipients').update({ status: 'failed', failure_reason: reason }).eq('id', item.campaign_recipient_id) : Promise.resolve(),
+      ])
+      results.push({ id: item.id, status: 'failed', error: reason, legacyReviewRequired: true })
+      continue
+    }
+
     try {
       if (!account.data?.openwa_session_id) throw new Error('ACCOUNT_SESSION_NOT_CONFIGURED')
       if (account.data.outbound_enabled === false) throw new Error('ACCOUNT_OUTBOUND_PAUSED')
