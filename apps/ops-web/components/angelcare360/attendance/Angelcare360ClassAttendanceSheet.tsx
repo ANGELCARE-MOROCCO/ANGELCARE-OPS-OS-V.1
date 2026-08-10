@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useMemo, useState, useTransition } from 'react'
 import type { Angelcare360AttendanceSheetRecord, Angelcare360AttendanceSheetResponse } from '@/types/angelcare360/attendance'
 
@@ -41,6 +42,7 @@ export default function Angelcare360ClassAttendanceSheet({
   canUpdate,
   canApprove,
 }: Angelcare360ClassAttendanceSheetProps) {
+  const router = useRouter()
   const [drafts, setDrafts] = useState<Record<string, DraftRecord>>(() => {
     const initial: Record<string, DraftRecord> = {}
     for (const record of sheet.students) {
@@ -99,7 +101,7 @@ export default function Angelcare360ClassAttendanceSheet({
           throw new Error(result?.error || 'La sauvegarde de la ligne a échoué.')
         }
         setFeedback(result.warning || 'Présence enregistrée avec succès.')
-        globalThis.setTimeout(() => globalThis.location?.reload(), 220)
+        router.refresh()
       } catch (error) {
         setFeedback(error instanceof Error ? error.message : 'Une erreur est survenue.')
       }
@@ -144,7 +146,7 @@ export default function Angelcare360ClassAttendanceSheet({
           throw new Error(result?.error || 'La sauvegarde du lot a échoué.')
         }
         setFeedback(result.warning || 'Lot de présences enregistré avec succès.')
-        globalThis.setTimeout(() => globalThis.location?.reload(), 220)
+        router.refresh()
       } catch (error) {
         setFeedback(error instanceof Error ? error.message : 'Une erreur est survenue.')
       }

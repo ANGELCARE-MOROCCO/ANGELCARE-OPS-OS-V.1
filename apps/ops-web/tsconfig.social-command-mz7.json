@@ -1,0 +1,25 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {"noEmit": true, "incremental": false, "skipLibCheck": true},
+  "include": [
+    "next-env.d.ts",
+    "lib/social-command/db.ts",
+    "lib/social-command/auth.ts",
+    "lib/social-command/meta.ts",
+    "lib/social-command/repository.ts",
+    "lib/social-command/types.ts",
+    "lib/social-command/engagement.ts",
+    "lib/social-command/instagram-webhook.ts",
+    "lib/social-command/instagram-engagement-mz6.ts",
+    "lib/social-command/relationship-mz7.ts",
+    "lib/social-command/mz7-authz.ts",
+    "lib/social-command/facebook-mz7.ts",
+    "lib/social-command/facebook-webhook-mz7.ts",
+    "lib/social-command/history-sync-mz7.ts",
+    "lib/social-command/engagement-mz7.ts",
+    "app/api/social-command/mz7/[...segments]/route.ts",
+    "app/(protected)/social-command/_components/EngagementCommandMZ7.tsx",
+    "app/(protected)/social-command/_components/FacebookOperationsMZ7.tsx",
+    "app/(protected)/social-command/_components/SocialCommandClient.tsx"
+  ]
+}

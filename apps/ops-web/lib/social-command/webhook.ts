@@ -1,3 +1,4 @@
+import { processFacebookMetaWebhookPayloadMZ7 } from "@/lib/social-command/facebook-webhook-mz7"
 import crypto from "node:crypto"
 import { cleanString, jsonObject, nowIso, socialDb } from "@/lib/social-command/db"
 import { storedMetaWebhookSubscriptionSnapshot } from "@/lib/social-command/meta"
@@ -305,7 +306,7 @@ async function normalizeMetaDomainPayload(payload: Record<string, unknown>) {
   return { normalized, kind, kinds: [...kinds] }
 }
 
-export async function processMetaWebhookPayload(payload: Record<string, unknown>, rawBody: string, signature?: WebhookSignatureCheck): Promise<WebhookProcessResult> {
+async function processMetaWebhookPayloadBeforeMZ7(payload: Record<string, unknown>, rawBody: string, signature?: WebhookSignatureCheck): Promise<WebhookProcessResult> {
   const db = await socialDb()
   const receivedAt = nowIso()
   const eventKey = stableEventKey(payload)
@@ -465,4 +466,15 @@ export async function webhookHealth() {
     subscriptions: Object.keys(subscriptionSnapshot).length ? subscriptionSnapshot : { state: "not_inspected", expectedFields: [], subscribedFields: [], missingFields: [] },
     replayableEvents: (failedEvents || []).map((row: any) => ({ id: row.id, eventType: row.event_type, error: row.error_message || null, receivedAt: row.received_at })),
   }
+}
+
+// SOCIAL_COMMAND_MZ7_FACEBOOK_WEBHOOK_WRAPPER
+// Facebook Page payloads are handled by the MZ7 provider processor. Every
+// non-Facebook payload is delegated byte-for-byte to the pre-MZ7 hardened
+// processor above. No dependency on its internal variable names or loop shape.
+export async function processMetaWebhookPayload(payload: Record<string, unknown>, rawBody: string) {
+  if (String(payload.object || "").trim().toLowerCase() === "page") {
+    return processFacebookMetaWebhookPayloadMZ7(payload, rawBody)
+  }
+  return processMetaWebhookPayloadBeforeMZ7(payload, rawBody)
 }
