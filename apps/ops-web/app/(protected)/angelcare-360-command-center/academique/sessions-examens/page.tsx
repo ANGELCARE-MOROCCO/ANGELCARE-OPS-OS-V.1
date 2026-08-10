@@ -1,7 +1,6 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import Angelcare360AcademicPageShell from '@/components/angelcare360/academics/Angelcare360AcademicPageShell'
-import AcademicZoneAR3Experience from '@/components/angelcare360/zone-a-academic/AcademicZoneAR3Experience'
 import { ANGELCARE360_ACADEMICS_NAVIGATION } from '@/data/angelcare360/academics-navigation'
 import { getAngelcare360AccessContext } from '@/lib/angelcare360/server'
 import { createAngelcare360ExamSession, listAngelcare360ExamSessions, listAngelcare360Exams } from '@/lib/angelcare360/server/academics'
@@ -46,20 +45,6 @@ export default async function Angelcare360SessionsExamensPage() {
       subtitle="Créneaux, salles et surveillance des sessions d’examens avec statut serveur."
       badge="Académique"
       statusLabel={`${sessions.length} session(s)`}
-      experience={<AcademicZoneAR3Experience
-        variant="assessment-sessions"
-        eyebrow="Assessment Operations Airspace"
-        title="Créneaux, salles et surveillance"
-        description="Les sessions sont lues comme une chronologie opérationnelle, sans inventer de ressources absentes du référentiel."
-        metrics={[
-          { label: 'Sessions', value: sessions.length, tone: 'purple' },
-          { label: 'Ouvertes', value: sessions.filter((item) => item.status === 'open').length, tone: 'cyan' },
-          { label: 'Clôturées', value: sessions.filter((item) => item.status === 'closed').length, tone: 'green' },
-          { label: 'Sans salle', value: sessions.filter((item) => !item.room).length, tone: 'amber' },
-        ]}
-        items={sessions.map((session) => ({ id: session.id, title: session.exam_title || 'Évaluation', meta: `${session.starts_at || 'Début à fixer'} → ${session.ends_at || 'Fin à fixer'}`, secondary: `${session.room || 'Salle non renseignée'} · ${session.invigilator_full_name || 'Surveillance non affectée'}`, status: session.status, attention: !session.room || !session.starts_at }))}
-        emptyLabel="Aucune session d’évaluation n’est encore planifiée."
-      />}
       navigationItems={ANGELCARE360_ACADEMICS_NAVIGATION}
     >
       <section style={panelStyle}>
@@ -78,7 +63,7 @@ export default async function Angelcare360SessionsExamensPage() {
             <Input name="room" placeholder="Salle" />
             <Input name="startsAt" type="datetime-local" />
             <Input name="endsAt" type="datetime-local" />
-            <Select name="invigilatorStaffId" defaultValue=""><option value="">Surveillant non renseigné</option>{teachers.map((item) => <option key={item.id} value={item.staff_id}>{relatedLabel(item.staff) || 'Enseignant non résolu'}</option>)}</Select>
+            <Select name="invigilatorStaffId" defaultValue=""><option value="">Surveillant non renseigné</option>{teachers.map((item) => <option key={item.id} value={item.staff_id}>{relatedLabel(item.staff) || item.staff_id}</option>)}</Select>
             <Select name="status" defaultValue="planned">
               <option value="planned">Planifiée</option>
               <option value="scheduled">Planifiée</option>
@@ -106,7 +91,7 @@ export default async function Angelcare360SessionsExamensPage() {
             {sessions.map((session) => (
               <article key={session.id} style={rowStyle}>
                 <div style={rowMainStyle}>
-                  <div style={rowTitleStyle}>{session.exam_title || session.exam_code || 'Évaluation'}</div>
+                  <div style={rowTitleStyle}>{session.exam_title || session.exam_code || session.exam_id}</div>
                   <div style={rowMetaStyle}>{session.session_code} · {session.room || 'Sans salle'}</div>
                   <div style={rowMetaStyle}>{session.starts_at || 'Début non fixé'} → {session.ends_at || 'Fin non fixée'}</div>
                 </div>

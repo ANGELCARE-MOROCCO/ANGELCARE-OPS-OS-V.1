@@ -1,5 +1,0 @@
-import { NextResponse } from 'next/server'
-import { assertFlashcardsApiAccess } from '@/lib/flashcards-os/server/access'
-import { actorFromUser } from '@/lib/flashcards-os/catalogue-composer/repository'
-import { publishDirectCollection } from '@/lib/flashcards-os/catalogue-composer/commercial-control'
-export async function POST(request:Request,{params}:{params:Promise<{collectionId:string}>}){const body=await request.json();const universe=body.universe==='b2b'?'b2b':'b2c';const access=await assertFlashcardsApiAccess(universe==='b2b'?'flashcards_os.publish_b2b_sellables':'flashcards_os.publish_b2c_sellables');if(!access.ok)return NextResponse.json({error:access.message},{status:access.status});try{const {collectionId}=await params;return NextResponse.json(await publishDirectCollection({collectionId:decodeURIComponent(collectionId),universe},actorFromUser(access.user)),{status:201})}catch(error){return NextResponse.json({error:error instanceof Error?error.message:'Publication impossible.'},{status:400})}}

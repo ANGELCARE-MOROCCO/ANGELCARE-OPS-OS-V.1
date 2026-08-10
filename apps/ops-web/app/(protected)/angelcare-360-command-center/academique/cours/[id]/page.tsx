@@ -2,7 +2,6 @@ import Link from 'next/link'
 import { revalidatePath } from 'next/cache'
 import { notFound, redirect } from 'next/navigation'
 import Angelcare360AcademicPageShell from '@/components/angelcare360/academics/Angelcare360AcademicPageShell'
-import AcademicZoneAR3Experience from '@/components/angelcare360/zone-a-academic/AcademicZoneAR3Experience'
 import { ANGELCARE360_ACADEMICS_NAVIGATION } from '@/data/angelcare360/academics-navigation'
 import { getAngelcare360AccessContext } from '@/lib/angelcare360/server'
 import { getAngelcare360LessonById, updateAngelcare360Lesson } from '@/lib/angelcare360/server/academics'
@@ -64,31 +63,13 @@ export default async function Angelcare360LessonDetailPage({ params }: PageProps
       subtitle="Détail du cours, contexte académique et mise à jour serveur validée."
       badge="Cours"
       statusLabel={lesson.status}
-      experience={<AcademicZoneAR3Experience
-        variant="lesson-detail"
-        eyebrow="Lesson Dossier"
-        title={lesson.topic}
-        description="Objectif, progression, travail lié et état de livraison restent visibles avant toute modification."
-        metrics={[
-          { label: 'Date', value: lesson.lesson_date, tone: 'indigo' },
-          { label: 'Classe', value: lesson.class_name || 'Non résolue', tone: 'cyan' },
-          { label: 'Matière', value: lesson.subject_name || 'Non résolue', tone: 'teal' },
-          { label: 'État', value: lesson.status, tone: lesson.status === 'completed' ? 'green' : 'amber' },
-        ]}
-        items={[
-          { id: 'objective', title: 'Objectif pédagogique', meta: lesson.objectives || 'Objectif à compléter', status: lesson.objectives ? 'Renseigné' : 'À compléter', attention: !lesson.objectives },
-          { id: 'homework', title: 'Travail lié', meta: lesson.homework_summary || 'Aucun travail associé', status: lesson.homework_summary ? 'Prévu' : 'Libre' },
-          { id: 'teacher', title: 'Responsabilité pédagogique', meta: lesson.staff_full_name || 'Enseignant non affecté', status: lesson.staff_full_name ? 'Affecté' : 'À vérifier', attention: !lesson.staff_full_name },
-          { id: 'progression', title: 'Progression', meta: 'Ouvrir le Learning Flow pour replacer cette séance dans le programme.', status: 'Contexte', href: '/angelcare-360-command-center/academique?plane=progression' },
-        ]}
-      />}
       navigationItems={ANGELCARE360_ACADEMICS_NAVIGATION}
       primaryAction={<Link href="/angelcare-360-command-center/academique/cours" style={secondaryLinkStyle}>Retour</Link>}
       contextRow={
         <>
-          <Badge label={lesson.academic_year_label || 'Année scolaire non résolue'} />
-          <Badge label={lesson.class_name || 'Classe non résolue'} />
-          <Badge label={lesson.subject_name || 'Matière non résolue'} />
+          <Badge label={lesson.academic_year_label || lesson.academic_year_id} />
+          <Badge label={lesson.class_name || lesson.class_id} />
+          <Badge label={lesson.subject_name || lesson.subject_id} />
           <Badge label={lesson.staff_full_name || 'Aucun enseignant'} />
         </>
       }
@@ -105,7 +86,7 @@ export default async function Angelcare360LessonDetailPage({ params }: PageProps
         <div style={summaryGridStyle}>
           <Summary label="Objectifs" value={lesson.objectives || 'Non renseignés'} />
           <Summary label="Travail à faire" value={lesson.homework_summary || 'Aucun'} />
-          <Summary label="Historique" value={`Créé pour ${lesson.class_name || 'Classe non résolue'}`} />
+          <Summary label="Historique" value={`Créé pour ${lesson.class_name || lesson.class_id}`} />
         </div>
       </section>
 
@@ -127,7 +108,7 @@ export default async function Angelcare360LessonDetailPage({ params }: PageProps
             <Select name="subjectId" defaultValue={lesson.subject_id}>{subjects.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</Select>
             <Select name="staffId" defaultValue={lesson.staff_id || ''}>
               <option value="">Enseignant non renseigné</option>
-              {assignments.map((assignment) => <option key={assignment.id} value={assignment.staff_id}>{relatedLabel(assignment.staff) || 'Enseignant non résolu'}</option>)}
+              {assignments.map((assignment) => <option key={assignment.id} value={assignment.staff_id}>{relatedLabel(assignment.staff) || assignment.staff_id}</option>)}
             </Select>
             <Input name="lessonDate" type="date" defaultValue={lesson.lesson_date} />
             <Input name="title" defaultValue={lesson.topic} />

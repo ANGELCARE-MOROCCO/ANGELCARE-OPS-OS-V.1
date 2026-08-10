@@ -2,7 +2,6 @@ import Link from 'next/link'
 import { revalidatePath } from 'next/cache'
 import { notFound, redirect } from 'next/navigation'
 import Angelcare360AcademicPageShell from '@/components/angelcare360/academics/Angelcare360AcademicPageShell'
-import AcademicZoneAR3Experience from '@/components/angelcare360/zone-a-academic/AcademicZoneAR3Experience'
 import { ANGELCARE360_ACADEMICS_NAVIGATION } from '@/data/angelcare360/academics-navigation'
 import { getAngelcare360AccessContext } from '@/lib/angelcare360/server'
 import { changeAngelcare360ExamStatus, getAngelcare360ExamById, updateAngelcare360Exam } from '@/lib/angelcare360/server/academics'
@@ -80,30 +79,12 @@ export default async function Angelcare360ExamDetailPage({ params }: PageProps) 
       subtitle="Détail de l’examen, sessions associées et opération serveur contrôlée."
       badge="Examen"
       statusLabel={exam.status}
-      experience={<AcademicZoneAR3Experience
-        variant="assessment-detail"
-        eyebrow="Assessment Control Dossier"
-        title={exam.title}
-        description="Planning, couverture, sessions, barème et état de correction restent visibles dans le dossier de contrôle."
-        metrics={[
-          { label: 'Date', value: exam.scheduled_on, tone: 'purple' },
-          { label: 'Durée', value: exam.duration_minutes ? `${exam.duration_minutes} min` : 'Non fixée', tone: 'indigo' },
-          { label: 'Barème', value: exam.max_score ?? '—', tone: 'cyan' },
-          { label: 'État', value: exam.status, tone: ['completed','graded'].includes(String(exam.status)) ? 'green' : 'amber' },
-        ]}
-        items={[
-          { id: 'class', title: 'Classe', meta: exam.class_name || 'Classe non résolue', status: 'Contexte' },
-          { id: 'subject', title: 'Matière', meta: exam.subject_name || 'Matière non résolue', status: 'Contexte' },
-          { id: 'sessions', title: 'Sessions', meta: `${detail.sessions.length} session(s) reliée(s)`, status: detail.sessions.length ? 'Planifiées' : 'À planifier', attention: !detail.sessions.length, href: `/angelcare-360-command-center/academique/sessions-examens?examId=${exam.id}` },
-          { id: 'marks', title: 'Notes', meta: `${detail.marks.length} note(s) enregistrée(s)`, status: detail.marks.length ? 'Disponibles' : 'À saisir', attention: ['completed','closed'].includes(String(exam.status)) && !detail.marks.length, href: `/angelcare-360-command-center/academique/notes?examId=${exam.id}&classId=${exam.class_id}&subjectId=${exam.subject_id}` },
-        ]}
-      />}
       navigationItems={ANGELCARE360_ACADEMICS_NAVIGATION}
       primaryAction={<Link href="/angelcare-360-command-center/academique/examens" style={secondaryLinkStyle}>Retour</Link>}
       contextRow={
         <>
-          <Badge label={exam.class_name || 'Classe non résolue'} />
-          <Badge label={exam.subject_name || 'Matière non résolue'} />
+          <Badge label={exam.class_name || exam.class_id} />
+          <Badge label={exam.subject_name || exam.subject_id} />
           <Badge label={`${detail.sessionCount} session(s)`} />
           <Badge label={`${detail.markCount} note(s)`} />
         </>
@@ -140,7 +121,7 @@ export default async function Angelcare360ExamDetailPage({ params }: PageProps) 
             <Select name="classId" defaultValue={exam.class_id}>{classes.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</Select>
             <Select name="sectionId" defaultValue={exam.section_id || ''}><option value="">Aucune section</option>{sections.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</Select>
             <Select name="subjectId" defaultValue={exam.subject_id}>{subjects.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</Select>
-            <Select name="staffId" defaultValue=""><option value="">Surveillant non renseigné</option>{teachers.map((item) => <option key={item.id} value={item.staff_id}>{relatedLabel(item.staff) || 'Enseignant non résolu'}</option>)}</Select>
+            <Select name="staffId" defaultValue=""><option value="">Surveillant non renseigné</option>{teachers.map((item) => <option key={item.id} value={item.staff_id}>{relatedLabel(item.staff) || item.staff_id}</option>)}</Select>
             <Input name="examCode" defaultValue={exam.exam_code} />
             <Input name="title" defaultValue={exam.title} />
             <Input name="examType" defaultValue={exam.exam_type} />

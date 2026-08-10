@@ -1,11 +1,9 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import Angelcare360AcademicPageShell from '@/components/angelcare360/academics/Angelcare360AcademicPageShell'
-import AcademicZoneAR3Experience from '@/components/angelcare360/zone-a-academic/AcademicZoneAR3Experience'
-import StudentAcademicQuickPeek from '@/components/angelcare360/zone-a-academic/StudentAcademicQuickPeek'
 import { ANGELCARE360_ACADEMICS_NAVIGATION } from '@/data/angelcare360/academics-navigation'
 import { getAngelcare360AccessContext } from '@/lib/angelcare360/server'
-import { bulkUpdateAngelcare360Marks, listAngelcare360Assignments, listAngelcare360Exams, listAngelcare360MarksEntrySheet, updateAngelcare360Mark } from '@/lib/angelcare360/server/academics'
+import { bulkUpdateAngelcare360Marks, listAngelcare360MarksEntrySheet, updateAngelcare360Mark } from '@/lib/angelcare360/server/academics'
 import { listAngelcare360AcademicYears, listAngelcare360Classes } from '@/lib/angelcare360/server/queries'
 import { listAngelcare360Sections, listAngelcare360Subjects } from '@/lib/angelcare360/server/administration'
 import { formGridStyle, optionValue, numberValue } from '../_utils'
@@ -77,14 +75,12 @@ export default async function Angelcare360NotesPage({ searchParams }: { searchPa
   const examId = optionValue(searchParams?.examId as FormDataEntryValue | null)
   const assignmentId = optionValue(searchParams?.assignmentId as FormDataEntryValue | null)
 
-  const [sheet, years, classes, sections, subjects, exams, assignments] = await Promise.all([
+  const [sheet, years, classes, sections, subjects] = await Promise.all([
     classId ? listAngelcare360MarksEntrySheet({ schoolId: context.school.id, academicYearId: academicYearId || null, classId, sectionId, subjectId, examId, assignmentId }) : Promise.resolve({ students: [], marks: [], context: null }),
     listAngelcare360AcademicYears(context.school.id),
     listAngelcare360Classes(context.school.id, academicYearId || context.academicYear?.id || null),
     listAngelcare360Sections(context.school.id, academicYearId || context.academicYear?.id || null),
     listAngelcare360Subjects(context.school.id),
-    listAngelcare360Exams({ schoolId: context.school.id, academicYearId: academicYearId || null, classId, sectionId, subjectId }),
-    listAngelcare360Assignments({ schoolId: context.school.id, academicYearId: academicYearId || null, classId, sectionId, subjectId }),
   ])
 
   return (
@@ -93,26 +89,12 @@ export default async function Angelcare360NotesPage({ searchParams }: { searchPa
       subtitle="Espace de saisie des notes avec contrôle de plage, état explicite et opération serveur."
       badge="Académique"
       statusLabel={classId ? `${sheet.students.length} élève(s)` : 'Sélection requise'}
-      experience={<AcademicZoneAR3Experience
-        variant="gradebook"
-        eyebrow="Mastery & Grade Matrix"
-        title="Résultats et état de saisie"
-        description="La matrice met en évidence les notes disponibles, les états en attente et l’impact sur la consolidation."
-        metrics={[
-          { label: 'Élèves', value: sheet.students.length, tone: 'teal' },
-          { label: 'Notes saisies', value: sheet.students.filter((entry) => entry.mark?.score != null).length, tone: 'green' },
-          { label: 'En attente', value: sheet.students.filter((entry) => entry.mark?.score == null || entry.mark?.mark_state === 'pending').length, tone: 'amber' },
-          { label: 'Sélection', value: classId ? 'Classe ouverte' : 'À choisir', tone: classId ? 'cyan' : 'graphite' },
-        ]}
-        items={sheet.students.map(({ enrollment, mark }) => ({ id: String(enrollment.student_id), title: String(mark?.student_full_name || 'Élève'), meta: String(mark?.assessment_type || 'Évaluation'), status: String(mark?.mark_state || 'pending'), value: mark?.score ?? null, maxValue: mark?.max_score ?? 20, attention: mark?.score == null || mark?.mark_state === 'pending' }))}
-        emptyLabel={classId ? 'Aucun élève n’est rattaché à cette sélection.' : 'Sélectionnez une classe pour ouvrir la matrice.'}
-      />}
       navigationItems={ANGELCARE360_ACADEMICS_NAVIGATION}
       contextRow={
         <>
           <Badge label={`Année: ${years.find((year) => year.id === academicYearId)?.label || context.academicYear?.label || 'Non résolue'}`} />
-          <Badge label={`Classe: ${classes.find((item) => item.id === classId)?.name || 'Aucune'}`} />
-          <Badge label={`Matière: ${subjects.find((item) => item.id === subjectId)?.name || 'Aucune'}`} />
+          <Badge label={`Classe: ${classId || 'Aucune'}`} />
+          <Badge label={`Matière: ${subjectId || 'Aucune'}`} />
         </>
       }
     >
@@ -128,8 +110,8 @@ export default async function Angelcare360NotesPage({ searchParams }: { searchPa
           <Select name="classId" defaultValue={classId || ''}><option value="">Sélectionner une classe</option>{classes.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</Select>
           <Select name="sectionId" defaultValue={sectionId || ''}><option value="">Toutes les sections</option>{sections.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</Select>
           <Select name="subjectId" defaultValue={subjectId || ''}><option value="">Sélectionner une matière</option>{subjects.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</Select>
-          <Select name="examId" defaultValue={examId || ''}><option value="">Toutes les évaluations</option>{exams.map((item) => <option key={item.id} value={item.id}>{item.title || item.exam_code || 'Évaluation'}</option>)}</Select>
-          <Select name="assignmentId" defaultValue={assignmentId || ''}><option value="">Tous les devoirs</option>{assignments.map((item) => <option key={item.id} value={item.id}>{item.title || item.assignment_code || 'Devoir'}</option>)}</Select>
+          <Input name="examId" placeholder="ID examen" defaultValue={examId || ''} />
+          <Input name="assignmentId" placeholder="ID devoir" defaultValue={assignmentId || ''} />
           <button type="submit" style={primaryButtonStyle}>Ouvrir la feuille</button>
         </form>
       </section>
@@ -157,8 +139,8 @@ export default async function Angelcare360NotesPage({ searchParams }: { searchPa
                   <input type="hidden" name="assignmentId" value={assignmentId || ''} />
                   <input type="hidden" name="recordedByStaffId" value="" />
                   <div style={rowMainStyle}>
-                    <div style={rowTitleStyle}>{mark?.student_full_name || 'Élève'}</div>
-                    <div style={rowMetaStyle}>{mark?.student_code || 'Référence élève non renseignée'}</div>
+                    <div style={rowTitleStyle}>{mark?.student_full_name || enrollment.student_id}</div>
+                    <div style={rowMetaStyle}>{mark?.student_code || enrollment.student_id}</div>
                   </div>
                   <div style={rowActionsStyle}>
                     <Input name="assessmentType" defaultValue={mark?.assessment_type || 'Contrôle'} />
@@ -171,14 +153,6 @@ export default async function Angelcare360NotesPage({ searchParams }: { searchPa
                       <option value="pending">En attente</option>
                     </Select>
                     <Input name="grade" defaultValue={mark?.grade || ''} placeholder="Mention" />
-                    <StudentAcademicQuickPeek
-                      studentId={String(enrollment.student_id)}
-                      name={String(mark?.student_full_name || 'Élève')}
-                      code={String(mark?.student_code || 'Référence non renseignée')}
-                      score={mark?.score ?? null}
-                      maxScore={mark?.max_score ?? null}
-                      state={String(mark?.mark_state || 'pending')}
-                    />
                     <button type="submit" style={primaryButtonStyle}>Enregistrer</button>
                   </div>
                 </form>

@@ -26,13 +26,8 @@ export type CatalogueCollectionCandidate = {
   painPointKeys: string[]
   outcomeKeys: string[]
   description: string
-  historicalPriceDh: number | null
   priceDh: number | null
   unitCostDh: number | null
-  minimumQuantity: number
-  taxPercent: number
-  volumeTiers: Array<Record<string, unknown>>
-  commercialAuthority: 'confirmed' | 'historical_seed' | 'unconfigured'
   commercialStatus: 'active' | 'draft' | 'missing_price' | 'inactive'
   warnings: string[]
 }

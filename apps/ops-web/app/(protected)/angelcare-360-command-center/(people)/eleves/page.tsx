@@ -1,24 +1,24 @@
 import { redirect } from 'next/navigation'
 import Angelcare360ErrorState from '@/components/angelcare360/states/Angelcare360ErrorState'
-import Student360Area10Command from '@/components/angelcare360/student360-area10/Student360Area10Command'
-import { getAngelcare360AccessContext } from '@/lib/angelcare360/server/context'
-import { loadAngelcare360Area10StudentCommand } from '@/lib/angelcare360/server/student360-area10'
+import Angelcare360StudentsOverview from '@/components/angelcare360/people/Angelcare360StudentsOverview'
+import { getAngelcare360AccessContext, listAngelcare360Classes } from '@/lib/angelcare360/server'
+import { listAngelcare360Sections } from '@/lib/angelcare360/server/administration'
+import { listAngelcare360Students } from '@/lib/angelcare360/server/people'
+import { getAngelcare360StudentsOverviewData } from '@/lib/angelcare360/server/students-overview'
+import {
+  createClassOptions,
+  createSectionOptions,
+  createStudentPeopleConfig,
+} from '@/data/angelcare360/people-pages'
+import type { Angelcare360StudentListRecord } from '@/types/angelcare360/people'
 
 export const dynamic = 'force-dynamic'
 
-type PageProps = {
-  searchParams?: Promise<Record<string, string | string[] | undefined>>
-}
-
-function first(value: string | string[] | undefined) {
-  return Array.isArray(value) ? value[0] : value
-}
-
-export default async function Angelcare360StudentsPage({ searchParams }: PageProps) {
+export default async function Angelcare360StudentsPage() {
   const context = await getAngelcare360AccessContext()
   if (!context?.school) redirect('/angelcare-360-command-center')
 
-  if (!context.access.canSeePeopleData && !context.permissions.has('eleves.view') && !context.permissions.has('angelcare360.people.view') && context.access.accessLevel !== 'super_admin') {
+  if (!context.access.canSeePeopleData && !context.permissions.has('eleves.view') && context.access.accessLevel !== 'super_admin') {
     return (
       <Angelcare360ErrorState
         title="Accès aux élèves verrouillé"
@@ -29,11 +29,41 @@ export default async function Angelcare360StudentsPage({ searchParams }: PagePro
     )
   }
 
-  const params = searchParams ? await searchParams : {}
-  const data = await loadAngelcare360Area10StudentCommand({
-    view: first(params.view),
-    studentId: first(params.student),
+  const [rows, classRows, sectionRows] = await Promise.all([
+    listAngelcare360Students({ schoolId: context.school.id, academicYearId: context.academicYear?.id || null }),
+    listAngelcare360Classes(context.school.id, context.academicYear?.id || null),
+    listAngelcare360Sections(context.school.id, context.academicYear?.id || null),
+  ])
+
+  const typedRows = rows as unknown as Angelcare360StudentListRecord[]
+  const overview = await getAngelcare360StudentsOverviewData({
+    schoolId: context.school.id,
+    students: typedRows,
   })
 
-  return <Student360Area10Command initialData={data}/>
+  const config = createStudentPeopleConfig({
+    schoolId: context.school.id,
+    academicYearId: context.academicYear?.id || null,
+    classOptions: createClassOptions(classRows as unknown as Array<Record<string, unknown>>),
+    sectionOptions: createSectionOptions(sectionRows as unknown as Array<Record<string, unknown>>),
+    classRows: classRows as unknown as Array<Record<string, unknown>>,
+    sectionRows: sectionRows as unknown as Array<Record<string, unknown>>,
+  })
+
+  const canCreate = context.access.accessLevel === 'super_admin' || context.permissions.has('eleves.create')
+  const canUpdate = context.access.accessLevel === 'super_admin' || context.permissions.has('eleves.update')
+
+  return (
+    <Angelcare360StudentsOverview
+      config={config}
+      rows={typedRows as unknown as Array<Record<string, unknown>>}
+      overview={overview}
+      schoolName={context.school.name}
+      academicYearLabel={context.academicYear?.label || 'Année scolaire à configurer'}
+      canCreate={canCreate}
+      canUpdate={canUpdate}
+      createDisabledReason="La création d’un élève est réservée aux rôles autorisés."
+      updateDisabledReason="La modification d’un élève est réservée aux rôles autorisés."
+    />
+  )
 }

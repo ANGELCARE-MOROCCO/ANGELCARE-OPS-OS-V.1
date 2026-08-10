@@ -2,7 +2,6 @@ import { NextResponse } from "next/server"
 import { createEmailOSCoreDb } from "@/lib/email-os-core/db"
 import { makeEmailOSId, nowIso } from "@/lib/email-os-core/schema"
 import { sendEmailOSDirect } from "@/lib/email-os-core/send-mail"
-import { loadComposeAttachments } from "@/lib/email-os-core/compose-attachments"
 
 function clean(value: unknown) {
   return typeof value === "string" ? value.trim() : ""
@@ -90,11 +89,7 @@ export async function POST(request: Request) {
         const subject = clean(payload.subject) || "(Sans objet)"
         const messageHtml = clean(row.payload?.bodyHtml || row.payload?.body_html || payload.body_html || payload.body || payload.message)
         const messageText = clean(row.payload?.bodyText || row.payload?.body_text || payload.body_text || payload.text)
-        let attachments = normalizeAttachments(row.payload?.attachments || payload.attachments)
-        if (!attachments.length && outboxId && mailboxId) {
-          const persistedAttachments = await loadComposeAttachments({ db, mailboxId, outboxId })
-          attachments = normalizeAttachments(persistedAttachments)
-        }
+        const attachments = normalizeAttachments(row.payload?.attachments || payload.attachments)
         const trackingEnabled = row.payload?.tracking !== false && row.payload?.tracking !== "false" && payload.tracking_enabled !== false
         const trackingId = trackingEnabled ? clean(payload.tracking_id) || makeEmailOSId() : ""
         const sendHtml = trackingEnabled ? withTrackingPixel(messageHtml, absoluteBaseUrl(request), trackingId) : messageHtml

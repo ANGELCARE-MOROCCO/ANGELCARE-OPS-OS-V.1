@@ -1,11 +1,10 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import Angelcare360AcademicPageShell from '@/components/angelcare360/academics/Angelcare360AcademicPageShell'
-import AcademicZoneAR3Experience from '@/components/angelcare360/zone-a-academic/AcademicZoneAR3Experience'
 import { ANGELCARE360_ACADEMICS_NAVIGATION } from '@/data/angelcare360/academics-navigation'
 import { getAngelcare360AccessContext } from '@/lib/angelcare360/server'
 import { calculateAngelcare360Averages, getAngelcare360AverageReadiness } from '@/lib/angelcare360/server/academics'
-import { listAngelcare360AcademicYears, listAngelcare360Classes, listAngelcare360Students } from '@/lib/angelcare360/server/queries'
+import { listAngelcare360AcademicYears, listAngelcare360Classes } from '@/lib/angelcare360/server/queries'
 import { listAngelcare360Sections, listAngelcare360Subjects, listAngelcare360Terms } from '@/lib/angelcare360/server/administration'
 import { formGridStyle, optionValue } from '../_utils'
 
@@ -60,7 +59,7 @@ export default async function Angelcare360MoyennesPage({ searchParams }: { searc
   const studentId = optionValue(searchParams?.studentId as FormDataEntryValue | null)
   const subjectId = optionValue(searchParams?.subjectId as FormDataEntryValue | null)
 
-  const [readiness, years, classes, sections, terms, subjects, students] = await Promise.all([
+  const [readiness, years, classes, sections, terms, subjects] = await Promise.all([
     getAngelcare360AverageReadiness({
       schoolId: context.school.id,
       academicYearId: academicYearId || null,
@@ -75,7 +74,6 @@ export default async function Angelcare360MoyennesPage({ searchParams }: { searc
     listAngelcare360Sections(context.school.id, academicYearId || context.academicYear?.id || null),
     listAngelcare360Terms(context.school.id, academicYearId || context.academicYear?.id || null),
     listAngelcare360Subjects(context.school.id),
-    listAngelcare360Students(context.school.id),
   ])
 
   const record = readiness.ok ? readiness.record : null
@@ -86,25 +84,6 @@ export default async function Angelcare360MoyennesPage({ searchParams }: { searc
       subtitle="Préparation des calculs, contrôle de la formule et verrouillage si la formule pédagogique n’est pas validée."
       badge="Académique"
       statusLabel={record?.canCalculate ? 'Calcul prêt' : 'Verrouillé'}
-      experience={<AcademicZoneAR3Experience
-        variant="averages"
-        eyebrow="Consolidation Chamber"
-        title="Readiness des moyennes"
-        description="Le calcul officiel reste verrouillé tant que les prérequis réels ne sont pas satisfaits."
-        metrics={[
-          { label: 'État', value: record?.canCalculate ? 'Prêt' : 'Verrouillé', detail: record?.reason || 'Contrôle de readiness', tone: record?.canCalculate ? 'green' : 'amber' },
-          { label: 'Notes', value: record?.marksCount ?? 0, tone: 'teal' },
-          { label: 'Formule', value: record?.formulaReady ? 'Prête' : 'À configurer', tone: record?.formulaReady ? 'green' : 'coral' },
-          { label: 'Coefficients', value: record?.coefficientsReady ? 'Prêts' : 'À vérifier', tone: record?.coefficientsReady ? 'green' : 'amber' },
-        ]}
-        items={[
-          { id: 'period', title: 'Période', meta: record?.termSelected ? 'Période sélectionnée' : 'Sélectionnez une période', status: record?.termSelected ? 'Prête' : 'Bloquante', attention: !record?.termSelected },
-          { id: 'class', title: 'Classe', meta: record?.classSelected ? 'Classe sélectionnée' : 'Sélectionnez une classe', status: record?.classSelected ? 'Prête' : 'Bloquante', attention: !record?.classSelected },
-          { id: 'student', title: 'Élève', meta: record?.studentSelected ? 'Élève sélectionné' : 'Sélection élève requise par le calcul', status: record?.studentSelected ? 'Prête' : 'À vérifier', attention: !record?.studentSelected },
-          { id: 'formula', title: 'Formule institutionnelle', meta: record?.formulaReady ? 'Formule disponible' : 'Formule absente ou non validée', status: record?.formulaReady ? 'Prête' : 'Bloquante', attention: !record?.formulaReady },
-        ]}
-        emptyLabel="Le calcul sera disponible lorsque les prérequis académiques seront réunis."
-      />}
       navigationItems={ANGELCARE360_ACADEMICS_NAVIGATION}
     >
       <section style={panelStyle}>
@@ -119,7 +98,7 @@ export default async function Angelcare360MoyennesPage({ searchParams }: { searc
           <Select name="termId" defaultValue={termId || ''}><option value="">Sélectionner une période</option>{terms.map((term) => <option key={term.id} value={term.id}>{term.label}</option>)}</Select>
           <Select name="classId" defaultValue={classId || ''}><option value="">Sélectionner une classe</option>{classes.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</Select>
           <Select name="sectionId" defaultValue={sectionId || ''}><option value="">Toutes les sections</option>{sections.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</Select>
-          <Select name="studentId" defaultValue={studentId || ''}><option value="">Tous les élèves</option>{students.map((item) => <option key={item.id} value={item.id}>{item.full_name || item.student_code || 'Élève'}</option>)}</Select>
+          <Input name="studentId" defaultValue={studentId || ''} placeholder="ID élève" />
           <Select name="subjectId" defaultValue={subjectId || ''}><option value="">Toutes les matières</option>{subjects.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</Select>
           <button type="submit" style={primaryButtonStyle}>Vérifier</button>
         </form>

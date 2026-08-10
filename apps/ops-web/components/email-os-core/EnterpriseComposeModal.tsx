@@ -123,31 +123,6 @@ type ComposeAttachment = {
   url?: string
 }
 
-function composeAttachmentsFromSeed(value: unknown): ComposeAttachment[] {
-  if (!Array.isArray(value)) return []
-  return value.map((item: any) => {
-    const sizeBytes = Number(item?.sizeBytes || item?.size_bytes || 0)
-    const fileId = clean(item?.fileId || item?.storageFileId || item?.storage_file_id)
-    const sourceValue = clean(item?.source).toLowerCase()
-    const source: ComposeAttachment["source"] = sourceValue === "drive" ? "drive" : sourceValue === "legacy" || sourceValue === "legacy_inline" ? "legacy" : "storage"
-    return {
-      id: clean(item?.id) || fileId || crypto.randomUUID(),
-      name: clean(item?.name || item?.filename || item?.original_filename) || "attachment",
-      size: clean(item?.size) || formatFileSize(sizeBytes),
-      sizeBytes,
-      source,
-      mimeType: clean(item?.mimeType || item?.contentType || item?.mime_type || item?.content_type) || "application/octet-stream",
-      contentBase64: clean(item?.contentBase64 || item?.content_base64) || undefined,
-      fileId: fileId || undefined,
-      storageBucket: clean(item?.storageBucket || item?.storage_bucket) || undefined,
-      storageKey: clean(item?.storageKey || item?.storage_key) || undefined,
-      storageStatus: clean(item?.storageStatus || item?.status) || undefined,
-      downloadUrl: clean(item?.downloadUrl) || (fileId ? `/api/storage/download/${encodeURIComponent(fileId)}` : undefined),
-      url: clean(item?.url) || undefined,
-    }
-  }).filter((item) => item.name && (item.fileId || item.contentBase64 || item.url))
-}
-
 type CompletionState = {
   type: "sent" | "draft" | "scheduled" | "error"
   title: string
@@ -453,48 +428,34 @@ function initialVariableValues(args: {
   return values
 }
 
+function fileToBase64(file: File) {
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onerror = () => reject(new Error(`Impossible de lire la pièce jointe : ${file.name}`))
+    reader.onload = () => {
+      const raw = String(reader.result || "")
+      resolve(raw.includes(",") ? raw.split(",").pop() || "" : raw)
+    }
+    reader.readAsDataURL(file)
+  })
+}
+
 async function uploadAttachmentToGateway(file: File, mailboxId: string, entityType: string) {
-  const ticketResponse = await fetch("/api/storage/upload-ticket", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      mailboxId,
-      moduleKey: "email_os",
-      entityType,
-      direction: "outbound",
-      filename: file.name,
-      contentType: file.type || "application/octet-stream",
-      sizeBytes: file.size
-    })
-  })
-  const ticketJson = await ticketResponse.json().catch(() => null)
-  if (!ticketResponse.ok || ticketJson?.ok === false || !ticketJson?.data?.uploadUrl || !ticketJson?.data?.ticket) {
-    return { ok: false, data: null, error: ticketJson?.error || `HTTP ${ticketResponse.status}` }
-  }
+  const formData = new FormData()
+  formData.append("file", file)
+  formData.append("moduleKey", "email_os")
+  formData.append("mailboxId", mailboxId)
+  formData.append("entityType", entityType)
+  formData.append("direction", "outbound")
+  formData.append("createdBy", "enterprise-compose-studio")
+  formData.append("metadata", JSON.stringify({ source: "enterprise-compose-studio" }))
 
-  const directResponse = await fetch(ticketJson.data.uploadUrl, {
-    method: "PUT",
-    headers: {
-      "Content-Type": file.type || "application/octet-stream",
-      "x-email-storage-ticket": ticketJson.data.ticket
-    },
-    body: file
-  })
-  const directJson = await directResponse.json().catch(() => null)
-  if (!directResponse.ok || directJson?.ok === false || !directJson?.data?.receipt) {
-    return { ok: false, data: null, error: directJson?.error || `HTTP ${directResponse.status}` }
-  }
-
-  const finalizeResponse = await fetch("/api/storage/upload-finalize", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ fileId: ticketJson.data.fileId, receipt: directJson.data.receipt })
-  })
-  const finalizeJson = await finalizeResponse.json().catch(() => null)
+  const res = await fetch("/api/storage/upload", { method: "POST", body: formData })
+  const json = await res.json().catch(() => null)
   return {
-    ok: finalizeResponse.ok && finalizeJson?.ok !== false,
-    data: finalizeJson?.data ?? finalizeJson,
-    error: finalizeJson?.error || (!finalizeResponse.ok ? `HTTP ${finalizeResponse.status}` : null)
+    ok: res.ok && json?.ok !== false,
+    data: json?.data ?? json,
+    error: json?.error || (!res.ok ? `HTTP ${res.status}` : null)
   }
 }
 
@@ -749,7 +710,7 @@ export default function EnterpriseComposeModal({
   const [recipientInput, setRecipientInput] = useState<string>(String(storedDraft?.recipientInput || ""))
   const [subject, setSubject] = useState<string>(storedDraft?.subject ?? initialSubjectValue())
   const [body, setBody] = useState<string>(storedDraft?.body ?? initialBodyValue())
-  const [attachments, setAttachments] = useState<ComposeAttachment[]>(Array.isArray(storedDraft?.attachments) ? storedDraft.attachments : composeAttachmentsFromSeed(selectedEmail?.attachments))
+  const [attachments, setAttachments] = useState<ComposeAttachment[]>(Array.isArray(storedDraft?.attachments) ? storedDraft.attachments : [])
   const [followUpEnabled, setFollowUpEnabled] = useState<boolean>(Boolean(storedDraft?.followUpEnabled))
   const [followUpDays, setFollowUpDays] = useState<number>(Number(storedDraft?.followUpDays || 3))
   const [assistantBusy, setAssistantBusy] = useState<boolean>(false)
@@ -777,7 +738,7 @@ export default function EnterpriseComposeModal({
     setTracking(stored?.tracking ?? initialTracking ?? true)
     setSourceTemplateId(stored?.sourceTemplateId || initialTemplateId || "")
     setSourceTemplateVersion(Number(stored?.sourceTemplateVersion || initialTemplateVersion || 0))
-    setAttachments(Array.isArray(stored?.attachments) ? stored.attachments : composeAttachmentsFromSeed(selectedEmail?.attachments))
+    setAttachments(Array.isArray(stored?.attachments) ? stored.attachments : [])
     setFollowUpEnabled(Boolean(stored?.followUpEnabled))
     setFollowUpDays(Number(stored?.followUpDays || 3))
     setScheduledDate(stored?.scheduledDate || "")
@@ -1052,35 +1013,42 @@ export default function EnterpriseComposeModal({
     setBusy(true)
     setStatus("Sécurisation des pièces jointes…")
 
-    let next: ComposeAttachment[]
-    try {
-      if (!mailboxId) throw new Error("Sélectionnez une identité d’envoi avant d’ajouter une pièce jointe")
-      next = await Promise.all(selected.map(async (file) => {
-        const mimeType = file.type || "application/octet-stream"
-        const id = `${Date.now()}-${Math.random().toString(36).slice(2)}`
-        const uploaded = await uploadAttachmentToGateway(file, mailboxId, mode === "reply" || mode === "forward" ? "reply_attachment" : "compose_attachment")
-        if (!uploaded.ok || !uploaded.data?.id) {
-          throw new Error(uploaded.error || `Échec du stockage sécurisé de ${file.name}`)
+    const next = await Promise.all(selected.map(async (file) => {
+      const mimeType = file.type || "application/octet-stream"
+      const id = `${Date.now()}-${Math.random().toString(36).slice(2)}`
+      if (mailboxId) {
+        try {
+          const uploaded = await uploadAttachmentToGateway(file, mailboxId, mode === "reply" || mode === "forward" ? "reply_attachment" : "compose_attachment")
+          if (uploaded.ok && uploaded.data?.id) {
+            return {
+              id,
+              name: uploaded.data.original_filename || file.name,
+              size: formatFileSize(file.size),
+              sizeBytes: file.size,
+              source: "storage" as const,
+              mimeType,
+              fileId: uploaded.data.id,
+              storageBucket: uploaded.data.storage_bucket,
+              storageKey: uploaded.data.storage_key,
+              storageStatus: uploaded.data.status || "active",
+              downloadUrl: `/api/storage/download/${uploaded.data.id}?mailboxId=${encodeURIComponent(mailboxId)}`
+            }
+          }
+        } catch {
+          // Fallback below.
         }
-        return {
-          id,
-          name: uploaded.data.original_filename || file.name,
-          size: formatFileSize(file.size),
-          sizeBytes: file.size,
-          source: "storage" as const,
-          mimeType,
-          fileId: uploaded.data.id,
-          storageBucket: uploaded.data.storage_bucket,
-          storageKey: uploaded.data.storage_key,
-          storageStatus: uploaded.data.status || "active",
-          downloadUrl: `/api/storage/download/${uploaded.data.id}?mailboxId=${encodeURIComponent(mailboxId)}`
-        }
-      }))
-    } catch (error) {
-      setBusy(false)
-      setStatus(error instanceof Error ? error.message : "La sécurisation de la pièce jointe a échoué")
-      return
-    }
+      }
+
+      return {
+        id,
+        name: file.name,
+        size: formatFileSize(file.size),
+        sizeBytes: file.size,
+        source: "legacy" as const,
+        mimeType,
+        contentBase64: await fileToBase64(file)
+      }
+    }))
 
     setAttachments((current) => [...current, ...next])
     setBusy(false)
@@ -1137,7 +1105,7 @@ export default function EnterpriseComposeModal({
   function attachmentsPayload() {
     return attachments
       .filter((item) => item.fileId || item.contentBase64)
-      .map(({ name, mimeType, contentBase64, fileId, storageBucket, storageKey }) => ({ filename: name, contentType: mimeType, contentBase64, fileId, storageFileId: fileId, storageBucket, storageKey }))
+      .map(({ name, mimeType, contentBase64, fileId }) => ({ filename: name, contentType: mimeType, contentBase64, fileId }))
   }
 
   async function saveDraft(statusValue: "draft" | "scheduled" = "draft") {

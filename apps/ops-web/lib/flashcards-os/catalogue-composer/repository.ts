@@ -4,7 +4,6 @@ import { createServiceClient } from '@/lib/supabase/server'
 import type { ActorContext } from '@/lib/flashcards-os/solutions/types'
 import { composeCatalogueJourneys, composeCataloguePackages } from './adapter'
 import { loadCatalogueComposerOptions } from './source'
-import { evaluateCatalogueEligibility, eligibilityFailureMessage } from './eligibility'
 import type {
   CatalogueCollectionCandidate,
   CatalogueCommercialCalculation,
@@ -32,25 +31,38 @@ async function audit(client:ServiceClient,actor:ActorContext,eventType:string,en
   await table(client,'outbox_events').insert({tenant_key:TENANT_KEY,event_type:eventType,aggregate_type:entityType,aggregate_id:entityId,payload:{...payload,actor:{id:actor.id,name:actor.name,role:actor.role}},status:'pending'})
 }
 
+function withinAge(item:CatalogueCollectionCandidate,ages:number[]){
+  if(!ages.length)return true
+  return ages.every((age)=>(item.ageMinMonths==null||age>=item.ageMinMonths)&&(item.ageMaxMonths==null||age<=item.ageMaxMonths))
+}
+function intersects(left:string[],right:string[]){return !right.length||left.some((item)=>right.includes(item))}
 function normalizeInputIds(value:string[]){return [...new Set(value.map(String).filter(Boolean))]}
 
 function filterCandidates(input:PackageComposerInput|JourneyComposerInput,all:CatalogueCollectionCandidate[]){
+  const ages=input.learnerAgesMonths.map(Number).filter(Number.isFinite)
+  const requiredCategories=new Set(input.requiredCategoryIds)
+  const excludedCategories=new Set(input.excludedCategoryIds)
+  const requiredCollections=new Set(input.requiredCollectionIds)
+  const excludedCollections=new Set(input.excludedCollectionIds)
   const usageContexts='usageContexts' in input?input.usageContexts:input.usageContextKeys
-  const result=evaluateCatalogueEligibility(all,{
-    learnerAgesMonths:input.learnerAgesMonths, languages:input.languages, deliveryMode:input.deliveryMode, usageContexts,
-    objectiveKeys:input.objectiveKeys, painPointKeys:input.painPointKeys, outcomeKeys:input.outcomeKeys,
-    requiredCategoryIds:normalizeInputIds(input.requiredCategoryIds), excludedCategoryIds:normalizeInputIds(input.excludedCategoryIds),
-    requiredCollectionIds:normalizeInputIds(input.requiredCollectionIds), excludedCollectionIds:normalizeInputIds(input.excludedCollectionIds),
-    budgetMaxDh:input.budgetMaxDh, quantity:input.quantity,
+  const candidates=all.filter((item)=>{
+    if(item.status==='archived'||item.lifecycle==='archived'||item.commercialStatus==='inactive')return false
+    if(item.priceDh==null||item.priceDh<=0)return false
+    if(excludedCollections.has(item.id)||excludedCategories.has(item.categoryId))return false
+    if(requiredCategories.size&&!requiredCategories.has(item.categoryId))return false
+    if(!withinAge(item,ages))return false
+    if(!intersects(item.languages,input.languages))return false
+    if(input.deliveryMode!=='hybrid'&&!item.formats.includes(input.deliveryMode))return false
+    if(usageContexts.length&&item.usageContexts.length&&!intersects(item.usageContexts,usageContexts))return false
+    return true
   })
-  if(!result.eligible.length)throw new Error(eligibilityFailureMessage(result))
-  const missingRequired=normalizeInputIds(input.requiredCollectionIds).filter((id)=>!result.eligible.some((item)=>item.id===id))
-  if(missingRequired.length){
-    const details=missingRequired.map((id)=>{const decision=result.decisions.find((item)=>item.collection.id===id);return `${decision?.collection.name||id}: ${(decision?.reasons||[]).join(', ')}`}).join(' · ')
-    throw new Error(`Collection obligatoire non éligible — ${details}`)
-  }
-  const requiredSet=new Set(normalizeInputIds(input.requiredCollectionIds))
-  return result.eligible.slice().sort((a,b)=>Number(requiredSet.has(b.id))-Number(requiredSet.has(a.id))||b.readinessScore-a.readinessScore||a.name.localeCompare(b.name))
+  const missingRequired=[...requiredCollections].filter((id)=>!candidates.some((item)=>item.id===id))
+  if(missingRequired.length)throw new Error(`Required catalogue collections are not eligible: ${missingRequired.join(', ')}`)
+  return candidates.sort((a,b)=>{
+    const requiredDelta=Number(requiredCollections.has(b.id))-Number(requiredCollections.has(a.id))
+    if(requiredDelta)return requiredDelta
+    return b.readinessScore-a.readinessScore||a.name.localeCompare(b.name)
+  })
 }
 
 function commercial(collectionIds:string[],collectionMap:Map<string,CatalogueCollectionCandidate>,quantity:number):CatalogueCommercialCalculation{

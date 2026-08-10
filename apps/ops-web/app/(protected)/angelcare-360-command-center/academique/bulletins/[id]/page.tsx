@@ -2,7 +2,6 @@ import Link from 'next/link'
 import { revalidatePath } from 'next/cache'
 import { notFound, redirect } from 'next/navigation'
 import Angelcare360AcademicPageShell from '@/components/angelcare360/academics/Angelcare360AcademicPageShell'
-import AcademicZoneAR3Experience from '@/components/angelcare360/zone-a-academic/AcademicZoneAR3Experience'
 import { ANGELCARE360_ACADEMICS_NAVIGATION } from '@/data/angelcare360/academics-navigation'
 import { getAngelcare360AccessContext } from '@/lib/angelcare360/server'
 import { blockAngelcare360AcademicExport, getAngelcare360ReportCardById, updateAngelcare360ReportCardStatus } from '@/lib/angelcare360/server/academics'
@@ -59,27 +58,13 @@ export default async function Angelcare360BulletinDetailPage({ params }: PagePro
       subtitle="Détail du bulletin, lignes de matières, notes, appréciations et verrouillage export."
       badge="Bulletin"
       statusLabel={reportCard.status}
-      experience={<AcademicZoneAR3Experience
-        variant="bulletin-detail"
-        eyebrow="Publication Dossier"
-        title={reportCard.student_full_name || 'Bulletin élève'}
-        description="Résultats, appréciations, readiness et statut de publication restent visibles avant toute décision."
-        metrics={[
-          { label: 'Moyenne', value: reportCard.overall_average ?? '—', tone: 'purple' },
-          { label: 'Rang', value: reportCard.rank_position ?? '—', tone: 'indigo' },
-          { label: 'Lignes', value: detail.lines.length, tone: 'cyan' },
-          { label: 'Appréciations', value: detail.commentCount, tone: 'teal' },
-        ]}
-        items={detail.lines.map((line) => ({ id: line.id, title: line.subject_name || 'Matière', meta: `Moyenne ${line.mark_average ?? '—'} · Coefficient ${line.coefficient}`, secondary: line.teacher_comment_text || line.remarks || 'Aucune appréciation', status: line.status, value: line.mark_average ?? null, maxValue: 20, attention: line.mark_average == null }))}
-        emptyLabel="Aucune ligne n’est encore consolidée pour ce bulletin."
-      />}
       navigationItems={ANGELCARE360_ACADEMICS_NAVIGATION}
       primaryAction={<Link href="/angelcare-360-command-center/academique/bulletins" style={secondaryLinkStyle}>Retour</Link>}
       contextRow={
         <>
-          <Badge label={reportCard.student_full_name || 'Élève'} />
-          <Badge label={reportCard.class_name || 'Classe non résolue'} />
-          <Badge label={reportCard.term_label || 'Sans période'} />
+          <Badge label={reportCard.student_full_name || reportCard.student_id} />
+          <Badge label={reportCard.class_name || reportCard.class_id} />
+          <Badge label={reportCard.term_label || reportCard.term_id || 'Sans période'} />
           <Badge label={`${detail.lines.length} ligne(s)`} />
         </>
       }
@@ -88,7 +73,7 @@ export default async function Angelcare360BulletinDetailPage({ params }: PagePro
         <div style={panelHeaderStyle}>
           <div>
             <div style={panelEyebrowStyle}>Résumé</div>
-            <h2 style={panelTitleStyle}>{reportCard.student_full_name || 'Élève'}</h2>
+            <h2 style={panelTitleStyle}>{reportCard.student_full_name || reportCard.student_id}</h2>
             <p style={panelMetaStyle}>Moyenne: {reportCard.overall_average ?? '—'} · Rang: {reportCard.rank_position ?? '—'}</p>
           </div>
         </div>
@@ -114,7 +99,7 @@ export default async function Angelcare360BulletinDetailPage({ params }: PagePro
             {detail.lines.map((line) => (
               <article key={line.id} style={rowStyle}>
                 <div style={rowMainStyle}>
-                  <div style={rowTitleStyle}>{line.subject_name || line.subject_code || 'Matière non résolue'}</div>
+                  <div style={rowTitleStyle}>{line.subject_name || line.subject_code || line.subject_id}</div>
                   <div style={rowMetaStyle}>Moyenne: {line.mark_average ?? '—'} · Coefficient: {line.coefficient}</div>
                   <div style={rowMetaStyle}>{line.teacher_comment_text || line.remarks || 'Aucune remarque'}</div>
                 </div>

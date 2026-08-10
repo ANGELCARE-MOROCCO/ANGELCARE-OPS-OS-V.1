@@ -1,11 +1,10 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import Angelcare360AcademicPageShell from '@/components/angelcare360/academics/Angelcare360AcademicPageShell'
-import AcademicZoneAR3Experience from '@/components/angelcare360/zone-a-academic/AcademicZoneAR3Experience'
 import { ANGELCARE360_ACADEMICS_NAVIGATION } from '@/data/angelcare360/academics-navigation'
 import { getAngelcare360AccessContext } from '@/lib/angelcare360/server'
 import { createAngelcare360TeacherComment, listAngelcare360TeacherComments } from '@/lib/angelcare360/server/academics'
-import { listAngelcare360AcademicYears, listAngelcare360Classes, listAngelcare360Students } from '@/lib/angelcare360/server/queries'
+import { listAngelcare360AcademicYears, listAngelcare360Classes } from '@/lib/angelcare360/server/queries'
 import { listAngelcare360Sections, listAngelcare360Terms, listAngelcare360TeacherAssignments } from '@/lib/angelcare360/server/administration'
 import { optionValue, numberValue, relatedLabel } from '../_utils'
 import Angelcare360EmptyState from '@/components/angelcare360/states/Angelcare360EmptyState'
@@ -38,14 +37,13 @@ export default async function Angelcare360AppreciationsPage() {
   const context = await getAngelcare360AccessContext()
   if (!context?.school) redirect('/angelcare-360-command-center')
 
-  const [comments, years, classes, sections, terms, teachers, students] = await Promise.all([
+  const [comments, years, classes, sections, terms, teachers] = await Promise.all([
     listAngelcare360TeacherComments({ schoolId: context.school.id, academicYearId: context.academicYear?.id || null }),
     listAngelcare360AcademicYears(context.school.id),
     listAngelcare360Classes(context.school.id, context.academicYear?.id || null),
     listAngelcare360Sections(context.school.id, context.academicYear?.id || null),
     listAngelcare360Terms(context.school.id, context.academicYear?.id || null),
     listAngelcare360TeacherAssignments(context.school.id, context.academicYear?.id || null),
-    listAngelcare360Students(context.school.id),
   ])
 
   return (
@@ -54,20 +52,6 @@ export default async function Angelcare360AppreciationsPage() {
       subtitle="Commentaires enseignant, observations disciplinaires et synthèses liées à un élève."
       badge="Académique"
       statusLabel={`${comments.length} commentaire(s)`}
-      experience={<AcademicZoneAR3Experience
-        variant="commentary"
-        eyebrow="Teacher Commentary Studio"
-        title="Appréciations contextualisées"
-        description="L’écriture reste humaine, reliée au dossier réel et visible avec son contexte de période et de classe."
-        metrics={[
-          { label: 'Commentaires', value: comments.length, tone: 'purple' },
-          { label: 'Actifs', value: comments.filter((item) => item.status === 'active').length, tone: 'green' },
-          { label: 'Archivés', value: comments.filter((item) => item.status === 'archived').length, tone: 'graphite' },
-          { label: 'Classes', value: new Set(comments.map((item) => item.class_id)).size, tone: 'cyan' },
-        ]}
-        items={comments.map((item) => ({ id: item.id, title: item.student_full_name || 'Élève', meta: `${item.comment_type} · ${item.term_label || 'Sans période'}`, secondary: item.comment_text, status: item.status }))}
-        emptyLabel="Aucune appréciation n’a encore été enregistrée."
-      />}
       navigationItems={ANGELCARE360_ACADEMICS_NAVIGATION}
     >
       <section style={panelStyle}>
@@ -82,11 +66,11 @@ export default async function Angelcare360AppreciationsPage() {
         ) : (
           <form action={createCommentAction} style={formGridStyle}>
             <Select name="academicYearId" defaultValue={years[0]?.id || ''}>{years.map((year) => <option key={year.id} value={year.id}>{year.label}</option>)}</Select>
-            <Select name="studentId" defaultValue="" required><option value="" disabled>Sélectionner un élève</option>{students.map((item) => <option key={item.id} value={item.id}>{item.full_name || item.student_code || 'Élève'}</option>)}</Select>
+            <Input name="studentId" placeholder="ID élève" />
             <Select name="classId" defaultValue={classes[0]?.id || ''}>{classes.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</Select>
             <Select name="sectionId" defaultValue=""><option value="">Aucune section</option>{sections.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</Select>
             <Select name="termId" defaultValue=""><option value="">Aucune période</option>{terms.map((term) => <option key={term.id} value={term.id}>{term.label}</option>)}</Select>
-            <Select name="staffId" defaultValue={teachers[0]?.staff_id || ''}>{teachers.map((item) => <option key={item.id} value={item.staff_id}>{relatedLabel(item.staff) || 'Enseignant non résolu'}</option>)}</Select>
+            <Select name="staffId" defaultValue={teachers[0]?.staff_id || ''}>{teachers.map((item) => <option key={item.id} value={item.staff_id}>{relatedLabel(item.staff) || item.staff_id}</option>)}</Select>
             <Input name="commentType" defaultValue="appreciation" />
             <Textarea name="commentText" placeholder="Texte de l’appréciation" />
             <Input name="rating" type="number" min="0" max="5" step="1" placeholder="5" />
@@ -114,7 +98,7 @@ export default async function Angelcare360AppreciationsPage() {
             {comments.map((comment) => (
               <article key={comment.id} style={rowStyle}>
                 <div style={rowMainStyle}>
-                  <div style={rowTitleStyle}>{comment.student_full_name || comment.student_code || 'Élève'}</div>
+                  <div style={rowTitleStyle}>{comment.student_full_name || comment.student_code || comment.student_id}</div>
                   <div style={rowMetaStyle}>{comment.comment_type} · {comment.term_label || 'Sans période'}</div>
                   <div style={rowMetaStyle}>{comment.comment_text}</div>
                 </div>

@@ -1,28 +1,9 @@
 import { redirect } from 'next/navigation'
 import Angelcare360EmptyState from '@/components/angelcare360/states/Angelcare360EmptyState'
 import TimetableSchedulingAuthority from '@/components/angelcare360/customer-academic-authority/TimetableSchedulingAuthority'
-import AcademicZoneAFrame from '@/components/angelcare360/zone-a-academic/AcademicZoneAFrame'
 import { getAngelcare360AccessContext } from '@/lib/angelcare360/server'
-import { getAngelcare360TimetableOverview, listAngelcare360SchoolCalendarEvents, listAngelcare360TimetableSlots } from '@/lib/angelcare360/server/timetable'
+import { getAngelcare360TimetableOverview,listAngelcare360SchoolCalendarEvents,listAngelcare360TimetableSlots } from '@/lib/angelcare360/server/timetable'
 import { getAcademicAuthoritySignals } from '@/lib/angelcare360/server/customer-academic-authority'
 
-export const dynamic = 'force-dynamic'
-
-export default async function Angelcare360TimetablePage({ searchParams }: { searchParams?: Promise<{ plane?: string }> }) {
-  const context = await getAngelcare360AccessContext()
-  if (!context?.school) redirect('/angelcare-360-command-center')
-  const query = (await searchParams) || {}
-  const [overview, slots, events, signals] = await Promise.all([
-    getAngelcare360TimetableOverview({ schoolId: context.school.id }),
-    listAngelcare360TimetableSlots({ schoolId: context.school.id, academicYearId: context.academicYear?.id || null }),
-    listAngelcare360SchoolCalendarEvents({ schoolId: context.school.id, academicYearId: context.academicYear?.id || null }),
-    getAcademicAuthoritySignals(context.school.id),
-  ])
-  if (!overview) return <Angelcare360EmptyState title="Emploi du temps indisponible" description="Aucun établissement actif n’a pu être résolu pour alimenter le planning." actionLabel="Retour au cockpit" actionHref="/angelcare-360-command-center" />
-  const canUpdate = context.access.accessLevel === 'super_admin' || context.permissions.has('emploi_du_temps.update')
-  return (
-    <AcademicZoneAFrame eyebrow="Timetable Airspace">
-      <TimetableSchedulingAuthority overview={overview} slots={slots} events={events} signals={signals} plane={query.plane || 'command'} schoolName={context.school.name} canUpdate={canUpdate} />
-    </AcademicZoneAFrame>
-  )
-}
+export const dynamic='force-dynamic'
+export default async function Angelcare360TimetablePage({searchParams}:{searchParams?:Promise<{plane?:string}>}){const context=await getAngelcare360AccessContext();if(!context?.school)redirect('/angelcare-360-command-center');const query=(await searchParams)||{};const [overview,slots,events,signals]=await Promise.all([getAngelcare360TimetableOverview({schoolId:context.school.id}),listAngelcare360TimetableSlots({schoolId:context.school.id,academicYearId:context.academicYear?.id||null}),listAngelcare360SchoolCalendarEvents({schoolId:context.school.id,academicYearId:context.academicYear?.id||null}),getAcademicAuthoritySignals(context.school.id)]);if(!overview)return <Angelcare360EmptyState title="Emploi du temps indisponible" description="Aucun établissement actif n’a pu être résolu pour alimenter le planning." actionLabel="Retour au cockpit" actionHref="/angelcare-360-command-center"/>;const canUpdate=context.access.accessLevel==='super_admin'||context.permissions.has('emploi_du_temps.update');return <TimetableSchedulingAuthority overview={overview} slots={slots} events={events} signals={signals} plane={query.plane||'command'} schoolName={context.school.name} canUpdate={canUpdate}/>} 

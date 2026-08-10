@@ -1,8 +1,0 @@
-{
-  "name": "angelcare-social-command-media-gateway",
-  "version": "1.0.0",
-  "private": true,
-  "description": "Streaming Windows media gateway for AngelCare Social Command",
-  "scripts": {"start":"node server.js","check":"node --check server.js"},
-  "engines": {"node": ">=20"}
-}

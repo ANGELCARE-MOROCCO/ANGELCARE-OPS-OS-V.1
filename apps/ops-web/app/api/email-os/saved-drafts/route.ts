@@ -2,7 +2,6 @@ import { NextResponse } from "next/server"
 import { getCurrentAppUser } from "@/lib/auth/session"
 import { createEmailOSCoreDb } from "@/lib/email-os-core/db"
 import { requireUnlockedMailboxAccess, resolveMailboxScopeForUser } from "@/lib/email-os-core/access-governance"
-import { loadComposeAttachments } from "@/lib/email-os-core/compose-attachments"
 
 function clean(value: any) {
   return typeof value === "string" ? value.trim() : ""
@@ -65,17 +64,7 @@ export async function GET(request: Request) {
       return right - left
     })
 
-    const hydratedRows = await Promise.all(rows.map(async (row: any) => {
-      const table = clean(row.__draft_table || row.source_table)
-      const attachments = await loadComposeAttachments({
-        db,
-        mailboxId: scope.mailboxId,
-        ...(table === "email_os_core_outbox" ? { outboxId: row.id } : { draftId: row.id }),
-      }).catch(() => [])
-      return { ...row, attachments }
-    }))
-
-    return NextResponse.json({ ok: true, data: hydratedRows })
+    return NextResponse.json({ ok: true, data: rows })
   } catch (error) {
     return NextResponse.json(
       { ok: false, error: error instanceof Error ? error.message : "Failed to load saved drafts" },

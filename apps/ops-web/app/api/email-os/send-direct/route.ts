@@ -5,7 +5,6 @@ import { auditMailboxAccessEvent, requireUnlockedMailboxAccess, resolveMailboxSc
 import { makeEmailOSId, nowIso } from "@/lib/email-os-core/schema"
 import { getEmailOSBridgeFailureDiagnostics, sendEmailOSDirect } from "@/lib/email-os-core/send-mail"
 import { emailOSOperatorSnapshot, resolveEmailOSOperatorIdentity } from "@/lib/email-os-core/operator-identity"
-import { attachmentErrorResponse, persistComposeAttachments, validateComposeAttachments } from "@/lib/email-os-core/compose-attachments"
 
 function clean(value: any) {
   return typeof value === "string" ? value.trim() : ""
@@ -128,7 +127,7 @@ export async function POST(request: Request) {
     const messageHtml = normalizeHtmlBody(body.bodyHtml || body.body_html || body.body || body.html || body.message)
     const messageText = clean(body.bodyText || body.body_text || body.text) || htmlToPlainText(messageHtml)
     const priority = clean(body.priority) || "normal"
-    const attachmentInputs = normalizeAttachmentsForSend(body.attachments)
+    const attachments = normalizeAttachmentsForSend(body.attachments)
     const trackingEnabled = body.tracking !== false && body.tracking !== "false"
     const sourceTemplateId = clean(body.templateId || body.template_id)
     const sourceTemplateVersion = Number(body.templateVersion || body.template_version || 0)
@@ -156,12 +155,6 @@ export async function POST(request: Request) {
       mailboxId: mailboxScope.mailboxId,
       requiredPermission: "can_send",
       request,
-    })
-
-    const attachments = await validateComposeAttachments({
-      db,
-      mailboxId: mailboxScope.mailboxId,
-      attachments: attachmentInputs,
     })
 
     const resolvedFrom = clean(access.mailbox?.address || access.mailbox?.name || "")
@@ -192,7 +185,7 @@ export async function POST(request: Request) {
     const now = nowIso()
     outboxId = makeEmailOSId()
 
-    const { error: outboxInsertError } = await db.from("email_os_core_outbox").insert({
+    await db.from("email_os_core_outbox").insert({
       id: outboxId,
       mailbox_id: mailboxScope.mailboxId,
       to_email: toEmail,
@@ -242,16 +235,7 @@ export async function POST(request: Request) {
       queue_id: null,
       from_email: resolvedFrom || null,
       last_error: null,
-    })
-    if (outboxInsertError) throw outboxInsertError
-
-    await persistComposeAttachments({
-      db,
-      mailboxId: mailboxScope.mailboxId,
-      outboxId,
-      attachments,
-      metadata: { source: "send-direct", transportPrepared: true },
-    })
+    }).then(() => null, () => null)
 
     const { identity, info } = await sendEmailOSDirect({
       mailboxId: mailboxScope.mailboxId,
@@ -439,12 +423,10 @@ export async function POST(request: Request) {
         .then(() => null, () => null)
     }
 
-    const attachmentDiagnostics = attachmentErrorResponse(error)
     return NextResponse.json(
       {
         ok: false,
-        error: attachmentDiagnostics?.message || message,
-        ...(attachmentDiagnostics ? { code: attachmentDiagnostics.code } : {}),
+        error: message,
         ...(bridgeDiagnostics || {}),
         hint: message.includes("535")
           ? "Selected mailbox credentials were rejected. Confirm the selected compose mailbox matches the configured mailbox email/password."
@@ -452,7 +434,7 @@ export async function POST(request: Request) {
             ? "Menara throttled SMTP. Wait 60 seconds and retry without liveness/diagnostics refreshing."
             : null,
       },
-      { status: attachmentDiagnostics?.status || (bridgeDiagnostics ? 502 : 500) }
+      { status: bridgeDiagnostics ? 502 : 500 }
     )
   }
 }

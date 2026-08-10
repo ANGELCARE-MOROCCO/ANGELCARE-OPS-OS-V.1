@@ -13,7 +13,6 @@ declare namespace React {
 declare namespace JSX {
   interface IntrinsicElements { [elementName: string]: any }
   interface Element {}
-  interface IntrinsicAttributes { key?: any }
 }
 
 declare module 'react' {
@@ -22,9 +21,6 @@ declare module 'react' {
   export type ChangeEvent<T = Element> = React.ChangeEvent<T>
   export type MouseEvent<T = Element> = React.MouseEvent<T>
   export function useState<S>(initialState: S | (() => S)): [S, React.Dispatch<React.SetStateAction<S>>]
-  export type Context<T> = { Provider:any; __contextType?: T }
-  export function createContext<T>(defaultValue:T): Context<T>
-  export function useContext<T>(context:Context<T>): T
   export function useMemo<T>(factory: () => T, dependencies: readonly unknown[]): T
 }
 

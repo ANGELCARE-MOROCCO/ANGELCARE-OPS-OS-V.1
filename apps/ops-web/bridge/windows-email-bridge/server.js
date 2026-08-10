@@ -99,71 +99,6 @@ function clean(value) {
   return typeof value === "string" ? value.trim() : ""
 }
 
-function base64urlEncode(value) {
-  const buffer = Buffer.isBuffer(value) ? value : Buffer.from(String(value || ""), "utf8")
-  return buffer.toString("base64").replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_")
-}
-
-function base64urlDecode(value) {
-  const normalized = String(value || "").replace(/-/g, "+").replace(/_/g, "/")
-  const pad = normalized.length % 4 ? "=".repeat(4 - (normalized.length % 4)) : ""
-  return Buffer.from(`${normalized}${pad}`, "base64")
-}
-
-function storageTransferSecret() {
-  const secret = clean(process.env.EMAIL_STORAGE_TRANSFER_SIGNING_SECRET)
-  if (!secret) throw new Error("EMAIL_STORAGE_TRANSFER_SIGNING_SECRET is not configured")
-  if (secret.length < 32) throw new Error("EMAIL_STORAGE_TRANSFER_SIGNING_SECRET must be at least 32 characters")
-  return secret
-}
-
-function storageTransferSignature(payload) {
-  return base64urlEncode(crypto.createHmac("sha256", storageTransferSecret()).update(payload).digest())
-}
-
-function signStorageTransferClaims(claims) {
-  const payload = base64urlEncode(JSON.stringify(claims))
-  return `${payload}.${storageTransferSignature(payload)}`
-}
-
-function verifyStorageTransferToken(token, expectedPurpose) {
-  const parts = clean(token).split(".")
-  if (parts.length !== 2 || !parts[0] || !parts[1]) throw new Error("Storage transfer token is malformed")
-  const payload = parts[0]
-  const provided = Buffer.from(parts[1])
-  const expected = Buffer.from(storageTransferSignature(payload))
-  if (provided.length !== expected.length || !crypto.timingSafeEqual(provided, expected)) {
-    throw new Error("Storage transfer token signature is invalid")
-  }
-  let claims
-  try { claims = JSON.parse(base64urlDecode(payload).toString("utf8")) } catch { throw new Error("Storage transfer token payload is invalid") }
-  if (!claims || claims.v !== 1) throw new Error("Storage transfer token version is invalid")
-  if (clean(claims.purpose) !== expectedPurpose) throw new Error("Storage transfer token purpose does not match")
-  const now = Math.floor(Date.now() / 1000)
-  const iat = Number(claims.iat || 0)
-  const exp = Number(claims.exp || 0)
-  if (!Number.isFinite(iat) || !Number.isFinite(exp) || exp <= now || iat > now + 30 || exp - iat > 300) {
-    throw new Error("Storage transfer token is expired or invalid")
-  }
-  if (!clean(claims.nonce) || !clean(claims.fileId) || !clean(claims.userId) || !clean(claims.mailboxId)) {
-    throw new Error("Storage transfer token claims are incomplete")
-  }
-  return claims
-}
-
-function storageAllowedOrigins() {
-  return new Set(String(process.env.EMAIL_STORAGE_ALLOWED_ORIGINS || "")
-    .split(",")
-    .map((item) => item.trim().replace(/\/+$/, ""))
-    .filter(Boolean))
-}
-
-function storageCorsOrigin(request) {
-  const origin = clean(request.headers.origin).replace(/\/+$/, "")
-  if (!origin || !storageAllowedOrigins().has(origin)) return ""
-  return origin
-}
-
 function nowIso() {
   return new Date().toISOString()
 }
@@ -2182,36 +2117,6 @@ function readJsonBody(request) {
   })
 }
 
-function readRawBody(request, maxBytes) {
-  return new Promise((resolve, reject) => {
-    const declared = Number(request.headers["content-length"] || 0)
-    if (Number.isFinite(declared) && declared > maxBytes) {
-      request.resume()
-      reject(new Error("PAYLOAD_TOO_LARGE"))
-      return
-    }
-    const chunks = []
-    let total = 0
-    let overflow = false
-    request.on("data", (chunk) => {
-      if (overflow) return
-      const buffer = Buffer.from(chunk)
-      total += buffer.length
-      if (total > maxBytes) {
-        overflow = true
-        chunks.length = 0
-        return
-      }
-      chunks.push(buffer)
-    })
-    request.on("end", () => {
-      if (overflow) return reject(new Error("PAYLOAD_TOO_LARGE"))
-      resolve(Buffer.concat(chunks))
-    })
-    request.on("error", reject)
-  })
-}
-
 function safeStatusValue(value, fallback = "unknown") {
   const normalized = clean(value).toLowerCase()
   return SAFE_STATUSES.has(normalized) ? normalized : fallback
@@ -2243,16 +2148,6 @@ function writeJson(res, status, payload) {
   res.writeHead(status, {
     "Content-Type": "application/json; charset=utf-8",
     "Content-Length": Buffer.byteLength(body)
-  })
-  res.end(body)
-}
-
-function writeJsonWithHeaders(res, status, payload, headers = {}) {
-  const body = JSON.stringify(payload)
-  res.writeHead(status, {
-    "Content-Type": "application/json; charset=utf-8",
-    "Content-Length": Buffer.byteLength(body),
-    ...headers
   })
   res.end(body)
 }
@@ -2919,55 +2814,32 @@ function estimateBase64Bytes(value) {
   return Math.max(0, Math.floor(cleanValue.length * 3 / 4) - padding)
 }
 
-function normalizeBridgeAttachments(input, diagnostics = {}) {
+function normalizeBridgeAttachments(input) {
   const rows = Array.isArray(input) ? input.slice(0, MAX_ATTACHMENT_COUNT) : []
   let totalBytes = 0
-  const mailboxId = clean(diagnostics.mailboxId || diagnostics.mailbox_id)
 
   return rows.map((item) => {
     const filename = sanitizeAttachmentFilename(item && (item.filename || item.name))
     const contentType = clean(item && (item.contentType || item.content_type || item.mimeType)) || "application/octet-stream"
-    const storageFileId = clean(item && (item.storageFileId || item.storage_file_id || item.fileId || item.file_id))
+    const rawBase64 = clean(item && (item.contentBase64 || item.content_base64 || item.base64 || item.content))
 
-    if (storageFileId) {
-      const found = findStorageRecordById(storageFileId)
-      if (!found || !found.filePath || !fs.existsSync(found.filePath) || !isWithinRoot(found.filePath, STORAGE_ROOT)) {
-        throw new Error(`Attachment ${filename} was not found in Windows storage.`)
-      }
-      const meta = found.meta && typeof found.meta === "object" ? found.meta : {}
-      const status = clean(meta.status).toLowerCase()
-      if (!["active", "deduplicated"].includes(status)) {
-        throw new Error(`Attachment ${filename} is not available for sending (${status || "unknown"}).`)
-      }
-      if (clean(meta.module_key).toLowerCase() !== "email_os") {
-        throw new Error(`Attachment ${filename} does not belong to Email OS storage.`)
-      }
-      if (!mailboxId || !clean(meta.mailbox_id) || clean(meta.mailbox_id) !== mailboxId) {
-        throw new Error(`Attachment ${filename} does not belong to the selected mailbox.`)
-      }
-
-      const stat = fs.statSync(found.filePath)
-      const bytes = Number(stat.size || 0)
-      if (!bytes) throw new Error(`Attachment ${filename} has no file content.`)
-      if (bytes > MAX_ATTACHMENT_BYTES) throw new Error(`Attachment ${filename} exceeds the 8 MB limit.`)
-      totalBytes += bytes
-      if (totalBytes > MAX_TOTAL_ATTACHMENT_BYTES) throw new Error("Total attachments exceed the 15 MB limit.")
-
-      return {
-        filename: sanitizeAttachmentFilename(meta.original_filename || filename),
-        contentType: clean(meta.content_type || contentType) || "application/octet-stream",
-        path: found.filePath
-      }
+    if (!rawBase64) {
+      throw new Error(`Attachment ${filename} has no file content.`)
     }
 
-    const rawBase64 = clean(item && (item.contentBase64 || item.content_base64 || item.base64 || item.content))
-    if (!rawBase64) throw new Error(`Attachment ${filename} has no file content.`)
-    if (!/^[A-Za-z0-9+/=\r\n]+$/.test(rawBase64)) throw new Error(`Attachment ${filename} is not valid base64.`)
+    if (!/^[A-Za-z0-9+/=\r\n]+$/.test(rawBase64)) {
+      throw new Error(`Attachment ${filename} is not valid base64.`)
+    }
 
     const bytes = estimateBase64Bytes(rawBase64)
-    if (bytes > MAX_ATTACHMENT_BYTES) throw new Error(`Attachment ${filename} exceeds the 8 MB limit.`)
+    if (bytes > MAX_ATTACHMENT_BYTES) {
+      throw new Error(`Attachment ${filename} exceeds the 8 MB limit.`)
+    }
+
     totalBytes += bytes
-    if (totalBytes > MAX_TOTAL_ATTACHMENT_BYTES) throw new Error("Total attachments exceed the 15 MB limit.")
+    if (totalBytes > MAX_TOTAL_ATTACHMENT_BYTES) {
+      throw new Error("Total attachments exceed the 15 MB limit.")
+    }
 
     return {
       filename,
@@ -3009,7 +2881,7 @@ async function sendMail(config, input, diagnostics) {
       subject: input.subject || "(Sans objet)",
       text: input.text || "",
       html: input.html || String(input.text || "").replace(/\n/g, "<br />"),
-      attachments: normalizeBridgeAttachments(input.attachments || [], diagnostics),
+      attachments: normalizeBridgeAttachments(input.attachments || []),
       replyTo: resolvedReplyTo,
       headers: {
         "X-AngelCare-Mailbox": diagnostics.mailbox || "",
@@ -3905,8 +3777,7 @@ async function handleSend(request, body) {
       status: 500,
       payload: {
         ok: false,
-        error: message,
-        code: "SMTP_REJECTED"
+        error: message
       }
     }
   }
@@ -4221,197 +4092,6 @@ async function handleStorageUpload(request, body) {
       warning: disk.warning,
       critical: disk.critical
     })
-  }
-}
-
-function storageTransferTtlSeconds() {
-  const raw = Number(process.env.EMAIL_STORAGE_TRANSFER_TTL_SECONDS || 90)
-  if (!Number.isFinite(raw)) return 90
-  return Math.max(30, Math.min(300, Math.floor(raw)))
-}
-
-function makeTransferClaims(purpose, input, ttlSeconds = storageTransferTtlSeconds()) {
-  const now = Math.floor(Date.now() / 1000)
-  return {
-    ...input,
-    v: 1,
-    purpose,
-    iat: now,
-    exp: now + Math.max(30, Math.min(300, Math.floor(ttlSeconds))),
-    nonce: clean(input.nonce) || crypto.randomUUID()
-  }
-}
-
-async function handleDirectStorageUpload(request, url, rawBody) {
-  const origin = storageCorsOrigin(request)
-  if (!origin) return { status: 403, payload: { ok: false, error: "Origin is not allowed", code: "STORAGE_TRANSFER_ORIGIN_DENIED" }, origin: "" }
-
-  let claims
-  try {
-    claims = verifyStorageTransferToken(request.headers["x-email-storage-ticket"], "storage_upload")
-  } catch (error) {
-    return { status: 401, payload: { ok: false, error: error instanceof Error ? error.message : "Invalid upload ticket", code: "STORAGE_TRANSFER_UNAUTHORIZED" }, origin }
-  }
-
-  const fileId = clean(url.pathname.split("/").pop())
-  if (!fileId || fileId !== clean(claims.fileId)) {
-    return { status: 400, payload: { ok: false, error: "Upload fileId mismatch", code: "STORAGE_TRANSFER_FILE_MISMATCH" }, origin }
-  }
-  if (clean(claims.origin).replace(/\/+$/, "") !== origin) {
-    return { status: 403, payload: { ok: false, error: "Upload origin mismatch", code: "STORAGE_TRANSFER_ORIGIN_DENIED" }, origin }
-  }
-  if (clean(claims.moduleKey) !== "email_os") {
-    return { status: 403, payload: { ok: false, error: "Upload module is not allowed", code: "STORAGE_TRANSFER_MODULE_DENIED" }, origin }
-  }
-
-  const declaredSize = Number(claims.sizeBytes || 0)
-  if (!Buffer.isBuffer(rawBody) || !rawBody.length || declaredSize !== rawBody.length) {
-    return { status: 400, payload: { ok: false, error: "Uploaded byte length does not match signed metadata", code: "STORAGE_TRANSFER_SIZE_MISMATCH" }, origin }
-  }
-  if (rawBody.length > STORAGE_MAX_FILE_BYTES) {
-    return { status: 413, payload: { ok: false, error: "Attachment exceeds the 8 MB limit", code: "ATTACHMENT_TOO_LARGE" }, origin }
-  }
-
-  const moduleKey = sanitizeStoragePart(claims.moduleKey)
-  const entityType = sanitizeStoragePart(claims.entityType || "compose_attachment")
-  const entityId = clean(claims.entityId) || null
-  const mailboxId = clean(claims.mailboxId)
-  const direction = normalizeStorageDirection(claims.direction || "outbound")
-  const originalFilename = sanitizeStorageFilename(claims.filename || "attachment")
-  const contentType = clean(claims.contentType) || "application/octet-stream"
-  const folder = buildStorageFolder(direction, moduleKey, entityType, fileId)
-  const filePath = buildStorageFilePath(direction, moduleKey, entityType, fileId, originalFilename)
-  const metaPath = buildStorageMetaPath(direction, moduleKey, entityType, fileId, originalFilename)
-  if (!isWithinRoot(filePath, STORAGE_ROOT)) {
-    return { status: 400, payload: { ok: false, error: "Invalid storage path", code: "STORAGE_TRANSFER_PATH_INVALID" }, origin }
-  }
-  if (fs.existsSync(filePath) || fs.existsSync(metaPath)) {
-    return { status: 409, payload: { ok: false, error: "Upload ticket has already been used for this fileId", code: "STORAGE_TRANSFER_ALREADY_USED" }, origin }
-  }
-
-  const storageKey = path.posix.join("email-os", "attachments", direction, moduleKey, entityType, fileId, sanitizeStorageFilename(originalFilename))
-  const sha256Hash = crypto.createHash("sha256").update(rawBody).digest("hex")
-  const createdAt = nowIso()
-  fs.mkdirSync(folder, { recursive: true })
-  fs.writeFileSync(filePath, rawBody)
-
-  const record = {
-    id: fileId,
-    module_key: moduleKey,
-    mailbox_id: mailboxId,
-    entity_type: entityType,
-    entity_id: entityId,
-    original_filename: originalFilename,
-    safe_filename: sanitizeStorageFilename(originalFilename),
-    content_type: contentType,
-    size_bytes: rawBody.length,
-    sha256_hash: sha256Hash,
-    storage_provider: "windows_node",
-    storage_node: STORAGE_NODE,
-    storage_bucket: STORAGE_BUCKET,
-    storage_key: storageKey,
-    status: "active",
-    created_by: clean(claims.userId),
-    created_at: createdAt,
-    updated_at: createdAt,
-    deleted_at: null,
-    metadata: { transfer: { direct: true, uploadNonce: clean(claims.nonce) } }
-  }
-  fs.writeFileSync(metaPath, `${JSON.stringify(record, null, 2)}\n`, "utf8")
-
-  const disk = storageDiskSnapshot()
-  logStorageEvent({
-    action: "STORAGE_DIRECT_UPLOAD",
-    moduleKey,
-    fileId,
-    mailboxId,
-    entityType,
-    direction,
-    status: "ok",
-    freeBytes: disk.freeBytes,
-    usedBytes: disk.usedBytes,
-    metadata: { originalFilename, contentType, sizeBytes: rawBody.length, storageBucket: STORAGE_BUCKET, storageKey }
-  })
-
-  const receiptClaims = makeTransferClaims("storage_upload_receipt", {
-    fileId,
-    userId: clean(claims.userId),
-    mailboxId,
-    moduleKey,
-    entityType,
-    entityId,
-    direction,
-    filename: originalFilename,
-    safeFilename: sanitizeStorageFilename(originalFilename),
-    contentType,
-    sizeBytes: rawBody.length,
-    origin,
-    sha256Hash,
-    storageProvider: "windows_node",
-    storageNode: STORAGE_NODE,
-    storageBucket: STORAGE_BUCKET,
-    storageKey,
-    status: "active",
-    uploadedAt: createdAt,
-    uploadNonce: clean(claims.nonce)
-  })
-
-  return {
-    status: 200,
-    origin,
-    payload: {
-      ok: true,
-      data: {
-        ...record,
-        receipt: signStorageTransferClaims(receiptClaims)
-      }
-    }
-  }
-}
-
-async function handleDirectStorageDownload(request, url) {
-  const fileId = clean(url.pathname.split("/").pop())
-  let claims
-  try {
-    claims = verifyStorageTransferToken(url.searchParams.get("ticket"), "storage_download")
-  } catch (error) {
-    return { status: 401, payload: { ok: false, error: error instanceof Error ? error.message : "Invalid download ticket", code: "STORAGE_TRANSFER_UNAUTHORIZED" } }
-  }
-  if (!fileId || fileId !== clean(claims.fileId)) {
-    return { status: 400, payload: { ok: false, error: "Download fileId mismatch", code: "STORAGE_TRANSFER_FILE_MISMATCH" } }
-  }
-
-  const found = findStorageRecordById(fileId)
-  if (!found || !found.filePath || !fs.existsSync(found.filePath) || !isWithinRoot(found.filePath, STORAGE_ROOT)) {
-    return { status: 404, payload: { ok: false, error: "Storage file not found", code: "ATTACHMENT_STORAGE_NOT_FOUND" } }
-  }
-  const meta = found.meta && typeof found.meta === "object" ? found.meta : {}
-  const status = clean(meta.status).toLowerCase()
-  if (!["active", "deduplicated"].includes(status)) {
-    return { status: status === "quarantined" ? 423 : 410, payload: { ok: false, error: "Storage file is not available", code: status === "quarantined" ? "ATTACHMENT_QUARANTINED" : "ATTACHMENT_DELETED" } }
-  }
-  if (clean(meta.mailbox_id) && clean(meta.mailbox_id) !== clean(claims.mailboxId)) {
-    return { status: 403, payload: { ok: false, error: "Storage file mailbox mismatch", code: "ATTACHMENT_ACCESS_DENIED" } }
-  }
-
-  const buffer = fs.readFileSync(found.filePath)
-  const contentType = clean(meta.content_type || meta.contentType) || "application/octet-stream"
-  const safeFilename = sanitizeStorageFilename(meta.safe_filename || meta.original_filename || path.basename(found.filePath))
-  logStorageEvent({ action: "STORAGE_DIRECT_DOWNLOAD", moduleKey: meta.module_key || "email_os", fileId, mailboxId: meta.mailbox_id || null, entityType: meta.entity_type || "attachment", direction: "outbound", status: "ok", metadata: { sizeBytes: buffer.length } })
-
-  return {
-    status: 200,
-    binary: {
-      status: 200,
-      body: buffer,
-      headers: {
-        "Content-Type": contentType,
-        "Content-Disposition": `attachment; filename="${safeFilename.replace(/"/g, "_")}"`,
-        "Cache-Control": "no-store",
-        "X-Content-Type-Options": "nosniff",
-        "Referrer-Policy": "no-referrer"
-      }
-    }
   }
 }
 
@@ -5877,40 +5557,6 @@ async function handleCancelShutdown(request) {
 async function handleRequest(request, response) {
   const url = new URL(request.url, `http://${request.headers.host || `${HOST}:${PORT}`}`)
   const pathname = url.pathname
-
-  if (request.method === "OPTIONS" && pathname.startsWith("/storage/direct-upload/")) {
-    const origin = storageCorsOrigin(request)
-    if (!origin) return writeJson(response, 403, { ok: false, error: "Origin is not allowed", code: "STORAGE_TRANSFER_ORIGIN_DENIED" })
-    response.writeHead(204, {
-      "Access-Control-Allow-Origin": origin,
-      "Access-Control-Allow-Methods": "PUT, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type, X-Email-Storage-Ticket",
-      "Access-Control-Max-Age": "600",
-      "Vary": "Origin",
-      "Cache-Control": "no-store"
-    })
-    return response.end()
-  }
-
-  if (request.method === "PUT" && pathname.startsWith("/storage/direct-upload/")) {
-    const origin = storageCorsOrigin(request)
-    if (!origin) return writeJson(response, 403, { ok: false, error: "Origin is not allowed", code: "STORAGE_TRANSFER_ORIGIN_DENIED" })
-    let rawBody
-    try {
-      rawBody = await readRawBody(request, STORAGE_MAX_FILE_BYTES)
-    } catch (error) {
-      return writeJsonWithHeaders(response, 413, { ok: false, error: "Attachment exceeds the 8 MB limit", code: "ATTACHMENT_TOO_LARGE" }, origin ? { "Access-Control-Allow-Origin": origin, "Vary": "Origin", "Cache-Control": "no-store" } : { "Cache-Control": "no-store" })
-    }
-    const result = await handleDirectStorageUpload(request, url, rawBody)
-    const corsHeaders = result.origin ? { "Access-Control-Allow-Origin": result.origin, "Vary": "Origin", "Cache-Control": "no-store" } : { "Cache-Control": "no-store" }
-    return writeJsonWithHeaders(response, result.status, result.payload, corsHeaders)
-  }
-
-  if (request.method === "GET" && pathname.startsWith("/storage/direct-download/")) {
-    const result = await handleDirectStorageDownload(request, url)
-    if (result.binary) return writeBinary(response, result.binary.status, result.binary.body, result.binary.headers)
-    return writeJson(response, result.status, result.payload)
-  }
 
   if (request.method === "GET" && pathname === "/health") {
     return writeJson(response, 200, {

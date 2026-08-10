@@ -3,11 +3,10 @@ import { getCurrentAppUser } from "@/lib/auth/session"
 import { createEmailOSCoreDb } from "@/lib/email-os-core/db"
 import { getUserEmailOSAdminProfile, requireUnlockedMailboxAccess, resolveMailboxScopeForUser } from "@/lib/email-os-core/access-governance"
 import {
+  downloadStorageFileFromBridge,
   loadStorageFileMetadata,
-  readStorageBridgeConfig,
   recordStorageEvent
 } from "@/lib/email-os-core/storage-gateway"
-import { getStorageTransferTtlSeconds, signStorageTransferTicket } from "@/lib/email-os-core/storage-transfer-ticket"
 
 export const dynamic = "force-dynamic"
 
@@ -78,33 +77,23 @@ export async function GET(request: Request, { params }: { params: Promise<{ file
       return NextResponse.json({ ok: false, error: "Mailbox scope required." }, { status: 403 })
     }
 
-    const bridge = readStorageBridgeConfig()
-    if (!bridge.hasBridgeUrl || !/^https?:\/\//i.test(bridge.bridgeUrl)) {
-      return NextResponse.json({ ok: false, error: "Storage bridge URL is not configured" }, { status: 503 })
-    }
+    const bridgeResponse = await downloadStorageFileFromBridge(fileId)
+    const arrayBuffer = await bridgeResponse.arrayBuffer()
+    const headers = new Headers()
+    const contentType = bridgeResponse.headers.get("content-type") || fileRow.content_type || "application/octet-stream"
+    headers.set("Content-Type", contentType)
+    headers.set("Content-Disposition", bridgeResponse.headers.get("content-disposition") || `attachment; filename="${fileRow.safe_filename.replace(/"/g, "_")}"`)
+    headers.set("Cache-Control", "no-store")
+    headers.set("X-Content-Type-Options", "nosniff")
 
-    const ttl = getStorageTransferTtlSeconds()
-    const requestUrl = new URL(request.url)
-    const ticket = signStorageTransferTicket("storage_download", {
-      fileId,
-      userId: user.id,
-      mailboxId: fileRow.mailbox_id || mailboxId || "admin",
-      moduleKey: fileRow.module_key || "email_os",
-      entityType: fileRow.entity_type || "attachment",
-      entityId: fileRow.entity_id || null,
-      direction: "outbound",
-      filename: fileRow.original_filename || fileRow.safe_filename || "attachment",
-      contentType: fileRow.content_type || "application/octet-stream",
-      sizeBytes: Number(fileRow.size_bytes || 0),
-      origin: requestUrl.origin,
-    }, ttl)
-
-    const directUrl = new URL(`${bridge.bridgeUrl}/storage/direct-download/${encodeURIComponent(fileId)}`)
-    directUrl.searchParams.set("ticket", ticket)
+    const response = new NextResponse(Buffer.from(arrayBuffer), {
+      status: bridgeResponse.status,
+      headers
+    })
 
     await recordStorageEvent(db, {
       fileId,
-      action: "download_ticket_issued",
+      action: "download",
       moduleKey: fileRow.module_key,
       actorUserId: user.id,
       ipAddress: request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || request.headers.get("x-real-ip") || null,
@@ -113,12 +102,11 @@ export async function GET(request: Request, { params }: { params: Promise<{ file
         originalFilename: fileRow.original_filename,
         storageBucket: fileRow.storage_bucket,
         storageKey: fileRow.storage_key,
-        sizeBytes: fileRow.size_bytes,
-        expiresInSeconds: ttl
+        sizeBytes: fileRow.size_bytes
       }
     })
 
-    return NextResponse.redirect(directUrl, { status: 307, headers: { "cache-control": "no-store" } })
+    return response
   } catch (error) {
     return NextResponse.json(
       {

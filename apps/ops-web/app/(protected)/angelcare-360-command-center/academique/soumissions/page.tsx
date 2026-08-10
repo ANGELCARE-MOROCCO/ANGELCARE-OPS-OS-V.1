@@ -1,12 +1,11 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import Angelcare360AcademicPageShell from '@/components/angelcare360/academics/Angelcare360AcademicPageShell'
-import AcademicZoneAR3Experience from '@/components/angelcare360/zone-a-academic/AcademicZoneAR3Experience'
 import { ANGELCARE360_ACADEMICS_NAVIGATION } from '@/data/angelcare360/academics-navigation'
 import { getAngelcare360AccessContext } from '@/lib/angelcare360/server'
 import { listAngelcare360AssignmentSubmissions, updateAngelcare360AssignmentSubmissionStatus } from '@/lib/angelcare360/server/academics'
 import { listAngelcare360Assignments } from '@/lib/angelcare360/server/academics'
-import { listAngelcare360AcademicYears, listAngelcare360Classes, listAngelcare360Students } from '@/lib/angelcare360/server/queries'
+import { listAngelcare360AcademicYears, listAngelcare360Classes } from '@/lib/angelcare360/server/queries'
 import { listAngelcare360Sections, listAngelcare360Subjects } from '@/lib/angelcare360/server/administration'
 import { optionValue, numberValue } from '../_utils'
 import Angelcare360EmptyState from '@/components/angelcare360/states/Angelcare360EmptyState'
@@ -43,14 +42,13 @@ export default async function Angelcare360SoumissionsPage({ searchParams }: { se
   const status = optionValue(searchParams?.status as FormDataEntryValue | null)
   const search = optionValue(searchParams?.q as FormDataEntryValue | null)
 
-  const [submissions, assignments, years, classes, sections, subjects, students] = await Promise.all([
+  const [submissions, assignments, years, classes, sections, subjects] = await Promise.all([
     listAngelcare360AssignmentSubmissions({ schoolId: context.school.id, assignmentId, studentId, classId, status, search }),
     listAngelcare360Assignments({ schoolId: context.school.id, academicYearId: context.academicYear?.id || null }),
     listAngelcare360AcademicYears(context.school.id),
     listAngelcare360Classes(context.school.id, context.academicYear?.id || null),
     listAngelcare360Sections(context.school.id, context.academicYear?.id || null),
     listAngelcare360Subjects(context.school.id),
-    listAngelcare360Students(context.school.id),
   ])
 
   return (
@@ -59,20 +57,6 @@ export default async function Angelcare360SoumissionsPage({ searchParams }: { se
       subtitle="Liste opérationnelle des remises avec correction, retard et statut de suivi."
       badge="Académique"
       statusLabel={`${submissions.length} soumission(s)`}
-      experience={<AcademicZoneAR3Experience
-        variant="submissions"
-        eyebrow="Submission Operations Board"
-        title="Remises, retards et corrections"
-        description="Les travaux à traiter sont séparés des remises corrigées pour accélérer la journée pédagogique."
-        metrics={[
-          { label: 'À corriger', value: submissions.filter((item) => item.status === 'submitted').length, tone: 'purple' },
-          { label: 'En retard', value: submissions.filter((item) => item.status === 'late').length, tone: 'coral' },
-          { label: 'Corrigées', value: submissions.filter((item) => ['reviewed','graded'].includes(String(item.status))).length, tone: 'green' },
-          { label: 'Manquantes', value: submissions.filter((item) => item.status === 'missing').length, tone: 'amber' },
-        ]}
-        items={submissions.map((item) => ({ id: item.id, title: item.student_full_name || 'Élève', meta: item.assignment_title || 'Devoir', secondary: item.submitted_at || 'Non remis', status: item.status, attention: ['late','missing','submitted'].includes(String(item.status)) }))}
-        emptyLabel="Aucune remise ne correspond aux filtres courants."
-      />}
       navigationItems={ANGELCARE360_ACADEMICS_NAVIGATION}
       contextRow={
         <>
@@ -92,7 +76,7 @@ export default async function Angelcare360SoumissionsPage({ searchParams }: { se
         <form method="get" style={filterGridStyle}>
           <Input name="q" placeholder="Recherche" defaultValue={search || ''} />
           <Select name="assignmentId" defaultValue={assignmentId || ''}><option value="">Tous les devoirs</option>{assignments.map((item) => <option key={item.id} value={item.id}>{item.title}</option>)}</Select>
-          <Select name="studentId" defaultValue={studentId || ''}><option value="">Tous les élèves</option>{students.map((item) => <option key={item.id} value={item.id}>{item.full_name || item.student_code || 'Élève'}</option>)}</Select>
+          <Input name="studentId" placeholder="ID élève" defaultValue={studentId || ''} />
           <Select name="classId" defaultValue={classId || ''}><option value="">Toutes les classes</option>{classes.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</Select>
           <Select name="status" defaultValue={status || ''}>
             <option value="">Tous les statuts</option>
@@ -123,8 +107,8 @@ export default async function Angelcare360SoumissionsPage({ searchParams }: { se
                 <input type="hidden" name="assignmentId" value={submission.assignment_id} />
                 <input type="hidden" name="studentId" value={submission.student_id} />
                 <div style={rowMainStyle}>
-                  <div style={rowTitleStyle}>{submission.student_full_name || submission.student_code || 'Élève'}</div>
-                  <div style={rowMetaStyle}>{submission.assignment_title || submission.assignment_code || 'Devoir'}</div>
+                  <div style={rowTitleStyle}>{submission.student_full_name || submission.student_code || submission.student_id}</div>
+                  <div style={rowMetaStyle}>{submission.assignment_title || submission.assignment_code || submission.assignment_id}</div>
                   <div style={rowMetaStyle}>{submission.due_on || 'Sans échéance'} · {submission.submitted_at || 'Non remis'}</div>
                 </div>
                 <div style={rowActionsStyle}>

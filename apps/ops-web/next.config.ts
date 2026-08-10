@@ -2,7 +2,6 @@ import type { NextConfig } from "next";
 import path from "path";
 
 const nextConfig: NextConfig = {
-  staticPageGenerationTimeout: 180,
   // Disabled until the Next 16 next/link ReactNode typing defect is resolved.
   typedRoutes: false,
 

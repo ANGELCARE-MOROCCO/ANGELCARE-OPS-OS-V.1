@@ -5,7 +5,6 @@ import { requireUnlockedMailboxAccess, resolveMailboxScopeForUser } from "@/lib/
 import { makeEmailOSId, nowIso } from "@/lib/email-os-core/schema"
 import { emailOSOperatorSnapshot, resolveEmailOSOperatorIdentity } from "@/lib/email-os-core/operator-identity"
 import { resolveSenderIdentity, senderIdentitySnapshot } from "@/lib/email-os-core/sender-identity"
-import { attachmentErrorResponse, persistComposeAttachments, validateComposeAttachments } from "@/lib/email-os-core/compose-attachments"
 
 function clean(value: unknown) {
   return typeof value === "string" ? value.trim() : ""
@@ -74,12 +73,7 @@ export async function POST(request: Request) {
     const messageHtml = clean(body.bodyHtml || body.body_html || body.body || body.html || body.message)
     const messageText = clean(body.bodyText || body.body_text || body.text)
     const priority = clean(body.priority) || "normal"
-    const attachmentInputs = normalizeAttachments(body.attachments)
-    const attachments = await validateComposeAttachments({
-      db,
-      mailboxId: mailboxScope.mailboxId,
-      attachments: attachmentInputs,
-    })
+    const attachments = normalizeAttachments(body.attachments)
     const trackingEnabled = body.tracking !== false && body.tracking !== "false"
     const sourceTemplateId = clean(body.templateId || body.template_id)
     const sourceTemplateVersion = Number(body.templateVersion || body.template_version || 0)
@@ -144,19 +138,6 @@ export async function POST(request: Request) {
       const { error: outboxError } = await db.from("email_os_core_outbox").insert(outboxRow)
       if (outboxError) {
         return NextResponse.json({ ok: false, error: outboxError.message }, { status: 500 })
-      }
-
-      try {
-        await persistComposeAttachments({
-          db,
-          mailboxId: mailboxScope.mailboxId,
-          outboxId,
-          attachments,
-          metadata: { source: "scheduled-draft", scheduledAt },
-        })
-      } catch (attachmentError) {
-        await db.from("email_os_core_outbox").update({ status: "failed", last_error: attachmentError instanceof Error ? attachmentError.message : "Attachment persistence failed", updated_at: nowIso() }).eq("id", outboxId).then(() => null, () => null)
-        throw attachmentError
       }
 
       const queuePayload = {
@@ -241,21 +222,7 @@ export async function POST(request: Request) {
     }
 
     const { data, error } = await db.from("email_os_core_drafts").insert(row).select("*").single()
-    if (!error) {
-      try {
-        await persistComposeAttachments({
-          db,
-          mailboxId: mailboxScope.mailboxId,
-          draftId: id,
-          attachments,
-          metadata: { source: "draft" },
-        })
-      } catch (attachmentError) {
-        await db.from("email_os_core_drafts").delete().eq("id", id).then(() => null, () => null)
-        throw attachmentError
-      }
-      return NextResponse.json({ ok: true, data })
-    }
+    if (!error) return NextResponse.json({ ok: true, data })
 
     const fallback = await db.from("email_os_core_outbox").insert({
       id,
@@ -293,25 +260,11 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: false, error: fallback.error.message }, { status: 500 })
     }
 
-    try {
-      await persistComposeAttachments({
-        db,
-        mailboxId: mailboxScope.mailboxId,
-        outboxId: id,
-        attachments,
-        metadata: { source: "draft-outbox-fallback" },
-      })
-    } catch (attachmentError) {
-      await db.from("email_os_core_outbox").update({ status: "failed", last_error: attachmentError instanceof Error ? attachmentError.message : "Attachment persistence failed", updated_at: nowIso() }).eq("id", id).then(() => null, () => null)
-      throw attachmentError
-    }
-
     return NextResponse.json({ ok: true, data: fallback.data })
   } catch (error) {
-    const attachment = attachmentErrorResponse(error)
     return NextResponse.json(
-      { ok: false, error: attachment?.message || (error instanceof Error ? error.message : "Draft save failed"), ...(attachment ? { code: attachment.code } : {}) },
-      { status: attachment?.status || 500 }
+      { ok: false, error: error instanceof Error ? error.message : "Draft save failed" },
+      { status: 500 }
     )
   }
 }
