@@ -100,8 +100,11 @@ export type CollectionCard = {
   updatedAt: string | null
 }
 
+export type CollectionCommercial = { id:string; universe:'b2c'|'b2b'; basePriceDh:number|null; unitCostDh:number|null; minimumQuantity:number; taxPercent:number; volumeTiers:Array<Record<string,unknown>>; status:'draft'|'active'|'inactive'; authoritySource:string; confirmedAt:string|null; confirmedBy:string|null }
+
 export type CollectionDossier = CollectionSummary & {
   cards: CollectionCard[]
+  commercials: CollectionCommercial[]
   sections: Array<{
     key: string
     label: string

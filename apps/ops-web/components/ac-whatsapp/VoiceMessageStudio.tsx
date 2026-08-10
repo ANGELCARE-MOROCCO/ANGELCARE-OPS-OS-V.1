@@ -19,6 +19,7 @@ type VoiceMessageStudioProps = {
   disabled?: boolean
   onSent: () => Promise<void> | void
   onSuccess: (title: string, description: string) => void
+  onQueued?: (title: string, description: string) => void
   onError: (title: string, description: string) => void
 }
 
@@ -62,6 +63,7 @@ export function VoiceMessageStudio({
   disabled,
   onSent,
   onSuccess,
+  onQueued,
   onError,
 }: VoiceMessageStudioProps) {
   const [phase, setPhase] = useState<RecorderPhase>("idle")
@@ -249,7 +251,7 @@ export function VoiceMessageStudio({
         mimeType: string
         fileName: string
       }
-      await acApi("/api/ac-whatsapp/messages/send", {
+      const result = await acApi<any>("/api/ac-whatsapp/messages/send", {
         method: "POST",
         body: JSON.stringify({
           conversationId,
@@ -268,7 +270,16 @@ export function VoiceMessageStudio({
       })
       resetRecording()
       await onSent()
-      onSuccess("Message vocal pris en charge", "Le message vocal a été attribué à votre identité AngelCare et remis au transport WhatsApp.")
+      if (String(result?.status || "").toLowerCase() === "queued") {
+        ;(onQueued || onError)(
+          "Message vocal en file d’envoi",
+          result?.error_message
+            ? `Le vocal est conservé dans le Vault AngelCare, mais WhatsApp n’a pas encore confirmé l’envoi : ${result.error_message}`
+            : "Le vocal est conservé dans le Vault AngelCare et attend une nouvelle tentative de transport WhatsApp.",
+        )
+      } else {
+        onSuccess("Message vocal accepté par WhatsApp", "OpenWA a accepté le message vocal et son état de transport a été enregistré.")
+      }
     } catch (cause) {
       setPhase("preview")
       onError("Envoi vocal non terminé", cause instanceof Error ? cause.message : "Le message vocal n’a pas pu être remis à OpenWA.")
@@ -289,7 +300,7 @@ export function VoiceMessageStudio({
       <Mic className="h-3.5 w-3.5" />Message vocal
     </button>
 
-    {phase !== "idle" ? <div className="absolute bottom-12 left-0 z-50 w-[min(430px,82vw)] rounded-[24px] border border-slate-300 bg-white p-4 shadow-[0_28px_80px_rgba(15,23,42,.24)]">
+    {phase !== "idle" ? <div className="absolute bottom-12 left-0 z-50 w-[min(430px,82vw)] rounded-[24px] border border-slate-300 bg-white p-4 shadow-[0_28px_80px_rgba(15,23,42,.24)] acw-floating-surface">
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="text-[8px] font-black uppercase tracking-[.16em] text-slate-600">Voice Message Studio</p>

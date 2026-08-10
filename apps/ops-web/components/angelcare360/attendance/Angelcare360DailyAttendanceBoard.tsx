@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useMemo, useState, useTransition } from 'react'
 import type { Angelcare360AttendanceDayClassRecord, Angelcare360AttendanceDayState } from '@/types/angelcare360/attendance'
 
@@ -23,6 +24,7 @@ export default function Angelcare360DailyAttendanceBoard({
   canCreateSession,
   canApproveSession,
 }: Angelcare360DailyAttendanceBoardProps) {
+  const router = useRouter()
   const [feedback, setFeedback] = useState<string | null>(null)
   const [isPending, startTransition] = useTransition()
 
@@ -49,9 +51,7 @@ export default function Angelcare360DailyAttendanceBoard({
           throw new Error(result?.error || 'L’action de présence a échoué.')
         }
         setFeedback(result.warning || 'Action de présence exécutée avec succès.')
-        globalThis.setTimeout(() => {
-          globalThis.location?.reload()
-        }, 200)
+        router.refresh()
       } catch (error) {
         setFeedback(error instanceof Error ? error.message : 'Une erreur est survenue.')
       }

@@ -1,8 +1,10 @@
 export type AcUnknownRecord = Record<string, any>
 
 const UNKNOWN_LABELS = new Set(['', 'unknown', '[unknown]', 'inconnu', '[inconnu]', 'contact', 'whatsapp', 'undefined', 'null'])
-const MESSAGE_ID_KEYS = ['id','message_id','provider_message_id','openwa_message_id','whatsapp_message_id','external_id','client_message_id','transport_message_id'] as const
+const MESSAGE_ID_KEYS = ['id','message_id','provider_message_id','openwa_message_id','whatsapp_message_id','external_id','external_message_id','client_message_id','transport_message_id'] as const
 const ATTACHMENT_ID_KEYS = ['id','storage_key','storage_path','file_name','filename'] as const
+const NON_RENDERABLE_MESSAGE_TYPES = new Set(['', 'unknown', 'system', 'protocol', 'reaction', 'revoked', 'notification', 'ciphertext'])
+const MEDIA_MESSAGE_TYPES = new Set(['image', 'video', 'audio', 'voice', 'document', 'sticker'])
 
 function asRecord(value: unknown): AcUnknownRecord | null { return value && typeof value === 'object' && !Array.isArray(value) ? value as AcUnknownRecord : null }
 function normalizedText(value: unknown) { return String(value ?? '').trim() }
@@ -41,7 +43,7 @@ function mergePersonLike(previousValue: unknown, incomingValue: unknown) {
   const previous=asRecord(previousValue), incoming=asRecord(incomingValue); if(!previous)return incomingValue; if(!incoming)return previousValue
   const merged:AcUnknownRecord={...previous,...incoming}
   for(const key of ['display_name','name','contact_name','sender_display_name','business_name','organization_name']) if(!meaningfulName(incoming[key])&&meaningfulName(previous[key])) merged[key]=previous[key]
-  for(const key of ['phone_e164','e164','phone']) if(!isValidE164(incoming[key])&&isValidE164(previous[key])) merged[key]=previous[key]
+  for(const key of ['phone_number_e164','phone_e164','e164','phone']) if(!isValidE164(incoming[key])&&isValidE164(previous[key])) merged[key]=previous[key]
   return merged
 }
 function normalizeRecord(record: AcUnknownRecord): AcUnknownRecord {
@@ -50,8 +52,10 @@ function normalizeRecord(record: AcUnknownRecord): AcUnknownRecord {
   const lid=isWhatsAppLid(remote)?remote:normalizedText(next.lid||next.lid_identity)
   if(lid&&isWhatsAppLid(lid)){
     next.lid_identity=lid; const digits=lidDigits(lid)
-    for(const key of ['phone_e164','e164','phone']){const candidate=normalizedText(next[key]).replace(/\D/g,''); if(candidate&&digits&&candidate===digits) next[key]=null}
+    for(const key of ['phone_number_e164','phone_e164','e164','phone']){const candidate=normalizedText(next[key]).replace(/\D/g,''); if(candidate&&digits&&candidate===digits) next[key]=null}
   }
+  if (normalizedText(next.whatsapp_id) && !meaningfulName(next.display_name)) next.display_name = null
+  if (UNKNOWN_LABELS.has(normalizedText(next.last_message_preview).toLowerCase())) next.last_message_preview = null
   for(const key of ['contact','sender','assigned_user','owner','responsible','account']) if(asRecord(next[key])) next[key]=normalizeRecord(next[key])
   if(Array.isArray(next.attachments)) next.attachments=next.attachments.map((item:unknown)=>{const value=asRecord(item); return value?normalizeRecord(value):item})
   return next
@@ -63,7 +67,7 @@ export function normalizeConversationSnapshot<T>(value:T):T{
 function mergeMessage(previous:AcUnknownRecord,incoming:AcUnknownRecord){
   const merged:AcUnknownRecord={...previous,...incoming}; merged.attachments=mergeAttachments(previous.attachments,incoming.attachments); merged.sender=mergePersonLike(previous.sender,incoming.sender)
   for(const key of ['sender_display_name_snapshot','sender_display_name','author_name']) if(!meaningfulName(incoming[key])&&meaningfulName(previous[key])) merged[key]=previous[key]
-  for(const key of ['provider_message_id','openwa_message_id','whatsapp_message_id','transport_message_id']) if(!normalizedText(incoming[key])&&normalizedText(previous[key])) merged[key]=previous[key]
+  for(const key of ['provider_message_id','openwa_message_id','whatsapp_message_id','transport_message_id','external_message_id']) if(!normalizedText(incoming[key])&&normalizedText(previous[key])) merged[key]=previous[key]
   return merged
 }
 function mergeMessages(previousValue:unknown,incomingValue:unknown){
@@ -83,3 +87,43 @@ export function mergeConversationSnapshot<T>(current:T|null|undefined,incoming:T
 }
 export function stableMessageKey(message:unknown,index=0){const record=asRecord(message); return record?(identityOf(record)||`message-${index}`):`message-${index}`}
 export function safeDisplayName(current:unknown,fallback?:unknown){if(meaningfulName(current))return normalizedText(current); if(meaningfulName(fallback))return normalizedText(fallback); return 'Contact WhatsApp'}
+
+export function canonicalTimelineMessageType(value: unknown) {
+  const record = asRecord(value)
+  const raw = normalizedText(record?.message_type || record?.type).toLowerCase()
+  const hasText = Boolean(normalizedText(record?.body || record?.caption || record?.text))
+  if (raw === 'ptt') return 'voice'
+  if (raw.startsWith('image/')) return 'image'
+  if (raw.startsWith('video/')) return 'video'
+  if (raw.startsWith('audio/')) return record?.ptt === true ? 'voice' : 'audio'
+  if (raw === 'chat' || raw === 'conversation' || raw === 'extendedtext' || raw === 'extended_text') return 'text'
+  if ((NON_RENDERABLE_MESSAGE_TYPES.has(raw) || !raw) && hasText) return 'text'
+  return raw || (hasText ? 'text' : 'unknown')
+}
+
+export function isRenderableTimelineMessage(value: unknown) {
+  const record = asRecord(value)
+  if (!record) return false
+  const type = canonicalTimelineMessageType(record)
+  if (normalizedText(record.body || record.caption || record.text)) return true
+  if (MEDIA_MESSAGE_TYPES.has(type)) return true
+  if (Array.isArray(record.attachments) && record.attachments.length > 0) return true
+  return !NON_RENDERABLE_MESSAGE_TYPES.has(type)
+}
+
+export function timelineMessagePreview(value: unknown) {
+  const record = asRecord(value)
+  if (!record) return ''
+  const text = normalizedText(record.body || record.caption || record.text)
+  if (text) return text
+  const type = canonicalTimelineMessageType(record)
+  const labels: Record<string, string> = {
+    image: 'Image WhatsApp',
+    video: 'Vidéo WhatsApp',
+    audio: 'Audio WhatsApp',
+    voice: 'Message vocal',
+    document: 'Document WhatsApp',
+    sticker: 'Sticker WhatsApp',
+  }
+  return labels[type] || ''
+}

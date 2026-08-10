@@ -1,8 +1,10 @@
 import type { ReactNode } from 'react'
 import Angelcare360TimetableNavigation from './Angelcare360TimetableNavigation'
 import type { Angelcare360TimetableNavigationItem } from '@/data/angelcare360/timetable-navigation'
+import AcademicZoneAFrame from '@/components/angelcare360/zone-a-academic/AcademicZoneAFrame'
+import styles from '@/components/angelcare360/zone-a-academic/AcademicZoneAChrome.module.css'
 
-type Angelcare360TimetablePageShellProps = {
+type Props = {
   title: string
   subtitle: string
   badge?: string
@@ -14,115 +16,22 @@ type Angelcare360TimetablePageShellProps = {
   children: ReactNode
 }
 
-export default function Angelcare360TimetablePageShell({
-  title,
-  subtitle,
-  badge,
-  statusLabel,
-  primaryAction,
-  secondaryActions,
-  contextRow,
-  navigationItems,
-  children,
-}: Angelcare360TimetablePageShellProps) {
+export default function Angelcare360TimetablePageShell({ title, subtitle, badge, statusLabel, primaryAction, secondaryActions, contextRow, navigationItems, children }: Props) {
   return (
-    <section style={shellStyle}>
-      <header style={headerStyle}>
-        <div style={headingStyle}>
-          <div style={eyebrowRowStyle}>
-            {badge ? <span style={badgeStyle}>{badge}</span> : null}
-            {statusLabel ? <span style={statusStyle}>{statusLabel}</span> : null}
+    <AcademicZoneAFrame eyebrow="Timetable Airspace">
+      <section className={styles.pageShell} data-zone-a-surface="timetable">
+        <header className={styles.hero}>
+          <div className={styles.heading}>
+            <div className={styles.eyebrowRow}>{badge ? <span className={styles.badge}>{badge}</span> : null}{statusLabel ? <span className={styles.status}>{statusLabel}</span> : null}</div>
+            <h1 className={styles.title}>{title}</h1>
+            <p className={styles.subtitle}>{subtitle}</p>
           </div>
-          <h1 style={titleStyle}>{title}</h1>
-          <p style={subtitleStyle}>{subtitle}</p>
-        </div>
-
-        {primaryAction || secondaryActions ? <div style={actionsStyle}>{secondaryActions}{primaryAction}</div> : null}
-      </header>
-
-      {contextRow ? <div style={contextStyle}>{contextRow}</div> : null}
-      <Angelcare360TimetableNavigation items={navigationItems} />
-      <div style={contentStyle}>{children}</div>
-    </section>
+          {primaryAction || secondaryActions ? <div className={styles.heroActions}>{secondaryActions}{primaryAction}</div> : null}
+        </header>
+        {contextRow ? <div className={styles.contextRow}>{contextRow}</div> : null}
+        <Angelcare360TimetableNavigation items={navigationItems} />
+        <div className={styles.operationalCanvas} data-zone-a-content="true">{children}</div>
+      </section>
+    </AcademicZoneAFrame>
   )
-}
-
-const shellStyle: React.CSSProperties = {
-  display: 'grid',
-  gap: 18,
-}
-
-const headerStyle: React.CSSProperties = {
-  display: 'flex',
-  flexWrap: 'wrap',
-  alignItems: 'start',
-  justifyContent: 'space-between',
-  gap: 16,
-}
-
-const headingStyle: React.CSSProperties = {
-  display: 'grid',
-  gap: 10,
-}
-
-const eyebrowRowStyle: React.CSSProperties = {
-  display: 'flex',
-  flexWrap: 'wrap',
-  gap: 8,
-}
-
-const badgeStyle: React.CSSProperties = {
-  display: 'inline-flex',
-  alignItems: 'center',
-  borderRadius: 999,
-  padding: '6px 10px',
-  background: '#dbeafe',
-  color: '#1d4ed8',
-  fontSize: 12,
-  fontWeight: 900,
-}
-
-const statusStyle: React.CSSProperties = {
-  display: 'inline-flex',
-  alignItems: 'center',
-  borderRadius: 999,
-  padding: '6px 10px',
-  background: '#eff6ff',
-  color: '#1e40af',
-  fontSize: 12,
-  fontWeight: 900,
-}
-
-const titleStyle: React.CSSProperties = {
-  margin: 0,
-  color: '#0f172a',
-  fontSize: 28,
-  lineHeight: 1.1,
-  fontWeight: 950,
-}
-
-const subtitleStyle: React.CSSProperties = {
-  margin: 0,
-  maxWidth: 980,
-  color: '#475569',
-  fontSize: 15,
-  lineHeight: 1.65,
-  fontWeight: 600,
-}
-
-const actionsStyle: React.CSSProperties = {
-  display: 'flex',
-  flexWrap: 'wrap',
-  gap: 10,
-}
-
-const contextStyle: React.CSSProperties = {
-  display: 'flex',
-  flexWrap: 'wrap',
-  gap: 10,
-}
-
-const contentStyle: React.CSSProperties = {
-  display: 'grid',
-  gap: 16,
 }

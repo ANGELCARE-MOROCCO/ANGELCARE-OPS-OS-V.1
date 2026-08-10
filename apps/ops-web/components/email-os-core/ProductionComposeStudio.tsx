@@ -57,25 +57,47 @@ function templateSubject(template: any) {
 }
 
 async function uploadAttachmentToGateway(file: File, mailboxId: string) {
-  const formData = new FormData()
-  formData.append("file", file)
-  formData.append("moduleKey", "email_os")
-  formData.append("mailboxId", mailboxId)
-  formData.append("entityType", "compose_attachment")
-  formData.append("direction", "outbound")
-  formData.append("createdBy", "production-compose-studio")
-  formData.append("metadata", JSON.stringify({ source: "production-compose-studio" }))
-
-  const res = await fetch("/api/storage/upload", {
+  const ticketResponse = await fetch("/api/storage/upload-ticket", {
     method: "POST",
-    body: formData
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      mailboxId,
+      moduleKey: "email_os",
+      entityType: "compose_attachment",
+      direction: "outbound",
+      filename: file.name,
+      contentType: file.type || "application/octet-stream",
+      sizeBytes: file.size
+    })
   })
+  const ticketJson = await ticketResponse.json().catch(() => null)
+  if (!ticketResponse.ok || ticketJson?.ok === false || !ticketJson?.data?.uploadUrl || !ticketJson?.data?.ticket) {
+    return { ok: false, data: null, error: ticketJson?.error || `HTTP ${ticketResponse.status}` }
+  }
 
-  const json = await res.json().catch(() => null)
+  const directResponse = await fetch(ticketJson.data.uploadUrl, {
+    method: "PUT",
+    headers: {
+      "Content-Type": file.type || "application/octet-stream",
+      "x-email-storage-ticket": ticketJson.data.ticket
+    },
+    body: file
+  })
+  const directJson = await directResponse.json().catch(() => null)
+  if (!directResponse.ok || directJson?.ok === false || !directJson?.data?.receipt) {
+    return { ok: false, data: null, error: directJson?.error || `HTTP ${directResponse.status}` }
+  }
+
+  const finalizeResponse = await fetch("/api/storage/upload-finalize", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ fileId: ticketJson.data.fileId, receipt: directJson.data.receipt })
+  })
+  const finalizeJson = await finalizeResponse.json().catch(() => null)
   return {
-    ok: res.ok && json?.ok !== false,
-    data: json?.data ?? json,
-    error: json?.error || (!res.ok ? `HTTP ${res.status}` : null)
+    ok: finalizeResponse.ok && finalizeJson?.ok !== false,
+    data: finalizeJson?.data ?? finalizeJson,
+    error: finalizeJson?.error || (!finalizeResponse.ok ? `HTTP ${finalizeResponse.status}` : null)
   }
 }
 
@@ -197,52 +219,37 @@ export default function ProductionComposeStudio() {
   async function registerLocalAttachments(files: FileList | null) {
     if (!files) return
 
-    const next = await Promise.all(Array.from(files).map(async (file) => {
-      const mimeType = file.type || "application/octet-stream"
-      if (mailboxId) {
-        try {
-          const uploaded = await uploadAttachmentToGateway(file, mailboxId)
-          if (uploaded.ok && uploaded.data?.id) {
-            return {
-              id: uploaded.data.id,
-              filename: uploaded.data.original_filename || file.name,
-              size: file.size,
-              mimeType,
-              fileId: uploaded.data.id,
-              storageBucket: uploaded.data.storage_bucket,
-              storageKey: uploaded.data.storage_key,
-              storageStatus: uploaded.data.status || "active",
-              downloadUrl: `/api/storage/download/${uploaded.data.id}?mailboxId=${encodeURIComponent(mailboxId)}`
-            }
-          }
-        } catch {
-          // Legacy fallback below.
+    if (!mailboxId) {
+      setStatus("Veuillez sélectionner une boîte mail avant d’ajouter une pièce jointe")
+      return
+    }
+
+    try {
+      const next = await Promise.all(Array.from(files).map(async (file) => {
+        const mimeType = file.type || "application/octet-stream"
+        const uploaded = await uploadAttachmentToGateway(file, mailboxId)
+        if (!uploaded.ok || !uploaded.data?.id) {
+          throw new Error(uploaded.error || `Échec du stockage sécurisé de ${file.name}`)
         }
-      }
+        return {
+          id: uploaded.data.id,
+          filename: uploaded.data.original_filename || file.name,
+          size: file.size,
+          mimeType,
+          fileId: uploaded.data.id,
+          storageFileId: uploaded.data.id,
+          storageBucket: uploaded.data.storage_bucket,
+          storageKey: uploaded.data.storage_key,
+          storageStatus: uploaded.data.status || "active",
+          downloadUrl: `/api/storage/download/${uploaded.data.id}?mailboxId=${encodeURIComponent(mailboxId)}`
+        }
+      }))
 
-      return {
-        id: `${file.name}-${file.size}-${Date.now()}`,
-        filename: file.name,
-        size: file.size,
-        mimeType,
-        contentBase64: await fileToDataUrl(file)
-      }
-    }))
-
-    setAttachments((prev) => [...prev, ...next])
-    setStatus(`${next.length} pièce(s) jointe(s) ajoutée(s)`)
-  }
-
-  function fileToDataUrl(file: File) {
-    return new Promise<string>((resolve, reject) => {
-      const reader = new FileReader()
-      reader.onerror = () => reject(new Error(`Unable to read attachment: ${file.name}`))
-      reader.onload = () => {
-        const raw = String(reader.result || "")
-        resolve(raw.includes(",") ? raw.split(",").pop() || "" : raw)
-      }
-      reader.readAsDataURL(file)
-    })
+      setAttachments((prev) => [...prev, ...next])
+      setStatus(`${next.length} pièce(s) jointe(s) ajoutée(s)`)
+    } catch (error) {
+      setStatus(error instanceof Error ? error.message : "Échec du stockage sécurisé des pièces jointes")
+    }
   }
 
   function resetCompose() {
@@ -306,28 +313,19 @@ export default function ProductionComposeStudio() {
         body,
         priority,
         templateKey,
+        attachments: safeAttachments.filter((item) => item.fileId || item.contentBase64).map((item) => ({
+          filename: item.filename,
+          contentType: item.mimeType,
+          fileId: item.fileId,
+          storageFileId: item.fileId,
+          contentBase64: item.contentBase64,
+          sizeBytes: item.size,
+          storageBucket: item.storageBucket,
+          storageKey: item.storageKey
+        })),
         diagnostics: { attachmentCount: safeAttachments.length }
       })
     })
-
-    if (result.ok && safeAttachments.length > 0) {
-      await api("/api/email-os/compose/attachments", {
-        method: "POST",
-        body: JSON.stringify({
-          mailboxId,
-          draftId: result.data?.id,
-          attachments: safeAttachments.filter((item) => item.fileId || item.contentBase64).map((item) => ({
-            filename: item.filename,
-            mimeType: item.mimeType,
-            fileId: item.fileId,
-            contentBase64: item.contentBase64,
-            size: item.size,
-            storageBucket: item.storageBucket,
-            storageKey: item.storageKey
-          }))
-        })
-      })
-    }
 
     setBusy(false)
     setLastResult(result)
@@ -365,28 +363,19 @@ export default function ProductionComposeStudio() {
         body,
         priority,
         templateKey,
+        attachments: safeAttachments.filter((item) => item.fileId || item.contentBase64).map((item) => ({
+          filename: item.filename,
+          contentType: item.mimeType,
+          fileId: item.fileId,
+          storageFileId: item.fileId,
+          contentBase64: item.contentBase64,
+          sizeBytes: item.size,
+          storageBucket: item.storageBucket,
+          storageKey: item.storageKey
+        })),
         diagnostics: { attachmentCount: safeAttachments.length }
       })
     })
-
-    if (result.ok && safeAttachments.length > 0) {
-      await api("/api/email-os/compose/attachments", {
-        method: "POST",
-        body: JSON.stringify({
-          mailboxId,
-          outboxId: result.data?.outboxId || result.data?.id,
-          attachments: safeAttachments.filter((item) => item.fileId || item.contentBase64).map((item) => ({
-            filename: item.filename,
-            mimeType: item.mimeType,
-            fileId: item.fileId,
-            contentBase64: item.contentBase64,
-            size: item.size,
-            storageBucket: item.storageBucket,
-            storageKey: item.storageKey
-          }))
-        })
-      })
-    }
 
     setBusy(false)
     setLastResult(result)

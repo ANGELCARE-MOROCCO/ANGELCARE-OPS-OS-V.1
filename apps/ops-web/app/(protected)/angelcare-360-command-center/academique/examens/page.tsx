@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import Angelcare360AcademicPageShell from '@/components/angelcare360/academics/Angelcare360AcademicPageShell'
+import AcademicZoneAR3Experience from '@/components/angelcare360/zone-a-academic/AcademicZoneAR3Experience'
 import { ANGELCARE360_ACADEMICS_NAVIGATION } from '@/data/angelcare360/academics-navigation'
 import { getAngelcare360AccessContext } from '@/lib/angelcare360/server'
 import { createAngelcare360Exam, listAngelcare360Exams } from '@/lib/angelcare360/server/academics'
@@ -64,6 +65,20 @@ export default async function Angelcare360ExamensPage({ searchParams }: { search
       subtitle="Planification des examens, sessions, coefficients et max score avec statuts persistés."
       badge="Académique"
       statusLabel={`${exams.length} examen(s)`}
+      experience={<AcademicZoneAR3Experience
+        variant="assessments"
+        eyebrow="Assessment Foundry"
+        title="Pipeline des évaluations"
+        description="Chaque évaluation avance d’un brouillon vers l’administration, la correction puis la publication des résultats."
+        metrics={[
+          { label: 'Brouillons', value: exams.filter((item) => item.status === 'draft').length, tone: 'graphite' },
+          { label: 'Planifiées', value: exams.filter((item) => ['planned','scheduled'].includes(String(item.status))).length, tone: 'purple' },
+          { label: 'À corriger', value: exams.filter((item) => ['completed','closed'].includes(String(item.status))).length, tone: 'amber' },
+          { label: 'Notées', value: exams.filter((item) => item.status === 'graded').length, tone: 'green' },
+        ]}
+        items={exams.map((exam) => ({ id: exam.id, title: exam.title, meta: `${exam.scheduled_on} · ${exam.class_name || 'Classe non résolue'} · ${exam.subject_name || 'Matière non résolue'}`, secondary: `${exam.mark_count || 0} note(s) · ${exam.session_count || 0} session(s)`, status: exam.status, attention: ['completed','closed'].includes(String(exam.status)), href: `/angelcare-360-command-center/academique/examens/${exam.id}` }))}
+        emptyLabel="Aucune évaluation ne correspond aux filtres courants."
+      />}
       navigationItems={ANGELCARE360_ACADEMICS_NAVIGATION}
       primaryAction={<Link href="#nouvel-examen" style={primaryLinkStyle}>Nouvel examen</Link>}
       contextRow={
@@ -117,7 +132,7 @@ export default async function Angelcare360ExamensPage({ searchParams }: { search
             <Select name="classId" defaultValue={classes[0]?.id || ''}>{classes.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</Select>
             <Select name="sectionId" defaultValue=""><option value="">Aucune section</option>{sections.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</Select>
             <Select name="subjectId" defaultValue={subjects[0]?.id || ''}>{subjects.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</Select>
-            <Select name="staffId" defaultValue=""><option value="">Enseignant non renseigné</option>{teachers.map((item) => <option key={item.id} value={item.staff_id}>{relatedLabel(item.staff) || item.staff_id}</option>)}</Select>
+            <Select name="staffId" defaultValue=""><option value="">Enseignant non renseigné</option>{teachers.map((item) => <option key={item.id} value={item.staff_id}>{relatedLabel(item.staff) || 'Enseignant non résolu'}</option>)}</Select>
             <Input name="examCode" placeholder="Code examen" />
             <Input name="title" placeholder="Titre de l’examen" />
             <Input name="examType" placeholder="Type d’examen" defaultValue="Composition" />
@@ -155,7 +170,7 @@ export default async function Angelcare360ExamensPage({ searchParams }: { search
                 <div style={rowMainStyle}>
                   <div style={rowTitleStyle}>{exam.title}</div>
                   <div style={rowMetaStyle}>{exam.exam_code} · {exam.scheduled_on} · {exam.exam_type}</div>
-                  <div style={rowMetaStyle}>{exam.class_name || exam.class_id} · {exam.subject_name || exam.subject_id}</div>
+                  <div style={rowMetaStyle}>{exam.class_name || 'Classe non résolue'} · {exam.subject_name || 'Matière non résolue'}</div>
                 </div>
                 <div style={rowActionsStyle}>
                   <Status status={exam.status} />

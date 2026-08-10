@@ -1,0 +1,17 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "incremental": false,
+    "skipLibCheck": true
+  },
+  "include": [
+    "next-env.d.ts",
+    "app/(protected)/social-command/_components/SocialCommandClient.tsx",
+    "app/(protected)/social-command/_components/EngagementCommand.tsx",
+    "app/(protected)/social-command/_components/SocialCommandMZ4Shell.tsx",
+    "app/(protected)/social-command/_components/SocialCommandMZ4Workspaces.tsx",
+    "lib/social-command/mz4-broadcast.ts"
+  ],
+  "exclude": ["node_modules", ".next", ".angelcare_backups", "backups", "_archive"]
+}
