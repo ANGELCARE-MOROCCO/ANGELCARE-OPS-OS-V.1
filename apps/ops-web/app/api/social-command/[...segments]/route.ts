@@ -165,7 +165,7 @@ export async function POST(request: Request, context: RouteContext) {
       let payload: Record<string, unknown>
       try { payload = JSON.parse(rawBody) as Record<string, unknown> }
       catch { await recordRejectedWebhook(rawBody, "invalid_json", signatureCheck); return new NextResponse("Invalid webhook payload", { status: 400 }) }
-      return socialOk(await processMetaWebhookPayload(payload, rawBody, signatureCheck))
+      return socialOk(await processMetaWebhookPayload(payload, rawBody))
     }
     if (key === "worker/tick") {
       if(!workerAuthorized(request)) return socialError("WORKER_UNAUTHORIZED",401)
