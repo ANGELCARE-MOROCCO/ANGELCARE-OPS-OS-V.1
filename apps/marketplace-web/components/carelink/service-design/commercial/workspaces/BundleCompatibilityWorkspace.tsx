@@ -1,2 +1,0 @@
-import{SupportWorkspace}from'./SupportWorkspace'
-export function BundleCompatibilityWorkspace(){return <SupportWorkspace eyebrow="Compatibility Observatory" title="Observatoire de compatibilit\u00e9" description="Conflits, doublons, ressources partag\u00e9es et blocages s\u00e9curit\u00e9." primary="Analyse de compatibilit\u00e9" secondary="R\u00e9solution requise" variant="matrix" items={["Conflit horaire", "Univers B2C/B2B", "Sécurité", "Référence répétée", "Staffing partagé", "Transport & matériel"]}/>}

@@ -2,6 +2,7 @@ import crypto from 'crypto'
 import { createServiceClient } from '@/lib/supabase/server'
 import { generateSessionToken, verifyPassword } from '@/lib/auth/session'
 import { ROLE_PERMISSION_FALLBACK, SOURCE_ROLE_TO_MARKETPLACE_ROLE } from '@/angelcare-marketplace/domain/constants'
+import { getMarketplaceAccessPolicy, marketplacePolicyAllowsSession } from '@/lib/auth/marketplace-access-policy'
 
 const ADMIN_PERMISSION = 'marketplace.admin.access'
 const LOGIN_FAILURE_ACTION = 'marketplace.admin.login.failed'
@@ -152,37 +153,17 @@ async function sessionPolicy(db: Awaited<ReturnType<typeof createServiceClient>>
   | { ok: true; durationHours: number }
   | { ok: false; code: 'ACCOUNT_UNAVAILABLE' | 'MFA_REQUIRED'; message: string }
 > {
-  try {
-    const { data: account } = await db
-      .from('angelcare360_operator_tenant_access_accounts')
-      .select('status,security_policy,access_starts_at,access_expires_at,mfa_enrolled_at')
-      .eq('app_user_id', userId)
-      .order('updated_at', { ascending: false })
-      .limit(1)
-      .maybeSingle()
-
-    if (!account) return { ok: true, durationHours: DEFAULT_SESSION_HOURS }
-
-    const now = Date.now()
-    const startsAt = account.access_starts_at ? new Date(String(account.access_starts_at)).getTime() : null
-    const expiresAt = account.access_expires_at ? new Date(String(account.access_expires_at)).getTime() : null
-    if (text(account.status) !== 'active' || (startsAt && startsAt > now) || (expiresAt && expiresAt <= now)) {
-      return { ok: false, code: 'ACCOUNT_UNAVAILABLE', message: 'Cet accès administrateur est indisponible.' }
-    }
-
-    const policy = account.security_policy && typeof account.security_policy === 'object'
-      ? account.security_policy as Record<string, unknown>
-      : {}
-    const durationHours = Math.max(1, Math.min(MAX_SESSION_HOURS, Number(policy.session_duration_hours || DEFAULT_SESSION_HOURS)))
-
-    if (Boolean(policy.require_mfa) && account.mfa_enrolled_at) {
-      return { ok: false, code: 'MFA_REQUIRED', message: 'Une validation MFA est requise avant l’accès au Marketplace Admin.' }
-    }
-
-    return { ok: true, durationHours }
-  } catch {
-    return { ok: true, durationHours: DEFAULT_SESSION_HOURS }
+  const policy = await getMarketplaceAccessPolicy(db, userId)
+  const availability = marketplacePolicyAllowsSession(policy)
+  if (!availability.ok) {
+    return { ok: false, code: 'ACCOUNT_UNAVAILABLE', message: 'Cet accès administrateur Marketplace est indisponible.' }
   }
+  // MFA is fail-closed only when the Marketplace policy explicitly requires it.
+  // Enrollment/challenge is completed by the dedicated Marketplace MFA authority in Ultra MZ2.
+  if (policy.requireMfa) {
+    return { ok: false, code: 'MFA_REQUIRED', message: 'Une validation MFA Marketplace est requise avant cet accès.' }
+  }
+  return { ok: true, durationHours: policy.sessionDurationHours }
 }
 
 export async function authenticateMarketplaceAdmin(input: {

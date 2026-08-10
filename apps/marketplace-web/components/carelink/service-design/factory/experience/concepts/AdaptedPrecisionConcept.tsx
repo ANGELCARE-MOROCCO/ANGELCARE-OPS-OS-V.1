@@ -1,6 +1,0 @@
-import { BrainCircuit, Search, ShieldCheck } from 'lucide-react'
-import type { ConceptLayoutProps } from '../types'
-
-export function AdaptedPrecisionConcept({ blueprint, renderSection }: ConceptLayoutProps) {
-  return <div className="grid gap-5 xl:grid-cols-[1fr_300px]"><main className="space-y-5">{blueprint.sections.map((section) => <div key={section.code}>{renderSection(section)}</div>)}</main><aside className="h-fit space-y-3 xl:sticky xl:top-24"><div className="rounded-[26px] border border-violet-200 bg-violet-950 p-5 text-white"><BrainCircuit size={24} className="text-violet-300" /><h3 className="mt-4 text-xl font-black">Précision adaptée</h3><p className="mt-2 text-xs font-semibold leading-5 text-violet-200">Déclencheurs, stratégies, continuité et compétences restent visibles pendant toute la configuration.</p></div><div className="rounded-2xl border border-violet-200 bg-violet-50 p-4"><Search size={17} className="text-violet-700" /><p className="mt-2 text-xs font-black text-violet-950">Aucun diagnostic inventé</p></div><div className="rounded-2xl border border-rose-200 bg-rose-50 p-4"><ShieldCheck size={17} className="text-rose-700" /><p className="mt-2 text-xs font-black text-rose-950">Sécurité non négociable</p></div></aside></div>
-}

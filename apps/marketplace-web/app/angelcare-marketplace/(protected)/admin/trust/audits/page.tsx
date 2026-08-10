@@ -1,1 +1,2 @@
-export { default } from '../quality-check-360/page'
+import {FinalVerticalPage} from '@/angelcare-marketplace/final-vertical/admin-page'
+export default function Page(){return <FinalVerticalPage workspaceKey="trust.audits"/>}

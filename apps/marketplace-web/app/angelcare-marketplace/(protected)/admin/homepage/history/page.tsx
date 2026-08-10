@@ -1,2 +1,2 @@
-import { HomepageComposerPage } from '@/angelcare-marketplace/commerce-studio/admin-pages'
-export default async function Page(){return HomepageComposerPage({ mode: 'history' })}
+import {HomepageReleasePage} from '@/angelcare-marketplace/homepage-final/admin-page'
+export default function Page(){return <HomepageReleasePage/>}

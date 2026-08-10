@@ -1,3 +1,2 @@
-import { requireMarketplacePageContext } from '@/angelcare-marketplace/auth/context'
-import { B2BTrainingBoard } from '@/angelcare-marketplace/academy-engine/components/B2BTrainingBoard'
-export default async function Page(){const context=await requireMarketplacePageContext('marketplace.academy.view');void context;return <B2BTrainingBoard />}
+import {AcademyFinalPage} from '@/angelcare-marketplace/academy-engine/final-admin-page'
+export default function Page(){return <AcademyFinalPage mode="b2b"/>}

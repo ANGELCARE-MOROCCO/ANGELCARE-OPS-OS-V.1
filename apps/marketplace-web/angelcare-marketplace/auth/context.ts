@@ -14,6 +14,7 @@ import type {
 } from '../domain/types'
 import { MarketplaceError } from '../server/errors'
 import { getCustomerContext } from '../customer-commerce/customer-auth'
+import { accessWorkspaceKeyForOperatingWorkspace, accessWorkspaceKeyForPermission, isSensitiveWorkspacePermission } from '../workspace-access/catalog'
 
 type CurrentAppUser = Record<string, unknown> & {
   id?: string
@@ -89,12 +90,25 @@ async function databaseAssignments(userId: string): Promise<{
   }
 }
 
+async function databaseWorkspaceAccess(userId:string):Promise<string[]>{
+  try{
+    const supabase=await createServiceClient()
+    const now=new Date().toISOString()
+    const {data,error}=await supabase.from('angelcare_marketplace_workspace_access').select('workspace_key,enabled,starts_at,expires_at').eq('app_user_id',userId).eq('enabled',true)
+    if(error)return[]
+    return [...new Set((data||[]).filter((row:Record<string,unknown>)=>{
+      const starts=row.starts_at?String(row.starts_at):null,expires=row.expires_at?String(row.expires_at):null
+      return (!starts||starts<=now)&&(!expires||expires>=now)
+    }).map((row:Record<string,unknown>)=>String(row.workspace_key)).filter(Boolean))]
+  }catch{return[]}
+}
+
 export async function getMarketplaceContext(): Promise<MarketplaceRequestContext | null> {
   const user = (await getCurrentUser().catch(() => null)) as CurrentAppUser | null
   if (!user?.id) return null
 
   const sourceRole = String(user.role || '').trim().toLowerCase()
-  const stored = await databaseAssignments(String(user.id))
+  const [stored,workspaceKeys] = await Promise.all([databaseAssignments(String(user.id)),databaseWorkspaceAccess(String(user.id))])
   const fallbackRoleKey = fallbackRole(sourceRole)
   const assignments: MarketplaceRoleAssignment[] = stored.assignments.length
     ? stored.assignments
@@ -129,6 +143,7 @@ export async function getMarketplaceContext(): Promise<MarketplaceRequestContext
     tenantId: user.tenant_id ? String(user.tenant_id) : assignments[0]?.tenantId || null,
     locale: normalizeLocale(user.locale),
     sessionReference,
+    workspaceKeys,
   }
 }
 
@@ -136,27 +151,45 @@ export function hasMarketplacePermission(
   context: MarketplaceRequestContext,
   permission: MarketplacePermission,
 ): boolean {
-  // Canonical authority doctrine:
-  // marketplace_admin is the highest Marketplace authority.
-  // It must never be denied because of registry drift, a newly introduced
-  // permission, a partial role-permission read, or a workspace-specific key.
-  if (context.roleKeys.includes('marketplace_admin')) {
-    return true
-  }
+  // Final authority doctrine: Marketplace Admin is absolute and cannot be
+  // reduced by role-permission drift or workspace grants.
+  if (context.roleKeys.includes('marketplace_admin')) return true
+  if (['ceo','admin','super_admin'].includes(context.actor.sourceRole)) return true
 
-  // Source-role fail-safe. CEO/admin identities remain absolute authorities
-  // even if the persisted Marketplace assignment cannot be resolved.
-  if (
-    context.actor.sourceRole === 'ceo' ||
-    context.actor.sourceRole === 'admin' ||
-    context.actor.sourceRole === 'super_admin'
-  ) {
-    return true
-  }
+  // Explicit permission grants remain authoritative, especially for the
+  // exceptional separation-of-duty actions listed as sensitive.
+  if (context.permissions.includes(permission)) return true
+  if (isSensitiveWorkspacePermission(permission)) return false
 
-  return context.permissions.includes(permission)
+  // Normal operators are governed by broad business workspaces rather than
+  // hundreds of create/read/update/delete switches. Existing legacy guards
+  // therefore inherit the user's master-workspace grant.
+  const accessKey = accessWorkspaceKeyForPermission(permission)
+  return Boolean(accessKey && (context.workspaceKeys?.includes('*') || context.workspaceKeys?.includes(accessKey)))
 }
 
+export function hasMarketplaceWorkspaceAccess(context:MarketplaceRequestContext,workspaceKey:string,_fallbackPermission?:MarketplacePermission):boolean{
+  if(context.roleKeys.includes('marketplace_admin'))return true
+  if(['ceo','admin','super_admin'].includes(context.actor.sourceRole))return true
+  if(context.workspaceKeys?.includes('*')||context.workspaceKeys?.includes(workspaceKey))return true
+  const masterKey=accessWorkspaceKeyForOperatingWorkspace(workspaceKey)
+  return Boolean(masterKey&&context.workspaceKeys?.includes(masterKey))
+}
+
+export async function requireMarketplaceWorkspacePageContext(workspaceKey:string,fallbackPermission?:MarketplacePermission):Promise<MarketplaceRequestContext>{
+  const context=await getMarketplaceContext()
+  if(!context){redirect(`/admin?returnTo=${encodeURIComponent('/angelcare-marketplace/admin')}`);throw new MarketplaceError('AUTHENTICATION_REQUIRED','Authentification Marketplace requise.')}
+  if(!hasMarketplacePermission(context,'marketplace.admin.access')&&!hasMarketplaceWorkspaceAccess(context,workspaceKey,fallbackPermission))redirect('/angelcare-marketplace/access-denied')
+  if(!hasMarketplaceWorkspaceAccess(context,workspaceKey,fallbackPermission))redirect('/angelcare-marketplace/access-denied')
+  return context
+}
+
+export async function requireMarketplaceWorkspaceApiContext(workspaceKey:string,fallbackPermission?:MarketplacePermission):Promise<MarketplaceRequestContext>{
+  const context=await getMarketplaceContext()
+  if(!context)throw new MarketplaceError('AUTHENTICATION_REQUIRED','Authentification Marketplace requise.')
+  if(!hasMarketplaceWorkspaceAccess(context,workspaceKey,fallbackPermission))throw new MarketplaceError('PERMISSION_DENIED','Accès à ce workspace non autorisé.')
+  return context
+}
 
 const FAMILY_CUSTOMER_SELF_SERVICE_PERMISSIONS = new Set<MarketplacePermission>([
   'marketplace.family.access',
@@ -234,11 +267,13 @@ export async function requireMarketplaceAdminPageContext(
     redirect(`/admin?returnTo=${encodeURIComponent('/angelcare-marketplace/admin')}`)
     throw new MarketplaceError('AUTHENTICATION_REQUIRED', 'Authentification Marketplace Admin requise.')
   }
-  if (!hasMarketplacePermission(context, 'marketplace.admin.access')) {
-    redirect('/angelcare-marketplace/access-denied')
+  // The Admin-control workspace itself remains restricted to absolute admins.
+  // Business workspaces may be entered by explicitly assigned operators via
+  // hasMarketplacePermission(), which resolves their master-workspace grant.
+  if (permission === 'marketplace.admin.access') {
+    if (!hasMarketplacePermission(context, 'marketplace.admin.access')) redirect('/angelcare-marketplace/access-denied')
+    return context
   }
-  if (permission && !hasMarketplacePermission(context, permission)) {
-    redirect('/angelcare-marketplace/access-denied')
-  }
+  if (!hasMarketplacePermission(context, permission)) redirect('/angelcare-marketplace/access-denied')
   return context
 }

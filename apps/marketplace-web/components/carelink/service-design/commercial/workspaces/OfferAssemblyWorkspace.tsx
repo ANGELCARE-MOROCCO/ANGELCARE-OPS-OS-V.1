@@ -1,2 +1,0 @@
-import{SupportWorkspace}from'./SupportWorkspace'
-export function OfferAssemblyWorkspace(){return <SupportWorkspace eyebrow="Offer Assembly Studio" title="Atelier d\u2019assemblage de l\u2019offre" description="Faits techniques verrouill\u00e9s, inclusions commerciales, options, termes et aper\u00e7u client." primary="Architecture de l\u2019offre" secondary="Aper\u00e7u client" variant="control" items={["Contenu technique verrouillé", "Features incluses", "Top-ups optionnels", "Upsells recommandés", "Préparation client", "Exclusions"]}/>}

@@ -1,4 +1,2 @@
-import {requireMarketplacePageContext} from '@/angelcare-marketplace/auth/context'
-import {AuthorityWorkspace} from '@/angelcare-marketplace/final-authority/components/AuthorityWorkspace'
-import {listMetricObservations} from '@/angelcare-marketplace/final-authority/repository'
-export default async function Page(){const c=await requireMarketplacePageContext('marketplace.intelligence.view');return <AuthorityWorkspace eyebrow="FINAL MARKETPLACE AUTHORITY" title="Category Intelligence" copy="Assortiment, découverte, conversion, disponibilité et potentiel par univers commercial." items={await listMetricObservations(c,'categories')} links={[]}/>}
+import {FinalVerticalPage} from '@/angelcare-marketplace/final-vertical/admin-page'
+export default function Page(){return <FinalVerticalPage workspaceKey="intelligence.categories"/>}

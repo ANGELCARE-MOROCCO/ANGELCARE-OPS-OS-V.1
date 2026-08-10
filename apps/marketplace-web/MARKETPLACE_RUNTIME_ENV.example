@@ -1,9 +1,28 @@
-# ANGELCARE Marketplace standalone runtime — exact variables referenced by Marketplace code
+# ANGELCARE Marketplace standalone runtime — canonical MZ1 environment contract
+# Values intentionally omitted. Never commit production secrets.
+
+# REQUIRED — Supabase runtime
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
 SUPABASE_SERVICE_ROLE_KEY=
+
+# REQUIRED — Marketplace identity / release
 ANGELCARE_MARKETPLACE_RELEASE_VERSION=
-ANGELCARE_PAYMENT_PROVIDER=
+NODE_ENV=production
+
+# REQUIRED when PayPal is the active production payment provider
+ANGELCARE_PAYMENT_PROVIDER=paypal
+PAYPAL_ENV=live
+PAYPAL_CLIENT_ID=
+PAYPAL_CLIENT_SECRET=
+PAYPAL_CURRENCY=EUR
+PAYPAL_DH_PER_PAYPAL_UNIT=
+PAYPAL_WEBHOOK_ID=
+
+# OPTIONAL — PayPal HTTP timeout override
+PAYPAL_TIMEOUT_MS=
+
+# LEGACY / non-PayPal adapter compatibility only.
+# Leave unset when ANGELCARE_PAYMENT_PROVIDER=paypal.
 ANGELCARE_PAYMENT_PROVIDER_SECRET=
 ANGELCARE_PAYMENT_WEBHOOK_SECRET=
-NODE_ENV=production

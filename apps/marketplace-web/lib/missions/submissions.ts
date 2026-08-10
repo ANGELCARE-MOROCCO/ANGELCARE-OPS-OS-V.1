@@ -1,1 +1,0 @@
-export { generateSubMissions } from './dossiers'

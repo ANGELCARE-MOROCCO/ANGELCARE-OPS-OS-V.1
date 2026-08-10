@@ -1,5 +1,0 @@
-'use client'
-import type { ReactNode } from 'react'
-import styles from '@/components/angelcare360/customer-foundation/FoundationPageShell.module.css'
-type Props={title:string;subtitle:string;badge?:string;statusLabel?:string;primaryAction?:ReactNode;secondaryActions?:ReactNode;contextRow?:ReactNode;children:ReactNode}
-export default function Angelcare360AdminPageShell({title,subtitle,badge,statusLabel,primaryAction,secondaryActions,contextRow,children}:Props){return <section className={styles.shell} data-domain="governance"><header className={styles.header}><div className={styles.heading}><div className={styles.eyebrow}>{badge?<span>{badge}</span>:null}{statusLabel?<span>{statusLabel}</span>:null}</div><h1 className={styles.title}>{title}</h1><p className={styles.subtitle}>{subtitle}</p></div>{primaryAction||secondaryActions?<div className={styles.actions}>{secondaryActions}{primaryAction}</div>:null}</header>{contextRow?<div className={styles.context}>{contextRow}</div>:null}<div className={styles.content}>{children}</div></section>}

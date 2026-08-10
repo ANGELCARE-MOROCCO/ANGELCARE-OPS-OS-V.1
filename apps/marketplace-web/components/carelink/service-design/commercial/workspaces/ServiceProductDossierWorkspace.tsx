@@ -1,2 +1,0 @@
-import{SupportWorkspace}from'./SupportWorkspace'
-export function ServiceProductDossierWorkspace(){return <SupportWorkspace eyebrow="Sellable Product Dossier" title="Dossier produit service" description="Passeport technique et commercial immuable avec lineage UMZ1\u2192UMZ2\u2192UMZ3." primary="Sections du dossier" secondary="Versions & lineage" variant="dossier" items={["Identité & promesse", "Plan technique", "Mission structure", "Features & options", "Staffing & matériel", "Safeguarding", "Prix & marge", "Termes & publication", "Mapping CARELINK futur"]}/>}

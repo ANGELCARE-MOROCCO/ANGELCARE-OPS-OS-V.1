@@ -1,2 +1,0 @@
-import{SupportWorkspace}from'./SupportWorkspace'
-export function BundleCompositionWorkspace(){return <SupportWorkspace eyebrow="Bundle Composition Theatre" title="Composition de packages multi-services" description="Canvas gouvern\u00e9, mutualisation et exposition des conflits." primary="Composition active" secondary="\u00c9conomie & compatibilit\u00e9" variant="control" items={["Service ancre", "Services compatibles", "Top-ups partagés", "Staffing mutualisé", "Transport mutualisé", "Remise bundle"]}/>}

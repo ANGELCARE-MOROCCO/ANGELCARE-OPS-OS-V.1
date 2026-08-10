@@ -1,2 +1,2 @@
-import { LiveExperiencePage } from '@/angelcare-marketplace/live-experience-command/admin-pages'
-export default function Page(){return <LiveExperiencePage mode="audiences"/>}
+import {LiveGovernancePage} from '@/angelcare-marketplace/live-experience-command/governance-admin-page'
+export default function Page(){return <LiveGovernancePage mode="audiences"/>}

@@ -1,1 +1,2 @@
-export { default } from '../page'
+import {FinalVerticalPage} from '@/angelcare-marketplace/final-vertical/admin-page'
+export default function Page(){return <FinalVerticalPage workspaceKey="trust.reports"/>}

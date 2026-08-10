@@ -1,6 +1,0 @@
-import { HeartHandshake, ShieldCheck, CheckSquare2 } from 'lucide-react'
-import type { ConceptLayoutProps } from '../types'
-
-export function ComfortDignityConcept({ blueprint, renderSection }: ConceptLayoutProps) {
-  return <div className="space-y-5"><div className="rounded-[30px] border border-emerald-200 bg-gradient-to-br from-emerald-50 via-white to-teal-50 p-6"><div className="flex items-center gap-4"><div className="grid h-14 w-14 place-items-center rounded-2xl bg-emerald-700 text-white"><HeartHandshake size={24} /></div><div><p className="text-[10px] font-black uppercase tracking-[.22em] text-emerald-700">Confort, autonomie et dignité</p><h3 className="mt-1 text-2xl font-black text-slate-950">Présence respectueuse · limites non médicales · famille informée</h3></div></div><div className="mt-5 flex flex-wrap gap-2"><span className="rounded-full bg-white px-3 py-2 text-xs font-bold text-emerald-900"><CheckSquare2 className="mr-1 inline" size={14} />Autonomie</span><span className="rounded-full bg-white px-3 py-2 text-xs font-bold text-emerald-900"><ShieldCheck className="mr-1 inline" size={14} />Cadre protégé</span></div></div><div className="grid gap-5 xl:grid-cols-2">{blueprint.sections.map((section, index) => <div key={section.code} className={index === 1 ? 'xl:col-span-2' : ''}>{renderSection(section)}</div>)}</div></div>
-}

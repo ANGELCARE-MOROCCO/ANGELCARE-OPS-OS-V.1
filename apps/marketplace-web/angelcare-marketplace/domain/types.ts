@@ -410,6 +410,20 @@ export type MarketplacePermission =
   | 'marketplace.archetype.manage'
   | 'marketplace.category_native_import.view'
   | 'marketplace.category_native_import.manage'
+  | 'marketplace.operating_kernel.view'
+  | 'marketplace.operating_kernel.manage'
+  | 'marketplace.operating_kernel.approve'
+  | 'marketplace.operations.evidence.manage'
+  | 'marketplace.operations.returns.manage'
+  | 'marketplace.operations.disputes.manage'
+  | 'marketplace.operations.recovery.manage'
+  | 'marketplace.operations.reconciliation.approve'
+  | 'marketplace.vendors.manage'
+  | 'marketplace.vendors.contracts.manage'
+  | 'marketplace.vendors.orders.manage'
+  | 'marketplace.vendors.inventory.manage'
+  | 'marketplace.vendors.quality.manage'
+  | 'marketplace.vendors.settlements.manage'
 export interface MarketplaceActor {
   id: string
   email: string | null
@@ -433,6 +447,7 @@ export interface MarketplaceRequestContext {
   tenantId: string | null
   locale: 'fr' | 'en' | 'ar'
   sessionReference: string | null
+  workspaceKeys?: string[]
 }
 
 export interface MarketplaceModule {
