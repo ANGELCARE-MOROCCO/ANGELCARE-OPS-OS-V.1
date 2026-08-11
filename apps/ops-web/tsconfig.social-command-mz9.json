@@ -1,0 +1,39 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "incremental": false,
+    "skipLibCheck": true
+  },
+  "include": [
+    "next-env.d.ts",
+    "lib/social-command/types.ts",
+    "lib/social-command/db.ts",
+    "lib/social-command/auth.ts",
+    "lib/social-command/repository.ts",
+    "lib/social-command/storage.ts",
+    "lib/social-command/meta.ts",
+    "lib/social-command/publishing.ts",
+    "lib/social-command/operator-experience.ts",
+    "lib/social-command/copy-vault-types.ts",
+    "lib/social-command/copy-vault.ts",
+    "lib/social-command/media-vault-types.ts",
+    "lib/social-command/media-vault.ts",
+    "app/api/social-command/[...segments]/route.ts",
+    "app/api/social-command/operator-experience/[...segments]/route.ts",
+    "app/api/social-command/copy-vault/[...segments]/route.ts",
+    "app/api/social-command/media-vault/[...segments]/route.ts",
+    "app/(protected)/social-command/_components/CopyVaultWorkspace.tsx",
+    "app/(protected)/social-command/_components/CopyVaultPicker.tsx",
+    "app/(protected)/social-command/_components/MediaVaultWorkspace.tsx",
+    "app/(protected)/social-command/_components/MediaVaultPicker.tsx",
+    "app/(protected)/social-command/_components/BulkOrchestrator.tsx",
+    "app/(protected)/social-command/_components/MZ9ExecutionCommand.tsx",
+    "app/(protected)/social-command/_components/MZ9SavedViews.tsx",
+    "app/(protected)/social-command/_components/SocialCommandClient.tsx",
+    "app/(protected)/social-command/_components/SocialCommandMZ4Shell.tsx",
+    "app/(protected)/social-command/_components/EngagementCommandMZ7.tsx",
+    "app/(protected)/social-command/_components/WebhookCommandMZ31.tsx"
+  ],
+  "exclude": ["node_modules", ".next", ".angelcare_backups", "backups", "_archive"]
+}

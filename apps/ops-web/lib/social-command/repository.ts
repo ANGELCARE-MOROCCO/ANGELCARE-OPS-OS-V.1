@@ -51,7 +51,7 @@ export async function getActiveConnectionWithSecrets() {
 
 export async function listMedia(limit = 240) {
   const db = await socialDb()
-  const { data, error } = await db.from("social_command_media_assets").select("*").neq("status", "deleted").order("created_at", { ascending: false }).limit(limit)
+  const { data, error } = await db.from("social_command_media_assets").select("*").neq("status", "deleted").eq("lifecycle_status", "active").order("created_at", { ascending: false }).limit(limit)
   if (error) throw error
   return ((data || []) as SocialMediaAsset[]).map((asset) => {
     let previewUrl: string | null = null
@@ -144,6 +144,12 @@ export async function createMediaPlaceholder(input: { filename: string; mimeType
     created_by: input.actorUserId,
     created_at: nowIso(),
     archived_at: null,
+    title: cleanString(input.filename, 260),
+    description: "",
+    lifecycle_status: "active",
+    favorite: false,
+    updated_by: input.actorUserId,
+    updated_at: nowIso(),
   }
   const { error } = await db.from("social_command_media_assets").insert(row)
   if (error) throw error
@@ -160,6 +166,7 @@ export async function completeMediaAsset(assetId: string, gateway: Record<string
     size_bytes: Number(gateway.sizeBytes || gateway.size_bytes || 0),
     sha256_hash: cleanString(gateway.sha256 || gateway.sha256_hash, 128) || null,
     metadata: jsonObject(gateway.metadata || {}),
+    updated_at: nowIso(),
   }
   const { data, error } = await db.from("social_command_media_assets").update(updates).eq("id", assetId).select("*").single()
   if (error) throw error

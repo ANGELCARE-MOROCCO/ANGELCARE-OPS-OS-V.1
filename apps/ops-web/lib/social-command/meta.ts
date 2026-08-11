@@ -433,39 +433,72 @@ export async function publishInstagram(input: {
   const igId = input.connection.instagram_business_id
   const caption = captionFor(input.publication, "instagram")
   const state = input.job.provider_state || {}
-  const existingContainer = cleanString((state as any).containerId, 200)
-
-  if (existingContainer) {
-    const status = await graphGet(existingContainer, { fields: "status_code,status" }, pageToken)
-    const code = cleanString(status?.status_code, 80).toUpperCase()
-    if (code && !["FINISHED", "PUBLISHED"].includes(code)) {
-      if (["ERROR", "EXPIRED"].includes(code)) return { done: true, status: "failed", error: cleanString(status?.status, 2000) || `Instagram container ${code}` }
-      return { done: false, retryable: true, status: "confirming", providerReference: existingContainer, providerState: state, retryAfterSeconds: 15 }
+  const confirmCount = Math.max(0, Number((state as any).confirmCount || 0))
+  const transient = (error: unknown) => /media id is not available|requested resource does not exist|not ready|processing|creation id/i.test(error instanceof Error ? error.message : String(error))
+  const confirming = (providerReference: string, nextState: Record<string, unknown>, seconds = 15): ProviderExecutionResult => ({
+    done: false, retryable: true, status: "confirming", providerReference,
+    providerState: { ...nextState, confirmCount: confirmCount + 1, providerPhase: "processing" }, retryAfterSeconds: seconds,
+  })
+  const inspectContainer = async (containerId: string) => {
+    try {
+      const observed = await graphGet(containerId, { fields: "status_code,status" }, pageToken)
+      return { code: cleanString(observed?.status_code, 80).toUpperCase(), detail: cleanString(observed?.status, 2000) }
+    } catch (error) {
+      if (transient(error) && confirmCount < 6) return { code: "TRANSIENT_LOOKUP", detail: error instanceof Error ? error.message : String(error) }
+      throw error
     }
-    const published = await graphPost(`${igId}/media_publish`, { creation_id: existingContainer }, pageToken)
-    return { done: true, status: "published", providerReference: cleanString(published?.id, 200) || existingContainer, providerState: { ...state, mediaId: published?.id || null } }
+  }
+
+  const stage = cleanString((state as any).stage, 80)
+  const childIds = Array.isArray((state as any).childIds) ? (state as any).childIds.map(String).filter(Boolean).slice(0, 10) : []
+  if (stage === "carousel_children" && childIds.length) {
+    let pending = false
+    for (const childId of childIds) {
+      const observed = await inspectContainer(childId)
+      if (["ERROR", "EXPIRED"].includes(observed.code)) return { done: true, status: "failed", error: observed.detail || `Instagram child container ${observed.code}`, providerReference: childId, providerState: { ...state, childId, observed } }
+      if (!["FINISHED", "PUBLISHED"].includes(observed.code)) pending = true
+    }
+    if (pending) return confirming(childIds[0], { ...state, stage: "carousel_children", childIds }, 18)
+    try {
+      const parent = await graphPost(`${igId}/media`, { media_type: "CAROUSEL", children: childIds.join(","), caption }, pageToken)
+      if (!parent?.id) throw new Error("Instagram did not return a carousel container")
+      const containerId = String(parent.id)
+      return confirming(containerId, { ...state, stage: "carousel_parent", childIds, containerId }, 18)
+    } catch (error) {
+      if (transient(error) && confirmCount < 6) return confirming(childIds[0], { ...state, stage: "carousel_children", childIds, lastProviderObservation: error instanceof Error ? error.message : String(error) }, 20)
+      throw error
+    }
+  }
+
+  const existingContainer = cleanString((state as any).containerId, 200)
+  if (existingContainer) {
+    const observed = await inspectContainer(existingContainer)
+    if (["ERROR", "EXPIRED"].includes(observed.code)) return { done: true, status: "failed", error: observed.detail || `Instagram container ${observed.code}`, providerReference: existingContainer, providerState: { ...state, observed } }
+    if (!["FINISHED", "PUBLISHED"].includes(observed.code)) return confirming(existingContainer, { ...state, containerId: existingContainer, observed }, 15)
+    try {
+      const published = await graphPost(`${igId}/media_publish`, { creation_id: existingContainer }, pageToken)
+      const mediaId = cleanString(published?.id, 200)
+      if (!mediaId) return confirming(existingContainer, { ...state, containerId: existingContainer, observed, lastProviderObservation: "media_publish returned without media id" }, 15)
+      return { done: true, status: "published", providerReference: mediaId, providerState: { ...state, containerId: existingContainer, mediaId, providerPhase: "published", publishedAt: nowIso() } }
+    } catch (error) {
+      if (transient(error) && confirmCount < 8) return confirming(existingContainer, { ...state, containerId: existingContainer, observed, lastProviderObservation: error instanceof Error ? error.message : String(error) }, Math.min(45, 15 + confirmCount * 5))
+      throw error
+    }
   }
 
   if (input.publication.format === "carousel" || (input.publication.format === "post" && input.media.length > 1)) {
     if (input.media.length < 2) return { done: true, status: "failed", error: "Instagram carousel requires at least 2 media assets" }
-    const childIds: string[] = []
+    const newChildIds: string[] = []
     for (const asset of input.media.slice(0, 10)) {
       const url = createDeliveryUrl(asset)
       const params: Record<string, string> = { is_carousel_item: "true" }
-      if (/^video\//i.test(asset.mime_type)) {
-        params.media_type = "VIDEO"
-        params.video_url = url
-      } else {
-        params.image_url = url
-      }
+      if (/^video\//i.test(asset.mime_type)) { params.media_type = "VIDEO"; params.video_url = url }
+      else params.image_url = url
       const child = await graphPost(`${igId}/media`, params, pageToken)
       if (!child?.id) throw new Error("Instagram did not return a carousel child container")
-      childIds.push(String(child.id))
+      newChildIds.push(String(child.id))
     }
-    const parent = await graphPost(`${igId}/media`, { media_type: "CAROUSEL", children: childIds.join(","), caption }, pageToken)
-    if (!parent?.id) throw new Error("Instagram did not return a carousel container")
-    const published = await graphPost(`${igId}/media_publish`, { creation_id: String(parent.id) }, pageToken)
-    return { done: true, status: "published", providerReference: cleanString(published?.id, 200), providerState: { containerId: parent.id, childIds } }
+    return confirming(newChildIds[0], { stage: "carousel_children", childIds: newChildIds }, 18)
   }
 
   const asset = input.publication.format === "reel" ? firstVideo(input.media) : input.media[0]
@@ -474,34 +507,20 @@ export async function publishInstagram(input: {
   const params: Record<string, string> = {}
   const isVideo = /^video\//i.test(asset.mime_type)
   if (input.publication.format === "reel") {
-    params.media_type = "REELS"
-    params.video_url = deliveryUrl
-    params.caption = caption
-    params.share_to_feed = "true"
+    params.media_type = "REELS"; params.video_url = deliveryUrl; params.caption = caption; params.share_to_feed = "true"
   } else if (input.publication.format === "story") {
-    params.media_type = "STORIES"
-    if (isVideo) params.video_url = deliveryUrl
-    else params.image_url = deliveryUrl
+    params.media_type = "STORIES"; if (isVideo) params.video_url = deliveryUrl; else params.image_url = deliveryUrl
+  } else if (isVideo) {
+    params.media_type = "REELS"; params.video_url = deliveryUrl; params.caption = caption; params.share_to_feed = "true"
   } else {
-    if (isVideo) {
-      params.media_type = "REELS"
-      params.video_url = deliveryUrl
-      params.caption = caption
-      params.share_to_feed = "true"
-    } else {
-      params.image_url = deliveryUrl
-      params.caption = caption
-    }
+    params.image_url = deliveryUrl; params.caption = caption
   }
   const container = await graphPost(`${igId}/media`, params, pageToken)
   if (!container?.id) throw new Error("Instagram did not return a media container")
   const containerId = String(container.id)
-
-  if (isVideo || input.publication.format === "reel" || input.publication.format === "story") {
-    return { done: false, retryable: true, status: "confirming", providerReference: containerId, providerState: { containerId }, retryAfterSeconds: 15 }
-  }
-  const published = await graphPost(`${igId}/media_publish`, { creation_id: containerId }, pageToken)
-  return { done: true, status: "published", providerReference: cleanString(published?.id, 200) || containerId, providerState: { containerId, mediaId: published?.id || null } }
+  // MZ9: every Instagram container gets a provider-readiness phase, including images.
+  // This avoids treating normal asynchronous Meta processing as an execution failure.
+  return confirming(containerId, { stage: "single_container", containerId, mediaKind: isVideo ? "video" : "image" }, isVideo ? 18 : 10)
 }
 
 export async function publishFacebook(input: {

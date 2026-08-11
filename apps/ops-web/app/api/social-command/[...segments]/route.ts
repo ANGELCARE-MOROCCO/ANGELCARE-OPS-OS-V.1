@@ -9,13 +9,14 @@ import {
   listJobs, listMedia, listOperations, listPublications, replaceFutureJobs, updateOperation, updatePublication,
 } from "@/lib/social-command/repository"
 import { autoReconcileMetaWebhookSubscriptionsEnabled, buildMetaLoginUrl, cleanupExpiredMetaOAuthSessions, discoverMetaPages, exchangeMetaCode, getMetaGrantedScopes, inspectMetaWebhookSubscriptions, reconcileMetaWebhookSubscriptions, rotateStoredMetaSecrets, saveMetaConnection, verifyMetaConnection } from "@/lib/social-command/meta"
-import { createUploadSession, deleteGatewayAsset, fetchGatewayAsset, fetchGatewayHealth } from "@/lib/social-command/storage"
+import { createUploadSession, fetchGatewayAsset, fetchGatewayHealth } from "@/lib/social-command/storage"
 import { processDueJobs, processExecutionJob } from "@/lib/social-command/publishing"
 import { mz2Bootstrap } from "@/lib/social-command/mz2"
 import { bulkConversationAction, getConversation, listComments, listConversations, listMentions, replyToComment, sendConversationReply, updateCommentState, updateConversationState } from "@/lib/social-command/engagement"
 import { listAutomations, listAutomationRuns, processAutomationTick, runAutomation, updateAutomation } from "@/lib/social-command/automation"
 import { aiUsageSummary, suggestDmReply } from "@/lib/social-command/ai"
 import { capabilityMatrix, performanceSummary, reconcilePublishedProviderState, syncProviderMetrics } from "@/lib/social-command/intelligence"
+import { trashMediaAsset } from "@/lib/social-command/media-vault"
 import { processMetaWebhookPayload, recordRejectedWebhook, recordWebhookVerification, replayMetaWebhookEvent, runWebhookSignatureSelfTest, verifyMetaWebhookSignatureDetailed, verifyWebhookChallenge, webhookHealth } from "@/lib/social-command/webhook"
 import type { BulkSlotDraft, SocialChannel, SocialFormat, SocialPublication } from "@/lib/social-command/types"
 
@@ -298,5 +299,5 @@ export async function PATCH(request: Request, context: RouteContext) {
 
 export async function DELETE(request: Request, context: RouteContext) {
   const {segments=[]}=await context.params; const key=pathKey(segments)
-  try{const auth=await requireActor();if(!auth.ok)return auth.response;const access=requireSocialCommandRoutePermission(auth.actor,"DELETE",key);if(!access.ok)return access.response;const media=/^media\/([^/]+)$/.exec(key);if(media){const db=await socialDb();const id=media[1];await deleteGatewayAsset(id);await db.from("social_command_media_assets").update({status:"deleted",archived_at:nowIso()}).eq("id",id);await auditSocial(auth.actor.id,"media.deleted","media_asset",id);return socialOk({deleted:true,id})}return socialError("SOCIAL_COMMAND_ROUTE_NOT_FOUND",404,{path:key})}catch(error){return socialError(error,500,{path:key})}
+  try{const auth=await requireActor();if(!auth.ok)return auth.response;const access=requireSocialCommandRoutePermission(auth.actor,"DELETE",key);if(!access.ok)return access.response;const media=/^media\/([^/]+)$/.exec(key);if(media){const id=media[1];await trashMediaAsset(id,auth.actor);return socialOk({trashed:true,id})}return socialError("SOCIAL_COMMAND_ROUTE_NOT_FOUND",404,{path:key})}catch(error){return socialError(error,500,{path:key})}
 }

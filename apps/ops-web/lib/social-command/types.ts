@@ -65,6 +65,12 @@ export type SocialMediaAsset = {
   created_by: string | null
   created_at: string
   archived_at: string | null
+  title: string
+  description: string
+  lifecycle_status: "active" | "archived" | "trashed"
+  favorite: boolean
+  updated_by: string | null
+  updated_at: string
   preview_url?: string | null
 }
 

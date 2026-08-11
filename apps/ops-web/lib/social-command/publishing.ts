@@ -40,7 +40,7 @@ async function recordAttempt(input: {
   providerState?: Record<string, unknown>
 }) {
   const db = await socialDb()
-  await db.from("social_command_execution_attempts").insert({
+  const { error } = await db.from("social_command_execution_attempts").insert({
     job_id: input.jobId,
     attempt_no: input.attemptNo,
     started_at: input.startedAt,
@@ -51,6 +51,7 @@ async function recordAttempt(input: {
     provider_reference: input.providerReference || null,
     provider_state: input.providerState || {},
   })
+  if (error) throw error
 }
 
 async function reconcilePublication(publicationId: string) {
@@ -70,7 +71,8 @@ async function reconcilePublication(publicationId: string) {
   } else if (states.some((state: string) => state === "retrying")) {
     status = "queued"
   }
-  await db.from("social_command_publications").update({ status, published_at: publishedAt, updated_at: nowIso() }).eq("id", publicationId)
+  const { error: updateError } = await db.from("social_command_publications").update({ status, published_at: publishedAt, updated_at: nowIso() }).eq("id", publicationId)
+  if (updateError) throw updateError
   return status
 }
 
@@ -108,12 +110,34 @@ async function recoverStaleExecutionLocks() {
   const db = await socialDb()
   const cutoff = new Date(Date.now() - 2 * 60 * 1000).toISOString()
   const now = nowIso()
-  const { data, error } = await db.from("social_command_execution_jobs").update({
-    status: "retrying", locked_at: null, next_attempt_at: now,
-    last_error: "Recovered stale Social Command worker lock", updated_at: now,
-  }).in("status", ["preparing", "publishing"]).lt("locked_at", cutoff).select("id")
+  const { data: stale, error } = await db.from("social_command_execution_jobs")
+    .select("id,publication_id,status,locked_at,provider_reference,provider_state")
+    .in("status", ["preparing", "publishing"]).lt("locked_at", cutoff).limit(100)
   if (error) throw error
-  return (data || []).length
+  let recovered = 0
+  for (const row of stale || []) {
+    const { data: publishedEvidence, error: evidenceError } = await db.from("social_command_provider_results")
+      .select("provider_reference,payload,created_at").eq("job_id", (row as any).id).eq("result_type", "published")
+      .order("created_at", { ascending: false }).limit(1).maybeSingle()
+    if (evidenceError) throw evidenceError
+    if (publishedEvidence?.provider_reference) {
+      const providerState = { ...((row as any).provider_state || {}), ...((publishedEvidence as any).payload || {}), externalSuccessRecovered: true }
+      const { error: publishError } = await db.from("social_command_execution_jobs").update({
+        status: "published", locked_at: null, next_attempt_at: null, last_error: null,
+        provider_reference: publishedEvidence.provider_reference, provider_state: providerState, updated_at: now,
+      }).eq("id", (row as any).id)
+      if (publishError) throw publishError
+      await reconcilePublication((row as any).publication_id)
+    } else {
+      const { error: retryError } = await db.from("social_command_execution_jobs").update({
+        status: "retrying", locked_at: null, next_attempt_at: now,
+        last_error: "Recovered stale Social Command worker lock without provider success evidence", updated_at: now,
+      }).eq("id", (row as any).id)
+      if (retryError) throw retryError
+    }
+    recovered++
+  }
+  return recovered
 }
 
 export async function processExecutionJob(jobId: string) {
@@ -124,76 +148,93 @@ export async function processExecutionJob(jobId: string) {
   const bundle = await loadExecutionBundle(jobId)
   const attemptNo = claim.attemptNo
 
+  let result: Awaited<ReturnType<typeof publishInstagram>>
   try {
     const connection = await getActiveConnectionWithSecrets()
     if (!connection) throw new Error("No active Meta connection")
     if (bundle.media.some((asset) => asset.status !== "ready")) throw new Error("Publication contains media that is not ready")
 
-    await db.from("social_command_execution_jobs").update({ status: "publishing", updated_at: nowIso() }).eq("id", jobId).eq("status", "preparing")
+    const { error: publishingError } = await db.from("social_command_execution_jobs").update({ status: "publishing", updated_at: nowIso() }).eq("id", jobId).eq("status", "preparing")
+    if (publishingError) throw publishingError
     const liveJob = { ...bundle.job, status: "publishing" as const, attempt_count: attemptNo }
-    const result = bundle.job.channel === "instagram"
+    result = bundle.job.channel === "instagram"
       ? await publishInstagram({ connection, publication: bundle.publication, media: bundle.media, job: liveJob })
       : await publishFacebook({ connection, publication: bundle.publication, media: bundle.media, job: liveJob })
-
-    const finishedAt = nowIso()
-    if (result.status === "published") {
-      await db.from("social_command_execution_jobs").update({
-        status: "published",
-        locked_at: null,
-        last_error: null,
-        provider_reference: result.providerReference || null,
-        provider_state: result.providerState || {},
-        next_attempt_at: null,
-        updated_at: finishedAt,
-      }).eq("id", jobId)
-      await recordAttempt({ jobId, attemptNo, startedAt, finishedAt, status: "published", providerReference: result.providerReference, providerState: result.providerState })
-      await db.from("social_command_provider_results").insert({
-        job_id: jobId, publication_id: bundle.publication.id,
-        channel: bundle.job.channel, result_type: "published", provider_reference: result.providerReference || null,
-        public_url: result.publicUrl || null, payload: result.providerState || {}, created_at: finishedAt,
-      })
-      const publicationStatus = await reconcilePublication(bundle.publication.id)
-      return { status: "published", publicationStatus, providerReference: result.providerReference || null }
-    }
-
-    if (result.status === "confirming" && result.retryable) {
-      const nextAttempt = addSeconds(result.retryAfterSeconds || 15)
-      await db.from("social_command_execution_jobs").update({
-        status: "confirming",
-        locked_at: null,
-        last_error: null,
-        provider_reference: result.providerReference || null,
-        provider_state: result.providerState || {},
-        next_attempt_at: nextAttempt,
-        updated_at: finishedAt,
-      }).eq("id", jobId)
-      await recordAttempt({ jobId, attemptNo, startedAt, finishedAt, status: "confirming", providerReference: result.providerReference, providerState: result.providerState })
-      await reconcilePublication(bundle.publication.id)
-      return { status: "confirming", nextAttemptAt: nextAttempt }
-    }
-
-    throw new Error(result.error || "Provider execution failed")
   } catch (error) {
-    const finishedAt = nowIso()
+    return finalizeProviderFailure(error)
+  }
+
+  const finishedAt = nowIso()
+  if (result.status === "published") {
+    // MZ9 irreversible provider-success boundary. Persist provider evidence first, then the canonical job state.
+    // Any later bookkeeping failure is reconciliation work and MUST NOT authorize another provider send.
+    const providerReference = result.providerReference || null
+    const providerState = { ...(result.providerState || {}), externalSuccess: true, externalSuccessAt: finishedAt }
+    const warnings: string[] = []
+
+    const { error: resultError } = await db.from("social_command_provider_results").insert({
+      job_id: jobId, publication_id: bundle.publication.id,
+      channel: bundle.job.channel, result_type: "published", provider_reference: providerReference,
+      public_url: result.publicUrl || null, payload: providerState, created_at: finishedAt,
+    })
+    if (resultError) warnings.push(`provider_result:${resultError.message}`)
+
+    const { error: jobError } = await db.from("social_command_execution_jobs").update({
+      status: "published", locked_at: null, last_error: warnings.length ? `Finalization warning: ${warnings.join(" | ")}` : null,
+      provider_reference: providerReference, provider_state: providerState, next_attempt_at: null, updated_at: finishedAt,
+    }).eq("id", jobId)
+    if (jobError) {
+      // At this point Meta has already confirmed success. We deliberately do NOT enter the retry branch.
+      warnings.push(`job_finalize:${jobError.message}`)
+      return { status: "published", publicationStatus: "reconciliation_required", providerReference, warning: warnings.join(" | ") }
+    }
+
+    try { await recordAttempt({ jobId, attemptNo, startedAt, finishedAt, status: "published", providerReference, providerState }) }
+    catch (error) { warnings.push(`attempt_ledger:${error instanceof Error ? error.message : String(error)}`) }
+    let publicationStatus = "published"
+    try { publicationStatus = await reconcilePublication(bundle.publication.id) }
+    catch (error) { warnings.push(`publication_reconcile:${error instanceof Error ? error.message : String(error)}`); publicationStatus = "reconciliation_required" }
+    if (warnings.length) {
+      await db.from("social_command_execution_jobs").update({ last_error: `Published; internal finalization warning: ${warnings.join(" | ")}`, updated_at: nowIso() }).eq("id", jobId)
+    }
+    return { status: "published", publicationStatus, providerReference, warning: warnings.length ? warnings.join(" | ") : undefined }
+  }
+
+  if (result.status === "confirming" && result.retryable) {
+    const nextAttempt = addSeconds(result.retryAfterSeconds || 15)
+    const { error: confirmError } = await db.from("social_command_execution_jobs").update({
+      status: "confirming", locked_at: null, last_error: null,
+      provider_reference: result.providerReference || null, provider_state: result.providerState || {},
+      next_attempt_at: nextAttempt, updated_at: finishedAt,
+    }).eq("id", jobId)
+    if (confirmError) return finalizeProviderFailure(confirmError)
+    try { await recordAttempt({ jobId, attemptNo, startedAt, finishedAt, status: "confirming", providerReference: result.providerReference, providerState: result.providerState }) } catch {}
+    try { await reconcilePublication(bundle.publication.id) } catch {}
+    return { status: "confirming", nextAttemptAt: nextAttempt, providerReference: result.providerReference || null }
+  }
+
+  return finalizeProviderFailure(new Error(result.error || "Provider execution failed"))
+
+  async function finalizeProviderFailure(error: unknown) {
+    const failedAt = nowIso()
     const message = error instanceof Error ? error.message : String(error)
     const maxAttempts = Number(bundle.job.max_attempts || 5)
     const retryable = attemptNo < maxAttempts && !/capability|unsupported|not enabled/i.test(message)
     const retrySeconds = Math.min(15 * Math.pow(2, Math.max(0, attemptNo - 1)), 15 * 60)
-    await db.from("social_command_execution_jobs").update({
-      status: retryable ? "retrying" : "failed",
-      locked_at: null,
-      last_error: message,
-      next_attempt_at: retryable ? addSeconds(retrySeconds) : null,
-      updated_at: finishedAt,
+    const next = retryable ? addSeconds(retrySeconds) : null
+    const { error: updateError } = await db.from("social_command_execution_jobs").update({
+      status: retryable ? "retrying" : "failed", locked_at: null, last_error: message,
+      next_attempt_at: next, updated_at: failedAt,
     }).eq("id", jobId)
-    await recordAttempt({ jobId, attemptNo, startedAt, finishedAt, status: retryable ? "retrying" : "failed", error: message, providerReference: bundle.job.provider_reference, providerState: bundle.job.provider_state })
+    if (updateError) throw updateError
+    try { await recordAttempt({ jobId, attemptNo, startedAt, finishedAt: failedAt, status: retryable ? "retrying" : "failed", error: message, providerReference: bundle.job.provider_reference, providerState: bundle.job.provider_state }) } catch {}
     await db.from("social_command_provider_results").insert({
-      job_id: jobId, publication_id: bundle.publication.id,
-      channel: bundle.job.channel, result_type: retryable ? "retrying" : "failed", provider_reference: bundle.job.provider_reference || null,
-      public_url: null, payload: { error: message }, created_at: finishedAt,
+      job_id: jobId, publication_id: bundle.publication.id, channel: bundle.job.channel,
+      result_type: retryable ? "retrying" : "failed", provider_reference: bundle.job.provider_reference || null,
+      public_url: null, payload: { error: message }, created_at: failedAt,
     })
-    await reconcilePublication(bundle.publication.id)
-    return { status: retryable ? "retrying" : "failed", error: message }
+    try { await reconcilePublication(bundle.publication.id) } catch {}
+    return { status: retryable ? "retrying" : "failed", error: message, nextAttemptAt: next }
   }
 }
 
