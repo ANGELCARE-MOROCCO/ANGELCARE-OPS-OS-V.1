@@ -16,12 +16,26 @@ export async function POST(request: NextRequest) {
   const limit = Math.max(1, Math.min(Number(body.limit || 25), 100))
   const legacyRetryCutoffHours = Math.max(1, Math.min(168, Number(process.env.AC_WHATSAPP_WORKER_LEGACY_RETRY_CUTOFF_HOURS || 6)))
   const legacyRetryCutoffMs = legacyRetryCutoffHours * 60 * 60 * 1000
+  const globalControl = await supabase.from('ac_whatsapp_runtime_controls').select('outbound_paused,campaigns_paused').eq('control_key','global').maybeSingle()
+  if (globalControl.error) return fail(globalControl.error.message,500)
+  if (globalControl.data?.outbound_paused) return ok({ workerId, claimed:0, results:[], paused:'GLOBAL_OUTBOUND_PAUSED' })
   await supabase.rpc('ac_whatsapp_release_stale_outbox', { p_age_minutes: 10 })
   const claimed = await supabase.rpc('ac_whatsapp_claim_outbox', { p_worker_id: workerId, p_limit: limit })
   if (claimed.error) return fail(claimed.error.message, 500)
   const results: any[] = []
 
   for (const item of claimed.data || []) {
+    if (item.campaign_id) {
+      const campaign = await supabase.from('ac_whatsapp_campaigns').select('status').eq('id',item.campaign_id).maybeSingle()
+      const campaignPaused = globalControl.data?.campaigns_paused || ['paused','cancelled','completed','failed','draft','review'].includes(String(campaign.data?.status || ''))
+      if (campaign.error || campaignPaused) {
+        const reason = campaign.error?.message || (globalControl.data?.campaigns_paused ? 'GLOBAL_CAMPAIGNS_PAUSED' : `CAMPAIGN_${String(campaign.data?.status || 'UNAVAILABLE').toUpperCase()}`)
+        const cancelled = ['cancelled','completed','failed'].includes(String(campaign.data?.status || ''))
+        await supabase.from('ac_whatsapp_outbox').update({ status: cancelled ? 'cancelled' : 'scheduled', locked_at:null, locked_by:null, last_error:reason, available_at:new Date(Date.now()+60000).toISOString() }).eq('id',item.id)
+        results.push({ id:item.id, status: cancelled ? 'cancelled' : 'paused', error:reason })
+        continue
+      }
+    }
     const account = await supabase.from('ac_whatsapp_accounts').select('*').eq('id', item.account_id).maybeSingle()
     const startedAt = new Date().toISOString()
 

@@ -171,3 +171,57 @@ export async function POST(request: NextRequest) {
 
   return ok(latest.data, { status: 201 })
 }
+
+export async function PATCH(request: NextRequest) {
+  const context = await acContext(request, 'ac-whatsapp.account.manage')
+  if ('error' in context) return context.error
+  const body = await request.json().catch(() => ({}))
+  const id = String(body.id || '')
+  if (!id) return fail('ACCOUNT_ID_REQUIRED', 422)
+  const current = await context.supabase.from('ac_whatsapp_accounts').select('*').eq('id', id).maybeSingle()
+  if (current.error) return fail(current.error.message, 500)
+  if (!current.data) return fail('ACCOUNT_NOT_FOUND', 404)
+  const previous = current.data
+  const patch: Record<string, unknown> = { updated_by: context.user.id, updated_at: new Date().toISOString() }
+  for (const key of ['name','phone_number_e164','department','purpose','default_queue_id','outbound_enabled','campaigns_enabled','cold_prospecting_enabled','bulk_messaging_enabled']) {
+    if (key in body) patch[key] = body[key] === '' ? null : body[key]
+  }
+  if (body.action === 'restore') {
+    patch.status = 'disconnected'
+    patch.settings = { ...(previous.settings || {}), retired: false, retired_at: null, retired_by: null, retired_reason: null }
+  }
+  const updated = await context.supabase.from('ac_whatsapp_accounts').update(patch).eq('id', id).select('*').single()
+  if (updated.error) return fail(updated.error.message, 500)
+  await audit(context, { action: `account.${body.action || 'update'}`, entityType: 'account', entityId: id, previousState: previous, newState: updated.data, reason: body.reason || null })
+  return ok(updated.data)
+}
+
+export async function DELETE(request: NextRequest) {
+  const context = await acContext(request, 'ac-whatsapp.account.manage')
+  if ('error' in context) return context.error
+  const body = await request.json().catch(() => ({}))
+  const id = String(body.id || '')
+  const reason = String(body.reason || '').trim()
+  if (!id) return fail('ACCOUNT_ID_REQUIRED', 422)
+  if (!reason) return fail('RETIRE_REASON_REQUIRED', 422)
+  const current = await context.supabase.from('ac_whatsapp_accounts').select('*').eq('id', id).maybeSingle()
+  if (current.error) return fail(current.error.message, 500)
+  if (!current.data) return fail('ACCOUNT_NOT_FOUND', 404)
+  const [conversations, outbox] = await Promise.all([
+    context.supabase.from('ac_whatsapp_conversations').select('id', { count: 'exact', head: true }).eq('account_id', id).not('status', 'in', '(resolved,closed,archived)'),
+    context.supabase.from('ac_whatsapp_outbox').select('id', { count: 'exact', head: true }).eq('account_id', id).in('status', ['scheduled','queued','processing']),
+  ])
+  const blocker = conversations.error || outbox.error
+  if (blocker) return fail(blocker.message, 500)
+  if ((conversations.count || 0) > 0 || (outbox.count || 0) > 0) return fail('ACCOUNT_RETIRE_BLOCKED', 409, { openConversations: conversations.count || 0, inFlightOutbox: outbox.count || 0 })
+  if (current.data.openwa_session_id) { try { await openwa.stopSession(current.data.openwa_session_id) } catch {} }
+  const now = new Date().toISOString()
+  const updated = await context.supabase.from('ac_whatsapp_accounts').update({
+    status: 'suspended', outbound_enabled: false, campaigns_enabled: false, cold_prospecting_enabled: false, bulk_messaging_enabled: false,
+    settings: { ...(current.data.settings || {}), retired: true, retired_at: now, retired_by: context.user.id, retired_reason: reason },
+    updated_by: context.user.id, updated_at: now,
+  }).eq('id', id).select('*').single()
+  if (updated.error) return fail(updated.error.message, 500)
+  await audit(context, { action: 'account.retire', entityType: 'account', entityId: id, previousState: current.data, newState: updated.data, reason })
+  return ok(updated.data)
+}

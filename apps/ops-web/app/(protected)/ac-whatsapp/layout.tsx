@@ -1,3 +1,4 @@
+import './apex.css'
 import { redirect } from 'next/navigation'
 import { getCurrentUser } from '@/lib/getUser'
 import { createServiceClient } from '@/lib/supabase/server'

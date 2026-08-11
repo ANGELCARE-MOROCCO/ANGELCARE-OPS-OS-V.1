@@ -1,0 +1,135 @@
+/* AC WhatsApp APEX — Precision White operator experience layer.
+   Scoped to [data-acw-apex] so it cannot contaminate the wider AngelCare app. */
+[data-acw-apex] {
+  --acw-canvas: #f4f6f9;
+  --acw-surface: #ffffff;
+  --acw-surface-subtle: #f8fafc;
+  --acw-ink: #0a1424;
+  --acw-muted: #64748b;
+  --acw-line: #dfe5ec;
+  --acw-line-strong: #c9d2dd;
+  --acw-blue: #175fa7;
+  --acw-navy: #071426;
+  --acw-rose: #ee365c;
+  --acw-green: #0b996f;
+  --acw-amber: #b96a07;
+  --acw-danger: #c42446;
+  --acw-focus: rgba(23,95,167,.26);
+  --acw-radius-sm: 10px;
+  --acw-radius-md: 14px;
+  --acw-radius-lg: 18px;
+  --acw-shadow-float: 0 22px 64px rgba(8,21,40,.13);
+  --acw-shadow-panel: 0 1px 2px rgba(8,21,40,.025),0 10px 30px rgba(8,21,40,.035);
+  color: var(--acw-ink);
+  font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+[data-acw-apex] *, [data-acw-apex] *::before, [data-acw-apex] *::after { box-sizing: border-box; }
+[data-acw-apex] ::selection { background: rgba(23,95,167,.18); color: #061427; }
+[data-acw-apex] :where(button,a,input,select,textarea,[role="button"]):focus-visible {
+  outline: 2px solid var(--acw-focus);
+  outline-offset: 2px;
+}
+[data-acw-apex] :where(button,a) { -webkit-tap-highlight-color: transparent; }
+[data-acw-apex] :where(button:disabled,[aria-disabled="true"]) { cursor: not-allowed; }
+[data-acw-apex] :where(input,textarea,select) { caret-color: var(--acw-blue); }
+[data-acw-apex] :where(input,textarea)::placeholder { color: #94a3b8; }
+[data-acw-apex] :where(table) { font-variant-numeric: tabular-nums; }
+[data-acw-apex] :where(.tabular-nums) { font-variant-numeric: tabular-nums; }
+
+[data-acw-apex] * { scrollbar-width: thin; scrollbar-color: #cbd5e1 transparent; }
+[data-acw-apex] *::-webkit-scrollbar { width: 9px; height: 9px; }
+[data-acw-apex] *::-webkit-scrollbar-track { background: transparent; }
+[data-acw-apex] *::-webkit-scrollbar-thumb { background: #cbd5e1; border: 3px solid transparent; border-radius: 999px; background-clip: padding-box; }
+[data-acw-apex] *::-webkit-scrollbar-thumb:hover { background: #94a3b8; border: 3px solid transparent; background-clip: padding-box; }
+
+[data-acw-apex][data-acw-density="compact"] { --acw-density-y: .82; }
+[data-acw-apex][data-acw-density="balanced"] { --acw-density-y: 1; }
+[data-acw-apex][data-acw-density="comfortable"] { --acw-density-y: 1.12; }
+
+[data-acw-apex] .acw-apex-glass {
+  background: rgba(255,255,255,.91);
+  -webkit-backdrop-filter: blur(16px) saturate(1.15);
+  backdrop-filter: blur(16px) saturate(1.15);
+}
+[data-acw-apex] .acw-apex-panel {
+  border: 1px solid var(--acw-line);
+  background: var(--acw-surface);
+  border-radius: var(--acw-radius-lg);
+  box-shadow: var(--acw-shadow-panel);
+}
+[data-acw-apex] .acw-apex-divider { border-color: var(--acw-line); }
+[data-acw-apex] .acw-apex-interactive { transition: background-color 140ms ease,border-color 140ms ease,color 140ms ease,box-shadow 140ms ease,transform 140ms ease; }
+[data-acw-apex] .acw-apex-interactive:hover { border-color: var(--acw-line-strong); }
+[data-acw-apex] .acw-apex-floating-surface,
+[data-acw-apex] .acw-floating-surface {
+  color: #0a1424;
+  background: #fff;
+  border-color: #d7dee7;
+  box-shadow: var(--acw-shadow-float);
+  isolation: isolate;
+}
+[data-acw-apex] .acw-apex-floating-surface :where(p,span,strong,label,h1,h2,h3,h4,button,a) { text-shadow: none; }
+[data-acw-apex] .acw-apex-floating-surface :where(button:not([class*="bg-slate-9"]):not([class*="bg-rose-"]):not([class*="bg-blue-"]):not([class*="bg-emerald-"])) { color: #0f172a; }
+
+[data-acw-apex] .acw-apex-kpi-strip { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); border:1px solid var(--acw-line); border-radius:16px; background:#fff; overflow:hidden; }
+[data-acw-apex] .acw-apex-kpi-strip > * { min-width:0; border-right:1px solid var(--acw-line); }
+[data-acw-apex] .acw-apex-kpi-strip > *:last-child { border-right:0; }
+
+[data-acw-apex] .acw-apex-table-head { position:sticky; top:0; z-index:3; background:rgba(248,250,252,.96); backdrop-filter:blur(8px); }
+[data-acw-apex] .acw-apex-row { transition:background-color 120ms ease,border-color 120ms ease; }
+[data-acw-apex] .acw-apex-row:hover { background:#f8fafc; }
+
+[data-acw-apex] .acw-apex-command-key { border:1px solid #dbe2ea; background:#fff; color:#64748b; border-radius:7px; padding:2px 6px; font-size:10px; line-height:1.2; font-weight:800; box-shadow:0 1px 1px rgba(8,21,40,.04); }
+
+[data-acw-apex] .acw-apex-danger-zone { border:1px solid #fecdd3; background:linear-gradient(180deg,#fff 0,#fff7f8 100%); }
+
+[data-acw-apex] [data-apex-drawer] { animation:acw-apex-drawer-in 180ms cubic-bezier(.2,.72,.26,1); }
+[data-acw-apex] [data-apex-popover] { animation:acw-apex-popover-in 140ms cubic-bezier(.2,.72,.26,1); transform-origin:top right; }
+@keyframes acw-apex-drawer-in { from { opacity:.35; transform:translateX(22px) } to { opacity:1; transform:translateX(0) } }
+@keyframes acw-apex-popover-in { from { opacity:0; transform:translateY(-4px) scale(.985) } to { opacity:1; transform:translateY(0) scale(1) } }
+
+@media (max-width: 1280px) {
+  [data-acw-apex] .acw-apex-kpi-strip { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  [data-acw-apex] .acw-apex-kpi-strip > *:nth-child(2) { border-right:0; }
+  [data-acw-apex] .acw-apex-kpi-strip > *:nth-child(-n+2) { border-bottom:1px solid var(--acw-line); }
+}
+@media (max-width: 720px) {
+  [data-acw-apex] .acw-apex-kpi-strip { grid-template-columns:1fr; }
+  [data-acw-apex] .acw-apex-kpi-strip > * { border-right:0; border-bottom:1px solid var(--acw-line); }
+  [data-acw-apex] .acw-apex-kpi-strip > *:last-child { border-bottom:0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-acw-apex], [data-acw-apex] * { scroll-behavior:auto !important; animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; }
+}
+
+/* Purpose-built KPI strips for workspaces with non-4 cardinalities. */
+[data-acw-apex] .acw-apex-kpi-strip-3 { grid-template-columns:repeat(3,minmax(0,1fr)); }
+[data-acw-apex] .acw-apex-kpi-strip-5 { grid-template-columns:repeat(5,minmax(0,1fr)); }
+[data-acw-apex] .acw-apex-kpi-strip-5 > * { border-right:1px solid var(--acw-line); }
+[data-acw-apex] .acw-apex-kpi-strip-5 > *:last-child { border-right:0; }
+
+/* Overlay contract: all AC WhatsApp floating layers are opaque, readable and deterministic. */
+[data-acw-apex] [role="menu"],
+[data-acw-apex] [role="dialog"] { isolation:isolate; }
+[data-acw-apex] [role="menu"] { color:#0f172a; background:#fff; }
+[data-acw-apex] [data-message-id] { scroll-margin-block:88px; }
+[data-acw-apex] textarea { field-sizing:content; }
+
+@media (max-width: 1280px) {
+  [data-acw-apex] .acw-apex-kpi-strip-3,
+  [data-acw-apex] .acw-apex-kpi-strip-5 { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  [data-acw-apex] .acw-apex-kpi-strip-3 > *,
+  [data-acw-apex] .acw-apex-kpi-strip-5 > * { border-bottom:1px solid var(--acw-line); }
+}
+@media (max-width: 720px) {
+  [data-acw-apex] .acw-apex-kpi-strip-3,
+  [data-acw-apex] .acw-apex-kpi-strip-5 { grid-template-columns:1fr; }
+  [data-acw-apex] .acw-apex-kpi-strip-3 > *,
+  [data-acw-apex] .acw-apex-kpi-strip-5 > * { border-right:0; border-bottom:1px solid var(--acw-line); }
+  [data-acw-apex] .acw-apex-kpi-strip-3 > *:last-child,
+  [data-acw-apex] .acw-apex-kpi-strip-5 > *:last-child { border-bottom:0; }
+}

@@ -17,6 +17,13 @@ export type AcWhatsAppPermission =
   | 'ac-whatsapp.quality.review'
   | 'ac-whatsapp.security.manage'
   | 'ac-whatsapp.audit.view'
+  | 'ac-whatsapp.team.remove'
+  | 'ac-whatsapp.responses.manage'
+  | 'ac-whatsapp.responses.import'
+  | 'ac-whatsapp.responses.publish'
+  | 'ac-whatsapp.storage.view'
+  | 'ac-whatsapp.storage.manage'
+  | 'ac-whatsapp.storage.purge'
 
 export type AcWhatsAppAccountStatus =
   | 'draft' | 'starting' | 'authenticating' | 'qr_required' | 'pairing_required'
@@ -38,7 +45,7 @@ export type AcWhatsAppAccount = {
   engine_type: 'whatsapp-web.js' | 'baileys'; status: AcWhatsAppAccountStatus; health_score: number
   outbound_enabled: boolean; campaigns_enabled: boolean; cold_prospecting_enabled: boolean
   bulk_messaging_enabled: boolean; runtime_metadata?: Record<string, unknown>; last_activity_at?: string | null
-  last_error?: string | null; created_at: string; updated_at: string
+  last_error?: string | null; default_queue_id?: string | null; settings?: Record<string, unknown>; created_at: string; updated_at: string
 }
 
 export type AcWhatsAppQueue = {
@@ -51,7 +58,7 @@ export type AcWhatsAppContact = {
   id: string; whatsapp_id: string; phone_number_e164?: string | null; display_name?: string | null
   organization_name?: string | null; contact_type: string; preferred_language: string; city?: string | null
   lead_stage?: string | null; sentiment?: string | null; priority: string; tags: string[]
-  last_contact_at?: string | null; last_response_at?: string | null
+  last_contact_at?: string | null; last_response_at?: string | null; archived_at?: string | null; archive_reason?: string | null
 }
 
 export type AcWhatsAppConversation = {
@@ -63,7 +70,7 @@ export type AcWhatsAppConversation = {
   contact?: AcWhatsAppContact | null; account?: AcWhatsAppAccount | null; queue?: AcWhatsAppQueue | null
   assigned_user?: Record<string, unknown> | null; labels?: Array<{ label_id?: string; label?: Record<string, unknown> | null }>
   last_message_sender_display_name_snapshot?: string | null; last_message_sender_type?: string | null
-  last_read_at?: string | null; last_read_by_user_id?: string | null; metadata?: Record<string, unknown>
+  last_read_at?: string | null; last_read_by_user_id?: string | null; automation_paused?: boolean; automation_paused_by?: string | null; automation_paused_at?: string | null; automation_pause_reason?: string | null; metadata?: Record<string, unknown>
 }
 
 export type AcWhatsAppAttachment = {
@@ -101,7 +108,7 @@ export type AcWhatsAppCampaign = {
   message_body?: string | null; status: string; total_recipients: number; queued_count: number; sent_count: number
   delivered_count: number; read_count: number; reply_count: number; positive_reply_count: number
   conversion_count: number; failed_count: number; scheduled_at?: string | null; started_at?: string | null
-  completed_at?: string | null; created_at: string; account?: AcWhatsAppAccount | null
+  completed_at?: string | null; archived_at?: string | null; archive_reason?: string | null; created_at: string; account?: AcWhatsAppAccount | null
 }
 
 export type AcWhatsAppBootstrap = {

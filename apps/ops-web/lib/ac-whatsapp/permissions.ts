@@ -13,8 +13,15 @@ export const AC_WHATSAPP_PERMISSIONS: ReadonlyArray<{ key: AcWhatsAppPermission;
   { key: 'ac-whatsapp.campaign.launch', label: 'Lancer, suspendre et annuler', group: 'Commercial' },
   { key: 'ac-whatsapp.account.manage', label: 'Administrer comptes et sessions', group: 'Administration' },
   { key: 'ac-whatsapp.members.manage', label: 'Administrer équipes et accès', group: 'Administration' },
-  { key: 'ac-whatsapp.templates.manage', label: 'Administrer les modèles', group: 'Automatisation' },
+  { key: 'ac-whatsapp.team.remove', label: 'Retirer un membre d’AC WhatsApp', group: 'Administration' },
+  { key: 'ac-whatsapp.templates.manage', label: 'Administrer les modèles (compatibilité)', group: 'Réponses' },
+  { key: 'ac-whatsapp.responses.manage', label: 'Administrer catégories et réponses', group: 'Réponses' },
+  { key: 'ac-whatsapp.responses.import', label: 'Importer des réponses CSV', group: 'Réponses' },
+  { key: 'ac-whatsapp.responses.publish', label: 'Approuver et publier les réponses', group: 'Réponses' },
   { key: 'ac-whatsapp.automation.manage', label: 'Administrer les automatisations', group: 'Automatisation' },
+  { key: 'ac-whatsapp.storage.view', label: 'Voir le Media Vault', group: 'Stockage' },
+  { key: 'ac-whatsapp.storage.manage', label: 'Gérer la rétention Media Vault', group: 'Stockage' },
+  { key: 'ac-whatsapp.storage.purge', label: 'Purger des médias du serveur', group: 'Stockage' },
   { key: 'ac-whatsapp.analytics.view', label: 'Voir les analyses', group: 'Direction' },
   { key: 'ac-whatsapp.quality.review', label: 'Contrôle qualité et coaching', group: 'Qualité' },
   { key: 'ac-whatsapp.security.manage', label: 'Sécurité et incidents', group: 'Sécurité' },
@@ -24,19 +31,20 @@ export const AC_WHATSAPP_PERMISSIONS: ReadonlyArray<{ key: AcWhatsAppPermission;
 const ALL = AC_WHATSAPP_PERMISSIONS.map(x => x.key)
 const READ: AcWhatsAppPermission[] = ['ac-whatsapp.view','ac-whatsapp.inbox.view','ac-whatsapp.campaign.view']
 const SEND: AcWhatsAppPermission[] = [...READ,'ac-whatsapp.message.send']
+const RESPONSES: AcWhatsAppPermission[] = ['ac-whatsapp.responses.manage','ac-whatsapp.responses.import','ac-whatsapp.responses.publish','ac-whatsapp.templates.manage']
 
 export const AC_WHATSAPP_ROLE_DEFAULTS: Record<string, AcWhatsAppPermission[]> = {
   platform_administrator: ALL,
   whatsapp_director: ALL,
   account_administrator: ALL,
-  department_supervisor: [...SEND,'ac-whatsapp.conversation.assign','ac-whatsapp.conversation.close','ac-whatsapp.contact.manage','ac-whatsapp.campaign.manage','ac-whatsapp.campaign.launch','ac-whatsapp.templates.manage','ac-whatsapp.analytics.view','ac-whatsapp.quality.review','ac-whatsapp.audit.view'],
-  campaign_manager: [...READ,'ac-whatsapp.contact.manage','ac-whatsapp.campaign.manage','ac-whatsapp.campaign.launch','ac-whatsapp.templates.manage','ac-whatsapp.analytics.view'],
-  team_leader: [...SEND,'ac-whatsapp.conversation.assign','ac-whatsapp.conversation.close','ac-whatsapp.contact.manage','ac-whatsapp.campaign.view','ac-whatsapp.analytics.view','ac-whatsapp.quality.review'],
+  department_supervisor: [...SEND,'ac-whatsapp.conversation.assign','ac-whatsapp.conversation.close','ac-whatsapp.contact.manage','ac-whatsapp.campaign.manage','ac-whatsapp.campaign.launch','ac-whatsapp.members.manage','ac-whatsapp.team.remove',...RESPONSES,'ac-whatsapp.automation.manage','ac-whatsapp.storage.view','ac-whatsapp.storage.manage','ac-whatsapp.analytics.view','ac-whatsapp.quality.review','ac-whatsapp.audit.view'],
+  campaign_manager: [...READ,'ac-whatsapp.contact.manage','ac-whatsapp.campaign.manage','ac-whatsapp.campaign.launch',...RESPONSES,'ac-whatsapp.automation.manage','ac-whatsapp.analytics.view'],
+  team_leader: [...SEND,'ac-whatsapp.conversation.assign','ac-whatsapp.conversation.close','ac-whatsapp.contact.manage','ac-whatsapp.campaign.view','ac-whatsapp.responses.manage','ac-whatsapp.templates.manage','ac-whatsapp.analytics.view','ac-whatsapp.quality.review'],
   senior_operator: [...SEND,'ac-whatsapp.conversation.assign','ac-whatsapp.conversation.close','ac-whatsapp.contact.manage','ac-whatsapp.campaign.view'],
   operator: [...SEND,'ac-whatsapp.conversation.close','ac-whatsapp.campaign.view'],
   quality_controller: [...READ,'ac-whatsapp.analytics.view','ac-whatsapp.quality.review','ac-whatsapp.audit.view'],
   analyst: [...READ,'ac-whatsapp.analytics.view','ac-whatsapp.audit.view'],
-  auditor: ['ac-whatsapp.view','ac-whatsapp.analytics.view','ac-whatsapp.audit.view'],
+  auditor: ['ac-whatsapp.view','ac-whatsapp.analytics.view','ac-whatsapp.audit.view','ac-whatsapp.storage.view'],
   read_only_observer: READ,
 }
 

@@ -136,6 +136,10 @@ export async function POST(request: NextRequest) {
     return ok({ ...note.data, sender_identity: { display_name: senderName, role: senderRole, type: 'internal_user', origin: 'internal_note' } }, { status: 201 })
   }
 
+  const globalControl = await context.supabase.from('ac_whatsapp_runtime_controls').select('outbound_paused').eq('control_key','global').maybeSingle()
+  if (globalControl.error) return fail(globalControl.error.message, 500)
+  if (globalControl.data?.outbound_paused) return fail('GLOBAL_OUTBOUND_PAUSED', 423)
+
   if (!hasAccountCapability(context, conv.data.account_id, 'send')) return fail('CONVERSATION_ACCESS_DENIED', 403)
   const account: any = conv.data.account
   if (!account?.openwa_session_id) return fail('ACCOUNT_SESSION_NOT_CONFIGURED', 409)
@@ -162,6 +166,9 @@ export async function POST(request: NextRequest) {
     created_at: now,
   }).select('*').single()
   if (message.error) return fail(message.error.message, 500)
+
+  // A real human reply takes ownership of the conversation and suppresses conflicting auto replies until explicitly resumed.
+  await context.supabase.from('ac_whatsapp_conversations').update({ automation_paused: true, automation_paused_by: context.user.id, automation_paused_at: now, automation_pause_reason: 'human_takeover', updated_at: now }).eq('id', conversationId)
 
   const outbox = await context.supabase.from('ac_whatsapp_outbox').insert({
     client_message_id: clientMessageId,
