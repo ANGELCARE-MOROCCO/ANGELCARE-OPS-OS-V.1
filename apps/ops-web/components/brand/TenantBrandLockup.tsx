@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from 'react'
 import BrandRuntimeLockup from './BrandRuntimeLockup'
-import type { BrandRuntime } from '@/types/angelcare360/operator/branding'
+import type { BrandRuntime } from '@/types/shared/brand-runtime'
 
 type Props = { compact?: boolean; className?: string; priority?: boolean }
 

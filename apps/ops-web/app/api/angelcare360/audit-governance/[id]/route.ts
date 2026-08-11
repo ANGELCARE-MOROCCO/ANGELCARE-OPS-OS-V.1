@@ -1,3 +1,0 @@
-import {NextResponse} from 'next/server'
-import {getAuditAreaSnapshot,getAuditExportDownloadUrl} from '@/lib/angelcare360/server/audit-area'
-export async function GET(req:Request,c:{params:Promise<{id:string}>}){const {id}=await c.params;if(new URL(req.url).searchParams.get('download')==='1'){const artifact=await getAuditExportDownloadUrl(id);return NextResponse.redirect(artifact.url)}const s=await getAuditAreaSnapshot();return NextResponse.json({ok:true,record:s.events.find(x=>x.id===id)||s.decisions.find(x=>x.id===id)||s.evidence.find(x=>x.id===id)||s.findings.find(x=>x.id===id)||s.investigations.find(x=>x.id===id)||s.reviews.find(x=>x.id===id)||s.exports.find(x=>x.id===id)||s.integrity.find(x=>x.id===id)||null})}

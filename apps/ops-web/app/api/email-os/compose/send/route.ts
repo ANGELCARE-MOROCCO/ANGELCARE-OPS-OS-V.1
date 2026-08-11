@@ -5,7 +5,7 @@ import { auditMailboxAccessEvent, requireUnlockedMailboxAccess, resolveMailboxSc
 import { makeEmailOSId, nowIso } from "@/lib/email-os-core/schema"
 import { getEmailOSBridgeFailureDiagnostics, sendEmailOSDirect } from "@/lib/email-os-core/send-mail"
 import { emailOSOperatorSnapshot, resolveEmailOSOperatorIdentity } from "@/lib/email-os-core/operator-identity"
-import { ac360GuardBlockedResponse, buildAc360IdempotencyKey, countEmailRecipients, runAc360WiredAction } from "@/lib/ac360/action-wiring"
+import { operationalActionBlockedResponse, buildOperationalIdempotencyKey, countEmailRecipients, runOperationalWiredAction } from "@/lib/shared/operational-action-wiring"
 import { attachmentErrorResponse, persistComposeAttachments, validateComposeAttachments } from "@/lib/email-os-core/compose-attachments"
 
 function clean(value: any) {
@@ -139,7 +139,7 @@ export async function POST(request: Request) {
     const mailboxDisplayName = clean(access.mailbox?.name || resolvedFrom || "AngelCare")
     const fromDisplayName = exposeOperatorExternally ? `${operatorIdentity.fullName} | ${mailboxDisplayName}` : mailboxDisplayName
 
-    const guarded = await runAc360WiredAction("email_os.compose_send", async () => {
+    const guarded = await runOperationalWiredAction("email_os.compose_send", async () => {
       const now = nowIso()
       outboxId = makeEmailOSId()
 
@@ -283,7 +283,7 @@ export async function POST(request: Request) {
     }, {
       orgId: body.orgId || body.org_id,
       quantity: recipientCount,
-      idempotencyKey: body.idempotencyKey || body.idempotency_key || buildAc360IdempotencyKey("email.compose.send", `${mailboxScope.mailboxId || resolvedFrom || "mailbox"}:${toEmail}:${subject}`),
+      idempotencyKey: body.idempotencyKey || body.idempotency_key || buildOperationalIdempotencyKey("email.compose.send", `${mailboxScope.mailboxId || resolvedFrom || "mailbox"}:${toEmail}:${subject}`),
       metadata: {
         mailboxId: mailboxScope.mailboxId,
         fromEmail: resolvedFrom,
@@ -297,7 +297,7 @@ export async function POST(request: Request) {
       },
     })
 
-    if (!guarded.ok) return ac360GuardBlockedResponse(guarded)
+    if (!guarded.ok) return operationalActionBlockedResponse(guarded)
 
     return NextResponse.json({
       ok: true,

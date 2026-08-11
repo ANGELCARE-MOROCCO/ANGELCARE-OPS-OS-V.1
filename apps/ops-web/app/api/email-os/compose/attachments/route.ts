@@ -2,7 +2,7 @@ import { NextResponse } from "next/server"
 import { getCurrentAppUser } from "@/lib/auth/session"
 import { createEmailOSCoreDb } from "@/lib/email-os-core/db"
 import { requireUnlockedMailboxAccess, resolveMailboxScopeForUser } from "@/lib/email-os-core/access-governance"
-import { ac360GuardBlockedResponse, buildAc360IdempotencyKey, estimateStorageGbFromBytes, runAc360WiredAction } from "@/lib/ac360/action-wiring"
+import { operationalActionBlockedResponse, buildOperationalIdempotencyKey, estimateStorageGbFromBytes, runOperationalWiredAction } from "@/lib/shared/operational-action-wiring"
 import { attachmentErrorResponse, loadComposeAttachments, persistComposeAttachments, validateComposeAttachments } from "@/lib/email-os-core/compose-attachments"
 
 function clean(value: unknown) {
@@ -67,7 +67,7 @@ export async function POST(request: Request) {
     const totalBytes = attachments.reduce((sum, item) => sum + Number(item.sizeBytes || 0), 0)
     const quantity = estimateStorageGbFromBytes(totalBytes)
 
-    const guarded = await runAc360WiredAction('email_os.compose_attachments', async () => {
+    const guarded = await runOperationalWiredAction('email_os.compose_attachments', async () => {
       const rows = await persistComposeAttachments({
         db,
         mailboxId: mailboxScope.mailboxId,
@@ -80,11 +80,11 @@ export async function POST(request: Request) {
     }, {
       orgId: body.orgId || body.org_id,
       quantity,
-      idempotencyKey: body.idempotencyKey || body.idempotency_key || buildAc360IdempotencyKey('email.attachments', `${body.draftId || body.outboxId || 'compose'}:${attachments.length}:${totalBytes}`),
+      idempotencyKey: body.idempotencyKey || body.idempotency_key || buildOperationalIdempotencyKey('email.attachments', `${body.draftId || body.outboxId || 'compose'}:${attachments.length}:${totalBytes}`),
       metadata: { attachmentCount: attachments.length, totalBytes, quantityGb: quantity, source: 'api.email-os.compose.attachments.POST' },
     })
 
-    if (!guarded.ok) return ac360GuardBlockedResponse(guarded)
+    if (!guarded.ok) return operationalActionBlockedResponse(guarded)
 
     return NextResponse.json({ ok: true, data: guarded.data, ac360: { guard: guarded.guard, usage: guarded.usage } })
   } catch (error) {

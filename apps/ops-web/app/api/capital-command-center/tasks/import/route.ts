@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createResource, listResource, logActivity } from '@/lib/capital-command-center/tasks-store'
-import { ac360GuardBlockedResponse, buildAc360IdempotencyKey, runAc360WiredAction } from '@/lib/ac360/action-wiring'
+import { operationalActionBlockedResponse, buildOperationalIdempotencyKey, runOperationalWiredAction } from '@/lib/shared/operational-action-wiring'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -125,7 +125,7 @@ export async function POST(request: NextRequest) {
     const importBatchId = String(body?.import_batch_id || `tasks_csv_${Date.now()}`).slice(0, 120)
     const filename = String(body?.filename || '').slice(0, 240)
 
-    const guarded = await runAc360WiredAction('capital.tasks.import', async () => {
+    const guarded = await runOperationalWiredAction('capital.tasks.import', async () => {
       const lookups = await nameLookup()
       const inserted: AnyRecord[] = []
       const failed: AnyRecord[] = []
@@ -155,11 +155,11 @@ export async function POST(request: NextRequest) {
     }, {
       orgId: body.orgId || body.org_id,
       quantity: rows.length,
-      idempotencyKey: body.idempotencyKey || body.idempotency_key || buildAc360IdempotencyKey('capital.tasks.import', `${importBatchId}:${rows.length}`),
+      idempotencyKey: body.idempotencyKey || body.idempotency_key || buildOperationalIdempotencyKey('capital.tasks.import', `${importBatchId}:${rows.length}`),
       metadata: { importBatchId, filename, rowCount: rows.length, source: 'api.capital-command-center.tasks.import.POST' },
     })
 
-    if (!guarded.ok) return ac360GuardBlockedResponse(guarded)
+    if (!guarded.ok) return operationalActionBlockedResponse(guarded)
     return NextResponse.json({ ok: true, data: guarded.data, ac360: { guard: guarded.guard, usage: guarded.usage } })
   } catch (error: any) {
     return NextResponse.json({ ok: false, error: error?.message || 'Unable to import tasks' }, { status: 500 })
