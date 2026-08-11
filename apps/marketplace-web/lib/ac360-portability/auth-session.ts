@@ -84,7 +84,7 @@ export async function getCurrentAppUser() {
 
 export async function requireUser() {
   const user = await getCurrentAppUser()
-  if (!user) redirect('/login')
+  if (!user) redirect('/angelcare-360-access/login')
   if ((user as any).__mfaRequired) redirect('/angelcare-360-access/mfa')
   return user
 }
