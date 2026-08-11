@@ -1,4 +1,0 @@
-import { requireMarketplacePageContext } from '@/angelcare-marketplace/auth/context'
-import { PageHeader } from '@/angelcare-marketplace/design-system/ui'
-import { adminListRequests } from '@/angelcare-marketplace/family-experience/repository'
-export default async function Page({params}:{params:Promise<{requestId:string}>}){await requireMarketplacePageContext('marketplace.family.admin.view');const {requestId}=await params;const item=(await adminListRequests()).find(row=>row.id===requestId);return <><PageHeader eyebrow="FAMILY REQUEST DOSSIER" title={item?.public_reference||'Demande famille'} description={item?.next_action||'Dossier à qualifier.'}/><pre style={{whiteSpace:'pre-wrap',background:'#fff',padding:24,borderRadius:20,border:'1px solid #dbe4ef'}}>{JSON.stringify(item,null,2)}</pre></>}

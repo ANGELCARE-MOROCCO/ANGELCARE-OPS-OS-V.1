@@ -155,7 +155,7 @@ export function readStorageBridgeConfig(): StorageBridgeConfig {
   }
 }
 
-async function callStorageBridge(pathname: string, options: RequestInit = {}) {
+async function callStorageBridge(pathname: string, options: RequestInit = {}, responseMode: "json" | "binary" = "json") {
   const config = readStorageBridgeConfig()
   if (!config.hasBridgeUrl || !/^https?:\/\//i.test(config.bridgeUrl)) {
     throw new Error("Storage bridge URL is not configured")
@@ -175,6 +175,22 @@ async function callStorageBridge(pathname: string, options: RequestInit = {}) {
     headers,
     cache: "no-store"
   })
+
+  if (responseMode === "binary") {
+    if (!response.ok) {
+      const text = await response.clone().text().catch(() => "")
+      let payload: any = null
+      if (text) {
+        try {
+          payload = JSON.parse(text)
+        } catch {
+          payload = null
+        }
+      }
+      throw new Error(payload?.error || `Storage bridge request failed with HTTP ${response.status}`)
+    }
+    return { response, payload: null, text: "" }
+  }
 
   const text = await response.text().catch(() => "")
   let payload: any = null
@@ -219,7 +235,7 @@ export async function uploadStorageFileToBridge(input: StorageBridgeUploadInput)
 export async function downloadStorageFileFromBridge(fileId: string) {
   const result = await callStorageBridge(`/admin/storage/download/${encodeURIComponent(clean(fileId))}`, {
     method: "GET"
-  })
+  }, "binary")
 
   return result.response
 }

@@ -1,0 +1,23 @@
+-- EMERGENCY ROLLBACK ONLY · removes MZ2 additive tables and preserves all MZ1 tables.
+begin;
+drop table if exists public.social_command_operator_notes cascade;
+drop table if exists public.social_command_ai_operations cascade;
+drop table if exists public.social_command_channel_health_events cascade;
+drop table if exists public.social_command_reconciliation_runs cascade;
+drop table if exists public.social_command_campaign_metrics cascade;
+drop table if exists public.social_command_metric_snapshots cascade;
+drop table if exists public.social_command_automation_actions cascade;
+drop table if exists public.social_command_automation_runs cascade;
+drop table if exists public.social_command_automation_versions cascade;
+drop table if exists public.social_command_automations cascade;
+drop table if exists public.social_command_mentions cascade;
+drop table if exists public.social_command_comments cascade;
+drop table if exists public.social_command_engagement_events cascade;
+drop table if exists public.social_command_conversation_tags cascade;
+drop table if exists public.social_command_conversation_assignments cascade;
+drop table if exists public.social_command_messages cascade;
+drop table if exists public.social_command_conversations cascade;
+drop table if exists public.social_command_webhook_events cascade;
+drop table if exists public.social_command_webhook_deliveries cascade;
+commit;
+select 'SOCIAL_COMMAND_MZ2_ROLLED_BACK_MZ1_PRESERVED' as result;

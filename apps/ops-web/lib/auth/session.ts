@@ -47,45 +47,12 @@ export async function getCurrentAppUser() {
 
   if (!user || user.status !== 'active') return null
 
-  try {
-    const { data: tenantAccess } = await supabase
-      .from('angelcare360_operator_tenant_access_accounts')
-      .select('id,status,security_policy,access_starts_at,access_expires_at,mfa_enrolled_at')
-      .eq('app_user_id', user.id)
-      .order('updated_at', { ascending: false })
-      .limit(1)
-      .maybeSingle()
-    if (tenantAccess) {
-      const now = Date.now()
-      const startsAt = tenantAccess.access_starts_at ? new Date(tenantAccess.access_starts_at).getTime() : null
-      const expiresAt = tenantAccess.access_expires_at ? new Date(tenantAccess.access_expires_at).getTime() : null
-      if (tenantAccess.status !== 'active' || (startsAt && startsAt > now) || (expiresAt && expiresAt <= now)) {
-        await supabase.from('app_sessions').delete().eq('session_token', token)
-        return null
-      }
-      const policy = (tenantAccess.security_policy || {}) as Record<string, unknown>
-      const durationHours = Math.max(1, Math.min(168, Number(policy.session_duration_hours || 12)))
-      const createdAt = session.created_at ? new Date(session.created_at).getTime() : null
-      if (createdAt && createdAt + durationHours * 3600000 <= now) {
-        await supabase.from('app_sessions').delete().eq('session_token', token)
-        return null
-      }
-      if (Boolean(policy.require_mfa) && tenantAccess.mfa_enrolled_at && !session.mfa_verified_at) {
-        return { ...user, __mfaRequired: true }
-      }
-      await supabase.from('app_sessions').update({ last_seen_at: new Date().toISOString() }).eq('session_token', token).then(() => null, () => null)
-    }
-  } catch {
-    // Compatibility mode until the additive Tenant Identity migration is applied.
-  }
-
   return user
 }
 
 export async function requireUser() {
   const user = await getCurrentAppUser()
   if (!user) redirect('/login')
-  if ((user as any).__mfaRequired) redirect('/angelcare-360-access/mfa')
   return user
 }
 

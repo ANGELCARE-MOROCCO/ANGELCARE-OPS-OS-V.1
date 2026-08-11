@@ -1,2 +1,0 @@
-import {handleFulfillmentEvidence} from '@/angelcare-marketplace/operations-reconciliation/api-handlers'
-export async function POST(r:Request,{params}:{params:Promise<{caseId:string}>}){const{caseId}=await params;return handleFulfillmentEvidence(r,caseId)}

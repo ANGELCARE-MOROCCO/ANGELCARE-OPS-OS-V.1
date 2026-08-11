@@ -1,2 +1,0 @@
-import { requireMarketplacePageContext } from '@/angelcare-marketplace/auth/context';import { SupplierSpecs } from '@/angelcare-marketplace/development-engine/components/SupplierSpecs';import { listSupplierSpecs } from '@/angelcare-marketplace/development-engine/repository'
-export default async function Page(){await requireMarketplacePageContext('marketplace.development.supplier_specs.view');return <SupplierSpecs specs={await listSupplierSpecs()}/>}

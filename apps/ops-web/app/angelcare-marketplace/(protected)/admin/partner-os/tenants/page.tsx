@@ -1,2 +1,0 @@
-import { requireMarketplacePageContext } from '@/angelcare-marketplace/auth/context';import { TenantRegistry } from '@/angelcare-marketplace/partner-os/components/TenantRegistry';import { listTenants } from '@/angelcare-marketplace/partner-os/repository'
-export default async function Page(){await requireMarketplacePageContext('marketplace.partner_os.admin.view');return <TenantRegistry tenants={await listTenants()}/>}

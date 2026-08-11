@@ -1,2 +1,0 @@
-import { handleRecoveryTransition } from '@/angelcare-marketplace/analytics-security/api-handlers'
-export async function POST(request:Request,{params}:{params:Promise<{testId:string}>}){return handleRecoveryTransition(request,(await params).testId)}

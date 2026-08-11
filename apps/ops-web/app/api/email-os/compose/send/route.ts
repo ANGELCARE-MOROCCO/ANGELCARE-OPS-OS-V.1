@@ -5,7 +5,8 @@ import { auditMailboxAccessEvent, requireUnlockedMailboxAccess, resolveMailboxSc
 import { makeEmailOSId, nowIso } from "@/lib/email-os-core/schema"
 import { getEmailOSBridgeFailureDiagnostics, sendEmailOSDirect } from "@/lib/email-os-core/send-mail"
 import { emailOSOperatorSnapshot, resolveEmailOSOperatorIdentity } from "@/lib/email-os-core/operator-identity"
-import { ac360GuardBlockedResponse, buildAc360IdempotencyKey, countEmailRecipients, runAc360WiredAction } from "@/lib/ac360/action-wiring"
+import { operationalActionBlockedResponse, buildOperationalIdempotencyKey, countEmailRecipients, runOperationalWiredAction } from "@/lib/shared/operational-action-wiring"
+import { attachmentErrorResponse, persistComposeAttachments, validateComposeAttachments } from "@/lib/email-os-core/compose-attachments"
 
 function clean(value: any) {
   return typeof value === "string" ? value.trim() : ""
@@ -90,7 +91,7 @@ export async function POST(request: Request) {
     const messageHtml = clean(body.bodyHtml || body.body_html || body.body || body.html || body.message)
     const messageText = clean(body.bodyText || body.body_text || body.text) || htmlToPlainText(messageHtml)
     const message = messageHtml
-    const attachments = normalizeAttachmentsForSend(body.attachments)
+    const attachmentInputs = normalizeAttachmentsForSend(body.attachments)
     const trackingEnabled = body.tracking !== false && body.tracking !== "false"
     const trackingId = trackingEnabled ? makeEmailOSId() : ""
     const trackingBaseUrl = absoluteBaseUrl(request)
@@ -106,6 +107,12 @@ export async function POST(request: Request) {
       mailboxId: mailboxScope.mailboxId,
       requiredPermission: "can_send",
       request,
+    })
+
+    const attachments = await validateComposeAttachments({
+      db,
+      mailboxId: mailboxScope.mailboxId,
+      attachments: attachmentInputs,
     })
 
     const resolvedFrom = clean(access.mailbox?.address || access.mailbox?.name || "")
@@ -132,11 +139,11 @@ export async function POST(request: Request) {
     const mailboxDisplayName = clean(access.mailbox?.name || resolvedFrom || "AngelCare")
     const fromDisplayName = exposeOperatorExternally ? `${operatorIdentity.fullName} | ${mailboxDisplayName}` : mailboxDisplayName
 
-    const guarded = await runAc360WiredAction("email_os.compose_send", async () => {
+    const guarded = await runOperationalWiredAction("email_os.compose_send", async () => {
       const now = nowIso()
       outboxId = makeEmailOSId()
 
-      await db.from("email_os_core_outbox").insert({
+      const { error: outboxInsertError } = await db.from("email_os_core_outbox").insert({
         id: outboxId,
         mailbox_id: mailboxScope.mailboxId,
         from_email: resolvedFrom || null,
@@ -180,7 +187,16 @@ export async function POST(request: Request) {
         updated_at: now,
         sent_at: null,
         last_error: null,
-      }).then(() => null, () => null)
+      })
+      if (outboxInsertError) throw outboxInsertError
+
+      await persistComposeAttachments({
+        db,
+        mailboxId: mailboxScope.mailboxId,
+        outboxId,
+        attachments,
+        metadata: { source: "compose/send", ac360Guarded: true },
+      })
 
       const { identity, info } = await sendEmailOSDirect({
         mailboxId: mailboxScope.mailboxId,
@@ -267,7 +283,7 @@ export async function POST(request: Request) {
     }, {
       orgId: body.orgId || body.org_id,
       quantity: recipientCount,
-      idempotencyKey: body.idempotencyKey || body.idempotency_key || buildAc360IdempotencyKey("email.compose.send", `${mailboxScope.mailboxId || resolvedFrom || "mailbox"}:${toEmail}:${subject}`),
+      idempotencyKey: body.idempotencyKey || body.idempotency_key || buildOperationalIdempotencyKey("email.compose.send", `${mailboxScope.mailboxId || resolvedFrom || "mailbox"}:${toEmail}:${subject}`),
       metadata: {
         mailboxId: mailboxScope.mailboxId,
         fromEmail: resolvedFrom,
@@ -281,7 +297,7 @@ export async function POST(request: Request) {
       },
     })
 
-    if (!guarded.ok) return ac360GuardBlockedResponse(guarded)
+    if (!guarded.ok) return operationalActionBlockedResponse(guarded)
 
     return NextResponse.json({
       ok: true,
@@ -310,13 +326,15 @@ export async function POST(request: Request) {
       }).eq("id", outboxId).then(() => null, () => null)
     }
 
+    const attachmentDiagnostics = attachmentErrorResponse(error)
     return NextResponse.json(
       {
         ok: false,
-        error: message,
+        error: attachmentDiagnostics?.message || message,
+        ...(attachmentDiagnostics ? { code: attachmentDiagnostics.code } : {}),
         ...(bridgeDiagnostics || {}),
       },
-      { status: bridgeDiagnostics ? 502 : 500 }
+      { status: attachmentDiagnostics?.status || (bridgeDiagnostics ? 502 : 500) }
     )
   }
 }

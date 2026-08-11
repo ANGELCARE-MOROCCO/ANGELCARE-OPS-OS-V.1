@@ -1,5 +1,0 @@
-import Link from 'next/link'
-import { BadgeCheck } from 'lucide-react'
-import type { CatalogLocale } from '@/angelcare-marketplace/catalog-discovery/types'
-import styles from '@/angelcare-marketplace/customer-commerce/customer-commerce.module.css'
-export default async function Page({params}:{params:Promise<{locale:string}>}){const{locale:raw}=await params;const locale=(raw==='en'||raw==='ar'?raw:'fr') as CatalogLocale;return <main className={styles.root} dir={locale==='ar'?'rtl':'ltr'}><div className={styles.authShell}><section className={styles.authCard}><BadgeCheck size={44}/><span className={styles.eyebrow}>IDENTITY VERIFIED</span><h1>{locale==='fr'?'Votre identité est confirmée':locale==='ar'?'تم تأكيد هويتك':'Your identity is confirmed'}</h1><p>{locale==='fr'?'Vous pouvez maintenant ouvrir Mon ANGELCARE, retrouver votre panier et activer AC Wallet.':locale==='ar'?'يمكنك الآن فتح حساب ANGELCARE واستعادة سلتك وتفعيل محفظة AC.':'You can now open Mon ANGELCARE, recover your basket and activate AC Wallet.'}</p><Link className={styles.primaryButton} href={`/angelcare-marketplace/${locale}/account`}>Mon ANGELCARE</Link></section></div></main>}

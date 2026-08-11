@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { createClient } from "@/lib/supabase/server"
-import { ac360GuardBlockedResponse, buildAc360IdempotencyKey, runAc360WiredAction } from "@/lib/ac360/action-wiring"
+import { operationalActionBlockedResponse, buildOperationalIdempotencyKey, runOperationalWiredAction } from "@/lib/shared/operational-action-wiring"
 
 export async function PATCH(request: Request) {
   const supabase = await createClient()
@@ -10,7 +10,7 @@ export async function PATCH(request: Request) {
     return NextResponse.json({ ok: false, error: "Missing taskId" }, { status: 400 })
   }
 
-  const guarded = await runAc360WiredAction('revenue.tasks.update', async () => {
+  const guarded = await runOperationalWiredAction('revenue.tasks.update', async () => {
     const updatePayload: Record<string, any> = {
       title: body.title,
       description: body.description || null,
@@ -65,10 +65,10 @@ export async function PATCH(request: Request) {
   }, {
     orgId: body.orgId || body.org_id,
     quantity: 1,
-    idempotencyKey: body.idempotencyKey || body.idempotency_key || buildAc360IdempotencyKey('revenue.tasks.update', body.taskId),
+    idempotencyKey: body.idempotencyKey || body.idempotency_key || buildOperationalIdempotencyKey('revenue.tasks.update', body.taskId),
     metadata: { taskId: body.taskId, status: body.status || null, source: 'api.tasks.PATCH' },
   })
 
-  if (!guarded.ok) return ac360GuardBlockedResponse(guarded)
+  if (!guarded.ok) return operationalActionBlockedResponse(guarded)
   return NextResponse.json({ ok: true, task: guarded.data, ac360: { guard: guarded.guard, usage: guarded.usage } })
 }

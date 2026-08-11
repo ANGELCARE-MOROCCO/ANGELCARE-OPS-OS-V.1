@@ -3,6 +3,7 @@ import { createEmailOSCoreDb } from "@/lib/email-os-core/db"
 import { resolveEmailOSMailboxIdentity, resolveEmailOSMailboxIdentityFromDb } from "@/lib/email-os-core/multi-mailbox-resolver"
 import { downloadStorageFileFromBridge, loadStorageFileMetadata } from "@/lib/email-os-core/storage-gateway"
 import { auditSenderIdentity, resolveSenderIdentity, senderIdentitySnapshot, type ResolvedSenderIdentity, type SenderIdentityOverride } from "@/lib/email-os-core/sender-identity"
+import { validateComposeAttachments } from "@/lib/email-os-core/compose-attachments"
 
 const sendLocks = new Map<string, Promise<void>>()
 const lastSendAt = new Map<string, number>()
@@ -46,7 +47,8 @@ export type EmailOSSendInfo = {
 }
 
 export type EmailOSBridgeFetchDiagnostics = {
-  bridgeFetchFailed: true
+  bridgeFetchFailed: boolean
+  transportErrorCode: "EMAIL_BRIDGE_CONNECTION_FAILED" | "EMAIL_BRIDGE_REJECTED" | "SMTP_REJECTED" | "EMAIL_BRIDGE_CONFIG_ERROR"
   bridgeUrlHost: string
   bridgeEndpointPath: "/send"
   forceBridge: boolean
@@ -157,7 +159,7 @@ function estimateBase64Bytes(value: string) {
   return Math.max(0, Math.floor(cleanValue.length * 3 / 4) - padding)
 }
 
-async function normalizeEmailAttachments(input: unknown) {
+async function normalizeEmailAttachmentsForLocal(input: unknown) {
   const rows = Array.isArray(input) ? input.slice(0, MAX_ATTACHMENT_COUNT) : []
   let totalBytes = 0
   const db = createEmailOSCoreDb()
@@ -224,6 +226,28 @@ async function normalizeEmailAttachments(input: unknown) {
   }
 
   return normalized
+}
+
+async function prepareBridgeAttachments(input: unknown, mailboxId: string) {
+  const canonical = await validateComposeAttachments({
+    db: createEmailOSCoreDb(),
+    mailboxId,
+    attachments: input,
+  })
+
+  return canonical.map((item) => item.storageFileId
+    ? {
+        filename: item.filename,
+        contentType: item.contentType,
+        storageFileId: item.storageFileId,
+        sizeBytes: item.sizeBytes,
+      }
+    : {
+        filename: item.filename,
+        contentType: item.contentType,
+        contentBase64: item.contentBase64 || "",
+        sizeBytes: item.sizeBytes,
+      })
 }
 
 function escapeHtml(value: string) {
@@ -330,13 +354,16 @@ function buildBridgeDiagnostics(input: {
   error: unknown
   bridgeResponseStatus?: number
   bridgeResponseBodyPreview?: string
+  bridgeFetchFailed?: boolean
+  transportErrorCode?: EmailOSBridgeFetchDiagnostics["transportErrorCode"]
 }): EmailOSBridgeFetchDiagnostics {
   const errorName = input.error instanceof Error ? input.error.name : "Error"
   const errorMessage = input.error instanceof Error ? input.error.message : String(input.error || "Bridge request failed")
   const cause = getErrorCause(input.error)
 
   return {
-    bridgeFetchFailed: true,
+    bridgeFetchFailed: input.bridgeFetchFailed !== false,
+    transportErrorCode: input.transportErrorCode || "EMAIL_BRIDGE_CONNECTION_FAILED",
     bridgeUrlHost: getBridgeUrlHost(input.bridgeUrl),
     bridgeEndpointPath: "/send",
     forceBridge: input.forceBridge,
@@ -364,7 +391,8 @@ async function sendViaBridge(identity: any, input: EmailOSSendInput, senderIdent
       throw new EmailOSBridgeFetchError(
         "Email-OS bridge is required but EMAIL_OS_BRIDGE_URL is missing or invalid.",
         {
-          bridgeFetchFailed: true,
+          bridgeFetchFailed: false,
+          transportErrorCode: "EMAIL_BRIDGE_CONFIG_ERROR",
           bridgeUrlHost: getBridgeUrlHost(bridgeUrl),
           bridgeEndpointPath: "/send",
           forceBridge,
@@ -384,7 +412,8 @@ async function sendViaBridge(identity: any, input: EmailOSSendInput, senderIdent
       throw new EmailOSBridgeFetchError(
         "Email-OS bridge is required but EMAIL_OS_BRIDGE_TOKEN is missing.",
         {
-          bridgeFetchFailed: true,
+          bridgeFetchFailed: false,
+          transportErrorCode: "EMAIL_BRIDGE_CONFIG_ERROR",
           bridgeUrlHost: getBridgeUrlHost(bridgeUrl),
           bridgeEndpointPath: "/send",
           forceBridge,
@@ -401,6 +430,7 @@ async function sendViaBridge(identity: any, input: EmailOSSendInput, senderIdent
 
   const endpoint = `${bridgeUrl}/send`
   const messageBodies = resolveMessageBodies(input)
+  const preparedAttachments = await prepareBridgeAttachments(input.attachments || [], identity.mailboxId || input.mailboxId || "")
 
   let response: Response
   try {
@@ -438,11 +468,7 @@ async function sendViaBridge(identity: any, input: EmailOSSendInput, senderIdent
         text: messageBodies.text,
         html: messageBodies.html,
         replyTo: senderIdentity.replyToAddress || input.headers?.["Reply-To"] || undefined,
-        attachments: (await normalizeEmailAttachments(input.attachments || [])).map((item) => ({
-          filename: item.filename,
-          contentType: item.contentType,
-          contentBase64: item.content.toString("base64")
-        }))
+        attachments: preparedAttachments
       }),
       cache: "no-store"
     })
@@ -454,7 +480,9 @@ async function sendViaBridge(identity: any, input: EmailOSSendInput, senderIdent
         forceBridge,
         hasBridgeUrl,
         hasBridgeToken,
-        error
+        error,
+        bridgeFetchFailed: true,
+        transportErrorCode: "EMAIL_BRIDGE_CONNECTION_FAILED"
       })
     )
   }
@@ -478,7 +506,9 @@ async function sendViaBridge(identity: any, input: EmailOSSendInput, senderIdent
         hasBridgeToken,
         error: new Error(payload?.error || `Email bridge failed with HTTP ${response.status}`),
         bridgeResponseStatus: response.status,
-        bridgeResponseBodyPreview: safePreview(payload ?? responseText)
+        bridgeResponseBodyPreview: safePreview(payload ?? responseText),
+        bridgeFetchFailed: false,
+        transportErrorCode: payload?.code === "SMTP_REJECTED" ? "SMTP_REJECTED" : "EMAIL_BRIDGE_REJECTED"
       })
     )
   }
@@ -584,7 +614,7 @@ export async function sendEmailOSDirect(input: EmailOSSendInput): Promise<{ iden
         subject: input.subject || "(Sans objet)",
         text: messageBodies.text,
         html: messageBodies.html,
-        attachments: await normalizeEmailAttachments(input.attachments || []),
+        attachments: await normalizeEmailAttachmentsForLocal(input.attachments || []),
         replyTo: senderIdentity.replyToAddress
           ? { name: senderIdentity.replyToName || senderIdentity.fromName, address: senderIdentity.replyToAddress }
           : undefined,

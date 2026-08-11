@@ -1,3 +1,0 @@
-import {notFound,redirect} from 'next/navigation'
-const first=(value:string|string[]|undefined)=>Array.isArray(value)?value[0]:value
-export default async function Page({params,searchParams}:{params:Promise<{locale:string}> ;searchParams:Promise<Record<string,string|string[]|undefined>>}){const {locale}=await params;if(!['fr','en','ar'].includes(locale))notFound();const query=await searchParams;const target=new URLSearchParams();for(const [key,value] of Object.entries(query)){const item=first(value);if(item)target.set(key,item)}target.set('stage','confirmation');redirect(`/angelcare-marketplace/${locale}/checkout?${target.toString()}`)}

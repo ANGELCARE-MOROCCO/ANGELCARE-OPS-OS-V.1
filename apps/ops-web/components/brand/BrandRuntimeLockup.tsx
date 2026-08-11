@@ -2,7 +2,12 @@
 'use client'
 
 import AngelCareLogo from './AngelCareLogo'
-import type { BrandRuntime } from '@/types/angelcare360/operator/branding'
+type BrandRuntime = {
+  resolvedMode?: 'angelcare_only' | 'cobrand' | 'customer_primary' | 'white_label' | null
+  logoUrl?: string | null
+  brandName?: string | null
+}
+
 
 type Props = {
   runtime?: BrandRuntime | null

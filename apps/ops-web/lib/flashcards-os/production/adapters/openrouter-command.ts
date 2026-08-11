@@ -7,14 +7,14 @@ import type { CommandOutputType, CommandSection } from '../types'
 const COMMAND_SCHEMA={type:'object',additionalProperties:false,required:['title','mission','sections','advisoryFindings'],properties:{title:{type:'string'},mission:{type:'string'},sections:{type:'array',minItems:11,maxItems:11,items:{type:'object',additionalProperties:false,required:['key','title','content'],properties:{key:{type:'string',enum:['mission','authority','content','pedagogy','creative','technical','producer','negative','quality','manifest','evidence']},title:{type:'string'},content:{type:'string'}}}},advisoryFindings:{type:'array',items:{type:'string'},maxItems:20}}}
 export type CommandCompilationResult={title:string;mission:string;sections:Array<Pick<CommandSection,'key'|'title'|'content'>>;advisoryFindings:string[];modelRequested:string;modelUsed:string|null;fallbackUsed:boolean;promptTokens:number;completionTokens:number;totalTokens:number;costUsd:number;latencyMs:number;responseId:string|null;attemptCount:number}
 
-export async function compileExternalProductionCommand(input:{design:Record<string,unknown>;collection:Record<string,unknown>;outputType:CommandOutputType;edition:string;variant:string;externalProfile:string}):Promise<CommandCompilationResult>{
+export async function compileExternalProductionCommand(input:{source:Record<string,unknown>;collection:Record<string,unknown>|null;outputType:CommandOutputType;edition:string;variant:string;externalProfile:string}):Promise<CommandCompilationResult>{
  const profile=await loadModelProfile('production_command_compiler')
  const context=assertSafeForExternalProvider(JSON.stringify(input,null,2))
  const result=await openRouterFreeCompletion({
   taskProfile:profile.profileKey,
   messages:[
-   {role:'system',content:'You are ANGELCARE External Production Command Architect. Compile instructions only. Never generate, render or claim to create any PDF, image, video, classroom deck or source asset. Preserve approved Product Design authority, evidence lineage and human release control.'},
-   {role:'user',content:`Compile the complete governed external production command for this approved design and target.\n\n${context.safeText}`},
+   {role:'system',content:'You are ANGELCARE External Production Command Architect. Compile instructions only. Never generate, render or claim to create any PDF, image, video, classroom deck or source asset. Preserve the supplied authoritative local source, exact collection lineage, evidence lineage and human release control. Product Design is one possible source, never a mandatory assumption.'},
+   {role:'user',content:`Compile the complete external production command for this authoritative Flashcards source and target. Use only supplied local source truth; never invent collections, pricing, files, approvals or release status.\n\n${context.safeText}`},
   ],
   temperature:profile.temperature,
   maxOutputTokens:profile.maxOutputTokens,
