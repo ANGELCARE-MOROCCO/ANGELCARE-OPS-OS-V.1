@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useMemo, useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useSearchParams } from "next/navigation"
 import {
   Activity, BadgeCheck, BriefcaseBusiness, CheckCircle2, ChevronRight, Clock3, Gauge,
@@ -49,7 +49,8 @@ export default function TeamOperationsWorkspace() {
   const operationalMemberships = memberships.filter((member: any) => member.status !== "removed")
   const online = operationalMemberships.filter((member: any) => onlineIds.has(member.user_id)).length
   const activeMembers = operationalMemberships.filter((member: any) => member.status === "active").length
-  const filtered = useMemo(() => memberships.filter((member: any) => !query || [member.user?.full_name, member.user?.name, member.user?.email, member.role_key].some((value) => String(value || "").toLowerCase().includes(query.toLowerCase()))), [memberships, query])
+  const normalizedQuery = query.trim().toLowerCase()
+  const filtered = memberships.filter((member: any) => !normalizedQuery || [member.user?.full_name, member.user?.name, member.user?.email, member.role_key].some((value) => String(value || "").toLowerCase().includes(normalizedQuery)))
 
   const queueStats = queues.map((queue) => {
     const rows = open.filter((row) => row.queue_id === queue.id)

@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useState, type CSSProperties } from "react"
 import {
   Activity, AlertTriangle, ArrowRightLeft, BellRing, Bot, BriefcaseBusiness, CalendarClock,
   CheckCheck, CircleGauge, Eye, FileCheck2, FileText, Gauge, Inbox, Layers3, MessageCircleMore,
@@ -128,19 +128,33 @@ const FEED_MODES: FeedModeDefinition[] = [
 ]
 
 const MODE_STORAGE_KEY = "ac-whatsapp:visual-apex-feed-mode"
-const tones: Record<SignalTone, { dot: string; glow: string; value: string }> = {
-  blue: { dot: "bg-sky-400", glow: "from-sky-400/16", value: "text-sky-100" },
-  emerald: { dot: "bg-emerald-400", glow: "from-emerald-400/16", value: "text-emerald-100" },
-  amber: { dot: "bg-amber-400", glow: "from-amber-400/16", value: "text-amber-100" },
-  rose: { dot: "bg-rose-400", glow: "from-rose-400/16", value: "text-rose-100" },
-  violet: { dot: "bg-violet-400", glow: "from-violet-400/16", value: "text-violet-100" },
-  slate: { dot: "bg-slate-300", glow: "from-slate-200/12", value: "text-slate-100" },
+const tones: Record<SignalTone, { dot: string; value: string; icon: string }> = {
+  blue: { dot: "bg-sky-400", value: "text-sky-200", icon: "text-sky-300" },
+  emerald: { dot: "bg-emerald-400", value: "text-emerald-200", icon: "text-emerald-300" },
+  amber: { dot: "bg-amber-400", value: "text-amber-200", icon: "text-amber-300" },
+  rose: { dot: "bg-rose-400", value: "text-rose-200", icon: "text-rose-300" },
+  violet: { dot: "bg-violet-400", value: "text-violet-200", icon: "text-violet-300" },
+  slate: { dot: "bg-slate-300", value: "text-slate-200", icon: "text-slate-300" },
+}
+
+function leadingNumber(value: string) {
+  const match = value.replace(/\s/g, "").match(/-?\d+(?:[.,]\d+)?/)
+  return match ? Number(match[0].replace(",", ".")) : null
+}
+
+function signalScore(signal: SignalBlueprint, value: string) {
+  const toneWeight: Record<SignalTone, number> = { rose: 70, amber: 54, violet: 34, blue: 30, emerald: 22, slate: 14 }
+  const number = leadingNumber(value)
+  let score = toneWeight[signal.tone]
+  if (number !== null) score += number > 0 ? Math.min(36, Math.log2(number + 1) * 8) : -32
+  const normalized = value.toLowerCase()
+  if (/dégrad|requis|rupture|échec|suspendu|critique|risque/.test(normalized)) score += 50
+  if (/opérationnel|confirmé|aucune rupture|couverture complète/.test(normalized)) score += 5
+  return score
 }
 
 export default function LiveSignalBroadcastBar({ data, activeWorkspace }: { data?: AcWhatsAppBootstrap | null; activeWorkspace: string }) {
   const [mode, setMode] = useState<LiveFeedMode>("pulse")
-  const [index, setIndex] = useState(0)
-  const [paused, setPaused] = useState(false)
 
   useEffect(() => {
     try {
@@ -150,46 +164,52 @@ export default function LiveSignalBroadcastBar({ data, activeWorkspace }: { data
   }, [])
 
   const selectedMode = useMemo(() => FEED_MODES.find((item) => item.id === mode) || FEED_MODES[0], [mode])
-  const signal = selectedMode.signals[index % selectedMode.signals.length]
-  const tone = tones[signal.tone]
-
-  useEffect(() => { setIndex(0) }, [mode])
-  useEffect(() => {
-    if (paused) return
-    const timer = window.setInterval(() => setIndex((value) => (value + 1) % selectedMode.signals.length), 7800)
-    return () => window.clearInterval(timer)
-  }, [paused, selectedMode])
+  const rankedSignals = useMemo(() => selectedMode.signals
+    .map((signal, order) => ({ signal, value: signal.value(data), order }))
+    .sort((a, b) => signalScore(b.signal, b.value) - signalScore(a.signal, a.value) || a.order - b.order), [data, selectedMode])
 
   function chooseMode(next: LiveFeedMode) {
     setMode(next)
-    setIndex(0)
     try { window.localStorage.setItem(MODE_STORAGE_KEY, next) } catch {}
   }
 
-  const Icon = signal.icon
   const ModeIcon = selectedMode.icon
-  return <div
-    data-acw-live-feed
-    className="relative min-w-0 flex-1 overflow-hidden rounded-[14px] border border-slate-700/70 bg-[#071426] shadow-[inset_0_1px_0_rgba(255,255,255,.05),0_10px_28px_rgba(7,20,38,.12)]"
-    onMouseEnter={() => setPaused(true)}
-    onMouseLeave={() => setPaused(false)}
-  >
-    <div className={cx("pointer-events-none absolute inset-0 bg-gradient-to-r to-transparent", tone.glow)} />
-    <div className="relative flex h-11 min-w-0 items-center gap-2 px-2.5">
-      <div className="hidden min-w-[104px] items-center gap-2 border-r border-white/10 pr-2.5 2xl:flex">
-        <div className="grid h-7 w-7 shrink-0 place-items-center rounded-lg border border-white/10 bg-white/[.06] text-white"><ModeIcon className="h-3.5 w-3.5" /></div>
-        <div className="min-w-0"><p className="truncate text-[9px] font-black uppercase tracking-[.16em] text-slate-400">Live feed</p><p className="truncate text-[10px] font-black text-white">{selectedMode.shortLabel}</p></div>
-      </div>
+  const duration = `${Math.max(38, rankedSignals.length * 4.8)}s`
 
-      <div key={`${mode}:${signal.id}:${index}`} className="acw-live-feed-signal flex min-w-0 flex-1 items-center gap-2.5" aria-live="polite">
-        <div className="relative grid h-8 w-8 shrink-0 place-items-center rounded-[10px] border border-white/10 bg-white/[.055] text-white"><Icon className="h-3.5 w-3.5" /><span className={cx("absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full ring-2 ring-[#071426]", tone.dot)} /></div>
-        <div className="min-w-0 flex-1"><div className="flex min-w-0 items-center gap-2"><p className="truncate text-[10px] font-black text-white">{signal.title}</p><span className={cx("shrink-0 text-[10px] font-black tabular-nums", tone.value)}>{signal.value(data)}</span></div><p className="truncate text-[9px] font-semibold text-slate-400">{signal.caption} · {activeWorkspace}</p></div>
+  const renderRun = (copy: "primary" | "duplicate") => <div className={cx("acw-broadcast-run", copy === "duplicate" && "acw-broadcast-run-duplicate")} aria-hidden={copy === "duplicate" ? true : undefined}>
+    {rankedSignals.map(({ signal, value }, index) => {
+      const Icon = signal.icon
+      const tone = tones[signal.tone]
+      return <div key={`${copy}:${signal.id}`} className="acw-broadcast-signal" title={`${signal.title} — ${signal.caption}`}>
+        <span className={cx("acw-broadcast-dot", tone.dot)} />
+        <Icon className={cx("h-3.5 w-3.5 shrink-0", tone.icon)} aria-hidden="true" />
+        <span className="acw-broadcast-title">{signal.title}</span>
+        <strong className={cx("acw-broadcast-value", tone.value)}>{value}</strong>
+        {index < rankedSignals.length - 1 ? <span className="acw-broadcast-separator">◆</span> : null}
       </div>
-
-      <div className="flex shrink-0 items-center gap-0.5 rounded-[10px] border border-white/10 bg-white/[.04] p-0.5" aria-label="Mode du flux live">
-        {FEED_MODES.map((item) => { const SelectorIcon = item.icon; return <button key={item.id} type="button" onClick={() => chooseMode(item.id)} title={item.label} aria-label={item.label} aria-pressed={mode === item.id} className={cx("grid h-7 w-7 place-items-center rounded-lg transition-colors", mode === item.id ? "bg-white text-slate-950" : "text-slate-400 hover:bg-white/10 hover:text-white")}><SelectorIcon className="h-3.5 w-3.5" /></button> })}
-      </div>
-      {paused ? <span className="hidden shrink-0 rounded-md bg-white/10 px-2 py-1 text-[9px] font-black uppercase tracking-[.08em] text-slate-300 2xl:inline">Pause</span> : null}
-    </div>
+    })}
   </div>
+
+  return <section data-acw-live-feed aria-label={`Flux live AngelCare · ${selectedMode.label}`} className="acw-broadcast-shell">
+    <div className="acw-broadcast-controls">
+      <div className="acw-broadcast-live-mark"><span className="acw-broadcast-heartbeat" /><span>LIVE</span></div>
+      <div className="acw-broadcast-mode-name"><ModeIcon className="h-3.5 w-3.5" /><span>{selectedMode.shortLabel}</span></div>
+      <div className="acw-broadcast-mode-buttons" aria-label="Sélection du mode live">
+        {FEED_MODES.map((item) => { const SelectorIcon = item.icon; return <button key={item.id} type="button" onClick={() => chooseMode(item.id)} title={item.label} aria-label={item.label} aria-pressed={mode === item.id} className={cx("acw-broadcast-mode-button", mode === item.id && "is-active")}><SelectorIcon className="h-3.5 w-3.5" /></button> })}
+      </div>
+    </div>
+
+    <div className="acw-broadcast-viewport" role="presentation">
+      <div className="acw-broadcast-track" style={{ "--acw-broadcast-duration": duration } as CSSProperties}>
+        {renderRun("primary")}
+        {renderRun("duplicate")}
+      </div>
+    </div>
+
+    <div className="acw-broadcast-context" title="Survolez le flux pour le mettre en pause">
+      <span className="hidden 2xl:inline">{activeWorkspace}</span>
+      <span className="acw-broadcast-pause-hint">Survol = pause</span>
+    </div>
+    <span className="sr-only">Le flux est animé sans rafraîchissement réseau additionnel. Survolez-le pour suspendre le mouvement.</span>
+  </section>
 }

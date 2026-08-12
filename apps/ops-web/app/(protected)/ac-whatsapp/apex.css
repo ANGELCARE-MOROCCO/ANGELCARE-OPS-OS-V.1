@@ -135,32 +135,194 @@
 }
 
 /* ========================================================================
-   AC WHATSAPP VISUAL APEX CLOSURE — Live Command visual depth + ergonomics
-   No continuous marquee/requestAnimationFrame. Feed changes are interval-driven
-   and reuse the existing 15 s bootstrap refresh; hover pauses presentation only.
+   AC WHATSAPP VISUAL APEX R1.0.1 — FULL-WIDTH LIVE BROADCAST RAIL
+   The rail occupies the otherwise-unused 52→86px overhead gap. It uses one
+   compositor-friendly CSS transform, no React timer, no rAF, no extra polling.
    ======================================================================== */
+.acw-live-broadcast-band {
+  top: 52px;
+  height: 34px;
+  background: #06111f;
+  border-top: 1px solid rgba(148, 163, 184, .18);
+  border-bottom: 1px solid rgba(148, 163, 184, .24);
+  box-shadow: 0 8px 24px rgba(2, 8, 23, .14);
+}
 [data-acw-apex] [data-acw-live-feed] {
   isolation: isolate;
   contain: layout paint style;
+  height: 100%;
 }
-[data-acw-apex] [data-acw-live-feed]::after {
+[data-acw-apex] .acw-broadcast-shell {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  height: 100%;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 14% 50%, rgba(14,165,233,.11), transparent 26%),
+    radial-gradient(circle at 86% 50%, rgba(139,92,246,.09), transparent 24%),
+    linear-gradient(90deg, #06111f 0%, #08182a 48%, #06111f 100%);
+  color: #fff;
+}
+[data-acw-apex] .acw-broadcast-shell::after {
   content: "";
+  pointer-events: none;
   position: absolute;
   inset: 0;
-  pointer-events: none;
-  opacity: .26;
-  background-image:
-    radial-gradient(circle at 18% 20%, rgba(255,255,255,.12) 0 1px, transparent 1px),
-    linear-gradient(90deg, transparent 0, rgba(255,255,255,.025) 48%, transparent 100%);
-  background-size: 18px 18px, 100% 100%;
+  opacity: .22;
+  background-image: linear-gradient(90deg, transparent 0, rgba(255,255,255,.04) 48%, transparent 100%);
 }
-[data-acw-apex] .acw-live-feed-signal {
-  animation: acw-live-feed-enter 240ms cubic-bezier(.2,.72,.26,1);
-  will-change: auto;
+[data-acw-apex] .acw-broadcast-controls,
+[data-acw-apex] .acw-broadcast-context {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  height: 100%;
+  align-items: center;
+  gap: 8px;
+  background: rgba(4, 14, 28, .96);
 }
-@keyframes acw-live-feed-enter {
-  from { opacity: .25; transform: translateY(3px); }
-  to { opacity: 1; transform: translateY(0); }
+[data-acw-apex] .acw-broadcast-controls {
+  padding: 0 10px;
+  border-right: 1px solid rgba(255,255,255,.12);
+  box-shadow: 12px 0 24px rgba(4,14,28,.75);
+}
+[data-acw-apex] .acw-broadcast-context {
+  padding: 0 12px 0 10px;
+  border-left: 1px solid rgba(255,255,255,.12);
+  box-shadow: -12px 0 24px rgba(4,14,28,.75);
+  color: #cbd5e1;
+  font-size: 9px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+[data-acw-apex] .acw-broadcast-live-mark,
+[data-acw-apex] .acw-broadcast-mode-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  font-weight: 900;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+[data-acw-apex] .acw-broadcast-live-mark { color: #86efac; font-size: 9px; }
+[data-acw-apex] .acw-broadcast-mode-name { color: #fff; font-size: 9px; letter-spacing: .04em; }
+[data-acw-apex] .acw-broadcast-heartbeat {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: #22c55e;
+  box-shadow: 0 0 0 3px rgba(34,197,94,.12), 0 0 14px rgba(34,197,94,.58);
+}
+[data-acw-apex] .acw-broadcast-mode-buttons {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  border-left: 1px solid rgba(255,255,255,.12);
+  padding-left: 7px;
+}
+[data-acw-apex] .acw-broadcast-mode-button {
+  display: grid;
+  width: 25px;
+  height: 25px;
+  place-items: center;
+  border-radius: 7px;
+  border: 1px solid transparent;
+  color: #cbd5e1;
+  transition: background-color 140ms ease, color 140ms ease, border-color 140ms ease;
+}
+[data-acw-apex] .acw-broadcast-mode-button:hover {
+  color: #fff;
+  background: rgba(255,255,255,.09);
+  border-color: rgba(255,255,255,.1);
+}
+[data-acw-apex] .acw-broadcast-mode-button.is-active {
+  color: #06111f;
+  background: #fff;
+  border-color: #fff;
+  box-shadow: 0 2px 10px rgba(255,255,255,.12);
+}
+[data-acw-apex] .acw-broadcast-viewport {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+  height: 100%;
+  overflow: hidden;
+  mask-image: linear-gradient(90deg, transparent 0, #000 22px, #000 calc(100% - 22px), transparent 100%);
+}
+[data-acw-apex] .acw-broadcast-track {
+  display: flex;
+  width: max-content;
+  min-width: max-content;
+  height: 100%;
+  align-items: center;
+  animation: acw-broadcast-scroll var(--acw-broadcast-duration, 48s) linear infinite;
+  transform: translateX(0);
+}
+[data-acw-apex] [data-acw-live-feed]:hover .acw-broadcast-track,
+[data-acw-apex] [data-acw-live-feed]:focus-within .acw-broadcast-track {
+  animation-play-state: paused;
+}
+[data-acw-apex] .acw-broadcast-run {
+  display: flex;
+  flex: none;
+  align-items: center;
+  height: 100%;
+  padding-right: 42px;
+}
+[data-acw-apex] .acw-broadcast-signal {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 7px;
+  height: 100%;
+  padding: 0 8px;
+  color: #fff;
+  white-space: nowrap;
+}
+[data-acw-apex] .acw-broadcast-dot {
+  width: 6px;
+  height: 6px;
+  flex: none;
+  border-radius: 999px;
+  box-shadow: 0 0 9px currentColor;
+}
+[data-acw-apex] .acw-broadcast-title {
+  color: #fff;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: -.01em;
+}
+[data-acw-apex] .acw-broadcast-value {
+  font-size: 10px;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+}
+[data-acw-apex] .acw-broadcast-separator {
+  margin-left: 5px;
+  color: rgba(148,163,184,.42);
+  font-size: 9px;
+}
+[data-acw-apex] .acw-broadcast-pause-hint {
+  color: #94a3b8;
+  font-size: 9px;
+  font-weight: 800;
+}
+@keyframes acw-broadcast-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@media (max-width: 1279px) {
+  [data-acw-apex] .acw-broadcast-mode-name,
+  [data-acw-apex] .acw-broadcast-context { display: none; }
+  [data-acw-apex] .acw-broadcast-controls { padding-inline: 8px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-acw-apex] .acw-broadcast-track { animation: none !important; transform: none !important; }
+  [data-acw-apex] .acw-broadcast-run-duplicate { display: none !important; }
+  [data-acw-apex] .acw-broadcast-viewport { overflow-x: auto; mask-image: none; }
 }
 
 /* The theatre height is based on the real app shell, not an arbitrary 650px floor.
@@ -220,13 +382,7 @@
 /* Keep floating message menus above both the composer and intelligence dock. */
 [data-acw-apex] .acw-message-menu { isolation: isolate; z-index: 160; }
 
-/* Compact workstation behavior: center conversation remains the primary surface. */
-@media (max-width: 1535px) and (min-width: 1280px) {
-  [data-acw-apex] [data-acw-live-feed] { min-width: 300px; }
-}
-@media (max-width: 1365px) {
-  [data-acw-apex] [data-acw-live-feed] { display: none; }
-}
+/* Compact workstation behavior: the broadcast rail remains visible while controls collapse. */
 @media (max-width: 1279px) {
   [data-acw-apex] .acw-live-theatre { min-height: 720px; }
   [data-acw-apex] .acw-message-bubble { max-width: 90%; }
@@ -234,8 +390,4 @@
 @media (max-width: 720px) {
   [data-acw-apex] .acw-live-theatre { min-height: 680px; border-radius: 16px; }
   [data-acw-apex] .acw-message-bubble { max-width: 96%; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  [data-acw-apex] .acw-live-feed-signal { animation: none !important; }
 }
