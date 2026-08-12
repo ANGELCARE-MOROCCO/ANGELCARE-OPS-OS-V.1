@@ -133,3 +133,109 @@
   [data-acw-apex] .acw-apex-kpi-strip-3 > *:last-child,
   [data-acw-apex] .acw-apex-kpi-strip-5 > *:last-child { border-bottom:0; }
 }
+
+/* ========================================================================
+   AC WHATSAPP VISUAL APEX CLOSURE — Live Command visual depth + ergonomics
+   No continuous marquee/requestAnimationFrame. Feed changes are interval-driven
+   and reuse the existing 15 s bootstrap refresh; hover pauses presentation only.
+   ======================================================================== */
+[data-acw-apex] [data-acw-live-feed] {
+  isolation: isolate;
+  contain: layout paint style;
+}
+[data-acw-apex] [data-acw-live-feed]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: .26;
+  background-image:
+    radial-gradient(circle at 18% 20%, rgba(255,255,255,.12) 0 1px, transparent 1px),
+    linear-gradient(90deg, transparent 0, rgba(255,255,255,.025) 48%, transparent 100%);
+  background-size: 18px 18px, 100% 100%;
+}
+[data-acw-apex] .acw-live-feed-signal {
+  animation: acw-live-feed-enter 240ms cubic-bezier(.2,.72,.26,1);
+  will-change: auto;
+}
+@keyframes acw-live-feed-enter {
+  from { opacity: .25; transform: translateY(3px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* The theatre height is based on the real app shell, not an arbitrary 650px floor.
+   This keeps the composer reachable at 100% zoom on common 768/800/900/1050px displays. */
+@media (min-width: 1280px) {
+  [data-acw-apex][data-acw-density="compact"] .acw-live-theatre { height: calc(100dvh - 274px); min-height: 420px; }
+  [data-acw-apex][data-acw-density="balanced"] .acw-live-theatre { height: calc(100dvh - 286px); min-height: 420px; }
+  [data-acw-apex][data-acw-density="comfortable"] .acw-live-theatre { height: calc(100dvh - 302px); min-height: 420px; }
+}
+
+[data-acw-apex] .acw-queue-panel {
+  background:
+    radial-gradient(circle at 12% 0%, rgba(14,165,233,.055), transparent 32%),
+    linear-gradient(180deg,#f8fafc 0%,#f4f7fb 100%);
+}
+[data-acw-apex] .acw-conversation-stage {
+  background: #fff;
+  box-shadow: inset 1px 0 0 rgba(203,213,225,.55), inset -1px 0 0 rgba(203,213,225,.45);
+}
+[data-acw-apex] .acw-conversation-canvas {
+  background:
+    radial-gradient(circle at 50% 12%, rgba(14,165,233,.065), transparent 34%),
+    radial-gradient(circle at 82% 72%, rgba(99,102,241,.035), transparent 30%),
+    linear-gradient(180deg,#eef3f8 0%,#f4f6f9 48%,#eef2f6 100%);
+  background-attachment: local;
+}
+[data-acw-apex] .acw-conversation-canvas::selection { background: rgba(14,165,233,.2); }
+[data-acw-apex] .acw-timeline-jumpbar {
+  box-shadow: 0 8px 24px rgba(7,20,38,.035);
+}
+[data-acw-apex] .acw-message-bubble {
+  backdrop-filter: saturate(1.04);
+  -webkit-backdrop-filter: saturate(1.04);
+}
+[data-acw-apex] .acw-message-inbound {
+  box-shadow: 0 1px 2px rgba(7,20,38,.035),0 14px 34px rgba(7,20,38,.065);
+}
+[data-acw-apex] .acw-message-outbound {
+  box-shadow: 0 1px 2px rgba(7,20,38,.05),0 16px 38px rgba(7,20,38,.16);
+}
+[data-acw-apex] .acw-composer-dock {
+  position: relative;
+  z-index: 18;
+  box-shadow: 0 -12px 34px rgba(7,20,38,.06);
+}
+[data-acw-apex] .acw-intelligence-dock {
+  background:
+    radial-gradient(circle at 90% 0%, rgba(14,165,233,.055), transparent 28%),
+    linear-gradient(180deg,#f8fafc 0%,#f3f6fa 100%);
+}
+[data-acw-apex] .acw-dock-card { transition: border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease; }
+[data-acw-apex] .acw-dock-card:hover { border-color: #cbd5e1; box-shadow: 0 1px 2px rgba(7,20,38,.025),0 16px 38px rgba(7,20,38,.065); }
+
+/* Stronger selected/waiting queue semantics without depending on color alone. */
+[data-acw-apex] .acw-queue-panel button[aria-current="true"] { outline: none; }
+
+/* Keep floating message menus above both the composer and intelligence dock. */
+[data-acw-apex] .acw-message-menu { isolation: isolate; z-index: 160; }
+
+/* Compact workstation behavior: center conversation remains the primary surface. */
+@media (max-width: 1535px) and (min-width: 1280px) {
+  [data-acw-apex] [data-acw-live-feed] { min-width: 300px; }
+}
+@media (max-width: 1365px) {
+  [data-acw-apex] [data-acw-live-feed] { display: none; }
+}
+@media (max-width: 1279px) {
+  [data-acw-apex] .acw-live-theatre { min-height: 720px; }
+  [data-acw-apex] .acw-message-bubble { max-width: 90%; }
+}
+@media (max-width: 720px) {
+  [data-acw-apex] .acw-live-theatre { min-height: 680px; border-radius: 16px; }
+  [data-acw-apex] .acw-message-bubble { max-width: 96%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-acw-apex] .acw-live-feed-signal { animation: none !important; }
+}

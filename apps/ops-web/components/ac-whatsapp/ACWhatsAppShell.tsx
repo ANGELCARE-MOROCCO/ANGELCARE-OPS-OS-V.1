@@ -10,6 +10,7 @@ import {
 } from "lucide-react"
 import { cx, HealthBadge, LiveDot, StatusPill } from "./ACWhatsAppUI"
 import { acApi, formatRelative, initials, useAcWhatsApp } from "./useAcWhatsApp"
+import LiveSignalBroadcastBar from "./LiveSignalBroadcastBar"
 
 const masters = [
   { href: "/ac-whatsapp/live", label: "Live Command", caption: "Conversations", icon: MessageCircleMore, number: "01", key: "L" },
@@ -172,11 +173,13 @@ export default function ACWhatsAppShell({ children }: { children: React.ReactNod
 
     <div className={cx("h-[calc(100dvh-86px)] overflow-y-auto overscroll-contain transition-[padding] duration-200 [scrollbar-gutter:stable]", sidebarCollapsed ? "xl:pl-[72px]" : "xl:pl-[252px]")}>
       <header className="acw-apex-glass sticky top-0 z-30 border-b border-slate-200">
-        <div className="flex min-h-[58px] items-center gap-3 px-3 lg:px-5">
+        <div className="flex min-h-[64px] items-center gap-3 px-3 lg:px-5">
           <button type="button" onClick={() => setMobileOpen(true)} className="grid h-9 w-9 shrink-0 place-items-center rounded-xl border border-slate-200 bg-white text-slate-600 xl:hidden"><Menu className="h-4 w-4" /></button>
-          <div className="flex min-w-0 items-center gap-2.5"><div className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-slate-950 text-white"><ActiveMasterIcon className="h-4 w-4" /></div><div className="min-w-0"><p className="truncate text-[10px] font-black uppercase tracking-[.15em] text-slate-400">Master {activeMaster.number} · Communications OS</p><p className="truncate text-[12px] font-black text-slate-950">{activeMaster.label}</p></div></div>
+          <div className="flex min-w-0 shrink-0 items-center gap-2.5"><div className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-slate-950 text-white shadow-[0_8px_18px_rgba(7,20,38,.14)]"><ActiveMasterIcon className="h-4 w-4" /></div><div className="min-w-0"><p className="truncate text-[10px] font-black uppercase tracking-[.15em] text-slate-400">Master {activeMaster.number} · Communications OS</p><p className="truncate text-[12px] font-black text-slate-950">{activeMaster.label}</p></div></div>
 
-          <button type="button" onClick={() => setPaletteOpen(true)} className="mx-auto hidden h-9 min-w-[280px] max-w-[520px] flex-1 items-center gap-2.5 rounded-xl border border-slate-200 bg-slate-50 px-3 text-left text-[10px] font-semibold text-slate-500 hover:border-slate-300 hover:bg-white md:flex"><Search className="h-3.5 w-3.5" /><span className="flex-1 truncate">Rechercher ou exécuter une commande…</span><span className="acw-apex-command-key">⌘K</span></button>
+          <div className="hidden min-w-[360px] flex-1 2xl:block"><LiveSignalBroadcastBar data={data} activeWorkspace={activeMaster.label} /></div>
+
+          <button type="button" onClick={() => setPaletteOpen(true)} className="hidden h-9 w-[min(24vw,330px)] shrink-0 items-center gap-2.5 rounded-xl border border-slate-200 bg-slate-50 px-3 text-left text-[10px] font-semibold text-slate-500 hover:border-slate-300 hover:bg-white md:flex"><Search className="h-3.5 w-3.5" /><span className="flex-1 truncate">Rechercher ou commander…</span><span className="acw-apex-command-key">⌘K</span></button>
 
           <div className="ml-auto flex shrink-0 items-center gap-1.5">
             <div className="hidden 2xl:block"><HealthBadge good={Boolean(data?.health.openwaReachable)} goodLabel="OpenWA opérationnel" badLabel="OpenWA à vérifier" /></div>
