@@ -28,7 +28,7 @@ export function validatePageForPublication(page: CmsPage, blocks: { block_type: 
   if (page.sensitive && page.translation_status === 'stale') errors.push('Le contenu sensible est périmé par rapport à la source française.')
   for (const block of blocks) {
     const definition = blockDefinition(block.block_type)
-    if (definition.requiresCta && !('ctaKey' in block.content || 'primaryCtaKey' in block.content)) errors.push(`CTA manquant dans ${definition.name}.`)
+    if (definition.requiresCta && !('ctaKey' in block.content || 'primaryCtaKey' in block.content || 'ctaHref' in block.content || 'primaryCtaHref' in block.content)) errors.push(`CTA manquant dans ${definition.name}.`)
   }
   if (errors.length) throw new MarketplaceError('DEPENDENCY_BLOCKED','La page ne satisfait pas les critères de publication.', { fieldErrors: { publication: errors } })
 }

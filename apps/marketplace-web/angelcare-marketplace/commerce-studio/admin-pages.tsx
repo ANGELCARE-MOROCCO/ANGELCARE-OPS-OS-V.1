@@ -39,11 +39,20 @@ export async function CatalogRegistryPage() {
   const data = await commerceStudioData(context)
   return <CatalogRegistryStudio items={data.catalogItems}/>
 }
-export async function ProductPage({ itemId }: { itemId?: string }) {
+export async function ProductPage({ itemId, section = 'overview' }: { itemId?: string; section?: string }) {
   const context = await requireMarketplacePageContext('marketplace.catalog.view')
   const data = await commerceStudioData(context)
   const item = itemId ? await getCommerceResource('catalog-items', itemId) as CatalogAdminItem | null : null
-  return <ProductStudio item={item} categories={data.categories} media={data.media} priceBooks={data.priceBooks}/>
+  return <ProductStudio
+    item={item}
+    categories={data.categories}
+    media={data.media}
+    priceBooks={data.priceBooks}
+    territories={data.territories}
+    catalogItems={data.catalogItems}
+    publicationEvents={data.publicationEvents}
+    initialTab={section}
+  />
 }
 export async function CategoryPage({ categoryId }: { categoryId?: string }) {
   const context = await requireMarketplacePageContext('marketplace.catalog.view')

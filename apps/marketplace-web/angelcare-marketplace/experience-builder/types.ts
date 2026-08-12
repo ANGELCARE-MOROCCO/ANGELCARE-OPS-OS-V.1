@@ -1,5 +1,5 @@
 export type CmsPageStatus = 'draft' | 'submitted' | 'in_review' | 'approved' | 'scheduled' | 'published' | 'retired' | 'archived'
-export type CmsBlockType = 'hero' | 'audience_router' | 'service_grid' | 'trust_strip' | 'proof_grid' | 'editorial' | 'cta_band' | 'faq' | 'stats' | 'timeline' | 'inquiry_form' | 'marketplace_entry' | 'partner_os_entry' | 'academy_entry' | 'family_story'
+export type CmsBlockType = 'hero' | 'split_hero' | 'video_hero' | 'audience_router' | 'service_grid' | 'product_grid' | 'collection_rail' | 'category_grid' | 'trust_strip' | 'proof_grid' | 'stats' | 'editorial' | 'story' | 'testimonials' | 'partner_logos' | 'comparison' | 'pricing' | 'timeline' | 'process' | 'cta_band' | 'faq' | 'inquiry_form' | 'marketplace_entry' | 'partner_os_entry' | 'academy_entry' | 'family_story' | 'media_gallery' | 'video' | 'territory_map' | 'quote' | 'download' | 'contact'
 
 export interface CmsPage {
   id: string

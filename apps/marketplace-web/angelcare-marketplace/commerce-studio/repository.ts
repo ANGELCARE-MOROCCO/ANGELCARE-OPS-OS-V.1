@@ -303,6 +303,8 @@ function normalizedPayload(resource: CommerceResource, payload: Row, context: Ma
     price_amount: payload.price_amount === '' || payload.price_amount === null || payload.price_amount === undefined ? null : safeNumber(payload.price_amount),
     featured: safeBoolean(payload.featured), availability_status: text(payload.availability_status) || 'configuration_required',
     commercial_metadata: safeJson(payload.commercial_metadata), seo_metadata: safeJson(payload.seo_metadata), attributes: safeJson(payload.attributes),
+    experience_config: safeJson(payload.experience_config), territory_config: safeJson(payload.territory_config), fulfillment_config: safeJson(payload.fulfillment_config),
+    trust_config: safeJson(payload.trust_config), relation_config: safeJson(payload.relation_config),
     status: text(payload.status) || 'draft', created_by: context.actor.id,
   }
   if (resource === 'catalog-categories') return {
@@ -313,6 +315,8 @@ function normalizedPayload(resource: CommerceResource, payload: Row, context: Ma
     visual_theme: text(payload.visual_theme) || 'navy', storefront_template: text(payload.storefront_template) || 'mixed',
     allowed_sellable_types: safeArray(payload.allowed_sellable_types), available_filters: safeJson(payload.available_filters),
     sort_order: safeNumber(payload.sort_order, 100), visible: safeBoolean(payload.visible, true), seo_metadata: safeJson(payload.seo_metadata),
+    experience_config: safeJson(payload.experience_config), hero_content: safeJson(payload.hero_content),
+    storefront_sections: Array.isArray(payload.storefront_sections) ? payload.storefront_sections : [], filter_config: safeJson(payload.filter_config),
     status: text(payload.status) || 'draft', created_by: context.actor.id,
   }
   if (resource === 'homepage-collections') return {

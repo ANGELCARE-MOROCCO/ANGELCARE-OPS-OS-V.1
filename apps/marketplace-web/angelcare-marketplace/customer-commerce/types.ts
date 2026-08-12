@@ -361,6 +361,8 @@ export interface EnterpriseOrderRecord {
   riskLevel: string
   nextAction: string | null
   updatedAt: string
+  creationSource: string
+  customerAccountId: string | null
   journey: MarketplaceJourney | null
 }
 

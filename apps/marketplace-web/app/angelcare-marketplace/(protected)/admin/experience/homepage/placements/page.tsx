@@ -1,3 +1,2 @@
-import { HomepageAdminPage } from '@/angelcare-marketplace/homepage-flagship/admin-page'
-export const metadata={title:'Homepage Flagship · placements'}
-export default async function Page(){return <HomepageAdminPage mode="placements"/>}
+import {redirect} from 'next/navigation'
+export default async function Page(){redirect('/angelcare-marketplace/admin/homepage/placements')}
