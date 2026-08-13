@@ -1,6 +1,6 @@
 "use client"
 
-import type { ComponentType, ReactNode } from "react"
+import React, { type ComponentType, type ReactNode } from "react"
 import {
   AlertTriangle,
   CheckCircle2,
@@ -33,12 +33,13 @@ const LABELS: Record<string, string> = {
   waiting_internal: "Attente interne", warning: "Attention", critical: "Critique",
   normal: "Normale", low: "Basse", high: "Élevée", urgent: "Urgente", vip: "VIP",
   customer: "Client", prospect: "Prospect", partner: "Partenaire", unqualified: "Contact non qualifié",
-  muted: "Silencieuse", pinned: "Épinglée", restored: "Restaurée",
+  muted: "Silencieuse", pinned: "Épinglée", restored: "Restaurée", removed: "Retiré",
+  revoked: "Révoqué", test: "Test", review: "À valider", in_review: "À valider",
 }
 
 const GOOD = new Set(["active", "approved", "completed", "connected", "delivered", "online", "read", "received", "resolved", "running", "sent"])
-const BAD = new Set(["authentication_lost", "cancelled", "critical", "urgent", "disconnected", "error", "failed", "offline", "suspended"])
-const WARNING = new Set(["authenticating", "degraded", "escalated", "high", "pairing_required", "paused", "processing", "qr_required", "queued", "rate_limited", "reconnecting", "scheduled", "scheduled_followup", "starting", "waiting_customer", "waiting_internal", "warning"])
+const BAD = new Set(["authentication_lost", "cancelled", "critical", "urgent", "disconnected", "error", "failed", "offline", "suspended", "revoked", "removed"])
+const WARNING = new Set(["authenticating", "degraded", "escalated", "high", "pairing_required", "paused", "processing", "qr_required", "queued", "rate_limited", "reconnecting", "scheduled", "scheduled_followup", "starting", "waiting_customer", "waiting_internal", "warning", "review", "in_review"])
 
 export function statusLabel(status?: string | null) {
   const key = String(status || "unknown").toLowerCase()
@@ -57,14 +58,14 @@ export function statusTone(status?: string | null) {
 export function StatusPill({ status, label, compact = false }: { status: string; label?: string; compact?: boolean }) {
   const tone = statusTone(status)
   const classes = tone === "good"
-    ? "border-emerald-300 bg-emerald-100 text-emerald-950"
+    ? "border-emerald-200 bg-emerald-50 text-emerald-900"
     : tone === "bad"
-      ? "border-rose-300 bg-rose-100 text-rose-950"
+      ? "border-rose-200 bg-rose-50 text-rose-900"
       : tone === "warning"
-        ? "border-amber-300 bg-amber-100 text-amber-950"
-        : "border-slate-300 bg-white text-slate-950"
+        ? "border-amber-200 bg-amber-50 text-amber-950"
+        : "border-slate-200 bg-slate-50 text-slate-700"
   return (
-    <span className={cx("inline-flex shrink-0 items-center rounded-full border font-black uppercase tracking-[.11em] shadow-sm", compact ? "gap-1 px-2 py-1 text-[8px]" : "gap-1.5 px-2.5 py-1.5 text-[9px]", classes)}>
+    <span className={cx("inline-flex shrink-0 items-center rounded-full border font-black tracking-[-.01em] shadow-[0_1px_1px_rgba(7,20,38,.025)]", compact ? "gap-1 px-2 py-1 text-[9px]" : "gap-1.5 px-2.5 py-1.5 text-[10px]", classes)}>
       {tone === "good" ? <CheckCircle2 className="h-3 w-3" /> : tone === "bad" ? <AlertTriangle className="h-3 w-3" /> : tone === "warning" ? <Clock3 className="h-3 w-3" /> : <Circle className="h-2.5 w-2.5 fill-current opacity-45" />}
       {label || statusLabel(status)}
     </span>
@@ -73,11 +74,11 @@ export function StatusPill({ status, label, compact = false }: { status: string;
 
 export function SectionTitle({ eyebrow, title, description, action, meta }: { eyebrow: string; title: string; description?: string; action?: ReactNode; meta?: ReactNode }) {
   return (
-    <div className="flex flex-col gap-5 xl:flex-row xl:items-end xl:justify-between">
+    <div className="relative flex flex-col gap-4 overflow-hidden rounded-[18px] border border-slate-200 bg-[linear-gradient(145deg,#ffffff_0%,#fbfdff_68%,#f5f9ff_100%)] px-5 py-4 shadow-[0_1px_2px_rgba(7,20,38,.02),0_12px_34px_rgba(7,20,38,.045)] xl:flex-row xl:items-end xl:justify-between"><span className="absolute inset-y-0 left-0 w-1 bg-[linear-gradient(180deg,#0ea5e9,#2563eb,#7c3aed)]" />
       <div className="min-w-0">
-        <div className="flex flex-wrap items-center gap-3"><p className="text-[9px] font-black uppercase tracking-[.22em] text-rose-600">{eyebrow}</p>{meta}</div>
-        <h1 className="mt-2 max-w-5xl text-[clamp(1.75rem,3vw,3rem)] font-black leading-[.98] tracking-[-.055em] text-slate-950">{title}</h1>
-        {description ? <p className="mt-3 max-w-4xl text-sm font-semibold leading-6 text-slate-500">{description}</p> : null}
+        <div className="flex flex-wrap items-center gap-2.5"><p className="text-[9px] font-black uppercase tracking-[.18em] text-slate-500">{eyebrow}</p>{meta}</div>
+        <h1 className="mt-1.5 max-w-5xl text-[clamp(1.45rem,2.1vw,2.15rem)] font-black leading-[1.04] tracking-[-.048em] text-slate-950">{title}</h1>
+        {description ? <p className="mt-2 max-w-4xl text-[12px] font-semibold leading-5 text-slate-500">{description}</p> : null}
       </div>
       {action ? <div className="shrink-0">{action}</div> : null}
     </div>
@@ -86,13 +87,16 @@ export function SectionTitle({ eyebrow, title, description, action, meta }: { ey
 
 export type MetricTone = "slate" | "emerald" | "rose" | "blue" | "violet" | "amber"
 export function Metric({ label, value, detail, icon: Icon, tone = "slate", trend }: { label: string; value: ReactNode; detail?: string; icon?: ComponentType<{ className?: string }>; tone?: MetricTone; trend?: ReactNode }) {
-  const iconTone: Record<MetricTone, string> = { slate: "bg-slate-950 text-white", emerald: "bg-emerald-600 text-white", rose: "bg-rose-600 text-white", blue: "bg-blue-600 text-white", violet: "bg-violet-600 text-white", amber: "bg-amber-500 text-white" }
+  const iconTone: Record<MetricTone, string> = { slate: "bg-slate-950 text-white", emerald: "bg-emerald-50 text-emerald-700", rose: "bg-rose-50 text-rose-700", blue: "bg-blue-50 text-blue-700", violet: "bg-violet-50 text-violet-700", amber: "bg-amber-50 text-amber-700" }
   return (
-    <div className="group relative overflow-hidden rounded-[24px] border border-slate-200/90 bg-white p-4 shadow-[0_12px_35px_rgba(15,23,42,.045)] transition duration-300 hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-[0_18px_45px_rgba(15,23,42,.075)]">
-      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent" />
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0"><p className="text-[8px] font-black uppercase tracking-[.17em] text-slate-400">{label}</p><p className="mt-2 truncate text-2xl font-black tracking-[-.045em] text-slate-950">{value}</p>{detail ? <p className="mt-1 text-[10px] font-semibold leading-4 text-slate-500">{detail}</p> : null}{trend ? <div className="mt-2">{trend}</div> : null}</div>
-        {Icon ? <div className={cx("grid h-10 w-10 shrink-0 place-items-center rounded-2xl shadow-sm", iconTone[tone])}><Icon className="h-4 w-4" /></div> : null}
+    <div className="group relative min-w-0 bg-white px-4 py-3.5">
+      <div className="flex items-center justify-between gap-3">
+        <div className="min-w-0">
+          <p className="text-[10px] font-black uppercase tracking-[.15em] text-slate-500">{label}</p>
+          <div className="mt-1 flex min-w-0 items-baseline gap-2"><p className="truncate text-[22px] font-black leading-none tracking-[-.04em] text-slate-950 tabular-nums">{value}</p>{trend ? <div>{trend}</div> : null}</div>
+          {detail ? <p className="mt-1.5 truncate text-[9px] font-semibold text-slate-500">{detail}</p> : null}
+        </div>
+        {Icon ? <div className={cx("grid h-9 w-9 shrink-0 place-items-center rounded-xl", iconTone[tone])}><Icon className="h-4 w-4" /></div> : null}
       </div>
     </div>
   )
@@ -100,56 +104,69 @@ export function Metric({ label, value, detail, icon: Icon, tone = "slate", trend
 
 export function EmptyState({ title, description, icon: Icon = WifiOff, action, compact = false }: { title: string; description: string; icon?: ComponentType<{ className?: string }>; action?: ReactNode; compact?: boolean }) {
   return (
-    <div className={cx("grid place-items-center rounded-[26px] border border-dashed border-slate-300 bg-[radial-gradient(circle_at_50%_0%,#ffffff_0,#f8fafc_58%,#f1f5f9_100%)] p-8 text-center", compact ? "min-h-44" : "min-h-64")}> 
-      <div><div className="mx-auto grid h-14 w-14 place-items-center rounded-[22px] border border-slate-200 bg-white text-slate-500 shadow-[0_10px_30px_rgba(15,23,42,.08)]"><Icon className="h-6 w-6" /></div><p className="mt-4 text-base font-black tracking-[-.02em] text-slate-950">{title}</p><p className="mx-auto mt-2 max-w-md text-sm font-semibold leading-6 text-slate-500">{description}</p>{action ? <div className="mt-5">{action}</div> : null}</div>
+    <div className={cx("grid place-items-center border border-dashed border-slate-300 bg-slate-50/70 px-8 text-center", compact ? "min-h-36 rounded-2xl py-6" : "min-h-56 rounded-[20px] py-10")}>
+      <div><div className="mx-auto grid h-12 w-12 place-items-center rounded-2xl border border-slate-200 bg-white text-slate-500 shadow-sm"><Icon className="h-5 w-5" /></div><p className="mt-3 text-[14px] font-black tracking-[-.02em] text-slate-950">{title}</p><p className="mx-auto mt-1.5 max-w-md text-[11px] font-semibold leading-5 text-slate-500">{description}</p>{action ? <div className="mt-4">{action}</div> : null}</div>
     </div>
   )
 }
 
 export function LoadingPanel({ label = "Synchronisation AC WhatsApp Live" }: { label?: string }) {
-  return <div className="grid min-h-[70vh] place-items-center rounded-[28px] border border-slate-200 bg-white"><div className="text-center"><div className="mx-auto grid h-16 w-16 place-items-center rounded-[24px] bg-slate-950 text-white shadow-2xl shadow-slate-950/15"><LoaderCircle className="h-7 w-7 animate-spin" /></div><p className="mt-4 text-[10px] font-black uppercase tracking-[.2em] text-slate-400">{label}</p></div></div>
+  return <div className="grid min-h-[62vh] place-items-center rounded-[18px] border border-slate-200 bg-white"><div className="text-center"><div className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-slate-950 text-white shadow-lg"><LoaderCircle className="h-5 w-5 animate-spin" /></div><p className="mt-3 text-[9px] font-black uppercase tracking-[.18em] text-slate-500">{label}</p></div></div>
 }
 
 export function LiveDot({ online, label }: { online: boolean; label?: string }) {
-  return <span className={cx("inline-flex items-center gap-1.5 text-[10px] font-black", online ? "text-emerald-600" : "text-rose-600")}>{online ? <Wifi className="h-3.5 w-3.5" /> : <WifiOff className="h-3.5 w-3.5" />}{label || (online ? "Temps réel actif" : "Runtime indisponible")}</span>
+  return <span className={cx("inline-flex items-center gap-1.5 text-[9px] font-extrabold", online ? "text-emerald-700" : "text-rose-700")}>{online ? <Wifi className="h-3.5 w-3.5" /> : <WifiOff className="h-3.5 w-3.5" />}{label || (online ? "Temps réel actif" : "Runtime indisponible")}</span>
 }
 
 export function HealthBadge({ good, goodLabel, badLabel }: { good: boolean; goodLabel: string; badLabel: string }) {
-  return <span className={cx("inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-[9px] font-black uppercase tracking-[.1em]", good ? "border-emerald-100 bg-emerald-50 text-emerald-700" : "border-rose-100 bg-rose-50 text-rose-700")}>{good ? <ShieldCheck className="h-3.5 w-3.5" /> : <AlertTriangle className="h-3.5 w-3.5" />}{good ? goodLabel : badLabel}</span>
+  return <span className={cx("inline-flex items-center gap-2 rounded-lg border px-2.5 py-1.5 text-[10px] font-black uppercase tracking-[.08em]", good ? "border-emerald-200 bg-emerald-50 text-emerald-800" : "border-rose-200 bg-rose-50 text-rose-800")}>{good ? <ShieldCheck className="h-3.5 w-3.5" /> : <AlertTriangle className="h-3.5 w-3.5" />}{good ? goodLabel : badLabel}</span>
 }
 
 export function NoticeBanner({ tone = "info", title, description, action, onClose, reference }: { tone?: "info" | "success" | "warning" | "danger"; title: string; description?: string; action?: ReactNode; onClose?: () => void; reference?: string }) {
-  const palette = tone === "info" ? "border-blue-200 bg-blue-50 text-blue-900" : tone === "success" ? "border-emerald-200 bg-emerald-50 text-emerald-900" : tone === "warning" ? "border-amber-200 bg-amber-50 text-amber-900" : "border-rose-200 bg-rose-50 text-rose-900"
+  const palette = tone === "info" ? "border-blue-200 bg-blue-50 text-blue-950" : tone === "success" ? "border-emerald-200 bg-emerald-50 text-emerald-950" : tone === "warning" ? "border-amber-200 bg-amber-50 text-amber-950" : "border-rose-200 bg-rose-50 text-rose-950"
   const Icon = tone === "success" ? CheckCircle2 : tone === "info" ? ShieldCheck : AlertTriangle
-  return <div className={cx("flex items-start gap-3 rounded-2xl border px-4 py-3", palette)}><Icon className="mt-0.5 h-4 w-4 shrink-0" /><div className="min-w-0 flex-1"><p className="text-xs font-black">{title}</p>{description ? <p className="mt-1 text-[10px] font-semibold leading-5 opacity-75">{description}</p> : null}{reference ? <p className="mt-1 font-mono text-[8px] font-bold opacity-55">Référence : {reference}</p> : null}</div>{action}{onClose ? <button type="button" onClick={onClose} className="grid h-7 w-7 shrink-0 place-items-center rounded-lg hover:bg-white/60"><X className="h-3.5 w-3.5" /></button> : null}</div>
+  return <div className={cx("flex items-start gap-3 rounded-xl border px-3.5 py-3", palette)}><Icon className="mt-0.5 h-4 w-4 shrink-0" /><div className="min-w-0 flex-1"><p className="text-[11px] font-black">{title}</p>{description ? <p className="mt-1 text-[10px] font-semibold leading-4 opacity-80">{description}</p> : null}{reference ? <p className="mt-1 font-mono text-[10px] font-bold opacity-55">Référence : {reference}</p> : null}</div>{action}{onClose ? <button type="button" onClick={onClose} className="grid h-7 w-7 shrink-0 place-items-center rounded-lg hover:bg-white/60"><X className="h-3.5 w-3.5" /></button> : null}</div>
 }
 
 export function Surface({ children, className, padded = true }: { children: ReactNode; className?: string; padded?: boolean }) {
-  return <section className={cx("overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_18px_55px_rgba(15,23,42,.05)]", padded && "p-5", className)}>{children}</section>
+  return <section className={cx("overflow-hidden rounded-[20px] border border-slate-200 bg-[linear-gradient(180deg,#ffffff_0%,#fdfefe_100%)] shadow-[0_1px_2px_rgba(7,20,38,.025),0_14px_38px_rgba(7,20,38,.05)]", padded && "p-4", className)}>{children}</section>
 }
 
 export function SurfaceHeader({ eyebrow, title, description, action, icon: Icon }: { eyebrow?: string; title: string; description?: string; action?: ReactNode; icon?: ComponentType<{ className?: string }> }) {
-  return <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between"><div className="flex min-w-0 items-start gap-3">{Icon ? <div className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-slate-950 text-white"><Icon className="h-4 w-4" /></div> : null}<div className="min-w-0">{eyebrow ? <p className="text-[8px] font-black uppercase tracking-[.18em] text-rose-600">{eyebrow}</p> : null}<h2 className="mt-1 text-lg font-black tracking-[-.035em] text-slate-950">{title}</h2>{description ? <p className="mt-1 max-w-2xl text-[10px] font-semibold leading-5 text-slate-500">{description}</p> : null}</div></div>{action ? <div className="shrink-0">{action}</div> : null}</div>
+  return <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between"><div className="flex min-w-0 items-start gap-3">{Icon ? <div className="grid h-10 w-10 shrink-0 place-items-center rounded-[13px] bg-[linear-gradient(145deg,#071426,#102442)] text-white shadow-[0_8px_18px_rgba(7,20,38,.13)]"><Icon className="h-4 w-4" /></div> : null}<div className="min-w-0">{eyebrow ? <p className="text-[10px] font-black uppercase tracking-[.16em] text-slate-500">{eyebrow}</p> : null}<h2 className="mt-0.5 text-[15px] font-black tracking-[-.03em] text-slate-950">{title}</h2>{description ? <p className="mt-1 max-w-2xl text-[10px] font-semibold leading-4 text-slate-500">{description}</p> : null}</div></div>{action ? <div className="shrink-0">{action}</div> : null}</div>
 }
 
 export function ProgressBar({ value, tone = "emerald", label }: { value: number; tone?: "emerald" | "rose" | "blue" | "amber" | "violet"; label?: string }) {
   const normalized = Math.max(0, Math.min(100, Number.isFinite(value) ? value : 0))
   const bar = { emerald: "bg-emerald-500", rose: "bg-rose-500", blue: "bg-blue-500", amber: "bg-amber-500", violet: "bg-violet-500" }[tone]
-  return <div>{label ? <div className="mb-1.5 flex items-center justify-between text-[9px] font-black text-slate-500"><span>{label}</span><span>{Math.round(normalized)}%</span></div> : null}<div className="h-2 overflow-hidden rounded-full bg-slate-100"><div className={cx("h-full rounded-full transition-all duration-500", bar)} style={{ width: `${normalized}%` }} /></div></div>
+  return <div>{label ? <div className="mb-1.5 flex items-center justify-between text-[9px] font-bold text-slate-600"><span>{label}</span><span className="tabular-nums">{Math.round(normalized)}%</span></div> : null}<div className="h-1.5 overflow-hidden rounded-full bg-slate-100"><div className={cx("h-full rounded-full transition-all duration-300", bar)} style={{ width: `${normalized}%` }} /></div></div>
 }
 
 export function WorkspaceTabs({ tabs, active, onChange }: { tabs: Array<{ id: string; label: string; icon?: ComponentType<{ className?: string }>; count?: number }>; active: string; onChange: (id: string) => void }) {
-  return <div className="flex gap-1.5 overflow-x-auto rounded-2xl border border-slate-200 bg-slate-50 p-1.5">{tabs.map((tab) => { const Icon = tab.icon; const selected = tab.id === active; return <button key={tab.id} type="button" onClick={() => onChange(tab.id)} className={cx("flex shrink-0 items-center gap-2 rounded-xl px-3 py-2.5 text-[10px] font-black transition", selected ? "bg-slate-950 text-white shadow-sm" : "text-slate-500 hover:bg-white hover:text-slate-900")}>{Icon ? <Icon className="h-3.5 w-3.5" /> : null}{tab.label}{typeof tab.count === "number" ? <span className={cx("rounded-full px-1.5 py-0.5 text-[8px]", selected ? "bg-white/15 text-white" : "bg-white text-slate-500")}>{tab.count}</span> : null}</button>})}</div>
+  return <div className="flex gap-0.5 overflow-x-auto border-b border-slate-200 bg-white px-1">{tabs.map((tab) => { const Icon = tab.icon; const selected = tab.id === active; return <button key={tab.id} type="button" onClick={() => onChange(tab.id)} className={cx("relative flex shrink-0 items-center gap-2 px-3 py-2.5 text-[10px] font-extrabold transition", selected ? "text-slate-950" : "text-slate-500 hover:text-slate-900")}>{Icon ? <Icon className="h-3.5 w-3.5" /> : null}{tab.label}{typeof tab.count === "number" ? <span className={cx("rounded-full px-1.5 py-0.5 text-[10px]", selected ? "bg-slate-950 text-white" : "bg-slate-100 text-slate-600")}>{tab.count}</span> : null}{selected ? <span className="absolute inset-x-2 bottom-0 h-0.5 rounded-full bg-slate-950" /> : null}</button>})}</div>
 }
 
 export function ModalFrame({ title, eyebrow, description, children, footer, onClose, wide = false }: { title: string; eyebrow?: string; description?: string; children: ReactNode; footer?: ReactNode; onClose: () => void; wide?: boolean }) {
-  return <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/55 p-4 backdrop-blur-sm"><button type="button" className="absolute inset-0" aria-label="Fermer" onClick={onClose} /><div className={cx("relative max-h-[92vh] w-full overflow-hidden rounded-[30px] border border-white/30 bg-white shadow-2xl", wide ? "max-w-5xl" : "max-w-2xl")}><div className="flex items-start justify-between gap-4 border-b border-slate-200 px-5 py-5"><div>{eyebrow ? <p className="text-[8px] font-black uppercase tracking-[.18em] text-rose-600">{eyebrow}</p> : null}<h3 className="mt-1 text-xl font-black tracking-[-.04em] text-slate-950">{title}</h3>{description ? <p className="mt-1 text-[10px] font-semibold leading-5 text-slate-500">{description}</p> : null}</div><button type="button" onClick={onClose} className="grid h-9 w-9 shrink-0 place-items-center rounded-xl border border-slate-200 text-slate-500 hover:bg-slate-50"><X className="h-4 w-4" /></button></div><div className="max-h-[68vh] overflow-y-auto p-5">{children}</div>{footer ? <div className="border-t border-slate-200 bg-slate-50 px-5 py-4">{footer}</div> : null}</div></div>
+  return <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/45 p-4 backdrop-blur-[2px]"><button type="button" className="absolute inset-0" aria-label="Fermer" onClick={onClose} /><div role="dialog" aria-modal="true" className={cx("acw-apex-floating-surface relative max-h-[92vh] w-full overflow-hidden rounded-[22px] border border-slate-200 bg-white shadow-[0_30px_90px_rgba(7,20,38,.26)]", wide ? "max-w-5xl" : "max-w-2xl")}><div className="flex items-start justify-between gap-4 border-b border-slate-200 bg-[linear-gradient(145deg,#ffffff,#f7faff)] px-5 py-4"><div>{eyebrow ? <p className="text-[10px] font-black uppercase tracking-[.16em] text-slate-500">{eyebrow}</p> : null}<h3 className="mt-0.5 text-[19px] font-black tracking-[-.035em] text-slate-950">{title}</h3>{description ? <p className="mt-1 max-w-3xl text-[10px] font-semibold leading-4 text-slate-500">{description}</p> : null}</div><button type="button" onClick={onClose} className="grid h-9 w-9 shrink-0 place-items-center rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"><X className="h-4 w-4" /></button></div><div className="max-h-[68vh] overflow-y-auto p-5">{children}</div>{footer ? <div className="border-t border-slate-200 bg-slate-50/80 px-5 py-3.5">{footer}</div> : null}</div></div>
+}
+
+export function DrawerFrame({ title, eyebrow, description, children, footer, onClose, wide = false }: { title: string; eyebrow?: string; description?: string; children: ReactNode; footer?: ReactNode; onClose: () => void; wide?: boolean }) {
+  return <div className="fixed inset-0 z-[105] bg-slate-950/35 backdrop-blur-[2px]"><button type="button" aria-label="Fermer" className="absolute inset-0" onClick={onClose} /><aside data-apex-drawer role="dialog" aria-modal="true" className={cx("acw-apex-floating-surface absolute inset-y-0 right-0 flex w-full flex-col border-l border-slate-200 bg-white shadow-[0_0_90px_rgba(7,20,38,.24)]", wide ? "max-w-3xl" : "max-w-xl")}><header className="flex items-start justify-between gap-4 border-b border-slate-200 px-5 py-4"><div>{eyebrow ? <p className="text-[10px] font-black uppercase tracking-[.16em] text-slate-500">{eyebrow}</p> : null}<h3 className="mt-0.5 text-[20px] font-black tracking-[-.035em] text-slate-950">{title}</h3>{description ? <p className="mt-1 text-[10px] font-semibold leading-4 text-slate-500">{description}</p> : null}</div><button type="button" onClick={onClose} className="grid h-9 w-9 shrink-0 place-items-center rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"><X className="h-4 w-4" /></button></header><div className="min-h-0 flex-1 overflow-y-auto p-5">{children}</div>{footer ? <footer className="border-t border-slate-200 bg-slate-50/80 px-5 py-3.5">{footer}</footer> : null}</aside></div>
 }
 
 export function DetailRow({ label, value, mono = false }: { label: string; value: ReactNode; mono?: boolean }) {
-  return <div className="flex items-start justify-between gap-4 border-b border-slate-100 py-2.5 last:border-b-0"><span className="text-[9px] font-black uppercase tracking-[.12em] text-slate-400">{label}</span><span className={cx("max-w-[65%] text-right text-[10px] font-bold text-slate-700", mono && "font-mono")}>{value || "—"}</span></div>
+  return <div className="flex items-start justify-between gap-4 border-b border-slate-100 py-2.5 last:border-b-0"><span className="text-[10px] font-black uppercase tracking-[.11em] text-slate-500">{label}</span><span className={cx("max-w-[68%] text-right text-[10px] font-bold text-slate-800", mono && "font-mono")}>{value || "—"}</span></div>
 }
 
 export function ActionLink({ label, onClick, danger = false, disabled = false }: { label: string; onClick: () => void; danger?: boolean; disabled?: boolean }) {
-  return <button type="button" onClick={onClick} disabled={disabled} className={cx("inline-flex items-center gap-1 rounded-xl border px-3 py-2 text-[9px] font-black transition disabled:cursor-not-allowed disabled:opacity-45", danger ? "border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-100" : "border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50")}>{label}<ChevronRight className="h-3 w-3" /></button>
+  return <button type="button" onClick={onClick} disabled={disabled} className={cx("inline-flex items-center gap-1 rounded-lg border px-2.5 py-2 text-[9px] font-extrabold transition disabled:cursor-not-allowed disabled:opacity-45", danger ? "border-rose-200 bg-rose-50 text-rose-800 hover:bg-rose-100" : "border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50")}>{label}<ChevronRight className="h-3 w-3" /></button>
+}
+export function ReasonConfirmDialog({ title, description, confirmLabel, onClose, onConfirm, danger = false, confirmationText }: { title: string; description: string; confirmLabel: string; onClose: () => void; onConfirm: (reason: string) => Promise<void> | void; danger?: boolean; confirmationText?: string }) {
+  const [reason, setReason] = React.useState("")
+  const [typed, setTyped] = React.useState("")
+  const [busy, setBusy] = React.useState(false)
+  const allowed = Boolean(reason.trim()) && (!confirmationText || typed.trim() === confirmationText)
+  return <ModalFrame title={title} eyebrow={danger ? "Action sensible" : "Confirmation opérationnelle"} description={description} onClose={onClose} footer={<div className="flex justify-end gap-2"><button type="button" onClick={onClose} disabled={busy} className="rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-[9px] font-black text-slate-700 hover:bg-slate-50">Annuler</button><button type="button" disabled={!allowed || busy} onClick={async () => { setBusy(true); try { await onConfirm(reason.trim()) } finally { setBusy(false) } }} className={cx("rounded-lg px-3.5 py-2.5 text-[9px] font-black text-white disabled:opacity-40", danger ? "bg-rose-600" : "bg-slate-950")}>{busy ? "Exécution…" : confirmLabel}</button></div>}>
+    <div className="space-y-4"><label className="block"><span className="mb-1.5 block text-[10px] font-black uppercase tracking-[.13em] text-slate-500">Motif obligatoire</span><textarea value={reason} onChange={(event) => setReason(event.target.value)} rows={3} autoFocus placeholder="Expliquez la raison de cette action…" className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-[11px] font-semibold text-slate-950 outline-none focus:border-slate-600" /></label>{confirmationText ? <label className="block"><span className="mb-1.5 block text-[10px] font-black uppercase tracking-[.13em] text-slate-500">Confirmation</span><p className="mb-2 text-[9px] font-semibold text-slate-500">Saisissez <strong className="font-mono text-slate-950">{confirmationText}</strong> pour continuer.</p><input value={typed} onChange={(event) => setTyped(event.target.value)} className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 font-mono text-[10px] font-bold text-slate-950 outline-none focus:border-slate-600" /></label> : null}</div>
+  </ModalFrame>
 }
