@@ -51,6 +51,11 @@ export type SocialMediaAsset = {
   storage_key: string | null
   original_filename: string
   title?: string | null
+  description?: string | null
+  lifecycle_status?: "active" | "archived" | "trashed" | null
+  favorite?: boolean | null
+  updated_by?: string | null
+  updated_at?: string | null
   safe_filename: string
   mime_type: string
   size_bytes: number
