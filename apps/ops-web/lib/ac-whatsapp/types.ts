@@ -64,6 +64,7 @@ export type AcWhatsAppConversation = {
   assigned_user?: Record<string, unknown> | null; labels?: Array<{ label_id?: string; label?: Record<string, unknown> | null }>
   last_message_sender_display_name_snapshot?: string | null; last_message_sender_type?: string | null
   last_read_at?: string | null; last_read_by_user_id?: string | null; metadata?: Record<string, unknown>
+  automation_paused?: boolean | null
 }
 
 export type AcWhatsAppAttachment = {
