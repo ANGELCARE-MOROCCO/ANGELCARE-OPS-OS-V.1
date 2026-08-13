@@ -1,7 +1,7 @@
 import type { SocialChannel, SocialFormat } from "@/lib/social-command/types"
 
 export type CopyVaultStatus = "draft" | "in_review" | "approved" | "rejected" | "archived" | "expired"
-export type CopyVaultLifecycle = "active" | "archived"
+export type CopyVaultLifecycle = "active" | "archived" | "trashed"
 export type CopyVaultType =
   | "post_caption"
   | "opening_hook"
@@ -33,7 +33,7 @@ export type CopyVaultCategory = {
   slug: string
   parent_id: string | null
   description: string
-  status: "active" | "archived"
+  status: "active" | "archived" | "trashed"
   sort_order: number
   created_by: string | null
   created_at: string
@@ -103,7 +103,7 @@ export type CopyVaultApprovalEvent = {
   id: string
   item_id: string
   version_no: number
-  action: "submitted" | "approved" | "rejected" | "archived" | "restored"
+  action: "submitted" | "approved" | "rejected" | "archived" | "restored" | "trashed" | "purged"
   stage: string
   note: string
   actor_user_id: string | null
@@ -147,6 +147,10 @@ export type CopyVaultPermissions = {
   reject: boolean
   manageCategories: boolean
   archive: boolean
+  restore: boolean
+  trash: boolean
+  hardDelete: boolean
+  deleteCategories: boolean
   governance: boolean
   rbacEnforced: boolean
   actorRole: string
@@ -160,6 +164,7 @@ export type CopyVaultStats = {
   drafts: number
   rejected: number
   archived: number
+  trashed: number
   categories: number
   usageEvents: number
 }
