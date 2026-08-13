@@ -1620,8 +1620,6 @@ export default async function Page({ searchParams }: any) {
   return (
     <main className="min-h-screen overflow-x-hidden bg-[radial-gradient(circle_at_top_left,#eef2ff_0,#f8fafc_32%,#f1f5f9_100%)] text-slate-950">
       <div className="flex min-h-screen w-full items-stretch">
-        <PerformanceMatrixSidebar />
-
         <div className="min-w-0 flex-1 px-4 py-4 lg:px-5">
         <header className="relative overflow-hidden rounded-[26px] border border-white/80 bg-white p-4 shadow-[0_20px_70px_rgba(15,23,42,0.10)] ring-1 ring-slate-100">
           <div className="absolute -right-32 -top-32 h-96 w-96 rounded-full bg-violet-200/30 blur-3xl" />

@@ -1136,43 +1136,6 @@ export default async function Page({
   return (
     <div className="min-h-screen bg-[#f7f8fc] text-slate-900">
       <div className="flex">
-        <aside className="sticky top-0 hidden h-screen w-[248px] shrink-0 overflow-y-auto border-r border-slate-200 bg-white/95 p-4 lg:block">
-          <Link
-            href="/hr"
-            className="mb-6 flex items-center gap-3 rounded-3xl bg-gradient-to-br from-violet-600 to-indigo-600 p-4 text-white shadow-lg shadow-violet-200"
-          >
-            <div className="grid h-10 w-10 place-items-center rounded-2xl bg-white/15">
-              <Sparkles className="h-5 w-5" />
-            </div>
-            <div>
-              <p className="text-sm font-black">Angelcare HR</p>
-              <p className="text-[11px] font-bold text-violet-100">
-                People Operating System
-              </p>
-            </div>
-          </Link>
-          <nav className="space-y-6">
-            {sidebarGroups.map((g: any) => (
-              <div key={g.label}>
-                <p className="mb-2 px-3 text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">
-                  {g.label}
-                </p>
-                <div className="space-y-1">
-                  {g.items.map(([label, href, Icon]: any) => (
-                    <Link
-                      key={label}
-                      href={href}
-                      className={`flex items-center gap-3 rounded-2xl px-3 py-2.5 text-xs font-black transition ${href === "/hr/recruitment" ? "bg-violet-50 text-violet-700 ring-1 ring-violet-100" : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"}`}
-                    >
-                      <Icon className="h-4 w-4" />
-                      {label}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </nav>
-        </aside>
         <main className="min-w-0 flex-1">
           <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/90 px-5 py-4 backdrop-blur-xl md:px-8">
             <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">

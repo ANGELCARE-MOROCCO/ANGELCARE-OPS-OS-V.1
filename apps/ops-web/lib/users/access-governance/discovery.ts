@@ -14,7 +14,7 @@ const FORMAL_MODULE_ROOTS = new Set([
   'billing', 'capital-command-center', 'carelink-ops', 'contracts', 'csa',
   'email-os', 'families', 'hr', 'interventions', 'market-os',
   'opsos-control-plane', 'pacojaco-ops', 'revenue-command-center', 'sales', 'service-os',
-  'services', 'traininghub', 'users', 'voice-center', 'whatsapp-os',
+  'services', 'social-command', 'traininghub', 'users', 'voice-center', 'whatsapp-os',
 ])
 const MODULE_PATTERNS = [/\bos\b/i, /command-center/i, /control-plane/i, /traininghub/i, /carelink/i]
 const RISK_SEGMENTS = new Set(['settings', 'permissions', 'governance', 'security', 'payouts', 'payments', 'billing', 'delete', 'admin'])

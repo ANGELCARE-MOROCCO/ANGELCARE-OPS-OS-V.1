@@ -1,0 +1,19 @@
+import { requireSocialCommandActor, requireSocialCommandRoutePermission, socialError, socialOk } from "@/lib/social-command/auth"
+import { cleanString } from "@/lib/social-command/db"
+import {
+  archiveMediaAsset, bulkMediaAction, createMediaCategory, createMediaCollection, getMediaVaultAsset,
+  listMediaVault, purgeMediaAsset, purgeMediaCategory, purgeMediaCollection, restoreMediaAsset,
+  trashMediaAsset, updateMediaCategory, updateMediaCollection, updateMediaVaultAsset,
+} from "@/lib/social-command/media-vault"
+
+export const dynamic="force-dynamic"
+export const runtime="nodejs"
+type Ctx={params:Promise<{segments:string[]}>}
+const key=(segments:string[])=>segments.join("/")
+async function actor(){return requireSocialCommandActor()}
+async function body(request:Request){return request.json().catch(()=>({})) as Promise<Record<string,unknown>>}
+function query(request:Request){const out:Record<string,unknown>={};new URL(request.url).searchParams.forEach((v,k)=>out[k]=v);return out}
+
+export async function GET(request:Request,ctx:Ctx){const {segments=[]}=await ctx.params;const route=key(segments);try{const auth=await actor();if(!auth.ok)return auth.response;const access=requireSocialCommandRoutePermission(auth.actor,"GET",`media-vault/${route}`);if(!access.ok)return access.response;if(route==="library")return socialOk(await listMediaVault(query(request),auth.actor));if(/^items\/[^/]+$/.test(route))return socialOk(await getMediaVaultAsset(segments[1],auth.actor));return socialError(new Error("MEDIA_VAULT_ROUTE_NOT_FOUND"),404)}catch(error){return socialError(error,400)}}
+export async function POST(request:Request,ctx:Ctx){const {segments=[]}=await ctx.params;const route=key(segments);try{const auth=await actor();if(!auth.ok)return auth.response;const access=requireSocialCommandRoutePermission(auth.actor,"POST",`media-vault/${route}`);if(!access.ok)return access.response;const input=await body(request);if(route==="categories")return socialOk(await createMediaCategory(input,auth.actor),{status:201});if(route==="collections")return socialOk(await createMediaCollection(input,auth.actor),{status:201});if(route==="bulk-action")return socialOk(await bulkMediaAction(input,auth.actor));if(/^items\/[^/]+\/(archive|restore|trash|purge)$/.test(route)){const action=segments[2];if(action==="archive")return socialOk(await archiveMediaAsset(segments[1],auth.actor));if(action==="restore")return socialOk(await restoreMediaAsset(segments[1],auth.actor));if(action==="trash")return socialOk(await trashMediaAsset(segments[1],auth.actor));return socialOk(await purgeMediaAsset(segments[1],cleanString(input.confirmation,80),auth.actor))}if(/^categories\/[^/]+\/purge$/.test(route))return socialOk(await purgeMediaCategory(segments[1],cleanString(input.confirmation,80),auth.actor));if(/^collections\/[^/]+\/purge$/.test(route))return socialOk(await purgeMediaCollection(segments[1],cleanString(input.confirmation,80),auth.actor));return socialError(new Error("MEDIA_VAULT_ROUTE_NOT_FOUND"),404)}catch(error){return socialError(error,400)}}
+export async function PATCH(request:Request,ctx:Ctx){const {segments=[]}=await ctx.params;const route=key(segments);try{const auth=await actor();if(!auth.ok)return auth.response;const access=requireSocialCommandRoutePermission(auth.actor,"PATCH",`media-vault/${route}`);if(!access.ok)return access.response;const input=await body(request);if(/^items\/[^/]+$/.test(route))return socialOk(await updateMediaVaultAsset(segments[1],input,auth.actor));if(/^categories\/[^/]+$/.test(route))return socialOk(await updateMediaCategory(segments[1],input,auth.actor));if(/^collections\/[^/]+$/.test(route))return socialOk(await updateMediaCollection(segments[1],input,auth.actor));return socialError(new Error("MEDIA_VAULT_ROUTE_NOT_FOUND"),404)}catch(error){return socialError(error,400)}}

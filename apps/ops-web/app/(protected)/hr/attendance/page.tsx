@@ -473,7 +473,6 @@ export default async function Page({ searchParams }: { searchParams?: Promise<Re
   return (
     <div className="min-h-screen bg-[#f6f8fc] text-slate-950">
         <div className="flex">
-          <HrSidebar />
           <main className="min-w-0 flex-1 p-5 lg:p-7">
             <div className="sticky top-[82px] z-30 mb-6 rounded-[30px] border border-slate-200 bg-white/90 p-4 shadow-[0_18px_50px_rgba(15,23,42,.08)] backdrop-blur-xl">
               <div className="flex flex-wrap items-center justify-between gap-4">

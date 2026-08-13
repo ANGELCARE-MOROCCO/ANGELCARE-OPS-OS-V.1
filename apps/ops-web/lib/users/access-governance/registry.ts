@@ -41,6 +41,7 @@ const MODULE_GROUPS: Record<string, string> = {
   'market-os': 'marketing',
   print: 'documents',
   'revenue-command-center': 'revenue',
+  'social-command': 'marketing',
   capital_command: 'revenue',
   sales: 'sales',
   services: 'services',

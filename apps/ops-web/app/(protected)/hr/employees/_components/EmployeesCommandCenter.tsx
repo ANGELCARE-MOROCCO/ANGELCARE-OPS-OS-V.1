@@ -737,45 +737,7 @@ export default function EmployeesCommandCenter({ command }: { command: Command }
   />
   <main className="min-h-screen bg-[radial-gradient(circle_at_top_left,#ede9fe,transparent_34%),linear-gradient(135deg,#f8fafc,#eef2ff_45%,#f8fafc)] text-slate-950">
     <div className="flex min-h-screen">
-      <aside className="sticky top-0 hidden h-screen w-[286px] shrink-0 overflow-y-auto border-r border-white/70 bg-white/92 p-4 shadow-2xl shadow-slate-200/60 backdrop-blur-2xl xl:block">
-        <Link href="/hr" className="flex items-center gap-3 rounded-[26px] bg-gradient-to-br from-violet-600 via-indigo-600 to-slate-950 p-4 text-white shadow-2xl shadow-violet-200">
-          <div className="grid h-11 w-11 place-items-center rounded-2xl bg-white/15 ring-1 ring-white/20"><Sparkles className="h-5 w-5" /></div>
-          <div>
-            <div className="text-[10px] font-black uppercase tracking-[0.24em] text-violet-100">AngelCare</div>
-            <div className="text-lg font-black tracking-tight">HR Command OS</div>
-          </div>
-        </Link>
 
-        <div className="mt-5 space-y-5">
-          {sidebarGroups.map((group) => (
-            <div key={group.label}>
-              <div className="mb-2 px-2 text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">{group.label}</div>
-              <div className="space-y-1">
-                {group.items.map((item) => {
-                  const Icon = item.icon
-                  const active = item.href === '/hr/employees'
-                  return (
-                    <Link
-                      key={`${group.label}-${item.label}-${item.href}`}
-                      href={item.href}
-                      className={`group flex items-center gap-3 rounded-2xl px-3 py-2.5 text-[13px] font-black transition ${active ? 'bg-violet-50 text-violet-700 ring-1 ring-violet-100 shadow-sm' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-950'}`}
-                    >
-                      <Icon className={`h-4 w-4 ${active ? 'text-violet-600' : 'text-slate-400 group-hover:text-violet-600'}`} />
-                      <span className="min-w-0 flex-1 truncate">{item.label}</span>
-                      {active ? <span className="h-2 w-2 rounded-full bg-violet-500 shadow-[0_0_14px_rgba(139,92,246,0.7)]" /> : null}
-                    </Link>
-                  )
-                })}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="mt-6 rounded-[24px] border border-violet-100 bg-gradient-to-br from-violet-50 via-white to-cyan-50 p-4 shadow-lg shadow-violet-100/50">
-          <div className="flex items-center gap-2 text-sm font-black text-violet-800"><DatabaseZap className="h-4 w-4" />Employee sync layer</div>
-          <p className="mt-2 text-xs font-bold leading-5 text-slate-600">Same HR navigation as the main module. Employees stay connected to attendance, leave, payroll, documents, rosters, onboarding and performance.</p>
-        </div>
-      </aside>
 
       <section className="min-w-0 flex-1 p-4 lg:p-6">
         <header className="sticky top-0 z-40 rounded-[30px] border border-white/80 bg-white/88 p-4 shadow-2xl shadow-slate-200/70 backdrop-blur-2xl">

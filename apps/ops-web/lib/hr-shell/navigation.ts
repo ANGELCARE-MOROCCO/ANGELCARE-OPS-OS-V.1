@@ -4,8 +4,13 @@ import {
   Building2,
   CalendarClock,
   ClipboardCheck,
+  Clock3,
   FileText,
+  Gauge,
+  GraduationCap,
   LayoutDashboard,
+  PlugZap,
+  Settings,
   Users,
   Workflow,
 } from "lucide-react";
@@ -48,9 +53,9 @@ const employeeAccess: HRNavigationRole[] = [
 ];
 
 /**
- * Locked HR navigation authority.
- * This is intentionally limited to the original final sidebar inventory.
- * Questionnaires is the only retained addition requested by management.
+ * Canonical HR navigation authority.
+ * The sovereign sidebar is the single visible HR module navigation surface.
+ * Legacy in-page navigation rails are intentionally not part of this registry.
  */
 export const HR_NAVIGATION_GROUPS: HRNavigationGroup[] = [
   {
@@ -142,6 +147,80 @@ export const HR_NAVIGATION_GROUPS: HRNavigationGroup[] = [
         icon: Workflow,
         roles: hrCore,
         badge: "new",
+      },
+    ],
+  },
+  {
+    key: "performance-development",
+    label: "Performance & développement",
+    description: "Évaluation, compétences et formation",
+    icon: Gauge,
+    items: [
+      {
+        key: "performance-matrix",
+        label: "Performance",
+        href: "/hr/performance-matrix",
+        description: "Matrice de performance et pilotage",
+        icon: Gauge,
+        roles: ["hr_admin", "hr_manager", "operations_manager"],
+      },
+      {
+        key: "training",
+        label: "Formation",
+        href: "/hr/training",
+        description: "Formation, ressources et développement",
+        icon: GraduationCap,
+        roles: ["hr_admin", "hr_manager", "operations_manager"],
+        aliases: ["/hr/training/online"],
+      },
+    ],
+  },
+  {
+    key: "time-organization",
+    label: "Temps & organisation",
+    description: "Congés, absences et planification",
+    icon: CalendarClock,
+    items: [
+      {
+        key: "leave",
+        label: "Congés & absences",
+        href: "/hr/leave",
+        description: "Demandes, validation et disponibilité",
+        icon: Clock3,
+        roles: ["hr_admin", "hr_manager", "operations_manager"],
+      },
+      {
+        key: "work-schedules",
+        label: "Horaires de travail",
+        href: "/hr/work-schedules",
+        description: "Planning, shifts et couverture",
+        icon: CalendarClock,
+        roles: ["hr_admin", "hr_manager", "operations_manager"],
+        aliases: ["/hr/rosters", "/hr/calendar"],
+      },
+    ],
+  },
+  {
+    key: "system",
+    label: "Système RH",
+    description: "Connexions et configuration",
+    icon: Settings,
+    items: [
+      {
+        key: "integrations",
+        label: "Intégrations",
+        href: "/hr/integrations",
+        description: "Connexions, synchronisation et santé",
+        icon: PlugZap,
+        roles: ["hr_admin", "hr_manager"],
+      },
+      {
+        key: "settings",
+        label: "Paramètres",
+        href: "/hr/settings",
+        description: "Configuration et gouvernance RH",
+        icon: Settings,
+        roles: ["hr_admin", "hr_manager"],
       },
     ],
   },

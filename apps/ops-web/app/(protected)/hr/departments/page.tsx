@@ -605,8 +605,6 @@ export default async function Page() {
   return (
     <div className="min-h-screen bg-[#f5f7fb] text-slate-900">
       <div className="flex">
-        <Sidebar />
-
         <main className="min-w-0 flex-1">
           <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/90 px-5 py-4 backdrop-blur-xl md:px-8">
             <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">

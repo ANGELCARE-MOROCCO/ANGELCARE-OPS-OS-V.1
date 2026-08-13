@@ -76,6 +76,16 @@ export const MODULE_PERMISSIONS = {
     'hr.admin',
   ],
   'voice-center': ['voice.view', 'voice.call', 'voice.manage'],
+  'social-command': [
+    'social-command.view',
+    'social-command.operate',
+    'social-command.publish',
+    'social-command.engage',
+    'social-command.automate',
+    'social-command.control',
+    'social-command.meta_admin',
+    'social-command.destructive',
+  ],
   market_os: [
     'market_os.view',
     'market_os.campaigns.view',
@@ -357,6 +367,7 @@ export const MODULE_ACCESS_LINKS = [
 
   { label: 'C.S.A Command Home', href: '/csa-home', permission: 'csa.home', group: 'C.S.A Command', icon: '🎧', badge: 'CSA', order: 33 },
   { label: 'Marketing Department Home', href: '/market-os/marketing-home', permission: 'marketing.home', group: 'Market OS', icon: '🏢', badge: 'HOME', order: 39 },
+  { label: 'Social Command', href: '/social-command', permission: 'social-command.view', group: 'Market OS', icon: '📡', badge: 'SOCIAL', order: 39.5 },
   { label: 'Market OS Home', href: '/market-os', permission: 'market_os.view', group: 'Market OS', icon: '🌐', badge: 'MKT', order: 40 },
   { label: 'Campaign Lifecycle', href: '/market-os/campaign-lifecycle', permission: 'market_os.campaigns.view', group: 'Market OS', icon: '🎯', order: 41 },
   { label: 'SEO Blog Workspace', href: '/market-os/seo-blog-workspace', permission: 'market_os.content.view', group: 'Market OS', icon: '✍️', order: 42 },

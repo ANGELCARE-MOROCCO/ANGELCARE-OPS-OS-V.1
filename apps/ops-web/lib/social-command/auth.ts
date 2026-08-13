@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import { getCurrentUser } from "@/lib/getUser"
+import { hasPermission } from "@/lib/auth/permissions"
 
 export type SocialCommandActor = {
   id: string
@@ -33,17 +34,54 @@ function roleSets() {
   return { privileged, operators, viewers }
 }
 
+function actorPermissionCodes(actor: SocialCommandActor) {
+  const raw = actor.raw || {}
+  const values = [raw.permissions, raw.permission_codes, raw.permissionCodes, raw.capabilities]
+    .flatMap((value) => Array.isArray(value) ? value.map(String) : [])
+    .map((value) => value.trim())
+    .filter(Boolean)
+  return new Set(values)
+}
+
 export function socialCommandRbacEnforced() {
   return /^(1|true|yes|on)$/i.test(String(process.env.SOCIAL_COMMAND_RBAC_ENFORCE || ""))
 }
 
+export function actorHasSocialCommandModuleAccess(actor: SocialCommandActor) {
+  return hasPermission(actor.raw, "social-command.view") || hasPermission(actor.raw, "page:/social-command")
+}
+
+export function actorUsesCentralSocialCommandGrants(actor: SocialCommandActor) {
+  const permissions = actorPermissionCodes(actor)
+  return [...permissions].some((permission) => permission.startsWith("social-command.") || permission.startsWith("social_command."))
+}
+
+function centralPermissionCandidates(permission: SocialCommandPermission) {
+  if (permission === "view") return ["social-command.view", "page:/social-command"]
+  if (permission === "operate") return ["social-command.operate"]
+  if (permission === "publish") return ["social-command.publish", "social-command.operate"]
+  if (permission === "engage") return ["social-command.engage", "social-command.operate"]
+  if (permission === "automate") return ["social-command.automate", "social-command.operate"]
+  if (permission === "control") return ["social-command.control"]
+  if (permission === "meta_admin") return ["social-command.meta_admin"]
+  return ["social-command.destructive"]
+}
+
 export function actorHasSocialCommandPermission(actor: SocialCommandActor, permission: SocialCommandPermission) {
-  if (!socialCommandRbacEnforced()) return true
+  if (!actorHasSocialCommandModuleAccess(actor)) return false
+
+  const candidates = centralPermissionCandidates(permission)
+  if (candidates.some((candidate) => hasPermission(actor.raw, candidate))) return true
+  if (permission === "view") return true
+
+  // Compatibility fallback only when the legacy role-RBAC switch is explicitly enabled.
+  // With normal central Users Management grants, assigned Social Command permissions are authoritative.
+  if (!socialCommandRbacEnforced()) return false
+
   const role = normalizedRole(actor.role)
-  const { privileged, operators, viewers } = roleSets()
-  if (permission === "view") return viewers.has(role)
+  const { privileged, operators } = roleSets()
   if (permission === "meta_admin" || permission === "destructive") return privileged.has(role)
-  if (permission === "publish" || permission === "engage" || permission === "automate" || permission === "control" || permission === "operate") return operators.has(role)
+  if (["publish", "engage", "automate", "control", "operate"].includes(permission)) return operators.has(role)
   return false
 }
 
@@ -54,10 +92,11 @@ function routePermission(method: string, key: string): SocialCommandPermission {
     if (key === "meta/connect" || key === "meta/candidates") return "meta_admin"
     return "view"
   }
-  if (key.startsWith("meta/")) return key === "meta/webhooks" ? "operate" : "meta_admin"
+  if (key.includes("/purge") || key.endsWith("/delete-permanently")) return "destructive"
+  if (key.startsWith("meta/") || key.startsWith("instagram-webhook/")) return key === "meta/webhooks" ? "operate" : "meta_admin"
   if (key.startsWith("control/")) return "control"
   if (key.startsWith("automations") || key.startsWith("automation/") || key.startsWith("ai/")) return "automate"
-  if (key.startsWith("conversations") || key.startsWith("comments") || key.startsWith("mentions")) return "engage"
+  if (key.startsWith("conversations") || key.startsWith("comments") || key.startsWith("mentions") || key.startsWith("engagement/")) return "engage"
   if (key.startsWith("publications") || key.startsWith("jobs") || key.startsWith("calendar") || key.startsWith("bulk-plans")) return "publish"
   return "operate"
 }
@@ -82,6 +121,9 @@ export async function requireSocialCommandActor() {
   if (!actor) {
     return { ok: false as const, response: NextResponse.json({ ok: false, error: "UNAUTHENTICATED" }, { status: 401 }) }
   }
+  if (!actorHasSocialCommandModuleAccess(actor)) {
+    return { ok: false as const, response: NextResponse.json({ ok: false, error: "SOCIAL_COMMAND_ACCESS_REQUIRED", permission: "social-command.view" }, { status: 403, headers: { "cache-control": "no-store" } }) }
+  }
   return { ok: true as const, actor }
 }
 
@@ -99,6 +141,8 @@ export function socialCommandSecurityHealth(actor?: SocialCommandActor | null) {
   const { privileged, operators, viewers } = roleSets()
   return {
     rbacEnforced: socialCommandRbacEnforced(),
+    centralAccessManaged: actor ? actorUsesCentralSocialCommandGrants(actor) : null,
+    actorHasModuleAccess: actor ? actorHasSocialCommandModuleAccess(actor) : null,
     actorRole: actor ? normalizedRole(actor.role) : null,
     actorCanControl: actor ? actorHasSocialCommandPermission(actor, "control") : null,
     configuredRoleCounts: { privileged: privileged.size, operators: operators.size, viewers: viewers.size },

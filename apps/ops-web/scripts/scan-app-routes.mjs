@@ -28,6 +28,7 @@ const MODULE_LABELS = {
   profile: 'Profile',
   reports: 'Reports',
   'revenue-command-center': 'Revenue Command Center',
+  'social-command': 'Social Command',
   sales: 'Sales',
   services: 'Services',
   traininghub: 'TrainingHub',

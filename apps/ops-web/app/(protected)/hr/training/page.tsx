@@ -1434,7 +1434,6 @@ export default async function Page({ searchParams }: { searchParams?: Promise<Re
 
   return <div className="min-h-screen bg-[#f5f7fb] text-slate-950">
     <div className="flex">
-      <SideBar />
       <main className="min-w-0 flex-1 p-6">
         <header className="mb-6 rounded-[34px] border border-slate-200 bg-white p-6 shadow-[0_18px_80px_rgba(15,23,42,0.06)]">
           <div className="flex flex-wrap items-start justify-between gap-5">

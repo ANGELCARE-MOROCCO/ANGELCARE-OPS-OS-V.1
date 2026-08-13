@@ -1,4 +1,4 @@
-import { requireSocialCommandActor, socialError, socialOk } from "@/lib/social-command/auth"
+import { requireSocialCommandActor, requireSocialCommandRoutePermission, socialError, socialOk } from "@/lib/social-command/auth"
 import { auditSocial } from "@/lib/social-command/repository"
 import { replyToComment, updateCommentState } from "@/lib/social-command/engagement"
 import { getCommentDossierMZ6, getConversationDossierMZ6, sendInstagramDirectTextMZ6, updateConversationOperationalStateMZ6 } from "@/lib/social-command/instagram-engagement-mz6"
@@ -14,6 +14,7 @@ export async function GET(_request: Request, context: RouteContext) {
   const route = key(segments)
   try {
     const auth = await requireSocialCommandActor(); if (!auth.ok) return auth.response
+    const access = requireSocialCommandRoutePermission(auth.actor, "GET", `engagement/${route}`); if (!access.ok) return access.response
     const conversation = /^conversations\/([^/]+)$/.exec(route)
     if (conversation) return socialOk(await getConversationDossierMZ6(conversation[1]))
     const comment = /^comments\/([^/]+)$/.exec(route)
@@ -27,6 +28,7 @@ export async function POST(request: Request, context: RouteContext) {
   const route = key(segments)
   try {
     const auth = await requireSocialCommandActor(); if (!auth.ok) return auth.response
+    const access = requireSocialCommandRoutePermission(auth.actor, "POST", `engagement/${route}`); if (!access.ok) return access.response
     const body = await request.json().catch(() => ({})) as Record<string, unknown>
 
     const reply = /^conversations\/([^/]+)\/reply$/.exec(route)

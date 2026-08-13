@@ -1191,17 +1191,7 @@ export default async function Page() {
 
   return (
     <main className="fixed inset-x-0 bottom-0 top-[112px] z-[40] overflow-hidden bg-[#f8fafc] text-slate-900">
-      <div className="grid h-full grid-cols-[250px_1fr]">
-        <aside className="flex min-h-0 flex-col border-r border-slate-200/80 bg-white/95 px-3 py-4 shadow-[24px_0_80px_rgba(15,23,42,0.06)] backdrop-blur-xl">
-          <div className="mb-5 flex items-center gap-3 px-2">
-            <div className="grid h-11 w-11 place-items-center overflow-hidden rounded-2xl bg-white shadow-xl shadow-violet-100 ring-1 ring-slate-100"><AngelCareLogo size="sm" /></div>
-            <div><div className="text-sm font-black text-slate-950">AngelCare HR</div><div className="text-[10px] font-black uppercase tracking-[0.24em] text-violet-400">Command OS</div></div>
-          </div>
-          <nav className="min-h-0 flex-1 space-y-4 overflow-y-auto pr-1">
-            {sidebarGroups.map((group) => <div key={group.label}><div className="mb-2 px-2 text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">{group.label}</div><div className="space-y-1">{group.items.map((item) => <Link key={`${item.label}-${item.href}`} href={item.href} className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-extrabold transition ${item.href === '/hr' ? 'bg-gradient-to-r from-violet-50 to-fuchsia-50 text-violet-700 shadow-sm ring-1 ring-violet-100' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-950'}`}><item.icon className="h-4 w-4" />{item.label}</Link>)}</div></div>)}
-          </nav>
-          <Link href="/ai-provider-control" className="mt-4 flex items-center justify-between rounded-2xl border border-violet-200 bg-violet-50 px-4 py-3 text-sm font-black text-violet-700 shadow-sm"><span>Ask Angel AI</span><Sparkles className="h-4 w-4" /></Link>
-        </aside>
+      <div className="grid h-full grid-cols-1">
 
         <section className="min-h-0 overflow-y-auto bg-[radial-gradient(circle_at_top_left,#ede9fe_0,transparent_32%),radial-gradient(circle_at_top_right,#e0f2fe_0,transparent_28%),#f8fafc] p-5">
           <div className="sticky top-0 z-40 mb-5 rounded-[30px] border border-white/80 bg-white/90 p-4 shadow-[0_18px_70px_rgba(15,23,42,0.12)] ring-1 ring-slate-100 backdrop-blur-2xl">

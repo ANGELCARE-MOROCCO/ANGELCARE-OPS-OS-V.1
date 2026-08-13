@@ -1,4 +1,4 @@
-import type { SocialCommandActor } from "@/lib/social-command/auth"
+import { actorHasSocialCommandPermission, actorUsesCentralSocialCommandGrants, type SocialCommandActor } from "@/lib/social-command/auth"
 
 export type MZ7Permission = "engagement.operate" | "facebook.control" | "history.sync" | "relationship.compliance"
 
@@ -17,6 +17,19 @@ const OPERATE = [...ADMIN,"manager","coordinator","coordinatrice","social_operat
 const HISTORY = [...ADMIN,"manager","coordinator","coordinatrice","analyst"]
 
 export function mz7AuthorizationSnapshot(actor: SocialCommandActor) {
+  const centralManaged = actorUsesCentralSocialCommandGrants(actor)
+  if (centralManaged) {
+    return {
+      enforce: true,
+      source: "users_management" as const,
+      role: String(actor.role || "user").trim().toLowerCase(),
+      canOperate: actorHasSocialCommandPermission(actor, "engage"),
+      canControlFacebook: actorHasSocialCommandPermission(actor, "meta_admin"),
+      canSyncHistory: actorHasSocialCommandPermission(actor, "control"),
+      canCompliance: actorHasSocialCommandPermission(actor, "control"),
+    }
+  }
+
   const enforce = enabled("SOCIAL_COMMAND_MZ7_RBAC_ENFORCE", false)
   const role = String(actor.role || "user").trim().toLowerCase()
   const admins = roleSet("SOCIAL_COMMAND_MZ7_ADMIN_ROLES", ADMIN)
@@ -24,6 +37,7 @@ export function mz7AuthorizationSnapshot(actor: SocialCommandActor) {
   const history = roleSet("SOCIAL_COMMAND_MZ7_HISTORY_ROLES", HISTORY)
   return {
     enforce,
+    source: "legacy_role_rbac" as const,
     role,
     canOperate: !enforce || operators.has(role),
     canControlFacebook: !enforce || admins.has(role),
