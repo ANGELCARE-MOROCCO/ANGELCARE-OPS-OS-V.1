@@ -180,7 +180,9 @@ export function MZ4InstitutionalMasthead({ data, universe, snapshotAt, search, s
   const searchRef = useRef<HTMLInputElement | null>(null)
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
-      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+      const target = event.target as HTMLElement | null
+      const typing = Boolean(target && (target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.tagName === "SELECT" || target.isContentEditable))
+      if (((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") || (event.key === "/" && !typing)) {
         event.preventDefault()
         setPaletteOpen(true)
         searchRef.current?.focus()
@@ -231,10 +233,22 @@ export function MZ4InstitutionalMasthead({ data, universe, snapshotAt, search, s
       action: () => navigate("studio", "campaigns"),
       icon: <Target />,
     }))
-    return [...fixed, ...publicationMatches, ...campaignMatches]
+    const mediaMatches = data.assets.slice(0, 80).map((asset) => ({
+      label: asset.title || asset.original_filename,
+      detail: `Media · ${asset.lifecycle_status || asset.status} · ${(asset.tags || []).slice(0,3).join(" · ")}`,
+      action: () => navigate("studio", "vault"),
+      icon: asset.mime_type?.startsWith("video/") ? <Film /> : <Images />,
+    }))
+    const relationshipMatches = (data.mz2?.conversations || []).slice(0, 80).map((conversation) => ({
+      label: conversation.participant_name || conversation.participant_username || "Social relationship",
+      detail: `${conversation.channel.toUpperCase()} · ${conversation.status} · ${conversation.last_message_preview || "conversation"}`,
+      action: () => navigate("engage", "dms"),
+      icon: <MessageCircleMore />,
+    }))
+    return [...fixed, ...publicationMatches, ...campaignMatches, ...mediaMatches, ...relationshipMatches]
       .filter((item) => !q || `${item.label} ${item.detail}`.toLowerCase().includes(q))
-      .slice(0, 10)
-  }, [data.campaigns, data.publications, navigate, search])
+      .slice(0, 14)
+  }, [data.assets, data.campaigns, data.mz2?.conversations, data.publications, navigate, search])
 
   return <>
     <header className={styles.institutionalMasthead}>
@@ -283,7 +297,7 @@ export function MZ4InstitutionalMasthead({ data, universe, snapshotAt, search, s
         <div className={styles.commandSearch} onFocus={() => setPaletteOpen(true)}>
           <Search />
           <input ref={searchRef} value={search} onChange={(event) => { setSearch(event.target.value); setPaletteOpen(true) }} placeholder="Rechercher ou commander Social Command…" />
-          <kbd>⌘ K</kbd>
+          <kbd>⌘ K · /</kbd>
           {paletteOpen ? <div className={styles.commandPalette}>
             <header><div><Command /><span>COMMAND PALETTE</span></div><button onMouseDown={(event) => event.preventDefault()} onClick={() => setPaletteOpen(false)}><X /></button></header>
             <div>{paletteResults.map((result, index) => <button key={`${result.label}-${index}`} onMouseDown={(event) => event.preventDefault()} onClick={() => { result.action(); setPaletteOpen(false) }}><span>{result.icon}</span><div><b>{result.label}</b><small>{result.detail}</small></div><ArrowRight /></button>)}</div>

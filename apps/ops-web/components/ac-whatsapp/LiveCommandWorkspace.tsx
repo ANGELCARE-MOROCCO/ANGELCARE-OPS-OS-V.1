@@ -383,7 +383,7 @@ export default function LiveCommandWorkspace() {
 
   async function toggleConversationAutomation() {
     if (!selectedId || !selected) return
-    const paused = !Boolean((selected as AcWhatsAppConversation & { automation_paused?: boolean | null }).automation_paused)
+    const paused = !Boolean(selected.automation_paused)
     try {
       await acApi(`/api/ac-whatsapp/conversations/${selectedId}/automation`, { method: "PATCH", body: JSON.stringify({ paused, reason: paused ? "Prise en charge humaine depuis Live Command" : "Reprise automation autorisée" }) })
       await reloadSelected()
