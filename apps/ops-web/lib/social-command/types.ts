@@ -50,6 +50,7 @@ export type SocialMediaAsset = {
   storage_provider: "windows_node" | string
   storage_key: string | null
   original_filename: string
+  title?: string | null
   safe_filename: string
   mime_type: string
   size_bytes: number
