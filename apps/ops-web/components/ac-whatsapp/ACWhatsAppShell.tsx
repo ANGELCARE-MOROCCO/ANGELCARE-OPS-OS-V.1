@@ -52,6 +52,7 @@ export default function ACWhatsAppShell({ children }: { children: React.ReactNod
   const [syncing, setSyncing] = useState(false)
   const [navChord, setNavChord] = useState(false)
   const searchRef = useRef<HTMLInputElement | null>(null)
+  const shellRef = useRef<HTMLDivElement | null>(null)
 
   const actorRole = normalizeIdentity(data?.actor.role)
   const hasPrivilegedSidebar = isAissaouiIlyass(data?.actor.name) || privilegedSidebarRoles.has(actorRole)
@@ -97,6 +98,35 @@ export default function ACWhatsAppShell({ children }: { children: React.ReactNod
       const storedDensity = window.localStorage.getItem(DENSITY_STORAGE_KEY)
       if (["compact", "balanced", "comfortable"].includes(String(storedDensity))) setDensity(storedDensity as Density)
     } catch {}
+  }, [])
+
+  useEffect(() => {
+    const shell = shellRef.current
+    if (!shell) return
+
+    const synchronizeShellViewport = () => {
+      const top = Math.max(0, shell.getBoundingClientRect().top)
+      const available = Math.max(320, window.innerHeight - top)
+
+      shell.style.setProperty(
+        "--acw-shell-height",
+        `${available}px`
+      )
+    }
+
+    synchronizeShellViewport()
+
+    window.addEventListener(
+      "resize",
+      synchronizeShellViewport,
+      { passive: true }
+    )
+
+    return () =>
+      window.removeEventListener(
+        "resize",
+        synchronizeShellViewport
+      )
   }, [])
 
   useEffect(() => {
@@ -166,16 +196,24 @@ export default function ACWhatsAppShell({ children }: { children: React.ReactNod
     </div>
   }
 
-  return <div data-acw-apex data-acw-density={density} className="relative h-dvh overflow-hidden bg-[#f4f6f9] pt-[86px] text-slate-950">
-    <div className="acw-live-broadcast-band fixed inset-x-0 z-[28]">
+  return <div
+    ref={shellRef}
+    data-acw-apex
+    data-acw-density={density}
+    className="relative min-h-0 overflow-hidden bg-[#f4f6f9] text-slate-950"
+    style={{
+      height: "var(--acw-shell-height, calc(100dvh - 52px))"
+    }}
+  >
+    <div className="acw-live-broadcast-band absolute inset-x-0 top-0 z-[60]">
       <LiveSignalBroadcastBar data={data} activeWorkspace={activeMaster.label} />
     </div>
 
-    <div className={cx("fixed bottom-0 left-0 z-40 hidden border-r border-slate-200 bg-white transition-[width] duration-200 xl:block", sidebarCollapsed ? "w-[72px]" : "w-[252px]")} style={{ top: 86 }}>{renderSidebar(sidebarCollapsed)}</div>
+    <div className={cx("absolute bottom-0 left-0 z-40 hidden border-r border-slate-200 bg-white transition-[width] duration-200 xl:block", sidebarCollapsed ? "w-[72px]" : "w-[252px]")} style={{ top: 34 }}>{renderSidebar(sidebarCollapsed)}</div>
 
-    {mobileOpen ? <div className="fixed bottom-0 left-0 right-0 z-[70] xl:hidden" style={{ top: 86 }}><button type="button" aria-label="Fermer la navigation" onClick={() => setMobileOpen(false)} className="absolute inset-0 bg-slate-950/35 backdrop-blur-[2px]" /><div className="relative h-full w-[min(90vw,280px)] border-r border-slate-200 bg-white shadow-2xl">{renderSidebar(false)}</div></div> : null}
+    {mobileOpen ? <div className="absolute bottom-0 left-0 right-0 z-[70] xl:hidden" style={{ top: 34 }}><button type="button" aria-label="Fermer la navigation" onClick={() => setMobileOpen(false)} className="absolute inset-0 bg-slate-950/35 backdrop-blur-[2px]" /><div className="relative h-full w-[min(90vw,280px)] border-r border-slate-200 bg-white shadow-2xl">{renderSidebar(false)}</div></div> : null}
 
-    <div className={cx("h-[calc(100dvh-86px)] overflow-y-auto overscroll-contain transition-[padding] duration-200 [scrollbar-gutter:stable]", sidebarCollapsed ? "xl:pl-[72px]" : "xl:pl-[252px]")}>
+    <div className={cx("absolute inset-x-0 bottom-0 top-[34px] overflow-y-auto overscroll-contain transition-[padding] duration-200 [scrollbar-gutter:stable]", sidebarCollapsed ? "xl:pl-[72px]" : "xl:pl-[252px]")}>
       <header className="acw-apex-glass sticky top-0 z-30 border-b border-slate-200">
         <div className="flex min-h-[64px] items-center gap-3 px-3 lg:px-5">
           <button type="button" onClick={() => setMobileOpen(true)} className="grid h-9 w-9 shrink-0 place-items-center rounded-xl border border-slate-200 bg-white text-slate-600 xl:hidden"><Menu className="h-4 w-4" /></button>

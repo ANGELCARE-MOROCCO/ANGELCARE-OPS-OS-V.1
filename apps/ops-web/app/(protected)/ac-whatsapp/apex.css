@@ -140,7 +140,7 @@
    compositor-friendly CSS transform, no React timer, no rAF, no extra polling.
    ======================================================================== */
 .acw-live-broadcast-band {
-  top: 52px;
+  top: 0;
   height: 34px;
   background: #06111f;
   border-top: 1px solid rgba(148, 163, 184, .18);
