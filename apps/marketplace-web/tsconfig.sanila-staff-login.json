@@ -1,0 +1,19 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "incremental": false
+  },
+  "include": [
+    "app/angelcare-360-staff/login/page.tsx",
+    "components/angelcare360/staff-auth/SanilaStaffLoginExperience.tsx",
+    "components/angelcare360/gateway/SanilaMasterGateway.tsx",
+    "lib/angelcare360/customer-broadcasts.ts",
+    "lib/ac360-portability/auth-session.ts",
+    "data/angelcare360/role-portals.ts",
+    "types/angelcare360/role-portals.ts",
+    "next-env.d.ts",
+    "types/**/*.d.ts"
+  ],
+  "exclude": ["node_modules", ".next"]
+}

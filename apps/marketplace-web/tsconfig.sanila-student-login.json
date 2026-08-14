@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "incremental": false
+  },
+  "include": [
+    "app/angelcare-360-student/login/page.tsx",
+    "components/angelcare360/student-auth/SanilaStudentLoginExperience.tsx",
+    "lib/ac360-portability/auth-session.ts",
+    "lib/angelcare360/customer-broadcasts.ts",
+    "data/angelcare360/role-portals.ts",
+    "types/angelcare360/role-portals.ts"
+  ]
+}
