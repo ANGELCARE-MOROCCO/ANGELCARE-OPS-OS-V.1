@@ -5,6 +5,7 @@ export type MarketplaceErrorCode =
   | 'FORBIDDEN'
   | 'SCOPE_MISMATCH'
   | 'NOT_FOUND'
+  | 'METHOD_NOT_ALLOWED'
   | 'CONFLICT'
   | 'DATA_INTEGRITY'
   | 'NOT_READY'
@@ -22,6 +23,7 @@ const STATUS_BY_CODE: Record<MarketplaceErrorCode, number> = {
   FORBIDDEN: 403,
   SCOPE_MISMATCH: 403,
   NOT_FOUND: 404,
+  METHOD_NOT_ALLOWED: 405,
   CONFLICT: 409,
   DATA_INTEGRITY: 409,
   NOT_READY: 409,

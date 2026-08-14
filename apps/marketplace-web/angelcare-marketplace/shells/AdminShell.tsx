@@ -5,6 +5,7 @@ import type { MarketplaceRequestContext } from '../domain/types'
 import styles from '../design-system/marketplace.module.css'
 import { AdminNavigation } from './AdminNavigation'
 import { AdminLogoutButton } from '../auth/admin/AdminLogoutButton'
+import { GlobalCommandPalette } from '../enterprise-command/components/GlobalCommandPalette'
 
 export function AdminShell({ context, children }: { context: MarketplaceRequestContext; children: ReactNode }) {
   return (
@@ -32,6 +33,7 @@ export function AdminShell({ context, children }: { context: MarketplaceRequestC
         <header className={styles.topbar}>
           <span className={styles.topbarTitle}>ANGELCARE BUILD 360 · Commandement global</span>
           <div className={styles.topbarMeta}>
+            <GlobalCommandPalette />
             <span className={styles.scopeBadge}>
               <Globe2 size={13} />
               {context.territoryId || 'Périmètre global'}

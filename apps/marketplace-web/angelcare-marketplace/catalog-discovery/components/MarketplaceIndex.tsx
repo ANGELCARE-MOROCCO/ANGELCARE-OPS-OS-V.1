@@ -8,6 +8,7 @@ import {categoryNativeFilters} from '../../category-native-experience/repository
 import {getPublishedSurface} from '../../total-commerce-control/repository'
 import {PublicSurfaceSections} from '../../total-commerce-control/components/PublicSurfaceSections'
 import {DiscoverySearch} from './DiscoverySearch'
+import {PublicPromotionRail} from '../../enterprise-closure/components/PublicPromotionRail'
 import styles from '../catalog-discovery.module.css'
 const iconMap:Record<string,typeof Search>={families:UsersRound,'home-services':HeartHandshake,development:Sparkles,kits:PackageOpen,academy:BookOpenCheck,establishments:Building2,hospitality:Hotel,'quality-check':ShieldCheck,'health-partners':HeartPulse,corporates:BriefcaseBusiness}
 const defaultEntries:StorefrontKey[]=['families','home-services','development','kits','academy','establishments','hospitality','quality-check']
@@ -23,6 +24,7 @@ export async function MarketplaceIndex({data}:{data:DiscoverySearchData}){
  return <main className={styles.marketplace} dir={data.locale==='ar'?'rtl':'ltr'}>
   <section className={styles.indexHero}><div><span>{eyebrow}</span><h1>{title}</h1><p>{lead}</p></div><div className={styles.heroProof}><strong>{data.total}</strong><span>{c.results}</span><i/><small>FR · EN · AR</small></div></section>
   <DiscoverySearch locale={data.locale} categories={data.categories} total={data.total}/>
+  <PublicPromotionRail locale={data.locale}/>
   <CategoryNativeFilters filters={nativeFilters} locale={data.locale} route={`/angelcare-marketplace/${data.locale}/marketplace/search`}/>
   <section className={styles.departmentGrid}>{departments.map((key,index)=>{const Icon=iconMap[key]||Search;const cat=data.categories.find(c=>c.category_key===key);return <Link key={key} href={`/angelcare-marketplace/${data.locale}/marketplace/category/${key}`} data-theme={cat?.visual_theme||key}><span>{String(index+1).padStart(2,'0')}</span><Icon size={27}/><h2>{cat?.title||key.replaceAll('-',' ')}</h2><p>{cat?.short_description}</p><b>{cat?.item_count||0} {c.results}<ArrowRight size={16}/></b></Link>})}</section>
   <PublicSurfaceSections experience={surface}/>
