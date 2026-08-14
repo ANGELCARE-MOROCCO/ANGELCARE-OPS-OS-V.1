@@ -4,6 +4,8 @@ import { fail, normalizeOpenWAAccountStatus, ok } from '@/lib/ac-whatsapp/server
 import { mapAckStatus, normalizeOpenWAEvent, verifyOpenWASignature } from '@/lib/ac-whatsapp/webhook'
 import { ingestOpenWAMedia, mediaVaultStorageKey } from '@/lib/ac-whatsapp/media-vault'
 import { openwa } from '@/lib/ac-whatsapp/openwa-client'
+import { recordInboundOutcomeForMaturity } from '@/lib/ac-whatsapp/revenue-intelligence/runtime'
+import { processCommercialCognitionEvent } from '@/lib/ac-whatsapp/commercial-cognition/runtime'
 
 export const runtime = 'nodejs'
 
@@ -129,6 +131,12 @@ export async function POST(request:NextRequest){
    const insert=await supabase.from('ac_whatsapp_messages').insert({account_id:account.id,conversation_id:conv.data.id,contact_id:contact.id,external_message_id:normalized.externalMessageId,direction:normalized.fromMe?'outbound':'inbound',message_type:normalized.type==='unknown'?'text':normalized.type,body:normalized.body||null,caption:normalized.caption||null,quoted_external_message_id:normalized.message?.quotedMessage?.id||null,status:normalized.fromMe?'sent':'received',sender_whatsapp_id:normalized.from,recipient_whatsapp_id:normalized.to,sender_display_name_snapshot:campaignIdentity?.campaign?.name?`Campagne · ${campaignIdentity.campaign.name}`:senderDisplayName,sender_role_snapshot:normalized.fromMe?(campaignIdentity?'Automatisation commerciale':'Compte WhatsApp mobile'):'Contact',sender_type:campaignIdentity?'automation':senderType,message_origin:campaignIdentity?'campaign':'whatsapp_webhook',campaign_id:campaignIdentity?.campaign_id||null,campaign_name_snapshot:campaignIdentity?.campaign?.name||null,responsible_user_id:campaignIdentity?.campaign?.owner_user_id||null,raw_payload:safeRawPayload(payload),sent_at:normalized.fromMe?normalized.timestamp:null,received_at:normalized.fromMe?null:normalized.timestamp,created_at:normalized.timestamp}).select('id').single();if(insert.error)throw insert.error
    await persistMedia(supabase,{accountId:account.id,conversationId:conv.data.id,messageId:insert.data.id,externalId:normalized.externalMessageId,media:mediaEnvelope(normalized),hasMedia:normalized.hasMedia,sessionId:sid,chatId:remote})
    if(!normalized.fromMe){const recent=await supabase.from('ac_whatsapp_campaign_recipients').select('id,campaign_id,external_message_id').eq('contact_id',contact.id).in('status',['sent','delivered','read']).order('sent_at',{ascending:false}).limit(1).maybeSingle();if(recent.error)throw recent.error;if(recent.data)await supabase.from('ac_whatsapp_campaign_recipients').update({status:'replied',replied_at:normalized.timestamp}).eq('id',recent.data.id)}
+   if(!normalized.fromMe){
+    await recordInboundOutcomeForMaturity(supabase,conv.data.id).catch(()=>null)
+    await processCommercialCognitionEvent(supabase,{type:'inbound_message',conversationId:conv.data.id,inputMessageId:insert.data.id,eventId:String(insert.data.id)}).catch(async(cause)=>{
+     try{await supabase.from('ac_whatsapp_ri_runtime_events').insert({event_type:'automation.failure',severity:'warning',conversation_id:conv.data.id,details:{code:'SOVEREIGN_REVENUE_AUTONOMY_FAILED',error:cause instanceof Error?cause.message:String(cause)}})}catch{}
+    })
+   }
   }
   await markWebhook(supabase,deliveryId,'processed')
   return ok({processed:true,eventType})

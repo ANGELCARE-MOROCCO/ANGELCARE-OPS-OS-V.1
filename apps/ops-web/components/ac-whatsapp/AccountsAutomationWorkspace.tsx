@@ -5,6 +5,7 @@ import { Activity, AlertTriangle, Bot, CheckCircle2, CirclePause, CirclePlay, Cl
 import type { AcWhatsAppAccount } from "@/lib/ac-whatsapp/types";
 import { cx, DetailRow, EmptyState, HealthBadge, LoadingPanel, Metric, ModalFrame, NoticeBanner, ProgressBar, SectionTitle, StatusPill, Surface, SurfaceHeader, WorkspaceTabs, } from "./ACWhatsAppUI";
 import { acApi, formatRelative, friendlyAcError, percentage, useAcWhatsApp } from "./useAcWhatsApp";
+import SovereignRevenueIntelligenceWorkspace from "./SovereignRevenueIntelligenceWorkspace";
 type Notice = ReturnType<typeof friendlyAcError> & {
     tone?: "success" | "danger" | "warning" | "info";
 };
@@ -71,7 +72,7 @@ export default function AccountsAutomationWorkspace() {
     </div> : null}
 
     {tab === "templates" ? <TemplateStudio templates={data?.templates || []}/> : null}
-    {tab === "automation" ? <AutomationStudio accounts={accounts}/> : null}
+    {tab === "automation" ? <SovereignRevenueIntelligenceWorkspace accounts={accounts}/> : null}
     {tab === "runtime" ? <RuntimeCockpit data={data} onRefresh={() => void refresh()}/> : null}
 
     {createOpen && data ? <AccountProvisioning data={data} onClose={() => setCreateOpen(false)} onCreated={async (account) => { setCreateOpen(false); setSelectedId(account.id); await refresh(); setNotice({ tone: "success", title: "Session OpenWA créée", description: "Le compte est enregistré. Poursuivez avec le QR ou le code d’appairage pour achever l’authentification." }); }}/> : null}
@@ -107,7 +108,7 @@ function AccountCard({ account, selected, busy, onSelect, onAction }: {
     const primaryLabel = account.status === "connected" ? "Mettre en pause" : account.status === "paused" ? "Reprendre" : "Démarrer";
     const primaryIcon = account.status === "connected" ? CirclePause : CirclePlay;
     const primaryAction = account.status === "connected" ? "pause" : account.status === "paused" ? "resume" : "start";
-    return <article className={cx("group relative overflow-hidden rounded-[28px] border p-5 transition-all duration-300", selected
+    return <article data-acw-account-card="true" data-selected={selected ? "true" : "false"} className={cx("group relative overflow-hidden rounded-[28px] border p-5 transition-all duration-300", selected
             ? "border-[#253956] bg-[#07111f] text-white shadow-[0_24px_70px_rgba(7,17,31,.28)] ring-1 ring-white/[.04]"
             : "border-slate-200 bg-white text-slate-950 shadow-[0_12px_35px_rgba(15,23,42,.06)] hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-[0_18px_50px_rgba(15,23,42,.10)]")}>
     {selected ? <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-sky-300/70 to-transparent"/> : null}

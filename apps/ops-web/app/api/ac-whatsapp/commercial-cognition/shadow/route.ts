@@ -1,0 +1,4 @@
+import { NextRequest } from 'next/server'
+import { acContext, fail, ok } from '@/lib/ac-whatsapp/server'
+import { processCommercialCognitionEvent } from '@/lib/ac-whatsapp/commercial-cognition/runtime'
+export async function POST(request:NextRequest){const context=await acContext(request,'ac-whatsapp.automation.manage');if('error' in context)return context.error;const body=await request.json().catch(()=>({}));const ids=Array.isArray(body.conversation_ids)?body.conversation_ids.map(String):[];if(!ids.length)return fail('CONVERSATION_IDS_REQUIRED',422);const results=[];for(const id of ids.slice(0,100)){try{results.push(await processCommercialCognitionEvent(context.supabase,{type:'shadow_evaluate',conversationId:id,eventId:crypto.randomUUID(),dryRun:true,shadow:true}))}catch(cause){results.push({conversationId:id,error:cause instanceof Error?cause.message:String(cause)})}}return ok({results})}

@@ -1,0 +1,10 @@
+[data-acw-revenue-intelligence] { isolation:isolate; }
+[data-acw-revenue-intelligence] * { text-rendering:geometricPrecision; }
+[data-acw-account-card="true"][data-selected="false"] { color:#0f172a !important; }
+[data-acw-account-card="true"][data-selected="false"] :where(p,span,strong,small,label,button) { -webkit-text-fill-color:currentColor !important; text-shadow:none !important; }
+[data-acw-account-card="true"][data-selected="false"] :where([class*="text-white"]) { color:#0f172a !important; }
+[data-acw-account-card="true"][data-selected="true"] :where(p,strong,h1,h2,h3,h4) { -webkit-text-fill-color:currentColor !important; }
+[data-acw-account-card="true"] { background-image:radial-gradient(circle at 90% 0%,rgba(125,211,252,.12),transparent 30%); }
+[data-acw-revenue-intelligence] ::selection { background:#bae6fd; color:#082f49; }
+[data-acw-revenue-intelligence] .ri-input { width:100%; border:1px solid #e2e8f0; border-radius:14px; background:#fff; padding:10px 12px; font-size:10px; font-weight:700; color:#0f172a; outline:none; }
+[data-acw-revenue-intelligence] .ri-input:focus { border-color:#7dd3fc; box-shadow:0 0 0 3px rgba(186,230,253,.35); }

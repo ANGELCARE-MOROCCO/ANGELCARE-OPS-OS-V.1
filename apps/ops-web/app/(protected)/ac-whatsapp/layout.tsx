@@ -1,5 +1,6 @@
 import './apex.css'
 import './ice-command.css'
+import './revenue-intelligence.css'
 import { redirect } from 'next/navigation'
 import { getCurrentUser } from '@/lib/getUser'
 import { createServiceClient } from '@/lib/supabase/server'

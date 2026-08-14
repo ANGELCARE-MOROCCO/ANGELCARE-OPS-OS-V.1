@@ -65,6 +65,16 @@ export type AcWhatsAppConversation = {
   last_message_sender_display_name_snapshot?: string | null; last_message_sender_type?: string | null
   last_read_at?: string | null; last_read_by_user_id?: string | null; metadata?: Record<string, unknown>
   automation_paused?: boolean | null
+  automation_mode?: 'manual' | 'assist' | 'selected_auto' | 'account_auto' | 'protected' | null
+  automation_doctrine_pack_id?: string | null
+  automation_goal?: string | null
+  automation_excluded?: boolean | null
+  automation_maturity_level?: string | null
+  automation_last_decision_at?: string | null
+  cognition_last_at?: string | null
+  cognition_escalation_flag?: boolean | null
+  cognition_escalation_reason?: string | null
+  cognition_state_version?: number | null
 }
 
 export type AcWhatsAppAttachment = {
@@ -102,7 +112,7 @@ export type AcWhatsAppCampaign = {
   message_body?: string | null; status: string; total_recipients: number; queued_count: number; sent_count: number
   delivered_count: number; read_count: number; reply_count: number; positive_reply_count: number
   conversion_count: number; failed_count: number; scheduled_at?: string | null; started_at?: string | null
-  completed_at?: string | null; created_at: string; account?: AcWhatsAppAccount | null
+  completed_at?: string | null; automation_doctrine_pack_id?: string | null; automation_goal?: string | null; created_at: string; account?: AcWhatsAppAccount | null
 }
 
 export type AcWhatsAppBootstrap = {
