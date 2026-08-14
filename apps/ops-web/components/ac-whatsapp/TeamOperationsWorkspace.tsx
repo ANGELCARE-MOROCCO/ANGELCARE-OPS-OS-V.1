@@ -59,7 +59,7 @@ export default function TeamOperationsWorkspace() {
     return { queue, rows, members, capacity }
   })
 
-  return <div className="space-y-4">
+  return <div data-acw-ice-workspace="team" className="acw-ice-workspace space-y-4">
     <SectionTitle
       eyebrow="Master 04 · Team Operations"
       title="Capacité, responsabilités et handovers — sans angle mort."

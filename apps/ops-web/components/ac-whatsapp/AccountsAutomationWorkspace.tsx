@@ -46,7 +46,7 @@ export default function AccountsAutomationWorkspace() {
     const connected = accounts.filter((row) => row.status === "connected").length;
     const degraded = accounts.filter((row) => ["error", "degraded", "disconnected", "authentication_lost"].includes(row.status)).length;
     const enabledCampaigns = accounts.filter((row) => row.campaigns_enabled && row.bulk_messaging_enabled).length;
-    return <div className="space-y-5">
+    return <div data-acw-ice-workspace="accounts" className="acw-ice-workspace space-y-5">
     <SectionTitle eyebrow="Master Workspace 05 · Accounts & Automation" title="Piloter les comptes, les sessions et l’automatisation avec confiance." description="Provisionnement guidé, QR, santé OpenWA, capacités commerciales, modèles et webhooks sous une administration AngelCare lisible et traçable." action={<button type="button" onClick={() => setCreateOpen(true)} className="inline-flex items-center gap-2 rounded-2xl bg-rose-600 px-4 py-3 text-[10px] font-black text-white shadow-lg shadow-rose-600/20"><Plus className="h-4 w-4"/>Connecter un compte</button>}/>
     {error ? <NoticeBanner tone="danger" {...friendlyAcError(error)}/> : null}
     {notice ? <NoticeBanner tone={notice.tone || "info"} title={notice.title} description={notice.description} reference={notice.reference} onClose={() => setNotice(null)}/> : null}

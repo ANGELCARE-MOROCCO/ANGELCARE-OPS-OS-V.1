@@ -73,6 +73,17 @@
 }
 [data-acw-apex] .acw-apex-floating-surface :where(p,span,strong,label,h1,h2,h3,h4,button,a) { text-shadow: none; }
 [data-acw-apex] .acw-apex-floating-surface :where(button:not([class*="bg-slate-9"]):not([class*="bg-rose-"]):not([class*="bg-blue-"]):not([class*="bg-emerald-"])) { color: #0f172a; }
+[data-acw-apex] .acw-apex-floating-surface :where(h1,h2,h3,h4) {
+  color: #020617 !important;
+  -webkit-text-fill-color: #020617 !important;
+  background-image: none !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+}
+[data-acw-apex] .acw-apex-floating-surface :where(p,span,strong,label,button,a) {
+  -webkit-text-fill-color: currentColor !important;
+  text-shadow: none !important;
+}
 
 [data-acw-apex] .acw-apex-kpi-strip { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); border:1px solid var(--acw-line); border-radius:16px; background:#fff; overflow:hidden; }
 [data-acw-apex] .acw-apex-kpi-strip > * { min-width:0; border-right:1px solid var(--acw-line); }

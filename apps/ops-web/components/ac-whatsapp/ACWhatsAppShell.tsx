@@ -108,6 +108,7 @@ export default function ACWhatsAppShell({ children }: { children: React.ReactNod
       const top = Math.max(0, shell.getBoundingClientRect().top)
       const available = Math.max(320, window.innerHeight - top)
 
+      shell.style.setProperty("--acw-shell-top", `${top}px`)
       shell.style.setProperty(
         "--acw-shell-height",
         `${available}px`
@@ -166,7 +167,7 @@ export default function ACWhatsAppShell({ children }: { children: React.ReactNod
   function navigate(href: string) { setPaletteOpen(false); setMobileOpen(false); router.push(href) }
 
   function renderSidebar(collapsed: boolean) {
-    return <div className={cx("flex h-full min-h-0 flex-col bg-white", collapsed ? "px-2 py-3" : "px-3 py-3")}>
+    return <div className={cx("acw-ice-sidebar flex h-full min-h-0 flex-col bg-white", collapsed ? "px-2 py-3" : "px-3 py-3")}>
       <div className={cx("flex items-center border-b border-slate-200 pb-3", collapsed ? "justify-center" : "gap-3 px-1")}>
         <Link href="/ac-whatsapp/live" onClick={() => setMobileOpen(false)} className={cx("relative block overflow-hidden bg-white", collapsed ? "h-10 w-12" : "h-[48px] w-[142px]")}>
           <img src="/ac-whatsapp/angelcare-full-logo-transparent.png" alt="AngelCare" className="h-full w-full object-contain object-left" />
@@ -181,7 +182,7 @@ export default function ACWhatsAppShell({ children }: { children: React.ReactNod
       <nav className={cx("min-h-0 flex-1 overflow-y-auto py-2", collapsed ? "space-y-1" : "space-y-0.5")}>
         {visibleMasters.map((item) => {
           const active = pathname.startsWith(item.href); const Icon = item.icon
-          return <Link key={item.href} href={item.href} onClick={() => setMobileOpen(false)} title={collapsed ? item.label : undefined} className={cx("group relative flex items-center border transition-colors", collapsed ? "h-12 justify-center rounded-xl" : "gap-3 rounded-xl px-2.5 py-2.5", active ? "border-slate-200 bg-slate-950 text-white shadow-sm" : "border-transparent text-slate-600 hover:bg-slate-50 hover:text-slate-950") }>
+          return <Link key={item.href} href={item.href} onClick={() => setMobileOpen(false)} title={collapsed ? item.label : undefined} className={cx("acw-ice-master-link group relative flex items-center border transition-colors", collapsed ? "h-12 justify-center rounded-xl" : "gap-3 rounded-xl px-2.5 py-2.5", active ? "border-slate-200 bg-slate-950 text-white shadow-sm" : "border-transparent text-slate-600 hover:bg-slate-50 hover:text-slate-950") }>
             <div className={cx("grid h-8 w-8 shrink-0 place-items-center rounded-lg", active ? "bg-white/10 text-white" : "bg-slate-100 text-slate-600")}><Icon className="h-4 w-4" /></div>
             {!collapsed ? <><div className="min-w-0 flex-1"><p className="truncate text-[10px] font-black">{item.label}</p><p className={cx("mt-0.5 text-[10px] font-semibold", active ? "text-white/55" : "text-slate-400")}>{item.caption}</p></div><span className={cx("text-[10px] font-black", active ? "text-white/45" : "text-slate-300")}>{item.number}</span></> : null}
           </Link>
@@ -198,7 +199,7 @@ export default function ACWhatsAppShell({ children }: { children: React.ReactNod
 
   return <div
     ref={shellRef}
-    data-acw-apex
+    data-acw-apex data-acw-ice="sovereign"
     data-acw-density={density}
     className="relative min-h-0 overflow-hidden bg-[#f4f6f9] text-slate-950"
     style={{
@@ -213,8 +214,8 @@ export default function ACWhatsAppShell({ children }: { children: React.ReactNod
 
     {mobileOpen ? <div className="absolute bottom-0 left-0 right-0 z-[70] xl:hidden" style={{ top: 34 }}><button type="button" aria-label="Fermer la navigation" onClick={() => setMobileOpen(false)} className="absolute inset-0 bg-slate-950/35 backdrop-blur-[2px]" /><div className="relative h-full w-[min(90vw,280px)] border-r border-slate-200 bg-white shadow-2xl">{renderSidebar(false)}</div></div> : null}
 
-    <div className={cx("absolute inset-x-0 bottom-0 top-[34px] overflow-y-auto overscroll-contain transition-[padding] duration-200 [scrollbar-gutter:stable]", sidebarCollapsed ? "xl:pl-[72px]" : "xl:pl-[252px]")}>
-      <header className="acw-apex-glass sticky top-0 z-30 border-b border-slate-200">
+    <div className={cx("acw-ice-stage absolute inset-x-0 bottom-0 top-[34px] overflow-y-auto overscroll-contain transition-[padding] duration-200 [scrollbar-gutter:stable]", sidebarCollapsed ? "xl:pl-[72px]" : "xl:pl-[252px]")}>
+      <header className="acw-apex-glass acw-ice-header sticky top-0 z-30 border-b border-slate-200">
         <div className="flex min-h-[64px] items-center gap-3 px-3 lg:px-5">
           <button type="button" onClick={() => setMobileOpen(true)} className="grid h-9 w-9 shrink-0 place-items-center rounded-xl border border-slate-200 bg-white text-slate-600 xl:hidden"><Menu className="h-4 w-4" /></button>
           <div className="flex min-w-0 shrink-0 items-center gap-2.5"><div className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-slate-950 text-white shadow-[0_8px_18px_rgba(7,20,38,.14)]"><ActiveMasterIcon className="h-4 w-4" /></div><div className="min-w-0"><p className="truncate text-[10px] font-black uppercase tracking-[.15em] text-slate-400">Master {activeMaster.number} · Communications OS</p><p className="truncate text-[12px] font-black text-slate-950">{activeMaster.label}</p></div></div>

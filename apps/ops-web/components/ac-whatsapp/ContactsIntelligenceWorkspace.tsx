@@ -35,7 +35,7 @@ export default function ContactsIntelligenceWorkspace() {
     const organizations = new Set(contacts.map((row) => row.organization_name).filter(Boolean)).size;
     const highPriority = contacts.filter((row) => row.priority === "high" || row.priority === "critical").length;
     const activeRelationships = contacts.filter((row) => row.last_contact_at).length;
-    return <div className="space-y-5">
+    return <div data-acw-ice-workspace="contacts" className="acw-ice-workspace space-y-5">
     <SectionTitle eyebrow="Master Workspace 03 · Contacts & Intelligence" title="Chaque numéro devient un dossier relationnel vivant." description="Identité, organisation, contexte commercial, historique et prochaine action — pour répondre avec mémoire et cohérence." action={<button type="button" onClick={() => setEditorOpen(true)} className="inline-flex items-center gap-2 rounded-2xl bg-rose-600 px-4 py-3 text-[10px] font-black text-white shadow-lg shadow-rose-600/20"><Plus className="h-4 w-4"/>Nouveau contact</button>}/>
     {error ? <NoticeBanner tone="danger" {...friendlyAcError(error)}/> : null}
     {notice ? <NoticeBanner tone={notice.tone || "info"} title={notice.title} description={notice.description} reference={notice.reference} onClose={() => setNotice(null)}/> : null}

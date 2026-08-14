@@ -64,7 +64,7 @@ export default function ExecutiveControlWorkspace() {
     const url = URL.createObjectURL(blob); const anchor = document.createElement("a"); anchor.href = url; anchor.download = `ac-whatsapp-executive-snapshot-${new Date().toISOString().slice(0, 10)}.json`; anchor.click(); URL.revokeObjectURL(url)
   }
 
-  return <div className="space-y-5">
+  return <div data-acw-ice-workspace="executive" className="acw-ice-workspace space-y-5">
     <SectionTitle eyebrow="Master Workspace 06 · Executive Control" title="Voir l’impact, le risque et la responsabilité en quelques secondes." description="Une lecture exécutive honnête de la disponibilité, des conversations, des campagnes et des exceptions nécessitant une intervention humaine." action={<div className="flex flex-wrap gap-2"><button type="button" onClick={exportSnapshot} className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-[10px] font-black text-slate-700"><Download className="h-4 w-4" />Exporter la preuve</button><button type="button" onClick={() => void synchronize()} className="inline-flex items-center gap-2 rounded-2xl bg-slate-950 px-4 py-3 text-[10px] font-black text-white"><RefreshCw className={cx("h-4 w-4", busy && "animate-spin")} />Synchroniser</button></div>} />
     {error ? <NoticeBanner tone="danger" {...friendlyAcError(error)} /> : null}
     {analyticsError ? <NoticeBanner tone="danger" {...friendlyAcError(analyticsError)} /> : null}

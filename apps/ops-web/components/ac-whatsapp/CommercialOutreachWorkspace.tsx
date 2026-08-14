@@ -52,7 +52,7 @@ export default function CommercialOutreachWorkspace() {
   const recipients = campaigns.reduce((sum, row) => sum + (row.total_recipients || 0), 0)
   const active = campaigns.filter((row) => row.status === "running").length
 
-  return <div className="space-y-5">
+  return <div data-acw-ice-workspace="outreach" className="acw-ice-workspace space-y-5">
     <SectionTitle eyebrow="Master Workspace 02 · Commercial Outreach" title="Transformer la prospection WhatsApp en missions commerciales gouvernées." description="Construire les audiences, orchestrer les séquences, suivre les réponses et convertir les signaux de marché sans perdre la maîtrise du rythme ni de la responsabilité." action={<button type="button" onClick={() => setStudioOpen(true)} className="inline-flex items-center gap-2 rounded-2xl bg-rose-600 px-4 py-3 text-[10px] font-black text-white shadow-lg shadow-rose-600/20"><Plus className="h-4 w-4" />Créer une mission</button>} />
     {error ? <NoticeBanner tone="danger" {...friendlyAcError(error)} /> : null}
     {notice ? <NoticeBanner tone={notice.tone || "info"} title={notice.title} description={notice.description} reference={notice.reference} onClose={() => setNotice(null)} /> : null}
