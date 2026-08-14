@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "incremental": false
+  },
+  "include": [
+    "app/angelcare-360-access/login/page.tsx",
+    "app/api/angelcare360/customer-broadcasts/route.ts",
+    "components/angelcare360/auth/Angelcare360CustomerLoginExperience.tsx",
+    "lib/angelcare360/customer-broadcasts.ts",
+    "next-env.d.ts"
+  ]
+}

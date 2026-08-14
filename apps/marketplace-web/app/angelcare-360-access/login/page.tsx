@@ -1,10 +1,13 @@
-import { redirect } from 'next/navigation'
+import type { Metadata } from 'next'
 import { cookies } from 'next/headers'
-import { createClient } from '@/lib/supabase/server'
+import { redirect } from 'next/navigation'
+import Angelcare360CustomerLoginExperience from '@/components/angelcare360/auth/Angelcare360CustomerLoginExperience'
 import {
   APP_SESSION_COOKIE,
   generateSessionToken,
 } from '@/lib/ac360-portability/auth-session'
+import { getAngelcare360CustomerBroadcastSnapshot } from '@/lib/angelcare360/customer-broadcasts'
+import { createClient } from '@/lib/supabase/server'
 
 type LoginUser = {
   id: string
@@ -22,6 +25,13 @@ const OPERATOR_ROLES = new Set([
   'support_operator',
   'implementation_manager',
 ])
+
+export const dynamic = 'force-dynamic'
+export const metadata: Metadata = {
+  title: 'AngelCare 360 · Connexion établissement',
+  description: 'SANILA Operating System · Pilotage établissement scolaire.',
+}
+
 
 function normalizeNext(value: string | undefined) {
   if (!value) return ''
@@ -60,7 +70,7 @@ function errorHref(error: 'missing' | 'invalid' | 'server', next: string) {
   return `/angelcare-360-access/login?error=${error}${suffix}`
 }
 
-export default async function Angelcare360InternalLoginPage({
+export default async function Angelcare360CustomerLoginPage({
   searchParams,
 }: {
   searchParams?: Promise<{
@@ -75,11 +85,11 @@ export default async function Angelcare360InternalLoginPage({
 
   const loginError =
     errorCode === 'missing'
-      ? 'Veuillez saisir votre nom utilisateur et votre mot de passe.'
+      ? 'Veuillez saisir votre identifiant et votre mot de passe.'
       : errorCode === 'invalid'
-        ? 'Identifiants internes incorrects.'
+        ? 'Identifiant ou mot de passe incorrect.'
         : errorCode === 'server'
-          ? 'Connexion interne indisponible pour le moment. Réessayez.'
+          ? 'La connexion sécurisée est momentanément indisponible. Réessayez dans quelques instants.'
           : null
 
   async function loginAction(formData: FormData) {
@@ -162,147 +172,14 @@ export default async function Angelcare360InternalLoginPage({
     redirect(requestedNext || defaultInternalRoute(user))
   }
 
+  const initialBroadcasts = await getAngelcare360CustomerBroadcastSnapshot()
+
   return (
-    <main
-      style={{
-        minHeight: '100vh',
-        display: 'grid',
-        placeItems: 'center',
-        padding: '32px 20px',
-        background:
-          'radial-gradient(circle at top left, rgba(16,67,118,.08), transparent 34%), linear-gradient(180deg,#f7fafc 0%,#eef4f8 100%)',
-        color: '#122033',
-        fontFamily:
-          'Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-      }}
-    >
-      <section
-        style={{
-          width: '100%',
-          maxWidth: 470,
-          border: '1px solid #dce6ee',
-          borderRadius: 22,
-          background: '#fff',
-          boxShadow: '0 24px 70px rgba(21,44,68,.12)',
-          padding: 34,
-        }}
-      >
-        <div
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            borderRadius: 999,
-            background: '#eef5fa',
-            border: '1px solid #d8e6f0',
-            padding: '7px 11px',
-            fontSize: 12,
-            fontWeight: 800,
-            letterSpacing: '.08em',
-            color: '#29577c',
-          }}
-        >
-          ANGELCARE 360 · INTERNAL ACCESS
-        </div>
-
-        <h1 style={{ margin: '22px 0 8px', fontSize: 31, lineHeight: 1.1 }}>
-          Connexion opérateur
-        </h1>
-
-        <p style={{ margin: '0 0 26px', lineHeight: 1.55, color: '#637387' }}>
-          Accès interne réservé aux utilisateurs AngelCare autorisés. Utilisez
-          votre nom utilisateur OpsOS — par exemple <strong>ceo</strong> — et
-          votre mot de passe interne.
-        </p>
-
-        {loginError ? (
-          <div
-            style={{
-              marginBottom: 18,
-              borderRadius: 12,
-              border: '1px solid #efcaca',
-              background: '#fff4f4',
-              padding: '11px 13px',
-              color: '#9d2929',
-              fontSize: 14,
-            }}
-          >
-            {loginError}
-          </div>
-        ) : null}
-
-        <form action={loginAction} style={{ display: 'grid', gap: 17 }}>
-          <input type="hidden" name="next" value={safeNext} />
-
-          <label style={{ display: 'grid', gap: 7 }}>
-            <span style={{ fontSize: 13, fontWeight: 750 }}>Nom utilisateur</span>
-            <input
-              name="username"
-              autoComplete="username"
-              placeholder="ex: ceo"
-              required
-              style={{
-                height: 48,
-                borderRadius: 12,
-                border: '1px solid #cfdce6',
-                padding: '0 14px',
-                fontSize: 15,
-                outline: 'none',
-              }}
-            />
-          </label>
-
-          <label style={{ display: 'grid', gap: 7 }}>
-            <span style={{ fontSize: 13, fontWeight: 750 }}>Mot de passe</span>
-            <input
-              name="password"
-              type="password"
-              autoComplete="current-password"
-              placeholder="••••••••"
-              required
-              style={{
-                height: 48,
-                borderRadius: 12,
-                border: '1px solid #cfdce6',
-                padding: '0 14px',
-                fontSize: 15,
-                outline: 'none',
-              }}
-            />
-          </label>
-
-          <button
-            type="submit"
-            style={{
-              marginTop: 3,
-              height: 50,
-              border: 0,
-              borderRadius: 12,
-              background: '#173f63',
-              color: '#fff',
-              fontSize: 15,
-              fontWeight: 800,
-              cursor: 'pointer',
-            }}
-          >
-            Ouvrir AngelCare 360
-          </button>
-        </form>
-
-        <div
-          style={{
-            marginTop: 22,
-            borderTop: '1px solid #edf1f4',
-            paddingTop: 17,
-            color: '#778695',
-            fontSize: 12,
-            lineHeight: 1.5,
-          }}
-        >
-          Session interne AngelCare · rôle contrôlé · cookie sécurisé
-          <br />
-          Cette page est distincte de la connexion client Marketplace.
-        </div>
-      </section>
-    </main>
+    <Angelcare360CustomerLoginExperience
+      loginAction={loginAction}
+      loginError={loginError}
+      safeNext={safeNext}
+      initialBroadcasts={initialBroadcasts}
+    />
   )
 }
