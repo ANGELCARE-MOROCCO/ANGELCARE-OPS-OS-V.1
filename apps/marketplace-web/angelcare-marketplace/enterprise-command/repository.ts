@@ -217,7 +217,7 @@ function segmentRuleMatch(profile:Record<string,unknown>,rule:SegmentRuleInput){
 }
 function segmentGroupsMatch(profile:Record<string,unknown>,filters:Record<string,unknown>){
   const raw=Array.isArray(filters.groups)?filters.groups:[]
-  const groups:SegmentRuleGroup[]=raw.map((group:any)=>({operator:text(group?.operator)==='or'?'or':'and',rules:(Array.isArray(group?.rules)?group.rules:[]).map((rule:any)=>({field:text(rule?.field),operator:text(rule?.operator)||'eq',value:rule?.value})).filter((rule:SegmentRuleInput)=>rule.field)})).filter(group=>group.rules.length)
+  const groups:SegmentRuleGroup[]=raw.map((group:any):SegmentRuleGroup=>({operator:text(group?.operator)==='or'?'or':'and',rules:(Array.isArray(group?.rules)?group.rules:[]).map((rule:any)=>({field:text(rule?.field),operator:text(rule?.operator)||'eq',value:rule?.value})).filter((rule:SegmentRuleInput)=>rule.field)})).filter(group=>group.rules.length)
   if(!groups.length)return true
   const outcomes=groups.map(group=>group.operator==='or'?group.rules.some(rule=>segmentRuleMatch(profile,rule)):group.rules.every(rule=>segmentRuleMatch(profile,rule)))
   return text(filters.groupOperator)==='or'?outcomes.some(Boolean):outcomes.every(Boolean)
