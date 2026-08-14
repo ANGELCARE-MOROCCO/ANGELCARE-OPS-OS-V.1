@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const context = await acContext(request, 'ac-whatsapp.responses.manage')
+  const context = await acContext(request, 'ac-whatsapp.templates.manage')
   if ('error' in context) return context.error
   const body = await request.json().catch(() => ({}))
   if (!String(body.name || '').trim()) return fail('CATEGORY_NAME_REQUIRED', 422)
@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
 }
 
 export async function PATCH(request: NextRequest) {
-  const context = await acContext(request, 'ac-whatsapp.responses.manage')
+  const context = await acContext(request, 'ac-whatsapp.templates.manage')
   if ('error' in context) return context.error
   const body = await request.json().catch(() => ({})); const id = String(body.id || '')
   if (!id) return fail('CATEGORY_ID_REQUIRED', 422)
@@ -52,7 +52,7 @@ export async function PATCH(request: NextRequest) {
 }
 
 export async function DELETE(request: NextRequest) {
-  const context = await acContext(request, 'ac-whatsapp.responses.manage')
+  const context = await acContext(request, 'ac-whatsapp.templates.manage')
   if ('error' in context) return context.error
   const body = await request.json().catch(() => ({})); const id = String(body.id || '')
   if (!id) return fail('CATEGORY_ID_REQUIRED', 422)
