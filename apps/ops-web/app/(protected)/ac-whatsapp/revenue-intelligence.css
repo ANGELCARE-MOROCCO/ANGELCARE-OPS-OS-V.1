@@ -23,7 +23,43 @@
 [data-acw-account-card="true"][data-selected="true"] :where(p,strong,h1,h2,h3,h4){-webkit-text-fill-color:currentColor!important}
 [data-acw-account-card="true"]{background-image:radial-gradient(circle at 90% 0%,rgba(125,211,252,.12),transparent 30%)}
 
-.acx-root{display:flex;flex-direction:column;gap:14px;min-width:0}
+.acx-root{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  min-width:0;
+
+  /* Automation Command owns a safe inner scroll surface inside the fixed ACW shell. */
+  max-height:calc(100dvh - 300px);
+  min-height:0;
+  overflow-y:auto;
+  overflow-x:hidden;
+  overscroll-behavior-y:contain;
+  scrollbar-gutter:stable;
+  padding-right:4px;
+  padding-bottom:96px;
+  -webkit-overflow-scrolling:touch;
+}
+
+.acx-root::-webkit-scrollbar{
+  width:8px;
+}
+
+.acx-root::-webkit-scrollbar-track{
+  background:transparent;
+}
+
+.acx-root::-webkit-scrollbar-thumb{
+  border:2px solid transparent;
+  border-radius:999px;
+  background:rgba(91,124,151,.30);
+  background-clip:padding-box;
+}
+
+.acx-root::-webkit-scrollbar-thumb:hover{
+  background:rgba(37,99,235,.42);
+  background-clip:padding-box;
+}
 .acx-hero{position:relative;overflow:hidden;border:1px solid #bfdcf1;border-radius:28px;background:linear-gradient(130deg,#fbfdff 0%,#f2f9ff 42%,#eef5ff 100%);box-shadow:0 24px 64px rgba(15,39,67,.09),inset 0 1px 0 #fff;padding:22px 24px 18px}
 .acx-hero::after{content:"";position:absolute;inset:auto 0 0;height:2px;background:linear-gradient(90deg,transparent,#38bdf8 18%,#2563eb 48%,#7c3aed 72%,transparent);opacity:.6}
 .acx-hero-scan{position:absolute;inset:0;background-image:linear-gradient(rgba(2,132,199,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(2,132,199,.035) 1px,transparent 1px);background-size:34px 34px;mask-image:linear-gradient(to right,#000,transparent 75%);pointer-events:none}
