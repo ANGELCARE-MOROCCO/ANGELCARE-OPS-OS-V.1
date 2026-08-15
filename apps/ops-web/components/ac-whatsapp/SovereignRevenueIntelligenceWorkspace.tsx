@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useMemo, useRef, useState } from "react"
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react"
 import {
   Activity, AlertTriangle, ArrowRight, BadgeCheck, BarChart3, BookOpen, Bot, BrainCircuit,
   CheckCircle2, ChevronRight, CirclePause, CirclePlay, Clock3, Command, Database,
@@ -58,6 +58,7 @@ export default function SovereignRevenueIntelligenceWorkspace({accounts}:{accoun
   const [busy,setBusy]=useState(false)
   const [palette,setPalette]=useState(false)
   const [teach,setTeach]=useState(false)
+  const rootRef=useRef<HTMLDivElement|null>(null)
 
   async function refresh(){
     setLoading(true)
@@ -78,6 +79,104 @@ export default function SovereignRevenueIntelligenceWorkspace({accounts}:{accoun
     }
     window.addEventListener("keydown",listener);return()=>window.removeEventListener("keydown",listener)
   },[])
+
+  useLayoutEffect(()=>{
+    const root=rootRef.current
+    if(!root)return
+
+    let frame=0
+    let parent=root.parentElement
+    let scrollHost:HTMLElement|Window=window
+
+    while(parent){
+      const overflowY=window.getComputedStyle(parent).overflowY
+      if(/auto|scroll|overlay/.test(overflowY)){
+        scrollHost=parent
+        break
+      }
+      parent=parent.parentElement
+    }
+
+    const measure=()=>{
+      window.cancelAnimationFrame(frame)
+
+      frame=window.requestAnimationFrame(()=>{
+        const rect=root.getBoundingClientRect()
+
+        const hostBottom=
+          scrollHost===window
+            ? window.innerHeight
+            : (scrollHost as HTMLElement).getBoundingClientRect().bottom
+
+        const viewportBottom=Math.min(
+          window.innerHeight,
+          hostBottom
+        )
+
+        const available=Math.max(
+          360,
+          Math.floor(
+            viewportBottom -
+            Math.max(rect.top,0) -
+            12
+          )
+        )
+
+        root.style.setProperty(
+          "--acx-viewport-height",
+          `${available}px`
+        )
+      })
+    }
+
+    measure()
+
+    const observer=
+      typeof ResizeObserver!=="undefined"
+        ? new ResizeObserver(measure)
+        : null
+
+    if(observer&&root.parentElement){
+      observer.observe(root.parentElement)
+    }
+
+    window.addEventListener("resize",measure)
+
+    if(scrollHost===window){
+      window.addEventListener("scroll",measure,{passive:true})
+    }else{
+      ;(scrollHost as HTMLElement).addEventListener(
+        "scroll",
+        measure,
+        {passive:true}
+      )
+    }
+
+    const commandBody=
+      root.querySelector<HTMLElement>(".acx-command-grid")
+
+    commandBody?.scrollTo({
+      top:0,
+      left:0,
+      behavior:"auto"
+    })
+
+    return()=>{
+      window.cancelAnimationFrame(frame)
+      observer?.disconnect()
+
+      window.removeEventListener("resize",measure)
+
+      if(scrollHost===window){
+        window.removeEventListener("scroll",measure)
+      }else{
+        ;(scrollHost as HTMLElement).removeEventListener(
+          "scroll",
+          measure
+        )
+      }
+    }
+  },[tab])
 
   const setting=data?.settings?.find(row=>row.scope_type==="global"&&!row.scope_id)||null
   const mode=String(setting?.autonomy_mode||"manual")
@@ -112,7 +211,7 @@ export default function SovereignRevenueIntelligenceWorkspace({accounts}:{accoun
 
   const shellProps={data:data as RevenueData,command,setting,accounts,onRefresh:refresh,onNotice:setNotice,onTeach:()=>setTeach(true)}
 
-  return <div data-acw-revenue-intelligence data-acx-command-experience="true" className="acx-root">
+  return <div ref={rootRef} data-acw-revenue-intelligence data-acx-command-experience="true" className="acx-root">
     <CommandHero mode={mode} readiness={readiness} coverage={coverage} maturity={maturityAverage} knowledgeHealth={knowledgeHealth} connected={connected} accounts={accounts.length} doctrines={command?.counts?.doctrineNodes||0} onTeach={()=>setTeach(true)} onPalette={()=>setPalette(true)} onRefresh={refresh} onPause={()=>void setAutonomy("manual")} busy={busy}/>
     {error?<NoticeBanner tone="danger" {...friendlyAcError(error)}/>:null}
     {notice?<NoticeBanner tone={notice.tone} title={notice.title} description={notice.description} onClose={()=>setNotice(null)}/>:null}
