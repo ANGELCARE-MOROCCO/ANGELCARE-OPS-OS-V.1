@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from '@/lib/supabase/contract-client'
 
 export type JsonRecord = Record<string, any>
 export type Tone = 'blue' | 'green' | 'amber' | 'red' | 'violet' | 'slate'

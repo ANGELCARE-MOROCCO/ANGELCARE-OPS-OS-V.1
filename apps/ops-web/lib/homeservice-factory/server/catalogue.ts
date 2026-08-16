@@ -1,5 +1,6 @@
 import 'server-only'
-import { createClient, type SupabaseClient } from '@supabase/supabase-js'
+import { createClient } from '@/lib/supabase/contract-client'
+import { type SupabaseClient } from '@supabase/supabase-js'
 import type { FactoryCataloguePayload, FactoryCategorySource } from '@/types/homeservice-factory'
 import { FACTORY_CONTEXTS, FACTORY_OBJECTIVES, FACTORY_OUTCOMES, FACTORY_PAIN_POINTS } from '../constants'
 

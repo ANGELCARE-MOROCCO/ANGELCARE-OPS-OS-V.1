@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from '@/lib/supabase/contract-client'
 import { createPartnerHardDeleteV2AdminClient, hardDeleteTrainingHubPartnerV2 } from '@/lib/traininghub/production/partner-hard-delete-v2'
 export const dynamic = 'force-dynamic'; export const revalidate = 0
 type Row = Record<string, any>; type RouteContext = { params: Promise<{ organizationId: string }> }

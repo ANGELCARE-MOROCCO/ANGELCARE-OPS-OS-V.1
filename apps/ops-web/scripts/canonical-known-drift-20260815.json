@@ -1,0 +1,908 @@
+{
+  "invalid_read_pairs": [
+    {
+      "column": "contact_id",
+      "occurrences": 1,
+      "table": "ac_whatsapp_stop_list"
+    },
+    {
+      "column": "trainee_id",
+      "occurrences": 1,
+      "table": "academy_alerts"
+    },
+    {
+      "column": "assignment_date",
+      "occurrences": 1,
+      "table": "academy_trainer_assignments"
+    },
+    {
+      "column": "start_time",
+      "occurrences": 2,
+      "table": "academy_trainer_assignments"
+    },
+    {
+      "column": "created_at",
+      "occurrences": 1,
+      "table": "ai_provider_usage_ledger"
+    },
+    {
+      "column": "name",
+      "occurrences": 4,
+      "table": "app_users"
+    },
+    {
+      "column": "role_key",
+      "occurrences": 2,
+      "table": "app_users"
+    },
+    {
+      "column": "user_email",
+      "occurrences": 1,
+      "table": "app_users"
+    },
+    {
+      "column": "end_at",
+      "occurrences": 1,
+      "table": "bd_tasks"
+    },
+    {
+      "column": "is_archived",
+      "occurrences": 1,
+      "table": "bd_tasks"
+    },
+    {
+      "column": "created_at",
+      "occurrences": 3,
+      "table": "caregiver_checkins"
+    },
+    {
+      "column": "created_at",
+      "occurrences": 1,
+      "table": "connect_action_assignees"
+    },
+    {
+      "column": "external_id",
+      "occurrences": 1,
+      "table": "email_os_core_inbox"
+    },
+    {
+      "column": "message_id",
+      "occurrences": 1,
+      "table": "email_os_core_inbox"
+    },
+    {
+      "column": "work_date",
+      "occurrences": 1,
+      "table": "hr_attendance"
+    },
+    {
+      "column": "version",
+      "occurrences": 3,
+      "table": "hr_interviews"
+    },
+    {
+      "column": "document_key",
+      "occurrences": 1,
+      "table": "hr_onboarding_documents"
+    },
+    {
+      "column": "storage_bucket",
+      "occurrences": 1,
+      "table": "hr_onboarding_documents"
+    },
+    {
+      "column": "storage_path",
+      "occurrences": 1,
+      "table": "hr_onboarding_documents"
+    },
+    {
+      "column": "version",
+      "occurrences": 5,
+      "table": "hr_staff_profiles"
+    },
+    {
+      "column": "assigned_user_id",
+      "occurrences": 1,
+      "table": "leads"
+    },
+    {
+      "column": "completed_at",
+      "occurrences": 1,
+      "table": "learn_assignments"
+    },
+    {
+      "column": "completion_status",
+      "occurrences": 1,
+      "table": "learn_assignments"
+    },
+    {
+      "column": "site_id",
+      "occurrences": 1,
+      "table": "learn_assignments"
+    },
+    {
+      "column": "expires_at",
+      "occurrences": 1,
+      "table": "learn_certificates"
+    },
+    {
+      "column": "site_id",
+      "occurrences": 1,
+      "table": "learn_certificates"
+    },
+    {
+      "column": "last_accessed_at",
+      "occurrences": 2,
+      "table": "learn_progress"
+    },
+    {
+      "column": "lesson_id",
+      "occurrences": 1,
+      "table": "learn_progress"
+    },
+    {
+      "column": "organization_id",
+      "occurrences": 1,
+      "table": "learn_progress"
+    },
+    {
+      "column": "progress_status",
+      "occurrences": 1,
+      "table": "learn_progress"
+    },
+    {
+      "column": "score_percent",
+      "occurrences": 1,
+      "table": "learn_progress"
+    },
+    {
+      "column": "site_id",
+      "occurrences": 1,
+      "table": "learn_progress"
+    },
+    {
+      "column": "created_at",
+      "occurrences": 1,
+      "table": "learn_quizzes"
+    },
+    {
+      "column": "completed_at",
+      "occurrences": 1,
+      "table": "learn_refresh_reminders"
+    },
+    {
+      "column": "due_at",
+      "occurrences": 2,
+      "table": "learn_refresh_reminders"
+    },
+    {
+      "column": "reminder_status",
+      "occurrences": 1,
+      "table": "learn_refresh_reminders"
+    },
+    {
+      "column": "site_id",
+      "occurrences": 1,
+      "table": "learn_refresh_reminders"
+    },
+    {
+      "column": "requested_at",
+      "occurrences": 1,
+      "table": "market_content_source_replacements"
+    },
+    {
+      "column": "message",
+      "occurrences": 1,
+      "table": "system_runtime_events"
+    },
+    {
+      "column": "metadata",
+      "occurrences": 1,
+      "table": "system_runtime_events"
+    },
+    {
+      "column": "module_key",
+      "occurrences": 1,
+      "table": "system_runtime_events"
+    },
+    {
+      "column": "route",
+      "occurrences": 1,
+      "table": "system_runtime_events"
+    },
+    {
+      "column": "severity",
+      "occurrences": 1,
+      "table": "system_runtime_events"
+    },
+    {
+      "column": "created_at",
+      "occurrences": 1,
+      "table": "trn_attendance_records"
+    },
+    {
+      "column": "checklist_title",
+      "occurrences": 1,
+      "table": "trn_delivery_checklists"
+    },
+    {
+      "column": "created_at",
+      "occurrences": 1,
+      "table": "trn_delivery_checklists"
+    },
+    {
+      "column": "status",
+      "occurrences": 1,
+      "table": "trn_delivery_checklists"
+    },
+    {
+      "column": "end_at",
+      "occurrences": 1,
+      "table": "trn_session_dates"
+    },
+    {
+      "column": "location_address",
+      "occurrences": 1,
+      "table": "trn_session_dates"
+    },
+    {
+      "column": "start_at",
+      "occurrences": 2,
+      "table": "trn_session_dates"
+    },
+    {
+      "column": "status",
+      "occurrences": 1,
+      "table": "trn_session_participants"
+    },
+    {
+      "column": "notes",
+      "occurrences": 1,
+      "table": "trn_session_resources_allocated"
+    },
+    {
+      "column": "status",
+      "occurrences": 1,
+      "table": "trn_session_resources_allocated"
+    },
+    {
+      "column": "assignment_status",
+      "occurrences": 1,
+      "table": "trn_session_trainers"
+    }
+  ],
+  "invalid_write_pairs": [
+    {
+      "column": "updated_at",
+      "occurrences": 1,
+      "table": "academy_alerts"
+    },
+    {
+      "column": "entity",
+      "occurrences": 1,
+      "table": "academy_notification_queue"
+    },
+    {
+      "column": "updated_at",
+      "occurrences": 3,
+      "table": "academy_partners"
+    },
+    {
+      "column": "partner_name",
+      "occurrences": 1,
+      "table": "academy_placement_cases"
+    },
+    {
+      "column": "assignment_date",
+      "occurrences": 1,
+      "table": "academy_trainer_assignments"
+    },
+    {
+      "column": "cohort_label",
+      "occurrences": 1,
+      "table": "academy_trainer_assignments"
+    },
+    {
+      "column": "cohort_reference",
+      "occurrences": 2,
+      "table": "academy_trainer_assignments"
+    },
+    {
+      "column": "delivery_format",
+      "occurrences": 1,
+      "table": "academy_trainer_assignments"
+    },
+    {
+      "column": "end_time",
+      "occurrences": 7,
+      "table": "academy_trainer_assignments"
+    },
+    {
+      "column": "program_label",
+      "occurrences": 1,
+      "table": "academy_trainer_assignments"
+    },
+    {
+      "column": "start_time",
+      "occurrences": 7,
+      "table": "academy_trainer_assignments"
+    },
+    {
+      "column": "action",
+      "occurrences": 4,
+      "table": "audit_change_logs"
+    },
+    {
+      "column": "actor_user_id",
+      "occurrences": 4,
+      "table": "audit_change_logs"
+    },
+    {
+      "column": "entity_id",
+      "occurrences": 4,
+      "table": "audit_change_logs"
+    },
+    {
+      "column": "entity_type",
+      "occurrences": 4,
+      "table": "audit_change_logs"
+    },
+    {
+      "column": "message",
+      "occurrences": 4,
+      "table": "audit_change_logs"
+    },
+    {
+      "column": "metadata",
+      "occurrences": 4,
+      "table": "audit_change_logs"
+    },
+    {
+      "column": "severity",
+      "occurrences": 4,
+      "table": "audit_change_logs"
+    },
+    {
+      "column": "actor_user_id",
+      "occurrences": 4,
+      "table": "audit_security_logs"
+    },
+    {
+      "column": "entity_id",
+      "occurrences": 4,
+      "table": "audit_security_logs"
+    },
+    {
+      "column": "entity_type",
+      "occurrences": 4,
+      "table": "audit_security_logs"
+    },
+    {
+      "column": "message",
+      "occurrences": 4,
+      "table": "audit_security_logs"
+    },
+    {
+      "column": "metadata",
+      "occurrences": 4,
+      "table": "audit_security_logs"
+    },
+    {
+      "column": "severity",
+      "occurrences": 4,
+      "table": "audit_security_logs"
+    },
+    {
+      "column": "title",
+      "occurrences": 9,
+      "table": "auto_events"
+    },
+    {
+      "column": "last_run_at",
+      "occurrences": 1,
+      "table": "b2b_automation_rules"
+    },
+    {
+      "column": "current_step_order",
+      "occurrences": 1,
+      "table": "b2b_campaign_prospects"
+    },
+    {
+      "column": "last_step_at",
+      "occurrences": 1,
+      "table": "b2b_campaign_prospects"
+    },
+    {
+      "column": "enrolled_count",
+      "occurrences": 1,
+      "table": "b2b_campaigns"
+    },
+    {
+      "column": "action_type",
+      "occurrences": 1,
+      "table": "b2b_direct_actions"
+    },
+    {
+      "column": "channel",
+      "occurrences": 1,
+      "table": "b2b_direct_actions"
+    },
+    {
+      "column": "created_by",
+      "occurrences": 1,
+      "table": "b2b_direct_actions"
+    },
+    {
+      "column": "campaign_status",
+      "occurrences": 1,
+      "table": "b2b_prospects"
+    },
+    {
+      "column": "last_campaign_touch_at",
+      "occurrences": 1,
+      "table": "b2b_prospects"
+    },
+    {
+      "column": "priority",
+      "occurrences": 1,
+      "table": "b2b_prospects"
+    },
+    {
+      "column": "description",
+      "occurrences": 1,
+      "table": "b2b_sequences"
+    },
+    {
+      "column": "action",
+      "occurrences": 1,
+      "table": "bd_automation_logs"
+    },
+    {
+      "column": "error",
+      "occurrences": 1,
+      "table": "bd_automation_logs"
+    },
+    {
+      "column": "message",
+      "occurrences": 1,
+      "table": "bd_automation_logs"
+    },
+    {
+      "column": "payload",
+      "occurrences": 1,
+      "table": "bd_automation_logs"
+    },
+    {
+      "column": "rule_name",
+      "occurrences": 1,
+      "table": "bd_automation_logs"
+    },
+    {
+      "column": "status",
+      "occurrences": 1,
+      "table": "bd_automation_logs"
+    },
+    {
+      "column": "trigger_type",
+      "occurrences": 1,
+      "table": "bd_automation_logs"
+    },
+    {
+      "column": "canonical_bridge_status",
+      "occurrences": 3,
+      "table": "carelink_mission_action_logs"
+    },
+    {
+      "column": "created_by",
+      "occurrences": 3,
+      "table": "carelink_mission_action_logs"
+    },
+    {
+      "column": "mission_code",
+      "occurrences": 1,
+      "table": "carelink_mission_notifications"
+    },
+    {
+      "column": "access_status",
+      "occurrences": 2,
+      "table": "core_organizations"
+    },
+    {
+      "column": "archived_at",
+      "occurrences": 2,
+      "table": "core_organizations"
+    },
+    {
+      "column": "deleted_at",
+      "occurrences": 2,
+      "table": "core_organizations"
+    },
+    {
+      "column": "display_name",
+      "occurrences": 1,
+      "table": "core_organizations"
+    },
+    {
+      "column": "is_active",
+      "occurrences": 2,
+      "table": "core_organizations"
+    },
+    {
+      "column": "account_id",
+      "occurrences": 1,
+      "table": "email_audit_logs"
+    },
+    {
+      "column": "details",
+      "occurrences": 1,
+      "table": "email_audit_logs"
+    },
+    {
+      "column": "entity_id",
+      "occurrences": 1,
+      "table": "email_audit_logs"
+    },
+    {
+      "column": "entity_type",
+      "occurrences": 1,
+      "table": "email_audit_logs"
+    },
+    {
+      "column": "message_id",
+      "occurrences": 1,
+      "table": "email_messages"
+    },
+    {
+      "column": "provider_uid",
+      "occurrences": 1,
+      "table": "email_messages"
+    },
+    {
+      "column": "raw_headers",
+      "occurrences": 1,
+      "table": "email_messages"
+    },
+    {
+      "column": "actor",
+      "occurrences": 1,
+      "table": "email_os_core_access_audit"
+    },
+    {
+      "column": "resource",
+      "occurrences": 1,
+      "table": "email_os_core_access_audit"
+    },
+    {
+      "column": "mailbox_id",
+      "occurrences": 1,
+      "table": "email_os_core_attachments"
+    },
+    {
+      "column": "email_address",
+      "occurrences": 1,
+      "table": "email_os_core_provider_logs"
+    },
+    {
+      "column": "error",
+      "occurrences": 1,
+      "table": "email_os_core_provider_logs"
+    },
+    {
+      "column": "provider_profile_id",
+      "occurrences": 1,
+      "table": "email_os_core_provider_logs"
+    },
+    {
+      "column": "test_type",
+      "occurrences": 1,
+      "table": "email_os_core_provider_logs"
+    },
+    {
+      "column": "tested_at",
+      "occurrences": 1,
+      "table": "email_os_core_provider_logs"
+    },
+    {
+      "column": "note",
+      "occurrences": 1,
+      "table": "email_os_message_assignments"
+    },
+    {
+      "column": "status",
+      "occurrences": 1,
+      "table": "email_os_message_assignments"
+    },
+    {
+      "column": "account_id",
+      "occurrences": 1,
+      "table": "email_threads"
+    },
+    {
+      "column": "assigned_owner_label",
+      "occurrences": 1,
+      "table": "email_threads"
+    },
+    {
+      "column": "external_thread_id",
+      "occurrences": 1,
+      "table": "email_threads"
+    },
+    {
+      "column": "participants",
+      "occurrences": 1,
+      "table": "email_threads"
+    },
+    {
+      "column": "action",
+      "occurrences": 3,
+      "table": "hr_activity_events"
+    },
+    {
+      "column": "entity_id",
+      "occurrences": 3,
+      "table": "hr_activity_events"
+    },
+    {
+      "column": "entity_type",
+      "occurrences": 3,
+      "table": "hr_activity_events"
+    },
+    {
+      "column": "metadata",
+      "occurrences": 3,
+      "table": "hr_activity_events"
+    },
+    {
+      "column": "actor_id",
+      "occurrences": 2,
+      "table": "hr_activity_timeline"
+    },
+    {
+      "column": "approver_name",
+      "occurrences": 1,
+      "table": "hr_approval_requests"
+    },
+    {
+      "column": "request_type",
+      "occurrences": 2,
+      "table": "hr_approval_requests"
+    },
+    {
+      "column": "requester_name",
+      "occurrences": 1,
+      "table": "hr_approval_requests"
+    },
+    {
+      "column": "entity_id",
+      "occurrences": 1,
+      "table": "hr_approvals"
+    },
+    {
+      "column": "entity_type",
+      "occurrences": 1,
+      "table": "hr_approvals"
+    },
+    {
+      "column": "request_type",
+      "occurrences": 1,
+      "table": "hr_approvals"
+    },
+    {
+      "column": "entity",
+      "occurrences": 1,
+      "table": "hr_audit_logs"
+    },
+    {
+      "column": "check_type",
+      "occurrences": 1,
+      "table": "hr_data_quality_checks"
+    },
+    {
+      "column": "entity_id",
+      "occurrences": 1,
+      "table": "hr_data_quality_checks"
+    },
+    {
+      "column": "entity_table",
+      "occurrences": 1,
+      "table": "hr_data_quality_checks"
+    },
+    {
+      "column": "finding",
+      "occurrences": 1,
+      "table": "hr_data_quality_checks"
+    },
+    {
+      "column": "notes",
+      "occurrences": 1,
+      "table": "hr_data_quality_checks"
+    },
+    {
+      "column": "recommended_fix",
+      "occurrences": 1,
+      "table": "hr_data_quality_checks"
+    },
+    {
+      "column": "cancellation_reason",
+      "occurrences": 1,
+      "table": "hr_interviews"
+    },
+    {
+      "column": "pipeline_stage_after",
+      "occurrences": 1,
+      "table": "hr_interviews"
+    },
+    {
+      "column": "updated_by",
+      "occurrences": 2,
+      "table": "hr_interviews"
+    },
+    {
+      "column": "version",
+      "occurrences": 2,
+      "table": "hr_interviews"
+    },
+    {
+      "column": "audience_role",
+      "occurrences": 1,
+      "table": "hr_notifications"
+    },
+    {
+      "column": "body",
+      "occurrences": 1,
+      "table": "hr_notifications"
+    },
+    {
+      "column": "payload",
+      "occurrences": 1,
+      "table": "hr_notifications"
+    },
+    {
+      "column": "user_id",
+      "occurrences": 1,
+      "table": "hr_notifications"
+    },
+    {
+      "column": "archive_reason",
+      "occurrences": 2,
+      "table": "hr_staff_profiles"
+    },
+    {
+      "column": "archived_by",
+      "occurrences": 2,
+      "table": "hr_staff_profiles"
+    },
+    {
+      "column": "lifecycle_state",
+      "occurrences": 2,
+      "table": "hr_staff_profiles"
+    },
+    {
+      "column": "terminated_at",
+      "occurrences": 1,
+      "table": "hr_staff_profiles"
+    },
+    {
+      "column": "termination_reason",
+      "occurrences": 1,
+      "table": "hr_staff_profiles"
+    },
+    {
+      "column": "updated_by",
+      "occurrences": 2,
+      "table": "hr_staff_profiles"
+    },
+    {
+      "column": "code",
+      "occurrences": 1,
+      "table": "hsd_handoff_amendments"
+    },
+    {
+      "column": "requested_by",
+      "occurrences": 1,
+      "table": "hsd_handoff_amendments"
+    },
+    {
+      "column": "metadata",
+      "occurrences": 2,
+      "table": "incidents"
+    },
+    {
+      "column": "owner_agent",
+      "occurrences": 1,
+      "table": "market_os_actions"
+    },
+    {
+      "column": "address",
+      "occurrences": 1,
+      "table": "missions"
+    },
+    {
+      "column": "actor",
+      "occurrences": 1,
+      "table": "opsos_action_logs"
+    },
+    {
+      "column": "payload_json",
+      "occurrences": 1,
+      "table": "opsos_action_logs"
+    },
+    {
+      "column": "reason",
+      "occurrences": 1,
+      "table": "opsos_action_logs"
+    },
+    {
+      "column": "result_json",
+      "occurrences": 1,
+      "table": "opsos_action_logs"
+    },
+    {
+      "column": "notes",
+      "occurrences": 1,
+      "table": "service_pricing_rules"
+    },
+    {
+      "column": "region",
+      "occurrences": 1,
+      "table": "service_pricing_rules"
+    },
+    {
+      "column": "status",
+      "occurrences": 1,
+      "table": "service_pricing_rules"
+    },
+    {
+      "column": "message",
+      "occurrences": 1,
+      "table": "system_runtime_events"
+    },
+    {
+      "column": "metadata",
+      "occurrences": 1,
+      "table": "system_runtime_events"
+    },
+    {
+      "column": "severity",
+      "occurrences": 1,
+      "table": "system_runtime_events"
+    },
+    {
+      "column": "business_stage_update",
+      "occurrences": 1,
+      "table": "whatsapp_contact_attempts"
+    }
+  ],
+  "missing_relations": [
+    "hr_training_course_assignments",
+    "intervention_config_items",
+    "b2b_workspace_automation_rules",
+    "b2b_workspace_partner_programs",
+    "b2b_workspace_reports",
+    "hr_employee_cases",
+    "hr_employee_lifecycle_events",
+    "traininghub_internal_actions",
+    "b2b_workspace_settings",
+    "ac_capital_command_activity",
+    "hr_employee_360_audit_events",
+    "hr_employee_360_idempotency",
+    "hr_record_links",
+    "academy_partner_activities",
+    "partner_activity_events",
+    "hr_interview_activity",
+    "intervention_config_audit_logs",
+    "marketing_ai_schedules",
+    "hr_openings",
+    "partner_requests",
+    "revenue_document_command_view",
+    "workspace_broadcast_memo_targets",
+    "hr_training_course_command_extensions",
+    "revenue_command_analytics_view",
+    "revenue_command_center_analytics"
+  ],
+  "missing_rpcs": [
+    "connect_current_user_ids",
+    "hr_onboarding_ensure_journey",
+    "hr_onboarding_execute"
+  ]
+}

@@ -1,4 +1,4 @@
-import { createClient } from "@supabase/supabase-js"
+import { createClient } from '@/lib/supabase/contract-client'
 
 export function createEmailOSCoreDb() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL

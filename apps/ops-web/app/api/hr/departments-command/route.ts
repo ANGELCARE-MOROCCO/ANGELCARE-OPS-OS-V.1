@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from '@/lib/supabase/contract-client'
 import { HR_TABLES } from '@/lib/hr-production/repository'
 
 export const dynamic = 'force-dynamic'

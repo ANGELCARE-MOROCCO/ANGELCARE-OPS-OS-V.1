@@ -1,5 +1,5 @@
 import crypto from 'node:crypto'
-import { createClient as createSupabaseAdmin } from '@supabase/supabase-js'
+import { createClient as createSupabaseAdmin } from '@/lib/supabase/contract-client'
 import { createClient as createSessionClient } from '@/lib/supabase/server'
 import { HSD_TENANT_ID } from '@/lib/homeservice-design/constants'
 import { requireHomeServiceApi, userId, type HomeServiceUser } from '@/lib/homeservice-design/server/auth'

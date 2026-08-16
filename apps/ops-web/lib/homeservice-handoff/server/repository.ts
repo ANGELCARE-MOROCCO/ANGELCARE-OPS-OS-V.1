@@ -1,4 +1,5 @@
-import{createClient,type SupabaseClient}from'@supabase/supabase-js'
+import { createClient } from '@/lib/supabase/contract-client'
+import { type SupabaseClient } from '@supabase/supabase-js'
 import type{HandoffDashboard,HandoffRequest,HandoffDate,PreflightFinding,MappingRule,TransmissionResult}from '@/types/homeservice-handoff'
 import type{HomeServiceUser}from '@/lib/homeservice-design/server/auth'
 import{userId,userLabel}from '@/lib/homeservice-design/server/auth'

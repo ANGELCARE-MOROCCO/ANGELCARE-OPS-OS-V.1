@@ -1,4 +1,4 @@
-import { createClient as createSupabaseAdmin } from "@supabase/supabase-js"
+import { createClient as createSupabaseAdmin } from '@/lib/supabase/contract-client'
 
 import { requireRevenueApiAccess } from "@/lib/revenue-command-center/api-access"
 import {

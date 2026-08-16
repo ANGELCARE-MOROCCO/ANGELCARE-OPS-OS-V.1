@@ -1,4 +1,5 @@
-import { createClient, type SupabaseClient } from "@supabase/supabase-js"
+import { createClient } from '@/lib/supabase/contract-client'
+import { type SupabaseClient } from '@supabase/supabase-js'
 import { AmbassadorServiceError } from "./errors"
 
 let cachedClient: SupabaseClient | null = null

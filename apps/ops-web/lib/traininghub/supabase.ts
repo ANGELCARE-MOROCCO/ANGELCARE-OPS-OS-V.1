@@ -1,6 +1,7 @@
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import { getSupabaseEnv } from '@/lib/supabase/env'
+import { wrapSupabaseClient } from '@/lib/supabase/contract-safe'
 
 export async function createTrainingHubUserClient() {
   const cookieStore = await cookies()
@@ -16,7 +17,7 @@ export async function createTrainingHubUserClient() {
     )
   }
 
-  return createServerClient(env.url, env.anonKey, {
+  return wrapSupabaseClient(createServerClient(env.url, env.anonKey, {
     cookies: {
       getAll() {
         return cookieStore.getAll()
@@ -27,5 +28,5 @@ export async function createTrainingHubUserClient() {
         } catch {}
       },
     },
-  })
+  }))
 }

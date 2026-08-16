@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from '@/lib/supabase/contract-client'
 
 export type OptionStatus = 'enabled' | 'disabled' | 'archived' | 'draft'
 export type SourceConfidence = 'live' | 'fallback'
