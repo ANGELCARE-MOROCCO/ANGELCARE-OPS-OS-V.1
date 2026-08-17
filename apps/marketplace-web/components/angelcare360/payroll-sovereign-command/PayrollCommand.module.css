@@ -15,4 +15,4 @@
 @media(max-width:900px){.shell{padding:22px 18px 70px}.masthead{align-items:flex-start;flex-direction:column}.schoolMark{border-left:0;border-top:1px solid var(--line);padding:16px 0 0;min-width:100%}.hero h2{font-size:34px}.mobileOnly{display:block}}
 @media(max-width:620px){.shell{padding:14px 12px 60px}.masthead,.hero{border-radius:22px;padding:20px}.title{font-size:38px}.grid4,.grid3{grid-template-columns:1fr 1fr}.heroRail{gap:12px}.heroMetric{min-width:calc(50% - 12px)}.navLink{padding:10px 12px}.table{min-width:760px}.button,.input,.select{min-height:46px}.sectionHead{align-items:flex-start;flex-direction:column}.card{padding:16px}}
 @media(max-width:420px){.grid4,.grid3{grid-template-columns:1fr}.heroMetric{min-width:100%}}
-@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+@media(prefers-reduced-motion:reduce){.universe,.universe *,.universe *::before,.universe *::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}

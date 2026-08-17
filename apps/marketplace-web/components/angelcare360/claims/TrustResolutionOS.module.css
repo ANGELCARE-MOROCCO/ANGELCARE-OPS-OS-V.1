@@ -528,7 +528,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
+  .page, .page *, .page *::before, .page *::after { scroll-behavior: auto !important; animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
 }
 
 .memoryBand { display: grid; grid-template-columns: .85fr 1.15fr; gap: 20px; padding: 0 clamp(16px,3vw,44px) 46px; }
