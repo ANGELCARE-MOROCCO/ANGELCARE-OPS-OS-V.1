@@ -13,7 +13,7 @@ type Envelope<T> = { data: T }
 const txt = (record: Record<string, unknown> | null | undefined, key: string) => String(record?.[key] ?? '')
 const money = (value: unknown) => `${Number(value || 0).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} Dh`
 
-export function CustomerMegaDossierOverlay({ customerId, onClose }: { customerId: string; onClose: () => void }) {
+export function CustomerMegaDossierOverlay({ customerId, onClose, onMinimize }: { customerId: string; onClose: () => void; onMinimize?: () => void }) {
   const [data, setData] = useState<CustomerMegaDossier | null>(null)
   const [tab, setTab] = useState('360')
   const [error, setError] = useState('')
@@ -35,7 +35,7 @@ export function CustomerMegaDossierOverlay({ customerId, onClose }: { customerId
 
   useEffect(() => { void reload() }, [customerId])
 
-  const tabs = ['360', 'Opérer', 'Famille', 'Commerce', 'Finance', 'CRM', 'Activité', 'Documents']
+  const tabs = ['360', 'Opérer', 'Famille', 'Commerce', 'Finance', 'CRM', 'Expérience', 'Activité', 'Documents']
   const customer = data?.customer || {}
   const wallet = Number(data?.walletAccount?.available_balance || data?.walletAccount?.balance || 0)
 
@@ -72,7 +72,7 @@ export function CustomerMegaDossierOverlay({ customerId, onClose }: { customerId
   }
 
   return <div className={styles.overlay}>
-    <section className={`${styles.dossier} ${fullscreen ? styles.dossierFullscreen : ''}`} aria-label="Mega dossier client">
+    <section className={`${styles.dossier} ${styles.customerRelationshipDossier} ${fullscreen ? styles.dossierFullscreen : ''}`} aria-label="Mega dossier client">
       <header className={styles.dossierHeader}>
         <div className={styles.panelTitle}>
           <div>
@@ -85,6 +85,7 @@ export function CustomerMegaDossierOverlay({ customerId, onClose }: { customerId
               <Link className={styles.button} href={`/angelcare-marketplace/admin/orders/new?customer=${customerId}`}><ShoppingBag size={14} />Créer commande</Link>
               <Link className={styles.buttonSecondary} href={`/angelcare-marketplace/admin/bookings?customer=${customerId}`}><CalendarDays size={14} />Booking</Link>
               <button className={styles.buttonSecondary} onClick={() => exportPdf('customer_dossier')}><Download size={14} />PDF</button>
+              {onMinimize ? <button className={styles.buttonSecondary} onClick={onMinimize} title="Minimiser dans le Relationship Dock"><Minimize2 size={14}/></button> : null}
               <button className={styles.buttonSecondary} onClick={() => setFullscreen((value) => !value)} title={fullscreen ? 'Réduire' : 'Plein écran'}>{fullscreen ? <Minimize2 size={14}/> : <Expand size={14}/>}</button>
               <Link className={styles.buttonSecondary} href={`/angelcare-marketplace/admin/customers/${customerId}/command`}><ExternalLink size={14} /></Link>
             </> : null}
@@ -162,7 +163,7 @@ export function CustomerMegaDossierOverlay({ customerId, onClose }: { customerId
                 <div className={styles.grid3}>
                   <F label="Direction"><select className={styles.select} value={creditDirection} onChange={(event) => setCreditDirection(event.target.value)}><option value="credit">Créditer</option><option value="debit">Débiter</option></select></F>
                   <F label="Montant AC"><input className={styles.input} type="number" min="0.01" step="0.01" value={creditAmount} onChange={(event) => setCreditAmount(event.target.value)} /></F>
-                  <F label="Motif"><input className={styles.input} value={creditReason} onChange={(event) => setCreditReason(event.target.value)} /></F>
+                  <F label="Motif"><select className={styles.select} value={creditReason} onChange={(event) => setCreditReason(event.target.value)}><option>Geste commercial documenté</option><option>Recovery service</option><option>Compensation expérience client</option><option>Correction financière validée</option><option>Programme fidélité</option></select></F>
                 </div>
                 <div className={styles.rowActions} style={{ marginTop: 12 }}><button className={styles.button} onClick={adjustCredit}>Appliquer écriture Credit</button><button className={styles.buttonSecondary} onClick={() => exportPdf('wallet_statement')}><ReceiptText size={14} />Relevé Credit PDF</button></div>
               </> : <p className={styles.muted}>Aucun Wallet créé pour ce client.</p>}
@@ -182,6 +183,13 @@ export function CustomerMegaDossierOverlay({ customerId, onClose }: { customerId
             <RecordList title="Demandes" data={data.inquiries} kind="inquiry" />
             <RecordList title="Support" data={data.supportTickets} />
             <div className={styles.panel}><div className={styles.panelTitle}><h3>Actions relation client</h3><MessageSquareText size={16} /></div><div className={styles.rowActions}><Link className={styles.button} href={`/angelcare-marketplace/admin/commercial?customer=${customerId}`}>Ouvrir CRM</Link><Link className={styles.buttonSecondary} href={`/angelcare-marketplace/admin/public-inquiries?customer=${customerId}`}>Inquiries</Link></div></div>
+          </div> : null}
+
+          {tab === 'Expérience' ? <div className={styles.grid2}>
+            <RecordList title="Support & customer care" data={data.supportTickets} />
+            <RecordList title="Demandes famille" data={data.familyRequests} />
+            <RecordList title="Inquiries & signaux" data={data.inquiries} kind="inquiry" />
+            <div className={styles.panel}><div className={styles.panelTitle}><h3>Relationship recovery</h3><MessageSquareText size={16}/></div><p className={styles.muted}>Open the Customer Recovery Desk to operate canonical cases with structured recovery transitions and preserved customer context.</p><div className={styles.rowActions}><Link className={styles.button} href={`/angelcare-marketplace/admin/customers-revenue/cases?customer=${customerId}`}>Open Recovery Desk</Link><Link className={styles.buttonSecondary} href={`/angelcare-marketplace/admin/customers-revenue/activity?customer=${customerId}`}>Relationship activity</Link></div></div>
           </div> : null}
 
           {tab === 'Activité' ? <div className={styles.command}>
