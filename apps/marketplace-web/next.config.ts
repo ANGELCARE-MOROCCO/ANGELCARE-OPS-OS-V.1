@@ -2,6 +2,9 @@ import type { NextConfig } from "next";
 import path from "path";
 
 const nextConfig: NextConfig = {
+  typescript: {
+    tsconfigPath: 'tsconfig.vercel-production.json',
+  },
   // Disabled until the Next 16 next/link ReactNode typing defect is resolved.
   typedRoutes: false,
 

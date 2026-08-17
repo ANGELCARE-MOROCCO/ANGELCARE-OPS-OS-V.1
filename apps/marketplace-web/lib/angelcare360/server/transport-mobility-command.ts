@@ -210,12 +210,12 @@ async function legacyRaw(client: any, schoolId: string) {
 }
 
 function normalizeAdvanced(raw: any) {
-  const routeById = new Map(raw.routes.map((r: Row) => [s(r.id), r]))
-  const vehicleById = new Map(raw.vehicles.map((r: Row) => [s(r.id), r]))
-  const driverById = new Map(raw.drivers.map((r: Row) => [s(r.id), r]))
-  const stopById = new Map(raw.stops.map((r: Row) => [s(r.id), r]))
-  const studentById = new Map(raw.students.map((r: Row) => [s(r.id), r]))
-  const runById = new Map(raw.runs.map((r: Row) => [s(r.id), r]))
+  const routeById = new Map<string, Row>(raw.routes.map((r: Row) => [s(r.id), r] as [string, Row]))
+  const vehicleById = new Map<string, Row>(raw.vehicles.map((r: Row) => [s(r.id), r] as [string, Row]))
+  const driverById = new Map<string, Row>(raw.drivers.map((r: Row) => [s(r.id), r] as [string, Row]))
+  const stopById = new Map<string, Row>(raw.stops.map((r: Row) => [s(r.id), r] as [string, Row]))
+  const studentById = new Map<string, Row>(raw.students.map((r: Row) => [s(r.id), r] as [string, Row]))
+  const runById = new Map<string, Row>(raw.runs.map((r: Row) => [s(r.id), r] as [string, Row]))
 
   const assignmentCounts = new Map<string, number>()
   const stopStudentCounts = new Map<string, number>()
@@ -303,11 +303,11 @@ function normalizeAdvanced(raw: any) {
 }
 
 function normalizeLegacy(raw: any) {
-  const routeById=new Map(raw.routes.map((r:Row)=>[s(r.id),r])); const vehicleById=new Map(raw.vehicles.map((r:Row)=>[s(r.id),r])); const studentById=new Map(raw.students.map((r:Row)=>[s(r.id),r])); const stopById=new Map(raw.stops.map((r:Row)=>[s(r.id),r]))
+  const routeById=new Map<string, Row>(raw.routes.map((r: Row) => [s(r.id), r] as [string, Row])); const vehicleById=new Map<string, Row>(raw.vehicles.map((r: Row) => [s(r.id), r] as [string, Row])); const studentById=new Map<string, Row>(raw.students.map((r: Row) => [s(r.id), r] as [string, Row])); const stopById=new Map<string, Row>(raw.stops.map((r: Row) => [s(r.id), r] as [string, Row]))
   const assignmentCounts=new Map<string,number>(); const stopStudentCounts=new Map<string,number>()
   for (const a of raw.assignments) if (s(a.status)==='active') { assignmentCounts.set(s(a.route_id),(assignmentCounts.get(s(a.route_id))||0)+1); if(a.pickup_stop_id) stopStudentCounts.set(s(a.pickup_stop_id),(stopStudentCounts.get(s(a.pickup_stop_id))||0)+1) }
   const stopCounts=new Map<string,number>(); for (const st of raw.stops) if(s(st.status)!=='archived') stopCounts.set(s(st.route_id),(stopCounts.get(s(st.route_id))||0)+1)
-  const staffById=new Map(raw.staff.map((r:Row)=>[s(r.id),r]))
+  const staffById=new Map<string, Row>(raw.staff.map((r: Row) => [s(r.id), r] as [string, Row]))
   const routes:TransportRoute[]=raw.routes.map((r:Row)=>{const v=vehicleById.get(s(r.vehicle_id));const d=staffById.get(s(r.responsible_staff_id));const ac=assignmentCounts.get(s(r.id))||0;const cap=n(r.capacity_seats??v?.capacity_seats);return{id:s(r.id),code:s(r.route_code),label:s(r.label),direction:'round_trip',routeType:s(r.route_type,'school_bus'),vehicleId:nullable(r.vehicle_id),driverId:nullable(r.responsible_staff_id),vehicleLabel:v?s(v.model||v.vehicle_code):null,driverName:d?s(d.full_name):null,status:s(r.status),stopCount:stopCounts.get(s(r.id))||0,assignmentCount:ac,capacity:cap,capacityPressure:cap>0&&ac>cap}})
   const stops:TransportStop[]=raw.stops.map((r:Row)=>{const route=routeById.get(s(r.route_id));return{id:s(r.id),routeId:s(r.route_id),routeCode:s(route?.route_code),routeLabel:s(route?.label),order:n(r.order_index,1),label:s(r.label),plannedTime:nullable(r.planned_time),latitude:r.latitude==null?null:n(r.latitude),longitude:r.longitude==null?null:n(r.longitude),status:s(r.status),studentCount:stopStudentCounts.get(s(r.id))||0}})
   const vehicles:TransportVehicle[]=raw.vehicles.map((r:Row)=>({id:s(r.id),code:s(r.vehicle_code),label:s(r.model||r.vehicle_code),vehicleType:'school_bus',plateNumber:nullable(r.plate_number),capacity:n(r.capacity_seats),seatbeltCount:0,insuranceExpiry:nullable(r.insurance_expires_on),inspectionExpiry:null,status:s(r.status),routeCount:routes.filter(x=>x.vehicleId===s(r.id)&&x.status==='active').length,assignmentCount:routes.filter(x=>x.vehicleId===s(r.id)).reduce((sum,x)=>sum+x.assignmentCount,0)}))
