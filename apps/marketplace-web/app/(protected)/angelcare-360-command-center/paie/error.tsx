@@ -1,0 +1,1 @@
+'use client';export default function Error({error,reset}:{error:Error;reset:()=>void}){return <div style={{padding:32,fontFamily:'system-ui'}}><h2>La paie n’a pas pu être chargée.</h2><p>{error.message}</p><button onClick={reset}>Réessayer</button></div>}

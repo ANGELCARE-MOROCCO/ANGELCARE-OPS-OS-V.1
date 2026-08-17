@@ -1,0 +1,9 @@
+EXPECTED SCHEMA DELTA
++ 6 service-role-only SANILA Mobility safety/integrity functions.
++ 0 tables.
++ 0 columns.
++ 0 indexes.
++ 0 RLS policy changes.
++ 0 data rewrites.
++ Existing ac360_school_transport_* tables/functions preserved.
++ Legacy angelcare360_transport_* tables preserved; no dual-write introduced.

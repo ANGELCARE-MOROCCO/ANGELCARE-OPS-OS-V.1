@@ -1,32 +1,31 @@
 'use client'
 
-type Props = {
-  tickets: Array<Record<string, any>>
-}
+import Link from 'next/link'
+import styles from './TrustResolutionOS.module.css'
+import { claimAge, claimPriorityLabel, claimStatusLabel } from './claimPresentation'
 
-export default function Angelcare360ClaimPriorityWorkspace({ tickets }: Props) {
-  return (
-    <div style={listStyle}>
-      {tickets.length ? tickets.map((ticket, index) => (
-        <article key={String(ticket.id || index)} style={cardStyle}>
-          <div style={headerStyle}>
-            <strong>{String(ticket.subject || ticket.reclamation_code || 'Ticket')}</strong>
-            <span>{String(ticket.priority || 'normal')}</span>
-          </div>
-          <div style={footerStyle}>
-            <span>{String(ticket.status || '—')}</span>
-            <span>{String(ticket.created_at || '—')}</span>
-          </div>
-        </article>
-      )) : (
-        <div style={emptyStyle}>Aucune priorité à afficher.</div>
-      )}
-    </div>
-  )
-}
+type Row = Record<string, any>
+const priorities = ['urgent', 'high', 'normal', 'low'] as const
+const buckets = [
+  { key: 'today', label: '< 24 heures', match: (hours: number | null) => hours !== null && hours < 24 },
+  { key: 'recent', label: '1 à 3 jours', match: (hours: number | null) => hours !== null && hours >= 24 && hours < 72 },
+  { key: 'aged', label: '> 3 jours', match: (hours: number | null) => hours !== null && hours >= 72 },
+  { key: 'unknown', label: 'Date non documentée', match: (hours: number | null) => hours === null },
+]
 
-const listStyle: React.CSSProperties = { display: 'grid', gap: 12 }
-const cardStyle: React.CSSProperties = { display: 'grid', gap: 8, padding: 14, borderRadius: 18, border: '1px solid #e2e8f0', background: '#fff' }
-const headerStyle: React.CSSProperties = { display: 'flex', justifyContent: 'space-between', gap: 12, alignItems: 'center' }
-const footerStyle: React.CSSProperties = { display: 'flex', flexWrap: 'wrap', gap: 12, color: '#64748b', fontSize: 12, fontWeight: 700 }
-const emptyStyle: React.CSSProperties = { padding: 16, borderRadius: 18, border: '1px dashed #cbd5e1', color: '#475569', fontWeight: 700 }
+export default function Angelcare360ClaimPriorityWorkspace({ tickets }: { tickets: Row[] }) {
+  return <section className={styles.workspacePanel}>
+    <div className={styles.panelHead}><div><div className={styles.eyebrow}>TIME HORIZON</div><h2>Priorité × ancienneté</h2><p>La matrice combine uniquement la priorité persistée et l’âge réel du dossier. Aucun SLA contractuel n’est affiché si aucune échéance canonique n’existe.</p></div><div className={styles.panelMeta}>{tickets.length} dossier(s)</div></div>
+    <div className={styles.priorityMatrix}><div className={styles.priorityGrid}>
+      <div className={styles.matrixCorner}>Priorité / âge</div>{buckets.map((bucket) => <div className={styles.matrixCol} key={bucket.key}>{bucket.label}</div>)}
+      {priorities.flatMap((priority) => {
+        const row: React.ReactNode[] = [<div key={`${priority}-label`} className={styles.matrixRowLabel} data-priority={priority}>{claimPriorityLabel(priority)}</div>]
+        buckets.forEach((bucket) => {
+          const cell = tickets.filter((ticket) => String(ticket.priority) === priority && bucket.match(claimAge(ticket.created_at).hours))
+          row.push(<div className={styles.matrixCell} key={`${priority}-${bucket.key}`}>{cell.map((ticket, index) => <Link className={styles.matrixTicket} href={`/angelcare-360-command-center/reclamations/tickets/${String(ticket.id)}`} key={String(ticket.id || index)}><strong>{String(ticket.subject || ticket.reclamation_code || 'Dossier')}</strong><span>{claimStatusLabel(ticket.status)} · {claimAge(ticket.created_at).label}</span></Link>)}</div>)
+        })
+        return row
+      })}
+    </div></div>
+  </section>
+}

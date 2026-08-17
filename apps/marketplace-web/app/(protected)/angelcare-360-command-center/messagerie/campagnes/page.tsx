@@ -1,0 +1,5 @@
+import CommunicationSectionFrame from '@/components/angelcare360/communication-command/CommunicationSectionFrame'
+import CampaignsCommand from '@/components/angelcare360/communication-command/CampaignsCommand'
+import { getSanilaCommunicationDashboard, getSanilaCommunicationReferences, listSanilaAudienceSegments, listSanilaCommunicationCampaigns, listSanilaCommunicationTemplates } from '@/lib/angelcare360/server/communication-command'
+export const dynamic='force-dynamic'
+export default async function Page(){const [campaigns,templates,segments,refs,dashboard]=await Promise.all([listSanilaCommunicationCampaigns({limit:200}),listSanilaCommunicationTemplates(),listSanilaAudienceSegments(),getSanilaCommunicationReferences(),getSanilaCommunicationDashboard()]);return <CommunicationSectionFrame active="/angelcare-360-command-center/messagerie/campagnes" title="Campagnes" description="Construction, audience, programmation et dispatch sous contrôle de vérité de livraison."><CampaignsCommand campaigns={campaigns} templates={templates} segments={segments} campuses={refs.campuses} readiness={dashboard.channelReadiness}/></CommunicationSectionFrame>}

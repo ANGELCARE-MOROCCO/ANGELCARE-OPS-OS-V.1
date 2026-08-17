@@ -1,0 +1,1 @@
+export default function Loading(){return <div style={{padding:32,fontFamily:'system-ui',color:'#5d6878'}}>SANILA Payroll · chargement du contrôle souverain…</div>}

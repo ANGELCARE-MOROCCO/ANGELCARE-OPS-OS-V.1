@@ -1,0 +1,1 @@
+import {getPayrollSovereignSnapshot} from '../_utils';import {Records} from '@/components/angelcare360/payroll-sovereign-command/PayrollViews';export const dynamic='force-dynamic';export default async function Page(){return <Records s={await getPayrollSovereignSnapshot()}/> }

@@ -1,0 +1,6 @@
+import { notFound } from 'next/navigation'
+import CommunicationSectionFrame from '@/components/angelcare360/communication-command/CommunicationSectionFrame'
+import CampaignChamber from '@/components/angelcare360/communication-command/CampaignChamber'
+import { getSanilaCommunicationCampaignDetail, getSanilaCommunicationReferences, listSanilaAudienceSegments } from '@/lib/angelcare360/server/communication-command'
+export const dynamic='force-dynamic'
+export default async function Page({params}:{params:Promise<{id:string}>}){const {id}=await params;const [detail,segments,refs]=await Promise.all([getSanilaCommunicationCampaignDetail(id),listSanilaAudienceSegments(),getSanilaCommunicationReferences()]);if(!detail)notFound();return <CommunicationSectionFrame active="/angelcare-360-command-center/messagerie/campagnes" title={`Diffusion ${detail.campaign.campaign_code}`} description="Audience figée, destinataires, lots d’exécution et événements de livraison sont inspectables sans raccourci sémantique."><CampaignChamber campaign={detail.campaign} recipients={detail.recipients} events={detail.events} jobs={detail.jobs} segments={segments} classes={refs.classes} students={refs.students}/></CommunicationSectionFrame>}

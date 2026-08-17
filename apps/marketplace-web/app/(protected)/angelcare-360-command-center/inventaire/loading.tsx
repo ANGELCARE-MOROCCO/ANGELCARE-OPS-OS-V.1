@@ -1,0 +1,4 @@
+import styles from '@/components/angelcare360/material-command/MaterialCommand.module.css'
+export default function Loading() {
+  return <main className={styles.page} aria-busy="true"><div className={styles.hero}><div><p className={styles.kicker}>SANILA · MATERIAL COMMAND</p><h1 className={styles.title}>Inventaire<span>Chargement de la réalité matérielle…</span></h1><p className={styles.lead}>Les surfaces restent stables pendant la lecture du stock, des mouvements et des responsabilités.</p></div><div className={styles.instrument}><div className={styles.instrumentValue}><strong>···</strong><span>lecture sécurisée</span></div></div></div><div className={styles.metricStrip}>{Array.from({length:5}).map((_,i)=><div className={styles.metric} key={i}><span>Chargement</span><strong>—</strong><small>État en cours de résolution</small></div>)}</div></main>
+}

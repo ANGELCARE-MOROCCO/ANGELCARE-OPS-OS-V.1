@@ -1,0 +1,6 @@
+import { redirect } from 'next/navigation'
+import styles from '@/components/angelcare360/material-command/MaterialCommand.module.css'
+import { MovementCommand } from '@/components/angelcare360/material-command/MovementCommand'
+import { MaterialCommandShell,SectionHero } from '@/components/angelcare360/material-command/MaterialCommandShell'
+import { getMaterialSnapshot,listMaterialMovements } from '@/lib/angelcare360/server/inventory-material-command'
+export default async function MovementsPage(){const[s,movements]=await Promise.all([getMaterialSnapshot(),listMaterialMovements({limit:1000})]);if(!s)redirect('/angelcare-360-command-center');return <MaterialCommandShell schoolName={s.schoolName} academicYearLabel={s.academicYearLabel} integrity={s.integrity} activePath="/angelcare-360-command-center/inventaire/mouvements"><section className={styles.sectionPage}><SectionHero eyebrow="MATERIAL FLOW COMMAND" title="Mouvements de stock" description="Une chronologie factuelle des entrées, sorties, ajustements, transferts journalisés, pertes et dommages. Les écritures de stock sont verrouillées tant que le moteur atomique n’est pas appliqué."/><MovementCommand schoolId={s.schoolId} items={s.items} movements={movements} integrity={s.integrity}/></section></MaterialCommandShell>}

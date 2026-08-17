@@ -1,0 +1,39 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "skipLibCheck": true,
+    "incremental": false
+  },
+  "include": [],
+  "exclude": [
+    "node_modules",
+    ".next",
+    "deployment",
+    ".angelcare_backups"
+  ],
+  "files": [
+    "types/angelcare360/library-circulation.ts",
+    "lib/angelcare360/server/library-circulation-command.ts",
+    "app/api/angelcare360/library-command/route.ts",
+    "components/angelcare360/library-command/LibraryCommandShell.tsx",
+    "components/angelcare360/library-command/LibraryActions.tsx",
+    "components/angelcare360/library-command/LibraryViews.tsx",
+    "app/(protected)/angelcare-360-command-center/bibliotheque/_utils.ts",
+    "app/(protected)/angelcare-360-command-center/bibliotheque/layout.tsx",
+    "app/(protected)/angelcare-360-command-center/bibliotheque/page.tsx",
+    "app/(protected)/angelcare-360-command-center/bibliotheque/loading.tsx",
+    "app/(protected)/angelcare-360-command-center/bibliotheque/error.tsx",
+    "app/(protected)/angelcare-360-command-center/bibliotheque/not-found.tsx",
+    "app/(protected)/angelcare-360-command-center/bibliotheque/livres/page.tsx",
+    "app/(protected)/angelcare-360-command-center/bibliotheque/livres/[id]/page.tsx",
+    "app/(protected)/angelcare-360-command-center/bibliotheque/exemplaires/page.tsx",
+    "app/(protected)/angelcare-360-command-center/bibliotheque/exemplaires/[id]/page.tsx",
+    "app/(protected)/angelcare-360-command-center/bibliotheque/disponibilite/page.tsx",
+    "app/(protected)/angelcare-360-command-center/bibliotheque/prets/page.tsx",
+    "app/(protected)/angelcare-360-command-center/bibliotheque/prets/[id]/page.tsx",
+    "app/(protected)/angelcare-360-command-center/bibliotheque/retours/page.tsx",
+    "app/(protected)/angelcare-360-command-center/bibliotheque/retards/page.tsx",
+    "app/(protected)/angelcare-360-command-center/bibliotheque/audit/page.tsx"
+  ]
+}

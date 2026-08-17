@@ -1,0 +1,6 @@
+import { redirect } from 'next/navigation'
+import styles from '@/components/angelcare360/material-command/MaterialCommand.module.css'
+import { ArticleRegistry } from '@/components/angelcare360/material-command/ArticleRegistry'
+import { MaterialCommandShell,SectionHero } from '@/components/angelcare360/material-command/MaterialCommandShell'
+import { getMaterialSnapshot,listMaterialStaff } from '@/lib/angelcare360/server/inventory-material-command'
+export default async function ArticlesPage(){const[s,staff]=await Promise.all([getMaterialSnapshot(),listMaterialStaff()]);if(!s)redirect('/angelcare-360-command-center');return <MaterialCommandShell schoolName={s.schoolName} academicYearLabel={s.academicYearLabel} integrity={s.integrity} activePath="/angelcare-360-command-center/inventaire/articles"><section className={styles.sectionPage}><SectionHero eyebrow="MATERIAL REGISTRY" title="Registre des articles" description="Le registre opérationnel dense et précis. Aucun UUID en premier plan, aucune quantité éditée hors mouvement transactionnel."/><ArticleRegistry schoolId={s.schoolId} items={s.items} categories={s.categories} staff={staff} integrity={s.integrity}/></section></MaterialCommandShell>}

@@ -1,0 +1,14 @@
+SQL REQUIRED: YES
+
+Why:
+- Fresh production schema has no database-level partial unique invariant preventing two simultaneous active loans for one copy.
+- Historical server implementation mutates loan and copy status in separate statements.
+- Barcode exists on copies but has no school-scoped uniqueness invariant.
+
+Run manually against the SELF-HOSTED Supabase production database:
+1. 01_PREFLIGHT.sql
+2. 02_MIGRATION.sql
+3. 03_POSTCHECK.sql
+
+Never run 04_ROLLBACK.sql unless intentionally reversing this package.
+The application installer DOES NOT execute SQL.

@@ -107,6 +107,13 @@ function mapClaim(row: Row): Angelcare360ClaimTicketRecord {
     resolution_summary: row.resolution_summary ? asString(row.resolution_summary) : null,
     status_history_json: normalizeHistory(row.status_history_json),
     internal_notes_json: normalizeHistory(row.internal_notes_json),
+    submitted_by_parent_id: row.submitted_by_parent_id ? asString(row.submitted_by_parent_id) : null,
+    submitted_by_student_id: row.submitted_by_student_id ? asString(row.submitted_by_student_id) : null,
+    submitted_by_staff_id: row.submitted_by_staff_id ? asString(row.submitted_by_staff_id) : null,
+    assigned_at: row.assigned_at ? asString(row.assigned_at) : null,
+    created_at: row.created_at ? asString(row.created_at) : null,
+    updated_at: row.updated_at ? asString(row.updated_at) : null,
+    metadata_json: row.metadata_json && typeof row.metadata_json === 'object' ? row.metadata_json as Record<string, unknown> : null,
     resolved_at: row.resolved_at ? asString(row.resolved_at) : null,
     closed_at: row.closed_at ? asString(row.closed_at) : null,
     requester_label: row.requester_label ? asString(row.requester_label) : null,
@@ -343,7 +350,7 @@ export async function listAngelcare360ClaimAssignments(options?: { schoolId?: st
   const supabase = await createClient()
   const { data, error } = await supabase
     .from('angelcare360_reclamations')
-    .select('id, assigned_staff_id, status, priority, subject, assigned_at, created_at')
+    .select('id, assigned_staff_id, status, priority, subject, assigned_at, created_at, reclamation_code, category, resolved_at, closed_at')
     .eq('school_id', context.school.id)
     .order('assigned_at', { ascending: false, nullsFirst: false })
     .limit(200)
@@ -354,7 +361,7 @@ export async function listAngelcare360ClaimAssignments(options?: { schoolId?: st
 export async function listAngelcare360ClaimPriorityView(options?: { schoolId?: string | null }) {
   const context = await getContextOrThrow('reclamations.view', options?.schoolId)
   const supabase = await createClient()
-  const { data, error } = await supabase.from('angelcare360_reclamations').select('id, priority, status, created_at').eq('school_id', context.school.id)
+  const { data, error } = await supabase.from('angelcare360_reclamations').select('id, priority, status, created_at, reclamation_code, subject, category, assigned_staff_id, assigned_at, resolved_at, closed_at').eq('school_id', context.school.id)
   if (error) throw new Error(error.message)
   return data || []
 }

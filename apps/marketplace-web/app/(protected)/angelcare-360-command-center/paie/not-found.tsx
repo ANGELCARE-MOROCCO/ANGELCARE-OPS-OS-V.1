@@ -1,0 +1,1 @@
+export default function NotFound(){return <div style={{padding:32,fontFamily:'system-ui'}}><h2>Dossier de paie introuvable</h2><p>Aucune donnée n’a été inventée pour cet identifiant.</p></div>}

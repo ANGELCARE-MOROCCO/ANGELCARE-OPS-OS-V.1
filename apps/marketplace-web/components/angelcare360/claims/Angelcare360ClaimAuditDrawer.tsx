@@ -1,45 +1,21 @@
 'use client'
 
+import { useMemo, useState } from 'react'
 import type { Angelcare360AuditRecord } from '@/types/angelcare360/audit'
+import styles from './TrustResolutionOS.module.css'
+import { formatClaimDate, humanizeClaimAction } from './claimPresentation'
 
-type Props = {
-  events: Angelcare360AuditRecord[]
+export default function Angelcare360ClaimAuditDrawer({ events }: { events: Angelcare360AuditRecord[] }) {
+  const [search, setSearch] = useState('')
+  const [severity, setSeverity] = useState('all')
+  const filtered = useMemo(() => events.filter((event) => {
+    const haystack = [event.action, event.entity_type, event.entity_id, event.actor_role, event.severity].join(' ').toLowerCase()
+    return (!search.trim() || haystack.includes(search.trim().toLowerCase())) && (severity === 'all' || event.severity === severity)
+  }), [events, search, severity])
+
+  return <section className={styles.auditPanel}>
+    <div className={styles.panelHead}><div><div className={styles.eyebrow}>FORENSIC CHRONOLOGY</div><h2>Mémoire d’audit</h2><p>Attribution, transitions, résolution et clôture restent retraçables à partir du journal canonique de l’établissement.</p></div><div className={styles.panelMeta}>{filtered.length} événement(s)</div></div>
+    <div className={styles.auditToolbar}><input className={styles.searchField} value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Action, entité, acteur…" /><select className={styles.selectField} value={severity} onChange={(e) => setSeverity(e.target.value)}><option value="all">Toutes gravités</option><option value="debug">Debug</option><option value="info">Information</option><option value="notice">Notice</option><option value="warning">Warning</option><option value="critical">Critical</option></select></div>
+    <div className={styles.auditTimeline}>{filtered.length ? filtered.map((event) => <div className={styles.auditEvent} key={event.id}><div className={styles.auditDot} data-severity={event.severity} /><article className={styles.auditCard}><div className={styles.auditTop}><strong>{humanizeClaimAction(event.action)}</strong><span>{formatClaimDate(event.created_at)}</span></div><div className={styles.auditMeta}><span>{event.severity}</span><span>{event.entity_type || 'Entité non renseignée'}</span><span>{event.entity_id || 'Sans identifiant'}</span><span>{event.actor_role || 'Acteur protégé'}</span></div></article></div>) : <div className={styles.truthLock}>Aucun événement d’audit ne correspond à cette vue.</div>}</div>
+  </section>
 }
-
-export default function Angelcare360ClaimAuditDrawer({ events }: Props) {
-  return (
-    <div style={tableWrapStyle}>
-      <table style={tableStyle}>
-        <thead>
-          <tr>
-            <th style={thStyle}>Date</th>
-            <th style={thStyle}>Action</th>
-            <th style={thStyle}>Entité</th>
-            <th style={thStyle}>Gravité</th>
-          </tr>
-        </thead>
-        <tbody>
-          {events.length ? events.map((event) => (
-            <tr key={event.id}>
-              <td style={tdStyle}>{event.created_at}</td>
-              <td style={tdStyle}>{event.action}</td>
-              <td style={tdStyle}>{event.entity_type || '—'}</td>
-              <td style={tdStyle}>{event.severity}</td>
-            </tr>
-          )) : (
-            <tr>
-              <td style={emptyStyle} colSpan={4}>Aucun événement d’audit réclamations.</td>
-            </tr>
-          )}
-        </tbody>
-      </table>
-    </div>
-  )
-}
-
-const tableWrapStyle: React.CSSProperties = { overflowX: 'auto', borderRadius: 18, border: '1px solid #e2e8f0' }
-const tableStyle: React.CSSProperties = { width: '100%', borderCollapse: 'collapse', minWidth: 780 }
-const thStyle: React.CSSProperties = { padding: '12px 14px', background: '#f8fafc', color: '#0f172a', fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.8, fontWeight: 900, borderBottom: '1px solid #e2e8f0', textAlign: 'left' }
-const tdStyle: React.CSSProperties = { padding: '12px 14px', color: '#334155', verticalAlign: 'top', borderBottom: '1px solid #e2e8f0', fontWeight: 600 }
-const emptyStyle: React.CSSProperties = { ...tdStyle, textAlign: 'center' }
-

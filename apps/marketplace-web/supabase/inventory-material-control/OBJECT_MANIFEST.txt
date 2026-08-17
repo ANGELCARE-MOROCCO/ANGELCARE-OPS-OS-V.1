@@ -1,0 +1,8 @@
+ALTERED CONSTRAINT: public.angelcare360_inventory_movements.angelcare360_inventory_movements_movement_type_check (removed contradictory narrow check)
+PRESERVED CONSTRAINT: public.angelcare360_inventory_movements.angelcare360_inventory_movements_type_check
+NEW FUNCTION: public.angelcare360_inventory_apply_movement_v1(...)
+NEW FUNCTION: public.angelcare360_inventory_integrity_status_v1()
+NEW INDEX: public.idx_angelcare360_inventory_items_school_barcode
+NO NEW TABLES
+NO RLS POLICY CHANGES
+NO DATA BACKFILL

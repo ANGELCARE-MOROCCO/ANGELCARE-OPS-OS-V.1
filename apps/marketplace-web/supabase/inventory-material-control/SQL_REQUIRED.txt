@@ -1,0 +1,8 @@
+SQL REQUIRED: YES
+WHY: current production schema has contradictory movement-type CHECK constraints and the historical application performs movement INSERT + item stock UPDATE as separate non-atomic requests. The new Material Command deliberately locks stock mutation until the atomic v1 RPC exists.
+RUN ORDER:
+1. 01_PREFLIGHT.sql
+2. 02_MIGRATION.sql
+3. 03_POSTCHECK.sql
+ROLLBACK (only if needed): 04_ROLLBACK.sql
+THE INSTALLER DOES NOT EXECUTE SQL.
