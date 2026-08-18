@@ -1,0 +1,12 @@
+.git
+**/.git
+**/node_modules
+**/.next
+**/.vercel
+**/.env
+**/.env.*
+**/*.log
+**/*.zip
+**/*.tar
+**/*.tgz
+.sanila-css-purity-hotfix-backup-*
