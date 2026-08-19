@@ -23,6 +23,13 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   if (!locales.has(current.locale)) return {}
   const locale = current.locale as PublicLocale
   const slug = current.slug?.length ? publicRoutePath(current.slug) : 'accueil'
+
+  console.error('[MARKETPLACE_ROUTE_STATE]', {
+    current,
+    locale,
+    slug,
+  })
+
   const alias = canonicalAlias(locale, slug)
   if (alias) return { title: 'ANGELCARE Marketplace', alternates: { canonical: `/angelcare-marketplace/${locale}/${alias}` } }
   if (slug === 'accueil') {
@@ -33,6 +40,11 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     const campaign = homepage?.campaigns[0]
     if (campaign) return { title: campaign.title, description: campaign.subtitle || undefined, alternates: { canonical: `/angelcare-marketplace/${locale}` } }
   }
+  console.error('[MARKETPLACE_HOMEPAGE_FALLBACK]', {
+    locale,
+    slug,
+  })
+
   const result = await getPublicPage({ locale, slug }).catch((error) => {
     console.error('[MARKETPLACE_PUBLIC_PAGE_FAILURE]', { locale, slug, error })
     return null
@@ -53,6 +65,12 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
     if (homepage) return <GlobalPublicShell locale={locale} navigation={homepage.navigation} variant="marketplace"><HomepageFlagship experience={homepage}/></GlobalPublicShell>
   }
   const result = await getPublicPage({ locale, slug }).catch(() => null)
+  console.error('[MARKETPLACE_PUBLIC_RESULT]', {
+    locale,
+    slug,
+    found: Boolean(result),
+  })
+
   if (!result) notFound()
   return <GlobalPublicShell locale={locale} navigation={result.navigation}><PublicPageRenderer experience={result} locale={locale}/></GlobalPublicShell>
 }
