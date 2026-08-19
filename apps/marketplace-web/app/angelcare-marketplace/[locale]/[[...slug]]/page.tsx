@@ -26,11 +26,17 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const alias = canonicalAlias(locale, slug)
   if (alias) return { title: 'ANGELCARE Marketplace', alternates: { canonical: `/angelcare-marketplace/${locale}/${alias}` } }
   if (slug === 'accueil') {
-    const homepage = await getHomepageExperience({ locale }).catch(() => null)
+    const homepage = await getHomepageExperience({ locale }).catch((error) => {
+      console.error('[MARKETPLACE_HOME_FAILURE]', error)
+      return null
+    })
     const campaign = homepage?.campaigns[0]
     if (campaign) return { title: campaign.title, description: campaign.subtitle || undefined, alternates: { canonical: `/angelcare-marketplace/${locale}` } }
   }
-  const result = await getPublicPage({ locale, slug }).catch(() => null)
+  const result = await getPublicPage({ locale, slug }).catch((error) => {
+    console.error('[MARKETPLACE_PUBLIC_PAGE_FAILURE]', { locale, slug, error })
+    return null
+  })
   if (!result) return { title: 'ANGELCARE Marketplace' }
   return { title: result.page.seo_title || result.page.title, description: result.page.seo_description || result.page.description || undefined, alternates: { canonical: result.page.canonical_url || undefined } }
 }
