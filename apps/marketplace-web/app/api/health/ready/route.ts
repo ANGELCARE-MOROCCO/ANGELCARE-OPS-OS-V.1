@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 
-import { getMissingSupabaseServerEnv, getSupabaseEnv } from '@/lib/supabase/env'
+import { getMissingSupabaseServerEnv } from '@/lib/supabase/env'
+import { createServiceClient } from '@/lib/supabase/server'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -39,35 +40,29 @@ function response(
 }
 
 async function probeSupabase(): Promise<boolean> {
-  const { url, serviceRoleKey } = getSupabaseEnv()
-
-  if (!url || !serviceRoleKey) return false
-
-  const controller = new AbortController()
-  const timer = setTimeout(() => controller.abort(), TIMEOUT_MS)
+  let timer: ReturnType<typeof setTimeout> | undefined
 
   try {
-    const endpoint = `${url.replace(/\/+$/, '')}/rest/v1/`
+    const probe = (async () => {
+      const supabase = await createServiceClient()
 
-    const result = await fetch(endpoint, {
-      method: 'GET',
-      headers: {
-        apikey: serviceRoleKey,
-        Authorization: `Bearer ${serviceRoleKey}`,
-      },
-      cache: 'no-store',
-      signal: controller.signal,
+      const { error } = await supabase
+        .from('angelcare_marketplace_territories')
+        .select('id')
+        .limit(1)
+
+      return !error
+    })()
+
+    const timeout = new Promise<boolean>((resolve) => {
+      timer = setTimeout(() => resolve(false), TIMEOUT_MS)
     })
 
-    if (result.body) {
-      await result.body.cancel().catch(() => undefined)
-    }
-
-    return result.ok
+    return await Promise.race([probe, timeout])
   } catch {
     return false
   } finally {
-    clearTimeout(timer)
+    if (timer) clearTimeout(timer)
   }
 }
 
@@ -91,13 +86,11 @@ export async function GET() {
 
   const supabaseOk = await probeSupabase()
 
-  const supabase: ReadinessCheck = {
-    ok: supabaseOk,
-    status: supabaseOk ? 'ready' : 'unavailable',
-  }
-
   return response(supabaseOk ? 200 : 503, {
     configuration,
-    supabase,
+    supabase: {
+      ok: supabaseOk,
+      status: supabaseOk ? 'ready' : 'unavailable',
+    },
   })
 }
