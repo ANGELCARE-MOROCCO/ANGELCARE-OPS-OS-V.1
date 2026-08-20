@@ -3,6 +3,21 @@ import { createEmailOSCoreDb } from "@/lib/email-os-core/db"
 import { makeEmailOSId, nowIso } from "@/lib/email-os-core/schema"
 import { sendEmailOSDirect } from "@/lib/email-os-core/send-mail"
 import { loadComposeAttachments } from "@/lib/email-os-core/compose-attachments"
+import {
+  isAngelCareRedisConfigured,
+} from "@/lib/runtime/redis/server"
+import {
+  acquireAngelCareRedisLease,
+} from "@/lib/runtime/redis/lease"
+
+const EMAIL_OS_QUEUE_WORKER_LEASE_KEY =
+  "angelcare:saas-ops:email-os:queue-worker:lease"
+
+const EMAIL_OS_QUEUE_WORKER_LEASE_TTL_MS =
+  10 * 60_000
+
+const EMAIL_OS_QUEUE_WORKER_LEASE_RENEW_MS =
+  30_000
 
 function clean(value: unknown) {
   return typeof value === "string" ? value.trim() : ""
@@ -44,10 +59,97 @@ function withTrackingPixel(message: string, baseUrl: string, trackingId: string)
 }
 
 export async function POST(request: Request) {
-  const db = createEmailOSCoreDb()
-  const now = nowIso()
+  const redisConfigured =
+    isAngelCareRedisConfigured()
+
+  const leaseResult =
+    redisConfigured
+      ? await acquireAngelCareRedisLease({
+          key:
+            EMAIL_OS_QUEUE_WORKER_LEASE_KEY,
+          ttlMs:
+            EMAIL_OS_QUEUE_WORKER_LEASE_TTL_MS,
+        })
+      : null
+
+  /*
+   * Production doctrine:
+   *
+   * REDIS_URL configured + coordination unavailable
+   *   -> fail closed.
+   *
+   * The durable database queue remains intact and can be
+   * processed later. Failing open here could allow duplicate
+   * email delivery.
+   *
+   * Local/dev environments without REDIS_URL preserve the
+   * historical single-process behavior.
+   */
+
+  if (
+    redisConfigured &&
+    leaseResult?.status === "unavailable"
+  ) {
+    return NextResponse.json(
+      {
+        ok: false,
+        error:
+          "Email OS queue worker coordination is unavailable.",
+        code:
+          "EMAIL_OS_QUEUE_WORKER_COORDINATION_UNAVAILABLE",
+      },
+      {
+        status: 503,
+      },
+    )
+  }
+
+  if (
+    leaseResult?.status === "busy"
+  ) {
+    return NextResponse.json(
+      {
+        ok: true,
+        data: [],
+        processed: 0,
+        skipped: true,
+        reason: "worker_busy",
+      },
+      {
+        status: 200,
+      },
+    )
+  }
+
+  const lease =
+    leaseResult?.status === "acquired"
+      ? leaseResult.lease
+      : null
+
+  let leaseLost = false
+
+  const heartbeat =
+    lease
+      ? setInterval(
+          () => {
+            void lease
+              .renew()
+              .then((renewed) => {
+                if (!renewed) {
+                  leaseLost = true
+                }
+              })
+              .catch(() => {
+                leaseLost = true
+              })
+          },
+          EMAIL_OS_QUEUE_WORKER_LEASE_RENEW_MS,
+        )
+      : null
 
   try {
+    const db = createEmailOSCoreDb()
+    const now = nowIso()
     const { data: queueRows, error } = await db
       .from("email_os_core_queue")
       .select("*")
@@ -64,6 +166,17 @@ export async function POST(request: Request) {
     const results: any[] = []
 
     for (const row of rows) {
+      /*
+       * If the owner-token lease can no longer be renewed,
+       * finish no additional queue items.
+       *
+       * We cannot safely abort an SMTP send already in flight,
+       * but we can stop the worker before claiming another row.
+       */
+      if (leaseLost) {
+        break
+      }
+
       const outboxId = clean(row.outbox_id || row.outboxId || row.payload?.outboxId)
       const attemptNumber = Number(row.attempts || 0) + 1
 
@@ -224,11 +337,34 @@ export async function POST(request: Request) {
       }
     }
 
-    return NextResponse.json({ ok: true, data: results, processed: rows.length })
+    return NextResponse.json({
+      ok: true,
+      data: results,
+      processed: results.length,
+      leaseLost,
+    })
   } catch (error) {
     return NextResponse.json(
-      { ok: false, error: error instanceof Error ? error.message : "Queue worker failed" },
-      { status: 500 }
+      {
+        ok: false,
+        error:
+          error instanceof Error
+            ? error.message
+            : "Queue worker failed",
+      },
+      {
+        status: 500,
+      },
     )
+  } finally {
+    if (heartbeat) {
+      clearInterval(heartbeat)
+    }
+
+    if (lease) {
+      await lease
+        .release()
+        .catch(() => false)
+    }
   }
 }
