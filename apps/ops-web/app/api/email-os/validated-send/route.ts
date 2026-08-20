@@ -10,7 +10,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, error: "You do not have permission to send Email-OS messages" }, { status: 403 })
   }
 
-  const limit = checkEmailOSRateLimit(`validated-send:${role}`, 30, 60_000)
+  const limit = await checkEmailOSRateLimit(`validated-send:${role}`, 30, 60_000)
   if (!limit.ok) {
     return NextResponse.json({ ok: false, error: "Rate limit exceeded" }, { status: 429 })
   }
