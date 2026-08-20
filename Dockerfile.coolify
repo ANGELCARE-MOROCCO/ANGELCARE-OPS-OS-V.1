@@ -62,6 +62,6 @@ HEALTHCHECK \
   --timeout=8s \
   --start-period=60s \
   --retries=3 \
-  CMD node -e "fetch('http://127.0.0.1:3000/').then(r=>process.exit(r.status<500?0:1)).catch(()=>process.exit(1))"
+  CMD node -e "fetch('http://127.0.0.1:3000/api/health/ready').then(r=>process.exit(r.status===200?0:1)).catch(()=>process.exit(1))"
 
 CMD ["./node_modules/.bin/next","start","-H","0.0.0.0","-p","3000"]
