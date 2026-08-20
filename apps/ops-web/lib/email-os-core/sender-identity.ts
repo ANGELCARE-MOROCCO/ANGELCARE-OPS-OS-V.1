@@ -1,4 +1,11 @@
+import { createHash } from "node:crypto"
+
 import { createEmailOSCoreDb } from "@/lib/email-os-core/db"
+import {
+  invalidateAngelCareRedisJsonIndex,
+  readAngelCareRedisJson,
+  writeAngelCareRedisJson,
+} from "@/lib/runtime/redis/json-cache"
 
 export type SenderIdentityMode = "corporate" | "department" | "named_operator" | "executive"
 export type SenderIdentityStatus = "draft" | "testing" | "active" | "suspended" | "retired"
@@ -109,7 +116,21 @@ type ResolveInput = {
 }
 
 const CACHE_TTL_MS = 45_000
-const identityCache = new Map<string, { expiresAt: number; value: ResolvedSenderIdentity }>()
+
+const REDIS_CACHE_NAMESPACE =
+  "angelcare:saas-ops:email-os:sender-identity"
+
+const REDIS_GLOBAL_INDEX_KEY =
+  `${REDIS_CACHE_NAMESPACE}:index:all`
+
+const identityCache =
+  new Map<
+    string,
+    {
+      expiresAt: number
+      value: ResolvedSenderIdentity
+    }
+  >()
 
 function requireSenderIdentityServiceRole() {
   if (!clean(process.env.SUPABASE_SERVICE_ROLE_KEY)) {
@@ -190,15 +211,28 @@ function asResolvedIdentity(row: SenderIdentityRecord | SenderIdentityVersionRec
   }
 }
 
-export function invalidateSenderIdentityCache(mailboxId?: string | null) {
+export async function invalidateSenderIdentityCache(mailboxId?: string | null) {
   const normalized = clean(mailboxId)
+
   if (!normalized) {
     identityCache.clear()
+
+    await invalidateSharedSenderIdentityCache(
+      null,
+    )
+
     return
   }
+
   for (const key of identityCache.keys()) {
-    if (key.startsWith(`${normalized}|`)) identityCache.delete(key)
+    if (key.startsWith(`${normalized}|`)) {
+      identityCache.delete(key)
+    }
   }
+
+  await invalidateSharedSenderIdentityCache(
+    normalized,
+  )
 }
 
 function cacheKey(input: ResolveInput) {
@@ -208,6 +242,150 @@ function cacheKey(input: ResolveInput) {
     clean(input.senderIdentityId),
     Number(input.senderIdentityVersion || 0),
   ].join("|")
+}
+
+
+function cacheDigest(value: string) {
+  return createHash("sha256")
+    .update(value)
+    .digest("hex")
+}
+
+function redisValueKey(localKey: string) {
+  return `${REDIS_CACHE_NAMESPACE}:value:${cacheDigest(localKey)}`
+}
+
+function redisMailboxIndexKey(mailboxId: string) {
+  return `${REDIS_CACHE_NAMESPACE}:index:mailbox:${cacheDigest(mailboxId)}`
+}
+
+function nullableString(value: unknown) {
+  return value === null || typeof value === "string"
+}
+
+function isResolvedSenderIdentity(
+  value: unknown,
+): value is ResolvedSenderIdentity {
+
+  if (
+    !value ||
+    typeof value !== "object" ||
+    Array.isArray(value)
+  ) {
+    return false
+  }
+
+  const row =
+    value as Record<string, unknown>
+
+  const modes =
+    new Set<SenderIdentityMode>([
+      "corporate",
+      "department",
+      "named_operator",
+      "executive",
+    ])
+
+  const statuses =
+    new Set<
+      ResolvedSenderIdentity["status"]
+    >([
+      "draft",
+      "testing",
+      "active",
+      "suspended",
+      "retired",
+      "fallback",
+    ])
+
+  const sources =
+    new Set<
+      ResolvedSenderIdentity["source"]
+    >([
+      "active_identity",
+      "frozen_version",
+      "admin_override",
+      "mailbox_fallback",
+      "brand_fallback",
+    ])
+
+  return (
+    nullableString(row.identityId) &&
+    (
+      row.version === null ||
+      (
+        typeof row.version === "number" &&
+        Number.isFinite(row.version)
+      )
+    ) &&
+    typeof row.mailboxId === "string" &&
+    typeof row.internalName === "string" &&
+    typeof row.fromName === "string" &&
+    typeof row.fromAddress === "string" &&
+    nullableString(row.replyToName) &&
+    nullableString(row.replyToAddress) &&
+    typeof row.identityMode === "string" &&
+    modes.has(
+      row.identityMode as SenderIdentityMode,
+    ) &&
+    typeof row.status === "string" &&
+    statuses.has(
+      row.status as ResolvedSenderIdentity["status"],
+    ) &&
+    typeof row.source === "string" &&
+    sources.has(
+      row.source as ResolvedSenderIdentity["source"],
+    )
+  )
+}
+
+async function readSharedSenderIdentityCache(
+  localKey: string,
+) {
+  return readAngelCareRedisJson(
+    redisValueKey(localKey),
+    isResolvedSenderIdentity,
+  )
+}
+
+async function writeSharedSenderIdentityCache(
+  localKey: string,
+  value: ResolvedSenderIdentity,
+) {
+  const indexKeys = [
+    REDIS_GLOBAL_INDEX_KEY,
+  ]
+
+  if (clean(value.mailboxId)) {
+    indexKeys.push(
+      redisMailboxIndexKey(
+        clean(value.mailboxId),
+      ),
+    )
+  }
+
+  await writeAngelCareRedisJson({
+    key: redisValueKey(localKey),
+    value,
+    ttlMs: CACHE_TTL_MS,
+    indexKeys,
+  })
+}
+
+async function invalidateSharedSenderIdentityCache(
+  mailboxId: string | null,
+) {
+  if (!mailboxId) {
+    await invalidateAngelCareRedisJsonIndex(
+      REDIS_GLOBAL_INDEX_KEY,
+    )
+
+    return
+  }
+
+  await invalidateAngelCareRedisJsonIndex(
+    redisMailboxIndexKey(mailboxId),
+  )
 }
 
 async function loadMailbox(db: ReturnType<typeof createEmailOSCoreDb>, mailboxId: string, fromAddress: string) {
@@ -271,8 +449,52 @@ export async function resolveSenderIdentity(input: ResolveInput): Promise<Resolv
   if (input.override) return validateOverride(input.override, canonicalFromAddress, mailboxId)
 
   const key = cacheKey(input)
-  const cached = identityCache.get(key)
-  if (cached && cached.expiresAt > Date.now()) return cached.value
+
+  const shared =
+    await readSharedSenderIdentityCache(key)
+
+  if (shared.status === "hit") {
+    identityCache.set(
+      key,
+      {
+        expiresAt:
+          Date.now() +
+          Math.max(
+            1,
+            Math.min(
+              CACHE_TTL_MS,
+              shared.ttlMs,
+            ),
+          ),
+        value: shared.value,
+      },
+    )
+
+    return shared.value
+  }
+
+  if (shared.status === "miss") {
+    /*
+     * Redis is reachable and authoritative, but the shared
+     * value is absent. Do not resurrect a potentially stale
+     * process-local value after distributed invalidation.
+     */
+    identityCache.delete(key)
+  } else {
+    /*
+     * Redis is unavailable. Preserve the original 45-second
+     * local cache as the resilience/degradation path.
+     */
+    const cached =
+      identityCache.get(key)
+
+    if (
+      cached &&
+      cached.expiresAt > Date.now()
+    ) {
+      return cached.value
+    }
+  }
 
   const db = createEmailOSCoreDb()
   let resolved: ResolvedSenderIdentity | null = null
@@ -307,7 +529,27 @@ export async function resolveSenderIdentity(input: ResolveInput): Promise<Resolv
     resolved = buildFallback(mailbox, input)
   }
 
-  identityCache.set(key, { expiresAt: Date.now() + CACHE_TTL_MS, value: resolved })
+  identityCache.set(
+    key,
+    {
+      expiresAt:
+        Date.now() + CACHE_TTL_MS,
+      value: resolved,
+    },
+  )
+
+  /*
+   * Shared cache population is best effort.
+   *
+   * Supabase remains authoritative and the local cache already
+   * protects the current process, so Redis latency must not delay
+   * the successful resolution response.
+   */
+  void writeSharedSenderIdentityCache(
+    key,
+    resolved,
+  )
+
   return resolved
 }
 
@@ -479,7 +721,7 @@ export async function saveSenderIdentityDraft(input: Record<string, unknown>, ac
     await auditSenderIdentity({ identityId: row.id, mailboxId: row.mailbox_id, actor, action: "sender_identity_draft_created", reason: clean(input.reason), next: senderIdentityPayload(row) })
   }
 
-  invalidateSenderIdentityCache(row.mailbox_id)
+  await invalidateSenderIdentityCache(row.mailbox_id)
   return row
 }
 
@@ -540,7 +782,7 @@ export async function activateSenderIdentity(identityId: string, actor: SenderId
   await insertVersion(db, row, actor, reason || "Sender identity activated")
   await db.from("email_os_core_mailboxes").update({ sender_display_name: row.external_display_name, reply_to_name: row.reply_to_name, reply_to_address: row.reply_to_address, updated_at: now }).eq("id", row.mailbox_id).then(() => null, () => null)
   await auditSenderIdentity({ identityId: row.id, mailboxId: row.mailbox_id, actor, action: "sender_identity_activated", reason, previous: senderIdentityPayload(previous), next: senderIdentityPayload(row) })
-  invalidateSenderIdentityCache(row.mailbox_id)
+  await invalidateSenderIdentityCache(row.mailbox_id)
   return row
 }
 
@@ -565,7 +807,7 @@ export async function suspendSenderIdentity(identityId: string, actor: SenderIde
   const row = data as SenderIdentityRecord
   await insertVersion(db, row, actor, reason || "Sender identity suspended")
   await auditSenderIdentity({ identityId: row.id, mailboxId: row.mailbox_id, actor, action: "sender_identity_suspended", reason, previous: senderIdentityPayload(previous), next: senderIdentityPayload(row) })
-  invalidateSenderIdentityCache(row.mailbox_id)
+  await invalidateSenderIdentityCache(row.mailbox_id)
   return row
 }
 
@@ -603,7 +845,7 @@ export async function rollbackSenderIdentity(identityId: string, targetVersion: 
   const row = data as SenderIdentityRecord
   await insertVersion(db, row, actor, reason || `Rolled back from version ${targetVersion}`)
   await auditSenderIdentity({ identityId: row.id, mailboxId: row.mailbox_id, actor, action: "sender_identity_rolled_back", reason, previous: senderIdentityPayload(previous), next: senderIdentityPayload(row), metadata: { targetVersion } })
-  invalidateSenderIdentityCache(row.mailbox_id)
+  await invalidateSenderIdentityCache(row.mailbox_id)
   return row
 }
 
