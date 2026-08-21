@@ -31,7 +31,7 @@ function loadEnv(file) {
 for (const file of ['.env.local', '.env.production.local', '.env.production', '.env']) loadEnv(path.join(appRoot, file))
 
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL
-const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY
+const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY
 if (!url || !key) {
   console.error('FAIL — NEXT_PUBLIC_SUPABASE_URL/SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are required.')
   process.exit(2)

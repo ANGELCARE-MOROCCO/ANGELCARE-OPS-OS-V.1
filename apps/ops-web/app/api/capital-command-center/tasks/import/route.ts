@@ -1,3 +1,4 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextRequest, NextResponse } from 'next/server'
 import { createResource, listResource, logActivity } from '@/lib/capital-command-center/tasks-store'
 import { operationalActionBlockedResponse, buildOperationalIdempotencyKey, runOperationalWiredAction } from '@/lib/shared/operational-action-wiring'
@@ -114,7 +115,7 @@ function normalizeIncomingTask(row: AnyRecord, lookups: Awaited<ReturnType<typeo
   return { payload, failed }
 }
 
-export async function POST(request: NextRequest) {
+async function POST__angelcareGovernedImpl(request: NextRequest) {
   try {
     const body = await request.json().catch(() => ({}))
     const rows = Array.isArray(body?.tasks) ? body.tasks : []
@@ -165,3 +166,11 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ ok: false, error: error?.message || 'Unable to import tasks' }, { status: 500 })
   }
 }
+
+export const POST = governRoute(
+  {
+    workloadClass: 'heavy',
+    operation: 'POST:/api/capital-command-center/tasks/import',
+  },
+  POST__angelcareGovernedImpl,
+)

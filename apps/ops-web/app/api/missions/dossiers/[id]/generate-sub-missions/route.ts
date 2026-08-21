@@ -1,7 +1,8 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextResponse } from 'next/server'
 import { generateSubMissions } from '@/lib/missions/dossiers'
 export const dynamic = 'force-dynamic'
-export async function POST(request: Request, context: { params: Promise<{ id: string }> }) {
+async function POST__angelcareGovernedImpl(request: Request, context: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await context.params
     const body = await request.json().catch(() => ({}))
@@ -11,3 +12,11 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
     return NextResponse.json({ ok: true, data })
   } catch (error) { return NextResponse.json({ ok: false, error: error instanceof Error ? error.message : 'Sub-mission generation failed' }, { status: 500 }) }
 }
+
+export const POST = governRoute(
+  {
+    workloadClass: 'heavy',
+    operation: 'POST:/api/missions/dossiers/[id]/generate-sub-missions',
+  },
+  POST__angelcareGovernedImpl,
+)

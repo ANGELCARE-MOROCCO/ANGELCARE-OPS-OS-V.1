@@ -1,9 +1,10 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextResponse } from "next/server"
 import { createEmailOSCoreDb } from "@/lib/email-os-core/db"
 import { nowIso } from "@/lib/email-os-core/schema"
 import { audit } from "@/lib/email-os-core/audit"
 
-export async function POST(
+async function POST__angelcareGovernedImpl(
   _request: Request,
   context: { params: Promise<{ id: string }> }
 ) {
@@ -77,3 +78,11 @@ export async function POST(
     return NextResponse.json({ ok: false, error: error instanceof Error ? error.message : "Executive action execution failed" }, { status: 500 })
   }
 }
+
+export const POST = governRoute(
+  {
+    workloadClass: 'worker',
+    operation: 'POST:/api/email-os/executive/actions/[id]/execute',
+  },
+  POST__angelcareGovernedImpl,
+)

@@ -1,3 +1,4 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextResponse } from "next/server"
 import net from "node:net"
 import tls from "node:tls"
@@ -31,7 +32,7 @@ function probeTcp(host: string, port: number, secure: boolean, timeout = 10000):
   })
 }
 
-export async function POST(request: Request) {
+async function POST__angelcareGovernedImpl(request: Request) {
   const denied = assertCeoAccess(request)
   if (denied) return denied
 
@@ -81,3 +82,11 @@ export async function POST(request: Request) {
     )
   }
 }
+
+export const POST = governRoute(
+  {
+    workloadClass: 'provider',
+    operation: 'POST:/api/email-os/mailbox-liveness/probe',
+  },
+  POST__angelcareGovernedImpl,
+)

@@ -1,9 +1,10 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextResponse } from 'next/server'
 import { apiErrorResponse, requireMarketingAiUser } from '@/lib/market-os/marketing-ai/auth'
 import { listMarketingAiCommands, listMarketingAiSkills } from '@/lib/market-os/marketing-ai/repository'
 
 export const dynamic = 'force-dynamic'
-export async function GET(request: Request) {
+async function GET__angelcareGovernedImpl(request: Request) {
   try {
     await requireMarketingAiUser('view')
     const params = new URL(request.url).searchParams
@@ -23,3 +24,11 @@ export async function GET(request: Request) {
     return apiErrorResponse(error)
   }
 }
+
+export const GET = governRoute(
+  {
+    workloadClass: 'ai',
+    operation: 'GET:/api/market-os/content-command/marketing-ai/commands',
+  },
+  GET__angelcareGovernedImpl,
+)

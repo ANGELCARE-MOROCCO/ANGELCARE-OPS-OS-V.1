@@ -1,8 +1,9 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextResponse } from 'next/server'
 import { apiErrorResponse, requireMarketingAiUser } from '@/lib/market-os/marketing-ai/auth'
 import { storeMarketingAiBridgeBytes } from '@/lib/market-os/marketing-ai/bridge'
 
-export async function POST(request: Request) {
+async function POST__angelcareGovernedImpl(request: Request) {
   try {
     const actor = await requireMarketingAiUser('manage')
     const form = await request.formData()
@@ -25,3 +26,11 @@ export async function POST(request: Request) {
     return apiErrorResponse(error)
   }
 }
+
+export const POST = governRoute(
+  {
+    workloadClass: 'ai',
+    operation: 'POST:/api/market-os/content-command/marketing-ai/bridge/upload',
+  },
+  POST__angelcareGovernedImpl,
+)

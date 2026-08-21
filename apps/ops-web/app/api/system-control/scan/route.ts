@@ -1,3 +1,4 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextResponse } from 'next/server'
 import { getSystemControlContext } from '../_shared'
 import { loadLatestScanResult, loadPolicyEvents, runLocalAppScan } from '@/lib/system-control/policy'
@@ -5,7 +6,7 @@ import { loadLatestScanResult, loadPolicyEvents, runLocalAppScan } from '@/lib/s
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
-export async function GET() {
+async function GET__angelcareGovernedImpl() {
   try {
     const context = await getSystemControlContext()
 
@@ -46,7 +47,7 @@ export async function GET() {
   }
 }
 
-export async function POST(request: Request) {
+async function POST__angelcareGovernedImpl(request: Request) {
   try {
     const context = await getSystemControlContext()
 
@@ -84,3 +85,19 @@ export async function POST(request: Request) {
     )
   }
 }
+
+export const GET = governRoute(
+  {
+    workloadClass: 'heavy',
+    operation: 'GET:/api/system-control/scan',
+  },
+  GET__angelcareGovernedImpl,
+)
+
+export const POST = governRoute(
+  {
+    workloadClass: 'heavy',
+    operation: 'POST:/api/system-control/scan',
+  },
+  POST__angelcareGovernedImpl,
+)

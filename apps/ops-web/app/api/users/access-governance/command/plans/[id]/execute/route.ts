@@ -1,3 +1,4 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextResponse } from 'next/server'
 import { getCurrentAppUser } from '@/lib/auth/session'
 import { createAccessGovernanceAdminClient } from '@/lib/users/access-governance/admin-client'
@@ -6,7 +7,7 @@ import { executeUniversalPlan } from '@/lib/users/access-governance/universal/ex
 export const dynamic = 'force-dynamic'
 export const maxDuration = 60
 
-export async function POST(_request: Request, { params }: { params: Promise<{ id: string }> }) {
+async function POST__angelcareGovernedImpl(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   const actor = await getCurrentAppUser()
   if (!actor) return NextResponse.json({ ok: false, error: 'Authentication required.' }, { status: 401 })
   const { id } = await params
@@ -17,3 +18,11 @@ export async function POST(_request: Request, { params }: { params: Promise<{ id
     return NextResponse.json({ ok: false, error: error instanceof Error ? error.message : 'Unable to execute plan.' }, { status: 400 })
   }
 }
+
+export const POST = governRoute(
+  {
+    workloadClass: 'worker',
+    operation: 'POST:/api/users/access-governance/command/plans/[id]/execute',
+  },
+  POST__angelcareGovernedImpl,
+)

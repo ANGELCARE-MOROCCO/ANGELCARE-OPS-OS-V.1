@@ -1,7 +1,8 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextResponse } from "next/server"
 import { createLifecycleRun, executeLifecycleRun, getLifecyclePolicy, listLifecycleRuns } from "@/lib/opsos/storage-lifecycle"
 function clean(value: unknown) { return String(value ?? "").trim() }
-export async function POST(request: Request) {
+async function POST__angelcareGovernedImpl(request: Request) {
   const secret = clean(process.env.OPSOS_STORAGE_LIFECYCLE_SECRET || process.env.CRON_SECRET)
   const supplied = clean(request.headers.get("x-opsos-lifecycle-secret") || request.headers.get("authorization")?.replace(/^Bearer\s+/i, ""))
   if (!secret || supplied !== secret) return NextResponse.json({ ok: false, error: "Unauthorized lifecycle scheduler" }, { status: 401 })
@@ -24,3 +25,11 @@ export async function POST(request: Request) {
   }
   catch (error) { return NextResponse.json({ ok: false, error: error instanceof Error ? error.message : "Scheduled lifecycle run failed" }, { status: 500 }) }
 }
+
+export const POST = governRoute(
+  {
+    workloadClass: 'worker',
+    operation: 'POST:/api/opsos/windows-node/storage/lifecycle/cron',
+  },
+  POST__angelcareGovernedImpl,
+)

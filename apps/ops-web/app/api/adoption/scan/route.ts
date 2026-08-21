@@ -1,9 +1,10 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextResponse } from "next/server";
 import { scanFactoryAdoptionCandidates } from "@/lib/saas-factory/phase5-file-scanner";
 
 export const dynamic = "force-dynamic";
 
-export async function GET() {
+async function GET__angelcareGovernedImpl() {
   try {
     const report = await scanFactoryAdoptionCandidates();
     return NextResponse.json({
@@ -20,3 +21,11 @@ export async function GET() {
     );
   }
 }
+
+export const GET = governRoute(
+  {
+    workloadClass: 'heavy',
+    operation: 'GET:/api/adoption/scan',
+  },
+  GET__angelcareGovernedImpl,
+)

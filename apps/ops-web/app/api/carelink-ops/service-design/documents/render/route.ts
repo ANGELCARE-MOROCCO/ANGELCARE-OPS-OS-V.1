@@ -1,3 +1,4 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import crypto from 'node:crypto'
 import { NextResponse } from 'next/server'
 import { getCurrentAppUser } from '@/lib/auth/session'
@@ -9,7 +10,7 @@ import type { ServiceDocumentRenderPayload } from '@/components/carelink/service
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
-export async function POST(request: Request) {
+async function POST__angelcareGovernedImpl(request: Request) {
   const user = await getCurrentAppUser()
   if (!user) return NextResponse.json({ ok: false, error: 'Authentification ANGELCARE requise.' }, { status: 401 })
   if (!canUseServiceDesignDocuments(user as Record<string, unknown>)) return NextResponse.json({ ok: false, error: 'Autorité Service Design insuffisante pour produire ce document.' }, { status: 403 })
@@ -27,3 +28,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, error: error instanceof Error ? error.message : 'Génération PDF impossible.' }, { status: 500 })
   }
 }
+
+export const POST = governRoute(
+  {
+    workloadClass: 'heavy',
+    operation: 'POST:/api/carelink-ops/service-design/documents/render',
+  },
+  POST__angelcareGovernedImpl,
+)

@@ -1,8 +1,9 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextResponse } from 'next/server'
 import { getCurrentB2BAppUser, getServerB2BDatabaseClient } from '@/lib/b2b-partnerships/runtime'
 import { requireB2BPermission } from '@/lib/b2b-partnerships/permissions'
 
-export async function POST() {
+async function POST__angelcareGovernedImpl() {
   try {
     const db = await getServerB2BDatabaseClient()
     const actor = await getCurrentB2BAppUser()
@@ -26,3 +27,11 @@ export async function POST() {
     return NextResponse.json({ ok:false, error:'Unable to run automation rules.' }, { status:500 })
   }
 }
+
+export const POST = governRoute(
+  {
+    workloadClass: 'worker',
+    operation: 'POST:/api/b2b-partnerships/automation/run',
+  },
+  POST__angelcareGovernedImpl,
+)

@@ -1,3 +1,4 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { recoveredLocalStorageSeed } from '@/lib/revenue-command-center/recoveredLocalStorageSeed'
@@ -105,11 +106,11 @@ function rowsFromSeed() {
   return { rows, entities }
 }
 
-export async function GET() {
+async function GET__angelcareGovernedImpl() {
   return POST()
 }
 
-export async function POST(req?: Request) {
+async function POST__angelcareGovernedImpl(req?: Request) {
   try {
     const supabase = await createClient()
     const url = req ? new URL(req.url) : null
@@ -169,3 +170,19 @@ export async function POST(req?: Request) {
     return NextResponse.json({ ok: false, error: error?.message || 'Recovery import failed. Confirm the SQL migration was run first.' }, { status: 500 })
   }
 }
+
+export const GET = governRoute(
+  {
+    workloadClass: 'heavy',
+    operation: 'GET:/api/revenue-command-center/recovery/import',
+  },
+  GET__angelcareGovernedImpl,
+)
+
+export const POST = governRoute(
+  {
+    workloadClass: 'heavy',
+    operation: 'POST:/api/revenue-command-center/recovery/import',
+  },
+  POST__angelcareGovernedImpl,
+)

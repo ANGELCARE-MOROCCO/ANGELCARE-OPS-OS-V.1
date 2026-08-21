@@ -1,3 +1,4 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 
@@ -54,7 +55,7 @@ function json(data: AnyRecord, status = 200) {
   return NextResponse.json(data, { status, headers: { 'Cache-Control': 'no-store' } })
 }
 
-export async function GET() {
+async function GET__angelcareGovernedImpl() {
   try {
     const supabase = await createClient()
     const { data, error } = await supabase
@@ -73,7 +74,7 @@ export async function GET() {
   }
 }
 
-export async function POST(req: NextRequest) {
+async function POST__angelcareGovernedImpl(req: NextRequest) {
   try {
     const body = await req.json().catch(() => ({}))
     const supabase = await createClient()
@@ -103,3 +104,19 @@ export async function POST(req: NextRequest) {
     return json({ ok: false, error: error?.message || 'Unable to save board report', data: { report: null } }, 500)
   }
 }
+
+export const GET = governRoute(
+  {
+    workloadClass: 'heavy',
+    operation: 'GET:/api/capital-command-center/reports/board',
+  },
+  GET__angelcareGovernedImpl,
+)
+
+export const POST = governRoute(
+  {
+    workloadClass: 'heavy',
+    operation: 'POST:/api/capital-command-center/reports/board',
+  },
+  POST__angelcareGovernedImpl,
+)

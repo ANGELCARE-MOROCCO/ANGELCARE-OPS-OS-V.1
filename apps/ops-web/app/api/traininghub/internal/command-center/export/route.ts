@@ -1,3 +1,4 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/contract-client'
 
@@ -32,7 +33,7 @@ async function countTable(supabase: any, table: string) {
   }
 }
 
-export async function GET() {
+async function GET__angelcareGovernedImpl() {
   const supabase = client()
   if (!supabase) return NextResponse.json({ ok: false, message: 'Supabase non configuré.' }, { status: 500 })
 
@@ -52,3 +53,11 @@ export async function GET() {
     },
   })
 }
+
+export const GET = governRoute(
+  {
+    workloadClass: 'heavy',
+    operation: 'GET:/api/traininghub/internal/command-center/export',
+  },
+  GET__angelcareGovernedImpl,
+)

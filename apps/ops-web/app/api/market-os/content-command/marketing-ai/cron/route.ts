@@ -1,3 +1,4 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextResponse } from 'next/server'
 import { getMarketingAiConfig } from '@/lib/market-os/marketing-ai/config'
 import { runMarketingAutopilotCycle } from '@/lib/market-os/marketing-ai/autopilot'
@@ -30,5 +31,21 @@ async function handle(request: Request) {
   }
 }
 
-export async function GET(request: Request) { return handle(request) }
-export async function POST(request: Request) { return handle(request) }
+async function GET__angelcareGovernedImpl(request: Request) { return handle(request) }
+async function POST__angelcareGovernedImpl(request: Request) { return handle(request) }
+
+export const GET = governRoute(
+  {
+    workloadClass: 'ai',
+    operation: 'GET:/api/market-os/content-command/marketing-ai/cron',
+  },
+  GET__angelcareGovernedImpl,
+)
+
+export const POST = governRoute(
+  {
+    workloadClass: 'ai',
+    operation: 'POST:/api/market-os/content-command/marketing-ai/cron',
+  },
+  POST__angelcareGovernedImpl,
+)

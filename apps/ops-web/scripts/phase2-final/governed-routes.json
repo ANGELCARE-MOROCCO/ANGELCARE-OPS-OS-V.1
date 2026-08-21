@@ -1,0 +1,1008 @@
+{
+  "generatedBy": "ANGELCARE_PHASE_II_FINAL_MEGA_BUILD",
+  "governed": [
+    {
+      "method": "POST",
+      "operation": "POST:/api/ac-capital-os/ai-control/scheduler/tick",
+      "route": "apps/ops-web/app/api/ac-capital-os/ai-control/scheduler/tick/route.ts",
+      "workloadClass": "worker"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/ac-capital-os/reports/generate",
+      "route": "apps/ops-web/app/api/ac-capital-os/reports/generate/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/ac-capital-os/reports/list",
+      "route": "apps/ops-web/app/api/ac-capital-os/reports/list/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/ac-capital-os/runtime/tick",
+      "route": "apps/ops-web/app/api/ac-capital-os/runtime/tick/route.ts",
+      "workloadClass": "worker"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/ac-whatsapp/ai/assist",
+      "route": "apps/ops-web/app/api/ac-whatsapp/ai/assist/route.ts",
+      "workloadClass": "ai"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/ac-whatsapp/commercial-cognition/knowledge/import",
+      "route": "apps/ops-web/app/api/ac-whatsapp/commercial-cognition/knowledge/import/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "PATCH",
+      "operation": "PATCH:/api/ac-whatsapp/revenue-intelligence/conversations/automation/bulk",
+      "route": "apps/ops-web/app/api/ac-whatsapp/revenue-intelligence/conversations/automation/bulk/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/ac-whatsapp/revenue-intelligence/doctrines/import",
+      "route": "apps/ops-web/app/api/ac-whatsapp/revenue-intelligence/doctrines/import/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/academy/cohorts/[id]/pdf",
+      "route": "apps/ops-web/app/api/academy/cohorts/[id]/pdf/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/academy/documents/generate",
+      "route": "apps/ops-web/app/api/academy/documents/generate/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/academy/programs/[id]/pdf",
+      "route": "apps/ops-web/app/api/academy/programs/[id]/pdf/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/academy/trainers/[id]/payments/[paymentId]/receipt/pdf",
+      "route": "apps/ops-web/app/api/academy/trainers/[id]/payments/[paymentId]/receipt/pdf/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/adoption/scan",
+      "route": "apps/ops-web/app/api/adoption/scan/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/ambassadors/final/ai-actions/execute",
+      "route": "apps/ops-web/app/api/ambassadors/final/ai-actions/execute/route.ts",
+      "workloadClass": "worker"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/b2b-partnerships/automation/run",
+      "route": "apps/ops-web/app/api/b2b-partnerships/automation/run/route.ts",
+      "workloadClass": "worker"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/b2b-partnerships/reports/executive",
+      "route": "apps/ops-web/app/api/b2b-partnerships/reports/executive/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/b2b-partnerships/reports/executive",
+      "route": "apps/ops-web/app/api/b2b-partnerships/reports/executive/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/b2b-partnerships/reports",
+      "route": "apps/ops-web/app/api/b2b-partnerships/reports/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/b2b-partnerships/reports",
+      "route": "apps/ops-web/app/api/b2b-partnerships/reports/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "PATCH",
+      "operation": "PATCH:/api/b2b-partnerships/reports",
+      "route": "apps/ops-web/app/api/b2b-partnerships/reports/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "DELETE",
+      "operation": "DELETE:/api/b2b-partnerships/reports",
+      "route": "apps/ops-web/app/api/b2b-partnerships/reports/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/b2b-partnerships/reports/weekly",
+      "route": "apps/ops-web/app/api/b2b-partnerships/reports/weekly/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/b2b-partnerships/tasks/import",
+      "route": "apps/ops-web/app/api/b2b-partnerships/tasks/import/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/billing/generate-from-mission",
+      "route": "apps/ops-web/app/api/billing/generate-from-mission/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/browser-extension/v1/commands/execute",
+      "route": "apps/ops-web/app/api/browser-extension/v1/commands/execute/route.ts",
+      "workloadClass": "worker"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/capital-command-center/reports/board",
+      "route": "apps/ops-web/app/api/capital-command-center/reports/board/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/capital-command-center/reports/board",
+      "route": "apps/ops-web/app/api/capital-command-center/reports/board/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/capital-command-center/tasks/import",
+      "route": "apps/ops-web/app/api/capital-command-center/tasks/import/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/carelink/missions/[id]/report",
+      "route": "apps/ops-web/app/api/carelink/missions/[id]/report/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/carelink/missions/[id]/report",
+      "route": "apps/ops-web/app/api/carelink/missions/[id]/report/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/carelink/ops/reports/[id]/request-correction",
+      "route": "apps/ops-web/app/api/carelink/ops/reports/[id]/request-correction/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/carelink/ops/reports/[id]/validate",
+      "route": "apps/ops-web/app/api/carelink/ops/reports/[id]/validate/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/carelink/ops/reports",
+      "route": "apps/ops-web/app/api/carelink/ops/reports/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/carelink-ops/service-design/commercial/requests/[id]/generate",
+      "route": "apps/ops-web/app/api/carelink-ops/service-design/commercial/requests/[id]/generate/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/carelink-ops/service-design/documents/render",
+      "route": "apps/ops-web/app/api/carelink-ops/service-design/documents/render/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/carelink-ops/service-design/factory/generate",
+      "route": "apps/ops-web/app/api/carelink-ops/service-design/factory/generate/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/carelink-ops/service-design/factory/import",
+      "route": "apps/ops-web/app/api/carelink-ops/service-design/factory/import/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/carelink-ops/service-design/handoffs/[id]/reports",
+      "route": "apps/ops-web/app/api/carelink-ops/service-design/handoffs/[id]/reports/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/carelink-ops/service-design/planning/requests/[id]/generate",
+      "route": "apps/ops-web/app/api/carelink-ops/service-design/planning/requests/[id]/generate/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/carelink-ops/service-design/product-experience/bulk",
+      "route": "apps/ops-web/app/api/carelink-ops/service-design/product-experience/bulk/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/email-os/ai/copilot-action",
+      "route": "apps/ops-web/app/api/email-os/ai/copilot-action/route.ts",
+      "workloadClass": "ai"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/email-os/ai/memory",
+      "route": "apps/ops-web/app/api/email-os/ai/memory/route.ts",
+      "workloadClass": "ai"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/email-os/ai/memory",
+      "route": "apps/ops-web/app/api/email-os/ai/memory/route.ts",
+      "workloadClass": "ai"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/email-os/ai/resolution-suggest",
+      "route": "apps/ops-web/app/api/email-os/ai/resolution-suggest/route.ts",
+      "workloadClass": "ai"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/email-os/ai/triage",
+      "route": "apps/ops-web/app/api/email-os/ai/triage/route.ts",
+      "workloadClass": "ai"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/email-os/ai/workflow-plan",
+      "route": "apps/ops-web/app/api/email-os/ai/workflow-plan/route.ts",
+      "workloadClass": "ai"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/email-os/automation/execute",
+      "route": "apps/ops-web/app/api/email-os/automation/execute/route.ts",
+      "workloadClass": "worker"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/email-os/backup-manifest",
+      "route": "apps/ops-web/app/api/email-os/backup-manifest/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/email-os/bridge-health",
+      "route": "apps/ops-web/app/api/email-os/bridge-health/route.ts",
+      "workloadClass": "provider"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/email-os/bulk/thread-action",
+      "route": "apps/ops-web/app/api/email-os/bulk/thread-action/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/email-os/executive/actions/[id]/execute",
+      "route": "apps/ops-web/app/api/email-os/executive/actions/[id]/execute/route.ts",
+      "workloadClass": "worker"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/email-os/export/[entity]",
+      "route": "apps/ops-web/app/api/email-os/export/[entity]/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/email-os/final/ai/draft-reply",
+      "route": "apps/ops-web/app/api/email-os/final/ai/draft-reply/route.ts",
+      "workloadClass": "ai"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/email-os/final/ai/memory-search",
+      "route": "apps/ops-web/app/api/email-os/final/ai/memory-search/route.ts",
+      "workloadClass": "ai"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/email-os/final/ai/status",
+      "route": "apps/ops-web/app/api/email-os/final/ai/status/route.ts",
+      "workloadClass": "ai"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/email-os/final/reliability/run",
+      "route": "apps/ops-web/app/api/email-os/final/reliability/run/route.ts",
+      "workloadClass": "worker"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/email-os/mailbox-liveness/probe",
+      "route": "apps/ops-web/app/api/email-os/mailbox-liveness/probe/route.ts",
+      "workloadClass": "provider"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/email-os/provider-test",
+      "route": "apps/ops-web/app/api/email-os/provider-test/route.ts",
+      "workloadClass": "provider"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/email-os/provider-test",
+      "route": "apps/ops-web/app/api/email-os/provider-test/route.ts",
+      "workloadClass": "provider"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/email-os/sync-jobs/[id]/run",
+      "route": "apps/ops-web/app/api/email-os/sync-jobs/[id]/run/route.ts",
+      "workloadClass": "provider"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/email-os/sync-jobs",
+      "route": "apps/ops-web/app/api/email-os/sync-jobs/route.ts",
+      "workloadClass": "provider"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/email-os/sync-jobs",
+      "route": "apps/ops-web/app/api/email-os/sync-jobs/route.ts",
+      "workloadClass": "provider"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/flashcards-os/documents/render",
+      "route": "apps/ops-web/app/api/flashcards-os/documents/render/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/flashcards-os/intelligence/research/missions/[missionId]/execute",
+      "route": "apps/ops-web/app/api/flashcards-os/intelligence/research/missions/[missionId]/execute/route.ts",
+      "workloadClass": "worker"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/flashcards-os/revenue/documents/[documentType]/[documentId]/pdf",
+      "route": "apps/ops-web/app/api/flashcards-os/revenue/documents/[documentType]/[documentId]/pdf/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/flashcards-os/solutions/journeys/[requestId]/generate",
+      "route": "apps/ops-web/app/api/flashcards-os/solutions/journeys/[requestId]/generate/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/flashcards-os/solutions/requests/[requestId]/generate",
+      "route": "apps/ops-web/app/api/flashcards-os/solutions/requests/[requestId]/generate/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/hr/action-completion/execute",
+      "route": "apps/ops-web/app/api/hr/action-completion/execute/route.ts",
+      "workloadClass": "worker"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/hr/employees/communications/send-email",
+      "route": "apps/ops-web/app/api/hr/employees/communications/send-email/route.ts",
+      "workloadClass": "provider"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/hr/employees/communications/send-email/status",
+      "route": "apps/ops-web/app/api/hr/employees/communications/send-email/status/route.ts",
+      "workloadClass": "provider"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/hr/export",
+      "route": "apps/ops-web/app/api/hr/export/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/hr/payroll/generate",
+      "route": "apps/ops-web/app/api/hr/payroll/generate/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/hr/performance-matrix/report",
+      "route": "apps/ops-web/app/api/hr/performance-matrix/report/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/hr/reports/export",
+      "route": "apps/ops-web/app/api/hr/reports/export/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/hr/reports/hr-complete-export",
+      "route": "apps/ops-web/app/api/hr/reports/hr-complete-export/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/internal/browser-extension/ultra/scheduler",
+      "route": "apps/ops-web/app/api/internal/browser-extension/ultra/scheduler/route.ts",
+      "workloadClass": "worker"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/market-os/ambassadors/reports/export",
+      "route": "apps/ops-web/app/api/market-os/ambassadors/reports/export/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/market-os/ambassadors/reports/export",
+      "route": "apps/ops-web/app/api/market-os/ambassadors/reports/export/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/market-os/ambassadors/reports",
+      "route": "apps/ops-web/app/api/market-os/ambassadors/reports/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/market-os/ambassadors/reports",
+      "route": "apps/ops-web/app/api/market-os/ambassadors/reports/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/market-os/content-command/ai/run",
+      "route": "apps/ops-web/app/api/market-os/content-command/ai/run/route.ts",
+      "workloadClass": "ai"
+    },
+    {
+      "method": "PATCH",
+      "operation": "PATCH:/api/market-os/content-command/marketing-ai/actions/[id]",
+      "route": "apps/ops-web/app/api/market-os/content-command/marketing-ai/actions/[id]/route.ts",
+      "workloadClass": "ai"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/market-os/content-command/marketing-ai/actions",
+      "route": "apps/ops-web/app/api/market-os/content-command/marketing-ai/actions/route.ts",
+      "workloadClass": "ai"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/market-os/content-command/marketing-ai/autopilot/dashboard",
+      "route": "apps/ops-web/app/api/market-os/content-command/marketing-ai/autopilot/dashboard/route.ts",
+      "workloadClass": "ai"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/market-os/content-command/marketing-ai/bridge/objects",
+      "route": "apps/ops-web/app/api/market-os/content-command/marketing-ai/bridge/objects/route.ts",
+      "workloadClass": "ai"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/market-os/content-command/marketing-ai/bridge/upload",
+      "route": "apps/ops-web/app/api/market-os/content-command/marketing-ai/bridge/upload/route.ts",
+      "workloadClass": "ai"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/market-os/content-command/marketing-ai/bridge/versions",
+      "route": "apps/ops-web/app/api/market-os/content-command/marketing-ai/bridge/versions/route.ts",
+      "workloadClass": "ai"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/market-os/content-command/marketing-ai/canonical-records",
+      "route": "apps/ops-web/app/api/market-os/content-command/marketing-ai/canonical-records/route.ts",
+      "workloadClass": "ai"
+    },
+    {
+      "method": "PATCH",
+      "operation": "PATCH:/api/market-os/content-command/marketing-ai/commands/[code]",
+      "route": "apps/ops-web/app/api/market-os/content-command/marketing-ai/commands/[code]/route.ts",
+      "workloadClass": "ai"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/market-os/content-command/marketing-ai/commands/export",
+      "route": "apps/ops-web/app/api/market-os/content-command/marketing-ai/commands/export/route.ts",
+      "workloadClass": "ai"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/market-os/content-command/marketing-ai/commands/import",
+      "route": "apps/ops-web/app/api/market-os/content-command/marketing-ai/commands/import/route.ts",
+      "workloadClass": "ai"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/market-os/content-command/marketing-ai/commands",
+      "route": "apps/ops-web/app/api/market-os/content-command/marketing-ai/commands/route.ts",
+      "workloadClass": "ai"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/market-os/content-command/marketing-ai/commands/template",
+      "route": "apps/ops-web/app/api/market-os/content-command/marketing-ai/commands/template/route.ts",
+      "workloadClass": "ai"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/market-os/content-command/marketing-ai/compilations/[id]/decision",
+      "route": "apps/ops-web/app/api/market-os/content-command/marketing-ai/compilations/[id]/decision/route.ts",
+      "workloadClass": "ai"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/market-os/content-command/marketing-ai/compilations/[id]/execute",
+      "route": "apps/ops-web/app/api/market-os/content-command/marketing-ai/compilations/[id]/execute/route.ts",
+      "workloadClass": "ai"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/market-os/content-command/marketing-ai/compilations/[id]",
+      "route": "apps/ops-web/app/api/market-os/content-command/marketing-ai/compilations/[id]/route.ts",
+      "workloadClass": "ai"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/market-os/content-command/marketing-ai/compilations",
+      "route": "apps/ops-web/app/api/market-os/content-command/marketing-ai/compilations/route.ts",
+      "workloadClass": "ai"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/market-os/content-command/marketing-ai/compilations",
+      "route": "apps/ops-web/app/api/market-os/content-command/marketing-ai/compilations/route.ts",
+      "workloadClass": "ai"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/market-os/content-command/marketing-ai/cron",
+      "route": "apps/ops-web/app/api/market-os/content-command/marketing-ai/cron/route.ts",
+      "workloadClass": "ai"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/market-os/content-command/marketing-ai/cron",
+      "route": "apps/ops-web/app/api/market-os/content-command/marketing-ai/cron/route.ts",
+      "workloadClass": "ai"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/market-os/content-command/marketing-ai/dashboard",
+      "route": "apps/ops-web/app/api/market-os/content-command/marketing-ai/dashboard/route.ts",
+      "workloadClass": "ai"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/market-os/content-command/marketing-ai/decisions",
+      "route": "apps/ops-web/app/api/market-os/content-command/marketing-ai/decisions/route.ts",
+      "workloadClass": "ai"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/market-os/content-command/marketing-ai/doctrine",
+      "route": "apps/ops-web/app/api/market-os/content-command/marketing-ai/doctrine/route.ts",
+      "workloadClass": "ai"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/market-os/content-command/marketing-ai/doctrine",
+      "route": "apps/ops-web/app/api/market-os/content-command/marketing-ai/doctrine/route.ts",
+      "workloadClass": "ai"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/market-os/content-command/marketing-ai/integrations",
+      "route": "apps/ops-web/app/api/market-os/content-command/marketing-ai/integrations/route.ts",
+      "workloadClass": "ai"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/market-os/content-command/marketing-ai/learning/[id]/govern",
+      "route": "apps/ops-web/app/api/market-os/content-command/marketing-ai/learning/[id]/govern/route.ts",
+      "workloadClass": "ai"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/market-os/content-command/marketing-ai/learning",
+      "route": "apps/ops-web/app/api/market-os/content-command/marketing-ai/learning/route.ts",
+      "workloadClass": "ai"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/market-os/content-command/marketing-ai/missions/[id]/run",
+      "route": "apps/ops-web/app/api/market-os/content-command/marketing-ai/missions/[id]/run/route.ts",
+      "workloadClass": "ai"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/market-os/content-command/marketing-ai/missions",
+      "route": "apps/ops-web/app/api/market-os/content-command/marketing-ai/missions/route.ts",
+      "workloadClass": "ai"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/market-os/content-command/marketing-ai/missions",
+      "route": "apps/ops-web/app/api/market-os/content-command/marketing-ai/missions/route.ts",
+      "workloadClass": "ai"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/market-os/content-command/marketing-ai/queue/[id]/control",
+      "route": "apps/ops-web/app/api/market-os/content-command/marketing-ai/queue/[id]/control/route.ts",
+      "workloadClass": "ai"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/market-os/content-command/marketing-ai/queue",
+      "route": "apps/ops-web/app/api/market-os/content-command/marketing-ai/queue/route.ts",
+      "workloadClass": "ai"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/market-os/content-command/marketing-ai/recovery",
+      "route": "apps/ops-web/app/api/market-os/content-command/marketing-ai/recovery/route.ts",
+      "workloadClass": "ai"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/market-os/content-command/marketing-ai/resources",
+      "route": "apps/ops-web/app/api/market-os/content-command/marketing-ai/resources/route.ts",
+      "workloadClass": "ai"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/market-os/content-command/marketing-ai/resources",
+      "route": "apps/ops-web/app/api/market-os/content-command/marketing-ai/resources/route.ts",
+      "workloadClass": "ai"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/market-os/content-command/marketing-ai/runs",
+      "route": "apps/ops-web/app/api/market-os/content-command/marketing-ai/runs/route.ts",
+      "workloadClass": "ai"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/market-os/content-command/marketing-ai/runs",
+      "route": "apps/ops-web/app/api/market-os/content-command/marketing-ai/runs/route.ts",
+      "workloadClass": "ai"
+    },
+    {
+      "method": "PATCH",
+      "operation": "PATCH:/api/market-os/content-command/marketing-ai/schedules/[id]",
+      "route": "apps/ops-web/app/api/market-os/content-command/marketing-ai/schedules/[id]/route.ts",
+      "workloadClass": "ai"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/market-os/content-command/marketing-ai/schedules",
+      "route": "apps/ops-web/app/api/market-os/content-command/marketing-ai/schedules/route.ts",
+      "workloadClass": "ai"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/market-os/content-command/marketing-ai/schedules",
+      "route": "apps/ops-web/app/api/market-os/content-command/marketing-ai/schedules/route.ts",
+      "workloadClass": "ai"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/market-os/content-command/marketing-ai/skills",
+      "route": "apps/ops-web/app/api/market-os/content-command/marketing-ai/skills/route.ts",
+      "workloadClass": "ai"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/market-os/content-command/marketing-ai/sync",
+      "route": "apps/ops-web/app/api/market-os/content-command/marketing-ai/sync/route.ts",
+      "workloadClass": "ai"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/market-os/content-command/marketing-ai/tools",
+      "route": "apps/ops-web/app/api/market-os/content-command/marketing-ai/tools/route.ts",
+      "workloadClass": "ai"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/market-os/content-command/research-control/cron",
+      "route": "apps/ops-web/app/api/market-os/content-command/research-control/cron/route.ts",
+      "workloadClass": "worker"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/market-os/content-command-headquarters/cron",
+      "route": "apps/ops-web/app/api/market-os/content-command-headquarters/cron/route.ts",
+      "workloadClass": "worker"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/missions/[id]/report",
+      "route": "apps/ops-web/app/api/missions/[id]/report/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/missions/dossiers/[id]/generate-sub-missions",
+      "route": "apps/ops-web/app/api/missions/dossiers/[id]/generate-sub-missions/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/operation-completion/scan",
+      "route": "apps/ops-web/app/api/operation-completion/scan/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/operation-completion/scan",
+      "route": "apps/ops-web/app/api/operation-completion/scan/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/opsos/windows-node/backup",
+      "route": "apps/ops-web/app/api/opsos/windows-node/backup/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/opsos/windows-node/backup/status",
+      "route": "apps/ops-web/app/api/opsos/windows-node/backup/status/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/opsos/windows-node/proof-send",
+      "route": "apps/ops-web/app/api/opsos/windows-node/proof-send/route.ts",
+      "workloadClass": "provider"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/opsos/windows-node/smtp-test",
+      "route": "apps/ops-web/app/api/opsos/windows-node/smtp-test/route.ts",
+      "workloadClass": "provider"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/opsos/windows-node/smtp-test",
+      "route": "apps/ops-web/app/api/opsos/windows-node/smtp-test/route.ts",
+      "workloadClass": "provider"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/opsos/windows-node/storage/cleanup/execute",
+      "route": "apps/ops-web/app/api/opsos/windows-node/storage/cleanup/execute/route.ts",
+      "workloadClass": "worker"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/opsos/windows-node/storage/dedup/plans/[planId]/execute",
+      "route": "apps/ops-web/app/api/opsos/windows-node/storage/dedup/plans/[planId]/execute/route.ts",
+      "workloadClass": "worker"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/opsos/windows-node/storage/dedup/scan",
+      "route": "apps/ops-web/app/api/opsos/windows-node/storage/dedup/scan/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/opsos/windows-node/storage/destruction/[requestId]/execute",
+      "route": "apps/ops-web/app/api/opsos/windows-node/storage/destruction/[requestId]/execute/route.ts",
+      "workloadClass": "worker"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/opsos/windows-node/storage/export",
+      "route": "apps/ops-web/app/api/opsos/windows-node/storage/export/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/opsos/windows-node/storage/lifecycle/cron",
+      "route": "apps/ops-web/app/api/opsos/windows-node/storage/lifecycle/cron/route.ts",
+      "workloadClass": "worker"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/opsos/windows-node/storage/quarantine/[caseId]/execute",
+      "route": "apps/ops-web/app/api/opsos/windows-node/storage/quarantine/[caseId]/execute/route.ts",
+      "workloadClass": "worker"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/pacojaco-ops/documents/[id]/pdf",
+      "route": "apps/ops-web/app/api/pacojaco-ops/documents/[id]/pdf/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/pacojaco-ops/documents/[id]/send-email",
+      "route": "apps/ops-web/app/api/pacojaco-ops/documents/[id]/send-email/route.ts",
+      "workloadClass": "provider"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/revenue-command-center/automation/run",
+      "route": "apps/ops-web/app/api/revenue-command-center/automation/run/route.ts",
+      "workloadClass": "worker"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/revenue-command-center/execution/bulk",
+      "route": "apps/ops-web/app/api/revenue-command-center/execution/bulk/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/revenue-command-center/recovery/import",
+      "route": "apps/ops-web/app/api/revenue-command-center/recovery/import/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/revenue-command-center/recovery/import",
+      "route": "apps/ops-web/app/api/revenue-command-center/recovery/import/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/revenue-command-center/v10/bulk",
+      "route": "apps/ops-web/app/api/revenue-command-center/v10/bulk/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/revenue-command-center/v11/bulk",
+      "route": "apps/ops-web/app/api/revenue-command-center/v11/bulk/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/revenue-command-center/v12/bulk",
+      "route": "apps/ops-web/app/api/revenue-command-center/v12/bulk/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/revenue-command-center/v9/bulk",
+      "route": "apps/ops-web/app/api/revenue-command-center/v9/bulk/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/revenue-command-os/ai/governance",
+      "route": "apps/ops-web/app/api/revenue-command-os/ai/governance/route.ts",
+      "workloadClass": "ai"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/revenue-command-os/ai/governance",
+      "route": "apps/ops-web/app/api/revenue-command-os/ai/governance/route.ts",
+      "workloadClass": "ai"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/revenue-command-os/ai/models",
+      "route": "apps/ops-web/app/api/revenue-command-os/ai/models/route.ts",
+      "workloadClass": "ai"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/revenue-command-os/ai/usage",
+      "route": "apps/ops-web/app/api/revenue-command-os/ai/usage/route.ts",
+      "workloadClass": "ai"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/revenue-command-os/strategy-engine/generate",
+      "route": "apps/ops-web/app/api/revenue-command-os/strategy-engine/generate/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/system-control/scan",
+      "route": "apps/ops-web/app/api/system-control/scan/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/system-control/scan",
+      "route": "apps/ops-web/app/api/system-control/scan/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/traininghub/internal/command-center/export",
+      "route": "apps/ops-web/app/api/traininghub/internal/command-center/export/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "GET",
+      "operation": "GET:/api/traininghub/internal/partners-portfolio/export",
+      "route": "apps/ops-web/app/api/traininghub/internal/partners-portfolio/export/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/traininghub/internal/partners-portfolio/import",
+      "route": "apps/ops-web/app/api/traininghub/internal/partners-portfolio/import/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/users/access-governance/command/plans/[id]/execute",
+      "route": "apps/ops-web/app/api/users/access-governance/command/plans/[id]/execute/route.ts",
+      "workloadClass": "worker"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/users/access-governance/command/rollbacks/[id]/execute",
+      "route": "apps/ops-web/app/api/users/access-governance/command/rollbacks/[id]/execute/route.ts",
+      "workloadClass": "worker"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/users/access-governance/scan/[id]/publish",
+      "route": "apps/ops-web/app/api/users/access-governance/scan/[id]/publish/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/users/access-governance/scan",
+      "route": "apps/ops-web/app/api/users/access-governance/scan/route.ts",
+      "workloadClass": "heavy"
+    },
+    {
+      "method": "POST",
+      "operation": "POST:/api/whatsapp-desktop/devices/bulk",
+      "route": "apps/ops-web/app/api/whatsapp-desktop/devices/bulk/route.ts",
+      "workloadClass": "heavy"
+    }
+  ],
+  "skipped": [
+    {
+      "reason": "no-direct-route-export",
+      "route": "apps/ops-web/app/api/email-os/provider-test/test/route.ts"
+    }
+  ],
+  "version": "phase2-final-v1"
+}

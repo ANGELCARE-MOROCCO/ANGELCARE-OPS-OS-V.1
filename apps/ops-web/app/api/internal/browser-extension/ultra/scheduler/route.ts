@@ -1,3 +1,4 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import crypto from 'node:crypto'
 import { NextRequest, NextResponse } from 'next/server'
 import { extensionDb } from '@/lib/browser-extension/runtime'
@@ -19,7 +20,7 @@ function boundedWorkerId(value: unknown) {
   return /^[a-z0-9:_-]+$/i.test(worker) ? worker : 'browser-ultra-production-worker'
 }
 
-export async function POST(request: NextRequest) {
+async function POST__angelcareGovernedImpl(request: NextRequest) {
   if (String(process.env.BROWSER_ULTRA_SCHEDULER_KILL_SWITCH || '').toLowerCase() === 'true') {
     return NextResponse.json({ ok: false, error: 'SCHEDULER_ENV_KILL_SWITCH_ACTIVE' }, { status: 503 })
   }
@@ -70,3 +71,11 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ ok: false, error: String(error?.message || 'SCHEDULER_TICK_FAILED'), details: error?.details || null }, { status: Number(error?.status || 500) })
   }
 }
+
+export const POST = governRoute(
+  {
+    workloadClass: 'worker',
+    operation: 'POST:/api/internal/browser-extension/ultra/scheduler',
+  },
+  POST__angelcareGovernedImpl,
+)

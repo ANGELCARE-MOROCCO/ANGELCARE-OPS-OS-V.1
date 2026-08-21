@@ -1,3 +1,4 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { apiError, apiOk, jsonBody } from '@/lib/homeservice-design/server/api'
 import { requireHomeServiceApi } from '@/lib/homeservice-design/server/auth'
 import { HSD_TENANT_ID } from '@/lib/homeservice-design/constants'
@@ -264,7 +265,7 @@ async function applyExperienceImport(body: ImportBody) {
   }
 }
 
-export async function POST(request: Request) {
+async function POST__angelcareGovernedImpl(request: Request) {
   try {
     const user = await requireHomeServiceApi(['homeservice_design.import_configuration', 'homeservice_design.admin'])
     const body = await jsonBody(request) as ImportBody
@@ -272,3 +273,11 @@ export async function POST(request: Request) {
     return apiOk(await applyDirectImport(body, user), 201)
   } catch (error) { return apiError(error) }
 }
+
+export const POST = governRoute(
+  {
+    workloadClass: 'heavy',
+    operation: 'POST:/api/carelink-ops/service-design/factory/import',
+  },
+  POST__angelcareGovernedImpl,
+)

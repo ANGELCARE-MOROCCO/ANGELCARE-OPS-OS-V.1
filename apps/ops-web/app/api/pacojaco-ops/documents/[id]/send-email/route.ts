@@ -1,3 +1,4 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import nodemailer from 'nodemailer'
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
@@ -65,7 +66,7 @@ function resolveSmtpIdentity() {
   return mailboxes.find((box) => Boolean(box.smtp?.host && box.smtp?.port && box.smtp?.user && box.smtp?.pass)) || null
 }
 
-export async function POST(_request: Request, context: Ctx) {
+async function POST__angelcareGovernedImpl(_request: Request, context: Ctx) {
   let supabase: Awaited<ReturnType<typeof createClient>> | null = null
   let document: Awaited<ReturnType<typeof loadPacojacoDocumentRelations>> | null = null
   let recipient = ''
@@ -213,3 +214,11 @@ export async function POST(_request: Request, context: Ctx) {
     return jsonError(error instanceof Error ? error.message : 'Unable to send email.', 500)
   }
 }
+
+export const POST = governRoute(
+  {
+    workloadClass: 'provider',
+    operation: 'POST:/api/pacojaco-ops/documents/[id]/send-email',
+  },
+  POST__angelcareGovernedImpl,
+)

@@ -1,3 +1,4 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextRequest, NextResponse } from 'next/server'
 import { getCurrentB2BAppUser, getServerB2BDatabaseClient } from '@/lib/b2b-partnerships/runtime'
 import { requireB2BPermission } from '@/lib/b2b-partnerships/permissions'
@@ -178,7 +179,7 @@ async function saveReport(req: NextRequest) {
   return json({ ok: true, data: normalizeReport(data) }, req.method === 'POST' ? 201 : 200)
 }
 
-export async function GET(req: NextRequest) {
+async function GET__angelcareGovernedImpl(req: NextRequest) {
   try {
     const g = await guard('read')
     if (!g.ok) return g.response
@@ -203,14 +204,46 @@ export async function GET(req: NextRequest) {
   }
 }
 
-export async function POST(req: NextRequest) {
+async function POST__angelcareGovernedImpl(req: NextRequest) {
   return saveReport(req)
 }
 
-export async function PATCH(req: NextRequest) {
+async function PATCH__angelcareGovernedImpl(req: NextRequest) {
   return saveReport(req)
 }
 
-export async function DELETE(req: NextRequest) {
+async function DELETE__angelcareGovernedImpl(req: NextRequest) {
   return saveReport(req)
 }
+
+export const GET = governRoute(
+  {
+    workloadClass: 'heavy',
+    operation: 'GET:/api/b2b-partnerships/reports',
+  },
+  GET__angelcareGovernedImpl,
+)
+
+export const POST = governRoute(
+  {
+    workloadClass: 'heavy',
+    operation: 'POST:/api/b2b-partnerships/reports',
+  },
+  POST__angelcareGovernedImpl,
+)
+
+export const PATCH = governRoute(
+  {
+    workloadClass: 'heavy',
+    operation: 'PATCH:/api/b2b-partnerships/reports',
+  },
+  PATCH__angelcareGovernedImpl,
+)
+
+export const DELETE = governRoute(
+  {
+    workloadClass: 'heavy',
+    operation: 'DELETE:/api/b2b-partnerships/reports',
+  },
+  DELETE__angelcareGovernedImpl,
+)

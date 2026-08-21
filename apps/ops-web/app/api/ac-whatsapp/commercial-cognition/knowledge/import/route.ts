@@ -1,10 +1,11 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextRequest } from 'next/server'
 import { acContext, audit, fail, ok } from '@/lib/ac-whatsapp/server'
 import { parseCsv } from '@/lib/ac-whatsapp/revenue-intelligence/csv'
 
 export const runtime='nodejs'
 
-export async function POST(request:NextRequest){
+async function POST__angelcareGovernedImpl(request:NextRequest){
   const context=await acContext(request,'ac-whatsapp.automation.manage');if('error' in context)return context.error
   const form=await request.formData().catch(()=>null);if(!form)return fail('MULTIPART_REQUIRED',415)
   const file=form.get('file');if(!(file instanceof File))return fail('CSV_FILE_REQUIRED',422)
@@ -22,3 +23,11 @@ export async function POST(request:NextRequest){
   await audit(context,{action:'commercial-cognition.knowledge.csv_import',entityType:'cc_knowledge_batch',reason:file.name,newState:{rows:normalized.length,applicable:applicable.length,blocked:blocked.length,green}})
   return ok({green,status:green?'validated':'review_required',stats:{rows:normalized.length,applicable:applicable.length,blocked:blocked.length},blocked:blocked.map(x=>({row:x.index+2,errors:x.errors}))},{status:201})
 }
+
+export const POST = governRoute(
+  {
+    workloadClass: 'heavy',
+    operation: 'POST:/api/ac-whatsapp/commercial-cognition/knowledge/import',
+  },
+  POST__angelcareGovernedImpl,
+)

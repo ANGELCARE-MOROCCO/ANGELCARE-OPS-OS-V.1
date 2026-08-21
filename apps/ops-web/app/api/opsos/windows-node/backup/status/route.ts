@@ -1,10 +1,11 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextResponse } from "next/server"
 import { getWindowsNodeRequestIp, requireWindowsNodeAdmin } from "@/app/api/opsos/windows-node/_shared"
 import { buildWindowsNodeApiErrorFromBridgeResult, callWindowsBridgeAdmin } from "@/lib/opsos/windows-node"
 import type { WindowsBackupStatus } from "@/lib/opsos/windows-node-types"
 
 
-export async function GET(request: Request) {
+async function GET__angelcareGovernedImpl(request: Request) {
   const auth = await requireWindowsNodeAdmin(request)
   if (!auth.ok) return auth.response
 
@@ -20,3 +21,11 @@ export async function GET(request: Request) {
 
   return NextResponse.json({ ok: true, data: result.data }, { headers: { "cache-control": "no-store" } })
 }
+
+export const GET = governRoute(
+  {
+    workloadClass: 'heavy',
+    operation: 'GET:/api/opsos/windows-node/backup/status',
+  },
+  GET__angelcareGovernedImpl,
+)

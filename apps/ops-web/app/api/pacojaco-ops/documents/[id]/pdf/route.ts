@@ -1,3 +1,4 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { getCurrentUser } from '@/lib/getUser'
@@ -20,7 +21,7 @@ async function resolveId(context: Ctx) {
   return String(params?.id || '').trim()
 }
 
-export async function GET(_request: Request, context: Ctx) {
+async function GET__angelcareGovernedImpl(_request: Request, context: Ctx) {
   try {
     const id = await resolveId(context)
     if (!isUuid(id)) return jsonError('Invalid document id.', 400)
@@ -48,3 +49,10 @@ export async function GET(_request: Request, context: Ctx) {
   }
 }
 
+export const GET = governRoute(
+  {
+    workloadClass: 'heavy',
+    operation: 'GET:/api/pacojaco-ops/documents/[id]/pdf',
+  },
+  GET__angelcareGovernedImpl,
+)

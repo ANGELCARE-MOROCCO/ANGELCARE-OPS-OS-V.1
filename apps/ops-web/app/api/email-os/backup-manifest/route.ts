@@ -1,3 +1,4 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextResponse } from "next/server"
 import { createEmailOSCoreDb } from "@/lib/email-os-core/db"
 import { EMAIL_OS_TABLES } from "@/lib/email-os-core/schema"
@@ -8,7 +9,7 @@ async function countTable(db: ReturnType<typeof createEmailOSCoreDb>, table: str
   return { ok: true, count: count || 0 }
 }
 
-export async function GET() {
+async function GET__angelcareGovernedImpl() {
   const db = createEmailOSCoreDb()
 
   const tables: Record<string, unknown> = {}
@@ -27,3 +28,11 @@ export async function GET() {
     exports: Object.keys(EMAIL_OS_TABLES).map((entity) => `/api/email-os/export/${entity}`)
   })
 }
+
+export const GET = governRoute(
+  {
+    workloadClass: 'heavy',
+    operation: 'GET:/api/email-os/backup-manifest',
+  },
+  GET__angelcareGovernedImpl,
+)

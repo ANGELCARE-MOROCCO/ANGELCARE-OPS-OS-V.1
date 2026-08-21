@@ -1,3 +1,4 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextResponse } from 'next/server'
 import { apiErrorResponse, requireMarketingAiUser } from '@/lib/market-os/marketing-ai/auth'
 import { getMarketingAiConfig } from '@/lib/market-os/marketing-ai/config'
@@ -5,7 +6,7 @@ import { getMarketAiRuntimeStatus } from '@/lib/market-os/ai-runtime/gateway'
 import { getMarketingAiDashboard } from '@/lib/market-os/marketing-ai/repository'
 
 export const dynamic = 'force-dynamic'
-export async function GET() {
+async function GET__angelcareGovernedImpl() {
   try {
     await requireMarketingAiUser('view')
     const config = getMarketingAiConfig()
@@ -22,3 +23,11 @@ export async function GET() {
     return NextResponse.json({ ok: true, snapshot: { ...snapshot, runtime } })
   } catch (error) { return apiErrorResponse(error) }
 }
+
+export const GET = governRoute(
+  {
+    workloadClass: 'ai',
+    operation: 'GET:/api/market-os/content-command/marketing-ai/dashboard',
+  },
+  GET__angelcareGovernedImpl,
+)

@@ -1,3 +1,4 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import crypto from 'node:crypto'
 import { NextResponse } from 'next/server'
 import { apiErrorResponse, requireMarketingAiUser } from '@/lib/market-os/marketing-ai/auth'
@@ -5,7 +6,7 @@ import { parseMarketingAiCommandCsv } from '@/lib/market-os/marketing-ai/csv'
 import { ensureMarketingAiSkillsForCommands, upsertMarketingAiCommands } from '@/lib/market-os/marketing-ai/repository'
 import { createContentCommandSupabaseServerClient } from '@/lib/market-os/content-command/db/supabase-server'
 
-export async function POST(request: Request) {
+async function POST__angelcareGovernedImpl(request: Request) {
   try {
     const actor = await requireMarketingAiUser('import')
     const form = await request.formData()
@@ -21,3 +22,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true, accepted: imported.length, rejected: parsed.rejected, errors: parsed.errors, checksum, createdSkills: createdSkills.length })
   } catch (error) { return apiErrorResponse(error) }
 }
+
+export const POST = governRoute(
+  {
+    workloadClass: 'ai',
+    operation: 'POST:/api/market-os/content-command/marketing-ai/commands/import',
+  },
+  POST__angelcareGovernedImpl,
+)

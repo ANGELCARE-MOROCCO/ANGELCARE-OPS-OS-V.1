@@ -1,3 +1,4 @@
+import { authorizeEmailOSWorkerRequest } from "@/lib/email-os-core/worker-auth"
 import { NextResponse } from "next/server"
 import { createEmailOSCoreDb } from "@/lib/email-os-core/db"
 import { makeEmailOSId, nowIso } from "@/lib/email-os-core/schema"
@@ -59,6 +60,13 @@ function withTrackingPixel(message: string, baseUrl: string, trackingId: string)
 }
 
 export async function POST(request: Request) {
+  const workerAuthorization =
+    await authorizeEmailOSWorkerRequest(request)
+
+  if (!workerAuthorization.ok) {
+    return workerAuthorization.response
+  }
+
   const redisConfigured =
     isAngelCareRedisConfigured()
 

@@ -1,9 +1,10 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextResponse } from "next/server";
 import { loadPerformanceMatrixData } from "../_shared";
 
 export const dynamic = "force-dynamic";
 
-export async function GET() {
+async function GET__angelcareGovernedImpl() {
   const data = await loadPerformanceMatrixData();
 
   return NextResponse.json(
@@ -34,3 +35,11 @@ export async function GET() {
     },
   );
 }
+
+export const GET = governRoute(
+  {
+    workloadClass: 'heavy',
+    operation: 'GET:/api/hr/performance-matrix/report',
+  },
+  GET__angelcareGovernedImpl,
+)

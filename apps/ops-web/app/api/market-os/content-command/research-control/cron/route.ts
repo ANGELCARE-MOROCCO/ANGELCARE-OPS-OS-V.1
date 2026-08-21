@@ -1,3 +1,4 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextResponse } from 'next/server'
 import { getContentResearchConfig } from '@/lib/market-os/content-research/config'
 import { runDueContentResearchAgents } from '@/lib/market-os/content-research/orchestrator'
@@ -31,4 +32,12 @@ async function handle(request: Request) {
 }
 
 export async function GET(request: Request) { return handle(request) }
-export async function POST(request: Request) { return handle(request) }
+async function POST__angelcareGovernedImpl(request: Request) { return handle(request) }
+
+export const POST = governRoute(
+  {
+    workloadClass: 'worker',
+    operation: 'POST:/api/market-os/content-command/research-control/cron',
+  },
+  POST__angelcareGovernedImpl,
+)

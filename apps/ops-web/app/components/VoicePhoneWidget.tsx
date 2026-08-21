@@ -46,6 +46,7 @@ export default function VoicePhoneWidget() {
   const [incomingNumber, setIncomingNumber] = useState("")
   const [callControlId, setCallControlId] = useState<string | null>(null)
   const [webrtcReady, setWebrtcReady] = useState(false)
+  const [telnyxLoginToken, setTelnyxLoginToken] = useState("")
   const [micReady, setMicReady] = useState(false)
 
 
@@ -266,18 +267,73 @@ export default function VoicePhoneWidget() {
   }, [number])
 
   useEffect(() => {
-    const username = process.env.NEXT_PUBLIC_TELNYX_SIP_USERNAME
-    const password = process.env.NEXT_PUBLIC_TELNYX_SIP_PASSWORD
+    let cancelled = false
 
-    if (!username || !password) {
-      console.warn("Missing Telnyx WebRTC SIP env credentials")
+    void (async () => {
+      try {
+        const response = await fetch(
+          "/api/voice/telnyx/token",
+          {
+            method: "GET",
+            cache: "no-store",
+            credentials: "same-origin",
+          },
+        )
+
+        const payload = await response
+          .json()
+          .catch(() => null)
+
+        const token =
+          typeof payload?.token === "string"
+            ? payload.token
+            : typeof payload?.login_token === "string"
+              ? payload.login_token
+              : typeof payload?.data === "string"
+                ? payload.data
+                : typeof payload?.data?.token === "string"
+                  ? payload.data.token
+                  : ""
+
+        if (
+          !response.ok ||
+          !token
+        ) {
+          throw new Error(
+            "TELNYX_WEBRTC_TOKEN_UNAVAILABLE",
+          )
+        }
+
+        if (!cancelled) {
+          setTelnyxLoginToken(token)
+        }
+      } catch (error) {
+        if (!cancelled) {
+          setWebrtcReady(false)
+          setTelnyxLoginToken("")
+          console.error(
+            "Telnyx WebRTC token error:",
+            error,
+          )
+        }
+      }
+    })()
+
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  useEffect(() => {
+    const loginToken = telnyxLoginToken
+
+    if (!loginToken) {
       setWebrtcReady(false)
       return
     }
 
     const client = new TelnyxRTC({
-      login: username,
-      password,
+      login_token: loginToken,
       debug: true,
       audio: true,
     } as any)
@@ -375,7 +431,7 @@ export default function VoicePhoneWidget() {
         client.disconnect()
       } catch {}
     }
-  }, [])
+  }, [telnyxLoginToken])
 
   const formatTime = (s: number) => {
     const min = Math.floor(s / 60)

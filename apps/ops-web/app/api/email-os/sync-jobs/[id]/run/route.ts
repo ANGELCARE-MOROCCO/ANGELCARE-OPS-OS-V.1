@@ -1,8 +1,9 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextResponse } from "next/server"
 import { createEmailOSCoreDb } from "@/lib/email-os-core/db"
 import { makeEmailOSId, nowIso } from "@/lib/email-os-core/schema"
 
-export async function POST(
+async function POST__angelcareGovernedImpl(
   _request: Request,
   context: { params: Promise<{ id: string }> }
 ) {
@@ -72,3 +73,11 @@ export async function POST(
     return NextResponse.json({ ok: false, error: error instanceof Error ? error.message : "Sync job run failed" }, { status: 500 })
   }
 }
+
+export const POST = governRoute(
+  {
+    workloadClass: 'provider',
+    operation: 'POST:/api/email-os/sync-jobs/[id]/run',
+  },
+  POST__angelcareGovernedImpl,
+)

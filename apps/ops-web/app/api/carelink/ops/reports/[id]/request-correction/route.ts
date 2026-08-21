@@ -1,3 +1,4 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { loadCareLinkOpsSnapshot, recordOpsAuditEvent } from '@/lib/carelink/ops-enterprise'
 import { recordMissionEvent } from '@/lib/missions/events'
 import { createDispatchMessage, createNotification, saveMissionReportCorrectionRequest } from '@/lib/carelink/mobile-persistence'
@@ -13,7 +14,7 @@ async function readId(context: Context) {
   return String(params.id)
 }
 
-export async function POST(request: Request, context: Context) {
+async function POST__angelcareGovernedImpl(request: Request, context: Context) {
   try {
     const reportId = await readId(context)
     const body = await readJsonBody(request)
@@ -76,3 +77,11 @@ export async function POST(request: Request, context: Context) {
     return opsError(error, 'Impossible de demander une correction de rapport')
   }
 }
+
+export const POST = governRoute(
+  {
+    workloadClass: 'heavy',
+    operation: 'POST:/api/carelink/ops/reports/[id]/request-correction',
+  },
+  POST__angelcareGovernedImpl,
+)

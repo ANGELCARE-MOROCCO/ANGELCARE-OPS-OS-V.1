@@ -1,3 +1,4 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextResponse } from "next/server"
 import { auditWindowsNodeEvent, getWindowsNodeRequestIp, requireWindowsNodeAdmin } from "@/app/api/opsos/windows-node/_shared"
 import { actorId } from "@/app/api/opsos/windows-node/storage/quarantine/_shared"
@@ -6,7 +7,7 @@ import { loadQuarantineCase, recordQuarantineEvent, updateQuarantineCase, update
 import type { WindowsStorageQuarantineJobResult } from "@/lib/opsos/windows-node-types"
 
 
-export async function POST(request: Request, { params }: { params: Promise<{ caseId: string }> }) {
+async function POST__angelcareGovernedImpl(request: Request, { params }: { params: Promise<{ caseId: string }> }) {
   const auth = await requireWindowsNodeAdmin(request)
   if (!auth.ok) return auth.response
   const { caseId } = await params
@@ -43,3 +44,11 @@ export async function POST(request: Request, { params }: { params: Promise<{ cas
   await auditWindowsNodeEvent({ timestamp: new Date().toISOString(), actor: auth.context.operator, action: "windows_storage_object_quarantined", target: "/opsos/infrastructure/windows-node#storage", result: "quarantined", reason: current.reason, severity: "high", metadataSummary: `case=${current.caseNumber} mode=${current.quarantineMode} recovered=${result.data.actualRecoveredBytes} reversible=true` })
   return NextResponse.json({ ok: true, data: { case: updated, job: result.data } }, { headers: { "cache-control": "no-store" } })
 }
+
+export const POST = governRoute(
+  {
+    workloadClass: 'worker',
+    operation: 'POST:/api/opsos/windows-node/storage/quarantine/[caseId]/execute',
+  },
+  POST__angelcareGovernedImpl,
+)

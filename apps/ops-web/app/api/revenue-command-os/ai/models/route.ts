@@ -1,5 +1,14 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import {NextResponse} from 'next/server'
 import {getCurrentUser} from '@/lib/getUser'
 import {aiRights,apiError} from '@/lib/revenue-command-os/ai/api-access'
 import {getRevenueAiModels} from '@/lib/revenue-command-os/ai/model-registry'
-export const runtime='nodejs';export async function GET(){const user=await getCurrentUser();if(!user)return apiError('UNAUTHENTICATED','Authentification requise.',401);return NextResponse.json({ok:true,data:getRevenueAiModels(),externalActions:true})}
+export const runtime='nodejs';async function GET__angelcareGovernedImpl(){const user=await getCurrentUser();if(!user)return apiError('UNAUTHENTICATED','Authentification requise.',401);return NextResponse.json({ok:true,data:getRevenueAiModels(),externalActions:true})}
+
+export const GET = governRoute(
+  {
+    workloadClass: 'ai',
+    operation: 'GET:/api/revenue-command-os/ai/models',
+  },
+  GET__angelcareGovernedImpl,
+)

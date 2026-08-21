@@ -1,3 +1,4 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import crypto from 'node:crypto'
 import { NextRequest, NextResponse } from 'next/server'
 import { authenticateExtensionRequest } from '@/lib/browser-extension/runtime'
@@ -11,7 +12,7 @@ function resultTargetId(result:any,fallback:any){
  return fallback||null
 }
 
-export async function POST(req:NextRequest){
+async function POST__angelcareGovernedImpl(req:NextRequest){
  const auth=await authenticateExtensionRequest(req); if(!auth.ok)return auth.response
  const body=await req.json().catch(()=>({})); const commandKey=String(body.commandKey||''); const idempotencyKey=String(body.idempotencyKey||''); const sourceAdapter=body.sourceAdapter?String(body.sourceAdapter):null
  if(!commandKey||!idempotencyKey)return NextResponse.json({ok:false,error:'commandKey and idempotencyKey are required.'},{status:400})
@@ -31,3 +32,11 @@ export async function POST(req:NextRequest){
   return NextResponse.json({ok:true,command:{...command,execution_status:'executed'},result})
  }catch(e:any){const status=Number(e?.status||500);await auth.db.from('browser_extension_command_requests').update({execution_status:'failed',executed_at:new Date().toISOString()}).eq('id',command.id);await auth.db.from('browser_extension_command_results').insert({command_request_id:command.id,result:'failed',error_code:String(e?.message||'EXECUTION_FAILED'),result_payload:{details:e?.details||null}});await writeExtensionAudit(auth.db,{actor:auth.context.user,deviceId:auth.context.device.id,eventType:'command_failed',moduleKey:'revenue_b2b',commandKey,result:'error',severity:status>=500?'error':'warning',sourceOrigin:body.sourceOrigin||null,metadata:{commandId:command.id,error:String(e?.message||e),details:e?.details||null}});return NextResponse.json({ok:false,error:String(e?.message||'EXECUTION_FAILED'),details:e?.details||null},{status})}
 }
+
+export const POST = governRoute(
+  {
+    workloadClass: 'worker',
+    operation: 'POST:/api/browser-extension/v1/commands/execute',
+  },
+  POST__angelcareGovernedImpl,
+)

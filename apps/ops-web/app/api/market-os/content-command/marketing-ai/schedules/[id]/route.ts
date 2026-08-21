@@ -1,10 +1,11 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextResponse } from 'next/server'
 import { apiErrorResponse, requireMarketingAiUser } from '@/lib/market-os/marketing-ai/auth'
 import { scheduleInputSchema } from '@/lib/market-os/marketing-ai/schemas'
 import { calculateNextRun } from '@/lib/market-os/marketing-ai/scheduler'
 import { saveMarketingAiSchedule } from '@/lib/market-os/marketing-ai/repository'
 
-export async function PATCH(request: Request, context: { params: Promise<{ id: string }> }) {
+async function PATCH__angelcareGovernedImpl(request: Request, context: { params: Promise<{ id: string }> }) {
   try {
     const actor = await requireMarketingAiUser('schedule')
     const { id } = await context.params
@@ -14,3 +15,11 @@ export async function PATCH(request: Request, context: { params: Promise<{ id: s
     return NextResponse.json({ ok: true, schedule })
   } catch (error) { return apiErrorResponse(error) }
 }
+
+export const PATCH = governRoute(
+  {
+    workloadClass: 'ai',
+    operation: 'PATCH:/api/market-os/content-command/marketing-ai/schedules/[id]',
+  },
+  PATCH__angelcareGovernedImpl,
+)

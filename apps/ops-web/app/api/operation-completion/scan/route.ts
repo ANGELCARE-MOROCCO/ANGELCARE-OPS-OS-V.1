@@ -1,3 +1,4 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextRequest, NextResponse } from 'next/server'
 import { requireRole } from '@/lib/auth/session'
 import { OPERATION_AREAS, runOperationEnterpriseScan, summarizeModules, type OperationArea } from '@/lib/operation-completion/autonomous-core'
@@ -17,7 +18,7 @@ function sanitizeAreas(values: string[]) {
   return values.filter((item) => allowed.has(item)) as OperationArea[]
 }
 
-export async function GET(request: NextRequest) {
+async function GET__angelcareGovernedImpl(request: NextRequest) {
   await requireRole(['ceo', 'manager', 'admin'])
 
   const selectedModules = splitParam(request.nextUrl.searchParams.get('modules'))
@@ -35,7 +36,7 @@ export async function GET(request: NextRequest) {
   })
 }
 
-export async function POST(request: NextRequest) {
+async function POST__angelcareGovernedImpl(request: NextRequest) {
   await requireRole(['ceo', 'manager', 'admin'])
 
   const body = await request.json().catch(() => ({}))
@@ -53,3 +54,19 @@ export async function POST(request: NextRequest) {
     },
   })
 }
+
+export const GET = governRoute(
+  {
+    workloadClass: 'heavy',
+    operation: 'GET:/api/operation-completion/scan',
+  },
+  GET__angelcareGovernedImpl,
+)
+
+export const POST = governRoute(
+  {
+    workloadClass: 'heavy',
+    operation: 'POST:/api/operation-completion/scan',
+  },
+  POST__angelcareGovernedImpl,
+)

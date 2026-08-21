@@ -1,3 +1,4 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextRequest } from 'next/server'
 import { GoogleGenAI, ThinkingLevel } from '@google/genai'
 import { acContext, audit, canAccessConversationRow, fail, ok } from '@/lib/ac-whatsapp/server'
@@ -30,7 +31,7 @@ function fallback(action: string, messages: any[], sourceText: string) {
   return `Bonjour, merci pour votre message. Nous avons bien pris en compte votre demande. Afin de vous répondre avec précision, pouvez-vous me confirmer votre besoin prioritaire et le délai souhaité ?`
 }
 
-export async function POST(request: NextRequest) {
+async function POST__angelcareGovernedImpl(request: NextRequest) {
   const context = await acContext(request, 'ac-whatsapp.message.send')
   if ('error' in context) return context.error
   const body = await request.json().catch(() => ({}))
@@ -70,3 +71,11 @@ export async function POST(request: NextRequest) {
   await audit(context, { action: `ai.${action}`, entityType: 'conversation', entityId: conversationId, metadata: { provider, historyMessages: history.length } })
   return ok({ text, provider, action })
 }
+
+export const POST = governRoute(
+  {
+    workloadClass: 'ai',
+    operation: 'POST:/api/ac-whatsapp/ai/assist',
+  },
+  POST__angelcareGovernedImpl,
+)

@@ -1,8 +1,9 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextResponse } from "next/server"
 import { sendEmailOSDirect } from "@/lib/email-os-core/send-mail"
 import { listEmailOSMultiMailboxes } from "@/lib/email-os-core/multi-mailbox-resolver"
 
-export async function GET() {
+async function GET__angelcareGovernedImpl() {
   const mailboxes = listEmailOSMultiMailboxes()
   return NextResponse.json({
     ok: true,
@@ -23,7 +24,7 @@ export async function GET() {
   })
 }
 
-export async function POST(request: Request) {
+async function POST__angelcareGovernedImpl(request: Request) {
   const body = await request.json().catch(() => ({}))
 
   if (!body.toEmail && !body.to_email && !body.to) {
@@ -51,3 +52,19 @@ export async function POST(request: Request) {
     }
   })
 }
+
+export const GET = governRoute(
+  {
+    workloadClass: 'provider',
+    operation: 'GET:/api/email-os/provider-test',
+  },
+  GET__angelcareGovernedImpl,
+)
+
+export const POST = governRoute(
+  {
+    workloadClass: 'provider',
+    operation: 'POST:/api/email-os/provider-test',
+  },
+  POST__angelcareGovernedImpl,
+)

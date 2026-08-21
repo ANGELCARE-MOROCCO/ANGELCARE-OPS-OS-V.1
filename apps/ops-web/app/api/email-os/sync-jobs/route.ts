@@ -1,8 +1,9 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextResponse } from "next/server"
 import { createEmailOSCoreDb } from "@/lib/email-os-core/db"
 import { makeEmailOSId, nowIso } from "@/lib/email-os-core/schema"
 
-export async function GET() {
+async function GET__angelcareGovernedImpl() {
   try {
     const db = createEmailOSCoreDb()
     const { data, error } = await db
@@ -18,7 +19,7 @@ export async function GET() {
   }
 }
 
-export async function POST(request: Request) {
+async function POST__angelcareGovernedImpl(request: Request) {
   try {
     const body = await request.json().catch(() => ({}))
     if (!body.mailboxId) {
@@ -47,3 +48,19 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, error: error instanceof Error ? error.message : "Failed to create sync job" }, { status: 500 })
   }
 }
+
+export const GET = governRoute(
+  {
+    workloadClass: 'provider',
+    operation: 'GET:/api/email-os/sync-jobs',
+  },
+  GET__angelcareGovernedImpl,
+)
+
+export const POST = governRoute(
+  {
+    workloadClass: 'provider',
+    operation: 'POST:/api/email-os/sync-jobs',
+  },
+  POST__angelcareGovernedImpl,
+)

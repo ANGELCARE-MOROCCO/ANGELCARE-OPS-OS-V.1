@@ -1,3 +1,4 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextResponse } from "next/server"
 
 import { getCurrentAppUser } from "@/lib/auth/session"
@@ -11,7 +12,7 @@ function clean(value: unknown) {
   return String(value ?? "").trim()
 }
 
-export async function GET(request: Request) {
+async function GET__angelcareGovernedImpl(request: Request) {
   const user = await getCurrentAppUser()
   if (!user) {
     return NextResponse.json({ ok: false, error: "Session expirée ou non authentifiée." }, { status: 401 })
@@ -57,3 +58,11 @@ export async function GET(request: Request) {
 
   return NextResponse.json({ ok: true, operationId, data })
 }
+
+export const GET = governRoute(
+  {
+    workloadClass: 'provider',
+    operation: 'GET:/api/hr/employees/communications/send-email/status',
+  },
+  GET__angelcareGovernedImpl,
+)

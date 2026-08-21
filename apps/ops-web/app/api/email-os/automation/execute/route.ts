@@ -1,6 +1,7 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextResponse } from "next/server"
 
-export async function POST(request: Request) {
+async function POST__angelcareGovernedImpl(request: Request) {
   const body = await request.json().catch(() => ({}))
 
   const execution = {
@@ -15,3 +16,11 @@ export async function POST(request: Request) {
     data: execution
   })
 }
+
+export const POST = governRoute(
+  {
+    workloadClass: 'worker',
+    operation: 'POST:/api/email-os/automation/execute',
+  },
+  POST__angelcareGovernedImpl,
+)

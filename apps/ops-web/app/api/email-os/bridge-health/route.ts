@@ -1,3 +1,4 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextResponse } from "next/server"
 
 export const runtime = "nodejs"
@@ -48,7 +49,7 @@ function readBridgeEnv() {
   }
 }
 
-export async function GET() {
+async function GET__angelcareGovernedImpl() {
   const config = readBridgeEnv()
 
   if (!config.hasBridgeUrl || !config.bridgeUrl.startsWith("http://") && !config.bridgeUrl.startsWith("https://")) {
@@ -155,3 +156,11 @@ export async function GET() {
     { headers: { "Cache-Control": "no-store" } }
   )
 }
+
+export const GET = governRoute(
+  {
+    workloadClass: 'provider',
+    operation: 'GET:/api/email-os/bridge-health',
+  },
+  GET__angelcareGovernedImpl,
+)

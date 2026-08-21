@@ -1,3 +1,4 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextRequest, NextResponse } from 'next/server'
 import QRCode from 'qrcode'
 
@@ -660,7 +661,7 @@ function academyPdfResponse(pdf: Uint8Array | Buffer, filename: string) {
 }
 
 
-export async function GET(
+async function GET__angelcareGovernedImpl(
   request: NextRequest,
   context: { params: Promise<{ id: string }> | { id: string } }
 ) {
@@ -729,3 +730,11 @@ export async function GET(
     if (browser) await browser.close().catch(() => undefined)
   }
 }
+
+export const GET = governRoute(
+  {
+    workloadClass: 'heavy',
+    operation: 'GET:/api/academy/programs/[id]/pdf',
+  },
+  GET__angelcareGovernedImpl,
+)

@@ -1,3 +1,4 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { executeCapitalReportComposition } from "@/lib/ac-capital-os/server/live-intelligence";
 import { apiError, insertAudit, insertRow, isWriter, readTable, requireCapitalApiActor, requiredString, success } from "@/lib/ac-capital-os/server/mz15-api";
 
@@ -87,7 +88,7 @@ async function collectApprovedContext(workspaces: string[]) {
   return { context: safeValue(context) as Row, totalRows, unavailableTables: unavailable, truncatedTables: [...new Set(truncated)] };
 }
 
-export async function POST(request: Request) {
+async function POST__angelcareGovernedImpl(request: Request) {
   try {
     const actor = await requireCapitalApiActor();
     if (!isWriter(actor)) throw Object.assign(new Error("WRITE_PERMISSION_REQUIRED"), { status: 403 });
@@ -200,3 +201,11 @@ export async function POST(request: Request) {
     return apiError(reason);
   }
 }
+
+export const POST = governRoute(
+  {
+    workloadClass: 'heavy',
+    operation: 'POST:/api/ac-capital-os/reports/generate',
+  },
+  POST__angelcareGovernedImpl,
+)

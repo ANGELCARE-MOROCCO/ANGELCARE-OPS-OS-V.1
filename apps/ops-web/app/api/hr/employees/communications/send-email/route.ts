@@ -1,3 +1,4 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextResponse } from "next/server"
 
 import { getCurrentAppUser } from "@/lib/auth/session"
@@ -33,7 +34,7 @@ function requestContext(request: Request) {
   }
 }
 
-export async function POST(request: Request) {
+async function POST__angelcareGovernedImpl(request: Request) {
   const db = createEmailOSCoreDb()
   const body = await request.json().catch(() => ({}))
   const user = await getCurrentAppUser()
@@ -444,3 +445,11 @@ export async function POST(request: Request) {
     )
   }
 }
+
+export const POST = governRoute(
+  {
+    workloadClass: 'provider',
+    operation: 'POST:/api/hr/employees/communications/send-email',
+  },
+  POST__angelcareGovernedImpl,
+)

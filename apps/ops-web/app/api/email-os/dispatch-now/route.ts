@@ -7,7 +7,8 @@ export async function POST(request: Request) {
 
     const response = await fetch(`${origin}/api/email-os/cron/queue-worker`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" }
+      headers: {
+        "x-angelcare-worker-secret": process.env.EMAIL_OS_WORKER_SECRET || "", "Content-Type": "application/json" }
     })
 
     const json = await response.json().catch(() => null)

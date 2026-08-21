@@ -1,7 +1,16 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextResponse } from 'next/server'
 import { apiErrorResponse, requireMarketingAiUser } from '@/lib/market-os/marketing-ai/auth'
 import { listLearningEvents } from '@/lib/market-os/marketing-ai/repository'
-export async function GET() {
+async function GET__angelcareGovernedImpl() {
   try { await requireMarketingAiUser('view'); return NextResponse.json({ ok: true, events: await listLearningEvents() }) }
   catch (error) { return apiErrorResponse(error) }
 }
+
+export const GET = governRoute(
+  {
+    workloadClass: 'ai',
+    operation: 'GET:/api/market-os/content-command/marketing-ai/learning',
+  },
+  GET__angelcareGovernedImpl,
+)

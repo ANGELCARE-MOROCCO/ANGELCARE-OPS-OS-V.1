@@ -1,3 +1,4 @@
+import { consumeAngelCareGlobalBurstToken } from '@/lib/runtime/governor/burst'
 import { NextResponse, type NextRequest } from 'next/server'
 
 function hasCookie(request: NextRequest, names: string[]) {
@@ -79,6 +80,37 @@ function buildCareLinkMobileLoginRequiredResponse(request: NextRequest) {
 }
 
 export function proxy(request: NextRequest) {
+
+  const angelcareBurst =
+    consumeAngelCareGlobalBurstToken(
+      request.nextUrl.pathname,
+      request.method,
+    )
+
+  if (!angelcareBurst.allowed) {
+    return NextResponse.json(
+      {
+        ok: false,
+        error: 'Request burst capacity is temporarily saturated.',
+        code: 'ANGELCARE_GLOBAL_BURST_SATURATED',
+        retryAfterMs: angelcareBurst.retryAfterMs,
+      },
+      {
+        status: 429,
+        headers: {
+          'cache-control': 'no-store',
+          'retry-after': String(
+            Math.max(
+              1,
+              Math.ceil(angelcareBurst.retryAfterMs / 1_000),
+            ),
+          ),
+          'x-angelcare-burst-shield': 'active',
+        },
+      },
+    )
+  }
+
   const pathname = request.nextUrl.pathname
 
   if (isCareLinkOpsProtectedPath(pathname)) {

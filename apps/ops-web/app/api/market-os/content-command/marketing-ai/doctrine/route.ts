@@ -1,8 +1,9 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextResponse } from 'next/server'
 import { apiErrorResponse, requireMarketingAiUser } from '@/lib/market-os/marketing-ai/auth'
 import { createContentCommandSupabaseServerClient } from '@/lib/market-os/content-command/db/supabase-server'
 
-export async function GET() {
+async function GET__angelcareGovernedImpl() {
   try {
     await requireMarketingAiUser('view')
     const { data, error } = await createContentCommandSupabaseServerClient().from('market_ai_doctrine_entries').select('*').order('category').order('code')
@@ -11,7 +12,7 @@ export async function GET() {
   } catch (error) { return apiErrorResponse(error) }
 }
 
-export async function POST(request: Request) {
+async function POST__angelcareGovernedImpl(request: Request) {
   try {
     const actor = await requireMarketingAiUser('govern')
     const body = await request.json()
@@ -37,3 +38,19 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true, entry: data })
   } catch (error) { return apiErrorResponse(error) }
 }
+
+export const GET = governRoute(
+  {
+    workloadClass: 'ai',
+    operation: 'GET:/api/market-os/content-command/marketing-ai/doctrine',
+  },
+  GET__angelcareGovernedImpl,
+)
+
+export const POST = governRoute(
+  {
+    workloadClass: 'ai',
+    operation: 'POST:/api/market-os/content-command/marketing-ai/doctrine',
+  },
+  POST__angelcareGovernedImpl,
+)

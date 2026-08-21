@@ -1,14 +1,15 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextResponse } from 'next/server'
 import { apiErrorResponse, requireMarketingAiUser } from '@/lib/market-os/marketing-ai/auth'
 import { scheduleInputSchema } from '@/lib/market-os/marketing-ai/schemas'
 import { calculateNextRun } from '@/lib/market-os/marketing-ai/scheduler'
 import { listMarketingAiSchedules, saveMarketingAiSchedule } from '@/lib/market-os/marketing-ai/repository'
 
-export async function GET() {
+async function GET__angelcareGovernedImpl() {
   try { await requireMarketingAiUser('view'); return NextResponse.json({ ok: true, schedules: await listMarketingAiSchedules() }) }
   catch (error) { return apiErrorResponse(error) }
 }
-export async function POST(request: Request) {
+async function POST__angelcareGovernedImpl(request: Request) {
   try {
     const actor = await requireMarketingAiUser('schedule')
     const parsed = scheduleInputSchema.parse(await request.json())
@@ -17,3 +18,19 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true, schedule })
   } catch (error) { return apiErrorResponse(error) }
 }
+
+export const GET = governRoute(
+  {
+    workloadClass: 'ai',
+    operation: 'GET:/api/market-os/content-command/marketing-ai/schedules',
+  },
+  GET__angelcareGovernedImpl,
+)
+
+export const POST = governRoute(
+  {
+    workloadClass: 'ai',
+    operation: 'POST:/api/market-os/content-command/marketing-ai/schedules',
+  },
+  POST__angelcareGovernedImpl,
+)

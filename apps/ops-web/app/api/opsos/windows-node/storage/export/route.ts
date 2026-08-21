@@ -1,3 +1,4 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextResponse } from "next/server"
 import { auditWindowsNodeEvent, getWindowsNodeRequestIp, requireWindowsNodeAdmin } from "@/app/api/opsos/windows-node/_shared"
 import { buildWindowsNodeApiErrorFromBridgeResult, callWindowsBridgeAdmin } from "@/lib/opsos/windows-node"
@@ -9,7 +10,7 @@ function csvCell(value: unknown) {
   return `"${text.replaceAll('"', '""')}"`
 }
 
-export async function GET(request: Request) {
+async function GET__angelcareGovernedImpl(request: Request) {
   const auth = await requireWindowsNodeAdmin(request)
   if (!auth.ok) return auth.response
   const url = new URL(request.url)
@@ -72,3 +73,11 @@ export async function GET(request: Request) {
     },
   })
 }
+
+export const GET = governRoute(
+  {
+    workloadClass: 'heavy',
+    operation: 'GET:/api/opsos/windows-node/storage/export',
+  },
+  GET__angelcareGovernedImpl,
+)

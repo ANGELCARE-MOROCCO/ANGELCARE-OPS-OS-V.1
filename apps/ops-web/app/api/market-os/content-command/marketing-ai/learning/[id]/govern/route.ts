@@ -1,3 +1,4 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { z } from 'zod'
 import { apiErrorResponse, requireMarketingAiUser } from '@/lib/market-os/marketing-ai/auth'
 import { governLearningEvent } from '@/lib/market-os/marketing-ai/repository'
@@ -7,7 +8,7 @@ const schema = z.object({
   reason: z.string().trim().min(8).max(3000),
 })
 
-export async function POST(request: Request, context: { params: Promise<{ id: string }> }) {
+async function POST__angelcareGovernedImpl(request: Request, context: { params: Promise<{ id: string }> }) {
   try {
     const actor = await requireMarketingAiUser('govern')
     const { id } = await context.params
@@ -16,3 +17,11 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
     return Response.json({ ok: true, event, doctrinePromoted: false })
   } catch (error) { return apiErrorResponse(error) }
 }
+
+export const POST = governRoute(
+  {
+    workloadClass: 'ai',
+    operation: 'POST:/api/market-os/content-command/marketing-ai/learning/[id]/govern',
+  },
+  POST__angelcareGovernedImpl,
+)

@@ -1,9 +1,10 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { readBody, withAmbassadorActor } from "@/lib/market-os/ambassadors/api"
 import { generateAmbassadorReport } from "@/lib/market-os/ambassadors/server"
 
 export const dynamic = "force-dynamic"
 
-export async function GET(request: Request) {
+async function GET__angelcareGovernedImpl(request: Request) {
   return withAmbassadorActor(request, async (actor) => {
     const url = new URL(request.url)
     const reportType = url.searchParams.get("report_type") || "ambassadors"
@@ -20,6 +21,22 @@ export async function GET(request: Request) {
   })
 }
 
-export async function POST(request: Request) {
+async function POST__angelcareGovernedImpl(request: Request) {
   return withAmbassadorActor(request, async (actor) => generateAmbassadorReport(actor, await readBody(request)))
 }
+
+export const GET = governRoute(
+  {
+    workloadClass: 'heavy',
+    operation: 'GET:/api/market-os/ambassadors/reports/export',
+  },
+  GET__angelcareGovernedImpl,
+)
+
+export const POST = governRoute(
+  {
+    workloadClass: 'heavy',
+    operation: 'POST:/api/market-os/ambassadors/reports/export',
+  },
+  POST__angelcareGovernedImpl,
+)

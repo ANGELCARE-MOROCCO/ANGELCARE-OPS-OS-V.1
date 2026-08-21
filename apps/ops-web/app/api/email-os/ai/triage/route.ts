@@ -1,3 +1,4 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextResponse } from "next/server"
 import { createEmailOSCoreDb } from "@/lib/email-os-core/db"
 import { makeEmailOSId } from "@/lib/email-os-core/schema"
@@ -37,7 +38,7 @@ function analyze(subject: string) {
   }
 }
 
-export async function POST() {
+async function POST__angelcareGovernedImpl() {
   try {
     const db = createEmailOSCoreDb()
 
@@ -69,3 +70,11 @@ export async function POST() {
     return NextResponse.json({ ok: false, error: "AI triage failed" }, { status: 500 })
   }
 }
+
+export const POST = governRoute(
+  {
+    workloadClass: 'ai',
+    operation: 'POST:/api/email-os/ai/triage',
+  },
+  POST__angelcareGovernedImpl,
+)

@@ -1,3 +1,4 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextRequest, NextResponse } from 'next/server'
 import { getCurrentB2BAppUser, getServerB2BDatabaseClient } from '@/lib/b2b-partnerships/runtime'
 import { requireB2BPermission } from '@/lib/b2b-partnerships/permissions'
@@ -170,7 +171,7 @@ function normalizeRowKeys(row: AnyRow) {
   return normalized
 }
 
-export async function POST(req: NextRequest) {
+async function POST__angelcareGovernedImpl(req: NextRequest) {
   try {
     const g = await guard('create')
     if (!g.ok) return g.response
@@ -279,3 +280,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: false, error: 'Unable to import B2B tasks.' }, { status: 500 })
   }
 }
+
+export const POST = governRoute(
+  {
+    workloadClass: 'heavy',
+    operation: 'POST:/api/b2b-partnerships/tasks/import',
+  },
+  POST__angelcareGovernedImpl,
+)

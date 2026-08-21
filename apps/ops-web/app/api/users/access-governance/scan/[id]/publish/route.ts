@@ -1,3 +1,4 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextResponse } from 'next/server'
 import { getCurrentAppUser } from '@/lib/auth/session'
 import { createAccessGovernanceAdminClient } from '@/lib/users/access-governance/admin-client'
@@ -6,7 +7,7 @@ import type { AccessResourceOverride } from '@/lib/users/access-governance/types
 
 export const dynamic = 'force-dynamic'
 
-export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
+async function POST__angelcareGovernedImpl(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const actor = await getCurrentAppUser()
   if (!actor) return NextResponse.json({ ok: false, error: 'Authentication required.' }, { status: 401 })
   const { id } = await params
@@ -23,3 +24,11 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     return NextResponse.json({ ok: false, error: error instanceof Error ? error.message : 'Registry publication failed.' }, { status: 500 })
   }
 }
+
+export const POST = governRoute(
+  {
+    workloadClass: 'heavy',
+    operation: 'POST:/api/users/access-governance/scan/[id]/publish',
+  },
+  POST__angelcareGovernedImpl,
+)

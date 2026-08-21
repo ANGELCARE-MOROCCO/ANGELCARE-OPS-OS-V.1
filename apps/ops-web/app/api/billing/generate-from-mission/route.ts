@@ -1,8 +1,9 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { getCurrentUser } from '@/lib/getUser'
 
-export async function POST(request: Request) {
+async function POST__angelcareGovernedImpl(request: Request) {
   const user = await getCurrentUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
@@ -22,3 +23,11 @@ export async function POST(request: Request) {
   await supabase.from('contract_finance_events').insert([{ contract_id: contractId, event_type: 'mission_invoice_generated', amount, note: missionId ? `Generated from mission #${missionId}` : label }])
   return NextResponse.json({ ok: true, invoice: data })
 }
+
+export const POST = governRoute(
+  {
+    workloadClass: 'heavy',
+    operation: 'POST:/api/billing/generate-from-mission',
+  },
+  POST__angelcareGovernedImpl,
+)

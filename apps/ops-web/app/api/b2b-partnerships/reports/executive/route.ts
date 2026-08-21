@@ -1,8 +1,9 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextRequest, NextResponse } from 'next/server'
 import { getCurrentB2BAppUser, getServerB2BDatabaseClient } from '@/lib/b2b-partnerships/runtime'
 import { requireB2BPermission } from '@/lib/b2b-partnerships/permissions'
 
-export async function GET() {
+async function GET__angelcareGovernedImpl() {
   try {
     const db = await getServerB2BDatabaseClient()
     const actor = await getCurrentB2BAppUser()
@@ -18,7 +19,7 @@ export async function GET() {
   }
 }
 
-export async function POST(req: NextRequest) {
+async function POST__angelcareGovernedImpl(req: NextRequest) {
   try {
     const db = await getServerB2BDatabaseClient()
     const actor = await getCurrentB2BAppUser()
@@ -45,3 +46,19 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: false, error: 'Unable to create executive report.' }, { status: 500 })
   }
 }
+
+export const GET = governRoute(
+  {
+    workloadClass: 'heavy',
+    operation: 'GET:/api/b2b-partnerships/reports/executive',
+  },
+  GET__angelcareGovernedImpl,
+)
+
+export const POST = governRoute(
+  {
+    workloadClass: 'heavy',
+    operation: 'POST:/api/b2b-partnerships/reports/executive',
+  },
+  POST__angelcareGovernedImpl,
+)

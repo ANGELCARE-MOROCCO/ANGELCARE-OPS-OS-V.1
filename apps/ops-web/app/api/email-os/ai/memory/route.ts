@@ -1,8 +1,9 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextResponse } from "next/server"
 import { createEmailOSCoreDb } from "@/lib/email-os-core/db"
 import { makeEmailOSId, nowIso } from "@/lib/email-os-core/schema"
 
-export async function GET() {
+async function GET__angelcareGovernedImpl() {
   try {
     const db = createEmailOSCoreDb()
     const { data, error } = await db.from("email_os_core_ai_memory").select("*").order("created_at", { ascending: false }).limit(250)
@@ -13,7 +14,7 @@ export async function GET() {
   }
 }
 
-export async function POST(request: Request) {
+async function POST__angelcareGovernedImpl(request: Request) {
   try {
     const body = await request.json().catch(() => ({}))
     if (!body.content) return NextResponse.json({ ok: false, error: "content is required" }, { status: 400 })
@@ -36,3 +37,19 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, error: error instanceof Error ? error.message : "Failed to save AI memory" }, { status: 500 })
   }
 }
+
+export const GET = governRoute(
+  {
+    workloadClass: 'ai',
+    operation: 'GET:/api/email-os/ai/memory',
+  },
+  GET__angelcareGovernedImpl,
+)
+
+export const POST = governRoute(
+  {
+    workloadClass: 'ai',
+    operation: 'POST:/api/email-os/ai/memory',
+  },
+  POST__angelcareGovernedImpl,
+)

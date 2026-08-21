@@ -1,9 +1,10 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextResponse } from "next/server"
 import { getWindowsNodeRequestIp, requireWindowsNodeAdmin } from "@/app/api/opsos/windows-node/_shared"
 import { buildWindowsNodeApiErrorFromBridgeResult, callWindowsBridgeAdmin } from "@/lib/opsos/windows-node"
 import { listCleanupProfiles } from "@/lib/opsos/storage-destruction"
 function clean(value: unknown) { return String(value ?? "").trim() }
-export async function POST(request: Request) {
+async function POST__angelcareGovernedImpl(request: Request) {
   const auth = await requireWindowsNodeAdmin(request)
   if (!auth.ok) return auth.response
   const body = await request.json().catch(() => ({}))
@@ -17,3 +18,11 @@ export async function POST(request: Request) {
   if (!result.ok) return NextResponse.json(buildWindowsNodeApiErrorFromBridgeResult(result, endpoint, "storage_cleanup_execute_failed"), { status: result.status })
   return NextResponse.json({ ok: true, data: result.data }, { headers: { "cache-control": "no-store" } })
 }
+
+export const POST = governRoute(
+  {
+    workloadClass: 'worker',
+    operation: 'POST:/api/opsos/windows-node/storage/cleanup/execute',
+  },
+  POST__angelcareGovernedImpl,
+)

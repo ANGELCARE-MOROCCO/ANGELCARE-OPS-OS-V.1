@@ -1,10 +1,11 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextResponse } from 'next/server';
 import { getContentCommandRuntimeUser } from '@/lib/market-os/content-command/auth/current-user';
 import { assertContentCommandPermission } from '@/lib/market-os/content-command/auth/permissions';
 import { runContentCommandAi } from '@/lib/market-os/content-command/ai/ai-runtime';
 import { recordContentCommandAudit } from '@/lib/market-os/content-command/audit/audit';
 
-export async function POST(request: Request) {
+async function POST__angelcareGovernedImpl(request: Request) {
   const user = await getContentCommandRuntimeUser();
   assertContentCommandPermission(user.role, 'ai:run');
 
@@ -21,3 +22,11 @@ export async function POST(request: Request) {
 
   return NextResponse.json({ ok: true, result });
 }
+
+export const POST = governRoute(
+  {
+    workloadClass: 'ai',
+    operation: 'POST:/api/market-os/content-command/ai/run',
+  },
+  POST__angelcareGovernedImpl,
+)

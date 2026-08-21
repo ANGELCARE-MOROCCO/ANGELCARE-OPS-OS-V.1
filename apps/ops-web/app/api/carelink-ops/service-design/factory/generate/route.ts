@@ -1,3 +1,4 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { randomUUID } from 'node:crypto'
 import { apiError, apiOk, jsonBody } from '@/lib/homeservice-design/server/api'
 import { requireHomeServiceApi } from '@/lib/homeservice-design/server/auth'
@@ -29,7 +30,7 @@ async function composeWithOneRecovery(input: ReturnType<typeof validateFactoryIn
   }
 }
 
-export async function POST(request: Request) {
+async function POST__angelcareGovernedImpl(request: Request) {
   try {
     const user = await requireHomeServiceApi([
       'homeservice_design.view',
@@ -45,3 +46,11 @@ export async function POST(request: Request) {
     return apiError(error)
   }
 }
+
+export const POST = governRoute(
+  {
+    workloadClass: 'heavy',
+    operation: 'POST:/api/carelink-ops/service-design/factory/generate',
+  },
+  POST__angelcareGovernedImpl,
+)

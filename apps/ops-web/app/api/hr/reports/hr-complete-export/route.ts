@@ -1,3 +1,4 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextRequest, NextResponse } from 'next/server'
 import { buildHRDomainExport } from '@/lib/hr-production/live-sync'
 
@@ -23,7 +24,7 @@ function toCsv(payload: any) {
   return [headers.join(','), ...rows.map((row: any) => headers.map((h) => csvEscape(row[h])).join(','))].join('\n')
 }
 
-export async function GET(req: NextRequest) {
+async function GET__angelcareGovernedImpl(req: NextRequest) {
   try {
     const format = req.nextUrl.searchParams.get('format') || 'json'
     const payload = await buildHRDomainExport(format)
@@ -41,3 +42,11 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ ok: false, error: error?.message || 'Unable to export HR live package.' }, { status: 500 })
   }
 }
+
+export const GET = governRoute(
+  {
+    workloadClass: 'heavy',
+    operation: 'GET:/api/hr/reports/hr-complete-export',
+  },
+  GET__angelcareGovernedImpl,
+)

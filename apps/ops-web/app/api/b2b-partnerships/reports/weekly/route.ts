@@ -1,3 +1,4 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextRequest, NextResponse } from 'next/server'
 import { getCurrentB2BAppUser, getServerB2BDatabaseClient } from '@/lib/b2b-partnerships/runtime'
 import { requireB2BPermission } from '@/lib/b2b-partnerships/permissions'
@@ -47,7 +48,7 @@ async function count(db: any, table: string, build?: (q: any) => any) {
   return count || 0
 }
 
-export async function GET() {
+async function GET__angelcareGovernedImpl() {
   try {
     const g = await guard('read')
     if (!g.ok) return g.response
@@ -68,3 +69,11 @@ export async function GET() {
     return NextResponse.json({ ok: true, data: { prospects: 0, qualified: 0, outreach_week: 0, meetings_booked: 0, meetings_completed: 0, proposals_active: 0 } })
   }
 }
+
+export const GET = governRoute(
+  {
+    workloadClass: 'heavy',
+    operation: 'GET:/api/b2b-partnerships/reports/weekly',
+  },
+  GET__angelcareGovernedImpl,
+)

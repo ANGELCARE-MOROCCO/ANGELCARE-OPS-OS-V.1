@@ -1,3 +1,4 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { randomUUID } from "node:crypto";
 import { apiError, requireCapitalApiActor, success } from "@/lib/ac-capital-os/server/mz15-api";
 import { processCapitalOrchestratorQueue } from "@/lib/ac-capital-os/server/capital-orchestrator";
@@ -34,7 +35,15 @@ export async function GET(request: Request) {
   } catch (error) { return apiError(error); }
 }
 
-export async function POST() {
+async function POST__angelcareGovernedImpl() {
   try { const actor = await requireCapitalApiActor(); return Response.json(success(await runTick(actor))); }
   catch (error) { return apiError(error); }
 }
+
+export const POST = governRoute(
+  {
+    workloadClass: 'worker',
+    operation: 'POST:/api/ac-capital-os/runtime/tick',
+  },
+  POST__angelcareGovernedImpl,
+)

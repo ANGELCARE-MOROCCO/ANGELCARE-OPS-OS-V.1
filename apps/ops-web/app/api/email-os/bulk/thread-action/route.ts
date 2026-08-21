@@ -1,9 +1,10 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextResponse } from "next/server"
 import { createEmailOSCoreDb } from "@/lib/email-os-core/db"
 import { nowIso } from "@/lib/email-os-core/schema"
 import { audit } from "@/lib/email-os-core/audit"
 
-export async function POST(request: Request) {
+async function POST__angelcareGovernedImpl(request: Request) {
   try {
     const body = await request.json().catch(() => ({}))
     const ids: string[] = Array.isArray(body.threadIds) ? body.threadIds : []
@@ -58,3 +59,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, error: error instanceof Error ? error.message : "Bulk action failed" }, { status: 500 })
   }
 }
+
+export const POST = governRoute(
+  {
+    workloadClass: 'heavy',
+    operation: 'POST:/api/email-os/bulk/thread-action',
+  },
+  POST__angelcareGovernedImpl,
+)

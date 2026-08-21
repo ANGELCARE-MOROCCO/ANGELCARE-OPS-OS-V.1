@@ -1,3 +1,4 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextResponse } from 'next/server'
 import { carelinkMobileErrorResponse, requireCareLinkMobileMissionAccess } from '@/lib/carelink/mobile-auth'
 import { executeCareLinkMobileMissionAction, parseCareLinkMobileActionBody } from '@/lib/carelink/mobile-action-engine'
@@ -6,7 +7,7 @@ import { loadMissionChecklist, loadMissionReport, loadMissionReportCorrections, 
 
 export const dynamic = 'force-dynamic'
 
-export async function GET(_request: Request, context: { params: Promise<{ id: string }> }) {
+async function GET__angelcareGovernedImpl(_request: Request, context: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await context.params
     await requireCareLinkMobileMissionAccess(Number(id), 'can_submit_reports')
@@ -17,7 +18,7 @@ export async function GET(_request: Request, context: { params: Promise<{ id: st
   }
 }
 
-export async function POST(request: Request, context: { params: Promise<{ id: string }> }) {
+async function POST__angelcareGovernedImpl(request: Request, context: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await context.params
     const missionId = Number(id)
@@ -74,3 +75,19 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
     return carelinkMobileErrorResponse(error, 'Report submission failed')
   }
 }
+
+export const GET = governRoute(
+  {
+    workloadClass: 'heavy',
+    operation: 'GET:/api/carelink/missions/[id]/report',
+  },
+  GET__angelcareGovernedImpl,
+)
+
+export const POST = governRoute(
+  {
+    workloadClass: 'heavy',
+    operation: 'POST:/api/carelink/missions/[id]/report',
+  },
+  POST__angelcareGovernedImpl,
+)

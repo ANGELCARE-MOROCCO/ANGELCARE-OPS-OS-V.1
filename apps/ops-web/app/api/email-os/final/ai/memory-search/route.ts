@@ -1,7 +1,8 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextResponse } from "next/server"
 import { createEmailOSCoreDb } from "@/lib/email-os-core/db"
 
-export async function GET(request: Request) {
+async function GET__angelcareGovernedImpl(request: Request) {
   try {
     const url = new URL(request.url)
     const q = (url.searchParams.get("q") || "").trim()
@@ -19,3 +20,11 @@ export async function GET(request: Request) {
     return NextResponse.json({ ok: false, error: error instanceof Error ? error.message : "AI memory search failed" }, { status: 500 })
   }
 }
+
+export const GET = governRoute(
+  {
+    workloadClass: 'ai',
+    operation: 'GET:/api/email-os/final/ai/memory-search',
+  },
+  GET__angelcareGovernedImpl,
+)

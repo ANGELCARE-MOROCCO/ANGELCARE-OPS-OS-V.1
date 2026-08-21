@@ -1,8 +1,9 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextRequest } from "next/server"
 import { auditEvent, governanceContext, ok, parseBody, revokeActiveLeases } from "@/lib/whatsapp-desktop/server"
 import { DEVICE_ACTION_PERMISSIONS, disconnectWhatsApp, lifecycleError, loadDevice, logoutDesktop, restoreDevice } from "@/lib/whatsapp-desktop/device-lifecycle"
 
-export async function POST(request: NextRequest) {
+async function POST__angelcareGovernedImpl(request: NextRequest) {
   const context = await governanceContext(request, { adminPermission: DEVICE_ACTION_PERMISSIONS.bulk })
   if ("error" in context) return context.error
   try {
@@ -36,3 +37,11 @@ export async function POST(request: NextRequest) {
     return ok({ requested: ids.length, succeeded: results.filter((row) => row.ok).length, failed: results.filter((row) => !row.ok).length, results })
   } catch (error) { return lifecycleError(error) }
 }
+
+export const POST = governRoute(
+  {
+    workloadClass: 'heavy',
+    operation: 'POST:/api/whatsapp-desktop/devices/bulk',
+  },
+  POST__angelcareGovernedImpl,
+)

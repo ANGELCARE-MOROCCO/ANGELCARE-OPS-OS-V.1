@@ -1,3 +1,4 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextRequest } from 'next/server'
 import { createHash } from 'node:crypto'
 import { acContext, audit, fail, ok } from '@/lib/ac-whatsapp/server'
@@ -5,7 +6,7 @@ import { detectDoctrineConflicts, normalizeDoctrineRow, parseCsv } from '@/lib/a
 
 export const runtime='nodejs'
 
-export async function POST(request:NextRequest){
+async function POST__angelcareGovernedImpl(request:NextRequest){
   const context=await acContext(request,'ac-whatsapp.automation.manage')
   if('error' in context)return context.error
   const form=await request.formData().catch(()=>null)
@@ -45,3 +46,11 @@ export async function POST(request:NextRequest){
   await audit(context,{action:'revenue.doctrine.csv_import',entityType:'ri_import',entityId:importRow.data.id,newState:{packId:pack.id,rows:normalized.length,applicable,review,blocked,conflicts:conflicts.length,applicability,status:importStatus}})
   return ok({importId:importRow.data.id,packId:pack.id,status:importStatus,green:importStatus==='validated',stats:{rows:normalized.length,applicable,review,blocked,conflicts:conflicts.length,applicability},conflicts},{status:201})
 }
+
+export const POST = governRoute(
+  {
+    workloadClass: 'heavy',
+    operation: 'POST:/api/ac-whatsapp/revenue-intelligence/doctrines/import',
+  },
+  POST__angelcareGovernedImpl,
+)

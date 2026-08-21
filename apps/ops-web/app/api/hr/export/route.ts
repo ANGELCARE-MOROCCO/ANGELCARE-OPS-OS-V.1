@@ -1,7 +1,8 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextRequest, NextResponse } from 'next/server'
 import { buildHRExport } from '@/lib/hr-production/export'
 
-export async function GET(req: NextRequest) {
+async function GET__angelcareGovernedImpl(req: NextRequest) {
   const type = req.nextUrl.searchParams.get('type') || 'staff'
   const csv = await buildHRExport(type)
   return new NextResponse(csv, {
@@ -11,3 +12,11 @@ export async function GET(req: NextRequest) {
     },
   })
 }
+
+export const GET = governRoute(
+  {
+    workloadClass: 'heavy',
+    operation: 'GET:/api/hr/export',
+  },
+  GET__angelcareGovernedImpl,
+)

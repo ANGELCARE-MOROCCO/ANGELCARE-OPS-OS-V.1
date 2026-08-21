@@ -1,3 +1,4 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 
@@ -131,7 +132,7 @@ function receiptHtml({ trainer, payment, cohort }: { trainer: AnyRecord; payment
 </html>`
 }
 
-export async function GET(_request: NextRequest, context: RouteContext) {
+async function GET__angelcareGovernedImpl(_request: NextRequest, context: RouteContext) {
   let browser: any = null
   try {
     const params = await context.params
@@ -165,3 +166,11 @@ export async function GET(_request: NextRequest, context: RouteContext) {
     if (browser) await browser.close().catch(() => null)
   }
 }
+
+export const GET = governRoute(
+  {
+    workloadClass: 'heavy',
+    operation: 'GET:/api/academy/trainers/[id]/payments/[paymentId]/receipt/pdf',
+  },
+  GET__angelcareGovernedImpl,
+)

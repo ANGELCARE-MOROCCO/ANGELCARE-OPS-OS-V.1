@@ -1,3 +1,4 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { loadCareLinkOpsSnapshot, validateOpsReport, recordOpsAuditEvent } from '@/lib/carelink/ops-enterprise'
 import { markMissionReportValidated } from '@/lib/carelink/mobile-persistence'
 import { opsError, opsJson, readJsonBody } from '../../../_helpers'
@@ -12,7 +13,7 @@ async function readId(context: Context) {
   return String(params.id)
 }
 
-export async function POST(request: Request, context: Context) {
+async function POST__angelcareGovernedImpl(request: Request, context: Context) {
   try {
     const reportId = await readId(context)
     const body = await readJsonBody(request)
@@ -44,3 +45,11 @@ export async function POST(request: Request, context: Context) {
     return opsError(error, 'Impossible de valider le rapport Ops')
   }
 }
+
+export const POST = governRoute(
+  {
+    workloadClass: 'heavy',
+    operation: 'POST:/api/carelink/ops/reports/[id]/validate',
+  },
+  POST__angelcareGovernedImpl,
+)

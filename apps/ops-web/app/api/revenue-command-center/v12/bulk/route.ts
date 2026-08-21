@@ -1,7 +1,8 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextResponse } from 'next/server'
 import { getSupabase, actionUpdates, logAction } from '../_shared'
 
-export async function POST(req: Request) {
+async function POST__angelcareGovernedImpl(req: Request) {
   try {
     const supabase = await getSupabase()
     const body = await req.json()
@@ -17,3 +18,11 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, error: error?.message || 'Bulk action failed' }, { status: 500 })
   }
 }
+
+export const POST = governRoute(
+  {
+    workloadClass: 'heavy',
+    operation: 'POST:/api/revenue-command-center/v12/bulk',
+  },
+  POST__angelcareGovernedImpl,
+)

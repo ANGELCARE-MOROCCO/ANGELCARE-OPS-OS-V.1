@@ -1,3 +1,4 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/contract-client'
 
@@ -20,7 +21,7 @@ function parseCsv(text: string) {
   })
 }
 
-export async function POST(request: NextRequest) {
+async function POST__angelcareGovernedImpl(request: NextRequest) {
   const supabase = client()
   if (!supabase) return NextResponse.json({ ok: false, message: 'Supabase non configuré.' }, { status: 500 })
 
@@ -48,3 +49,11 @@ export async function POST(request: NextRequest) {
 
   return NextResponse.json({ ok: true, imported: results.filter((r) => r.ok).length, results })
 }
+
+export const POST = governRoute(
+  {
+    workloadClass: 'heavy',
+    operation: 'POST:/api/traininghub/internal/partners-portfolio/import',
+  },
+  POST__angelcareGovernedImpl,
+)

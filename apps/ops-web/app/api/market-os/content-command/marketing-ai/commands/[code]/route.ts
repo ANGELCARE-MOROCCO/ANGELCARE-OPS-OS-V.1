@@ -1,9 +1,10 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextResponse } from 'next/server'
 import { apiErrorResponse, requireMarketingAiUser } from '@/lib/market-os/marketing-ai/auth'
 import { updateMarketingAiCommand } from '@/lib/market-os/marketing-ai/repository'
 import { commandPatchSchema } from '@/lib/market-os/marketing-ai/schemas'
 
-export async function PATCH(request: Request, context: { params: Promise<{ code: string }> }) {
+async function PATCH__angelcareGovernedImpl(request: Request, context: { params: Promise<{ code: string }> }) {
   try {
     const raw = await request.json()
     const body = commandPatchSchema.parse(raw)
@@ -16,3 +17,11 @@ export async function PATCH(request: Request, context: { params: Promise<{ code:
     return apiErrorResponse(error)
   }
 }
+
+export const PATCH = governRoute(
+  {
+    workloadClass: 'ai',
+    operation: 'PATCH:/api/market-os/content-command/marketing-ai/commands/[code]',
+  },
+  PATCH__angelcareGovernedImpl,
+)

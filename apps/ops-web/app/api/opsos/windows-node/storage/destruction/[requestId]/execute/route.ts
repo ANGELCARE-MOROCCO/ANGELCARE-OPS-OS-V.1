@@ -1,3 +1,4 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { randomUUID } from "node:crypto"
 import { NextResponse } from "next/server"
 import { auditWindowsNodeEvent, getWindowsNodeRequestIp, requireWindowsNodeAdmin } from "@/app/api/opsos/windows-node/_shared"
@@ -13,7 +14,7 @@ import {
 import type { WindowsStorageDestructionJobResult } from "@/lib/opsos/windows-node-types"
 
 
-export async function POST(request: Request, { params }: { params: Promise<{ requestId: string }> }) {
+async function POST__angelcareGovernedImpl(request: Request, { params }: { params: Promise<{ requestId: string }> }) {
   const auth = await requireWindowsNodeAdmin(request)
   if (!auth.ok) return auth.response
   const { requestId } = await params
@@ -76,3 +77,11 @@ export async function POST(request: Request, { params }: { params: Promise<{ req
   await auditWindowsNodeEvent({ timestamp: new Date().toISOString(), actor: auth.context.operator, action: "windows_storage_object_permanently_destroyed", target: "/opsos/infrastructure/windows-node#storage", result: finalStatus, reason: current.reason, severity: "critical", metadataSummary: `request=${current.requestNumber} certificate=${certificate.certificateNumber} recovered=${bridge.data.actualRecoveredBytes} permanent=true` })
   return NextResponse.json({ ok: true, data: { request: completed, job: bridge.data, certificate } }, { headers: { "cache-control": "no-store" } })
 }
+
+export const POST = governRoute(
+  {
+    workloadClass: 'worker',
+    operation: 'POST:/api/opsos/windows-node/storage/destruction/[requestId]/execute',
+  },
+  POST__angelcareGovernedImpl,
+)

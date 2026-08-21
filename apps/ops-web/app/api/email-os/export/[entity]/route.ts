@@ -1,3 +1,4 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextResponse } from "next/server"
 import { createEmailOSCoreDb } from "@/lib/email-os-core/db"
 import { EMAIL_OS_TABLES, isEmailOSEntity } from "@/lib/email-os-core/schema"
@@ -7,7 +8,7 @@ function csvEscape(value: unknown) {
   return `"${text.replaceAll('"', '""')}"`
 }
 
-export async function GET(
+async function GET__angelcareGovernedImpl(
   _request: Request,
   context: { params: Promise<{ entity: string }> }
 ) {
@@ -45,3 +46,11 @@ export async function GET(
     )
   }
 }
+
+export const GET = governRoute(
+  {
+    workloadClass: 'heavy',
+    operation: 'GET:/api/email-os/export/[entity]',
+  },
+  GET__angelcareGovernedImpl,
+)

@@ -1,9 +1,10 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextResponse } from "next/server"
 import { getWindowsNodeRequestIp, requireWindowsNodeAdmin } from "@/app/api/opsos/windows-node/_shared"
 import { actorId } from "@/app/api/opsos/windows-node/storage/quarantine/_shared"
 import { beginDedupPlanExecution, finalizeDedupPlan, loadDedupPlan } from "@/lib/opsos/storage-lifecycle"
 import { callWindowsBridgeAdmin } from "@/lib/opsos/windows-node"
-export async function POST(request: Request, { params }: { params: Promise<{ planId: string }> }) {
+async function POST__angelcareGovernedImpl(request: Request, { params }: { params: Promise<{ planId: string }> }) {
   const auth = await requireWindowsNodeAdmin(request)
   if (!auth.ok) return auth.response
   const { planId } = await params
@@ -26,3 +27,11 @@ export async function POST(request: Request, { params }: { params: Promise<{ pla
     return NextResponse.json({ ok: false, error: error instanceof Error ? error.message : "Deduplication execution failed" }, { status: 400 })
   }
 }
+
+export const POST = governRoute(
+  {
+    workloadClass: 'worker',
+    operation: 'POST:/api/opsos/windows-node/storage/dedup/plans/[planId]/execute',
+  },
+  POST__angelcareGovernedImpl,
+)

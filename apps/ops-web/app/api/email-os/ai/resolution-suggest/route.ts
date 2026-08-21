@@ -1,8 +1,9 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextResponse } from "next/server"
 import { createEmailOSCoreDb } from "@/lib/email-os-core/db"
 import { makeEmailOSId, nowIso } from "@/lib/email-os-core/schema"
 
-export async function POST(request: Request) {
+async function POST__angelcareGovernedImpl(request: Request) {
   try {
     const body = await request.json().catch(() => ({}))
     if (!body.threadId) return NextResponse.json({ ok: false, error: "threadId is required" }, { status: 400 })
@@ -24,3 +25,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, error: error instanceof Error ? error.message : "AI resolution suggestion failed" }, { status: 500 })
   }
 }
+
+export const POST = governRoute(
+  {
+    workloadClass: 'ai',
+    operation: 'POST:/api/email-os/ai/resolution-suggest',
+  },
+  POST__angelcareGovernedImpl,
+)

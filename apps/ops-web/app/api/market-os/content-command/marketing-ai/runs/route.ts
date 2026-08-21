@@ -1,14 +1,15 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextResponse } from 'next/server'
 import { apiErrorResponse, requireMarketingAiUser } from '@/lib/market-os/marketing-ai/auth'
 import { runCommandSchema } from '@/lib/market-os/marketing-ai/schemas'
 import { executeMarketingAiCommand } from '@/lib/market-os/marketing-ai/orchestrator'
 import { listMarketingAiRuns } from '@/lib/market-os/marketing-ai/repository'
 
-export async function GET(request: Request) {
+async function GET__angelcareGovernedImpl(request: Request) {
   try { await requireMarketingAiUser('view'); const limit = Math.min(200, Number(new URL(request.url).searchParams.get('limit') || 100)); return NextResponse.json({ ok: true, runs: await listMarketingAiRuns(limit) }) }
   catch (error) { return apiErrorResponse(error) }
 }
-export async function POST(request: Request) {
+async function POST__angelcareGovernedImpl(request: Request) {
   try {
     const actor = await requireMarketingAiUser('run')
     const parsed = runCommandSchema.parse(await request.json())
@@ -17,3 +18,19 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true, run })
   } catch (error) { return apiErrorResponse(error) }
 }
+
+export const GET = governRoute(
+  {
+    workloadClass: 'ai',
+    operation: 'GET:/api/market-os/content-command/marketing-ai/runs',
+  },
+  GET__angelcareGovernedImpl,
+)
+
+export const POST = governRoute(
+  {
+    workloadClass: 'ai',
+    operation: 'POST:/api/market-os/content-command/marketing-ai/runs',
+  },
+  POST__angelcareGovernedImpl,
+)

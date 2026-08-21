@@ -1,3 +1,4 @@
+import { governRoute } from '@/lib/runtime/governor/route'
 import { NextResponse } from 'next/server'
 import { getCurrentUser } from '@/lib/getUser'
 import { aiRights, apiError, tenantOf } from '@/lib/revenue-command-os/ai/api-access'
@@ -7,7 +8,7 @@ import { loadAiProviderSnapshot } from '@/lib/ai-provider-control/repository'
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
-export async function GET() {
+async function GET__angelcareGovernedImpl() {
   const user = await getCurrentUser()
   try {
     const [rows, snapshot] = await Promise.all([getAiUsage(tenantOf(user)), loadAiProviderSnapshot()])
@@ -22,3 +23,11 @@ export async function GET() {
     return apiError('AI_USAGE_UNAVAILABLE', error instanceof Error ? error.message : 'Consommation IA indisponible.', 503)
   }
 }
+
+export const GET = governRoute(
+  {
+    workloadClass: 'ai',
+    operation: 'GET:/api/revenue-command-os/ai/usage',
+  },
+  GET__angelcareGovernedImpl,
+)
