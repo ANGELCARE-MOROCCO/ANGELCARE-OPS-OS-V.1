@@ -1,3 +1,4 @@
+import { governCustomerPlatformRoute } from '@/lib/runtime/customer-platform/governor'
 import { NextRequest, NextResponse } from 'next/server'
 import { Angelcare360AccessError } from '@/lib/angelcare360/server/context'
 import {
@@ -34,7 +35,7 @@ function schoolId(request: NextRequest) {
   return request.nextUrl.searchParams.get('schoolId')
 }
 
-export async function GET(request: NextRequest) {
+async function GET__customerPlatformImpl(request: NextRequest) {
   try {
     const mode = request.nextUrl.searchParams.get('mode') || 'overview'
     const sid = schoolId(request)
@@ -69,7 +70,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-export async function POST(request: NextRequest) {
+async function POST__customerPlatformImpl(request: NextRequest) {
   try {
     const body = (await request.json().catch(() => null)) as Body | null
     if (!body?.entity || !body.operation) return NextResponse.json({ ok: false, error: 'Commande inventaire incomplète.' }, { status: 422 })
@@ -88,3 +89,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ ok: false, error: error instanceof Error ? error.message : 'Erreur inventaire inattendue.' }, { status: 500 })
   }
 }
+
+export const GET = governCustomerPlatformRoute(
+  { workloadClass: 'interactive', operation: 'GET:/api/angelcare360/inventory-command' },
+  GET__customerPlatformImpl,
+)
+
+export const POST = governCustomerPlatformRoute(
+  { workloadClass: 'mutation', operation: 'POST:/api/angelcare360/inventory-command' },
+  POST__customerPlatformImpl,
+)

@@ -1,3 +1,4 @@
+import { getCustomerPlatformConfig } from '@/lib/runtime/customer-platform/config'
 import { NextResponse } from 'next/server'
 import type { ApiFailure, ApiSuccess } from '../domain/types'
 import { asMarketplaceError, MarketplaceError } from './errors'
@@ -41,6 +42,11 @@ export function apiFailure(error: unknown, explicitRequestId?: string): NextResp
 }
 
 export async function parseJsonObject(request: Request): Promise<Record<string, unknown>> {
+  const maxBytes = getCustomerPlatformConfig().maxJsonBodyBytes
+  const declaredLength = Number(request.headers.get('content-length') || 0)
+  if (Number.isFinite(declaredLength) && declaredLength > maxBytes) {
+    throw new MarketplaceError('VALIDATION_ERROR', 'Le corps JSON dépasse la limite autorisée.')
+  }
   let body: unknown
   try {
     body = await request.json()
@@ -49,6 +55,10 @@ export async function parseJsonObject(request: Request): Promise<Record<string, 
   }
   if (!body || typeof body !== 'object' || Array.isArray(body)) {
     throw new MarketplaceError('VALIDATION_ERROR', 'Un objet JSON est requis.')
+  }
+  const measuredLength = new TextEncoder().encode(JSON.stringify(body)).byteLength
+  if (measuredLength > maxBytes) {
+    throw new MarketplaceError('VALIDATION_ERROR', 'Le corps JSON dépasse la limite autorisée.')
   }
   return body as Record<string, unknown>
 }

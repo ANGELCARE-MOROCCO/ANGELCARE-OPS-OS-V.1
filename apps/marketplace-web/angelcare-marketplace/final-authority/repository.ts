@@ -1,3 +1,4 @@
+import { getCustomerPlatformPerformanceObservations } from '@/lib/runtime/customer-platform/performance'
 import {createServiceClient} from '@/lib/supabase/server'
 import type {MarketplaceRequestContext} from '../domain/types'
 import {writeMarketplaceAudit} from '../audit/write-audit'
@@ -14,7 +15,7 @@ export const listMetricDefinitions=()=>plain<MetricDefinition>('angelcare_market
 export const listMetricObservations=(c:MarketplaceRequestContext,domain?:string)=>scoped<MetricObservation>('angelcare_marketplace_metric_observations',c,'calculated_at',500).then(x=>domain?x.filter(v=>v.domain===domain):x)
 export const listGrowthOpportunities=(c:MarketplaceRequestContext)=>scoped<GrowthOpportunity>('angelcare_marketplace_growth_opportunities',c)
 export const listExperiments=()=>plain<Experiment>('angelcare_marketplace_experiments')
-export const listPerformance=(c:MarketplaceRequestContext)=>scoped<PerformanceObservation>('angelcare_marketplace_performance_observations',c,'observed_at',500)
+export const listPerformance=async(c:MarketplaceRequestContext):Promise<PerformanceObservation[]>=>{const [stored,runtime]=await Promise.all([scoped<PerformanceObservation>('angelcare_marketplace_performance_observations',c,'observed_at',500),getCustomerPlatformPerformanceObservations()]);return [...runtime as PerformanceObservation[],...stored].slice(0,500)}
 export const listSecurityControls=()=>plain<SecurityControl>('angelcare_marketplace_security_controls','control_key',500)
 export const listSecurityAssessments=()=>plain<SecurityAssessment>('angelcare_marketplace_security_assessments','assessed_at',500)
 export const listQaRuns=()=>plain<QaRun>('angelcare_marketplace_qa_runs','started_at')

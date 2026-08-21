@@ -1,9 +1,10 @@
+import { governCustomerPlatformRoute } from '@/lib/runtime/customer-platform/governor'
 import { NextResponse } from 'next/server'
 import { getAngelcare360CustomerBroadcastSnapshot } from '@/lib/angelcare360/customer-broadcasts'
 
 export const dynamic = 'force-dynamic'
 
-export async function GET(request: Request) {
+async function GET__customerPlatformImpl(request: Request) {
   const snapshot = await getAngelcare360CustomerBroadcastSnapshot()
   const etag = `W/\"${snapshot.version}\"`
 
@@ -25,3 +26,8 @@ export async function GET(request: Request) {
     },
   })
 }
+
+export const GET = governCustomerPlatformRoute(
+  { workloadClass: 'interactive', operation: 'GET:/api/angelcare360/customer-broadcasts' },
+  GET__customerPlatformImpl,
+)

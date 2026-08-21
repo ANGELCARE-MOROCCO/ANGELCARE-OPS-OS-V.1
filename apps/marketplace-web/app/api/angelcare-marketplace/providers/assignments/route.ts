@@ -1,2 +1,8 @@
+import { governCustomerPlatformRoute } from '@/lib/runtime/customer-platform/governor'
 import { handleProviderSummary } from '@/angelcare-marketplace/provider-workforce/api-handlers'
-export const GET=handleProviderSummary
+const GET__customerPlatformImpl = handleProviderSummary
+
+export const GET = governCustomerPlatformRoute(
+  { workloadClass: 'interactive', operation: 'GET:/api/angelcare-marketplace/providers/assignments' },
+  GET__customerPlatformImpl,
+)

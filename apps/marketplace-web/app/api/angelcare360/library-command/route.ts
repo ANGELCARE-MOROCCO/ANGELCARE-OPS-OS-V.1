@@ -1,3 +1,4 @@
+import { governCustomerPlatformRoute } from '@/lib/runtime/customer-platform/governor'
 import { NextRequest, NextResponse } from 'next/server'
 import {
   cancelLibraryLoanAtomic,
@@ -19,7 +20,7 @@ function failure(error: unknown, status = 400) {
   return NextResponse.json({ ok: false, error: message }, { status })
 }
 
-export async function GET(request: NextRequest) {
+async function GET__customerPlatformImpl(request: NextRequest) {
   try {
     const mode = request.nextUrl.searchParams.get('mode') || 'snapshot'
     const schoolId = request.nextUrl.searchParams.get('schoolId')
@@ -35,7 +36,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-export async function POST(request: NextRequest) {
+async function POST__customerPlatformImpl(request: NextRequest) {
   try {
     const body = await request.json()
     const action = String(body?.action || '')
@@ -73,3 +74,13 @@ export async function POST(request: NextRequest) {
     return failure(error)
   }
 }
+
+export const GET = governCustomerPlatformRoute(
+  { workloadClass: 'interactive', operation: 'GET:/api/angelcare360/library-command' },
+  GET__customerPlatformImpl,
+)
+
+export const POST = governCustomerPlatformRoute(
+  { workloadClass: 'mutation', operation: 'POST:/api/angelcare360/library-command' },
+  POST__customerPlatformImpl,
+)

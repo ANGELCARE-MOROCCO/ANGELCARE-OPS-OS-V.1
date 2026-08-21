@@ -1,3 +1,4 @@
+import { governCustomerPlatformRoute } from '@/lib/runtime/customer-platform/governor'
 import { NextRequest, NextResponse } from 'next/server'
 import {
   assignAngelcare360ClaimTicket,
@@ -30,7 +31,7 @@ function normalizePayload(body: Body): Record<string, unknown> {
   }
 }
 
-export async function GET(request: NextRequest) {
+async function GET__customerPlatformImpl(request: NextRequest) {
   const schoolId = request.nextUrl.searchParams.get('schoolId')
   const mode = request.nextUrl.searchParams.get('mode') || 'overview'
 
@@ -58,7 +59,7 @@ export async function GET(request: NextRequest) {
   return NextResponse.json({ ok: Boolean(overview), overview }, { status: overview ? 200 : 404 })
 }
 
-export async function POST(request: NextRequest) {
+async function POST__customerPlatformImpl(request: NextRequest) {
   try {
     const body = (await request.json().catch(() => null)) as Body | null
     if (!body?.entity || !body.operation) {
@@ -84,3 +85,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ ok: false, error: message }, { status: 500 })
   }
 }
+
+export const GET = governCustomerPlatformRoute(
+  { workloadClass: 'interactive', operation: 'GET:/api/angelcare360/claims' },
+  GET__customerPlatformImpl,
+)
+
+export const POST = governCustomerPlatformRoute(
+  { workloadClass: 'mutation', operation: 'POST:/api/angelcare360/claims' },
+  POST__customerPlatformImpl,
+)

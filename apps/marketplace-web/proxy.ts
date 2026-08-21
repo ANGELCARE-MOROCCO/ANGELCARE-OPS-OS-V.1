@@ -1,3 +1,4 @@
+import { admitCustomerPlatformIngress } from '@/lib/runtime/customer-platform/ingress'
 import { NextResponse, type NextRequest } from 'next/server'
 
 function hasCookie(request: NextRequest, names: string[]) {
@@ -81,6 +82,28 @@ function buildCareLinkMobileLoginRequiredResponse(request: NextRequest) {
 export function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname
 
+  const customerPlatformAdmission = admitCustomerPlatformIngress(request)
+
+  if (!customerPlatformAdmission.allowed) {
+    return NextResponse.json(
+      {
+        ok: false,
+        error: 'Request capacity is temporarily saturated.',
+        code: customerPlatformAdmission.code,
+        workloadClass: customerPlatformAdmission.workloadClass,
+        retryAfterMs: customerPlatformAdmission.retryAfterMs,
+      },
+      {
+        status: customerPlatformAdmission.status,
+        headers: {
+          'cache-control': 'no-store',
+          'retry-after': String(Math.max(1, Math.ceil(customerPlatformAdmission.retryAfterMs / 1_000))),
+          'x-angelcare-customer-ingress': 'active',
+        },
+      },
+    )
+  }
+
   if (isCareLinkOpsProtectedPath(pathname)) {
     if (!isCareLinkOpsAuthorizedActor(request)) {
       return redirectWithNext(request, '/login')
@@ -116,6 +139,9 @@ export function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
+    '/angelcare-360-command-center/:path*',
+    '/angelcare-marketplace/:path*',
+    '/api/:path*',
     '/carelink/:path*',
     '/carelink-ops/:path*',
     '/api/carelink/:path*',

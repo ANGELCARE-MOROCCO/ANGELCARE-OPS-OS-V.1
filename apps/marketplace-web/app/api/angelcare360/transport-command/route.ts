@@ -1,3 +1,4 @@
+import { governCustomerPlatformRoute } from '@/lib/runtime/customer-platform/governor'
 import { NextRequest, NextResponse } from 'next/server'
 import { Angelcare360AccessError } from '@/lib/angelcare360/server/context'
 import { getTransportMobilitySnapshot, transportMutation } from '@/lib/angelcare360/server/transport-mobility-command'
@@ -9,7 +10,7 @@ function response(body: unknown, status = 200) {
   return NextResponse.json(body, { status, headers: { 'Cache-Control': 'no-store' } })
 }
 
-export async function GET(request: NextRequest) {
+async function GET__customerPlatformImpl(request: NextRequest) {
   try {
     const schoolId = request.nextUrl.searchParams.get('schoolId')
     const snapshot = await getTransportMobilitySnapshot({ schoolId })
@@ -20,7 +21,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-export async function POST(request: NextRequest) {
+async function POST__customerPlatformImpl(request: NextRequest) {
   try {
     const payload = await request.json().catch(() => null)
     if (!payload || typeof payload !== 'object') return response({ ok: false, error: 'Payload Transport invalide.' }, 422)
@@ -31,3 +32,13 @@ export async function POST(request: NextRequest) {
     return response({ ok: false, error: error instanceof Error ? error.message : 'Erreur Transport.' }, 500)
   }
 }
+
+export const GET = governCustomerPlatformRoute(
+  { workloadClass: 'critical', operation: 'GET:/api/angelcare360/transport-command' },
+  GET__customerPlatformImpl,
+)
+
+export const POST = governCustomerPlatformRoute(
+  { workloadClass: 'critical', operation: 'POST:/api/angelcare360/transport-command' },
+  POST__customerPlatformImpl,
+)

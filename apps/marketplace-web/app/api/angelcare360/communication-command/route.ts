@@ -1,3 +1,4 @@
+import { governCustomerPlatformRoute } from '@/lib/runtime/customer-platform/governor'
 import { NextResponse } from 'next/server'
 import {
   createSanilaCommunicationCampaign,
@@ -25,7 +26,7 @@ function json(payload: unknown, status = 200) {
   return response
 }
 
-export async function POST(request: Request) {
+async function POST__customerPlatformImpl(request: Request) {
   const body = await request.json().catch(() => ({})) as Record<string, unknown>
   const action = String(body.action || '')
   const payload = (body.payload && typeof body.payload === 'object' ? body.payload : body) as Record<string, unknown>
@@ -52,3 +53,8 @@ export async function POST(request: Request) {
     return json({ ok: false, error: error instanceof Error ? error.message : 'Action Communication Command impossible.' }, 500)
   }
 }
+
+export const POST = governCustomerPlatformRoute(
+  { workloadClass: 'provider', operation: 'POST:/api/angelcare360/communication-command' },
+  POST__customerPlatformImpl,
+)
