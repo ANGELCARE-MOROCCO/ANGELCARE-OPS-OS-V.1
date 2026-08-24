@@ -1,0 +1,50 @@
+name: Build Marketplace GHCR One-Off
+
+on:
+  push:
+    branches:
+      - deploy/marketplace-current-20260824
+    paths:
+      - ".github/workflows/build-marketplace-ghcr-oneoff.yml"
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  TARGET_SHA: 2c2e0fe4f2169dbcae245254d6b366c9d91f521d
+  IMAGE: ghcr.io/angelcare-morocco/angelcare-marketplace
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout exact Marketplace source
+        uses: actions/checkout@v4
+        with:
+          ref: 2c2e0fe4f2169dbcae245254d6b366c9d91f521d
+
+      - name: Install Nixpacks
+        run: curl -sSL https://nixpacks.com/install.sh | bash
+
+      - name: Show Nixpacks build plan
+        run: nixpacks plan apps/marketplace-web
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build exact Marketplace image
+        run: |
+          nixpacks build apps/marketplace-web \
+            --name "${IMAGE}:${TARGET_SHA}" \
+            --platform linux/amd64 \
+            --label "org.opencontainers.image.revision=${TARGET_SHA}" \
+            --label "org.opencontainers.image.source=https://github.com/ANGELCARE-MOROCCO/ANGELCARE-OPS-OS-V.1"
+
+      - name: Push exact Marketplace image
+        run: docker push "${IMAGE}:${TARGET_SHA}"
