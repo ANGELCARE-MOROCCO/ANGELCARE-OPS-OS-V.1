@@ -1,0 +1,37 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "incremental": false
+  },
+  "files": [
+    "next-env.d.ts",
+    "components/angelcare360/transport/sovereign/transport-sovereign-css.d.ts",
+    "components/angelcare360/transport/Angelcare360TransportNavigation.tsx",
+    "components/angelcare360/transport/Angelcare360TransportPageShell.tsx",
+    "components/angelcare360/transport/sovereign/TransportPrimitives.tsx",
+    "components/angelcare360/transport/sovereign/TransportDrawer.tsx",
+    "components/angelcare360/transport/sovereign/TransportActions.tsx",
+    "components/angelcare360/transport/sovereign/TransportViews.tsx",
+    "types/angelcare360/transport-mobility.ts",
+    "lib/angelcare360/server/transport-mobility-command.ts",
+    "app/api/angelcare360/transport-command/route.ts",
+    "app/(protected)/angelcare-360-command-center/transport/page.tsx",
+    "app/(protected)/angelcare-360-command-center/transport/circuits/page.tsx",
+    "app/(protected)/angelcare-360-command-center/transport/circuits/[id]/page.tsx",
+    "app/(protected)/angelcare-360-command-center/transport/arrets/page.tsx",
+    "app/(protected)/angelcare-360-command-center/transport/vehicules/page.tsx",
+    "app/(protected)/angelcare-360-command-center/transport/vehicules/[id]/page.tsx",
+    "app/(protected)/angelcare-360-command-center/transport/affectations/page.tsx",
+    "app/(protected)/angelcare-360-command-center/transport/ramassage/page.tsx",
+    "app/(protected)/angelcare-360-command-center/transport/depot/page.tsx",
+    "app/(protected)/angelcare-360-command-center/transport/securite/page.tsx",
+    "app/(protected)/angelcare-360-command-center/transport/incidents/page.tsx",
+    "app/(protected)/angelcare-360-command-center/transport/notifications/page.tsx",
+    "app/(protected)/angelcare-360-command-center/transport/audit/page.tsx",
+    "app/(protected)/angelcare-360-command-center/transport/loading.tsx",
+    "app/(protected)/angelcare-360-command-center/transport/error.tsx",
+    "app/(protected)/angelcare-360-command-center/transport/not-found.tsx"
+  ],
+  "include": []
+}

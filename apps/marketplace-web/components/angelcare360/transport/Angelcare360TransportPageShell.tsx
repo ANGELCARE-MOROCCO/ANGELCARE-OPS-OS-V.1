@@ -1,15 +1,9 @@
 import type { ReactNode } from 'react'
 import Angelcare360TransportNavigation from './Angelcare360TransportNavigation'
 import type { Angelcare360TransportNavigationItem } from '@/data/angelcare360/transport-navigation'
-import {
-  ANGELCARE360_COLORS,
-  angelcare360HeroBackdropStyle,
-  angelcare360PageShellStyle,
-  angelcare360PillBlueStyle,
-  angelcare360PillStyle,
-} from '@/components/angelcare360/ui/Angelcare360VisualSystem'
+import styles from './sovereign/TransportSovereign.module.css'
 
-type Angelcare360TransportPageShellProps = {
+type Props = {
   title: string
   subtitle: string
   badge?: string
@@ -31,98 +25,32 @@ export default function Angelcare360TransportPageShell({
   contextRow,
   navigationItems,
   children,
-}: Angelcare360TransportPageShellProps) {
+}: Props) {
   return (
-    <section style={shellStyle}>
-      <header style={headerStyle}>
-        <div style={headingStyle}>
-          <div style={eyebrowRowStyle}>
-            {badge ? <span style={badgeStyle}>{badge}</span> : null}
-            {statusLabel ? <span style={statusStyle}>{statusLabel}</span> : null}
+    <section className={styles.scope} data-sanila-transport-surface="sovereign">
+      <div className={styles.shell}>
+        <header className={styles.transportMasthead}>
+          <div className={styles.transportHeading}>
+            <span className={styles.eyebrow}>{badge || 'Transport & Sécurité'}</span>
+            <h1 className={styles.transportTitle}>{title}</h1>
+            <p className={styles.transportSubtitle}>{subtitle}</p>
           </div>
-          <h1 style={titleStyle}>{title}</h1>
-          <p style={subtitleStyle}>{subtitle}</p>
+          {(statusLabel || secondaryActions || primaryAction) ? (
+            <div className={styles.transportCommandRail}>
+              {statusLabel ? <span className={styles.transportStatus}>{statusLabel}</span> : null}
+              <div className={styles.transportActions}>{secondaryActions}{primaryAction}</div>
+            </div>
+          ) : null}
+        </header>
+
+        {contextRow ? <div className={styles.transportContext}>{contextRow}</div> : null}
+
+        <div className={styles.transportLocalNavigation}>
+          <Angelcare360TransportNavigation items={navigationItems} />
         </div>
 
-        {primaryAction || secondaryActions ? <div style={actionsStyle}>{secondaryActions}{primaryAction}</div> : null}
-      </header>
-
-      {contextRow ? <div style={contextStyle}>{contextRow}</div> : null}
-      <Angelcare360TransportNavigation items={navigationItems} />
-      <div style={contentStyle}>{children}</div>
+        <div className={styles.transportWorkspace}>{children}</div>
+      </div>
     </section>
   )
-}
-
-const shellStyle: React.CSSProperties = {
-  ...angelcare360PageShellStyle,
-}
-
-const headerStyle: React.CSSProperties = {
-  ...angelcare360HeroBackdropStyle,
-  display: 'flex',
-  flexWrap: 'wrap',
-  alignItems: 'start',
-  justifyContent: 'space-between',
-  gap: 18,
-  padding: 22,
-}
-
-const headingStyle: React.CSSProperties = {
-  display: 'grid',
-  gap: 10,
-}
-
-const eyebrowRowStyle: React.CSSProperties = {
-  display: 'flex',
-  flexWrap: 'wrap',
-  gap: 8,
-}
-
-const badgeStyle: React.CSSProperties = {
-  ...angelcare360PillBlueStyle,
-  width: 'fit-content',
-}
-
-const statusStyle: React.CSSProperties = {
-  ...angelcare360PillStyle,
-}
-
-const titleStyle: React.CSSProperties = {
-  margin: 0,
-  color: ANGELCARE360_COLORS.navy,
-  fontSize: 30,
-  lineHeight: 1.08,
-  fontWeight: 950,
-}
-
-const subtitleStyle: React.CSSProperties = {
-  margin: 0,
-  maxWidth: 980,
-  color: ANGELCARE360_COLORS.slate,
-  fontSize: 15.5,
-  lineHeight: 1.65,
-  fontWeight: 600,
-}
-
-const actionsStyle: React.CSSProperties = {
-  display: 'flex',
-  flexWrap: 'wrap',
-  gap: 10,
-}
-
-const contextStyle: React.CSSProperties = {
-  display: 'flex',
-  flexWrap: 'wrap',
-  gap: 10,
-  padding: 16,
-  borderRadius: 22,
-  background: ANGELCARE360_COLORS.white,
-  border: `1px solid ${ANGELCARE360_COLORS.borderSoft}`,
-  boxShadow: '0 14px 32px rgba(15,23,42,.04)',
-}
-
-const contentStyle: React.CSSProperties = {
-  display: 'grid',
-  gap: 16,
 }

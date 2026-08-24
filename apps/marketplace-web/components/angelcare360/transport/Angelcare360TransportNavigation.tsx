@@ -1,90 +1,61 @@
 'use client'
 
 import Link from 'next/link'
+import type { ComponentType } from 'react'
 import { usePathname } from 'next/navigation'
+import {
+  Activity,
+  BusFront,
+  CircleAlert,
+  ClipboardCheck,
+  History,
+  MapPin,
+  Route,
+  ShieldCheck,
+  UserRoundCheck,
+  UsersRound,
+  Waypoints,
+} from 'lucide-react'
 import type { Angelcare360TransportNavigationItem } from '@/data/angelcare360/transport-navigation'
+import styles from './sovereign/TransportSovereign.module.css'
 
-type Angelcare360TransportNavigationProps = {
-  items: Angelcare360TransportNavigationItem[]
+const ICONS: Record<string, ComponentType<{ size?: number; strokeWidth?: number }>> = {
+  overview: Activity,
+  routes: Route,
+  stops: MapPin,
+  vehicles: BusFront,
+  assignments: UsersRound,
+  pickup: UserRoundCheck,
+  dropoff: Waypoints,
+  safety: ShieldCheck,
+  incidents: CircleAlert,
+  notifications: ClipboardCheck,
+  audit: History,
 }
 
-export default function Angelcare360TransportNavigation({ items }: Angelcare360TransportNavigationProps) {
+export default function Angelcare360TransportNavigation({ items }: { items: Angelcare360TransportNavigationItem[] }) {
   const pathname = usePathname() || '/angelcare-360-command-center/transport'
 
   return (
-    <nav style={navStyle} aria-label="Navigation transport AngelCare 360">
+    <nav className={styles.localNav} aria-label="Navigation Transport & Sécurité">
       {items.map((item) => {
-        const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`)
+        const active = pathname === item.href || (item.href !== '/angelcare-360-command-center/transport' && pathname.startsWith(`${item.href}/`))
+        const Icon = ICONS[item.key] || Activity
         return (
           <Link
             key={item.key}
             href={item.href}
-            aria-current={isActive ? 'page' : undefined}
-            style={{ ...linkStyle, ...(isActive ? activeLinkStyle : null) }}
+            className={styles.localNavItem}
+            data-active={active ? 'true' : 'false'}
+            aria-current={active ? 'page' : undefined}
             title={item.summary}
           >
-            <div style={contentStyle}>
-              <div style={labelStyle}>{item.label}</div>
-              <div style={summaryStyle}>{item.summary}</div>
-            </div>
-            {item.badge ? <span style={badgeStyle}>{item.badge}</span> : null}
+            <span className={styles.localNavIcon}><Icon size={16} strokeWidth={1.9} /></span>
+            <span className={styles.localNavText}><strong>{item.label}</strong><small>{item.summary}</small></span>
+            {item.badge ? <span className={styles.localNavBadge}>{item.badge}</span> : null}
           </Link>
         )
       })}
     </nav>
   )
-}
-
-const navStyle: React.CSSProperties = {
-  display: 'flex',
-  flexWrap: 'wrap',
-  gap: 10,
-}
-
-const linkStyle: React.CSSProperties = {
-  flex: '1 1 260px',
-  display: 'flex',
-  justifyContent: 'space-between',
-  gap: 12,
-  alignItems: 'center',
-  padding: '14px 16px',
-  borderRadius: 18,
-  border: '1px solid #dbe4ef',
-  background: '#fff',
-  color: '#0f172a',
-  textDecoration: 'none',
-  boxShadow: '0 14px 40px rgba(15,23,42,.04)',
-}
-
-const activeLinkStyle: React.CSSProperties = {
-  border: '1px solid #38bdf8',
-  background: '#f0f9ff',
-  boxShadow: 'inset 0 0 0 1px rgba(56,189,248,.08)',
-}
-
-const contentStyle: React.CSSProperties = {
-  display: 'grid',
-  gap: 4,
-}
-
-const labelStyle: React.CSSProperties = {
-  fontSize: 14,
-  fontWeight: 900,
-}
-
-const summaryStyle: React.CSSProperties = {
-  color: '#64748b',
-  fontSize: 12,
-  lineHeight: 1.45,
-  fontWeight: 600,
-}
-
-const badgeStyle: React.CSSProperties = {
-  flexShrink: 0,
-  borderRadius: 999,
-  padding: '5px 9px',
-  background: '#dbeafe',
-  color: '#1d4ed8',
-  fontSize: 11,
-  fontWeight: 900,
 }
