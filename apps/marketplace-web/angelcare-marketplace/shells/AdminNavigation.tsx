@@ -1,54 +1,32 @@
-"use client"
+'use client'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import {Radio, Images, Navigation, PackagePlus, Tags, Megaphone,BadgeDollarSign,RefreshCcw,Users,Building2, Activity, BadgeCheck, Banknote, BarChart3, Boxes, CalendarCheck, ClipboardCheck, Clock3, Component, FileClock, FileText, Flag, Gauge, Globe2, HardDrive, LayoutTemplate, ListChecks, Rocket, Search, Settings2, ShieldCheck, ShoppingBag, Sparkles, UsersRound, WandSparkles, Waypoints } from 'lucide-react'
+import {usePathname} from 'next/navigation'
+import {BadgeDollarSign,Boxes,Gauge,Network,Rocket,Search,ShoppingBag,Sparkles,UsersRound,Waypoints} from 'lucide-react'
 import styles from '../design-system/marketplace.module.css'
-import { cx } from '../design-system/ui'
-const groups=[
- {label:'Commandement souverain',items:[
-  {href:'/angelcare-marketplace/admin',label:'Cockpit de direction',icon:Gauge},{href:'/angelcare-marketplace/admin/command',label:'Commandement 360',icon:Sparkles},{href:'/angelcare-marketplace/admin/search',label:'Recherche globale',icon:Search},{href:'/angelcare-marketplace/admin/approvals',label:'Centre d’approbation',icon:ListChecks},{href:'/angelcare-marketplace/admin/action-center',label:'Centre d’action',icon:ClipboardCheck},{href:'/angelcare-marketplace/admin/territories',label:'Territory Command',icon:Globe2},
- ]},
- {label:'Commerce Studio · contrôle immédiat',items:[
-  {href:'/angelcare-marketplace/admin/commerce-studio',label:'Commerce Studio',icon:Sparkles},{href:'/angelcare-marketplace/admin/media',label:'Media Library',icon:Images},{href:'/angelcare-marketplace/admin/homepage/composer',label:'Homepage Composer',icon:LayoutTemplate},{href:'/angelcare-marketplace/admin/navigation/header',label:'Navigation Studio',icon:Navigation},{href:'/angelcare-marketplace/admin/catalog/items/new',label:'Product Studio',icon:PackagePlus},{href:'/angelcare-marketplace/admin/catalog/categories',label:'Category Studio',icon:Tags},{href:'/angelcare-marketplace/admin/merchandising',label:'Merchandising Studio',icon:Megaphone},{href:'/angelcare-marketplace/admin/publication',label:'Publication immédiate',icon:Rocket},
- ]},
- {label:'Commerce & offre',items:[
-  {href:'/angelcare-marketplace/admin/development',label:'Développement enfant',icon:Sparkles},{href:'/angelcare-marketplace/admin/development/kits',label:'Kits & protocoles',icon:Boxes},{href:'/angelcare-marketplace/admin/marketplace',label:'Marketplace Command',icon:Boxes},{href:'/angelcare-marketplace/admin/catalog',label:'Catalogue unifié',icon:ListChecks},{href:'/angelcare-marketplace/admin/suppliers',label:'Fournisseurs',icon:Boxes},{href:'/angelcare-marketplace/admin/quote-baskets',label:'Paniers de devis',icon:ListChecks},
- ]},
- {label:'Revenu & partenaires',items:[
-  {href:'/angelcare-marketplace/admin/commercial',label:'Revenue Command',icon:Activity},{href:'/angelcare-marketplace/admin/commercial/leads',label:'Leads & comptes',icon:UsersRound},{href:'/angelcare-marketplace/admin/commercial/opportunities',label:'Opportunités',icon:Activity},{href:'/angelcare-marketplace/admin/commercial/quotes',label:'Devis & preuves',icon:FileClock},{href:'/angelcare-marketplace/admin/partner-os',label:'Partner OS Command',icon:Boxes},{href:'/angelcare-marketplace/admin/partner-os/tenants',label:'Tenants',icon:Boxes},{href:'/angelcare-marketplace/admin/partner-os/plans',label:'Plans & abonnements',icon:LayoutTemplate},
- ]},
- {label:'Univers B2B verticaux',items:[
-  {href:'/angelcare-marketplace/admin/verticals',label:'B2B Executive Command',icon:Activity},{href:'/angelcare-marketplace/admin/verticals/establishments',label:'Écoles & crèches',icon:Boxes},{href:'/angelcare-marketplace/admin/verticals/hospitality',label:'Hôtellerie & hospitality',icon:Sparkles},{href:'/angelcare-marketplace/admin/verticals/health-partners',label:'Partenaires santé',icon:ShieldCheck},{href:'/angelcare-marketplace/admin/verticals/corporates',label:'Corporate & RH',icon:UsersRound},
- ]},
- {label:'Customer, paiement & Wallet',items:[
-  {href:'/angelcare-marketplace/admin/wallet',label:'AC Privilege Wallet',icon:BadgeDollarSign},{href:'/angelcare-marketplace/admin/wallet/policies',label:'Wallet Policy Studio',icon:Sparkles},{href:'/angelcare-marketplace/admin/wallet/customers',label:'Dossiers Wallet',icon:UsersRound},{href:'/angelcare-marketplace/admin/wallet/risk',label:'Wallet Risk Command',icon:ShieldCheck},{href:'/angelcare-marketplace/admin/wallet/reconciliation',label:'Wallet Reconciliation',icon:RefreshCcw},{href:'/angelcare-marketplace/admin/payments',label:'Payment Command',icon:Banknote},{href:'/angelcare-marketplace/admin/orders',label:'Enterprise Orders',icon:ShoppingBag},
- ]},
- {label:'Conversion & checkout',items:[
-  {href:'/angelcare-marketplace/admin/conversion',label:'Conversion Command',icon:ShoppingBag},{href:'/angelcare-marketplace/admin/conversion/sessions',label:'Sessions & handovers',icon:Waypoints},{href:'/angelcare-marketplace/admin/conversion/baskets',label:'Paniers & quote baskets',icon:Boxes},{href:'/angelcare-marketplace/admin/conversion/quotations',label:'Propositions & devis',icon:FileText},{href:'/angelcare-marketplace/admin/conversion/bookings',label:'Bookings services',icon:CalendarCheck},{href:'/angelcare-marketplace/admin/conversion/enrollments',label:'Inscriptions Academy',icon:Sparkles},{href:'/angelcare-marketplace/admin/conversion/holds',label:'Holds disponibilité',icon:Clock3},{href:'/angelcare-marketplace/admin/conversion/consents',label:'Consentements',icon:ClipboardCheck},{href:'/angelcare-marketplace/admin/conversion/exceptions',label:'Exceptions & récupération',icon:ShieldCheck},{href:'/angelcare-marketplace/admin/conversion/analytics',label:'Conversion analytics',icon:BarChart3},
- ]},
- {label:'Customer Journey Control',items:[
-  {href:'/angelcare-marketplace/admin/journeys',label:'Journey Command',icon:Waypoints},{href:'/angelcare-marketplace/admin/journeys/action-center',label:'Action Center',icon:ListChecks},{href:'/angelcare-marketplace/admin/journeys/orders',label:'Commandes & fulfillment',icon:ShoppingBag},{href:'/angelcare-marketplace/admin/journeys/bookings',label:'Bookings & services',icon:CalendarCheck},{href:'/angelcare-marketplace/admin/journeys/enrollments',label:'Parcours Academy',icon:Sparkles},{href:'/angelcare-marketplace/admin/journeys/quotations',label:'Devis & décisions B2B',icon:FileText},{href:'/angelcare-marketplace/admin/journeys/subscriptions',label:'Partner activations',icon:Rocket},{href:'/angelcare-marketplace/admin/journeys/assessments',label:'Quality journeys',icon:ShieldCheck},{href:'/angelcare-marketplace/admin/journeys/recovery',label:'Recovery Command',icon:Activity},{href:'/angelcare-marketplace/admin/journeys/analytics',label:'Journey analytics',icon:BarChart3},
- ]},
- {label:'Academy, workforce & opérations',items:[
-  {href:'/angelcare-marketplace/admin/academy',label:'Academy Command',icon:Sparkles},{href:'/angelcare-marketplace/admin/academy/cohorts',label:'Cohortes & sessions',icon:UsersRound},{href:'/angelcare-marketplace/admin/academy/certificates',label:'Autorité certificats',icon:ShieldCheck},{href:'/angelcare-marketplace/admin/providers',label:'Provider Workforce',icon:UsersRound},{href:'/angelcare-marketplace/admin/providers/eligibility',label:'Éligibilité opérationnelle',icon:ClipboardCheck},{href:'/angelcare-marketplace/admin/providers/payable-eligibility',label:'Éligibilité payable',icon:FileClock},{href:'/angelcare-marketplace/admin/operations',label:'Marketplace Operations',icon:Activity},{href:'/angelcare-marketplace/admin/operations/action-center',label:'Operations Action Center',icon:ListChecks},{href:'/angelcare-marketplace/admin/operations/fulfillment',label:'Fulfillment Command',icon:Waypoints},{href:'/angelcare-marketplace/admin/vendors',label:'Vendor Commerce',icon:Building2},{href:'/angelcare-marketplace/admin/providers/commerce',label:'Provider Commerce',icon:Users},{href:'/angelcare-marketplace/admin/operations/returns',label:'Returns & Replacements',icon:RefreshCcw},{href:'/angelcare-marketplace/admin/operations/disputes',label:'Disputes & Recovery',icon:ShieldCheck},{href:'/angelcare-marketplace/admin/operations/reconciliation',label:'Finance Reconciliation',icon:BadgeDollarSign},{href:'/angelcare-marketplace/admin/operations/live',label:'Mission Control',icon:Radio},{href:'/angelcare-marketplace/admin/operations/dispatch',label:'Dispatch Control',icon:Waypoints},{href:'/angelcare-marketplace/admin/operations/incidents',label:'Incidents & escalades',icon:ShieldCheck},{href:'/angelcare-marketplace/admin/operations/closure',label:'Clôture opérationnelle',icon:ListChecks},
- ]},
- {label:'Expérience & publication',items:[
-  {href:'/angelcare-marketplace/admin/experience/homepage',label:'Homepage Flagship',icon:LayoutTemplate},{href:'/angelcare-marketplace/admin/experience',label:'Experience Builder',icon:WandSparkles},{href:'/angelcare-marketplace/admin/experience/pages',label:'Pages & versions',icon:LayoutTemplate},{href:'/angelcare-marketplace/admin/experience/publishing',label:'Runway de publication',icon:FileClock},{href:'/angelcare-marketplace/admin/localization',label:'Localization Intelligence',icon:Globe2},
- ]},
- {label:'Familles & acquisition',items:[
-  {href:'/angelcare-marketplace/admin/families',label:'Family Command',icon:UsersRound},{href:'/angelcare-marketplace/admin/family-requests',label:'Demandes familles',icon:ClipboardCheck},{href:'/angelcare-marketplace/admin/public-inquiries',label:'Entrées publiques',icon:Activity},
- ]},
- {label:'Contrôle produit',items:[
-  {href:'/angelcare-marketplace/admin/modules',label:'Registre des modules',icon:Boxes},{href:'/angelcare-marketplace/admin/feature-flags',label:'Feature flags',icon:Flag},{href:'/angelcare-marketplace/admin/configuration',label:'Configuration',icon:Settings2},
- ]},
- {label:'Intelligence, assurance & launch',items:[
-  {href:'/angelcare-marketplace/admin/intelligence',label:'Executive Intelligence',icon:BarChart3},{href:'/angelcare-marketplace/admin/growth',label:'Growth Command',icon:Rocket},{href:'/angelcare-marketplace/admin/platform-performance',label:'Performance Command',icon:Activity},{href:'/angelcare-marketplace/admin/security',label:'Security Command',icon:ShieldCheck},{href:'/angelcare-marketplace/admin/qa',label:'QA & Defect Authority',icon:ListChecks},{href:'/angelcare-marketplace/admin/launch',label:'Final Launch Authority',icon:Rocket},{href:'/angelcare-marketplace/admin/activation',label:'Production Activation',icon:Rocket},
- ]},
- {label:'Trust, finance & finalisation',items:[
-  {href:'/angelcare-marketplace/admin/trust',label:'Trust & Quality Command',icon:BadgeCheck},{href:'/angelcare-marketplace/admin/trust/quality-check-360',label:'Quality Check 360',icon:ClipboardCheck},{href:'/angelcare-marketplace/admin/trust/complaints',label:'Plaintes & investigations',icon:ShieldCheck},{href:'/angelcare-marketplace/admin/finance',label:'Finance Authority',icon:Banknote},{href:'/angelcare-marketplace/admin/analytics',label:'Enterprise Analytics',icon:BarChart3},{href:'/angelcare-marketplace/admin/security',label:'Security Assurance',icon:ShieldCheck},{href:'/angelcare-marketplace/admin/security/backups',label:'Backup & Recovery',icon:HardDrive},{href:'/angelcare-marketplace/admin/quality-assurance',label:'QA Authority',icon:ListChecks},{href:'/angelcare-marketplace/admin/launch',label:'Final Launch Authority',icon:Rocket},
- ]},
- {label:'Assurance',items:[
-  {href:'/angelcare-marketplace/admin/security-audit',label:'Sécurité & audit',icon:ShieldCheck},{href:'/angelcare-marketplace/admin/readiness',label:'Préparation & sign-off',icon:ClipboardCheck},{href:'/angelcare-marketplace/admin/foundation-ui',label:'Fondation UI',icon:Component},
- ]},
-]
-export function AdminNavigation(){const pathname=usePathname();return <nav className={styles.sidebarNav} aria-label="Master Backoffice Marketplace">{groups.map(group=><div className={styles.navGroup} key={group.label}><div className={styles.navGroupLabel}>{group.label}</div>{group.items.map(({href,label,icon:Icon})=>{const active=pathname===href||(href!=='/angelcare-marketplace/admin'&&pathname.startsWith(`${href}/`));return <Link key={href} href={href} className={cx(styles.sideNavLink,active&&styles.sideNavLinkActive)}><span className={styles.sideNavIcon}><Icon size={15}/></span>{label}</Link>})}</div>)}<div className={styles.navGroup}><div className={styles.navGroupLabel}>Accès</div><Link href="/angelcare-marketplace/fr/marketplace" className={styles.sideNavLink}><span className={styles.sideNavIcon}><Boxes size={15}/></span>Marketplace public</Link><Link href="/angelcare-marketplace/partner/dashboard" className={styles.sideNavLink}><span className={styles.sideNavIcon}><Boxes size={15}/></span>Espace tenant</Link><Link href="/angelcare-marketplace/provider" className={styles.sideNavLink}><span className={styles.sideNavIcon}><UsersRound size={15}/></span>Espace provider</Link><Link href="/angelcare-marketplace/trainer" className={styles.sideNavLink}><span className={styles.sideNavIcon}><Sparkles size={15}/></span>Espace trainer</Link><Link href="/angelcare-marketplace/family/dashboard" className={styles.sideNavLink}><span className={styles.sideNavIcon}><UsersRound size={15}/></span>Espace famille</Link></div></nav>}
+import {cx} from '../design-system/ui'
+
+const masters=[
+ {id:'01',href:'/angelcare-marketplace/admin/enterprise-command',label:'Command & Live Operations',icon:Gauge},
+ {id:'02',href:'/angelcare-marketplace/admin/customers-revenue',label:'Customers & Revenue',icon:UsersRound},
+ {id:'03',href:'/angelcare-marketplace/admin/commerce-factory',label:'Commerce & Offer Factory',icon:Boxes},
+ {id:'04',href:'/angelcare-marketplace/admin/orders-fulfillment',label:'Orders & Fulfillment',icon:Waypoints},
+ {id:'05',href:'/angelcare-marketplace/admin/finance-monetization',label:'Finance & Monetization',icon:BadgeDollarSign},
+ {id:'06',href:'/angelcare-marketplace/admin/supply-network',label:'Supply & Partner Network',icon:Network},
+ {id:'07',href:'/angelcare-marketplace/admin/growth-experience',label:'Growth & Marketplace Experience',icon:Rocket},
+ {id:'08',href:'/angelcare-marketplace/admin/executive-control',label:'Intelligence & Executive Control',icon:Sparkles},
+] as const
+
+const tools=[
+ {href:'/angelcare-marketplace/admin/workspaces',label:'Specialist Workspaces',icon:Boxes},
+ {href:'/angelcare-marketplace/admin/search',label:'Global Search',icon:Search},
+ {href:'/angelcare-marketplace/admin/orders/new',label:'Create Order',icon:ShoppingBag},
+] as const
+
+export function AdminNavigation(){
+ const pathname=usePathname()
+ return <nav className={styles.sidebarNav} aria-label="Marketplace Admin">
+  <div className={styles.navGroup}><div className={styles.navGroupLabel}>ANGELCARE MARKETPLACE</div><Link href="/angelcare-marketplace/admin" className={styles.sideNavLink}><span className={styles.sideNavIcon}><Gauge size={15}/></span>Admin Command</Link></div>
+  <div className={styles.navGroup}><div className={styles.navGroupLabel}>8 MASTER WORKSPACES</div>{masters.map(({id,href,label,icon:Icon})=>{const active=pathname===href||pathname.startsWith(`${href}/`);return <Link key={href} href={href} className={cx(styles.sideNavLink,active&&styles.sideNavLinkActive)}><span className={styles.sideNavIcon}><Icon size={15}/></span><span>{id} · {label}</span></Link>})}</div>
+  <div className={styles.navGroup}><div className={styles.navGroupLabel}>SPECIALIST TOOLS</div>{tools.map(({href,label,icon:Icon})=>{const active=pathname===href||pathname.startsWith(`${href}/`);return <Link key={href} href={href} className={cx(styles.sideNavLink,active&&styles.sideNavLinkActive)}><span className={styles.sideNavIcon}><Icon size={15}/></span>{label}</Link>})}</div>
+ </nav>
+}

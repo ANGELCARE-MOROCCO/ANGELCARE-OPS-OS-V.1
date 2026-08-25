@@ -231,7 +231,11 @@ export async function getCommerceResource(resource: CommerceResource, id: string
   const db = await createServiceClient()
   let query = db.from(TABLES[resource]).select('*').eq('id', id)
   if (resource === 'catalog-items') {
-    query = db.from(TABLES[resource]).select('*,variants:angelcare_marketplace_catalog_variants(*),media:angelcare_marketplace_catalog_item_media(*),availability:angelcare_marketplace_catalog_availability(*),categories:angelcare_marketplace_catalog_item_categories(*),priceRules:angelcare_marketplace_finance_price_rules(*)').eq('id', id)
+    // IMPORTANT: finance_price_rules.catalog_item_id exists in production, but it is not
+    // declared as a FK to catalog_items. PostgREST therefore cannot safely embed it here.
+    // Load canonical child resources that have real relationships, then fetch price rules
+    // explicitly by catalog_item_id. This also makes mutation readback deterministic.
+    query = db.from(TABLES[resource]).select('*,variants:angelcare_marketplace_catalog_variants(*),media:angelcare_marketplace_catalog_item_media(*),availability:angelcare_marketplace_catalog_availability(*),categories:angelcare_marketplace_catalog_item_categories(*)').eq('id', id)
   }
   if (resource === 'catalog-categories') {
     query = db.from(TABLES[resource]).select('*,items:angelcare_marketplace_catalog_item_categories(*)').eq('id', id)
@@ -241,7 +245,13 @@ export async function getCommerceResource(resource: CommerceResource, id: string
   }
   const { data, error } = await query.maybeSingle()
   if (error) throw fail(`charger ${resource}`, error)
-  return data as CommerceRecord | null
+  if (!data) return null
+  if (resource === 'catalog-items') {
+    const priceRuleResult = await db.from('angelcare_marketplace_finance_price_rules').select('*').eq('catalog_item_id', id).order('priority').order('updated_at', { ascending: false })
+    if (priceRuleResult.error) throw fail('charger les règles de prix du produit', priceRuleResult.error)
+    return { ...(data as Row), priceRules: rows(priceRuleResult.data) } as unknown as CommerceRecord
+  }
+  return data as CommerceRecord
 }
 
 function normalizedPayload(resource: CommerceResource, payload: Row, context: MarketplaceRequestContext): Row {
@@ -303,6 +313,8 @@ function normalizedPayload(resource: CommerceResource, payload: Row, context: Ma
     price_amount: payload.price_amount === '' || payload.price_amount === null || payload.price_amount === undefined ? null : safeNumber(payload.price_amount),
     featured: safeBoolean(payload.featured), availability_status: text(payload.availability_status) || 'configuration_required',
     commercial_metadata: safeJson(payload.commercial_metadata), seo_metadata: safeJson(payload.seo_metadata), attributes: safeJson(payload.attributes),
+    experience_config: safeJson(payload.experience_config), territory_config: safeJson(payload.territory_config), fulfillment_config: safeJson(payload.fulfillment_config),
+    trust_config: safeJson(payload.trust_config), relation_config: safeJson(payload.relation_config),
     status: text(payload.status) || 'draft', created_by: context.actor.id,
   }
   if (resource === 'catalog-categories') return {
@@ -313,6 +325,8 @@ function normalizedPayload(resource: CommerceResource, payload: Row, context: Ma
     visual_theme: text(payload.visual_theme) || 'navy', storefront_template: text(payload.storefront_template) || 'mixed',
     allowed_sellable_types: safeArray(payload.allowed_sellable_types), available_filters: safeJson(payload.available_filters),
     sort_order: safeNumber(payload.sort_order, 100), visible: safeBoolean(payload.visible, true), seo_metadata: safeJson(payload.seo_metadata),
+    experience_config: safeJson(payload.experience_config), hero_content: safeJson(payload.hero_content),
+    storefront_sections: Array.isArray(payload.storefront_sections) ? payload.storefront_sections : [], filter_config: safeJson(payload.filter_config),
     status: text(payload.status) || 'draft', created_by: context.actor.id,
   }
   if (resource === 'homepage-collections') return {
@@ -568,6 +582,39 @@ export async function commerceResourceAction(input: {
   }
   if (input.action === 'archive') {
     return archiveCommerceResource({ resource: input.resource, id: input.id, context: input.context })
+  }
+  if (input.action === 'purge' && input.resource === 'catalog-items') {
+    const original = await getCommerceResource('catalog-items', input.id)
+    if (!original) throw new MarketplaceError('NOT_FOUND', 'Produit introuvable.')
+    if (text(input.payload.confirmation_reference) !== text(original.public_reference)) {
+      throw new MarketplaceError('VALIDATION_ERROR', 'La référence de confirmation ne correspond pas au produit.')
+    }
+    if (text(original.status) !== 'archived') {
+      throw new MarketplaceError('INVALID_STATE_TRANSITION', 'Le produit doit être archivé avant toute purge définitive.')
+    }
+    const blockers = [
+      ['orders','angelcare_marketplace_order_lines','catalog_item_id'],
+      ['conversion_sessions','angelcare_marketplace_conversion_sessions','catalog_item_id'],
+      ['subscriptions','angelcare_marketplace_customer_subscriptions','catalog_item_id'],
+      ['crm_quotes','angelcare_marketplace_crm_quote_lines','catalog_item_id'],
+      ['quote_baskets','angelcare_marketplace_quote_basket_items','catalog_item_id'],
+      ['academy_courses','angelcare_marketplace_academy_courses','catalog_item_id'],
+      ['availability_holds','angelcare_marketplace_conversion_availability_holds','catalog_item_id'],
+    ] as const
+    const dependencyResults = await Promise.all(blockers.map(async ([key, table, column]) => {
+      const result = await db.from(table).select('id', { count: 'exact', head: true }).eq(column, input.id)
+      if (result.error) throw fail(`vérifier les dépendances ${key}`, result.error)
+      return { key, count: result.count || 0 }
+    }))
+    const activeBlockers = dependencyResults.filter(entry => entry.count > 0)
+    if (activeBlockers.length) {
+      throw new MarketplaceError('VALIDATION_ERROR', `Purge interdite: dépendances transactionnelles (${activeBlockers.map(entry => `${entry.key}:${entry.count}`).join(', ')}). Utilisez l’archive.`)
+    }
+    const { error } = await db.from('angelcare_marketplace_catalog_items').delete().eq('id', input.id)
+    if (error) throw fail('purger définitivement le produit', error)
+    const paths = affectedCommercePaths({ objectType: 'catalog-items', slug: nullableText(original.slug) })
+    refreshCommerceSurfaces(paths)
+    return { record: { id: input.id, public_reference: original.public_reference, status: 'purged' } as CommerceRecord, affectedPaths: paths, publicationEventId: null }
   }
   if (input.action === 'duplicate') {
     const original = await getCommerceResource(input.resource, input.id)

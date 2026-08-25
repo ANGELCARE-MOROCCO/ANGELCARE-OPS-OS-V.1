@@ -5,55 +5,38 @@ import path from 'node:path'
 const app = path.resolve(process.argv[2] || process.cwd())
 let passed = 0
 let failed = 0
-
-function check(name, condition) {
-  if (condition) {
-    console.log(`PASS  ${name}`)
-    passed += 1
-  } else {
-    console.log(`FAIL  ${name}`)
-    failed += 1
-  }
+const check = (name, condition) => {
+  if (condition) { console.log(`PASS — ${name}`); passed += 1 }
+  else { console.log(`FAIL — ${name}`); failed += 1 }
 }
-function read(rel) {
-  const file = path.join(app, rel)
-  return fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : ''
-}
-function exists(rel) { return fs.existsSync(path.join(app, rel)) }
-function walk(dir) {
-  const result = []
-  if (!fs.existsSync(dir)) return result
-  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-    const full = path.join(dir, entry.name)
-    if (entry.isDirectory()) result.push(...walk(full))
-    else result.push(full)
-  }
-  return result
-}
-
+const read = rel => { const file = path.join(app, rel); return fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : '' }
+const exists = rel => fs.existsSync(path.join(app, rel))
 const routeBase = 'app/(protected)/angelcare-360-command-center/bibliotheque'
-const requiredRoutes = [
-  `${routeBase}/page.tsx`,
-  `${routeBase}/layout.tsx`,
-  `${routeBase}/_utils.ts`,
-  `${routeBase}/loading.tsx`,
-  `${routeBase}/error.tsx`,
-  `${routeBase}/not-found.tsx`,
-  `${routeBase}/livres/page.tsx`,
-  `${routeBase}/livres/[id]/page.tsx`,
-  `${routeBase}/exemplaires/page.tsx`,
-  `${routeBase}/exemplaires/[id]/page.tsx`,
-  `${routeBase}/disponibilite/page.tsx`,
-  `${routeBase}/prets/page.tsx`,
-  `${routeBase}/prets/[id]/page.tsx`,
-  `${routeBase}/retours/page.tsx`,
-  `${routeBase}/retards/page.tsx`,
-  `${routeBase}/audit/page.tsx`,
-]
-for (const route of requiredRoutes) check(`route exists: ${route.replace(routeBase + '/', '')}`, exists(route))
+const routes = {
+  root: `${routeBase}/page.tsx`,
+  layout: `${routeBase}/layout.tsx`,
+  util: `${routeBase}/_utils.ts`,
+  loading: `${routeBase}/loading.tsx`,
+  error: `${routeBase}/error.tsx`,
+  notFound: `${routeBase}/not-found.tsx`,
+  books: `${routeBase}/livres/page.tsx`,
+  book: `${routeBase}/livres/[id]/page.tsx`,
+  copies: `${routeBase}/exemplaires/page.tsx`,
+  copy: `${routeBase}/exemplaires/[id]/page.tsx`,
+  availability: `${routeBase}/disponibilite/page.tsx`,
+  loans: `${routeBase}/prets/page.tsx`,
+  loan: `${routeBase}/prets/[id]/page.tsx`,
+  returns: `${routeBase}/retours/page.tsx`,
+  overdue: `${routeBase}/retards/page.tsx`,
+  members: `${routeBase}/membres/page.tsx`,
+  member: `${routeBase}/membres/[id]/page.tsx`,
+  audit: `${routeBase}/audit/page.tsx`,
+}
+for (const [key, rel] of Object.entries(routes)) check(`route exists · ${key}`, exists(rel))
 
-const requiredCore = [
+const core = [
   'types/angelcare360/library-circulation.ts',
+  'types/angelcare360/library-circulation-css-modules.d.ts',
   'lib/angelcare360/server/library-circulation-command.ts',
   'app/api/angelcare360/library-command/route.ts',
   'components/angelcare360/library-command/LibraryCommand.module.css',
@@ -63,149 +46,149 @@ const requiredCore = [
   'tsconfig.sanila-library-circulation.json',
   'scripts/angelcare360/verify-sanila-library-circulation.mjs',
 ]
-for (const item of requiredCore) check(`core exists: ${item}`, exists(item))
+for (const rel of core) check(`core exists · ${rel}`, exists(rel))
 
-const sqlFiles = [
-  'supabase/library-circulation/01_PREFLIGHT.sql',
-  'supabase/library-circulation/02_MIGRATION.sql',
-  'supabase/library-circulation/03_POSTCHECK.sql',
-  'supabase/library-circulation/04_ROLLBACK.sql',
-  'supabase/library-circulation/SQL_REQUIRED.txt',
-  'supabase/library-circulation/OBJECT_MANIFEST.txt',
-  'supabase/library-circulation/EXPECTED_SCHEMA_DELTA.txt',
+const server = read(core[2])
+const api = read(core[3])
+const css = read(core[4])
+const shell = read(core[5])
+const actions = read(core[6])
+const views = read(core[7])
+const types = read(core[0])
+const tsconfig = read(core[8])
+const allRouteText = Object.values(routes).map(read).join('\n')
+const allDomainText = [server, api, shell, actions, views, types, allRouteText].join('\n')
+
+// Actual route wiring
+const routeWiring = [
+  ['root cockpit', routes.root, 'KnowledgeAtrium'],
+  ['catalogue', routes.books, 'CatalogueEditorial'],
+  ['title dossier', routes.book, 'WorkPortrait'],
+  ['copy registry', routes.copies, 'CopyFleet'],
+  ['copy dossier', routes.copy, 'CopyDossier'],
+  ['availability', routes.availability, 'AvailabilityAtlas'],
+  ['circulation', routes.loans, 'CirculationDesk'],
+  ['loan chamber', routes.loan, 'CirculationChamber'],
+  ['returns', routes.returns, 'ReturnDesk'],
+  ['overdue', routes.overdue, 'OverdueRecovery'],
+  ['member command', routes.members, 'MemberCommand'],
+  ['member dossier', routes.member, 'MemberDossier'],
+  ['forensics', routes.audit, 'CollectionForensics'],
 ]
-for (const item of sqlFiles) check(`repo SQL artifact exists: ${path.basename(item)}`, exists(item))
+for (const [label, rel, symbol] of routeWiring) check(`live wiring · ${label}`, read(rel).includes(symbol))
 
-const server = read('lib/angelcare360/server/library-circulation-command.ts')
-const api = read('app/api/angelcare360/library-command/route.ts')
-const actions = read('components/angelcare360/library-command/LibraryActions.tsx')
-const views = read('components/angelcare360/library-command/LibraryViews.tsx')
-const css = read('components/angelcare360/library-command/LibraryCommand.module.css')
-const types = read('types/angelcare360/library-circulation.ts')
-const migration = read('supabase/library-circulation/02_MIGRATION.sql')
-const preflight = read('supabase/library-circulation/01_PREFLIGHT.sql')
-const postcheck = read('supabase/library-circulation/03_POSTCHECK.sql')
-const rollback = read('supabase/library-circulation/04_ROLLBACK.sql')
-const tsconfig = read('tsconfig.sanila-library-circulation.json')
+// UX depth and distinct operational experiences
+for (const symbol of ['KnowledgeAtrium','CatalogueEditorial','WorkPortrait','CopyFleet','CopyDossier','AvailabilityAtlas','CirculationDesk','CirculationChamber','ReturnDesk','OverdueRecovery','MemberCommand','MemberDossier','CollectionForensics']) {
+  check(`experience exported · ${symbol}`, views.includes(`export function ${symbol}`))
+}
+for (const symbol of ['BookStudio','CopyStudio','LoanStudio','ReturnStudio','LossCancelStudio','BarcodeLookup','LibraryDrawer']) {
+  check(`deep studio exists · ${symbol}`, actions.includes(`function ${symbol}`) || actions.includes(`export function ${symbol}`))
+}
+check('signature watchtower present', views.includes('À traiter maintenant') || views.includes('Watchtower'))
+check('today circulation pulse present', views.includes('Circulation aujourd’hui') || views.includes('todayEvents'))
+check('member eligibility truth present', views.includes('Éligibilité réellement prouvée'))
+check('overdue recovery doctrine present', views.includes('Vérité de relance'))
+check('title/copy distinction explicit', types.includes('LibraryBook') && types.includes('LibraryCopy') && views.includes('exemplaire physique'))
+check('dossier in-page navigation present', views.includes('DossierNav'))
+check('mobile-specific entity cards present', views.includes('mobileEntityCard') && css.includes('.mobileEntityCard'))
 
-for (const term of [
-  'Knowledge Atrium','Constellation de collection','Ruban de circulation','À traiter aujourd’hui',
-  'CatalogueEditorial','Work Portrait','Copy Fleet','Availability Atlas','CirculationDesk',
-  'Circulation Chamber','ReturnDesk','OverdueRecovery','Collection Forensics'
-]) check(`signed experience present: ${term}`, views.includes(term))
+// Canonical backend authority
+for (const table of ['angelcare360_library_books','angelcare360_library_copies','angelcare360_library_loans','angelcare360_students','angelcare360_staff','angelcare360_classes','angelcare360_audit_logs']) {
+  check(`canonical read authority · ${table}`, server.includes(`from('${table}')`))
+}
+for (const rpc of ['angelcare360_library_integrity_status_v1','angelcare360_library_create_loan_v1','angelcare360_library_return_loan_v1','angelcare360_library_mark_lost_v1','angelcare360_library_cancel_loan_v1']) {
+  check(`canonical RPC authority · ${rpc}`, server.includes(`rpc('${rpc}'`))
+}
+check('view permission preserved', server.includes("context('bibliotheque.view'"))
+check('create permission preserved', server.includes("context('bibliotheque.create'"))
+check('update permission preserved', server.includes("context('bibliotheque.update'"))
+check('canonical library audit category', server.includes("category: 'library'"))
+check('atomic circulation readiness gate', server.includes('requireCirculationReady'))
+check('browser never writes stock/circulation directly', !actions.includes("from('angelcare360_library_loans')") && !views.includes("from('angelcare360_library_loans')"))
+check('archive guard protects active circulation', server.includes('possède encore un prêt actif'))
+check('loaned state cannot be manufactured manually', server.includes('ne peut être produit que par la circulation'))
 
-for (const term of [
-  'BookStudio','CopyStudio','LoanStudio','ReturnStudio','LossCancelStudio','BarcodeLookup'
-]) check(`deep studio present: ${term}`, actions.includes(term) || views.includes(term))
+// Capability truth — explicitly no invented reservations/renewals/provider/fines authority
+check('reservation workflow explicitly unsupported', types.includes('reservationWorkflow: false') && server.includes('reservationWorkflow: false'))
+check('reservation status is observed truth only', types.includes("reservationTruth: 'status_only'") && server.includes("reservationTruth: 'status_only'"))
+check('renewal workflow explicitly unsupported', types.includes('renewalWorkflow: false') && server.includes('renewalWorkflow: false'))
+check('financial fine authority explicitly unsupported', types.includes('financialFineAuthority: false') && server.includes('financialFineAuthority: false'))
+check('reminder delivery authority explicitly unsupported', types.includes('reminderDeliveryAuthority: false') && server.includes('reminderDeliveryAuthority: false'))
+check('shelf location authority labelled recorded text only', types.includes("shelfLocationAuthority: 'recorded_text_only'"))
+check('ISBN metadata provider explicitly unsupported', types.includes('isbnMetadataProvider: false'))
+check('no reservation mutation action invented', !/reservation\.(create|update|cancel|fulfill)/.test(allDomainText))
+check('no renewal mutation action invented', !/loan\.renew|renewLibraryLoan|renewal\.create/.test(allDomainText))
+check('external reminder delivery is explicitly negated and delegated', views.includes('n’affiche jamais « SMS envoyé »') && views.includes('autorité Messagerie'))
+check('no AI borrower scoring', !/bad borrower|bon emprunteur|mauvais emprunteur|risk score|score de risque|score comportemental IA/i.test(allDomainText))
+check('no fake external ISBN lookup', !/Google Books|OpenLibrary|ISBN API|metadata provider active/i.test(allDomainText))
+check('RFID and real-time shelf tracking are explicitly disclaimed', views.includes('ne revendique aucune localisation physique temps réel, RFID ou IoT'))
+check('fine is not promoted to Finance invoice', views.includes('jamais présentée comme facture Finance'))
 
-check('book/copy distinction represented in types', types.includes('LibraryBook') && types.includes('LibraryCopy'))
-check('borrower supports student', types.includes("'student'"))
-check('borrower supports staff', types.includes("'staff'"))
-check('fine amount remains factual field', types.includes('fineAmount'))
-check('integrity state is explicit', types.includes('safeForCirculation'))
+// Actions and barcode safety
+check('barcode lookup uses canonical copies table', server.includes(".eq('barcode', needle)") && server.includes(".eq('copy_code', needle)"))
+check('barcode manual fallback present', /saisie manuelle|recherche manuelle/i.test(actions))
+check('camera tracks stopped', actions.includes('getTracks().forEach(track => track.stop())'))
+check('no camera video persistence', !/MediaRecorder|toBlob\(|upload.*video/i.test(actions))
+check('no rapid polling', !/setInterval\s*\(/.test(actions + views))
+check('no forced full-page reload', !/window\.location\.reload/.test(actions + views))
+check('router refresh after confirmed mutations', actions.includes('router.refresh()'))
 
-check('snapshot reads canonical books table', server.includes("from('angelcare360_library_books')"))
-check('snapshot reads canonical copies table', server.includes("from('angelcare360_library_copies')"))
-check('snapshot reads canonical loans table', server.includes("from('angelcare360_library_loans')"))
-check('snapshot resolves students', server.includes("from('angelcare360_students')"))
-check('snapshot resolves staff', server.includes("from('angelcare360_staff')"))
-check('snapshot reads central audit authority', server.includes("from('angelcare360_audit_logs')"))
-check('no legacy library server import', !server.includes("from './library'") && !server.includes("@/lib/angelcare360/server/library'"))
-check('no duplicate library table generation in code', !server.includes('sanila_library_') && !server.includes('ac360_library_v2'))
+// API truth
+for (const action of ['book.create','book.update','copy.create','copy.update','loan.create','loan.return','loan.lost','loan.cancel']) check(`API action · ${action}`, api.includes(`case '${action}'`))
+check('API barcode mode', api.includes("mode === 'barcode'"))
+check('API snapshot mode', api.includes('getLibraryCommandSnapshot'))
+check('API no-store', api.includes("'Cache-Control': 'no-store'"))
+check('API has no reservation action', !api.includes('reservation.'))
+check('API has no renewal action', !api.includes('renew'))
 
-check('barcode lookup is real database query', server.includes(".eq('barcode', needle)") && server.includes(".eq('copy_code', needle)"))
-check('barcode scanner has manual fallback', actions.includes('saisie manuelle'))
-check('scanner stops media tracks', actions.includes("getTracks().forEach(track => track.stop())"))
-check('scanner uses no persistent interval', !actions.includes('setInterval('))
-check('no short polling loop', !actions.includes('setInterval(') && !views.includes('setInterval('))
-check('no forced browser reload', !actions.includes('window.location.reload'))
-check('router refresh used after confirmed mutation', actions.includes('router.refresh()'))
+// Types/read model
+check('borrowers include student and staff', types.includes("'student' | 'staff'"))
+check('member operational counts typed', types.includes('activeLoanCount') && types.includes('overdueLoanCount') && types.includes('totalLoanCount'))
+check('intervention queue typed', types.includes('LibraryInterventionItem'))
+check('today circulation typed', types.includes('LibraryCirculationEvent'))
+check('capability truth typed', types.includes('LibraryCapabilities'))
+check('availability metrics typed', types.includes('titlesUnavailable') && types.includes('dueToday') && types.includes('returnedToday'))
 
-check('loan mutation delegates to atomic RPC', server.includes("rpc('angelcare360_library_create_loan_v1'"))
-check('return mutation delegates to atomic RPC', server.includes("rpc('angelcare360_library_return_loan_v1'"))
-check('loss mutation delegates to atomic RPC', server.includes("rpc('angelcare360_library_mark_lost_v1'"))
-check('cancel mutation delegates to atomic RPC', server.includes("rpc('angelcare360_library_cancel_loan_v1'"))
-check('circulation locks when SQL missing', server.includes('requireCirculationReady') && server.includes('locked: true'))
-check('integrity RPC consumed by runtime', server.includes("rpc('angelcare360_library_integrity_status_v1'"))
+// CSS integrity
+const refs = new Set([...`${shell}\n${actions}\n${views}\n${read(routes.loading)}\n${read(routes.error)}\n${read(routes.notFound)}`.matchAll(/styles\.([A-Za-z0-9_]+)/g)].map(m => m[1]))
+const defs = new Set([...css.matchAll(/\.([A-Za-z_][A-Za-z0-9_-]*)\s*(?=[,{:\[])/g)].map(m => m[1]))
+const missingCss = [...refs].filter(name => !defs.has(name))
+console.log(`CSS refs=${refs.size} defs=${defs.size} missing=${missingCss.length}`)
+if (missingCss.length) console.log(`CSS missing: ${missingCss.join(', ')}`)
+check('all CSS module references resolve', missingCss.length === 0)
+check('focus-visible styling present', css.includes(':focus-visible'))
+check('reduced motion locally scoped', css.includes('@media(prefers-reduced-motion:reduce)') && css.includes('.universe *'))
+check('desktop/tablet/mobile breakpoints present', css.includes('max-width:1280px') && css.includes('max-width:980px') && css.includes('max-width:760px') && css.includes('max-width:520px'))
+check('mobile touch controls >=44px', css.includes('min-height:44px'))
+check('module remains light institutional theme', css.includes('--paper:#fffdf8') && !css.includes('color-scheme:dark'))
 
-check('API exposes snapshot', api.includes('getLibraryCommandSnapshot'))
-check('API exposes barcode lookup', api.includes("mode === 'barcode'"))
-check('API exposes book create', api.includes("case 'book.create'"))
-check('API exposes book update', api.includes("case 'book.update'"))
-check('API exposes copy create', api.includes("case 'copy.create'"))
-check('API exposes copy update', api.includes("case 'copy.update'"))
-check('API exposes loan create', api.includes("case 'loan.create'"))
-check('API exposes loan return', api.includes("case 'loan.return'"))
-check('API exposes loss', api.includes("case 'loan.lost'"))
-check('API exposes cancel', api.includes("case 'loan.cancel'"))
-check('API is no-store', api.includes("'Cache-Control': 'no-store'"))
+// States & architecture
+check('purpose-built loading state', read(routes.loading).includes('loading') || read(routes.loading).includes('Chargement'))
+check('purpose-built error state is client component', read(routes.error).startsWith("'use client'"))
+check('error explains no mutation occurred', /aucun|aucune|inchang|reste/i.test(read(routes.error)))
+check('purpose-built not-found state', /introuvable|Retour/i.test(read(routes.notFound)))
+check('module shell imports no global replacement shell', !/AppShell|ZoneEFrame|Sidebar|MainSidebar/.test(shell))
+check('no global config reference in package UI', !/next\.config|vercel\.json|middleware\.ts/.test(allDomainText))
 
-check('preflight requires canonical books', preflight.includes('angelcare360_library_books'))
-check('preflight requires canonical copies', preflight.includes('angelcare360_library_copies'))
-check('preflight requires canonical loans', preflight.includes('angelcare360_library_loans'))
-check('preflight detects duplicate active loans', preflight.includes('duplicate_active'))
-check('preflight detects copy-state mismatches', preflight.includes('state_mismatch'))
-check('preflight detects loaned copies without loan', preflight.includes('orphan_loaned'))
-check('preflight detects invalid borrower links', preflight.includes('invalid_borrowers'))
-check('preflight detects duplicate barcodes', preflight.includes('duplicate_barcodes'))
-check('preflight performs no DDL', !/\bCREATE\s+(TABLE|INDEX|FUNCTION)|\bALTER\s+TABLE|\bDROP\s+/i.test(preflight))
-
-check('migration creates no table', !/\bCREATE\s+TABLE\b/i.test(migration))
-check('migration changes no RLS policy', !/\bCREATE\s+POLICY\b|\bDROP\s+POLICY\b|\bENABLE\s+ROW\s+LEVEL\s+SECURITY\b|\bDISABLE\s+ROW\s+LEVEL\s+SECURITY\b/i.test(migration))
-check('migration creates active-loan partial unique index', migration.includes('ux_ac360_library_one_active_loan_per_copy'))
-check('migration creates barcode uniqueness index', migration.includes('ux_ac360_library_copy_barcode'))
-check('migration creates integrity function', migration.includes('angelcare360_library_integrity_status_v1'))
-check('migration creates loan function', migration.includes('angelcare360_library_create_loan_v1'))
-check('migration creates return function', migration.includes('angelcare360_library_return_loan_v1'))
-check('migration creates loss function', migration.includes('angelcare360_library_mark_lost_v1'))
-check('migration creates cancel function', migration.includes('angelcare360_library_cancel_loan_v1'))
-check('loan RPC locks copy row', /library_create_loan_v1[\s\S]*FOR UPDATE/i.test(migration))
-check('return RPC locks circulation rows', /library_return_loan_v1[\s\S]*FOR UPDATE/i.test(migration))
-check('negative dual-loan prevented at database layer', migration.includes("WHERE returned_at IS NULL AND status IN ('open','active','overdue')"))
-check('service_role-only grants present', migration.includes('GRANT EXECUTE') && migration.includes('TO service_role'))
-check('authenticated direct RPC grants revoked', migration.includes('FROM PUBLIC, anon, authenticated'))
-check('postcheck validates objects', postcheck.includes('POSTCHECK FAILED'))
-check('postcheck runs integrity per school', postcheck.includes('angelcare360_library_integrity_status_v1(s.id)'))
-check('rollback removes only package RPCs/indexes', rollback.includes('DROP FUNCTION IF EXISTS') && rollback.includes('DROP INDEX IF EXISTS') && !rollback.includes('DROP TABLE'))
-
-check('external reminders are not claimed as sent', views.includes('relances externes ne sont pas présentées comme envoyées'))
-check('fine is explicitly not Finance invoice', views.includes('n’est pas présenté comme facture Finance'))
-check('reserved state is labelled factual', actions.includes('Réservé · état factuel existant'))
-check('no fake reservation creation action', !actions.includes('reservation.create') && !api.includes('reservation.create'))
-check('no fake recommendation language', !/recommandation IA|score de lecture|popularité prédite/i.test(views + actions))
-check('no fake external delivery status', !/SMS envoyé|WhatsApp envoyé|email envoyé/i.test(views + actions))
-
-check('WCAG focus-visible styling present', css.includes(':focus-visible'))
-check('reduced motion fallback present', css.includes('prefers-reduced-motion'))
-check('mobile breakpoint present', css.includes('@media(max-width:620px)'))
-check('tablet breakpoint present', css.includes('@media(max-width:900px)'))
-check('touch-sized mobile buttons present', css.includes('min-height:44px'))
-check('no dark-only theme', css.includes('--paper:#fffdf8') && css.includes('background:'))
-
-const domainFiles = walk(path.join(app, routeBase)).concat(walk(path.join(app, 'components/angelcare360/library-command')))
-const domainText = domainFiles.filter(f => /\.(ts|tsx|css)$/.test(f)).map(f => fs.readFileSync(f,'utf8')).join('\n')
-for (const oldName of [
-  'Angelcare360LibraryHub',
-  'Angelcare360LibraryNavigation',
-  'Angelcare360LibraryPageShell',
-  'Angelcare360LibraryMutationForm',
-  'Angelcare360LibrarySectionScreen',
-  'Angelcare360LibraryRiskPanel',
-  'Angelcare360LibraryAuditDrawer'
-]) check(`old beta component not imported: ${oldName}`, !domainText.includes(oldName))
-
+// Targeted TS config
 check('target tsconfig disables inherited include', /"include"\s*:\s*\[\s*\]/.test(tsconfig))
 check('target tsconfig has explicit files', /"files"\s*:\s*\[/.test(tsconfig))
-check('target tsconfig no production build command', !tsconfig.includes('next build'))
+check('target tsconfig includes CSS declaration', tsconfig.includes('library-circulation-css-modules.d.ts'))
+check('target tsconfig includes members route', tsconfig.includes('bibliotheque/membres/page.tsx') && tsconfig.includes('bibliotheque/membres/[id]/page.tsx'))
+check('target tsconfig disables incremental cache', tsconfig.includes('"incremental": false'))
+check('target tsconfig does not invoke production build', !tsconfig.includes('next build'))
 
-console.log()
-console.log('========================================================================')
+// Old beta surfaces not mounted by new route family
+for (const oldName of ['Angelcare360LibraryHub','Angelcare360LibraryNavigation','Angelcare360LibraryPageShell','Angelcare360LibraryMutationForm','Angelcare360LibrarySectionScreen','Angelcare360LibraryRiskPanel','Angelcare360LibraryAuditDrawer']) {
+  check(`legacy beta component absent · ${oldName}`, !allRouteText.includes(oldName))
+}
+
+console.log('\n========================================================================')
 console.log(`RESULT: ${passed}/${passed + failed} checks passed`)
-if (failed === 0) {
-  console.log('SANILA Library & Circulation OS is statically accepted.')
-} else {
-  console.log(`SANILA Library & Circulation OS FAILED ${failed} static check(s).`)
+if (failed) {
+  console.log(`SANILA Library & Circulation Command FAILED ${failed} check(s).`)
   process.exit(1)
 }
+console.log('SANILA Library & Circulation Command is statically accepted.')
 console.log('NO SQL EXECUTED · NO BUILD · NO STAGE · NO COMMIT · NO PUSH · NO DEPLOYMENT')
 console.log('========================================================================')

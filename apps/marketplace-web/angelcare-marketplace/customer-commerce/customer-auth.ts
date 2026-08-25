@@ -19,6 +19,11 @@ const CUSTOMER_PERMISSIONS: MarketplacePermission[] = [
   'marketplace.family.profile.manage',
   'marketplace.family.children.view',
   'marketplace.family.children.manage',
+  'marketplace.family.diagnostics.create',
+  'marketplace.family.diagnostics.view',
+  'marketplace.family.requests.create',
+  'marketplace.family.requests.view',
+  'marketplace.family.missions.view',
   'marketplace.family.support.create',
   'marketplace.family.support.view',
 ]

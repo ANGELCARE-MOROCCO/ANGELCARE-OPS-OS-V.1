@@ -1,5 +1,4 @@
-import { handleAdminEnterpriseOrders } from '@/angelcare-marketplace/customer-commerce/api-handlers'
+import { handleAdminOrders } from '@/angelcare-marketplace/admin-control-plane/api-handlers'
 
-export async function GET(request: Request) {
-  return handleAdminEnterpriseOrders(request)
-}
+export async function GET(request: Request) { return handleAdminOrders(request) }
+export async function POST(request: Request) { return handleAdminOrders(request) }

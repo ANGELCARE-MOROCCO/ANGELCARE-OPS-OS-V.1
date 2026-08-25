@@ -1,5 +1,2 @@
-import styles from '@/components/angelcare360/claims/TrustResolutionOS.module.css'
-
-export default function Angelcare360ClaimsLoading() {
-  return <main className={styles.statePage} aria-busy="true" aria-label="Chargement du Trust Resolution OS"><div className={styles.skeleton}><div className={styles.skeletonBar} /><div className={styles.skeletonPanel} /><div className={styles.skeletonBar} /></div></main>
-}
+import styles from '@/components/angelcare360/claims/sovereign-reintegration/TrustResolutionSovereign.module.css'
+export default function Loading(){return <section className={styles.page}><div className={styles.masthead}><div className={styles.mastheadCopy}><span className={styles.eyebrow}>Trust Resolution</span><h1>Chargement du commandement relationnel…</h1><p>Les dossiers, responsabilités et signaux opérationnels sont en cours de préparation.</p></div></div><div className={styles.readinessRail}>{Array.from({length:6},(_,index)=><div className={styles.metric} key={index}><span>Chargement</span><strong>—</strong><small>Données en cours</small></div>)}</div></section>}

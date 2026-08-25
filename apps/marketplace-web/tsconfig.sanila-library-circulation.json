@@ -6,13 +6,10 @@
     "incremental": false
   },
   "include": [],
-  "exclude": [
-    "node_modules",
-    ".next",
-    "deployment",
-    ".angelcare_backups"
-  ],
+  "exclude": ["node_modules", ".next", "deployment", ".angelcare_backups"],
   "files": [
+    "next-env.d.ts",
+    "types/angelcare360/library-circulation-css-modules.d.ts",
     "types/angelcare360/library-circulation.ts",
     "lib/angelcare360/server/library-circulation-command.ts",
     "app/api/angelcare360/library-command/route.ts",
@@ -34,6 +31,8 @@
     "app/(protected)/angelcare-360-command-center/bibliotheque/prets/[id]/page.tsx",
     "app/(protected)/angelcare-360-command-center/bibliotheque/retours/page.tsx",
     "app/(protected)/angelcare-360-command-center/bibliotheque/retards/page.tsx",
+    "app/(protected)/angelcare-360-command-center/bibliotheque/membres/page.tsx",
+    "app/(protected)/angelcare-360-command-center/bibliotheque/membres/[id]/page.tsx",
     "app/(protected)/angelcare-360-command-center/bibliotheque/audit/page.tsx"
   ]
 }

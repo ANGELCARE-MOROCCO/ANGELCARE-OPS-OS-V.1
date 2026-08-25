@@ -1,24 +1,7 @@
-import Angelcare360TrustResolutionCommand from '@/components/angelcare360/claims/Angelcare360TrustResolutionCommand'
-import { getAngelcare360ClaimsOverview, listAngelcare360ClaimTickets } from '@/lib/angelcare360/server/claims'
-import { getAngelcare360ClaimsContext } from './_utils'
-
-export const dynamic = 'force-dynamic'
-
-export default async function Angelcare360ReclamationsPage() {
-  const context = await getAngelcare360ClaimsContext()
-  const [claims, claimTickets] = await Promise.all([
-    getAngelcare360ClaimsOverview({ schoolId: context.school.id }),
-    listAngelcare360ClaimTickets({ schoolId: context.school.id }),
-  ])
-
-  const snapshot = {
-    schoolName: context.school.name,
-    academicYearLabel: context.academicYear?.label || 'Année scolaire active non renseignée',
-    generatedAt: new Date().toISOString(),
-    claims,
-    claimTickets,
-    sourceWarnings: claims.risks || [],
-  }
-
-  return <Angelcare360TrustResolutionCommand snapshot={snapshot} />
-}
+import TrustResolutionShell from '@/components/angelcare360/claims/sovereign-reintegration/TrustResolutionShell'
+import { TrustResolutionCockpit } from '@/components/angelcare360/claims/sovereign-reintegration/TrustResolutionViews'
+import { TrustActionButton } from '@/components/angelcare360/claims/sovereign-reintegration/TrustResolutionActions'
+import { getTrustResolutionSnapshot } from '@/lib/angelcare360/server/trust-resolution-command'
+import styles from '@/components/angelcare360/claims/sovereign-reintegration/TrustResolutionSovereign.module.css'
+export const dynamic='force-dynamic'
+export default async function ReclamationsPage(){const snapshot=await getTrustResolutionSnapshot();return <TrustResolutionShell eyebrow="Trust Resolution Command" title="Réclamations & confiance familles" description="Pilotez chaque réclamation comme un dossier institutionnel : priorité, responsabilité, chronologie, communication, résolution et preuve de clôture — sans quitter l’architecture SANILA existante." context={<><span className={styles.contextPill}>{snapshot.schoolName}</span><span className={styles.contextPill}>Données réelles · {snapshot.cases.length} dossier(s)</span><span className={styles.contextPill}>Livraison fournisseur non supposée</span></>} actions={<TrustActionButton mode="create" label="Nouvelle réclamation" staff={snapshot.staff} parents={snapshot.parents} students={snapshot.students}/>}><TrustResolutionCockpit snapshot={snapshot}/></TrustResolutionShell>}

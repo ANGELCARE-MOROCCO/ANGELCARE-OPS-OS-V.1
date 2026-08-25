@@ -135,6 +135,10 @@ export interface MarketplaceJourney {
   financial_status: Record<string, unknown>
   fulfillment_status: Record<string, unknown>
   customer_context: Record<string, unknown>
+  metadata: Record<string, unknown>
+  customer_account_id: string | null
+  creation_source: string
+  assisted_order_payload: Record<string, unknown>
   events: JourneyEvent[]
   actions: JourneyAction[]
   documents: JourneyDocument[]

@@ -100,7 +100,10 @@ export async function handleCommerceAction(request: Request, rawResource: string
   const rid = requestId(request)
   try {
     const resource = commerceResource(rawResource)
-    const context = await requireMarketplaceApiContext(permissionForResource(resource, true))
+    const actionPermission: MarketplacePermission = action === 'purge' && resource === 'catalog-items'
+      ? 'marketplace.catalog.purge'
+      : permissionForResource(resource, true)
+    const context = await requireMarketplaceApiContext(actionPermission)
     const body = request.method === 'POST' || request.method === 'PATCH' ? await parseJsonObject(request) : {}
     const result = await commerceResourceAction({ resource, id, action, payload: body, context })
     await writeMarketplaceAudit({

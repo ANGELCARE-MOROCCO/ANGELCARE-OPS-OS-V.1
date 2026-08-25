@@ -1,7 +1,3 @@
 import Link from 'next/link'
-import { SearchX } from 'lucide-react'
-import styles from '@/components/angelcare360/claims/TrustResolutionOS.module.css'
-
-export default function Angelcare360ClaimNotFound() {
-  return <main className={styles.statePage}><section className={styles.stateCard}><div className={styles.stateIcon}><SearchX /></div><h1>Dossier introuvable dans cet établissement.</h1><p>La référence demandée n’est pas accessible dans le périmètre courant. Aucune donnée d’un autre tenant n’est exposée.</p><div style={{ display: 'flex', justifyContent: 'center', marginTop: 18 }}><Link className={styles.primaryButton} href="/angelcare-360-command-center/reclamations/tickets">Retour aux dossiers</Link></div></section></main>
-}
+import styles from '@/components/angelcare360/claims/sovereign-reintegration/TrustResolutionSovereign.module.css'
+export default function NotFound(){return <section className={styles.page}><div className={styles.masthead}><div className={styles.mastheadCopy}><span className={styles.eyebrow}>Trust Resolution</span><h1>Dossier introuvable</h1><p>Cette réclamation n’existe pas dans le contexte actuellement accessible ou n’est plus disponible.</p></div><Link className={styles.actionButton} href="/angelcare-360-command-center/reclamations/tickets">Retour aux dossiers</Link></div></section>}

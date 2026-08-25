@@ -287,8 +287,8 @@ export const ROLE_PERMISSION_FALLBACK: Record<string, MarketplacePermission[]> =
 }
 
 export const SOURCE_ROLE_TO_MARKETPLACE_ROLE: Record<string, string> = {
-  ceo:'marketplace_executive',owner:'marketplace_executive',founder:'marketplace_executive',
-  managing_director:'marketplace_executive',super_admin:'marketplace_executive',admin:'marketplace_admin',
+  ceo:'marketplace_admin',owner:'marketplace_executive',founder:'marketplace_executive',
+  managing_director:'marketplace_executive',super_admin:'marketplace_admin',admin:'marketplace_admin',
   security:'marketplace_security',compliance:'marketplace_security',manager:'marketplace_manager',
   operations:'marketplace_manager',quality:'marketplace_manager',finance:'marketplace_manager',
   territory_manager:'marketplace_territory_director',territory_director:'marketplace_territory_director',

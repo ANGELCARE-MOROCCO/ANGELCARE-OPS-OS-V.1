@@ -1,0 +1,25 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": { "noEmit": true, "incremental": false },
+  "files": [
+    "next-env.d.ts",
+    "types/angelcare360/trust-resolution-css-modules.d.ts",
+    "types/angelcare360/trust-resolution.ts",
+    "lib/angelcare360/server/trust-resolution-command.ts",
+    "app/api/angelcare360/trust-resolution/route.ts",
+    "components/angelcare360/claims/sovereign-reintegration/TrustResolutionShell.tsx",
+    "components/angelcare360/claims/sovereign-reintegration/TrustResolutionActions.tsx",
+    "components/angelcare360/claims/sovereign-reintegration/TrustResolutionViews.tsx",
+    "app/(protected)/angelcare-360-command-center/reclamations/layout.tsx",
+    "app/(protected)/angelcare-360-command-center/reclamations/page.tsx",
+    "app/(protected)/angelcare-360-command-center/reclamations/tickets/page.tsx",
+    "app/(protected)/angelcare-360-command-center/reclamations/tickets/[id]/page.tsx",
+    "app/(protected)/angelcare-360-command-center/reclamations/assignations/page.tsx",
+    "app/(protected)/angelcare-360-command-center/reclamations/priorites/page.tsx",
+    "app/(protected)/angelcare-360-command-center/reclamations/audit/page.tsx",
+    "app/(protected)/angelcare-360-command-center/reclamations/loading.tsx",
+    "app/(protected)/angelcare-360-command-center/reclamations/error.tsx",
+    "app/(protected)/angelcare-360-command-center/reclamations/not-found.tsx"
+  ],
+  "include": []
+}

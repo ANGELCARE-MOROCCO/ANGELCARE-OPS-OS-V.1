@@ -96,6 +96,9 @@ export interface PaymentIntent {
   refunded_amount: number
   due_now_amount: number
   due_later_amount: number
+  wallet_contribution: number
+  external_contribution: number
+  metadata: Record<string, unknown>
   idempotency_key: string
   selected_method: PaymentMethodKind | null
   provider_key: string | null
@@ -358,6 +361,8 @@ export interface EnterpriseOrderRecord {
   riskLevel: string
   nextAction: string | null
   updatedAt: string
+  creationSource: string
+  customerAccountId: string | null
   journey: MarketplaceJourney | null
 }
 

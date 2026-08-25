@@ -114,6 +114,7 @@ export async function handleConversionConfirmation(request: Request, sessionKey:
       sessionKey,
       visitorReference: requiredText(visitor(request, body), 'visitorReference', 180),
       idempotencyKey: requiredText(body.idempotencyKey, 'idempotencyKey', 220),
+      paymentIntentId: body.paymentIntentId ? String(body.paymentIntentId) : null,
     }), { requestId: id, status: 201 })
   } catch (error) {
     return apiFailure(error, id)

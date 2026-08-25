@@ -65,10 +65,10 @@ async function referenceMaps(db: Awaited<ReturnType<typeof createClient>>, orgId
     campusIds.length ? db.from('ac360_campuses').select('id,name,city').eq('org_id', orgId).in('id', campusIds) : Promise.resolve({ data: [] as Row[], error: null }),
   ])
   return {
-    guardians: new Map((guardians.data || []).map((r: Row) => [text(r.id), r])),
-    students: new Map((students.data || []).map((r: Row) => [text(r.id), r])),
-    staff: new Map((staff.data || []).map((r: Row) => [text(r.id), r])),
-    campuses: new Map((campuses.data || []).map((r: Row) => [text(r.id), r])),
+    guardians: new Map<string, Row>((guardians.data || []).map((r: Row) => [text(r.id), r] as [string, Row])),
+    students: new Map<string, Row>((students.data || []).map((r: Row) => [text(r.id), r] as [string, Row])),
+    staff: new Map<string, Row>((staff.data || []).map((r: Row) => [text(r.id), r] as [string, Row])),
+    campuses: new Map<string, Row>((campuses.data || []).map((r: Row) => [text(r.id), r] as [string, Row])),
   }
 }
 
@@ -98,7 +98,7 @@ async function enrichThreads(db: Awaited<ReturnType<typeof createClient>>, orgId
   })
 }
 
-export async function listSanilaCommunicationThreads(options: { status?: string; priority?: string; search?: string; limit?: number } = {}) {
+export async function listSanilaCommunicationThreads(options: { status?: string; priority?: string; search?: string; limit?: number } = {}): Promise<SanilaCommunicationThread[]> {
   const { orgId } = await commandContext('messagerie.view')
   const db = await createClient()
   let query = db.from('ac360_school_communication_threads').select('*').eq('org_id', orgId).order('last_message_at', { ascending: false, nullsFirst: false }).order('created_at', { ascending: false }).limit(Math.min(Math.max(options.limit || 120, 1), 300))
@@ -139,7 +139,7 @@ function mapCampaign(row: Row, refs?: { campus?: Row; template?: Row; segment?: 
   return { ...row, id: text(row.id), org_id: text(row.org_id), campus_id: maybe(row.campus_id), template_id: maybe(row.template_id), message_id: maybe(row.message_id), segment_id: maybe(row.segment_id), campaign_code: text(row.campaign_code), campaign_type: text(row.campaign_type), channel: text(row.channel), audience_type: text(row.audience_type), title: text(row.title), subject: maybe(row.subject), body: text(row.body), status: text(row.status), scheduled_at: maybe(row.scheduled_at), queued_at: maybe(row.queued_at), sent_at: maybe(row.sent_at), recipient_count: num(row.recipient_count), queued_count: num(row.queued_count), dispatched_count: num(row.dispatched_count), delivered_count: num(row.delivered_count), failed_count: num(row.failed_count), read_count: num(row.read_count), created_at: text(row.created_at), updated_at: text(row.updated_at), campus_name: refs?.campus?.name || null, template_label: refs?.template?.label || null, segment_label: refs?.segment?.label || null }
 }
 
-export async function listSanilaCommunicationCampaigns(options: { type?: string; status?: string; limit?: number } = {}) {
+export async function listSanilaCommunicationCampaigns(options: { type?: string; status?: string; limit?: number } = {}): Promise<SanilaCampaign[]> {
   const { orgId } = await commandContext('messagerie.view')
   const db = await createClient()
   let q = db.from('ac360_school_message_campaigns').select('*').eq('org_id', orgId).order('created_at', { ascending: false }).limit(Math.min(Math.max(options.limit || 120, 1), 300))
@@ -156,7 +156,7 @@ export async function listSanilaCommunicationCampaigns(options: { type?: string;
     templateIds.length ? db.from('ac360_school_message_templates').select('id,label').eq('org_id', orgId).in('id', templateIds) : Promise.resolve({ data: [] as Row[], error: null }),
     segmentIds.length ? db.from('ac360_school_audience_segments').select('id,label').eq('org_id', orgId).in('id', segmentIds) : Promise.resolve({ data: [] as Row[], error: null }),
   ])
-  const cm = new Map((campuses.data || []).map((r: Row) => [text(r.id), r])); const tm = new Map((templates.data || []).map((r: Row) => [text(r.id), r])); const sm = new Map((segments.data || []).map((r: Row) => [text(r.id), r]))
+  const cm = new Map<string, Row>((campuses.data || []).map((r: Row) => [text(r.id), r] as [string, Row])); const tm = new Map<string, Row>((templates.data || []).map((r: Row) => [text(r.id), r] as [string, Row])); const sm = new Map<string, Row>((segments.data || []).map((r: Row) => [text(r.id), r] as [string, Row]))
   return rows.map((r: Row) => mapCampaign(r, { campus: cm.get(text(r.campus_id)), template: tm.get(text(r.template_id)), segment: sm.get(text(r.segment_id)) }))
 }
 
@@ -178,7 +178,7 @@ function mapRecipient(r: Row): SanilaCampaignRecipient { return { id: text(r.id)
 function mapDeliveryEvent(r: Row): SanilaDeliveryEvent { return { id: text(r.id), campaign_id: maybe(r.campaign_id), recipient_id: maybe(r.recipient_id), delivery_job_id: maybe(r.delivery_job_id), event_type: text(r.event_type), provider_key: text(r.provider_key), provider_message_id: maybe(r.provider_message_id), error_message: maybe(r.error_message), created_at: text(r.created_at) } }
 function mapDeliveryJob(r: Row): SanilaDeliveryJob { return { id: text(r.id), campaign_id: maybe(r.campaign_id), job_code: text(r.job_code), channel: text(r.channel), provider_key: text(r.provider_key), status: text(r.status), attempted_count: num(r.attempted_count), succeeded_count: num(r.succeeded_count), failed_count: num(r.failed_count), started_at: maybe(r.started_at), completed_at: maybe(r.completed_at), created_at: text(r.created_at) } }
 
-export async function listSanilaCommunicationTemplates() {
+export async function listSanilaCommunicationTemplates(): Promise<SanilaTemplate[]> {
   const { orgId } = await commandContext('messagerie.view'); const db = await createClient()
   const { data, error } = await db.from('ac360_school_message_templates').select('*').eq('org_id', orgId).order('updated_at', { ascending: false }).limit(250)
   if (error) throw new Error(error.message)
@@ -188,14 +188,14 @@ export async function listSanilaCommunicationTemplates() {
   return (data || []).map((r: Row) => { const v = by.get(text(r.id)) || []; return { ...r, id: text(r.id), org_id: text(r.org_id), campus_id: maybe(r.campus_id), template_key: text(r.template_key), label: text(r.label), template_type: text(r.template_type), channel: text(r.channel), audience_type: text(r.audience_type), language_code: text(r.language_code), subject_template: maybe(r.subject_template), body_template: text(r.body_template), variables_schema_json: obj(r.variables_schema_json), status: text(r.status), published_at: maybe(r.published_at), created_at: text(r.created_at), updated_at: text(r.updated_at), version_count: v.length, latest_version: v[0]?.version_number ? num(v[0].version_number) : null } as SanilaTemplate })
 }
 
-export async function listSanilaTemplateVersions(templateId: string) {
+export async function listSanilaTemplateVersions(templateId: string): Promise<SanilaTemplateVersion[]> {
   const { orgId } = await commandContext('messagerie.view'); const db = await createClient()
   const { data, error } = await db.from('ac360_school_message_template_versions').select('*').eq('org_id', orgId).eq('template_id', templateId).order('version_number', { ascending: false })
   if (error) throw new Error(error.message)
   return (data || []).map((r: Row) => ({ ...r, id: text(r.id), template_id: text(r.template_id), version_number: num(r.version_number), subject_template: maybe(r.subject_template), body_template: text(r.body_template), variables_schema_json: obj(r.variables_schema_json), status: text(r.status), created_at: text(r.created_at) } as SanilaTemplateVersion))
 }
 
-export async function listSanilaAudienceSegments() {
+export async function listSanilaAudienceSegments(): Promise<SanilaAudienceSegment[]> {
   const { orgId } = await commandContext('messagerie.view'); const db = await createClient()
   const [{ data: segments, error }, { data: members }] = await Promise.all([
     db.from('ac360_school_audience_segments').select('*').eq('org_id', orgId).order('updated_at', { ascending: false }).limit(200),
@@ -207,7 +207,7 @@ export async function listSanilaAudienceSegments() {
 }
 function mapMember(m: Row): SanilaAudienceMember { return { id: text(m.id), segment_id: text(m.segment_id), member_type: text(m.member_type), member_id: maybe(m.member_id), display_name: maybe(m.display_name), contact_channel: maybe(m.contact_channel), contact_value: maybe(m.contact_value), status: text(m.status) } }
 
-export async function listSanilaCommunicationAlerts() {
+export async function listSanilaCommunicationAlerts(): Promise<SanilaCommunicationAlert[]> {
   const { orgId } = await commandContext('messagerie.view'); const db = await createClient(); const { data, error } = await db.from('ac360_school_communication_alerts').select('*').eq('org_id', orgId).order('created_at', { ascending: false }).limit(250); if (error) throw new Error(error.message); return (data || []).map((r: Row) => ({ ...r, id: text(r.id), org_id: text(r.org_id), campus_id: maybe(r.campus_id), campaign_id: maybe(r.campaign_id), thread_id: maybe(r.thread_id), alert_key: text(r.alert_key), alert_type: text(r.alert_type), severity: text(r.severity), title: text(r.title), description: maybe(r.description), status: text(r.status), resolved_at: maybe(r.resolved_at), resolution_note: maybe(r.resolution_note), created_at: text(r.created_at), updated_at: text(r.updated_at) } as SanilaCommunicationAlert))
 }
 
@@ -220,7 +220,7 @@ export async function listSanilaDeliveryCommand() {
 }
 
 function mapPreference(r: Row): SanilaCommunicationPreference { return { id: text(r.id), campus_id: maybe(r.campus_id), recipient_type: text(r.recipient_type), recipient_id: maybe(r.recipient_id), channel: text(r.channel), is_enabled: Boolean(r.is_enabled), consent_status: text(r.consent_status), quiet_hours_json: obj(r.quiet_hours_json), language_code: text(r.language_code), created_at: text(r.created_at), updated_at: text(r.updated_at), recipient_label: null } }
-export async function listSanilaCommunicationPreferences() {
+export async function listSanilaCommunicationPreferences(): Promise<SanilaCommunicationPreference[]> {
   const { orgId } = await commandContext('messagerie.view'); const db = await createClient(); const { data, error } = await db.from('ac360_school_notification_preferences').select('*').eq('org_id', orgId).order('updated_at', { ascending: false }).limit(500); if (error) throw new Error(error.message)
   const rows = data || []; const guardianIds = [...new Set(rows.filter((r: Row) => r.recipient_type === 'guardian').map((r: Row) => r.recipient_id).filter(Boolean))]; const staffIds = [...new Set(rows.filter((r: Row) => r.recipient_type === 'staff').map((r: Row) => r.recipient_id).filter(Boolean))]
   const [g,s] = await Promise.all([guardianIds.length ? db.from('ac360_school_guardians').select('id,full_name').eq('org_id', orgId).in('id', guardianIds) : Promise.resolve({data:[] as Row[], error:null}), staffIds.length ? db.from('ac360_school_staff_profiles').select('id,full_name').eq('org_id', orgId).in('id', staffIds) : Promise.resolve({data:[] as Row[], error:null})]); const names = new Map<string,string>(); for (const r of [...(g.data||[]), ...(s.data||[])]) names.set(text(r.id), text(r.full_name)); return rows.map((r: Row) => ({ ...mapPreference(r), recipient_label: names.get(text(r.recipient_id)) || null }))
@@ -409,7 +409,7 @@ export async function getSanilaAudienceSegmentDetail(id: string) {
   if (error) throw new Error(error.message)
   if (membersError) throw new Error(membersError.message)
   if (!segment) return null
-  const mappedMembers = (members || []).map((m: Row) => mapMember(m))
+  const mappedMembers: SanilaAudienceMember[] = (members || []).map((m: Row) => mapMember(m))
   return {
     segment: { ...segment, id: text(segment.id), org_id: text(segment.org_id), campus_id: maybe(segment.campus_id), segment_key: text(segment.segment_key), label: text(segment.label), audience_type: text(segment.audience_type), filter_json: obj(segment.filter_json), status: text(segment.status), created_at: text(segment.created_at), updated_at: text(segment.updated_at), member_count: mappedMembers.length, active_member_count: mappedMembers.filter(m => m.status === 'active').length, sample_members: mappedMembers.slice(0, 12) } as SanilaAudienceSegment,
     members: mappedMembers,

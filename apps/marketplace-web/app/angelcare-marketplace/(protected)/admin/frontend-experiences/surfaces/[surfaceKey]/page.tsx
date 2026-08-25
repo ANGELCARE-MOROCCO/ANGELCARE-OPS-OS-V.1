@@ -1,0 +1,8 @@
+import {notFound,redirect} from 'next/navigation'
+import {requireMarketplacePageContext} from '@/angelcare-marketplace/auth/context'
+import {getFrontendSurface} from '@/angelcare-marketplace/total-commerce-control/repository'
+import {SURFACE_BY_KEY} from '@/angelcare-marketplace/total-commerce-control/surface-registry'
+import {SurfaceExperienceStudio} from '@/angelcare-marketplace/total-commerce-control/components/SurfaceExperienceStudio'
+import {commerceStudioData} from '@/angelcare-marketplace/commerce-studio/repository'
+export const dynamic='force-dynamic'
+export default async function Page({params}:{params:Promise<{surfaceKey:string}>}){const context=await requireMarketplacePageContext('marketplace.commerce.view');const{surfaceKey}=await params;const definition=SURFACE_BY_KEY.get(surfaceKey);if(!definition)notFound();if(definition.studio==='homepage')redirect('/angelcare-marketplace/admin/homepage');if(definition.studio==='navigation')redirect('/angelcare-marketplace/admin/navigation/header');if(definition.studio==='footer')redirect('/angelcare-marketplace/admin/footer-studio');if(definition.studio==='category'){const data=await commerceStudioData(context);const category=data.categories.find(item=>item.category_key===surfaceKey&&item.locale==='fr')||data.categories.find(item=>item.category_key===surfaceKey);if(category)redirect(`/angelcare-marketplace/admin/catalog/categories/${category.id}/storefront`);redirect('/angelcare-marketplace/admin/catalog/categories')}const initial=await getFrontendSurface(surfaceKey);if(!initial)notFound();return <SurfaceExperienceStudio definition={definition} initial={initial}/>}

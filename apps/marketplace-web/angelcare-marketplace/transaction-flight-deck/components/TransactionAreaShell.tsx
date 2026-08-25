@@ -1,0 +1,8 @@
+'use client'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { Box, Command, Download, Search, Sparkles } from 'lucide-react'
+import styles from '../transaction-flight-deck.module.css'
+const base='/angelcare-marketplace/admin/orders-fulfillment'
+const nav=[['Overview',base],['Incoming',`${base}/incoming`],['Orders',`${base}/orders`],['Fulfillment',`${base}/fulfillment`],['Dispatch',`${base}/dispatch`],['Exceptions',`${base}/exceptions`],['Recovery',`${base}/recovery`],['Completed',`${base}/completed`]] as const
+export function TransactionAreaShell({children}:{children:React.ReactNode}){const path=usePathname();return <div className={styles.shell}><header className={styles.areaHeader}><div><div className={styles.areaKicker}>04 · Orders & Fulfillment</div><h1>Transaction Flight Deck</h1><p>Exécution, dispatch, recovery et clôture de chaque transaction Marketplace.</p></div><div className={styles.areaTools}><Link className={styles.button} href="/angelcare-marketplace/admin/orders/new"><Sparkles size={14}/>Créer une commande</Link><Link className={styles.buttonSecondary} href="/angelcare-marketplace/admin/search"><Search size={14}/>Recherche</Link><Link className={styles.buttonSecondary} href="/angelcare-marketplace/admin/my-workspace"><Command size={14}/>War Room</Link><Link className={styles.buttonSecondary} href="/angelcare-marketplace/admin/orders"><Download size={14}/>Registry expert</Link></div></header><nav className={styles.nav}>{nav.map(([label,href])=><Link key={href} href={href} data-active={path===href}>{label}</Link>)}</nav>{children}<div className={styles.flightSignature}><Box size={14}/><span>Order → Payment → Assignment → Execution → Closure</span></div></div>}

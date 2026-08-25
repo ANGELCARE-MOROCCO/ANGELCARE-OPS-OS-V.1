@@ -2,6 +2,7 @@ export type LibraryBookStatus = 'active' | 'inactive' | 'archived'
 export type LibraryCopyStatus = 'available' | 'loaned' | 'damaged' | 'lost' | 'archived' | 'reserved'
 export type LibraryLoanStatus = 'open' | 'active' | 'returned' | 'overdue' | 'lost' | 'cancelled' | 'archived'
 export type LibraryBorrowerType = 'student' | 'staff'
+export type LibraryAttentionTone = 'good' | 'neutral' | 'warn' | 'bad'
 
 export interface LibraryBook {
   id: string
@@ -22,6 +23,8 @@ export interface LibraryBook {
   reservedCount: number
   activeLoanCount: number
   overdueCount: number
+  circulationCount: number
+  lastCirculatedAt: string | null
 }
 
 export interface LibraryCopy {
@@ -43,6 +46,7 @@ export interface LibraryCopy {
   borrowerType: LibraryBorrowerType | null
   dueAt: string | null
   daysOverdue: number
+  lastActivityAt: string | null
 }
 
 export interface LibraryLoan {
@@ -79,6 +83,17 @@ export interface LibraryBorrower {
   fullName: string
   secondary: string | null
   status: string
+  classId: string | null
+  classLabel: string | null
+  activeLoanCount: number
+  overdueLoanCount: number
+  totalLoanCount: number
+  returnedLoanCount: number
+  lostLoanCount: number
+  currentTitles: string[]
+  lastActivityAt: string | null
+  eligibility: 'eligible' | 'attention' | 'inactive'
+  eligibilityReason: string
 }
 
 export interface LibraryAuditEvent {
@@ -117,6 +132,40 @@ export interface LibraryCategoryPulse {
   lost: number
 }
 
+export interface LibraryInterventionItem {
+  id: string
+  kind: 'overdue' | 'due_today' | 'copy_exception' | 'reserved_state' | 'location_gap' | 'member_attention' | 'title_unavailable'
+  tone: LibraryAttentionTone
+  title: string
+  detail: string
+  href: string
+  rank: number
+}
+
+export interface LibraryCirculationEvent {
+  id: string
+  type: 'checkout' | 'return' | 'lost' | 'cancelled'
+  at: string
+  title: string
+  detail: string
+  href: string
+  tone: LibraryAttentionTone
+}
+
+export interface LibraryCapabilities {
+  atomicCheckout: true
+  atomicReturn: true
+  atomicLoss: true
+  atomicCancel: true
+  reservationWorkflow: false
+  reservationTruth: 'status_only'
+  renewalWorkflow: false
+  financialFineAuthority: false
+  reminderDeliveryAuthority: false
+  shelfLocationAuthority: 'recorded_text_only'
+  isbnMetadataProvider: false
+}
+
 export interface LibrarySnapshot {
   schoolId: string
   schoolName: string
@@ -129,6 +178,9 @@ export interface LibrarySnapshot {
   audit: LibraryAuditEvent[]
   categories: LibraryCategoryPulse[]
   integrity: LibraryIntegrity
+  capabilities: LibraryCapabilities
+  interventions: LibraryInterventionItem[]
+  todayEvents: LibraryCirculationEvent[]
   metrics: {
     works: number
     copies: number
@@ -142,6 +194,9 @@ export interface LibrarySnapshot {
     returnedToday: number
     worksWithoutCopies: number
     copiesWithoutShelf: number
+    titlesUnavailable: number
+    activeBorrowers: number
+    borrowersWithOverdue: number
   }
 }
 

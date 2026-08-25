@@ -172,6 +172,11 @@ export interface CatalogAdminItem extends CommerceRecord {
   commercial_metadata: Record<string, unknown>
   seo_metadata: Record<string, unknown>
   attributes: Record<string, unknown>
+  experience_config?: Record<string, unknown>
+  territory_config?: Record<string, unknown>
+  fulfillment_config?: Record<string, unknown>
+  trust_config?: Record<string, unknown>
+  relation_config?: Record<string, unknown>
   variants?: CommerceRecord[]
   media?: CommerceRecord[]
   availability?: CommerceRecord[]
@@ -196,6 +201,10 @@ export interface CatalogCategoryAdmin extends CommerceRecord {
   visible: boolean
   status: string
   seo_metadata: Record<string, unknown>
+  experience_config?: Record<string, unknown>
+  hero_content?: Record<string, unknown>
+  storefront_sections?: Array<Record<string, unknown>>
+  filter_config?: Record<string, unknown>
   item_count: number
 }
 

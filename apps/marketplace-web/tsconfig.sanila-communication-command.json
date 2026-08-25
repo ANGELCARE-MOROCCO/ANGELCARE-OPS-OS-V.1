@@ -2,9 +2,12 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "noEmit": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "incremental": false
   },
   "files": [
+    "types/angelcare360/communication-command-css-modules.d.ts",
+    "next-env.d.ts",
     "app/(protected)/angelcare-360-command-center/messagerie/_utils.ts",
     "app/(protected)/angelcare-360-command-center/messagerie/annonces/page.tsx",
     "app/(protected)/angelcare-360-command-center/messagerie/audiences/[id]/page.tsx",

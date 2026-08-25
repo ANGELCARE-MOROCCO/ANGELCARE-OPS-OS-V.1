@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const current = await params
   if (!locales.has(current.locale)) return {}
   const locale = current.locale as PublicLocale
-  const slug = publicRoutePath(current.slug)
+  const slug = current.slug?.length ? publicRoutePath(current.slug) : 'accueil'
   const alias = canonicalAlias(locale, slug)
   if (alias) return { title: 'ANGELCARE Marketplace', alternates: { canonical: `/angelcare-marketplace/${locale}/${alias}` } }
   if (slug === 'accueil') {
@@ -39,7 +39,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
   const current = await params
   if (!locales.has(current.locale)) notFound()
   const locale = current.locale as PublicLocale
-  const slug = publicRoutePath(current.slug)
+  const slug = current.slug?.length ? publicRoutePath(current.slug) : 'accueil'
   const alias = canonicalAlias(locale, slug)
   if (alias) permanentRedirect(`/angelcare-marketplace/${locale}/${alias}`)
   if (slug === 'accueil') {

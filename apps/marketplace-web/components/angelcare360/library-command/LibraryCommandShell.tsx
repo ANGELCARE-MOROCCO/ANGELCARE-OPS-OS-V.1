@@ -3,13 +3,14 @@ import styles from './LibraryCommand.module.css'
 
 const BASE = '/angelcare-360-command-center/bibliotheque'
 const NAV = [
-  ['Atrium', BASE],
+  ['Cockpit', BASE],
   ['Catalogue', `${BASE}/livres`],
   ['Exemplaires', `${BASE}/exemplaires`],
   ['Disponibilité', `${BASE}/disponibilite`],
-  ['Prêts', `${BASE}/prets`],
+  ['Circulation', `${BASE}/prets`],
   ['Retours', `${BASE}/retours`],
   ['Retards', `${BASE}/retards`],
+  ['Membres', `${BASE}/membres`],
   ['Audit', `${BASE}/audit`],
 ] as const
 
@@ -18,24 +19,38 @@ export function LibraryCommandShell({
   title,
   subtitle,
   children,
+  actions,
+  context,
 }: {
   schoolName: string
   title: string
   subtitle: string
   children: React.ReactNode
+  actions?: React.ReactNode
+  context?: React.ReactNode
 }) {
   return (
-    <div className={styles.universe}>
+    <div className={styles.universe} data-sanila-library-surface="circulation-command">
       <main className={styles.shell}>
         <header className={styles.masthead}>
-          <div>
-            <div className={styles.eyebrow}>SANILA · Library & Circulation OS</div>
+          <div className={styles.mastheadCopy}>
+            <div className={styles.eyebrow}>SANILA · Library & Circulation Command OS</div>
             <h1 className={styles.title}>{title}</h1>
             <p className={styles.subtitle}>{subtitle}</p>
+            <div className={styles.contextRow}>
+              <span className={styles.contextPill}>{schoolName}</span>
+              <span className={styles.contextPill}>Circulation atomique</span>
+              <span className={styles.contextPill}>Disponibilité factuelle</span>
+              {context}
+            </div>
           </div>
-          <div className={styles.schoolMark}>
-            <strong>{schoolName}</strong>
-            <span>Maison du savoir · circulation institutionnelle</span>
+          <div className={styles.mastheadRail}>
+            <div className={styles.schoolMark}>
+              <span>Maison du savoir</span>
+              <strong>{schoolName}</strong>
+              <small>Catalogue · exemplaires · emprunteurs · circulation</small>
+            </div>
+            {actions ? <div className={styles.mastheadActions}>{actions}</div> : null}
           </div>
         </header>
         <nav className={styles.nav} aria-label="Navigation Bibliothèque">
@@ -45,7 +60,7 @@ export function LibraryCommandShell({
             </Link>
           ))}
         </nav>
-        {children}
+        <div className={styles.workspace}>{children}</div>
       </main>
     </div>
   )
@@ -55,11 +70,13 @@ export function StatusPill({ value, tone }: { value: string; tone?: 'good' | 'wa
   return <span className={styles.status} data-tone={tone || 'neutral'}>{value}</span>
 }
 
-export function EmptyState({ title, copy }: { title: string; copy: string }) {
+export function EmptyState({ title, copy, action }: { title: string; copy: string; action?: React.ReactNode }) {
   return (
     <div className={styles.empty}>
+      <span className={styles.emptyMark}>∷</span>
       <strong>{title}</strong>
       <p>{copy}</p>
+      {action ? <div className={styles.emptyAction}>{action}</div> : null}
     </div>
   )
 }

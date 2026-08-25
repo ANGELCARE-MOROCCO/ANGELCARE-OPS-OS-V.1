@@ -1,0 +1,11 @@
+'use client'
+import {Maximize2,Minimize2,X} from 'lucide-react'
+import styles from '../commerce-product-atelier.module.css'
+
+export type Envelope<T>={data?:T;error?:{message?:string}}
+export async function atelierApi<T>(url:string,init?:RequestInit):Promise<T>{const response=await fetch(url,{...init,headers:{...(init?.body?{'content-type':'application/json'}:{}),...(init?.headers||{})}});const payload=await response.json() as Envelope<T>;if(!response.ok||payload.error)throw new Error(payload.error?.message||`Erreur ${response.status}`);if(payload.data===undefined)throw new Error('Réponse Marketplace incomplète.');return payload.data}
+export const money=(value:number|null|undefined,currency='Dh')=>value==null?'Sur devis':`${Number(value).toLocaleString('fr-FR',{maximumFractionDigits:2})} ${currency}`
+export const pct=(value:number|null|undefined)=>value==null?'—':`${value.toFixed(1)}%`
+
+export function DrawerShell({title,subtitle,children,onClose,onMinimize,full,setFull,size='xl',footer}:{title:string;subtitle?:string;children:React.ReactNode;onClose:()=>void;onMinimize?:()=>void;full:boolean;setFull:(value:boolean)=>void;size?:'medium'|'large'|'xl';footer?:React.ReactNode}){return <div className={styles.drawerBackdrop} onMouseDown={e=>{if(e.target===e.currentTarget)onClose()}}><section className={styles.drawer} data-size={size} data-full={full}><header className={styles.drawerHeader}><div><div className={styles.eyebrow}>COMMERCE COMMAND DRAWER</div><h2>{title}</h2>{subtitle?<p>{subtitle}</p>:null}</div><div className={styles.drawerControls}>{onMinimize?<button className={styles.iconButton} onClick={onMinimize} title="Minimize"><Minimize2 size={15}/></button>:null}<button className={styles.iconButton} onClick={()=>setFull(!full)} title={full?'Restore':'Fullscreen'}><Maximize2 size={15}/></button><button className={styles.iconButton} onClick={onClose} title="Close"><X size={16}/></button></div></header>{children}{footer?<footer className={styles.drawerFooter}>{footer}</footer>:null}</section></div>}
+export function Notice({message,error}:{message?:string;error?:string}){if(!message&&!error)return null;return <div className={`${styles.notice} ${error?styles.error:styles.success}`}>{error||message}</div>}

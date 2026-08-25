@@ -1,1 +1,2 @@
-export { default } from '../readiness/page'
+import {redirect} from 'next/navigation'
+export default function Page(){redirect('/angelcare-marketplace/admin/launch/readiness')}

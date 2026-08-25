@@ -24,9 +24,9 @@ export function MaterialCommandShell({
   return <main className={styles.page}>
     <header className={styles.hero}>
       <div>
-        <p className={styles.kicker}>SANILA · MATERIAL COMMAND</p>
-        <h1 className={styles.title}>Inventaire<span>Matériel · Stock · Mouvements · Responsabilité · Traçabilité</span></h1>
-        <p className={styles.lead}>Une architecture de contrôle matériel conçue pour savoir ce que l’établissement possède, ce qui devient critique, qui en répond et quelle action a réellement modifié le stock.</p>
+        <p className={styles.kicker}>SANILA · MATERIAL & ASSET CONTROL</p>
+        <h1 className={styles.title}>Inventaire<span>Matériel · Stock · Mouvements · Responsabilité · Disponibilité · Traçabilité</span></h1>
+        <p className={styles.lead}>Le poste de contrôle matériel de l’établissement: savoir ce qui existe, ce qui est disponible, ce qui devient critique, qui en répond et quelle action a réellement modifié le stock.</p>
         <div className={styles.contextRail}><span>{schoolName}</span><span>{academicYearLabel || 'Année scolaire active non définie'}</span><span>Autorité: inventaire établissement</span></div>
       </div>
       <aside className={styles.instrument} aria-label="Intégrité transactionnelle inventaire">

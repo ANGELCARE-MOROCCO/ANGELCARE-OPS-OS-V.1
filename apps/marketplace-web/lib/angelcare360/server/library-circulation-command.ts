@@ -6,8 +6,10 @@ import type {
   LibraryBook,
   LibraryBorrower,
   LibraryCategoryPulse,
+  LibraryCirculationEvent,
   LibraryCopy,
   LibraryIntegrity,
+  LibraryInterventionItem,
   LibraryLoan,
   LibraryMutationResult,
   LibrarySnapshot,
@@ -90,21 +92,36 @@ async function audit(input: {
 }
 
 function bookMap(rows: Row[]) {
-  return new Map(rows.map((row) => [text(row.id), row]))
+  return new Map<string, Row>(rows.map((row: Row) => [text(row.id), row] as [string, Row]))
 }
 function copyMap(rows: Row[]) {
-  return new Map(rows.map((row) => [text(row.id), row]))
+  return new Map<string, Row>(rows.map((row: Row) => [text(row.id), row] as [string, Row]))
 }
-function borrowerMap(students: Row[], staff: Row[]) {
+function borrowerMap(students: Row[], staff: Row[], classes: Row[]) {
+  const classById = new Map<string, Row>(classes.map((row: Row) => [text(row.id), row] as [string, Row]))
   const result = new Map<string, LibraryBorrower>()
   for (const row of students) {
+    const classRow = classById.get(text(row.current_class_id))
     result.set(text(row.id), {
       id: text(row.id),
       type: 'student',
       code: text(row.student_code),
       fullName: text(row.full_name),
-      secondary: nullable(row.status),
+      secondary: classRow ? text(classRow.name) : nullable(row.status),
       status: text(row.status),
+      classId: nullable(row.current_class_id),
+      classLabel: classRow ? text(classRow.name) : null,
+      activeLoanCount: 0,
+      overdueLoanCount: 0,
+      totalLoanCount: 0,
+      returnedLoanCount: 0,
+      lostLoanCount: 0,
+      currentTitles: [],
+      lastActivityAt: null,
+      eligibility: text(row.status) === 'active' ? 'eligible' : 'inactive',
+      eligibilityReason: text(row.status) === 'active'
+        ? 'Membre actif. Aucun plafond de prêt ou blocage automatique supplémentaire n’est prouvé par l’autorité Bibliothèque actuelle.'
+        : 'Membre inactif : le RPC de circulation refusera le prêt.',
     })
   }
   for (const row of staff) {
@@ -115,6 +132,19 @@ function borrowerMap(students: Row[], staff: Row[]) {
       fullName: text(row.full_name),
       secondary: nullable(row.department),
       status: text(row.status),
+      classId: null,
+      classLabel: null,
+      activeLoanCount: 0,
+      overdueLoanCount: 0,
+      totalLoanCount: 0,
+      returnedLoanCount: 0,
+      lostLoanCount: 0,
+      currentTitles: [],
+      lastActivityAt: null,
+      eligibility: text(row.status) === 'active' ? 'eligible' : 'inactive',
+      eligibilityReason: text(row.status) === 'active'
+        ? 'Membre actif. Aucun plafond de prêt ou blocage automatique supplémentaire n’est prouvé par l’autorité Bibliothèque actuelle.'
+        : 'Membre inactif : le RPC de circulation refusera le prêt.',
     })
   }
   return result
@@ -136,7 +166,7 @@ function emptyIntegrity(message: string): LibraryIntegrity {
 async function loadIntegrity(client: any, schoolId: string): Promise<LibraryIntegrity> {
   const { data, error } = await client.rpc('angelcare360_library_integrity_status_v1', { p_school_id: schoolId })
   if (error || !data) {
-    return emptyIntegrity('Le garde-fou transactionnel Bibliothèque n’est pas encore installé. Exécutez le SQL réconcilié avant les mutations de circulation.')
+    return emptyIntegrity('Le garde-fou transactionnel Bibliothèque est indisponible dans ce runtime. Les mutations restent verrouillées jusqu’à rétablissement de l’autorité existante ; aucun SQL supplémentaire n’est supposé par cette interface.')
   }
   const row = (Array.isArray(data) ? data[0] : data) as Row
   return {
@@ -152,7 +182,7 @@ async function loadIntegrity(client: any, schoolId: string): Promise<LibraryInte
 }
 
 async function rawSnapshot(client: any, schoolId: string) {
-  const [booksResult, copiesResult, loansResult, studentsResult, staffResult, auditResult] = await Promise.all([
+  const [booksResult, copiesResult, loansResult, studentsResult, staffResult, classesResult, auditResult] = await Promise.all([
     client.from('angelcare360_library_books')
       .select('id,school_id,book_code,isbn,title,author,publisher,category,language,status,created_at,updated_at')
       .eq('school_id', schoolId).order('title', { ascending: true }).range(0, 9999),
@@ -168,11 +198,14 @@ async function rawSnapshot(client: any, schoolId: string) {
     client.from('angelcare360_staff')
       .select('id,school_id,staff_code,full_name,department,status')
       .eq('school_id', schoolId).eq('status', 'active').order('full_name').range(0, 9999),
+    client.from('angelcare360_classes')
+      .select('id,school_id,class_code,name,level,status')
+      .eq('school_id', schoolId).eq('status', 'active').order('name').range(0, 9999),
     client.from('angelcare360_audit_logs')
       .select('id,actor_user_id,actor_role,action,entity_type,entity_id,severity,before_data,after_data,metadata,created_at,module')
       .eq('school_id', schoolId).in('module', ['bibliotheque', 'library']).order('created_at', { ascending: false }).limit(250),
   ])
-  const firstError = [booksResult, copiesResult, loansResult, studentsResult, staffResult].find((item: any) => item.error)?.error
+  const firstError = [booksResult, copiesResult, loansResult, studentsResult, staffResult, classesResult].find((item: any) => item.error)?.error
   if (firstError) throw new Error(firstError.message || 'Impossible de charger la Bibliothèque.')
   return {
     books: (booksResult.data || []) as Row[],
@@ -180,6 +213,7 @@ async function rawSnapshot(client: any, schoolId: string) {
     loans: (loansResult.data || []) as Row[],
     students: (studentsResult.data || []) as Row[],
     staff: (staffResult.data || []) as Row[],
+    classes: (classesResult.data || []) as Row[],
     audit: (auditResult.data || []) as Row[],
   }
 }
@@ -190,7 +224,7 @@ export async function getLibraryCommandSnapshot(options?: { schoolId?: string | 
   const raw = await rawSnapshot(client, access.school!.id)
   const booksById = bookMap(raw.books)
   const copiesById = copyMap(raw.copies)
-  const borrowersById = borrowerMap(raw.students, raw.staff)
+  const borrowersById = borrowerMap(raw.students, raw.staff, raw.classes)
   const activeLoanByCopy = new Map<string, Row>()
 
   for (const loan of raw.loans) {
@@ -254,6 +288,7 @@ export async function getLibraryCommandSnapshot(options?: { schoolId?: string | 
       borrowerType: loan ? (text(loan.borrower_type) === 'staff' ? 'staff' : 'student') : null,
       dueAt: loan ? text(loan.due_at) : null,
       daysOverdue: loan ? overdueDays(nullable(loan.due_at), nullable(loan.returned_at)) : 0,
+      lastActivityAt: loan ? nullable(loan.returned_at || loan.updated_at || loan.loaned_at) : nullable(row.updated_at || row.created_at),
     }
   })
 
@@ -271,6 +306,15 @@ export async function getLibraryCommandSnapshot(options?: { schoolId?: string | 
     if (copy.daysOverdue > 0) c.overdue += 1
     counts.set(copy.bookId, c)
   }
+  const circulationByBook = new Map<string, { count: number; lastAt: string | null }>()
+  for (const loan of loans) {
+    const current = circulationByBook.get(loan.bookId) || { count: 0, lastAt: null }
+    current.count += 1
+    const activity = loan.returnedAt || loan.loanedAt
+    if (activity && (!current.lastAt || activity > current.lastAt)) current.lastAt = activity
+    circulationByBook.set(loan.bookId, current)
+  }
+
 
   const books: LibraryBook[] = raw.books.map((row) => {
     const c = counts.get(text(row.id)) || { copies:0, available:0, loaned:0, damaged:0, lost:0, reserved:0, activeLoans:0, overdue:0 }
@@ -293,8 +337,36 @@ export async function getLibraryCommandSnapshot(options?: { schoolId?: string | 
       reservedCount: c.reserved,
       activeLoanCount: c.activeLoans,
       overdueCount: c.overdue,
+      circulationCount: circulationByBook.get(text(row.id))?.count || 0,
+      lastCirculatedAt: circulationByBook.get(text(row.id))?.lastAt || null,
     }
   })
+
+  for (const borrower of borrowersById.values()) {
+    const related = loans.filter((loan) => (loan.borrowerStudentId || loan.borrowerStaffId) === borrower.id)
+    const active = related.filter((loan) => !loan.returnedAt && ACTIVE_LOAN_STATES.has(loan.storedStatus))
+    const overdue = active.filter((loan) => loan.effectiveStatus === 'overdue')
+    borrower.totalLoanCount = related.length
+    borrower.activeLoanCount = active.length
+    borrower.overdueLoanCount = overdue.length
+    borrower.returnedLoanCount = related.filter((loan) => loan.effectiveStatus === 'returned').length
+    borrower.lostLoanCount = related.filter((loan) => loan.effectiveStatus === 'lost').length
+    borrower.currentTitles = active.map((loan) => loan.bookTitle)
+    borrower.lastActivityAt = related.reduce<string | null>((latest, loan) => {
+      const candidate = loan.returnedAt || loan.loanedAt
+      return candidate && (!latest || candidate > latest) ? candidate : latest
+    }, null)
+    if (borrower.status !== 'active') {
+      borrower.eligibility = 'inactive'
+      borrower.eligibilityReason = 'Membre inactif : le RPC de circulation refusera le prêt.'
+    } else if (borrower.overdueLoanCount > 0) {
+      borrower.eligibility = 'attention'
+      borrower.eligibilityReason = `${borrower.overdueLoanCount} prêt(s) en retard. Information opérationnelle uniquement : aucune règle de blocage automatique supplémentaire n’est prouvée par le schéma.`
+    } else {
+      borrower.eligibility = 'eligible'
+      borrower.eligibilityReason = 'Membre actif. Aucun plafond de prêt ou blocage automatique supplémentaire n’est prouvé par l’autorité Bibliothèque actuelle.'
+    }
+  }
 
   const categoryMap = new Map<string, LibraryCategoryPulse>()
   for (const book of books) {
@@ -328,33 +400,86 @@ export async function getLibraryCommandSnapshot(options?: { schoolId?: string | 
   }))
 
   const integrity = await loadIntegrity(client, access.school!.id)
+  const borrowers = Array.from(borrowersById.values()).sort((a, b) => a.fullName.localeCompare(b.fullName, 'fr'))
+  const metrics = {
+    works: books.filter((book) => book.status === 'active').length,
+    copies: copies.filter((copy) => copy.status !== 'archived').length,
+    available: copies.filter((copy) => copy.status === 'available').length,
+    circulating: copies.filter((copy) => copy.status === 'loaned').length,
+    overdue: loans.filter((loan) => loan.effectiveStatus === 'overdue').length,
+    damaged: copies.filter((copy) => copy.status === 'damaged').length,
+    lost: copies.filter((copy) => copy.status === 'lost').length,
+    reserved: copies.filter((copy) => copy.status === 'reserved').length,
+    dueToday: loans.filter((loan) => !loan.returnedAt && ACTIVE_LOAN_STATES.has(loan.storedStatus) && sameDayInZone(new Date(loan.dueAt), today, schoolTimezone)).length,
+    returnedToday: loans.filter((loan) => loan.returnedAt && sameDayInZone(new Date(loan.returnedAt), today, schoolTimezone)).length,
+    worksWithoutCopies: books.filter((book) => book.copyCount === 0).length,
+    copiesWithoutShelf: copies.filter((copy) => copy.status !== 'archived' && !copy.shelfLocation).length,
+    titlesUnavailable: books.filter((book) => book.status === 'active' && book.copyCount > 0 && book.availableCount === 0).length,
+    activeBorrowers: borrowers.filter((borrower) => borrower.activeLoanCount > 0).length,
+    borrowersWithOverdue: borrowers.filter((borrower) => borrower.overdueLoanCount > 0).length,
+  }
+
+  const interventions: LibraryInterventionItem[] = []
+  for (const loan of loans) {
+    if (loan.effectiveStatus === 'overdue') interventions.push({
+      id: `overdue:${loan.id}`, kind: 'overdue', tone: 'bad', rank: 120 + Math.min(loan.daysOverdue, 60),
+      title: `${loan.copyCode} · ${loan.bookTitle}`, detail: `${loan.borrowerName} · ${loan.daysOverdue} jour(s) de retard`, href: `/angelcare-360-command-center/bibliotheque/prets/${loan.id}`,
+    })
+    else if (!loan.returnedAt && ACTIVE_LOAN_STATES.has(loan.storedStatus) && sameDayInZone(new Date(loan.dueAt), today, schoolTimezone)) interventions.push({
+      id: `due:${loan.id}`, kind: 'due_today', tone: 'warn', rank: 90, title: `${loan.copyCode} · retour attendu aujourd’hui`, detail: `${loan.borrowerName} · ${loan.bookTitle}`, href: `/angelcare-360-command-center/bibliotheque/prets/${loan.id}`,
+    })
+  }
+  for (const copy of copies) {
+    if (copy.status === 'lost' || copy.status === 'damaged') interventions.push({
+      id: `copy:${copy.id}`, kind: 'copy_exception', tone: 'bad', rank: copy.status === 'lost' ? 115 : 105, title: `${copy.copyCode} · ${copy.status === 'lost' ? 'perdu' : 'endommagé'}`, detail: `${copy.bookTitle}${copy.shelfLocation ? ` · ${copy.shelfLocation}` : ''}`, href: `/angelcare-360-command-center/bibliotheque/exemplaires/${copy.id}`,
+    })
+    if (copy.status === 'reserved') interventions.push({
+      id: `reserved:${copy.id}`, kind: 'reserved_state', tone: 'warn', rank: 65, title: `${copy.copyCode} · état réservé observé`, detail: 'État factuel existant. Aucun workflow de réservation n’est inventé par SANILA sans autorité dédiée.', href: `/angelcare-360-command-center/bibliotheque/exemplaires/${copy.id}`,
+    })
+    if (copy.status !== 'archived' && !copy.shelfLocation) interventions.push({
+      id: `shelf:${copy.id}`, kind: 'location_gap', tone: 'neutral', rank: 38, title: `${copy.copyCode} · rayon non renseigné`, detail: `${copy.bookTitle} · localisation textuelle à compléter`, href: `/angelcare-360-command-center/bibliotheque/exemplaires/${copy.id}`,
+    })
+  }
+  for (const borrower of borrowers.filter((item) => item.overdueLoanCount > 1)) interventions.push({
+    id: `member:${borrower.id}`, kind: 'member_attention', tone: 'bad', rank: 100 + borrower.overdueLoanCount, title: `${borrower.fullName} · ${borrower.overdueLoanCount} retards`, detail: `${borrower.activeLoanCount} prêt(s) actif(s) · information de circulation`, href: `/angelcare-360-command-center/bibliotheque/membres/${borrower.id}`,
+  })
+  for (const book of books.filter((item) => item.status === 'active' && item.copyCount > 0 && item.availableCount === 0)) interventions.push({
+    id: `unavailable:${book.id}`, kind: 'title_unavailable', tone: 'warn', rank: 58 + book.overdueCount, title: `${book.title} · aucun exemplaire disponible`, detail: `${book.copyCount} exemplaire(s) · ${book.activeLoanCount} prêt(s) actif(s)`, href: `/angelcare-360-command-center/bibliotheque/livres/${book.id}`,
+  })
+  interventions.sort((a, b) => b.rank - a.rank || a.title.localeCompare(b.title, 'fr'))
+
+  const todayEvents: LibraryCirculationEvent[] = []
+  for (const loan of loans) {
+    if (sameDayInZone(new Date(loan.loanedAt), today, schoolTimezone)) todayEvents.push({
+      id: `checkout:${loan.id}`, type: 'checkout', at: loan.loanedAt, title: `Prêt · ${loan.copyCode}`, detail: `${loan.bookTitle} → ${loan.borrowerName}`, href: `/angelcare-360-command-center/bibliotheque/prets/${loan.id}`, tone: 'neutral',
+    })
+    if (loan.returnedAt && sameDayInZone(new Date(loan.returnedAt), today, schoolTimezone)) todayEvents.push({
+      id: `return:${loan.id}`, type: 'return', at: loan.returnedAt, title: `Retour · ${loan.copyCode}`, detail: `${loan.bookTitle} · ${loan.borrowerName}`, href: `/angelcare-360-command-center/bibliotheque/prets/${loan.id}`, tone: 'good',
+    })
+    if (loan.effectiveStatus === 'lost' && sameDayInZone(new Date(loan.returnedAt || loan.loanedAt), today, schoolTimezone)) todayEvents.push({
+      id: `lost:${loan.id}`, type: 'lost', at: loan.returnedAt || loan.loanedAt, title: `Perte · ${loan.copyCode}`, detail: `${loan.bookTitle} · historique conservé`, href: `/angelcare-360-command-center/bibliotheque/prets/${loan.id}`, tone: 'bad',
+    })
+    if (loan.effectiveStatus === 'cancelled' && sameDayInZone(new Date(loan.loanedAt), today, schoolTimezone)) todayEvents.push({
+      id: `cancelled:${loan.id}`, type: 'cancelled', at: loan.loanedAt, title: `Annulation · ${loan.copyCode}`, detail: `${loan.bookTitle} · prêt annulé`, href: `/angelcare-360-command-center/bibliotheque/prets/${loan.id}`, tone: 'neutral',
+    })
+  }
+  todayEvents.sort((a, b) => b.at.localeCompare(a.at))
+
   return {
     schoolId: access.school!.id,
     schoolName: access.school!.name || access.school!.school_code || 'Établissement',
     schoolTimezone,
     generatedAt: new Date().toISOString(),
-    books,
-    copies,
-    loans,
-    borrowers: Array.from(borrowersById.values()).sort((a, b) => a.fullName.localeCompare(b.fullName, 'fr')),
-    audit,
-    categories,
-    integrity,
-    metrics: {
-      works: books.filter((book) => book.status === 'active').length,
-      copies: copies.filter((copy) => copy.status !== 'archived').length,
-      available: copies.filter((copy) => copy.status === 'available').length,
-      circulating: copies.filter((copy) => copy.status === 'loaned').length,
-      overdue: loans.filter((loan) => loan.effectiveStatus === 'overdue').length,
-      damaged: copies.filter((copy) => copy.status === 'damaged').length,
-      lost: copies.filter((copy) => copy.status === 'lost').length,
-      reserved: copies.filter((copy) => copy.status === 'reserved').length,
-      dueToday: loans.filter((loan) => !loan.returnedAt && ACTIVE_LOAN_STATES.has(loan.storedStatus) && sameDayInZone(new Date(loan.dueAt), today, schoolTimezone)).length,
-      returnedToday: loans.filter((loan) => loan.returnedAt && sameDayInZone(new Date(loan.returnedAt), today, schoolTimezone)).length,
-      worksWithoutCopies: books.filter((book) => book.copyCount === 0).length,
-      copiesWithoutShelf: copies.filter((copy) => copy.status !== 'archived' && !copy.shelfLocation).length,
+    books, copies, loans, borrowers, audit, categories, integrity, metrics,
+    interventions: interventions.slice(0, 16),
+    todayEvents: todayEvents.slice(0, 20),
+    capabilities: {
+      atomicCheckout: true, atomicReturn: true, atomicLoss: true, atomicCancel: true,
+      reservationWorkflow: false, reservationTruth: 'status_only', renewalWorkflow: false,
+      financialFineAuthority: false, reminderDeliveryAuthority: false, shelfLocationAuthority: 'recorded_text_only', isbnMetadataProvider: false,
     },
   }
+
 }
 
 export async function getLibraryBookDossier(id: string, schoolId?: string | null) {
@@ -386,6 +511,14 @@ export async function getLibraryLoanDossier(id: string, schoolId?: string | null
     item.id === (loan.borrowerStudentId || loan.borrowerStaffId),
   ) || null
   return { snapshot, loan, copy, book, borrower }
+}
+
+export async function getLibraryMemberDossier(id: string, schoolId?: string | null) {
+  const snapshot = await getLibraryCommandSnapshot({ schoolId })
+  const borrower = snapshot.borrowers.find((item) => item.id === id)
+  if (!borrower) return null
+  const loans = snapshot.loans.filter((loan) => (loan.borrowerStudentId || loan.borrowerStaffId) === id)
+  return { snapshot, borrower, loans }
 }
 
 export async function findLibraryCopyByBarcode(query: string, schoolId?: string | null) {
@@ -441,6 +574,17 @@ export async function updateLibraryBook(input: Row): Promise<LibraryMutationResu
   const { data: before } = await client.from('angelcare360_library_books').select('*').eq('school_id', access.school!.id).eq('id', id).maybeSingle()
   if (!before) return { ok: false, error: 'Ouvrage introuvable.' }
   const status = ['active', 'inactive', 'archived'].includes(text(input.status)) ? text(input.status) : text(before.status)
+  if (status === 'archived' && text(before.status) !== 'archived') {
+    const { data: bookCopies, error: copyError } = await client.from('angelcare360_library_copies').select('id').eq('school_id', access.school!.id).eq('book_id', id)
+    if (copyError) return { ok: false, error: copyError.message }
+    const copyIds = ((bookCopies || []) as Row[]).map((row: Row) => text(row.id)).filter(Boolean)
+    if (copyIds.length > 0) {
+      const { count: activeCopyLoans, error: loanError } = await client.from('angelcare360_library_loans').select('id', { count: 'exact', head: true })
+        .eq('school_id', access.school!.id).is('returned_at', null).in('status', ['open', 'active', 'overdue']).in('copy_id', copyIds)
+      if (loanError) return { ok: false, error: loanError.message }
+      if ((activeCopyLoans || 0) > 0) return { ok: false, error: 'Cet ouvrage possède encore un prêt actif. Clôturez la circulation avant archivage.' }
+    }
+  }
   const payload = {
     book_code: text(input.bookCode || before.book_code).trim(),
     isbn: input.isbn === undefined ? before.isbn : nullable(input.isbn),

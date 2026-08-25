@@ -2,11 +2,11 @@ import { LibraryCommandShell } from '@/components/angelcare360/library-command/L
 import { KnowledgeAtrium } from '@/components/angelcare360/library-command/LibraryViews'
 import { loadLibrarySnapshot } from './_utils'
 
+export const dynamic = 'force-dynamic'
+
 export default async function BibliothequePage() {
   const snapshot = await loadLibrarySnapshot()
-  return (
-    <LibraryCommandShell schoolName={snapshot.schoolName} title="Bibliothèque" subtitle="Maison du savoir · collection, exemplaires et circulation institutionnelle">
-      <KnowledgeAtrium snapshot={snapshot} />
-    </LibraryCommandShell>
-  )
+  return <LibraryCommandShell schoolName={snapshot.schoolName} title="Bibliothèque" subtitle="Library Operations Cockpit · collection, disponibilité, circulation, membres et exceptions institutionnelles">
+    <KnowledgeAtrium snapshot={snapshot} />
+  </LibraryCommandShell>
 }
