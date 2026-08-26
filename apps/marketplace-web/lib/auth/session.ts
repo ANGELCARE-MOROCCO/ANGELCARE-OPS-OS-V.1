@@ -6,6 +6,8 @@ import { createClient } from '@/lib/supabase/server'
 
 export const APP_SESSION_COOKIE = 'angelcare_ops_session'
 
+export const APP_SESSION_COOKIE_DOMAIN = process.env.NODE_ENV === 'production' ? 'angelcarehub.com' : undefined
+
 export async function hashPassword(password: string) {
   return bcrypt.hash(password, 12)
 }

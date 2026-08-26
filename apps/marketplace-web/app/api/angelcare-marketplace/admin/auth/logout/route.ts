@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
-import { APP_SESSION_COOKIE } from '@/lib/auth/session'
+import { APP_SESSION_COOKIE, APP_SESSION_COOKIE_DOMAIN } from '@/lib/auth/session'
 import { createServiceClient } from '@/lib/supabase/server'
 
 export const dynamic = 'force-dynamic'
@@ -25,6 +25,16 @@ export async function POST() {
     path: '/',
     maxAge: 0,
   })
+  if (APP_SESSION_COOKIE_DOMAIN) {
+    response.cookies.set(APP_SESSION_COOKIE, '', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      domain: APP_SESSION_COOKIE_DOMAIN,
+      maxAge: 0,
+    })
+  }
   response.headers.set('cache-control', 'no-store')
   return response
 }

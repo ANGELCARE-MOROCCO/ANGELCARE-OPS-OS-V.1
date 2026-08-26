@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { APP_SESSION_COOKIE } from '@/lib/auth/session'
+import { APP_SESSION_COOKIE, APP_SESSION_COOKIE_DOMAIN } from '@/lib/auth/session'
 import {
   adminSessionMaxAge,
   assertAdminLoginSameOrigin,
@@ -37,11 +37,23 @@ export async function POST(request: Request) {
       returnTo: result.returnTo,
       displayName: result.displayName,
     })
+    // Remove the legacy host-only session before issuing the shared session.
+    response.cookies.set(APP_SESSION_COOKIE, '', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 0,
+    })
+
     response.cookies.set(APP_SESSION_COOKIE, result.sessionToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       path: '/',
+      ...(APP_SESSION_COOKIE_DOMAIN
+        ? { domain: APP_SESSION_COOKIE_DOMAIN }
+        : {}),
       maxAge: adminSessionMaxAge(result.expiresAt),
     })
     response.headers.set('cache-control', 'no-store')

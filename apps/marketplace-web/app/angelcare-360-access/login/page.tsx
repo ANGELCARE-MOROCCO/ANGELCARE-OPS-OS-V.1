@@ -1,3 +1,4 @@
+import { APP_SESSION_COOKIE_DOMAIN } from '@/lib/auth/session'
 import type { Metadata } from 'next'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
@@ -161,11 +162,22 @@ export default async function Angelcare360CustomerLoginPage({
 
     const cookieStore = await cookies()
 
+    // Remove the legacy host-only session before issuing the shared session.
+    cookieStore.set(APP_SESSION_COOKIE, '', {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+      path: '/',
+      maxAge: 0,
+    })
     cookieStore.set(APP_SESSION_COOKIE, token, {
       httpOnly: true,
       sameSite: 'lax',
       secure: process.env.NODE_ENV === 'production',
       path: '/',
+      ...(APP_SESSION_COOKIE_DOMAIN
+        ? { domain: APP_SESSION_COOKIE_DOMAIN }
+        : {}),
       expires: expiresAt,
     })
 
