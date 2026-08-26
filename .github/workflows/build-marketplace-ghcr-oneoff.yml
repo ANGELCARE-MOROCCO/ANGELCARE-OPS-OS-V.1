@@ -12,7 +12,7 @@ permissions:
   packages: write
 
 env:
-  TARGET_SHA: c940e7ddaece5fed8b2741ffd543cf186548e8a4
+  TARGET_SHA: 63d9aa882b337194498d0ec6eff969d1596c4457
   IMAGE: ghcr.io/angelcare-morocco/angelcare-marketplace
 
 jobs:
@@ -23,7 +23,7 @@ jobs:
       - name: Checkout exact Marketplace source
         uses: actions/checkout@v4
         with:
-          ref: c940e7ddaece5fed8b2741ffd543cf186548e8a4
+          ref: 63d9aa882b337194498d0ec6eff969d1596c4457
       - name: Verify Marketplace source route constitution
         run: node apps/marketplace-web/scripts/release/verify-marketplace-release-constitution.mjs source
 
@@ -54,20 +54,55 @@ jobs:
           set -euo pipefail
 
           CID="$(docker create "${IMAGE}:${TARGET_SHA}")"
+          ARCHIVE="/tmp/angelcare-marketplace-candidate.tar"
+          EXTRACT="/tmp/angelcare-marketplace-manifests"
+          LIST="/tmp/angelcare-marketplace-manifests.txt"
 
           cleanup() {
             docker rm -f "$CID" >/dev/null 2>&1 || true
-            rm -rf /tmp/angelcare-marketplace-next
+            rm -f "$ARCHIVE" "$LIST"
+            rm -rf "$EXTRACT"
           }
 
           trap cleanup EXIT
 
-          rm -rf /tmp/angelcare-marketplace-next
-          mkdir -p /tmp/angelcare-marketplace-next
+          rm -f "$ARCHIVE" "$LIST"
+          rm -rf "$EXTRACT"
+          mkdir -p "$EXTRACT"
 
-          docker cp "$CID:/app/.next/." /tmp/angelcare-marketplace-next/
+          echo "=== EXPORT CANDIDATE FILESYSTEM ==="
+          docker export "$CID" > "$ARCHIVE"
 
-          NEXT_DIR=/tmp/angelcare-marketplace-next \
+          echo "=== DISCOVER APP PATH MANIFESTS ==="
+          tar -tf "$ARCHIVE" \
+            | grep -E '(^|/)app-paths-manifest\.json$' \
+            | sort -u \
+            > "$LIST"
+
+          MANIFEST_COUNT="$(wc -l < "$LIST" | tr -d ' ')"
+
+          echo "APP_PATH_MANIFESTS_IN_IMAGE=$MANIFEST_COUNT"
+
+          if [ "$MANIFEST_COUNT" -lt 1 ]; then
+            echo "STOP — no app-paths-manifest.json found in candidate image."
+            exit 1
+          fi
+
+          sed -n '1,120p' "$LIST"
+
+          echo "=== EXTRACT MANIFESTS ONLY ==="
+
+          while IFS= read -r MANIFEST; do
+            [ -n "$MANIFEST" ] || continue
+
+            tar -xf "$ARCHIVE" \
+              -C "$EXTRACT" \
+              "$MANIFEST"
+          done < "$LIST"
+
+          echo "=== VERIFY COMPILED ROUTE CONSTITUTION ==="
+
+          NEXT_DIR="$EXTRACT" \
             node apps/marketplace-web/scripts/release/verify-marketplace-release-constitution.mjs compiled
 
       - name: Push exact Marketplace image
