@@ -12,7 +12,7 @@ permissions:
   packages: write
 
 env:
-  TARGET_SHA: 9387a89ccf7a30732d960de67e0d3dd08b591647
+  TARGET_SHA: c940e7ddaece5fed8b2741ffd543cf186548e8a4
   IMAGE: ghcr.io/angelcare-morocco/angelcare-marketplace
 
 jobs:
@@ -23,7 +23,9 @@ jobs:
       - name: Checkout exact Marketplace source
         uses: actions/checkout@v4
         with:
-          ref: 9387a89ccf7a30732d960de67e0d3dd08b591647
+          ref: c940e7ddaece5fed8b2741ffd543cf186548e8a4
+      - name: Verify Marketplace source route constitution
+        run: node apps/marketplace-web/scripts/release/verify-marketplace-release-constitution.mjs source
 
       - name: Install Nixpacks
         run: curl -sSL https://nixpacks.com/install.sh | bash
@@ -45,6 +47,28 @@ jobs:
             --platform linux/amd64 \
             --label "org.opencontainers.image.revision=${TARGET_SHA}" \
             --label "org.opencontainers.image.source=https://github.com/ANGELCARE-MOROCCO/ANGELCARE-OPS-OS-V.1"
+
+      - name: Verify compiled Marketplace route constitution
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          CID="$(docker create "${IMAGE}:${TARGET_SHA}")"
+
+          cleanup() {
+            docker rm -f "$CID" >/dev/null 2>&1 || true
+            rm -rf /tmp/angelcare-marketplace-next
+          }
+
+          trap cleanup EXIT
+
+          rm -rf /tmp/angelcare-marketplace-next
+          mkdir -p /tmp/angelcare-marketplace-next
+
+          docker cp "$CID:/app/.next/." /tmp/angelcare-marketplace-next/
+
+          NEXT_DIR=/tmp/angelcare-marketplace-next \
+            node apps/marketplace-web/scripts/release/verify-marketplace-release-constitution.mjs compiled
 
       - name: Push exact Marketplace image
         run: docker push "${IMAGE}:${TARGET_SHA}"
