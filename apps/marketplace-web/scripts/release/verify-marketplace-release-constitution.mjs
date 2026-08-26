@@ -226,7 +226,18 @@ function normalizeCompiledKey(key) {
 
   route = route.replace(/\/page$/, '')
 
-  if (route === '') route = '/'
+  const segments = route
+    .split('/')
+    .filter(Boolean)
+    .filter(
+      (segment) =>
+        !(segment.startsWith('(') && segment.endsWith(')')),
+    )
+    .filter((segment) => !segment.startsWith('@'))
+
+  route = segments.length
+    ? `/${segments.join('/')}`
+    : '/'
 
   return route
 }
