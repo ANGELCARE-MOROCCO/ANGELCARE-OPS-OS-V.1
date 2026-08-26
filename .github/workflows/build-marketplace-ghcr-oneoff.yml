@@ -12,7 +12,7 @@ permissions:
   packages: write
 
 env:
-  TARGET_SHA: ccd32907c54be2d1b377e7e06fdfb2ea4f6469b9
+  TARGET_SHA: 9387a89ccf7a30732d960de67e0d3dd08b591647
   IMAGE: ghcr.io/angelcare-morocco/angelcare-marketplace
 
 jobs:
@@ -23,7 +23,7 @@ jobs:
       - name: Checkout exact Marketplace source
         uses: actions/checkout@v4
         with:
-          ref: ccd32907c54be2d1b377e7e06fdfb2ea4f6469b9
+          ref: 9387a89ccf7a30732d960de67e0d3dd08b591647
 
       - name: Install Nixpacks
         run: curl -sSL https://nixpacks.com/install.sh | bash
