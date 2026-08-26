@@ -12,7 +12,7 @@ permissions:
   packages: write
 
 env:
-  TARGET_SHA: 63d9aa882b337194498d0ec6eff969d1596c4457
+  TARGET_SHA: 2df2477529d20c962304090b7fc8beb40068cfa7
   IMAGE: ghcr.io/angelcare-morocco/angelcare-marketplace
 
 jobs:
@@ -23,7 +23,7 @@ jobs:
       - name: Checkout exact Marketplace source
         uses: actions/checkout@v4
         with:
-          ref: 63d9aa882b337194498d0ec6eff969d1596c4457
+          ref: 2df2477529d20c962304090b7fc8beb40068cfa7
       - name: Verify Marketplace source route constitution
         run: node apps/marketplace-web/scripts/release/verify-marketplace-release-constitution.mjs source
 
