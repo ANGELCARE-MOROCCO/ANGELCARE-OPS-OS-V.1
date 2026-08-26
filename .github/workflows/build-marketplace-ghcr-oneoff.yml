@@ -1,3 +1,4 @@
+# manual-build-trigger: 20260826-172146
 name: Build Marketplace GHCR One-Off
 
 on:
