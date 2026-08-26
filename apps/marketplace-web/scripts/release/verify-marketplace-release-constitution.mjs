@@ -208,6 +208,46 @@ function verifySource() {
     }
   }
 
+  // MARKETPLACE_LOCALE_ROOT_FAIL_OPEN_CONSTITUTION
+  const marketplaceLocaleRootFile = path.join(
+    appRoot,
+    'angelcare-marketplace',
+    '[locale]',
+    '[[...slug]]',
+    'page.tsx',
+  )
+
+  if (!fs.existsSync(marketplaceLocaleRootFile)) {
+    console.error('FAIL MARKETPLACE LOCALE ROOT FILE')
+    failures += 1
+  } else {
+    const marketplaceLocaleRootSource = fs.readFileSync(
+      marketplaceLocaleRootFile,
+      'utf8',
+    )
+
+    const continuityAuthorities = [
+      'MARKETPLACE_LOCALE_ROOT_FAIL_OPEN',
+      'MarketplaceIndex',
+      'searchDiscovery',
+    ]
+
+    const missingContinuityAuthorities = continuityAuthorities.filter(
+      (authority) => !marketplaceLocaleRootSource.includes(authority),
+    )
+
+    if (missingContinuityAuthorities.length) {
+      console.error(
+        `FAIL MARKETPLACE ROOT CONTINUITY ${missingContinuityAuthorities.join(',')}`,
+      )
+      failures += 1
+    } else {
+      console.log(
+        'PASS MARKETPLACE ROOT CONTINUITY — valid locale root cannot fail closed on homepage data',
+      )
+    }
+  }
+
   console.log(`SOURCE_ROUTE_PATTERNS=${patterns.length}`)
   console.log(`REQUIRED_ROUTES=${REQUIRED.length}`)
 
