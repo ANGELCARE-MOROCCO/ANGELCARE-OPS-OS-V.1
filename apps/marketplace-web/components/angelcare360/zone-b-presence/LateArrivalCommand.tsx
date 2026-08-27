@@ -1,0 +1,15 @@
+'use client'
+import { useMemo, useState } from 'react'
+import type { Angelcare360AttendanceRecordListRecord } from '@/types/angelcare360/attendance'
+import styles from './PresenceZoneBFrame.module.css'
+import { dateFr, initials } from './presence-ui'
+import { LateArrivalDrawer } from './PresenceCommandSurfaces'
+
+export default function LateArrivalCommand({rows}:{rows:Angelcare360AttendanceRecordListRecord[]}){
+ const [selected,setSelected]=useState<Angelcare360AttendanceRecordListRecord|null>(null)
+ const max=Math.max(1,...rows.map(r=>Number(r.minutes_late||0)))
+ const buckets=useMemo(()=>[{label:'1–10 min',count:rows.filter(r=>(r.minutes_late||0)<=10).length},{label:'11–20 min',count:rows.filter(r=>(r.minutes_late||0)>10&&(r.minutes_late||0)<=20).length},{label:'21–30 min',count:rows.filter(r=>(r.minutes_late||0)>20&&(r.minutes_late||0)<=30).length},{label:'30+ min',count:rows.filter(r=>(r.minutes_late||0)>30).length}], [rows])
+ return <div className={styles.page} data-zone-b-page="late"><section className={styles.crown}><div className={styles.crownTop}><div><h2 className={styles.crownTitle}>Late Arrival Command</h2><p className={styles.crownSub}>Le retard est traité comme un événement horaire mesurable, pas comme un jugement sur l’élève.</p></div><div className={styles.contextPills}><span className={styles.pillAmber}>{rows.length} retard(s)</span></div></div></section>
+ <section className={styles.grid2}><div className={styles.panel}><div className={styles.panelHeader}><div><div className={styles.panelEyebrow}>Timeline</div><h3 className={styles.panelTitle}>Late Arrival Timeline</h3></div></div><div className={styles.list}>{rows.length?rows.slice(0,30).map(r=><button className={styles.listButton} type="button" key={r.id} onClick={()=>setSelected(r)}><span className={styles.avatar}>{initials(r.student_full_name)}</span><span className={styles.rowCopy}><strong className={styles.rowTitle}>{r.student_full_name||'Élève'}</strong><span className={styles.rowMeta}>{r.class_name||'Classe'} · {dateFr(r.session_date)}</span><span className={styles.progress}><span className={styles.progressBar} style={{display:'block',width:`${Math.max(6,Math.min(100,(Number(r.minutes_late||0)/max)*100))}%`}}/></span></span><span className={styles.rowRight}><strong className={styles.rowTime}>{r.minutes_late||0} min</strong></span></button>):<div className={styles.empty}><strong className={styles.emptyTitle}>Aucun retard à traiter</strong><p className={styles.emptyText}>Aucune arrivée tardive n’est enregistrée pour cette vue.</p></div>}</div></div>
+ <div className={styles.panel} data-zone-b-secondary="true"><div className={styles.panelHeader}><div><div className={styles.panelEyebrow}>Distribution</div><h3 className={styles.panelTitle}>Durées observées</h3></div></div><div className={styles.panelPad}>{buckets.map(b=><div key={b.label} className={styles.section} style={{marginBottom:8}}><strong>{b.label}</strong><span>{b.count} événement(s)</span></div>)}</div></div></section><LateArrivalDrawer open={Boolean(selected)} onClose={()=>setSelected(null)} record={selected}/></div>
+}
