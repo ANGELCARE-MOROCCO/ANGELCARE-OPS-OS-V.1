@@ -18,10 +18,12 @@ export async function growthExperienceSnapshot(context: MarketplaceRequestContex
     frontend: frontendSnapshot.metrics,
     localization: {
       totalCandidates: localization.totalCandidates,
-      missing: localization.missing,
-      stale: localization.stale,
-      sensitiveBlockers: localization.sensitiveBlockers,
-      truthfulCoverage: localization.truthfulCoverage,
+      missing: localization.missingEn + localization.missingAr,
+      stale: localization.staleEn + localization.staleAr,
+      sensitiveBlockers: localization.blocked,
+      truthfulCoverage: localization.totalCandidates
+        ? ((localization.enComplete + localization.arComplete) / (localization.totalCandidates * 2)) * 100
+        : 100,
     },
   }
 }

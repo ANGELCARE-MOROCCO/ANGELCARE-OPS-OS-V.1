@@ -14,9 +14,28 @@ const label=(value:string)=>value.replaceAll('_',' ')
 const date=(value:string|null)=>value?new Date(value).toLocaleString('fr-FR'):'Non renseigné'
 
 export function MissionDossier({data,canManage}:{data:MissionDossierData;canManage:boolean}){
- const {request}=useGovernedAction();const[status,setStatus]=useState(data.mission.status);const[notice,setNotice]=useState('');const[busy,setBusy]=useState(false)
+ const requestAction=useGovernedAction();const[status,setStatus]=useState(data.mission.status);const[notice,setNotice]=useState('');const[busy,setBusy]=useState(false)
  const m=data.mission;const available=useMemo(()=>transitions[status]||[],[status]);const openIncidents=data.incidents.filter(x=>!['resolved','closed'].includes(x.status));const criticalFailures=data.checklists.reduce((sum,row)=>sum+Number(row.critical_failures||0),0);const evidenceReady=Boolean(data.brief?.published_at&&data.checks.length>=2&&data.checklists.length&&!criticalFailures&&data.report)
- function transition(next:MissionStatus){request({title:`Faire évoluer ${m.public_reference}`,description:`La mission passera de « ${label(status)} » à « ${label(next)} ». Cette décision est auditée et peut affecter le provider, le payable et la clôture opérationnelle.`,confirmLabel:`Confirmer ${label(next)}`,tone:['cancelled','suspended','incident_open','correction_required'].includes(next)?'danger':'default',reasonRequired:true,onConfirm:async reason=>{setBusy(true);setNotice('');try{const response=await fetch(`/api/angelcare-marketplace/operations/missions/${m.id}/transition`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({nextStatus:next,reason})});const payload=await response.json().catch(()=>({})) as {error?:{message?:string}};if(!response.ok)throw new Error(payload.error?.message||'Transition impossible.');setStatus(next);setNotice(`Mission mise à jour : ${label(next)}.`)}catch(error){setNotice(error instanceof Error?error.message:'Transition impossible.');throw error}finally{setBusy(false)}}})}
+ async function transition(next:MissionStatus){
+  const reason=await requestAction({
+   title:`Faire évoluer ${m.public_reference}`,
+   objectLabel:m.public_reference,
+   currentState:label(status),
+   nextState:label(next),
+   consequence:`La mission passera de « ${label(status)} » à « ${label(next)} ». Cette décision est auditée et peut affecter le provider, le payable et la clôture opérationnelle.`,
+   permission:'marketplace.operations.missions.manage',
+   danger:['cancelled','suspended','incident_open','correction_required'].includes(next),
+   reasonLabel:'Motif de la transition mission',
+  })
+  if(!reason)return
+  setBusy(true);setNotice('')
+  try{
+   const response=await fetch(`/api/angelcare-marketplace/operations/missions/${m.id}/transition`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({nextStatus:next,reason})})
+   const payload=await response.json().catch(()=>({})) as {error?:{message?:string}}
+   if(!response.ok)throw new Error(payload.error?.message||'Transition impossible.')
+   setStatus(next);setNotice(`Mission mise à jour : ${label(next)}.`)
+  }catch(error){setNotice(error instanceof Error?error.message:'Transition impossible.');throw error}finally{setBusy(false)}
+ }
  return <div className={styles.shell}>
   <section className={styles.hero}><div><div className={styles.eyebrow}>MISSION DOSSIER 360</div><h1 className={styles.title}>{m.title}</h1><p className={styles.copy}>{m.public_reference} · {label(status)} · {m.service_type}</p><div className={detailStyles.heroActions}><Link href="/angelcare-marketplace/admin/operations/mission-control">Mission Control</Link>{m.source_id?<Link href={`/angelcare-marketplace/admin/orders/${m.source_id}/command`}>Objet source</Link>:null}</div></div><div className={styles.livePanel}><Signal label="Provider" value={m.assigned_provider_id?'Assigné':'Manquant'}/><Signal label="Evidence readiness" value={evidenceReady?'Ready':'Incomplète'}/><Signal label="Incidents ouverts" value={String(openIncidents.length)}/><Signal label="Prochaine action" value={m.next_action||'À déterminer'}/></div></section>
   <section className={styles.metricGrid}><Metric icon={<Clock3/>} label="Début" value={date(m.scheduled_start)}/><Metric icon={<MapPin/>} label="Zone" value={m.operational_zone||'Non affectée'}/><Metric icon={<UserRoundCheck/>} label="Propositions" value={String(data.proposals.length)}/><Metric icon={<FileCheck2/>} label="Checklists" value={`${data.checklists.length} · ${criticalFailures} échec(s)`}/><Metric icon={<ShieldCheck/>} label="Contrôles" value={String(data.checks.length)}/><Metric icon={<AlertTriangle/>} label="Risque" value={m.risk_level}/></section>

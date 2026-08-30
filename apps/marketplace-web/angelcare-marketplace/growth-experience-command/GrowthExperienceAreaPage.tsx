@@ -1,4 +1,4 @@
-import {requireMarketplacePageContext} from '../auth/context'
+import {hasMarketplacePermission,requireMarketplacePageContext} from '../auth/context'
 import {RealityCompletionPage} from '../reality-completion/admin-page'
 import {LiveExperiencePage} from '../live-experience-command/admin-pages'
 import {LiveGovernancePage} from '../live-experience-command/governance-admin-page'
@@ -30,9 +30,9 @@ export async function GrowthExperienceAreaPage({mode}:{mode:GrowthExperienceMode
   if(mode==='merchandising')return MerchandisingPage({mode:'merchandising'})
   if(mode==='homepage')return HomepageComposerPage({mode:'command'})
   if(mode==='discovery'||mode==='search'){
-    await requireMarketplacePageContext('marketplace.merchandising.view')
+    const context=await requireMarketplacePageContext('marketplace.merchandising.view')
     const [rules,options]=await Promise.all([listSearchRules(),assistedOrderOptions()])
-    return <DiscoveryControl initial={rules} options={options}/>
+    return <DiscoveryControl initial={rules} options={options} canManage={hasMarketplacePermission(context,'marketplace.merchandising.manage')}/>
   }
   if(mode==='conversion'){
     const context=await requireMarketplacePageContext('marketplace.conversion.view')

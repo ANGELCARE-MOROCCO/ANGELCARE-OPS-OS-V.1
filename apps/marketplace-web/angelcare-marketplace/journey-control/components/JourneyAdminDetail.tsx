@@ -13,8 +13,29 @@ import detailStyles from './journey-admin-detail.module.css'
 
 const date=(value:string|null)=>value?new Date(value).toLocaleString('fr-FR'):'Non planifié'
 export function JourneyAdminDetail({journey,canManage}:{journey:MarketplaceJourney;canManage:boolean}){
- const{request}=useGovernedAction();const[status,setStatus]=useState<JourneyStatus>(journey.status);const[busy,setBusy]=useState(false);const[notice,setNotice]=useState('');const openActions=useMemo(()=>journey.actions.filter(x=>['open','in_progress'].includes(x.status)),[journey.actions]);const failedNotifications=journey.notifications.filter(x=>x.status==='failed');const activeRecoveries=journey.recovery_cases.filter(x=>!['resolved','closed'].includes(x.status));
- function apply(){if(status===journey.status)return;request({title:`Faire évoluer ${journey.public_reference}`,description:`Le parcours passera de « ${statusLabels.fr[journey.status]} » à « ${statusLabels.fr[status]} ». Cette transition ajoute un événement visible et une trace d’audit.`,confirmLabel:'Appliquer la transition',tone:['blocked','recovery','cancelled'].includes(status)?'danger':'default',reasonRequired:true,onConfirm:async reason=>{setBusy(true);setNotice('');try{const response=await fetch(`/api/angelcare-marketplace/journeys/admin/${journey.id}`,{method:'PATCH',headers:{'content-type':'application/json'},body:JSON.stringify({status,reason})});const payload=await response.json().catch(()=>({})) as {error?:{message?:string}};if(!response.ok)throw new Error(payload.error?.message||'Transition impossible.');setNotice('Parcours mis à jour et audité.');window.setTimeout(()=>window.location.reload(),450)}finally{setBusy(false)}}})}
+ const requestAction=useGovernedAction();const[status,setStatus]=useState<JourneyStatus>(journey.status);const[busy,setBusy]=useState(false);const[notice,setNotice]=useState('');const openActions=useMemo(()=>journey.actions.filter(x=>['open','in_progress'].includes(x.status)),[journey.actions]);const failedNotifications=journey.notifications.filter(x=>x.status==='failed');const activeRecoveries=journey.recovery_cases.filter(x=>!['resolved','closed'].includes(x.status));
+ async function apply(){
+  if(status===journey.status)return
+  const reason=await requestAction({
+   title:`Faire évoluer ${journey.public_reference}`,
+   objectLabel:journey.public_reference,
+   currentState:statusLabels.fr[journey.status],
+   nextState:statusLabels.fr[status],
+   consequence:`Le parcours passera de « ${statusLabels.fr[journey.status]} » à « ${statusLabels.fr[status]} ». Cette transition ajoute un événement visible et une trace d’audit.`,
+   permission:'marketplace.journeys.manage',
+   danger:['blocked','recovery','cancelled'].includes(status),
+   reasonLabel:'Motif de la transition',
+  })
+  if(!reason)return
+  setBusy(true);setNotice('')
+  try{
+   const response=await fetch(`/api/angelcare-marketplace/journeys/admin/${journey.id}`,{method:'PATCH',headers:{'content-type':'application/json'},body:JSON.stringify({status,reason})})
+   const payload=await response.json().catch(()=>({})) as {error?:{message?:string}}
+   if(!response.ok)throw new Error(payload.error?.message||'Transition impossible.')
+   setNotice('Parcours mis à jour et audité.')
+   window.setTimeout(()=>window.location.reload(),450)
+  }finally{setBusy(false)}
+ }
  return <main className={styles.adminDetailShell}><Link className={styles.backLink} href="/angelcare-marketplace/admin/journeys"><ArrowLeft size={16}/> Journey Command</Link>
   <section className={styles.adminDetailHero}><div><span>{journey.public_reference}</span><h1>{journey.title}</h1><p>{journey.subtitle||`Autorité actuelle : ${journey.current_authority}`}</p><div className={detailStyles.heroMeta}><span>{journey.journey_type.replaceAll('_',' ')}</span><span>Risque {journey.risk_level}</span><span>{journey.territory_id||'Territoire global'}</span></div></div><div><strong>{journey.completion_percent}%</strong><span>{statusLabels.fr[journey.status]}</span></div></section>
   <section className={detailStyles.metricGrid}><Metric icon={<Clock3/>} label="Prochaine échéance" value={date(journey.next_action_due_at)}/><Metric icon={<CheckCircle2/>} label="Actions ouvertes" value={String(openActions.length)}/><Metric icon={<FileCheck2/>} label="Documents" value={String(journey.documents.length)}/><Metric icon={<Bell/>} label="Notifications en échec" value={String(failedNotifications.length)}/><Metric icon={<LifeBuoy/>} label="Recovery active" value={String(activeRecoveries.length)}/></section>

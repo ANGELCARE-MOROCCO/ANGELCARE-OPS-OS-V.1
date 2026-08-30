@@ -126,7 +126,7 @@ export async function uploadMarketplaceGatewayBytes(input: {
   const response = await fetch(session.uploadUrl, {
     method: 'PUT',
     headers: { 'content-type': input.mimeType, 'content-length': String(input.bytes.byteLength) },
-    body: input.bytes,
+    body: Uint8Array.from(input.bytes).buffer,
   })
   const payload = await response.json().catch(() => null) as { ok?: boolean; error?: string } | null
   if (!response.ok || payload?.ok === false) throw new MarketplaceError('INTERNAL_ERROR', payload?.error || 'Le stockage média a refusé le fichier.')
