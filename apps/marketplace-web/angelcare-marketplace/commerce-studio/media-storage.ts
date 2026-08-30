@@ -165,7 +165,20 @@ export async function imageDerivatives(input: {
 export async function marketplaceMediaStorageHealth() {
   const configuration = marketplaceMediaStorageConfiguration()
   const root = gatewayBaseUrl()
-  if (!root) return { ...configuration, reachable: false, healthy: false, error: 'MARKETPLACE_MEDIA_GATEWAY_PUBLIC_URL absent' }
+  if (!root) return {
+    ...configuration,
+    reachable: false,
+    healthy: false,
+    rootLabel: null,
+    freeBytes: null,
+    totalBytes: null,
+    usedBytes: null,
+    minFreeBytes: null,
+    temporaryFiles: null,
+    warnings: [],
+    serverTime: null,
+    error: 'MARKETPLACE_MEDIA_GATEWAY_PUBLIC_URL absent',
+  }
   try {
     const response = await fetch(`${root}/health`, { cache: 'no-store' })
     const payload = await response.json().catch(() => null) as { ok?: boolean; data?: Record<string, unknown>; error?: string } | null
@@ -185,6 +198,19 @@ export async function marketplaceMediaStorageHealth() {
       error: response.ok ? null : payload?.error || `HTTP ${response.status}`,
     }
   } catch (error) {
-    return { ...configuration, reachable: false, healthy: false, error: error instanceof Error ? error.message : String(error) }
+    return {
+      ...configuration,
+      reachable: false,
+      healthy: false,
+      rootLabel: null,
+      freeBytes: null,
+      totalBytes: null,
+      usedBytes: null,
+      minFreeBytes: null,
+      temporaryFiles: null,
+      warnings: [],
+      serverTime: null,
+      error: error instanceof Error ? error.message : String(error),
+    }
   }
 }
