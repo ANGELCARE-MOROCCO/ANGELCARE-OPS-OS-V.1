@@ -1,0 +1,112 @@
+# manual-build-trigger: 20260826-172146
+name: Build Marketplace GHCR One-Off
+
+on:
+  push:
+    branches:
+      - upgrade/next-angelcare-upgrade
+    paths:
+      - ".github/workflows/build-marketplace-ghcr-oneoff.yml"
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  TARGET_SHA: 4b31f9664f06a40cacd5c18bf7d699b2623eb17a
+  IMAGE: ghcr.io/angelcare-morocco/angelcare-marketplace
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout exact Marketplace source
+        uses: actions/checkout@v4
+        with:
+          ref: 4b31f9664f06a40cacd5c18bf7d699b2623eb17a
+      - name: Verify Marketplace source route constitution
+        run: node apps/marketplace-web/scripts/release/verify-marketplace-release-constitution.mjs source
+
+      - name: Install Nixpacks
+        run: curl -sSL https://nixpacks.com/install.sh | bash
+
+      - name: Show Nixpacks build plan
+        run: nixpacks plan apps/marketplace-web
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build exact Marketplace image
+        run: |
+          nixpacks build apps/marketplace-web \
+            --name "${IMAGE}:${TARGET_SHA}" \
+            --platform linux/amd64 \
+            --label "org.opencontainers.image.revision=${TARGET_SHA}" \
+            --label "org.opencontainers.image.source=https://github.com/ANGELCARE-MOROCCO/ANGELCARE-OPS-OS-V.1"
+
+      - name: Verify compiled Marketplace route constitution
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          CID="$(docker create "${IMAGE}:${TARGET_SHA}")"
+          ARCHIVE="/tmp/angelcare-marketplace-candidate.tar"
+          EXTRACT="/tmp/angelcare-marketplace-manifests"
+          LIST="/tmp/angelcare-marketplace-manifests.txt"
+
+          cleanup() {
+            docker rm -f "$CID" >/dev/null 2>&1 || true
+            rm -f "$ARCHIVE" "$LIST"
+            rm -rf "$EXTRACT"
+          }
+
+          trap cleanup EXIT
+
+          rm -f "$ARCHIVE" "$LIST"
+          rm -rf "$EXTRACT"
+          mkdir -p "$EXTRACT"
+
+          echo "=== EXPORT CANDIDATE FILESYSTEM ==="
+          docker export "$CID" > "$ARCHIVE"
+
+          echo "=== DISCOVER APP PATH MANIFESTS ==="
+          tar -tf "$ARCHIVE" \
+            | grep -E '(^|/)app-paths-manifest\.json$' \
+            | sort -u \
+            > "$LIST"
+
+          MANIFEST_COUNT="$(wc -l < "$LIST" | tr -d ' ')"
+
+          echo "APP_PATH_MANIFESTS_IN_IMAGE=$MANIFEST_COUNT"
+
+          if [ "$MANIFEST_COUNT" -lt 1 ]; then
+            echo "STOP — no app-paths-manifest.json found in candidate image."
+            exit 1
+          fi
+
+          sed -n '1,120p' "$LIST"
+
+          echo "=== EXTRACT MANIFESTS ONLY ==="
+
+          while IFS= read -r MANIFEST; do
+            [ -n "$MANIFEST" ] || continue
+
+            tar -xf "$ARCHIVE" \
+              -C "$EXTRACT" \
+              "$MANIFEST"
+          done < "$LIST"
+
+          echo "=== VERIFY COMPILED ROUTE CONSTITUTION ==="
+
+          NEXT_DIR="$EXTRACT" \
+            node apps/marketplace-web/scripts/release/verify-marketplace-release-constitution.mjs compiled
+
+      - name: Push exact Marketplace image
+        run: docker push "${IMAGE}:${TARGET_SHA}"
+
+# manual-build-trigger: 20260827-133715
