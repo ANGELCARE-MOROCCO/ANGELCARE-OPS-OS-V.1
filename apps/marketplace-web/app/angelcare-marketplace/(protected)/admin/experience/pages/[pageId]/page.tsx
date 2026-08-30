@@ -1,10 +1,30 @@
-import { requireMarketplacePageContext } from '@/angelcare-marketplace/auth/context'
-import { PageHeader, ButtonLink, StatusChip } from '@/angelcare-marketplace/design-system/ui'
+import { hasMarketplacePermission, requireMarketplacePageContext } from '@/angelcare-marketplace/auth/context'
+import { PageDossierClient } from '@/angelcare-marketplace/experience-builder/components/PageDossierClient'
 import { getPageDetail } from '@/angelcare-marketplace/experience-builder/repository'
 
 export default async function Page({ params }: { params: Promise<{ pageId: string }> }) {
-  await requireMarketplacePageContext('marketplace.cms.view')
+  const context = await requireMarketplacePageContext('marketplace.cms.view')
   const { pageId } = await params
   const bundle = await getPageDetail(pageId)
-  return <><PageHeader eyebrow="PAGE DOSSIER" title={bundle.page.title} description={`/${bundle.page.locale}/${bundle.page.slug} · version ${bundle.page.current_version}`} actions={<ButtonLink href={`/angelcare-marketplace/admin/experience/pages/${pageId}/builder`}>Ouvrir le builder</ButtonLink>} /><section style={{background:'#fff',border:'1px solid #dbe4ef',borderRadius:22,padding:24}}><StatusChip status={bundle.page.status}/><p>{bundle.page.description || 'Aucune description.'}</p><p>{bundle.blocks.length} blocs structurés · {bundle.versions.length} versions conservées.</p></section></>
+  return <PageDossierClient
+    initialPage={bundle.page}
+    blocks={bundle.blocks}
+    versions={bundle.versions}
+    permissions={{
+      edit: hasMarketplacePermission(context, 'marketplace.cms.edit'),
+      blocks: hasMarketplacePermission(context, 'marketplace.cms.blocks.manage'),
+      preview: hasMarketplacePermission(context, 'marketplace.cms.preview'),
+      rollback: hasMarketplacePermission(context, 'marketplace.cms.rollback'),
+      transitions: {
+        draft: hasMarketplacePermission(context, 'marketplace.cms.edit'),
+        submitted: hasMarketplacePermission(context, 'marketplace.cms.submit'),
+        in_review: hasMarketplacePermission(context, 'marketplace.cms.review'),
+        approved: hasMarketplacePermission(context, 'marketplace.cms.approve'),
+        scheduled: hasMarketplacePermission(context, 'marketplace.cms.schedule'),
+        published: hasMarketplacePermission(context, 'marketplace.cms.publish'),
+        retired: hasMarketplacePermission(context, 'marketplace.cms.publish'),
+        archived: hasMarketplacePermission(context, 'marketplace.cms.archive'),
+      },
+    }}
+  />
 }

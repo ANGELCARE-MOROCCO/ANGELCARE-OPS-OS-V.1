@@ -65,7 +65,9 @@ check('analytics event persistence', /homepage_interactions/.test(source) && /ho
 check('Backoffice CRUD handler', /request\.method === 'POST'/.test(source) && /request\.method === 'PATCH'/.test(source) && /request\.method === 'DELETE'/.test(source))
 check('Backoffice server permission', /requireMarketplaceApiContext\('marketplace\.cms\.pages\.manage'\)/.test(source) && /requireMarketplacePageContext\('marketplace\.cms\.pages\.manage'\)/.test(source))
 check('Backoffice audit writes', /writeMarketplaceAudit/.test(source) && /homepage\.\$\{kind\}/.test(source))
-check('Homepage navigation mounted', /Homepage Flagship/.test(nav) && /admin\/experience\/homepage/.test(nav))
+// V4 canonical contract: Boutique owns the storefront command center; the
+// technical Experience routes remain specialist destinations beneath it.
+check('Boutique navigation mounted', /label:'Boutique'/.test(nav) && /admin\/boutique'/.test(nav))
 check('no obsolete French route links in marketplace shell', !/\/etablissements|\/entreprises|\/confiance/.test(shell))
 
 const sqlTables = ['catalog_categories','catalog_item_categories','catalog_item_media','homepage_versions','homepage_campaigns','homepage_campaign_assets','homepage_sections','homepage_collections','homepage_collection_items','homepage_placements','homepage_audience_rules','homepage_territory_rules','homepage_interactions','homepage_visitor_selections']

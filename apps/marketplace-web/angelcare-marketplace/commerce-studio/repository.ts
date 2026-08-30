@@ -786,3 +786,64 @@ export async function registerUploadedMedia(input: {
   await versionRecord({ resource: 'media', row: data as Row, action: 'uploaded', actorId: input.context.actor.id })
   return mapMedia(data as Row)
 }
+
+export async function registerPendingGatewayMedia(input: {
+  id: string
+  fileName: string
+  mimeType: string
+  sizeBytes: number
+  folderId: string | null
+  altTextFr: string
+  publicUrl: string
+  context: MarketplaceRequestContext
+}): Promise<MediaAsset> {
+  const db = await createServiceClient()
+  const { data, error } = await db.from('angelcare_marketplace_media_assets').insert({
+    id: input.id,
+    asset_key: `media-${input.id}`,
+    folder_id: input.folderId,
+    file_name: input.fileName,
+    media_type: input.mimeType.startsWith('video/') ? 'video' : input.mimeType === 'application/pdf' ? 'document' : 'image',
+    mime_type: input.mimeType,
+    size_bytes: input.sizeBytes,
+    storage_bucket: 'marketplace-windows-media',
+    storage_path: `assets/${input.id}`,
+    public_url: input.publicUrl,
+    desktop_url: input.publicUrl,
+    tablet_url: input.publicUrl,
+    mobile_url: input.publicUrl,
+    square_url: input.publicUrl,
+    alt_text_fr: input.altTextFr,
+    rights_status: 'owned',
+    optimization_status: 'processing',
+    metadata: { storage_backend: 'windows_self_hosted', upload_state: 'awaiting_binary' },
+    status: 'processing',
+    created_by: input.context.actor.id,
+    updated_by: input.context.actor.id,
+  }).select('*').single()
+  if (error || !data) throw fail('préparer le média Marketplace', error)
+  await versionRecord({ resource: 'media', row: data as Row, action: 'upload_session_created', actorId: input.context.actor.id })
+  return mapMedia(data as Row)
+}
+
+export async function markGatewayMediaFailed(input: { id: string; message: string; context: MarketplaceRequestContext }): Promise<void> {
+  const db = await createServiceClient()
+  await db.from('angelcare_marketplace_media_assets').update({
+    status: 'failed',
+    optimization_status: 'failed',
+    metadata: { storage_backend: 'windows_self_hosted', upload_state: 'failed', failure_reason: input.message.slice(0, 500) },
+    updated_by: input.context.actor.id,
+    updated_at: new Date().toISOString(),
+  }).eq('id', input.id).eq('status', 'processing')
+}
+
+export async function permanentlyDeleteMediaMetadata(input: { id: string; context: MarketplaceRequestContext }): Promise<MediaAsset> {
+  const db = await createServiceClient()
+  const { data: current, error: readError } = await db.from('angelcare_marketplace_media_assets').select('*').eq('id', input.id).maybeSingle()
+  if (readError) throw fail('charger le média à supprimer', readError)
+  if (!current) throw new MarketplaceError('NOT_FOUND', 'Média introuvable.')
+  const { data, error } = await db.from('angelcare_marketplace_media_assets').delete().eq('id', input.id).select('*').single()
+  if (error || !data) throw fail('supprimer définitivement le média', error)
+  await versionRecord({ resource: 'media', row: current as Row, action: 'permanently_deleted', actorId: input.context.actor.id })
+  return mapMedia(data as Row)
+}

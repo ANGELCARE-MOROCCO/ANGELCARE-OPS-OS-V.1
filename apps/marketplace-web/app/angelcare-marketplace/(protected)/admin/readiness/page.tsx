@@ -1,5 +1,5 @@
 import type { MarketplaceReadinessCheck } from '@/angelcare-marketplace/domain/types'
-import { requireMarketplacePageContext } from '@/angelcare-marketplace/auth/context'
+import { hasMarketplacePermission, requireMarketplacePageContext } from '@/angelcare-marketplace/auth/context'
 import { FoundationUnavailable } from '@/angelcare-marketplace/components/FoundationUnavailable'
 import { ReadinessClient } from '@/angelcare-marketplace/features/admin/ReadinessClient'
 import { PageHeader } from '@/angelcare-marketplace/design-system/ui'
@@ -23,8 +23,8 @@ export default async function MarketplaceReadinessPage() {
         ? (
           <ReadinessClient
             initialChecks={checks}
-            canUpdate={context.permissions.includes('marketplace.readiness.update')}
-            canSignOff={context.permissions.includes('marketplace.readiness.sign_off')}
+            canUpdate={hasMarketplacePermission(context,'marketplace.readiness.update')}
+            canSignOff={hasMarketplacePermission(context,'marketplace.readiness.sign_off')}
           />
         )
         : <FoundationUnavailable />}

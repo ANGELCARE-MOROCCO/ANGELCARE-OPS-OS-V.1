@@ -40,6 +40,9 @@ export async function networkCapacitySnapshot(context:MarketplaceRequestContext)
  const now=new Date(),nowIso=now.toISOString(),fourHours=new Date(now.getTime()+4*3600000).toISOString(),todayEnd=new Date(now);todayEnd.setHours(23,59,59,999)
  const providerQ=scopeQuery(db.from('angelcare_marketplace_provider_profiles').select('*').order('updated_at',{ascending:false}).limit(1800),context)
  const missionQ=scopeQuery(db.from('angelcare_marketplace_operations_missions').select('*').order('updated_at',{ascending:false}).limit(3000),context)
+ let partnerQ=db.from('angelcare_marketplace_partner_tenants').select('*').neq('status','archived').order('updated_at',{ascending:false}).limit(1200)
+ if(context.tenantId)partnerQ=partnerQ.eq('id',context.tenantId)
+ else if(context.territoryId)partnerQ=partnerQ.eq('territory_id',context.territoryId)
  const [providersRes,eligRes,rulesRes,exceptionsRes,qualRes,assignRes,missionsRes,proposalsRes,docsRes,certsRes,perfRes,incidentsRes,territoriesRes,suppliersRes,vendorsRes,vContractsRes,vOrdersRes,vQualityRes,vPerfRes,partnersRes]=await Promise.all([
   providerQ,
   scopeQuery(db.from('angelcare_marketplace_provider_operational_eligibility').select('*').order('calculated_at',{ascending:false}).limit(3500),context),
@@ -60,7 +63,7 @@ export async function networkCapacitySnapshot(context:MarketplaceRequestContext)
   scopeQuery(db.from('angelcare_marketplace_vendor_orders').select('*').order('updated_at',{ascending:false}).limit(2500),context),
   db.from('angelcare_marketplace_vendor_quality_reviews').select('*').limit(2500),
   db.from('angelcare_marketplace_vendor_performance_events').select('*').gte('created_at',new Date(now.getTime()-120*86400000).toISOString()).limit(3000),
-  scopeQuery(db.from('angelcare_marketplace_partner_tenants').select('*').neq('status','archived').order('updated_at',{ascending:false}).limit(1200),context),
+  partnerQ,
  ])
  for(const r of [providersRes,eligRes,rulesRes,exceptionsRes,qualRes,assignRes,missionsRes,proposalsRes,docsRes,certsRes,perfRes,incidentsRes,territoriesRes,suppliersRes,vendorsRes,vContractsRes,vOrdersRes,vQualityRes,vPerfRes,partnersRes]){
   if(r.error)throw r.error

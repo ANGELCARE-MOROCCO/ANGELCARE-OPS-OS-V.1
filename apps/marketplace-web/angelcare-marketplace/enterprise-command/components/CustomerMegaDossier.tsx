@@ -2,20 +2,40 @@
 
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
-import { Archive, BadgeDollarSign, CalendarDays, Download, Expand, ExternalLink, FileText, MessageSquareText, Minimize2, ReceiptText, RotateCcw, ShoppingBag, WalletCards, X } from 'lucide-react'
+import { Archive, CalendarDays, Download, Expand, ExternalLink, FileText, MessageSquareText, Minimize2, ReceiptText, RotateCcw, ShoppingBag, WalletCards, X } from 'lucide-react'
 import type { CustomerMegaDossier, DocumentTemplateKey, EnterpriseTimelineEvent } from '../types'
+import { READ_ONLY_CUSTOMER_PERMISSIONS, type CustomerDossierPermissions } from '../customer-permissions'
 import styles from '../enterprise-command.module.css'
 import { CustomerInlineOperations } from './CustomerInlineOperations'
 import { OrderMegaCommandOverlay } from './OrderMegaCommandOverlay'
 import { PaymentMegaCommandOverlay } from './PaymentMegaCommandOverlay'
+import { CustomerCrmActivityPanel } from './CustomerCrmActivityPanel'
 
 type Envelope<T> = { data: T }
 const txt = (record: Record<string, unknown> | null | undefined, key: string) => String(record?.[key] ?? '')
 const money = (value: unknown) => `${Number(value || 0).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} Dh`
 
-export function CustomerMegaDossierOverlay({ customerId, onClose, onMinimize }: { customerId: string; onClose: () => void; onMinimize?: () => void }) {
-  const [data, setData] = useState<CustomerMegaDossier | null>(null)
-  const [tab, setTab] = useState('360')
+export type CustomerDossierTab = '360' | 'Opérer' | 'Famille' | 'Portefeuille' | 'Commerce' | 'Finance' | 'CRM' | 'Expérience' | 'Activité' | 'Documents'
+
+export function CustomerMegaDossierOverlay({
+  customerId,
+  onClose,
+  onMinimize,
+  embedded = false,
+  initialTab = '360',
+  initialData = null,
+  permissions = READ_ONLY_CUSTOMER_PERMISSIONS,
+}: {
+  customerId: string
+  onClose?: () => void
+  onMinimize?: () => void
+  embedded?: boolean
+  initialTab?: CustomerDossierTab
+  initialData?: CustomerMegaDossier | null
+  permissions?: CustomerDossierPermissions
+}) {
+  const [data, setData] = useState<CustomerMegaDossier | null>(initialData)
+  const [tab, setTab] = useState<CustomerDossierTab>(initialTab)
   const [error, setError] = useState('')
   const [creditAmount, setCreditAmount] = useState('')
   const [creditDirection, setCreditDirection] = useState('credit')
@@ -25,6 +45,9 @@ export function CustomerMegaDossierOverlay({ customerId, onClose, onMinimize }: 
   const [fullscreen, setFullscreen] = useState(false)
   const [nestedOrderId, setNestedOrderId] = useState<string | null>(null)
   const [nestedPaymentId, setNestedPaymentId] = useState<string | null>(null)
+  const [pendingCustomerStatus, setPendingCustomerStatus] = useState<'active' | 'closed' | null>(null)
+  const [walletReviewOpen, setWalletReviewOpen] = useState(false)
+  const [actionBusy, setActionBusy] = useState(false)
 
   async function reload() {
     const response = await fetch(`/api/angelcare-marketplace/admin/enterprise-command/customers/${customerId}`, { cache: 'no-store' })
@@ -33,9 +56,28 @@ export function CustomerMegaDossierOverlay({ customerId, onClose, onMinimize }: 
     else setError(payload.error?.message || 'Dossier indisponible.')
   }
 
-  useEffect(() => { void reload() }, [customerId])
+  useEffect(() => {
+    if (initialData) return
+    let active = true
+    void fetch(`/api/angelcare-marketplace/admin/enterprise-command/customers/${customerId}`, { cache: 'no-store' })
+      .then(async (response) => ({ response, payload: await response.json() as Envelope<CustomerMegaDossier> & { error?: { message?: string } } }))
+      .then(({ response, payload }) => {
+        if (!active) return
+        if (response.ok && 'data' in payload) { setData(payload.data); setError('') }
+        else setError(payload.error?.message || 'Dossier indisponible.')
+      })
+      .catch(() => { if (active) setError('Dossier indisponible.') })
+    return () => { active = false }
+  }, [customerId, initialData])
 
-  const tabs = ['360', 'Opérer', 'Famille', 'Commerce', 'Finance', 'CRM', 'Expérience', 'Activité', 'Documents']
+  const tabs: CustomerDossierTab[] = ['360', 'Opérer', 'Famille', 'Portefeuille', 'Finance', 'CRM', 'Expérience', 'Activité', 'Documents']
+  const canonicalRoutes: Partial<Record<CustomerDossierTab, string>> = {
+    '360': `/angelcare-marketplace/admin/customers/${customerId}`,
+    Famille: `/angelcare-marketplace/admin/customers/${customerId}/family`,
+    Portefeuille: `/angelcare-marketplace/admin/customers/${customerId}/commercial`,
+    Finance: `/angelcare-marketplace/admin/customers/${customerId}/payments`,
+    Activité: `/angelcare-marketplace/admin/customers/${customerId}/activity`,
+  }
   const customer = data?.customer || {}
   const wallet = Number(data?.walletAccount?.available_balance || data?.walletAccount?.balance || 0)
 
@@ -52,18 +94,21 @@ export function CustomerMegaDossierOverlay({ customerId, onClose, onMinimize }: 
   }
 
   async function adjustCredit() {
-    if (!data?.walletAccount?.id || !creditAmount) return
+    if (!permissions.approveFinanceException || !data?.walletAccount?.id || !creditAmount || !creditReason.trim()) return
+    setActionBusy(true)
     setNotice('')
-    const response = await fetch(`/api/angelcare-marketplace/admin/wallet/accounts/${String(data.walletAccount.id)}/adjustment`, {
-      method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ amount: Number(creditAmount), direction: creditDirection, bucketKind: 'goodwill', reason: creditReason, idempotencyKey: crypto.randomUUID() }),
-    })
-    if (response.ok) { setNotice('AngelCare Credit ajusté et journalisé.'); setCreditAmount(''); await reload(); return }
-    const payload = await response.json().catch(() => ({ error: { message: 'Ajustement impossible.' } })) as { error?: { message?: string } }
-    setNotice(payload.error?.message || 'Ajustement impossible.')
+    try {
+      const response = await fetch(`/api/angelcare-marketplace/admin/wallet/accounts/${String(data.walletAccount.id)}/adjustment`, {
+        method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ amount: Number(creditAmount), direction: creditDirection, bucketKind: 'goodwill', reason: creditReason, idempotencyKey: crypto.randomUUID() }),
+      })
+      if (response.ok) { setNotice('AngelCare Credit ajusté et journalisé.'); setCreditAmount(''); setWalletReviewOpen(false); await reload(); return }
+      const payload = await response.json().catch(() => ({ error: { message: 'Ajustement impossible.' } })) as { error?: { message?: string } }
+      setNotice(payload.error?.message || 'Ajustement impossible.')
+    } finally { setActionBusy(false) }
   }
 
   async function addNote() {
-    if (!note.trim()) return
+    if (!permissions.commentOnCustomer || !note.trim()) return
     const response = await fetch(`/api/angelcare-marketplace/backoffice/objects/customer_account/${customerId}`, {
       method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ body: note, visibility: 'internal' }),
     })
@@ -72,14 +117,18 @@ export function CustomerMegaDossierOverlay({ customerId, onClose, onMinimize }: 
   }
 
   async function transitionCustomer(status: 'active' | 'closed') {
+    if (!permissions.manageCustomer) return
+    setActionBusy(true)
     setNotice('')
-    const response = await fetch(`/api/angelcare-marketplace/admin/customers/${customerId}`, { method: 'PATCH', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ status }) })
-    const payload = await response.json().catch(() => null) as { error?: { message?: string } } | null
-    if (!response.ok) { setNotice(payload?.error?.message || 'Transition client impossible.'); return }
-    setNotice(status === 'closed' ? 'Relation client archivée sans effacer son historique.' : 'Relation client restaurée.'); await reload()
+    try {
+      const response = await fetch(`/api/angelcare-marketplace/admin/customers/${customerId}`, { method: 'PATCH', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ status }) })
+      const payload = await response.json().catch(() => null) as { error?: { message?: string } } | null
+      if (!response.ok) { setNotice(payload?.error?.message || 'Transition client impossible.'); return }
+      setNotice(status === 'closed' ? 'Relation client archivée sans effacer son historique.' : 'Relation client restaurée.'); setPendingCustomerStatus(null); await reload()
+    } finally { setActionBusy(false) }
   }
 
-  return <div className={styles.overlay}>
+  return <div className={embedded ? styles.embeddedDossierShell : styles.overlay}>
     <section className={`${styles.dossier} ${styles.customerRelationshipDossier} ${fullscreen ? styles.dossierFullscreen : ''}`} aria-label="Mega dossier client">
       <header className={styles.dossierHeader}>
         <div className={styles.panelTitle}>
@@ -90,15 +139,15 @@ export function CustomerMegaDossierOverlay({ customerId, onClose, onMinimize }: 
           </div>
           <div className={styles.toolbar}>
             {data ? <>
-              <Link className={styles.button} href={`/angelcare-marketplace/admin/orders/new?customer=${customerId}`}><ShoppingBag size={14} />Créer commande</Link>
-              <Link className={styles.buttonSecondary} href={`/angelcare-marketplace/admin/bookings?customer=${customerId}`}><CalendarDays size={14} />Booking</Link>
-              <button className={styles.buttonSecondary} onClick={() => exportPdf('customer_dossier')}><Download size={14} />PDF</button>
-              {txt(customer,'status')==='closed' ? <button className={styles.buttonSecondary} onClick={() => void transitionCustomer('active')}><RotateCcw size={14}/>Restaurer</button> : <button className={styles.buttonSecondary} onClick={() => void transitionCustomer('closed')}><Archive size={14}/>Archiver</button>}
+              {permissions.createOrder ? <Link className={styles.button} href={`/angelcare-marketplace/admin/orders/new?customer=${customerId}`}><ShoppingBag size={14} />Créer commande</Link> : <button className={styles.button} disabled title="Permission marketplace.operations.missions.manage requise"><ShoppingBag size={14}/>Créer commande</button>}
+              {permissions.createBooking ? <Link className={styles.buttonSecondary} href={`/angelcare-marketplace/admin/bookings?customer=${customerId}`}><CalendarDays size={14} />Booking</Link> : <button className={styles.buttonSecondary} disabled title="Permission marketplace.operations.missions.create requise"><CalendarDays size={14}/>Booking</button>}
+              <button className={styles.buttonSecondary} disabled={!permissions.exportCustomer} title={!permissions.exportCustomer ? 'Permission marketplace.admin.access requise' : undefined} onClick={() => void exportPdf('customer_dossier')}><Download size={14} />PDF</button>
+              {txt(customer,'status')==='closed' ? <button className={styles.buttonSecondary} disabled={!permissions.manageCustomer} title={!permissions.manageCustomer ? 'Permission marketplace.admin.access requise' : undefined} onClick={() => setPendingCustomerStatus('active')}><RotateCcw size={14}/>Restaurer</button> : <button className={styles.buttonSecondary} disabled={!permissions.manageCustomer} title={!permissions.manageCustomer ? 'Permission marketplace.admin.access requise' : undefined} onClick={() => setPendingCustomerStatus('closed')}><Archive size={14}/>Archiver</button>}
               {onMinimize ? <button className={styles.buttonSecondary} onClick={onMinimize} title="Minimiser dans le Relationship Dock"><Minimize2 size={14}/></button> : null}
               <button className={styles.buttonSecondary} onClick={() => setFullscreen((value) => !value)} title={fullscreen ? 'Réduire' : 'Plein écran'}>{fullscreen ? <Minimize2 size={14}/> : <Expand size={14}/>}</button>
-              <Link className={styles.buttonSecondary} href={`/angelcare-marketplace/admin/customers/${customerId}/command`}><ExternalLink size={14} /></Link>
+              {!embedded ? <Link className={styles.buttonSecondary} href={`/angelcare-marketplace/admin/customers/${customerId}`}><ExternalLink size={14} /></Link> : null}
             </> : null}
-            <button className={styles.buttonSecondary} onClick={onClose}><X size={14} /></button>
+            {!embedded && onClose ? <button className={styles.buttonSecondary} onClick={onClose} aria-label="Fermer le dossier client"><X size={14} /></button> : null}
           </div>
         </div>
         {data ? <div className={styles.metricGrid}>
@@ -110,7 +159,9 @@ export function CustomerMegaDossierOverlay({ customerId, onClose, onMinimize }: 
       </header>
 
       <div style={{ padding: '10px 24px', background: '#fff', borderBottom: '1px solid #dde5ed' }}>
-        <div className={styles.tabs}>{tabs.map((name) => <button key={name} className={`${styles.tab} ${tab === name ? styles.tabActive : ''}`} onClick={() => setTab(name)}>{name}</button>)}</div>
+        <div className={styles.tabs}>{tabs.map((name) => embedded && canonicalRoutes[name]
+          ? <Link key={name} className={`${styles.tab} ${tab === name ? styles.tabActive : ''}`} href={canonicalRoutes[name]!} aria-current={tab === name ? 'page' : undefined}>{name}</Link>
+          : <button type="button" key={name} className={`${styles.tab} ${tab === name ? styles.tabActive : ''}`} onClick={() => setTab(name)}>{name}</button>)}</div>
       </div>
 
       <main className={styles.dossierBody}>
@@ -148,13 +199,28 @@ export function CustomerMegaDossierOverlay({ customerId, onClose, onMinimize }: 
             </div>
           </div> : null}
 
-          {tab === 'Opérer' ? <CustomerInlineOperations data={data} onReload={reload} /> : null}
+          {tab === 'Opérer' ? <CustomerInlineOperations data={data} onReload={reload} permissions={permissions} /> : null}
 
-          {tab === 'Famille' ? <div className={styles.grid2}>
-            <RecordList title="Gardiens" data={data.guardians} />
-            <RecordList title="Enfants" data={data.children} />
-            <RecordList title="Adresses" data={data.addresses} />
-            <div className={styles.panel}><h3>Actions famille</h3><p className={styles.muted}>Le dossier canonique famille reste éditable depuis Customer Command; ce Mega Dossier centralise immédiatement son contexte.</p><Link className={styles.button} href={`/angelcare-marketplace/admin/customers?customer=${customerId}`}>Éditer identité / famille</Link></div>
+          {tab === 'Famille' ? <div className={styles.command}>
+            <div className={styles.grid2}>
+              <RecordList title="Gardiens" data={data.guardians} />
+              <RecordList title="Enfants / bénéficiaires" data={data.children} />
+              <RecordList title="Adresses" data={data.addresses} />
+              <div className={styles.panel}><h3>Continuité famille</h3><p className={styles.muted}>Les relations, profils et adresses sont opérés ici avec les mêmes autorités que le dossier famille historique.</p><Link className={styles.buttonSecondary} href={`/angelcare-marketplace/admin/customers/${customerId}`}>Revenir à la vue 360</Link></div>
+            </div>
+            <CustomerInlineOperations data={data} onReload={reload} permissions={permissions} initialSection="family" showIdentity={false} showSectionTabs={false} />
+          </div> : null}
+
+          {tab === 'Portefeuille' ? <div className={styles.command}>
+            <div className={styles.grid2}>
+              <RecordList title="Commandes" data={data.orders} kind="order" onOpen={(record) => setNestedOrderId(txt(record, 'id'))} />
+              <RecordList title="Bookings" data={data.bookings} kind="booking" />
+              <RecordList title="Abonnements" data={data.subscriptions} kind="subscription" />
+              <RecordList title="Opportunités" data={data.crmOpportunities} kind="opportunity" />
+              <RecordList title="Devis" data={data.crmQuotes} kind="quote" />
+              <RecordList title="Demandes" data={data.inquiries} kind="inquiry" />
+            </div>
+            <CustomerInlineOperations data={data} onReload={reload} permissions={permissions} initialSection="crm" showIdentity={false} showSectionTabs={false} />
           </div> : null}
 
           {tab === 'Commerce' ? <div className={styles.grid2}>
@@ -174,7 +240,7 @@ export function CustomerMegaDossierOverlay({ customerId, onClose, onMinimize }: 
                   <F label="Montant AC"><input className={styles.input} type="number" min="0.01" step="0.01" value={creditAmount} onChange={(event) => setCreditAmount(event.target.value)} /></F>
                   <F label="Motif"><select className={styles.select} value={creditReason} onChange={(event) => setCreditReason(event.target.value)}><option>Geste commercial documenté</option><option>Recovery service</option><option>Compensation expérience client</option><option>Correction financière validée</option><option>Programme fidélité</option></select></F>
                 </div>
-                <div className={styles.rowActions} style={{ marginTop: 12 }}><button className={styles.button} onClick={adjustCredit}>Appliquer écriture Credit</button><button className={styles.buttonSecondary} onClick={() => exportPdf('wallet_statement')}><ReceiptText size={14} />Relevé Credit PDF</button></div>
+                <div className={styles.rowActions} style={{ marginTop: 12 }}><button className={styles.button} disabled={!permissions.approveFinanceException || !creditAmount || Number(creditAmount) <= 0} title={!permissions.approveFinanceException ? 'Permission marketplace.finance.exceptions.approve requise' : undefined} onClick={() => setWalletReviewOpen(true)}>Revoir l’écriture Credit</button><button className={styles.buttonSecondary} disabled={!permissions.exportCustomer} onClick={() => void exportPdf('wallet_statement')}><ReceiptText size={14} />Relevé Credit PDF</button></div>
               </> : <p className={styles.muted}>Aucun Wallet créé pour ce client.</p>}
               {notice ? <div className={styles.notice} style={{ marginTop: 10 }}>{notice}</div> : null}
             </div>
@@ -192,26 +258,28 @@ export function CustomerMegaDossierOverlay({ customerId, onClose, onMinimize }: 
             <RecordList title="Demandes" data={data.inquiries} kind="inquiry" />
             <RecordList title="Support" data={data.supportTickets} />
             <div className={styles.panel}><div className={styles.panelTitle}><h3>Actions relation client</h3><MessageSquareText size={16} /></div><div className={styles.rowActions}><Link className={styles.button} href={`/angelcare-marketplace/admin/commercial?customer=${customerId}`}>Ouvrir CRM</Link><Link className={styles.buttonSecondary} href={`/angelcare-marketplace/admin/public-inquiries?customer=${customerId}`}>Inquiries</Link></div></div>
+            <CustomerCrmActivityPanel customerId={customerId} canManageTasks={permissions.manageCrmTasks} canLogCommunications={permissions.logCrmCommunications}/>
           </div> : null}
 
           {tab === 'Expérience' ? <div className={styles.grid2}>
             <RecordList title="Support & customer care" data={data.supportTickets} />
             <RecordList title="Demandes famille" data={data.familyRequests} />
             <RecordList title="Inquiries & signaux" data={data.inquiries} kind="inquiry" />
-            <div className={styles.panel}><div className={styles.panelTitle}><h3>Relationship recovery</h3><MessageSquareText size={16}/></div><p className={styles.muted}>Open the Customer Recovery Desk to operate canonical cases with structured recovery transitions and preserved customer context.</p><div className={styles.rowActions}><Link className={styles.button} href={`/angelcare-marketplace/admin/customers-revenue/cases?customer=${customerId}`}>Open Recovery Desk</Link><Link className={styles.buttonSecondary} href={`/angelcare-marketplace/admin/customers-revenue/activity?customer=${customerId}`}>Relationship activity</Link></div></div>
+            <div className={styles.panel}><div className={styles.panelTitle}><h3>Recovery relationnelle</h3><MessageSquareText size={16}/></div><p className={styles.muted}>Le centre Support opère les dossiers canoniques avec transitions, preuves, affectations et recovery sans perdre le contexte client.</p><div className={styles.rowActions}><Link className={styles.button} href={`/angelcare-marketplace/admin/customers/support?customer=${customerId}`}>Ouvrir Support & recovery</Link><Link className={styles.buttonSecondary} href={`/angelcare-marketplace/admin/customers/${customerId}/activity`}>Activité relationnelle</Link></div></div>
           </div> : null}
 
           {tab === 'Activité' ? <div className={styles.command}>
             <div className={styles.panel}>
               <div className={styles.panelTitle}><h3>Note interne</h3><span className={styles.chip}>{data.comments.length} notes</span></div>
               <textarea className={styles.textarea} value={note} onChange={(event) => setNote(event.target.value)} placeholder="Observation, engagement, demande client, contexte commercial…" />
-              <button className={styles.button} style={{ marginTop: 10 }} onClick={addNote}>Ajouter au dossier</button>
+              <button className={styles.button} style={{ marginTop: 10 }} disabled={!permissions.commentOnCustomer || !note.trim()} title={!permissions.commentOnCustomer ? 'Permission marketplace.backoffice.objects.comment requise' : undefined} onClick={() => void addNote()}>Ajouter au dossier</button>
             </div>
             <div className={styles.panel}><div className={styles.timeline}>{data.timeline.map((event) => <TimelineEvent event={event} key={event.id} />)}</div></div>
+            <CustomerCrmActivityPanel customerId={customerId} canManageTasks={permissions.manageCrmTasks} canLogCommunications={permissions.logCrmCommunications}/>
           </div> : null}
 
           {tab === 'Documents' ? <div className={styles.grid2}>
-            <div className={styles.panel}><div className={styles.panelTitle}><h3>Documents instantanés</h3><FileText size={18} /></div><p className={styles.muted}>Générés depuis le dossier courant, avec la référence humaine et le Template Studio.</p><div className={styles.rowActions}><button className={styles.button} onClick={() => exportPdf('customer_dossier')}><Download size={14} />Dossier Client</button><button className={styles.buttonSecondary} onClick={() => exportPdf('family_dossier')}>Dossier Famille</button><button className={styles.buttonSecondary} onClick={() => exportPdf('wallet_statement')}>Relevé Credit</button></div></div>
+            <div className={styles.panel}><div className={styles.panelTitle}><h3>Documents instantanés</h3><FileText size={18} /></div><p className={styles.muted}>Générés depuis le dossier courant, avec la référence humaine et le Template Studio.</p><div className={styles.rowActions}><button className={styles.button} disabled={!permissions.exportCustomer} onClick={() => void exportPdf('customer_dossier')}><Download size={14} />Dossier Client</button><button className={styles.buttonSecondary} disabled={!permissions.exportCustomer} onClick={() => void exportPdf('family_dossier')}>Dossier Famille</button><button className={styles.buttonSecondary} disabled={!permissions.exportCustomer} onClick={() => void exportPdf('wallet_statement')}>Relevé Credit</button></div></div>
             <div className={styles.panel}><h3>Corporate Template Studio</h3><p className={styles.muted}>A4/A3, portrait/paysage, FR/EN/AR, logo existant, header/footer, texte légal et blocs conditionnels.</p><Link className={styles.button} href="/angelcare-marketplace/admin/documents">Ouvrir Document Factory</Link></div>
           </div> : null}
         </>}
@@ -219,6 +287,8 @@ export function CustomerMegaDossierOverlay({ customerId, onClose, onMinimize }: 
     </section>
     {nestedOrderId ? <OrderMegaCommandOverlay orderId={nestedOrderId} onClose={() => setNestedOrderId(null)} /> : null}
     {nestedPaymentId ? <PaymentMegaCommandOverlay paymentIntentId={nestedPaymentId} onClose={() => setNestedPaymentId(null)} /> : null}
+    {pendingCustomerStatus ? <dialog className={styles.governedModal} open aria-labelledby="customer-lifecycle-decision"><div className={styles.governedModalBody}><div className={styles.eyebrow}>DÉCISION DE CYCLE DE VIE</div><h3 id="customer-lifecycle-decision">{pendingCustomerStatus === 'closed' ? 'Archiver cette relation client ?' : 'Restaurer cette relation client ?'}</h3><div className={styles.grid2}><Metric label="Objet" value={data?.enterpriseReference || customerId}/><Metric label="État proposé" value={pendingCustomerStatus}/></div><p className={styles.muted}>{pendingCustomerStatus === 'closed' ? 'Le dossier disparaît des files actives, mais son historique, ses transactions et ses preuves restent conservés.' : 'Le dossier redevient actif et disponible pour les opérations autorisées.'}</p><div className={styles.rowActions}><button type="button" className={styles.buttonSecondary} disabled={actionBusy} onClick={() => setPendingCustomerStatus(null)}>Annuler</button><button type="button" className={styles.button} disabled={actionBusy} onClick={() => void transitionCustomer(pendingCustomerStatus)}>{actionBusy ? 'Application…' : 'Confirmer la transition'}</button></div></div></dialog> : null}
+    {walletReviewOpen ? <dialog className={styles.governedModal} open aria-labelledby="customer-wallet-decision"><div className={styles.governedModalBody}><div className={styles.eyebrow}>EXCEPTION FINANCIÈRE GOUVERNÉE</div><h3 id="customer-wallet-decision">Ajuster AngelCare Credit</h3><div className={styles.grid3}><Metric label="Compte" value={String(data?.walletAccount?.public_reference || data?.walletAccount?.id || '—')}/><Metric label="Solde actuel" value={money(wallet)}/><Metric label="Impact proposé" value={`${creditDirection === 'credit' ? '+' : '−'} ${money(creditAmount)}`}/></div><p className={styles.muted}>Cette écriture est irréversible depuis ce dossier et sera auditée avec son motif et une clé d’idempotence.</p><F label="Motif obligatoire"><textarea className={styles.textarea} rows={3} value={creditReason} onChange={(event) => setCreditReason(event.target.value)}/></F>{notice ? <div className={styles.notice}>{notice}</div> : null}<div className={styles.rowActions}><button type="button" className={styles.buttonSecondary} disabled={actionBusy} onClick={() => setWalletReviewOpen(false)}>Annuler</button><button type="button" className={styles.button} disabled={actionBusy || !creditReason.trim()} onClick={() => void adjustCredit()}>{actionBusy ? 'Journalisation…' : 'Confirmer l’écriture'}</button></div></div></dialog> : null}
   </div>
 }
 

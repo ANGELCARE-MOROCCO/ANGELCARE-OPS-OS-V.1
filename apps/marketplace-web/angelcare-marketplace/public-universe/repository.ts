@@ -34,20 +34,29 @@ export async function resolveTerritoryId(code?: string | null): Promise<string |
 export async function getPublicPage(input: { locale: string; slug: string; territoryCode?: string | null }): Promise<PublicPageExperience | null> {
   const supabase = await createServiceClient()
   const territoryId = await resolveTerritoryId(input.territoryCode || 'MA-MASTER')
-  let pageQuery = supabase.from('angelcare_marketplace_cms_pages').select('*').eq('locale', input.locale).eq('slug', input.slug).eq('status', 'published')
-  if (territoryId) pageQuery = pageQuery.or(`territory_id.is.null,territory_id.eq.${territoryId}`)
-  else pageQuery = pageQuery.is('territory_id', null)
-  const { data: pages, error: pageError } = await pageQuery.order('territory_id', { ascending: false, nullsFirst: false }).limit(1)
-  if (pageError) throw publicError('charger la page', pageError)
-  const page = pages?.[0] as CmsPage | undefined
+  const loadPage = async (locale: string) => {
+    let query = supabase.from('angelcare_marketplace_cms_pages').select('*').eq('locale', locale).eq('slug', input.slug).eq('status', 'published')
+    if (territoryId) query = query.or(`territory_id.is.null,territory_id.eq.${territoryId}`)
+    else query = query.is('territory_id', null)
+    return query.order('territory_id', { ascending: false, nullsFirst: false }).limit(1)
+  }
+  const localized = await loadPage(input.locale)
+  if (localized.error) throw publicError('charger la page', localized.error)
+  const fallback = !localized.data?.length && input.locale !== 'fr' ? await loadPage('fr') : null
+  if (fallback?.error) throw publicError('charger la page française de repli', fallback.error)
+  const page = (localized.data?.[0] || fallback?.data?.[0]) as CmsPage | undefined
   if (!page) return null
-  const [{ data: blocks, error: blockError }, { data: menu, error: menuError }] = await Promise.all([
+  const [{ data: blocks, error: blockError }, localizedMenu] = await Promise.all([
     supabase.from('angelcare_marketplace_cms_blocks').select('*').eq('page_id', page.id).eq('status', 'active').order('sort_order'),
     supabase.from('angelcare_marketplace_public_navigation_v').select('*').eq('locale', input.locale).or(territoryId ? `territory_id.is.null,territory_id.eq.${territoryId}` : 'territory_id.is.null').order('sort_order'),
   ])
   if (blockError) throw publicError('charger les blocs', blockError)
-  if (menuError) throw publicError('charger la navigation', menuError)
-  return { page, blocks: (blocks || []) as CmsBlock[], navigation: (menu || []) as CmsMenuItem[] }
+  if (localizedMenu.error) throw publicError('charger la navigation', localizedMenu.error)
+  const fallbackMenu = !localizedMenu.data?.length && input.locale !== 'fr'
+    ? await supabase.from('angelcare_marketplace_public_navigation_v').select('*').eq('locale', 'fr').or(territoryId ? `territory_id.is.null,territory_id.eq.${territoryId}` : 'territory_id.is.null').order('sort_order')
+    : null
+  if (fallbackMenu?.error) throw publicError('charger la navigation française de repli', fallbackMenu.error)
+  return { page, blocks: (blocks || []) as CmsBlock[], navigation: (localizedMenu.data?.length ? localizedMenu.data : fallbackMenu?.data || []) as CmsMenuItem[] }
 }
 
 export async function createPublicInquiry(input: PublicInquiryInput, request: Request): Promise<PublicInquiryRecord> {

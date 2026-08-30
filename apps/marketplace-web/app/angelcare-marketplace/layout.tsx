@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
-import type { ReactNode } from 'react'
+import { Suspense, type ReactNode } from 'react'
 import styles from '@/angelcare-marketplace/design-system/marketplace.module.css'
+import { LocalizationRuntime } from '@/angelcare-marketplace/localization-intelligence/components/LocalizationRuntime'
 
 export const metadata: Metadata = {
   title: {
@@ -12,5 +13,5 @@ export const metadata: Metadata = {
 }
 
 export default function AngelCareMarketplaceLayout({ children }: { children: ReactNode }) {
-  return <div className={styles.scope}>{children}</div>
+  return <div className={styles.scope}><Suspense fallback={children}><LocalizationRuntime>{children}</LocalizationRuntime></Suspense></div>
 }

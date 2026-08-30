@@ -1,8 +1,48 @@
 'use client'
+
+import Link from 'next/link'
 import { useMemo, useState } from 'react'
 import { ChevronRight, CircleAlert, Search, ShieldAlert } from 'lucide-react'
 import type { CustomerCaseRecord, CustomerRelationshipOverview } from '../types'
 import styles from '../customer-relationship.module.css'
 import { RelationshipDrawerHost } from './CustomerRelationshipDrawers'
-const money=(v:number,c='Dh')=>`${Math.round(v).toLocaleString('fr-FR')} ${c}`
-export function CustomerCasesWorkspace({snapshot}:{snapshot:CustomerRelationshipOverview}){const[q,setQ]=useState('');const[scope,setScope]=useState('all');const[selected,setSelected]=useState<CustomerCaseRecord|null>(null);const list=useMemo(()=>snapshot.cases.filter(c=>{const s=scope==='all'||scope==='critical'&&['critical','urgent'].includes(c.priority)||scope==='blocked'&&c.status==='blocked'||scope==='recovery'&&c.status==='recovery'||scope===c.status;const m=!q||`${c.reference} ${c.customerName||''} ${c.title} ${c.sourceReference||''}`.toLowerCase().includes(q.toLowerCase());return s&&m}),[snapshot.cases,q,scope]);const exposure=list.reduce((s,c)=>s+c.exposure,0);return <main className={styles.workspaceCanvas}><section className={styles.workspaceHero}><div><span>CUSTOMER RECOVERY DESK</span><h2>Customer harm, urgency and relationship value before queue noise.</h2><p>Cases are canonical operating cases. Decisions use the existing operating-kernel transition authority.</p></div><div className={styles.heroStats}><div><strong>{snapshot.cases.length}</strong><span>Open cases</span></div><div><strong>{snapshot.cases.filter(c=>['critical','urgent'].includes(c.priority)||c.riskLevel==='critical').length}</strong><span>Critical</span></div><div><strong>{money(snapshot.cases.reduce((s,c)=>s+c.exposure,0))}</strong><span>Exposure</span></div></div></section><div className={styles.registryScope}>{['all','critical','blocked','recovery','in_progress','approval_pending'].map(key=><button key={key} data-active={scope===key} onClick={()=>setScope(key)}>{key.replaceAll('_',' ')}<span>{key==='all'?snapshot.cases.length:snapshot.cases.filter(c=>key==='critical'?['critical','urgent'].includes(c.priority)||c.riskLevel==='critical':c.status===key).length}</span></button>)}</div><section className={styles.registryPanel}><header><div className={styles.searchBox}><Search size={15}/><input value={q} onChange={e=>setQ(e.target.value)} placeholder="Search case, customer, reference…"/></div><div className={styles.registryCount}><CircleAlert size={14}/>{list.length} cases · {money(exposure)} exposure</div></header><div className={styles.caseQueue}>{list.map(c=><button key={c.id} data-risk={['critical','urgent'].includes(c.priority)||c.riskLevel==='critical'?'critical':'attention'} onClick={()=>setSelected(c)}><ShieldAlert size={16}/><div><strong>{c.title}</strong><small>{c.reference} · {c.customerName||'Customer not linked'}</small></div><div><strong>{c.status.replaceAll('_',' ')}</strong><small>{c.nextAction||'No next action recorded'}</small></div><div><strong>{c.priority}</strong><small>{c.dueAt?new Date(c.dueAt).toLocaleString('fr-FR'):'No deadline'}</small></div><b>{c.exposure?money(c.exposure,c.currency):'—'}</b><ChevronRight size={14}/></button>)}{!list.length?<div className={styles.healthyEmpty}>No customer case in this queue.</div>:null}</div></section>{selected?<RelationshipDrawerHost customer={null} caseRecord={selected} onClose={()=>setSelected(null)}/>:null}</main>}
+
+const money = (value: number, currency = 'Dh') => `${Math.round(value).toLocaleString('fr-FR')} ${currency}`
+
+export function CustomerCasesWorkspace({ snapshot, canManageCase }: { snapshot: CustomerRelationshipOverview; canManageCase: boolean }) {
+  const [query, setQuery] = useState('')
+  const [scope, setScope] = useState('all')
+  const [selected, setSelected] = useState<CustomerCaseRecord | null>(null)
+  const list = useMemo(() => snapshot.cases.filter((record) => {
+    const scoped = scope === 'all' ||
+      (scope === 'critical' && (['critical', 'urgent'].includes(record.priority) || record.riskLevel === 'critical')) ||
+      (scope === 'blocked' && record.status === 'blocked') ||
+      (scope === 'recovery' && record.status === 'recovery') ||
+      scope === record.status
+    const haystack = `${record.reference} ${record.customerName || ''} ${record.title} ${record.sourceReference || ''}`.toLowerCase()
+    return scoped && (!query || haystack.includes(query.toLowerCase()))
+  }), [snapshot.cases, query, scope])
+  const exposure = list.reduce((sum, record) => sum + record.exposure, 0)
+  const scopes = ['all', 'critical', 'blocked', 'recovery', 'in_progress', 'approval_pending']
+
+  return <main className={styles.workspaceCanvas}>
+    <section className={styles.workspaceHero}>
+      <div><span>CLIENTS · SUPPORT & RÉCLAMATIONS</span><h2>Qualifier le préjudice client, l’urgence et la prochaine décision.</h2><p>La file s’appuie sur les dossiers du noyau opérationnel. Les transitions, preuves, affectations et actions de recovery restent auditées par leurs autorités serveur.</p></div>
+      <div className={styles.introActions}><Link className={styles.secondaryAction} href="/angelcare-marketplace/admin/customers">Registre clients</Link><Link className={styles.primaryAction} href="/angelcare-marketplace/admin/customers/health">Santé & rétention</Link></div>
+    </section>
+    <section className={styles.estateStrip} aria-label="Indicateurs support">
+      <button type="button" onClick={() => setScope('all')}><CircleAlert/><span>Dossiers ouverts</span><strong>{snapshot.cases.length}</strong></button>
+      <button type="button" onClick={() => setScope('critical')}><ShieldAlert/><span>Critiques / urgents</span><strong>{snapshot.cases.filter((record) => ['critical', 'urgent'].includes(record.priority) || record.riskLevel === 'critical').length}</strong></button>
+      <button type="button" onClick={() => setScope('blocked')}><CircleAlert/><span>Bloqués</span><strong>{snapshot.cases.filter((record) => record.status === 'blocked').length}</strong></button>
+      <button type="button" onClick={() => setScope('approval_pending')}><ShieldAlert/><span>Approbation</span><strong>{snapshot.cases.filter((record) => record.status === 'approval_pending').length}</strong></button>
+      <button type="button" onClick={() => setScope('recovery')}><ShieldAlert/><span>Recovery</span><strong>{snapshot.cases.filter((record) => record.status === 'recovery').length}</strong></button>
+      <button type="button" onClick={() => setScope('all')}><CircleAlert/><span>Exposition</span><strong>{money(snapshot.cases.reduce((sum, record) => sum + record.exposure, 0))}</strong></button>
+    </section>
+    <div className={styles.registryScope}>{scopes.map((key) => <button type="button" key={key} data-active={scope === key} onClick={() => setScope(key)}>{key.replaceAll('_', ' ')}<span>{key === 'all' ? snapshot.cases.length : snapshot.cases.filter((record) => key === 'critical' ? ['critical', 'urgent'].includes(record.priority) || record.riskLevel === 'critical' : record.status === key).length}</span></button>)}</div>
+    <section className={styles.registryPanel}>
+      <header><label className={styles.searchBox}><Search size={15}/><span className={styles.visuallyHidden}>Rechercher un dossier support</span><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Dossier, client, référence source…"/></label><div className={styles.registryCount}><CircleAlert size={14}/>{list.length} dossier(s) · {money(exposure)} d’exposition</div></header>
+      <div className={styles.caseQueue}>{list.map((record) => <button type="button" key={record.id} data-risk={['critical', 'urgent'].includes(record.priority) || record.riskLevel === 'critical' ? 'critical' : 'attention'} onClick={() => setSelected(record)}><ShieldAlert size={16}/><div><strong>{record.title}</strong><small>{record.reference} · {record.customerName || 'Client non relié'}</small></div><div><strong>{record.status.replaceAll('_', ' ')}</strong><small>{record.nextAction || 'Prochaine action non renseignée'}</small></div><div><strong>{record.priority}</strong><small>{record.dueAt ? new Date(record.dueAt).toLocaleString('fr-FR') : 'Échéance non définie'}</small></div><b>{record.exposure ? money(record.exposure, record.currency) : '—'}</b><ChevronRight size={14}/></button>)}{!list.length ? <div className={styles.healthyEmpty}>Aucun dossier ne correspond à cette file. Les filtres restent disponibles pour correction.</div> : null}</div>
+    </section>
+    {selected ? <RelationshipDrawerHost customer={null} caseRecord={selected} canManageCase={canManageCase} onClose={() => setSelected(null)}/> : null}
+  </main>
+}

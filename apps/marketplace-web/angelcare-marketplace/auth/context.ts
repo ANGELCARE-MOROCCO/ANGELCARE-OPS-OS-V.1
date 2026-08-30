@@ -264,7 +264,7 @@ export async function requireMarketplaceAdminPageContext(
 ): Promise<MarketplaceRequestContext> {
   const context = await getMarketplaceContext()
   if (!context) {
-    redirect(`/admin?returnTo=${encodeURIComponent('/angelcare-marketplace/admin')}`)
+    redirect(`/angelcare-marketplace/admin/login?returnTo=${encodeURIComponent('/angelcare-marketplace/admin')}`)
     throw new MarketplaceError('AUTHENTICATION_REQUIRED', 'Authentification Marketplace Admin requise.')
   }
   // The Admin-control workspace itself remains restricted to absolute admins.

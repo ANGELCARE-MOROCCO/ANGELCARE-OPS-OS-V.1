@@ -6,6 +6,8 @@ import styles from '../design-system/marketplace.module.css'
 import { AdminNavigation } from './AdminNavigation'
 import { AdminLogoutButton } from '../auth/admin/AdminLogoutButton'
 import { GlobalCommandPalette } from '../enterprise-command/components/GlobalCommandPalette'
+import { GovernedActionProvider } from './GovernedActionProvider'
+import { AdminWorkspaceContextNav } from './AdminWorkspaceContextNav'
 
 export function AdminShell({ context, children }: { context: MarketplaceRequestContext; children: ReactNode }) {
   return (
@@ -44,7 +46,8 @@ export function AdminShell({ context, children }: { context: MarketplaceRequestC
             </span>
           </div>
         </header>
-        <main className={styles.content}>{children}</main>
+        <AdminWorkspaceContextNav />
+        <main className={styles.content}><GovernedActionProvider>{children}</GovernedActionProvider></main>
       </section>
     </div>
   )

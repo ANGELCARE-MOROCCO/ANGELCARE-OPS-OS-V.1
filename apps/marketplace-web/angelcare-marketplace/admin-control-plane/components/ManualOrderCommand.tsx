@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from 'react'
+import Link from 'next/link'
+import { useEffect, useState } from 'react'
 import { CheckCircle2, ClipboardPlus, CreditCard, ShoppingBag } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import styles from '../../design-system/marketplace.module.css'
@@ -35,11 +36,28 @@ export function ManualOrderCommand({ customers }: { customers: CustomerOption[] 
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
+  const [createdOrder, setCreatedOrder] = useState<{ id: string; reference: string; paymentReference: string | null } | null>(null)
+  const dirty = Boolean(title || amount || providerReference || scheduledStartAt || scheduledEndAt || notes)
+
+  useEffect(() => {
+    const warn = (event: BeforeUnloadEvent) => {
+      if (!dirty || busy || createdOrder) return
+      event.preventDefault()
+    }
+    window.addEventListener('beforeunload', warn)
+    return () => window.removeEventListener('beforeunload', warn)
+  }, [busy, createdOrder, dirty])
 
   async function createOrder() {
     setBusy(true)
     setError(null)
     setSuccess(null)
+    setCreatedOrder(null)
+    if (scheduledStartAt && scheduledEndAt && new Date(scheduledEndAt) <= new Date(scheduledStartAt)) {
+      setError('La fin prévue doit être postérieure au début prévu.')
+      setBusy(false)
+      return
+    }
     try {
       const result = await request<{ order: Record<string, unknown>; payment: Record<string, unknown> | null }>('/api/angelcare-marketplace/admin/orders', {
         method: 'POST',
@@ -57,7 +75,10 @@ export function ManualOrderCommand({ customers }: { customers: CustomerOption[] 
           createPayment,
         }),
       })
-      setSuccess(`Commande ${String(result.order.public_reference || '')} créée${result.payment ? ` · paiement ${String(result.payment.public_reference || '')} créé` : ''}.`)
+      const reference = String(result.order.public_reference || result.order.id || '')
+      const paymentReference = result.payment ? String(result.payment.public_reference || result.payment.id || '') : null
+      setSuccess(`Commande ${reference} créée${paymentReference ? ` · paiement ${paymentReference} créé` : ''}.`)
+      setCreatedOrder({ id: String(result.order.id || ''), reference, paymentReference })
       setTitle('')
       setAmount('')
       setProviderReference('')
@@ -80,6 +101,7 @@ export function ManualOrderCommand({ customers }: { customers: CustomerOption[] 
 
       {error ? <div className={styles.noticeDanger} style={{ marginBottom: 14 }}>{error}</div> : null}
       {success ? <div className={styles.noticeSuccess} style={{ marginBottom: 14 }}><CheckCircle2 size={16} /> {success}</div> : null}
+      {createdOrder ? <Card title="Commande créée" subtitle="Le résultat est persistant et rejoint immédiatement le portefeuille canonique."><div className={styles.pageActions}><strong>{createdOrder.reference}</strong>{createdOrder.paymentReference ? <span>Paiement : {createdOrder.paymentReference}</span> : null}<Link className={styles.button} href={`/angelcare-marketplace/admin/orders/${createdOrder.id}`}>Ouvrir Order 360</Link><Link className={styles.buttonSecondary} href="/angelcare-marketplace/admin/orders">Retour au portefeuille</Link></div></Card> : null}
 
       <Card title="Nouvelle commande" subtitle="Cette création ne contourne pas le modèle Commerce : elle crée un Journey canonique et, si demandé, son Payment Intent.">
         <div className={styles.formGrid}>
@@ -98,7 +120,7 @@ export function ManualOrderCommand({ customers }: { customers: CustomerOption[] 
           <div className={styles.fieldGroup}><label className={styles.fieldLabel}>Référence paiement externe</label><input className={styles.textField} value={providerReference} onChange={(event) => setProviderReference(event.target.value)} /></div>
           <div className={styles.fieldGroup} style={{ gridColumn: '1 / -1' }}><label className={styles.fieldLabel}>Note opérateur</label><textarea className={styles.textArea} value={notes} onChange={(event) => setNotes(event.target.value)} /></div>
           <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12 }}><input type="checkbox" checked={createPayment} onChange={(event) => setCreatePayment(event.target.checked)} /> Créer automatiquement le Payment Intent associé</label>
-          <div className={styles.pageActions}><Button disabled={busy || !customerId || !title} onClick={() => void createOrder()}><ClipboardPlus size={15} /> Créer la commande</Button></div>
+          <div className={styles.pageActions}><Button disabled={busy || !customerId || !title} onClick={() => void createOrder()}><ClipboardPlus size={15} /> {busy ? 'Création…' : 'Créer la commande'}</Button></div>
         </div>
       </Card>
 

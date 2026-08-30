@@ -197,6 +197,10 @@ export async function handleInventory(
       q: url.searchParams.get('q') || undefined,
       domain: url.searchParams.get('domain') || undefined,
       route: url.searchParams.get('route') || undefined,
+      audience: url.searchParams.get('audience') || undefined,
+      workflow: url.searchParams.get('workflow') || undefined,
+      entityType: url.searchParams.get('entityType') || undefined,
+      locale: (url.searchParams.get('locale') === 'en' || url.searchParams.get('locale') === 'ar' ? url.searchParams.get('locale') : undefined) as 'en'|'ar'|undefined,
       territoryId:
         url.searchParams.get('territoryId') || undefined,
       freshness: parseFreshnessState(

@@ -1,4 +1,3 @@
-import { createServiceClient } from '@/lib/supabase/server'
 import { requireMarketplaceApiContext } from '../auth/context'
 import { writeMarketplaceAudit } from '../audit/write-audit'
 import { apiFailure, apiSuccess, cleanOptionalText, cleanText, parseJsonObject, requestId } from '../server/request'
@@ -12,10 +11,11 @@ import {
   createCommerceResource,
   getCommerceResource,
   listCommerceResource,
-  registerUploadedMedia,
+  registerPendingGatewayMedia,
   updateCommerceResource,
 } from './repository'
 import { commerceResource, sanitizeFileName } from './validation'
+import { imageDerivatives, uploadMarketplaceGatewayBytes } from './media-storage'
 
 const MAX_UPLOAD_BYTES = 40 * 1024 * 1024
 const ALLOWED_MIME = new Set([
@@ -117,44 +117,6 @@ export async function handleCommerceAction(request: Request, rawResource: string
   }
 }
 
-async function uploadStorageObject(input: { db: Awaited<ReturnType<typeof createServiceClient>>; path: string; bytes: Uint8Array; contentType: string }): Promise<string> {
-  const { error } = await input.db.storage.from('angelcare-marketplace-media').upload(input.path, input.bytes, {
-    contentType: input.contentType,
-    upsert: false,
-    cacheControl: '31536000',
-  })
-  if (error) throw new MarketplaceError('INTERNAL_ERROR', 'Une variante média n’a pas pu être téléversée.', { cause: error })
-  return input.db.storage.from('angelcare-marketplace-media').getPublicUrl(input.path).data.publicUrl
-}
-
-async function imageDerivatives(input: { db: Awaited<ReturnType<typeof createServiceClient>>; bytes: Uint8Array; basePath: string; mimeType: string }): Promise<{ desktopUrl: string | null; tabletUrl: string | null; mobileUrl: string | null; squareUrl: string | null; width: number | null; height: number | null }> {
-  if (!['image/jpeg','image/png','image/webp','image/avif'].includes(input.mimeType)) {
-    return { desktopUrl: null, tabletUrl: null, mobileUrl: null, squareUrl: null, width: null, height: null }
-  }
-  const source = sharp(input.bytes, { failOn: 'warning' }).rotate()
-  const metadata = await source.metadata()
-  const variants = [
-    ['desktop', 1920, 1080, 'inside'],
-    ['tablet', 1280, 960, 'inside'],
-    ['mobile', 768, 1024, 'inside'],
-    ['square', 1200, 1200, 'cover'],
-  ] as const
-  const urls: Record<string, string> = {}
-  for (const [name, width, height, fit] of variants) {
-    const output = await source.clone().resize({ width, height, fit, withoutEnlargement: true, position: 'centre' }).webp({ quality: 86, effort: 4 }).toBuffer()
-    const path = input.basePath.replace(/\.[^.]+$/, `-${name}.webp`)
-    urls[name] = await uploadStorageObject({ db: input.db, path, bytes: new Uint8Array(output), contentType: 'image/webp' })
-  }
-  return {
-    desktopUrl: urls.desktop || null,
-    tabletUrl: urls.tablet || null,
-    mobileUrl: urls.mobile || null,
-    squareUrl: urls.square || null,
-    width: metadata.width || null,
-    height: metadata.height || null,
-  }
-}
-
 function assertSafeSvg(bytes: Uint8Array): void {
   const source = new TextDecoder().decode(bytes).toLowerCase()
   const forbidden = ['<script', 'javascript:', 'onload=', 'onerror=', '<foreignobject', 'data:text/html']
@@ -177,43 +139,33 @@ export async function handleMediaUpload(request: Request): Promise<Response> {
     const replaceAssetId = cleanOptionalText(form.get('replace_asset_id'), 64)
     const altTextFr = cleanText(form.get('alt_text_fr'), 400) || file.name
     const storageFileName = sanitizeFileName(file.name)
-    const date = new Date()
-    const storagePath = `${date.getUTCFullYear()}/${String(date.getUTCMonth() + 1).padStart(2, '0')}/${storageFileName}`
-    const db = await createServiceClient()
     const bytes = new Uint8Array(await file.arrayBuffer())
     if (file.type === 'image/svg+xml') assertSafeSvg(bytes)
-    const publicUrl = await uploadStorageObject({ db, path: storagePath, bytes, contentType: file.type })
-    const derivatives = await imageDerivatives({ db, bytes, basePath: storagePath, mimeType: file.type })
-    const asset = replaceAssetId
-      ? (await updateCommerceResource({
-          resource: 'media',
-          id: replaceAssetId,
-          payload: {
-            file_name: file.name,
-            mime_type: file.type,
-            media_type: file.type.startsWith('image/') ? 'image' : file.type.startsWith('video/') ? 'video' : 'document',
-            storage_bucket: 'angelcare-marketplace-media',
-            storage_path: storagePath,
-            public_url: publicUrl,
-            desktop_url: derivatives.desktopUrl || publicUrl,
-            tablet_url: derivatives.tabletUrl || derivatives.desktopUrl || publicUrl,
-            mobile_url: derivatives.mobileUrl || derivatives.tabletUrl || derivatives.desktopUrl || publicUrl,
-            square_url: derivatives.squareUrl || derivatives.mobileUrl || publicUrl,
-            width: derivatives.width,
-            height: derivatives.height,
-            size_bytes: file.size,
-            folder_id: folderId,
-            alt_text_fr: altTextFr,
-            optimization_status: 'ready',
-            status: 'active',
-          },
-          context,
-        })).record as import('./types').MediaAsset
-      : await registerUploadedMedia({
-          fileName: file.name, mimeType: file.type, storagePath, publicUrl,
-          desktopUrl: derivatives.desktopUrl, tabletUrl: derivatives.tabletUrl, mobileUrl: derivatives.mobileUrl, squareUrl: derivatives.squareUrl,
-          width: derivatives.width, height: derivatives.height, sizeBytes: file.size, folderId, altTextFr, context,
-        })
+    const assetId = replaceAssetId || crypto.randomUUID()
+    const publicUrl = `/api/angelcare-marketplace/media/${assetId}/${encodeURIComponent(storageFileName)}`
+    if (!replaceAssetId) await registerPendingGatewayMedia({ id: assetId, fileName: file.name, mimeType: file.type, sizeBytes: file.size, folderId, altTextFr, publicUrl, context })
+    const gateway = await uploadMarketplaceGatewayBytes({ assetId, filename: storageFileName, mimeType: file.type, bytes, actorUserId: context.actor.id })
+    let width: number | null = null
+    let height: number | null = null
+    if (['image/jpeg','image/png','image/webp','image/avif'].includes(file.type)) {
+      const metadata = await sharp(bytes, { failOn: 'warning' }).metadata()
+      width = metadata.width || null
+      height = metadata.height || null
+    }
+    const current = await getCommerceResource('media', assetId)
+    if (!current) throw new MarketplaceError('NOT_FOUND', 'Session média introuvable.')
+    const asset = (await updateCommerceResource({
+      resource: 'media', id: assetId, context,
+      payload: {
+        file_name: file.name, mime_type: gateway.mimeType,
+        media_type: file.type.startsWith('image/') ? 'image' : file.type.startsWith('video/') ? 'video' : 'document',
+        storage_bucket: 'marketplace-windows-media', storage_path: gateway.storageKey,
+        public_url: publicUrl, desktop_url: publicUrl, tablet_url: publicUrl, mobile_url: publicUrl, square_url: publicUrl,
+        width, height, size_bytes: gateway.sizeBytes, folder_id: folderId, alt_text_fr: altTextFr,
+        optimization_status: 'ready', status: 'active',
+        metadata: { ...((current.metadata && typeof current.metadata === 'object') ? current.metadata as Record<string, unknown> : {}), storage_backend: 'windows_self_hosted', sha256: gateway.sha256, upload_state: 'complete' },
+      },
+    })).record as import('./types').MediaAsset
     await writeMarketplaceAudit({
       context, requestId: rid, action: replaceAssetId ? 'marketplace.media.replaced' : 'marketplace.media.uploaded', objectType: 'media_asset',
       objectId: asset.id, afterValue: asset, source: 'complete-commerce-administration', request,
@@ -255,10 +207,11 @@ export async function handleMediaTransform(request: Request, mediaId: string): P
       pipeline = pipeline.extract({ left, top, width, height })
     }
     const transformed = await pipeline.webp({ quality: 90, effort: 4 }).toBuffer()
-    const db = await createServiceClient()
-    const storagePath = `transforms/${mediaId}/${Date.now()}-source.webp`
-    const publicUrl = await uploadStorageObject({ db, path: storagePath, bytes: new Uint8Array(transformed), contentType: 'image/webp' })
-    const derivatives = await imageDerivatives({ db, bytes: new Uint8Array(transformed), basePath: storagePath, mimeType: 'image/webp' })
+    const gateway = await uploadMarketplaceGatewayBytes({ assetId: mediaId, filename: `${Date.now()}-transform.webp`, mimeType: 'image/webp', bytes: new Uint8Array(transformed), actorUserId: context.actor.id })
+    const derivatives = await imageDerivatives({ assetId: mediaId, bytes: new Uint8Array(transformed), actorUserId: context.actor.id })
+    const publicUrl = `/api/angelcare-marketplace/media/${mediaId}/${encodeURIComponent(gateway.safeFilename)}`
+    const variantUrl = (variant: string, filename: string) => `/api/angelcare-marketplace/media/${mediaId}/${encodeURIComponent(filename)}?variant=${variant}`
+    const transformedMetadata = await sharp(transformed).metadata()
     const focalPoint = {
       x: Math.max(0, Math.min(100, Number(body.focal_x ?? 50))),
       y: Math.max(0, Math.min(100, Number(body.focal_y ?? 50))),
@@ -266,14 +219,12 @@ export async function handleMediaTransform(request: Request, mediaId: string): P
     const result = await updateCommerceResource({
       resource: 'media', id: mediaId, context,
       payload: {
-        storage_bucket: 'angelcare-marketplace-media', storage_path: storagePath,
-        public_url: publicUrl, desktop_url: derivatives.desktopUrl || publicUrl,
-        tablet_url: derivatives.tabletUrl || derivatives.desktopUrl || publicUrl,
-        mobile_url: derivatives.mobileUrl || derivatives.tabletUrl || derivatives.desktopUrl || publicUrl,
-        square_url: derivatives.squareUrl || publicUrl, mime_type: 'image/webp',
-        width: derivatives.width, height: derivatives.height, size_bytes: transformed.byteLength,
+        storage_bucket: 'marketplace-windows-media', storage_path: gateway.storageKey,
+        public_url: publicUrl, desktop_url: variantUrl('desktop', derivatives.desktop.safeFilename), tablet_url: variantUrl('tablet', derivatives.tablet.safeFilename),
+        mobile_url: variantUrl('mobile', derivatives.mobile.safeFilename), square_url: variantUrl('square', derivatives.square.safeFilename), mime_type: 'image/webp',
+        width: transformedMetadata.width || null, height: transformedMetadata.height || null, size_bytes: gateway.sizeBytes,
         focal_point: focalPoint, optimization_status: 'ready',
-        metadata: { ...((existing.metadata && typeof existing.metadata === 'object') ? existing.metadata as Record<string, unknown> : {}), last_transform: { rotation, left, top, width: requestedWidth || null, height: requestedHeight || null, transformed_at: new Date().toISOString() } },
+        metadata: { ...((existing.metadata && typeof existing.metadata === 'object') ? existing.metadata as Record<string, unknown> : {}), storage_backend: 'windows_self_hosted', sha256: gateway.sha256, gateway_variants: Object.fromEntries(Object.entries(derivatives).map(([variant, record]) => [variant, record.assetId])), last_transform: { rotation, left, top, width: requestedWidth || null, height: requestedHeight || null, transformed_at: new Date().toISOString() } },
       },
     })
     await writeMarketplaceAudit({

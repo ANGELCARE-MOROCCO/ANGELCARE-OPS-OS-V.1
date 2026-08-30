@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import type { FormEvent, ReactNode } from 'react'
 import { AlertTriangle, CheckCircle2, Loader2, RefreshCw, Save, Send, X } from 'lucide-react'
 import styles from '../commerce-studio.module.css'
@@ -47,7 +47,7 @@ export function StudioNotice({ message, error, onClose }: { message: string | nu
 }
 
 export function StudioForm({
-  resource, id, children, onSaved, submitLabel = 'Enregistrer', extraPayload,
+  resource, id, children, onSaved, submitLabel = 'Enregistrer', extraPayload, disabled = false, disabledReason,
 }: {
   resource: CommerceResource
   id?: string
@@ -55,6 +55,8 @@ export function StudioForm({
   onSaved?: (record: CommerceRecord) => void
   submitLabel?: string
   extraPayload?: Record<string, unknown>
+  disabled?: boolean
+  disabledReason?: string
 }) {
   const mutation = useStudioMutation()
   async function submit(event: FormEvent<HTMLFormElement>) {
@@ -84,15 +86,16 @@ export function StudioForm({
     if (result) onSaved?.(result.record)
   }
   return <form className={styles.studioForm} onSubmit={submit}>
-    {children}
+    <fieldset className={styles.formFieldset} disabled={disabled}>{children}</fieldset>
     <StudioNotice message={mutation.message} error={mutation.error} onClose={mutation.clear}/>
-    <button className={styles.primaryAction} type="submit" disabled={mutation.saving}>
+    <button className={styles.primaryAction} type="submit" disabled={disabled || mutation.saving} title={disabled ? disabledReason : undefined}>
       {mutation.saving ? <Loader2 className={styles.spin} size={17}/> : <Save size={17}/>} {submitLabel}
     </button>
+    {disabled && disabledReason ? <p className={styles.permissionReason}>{disabledReason}</p> : null}
   </form>
 }
 
-export function ImmediateAction({ resource, id, action, label, payload, onDone, tone = 'default' }: {
+export function ImmediateAction({ resource, id, action, label, payload, onDone, tone = 'default', disabled = false, disabledReason }: {
   resource: CommerceResource
   id: string
   action: string
@@ -100,14 +103,99 @@ export function ImmediateAction({ resource, id, action, label, payload, onDone, 
   payload?: Record<string, unknown>
   onDone?: () => void
   tone?: 'default' | 'danger' | 'success'
+  disabled?: boolean
+  disabledReason?: string
 }) {
   const mutation = useStudioMutation(onDone)
-  return <button type="button" className={styles.inlineAction} data-tone={tone} disabled={mutation.saving} onClick={() => void mutation.run(
+  return <button type="button" className={styles.inlineAction} data-tone={tone} disabled={disabled || mutation.saving} title={disabled ? disabledReason : undefined} onClick={() => void mutation.run(
     () => apiRequest(`/api/angelcare-marketplace/admin/commerce/${resource}/${id}/${action}`, {
       method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload || {}),
     }),
     `${label} — résultat appliqué immédiatement.`,
   )}>{mutation.saving ? <Loader2 className={styles.spin} size={14}/> : action === 'publish' ? <Send size={14}/> : <RefreshCw size={14}/>} {label}</button>
+}
+
+export function CommerceActionDialog({
+  resource,
+  id,
+  action,
+  label,
+  objectLabel,
+  currentState,
+  targetState,
+  consequences,
+  reversible,
+  payload,
+  onDone,
+  disabled = false,
+  disabledReason,
+  danger = false,
+}: {
+  resource: CommerceResource
+  id: string
+  action: string
+  label: string
+  objectLabel: string
+  currentState: string
+  targetState: string
+  consequences: string
+  reversible: boolean
+  payload?: Record<string, unknown>
+  onDone?: () => void
+  disabled?: boolean
+  disabledReason?: string
+  danger?: boolean
+}) {
+  const dialogRef = useRef<HTMLDialogElement>(null)
+  const mutation = useStudioMutation()
+
+  async function confirm() {
+    const result = await mutation.run(
+      () => apiRequest(`/api/angelcare-marketplace/admin/commerce/${resource}/${id}/${action}`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(payload || {}),
+      }),
+      `${label} — état appliqué et audit serveur enregistré.`,
+    )
+    if (!result) return
+    dialogRef.current?.close()
+    onDone?.()
+  }
+
+  return <>
+    <button
+      type="button"
+      className={styles.inlineAction}
+      data-tone={danger ? 'danger' : 'success'}
+      disabled={disabled}
+      title={disabled ? disabledReason : undefined}
+      onClick={() => dialogRef.current?.showModal()}
+    >
+      {action === 'publish' ? <Send size={14}/> : <RefreshCw size={14}/>} {label}
+    </button>
+    <dialog className={styles.commerceDecisionDialog} ref={dialogRef}>
+      <header>
+        <div><span>COMMANDE COMMERCE GOUVERNÉE</span><h2>{label}</h2></div>
+        <button type="button" aria-label="Fermer" disabled={mutation.saving} onClick={() => dialogRef.current?.close()}><X size={17}/></button>
+      </header>
+      <div className={styles.commerceDecisionBody}>
+        <dl>
+          <div><dt>Objet exact</dt><dd>{objectLabel}</dd></div>
+          <div><dt>État actuel</dt><dd>{currentState}</dd></div>
+          <div><dt>État proposé</dt><dd>{targetState}</dd></div>
+          <div><dt>Réversibilité</dt><dd>{reversible ? 'Action inverse disponible' : 'Aucune récupération source confirmée'}</dd></div>
+        </dl>
+        <p>{consequences}</p>
+        <small>L’autorité API vérifie la permission et inscrit l’action dans l’audit Marketplace. Aucun motif additionnel n’est prétendu persistant.</small>
+        <StudioNotice message={mutation.message} error={mutation.error} onClose={mutation.clear}/>
+      </div>
+      <footer>
+        <button type="button" disabled={mutation.saving} onClick={() => dialogRef.current?.close()}>Annuler</button>
+        <button type="button" data-danger={danger} disabled={mutation.saving} onClick={() => void confirm()}>{mutation.saving ? <Loader2 className={styles.spin} size={15}/> : null} Confirmer</button>
+      </footer>
+    </dialog>
+  </>
 }
 
 export function Field({ name, label, defaultValue, type = 'text', required = false, placeholder, min, step }: {

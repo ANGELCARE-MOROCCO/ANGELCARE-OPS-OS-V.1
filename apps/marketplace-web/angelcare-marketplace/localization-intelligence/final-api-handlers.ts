@@ -1,4 +1,5 @@
 import {requireMarketplaceWorkspaceApiContext} from '../auth/context'
+import type {MarketplacePermission} from '../domain/types'
 import {apiFailure,apiSuccess,parseJsonObject,requestId} from '../server/request'
 import {executeLocalizationCommand,loadLocalizationAuthority,type LocalizationAuthorityMode} from './final-repository'
 const MODES=new Set<LocalizationAuthorityMode>(['translations','sources','glossary','memory','reviews','seo','readiness'])
@@ -15,10 +16,19 @@ function modeOf(value:string|null):LocalizationAuthorityMode{const mode=(value||
 export async function handleLocalizationAuthorityMode(request:Request,mode:LocalizationAuthorityMode){
  const id=requestId(request)
  try{
-  await requireMarketplaceWorkspaceApiContext(`localization.${mode}`,permissionFor(mode,request.method!=='GET'))
+  await requireMarketplaceWorkspaceApiContext(`localization.${mode}`,permissionFor(mode,false))
   if(request.method==='GET')return apiSuccess(await loadLocalizationAuthority(mode),{requestId:id})
-  const context=await requireMarketplaceWorkspaceApiContext(`localization.${mode}`,'marketplace.localization.access')
-  return apiSuccess(await executeLocalizationCommand(await parseJsonObject(request),context,id,request),{requestId:id})
+  const body=await parseJsonObject(request)
+  const command=String(body.command||'')
+  let permission=permissionFor(mode,true) as MarketplacePermission
+  if(command==='translation.transition'){
+   const target=String(body.to||'')
+   permission=(target==='in_review'?'marketplace.localization.translations.submit':target==='approved'?'marketplace.localization.translations.approve':target==='published'?'marketplace.localization.translations.publish':target==='archived'?'marketplace.localization.translations.archive':'marketplace.localization.translations.edit')
+  }else if(command==='review.decide')permission=String(body.decision)==='approve'?'marketplace.localization.translations.approve':'marketplace.localization.translations.review'
+  else if(command==='memory.curate')permission='marketplace.localization.memory.curate'
+  else if(command==='readiness.recalculate')permission='marketplace.localization.scans.run'
+  const context=await requireMarketplaceWorkspaceApiContext(`localization.${mode}`,permission)
+  return apiSuccess(await executeLocalizationCommand(body,context,id,request),{requestId:id})
  }catch(error){return apiFailure(error,id)}
 }
 

@@ -10,6 +10,7 @@ import type { CatalogLocale } from '@/angelcare-marketplace/catalog-discovery/ty
 import { GlobalPublicShell } from '@/angelcare-marketplace/public-universe/components/GlobalPublicShell'
 import { PublicPageRenderer } from '@/angelcare-marketplace/public-universe/components/PublicPageRenderer'
 import { getPublicPage, publicRoutePath } from '@/angelcare-marketplace/public-universe/repository'
+import { resolvePublishedDictionary } from '@/angelcare-marketplace/localization-intelligence/runtime'
 
 const locales = new Set(['fr', 'en', 'ar'])
 type PublicLocale = HomepageLocale
@@ -25,17 +26,19 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const current = await params
   if (!locales.has(current.locale)) return {}
   const locale = current.locale as PublicLocale
+  const dictionary = locale === 'fr' ? null : await resolvePublishedDictionary(locale, 'public').catch(() => null)
+  const translated = (value: string | null | undefined) => value ? dictionary?.bySource[value] || value : undefined
   const slug = current.slug?.length ? publicRoutePath(current.slug) : 'accueil'
   const alias = canonicalAlias(locale, slug)
   if (alias) return { title: 'ANGELCARE Marketplace', alternates: { canonical: `/angelcare-marketplace/${locale}/${alias}` } }
   if (slug === 'accueil') {
     const homepage = await getHomepageExperience({ locale }).catch(() => null)
     const campaign = homepage?.campaigns[0]
-    if (campaign) return { title: campaign.title, description: campaign.subtitle || undefined, alternates: { canonical: `/angelcare-marketplace/${locale}` } }
+    if (campaign) return { title: translated(campaign.title), description: translated(campaign.subtitle), alternates: { canonical: `/angelcare-marketplace/${locale}` } }
   }
   const result = await getPublicPage({ locale, slug }).catch(() => null)
   if (!result) return { title: 'ANGELCARE Marketplace' }
-  return { title: result.page.seo_title || result.page.title, description: result.page.seo_description || result.page.description || undefined, alternates: { canonical: result.page.canonical_url || undefined } }
+  return { title: translated(result.page.seo_title || result.page.title), description: translated(result.page.seo_description || result.page.description), alternates: { canonical: result.page.canonical_url || undefined } }
 }
 
 export default async function Page({ params }: { params: Promise<{ locale: string; slug?: string[] }> }) {

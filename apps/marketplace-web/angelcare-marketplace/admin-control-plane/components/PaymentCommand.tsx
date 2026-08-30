@@ -5,6 +5,7 @@ import { BadgeDollarSign, CheckCircle2, CircleAlert, CreditCard, FilePlus2, Refr
 import type { AdminPaymentDossier, AdminPaymentSummary } from '../types'
 import styles from '../../design-system/marketplace.module.css'
 import { Button, Card, MetricCard, PageHeader, StatePanel, StatusChip } from '../../design-system/ui'
+import { useGovernedAction } from '../../shells/GovernedActionProvider'
 
 type Envelope<T> = { data: T }
 
@@ -20,7 +21,8 @@ async function request<T>(url: string, init?: RequestInit): Promise<T> {
 
 const money = (value: number) => `${value.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} Dh`
 
-export function PaymentCommand({ initial }: { initial: AdminPaymentSummary }) {
+export function PaymentCommand({ initial, canCreate, canManage, canRefund }: { initial: AdminPaymentSummary; canCreate: boolean; canManage: boolean; canRefund: boolean }) {
+  const requestAction = useGovernedAction()
   const [summary, setSummary] = useState(initial)
   const [selected, setSelected] = useState<AdminPaymentDossier | null>(null)
   const [query, setQuery] = useState('')
@@ -99,6 +101,8 @@ export function PaymentCommand({ initial }: { initial: AdminPaymentSummary }) {
 
   async function mutatePayment(action: 'capture' | 'failed' | 'cancelled') {
     if (!selected) return
+    const governedReason = await requestAction({ title: action === 'capture' ? 'Capturer le paiement' : action === 'failed' ? 'Déclarer un échec' : 'Annuler le paiement', objectLabel: selected.payment.public_reference, currentState: selected.payment.status, nextState: action, consequence: action === 'capture' ? 'La capture devient une écriture financière persistante.' : 'Le parcours de paiement actif est interrompu.', permission: 'marketplace.finance.exceptions.approve', danger: action !== 'capture' })
+    if (!governedReason) return
     setBusy(true)
     setError(null)
     try {
@@ -108,7 +112,7 @@ export function PaymentCommand({ initial }: { initial: AdminPaymentSummary }) {
           action,
           amount: action === 'capture' && captureAmount ? Number(captureAmount) : undefined,
           providerReference: captureReference || null,
-          reason: actionReason || `Action opérateur : ${action}`,
+          reason: `${actionReason || `Action opérateur : ${action}`} · ${governedReason}`,
         }),
       })
       setSelected(result)
@@ -126,6 +130,8 @@ export function PaymentCommand({ initial }: { initial: AdminPaymentSummary }) {
 
   async function refundPayment() {
     if (!selected) return
+    const governedReason = await requestAction({ title: 'Autoriser le remboursement', objectLabel: selected.payment.public_reference, currentState: selected.payment.status, nextState: 'partially_refunded / refunded', consequence: 'Le moteur répartit le remboursement entre Wallet et contribution externe et conserve l’idempotence.', permission: 'marketplace.finance.exceptions.approve', danger: true, reversibility: 'Aucune annulation de remboursement n’est exposée.' })
+    if (!governedReason) return
     setBusy(true)
     setError(null)
     try {
@@ -133,7 +139,7 @@ export function PaymentCommand({ initial }: { initial: AdminPaymentSummary }) {
         method: 'POST',
         body: JSON.stringify({
           amount: Number(refundAmount),
-          reason: refundReason,
+          reason: `${refundReason} · ${governedReason}`,
           idempotencyKey: `admin-refund:${selected.payment.id}:${refundAmount}:${Date.now()}`,
         }),
       })
@@ -155,7 +161,7 @@ export function PaymentCommand({ initial }: { initial: AdminPaymentSummary }) {
         eyebrow="PAYMENT COMMAND"
         title="Paiements, vérification et remboursements"
         description="Registre financier opérateur réel : créer un paiement manuel, le vérifier, capturer partiellement ou totalement, suivre les tentatives et déclencher un remboursement depuis le même dossier."
-        actions={<Button onClick={() => setCreateOpen((value) => !value)}><FilePlus2 size={16} /> Enregistrer un paiement</Button>}
+        actions={<Button disabled={!canCreate} onClick={() => setCreateOpen((value) => !value)}><FilePlus2 size={16} /> Enregistrer un paiement</Button>}
       />
 
       {error ? <div className={styles.noticeDanger} style={{ marginBottom: 14 }}>{error}</div> : null}
@@ -213,9 +219,9 @@ export function PaymentCommand({ initial }: { initial: AdminPaymentSummary }) {
                 <div className={styles.fieldGroup} style={{ gridColumn: '1 / -1' }}><label className={styles.fieldLabel}>Motif / preuve</label><textarea className={styles.textArea} value={actionReason} onChange={(event) => setActionReason(event.target.value)} /></div>
               </div>
               <div className={styles.pageActions} style={{ justifyContent: 'flex-start', marginTop: 12 }}>
-                <Button disabled={busy || ['captured', 'refunded', 'partially_refunded'].includes(selected.payment.status)} onClick={() => void mutatePayment('capture')}><CheckCircle2 size={15} /> Capturer</Button>
-                <Button variant="secondary" disabled={busy || ['captured', 'refunded', 'partially_refunded', 'failed', 'cancelled'].includes(selected.payment.status)} onClick={() => void mutatePayment('failed')}><XCircle size={15} /> Déclarer échec</Button>
-                <Button variant="danger" disabled={busy || ['captured', 'refunded', 'partially_refunded', 'failed', 'cancelled'].includes(selected.payment.status)} onClick={() => void mutatePayment('cancelled')}>Annuler</Button>
+                <Button disabled={!canManage || busy || ['captured', 'refunded', 'partially_refunded'].includes(selected.payment.status)} onClick={() => void mutatePayment('capture')}><CheckCircle2 size={15} /> Capturer</Button>
+                <Button variant="secondary" disabled={!canManage || busy || ['captured', 'refunded', 'partially_refunded', 'failed', 'cancelled'].includes(selected.payment.status)} onClick={() => void mutatePayment('failed')}><XCircle size={15} /> Déclarer échec</Button>
+                <Button variant="danger" disabled={!canManage || busy || ['captured', 'refunded', 'partially_refunded', 'failed', 'cancelled'].includes(selected.payment.status)} onClick={() => void mutatePayment('cancelled')}>Annuler</Button>
               </div>
               <div className={styles.noticeWarning} style={{ marginTop: 14 }}>
                 <RefreshCcw size={16} />
@@ -224,7 +230,7 @@ export function PaymentCommand({ initial }: { initial: AdminPaymentSummary }) {
               <div className={styles.formGrid} style={{ marginTop: 12 }}>
                 <div className={styles.fieldGroup}><label className={styles.fieldLabel}>Montant à rembourser</label><input className={styles.textField} type="number" min="0.01" step="0.01" value={refundAmount} onChange={(event) => setRefundAmount(event.target.value)} placeholder="Montant total" /></div>
                 <div className={styles.fieldGroup}><label className={styles.fieldLabel}>Motif du remboursement</label><input className={styles.textField} value={refundReason} onChange={(event) => setRefundReason(event.target.value)} /></div>
-                <div className={styles.pageActions}><Button variant="danger" disabled={busy || !refundAmount || !refundReason || !['captured','partially_refunded'].includes(selected.payment.status)} onClick={() => void refundPayment()}><RefreshCcw size={15} /> Rembourser</Button></div>
+                <div className={styles.pageActions}><Button variant="danger" disabled={!canRefund || busy || !refundAmount || !refundReason || !['captured','partially_refunded'].includes(selected.payment.status)} onClick={() => void refundPayment()}><RefreshCcw size={15} /> Rembourser</Button></div>
               </div>
               <div className={styles.list} style={{ marginTop: 16 }}>
                 <div className={styles.listItem}><CreditCard size={16} /><div className={styles.listItemContent}><strong>Tentatives</strong><p>{selected.attempts.length} tentative(s) enregistrée(s).</p></div></div>

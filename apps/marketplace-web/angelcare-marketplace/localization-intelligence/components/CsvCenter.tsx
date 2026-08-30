@@ -1,75 +1,29 @@
 'use client'
-
-import { useMemo, useState } from 'react'
+import {useEffect,useMemo,useState} from 'react'
+import {Download,FileCheck2,FileUp,Languages,ShieldCheck,TriangleAlert} from 'lucide-react'
 import styles from '../localization.module.css'
 
-type TargetLocale='en'|'ar'
-type InventoryRow=Record<string,unknown>
-type ParsedRow=Record<string,string>
+type DryRow={rowNumber:number;importRowNumber:number;translationId:string;sourceKey:string;locale:'en'|'ar';before:string;proposed:string;status:string;errors:string[];warnings:string[]}
+type DryResult={importId:string;rows:DryRow[];valid:number;invalid:number;conflicts:number;status:string}
+type History=Record<string,unknown>
+const PROFILES=[['new','TRADUIRE LES NOUVEAUTÉS'],['missing-en',"RATTRAPER L'ANGLAIS"],['missing-ar',"RATTRAPER L'ARABE"],['stale','RETRADUIRE LES SOURCES MODIFIÉES'],['products','PRODUITS UNIQUEMENT'],['public','BOUTIQUE PUBLIQUE UNIQUEMENT'],['admin','INTERFACE ADMIN'],['private','PORTAIL CLIENT'],['checkout','CHECKOUT CRITIQUE'],['homepage','HOMEPAGE / CAMPAGNE'],['seo','SEO'],['changed','CHANGÉ DEPUIS…'],['custom','PERSONNALISÉ']] as const
 
-const REQUIRED_HEADERS=['candidate_id','source_text_fr','source_hash','target_locale','proposed_translation'] as const
-
-function csvCell(value:unknown){const text=String(value??'');return /[",\n]/.test(text)?`"${text.replaceAll('"','""')}"`:text}
-function parseCsv(text:string){
-  const rows:string[][]=[];let row:string[]=[],cell='',quoted=false
-  for(let i=0;i<text.length;i++){const ch=text[i];if(quoted){if(ch==='"'&&text[i+1]==='"'){cell+='"';i++}else if(ch==='"')quoted=false;else cell+=ch}else if(ch==='"')quoted=true;else if(ch===','){row.push(cell);cell=''}else if(ch==='\n'){row.push(cell.replace(/\r$/,''));rows.push(row);row=[];cell=''}else cell+=ch}
-  if(cell||row.length){row.push(cell.replace(/\r$/,''));rows.push(row)}
-  if(!rows.length)return []
-  const header=rows[0].map((value)=>value.replace(/^\uFEFF/,'').trim())
-  return rows.slice(1).filter((values)=>values.some(Boolean)).map((values)=>Object.fromEntries(header.map((key,index)=>[key,values[index]??''])) as ParsedRow)
-}
-function download(name:string,content:string){const blob=new Blob([`\uFEFF${content}`],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url)}
-
+function downloadResponse(response:Response){const disposition=response.headers.get('content-disposition')||'',name=disposition.match(/filename="([^"]+)"/)?.[1]||'marketplace_translation_batch.csv';return response.blob().then(blob=>{const url=URL.createObjectURL(blob),anchor=document.createElement('a');anchor.href=url;anchor.download=name;document.body.appendChild(anchor);anchor.click();anchor.remove();URL.revokeObjectURL(url)})}
 export function CsvCenter(){
-  const [fileName,setFileName]=useState('Aucun fichier sélectionné.')
-  const [parsed,setParsed]=useState<ParsedRow[]>([])
-  const [message,setMessage]=useState('')
-  const [busy,setBusy]=useState(false)
-  const [valid,setValid]=useState(false)
-  const summary=useMemo(()=>parsed.length?`${parsed.length} ligne(s) chargée(s).`:'Aucun import en mémoire.',[parsed.length])
-
-  async function exportLocale(locale:TargetLocale){
-    setBusy(true);setMessage('')
-    try{
-      const response=await fetch('/api/angelcare-marketplace/localization/inventory?page=1&pageSize=250')
-      const payload=await response.json() as {data?:InventoryRow[];error?:{message?:string}}
-      if(!response.ok||payload.error)throw new Error(payload.error?.message||'Export impossible.')
-      const rows=(payload.data||[]).filter((row)=>String(row[`translation_${locale}`]??row.target_locale??'')!==locale||!String(row[`translation_${locale}`]??'').trim())
-      const header=['candidate_id','translation_key','domain','route','source_text_fr','source_hash','target_locale','proposed_translation','reviewer_note']
-      const lines=[header,...rows.map((row)=>[row.candidate_id??row.id??'',row.translation_key??'',row.domain??'',row.route??'',row.source_text_fr??'',row.source_hash??'',locale,'',''])].map((row)=>row.map(csvCell).join(','))
-      download(`angelcare-localization-${locale}-${new Date().toISOString().slice(0,10)}.csv`,lines.join('\n'))
-      setMessage(`Export ${locale.toUpperCase()} préparé depuis l’inventaire courant (${rows.length} ligne(s)).`)
-    }catch(error){setMessage(error instanceof Error?error.message:'Export impossible.')}finally{setBusy(false)}
-  }
-
-  async function chooseFile(file:File|null){
-    setValid(false);setParsed([]);setMessage('')
-    if(!file){setFileName('Aucun fichier sélectionné.');return}
-    setFileName(file.name)
-    try{const rows=parseCsv(await file.text());setParsed(rows);setMessage(`${rows.length} ligne(s) prêtes pour dry-run.`)}catch{setMessage('CSV illisible ou invalide.')}
-  }
-
-  function dryRun(){
-    if(!parsed.length){setValid(false);setMessage('Chargez un CSV avant le dry-run.');return}
-    const errors:string[]=[]
-    parsed.forEach((row,index)=>{for(const key of REQUIRED_HEADERS)if(!row[key]?.trim())errors.push(`L${index+2}: ${key} manquant`);if(row.target_locale&&!['en','ar'].includes(row.target_locale))errors.push(`L${index+2}: target_locale doit être en ou ar`)})
-    setValid(errors.length===0);setMessage(errors.length?`Dry-run refusé: ${errors.slice(0,8).join(' · ')}${errors.length>8?' …':''}`:`Dry-run PASS: ${parsed.length} ligne(s), en-têtes et champs obligatoires valides.`)
-  }
-
-  async function applyImport(){
-    if(!valid||!parsed.length)return
-    setBusy(true);setMessage('')
-    try{
-      let applied=0
-      for(const row of parsed){
-        const response=await fetch('/api/angelcare-marketplace/localization/final?mode=translations',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({command:'translation.save',candidateId:row.candidate_id,targetLocale:row.target_locale,translationText:row.proposed_translation})})
-        const payload=await response.json() as {error?:{message?:string}}
-        if(!response.ok||payload.error)throw new Error(`Ligne ${applied+2}: ${payload.error?.message||'échec import'}`)
-        applied++
-      }
-      setMessage(`Import appliqué avec audit: ${applied}/${parsed.length} traduction(s) enregistrée(s) en brouillon.`);setValid(false)
-    }catch(error){setMessage(error instanceof Error?error.message:'Import impossible.')}finally{setBusy(false)}
-  }
-
-  return <div className={styles.page}><section className={styles.hero}><div className={styles.eyebrow}>CSV FULFILLMENT BRIDGE</div><h1>Exporter, contrôler en dry-run, puis injecter sous autorité.</h1><p>L’export provient de l’inventaire courant. L’import vérifie les en-têtes et champs obligatoires puis utilise l’API Localization gouvernée; chaque traduction importée reste en brouillon avant revue et publication.</p></section><section className={styles.cards}><article className={styles.command}><h3>Exporter EN</h3><p className={styles.muted}>Inventaire courant, source française, hash et cible EN.</p><button type="button" className={styles.button} onClick={()=>void exportLocale('en')} disabled={busy}>Préparer l’export EN</button></article><article className={styles.command}><h3>Exporter AR</h3><p className={styles.muted}>Inventaire courant, UTF‑8 et cible AR.</p><button type="button" className={styles.button} onClick={()=>void exportLocale('ar')} disabled={busy}>Préparer l’export AR</button></article><article className={styles.command}><h3>Importer un CSV</h3><input type="file" accept=".csv,text/csv" onChange={e=>void chooseFile(e.target.files?.[0]||null)}/><p className={styles.muted}>{fileName} · {summary}</p><div className={styles.toolbar}><button type="button" className={styles.button} onClick={dryRun} disabled={busy||!parsed.length}>Valider en dry-run</button><button type="button" className={`${styles.button} ${styles.secondary}`} onClick={()=>void applyImport()} disabled={busy||!valid}>Appliquer l’import validé</button></div>{message?<p className={styles.muted}>{message}</p>:null}</article></section></div>
+ const[profile,setProfile]=useState('new'),[locale,setLocale]=useState('en,ar'),[workspace,setWorkspace]=useState(''),[updatedSince,setUpdatedSince]=useState(''),[file,setFile]=useState<File|null>(null),[csv,setCsv]=useState(''),[dry,setDry]=useState<DryResult|null>(null),[selectedReady,setSelectedReady]=useState<Set<number>>(new Set()),[history,setHistory]=useState<History[]>([]),[busy,setBusy]=useState(false),[message,setMessage]=useState(''),[confirmed,setConfirmed]=useState(false),[rollbackId,setRollbackId]=useState('')
+ const ready=useMemo(()=>dry?.rows.filter(row=>row.status==='READY')||[],[dry])
+ useEffect(()=>{void fetch('/api/angelcare-marketplace/localization/imports').then(response=>response.ok?response.json():null).then(payload=>setHistory(payload?.data||[])).catch(()=>undefined)},[])
+ useEffect(()=>{if(!rollbackId)return;const previous=document.activeElement as HTMLElement|null,dialog=document.querySelector<HTMLElement>('[aria-labelledby="rollback-title"]');if(!dialog)return;const focusable=()=>[...dialog.querySelectorAll<HTMLElement>('button,a[href],input,select,textarea,[tabindex]:not([tabindex="-1"])')].filter(element=>!element.hasAttribute('disabled'));focusable()[0]?.focus();function keys(event:KeyboardEvent){if(event.key==='Escape'){setRollbackId('');return}if(event.key!=='Tab')return;const controls=focusable();if(!controls.length)return;const first=controls[0],last=controls.at(-1)!;if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus()}else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus()}}document.addEventListener('keydown',keys);return()=>{document.removeEventListener('keydown',keys);previous?.focus()}},[rollbackId])
+ function exportUrl(instructions=false){const params=new URLSearchParams();const effectiveLocale=profile==='missing-en'?'en':profile==='missing-ar'?'ar':locale;if(effectiveLocale!=='en,ar')params.set('locale',effectiveLocale);if(workspace)params.set('workspace',workspace);if(profile==='new')params.set('freshness','new');if(profile.startsWith('missing'))params.set('missingOnly','true');if(profile==='stale')params.set('staleOnly','true');if(profile==='products')params.set('workspace','products');if(profile==='public')params.set('publicOnly','true');if(profile==='admin')params.set('audience','admin');if(profile==='private')params.set('audience','private');if(profile==='checkout')params.set('route','/angelcare-marketplace/[locale]/checkout');if(profile==='homepage'){params.set('workspace','boutique');params.set('surface','homepage_hero')}if(profile==='seo'){params.set('workspace','boutique');params.set('surface','seo')}if((profile==='changed'||profile==='custom')&&updatedSince)params.set('updatedSince',new Date(updatedSince).toISOString());if(instructions)params.set('instructions','true');return`/api/angelcare-marketplace/localization/exports?${params}`}
+ async function exportBatch(instructions=false){setBusy(true);setMessage('');try{const response=await fetch(exportUrl(instructions));if(!response.ok){const payload=await response.json().catch(()=>null);throw new Error(payload?.error?.message||'Export refusé.')}await downloadResponse(response);setMessage(instructions?'Instructions ChatGPT téléchargées.':'CSV gouverné téléchargé.')}catch(error){setMessage(error instanceof Error?error.message:'Export impossible.')}finally{setBusy(false)}}
+ async function choose(next:File|null){setFile(next);setDry(null);setSelectedReady(new Set());setConfirmed(false);setCsv(next?await next.text():'');setMessage(next?`${next.name} chargé. Le dry-run serveur est obligatoire.`:'')}
+ async function dryRun(){if(!file||!csv)return;setBusy(true);setMessage('');try{const response=await fetch('/api/angelcare-marketplace/localization/imports',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({command:'dry-run',fileName:file.name,csv})}),payload=await response.json();if(!response.ok)throw new Error(payload?.error?.message||'Dry-run refusé.');setDry(payload.data);setSelectedReady(new Set((payload.data.rows as DryRow[]).filter(row=>row.status==='READY').map(row=>row.importRowNumber)));setMessage(`Dry-run: ${payload.data.valid} prête(s), ${payload.data.invalid} invalide(s), ${payload.data.conflicts} conflit(s).`)}catch(error){setMessage(error instanceof Error?error.message:'Dry-run impossible.')}finally{setBusy(false)}}
+ async function apply(){if(!dry||!confirmed||!selectedReady.size)return;setBusy(true);setMessage('');try{const response=await fetch('/api/angelcare-marketplace/localization/imports',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({command:'apply',importId:dry.importId,selected:[...selectedReady]})}),payload=await response.json();if(!response.ok)throw new Error(payload?.error?.message||'Application refusée.');setMessage(`${payload.data.applied} traduction(s) appliquée(s) en brouillon. Aucune publication automatique.`);setConfirmed(false)}catch(error){setMessage(error instanceof Error?error.message:'Application impossible.')}finally{setBusy(false)}}
+ async function rollback(){if(!rollbackId)return;setBusy(true);try{const response=await fetch('/api/angelcare-marketplace/localization/imports',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({command:'rollback',importId:rollbackId})}),payload=await response.json();if(!response.ok)throw new Error(payload?.error?.message||'Restauration refusée.');setMessage(`${payload.data.restored} traduction(s) restaurée(s).`);setHistory(current=>current.map(row=>String(row.id)===rollbackId?{...row,status:'rolled_back'}:row));setRollbackId('')}catch(error){setMessage(error instanceof Error?error.message:'Restauration impossible.')}finally{setBusy(false)}}
+ return <main className={styles.page}><section className={styles.hero}><div className={styles.eyebrow}>LOCALIZATION OS · EXPORT / IMPORT</div><h1>Du français maître au lot EN / AR, sans écriture aveugle.</h1><p>Les identités, hashes source, placeholders, HTML et conflits sont contrôlés côté serveur. L’import crée uniquement des brouillons, ensuite soumis à revue, approbation et publication.</p></section>
+ <section className={styles.cards}><article className={styles.command}><Languages/><h3>1 · Définir le scope</h3><label>Profil<select value={profile} onChange={event=>setProfile(event.target.value)}>{PROFILES.map(([value,label])=><option key={value} value={value}>{label}</option>)}</select></label><label>Langues<select value={locale} onChange={event=>setLocale(event.target.value)}><option value="en,ar">EN + AR</option><option value="en">EN</option><option value="ar">AR</option></select></label><label>Workspace<input value={workspace} onChange={event=>setWorkspace(event.target.value)} placeholder="Tous ou products, boutique…"/></label>{profile==='changed'||profile==='custom'?<label>Modifié depuis<input type="datetime-local" value={updatedSince} onChange={event=>setUpdatedSince(event.target.value)}/></label>:null}<div className={styles.toolbar}><button className={styles.button} disabled={busy} onClick={()=>void exportBatch(false)}><Download size={15}/> Exporter CSV</button><button className={styles.secondaryButton} disabled={busy} onClick={()=>void exportBatch(true)}>Instructions ChatGPT</button></div></article>
+ <article className={styles.command}><FileUp/><h3>2 · Importer et simuler</h3><input type="file" accept=".csv,text/csv" onChange={event=>void choose(event.target.files?.[0]||null)}/><p className={styles.muted}>{file?.name||'Aucun fichier sélectionné'}</p><button className={styles.button} disabled={busy||!file} onClick={()=>void dryRun()}><FileCheck2 size={15}/> Dry-run serveur</button>{dry?<div><strong>{dry.valid} READY</strong><p>{dry.invalid} invalides · {dry.conflicts} conflits</p></div>:null}</article>
+ <article className={styles.command}><ShieldCheck/><h3>3 · Revoir et appliquer</h3><p>Seules les lignes READY sélectionnées seront écrites. Elles restent DRAFT et ne peuvent pas fuir vers le runtime.</p><label><input type="checkbox" checked={confirmed} onChange={event=>setConfirmed(event.target.checked)}/> J’ai examiné les différences et confirme l’application des {selectedReady.size} lignes sélectionnées sur {ready.length} valides.</label><button className={styles.button} disabled={busy||!confirmed||!selectedReady.size} onClick={()=>void apply()}>Appliquer en brouillon</button></article></section>
+ {message?<p className={styles.message}>{message}</p>:null}{dry?<section className={styles.table}><header><strong>Prévisualisation FR / avant / import</strong><span>{dry.rows.length} changements</span></header>{dry.rows.slice(0,500).map((row,index)=><article key={`${row.translationId}:${row.locale}:${index}`}>{row.status==='READY'?<input type="checkbox" aria-label={`Appliquer ${row.sourceKey} ${row.locale.toUpperCase()}`} checked={selectedReady.has(row.importRowNumber)} onChange={event=>setSelectedReady(current=>{const next=new Set(current);if(event.target.checked)next.add(row.importRowNumber);else next.delete(row.importRowNumber);return next})}/>:null}<div><strong>{row.sourceKey}</strong><small>{row.locale.toUpperCase()} · ligne CSV {row.rowNumber}</small></div><span data-risk={row.status!=='READY'}>{row.status}</span><div><small>Avant: {row.before||'—'}</small><strong>Import: {row.proposed}</strong>{row.errors.map(error=><small key={error}><TriangleAlert size={12}/>{error}</small>)}</div></article>)}</section>:null}
+ <section className={styles.table}><header><strong>Historique d’import</strong><span>{history.length}</span></header>{history.map(row=><article key={String(row.id)}><div><strong>{String(row.file_name||'Import')}</strong><small>{String(row.created_at||'')}</small></div><span>{String(row.status||'')}</span><div><small>{String(row.valid_rows||0)} valides · {String(row.invalid_rows||0)} invalides · {String(row.conflict_rows||0)} conflits</small><a href={`/api/angelcare-marketplace/localization/imports?id=${row.id}&artifact=original`}>Original</a><a href={`/api/angelcare-marketplace/localization/imports?id=${row.id}&artifact=validated`}>Validé</a>{Number(row.invalid_rows||0)>0?<a href={`/api/angelcare-marketplace/localization/imports?id=${row.id}&artifact=errors`}>Erreurs</a>:null}{String(row.status)==='applied'?<button type="button" className={styles.secondaryButton} onClick={()=>setRollbackId(String(row.id))}>Préparer la restauration</button>:null}</div></article>)}</section>{rollbackId?<aside className={styles.command} role="dialog" aria-modal="true" aria-labelledby="rollback-title"><h2 id="rollback-title">Restaurer l’import</h2><p>Les traductions modifiées retrouveront leur valeur et leur état antérieurs. Les traductions créées uniquement par ce lot seront retirées.</p><div className={styles.toolbar}><button className={styles.secondaryButton} onClick={()=>setRollbackId('')}>Annuler</button><button className={styles.button} disabled={busy} onClick={()=>void rollback()}>Confirmer la restauration</button></div></aside>:null}</main>
 }

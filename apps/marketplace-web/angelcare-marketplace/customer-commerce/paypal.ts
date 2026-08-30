@@ -161,6 +161,29 @@ export function paypalConfigured(): boolean {
   }
 }
 
+export function paypalConfigurationStatus() {
+  const provider = String(process.env.ANGELCARE_PAYMENT_PROVIDER || '').trim().toLowerCase()
+  const environment = String(process.env.PAYPAL_ENV || 'live').trim().toLowerCase()
+  const clientId = String(process.env.PAYPAL_CLIENT_ID || '').trim()
+  const clientSecret = String(process.env.PAYPAL_CLIENT_SECRET || '').trim()
+  const webhookId = String(process.env.PAYPAL_WEBHOOK_ID || '').trim()
+  const rate = finitePositive(process.env.PAYPAL_DH_PER_PAYPAL_UNIT)
+  return {
+    providerEnabled: provider === 'paypal', environment: environment === 'sandbox' || environment === 'live' ? environment : 'unknown',
+    baseUrl: environment === 'sandbox' ? 'https://api-m.sandbox.paypal.com' : environment === 'live' ? 'https://api-m.paypal.com' : null,
+    clientIdPresent: Boolean(clientId), clientSecretPresent: Boolean(clientSecret), webhookIdPresent: Boolean(webhookId),
+    conversionRatePresent: rate > 0, currency: String(process.env.PAYPAL_CURRENCY || 'EUR').trim().toUpperCase(),
+    configured: paypalConfigured(), supportedCurrencies: ['EUR'], supportedJourneys: ['card', 'deposit', 'installment'],
+  }
+}
+
+export async function testPayPalConnection() {
+  const config = getPayPalConfig({ requireWebhook: true })
+  const startedAt = Date.now()
+  await accessToken(config, true)
+  return { ok: true, environment: config.environment, baseUrl: config.baseUrl, latencyMs: Date.now() - startedAt, checkedAt: new Date().toISOString() }
+}
+
 export function dhToPayPalAmount(amountDh: number, dhPerUnit: number): string {
   if (!Number.isFinite(amountDh) || amountDh <= 0) {
     throw new MarketplaceError('VALIDATION_ERROR', 'Le montant externe PayPal doit être strictement positif.')

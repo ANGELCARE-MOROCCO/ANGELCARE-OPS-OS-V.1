@@ -1,2 +1,2 @@
-import {RealityCompletionPage} from '@/angelcare-marketplace/reality-completion/admin-page'
-export default function Page(){return <RealityCompletionPage workspaceKey="launch.readiness"/>}
+import { redirect } from 'next/navigation'
+export default function Page(){redirect('/angelcare-marketplace/admin/readiness')}

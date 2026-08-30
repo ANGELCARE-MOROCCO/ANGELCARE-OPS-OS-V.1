@@ -81,10 +81,15 @@ function mapItem(row: DbRow, locale: HomepageLocale, mediaUrl: string | null, ca
 
 async function listNavigation(locale: HomepageLocale, territoryId: string | null): Promise<CmsMenuItem[]> {
   const supabase = await createServiceClient()
-  let query = supabase.from('angelcare_marketplace_public_navigation_v').select('*').eq('locale', locale)
-  query = territoryId ? query.or(`territory_id.is.null,territory_id.eq.${territoryId}`) : query.is('territory_id', null)
-  const { data } = await query.order('sort_order')
-  return (data || []) as CmsMenuItem[]
+  const load = async (targetLocale: HomepageLocale) => {
+    let query = supabase.from('angelcare_marketplace_public_navigation_v').select('*').eq('locale', targetLocale)
+    query = territoryId ? query.or(`territory_id.is.null,territory_id.eq.${territoryId}`) : query.is('territory_id', null)
+    return query.order('sort_order')
+  }
+  const localized = await load(locale)
+  if (localized.data?.length || locale === 'fr') return (localized.data || []) as CmsMenuItem[]
+  const fallback = await load('fr')
+  return (fallback.data || []) as CmsMenuItem[]
 }
 
 async function listTerritory(territoryCode: string): Promise<HomepageTerritory | null> {
@@ -135,10 +140,27 @@ export async function getHomepageExperience(input: { locale: HomepageLocale; ter
     supabase.from('angelcare_marketplace_homepage_placements').select('*').eq('locale', locale).eq('status', 'active').lte('starts_at', now).or(`ends_at.is.null,ends_at.gte.${now}`).order('priority').order('sort_order'),
   ])
 
+  const fallbackCampaignRows = locale !== 'fr' && !rows(campaignRows).length
+    ? (await supabase.from('angelcare_marketplace_homepage_campaigns').select('*').eq('locale', 'fr').eq('status', 'active').lte('starts_at', now).or(`ends_at.is.null,ends_at.gte.${now}`).order('priority').limit(8)).data
+    : null
+  const [fallbackCategoryRows, fallbackCollectionRows, fallbackSectionRows, fallbackPlacementRows] = locale !== 'fr'
+    ? await Promise.all([
+      rows(categoryRows).length ? Promise.resolve(null) : supabase.from('angelcare_marketplace_catalog_categories').select('*').eq('locale', 'fr').eq('status', 'published').order('sort_order').then(result => result.data),
+      rows(collectionRows).length ? Promise.resolve(null) : supabase.from('angelcare_marketplace_homepage_collections').select('*').eq('locale', 'fr').eq('status', 'active').order('sort_order').then(result => result.data),
+      rows(sectionRows).length ? Promise.resolve(null) : supabase.from('angelcare_marketplace_homepage_sections').select('*').eq('locale', 'fr').eq('status', 'active').eq('visible', true).lte('starts_at', now).or(`ends_at.is.null,ends_at.gte.${now}`).order('sort_order').then(result => result.data),
+      rows(placementRows).length ? Promise.resolve(null) : supabase.from('angelcare_marketplace_homepage_placements').select('*').eq('locale', 'fr').eq('status', 'active').lte('starts_at', now).or(`ends_at.is.null,ends_at.gte.${now}`).order('priority').order('sort_order').then(result => result.data),
+    ])
+    : [null, null, null, null]
+  const effectiveCampaignRows = rows(campaignRows).length ? campaignRows : fallbackCampaignRows
+  const effectiveCategoryRows = rows(categoryRows).length ? categoryRows : fallbackCategoryRows
+  const effectiveCollectionRows = rows(collectionRows).length ? collectionRows : fallbackCollectionRows
+  const effectiveSectionRows = rows(sectionRows).length ? sectionRows : fallbackSectionRows
+  const effectivePlacementRows = rows(placementRows).length ? placementRows : fallbackPlacementRows
+
   const itemRowsSafe = rows(itemRows)
   const linkRowsSafe = rows(linkRows)
   const mediaMap = new Map(rows(mediaRows).map((row) => [text(row.catalog_item_id), text(row.asset_url)]))
-  const rawCategories = rows(categoryRows)
+  const rawCategories = rows(effectiveCategoryRows)
   const countByCategory = new Map<string, number>()
   for (const link of linkRowsSafe) countByCategory.set(text(link.category_id), (countByCategory.get(text(link.category_id)) || 0) + 1)
   const categories = rawCategories.map((row) => mapCategory(row, countByCategory.get(text(row.id)) || 0))
@@ -159,13 +181,13 @@ export async function getHomepageExperience(input: { locale: HomepageLocale; ter
   const items = itemRowsSafe.map((row) => mapItem(row, locale, mediaMap.get(text(row.id)) || null, categoryByItem.get(text(row.id)), trustByObject.get(text(row.id)) || []))
   const itemById = new Map(items.map((item) => [item.id, item]))
   const collectionLinks = rows(collectionItemRows)
-  const collections: HomepageCollection[] = rows(collectionRows).map((row) => ({
+  const collections: HomepageCollection[] = rows(effectiveCollectionRows).map((row) => ({
     id: text(row.id), collection_key: text(row.collection_key), locale, title: text(row.title), subtitle: nullableText(row.subtitle),
     selection_method: text(row.selection_method), layout_variant: text(row.layout_variant),
     items: collectionLinks.filter((link) => text(link.collection_id) === text(row.id)).map((link) => itemById.get(text(link.catalog_item_id))).filter((item): item is HomepageItem => Boolean(item)),
   }))
 
-  const placementRowsSafe = rows(placementRows)
+  const placementRowsSafe = rows(effectivePlacementRows)
   const placementItems = (badge: string): HomepageItem[] => placementRowsSafe
     .filter((placement) => text(placement.merchandising_badge) === badge)
     .map((placement) => itemById.get(text(placement.catalog_item_id)))
@@ -178,7 +200,7 @@ export async function getHomepageExperience(input: { locale: HomepageLocale; ter
     sectionPlacements.set(sectionId, [...(sectionPlacements.get(sectionId) || []), item])
   }
   const collectionById = new Map(collections.map((collection) => [collection.id, collection]))
-  const composition: HomepageSectionDefinition[] = rows(sectionRows).map((row) => {
+  const composition: HomepageSectionDefinition[] = rows(effectiveSectionRows).map((row) => {
     const settings = recordValue(row.settings)
     const collection = collectionById.get(text(settings.collection_id))
     return {
@@ -213,7 +235,7 @@ export async function getHomepageExperience(input: { locale: HomepageLocale; ter
   const published = items.filter((item) => !territoryId || !item.territory_id || item.territory_id === territoryId)
 
   return {
-    locale, territory, navigation, campaigns: rows(campaignRows).map(mapCampaign), categories, collections, composition,
+    locale, territory, navigation, campaigns: rows(effectiveCampaignRows).map(mapCampaign), categories, collections, composition,
     popularItems: placementItems('popular'), bestPickItems: placementItems('best-pick'), newArrivalItems: placementItems('new-arrival'),
     featuredItems: published.filter((item) => item.featured).slice(0, 14),
     availableItems: published.filter((item) => item.availability_status === 'available').slice(0, 12),

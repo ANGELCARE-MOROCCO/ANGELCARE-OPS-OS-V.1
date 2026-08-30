@@ -1,4 +1,4 @@
-import { requireMarketplacePageContext } from '../auth/context'
+import { hasMarketplacePermission, requireMarketplacePageContext } from '../auth/context'
 import { commerceStudioData, getCommerceResource } from './repository'
 import type { CatalogAdminItem, CatalogCategoryAdmin } from './types'
 import { CatalogRegistryStudio } from './components/CatalogRegistryStudio'
@@ -12,6 +12,7 @@ import { MerchandisingStudio } from './components/MerchandisingStudio'
 import { NavigationStudio } from './components/NavigationStudio'
 import { ProductStudio } from './components/ProductStudio'
 import { PublicationStudio } from './components/PublicationStudio'
+import { categoryNativeStudioData } from '../category-native/repository'
 
 export async function CommerceCommandPage() {
   const context = await requireMarketplacePageContext('marketplace.commerce.view')
@@ -20,19 +21,22 @@ export async function CommerceCommandPage() {
 export async function MediaPage({ mode = 'library' }: { mode?: string }) {
   const context = await requireMarketplacePageContext('marketplace.media.view')
   const data = await commerceStudioData(context)
-  return <MediaLibraryStudio initialMedia={data.media} mode={mode}/>
+  return <MediaLibraryStudio initialMedia={data.media} mode={mode} canManage={hasMarketplacePermission(context, 'marketplace.media.manage')}/>
 }
 export async function HomepageComposerPage({ mode = 'composer' }: { mode?: string }) {
   const context = await requireMarketplacePageContext('marketplace.homepage.view')
   const data = await commerceStudioData(context)
-  if (mode === 'hero') return <HeroCampaignStudio initialCampaigns={data.campaigns} media={data.media}/>
-  if (mode === 'collections') return <CollectionStudio initialCollections={data.collections} items={data.catalogItems} media={data.media}/>
-  return <HomepageComposerStudio initialSections={data.sections} collections={data.collections} mode={mode}/>
+  const canManage = hasMarketplacePermission(context, 'marketplace.homepage.manage')
+  const canViewHistory = hasMarketplacePermission(context, 'marketplace.publication.manage')
+  if (mode === 'hero') return <HeroCampaignStudio initialCampaigns={data.campaigns} media={data.media} canManage={canManage} canViewHistory={canViewHistory}/>
+  if (mode === 'collections') return <CollectionStudio initialCollections={data.collections} items={data.catalogItems} media={data.media} canManage={canManage} canViewHistory={canViewHistory}/>
+  const categoryNative = await categoryNativeStudioData()
+  return <HomepageComposerStudio initialSections={data.sections} collections={data.collections} blocks={categoryNative.homepageBlocks} schemas={categoryNative.schemas} mode={mode} canManage={canManage} canViewHistory={canViewHistory}/>
 }
 export async function NavigationPage({ mode = 'header' }: { mode?: string }) {
   const context = await requireMarketplacePageContext('marketplace.navigation.view')
   const data = await commerceStudioData(context)
-  return <NavigationStudio initialMenus={data.menus} media={data.media} mode={mode}/>
+  return <NavigationStudio initialMenus={data.menus} media={data.media} mode={mode} canManage={hasMarketplacePermission(context, 'marketplace.navigation.manage')} canViewHistory={hasMarketplacePermission(context, 'marketplace.publication.manage')}/>
 }
 export async function CatalogRegistryPage() {
   const context = await requireMarketplacePageContext('marketplace.catalog.view')
@@ -54,17 +58,35 @@ export async function ProductPage({ itemId, section = 'overview' }: { itemId?: s
     initialTab={section}
   />
 }
-export async function CategoryPage({ categoryId }: { categoryId?: string }) {
+export async function CategoryPage({
+  categoryId,
+  section = 'identity',
+  startNew = false,
+}: {
+  categoryId?: string
+  section?: 'identity' | 'storefront' | 'filters' | 'products' | 'preview'
+  startNew?: boolean
+}) {
   const context = await requireMarketplacePageContext('marketplace.catalog.view')
   const data = await commerceStudioData(context)
   const category = categoryId ? await getCommerceResource('catalog-categories', categoryId) as CatalogCategoryAdmin | null : null
-  return <CategoryStudio initialCategories={data.categories} items={data.catalogItems} media={data.media} category={category}/>
+  return <CategoryStudio
+    initialCategories={data.categories}
+    items={data.catalogItems}
+    media={data.media}
+    category={category}
+    initialTab={section}
+    startNew={startNew}
+    canManage={hasMarketplacePermission(context, 'marketplace.categories.manage')}
+    canExport={hasMarketplacePermission(context, 'marketplace.commerce.export')}
+    canViewHistory={hasMarketplacePermission(context, 'marketplace.publication.manage')}
+  />
 }
 export async function MerchandisingPage({ mode = 'merchandising' }: { mode?: string }) {
   const context = await requireMarketplacePageContext('marketplace.merchandising.view')
   const data = await commerceStudioData(context)
-  if (mode === 'collections') return <CollectionStudio initialCollections={data.collections} items={data.catalogItems} media={data.media}/>
-  return <MerchandisingStudio items={data.catalogItems} initialPlacements={data.placements} collections={data.collections} mode={mode}/>
+  if (mode === 'collections') return <CollectionStudio initialCollections={data.collections} items={data.catalogItems} media={data.media} canManage={hasMarketplacePermission(context, 'marketplace.homepage.manage')} canViewHistory={hasMarketplacePermission(context, 'marketplace.publication.manage')}/>
+  return <MerchandisingStudio items={data.catalogItems} initialPlacements={data.placements} collections={data.collections} publicationEvents={data.publicationEvents} mode={mode} canManage={hasMarketplacePermission(context, 'marketplace.merchandising.manage')}/>
 }
 export async function PublicationPage() {
   const context = await requireMarketplacePageContext('marketplace.publication.manage')

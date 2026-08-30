@@ -111,7 +111,9 @@ const codeMarkers = [
   ['media derivatives', 'angelcare-marketplace/commerce-studio/api-handlers.ts', 'imageDerivatives'],
   ['media crop and rotate', 'angelcare-marketplace/commerce-studio/api-handlers.ts', 'handleMediaTransform'],
   ['SVG active-content guard', 'angelcare-marketplace/commerce-studio/api-handlers.ts', 'assertSafeSvg'],
-  ['homepage drag reorder', 'angelcare-marketplace/commerce-studio/components/HomepageComposerStudio.tsx', 'draggable'],
+  // HomepageComposerStudio is a deliberate compatibility export. The
+  // implementation authority is HomepageDesigner2.
+  ['homepage drag reorder', 'angelcare-marketplace/category-native/components/HomepageDesigner2.tsx', 'draggable'],
   ['category drag reorder', 'angelcare-marketplace/commerce-studio/components/CategoryStudio.tsx', 'reorder(targetId'],
   ['category product order', 'angelcare-marketplace/commerce-studio/components/CategoryStudio.tsx', 'reorderAssigned'],
   ['collection item order', 'angelcare-marketplace/commerce-studio/components/CollectionStudio.tsx', 'selectedOrder'],
@@ -120,9 +122,11 @@ const codeMarkers = [
   ['product variants', 'angelcare-marketplace/commerce-studio/components/ProductStudio.tsx', 'VARIANT MATRIX'],
   ['Finance price rule binding', 'angelcare-marketplace/commerce-studio/components/ProductStudio.tsx', 'price-rules'],
   ['category assignment', 'angelcare-marketplace/commerce-studio/components/ProductStudio.tsx', 'assignCategories'],
-  ['Featured action', 'angelcare-marketplace/commerce-studio/components/ProductStudio.tsx', "merchandising_badge:'featured'"],
-  ['Popular action', 'angelcare-marketplace/commerce-studio/components/ProductStudio.tsx', "merchandising_badge:'popular'"],
-  ['Best Pick action', 'angelcare-marketplace/commerce-studio/components/ProductStudio.tsx', "merchandising_badge:'best-pick'"],
+  // Merchandising rails are intentionally owned by MerchandisingStudio, not
+  // duplicated inside ProductStudio. This is the V4 consolidated authority.
+  ['Featured action', 'angelcare-marketplace/commerce-studio/components/MerchandisingStudio.tsx', "['featured','Featured'"],
+  ['Popular action', 'angelcare-marketplace/commerce-studio/components/MerchandisingStudio.tsx', "['popular','Popular'"],
+  ['Best Pick action', 'angelcare-marketplace/commerce-studio/components/MerchandisingStudio.tsx', "['best-pick','Best Picks'"],
   ['merchandising drag reorder', 'angelcare-marketplace/commerce-studio/components/MerchandisingStudio.tsx', 'reorderPlacement'],
   ['CSV parser', 'angelcare-marketplace/commerce-studio/import-export.ts', 'parseCsv'],
   ['immediate revalidation', 'angelcare-marketplace/commerce-studio/publication.ts', 'revalidatePath'],

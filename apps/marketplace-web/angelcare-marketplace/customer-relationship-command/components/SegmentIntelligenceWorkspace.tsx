@@ -1,6 +1,24 @@
 'use client'
+
+import Link from 'next/link'
 import { Layers3, Sparkles } from 'lucide-react'
 import type { CustomerRelationshipOverview } from '../types'
 import styles from '../customer-relationship.module.css'
 import { SegmentBuilder } from '@/angelcare-marketplace/enterprise-command/components/SegmentBuilder'
-export function SegmentIntelligenceWorkspace({snapshot}:{snapshot:CustomerRelationshipOverview}){return <main className={styles.workspaceCanvas}><section className={styles.workspaceHero}><div><span>CUSTOMER INTELLIGENCE LAB</span><h2>Saved audiences, live matching and commercial activation.</h2><p>The existing scalable segment engine remains the authority. This workspace gives it a relationship-management environment rather than duplicating the logic.</p></div><div className={styles.heroStats}><div><strong>{snapshot.segments.length}</strong><span>Estate lenses</span></div><div><strong>{snapshot.customers.length}</strong><span>Evaluable customers</span></div><div><strong>{snapshot.segments.filter(s=>s.severity!=='healthy').reduce((sum,s)=>sum+s.count,0)}</strong><span>Attention matches</span></div></div></section><section className={styles.segmentLens}><header><Layers3 size={16}/><div><span>RELATIONSHIP LENSES</span><strong>Precomputed management perspectives</strong></div></header>{snapshot.segments.map(s=><article key={s.key} data-severity={s.severity}><Sparkles size={15}/><div><strong>{s.label}</strong><small>{s.description}</small></div><b>{s.count}</b></article>)}</section><section className={styles.embeddedAuthority}><div className={styles.authorityLabel}><span>CANONICAL SEGMENT BUILDER</span><strong>Advanced AND/OR rules, saved segments, memberships and activation</strong></div><SegmentBuilder/></section></main>}
+
+export function SegmentIntelligenceWorkspace({ snapshot, canManage, canActivate }: { snapshot: CustomerRelationshipOverview; canManage: boolean; canActivate: boolean }) {
+  return <main className={styles.workspaceCanvas}>
+    <section className={styles.workspaceHero}>
+      <div><span>CLIENTS · SEGMENTS & AUDIENCES</span><h2>Construire, prévisualiser et activer des audiences persistantes.</h2><p>Le moteur existant agrège les signaux commerciaux puis matérialise les memberships. Les activations réutilisent l’autorité Promotions, sans recréer un moteur d’audience parallèle.</p></div>
+      <div className={styles.introActions}><Link className={styles.secondaryAction} href="/angelcare-marketplace/admin/customers">Registre clients</Link><Link className={styles.primaryAction} href="/angelcare-marketplace/admin/promotions">Promotions</Link></div>
+    </section>
+    <section className={styles.segmentLens}>
+      <header><Layers3 size={16}/><div><span>LENTILLES RELATIONNELLES</span><strong>Perspectives de gestion calculées depuis la source</strong></div></header>
+      {snapshot.segments.map((segment) => <article key={segment.key} data-severity={segment.severity}><Sparkles size={15}/><div><strong>{segment.label}</strong><small>{segment.description}</small></div><b>{segment.count}</b></article>)}
+    </section>
+    <section className={styles.embeddedAuthority}>
+      <div className={styles.authorityLabel}><span>STUDIO D’AUDIENCE CANONIQUE</span><strong>Règles AND/OR, estimation, sauvegarde, export et activation gouvernée</strong></div>
+      <SegmentBuilder canManage={canManage} canActivate={canActivate}/>
+    </section>
+  </main>
+}

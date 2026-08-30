@@ -2,7 +2,9 @@ import { createServiceClient } from '@/lib/supabase/server'
 import type { MarketplaceRequestContext } from '../domain/types'
 import { MarketplaceError } from '../server/errors'
 import { writeMarketplaceAudit } from '../audit/write-audit'
-import { canPublish, validateArabic, validatePlaceholderParity } from './validation'
+import { assertTransition, canPublish, validateArabic, validatePlaceholderParity } from './validation'
+import {bridgePublishedEntityTranslation} from './entity-bridge'
+import {listInventory} from './repository'
 
 export type LocalizationAuthorityMode='translations'|'sources'|'glossary'|'memory'|'reviews'|'seo'|'readiness'
 type Row=Record<string,unknown>
@@ -14,7 +16,7 @@ function fail(action:string,error:unknown):never{throw new MarketplaceError('INT
 async function listTable(table:string,order='updated_at',limit=250){const db=await createServiceClient();const{data,error}=await db.from(table).select('*').order(order,{ascending:false}).limit(limit);if(error){if(missing(error))throw new MarketplaceError('CONFIGURATION_ERROR',`La table ${table} requise par Localization OS est absente.`,{cause:error});fail(`charger ${table}`,error)}return rows(data)}
 
 export async function loadLocalizationAuthority(mode:LocalizationAuthorityMode){
- if(mode==='translations'){const db=await createServiceClient();const{data,error}=await db.from('angelcare_marketplace_translation_inventory_v').select('*').order('last_changed_at',{ascending:false}).limit(250);if(error)fail('charger la file de traduction',error);return rows(data)}
+ if(mode==='translations')return(await listInventory({page:1,pageSize:1000})).rows
  if(mode==='sources')return listTable('angelcare_marketplace_localization_source_registries')
  if(mode==='glossary')return listTable('angelcare_marketplace_glossary_terms')
  if(mode==='memory')return listTable('angelcare_marketplace_translation_memory','created_at')
@@ -43,6 +45,7 @@ export async function executeLocalizationCommand(input:Row,context:MarketplaceRe
   if(!translationId||!['in_review','approved','rejected','published','archived'].includes(to))throw new MarketplaceError('VALIDATION_ERROR','Transition de traduction invalide.')
   const{data:translation,error:tError}=await db.from('angelcare_marketplace_translations').select('*, angelcare_marketplace_translation_candidates(*)').eq('id',translationId).maybeSingle();if(tError||!translation)throw new MarketplaceError('NOT_FOUND','Traduction introuvable.',{cause:tError||undefined})
   const candidate=(translation.angelcare_marketplace_translation_candidates||{}) as Row,targetLocale=text(translation.target_locale) as 'en'|'ar',target=text(translation.translation_text),source=text(candidate.source_text_fr)
+  assertTransition(text(translation.status) as Parameters<typeof assertTransition>[0],to as Parameters<typeof assertTransition>[1])
   if(to==='published'){
     const parity=validatePlaceholderParity(source,target),rtl=targetLocale==='ar'?validateArabic(target).valid:true,glossary=await glossaryValid(source,target,targetLocale)
     let mandatoryLocalesPresent=true
@@ -52,6 +55,7 @@ export async function executeLocalizationCommand(input:Row,context:MarketplaceRe
   }
   const update:Row={status:to,updated_at:now};if(to==='in_review')update.reviewer_id=context.actor.id;if(to==='approved')update.approved_by=context.actor.id;if(to==='published'){update.published_by=context.actor.id;update.published_at=now;update.freshness_state='current'}
   const{data,error}=await db.from('angelcare_marketplace_translations').update(update).eq('id',translationId).select('*').single();if(error||!data)fail('transitionner la traduction',error)
+  if(to==='published')await bridgePublishedEntityTranslation(candidate,targetLocale,target)
   if(['approved','rejected'].includes(to)){const{error:rError}=await db.from('angelcare_marketplace_translation_reviews').insert({translation_id:translationId,decision:to,reviewer_id:context.actor.id,comments:reason,quality_checks:{source_hash_current:text(translation.source_hash_at_translation)===text(candidate.source_hash)}});if(rError)fail('enregistrer la décision de revue',rError)}
   await audit(context,requestId,request,`localization.translation.${to}`,'translation',translationId,data,reason);return data
  }

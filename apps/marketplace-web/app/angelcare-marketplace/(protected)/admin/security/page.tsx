@@ -1,2 +1,5 @@
-import {RealityCompletionPage} from '@/angelcare-marketplace/reality-completion/admin-page'
-export default function Page(){return <RealityCompletionPage workspaceKey="security.command"/>}
+import { hasMarketplacePermission, requireMarketplacePageContext } from '@/angelcare-marketplace/auth/context'
+import { listAccessReviews, listIsolationTests, listRecoveryTests, securitySummary } from '@/angelcare-marketplace/analytics-security/repository'
+import { SecurityCommand } from '@/angelcare-marketplace/analytics-security/components/SecurityCommand'
+import { SecurityGovernanceDesk } from '@/angelcare-marketplace/analytics-security/components/SecurityGovernanceDesk'
+export default async function Page(){const context=await requireMarketplacePageContext('marketplace.security.view');const [summary,reviews,tests,recovery]=await Promise.all([securitySummary(),listAccessReviews(context),listIsolationTests(context),listRecoveryTests()]);return <><SecurityCommand summary={summary} reviews={reviews} tests={tests}/><SecurityGovernanceDesk tests={tests} recovery={recovery} canTest={hasMarketplacePermission(context,'marketplace.security.isolation.review')} canApproveRecovery={hasMarketplacePermission(context,'marketplace.recovery_test.approve')}/></>}

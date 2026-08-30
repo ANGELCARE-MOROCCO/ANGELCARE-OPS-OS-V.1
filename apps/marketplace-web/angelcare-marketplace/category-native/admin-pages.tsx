@@ -1,4 +1,4 @@
-import { requireMarketplacePageContext } from '../auth/context'
+import { hasMarketplacePermission, requireMarketplacePageContext } from '../auth/context'
 import { commerceStudioData } from '../commerce-studio/repository'
 import { categoryNativeStudioData, getExperienceSchema } from './repository'
 import { CategoryNativeCommand } from './components/CategoryNativeCommand'
@@ -14,15 +14,15 @@ export async function CategoryNativeCommandPage() {
 }
 
 export async function SchemaArchitecturePage() {
-  await requireMarketplacePageContext('marketplace.experience_schema.view')
-  return <SchemaArchitectureStudio initialData={await categoryNativeStudioData()}/>
+  const context = await requireMarketplacePageContext('marketplace.experience_schema.view')
+  return <SchemaArchitectureStudio initialData={await categoryNativeStudioData()} canManage={hasMarketplacePermission(context, 'marketplace.experience_schema.manage')}/>
 }
 
 export async function ArchetypePage({ schemaKey }: { schemaKey?: string }) {
-  await requireMarketplacePageContext('marketplace.experience_schema.view')
+  const context = await requireMarketplacePageContext('marketplace.experience_schema.view')
   const data = await categoryNativeStudioData()
   const selected = schemaKey ? await getExperienceSchema(schemaKey) : data.schemas[0] || null
-  return <ArchetypeStudio schemas={data.schemas} initialSchema={selected}/>
+  return <ArchetypeStudio schemas={data.schemas} initialSchema={selected} canCreate={hasMarketplacePermission(context, 'marketplace.catalog.manage')}/>
 }
 
 export async function CsvTemplateFactoryPage() {
@@ -31,14 +31,14 @@ export async function CsvTemplateFactoryPage() {
 }
 
 export async function CsvImportPage() {
-  await requireMarketplacePageContext('marketplace.category_native_import.view')
+  const context = await requireMarketplacePageContext('marketplace.category_native_import.view')
   const data = await categoryNativeStudioData()
-  return <CsvImportStudio schemas={data.schemas} initialImports={data.imports}/>
+  return <CsvImportStudio schemas={data.schemas} initialImports={data.imports} canManage={hasMarketplacePermission(context, 'marketplace.category_native_import.manage')}/>
 }
 
 export async function HomepageDesigner2Page() {
   const context = await requireMarketplacePageContext('marketplace.homepage.view')
   const commerce = await commerceStudioData(context)
   const categoryNative = await categoryNativeStudioData()
-  return <HomepageDesigner2 initialSections={commerce.sections} collections={commerce.collections} blocks={categoryNative.homepageBlocks} schemas={categoryNative.schemas}/>
+  return <HomepageDesigner2 initialSections={commerce.sections} collections={commerce.collections} blocks={categoryNative.homepageBlocks} schemas={categoryNative.schemas} canManage={hasMarketplacePermission(context, 'marketplace.homepage.manage')} canViewHistory={hasMarketplacePermission(context, 'marketplace.publication.manage')}/>
 }

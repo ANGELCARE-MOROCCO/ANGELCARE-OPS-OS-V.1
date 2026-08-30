@@ -1,9 +1,10 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useMemo, useState } from 'react'
-import { BadgeDollarSign, Download, FileText, RefreshCcw, RotateCcw, Truck, UserRound } from 'lucide-react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { BadgeDollarSign, Download, FileText, RefreshCcw, RotateCcw, Truck, UserRound, X } from 'lucide-react'
 import type { DocumentTemplateKey, EnterpriseTimelineEvent, OrderMegaDossier } from '../types'
+import { readOnlyOrderPermissions, type OrderCommandPermissions } from '../../customer-commerce/order-permissions'
 import styles from '../enterprise-command.module.css'
 import { OrderInlineOperations } from './OrderInlineOperations'
 
@@ -12,20 +13,40 @@ const txt = (record: Record<string, unknown> | null | undefined, key: string) =>
 const obj = (value: unknown): Record<string, unknown> => value && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, unknown> : {}
 const money = (value: unknown) => `${Number(value || 0).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} Dh`
 
-export function OrderMegaCommand({ orderId }: { orderId: string }) {
-  const [data, setData] = useState<OrderMegaDossier | null>(null)
+async function loadOrder(orderId: string): Promise<OrderMegaDossier> {
+  const response = await fetch(`/api/angelcare-marketplace/admin/enterprise-command/orders/${orderId}`, { cache: 'no-store' })
+  const payload = await response.json() as Envelope<OrderMegaDossier> & { error?: { message?: string } }
+  if (!response.ok || !('data' in payload)) throw new Error(payload.error?.message || 'Commande indisponible.')
+  return payload.data
+}
+
+export function OrderMegaCommand({ orderId, initialData, permissions = readOnlyOrderPermissions }: { orderId: string; initialData?: OrderMegaDossier; permissions?: OrderCommandPermissions }) {
+  const [data, setData] = useState<OrderMegaDossier | null>(initialData || null)
   const [tab, setTab] = useState('Command')
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
   const [busy, setBusy] = useState(false)
+  const [transitionTarget, setTransitionTarget] = useState('')
+  const [transitionReason, setTransitionReason] = useState('')
 
-  async function reload() {
-    const response = await fetch(`/api/angelcare-marketplace/admin/enterprise-command/orders/${orderId}`, { cache: 'no-store' })
-    const payload = await response.json() as Envelope<OrderMegaDossier> & { error?: { message?: string } }
-    if (response.ok && 'data' in payload) { setData(payload.data); setError('') }
-    else setError(payload.error?.message || 'Commande indisponible.')
-  }
-  useEffect(() => { void reload() }, [orderId])
+  const reload = useCallback(async () => {
+    try {
+      setData(await loadOrder(orderId))
+      setError('')
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : 'Commande indisponible.')
+    }
+  }, [orderId])
+  useEffect(() => {
+    if (initialData) return
+    let active = true
+    void loadOrder(orderId).then((payload) => {
+      if (active) { setData(payload); setError('') }
+    }).catch((cause: unknown) => {
+      if (active) setError(cause instanceof Error ? cause.message : 'Commande indisponible.')
+    })
+    return () => { active = false }
+  }, [initialData, orderId])
 
   const financial = useMemo(() => obj(data?.order.financial_status), [data])
   const fulfillment = useMemo(() => obj(data?.order.fulfillment_status), [data])
@@ -33,12 +54,13 @@ export function OrderMegaCommand({ orderId }: { orderId: string }) {
   const total = Number(financial.grand_total || financial.total || financial.total_amount || 0)
   const paymentStatus = String(financial.payment_status || data?.payments?.[0]?.status || '—')
 
-  async function transition(status: string) {
+  async function transition() {
+    if (!transitionTarget || !transitionReason.trim() || !permissions.manageOrder) return
     setBusy(true); setNotice('')
     try {
-      const response = await fetch(`/api/angelcare-marketplace/admin/orders/${orderId}`, { method: 'PATCH', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ status, reason: `Order Command OS · ${status}` }) })
+      const response = await fetch(`/api/angelcare-marketplace/admin/orders/${orderId}`, { method: 'PATCH', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ status: transitionTarget, reason: transitionReason.trim() }) })
       const payload = await response.json() as { error?: { message?: string } }
-      if (response.ok) { setNotice(`Commande passée à ${status}.`); await reload() }
+      if (response.ok) { setNotice(`Commande passée à ${transitionTarget}.`); setTransitionTarget(''); setTransitionReason(''); await reload() }
       else setNotice(payload.error?.message || 'Transition impossible.')
     } finally { setBusy(false) }
   }
@@ -55,7 +77,7 @@ export function OrderMegaCommand({ orderId }: { orderId: string }) {
     <section className={styles.hero}>
       <div className={styles.panelTitle}>
         <div><div className={styles.eyebrow}>Enterprise Order Command OS</div><h1 className={styles.title}>{data ? txt(data.order, 'title') : 'Order Command'}</h1><p className={styles.lead}>{data?.enterpriseReference} · {data ? txt(data.customer, 'display_name') : ''} · {money(total)}</p></div>
-        <div className={styles.toolbar}><button className={styles.buttonSecondary} onClick={reload}><RefreshCcw size={14} /></button><button className={styles.button} onClick={() => pdf('order_summary')}><Download size={14} />Order Pack</button></div>
+        <div className={styles.toolbar}><Link className={styles.buttonSecondary} href="/angelcare-marketplace/admin/orders">Retour portefeuille</Link><button className={styles.buttonSecondary} onClick={reload}><RefreshCcw size={14} /></button><button className={styles.button} disabled={!permissions.exportDocuments} title={!permissions.exportDocuments ? 'Export indisponible' : undefined} onClick={() => pdf('order_summary')}><Download size={14} />Order Pack</button></div>
       </div>
       {data ? <div className={styles.phaseRail}>{data.phaseReferences.map((phase) => <div key={phase.phase} className={`${styles.phase} ${phase.status === 'current' ? styles.phaseCurrent : phase.status === 'completed' ? styles.phaseDone : ''}`}><strong>{phase.label}</strong><small>{phase.reference}</small></div>)}</div> : null}
     </section>
@@ -82,18 +104,18 @@ export function OrderMegaCommand({ orderId }: { orderId: string }) {
             <Metric label="Documents" value={data.documents.length} />
           </div>
           <div className={styles.rowActions} style={{ marginTop: 16 }}>
-            <button className={styles.buttonSecondary} disabled={busy} onClick={() => transition('in_preparation')}>Préparation</button>
-            <button className={styles.buttonSecondary} disabled={busy} onClick={() => transition('in_progress')}>En exécution</button>
-            <button className={styles.button} disabled={busy} onClick={() => transition('completed')}>Clôturer</button>
-            <button className={styles.buttonDanger} disabled={busy} onClick={() => transition('recovery')}>Recovery</button>
-            <button className={styles.buttonDanger} disabled={busy} onClick={() => transition('cancelled')}>Annuler</button>
+            <button className={styles.buttonSecondary} disabled={busy || !permissions.manageOrder} title={!permissions.manageOrder ? 'Permission marketplace.operations.missions.manage requise' : undefined} onClick={() => setTransitionTarget('in_preparation')}>Préparation</button>
+            <button className={styles.buttonSecondary} disabled={busy || !permissions.manageOrder} onClick={() => setTransitionTarget('in_progress')}>En exécution</button>
+            <button className={styles.button} disabled={busy || !permissions.manageOrder} onClick={() => setTransitionTarget('completed')}>Clôturer</button>
+            <button className={styles.buttonDanger} disabled={busy || !permissions.manageOrder} onClick={() => setTransitionTarget('recovery')}>Recovery</button>
+            <button className={styles.buttonDanger} disabled={busy || !permissions.manageOrder} onClick={() => setTransitionTarget('cancelled')}>Annuler</button>
           </div>
           {notice ? <div className={styles.notice} style={{ marginTop: 12 }}>{notice}</div> : null}
           <div className={styles.rowActions} style={{ marginTop: 12 }}>
             <button className={styles.buttonSecondary} onClick={() => setTab('Operate')}>Opérer lignes / planning / finance</button>
             <Link className={styles.buttonSecondary} href={`/angelcare-marketplace/admin/payments?order=${orderId}`}>Payment Command</Link>
             <Link className={styles.buttonSecondary} href={`/angelcare-marketplace/admin/finance/invoices?order=${orderId}`}>Facturer</Link>
-            <Link className={styles.buttonSecondary} href={`/angelcare-marketplace/admin/orders/new?customer=${txt(data.customer, 'id')}&sourceOrder=${orderId}`}><RotateCcw size={13} />Reorder / replacement</Link>
+            {permissions.createOrder ? <Link className={styles.buttonSecondary} href={`/angelcare-marketplace/admin/orders/new?customer=${txt(data.customer, 'id')}&sourceOrder=${orderId}`}><RotateCcw size={13} />Reorder / replacement</Link> : null}
           </div>
         </div>
         <div className={styles.panel}>
@@ -104,11 +126,11 @@ export function OrderMegaCommand({ orderId }: { orderId: string }) {
             <Metric label="Provider" value={String(fulfillment.provider_name || fulfillment.provider_reference || '—')} />
             <Metric label="Territoire" value={txt(data.order, 'territory_id') || '—'} />
           </div>
-          {data.customer ? <Link className={styles.buttonSecondary} style={{ marginTop: 12 }} href={`/angelcare-marketplace/admin/customers/${txt(data.customer, 'id')}/command`}>Mega Client Dossier</Link> : null}
+          {data.customer ? <Link className={styles.buttonSecondary} style={{ marginTop: 12 }} href={`/angelcare-marketplace/admin/customers/${txt(data.customer, 'id')}`}>Client 360</Link> : null}
         </div>
       </div> : null}
 
-      {tab === 'Operate' ? <OrderInlineOperations data={data} onReload={reload} /> : null}
+      {tab === 'Operate' ? <OrderInlineOperations data={data} onReload={reload} permissions={permissions} /> : null}
       {tab === 'Items' ? <RecordTable title="Lignes de commande" data={data.lines} /> : null}
       {tab === 'Payment' ? <div className={styles.grid2}><PaymentTable data={data.payments} /><RecordTable title="Factures & reçus" data={[...data.invoices, ...data.receipts]} /></div> : null}
       {tab === 'Fulfillment' ? <div className={styles.grid2}><RecordTable title="Participants / Providers" data={data.participants} /><RecordTable title="Actions fulfillment" data={data.actions} /><div className={styles.panel}><h3>Fiche d’exécution</h3><p className={styles.muted}>Document opérationnel avec phases codifiées et références de mission.</p><button className={styles.button} onClick={() => pdf('fulfillment_sheet')}><FileText size={14} />Fiche Fulfillment PDF</button></div></div> : null}
@@ -118,6 +140,7 @@ export function OrderMegaCommand({ orderId }: { orderId: string }) {
       {tab === 'Relations' ? <RecordTable title="Relations objets" data={data.relations} /> : null}
       {tab === 'Communications' ? <RecordTable title="Communications" data={data.notifications} /> : null}
       {tab === 'Incidents' ? <RecordTable title="Incidents / événements" data={data.events.filter((event) => /incident|blocked|failure|risk|recovery/i.test(`${event.event_type || ''} ${event.status || ''} ${event.label || ''}`))} /> : null}
+      {transitionTarget ? <div className={styles.governedModal} role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget && !busy) setTransitionTarget('') }}><section className={styles.governedModalBody} role="dialog" aria-modal="true" aria-labelledby="order-cycle-decision"><header className={styles.panelTitle}><div><div className={styles.eyebrow}>Décision gouvernée</div><h2 id="order-cycle-decision">{data.enterpriseReference} → {transitionTarget}</h2></div><button className={styles.buttonSecondary} aria-label="Fermer" disabled={busy} onClick={() => setTransitionTarget('')}><X size={16} /></button></header><div className={styles.grid2}><Metric label="État actuel" value={txt(data.order, 'status')} /><Metric label="État proposé" value={transitionTarget} /></div><p className={styles.muted}>{transitionTarget === 'completed' ? 'La clôture reste bloquée si le paiement ou le fulfillment ne satisfait pas les contrôles serveur.' : transitionTarget === 'cancelled' ? 'L’annulation est auditée et n’invente aucun remboursement automatique.' : 'Le lifecycle serveur valide cette transition et conserve la raison.'}</p><label className={styles.field}><span>Motif obligatoire</span><textarea className={styles.textarea} value={transitionReason} onChange={(event) => setTransitionReason(event.target.value)} /></label>{notice ? <div className={styles.notice}>{notice}</div> : null}<footer className={styles.rowActions}><button className={styles.buttonSecondary} disabled={busy} onClick={() => setTransitionTarget('')}>Retour</button><button className={transitionTarget === 'cancelled' ? styles.buttonDanger : styles.button} disabled={busy || !transitionReason.trim()} onClick={() => void transition()}>{busy ? 'Application…' : 'Confirmer'}</button></footer></section></div> : null}
     </>}
   </div>
 }

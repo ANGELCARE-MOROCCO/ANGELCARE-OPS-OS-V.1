@@ -1,5 +1,5 @@
 import type { MarketplaceModule } from '@/angelcare-marketplace/domain/types'
-import { requireMarketplacePageContext } from '@/angelcare-marketplace/auth/context'
+import { hasMarketplacePermission, requireMarketplacePageContext } from '@/angelcare-marketplace/auth/context'
 import { ModuleRegistryClient } from '@/angelcare-marketplace/features/admin/ModuleRegistryClient'
 import { FoundationUnavailable } from '@/angelcare-marketplace/components/FoundationUnavailable'
 import { PageHeader } from '@/angelcare-marketplace/design-system/ui'
@@ -20,7 +20,7 @@ export default async function MarketplaceModulesPage() {
         description="Source de vérité pour monter les Mega ZIPs futurs sans disperser la navigation, les permissions, les dépendances ou les statuts dans le code."
       />
       {available
-        ? <ModuleRegistryClient initialModules={modules} permissions={context.permissions} />
+        ? <ModuleRegistryClient initialModules={modules} canCreate={hasMarketplacePermission(context,'marketplace.modules.create')} canUpdate={hasMarketplacePermission(context,'marketplace.modules.update')} />
         : <FoundationUnavailable />}
     </>
   )
