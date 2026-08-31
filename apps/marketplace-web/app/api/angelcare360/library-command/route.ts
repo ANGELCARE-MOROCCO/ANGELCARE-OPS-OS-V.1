@@ -1,3 +1,4 @@
+import { publicAngelcare360Error } from '@/lib/angelcare360/server/public-error'
 import { NextRequest, NextResponse } from 'next/server'
 import {
   cancelLibraryLoanAtomic,
@@ -15,7 +16,7 @@ import {
 export const dynamic = 'force-dynamic'
 
 function failure(error: unknown, status = 400) {
-  const message = error instanceof Error ? error.message : 'Une erreur inattendue est survenue.'
+  const message = publicAngelcare360Error(error)
   return NextResponse.json({ ok: false, error: message }, { status })
 }
 

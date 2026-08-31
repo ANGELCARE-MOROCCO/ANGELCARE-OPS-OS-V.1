@@ -19,7 +19,6 @@ function isRuntimeKeyEnabled(
   restricted: Array<{ key: string; state: string }>,
 ) {
   if (!key || !runtime?.enforced) return true
-  if (enabled.length === 0 && restricted.length === 0) return true
   if (restricted.some((item) => item.key === key && item.state !== 'enabled')) return false
   return enabled.includes(key)
 }

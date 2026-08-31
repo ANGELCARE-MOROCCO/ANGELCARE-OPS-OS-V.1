@@ -1,3 +1,4 @@
+import { publicAngelcare360Error } from '@/lib/angelcare360/server/public-error'
 import { NextRequest, NextResponse } from 'next/server'
 import { Angelcare360AccessError } from '@/lib/angelcare360/server/context'
 import {
@@ -65,7 +66,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ ok: Boolean(snapshot), snapshot }, { status: snapshot ? 200 : 404 })
   } catch (error) {
     if (error instanceof Angelcare360AccessError) return NextResponse.json({ ok: false, error: error.message }, { status: error.status })
-    return NextResponse.json({ ok: false, error: error instanceof Error ? error.message : 'Erreur inventaire inattendue.' }, { status: 500 })
+    return NextResponse.json({ ok: false, error: publicAngelcare360Error(error) }, { status: 500 })
   }
 }
 
@@ -85,6 +86,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(result, { status: result.ok ? 200 : result.locked ? 409 : 422 })
   } catch (error) {
     if (error instanceof Angelcare360AccessError) return NextResponse.json({ ok: false, error: error.message }, { status: error.status })
-    return NextResponse.json({ ok: false, error: error instanceof Error ? error.message : 'Erreur inventaire inattendue.' }, { status: 500 })
+    return NextResponse.json({ ok: false, error: publicAngelcare360Error(error) }, { status: 500 })
   }
 }

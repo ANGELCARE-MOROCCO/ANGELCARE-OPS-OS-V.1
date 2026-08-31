@@ -3,7 +3,6 @@
 import Angelcare360ErrorState from '@/components/angelcare360/states/Angelcare360ErrorState'
 
 export default function Angelcare360CommandCenterError({
-  error,
   reset,
 }: {
   error: Error & { digest?: string }
@@ -12,8 +11,8 @@ export default function Angelcare360CommandCenterError({
   return (
     <div style={pageStyle}>
       <Angelcare360ErrorState
-        title="Le cockpit n’a pas pu être chargé"
-        description={error.message || 'Une erreur contrôlée a interrompu le rendu du command center.'}
+        title="L’accueil SANILA n’a pas pu être chargé"
+        description="Nous n’avons pas pu afficher cet espace pour le moment. Vos données restent inchangées. Réessayez dans quelques instants."
         actionLabel="Retour à l’accueil"
         actionHref="/angelcare-360-command-center"
         onRetry={reset}

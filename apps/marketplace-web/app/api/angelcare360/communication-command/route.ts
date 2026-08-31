@@ -1,3 +1,4 @@
+import { publicAngelcare360Error } from '@/lib/angelcare360/server/public-error'
 import { NextResponse } from 'next/server'
 import {
   createSanilaCommunicationCampaign,
@@ -49,6 +50,6 @@ export async function POST(request: Request) {
     else return json({ ok: false, error: 'Action Communication Command inconnue.' }, 400)
     return json(result, result?.ok ? 200 : (result?.status || 400))
   } catch (error) {
-    return json({ ok: false, error: error instanceof Error ? error.message : 'Action Communication Command impossible.' }, 500)
+    return json({ ok: false, error: publicAngelcare360Error(error) }, 500)
   }
 }

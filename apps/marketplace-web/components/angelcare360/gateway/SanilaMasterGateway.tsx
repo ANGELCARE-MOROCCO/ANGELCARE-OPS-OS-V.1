@@ -54,7 +54,7 @@ const DOORS: GatewayDoor[] = [
     title: 'Espace Enseignant',
     description: 'Enseigner, planifier et suivre les apprentissages.',
     image: '/sanila/gateway/sanila-gateway-teacher.webp',
-    href: '/angelcare-360-teacher/login',
+    href: '/angelcare-360-portal/login?audience=teacher&next=/angelcare-360-teacher',
     icon: BookOpenText,
   },
   {
@@ -63,7 +63,7 @@ const DOORS: GatewayDoor[] = [
     title: 'Espace Équipe',
     description: 'Collaborer, organiser et assurer le suivi.',
     image: '/sanila/gateway/sanila-gateway-staff.webp',
-    href: '/angelcare-360-staff/login',
+    href: '/angelcare-360-portal/login?audience=staff&next=/angelcare-360-staff',
     icon: UsersRound,
   },
   {
@@ -72,7 +72,7 @@ const DOORS: GatewayDoor[] = [
     title: 'Espace Parent / Tuteur',
     description: 'Suivre, accompagner et rester informé.',
     image: '/sanila/gateway/sanila-gateway-parent.webp',
-    href: '/angelcare-360-parent/login',
+    href: '/angelcare-360-portal/login?audience=parent&next=/angelcare-360-parent',
     icon: UsersRound,
   },
   {
@@ -81,7 +81,7 @@ const DOORS: GatewayDoor[] = [
     title: 'Espace Élève',
     description: 'Apprendre, progresser et réussir.',
     image: '/sanila/gateway/sanila-gateway-student.webp',
-    href: '/angelcare-360-student/login',
+    href: '/angelcare-360-portal/login?audience=student&next=/angelcare-360-student',
     icon: GraduationCap,
   },
 ]

@@ -18,6 +18,25 @@ async function optionalRows(db:any,table:string,schoolId:string,order='created_a
 async function optionalAll(db:any,table:string,limit=1000){try{const r=await db.from(table).select('*').limit(limit);return (r.data||[]) as Row[]}catch{return []}}
 async function requireArea(){const c=await getAngelcare360AccessContext();if(!c?.school)throw new Angelcare360AccessError('Aucun établissement actif n’est disponible.',404);const canWrite=c.access.accessLevel==='super_admin'||c.access.canSeeConfiguration||c.permissions.has('angelcare360.securite.configure')||['direction','administration','owner','ceo'].includes(txt(c.primaryRoleKey));const canApprove=c.access.accessLevel==='super_admin'||['direction','owner','ceo'].includes(txt(c.primaryRoleKey))||c.permissions.has('angelcare360.securite.approve');return{...c,school:c.school,canWrite,canApprove,canManageSensitive:canApprove||c.permissions.has('angelcare360.securite.audit')}}
 
+async function requireSchoolUserTarget(db:any,schoolId:string,userId:string){
+ if(!userId)throw new Angelcare360AccessError('L’utilisateur ciblé est requis.',422)
+ const [{data:membership},{data:user}]=await Promise.all([
+  db.from('angelcare360_user_roles').select('id').eq('school_id',schoolId).eq('app_user_id',userId).limit(1).maybeSingle(),
+  db.from('app_users').select('id,role,permissions').eq('id',userId).maybeSingle(),
+ ])
+ if(!membership||!user)throw new Angelcare360AccessError('Cet utilisateur ne fait pas partie de l’établissement autorisé.',403)
+ const role=txt(user.role).toLowerCase(),permissions=arr(user.permissions).map(String)
+ if(['super_admin','operator_admin','account_manager','finance_operator','support_operator','implementation_manager'].includes(role)||permissions.some((permission:string)=>permission==='operator.*'||permission==='angelcare360.operator.*'||permission.startsWith('operator.')||permission.startsWith('angelcare360.operator.'))){
+  throw new Angelcare360AccessError('Une identité Operator ne peut pas être administrée depuis un établissement.',403)
+ }
+}
+
+async function requireSchoolRoleTarget(db:any,schoolId:string,roleId:string){
+ if(!roleId)throw new Angelcare360AccessError('Le rôle ciblé est requis.',422)
+ const {data}=await db.from('angelcare360_roles').select('id').eq('school_id',schoolId).eq('id',roleId).maybeSingle()
+ if(!data)throw new Angelcare360AccessError('Ce rôle ne fait pas partie de l’établissement autorisé.',403)
+}
+
 function seatInfo(c:Awaited<ReturnType<typeof requireArea>>,active:number){const hit=c.runtimeEntitlements.limits.find(x=>['administrator_seats','staff_user_seats','user_seats','active_users'].includes(x.key));const allowed=hit?.allowed??null;return{seatLimit:allowed,activeSeats:active,remainingSeats:allowed===null?null:Math.max(0,allowed-active),meterKey:hit?.key||'administrator_seats',packageVersionId:c.runtimeEntitlements.packageVersionId,packageVersionLabel:c.runtimeEntitlements.packageVersionName||c.runtimeEntitlements.packageVersionCode,exactTopupHref:'/angelcare-360-operator/platform?workspace=product-reality&focus=topups&meter=administrator_seats&source=roles-permissions'}}
 
 function scopeSummary(row:Row,schools:Map<string,string>,sites:Map<string,string>):AccessScopeSummary{return{id:txt(row.id),label:txt(row.label,txt(row.scope_key,'Périmètre établissement')),scopeType:txt(row.scope_type,'school'),institutionId:txt(row.institution_id||row.school_id)||null,institutionLabel:schools.get(txt(row.institution_id||row.school_id))||null,siteId:txt(row.site_id)||null,siteLabel:sites.get(txt(row.site_id))||null,moduleKey:txt(row.module_key)||null,entityType:txt(row.entity_type)||null,entityId:txt(row.entity_id)||null,startsAt:txt(row.starts_at)||null,endsAt:txt(row.ends_at)||null,state:txt(row.status,'active')}}
@@ -62,6 +81,12 @@ export async function executeAccessAction(req:AccessActionRequest):Promise<Acces
  let message='Action enregistrée.'
  const highApproval=['role.publish_version','access_request.approve','access_request.approve_limited','delegation.approve','sensitive_access.approve','access_review.complete','emergency_access.activate'] as AccessActionKey[]
  if(highApproval.includes(req.actionKey)&&!c.canApprove)throw new Angelcare360AccessError('Cette décision nécessite la validation de la direction.',403)
+ const globalIdentityActions:AccessActionKey[]=['user_access.activate','user_access.suspend','user_access.restore','user_access.end','user_access.revoke_sessions']
+ if(globalIdentityActions.includes(req.actionKey))await requireSchoolUserTarget(db,schoolId,txt(req.userId))
+ if(req.actionKey==='role_assignment.assign'){
+  await requireSchoolUserTarget(db,schoolId,txt(req.userId))
+  await requireSchoolRoleTarget(db,schoolId,txt(req.roleId))
+ }
  switch(req.actionKey){
   case'user_access.invite':{const email=txt(value(req,'email'));if(!email)throw new Error('L’adresse e-mail est requise.');const personId=txt(value(req,'personId'))||null;const roleId=txt(req.roleId||value(req,'roleId'))||null;const seat=seatInfo(c,(await getAccessAreaSnapshot()).productAccess.activeSeats);if(seat.remainingSeats!==null&&seat.remainingSeats<=0)throw new Error('Votre formule ne dispose plus de siège utilisateur disponible.');await db.from('angelcare360_access_invitations').insert({school_id:schoolId,person_id:isUuid(personId)?personId:null,email,role_id:isUuid(roleId)?roleId:null,scope_json:{institution_id:value(req,'institutionId'),site_id:value(req,'siteId')},state:'sent',starts_at:startsAt,expires_at:endsAt||new Date(Date.now()+7*86400000).toISOString(),invited_by:c.user.id});message=`Invitation envoyée à ${email}.`;break}
   case'user_access.resend_invitation':await db.from('angelcare360_access_invitations').update({state:'sent',sent_at:now,expires_at:endsAt||new Date(Date.now()+7*86400000).toISOString()}).eq('school_id',schoolId).eq('id',req.userId);message='Invitation renvoyée.';break

@@ -1,3 +1,4 @@
+import { publicAngelcare360Error } from '@/lib/angelcare360/server/public-error'
 import { NextRequest, NextResponse } from 'next/server'
 import {
   assignAngelcare360ClaimTicket,
@@ -80,7 +81,7 @@ export async function POST(request: NextRequest) {
     if (error instanceof Angelcare360AccessError) {
       return NextResponse.json({ ok: false, error: error.message }, { status: error.status })
     }
-    const message = error instanceof Error ? error.message : 'Erreur inattendue'
+    const message = publicAngelcare360Error(error)
     return NextResponse.json({ ok: false, error: message }, { status: 500 })
   }
 }

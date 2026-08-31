@@ -7,7 +7,8 @@ export default function ErrorState({ reset }: { error: Error & { digest?: string
     <Angelcare360ErrorState
       title="Le backoffice opérateur n’a pas pu être chargé."
       description="Vérifiez votre accès opérateur ou réessayez dans quelques instants."
-      actionLabel="Réessayer"
+      actionLabel="Retour à l’accueil opérateur"
+      actionHref="/angelcare-360-operator"
       onRetry={reset}
     />
   )

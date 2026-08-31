@@ -467,9 +467,12 @@ async function executeOperationGate(context: ExecutionContext) {
 
 async function executeInstitutionTransition(context: ExecutionContext) {
   const payload = object(context.request.payload)
-  const schoolId = context.request.entityId || context.schoolId
+  const schoolId = context.schoolId
+  if (context.request.entityId && context.request.entityId !== schoolId) {
+    throw new Angelcare360AccessError('L’établissement ciblé ne fait pas partie de votre périmètre autorisé.', 403)
+  }
   const target = required(payload, 'targetState', 'Le nouvel état')
-  const { data: current, error } = await context.client.from('angelcare360_schools').select('*').eq('id', schoolId).single()
+  const { data: current, error } = await context.client.from('angelcare360_schools').select('*').eq('id', context.schoolId).single()
   if (error) throw new Error(error.message)
   const before = current as ProductRealityRow
   const from = string(before.metadata_json && object(before.metadata_json).reality_state, string(before.status, 'draft'))
@@ -489,7 +492,7 @@ async function executeInstitutionTransition(context: ExecutionContext) {
   if (blockers.length) return { message: 'Transition bloquée par la readiness.', record: before, blockers }
   const operationalStatus = target === 'active' ? 'active' : target === 'suspended' ? 'suspended' : target === 'archived' ? 'archived' : string(before.status)
   const metadata = { ...object(before.metadata_json), reality_state: target, reality_policy_version: number(policy?.version_number, 1), reality_effective_at: context.request.effectiveAt || now() }
-  const { data, error: updateError } = await context.client.from('angelcare360_schools').update({ status: operationalStatus, metadata_json: metadata, updated_by: context.userId, updated_at: now() }).eq('id', schoolId).select('*').single()
+  const { data, error: updateError } = await context.client.from('angelcare360_schools').update({ status: operationalStatus, metadata_json: metadata, updated_by: context.userId, updated_at: now() }).eq('id', context.schoolId).select('*').single()
   if (updateError) throw new Error(updateError.message)
   await context.client.from('angelcare360_institution_lifecycle_events').insert({ school_id: context.schoolId, institution_id: schoolId, from_state: from, to_state: target, reason: context.request.reason, policy_version: number(policy?.version_number, 1), effective_at: context.request.effectiveAt || now(), execution_id: context.executionId, actor_user_id: context.userId })
   await audit(context, { entityType: 'angelcare360_schools', entityId: schoolId, before, after: data as ProductRealityRow })

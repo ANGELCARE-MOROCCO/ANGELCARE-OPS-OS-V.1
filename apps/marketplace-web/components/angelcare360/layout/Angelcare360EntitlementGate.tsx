@@ -30,20 +30,33 @@ export default function Angelcare360EntitlementGate({ children, pathname, runtim
   const suspended = /suspend|locked/.test(state)
   const migration = /deprecated|migration|retired/.test(state)
   const Icon = configuration ? Settings2 : pending ? Clock3 : capacity ? Gauge : dependency ? Link2Off : suspended ? ShieldAlert : LockKeyhole
-  const title = configuration ? 'Configuration requise' : pending ? 'Activation en cours' : capacity ? 'Capacité atteinte' : dependency ? 'Dépendance indisponible' : suspended ? 'Capacité temporairement suspendue' : migration ? 'Évolution du produit requise' : 'Capacité non incluse'
-  const action = configuration ? { href: '/angelcare-360-command-center/administration/parametres', label: 'Configurer la capacité' } : capacity ? { href: '/angelcare-360-command-center/direction', label: 'Consulter les capacités' } : { href: '/angelcare-360-command-center/direction', label: 'Retour au cockpit' }
+  const title = configuration ? 'Configuration nécessaire' : pending ? 'Activation nécessaire' : capacity ? 'Limite de votre offre atteinte' : dependency ? 'Service temporairement indisponible' : suspended ? 'Service temporairement suspendu' : migration ? 'Service en cours d’évolution' : 'Non inclus dans votre offre'
+  const explanation = configuration
+    ? 'Ce service doit être configuré par une personne autorisée avant sa première utilisation.'
+    : pending
+      ? 'L’activation de ce service est en cours. Il sera disponible dès que sa préparation sera terminée.'
+      : capacity
+        ? 'La limite prévue dans votre offre est atteinte. La direction peut consulter les options disponibles.'
+        : dependency
+          ? 'Un service nécessaire est momentanément indisponible. Réessayez dans quelques instants.'
+          : suspended
+            ? 'Ce service est temporairement suspendu. Votre administrateur peut consulter la situation.'
+            : migration
+              ? 'Ce service évolue actuellement et ne peut pas être utilisé depuis cet écran.'
+              : 'Ce service ne fait pas partie de l’offre actuellement active pour votre établissement.'
+  const action = configuration ? { href: '/angelcare-360-command-center/administration/parametres', label: 'Ouvrir la configuration' } : capacity ? { href: '/angelcare-360-command-center/direction', label: 'Consulter la situation' } : { href: '/angelcare-360-command-center/direction', label: 'Retour à l’accueil' }
 
   return <section className={styles.page} data-entitlement-state={state}>
     <div className={styles.icon}><Icon size={27}/></div>
-    <span className={styles.eyebrow}>Périmètre contractuel du tenant</span>
+    <span className={styles.eyebrow}>Accès au service</span>
     <h1>{title}</h1>
-    <p>{route?.label || 'Cette capacité'} est gouvernée par le package versionné, le snapshot d’entitlements, les permissions et le provisioning réel. AngelCare 360 n’affiche jamais un accès simulé.</p>
+    <p>{explanation}</p>
     <div className={styles.grid}>
-      <article><PackageCheck size={18}/><span>Package effectif</span><strong>{runtime.packageVersionName || 'Non affecté'}</strong><small>{runtime.packageVersionCode || 'Aucune version publiée'}</small></article>
-      <article><CheckCircle2 size={18}/><span>Capacité demandée</span><strong>{route?.label || moduleKey || 'Capacité protégée'}</strong><small>{route?.capabilityKey || route?.featureKey || state}</small></article>
-      <article><LockKeyhole size={18}/><span>Tenant</span><strong>{runtime.tenantSlug || 'Non lié'}</strong><small>{runtime.tenantStatus || 'État indisponible'}</small></article>
+      <article><PackageCheck size={18}/><span>Offre actuelle</span><strong>{runtime.packageVersionName || 'Offre à confirmer'}</strong><small>Information disponible auprès de votre administrateur</small></article>
+      <article><CheckCircle2 size={18}/><span>Service demandé</span><strong>{route?.label || 'Service SANILA'}</strong><small>{title}</small></article>
+      <article><LockKeyhole size={18}/><span>Établissement</span><strong>Établissement actif</strong><small>Accès protégé selon votre rôle</small></article>
     </div>
-    <div className={styles.reason}><AlertTriangle size={17}/><span>{restriction?.reason || runtime.warning || 'Cette capacité nécessite une activation, une configuration, un add-on, un top-up ou une évolution de package.'}</span></div>
-    <div className={styles.actions}><Link href={action.href}>{action.label}</Link><span>La raison et la provenance de cette restriction restent consultables par votre administrateur autorisé.</span></div>
+    <div className={styles.reason}><AlertTriangle size={17}/><span>{explanation}</span></div>
+    <div className={styles.actions}><Link href={action.href}>{action.label}</Link><span>Votre administrateur peut consulter le détail de cette restriction et vous accompagner.</span></div>
   </section>
 }

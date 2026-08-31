@@ -72,8 +72,14 @@ export async function getCurrentAppUser() {
         await supabase.from('app_sessions').delete().eq('session_token', token)
         return null
       }
-      if (Boolean(policy.require_mfa) && tenantAccess.mfa_enrolled_at && !session.mfa_verified_at) {
-        return { ...user, __mfaRequired: true }
+      if (Boolean(policy.require_mfa)) {
+        if (!tenantAccess.mfa_enrolled_at) {
+          await supabase.from('app_sessions').delete().eq('session_token', token)
+          return null
+        }
+        if (!session.mfa_verified_at) {
+          return { ...user, __mfaRequired: true }
+        }
       }
       await supabase.from('app_sessions').update({ last_seen_at: new Date().toISOString() }).eq('session_token', token).then(() => null, () => null)
     }
