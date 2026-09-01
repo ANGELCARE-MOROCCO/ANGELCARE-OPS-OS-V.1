@@ -23,10 +23,10 @@ const masters=[
  {id:'15',href:'/angelcare-marketplace/admin/configuration',label:'Paramètres & gouvernance',icon:Boxes},
 ] as const
 
-export function AdminNavigation(){
+export function AdminNavigation({collapsed=false}:{collapsed?:boolean}){
  const pathname=usePathname()
  return <nav className={styles.sidebarNav} aria-label="Marketplace Admin">
   <div className={styles.navGroup}><div className={styles.navGroupLabel}>ANGELCARE MARKETPLACE</div></div>
-  <div className={styles.navGroup}><div className={styles.navGroupLabel}>15 WORKSPACES</div>{masters.map(({id,href,label,icon:Icon})=>{const active=pathname===href||pathname.startsWith(`${href}/`);return <Link key={`${id}-${href}`} href={href} className={cx(styles.sideNavLink,active&&styles.sideNavLinkActive)}><span className={styles.sideNavIcon}><Icon size={15}/></span><span>{id} · {label}</span></Link>})}</div>
+  <div className={styles.navGroup}><div className={styles.navGroupLabel}>15 WORKSPACES</div>{masters.map(({id,href,label,icon:Icon})=>{const active=pathname===href||(href!=='/angelcare-marketplace/admin'&&pathname.startsWith(`${href}/`));return <Link key={`${id}-${href}`} href={href} className={cx(styles.sideNavLink,active&&styles.sideNavLinkActive)} aria-current={active?'page':undefined} title={collapsed?`${id} · ${label}`:undefined}><span className={styles.sideNavIcon}><Icon size={17}/></span><span className={styles.sideNavLabel}>{id} · {label}</span></Link>})}</div>
  </nav>
 }

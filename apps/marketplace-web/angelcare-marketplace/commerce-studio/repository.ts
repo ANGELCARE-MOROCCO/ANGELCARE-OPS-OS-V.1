@@ -233,8 +233,8 @@ export async function getCommerceResource(resource: CommerceResource, id: string
   if (resource === 'catalog-items') {
     // IMPORTANT: finance_price_rules.catalog_item_id exists in production, but it is not
     // declared as a FK to catalog_items. PostgREST therefore cannot safely embed it here.
-    // Load canonical child resources that have real relationships, then fetch price rules
-    // explicitly by catalog_item_id. This also makes mutation readback deterministic.
+    // Load only canonical child resources that have real relationships here. Price rules
+    // are exposed through their independent catalog_item_id-scoped API route.
     query = db.from(TABLES[resource]).select('*,variants:angelcare_marketplace_catalog_variants(*),media:angelcare_marketplace_catalog_item_media(*),availability:angelcare_marketplace_catalog_availability(*),categories:angelcare_marketplace_catalog_item_categories(*)').eq('id', id)
   }
   if (resource === 'catalog-categories') {
@@ -247,9 +247,7 @@ export async function getCommerceResource(resource: CommerceResource, id: string
   if (error) throw fail(`charger ${resource}`, error)
   if (!data) return null
   if (resource === 'catalog-items') {
-    const priceRuleResult = await db.from('angelcare_marketplace_finance_price_rules').select('*').eq('catalog_item_id', id).order('priority').order('updated_at', { ascending: false })
-    if (priceRuleResult.error) throw fail('charger les règles de prix du produit', priceRuleResult.error)
-    return { ...(data as Row), priceRules: rows(priceRuleResult.data) } as unknown as CommerceRecord
+    return { ...(data as Row), priceRules: [] } as unknown as CommerceRecord
   }
   return data as CommerceRecord
 }
