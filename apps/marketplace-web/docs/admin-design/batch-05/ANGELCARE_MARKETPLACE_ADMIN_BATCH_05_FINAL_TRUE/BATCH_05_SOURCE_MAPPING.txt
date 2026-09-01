@@ -1,0 +1,1223 @@
+ANGELCARE MARKETPLACE ADMIN — BATCH 05 FINAL TRUE
+BOUTIQUE / STOREFRONT / HOMEPAGE / PAGES / MEDIA / NAVIGATION / FOOTER / SURFACES / LOCALIZATION / PUBLICATION
+SOURCE/BACKEND MAPPING + CODEX IMPLEMENTATION CONTRACT — 2026-08-27
+
+======================================================================
+0. STATUS / AUTHORITY
+======================================================================
+
+THIS FILE IS MANDATORY FOR CODEX.
+
+Batch 05 is not merely a set of pictures. It is a source-grounded frontend
+productization contract for the Marketplace Admin Storefront universe.
+
+CURRENT SOURCE AUTHORITY:
+ANGELCARE_MARKETPLACE_WEB_20260826-221837.zip
+apps/marketplace-web
+
+APPROVED DESIGN AUTHORITY:
+admin-design/batch-05/** once the user places this delivery there.
+
+Everything inside admin-design is approved by user doctrine; therefore Codex
+must not invent another visual direction or ask for a separate approval file.
+
+PRECEDENCE WHEN IMPLEMENTING:
+1. Existing Marketplace business/backend truth and permissions
+2. This BATCH_05_SOURCE_MAPPING.txt
+3. Approved PNG projection
+4. Current legacy/fragmented frontend
+
+If a PNG appears to imply a control not supported by source authority, DO NOT
+fake it. Preserve the visual intent but omit/disable/remap that control and
+report the exact source gap.
+
+NO SQL.
+NO migrations.
+NO new tables.
+NO new parallel CMS.
+NO new parallel Homepage engine.
+NO new parallel Media engine.
+NO new parallel Navigation engine.
+NO new parallel Footer engine.
+NO new parallel Surface engine.
+NO new parallel Localization engine.
+NO fake publication state.
+NO fake previews.
+NO fake analytics.
+NO fake rights status.
+NO fake translations.
+
+DO NOT COMMIT.
+DO NOT PUSH.
+DO NOT DEPLOY.
+
+======================================================================
+1. BATCH 05 SCOPE / FINAL HUMAN HOME
+======================================================================
+
+PRIMARY WORKSPACE:
+Boutique
+
+Batch 05 must make Boutique the non-developer public-storefront control plane.
+
+FINAL OPERATOR SUBTREE:
+
+Boutique
+  ├─ Vue générale / Storefront Command Center
+  ├─ Homepage
+  │   ├─ Hero & campaigns
+  │   ├─ Sections & placements
+  │   ├─ Collections / audiences / territories
+  │   ├─ Preview
+  │   └─ Release history
+  ├─ Pages & content
+  │   ├─ Page registry
+  │   ├─ Create page
+  │   ├─ Page 360
+  │   ├─ Page Builder
+  │   ├─ Block Library
+  │   ├─ CTA / menus authority where applicable
+  │   └─ Publishing runway
+  ├─ Media Library
+  │   ├─ Library
+  │   ├─ Upload
+  │   ├─ Folders
+  │   ├─ Rights
+  │   ├─ Optimization / transforms
+  │   └─ Usage / where-used
+  ├─ Navigation Studio
+  │   ├─ Header
+  │   ├─ Mega-menu
+  │   ├─ Mobile
+  │   ├─ Footer navigation
+  │   └─ History / publish
+  ├─ Footer Studio
+  │   ├─ Cockpit
+  │   ├─ Profiles
+  │   ├─ Composer
+  │   ├─ Themes
+  │   ├─ Components
+  │   ├─ Contacts
+  │   ├─ Navigation
+  │   ├─ Localization
+  │   ├─ Targeting
+  │   ├─ Schedules
+  │   ├─ History
+  │   ├─ Analytics
+  │   └─ Settings
+  ├─ Frontend Surfaces
+  │   ├─ Surface Registry
+  │   ├─ Marketplace Landing
+  │   ├─ Vertical surfaces
+  │   ├─ Transactional content surfaces
+  │   └─ Real public preview
+  ├─ Localization
+  │   ├─ Scanner
+  │   ├─ Inventory
+  │   ├─ Translations
+  │   ├─ Sources
+  │   ├─ Glossary
+  │   ├─ Translation memory
+  │   ├─ CSV / imports
+  │   ├─ RTL lab
+  │   ├─ SEO
+  │   ├─ Reviews
+  │   └─ Readiness
+  └─ Publication
+      ├─ Immediate publication events
+      ├─ Version history
+      ├─ Release dossiers
+      ├─ Readiness / approval state
+      ├─ Preview evidence
+      └─ Rollback / restore
+
+IMPORTANT SCOPE CORRECTION:
+The earlier Batch-05 preview that showed Live Experience / Popups is INVALID for
+Batch 05. Live Experience belongs to Batch 06 — Marketing & promotions.
+Do NOT implement Live Experience as a Boutique child from this batch.
+
+======================================================================
+2. IMMUTABLE GLOBAL ADMIN SHELL
+======================================================================
+
+All 10 Batch-05 projections must be integrated under the SAME Marketplace Admin
+shell established by approved Batches 01–04.
+
+Permanent primary navigation:
+- Accueil
+- Commandes & réservations
+- Produits & services
+- Catégories & collections
+- Clients
+- Boutique
+- Marketing & promotions
+- Opérations
+- Prestataires & fournisseurs
+- Academy
+- B2B & partenaires
+- Finance
+- Trust & qualité
+- Analytics & intelligence
+- Paramètres & gouvernance
+
+Batch 05 active primary workspace: Boutique.
+
+Do NOT replace this human navigation with route-generation or technical menus
+such as Commerce Studio, Experience Builder, Frontend Experiences, Localization
+Intelligence, etc. Those become internal advanced subtools under Boutique.
+
+Brand rendering for these projections is text authority:
+ANGELCARE MARKETPLACE
+Do not invent/redraw an AngelCare logo.
+
+======================================================================
+3. SOURCE COMPONENTS / REPOSITORIES VERIFIED
+======================================================================
+
+HOMEPAGE / COMMERCE STUDIO
+angelcare-marketplace/commerce-studio/admin-pages.tsx
+angelcare-marketplace/commerce-studio/repository.ts
+angelcare-marketplace/commerce-studio/api-handlers.ts
+angelcare-marketplace/commerce-studio/publication.ts
+angelcare-marketplace/commerce-studio/types.ts
+angelcare-marketplace/commerce-studio/components/HomepageComposerStudio.tsx
+angelcare-marketplace/commerce-studio/components/HeroCampaignStudio.tsx
+angelcare-marketplace/commerce-studio/components/PublicationStudio.tsx
+angelcare-marketplace/category-native/components/HomepageDesigner2.tsx
+
+HOMEPAGE RELEASE AUTHORITY
+angelcare-marketplace/homepage-final/admin-page.tsx
+angelcare-marketplace/homepage-final/repository.ts
+angelcare-marketplace/homepage-final/api-handlers.ts
+angelcare-marketplace/homepage-final/components/HomepageReleaseAuthority.tsx
+
+EXPERIENCE BUILDER / CMS
+angelcare-marketplace/experience-builder/repository.ts
+angelcare-marketplace/experience-builder/api-handlers.ts
+angelcare-marketplace/experience-builder/validation.ts
+angelcare-marketplace/experience-builder/types.ts
+angelcare-marketplace/experience-builder/block-registry.ts
+angelcare-marketplace/experience-builder/components/ExperienceCommand.tsx
+angelcare-marketplace/experience-builder/components/PageRegistry.tsx
+angelcare-marketplace/experience-builder/components/CreatePageClient.tsx
+angelcare-marketplace/experience-builder/components/PageBuilderClient.tsx
+angelcare-marketplace/experience-builder/components/PublishingRunway.tsx
+
+MEDIA LIBRARY
+angelcare-marketplace/commerce-studio/components/MediaLibraryStudio.tsx
+angelcare-marketplace/commerce-studio/repository.ts
+angelcare-marketplace/commerce-studio/api-handlers.ts
+
+NAVIGATION
+angelcare-marketplace/commerce-studio/components/NavigationStudio.tsx
+angelcare-marketplace/commerce-studio/repository.ts
+angelcare-marketplace/commerce-studio/api-handlers.ts
+
+FOOTER
+angelcare-marketplace/footer-studio/admin-pages.tsx
+angelcare-marketplace/footer-studio/repository.ts
+angelcare-marketplace/footer-studio/api-handlers.ts
+angelcare-marketplace/footer-studio/types.ts
+angelcare-marketplace/footer-studio/themes.ts
+angelcare-marketplace/footer-studio/components/FooterStudioCommand.tsx
+angelcare-marketplace/footer-studio/components/FooterExperience.tsx
+angelcare-marketplace/footer-studio/components/EnterpriseFooter.tsx
+
+FRONTEND SURFACE CONTROL
+angelcare-marketplace/total-commerce-control/repository.ts
+angelcare-marketplace/total-commerce-control/surface-registry.ts
+angelcare-marketplace/total-commerce-control/components/FrontendControlCommand.tsx
+angelcare-marketplace/total-commerce-control/components/SurfaceRegistryStudio.tsx
+angelcare-marketplace/total-commerce-control/components/SurfaceExperienceStudio.tsx
+
+LOCALIZATION INTELLIGENCE
+angelcare-marketplace/localization-intelligence/repository.ts
+angelcare-marketplace/localization-intelligence/final-repository.ts
+angelcare-marketplace/localization-intelligence/api-handlers.ts
+angelcare-marketplace/localization-intelligence/final-api-handlers.ts
+angelcare-marketplace/localization-intelligence/types.ts
+angelcare-marketplace/localization-intelligence/constants.ts
+angelcare-marketplace/localization-intelligence/csv.ts
+angelcare-marketplace/localization-intelligence/memory.ts
+angelcare-marketplace/localization-intelligence/components/LocalizationCockpit.tsx
+angelcare-marketplace/localization-intelligence/components/ScannerCommandCenter.tsx
+angelcare-marketplace/localization-intelligence/components/InventoryTable.tsx
+angelcare-marketplace/localization-intelligence/components/CsvCenter.tsx
+angelcare-marketplace/localization-intelligence/components/LocalizationAuthorityCommand.tsx
+angelcare-marketplace/localization-intelligence/components/RtlLab.tsx
+
+PERMISSIONS
+angelcare-marketplace/permissions/permission-catalog.ts
+
+======================================================================
+4. PERMISSIONS VERIFIED / MUST REMAIN ENFORCED
+======================================================================
+
+Commerce / Storefront:
+marketplace.commerce.view
+marketplace.media.view
+marketplace.media.manage
+marketplace.homepage.view
+marketplace.homepage.manage
+marketplace.navigation.view
+marketplace.navigation.manage
+marketplace.publication.manage
+marketplace.seo.manage
+marketplace.commerce.export
+marketplace.commerce.import
+
+Experience Builder / CMS:
+marketplace.cms.view
+marketplace.cms.create
+marketplace.cms.edit
+marketplace.cms.submit
+marketplace.cms.review
+marketplace.cms.approve
+marketplace.cms.publish
+marketplace.cms.schedule
+marketplace.cms.rollback
+marketplace.cms.archive
+marketplace.cms.blocks.manage
+marketplace.cms.menus.manage
+marketplace.cms.ctas.manage
+marketplace.cms.preview
+marketplace.cms.redirects.manage
+marketplace.cms.pages.manage
+marketplace.cms.export
+
+Localization Intelligence:
+marketplace.localization.access
+marketplace.localization.scans.view
+marketplace.localization.scans.run
+marketplace.localization.scans.cancel
+marketplace.localization.scans.configure
+marketplace.localization.inventory.view
+marketplace.localization.inventory.classify
+marketplace.localization.inventory.export
+marketplace.localization.translations.view
+marketplace.localization.translations.create
+marketplace.localization.translations.edit
+marketplace.localization.translations.assign
+marketplace.localization.translations.submit
+marketplace.localization.translations.review
+marketplace.localization.translations.approve
+marketplace.localization.translations.publish
+marketplace.localization.translations.archive
+marketplace.localization.csv.export
+marketplace.localization.csv.import
+marketplace.localization.csv.validate
+marketplace.localization.csv.apply
+marketplace.localization.csv.rollback
+marketplace.localization.glossary.view
+marketplace.localization.glossary.manage
+marketplace.localization.memory.view
+marketplace.localization.memory.curate
+marketplace.localization.sensitive.review
+marketplace.localization.sensitive.approve
+marketplace.localization.seo.view
+marketplace.localization.seo.manage
+marketplace.localization.rules.view
+marketplace.localization.rules.manage
+marketplace.localization.sources.view
+marketplace.localization.sources.manage
+marketplace.localization.readiness.view
+marketplace.localization.audit.export
+
+Footer page currently enters through marketplace.commerce.view and footer mutation
+handlers must keep their server-side authority/audit checks. Do not infer security
+from the visible UI alone.
+
+======================================================================
+5. API / MUTATION AUTHORITIES VERIFIED
+======================================================================
+
+CMS / EXPERIENCE BUILDER
+/api/angelcare-marketplace/cms/pages
+/api/angelcare-marketplace/cms/pages/[pageId]
+/api/angelcare-marketplace/cms/pages/[pageId]/blocks
+/api/angelcare-marketplace/cms/pages/[pageId]/preview
+/api/angelcare-marketplace/cms/pages/[pageId]/transition
+/api/angelcare-marketplace/cms/pages/[pageId]/rollback
+/api/angelcare-marketplace/cms/publishing
+/api/angelcare-marketplace/cms/menus
+/api/angelcare-marketplace/cms/ctas
+
+HOMEPAGE
+/api/angelcare-marketplace/admin/homepage/campaigns
+/api/angelcare-marketplace/admin/homepage/sections
+/api/angelcare-marketplace/admin/homepage/sections/[sectionId]
+/api/angelcare-marketplace/admin/homepage/reorder
+/api/angelcare-marketplace/admin/homepage/collections
+/api/angelcare-marketplace/admin/homepage/placements
+/api/angelcare-marketplace/admin/homepage/publish
+/api/angelcare-marketplace/admin/homepage/releases
+/api/angelcare-marketplace/category-native/homepage-blocks
+Generic commerce resources also remain authoritative:
+/api/angelcare-marketplace/admin/commerce/[resource]
+/api/angelcare-marketplace/admin/commerce/[resource]/[id]
+/api/angelcare-marketplace/admin/commerce/[resource]/[id]/[action]
+
+MEDIA
+/api/angelcare-marketplace/admin/media
+/api/angelcare-marketplace/admin/media/upload
+/api/angelcare-marketplace/admin/media/[mediaId]
+/api/angelcare-marketplace/admin/media/[mediaId]/usage
+/api/angelcare-marketplace/admin/media/[mediaId]/transform
+
+NAVIGATION
+/api/angelcare-marketplace/admin/navigation
+/api/angelcare-marketplace/admin/navigation/items
+/api/angelcare-marketplace/admin/navigation/items/[itemId]
+/api/angelcare-marketplace/admin/navigation/reorder
+/api/angelcare-marketplace/admin/navigation/publish
+
+FOOTER
+/api/angelcare-marketplace/admin/footer-studio/summary
+/api/angelcare-marketplace/admin/footer-studio/profiles
+/api/angelcare-marketplace/admin/footer-studio/profiles/[profileId]
+/api/angelcare-marketplace/admin/footer-studio/profiles/[profileId]/actions/[action]
+/api/angelcare-marketplace/admin/footer-studio/profiles/[profileId]/sections
+/api/angelcare-marketplace/admin/footer-studio/profiles/[profileId]/sections/[sectionId]
+/api/angelcare-marketplace/admin/footer-studio/profiles/[profileId]/sections/reorder
+/api/angelcare-marketplace/admin/footer-studio/profiles/[profileId]/sections/[sectionId]/links
+/api/angelcare-marketplace/admin/footer-studio/profiles/[profileId]/sections/[sectionId]/links/[linkId]
+/api/angelcare-marketplace/admin/footer-studio/profiles/[profileId]/versions/[versionId]/restore
+/api/angelcare-marketplace/admin/footer-studio/contacts
+/api/angelcare-marketplace/admin/footer-studio/contacts/[deskId]
+/api/angelcare-marketplace/admin/footer-studio/targeting
+/api/angelcare-marketplace/admin/footer-studio/schedules
+/api/angelcare-marketplace/admin/footer-studio/schedules/run
+/api/angelcare-marketplace/admin/footer-studio/themes
+/api/angelcare-marketplace/admin/footer-studio/themes/[themeId]
+/api/angelcare-marketplace/admin/footer-studio/analytics
+
+FRONTEND SURFACES
+/api/angelcare-marketplace/admin/frontend-surfaces
+/api/angelcare-marketplace/admin/frontend-surfaces/[surfaceKey]
+/api/angelcare-marketplace/admin/frontend-surfaces/[surfaceKey]/sections
+/api/angelcare-marketplace/admin/frontend-surfaces/[surfaceKey]/publish
+
+LOCALIZATION
+/api/angelcare-marketplace/localization/summary
+/api/angelcare-marketplace/localization/scans
+/api/angelcare-marketplace/localization/inventory
+/api/angelcare-marketplace/localization/translations
+/api/angelcare-marketplace/localization/sources
+/api/angelcare-marketplace/localization/glossary
+/api/angelcare-marketplace/localization/memory
+/api/angelcare-marketplace/localization/exports
+/api/angelcare-marketplace/localization/imports
+/api/angelcare-marketplace/localization/readiness
+/api/angelcare-marketplace/localization/rtl-preview
+/api/angelcare-marketplace/localization/seo
+/api/angelcare-marketplace/localization/query
+/api/angelcare-marketplace/localization/final
+
+======================================================================
+6. CURRENT ROUTE FAMILIES ACCOUNTED FOR / DISPOSITION
+======================================================================
+
+CANONICAL / MERGED INTO BOUTIQUE
+
+Homepage family:
+/angelcare-marketplace/admin/homepage
+/angelcare-marketplace/admin/homepage/composer
+/angelcare-marketplace/admin/homepage/hero
+/angelcare-marketplace/admin/homepage/sections
+/angelcare-marketplace/admin/homepage/placements
+/angelcare-marketplace/admin/homepage/collections
+/angelcare-marketplace/admin/homepage/audiences
+/angelcare-marketplace/admin/homepage/territories
+/angelcare-marketplace/admin/homepage/preview
+/angelcare-marketplace/admin/homepage/history
+/angelcare-marketplace/admin/category-native/homepage-designer
+
+Compatibility aliases already present and must resolve to canonical homepage:
+/angelcare-marketplace/admin/experience/homepage
+/angelcare-marketplace/admin/experience/homepage/hero
+/angelcare-marketplace/admin/experience/homepage/sections
+/angelcare-marketplace/admin/experience/homepage/placements
+/angelcare-marketplace/admin/experience/homepage/collections
+/angelcare-marketplace/admin/experience/homepage/audiences
+/angelcare-marketplace/admin/experience/homepage/territories
+/angelcare-marketplace/admin/experience/homepage/preview
+/angelcare-marketplace/admin/experience/homepage/campaigns
+/angelcare-marketplace/admin/experience/homepage/media
+
+Experience / Pages:
+/angelcare-marketplace/admin/experience
+/angelcare-marketplace/admin/experience/pages
+/angelcare-marketplace/admin/experience/pages/new
+/angelcare-marketplace/admin/experience/pages/[pageId]
+/angelcare-marketplace/admin/experience/pages/[pageId]/builder
+/angelcare-marketplace/admin/experience/block-library
+/angelcare-marketplace/admin/experience/ctas
+/angelcare-marketplace/admin/experience/menus
+/angelcare-marketplace/admin/experience/publishing
+
+Media:
+/angelcare-marketplace/admin/media
+/angelcare-marketplace/admin/media/library
+/angelcare-marketplace/admin/media/upload
+/angelcare-marketplace/admin/media/folders
+/angelcare-marketplace/admin/media/rights
+/angelcare-marketplace/admin/media/optimization
+/angelcare-marketplace/admin/media/usage
+/angelcare-marketplace/admin/catalog/media -> compatibility redirect to Media Library
+
+Navigation:
+/angelcare-marketplace/admin/navigation
+/angelcare-marketplace/admin/navigation/header
+/angelcare-marketplace/admin/navigation/mega-menu
+/angelcare-marketplace/admin/navigation/mobile
+/angelcare-marketplace/admin/navigation/footer
+/angelcare-marketplace/admin/navigation/history
+
+Footer:
+/angelcare-marketplace/admin/footer-studio
+/angelcare-marketplace/admin/footer-studio/profiles
+/angelcare-marketplace/admin/footer-studio/composer
+/angelcare-marketplace/admin/footer-studio/themes
+/angelcare-marketplace/admin/footer-studio/components
+/angelcare-marketplace/admin/footer-studio/contacts
+/angelcare-marketplace/admin/footer-studio/navigation
+/angelcare-marketplace/admin/footer-studio/localization
+/angelcare-marketplace/admin/footer-studio/targeting
+/angelcare-marketplace/admin/footer-studio/schedules
+/angelcare-marketplace/admin/footer-studio/history
+/angelcare-marketplace/admin/footer-studio/analytics
+/angelcare-marketplace/admin/footer-studio/settings
+
+Frontend Surface authority:
+/angelcare-marketplace/admin/frontend-experiences
+/angelcare-marketplace/admin/frontend-experiences/surfaces
+/angelcare-marketplace/admin/frontend-experiences/surfaces/[surfaceKey]
+/angelcare-marketplace/admin/frontend-experiences/preview
+/angelcare-marketplace/admin/frontend-experiences/marketplace
+/angelcare-marketplace/admin/frontend-experiences/homepage -> redirect canonical Homepage
+/angelcare-marketplace/admin/frontend-experiences/verticals/[surfaceKey]
+
+Localization:
+/angelcare-marketplace/admin/localization
+/angelcare-marketplace/admin/localization/scanner
+/angelcare-marketplace/admin/localization/inventory
+/angelcare-marketplace/admin/localization/translations
+/angelcare-marketplace/admin/localization/sources
+/angelcare-marketplace/admin/localization/glossary
+/angelcare-marketplace/admin/localization/memory
+/angelcare-marketplace/admin/localization/csv
+/angelcare-marketplace/admin/localization/imports
+/angelcare-marketplace/admin/localization/rtl-lab
+/angelcare-marketplace/admin/localization/seo
+/angelcare-marketplace/admin/localization/reviews
+/angelcare-marketplace/admin/localization/readiness
+/angelcare-marketplace/admin/catalog/localization -> compatibility redirect canonical Localization
+
+Publication:
+/angelcare-marketplace/admin/publication
+/angelcare-marketplace/admin/commerce-studio/publication
+/angelcare-marketplace/admin/catalog/publication -> compatibility redirect to commerce publication
+
+DEFERRED TO BATCH 06 — DO NOT MERGE INTO BOUTIQUE PRIMARY SUBTREE:
+/angelcare-marketplace/admin/live-experience-command/**
+/angelcare-marketplace/admin/growth-experience/** except storefront-safe compatibility links.
+
+======================================================================
+7. SCREEN-BY-SCREEN IMPLEMENTATION AUTHORITY
+======================================================================
+
+---------------------------------------------------------------------
+01_STOREFRONT_COMMAND_CENTER.png
+---------------------------------------------------------------------
+FINAL HOME:
+Boutique -> Vue générale
+
+SOURCE AUTHORITIES:
+- total-commerce-control/components/FrontendControlCommand.tsx
+- total-commerce-control/repository.ts -> frontendControlSnapshot()
+- total-commerce-control/surface-registry.ts
+- experience-builder -> page/job counts
+- commerce-studio -> homepage/media/navigation/publication counts
+
+MUST EXPOSE:
+- public surfaces and their status
+- pages/content entry
+- Homepage entry
+- Media Library entry
+- Navigation entry
+- Footer Studio entry
+- Localization entry
+- Publication entry
+- storefront priorities generated from REAL statuses only
+- preview/open actions to real source-backed destinations
+
+DO NOT:
+- fabricate visitor metrics
+- duplicate Marketing/Live Experience
+- create another storefront data engine
+
+---------------------------------------------------------------------
+02_HOMEPAGE_HERO_CAMPAIGNS.png
+---------------------------------------------------------------------
+FINAL HOME:
+Boutique -> Homepage -> Hero & campaigns
+
+SOURCE COMPONENT:
+commerce-studio/components/HeroCampaignStudio.tsx
+
+REAL CAPABILITIES:
+- registry of homepage campaigns
+- create campaign
+- locale FR / EN / AR
+- audience: all / family / organization / professional
+- eyebrow
+- title
+- subtitle
+- primary CTA label + href
+- secondary CTA label + href
+- desktop image from Media Library
+- tablet image / responsive derivative
+- mobile image / responsive derivative
+- device preview desktop / tablet / mobile
+- priority
+- status: draft / configured / scheduled / active / paused / expired / archived
+- starts_at / ends_at
+- save
+- publish/unpublish immediate action
+- duplicate
+- open live public homepage
+
+IMPORTANT:
+The PNG may visually group audience/territory/schedule controls more richly;
+Codex must use the actual campaign record fields and existing authority.
+
+---------------------------------------------------------------------
+03_HOMEPAGE_SECTIONS_PLACEMENTS.png
+---------------------------------------------------------------------
+FINAL HOME:
+Boutique -> Homepage -> Sections & placements
+
+SOURCE COMPONENT:
+category-native/components/HomepageDesigner2.tsx
+(HomepageComposerStudio re-exports HomepageDesigner2)
+
+REAL CAPABILITIES:
+- desktop / tablet / mobile canvas
+- FR / EN / AR RTL selector
+- undo / redo in current client session
+- visible live sections ordered by sort_order
+- drag reorder persisted through homepage-sections bulk/reorder
+- block library from category-native homepage block registry
+- category-aware blocks
+- add block and immediate live insertion according to source behavior
+- section select
+- hide section
+- edit title / subtitle
+- layout variants:
+  rail / grid / mosaic / split / full-width / editorial /
+  availability-panel / comparison
+- density:
+  comfortable / compact / cinematic
+- collection binding
+- compatible experience schema keys / archetypes
+- device visibility
+- publish now
+- duplicate as block
+- real public live link
+
+DO NOT simplify this into a generic card settings page.
+This is a true visual Homepage composition environment.
+
+Homepage release history also exists separately through homepage-final and must
+be reachable from the final Homepage studio.
+
+---------------------------------------------------------------------
+04_PAGES_REGISTRY.png
+---------------------------------------------------------------------
+FINAL HOME:
+Boutique -> Pages & content -> Pages
+
+SOURCE COMPONENTS:
+experience-builder/components/PageRegistry.tsx
+experience-builder/components/CreatePageClient.tsx
+experience-builder/repository.ts
+
+REAL PAGE DATA / FILTERS:
+- status
+- locale
+- territory
+- route key
+- title
+- navigation label
+- slug
+- description
+- sensitive flag
+- SEO title
+- SEO description
+- canonical URL
+- translation status
+- scheduled_at
+- owner / version / update state from CmsPage
+
+REAL LIFECYCLE:
+draft -> submitted -> in_review -> approved -> scheduled -> published
+plus retired / archived according to source transitions.
+
+A new page must use the existing CMS create authority, not a new table/API.
+
+---------------------------------------------------------------------
+05_PAGE_BUILDER_360.png
+---------------------------------------------------------------------
+FINAL HOME:
+Boutique -> Pages & content -> Page 360 -> Builder
+
+SOURCE COMPONENT:
+experience-builder/components/PageBuilderClient.tsx
+
+REAL BUILDER CAPABILITIES:
+- block registry, no manual JSON required for normal operator flow
+- add block by supported CmsBlockType
+- move block up/down
+- duplicate block
+- hide/show block
+- remove/archive omitted block on persistence
+- block stable key
+- generic content fields
+- CTA fields
+- secondary CTA where supported
+- Media Library URL field for media-capable blocks
+- repeatable items / FAQ / steps
+- product_grid source by category key or item refs
+- collection_rail by collection key
+- published catalogue remains canonical for product cards
+- presentation layout:
+  default / split / centered / contrast / wide
+- block status active / hidden
+- save composition
+- create REAL preview session token
+- open /angelcare-marketplace/preview/[preview_token]
+
+CMS BLOCK REGISTRY MUST REMAIN AUTHORITATIVE.
+Codex should expose all registered block types coherently rather than hard-code
+only the examples visible in the PNG.
+
+Page governance surrounding the builder must expose:
+submit / review / approve / schedule / publish / archive / rollback according to
+permissions and state transition authority.
+
+---------------------------------------------------------------------
+06_MEDIA_LIBRARY_COMMAND.png
+---------------------------------------------------------------------
+FINAL HOME:
+Boutique -> Media Library
+
+SOURCE COMPONENT:
+commerce-studio/components/MediaLibraryStudio.tsx
+
+REAL CAPABILITIES:
+- search file_name / asset_key / alt text
+- media types: image / video / document
+- upload multiple assets
+- accepted current UI types:
+  JPG, PNG, WebP, AVIF, SVG, MP4, WebM, PDF
+- UI source states 40 MB max
+- alt text FR on upload
+- optional folder
+- create media folder
+- asset inspector
+- alt FR / EN / AR
+- rights status:
+  owned / licensed / public_domain / restricted / expired
+- rights expiration
+- focal X / focal Y
+- tablet URL
+- mobile URL
+- crop x/y/width/height
+- rotation 0/90/180/270
+- regenerate responsive derivatives
+- replace binary while preserving existing references
+- usage lookup / where-used with route hints
+- usage_count
+- optimization_status and generated derivatives are real backend data
+
+DO NOT display a false “optimized” score unless source computes it.
+Do not delete or sever references as a shortcut for replacement.
+
+---------------------------------------------------------------------
+07_NAVIGATION_STUDIO.png
+---------------------------------------------------------------------
+FINAL HOME:
+Boutique -> Navigation Studio
+
+SOURCE COMPONENT:
+commerce-studio/components/NavigationStudio.tsx
+
+REAL CAPABILITIES:
+- navigation menu registry
+- menu locale FR / EN / AR
+- menu create and publish
+- Header / mega-menu / mobile / footer modes represented by route family
+- real menu tree
+- root / child hierarchy
+- drag reorder persisted by /admin/navigation/reorder
+- item inspector
+- label FR / EN / AR
+- href / route
+- parent group
+- sort order
+- icon key
+- promotional image from Media Library
+- audience visibility:
+  public / family / organization / professional / authenticated
+- status:
+  active / hidden / archived
+- desktop visible
+- mobile visible
+- hide/show immediate action
+- test route
+- automatic validation expectations:
+  internal route validity
+  no hierarchy loop
+  locale consistency
+  desktop/mobile visibility
+
+Do not create a second footer-navigation authority. Footer links may be surfaced
+contextually, but Footer Studio remains canonical for its own footer experience.
+
+---------------------------------------------------------------------
+08_FOOTER_STUDIO.png
+---------------------------------------------------------------------
+FINAL HOME:
+Boutique -> Footer Studio
+
+SOURCE COMPONENT:
+footer-studio/components/FooterStudioCommand.tsx
+
+CURRENT MODES — ALL MUST REMAIN REACHABLE:
+command
+profiles
+composer
+themes
+components
+contacts
+navigation
+localization
+targeting
+schedules
+history
+analytics
+settings
+
+REAL OPERATIONS:
+- multiple footer profiles
+- duplicate profile
+- profile save / publish actions
+- theme selection
+- section create
+- section edit
+- section ordering / reorder endpoint
+- column span
+- mobile default-open behavior
+- approved component registry
+- contact desk editing
+- footer link create/edit with types:
+  internal / external / email / phone / document / action
+- new-tab / safe rel semantics for external links
+- FR / EN / AR localized content
+- targeting by:
+  route prefixes / locale / segment / territory / AC Wallet tier /
+  authenticated state / priority
+- schedule actions:
+  publish / suspend / resume / expire
+- Africa/Casablanca timezone in current scheduler UI
+- run due schedules
+- immutable/versioned history and restore
+- analytics:
+  total events / link clicks / email clicks / accordion opens /
+  final authority clicks / top actions
+- global settings:
+  desktop columns / mobile accordion behavior / service bar /
+  protected authority statement
+- real desktop/tablet/mobile FooterExperience preview
+
+DOCTRINE FILE:
+footer-studio/themes.ts contains FOOTER_FEATURE_REGISTRY with 190 active native
+capabilities. Codex MUST inspect that registry and preserve its functional
+coverage. Do not implement only the handful of blocks visible in the PNG.
+
+Capability families represented there include:
+Architecture, Brand, Navigation, Contacts, Localization, Social, Profiles,
+Themes, Targeting, Scheduling, Legal & Trust, Campaigns, Publishing, Analytics,
+Security & Operations.
+
+---------------------------------------------------------------------
+09_FRONTEND_SURFACE_STUDIO.png
+---------------------------------------------------------------------
+FINAL HOME:
+Boutique -> Frontend Surfaces
+
+SOURCE COMPONENTS:
+total-commerce-control/components/FrontendControlCommand.tsx
+total-commerce-control/components/SurfaceRegistryStudio.tsx
+total-commerce-control/components/SurfaceExperienceStudio.tsx
+total-commerce-control/surface-registry.ts
+
+SOURCE-GROUNDED PURPOSE:
+Answer exactly: “Where can I edit this public page?”
+
+REGISTRY REAL FILTERS:
+- search title / route / group / renderer
+- group
+- status published / draft / paused
+
+EACH REGISTERED SURFACE DEFINES:
+- key
+- title
+- group
+- public route
+- type
+- renderer
+- canonical studio
+- editable fields/capabilities
+- dynamic/system-driven data
+- preview path
+
+CURRENT SOURCE REGISTRY INCLUDES AT LEAST:
+Homepage
+Marketplace Landing
+Families
+Home Services
+Development
+Kits
+Academy
+Establishments
+Hospitality
+Corporates
+Health Partners
+Quality Check 360
+Cart
+Checkout
+Order Success
+Global Header
+Global Footer
+
+SURFACE EXPERIENCE STUDIO REAL CAPABILITIES:
+- FR / EN / AR content
+- eyebrow
+- title
+- lead
+- primary CTA label/href
+- secondary CTA label/href
+- media URL
+- cards
+- sections
+- add section
+- section order up/down
+- duplicate section
+- visible status
+- draft save
+- publish snapshot
+- desktop / tablet / mobile real iframe preview
+
+IMPORTANT ARCHITECTURAL DOCTRINE:
+A Surface Studio edits business content around a renderer; it MUST NOT replace
+or reimplement the renderer’s transaction/business logic.
+
+Canonical redirects already exist:
+Homepage surface -> /admin/homepage
+Navigation surface -> /admin/navigation/header
+Footer surface -> /admin/footer-studio
+Category surface -> canonical category storefront studio
+
+Preserve those redirects.
+
+---------------------------------------------------------------------
+10_LOCALIZATION_PUBLICATION_RUNWAY.png
+---------------------------------------------------------------------
+FINAL HOME:
+Boutique -> Localization & Publication
+
+This projection visually combines readiness/publication overview, but Codex must
+preserve TWO real authorities underneath it:
+A) Localization Intelligence
+B) Publication / version / rollback governance
+
+LOCALIZATION SOURCE CAPABILITIES:
+- truthful coverage; source failure prevents fake 100% coverage
+- canonical French source doctrine
+- scanner complete / incremental / targeted
+- scan status / new / changed / failed sources / scanned files
+- master inventory
+- classification
+- translations
+- assignment
+- submit/review/approve/publish/archive translation lifecycle
+- CSV export/import/validate/apply/rollback
+- glossary
+- translation memory
+- sensitive content review/approval
+- localized SEO
+- source adapters
+- readiness
+- RTL lab / preview
+- audit export
+
+LOCALIZATION ROUTES MUST REMAIN DEEP-LINKABLE.
+
+PUBLICATION SOURCE CAPABILITIES — COMMERCE:
+commerce-studio/components/PublicationStudio.tsx
+- Save -> Publish -> Refresh -> Result doctrine
+- publication events
+- affected paths count
+- event status success/failed
+- version history
+- immediate rollback by object_type/object_id/version_number
+- route/tag refresh after commercial mutation
+
+PUBLICATION SOURCE CAPABILITIES — CMS:
+- page publication jobs with lanes:
+  queued / validating / blocked / ready
+- page state transitions
+- publication validation before published/scheduled
+- preview sessions
+- version snapshots
+- rollback
+
+HOMEPAGE RELEASE AUTHORITY:
+homepage-final/components/HomepageReleaseAuthority.tsx
+- create release snapshot
+- locale FR / EN / AR
+- release dossier lifecycle:
+  draft
+  content_ready
+  review
+  approval_pending
+  approved
+  scheduled
+  published
+  verification
+  accepted
+  superseded
+  rollback_required
+  rolled_back
+  rejected
+  archived
+- readiness requires real content snapshot
+- approval evidence mandatory where source requires it
+- publication/preview evidence mandatory where source requires it
+- version persistence and audit
+
+Do not flatten this governance into a fake single “Publish” toggle.
+
+======================================================================
+8. REQUIRED UI STATES FOR BATCH 05
+======================================================================
+
+Every canonical surface must implement relevant states:
+- loading
+- empty
+- partial data
+- error
+- permission denied
+- validation failure
+- unsaved changes
+- save in progress
+- save failure
+- success
+- publish-ready
+- publish-blocked
+- scheduled
+- published/live
+- paused/hidden
+- archived
+- rollback available
+- preview unavailable
+- media rights restricted/expired
+- missing translation / incomplete locale
+- RTL review state
+- broken route / invalid navigation destination where existing validation finds it
+
+Do not use fake happy-path-only screens.
+
+======================================================================
+9. CROSS-WORKSPACE INTEGRATION / ZERO-DUPLICATION RULES
+======================================================================
+
+PRODUCTS / CATEGORIES:
+Homepage, Pages and Surfaces may bind catalog objects and collections, but Batch
+05 must not create parallel Product or Category data. Use Batch 01/02 authority.
+
+CUSTOMERS / ORDERS:
+Storefront may link to public customer/transaction routes but must not duplicate
+Batch 03/04 CRM/order backends.
+
+MARKETING:
+Campaign references that are Homepage-specific remain valid in Homepage.
+Popups, broadcasts, proof widgets, experiments, recovery and growth belong to
+Batch 06 Marketing & promotions.
+
+FINANCE:
+Storefront may show payment/trust copy only. It must not become Finance Admin.
+
+TRUST:
+Footer and storefront may display source-backed Trust/legal content, but Trust &
+Quality governance remains its dedicated later workspace.
+
+ANALYTICS:
+Existing Footer interaction metrics may remain contextually visible, but global
+analytics belongs to Analytics & intelligence.
+
+======================================================================
+10. VISUAL / UX IMPLEMENTATION CONTRACT
+======================================================================
+
+The approved PNGs are final projections, not loose inspiration.
+
+Codex must preserve:
+- permanent Batch 01–04 primary sidebar
+- Boutique active
+- white/light enterprise visual language
+- compact professional density
+- strong hierarchy
+- real tables / inspectors / studios
+- contextual right rails
+- preview surfaces
+- desktop-first operator ergonomics
+- consistent action placement
+- status chips with stable semantics
+- no generic card-wall redesign
+- no giant empty KPI areas
+- no dark generic admin theme
+- no invented logos
+
+Purpose-specific UI patterns:
+01 Command Center / Registry
+02 Hero Campaign Studio
+03 Visual Homepage Studio
+04 Registry
+05 Page Builder / Inspector Studio
+06 Media Asset Library
+07 Navigation Tree Studio
+08 Footer Command Studio
+09 Surface Registry + Surface Studio
+10 Localization / Publication Control Room
+
+Do not force these into one generic reusable page template.
+
+======================================================================
+11. CODEX EXECUTION ORDER
+======================================================================
+
+Before coding:
+1. Read this entire file.
+2. Inspect every mapped source component/repository/API/permission.
+3. Inspect Batch-01..04 approved shell/components to preserve visual continuity.
+4. Inventory exact current routes covered by Batch 05.
+5. Produce concise target-file implementation map.
+6. Continue immediately; do not stop for user approval.
+
+Recommended internal order:
+A. Shared Boutique subnavigation / shell adapters
+B. Storefront Command Center
+C. Homepage Hero + Homepage Designer 2 integration
+D. Pages Registry + Page 360 + Builder
+E. Media Library
+F. Navigation Studio
+G. Footer Studio canonical shell integration
+H. Frontend Surface Registry / Studio
+I. Localization canonical presentation
+J. Publication / release / rollback integration
+K. compatibility redirects + link integrity
+L. states + responsive + accessibility + verification
+
+======================================================================
+12. VALIDATION / DEFINITION OF DONE
+======================================================================
+
+Batch 05 is not complete because JSX renders.
+
+Required checks:
+- TypeScript passes
+- existing Marketplace source verifiers relevant to routes pass
+- canonical Boutique routes render behind auth
+- every Batch-05 navigation target resolves
+- legacy aliases/redirects resolve to canonical targets
+- no black/blank/404 destination from final Boutique navigation
+- Homepage mutation persists and public preview reflects real source
+- Page Builder save persists
+- CMS preview token opens real preview route
+- media upload/update/usage/replace wiring remains real
+- navigation reorder/publish wiring remains real
+- Footer profile/section/link/schedule/history controls remain wired
+- Surface Studio publish continues using frontend-surfaces authority
+- Localization never claims 100% when source says coverage is not truthful
+- publication events/version rollback remain real
+- permissions remain server-enforced
+- public Marketplace remains intact
+- no SQL introduced
+- no unrelated AngelCare product touched
+
+If credentials/runtime data prevent a full mutation proof, report exactly that as
+RUNTIME-ONLY verification; do not fake success.
+
+======================================================================
+13. CODING / CHANGE DISCIPLINE
+======================================================================
+
+FRONTEND/UIX PRODUCTIZATION ONLY unless a proven frontend wiring defect requires
+an existing API call correction.
+
+Do not broad-refactor repositories.
+Do not rename tables.
+Do not relocate unrelated routes.
+Do not rewrite auth.
+Do not weaken permissions.
+Do not delete legacy routes until compatibility is proven.
+Do not remove advanced source-backed tools just because the final human tree is
+simpler.
+
+Existing specialist routes may remain as deep links, aliases or advanced tools,
+but final operator navigation must point to canonical Boutique experiences.
+
+At completion report:
+- exact files changed
+- routes canonicalized
+- redirects/aliases preserved
+- existing APIs/repositories reused
+- permissions reused
+- source capabilities exposed per screen
+- tests/verifiers
+- runtime-only gates
+- git status
+
+STOP BEFORE COMMIT / PUSH / DEPLOY.
+
+======================================================================
+14. BATCH 05 FILE MANIFEST
+======================================================================
+
+01_STOREFRONT_COMMAND_CENTER.png
+02_HOMEPAGE_HERO_CAMPAIGNS.png
+03_HOMEPAGE_SECTIONS_PLACEMENTS.png
+04_PAGES_REGISTRY.png
+05_PAGE_BUILDER_360.png
+06_MEDIA_LIBRARY_COMMAND.png
+07_NAVIGATION_STUDIO.png
+08_FOOTER_STUDIO.png
+09_FRONTEND_SURFACE_STUDIO.png
+10_LOCALIZATION_PUBLICATION_RUNWAY.png
+BATCH_05_SOURCE_MAPPING.txt
+
+======================================================================
+15. FINAL BATCH 05 DOCTRINE
+======================================================================
+
+The final goal is simple for the operator:
+
+"If it is part of what a visitor sees on the Marketplace, I can identify its
+canonical editing home from Boutique, edit it through a purpose-built studio,
+preview the real public result, publish through the existing governed authority,
+and recover/version/rollback where the source supports it — without writing
+code and without creating a parallel backend."
+
+END OF BATCH 05 SOURCE/BACKEND MAPPING + CODEX IMPLEMENTATION CONTRACT

@@ -20,10 +20,27 @@ import { transitionWalletReconciliation } from './wallet-admin'
 
 const urlLocale=(request:Request)=>localeValue(new URL(request.url).searchParams.get('locale'))
 
-export async function handleCustomerRegister(request:Request):Promise<Response>{const rid=requestId(request);try{const body=await parseJsonObject(request);const origin=new URL(request.url).origin;const locale=localeValue(body.locale);const result=await registerCustomer({fullName:body.fullName,email:body.email,phone:body.phone,password:body.password,locale,accountKind:body.accountKind,returnTo:`${origin}/angelcare-marketplace/${locale}/auth/verified`});if(result.account&&body.visitorReference)await claimGuestCommerce({visitorReference:String(body.visitorReference),account:result.account});return apiSuccess(result,{requestId:rid,status:201})}catch(error){return apiFailure(error,rid)}}
+const customerPublicOrigin=(request:Request)=>{
+ const configured=String(
+  process.env.NEXT_PUBLIC_SITE_URL||
+  process.env.NEXT_PUBLIC_APP_URL||
+  ''
+ ).trim()
+
+ if(configured){
+  try{
+   const candidate=new URL(configured)
+   if(candidate.protocol==='https:'||candidate.protocol==='http:')return candidate.origin
+  }catch{}
+ }
+
+ return new URL(request.url).origin
+}
+
+export async function handleCustomerRegister(request:Request):Promise<Response>{const rid=requestId(request);try{const body=await parseJsonObject(request);const origin=customerPublicOrigin(request);const locale=localeValue(body.locale);const result=await registerCustomer({fullName:body.fullName,email:body.email,phone:body.phone,password:body.password,locale,accountKind:body.accountKind,returnTo:`${origin}/angelcare-marketplace/${locale}/auth/verified`});if(result.account&&body.visitorReference)await claimGuestCommerce({visitorReference:String(body.visitorReference),account:result.account});return apiSuccess(result,{requestId:rid,status:201})}catch(error){return apiFailure(error,rid)}}
 export async function handleCustomerLogin(request:Request):Promise<Response>{const rid=requestId(request);try{const body=await parseJsonObject(request);const account=await loginCustomer({email:body.email,password:body.password});if(body.visitorReference)await claimGuestCommerce({visitorReference:String(body.visitorReference),account});return apiSuccess({account},{requestId:rid})}catch(error){return apiFailure(error,rid)}}
 export async function handleCustomerLogout(request:Request):Promise<Response>{const rid=requestId(request);try{await logoutCustomer();return apiSuccess({loggedOut:true},{requestId:rid})}catch(error){return apiFailure(error,rid)}}
-export async function handleCustomerRecovery(request:Request):Promise<Response>{const rid=requestId(request);try{const body=await parseJsonObject(request);const locale=localeValue(body.locale);const origin=new URL(request.url).origin;await requestCustomerRecovery(body.email,`${origin}/angelcare-marketplace/${locale}/auth/reset`);return apiSuccess({sent:true},{requestId:rid})}catch(error){return apiFailure(error,rid)}}
+export async function handleCustomerRecovery(request:Request):Promise<Response>{const rid=requestId(request);try{const body=await parseJsonObject(request);const locale=localeValue(body.locale);const origin=customerPublicOrigin(request);await requestCustomerRecovery(body.email,`${origin}/angelcare-marketplace/${locale}/auth/reset`);return apiSuccess({sent:true},{requestId:rid})}catch(error){return apiFailure(error,rid)}}
 export async function handleCustomerPasswordReset(request:Request):Promise<Response>{const rid=requestId(request);try{const body=await parseJsonObject(request);await updateCustomerPassword(body.password);return apiSuccess({updated:true},{requestId:rid})}catch(error){return apiFailure(error,rid)}}
 export async function handleCustomerMe(request:Request):Promise<Response>{const rid=requestId(request);try{const context=await getCustomerContext();return apiSuccess({authenticated:Boolean(context),account:context?.account||null},{requestId:rid})}catch(error){return apiFailure(error,rid)}}
 
@@ -53,7 +70,7 @@ export async function handleAdminEnterpriseOrders(request:Request):Promise<Respo
 export async function handleAdminEnterpriseOrder(request:Request,params:Promise<{orderId:string}>):Promise<Response>{const rid=requestId(request);try{const context=await requireMarketplaceApiContext('marketplace.operations.missions.manage');const{orderId}=await params;const body=await parseJsonObject(request);const status=String(body.status||'') as JourneyStatus;if(!status)throw new MarketplaceError('VALIDATION_ERROR','Le statut est requis.');return apiSuccess(await transitionEnterpriseOrder({orderId,status,reason:requiredText(body.reason,'reason',800),context,requestId:rid,request}),{requestId:rid})}catch(error){return apiFailure(error,rid)}}
 export async function handleAdminOrderLineEvent(request:Request,params:Promise<{orderId:string}>):Promise<Response>{const rid=requestId(request);try{const context=await requireMarketplaceApiContext('marketplace.operations.missions.manage');const{orderId}=await params;return apiSuccess(await recordOrderLineEvent({orderId,body:await parseJsonObject(request),context,requestId:rid,request}),{requestId:rid,status:201})}catch(error){return apiFailure(error,rid)}}
 
-export async function handleCustomerMagicLink(request:Request):Promise<Response>{const rid=requestId(request);try{const body=await parseJsonObject(request);const locale=localeValue(body.locale);const origin=new URL(request.url).origin;await sendCustomerMagicLink({email:body.email,locale,redirectTo:`${origin}/angelcare-marketplace/${locale}/account`});return apiSuccess({sent:true},{requestId:rid})}catch(error){return apiFailure(error,rid)}}
+export async function handleCustomerMagicLink(request:Request):Promise<Response>{const rid=requestId(request);try{const body=await parseJsonObject(request);const locale=localeValue(body.locale);const origin=customerPublicOrigin(request);await sendCustomerMagicLink({email:body.email,locale,redirectTo:`${origin}/angelcare-marketplace/${locale}/account`});return apiSuccess({sent:true},{requestId:rid})}catch(error){return apiFailure(error,rid)}}
 export async function handleCustomerPhoneOtp(request:Request):Promise<Response>{const rid=requestId(request);try{const body=await parseJsonObject(request);if(body.token)return apiSuccess({account:await verifyCustomerPhoneOtp({phone:body.phone,token:body.token})},{requestId:rid});await sendCustomerPhoneOtp(body.phone);return apiSuccess({sent:true},{requestId:rid})}catch(error){return apiFailure(error,rid)}}
 export async function handleCustomerSessions(request:Request):Promise<Response>{const rid=requestId(request);try{if(request.method==='DELETE'){await logoutCustomerEverywhere();return apiSuccess({revoked:true},{requestId:rid})}return apiSuccess(await customerSessionSummary(),{requestId:rid})}catch(error){return apiFailure(error,rid)}}
 export async function handlePaymentWebhook(request:Request,params:Promise<{provider:string}>):Promise<Response>{const rid=requestId(request);try{const{provider}=await params;return apiSuccess(await processPaymentProviderWebhook({providerKey:provider,request}),{requestId:rid})}catch(error){return apiFailure(error,rid)}}

@@ -1,0 +1,1246 @@
+ANGELCARE MARKETPLACE ADMIN — BATCH 10
+FINANCE / PAYMENTS / WALLET / PRICING / MARGINS / REVENUE / RECONCILIATION
+SOURCE + BACKEND + UIX IMPLEMENTATION CONTRACT
+Generated for approved admin-design Batch 10
+SOURCE_ARCHIVE=ANGELCARE_MARKETPLACE_WEB_20260826-221837.zip
+SOURCE_SHA256=acf0b0a651268d6d49397bf3413fbe2c9164db9e67f52b461df90abb4e054d35
+ADMIN_ROUTES_MAPPED=29
+API_ROUTES_MAPPED=30
+FINANCE_PERMISSIONS_MAPPED=9
+NO SQL / NO MIGRATIONS / NO NEW TABLES / NO PARALLEL FINANCE ENGINE
+==========================================================================================
+1. AUTHORITY PRECEDENCE
+==========================================================================================
+Codex MUST resolve conflicts in this order:
+1. Existing Marketplace backend/business/data authority.
+2. This BATCH_10_SOURCE_MAPPING.txt.
+3. The ten approved Batch-10 PNG projections.
+4. Current fragmented/legacy frontend implementation.
+The PNGs specify the approved final operator experience.
+The mapping specifies what the experience is allowed and required to do.
+Current backend state machines, API guards, permissions and canonical object relationships remain authoritative.
+A screenshot value/count/customer name is illustrative UI content unless it is generated from runtime data.
+Codex MUST replace sample values with real source-backed runtime data.
+Codex MUST NOT create fake analytics, fake payment-provider health, fake accounting numbers or fake integrations.
+==========================================================================================
+2. GLOBAL PRODUCT TREE — IMMUTABLE
+==========================================================================================
+- Accueil
+- Commandes & réservations
+- Produits & services
+- Catégories & collections
+- Clients
+- Boutique
+- Marketing & promotions
+- Opérations
+- Prestataires & fournisseurs
+- Academy
+- B2B & partenaires
+- Finance  <-- ACTIVE BATCH 10
+- Trust & qualité
+- Analytics & intelligence
+- Paramètres & gouvernance
+Finance sub-tools MUST remain inside Finance. Do not add Price Books, Wallet, Reconciliation, Revenue Streams, etc. as global sidebar entries.
+==========================================================================================
+3. BATCH 10 FINAL CANONICAL SCREENS
+==========================================================================================
+01. FINANCE EXECUTIVE COMMAND / CONTROL LEDGER OVERVIEW
+    PNG=01_FINANCE_EXECUTIVE_COMMAND_CONTROL_LEDGER.png
+    route-authority=/angelcare-marketplace/admin/finance
+    route-authority=/angelcare-marketplace/admin/finance-monetization
+    route-authority=/angelcare-marketplace/admin/finance/reports
+02. PAYMENTS / RECONCILIATION COMMAND
+    PNG=02_PAYMENTS_RECONCILIATION_COMMAND.png
+    route-authority=/angelcare-marketplace/admin/payments
+    route-authority=/angelcare-marketplace/admin/finance-monetization/payments
+03. PAYMENT 360 MEGA DOSSIER / REFUND AUTHORITY
+    PNG=03_PAYMENT_360_MEGA_DOSSIER_REFUND_AUTHORITY.png
+    route-authority=/angelcare-marketplace/admin/payments/[paymentIntentId]/command
+    route-authority=/angelcare-marketplace/admin/finance-monetization/refunds
+04. INVOICES / INVOICE READINESS / ISSUANCE
+    PNG=04_INVOICES_READINESS_ISSUANCE_COMMAND.png
+    route-authority=/angelcare-marketplace/admin/finance/invoices
+    route-authority=/angelcare-marketplace/admin/finance/invoice-readiness
+    route-authority=/angelcare-marketplace/admin/finance-monetization/invoices
+05. RECEIPTS / PAYMENT EVIDENCE COMMAND
+    PNG=05_RECEIPTS_PAYMENT_EVIDENCE_COMMAND.png
+    route-authority=/angelcare-marketplace/admin/finance/receipts
+    route-authority=/angelcare-marketplace/admin/finance-monetization/receipts
+06. AC WALLET / CREDIT / POLICY / RISK / RECONCILIATION
+    PNG=06_AC_WALLET_CONTROL_RISK_RECONCILIATION.png
+    route-authority=/angelcare-marketplace/admin/wallet
+    route-authority=/angelcare-marketplace/admin/wallet/customers
+    route-authority=/angelcare-marketplace/admin/wallet/policies
+    route-authority=/angelcare-marketplace/admin/wallet/risk
+    route-authority=/angelcare-marketplace/admin/wallet/reconciliation
+    route-authority=/angelcare-marketplace/admin/finance-monetization/credit
+07. PRICE BOOKS / PRICING RULES / LIFECYCLE AUTHORITY
+    PNG=07_PRICE_BOOKS_PRICING_RULE_LIFECYCLE.png
+    route-authority=/angelcare-marketplace/admin/finance/price-books
+08. MARGINS / DISCOUNTS / EXCEPTION DECISION AUTHORITY
+    PNG=08_MARGIN_DISCOUNT_EXCEPTION_DECISION_AUTHORITY.png
+    route-authority=/angelcare-marketplace/admin/finance/margins
+    route-authority=/angelcare-marketplace/admin/finance/discounts
+    route-authority=/angelcare-marketplace/admin/finance/exceptions
+    route-authority=/angelcare-marketplace/admin/finance-monetization/exceptions
+09. REVENUE STREAMS / COMMISSIONS / SUBSCRIPTIONS
+    PNG=09_REVENUE_STREAMS_COMMISSIONS_SUBSCRIPTIONS.png
+    route-authority=/angelcare-marketplace/admin/finance/revenue-streams
+    route-authority=/angelcare-marketplace/admin/finance/commissions
+    route-authority=/angelcare-marketplace/admin/subscriptions
+    route-authority=/angelcare-marketplace/admin/finance-monetization/subscriptions
+10. FINANCIAL RECONCILIATION / CONTROL LEDGER CLOSURE
+    PNG=10_FINANCIAL_RECONCILIATION_CONTROL_LEDGER_CLOSURE.png
+    route-authority=/angelcare-marketplace/admin/finance/reconciliation
+    route-authority=/angelcare-marketplace/admin/finance-monetization/reconciliation
+    route-authority=/angelcare-marketplace/admin/finance-monetization
+==========================================================================================
+4. CURRENT ADMIN ROUTE DISPOSITION — ZERO BLIND
+==========================================================================================
+ROUTE: /angelcare-marketplace/admin/finance
+  SCREEN: 01
+  DISPOSITION: CANONICAL
+  CURRENT_COMPONENT: FinanceCommand
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/finance/page.tsx
+ROUTE: /angelcare-marketplace/admin/finance-monetization
+  SCREEN: 10
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: FinanceAreaPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/finance-monetization/page.tsx
+ROUTE: /angelcare-marketplace/admin/finance-monetization/credit
+  SCREEN: 06
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: FinanceAreaPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/finance-monetization/credit/page.tsx
+ROUTE: /angelcare-marketplace/admin/finance-monetization/exceptions
+  SCREEN: 08
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: FinanceAreaPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/finance-monetization/exceptions/page.tsx
+ROUTE: /angelcare-marketplace/admin/finance-monetization/invoices
+  SCREEN: 04
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: FinanceAreaPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/finance-monetization/invoices/page.tsx
+ROUTE: /angelcare-marketplace/admin/finance-monetization/payments
+  SCREEN: 02
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: FinanceAreaPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/finance-monetization/payments/page.tsx
+ROUTE: /angelcare-marketplace/admin/finance-monetization/receipts
+  SCREEN: 05
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: FinanceAreaPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/finance-monetization/receipts/page.tsx
+ROUTE: /angelcare-marketplace/admin/finance-monetization/reconciliation
+  SCREEN: 10
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: FinanceAreaPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/finance-monetization/reconciliation/page.tsx
+ROUTE: /angelcare-marketplace/admin/finance-monetization/refunds
+  SCREEN: 03
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: FinanceAreaPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/finance-monetization/refunds/page.tsx
+ROUTE: /angelcare-marketplace/admin/finance-monetization/subscriptions
+  SCREEN: 09
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: FinanceAreaPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/finance-monetization/subscriptions/page.tsx
+ROUTE: /angelcare-marketplace/admin/finance/commissions
+  SCREEN: 09
+  DISPOSITION: COMPATIBILITY_REDIRECT
+  CURRENT_COMPONENT: wrapper/redirect
+  CURRENT_REDIRECT: /angelcare-marketplace/admin/finance/revenue-streams?focus=commissions
+  SOURCE_FILE: (protected)/admin/finance/commissions/page.tsx
+ROUTE: /angelcare-marketplace/admin/finance/discounts
+  SCREEN: 08
+  DISPOSITION: COMPATIBILITY_REDIRECT
+  CURRENT_COMPONENT: wrapper/redirect
+  CURRENT_REDIRECT: /angelcare-marketplace/admin/finance/margins?focus=discounts
+  SOURCE_FILE: (protected)/admin/finance/discounts/page.tsx
+ROUTE: /angelcare-marketplace/admin/finance/exceptions
+  SCREEN: 08
+  DISPOSITION: COMPATIBILITY_REDIRECT
+  CURRENT_COMPONENT: wrapper/redirect
+  CURRENT_REDIRECT: /angelcare-marketplace/admin/finance/margins?focus=exceptions
+  SOURCE_FILE: (protected)/admin/finance/exceptions/page.tsx
+ROUTE: /angelcare-marketplace/admin/finance/invoice-readiness
+  SCREEN: 04
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: InvoiceReadinessAuthority
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/finance/invoice-readiness/page.tsx
+ROUTE: /angelcare-marketplace/admin/finance/invoices
+  SCREEN: 04
+  DISPOSITION: CANONICAL
+  CURRENT_COMPONENT: InvoiceCommand
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/finance/invoices/page.tsx
+ROUTE: /angelcare-marketplace/admin/finance/margins
+  SCREEN: 08
+  DISPOSITION: CANONICAL
+  CURRENT_COMPONENT: MarginAuthority
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/finance/margins/page.tsx
+ROUTE: /angelcare-marketplace/admin/finance/price-books
+  SCREEN: 07
+  DISPOSITION: CANONICAL
+  CURRENT_COMPONENT: PriceBookAuthority
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/finance/price-books/page.tsx
+ROUTE: /angelcare-marketplace/admin/finance/receipts
+  SCREEN: 05
+  DISPOSITION: CANONICAL
+  CURRENT_COMPONENT: ReceiptCommand
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/finance/receipts/page.tsx
+ROUTE: /angelcare-marketplace/admin/finance/reconciliation
+  SCREEN: 10
+  DISPOSITION: CANONICAL
+  CURRENT_COMPONENT: ReconciliationAuthority
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/finance/reconciliation/page.tsx
+ROUTE: /angelcare-marketplace/admin/finance/reports
+  SCREEN: 01
+  DISPOSITION: COMPATIBILITY_REDIRECT
+  CURRENT_COMPONENT: wrapper/redirect
+  CURRENT_REDIRECT: /angelcare-marketplace/admin/finance?focus=reports
+  SOURCE_FILE: (protected)/admin/finance/reports/page.tsx
+ROUTE: /angelcare-marketplace/admin/finance/revenue-streams
+  SCREEN: 09
+  DISPOSITION: CANONICAL
+  CURRENT_COMPONENT: RevenueAuthority
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/finance/revenue-streams/page.tsx
+ROUTE: /angelcare-marketplace/admin/payments
+  SCREEN: 02
+  DISPOSITION: CANONICAL
+  CURRENT_COMPONENT: PaymentCommand
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/payments/page.tsx
+ROUTE: /angelcare-marketplace/admin/payments/[paymentIntentId]/command
+  SCREEN: 03
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: PaymentMegaCommand
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/payments/[paymentIntentId]/command/page.tsx
+ROUTE: /angelcare-marketplace/admin/subscriptions
+  SCREEN: 09
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: SubscriptionCommand
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/subscriptions/page.tsx
+ROUTE: /angelcare-marketplace/admin/wallet
+  SCREEN: 06
+  DISPOSITION: CANONICAL
+  CURRENT_COMPONENT: AdminWalletCommand
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/wallet/page.tsx
+ROUTE: /angelcare-marketplace/admin/wallet/customers
+  SCREEN: 06
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: WalletAuthorityClient
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/wallet/customers/page.tsx
+ROUTE: /angelcare-marketplace/admin/wallet/policies
+  SCREEN: 06
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: WalletPolicyStudio
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/wallet/policies/page.tsx
+ROUTE: /angelcare-marketplace/admin/wallet/reconciliation
+  SCREEN: 06
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: WalletAuthorityClient
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/wallet/reconciliation/page.tsx
+ROUTE: /angelcare-marketplace/admin/wallet/risk
+  SCREEN: 06
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: WalletAuthorityClient
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/wallet/risk/page.tsx
+==========================================================================================
+5. API AUTHORITY REGISTER
+==========================================================================================
+API: /api/angelcare-marketplace/admin/finance-control-ledger
+  METHODS: GET
+  FAMILY: admin
+  SOURCE_FILE: admin/finance-control-ledger/route.ts
+  IMPORT_AUTHORITY: {handleFinancialControlLedgerSnapshot} FROM @/angelcare-marketplace/financial-control-ledger/api-handlers
+API: /api/angelcare-marketplace/admin/invoices
+  METHODS: GET,POST
+  FAMILY: admin
+  SOURCE_FILE: admin/invoices/route.ts
+  IMPORT_AUTHORITY: {handleInvoices} FROM @/angelcare-marketplace/enterprise-closure/api-handlers
+API: /api/angelcare-marketplace/admin/invoices/[invoiceId]
+  METHODS: PATCH
+  FAMILY: admin
+  SOURCE_FILE: admin/invoices/[invoiceId]/route.ts
+  IMPORT_AUTHORITY: {handleInvoice} FROM @/angelcare-marketplace/enterprise-closure/api-handlers
+API: /api/angelcare-marketplace/admin/payments
+  METHODS: GET,POST
+  FAMILY: admin
+  SOURCE_FILE: admin/payments/route.ts
+  IMPORT_AUTHORITY: { handleAdminPayments } FROM @/angelcare-marketplace/admin-control-plane/api-handlers
+API: /api/angelcare-marketplace/admin/payments/[paymentIntentId]
+  METHODS: GET,PATCH
+  FAMILY: admin
+  SOURCE_FILE: admin/payments/[paymentIntentId]/route.ts
+  IMPORT_AUTHORITY: { handleAdminPayment } FROM @/angelcare-marketplace/admin-control-plane/api-handlers
+API: /api/angelcare-marketplace/admin/payments/[paymentIntentId]/refund
+  METHODS: POST
+  FAMILY: admin
+  SOURCE_FILE: admin/payments/[paymentIntentId]/refund/route.ts
+  IMPORT_AUTHORITY: {handleAdminPaymentRefund} FROM @/angelcare-marketplace/customer-commerce/api-handlers
+API: /api/angelcare-marketplace/admin/payments/reconciliation/[itemId]/transition
+  METHODS: POST
+  FAMILY: admin
+  SOURCE_FILE: admin/payments/reconciliation/[itemId]/transition/route.ts
+  IMPORT_AUTHORITY: { handleAdminPaymentReconciliationTransition } FROM @/angelcare-marketplace/customer-commerce/api-handlers
+API: /api/angelcare-marketplace/admin/receipts
+  METHODS: GET,POST
+  FAMILY: admin
+  SOURCE_FILE: admin/receipts/route.ts
+  IMPORT_AUTHORITY: {handleReceipts} FROM @/angelcare-marketplace/enterprise-closure/api-handlers
+API: /api/angelcare-marketplace/admin/subscriptions
+  METHODS: GET,POST
+  FAMILY: admin
+  SOURCE_FILE: admin/subscriptions/route.ts
+  IMPORT_AUTHORITY: {handleSubscriptions} FROM @/angelcare-marketplace/enterprise-closure/api-handlers
+API: /api/angelcare-marketplace/admin/subscriptions/[subscriptionId]
+  METHODS: PATCH
+  FAMILY: admin
+  SOURCE_FILE: admin/subscriptions/[subscriptionId]/route.ts
+  IMPORT_AUTHORITY: {handleSubscription} FROM @/angelcare-marketplace/enterprise-closure/api-handlers
+API: /api/angelcare-marketplace/admin/wallet/accounts/[walletId]/adjustment
+  METHODS: POST
+  FAMILY: admin
+  SOURCE_FILE: admin/wallet/accounts/[walletId]/adjustment/route.ts
+  IMPORT_AUTHORITY: { handleAdminWalletAdjustment } FROM @/angelcare-marketplace/customer-commerce/api-handlers
+API: /api/angelcare-marketplace/admin/wallet/accounts/[walletId]/restriction
+  METHODS: PATCH
+  FAMILY: admin
+  SOURCE_FILE: admin/wallet/accounts/[walletId]/restriction/route.ts
+  IMPORT_AUTHORITY: { handleAdminWalletRestriction } FROM @/angelcare-marketplace/customer-commerce/api-handlers
+API: /api/angelcare-marketplace/admin/wallet/imports
+  METHODS: POST
+  FAMILY: admin
+  SOURCE_FILE: admin/wallet/imports/route.ts
+  IMPORT_AUTHORITY: {handleAdminWalletPolicyImport} FROM @/angelcare-marketplace/customer-commerce/api-handlers
+API: /api/angelcare-marketplace/admin/wallet/policies
+  METHODS: GET,POST
+  FAMILY: admin
+  SOURCE_FILE: admin/wallet/policies/route.ts
+  IMPORT_AUTHORITY: { handleAdminWalletPolicies } FROM @/angelcare-marketplace/customer-commerce/api-handlers
+API: /api/angelcare-marketplace/admin/wallet/policies/[policyId]
+  METHODS: PATCH
+  FAMILY: admin
+  SOURCE_FILE: admin/wallet/policies/[policyId]/route.ts
+  IMPORT_AUTHORITY: { handleAdminWalletPolicy } FROM @/angelcare-marketplace/customer-commerce/api-handlers
+API: /api/angelcare-marketplace/admin/wallet/reconciliation/[itemId]/transition
+  METHODS: POST
+  FAMILY: admin
+  SOURCE_FILE: admin/wallet/reconciliation/[itemId]/transition/route.ts
+  IMPORT_AUTHORITY: { handleAdminWalletReconciliationTransition } FROM @/angelcare-marketplace/customer-commerce/api-handlers
+API: /api/angelcare-marketplace/admin/wallet/simulations
+  METHODS: POST
+  FAMILY: admin
+  SOURCE_FILE: admin/wallet/simulations/route.ts
+  IMPORT_AUTHORITY: { handleAdminWalletSimulation } FROM @/angelcare-marketplace/customer-commerce/api-handlers
+API: /api/angelcare-marketplace/admin/wallet/summary
+  METHODS: GET
+  FAMILY: admin
+  SOURCE_FILE: admin/wallet/summary/route.ts
+  IMPORT_AUTHORITY: { handleAdminWalletSummary } FROM @/angelcare-marketplace/customer-commerce/api-handlers
+API: /api/angelcare-marketplace/finance/invoice-readiness
+  METHODS: source wrapper / inspect implementation
+  FAMILY: finance
+  SOURCE_FILE: finance/invoice-readiness/route.ts
+  IMPORT_AUTHORITY: { handleInvoiceReadiness } FROM @/angelcare-marketplace/finance-authority/api-handlers
+API: /api/angelcare-marketplace/finance/invoice-readiness/evaluate
+  METHODS: source wrapper / inspect implementation
+  FAMILY: finance
+  SOURCE_FILE: finance/invoice-readiness/evaluate/route.ts
+  IMPORT_AUTHORITY: { handleInvoiceReadinessEvaluation } FROM @/angelcare-marketplace/finance-authority/api-handlers
+API: /api/angelcare-marketplace/finance/margin-exceptions
+  METHODS: source wrapper / inspect implementation
+  FAMILY: finance
+  SOURCE_FILE: finance/margin-exceptions/route.ts
+  IMPORT_AUTHORITY: { handleMarginExceptions } FROM @/angelcare-marketplace/finance-authority/api-handlers
+API: /api/angelcare-marketplace/finance/margin-exceptions/[exceptionId]/decision
+  METHODS: POST
+  FAMILY: finance
+  SOURCE_FILE: finance/margin-exceptions/[exceptionId]/decision/route.ts
+  IMPORT_AUTHORITY: { handleMarginDecision } FROM @/angelcare-marketplace/finance-authority/api-handlers
+API: /api/angelcare-marketplace/finance/price-books
+  METHODS: source wrapper / inspect implementation
+  FAMILY: finance
+  SOURCE_FILE: finance/price-books/route.ts
+  IMPORT_AUTHORITY: { handlePriceBooks } FROM @/angelcare-marketplace/finance-authority/api-handlers
+API: /api/angelcare-marketplace/finance/price-books/[priceBookId]/transition
+  METHODS: POST
+  FAMILY: finance
+  SOURCE_FILE: finance/price-books/[priceBookId]/transition/route.ts
+  IMPORT_AUTHORITY: { handlePriceBookTransition } FROM @/angelcare-marketplace/finance-authority/api-handlers
+API: /api/angelcare-marketplace/finance/price-rules
+  METHODS: source wrapper / inspect implementation
+  FAMILY: finance
+  SOURCE_FILE: finance/price-rules/route.ts
+  IMPORT_AUTHORITY: { handlePriceRules } FROM @/angelcare-marketplace/finance-authority/api-handlers
+API: /api/angelcare-marketplace/finance/price-rules/[priceRuleId]/evaluate
+  METHODS: POST
+  FAMILY: finance
+  SOURCE_FILE: finance/price-rules/[priceRuleId]/evaluate/route.ts
+  IMPORT_AUTHORITY: { handleFinancialRuleEvaluation } FROM @/angelcare-marketplace/finance-authority/api-handlers
+API: /api/angelcare-marketplace/finance/reconciliation
+  METHODS: source wrapper / inspect implementation
+  FAMILY: finance
+  SOURCE_FILE: finance/reconciliation/route.ts
+  IMPORT_AUTHORITY: { handleReconciliation } FROM @/angelcare-marketplace/finance-authority/api-handlers
+API: /api/angelcare-marketplace/finance/reconciliation/[eventId]/resolve
+  METHODS: POST
+  FAMILY: finance
+  SOURCE_FILE: finance/reconciliation/[eventId]/resolve/route.ts
+  IMPORT_AUTHORITY: { handleReconciliationResolution } FROM @/angelcare-marketplace/finance-authority/api-handlers
+API: /api/angelcare-marketplace/finance/revenue-streams
+  METHODS: source wrapper / inspect implementation
+  FAMILY: finance
+  SOURCE_FILE: finance/revenue-streams/route.ts
+  IMPORT_AUTHORITY: { handleRevenueStreams } FROM @/angelcare-marketplace/finance-authority/api-handlers
+API: /api/angelcare-marketplace/finance/summary
+  METHODS: source wrapper / inspect implementation
+  FAMILY: finance
+  SOURCE_FILE: finance/summary/route.ts
+  IMPORT_AUTHORITY: { handleFinanceSummary } FROM @/angelcare-marketplace/finance-authority/api-handlers
+==========================================================================================
+6. FINANCE PERMISSIONS — DO NOT BYPASS
+==========================================================================================
+PERMISSION: marketplace.finance.view
+  LABEL: Consulter
+  SENSITIVE: False
+  WORKSPACE: Finance
+  DOMAIN: finance
+PERMISSION: marketplace.finance.manage
+  LABEL: Gérer les opérations financières
+  SENSITIVE: True
+  WORKSPACE: Finance
+  DOMAIN: finance
+PERMISSION: marketplace.finance.price_books.manage
+  LABEL: Gérer
+  SENSITIVE: True
+  WORKSPACE: Finance
+  DOMAIN: finance
+PERMISSION: marketplace.finance.price_books.approve
+  LABEL: Approuver
+  SENSITIVE: True
+  WORKSPACE: Finance
+  DOMAIN: finance
+PERMISSION: marketplace.finance.margins.view
+  LABEL: Consulter
+  SENSITIVE: False
+  WORKSPACE: Finance
+  DOMAIN: finance
+PERMISSION: marketplace.finance.exceptions.approve
+  LABEL: Approuver
+  SENSITIVE: True
+  WORKSPACE: Finance
+  DOMAIN: finance
+PERMISSION: marketplace.finance.revenue.view
+  LABEL: Consulter
+  SENSITIVE: False
+  WORKSPACE: Finance
+  DOMAIN: finance
+PERMISSION: marketplace.finance.reconciliation.manage
+  LABEL: Gérer
+  SENSITIVE: True
+  WORKSPACE: Finance
+  DOMAIN: finance
+PERMISSION: marketplace.finance.export
+  LABEL: Exporter
+  SENSITIVE: True
+  WORKSPACE: Finance
+  DOMAIN: finance
+Sensitive Finance controls must be permission-aware in the UI and server-authorized regardless of visibility.
+==========================================================================================
+7. SOURCE FILE / COMPONENT AUTHORITY
+==========================================================================================
+- angelcare-marketplace/finance-authority/types.ts
+- angelcare-marketplace/finance-authority/repository.ts
+- angelcare-marketplace/finance-authority/api-handlers.ts
+- angelcare-marketplace/finance-authority/components/FinanceCommand.tsx
+- angelcare-marketplace/finance-authority/components/FinanceRegisters.tsx
+- angelcare-marketplace/finance-authority/components/FinanceDecisionClients.tsx
+- angelcare-marketplace/finance-authority/components/PriceBookAuthority.tsx
+- angelcare-marketplace/financial-control-ledger/types.ts
+- angelcare-marketplace/financial-control-ledger/repository.ts
+- angelcare-marketplace/financial-control-ledger/components/FinanceControlLedger.tsx
+- angelcare-marketplace/financial-control-ledger/components/FinanceAreaShell.tsx
+- angelcare-marketplace/financial-control-ledger/components/FinanceDrawers.tsx
+- angelcare-marketplace/customer-commerce/types.ts
+- angelcare-marketplace/customer-commerce/payment-admin.ts
+- angelcare-marketplace/customer-commerce/payment-adapters.ts
+- angelcare-marketplace/customer-commerce/paypal.ts
+- angelcare-marketplace/customer-commerce/wallet-admin.ts
+- angelcare-marketplace/customer-commerce/wallet-policy.ts
+- angelcare-marketplace/customer-commerce/components/PaymentAdminCommand.tsx
+- angelcare-marketplace/customer-commerce/components/AdminWalletCommand.tsx
+- angelcare-marketplace/customer-commerce/components/WalletAuthorityClient.tsx
+- angelcare-marketplace/customer-commerce/components/WalletPolicyStudio.tsx
+- angelcare-marketplace/enterprise-command/components/PaymentMegaCommand.tsx
+- angelcare-marketplace/enterprise-command/components/PaymentMegaCommandOverlay.tsx
+- angelcare-marketplace/enterprise-closure/components/InvoiceCommand.tsx
+- angelcare-marketplace/enterprise-closure/components/ReceiptCommand.tsx
+- angelcare-marketplace/enterprise-closure/components/SubscriptionCommand.tsx
+- angelcare-marketplace/enterprise-closure/types.ts
+==========================================================================================
+8. CANONICAL STATE MACHINES
+==========================================================================================
+PAYMENT INTENT STATUS — customer-commerce/types.ts
+  - created
+  - requires_method
+  - requires_customer_action
+  - pending
+  - authorized
+  - partially_captured
+  - captured
+  - failed
+  - cancelled
+  - expired
+  - partially_refunded
+  - refunded
+  - disputed
+  - chargeback
+  - reversed
+  - reconciliation_pending
+  - reconciled
+PRICE BOOK STATUS — finance-authority/types.ts
+  - draft
+  - financial_review
+  - commercial_review
+  - approval_pending
+  - approved
+  - scheduled
+  - active
+  - superseded
+  - suspended
+  - expired
+  - archived
+PRICE BOOK LEGITIMATE TRANSITIONS — FinanceDecisionClients.tsx
+  draft -> financial_review, archived
+  financial_review -> draft, commercial_review
+  commercial_review -> financial_review, approval_pending
+  approval_pending -> commercial_review, approved
+  approved -> scheduled, active, suspended
+  scheduled -> active, suspended
+  active -> superseded, suspended, expired
+  superseded -> archived
+  suspended -> approved, active, archived
+  expired -> superseded, archived
+  archived -> terminal
+REVENUE STATUS — finance-authority/types.ts
+  - quoted
+  - contracted
+  - scheduled
+  - delivered
+  - validated
+  - invoice_ready
+  - invoiced
+  - partially_paid
+  - paid
+  - disputed
+  - cancelled
+  - credited
+  - written_off
+INVOICE STATUS — enterprise-closure/types.ts
+  - draft
+  - issued
+  - partially_paid
+  - paid
+  - overdue
+  - cancelled
+  - credited
+SUBSCRIPTION STATUS — enterprise-closure/types.ts
+  - draft
+  - trial
+  - active
+  - paused
+  - past_due
+  - cancelled
+  - expired
+WALLET ACCOUNT STATUS — customer-commerce/types.ts
+  - active
+  - frozen
+  - restricted
+  - closed
+WALLET POLICY STATUS — customer-commerce/types.ts
+  - draft
+  - active
+  - suspended
+  - archived
+FINANCIAL CONTROL LEDGER MODES — financial-control-ledger/types.ts
+  - overview
+  - payments
+  - invoices
+  - receipts
+  - refunds
+  - credit
+  - subscriptions
+  - reconciliation
+  - exceptions
+==========================================================================================
+9. MONEY / LINEAGE DOCTRINE
+==========================================================================================
+- No frontend control may invent expected, captured, refunded, outstanding, Wallet contribution, external contribution, provider payable, net or margin values.
+- Revenue streams preserve source_object_type and source_object_id.
+- Revenue streams preserve territory_id, tenant_id, organization_id and family_account_id where present.
+- Revenue streams preserve price_book_id and price_rule_id lineage where present.
+- Payment intents preserve canonical_object_type and canonical_object_id.
+- Payment attempts preserve attempt number, method kind, amount, provider key/reference and failure code.
+- Receipts are evidence generated from captured payment authority and may link to an invoice.
+- Invoice readiness is separate from invoice existence; blockers remain visible until resolved.
+- Wallet is a ledger with buckets and entries, not a mutable number field.
+- Wallet adjustments must create canonical ledger entries with direction, bucket, reason and source evidence.
+- Financial Control Ledger is an orchestration/projection layer over canonical engines; it must never become a second database authority.
+- Operations reconciliation handover may feed Finance, but Finance does not erase Operations evidence.
+- External payment provider availability/configuration must be represented honestly; do not show Connected/Healthy unless runtime evidence proves it.
+==========================================================================================
+10. WALLET BUCKET + LEDGER DOCTRINE
+==========================================================================================
+Wallet bucket kinds:
+  - purchased
+  - promotional
+  - goodwill
+  - refund
+  - employer
+  - gift
+  - reserved
+  - pending
+  - expiring
+  - expired
+  - frozen
+  - disputed
+Wallet ledger entry types:
+  - top_up
+  - top_up_bonus
+  - purchase_reservation
+  - purchase_commit
+  - reservation_release
+  - refund
+  - partial_refund
+  - goodwill_credit
+  - promotion_credit
+  - manual_adjustment_credit
+  - manual_adjustment_debit
+  - expiry
+  - expiry_reversal
+  - chargeback_freeze
+  - chargeback_reversal
+  - employer_credit
+  - gift_credit
+  - migration_credit
+  - correction
+Wallet policy benefit kinds:
+  - percentage_discount
+  - fixed_discount
+  - wallet_fixed_price
+  - bonus_credits
+  - topup_bonus
+  - cashback_credits
+  - free_delivery
+  - priority_booking
+  - priority_waitlist
+  - included_addon
+  - fee_waiver
+  - early_access
+  - exclusive_availability
+==========================================================================================
+11. SCREEN-BY-SCREEN CODEX IMPLEMENTATION CONTRACT
+==========================================================================================
+[01] FINANCE EXECUTIVE COMMAND / CONTROL LEDGER OVERVIEW
+PNG AUTHORITY: 01_FINANCE_EXECUTIVE_COMMAND_CONTROL_LEDGER.png
+CANONICAL / COMPATIBILITY ROUTES:
+  - /angelcare-marketplace/admin/finance
+  - /angelcare-marketplace/admin/finance-monetization
+  - /angelcare-marketplace/admin/finance/reports
+SOURCE COMPONENTS / ENGINES:
+  - FinanceCommand
+  - FinanceControlLedger
+  - FinanceAreaShell
+DATA / REPOSITORY AUTHORITY:
+  - financeSummary
+  - listRevenueStreams
+  - FinancialControlLedgerSnapshot
+MANDATORY CAPABILITY EXPOSURE:
+  - Overview of expected/captured/outstanding/refunded/Wallet/invoice/reconciliation pressure
+  - Revenue runway with canonical source object lineage
+  - Next financial moves generated from actual exception queues
+  - Closure watch for missing receipt, overdue invoice, Wallet risk, reconciliation and recurring revenue pressure
+  - Drill-down into specialist finance workspaces without inventing new financial objects
+MANDATORY UI STATES:
+  - loading
+  - empty
+  - partial data
+  - error
+  - permission denied
+  - success feedback
+  - action busy/disabled
+  - stale/reload where relevant
+  - runtime external-provider uncertainty where relevant
+CODEX RULES:
+  - Match the approved PNG information hierarchy, density and workspace grammar.
+  - Use real runtime data and source-backed actions.
+  - Preserve cross-links to Customer 360, Order Command, source objects and specialist finance screens.
+  - Do not duplicate existing repositories or state machines.
+  - Preserve legacy routes through redirects/aliases or wrapper reuse when safe.
+  - Keep Finance active in the permanent primary sidebar.
+[02] PAYMENTS / RECONCILIATION COMMAND
+PNG AUTHORITY: 02_PAYMENTS_RECONCILIATION_COMMAND.png
+CANONICAL / COMPATIBILITY ROUTES:
+  - /angelcare-marketplace/admin/payments
+  - /angelcare-marketplace/admin/finance-monetization/payments
+SOURCE COMPONENTS / ENGINES:
+  - PaymentCommand
+  - PaymentAdminCommand
+  - FinanceControlLedger workspace: payments
+DATA / REPOSITORY AUTHORITY:
+  - admin payment summary
+  - payment attempts
+  - provider events
+  - payment reconciliation
+  - refund records
+  - disputes
+MANDATORY CAPABILITY EXPOSURE:
+  - Filter by payment status and reference/customer/provider context
+  - Show expected, Wallet contribution, external contribution, captured, refunded and outstanding
+  - Show attempts including failure code and provider reference
+  - Show webhook/provider events and signature evidence where stored
+  - Show open payment reconciliation and controlled lifecycle actions
+  - Open Payment 360 specialist dossier
+MANDATORY UI STATES:
+  - loading
+  - empty
+  - partial data
+  - error
+  - permission denied
+  - success feedback
+  - action busy/disabled
+  - stale/reload where relevant
+  - runtime external-provider uncertainty where relevant
+CODEX RULES:
+  - Match the approved PNG information hierarchy, density and workspace grammar.
+  - Use real runtime data and source-backed actions.
+  - Preserve cross-links to Customer 360, Order Command, source objects and specialist finance screens.
+  - Do not duplicate existing repositories or state machines.
+  - Preserve legacy routes through redirects/aliases or wrapper reuse when safe.
+  - Keep Finance active in the permanent primary sidebar.
+[03] PAYMENT 360 MEGA DOSSIER / REFUND AUTHORITY
+PNG AUTHORITY: 03_PAYMENT_360_MEGA_DOSSIER_REFUND_AUTHORITY.png
+CANONICAL / COMPATIBILITY ROUTES:
+  - /angelcare-marketplace/admin/payments/[paymentIntentId]/command
+  - /angelcare-marketplace/admin/finance-monetization/refunds
+SOURCE COMPONENTS / ENGINES:
+  - PaymentMegaCommand
+  - PaymentMegaCommandOverlay
+  - FinanceDrawers.PaymentDrawer
+  - FinanceDrawers.RefundDrawer
+DATA / REPOSITORY AUTHORITY:
+  - AdminPaymentDossier
+  - payment attempts
+  - refund history
+  - order context
+MANDATORY CAPABILITY EXPOSURE:
+  - Capture when legitimate
+  - Mark failed when legitimate
+  - Cancel when legitimate
+  - Controlled refund with positive amount <= captured minus refunded
+  - Mandatory refund reason and idempotency key
+  - Export receipt PDF through existing document export authority
+  - Open Customer 360 and Order Command
+  - Preserve attempts, provider evidence and refund history
+MANDATORY UI STATES:
+  - loading
+  - empty
+  - partial data
+  - error
+  - permission denied
+  - success feedback
+  - action busy/disabled
+  - stale/reload where relevant
+  - runtime external-provider uncertainty where relevant
+CODEX RULES:
+  - Match the approved PNG information hierarchy, density and workspace grammar.
+  - Use real runtime data and source-backed actions.
+  - Preserve cross-links to Customer 360, Order Command, source objects and specialist finance screens.
+  - Do not duplicate existing repositories or state machines.
+  - Preserve legacy routes through redirects/aliases or wrapper reuse when safe.
+  - Keep Finance active in the permanent primary sidebar.
+[04] INVOICES / INVOICE READINESS / ISSUANCE
+PNG AUTHORITY: 04_INVOICES_READINESS_ISSUANCE_COMMAND.png
+CANONICAL / COMPATIBILITY ROUTES:
+  - /angelcare-marketplace/admin/finance/invoices
+  - /angelcare-marketplace/admin/finance/invoice-readiness
+  - /angelcare-marketplace/admin/finance-monetization/invoices
+SOURCE COMPONENTS / ENGINES:
+  - InvoiceCommand
+  - InvoiceReadinessAuthority
+  - InvoiceReadinessDesk
+  - FinanceDrawers.InvoiceDrawer
+  - FinanceDrawers.InvoiceCreateDrawer
+DATA / REPOSITORY AUTHORITY:
+  - InvoiceRecord
+  - InvoiceReadiness
+  - invoice lines
+  - customer/order references
+MANDATORY CAPABILITY EXPOSURE:
+  - Create invoice from customer and optional order
+  - Issue invoice
+  - Cancel invoice
+  - Credit invoice
+  - Track total, paid amount and balance due
+  - Evaluate invoice readiness from delivery/validation/evidence
+  - Display missing evidence and blockers until resolved
+  - Never expose a force-ready shortcut
+MANDATORY UI STATES:
+  - loading
+  - empty
+  - partial data
+  - error
+  - permission denied
+  - success feedback
+  - action busy/disabled
+  - stale/reload where relevant
+  - runtime external-provider uncertainty where relevant
+CODEX RULES:
+  - Match the approved PNG information hierarchy, density and workspace grammar.
+  - Use real runtime data and source-backed actions.
+  - Preserve cross-links to Customer 360, Order Command, source objects and specialist finance screens.
+  - Do not duplicate existing repositories or state machines.
+  - Preserve legacy routes through redirects/aliases or wrapper reuse when safe.
+  - Keep Finance active in the permanent primary sidebar.
+[05] RECEIPTS / PAYMENT EVIDENCE COMMAND
+PNG AUTHORITY: 05_RECEIPTS_PAYMENT_EVIDENCE_COMMAND.png
+CANONICAL / COMPATIBILITY ROUTES:
+  - /angelcare-marketplace/admin/finance/receipts
+  - /angelcare-marketplace/admin/finance-monetization/receipts
+SOURCE COMPONENTS / ENGINES:
+  - ReceiptCommand
+  - FinanceDrawers.ReceiptDrawer
+DATA / REPOSITORY AUTHORITY:
+  - ReceiptRecord
+  - captured payment eligibility
+  - optional invoice relation
+MANDATORY CAPABILITY EXPOSURE:
+  - Issue receipt only from eligible captured-state payments
+  - Optionally bind receipt to invoice
+  - Retain amount, currency, payment method and provider reference
+  - Search receipt registry by number/reference
+  - Expose receipt lineage in finance closure
+  - Surface missing receipt as closure exception
+MANDATORY UI STATES:
+  - loading
+  - empty
+  - partial data
+  - error
+  - permission denied
+  - success feedback
+  - action busy/disabled
+  - stale/reload where relevant
+  - runtime external-provider uncertainty where relevant
+CODEX RULES:
+  - Match the approved PNG information hierarchy, density and workspace grammar.
+  - Use real runtime data and source-backed actions.
+  - Preserve cross-links to Customer 360, Order Command, source objects and specialist finance screens.
+  - Do not duplicate existing repositories or state machines.
+  - Preserve legacy routes through redirects/aliases or wrapper reuse when safe.
+  - Keep Finance active in the permanent primary sidebar.
+[06] AC WALLET / CREDIT / POLICY / RISK / RECONCILIATION
+PNG AUTHORITY: 06_AC_WALLET_CONTROL_RISK_RECONCILIATION.png
+CANONICAL / COMPATIBILITY ROUTES:
+  - /angelcare-marketplace/admin/wallet
+  - /angelcare-marketplace/admin/wallet/customers
+  - /angelcare-marketplace/admin/wallet/policies
+  - /angelcare-marketplace/admin/wallet/risk
+  - /angelcare-marketplace/admin/wallet/reconciliation
+  - /angelcare-marketplace/admin/finance-monetization/credit
+SOURCE COMPONENTS / ENGINES:
+  - AdminWalletCommand
+  - WalletAuthorityClient
+  - WalletPolicyStudio
+  - FinanceDrawers.CreditDrawer
+DATA / REPOSITORY AUTHORITY:
+  - WalletAccount
+  - WalletLedgerEntry
+  - WalletPolicy
+  - WalletComparison
+  - Wallet risk cases
+  - Wallet reconciliation
+MANDATORY CAPABILITY EXPOSURE:
+  - Expose available/purchased/bonus/reserved/expiring balances
+  - Controlled credit/debit adjustments with reason
+  - Freeze/restrict/reactivate with audit
+  - Show risk cases and reconciliation pressure
+  - Policy library and policy builder
+  - Policy activate/suspend
+  - Simulation via same production evaluator used by checkout
+  - Policy conditions: minimum basket/category/schema/territory/tier/Wallet required
+  - Policy safeguards: usage limit/budget/max discount/margin floor
+  - Preserve ledger bucket and entry semantics
+MANDATORY UI STATES:
+  - loading
+  - empty
+  - partial data
+  - error
+  - permission denied
+  - success feedback
+  - action busy/disabled
+  - stale/reload where relevant
+  - runtime external-provider uncertainty where relevant
+CODEX RULES:
+  - Match the approved PNG information hierarchy, density and workspace grammar.
+  - Use real runtime data and source-backed actions.
+  - Preserve cross-links to Customer 360, Order Command, source objects and specialist finance screens.
+  - Do not duplicate existing repositories or state machines.
+  - Preserve legacy routes through redirects/aliases or wrapper reuse when safe.
+  - Keep Finance active in the permanent primary sidebar.
+[07] PRICE BOOKS / PRICING RULES / LIFECYCLE AUTHORITY
+PNG AUTHORITY: 07_PRICE_BOOKS_PRICING_RULE_LIFECYCLE.png
+CANONICAL / COMPATIBILITY ROUTES:
+  - /angelcare-marketplace/admin/finance/price-books
+SOURCE COMPONENTS / ENGINES:
+  - PriceBookAuthority
+  - PriceBookTransitionDesk
+DATA / REPOSITORY AUTHORITY:
+  - PriceBook
+  - PriceRule
+MANDATORY CAPABILITY EXPOSURE:
+  - Version price books by territory/currency/segment/customer type/validity
+  - Expose rule minimum/standard/maximum/cost basis/target margin/floor margin/max discount/commission rate
+  - Respect price-book lifecycle state machine
+  - Require reason for lifecycle transitions
+  - Expose rule evaluation through existing API
+  - No price hardcoding in frontend
+MANDATORY UI STATES:
+  - loading
+  - empty
+  - partial data
+  - error
+  - permission denied
+  - success feedback
+  - action busy/disabled
+  - stale/reload where relevant
+  - runtime external-provider uncertainty where relevant
+CODEX RULES:
+  - Match the approved PNG information hierarchy, density and workspace grammar.
+  - Use real runtime data and source-backed actions.
+  - Preserve cross-links to Customer 360, Order Command, source objects and specialist finance screens.
+  - Do not duplicate existing repositories or state machines.
+  - Preserve legacy routes through redirects/aliases or wrapper reuse when safe.
+  - Keep Finance active in the permanent primary sidebar.
+[08] MARGINS / DISCOUNTS / EXCEPTION DECISION AUTHORITY
+PNG AUTHORITY: 08_MARGIN_DISCOUNT_EXCEPTION_DECISION_AUTHORITY.png
+CANONICAL / COMPATIBILITY ROUTES:
+  - /angelcare-marketplace/admin/finance/margins
+  - /angelcare-marketplace/admin/finance/discounts
+  - /angelcare-marketplace/admin/finance/exceptions
+  - /angelcare-marketplace/admin/finance-monetization/exceptions
+SOURCE COMPONENTS / ENGINES:
+  - MarginAuthority
+  - MarginDecisionDesk
+DATA / REPOSITORY AUTHORITY:
+  - MarginException
+MANDATORY CAPABILITY EXPOSURE:
+  - Show configured price/proposed price/cost basis/floor/proposed margin/discount/reason
+  - Require independent Finance decision
+  - Require non-empty decision reason
+  - Approve or reject through existing decision endpoint
+  - Keep requester/reviewer/review timestamp/decision reason visible
+  - Do not expose an ungoverned force-margin control
+MANDATORY UI STATES:
+  - loading
+  - empty
+  - partial data
+  - error
+  - permission denied
+  - success feedback
+  - action busy/disabled
+  - stale/reload where relevant
+  - runtime external-provider uncertainty where relevant
+CODEX RULES:
+  - Match the approved PNG information hierarchy, density and workspace grammar.
+  - Use real runtime data and source-backed actions.
+  - Preserve cross-links to Customer 360, Order Command, source objects and specialist finance screens.
+  - Do not duplicate existing repositories or state machines.
+  - Preserve legacy routes through redirects/aliases or wrapper reuse when safe.
+  - Keep Finance active in the permanent primary sidebar.
+[09] REVENUE STREAMS / COMMISSIONS / SUBSCRIPTIONS
+PNG AUTHORITY: 09_REVENUE_STREAMS_COMMISSIONS_SUBSCRIPTIONS.png
+CANONICAL / COMPATIBILITY ROUTES:
+  - /angelcare-marketplace/admin/finance/revenue-streams
+  - /angelcare-marketplace/admin/finance/commissions
+  - /angelcare-marketplace/admin/subscriptions
+  - /angelcare-marketplace/admin/finance-monetization/subscriptions
+SOURCE COMPONENTS / ENGINES:
+  - RevenueAuthority
+  - SubscriptionCommand
+  - FinanceDrawers.SubscriptionDrawer
+DATA / REPOSITORY AUTHORITY:
+  - RevenueStream
+  - CustomerSubscriptionRecord
+MANDATORY CAPABILITY EXPOSURE:
+  - Preserve source object/territory/tenant/organization/family/price-book lineage
+  - Expose gross/discount/commission/provider payable/cost basis/net/margin
+  - Use revenue-stream status lifecycle without inventing recognition
+  - Create subscription from customer and optional catalog item
+  - Update subscription lifecycle active/paused/cancelled and other stored statuses
+  - Expose billing period, amount, next billing and renewal mode
+  - Commission route remains focused view of revenue stream authority
+MANDATORY UI STATES:
+  - loading
+  - empty
+  - partial data
+  - error
+  - permission denied
+  - success feedback
+  - action busy/disabled
+  - stale/reload where relevant
+  - runtime external-provider uncertainty where relevant
+CODEX RULES:
+  - Match the approved PNG information hierarchy, density and workspace grammar.
+  - Use real runtime data and source-backed actions.
+  - Preserve cross-links to Customer 360, Order Command, source objects and specialist finance screens.
+  - Do not duplicate existing repositories or state machines.
+  - Preserve legacy routes through redirects/aliases or wrapper reuse when safe.
+  - Keep Finance active in the permanent primary sidebar.
+[10] FINANCIAL RECONCILIATION / CONTROL LEDGER CLOSURE
+PNG AUTHORITY: 10_FINANCIAL_RECONCILIATION_CONTROL_LEDGER_CLOSURE.png
+CANONICAL / COMPATIBILITY ROUTES:
+  - /angelcare-marketplace/admin/finance/reconciliation
+  - /angelcare-marketplace/admin/finance-monetization/reconciliation
+  - /angelcare-marketplace/admin/finance-monetization
+SOURCE COMPONENTS / ENGINES:
+  - ReconciliationAuthority
+  - ReconciliationResolutionDesk
+  - FinanceControlLedger
+  - FinanceDrawers.ReconciliationDrawer
+  - FinanceDrawers.ExceptionDrawer
+DATA / REPOSITORY AUTHORITY:
+  - ReconciliationEvent
+  - FinanceReconciliation
+  - FinanceException
+  - FinanceNextMove
+MANDATORY CAPABILITY EXPOSURE:
+  - Compare expected vs observed across payment, Wallet and Finance events
+  - Retain source system/reference and target system/reference
+  - Assign owner and preserve resolution note
+  - Use source-specific legitimate transitions for payment/Wallet reconciliation
+  - Use Finance resolve endpoint for Finance authority reconciliation
+  - Surface cross-ledger exceptions without inventing diagnosis
+  - Expose clean-close blockers rather than fake green status
+  - Keep all specialist engines canonical and use Control Ledger as projection/orchestration
+MANDATORY UI STATES:
+  - loading
+  - empty
+  - partial data
+  - error
+  - permission denied
+  - success feedback
+  - action busy/disabled
+  - stale/reload where relevant
+  - runtime external-provider uncertainty where relevant
+CODEX RULES:
+  - Match the approved PNG information hierarchy, density and workspace grammar.
+  - Use real runtime data and source-backed actions.
+  - Preserve cross-links to Customer 360, Order Command, source objects and specialist finance screens.
+  - Do not duplicate existing repositories or state machines.
+  - Preserve legacy routes through redirects/aliases or wrapper reuse when safe.
+  - Keep Finance active in the permanent primary sidebar.
+==========================================================================================
+12. PAYMENT 360 ACTION CONTRACT
+==========================================================================================
+- Capture action PATCHes canonical payment intent and server validates state/amount.
+- Failed/cancelled actions are available only when current state allows them.
+- Refund amount must be > 0 and <= captured_amount - refunded_amount.
+- Refund requires a reason and idempotency key.
+- Payment dossier PDF uses existing enterprise-command document export authority.
+- Attempts/evidence and refund history remain visible after reload.
+- Provider key/reference are evidence fields, not proof that an external provider is currently configured.
+- Payment reconciliation transitions are governed and reasoned.
+- Customer 360 and Order Command links must resolve to canonical existing objects.
+==========================================================================================
+13. INVOICE / RECEIPT CONTRACT
+==========================================================================================
+- Invoice create requires a customer; order/journey link is optional.
+- Invoice create captures description, amount, due date and notes through existing API.
+- Invoice lifecycle exposes legitimate statuses, not arbitrary strings.
+- Invoice readiness recalculation uses the existing readiness evaluator and source object.
+- Readiness UI must show required evidence, missing evidence and blockers.
+- Receipt issuance requires an eligible captured-state payment.
+- Receipt may bind to an invoice.
+- Receipt preserves payment method and provider reference when present.
+- Missing receipt is a financial closure exception, not a reason to fabricate a receipt.
+==========================================================================================
+14. PRICE BOOK / MARGIN GOVERNANCE CONTRACT
+==========================================================================================
+- Price book versions expose territory, currency, market segment, customer type, valid_from, valid_until, version and finance owner.
+- Price rules expose source object, pricing model, unit, minimum/standard/maximum price, cost basis, target margin, floor margin, maximum discount, commission rate and territory.
+- Price book lifecycle transitions follow the explicit nextByStatus state machine.
+- Every transition requires a reason in current UI authority.
+- Margin exception decision requires a reason.
+- Margin exception approval/rejection uses marketplace.finance.exceptions.approve sensitive authority.
+- Configured price, proposed price, cost basis, floor, proposed margin and discount remain visible before decision.
+- Discounts and commissions must not be recomputed from presentation-only constants.
+==========================================================================================
+15. WALLET POLICY STUDIO CONTRACT
+==========================================================================================
+- Policy key is stable identity.
+- Names/messages support FR/EN/AR as the existing policy model does.
+- Policy fields include priority, stack mode, customer scope, start/end, usage limit, campaign budget, maximum discount and margin floor.
+- Conditions may include minimum basket, category key, schema key, territory id, tier key and Wallet-payment-required.
+- Benefits may include percentage/fixed discount and other supported WalletPolicyBenefitKind values.
+- Policy activate/suspend uses existing PATCH authority.
+- Backoffice simulation uses /admin/wallet/simulations.
+- Simulation returns normalPrice, walletPrice, immediateSaving, savingPercent, walletBalance, walletContribution, externalContribution, remainingBalance, required/suggested topup, topUpBonus, priorityLabel, eligibility and policy evidence.
+- The same production evaluator doctrine must be preserved; do not build a separate UI-only calculator.
+==========================================================================================
+16. FINANCIAL CONTROL LEDGER CONTRACT
+==========================================================================================
+- Control Ledger snapshot contains payments, invoices, receipts, refunds, wallets, subscriptions, reconciliation, exceptions, next moves, customers and orders.
+- Control Ledger metrics include expected, authorized, captured, outstanding, refunded, Wallet used, offline captured, invoice outstanding, unreconciled, failed payments, overdue invoices, pending refunds, Wallet risk, past-due subscriptions and reconciliation rate.
+- Control Ledger drawer kinds are payment, invoice, receipt, refund, credit, subscription, reconciliation, exception and invoice_create.
+- Payment drawer may capture, refund and issue receipt through canonical endpoints.
+- Invoice drawer updates canonical invoice state/due date.
+- Credit drawer posts structured Wallet ledger entries.
+- Subscription drawer updates canonical subscription lifecycle.
+- Reconciliation drawer chooses source-specific legitimate transition endpoint.
+- Exception drawer explains why surfaced and routes operator to canonical object; it does not invent diagnosis.
+- Next financial moves are navigation/action queues, not background mutations.
+==========================================================================================
+17. FORBIDDEN IMPLEMENTATION SHORTCUTS
+==========================================================================================
+- No SQL or migration for this frontend batch.
+- No new finance tables.
+- No new generic payment engine.
+- No new Wallet engine.
+- No duplicate invoice engine.
+- No duplicate reconciliation engine.
+- No fake accounting ledger.
+- No fake connected provider status.
+- No hardcoded revenue analytics presented as real runtime facts.
+- No force-ready invoice button.
+- No force-margin button.
+- No direct mutable Wallet balance input.
+- No refund beyond refundable amount.
+- No permission bypass because a button is hidden.
+- No route deletion merely because a capability is merged into a canonical Studio.
+- No broad refactor of shared auth/session.
+- No commit, push or deploy unless separately instructed.
+==========================================================================================
+18. REQUIRED CROSS-LINKS
+==========================================================================================
+- Finance Command -> Payments, Invoice Readiness, Price Books, Margins, Revenue Streams, Reconciliation, Wallet.
+- Payment Registry -> Payment 360.
+- Payment 360 -> Customer 360 and Order Command where ids exist.
+- Payment 360 -> PDF document export.
+- Invoice -> linked Order Command where id exists.
+- Receipt -> payment and invoice lineage.
+- Wallet -> Customer context.
+- Revenue Stream -> canonical source object.
+- Subscription -> customer and catalog item context.
+- Reconciliation -> canonical source financial object.
+- Exceptions -> legitimate operating queue, never dead-end cards.
+==========================================================================================
+19. VISUAL / UIX CONSTITUTION
+==========================================================================================
+- White/light premium enterprise canvas.
+- Permanent global sidebar identical to approved Batches 05–09.
+- Finance active in navy.
+- No invented brand mark; text brand ANGELCARE MARKETPLACE.
+- Dense but calm information hierarchy.
+- Financial numbers aligned and legible.
+- Use distinct page grammar: Command Center, Registry, Dossier, Evidence Desk, Ledger Studio, Lifecycle Authority, Decision Desk, Matching Desk.
+- Do not repeat the same generic KPI/table page ten times.
+- Use right rails for next actions, blockers, evidence and decisions only where operationally useful.
+- Buttons must communicate real actions and become disabled when backend state disallows them.
+- Risk colors must never replace text/status meaning.
+- Display Dh for normal Marketplace currency labels; preserve actual currency_label when runtime data differs.
+- AC Wallet units must not be silently mislabeled as Dh when source distinguishes them.
+==========================================================================================
+20. VALIDATION GATES FOR CODEX
+==========================================================================================
+- Read this TXT completely before modifying Finance frontend.
+- Inspect each mapped source component and route before replacement/consolidation.
+- Run TypeScript validation.
+- Run relevant Marketplace finance/customer-commerce/enterprise-closure verifiers if present.
+- Smoke canonical Finance routes.
+- Smoke compatibility routes and redirects.
+- Check all primary/sidebar/cross-object links introduced by Batch 10.
+- Check permission visibility and server enforcement.
+- Check action error/success/loading states.
+- Check refresh persistence after mutations.
+- Check public/customer-facing downstream objects are not broken.
+- No SQL.
+- No commit/push/deploy.
+==========================================================================================
+21. DEFINITION OF DONE — BATCH 10
+==========================================================================================
+- All 10 approved projections implemented or a proven backend hard gate is reported.
+- 29 mapped Admin Finance/Payments/Wallet/Subscription routes have a documented final home.
+- 30 mapped API authorities are reused rather than duplicated.
+- 9 Finance permissions remain respected.
+- Payment/refund actions use canonical APIs.
+- Invoice/readiness/receipt flows preserve evidence gates.
+- Wallet adjustments/restrictions/policies/reconciliation use canonical engines.
+- Price Book lifecycle and margin decisions preserve governance.
+- Revenue/commission/subscription lineage remains intact.
+- Financial Control Ledger remains a projection/orchestration layer.
+- No fake metrics or provider status are introduced.
+- No known canonical Finance link leads to 404 or unrelated workspace.
+- Batch 10 visual implementation matches approved PNGs with comparable density and hierarchy.
+- Git status is reported and work stops before commit/push/deploy.
+==========================================================================================
+22. FILES INCLUDED IN APPROVED BATCH 10
+==========================================================================================
+01_FINANCE_EXECUTIVE_COMMAND_CONTROL_LEDGER.png
+02_PAYMENTS_RECONCILIATION_COMMAND.png
+03_PAYMENT_360_MEGA_DOSSIER_REFUND_AUTHORITY.png
+04_INVOICES_READINESS_ISSUANCE_COMMAND.png
+05_RECEIPTS_PAYMENT_EVIDENCE_COMMAND.png
+06_AC_WALLET_CONTROL_RISK_RECONCILIATION.png
+07_PRICE_BOOKS_PRICING_RULE_LIFECYCLE.png
+08_MARGIN_DISCOUNT_EXCEPTION_DECISION_AUTHORITY.png
+09_REVENUE_STREAMS_COMMISSIONS_SUBSCRIPTIONS.png
+10_FINANCIAL_RECONCILIATION_CONTROL_LEDGER_CLOSURE.png
+BATCH_10_SOURCE_MAPPING.txt
+==========================================================================================
+23. CODEX EXECUTION ORDER
+==========================================================================================
+1. Implement FINANCE EXECUTIVE COMMAND / CONTROL LEDGER OVERVIEW using 01_FINANCE_EXECUTIVE_COMMAND_CONTROL_LEDGER.png + this mapping + existing source authority.
+2. Implement PAYMENTS / RECONCILIATION COMMAND using 02_PAYMENTS_RECONCILIATION_COMMAND.png + this mapping + existing source authority.
+3. Implement PAYMENT 360 MEGA DOSSIER / REFUND AUTHORITY using 03_PAYMENT_360_MEGA_DOSSIER_REFUND_AUTHORITY.png + this mapping + existing source authority.
+4. Implement INVOICES / INVOICE READINESS / ISSUANCE using 04_INVOICES_READINESS_ISSUANCE_COMMAND.png + this mapping + existing source authority.
+5. Implement RECEIPTS / PAYMENT EVIDENCE COMMAND using 05_RECEIPTS_PAYMENT_EVIDENCE_COMMAND.png + this mapping + existing source authority.
+6. Implement AC WALLET / CREDIT / POLICY / RISK / RECONCILIATION using 06_AC_WALLET_CONTROL_RISK_RECONCILIATION.png + this mapping + existing source authority.
+7. Implement PRICE BOOKS / PRICING RULES / LIFECYCLE AUTHORITY using 07_PRICE_BOOKS_PRICING_RULE_LIFECYCLE.png + this mapping + existing source authority.
+8. Implement MARGINS / DISCOUNTS / EXCEPTION DECISION AUTHORITY using 08_MARGIN_DISCOUNT_EXCEPTION_DECISION_AUTHORITY.png + this mapping + existing source authority.
+9. Implement REVENUE STREAMS / COMMISSIONS / SUBSCRIPTIONS using 09_REVENUE_STREAMS_COMMISSIONS_SUBSCRIPTIONS.png + this mapping + existing source authority.
+10. Implement FINANCIAL RECONCILIATION / CONTROL LEDGER CLOSURE using 10_FINANCIAL_RECONCILIATION_CONTROL_LEDGER_CLOSURE.png + this mapping + existing source authority.
+11. Run validation and route/link integrity.
+12. Report exact files changed, routes covered, APIs reused, permissions reused, tests, runtime-only blockers and git status.
+13. STOP BEFORE COMMIT / PUSH / DEPLOY.
+==========================================================================================
+END OF BATCH 10 SOURCE MAPPING
+==========================================================================================
+This file is the functional/backend implementation authority paired with the ten approved Batch-10 PNGs.
+Anything inside admin-design/batch-10/ is considered approved for build by the established project SOP.

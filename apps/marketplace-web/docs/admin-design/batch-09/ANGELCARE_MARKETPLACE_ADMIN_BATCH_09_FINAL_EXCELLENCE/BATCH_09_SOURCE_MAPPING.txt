@@ -1,0 +1,1143 @@
+ANGELCARE MARKETPLACE ADMIN — BATCH 09 FINAL EXCELLENCE
+ACADEMY + B2B & PARTNERS / PARTNER OS / CORPORATE / ESTABLISHMENTS / HEALTH / HOSPITALITY
+SOURCE / BACKEND / CODEX IMPLEMENTATION AUTHORITY
+Generated: 2026-08-28
+
+======================================================================
+0. STATUS / PRECEDENCE
+======================================================================
+
+This file is the mandatory implementation companion for the 10 approved
+Batch-09 PNG projections. It is not a marketing brief and not an aspirational
+feature list. It maps the final UI projections to the current Marketplace
+source authority.
+
+CURRENT SOURCE ARCHIVE:
+  ANGELCARE_MARKETPLACE_WEB_20260826-221837.zip
+  SHA-256: acf0b0a651268d6d49397bf3413fbe2c9164db9e67f52b461df90abb4e054d35
+
+PROJECT ROOT WHEN IMPLEMENTED:
+  ~/Desktop/angelcare-platform/apps/marketplace-web
+
+IMPLEMENTATION PRECEDENCE:
+  1. Existing backend/domain truth, permissions and lifecycle invariants
+  2. This BATCH_09_SOURCE_MAPPING.txt
+  3. Approved Batch-09 PNG visual authority
+  4. Existing fragmented/legacy frontend presentation
+
+If a PNG visually implies an action that the source does not support, Codex
+MUST preserve backend truth and record the discrepancy rather than fabricate
+behavior.
+
+NO SQL.
+NO migrations.
+NO new tables.
+NO parallel Academy engine.
+NO parallel CRM.
+NO parallel Partner OS.
+NO parallel B2B vertical engine.
+NO fake certification.
+NO fake tenant isolation.
+NO fake impact metrics.
+NO fake health/medical capabilities.
+NO commit / push / deploy unless separately instructed.
+
+Illustrative names, counts, scores, dates and amounts rendered in the PNGs are
+visual sample data only. The controls, lifecycle states, object relationships,
+permissions and actions documented here are source-backed.
+
+======================================================================
+1. GLOBAL VISUAL / NAVIGATION CONSTITUTION
+======================================================================
+
+The permanent Marketplace Admin primary tree remains:
+  Accueil
+  Commandes & réservations
+  Produits & services
+  Catégories & collections
+  Clients
+  Boutique
+  Marketing & promotions
+  Opérations
+  Prestataires & fournisseurs
+  Academy
+  B2B & partenaires
+  Finance
+  Trust & qualité
+  Analytics & intelligence
+  Paramètres & gouvernance
+
+ACTIVE PRIMARY WORKSPACE BY SCREEN:
+  01–04 -> Academy
+  05–10 -> B2B & partenaires
+
+DO NOT add Partner OS, Corporate, Establishments, Health, Hospitality,
+Diagnostics, Quality Check, Tenant Control, Certificate Authority or Trainer
+Workspace as new global sidebar items. They are deep authorities inside the
+correct human-facing workspace.
+
+Brand rendering in the projections is text-only: ANGELCARE MARKETPLACE.
+Do not invent or redraw an AngelCare logo.
+
+======================================================================
+2. ZERO-BLIND COVERAGE SUMMARY
+======================================================================
+
+Admin route families directly dispositioned in Batch 09: 40
+Relevant API routes mapped in Batch 09: 48
+Relevant explicit permissions mapped in Batch 09: 60
+Relevant existing DB authority tables inventoried: 63
+
+Batch 09 intentionally does NOT absorb:
+  - /admin/analytics/academy and /admin/analytics/b2b -> later Analytics batch
+  - /admin/intelligence/academy, /b2b, /partner-os -> later Analytics/Intelligence batch
+  - /admin/operations/academy, /b2b, /partner-os -> Operations remains Batch 07 authority
+  - Finance settlement/payment authority -> later Finance batch
+  - Trust/QA system-wide governance -> later Trust & Quality batch
+
+Academy B2B Training remains inside Academy because the training execution and
+competency proof chain is Academy-owned. B2B organization and commercial/tenant
+relationship authority remains under B2B & partenaires.
+
+======================================================================
+3. SOURCE COMPONENTS VERIFIED
+======================================================================
+
+ACADEMY:
+  angelcare-marketplace/academy-engine/components/AcademyCommand.tsx
+  angelcare-marketplace/academy-engine/components/CatalogRegistry.tsx
+  angelcare-marketplace/academy-engine/components/CohortCommand.tsx
+  angelcare-marketplace/academy-engine/components/TrainerWorkspace.tsx
+  angelcare-marketplace/academy-engine/components/AttendanceCommand.tsx
+  angelcare-marketplace/academy-engine/components/AssessmentCommand.tsx
+  angelcare-marketplace/academy-engine/components/CertificateAuthority.tsx
+  angelcare-marketplace/academy-engine/components/B2BTrainingBoard.tsx
+  angelcare-marketplace/academy-engine/components/AcademyFinalCommand.tsx
+  angelcare-marketplace/academy-engine/final-admin-page.tsx
+  angelcare-marketplace/academy-engine/repository.ts
+  angelcare-marketplace/academy-engine/final-repository.ts
+  angelcare-marketplace/academy-engine/api-handlers.ts
+  angelcare-marketplace/academy-engine/final-api-handlers.ts
+  angelcare-marketplace/academy-engine/types.ts
+  angelcare-marketplace/academy-engine/final-types.ts
+
+PARTNER OS:
+  angelcare-marketplace/partner-os/components/PartnerCommand.tsx
+  angelcare-marketplace/partner-os/components/PlanSubscriptionBoard.tsx
+  angelcare-marketplace/partner-os/components/TenantRegistry.tsx
+  angelcare-marketplace/partner-os/components/TenantWorkspace.tsx
+  angelcare-marketplace/partner-os/components/PartnerLifecycleClient.tsx
+  angelcare-marketplace/partner-os/repository.ts
+  angelcare-marketplace/partner-os/api-handlers.ts
+  angelcare-marketplace/partner-os/types.ts
+
+B2B VERTICALS:
+  angelcare-marketplace/b2b-verticals/components/B2BExecutiveCommand.tsx
+  angelcare-marketplace/b2b-verticals/components/Organization360.tsx
+  angelcare-marketplace/b2b-verticals/components/PortfolioRegistry.tsx
+  angelcare-marketplace/b2b-verticals/components/CorporateCommand.tsx
+  angelcare-marketplace/b2b-verticals/components/EstablishmentsCommand.tsx
+  angelcare-marketplace/b2b-verticals/components/HealthPartnersCommand.tsx
+  angelcare-marketplace/b2b-verticals/components/HospitalityCommand.tsx
+  angelcare-marketplace/b2b-verticals/components/VerticalOperationsBoard.tsx
+  angelcare-marketplace/b2b-verticals/components/SpecializedBoards.tsx
+  angelcare-marketplace/b2b-verticals/repository.ts
+  angelcare-marketplace/b2b-verticals/api-handlers.ts
+  angelcare-marketplace/b2b-verticals/types.ts
+
+======================================================================
+4. DOMAIN LIFECYCLE TRUTH
+======================================================================
+
+ACADEMY PUBLICATION STATUS:
+  draft -> review -> approved -> published -> suspended -> archived
+
+ACADEMY COHORT STATUS:
+  draft | enrollment_open | enrollment_closed | scheduled | active |
+  assessment | completion_review | completed | cancelled | archived
+
+ACADEMY ENROLLMENT STATUS:
+  invited | enrolled | waitlisted | active | completed | failed | withdrawn | cancelled
+
+ACADEMY CERTIFICATE STATUS:
+  draft | eligible | pending_approval | issued | active | expiring | expired |
+  suspended | revoked | renewed | archived
+
+PARTNER TENANT STATUS:
+  draft | onboarding | trial | active | suspended | cancelled | archived
+
+B2B DIAGNOSTIC STATUS:
+  draft | in_progress | submitted | under_review | clarification_required |
+  qualified | not_qualified | converted | archived
+
+B2B PROGRAM STATUS:
+  configuration | readiness_review | approved | scheduled | active | paused |
+  completed | suspended | archived
+
+B2B READINESS STATUS:
+  not_started | in_progress | submitted | passed | failed | waived | not_applicable
+
+Codex must not replace these states with frontend-only aliases that lose domain
+meaning. Friendly labels may be rendered, but canonical values remain authoritative.
+
+======================================================================
+5. SCREEN 01 — ACADEMY COMMAND CENTER
+======================================================================
+
+PNG:
+  01_ACADEMY_COMMAND_CENTER.png
+
+FINAL HOME:
+  Academy -> Centre de commandement compétence
+
+PRIMARY CURRENT ROUTE:
+  /angelcare-marketplace/admin/academy
+
+PRIMARY COMPONENT:
+  AcademyCommand
+
+REAL SUMMARY DIMENSIONS:
+  programs
+  courses
+  cohortsActive
+  learnersActive
+  sessionsToday
+  attendanceExceptions
+  assessmentsPending
+  certificatesExpiring
+  b2bOrdersActive
+
+REAL OPERATOR AREAS TO EXPOSE:
+  - cohort runway: status, capacity, enrolled_count, start window
+  - certificate authority pressure
+  - session pressure
+  - trainer gaps
+  - attendance exceptions
+  - pending assessment review
+  - B2B training order status
+
+CODEX UX DOCTRINE:
+  Academy Command Center is not an analytics-only dashboard. It must behave as
+  a decision and execution launcher into the governed Academy engines.
+
+======================================================================
+6. SCREEN 02 — PROGRAMS & COURSES CATALOG STUDIO
+======================================================================
+
+PNG:
+  02_ACADEMY_PROGRAMS_COURSES_CATALOG_STUDIO.png
+
+CURRENT ROUTES MERGED INTO FINAL STUDIO:
+  /admin/academy/catalog
+  /admin/academy/programs
+  /admin/academy/courses
+
+SOURCE COMPONENTS:
+  CatalogRegistry
+  AcademyFinalCommand modes: programs, courses
+
+PROGRAM FIELDS AVAILABLE:
+  public_reference, code, title_fr, description_fr, target_audience,
+  competency_framework, status, territory_id, tenant_id, owner_id, published_at
+
+COURSE FIELDS AVAILABLE:
+  program_id, catalog_item_id, code, slug, title_fr, description_fr,
+  duration_minutes, delivery_mode, prerequisite_rules, attendance_threshold,
+  passing_score, certificate_type, certificate_validity_days, territory_id, status
+
+REAL PUBLICATION ACTIONS:
+  draft -> review
+  review -> approved
+  approved -> published
+
+API AUTHORITY:
+  POST /api/angelcare-marketplace/academy/final/programs/[id]/transition
+  POST /api/angelcare-marketplace/academy/final/courses/[id]/transition
+
+Every transition requires a reason in the final handler path.
+
+======================================================================
+7. SCREEN 03 — COHORTS / SESSIONS / TRAINER CONTROL
+======================================================================
+
+PNG:
+  03_ACADEMY_COHORTS_SESSIONS_TRAINER_CONTROL.png
+
+CURRENT ROUTES MERGED:
+  /admin/academy/cohorts
+  /admin/academy/sessions
+  /admin/academy/trainers
+
+COHORT FIELDS:
+  public_reference, course_id, b2b_training_order_id, name, status, capacity,
+  enrolled_count, waitlist_count, starts_at, ends_at, enrollment_opens_at,
+  enrollment_closes_at, trainer_id, site_reference, tenant_id, territory_id, owner_id
+
+SESSION FIELDS:
+  cohort_id, title_fr, starts_at, ends_at, delivery_mode, location, trainer_id,
+  status, attendance_locked
+
+REAL MUTATIONS:
+  POST /academy/final/sessions           -> create session
+  POST /academy/final/sessions/[id]/transition
+  POST /academy/final/cohorts/[id]/transition
+  POST /academy/final/cohorts/[id]/trainer
+
+TRAINER ASSIGNMENT RULE:
+  Final repository verifies provider operational eligibility before mutation.
+  UI must show eligibility/blocking truth and must not allow a visual override.
+
+======================================================================
+8. SCREEN 04 — EVIDENCE / ASSESSMENT / CERTIFICATION AUTHORITY
+======================================================================
+
+PNG:
+  04_ACADEMY_EVIDENCE_ASSESSMENT_CERTIFICATION_AUTHORITY.png
+
+CURRENT ROUTES MERGED:
+  /admin/academy/attendance
+  /admin/academy/assessments
+  /admin/academy/enrollments
+  /admin/academy/certificates
+  /admin/academy/compliance
+  /admin/academy/b2b-training (linked execution evidence only)
+
+ATTENDANCE STATES:
+  present | late | absent | authorized_absence | left_early
+
+ASSESSMENT RESULT REVIEW:
+  decision = approved | rejected
+  reason required
+
+REMEDIATION LIFECYCLE EXPOSED BY CURRENT FINAL UI:
+  open / reopened -> in_progress -> evidence_review -> completed -> reopened
+
+CERTIFICATE DECISIONS:
+  issue
+  suspend
+  revoke
+  renew
+
+CertificateAuthority explicitly states that issue/suspend/revoke/renew passes
+Academy eligibility logic, writes certificate events and recalculates provider
+eligibility where applicable.
+
+CODEX MUST NOT render certification as a simple editable status dropdown.
+
+======================================================================
+9. SCREEN 05 — B2B & PARTNERS EXECUTIVE COMMAND
+======================================================================
+
+PNG:
+  05_B2B_PARTNERS_EXECUTIVE_COMMAND.png
+
+PRIMARY CURRENT ROUTE:
+  /angelcare-marketplace/admin/verticals
+
+PRIMARY COMPONENT:
+  B2BExecutiveCommand
+
+VERTICALS:
+  establishment
+  hospitality
+  health_partner
+  corporate
+
+REAL SUMMARY DIMENSIONS:
+  organizations
+  diagnosticsActive
+  diagnosticsSubmitted
+  qualified
+  programsActive
+  blockedLaunches
+  tenantConversions
+  proposalValue + currencyLabel
+  risks
+  organization count by vertical
+
+KEEP THE B2B COMMAND CONNECTED TO:
+  existing CRM account IDs
+  existing Partner OS tenant IDs
+  organization dossiers
+  diagnostics / recommendations
+  readiness / programs
+  reports
+
+DO NOT build a second CRM inside this workspace.
+
+======================================================================
+10. SCREEN 06 — ORGANIZATION 360 + PARTNER OS TENANT LIFECYCLE
+======================================================================
+
+PNG:
+  06_ORGANIZATION_360_PARTNER_OS_TENANT_LIFECYCLE.png
+
+CURRENT ROUTES MERGED / CROSS-LINKED:
+  /admin/verticals/organizations
+  /admin/verticals/organizations/[organizationId]
+  /admin/partner-os
+  /admin/partner-os/plans
+  /admin/partner-os/tenants
+  /admin/partner-os/tenants/[tenantId]
+
+ORGANIZATION 360 AUTHORITY:
+  organization identity / vertical / lifecycle / risk / health
+  sites
+  contacts and decision roles
+  diagnostics
+  recommendations
+  programs
+  readiness checks
+  reports
+  crmAccountId relation
+  tenantId relation
+  auditCount
+
+PARTNER TENANT WORKSPACE AUTHORITY:
+  tenant identity / code / type / territory / status / owner / locale / currency
+  onboarding_score / health_status
+  active subscription
+  module activations
+  onboarding checks
+  members count
+  usageAlerts
+
+REAL PARTNER MUTATIONS:
+  POST /partner-os/tenants                       create/list tenant authority
+  POST /partner-os/tenants/[id]/transition       tenant lifecycle
+  POST /partner-os/tenants/[id]/subscription     assign plan/subscription
+  POST /partner-os/tenants/[id]/modules          module activation
+  POST /partner-os/tenants/[id]/onboarding/[id]  onboarding decision
+  GET  /partner-os/tenants/[id]/workspace        isolated tenant workspace
+
+NO UI FILTER MAY SUBSTITUTE FOR SERVER/database tenant isolation.
+
+======================================================================
+11. SCREEN 07 — CORPORATE FAMILY BENEFITS
+======================================================================
+
+PNG:
+  07_CORPORATE_FAMILY_BENEFITS_ELIGIBILITY_USAGE_IMPACT.png
+
+CURRENT ROUTES MERGED:
+  /admin/verticals/corporates
+  /admin/verticals/corporates/programs
+  /admin/verticals/corporates/eligibility
+  /admin/verticals/corporates/usage
+  /admin/verticals/corporates/impact
+
+PROGRAM FIELDS:
+  status, readiness_score, risk_level, next_action, employer_contribution,
+  employee_contribution, budget_amount, currency_label, enrollment window
+
+ELIGIBILITY RULE FIELDS:
+  rule_key, rule_type, configuration, status, priority
+
+QUOTA FIELDS:
+  beneficiary_reference, period_key, allocated_quantity, consumed_quantity,
+  reserved_quantity, remaining_quantity, status
+
+REAL USAGE MUTATION:
+  POST /api/angelcare-marketplace/b2b/corporates/quotas/[quotaId]/consume
+  payload includes quantity + serviceReference
+
+UI must enforce/display remaining capacity truth; it must not visually permit
+consumption beyond the backend quota authority.
+
+======================================================================
+12. SCREEN 08 — ESTABLISHMENTS TRANSFORMATION & QUALITY CHECK 360
+======================================================================
+
+PNG:
+  08_ESTABLISHMENTS_TRANSFORMATION_DIAGNOSTICS_QUALITY.png
+
+CURRENT ROUTES MERGED:
+  /admin/verticals/establishments
+  /admin/verticals/establishments/diagnostics
+  /admin/verticals/establishments/proposals
+  /admin/verticals/establishments/conversions
+  /admin/verticals/establishments/quality-checks
+
+ESTABLISHMENT DOMAIN FIELDS PRESENT IN SOURCE:
+  establishment_kind
+  enrolled_children
+  classrooms
+  licensed_capacity
+  digital_maturity
+  parent_communication_maturity
+  safeguarding_maturity
+
+DIAGNOSTIC AUTHORITY:
+  completion_score
+  qualification_score
+  risk_level
+  owner / reviewer
+  recommendation_summary
+  next_action
+  structured answers
+
+DIAGNOSTIC TRANSITION API:
+  POST /b2b/diagnostics/[diagnosticId]/transition
+  permission: marketplace.b2b.diagnostics.review
+
+CONVERSION API:
+  POST /b2b/diagnostics/[diagnosticId]/convert
+  conversionType = crm_opportunity | partner_tenant | both
+
+QUALITY CHECK 360 FIELDS:
+  request_type, status, scope, scheduled_at, score, critical_findings,
+  corrective_actions
+
+======================================================================
+13. SCREEN 09 — HEALTH PARTNERS NON-MEDICAL COMPLIANCE & REFERRALS
+======================================================================
+
+PNG:
+  09_HEALTH_PARTNERS_NON_MEDICAL_COMPLIANCE_REFERRALS.png
+
+CURRENT ROUTES MERGED:
+  /admin/verticals/health-partners
+  /admin/verticals/health-partners/programs
+  /admin/verticals/health-partners/referrals
+  /admin/verticals/health-partners/consents
+  /admin/verticals/health-partners/compliance
+
+NON-NEGOTIABLE SOURCE DOCTRINE:
+  The current HealthPartnersCommand explicitly states strict non-medical scope.
+  ANGELCARE does not diagnose, prescribe, administer medication or replace
+  licensed health professionals.
+
+HEALTH BOUNDARY FIELDS:
+  boundary_key
+  title_fr
+  allowed
+  requires_licensed_referral
+  prohibited_actions[]
+  escalation_rule
+  status
+  approved_by / approved_at
+
+CONSENT FIELDS:
+  consent_type
+  required
+  consent_text_key
+  retention_days
+  escalation_contact_id
+  status
+
+SENSITIVE PERMISSIONS:
+  marketplace.b2b.health_partners.compliance_review
+  marketplace.b2b.health_partners.sensitive_approve
+
+No frontend action may bypass a boundary, referral or consent gate.
+
+======================================================================
+14. SCREEN 10 — HOSPITALITY PROPERTIES / PROGRAMS / READINESS / REPORTS
+======================================================================
+
+PNG:
+  10_HOSPITALITY_PROPERTIES_PROGRAMS_READINESS_REPORTS.png
+
+CURRENT ROUTES MERGED:
+  /admin/verticals/hospitality
+  /admin/verticals/hospitality/properties
+  /admin/verticals/hospitality/programs
+  /admin/verticals/hospitality/readiness
+  /admin/verticals/hospitality/reports
+
+PROPERTY FIELDS:
+  property_code
+  name
+  property_type
+  category_label
+  room_count
+  family_guest_volume
+  seasonality_profile
+  kids_facilities
+  security_contact_id
+
+HOSPITALITY PROGRAM FIELDS:
+  property_id
+  season_key
+  guest_booking_mode
+  age_min / age_max
+  operating_hours
+  guest_languages[]
+  capacity
+  readiness_score
+  risk_level
+  next_action
+
+REPORT AUTHORITY:
+  report_type
+  program_id
+  period_start / period_end
+  status
+  metrics object
+  published_at
+
+======================================================================
+15. CROSS-WORKSPACE BOUNDARIES CODEX MUST PRESERVE
+======================================================================
+
+ACADEMY <-> PROVIDERS:
+  Trainer assignment may depend on provider eligibility.
+  Certification events may affect provider eligibility.
+  Provider master data remains Prestataires & fournisseurs authority.
+
+ACADEMY <-> B2B:
+  Academy B2B training orders retain organization / CRM / tenant lineage.
+  Organization commercial relationship remains B2B/CRM authority.
+
+B2B <-> PARTNER OS:
+  Organization360 carries tenant_id relation.
+  Diagnostic conversion can create a partner tenant through canonical conversion.
+  Partner OS owns tenant lifecycle, subscription, modules and onboarding.
+
+B2B <-> CRM:
+  Organization360 carries crm_account_id.
+  B2B Command links to existing commercial pipeline rather than replacing it.
+
+B2B <-> OPERATIONS:
+  Active programs can create downstream operational work, but Operations Batch 07
+  remains the execution/reconciliation authority.
+
+B2B <-> FINANCE:
+  Monetary amounts may be displayed contextually, but invoices/payments/settlement
+  authority remains Finance.
+
+======================================================================
+16. REQUIRED UX STATES
+======================================================================
+
+Every canonical Batch-09 screen must have purposeful treatment for:
+  loading
+  empty
+  partial data
+  server error
+  permission denied
+  validation error
+  mutation pending
+  mutation success
+  mutation failure
+  lifecycle action blocked
+  required reason missing
+  missing owner / trainer / reviewer
+  readiness blocker
+  certificate / consent / boundary governance block
+
+No blank black panels. No dead buttons. No fake enabled state.
+
+======================================================================
+17. CODEX IMPLEMENTATION RULES
+======================================================================
+
+1. Read this entire TXT before editing.
+2. Inspect the current source components and repositories named above.
+3. Use the 10 PNGs as approved final visual direction.
+4. Consolidate fragmented route presentation into the canonical dossiers/studios.
+5. Reuse current API handlers and repositories.
+6. Preserve explicit permission checks.
+7. Preserve lifecycle state machines and reason/evidence requirements.
+8. Preserve compatibility routes with safe redirects/aliases where appropriate.
+9. Do not create a parallel backend to make a screenshot easier to reproduce.
+10. Do not put technical sub-engines into the global sidebar.
+11. Do not claim external runtime integration is live unless runtime-proven.
+12. Do not modify SQL, migrations or RLS as part of this frontend batch.
+13. Run TypeScript and relevant Marketplace verifiers after implementation.
+14. Audit all Batch-09 links for 404 / wrong workspace / obsolete duplicates.
+15. Stop before commit, push or deploy.
+
+======================================================================
+18. CURRENT ADMIN ROUTES — EXACT SOURCE INVENTORY
+======================================================================
+
+01. /angelcare-marketplace/admin/academy
+    file: (protected)/admin/academy/page.tsx
+    components: AcademyCommand
+02. /angelcare-marketplace/admin/academy/assessments
+    file: (protected)/admin/academy/assessments/page.tsx
+    components: AcademyFinalPage
+03. /angelcare-marketplace/admin/academy/attendance
+    file: (protected)/admin/academy/attendance/page.tsx
+    components: AcademyFinalPage
+04. /angelcare-marketplace/admin/academy/b2b-training
+    file: (protected)/admin/academy/b2b-training/page.tsx
+    components: AcademyFinalPage
+05. /angelcare-marketplace/admin/academy/catalog
+    file: (protected)/admin/academy/catalog/page.tsx
+    components: CatalogRegistry
+06. /angelcare-marketplace/admin/academy/certificates
+    file: (protected)/admin/academy/certificates/page.tsx
+    components: CertificateAuthority
+07. /angelcare-marketplace/admin/academy/cohorts
+    file: (protected)/admin/academy/cohorts/page.tsx
+    components: CohortCommand
+08. /angelcare-marketplace/admin/academy/compliance
+    file: (protected)/admin/academy/compliance/page.tsx
+    components: CertificateAuthority
+09. /angelcare-marketplace/admin/academy/courses
+    file: (protected)/admin/academy/courses/page.tsx
+    components: AcademyFinalPage
+10. /angelcare-marketplace/admin/academy/enrollments
+    file: (protected)/admin/academy/enrollments/page.tsx
+    components: AcademyFinalPage
+11. /angelcare-marketplace/admin/academy/programs
+    file: (protected)/admin/academy/programs/page.tsx
+    components: AcademyFinalPage
+12. /angelcare-marketplace/admin/academy/sessions
+    file: (protected)/admin/academy/sessions/page.tsx
+    components: AcademyFinalPage
+13. /angelcare-marketplace/admin/academy/trainers
+    file: (protected)/admin/academy/trainers/page.tsx
+    components: AcademyFinalPage
+14. /angelcare-marketplace/admin/partner-os
+    file: (protected)/admin/partner-os/page.tsx
+    components: PartnerCommand
+15. /angelcare-marketplace/admin/partner-os/plans
+    file: (protected)/admin/partner-os/plans/page.tsx
+    components: PlanSubscriptionBoard
+16. /angelcare-marketplace/admin/partner-os/tenants
+    file: (protected)/admin/partner-os/tenants/page.tsx
+    components: TenantCreateDesk;TenantRegistry;Link
+17. /angelcare-marketplace/admin/partner-os/tenants/[tenantId]
+    file: (protected)/admin/partner-os/tenants/[tenantId]/page.tsx
+    components: TenantWorkspace;TenantLifecycleDesk
+18. /angelcare-marketplace/admin/verticals
+    file: (protected)/admin/verticals/page.tsx
+    components: B2BExecutiveCommand
+19. /angelcare-marketplace/admin/verticals/corporates
+    file: (protected)/admin/verticals/corporates/page.tsx
+    components: CorporateCommand
+20. /angelcare-marketplace/admin/verticals/corporates/eligibility
+    file: (protected)/admin/verticals/corporates/eligibility/page.tsx
+    components: CorporateEligibilityBoard
+21. /angelcare-marketplace/admin/verticals/corporates/impact
+    file: (protected)/admin/verticals/corporates/impact/page.tsx
+    components: VerticalOperationsBoard
+22. /angelcare-marketplace/admin/verticals/corporates/programs
+    file: (protected)/admin/verticals/corporates/programs/page.tsx
+    components: VerticalOperationsBoard
+23. /angelcare-marketplace/admin/verticals/corporates/usage
+    file: (protected)/admin/verticals/corporates/usage/page.tsx
+    components: VerticalOperationsBoard
+24. /angelcare-marketplace/admin/verticals/establishments
+    file: (protected)/admin/verticals/establishments/page.tsx
+    components: EstablishmentsCommand
+25. /angelcare-marketplace/admin/verticals/establishments/conversions
+    file: (protected)/admin/verticals/establishments/conversions/page.tsx
+    components: DiagnosticRegistry
+26. /angelcare-marketplace/admin/verticals/establishments/diagnostics
+    file: (protected)/admin/verticals/establishments/diagnostics/page.tsx
+    components: DiagnosticRegistry
+27. /angelcare-marketplace/admin/verticals/establishments/proposals
+    file: (protected)/admin/verticals/establishments/proposals/page.tsx
+    components: PortfolioRegistry
+28. /angelcare-marketplace/admin/verticals/establishments/quality-checks
+    file: (protected)/admin/verticals/establishments/quality-checks/page.tsx
+    components: QualityCheckRegistry
+29. /angelcare-marketplace/admin/verticals/health-partners
+    file: (protected)/admin/verticals/health-partners/page.tsx
+    components: HealthPartnersCommand
+30. /angelcare-marketplace/admin/verticals/health-partners/compliance
+    file: (protected)/admin/verticals/health-partners/compliance/page.tsx
+    components: HealthComplianceBoard
+31. /angelcare-marketplace/admin/verticals/health-partners/consents
+    file: (protected)/admin/verticals/health-partners/consents/page.tsx
+    components: HealthComplianceBoard
+32. /angelcare-marketplace/admin/verticals/health-partners/programs
+    file: (protected)/admin/verticals/health-partners/programs/page.tsx
+    components: VerticalOperationsBoard
+33. /angelcare-marketplace/admin/verticals/health-partners/referrals
+    file: (protected)/admin/verticals/health-partners/referrals/page.tsx
+    components: VerticalOperationsBoard
+34. /angelcare-marketplace/admin/verticals/hospitality
+    file: (protected)/admin/verticals/hospitality/page.tsx
+    components: HospitalityCommand
+35. /angelcare-marketplace/admin/verticals/hospitality/programs
+    file: (protected)/admin/verticals/hospitality/programs/page.tsx
+    components: VerticalOperationsBoard
+36. /angelcare-marketplace/admin/verticals/hospitality/properties
+    file: (protected)/admin/verticals/hospitality/properties/page.tsx
+    components: HospitalityPropertyBoard
+37. /angelcare-marketplace/admin/verticals/hospitality/readiness
+    file: (protected)/admin/verticals/hospitality/readiness/page.tsx
+    components: VerticalOperationsBoard
+38. /angelcare-marketplace/admin/verticals/hospitality/reports
+    file: (protected)/admin/verticals/hospitality/reports/page.tsx
+    components: VerticalOperationsBoard
+39. /angelcare-marketplace/admin/verticals/organizations
+    file: (protected)/admin/verticals/organizations/page.tsx
+    components: PortfolioRegistry
+40. /angelcare-marketplace/admin/verticals/organizations/[organizationId]
+    file: (protected)/admin/verticals/organizations/[organizationId]/page.tsx
+    components: Organization360
+
+======================================================================
+19. RELEVANT API ROUTES — EXACT SOURCE INVENTORY
+======================================================================
+
+01. /api/angelcare-marketplace/academy/assessment-results
+    methods field: handler-defined
+    file: academy/assessment-results/route.ts
+    imports: { handleAssessmentResult } FROM @/angelcare-marketplace/academy-engine/api-handlers
+02. /api/angelcare-marketplace/academy/assessments
+    methods field: handler-defined
+    file: academy/assessments/route.ts
+    imports: { handleAcademySummary } FROM @/angelcare-marketplace/academy-engine/api-handlers
+03. /api/angelcare-marketplace/academy/attendance
+    methods field: handler-defined
+    file: academy/attendance/route.ts
+    imports: { handleAttendance } FROM @/angelcare-marketplace/academy-engine/api-handlers
+04. /api/angelcare-marketplace/academy/b2b-training
+    methods field: handler-defined
+    file: academy/b2b-training/route.ts
+    imports: { handleAcademySummary } FROM @/angelcare-marketplace/academy-engine/api-handlers
+05. /api/angelcare-marketplace/academy/certificates
+    methods field: handler-defined
+    file: academy/certificates/route.ts
+    imports: { handleCertificates } FROM @/angelcare-marketplace/academy-engine/api-handlers
+06. /api/angelcare-marketplace/academy/certificates/[certificateId]/decision
+    methods field: POST
+    file: academy/certificates/[certificateId]/decision/route.ts
+    imports: { handleCertificateDecision } FROM @/angelcare-marketplace/academy-engine/api-handlers
+07. /api/angelcare-marketplace/academy/cohorts
+    methods field: handler-defined
+    file: academy/cohorts/route.ts
+    imports: { handleCohorts } FROM @/angelcare-marketplace/academy-engine/api-handlers
+08. /api/angelcare-marketplace/academy/enrollments
+    methods field: handler-defined
+    file: academy/enrollments/route.ts
+    imports: { handleAcademySummary } FROM @/angelcare-marketplace/academy-engine/api-handlers
+09. /api/angelcare-marketplace/academy/final/assessments
+    methods field: POST
+    file: academy/final/assessments/route.ts
+    imports: {handleAcademyAssessmentCreate} FROM @/angelcare-marketplace/academy-engine/final-api-handlers
+10. /api/angelcare-marketplace/academy/final/b2b/[orderId]/transition
+    methods field: POST
+    file: academy/final/b2b/[orderId]/transition/route.ts
+    imports: {handleAcademyB2BTransition} FROM @/angelcare-marketplace/academy-engine/final-api-handlers
+11. /api/angelcare-marketplace/academy/final/cohorts/[cohortId]/trainer
+    methods field: POST
+    file: academy/final/cohorts/[cohortId]/trainer/route.ts
+    imports: {handleAcademyTrainerAssignment} FROM @/angelcare-marketplace/academy-engine/final-api-handlers
+12. /api/angelcare-marketplace/academy/final/cohorts/[cohortId]/transition
+    methods field: POST
+    file: academy/final/cohorts/[cohortId]/transition/route.ts
+    imports: {handleAcademyCohortTransition} FROM @/angelcare-marketplace/academy-engine/final-api-handlers
+13. /api/angelcare-marketplace/academy/final/courses/[id]/transition
+    methods field: POST
+    file: academy/final/courses/[id]/transition/route.ts
+    imports: {handleAcademyPublicationTransition} FROM @/angelcare-marketplace/academy-engine/final-api-handlers
+14. /api/angelcare-marketplace/academy/final/programs/[id]/transition
+    methods field: POST
+    file: academy/final/programs/[id]/transition/route.ts
+    imports: {handleAcademyPublicationTransition} FROM @/angelcare-marketplace/academy-engine/final-api-handlers
+15. /api/angelcare-marketplace/academy/final/remediations
+    methods field: POST
+    file: academy/final/remediations/route.ts
+    imports: {handleAcademyRemediationCreate} FROM @/angelcare-marketplace/academy-engine/final-api-handlers
+16. /api/angelcare-marketplace/academy/final/remediations/[remediationId]/transition
+    methods field: POST
+    file: academy/final/remediations/[remediationId]/transition/route.ts
+    imports: {handleAcademyRemediationTransition} FROM @/angelcare-marketplace/academy-engine/final-api-handlers
+17. /api/angelcare-marketplace/academy/final/results/[resultId]/review
+    methods field: POST
+    file: academy/final/results/[resultId]/review/route.ts
+    imports: {handleAssessmentResultReview} FROM @/angelcare-marketplace/academy-engine/final-api-handlers
+18. /api/angelcare-marketplace/academy/final/sessions
+    methods field: POST
+    file: academy/final/sessions/route.ts
+    imports: {handleAcademySessionCreate} FROM @/angelcare-marketplace/academy-engine/final-api-handlers
+19. /api/angelcare-marketplace/academy/final/sessions/[sessionId]/transition
+    methods field: POST
+    file: academy/final/sessions/[sessionId]/transition/route.ts
+    imports: {handleAcademySessionTransition} FROM @/angelcare-marketplace/academy-engine/final-api-handlers
+20. /api/angelcare-marketplace/academy/final/snapshot
+    methods field: GET
+    file: academy/final/snapshot/route.ts
+    imports: {handleAcademyFinalSnapshot} FROM @/angelcare-marketplace/academy-engine/final-api-handlers
+21. /api/angelcare-marketplace/academy/programs
+    methods field: handler-defined
+    file: academy/programs/route.ts
+    imports: { handlePrograms } FROM @/angelcare-marketplace/academy-engine/api-handlers
+22. /api/angelcare-marketplace/academy/sessions
+    methods field: handler-defined
+    file: academy/sessions/route.ts
+    imports: { handleAcademySummary } FROM @/angelcare-marketplace/academy-engine/api-handlers
+23. /api/angelcare-marketplace/academy/summary
+    methods field: handler-defined
+    file: academy/summary/route.ts
+    imports: { handleAcademySummary } FROM @/angelcare-marketplace/academy-engine/api-handlers
+24. /api/angelcare-marketplace/b2b/corporates/eligibility
+    methods field: handler-defined
+    file: b2b/corporates/eligibility/route.ts
+    imports: { handleCorporateEligibility } FROM @/angelcare-marketplace/b2b-verticals/api-handlers
+25. /api/angelcare-marketplace/b2b/corporates/programs
+    methods field: handler-defined
+    file: b2b/corporates/programs/route.ts
+    imports: { handleCorporatePrograms } FROM @/angelcare-marketplace/b2b-verticals/api-handlers
+26. /api/angelcare-marketplace/b2b/corporates/quotas/[quotaId]/consume
+    methods field: POST
+    file: b2b/corporates/quotas/[quotaId]/consume/route.ts
+    imports: { handleCorporateUsage } FROM @/angelcare-marketplace/b2b-verticals/api-handlers
+27. /api/angelcare-marketplace/b2b/diagnostics
+    methods field: handler-defined
+    file: b2b/diagnostics/route.ts
+    imports: { handleDiagnostics } FROM @/angelcare-marketplace/b2b-verticals/api-handlers
+28. /api/angelcare-marketplace/b2b/diagnostics/[diagnosticId]/convert
+    methods field: POST
+    file: b2b/diagnostics/[diagnosticId]/convert/route.ts
+    imports: { handleDiagnosticConversion } FROM @/angelcare-marketplace/b2b-verticals/api-handlers
+29. /api/angelcare-marketplace/b2b/diagnostics/[diagnosticId]/transition
+    methods field: POST
+    file: b2b/diagnostics/[diagnosticId]/transition/route.ts
+    imports: { handleDiagnosticTransition } FROM @/angelcare-marketplace/b2b-verticals/api-handlers
+30. /api/angelcare-marketplace/b2b/establishments/quality-checks
+    methods field: handler-defined
+    file: b2b/establishments/quality-checks/route.ts
+    imports: { handleEstablishmentQualityChecks } FROM @/angelcare-marketplace/b2b-verticals/api-handlers
+31. /api/angelcare-marketplace/b2b/health-partners/compliance
+    methods field: handler-defined
+    file: b2b/health-partners/compliance/route.ts
+    imports: { handleHealthCompliance } FROM @/angelcare-marketplace/b2b-verticals/api-handlers
+32. /api/angelcare-marketplace/b2b/hospitality/programs
+    methods field: handler-defined
+    file: b2b/hospitality/programs/route.ts
+    imports: { handleHospitalityPrograms } FROM @/angelcare-marketplace/b2b-verticals/api-handlers
+33. /api/angelcare-marketplace/b2b/hospitality/properties
+    methods field: handler-defined
+    file: b2b/hospitality/properties/route.ts
+    imports: { handleHospitalityProperties } FROM @/angelcare-marketplace/b2b-verticals/api-handlers
+34. /api/angelcare-marketplace/b2b/organizations
+    methods field: handler-defined
+    file: b2b/organizations/route.ts
+    imports: { handleOrganizations } FROM @/angelcare-marketplace/b2b-verticals/api-handlers
+35. /api/angelcare-marketplace/b2b/organizations/[organizationId]
+    methods field: GET
+    file: b2b/organizations/[organizationId]/route.ts
+    imports: { handleOrganization360 } FROM @/angelcare-marketplace/b2b-verticals/api-handlers
+36. /api/angelcare-marketplace/b2b/programs
+    methods field: handler-defined
+    file: b2b/programs/route.ts
+    imports: { handlePrograms } FROM @/angelcare-marketplace/b2b-verticals/api-handlers
+37. /api/angelcare-marketplace/b2b/programs/[programId]/transition
+    methods field: POST
+    file: b2b/programs/[programId]/transition/route.ts
+    imports: { handleProgramTransition } FROM @/angelcare-marketplace/b2b-verticals/api-handlers
+38. /api/angelcare-marketplace/b2b/public/diagnostics
+    methods field: handler-defined
+    file: b2b/public/diagnostics/route.ts
+    imports: { handlePublicDiagnostic } FROM @/angelcare-marketplace/b2b-verticals/api-handlers
+39. /api/angelcare-marketplace/b2b/summary
+    methods field: handler-defined
+    file: b2b/summary/route.ts
+    imports: { handleB2BSummary } FROM @/angelcare-marketplace/b2b-verticals/api-handlers
+40. /api/angelcare-marketplace/partner-os/plans
+    methods field: handler-defined
+    file: partner-os/plans/route.ts
+    imports: { handlePlans } FROM @/angelcare-marketplace/partner-os/api-handlers
+41. /api/angelcare-marketplace/partner-os/subscriptions
+    methods field: handler-defined
+    file: partner-os/subscriptions/route.ts
+    imports: { handleSubscriptions } FROM @/angelcare-marketplace/partner-os/api-handlers
+42. /api/angelcare-marketplace/partner-os/summary
+    methods field: handler-defined
+    file: partner-os/summary/route.ts
+    imports: { handlePartnerSummary } FROM @/angelcare-marketplace/partner-os/api-handlers
+43. /api/angelcare-marketplace/partner-os/tenants
+    methods field: handler-defined
+    file: partner-os/tenants/route.ts
+    imports: { handleTenants } FROM @/angelcare-marketplace/partner-os/api-handlers
+44. /api/angelcare-marketplace/partner-os/tenants/[tenantId]/modules
+    methods field: POST
+    file: partner-os/tenants/[tenantId]/modules/route.ts
+    imports: { handleTenantModuleUpsert } FROM @/angelcare-marketplace/partner-os/api-handlers
+45. /api/angelcare-marketplace/partner-os/tenants/[tenantId]/onboarding/[checkId]
+    methods field: POST
+    file: partner-os/tenants/[tenantId]/onboarding/[checkId]/route.ts
+    imports: { handleTenantOnboardingCheck } FROM @/angelcare-marketplace/partner-os/api-handlers
+46. /api/angelcare-marketplace/partner-os/tenants/[tenantId]/subscription
+    methods field: POST
+    file: partner-os/tenants/[tenantId]/subscription/route.ts
+    imports: { handleTenantSubscriptionAssign } FROM @/angelcare-marketplace/partner-os/api-handlers
+47. /api/angelcare-marketplace/partner-os/tenants/[tenantId]/transition
+    methods field: POST
+    file: partner-os/tenants/[tenantId]/transition/route.ts
+    imports: { handleTenantTransition } FROM @/angelcare-marketplace/partner-os/api-handlers
+48. /api/angelcare-marketplace/partner-os/tenants/[tenantId]/workspace
+    methods field: GET
+    file: partner-os/tenants/[tenantId]/workspace/route.ts
+    imports: { handleTenantWorkspace } FROM @/angelcare-marketplace/partner-os/api-handlers
+
+======================================================================
+20. PERMISSION AUTHORITY — EXACT INVENTORY
+======================================================================
+
+- marketplace.partner_os.public.view | View | sensitive=False | Partner OS
+- marketplace.partner_os.admin.view | View | sensitive=False | Partner OS
+- marketplace.partner_os.tenants.create | Create | sensitive=True | Partner OS
+- marketplace.partner_os.tenants.manage | Manage | sensitive=True | Partner OS
+- marketplace.partner_os.plans.view | View | sensitive=False | Partner OS
+- marketplace.partner_os.plans.manage | Manage | sensitive=True | Partner OS
+- marketplace.partner_os.subscriptions.view | View | sensitive=False | Partner OS
+- marketplace.partner_os.subscriptions.manage | Manage | sensitive=True | Partner OS
+- marketplace.partner_os.modules.manage | Manage | sensitive=True | Partner OS
+- marketplace.partner_os.usage.view | View | sensitive=False | Partner OS
+- marketplace.partner_os.usage.manage | Manage | sensitive=True | Partner OS
+- marketplace.partner_os.onboarding.manage | Manage | sensitive=True | Partner OS
+- marketplace.partner_os.tenant.access | Access | sensitive=False | Partner OS
+- marketplace.partner_os.tenant.members.manage | Manage | sensitive=True | Partner OS
+- marketplace.partner_os.export | Export | sensitive=True | Partner OS
+- marketplace.b2b.view | Consulter | sensitive=False | B2B Vertical Universe
+- marketplace.b2b.create | Gérer | sensitive=True | B2B Vertical Universe
+- marketplace.b2b.manage | Gérer | sensitive=True | B2B Vertical Universe
+- marketplace.b2b.export | Exporter | sensitive=True | B2B Vertical Universe
+- marketplace.b2b.organizations.merge | Gérer | sensitive=True | B2B Vertical Universe
+- marketplace.b2b.organizations.assign | Gérer | sensitive=True | B2B Vertical Universe
+- marketplace.b2b.diagnostics.view | Consulter | sensitive=False | B2B Vertical Universe
+- marketplace.b2b.diagnostics.manage | Gérer | sensitive=True | B2B Vertical Universe
+- marketplace.b2b.diagnostics.review | Approuver | sensitive=True | B2B Vertical Universe
+- marketplace.b2b.diagnostics.qualify | Approuver | sensitive=True | B2B Vertical Universe
+- marketplace.b2b.programs.view | Consulter | sensitive=False | B2B Vertical Universe
+- marketplace.b2b.programs.manage | Gérer | sensitive=True | B2B Vertical Universe
+- marketplace.b2b.programs.approve | Approuver | sensitive=True | B2B Vertical Universe
+- marketplace.b2b.programs.activate | Gérer | sensitive=True | B2B Vertical Universe
+- marketplace.b2b.programs.pause | Gérer | sensitive=True | B2B Vertical Universe
+- marketplace.b2b.establishments.view | Consulter | sensitive=False | B2B Vertical Universe
+- marketplace.b2b.establishments.manage | Gérer | sensitive=True | B2B Vertical Universe
+- marketplace.b2b.establishments.quality_review | Approuver | sensitive=True | B2B Vertical Universe
+- marketplace.b2b.hospitality.view | Consulter | sensitive=False | B2B Vertical Universe
+- marketplace.b2b.hospitality.manage | Gérer | sensitive=True | B2B Vertical Universe
+- marketplace.b2b.hospitality.approve | Approuver | sensitive=True | B2B Vertical Universe
+- marketplace.b2b.health_partners.view | Consulter | sensitive=False | B2B Vertical Universe
+- marketplace.b2b.health_partners.manage | Gérer | sensitive=True | B2B Vertical Universe
+- marketplace.b2b.health_partners.compliance_review | Approuver | sensitive=True | B2B Vertical Universe
+- marketplace.b2b.health_partners.sensitive_approve | Approuver | sensitive=True | B2B Vertical Universe
+- marketplace.b2b.corporates.view | Consulter | sensitive=False | B2B Vertical Universe
+- marketplace.b2b.corporates.manage | Gérer | sensitive=True | B2B Vertical Universe
+- marketplace.b2b.corporates.eligibility_manage | Gérer | sensitive=True | B2B Vertical Universe
+- marketplace.b2b.corporates.impact_view | Consulter | sensitive=False | B2B Vertical Universe
+- marketplace.b2b.conversions.manage | Gérer | sensitive=True | B2B Vertical Universe
+- marketplace.b2b.readiness.review | Approuver | sensitive=True | B2B Vertical Universe
+- marketplace.b2b.reports.view | Consulter | sensitive=False | B2B Vertical Universe
+- marketplace.academy.view | Consulter | sensitive=False | Academy & Certification
+- marketplace.academy.manage | Gérer | sensitive=True | Academy & Certification
+- marketplace.academy.catalog.manage | Gérer | sensitive=True | Academy & Certification
+- marketplace.academy.cohorts.manage | Gérer | sensitive=True | Academy & Certification
+- marketplace.academy.sessions.manage | Gérer | sensitive=True | Academy & Certification
+- marketplace.academy.attendance.manage | Gérer | sensitive=True | Academy & Certification
+- marketplace.academy.assessments.manage | Gérer | sensitive=True | Academy & Certification
+- marketplace.academy.certificates.issue | Émettre | sensitive=True | Academy & Certification
+- marketplace.academy.certificates.suspend | Suspendre | sensitive=True | Academy & Certification
+- marketplace.academy.certificates.revoke | Révoquer | sensitive=True | Academy & Certification
+- marketplace.academy.b2b.manage | Gérer | sensitive=True | Academy & Certification
+- marketplace.academy.trainer.access | Accéder | sensitive=False | Academy & Certification
+- marketplace.academy.learner.access | Accéder | sensitive=False | Academy & Certification
+
+======================================================================
+21. EXISTING DATABASE AUTHORITY — READ ONLY REFERENCE
+======================================================================
+
+These tables already exist in the source/migration authority. They are listed
+to help Codex understand object lineage. Batch 09 must NOT create or alter them.
+
+- angelcare_marketplace_academy_assessment_results | migration authority: 20260801130000_angelcare_marketplace_ultra_04_mz16_academy.sql
+- angelcare_marketplace_academy_assessments | migration authority: 20260801130000_angelcare_marketplace_ultra_04_mz16_academy.sql
+- angelcare_marketplace_academy_attendance_records | migration authority: 20260801130000_angelcare_marketplace_ultra_04_mz16_academy.sql
+- angelcare_marketplace_academy_b2b_training_orders | migration authority: 20260801130000_angelcare_marketplace_ultra_04_mz16_academy.sql
+- angelcare_marketplace_academy_certificate_events | migration authority: 20260801130000_angelcare_marketplace_ultra_04_mz16_academy.sql
+- angelcare_marketplace_academy_certificates | migration authority: 20260801130000_angelcare_marketplace_ultra_04_mz16_academy.sql
+- angelcare_marketplace_academy_cohorts | migration authority: 20260801130000_angelcare_marketplace_ultra_04_mz16_academy.sql
+- angelcare_marketplace_academy_competencies | migration authority: 20260801130000_angelcare_marketplace_ultra_04_mz16_academy.sql
+- angelcare_marketplace_academy_course_competencies | migration authority: 20260801130000_angelcare_marketplace_ultra_04_mz16_academy.sql
+- angelcare_marketplace_academy_course_modules | migration authority: 20260801130000_angelcare_marketplace_ultra_04_mz16_academy.sql
+- angelcare_marketplace_academy_courses | migration authority: 20260801130000_angelcare_marketplace_ultra_04_mz16_academy.sql
+- angelcare_marketplace_academy_enrollments | migration authority: 20260801130000_angelcare_marketplace_ultra_04_mz16_academy.sql
+- angelcare_marketplace_academy_programs | migration authority: 20260801130000_angelcare_marketplace_ultra_04_mz16_academy.sql
+- angelcare_marketplace_academy_remediations | migration authority: 20260810050000_angelcare_marketplace_ultra_mz2_final_production_authority.sql
+- angelcare_marketplace_academy_sessions | migration authority: 20260801130000_angelcare_marketplace_ultra_04_mz16_academy.sql
+- angelcare_marketplace_b2b_contacts | migration authority: 20260801090000_angelcare_marketplace_ultra_03_mz12_establishments.sql
+- angelcare_marketplace_b2b_conversions | migration authority: 20260801090000_angelcare_marketplace_ultra_03_mz12_establishments.sql
+- angelcare_marketplace_b2b_diagnostic_answers | migration authority: 20260801090000_angelcare_marketplace_ultra_03_mz12_establishments.sql
+- angelcare_marketplace_b2b_diagnostic_sections | migration authority: 20260801090000_angelcare_marketplace_ultra_03_mz12_establishments.sql
+- angelcare_marketplace_b2b_diagnostics | migration authority: 20260801090000_angelcare_marketplace_ultra_03_mz12_establishments.sql
+- angelcare_marketplace_b2b_organization_sites | migration authority: 20260801090000_angelcare_marketplace_ultra_03_mz12_establishments.sql
+- angelcare_marketplace_b2b_organizations | migration authority: 20260801090000_angelcare_marketplace_ultra_03_mz12_establishments.sql
+- angelcare_marketplace_b2b_program_approvals | migration authority: 20260801090000_angelcare_marketplace_ultra_03_mz12_establishments.sql
+- angelcare_marketplace_b2b_program_requests | migration authority: 20260801090000_angelcare_marketplace_ultra_03_mz12_establishments.sql
+- angelcare_marketplace_b2b_program_services | migration authority: 20260801090000_angelcare_marketplace_ultra_03_mz12_establishments.sql
+- angelcare_marketplace_b2b_program_sites | migration authority: 20260801090000_angelcare_marketplace_ultra_03_mz12_establishments.sql
+- angelcare_marketplace_b2b_programs | migration authority: 20260801090000_angelcare_marketplace_ultra_03_mz12_establishments.sql
+- angelcare_marketplace_b2b_public_requests | migration authority: 20260801090000_angelcare_marketplace_ultra_03_mz12_establishments.sql
+- angelcare_marketplace_b2b_readiness_checks | migration authority: 20260801090000_angelcare_marketplace_ultra_03_mz12_establishments.sql
+- angelcare_marketplace_b2b_recommendations | migration authority: 20260801090000_angelcare_marketplace_ultra_03_mz12_establishments.sql
+- angelcare_marketplace_b2b_reports | migration authority: 20260801090000_angelcare_marketplace_ultra_03_mz12_establishments.sql
+- angelcare_marketplace_corporate_benefit_programs | migration authority: 20260801120000_angelcare_marketplace_ultra_03_mz15_corporate_hr.sql
+- angelcare_marketplace_corporate_eligibility_rules | migration authority: 20260801120000_angelcare_marketplace_ultra_03_mz15_corporate_hr.sql
+- angelcare_marketplace_corporate_employee_eligibility | migration authority: 20260801120000_angelcare_marketplace_ultra_03_mz15_corporate_hr.sql
+- angelcare_marketplace_corporate_impact_snapshots | migration authority: 20260801120000_angelcare_marketplace_ultra_03_mz15_corporate_hr.sql
+- angelcare_marketplace_corporate_profiles | migration authority: 20260801120000_angelcare_marketplace_ultra_03_mz15_corporate_hr.sql
+- angelcare_marketplace_corporate_quota_allocations | migration authority: 20260801120000_angelcare_marketplace_ultra_03_mz15_corporate_hr.sql
+- angelcare_marketplace_corporate_usage_records | migration authority: 20260801120000_angelcare_marketplace_ultra_03_mz15_corporate_hr.sql
+- angelcare_marketplace_establishment_academy_needs | migration authority: 20260801090000_angelcare_marketplace_ultra_03_mz12_establishments.sql
+- angelcare_marketplace_establishment_profiles | migration authority: 20260801090000_angelcare_marketplace_ultra_03_mz12_establishments.sql
+- angelcare_marketplace_establishment_quality_checks | migration authority: 20260801090000_angelcare_marketplace_ultra_03_mz12_establishments.sql
+- angelcare_marketplace_health_consent_requirements | migration authority: 20260801110000_angelcare_marketplace_ultra_03_mz14_health_adjacent.sql
+- angelcare_marketplace_health_incident_referrals | migration authority: 20260801110000_angelcare_marketplace_ultra_03_mz14_health_adjacent.sql
+- angelcare_marketplace_health_partner_profiles | migration authority: 20260801110000_angelcare_marketplace_ultra_03_mz14_health_adjacent.sql
+- angelcare_marketplace_health_referral_protocols | migration authority: 20260801110000_angelcare_marketplace_ultra_03_mz14_health_adjacent.sql
+- angelcare_marketplace_health_support_boundaries | migration authority: 20260801110000_angelcare_marketplace_ultra_03_mz14_health_adjacent.sql
+- angelcare_marketplace_hospitality_feedback | migration authority: 20260801100000_angelcare_marketplace_ultra_03_mz13_hospitality.sql
+- angelcare_marketplace_hospitality_guest_service_rules | migration authority: 20260801100000_angelcare_marketplace_ultra_03_mz13_hospitality.sql
+- angelcare_marketplace_hospitality_programs | migration authority: 20260801100000_angelcare_marketplace_ultra_03_mz13_hospitality.sql
+- angelcare_marketplace_hospitality_properties | migration authority: 20260801100000_angelcare_marketplace_ultra_03_mz13_hospitality.sql
+- angelcare_marketplace_hospitality_seasons | migration authority: 20260801100000_angelcare_marketplace_ultra_03_mz13_hospitality.sql
+- angelcare_marketplace_partner_domains | migration authority: 20260801080000_angelcare_marketplace_ultra_02_mz11_partner_tenant_saas.sql
+- angelcare_marketplace_partner_module_activations | migration authority: 20260801080000_angelcare_marketplace_ultra_02_mz11_partner_tenant_saas.sql
+- angelcare_marketplace_partner_onboarding_checks | migration authority: 20260801080000_angelcare_marketplace_ultra_02_mz11_partner_tenant_saas.sql
+- angelcare_marketplace_partner_plan_modules | migration authority: 20260801080000_angelcare_marketplace_ultra_02_mz11_partner_tenant_saas.sql
+- angelcare_marketplace_partner_plans | migration authority: 20260801080000_angelcare_marketplace_ultra_02_mz11_partner_tenant_saas.sql
+- angelcare_marketplace_partner_subscriptions | migration authority: 20260801080000_angelcare_marketplace_ultra_02_mz11_partner_tenant_saas.sql
+- angelcare_marketplace_partner_tenant_audit_events | migration authority: 20260801080000_angelcare_marketplace_ultra_02_mz11_partner_tenant_saas.sql
+- angelcare_marketplace_partner_tenant_members | migration authority: 20260801080000_angelcare_marketplace_ultra_02_mz11_partner_tenant_saas.sql
+- angelcare_marketplace_partner_tenants | migration authority: 20260801080000_angelcare_marketplace_ultra_02_mz11_partner_tenant_saas.sql
+- angelcare_marketplace_partner_usage_counters | migration authority: 20260801080000_angelcare_marketplace_ultra_02_mz11_partner_tenant_saas.sql
+- angelcare_marketplace_partner_usage_limits | migration authority: 20260801080000_angelcare_marketplace_ultra_02_mz11_partner_tenant_saas.sql
+- angelcare_marketplace_territory_health_events | migration authority: 20260731040000_angelcare_marketplace_mega_zip_02_territory_os.sql
+
+======================================================================
+22. FINAL FILE / SCREEN CONTRACT
+======================================================================
+
+01_ACADEMY_COMMAND_CENTER.png
+02_ACADEMY_PROGRAMS_COURSES_CATALOG_STUDIO.png
+03_ACADEMY_COHORTS_SESSIONS_TRAINER_CONTROL.png
+04_ACADEMY_EVIDENCE_ASSESSMENT_CERTIFICATION_AUTHORITY.png
+05_B2B_PARTNERS_EXECUTIVE_COMMAND.png
+06_ORGANIZATION_360_PARTNER_OS_TENANT_LIFECYCLE.png
+07_CORPORATE_FAMILY_BENEFITS_ELIGIBILITY_USAGE_IMPACT.png
+08_ESTABLISHMENTS_TRANSFORMATION_DIAGNOSTICS_QUALITY.png
+09_HEALTH_PARTNERS_NON_MEDICAL_COMPLIANCE_REFERRALS.png
+10_HOSPITALITY_PROPERTIES_PROGRAMS_READINESS_REPORTS.png
+BATCH_09_SOURCE_MAPPING.txt
+
+======================================================================
+23. DEFINITION OF DONE FOR BATCH 09 IMPLEMENTATION
+======================================================================
+
+Batch 09 is implementation-complete only when:
+  - Academy screens expose the real competence/evidence/certification authority
+  - B2B screens expose the real vertical / organization / Partner OS authority
+  - every Batch-09 canonical action is wired to real existing backend authority
+  - all sensitive actions remain permission-gated
+  - Academy and B2B remain distinct primary workspaces in the global sidebar
+  - technical deep tools do not pollute the global sidebar
+  - no known Batch-09 canonical link produces a 404
+  - no fake data is persisted
+  - no SQL/migration/backend replacement is introduced
+  - TypeScript and relevant Marketplace verifiers pass
+  - public Academy / corporate / establishment / health / hospitality experiences
+    remain intact where touched by preview links
+
+END OF BATCH 09 SOURCE / BACKEND MAPPING AUTHORITY

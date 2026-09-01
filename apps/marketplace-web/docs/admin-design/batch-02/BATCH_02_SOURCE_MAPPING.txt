@@ -1,0 +1,642 @@
+ANGELCARE MARKETPLACE ADMIN — BATCH 02
+CATEGORIES & COLLECTIONS / CATEGORY STOREFRONT / CATEGORY-NATIVE
+SOURCE/BACKEND MAPPING — 2026-08-27
+
+STATUS
+------
+These 10 PNGs are final frontend projections grounded in the current uploaded
+ANGELCARE_MARKETPLACE_WEB_20260826-221837.zip source.
+
+VISUAL RULE
+-----------
+The PNGs are the approved UI/UX projection authority once placed by the user
+inside admin-design/.
+
+BUSINESS/TECHNICAL RULE
+-----------------------
+Existing Marketplace APIs, repositories, permissions and lifecycle authority
+remain canonical. Do not invent backend functionality to imitate a visual.
+
+NO SQL / NO MIGRATIONS / NO NEW TABLES / NO PARALLEL CATEGORY ENGINE.
+
+Illustrative records and numbers visible in PNGs are UI sample content only.
+Controls, states, route families and workflow dimensions are source-confirmed.
+
+======================================================================
+SOURCE COMPONENTS VERIFIED
+======================================================================
+
+angelcare-marketplace/commerce-studio/components/CategoryStudio.tsx
+angelcare-marketplace/commerce-studio/components/CollectionStudio.tsx
+angelcare-marketplace/commerce-studio/admin-pages.tsx
+angelcare-marketplace/category-native/components/SchemaArchitectureStudio.tsx
+angelcare-marketplace/category-native/components/ArchetypeStudio.tsx
+angelcare-marketplace/category-native/components/CsvTemplateFactory.tsx
+angelcare-marketplace/category-native/components/CsvImportStudio.tsx
+angelcare-marketplace/category-native/admin-pages.tsx
+angelcare-marketplace/permissions/permission-catalog.ts
+
+======================================================================
+PERMISSIONS VERIFIED
+======================================================================
+
+marketplace.catalog.view
+marketplace.catalog.manage
+marketplace.catalog.review
+marketplace.catalog.publish
+marketplace.categories.manage
+marketplace.merchandising.view
+marketplace.merchandising.manage
+marketplace.publication.manage
+marketplace.seo.manage
+marketplace.commerce.export
+marketplace.commerce.import
+marketplace.experience_schema.view
+marketplace.experience_schema.manage
+marketplace.archetype.view
+marketplace.archetype.manage
+marketplace.category_native_import.view
+marketplace.category_native_import.manage
+
+Page-level current guards verified:
+- CategoryPage -> marketplace.catalog.view
+- MerchandisingPage -> marketplace.merchandising.view
+- SchemaArchitecturePage -> marketplace.experience_schema.view
+- ArchetypePage -> marketplace.experience_schema.view
+- CsvTemplateFactoryPage -> marketplace.category_native_import.view
+- CsvImportPage -> marketplace.category_native_import.view
+
+======================================================================
+CURRENT ROUTES ACCOUNTED FOR IN BATCH 02
+======================================================================
+
+/angelcare-marketplace/admin/catalog/categories
+/angelcare-marketplace/admin/catalog/categories/new
+/angelcare-marketplace/admin/catalog/categories/[categoryId]
+/angelcare-marketplace/admin/catalog/categories/[categoryId]/storefront
+/angelcare-marketplace/admin/catalog/categories/[categoryId]/products
+/angelcare-marketplace/admin/catalog/categories/[categoryId]/seo
+/angelcare-marketplace/admin/catalog/collections
+/angelcare-marketplace/admin/merchandising/collections
+/angelcare-marketplace/admin/commerce-factory/categories
+/angelcare-marketplace/admin/commerce-factory/collections
+/angelcare-marketplace/admin/category-native
+/angelcare-marketplace/admin/category-native/schemas
+/angelcare-marketplace/admin/category-native/archetypes
+/angelcare-marketplace/admin/category-native/archetypes/[schemaKey]
+/angelcare-marketplace/admin/category-native/template-factory
+/angelcare-marketplace/admin/category-native/imports
+
+DEFERRED BUT NOT FORGOTTEN:
+/angelcare-marketplace/admin/category-native/homepage-designer
+Reason: source component HomepageDesigner2 controls global Homepage composition
+(desktop/tablet/mobile, FR/EN/AR, category-aware blocks, ordering, visibility,
+publishing) and belongs in the dedicated Storefront/Homepage design batch rather
+than Category administration.
+
+======================================================================
+CORE APIs / AUTHORITIES VERIFIED
+======================================================================
+
+Generic Commerce resource authority:
+/api/angelcare-marketplace/admin/commerce/[resource]
+/api/angelcare-marketplace/admin/commerce/[resource]/[id]
+/api/angelcare-marketplace/admin/commerce/[resource]/[id]/[action]
+
+Category resources used by CategoryStudio:
+resource: catalog-categories
+PATCH /api/angelcare-marketplace/admin/commerce/catalog-categories/[id]
+POST  /api/angelcare-marketplace/admin/commerce/catalog-categories/[id]/assign-products
+POST  /api/angelcare-marketplace/admin/catalog/categories/reorder
+
+Current direct category API family also exists:
+/api/angelcare-marketplace/admin/catalog/categories
+/api/angelcare-marketplace/admin/catalog/categories/[categoryId]
+/api/angelcare-marketplace/admin/catalog/categories/[categoryId]/items
+/api/angelcare-marketplace/admin/catalog/categories/reorder
+
+Collections:
+resource: homepage-collections
+POST /api/angelcare-marketplace/admin/commerce/homepage-collections/[id]/assign-items
+publish / unpublish / duplicate through generic Commerce resource action route
+/api/angelcare-marketplace/admin/merchandising/collections
+/api/angelcare-marketplace/admin/homepage/collections
+
+Category-Native Schema:
+/api/angelcare-marketplace/admin/category-native/schemas
+PATCH /api/angelcare-marketplace/admin/category-native/schemas/[schemaKey]
+/api/angelcare-marketplace/admin/category-native/schemas/[schemaKey]/[action]
+PATCH /api/angelcare-marketplace/admin/category-native/schemas/[schemaKey]/fields/[fieldId]
+POST  /api/angelcare-marketplace/admin/category-native/schemas/[schemaKey]/fields/reorder
+/api/angelcare-marketplace/admin/category-native/schemas/[schemaKey]/template
+
+Category-Native object creation from ArchetypeStudio:
+POST /api/angelcare-marketplace/admin/commerce/catalog-items
+
+Category-Native Imports:
+POST /api/angelcare-marketplace/admin/category-native/imports
+GET  /api/angelcare-marketplace/admin/category-native/imports/[jobId]
+POST /api/angelcare-marketplace/admin/category-native/imports/[jobId]/execute
+POST /api/angelcare-marketplace/admin/category-native/imports/[jobId]/rollback
+
+======================================================================
+01 — CATEGORIES REGISTRY & ARCHITECTURE
+======================================================================
+
+PNG:
+01_CATEGORIES_REGISTRY_ARCHITECTURE.png
+
+FINAL HOME:
+Categories & Collections -> Categories
+
+CURRENT SOURCE:
+CategoryStudio
+CategoryPage
+
+CURRENT ROUTES:
+/admin/catalog/categories
+/admin/catalog/categories/new
+/admin/catalog/categories/[categoryId]
+/admin/commerce-factory/categories (parallel/advanced current family)
+
+SOURCE-CONFIRMED CAPABILITIES:
+- FR category registry
+- search by title + category_key + slug
+- product/item_count visibility
+- category status
+- hierarchy/parent relationship
+- drag/drop category ordering
+- immediate canonical reorder persistence
+- create category
+- open/edit category
+
+FINAL DISPOSITION:
+/admin/catalog/categories                       CANONICAL
+/admin/catalog/categories/new                   MERGE_INTO_CATEGORY_STUDIO
+/admin/catalog/categories/[categoryId]          MERGE_INTO_CATEGORY_DOSSIER
+/admin/commerce-factory/categories              ADVANCED/COMPATIBILITY; do not expose as duplicate primary UI
+
+======================================================================
+02 — CATEGORY 360 / IDENTITY & PRESENTATION
+======================================================================
+
+PNG:
+02_CATEGORY_360_IDENTITY_PRESENTATION.png
+
+FINAL HOME:
+Categories & Collections -> Category 360 -> Identity
+
+SOURCE-CONFIRMED FIELDS:
+- locale: fr / en / ar
+- status: draft / published / paused / archived
+- title
+- short_description / Introduction storefront
+- category_key
+- slug
+- parent_category_id
+- visual_theme:
+  navy, warm, blue, red, gold, health, corporate, saas, quality, professional
+- storefront_template:
+  mixed
+  family-concierge
+  home-service-booking
+  developmental-discovery
+  product-commerce
+  academy-credential
+  institutional-transformation
+  hospitality-programme
+  health-adjacent
+  corporate-benefits
+  saas-commerce
+  quality-assessment
+  professional-marketplace
+- cover_asset_url from Media Library
+- mobile_cover_asset_url from Media Library / derived fallback
+- icon_key
+- sort_order
+- visible=true in current studio form
+
+SOURCE-CONFIRMED ACTIONS:
+- create
+- save/update
+- publish immediately
+- open real public storefront
+
+======================================================================
+03 — CATEGORY STOREFRONT STUDIO / HERO & PUBLIC CONTENT
+======================================================================
+
+PNG:
+03_CATEGORY_STOREFRONT_HERO_PUBLIC_CONTENT.png
+
+FINAL HOME:
+Categories & Collections -> Category 360 -> Storefront
+
+CURRENT SOURCE:
+CategoryExperienceEditor inside CategoryStudio
+
+SOURCE-CONFIRMED CONTENT:
+hero_content:
+- eyebrow
+- title
+- lead
+- cta_label
+- cta_href
+
+experience_config:
+- search_placeholder
+- featured_title
+- inventory_title
+- editorial_title
+- editorial_body
+- closing_title
+- closing_lead
+- closing_cta_label
+- closing_cta_href
+
+storefront_sections generated by source include:
+- editorial
+- closing CTA
+
+SOURCE ACTION:
+PATCH existing catalog-category resource.
+
+DOWNSTREAM EFFECT:
+Configured data is explicitly described in source as ready to be consumed by
+the frontend without TypeScript modification.
+
+======================================================================
+04 — CATEGORY DISCOVERY & SEO STUDIO
+======================================================================
+
+PNG:
+04_CATEGORY_DISCOVERY_SEO_STUDIO.png
+
+FINAL HOME:
+Categories & Collections -> Category 360 -> Discovery & SEO
+
+SOURCE-CONFIRMED CONTROLS:
+filter_config:
+- filter_keys
+- sort_options
+- show_featured
+- show_collections
+
+Default source sort options:
+- recommended
+- newest
+- price_asc
+- price_desc
+
+SEO metadata:
+- title_fr
+- description_fr
+
+SOURCE DOCTRINE:
+Product attributes continue to feed real facets. Admin controls which filters
+and sort options are exposed; do not invent an independent facet engine.
+
+NO UNSUPPORTED FEATURE:
+No AI SEO scoring is represented.
+
+======================================================================
+05 — CATEGORY PRODUCT COMPOSITION & LIVE PREVIEW
+======================================================================
+
+PNG:
+05_CATEGORY_PRODUCT_COMPOSITION_LIVE_PREVIEW.png
+
+FINAL HOME:
+Categories & Collections -> Category 360 -> Products / Preview
+
+SOURCE-CONFIRMED PRODUCT SEARCH:
+name_fr
+public_reference
+sku
+
+SOURCE-CONFIRMED ACTIONS:
+- checkbox assignment
+- removal
+- selected item order
+- drag reorder of assigned items
+- synchronize item_ids with canonical catalogue relation
+
+API:
+POST /api/angelcare-marketplace/admin/commerce/catalog-categories/[id]/assign-products
+
+REAL PREVIEW:
+CategoryStudio current source renders an iframe using:
+/angelcare-marketplace/fr/marketplace/category/[category_key or slug]
+
+FINAL DOCTRINE:
+Preview must remain tied to the real public renderer rather than a fake static
+preview component.
+
+======================================================================
+06 — COLLECTIONS STUDIO
+======================================================================
+
+PNG:
+06_COLLECTIONS_STUDIO.png
+
+FINAL HOME:
+Categories & Collections -> Collections
+
+CURRENT SOURCE:
+CollectionStudio
+MerchandisingPage({ mode: 'collections' })
+
+CURRENT ROUTE:
+/admin/merchandising/collections
+
+COMPATIBILITY REDIRECT:
+/admin/catalog/collections -> /admin/merchandising/collections
+
+SOURCE-CONFIRMED FIELDS:
+- title
+- subtitle
+- description
+- collection_key
+- locale: fr / en / ar
+- selection_method: editorial / rules / hybrid
+- layout_variant:
+  service_cards
+  product_cards
+  academy_cards
+  b2b_cards
+  mixed_cards
+  logos
+  editorial
+- cover_media_asset_id from Media Library
+- item_limit
+- sort_order
+- audience: all / family / organization / professional
+- status: draft / scheduled / active / paused / archived
+- starts_at
+- ends_at
+
+SOURCE-CONFIRMED ACTIONS:
+- create
+- save/update
+- publish
+- unpublish
+- duplicate
+- search products
+- checkbox item assignment
+- drag item ordering
+- remove item
+- synchronize items
+
+ASSIGN API:
+POST /api/angelcare-marketplace/admin/commerce/homepage-collections/[id]/assign-items
+
+FINAL DISPOSITION:
+/admin/merchandising/collections               CANONICAL FUNCTION
+/admin/catalog/collections                     COMPATIBILITY_REDIRECT
+/admin/commerce-factory/collections            ADVANCED/COMPATIBILITY; no duplicate primary UI
+
+======================================================================
+07 — CATEGORY-NATIVE SCHEMA ARCHITECTURE
+======================================================================
+
+PNG:
+07_CATEGORY_NATIVE_SCHEMA_ARCHITECTURE.png
+
+FINAL HOME:
+Categories & Collections -> Advanced -> Experience Schemas
+
+CURRENT ROUTE:
+/admin/category-native/schemas
+
+SOURCE-CONFIRMED SCHEMA REGISTRY DIMENSIONS:
+- schema_key
+- name_fr
+- description_fr
+- segment_key
+- vertical_key
+- category_key
+- version
+- status
+- fields
+
+SOURCE-CONFIRMED FIELD MATRIX TOGGLES:
+- admin_visible
+- csv_enabled
+- public_visible
+- filter_enabled
+- comparison_enabled
+- operations_visible
+
+SOURCE-CONFIRMED FIELD BEHAVIOR:
+- drag reorder
+- field section
+- field key
+- field type
+- required
+
+SOURCE-CONFIRMED TEMPLATE AUTHORITIES:
+- admin_studio_template
+- public_experience_template
+- conversion_template
+- operations_handover_type
+- homepage_card_template
+- pricing_modes
+
+SOURCE-CONFIRMED ACTIONS:
+- patch schema
+- patch field
+- reorder fields
+- activate immediately
+- pause
+- open native studio
+- download exact CSV template
+
+DOCTRINE:
+One field definition governs Admin / CSV / Public / Operations rather than
+repeating logic in several modules.
+
+======================================================================
+08 — CATEGORY-NATIVE ARCHETYPE STUDIO
+======================================================================
+
+PNG:
+08_CATEGORY_NATIVE_ARCHETYPE_STUDIO.png
+
+FINAL HOME:
+Categories & Collections -> Advanced -> Archetype Studios
+
+CURRENT ROUTES:
+/admin/category-native/archetypes
+/admin/category-native/archetypes/[schemaKey]
+
+SOURCE-CONFIRMED ARCHETYPE FAMILIES DERIVED BY CURRENT CODE:
+- product
+- service
+- academy
+- b2b
+- saas
+- assessment
+
+SOURCE-CONFIRMED DYNAMIC FIELD TYPES:
+- boolean
+- textarea
+- richtext
+- allowed-values select
+- multiselect
+- list
+- territory_list
+- media_list
+- number
+- integer
+- money
+- date
+- datetime
+- time
+- text
+
+Only fields with admin_visible=true are rendered.
+Fields are grouped by section_key and ordered by sort_order.
+required flags remain authoritative.
+
+SOURCE-CONFIRMED CREATE ACTION:
+POST existing commerce/catalog-items authority with:
+- title
+- item_key/service_key/solution_key fallback
+- slug
+- kind derived from family
+- sellable_type from schema.archetype_key
+- status=draft
+- experience_schema_key
+- experience_schema_version
+- experience_configuration
+- summary
+- description
+- price_mode
+
+SOURCE-CONFIRMED CONTINUITY PANEL:
+- Public template
+- CSV schema_key.csv
+- Homepage card template
+- Operations handover type
+- search_filters
+- comparison_fields
+
+======================================================================
+09 — CSV TEMPLATE FACTORY
+======================================================================
+
+PNG:
+09_CSV_TEMPLATE_FACTORY.png
+
+FINAL HOME:
+Categories & Collections -> Advanced -> CSV Template Factory
+
+CURRENT ROUTE:
+/admin/category-native/template-factory
+
+SOURCE-CONFIRMED FILTERS:
+- segment
+- vertical
+- text search over name_fr/schema_key
+
+SOURCE-CONFIRMED TEMPLATE CONTENT:
+- version
+- schema_key.csv
+- description_fr
+- csv-enabled field count (+ system columns in current UI metric)
+- required CSV field count
+- fields with controlled allowed_values
+- column
+- type
+- required/optional
+- help_fr / label_fr
+
+DOWNLOAD API:
+/api/angelcare-marketplace/admin/category-native/schemas/[schemaKey]/template
+
+SOURCE-CONFIRMED IMPORT CONTRACT DISPLAY:
+- mandatory dry-run before execution
+- exact error by row/column
+- identical-key detection
+- create/update/upsert modes
+- history
+- data-preserving rollback
+
+======================================================================
+10 — CATEGORY-NATIVE IMPORT COMMAND
+======================================================================
+
+PNG:
+10_CATEGORY_NATIVE_IMPORT_COMMAND.png
+
+FINAL HOME:
+Categories & Collections -> Advanced -> Import Command
+
+CURRENT ROUTE:
+/admin/category-native/imports
+
+SOURCE-CONFIRMED INPUTS:
+- schema_key
+- mode:
+  upsert
+  create
+  update
+  dry_run
+- CSV file
+- accept=.csv,text/csv
+- UI states 20 MB maximum
+
+SOURCE-CONFIRMED FIRST STAGE:
+POST /api/angelcare-marketplace/admin/category-native/imports
+returns a dry-run job.
+Current UI message explicitly states no commercial data was modified.
+
+SOURCE-CONFIRMED RESULT METRICS:
+- total_rows
+- valid_rows
+- invalid_rows
+- imported_rows + updated_rows
+
+SOURCE-CONFIRMED ROW DETAIL:
+- row_number
+- identity_key
+- errors[]
+- warnings[]
+- row status
+
+SOURCE-CONFIRMED EXECUTION:
+If mode != dry_run and job status is validated or partial:
+POST /imports/[jobId]/execute
+"Exécuter les lignes valides"
+
+SOURCE-CONFIRMED ROLLBACK:
+If job status is completed or partial:
+POST /imports/[jobId]/rollback
+"Rollback appliqué sans perte d’historique"
+
+SOURCE-CONFIRMED HISTORY:
+- source_file_name
+- valid_rows / total_rows
+- status
+- fetch complete job details when selected
+
+======================================================================
+BATCH 02 FINAL FRONTEND DOCTRINE FOR CODEX
+======================================================================
+
+1. Do not create ten disconnected technical pages simply because source routes exist.
+2. Categories Registry is the obvious human entry point.
+3. Category subroutes should converge into a coherent Category 360 / Storefront Studio
+   using tabs or stateful canonical navigation while preserving compatibility URLs.
+4. Collections remains a first-class curation application.
+5. Category-Native tools remain Advanced specialist tools; they must not be deleted
+   or reduced during simplification.
+6. Do not fold global HomepageDesigner2 into category pages. It is reserved for the
+   dedicated Storefront/Homepage finalization batch.
+7. All buttons in the PNGs must map to an existing source-confirmed action.
+8. If backend inspection contradicts a visual sample value, backend truth wins.
+9. Implement loading, empty, error, permission-denied, validation, save failure and
+   unsaved states even when not all are visible in the static PNG.
+10. No SQL, no migrations, no parallel category/collection/schema/import engines.
+
+END BATCH 02 SOURCE MAPPING

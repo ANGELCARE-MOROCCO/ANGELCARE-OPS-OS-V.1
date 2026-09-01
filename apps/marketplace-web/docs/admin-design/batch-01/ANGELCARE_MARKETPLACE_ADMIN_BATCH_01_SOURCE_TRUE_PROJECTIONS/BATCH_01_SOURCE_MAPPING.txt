@@ -1,0 +1,63 @@
+ANGELCARE MARKETPLACE ADMIN — BATCH 01 SOURCE MAPPING
+
+01 Admin Home / Command Center
+Current route: /angelcare-marketplace/admin
+Source component: OperatorExcellenceCockpit
+Backend snapshots: enterpriseControlSnapshot + frontendControlSnapshot + ADMIN_WORKSPACE_REGISTRY
+
+02 Products & Services Registry
+Current route: /angelcare-marketplace/admin/catalog/items
+Source component: CatalogRegistryStudio
+Backend data: commerceStudioData.catalogItems
+Real filters today: query, all, incomplete, published
+Final projection adds enterprise table UX but keeps existing product fields/actions.
+
+03 Add Product / Service
+Current route: /angelcare-marketplace/admin/catalog/items/new
+Source component: ProductStudio initial tab content
+Supported kind: product, kit, service, training, audit, saas_module
+Supported sellable types include physical_product, one_time_service, recurring_service, family_service, development_activity, montessori_programme, academy_programme, course, cohort, b2b_solution, establishment_programme, hospitality_programme, health_adjacent_programme, corporate_benefit, partner_os_plan, saas_add_on, quality_assessment, audit, bundle, quote_only_solution.
+
+04 Product 360 Overview
+Current route: /angelcare-marketplace/admin/catalog/items/[itemId] and /overview
+Source component: ProductStudio tab overview
+Readiness/counts: categories, variants, media, availability + Product readiness dimensions.
+
+05 Content & Media
+Current routes: /content and /media
+Real content fields: kind, sellable_type, SKU, name FR/EN/AR, item_key, slug, summaries and descriptions FR/EN/AR.
+Real media authority: assigned catalog media + Media Library assets.
+
+06 Pricing & Commercial
+Current routes: /pricing and /commercial
+Real price modes: fixed, starting_from, quote_only, subscription.
+Real Finance binding: price rules + price_book_id + pricing_model + unit label.
+Commercial metadata: promise, highlights, inclusions, exclusions, eligibility, preparation, cancellation copy, after purchase.
+
+07 Availability & Territories
+Current routes: /availability and /territories
+Availability states: available, unavailable, configuration_required, out_of_stock, territory_restricted.
+Real fields: territory_id, stock_quantity, capacity_remaining.
+Territory config: coverage mode, territory codes, fallback behavior, delivery radius, customer message.
+
+08 Fulfillment & Sourcing
+Current routes: /fulfillment and /sourcing
+Fulfillment modes: angelcare_internal, provider, vendor, academy, digital, shipment, hybrid.
+Capacity models: unlimited, stock, slots, provider_capacity, cohort_capacity.
+Sourcing: internal, provider_pool, vendor, academy_trainer, mixed.
+Strategies: manual, best_available, territory_first, quality_first, cost_first.
+
+09 Trust / Merchandising / SEO
+Current routes: /trust, /merchandising, /seo
+Trust config: trust_headline, certifications, guarantees, safety_information, provider_requirements, proof_urls.
+Merchandising: badge, priority, card_variant, featured_copy, seasonal_label.
+SEO FR/EN/AR, canonical/social metadata; discovery attributes age_range, duration, format, language, keywords, filter_tags.
+
+10 Preview / Publication / History
+Current routes: /preview, /publication, /history
+Preview uses actual public route iframe.
+Publish/unpublish is real immediate action.
+Published products feed Catalog Discovery and category storefronts without deployment.
+History uses Commerce/publication events.
+
+NOTE: These are final UI projections grounded in current source authority, not assertions that every external runtime/provider is certified live.

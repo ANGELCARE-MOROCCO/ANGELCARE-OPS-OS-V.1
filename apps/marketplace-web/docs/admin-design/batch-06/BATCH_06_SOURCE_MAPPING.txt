@@ -1,0 +1,1727 @@
+ANGELCARE MARKETPLACE ADMIN — BATCH 06 FINAL
+MARKETING & PROMOTIONS / GROWTH / LIVE EXPERIENCE / PROMOTIONS / MERCHANDISING / SEGMENTS / DISCOVERY / RECOVERY / EXPERIMENTS
+SOURCE/BACKEND + CODEX IMPLEMENTATION MAPPING — 2026-08-27
+
+STATUS
+======
+THIS FILE IS THE IMPLEMENTATION AUTHORITY FOR BATCH 06.
+
+It must be read by Codex BEFORE editing Batch 06 frontend code.
+The 10 PNGs packaged beside this file are the approved final UI/UX projection authority.
+The existing Marketplace backend/API/repository/permission/lifecycle code remains the business and technical authority.
+
+THIS FINAL SET SUPERSEDES ALL EARLIER BATCH 06 PREVIEW IMAGES OR IMAGE-ONLY OUTPUTS.
+
+PROJECT
+-------
+~/Desktop/angelcare-platform/apps/marketplace-web
+
+SOURCE BASELINE INSPECTED
+-------------------------
+ANGELCARE_MARKETPLACE_WEB_20260826-221837.zip
+
+STRICT PRODUCT
+--------------
+AngelCare Marketplace only.
+
+NO SQL.
+NO migrations.
+NO new tables.
+NO replacement auth/session authority.
+NO new Growth engine.
+NO new Promotion engine.
+NO new Live Experience engine.
+NO new Segmentation engine.
+NO new Discovery engine.
+NO new Merchandising engine.
+NO fake ROI / ROAS / CAC / churn / revenue attribution.
+NO fake email/SMS provider integrations.
+NO fake A/B statistical significance.
+NO fake Trust authority in this batch.
+NO unrelated AngelCare products.
+NO commit / push / deploy from this design contract.
+
+----------------------------------------------------------------------
+A. IMMUTABLE ADMIN SHELL / VISUAL DOCTRINE
+----------------------------------------------------------------------
+
+Every Batch 06 screen belongs under the same permanent human-facing Marketplace Admin tree already approved in Batches 01–05:
+
+Accueil
+Commandes & réservations
+Produits & services
+Catégories & collections
+Clients
+Boutique
+Marketing & promotions   <-- ACTIVE FOR ALL BATCH 06 SCREENS
+Opérations
+Prestataires & fournisseurs
+Academy
+B2B & partenaires
+Finance
+Trust & qualité
+Analytics & intelligence
+Paramètres & gouvernance
+
+Do NOT replace the primary sidebar with technical internal route families such as:
+- Growth Experience
+- Conversion
+- Discovery Control
+- Live Experience Command
+- Performance
+- Campaigns
+- Trust Studio
+- Reports & BI
+
+Those are specialist capabilities behind the human workspace, not primary product navigation.
+
+Brand rendering in this design authority is text-only:
+ANGELCARE MARKETPLACE
+
+Do not invent, redraw or approximate the AngelCare logo.
+
+The approved visual standard remains:
+- premium white/light enterprise Marketplace Admin
+- dense but calm
+- high legibility
+- purpose-first screens
+- consistent top command bar
+- consistent sidebar
+- coherent status chips
+- operational tables, dossiers, studios and control rooms
+- no generic dashboard cloning
+- no decorative unsupported metrics
+
+Illustrative names, references, amounts and counts visible in PNGs are UI sample content only.
+Controls and operating dimensions are source-backed.
+
+----------------------------------------------------------------------
+B. BATCH 06 FINAL CANONICAL SCREEN SET
+----------------------------------------------------------------------
+
+01_MARKETING_GROWTH_COMMAND_CENTER.png
+02_PROMOTIONS_OFFERS_RULES.png
+03_LIVE_EXPERIENCE_COMMAND.png
+04_LIVE_EXPERIENCE_GOVERNANCE.png
+05_MERCHANDISING_STUDIO.png
+06_SEGMENTS_AUDIENCE_BUILDER.png
+07_SEARCH_DISCOVERY_CONTROL.png
+08_GROWTH_RECOVERY_RETENTION.png
+09_EXPERIMENTS_GOVERNANCE.png
+10_GROWTH_EXECUTION_OPPORTUNITIES.png
+
+Explicitly NOT in Batch 06:
+- Trust Studio / Trust Badges / Complaints / CAPA -> later Trust & qualité batch
+- enterprise Finance dashboards -> later Finance batch
+- enterprise Analytics & Intelligence command -> later Analytics batch
+- Homepage / Media / Navigation / Footer / Localization / Publication -> Batch 05 Boutique authority
+- Order conversion engine -> Batch 04 Commandes & réservations authority
+
+----------------------------------------------------------------------
+C. SOURCE COMPONENTS VERIFIED
+----------------------------------------------------------------------
+
+Core Growth composition:
+angelcare-marketplace/growth-experience-command/GrowthExperienceAreaPage.tsx
+angelcare-marketplace/growth-experience-command/components/GrowthExperienceCommand.tsx
+angelcare-marketplace/growth-experience-command/repository.ts
+angelcare-marketplace/growth-experience-command/types.ts
+
+Governed Growth execution:
+angelcare-marketplace/reality-completion/admin-page.tsx
+angelcare-marketplace/reality-completion/components/GrowthExecutionCommand.tsx
+angelcare-marketplace/reality-completion/domain-contract.ts
+angelcare-marketplace/reality-completion/repository.ts
+angelcare-marketplace/final-vertical/registry.ts
+
+Promotions:
+angelcare-marketplace/enterprise-closure/components/PromotionCommand.tsx
+angelcare-marketplace/enterprise-closure/repository.ts
+angelcare-marketplace/enterprise-closure/api-handlers.ts
+
+Live Experience:
+angelcare-marketplace/live-experience-command/components/LiveExperienceCommand.tsx
+angelcare-marketplace/live-experience-command/components/LiveGovernanceCommand.tsx
+angelcare-marketplace/live-experience-command/components/LiveExperienceLayer.tsx
+angelcare-marketplace/live-experience-command/repository.ts
+angelcare-marketplace/live-experience-command/registry.ts
+angelcare-marketplace/live-experience-command/types.ts
+angelcare-marketplace/live-experience-command/admin-pages.tsx
+angelcare-marketplace/live-experience-command/governance-admin-page.tsx
+angelcare-marketplace/live-experience-command/api-handlers.ts
+angelcare-marketplace/live-experience-command/governance-api-handlers.ts
+
+Merchandising:
+angelcare-marketplace/commerce-studio/components/MerchandisingStudio.tsx
+angelcare-marketplace/commerce-studio/admin-pages.tsx
+angelcare-marketplace/commerce-studio/api-handlers.ts
+
+Segments:
+angelcare-marketplace/enterprise-command/components/SegmentBuilder.tsx
+angelcare-marketplace/enterprise-command/repository.ts
+angelcare-marketplace/enterprise-command/sovereign-api-handlers.ts
+
+Search & Discovery:
+angelcare-marketplace/total-commerce-control/components/DiscoveryControl.tsx
+angelcare-marketplace/total-commerce-control/api-handlers.ts
+angelcare-marketplace/catalog-discovery/repository.ts
+angelcare-marketplace/catalog-discovery/components/DiscoverySearch.tsx
+angelcare-marketplace/catalog-discovery/components/CatalogAdminCommand.tsx
+
+Permissions:
+angelcare-marketplace/permissions/permission-catalog.ts
+
+----------------------------------------------------------------------
+D. PERMISSION / AUTHORITY TRUTH
+----------------------------------------------------------------------
+
+Verified static permission catalog keys used by this area:
+- marketplace.admin.access
+- marketplace.growth.view
+- marketplace.growth.experiments.manage
+- marketplace.merchandising.view
+- marketplace.merchandising.manage
+- marketplace.conversion.view
+- marketplace.conversion.manage
+- marketplace.conversion.recover
+- marketplace.conversion.analytics.view
+- marketplace.homepage.view
+- marketplace.homepage.manage
+- marketplace.localization.access
+- marketplace.commerce.view
+- marketplace.publication.manage
+
+Promotions page guard:
+marketplace.merchandising.view
+
+Promotions GET API:
+marketplace.merchandising.view
+
+Promotions POST/PATCH API:
+marketplace.merchandising.manage
+
+Merchandising page guard:
+marketplace.merchandising.view
+
+Discovery page guard:
+marketplace.merchandising.view
+
+Discovery GET API:
+marketplace.merchandising.view
+
+Discovery POST API:
+marketplace.merchandising.manage
+
+Segments page/API guard currently:
+marketplace.admin.access
+
+Growth Experience command guard:
+marketplace.growth.view
+
+RealityCompletion Growth domain contract manage permission:
+marketplace.growth.experiments.manage
+
+IMPORTANT SOURCE DISCREPANCY — LIVE EXPERIENCE PERMISSIONS
+-----------------------------------------------------------
+The current Live Experience source explicitly references these guard strings:
+- marketplace.live_experience.view
+- marketplace.live_experience.manage
+- marketplace.live_experience.publish
+- marketplace.emergency_broadcast.manage
+
+Those strings are used directly by Live Experience page/API handlers inspected in this source baseline.
+The static permission-catalog excerpt inspected during this batch did not expose those keys.
+
+CODEX RULE:
+Do NOT rename or replace these permission strings during Batch 06 frontend work.
+Do NOT create SQL because of this discrepancy.
+Do NOT weaken the guards.
+Before any permission-specific UI rewrite, inspect the complete runtime auth/workspace permission resolver and preserve current behavior.
+If runtime permission resolution proves genuinely missing, report it as a separate hard gate rather than silently changing backend authority.
+
+----------------------------------------------------------------------
+E. CURRENT ADMIN ROUTES ACCOUNTED FOR
+----------------------------------------------------------------------
+/angelcare-marketplace/admin/discovery-control
+  file: (protected)/admin/discovery-control/page.tsx
+  redirect: none
+  current renderer: DiscoveryControl
+
+/angelcare-marketplace/admin/growth
+  file: (protected)/admin/growth/page.tsx
+  redirect: /angelcare-marketplace/admin/growth-experience
+  current renderer: wrapper
+
+/angelcare-marketplace/admin/growth-experience
+  file: (protected)/admin/growth-experience/page.tsx
+  redirect: none
+  current renderer: GrowthExperienceAreaPage
+
+/angelcare-marketplace/admin/growth-experience/acquisition
+  file: (protected)/admin/growth-experience/acquisition/page.tsx
+  redirect: none
+  current renderer: GrowthExperienceAreaPage
+
+/angelcare-marketplace/admin/growth-experience/audiences
+  file: (protected)/admin/growth-experience/audiences/page.tsx
+  redirect: none
+  current renderer: GrowthExperienceAreaPage
+
+/angelcare-marketplace/admin/growth-experience/campaigns
+  file: (protected)/admin/growth-experience/campaigns/page.tsx
+  redirect: none
+  current renderer: GrowthExperienceAreaPage
+
+/angelcare-marketplace/admin/growth-experience/conversion
+  file: (protected)/admin/growth-experience/conversion/page.tsx
+  redirect: none
+  current renderer: GrowthExperienceAreaPage
+
+/angelcare-marketplace/admin/growth-experience/discovery
+  file: (protected)/admin/growth-experience/discovery/page.tsx
+  redirect: none
+  current renderer: GrowthExperienceAreaPage
+
+/angelcare-marketplace/admin/growth-experience/experiments
+  file: (protected)/admin/growth-experience/experiments/page.tsx
+  redirect: none
+  current renderer: GrowthExperienceAreaPage
+
+/angelcare-marketplace/admin/growth-experience/homepage
+  file: (protected)/admin/growth-experience/homepage/page.tsx
+  redirect: none
+  current renderer: GrowthExperienceAreaPage
+
+/angelcare-marketplace/admin/growth-experience/localization
+  file: (protected)/admin/growth-experience/localization/page.tsx
+  redirect: none
+  current renderer: GrowthExperienceAreaPage
+
+/angelcare-marketplace/admin/growth-experience/merchandising
+  file: (protected)/admin/growth-experience/merchandising/page.tsx
+  redirect: none
+  current renderer: GrowthExperienceAreaPage
+
+/angelcare-marketplace/admin/growth-experience/performance
+  file: (protected)/admin/growth-experience/performance/page.tsx
+  redirect: none
+  current renderer: GrowthExperienceAreaPage
+
+/angelcare-marketplace/admin/growth-experience/public-experience
+  file: (protected)/admin/growth-experience/public-experience/page.tsx
+  redirect: none
+  current renderer: GrowthExperienceAreaPage
+
+/angelcare-marketplace/admin/growth-experience/recovery
+  file: (protected)/admin/growth-experience/recovery/page.tsx
+  redirect: none
+  current renderer: GrowthExperienceAreaPage
+
+/angelcare-marketplace/admin/growth-experience/retention
+  file: (protected)/admin/growth-experience/retention/page.tsx
+  redirect: none
+  current renderer: GrowthExperienceAreaPage
+
+/angelcare-marketplace/admin/growth-experience/search
+  file: (protected)/admin/growth-experience/search/page.tsx
+  redirect: none
+  current renderer: GrowthExperienceAreaPage
+
+/angelcare-marketplace/admin/growth/audiences
+  file: (protected)/admin/growth/audiences/page.tsx
+  redirect: none
+  current renderer: RealityCompletionPage
+
+/angelcare-marketplace/admin/growth/campaigns
+  file: (protected)/admin/growth/campaigns/page.tsx
+  redirect: none
+  current renderer: RealityCompletionPage
+
+/angelcare-marketplace/admin/growth/experiments
+  file: (protected)/admin/growth/experiments/page.tsx
+  redirect: none
+  current renderer: RealityCompletionPage
+
+/angelcare-marketplace/admin/growth/opportunities
+  file: (protected)/admin/growth/opportunities/page.tsx
+  redirect: none
+  current renderer: RealityCompletionPage
+
+/angelcare-marketplace/admin/growth/recommendations
+  file: (protected)/admin/growth/recommendations/page.tsx
+  redirect: none
+  current renderer: RealityCompletionPage
+
+/angelcare-marketplace/admin/growth/recovery
+  file: (protected)/admin/growth/recovery/page.tsx
+  redirect: none
+  current renderer: RealityCompletionPage
+
+/angelcare-marketplace/admin/growth/retention
+  file: (protected)/admin/growth/retention/page.tsx
+  redirect: none
+  current renderer: RealityCompletionPage
+
+/angelcare-marketplace/admin/live-experience-command
+  file: (protected)/admin/live-experience-command/page.tsx
+  redirect: none
+  current renderer: LiveExperiencePage
+
+/angelcare-marketplace/admin/live-experience-command/analytics
+  file: (protected)/admin/live-experience-command/analytics/page.tsx
+  redirect: none
+  current renderer: LiveExperiencePage
+
+/angelcare-marketplace/admin/live-experience-command/audiences
+  file: (protected)/admin/live-experience-command/audiences/page.tsx
+  redirect: none
+  current renderer: LiveGovernancePage
+
+/angelcare-marketplace/admin/live-experience-command/broadcasts
+  file: (protected)/admin/live-experience-command/broadcasts/page.tsx
+  redirect: none
+  current renderer: LiveExperiencePage
+
+/angelcare-marketplace/admin/live-experience-command/experiments
+  file: (protected)/admin/live-experience-command/experiments/page.tsx
+  redirect: none
+  current renderer: LiveGovernancePage
+
+/angelcare-marketplace/admin/live-experience-command/history
+  file: (protected)/admin/live-experience-command/history/page.tsx
+  redirect: none
+  current renderer: LiveGovernancePage
+
+/angelcare-marketplace/admin/live-experience-command/placements
+  file: (protected)/admin/live-experience-command/placements/page.tsx
+  redirect: none
+  current renderer: LiveGovernancePage
+
+/angelcare-marketplace/admin/live-experience-command/popups
+  file: (protected)/admin/live-experience-command/popups/page.tsx
+  redirect: none
+  current renderer: LiveExperiencePage
+
+/angelcare-marketplace/admin/live-experience-command/proof-widgets
+  file: (protected)/admin/live-experience-command/proof-widgets/page.tsx
+  redirect: none
+  current renderer: LiveExperiencePage
+
+/angelcare-marketplace/admin/live-experience-command/schedules
+  file: (protected)/admin/live-experience-command/schedules/page.tsx
+  redirect: none
+  current renderer: LiveGovernancePage
+
+/angelcare-marketplace/admin/live-experience-command/settings
+  file: (protected)/admin/live-experience-command/settings/page.tsx
+  redirect: none
+  current renderer: LiveGovernancePage
+
+/angelcare-marketplace/admin/live-experience-command/templates
+  file: (protected)/admin/live-experience-command/templates/page.tsx
+  redirect: none
+  current renderer: LiveExperiencePage
+
+/angelcare-marketplace/admin/merchandising
+  file: (protected)/admin/merchandising/page.tsx
+  redirect: none
+  current renderer: MerchandisingPage
+
+/angelcare-marketplace/admin/merchandising/available-now
+  file: (protected)/admin/merchandising/available-now/page.tsx
+  redirect: none
+  current renderer: MerchandisingPage
+
+/angelcare-marketplace/admin/merchandising/best-picks
+  file: (protected)/admin/merchandising/best-picks/page.tsx
+  redirect: none
+  current renderer: MerchandisingPage
+
+/angelcare-marketplace/admin/merchandising/calendar
+  file: (protected)/admin/merchandising/calendar/page.tsx
+  redirect: none
+  current renderer: MerchandisingPage
+
+/angelcare-marketplace/admin/merchandising/collections
+  file: (protected)/admin/merchandising/collections/page.tsx
+  redirect: none
+  current renderer: MerchandisingPage
+
+/angelcare-marketplace/admin/merchandising/featured
+  file: (protected)/admin/merchandising/featured/page.tsx
+  redirect: none
+  current renderer: MerchandisingPage
+
+/angelcare-marketplace/admin/merchandising/history
+  file: (protected)/admin/merchandising/history/page.tsx
+  redirect: none
+  current renderer: MerchandisingPage
+
+/angelcare-marketplace/admin/merchandising/new-arrivals
+  file: (protected)/admin/merchandising/new-arrivals/page.tsx
+  redirect: none
+  current renderer: MerchandisingPage
+
+/angelcare-marketplace/admin/merchandising/placements
+  file: (protected)/admin/merchandising/placements/page.tsx
+  redirect: none
+  current renderer: MerchandisingPage
+
+/angelcare-marketplace/admin/merchandising/popular
+  file: (protected)/admin/merchandising/popular/page.tsx
+  redirect: none
+  current renderer: MerchandisingPage
+
+/angelcare-marketplace/admin/merchandising/rules
+  file: (protected)/admin/merchandising/rules/page.tsx
+  redirect: none
+  current renderer: MerchandisingPage
+
+/angelcare-marketplace/admin/promotions
+  file: (protected)/admin/promotions/page.tsx
+  redirect: none
+  current renderer: PromotionCommand
+
+/angelcare-marketplace/admin/segments
+  file: (protected)/admin/segments/page.tsx
+  redirect: none
+  current renderer: SegmentBuilder
+
+----------------------------------------------------------------------
+F. CURRENT API ROUTES ACCOUNTED FOR
+----------------------------------------------------------------------
+/api/angelcare-marketplace/admin/enterprise-command/segments
+  methods detected: POST
+  file: admin/enterprise-command/segments/route.ts
+  imports: direct/inline
+
+/api/angelcare-marketplace/admin/enterprise-command/segments/saved
+  methods detected: GET,POST
+  file: admin/enterprise-command/segments/saved/route.ts
+  imports: { handleSavedSegments } FROM @/angelcare-marketplace/enterprise-command/sovereign-api-handlers
+
+/api/angelcare-marketplace/admin/enterprise-command/segments/saved/[segmentId]
+  methods detected: PATCH,DELETE
+  file: admin/enterprise-command/segments/saved/[segmentId]/route.ts
+  imports: { handleSavedSegment } FROM @/angelcare-marketplace/enterprise-command/sovereign-api-handlers
+
+/api/angelcare-marketplace/admin/live-experience/analytics
+  methods detected: handler-defined
+  file: admin/live-experience/analytics/route.ts
+  imports: { handleLiveSummary } FROM @/angelcare-marketplace/live-experience-command/api-handlers
+
+/api/angelcare-marketplace/admin/live-experience/audiences
+  methods detected: handler-defined
+  file: admin/live-experience/audiences/route.ts
+  imports: {handleLiveGovernance} FROM @/angelcare-marketplace/live-experience-command/governance-api-handlers
+
+/api/angelcare-marketplace/admin/live-experience/broadcasts
+  methods detected: handler-defined
+  file: admin/live-experience/broadcasts/route.ts
+  imports: { handleLiveCampaigns } FROM @/angelcare-marketplace/live-experience-command/api-handlers
+
+/api/angelcare-marketplace/admin/live-experience/campaigns
+  methods detected: handler-defined
+  file: admin/live-experience/campaigns/route.ts
+  imports: { handleLiveCampaigns } FROM @/angelcare-marketplace/live-experience-command/api-handlers
+
+/api/angelcare-marketplace/admin/live-experience/campaigns/[campaignId]
+  methods detected: GET,PATCH
+  file: admin/live-experience/campaigns/[campaignId]/route.ts
+  imports: { handleLiveCampaign } FROM @/angelcare-marketplace/live-experience-command/api-handlers
+
+/api/angelcare-marketplace/admin/live-experience/campaigns/[campaignId]/actions/[action]
+  methods detected: POST
+  file: admin/live-experience/campaigns/[campaignId]/actions/[action]/route.ts
+  imports: { handleLiveCampaignAction } FROM @/angelcare-marketplace/live-experience-command/api-handlers
+
+/api/angelcare-marketplace/admin/live-experience/experiments
+  methods detected: handler-defined
+  file: admin/live-experience/experiments/route.ts
+  imports: {handleLiveGovernance} FROM @/angelcare-marketplace/live-experience-command/governance-api-handlers
+
+/api/angelcare-marketplace/admin/live-experience/history
+  methods detected: handler-defined
+  file: admin/live-experience/history/route.ts
+  imports: {handleLiveGovernance} FROM @/angelcare-marketplace/live-experience-command/governance-api-handlers
+
+/api/angelcare-marketplace/admin/live-experience/placements
+  methods detected: handler-defined
+  file: admin/live-experience/placements/route.ts
+  imports: {handleLiveGovernance} FROM @/angelcare-marketplace/live-experience-command/governance-api-handlers
+
+/api/angelcare-marketplace/admin/live-experience/popups
+  methods detected: handler-defined
+  file: admin/live-experience/popups/route.ts
+  imports: { handleLiveCampaigns } FROM @/angelcare-marketplace/live-experience-command/api-handlers
+
+/api/angelcare-marketplace/admin/live-experience/proof-widgets
+  methods detected: handler-defined
+  file: admin/live-experience/proof-widgets/route.ts
+  imports: { handleLiveCampaigns } FROM @/angelcare-marketplace/live-experience-command/api-handlers
+
+/api/angelcare-marketplace/admin/live-experience/schedules
+  methods detected: handler-defined
+  file: admin/live-experience/schedules/route.ts
+  imports: {handleLiveGovernance} FROM @/angelcare-marketplace/live-experience-command/governance-api-handlers
+
+/api/angelcare-marketplace/admin/live-experience/settings
+  methods detected: handler-defined
+  file: admin/live-experience/settings/route.ts
+  imports: {handleLiveGovernance} FROM @/angelcare-marketplace/live-experience-command/governance-api-handlers
+
+/api/angelcare-marketplace/admin/live-experience/simulate
+  methods detected: handler-defined
+  file: admin/live-experience/simulate/route.ts
+  imports: { handleLiveSimulate } FROM @/angelcare-marketplace/live-experience-command/api-handlers
+
+/api/angelcare-marketplace/admin/live-experience/sources/refresh
+  methods detected: handler-defined
+  file: admin/live-experience/sources/refresh/route.ts
+  imports: { handleLiveSourceRefresh } FROM @/angelcare-marketplace/live-experience-command/api-handlers
+
+/api/angelcare-marketplace/admin/live-experience/summary
+  methods detected: handler-defined
+  file: admin/live-experience/summary/route.ts
+  imports: { handleLiveSummary } FROM @/angelcare-marketplace/live-experience-command/api-handlers
+
+/api/angelcare-marketplace/admin/live-experience/templates
+  methods detected: handler-defined
+  file: admin/live-experience/templates/route.ts
+  imports: { handleLiveSummary } FROM @/angelcare-marketplace/live-experience-command/api-handlers
+
+/api/angelcare-marketplace/admin/merchandising/collections
+  methods detected: handler-defined
+  file: admin/merchandising/collections/route.ts
+  imports: { handleCommerceResource } FROM @/angelcare-marketplace/commerce-studio/api-handlers
+
+/api/angelcare-marketplace/admin/merchandising/placements
+  methods detected: handler-defined
+  file: admin/merchandising/placements/route.ts
+  imports: { handleCommerceResource } FROM @/angelcare-marketplace/commerce-studio/api-handlers
+
+/api/angelcare-marketplace/admin/merchandising/publish
+  methods detected: handler-defined
+  file: admin/merchandising/publish/route.ts
+  imports: { handleCommerceAction } FROM @/angelcare-marketplace/commerce-studio/api-handlers
+
+/api/angelcare-marketplace/admin/merchandising/reorder
+  methods detected: handler-defined
+  file: admin/merchandising/reorder/route.ts
+  imports: { handleCommerceAction } FROM @/angelcare-marketplace/commerce-studio/api-handlers
+
+/api/angelcare-marketplace/admin/merchandising/rules
+  methods detected: handler-defined
+  file: admin/merchandising/rules/route.ts
+  imports: { handleCommerceResource } FROM @/angelcare-marketplace/commerce-studio/api-handlers
+
+/api/angelcare-marketplace/admin/promotions
+  methods detected: GET,POST
+  file: admin/promotions/route.ts
+  imports: {handlePromotions} FROM @/angelcare-marketplace/enterprise-closure/api-handlers
+
+/api/angelcare-marketplace/admin/promotions/[promotionId]
+  methods detected: PATCH
+  file: admin/promotions/[promotionId]/route.ts
+  imports: {handlePromotion} FROM @/angelcare-marketplace/enterprise-closure/api-handlers
+
+/api/angelcare-marketplace/admin/search-rules
+  methods detected: GET,POST
+  file: admin/search-rules/route.ts
+  imports: {handleSearchRules} FROM @/angelcare-marketplace/total-commerce-control/api-handlers
+
+/api/angelcare-marketplace/discovery/search
+  methods detected: GET
+  file: discovery/search/route.ts
+  imports: {NextResponse} FROM next/server;{searchDiscovery} FROM @/angelcare-marketplace/catalog-discovery/repository;type {CatalogLocale} FROM @/angelcare-marketplace/catalog-discovery/types
+
+/api/angelcare-marketplace/growth/experiments
+  methods detected: handler-defined
+  file: growth/experiments/route.ts
+  imports: direct/inline
+
+/api/angelcare-marketplace/growth/experiments/[experimentId]/transition
+  methods detected: POST
+  file: growth/experiments/[experimentId]/transition/route.ts
+  imports: {handleExperimentTransition} FROM @/angelcare-marketplace/final-authority/api-handlers
+
+/api/angelcare-marketplace/growth/opportunities
+  methods detected: handler-defined
+  file: growth/opportunities/route.ts
+  imports: direct/inline
+
+----------------------------------------------------------------------
+G. SCREEN-BY-SCREEN SOURCE / BACKEND / CODEX CONTRACT
+----------------------------------------------------------------------
+
+---------------------------------------------------------------------
+01 — MARKETING & PROMOTIONS / GROWTH COMMAND CENTER
+---------------------------------------------------------------------
+PNG:
+01_MARKETING_GROWTH_COMMAND_CENTER.png
+
+FINAL HUMAN HOME:
+Marketing & promotions -> Vue générale
+
+CANONICAL SOURCE ROUTE:
+/angelcare-marketplace/admin/growth-experience
+
+COMPATIBILITY / RELATED CURRENT ROUTES:
+/angelcare-marketplace/admin/growth -> redirects to /admin/growth-experience
+/angelcare-marketplace/admin/growth-experience/acquisition
+/angelcare-marketplace/admin/growth-experience/campaigns
+/angelcare-marketplace/admin/growth-experience/audiences
+/angelcare-marketplace/admin/growth-experience/merchandising
+/angelcare-marketplace/admin/growth-experience/discovery
+/angelcare-marketplace/admin/growth-experience/search
+/angelcare-marketplace/admin/growth-experience/recovery
+/angelcare-marketplace/admin/growth-experience/retention
+/angelcare-marketplace/admin/growth-experience/experiments
+/angelcare-marketplace/admin/growth-experience/conversion
+/angelcare-marketplace/admin/growth-experience/homepage
+/angelcare-marketplace/admin/growth-experience/localization
+/angelcare-marketplace/admin/growth-experience/public-experience
+/angelcare-marketplace/admin/growth-experience/performance
+
+PRIMARY COMPONENT:
+GrowthExperienceCommand
+
+SOURCE SNAPSHOT:
+growthExperienceSnapshot(context)
+
+Snapshot composes existing authorities:
+- executiveAuthoritySummary(context)
+- conversionAdminSummary(context)
+- frontendControlSnapshot()
+- localizationSummary()
+
+REAL SOURCE-BACKED METRICS AVAILABLE:
+- growth opportunities
+- experiments running
+- accepted metrics
+- data quality blockers
+- performance breaches
+- active conversion sessions
+- ready-for-confirmation sessions
+- submitted today
+- conversion failures
+- critical conversion exceptions
+- frontend surfaces
+- published frontend surfaces
+- products
+- categories
+- pages
+- open inquiries
+- localization total candidates
+- missing translations
+- stale translations
+- sensitive localization blockers
+- truthful localization coverage when available
+
+CRITICAL TRUTH DOCTRINE FROM SOURCE:
+The Growth command explicitly says it must NOT invent:
+- revenue attribution
+- ROAS
+- churn
+- demand
+unless backend authority proves those values.
+
+FINAL UX REQUIREMENT:
+The command center is an operator launchpad and evidence queue, not a decorative KPI dashboard.
+It must surface:
+- evidence-backed growth opportunities
+- critical intervention queues
+- links to Promotions, Live Experience, Audiences, Merchandising, Discovery, Conversion, Recovery, Retention, Experiments
+- clear truth-source status
+- blockers rather than fake executive facts when data quality is insufficient
+
+DO NOT:
+- invent marketing ROI
+- invent campaign revenue
+- invent CAC
+- invent traffic totals
+- invent customer churn
+- turn this into the enterprise Analytics workspace
+
+---------------------------------------------------------------------
+02 — PROMOTIONS / OFFERS / CODES / RULES
+---------------------------------------------------------------------
+PNG:
+02_PROMOTIONS_OFFERS_RULES.png
+
+FINAL HUMAN HOME:
+Marketing & promotions -> Promotions
+
+CANONICAL SOURCE ROUTE:
+/angelcare-marketplace/admin/promotions
+
+PRIMARY COMPONENT:
+PromotionCommand
+
+SOURCE REPOSITORY:
+listPromotions()
+savePromotion(...)
+
+REAL API:
+GET/POST /api/angelcare-marketplace/admin/promotions
+PATCH /api/angelcare-marketplace/admin/promotions/[promotionId]
+
+REAL PROMOTION FIELDS:
+- promotion_key
+- name
+- description
+- code
+- promotion_type
+- value
+- minimum_order_amount
+- maximum_discount_amount
+- starts_at
+- ends_at
+- usage_limit
+- customer_usage_limit
+- automatic
+- status
+- priority
+- content
+- targets
+
+REAL PROMOTION TYPES:
+- percent
+- fixed
+- wallet_credit
+- free_delivery
+- custom
+
+REAL TARGET TYPES:
+- all
+- item
+- category
+- territory
+- segment
+
+REAL ACTIONS:
+- create
+- save
+- activate
+- suspend / pause
+- archive
+
+REAL DOCTRINE:
+- client codes are normalized to uppercase in repository
+- target rows are replaced canonically on save
+- promotion create/update is audited
+- automatic promotions participate in real pricing authority where current backend consumes them
+
+CODEX MUST EXPOSE:
+- registry search
+- current status
+- type/value
+- target
+- minimum order
+- maximum discount cap
+- global usage limit
+- customer usage limit
+- start/end
+- priority
+- automatic application toggle
+- code
+- description
+- actions above
+
+DO NOT INVENT:
+- a separate coupon engine
+- stacking rules not present in current source
+- conflict solver not present in current source
+- marketing budget engine
+- fake coupon usage analytics
+
+---------------------------------------------------------------------
+03 — LIVE EXPERIENCE COMMAND
+---------------------------------------------------------------------
+PNG:
+03_LIVE_EXPERIENCE_COMMAND.png
+
+FINAL HUMAN HOME:
+Marketing & promotions -> Live Experience
+
+CANONICAL ROUTES:
+/angelcare-marketplace/admin/live-experience-command
+/angelcare-marketplace/admin/live-experience-command/popups
+/angelcare-marketplace/admin/live-experience-command/broadcasts
+/angelcare-marketplace/admin/live-experience-command/proof-widgets
+/angelcare-marketplace/admin/live-experience-command/templates
+/angelcare-marketplace/admin/live-experience-command/analytics
+
+PRIMARY COMPONENT:
+LiveExperienceCommand
+
+REAL EXPERIENCE KINDS:
+- popup
+- broadcast
+- proof
+
+REAL MODES EXPOSED BY SOURCE:
+- command
+- popups
+- broadcasts
+- proof-widgets
+- templates
+- audiences
+- placements
+- schedules
+- experiments
+- analytics
+- history
+- settings
+
+REAL CREATE PATH:
+POST /api/angelcare-marketplace/admin/live-experience/campaigns
+
+REAL EDIT PATH:
+PATCH /api/angelcare-marketplace/admin/live-experience/campaigns/[campaignId]
+
+REAL ACTION PATH:
+POST /api/angelcare-marketplace/admin/live-experience/campaigns/[campaignId]/actions/[action]
+
+REAL ACTION TRANSITIONS SUPPORTED:
+- activate
+- publish -> active
+- schedule -> scheduled
+- suspend -> suspended
+- resume -> active
+- archive -> archived
+- expire -> expired
+- duplicate produces a new draft clone
+
+REAL CAMPAIGN CONFIGURATION DIMENSIONS:
+- campaign_key
+- name
+- kind
+- purpose_key
+- theme_key
+- status
+- priority
+- localized_content
+- media
+- placement
+- trigger
+- targeting
+- frequency
+- schedule
+- truth_source
+- conversion
+- version
+
+REAL LOCALIZATION:
+FR / EN / AR
+
+REAL DEVICE TARGETING / PREVIEW:
+desktop / tablet / mobile / small-mobile are present in campaign targeting defaults.
+Admin preview uses desktop/tablet/mobile.
+
+REAL TARGETING DEFAULTS / CAPABILITIES INCLUDE:
+- locales
+- audiences
+- devices
+- routes
+- wallet balance/tier targeting capability
+- category/item/territory targeting capability
+- new/returning and auth targeting capability
+- frequency caps
+- session/customer/conversion suppression
+
+REAL FREQUENCY FIELDS:
+- per_session
+- per_day
+- per_week
+- remember_dismissal
+- suppress_after_conversion
+- cooldown_hours
+- backdrop_close
+
+REAL DEFAULT TIMEZONE:
+Africa/Casablanca
+
+REAL SIMULATION:
+POST /api/angelcare-marketplace/admin/live-experience/simulate
+The source explicitly states simulation uses the same evaluator as production.
+
+REAL TRUTH SOURCE REFRESH:
+POST /api/angelcare-marketplace/admin/live-experience/sources/refresh
+
+CRITICAL PROOF RULE:
+A proof campaign may not activate/schedule if canonical proof is absent, unverified or expired.
+The repository returns a dependency block and the widget remains hidden.
+
+REAL PRESET UNIVERSE:
+LIVE_PRESETS are generated from registered purposes x themes.
+Current source describes 270 preintegrated experience combinations.
+
+REAL PLACEMENTS REGISTERED INCLUDE:
+- after_header
+- above_navigation
+- below_navigation
+- before_content
+- after_content
+- hero_overlay
+- after_hero
+- product_card
+- product_hero
+- service_card
+- configurator
+- price_panel
+- basket
+- checkout
+- confirmation
+- account
+- wallet_dashboard
+- floating_side
+- mobile_bottom
+- before_footer
+
+ANALYTICS TRUTH:
+Admin summary counts real rows for:
+- impressions
+- interactions
+- conversions
+If no data exists, source deliberately leaves metrics at zero rather than simulating uplift/revenue/viewers.
+
+DO NOT INVENT:
+- email provider campaigns
+- SMS provider campaigns
+- external ad platform activation
+- fake revenue uplift
+
+---------------------------------------------------------------------
+04 — LIVE EXPERIENCE GOVERNANCE
+---------------------------------------------------------------------
+PNG:
+04_LIVE_EXPERIENCE_GOVERNANCE.png
+
+FINAL HUMAN HOME:
+Marketing & promotions -> Live Experience -> Gouvernance
+
+CANONICAL ROUTES:
+/angelcare-marketplace/admin/live-experience-command/audiences
+/angelcare-marketplace/admin/live-experience-command/placements
+/angelcare-marketplace/admin/live-experience-command/schedules
+/angelcare-marketplace/admin/live-experience-command/experiments
+/angelcare-marketplace/admin/live-experience-command/history
+/angelcare-marketplace/admin/live-experience-command/settings
+
+PRIMARY COMPONENT:
+LiveGovernanceCommand
+
+REAL GOVERNANCE TABLES:
+- audiences -> angelcare_marketplace_live_experience_audiences
+- placements -> angelcare_marketplace_live_experience_placements
+- schedules -> angelcare_marketplace_live_experience_schedules
+- experiments -> angelcare_marketplace_live_experience_experiments
+- settings -> angelcare_marketplace_live_experience_capabilities
+- history -> versions + audit events, immutable
+
+REAL AUDIENCE CREATION FIELDS:
+- audience_key
+- name
+- cities
+- customer_kinds
+- premium_only
+- status draft
+
+REAL PLACEMENT CREATION FIELDS:
+- placement_key
+- label
+- family
+- pathname
+- locale
+- priority
+- status draft
+
+REAL SCHEDULE FIELDS:
+- schedule_key
+- campaign_id
+- frequency: once / daily / weekly
+- timezone
+- starts_at
+- ends_at
+- status scheduled
+
+REAL SCHEDULE SAFETY:
+- end must follow start
+- active/scheduled window overlap on the same campaign is detected and rejected
+
+REAL EXPERIMENT FIELDS:
+- experiment_key
+- name
+- variants[]
+- allocation
+- objective
+- status
+- control_variant
+- starts_at
+- ends_at
+- winner_variant
+- evidence
+
+REAL EXPERIMENT TRANSITIONS:
+- draft -> ready / closed
+- ready -> running / draft / closed
+- running -> paused / significance_review / closed
+- paused -> running / significance_review / closed
+- significance_review -> winner / running / closed
+- winner -> closed
+
+WINNER SAFETY:
+Winner transition is blocked until winner_variant is defined.
+
+HISTORY:
+History is immutable in API handler.
+No mutation controls should appear on history mode.
+
+---------------------------------------------------------------------
+05 — MERCHANDISING STUDIO
+---------------------------------------------------------------------
+PNG:
+05_MERCHANDISING_STUDIO.png
+
+FINAL HUMAN HOME:
+Marketing & promotions -> Merchandising
+
+CANONICAL ROUTES:
+/angelcare-marketplace/admin/merchandising
+/angelcare-marketplace/admin/merchandising/featured
+/angelcare-marketplace/admin/merchandising/popular
+/angelcare-marketplace/admin/merchandising/best-picks
+/angelcare-marketplace/admin/merchandising/available-now
+/angelcare-marketplace/admin/merchandising/new-arrivals
+/angelcare-marketplace/admin/merchandising/placements
+/angelcare-marketplace/admin/merchandising/rules
+/angelcare-marketplace/admin/merchandising/calendar
+/angelcare-marketplace/admin/merchandising/history
+/angelcare-marketplace/admin/merchandising/collections
+
+PRIMARY COMPONENT:
+MerchandisingStudio
+
+REAL RAILS:
+- featured
+- popular
+- best-pick
+- available-now
+- new-arrival
+
+REAL PRODUCT SOURCE:
+Published catalog items only are selectable by the picker.
+
+REAL PLACEMENT ACTIONS:
+- add product to rail
+- remove placement
+- drag reorder
+- reorder persistence via /admin/merchandising/reorder
+- reorder is described in source as immediate publication
+
+REAL ADVANCED PLACEMENT FIELDS:
+- custom_title
+- custom_subtitle
+- starts_at
+- ends_at
+- locale: fr / en / ar
+- audience: all / family / organization / professional
+- cta_label
+- cta_href
+- sort_order
+- status
+
+REAL RULE TYPES:
+- category
+- availability
+- newest
+- most_viewed
+- most_saved
+- most_converted
+- academy_open
+- provider_capacity
+- trust_status
+- manual_priority
+
+REAL RULE FIELDS:
+- name
+- rule_key
+- rule_type
+- conditions_json
+- sort_json
+- item_limit
+- locale
+- audience
+- status
+
+DO NOT:
+- fabricate algorithmic recommendation scores
+- claim AI ranking where source only provides rules
+- invent merchandising revenue uplift
+
+---------------------------------------------------------------------
+06 — SEGMENTS & AUDIENCE BUILDER
+---------------------------------------------------------------------
+PNG:
+06_SEGMENTS_AUDIENCE_BUILDER.png
+
+FINAL HUMAN HOME:
+Marketing & promotions -> Audiences & segments
+
+CANONICAL SOURCE ROUTE:
+/angelcare-marketplace/admin/segments
+
+RELATED EXISTING CUSTOMER VIEW:
+/angelcare-marketplace/admin/customers-revenue/segments
+This is a customer/revenue intelligence view and should link into, not replace, the canonical operator Segment Builder.
+
+PRIMARY COMPONENT:
+SegmentBuilder
+
+REAL SERVER BATCH FILTERS:
+- status
+- accountKind
+- premium
+- minOrders
+- minRevenue
+- minAov
+- minWallet
+- inactiveDays
+- city
+- productId
+- bookingStatus
+- subscriptionStatus
+- acquisitionSource
+- groupOperator
+- groups
+- limit (current client sets 5000)
+
+REAL ADVANCED RULE FIELDS:
+- city
+- orderCount
+- capturedRevenue
+- averageOrderValue
+- walletBalance / AngelCare Credit
+- activeSubscriptions
+- bookingCount
+- inactivityDays
+- acquisitionSources
+- purchasedProductIds
+- premium
+- status
+- accountKind
+
+REAL OPERATORS:
+Boolean:
+- true
+- false
+
+Text:
+- contains
+- eq
+- neq
+
+Numeric:
+- gte
+- lte
+- gt
+- lt
+- eq
+
+REAL GROUPING:
+- AND / OR between groups
+- AND / OR inside each group
+
+REAL ACTIONS:
+- preview / calculate
+- save persistent segment
+- recalculate saved segment
+- delete segment
+- export result CSV
+- create a targeted Promotion draft using target_type=segment
+- open Customer 360 for result rows
+
+REAL RESULT FIELDS:
+- customer reference
+- name
+- email
+- city
+- orderCount
+- capturedRevenue Dh
+- averageOrderValue Dh
+- walletBalance / Credit Dh
+- activeSubscriptions
+- bookingCount
+- acquisitionSources
+- lastOrderAt
+
+DO NOT INVENT:
+- external CDP activation
+- Meta/TikTok/Google audience sync
+- email/SMS destinations unless another separately configured provider authority is proven
+
+---------------------------------------------------------------------
+07 — SEARCH & DISCOVERY CONTROL
+---------------------------------------------------------------------
+PNG:
+07_SEARCH_DISCOVERY_CONTROL.png
+
+FINAL HUMAN HOME:
+Marketing & promotions -> Search & Discovery
+
+CANONICAL ROUTE:
+/angelcare-marketplace/admin/discovery-control
+
+COMPATIBILITY ROUTES:
+/angelcare-marketplace/admin/growth-experience/discovery
+/angelcare-marketplace/admin/growth-experience/search
+
+PRIMARY COMPONENT:
+DiscoveryControl
+
+REAL API:
+GET/POST /api/angelcare-marketplace/admin/search-rules
+
+PUBLIC SEARCH AUTHORITY:
+GET /api/angelcare-marketplace/discovery/search
+catalog-discovery/repository.ts
+
+REAL RULE TYPES:
+- synonym
+- alias
+- pin
+- bury
+- suggestion
+- empty_result
+- banner
+
+REAL RULE FIELDS:
+- rule_key
+- rule_type
+- query_pattern
+- replacement_query
+- catalog_item_id
+- category_key
+- locale
+- priority
+- status
+- content.headline
+- content.href
+
+REAL UX BEHAVIOR:
+- synonym / alias / suggestion / empty_result can use replacement query
+- pin / bury require a real published catalog item
+- category is optional
+- banner / empty_result can expose commercial headline + destination
+- locale is FR / EN / AR
+- search/filter existing rules
+- save into the canonical search-rule engine
+
+DO NOT INVENT:
+- AI semantic ranking if source does not expose it
+- opaque learning-to-rank controls
+- fake search conversion scores
+
+---------------------------------------------------------------------
+08 — GROWTH RECOVERY & RETENTION
+---------------------------------------------------------------------
+PNG:
+08_GROWTH_RECOVERY_RETENTION.png
+
+FINAL HUMAN HOME:
+Marketing & promotions -> Recovery & retention
+
+CANONICAL ROUTES:
+/angelcare-marketplace/admin/growth/recovery
+/angelcare-marketplace/admin/growth/retention
+/angelcare-marketplace/admin/growth/recommendations
+
+COMPOSED GROWTH-EXPERIENCE ROUTES:
+/angelcare-marketplace/admin/growth-experience/recovery
+/angelcare-marketplace/admin/growth-experience/retention
+
+PRIMARY RENDERER:
+GrowthExecutionCommand through RealityCompletionPage
+
+REAL GROWTH LIFECYCLE:
+- hypothesis
+- plan
+- approval
+- activation
+- monitoring
+- analysis
+- decision
+- scale
+- stop
+- closed
+
+REAL CREATE FIELDS:
+- hypothesis
+- objective
+- audienceKey
+- channel
+- metricKey
+- baselineValue
+- targetValue
+- budgetDh
+
+REAL MONITOR / ANALYSIS FIELDS:
+- actualValue
+- incrementalRevenueDh
+- evidence
+
+REAL DECISION / SCALE / STOP / CLOSE FIELDS:
+- decision
+- nextAction
+
+REAL SOURCE INTAKE:
+Existing source records can be transformed into governed Growth initiatives.
+Do not synthesize an external messaging automation engine.
+
+IMPORTANT:
+The PNG is a governed growth execution workspace, NOT a claim that email/SMS relance providers are connected.
+Channel remains a recorded business field unless a separate integration authority is proven.
+
+---------------------------------------------------------------------
+09 — EXPERIMENTS GOVERNANCE
+---------------------------------------------------------------------
+PNG:
+09_EXPERIMENTS_GOVERNANCE.png
+
+FINAL HUMAN HOME:
+Marketing & promotions -> Experiments
+
+PRIMARY CANONICAL ROUTE:
+/angelcare-marketplace/admin/live-experience-command/experiments
+
+RELATED GOVERNED GROWTH ROUTE:
+/angelcare-marketplace/admin/growth/experiments
+
+LIVE GOVERNANCE AUTHORITY:
+LiveGovernanceCommand mode=experiments
+
+REAL ALLOCATION:
+The Live Experience repository uses deterministic bucketing of a customer/session seed across weighted variants.
+
+REAL FIELDS:
+- experiment_key
+- name
+- variants
+- weights / allocation
+- objective
+- control_variant
+- starts_at
+- ends_at
+- winner_variant
+- evidence
+- status
+
+REAL TRANSITIONS:
+See Screen 04 experiment lifecycle.
+
+NO FAKE STATISTICS:
+Do not render p-values, confidence intervals, sample significance or uplift as facts unless current backend actually persists/provides those values.
+The approved UI should expose status, allocation, objective, evidence and winner decision truthfully.
+
+RELATED GROWTH EXPERIMENTS:
+The RealityCompletion growth.experiments workspace is a separate governed business initiative lifecycle (hypothesis -> scale/stop) and may be linked contextually from this screen.
+Do not merge the two backend engines.
+
+---------------------------------------------------------------------
+10 — GROWTH EXECUTION / OPPORTUNITIES
+---------------------------------------------------------------------
+PNG:
+10_GROWTH_EXECUTION_OPPORTUNITIES.png
+
+FINAL HUMAN HOME:
+Marketing & promotions -> Growth initiatives / opportunities
+
+CANONICAL ROUTES:
+/angelcare-marketplace/admin/growth/opportunities
+/angelcare-marketplace/admin/growth/campaigns
+/angelcare-marketplace/admin/growth/audiences
+
+GROWTH ROOT:
+/angelcare-marketplace/admin/growth redirects to Growth Experience command.
+
+PRIMARY RENDERER:
+GrowthExecutionCommand
+
+REAL REGISTRY DEFINITIONS:
+growth.command
+growth.experiments
+growth.recommendations
+growth.retention
+growth.campaigns
+growth.audiences
+growth.recovery
+growth.opportunities
+
+Each uses domain = growth and the same governed execution engine while preserving workspace identity.
+
+REAL PRIMARY ENTITY:
+growth_case
+
+REAL SOURCE TABLES:
+- angelcare_marketplace_growth_opportunities for most growth workspaces
+- angelcare_marketplace_experiments for growth.experiments source intake
+
+REAL PERSISTED EXECUTION TABLE FROM DOMAIN CONTRACT:
+angelcare_marketplace_growth_execution_cases
+
+REAL EVIDENCE DOCTRINE:
+Required evidence identified by registry includes:
+- hypothesis_evidence
+- experiment_result
+- commercial_outcome
+
+REAL RECORD DATA EXPOSED BY GrowthExecutionCommand:
+- public_reference
+- title
+- hypothesis
+- metric_key
+- baseline_value
+- target_value
+- actual_value
+- budget_dh
+- incremental_revenue_dh
+- audience_key
+- channel
+- decision
+- status
+
+REAL COMMAND FLOW:
+- create initiative
+- plan
+- request approval
+- activate
+- monitor / record measure
+- analyze
+- decide
+- scale or stop
+- close
+
+REAL AUDIT:
+Decision/command events include previous status, next status, reason and created_at.
+
+DO NOT INVENT:
+- campaign management automation unrelated to the GrowthExecution backend
+- ad spend imports
+- provider webhooks
+- ROI/CAC/ROAS unless accepted backend data proves them
+
+----------------------------------------------------------------------
+H. ROUTE DISPOSITION / UNIFICATION DOCTRINE
+----------------------------------------------------------------------
+
+The frontend should NOT expose all current technical routes as independent sidebar destinations.
+
+Final operator grouping:
+
+Marketing & promotions
+  -> Vue générale / Growth Command Center
+  -> Promotions
+  -> Live Experience
+       -> Campaigns / Popups / Broadcasts / Proof
+       -> Templates
+       -> Audiences
+       -> Placements
+       -> Schedules
+       -> Experiments
+       -> Analytics
+       -> History
+       -> Settings
+  -> Merchandising
+       -> Featured
+       -> Popular
+       -> Best Picks
+       -> Available Now
+       -> New Arrivals
+       -> Placements
+       -> Rules
+       -> Calendar
+       -> Collections
+       -> History
+  -> Audiences & Segments
+  -> Search & Discovery
+  -> Recovery & Retention
+  -> Experiments
+  -> Growth Initiatives / Opportunities
+
+Compatibility rules:
+- /admin/growth remains a redirect to /admin/growth-experience.
+- growth-experience subroutes are specialist aliases into the canonical human workspaces.
+- merchandising subroutes may remain route-compatible but should render one coherent Merchandising Studio with contextual tab/mode.
+- Live Experience subroutes remain useful deep links and should share one coherent Live Experience product shell.
+- /admin/customers-revenue/segments remains an advanced customer-intelligence view, not a second Segment Builder.
+- intelligence/executive-control Growth/Discovery pages belong to the later Analytics & Intelligence batch and should cross-link rather than duplicate this workspace.
+- Trust routes belong to the later Trust & qualité batch.
+
+----------------------------------------------------------------------
+I. REQUIRED UX STATES
+----------------------------------------------------------------------
+
+For every canonical Batch 06 page, implement where applicable:
+- loading
+- empty
+- partial data
+- API error
+- permission denied
+- validation error
+- dependency blocked
+- save success
+- save failure
+- transition not allowed
+- conflict
+- scheduled
+- active
+- paused / suspended
+- archived / expired / closed
+- truth source missing
+- stale/expired proof
+- no accepted metric source
+
+Do not leave blank/black technical pages.
+
+----------------------------------------------------------------------
+J. LINK / CROSS-WORKSPACE INTEGRITY
+----------------------------------------------------------------------
+
+Marketing pages may contextually link to:
+- Product 360 -> Batch 01
+- Category / Collection -> Batch 02
+- Customer 360 -> Batch 03
+- Conversion / Order -> Batch 04
+- Homepage / public surfaces / localization -> Batch 05
+- Trust authority -> later Trust & qualité batch
+- Enterprise analytics -> later Analytics batch
+
+They must NOT replace those authorities or create duplicate engines.
+
+No Batch 06 canonical control may link to:
+- 404
+- obsolete duplicate frontend generation
+- wrong product
+- wrong auth route
+- technical placeholder
+- black screen
+
+----------------------------------------------------------------------
+K. CODEX IMPLEMENTATION ORDER
+----------------------------------------------------------------------
+
+1. Read this entire file.
+2. Inspect all 10 PNGs.
+3. Inspect current exact source components and routes listed above.
+4. Preserve backend/data/permission authority.
+5. Establish the permanent Marketing & promotions human workspace shell.
+6. Implement Screen 01 command center from GrowthExperienceCommand snapshot.
+7. Productize Promotions without creating another promotion engine.
+8. Productize Live Experience while preserving campaign, simulation, truth-source and transition semantics.
+9. Consolidate Live Governance routes under one coherent sub-navigation.
+10. Productize Merchandising rails/rules/calendar modes.
+11. Productize Segment Builder including advanced AND/OR groups and targeted promotion action.
+12. Productize Discovery Control against /admin/search-rules.
+13. Productize Growth Recovery/Retention using the existing RealityCompletion Growth engine.
+14. Productize Live Experiment Governance without fake statistics.
+15. Productize Growth Opportunities/Initiatives using GrowthExecutionCommand.
+16. Audit route/link integrity.
+17. Run TypeScript and relevant Marketplace verifiers.
+18. Stop before commit/push/deploy.
+
+----------------------------------------------------------------------
+L. VISUAL PRECEDENCE / CONFLICT RESOLUTION
+----------------------------------------------------------------------
+
+If PNG visual detail conflicts with actual backend/source capability:
+1. Existing business/backend truth wins.
+2. This mapping wins over decorative illustrative content.
+3. PNG layout/hierarchy remains the approved visual direction.
+4. Old fragmented frontend has lowest precedence.
+
+Codex must NOT fabricate behavior just to imitate a visual label.
+Instead, use the closest truthful source-backed control and document the deviation.
+
+----------------------------------------------------------------------
+M. VALIDATION / DEFINITION OF DONE FOR BATCH 06
+----------------------------------------------------------------------
+
+Batch 06 is not complete because JSX renders.
+
+Required checks:
+- TypeScript passes for changed scope.
+- canonical Marketing primary sidebar remains unchanged.
+- all canonical Batch 06 routes resolve.
+- no known canonical link produces 404.
+- mutations use existing APIs/repositories.
+- permission guards remain intact.
+- Promotion create/edit/status actions persist.
+- Live Experience create/edit/simulate/actions persist.
+- proof publication remains dependency-blocked without verified truth source.
+- Live schedule overlap protection remains intact.
+- experiment transitions remain governed.
+- Merchandising reorder persists.
+- Segment preview/save/recalculate/delete/export works against existing authority.
+- targeted Segment promotion action creates a Promotion draft through existing authority.
+- Discovery rules persist to canonical search rules.
+- Growth initiatives preserve lifecycle/evidence/audit semantics.
+- public Marketplace remains intact.
+- no SQL introduced.
+
+----------------------------------------------------------------------
+N. EXPLICIT DEFERRED AUTHORITIES — DO NOT STEAL INTO BATCH 06
+----------------------------------------------------------------------
+
+Trust & Quality later batch:
+- Trust Badges
+- guarantees
+- complaints
+- investigations
+- audits
+- non-conformities
+- CAPA
+- compliance
+- Product Excellence
+
+Analytics & Intelligence later batch:
+- enterprise revenue analytics
+- customer/product/category analytics
+- forecasting
+- executive metrics authority
+- metric definitions / quality authority
+- decision/outcome intelligence
+
+Finance later batch:
+- payment control
+- invoices / receipts
+- Wallet finance
+- refunds
+- reconciliation
+- margins / commissions
+
+Operations later batch:
+- fulfillment
+- dispatch
+- missions
+- operational recovery
+- territory OS
+- flight deck
+
+----------------------------------------------------------------------
+O. BATCH 06 FILE MANIFEST
+----------------------------------------------------------------------
+
+01_MARKETING_GROWTH_COMMAND_CENTER.png
+02_PROMOTIONS_OFFERS_RULES.png
+03_LIVE_EXPERIENCE_COMMAND.png
+04_LIVE_EXPERIENCE_GOVERNANCE.png
+05_MERCHANDISING_STUDIO.png
+06_SEGMENTS_AUDIENCE_BUILDER.png
+07_SEARCH_DISCOVERY_CONTROL.png
+08_GROWTH_RECOVERY_RETENTION.png
+09_EXPERIMENTS_GOVERNANCE.png
+10_GROWTH_EXECUTION_OPPORTUNITIES.png
+BATCH_06_SOURCE_MAPPING.txt
+
+END OF BATCH 06 SOURCE / BACKEND / CODEX IMPLEMENTATION AUTHORITY

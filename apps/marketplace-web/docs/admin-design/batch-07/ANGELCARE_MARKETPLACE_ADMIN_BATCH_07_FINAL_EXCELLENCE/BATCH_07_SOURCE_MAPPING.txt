@@ -1,0 +1,895 @@
+ANGELCARE MARKETPLACE ADMIN — BATCH 07 FINAL EXCELLENCE REBUILD
+OPERATIONS / FULFILLMENT / DISPATCH / MISSIONS / JOURNEY CONTROL / EXCEPTIONS / RECOVERY / RECONCILIATION / TERRITORY OS / FLIGHT DECK / BULK & DOCUMENTS
+SOURCE/BACKEND + CODEX IMPLEMENTATION MAPPING — 2026-08-28
+
+------------------------------------------------------------------------------
+0. STATUS AND AUTHORITY
+------------------------------------------------------------------------------
+This file is the mandatory implementation contract for Batch 07.
+Codex MUST read this TXT completely before implementing any Batch 07 PNG.
+The 10 PNG files in the same folder are the approved visual/UIX authority.
+The existing Marketplace source, APIs, repositories, permissions and lifecycle semantics remain business/technical authority.
+Source archive used for this reconciliation: ANGELCARE_MARKETPLACE_WEB_20260826-221837.zip
+Source archive SHA-256: acf0b0a651268d6d49397bf3413fbe2c9164db9e67f52b461df90abb4e054d35
+Illustrative records, names, counts, amounts and dates shown in PNGs are sample UI content only.
+Controls, route families, object relationships, status families and mutations described here are source-grounded.
+
+ABSOLUTE FREEZE: NO SQL. NO migrations. NO new tables. NO parallel Operations engine. NO parallel Journey engine. NO parallel Territory engine. NO duplicated Finance authority. NO fake evidence. NO fake provider assignment. NO fake settlement readiness.
+
+
+------------------------------------------------------------------------------
+0A. SUPERSESSION / VISUAL QUALITY CORRECTION
+------------------------------------------------------------------------------
+THIS FILE + THE 10 PNGS IN THIS FINAL_EXCELLENCE FOLDER SUPERSEDE AND INVALIDATE ALL EARLIER BATCH 07 ZIPs, screenshots, HTML mockups and fallback projections.
+
+The earlier Batch 07 visual package was rejected because it became too generic, sparse and repetitive. Codex MUST NOT use any earlier Batch 07 image as visual authority.
+
+The 10 PNGs beside this TXT are the only approved visual authority for Batch 07. They were rebuilt against the approved Marketplace Admin shell and intentionally use purpose-specific layouts:
+  01 command center / operating runway
+  02 dispatch lanes + provider readiness + decision log
+  03 Mission 360 evidence dossier
+  04 Journey Control authority
+  05 incident / escalation command
+  06 linked return / replacement / recovery orchestration
+  07 reconciliation / settlement / closure control
+  08 Territory OS command
+  09 Transaction Flight Deck
+  10 persistent Bulk Operations + Document Factory
+
+IMAGE FIDELITY GATE FOR CODEX:
+- Do not flatten these screens into one generic table template.
+- Preserve the distinct information architecture of each PNG.
+- Preserve right rails, queues, dossiers, evidence chains, gate matrices, lanes, timelines, readiness panels and action placement.
+- Preserve the same primary Marketplace sidebar across all screens.
+- Use responsive adaptation, but desktop implementation must remain recognizably faithful to the approved PNG.
+- If the existing backend cannot support a depicted action, do not fake it; record the exact source gap.
+- Illustrative values/names/counts in PNGs are NOT seed data and must never be hard-coded as production facts.
+
+------------------------------------------------------------------------------
+1. VISUAL CONSTITUTION — IMMUTABLE FOR BATCH 07
+------------------------------------------------------------------------------
+Primary product: AngelCare Marketplace Admin only.
+Text brand: ANGELCARE MARKETPLACE. Do not invent/redraw a logo.
+Primary sidebar MUST stay identical to approved Batches 01–06:
+  - Accueil
+  - Commandes & réservations
+  - Produits & services
+  - Catégories & collections
+  - Clients
+  - Boutique
+  - Marketing & promotions
+  - Opérations
+  - Prestataires & fournisseurs
+  - Academy
+  - B2B & partenaires
+  - Finance
+  - Trust & qualité
+  - Analytics & intelligence
+  - Paramètres & gouvernance
+Opérations is active in every Batch 07 screen.
+Do NOT promote technical route families such as Journeys, Flight Deck, Territory OS, Reconciliation, Bulk Operations or Documents to new primary sidebar roots.
+Those are contextual advanced tools inside Opérations.
+
+Visual precedence: backend truth > this source mapping > approved PNG > current legacy frontend.
+If a PNG seems to imply unsupported behavior, preserve backend truth and record the gap instead of fabricating it.
+
+------------------------------------------------------------------------------
+2. CANONICAL OPERATIONS DOCTRINE
+------------------------------------------------------------------------------
+Operations orchestrates obligations, mission execution, evidence, exceptions, handovers and closure; it does NOT replace canonical authorities.
+Canonical source matrix verified in operations-reconciliation documentation:
+  - Stock and reservation -> Inventory
+  - Provider eligibility and mission -> Provider / Dispatch / Operations
+  - Academy attendance and certification -> Academy
+  - Organization and proposal -> CRM
+  - Tenant provisioning -> Partner OS
+  - Assessment findings -> Quality Check 360
+  - Invoice, payment, refund, credit and posting -> Finance
+  - Customer-visible journey -> Journey Control
+Fulfillment lifecycle verified: commercially_confirmed -> readiness_review -> awaiting_acceptance -> accepted -> allocation_required -> allocated -> preparing -> in_execution -> evidence_required -> quality_review -> customer_acceptance -> reconciliation_required -> reconciled -> closed. blocked/cancelled remain explicit.
+Mission lifecycle includes draft, authorization, staffing/proposal/assignment, acceptance, brief acknowledgement, travel/check-in, in-progress, incident/report/validation states, payable handover, closed/cancelled/suspended.
+Journey lifecycle verified: registered -> awaiting_customer / awaiting_angelcare -> qualified -> scheduled -> in_preparation -> in_progress -> completed; blocked/recovery/cancelled are governed exception states.
+
+------------------------------------------------------------------------------
+3. SOURCE COMPONENTS VERIFIED
+------------------------------------------------------------------------------
+  angelcare-marketplace/enterprise-command/components/BulkOperationsCenter.tsx
+  angelcare-marketplace/enterprise-command/components/DocumentFactoryCommand.tsx
+  angelcare-marketplace/enterprise-command/components/FulfillmentMissionControl.tsx
+  angelcare-marketplace/enterprise-command/document-factory.ts
+  angelcare-marketplace/journey-control/components/DocumentVault.tsx
+  angelcare-marketplace/journey-control/components/JourneyActionPanel.tsx
+  angelcare-marketplace/journey-control/components/JourneyAdminCommand.tsx
+  angelcare-marketplace/journey-control/components/JourneyAdminDetail.tsx
+  angelcare-marketplace/journey-control/components/JourneyTimeline.tsx
+  angelcare-marketplace/journey-control/components/NotificationCenter.tsx
+  angelcare-marketplace/journey-control/components/RecoveryPanel.tsx
+  angelcare-marketplace/operations-execution/components/ChecklistCommand.tsx
+  angelcare-marketplace/operations-execution/components/DailyClosureBoard.tsx
+  angelcare-marketplace/operations-execution/components/DispatchBoard.tsx
+  angelcare-marketplace/operations-execution/components/IncidentAuthorityClient.tsx
+  angelcare-marketplace/operations-execution/components/MissionDossier.tsx
+  angelcare-marketplace/operations-execution/components/OperationsCommand.tsx
+  angelcare-marketplace/operations-execution/components/OperationsEvidenceRegisters.tsx
+  angelcare-marketplace/operations-execution/components/ProofCommand.tsx
+  angelcare-marketplace/operations-execution/components/ValidationBoard.tsx
+  angelcare-marketplace/operations-execution/repository.ts
+  angelcare-marketplace/operations-reconciliation/api-handlers.ts
+  angelcare-marketplace/operations-reconciliation/components/CaseCommands.tsx
+  angelcare-marketplace/operations-reconciliation/components/CounterpartyCommands.tsx
+  angelcare-marketplace/operations-reconciliation/components/OperationsCommerceCommand.tsx
+  angelcare-marketplace/operations-reconciliation/components/OperationsQueuePage.tsx
+  angelcare-marketplace/operations-reconciliation/repository.ts
+  angelcare-marketplace/operations-reconciliation/types.ts
+  angelcare-marketplace/territory-os/components/CloneTerritoryWizard.tsx
+  angelcare-marketplace/territory-os/components/CreateTerritoryWizard.tsx
+  angelcare-marketplace/territory-os/components/OverrideStudioClient.tsx
+  angelcare-marketplace/territory-os/components/ReadinessBoardClient.tsx
+  angelcare-marketplace/territory-os/components/TerritoryCommandCockpit.tsx
+  angelcare-marketplace/territory-os/components/TerritoryDetailCommand.tsx
+  angelcare-marketplace/territory-os/components/TerritoryHealthClient.tsx
+  angelcare-marketplace/transaction-flight-deck/components/FlightDeckDrawer.tsx
+  angelcare-marketplace/transaction-flight-deck/components/FlightDeckWorkspace.tsx
+  angelcare-marketplace/transaction-flight-deck/repository.ts
+  angelcare-marketplace/transaction-flight-deck/types.ts
+  angelcare-marketplace/operations-reconciliation/content.ts
+  angelcare-marketplace/operations-execution/types.ts
+  angelcare-marketplace/operations-execution/api-handlers.ts
+  angelcare-marketplace/journey-control/types.ts
+  angelcare-marketplace/journey-control/repository.ts
+  angelcare-marketplace/journey-control/api-handlers.ts
+  angelcare-marketplace/territory-os/types.ts
+  angelcare-marketplace/territory-os/repository.ts
+  angelcare-marketplace/territory-os/readiness.ts
+  angelcare-marketplace/territory-os/api-handlers.ts
+  angelcare-marketplace/enterprise-command/repository.ts
+  angelcare-marketplace/enterprise-command/api-handlers.ts
+  angelcare-marketplace/permissions/permission-catalog.ts
+
+------------------------------------------------------------------------------
+4. PERMISSION AUTHORITY
+------------------------------------------------------------------------------
+  marketplace.territories.view | label=Consulter | workspace=Operations | sensitive=False
+  marketplace.territories.create | label=Créer | workspace=Operations | sensitive=True
+  marketplace.territories.update | label=Mettre à jour | workspace=Operations | sensitive=True
+  marketplace.territories.clone | label=Clone | workspace=Operations | sensitive=True
+  marketplace.territories.submit_review | label=Submit review | workspace=Operations | sensitive=True
+  marketplace.territories.approve_soft_launch | label=Approve soft launch | workspace=Operations | sensitive=True
+  marketplace.territories.approve_live | label=Approve live | workspace=Operations | sensitive=True
+  marketplace.territories.pause | label=Pause | workspace=Operations | sensitive=True
+  marketplace.territories.resume | label=Resume | workspace=Operations | sensitive=True
+  marketplace.territories.archive | label=Archiver | workspace=Operations | sensitive=True
+  marketplace.territories.preview | label=Preview | workspace=Operations | sensitive=True
+  marketplace.territories.export | label=Exporter | workspace=Operations | sensitive=True
+  marketplace.territory_settings.view | label=Consulter | workspace=Operations | sensitive=False
+  marketplace.territory_settings.manage | label=Gérer | workspace=Operations | sensitive=True
+  marketplace.territory_overrides.view | label=Consulter | workspace=Operations | sensitive=False
+  marketplace.territory_overrides.create | label=Créer | workspace=Operations | sensitive=True
+  marketplace.territory_overrides.review | label=Réviser | workspace=Operations | sensitive=True
+  marketplace.territory_overrides.approve | label=Approuver | workspace=Operations | sensitive=True
+  marketplace.territory_overrides.reject | label=Reject | workspace=Operations | sensitive=True
+  marketplace.territory_overrides.rollback | label=Restaurer | workspace=Operations | sensitive=True
+  marketplace.territory_readiness.view | label=Consulter | workspace=Operations | sensitive=False
+  marketplace.territory_readiness.manage | label=Gérer | workspace=Operations | sensitive=True
+  marketplace.territory_readiness.review | label=Réviser | workspace=Operations | sensitive=True
+  marketplace.territory_readiness.sign_off | label=Signer | workspace=Operations | sensitive=True
+  marketplace.territory_health.view | label=Consulter | workspace=Operations | sensitive=False
+  marketplace.territory_health.manage | label=Gérer | workspace=Operations | sensitive=True
+  marketplace.journeys.view | label=Voir Journey Control | workspace=Operations | sensitive=False
+  marketplace.journeys.manage | label=Gérer les parcours | workspace=Operations | sensitive=True
+  marketplace.journeys.actions.manage | label=Gérer les actions client | workspace=Operations | sensitive=True
+  marketplace.journeys.documents.manage | label=Gérer les documents parcours | workspace=Operations | sensitive=True
+  marketplace.journeys.notifications.manage | label=Gérer les notifications parcours | workspace=Operations | sensitive=True
+  marketplace.journeys.recovery.manage | label=Gérer Journey Recovery | workspace=Operations | sensitive=True
+  marketplace.journeys.configuration.manage | label=Configurer Journey Control | workspace=Operations | sensitive=True
+  marketplace.journeys.analytics.view | label=Voir Journey Analytics | workspace=Operations | sensitive=False
+  marketplace.journeys.export | label=Exporter preuves parcours | workspace=Operations | sensitive=True
+  marketplace.operations.view | label=Consulter | workspace=Operations | sensitive=False
+  marketplace.operations.missions.create | label=Créer | workspace=Operations | sensitive=True
+  marketplace.operations.missions.manage | label=Gérer | workspace=Operations | sensitive=True
+  marketplace.operations.dispatch.manage | label=Gérer | workspace=Operations | sensitive=True
+  marketplace.operations.assign | label=Affecter | workspace=Operations | sensitive=True
+  marketplace.operations.reassign | label=Réaffecter | workspace=Operations | sensitive=True
+  marketplace.operations.checklists.manage | label=Gérer | workspace=Operations | sensitive=True
+  marketplace.operations.reports.review | label=Réviser | workspace=Operations | sensitive=True
+  marketplace.operations.reports.validate | label=Gérer | workspace=Operations | sensitive=True
+  marketplace.operations.incidents.view | label=Consulter | workspace=Operations | sensitive=False
+  marketplace.operations.incidents.manage | label=Gérer | workspace=Operations | sensitive=True
+  marketplace.operations.incidents.escalate | label=Gérer | workspace=Operations | sensitive=True
+  marketplace.operations.closure.approve | label=Approuver | workspace=Operations | sensitive=True
+  marketplace.operations.proof.export | label=Exporter | workspace=Operations | sensitive=True
+  marketplace.operations.live.view | label=Consulter | workspace=Operations | sensitive=False
+  marketplace.finance.reconciliation.manage | label=Gérer | workspace=Finance | sensitive=True
+  marketplace.commerce.export | label=Exporter le commerce | workspace=Commerce & Revenue | sensitive=True
+  marketplace.commerce.import | label=Importer le commerce | workspace=Commerce & Revenue | sensitive=True
+Server-side checks remain mandatory. Hiding a button is not authorization.
+Finance reconciliation mutations stay protected by marketplace.finance.reconciliation.manage where applicable.
+
+------------------------------------------------------------------------------
+5. EXACT ADMIN ROUTE ESTATE ACCOUNTED FOR
+------------------------------------------------------------------------------
+68 current Admin routes in the Operations/Journey/Territory/FlightDeck/Bulk/Documents families are explicitly accounted for in this Batch 07 mapping:
+  /angelcare-marketplace/admin/bulk-operations | family=bulk-operations | page=BulkOperationsCenter
+  /angelcare-marketplace/admin/documents | family=documents | page=DocumentFactoryCommand
+  /angelcare-marketplace/admin/journeys | family=journeys | page=JourneyAdminCommand
+  /angelcare-marketplace/admin/journeys/[journeyId] | family=journeys | page=JourneyAdminDetail
+  /angelcare-marketplace/admin/journeys/action-center | family=journeys | page=JourneyAdminCommand
+  /angelcare-marketplace/admin/journeys/analytics | family=journeys | page=JourneyAdminCommand
+  /angelcare-marketplace/admin/journeys/assessments | family=journeys | page=JourneyAdminCommand
+  /angelcare-marketplace/admin/journeys/bookings | family=journeys | page=JourneyAdminCommand
+  /angelcare-marketplace/admin/journeys/configuration | family=journeys | page=JourneyAdminCommand
+  /angelcare-marketplace/admin/journeys/documents | family=journeys | page=JourneyAdminCommand
+  /angelcare-marketplace/admin/journeys/enrollments | family=journeys | page=JourneyAdminCommand
+  /angelcare-marketplace/admin/journeys/exceptions | family=journeys | page=JourneyAdminCommand
+  /angelcare-marketplace/admin/journeys/fulfillment | family=journeys | page=JourneyAdminCommand
+  /angelcare-marketplace/admin/journeys/notifications | family=journeys | page=JourneyAdminCommand
+  /angelcare-marketplace/admin/journeys/orders | family=journeys | page=JourneyAdminCommand
+  /angelcare-marketplace/admin/journeys/quotations | family=journeys | page=JourneyAdminCommand
+  /angelcare-marketplace/admin/journeys/recovery | family=journeys | page=JourneyAdminCommand
+  /angelcare-marketplace/admin/journeys/subscriptions | family=journeys | page=JourneyAdminCommand
+  /angelcare-marketplace/admin/operations | family=operations | page=OperationsCommerceCommand
+  /angelcare-marketplace/admin/operations/academy | family=operations | page=OperationsQueuePage
+  /angelcare-marketplace/admin/operations/action-center | family=operations | page=OperationsQueuePage
+  /angelcare-marketplace/admin/operations/analytics | family=operations | page=OperationsQueuePage
+  /angelcare-marketplace/admin/operations/b2b | family=operations | page=OperationsQueuePage
+  /angelcare-marketplace/admin/operations/checklists | family=operations | page=ChecklistRegister
+  /angelcare-marketplace/admin/operations/closure | family=operations | page=DailyClosureBoard
+  /angelcare-marketplace/admin/operations/configuration | family=operations | page=OperationsQueuePage
+  /angelcare-marketplace/admin/operations/dispatch | family=operations | page=DispatchBoard
+  /angelcare-marketplace/admin/operations/disputes | family=operations | page=DisputeCommand
+  /angelcare-marketplace/admin/operations/escalations | family=operations | page=IncidentAuthorityClient
+  /angelcare-marketplace/admin/operations/exceptions | family=operations | page=ExceptionCockpit
+  /angelcare-marketplace/admin/operations/fulfillment | family=operations | page=Record;OperationsQueuePage
+  /angelcare-marketplace/admin/operations/fulfillment/[caseId] | family=operations | page=FulfillmentDossier
+  /angelcare-marketplace/admin/operations/incidents | family=operations | page=IncidentAuthorityClient
+  /angelcare-marketplace/admin/operations/live | family=operations | page=OperationsCommand
+  /angelcare-marketplace/admin/operations/mission-control | family=operations | page=FulfillmentMissionControl
+  /angelcare-marketplace/admin/operations/missions | family=operations | page=OperationsCommand
+  /angelcare-marketplace/admin/operations/missions/[missionId] | family=operations | page=MissionDossier
+  /angelcare-marketplace/admin/operations/orders | family=operations | page=OperationsQueuePage
+  /angelcare-marketplace/admin/operations/partner-os | family=operations | page=OperationsQueuePage
+  /angelcare-marketplace/admin/operations/proof | family=operations | page=ProofRegister
+  /angelcare-marketplace/admin/operations/quality-check | family=operations | page=OperationsQueuePage
+  /angelcare-marketplace/admin/operations/reconciliation | family=operations | page=ReconciliationCommand
+  /angelcare-marketplace/admin/operations/recovery | family=operations | page=RecoveryCommand
+  /angelcare-marketplace/admin/operations/replacements | family=operations | page=ReturnsCommand
+  /angelcare-marketplace/admin/operations/reports | family=operations | page=ReportRegister
+  /angelcare-marketplace/admin/operations/returns | family=operations | page=ReturnsCommand
+  /angelcare-marketplace/admin/operations/services | family=operations | page=OperationsQueuePage
+  /angelcare-marketplace/admin/operations/settlements | family=operations | page=SettlementCommand
+  /angelcare-marketplace/admin/operations/today | family=operations | page=OperationsCommand
+  /angelcare-marketplace/admin/operations/validation | family=operations | page=ValidationBoard
+  /angelcare-marketplace/admin/orders-fulfillment | family=orders-fulfillment | page=FlightDeckWorkspace
+  /angelcare-marketplace/admin/orders-fulfillment/completed | family=orders-fulfillment | page=FlightDeckWorkspace
+  /angelcare-marketplace/admin/orders-fulfillment/dispatch | family=orders-fulfillment | page=FlightDeckWorkspace
+  /angelcare-marketplace/admin/orders-fulfillment/exceptions | family=orders-fulfillment | page=FlightDeckWorkspace
+  /angelcare-marketplace/admin/orders-fulfillment/fulfillment | family=orders-fulfillment | page=FlightDeckWorkspace
+  /angelcare-marketplace/admin/orders-fulfillment/incoming | family=orders-fulfillment | page=FlightDeckWorkspace
+  /angelcare-marketplace/admin/orders-fulfillment/orders | family=orders-fulfillment | page=FlightDeckWorkspace
+  /angelcare-marketplace/admin/orders-fulfillment/recovery | family=orders-fulfillment | page=FlightDeckWorkspace
+  /angelcare-marketplace/admin/territories | family=territories | page=TerritoryCommandPage
+  /angelcare-marketplace/admin/territories/[territoryCode] | family=territories | page=TerritoryDetailCommand
+  /angelcare-marketplace/admin/territories/[territoryCode]/health | family=territories | page=TerritoryHealthClient
+  /angelcare-marketplace/admin/territories/[territoryCode]/overrides | family=territories | page=OverrideStudioClient
+  /angelcare-marketplace/admin/territories/[territoryCode]/preview | family=territories | page=TerritoryPreview
+  /angelcare-marketplace/admin/territories/[territoryCode]/readiness | family=territories | page=ReadinessBoardClient
+  /angelcare-marketplace/admin/territories/[territoryCode]/settings | family=territories | page=TerritorySettingsClient
+  /angelcare-marketplace/admin/territories/clone | family=territories | page=CloneTerritoryWizard
+  /angelcare-marketplace/admin/territories/new | family=territories | page=CreateTerritoryWizard
+  /angelcare-marketplace/admin/territories/registry | family=territories | page=TerritoryRegistryClient
+
+------------------------------------------------------------------------------
+6. EXACT API ROUTE ESTATE RELEVANT TO BATCH 07
+------------------------------------------------------------------------------
+68 relevant API routes were mapped from the current source inventory:
+  /api/angelcare-marketplace/admin/enterprise-command/bulk-operations | methods=GET |
+  /api/angelcare-marketplace/admin/enterprise-command/documents/export | methods=POST |
+  /api/angelcare-marketplace/admin/enterprise-command/missions | methods=GET |
+  /api/angelcare-marketplace/admin/transaction-flight-deck/snapshot | methods=GET | { NextResponse } FROM next/server;{ transactionFlightDeckSnapshot } FROM @/angelcare-marketplace/transaction-flight-deck/repository
+  /api/angelcare-marketplace/journeys | methods=handler-defined | { handleCustomerJourneys } FROM @/angelcare-marketplace/journey-control/api-handlers
+  /api/angelcare-marketplace/journeys/[journeyId] | methods=GET | { handleCustomerJourney } FROM @/angelcare-marketplace/journey-control/api-handlers
+  /api/angelcare-marketplace/journeys/[journeyId]/actions/[actionId]/complete | methods=POST | { handleCompleteCustomerAction } FROM @/angelcare-marketplace/journey-control/api-handlers
+  /api/angelcare-marketplace/journeys/[journeyId]/change-requests | methods=POST | { handleCreateChangeRequest } FROM @/angelcare-marketplace/journey-control/api-handlers
+  /api/angelcare-marketplace/journeys/[journeyId]/recovery | methods=POST | { handleCreateRecovery } FROM @/angelcare-marketplace/journey-control/api-handlers
+  /api/angelcare-marketplace/journeys/account | methods=handler-defined | { handleCustomerAccount } FROM @/angelcare-marketplace/journey-control/api-handlers
+  /api/angelcare-marketplace/journeys/admin | methods=handler-defined | { handleAdminJourneys } FROM @/angelcare-marketplace/journey-control/api-handlers
+  /api/angelcare-marketplace/journeys/admin/[journeyId] | methods=GET,PATCH | { handleAdminJourney } FROM @/angelcare-marketplace/journey-control/api-handlers
+  /api/angelcare-marketplace/journeys/admin/summary | methods=handler-defined | { handleAdminSummary } FROM @/angelcare-marketplace/journey-control/api-handlers
+  /api/angelcare-marketplace/journeys/category-native/[journeyId] | methods=GET | { handleCategoryNativeJourney } FROM @/angelcare-marketplace/category-native-experience/api-handlers
+  /api/angelcare-marketplace/journeys/notifications/[notificationId]/acknowledge | methods=POST | { handleAcknowledgeNotification } FROM @/angelcare-marketplace/journey-control/api-handlers
+  /api/angelcare-marketplace/operations/check-events | methods=handler-defined | { handleCheckEvent } FROM @/angelcare-marketplace/operations-execution/api-handlers
+  /api/angelcare-marketplace/operations/checklists | methods=handler-defined | { handleChecklistRegister } FROM @/angelcare-marketplace/operations-execution/api-handlers
+  /api/angelcare-marketplace/operations/commerce/summary | methods=handler-defined | {handleOperationsSummary} FROM @/angelcare-marketplace/operations-reconciliation/api-handlers
+  /api/angelcare-marketplace/operations/daily-closures | methods=handler-defined | { handleDailyClosure } FROM @/angelcare-marketplace/operations-execution/api-handlers
+  /api/angelcare-marketplace/operations/disputes | methods=handler-defined | {handleDisputes} FROM @/angelcare-marketplace/operations-reconciliation/api-handlers
+  /api/angelcare-marketplace/operations/disputes/[disputeId]/transition | methods=POST | {handleDisputeTransition} FROM @/angelcare-marketplace/operations-reconciliation/api-handlers
+  /api/angelcare-marketplace/operations/escalations | methods=handler-defined | { handleOperationsSummary } FROM @/angelcare-marketplace/operations-execution/api-handlers
+  /api/angelcare-marketplace/operations/evidence/[evidenceId]/review | methods=POST | {handleFulfillmentEvidenceReview} FROM @/angelcare-marketplace/operations-reconciliation/api-handlers
+  /api/angelcare-marketplace/operations/fulfillment | methods=handler-defined | {handleFulfillment} FROM @/angelcare-marketplace/operations-reconciliation/api-handlers
+  /api/angelcare-marketplace/operations/fulfillment/[caseId] | methods=GET | {handleFulfillmentDossier} FROM @/angelcare-marketplace/operations-reconciliation/api-handlers
+  /api/angelcare-marketplace/operations/fulfillment/[caseId]/evidence | methods=POST | {handleFulfillmentEvidence} FROM @/angelcare-marketplace/operations-reconciliation/api-handlers
+  /api/angelcare-marketplace/operations/fulfillment/[caseId]/transition | methods=POST | {handleFulfillmentTransition} FROM @/angelcare-marketplace/operations-reconciliation/api-handlers
+  /api/angelcare-marketplace/operations/incidents | methods=handler-defined | { handleIncident,handleIncidentRegister } FROM @/angelcare-marketplace/operations-execution/api-handlers
+  /api/angelcare-marketplace/operations/incidents/[incidentId]/transition | methods=POST | { handleIncidentTransition } FROM @/angelcare-marketplace/operations-execution/api-handlers
+  /api/angelcare-marketplace/operations/missions | methods=handler-defined | { handleMissions } FROM @/angelcare-marketplace/operations-execution/api-handlers
+  /api/angelcare-marketplace/operations/missions/[missionId] | methods=GET | { handleMissionDossier } FROM @/angelcare-marketplace/operations-execution/api-handlers
+  /api/angelcare-marketplace/operations/missions/[missionId]/dispatch | methods=POST | { handleDispatchGenerate } FROM @/angelcare-marketplace/operations-execution/api-handlers
+  /api/angelcare-marketplace/operations/missions/[missionId]/transition | methods=POST | { handleMissionTransition } FROM @/angelcare-marketplace/operations-execution/api-handlers
+  /api/angelcare-marketplace/operations/proof | methods=handler-defined | { handleProofRegister } FROM @/angelcare-marketplace/operations-execution/api-handlers
+  /api/angelcare-marketplace/operations/proposals/[proposalId]/decision | methods=POST | { handleProposalDecision } FROM @/angelcare-marketplace/operations-execution/api-handlers
+  /api/angelcare-marketplace/operations/providers | methods=handler-defined | {handleProviders} FROM @/angelcare-marketplace/operations-reconciliation/api-handlers
+  /api/angelcare-marketplace/operations/reconciliation | methods=handler-defined | {handleReconciliations} FROM @/angelcare-marketplace/operations-reconciliation/api-handlers
+  /api/angelcare-marketplace/operations/reconciliation/[caseId]/handover | methods=POST | {handleReconciliationHandover} FROM @/angelcare-marketplace/operations-reconciliation/api-handlers
+  /api/angelcare-marketplace/operations/reconciliation/[caseId]/transition | methods=POST | {handleReconciliationTransition} FROM @/angelcare-marketplace/operations-reconciliation/api-handlers
+  /api/angelcare-marketplace/operations/reconciliation/lines/[lineId]/decision | methods=POST | {handleReconciliationLineDecision} FROM @/angelcare-marketplace/operations-reconciliation/api-handlers
+  /api/angelcare-marketplace/operations/recovery | methods=handler-defined | {handleRecovery} FROM @/angelcare-marketplace/operations-reconciliation/api-handlers
+  /api/angelcare-marketplace/operations/recovery/[planId]/transition | methods=POST | {handleRecoveryTransition} FROM @/angelcare-marketplace/operations-reconciliation/api-handlers
+  /api/angelcare-marketplace/operations/replacements/[caseId]/transition | methods=POST | {handleReplacementTransition} FROM @/angelcare-marketplace/operations-reconciliation/api-handlers
+  /api/angelcare-marketplace/operations/reports | methods=handler-defined | { handleReportRegister } FROM @/angelcare-marketplace/operations-execution/api-handlers
+  /api/angelcare-marketplace/operations/returns | methods=handler-defined | {handleReturns} FROM @/angelcare-marketplace/operations-reconciliation/api-handlers
+  /api/angelcare-marketplace/operations/returns/[caseId]/transition | methods=POST | {handleReturnTransition} FROM @/angelcare-marketplace/operations-reconciliation/api-handlers
+  /api/angelcare-marketplace/operations/settlements | methods=handler-defined | {handleSettlements} FROM @/angelcare-marketplace/operations-reconciliation/api-handlers
+  /api/angelcare-marketplace/operations/settlements/[settlementId]/readiness | methods=POST | {handleSettlementReadinessUpdate} FROM @/angelcare-marketplace/operations-reconciliation/api-handlers
+  /api/angelcare-marketplace/operations/summary | methods=handler-defined | { handleOperationsSummary } FROM @/angelcare-marketplace/operations-execution/api-handlers
+  /api/angelcare-marketplace/operations/vendors | methods=handler-defined | {handleVendors} FROM @/angelcare-marketplace/operations-reconciliation/api-handlers
+  /api/angelcare-marketplace/territories | methods=handler-defined |
+  /api/angelcare-marketplace/territories/[territoryCode] | methods=GET,PATCH | { handleTerritoryGet, handleTerritoryPatch, } FROM @/angelcare-marketplace/territory-os/api-handlers
+  /api/angelcare-marketplace/territories/[territoryCode]/health | methods=GET,POST | { handleTerritoryHealthGet, handleTerritoryHealthPost, } FROM @/angelcare-marketplace/territory-os/api-handlers
+  /api/angelcare-marketplace/territories/[territoryCode]/overrides | methods=GET,POST | { handleTerritoryOverridesGet, handleTerritoryOverridesPost, } FROM @/angelcare-marketplace/territory-os/api-handlers
+  /api/angelcare-marketplace/territories/[territoryCode]/preview | methods=GET | { handleTerritoryPreviewGet, } FROM @/angelcare-marketplace/territory-os/api-handlers
+  /api/angelcare-marketplace/territories/[territoryCode]/readiness | methods=GET | { handleTerritoryReadinessGet, } FROM @/angelcare-marketplace/territory-os/api-handlers
+  /api/angelcare-marketplace/territories/[territoryCode]/readiness/[gateKey] | methods=PATCH | { handleTerritoryReadinessPatch, } FROM @/angelcare-marketplace/territory-os/api-handlers
+  /api/angelcare-marketplace/territories/[territoryCode]/readiness/sign-off | methods=POST | { handleTerritoryReadinessSignOffPost, } FROM @/angelcare-marketplace/territory-os/api-handlers
+  /api/angelcare-marketplace/territories/[territoryCode]/readiness/validate | methods=POST | { handleTerritoryReadinessValidatePost, } FROM @/angelcare-marketplace/territory-os/api-handlers
+  /api/angelcare-marketplace/territories/[territoryCode]/settings | methods=GET | { handleTerritorySettingsGet, } FROM @/angelcare-marketplace/territory-os/api-handlers
+  /api/angelcare-marketplace/territories/[territoryCode]/settings/[settingKey] | methods=PATCH | { handleTerritorySettingPatch, } FROM @/angelcare-marketplace/territory-os/api-handlers
+  /api/angelcare-marketplace/territories/[territoryCode]/transition | methods=POST | { handleTerritoryTransitionPost, } FROM @/angelcare-marketplace/territory-os/api-handlers
+  /api/angelcare-marketplace/territories/clone | methods=handler-defined |
+  /api/angelcare-marketplace/territories/export | methods=handler-defined |
+  /api/angelcare-marketplace/territories/templates | methods=handler-defined |
+  /api/angelcare-marketplace/territory-overrides/[overrideId] | methods=GET | { handleTerritoryOverrideGet, } FROM @/angelcare-marketplace/territory-os/api-handlers
+  /api/angelcare-marketplace/territory-overrides/[overrideId]/review | methods=POST | { handleTerritoryOverrideReviewPost, } FROM @/angelcare-marketplace/territory-os/api-handlers
+  /api/angelcare-marketplace/territory-overrides/[overrideId]/rollback | methods=POST | { handleTerritoryOverrideRollbackPost, } FROM @/angelcare-marketplace/territory-os/api-handlers
+
+------------------------------------------------------------------------------
+7. SCREEN-BY-SCREEN CODEX CONTRACT
+------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+01. OPÉRATIONS — CENTRE DE COMMANDEMENT LIVE
+------------------------------------------------------------------------------
+PNG AUTHORITY: 01_OPERATIONS_TODAY_LIVE_COMMAND_CENTER.png
+FINAL HOME: Opérations
+CURRENT ROUTES COVERED:
+  - /angelcare-marketplace/admin/operations
+  - /angelcare-marketplace/admin/operations/today
+  - /angelcare-marketplace/admin/operations/live
+  - /angelcare-marketplace/admin/operations/action-center
+SOURCE FILES / COMPONENTS:
+  - angelcare-marketplace/operations-reconciliation/components/OperationsCommerceCommand.tsx
+  - angelcare-marketplace/operations-execution/components/OperationsCommand.tsx
+  - angelcare-marketplace/operations-reconciliation/repository.ts
+  - angelcare-marketplace/operations-execution/repository.ts
+PERMISSIONS:
+  - marketplace.operations.view
+  - marketplace.operations.live.view
+CAPABILITIES THAT MUST BE EXPOSED COHERENTLY:
+  - Dossiers gouvernés
+  - Acceptations requises
+  - Dossiers bloqués
+  - Preuves requises
+  - Quality review
+  - Réconciliation requise
+  - Exposition opérationnelle
+  - 8 moteurs opérationnels
+  - Live fulfillment portfolio
+  - Exception command
+  - Action Center
+IMPLEMENTATION DECISION: Canonical Operations landing. Consolidate Today/Live/Action Center as contextual views, not new primary sidebar destinations.
+REQUIRED UX STATES: loading; empty; partial; error; permission denied; mutation pending; mutation success; mutation failure; stale/refresh where current source polls or reloads.
+ROUTE RULE: preserve compatibility routes where needed, but make the approved screen the canonical human-facing surface.
+NO DEAD CONTROLS: every visible mutation/action must call an existing authority or be omitted/disabled with truthful explanation.
+
+------------------------------------------------------------------------------
+02. FULFILLMENT & DISPATCH — MISSION CONTROL
+------------------------------------------------------------------------------
+PNG AUTHORITY: 02_FULFILLMENT_DISPATCH_MISSION_CONTROL.png
+FINAL HOME: Opérations
+CURRENT ROUTES COVERED:
+  - /angelcare-marketplace/admin/operations/fulfillment
+  - /angelcare-marketplace/admin/operations/dispatch
+  - /angelcare-marketplace/admin/operations/mission-control
+SOURCE FILES / COMPONENTS:
+  - angelcare-marketplace/enterprise-command/components/FulfillmentMissionControl.tsx
+  - angelcare-marketplace/operations-execution/components/DispatchBoard.tsx
+  - angelcare-marketplace/operations-reconciliation/components/OperationsQueuePage.tsx
+PERMISSIONS:
+  - marketplace.operations.view
+  - marketplace.operations.missions.create
+  - marketplace.operations.missions.manage
+  - marketplace.operations.dispatch.manage
+  - marketplace.operations.assign
+  - marketplace.operations.reassign
+CAPABILITIES THAT MUST BE EXPOSED COHERENTLY:
+  - Create operational mission from a confirmed journey/order
+  - Load provider network
+  - Generate provider proposals
+  - Score eligibility, territory, availability and conflicts
+  - Accept or reject proposal
+  - Assign provider
+  - Transition mission status
+  - Refresh live state
+IMPLEMENTATION DECISION: Do not invent assignment logic. Reuse existing proposal/decision and mission transition APIs.
+REQUIRED UX STATES: loading; empty; partial; error; permission denied; mutation pending; mutation success; mutation failure; stale/refresh where current source polls or reloads.
+ROUTE RULE: preserve compatibility routes where needed, but make the approved screen the canonical human-facing surface.
+NO DEAD CONTROLS: every visible mutation/action must call an existing authority or be omitted/disabled with truthful explanation.
+
+------------------------------------------------------------------------------
+03. MISSION 360 — CHECKLIST, PREUVE & VALIDATION
+------------------------------------------------------------------------------
+PNG AUTHORITY: 03_MISSION_360_CHECKLIST_PROOF_VALIDATION.png
+FINAL HOME: Opérations
+CURRENT ROUTES COVERED:
+  - /angelcare-marketplace/admin/operations/missions
+  - /angelcare-marketplace/admin/operations/missions/[missionId]
+  - /angelcare-marketplace/admin/operations/checklists
+  - /angelcare-marketplace/admin/operations/proof
+  - /angelcare-marketplace/admin/operations/validation
+  - /angelcare-marketplace/admin/operations/reports
+SOURCE FILES / COMPONENTS:
+  - angelcare-marketplace/operations-execution/components/MissionDossier.tsx
+  - angelcare-marketplace/operations-execution/components/ChecklistCommand.tsx
+  - angelcare-marketplace/operations-execution/components/ProofCommand.tsx
+  - angelcare-marketplace/operations-execution/components/ValidationBoard.tsx
+  - angelcare-marketplace/operations-execution/components/OperationsEvidenceRegisters.tsx
+PERMISSIONS:
+  - marketplace.operations.view
+  - marketplace.operations.missions.manage
+  - marketplace.operations.checklists.manage
+  - marketplace.operations.reports.review
+  - marketplace.operations.reports.validate
+  - marketplace.operations.proof.export
+CAPABILITIES THAT MUST BE EXPOSED COHERENTLY:
+  - Mission identity and schedule
+  - Assigned provider
+  - Mission brief
+  - Check-in / check-out evidence
+  - Dynamic checklist run
+  - Mission report
+  - Incidents
+  - Evidence review
+  - Report validation
+  - Proof export
+  - Audited transitions
+IMPLEMENTATION DECISION: Mission completion must remain evidence-backed. Do not bypass report, checklist, incident or validation gates.
+REQUIRED UX STATES: loading; empty; partial; error; permission denied; mutation pending; mutation success; mutation failure; stale/refresh where current source polls or reloads.
+ROUTE RULE: preserve compatibility routes where needed, but make the approved screen the canonical human-facing surface.
+NO DEAD CONTROLS: every visible mutation/action must call an existing authority or be omitted/disabled with truthful explanation.
+
+------------------------------------------------------------------------------
+04. JOURNEY CONTROL — POST-CONVERSION AUTHORITY
+------------------------------------------------------------------------------
+PNG AUTHORITY: 04_JOURNEY_CONTROL_POST_CONVERSION.png
+FINAL HOME: Opérations
+CURRENT ROUTES COVERED:
+  - /angelcare-marketplace/admin/journeys
+  - /angelcare-marketplace/admin/journeys/[journeyId]
+  - /angelcare-marketplace/admin/journeys/action-center
+  - /angelcare-marketplace/admin/journeys/orders
+  - /angelcare-marketplace/admin/journeys/bookings
+  - /angelcare-marketplace/admin/journeys/enrollments
+  - /angelcare-marketplace/admin/journeys/quotations
+  - /angelcare-marketplace/admin/journeys/subscriptions
+  - /angelcare-marketplace/admin/journeys/assessments
+  - /angelcare-marketplace/admin/journeys/fulfillment
+  - /angelcare-marketplace/admin/journeys/exceptions
+  - /angelcare-marketplace/admin/journeys/recovery
+  - /angelcare-marketplace/admin/journeys/documents
+  - /angelcare-marketplace/admin/journeys/notifications
+  - /angelcare-marketplace/admin/journeys/configuration
+  - /angelcare-marketplace/admin/journeys/analytics
+SOURCE FILES / COMPONENTS:
+  - angelcare-marketplace/journey-control/components/JourneyAdminCommand.tsx
+  - angelcare-marketplace/journey-control/components/JourneyAdminDetail.tsx
+  - angelcare-marketplace/journey-control/components/JourneyTimeline.tsx
+  - angelcare-marketplace/journey-control/components/JourneyActionPanel.tsx
+  - angelcare-marketplace/journey-control/components/DocumentVault.tsx
+  - angelcare-marketplace/journey-control/components/NotificationCenter.tsx
+  - angelcare-marketplace/journey-control/components/RecoveryPanel.tsx
+PERMISSIONS:
+  - marketplace.journeys.view
+  - marketplace.journeys.manage
+  - marketplace.journeys.actions.manage
+  - marketplace.journeys.documents.manage
+  - marketplace.journeys.notifications.manage
+  - marketplace.journeys.recovery.manage
+  - marketplace.journeys.configuration.manage
+  - marketplace.journeys.analytics.view
+  - marketplace.journeys.export
+CAPABILITIES THAT MUST BE EXPOSED COHERENTLY:
+  - Journey types: product_order, kit_order, family_booking, recurring_service, academy_enrollment, b2b_quotation, hospitality_programme, corporate_benefit, partner_activation, quality_assessment
+  - Stored lifecycle state
+  - Current authority
+  - Next action and due date
+  - Risk
+  - Events
+  - Actions
+  - Documents
+  - Notifications
+  - Change requests
+  - Recovery cases
+  - Admin PATCH with audit
+IMPLEMENTATION DECISION: Progress must be stored/authority-backed. Never infer completion from decorative steps.
+REQUIRED UX STATES: loading; empty; partial; error; permission denied; mutation pending; mutation success; mutation failure; stale/refresh where current source polls or reloads.
+ROUTE RULE: preserve compatibility routes where needed, but make the approved screen the canonical human-facing surface.
+NO DEAD CONTROLS: every visible mutation/action must call an existing authority or be omitted/disabled with truthful explanation.
+
+------------------------------------------------------------------------------
+05. INCIDENTS, EXCEPTIONS, ESCALATIONS & DISPUTES
+------------------------------------------------------------------------------
+PNG AUTHORITY: 05_INCIDENTS_EXCEPTIONS_ESCALATIONS_DISPUTES.png
+FINAL HOME: Opérations
+CURRENT ROUTES COVERED:
+  - /angelcare-marketplace/admin/operations/incidents
+  - /angelcare-marketplace/admin/operations/escalations
+  - /angelcare-marketplace/admin/operations/exceptions
+  - /angelcare-marketplace/admin/operations/disputes
+SOURCE FILES / COMPONENTS:
+  - angelcare-marketplace/operations-execution/components/IncidentAuthorityClient.tsx
+  - angelcare-marketplace/operations-reconciliation/components/CaseCommands.tsx
+  - angelcare-marketplace/operations-reconciliation/components/OperationsQueuePage.tsx
+PERMISSIONS:
+  - marketplace.operations.incidents.view
+  - marketplace.operations.incidents.manage
+  - marketplace.operations.incidents.escalate
+  - marketplace.operations.view
+CAPABILITIES THAT MUST BE EXPOSED COHERENTLY:
+  - Incident category and severity
+  - Incident lifecycle
+  - Safeguarding flag
+  - Protected narrative
+  - Immediate actions
+  - Owner
+  - Response due
+  - Operational exception customer harm
+  - Financial exposure
+  - SLA exposure
+  - Next action
+  - Dispute investigation, decision and remedy
+  - Audited transitions
+IMPLEMENTATION DECISION: Keep security/privacy boundaries on protected narratives. Do not expose internal incident data to customer-facing surfaces.
+REQUIRED UX STATES: loading; empty; partial; error; permission denied; mutation pending; mutation success; mutation failure; stale/refresh where current source polls or reloads.
+ROUTE RULE: preserve compatibility routes where needed, but make the approved screen the canonical human-facing surface.
+NO DEAD CONTROLS: every visible mutation/action must call an existing authority or be omitted/disabled with truthful explanation.
+
+------------------------------------------------------------------------------
+06. RETURNS, REPLACEMENTS & RECOVERY
+------------------------------------------------------------------------------
+PNG AUTHORITY: 06_RETURNS_REPLACEMENTS_RECOVERY.png
+FINAL HOME: Opérations
+CURRENT ROUTES COVERED:
+  - /angelcare-marketplace/admin/operations/returns
+  - /angelcare-marketplace/admin/operations/replacements
+  - /angelcare-marketplace/admin/operations/recovery
+SOURCE FILES / COMPONENTS:
+  - angelcare-marketplace/operations-reconciliation/types.ts
+  - angelcare-marketplace/operations-reconciliation/repository.ts
+  - angelcare-marketplace/operations-reconciliation/api-handlers.ts
+PERMISSIONS:
+  - marketplace.operations.view
+CAPABILITIES THAT MUST BE EXPOSED COHERENTLY:
+  - Return reason and type
+  - Eligibility status
+  - Return remedy type
+  - Finance handover status
+  - Replacement type and promised/completed dates
+  - Recovery type
+  - Urgency
+  - Customer summary
+  - Internal strategy
+  - Approved remedy
+  - Owner and due date
+  - State transition
+IMPLEMENTATION DECISION: Never mutate original transaction history away. Returns/replacements/recovery are governed linked cases.
+REQUIRED UX STATES: loading; empty; partial; error; permission denied; mutation pending; mutation success; mutation failure; stale/refresh where current source polls or reloads.
+ROUTE RULE: preserve compatibility routes where needed, but make the approved screen the canonical human-facing surface.
+NO DEAD CONTROLS: every visible mutation/action must call an existing authority or be omitted/disabled with truthful explanation.
+
+------------------------------------------------------------------------------
+07. RÉCONCILIATION, SETTLEMENTS & CLÔTURE JOURNALIÈRE
+------------------------------------------------------------------------------
+PNG AUTHORITY: 07_RECONCILIATION_SETTLEMENTS_DAILY_CLOSURE.png
+FINAL HOME: Opérations
+CURRENT ROUTES COVERED:
+  - /angelcare-marketplace/admin/operations/reconciliation
+  - /angelcare-marketplace/admin/operations/settlements
+  - /angelcare-marketplace/admin/operations/closure
+SOURCE FILES / COMPONENTS:
+  - angelcare-marketplace/operations-reconciliation/types.ts
+  - angelcare-marketplace/operations-reconciliation/components/CounterpartyCommands.tsx
+  - angelcare-marketplace/operations-execution/components/DailyClosureBoard.tsx
+PERMISSIONS:
+  - marketplace.operations.view
+  - marketplace.operations.closure.approve
+  - marketplace.finance.reconciliation.manage
+CAPABILITIES THAT MUST BE EXPOSED COHERENTLY:
+  - Contracted amount
+  - Adjustment amount
+  - Final reconciled amount
+  - Reconciliation lines debit/credit
+  - Evidence complete
+  - Dispute open
+  - Finance handover status
+  - Settlement readiness gates: evidence, quality, customer acceptance, incident clear, dispute clear, amount validated, document ready, approval ready
+  - Blocked reasons
+  - Daily closure approval
+IMPLEMENTATION DECISION: Operations prepares evidence/readiness. Finance remains canonical for financial posting and reconciliation authority.
+REQUIRED UX STATES: loading; empty; partial; error; permission denied; mutation pending; mutation success; mutation failure; stale/refresh where current source polls or reloads.
+ROUTE RULE: preserve compatibility routes where needed, but make the approved screen the canonical human-facing surface.
+NO DEAD CONTROLS: every visible mutation/action must call an existing authority or be omitted/disabled with truthful explanation.
+
+------------------------------------------------------------------------------
+08. TERRITORY OS — READINESS, HEALTH & OVERRIDES
+------------------------------------------------------------------------------
+PNG AUTHORITY: 08_TERRITORY_OS_READINESS_HEALTH_OVERRIDES.png
+FINAL HOME: Opérations
+CURRENT ROUTES COVERED:
+  - /angelcare-marketplace/admin/territories
+  - /angelcare-marketplace/admin/territories/registry
+  - /angelcare-marketplace/admin/territories/new
+  - /angelcare-marketplace/admin/territories/clone
+  - /angelcare-marketplace/admin/territories/[territoryCode]
+  - /angelcare-marketplace/admin/territories/[territoryCode]/readiness
+  - /angelcare-marketplace/admin/territories/[territoryCode]/health
+  - /angelcare-marketplace/admin/territories/[territoryCode]/overrides
+  - /angelcare-marketplace/admin/territories/[territoryCode]/settings
+  - /angelcare-marketplace/admin/territories/[territoryCode]/preview
+SOURCE FILES / COMPONENTS:
+  - angelcare-marketplace/territory-os/components/TerritoryCommandCockpit.tsx
+  - angelcare-marketplace/territory-os/components/TerritoryDetailCommand.tsx
+  - angelcare-marketplace/territory-os/components/ReadinessBoardClient.tsx
+  - angelcare-marketplace/territory-os/components/TerritoryHealthClient.tsx
+  - angelcare-marketplace/territory-os/components/OverrideStudioClient.tsx
+  - angelcare-marketplace/territory-os/components/CreateTerritoryWizard.tsx
+  - angelcare-marketplace/territory-os/components/CloneTerritoryWizard.tsx
+PERMISSIONS:
+  - marketplace.territories.view
+  - marketplace.territories.create
+  - marketplace.territories.update
+  - marketplace.territories.clone
+  - marketplace.territories.submit_review
+  - marketplace.territories.approve_soft_launch
+  - marketplace.territories.approve_live
+  - marketplace.territories.pause
+  - marketplace.territories.resume
+  - marketplace.territories.archive
+  - marketplace.territories.preview
+  - marketplace.territories.export
+  - marketplace.territory_settings.view
+  - marketplace.territory_settings.manage
+  - marketplace.territory_overrides.view
+  - marketplace.territory_overrides.create
+  - marketplace.territory_overrides.review
+  - marketplace.territory_overrides.approve
+  - marketplace.territory_overrides.reject
+  - marketplace.territory_overrides.rollback
+  - marketplace.territory_readiness.view
+  - marketplace.territory_readiness.manage
+  - marketplace.territory_readiness.review
+  - marketplace.territory_readiness.sign_off
+  - marketplace.territory_health.view
+  - marketplace.territory_health.manage
+CAPABILITIES THAT MUST BE EXPOSED COHERENTLY:
+  - Create territory
+  - Clone Global Master
+  - Status and health
+  - Active locales
+  - Readiness score and gates
+  - Decision queue
+  - Health events
+  - Settings inheritance
+  - Overrides create/review/approve/reject/rollback
+  - Preview
+  - Readiness validate/sign-off
+  - Lifecycle transition
+  - Export
+IMPLEMENTATION DECISION: Territory state must be governed. Do not simulate live launch when gates or sign-off are incomplete.
+REQUIRED UX STATES: loading; empty; partial; error; permission denied; mutation pending; mutation success; mutation failure; stale/refresh where current source polls or reloads.
+ROUTE RULE: preserve compatibility routes where needed, but make the approved screen the canonical human-facing surface.
+NO DEAD CONTROLS: every visible mutation/action must call an existing authority or be omitted/disabled with truthful explanation.
+
+------------------------------------------------------------------------------
+09. TRANSACTION FLIGHT DECK — ORDERS & FULFILLMENT
+------------------------------------------------------------------------------
+PNG AUTHORITY: 09_TRANSACTION_FLIGHT_DECK.png
+FINAL HOME: Opérations
+CURRENT ROUTES COVERED:
+  - /angelcare-marketplace/admin/orders-fulfillment
+  - /angelcare-marketplace/admin/orders-fulfillment/incoming
+  - /angelcare-marketplace/admin/orders-fulfillment/orders
+  - /angelcare-marketplace/admin/orders-fulfillment/fulfillment
+  - /angelcare-marketplace/admin/orders-fulfillment/dispatch
+  - /angelcare-marketplace/admin/orders-fulfillment/exceptions
+  - /angelcare-marketplace/admin/orders-fulfillment/recovery
+  - /angelcare-marketplace/admin/orders-fulfillment/completed
+SOURCE FILES / COMPONENTS:
+  - angelcare-marketplace/transaction-flight-deck/components/FlightDeckWorkspace.tsx
+  - angelcare-marketplace/transaction-flight-deck/components/FlightDeckDrawer.tsx
+  - angelcare-marketplace/transaction-flight-deck/repository.ts
+  - angelcare-marketplace/transaction-flight-deck/types.ts
+PERMISSIONS:
+  - marketplace.operations.view
+CAPABILITIES THAT MUST BE EXPOSED COHERENTLY:
+  - Flight stages: new, payment, confirmed, preparation, assigned, scheduled, executing, blocked, recovery, completed, financial_close, closed, cancelled
+  - Severity: healthy, watch, attention, critical
+  - Active/value-in-flow/outstanding/unassigned/late-risk/open-exceptions/recovery metrics
+  - Order Runway
+  - Mission lanes
+  - Dispatch desk
+  - Provider capacity
+  - Exception control
+  - Recovery desk
+  - Closure gates
+  - Multi-object drawers and dock
+IMPLEMENTATION DECISION: Flight Deck is an advanced operational projection. It must not become a second order/payment/fulfillment authority.
+REQUIRED UX STATES: loading; empty; partial; error; permission denied; mutation pending; mutation success; mutation failure; stale/refresh where current source polls or reloads.
+ROUTE RULE: preserve compatibility routes where needed, but make the approved screen the canonical human-facing surface.
+NO DEAD CONTROLS: every visible mutation/action must call an existing authority or be omitted/disabled with truthful explanation.
+
+------------------------------------------------------------------------------
+10. BULK OPERATIONS & DOCUMENT FACTORY
+------------------------------------------------------------------------------
+PNG AUTHORITY: 10_BULK_OPERATIONS_DOCUMENT_FACTORY.png
+FINAL HOME: Opérations
+CURRENT ROUTES COVERED:
+  - /angelcare-marketplace/admin/bulk-operations
+  - /angelcare-marketplace/admin/documents
+SOURCE FILES / COMPONENTS:
+  - angelcare-marketplace/enterprise-command/components/BulkOperationsCenter.tsx
+  - angelcare-marketplace/enterprise-command/components/DocumentFactoryCommand.tsx
+  - angelcare-marketplace/enterprise-command/document-factory.ts
+PERMISSIONS:
+  - marketplace.commerce.import
+  - marketplace.commerce.export
+CAPABILITIES THAT MUST BE EXPOSED COHERENTLY:
+  - Persistent bulk jobs
+  - Dry-run/preflight
+  - Progress percentage
+  - Processed/total rows
+  - Valid/failed/rejected counts
+  - Resume/retry specialized jobs
+  - Product doctrine import
+  - Structured commerce import/export
+  - Localization imports
+  - Category-native imports
+  - Document template library
+  - Portrait/landscape
+  - Header/footer
+  - Blocks
+  - Real object search/binding
+  - Export endpoint
+IMPLEMENTATION DECISION: Bulk Center federates specialized engines; it does not replace them. Document Factory exports from real objects, not mock records.
+REQUIRED UX STATES: loading; empty; partial; error; permission denied; mutation pending; mutation success; mutation failure; stale/refresh where current source polls or reloads.
+ROUTE RULE: preserve compatibility routes where needed, but make the approved screen the canonical human-facing surface.
+NO DEAD CONTROLS: every visible mutation/action must call an existing authority or be omitted/disabled with truthful explanation.
+
+------------------------------------------------------------------------------
+8. DATA MODEL / STATUS FAMILIES CODEX MUST RESPECT
+------------------------------------------------------------------------------
+FulfillmentKind: product_order | kit_order | family_service | recurring_service | academy_delivery | b2b_programme | partner_activation | quality_assessment
+FulfillmentStatus: commercially_confirmed | readiness_review | awaiting_acceptance | accepted | allocation_required | allocated | preparing | in_execution | evidence_required | quality_review | customer_acceptance | reconciliation_required | reconciled | closed | blocked | cancelled
+OperationsRisk: low | medium | high | critical
+MissionStatus: draft | awaiting_authorization | authorized | staffing_required | proposed | assigned | awaiting_acceptance | accepted | brief_acknowledged | travel_ready | check_in_pending | in_progress | incident_open | check_out_pending | report_pending | validation_pending | correction_required | validated | payable_handover | closed | cancelled | suspended
+IncidentSeverity: low | moderate | high | critical | emergency
+IncidentStatus: reported | triaged | assigned | under_response | stabilized | investigation | corrective_action | awaiting_validation | resolved | closed | reopened
+JourneyType: product_order | kit_order | family_booking | recurring_service | academy_enrollment | b2b_quotation | hospitality_programme | corporate_benefit | partner_activation | quality_assessment
+JourneyStatus: registered | awaiting_customer | awaiting_angelcare | qualified | scheduled | in_preparation | in_progress | completed | blocked | recovery | cancelled
+JourneyActionStatus: open | in_progress | completed | waived | expired
+JourneyRisk: low | medium | high | critical
+FlightStage: new | payment | confirmed | preparation | assigned | scheduled | executing | blocked | recovery | completed | financial_close | closed | cancelled
+FlightSeverity: healthy | watch | attention | critical
+
+------------------------------------------------------------------------------
+9. OBJECT RELATIONSHIPS / CROSS-LINKING
+------------------------------------------------------------------------------
+  - Conversion outcome -> Marketplace Journey
+  - Journey -> fulfillment case / canonical object
+  - Order/Journey -> Operations Mission
+  - Mission -> assignment proposals -> provider
+  - Mission -> brief / checks / checklist / report / incidents
+  - Fulfillment case -> obligations / evidence / returns / replacements / disputes / recoveries / reconciliations / settlements
+  - Reconciliation -> lines -> Finance handover
+  - Territory -> settings / readiness gates / health events / overrides / preview
+  - Flight Deck -> projection over orders, missions, exceptions, recoveries, providers and closure gates
+  - Bulk Operations -> specialized import engines; persistent job register
+  - Document Factory -> template + real source object -> export
+All cross-links must point to real existing routes or canonical new frontends created by approved batches. No 404/black screen/obsolete UI destinations.
+
+------------------------------------------------------------------------------
+10. MUTATION SAFETY / EVIDENCE RULES
+------------------------------------------------------------------------------
+  - Provider assignment must use scored proposals and existing proposal decision API.
+  - Mission transitions must use the mission transition API and preserve reason/audit.
+  - Fulfillment completion must not bypass evidence/quality/customer acceptance/reconciliation gates.
+  - Incident escalation and transition must preserve incident authority and protected data.
+  - Return/replacement/recovery transitions must preserve original transaction history.
+  - Reconciliation handover prepares Finance; do not perform fake posting in Operations.
+  - Settlement readiness is a gate matrix, not a decorative green badge.
+  - Daily closure approval requires the existing closure authority/permission.
+  - Territory launch/soft-launch/live transitions must respect readiness/health/override/sign-off authority.
+  - Bulk actions must remain job-based, resumable and traceable; do not turn them into browser-only loops.
+  - Document exports must bind to real objects and existing export endpoint.
+
+------------------------------------------------------------------------------
+11. PRIMARY NAVIGATION / SIDEBAR COHERENCE
+------------------------------------------------------------------------------
+Never add these as primary sidebar items: Fulfillment, Dispatch, Missions, Journey Control, Incidents, Recovery, Reconciliation, Territory OS, Flight Deck, Bulk Operations, Documents.
+They belong as Opérations tabs, secondary navigation, command cards, dossier links, drawers or advanced tools.
+The permanent 15-item primary sidebar remains the only global Marketplace Admin navigation constitution.
+
+------------------------------------------------------------------------------
+12. CROSS-BATCH BOUNDARIES — DO NOT STEAL FUTURE WORK
+------------------------------------------------------------------------------
+Batch 08 owns Providers / Vendors / Suppliers / Supply Network dossiers and capacity management. Batch 07 may reference providers only contextually for dispatch and settlement readiness.
+Batch 10 owns Finance. Batch 07 may show operational financial exposure, reconciliation readiness and Finance handover, but must not recreate payments, invoices, refunds, Wallet, price books or posting authority.
+Later Trust & Quality owns quality governance. Batch 07 may show operational quality-review gates but must not recreate Trust Studio, CAPA or Quality Check governance.
+Later Analytics owns enterprise analytics. Batch 07 may show operational counts/pressure needed to execute work, but not build a duplicate analytics suite.
+
+------------------------------------------------------------------------------
+13. REQUIRED CODEX EXECUTION ORDER
+------------------------------------------------------------------------------
+01. Read this entire mapping TXT.
+02. Inspect all 10 PNGs.
+03. Inspect current source components/repositories/API handlers listed above.
+04. Confirm existing working-tree changes and do not revert unrelated work.
+05. Create/normalize Opérations secondary information architecture without modifying global primary sidebar doctrine.
+06. Implement Screen 01 foundation and shared Operations shell patterns.
+07. Implement Screens 02–07 using current Operations/Journey authorities.
+08. Integrate Territory OS as advanced Operations workspace without changing Territory backend.
+09. Integrate Transaction Flight Deck as projection, not authority replacement.
+10. Integrate Bulk Operations + Document Factory as advanced tools.
+11. Audit all cross-links and compatibility routes.
+12. Run TypeScript and relevant Marketplace source verifiers.
+13. Run route/link smoke validation where possible.
+14. Stop before commit/push/deploy and report exact diff/status.
+
+------------------------------------------------------------------------------
+14. ACCEPTANCE CHECKLIST
+------------------------------------------------------------------------------
+[ ] All 10 approved PNG surfaces implemented or explicitly blocked by a proven source gap.
+[ ] Opérations active in permanent sidebar; no new global sidebar roots.
+[ ] No SQL/migration/new table introduced.
+[ ] No backend business authority replaced.
+[ ] Every displayed action is real, permission-aware and wired.
+[ ] Mission assignment uses scored proposal authority.
+[ ] Mission proof/checklist/report/incident chain remains intact.
+[ ] Journey statuses and progress are authority-backed.
+[ ] Exceptions/disputes/recovery remain linked to canonical cases.
+[ ] Reconciliation never impersonates Finance posting.
+[ ] Settlement readiness uses real gates.
+[ ] Territory readiness/health/overrides/sign-off remain governed.
+[ ] Flight Deck remains a projection over canonical objects.
+[ ] Bulk jobs remain durable/resumable and specialized-engine aware.
+[ ] Document Factory binds to real source objects.
+[ ] Loading/empty/error/permission/mutation states exist.
+[ ] No canonical link produces known 404, black screen or wrong product.
+[ ] Public Marketplace and other AngelCare products remain untouched.
+[ ] TypeScript passes for changed scope.
+[ ] No commit/push/deploy performed.
+
+------------------------------------------------------------------------------
+15. FINAL CODEX REPORT FORMAT
+------------------------------------------------------------------------------
+  - Files changed
+  - Canonical routes implemented
+  - Compatibility routes preserved/redirected
+  - Existing components/repos/APIs reused
+  - Permissions enforced
+  - Visual coverage per PNG 01–10
+  - Functional coverage per PNG 01–10
+  - TypeScript/verifier results
+  - Known runtime-only gates
+  - Any proven backend gap (do not solve with SQL unless separately approved)
+  - Exact git status/diff summary
+
+END OF BATCH 07 SOURCE/BACKEND + CODEX IMPLEMENTATION MAPPING

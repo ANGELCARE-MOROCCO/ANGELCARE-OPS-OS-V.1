@@ -10,6 +10,9 @@ import type { CatalogLocale } from '@/angelcare-marketplace/catalog-discovery/ty
 import { GlobalPublicShell } from '@/angelcare-marketplace/public-universe/components/GlobalPublicShell'
 import { PublicPageRenderer } from '@/angelcare-marketplace/public-universe/components/PublicPageRenderer'
 import { getPublicPage, publicRoutePath } from '@/angelcare-marketplace/public-universe/repository'
+import { SanilaPublicUniverse } from '@/angelcare-marketplace/sanila-public/SanilaPublicUniverse'
+import { isSanilaPublicRoute } from '@/angelcare-marketplace/sanila-public/content'
+import { getSanilaPublicMetadata } from '@/angelcare-marketplace/sanila-public/metadata'
 import { resolvePublishedDictionary } from '@/angelcare-marketplace/localization-intelligence/runtime'
 
 const locales = new Set(['fr', 'en', 'ar'])
@@ -30,6 +33,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const translated = (value: string | null | undefined) => value ? dictionary?.bySource[value] || value : undefined
   const slug = current.slug?.length ? publicRoutePath(current.slug) : 'accueil'
   const alias = canonicalAlias(locale, slug)
+  if (locale === 'fr' && isSanilaPublicRoute(slug)) return getSanilaPublicMetadata(slug)
   if (alias) return { title: 'ANGELCARE Marketplace', alternates: { canonical: `/angelcare-marketplace/${locale}/${alias}` } }
   if (slug === 'accueil') {
     const homepage = await getHomepageExperience({ locale }).catch(() => null)
@@ -48,6 +52,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
   const slug = current.slug?.length ? publicRoutePath(current.slug) : 'accueil'
   const alias = canonicalAlias(locale, slug)
   if (alias) permanentRedirect(`/angelcare-marketplace/${locale}/${alias}`)
+  if (locale === 'fr' && isSanilaPublicRoute(slug)) return <SanilaPublicUniverse slug={slug} locale={locale} />
   if (slug === 'accueil') {
     // MARKETPLACE_LOCALE_ROOT_FAIL_OPEN
     //

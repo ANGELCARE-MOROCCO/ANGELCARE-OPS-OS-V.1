@@ -1,0 +1,1078 @@
+ANGELCARE MARKETPLACE ADMIN — BATCH 08 FINAL
+PRESTATAIRES & FOURNISSEURS / PROVIDERS / VENDORS / SUPPLIERS / SUPPLY NETWORK / CAPACITY
+SOURCE/BACKEND + CODEX IMPLEMENTATION MAPPING
+Generated from source authority: ANGELCARE_MARKETPLACE_WEB_20260826-221837.zip
+SOURCE SHA-256: acf0b0a651268d6d49397bf3413fbe2c9164db9e67f52b461df90abb4e054d35
+
+STATUS
+======
+This file is the implementation contract for Batch 08.
+The 10 PNG files packaged with it are the approved visual/UIX authority.
+This TXT is the source/backend authority mapping that Codex MUST read first.
+
+Anything inside admin-design/batch-08/ is approved for implementation by project doctrine.
+There is no separate approvals manifest.
+
+STRICT PRODUCT
+==============
+ANGELCARE MARKETPLACE ONLY.
+Do not touch AngelCare 360, SANILA, Operator or unrelated products.
+
+BACKEND FREEZE
+==============
+NO SQL.
+NO migrations.
+NO new tables.
+NO parallel Provider engine.
+NO parallel Vendor engine.
+NO parallel Supplier engine.
+NO parallel Supply Network engine.
+NO auth/session redesign.
+NO RLS weakening.
+NO permission-model replacement.
+NO fake metrics or fake status.
+NO invented eligibility, availability, contract, quality, settlement or payable state.
+
+Existing Marketplace APIs, repositories, permissions, lifecycle transitions and persisted authorities remain canonical.
+The visual projections are a frontend consolidation and productization contract, NOT permission to invent backend behavior.
+
+VISUAL CONSTITUTION
+===================
+Batch 08 must remain visually coherent with approved Batches 01–07:
+- permanent human-facing Marketplace sidebar remains unchanged;
+- active workspace for all Batch 08 screens: Prestataires & fournisseurs;
+- text brand: ANGELCARE MARKETPLACE;
+- premium white/light corporate UI;
+- high information density without clutter;
+- purpose-specific workspaces, not generic repeated dashboards;
+- strong hierarchy, contextual action rails, evidence status, readiness and risk;
+- French operator language;
+- currency: Dh when money appears;
+- real status labels and real source-backed actions only.
+
+PERMANENT PRIMARY SIDEBAR
+=========================
+Accueil
+Commandes & réservations
+Produits & services
+Catégories & collections
+Clients
+Boutique
+Marketing & promotions
+Opérations
+Prestataires & fournisseurs   <-- ACTIVE IN BATCH 08
+Academy
+B2B & partenaires
+Finance
+Trust & qualité
+Analytics & intelligence
+Paramètres & gouvernance
+
+Do NOT expose technical route groups such as Provider Workforce, Vendor Authority,
+Supply Network Grid, Capacity, Eligibility, Payable Eligibility, etc. as new global-sidebar items.
+Those are deep tools inside Prestataires & fournisseurs.
+
+======================================================================
+BATCH 08 FINAL 10-SCREEN PRODUCT TREE
+======================================================================
+01 — PRESTATAIRES_FOURNISSEURS_COMMAND_CENTER
+02 — PROVIDER_MASTER_REGISTRY_ONBOARDING
+03 — PROVIDER_360_ELIGIBILITY_LIFECYCLE
+04 — PROVIDER_READINESS_DOCUMENTS_CERTIFICATIONS_QUALIFICATIONS
+05 — PROVIDER_AVAILABILITY_ASSIGNMENTS_PERFORMANCE_PAYABLES
+06 — VENDOR_AUTHORITY_REGISTRY_LIFECYCLE
+07 — VENDOR_CONTRACTS_CATALOG_INVENTORY
+08 — VENDOR_ORDERS_QUALITY_DISPUTES_SETTLEMENTS
+09 — SUPPLIER_NETWORK_COMMAND
+10 — NETWORK_CAPACITY_GRID_ASSIGNMENT_LOAD
+
+These 10 final workspaces consolidate the current provider/vendor/supplier/supply-network route estate.
+They DO NOT imply deleting compatibility routes during this frontend pass.
+
+======================================================================
+SOURCE COMPONENTS VERIFIED
+======================================================================
+angelcare-marketplace/provider-workforce/components/ProviderCommand.tsx
+angelcare-marketplace/provider-workforce/components/ProviderDossier.tsx
+angelcare-marketplace/provider-workforce/components/EligibilityCommand.tsx
+angelcare-marketplace/provider-workforce/components/ProviderActionClient.tsx
+angelcare-marketplace/provider-workforce/types.ts
+angelcare-marketplace/provider-workforce/repository.ts
+
+angelcare-marketplace/vendor-authority/components/VendorAuthorityClient.tsx
+angelcare-marketplace/vendor-authority/types.ts
+angelcare-marketplace/vendor-authority/repository.ts
+
+angelcare-marketplace/marketplace-core/components/SupplierCommand.tsx
+angelcare-marketplace/marketplace-core/types.ts
+
+angelcare-marketplace/network-capacity-grid/components/NetworkCapacityGrid.tsx
+angelcare-marketplace/network-capacity-grid/components/ProviderManagementPanel.tsx
+angelcare-marketplace/network-capacity-grid/components/NetworkDrawers.tsx
+angelcare-marketplace/network-capacity-grid/components/NetworkAreaShell.tsx
+angelcare-marketplace/network-capacity-grid/NetworkAreaPage.tsx
+angelcare-marketplace/network-capacity-grid/types.ts
+angelcare-marketplace/network-capacity-grid/repository.ts
+
+angelcare-marketplace/operations-reconciliation/components/CounterpartyCommands.tsx
+angelcare-marketplace/operations-reconciliation/repository.ts
+angelcare-marketplace/operations-reconciliation/types.ts
+angelcare-marketplace/permissions/permission-catalog.ts
+
+======================================================================
+PERMISSIONS VERIFIED
+======================================================================
+marketplace.providers.view
+marketplace.providers.create
+marketplace.providers.manage
+marketplace.providers.documents.review
+marketplace.providers.certifications.review
+marketplace.providers.availability.manage
+marketplace.providers.eligibility.review
+marketplace.providers.suspend
+marketplace.providers.performance.view
+marketplace.providers.payable_eligibility.review
+marketplace.providers.self.access
+marketplace.providers.missions.view
+marketplace.providers.reports.submit
+
+marketplace.operations.view
+marketplace.operations.missions.create
+marketplace.operations.missions.manage
+marketplace.operations.dispatch.manage
+marketplace.operations.assign
+marketplace.operations.reassign
+
+marketplace.catalog.suppliers.view
+marketplace.catalog.suppliers.manage
+
+marketplace.development.supplier_specs.view
+marketplace.development.supplier_specs.manage
+
+Permission nuance:
+- current provider admin pages commonly guard with marketplace.providers.view;
+- sensitive mutation endpoints/components must remain permission-aware according to existing backend authority;
+- current vendor authority pages guard with marketplace.operations.view;
+- suppliers page guards with marketplace.catalog.suppliers.view;
+- do not broaden access in frontend to compensate for current route-level guard simplicity.
+
+======================================================================
+CANONICAL DATA TYPES / STATES VERIFIED
+======================================================================
+PROVIDER TYPES
+caregiver
+childcare_agent
+trainer
+facilitator
+activity_specialist
+provider_organization
+contractor
+
+PROVIDER DOCUMENT STATUS
+requested
+submitted
+under_review
+valid
+rejected
+expiring
+expired
+superseded
+archived
+
+PROVIDER ELIGIBILITY STATUS
+not_started
+incomplete
+pending_review
+eligible
+eligible_with_restrictions
+temporarily_blocked
+suspended
+expired
+ineligible
+
+PROVIDER PAYABLE STATUS
+not_eligible
+pending_execution
+pending_report
+pending_validation
+eligible
+held
+disputed
+approved
+exported
+paid
+reversed
+
+PROVIDER QUALIFICATION STATUS
+pending
+qualified
+restricted
+expired
+revoked
+
+PROVIDER AVAILABILITY AUTHORITY
+weekday
+starts_at
+ends_at
+timezone
+zones
+service_categories
+max_daily_minutes
+max_weekly_minutes
+active
+plus dated availability exceptions and conflict_flag
+
+VENDOR LIFECYCLE STATUS
+onboarding
+qualification
+due_diligence
+approved
+contracted
+active
+performance_review
+restricted
+suspended
+terminated
+
+VENDOR CONTRACT STATUS
+draft
+due_diligence
+approval_pending
+approved
+active
+renewal_due
+suspended
+terminated
+expired
+
+VENDOR ORDER STATUS
+requested
+accepted
+rejected
+preparing
+dispatched
+delivered
+evidence_pending
+validated
+disputed
+cancelled
+closed
+
+VENDOR QUALITY STATUS
+open
+evidence_required
+review
+approved
+corrective_action
+failed
+closed
+
+NETWORK WORKSPACE MODES
+overview
+providers
+availability
+capacity
+assignments
+suppliers
+vendors
+partners
+quality
+
+NETWORK SEVERITY
+healthy
+watch
+attention
+critical
+
+======================================================================
+SOURCE-TRUE NETWORK METRICS / DIMENSIONS
+======================================================================
+The Network Capacity snapshot exposes:
+- providers
+- availableNow
+- assigned
+- atCapacity
+- unavailable
+- openMissions
+- unassignedMissions
+- criticalTerritories
+- qualifiedCapabilities
+- coverageRate
+- providerCases
+- documentsAttention
+- qualityAttention
+
+Provider network records expose:
+- provider identity/reference/type
+- primary territory
+- onboarding and operational status
+- risk level
+- services / age groups / languages / zones
+- eligibility status, score and blockers
+- availability state
+- active/upcoming missions
+- scheduled minutes today
+- assignment count
+- valid/attention documents
+- active/attention certifications
+- performance count/average
+- open incidents
+
+Territory capacity exposes:
+- providers / eligible / available / assigned
+- demandNext4h
+- active missions
+- capacity gap
+- coverage rate
+- critical capabilities
+- quality signals
+
+Capability capacity exposes:
+- demand
+- qualified
+- available
+- assigned
+- deficit
+- coverage rate
+- severity
+
+Vendor network records expose:
+- status
+- territory ids
+- catalog count
+- contract reference
+- settlement status
+- active contracts
+- open orders
+- open quality reviews
+- performance average
+
+Supplier network records expose:
+- reference / code / legal name / display name
+- status
+- quality status
+- territory
+- payment terms
+- offer count
+
+======================================================================
+SCREEN 01 — PRESTATAIRES & FOURNISSEURS COMMAND CENTER
+======================================================================
+PNG:
+01_PRESTATAIRES_FOURNISSEURS_COMMAND_CENTER.png
+
+FINAL HOME:
+Prestataires & fournisseurs
+
+PRIMARY SOURCE AUTHORITIES:
+NetworkCapacityGrid overview
+ProviderCommand summary
+VendorAuthoritySnapshot summary
+SupplierCommand data
+
+PURPOSE:
+Give a Marketplace operator one supply-side command center showing whether the network can actually fulfill demand safely and commercially.
+
+SOURCE-BACKED CONTENT TO EXPOSE:
+- providers total / available now / assigned / at capacity / unavailable
+- open missions / unassigned missions
+- critical territories
+- qualified capabilities
+- network coverage rate
+- provider cases
+- documents requiring attention
+- quality attention
+- vendors active / active contracts / blocked settlements
+- suppliers active / quality state / offers
+- recent network movements
+- next supply moves queue
+- deep links to Providers, Vendors, Suppliers, Capacity and Quality
+
+DO NOT INVENT:
+- GPS live position unless a real source exists;
+- predictive workforce AI score;
+- payroll amounts;
+- vendor spend analytics not present in this authority.
+
+UX PATTERN:
+Supply Network Command Center with territory/capacity visualization + action rail + evidence queue.
+
+======================================================================
+SCREEN 02 — PROVIDER MASTER REGISTRY & ONBOARDING
+======================================================================
+PNG:
+02_PROVIDER_MASTER_REGISTRY_ONBOARDING.png
+
+CURRENT ROUTES CONSOLIDATED:
+/angelcare-marketplace/admin/providers
+/angelcare-marketplace/admin/providers/dossiers
+/angelcare-marketplace/admin/providers/onboarding
+/angelcare-marketplace/admin/supply-network/providers
+
+SOURCE COMPONENTS:
+ProviderCommand
+ProviderLifecycleDesk
+NetworkCapacityGrid providers mode
+ProviderManagementPanel identity section
+
+REAL ACTIONS:
+- create Provider via POST /api/angelcare-marketplace/providers
+- provider type selection
+- display name, email, phone
+- territory/service categories
+- lifecycle transition with reason/evidence
+- open Provider 360 dossier
+- search/filter by reference, name, service, territory, status
+
+Provider creation enters onboarding; do not render creation as immediately active/eligible.
+
+======================================================================
+SCREEN 03 — PROVIDER 360 / ELIGIBILITY & LIFECYCLE
+======================================================================
+PNG:
+03_PROVIDER_360_ELIGIBILITY_LIFECYCLE.png
+
+CURRENT ROUTES CONSOLIDATED:
+/angelcare-marketplace/admin/providers/dossiers/[providerId]
+/angelcare-marketplace/admin/providers/eligibility
+
+SOURCE COMPONENTS:
+ProviderDossier
+EligibilityCommand
+ProviderLifecycleDesk
+ProviderManagementPanel
+
+REAL DOSSIER DIMENSIONS:
+- canonical provider identity/reference/type
+- services / age groups / languages / operational zones
+- onboarding status
+- operational status
+- territory
+- risk level
+- eligibility score/status
+- eligible services / age groups / territories
+- restrictions
+- blockers
+- expiry
+- next action
+- assignments
+- documents
+- certifications
+- qualifications
+- availability
+- payable relationships
+
+REAL ACTIONS:
+- PATCH provider profile
+- lifecycle transition (onboarding or operational) with reason
+- recalculate eligibility
+- qualify/restrict/revoke service qualification
+- navigate to readiness/availability/performance/payable tools
+
+DO NOT display an eligibility override action unless current backend route actually supports it.
+
+======================================================================
+SCREEN 04 — PROVIDER READINESS / DOCUMENTS, CERTIFICATIONS & QUALIFICATIONS
+======================================================================
+PNG:
+04_PROVIDER_READINESS_DOCUMENTS_CERTIFICATIONS_QUALIFICATIONS.png
+
+CURRENT ROUTES CONSOLIDATED:
+/angelcare-marketplace/admin/providers/documents
+/angelcare-marketplace/admin/providers/certifications
+/angelcare-marketplace/admin/providers/commerce/readiness
+/angelcare-marketplace/admin/providers/commerce/evidence
+
+SOURCE COMPONENTS:
+ProviderDocumentDesk
+ProviderManagementPanel document readiness
+ProviderCommerceCommand readiness/evidence modes
+
+REAL ACTIONS:
+- request Provider document
+- review document valid/rejected with reason
+- inspect expiration status
+- review certification active/suspended with reason
+- view mandatory-for-services and restrictions
+- manage service qualifications
+- expose incomplete/expiring/rejected blockers feeding eligibility
+
+READINESS DOCTRINE:
+Documents and certifications are evidence gates; UI must show why provider is blocked, not just a red badge.
+
+======================================================================
+SCREEN 05 — PROVIDER AVAILABILITY, ASSIGNMENTS, PERFORMANCE & PAYABLES
+======================================================================
+PNG:
+05_PROVIDER_AVAILABILITY_ASSIGNMENTS_PERFORMANCE_PAYABLES.png
+
+CURRENT ROUTES CONSOLIDATED:
+/angelcare-marketplace/admin/providers/availability
+/angelcare-marketplace/admin/providers/assignments
+/angelcare-marketplace/admin/providers/performance
+/angelcare-marketplace/admin/providers/payable-eligibility
+/angelcare-marketplace/admin/providers/commerce/quality
+/angelcare-marketplace/admin/providers/commerce/payables
+/angelcare-marketplace/admin/supply-network/availability
+/angelcare-marketplace/admin/supply-network/assignments
+
+SOURCE COMPONENTS:
+ProviderAvailabilityDesk
+ProviderPerformanceDesk
+ProviderPayableDesk
+NetworkCapacityGrid availability/assignments modes
+
+REAL ACTIONS:
+- create recurring availability rule
+- manage weekday/timezone/zones/services/capacity
+- create dated availability exception with reason
+- detect conflict flag
+- inspect mission assignment / proposal count / conflicts
+- record performance event type/score/severity/details
+- payable decision approve / hold / dispute with reason
+
+PAYABLE DOCTRINE:
+Compensation becomes payable only from canonical proof/checklist authority.
+Keep Finance handoff visible; do not turn this screen into Finance ledger.
+
+======================================================================
+SCREEN 06 — VENDOR AUTHORITY / REGISTRY & LIFECYCLE
+======================================================================
+PNG:
+06_VENDOR_AUTHORITY_REGISTRY_LIFECYCLE.png
+
+CURRENT ROUTES CONSOLIDATED:
+/angelcare-marketplace/admin/vendors
+/angelcare-marketplace/admin/vendors/registry
+/angelcare-marketplace/admin/vendors/onboarding
+/angelcare-marketplace/admin/supply-network/vendors
+
+SOURCE COMPONENT:
+VendorAuthorityClient modes command / registry / onboarding
+
+REAL CONTENT:
+- vendor canonical identity/reference
+- lifecycle status
+- territories
+- catalog item links count
+- contract count
+- order count
+- settlement status
+- current lifecycle state
+
+REAL LIFECYCLE ACTION:
+POST /api/angelcare-marketplace/vendors/[vendorId]/lifecycle
+payload: target + reason
+
+Allowed target sequence exposed by current frontend authority:
+qualification / due_diligence / approved / contracted / active / performance_review / restricted / suspended / terminated
+
+Every sensitive transition needs reason/evidence in UX.
+
+======================================================================
+SCREEN 07 — VENDOR CONTRACTS, CATALOG & INVENTORY
+======================================================================
+PNG:
+07_VENDOR_CONTRACTS_CATALOG_INVENTORY.png
+
+CURRENT ROUTES CONSOLIDATED:
+/angelcare-marketplace/admin/vendors/contracts
+/angelcare-marketplace/admin/vendors/catalog-links
+/angelcare-marketplace/admin/vendors/inventory
+
+SOURCE COMPONENTS:
+ContractDesk
+InventoryDesk
+Registry
+
+REAL CONTRACT ACTIONS:
+- create canonical contract
+- reference / startsAt / endsAt / renewalMode
+- serviceLevel / commercialTerms / settlementTerms / complianceRequirements are real data structures
+- transition contract with reason
+
+REAL CONTRACT STATES:
+draft / due_diligence / approval_pending / approved / active / renewal_due / suspended / terminated / expired
+
+REAL INVENTORY ACTIONS:
+- catalogItemId
+- status available/low/out_of_stock/discontinued/blocked/unknown
+- quantityAvailable
+- quantityReserved
+- leadTimeMinutes
+- source admin_manual
+
+Do not fake product names when only catalog UUID is known; implementation may resolve real catalog identity through existing relationships where available.
+
+======================================================================
+SCREEN 08 — VENDOR ORDERS, QUALITY, DISPUTES & SETTLEMENTS
+======================================================================
+PNG:
+08_VENDOR_ORDERS_QUALITY_DISPUTES_SETTLEMENTS.png
+
+CURRENT ROUTES CONSOLIDATED:
+/angelcare-marketplace/admin/vendors/orders
+/angelcare-marketplace/admin/vendors/quality
+/angelcare-marketplace/admin/vendors/performance
+/angelcare-marketplace/admin/vendors/disputes
+/angelcare-marketplace/admin/vendors/settlements
+
+SOURCE COMPONENTS:
+OrderDesk
+QualityDesk
+PerformanceDesk
+DisputeDesk
+SettlementDesk
+
+REAL VENDOR ORDER ACTIONS:
+- create vendor order with amount Dh and expectedAt
+- transition order with reason
+- accepted/rejected/preparing/dispatched/delivered/evidence_pending/validated/disputed/cancelled/closed
+
+QUALITY:
+- open review
+- score 0–100
+- findings
+- corrective actions
+- evidence_required / review / approved / corrective_action / failed / closed
+
+PERFORMANCE:
+- event type
+- score
+- severity
+- details
+- related object context
+
+DISPUTES:
+- public reference
+- risk level
+- financial exposure
+- status
+- summary
+
+SETTLEMENT READINESS:
+- evidence_complete
+- quality_validated
+- dispute_clear
+- approval_ready
+- ready_flag
+- blocked reasons
+- decision blocked/ready/approved/held/disputed/settled with reason
+
+Settlement is a gated readiness authority. Finance remains canonical for final financial accounting.
+
+======================================================================
+SCREEN 09 — SUPPLIER NETWORK COMMAND
+======================================================================
+PNG:
+09_SUPPLIER_NETWORK_COMMAND.png
+
+CURRENT ROUTES CONSOLIDATED:
+/angelcare-marketplace/admin/suppliers
+/angelcare-marketplace/admin/supply-network/suppliers
+
+SOURCE COMPONENT:
+SupplierCommand
+NetworkCapacityGrid suppliers mode
+
+REAL ACTIONS:
+POST /api/angelcare-marketplace/admin/suppliers
+PATCH /api/angelcare-marketplace/admin/suppliers/[supplierId]
+
+REAL CREATE FIELDS:
+- supplierCode
+- legalName
+- displayName
+- paymentTerms
+
+REAL STATUS CONTROL:
+prospect / qualification / approved / active / suspended / archived
+
+REAL QUALITY STATUS CONTROL:
+unreviewed / pending / approved / conditional / rejected / expired
+
+REAL DISPLAY DIMENSIONS:
+- supplier reference/code
+- legal/display name
+- territory
+- quality status
+- payment terms
+- catalog offer count
+
+Do not invent vendor-style contracts/orders for Suppliers unless backend source is expanded later.
+
+======================================================================
+SCREEN 10 — NETWORK CAPACITY GRID / TERRITORY, CAPABILITY & ASSIGNMENT LOAD
+======================================================================
+PNG:
+10_NETWORK_CAPACITY_GRID_ASSIGNMENT_LOAD.png
+
+CURRENT ROUTES CONSOLIDATED:
+/angelcare-marketplace/admin/supply-network
+/angelcare-marketplace/admin/supply-network/capacity
+/angelcare-marketplace/admin/supply-network/availability
+/angelcare-marketplace/admin/supply-network/assignments
+/angelcare-marketplace/admin/supply-network/partners
+/angelcare-marketplace/admin/supply-network/quality
+
+SOURCE COMPONENTS:
+NetworkCapacityGrid
+ProviderManagementPanel
+NetworkDrawers
+NetworkAreaShell
+
+SNAPSHOT API:
+GET /api/angelcare-marketplace/admin/network-capacity-grid
+
+REAL TERRITORY DIMENSIONS:
+providers / eligible / available / assigned / demand next 4h / active missions / gap / coverage / critical capabilities / quality signals
+
+REAL CAPABILITY DIMENSIONS:
+demand / qualified / available / assigned / deficit / coverage / severity
+
+REAL ASSIGNMENT DIMENSIONS:
+mission reference/title
+provider id/reference/name
+role
+status
+service type
+territory
+scheduled start/end
+conflicts
+proposal count
+
+REAL NETWORK MOVEMENT:
+recent changes across providers, assignments and partners
+
+REAL NEXT SUPPLY MOVES:
+- staff unassigned missions
+- restore document readiness
+- resolve territory capacity pressure
+
+The capacity grid is an operational projection over canonical provider/mission/territory/vendor/supplier/partner data.
+Do NOT create a second provider or mission authority inside it.
+
+======================================================================
+CROSS-WORKSPACE BOUNDARIES
+======================================================================
+OPERATIONS:
+Batch 07 owns mission execution, dispatch, evidence, exceptions and daily closure.
+Batch 08 owns provider/vendor/supplier readiness and supply capacity views.
+Assignments may deep-link between the two; do not duplicate mission lifecycle logic.
+
+FINANCE:
+Finance owns accounting/payment/settlement execution.
+Batch 08 may expose payable/settlement readiness and blockers only as canonical source supports.
+
+TRUST & QUALITY:
+Later Trust & qualité batch owns enterprise trust/quality governance.
+Batch 08 exposes provider/vendor/supplier quality signals only as counterparty readiness controls.
+
+ANALYTICS:
+Later Analytics batch owns enterprise analytics.
+Batch 08 may show operational summaries calculated by current supply snapshots/repositories but should not invent BI models.
+
+B2B & PARTNERS:
+Supply Network has partner-network context and deep link to Partner OS.
+Do not merge Partner OS into Batch 08.
+
+======================================================================
+ADMIN ROUTES ACCOUNTED FOR IN BATCH 08
+======================================================================
+/angelcare-marketplace/admin/analytics/providers
+  guard: marketplace.analytics.view
+  current component(s): MetricRegistry
+/angelcare-marketplace/admin/providers
+  guard: marketplace.providers.view
+  current component(s): ProviderCommand
+/angelcare-marketplace/admin/providers/assignments
+  guard: marketplace.providers.view
+  current component(s): ProviderCommand
+/angelcare-marketplace/admin/providers/availability
+  guard: marketplace.providers.view
+  current component(s): ProviderAvailabilityDesk
+/angelcare-marketplace/admin/providers/certifications
+  guard: marketplace.providers.view
+  current component(s): ProviderDocumentDesk
+/angelcare-marketplace/admin/providers/commerce
+  guard: marketplace.providers.view
+  current component(s): ProviderCommerceCommand
+/angelcare-marketplace/admin/providers/commerce/disputes
+  guard: marketplace.providers.view
+  current component(s): ProviderCommerceCommand
+/angelcare-marketplace/admin/providers/commerce/evidence
+  guard: marketplace.providers.view
+  current component(s): ProviderCommerceCommand
+/angelcare-marketplace/admin/providers/commerce/payables
+  guard: marketplace.providers.view
+  current component(s): ProviderCommerceCommand
+/angelcare-marketplace/admin/providers/commerce/quality
+  guard: marketplace.providers.view
+  current component(s): ProviderCommerceCommand
+/angelcare-marketplace/admin/providers/commerce/readiness
+  guard: marketplace.providers.view
+  current component(s): ProviderCommerceCommand
+/angelcare-marketplace/admin/providers/documents
+  guard: marketplace.providers.view
+  current component(s): ProviderDocumentDesk
+/angelcare-marketplace/admin/providers/dossiers
+  guard: marketplace.providers.view
+  current component(s): ProviderCommand
+/angelcare-marketplace/admin/providers/dossiers/[providerId]
+  guard: marketplace.providers.view
+  current component(s): ProviderDossier
+/angelcare-marketplace/admin/providers/eligibility
+  guard: marketplace.providers.view
+  current component(s): EligibilityCommand, ProviderLifecycleDesk
+/angelcare-marketplace/admin/providers/onboarding
+  guard: marketplace.providers.view
+  current component(s): ProviderLifecycleDesk
+/angelcare-marketplace/admin/providers/payable-eligibility
+  guard: marketplace.providers.view
+  current component(s): ProviderPayableDesk
+/angelcare-marketplace/admin/providers/performance
+  guard: marketplace.providers.view
+  current component(s): ProviderPerformanceDesk
+/angelcare-marketplace/admin/suppliers
+  guard: marketplace.catalog.suppliers.view
+  current component(s): SupplierCommand
+/angelcare-marketplace/admin/supply-network
+  guard: layout/context authority
+  current component(s): NetworkAreaPage
+/angelcare-marketplace/admin/supply-network/assignments
+  guard: layout/context authority
+  current component(s): NetworkAreaPage
+/angelcare-marketplace/admin/supply-network/availability
+  guard: layout/context authority
+  current component(s): NetworkAreaPage
+/angelcare-marketplace/admin/supply-network/capacity
+  guard: layout/context authority
+  current component(s): NetworkAreaPage
+/angelcare-marketplace/admin/supply-network/partners
+  guard: layout/context authority
+  current component(s): NetworkAreaPage
+/angelcare-marketplace/admin/supply-network/providers
+  guard: layout/context authority
+  current component(s): NetworkAreaPage
+/angelcare-marketplace/admin/supply-network/quality
+  guard: layout/context authority
+  current component(s): NetworkAreaPage
+/angelcare-marketplace/admin/supply-network/suppliers
+  guard: layout/context authority
+  current component(s): NetworkAreaPage
+/angelcare-marketplace/admin/supply-network/vendors
+  guard: layout/context authority
+  current component(s): NetworkAreaPage
+/angelcare-marketplace/admin/vendors
+  guard: marketplace.operations.view
+  current component(s): VendorAuthorityClient
+/angelcare-marketplace/admin/vendors/catalog-links
+  guard: marketplace.operations.view
+  current component(s): VendorAuthorityClient
+/angelcare-marketplace/admin/vendors/contracts
+  guard: marketplace.operations.view
+  current component(s): VendorAuthorityClient
+/angelcare-marketplace/admin/vendors/disputes
+  guard: marketplace.operations.view
+  current component(s): VendorAuthorityClient
+/angelcare-marketplace/admin/vendors/inventory
+  guard: marketplace.operations.view
+  current component(s): VendorAuthorityClient
+/angelcare-marketplace/admin/vendors/onboarding
+  guard: marketplace.operations.view
+  current component(s): VendorAuthorityClient
+/angelcare-marketplace/admin/vendors/orders
+  guard: marketplace.operations.view
+  current component(s): VendorAuthorityClient
+/angelcare-marketplace/admin/vendors/performance
+  guard: marketplace.operations.view
+  current component(s): VendorAuthorityClient
+/angelcare-marketplace/admin/vendors/quality
+  guard: marketplace.operations.view
+  current component(s): VendorAuthorityClient
+/angelcare-marketplace/admin/vendors/registry
+  guard: marketplace.operations.view
+  current component(s): VendorAuthorityClient
+/angelcare-marketplace/admin/vendors/settlements
+  guard: marketplace.operations.view
+  current component(s): VendorAuthorityClient
+
+======================================================================
+API ROUTES ACCOUNTED FOR / REUSED
+======================================================================
+/api/angelcare-marketplace/admin/network-capacity-grid
+/api/angelcare-marketplace/admin/suppliers
+/api/angelcare-marketplace/admin/suppliers/[supplierId]
+/api/angelcare-marketplace/operations/providers
+/api/angelcare-marketplace/operations/vendors
+/api/angelcare-marketplace/providers
+/api/angelcare-marketplace/providers/[providerId]
+/api/angelcare-marketplace/providers/[providerId]/availability
+/api/angelcare-marketplace/providers/[providerId]/availability/[ruleId]
+/api/angelcare-marketplace/providers/[providerId]/availability/exceptions
+/api/angelcare-marketplace/providers/[providerId]/certifications/[certificationId]/review
+/api/angelcare-marketplace/providers/[providerId]/documents/[documentId]/review
+/api/angelcare-marketplace/providers/[providerId]/documents/request
+/api/angelcare-marketplace/providers/[providerId]/eligibility/recalculate
+/api/angelcare-marketplace/providers/[providerId]/lifecycle
+/api/angelcare-marketplace/providers/[providerId]/performance
+/api/angelcare-marketplace/providers/[providerId]/qualifications
+/api/angelcare-marketplace/providers/[providerId]/qualifications/[qualificationId]
+/api/angelcare-marketplace/providers/assignments
+/api/angelcare-marketplace/providers/availability
+/api/angelcare-marketplace/providers/certifications
+/api/angelcare-marketplace/providers/documents
+/api/angelcare-marketplace/providers/payable
+/api/angelcare-marketplace/providers/payable/[payableId]/decision
+/api/angelcare-marketplace/providers/performance
+/api/angelcare-marketplace/providers/summary
+/api/angelcare-marketplace/vendors/[vendorId]/contracts
+/api/angelcare-marketplace/vendors/[vendorId]/contracts/[contractId]/transition
+/api/angelcare-marketplace/vendors/[vendorId]/inventory
+/api/angelcare-marketplace/vendors/[vendorId]/lifecycle
+/api/angelcare-marketplace/vendors/[vendorId]/orders
+/api/angelcare-marketplace/vendors/[vendorId]/orders/[orderId]/transition
+/api/angelcare-marketplace/vendors/[vendorId]/performance
+/api/angelcare-marketplace/vendors/[vendorId]/quality
+/api/angelcare-marketplace/vendors/[vendorId]/quality/[reviewId]/transition
+/api/angelcare-marketplace/vendors/authority
+/api/angelcare-marketplace/vendors/settlements/[settlementId]/decision
+
+======================================================================
+LEGACY / CANONICAL DISPOSITION DOCTRINE
+======================================================================
+All current routes above must receive an implementation disposition during Codex build:
+CANONICAL
+MERGE_INTO_DOSSIER
+MERGE_INTO_STUDIO
+MERGE_INTO_CONTROL_ROOM
+ADVANCED_TOOL
+COMPATIBILITY_REDIRECT
+LEGACY_HIDDEN
+BROKEN_REPAIR
+REMOVE_LATER
+
+Do not delete or break a current route simply because its capability is merged into a richer final workspace.
+Prefer safe compatibility redirects or wrappers after real action/link verification.
+
+Recommended final homes:
+- /admin/providers -> Provider Master Registry / supply workspace
+- /admin/providers/dossiers/[providerId] -> Provider 360
+- provider documents/certifications/availability/performance/payable pages -> deep Provider 360 tools/tabs or specialist views
+- /admin/vendors -> Vendor Authority
+- vendor child routes -> Vendor Dossier / specialist tabs
+- /admin/suppliers -> Supplier Network
+- /admin/supply-network -> Network Capacity Command
+
+======================================================================
+MANDATORY UI STATES
+======================================================================
+For every Batch 08 canonical surface implement where relevant:
+- loading
+- empty
+- partial data
+- error
+- permission denied
+- validation error
+- mutation busy
+- mutation success
+- mutation failure
+- stale snapshot / refresh
+- blocked by readiness
+- blocked by missing evidence
+- blocked by availability conflict
+- blocked by quality review
+- blocked by settlement/payable gate
+- no providers/vendors/suppliers
+- no capacity gap / healthy state
+
+Never use fake zero values to hide a failed repository call.
+
+======================================================================
+MANDATORY ACTION SAFETY
+======================================================================
+Sensitive transitions must show:
+- current state
+- target state
+- reason/evidence input where backend expects it
+- affected provider/vendor/object
+- blocking conditions
+- permission awareness
+- explicit success/failure feedback
+
+Dangerous states such as suspend, terminate, reject, dispute, revoke, hold must be visually distinct and never hidden behind ambiguous primary CTA styling.
+
+======================================================================
+CODEX IMPLEMENTATION ORDER
+======================================================================
+1. Read this entire TXT first.
+2. Inspect the 10 PNGs.
+3. Re-open every listed current source component/repository/API before editing.
+4. Build/upgrade the shared Marketplace admin shell only if needed for visual fidelity; do not alter its doctrine.
+5. Implement Screen 01 supply command center.
+6. Implement Provider registry + Provider 360 consolidation.
+7. Implement Provider readiness/availability/performance/payable surfaces.
+8. Implement Vendor registry/dossier/specialist surfaces.
+9. Implement Supplier network.
+10. Implement Network Capacity Grid and drawers.
+11. Add compatibility routing for legacy specialist paths where safe.
+12. Audit every internal link and action target.
+13. Run TypeScript and relevant Marketplace verifiers.
+14. Smoke canonical routes locally.
+15. Compare runtime screenshots against approved PNGs.
+16. Stop before commit/push/deploy unless user separately instructs.
+
+======================================================================
+VISUAL PRECEDENCE
+======================================================================
+When visual and old frontend conflict:
+1. backend/business truth wins;
+2. this source mapping defines capability and lifecycle truth;
+3. Batch 08 PNG defines approved final hierarchy/layout/UIX;
+4. old frontend styling has lowest precedence.
+
+Codex may improve responsive behavior and accessibility while preserving approved desktop composition.
+Codex must not flatten these ten purpose-specific screens into one reusable generic dashboard template.
+
+======================================================================
+ACCEPTANCE GATES
+======================================================================
+Batch 08 is not complete because JSX renders.
+
+Required:
+- all 10 canonical projections implemented or explicitly mapped to a real specialist route;
+- all source-backed actions wired;
+- no fake controls;
+- no broken links/404s from Batch 08;
+- permissions preserved;
+- provider create persists and enters onboarding;
+- lifecycle transition persists;
+- eligibility recalc persists;
+- document/certification decisions persist;
+- availability rules/exceptions persist;
+- performance events persist;
+- payable decisions persist;
+- vendor contract/order/quality/lifecycle transitions persist;
+- supplier create/update persists;
+- network capacity snapshot loads from canonical API;
+- legacy routes mapped safely;
+- public Marketplace regression unchanged;
+- no SQL introduced;
+- no commit/push/deploy unless explicitly approved.
+
+======================================================================
+BATCH 08 FILE MANIFEST
+======================================================================
+01_PRESTATAIRES_FOURNISSEURS_COMMAND_CENTER.png
+02_PROVIDER_MASTER_REGISTRY_ONBOARDING.png
+03_PROVIDER_360_ELIGIBILITY_LIFECYCLE.png
+04_PROVIDER_READINESS_DOCUMENTS_CERTIFICATIONS_QUALIFICATIONS.png
+05_PROVIDER_AVAILABILITY_ASSIGNMENTS_PERFORMANCE_PAYABLES.png
+06_VENDOR_AUTHORITY_REGISTRY_LIFECYCLE.png
+07_VENDOR_CONTRACTS_CATALOG_INVENTORY.png
+08_VENDOR_ORDERS_QUALITY_DISPUTES_SETTLEMENTS.png
+09_SUPPLIER_NETWORK_COMMAND.png
+10_NETWORK_CAPACITY_GRID_ASSIGNMENT_LOAD.png
+BATCH_08_SOURCE_MAPPING.txt
+
+END OF BATCH 08 SOURCE/BACKEND + CODEX IMPLEMENTATION CONTRACT

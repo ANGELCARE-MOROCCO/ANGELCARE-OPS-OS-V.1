@@ -1,0 +1,1685 @@
+ANGELCARE MARKETPLACE ADMIN — BATCH 11
+TRUST & QUALITY / ANALYTICS & INTELLIGENCE / PLATFORM SECURITY / QA / FINAL LAUNCH GOVERNANCE
+SOURCE + BACKEND + UIX IMPLEMENTATION CONTRACT
+Generated for approved admin-design Batch 11
+SOURCE_ARCHIVE=ANGELCARE_MARKETPLACE_WEB_20260826-221837.zip
+SOURCE_SHA256=acf0b0a651268d6d49397bf3413fbe2c9164db9e67f52b461df90abb4e054d35
+ADMIN_ROUTES_MAPPED=125
+API_ROUTES_MAPPED=61
+PERMISSIONS_MAPPED=69
+NO SQL / NO MIGRATIONS / NO NEW TABLES / NO PARALLEL ASSURANCE OR ANALYTICS ENGINE
+================================================================================================
+1. AUTHORITY PRECEDENCE
+================================================================================================
+Codex MUST resolve conflicts in this order:
+1. Existing Marketplace backend/business/data authority.
+2. This BATCH_11_SOURCE_MAPPING.txt.
+3. The ten approved Batch-11 PNG projections.
+4. Current fragmented/legacy frontend implementation.
+The PNGs specify the approved final operator experience.
+The mapping specifies what the experience is allowed and required to do.
+Backend state machines, permissions, evidence rules, audit and isolation remain authoritative.
+Any counts/names/timestamps shown in PNGs are illustrative UI sample data unless runtime provides them.
+Codex MUST replace sample values with source-backed runtime data and MUST NOT fabricate analytics, security posture, QA pass rates or release readiness.
+================================================================================================
+2. GLOBAL PRODUCT TREE — IMMUTABLE
+================================================================================================
+- Accueil
+- Commandes & réservations
+- Produits & services
+- Catégories & collections
+- Clients
+- Boutique
+- Marketing & promotions
+- Opérations
+- Prestataires & fournisseurs
+- Academy
+- B2B & partenaires
+- Finance
+- Trust & qualité  <-- ACTIVE screens 01–04
+- Analytics & intelligence  <-- ACTIVE screens 05–07
+- Paramètres & gouvernance  <-- ACTIVE screens 08–10
+Technical authorities such as Quality Check 360, CAPA, Metric Registry, Security, Modules, QA, Readiness, Launch and Activation MUST remain inside these three human workspaces. Do not add them as new global sidebar entries.
+================================================================================================
+3. BATCH 11 FINAL CANONICAL SCREENS
+================================================================================================
+01. TRUST & QUALITY EXECUTIVE ASSURANCE COMMAND
+    PNG=01_TRUST_QUALITY_EXECUTIVE_COMMAND_CENTER.png
+    route-authority=/angelcare-marketplace/admin/trust
+    route-authority=/angelcare-marketplace/admin/trust/command
+    route-authority=/angelcare-marketplace/admin/trust/reports
+02. QUALITY CHECK 360 / EVIDENCE / BADGE AUTHORITY
+    PNG=02_QUALITY_CHECK_360_EVIDENCE_BADGES.png
+    route-authority=/angelcare-marketplace/admin/trust/quality-check-360
+    route-authority=/angelcare-marketplace/admin/trust/evidence
+    route-authority=/angelcare-marketplace/admin/trust/badges
+03. COMPLAINTS / INVESTIGATIONS / NON-CONFORMITY / CAPA
+    PNG=03_COMPLAINTS_INVESTIGATIONS_NONCONFORMITY_CAPA.png
+    route-authority=/angelcare-marketplace/admin/trust/complaints
+    route-authority=/angelcare-marketplace/admin/trust/investigations
+    route-authority=/angelcare-marketplace/admin/trust/non-conformities
+    route-authority=/angelcare-marketplace/admin/trust/corrective-actions
+    route-authority=/angelcare-marketplace/admin/trust/audits
+04. STANDARDS / SOP / COMPLIANCE / SENSITIVE CONTENT
+    PNG=04_STANDARDS_SOPS_COMPLIANCE_SENSITIVE_CONTENT.png
+    route-authority=/angelcare-marketplace/admin/trust/sops
+    route-authority=/angelcare-marketplace/admin/trust/standards
+    route-authority=/angelcare-marketplace/admin/trust/compliance
+    route-authority=/angelcare-marketplace/admin/trust/sensitive-content
+05. ANALYTICS & INTELLIGENCE EXECUTIVE CONTROL PLANE
+    PNG=05_ANALYTICS_INTELLIGENCE_EXECUTIVE_COMMAND.png
+    route-authority=/angelcare-marketplace/admin/analytics
+    route-authority=/angelcare-marketplace/admin/executive-control
+    route-authority=/angelcare-marketplace/admin/intelligence
+06. METRIC REGISTRY / DATA QUALITY / DOMAIN INTELLIGENCE
+    PNG=06_METRIC_REGISTRY_DATA_QUALITY_DOMAIN_INTELLIGENCE.png
+    route-authority=/angelcare-marketplace/admin/analytics/data-quality
+    route-authority=/angelcare-marketplace/admin/analytics/marketplace
+    route-authority=/angelcare-marketplace/admin/analytics/families
+    route-authority=/angelcare-marketplace/admin/analytics/b2b
+    route-authority=/angelcare-marketplace/admin/analytics/academy
+    route-authority=/angelcare-marketplace/admin/analytics/providers
+    route-authority=/angelcare-marketplace/admin/analytics/operations
+    route-authority=/angelcare-marketplace/admin/analytics/territories
+    route-authority=/angelcare-marketplace/admin/analytics/trust
+07. LIVE BUSINESS PULSE / FORECASTING REVIEW / EXECUTIVE BRIEFS
+    PNG=07_BUSINESS_PULSE_FORECASTING_EXECUTIVE_BRIEFS.png
+    route-authority=/angelcare-marketplace/admin/business-pulse
+    route-authority=/angelcare-marketplace/admin/executive-briefs
+    route-authority=/angelcare-marketplace/admin/intelligence/forecasting
+    route-authority=/angelcare-marketplace/admin/intelligence/executive
+    route-authority=/angelcare-marketplace/admin/intelligence/growth
+    route-authority=/angelcare-marketplace/admin/intelligence/demand
+    route-authority=/angelcare-marketplace/admin/intelligence/experiments
+08. SECURITY / ACCESS / ISOLATION / RETENTION / RECOVERY
+    PNG=08_SECURITY_ACCESS_ISOLATION_RECOVERY_COMMAND.png
+    route-authority=/angelcare-marketplace/admin/security
+    route-authority=/angelcare-marketplace/admin/security-audit
+    route-authority=/angelcare-marketplace/admin/security/workspace-access
+    route-authority=/angelcare-marketplace/admin/security/tenant-isolation
+    route-authority=/angelcare-marketplace/admin/security/territory-isolation
+    route-authority=/angelcare-marketplace/admin/security/backups
+    route-authority=/angelcare-marketplace/admin/security/recovery
+    route-authority=/angelcare-marketplace/admin/security/data-retention
+    route-authority=/angelcare-marketplace/admin/security/events
+    route-authority=/angelcare-marketplace/admin/security/separation-of-duties
+09. PLATFORM CONFIGURATION / MODULES / WORKSPACES / PRODUCT EXCELLENCE
+    PNG=09_PLATFORM_CONFIGURATION_MODULES_WORKSPACES_PRODUCT_EXCELLENCE.png
+    route-authority=/angelcare-marketplace/admin/configuration
+    route-authority=/angelcare-marketplace/admin/modules
+    route-authority=/angelcare-marketplace/admin/modules/[moduleKey]
+    route-authority=/angelcare-marketplace/admin/workspaces
+    route-authority=/angelcare-marketplace/admin/product-excellence
+    route-authority=/angelcare-marketplace/admin/foundation-ui
+10. QA / READINESS / ACTIVATION / FINAL LAUNCH AUTHORITY
+    PNG=10_QA_LAUNCH_READINESS_ACTIVATION_RELEASE_AUTHORITY.png
+    route-authority=/angelcare-marketplace/admin/qa
+    route-authority=/angelcare-marketplace/admin/quality-assurance
+    route-authority=/angelcare-marketplace/admin/launch
+    route-authority=/angelcare-marketplace/admin/readiness
+    route-authority=/angelcare-marketplace/admin/reality-readiness
+    route-authority=/angelcare-marketplace/admin/activation
+================================================================================================
+4. CURRENT ADMIN ROUTE DISPOSITION — ZERO BLIND
+================================================================================================
+ROUTE: /angelcare-marketplace/admin/activation
+  SCREEN: 10
+  DISPOSITION: CANONICAL
+  CURRENT_COMPONENT: wrapper/server page
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/activation/page.tsx
+ROUTE: /angelcare-marketplace/admin/analytics
+  SCREEN: 05
+  DISPOSITION: CANONICAL
+  CURRENT_COMPONENT: AnalyticsCommand
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/analytics/page.tsx
+ROUTE: /angelcare-marketplace/admin/analytics/academy
+  SCREEN: 06
+  DISPOSITION: MERGE_INTO_CONTROL_ROOM
+  CURRENT_COMPONENT: MetricRegistry
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/analytics/academy/page.tsx
+ROUTE: /angelcare-marketplace/admin/analytics/b2b
+  SCREEN: 06
+  DISPOSITION: MERGE_INTO_CONTROL_ROOM
+  CURRENT_COMPONENT: MetricRegistry
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/analytics/b2b/page.tsx
+ROUTE: /angelcare-marketplace/admin/analytics/data-quality
+  SCREEN: 06
+  DISPOSITION: CANONICAL
+  CURRENT_COMPONENT: DataQualityCommand
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/analytics/data-quality/page.tsx
+ROUTE: /angelcare-marketplace/admin/analytics/executive
+  SCREEN: 05
+  DISPOSITION: COMPATIBILITY_REDIRECT
+  CURRENT_COMPONENT: wrapper/server page
+  CURRENT_REDIRECT: /angelcare-marketplace/admin/analytics
+  SOURCE_FILE: (protected)/admin/analytics/executive/page.tsx
+ROUTE: /angelcare-marketplace/admin/analytics/families
+  SCREEN: 06
+  DISPOSITION: MERGE_INTO_CONTROL_ROOM
+  CURRENT_COMPONENT: MetricRegistry
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/analytics/families/page.tsx
+ROUTE: /angelcare-marketplace/admin/analytics/finance
+  SCREEN: 06
+  DISPOSITION: MERGE_INTO_CONTROL_ROOM
+  CURRENT_COMPONENT: MetricRegistry
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/analytics/finance/page.tsx
+ROUTE: /angelcare-marketplace/admin/analytics/marketplace
+  SCREEN: 06
+  DISPOSITION: MERGE_INTO_CONTROL_ROOM
+  CURRENT_COMPONENT: MetricRegistry
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/analytics/marketplace/page.tsx
+ROUTE: /angelcare-marketplace/admin/analytics/operations
+  SCREEN: 06
+  DISPOSITION: MERGE_INTO_CONTROL_ROOM
+  CURRENT_COMPONENT: MetricRegistry
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/analytics/operations/page.tsx
+ROUTE: /angelcare-marketplace/admin/analytics/providers
+  SCREEN: 06
+  DISPOSITION: MERGE_INTO_CONTROL_ROOM
+  CURRENT_COMPONENT: MetricRegistry
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/analytics/providers/page.tsx
+ROUTE: /angelcare-marketplace/admin/analytics/territories
+  SCREEN: 06
+  DISPOSITION: MERGE_INTO_CONTROL_ROOM
+  CURRENT_COMPONENT: MetricRegistry
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/analytics/territories/page.tsx
+ROUTE: /angelcare-marketplace/admin/analytics/trust
+  SCREEN: 06
+  DISPOSITION: MERGE_INTO_CONTROL_ROOM
+  CURRENT_COMPONENT: MetricRegistry
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/analytics/trust/page.tsx
+ROUTE: /angelcare-marketplace/admin/business-pulse
+  SCREEN: 07
+  DISPOSITION: CANONICAL
+  CURRENT_COMPONENT: BusinessPulseCommand
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/business-pulse/page.tsx
+ROUTE: /angelcare-marketplace/admin/configuration
+  SCREEN: 09
+  DISPOSITION: CANONICAL
+  CURRENT_COMPONENT: MarketplaceConfigurationPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/configuration/page.tsx
+ROUTE: /angelcare-marketplace/admin/executive-briefs
+  SCREEN: 07
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: PageHeader;StatusChip;StatePanel
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/executive-briefs/page.tsx
+ROUTE: /angelcare-marketplace/admin/executive-control
+  SCREEN: 05
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: ExecutiveControlAreaPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/executive-control/page.tsx
+ROUTE: /angelcare-marketplace/admin/executive-control/categories
+  SCREEN: 05
+  DISPOSITION: MERGE_INTO_CONTROL_ROOM
+  CURRENT_COMPONENT: ExecutiveControlAreaPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/executive-control/categories/page.tsx
+ROUTE: /angelcare-marketplace/admin/executive-control/conversion
+  SCREEN: 05
+  DISPOSITION: MERGE_INTO_CONTROL_ROOM
+  CURRENT_COMPONENT: ExecutiveControlAreaPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/executive-control/conversion/page.tsx
+ROUTE: /angelcare-marketplace/admin/executive-control/customers
+  SCREEN: 05
+  DISPOSITION: MERGE_INTO_CONTROL_ROOM
+  CURRENT_COMPONENT: ExecutiveControlAreaPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/executive-control/customers/page.tsx
+ROUTE: /angelcare-marketplace/admin/executive-control/demand
+  SCREEN: 05
+  DISPOSITION: MERGE_INTO_CONTROL_ROOM
+  CURRENT_COMPONENT: ExecutiveControlAreaPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/executive-control/demand/page.tsx
+ROUTE: /angelcare-marketplace/admin/executive-control/discovery
+  SCREEN: 05
+  DISPOSITION: MERGE_INTO_CONTROL_ROOM
+  CURRENT_COMPONENT: ExecutiveControlAreaPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/executive-control/discovery/page.tsx
+ROUTE: /angelcare-marketplace/admin/executive-control/executive
+  SCREEN: 05
+  DISPOSITION: MERGE_INTO_CONTROL_ROOM
+  CURRENT_COMPONENT: ExecutiveControlAreaPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/executive-control/executive/page.tsx
+ROUTE: /angelcare-marketplace/admin/executive-control/growth
+  SCREEN: 05
+  DISPOSITION: MERGE_INTO_CONTROL_ROOM
+  CURRENT_COMPONENT: ExecutiveControlAreaPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/executive-control/growth/page.tsx
+ROUTE: /angelcare-marketplace/admin/executive-control/launch
+  SCREEN: 05
+  DISPOSITION: MERGE_INTO_CONTROL_ROOM
+  CURRENT_COMPONENT: ExecutiveControlAreaPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/executive-control/launch/page.tsx
+ROUTE: /angelcare-marketplace/admin/executive-control/operations
+  SCREEN: 05
+  DISPOSITION: MERGE_INTO_CONTROL_ROOM
+  CURRENT_COMPONENT: ExecutiveControlAreaPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/executive-control/operations/page.tsx
+ROUTE: /angelcare-marketplace/admin/executive-control/performance
+  SCREEN: 05
+  DISPOSITION: MERGE_INTO_CONTROL_ROOM
+  CURRENT_COMPONENT: ExecutiveControlAreaPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/executive-control/performance/page.tsx
+ROUTE: /angelcare-marketplace/admin/executive-control/qa
+  SCREEN: 05
+  DISPOSITION: MERGE_INTO_CONTROL_ROOM
+  CURRENT_COMPONENT: ExecutiveControlAreaPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/executive-control/qa/page.tsx
+ROUTE: /angelcare-marketplace/admin/executive-control/revenue
+  SCREEN: 05
+  DISPOSITION: MERGE_INTO_CONTROL_ROOM
+  CURRENT_COMPONENT: ExecutiveControlAreaPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/executive-control/revenue/page.tsx
+ROUTE: /angelcare-marketplace/admin/executive-control/security
+  SCREEN: 05
+  DISPOSITION: MERGE_INTO_CONTROL_ROOM
+  CURRENT_COMPONENT: ExecutiveControlAreaPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/executive-control/security/page.tsx
+ROUTE: /angelcare-marketplace/admin/executive-control/territories
+  SCREEN: 05
+  DISPOSITION: MERGE_INTO_CONTROL_ROOM
+  CURRENT_COMPONENT: ExecutiveControlAreaPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/executive-control/territories/page.tsx
+ROUTE: /angelcare-marketplace/admin/executive-control/trust
+  SCREEN: 05
+  DISPOSITION: MERGE_INTO_CONTROL_ROOM
+  CURRENT_COMPONENT: ExecutiveControlAreaPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/executive-control/trust/page.tsx
+ROUTE: /angelcare-marketplace/admin/foundation-ui
+  SCREEN: 09
+  DISPOSITION: COMPATIBILITY_REDIRECT
+  CURRENT_COMPONENT: wrapper/server page
+  CURRENT_REDIRECT: /angelcare-marketplace/admin/product-excellence
+  SOURCE_FILE: (protected)/admin/foundation-ui/page.tsx
+ROUTE: /angelcare-marketplace/admin/intelligence
+  SCREEN: 05
+  DISPOSITION: COMPATIBILITY_REDIRECT
+  CURRENT_COMPONENT: wrapper/server page
+  CURRENT_REDIRECT: /angelcare-marketplace/admin/executive-control
+  SOURCE_FILE: (protected)/admin/intelligence/page.tsx
+ROUTE: /angelcare-marketplace/admin/intelligence/academy
+  SCREEN: 06
+  DISPOSITION: MERGE_INTO_CONTROL_ROOM
+  CURRENT_COMPONENT: RealityCompletionPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/intelligence/academy/page.tsx
+ROUTE: /angelcare-marketplace/admin/intelligence/b2b
+  SCREEN: 06
+  DISPOSITION: MERGE_INTO_CONTROL_ROOM
+  CURRENT_COMPONENT: RealityCompletionPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/intelligence/b2b/page.tsx
+ROUTE: /angelcare-marketplace/admin/intelligence/categories
+  SCREEN: 06
+  DISPOSITION: MERGE_INTO_CONTROL_ROOM
+  CURRENT_COMPONENT: RealityCompletionPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/intelligence/categories/page.tsx
+ROUTE: /angelcare-marketplace/admin/intelligence/conversion
+  SCREEN: 06
+  DISPOSITION: MERGE_INTO_CONTROL_ROOM
+  CURRENT_COMPONENT: RealityCompletionPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/intelligence/conversion/page.tsx
+ROUTE: /angelcare-marketplace/admin/intelligence/customers
+  SCREEN: 06
+  DISPOSITION: MERGE_INTO_CONTROL_ROOM
+  CURRENT_COMPONENT: RealityCompletionPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/intelligence/customers/page.tsx
+ROUTE: /angelcare-marketplace/admin/intelligence/demand
+  SCREEN: 07
+  DISPOSITION: MERGE_INTO_CONTROL_ROOM
+  CURRENT_COMPONENT: RealityCompletionPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/intelligence/demand/page.tsx
+ROUTE: /angelcare-marketplace/admin/intelligence/discovery
+  SCREEN: 06
+  DISPOSITION: MERGE_INTO_CONTROL_ROOM
+  CURRENT_COMPONENT: RealityCompletionPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/intelligence/discovery/page.tsx
+ROUTE: /angelcare-marketplace/admin/intelligence/executive
+  SCREEN: 07
+  DISPOSITION: MERGE_INTO_CONTROL_ROOM
+  CURRENT_COMPONENT: RealityCompletionPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/intelligence/executive/page.tsx
+ROUTE: /angelcare-marketplace/admin/intelligence/experiments
+  SCREEN: 07
+  DISPOSITION: MERGE_INTO_CONTROL_ROOM
+  CURRENT_COMPONENT: RealityCompletionPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/intelligence/experiments/page.tsx
+ROUTE: /angelcare-marketplace/admin/intelligence/forecasting
+  SCREEN: 07
+  DISPOSITION: MERGE_INTO_CONTROL_ROOM
+  CURRENT_COMPONENT: RealityCompletionPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/intelligence/forecasting/page.tsx
+ROUTE: /angelcare-marketplace/admin/intelligence/growth
+  SCREEN: 07
+  DISPOSITION: MERGE_INTO_CONTROL_ROOM
+  CURRENT_COMPONENT: RealityCompletionPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/intelligence/growth/page.tsx
+ROUTE: /angelcare-marketplace/admin/intelligence/operations
+  SCREEN: 06
+  DISPOSITION: MERGE_INTO_CONTROL_ROOM
+  CURRENT_COMPONENT: RealityCompletionPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/intelligence/operations/page.tsx
+ROUTE: /angelcare-marketplace/admin/intelligence/partner-os
+  SCREEN: 06
+  DISPOSITION: MERGE_INTO_CONTROL_ROOM
+  CURRENT_COMPONENT: RealityCompletionPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/intelligence/partner-os/page.tsx
+ROUTE: /angelcare-marketplace/admin/intelligence/revenue
+  SCREEN: 06
+  DISPOSITION: MERGE_INTO_CONTROL_ROOM
+  CURRENT_COMPONENT: RealityCompletionPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/intelligence/revenue/page.tsx
+ROUTE: /angelcare-marketplace/admin/intelligence/territories
+  SCREEN: 06
+  DISPOSITION: MERGE_INTO_CONTROL_ROOM
+  CURRENT_COMPONENT: RealityCompletionPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/intelligence/territories/page.tsx
+ROUTE: /angelcare-marketplace/admin/intelligence/trust
+  SCREEN: 06
+  DISPOSITION: MERGE_INTO_CONTROL_ROOM
+  CURRENT_COMPONENT: RealityCompletionPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/intelligence/trust/page.tsx
+ROUTE: /angelcare-marketplace/admin/launch
+  SCREEN: 10
+  DISPOSITION: CANONICAL
+  CURRENT_COMPONENT: RealityCompletionPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/launch/page.tsx
+ROUTE: /angelcare-marketplace/admin/launch/approvals
+  SCREEN: 10
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: RealityCompletionPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/launch/approvals/page.tsx
+ROUTE: /angelcare-marketplace/admin/launch/blockers
+  SCREEN: 10
+  DISPOSITION: COMPATIBILITY_REDIRECT
+  CURRENT_COMPONENT: wrapper/server page
+  CURRENT_REDIRECT: /angelcare-marketplace/admin/launch/readiness
+  SOURCE_FILE: (protected)/admin/launch/blockers/page.tsx
+ROUTE: /angelcare-marketplace/admin/launch/defects
+  SCREEN: 10
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: RealityCompletionPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/launch/defects/page.tsx
+ROUTE: /angelcare-marketplace/admin/launch/evidence
+  SCREEN: 10
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: RealityCompletionPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/launch/evidence/page.tsx
+ROUTE: /angelcare-marketplace/admin/launch/gates
+  SCREEN: 10
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: RealityCompletionPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/launch/gates/page.tsx
+ROUTE: /angelcare-marketplace/admin/launch/monitoring
+  SCREEN: 10
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: RealityCompletionPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/launch/monitoring/page.tsx
+ROUTE: /angelcare-marketplace/admin/launch/post-launch
+  SCREEN: 10
+  DISPOSITION: COMPATIBILITY_REDIRECT
+  CURRENT_COMPONENT: wrapper/server page
+  CURRENT_REDIRECT: /angelcare-marketplace/admin/launch/monitoring
+  SOURCE_FILE: (protected)/admin/launch/post-launch/page.tsx
+ROUTE: /angelcare-marketplace/admin/launch/readiness
+  SCREEN: 10
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: RealityCompletionPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/launch/readiness/page.tsx
+ROUTE: /angelcare-marketplace/admin/launch/release
+  SCREEN: 10
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: RealityCompletionPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/launch/release/page.tsx
+ROUTE: /angelcare-marketplace/admin/launch/rollback
+  SCREEN: 10
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: RealityCompletionPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/launch/rollback/page.tsx
+ROUTE: /angelcare-marketplace/admin/launch/runbook
+  SCREEN: 10
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: RunbookAuthority
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/launch/runbook/page.tsx
+ROUTE: /angelcare-marketplace/admin/modules
+  SCREEN: 09
+  DISPOSITION: CANONICAL
+  CURRENT_COMPONENT: MarketplaceModulesPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/modules/page.tsx
+ROUTE: /angelcare-marketplace/admin/modules/[moduleKey]
+  SCREEN: 09
+  DISPOSITION: ADVANCED_TOOL
+  CURRENT_COMPONENT: MarketplaceModuleDetailPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/modules/[moduleKey]/page.tsx
+ROUTE: /angelcare-marketplace/admin/product-excellence
+  SCREEN: 09
+  DISPOSITION: CANONICAL
+  CURRENT_COMPONENT: ProductExcellenceCommand
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/product-excellence/page.tsx
+ROUTE: /angelcare-marketplace/admin/qa
+  SCREEN: 10
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: RealityCompletionPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/qa/page.tsx
+ROUTE: /angelcare-marketplace/admin/qa/accessibility
+  SCREEN: 10
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: RealityCompletionPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/qa/accessibility/page.tsx
+ROUTE: /angelcare-marketplace/admin/qa/contracts
+  SCREEN: 10
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: RealityCompletionPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/qa/contracts/page.tsx
+ROUTE: /angelcare-marketplace/admin/qa/data-integrity
+  SCREEN: 10
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: RealityCompletionPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/qa/data-integrity/page.tsx
+ROUTE: /angelcare-marketplace/admin/qa/defects
+  SCREEN: 10
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: RealityCompletionPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/qa/defects/page.tsx
+ROUTE: /angelcare-marketplace/admin/qa/evidence
+  SCREEN: 10
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: RealityCompletionPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/qa/evidence/page.tsx
+ROUTE: /angelcare-marketplace/admin/qa/localization
+  SCREEN: 10
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: RealityCompletionPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/qa/localization/page.tsx
+ROUTE: /angelcare-marketplace/admin/qa/regression
+  SCREEN: 10
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: RealityCompletionPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/qa/regression/page.tsx
+ROUTE: /angelcare-marketplace/admin/qa/responsive
+  SCREEN: 10
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: RealityCompletionPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/qa/responsive/page.tsx
+ROUTE: /angelcare-marketplace/admin/qa/routes
+  SCREEN: 10
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: RealityCompletionPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/qa/routes/page.tsx
+ROUTE: /angelcare-marketplace/admin/qa/security
+  SCREEN: 10
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: RealityCompletionPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/qa/security/page.tsx
+ROUTE: /angelcare-marketplace/admin/qa/workflows
+  SCREEN: 10
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: RealityCompletionPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/qa/workflows/page.tsx
+ROUTE: /angelcare-marketplace/admin/quality-assurance
+  SCREEN: 10
+  DISPOSITION: CANONICAL
+  CURRENT_COMPONENT: QaCommand
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/quality-assurance/page.tsx
+ROUTE: /angelcare-marketplace/admin/quality-assurance/accessibility
+  SCREEN: 10
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: ResultAuthority
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/quality-assurance/accessibility/page.tsx
+ROUTE: /angelcare-marketplace/admin/quality-assurance/defects
+  SCREEN: 10
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: DefectAuthority
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/quality-assurance/defects/page.tsx
+ROUTE: /angelcare-marketplace/admin/quality-assurance/localization
+  SCREEN: 10
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: ResultAuthority
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/quality-assurance/localization/page.tsx
+ROUTE: /angelcare-marketplace/admin/quality-assurance/performance
+  SCREEN: 10
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: ResultAuthority
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/quality-assurance/performance/page.tsx
+ROUTE: /angelcare-marketplace/admin/quality-assurance/regressions
+  SCREEN: 10
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: ResultAuthority
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/quality-assurance/regressions/page.tsx
+ROUTE: /angelcare-marketplace/admin/quality-assurance/release
+  SCREEN: 10
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: ResultAuthority
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/quality-assurance/release/page.tsx
+ROUTE: /angelcare-marketplace/admin/quality-assurance/runs
+  SCREEN: 10
+  DISPOSITION: COMPATIBILITY_REDIRECT
+  CURRENT_COMPONENT: wrapper/server page
+  CURRENT_REDIRECT: /angelcare-marketplace/admin/qa
+  SOURCE_FILE: (protected)/admin/quality-assurance/runs/page.tsx
+ROUTE: /angelcare-marketplace/admin/quality-assurance/security
+  SCREEN: 10
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: ResultAuthority
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/quality-assurance/security/page.tsx
+ROUTE: /angelcare-marketplace/admin/quality-assurance/suites
+  SCREEN: 10
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: SuiteAuthority
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/quality-assurance/suites/page.tsx
+ROUTE: /angelcare-marketplace/admin/readiness
+  SCREEN: 10
+  DISPOSITION: CANONICAL
+  CURRENT_COMPONENT: MarketplaceReadinessPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/readiness/page.tsx
+ROUTE: /angelcare-marketplace/admin/reality-readiness
+  SCREEN: 10
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: FinalRealityReadiness
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/reality-readiness/page.tsx
+ROUTE: /angelcare-marketplace/admin/security
+  SCREEN: 08
+  DISPOSITION: CANONICAL
+  CURRENT_COMPONENT: RealityCompletionPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/security/page.tsx
+ROUTE: /angelcare-marketplace/admin/security-audit
+  SCREEN: 08
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: MarketplaceSecurityAuditPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/security-audit/page.tsx
+ROUTE: /angelcare-marketplace/admin/security/access
+  SCREEN: 08
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: RealityCompletionPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/security/access/page.tsx
+ROUTE: /angelcare-marketplace/admin/security/audit
+  SCREEN: 08
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: RealityCompletionPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/security/audit/page.tsx
+ROUTE: /angelcare-marketplace/admin/security/backups
+  SCREEN: 08
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: BackupRecoveryAuthority
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/security/backups/page.tsx
+ROUTE: /angelcare-marketplace/admin/security/data-exposure
+  SCREEN: 08
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: RealityCompletionPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/security/data-exposure/page.tsx
+ROUTE: /angelcare-marketplace/admin/security/data-retention
+  SCREEN: 08
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: RetentionAuthority
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/security/data-retention/page.tsx
+ROUTE: /angelcare-marketplace/admin/security/events
+  SCREEN: 08
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: SecurityEvents
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/security/events/page.tsx
+ROUTE: /angelcare-marketplace/admin/security/incidents
+  SCREEN: 08
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: RealityCompletionPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/security/incidents/page.tsx
+ROUTE: /angelcare-marketplace/admin/security/permissions
+  SCREEN: 08
+  DISPOSITION: COMPATIBILITY_REDIRECT
+  CURRENT_COMPONENT: wrapper/server page
+  CURRENT_REDIRECT: /angelcare-marketplace/admin/security/workspace-access
+  SOURCE_FILE: (protected)/admin/security/permissions/page.tsx
+ROUTE: /angelcare-marketplace/admin/security/rbac
+  SCREEN: 08
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: RealityCompletionPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/security/rbac/page.tsx
+ROUTE: /angelcare-marketplace/admin/security/recovery
+  SCREEN: 08
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: RealityCompletionPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/security/recovery/page.tsx
+ROUTE: /angelcare-marketplace/admin/security/reviews
+  SCREEN: 08
+  DISPOSITION: COMPATIBILITY_REDIRECT
+  CURRENT_COMPONENT: wrapper/server page
+  CURRENT_REDIRECT: /angelcare-marketplace/admin/security/access
+  SOURCE_FILE: (protected)/admin/security/reviews/page.tsx
+ROUTE: /angelcare-marketplace/admin/security/roles
+  SCREEN: 08
+  DISPOSITION: COMPATIBILITY_REDIRECT
+  CURRENT_COMPONENT: wrapper/server page
+  CURRENT_REDIRECT: /angelcare-marketplace/admin/security/workspace-access
+  SOURCE_FILE: (protected)/admin/security/roles/page.tsx
+ROUTE: /angelcare-marketplace/admin/security/secrets
+  SCREEN: 08
+  DISPOSITION: COMPATIBILITY_REDIRECT
+  CURRENT_COMPONENT: wrapper/server page
+  CURRENT_REDIRECT: /angelcare-marketplace/admin/security
+  SOURCE_FILE: (protected)/admin/security/secrets/page.tsx
+ROUTE: /angelcare-marketplace/admin/security/separation-of-duties
+  SCREEN: 08
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: RealityCompletionPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/security/separation-of-duties/page.tsx
+ROUTE: /angelcare-marketplace/admin/security/sessions
+  SCREEN: 08
+  DISPOSITION: COMPATIBILITY_REDIRECT
+  CURRENT_COMPONENT: wrapper/server page
+  CURRENT_REDIRECT: /angelcare-marketplace/admin/security/incidents
+  SOURCE_FILE: (protected)/admin/security/sessions/page.tsx
+ROUTE: /angelcare-marketplace/admin/security/tenant-isolation
+  SCREEN: 08
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: RealityCompletionPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/security/tenant-isolation/page.tsx
+ROUTE: /angelcare-marketplace/admin/security/territory-isolation
+  SCREEN: 08
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: RealityCompletionPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/security/territory-isolation/page.tsx
+ROUTE: /angelcare-marketplace/admin/security/workspace-access
+  SCREEN: 08
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: WorkspaceAccessPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/security/workspace-access/page.tsx
+ROUTE: /angelcare-marketplace/admin/trust
+  SCREEN: 01
+  DISPOSITION: CANONICAL
+  CURRENT_COMPONENT: TrustCommand
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/trust/page.tsx
+ROUTE: /angelcare-marketplace/admin/trust/audits
+  SCREEN: 03
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: RealityCompletionPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/trust/audits/page.tsx
+ROUTE: /angelcare-marketplace/admin/trust/badges
+  SCREEN: 02
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: BadgeAuthority
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/trust/badges/page.tsx
+ROUTE: /angelcare-marketplace/admin/trust/command
+  SCREEN: 01
+  DISPOSITION: COMPATIBILITY_REDIRECT
+  CURRENT_COMPONENT: wrapper/server page
+  CURRENT_REDIRECT: /angelcare-marketplace/admin/trust
+  SOURCE_FILE: (protected)/admin/trust/command/page.tsx
+ROUTE: /angelcare-marketplace/admin/trust/complaints
+  SCREEN: 03
+  DISPOSITION: CANONICAL
+  CURRENT_COMPONENT: ComplaintCommand
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/trust/complaints/page.tsx
+ROUTE: /angelcare-marketplace/admin/trust/compliance
+  SCREEN: 04
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: ComplianceAuthority
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/trust/compliance/page.tsx
+ROUTE: /angelcare-marketplace/admin/trust/corrective-actions
+  SCREEN: 03
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: CapaCommand
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/trust/corrective-actions/page.tsx
+ROUTE: /angelcare-marketplace/admin/trust/evidence
+  SCREEN: 02
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: EvidenceAuthority
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/trust/evidence/page.tsx
+ROUTE: /angelcare-marketplace/admin/trust/investigations
+  SCREEN: 03
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: RealityCompletionPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/trust/investigations/page.tsx
+ROUTE: /angelcare-marketplace/admin/trust/non-conformities
+  SCREEN: 03
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: NonConformityAuthority
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/trust/non-conformities/page.tsx
+ROUTE: /angelcare-marketplace/admin/trust/quality-check-360
+  SCREEN: 02
+  DISPOSITION: CANONICAL
+  CURRENT_COMPONENT: Quality360Command
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/trust/quality-check-360/page.tsx
+ROUTE: /angelcare-marketplace/admin/trust/reports
+  SCREEN: 01
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: RealityCompletionPage
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/trust/reports/page.tsx
+ROUTE: /angelcare-marketplace/admin/trust/sensitive-content
+  SCREEN: 04
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: SensitiveContentCommand
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/trust/sensitive-content/page.tsx
+ROUTE: /angelcare-marketplace/admin/trust/sops
+  SCREEN: 04
+  DISPOSITION: CANONICAL
+  CURRENT_COMPONENT: SopAuthority
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/trust/sops/page.tsx
+ROUTE: /angelcare-marketplace/admin/trust/standards
+  SCREEN: 04
+  DISPOSITION: MERGE_INTO_STUDIO
+  CURRENT_COMPONENT: StandardsAuthority
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/trust/standards/page.tsx
+ROUTE: /angelcare-marketplace/admin/workspaces
+  SCREEN: 09
+  DISPOSITION: CANONICAL
+  CURRENT_COMPONENT: WorkspaceRegistryCommand
+  CURRENT_REDIRECT: none
+  SOURCE_FILE: (protected)/admin/workspaces/page.tsx
+================================================================================================
+5. API AUTHORITY MAP — REUSE, DO NOT DUPLICATE
+================================================================================================
+API: /api/angelcare-marketplace/admin/activation/run
+  METHODS: route handler authority
+  SOURCE_FILE: admin/activation/run/route.ts
+  IMPORTS: { handleActivationRun } FROM @/angelcare-marketplace/production-activation/api-handlers
+API: /api/angelcare-marketplace/admin/activation/summary
+  METHODS: route handler authority
+  SOURCE_FILE: admin/activation/summary/route.ts
+  IMPORTS: { handleActivationSummary } FROM @/angelcare-marketplace/production-activation/api-handlers
+API: /api/angelcare-marketplace/admin/enterprise-command/pulse
+  METHODS: GET
+  SOURCE_FILE: admin/enterprise-command/pulse/route.ts
+  IMPORTS: foundation/final authority handler
+API: /api/angelcare-marketplace/admin/workspace-access
+  METHODS: GET,POST
+  SOURCE_FILE: admin/workspace-access/route.ts
+  IMPORTS: {handleWorkspaceAccess} FROM @/angelcare-marketplace/workspace-access/api-handlers
+API: /api/angelcare-marketplace/analytics/data-quality
+  METHODS: route handler authority
+  SOURCE_FILE: analytics/data-quality/route.ts
+  IMPORTS: { handleDataQuality } FROM @/angelcare-marketplace/analytics-security/api-handlers
+API: /api/angelcare-marketplace/analytics/metrics
+  METHODS: route handler authority
+  SOURCE_FILE: analytics/metrics/route.ts
+  IMPORTS: { handleMetrics } FROM @/angelcare-marketplace/analytics-security/api-handlers
+API: /api/angelcare-marketplace/analytics/refresh
+  METHODS: route handler authority
+  SOURCE_FILE: analytics/refresh/route.ts
+  IMPORTS: { handleAnalyticsRefresh } FROM @/angelcare-marketplace/analytics-security/api-handlers
+API: /api/angelcare-marketplace/analytics/snapshots
+  METHODS: route handler authority
+  SOURCE_FILE: analytics/snapshots/route.ts
+  IMPORTS: { handleSnapshots } FROM @/angelcare-marketplace/analytics-security/api-handlers
+API: /api/angelcare-marketplace/analytics/summary
+  METHODS: route handler authority
+  SOURCE_FILE: analytics/summary/route.ts
+  IMPORTS: { handleAnalyticsSummary } FROM @/angelcare-marketplace/analytics-security/api-handlers
+API: /api/angelcare-marketplace/backoffice/briefs
+  METHODS: route handler authority
+  SOURCE_FILE: backoffice/briefs/route.ts
+  IMPORTS: foundation/final authority handler
+API: /api/angelcare-marketplace/foundation/audit
+  METHODS: route handler authority
+  SOURCE_FILE: foundation/audit/route.ts
+  IMPORTS: foundation/final authority handler
+API: /api/angelcare-marketplace/foundation/audit/export
+  METHODS: route handler authority
+  SOURCE_FILE: foundation/audit/export/route.ts
+  IMPORTS: foundation/final authority handler
+API: /api/angelcare-marketplace/foundation/configuration
+  METHODS: route handler authority
+  SOURCE_FILE: foundation/configuration/route.ts
+  IMPORTS: foundation/final authority handler
+API: /api/angelcare-marketplace/foundation/configuration/[key]
+  METHODS: PATCH
+  SOURCE_FILE: foundation/configuration/[key]/route.ts
+  IMPORTS: { handleConfigurationPatch, } FROM @/angelcare-marketplace/api/handlers
+API: /api/angelcare-marketplace/foundation/modules
+  METHODS: route handler authority
+  SOURCE_FILE: foundation/modules/route.ts
+  IMPORTS: foundation/final authority handler
+API: /api/angelcare-marketplace/foundation/modules/[moduleKey]
+  METHODS: GET,PATCH
+  SOURCE_FILE: foundation/modules/[moduleKey]/route.ts
+  IMPORTS: { handleModuleGet, handleModulePatch, } FROM @/angelcare-marketplace/api/handlers
+API: /api/angelcare-marketplace/foundation/modules/[moduleKey]/transition
+  METHODS: POST
+  SOURCE_FILE: foundation/modules/[moduleKey]/transition/route.ts
+  IMPORTS: { handleModuleTransitionPost, } FROM @/angelcare-marketplace/api/handlers
+API: /api/angelcare-marketplace/foundation/readiness
+  METHODS: route handler authority
+  SOURCE_FILE: foundation/readiness/route.ts
+  IMPORTS: foundation/final authority handler
+API: /api/angelcare-marketplace/foundation/readiness/[checkKey]
+  METHODS: PATCH
+  SOURCE_FILE: foundation/readiness/[checkKey]/route.ts
+  IMPORTS: { handleReadinessPatch, } FROM @/angelcare-marketplace/api/handlers
+API: /api/angelcare-marketplace/foundation/readiness/sign-off
+  METHODS: route handler authority
+  SOURCE_FILE: foundation/readiness/sign-off/route.ts
+  IMPORTS: foundation/final authority handler
+API: /api/angelcare-marketplace/intelligence/executive
+  METHODS: route handler authority
+  SOURCE_FILE: intelligence/executive/route.ts
+  IMPORTS: foundation/final authority handler
+API: /api/angelcare-marketplace/intelligence/metrics
+  METHODS: route handler authority
+  SOURCE_FILE: intelligence/metrics/route.ts
+  IMPORTS: foundation/final authority handler
+API: /api/angelcare-marketplace/intelligence/observations
+  METHODS: route handler authority
+  SOURCE_FILE: intelligence/observations/route.ts
+  IMPORTS: foundation/final authority handler
+API: /api/angelcare-marketplace/launch/approvals
+  METHODS: route handler authority
+  SOURCE_FILE: launch/approvals/route.ts
+  IMPORTS: { handleLaunchApprovals } FROM @/angelcare-marketplace/launch-assurance/api-handlers
+API: /api/angelcare-marketplace/launch/evidence
+  METHODS: route handler authority
+  SOURCE_FILE: launch/evidence/route.ts
+  IMPORTS: { handleLaunchEvidence } FROM @/angelcare-marketplace/launch-assurance/api-handlers
+API: /api/angelcare-marketplace/launch/gates
+  METHODS: route handler authority
+  SOURCE_FILE: launch/gates/route.ts
+  IMPORTS: foundation/final authority handler
+API: /api/angelcare-marketplace/launch/gates/[gateId]/update
+  METHODS: POST
+  SOURCE_FILE: launch/gates/[gateId]/update/route.ts
+  IMPORTS: { handleGateUpdate } FROM @/angelcare-marketplace/launch-assurance/api-handlers
+API: /api/angelcare-marketplace/launch/monitoring
+  METHODS: route handler authority
+  SOURCE_FILE: launch/monitoring/route.ts
+  IMPORTS: foundation/final authority handler
+API: /api/angelcare-marketplace/launch/post-launch
+  METHODS: route handler authority
+  SOURCE_FILE: launch/post-launch/route.ts
+  IMPORTS: { handlePostLaunch } FROM @/angelcare-marketplace/launch-assurance/api-handlers
+API: /api/angelcare-marketplace/launch/runbooks
+  METHODS: route handler authority
+  SOURCE_FILE: launch/runbooks/route.ts
+  IMPORTS: { handleRunbooks } FROM @/angelcare-marketplace/launch-assurance/api-handlers
+API: /api/angelcare-marketplace/launch/summary
+  METHODS: route handler authority
+  SOURCE_FILE: launch/summary/route.ts
+  IMPORTS: { handleLaunchSummary } FROM @/angelcare-marketplace/launch-assurance/api-handlers
+API: /api/angelcare-marketplace/qa/checks
+  METHODS: route handler authority
+  SOURCE_FILE: qa/checks/route.ts
+  IMPORTS: foundation/final authority handler
+API: /api/angelcare-marketplace/qa/defects
+  METHODS: route handler authority
+  SOURCE_FILE: qa/defects/route.ts
+  IMPORTS: foundation/final authority handler
+API: /api/angelcare-marketplace/qa/defects/[defectId]/transition
+  METHODS: POST
+  SOURCE_FILE: qa/defects/[defectId]/transition/route.ts
+  IMPORTS: {handleDefectTransition} FROM @/angelcare-marketplace/final-authority/api-handlers
+API: /api/angelcare-marketplace/qa/results
+  METHODS: route handler authority
+  SOURCE_FILE: qa/results/route.ts
+  IMPORTS: { handleTestResults } FROM @/angelcare-marketplace/launch-assurance/api-handlers
+API: /api/angelcare-marketplace/qa/runs
+  METHODS: route handler authority
+  SOURCE_FILE: qa/runs/route.ts
+  IMPORTS: foundation/final authority handler
+API: /api/angelcare-marketplace/qa/suites
+  METHODS: route handler authority
+  SOURCE_FILE: qa/suites/route.ts
+  IMPORTS: { handleTestSuites } FROM @/angelcare-marketplace/launch-assurance/api-handlers
+API: /api/angelcare-marketplace/qa/summary
+  METHODS: route handler authority
+  SOURCE_FILE: qa/summary/route.ts
+  IMPORTS: { handleQaSummary } FROM @/angelcare-marketplace/launch-assurance/api-handlers
+API: /api/angelcare-marketplace/security/access-reviews
+  METHODS: route handler authority
+  SOURCE_FILE: security/access-reviews/route.ts
+  IMPORTS: { handleAccessReviews } FROM @/angelcare-marketplace/analytics-security/api-handlers
+API: /api/angelcare-marketplace/security/assessments
+  METHODS: route handler authority
+  SOURCE_FILE: security/assessments/route.ts
+  IMPORTS: foundation/final authority handler
+API: /api/angelcare-marketplace/security/controls
+  METHODS: route handler authority
+  SOURCE_FILE: security/controls/route.ts
+  IMPORTS: foundation/final authority handler
+API: /api/angelcare-marketplace/security/events
+  METHODS: route handler authority
+  SOURCE_FILE: security/events/route.ts
+  IMPORTS: { handleSecurityEvents } FROM @/angelcare-marketplace/analytics-security/api-handlers
+API: /api/angelcare-marketplace/security/isolation-tests
+  METHODS: route handler authority
+  SOURCE_FILE: security/isolation-tests/route.ts
+  IMPORTS: { handleIsolationTests } FROM @/angelcare-marketplace/analytics-security/api-handlers
+API: /api/angelcare-marketplace/security/isolation-tests/[testId]/execute
+  METHODS: POST
+  SOURCE_FILE: security/isolation-tests/[testId]/execute/route.ts
+  IMPORTS: { handleIsolationExecution } FROM @/angelcare-marketplace/analytics-security/api-handlers
+API: /api/angelcare-marketplace/security/recovery-tests
+  METHODS: route handler authority
+  SOURCE_FILE: security/recovery-tests/route.ts
+  IMPORTS: { handleRecoveryTests } FROM @/angelcare-marketplace/analytics-security/api-handlers
+API: /api/angelcare-marketplace/security/recovery-tests/[testId]/transition
+  METHODS: POST
+  SOURCE_FILE: security/recovery-tests/[testId]/transition/route.ts
+  IMPORTS: { handleRecoveryTransition } FROM @/angelcare-marketplace/analytics-security/api-handlers
+API: /api/angelcare-marketplace/security/retention
+  METHODS: route handler authority
+  SOURCE_FILE: security/retention/route.ts
+  IMPORTS: { handleRetention } FROM @/angelcare-marketplace/analytics-security/api-handlers
+API: /api/angelcare-marketplace/security/summary
+  METHODS: route handler authority
+  SOURCE_FILE: security/summary/route.ts
+  IMPORTS: { handleSecuritySummary } FROM @/angelcare-marketplace/analytics-security/api-handlers
+API: /api/angelcare-marketplace/trust/assessments
+  METHODS: route handler authority
+  SOURCE_FILE: trust/assessments/route.ts
+  IMPORTS: { handleAssessments } FROM @/angelcare-marketplace/trust-quality/api-handlers
+API: /api/angelcare-marketplace/trust/assessments/[assessmentId]/recalculate
+  METHODS: POST
+  SOURCE_FILE: trust/assessments/[assessmentId]/recalculate/route.ts
+  IMPORTS: { handleAssessmentRecalculate } FROM @/angelcare-marketplace/trust-quality/api-handlers
+API: /api/angelcare-marketplace/trust/assessments/[assessmentId]/transition
+  METHODS: POST
+  SOURCE_FILE: trust/assessments/[assessmentId]/transition/route.ts
+  IMPORTS: { handleAssessmentTransition } FROM @/angelcare-marketplace/trust-quality/api-handlers
+API: /api/angelcare-marketplace/trust/capa
+  METHODS: route handler authority
+  SOURCE_FILE: trust/capa/route.ts
+  IMPORTS: { handleCapa } FROM @/angelcare-marketplace/trust-quality/api-handlers
+API: /api/angelcare-marketplace/trust/capa/[actionId]/transition
+  METHODS: POST
+  SOURCE_FILE: trust/capa/[actionId]/transition/route.ts
+  IMPORTS: { handleCapaTransition } FROM @/angelcare-marketplace/trust-quality/api-handlers
+API: /api/angelcare-marketplace/trust/complaints
+  METHODS: route handler authority
+  SOURCE_FILE: trust/complaints/route.ts
+  IMPORTS: { handleComplaints } FROM @/angelcare-marketplace/trust-quality/api-handlers
+API: /api/angelcare-marketplace/trust/complaints/[complaintId]/transition
+  METHODS: POST
+  SOURCE_FILE: trust/complaints/[complaintId]/transition/route.ts
+  IMPORTS: { handleComplaintTransition } FROM @/angelcare-marketplace/trust-quality/api-handlers
+API: /api/angelcare-marketplace/trust/evidence
+  METHODS: route handler authority
+  SOURCE_FILE: trust/evidence/route.ts
+  IMPORTS: { handleEvidence } FROM @/angelcare-marketplace/trust-quality/api-handlers
+API: /api/angelcare-marketplace/trust/sensitive-reviews
+  METHODS: route handler authority
+  SOURCE_FILE: trust/sensitive-reviews/route.ts
+  IMPORTS: { handleSensitiveReviews } FROM @/angelcare-marketplace/trust-quality/api-handlers
+API: /api/angelcare-marketplace/trust/sensitive-reviews/[reviewId]/approve
+  METHODS: POST
+  SOURCE_FILE: trust/sensitive-reviews/[reviewId]/approve/route.ts
+  IMPORTS: { handleSensitiveApproval } FROM @/angelcare-marketplace/trust-quality/api-handlers
+API: /api/angelcare-marketplace/trust/sops
+  METHODS: route handler authority
+  SOURCE_FILE: trust/sops/route.ts
+  IMPORTS: { handleSops } FROM @/angelcare-marketplace/trust-quality/api-handlers
+API: /api/angelcare-marketplace/trust/sops/[sopId]/transition
+  METHODS: POST
+  SOURCE_FILE: trust/sops/[sopId]/transition/route.ts
+  IMPORTS: { handleSopTransition } FROM @/angelcare-marketplace/trust-quality/api-handlers
+API: /api/angelcare-marketplace/trust/summary
+  METHODS: route handler authority
+  SOURCE_FILE: trust/summary/route.ts
+  IMPORTS: { handleTrustSummary } FROM @/angelcare-marketplace/trust-quality/api-handlers
+================================================================================================
+6. PERMISSION AUTHORITY — SERVER ENFORCEMENT REMAINS CANONICAL
+================================================================================================
+marketplace.workspace.access | Accéder | category=Fondation | sensitive=False | workspace=Cross-cutting / Unmapped
+marketplace.modules.view | Consulter | category=Modules | sensitive=False | workspace=Cross-cutting / Unmapped
+marketplace.modules.create | Créer | category=Modules | sensitive=True | workspace=Cross-cutting / Unmapped
+marketplace.modules.update | Mettre à jour | category=Modules | sensitive=True | workspace=Cross-cutting / Unmapped
+marketplace.modules.enable | Activer | category=Modules | sensitive=True | workspace=Cross-cutting / Unmapped
+marketplace.modules.disable | Désactiver | category=Modules | sensitive=True | workspace=Cross-cutting / Unmapped
+marketplace.modules.archive | Archiver | category=Modules | sensitive=True | workspace=Cross-cutting / Unmapped
+marketplace.feature_flags.view | Consulter | category=Activation | sensitive=False | workspace=Cross-cutting / Unmapped
+marketplace.feature_flags.manage | Gérer | category=Activation | sensitive=True | workspace=Cross-cutting / Unmapped
+marketplace.configuration.view | Consulter | category=Configuration | sensitive=False | workspace=Cross-cutting / Unmapped
+marketplace.configuration.manage | Gérer | category=Configuration | sensitive=True | workspace=Cross-cutting / Unmapped
+marketplace.audit.view | Consulter | category=Sécurité | sensitive=False | workspace=Cross-cutting / Unmapped
+marketplace.audit.export | Exporter | category=Sécurité | sensitive=True | workspace=Cross-cutting / Unmapped
+marketplace.security.view | Consulter | category=Sécurité | sensitive=False | workspace=Platform & Security
+marketplace.security.manage | Gérer | category=Sécurité | sensitive=True | workspace=Platform & Security
+marketplace.readiness.view | Consulter | category=Gouvernance | sensitive=False | workspace=Launch & Governance
+marketplace.readiness.update | Mettre à jour | category=Gouvernance | sensitive=True | workspace=Launch & Governance
+marketplace.readiness.review | Réviser | category=Gouvernance | sensitive=True | workspace=Launch & Governance
+marketplace.readiness.sign_off | Signer | category=Gouvernance | sensitive=True | workspace=Launch & Governance
+marketplace.quality.view | Consulter | category=Quality Check 360 | sensitive=False | workspace=Trust & Quality
+marketplace.quality.assessments.manage | Gérer | category=Quality Check 360 | sensitive=True | workspace=Trust & Quality
+marketplace.quality.assessments.approve | Approuver | category=Quality Check 360 | sensitive=True | workspace=Trust & Quality
+marketplace.quality.findings.manage | Gérer | category=Quality Check 360 | sensitive=True | workspace=Trust & Quality
+marketplace.quality.corrective_actions.manage | Gérer | category=Quality Check 360 | sensitive=True | workspace=Trust & Quality
+marketplace.quality.corrective_actions.close | Clôturer | category=Quality Check 360 | sensitive=True | workspace=Trust & Quality
+marketplace.complaints.view | Consulter | category=Complaints & Investigations | sensitive=False | workspace=Trust & Quality
+marketplace.complaints.manage | Gérer | category=Complaints & Investigations | sensitive=True | workspace=Trust & Quality
+marketplace.complaints.investigate | Enquêter | category=Complaints & Investigations | sensitive=True | workspace=Trust & Quality
+marketplace.complaints.resolve | Résoudre | category=Complaints & Investigations | sensitive=True | workspace=Trust & Quality
+marketplace.complaints.export | Exporter | category=Complaints & Investigations | sensitive=True | workspace=Trust & Quality
+marketplace.sensitive_content.review | Réviser | category=Compliance & Sensitive Content | sensitive=True | workspace=Trust & Quality
+marketplace.sensitive_content.approve | Approuver | category=Compliance & Sensitive Content | sensitive=True | workspace=Trust & Quality
+marketplace.compliance.review | Réviser | category=Compliance & Sensitive Content | sensitive=True | workspace=Trust & Quality
+marketplace.compliance.approve | Approuver | category=Compliance & Sensitive Content | sensitive=True | workspace=Trust & Quality
+marketplace.analytics.view | Consulter | category=Enterprise Analytics | sensitive=False | workspace=Intelligence & Analytics
+marketplace.analytics.executive | Executive | category=Enterprise Analytics | sensitive=False | workspace=Intelligence & Analytics
+marketplace.analytics.finance | Finance | category=Enterprise Analytics | sensitive=False | workspace=Intelligence & Analytics
+marketplace.analytics.security | Security | category=Enterprise Analytics | sensitive=False | workspace=Intelligence & Analytics
+marketplace.analytics.export | Exporter | category=Enterprise Analytics | sensitive=True | workspace=Intelligence & Analytics
+marketplace.analytics.definitions.manage | Gérer | category=Enterprise Analytics | sensitive=True | workspace=Intelligence & Analytics
+marketplace.analytics.data_quality.manage | Gérer | category=Enterprise Analytics | sensitive=True | workspace=Intelligence & Analytics
+marketplace.security.access_review | Access review | category=Security Assurance | sensitive=True | workspace=Platform & Security
+marketplace.security.roles.manage | Gérer | category=Security Assurance | sensitive=True | workspace=Platform & Security
+marketplace.security.isolation.review | Réviser | category=Security Assurance | sensitive=True | workspace=Platform & Security
+marketplace.security.events.view | Consulter | category=Security Assurance | sensitive=False | workspace=Platform & Security
+marketplace.security.retention.manage | Gérer | category=Security Assurance | sensitive=True | workspace=Platform & Security
+marketplace.security.separation_of_duties.review | Réviser | category=Security Assurance | sensitive=True | workspace=Platform & Security
+marketplace.backup.view | Consulter | category=Backup & Recovery | sensitive=False | workspace=Platform & Security
+marketplace.backup.manage | Gérer | category=Backup & Recovery | sensitive=True | workspace=Platform & Security
+marketplace.recovery_test.approve | Approuver | category=Backup & Recovery | sensitive=True | workspace=Platform & Security
+marketplace.qa.view | Consulter | category=Quality Assurance | sensitive=False | workspace=Trust & Quality
+marketplace.qa.manage | Gérer | category=Quality Assurance | sensitive=True | workspace=Trust & Quality
+marketplace.qa.execute | Exécuter | category=Quality Assurance | sensitive=True | workspace=Trust & Quality
+marketplace.qa.defects.manage | Gérer | category=Quality Assurance | sensitive=True | workspace=Trust & Quality
+marketplace.qa.release_review | Release review | category=Quality Assurance | sensitive=True | workspace=Trust & Quality
+marketplace.launch.view | Consulter | category=Final Launch Authority | sensitive=False | workspace=Launch & Governance
+marketplace.launch.gates.manage | Gérer | category=Final Launch Authority | sensitive=True | workspace=Launch & Governance
+marketplace.launch.gates.review | Réviser | category=Final Launch Authority | sensitive=True | workspace=Launch & Governance
+marketplace.launch.waivers.approve | Approuver | category=Final Launch Authority | sensitive=True | workspace=Launch & Governance
+marketplace.launch.release.approve | Approuver | category=Final Launch Authority | sensitive=True | workspace=Launch & Governance
+marketplace.launch.pause | Mettre en pause | category=Final Launch Authority | sensitive=True | workspace=Launch & Governance
+marketplace.launch.rollback_authorize | Autoriser le rollback | category=Final Launch Authority | sensitive=True | workspace=Launch & Governance
+marketplace.launch.post_launch.manage | Gérer | category=Final Launch Authority | sensitive=True | workspace=Launch & Governance
+marketplace.intelligence.view | Voir Executive Intelligence | category=Intelligence | sensitive=False | workspace=Intelligence & Analytics
+marketplace.intelligence.metrics.manage | Gérer les métriques | category=Intelligence | sensitive=True | workspace=Intelligence & Analytics
+marketplace.performance.view | Voir Performance Command | category=Performance | sensitive=False | workspace=Platform & Security
+marketplace.security.assess | Évaluer les contrôles sécurité | category=Security | sensitive=True | workspace=Platform & Security
+marketplace.launch.approve | Approuver une release | category=Launch | sensitive=True | workspace=Launch & Governance
+marketplace.launch.monitoring | Voir le monitoring post-launch | category=Launch | sensitive=False | workspace=Launch & Governance
+================================================================================================
+7. SOURCE MODULES / COMPONENT AUTHORITIES
+================================================================================================
+- angelcare-marketplace/trust-quality/components/TrustCommand.tsx
+- angelcare-marketplace/trust-quality/components/Quality360Command.tsx
+- angelcare-marketplace/trust-quality/components/ComplaintCommand.tsx
+- angelcare-marketplace/trust-quality/components/CapaCommand.tsx
+- angelcare-marketplace/trust-quality/components/SopAuthority.tsx
+- angelcare-marketplace/trust-quality/components/SensitiveContentCommand.tsx
+- angelcare-marketplace/trust-quality/components/EvidenceAuthority.tsx
+- angelcare-marketplace/trust-quality/repository.ts
+- angelcare-marketplace/trust-quality/api-handlers.ts
+- angelcare-marketplace/analytics-security/components/AnalyticsCommand.tsx
+- angelcare-marketplace/analytics-security/components/MetricRegistry.tsx
+- angelcare-marketplace/analytics-security/components/SecurityCommand.tsx
+- angelcare-marketplace/analytics-security/repository.ts
+- angelcare-marketplace/analytics-security/api-handlers.ts
+- angelcare-marketplace/final-authority/components/ExecutiveIntelligenceCockpit.tsx
+- angelcare-marketplace/final-authority/repository.ts
+- angelcare-marketplace/executive-control-center/components/ExecutiveControlCommand.tsx
+- angelcare-marketplace/enterprise-command/components/BusinessPulseCommand.tsx
+- angelcare-marketplace/launch-assurance/components/QaCommand.tsx
+- angelcare-marketplace/launch-assurance/components/LaunchCommand.tsx
+- angelcare-marketplace/launch-assurance/repository.ts
+- angelcare-marketplace/launch-assurance/api-handlers.ts
+- angelcare-marketplace/production-activation/components/ActivationCommand.tsx
+- angelcare-marketplace/workspace-access/components/WorkspaceAccessCommand.tsx
+- angelcare-marketplace/features/admin/ConfigurationClient.tsx
+- angelcare-marketplace/features/admin/ModuleRegistryClient.tsx
+- angelcare-marketplace/features/admin/ReadinessClient.tsx
+- angelcare-marketplace/total-commerce-control/components/ProductExcellenceCommand.tsx
+================================================================================================
+8. SCREEN-BY-SCREEN FUNCTIONAL CONTRACT
+================================================================================================
+01 — TRUST & QUALITY EXECUTIVE ASSURANCE COMMAND
+PNG: 01_TRUST_QUALITY_EXECUTIVE_COMMAND_CENTER.png
+SOURCE ROUTE FAMILIES:
+  - /angelcare-marketplace/admin/trust
+  - /angelcare-marketplace/admin/trust/command
+  - /angelcare-marketplace/admin/trust/reports
+PRIMARY COMPONENT / AUTHORITY REFERENCES:
+  - TrustCommand
+  - TrustSummary
+SOURCE OBJECT / REPOSITORY REFERENCES:
+  - trustSummary
+  - listSops
+  - listAssessments
+  - listComplaints
+MANDATORY CAPABILITIES:
+  - Expose calculated trust health and source-backed pressure counts
+  - Open SOP, Evidence, Quality Check 360, Badge, Complaint and CAPA control planes
+  - Show SOP review runway, quality assessments and complaint SLA queue
+  - Never present a public trust claim as valid when evidence is stale/rejected/expired
+02 — QUALITY CHECK 360 / EVIDENCE / BADGE AUTHORITY
+PNG: 02_QUALITY_CHECK_360_EVIDENCE_BADGES.png
+SOURCE ROUTE FAMILIES:
+  - /angelcare-marketplace/admin/trust/quality-check-360
+  - /angelcare-marketplace/admin/trust/evidence
+  - /angelcare-marketplace/admin/trust/badges
+PRIMARY COMPONENT / AUTHORITY REFERENCES:
+  - Quality360Command
+  - EvidenceAuthority
+  - BadgeAuthority
+SOURCE OBJECT / REPOSITORY REFERENCES:
+  - QualityAssessment
+  - EvidenceRecord
+  - BadgeIssuance
+MANDATORY CAPABILITIES:
+  - Expose framework/version/object/assessment status/score/maturity/risk/critical failures/follow-up
+  - Preserve evidence source/object/sensitivity/checksum/validity/reviewer lineage
+  - Recalculate/transition assessment only through existing governed endpoint
+  - Badge issuance/verification must remain dependent on current accepted evidence
+03 — COMPLAINTS / INVESTIGATIONS / NON-CONFORMITY / CAPA
+PNG: 03_COMPLAINTS_INVESTIGATIONS_NONCONFORMITY_CAPA.png
+SOURCE ROUTE FAMILIES:
+  - /angelcare-marketplace/admin/trust/complaints
+  - /angelcare-marketplace/admin/trust/investigations
+  - /angelcare-marketplace/admin/trust/non-conformities
+  - /angelcare-marketplace/admin/trust/corrective-actions
+  - /angelcare-marketplace/admin/trust/audits
+PRIMARY COMPONENT / AUTHORITY REFERENCES:
+  - ComplaintCommand
+  - CapaCommand
+  - NonConformityAuthority
+SOURCE OBJECT / REPOSITORY REFERENCES:
+  - ComplaintRecord
+  - NonConformity
+  - CapaRecord
+MANDATORY CAPABILITIES:
+  - Keep complaint identity/channel/severity/SLA/owner/next action auditable
+  - Keep complaint lifecycle distinct from investigation and CAPA lifecycle
+  - Link non-conformity to assessment and/or complaint without flattening source history
+  - CAPA closes only after evidence submission and effectiveness review
+04 — STANDARDS / SOP / COMPLIANCE / SENSITIVE CONTENT
+PNG: 04_STANDARDS_SOPS_COMPLIANCE_SENSITIVE_CONTENT.png
+SOURCE ROUTE FAMILIES:
+  - /angelcare-marketplace/admin/trust/sops
+  - /angelcare-marketplace/admin/trust/standards
+  - /angelcare-marketplace/admin/trust/compliance
+  - /angelcare-marketplace/admin/trust/sensitive-content
+PRIMARY COMPONENT / AUTHORITY REFERENCES:
+  - SopAuthority
+  - StandardsAuthority
+  - ComplianceAuthority
+  - SensitiveContentCommand
+SOURCE OBJECT / REPOSITORY REFERENCES:
+  - SopRecord
+  - TrustStandard
+  - ComplianceReview
+  - SensitiveReview
+MANDATORY CAPABILITIES:
+  - Expose SOP version/effective/review/expiry/risk/owner/next action
+  - Respect explicit SOP state machine from draft through effective/review_due/superseded/archive
+  - Sensitive content remains blocked unless translation/evidence/domain-owner/compliance gates are satisfied
+  - Compliance decisions preserve reviewer, decision reason and expiry
+05 — ANALYTICS & INTELLIGENCE EXECUTIVE CONTROL PLANE
+PNG: 05_ANALYTICS_INTELLIGENCE_EXECUTIVE_COMMAND.png
+SOURCE ROUTE FAMILIES:
+  - /angelcare-marketplace/admin/analytics
+  - /angelcare-marketplace/admin/executive-control
+  - /angelcare-marketplace/admin/intelligence
+PRIMARY COMPONENT / AUTHORITY REFERENCES:
+  - AnalyticsCommand
+  - ExecutiveControlCommand
+  - ExecutiveIntelligenceCockpit
+SOURCE OBJECT / REPOSITORY REFERENCES:
+  - AnalyticsSummary
+  - ExecutiveAuthoritySummary
+  - MetricObservation
+  - GrowthOpportunity
+  - PerformanceObservation
+  - SecurityControl
+  - LaunchGate
+MANDATORY CAPABILITIES:
+  - Use accepted metric observations only for executive facts
+  - Surface data-quality blockers, growth opportunities, performance breaches, security blockers, critical defects and launch blockers
+  - Preserve explicit decision doctrine: signal → validation → analysis → recommendation → human decision → action → measured outcome
+  - Do not turn recommendations into autonomous business mutations
+06 — METRIC REGISTRY / DATA QUALITY / DOMAIN INTELLIGENCE
+PNG: 06_METRIC_REGISTRY_DATA_QUALITY_DOMAIN_INTELLIGENCE.png
+SOURCE ROUTE FAMILIES:
+  - /angelcare-marketplace/admin/analytics/data-quality
+  - /angelcare-marketplace/admin/analytics/marketplace
+  - /angelcare-marketplace/admin/analytics/families
+  - /angelcare-marketplace/admin/analytics/b2b
+  - /angelcare-marketplace/admin/analytics/academy
+  - /angelcare-marketplace/admin/analytics/providers
+  - /angelcare-marketplace/admin/analytics/operations
+  - /angelcare-marketplace/admin/analytics/territories
+  - /angelcare-marketplace/admin/analytics/trust
+PRIMARY COMPONENT / AUTHORITY REFERENCES:
+  - MetricRegistry
+  - DataQualityCommand
+  - AnalyticsToIntelligence
+SOURCE OBJECT / REPOSITORY REFERENCES:
+  - MetricDefinition
+  - AnalyticsSnapshot
+  - DataQualityEvent
+MANDATORY CAPABILITIES:
+  - Expose metric key/name/domain/description/source tables/calculation/unit/scope/owner/refresh/version/status
+  - Expose snapshot period/value/dimensions/source count/excluded count/data-quality status/calculated timestamp
+  - Data-quality exceptions become assignable investigations rather than passive red badges
+  - Keep domain-specific analytics as views over the same governed definitions
+07 — LIVE BUSINESS PULSE / FORECASTING REVIEW / EXECUTIVE BRIEFS
+PNG: 07_BUSINESS_PULSE_FORECASTING_EXECUTIVE_BRIEFS.png
+SOURCE ROUTE FAMILIES:
+  - /angelcare-marketplace/admin/business-pulse
+  - /angelcare-marketplace/admin/executive-briefs
+  - /angelcare-marketplace/admin/intelligence/forecasting
+  - /angelcare-marketplace/admin/intelligence/executive
+  - /angelcare-marketplace/admin/intelligence/growth
+  - /angelcare-marketplace/admin/intelligence/demand
+  - /angelcare-marketplace/admin/intelligence/experiments
+PRIMARY COMPONENT / AUTHORITY REFERENCES:
+  - BusinessPulseCommand
+  - Executive briefs page
+  - RealityCompletionPage / FinalAuthority projections
+SOURCE OBJECT / REPOSITORY REFERENCES:
+  - BusinessPulseSnapshot
+  - MetricObservation
+  - GrowthOpportunity
+  - Experiment
+  - Executive brief records
+MANDATORY CAPABILITIES:
+  - Live pulse refresh remains bounded and visibility-aware
+  - Events link back to canonical orders/payments/inquiries rather than duplicated event objects
+  - Forecasting/opportunity UX must show evidence quality/confidence and uncertainty
+  - Executive briefs remain versioned human-readable syntheses with risks/decisions/owners
+08 — SECURITY / ACCESS / ISOLATION / RETENTION / RECOVERY
+PNG: 08_SECURITY_ACCESS_ISOLATION_RECOVERY_COMMAND.png
+SOURCE ROUTE FAMILIES:
+  - /angelcare-marketplace/admin/security
+  - /angelcare-marketplace/admin/security-audit
+  - /angelcare-marketplace/admin/security/workspace-access
+  - /angelcare-marketplace/admin/security/tenant-isolation
+  - /angelcare-marketplace/admin/security/territory-isolation
+  - /angelcare-marketplace/admin/security/backups
+  - /angelcare-marketplace/admin/security/recovery
+  - /angelcare-marketplace/admin/security/data-retention
+  - /angelcare-marketplace/admin/security/events
+  - /angelcare-marketplace/admin/security/separation-of-duties
+PRIMARY COMPONENT / AUTHORITY REFERENCES:
+  - SecurityCommand
+  - WorkspaceAccessPage
+  - BackupRecoveryAuthority
+  - RetentionAuthority
+  - SecurityEvents
+  - AuditViewerClient
+SOURCE OBJECT / REPOSITORY REFERENCES:
+  - SecuritySummary
+  - AccessReview
+  - IsolationTest
+  - SecurityEvent
+  - RetentionPolicy
+  - BackupRecord
+  - RecoveryTest
+  - MarketplaceAuditEvent
+MANDATORY CAPABILITIES:
+  - Workspace access grants business universes; server permissions still gate sensitive actions
+  - Tenant/territory isolation assurance proves expected deny as well as expected allow
+  - Security events preserve actor/scope/object/request/evidence and resolution
+  - Backup/recovery exposes encryption/checksum/RPO/RTO/authorization/execution/validation evidence
+  - Audit must never store or expose passwords/secrets/tokens
+09 — PLATFORM CONFIGURATION / MODULES / WORKSPACES / PRODUCT EXCELLENCE
+PNG: 09_PLATFORM_CONFIGURATION_MODULES_WORKSPACES_PRODUCT_EXCELLENCE.png
+SOURCE ROUTE FAMILIES:
+  - /angelcare-marketplace/admin/configuration
+  - /angelcare-marketplace/admin/modules
+  - /angelcare-marketplace/admin/modules/[moduleKey]
+  - /angelcare-marketplace/admin/workspaces
+  - /angelcare-marketplace/admin/product-excellence
+  - /angelcare-marketplace/admin/foundation-ui
+PRIMARY COMPONENT / AUTHORITY REFERENCES:
+  - ConfigurationClient
+  - ModuleRegistryClient
+  - WorkspaceRegistryCommand
+  - ProductExcellenceCommand
+SOURCE OBJECT / REPOSITORY REFERENCES:
+  - MarketplaceConfiguration
+  - MarketplaceModule
+  - WorkspaceAccessSnapshot
+  - ProductExcellenceSnapshot
+MANDATORY CAPABILITIES:
+  - Editable non-sensitive configuration can be changed only with reason and audit
+  - Sensitive configuration values remain server protected and must never be revealed in UI
+  - Module registry records stable key/route/type/audience/dependencies/scopes/health/version and validates transitions
+  - Module registry does not install undelivered code
+  - Workspace access governs mission-level universes, not micro-CRUD navigation
+  - Product Excellence surfaces real closure gaps such as missing media/category and unpublished surfaces
+10 — QA / READINESS / ACTIVATION / FINAL LAUNCH AUTHORITY
+PNG: 10_QA_LAUNCH_READINESS_ACTIVATION_RELEASE_AUTHORITY.png
+SOURCE ROUTE FAMILIES:
+  - /angelcare-marketplace/admin/qa
+  - /angelcare-marketplace/admin/quality-assurance
+  - /angelcare-marketplace/admin/launch
+  - /angelcare-marketplace/admin/readiness
+  - /angelcare-marketplace/admin/reality-readiness
+  - /angelcare-marketplace/admin/activation
+PRIMARY COMPONENT / AUTHORITY REFERENCES:
+  - QaCommand
+  - LaunchCommand
+  - ReadinessClient
+  - FinalRealityReadiness
+  - ActivationCommand
+SOURCE OBJECT / REPOSITORY REFERENCES:
+  - QaSummary
+  - TestSuite
+  - TestRun
+  - TestResult
+  - QaDefect
+  - LaunchSummary
+  - LaunchGate
+  - LaunchEvidence
+  - LaunchApproval
+  - ReleaseCandidate
+  - LaunchRunbook
+  - PostLaunchReview
+  - MarketplaceReadinessCheck
+  - ActivationRun
+MANDATORY CAPABILITIES:
+  - QA covers API/database/lifecycle/permissions/isolation/RTL/accessibility/concurrency/idempotency/runtime/rollback, not TypeScript alone
+  - Defect state transitions remain governed and release-blocking flag remains authoritative
+  - Mandatory launch gates require accepted evidence; waivers remain explicit approvals
+  - Readiness sign-off is conditional when required checks are not ready
+  - Activation scan persists measured checks and never assumes green status
+  - Launch approvals, pause and rollback authorization remain permission-gated and auditable
+================================================================================================
+9. TRUST STATE MACHINES — DO NOT FLATTEN
+================================================================================================
+SOP STATUS: draft → author_review → technical_review → compliance_review → approval_pending → approved → published → effective → review_due / expired / suspended / superseded / archived.
+QUALITY OUTCOME: compliant | partially_compliant | non_compliant | critical_failure | not_applicable | not_observed | evidence_missing.
+QUALITY ASSESSMENT: requested → qualified → scheduled → preparation → in_progress → evidence_review → findings_review → report_draft → correction_required → approved → published → follow_up_required → closed / cancelled.
+COMPLAINT: received → acknowledged → triaged → assigned → under_investigation → information_required → response_prepared → resolution_proposed → resolved → appealed / reopened → closed / withdrawn.
+CAPA: identified → triaged → containment_required → containment_active → root_cause_analysis → action_planned → action_in_progress → evidence_submitted → effectiveness_review → effective / ineffective / reopened → closed / cancelled.
+Critical failures, expired/rejected evidence and blocked sensitive content MUST remain visible blockers. UI cannot skip them.
+================================================================================================
+10. EVIDENCE / BADGE / COMPLIANCE CONTRACT
+================================================================================================
+- Evidence records preserve evidence_type, source_type/source_reference, object_type/object_id, territory/tenant scope, sensitivity, review_status, validity, checksum, owner/reviewer and creation time.
+- No anonymous or silently replaced evidence.
+- Badge issuance preserves badge_key, object link, status, issued/valid_until, suspension reason and verification_reference.
+- Public verification must use stored verification authority, not an invented badge URL.
+- Compliance review preserves review type, object, scope, status, reviewer, decision reason and expiry.
+- Sensitive content gate preserves source locale/version, translation/evidence/domain-owner/compliance/publication statuses and blocking reasons.
+- Child-safety, health-adjacent, pricing, consent, legal and public-statistics claims remain blocked when required evidence or approval is stale/missing.
+================================================================================================
+11. ANALYTICS / INTELLIGENCE CONTRACT
+================================================================================================
+- MetricDefinition exposes metric_key, name, domain, description, source_tables/source_authorities, calculation definition/formula, unit, scope-awareness, owner, refresh frequency and version.
+- AnalyticsSnapshot / MetricObservation exposes period, value, dimensions, source_count, excluded_count, quality/freshness/confidence, definition version and calculated timestamp.
+- DataQualityEvent exposes metric/domain, event type, severity, status, description, affected records, owner and resolution evidence.
+- Executive intelligence cannot invent values when no accepted observation exists.
+- Growth opportunities expose evidence, commercial relevance, confidence, status, owner, recommended action, approved action and outcome.
+- Experiments remain governed objects with hypothesis, routes, audience, metrics, timing, approval/result/decision; Batch 11 does not recreate Batch 06 experiment UI.
+- Business Pulse is bounded, visibility-aware and links events back to canonical source objects.
+- Forecasting UX must distinguish observation, inference/recommendation and authorized decision.
+- Executive briefs remain versioned summaries; they do not mutate source objects.
+================================================================================================
+12. SECURITY / ACCESS / ISOLATION CONTRACT
+================================================================================================
+- Access review exposes subject, scope, reviewer, risk, permission snapshot, findings, decision and due/completion dates.
+- Isolation tests preserve test scope, actor profile, resource domain, territory/tenant, expected result, observed result, status, evidence and execution identity/timestamp.
+- An expected DENY is a successful isolation outcome when policy requires denial.
+- Security events preserve event type, severity, status, actor, scope, object, request id, description, detection/resolution and owner.
+- Retention policy exposes record type, retention days, legal hold support, deletion mode, archive mode, territory, owner and review schedule.
+- Backup records expose scope, status, times, retention, encryption, checksum/storage reference and failure reason.
+- Recovery tests expose target/actual RPO and RTO, authorization, executor, validator, evidence and next action.
+- Workspace access is additional workspace-level governance; it does not replace server permissions, scope isolation or separation of duties.
+- CEO / marketplace_admin absolute authority behavior from WorkspaceAccessCommand must remain intact.
+- Security audit must never persist/expose passwords, secrets or tokens.
+================================================================================================
+13. PLATFORM CONFIGURATION / MODULE LIFECYCLE CONTRACT
+================================================================================================
+MODULE STATUS: registered | not_installed | disabled | enabled | blocked | degraded | deprecated | archived.
+READINESS STATUS: not_started | in_progress | ready | blocked | not_applicable.
+- MarketplaceConfiguration exposes config_key, label, description, value type, category, editable/sensitive flags, scope, locale, version and updater metadata.
+- Sensitive configuration values render as protected server values and are not editable client-side.
+- Configuration changes require non-empty reason and audit.
+- MarketplaceModule exposes stable module_key, route_prefix, module_type, audience, nav metadata, status/enabled, required permissions/dependencies, territory/tenant/locale awareness, feature flag, health, owner, Mega ZIP provenance and version.
+- Module transition endpoint validates permission, target transition and dependencies.
+- Creating a module register object does NOT install code or a Mega ZIP that does not exist.
+- Product Excellence remains a closure projection over real surfaces/catalog/pages/orders/inquiries/media/category completeness.
+================================================================================================
+14. QA / DEFECT / LAUNCH STATE MACHINES
+================================================================================================
+DEFECT STATUS: reported | triaged | confirmed | assigned | in_progress | ready_for_verification | verified | rejected | reopened | deferred_with_approval | closed.
+LAUNCH GATE STATUS: not_started | in_progress | evidence_required | failed | blocked | conditionally_passed | passed | expired | waiver_requested | waiver_approved | not_applicable.
+RELEASE STATUS: development | integration_review | system_validation | release_candidate | launch_review | approved_for_controlled_release | controlled_release | monitoring | general_release | paused | rolled_back | retired.
+- QA suites/runs/results must preserve environment, source snapshot, test counts, evidence, expected/observed result, route/domain/criticality and execution identity.
+- QA must cover API/database/lifecycle/permission-denied/tenant-isolation/Arabic-RTL/accessibility/concurrency/idempotency/runtime-smoke/rollback families represented by source data. Do not reduce QA to TypeScript.
+- Defect transitions use existing transition authority and audit; block_release flag remains authoritative.
+- Launch readiness is computed from mandatory gates with accepted evidence plus critical defect/security/recovery/operator conditions.
+- Launch approval records preserve approver role, decision, reason, residual risks, conditions and expiry.
+- Launch runbook preserves freeze/migrations/environment/secrets/monitoring/backup/rollback/smoke/business/security/support/go-no-go authority.
+- Post-launch review preserves monitoring window, owners, thresholds, incidents, stabilization criteria and exit decision.
+- Readiness sign-off remains accepted or conditional according to actual required checks.
+- Activation run is persisted and contains measured/expected values plus evidence for each check.
+- Never fabricate green release/activation status from a design mockup.
+================================================================================================
+15. CROSS-BATCH BOUNDARIES — DO NOT STEAL OTHER WORKSPACES
+================================================================================================
+- Batch 11 Trust may link to Provider, Operations, Finance, B2B or Academy source objects but does not recreate their primary workspaces.
+- Analytics consumes canonical data from Batches 01–10; it does not become a new source of truth for products/orders/customers/payments.
+- Security controls access and evidence; it does not redesign shared authentication/session authority.
+- Localization detailed studio remains Batch 05 Boutique/Experience; Batch 11 may consume localization readiness/QA evidence only.
+- Experiment authoring remains Batch 06 Marketing; Batch 11 may consume experiment evidence/results in executive intelligence.
+- Finance remains canonical for money; Batch 11 may show finance metrics as observations only.
+- Operations remains canonical for mission/reconciliation execution; Batch 11 consumes its readiness/QA evidence.
+- Publication UX remains Batch 05; Batch 11 controls final release readiness, not content composition.
+================================================================================================
+16. VISUAL / UIX CONSTITUTION
+================================================================================================
+- White/light premium enterprise canvas consistent with approved Batches 01–10.
+- Permanent primary sidebar remains identical; only the active human workspace changes by screen group.
+- No invented global menu items for technical sub-tools.
+- No invented logo; text brand ANGELCARE MARKETPLACE remains acceptable visual authority.
+- Each screen uses purpose-specific grammar: Assurance Command, Assessment Dossier, Investigation Desk, Doctrine Authority, Boardroom Control Plane, Metric Registry, Live Pulse/Briefs, Security Assurance, Platform Constitution, Release Authority.
+- No ten-page clone of the same KPI + table template.
+- Dense data is acceptable; decorative emptiness is not.
+- Critical risk is always accompanied by explicit text/status, not color alone.
+- Decision rails must surface allowed action, required reason/evidence and permission context.
+- Loading, empty, partial, error, permission denied, stale evidence, blocked state, mutation success/failure and unsaved changes must be implemented where relevant.
+================================================================================================
+17. REQUIRED CROSS-LINKS
+================================================================================================
+- Trust Command -> SOPs, Evidence, Quality Check 360, Badges, Complaints, CAPA.
+- Quality assessment -> evidence, findings/non-conformity, CAPA, source object and badge eligibility.
+- Complaint -> related customer/provider/order/mission where identifiers exist; sensitive identity remains protected.
+- Analytics -> Metric Registry, Data Quality, domain views, Executive Control and governed investigation/action flow.
+- Business Pulse -> canonical Order Command, Payment 360 and Public Inquiry routes.
+- Security -> Workspace Access, isolation tests, events, retention, backups, recovery and audit.
+- Platform Constitution -> Configuration, Modules, Module Detail, Workspace Registry/Access and Product Excellence.
+- QA -> suites, runs, results/defects and release review.
+- Launch -> readiness, evidence, approvals, gates, defects, runbook, release, rollback and monitoring.
+- Activation -> public/admin route checks and canonical admin creation/repair routes.
+================================================================================================
+18. FORBIDDEN IMPLEMENTATION SHORTCUTS
+================================================================================================
+- No SQL or migrations for this frontend design batch.
+- No new Trust, Analytics, Security, QA or Launch tables.
+- No parallel metric engine or JavaScript-calculated executive truth when source repository exists.
+- No fake AI recommendations represented as backend decisions.
+- No fake A/B significance or fake forecasting certainty.
+- No fake security-health or backup-success values.
+- No fake QA pass rate or release GO state.
+- No override button that bypasses evidence, permissions, separation of duties or state machines.
+- No secrets/tokens displayed in configuration or audit.
+- No UI-only tenant isolation.
+- No deletion of legacy routes merely because they are merged into canonical studios.
+- No broad shared-auth/session refactor.
+- No commit, push or deploy unless separately instructed.
+================================================================================================
+19. CODEX IMPLEMENTATION METHOD
+================================================================================================
+- Read this file completely before editing frontend.
+- Open each approved PNG and inspect its source-mapped routes/components.
+- Reuse existing server pages, repositories and handlers; consolidate fragmented wrappers into the approved canonical human workspace.
+- Use redirects or thin compatibility wrappers for legacy routes where appropriate.
+- Preserve query parameters/focus links when they are already compatibility contracts.
+- Every visible action must have a real permission and real mutation/read endpoint or be omitted/disabled with explanation.
+- Use actual runtime data; sample PNG values are visual examples only.
+- Keep mutations auditable and reason/evidence fields where source requires them.
+- Implement responsive states without collapsing dense operating controls into unusable cards.
+- Never turn advanced technical tools into global sidebar clutter.
+================================================================================================
+20. VALIDATION GATES FOR CODEX
+================================================================================================
+- TypeScript validation.
+- Relevant Marketplace source/static verifiers.
+- Route smoke for all Batch 11 canonical screens.
+- Compatibility redirect smoke for mapped legacy routes.
+- Internal link integrity for Batch 11.
+- Permission visibility + server enforcement inspection.
+- Tenant/territory isolation regression checks where test fixtures exist.
+- Mutation success/error/loading and post-refresh persistence.
+- QA/Launch state transition inspection.
+- No regression to public Marketplace or Batches 01–10.
+- No SQL.
+- No commit/push/deploy.
+================================================================================================
+21. DEFINITION OF DONE — BATCH 11
+================================================================================================
+- All 10 approved screens implemented or a proven backend hard gate is reported.
+- All mapped Batch 11 Admin routes have a documented final home/disposition.
+- All mapped APIs are reused rather than duplicated.
+- Relevant permissions remain enforced.
+- Trust lifecycles, evidence validity and public-claim blockers remain intact.
+- Analytics exposes metric definitions, source quality and confidence without silent inference.
+- Security demonstrates access/isolation/recovery evidence rather than presentation-only controls.
+- Configuration hides sensitive values and audits legitimate edits.
+- Module and workspace governance remains dependency/permission aware.
+- QA and Launch maintain evidence-gated go/no-go authority and rollback readiness.
+- Activation scan persists real measured checks.
+- No known Batch-11 canonical link reaches 404, wrong workspace or dead control.
+- Visual implementation matches approved PNGs with comparable density, hierarchy and purpose-specific depth.
+- Git status reported; STOP before commit/push/deploy.
+================================================================================================
+22. FILES INCLUDED IN APPROVED BATCH 11
+================================================================================================
+01_TRUST_QUALITY_EXECUTIVE_COMMAND_CENTER.png
+02_QUALITY_CHECK_360_EVIDENCE_BADGES.png
+03_COMPLAINTS_INVESTIGATIONS_NONCONFORMITY_CAPA.png
+04_STANDARDS_SOPS_COMPLIANCE_SENSITIVE_CONTENT.png
+05_ANALYTICS_INTELLIGENCE_EXECUTIVE_COMMAND.png
+06_METRIC_REGISTRY_DATA_QUALITY_DOMAIN_INTELLIGENCE.png
+07_BUSINESS_PULSE_FORECASTING_EXECUTIVE_BRIEFS.png
+08_SECURITY_ACCESS_ISOLATION_RECOVERY_COMMAND.png
+09_PLATFORM_CONFIGURATION_MODULES_WORKSPACES_PRODUCT_EXCELLENCE.png
+10_QA_LAUNCH_READINESS_ACTIVATION_RELEASE_AUTHORITY.png
+BATCH_11_SOURCE_MAPPING.txt
+================================================================================================
+23. CODEX EXECUTION ORDER
+================================================================================================
+1. Implement TRUST & QUALITY EXECUTIVE ASSURANCE COMMAND using 01_TRUST_QUALITY_EXECUTIVE_COMMAND_CENTER.png + this mapping + current source authority.
+2. Implement QUALITY CHECK 360 / EVIDENCE / BADGE AUTHORITY using 02_QUALITY_CHECK_360_EVIDENCE_BADGES.png + this mapping + current source authority.
+3. Implement COMPLAINTS / INVESTIGATIONS / NON-CONFORMITY / CAPA using 03_COMPLAINTS_INVESTIGATIONS_NONCONFORMITY_CAPA.png + this mapping + current source authority.
+4. Implement STANDARDS / SOP / COMPLIANCE / SENSITIVE CONTENT using 04_STANDARDS_SOPS_COMPLIANCE_SENSITIVE_CONTENT.png + this mapping + current source authority.
+5. Implement ANALYTICS & INTELLIGENCE EXECUTIVE CONTROL PLANE using 05_ANALYTICS_INTELLIGENCE_EXECUTIVE_COMMAND.png + this mapping + current source authority.
+6. Implement METRIC REGISTRY / DATA QUALITY / DOMAIN INTELLIGENCE using 06_METRIC_REGISTRY_DATA_QUALITY_DOMAIN_INTELLIGENCE.png + this mapping + current source authority.
+7. Implement LIVE BUSINESS PULSE / FORECASTING REVIEW / EXECUTIVE BRIEFS using 07_BUSINESS_PULSE_FORECASTING_EXECUTIVE_BRIEFS.png + this mapping + current source authority.
+8. Implement SECURITY / ACCESS / ISOLATION / RETENTION / RECOVERY using 08_SECURITY_ACCESS_ISOLATION_RECOVERY_COMMAND.png + this mapping + current source authority.
+9. Implement PLATFORM CONFIGURATION / MODULES / WORKSPACES / PRODUCT EXCELLENCE using 09_PLATFORM_CONFIGURATION_MODULES_WORKSPACES_PRODUCT_EXCELLENCE.png + this mapping + current source authority.
+10. Implement QA / READINESS / ACTIVATION / FINAL LAUNCH AUTHORITY using 10_QA_LAUNCH_READINESS_ACTIVATION_RELEASE_AUTHORITY.png + this mapping + current source authority.
+11. Run validation and route/link integrity.
+12. Report exact files changed, canonical routes, legacy dispositions, APIs reused, permissions reused, tests, runtime-only blockers and git status.
+13. STOP BEFORE COMMIT / PUSH / DEPLOY.
+================================================================================================
+END OF BATCH 11 SOURCE MAPPING
+================================================================================================
+This TXT is the functional/backend implementation authority paired with the ten approved Batch-11 PNGs.
+Anything placed by the user inside admin-design/batch-11/ is approved for build under the established project SOP.
+Batch 11 completes the locked 11-batch Admin design program; final implementation must still preserve every backend/business authority and all release gates.
