@@ -111,64 +111,66 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
           }
 
     return (
-      <main
-        dir={locale === 'ar' ? 'rtl' : 'ltr'}
-        style={{
-          minHeight: '100vh',
-          background: '#ffffff',
-          color: '#102847',
-          display: 'grid',
-          placeItems: 'center',
-          padding: '48px 24px',
-          fontFamily: 'Arial, Helvetica, sans-serif',
-        }}
-      >
-        <section
+      <GlobalPublicShell locale={locale} navigation={[]} variant="marketplace">
+        <main
+          dir={locale === 'ar' ? 'rtl' : 'ltr'}
           style={{
-            width: '100%',
-            maxWidth: 920,
-            border: '1px solid #e6ebf1',
-            borderRadius: 24,
-            padding: '56px 48px',
-            boxShadow: '0 20px 60px rgba(16, 40, 71, 0.08)',
+            minHeight: '100vh',
             background: '#ffffff',
+            color: '#102847',
+            display: 'grid',
+            placeItems: 'center',
+            padding: '48px 24px',
+            fontFamily: 'Arial, Helvetica, sans-serif',
           }}
         >
-          <p
+          <section
             style={{
-              margin: 0,
-              fontSize: 13,
-              fontWeight: 800,
-              letterSpacing: '0.18em',
+              width: '100%',
+              maxWidth: 920,
+              border: '1px solid #e6ebf1',
+              borderRadius: 24,
+              padding: '56px 48px',
+              boxShadow: '0 20px 60px rgba(16, 40, 71, 0.08)',
+              background: '#ffffff',
             }}
           >
-            {continuityCopy.eyebrow}
-          </p>
+            <p
+              style={{
+                margin: 0,
+                fontSize: 13,
+                fontWeight: 800,
+                letterSpacing: '0.18em',
+              }}
+            >
+              {continuityCopy.eyebrow}
+            </p>
 
-          <h1
-            style={{
-              margin: '18px 0 14px',
-              fontSize: 'clamp(34px, 6vw, 68px)',
-              lineHeight: 1.02,
-              letterSpacing: '-0.04em',
-            }}
-          >
-            {continuityCopy.title}
-          </h1>
+            <h1
+              style={{
+                margin: '18px 0 14px',
+                fontSize: 'clamp(34px, 6vw, 68px)',
+                lineHeight: 1.02,
+                letterSpacing: '-0.04em',
+              }}
+            >
+              {continuityCopy.title}
+            </h1>
 
-          <p
-            style={{
-              margin: 0,
-              maxWidth: 680,
-              fontSize: 18,
-              lineHeight: 1.7,
-              color: '#53657a',
-            }}
-          >
-            {continuityCopy.body}
-          </p>
-        </section>
-      </main>
+            <p
+              style={{
+                margin: 0,
+                maxWidth: 680,
+                fontSize: 18,
+                lineHeight: 1.7,
+                color: '#53657a',
+              }}
+            >
+              {continuityCopy.body}
+            </p>
+          </section>
+        </main>
+      </GlobalPublicShell>
     )
   }
 
