@@ -1,4 +1,4 @@
-# manual-build-trigger: 20260826-172146
+# manual-build-trigger: 20260902-023809
 name: Build Marketplace GHCR One-Off
 
 on:
@@ -13,7 +13,7 @@ permissions:
   packages: write
 
 env:
-  TARGET_SHA: 368fd595955ed9ec93ef7c4172006b773ff5a2d1
+  TARGET_SHA: e5ba063f2c6b93a7b2a99f51c3b131a425b488c7
   IMAGE: ghcr.io/angelcare-morocco/angelcare-marketplace
 
 jobs:
