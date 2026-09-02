@@ -82,7 +82,7 @@ export function SanilaFooter() {
       </div>
       <div className={styles.footerTop}>
         <div className={styles.footerBrand}>
-          <Image src="/sanila/sanila-operating-system-logo.png" alt="SANILA Operating System" width={190} height={67} />
+          <Image src="/sanila/sanila-operating-system-logo-white.png" alt="SANILA Operating System" width={190} height={67} />
           <p>Le système d’exploitation complet de votre établissement.</p>
           <small>Produit AngelCare • conçu pour une exploitation institutionnelle exigeante.</small>
         </div>

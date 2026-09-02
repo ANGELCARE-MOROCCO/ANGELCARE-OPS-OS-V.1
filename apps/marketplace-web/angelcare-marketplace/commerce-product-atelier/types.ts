@@ -34,6 +34,7 @@ export type AtelierProduct={
   missingPrice:boolean
   missingCategory:boolean
   missingTranslation:boolean
+  readiness:{ready:boolean;reasons:string[]}
   health:AtelierSeverity
   healthReasons:string[]
 }

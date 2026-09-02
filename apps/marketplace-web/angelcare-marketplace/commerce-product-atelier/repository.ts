@@ -44,6 +44,15 @@ export async function commerceProductAtelierSnapshot(context:MarketplaceRequestC
     const missingCategory=Boolean((item as any).missing_category)||categoryIds.length===0
     const missingTranslation=Boolean((item as any).missing_translation)
     const providerCoverage=qualificationsByService.get(item.item_key)?.size||0
+    const readinessReasons:string[]=[]
+    if(!item.name_fr||!item.description_fr) readinessReasons.push('CONTENT_MISSING')
+    if(!item.seo_metadata?.title_fr&&item.name_fr) readinessReasons.push('SEO_MISSING')
+    if(missingPrice) readinessReasons.push('PRICING_MISSING')
+    if(missingCategory) readinessReasons.push('CATEGORY_MISSING')
+    if(missingMedia) readinessReasons.push('MEDIA_MISSING')
+    if(!availability.length&&item.availability_status!=='available') readinessReasons.push('AVAILABILITY_MISSING')
+    if(!Object.keys(item.fulfillment_config||{}).length) readinessReasons.push('FULFILLMENT_MISSING')
+    if(!Object.keys(item.trust_config||{}).length) readinessReasons.push('TRUST_MISSING')
     const reasons:string[]=[]
     if(item.status==='published'&&missingMedia)reasons.push('Média actif manquant')
     if(item.status==='published'&&missingCategory)reasons.push('Catégorie storefront manquante')
@@ -53,10 +62,9 @@ export async function commerceProductAtelierSnapshot(context:MarketplaceRequestC
     if(itemSessions.length>=20&&conversion!==null&&conversion<2)reasons.push(`Conversion 30j faible (${conversion.toFixed(1)}%)`)
     const opportunity=itemSessions.length>=20&&conversion!==null&&conversion>=8&&item.kind==='service'&&providerCoverage<=2
     const health=opportunity?'opportunity':reasons.some(reason=>/Aucun provider|unavailable|out_of_stock/.test(reason))?'critical':reasons.length?'attention':'healthy'
-    return {id:item.id,reference:item.public_reference,itemKey:item.item_key,slug:item.slug,name:item.name_fr,doctrine:item.sellable_type||item.kind,kind:item.kind,status:item.status,priceMode:item.price_mode,priceAmount:item.price_amount,currencyLabel:item.currency_label,availabilityStatus:item.availability_status,featured:item.featured,mediaCount:arr(item.media).length,categoryIds,categoryCount:categoryIds.length,availabilityCount:availability.length,availableTerritories,priceRuleCount:arr(item.priceRules).length,providerCoverage,sessions30d:itemSessions.length,confirmed30d:confirmed,conversion30d:conversion,orders30d:orders,revenue30d:revenue,updatedAt:item.updated_at||null,missingMedia,missingPrice,missingCategory,missingTranslation,health,healthReasons:opportunity?[`Demande forte · conversion ${conversion?.toFixed(1)}% · couverture provider ${providerCoverage}`]:reasons}
+    return {id:item.id,reference:item.public_reference,itemKey:item.item_key,slug:item.slug,name:item.name_fr,doctrine:item.sellable_type||item.kind,kind:item.kind,status:item.status,priceMode:item.price_mode,priceAmount:item.price_amount,currencyLabel:item.currency_label,availabilityStatus:item.availability_status,featured:item.featured,mediaCount:arr(item.media).length,categoryIds,categoryCount:categoryIds.length,availabilityCount:availability.length,availableTerritories,priceRuleCount:arr(item.priceRules).length,providerCoverage,sessions30d:itemSessions.length,confirmed30d:confirmed,conversion30d:conversion,orders30d:orders,revenue30d:revenue,updatedAt:item.updated_at||null,missingMedia,missingPrice,missingCategory,missingTranslation,readiness:{ready:readinessReasons.length===0,reasons:readinessReasons},health,healthReasons:opportunity?[`Demande forte · conversion ${conversion?.toFixed(1)}% · couverture provider ${providerCoverage}`]:reasons}
   })
 
-  const productById=new Map(products.map(product=>[product.id,product]))
   const doctrineKeys=Object.keys(PRODUCT_DOCTRINES) as ProductDoctrineKey[]
   const doctrines=doctrineKeys.map(key=>{const scoped=products.filter(product=>product.doctrine===key);return{definition:PRODUCT_DOCTRINES[key],offers:scoped.length,published:scoped.filter(product=>product.status==='published').length,attention:scoped.filter(product=>product.health==='attention'||product.health==='critical').length,revenue30d:scoped.reduce((sum,product)=>sum+product.revenue30d,0)}})
   const categoryStats:CategoryStat[]=data.categories.map(category=>{const scoped=products.filter(product=>product.categoryIds.includes(category.id));return{id:category.id,key:category.category_key,title:category.title,slug:category.slug,status:category.status,visible:category.visible,itemCount:category.item_count||scoped.length,publishedItems:scoped.filter(product=>product.status==='published').length,revenue30d:scoped.reduce((sum,product)=>sum+product.revenue30d,0)}})

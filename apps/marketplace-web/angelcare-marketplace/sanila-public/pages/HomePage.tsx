@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { getSanilaPublicPage, sanilaHref } from '../content'
 import { SanilaIcon } from '../SanilaIcon'
 import { ClosingStatement, DomainNavigation, EvidenceLedger, FragmentationModel, ProductSourcePanel, SectionHeading } from '../components/SanilaExperience'
+import { ProductEvidenceMosaic, ProductOperatingConstellation, VisualSignalRail } from '../components/SanilaVisualSystems'
 import { InteractiveDayStory, RoleSwitchboard } from '../components/SanilaInteractiveStories'
 import styles from '../SanilaPublic.module.css'
 
@@ -11,8 +12,8 @@ export function HomePage() {
   const page = getSanilaPublicPage('accueil')!
   return (
     <>
-      <section className={styles.homeHero}>
-        <div className={styles.homeHeroCopy}>
+      <section className={styles.homeHeroMaster}>
+        <div className={styles.homeHeroMasterCopy}>
           <div className={styles.homeHeroMeta}><span>SANILA</span><i /><span>School Operating System</span></div>
           <h1>L’établissement fonctionne déjà comme un système.</h1>
           <p>SANILA relie direction, administration, pédagogie, finance, familles, personnel et opérations dans une architecture commune — sans effacer les responsabilités de chacun.</p>
@@ -21,19 +22,33 @@ export function HomePage() {
             <Link href={sanilaHref('produit')}>Explorer l’architecture produit</Link>
             <Link href={sanilaHref('connexion')}>Accéder à SANILA</Link>
           </div>
+          <div className={styles.homeHeroTrustLine}><span>Produit AngelCare</span><i /><span>France • Maroc • International</span><i /><span>Architecture par rôles</span></div>
         </div>
-        <div className={styles.homeHeroStage}>
-          <div className={styles.homeHeroMainEvidence}><ProductSourcePanel page={getSanilaPublicPage('direction')!} title="Pilotage institutionnel — autorité produit" /></div>
-          <div className={styles.homeHeroContext}><Image src="/sanila/parent-login/sanila-parent-morocco-approved.webp" alt="Contexte familial marocain contemporain autour de SANILA" fill sizes="220px" priority /></div>
-          <div className={styles.homeHeroRole}><span>UNE INSTITUTION • PLUSIEURS EXPÉRIENCES</span><strong>La même école ne doit pas ressembler au même logiciel pour tout le monde.</strong><p>Direction, administration, enseignants, personnel, parents et élèves accèdent à des environnements adaptés à leur responsabilité.</p><Link href={sanilaHref('connexion')}>Voir les accès réels <SanilaIcon name="arrow" size={14} /></Link></div>
+        <div className={styles.homeHeroMasterVisual}>
+          <ProductSourcePanel page={getSanilaPublicPage('direction')!} title="Pilotage institutionnel — autorité produit" />
+          <div className={styles.homeHeroFloatingPhoto}><Image src="/sanila/parent-login/sanila-parent-morocco-approved.webp" alt="Contexte familial marocain contemporain autour de SANILA" fill sizes="260px" priority /></div>
+          <div className={styles.homeHeroFloatingSignal}><span>CONTINUITÉ</span><strong>Un dossier reste relié à l’action suivante.</strong><small>Direction → opération → famille</small></div>
         </div>
       </section>
-      <div className={styles.homeProofRail}>
-        <div><span>ARCHITECTURE</span><strong>29 routes publiques organisées sous une autorité SANILA dédiée.</strong></div>
-        <div><span>PRODUIT</span><strong>Preuves source et accès réels, sans faux cockpit marketing.</strong></div>
-        <div><span>MAROC</span><strong>Finance en Dh, rentrée, familles, transport et réalité des établissements privés.</strong></div>
-        <div><span>MISE EN SERVICE</span><strong>Diagnostic, configuration, rôles, validation, lancement et accompagnement.</strong></div>
-      </div>
+
+      <VisualSignalRail items={[
+        { icon: 'chart', label: 'Direction', detail: 'Lire les signaux et descendre dans leur provenance.' },
+        { icon: 'users', label: 'Admissions', detail: 'Faire progresser le dossier sans reconstruire le contexte.' },
+        { icon: 'book', label: 'Pédagogie', detail: 'Relier classes, enseignants, évaluations et restitution.' },
+        { icon: 'wallet', label: 'Finance', detail: 'Facture, paiement, reçu, solde et relance dans une chaîne.' },
+        { icon: 'bus', label: 'Transport', detail: 'Structurer circuits, arrêts, véhicules et responsabilités.' },
+        { icon: 'shield', label: 'Confiance', detail: 'Identités, rôles, permissions et trace institutionnelle.' },
+      ]} />
+
+      <section className={styles.homeConstellationSection}>
+        <div className={styles.homeConstellationCopy}><span>UNE ARCHITECTURE, PAS UNE COLLECTION DE MODULES</span><h2>Voir l’établissement comme un réseau de responsabilités.</h2><p>Le produit est plus lisible quand les domaines sont montrés dans leurs relations. Ce schéma est éditorial : il explique l’architecture SANILA sans fabriquer de données produit.</p></div>
+        <ProductOperatingConstellation />
+      </section>
+
+      <section className={styles.homeEvidenceMaster}>
+        <div className={styles.homeEvidenceHeader}><span>EXPÉRIENCES RÉELLES</span><h2>La même institution ne doit pas ressembler au même logiciel pour tout le monde.</h2></div>
+        <ProductEvidenceMosaic />
+      </section>
 
       <section className={styles.homeSystemSection}>
         <SectionHeading index="01" eyebrow="L’INSTITUTION COMME SYSTÈME" title="SANILA n’ajoute pas un outil. Il donne une architecture au travail qui existe déjà." body="La direction ne doit pas réconcilier des fragments. L’administration ne doit pas reconstruire le contexte. Les familles ne doivent pas devenir le middleware humain de l’établissement." />
