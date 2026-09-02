@@ -1,4 +1,4 @@
-# manual-build-trigger: 20260902-170933
+# manual-build-trigger: 20260902-180718
 name: Build Marketplace GHCR One-Off
 
 on:
@@ -13,7 +13,7 @@ permissions:
   packages: write
 
 env:
-  TARGET_SHA: 1b31e6fb4b7ae9931a11828e087452a7776c7c6c
+  TARGET_SHA: d1db89aaad9a968f9fb46ed242cb475da72d8ca4
   IMAGE: ghcr.io/angelcare-morocco/angelcare-marketplace
 
 jobs:
@@ -27,6 +27,12 @@ jobs:
           ref: 368fd595955ed9ec93ef7c4172006b773ff5a2d1
       - name: Verify Marketplace source route constitution
         run: node apps/marketplace-web/scripts/release/verify-marketplace-release-constitution.mjs source
+
+      - name: Purge stale Marketplace build outputs
+        run: |
+          rm -rf apps/marketplace-web/.next
+          rm -rf apps/marketplace-web/.turbo
+          rm -rf apps/marketplace-web/node_modules/.cache
 
       - name: Install Nixpacks
         run: curl -sSL https://nixpacks.com/install.sh | bash
@@ -44,6 +50,7 @@ jobs:
       - name: Build exact Marketplace image
         run: |
           nixpacks build apps/marketplace-web \
+            --no-cache \
             --name "${IMAGE}:${TARGET_SHA}" \
             --platform linux/amd64 \
             --label "org.opencontainers.image.revision=${TARGET_SHA}" \
@@ -105,6 +112,10 @@ jobs:
 
           NEXT_DIR="$EXTRACT" \
             node apps/marketplace-web/scripts/release/verify-marketplace-release-constitution.mjs compiled
+
+      - name: Verify Marketplace runtime identity inside candidate image
+        run: |
+          bash apps/marketplace-web/scripts/release/verify-marketplace-image-runtime.sh "${IMAGE}:${TARGET_SHA}"
 
       - name: Push exact Marketplace image
         run: docker push "${IMAGE}:${TARGET_SHA}"
