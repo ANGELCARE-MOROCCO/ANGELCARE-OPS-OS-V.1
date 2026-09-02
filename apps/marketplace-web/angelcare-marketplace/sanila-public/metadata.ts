@@ -1,21 +1,24 @@
 import type { Metadata } from 'next'
-import { getSanilaPublicPage } from './content'
+import { getSanilaPublicPage, resolveSanilaPublicSlug } from './content'
 
-export function getSanilaPublicMetadata(slug: string): Metadata {
-  const page = getSanilaPublicPage(slug)
-  if (!page) return { title: 'SANILA — Operating System' }
+export function getSanilaPublicMetadata(routeSlug: string): Metadata {
+  const slug = resolveSanilaPublicSlug(routeSlug)
+  const page = slug ? getSanilaPublicPage(slug) : null
+  if (!page) return { title: 'SANILA — Operating System', robots: { index: false, follow: false } }
+
   const canonical = slug === 'accueil'
-    ? '/angelcare-marketplace/fr'
-    : `/angelcare-marketplace/fr/${slug}`
+    ? '/angelcare-marketplace/fr/sanila'
+    : `/angelcare-marketplace/fr/sanila/${slug}`
 
+  const pageName = page.nav === 'Accueil' ? 'SANILA' : `${page.nav} — SANILA`
   return {
-    title: `${page.nav === 'Accueil' ? 'SANILA' : `${page.nav} — SANILA`} | Le système d’exploitation complet de votre établissement`,
+    title: `${pageName} | Le système d’exploitation complet de votre établissement`,
     description: page.subtitle,
     alternates: { canonical },
     openGraph: {
       type: 'website',
       locale: 'fr_MA',
-      title: `${page.nav === 'Accueil' ? 'SANILA' : page.nav} — SANILA`,
+      title: pageName,
       description: page.subtitle,
       url: canonical,
       images: [{ url: '/sanila/sanila-operating-system-logo.png', width: 586, height: 206, alt: 'SANILA Operating System' }],

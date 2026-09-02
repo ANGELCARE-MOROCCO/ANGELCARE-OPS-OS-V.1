@@ -11,7 +11,7 @@ import { GlobalPublicShell } from '@/angelcare-marketplace/public-universe/compo
 import { PublicPageRenderer } from '@/angelcare-marketplace/public-universe/components/PublicPageRenderer'
 import { getPublicPage, publicRoutePath } from '@/angelcare-marketplace/public-universe/repository'
 import { SanilaPublicUniverse } from '@/angelcare-marketplace/sanila-public/SanilaPublicUniverse'
-import { isSanilaPublicRoute } from '@/angelcare-marketplace/sanila-public/content'
+import { isSanilaPublicRoute, resolveSanilaPublicSlug } from '@/angelcare-marketplace/sanila-public/content'
 import { getSanilaPublicMetadata } from '@/angelcare-marketplace/sanila-public/metadata'
 import { resolvePublishedDictionary } from '@/angelcare-marketplace/localization-intelligence/runtime'
 
@@ -52,7 +52,11 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
   const slug = current.slug?.length ? publicRoutePath(current.slug) : 'accueil'
   const alias = canonicalAlias(locale, slug)
   if (alias) permanentRedirect(`/angelcare-marketplace/${locale}/${alias}`)
-  if (locale === 'fr' && isSanilaPublicRoute(slug)) return <SanilaPublicUniverse slug={slug} locale={locale} />
+  if (locale === 'fr' && isSanilaPublicRoute(slug)) {
+    const sanilaSlug = resolveSanilaPublicSlug(slug)
+    if (!sanilaSlug) notFound()
+    return <SanilaPublicUniverse slug={sanilaSlug} locale={locale} />
+  }
   if (slug === 'accueil') {
     // MARKETPLACE_LOCALE_ROOT_FAIL_OPEN
     //
