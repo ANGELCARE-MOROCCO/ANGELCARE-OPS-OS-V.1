@@ -23,7 +23,7 @@ jobs:
       - name: Checkout exact Marketplace source
         uses: actions/checkout@v4
         with:
-          ref: 368fd595955ed9ec93ef7c4172006b773ff5a2d1
+          ref: ${{ env.TARGET_SHA }}
       - name: Verify Marketplace source route constitution
         run: node apps/marketplace-web/scripts/release/verify-marketplace-release-constitution.mjs source
 
