@@ -1,4 +1,3 @@
-# manual-build-trigger: 20260902-190939
 name: Build Marketplace GHCR One-Off
 
 on:
@@ -121,38 +120,33 @@ jobs:
           IMAGE_REF="${IMAGE}:${TARGET_SHA}"
 
           MARKET_BODY="/tmp/marketplace-fr.html"
-          SANILA_BODY="/tmp/sanila-root.html"
-          ROOT_HEADERS="/tmp/root-headers.txt"
+          SANILA_BODY="/tmp/sanila.html"
+          ROOT_HEADERS="/tmp/root.headers"
 
           CID=""
 
           cleanup() {
-            if [ -n "${CID:-}" ]; then
-              docker rm -f "$CID" >/dev/null 2>&1 || true
-            fi
+            [ -z "${CID:-}" ] || docker rm -f "$CID" >/dev/null 2>&1 || true
           }
-
           trap cleanup EXIT
 
           echo "============================================================"
-          echo "START CANDIDATE IMAGE"
+          echo "BOOT EXACT CANDIDATE IMAGE"
           echo "IMAGE_REF=${IMAGE_REF}"
           echo "============================================================"
 
           CID="$(docker run -d -p 127.0.0.1::3000 "$IMAGE_REF")"
-
           echo "CID=${CID}"
 
           HOST_PORT=""
           CODE="000"
 
-          for ATTEMPT in $(seq 1 180); do
-
+          for N in $(seq 1 180); do
             HOST_PORT="$(
-              docker port "$CID" 3000/tcp 2>/dev/null \
-                | head -1 \
-                | awk -F: '{print $NF}' \
-                | tr -d '[:space:]'
+              docker port "$CID" 3000/tcp 2>/dev/null |
+              head -1 |
+              awk -F: '{print $NF}' |
+              tr -d '[:space:]'
             )"
 
             if [ -n "${HOST_PORT}" ]; then
@@ -164,17 +158,10 @@ jobs:
                   2>/dev/null || true
               )"
 
-              if [ "$CODE" = "200" ]; then
-                break
-              fi
+              [ "$CODE" = "200" ] && break
             fi
 
-            RUNNING="$(
-              docker inspect -f '{{.State.Running}}' "$CID" 2>/dev/null \
-                || echo false
-            )"
-
-            if [ "$RUNNING" != "true" ]; then
+            if [ "$(docker inspect -f '{{.State.Running}}' "$CID" 2>/dev/null || echo false)" != "true" ]; then
               echo "FAIL: candidate container exited"
               docker logs "$CID" || true
               exit 1
@@ -186,38 +173,109 @@ jobs:
           echo "HOST_PORT=${HOST_PORT}"
           echo "MARKETPLACE_HTTP=${CODE}"
 
-          if [ "$CODE" != "200" ]; then
-            echo "FAIL: Marketplace FR never became HTTP 200"
+          [ "$CODE" = "200" ] || {
+            echo "FAIL: Marketplace FR did not reach HTTP 200"
             docker logs "$CID" || true
             exit 1
-          fi
+          }
 
-          echo
-          echo "=== MARKETPLACE MUST NOT BE SANILA ==="
+          # ------------------------------------------------------------
+          # Parse actual rendered DOM.
+          # Script/style contents are ignored, therefore Next RSC payload
+          # strings cannot create false SANILA matches.
+          # ------------------------------------------------------------
+          python3 - "$MARKET_BODY" <<'PYDOM'
+          from html.parser import HTMLParser
+          from pathlib import Path
+          import re
+          import sys
 
-          if grep -Fqi 'Tout votre établissement' "$MARKET_BODY"; then
-            echo "FAIL: old SANILA hero rendered at Marketplace FR"
-            exit 1
-          fi
+          class VisibleDOM(HTMLParser):
+              def __init__(self):
+                  super().__init__(convert_charrefs=True)
+                  self.hidden = 0
+                  self.marketplace_variant = False
+                  self.sanila_page = False
+                  self.text = []
 
-          if grep -Eqi 'data-page=.accueil.' "$MARKET_BODY"; then
-            echo "FAIL: SANILA accueil renderer owns Marketplace FR"
-            exit 1
-          fi
+              def handle_starttag(self, tag, attrs):
+                  tag = tag.lower()
 
-          echo "MARKETPLACE_FR_SANILA_INTERCEPTION=0"
+                  if tag in {"script", "style", "noscript"}:
+                      self.hidden += 1
+                      return
 
-          if grep -Fqi 'GLOBAL MARKETPLACE' "$MARKET_BODY"; then
-            echo "MARKETPLACE_RUNTIME_IDENTITY=GLOBAL_MARKETPLACE"
-          elif grep -Fqi 'ANGELCARE MARKET PLACE' "$MARKET_BODY"; then
-            echo "MARKETPLACE_RUNTIME_IDENTITY=ANGELCARE_MARKET_PLACE"
-          else
-            echo "MARKETPLACE_RUNTIME_IDENTITY=SAFE_FALLBACK"
-          fi
+                  if self.hidden:
+                      return
 
-          echo
-          echo "=== SANILA MUST STILL EXIST ONLY UNDER /sanila ==="
+                  values = dict(attrs)
 
+                  if values.get("data-variant") == "marketplace":
+                      self.marketplace_variant = True
+
+                  if values.get("data-page") == "accueil":
+                      self.sanila_page = True
+
+              def handle_endtag(self, tag):
+                  if tag.lower() in {"script", "style", "noscript"} and self.hidden:
+                      self.hidden -= 1
+
+              def handle_data(self, data):
+                  if not self.hidden:
+                      value = " ".join(data.split())
+                      if value:
+                          self.text.append(value)
+
+          html = Path(sys.argv[1]).read_text(errors="replace")
+
+          parser = VisibleDOM()
+          parser.feed(html)
+
+          visible = " ".join(parser.text)
+          visible = re.sub(r"\s+", " ", visible).strip()
+
+          marketplace_identity = (
+              "GLOBAL MARKETPLACE" in visible.upper()
+              or "ANGELCARE MARKET PLACE" in visible.upper()
+              or "BIENVENUE DANS VOTRE UNIVERS ANGELCARE" in visible.upper()
+          )
+
+          print(
+              "DOM_MARKETPLACE_VARIANT="
+              + ("YES" if parser.marketplace_variant else "NO")
+          )
+
+          print(
+              "DOM_SANILA_ACCUEIL="
+              + ("YES" if parser.sanila_page else "NO")
+          )
+
+          print(
+              "VISIBLE_MARKETPLACE_IDENTITY="
+              + ("YES" if marketplace_identity else "NO")
+          )
+
+          if not parser.marketplace_variant:
+              raise SystemExit(
+                  "FAIL: rendered DOM does not identify Marketplace shell"
+              )
+
+          if parser.sanila_page:
+              raise SystemExit(
+                  "FAIL: SANILA accueil is actually rendered at Marketplace FR"
+              )
+
+          if not marketplace_identity:
+              raise SystemExit(
+                  "FAIL: visible Marketplace identity missing"
+              )
+
+          print("MARKETPLACE_RENDERED_DOM=PASS")
+          PYDOM
+
+          # ------------------------------------------------------------
+          # SANILA namespace itself must still work.
+          # ------------------------------------------------------------
           SANILA_CODE="$(
             curl -sS \
               -o "$SANILA_BODY" \
@@ -227,28 +285,72 @@ jobs:
 
           echo "SANILA_HTTP=${SANILA_CODE}"
 
-          if [ "$SANILA_CODE" != "200" ]; then
-            echo "FAIL: SANILA namespaced root is not HTTP 200"
+          [ "$SANILA_CODE" = "200" ] || {
+            echo "FAIL: SANILA namespace is not HTTP 200"
             exit 1
-          fi
+          }
 
-          if grep -Eqi 'data-page=.accueil.' "$SANILA_BODY"; then
-            echo "SANILA_NAMESPACE_RENDERER=PASS"
-          elif grep -Fqi 'SANILA' "$SANILA_BODY"; then
-            echo "SANILA_NAMESPACE_RENDERER=PASS"
-          else
-            echo "FAIL: SANILA identity absent from SANILA namespace"
-            exit 1
-          fi
+          python3 - "$SANILA_BODY" <<'PYSANILA'
+          from html.parser import HTMLParser
+          from pathlib import Path
+          import sys
 
-          echo
-          echo "=== ROOT MUST REDIRECT TO MARKETPLACE ==="
+          class SanilaDOM(HTMLParser):
+              def __init__(self):
+                  super().__init__(convert_charrefs=True)
+                  self.hidden = 0
+                  self.page = False
+                  self.text = []
 
+              def handle_starttag(self, tag, attrs):
+                  if tag.lower() in {"script", "style", "noscript"}:
+                      self.hidden += 1
+                      return
+
+                  if self.hidden:
+                      return
+
+                  values = dict(attrs)
+
+                  if values.get("data-page") == "accueil":
+                      self.page = True
+
+              def handle_endtag(self, tag):
+                  if tag.lower() in {"script", "style", "noscript"} and self.hidden:
+                      self.hidden -= 1
+
+              def handle_data(self, data):
+                  if not self.hidden:
+                      value = " ".join(data.split())
+                      if value:
+                          self.text.append(value)
+
+          p = SanilaDOM()
+          p.feed(Path(sys.argv[1]).read_text(errors="replace"))
+
+          visible = " ".join(p.text)
+
+          sanila_visible = "SANILA" in visible.upper()
+
+          print(
+              "DOM_SANILA_NAMESPACE="
+              + ("YES" if (p.page or sanila_visible) else "NO")
+          )
+
+          if not (p.page or sanila_visible):
+              raise SystemExit(
+                  "FAIL: SANILA namespace lacks SANILA rendered identity"
+              )
+
+          print("SANILA_NAMESPACE_RENDERER=PASS")
+          PYSANILA
+
+          # ------------------------------------------------------------
+          # Bare root must point to Marketplace.
+          # ------------------------------------------------------------
           curl -sSI \
             "http://127.0.0.1:${HOST_PORT}/" \
             > "$ROOT_HEADERS"
-
-          sed -n '1,15p' "$ROOT_HEADERS"
 
           ROOT_LOCATION="$(
             awk '
@@ -264,17 +366,16 @@ jobs:
 
           echo "ROOT_LOCATION=${ROOT_LOCATION}"
 
-          if [ "$ROOT_LOCATION" != "/angelcare-marketplace/fr" ]; then
+          [ "$ROOT_LOCATION" = "/angelcare-marketplace/fr" ] || {
             echo "FAIL: root does not redirect to Marketplace FR"
             exit 1
-          fi
+          }
 
           echo "ROOT_TO_MARKETPLACE=PASS"
 
-          echo
           echo "============================================================"
           echo "MARKETPLACE_CANDIDATE_RUNTIME=PASS"
-          echo "MARKETPLACE_FR_SANILA_INTERCEPTION=0"
+          echo "MARKETPLACE_RENDERED_DOM=PASS"
           echo "SANILA_NAMESPACE_RENDERER=PASS"
           echo "ROOT_TO_MARKETPLACE=PASS"
           echo "============================================================"
@@ -282,3 +383,4 @@ jobs:
       - name: Push exact Marketplace image
         run: docker push "${IMAGE}:${TARGET_SHA}"
 
+# manual-build-trigger: 20260902-192156
