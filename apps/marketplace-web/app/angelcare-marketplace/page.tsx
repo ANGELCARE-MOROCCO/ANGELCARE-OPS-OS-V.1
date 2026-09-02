@@ -1,2 +1,5 @@
-import { redirect } from 'next/navigation'
-export default function Page(){redirect('/angelcare-marketplace/fr')}
+import { permanentRedirect } from 'next/navigation'
+
+export default function Page() {
+  permanentRedirect('/angelcare-marketplace/fr')
+}

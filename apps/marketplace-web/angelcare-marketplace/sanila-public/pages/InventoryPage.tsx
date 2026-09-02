@@ -1,19 +1,7 @@
 import { getSanilaPublicPage } from '../content'
-import { AccessLobby, BeforeAfterSection, CapabilitiesSection, ContextSection, DayWithSanilaSection, DomainExplorer, FAQSection, FinalCTA, ImplementationSection, PricingSection, ProofSection, RecognitionBand, ResourcesSection, RoleExperienceSection, SolutionCards, WorkflowSection } from '../components/SanilaSections'
-import { CrossDomainBridge, DemoPreparation, DomainSignature, OnboardingGuardrail, SecurityConstitution, SystemArchitectureStory } from '../components/SanilaSpecialSections'
-
-export function InventoryPage() {
-  const page = getSanilaPublicPage('inventaire')!
-  return (
-    <>
-      <RecognitionBand page={page} />
-      <DomainSignature page={page} />
-      <WorkflowSection page={page} title="De la référence au mouvement, conserver la responsabilité." />
-      <CapabilitiesSection page={page} />
-      <ProofSection page={page} />
-      <CrossDomainBridge from="inventaire" to="rapports" title="L’inventaire prend de la valeur lorsque les mouvements peuvent être relus et restitués." body="Risque, historique et audit donnent à l’actif une continuité opérationnelle au-delà du simple stock." />
-      <DomainExplorer currentSlug={page.slug} />
-      <FinalCTA page={page} />
-    </>
-  )
-}
+import { CapabilityIndex, ClosingStatement, EvidenceLedger, OutcomeStrip, SectionHeading } from '../components/SanilaExperience'
+import styles from '../SanilaPublic.module.css'
+export function InventoryPage(){const page=getSanilaPublicPage('inventaire')!;const objects=['Objet','Emplacement','Mouvement','Responsable','État','Historique'];return <>
+<section className={styles.domainEditorialHero}><div className={styles.domainEditorialNumber}>□</div><div className={styles.domainEditorialCopy}><span>INVENTAIRE / ACTIFS PHYSIQUES</span><h1>{page.title}</h1><p>{page.subtitle}</p></div></section><OutcomeStrip page={page}/>
+<section className={styles.pagePatternD}><SectionHeading index="01" eyebrow="CONTRÔLE PHYSIQUE" title="Savoir ce que l’établissement possède, où cela se trouve et ce qui lui est arrivé."/><div className={`${styles.pagePatternGrid} ${styles.pagePatternGridThree}`}>{objects.map((x,i)=><div className={styles.pagePatternPanel} key={x}><span>0{i+1}</span><h3>{x}</h3><p>Un objet institutionnel doit pouvoir conserver ce contexte sans dépendre de la mémoire d’une seule personne.</p></div>)}</div></section>
+<section className={styles.section}><div className={styles.domainSplit}><CapabilityIndex page={page} columns={2}/><EvidenceLedger sources={page.evidenceSources}/></div></section><ClosingStatement page={page}/></>}

@@ -1,20 +1,7 @@
 import { getSanilaPublicPage } from '../content'
-import { AccessLobby, BeforeAfterSection, CapabilitiesSection, ContextSection, DayWithSanilaSection, DomainExplorer, FAQSection, FinalCTA, ImplementationSection, PricingSection, ProofSection, RecognitionBand, ResourcesSection, RoleExperienceSection, SolutionCards, WorkflowSection } from '../components/SanilaSections'
-import { CrossDomainBridge, DemoPreparation, DomainSignature, OnboardingGuardrail, SecurityConstitution, SystemArchitectureStory } from '../components/SanilaSpecialSections'
-
-export function ClaimsPage() {
-  const page = getSanilaPublicPage('reclamations')!
-  return (
-    <>
-      <RecognitionBand page={page} />
-      <ContextSection page={page} />
-      <DomainSignature page={page} />
-      <WorkflowSection page={page} title="De la préoccupation à la clôture, donner une responsabilité claire." />
-      <CapabilitiesSection page={page} />
-      <ProofSection page={page} />
-      <CrossDomainBridge from="reclamations" to="direction" title="La qualité de résolution doit pouvoir remonter à la direction sans exposer tout le bruit opérationnel." body="Priorité, assignation, action et clôture permettent une lecture plus responsable de la relation famille." />
-      <DomainExplorer currentSlug={page.slug} />
-      <FinalCTA page={page} />
-    </>
-  )
-}
+import { ClosingStatement, EvidenceLedger, OutcomeStrip, ProcessSequence, SectionHeading } from '../components/SanilaExperience'
+import styles from '../SanilaPublic.module.css'
+export function ClaimsPage(){const page=getSanilaPublicPage('reclamations')!;return <>
+<section className={styles.domainEditorialHero}><div className={styles.domainEditorialNumber}>!</div><div className={styles.domainEditorialCopy}><span>RÉCLAMATIONS / RÉCUPÉRATION DE CONFIANCE</span><h1>{page.title}</h1><p>{page.subtitle}</p></div></section><OutcomeStrip page={page}/>
+<section className={`${styles.section} ${styles.sectionSoft}`}><SectionHeading index="01" eyebrow="BOUCLE DE RÉSOLUTION" title="Un signalement devient utile quand il acquiert un responsable, une action et une trace."/><ProcessSequence steps={page.workflow} variant="vertical"/></section>
+<section className={styles.section}><div className={styles.domainSplit}><div className={styles.domainManifesto}>La qualité de la relation famille se mesure aussi à la façon dont l’établissement traite ce qui ne s’est pas bien passé.</div><EvidenceLedger sources={page.evidenceSources}/></div></section><ClosingStatement page={page}/></>}

@@ -1,19 +1,7 @@
 import { getSanilaPublicPage } from '../content'
-import { AccessLobby, BeforeAfterSection, CapabilitiesSection, ContextSection, DayWithSanilaSection, DomainExplorer, FAQSection, FinalCTA, ImplementationSection, PricingSection, ProofSection, RecognitionBand, ResourcesSection, RoleExperienceSection, SolutionCards, WorkflowSection } from '../components/SanilaSections'
-import { CrossDomainBridge, DemoPreparation, DomainSignature, OnboardingGuardrail, SecurityConstitution, SystemArchitectureStory } from '../components/SanilaSpecialSections'
-
-export function LibraryPage() {
-  const page = getSanilaPublicPage('bibliotheque')!
-  return (
-    <>
-      <RecognitionBand page={page} />
-      <DomainSignature page={page} />
-      <CapabilitiesSection page={page} />
-      <WorkflowSection page={page} title="Du catalogue au retour, suivre la circulation documentaire." />
-      <ProofSection page={page} />
-      <CrossDomainBridge from="bibliotheque" to="inventaire" title="Une ressource qui circule n’est pas gérée comme un actif immobile." body="Le site public distingue volontairement la logique bibliothèque de la logique inventaire pour respecter le travail réel." />
-      <DomainExplorer currentSlug={page.slug} />
-      <FinalCTA page={page} />
-    </>
-  )
-}
+import { CapabilityIndex, ClosingStatement, EvidenceLedger, OutcomeStrip, ProcessSequence, SectionHeading } from '../components/SanilaExperience'
+import styles from '../SanilaPublic.module.css'
+export function LibraryPage(){const page=getSanilaPublicPage('bibliotheque')!;return <>
+<section className={styles.domainEditorialHero}><div className={styles.domainEditorialNumber}>B</div><div className={styles.domainEditorialCopy}><span>BIBLIOTHÈQUE / CIRCULATION</span><h1>{page.title}</h1><p>{page.subtitle}</p></div></section><OutcomeStrip page={page}/>
+<section className={`${styles.section} ${styles.sectionSoft}`}><SectionHeading index="01" eyebrow="RESSOURCE → DÉTENTEUR → RETOUR" title="La bibliothèque est un système de circulation et de responsabilité."/><ProcessSequence steps={page.workflow} variant="journey"/></section>
+<section className={styles.section}><div className={styles.domainSplitReverse}><EvidenceLedger sources={page.evidenceSources}/><CapabilityIndex page={page} columns={2}/></div></section><ClosingStatement page={page}/></>}

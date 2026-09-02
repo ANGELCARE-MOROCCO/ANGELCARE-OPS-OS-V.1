@@ -1,6 +1,5 @@
 import { getSanilaPublicPage } from './content'
 import { SanilaFooter, SanilaHeader } from './components/SanilaShell'
-import { PageHero } from './components/SanilaSections'
 import { SANILA_PAGE_COMPONENTS } from './pageRegistry'
 import styles from './SanilaPublic.module.css'
 
@@ -14,8 +13,7 @@ export function SanilaPublicUniverse({ slug, locale }: { slug: string; locale: s
     <div className={styles.site} data-accent={page.accent} data-page={page.slug}>
       <a className={styles.skipLink} href="#contenu-sanila">Aller au contenu</a>
       <SanilaHeader />
-      <main id="contenu-sanila">
-        <PageHero page={page} />
+      <main id="contenu-sanila" className={styles.pageMain}>
         <PageComposition />
       </main>
       <SanilaFooter />

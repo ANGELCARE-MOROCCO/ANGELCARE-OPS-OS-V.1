@@ -1,19 +1,8 @@
 import { getSanilaPublicPage } from '../content'
-import { AccessLobby, BeforeAfterSection, CapabilitiesSection, ContextSection, DayWithSanilaSection, DomainExplorer, FAQSection, FinalCTA, ImplementationSection, PricingSection, ProofSection, RecognitionBand, ResourcesSection, RoleExperienceSection, SolutionCards, WorkflowSection } from '../components/SanilaSections'
-import { CrossDomainBridge, DemoPreparation, DomainSignature, OnboardingGuardrail, SecurityConstitution, SystemArchitectureStory } from '../components/SanilaSpecialSections'
-
-export function PayrollPage() {
-  const page = getSanilaPublicPage('paie')!
-  return (
-    <>
-      <RecognitionBand page={page} />
-      <DomainSignature page={page} />
-      <WorkflowSection page={page} title="De la période au paiement, contrôler chaque étape du traitement." />
-      <CapabilitiesSection page={page} />
-      <ProofSection page={page} />
-      <CrossDomainBridge from="paie" to="rapports" title="La paie doit rester gouvernable après le paiement." body="Historique personnel, conformité et audit prolongent le traitement au-delà de la simple exécution mensuelle." />
-      <DomainExplorer currentSlug={page.slug} />
-      <FinalCTA page={page} />
-    </>
-  )
-}
+import { CapabilityIndex, ClosingStatement, EvidenceLedger, OutcomeStrip, ProcessSequence, SectionHeading } from '../components/SanilaExperience'
+import styles from '../SanilaPublic.module.css'
+export function PayrollPage(){const page=getSanilaPublicPage('paie')!;return <>
+  <section className={styles.domainEditorialHero}><div className={styles.domainEditorialNumber}>P</div><div className={styles.domainEditorialCopy}><span>PAIE / CONTRÔLE</span><h1>{page.title}</h1><p>{page.subtitle}</p></div></section><OutcomeStrip page={page}/>
+  <section className={`${styles.section} ${styles.sectionSoft}`}><SectionHeading index="01" eyebrow="PÉRIODE → PAIEMENT" title="La paie est un processus gouverné, pas un montant final."/><ProcessSequence steps={page.workflow} variant="ledger"/></section>
+  <section className={styles.section}><div className={styles.domainSplitReverse}><EvidenceLedger sources={page.evidenceSources}/><CapabilityIndex page={page} columns={2}/></div></section><ClosingStatement page={page}/>
+</>}

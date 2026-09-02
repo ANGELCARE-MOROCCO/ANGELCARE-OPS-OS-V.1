@@ -1,15 +1,6 @@
-import { getSanilaPublicPage } from '../content'
-import { AccessLobby, BeforeAfterSection, CapabilitiesSection, ContextSection, DayWithSanilaSection, DomainExplorer, FAQSection, FinalCTA, ImplementationSection, PricingSection, ProofSection, RecognitionBand, ResourcesSection, RoleExperienceSection, SolutionCards, WorkflowSection } from '../components/SanilaSections'
-import { CrossDomainBridge, DemoPreparation, DomainSignature, OnboardingGuardrail, SecurityConstitution, SystemArchitectureStory } from '../components/SanilaSpecialSections'
-
-export function ResourcesPage() {
-  const page = getSanilaPublicPage('ressources')!
-  return (
-    <>
-      <ResourcesSection />
-      <ProofSection page={page} />
-      <FAQSection />
-      <FinalCTA page={page} />
-    </>
-  )
-}
+import { getSanilaPublicPage, sanilaHref } from '../content'
+import { ClosingStatement, SectionHeading } from '../components/SanilaExperience'
+import styles from '../SanilaPublic.module.css'
+export function ResourcesPage(){const page=getSanilaPublicPage('ressources')!;const cards=[['Architecture produit','Comprendre comment SANILA relie les responsabilités de l’établissement.','Consulter le produit'],['Mise en service','Voir la méthode de préparation, validation et lancement.','Voir le programme'],['Questions d’achat','Sécurité, utilisateurs, migration, multi-sites, support et tarification.','Lire la FAQ']];return <>
+<section className={styles.serviceHero}><div><span>RESSOURCES / VRAIES AUTORITÉS</span><h1>{page.title}</h1><p>{page.subtitle}</p></div><div className={styles.serviceHeroAside}><strong>Une petite bibliothèque honnête vaut mieux qu’un centre de ressources fictif.</strong></div></section>
+<section className={styles.section}><SectionHeading index="01" eyebrow="BIBLIOTHÈQUE PUBLIQUE" title="Trois chemins utiles pour préparer une décision."/><div className={styles.resourceShelf}>{cards.map(([a,b,c],i)=><a className={styles.resourceCard} key={a} href={i===0?sanilaHref('produit'):i===1?sanilaHref('mise-en-service'):sanilaHref('faq')}><span>RESSOURCE 0{i+1}</span><h3>{a}</h3><p>{b}</p><small>{c} →</small></a>)}</div></section><ClosingStatement page={page}/></>}

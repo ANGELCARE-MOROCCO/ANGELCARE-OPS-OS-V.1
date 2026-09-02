@@ -1,19 +1,7 @@
 import { getSanilaPublicPage } from '../content'
-import { AccessLobby, BeforeAfterSection, CapabilitiesSection, ContextSection, DayWithSanilaSection, DomainExplorer, FAQSection, FinalCTA, ImplementationSection, PricingSection, ProofSection, RecognitionBand, ResourcesSection, RoleExperienceSection, SolutionCards, WorkflowSection } from '../components/SanilaSections'
-import { CrossDomainBridge, DemoPreparation, DomainSignature, OnboardingGuardrail, SecurityConstitution, SystemArchitectureStory } from '../components/SanilaSpecialSections'
-
-export function PrivateSchoolSolutionPage() {
-  const page = getSanilaPublicPage('solutions/ecoles-privees')!
-  return (
-    <>
-      <RecognitionBand page={page} />
-      <ContextSection page={page} />
-      <CapabilitiesSection page={page} />
-      <WorkflowSection page={page} title="Relier administration, pédagogie, finance et familles sans créer de silos." />
-      <DomainExplorer />
-      <ProofSection page={page} />
-      <RoleExperienceSection />
-      <FinalCTA page={page} />
-    </>
-  )
-}
+import { CapabilityIndex, ClosingStatement, InstitutionalContextBand, OutcomeStrip, SectionHeading, StructureTreeVisual } from '../components/SanilaExperience'
+import styles from '../SanilaPublic.module.css'
+export function PrivateSchoolSolutionPage(){const page=getSanilaPublicPage('solutions/ecoles-privees')!;return <>
+<section className={styles.solutionHeroInstitution}><div><span className={styles.kicker}>ÉCOLES PRIVÉES</span><h1>{page.title}</h1><p>{page.subtitle}</p></div><div className={styles.solutionInstitutionBoard}><span>MODÈLE D’EXPLOITATION</span><strong>Une école est une organisation académique, administrative, financière et relationnelle à la fois.</strong><div>{['Direction','Administration','Admissions','Pédagogie','Finance','Familles','Personnel','Rapports'].map(x=><span key={x}>{x}</span>)}</div></div></section><OutcomeStrip page={page}/>
+<section className={`${styles.section} ${styles.sectionSoft}`}><SectionHeading index="01" eyebrow="COMPLEXITÉ UTILE" title="Structurer l’établissement sans casser les métiers."/><div className={styles.pagePatternGrid}><StructureTreeVisual/><InstitutionalContextBand title="Une seule institution, plusieurs cadences." items={['Rentrée','Périodes','Cours','Évaluations','Mensualités','Relances','Réunions familles','Transport']}/></div></section>
+<section className={styles.section}><CapabilityIndex page={page} columns={4}/></section><ClosingStatement page={page}/></>}

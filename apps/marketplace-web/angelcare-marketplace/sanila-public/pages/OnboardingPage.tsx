@@ -1,20 +1,7 @@
 import { getSanilaPublicPage } from '../content'
-import { AccessLobby, BeforeAfterSection, CapabilitiesSection, ContextSection, DayWithSanilaSection, DomainExplorer, FAQSection, FinalCTA, ImplementationSection, PricingSection, ProofSection, RecognitionBand, ResourcesSection, RoleExperienceSection, SolutionCards, WorkflowSection } from '../components/SanilaSections'
-import { CrossDomainBridge, DemoPreparation, DomainSignature, OnboardingGuardrail, SecurityConstitution, SystemArchitectureStory } from '../components/SanilaSpecialSections'
-import { SanilaDemoForm } from '../SanilaDemoForm'
-import { SanilaContactForm } from '../SanilaContactForm'
+import { EvidenceLedger } from '../components/SanilaExperience'
 import { SanilaOnboardingForm } from '../SanilaOnboardingForm'
 import styles from '../SanilaPublic.module.css'
-
-export function OnboardingPage() {
-  const page = getSanilaPublicPage('creer-mon-etablissement')!
-  return (
-    <>
-      <RecognitionBand page={page} />
-      <OnboardingGuardrail />
-      <section className={`${styles.section} ${styles.formSection}`}><SanilaOnboardingForm /></section>
-      <ImplementationSection />
-      <ProofSection page={page} />
-    </>
-  )
-}
+export function OnboardingPage(){const page=getSanilaPublicPage('creer-mon-etablissement')!;const preview=['Organisation','Sites','Volume','Priorités','Calendrier','Responsable'];return <>
+<section className={styles.serviceHero}><div><span>PRÉPARER MON ÉTABLISSEMENT</span><h1>Commencer la mise en service sans créer un environnement production incontrôlé.</h1><p>Ce parcours prépare une revue AngelCare : il structure le contexte de l’établissement, son périmètre et son calendrier avant toute décision de création d’environnement.</p></div><div className={styles.serviceHeroAside}><strong>Soumettre ≠ créer. La validation humaine reste une frontière produit.</strong><div className={styles.onboardingStepsPreview}>{preview.map((x,i)=><div key={x}><span>0{i+1}</span><strong>{x}</strong></div>)}</div></div></section>
+<section className={styles.section}><div className={styles.formExperience}><aside className={styles.formExperienceIntro}><span>PRÉPARATION GUIDÉE</span><h2>Transformer une intention commerciale en dossier de préparation.</h2><p>Le parcours distingue organisation, structure, volume, domaines souhaités, calendrier et responsable. Aucun environnement production n’est créé automatiquement.</p><EvidenceLedger sources={page.evidenceSources}/></aside><SanilaOnboardingForm/></div></section></>}

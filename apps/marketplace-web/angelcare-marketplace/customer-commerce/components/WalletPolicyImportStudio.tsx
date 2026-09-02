@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { Download, FileCheck2, UploadCloud } from 'lucide-react'
+import { CSV_FILE_ACCEPT, MarketplaceFilePicker } from '../../components/MarketplaceFilePicker'
 import { useGovernedAction } from '../../shells/GovernedActionProvider'
 import styles from '../customer-commerce.module.css'
 
@@ -20,6 +21,7 @@ async function submit(csvText: string, mode: 'validate' | 'upsert', reason?: str
 export function WalletPolicyImportStudio() {
   const requestAction = useGovernedAction()
   const [csvText, setCsvText] = useState('')
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([])
   const [result, setResult] = useState<ImportResult | null>(null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -43,11 +45,28 @@ export function WalletPolicyImportStudio() {
     const anchor = document.createElement('a'); anchor.href = url; anchor.download = 'ac-wallet-policy-assignments.csv'; anchor.click(); URL.revokeObjectURL(url)
   }
 
+  async function chooseCsv(files: File[]) {
+    setSelectedFiles(files); setResult(null); setError(null)
+    const file = files[0]
+    if (!file) { setCsvText(''); return }
+    try {
+      const text = await file.text()
+      if (!text.trim()) throw new Error('Le fichier est vide.')
+      setCsvText(text)
+    } catch (value) {
+      setSelectedFiles([]); setCsvText(''); setError(value instanceof Error ? value.message : 'Impossible de lire le fichier.')
+    }
+  }
+
+  function pasteCsv(value: string) {
+    setSelectedFiles([]); setResult(null); setError(null); setCsvText(value)
+  }
+
   return <section className={styles.adminPanel} style={{ marginTop: 24 }}>
     <header><div><span className={styles.eyebrow}>WALLET ASSIGNMENT IMPORT</span><h2>Dry-run, erreurs ligne par ligne, exécution gouvernée</h2></div><button className={styles.secondaryButton} type="button" onClick={downloadTemplate}><Download size={15} />Télécharger le modèle</button></header>
     <div className={styles.formGrid}>
-      <label className={styles.fullField}><span>Fichier CSV</span><input type="file" accept=".csv,text/csv" onChange={event => { const file = event.target.files?.[0]; if (file) void file.text().then(setCsvText) }} /></label>
-      <label className={styles.fullField}><span>Contenu contrôlé</span><textarea rows={7} value={csvText} onChange={event => setCsvText(event.target.value)} placeholder="policy_key,customer_email,starts_at,ends_at,status" /></label>
+      <div className={styles.fullField}><MarketplaceFilePicker accept={CSV_FILE_ACCEPT} files={selectedFiles} onFilesChange={(files) => void chooseCsv(files)} label="Importer le fichier CSV" description="Affectations Wallet · sélection ou glisser-déposer · dry-run obligatoire" /></div>
+      <label className={styles.fullField}><span>Coller le CSV</span><textarea rows={7} value={csvText} onChange={event => pasteCsv(event.target.value)} placeholder="policy_key,customer_email,starts_at,ends_at,status" /></label>
     </div>
     <div className={styles.authActions}><button className={styles.secondaryButton} disabled={busy || !csvText.trim()} onClick={() => void run('validate')}><FileCheck2 size={15} />Valider / dry-run</button><button className={styles.primaryButton} disabled={busy || !result || result.mode !== 'validate' || result.invalid > 0} onClick={() => void run('upsert')}><UploadCloud size={15} />Exécuter les lignes valides</button></div>
     {error ? <div className={styles.error} role="alert">{error}</div> : null}

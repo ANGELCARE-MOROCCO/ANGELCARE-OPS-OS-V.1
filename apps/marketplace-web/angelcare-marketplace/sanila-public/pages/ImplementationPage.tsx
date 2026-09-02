@@ -1,16 +1,7 @@
 import { getSanilaPublicPage } from '../content'
-import { AccessLobby, BeforeAfterSection, CapabilitiesSection, ContextSection, DayWithSanilaSection, DomainExplorer, FAQSection, FinalCTA, ImplementationSection, PricingSection, ProofSection, RecognitionBand, ResourcesSection, RoleExperienceSection, SolutionCards, WorkflowSection } from '../components/SanilaSections'
-import { CrossDomainBridge, DemoPreparation, DomainSignature, OnboardingGuardrail, SecurityConstitution, SystemArchitectureStory } from '../components/SanilaSpecialSections'
-
-export function ImplementationPage() {
-  const page = getSanilaPublicPage('mise-en-service')!
-  return (
-    <>
-      <RecognitionBand page={page} />
-      <ImplementationSection />
-      <WorkflowSection page={page} title="Une transition préparée plutôt qu’une activation aveugle." />
-      <ProofSection page={page} />
-      <FinalCTA page={page} />
-    </>
-  )
-}
+import { ClosingStatement, EvidenceLedger, SectionHeading } from '../components/SanilaExperience'
+import styles from '../SanilaPublic.module.css'
+export function ImplementationPage(){const page=getSanilaPublicPage('mise-en-service')!;const phases=[['Diagnostic','Comprendre le fonctionnement réel.'],['Architecture institutionnelle','Définir structure, rôles et priorités.'],['Configuration','Préparer SANILA selon le périmètre validé.'],['Données','Organiser ce qui doit être repris.'],['Rôles & accès','Définir les frontières.'],['Formation','Préparer les équipes à agir.'],['Validation','Tester avant ouverture.'],['Mise en service','Basculer avec contrôle.'],['Accompagnement','Stabiliser et améliorer.']];return <>
+<section className={styles.serviceHero}><div><span>MISE EN SERVICE / PROGRAMME</span><h1>{page.title}</h1><p>{page.subtitle}</p></div><div className={styles.serviceHeroAside}><strong>La transformation doit réduire l’anxiété opérationnelle, pas l’augmenter.</strong></div></section>
+<section className={`${styles.section} ${styles.sectionSoft}`}><SectionHeading index="01" eyebrow="PROGRAMME DE TRANSITION" title="Neuf étapes. Une responsabilité claire à chaque passage."/><div className={styles.implementationProgram}>{phases.map(([a,b],i)=><div key={a}><b>{String(i+1).padStart(2,'0')}</b><strong>{a}</strong><p>{b}</p></div>)}</div></section>
+<section className={styles.section}><div className={styles.domainSplit}><div className={styles.domainManifesto}>Une mise en service réussie n’est pas un bouton “Activer”. C’est un transfert de fonctionnement.</div><EvidenceLedger sources={page.evidenceSources}/></div></section><ClosingStatement page={page}/></>}

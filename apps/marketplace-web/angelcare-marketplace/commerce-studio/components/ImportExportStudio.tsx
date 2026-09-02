@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import type { ChangeEvent } from 'react'
 import { Download, FileSpreadsheet, Upload } from 'lucide-react'
+import { MarketplaceFilePicker } from '../../components/MarketplaceFilePicker'
 import styles from '../commerce-studio.module.css'
 import { apiRequest, StudioNotice, useStudioMutation } from './StudioClient'
 
@@ -37,9 +38,30 @@ interface ImportResult {
 export function ImportExportStudio() {
   const [resource, setResource] = useState('catalog-items')
   const [source, setSource] = useState(initialSource)
+  const [sourceFormat, setSourceFormat] = useState<'json' | 'csv'>('json')
   const [result, setResult] = useState('')
-  const [importFile, setImportFile] = useState<File | null>(null)
+  const [importFiles, setImportFiles] = useState<File[]>([])
+  const [fileError, setFileError] = useState('')
   const mutation = useStudioMutation()
+  const importFile = importFiles[0] || null
+
+  async function chooseImportFile(files: File[]) {
+    setImportFiles(files); setFileError(''); setResult('')
+    const file = files[0]
+    if (!file) { setSource(''); return }
+    try {
+      const text = await file.text()
+      if (!text.trim()) throw new Error('Le fichier est vide.')
+      setSource(text)
+      setSourceFormat(file.name.toLowerCase().endsWith('.csv') || file.type.includes('csv') ? 'csv' : 'json')
+    } catch (error) {
+      setImportFiles([]); setFileError(error instanceof Error ? error.message : 'Impossible de lire le fichier.')
+    }
+  }
+
+  function editSource(value: string) {
+    setImportFiles([]); setFileError(''); setResult(''); setSource(value)
+  }
 
   async function run(dryRun: boolean) {
     if (importFile) {
@@ -49,6 +71,15 @@ export function ImportExportStudio() {
       const response = await mutation.run(
         () => apiRequest<ImportResult>(`/api/angelcare-marketplace/admin/commerce/import/${resource}`, { method: 'POST', body: form }),
         dryRun ? 'Dry-run fichier terminé.' : 'Fichier importé immédiatement.',
+      )
+      if (response) setResult(JSON.stringify(response, null, 2))
+      return
+    }
+    if (sourceFormat === 'csv') {
+      if (!source.trim()) { setResult('Le contenu CSV est vide.'); return }
+      const response = await mutation.run(
+        () => apiRequest<ImportResult>(`/api/angelcare-marketplace/admin/commerce/import/${resource}?dry_run=${String(dryRun)}`, { method: 'POST', headers: { 'content-type': 'text/csv' }, body: source }),
+        dryRun ? 'Dry-run CSV terminé.' : 'CSV importé immédiatement.',
       )
       if (response) setResult(JSON.stringify(response, null, 2))
       return
@@ -126,13 +157,26 @@ export function ImportExportStudio() {
         </article>
 
         <article>
-          <h2>Import JSON structuré</h2>
-          <textarea
-            className={styles.codeEditor}
-            value={source}
-            onChange={(event: ChangeEvent<HTMLTextAreaElement>) => setSource(event.target.value)}
-            rows={20}
-          />
+          <h2>Import CSV ou JSON structuré</h2>
+          <MarketplaceFilePicker accept=".csv,.json,text/csv,application/json" files={importFiles} onFilesChange={(files) => void chooseImportFile(files)} label="Choisir un fichier CSV ou JSON" description="Le fichier est lu localement puis attend votre dry-run ou exécution explicite." />
+          {fileError ? <p className={styles.errorNotice} role="alert">{fileError}</p> : null}
+          <label className={styles.field}>
+            <span>Format du contenu collé</span>
+            <select value={sourceFormat} onChange={(event) => { setImportFiles([]); setSourceFormat(event.target.value as 'json' | 'csv'); setSource(event.target.value === 'csv' ? '' : initialSource) }}>
+              <option value="json">JSON</option>
+              <option value="csv">CSV</option>
+            </select>
+          </label>
+          <label className={styles.field}>
+            <span>{sourceFormat === 'csv' ? 'Coller le CSV' : 'Coller le JSON'}</span>
+            <textarea
+              className={styles.codeEditor}
+              value={source}
+              onChange={(event: ChangeEvent<HTMLTextAreaElement>) => editSource(event.target.value)}
+              placeholder={sourceFormat === 'csv' ? 'Collez ici le contenu CSV…' : 'Collez ici le tableau JSON…'}
+              rows={20}
+            />
+          </label>
           <div className={styles.actionBar}>
             <button
               type="button"

@@ -1,16 +1,6 @@
 import { getSanilaPublicPage } from '../content'
-import { AccessLobby, BeforeAfterSection, CapabilitiesSection, ContextSection, DayWithSanilaSection, DomainExplorer, FAQSection, FinalCTA, ImplementationSection, PricingSection, ProofSection, RecognitionBand, ResourcesSection, RoleExperienceSection, SolutionCards, WorkflowSection } from '../components/SanilaSections'
-import { CrossDomainBridge, DemoPreparation, DomainSignature, OnboardingGuardrail, SecurityConstitution, SystemArchitectureStory } from '../components/SanilaSpecialSections'
-
-export function PricingPage() {
-  const page = getSanilaPublicPage('tarifs')!
-  return (
-    <>
-      <RecognitionBand page={page} />
-      <PricingSection />
-      <WorkflowSection page={page} title="Construire le prix à partir du périmètre réel." />
-      <ProofSection page={page} />
-      <FinalCTA page={page} />
-    </>
-  )
-}
+import { ClosingStatement, SectionHeading } from '../components/SanilaExperience'
+import styles from '../SanilaPublic.module.css'
+export function PricingPage(){const page=getSanilaPublicPage('tarifs')!;const factors=[['01','Type d’établissement'],['02','Nombre de sites'],['03','Volume d’élèves'],['04','Périmètre SANILA'],['05','Préparation / reprise'],['06','Accompagnement requis']];return <>
+<section className={styles.serviceHero}><div><span>TARIFS / DISCIPLINE COMMERCIALE</span><h1>{page.title}</h1><p>{page.subtitle}</p></div><div className={styles.serviceHeroAside}><strong>Un prix sérieux vient d’un périmètre sérieux. SANILA n’invente pas des forfaits publics pour remplir une grille.</strong></div></section>
+<section className={`${styles.section} ${styles.sectionSoft}`}><SectionHeading index="01" eyebrow="LOGIQUE DE CHIFFRAGE" title="Ce qui influence la proposition."/><div className={styles.pricingLogic}><div className={styles.pricingFactors}>{factors.map(([n,t])=><div key={n}><b>{n}</b><strong>{t}</strong></div>)}</div><div className={styles.pricingStatement}><span>PRINCIPE</span><h3>Qualifier avant de chiffrer.</h3><p>La proposition doit correspondre à la structure, au périmètre et au niveau de mise en service réellement nécessaire.</p></div></div></section><ClosingStatement page={page} title="Préparer une proposition à partir de votre périmètre réel."/></>}

@@ -1,9 +1,10 @@
 'use client'
 
 import { useEffect,useMemo,useRef,useState } from 'react'
-import { CheckCircle2,Download,FileSpreadsheet,PauseCircle,PlayCircle,RefreshCcw,RotateCcw,TableProperties,UploadCloud,Wand2 } from 'lucide-react'
+import { CheckCircle2,Download,FileSpreadsheet,PauseCircle,PlayCircle,RefreshCcw,RotateCcw,TableProperties,Wand2 } from 'lucide-react'
 import { PRODUCT_DOCTRINES } from '../product-doctrine'
 import type { ProductImportPreview } from '../types'
+import { CSV_FILE_ACCEPT, MarketplaceFilePicker } from '../../components/MarketplaceFilePicker'
 import styles from '../enterprise-command.module.css'
 
 type Row=Record<string,string>
@@ -29,6 +30,8 @@ function csvDownload(name:string,headers:string[],data:Array<Record<string,unkno
 export function ProductImportStudio(){
   const[doctrine,setDoctrine]=useState('one_time_service')
   const[source,setSource]=useState('')
+  const[selectedFiles,setSelectedFiles]=useState<File[]>([])
+  const[fileError,setFileError]=useState('')
   const[preview,setPreview]=useState<ProductImportPreview|null>(null)
   const[busy,setBusy]=useState(false)
   const[notice,setNotice]=useState('')
@@ -108,13 +111,15 @@ export function ProductImportStudio(){
   async function exportJobFailures(){if(!job)return;setBusy(true);try{const all:JobRow[]=[];let page=1;while(true){const r=await fetch(`/api/angelcare-marketplace/admin/enterprise-command/product-import/jobs/${job.job.id}?failedOnly=1&page=${page}&pageSize=500`,{cache:'no-store'});const p=await r.json() as Envelope<JobSnapshot>;if(!r.ok||!p.data)throw new Error(p.error?.message||'Export impossible.');all.push(...p.data.rows);if(all.length>=p.data.rowCount)break;page++}csvDownload(`${job.job.public_reference||'ANGELCARE_IMPORT'}_FAILURES.csv`,['row_number','status','action','item_key','errors','warnings'],all.map(r=>({row_number:r.row_number,status:r.status,action:r.action,item_key:String(r.normalized_payload?.item_key||''),errors:(r.errors||[]).join(' | '),warnings:(r.warnings||[]).join(' | ')})))}catch(e){setNotice(e instanceof Error?e.message:String(e))}finally{setBusy(false)}}
 
   function template(){csvDownload(`ANGELCARE_${doctrine}_IMPORT.csv`,targets,[Object.fromEntries(targets.map(t=>[t,'']))])}
+  async function chooseCsv(files:File[]){setSelectedFiles(files);setFileError('');setPreview(null);setJob(null);const file=files[0];if(!file){setSource('');return}try{const text=await file.text();if(!text.trim())throw new Error('Le fichier est vide.');setSource(text)}catch(error){setSelectedFiles([]);setSource('');setFileError(error instanceof Error?error.message:'Impossible de lire le fichier.')}}
+  function pasteCsv(value:string){setSelectedFiles([]);setFileError('');setSource(value)}
   function updateCell(index:number,key:string,value:string){setEditable(rows=>rows.map((row,i)=>i===index?{...row,[key]:value}:row));setPreview(null);setJob(null)}
   function rejected(){if(!preview)return;csvDownload('ANGELCARE_IMPORT_REJECTED.csv',['row','key','name','errors'],preview.rows.filter(r=>!r.valid).map(r=>({row:r.row,key:r.key,name:r.name,errors:r.errors.join(' | ')})))}
 
   return <div className={styles.command}>
     <section className={styles.hero}><div className={styles.eyebrow}>Industrial Product / Service PIM Import</div><h1 className={styles.title}>Doctrine Import Studio · mapping · full preflight · resumable jobs</h1><p className={styles.lead}>Chaque ligne est validée par doctrine, persistée dans un job reprenable, traitée par lots et traçable jusqu’au résultat canonique. Un échec de ligne ne détruit pas l’import complet.</p></section>
     <div className={styles.grid2}>
-      <section className={styles.panel}><F label="Doctrine"><select className={styles.select} value={doctrine} onChange={e=>setDoctrine(e.target.value)}>{Object.values(PRODUCT_DOCTRINES).map(x=><option value={x.key} key={x.key}>{x.label}</option>)}</select></F><F label="CSV"><textarea className={styles.textarea} style={{minHeight:260}} value={source} onChange={e=>setSource(e.target.value)} placeholder="Collez un CSV ou importez un fichier…"/></F><div className={styles.toolbar}><label className={styles.buttonSecondary}><UploadCloud size={14}/>Importer CSV<input hidden type="file" accept=".csv,text/csv" onChange={async e=>setSource(await e.target.files?.[0]?.text()||'')}/></label><button className={styles.buttonSecondary} onClick={template}><Download size={14}/>Template doctrine</button><button className={styles.buttonSecondary} disabled={!parsed.headers.length} onClick={autoMap}><Wand2 size={14}/>Auto-map</button><button className={styles.button} disabled={busy||!mappedRows.length} onClick={()=>void dry()}><FileSpreadsheet size={14}/>Dry-run {mappedRows.length}</button></div></section>
+      <section className={styles.panel}><F label="Doctrine"><select className={styles.select} value={doctrine} onChange={e=>setDoctrine(e.target.value)}>{Object.values(PRODUCT_DOCTRINES).map(x=><option value={x.key} key={x.key}>{x.label}</option>)}</select></F><MarketplaceFilePicker accept={CSV_FILE_ACCEPT} files={selectedFiles} onFilesChange={(files)=>void chooseCsv(files)} label="Importer CSV" description="CSV doctrine · sélection ou glisser-déposer · aucune exécution automatique"/>{fileError?<div className={styles.notice} role="alert">{fileError}</div>:null}<F label="Coller le CSV"><textarea className={styles.textarea} style={{minHeight:260}} value={source} onChange={e=>pasteCsv(e.target.value)} placeholder="Collez ici le contenu CSV…"/></F><div className={styles.toolbar}><button className={styles.buttonSecondary} type="button" onClick={template}><Download size={14}/>Template doctrine</button><button className={styles.buttonSecondary} type="button" disabled={!parsed.headers.length} onClick={autoMap}><Wand2 size={14}/>Auto-map</button><button className={styles.button} type="button" disabled={busy||!mappedRows.length} onClick={()=>void dry()}><FileSpreadsheet size={14}/>Dry-run {mappedRows.length}</button></div></section>
       <section className={styles.panel}><div className={styles.panelTitle}><h3>{d.label}</h3><span className={styles.chip}>{parsed.headers.length} colonnes · {editable.length} lignes</span></div><p className={styles.muted}>{d.description}</p><h4>Champs requis</h4><div className={styles.toolbar}>{d.requiredColumns.map(x=><span className={styles.chip} key={x}>{x}</span>)}</div>{notice?<div className={styles.notice} style={{marginTop:14}}>{notice}</div>:null}</section>
     </div>
 

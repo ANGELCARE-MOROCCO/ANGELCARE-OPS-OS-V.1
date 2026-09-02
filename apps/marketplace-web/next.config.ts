@@ -2,6 +2,12 @@ import type { NextConfig } from "next";
 import path from "path";
 
 const nextConfig: NextConfig = {
+  async redirects() {
+    return [
+      { source: '/', destination: '/angelcare-marketplace/fr', permanent: true },
+    ]
+  },
+
   typescript: {
     tsconfigPath: 'tsconfig.vercel-production.json',
   },

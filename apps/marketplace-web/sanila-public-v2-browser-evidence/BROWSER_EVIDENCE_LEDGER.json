@@ -1,0 +1,152 @@
+[
+  {
+    "kind": "public",
+    "route": "/angelcare-marketplace/fr/sanila",
+    "status": 200
+  },
+  {
+    "kind": "public",
+    "route": "/angelcare-marketplace/fr/sanila/produit",
+    "status": 200
+  },
+  {
+    "kind": "public",
+    "route": "/angelcare-marketplace/fr/sanila/fonctionnalites",
+    "status": 200
+  },
+  {
+    "kind": "public",
+    "route": "/angelcare-marketplace/fr/sanila/direction",
+    "status": 200
+  },
+  {
+    "kind": "public",
+    "route": "/angelcare-marketplace/fr/sanila/administration",
+    "status": 200
+  },
+  {
+    "kind": "public",
+    "route": "/angelcare-marketplace/fr/sanila/admissions",
+    "status": 200
+  },
+  {
+    "kind": "public",
+    "route": "/angelcare-marketplace/fr/sanila/presences",
+    "status": 200
+  },
+  {
+    "kind": "public",
+    "route": "/angelcare-marketplace/fr/sanila/pedagogie",
+    "status": 200
+  },
+  {
+    "kind": "public",
+    "route": "/angelcare-marketplace/fr/sanila/finance",
+    "status": 200
+  },
+  {
+    "kind": "public",
+    "route": "/angelcare-marketplace/fr/sanila/paie",
+    "status": 200
+  },
+  {
+    "kind": "public",
+    "route": "/angelcare-marketplace/fr/sanila/transport",
+    "status": 200
+  },
+  {
+    "kind": "public",
+    "route": "/angelcare-marketplace/fr/sanila/communication",
+    "status": 200
+  },
+  {
+    "kind": "public",
+    "route": "/angelcare-marketplace/fr/sanila/bibliotheque",
+    "status": 200
+  },
+  {
+    "kind": "public",
+    "route": "/angelcare-marketplace/fr/sanila/inventaire",
+    "status": 200
+  },
+  {
+    "kind": "public",
+    "route": "/angelcare-marketplace/fr/sanila/reclamations",
+    "status": 200
+  },
+  {
+    "kind": "public",
+    "route": "/angelcare-marketplace/fr/sanila/rapports",
+    "status": 200
+  },
+  {
+    "kind": "public",
+    "route": "/angelcare-marketplace/fr/sanila/solutions",
+    "status": 200
+  },
+  {
+    "kind": "public",
+    "route": "/angelcare-marketplace/fr/sanila/solutions/creches-maternelles",
+    "status": 200
+  },
+  {
+    "kind": "public",
+    "route": "/angelcare-marketplace/fr/sanila/solutions/ecoles-privees",
+    "status": 200
+  },
+  {
+    "kind": "public",
+    "route": "/angelcare-marketplace/fr/sanila/solutions/groupes-scolaires",
+    "status": 200
+  },
+  {
+    "kind": "public",
+    "route": "/angelcare-marketplace/fr/sanila/securite",
+    "status": 200
+  },
+  {
+    "kind": "public",
+    "route": "/angelcare-marketplace/fr/sanila/mise-en-service",
+    "status": 200
+  },
+  {
+    "kind": "public",
+    "route": "/angelcare-marketplace/fr/sanila/tarifs",
+    "status": 200
+  },
+  {
+    "kind": "public",
+    "route": "/angelcare-marketplace/fr/sanila/ressources",
+    "status": 200
+  },
+  {
+    "kind": "public",
+    "route": "/angelcare-marketplace/fr/sanila/faq",
+    "status": 200
+  },
+  {
+    "kind": "public",
+    "route": "/angelcare-marketplace/fr/sanila/demonstration",
+    "status": 200
+  },
+  {
+    "kind": "public",
+    "route": "/angelcare-marketplace/fr/sanila/contact",
+    "status": 200
+  },
+  {
+    "kind": "public",
+    "route": "/angelcare-marketplace/fr/sanila/creer-mon-etablissement",
+    "status": 200
+  },
+  {
+    "kind": "public",
+    "route": "/angelcare-marketplace/fr/sanila/connexion",
+    "status": 200
+  },
+  {
+    "kind": "authenticated",
+    "status": "RUNTIME_EVIDENCE_REQUIRED",
+    "reason": "Set SANILA_STORAGE_STATE to an authorized Playwright storage state."
+  }
+]

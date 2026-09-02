@@ -1,18 +1,7 @@
 import { getSanilaPublicPage } from '../content'
-import { AccessLobby, BeforeAfterSection, CapabilitiesSection, ContextSection, DayWithSanilaSection, DomainExplorer, FAQSection, FinalCTA, ImplementationSection, PricingSection, ProofSection, RecognitionBand, ResourcesSection, RoleExperienceSection, SolutionCards, WorkflowSection } from '../components/SanilaSections'
-import { CrossDomainBridge, DemoPreparation, DomainSignature, OnboardingGuardrail, SecurityConstitution, SystemArchitectureStory } from '../components/SanilaSpecialSections'
-
-export function SchoolGroupSolutionPage() {
-  const page = getSanilaPublicPage('solutions/groupes-scolaires')!
-  return (
-    <>
-      <RecognitionBand page={page} />
-      <SystemArchitectureStory />
-      <WorkflowSection page={page} title="Définir les standards communs sans effacer le contexte local." />
-      <CapabilitiesSection page={page} />
-      <ProofSection page={page} />
-      <SolutionCards />
-      <FinalCTA page={page} />
-    </>
-  )
-}
+import { ClosingStatement, InstitutionalMap, OutcomeStrip, SectionHeading } from '../components/SanilaExperience'
+import styles from '../SanilaPublic.module.css'
+export function SchoolGroupSolutionPage(){const page=getSanilaPublicPage('solutions/groupes-scolaires')!;const layers=[['GROUPE','Standards, gouvernance, lecture consolidée'],['SITE','Contexte local, capacités, équipe'],['CLASSE','Exécution académique et quotidienne'],['FAMILLE','Relation et information autorisée']];return <>
+<section className={styles.solutionHeroInstitution}><div><span className={styles.kicker}>GROUPES SCOLAIRES / GOUVERNANCE</span><h1>{page.title}</h1><p>{page.subtitle}</p></div><div className={styles.solutionInstitutionBoard}><span>ARCHITECTURE MULTI-SITES</span><strong>Centraliser les standards sans supprimer le contexte local.</strong><div>{layers.map(([a,b])=><span key={a}><b>{a}</b><br/>{b}</span>)}</div></div></section><OutcomeStrip page={page}/>
+<section className={`${styles.section} ${styles.sectionInk}`}><SectionHeading index="01" eyebrow="DU GROUPE AU SITE" title="La gouvernance doit voir l’ensemble sans transformer chaque campus en copie aveugle."/><div className={styles.homeSystemStage}><InstitutionalMap/></div></section>
+<section className={styles.section}><div className={styles.pagePatternGrid}>{layers.map(([a,b],i)=><div className={styles.pagePatternPanel} key={a}><span>0{i+1}</span><h3>{a}</h3><p>{b}</p></div>)}</div></section><ClosingStatement page={page}/></>}

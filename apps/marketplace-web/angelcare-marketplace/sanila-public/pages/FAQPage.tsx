@@ -1,15 +1,7 @@
-import { getSanilaPublicPage } from '../content'
-import { AccessLobby, BeforeAfterSection, CapabilitiesSection, ContextSection, DayWithSanilaSection, DomainExplorer, FAQSection, FinalCTA, ImplementationSection, PricingSection, ProofSection, RecognitionBand, ResourcesSection, RoleExperienceSection, SolutionCards, WorkflowSection } from '../components/SanilaSections'
-import { CrossDomainBridge, DemoPreparation, DomainSignature, OnboardingGuardrail, SecurityConstitution, SystemArchitectureStory } from '../components/SanilaSpecialSections'
-
-export function FAQPage() {
-  const page = getSanilaPublicPage('faq')!
-  return (
-    <>
-      <FAQSection />
-      <ProofSection page={page} />
-      <ResourcesSection />
-      <FinalCTA page={page} />
-    </>
-  )
-}
+import { getSanilaPublicPage, sanilaHref } from '../content'
+import { ClosingStatement } from '../components/SanilaExperience'
+import styles from '../SanilaPublic.module.css'
+const qs=[['Produit','Que remplace réellement SANILA ?','SANILA remplace surtout la fragmentation opérationnelle : outils, fichiers et procédures dispersés. Le périmètre précis dépend des domaines activés et de la configuration de l’établissement.'],['Mise en service','Comment passe-t-on de notre système actuel à SANILA ?','Par un programme de diagnostic, configuration, préparation des données, rôles, formation, validation et mise en service.'],['Équipes','Les utilisateurs voient-ils tous la même chose ?','Non. Direction, administration, enseignants, personnel, parents et élèves disposent d’autorités et d’expériences distinctes selon les droits accordés.'],['Sécurité','Qui voit quoi ?','L’accès dépend des identités, rôles, permissions et du contexte institutionnel configuré. Aucune certification non prouvée n’est revendiquée publiquement.'],['Multi-sites','SANILA convient-il aux groupes scolaires ?','L’architecture publique est pensée pour expliquer les standards groupe, le contexte local, la délégation et la restitution multi-sites.'],['Tarifs','Comment le prix est-il déterminé ?','Selon la structure, le nombre de sites, le volume, le périmètre SANILA et le niveau de préparation ou d’accompagnement requis.']]
+export function FAQPage(){const page=getSanilaPublicPage('faq')!;return <>
+<section className={styles.serviceHero}><div><span>FAQ / DÉCISION</span><h1>{page.title}</h1><p>{page.subtitle}</p></div><div className={styles.serviceHeroAside}><strong>Une FAQ utile réduit l’incertitude d’achat ; elle ne remplit pas une page pour le référencement.</strong></div></section>
+<section className={styles.section}><div className={styles.faqArchitecture}><nav><a href={sanilaHref('produit')}>Produit</a><a href={sanilaHref('mise-en-service')}>Mise en service</a><a href={sanilaHref('securite')}>Sécurité</a><a href={sanilaHref('tarifs')}>Tarifs</a></nav><div className={styles.faqArchitectureList}>{qs.map(([c,q,a],i)=><details key={q}><summary><b>0{i+1}</b>{q}</summary><p><strong>{c}.</strong> {a}</p></details>)}</div></div></section><ClosingStatement page={page}/></>}
