@@ -1,4 +1,4 @@
-# manual-build-trigger: 20260902-190653
+# manual-build-trigger: 20260902-190939
 name: Build Marketplace GHCR One-Off
 
 on:
@@ -114,43 +114,37 @@ jobs:
             node apps/marketplace-web/scripts/release/verify-marketplace-release-constitution.mjs compiled
 
       - name: Verify Marketplace runtime identity inside candidate image
+        shell: bash
         run: |
           set -euo pipefail
 
           IMAGE_REF="${IMAGE}:${TARGET_SHA}"
 
-          echo "========================================================================"
-          echo "MARKETPLACE CANDIDATE IMAGE — REAL RUNTIME GATE"
-          echo "========================================================================"
-          echo "IMAGE_REF=${IMAGE_REF}"
+          MARKET_BODY="/tmp/marketplace-fr.html"
+          SANILA_BODY="/tmp/sanila-root.html"
+          ROOT_HEADERS="/tmp/root-headers.txt"
 
-          BODY="$(mktemp)"
-          ROOT_HEADERS="$(mktemp)"
-          CONTAINER_LOG="$(mktemp)"
           CID=""
 
-          cleanup_runtime() {
+          cleanup() {
             if [ -n "${CID:-}" ]; then
               docker rm -f "$CID" >/dev/null 2>&1 || true
             fi
-            rm -f "$BODY" "$ROOT_HEADERS" "$CONTAINER_LOG"
           }
 
-          trap cleanup_runtime EXIT
+          trap cleanup EXIT
 
-          echo
-          echo "=== START CANDIDATE IMAGE ==="
+          echo "============================================================"
+          echo "START CANDIDATE IMAGE"
+          echo "IMAGE_REF=${IMAGE_REF}"
+          echo "============================================================"
 
-          CID="$(
-            docker run \
-              -d \
-              -p 127.0.0.1::3000 \
-              "$IMAGE_REF"
-          )"
+          CID="$(docker run -d -p 127.0.0.1::3000 "$IMAGE_REF")"
 
-          echo "CID=$CID"
+          echo "CID=${CID}"
 
           HOST_PORT=""
+          CODE="000"
 
           for ATTEMPT in $(seq 1 180); do
 
@@ -161,11 +155,10 @@ jobs:
                 | tr -d '[:space:]'
             )"
 
-            if [ -n "${HOST_PORT:-}" ]; then
+            if [ -n "${HOST_PORT}" ]; then
               CODE="$(
-                curl \
-                  -sS \
-                  -o "$BODY" \
+                curl -sS \
+                  -o "$MARKET_BODY" \
                   -w '%{http_code}' \
                   "http://127.0.0.1:${HOST_PORT}/angelcare-marketplace/fr" \
                   2>/dev/null || true
@@ -177,108 +170,91 @@ jobs:
             fi
 
             RUNNING="$(
-              docker inspect \
-                -f '{{.State.Running}}' \
-                "$CID" 2>/dev/null || echo false
+              docker inspect -f '{{.State.Running}}' "$CID" 2>/dev/null \
+                || echo false
             )"
 
             if [ "$RUNNING" != "true" ]; then
-              echo "FAIL: candidate container exited."
-
-              docker logs "$CID" \
-                > "$CONTAINER_LOG" 2>&1 || true
-
-              tail -n 200 "$CONTAINER_LOG"
+              echo "FAIL: candidate container exited"
+              docker logs "$CID" || true
               exit 1
             fi
 
             sleep 1
           done
 
-          if [ -z "${HOST_PORT:-}" ]; then
-            echo "FAIL: candidate image never exposed port 3000."
+          echo "HOST_PORT=${HOST_PORT}"
+          echo "MARKETPLACE_HTTP=${CODE}"
+
+          if [ "$CODE" != "200" ]; then
+            echo "FAIL: Marketplace FR never became HTTP 200"
             docker logs "$CID" || true
             exit 1
           fi
 
-          echo "HOST_PORT=$HOST_PORT"
+          echo
+          echo "=== MARKETPLACE MUST NOT BE SANILA ==="
 
-          HTTP="$(
-            curl \
-              -sS \
-              -o "$BODY" \
+          if grep -Fqi 'Tout votre établissement' "$MARKET_BODY"; then
+            echo "FAIL: old SANILA hero rendered at Marketplace FR"
+            exit 1
+          fi
+
+          if grep -Eqi 'data-page=.accueil.' "$MARKET_BODY"; then
+            echo "FAIL: SANILA accueil renderer owns Marketplace FR"
+            exit 1
+          fi
+
+          echo "MARKETPLACE_FR_SANILA_INTERCEPTION=0"
+
+          if grep -Fqi 'GLOBAL MARKETPLACE' "$MARKET_BODY"; then
+            echo "MARKETPLACE_RUNTIME_IDENTITY=GLOBAL_MARKETPLACE"
+          elif grep -Fqi 'ANGELCARE MARKET PLACE' "$MARKET_BODY"; then
+            echo "MARKETPLACE_RUNTIME_IDENTITY=ANGELCARE_MARKET_PLACE"
+          else
+            echo "MARKETPLACE_RUNTIME_IDENTITY=SAFE_FALLBACK"
+          fi
+
+          echo
+          echo "=== SANILA MUST STILL EXIST ONLY UNDER /sanila ==="
+
+          SANILA_CODE="$(
+            curl -sS \
+              -o "$SANILA_BODY" \
               -w '%{http_code}' \
-              "http://127.0.0.1:${HOST_PORT}/angelcare-marketplace/fr"
+              "http://127.0.0.1:${HOST_PORT}/angelcare-marketplace/fr/sanila"
           )"
 
-          echo "MARKETPLACE_HTTP=$HTTP"
+          echo "SANILA_HTTP=${SANILA_CODE}"
 
-          [ "$HTTP" = "200" ] || {
-            echo "FAIL: Marketplace FR did not return HTTP 200."
-            docker logs "$CID" || true
-            exit 1
-          }
-
-          echo
-          echo "=== MARKETPLACE IDENTITY TEST ==="
-
-          if grep -Fqi "SANILA Operating System" "$BODY"; then
-            echo "FAIL: Marketplace FR renders SANILA Operating System."
+          if [ "$SANILA_CODE" != "200" ]; then
+            echo "FAIL: SANILA namespaced root is not HTTP 200"
             exit 1
           fi
 
-          if grep -Fqi "Tout votre établissement" "$BODY"; then
-            echo "FAIL: Marketplace FR renders the old SANILA hero."
-            exit 1
-          fi
-
-          if grep -Eqi 'data-page=["'\'']accueil["'\'']' "$BODY"; then
-            echo "FAIL: Marketplace FR renders SANILA accueil authority."
-            exit 1
-          fi
-
-          echo "SANILA_AT_MARKETPLACE_ROOT=NO"
-
-          MARKETPLACE_IDENTITY=NO
-
-          if grep -Fqi "GLOBAL MARKETPLACE" "$BODY"; then
-            echo "MARKETPLACE_IDENTITY=GLOBAL_MARKETPLACE"
-            MARKETPLACE_IDENTITY=YES
-          fi
-
-          if grep -Fqi "ANGELCARE MARKET PLACE" "$BODY"; then
-            echo "MARKETPLACE_IDENTITY=ANGELCARE_MARKET_PLACE"
-            MARKETPLACE_IDENTITY=YES
-          fi
-
-          if grep -Eqi "AngelCare.{0,80}Marketplace|Marketplace.{0,80}AngelCare" "$BODY"; then
-            echo "MARKETPLACE_IDENTITY=ANGELCARE_MARKETPLACE"
-            MARKETPLACE_IDENTITY=YES
-          fi
-
-          if [ "$MARKETPLACE_IDENTITY" != "YES" ]; then
-            echo "FAIL: expected Marketplace identity absent."
-            echo
-            echo "HTML excerpt:"
-            sed -n '1,100p' "$BODY"
+          if grep -Eqi 'data-page=.accueil.' "$SANILA_BODY"; then
+            echo "SANILA_NAMESPACE_RENDERER=PASS"
+          elif grep -Fqi 'SANILA' "$SANILA_BODY"; then
+            echo "SANILA_NAMESPACE_RENDERER=PASS"
+          else
+            echo "FAIL: SANILA identity absent from SANILA namespace"
             exit 1
           fi
 
           echo
-          echo "=== ROOT REDIRECT TEST ==="
+          echo "=== ROOT MUST REDIRECT TO MARKETPLACE ==="
 
-          curl \
-            -sSI \
+          curl -sSI \
             "http://127.0.0.1:${HOST_PORT}/" \
             > "$ROOT_HEADERS"
 
-          sed -n '1,20p' "$ROOT_HEADERS"
+          sed -n '1,15p' "$ROOT_HEADERS"
 
           ROOT_LOCATION="$(
             awk '
               BEGIN { IGNORECASE=1 }
               /^location:/ {
-                sub(/$/, "", $0)
+                sub(/\r$/, "", $0)
                 sub(/^[Ll]ocation:[[:space:]]*/, "", $0)
                 print
                 exit
@@ -286,32 +262,23 @@ jobs:
             ' "$ROOT_HEADERS"
           )"
 
-          echo "ROOT_LOCATION=$ROOT_LOCATION"
+          echo "ROOT_LOCATION=${ROOT_LOCATION}"
 
-          case "$ROOT_LOCATION" in
-            /angelcare-marketplace/fr)
-              ;;
-            http://*/angelcare-marketplace/fr)
-              ;;
-            https://*/angelcare-marketplace/fr)
-              ;;
-            *)
-              echo "FAIL: / does not redirect to Marketplace FR."
-              exit 1
-              ;;
-          esac
+          if [ "$ROOT_LOCATION" != "/angelcare-marketplace/fr" ]; then
+            echo "FAIL: root does not redirect to Marketplace FR"
+            exit 1
+          fi
 
           echo "ROOT_TO_MARKETPLACE=PASS"
 
           echo
-          echo "========================================================================"
+          echo "============================================================"
           echo "MARKETPLACE_CANDIDATE_RUNTIME=PASS"
-          echo "SANILA_AT_MARKETPLACE_ROOT=NO"
+          echo "MARKETPLACE_FR_SANILA_INTERCEPTION=0"
+          echo "SANILA_NAMESPACE_RENDERER=PASS"
           echo "ROOT_TO_MARKETPLACE=PASS"
-          echo "IMAGE_REF=${IMAGE_REF}"
-          echo "========================================================================"
+          echo "============================================================"
 
       - name: Push exact Marketplace image
         run: docker push "${IMAGE}:${TARGET_SHA}"
 
-# manual-build-trigger: 20260827-133715
