@@ -10,19 +10,15 @@ import {
   getAngelcare360ExportOverview,
   getAngelcare360ReportsOverview,
   listAngelcare360DocumentAuditEvents,
-  listAngelcare360DocumentTemplates,
   listAngelcare360ExportAuditEvents,
-  listAngelcare360ExportFiles,
-  listAngelcare360ExportHistory,
   listAngelcare360ReportAuditEvents,
   listAngelcare360ReportCatalogue,
   listAngelcare360ReportHistory,
   listAngelcare360ReportRequests,
   listAngelcare360ReportTemplates,
-  updateAngelcare360DocumentTemplate,
   updateAngelcare360ReportTemplate,
 } from '@/lib/angelcare360/server/reports'
-import { Angelcare360AccessError } from '@/lib/angelcare360/server/context'
+import { Angelcare360AccessError, assertAngelcare360DemoOperationAllowed } from '@/lib/angelcare360/server/context'
 
 export const runtime = 'nodejs'
 
@@ -94,6 +90,7 @@ export async function POST(request: NextRequest) {
     if (!body?.entity || !body.operation) {
       return NextResponse.json({ ok: false, error: 'La requête rapports est incomplète.' }, { status: 422 })
     }
+    await assertAngelcare360DemoOperationAllowed(`${body.entity}.${body.operation}`)
     const payload = normalizePayload(body)
 
     if (body.entity === 'template') {

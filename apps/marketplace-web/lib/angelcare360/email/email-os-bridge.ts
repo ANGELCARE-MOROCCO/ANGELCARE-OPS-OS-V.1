@@ -3,6 +3,7 @@ import { sendEmailOSDirect } from '@/lib/email-os-core/send-mail'
 import { recordOutboundEmailCommand } from '@/lib/angelcare360/email/correspondence-ledger'
 import type { Angelcare360EmailDraft, Angelcare360EmailSendResult } from '@/types/angelcare360/email'
 import { renderAngelcare360BrandedEmail } from '@/lib/angelcare360/branding/email-template'
+import { assertExternalSideEffectAllowed } from '@/lib/sanila-demo/safety'
 
 const B2B_EMAIL = 'b2b@angelcarehub.ma'
 
@@ -29,8 +30,10 @@ function normalizeEmailError(error: unknown) {
 
 export async function sendAngelcare360Email(draft: Angelcare360EmailDraft): Promise<Angelcare360EmailSendResult> {
   const mailbox = getAngelcare360B2BMailboxEmail()
+  const metadata = draft.metadata || {}
+  const safety = await assertExternalSideEffectAllowed({ channel: 'email', operation: 'email.send', tenantId: typeof metadata.tenantId === 'string' ? metadata.tenantId : null, schoolId: typeof metadata.schoolId === 'string' ? metadata.schoolId : null, metadata: { recipient_domain: String(draft.toEmail).split('@')[1] || null } })
+  if (!safety.allowed) return { ok: true, locked: true, mailbox, provider: 'email-os', emailId: `demo-simulated:${safety.context.configId}`, reason: `${safety.code} · SIMULATED / DEMO SAFE` }
   try {
-    const metadata = draft.metadata || {}
     const branded = await renderAngelcare360BrandedEmail({ subject: draft.subject, body: draft.body, bodyHtml: draft.bodyHtml, clientId: typeof metadata.clientId === 'string' ? metadata.clientId : null, tenantId: typeof metadata.tenantId === 'string' ? metadata.tenantId : null })
     const result = await sendEmailOSDirect({
       mailboxId: mailboxIdFromEmail(mailbox),

@@ -1,0 +1,43 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "incremental": false
+  },
+  "include": [
+    "app/(protected)/angelcare-360-operator/demo/**/*.tsx",
+    "app/angelcare-marketplace/(protected)/admin/sanila-demo/page.tsx",
+    "app/angelcare-marketplace/[locale]/sanila/demo-access/page.tsx",
+    "app/api/angelcare360/operator/demo/route.ts",
+    "app/api/angelcare360/academic-years/route.ts",
+    "app/api/angelcare360/academics/route.ts",
+    "app/api/angelcare360/administration/route.ts",
+    "app/api/angelcare360/admissions/route.ts",
+    "app/api/angelcare360/attendance/route.ts",
+    "app/api/angelcare360/claims/route.ts",
+    "app/api/angelcare360/communication/route.ts",
+    "app/api/angelcare360/documents/route.ts",
+    "app/api/angelcare360/finance/route.ts",
+    "app/api/angelcare360/inventory/route.ts",
+    "app/api/angelcare360/library/route.ts",
+    "app/api/angelcare360/payroll/route.ts",
+    "app/api/angelcare360/people/route.ts",
+    "app/api/angelcare360/reports/route.ts",
+    "app/api/angelcare360/timetable/route.ts",
+    "app/api/angelcare360/transport/route.ts",
+    "app/api/angelcare-marketplace/admin/sanila-demo/route.ts",
+    "components/marketplace/SanilaDemoDesk.tsx",
+    "lib/sanila-demo/**/*.ts",
+    "lib/angelcare360/email/email-os-bridge.ts",
+    "lib/angelcare360/operator/email-command.ts",
+    "lib/angelcare360/operator/access.ts",
+    "lib/angelcare360/payment-gates/customer-gate.ts",
+    "lib/angelcare360/server/context.ts",
+    "lib/ac360/school-communication.ts",
+    "lib/ac360/runtime.ts",
+    "scripts/sanila-demo-policy.test.ts",
+    "next-env.d.ts",
+    "types/**/*.d.ts"
+  ],
+  "exclude": ["node_modules", ".next"]
+}

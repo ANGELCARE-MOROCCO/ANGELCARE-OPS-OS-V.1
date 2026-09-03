@@ -1,6 +1,6 @@
 $ErrorActionPreference = 'Stop'
 $Target = if ($env:MARKETPLACE_MEDIA_GATEWAY_INSTALL_DIR) { $env:MARKETPLACE_MEDIA_GATEWAY_INSTALL_DIR } else { 'C:\AngelCare\MarketplaceMediaGateway' }
-$MediaRoot = if ($env:MARKETPLACE_MEDIA_ROOT) { $env:MARKETPLACE_MEDIA_ROOT } else { 'D:\AngelCareData\Marketplace' }
+$MediaRoot = if ($env:MARKETPLACE_MEDIA_ROOT) { $env:MARKETPLACE_MEDIA_ROOT } else { 'S:\AngelCareData\Marketplace' }
 New-Item -ItemType Directory -Force -Path $Target | Out-Null
 New-Item -ItemType Directory -Force -Path $MediaRoot | Out-Null
 Copy-Item -Force "$PSScriptRoot\server.js" "$Target\server.js"

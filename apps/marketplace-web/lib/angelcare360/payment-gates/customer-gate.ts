@@ -2,6 +2,7 @@ import { getAngelcare360AccessContext } from '@/lib/angelcare360/server/context'
 import { getAngelcare360PaymentProviderStatus, createAngelcare360CheckoutSession } from '@/lib/angelcare360/payments/provider'
 import { createClient } from '@/lib/supabase/server'
 import type { Angelcare360PaymentGateRecord } from '@/types/angelcare360/payment-gates'
+import { assertExternalSideEffectAllowed } from '@/lib/sanila-demo/safety'
 
 export async function getActiveCustomerPaymentGate(options?: { schoolId?: string | null }) {
   const context = await getAngelcare360AccessContext(options)
@@ -53,6 +54,12 @@ export async function createOnlineCheckoutSessionForGate(input: {
   currency?: string | null
   returnUrl?: string | null
 }) {
+  const db = await createClient()
+  const gate = await db.from('angelcare360_operator_payment_gates').select('tenant_id').eq('gate_code', input.gateCode).maybeSingle()
+  if (gate.data?.tenant_id) {
+    const safety = await assertExternalSideEffectAllowed({ channel: 'payment', operation: 'payment.checkout', tenantId: String(gate.data.tenant_id), metadata: { gate_code: input.gateCode, amount_mad: input.amountDueMad } })
+    if (!safety.allowed) return { ok: true as const, locked: true as const, simulated: true as const, checkoutUrl: null, code: safety.code, reason: 'Paiement simulé · DEMO SAFE' }
+  }
   const provider = getAngelcare360PaymentProviderStatus()
   if (!provider.configured) {
     return {

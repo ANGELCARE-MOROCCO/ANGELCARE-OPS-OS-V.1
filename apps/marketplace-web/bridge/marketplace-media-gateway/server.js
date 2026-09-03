@@ -2,7 +2,7 @@
 const http=require('node:http'),fs=require('node:fs'),fsp=require('node:fs/promises'),path=require('node:path'),crypto=require('node:crypto')
 const{pipeline}=require('node:stream/promises')
 const PORT=Number(process.env.MARKETPLACE_MEDIA_GATEWAY_PORT||8790),HOST=process.env.MARKETPLACE_MEDIA_GATEWAY_HOST||'0.0.0.0'
-const ROOT=path.resolve(process.env.MARKETPLACE_MEDIA_ROOT||'D:\\AngelCareData\\Marketplace')
+const ROOT=path.resolve(process.env.MARKETPLACE_MEDIA_ROOT||'S:\\AngelCareData\\Marketplace')
 const SIGNING_SECRET=String(process.env.MARKETPLACE_MEDIA_SIGNING_SECRET||''),ADMIN_TOKEN=String(process.env.MARKETPLACE_MEDIA_GATEWAY_ADMIN_TOKEN||'')
 const ALLOWED_ORIGIN=String(process.env.MARKETPLACE_MEDIA_ALLOWED_ORIGIN||'').replace(/\/$/,'')
 const MAX_BYTES=Number(process.env.MARKETPLACE_MEDIA_MAX_BYTES||40*1024*1024),MIN_FREE_BYTES=Number(process.env.MARKETPLACE_MEDIA_MIN_FREE_BYTES||10*1024*1024*1024),TEMP_HOURS=Number(process.env.MARKETPLACE_MEDIA_TEMP_RETENTION_HOURS||24)

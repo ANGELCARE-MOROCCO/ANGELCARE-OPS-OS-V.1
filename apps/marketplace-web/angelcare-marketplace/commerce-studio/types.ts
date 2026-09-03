@@ -80,6 +80,7 @@ export interface MediaAsset extends CommerceRecord {
   file_name: string
   media_type: string
   mime_type: string
+  size_bytes: number
   storage_bucket: string
   storage_path: string
   public_url: string
@@ -94,9 +95,19 @@ export interface MediaAsset extends CommerceRecord {
   rights_status: string
   rights_expires_at: string | null
   usage_count: number
+  metadata: Record<string, unknown>
+  assignment_roles?: string[]
   status: string
   created_at: string
   updated_at: string
+}
+
+export interface MediaFolder extends CommerceRecord {
+  id: string
+  parent_id: string | null
+  name: string
+  slug: string
+  status: string
 }
 
 export interface HomepageSectionRecord extends CommerceRecord {
@@ -227,6 +238,7 @@ export interface MerchandisingAssignment extends CommerceRecord {
 export interface CommerceStudioData {
   summary: CommerceStudioSummary
   media: MediaAsset[]
+  mediaFolders: MediaFolder[]
   sections: HomepageSectionRecord[]
   campaigns: CommerceRecord[]
   collections: CommerceRecord[]

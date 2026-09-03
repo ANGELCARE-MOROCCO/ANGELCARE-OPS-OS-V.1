@@ -55,7 +55,9 @@ test('all Marketplace importer clients use the shared picker and retain explicit
   assert.match(commerce, /onClick=\{\(\) => void run\(false\)\}/)
 
   const media = await source(paths[5])
-  assert.match(media, /MEDIA_MAX_BYTES=40\*1024\*1024/)
+  assert.match(media, /MEDIA_MAX_BYTES/)
+  const mediaPolicy = await source('angelcare-marketplace/commerce-studio/media-library-operations.ts')
+  assert.match(mediaPolicy, /MEDIA_MAX_BYTES = 40 \* 1024 \* 1024/)
   assert.match(media, /Confirmer le remplacement/)
   assert.doesNotMatch(media, /onFilesChange=\{[^}\n]*replaceAsset/)
 })

@@ -42,6 +42,7 @@ function getOperatorRole(user: Angelcare360SessionUser): Angelcare360OperatorRol
 
 export async function requireAngelcare360OperatorSession(): Promise<Angelcare360OperatorSession | null> {
   const raw = await requireUser().catch(() => null)
+  if ((raw as { __demo?: boolean } | null)?.__demo) return null
   const user = normalizeAngelcare360User(raw as Partial<Angelcare360SessionUser> | null)
   if (!user) return null
 
@@ -85,4 +86,3 @@ export function hasAngelcare360OperatorAccess(user: Partial<Angelcare360SessionU
   const role = getOperatorRole(normalized)
   return access.accessLevel === 'super_admin' || role !== 'read_only' || hasOperatorPermissionNamespace(permissions)
 }
-

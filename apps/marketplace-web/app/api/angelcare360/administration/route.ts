@@ -21,6 +21,7 @@ import {
   updateAngelcare360TeacherAssignment,
 } from '@/lib/angelcare360/server/administration'
 import { Angelcare360AccessError, requireAngelcare360Permission } from '@/lib/angelcare360/server'
+import { assertAngelcare360DemoOperationAllowed } from '@/lib/angelcare360/server/context'
 
 export const runtime = 'nodejs'
 
@@ -208,6 +209,7 @@ export async function POST(request: NextRequest) {
 
     const entity = body.entity
     const operation = body.operation
+    await assertAngelcare360DemoOperationAllowed(`${entity}.${operation}`)
 
     if (entity === 'role-permissions') {
       await requireAngelcare360Permission('securite.configure')

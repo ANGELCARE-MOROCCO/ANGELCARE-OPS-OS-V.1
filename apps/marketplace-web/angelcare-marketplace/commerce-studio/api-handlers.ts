@@ -6,6 +6,7 @@ import sharp from 'sharp'
 import type { MarketplacePermission } from '../domain/types'
 import {
   archiveCommerceResource,
+  assertActiveMediaFolder,
   commerceResourceAction,
   commerceStudioData,
   createCommerceResource,
@@ -136,6 +137,7 @@ export async function handleMediaUpload(request: Request): Promise<Response> {
     if (!ALLOWED_MIME.has(file.type)) throw new MarketplaceError('VALIDATION_ERROR', 'Format de média non pris en charge.')
     if (file.size <= 0 || file.size > MAX_UPLOAD_BYTES) throw new MarketplaceError('VALIDATION_ERROR', 'Le fichier doit être inférieur à 40 Mo.')
     const folderId = cleanOptionalText(form.get('folder_id'), 64)
+    await assertActiveMediaFolder(folderId)
     const replaceAssetId = cleanOptionalText(form.get('replace_asset_id'), 64)
     const altTextFr = cleanText(form.get('alt_text_fr'), 400) || file.name
     const storageFileName = sanitizeFileName(file.name)

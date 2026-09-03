@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import crypto from 'crypto'
 import { createServiceClient } from '@/lib/supabase/server'
 import { listEmailOSMultiMailboxes, listEmailOSMultiMailboxesFromDb, mailboxIdFromEmail } from '@/lib/email-os-core/multi-mailbox-resolver'
@@ -6,6 +7,7 @@ import { requireAngelcare360OperatorPermission } from './access'
 import { writeOperatorAuditLog } from './audit'
 import { asString, asStringArray, getOperatorClient, safeList, toRecord } from './shared'
 import type { EmailCommandSnapshot } from '@/types/angelcare360/operator/email-command'
+import { assertExternalSideEffectAllowed } from '@/lib/sanila-demo/safety'
 
 const RULE_TABLE = 'angelcare360_operator_email_automation_rules'
 const RULE_VERSION_TABLE = 'angelcare360_operator_email_automation_rule_versions'
@@ -16,7 +18,6 @@ const LINK_TABLE = 'angelcare360_operator_email_relationship_links'
 const MATCH_TABLE = 'angelcare360_operator_email_inbound_matches'
 const ASSIGNMENT_TABLE = 'angelcare360_operator_email_thread_assignments'
 const TEMPLATE_TABLE = 'angelcare360_operator_email_templates'
-const JOURNEY_TABLE = 'angelcare360_operator_email_journeys'
 const APPROVAL_TABLE = 'angelcare360_operator_email_approvals'
 const SUPPRESSION_TABLE = 'angelcare360_operator_email_suppressions'
 const COMMITMENT_TABLE = 'angelcare360_operator_email_business_commitments'
@@ -26,21 +27,6 @@ type ResolvedRecipient = {
   contactId?: string | null
   source: string
   confidence: 'confirmed' | 'high' | 'suggested'
-}
-
-const TABLES = {
-  rules: RULE_TABLE,
-  executions: EXECUTION_TABLE,
-  messages: MESSAGE_TABLE,
-  deliveryEvents: DELIVERY_TABLE,
-  relationshipLinks: LINK_TABLE,
-  inboundMatches: MATCH_TABLE,
-  assignments: ASSIGNMENT_TABLE,
-  templates: TEMPLATE_TABLE,
-  journeys: JOURNEY_TABLE,
-  approvals: APPROVAL_TABLE,
-  suppressions: SUPPRESSION_TABLE,
-  commitments: COMMITMENT_TABLE,
 }
 
 function now() { return new Date().toISOString() }
@@ -263,6 +249,12 @@ async function sendMessage(input: unknown) {
   if (message.status === 'scheduled' && message.scheduled_at && new Date(message.scheduled_at).getTime() > Date.now() && !bool(payload.force)) return { ok: false, error: 'Le message est planifié pour une date future.' }
   const suppressed = await findSuppressedRecipient(db, message.recipient_emails || [])
   if (suppressed) return { ok: false, error: `Destinataire supprimé: ${suppressed.email}.` }
+  const demoSafety = await assertExternalSideEffectAllowed({ channel: 'email', operation: 'email.send', tenantId: message.tenant_id, actorUserId: actor.user.id, metadata: { operator_message_id: id } })
+  if (!demoSafety.allowed) {
+    const { data } = await db.from(MESSAGE_TABLE).update({ status: 'smtp_accepted', delivery_state: 'simulated_demo_safe', provider_message_id: `demo-simulated:${id}`, sent_at: now(), updated_by: actor.user.id }).eq('id', id).select('*').single()
+    await appendDeliveryEvent(db, id, 'simulated_demo_safe', { code: demoSafety.code })
+    return { ok: true, simulated: true, code: demoSafety.code, record: data }
+  }
   const mailboxes = [...await listEmailOSMultiMailboxesFromDb().catch(() => []), ...listEmailOSMultiMailboxes()]
   const mailbox = mailboxes.find((item) => item.key === message.mailbox_key || item.email === message.mailbox_email) || mailboxes.find((item) => item.key === 'B2B') || mailboxes[0]
   if (!mailbox) return { ok: false, error: 'Aucune boîte Email OS configurée.' }
@@ -543,6 +535,12 @@ async function sendStoredMessageAsSystem(db: any, message: any) {
     await db.from(MESSAGE_TABLE).update({ status: 'cancelled', delivery_state: 'suppressed', failure_reason: `Recipient suppressed: ${suppressed.email}` }).eq('id', message.id)
     await appendDeliveryEvent(db, message.id, 'suppressed', { email: suppressed.email, reason: suppressed.reason || null })
     return { ok: false, skipped: true, error: `Destinataire supprimé: ${suppressed.email}.` }
+  }
+  const demoSafety = await assertExternalSideEffectAllowed({ channel: 'email', operation: 'email.send.worker', tenantId: message.tenant_id, metadata: { operator_message_id: message.id } })
+  if (!demoSafety.allowed) {
+    const { data } = await db.from(MESSAGE_TABLE).update({ status: 'smtp_accepted', delivery_state: 'simulated_demo_safe', provider_message_id: `demo-simulated:${message.id}`, sent_at: now(), next_retry_at: null }).eq('id', message.id).select('*').single()
+    await appendDeliveryEvent(db, message.id, 'worker.simulated_demo_safe', { code: demoSafety.code })
+    return { ok: true, simulated: true, code: demoSafety.code, record: data }
   }
   const mailboxes = [...await listEmailOSMultiMailboxesFromDb().catch(() => []), ...listEmailOSMultiMailboxes()]
   const mailbox = mailboxes.find((item) => item.key === message.mailbox_key || item.email === message.mailbox_email) || mailboxes.find((item) => item.key === 'B2B') || mailboxes[0]

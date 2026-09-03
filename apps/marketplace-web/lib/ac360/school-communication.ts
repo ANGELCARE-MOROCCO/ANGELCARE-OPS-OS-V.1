@@ -1,7 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createClient } from '@/lib/supabase/server'
 import { getCurrentUser } from '@/lib/getUser'
 import { buildAc360IdempotencyKey, runAc360WiredAction } from './action-wiring'
 import { resolveAc360SchoolOpsContext } from './school-ops'
+import { getAngelcare360AccessContext } from '@/lib/angelcare360/server/context'
+import { assertExternalSideEffectAllowed } from '@/lib/sanila-demo/safety'
 
 export type Ac360SchoolCommunicationPayload = Record<string, unknown>
 
@@ -62,6 +65,13 @@ async function executeCommunicationRpc(
 ) {
   const resolved = await resolveAc360SchoolOpsContext(String(body.orgId || body.org_id || '') || undefined)
   if (!resolved.ok) return resolved
+
+  if (wiringKey.endsWith('.dispatch')) {
+    const legacy = await getAngelcare360AccessContext().catch(() => null)
+    const channel = wiringKey.includes('whatsapp') ? 'whatsapp' : wiringKey.includes('sms') ? 'sms' : wiringKey.includes('push') ? 'push' : 'email'
+    const safety = await assertExternalSideEffectAllowed({ channel, operation: `${channel}.send`, schoolId: legacy?.school?.id || null, actorUserId: legacy?.user?.id || null, metadata: { org_id: resolved.orgId, wiring_key: wiringKey } })
+    if (!safety.allowed) return { ok: true as const, status: 200, simulated: true, code: safety.code, data: { outcome: 'SIMULATED_DEMO_SAFE', dispatched: 0 } }
+  }
 
   const idempotencySeed = body.idempotencyKey || body.idempotency_key || `${resolved.orgId}:${wiringKey}:${body.templateKey || body.template_key || body.campaignId || body.campaign_id || body.recipientId || body.recipient_id || body.threadId || body.thread_id || body.notificationId || body.notification_id || body.alertId || body.alert_id || Date.now()}`
 

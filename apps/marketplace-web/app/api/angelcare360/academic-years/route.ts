@@ -1,7 +1,7 @@
 import { publicAngelcare360Error } from '@/lib/angelcare360/server/public-error'
 import { NextRequest, NextResponse } from 'next/server'
 import { publishAngelcare360AcademicCalendar } from '@/lib/angelcare360/server/academic-years-overview'
-import { Angelcare360AccessError } from '@/lib/angelcare360/server/context'
+import { Angelcare360AccessError, assertAngelcare360DemoOperationAllowed } from '@/lib/angelcare360/server/context'
 
 export const runtime = 'nodejs'
 
@@ -14,6 +14,7 @@ type AcademicYearsMutationBody = {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json().catch(() => null) as AcademicYearsMutationBody | null
+    await assertAngelcare360DemoOperationAllowed(`academic-year.${body?.operation || ''}`)
     if (!body?.operation || !body.schoolId || !body.academicYearId) {
       return NextResponse.json({ ok: false, error: 'La requête calendrier académique est incomplète.' }, { status: 422 })
     }

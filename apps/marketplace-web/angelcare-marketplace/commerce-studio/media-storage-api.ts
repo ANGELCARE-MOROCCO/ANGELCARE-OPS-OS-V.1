@@ -15,6 +15,8 @@ import {
   marketplaceMediaStorageHealth,
 } from './media-storage'
 import {
+  assertActiveMediaFolder,
+  findMediaByChecksums,
   getCommerceResource,
   markGatewayMediaFailed,
   permanentlyDeleteMediaMetadata,
@@ -24,6 +26,37 @@ import {
 import { sanitizeFileName } from './validation'
 
 const ALLOWED_MIME = new Set(['image/jpeg','image/png','image/webp','image/avif','image/svg+xml','video/mp4','video/webm','application/pdf'])
+
+type MediaPreflightInput = { fileName?: unknown; mimeType?: unknown; sizeBytes?: unknown; checksumSha256?: unknown; folderId?: unknown }
+
+export async function handleMarketplaceMediaPreflight(request: Request): Promise<Response> {
+  const rid = requestId(request)
+  try {
+    await requireMarketplaceApiContext('marketplace.media.manage')
+    const body = await parseJsonObject(request)
+    const candidates = Array.isArray(body.files) ? body.files.slice(0, 250) as MediaPreflightInput[] : []
+    if (!candidates.length) throw new MarketplaceError('VALIDATION_ERROR', 'Au moins un fichier est requis pour le préflight.')
+    const configuration = marketplaceMediaStorageConfiguration()
+    const prepared = candidates.map((candidate, index) => {
+      const fileName = cleanText(candidate.fileName, 180)
+      const mimeType = cleanText(candidate.mimeType, 120).toLowerCase()
+      const sizeBytes = Number(candidate.sizeBytes || 0)
+      const checksumSha256 = cleanText(candidate.checksumSha256, 64).toLowerCase()
+      const folderId = cleanOptionalText(candidate.folderId, 64)
+      const errors: string[] = []
+      if (!fileName) errors.push('Nom de fichier manquant.')
+      if (!ALLOWED_MIME.has(mimeType)) errors.push('Format non pris en charge.')
+      if (!Number.isFinite(sizeBytes) || sizeBytes <= 0 || sizeBytes > configuration.maxUploadBytes) errors.push(`Taille invalide ou supérieure à ${Math.round(configuration.maxUploadBytes / 1024 / 1024)} Mo.`)
+      if (!/^[a-f0-9]{64}$/.test(checksumSha256)) errors.push('Empreinte SHA-256 invalide.')
+      return { index, fileName, mimeType, sizeBytes, checksumSha256, folderId, errors }
+    })
+    for (const folderId of [...new Set(prepared.map(row => row.folderId).filter((value): value is string => Boolean(value)))]) await assertActiveMediaFolder(folderId)
+    const duplicates = await findMediaByChecksums(prepared.map(row => row.checksumSha256))
+    return apiSuccess(prepared.map(row => ({ ...row, duplicate: duplicates[row.checksumSha256] || null, state: row.errors.length ? 'FAILED' : 'READY' })), { requestId: rid })
+  } catch (error) {
+    return apiFailure(error, rid)
+  }
+}
 
 function stableMediaPath(assetId: string, fileName: string, variant?: string): string {
   const pathname = `/api/angelcare-marketplace/media/${encodeURIComponent(assetId)}/${encodeURIComponent(sanitizeFileName(fileName))}`
@@ -45,22 +78,24 @@ export async function handleMarketplaceMediaUploadSession(request: Request): Pro
       throw new MarketplaceError('VALIDATION_ERROR', `Le fichier doit être inférieur à ${Math.round(configuration.maxUploadBytes / 1024 / 1024)} Mo.`)
     }
     const replaceAssetId = cleanOptionalText(body.replaceAssetId, 64)
+    const folderId = cleanOptionalText(body.folderId, 64)
+    await assertActiveMediaFolder(folderId)
     const assetId = replaceAssetId || crypto.randomUUID()
     if (replaceAssetId && !await getCommerceResource('media', replaceAssetId)) throw new MarketplaceError('NOT_FOUND', 'Média à remplacer introuvable.')
     const publicUrl = stableMediaPath(assetId, fileName)
+    const session = createMarketplaceMediaUploadSession({ assetId, filename: sanitizeFileName(fileName), mimeType, maxBytes: sizeBytes, actorUserId: context.actor.id })
     if (!replaceAssetId) {
       await registerPendingGatewayMedia({
         id: assetId,
         fileName,
         mimeType,
         sizeBytes,
-        folderId: cleanOptionalText(body.folderId, 64),
+        folderId,
         altTextFr: cleanText(body.altTextFr, 400) || fileName,
         publicUrl,
         context,
       })
     }
-    const session = createMarketplaceMediaUploadSession({ assetId, filename: sanitizeFileName(fileName), mimeType, maxBytes: sizeBytes, actorUserId: context.actor.id })
     await writeMarketplaceAudit({
       context, requestId: rid, action: replaceAssetId ? 'marketplace.media.replace_session_created' : 'marketplace.media.upload_session_created',
       objectType: 'media_asset', objectId: assetId, afterValue: { fileName, mimeType, sizeBytes, storageBackend: 'windows_self_hosted' },
@@ -80,8 +115,10 @@ export async function handleMarketplaceMediaUploadComplete(request: Request, med
     const gateway = await fetchMarketplaceGatewayAsset(mediaId)
     const expectedMime = cleanText(body.mimeType, 120).toLowerCase()
     const expectedSize = Number(body.sizeBytes || 0)
+    const expectedChecksum = cleanText(body.checksumSha256, 64).toLowerCase()
     if (expectedMime && gateway.mimeType !== expectedMime) throw new MarketplaceError('DATA_INTEGRITY', 'Le type reçu ne correspond pas à la session de téléversement.')
     if (expectedSize && gateway.sizeBytes !== expectedSize) throw new MarketplaceError('DATA_INTEGRITY', 'La taille reçue ne correspond pas à la session de téléversement.')
+    if (expectedChecksum && gateway.sha256.toLowerCase() !== expectedChecksum) throw new MarketplaceError('DATA_INTEGRITY', 'L’empreinte reçue ne correspond pas au fichier prévalidé.')
     let width: number | null = null
     let height: number | null = null
     let derivatives: Awaited<ReturnType<typeof imageDerivatives>> | null = null
@@ -122,6 +159,7 @@ export async function handleMarketplaceMediaUploadComplete(request: Request, med
           ...((current.metadata && typeof current.metadata === 'object' && !Array.isArray(current.metadata)) ? current.metadata : {}),
           storage_backend: 'windows_self_hosted', upload_state: 'complete', sha256: gateway.sha256,
           gateway_created_at: gateway.createdAt,
+          product_reference: cleanOptionalText(body.productReference, 120),
           gateway_variants: derivatives ? Object.fromEntries(Object.entries(derivatives).map(([variant, record]) => [variant, record.assetId])) : {},
         },
       },

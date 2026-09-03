@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import crypto from 'crypto'
 import bcrypt from 'bcryptjs'
 import { createClient } from '@/lib/supabase/server'
+import { DEMO_COOKIE, resolveDemoSession } from '@/lib/sanila-demo/authority'
 
 export const APP_SESSION_COOKIE = 'angelcare_ops_session'
 
@@ -22,6 +24,15 @@ export function generateSessionToken() {
 
 export async function getCurrentAppUser() {
   const cookieStore = await cookies()
+  const demoToken = cookieStore.get(DEMO_COOKIE)?.value
+  if (demoToken) {
+    const demo = await resolveDemoSession(demoToken).catch(() => null)
+    if (demo?.config?.school_admin_app_user_id) {
+      const demoDb = await createClient()
+      const { data: demoUser } = await demoDb.from('app_users').select('*').eq('id', demo.config.school_admin_app_user_id).eq('status', 'active').maybeSingle()
+      if (demoUser) return { ...demoUser, __demo: true, __demoGrantId: demo.grant_id, __demoInquiryId: demo.grant?.public_inquiry_id || null, __demoSchoolId: demo.school_id, __demoExpiresAt: demo.effective_expires_at }
+    }
+  }
   const token = cookieStore.get(APP_SESSION_COOKIE)?.value
 
   if (!token) return null

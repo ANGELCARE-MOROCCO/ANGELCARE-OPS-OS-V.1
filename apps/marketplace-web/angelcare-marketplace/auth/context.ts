@@ -27,6 +27,7 @@ type CurrentAppUser = Record<string, unknown> & {
   tenant_id?: string
   territory_id?: string
   permissions?: string[]
+  __demo?: boolean
 }
 
 function normalizeLocale(value: unknown): 'fr' | 'en' | 'ar' {
@@ -106,6 +107,7 @@ async function databaseWorkspaceAccess(userId:string):Promise<string[]>{
 export async function getMarketplaceContext(): Promise<MarketplaceRequestContext | null> {
   const user = (await getCurrentUser().catch(() => null)) as CurrentAppUser | null
   if (!user?.id) return null
+  if (user.__demo) return null
 
   const sourceRole = String(user.role || '').trim().toLowerCase()
   const [stored,workspaceKeys] = await Promise.all([databaseAssignments(String(user.id)),databaseWorkspaceAccess(String(user.id))])

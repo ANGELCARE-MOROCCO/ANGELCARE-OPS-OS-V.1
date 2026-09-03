@@ -20,7 +20,7 @@ import {
   returnAngelcare360LibraryLoan,
   markAngelcare360LibraryLoanLost,
 } from '@/lib/angelcare360/server/library'
-import { Angelcare360AccessError } from '@/lib/angelcare360/server/context'
+import { Angelcare360AccessError, assertAngelcare360DemoOperationAllowed } from '@/lib/angelcare360/server/context'
 
 export const runtime = 'nodejs'
 
@@ -87,6 +87,7 @@ export async function POST(request: NextRequest) {
     if (!body?.entity || !body.operation) {
       return NextResponse.json({ ok: false, error: 'La requête bibliothèque est incomplète.' }, { status: 422 })
     }
+    await assertAngelcare360DemoOperationAllowed(`${body.entity}.${body.operation}`)
 
     const payload = normalizePayload(body)
 

@@ -1,6 +1,6 @@
 # AngelCare Marketplace Windows Media Gateway
 
-Marketplace-owned adaptation of the proven Social Command Media Vault doctrine. It runs separately on trusted AngelCare Windows infrastructure and uses an isolated root (`D:\AngelCareData\Marketplace` by default). No runtime import or storage namespace is shared with Ops OS.
+Marketplace-owned adaptation of the proven Social Command Media Vault doctrine. It runs separately on trusted AngelCare Windows infrastructure and uses the frozen Marketplace root (`S:\AngelCareData\Marketplace` by default). No runtime import or storage namespace is shared with Ops OS.
 
 Required server variables:
 

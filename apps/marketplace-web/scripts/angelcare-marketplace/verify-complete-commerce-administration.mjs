@@ -107,7 +107,7 @@ const apiRoutes = [
 for (const relative of apiRoutes) ok(`API route ${relative}`, exists(relative))
 
 const codeMarkers = [
-  ['media multi upload', 'angelcare-marketplace/commerce-studio/components/MediaLibraryStudio.tsx', "getAll('file')"],
+  ['media multi upload', 'angelcare-marketplace/commerce-studio/components/MediaLibraryStudio.tsx', 'multiple deferValidation'],
   ['media derivatives', 'angelcare-marketplace/commerce-studio/api-handlers.ts', 'imageDerivatives'],
   ['media crop and rotate', 'angelcare-marketplace/commerce-studio/api-handlers.ts', 'handleMediaTransform'],
   ['SVG active-content guard', 'angelcare-marketplace/commerce-studio/api-handlers.ts', 'assertSafeSvg'],

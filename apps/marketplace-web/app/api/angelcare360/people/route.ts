@@ -18,7 +18,7 @@ import {
   updateAngelcare360Staff,
   updateAngelcare360Student,
 } from '@/lib/angelcare360/server/people'
-import { Angelcare360AccessError } from '@/lib/angelcare360/server/context'
+import { Angelcare360AccessError, assertAngelcare360DemoOperationAllowed } from '@/lib/angelcare360/server/context'
 
 export const runtime = 'nodejs'
 
@@ -35,6 +35,7 @@ export async function POST(request: NextRequest) {
     if (!body?.entity || !body.operation) {
       return NextResponse.json({ ok: false, error: 'La requête personnes est incomplète.' }, { status: 422 })
     }
+    await assertAngelcare360DemoOperationAllowed(`${body.entity}.${body.operation}`)
 
     const payload: Record<string, unknown> = {
       ...(body.payload || {}),

@@ -21,7 +21,7 @@ export async function CommerceCommandPage() {
 export async function MediaPage({ mode = 'library' }: { mode?: string }) {
   const context = await requireMarketplacePageContext('marketplace.media.view')
   const data = await commerceStudioData(context)
-  return <MediaLibraryStudio initialMedia={data.media} mode={mode} canManage={hasMarketplacePermission(context, 'marketplace.media.manage')}/>
+  return <MediaLibraryStudio initialMedia={data.media} initialFolders={data.mediaFolders} catalogItems={data.catalogItems} mode={mode} canManage={hasMarketplacePermission(context, 'marketplace.media.manage')}/>
 }
 export async function HomepageComposerPage({ mode = 'composer' }: { mode?: string }) {
   const context = await requireMarketplacePageContext('marketplace.homepage.view')

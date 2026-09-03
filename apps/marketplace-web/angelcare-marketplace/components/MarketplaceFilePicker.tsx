@@ -33,6 +33,7 @@ type MarketplaceFilePickerProps = {
   multiple?: boolean
   className?: string
   inputAriaLabel?: string
+  deferValidation?: boolean
 }
 
 export function MarketplaceFilePicker({
@@ -46,6 +47,7 @@ export function MarketplaceFilePicker({
   multiple = false,
   className,
   inputAriaLabel,
+  deferValidation = false,
 }: MarketplaceFilePickerProps) {
   const inputRef = useRef<HTMLInputElement>(null)
   const descriptionId = useId()
@@ -64,6 +66,11 @@ export function MarketplaceFilePicker({
     setDragActive(false)
     const selected = multiple ? candidates : candidates.slice(0, 1)
     if (!selected.length) return
+    if (deferValidation) {
+      setError('')
+      onFilesChange(selected)
+      return
+    }
     const invalid = selected.find((file) => !acceptsFile(file, accept))
     if (invalid) {
       setError(`Format de fichier non autorisé : ${invalid.name}.`)

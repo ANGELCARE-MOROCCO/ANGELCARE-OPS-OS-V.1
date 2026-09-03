@@ -92,6 +92,12 @@ export async function loadAngelcare360RuntimeEntitlements(input: { userId: strin
     const tenantRow = tenant as Row
     const tenantId = str(tenantRow.id)
     const tenantDetails = { schoolId: input.schoolId, tenantId, tenantSlug: str(tenantRow.tenant_slug), tenantStatus: str(tenantRow.status) }
+    const { data: demoConfig } = await supabase.from('sanila_demo_configs').select('id,billing_mode,safety_status,seed_version').eq('school_id', input.schoolId).eq('classification', 'master_demo').eq('active', true).maybeSingle()
+    if (demoConfig?.billing_mode === 'non_billable' && demoConfig.safety_status === 'enforced') {
+      const modules = [...new Set(ANGELCARE360_PRODUCT_REALITY_OPERATIONS.map((item) => item.moduleKey).filter(Boolean))] as string[]
+      const capabilities = [...new Set(ANGELCARE360_PRODUCT_REALITY_OPERATIONS.map((item) => item.capabilityKey).filter(Boolean))] as string[]
+      return { ...EMPTY, ...tenantDetails, state: 'active', enforced: true, enabledModules: modules, enabledCapabilities: capabilities, enabledOperations: ANGELCARE360_PRODUCT_REALITY_OPERATIONS.map((item) => item.operationKey), warning: null }
+    }
     if (String(tenantRow.status) !== 'active') {
       const suspended = ['suspended', 'archived', 'cancelled'].includes(String(tenantRow.status))
       return closedState(suspended ? 'suspended' : 'partial', suspended ? 'L’accès de votre établissement est temporairement suspendu.' : 'La mise en service de votre établissement doit être finalisée.', tenantDetails)

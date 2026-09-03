@@ -11,6 +11,7 @@ import type {
   CommerceStudioSummary,
   HomepageSectionRecord,
   MediaAsset,
+  MediaFolder,
   MerchandisingAssignment,
   NavigationMenuRecord,
 } from './types'
@@ -86,11 +87,13 @@ function mapMedia(row: Row): MediaAsset {
     ...row,
     id: text(row.id), asset_key: text(row.asset_key), folder_id: nullableText(row.folder_id),
     file_name: text(row.file_name), media_type: text(row.media_type), mime_type: text(row.mime_type),
+    size_bytes: Number(row.size_bytes || 0),
     storage_bucket: text(row.storage_bucket), storage_path: text(row.storage_path), public_url: text(row.public_url),
     desktop_url: text(row.desktop_url), tablet_url: nullableText(row.tablet_url), mobile_url: nullableText(row.mobile_url),
     square_url: nullableText(row.square_url), alt_text_fr: text(row.alt_text_fr), alt_text_en: nullableText(row.alt_text_en),
     alt_text_ar: nullableText(row.alt_text_ar), focal_point: record(row.focal_point), rights_status: text(row.rights_status),
     rights_expires_at: nullableText(row.rights_expires_at), usage_count: Number(row.usage_count || 0),
+    metadata: record(row.metadata),
     status: text(row.status), created_at: text(row.created_at), updated_at: text(row.updated_at),
   }
 }
@@ -187,9 +190,11 @@ export async function commerceStudioData(context: MarketplaceRequestContext): Pr
   const territoryFilter = <T extends { or: (value: string) => T }>(query: T): T => scopedTerritory
     ? query.or(`territory_id.is.null,territory_id.eq.${scopedTerritory}`)
     : query
-  const [summary, media, sections, campaigns, collections, placements, menus, items, categories, priceBooks, territories, versions, events] = await Promise.all([
+  const [summary, media, mediaFolders, catalogMedia, sections, campaigns, collections, placements, menus, items, categories, priceBooks, territories, versions, events] = await Promise.all([
     commerceStudioSummary(),
     db.from('angelcare_marketplace_media_assets').select('*').order('updated_at', { ascending: false }).limit(500),
+    db.from('angelcare_marketplace_media_folders').select('*').neq('status', 'archived').order('name').limit(1000),
+    db.from('angelcare_marketplace_catalog_item_media').select('media_key,asset_url,status').neq('status', 'archived').limit(5000),
     territoryFilter(db.from('angelcare_marketplace_homepage_sections').select('*')).order('sort_order'),
     territoryFilter(db.from('angelcare_marketplace_homepage_campaigns').select('*')).order('priority'),
     territoryFilter(db.from('angelcare_marketplace_homepage_collections').select('*,items:angelcare_marketplace_homepage_collection_items(*)')).order('sort_order'),
@@ -202,12 +207,18 @@ export async function commerceStudioData(context: MarketplaceRequestContext): Pr
     db.from('angelcare_marketplace_commerce_versions').select('*').order('created_at', { ascending: false }).limit(100),
     db.from('angelcare_marketplace_commerce_publication_events').select('*').order('created_at', { ascending: false }).limit(100),
   ])
-  for (const result of [media, sections, campaigns, collections, placements, menus, items, categories]) {
+  for (const result of [media, mediaFolders, catalogMedia, sections, campaigns, collections, placements, menus, items, categories]) {
     if (result.error) throw fail('charger Commerce Studio', result.error)
   }
+  const assignments = rows(catalogMedia.data)
+  const mappedMedia = rows(media.data).map(row => {
+    const asset = mapMedia(row)
+    const references = assignments.filter(entry => [asset.public_url, asset.desktop_url, asset.tablet_url, asset.mobile_url, asset.square_url].filter(Boolean).includes(text(entry.asset_url)))
+    return { ...asset, usage_count: Math.max(asset.usage_count, references.length), assignment_roles: [...new Set(references.map(entry => text(entry.media_key) === 'primary' ? 'primary' : 'gallery'))] }
+  })
   return {
     summary,
-    media: rows(media.data).map(mapMedia), sections: rows(sections.data).map(mapSection),
+    media: mappedMedia, mediaFolders: rows(mediaFolders.data) as MediaFolder[], sections: rows(sections.data).map(mapSection),
     campaigns: rows(campaigns.data) as CommerceRecord[], collections: rows(collections.data) as CommerceRecord[],
     placements: rows(placements.data) as MerchandisingAssignment[], menus: rows(menus.data) as NavigationMenuRecord[],
     catalogItems: rows(items.data).map(mapItem), categories: rows(categories.data).map(mapCategory),
@@ -471,15 +482,69 @@ export async function createCommerceResource(input: {
 }): Promise<CommerceMutationResult> {
   const db = await createServiceClient()
   const payload = normalizedPayload(input.resource, input.payload, input.context)
+  if (input.resource === 'media-folders') {
+    const slug = text(payload.slug)
+    const parentId = nullableText(payload.parent_id)
+    let existingQuery = db.from(TABLES[input.resource]).select('*').eq('slug', slug)
+    existingQuery = parentId ? existingQuery.eq('parent_id', parentId) : existingQuery.is('parent_id', null)
+    const existing = await existingQuery.maybeSingle()
+    if (existing.error) throw fail('vérifier le dossier média', existing.error)
+    if (existing.data) {
+      if (existing.data.status === 'archived') {
+        const restored = await db.from(TABLES[input.resource]).update({ name: text(payload.name), status: 'active', updated_at: new Date().toISOString(), updated_by: input.context.actor.id }).eq('id', existing.data.id).select('*').single()
+        if (restored.error || !restored.data) throw fail('réactiver le dossier média', restored.error)
+        return { record: restored.data as CommerceRecord, affectedPaths: [], publicationEventId: null }
+      }
+      return { record: existing.data as CommerceRecord, affectedPaths: [], publicationEventId: null }
+    }
+  }
+  if (input.resource === 'catalog-media') {
+    const existing = await db.from(TABLES[input.resource]).select('id').eq('catalog_item_id', text(payload.catalog_item_id)).eq('media_key', text(payload.media_key)).maybeSingle()
+    if (existing.error) throw fail('vérifier l’affectation média produit', existing.error)
+    if (existing.data?.id) return updateCommerceResource({ resource: input.resource, id: String(existing.data.id), payload, context: input.context })
+  }
   if (input.resource === 'navigation-items') await assertNoHierarchyCycle(input.resource, null, nullableText(payload.parent_id))
   if (input.resource === 'catalog-categories') await assertNoHierarchyCycle(input.resource, null, nullableText(payload.parent_category_id))
   const { data, error } = await db.from(TABLES[input.resource]).insert(payload).select('*').single()
-  if (error || !data) throw fail(`créer ${input.resource}`, error)
+  if (error || !data) {
+    if (input.resource === 'media-folders' && error?.code === '23505') {
+      const parentId = nullableText(payload.parent_id)
+      let collision = db.from(TABLES[input.resource]).select('*').eq('slug', text(payload.slug))
+      collision = parentId ? collision.eq('parent_id', parentId) : collision.is('parent_id', null)
+      const resolved = await collision.maybeSingle()
+      if (!resolved.error && resolved.data) return { record: resolved.data as CommerceRecord, affectedPaths: [], publicationEventId: null }
+    }
+    throw fail(`créer ${input.resource}`, error)
+  }
   await versionRecord({ resource: input.resource, row: data as Row, action: 'created', actorId: input.context.actor.id })
   const paths = affectedCommercePaths({ objectType: input.resource, locale: nullableText((data as Row).locale), slug: nullableText((data as Row).slug) })
   refreshCommerceSurfaces(paths)
   const eventId = await publicationEvent({ resource: input.resource, row: data as Row, action: 'created', actorId: input.context.actor.id, paths })
   return { record: data as CommerceRecord, affectedPaths: paths, publicationEventId: eventId }
+}
+
+export async function assertActiveMediaFolder(folderId: string | null): Promise<void> {
+  if (!folderId) return
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(folderId)) {
+    throw new MarketplaceError('VALIDATION_ERROR', 'Le dossier média sélectionné est invalide.')
+  }
+  const db = await createServiceClient()
+  const { data, error } = await db.from('angelcare_marketplace_media_folders').select('id').eq('id', folderId).eq('status', 'active').maybeSingle()
+  if (error) throw fail('vérifier le dossier média', error)
+  if (!data) throw new MarketplaceError('VALIDATION_ERROR', 'Le dossier média sélectionné n’existe plus ou est archivé.')
+}
+
+export async function findMediaByChecksums(checksums: string[]): Promise<Record<string, MediaAsset>> {
+  const unique = [...new Set(checksums.map(value => value.trim().toLowerCase()).filter(value => /^[a-f0-9]{64}$/.test(value)))]
+  if (!unique.length) return {}
+  const db = await createServiceClient()
+  const matches: Record<string, MediaAsset> = {}
+  for (const checksum of unique) {
+    const { data, error } = await db.from('angelcare_marketplace_media_assets').select('*').contains('metadata', { sha256: checksum }).neq('status', 'archived').limit(1).maybeSingle()
+    if (error) throw fail('rechercher les doublons média', error)
+    if (data) matches[checksum] = mapMedia(data as Row)
+  }
+  return matches
 }
 
 export async function updateCommerceResource(input: {
@@ -501,6 +566,7 @@ export async function updateCommerceResource(input: {
     { ...(current as Row), ...input.payload },
     input.context,
   )
+  if (input.resource === 'media') await assertActiveMediaFolder(nullableText(payload.folder_id))
   if (input.resource === 'navigation-items') await assertNoHierarchyCycle(input.resource, input.id, nullableText(payload.parent_id))
   if (input.resource === 'catalog-categories') await assertNoHierarchyCycle(input.resource, input.id, nullableText(payload.parent_category_id))
   delete payload.id
@@ -795,6 +861,7 @@ export async function registerPendingGatewayMedia(input: {
   publicUrl: string
   context: MarketplaceRequestContext
 }): Promise<MediaAsset> {
+  await assertActiveMediaFolder(input.folderId)
   const db = await createServiceClient()
   const { data, error } = await db.from('angelcare_marketplace_media_assets').insert({
     id: input.id,
