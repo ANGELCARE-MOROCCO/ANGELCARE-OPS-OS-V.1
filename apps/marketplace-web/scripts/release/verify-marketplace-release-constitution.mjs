@@ -8,6 +8,7 @@ const REQUIRED = [
   '/angelcare-marketplace/fr',
 
   '/angelcare-360-access/login',
+  '/angelcare-360-access/activate',
   '/angelcare-360-portal/login',
   '/angelcare-360-parent/login',
   '/angelcare-360-student/login',

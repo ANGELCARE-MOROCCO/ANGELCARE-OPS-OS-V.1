@@ -136,6 +136,10 @@ function tokenDigest(token: string) {
   return crypto.createHash('sha256').update(token).digest('hex')
 }
 
+function isAccessTokenShape(token: string) {
+  return /^[A-Za-z0-9_-]{43}$/.test(token)
+}
+
 function rawToken() {
   return crypto.randomBytes(32).toString('base64url')
 }
@@ -541,6 +545,7 @@ export async function endTenantSupportAccess(input: unknown) {
 }
 
 export async function inspectTenantAccessToken(token: string, mode: 'invite' | 'reset') {
+  if (!isAccessTokenShape(token)) return { ok: false, error: mode === 'reset' ? 'Le lien de réinitialisation est invalide ou expiré.' : 'Le lien d’activation est invalide, annulé ou expiré.' }
   const db = await createServiceClient()
   const digest = tokenDigest(token)
   if (mode === 'reset') {
@@ -550,7 +555,7 @@ export async function inspectTenantAccessToken(token: string, mode: 'invite' | '
     return { ok: true, mode, account: data.account, expiresAt: data.expires_at }
   }
   const { data } = await db.from(INVITE_TABLE).select('*, account:angelcare360_operator_tenant_access_accounts(id,full_name,email,status,role_template,security_policy,client_id,tenant_id,client:angelcare360_operator_clients(display_name),tenant:angelcare360_operator_tenants(tenant_slug))').eq('token_hash', digest).in('status', ['invited','opened']).gt('expires_at', new Date().toISOString()).maybeSingle()
-  if (!data) return { ok: false, error: 'Le lien d’activation est invalide, annulé ou expiré.' }
+  if (!data?.account || normalizeEmail(data.email) !== normalizeEmail(data.account.email) || ['revoked', 'expired', 'suspended', 'locked'].includes(String(data.account.status))) return { ok: false, error: 'Le lien d’activation est invalide, annulé ou expiré.' }
   await db.from(INVITE_TABLE).update({ status: 'opened', opened_at: new Date().toISOString() }).eq('id', data.id)
   const existingIdentity = data.account?.email
     ? Boolean((await db.from('app_users').select('id').ilike('email', String(data.account.email)).maybeSingle()).data)
@@ -586,6 +591,8 @@ async function provisionMembership(db: Awaited<ReturnType<typeof createServiceCl
     let roleResult = await db.from('angelcare360_roles').select('*').eq('school_id', schoolId).eq('role_key', roleKey).maybeSingle()
     if (!roleResult.data) {
       roleResult = await db.from('angelcare360_roles').insert({ school_id: schoolId, role_key: roleKey, label: `${SCHOOL_ROLE_MAP[template] || 'administration'} · ${asString(account.full_name)}`, description: `Rôle individuel provisionné par Tenant Identity Access (${template}).`, scope: 'school', is_system_locked: true, status: 'active', metadata_json: { source: 'tenant-access', role_template: template, access_account_id: account.id } }).select('*').single()
+    } else if (roleResult.data.status !== 'active') {
+      roleResult = await db.from('angelcare360_roles').update({ status: 'active' }).eq('id', roleResult.data.id).select('*').single()
     }
     if (roleResult.error || !roleResult.data) warnings.push(roleResult.error?.message || 'Rôle établissement non provisionné.')
     else {
@@ -629,10 +636,11 @@ async function provisionMembership(db: Awaited<ReturnType<typeof createServiceCl
   return { membershipId, schoolUserRoleId, warning: warnings.filter(Boolean).join(' · ') || null }
 }
 
-export async function completeTenantAccessToken(input: { token: string; mode: 'invite' | 'reset'; password: string }) {
+export async function completeTenantAccessToken(input: { token: string; mode: 'invite' | 'reset'; password: string; passwordConfirmation: string }) {
   const token = String(input.token || '')
   const password = String(input.password || '')
-  if (token.length < 20) return { ok: false, error: 'Jeton de sécurité invalide.' }
+  if (!isAccessTokenShape(token)) return { ok: false, error: 'Jeton de sécurité invalide.' }
+  if (password !== String(input.passwordConfirmation || '')) return { ok: false, error: 'Les deux mots de passe ne correspondent pas.' }
   const db = await createServiceClient()
   const digest = tokenDigest(token)
   const passwordIsStrong = password.length >= 12 && /[A-Z]/.test(password) && /[a-z]/.test(password) && /[0-9]/.test(password) && /[^A-Za-z0-9]/.test(password)
@@ -652,7 +660,7 @@ export async function completeTenantAccessToken(input: { token: string; mode: 'i
   }
 
   const { data: invitation } = await db.from(INVITE_TABLE).select('*, account:angelcare360_operator_tenant_access_accounts(*)').eq('token_hash', digest).in('status', ['invited','opened']).gt('expires_at', new Date().toISOString()).maybeSingle()
-  if (!invitation?.account) return { ok: false, error: 'Invitation invalide, annulée ou expirée.' }
+  if (!invitation?.account || normalizeEmail(invitation.email) !== normalizeEmail(invitation.account.email) || ['revoked', 'expired', 'suspended', 'locked'].includes(String(invitation.account.status))) return { ok: false, error: 'Invitation invalide, annulée ou expirée.' }
   const account = invitation.account as Record<string, unknown>
   let appUser: any = await db.from('app_users').select('*').ilike('email', asString(account.email)).maybeSingle()
   if (!appUser.data) {
@@ -671,6 +679,7 @@ export async function completeTenantAccessToken(input: { token: string; mode: 'i
   }
   if (appUser.error || !appUser.data) return { ok: false, error: appUser.error?.message || 'Création de l’identité impossible.' }
   const membership = await provisionMembership(db, account, String(appUser.data.id))
+  if (asString(account.school_id) && (!membership.schoolUserRoleId || membership.warning)) return { ok: false, error: 'Le rôle établissement actif n’a pas pu être établi. Réessayez ou contactez AngelCare.' }
   const now = new Date().toISOString()
   const requireMfa = Boolean(toRecord(account.security_policy).require_mfa)
   if (requireMfa) {
@@ -690,6 +699,7 @@ export async function completeTenantAccessToken(input: { token: string; mode: 'i
 
 
 export async function confirmTenantMfaEnrollment(input: { token: string; code: string }) {
+  if (!isAccessTokenShape(String(input.token || ''))) return { ok: false, error: 'Session d’enrôlement MFA invalide ou expirée.' }
   const db = await createServiceClient()
   const digest = tokenDigest(input.token)
   const { data: invitation } = await db.from(INVITE_TABLE).select('*, account:angelcare360_operator_tenant_access_accounts(*)').eq('token_hash', digest).in('status', ['invited','opened']).gt('expires_at', new Date().toISOString()).maybeSingle()
