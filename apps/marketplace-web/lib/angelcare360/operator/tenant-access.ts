@@ -128,6 +128,10 @@ function normalizeEmail(value: unknown) {
   return asString(value).trim().toLowerCase()
 }
 
+function canonicalTenantAccessUsername(email: unknown) {
+  return normalizeEmail(email)
+}
+
 function isEmail(value: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
 }
@@ -142,6 +146,45 @@ function isAccessTokenShape(token: string) {
 
 function rawToken() {
   return crypto.randomBytes(32).toString('base64url')
+}
+
+async function resolveTenantAccessAppUser(
+  db: Awaited<ReturnType<typeof createServiceClient>>,
+  account: Record<string, unknown>,
+): Promise<
+  | { ok: false; error: string }
+  | { ok: true; user: Record<string, unknown> | null; username: string; backfill: boolean }
+> {
+  const email = normalizeEmail(account.email)
+  const linkedId = asString(account.app_user_id)
+  if (!email) return { ok: false as const, error: 'L’adresse email du compte Tenant Access est invalide.' }
+
+  const [linkedResult, emailResult] = await Promise.all([
+    linkedId
+      ? db.from('app_users').select('*').eq('id', linkedId).maybeSingle()
+      : Promise.resolve({ data: null, error: null }),
+    db.from('app_users').select('*').ilike('email', email).limit(2),
+  ])
+  if (linkedResult.error || emailResult.error) return { ok: false as const, error: linkedResult.error?.message || emailResult.error?.message || 'Identité AngelCare inaccessible.' }
+
+  const linkedUser = linkedResult.data as Record<string, unknown> | null
+  const emailMatches = (emailResult.data || []) as Array<Record<string, unknown>>
+  if (emailMatches.length > 1) return { ok: false as const, error: 'Plusieurs identités AngelCare portent cette adresse email. Contactez AngelCare avant activation.' }
+  const emailUser = emailMatches[0] || null
+  if (linkedUser && normalizeEmail(linkedUser.email) !== email) return { ok: false as const, error: 'L’identité liée ne correspond pas à l’adresse invitée.' }
+  if (linkedUser && emailUser && asString(linkedUser.id) !== asString(emailUser.id)) return { ok: false as const, error: 'L’adresse invitée appartient déjà à une autre identité AngelCare.' }
+
+  const existingUser = linkedUser || emailUser
+  const existingUsername = asString(existingUser?.username).trim()
+  if (existingUsername) return { ok: true as const, user: existingUser, username: existingUsername, backfill: false }
+
+  const username = canonicalTenantAccessUsername(email)
+  const usernameResult = await db.from('app_users').select('id,email').ilike('username', username).limit(2)
+  if (usernameResult.error) return { ok: false as const, error: usernameResult.error.message }
+  const collisions = ((usernameResult.data || []) as Array<Record<string, unknown>>).filter((row) => !existingUser || asString(row.id) !== asString(existingUser.id))
+  if (collisions.length) return { ok: false as const, error: 'L’identifiant de connexion canonique appartient déjà à une autre identité AngelCare.' }
+
+  return { ok: true as const, user: existingUser, username, backfill: Boolean(existingUser) }
 }
 
 function toIso(value: unknown) {
@@ -321,7 +364,9 @@ export async function upsertTenantAccessAccount(input: unknown) {
   }
 
   if (result.data.app_user_id) {
-    await db.from('app_users').update({ full_name: fullName, email, role: APP_ROLE_MAP[roleTemplate] || 'administration', permissions: effectiveAppPermissions(result.data) }).eq('id', result.data.app_user_id)
+    const identity = await resolveTenantAccessAppUser(db, result.data)
+    if (!identity.ok || !identity.user) return { ok: false, error: identity.ok ? 'L’identité AngelCare liée est introuvable.' : identity.error }
+    await db.from('app_users').update({ full_name: fullName, email, role: APP_ROLE_MAP[roleTemplate] || 'administration', permissions: effectiveAppPermissions(result.data), ...(identity.backfill ? { username: identity.username } : {}) }).eq('id', result.data.app_user_id)
     if (result.data.school_id) {
       await db.from('angelcare360_user_roles').update({ status: 'paused' }).eq('app_user_id', result.data.app_user_id).eq('school_id', result.data.school_id).contains('metadata_json', { source: 'tenant-access' })
     }
@@ -662,12 +707,15 @@ export async function completeTenantAccessToken(input: { token: string; mode: 'i
   const { data: invitation } = await db.from(INVITE_TABLE).select('*, account:angelcare360_operator_tenant_access_accounts(*)').eq('token_hash', digest).in('status', ['invited','opened']).gt('expires_at', new Date().toISOString()).maybeSingle()
   if (!invitation?.account || normalizeEmail(invitation.email) !== normalizeEmail(invitation.account.email) || ['revoked', 'expired', 'suspended', 'locked'].includes(String(invitation.account.status))) return { ok: false, error: 'Invitation invalide, annulée ou expirée.' }
   const account = invitation.account as Record<string, unknown>
-  let appUser: any = await db.from('app_users').select('*').ilike('email', asString(account.email)).maybeSingle()
-  if (!appUser.data) {
+  const identity = await resolveTenantAccessAppUser(db, account)
+  if (!identity.ok) return { ok: false, error: identity.error }
+  let appUser: any
+  if (!identity.user) {
     if (!passwordIsStrong) return { ok: false, error: 'Le mot de passe doit contenir au moins 12 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial.' }
     const passwordHash = await hashPassword(password)
     appUser = await db.from('app_users').insert({
       email: asString(account.email),
+      username: identity.username,
       full_name: asString(account.full_name),
       role: APP_ROLE_MAP[asString(account.role_template)] || 'administration',
       status: 'active',
@@ -675,7 +723,7 @@ export async function completeTenantAccessToken(input: { token: string; mode: 'i
       permissions: effectiveAppPermissions(account),
     }).select('*').single()
   } else {
-    appUser = await db.from('app_users').update({ full_name: asString(account.full_name), role: APP_ROLE_MAP[asString(account.role_template)] || 'administration', status: 'active', permissions: effectiveAppPermissions(account) }).eq('id', appUser.data.id).select('*').single()
+    appUser = await db.from('app_users').update({ full_name: asString(account.full_name), role: APP_ROLE_MAP[asString(account.role_template)] || 'administration', status: 'active', permissions: effectiveAppPermissions(account), ...(identity.backfill ? { username: identity.username } : {}) }).eq('id', identity.user.id).select('*').single()
   }
   if (appUser.error || !appUser.data) return { ok: false, error: appUser.error?.message || 'Création de l’identité impossible.' }
   const membership = await provisionMembership(db, account, String(appUser.data.id))
