@@ -11,7 +11,8 @@
     "app/angelcare-marketplace/(protected)/admin/layout.tsx",
     "app/angelcare-marketplace/(protected)/admin/configuration/web-presence/page.tsx",
     "app/api/angelcare-marketplace/admin/web-presence/**/*.ts",
-    "app/api/angelcare-marketplace/public/web-presence/**/*.ts"
+    "app/api/angelcare-marketplace/public/web-presence/**/*.ts",
+    "scripts/angelcare-marketplace/verify-web-presence-fresh-install.test.ts"
   ],
   "exclude":["node_modules",".next"]
 }

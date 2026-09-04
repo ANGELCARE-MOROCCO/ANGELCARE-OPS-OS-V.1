@@ -22,7 +22,7 @@ export default function SanilaDemoDesk({ config, grants, inquiries, events }: { 
     if (!response.ok || !result.ok) { setMessage(result.error || 'Action impossible.'); return }
     if (result.pin) setPin(result.pin)
     if (result.grant) setRows((current) => [result.grant, ...current.filter((row) => row.id !== result.grant.id)])
-    setMessage('Dossier Demo mis à jour.')
+    setMessage(result.pin && result.grant?.approval_state !== 'approved' ? 'PIN généré. L’accès reste bloqué jusqu’à l’approbation formelle du grant.' : 'Dossier Demo mis à jour.')
   }
 
   function confirmed(action: 'revoke' | 'regenerate_pin', grantId: string) {
@@ -63,6 +63,7 @@ export default function SanilaDemoDesk({ config, grants, inquiries, events }: { 
         {rows.map((row) => <article key={row.id} style={{ background: '#fff', border: '1px solid #dce6ef', borderRadius: 14, padding: 16, display: 'grid', gap: 8 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16 }}><strong>{row.requester_name}</strong><span>{row.approval_state} · {row.status}</span></div>
           <small>{row.requester_email || '—'} · {row.policy_type} · {row.used_count || 0}/{row.max_uses || '∞'} usages · PIN ••••{row.pin_last4 || '—'} · expiration {row.effective_expires_at || row.absolute_expires_at || '—'}</small>
+          {row.approval_state !== 'approved' ? <small style={{ color: '#9a6419', fontWeight: 800 }}>Accès public bloqué : approuvez formellement ce grant avant de transmettre le PIN.</small> : null}
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
             <button type="button" onClick={() => void act({ action: 'under_review', grantId: row.id })}>Sous revue</button><button type="button" onClick={() => void act({ action: 'needs_info', grantId: row.id })}>Informations requises</button><button type="button" onClick={() => void act({ action: 'approve', grantId: row.id })}>Approuver</button><button type="button" onClick={() => void act({ action: 'reject', grantId: row.id })}>Rejeter</button><button type="button" onClick={() => void act({ action: 'suspend', grantId: row.id })}>Suspendre</button><button type="button" onClick={() => void act({ action: 'reactivate', grantId: row.id })}>Réactiver</button><button type="button" onClick={() => { const expiry = window.prompt('Nouvelle expiration ISO (ex. 2026-10-01T18:00:00Z)'); if (expiry) void act({ action: 'extend', grantId: row.id, absoluteExpiresAt: expiry }) }}>Prolonger</button><button type="button" onClick={() => confirmed('regenerate_pin', row.id)}>Régénérer le PIN</button><button type="button" onClick={() => confirmed('revoke', row.id)}>Révoquer</button>
           </div>

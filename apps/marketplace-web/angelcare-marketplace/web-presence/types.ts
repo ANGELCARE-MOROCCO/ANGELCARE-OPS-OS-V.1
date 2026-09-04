@@ -4,6 +4,7 @@ export const WEB_PRESENCE_LOCALES = ['fr', 'en', 'ar'] as const
 export type WebPresenceScope = (typeof WEB_PRESENCE_SCOPES)[number]
 export type WebPresenceLocale = (typeof WEB_PRESENCE_LOCALES)[number]
 export type WebPresenceLifecycle = 'DRAFT' | 'VALIDATED' | 'PUBLISHED' | 'SUPERSEDED' | 'ROLLED_BACK'
+export type WebPresencePersistenceState = 'UNAVAILABLE' | 'READY_TO_BOOTSTRAP' | 'DRAFT_ONLY' | 'PUBLISHED'
 export type IconRenderingMode = 'CONTAIN_TRANSPARENT' | 'CONTAIN_BRAND_BACKGROUND'
 
 export interface LocalizedMetadata {
@@ -155,9 +156,11 @@ export interface WebPresenceSnapshot {
   profile: WebPresenceProfile
   draft: WebPresenceVersion | null
   published: WebPresenceVersion | null
+  effectiveConfiguration: WebPresenceConfiguration
   mediaAssets: WebPresenceMediaAsset[]
   affectedRoutes: string[]
   persistenceAvailable: boolean
+  persistenceState: WebPresencePersistenceState
   fallbackActive: boolean
   verification: Record<string, unknown> | null
 }

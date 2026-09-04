@@ -54,4 +54,5 @@ export interface Angelcare360RuntimeEntitlements {
     reason: string | null
   }>
   warning: string | null
+  diagnosticCode?: import('@/lib/angelcare360/runtime-entitlement-authority').Angelcare360EntitlementDiagnosticCode | null
 }

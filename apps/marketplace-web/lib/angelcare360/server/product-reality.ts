@@ -7,7 +7,7 @@ import { requireAngelcare360OperatorPermission } from '@/lib/angelcare360/operat
 import { loadAngelcare360RuntimeEntitlements } from '@/lib/angelcare360/server/entitlements'
 import { ANGELCARE360_PRODUCT_REALITY_OPERATIONS, ANGELCARE360_REALITY_POLICY_DEFAULTS, getProductRealityOperation } from '@/data/angelcare360/product-reality'
 import { getAngelcare360RouteBinding } from '@/data/angelcare360/product-constitution'
-import { isAngelcare360CapabilityEnabled, isAngelcare360FeatureEnabled, isAngelcare360ModuleEnabled, isAngelcare360OperationEnabled } from '@/lib/angelcare360/entitlements'
+import { isAngelcare360ModuleEnabled, isAngelcare360OperationEnabled } from '@/lib/angelcare360/entitlements'
 import { Angelcare360AccessError, getAngelcare360AccessContext, requireAngelcare360Permission } from '@/lib/angelcare360/server/context'
 import { recordAngelcare360AuditEventServer } from '@/lib/angelcare360/server/audit'
 import type {
@@ -108,14 +108,10 @@ export async function requireProductRealityOperation(operationKey: string, optio
   if (!context.school) throw new Angelcare360AccessError('Établissement actif introuvable.', 403)
   const runtime = context.runtimeEntitlements
   const moduleAllowed = isAngelcare360ModuleEnabled(runtime, definition.moduleKey)
-  const capabilityAllowed = isAngelcare360CapabilityEnabled(runtime, definition.capabilityKey)
-  const featureAllowed = isAngelcare360FeatureEnabled(runtime, definition.featureKey)
   const operationAllowed = isAngelcare360OperationEnabled(runtime, operationKey)
-  let allowed = moduleAllowed && capabilityAllowed && featureAllowed && operationAllowed
+  let allowed = moduleAllowed && operationAllowed
   let reason: string | null = null
   if (!moduleAllowed) reason = runtime.restrictedModules.find((item) => item.key === definition.moduleKey)?.reason || `Le module ${definition.moduleKey} n’est pas actif.`
-  else if (!capabilityAllowed) reason = runtime.restrictedCapabilities.find((item) => item.key === definition.capabilityKey)?.reason || `La capability ${definition.capabilityKey} n’est pas active.`
-  else if (!featureAllowed) reason = runtime.restrictedFeatures.find((item) => item.key === definition.featureKey)?.reason || `La feature ${definition.featureKey} n’est pas active.`
   else if (!operationAllowed) reason = runtime.restrictedOperations.find((item) => item.key === operationKey)?.reason || `L’opération ${operationKey} est verrouillée.`
 
   const client = await createServiceClient()
@@ -2077,8 +2073,6 @@ async function requireQueuedProductRealityOperation(
   if (definition.operatorOnly) throw new Error(`L’opération ${operationKey} exige une exécution directe par un Operator authentifié.`)
   const runtime = await loadAngelcare360RuntimeEntitlements({ userId, schoolId })
   const allowed = isAngelcare360ModuleEnabled(runtime, definition.moduleKey)
-    && isAngelcare360CapabilityEnabled(runtime, definition.capabilityKey)
-    && isAngelcare360FeatureEnabled(runtime, definition.featureKey)
     && isAngelcare360OperationEnabled(runtime, operationKey)
   if (!allowed) throw new Error(`Entitlement runtime refusé pour ${operationKey}.`)
   const { data: overrideGate, error: gateError } = await client

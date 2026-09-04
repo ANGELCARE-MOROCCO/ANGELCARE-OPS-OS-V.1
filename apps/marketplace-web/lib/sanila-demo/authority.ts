@@ -2,7 +2,7 @@
 import crypto from 'crypto'
 import bcrypt from 'bcryptjs'
 import { createServiceClient } from '@/lib/supabase/server'
-import { demoSessionIsAuthorized, grantIsUsable, nextGrantUsageState, policyExpiry } from './policy'
+import { demoGrantEligibility, demoSessionIsAuthorized, nextGrantUsageState, policyExpiry } from './policy'
 import { demoAttemptFingerprint, isValidDemoPinFormat, pinLookupDigest } from './security'
 export { generateDemoPin, grantIsUsable, policyExpiry } from './policy'
 
@@ -48,15 +48,17 @@ export async function authorizeDemoPin(pin: string, requestMeta: { ip?: string |
     const lookup = await db.from('sanila_demo_access_grants').select('*').eq('config_id', config.id).eq('pin_lookup_digest', lookupDigest).order('created_at', { ascending: false }).limit(1).maybeSingle()
     if (lookup.data && await bcrypt.compare(pin, text(lookup.data.pin_hash))) candidate = lookup.data as Row
   }
-  if (!candidate || !grantIsUsable(candidate, now)) {
+  const eligibility = candidate ? demoGrantEligibility(candidate, now) : 'INVALID_PIN'
+  if (eligibility !== 'VALID') {
     if (candidate) {
       const failed = Number(candidate.failed_attempts || 0) + 1
       await db.from('sanila_demo_access_grants').update({ failed_attempts: failed, locked_until: failed >= 5 ? new Date(Date.now() + 15 * 60000).toISOString() : null, updated_at: now.toISOString() }).eq('id', candidate.id)
     }
     const attempt = await db.rpc('sanila_register_demo_pin_failure', { p_config_id: config.id, p_fingerprint_hash: fingerprint })
-    await recordDemoEvent({ configId: config.id, grantId: candidate?.id || null, inquiryId: candidate?.public_inquiry_id || null, eventType: 'authorization_failed', severity: 'warning', metadata: { reason: 'invalid_or_unusable_pin', fingerprint: fingerprint.slice(0, 12), throttled: Boolean(attempt.data?.locked) } })
+    await recordDemoEvent({ configId: config.id, grantId: candidate?.id || null, inquiryId: candidate?.public_inquiry_id || null, eventType: 'authorization_failed', severity: 'warning', metadata: { reason: eligibility.toLowerCase(), fingerprint: fingerprint.slice(0, 12), throttled: Boolean(attempt.data?.locked) } })
     return { ok: false as const, error: 'Code invalide, expiré ou indisponible.' }
   }
+  if (!candidate) return { ok: false as const, error: 'Code invalide, expiré ou indisponible.' }
   const activatedAt = candidate.activated_at ? new Date(candidate.activated_at) : now
   const expiry = policyExpiry({ ...candidate, activated_at: activatedAt.toISOString() }) || new Date(Date.now() + 12 * 3600000)
   const nextUsage = nextGrantUsageState(candidate)

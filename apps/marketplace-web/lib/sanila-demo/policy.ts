@@ -2,6 +2,7 @@
 import crypto from 'crypto'
 
 type Row = Record<string, any>
+export type SanilaDemoGrantEligibility = 'VALID' | 'LOCKED_OUT' | 'EXPIRED' | 'REVOKED' | 'SUSPENDED' | 'NOT_APPROVED' | 'CONSUMED'
 export const PIN_LENGTH = 8
 export const SANILA_MASTER_DEMO_SEED_VERSION = 'SANILA_MASTER_DEMO_SEED_2026_09_V1'
 export type SanilaDemoMutationClass = 'SAFE_READ' | 'SAFE_DEMO_MUTATION' | 'BLOCKED_DESTRUCTIVE' | 'BLOCKED_EXTERNAL_SIDE_EFFECT'
@@ -24,12 +25,37 @@ export function policyExpiry(grant: Row) {
   const duration = grant.activation_duration_minutes && grant.activated_at ? new Date(new Date(grant.activated_at).getTime() + Number(grant.activation_duration_minutes) * 60000) : null
   return [absolute, duration].filter(Boolean).sort((a, b) => (a as Date).getTime() - (b as Date).getTime())[0] || null
 }
-export function grantIsUsable(grant: Row, now = new Date()) {
-  if (grant.approval_state !== 'approved' || !['ready', 'active'].includes(String(grant.status))) return false
-  if (grant.locked_until && new Date(grant.locked_until) > now) return false
-  if (grant.max_uses && Number(grant.used_count || 0) >= Number(grant.max_uses)) return false
+export function demoGrantEligibility(grant: Row, now = new Date()): SanilaDemoGrantEligibility {
+  const status = String(grant.status)
+  if (grant.revoked_at || status === 'revoked') return 'REVOKED'
+  if (grant.suspended_at || status === 'suspended') return 'SUSPENDED'
+  if (grant.approval_state !== 'approved') return 'NOT_APPROVED'
+  if (status === 'expired') return 'EXPIRED'
+  if (status === 'used' || status === 'exhausted' || (grant.max_uses && Number(grant.used_count || 0) >= Number(grant.max_uses))) return 'CONSUMED'
+  if (grant.locked_until && new Date(grant.locked_until) > now) return 'LOCKED_OUT'
   const expiry = policyExpiry(grant)
-  return !expiry || expiry > now
+  if (expiry && (!Number.isFinite(expiry.getTime()) || expiry <= now)) return 'EXPIRED'
+  return ['ready', 'active'].includes(status) ? 'VALID' : 'NOT_APPROVED'
+}
+
+export function grantIsUsable(grant: Row, now = new Date()) {
+  return demoGrantEligibility(grant, now) === 'VALID'
+}
+
+export function nextGrantApprovalStatus(grant: Row, approvalState: string) {
+  const status = String(grant.status)
+  if (['revoked', 'suspended', 'expired'].includes(status)) return status
+  if (approvalState !== 'approved') return 'draft'
+  if (status === 'used' || status === 'exhausted' || (grant.max_uses && Number(grant.used_count || 0) >= Number(grant.max_uses))) return 'exhausted'
+  return status === 'active' ? 'active' : 'ready'
+}
+
+export function nextGrantRegenerationState(grant: Row) {
+  const status = String(grant.status)
+  return {
+    used_count: 0,
+    status: ['suspended', 'expired'].includes(status) ? status : grant.approval_state === 'approved' ? 'ready' : 'draft',
+  }
 }
 
 export function nextGrantUsageState(grant: Row) {

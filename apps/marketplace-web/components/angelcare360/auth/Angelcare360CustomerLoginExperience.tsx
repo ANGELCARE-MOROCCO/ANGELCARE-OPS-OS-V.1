@@ -183,7 +183,7 @@ function BroadcastTicker({ initial }: { initial: Angelcare360CustomerBroadcastSn
   )
 }
 
-function CustomerBroadcastBar({ initial }: { initial: Angelcare360CustomerBroadcastSnapshot }) {
+export function CustomerBroadcastBar({ initial }: { initial: Angelcare360CustomerBroadcastSnapshot }) {
   return (
     <header className={styles.broadcastBar}>
       <div className={styles.brandLockup}>
@@ -375,7 +375,7 @@ function InvitationAccess() {
   )
 }
 
-function TrustRail() {
+export function TrustRail() {
   return (
     <div className={styles.trustRail} aria-label="Engagements de service">
       <div>

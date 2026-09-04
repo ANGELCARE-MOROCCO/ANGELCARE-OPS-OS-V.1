@@ -39,6 +39,7 @@
     "lib/ac360/school-communication.ts",
     "lib/ac360/runtime.ts",
     "scripts/sanila-demo-policy.test.ts",
+    "scripts/sanila-demo-access-recovery.test.ts",
     "next-env.d.ts",
     "types/**/*.d.ts"
   ],

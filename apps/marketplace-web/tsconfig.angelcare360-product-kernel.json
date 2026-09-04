@@ -20,6 +20,7 @@
     "lib/angelcare360/entitlements.ts",
     "lib/angelcare360/server/entitlements.ts",
     "lib/angelcare360/server/context.ts",
+    "scripts/angelcare360-runtime-entitlement-authority.test.ts",
     "types/angelcare360/entitlements.ts",
     "types/angelcare360/operator/product-kernel.ts",
     "types/angelcare360/operator/index.ts"
