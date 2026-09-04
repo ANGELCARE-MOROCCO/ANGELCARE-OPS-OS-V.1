@@ -4,9 +4,78 @@ import { requireAngelcare360OperatorPermission } from '@/lib/angelcare360/operat
 import { launchTenantSupportAccess, requestTenantSupportAccess } from '@/lib/angelcare360/operator/tenant-access'
 import { createServiceClient } from '@/lib/supabase/server'
 import { recordDemoEvent } from '@/lib/sanila-demo/authority'
+import { provisionGrowthInstitutionSanilaSchool } from '@/lib/angelcare360/operator/institution-school-provisioning'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
+
+function text(value: unknown) { return typeof value === 'string' ? value : value == null ? '' : String(value) }
+function isSchoolInstitution(value: unknown) { return ['school', 'ecole', 'école'].includes(text(value).trim().toLowerCase()) }
+
+async function provisioningCandidates() {
+  const db = await createServiceClient()
+  const [tenantResult, institutionResult, accountResult] = await Promise.all([
+    db.from('angelcare360_operator_tenants').select('id,client_id,school_id,tenant_slug,status,environment,provisioning_status').eq('status', 'active').order('tenant_slug'),
+    db.from('angelcare360_operator_growth_institutions').select('id,client_id,tenant_id,institution_code,name,institution_type,status,metadata,archived_at').not('tenant_id', 'is', null).limit(500),
+    db.from('angelcare360_operator_tenant_access_accounts').select('id,client_id,tenant_id,school_id,app_user_id,school_user_role_id,full_name,email,role_template,status,is_primary_owner,mfa_enrolled_at').eq('status', 'active').not('app_user_id', 'is', null).limit(500),
+  ])
+  if (tenantResult.error) throw tenantResult.error
+  if (institutionResult.error) throw institutionResult.error
+  if (accountResult.error) throw accountResult.error
+
+  const tenants = tenantResult.data || []
+  const institutions = (institutionResult.data || []).filter((item: any) => !item.archived_at && isSchoolInstitution(item.institution_type))
+  const accounts = accountResult.data || []
+  const schoolIds = [...new Set(tenants.map((item: any) => text(item.school_id)).filter(Boolean))]
+  const appUserIds = [...new Set(accounts.map((item: any) => text(item.app_user_id)).filter(Boolean))]
+  const [schoolResult, roleResult] = await Promise.all([
+    schoolIds.length ? db.from('angelcare360_schools').select('id,school_code,name,status').in('id', schoolIds) : Promise.resolve({ data: [], error: null }),
+    appUserIds.length ? db.from('angelcare360_user_roles').select('id,app_user_id,school_id,status').in('app_user_id', appUserIds).eq('status', 'active') : Promise.resolve({ data: [], error: null }),
+  ])
+  if (schoolResult.error) throw schoolResult.error
+  if (roleResult.error) throw roleResult.error
+  const schools = new Map((schoolResult.data || []).map((item: any) => [text(item.id), item]))
+  const activeRoleKeys = new Set((roleResult.data || []).map((item: any) => `${text(item.app_user_id)}:${text(item.school_id)}`))
+
+  const candidates: any[] = []
+  for (const tenant of tenants as any[]) {
+    const tenantInstitutions = institutions.filter((item: any) => text(item.tenant_id) === text(tenant.id) && text(item.client_id) === text(tenant.client_id))
+    const accountScore = (item: any) => (item.is_primary_owner ? 100 : 0) + (text(item.role_template) === 'school_admin' ? 20 : text(item.role_template) === 'tenant_owner' ? 10 : 0)
+    const tenantAccounts = accounts
+      .filter((item: any) => text(item.tenant_id) === text(tenant.id) && text(item.client_id) === text(tenant.client_id))
+      .sort((a: any, b: any) => accountScore(b) - accountScore(a))
+    if (!tenantInstitutions.length || !tenantAccounts.length) continue
+    const admin = tenantAccounts[0]
+    for (const institution of tenantInstitutions) {
+      const schoolId = text(tenant.school_id)
+      const school: any = schoolId ? schools.get(schoolId) : null
+      const adminAppUserId = text(admin.app_user_id)
+      const schoolRoleActive = Boolean(schoolId && adminAppUserId && activeRoleKeys.has(`${adminAppUserId}:${schoolId}`))
+      candidates.push({
+        id: `${text(tenant.id)}:${text(institution.id)}:${text(admin.id)}`,
+        operatorTenantId: text(tenant.id),
+        tenantSlug: text(tenant.tenant_slug),
+        tenantStatus: text(tenant.status),
+        tenantProvisioningStatus: text(tenant.provisioning_status),
+        institutionId: text(institution.id),
+        institutionName: text(institution.name),
+        institutionCode: text(institution.institution_code),
+        schoolId: schoolId || null,
+        schoolName: school ? text(school.name) : null,
+        schoolStatus: school ? text(school.status) : null,
+        schoolAdminAccessAccountId: text(admin.id),
+        schoolAdminAppUserId: adminAppUserId,
+        schoolAdminName: text(admin.full_name),
+        schoolAdminEmail: text(admin.email),
+        schoolAdminRoleTemplate: text(admin.role_template),
+        mfaEnrolled: Boolean(admin.mfa_enrolled_at),
+        schoolRoleActive,
+        readyForClassification: Boolean(schoolId && school?.status === 'active' && adminAppUserId && schoolRoleActive),
+      })
+    }
+  }
+  return candidates
+}
 
 async function snapshot(configId?: string | null) {
   const db = await createServiceClient()
@@ -30,8 +99,11 @@ async function snapshot(configId?: string | null) {
 }
 
 export async function GET() {
-  try { await requireAngelcare360OperatorPermission('operator.demo.environment.view'); return NextResponse.json({ ok: true, snapshot: await snapshot() }) }
-  catch (error) { return NextResponse.json({ ok: false, error: error instanceof Error ? error.message : 'Accès refusé.' }, { status: 403 }) }
+  try {
+    await requireAngelcare360OperatorPermission('operator.demo.environment.view')
+    const current = await snapshot()
+    return NextResponse.json({ ok: true, snapshot: current, candidates: current ? [] : await provisioningCandidates() })
+  } catch (error) { return NextResponse.json({ ok: false, error: error instanceof Error ? error.message : 'Accès refusé.' }, { status: 403 }) }
 }
 
 export async function POST(request: NextRequest) {
@@ -39,6 +111,12 @@ export async function POST(request: NextRequest) {
     const actor = await requireAngelcare360OperatorPermission('operator.demo.environment.manage')
     const body = await request.json() as Record<string, any>
     const db = await createServiceClient()
+    if (body.action === 'provision_school') {
+      if (!body.institutionId || !body.operatorTenantId || body.confirmation !== 'PROVISION SANILA SCHOOL') return NextResponse.json({ ok: false, error: 'Institution, tenant et confirmation exacte PROVISION SANILA SCHOOL requis.' }, { status: 422 })
+      const result = await provisionGrowthInstitutionSanilaSchool({ institutionId: body.institutionId, operatorTenantId: body.operatorTenantId })
+      if (!result.ok) return NextResponse.json(result, { status: 422 })
+      return NextResponse.json({ ok: true, provisioning: result, candidates: await provisioningCandidates() })
+    }
     if (body.action === 'configure') {
       if (!body.operatorTenantId || !body.schoolId || !body.schoolAdminAppUserId || body.confirmation !== 'CLASSIFY SANILA MASTER DEMO') return NextResponse.json({ ok: false, error: 'Tenant, école, School Admin et confirmation exacte requis.' }, { status: 422 })
       const [tenant, school, admin, adminRole] = await Promise.all([

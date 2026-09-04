@@ -18,6 +18,8 @@
     "sanila-demo:certify": "node --env-file=.env.local scripts/sanila-demo-master.mjs certify",
     "media-library:v1:test": "node --experimental-strip-types --test scripts/angelcare-marketplace/verify-media-library-operationalization-v1.test.ts",
     "media-library:v1:typecheck": "tsc -p tsconfig.media-library-v1.json --pretty false",
+    "category-native:product360-bulk:test": "node --experimental-strip-types --test scripts/angelcare-marketplace/verify-category-native-product360-bulk-enrichment.test.ts",
+    "category-native:product360-bulk:typecheck": "tsc -p tsconfig.category-native-product360-bulk.json --pretty false",
     "verify:email-os": "node scripts/verify-email-os-production.mjs",
     "audit:email-os": "node scripts/audit-email-os-routes.mjs",
     "qa:email-os": "node scripts/email-os-final-qa.mjs",

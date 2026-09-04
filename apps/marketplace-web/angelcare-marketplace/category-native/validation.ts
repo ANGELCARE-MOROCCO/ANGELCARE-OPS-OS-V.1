@@ -5,6 +5,11 @@ import type {
   ExperienceSchemaBlueprint,
   RowValidationResult,
 } from './types'
+import {
+  CATEGORY_NATIVE_PRODUCT360_ENRICHMENT_KEYS,
+  categoryNativeCsvFields,
+  validateProduct360Enrichment,
+} from './product360-enrichment'
 
 const TRUE_VALUES = new Set(['true', '1', 'yes', 'oui', 'on'])
 const FALSE_VALUES = new Set(['false', '0', 'no', 'non', 'off'])
@@ -158,7 +163,7 @@ export function validateCategoryNativeRow(
     warnings.push(`Le template est en version ${String(normalized.template_version)} alors que le schéma actif est en version ${schema.version}.`)
   }
 
-  for (const field of schema.fields.filter((entry) => entry.csv_enabled)) {
+  for (const field of categoryNativeCsvFields(schema.fields)) {
     const raw = row[field.field_key]
     const empty = raw === null || raw === undefined || categoryNativeText(raw) === ''
     if (field.required && empty && field.default_value === null) {
@@ -192,6 +197,8 @@ export function validateCategoryNativeRow(
   if (!mediaReference && schema.media_requirements.primary === true) {
     errors.push('Une image principale Media Library est requise.')
   }
+
+  errors.push(...validateProduct360Enrichment(normalized))
 
   return {
     rowNumber,
@@ -269,7 +276,7 @@ function csvEscape(value: unknown): string {
 export function categoryNativeCsvTemplate(
   schema: ExperienceSchemaBlueprint,
 ): CsvTemplateDocument {
-  const fields = schema.fields.filter((field) => field.csv_enabled)
+  const fields = categoryNativeCsvFields(schema.fields)
   const headers = ['template_version', 'schema_key', ...fields.map((field) => field.field_key)]
   const example: Record<string, unknown> = {
     template_version: schema.version,
@@ -277,7 +284,9 @@ export function categoryNativeCsvTemplate(
   }
 
   for (const field of fields) {
-    if (field.default_value !== null && field.default_value !== undefined) {
+    if (CATEGORY_NATIVE_PRODUCT360_ENRICHMENT_KEYS.has(field.field_key)) {
+      example[field.field_key] = ''
+    } else if (field.default_value !== null && field.default_value !== undefined) {
       example[field.field_key] = field.default_value
     } else if (field.allowed_values.length) {
       example[field.field_key] = field.field_type === 'multiselect'

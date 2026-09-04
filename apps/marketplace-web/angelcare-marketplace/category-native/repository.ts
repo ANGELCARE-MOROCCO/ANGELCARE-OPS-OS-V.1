@@ -31,6 +31,10 @@ import {
   parseCategoryNativeCsv,
   validateCategoryNativeRow,
 } from './validation'
+import {
+  CATEGORY_NATIVE_PRODUCT360_ENRICHMENT_KEYS,
+  product360CatalogPatch,
+} from './product360-enrichment'
 
 type Row = Record<string, unknown>
 type DbError = { code?: string; message?: string; details?: string } | null
@@ -546,6 +550,7 @@ function canonicalCatalogPayload(
   normalized: Record<string, unknown>,
   actorId: string,
   importJobId: string,
+  existing: Row | null,
 ): Row {
   const identityField = text(schema.configuration.identity_field)
   const identity = categoryNativeText(normalized[identityField])
@@ -561,8 +566,10 @@ function canonicalCatalogPayload(
     'description_fr','description_en','description_ar','price_mode','pricing_mode','price_amount','starting_price_dh',
     'recurring_fee_dh','currency_label','status','featured','popular','best_pick','territory_codes','category_keys',
     'primary_image_reference','gallery_references','stock_quantity',
+    ...CATEGORY_NATIVE_PRODUCT360_ENRICHMENT_KEYS,
   ])
   const attributes = Object.fromEntries(Object.entries(normalized).filter(([key]) => !canonicalKeys.has(key)))
+  const product360 = product360CatalogPatch(normalized, existing)
   return {
     item_key: identity,
     sku: categoryNativeOptionalText(normalized.sku),
@@ -584,7 +591,7 @@ function canonicalCatalogPayload(
       segment_key: schema.segment_key, vertical_key: schema.vertical_key, category_key: schema.category_key,
       subcategory_key: schema.subcategory_key, pricing_model: actualPricingModel, import_job_id: importJobId,
     },
-    seo_metadata: {}, attributes,
+    attributes, ...product360,
     experience_schema_key: schema.schema_key, experience_schema_version: schema.version,
     experience_configuration: normalized,
     status: ['published','paused','archived'].includes(status) ? status : 'draft',
@@ -736,7 +743,7 @@ export async function executeImportJob(jobId: string, context: MarketplaceReques
       if (job.mode === 'create' && existing) throw new MarketplaceError('CONFLICT', `L’objet ${identity} existe déjà.`)
       if (job.mode === 'update' && !existing) throw new MarketplaceError('NOT_FOUND', `L’objet ${identity} n’existe pas pour mise à jour.`)
       const before = existing ? await fullCatalogSnapshot(text((existing as Row).id)) : null
-      const payload = canonicalCatalogPayload(schema, normalized, context.actor.id, job.id)
+      const payload = canonicalCatalogPayload(schema, normalized, context.actor.id, job.id, before)
       const { data: catalogItem, error: upsertError } = await db.from('angelcare_marketplace_catalog_items').upsert({
         ...payload, ...(existing ? {} : { created_by: context.actor.id }),
       }, { onConflict: 'item_key' }).select('*').single()

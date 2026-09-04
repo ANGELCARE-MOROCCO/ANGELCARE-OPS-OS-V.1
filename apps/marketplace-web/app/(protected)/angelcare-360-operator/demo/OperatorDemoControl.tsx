@@ -1,30 +1,114 @@
 'use client'
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState, useTransition } from 'react'
+import { useEffect, useMemo, useState, useTransition } from 'react'
 
 type Row = Record<string, any>
 
 export default function OperatorDemoControl() {
   const [snapshot, setSnapshot] = useState<Row | null>(null)
+  const [candidates, setCandidates] = useState<Row[]>([])
+  const [selectedCandidateId, setSelectedCandidateId] = useState('')
   const [loaded, setLoaded] = useState(false)
   const [error, setError] = useState('')
-  const [operatorTenantId, setOperatorTenantId] = useState('')
-  const [schoolId, setSchoolId] = useState('')
-  const [schoolAdminAppUserId, setSchoolAdminAppUserId] = useState('')
   const [pending, startTransition] = useTransition()
+
   useEffect(() => {
     let active = true
     fetch('/api/angelcare360/operator/demo', { cache: 'no-store' }).then(async (response) => {
       const body = await response.json()
       if (!response.ok || !body.ok) throw new Error(body.error || 'Chargement impossible.')
-      if (active) { setSnapshot(body.snapshot); setLoaded(true) }
-    }).catch((cause) => { if (active) { setError(cause instanceof Error ? cause.message : 'Chargement impossible.'); setLoaded(true) } })
+      if (active) {
+        setSnapshot(body.snapshot)
+        setCandidates(Array.isArray(body.candidates) ? body.candidates : [])
+        setLoaded(true)
+      }
+    }).catch((cause) => {
+      if (active) {
+        setError(cause instanceof Error ? cause.message : 'Chargement impossible.')
+        setLoaded(true)
+      }
+    })
     return () => { active = false }
   }, [])
-  function run(action: string, confirmation?: string, extra: Row = {}) { startTransition(async () => { setError(''); try { const response = await fetch('/api/angelcare360/operator/demo', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ action, configId: snapshot?.config?.id, confirmation, ...extra }) }); const body = await response.json(); if (!response.ok || !body.ok) throw new Error(body.error || 'Action impossible.'); if (body.snapshot) setSnapshot(body.snapshot); if (body.url) window.location.assign(body.url) } catch (cause) { setError(cause instanceof Error ? cause.message : 'Action impossible.') } }) }
+
+  const selectedCandidate = useMemo(
+    () =>
+      candidates.find((candidate) => candidate.id === selectedCandidateId)
+      || candidates.find((candidate) => candidate.readyForClassification)
+      || candidates[0]
+      || null,
+    [candidates, selectedCandidateId],
+  )
+
+  function run(action: string, confirmation?: string, extra: Row = {}) {
+    startTransition(async () => {
+      setError('')
+      try {
+        const response = await fetch('/api/angelcare360/operator/demo', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ action, configId: snapshot?.config?.id, confirmation, ...extra }),
+        })
+        const body = await response.json()
+        if (!response.ok || !body.ok) throw new Error(body.error || 'Action impossible.')
+        if (body.snapshot) setSnapshot(body.snapshot)
+        if (Array.isArray(body.candidates)) {
+          setCandidates(body.candidates)
+          if (body.provisioning?.operatorTenantId) {
+            const resolved = body.candidates.find((candidate: Row) => candidate.operatorTenantId === body.provisioning.operatorTenantId && candidate.institutionId === body.provisioning.institutionId)
+            if (resolved) setSelectedCandidateId(String(resolved.id))
+          }
+        }
+        if (body.url) window.location.assign(body.url)
+      } catch (cause) {
+        setError(cause instanceof Error ? cause.message : 'Action impossible.')
+      }
+    })
+  }
+
   if (!loaded) return <main style={{ padding: 48 }}><h1>SANILA MASTER DEMO</h1><p>{error || 'Chargement du commandement opérateur…'}</p></main>
-  if (!snapshot) return <main style={{ padding: 48, color: '#17324d' }}><h1>SANILA MASTER DEMO</h1><p>Aucun Master Demo actif. Liez uniquement des identifiants créés par le workflow Operator/Tenant Access.</p>{error ? <p role="alert">{error}</p> : null}<form onSubmit={(event) => { event.preventDefault(); const confirmation = window.prompt('Saisissez CLASSIFY SANILA MASTER DEMO') || ''; run('configure', confirmation, { operatorTenantId, schoolId, schoolAdminAppUserId }) }} style={{ display: 'grid', gap: 12, maxWidth: 620 }}><label>Operator tenant ID<input required value={operatorTenantId} onChange={(event) => setOperatorTenantId(event.target.value)} /></label><label>School ID<input required value={schoolId} onChange={(event) => setSchoolId(event.target.value)} /></label><label>School Admin app user ID<input required value={schoolAdminAppUserId} onChange={(event) => setSchoolAdminAppUserId(event.target.value)} /></label><button disabled={pending} type="submit">CLASSIFIER SANILA MASTER DEMO</button></form></main>
-  const c = snapshot.config; const cards = [['Statut', c.access_status], ['Tenant', snapshot.tenant?.tenant_slug], ['École', snapshot.school?.name], ['School Admin', snapshot.schoolAdmin?.email || 'Non lié'], ['Seed', c.seed_version], ['Santé seed', c.seed_health], ['Dernier seed', c.seeded_at || '—'], ['Dernière vérification', c.verified_at || c.last_seed_verified_at || '—'], ['Dernier reset', c.last_reset_at || '—'], ['Reset', c.reset_status], ['Non facturable', c.billing_mode], ['Sécurité', c.safety_status], ['Grants actifs', snapshot.activeGrants], ['Sessions valides', snapshot.validSessions]]
+
+  if (!snapshot) {
+    return <main style={{ padding: 'clamp(28px,4vw,56px)', minHeight: '100vh', background: '#f6f9fc', color: '#17324d' }}>
+      <div style={{ fontSize: 11, letterSpacing: '.16em', fontWeight: 900, color: '#59748b' }}>OPERATOR · MASTER DEMO PROVISIONING</div>
+      <h1 style={{ marginBottom: 8 }}>SANILA MASTER DEMO</h1>
+      <p style={{ maxWidth: 760 }}>Sélectionnez l’autorité Operator déjà provisionnée. Aucun UUID Supabase ne doit être recherché ou saisi manuellement.</p>
+      {error ? <p role="alert" style={{ padding: 12, borderRadius: 10, background: '#fff0ee', color: '#9b2c24' }}>{error}</p> : null}
+
+      {!candidates.length ? <section style={{ marginTop: 24, maxWidth: 760, padding: 20, border: '1px solid #d8e3ec', borderRadius: 14, background: 'white' }}>
+        <strong>Aucune chaîne Institution → Tenant → Administrateur actif n’est disponible.</strong>
+        <p style={{ marginBottom: 0 }}>Créez/lien l’institution de type School à un tenant actif et activez son administrateur via Tenant Access, puis rechargez cette page.</p>
+      </section> : <>
+        <label style={{ display: 'grid', gap: 8, maxWidth: 760, marginTop: 24, fontWeight: 800 }}>
+          Autorité à classifier
+          <select value={selectedCandidateId} onChange={(event) => setSelectedCandidateId(event.target.value)} style={{ minHeight: 44, padding: '0 12px', borderRadius: 10, border: '1px solid #b8c8d6', background: 'white' }}>
+            {candidates.map((candidate) => <option key={candidate.id} value={candidate.id}>{candidate.tenantSlug} · {candidate.institutionName} · {candidate.schoolAdminEmail}</option>)}
+          </select>
+        </label>
+
+        {selectedCandidate ? <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(220px,1fr))', gap: 12, maxWidth: 1000, marginTop: 18 }}>
+          {[
+            ['Tenant', selectedCandidate.tenantSlug],
+            ['Institution', selectedCandidate.institutionName],
+            ['École SANILA', selectedCandidate.schoolName || 'À provisionner'],
+            ['School Admin', `${selectedCandidate.schoolAdminName} · ${selectedCandidate.schoolAdminEmail}`],
+            ['Rôle Tenant Access', selectedCandidate.schoolAdminRoleTemplate],
+            ['MFA', selectedCandidate.mfaEnrolled ? 'Enrôlé' : 'Non enrôlé'],
+            ['Rôle école', selectedCandidate.schoolRoleActive ? 'Actif' : 'À réconcilier'],
+            ['Prêt à classifier', selectedCandidate.readyForClassification ? 'OUI' : 'NON'],
+          ].map(([label, value]) => <dl key={String(label)} style={{ margin: 0, padding: 16, border: '1px solid #d8e3ec', borderRadius: 12, background: 'white' }}><dt style={{ fontSize: 11, color: '#607789' }}>{label}</dt><dd style={{ margin: '6px 0 0', fontWeight: 800, overflowWrap: 'anywhere' }}>{String(value || '—')}</dd></dl>)}
+        </section> : null}
+
+        {selectedCandidate ? <section style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginTop: 22 }}>
+          {!selectedCandidate.readyForClassification ? <button disabled={pending} onClick={() => run('provision_school', window.prompt('Saisissez PROVISION SANILA SCHOOL') || '', { institutionId: selectedCandidate.institutionId, operatorTenantId: selectedCandidate.operatorTenantId })}>PROVISIONNER / RÉCONCILIER L’ÉCOLE SANILA</button> : null}
+          <button disabled={pending || !selectedCandidate.readyForClassification} onClick={() => run('configure', window.prompt('Saisissez CLASSIFY SANILA MASTER DEMO') || '', { operatorTenantId: selectedCandidate.operatorTenantId, schoolId: selectedCandidate.schoolId, schoolAdminAppUserId: selectedCandidate.schoolAdminAppUserId })}>CLASSIFIER SANILA MASTER DEMO</button>
+        </section> : null}
+      </>}
+    </main>
+  }
+
+  const c = snapshot.config
+  const cards = [['Statut', c.access_status], ['Tenant', snapshot.tenant?.tenant_slug], ['École', snapshot.school?.name], ['School Admin', snapshot.schoolAdmin?.email || 'Non lié'], ['Seed', c.seed_version], ['Santé seed', c.seed_health], ['Dernier seed', c.seeded_at || '—'], ['Dernière vérification', c.verified_at || c.last_seed_verified_at || '—'], ['Dernier reset', c.last_reset_at || '—'], ['Reset', c.reset_status], ['Non facturable', c.billing_mode], ['Sécurité', c.safety_status], ['Grants actifs', snapshot.activeGrants], ['Sessions valides', snapshot.validSessions]]
   return <main style={{ padding: 'clamp(24px,4vw,56px)', background: '#f6f9fc', minHeight: '100vh', color: '#17324d' }}>
     <div style={{ fontSize: 11, letterSpacing: '.16em', fontWeight: 900, color: '#59748b' }}>OPERATOR · DEMO ENVIRONMENT</div><h1>SANILA MASTER DEMO</h1><p>Commandement de l’unique environnement de démonstration partagé.</p>
     {error ? <p role="alert" style={{ padding: 12, background: '#fff0ee', color: '#9b2c24' }}>{error}</p> : null}

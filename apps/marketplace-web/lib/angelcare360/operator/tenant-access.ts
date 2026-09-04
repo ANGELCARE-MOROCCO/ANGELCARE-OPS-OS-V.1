@@ -681,6 +681,52 @@ async function provisionMembership(db: Awaited<ReturnType<typeof createServiceCl
   return { membershipId, schoolUserRoleId, warning: warnings.filter(Boolean).join(' · ') || null }
 }
 
+export async function reconcileTenantAccessAccountsForLinkedSchool(input: { tenantId: string; schoolId: string; clientId?: string | null }) {
+  const actor = await requireAngelcare360OperatorPermission('operator.tenants.update')
+  const tenantId = asString(input.tenantId)
+  const schoolId = asString(input.schoolId)
+  const clientId = asString(input.clientId)
+  if (!tenantId || !schoolId) return { ok: false, error: 'Tenant et école SANILA requis.', accountsReconciled: 0, activeSchoolRolesProvisioned: 0 }
+
+  const db = await createServiceClient()
+  const { data: tenant, error: tenantError } = await db.from('angelcare360_operator_tenants').select('id,client_id,school_id,status').eq('id', tenantId).maybeSingle()
+  if (tenantError || !tenant) return { ok: false, error: tenantError?.message || 'Tenant Operator introuvable.', accountsReconciled: 0, activeSchoolRolesProvisioned: 0 }
+  if (clientId && asString(tenant.client_id) !== clientId) return { ok: false, error: 'Le tenant ne correspond pas au client attendu.', accountsReconciled: 0, activeSchoolRolesProvisioned: 0 }
+  if (asString(tenant.school_id) !== schoolId) return { ok: false, error: 'Le tenant n’est pas lié à l’école SANILA demandée.', accountsReconciled: 0, activeSchoolRolesProvisioned: 0 }
+
+  const { data: accounts, error: accountError } = await db.from(ACCESS_TABLE).select('*').eq('tenant_id', tenantId)
+  if (accountError) return { ok: false, error: accountError.message, accountsReconciled: 0, activeSchoolRolesProvisioned: 0 }
+
+  let accountsReconciled = 0
+  let activeSchoolRolesProvisioned = 0
+  for (const raw of accounts || []) {
+    const account = raw as Record<string, unknown>
+    const existingSchoolId = asString(account.school_id)
+    if (existingSchoolId && existingSchoolId !== schoolId) return { ok: false, error: `Le compte ${asString(account.email) || asString(account.id)} est déjà lié à une autre école.`, accountsReconciled, activeSchoolRolesProvisioned }
+
+    let membershipId = asString(account.membership_id) || null
+    let schoolUserRoleId = asString(account.school_user_role_id) || null
+    const appUserId = asString(account.app_user_id)
+    const accountStatus = asString(account.status)
+    if (appUserId && accountStatus === 'active') {
+      const { data: appUser, error: appUserError } = await db.from('app_users').select('id,status').eq('id', appUserId).maybeSingle()
+      if (appUserError || !appUser || asString(appUser.status) !== 'active') return { ok: false, error: appUserError?.message || `L’identité ${asString(account.email)} n’est pas active.`, accountsReconciled, activeSchoolRolesProvisioned }
+      const provisioned = await provisionMembership(db, { ...account, school_id: schoolId }, appUserId)
+      if (provisioned.warning || !provisioned.schoolUserRoleId) return { ok: false, error: provisioned.warning || `Le rôle établissement de ${asString(account.email)} n’a pas pu être provisionné.`, accountsReconciled, activeSchoolRolesProvisioned }
+      membershipId = provisioned.membershipId || membershipId
+      schoolUserRoleId = provisioned.schoolUserRoleId
+      activeSchoolRolesProvisioned += 1
+    }
+
+    const update = await db.from(ACCESS_TABLE).update({ school_id: schoolId, membership_id: membershipId, school_user_role_id: schoolUserRoleId, updated_by: actor.user.id }).eq('id', account.id).select('id').single()
+    if (update.error) return { ok: false, error: update.error.message, accountsReconciled, activeSchoolRolesProvisioned }
+    accountsReconciled += 1
+    await writeAccessEvent({ accessAccountId: asString(account.id), clientId: asString(account.client_id), tenantId, actorUserId: actor.user.id, eventType: 'school.link.reconciled', severity: 'notice', summary: 'Compte Tenant Access réconcilié avec l’école SANILA du tenant.', metadata: { school_id: schoolId, school_user_role_id: schoolUserRoleId } })
+  }
+
+  return { ok: true, accountsReconciled, activeSchoolRolesProvisioned }
+}
+
 export async function completeTenantAccessToken(input: { token: string; mode: 'invite' | 'reset'; password: string; passwordConfirmation: string }) {
   const token = String(input.token || '')
   const password = String(input.password || '')
