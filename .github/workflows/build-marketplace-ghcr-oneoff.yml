@@ -12,7 +12,7 @@ permissions:
   packages: write
 
 env:
-  TARGET_SHA: 510e15c7318fc76287f23facbcc3d66c79f8e27e
+  TARGET_SHA: 5c759bc35a9c1de4f491f9f8921a21a1373aba7c
   IMAGE: ghcr.io/angelcare-morocco/angelcare-marketplace
 
 jobs:
@@ -383,4 +383,4 @@ jobs:
       - name: Push exact Marketplace image
         run: docker push "${IMAGE}:${TARGET_SHA}"
 
-# manual-build-trigger: 20260903-tenant-access-username
+# manual-build-trigger: 20260904-031330
