@@ -1,0 +1,17 @@
+{
+  "extends":"./tsconfig.json",
+  "compilerOptions":{"noEmit":true,"skipLibCheck":true,"incremental":false},
+  "include":[
+    "angelcare-marketplace/web-presence/**/*.ts",
+    "angelcare-marketplace/web-presence/**/*.tsx",
+    "app/robots.ts",
+    "app/sitemap.ts",
+    "app/manifest.ts",
+    "app/angelcare-marketplace/layout.tsx",
+    "app/angelcare-marketplace/(protected)/admin/layout.tsx",
+    "app/angelcare-marketplace/(protected)/admin/configuration/web-presence/page.tsx",
+    "app/api/angelcare-marketplace/admin/web-presence/**/*.ts",
+    "app/api/angelcare-marketplace/public/web-presence/**/*.ts"
+  ],
+  "exclude":["node_modules",".next"]
+}

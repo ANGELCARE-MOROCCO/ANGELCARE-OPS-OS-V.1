@@ -6,7 +6,7 @@ import Angelcare360OperatorShell from '@/components/angelcare360/operator/Angelc
 
 export const metadata: Metadata = {
   title: `Backoffice Opérateur · ${ANGELCARE360_PRODUCT_NAME}`,
-  description: 'Backoffice interne AngelCare pour les clients SaaS, abonnements, facturation et service.',
+  description: 'Backoffice interne SANILA Operating System pour les clients SaaS, abonnements, facturation et service.',
 }
 
 export const dynamic = 'force-dynamic'

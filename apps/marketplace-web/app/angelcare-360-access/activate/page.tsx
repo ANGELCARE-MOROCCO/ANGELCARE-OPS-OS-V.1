@@ -5,8 +5,8 @@ import TenantAccessActivationClient from '@/components/angelcare360/access/Tenan
 export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
-  title: 'AngelCare 360 · Activation de l’accès',
-  description: 'Activation sécurisée de votre accès établissement AngelCare 360.',
+  title: 'SANILA Operating System · Activation de l’accès',
+  description: 'Activation sécurisée de votre accès établissement SANILA.',
 }
 
 export default function TenantAccessActivationPage() {

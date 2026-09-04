@@ -30,7 +30,7 @@ import {
   WalletCards,
   Workflow,
 } from 'lucide-react'
-import AngelCareLogo from '@/components/brand/AngelCareLogo'
+import SanilaLogo from '@/components/brand/SanilaLogo'
 import type { SovereignEntity, SovereignWorkspaceSnapshot } from '../SovereignTypes'
 import styles from './RevenueAuthorityCommandDeck.module.css'
 
@@ -263,7 +263,7 @@ export default function RevenueAuthorityCommandDeck({ snapshot, onOpen }: Props)
     <div className={styles.deck} data-view={activeView}>
       <header className={styles.authorityCrown}>
         <div className={styles.brandIdentity}>
-          <AngelCareLogo size="md" priority />
+          <SanilaLogo variant="white" width={134} height={47} priority />
           <div>
             <span>Revenue Authority</span>
             <strong>Command Deck</strong>

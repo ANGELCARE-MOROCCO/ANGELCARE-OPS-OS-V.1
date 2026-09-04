@@ -3,6 +3,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Link from 'next/link'
 import { FormEvent, useState } from 'react'
+import SanilaLogo from '@/components/brand/SanilaLogo'
 
 type Row = Record<string, any>
 
@@ -40,7 +41,7 @@ export default function SanilaDemoDesk({ config, grants, inquiries, events }: { 
   return (
     <main style={{ padding: 'clamp(24px,4vw,56px)', background: '#f6f9fc', minHeight: '100vh', color: '#17324d' }}>
       <header style={{ display: 'flex', justifyContent: 'space-between', gap: 20, alignItems: 'end', marginBottom: 26 }}>
-        <div><div style={{ fontSize: 11, letterSpacing: '.16em', fontWeight: 900, color: '#59748b' }}>SANILA · DEMO DESK</div><h1 style={{ margin: '10px 0 6px' }}>Accès Master Demo</h1><p style={{ margin: 0, color: '#718398' }}>Qualification, approbation formelle et accès contrôlé au même établissement.</p></div>
+        <div><SanilaLogo variant="normal" width={154} height={54}/><div style={{ fontSize: 11, letterSpacing: '.16em', fontWeight: 900, color: '#59748b', marginTop: 8 }}>SANILA · DEMO DESK</div><h1 style={{ margin: '10px 0 6px' }}>Accès Master Demo</h1><p style={{ margin: 0, color: '#718398' }}>Qualification, approbation formelle et accès contrôlé au même établissement.</p></div>
         <Link href="/angelcare-marketplace/admin/public-inquiries" style={{ color: '#174b73', fontWeight: 800 }}>Retour aux inquiries</Link>
       </header>
       {message ? <div role="status" style={{ padding: 12, background: '#eaf4ff', border: '1px solid #b9d5ec', borderRadius: 10, marginBottom: 16 }}>{message}</div> : null}

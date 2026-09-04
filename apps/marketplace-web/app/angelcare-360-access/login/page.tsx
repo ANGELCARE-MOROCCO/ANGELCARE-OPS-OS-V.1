@@ -29,7 +29,7 @@ const OPERATOR_ROLES = new Set([
 
 export const dynamic = 'force-dynamic'
 export const metadata: Metadata = {
-  title: 'AngelCare 360 · Connexion établissement',
+  title: 'SANILA Operating System · Connexion établissement',
   description: 'SANILA Operating System · Pilotage établissement scolaire.',
 }
 

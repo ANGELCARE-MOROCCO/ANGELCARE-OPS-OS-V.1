@@ -6,12 +6,15 @@ import type { CmsMenuItem } from '../../experience-builder/types'
 import styles from '../public.module.css'
 import { EnterpriseFooter } from '../../footer-studio/components/EnterpriseFooter'
 import { LiveExperienceLayer } from '../../live-experience-command/components/LiveExperienceLayer'
+import { buildStructuredData } from '../../web-presence/runtime'
 
 const localeNames={fr:'FR',en:'EN',ar:'AR'} as const
 
-export function GlobalPublicShell({locale,navigation,children,preview=false,variant='standard'}:{locale:'fr'|'en'|'ar';navigation:CmsMenuItem[];children:ReactNode;preview?:boolean;variant?:'standard'|'marketplace'}){
+export async function GlobalPublicShell({locale,navigation,children,preview=false,variant='standard'}:{locale:'fr'|'en'|'ar';navigation:CmsMenuItem[];children:ReactNode;preview?:boolean;variant?:'standard'|'marketplace'}){
   const marketplace=variant==='marketplace'
+  const structuredData=preview?null:await buildStructuredData('MARKETPLACE')
   return <div id="angelcare-marketplace-top" className={styles.publicRoot} data-variant={variant} dir={locale==='ar'?'rtl':'ltr'} lang={locale}>
+    {structuredData?<script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(structuredData).replace(/</g,'\\u003c')}}/>:null}
     {marketplace ? <>
       <div className={styles.marketTop}><div><span>Copyright ANGELCARE MARKET PLACE</span><div><Link href={`/angelcare-marketplace/${locale}/trust`}>Trust & Quality</Link><Link href={`/angelcare-marketplace/${locale}/contact`}>Support</Link><Link href={`/angelcare-marketplace/${locale}/partner-os`}>Professionnels</Link></div></div></div>
       <header className={styles.marketHeader}><div className={styles.marketHeaderInner}><a className={styles.mobileMenu} href="#marketplace-primary-navigation" aria-label="Ouvrir la navigation"><Menu/></a><Link href={`/angelcare-marketplace/${locale}`} className={styles.marketBrand}><Image src="/b2b-plaquette-partenaires/assets/angelcare-original-logo.png" alt="ANGELCARE Preschool & Kindergarten" width={722} height={198} priority/><span><strong>GLOBAL MARKETPLACE</strong><small>Kids · Family · Partner Universe</small></span></Link><form action={`/angelcare-marketplace/${locale}/marketplace`} className={styles.headerSearch}><Search size={20}/><input name="q" aria-label="Recherche Marketplace" placeholder={locale==='ar'?'ابحث في سوق أنجل كير':locale==='en'?'Search the ANGELCARE Marketplace':'Rechercher dans tout le Marketplace'}/><button type="submit">{locale==='ar'?'بحث':locale==='en'?'Search':'Rechercher'}</button></form><div className={styles.marketActions}><Link href={`/angelcare-marketplace/${locale}/marketplace?territory=MA-MASTER`}><MapPin/><span>Morocco<small>Territoire</small></span></Link><Link href={`/angelcare-marketplace/${locale}/marketplace?saved=1`} aria-label="Saved"><Heart/></Link><Link href={`/angelcare-marketplace/${locale}/marketplace?compare=1`} aria-label="Compare"><GitCompareArrows/></Link><Link href={`/angelcare-marketplace/${locale}/quote-basket`} aria-label="Quote basket"><ShoppingBag/></Link><Link href={`/angelcare-marketplace/${locale}/account`} aria-label="Account"><UserRound/></Link></div></div></header>

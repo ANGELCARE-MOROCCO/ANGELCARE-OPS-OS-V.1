@@ -101,6 +101,7 @@
     linear-gradient(145deg, #111827 0%, #0f172a 65%, var(--operator-accent-deep) 145%);
   box-shadow: 0 20px 55px rgba(15, 23, 42, .18);
 }
+.sidebarBrandLogo { display: block; width: 130px; height: auto; object-fit: contain; }
 
 .sidebarBrand::before {
   content: '';

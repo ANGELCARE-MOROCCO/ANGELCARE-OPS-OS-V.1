@@ -166,7 +166,7 @@ function BroadcastTicker({ initial }: { initial: Angelcare360CustomerBroadcastSn
   const items = snapshot.items.length ? snapshot.items : initial.items
 
   return (
-    <div className={styles.tickerViewport} aria-label="Informations clients AngelCare 360">
+    <div className={styles.tickerViewport} aria-label="Informations clients SANILA">
       <div className={styles.tickerTrack}>
         <div className={styles.tickerGroup}>
           {items.map((item) => (
@@ -188,10 +188,10 @@ function CustomerBroadcastBar({ initial }: { initial: Angelcare360CustomerBroadc
     <header className={styles.broadcastBar}>
       <div className={styles.brandLockup}>
         <Image
-          src="/brand/angelcare-official-user-transparent.png"
-          alt="AngelCare Kindergarten & Preschool"
-          width={214}
-          height={54}
+          src="/sanila/sanila-operating-system-logo-white.png"
+          alt="SANILA Operating System"
+          width={188}
+          height={66}
           priority
           className={styles.officialLogo}
         />
@@ -313,7 +313,7 @@ function LoginForm({ loginAction, loginError, safeNext }: Pick<Props, 'loginActi
 
       {recoveryOpen ? (
         <div className={styles.recoveryNotice}>
-          La réinitialisation sécurisée est déclenchée par un administrateur autorisé. Utilisez le lien reçu par e-mail ou contactez votre administrateur AngelCare 360.
+          La réinitialisation sécurisée est déclenchée par un administrateur autorisé. Utilisez le lien reçu par e-mail ou contactez votre administrateur SANILA.
         </div>
       ) : null}
 
@@ -402,7 +402,7 @@ export default function Angelcare360CustomerLoginExperience(props: Props) {
       <CustomerBroadcastBar initial={props.initialBroadcasts} />
 
       <div className={styles.desktopStage}>
-        <section className={styles.heroPanel} aria-label="Direction d’établissement scolaire AngelCare 360">
+        <section className={styles.heroPanel} aria-label="Direction d’établissement scolaire SANILA">
           <Image
             src="/angelcare360/login/angelcare360-executive-morocco.webp"
             alt="Directrice d’établissement scolaire dans un environnement professionnel marocain"
@@ -420,12 +420,12 @@ export default function Angelcare360CustomerLoginExperience(props: Props) {
               <span>SANILA Operating System</span>
               <i aria-hidden="true" />
             </div>
-            <h1>ANGELCARE 360</h1>
+            <h1>SANILA OS</h1>
             <h2>Pilotage établissement scolaire</h2>
             <p>Tout votre établissement. <strong>Sous contrôle.</strong> Vers l’excellence.</p>
           </div>
 
-          <section className={styles.loginCard} aria-label="Connexion AngelCare 360">
+          <section className={styles.loginCard} aria-label="Connexion SANILA Operating System">
             <div className={styles.tabs} role="tablist" aria-label="Mode d’accès">
               <button
                 role="tab"
@@ -456,7 +456,7 @@ export default function Angelcare360CustomerLoginExperience(props: Props) {
           </section>
 
           <TrustRail />
-          <footer className={styles.footer}>© 2026 ANGELCARE 360. Tous droits réservés.</footer>
+          <footer className={styles.footer}>© 2026 SANILA Operating System · by AngelCare.</footer>
         </section>
       </div>
     </main>

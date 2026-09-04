@@ -184,10 +184,10 @@ function LiveBar({ initial }: { initial: Angelcare360CustomerBroadcastSnapshot }
     <header className={styles.liveBar}>
       <div className={styles.angelcareLogoSlot}>
         <Image
-          src="/brand/angelcare-official-user-transparent.png"
-          alt="AngelCare"
-          width={214}
-          height={54}
+          src="/sanila/sanila-operating-system-logo-white.png"
+          alt="SANILA Operating System"
+          width={188}
+          height={66}
           priority
           className={styles.angelcareLogo}
         />
@@ -343,10 +343,10 @@ export default function SanilaTeacherLoginExperience(props: Props) {
         <div className={styles.authPanel}>
           <div className={styles.authInner}>
             <Image
-              src="/brand/sanila-official-logo.png"
+              src="/sanila/sanila-operating-system-logo.png"
               alt="SANILA Operating System"
-              width={441}
-              height={181}
+              width={586}
+              height={206}
               priority
               className={styles.sanilaLogo}
             />

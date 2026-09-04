@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { ArrowRight, BadgeCheck, CheckCircle2, Eye, EyeOff, KeyRound, LockKeyhole, ShieldCheck } from 'lucide-react'
 import { useSearchParams } from 'next/navigation'
-import BrandRuntimeLockup from '@/components/brand/BrandRuntimeLockup'
+import SanilaLogo from '@/components/brand/SanilaLogo'
 import type { BrandRuntime } from '@/types/angelcare360/operator/branding'
 import styles from './TenantAccessActivationClient.module.css'
 
@@ -103,8 +103,8 @@ export default function TenantAccessActivationClient() {
 
   return <main className={styles.page}>
     <section className={styles.brandPanel}>
-      <div className={styles.brandMark}><BrandRuntimeLockup runtime={state?.brandRuntime || null} priority /></div>
-      <div className={styles.brandCopy}><small>ANGELCARE · SANILA OS</small><h1>Accès administrateur sécurisé</h1><p>Votre identité, votre rôle, votre établissement et les modules contractés sont gouvernés séparément. AngelCare ne connaît et ne conserve jamais votre mot de passe en clair.</p></div>
+      <div className={styles.brandMark}><SanilaLogo variant="white" width={188} height={66} priority /></div>
+      <div className={styles.brandCopy}><small>SANILA OPERATING SYSTEM · BY ANGELCARE</small><h1>Accès administrateur sécurisé</h1><p>Votre identité, votre rôle, votre établissement et les modules contractés sont gouvernés séparément. AngelCare ne connaît et ne conserve jamais votre mot de passe en clair.</p></div>
       <div className={styles.securityList}>
         <div><ShieldCheck size={20}/><span><strong>Activation privée</strong><small>Lien unique, limité dans le temps.</small></span></div>
         <div><LockKeyhole size={20}/><span><strong>Mot de passe confidentiel</strong><small>Défini uniquement par vous.</small></span></div>

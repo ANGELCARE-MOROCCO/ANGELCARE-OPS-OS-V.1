@@ -46,7 +46,7 @@ import {
   ZoomIn,
   ZoomOut,
 } from 'lucide-react'
-import AngelCareLogo from '@/components/brand/AngelCareLogo'
+import SanilaLogo from '@/components/brand/SanilaLogo'
 import type { SovereignEntity, SovereignWorkspaceSnapshot } from '../SovereignTypes'
 import styles from './PlatformSovereignFabric.module.css'
 
@@ -294,7 +294,7 @@ export default function PlatformSovereignFabric({ snapshot, onOpen }: Props) {
     <div className={styles.fabric} data-view={activeView} data-dragging={dragging ? 'true' : 'false'}>
       <header className={styles.authorityHeader}>
         <div className={styles.brandBlock}>
-          <AngelCareLogo size="sm" inverse priority />
+          <SanilaLogo variant="white" width={118} height={41} priority />
           <div>
             <span>Platform Sovereign Fabric</span>
             <strong>Product · Commercialization · Entitlement · Runtime</strong>

@@ -1,0 +1,5 @@
+import { NextResponse } from 'next/server'
+import { publicAsset } from '@/angelcare-marketplace/web-presence/runtime'
+import { parseScope } from '@/angelcare-marketplace/web-presence/schema'
+const SLOTS=new Set(['favicon','icon','apple-touch-icon','manifest-192','manifest-512','organization-logo'])
+export async function GET(request:Request,{params}:{params:Promise<{slot:string}>}){const{slot}=await params;if(!SLOTS.has(slot))return NextResponse.json({error:'NOT_FOUND'},{status:404});const url=new URL(request.url),scope=parseScope(url.searchParams.get('scope')),revision=Number(url.searchParams.get('revision')||0);const asset=await publicAsset(slot,scope,revision).catch(()=>null);if(!asset)return new NextResponse(null,{status:404,headers:{'Cache-Control':'public, max-age=60'}});return new NextResponse(asset.blob,{status:200,headers:{'Content-Type':asset.type,'Content-Length':String(asset.blob.size),'Cache-Control':'public, max-age=31536000, immutable',ETag:asset.etag,'X-Content-Type-Options':'nosniff','Content-Disposition':'inline'}})}
