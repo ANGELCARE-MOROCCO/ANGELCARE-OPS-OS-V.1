@@ -1,10 +1,7 @@
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
-// @ts-expect-error Node's strip-types runner resolves explicit TypeScript extensions.
 import { decideAngelcare360EntitlementKey, normalizeAngelcare360SnapshotItems, validateAngelcare360EntitlementChain } from '../lib/angelcare360/runtime-entitlement-authority.ts'
-// @ts-expect-error Node's strip-types runner resolves explicit TypeScript extensions.
 import { ANGELCARE360_WORKSPACE_ENTITLEMENT_REGISTRY } from '../lib/angelcare360/workspace-entitlement-registry.ts'
-// @ts-expect-error Node's strip-types runner resolves explicit TypeScript extensions.
 import { ANGELCARE360_MODULE_REGISTRY } from '../data/angelcare360/module-registry.ts'
 
 type Item = { item_type: string; item_key: string; effective_state: string; quantity?: number | null; unit?: string | null }

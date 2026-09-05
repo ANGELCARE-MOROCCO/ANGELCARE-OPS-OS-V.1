@@ -2,7 +2,8 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "noEmit": true,
-    "incremental": false
+    "incremental": false,
+    "allowImportingTsExtensions": true
   },
   "include": [
     "next-env.d.ts",
@@ -21,6 +22,7 @@
     "lib/angelcare360/server/entitlements.ts",
     "lib/angelcare360/server/context.ts",
     "scripts/angelcare360-runtime-entitlement-authority.test.ts",
+    "scripts/angelcare360-live-workspace-entitlement-gate.test.ts",
     "types/angelcare360/entitlements.ts",
     "types/angelcare360/operator/product-kernel.ts",
     "types/angelcare360/operator/index.ts"
