@@ -6,6 +6,7 @@ import type { ReactNode } from 'react'
 import type { Angelcare360RuntimeEntitlements } from '@/types/angelcare360/entitlements'
 import { getAngelcare360ModuleKeyForPath, isAngelcare360ModuleEnabled } from '@/lib/angelcare360/entitlements'
 import { getAngelcare360RouteBinding } from '@/data/angelcare360/product-constitution'
+import { getAngelcare360CustomerGatePresentation } from '@/lib/angelcare360/entitlement-gate-diagnostics'
 import styles from './Angelcare360EntitlementGate.module.css'
 
 export default function Angelcare360EntitlementGate({ children, pathname, runtime }: { children: ReactNode; pathname: string; runtime: Angelcare360RuntimeEntitlements }) {
@@ -19,30 +20,12 @@ export default function Angelcare360EntitlementGate({ children, pathname, runtim
   const moduleRestriction = runtime.restrictedModules.find((item) => item.key === moduleKey)
   const restriction = moduleRestriction
   const state = String(restriction?.state || runtime.state || 'not_included').toLowerCase()
-  const configuration = /config/.test(state)
-  const pending = /pending|compiled|provision/.test(state)
-  const capacity = /capacity|limit|quota/.test(state)
-  const dependency = /dependency|incompatible/.test(state)
-  const suspended = /suspend|locked/.test(state)
-  const migration = /deprecated|migration|retired/.test(state)
-  const Icon = configuration ? Settings2 : pending ? Clock3 : capacity ? Gauge : dependency ? Link2Off : suspended ? ShieldAlert : LockKeyhole
-  const title = configuration ? 'Configuration nécessaire' : pending ? 'Activation nécessaire' : capacity ? 'Limite de votre offre atteinte' : dependency ? 'Service temporairement indisponible' : suspended ? 'Service temporairement suspendu' : migration ? 'Service en cours d’évolution' : 'Non inclus dans votre offre'
-  const explanation = configuration
-    ? 'Ce service doit être configuré par une personne autorisée avant sa première utilisation.'
-    : pending
-      ? 'L’activation de ce service est en cours. Il sera disponible dès que sa préparation sera terminée.'
-      : capacity
-        ? 'La limite prévue dans votre offre est atteinte. La direction peut consulter les options disponibles.'
-        : dependency
-          ? 'Un service nécessaire est momentanément indisponible. Réessayez dans quelques instants.'
-          : suspended
-            ? 'Ce service est temporairement suspendu. Votre administrateur peut consulter la situation.'
-            : migration
-              ? 'Ce service évolue actuellement et ne peut pas être utilisé depuis cet écran.'
-              : 'Ce service ne fait pas partie de l’offre actuellement active pour votre établissement.'
-  const action = configuration ? { href: '/angelcare-360-command-center/administration/parametres', label: 'Ouvrir la configuration' } : capacity ? { href: '/angelcare-360-command-center/direction', label: 'Consulter la situation' } : { href: '/angelcare-360-command-center/direction', label: 'Retour à l’accueil' }
+  const presentation = getAngelcare360CustomerGatePresentation(runtime, restriction?.state)
+  const icons = { settings: Settings2, clock: Clock3, gauge: Gauge, dependency: Link2Off, suspended: ShieldAlert, locked: LockKeyhole }
+  const Icon = icons[presentation.icon]
+  const { title, explanation, action } = presentation
 
-  return <section className={styles.page} data-entitlement-state={state}>
+  return <section className={styles.page} data-entitlement-state={state} data-entitlement-classification={presentation.classification}>
     <div className={styles.icon}><Icon size={27}/></div>
     <span className={styles.eyebrow}>Accès au service</span>
     <h1>{title}</h1>

@@ -1,14 +1,19 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createClient } from '@/lib/supabase/server'
 import { getCurrentAppUser } from '@/lib/auth/session'
 import { cookies } from 'next/headers'
 import type { Angelcare360AccessProfile, Angelcare360SessionUser } from '@/types/angelcare360/module'
 import type { Angelcare360PermissionRecord, Angelcare360RoleRecord } from '@/types/angelcare360/rbac'
 import { buildAngelcare360AccessProfile, normalizeAngelcare360User } from '@/lib/angelcare360/permissions'
-import { loadAngelcare360RuntimeEntitlements } from '@/lib/angelcare360/server/entitlements'
+import { createAngelcare360DemoContextMismatchEntitlements, loadAngelcare360RuntimeEntitlements } from '@/lib/angelcare360/server/entitlements'
 import { getAngelcare360ModuleKeyForPermission, isAngelcare360ModuleEnabled } from '@/lib/angelcare360/entitlements'
 import type { Angelcare360RuntimeEntitlements } from '@/types/angelcare360/entitlements'
 import { classifyMasterDemoOperation } from '@/lib/sanila-demo/policy'
+import {
+  buildAngelcare360DemoAccess,
+  extractTrustedAngelcare360DemoPrincipalContext,
+  resolveAngelcare360PrincipalSchoolAuthority,
+  type Angelcare360DemoAccess,
+} from '@/lib/angelcare360/principal-context-authority'
 
 export type Angelcare360SchoolRecord = {
   id: string
@@ -61,7 +66,7 @@ export type Angelcare360AccessContext = {
   primaryRoleKey: string | null
   runtimeEntitlements: Angelcare360RuntimeEntitlements
   supportAccess?: Record<string, unknown> | null
-  demoAccess?: { grantId: string; inquiryId: string | null; expiresAt: string } | null
+  demoAccess?: Angelcare360DemoAccess | null
 }
 
 export class Angelcare360AccessError extends Error {
@@ -206,14 +211,24 @@ export async function getAngelcare360AccessContext(options?: {
   schoolId?: string | null
 }): Promise<Angelcare360AccessContext | null> {
   const rawUser = await getCurrentAppUser()
+  const demoContext = extractTrustedAngelcare360DemoPrincipalContext(rawUser)
   const user = normalizeAngelcare360User(rawUser as Partial<Angelcare360SessionUser> | null)
 
   if (!user) return null
 
   const access = buildAngelcare360AccessProfile(user)
   const supportAccess = await getActiveSupportAccess(user.id)
-  const requestedSchoolId = supportAccess?.tenant?.school_id || (user as any).__demoSchoolId || options?.schoolId
-  const school = await getActiveSchool(user.id, access.accessLevel === 'super_admin' || Boolean(supportAccess), requestedSchoolId)
+  const schoolAuthority = resolveAngelcare360PrincipalSchoolAuthority({
+    demoContext,
+    supportSchoolId: supportAccess?.tenant?.school_id || null,
+    requestedSchoolId: options?.schoolId || null,
+  })
+  const requestedSchoolId = schoolAuthority.ok ? schoolAuthority.schoolId : demoContext.schoolId
+  const school = schoolAuthority.ok
+    ? await getActiveSchool(user.id, access.accessLevel === 'super_admin' || Boolean(supportAccess), requestedSchoolId)
+    : null
+  const demoAccess = buildAngelcare360DemoAccess(demoContext)
+  const demoContextMismatch = demoContext.isDemo && (!schoolAuthority.ok || !school)
 
   if (!school) {
     return {
@@ -225,9 +240,11 @@ export async function getAngelcare360AccessContext(options?: {
       roles: [],
       permissions: new Set<string>(),
       primaryRoleKey: null,
-      runtimeEntitlements: await loadAngelcare360RuntimeEntitlements({ userId: user.id, schoolId: null }),
+      runtimeEntitlements: demoContextMismatch
+        ? createAngelcare360DemoContextMismatchEntitlements(demoContext.schoolId)
+        : await loadAngelcare360RuntimeEntitlements({ userId: user.id, schoolId: null }),
       supportAccess,
-      demoAccess: (user as any).__demo ? { grantId: String((user as any).__demoGrantId), inquiryId: (user as any).__demoInquiryId || null, expiresAt: String((user as any).__demoExpiresAt) } : null,
+      demoAccess,
     }
   }
 
@@ -259,7 +276,7 @@ export async function getAngelcare360AccessContext(options?: {
     primaryRoleKey,
     runtimeEntitlements,
     supportAccess,
-    demoAccess: (user as any).__demo ? { grantId: String((user as any).__demoGrantId), inquiryId: (user as any).__demoInquiryId || null, expiresAt: String((user as any).__demoExpiresAt) } : null,
+    demoAccess,
   }
 }
 

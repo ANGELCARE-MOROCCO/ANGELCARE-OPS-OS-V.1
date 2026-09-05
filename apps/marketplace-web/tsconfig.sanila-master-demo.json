@@ -36,6 +36,8 @@
     "lib/angelcare360/operator/access.ts",
     "lib/angelcare360/payment-gates/customer-gate.ts",
     "lib/angelcare360/server/context.ts",
+    "lib/angelcare360/entitlement-gate-diagnostics.ts",
+    "lib/angelcare360/principal-context-authority.ts",
     "lib/ac360/school-communication.ts",
     "lib/ac360/runtime.ts",
     "scripts/sanila-demo-policy.test.ts",

@@ -10,6 +10,7 @@ export type Angelcare360EntitlementDiagnosticCode =
   | 'SNAPSHOT_INACTIVE'
   | 'ENTITLEMENT_KEY_UNKNOWN'
   | 'ENTITLEMENT_RESTRICTED'
+  | 'DEMO_CONTEXT_MISMATCH'
   | 'CONTEXT_MISMATCH'
 
 type Row = Record<string, unknown>

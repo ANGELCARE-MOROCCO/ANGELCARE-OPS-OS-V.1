@@ -58,6 +58,15 @@ function closedState(
   }
 }
 
+export function createAngelcare360DemoContextMismatchEntitlements(schoolId: string | null): Angelcare360RuntimeEntitlements {
+  return closedState(
+    'unavailable',
+    'La session sécurisée ne permet pas de résoudre cet établissement. Reconnectez-vous pour rétablir votre accès.',
+    { schoolId },
+    'DEMO_CONTEXT_MISMATCH',
+  )
+}
+
 type Row = Record<string, unknown>
 function str(value: unknown) { return typeof value === 'string' ? value : value == null ? null : String(value) }
 function num(value: unknown) { const parsed = Number(value); return Number.isFinite(parsed) ? parsed : null }
