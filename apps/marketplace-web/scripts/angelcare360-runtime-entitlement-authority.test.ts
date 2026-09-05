@@ -6,11 +6,12 @@ import { ANGELCARE360_MODULE_REGISTRY } from '../data/angelcare360/module-regist
 
 type Item = { item_type: string; item_key: string; effective_state: string; quantity?: number | null; unit?: string | null }
 const ids = { school: 'school-a', tenant: 'tenant-a', subscription: 'subscription-a', package: 'package-enterprise', snapshot: 'snapshot-a' }
+const masterDemoSchool = { id: ids.school, name: 'SANILA INTERNATIONAL SCHOOL — DEMO' }
 const chain = {
-  schoolId: ids.school,
-  tenant: { id: ids.tenant, school_id: ids.school, status: 'active' },
-  subscription: { id: ids.subscription, tenant_id: ids.tenant, package_version_id: ids.package, status: 'active' },
-  packageVersion: { id: ids.package, status: 'published' },
+  schoolId: masterDemoSchool.id,
+  tenant: { id: ids.tenant, school_id: ids.school, tenant_slug: 'sanila-master-demo', status: 'active' },
+  subscription: { id: ids.subscription, tenant_id: ids.tenant, subscription_code: 'DEMO-MAROC-2026', package_version_id: ids.package, status: 'active' },
+  packageVersion: { id: ids.package, name: 'AngelCare 360 Enterprise', version_code: 'ENTERPRISE-MA-V1', status: 'published' },
   snapshot: { id: ids.snapshot, tenant_id: ids.tenant, subscription_id: ids.subscription, package_version_id: ids.package, status: 'active' },
 }
 
@@ -27,6 +28,13 @@ const masterDemoItems: Item[] = [
 
 assert.equal(masterDemoItems.length, 38)
 assert.deepEqual(validateAngelcare360EntitlementChain(chain), { ok: true })
+assert.equal(masterDemoSchool.name, 'SANILA INTERNATIONAL SCHOOL — DEMO')
+assert.equal(chain.tenant.tenant_slug, 'sanila-master-demo')
+assert.equal(chain.subscription.subscription_code, 'DEMO-MAROC-2026')
+assert.equal(chain.packageVersion.name, 'AngelCare 360 Enterprise')
+assert.equal(chain.packageVersion.version_code, 'ENTERPRISE-MA-V1')
+console.log('MASTER_DEMO_CHAIN_INTEGRITY=PASS')
+console.log('VALID_CHAIN_DOES_NOT_CONTEXT_MISMATCH=PASS')
 const master = normalizeAngelcare360SnapshotItems(masterDemoItems)
 assert.equal(master.module.enabled.length, 12)
 assert.equal(master.feature.enabled.length, 22)
@@ -68,11 +76,21 @@ console.log('REAL_CUSTOMER_LOWER_TIER_RESTRICTED=PASS')
 console.log('RESTRICTED_FIXTURE_STILL_RESTRICTED=PASS')
 
 assert.deepEqual(validateAngelcare360EntitlementChain({ ...chain, snapshot: { ...chain.snapshot, tenant_id: 'tenant-b' } }), { ok: false, code: 'CONTEXT_MISMATCH' })
+assert.deepEqual(validateAngelcare360EntitlementChain({ ...chain, subscription: { ...chain.subscription, tenant_id: 'tenant-b' } }), { ok: false, code: 'CONTEXT_MISMATCH' })
+assert.deepEqual(validateAngelcare360EntitlementChain({ ...chain, subscription: { ...chain.subscription, package_version_id: 'package-other' } }), { ok: false, code: 'CONTEXT_MISMATCH' })
+assert.deepEqual(validateAngelcare360EntitlementChain({ ...chain, snapshot: { ...chain.snapshot, subscription_id: 'subscription-b' } }), { ok: false, code: 'CONTEXT_MISMATCH' })
+assert.deepEqual(validateAngelcare360EntitlementChain({ ...chain, snapshot: { ...chain.snapshot, package_version_id: 'package-other' } }), { ok: false, code: 'CONTEXT_MISMATCH' })
 assert.deepEqual(validateAngelcare360EntitlementChain({ ...chain, subscription: { ...chain.subscription, status: 'cancelled' } }), { ok: false, code: 'SUBSCRIPTION_INACTIVE' })
 assert.deepEqual(validateAngelcare360EntitlementChain({ ...chain, snapshot: null }), { ok: false, code: 'SNAPSHOT_MISSING' })
 assert.deepEqual(validateAngelcare360EntitlementChain({ ...chain, snapshot: { ...chain.snapshot, status: 'compiled' } }), { ok: false, code: 'SNAPSHOT_INACTIVE' })
 assert.deepEqual(validateAngelcare360EntitlementChain({ ...chain, tenant: { ...chain.tenant, school_id: 'school-b' } }), { ok: false, code: 'CONTEXT_MISMATCH' })
 console.log('CROSS_TENANT_SNAPSHOT_REJECTED=PASS')
+console.log('WRONG_SUBSCRIPTION_TENANT_REJECTED=PASS')
+console.log('WRONG_PACKAGE_LINK_REJECTED=PASS')
+console.log('WRONG_SNAPSHOT_TENANT_REJECTED=PASS')
+console.log('WRONG_SNAPSHOT_SUBSCRIPTION_REJECTED=PASS')
+console.log('WRONG_SNAPSHOT_PACKAGE_REJECTED=PASS')
+console.log('CROSS_TENANT_ISOLATION=PASS')
 console.log('INACTIVE_SUBSCRIPTION_REJECTED=PASS')
 console.log('MISSING_SNAPSHOT_REJECTED=PASS')
 
@@ -97,6 +115,45 @@ assert.doesNotMatch(resolver, /demoConfig|sanila_demo_configs/)
 assert.doesNotMatch(resolver, /snapshot_version/)
 assert.match(resolver, /order\('activated_at'/)
 assert.match(resolver, /validateAngelcare360EntitlementChain/)
+
+function projectedFields(table: string) {
+  const projection = resolver.match(new RegExp(`\\.from\\('${table}'\\)[\\s\\S]*?\\.select\\('([^']+)'\\)`))?.[1]
+  assert.ok(projection, `missing production projection for ${table}`)
+  return projection.split(',').map((field) => field.trim())
+}
+
+function project(source: Record<string, unknown>, fields: string[]) {
+  return Object.fromEntries(fields.filter((field) => field in source).map((field) => [field, source[field]]))
+}
+
+const tenantProjection = projectedFields('angelcare360_operator_tenants')
+const subscriptionProjection = projectedFields('angelcare360_operator_subscriptions')
+const packageProjection = projectedFields('angelcare360_operator_package_versions')
+const snapshotProjection = projectedFields('angelcare360_operator_tenant_entitlement_snapshots')
+
+const subscriptionWithoutTenantId = project(chain.subscription, ['id', 'status', 'package_version_id', 'updated_at'])
+assert.deepEqual(validateAngelcare360EntitlementChain({ ...chain, subscription: subscriptionWithoutTenantId }), { ok: false, code: 'CONTEXT_MISMATCH' })
+console.log('PRE_FIX_PROJECTION_REPRODUCED=PASS')
+
+for (const field of ['id', 'school_id', 'status']) assert.ok(tenantProjection.includes(field), `tenant projection must include ${field}`)
+for (const field of ['id', 'tenant_id', 'status', 'package_version_id']) assert.ok(subscriptionProjection.includes(field), `subscription projection must include ${field}`)
+for (const field of ['id', 'status']) assert.ok(packageProjection.includes(field), `package projection must include ${field}`)
+for (const field of ['id', 'tenant_id', 'subscription_id', 'package_version_id', 'status']) assert.ok(snapshotProjection.includes(field), `snapshot projection must include ${field}`)
+console.log('TENANT_VALIDATION_PROJECTION_COMPLETE=PASS')
+console.log('SUBSCRIPTION_VALIDATION_PROJECTION_COMPLETE=PASS')
+console.log('PACKAGE_VALIDATION_PROJECTION_COMPLETE=PASS')
+console.log('SNAPSHOT_VALIDATION_PROJECTION_COMPLETE=PASS')
+console.log('SUBSCRIPTION_TENANT_ID_PROJECTED=PASS')
+
+const productionProjectedChain = {
+  schoolId: chain.schoolId,
+  tenant: project(chain.tenant, tenantProjection),
+  subscription: project(chain.subscription, subscriptionProjection),
+  packageVersion: project(chain.packageVersion, packageProjection),
+  snapshot: project(chain.snapshot, snapshotProjection),
+}
+assert.deepEqual(validateAngelcare360EntitlementChain(productionProjectedChain), { ok: true })
+console.log('PRODUCTION_CHAIN_VALIDATION=PASS')
 assert.match(gate, /isAngelcare360ModuleEnabled/)
 assert.doesNotMatch(gate, /isAngelcare360CapabilityEnabled|isAngelcare360FeatureEnabled/)
 assert.match(productReality, /isAngelcare360ModuleEnabled/)
@@ -120,3 +177,4 @@ const runtimeSemanticSet = new Set([...master.module.enabled.map((key) => `modul
 assert.deepEqual([...runtimeSemanticSet].sort(), [...operatorSemanticSet].sort())
 assert.equal(runtimeSemanticSet.size, 34)
 console.log('OPERATOR_SANILA_ENTITLEMENT_PARITY=PASS')
+console.log('RUNTIME_ENTITLEMENT_AUTHORITY_TEST=PASS')

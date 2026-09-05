@@ -103,7 +103,7 @@ export async function loadAngelcare360RuntimeEntitlements(input: { userId: strin
     }
     const { data: subscription, error: subscriptionError } = await supabase
       .from('angelcare360_operator_subscriptions')
-      .select('id, status, package_version_id, updated_at')
+      .select('id, tenant_id, status, package_version_id, updated_at')
       .eq('tenant_id', tenantId)
       .order('updated_at', { ascending: false })
       .limit(1)
