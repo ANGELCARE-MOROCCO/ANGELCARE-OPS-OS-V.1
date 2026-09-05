@@ -124,13 +124,25 @@ export async function loadAngelcare360RuntimeEntitlements(input: { userId: strin
     const snapshotId = str(snapshotRow.id)
     const chain = validateAngelcare360EntitlementChain({ schoolId: input.schoolId, tenant: tenantRow, subscription: subscriptionRow, packageVersion: row(packageVersion), snapshot: snapshotRow })
     if (!chain.ok) return closedState('unavailable', ACCESS_UNAVAILABLE, { ...packageDetails, snapshotId, compiledAt: str(snapshotRow.compiled_at) }, chain.code)
-    const [{ data: items, error: itemError }, { data: operationGates, error: operationGateError }, { data: provisioningRows, error: provisioningError }, { data: consumptionRows, error: consumptionError }] = await Promise.all([
-      supabase.from('angelcare360_operator_tenant_entitlement_items').select('item_type, item_key, item_label, effective_state, quantity, unit, origin, reason').eq('snapshot_id', snapshotId),
+    // The compiled tenant snapshot is the commercial source of truth for whole-workspace access.
+    // Auxiliary runtime authorities (operation gates, provisioning evidence and meter consumption)
+    // must fail closed for actions without erasing valid module rights from the canonical snapshot.
+    const { data: items, error: itemError } = await supabase
+      .from('angelcare360_operator_tenant_entitlement_items')
+      .select('item_type, item_key, item_label, effective_state, quantity, unit, origin, reason')
+      .eq('snapshot_id', snapshotId)
+    if (itemError) return closedState('unavailable', ACCESS_UNAVAILABLE, { ...packageDetails, snapshotId, compiledAt: str(snapshotRow.compiled_at) }, 'AUTHORITY_UNAVAILABLE')
+
+    const [
+      { data: operationGates, error: operationGateError },
+      { data: provisioningRows, error: provisioningError },
+      { data: consumptionRows, error: consumptionError },
+    ] = await Promise.all([
       supabase.from('angelcare360_product_runtime_operation_gates').select('operation_key,state,reason,effective_from,effective_to').eq('school_id', input.schoolId).eq('status', 'active'),
       supabase.from('angelcare360_product_reality_provisioning_events').select('item_type,item_key,state,verified_at,reason').eq('school_id', input.schoolId).order('created_at', { ascending: false }),
       supabase.from('angelcare360_product_meter_consumption').select('meter_key,current_value,reserved_value,allowed_value,unit,status,source_entity_type').eq('school_id', input.schoolId),
     ])
-    if (itemError || operationGateError || provisioningError || consumptionError) return closedState('unavailable', ACCESS_UNAVAILABLE, { ...packageDetails, snapshotId, compiledAt: str(snapshotRow.compiled_at) }, 'AUTHORITY_UNAVAILABLE')
+    const auxiliaryAuthorityUnavailable = Boolean(operationGateError || provisioningError || consumptionError)
 
     const itemRows = (items || []) as Row[]
     const normalized = normalizeAngelcare360SnapshotItems(itemRows, publicRestrictionReason)
@@ -148,32 +160,38 @@ export async function loadAngelcare360RuntimeEntitlements(input: { userId: strin
       if (!['enabled', 'active'].includes(String(gate.state))) operationRestrictions.set(String(gate.operation_key), { key: String(gate.operation_key), state: String(gate.state), reason: publicRestrictionReason('operation', String(gate.state)) })
     }
     const compiledOperationKeys = [...normalized.operation.enabled, ...normalized.operation.restricted.map((item) => item.key)]
-    const enabledOperations = compiledOperationKeys.length
-      ? normalized.operation.enabled.filter((key) => !operationRestrictions.has(key))
-      : ANGELCARE360_PRODUCT_REALITY_OPERATIONS.filter((definition) => {
-        if (operationRestrictions.has(definition.operationKey)) return false
-        if (definition.moduleKey && !modules.enabled.includes(definition.moduleKey)) return false
-        if (definition.capabilityKey && (capabilities.restricted.some((item) => item.key === definition.capabilityKey) || (capabilities.enabled.length && !capabilities.enabled.includes(definition.capabilityKey)))) return false
-        if (definition.featureKey && (features.restricted.some((item) => item.key === definition.featureKey) || (features.enabled.length && !features.enabled.includes(definition.featureKey)))) return false
-        return true
-      }).map((definition) => definition.operationKey)
+    const enabledOperations = auxiliaryAuthorityUnavailable
+      ? []
+      : compiledOperationKeys.length
+        ? normalized.operation.enabled.filter((key) => !operationRestrictions.has(key))
+        : ANGELCARE360_PRODUCT_REALITY_OPERATIONS.filter((definition) => {
+          if (operationRestrictions.has(definition.operationKey)) return false
+          if (definition.moduleKey && !modules.enabled.includes(definition.moduleKey)) return false
+          if (definition.capabilityKey && (capabilities.restricted.some((item) => item.key === definition.capabilityKey) || (capabilities.enabled.length && !capabilities.enabled.includes(definition.capabilityKey)))) return false
+          if (definition.featureKey && (features.restricted.some((item) => item.key === definition.featureKey) || (features.enabled.length && !features.enabled.includes(definition.featureKey)))) return false
+          return true
+        }).map((definition) => definition.operationKey)
     const consumptionMap = new Map<string, Row>(((consumptionRows || []) as Row[]).map((item) => [String(item.meter_key), item]))
     const limits = normalized.meters.map((item) => {
       const usage = consumptionMap.get(String(item.item_key))
       const allowed = num(item.quantity)
       const current = num(usage?.current_value)
-      const state = String(usage?.status || (allowed !== null && current !== null && current >= allowed ? 'reached' : allowed !== null && current !== null && current >= allowed * 0.8 ? 'warning' : 'available')) as Angelcare360RuntimeEntitlements['limits'][number]['state']
-      return { key: String(item.item_key), label: String(item.item_label), allowed, current, reserved: num(usage?.reserved_value), unit: str(item.unit || usage?.unit), state, source: str(usage?.source_entity_type || item.origin) }
+      const state = String(consumptionError
+        ? 'unknown'
+        : usage?.status || (allowed !== null && current !== null && current >= allowed ? 'reached' : allowed !== null && current !== null && current >= allowed * 0.8 ? 'warning' : 'available')) as Angelcare360RuntimeEntitlements['limits'][number]['state']
+      return { key: String(item.item_key), label: String(item.item_label), allowed, current: consumptionError ? null : current, reserved: consumptionError ? null : num(usage?.reserved_value), unit: str(item.unit || usage?.unit), state, source: consumptionError ? null : str(usage?.source_entity_type || item.origin) }
     })
     const provisioningMap = new Map<string, Row>()
     for (const item of (provisioningRows || []) as Row[]) {
       const key = `${String(item.item_type)}:${String(item.item_key)}`
       if (!provisioningMap.has(key)) provisioningMap.set(key, item)
     }
-    const provisioning = [...provisioningMap.values()].map((item) => ({ itemType: String(item.item_type), itemKey: String(item.item_key), state: String(item.state), lastVerifiedAt: str(item.verified_at), reason: ['verified', 'active', 'enabled'].includes(String(item.state)) ? null : publicRestrictionReason(String(item.item_type), String(item.state)) }))
+    const provisioning = provisioningError
+      ? []
+      : [...provisioningMap.values()].map((item) => ({ itemType: String(item.item_type), itemKey: String(item.item_key), state: String(item.state), lastVerifiedAt: str(item.verified_at), reason: ['verified', 'active', 'enabled'].includes(String(item.state)) ? null : publicRestrictionReason(String(item.item_type), String(item.state)) }))
 
     return {
-      state: 'active',
+      state: auxiliaryAuthorityUnavailable ? 'partial' : 'active',
       enforced: true,
       schoolId: input.schoolId,
       tenantId,
@@ -199,8 +217,10 @@ export async function loadAngelcare360RuntimeEntitlements(input: { userId: strin
       restrictedOperations: [...operationRestrictions.values()],
       limits,
       provisioning,
-      warning: null,
-      diagnosticCode: null,
+      warning: auxiliaryAuthorityUnavailable
+        ? 'Certains contrôles opérationnels sont temporairement indisponibles. Les droits contractuels de consultation restent appliqués; les opérations sensibles restent verrouillées.'
+        : null,
+      diagnosticCode: auxiliaryAuthorityUnavailable ? 'AUTHORITY_UNAVAILABLE' : null,
     }
   } catch {
     return closedState('unavailable', ACCESS_UNAVAILABLE, { schoolId: input.schoolId }, 'AUTHORITY_UNAVAILABLE')
