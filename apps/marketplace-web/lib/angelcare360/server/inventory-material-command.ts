@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto'
 import { createClient } from '@/lib/supabase/server'
 import { getAngelcare360AccessContext, requireAngelcare360Permission } from '@/lib/angelcare360/server/context'
+import { getSanilaBusinessClock, getSanilaBusinessDate } from '@/lib/angelcare360/server/business-clock'
 import { recordAngelcare360AuditEventServer } from '@/lib/angelcare360/server/audit'
 import type {
   MaterialAuditEvent,
@@ -342,7 +343,7 @@ export async function getMaterialSnapshot(options?: { schoolId?: string | null }
     .order('created_at', { ascending: false })
     .limit(80)
   const auditEvents = ((auditRows || []) as Row[]).map(mapAudit)
-  const thirtyDaysAgo = Date.now() - 30 * 24 * 60 * 60 * 1000
+  const thirtyDaysAgo = getSanilaBusinessClock(resolved).instant.getTime() - 30 * 24 * 60 * 60 * 1000
   return {
     schoolId,
     schoolName: resolved.school.name,
@@ -686,7 +687,7 @@ export async function applyMaterialMovement(input: Record<string, unknown>): Pro
     const integrity = await getMaterialIntegrityStatus()
     if (!integrity.ready) return { ok: false, locked: true, reason: integrity.reason || 'Migration d’intégrité inventaire requise.' }
     const client = await createClient()
-    const movementCode = nullableText(input.movementCode) || `MOV-${new Date().toISOString().slice(0, 10).replaceAll('-', '')}-${randomUUID().slice(0, 8).toUpperCase()}`
+    const movementCode = nullableText(input.movementCode) || `MOV-${getSanilaBusinessDate(resolved).replaceAll('-', '')}-${randomUUID().slice(0, 8).toUpperCase()}`
     const { data, error } = await client.rpc(MOVEMENT_FUNCTION, {
       p_school_id: resolved.school!.id,
       p_item_id: itemId,
@@ -694,7 +695,7 @@ export async function applyMaterialMovement(input: Record<string, unknown>): Pro
       p_movement_type: movementType,
       p_quantity: quantity,
       p_observed_stock: observedStock,
-      p_movement_date: nullableText(input.movementDate) || new Date().toISOString().slice(0, 10),
+      p_movement_date: nullableText(input.movementDate) || getSanilaBusinessDate(resolved),
       p_reference_type: nullableText(input.referenceType),
       p_reference_id: nullableText(input.referenceId),
       p_performed_by: nullableText(input.performedBy) || resolved.user.id,

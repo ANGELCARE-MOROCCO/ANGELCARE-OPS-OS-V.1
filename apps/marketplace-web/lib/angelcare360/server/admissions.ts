@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { getAngelcare360AccessContext, requireAngelcare360Permission } from './context'
 import { recordAngelcare360AuditEventServer } from './audit'
+import { getSanilaBusinessDate } from './business-clock'
 import {
   angelcare360AdmissionApplicationCreateSchema,
   angelcare360AdmissionApplicationStatusChangeSchema,
@@ -1035,7 +1036,7 @@ export async function convertAngelcare360LeadToApplication(input: unknown) {
       email: parsed.data.email || null,
       address: parsed.data.address || null,
       application_stage: parsed.data.applicationStage,
-      application_date: parsed.data.applicationDate || new Date().toISOString().slice(0, 10),
+      application_date: parsed.data.applicationDate || getSanilaBusinessDate(context),
       decision_date: parsed.data.decisionDate || null,
       decision_status: parsed.data.decisionStatus || 'pending',
       decision_reason: parsed.data.decisionReason || null,
@@ -1207,7 +1208,7 @@ export async function createAngelcare360AdmissionApplication(input: unknown) {
     email: parsed.data.email || null,
     address: parsed.data.address || null,
     application_stage: parsed.data.applicationStage,
-    application_date: parsed.data.applicationDate || new Date().toISOString().slice(0, 10),
+    application_date: parsed.data.applicationDate || getSanilaBusinessDate(context),
     decision_date: parsed.data.decisionDate || null,
     decision_status: parsed.data.decisionStatus || 'pending',
     decision_reason: parsed.data.decisionReason || null,
@@ -1896,7 +1897,7 @@ export async function convertAngelcare360ApplicationToPeopleRecords(input: unkno
         date_of_birth: toDateString(asOptionalString(applicationRow.child_date_of_birth || metadata.child_date_of_birth)),
         admission_status: 'enrolled',
         status: 'active',
-        admission_date: new Date().toISOString().slice(0, 10),
+        admission_date: getSanilaBusinessDate(context),
         created_by: context.user.id,
         updated_by: context.user.id,
         metadata_json: {
@@ -1957,7 +1958,7 @@ export async function convertAngelcare360ApplicationToPeopleRecords(input: unkno
           enrollment_number: `ENR-${Date.now()}`,
           enrollment_status: 'enrolled',
           status: 'active',
-          enrolled_on: new Date().toISOString().slice(0, 10),
+          enrolled_on: getSanilaBusinessDate(context),
           created_by: context.user.id,
           updated_by: context.user.id,
           metadata_json: { source: 'admissions_conversion' },

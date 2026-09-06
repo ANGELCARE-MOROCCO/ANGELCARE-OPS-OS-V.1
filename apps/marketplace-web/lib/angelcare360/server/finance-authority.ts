@@ -4,6 +4,7 @@ import { generateAngelcare360A4PdfBytes } from '@/lib/angelcare360/documents/pdf
 import { buildCustomerFinanceDocumentModel } from '@/lib/angelcare360/documents/finance'
 import { requireProductRealityOperation } from '@/lib/angelcare360/server/product-reality'
 import { recordAngelcare360AuditEventServer } from '@/lib/angelcare360/server/audit'
+import { getSanilaBusinessClock } from '@/lib/angelcare360/server/business-clock'
 import {
   applyAngelcare360Discount,
   confirmAngelcare360Payment,
@@ -51,7 +52,6 @@ function optional(value: unknown): string | null { const rendered = string(value
 function numeric(value: unknown, fallback = 0): number { const parsed = Number(value); return Number.isFinite(parsed) ? parsed : fallback }
 function boolean(value: unknown, fallback = false): boolean { return typeof value === 'boolean' ? value : value === 'true' || value === 1 || value === '1' ? true : value === 'false' || value === 0 || value === '0' ? false : fallback }
 function now() { return new Date().toISOString() }
-function today() { return new Date().toISOString().slice(0, 10) }
 function stableHash(value: unknown) { return createHash('sha256').update(JSON.stringify(value)).digest('hex') }
 function code(prefix: string) { return `${prefix}-${Date.now().toString(36).toUpperCase()}-${randomUUID().slice(0, 8).toUpperCase()}` }
 function required(payload: Row, key: string, label: string) { const value = optional(payload[key]); if (!value) throw new Error(`${label} est requis.`); return value }
@@ -86,6 +86,7 @@ async function ensurePayerAccountForStudent(
   schoolId: string,
   userId: string,
   studentId: string,
+  businessDate: string,
 ) {
   const { data: existingMember, error: memberError } = await client
     .from('angelcare360_finance_payer_account_members')
@@ -134,7 +135,7 @@ async function ensurePayerAccountForStudent(
       student_id: studentId,
       responsibility_type: 'primary_payer',
       allocation_percentage: 100,
-      effective_from: today(),
+      effective_from: businessDate,
       status: 'active',
     }, { onConflict: 'school_id,payer_account_id,student_id' })
   if (linkError) throw new Error(linkError.message)
@@ -152,7 +153,7 @@ const PERIOD_LOCK_EXEMPT = new Set<FinanceAuthorityCommandRequest['operationKey'
   'finance.approval.decide',
 ])
 
-function operationDate(payload: Row): string {
+function operationDate(payload: Row, businessDate: string): string {
   return optional(
     payload.effectiveDate
     || payload.invoiceDate
@@ -160,7 +161,7 @@ function operationDate(payload: Row): string {
     || payload.expenseDate
     || payload.dueDate
     || payload.date
-  ) || today()
+  ) || businessDate
 }
 
 async function assertFinancePeriodOpen(
@@ -168,9 +169,10 @@ async function assertFinancePeriodOpen(
   schoolId: string,
   operationKey: FinanceAuthorityCommandRequest['operationKey'],
   payload: Row,
+  businessDate: string,
 ) {
   if (PERIOD_LOCK_EXEMPT.has(operationKey)) return
-  const date = operationDate(payload)
+  const date = operationDate(payload, businessDate)
   const { data, error } = await client
     .from('angelcare360_finance_periods')
     .select('id,label,date_from,date_to,status')
@@ -359,7 +361,7 @@ async function billingPreview(client: ServiceClient, schoolId: string, payload: 
   return { academicYearId, eligibleCount: items.filter((item: { status: string }) => item.status === 'eligible').length, blockedCount: items.filter((item: { status: string }) => item.status === 'blocked').length, totalAmount: centsToDecimal(items.reduce((sum: number, item: { amount: string }) => sum + decimalToCents(item.amount), 0)), items }
 }
 
-async function executeBillingRun(client: ServiceClient, schoolId: string, userId: string, payload: Row, idempotencyKey: string) {
+async function executeBillingRun(client: ServiceClient, schoolId: string, userId: string, payload: Row, idempotencyKey: string, businessDate: string) {
   const preview = await billingPreview(client, schoolId, payload)
   const { data: run, error: runError } = await client.from('angelcare360_finance_billing_runs').insert({ school_id: schoolId, academic_year_id: preview.academicYearId, run_code: code('BILL'), idempotency_key: idempotencyKey, status: 'processing', preview_json: preview, requested_by: userId, started_at: now() }).select('*').single()
   if (runError) {
@@ -392,8 +394,8 @@ async function executeBillingRun(client: ServiceClient, schoolId: string, userId
         student_id: assignmentRow.student_id,
         invoice_number: invoiceNumber,
         invoice_type: 'school_fee',
-        invoice_date: today(),
-        due_date: optional(payload.dueDate) || today(),
+        invoice_date: businessDate,
+        due_date: optional(payload.dueDate) || businessDate,
         currency: string(structure.currency || 'MAD'),
         subtotal_amount: centsToDecimal(totalCents),
         discount_total: '0.00',
@@ -423,9 +425,10 @@ async function executeBillingRun(client: ServiceClient, schoolId: string, userId
   return row(completed)
 }
 
-async function performFinanceOperation(input: { client: ServiceClient; schoolId: string; schoolName: string; userId: string; executionId: string; request: FinanceAuthorityCommandRequest; bypassApproval: boolean }): Promise<Row> {
+async function performFinanceOperation(input: { client: ServiceClient; schoolId: string; schoolName: string; userId: string; executionId: string; request: FinanceAuthorityCommandRequest; bypassApproval: boolean; businessDate: string }): Promise<Row> {
   const payload = row(input.request.payload)
   const schoolId = input.schoolId
+  const businessDate = input.businessDate
   switch (input.request.operationKey) {
     case 'finance.fee.create': {
       const result = await createAngelcare360FeeStructure({
@@ -465,7 +468,7 @@ async function performFinanceOperation(input: { client: ServiceClient; schoolId:
       const remainingCents = totalCents - depositCents
       const baseCents = Math.floor(remainingCents / count)
       const remainder = remainingCents - (baseCents * count)
-      const startDate = new Date(optional(payload.firstDueDate) || today())
+      const startDate = new Date(optional(payload.firstDueDate) || businessDate)
       if (Number.isNaN(startDate.getTime())) throw new Error('La première échéance est invalide.')
       const schedule = Array.from({ length: count }, (_, index) => {
         const due = new Date(startDate)
@@ -488,7 +491,7 @@ async function performFinanceOperation(input: { client: ServiceClient; schoolId:
           .eq('id', assignmentId)
           .single()
         if (assignmentError) throw new Error(assignmentError.message)
-        payerAccountId = string((await ensurePayerAccountForStudent(input.client, schoolId, input.userId, string(row(assignment).student_id))).id)
+        payerAccountId = string((await ensurePayerAccountForStudent(input.client, schoolId, input.userId, string(row(assignment).student_id), businessDate)).id)
       }
       const { data, error } = await input.client.from('angelcare360_finance_installment_plans').insert({
         school_id: schoolId,
@@ -520,7 +523,7 @@ async function performFinanceOperation(input: { client: ServiceClient; schoolId:
         studentId: required(payload, 'studentId', 'Élève'),
         invoiceNumber,
         invoiceType: string(payload.invoiceType || 'manual'),
-        invoiceDate: optional(payload.invoiceDate) || today(),
+        invoiceDate: optional(payload.invoiceDate) || businessDate,
         dueDate: optional(payload.dueDate),
         currency: string(payload.currency || 'MAD'),
         subtotalAmount: numeric(centsToDecimal(subtotalCents)),
@@ -655,7 +658,7 @@ async function performFinanceOperation(input: { client: ServiceClient; schoolId:
       const { data: source, error: sourceError } = await input.client.from('angelcare360_fee_structures').select('*, angelcare360_fee_items(*)').eq('school_id', schoolId).eq('id', feeStructureId).single()
       if (sourceError) throw new Error(sourceError.message)
       const versionNumber = numeric(payload.versionNumber, 1)
-      const { data, error } = await input.client.from('angelcare360_finance_fee_policy_versions').insert({ school_id: schoolId, fee_structure_id: feeStructureId, policy_code: string(row(source).fee_code), version_number: versionNumber, status: 'published', effective_from: optional(payload.effectiveFrom) || today(), effective_to: optional(payload.effectiveTo), policy_json: source, published_by: input.userId, published_at: now() }).select('*').single()
+      const { data, error } = await input.client.from('angelcare360_finance_fee_policy_versions').insert({ school_id: schoolId, fee_structure_id: feeStructureId, policy_code: string(row(source).fee_code), version_number: versionNumber, status: 'published', effective_from: optional(payload.effectiveFrom) || businessDate, effective_to: optional(payload.effectiveTo), policy_json: source, published_by: input.userId, published_at: now() }).select('*').single()
       if (error) throw new Error(error.message)
       return { policyVersion: data }
     }
@@ -671,7 +674,7 @@ async function performFinanceOperation(input: { client: ServiceClient; schoolId:
       return { plan: data }
     }
     case 'finance.billing_run.preview': return { preview: await billingPreview(input.client, schoolId, payload) }
-    case 'finance.billing_run.execute': return { billingRun: await executeBillingRun(input.client, schoolId, input.userId, payload, optional(input.request.idempotencyKey) || stableHash(payload)) }
+    case 'finance.billing_run.execute': return { billingRun: await executeBillingRun(input.client, schoolId, input.userId, payload, optional(input.request.idempotencyKey) || stableHash(payload), businessDate) }
     case 'finance.invoice.issue': {
       const invoiceId = input.request.entityId || required(payload, 'invoiceId', 'Facture')
       const result = await issueAngelcare360Invoice({ schoolId, id: invoiceId })
@@ -892,7 +895,7 @@ async function performFinanceOperation(input: { client: ServiceClient; schoolId:
         .eq('id', accountReference)
         .maybeSingle()
       if (directAccountError && directAccountError.code !== 'PGRST116') throw new Error(directAccountError.message)
-      const payerAccount = directAccount || await ensurePayerAccountForStudent(input.client, schoolId, input.userId, accountReference)
+      const payerAccount = directAccount || await ensurePayerAccountForStudent(input.client, schoolId, input.userId, accountReference, businessDate)
       const accountId = string(row(payerAccount).id)
       const { data, error } = await input.client.from('angelcare360_finance_collection_cases').insert({ school_id: schoolId, account_id: accountId, case_code: code('COL'), status: 'monitoring', priority: string(payload.priority || 'normal'), outstanding_amount: payload.outstandingAmount || 0, aging_bucket: string(payload.agingBucket || 'current'), owner_id: optional(payload.ownerId), next_action: optional(payload.nextAction), due_at: optional(payload.dueAt), opened_by: input.userId, opened_at: now() }).select('*').single()
       if (error) throw new Error(error.message)
@@ -1021,18 +1024,19 @@ export async function executeFinanceAuthorityCommand(request: FinanceAuthorityCo
   const context = gate.context
   if (!context.school) throw new Error('Établissement actif introuvable.')
   const client = await createServiceClient()
+  const businessDate = getSanilaBusinessClock(context).date
   const { execution, replay } = await beginFinanceExecution(client, context.school.id, context.user.id, request)
   const executionId = string(execution.id)
   if (replay) return { ok: string(execution.state) !== 'failed', state: string(execution.state) as FinanceAuthorityCommandResult['state'], message: string(row(execution.result_payload).message || 'Exécution financière déjà traitée.'), operationKey: request.operationKey, executionId, approvalId: optional(row(execution.result_payload).approvalId), entityId: request.entityId || null, result: row(execution.result_payload) }
   try {
-    await assertFinancePeriodOpen(client, context.school.id, request.operationKey, row(request.payload))
+    await assertFinancePeriodOpen(client, context.school.id, request.operationKey, row(request.payload), businessDate)
     if (definition.approval && !options.bypassApproval) {
       const approval = await requestApproval(client, context.school.id, context.user.id, request, executionId)
       const result = { approvalId: approval.id, message: 'Opération transmise au circuit d’approbation.' }
       await finishExecution(client, executionId, 'approval_required', result)
       return { ok: true, state: 'approval_required', message: result.message, operationKey: request.operationKey, executionId, approvalId: string(approval.id), entityId: request.entityId || null, result }
     }
-    const result = await performFinanceOperation({ client, schoolId: context.school.id, schoolName: context.school.name, userId: context.user.id, executionId, request, bypassApproval: Boolean(options.bypassApproval) })
+    const result = await performFinanceOperation({ client, schoolId: context.school.id, schoolName: context.school.name, userId: context.user.id, executionId, request, bypassApproval: Boolean(options.bypassApproval), businessDate })
     await finishExecution(client, executionId, 'completed', result)
     await recordAngelcare360AuditEventServer({ category: 'finance', module: 'finance', action: request.operationKey, schoolId: context.school.id, entityType: 'finance_authority', entityId: request.entityId || executionId, severity: 'info', afterData: { executionId, result } })
     return { ok: true, state: 'completed', message: 'Opération financière exécutée, équilibrée et auditée.', operationKey: request.operationKey, executionId, entityId: request.entityId || null, result }
@@ -1074,6 +1078,7 @@ export async function getFinanceAuthoritySnapshot(scene: FinanceAuthorityScene =
   if (!context.school) throw new Error('Établissement actif introuvable.')
   const client = await createServiceClient()
   const schoolId = context.school.id
+  const businessNow = getSanilaBusinessClock(context).instant.getTime()
   const [overview, feeStructures, feeAssignments, invoices, payments, receipts, discounts, reminders, balances, expenses, payerAccounts, collectionCases, commitments, refunds, periods, templates, documents, reportRuns, exportRuns, approvals, executions] = await Promise.all([
     getAngelcare360FinanceOverview({ schoolId }),
     listAngelcare360FeeStructures({ schoolId }),
@@ -1123,7 +1128,7 @@ export async function getFinanceAuthoritySnapshot(scene: FinanceAuthorityScene =
   ].map((bucket) => {
     const items = invoiceRows.filter((invoice) => {
       const due = optional(invoice.due_date)
-      const days = due ? Math.floor((Date.now() - Date.parse(due)) / 86400000) : 0
+      const days = due ? Math.floor((businessNow - Date.parse(due)) / 86400000) : 0
       return numeric(invoice.balance_due, numeric(invoice.total_amount) - numeric(invoice.amount_paid)) > 0 && days >= bucket.min && days <= bucket.max
     })
     return { bucket: bucket.bucket, amount: money(items.reduce((sum, invoice) => sum + numeric(invoice.balance_due, numeric(invoice.total_amount) - numeric(invoice.amount_paid)), 0)), invoices: items.length, tone: bucket.tone }

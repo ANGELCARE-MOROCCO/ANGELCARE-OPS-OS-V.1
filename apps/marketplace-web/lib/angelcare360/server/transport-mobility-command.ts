@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
-import { requireAngelcare360Permission } from '@/lib/angelcare360/server/context'
+import { getAngelcare360AccessContext, requireAngelcare360Permission } from '@/lib/angelcare360/server/context'
 import { recordAngelcare360AuditEventServer } from '@/lib/angelcare360/server/audit'
+import { getSanilaBusinessClock, getSanilaBusinessDate } from '@/lib/angelcare360/server/business-clock'
 import type {
   TransportAlert,
   TransportAssignment,
@@ -22,7 +23,6 @@ import type {
 
 type Row = Record<string, any>
 const MODULE = 'transport'
-const TODAY = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'Africa/Casablanca' }).format(new Date())
 
 function s(value: unknown, fallback = '') { return value === null || value === undefined ? fallback : String(value) }
 function n(value: unknown, fallback = 0) { const x = Number(value); return Number.isFinite(x) ? x : fallback }
@@ -164,7 +164,7 @@ async function queryRows(client: any, table: string, columns: string, column: st
 }
 
 async function advancedRaw(client: any, orgId: string, schoolId: string) {
-  const today = TODAY()
+  const today = getSanilaBusinessDate(await getAngelcare360AccessContext({ schoolId }))
   const results = await Promise.all([
     queryRows(client, 'ac360_school_transport_routes', '*', 'org_id', orgId, 'route_code'),
     queryRows(client, 'ac360_school_transport_route_stops', '*', 'org_id', orgId, 'stop_order'),
@@ -205,7 +205,7 @@ async function legacyRaw(client: any, schoolId: string) {
   return {
     routes: results[0] as Row[], stops: results[1] as Row[], vehicles: results[2] as Row[], assignments: results[3] as Row[],
     students: results[4] as Row[], staff: results[5] as Row[], audits: (results[6].data || []) as Row[],
-    drivers: [] as Row[], runs: [] as Row[], events: [] as Row[], safety: [] as Row[], alerts: [] as Row[], today: TODAY(),
+    drivers: [] as Row[], runs: [] as Row[], events: [] as Row[], safety: [] as Row[], alerts: [] as Row[], today: getSanilaBusinessDate(await getAngelcare360AccessContext({ schoolId })),
   }
 }
 
@@ -326,7 +326,7 @@ export async function getTransportMobilitySnapshot(options?: { schoolId?: string
   const normalized=choice.authority==='advanced'?normalizeAdvanced(raw):normalizeLegacy(raw)
   const integrity=await loadIntegrity(client,choice.orgId,choice.authority)
   const routes=normalized.routes
-  const today=TODAY()
+  const today=getSanilaBusinessDate(ctx)
   const metrics={
     routes:routes.length,activeRoutes:routes.filter(x=>x.status==='active').length,stops:normalized.stops.length,vehicles:normalized.vehicles.length,
     activeVehicles:normalized.vehicles.filter(x=>x.status==='active').length,drivers:normalized.drivers.length,activeDrivers:normalized.drivers.filter(x=>x.status==='active').length,
@@ -364,6 +364,8 @@ export async function transportMutation(input: Record<string,unknown>): Promise<
   const client=await createClient()
   const choice=await chooseAuthority(client,ctx.school!)
   const actor=ctx.user.id
+  const businessClock=getSanilaBusinessClock(ctx)
+  const businessDate=businessClock.date
 
   try {
     if (choice.authority==='advanced'&&choice.orgId) {
@@ -395,11 +397,11 @@ export async function transportMutation(input: Record<string,unknown>): Promise<
         if(gated.locked)return{ok:false,locked:true,error:gated.locked}
       }
       if (action==='assignment.upsert') {
-        const {data,error}=await client.rpc('angelcare360_transport_assign_student_v1',{p_org_id:orgId,p_student_id:s(input.studentId),p_route_id:s(input.routeId),p_stop_id:nullable(input.stopId),p_service_direction:s(input.serviceDirection,'round_trip'),p_monthly_fee_mad:n(input.monthlyFeeMad),p_starts_on:nullable(input.startsOn)||TODAY(),p_ends_on:nullable(input.endsOn),p_status:s(input.status,'active'),p_actor_app_user_id:actor,p_metadata:{source:'sanila_mobility'}})
+        const {data,error}=await client.rpc('angelcare360_transport_assign_student_v1',{p_org_id:orgId,p_student_id:s(input.studentId),p_route_id:s(input.routeId),p_stop_id:nullable(input.stopId),p_service_direction:s(input.serviceDirection,'round_trip'),p_monthly_fee_mad:n(input.monthlyFeeMad),p_starts_on:nullable(input.startsOn)||businessDate,p_ends_on:nullable(input.endsOn),p_status:s(input.status,'active'),p_actor_app_user_id:actor,p_metadata:{source:'sanila_mobility'}})
         if(error)return resultError(error);const id=rpcId(data,'assignmentId');if(id)await audit({schoolId:ctx.school!.id,action:'transport.assignment.upsert',entityType:'transport_assignment',entityId:id,metadata:{authority:'advanced'}});return{ok:true,id}
       }
       if (action==='run.open') {
-        const {data,error}=await client.rpc('angelcare360_transport_open_run_v1',{p_org_id:orgId,p_route_id:s(input.routeId),p_vehicle_id:nullable(input.vehicleId),p_driver_id:nullable(input.driverId),p_run_date:nullable(input.runDate)||TODAY(),p_run_type:s(input.runType,'pickup'),p_planned_start_at:nullable(input.plannedStartAt),p_actor_app_user_id:actor,p_metadata:{source:'sanila_mobility'}})
+        const {data,error}=await client.rpc('angelcare360_transport_open_run_v1',{p_org_id:orgId,p_route_id:s(input.routeId),p_vehicle_id:nullable(input.vehicleId),p_driver_id:nullable(input.driverId),p_run_date:nullable(input.runDate)||businessDate,p_run_type:s(input.runType,'pickup'),p_planned_start_at:nullable(input.plannedStartAt),p_actor_app_user_id:actor,p_metadata:{source:'sanila_mobility'}})
         if(error)return resultError(error);if(data?.ok===false)return{ok:false,error:s(data.error)};const id=rpcId(data,'routeRunId');if(id)await audit({schoolId:ctx.school!.id,action:'transport.run.open',entityType:'transport_route_run',entityId:id,severity:'notice',metadata:{authority:'advanced'}});return{ok:true,id}
       }
       if (action==='run.close') {
@@ -411,7 +413,7 @@ export async function transportMutation(input: Record<string,unknown>): Promise<
         if(error)return resultError(error);if(data?.ok===false)return{ok:false,error:s(data.error)};const id=rpcId(data,'eventId');if(id)await audit({schoolId:ctx.school!.id,action:`transport.event.${s(input.eventType)}`,entityType:'transport_run_event',entityId:id,metadata:{authority:'advanced',runId:s(input.runId)}});return{ok:true,id}
       }
       if (action==='safety.record') {
-        const {data,error}=await client.rpc('angelcare360_transport_record_safety_check_v1',{p_org_id:orgId,p_vehicle_id:nullable(input.vehicleId),p_driver_id:nullable(input.driverId),p_route_run_id:nullable(input.runId),p_check_type:s(input.checkType,'pre_route'),p_result:s(input.result,'passed'),p_checked_at:new Date().toISOString(),p_checked_by_staff_id:nullable(input.checkedByStaffId),p_notes:nullable(input.notes),p_actor_app_user_id:actor,p_metadata:{source:'sanila_mobility'}})
+        const {data,error}=await client.rpc('angelcare360_transport_record_safety_check_v1',{p_org_id:orgId,p_vehicle_id:nullable(input.vehicleId),p_driver_id:nullable(input.driverId),p_route_run_id:nullable(input.runId),p_check_type:s(input.checkType,'pre_route'),p_result:s(input.result,'passed'),p_checked_at:businessClock.instant.toISOString(),p_checked_by_staff_id:nullable(input.checkedByStaffId),p_notes:nullable(input.notes),p_actor_app_user_id:actor,p_metadata:{source:'sanila_mobility'}})
         if(error)return resultError(error);if(data?.ok===false)return{ok:false,error:s(data.error)};const id=rpcId(data,'safetyCheckId');if(id)await audit({schoolId:ctx.school!.id,action:'transport.safety.record',entityType:'transport_safety_check',entityId:id,severity:['failed','blocked'].includes(s(input.result))?'warning':'info',metadata:{authority:'advanced'}});return{ok:true,id}
       }
       if (action==='alert.resolve') {
@@ -419,7 +421,7 @@ export async function transportMutation(input: Record<string,unknown>): Promise<
         if(error)return resultError(error);if(data?.ok===false)return{ok:false,error:s(data.error)};return{ok:true,id:s(input.alertId)}
       }
       if (action==='runtime.reconcile') {
-        const {data,error}=await client.rpc('ac360_school_reconcile_transport_runtime',{p_org_id:orgId,p_as_of_date:TODAY(),p_actor_app_user_id:actor,p_metadata:{source:'sanila_mobility'}})
+        const {data,error}=await client.rpc('ac360_school_reconcile_transport_runtime',{p_org_id:orgId,p_as_of_date:businessDate,p_actor_app_user_id:actor,p_metadata:{source:'sanila_mobility'}})
         if(error)return resultError(error);return{ok:true,record:data}
       }
       return{ok:false,error:'Action Transport avancée inconnue.'}
@@ -443,7 +445,7 @@ export async function transportMutation(input: Record<string,unknown>): Promise<
       const {data,error}=await q;if(error)return resultError(error);return{ok:true,id:s(data?.id)}
     }
     if(action==='assignment.upsert'){
-      const id=nullable(input.id);const row={school_id:school,academic_year_id:ctx.academicYear?.id,route_id:s(input.routeId),student_id:s(input.studentId),vehicle_id:nullable(input.vehicleId),pickup_stop_id:nullable(input.stopId),dropoff_stop_id:nullable(input.dropoffStopId)||nullable(input.stopId),assigned_on:nullable(input.startsOn)||TODAY(),status:s(input.status,'active'),updated_by:actor}
+      const id=nullable(input.id);const row={school_id:school,academic_year_id:ctx.academicYear?.id,route_id:s(input.routeId),student_id:s(input.studentId),vehicle_id:nullable(input.vehicleId),pickup_stop_id:nullable(input.stopId),dropoff_stop_id:nullable(input.dropoffStopId)||nullable(input.stopId),assigned_on:nullable(input.startsOn)||businessDate,status:s(input.status,'active'),updated_by:actor}
       if(!row.academic_year_id)return{ok:false,error:'Année scolaire active requise.'}
       const q=id?client.from('angelcare360_transport_assignments').update(row).eq('id',id).eq('school_id',school).select('id').maybeSingle():client.from('angelcare360_transport_assignments').insert({...row,created_by:actor}).select('id').single()
       const {data,error}=await q;if(error)return resultError(error);return{ok:true,id:s(data?.id)}

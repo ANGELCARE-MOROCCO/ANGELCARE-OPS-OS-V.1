@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { getAngelcare360AccessContext, requireAngelcare360Permission } from './context'
 import { recordAngelcare360AuditEventServer } from './audit'
+import { getSanilaBusinessClock, getSanilaBusinessDate } from './business-clock'
 import {
   angelcare360DiscountApplySchema,
   angelcare360DiscountCreateSchema,
@@ -435,7 +436,7 @@ export async function getAngelcare360FinanceOverview(options?: { schoolId?: stri
   const activeTerm = activeTermId
     ? (await client.from('angelcare360_terms').select('id, label').eq('id', activeTermId).maybeSingle()).data
     : null
-  const monthLabel = new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric' }).format(new Date())
+  const monthLabel = new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric', timeZone: context.school.timezone || 'Africa/Casablanca' }).format(getSanilaBusinessClock(context).instant)
 
   const [
     totalFeeStructures,
@@ -749,7 +750,7 @@ export async function createAngelcare360StudentFeeAssignment(input: Record<strin
     fee_structure_id: parsed.data.feeStructureId,
     class_id: parsed.data.classId || null,
     section_id: parsed.data.sectionId || null,
-    assigned_on: parsed.data.assignedOn || new Date().toISOString().slice(0, 10),
+    assigned_on: parsed.data.assignedOn || getSanilaBusinessDate(context),
     status: parsed.data.status || 'active',
     metadata_json: { source: 'phase8' },
   }
@@ -854,7 +855,7 @@ export async function createAngelcare360Invoice(input: Record<string, unknown>):
     student_id: parsed.data.studentId,
     invoice_number: parsed.data.invoiceNumber || buildCode('INV'),
     invoice_type: parsed.data.invoiceType || 'tuition',
-    invoice_date: parsed.data.invoiceDate || new Date().toISOString().slice(0, 10),
+    invoice_date: parsed.data.invoiceDate || getSanilaBusinessDate(context),
     due_date: parsed.data.dueDate || null,
     currency: parsed.data.currency || 'MAD',
     subtotal_amount: parsed.data.subtotalAmount || 0,
@@ -1473,7 +1474,7 @@ export async function createAngelcare360Expense(input: Record<string, unknown>):
     school_id: context.school!.id,
     academic_year_id: parsed.data.academicYearId || context.academicYear?.id || null,
     expense_code: parsed.data.expenseCode || buildCode('EXP'),
-    expense_date: parsed.data.expenseDate || new Date().toISOString().slice(0, 10),
+    expense_date: parsed.data.expenseDate || getSanilaBusinessDate(context),
     category: parsed.data.category,
     vendor_name: parsed.data.vendorName,
     account_id: parsed.data.accountId || null,

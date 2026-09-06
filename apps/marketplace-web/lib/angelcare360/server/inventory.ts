@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { getAngelcare360AccessContext, requireAngelcare360Permission } from './context'
+import { getSanilaBusinessDate } from './business-clock'
 import { recordAngelcare360AuditEventServer } from './audit'
 import {
   angelcare360InventoryAuditQueryFiltersSchema,
@@ -431,7 +432,7 @@ export async function createAngelcare360InventoryMovement(input: Record<string, 
     movement_code: parsed.data.movementCode,
     movement_type: movementType,
     quantity: parsed.data.quantity,
-    movement_date: parsed.data.movementDate || new Date().toISOString().slice(0, 10),
+    movement_date: parsed.data.movementDate || getSanilaBusinessDate(context),
     reference_type: parsed.data.referenceType || null,
     reference_id: parsed.data.referenceId || null,
     performed_by: parsed.data.performedBy || context.user.id,

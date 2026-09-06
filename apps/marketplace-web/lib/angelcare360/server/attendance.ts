@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { getAngelcare360AccessContext, requireAngelcare360Permission } from './context'
 import { recordAngelcare360AuditEventServer } from './audit'
+import { getSanilaBusinessDate } from './business-clock'
 import {
   angelcare360AttendanceAbsenceRecordsQuerySchema,
   angelcare360AttendanceAuditFilterSchema,
@@ -412,7 +413,7 @@ function countTeacherRows(rows: Row[]) {
 export async function getAngelcare360DailyAttendanceState(options?: { schoolId?: string | null; date?: string | null }) {
   const context = await getAngelcare360AccessContext({ schoolId: options?.schoolId })
   if (!context?.school) return null
-  const selectedDate = toDayKey(options?.date) || new Date().toISOString().slice(0, 10)
+  const selectedDate = toDayKey(options?.date) || getSanilaBusinessDate(context)
   const dayClasses = await listAngelcare360AttendanceDayClasses({ schoolId: context.school.id, date: selectedDate })
   const sessions = await listAngelcare360AttendanceSessions({ schoolId: context.school.id, date: selectedDate })
   const completeSessions = sessions.filter((session) => isClosedStatus(session.status))
@@ -442,7 +443,7 @@ export async function listAngelcare360AttendanceDayClasses(options?: { schoolId?
   const context = await getAngelcare360AccessContext({ schoolId: options?.schoolId })
   if (!context?.school) return []
   const supabase = await createClient()
-  const selectedDate = toDayKey(options?.date) || new Date().toISOString().slice(0, 10)
+  const selectedDate = toDayKey(options?.date) || getSanilaBusinessDate(context)
   const academicYearId = context.academicYear?.id || null
 
   const [classesResponse, sectionsResponse, enrollmentsResponse, sessionsResponse, recordsResponse] = await Promise.all([
@@ -643,7 +644,7 @@ export async function listAngelcare360AttendanceRecords(options: { schoolId?: st
 export async function listAngelcare360ClassAttendanceSheet(options: { schoolId?: string | null; classId: string; date?: string | null; sectionId?: string | null }) {
   const context = await getAngelcare360AccessContext({ schoolId: options.schoolId })
   if (!context?.school) return { session: null, students: [], expectedStudents: 0, markedStudents: 0, completionRate: 0, isClosed: false, risks: ['Aucun établissement actif n’est disponible.'] } satisfies Angelcare360AttendanceSheetResponse
-  const selectedDate = toDayKey(options.date) || new Date().toISOString().slice(0, 10)
+  const selectedDate = toDayKey(options.date) || getSanilaBusinessDate(context)
   const supabase = await createClient()
   const academicYearId = context.academicYear?.id || null
 
