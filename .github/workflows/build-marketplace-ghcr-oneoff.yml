@@ -12,7 +12,7 @@ permissions:
   packages: write
 
 env:
-  TARGET_SHA: 9db0153512801dba6c88d078b41e76fe28d74f83
+  TARGET_SHA: 9a244e57ef119b1e3444d27a2c725bbe948772c5
   IMAGE: ghcr.io/angelcare-morocco/angelcare-marketplace
 
 jobs:
