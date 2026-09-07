@@ -1,0 +1,97 @@
+name: Relay SANILA Marketplace Image
+
+on:
+  push:
+    branches:
+      - upgrade/next-angelcare-upgrade
+    paths:
+      - .github/workflows/relay-sanila-marketplace-image.yml
+
+permissions:
+  contents: read
+  packages: read
+
+jobs:
+  relay:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+
+    steps:
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pull and certify exact SANILA Marketplace image
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          IMAGE="ghcr.io/angelcare-morocco/angelcare-marketplace:3a4c7f371a11f939d2292c4293fdba5d223e74b5"
+          EXPECTED_DIGEST="sha256:38385739de08166a4adaf33f4ab9935bf848610fae08841c667891631567d1fa"
+
+          echo "IMAGE=$IMAGE"
+
+          docker pull "$IMAGE"
+
+          IMAGE_ID="$(
+            docker image inspect "$IMAGE" \
+              --format '{{.Id}}'
+          )"
+
+          REMOTE_DIGEST="$(
+            docker image inspect "$IMAGE" \
+              --format '{{range .RepoDigests}}{{println .}}{{end}}' |
+            sed -n 's/.*@\(sha256:[0-9a-f]\{64\}\)$/\1/p' |
+            head -1
+          )"
+
+          echo "IMAGE_ID=$IMAGE_ID"
+          echo "REMOTE_DIGEST=$REMOTE_DIGEST"
+          echo "EXPECTED_DIGEST=$EXPECTED_DIGEST"
+
+          test "$REMOTE_DIGEST" = "$EXPECTED_DIGEST"
+
+          printf '%s\n' "$IMAGE_ID" \
+            > marketplace-image-id.txt
+
+          printf '%s\n' "$REMOTE_DIGEST" \
+            > marketplace-image-digest.txt
+
+          echo
+          echo "EXPORTING IMAGE AS CHUNKED GZIP ARCHIVE"
+          echo
+
+          docker save "$IMAGE" |
+            gzip -1 |
+            split \
+              -b 1800m \
+              -d \
+              -a 3 \
+              - \
+              marketplace-image.tar.gz.part-
+
+          cat marketplace-image.tar.gz.part-* |
+            sha256sum |
+            awk '{print $1 "  marketplace-image.tar.gz"}' \
+            > marketplace-image.tar.gz.sha256
+
+          ls -lh marketplace-image.tar.gz.part-*
+          cat marketplace-image.tar.gz.sha256
+
+          echo "IMAGE_RELAY_EXPORT=PASS"
+
+      - name: Upload SANILA image relay
+        uses: actions/upload-artifact@v4
+        with:
+          name: sanila-marketplace-image-relay
+          path: |
+            marketplace-image.tar.gz.part-*
+            marketplace-image.tar.gz.sha256
+            marketplace-image-id.txt
+            marketplace-image-digest.txt
+          compression-level: 0
+          retention-days: 1
+          if-no-files-found: error
