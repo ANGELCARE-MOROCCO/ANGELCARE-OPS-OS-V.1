@@ -1,16 +1,32 @@
-import Angelcare360CommandCenterView from '@/components/angelcare360/Angelcare360CommandCenterView'
-import { requireUser } from '@/lib/ac360-portability/auth-session'
-import { buildAngelcare360AccessProfile, normalizeAngelcare360User } from '@/lib/angelcare360/permissions'
+import { getAngelcare360AccessContext } from '@/lib/angelcare360/server/context'
+import { getSanilaCommandCenterSnapshot, isTrustedSanilaMasterDemoContext } from '@/lib/angelcare360/server/command-center-experience'
+import { getSanilaDemoExperienceState } from '@/lib/angelcare360/server/demo-experience-state'
+import MasterDemoExperienceCenter from '@/components/angelcare360/demo-experience/MasterDemoExperienceCenter'
+import TenantExecutiveCommandCenter from '@/components/angelcare360/command-center/TenantExecutiveCommandCenter'
 
 export const dynamic = 'force-dynamic'
 
 export default async function Angelcare360CommandCenterPage() {
-  const rawUser = await requireUser()
-  const user = normalizeAngelcare360User(rawUser)
+  const context = await getAngelcare360AccessContext()
+  if (!context?.school) return null
 
-  if (!user) return null
+  const snapshot = await getSanilaCommandCenterSnapshot(context)
 
-  const access = buildAngelcare360AccessProfile(user)
+  if (isTrustedSanilaMasterDemoContext(context)) {
+    const visitState = await getSanilaDemoExperienceState(context)
+    return (
+      <MasterDemoExperienceCenter
+        snapshot={snapshot}
+        initialState={visitState}
+        visitorName={context.user.full_name || context.user.name || context.user.email || null}
+      />
+    )
+  }
 
-  return <Angelcare360CommandCenterView user={user} access={access} variant="overview" />
+  return (
+    <TenantExecutiveCommandCenter
+      snapshot={snapshot}
+      viewerName={context.user.full_name || context.user.name || context.user.email || null}
+    />
+  )
 }

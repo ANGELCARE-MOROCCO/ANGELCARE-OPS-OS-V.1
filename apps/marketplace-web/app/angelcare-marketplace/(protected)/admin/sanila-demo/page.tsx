@@ -11,7 +11,7 @@ export default async function SanilaDemoDeskPage() {
   const [{ data: grants }, { data: inquiries }, { data: events }] = await Promise.all([
     config ? db.from('sanila_demo_access_grants').select('id,public_inquiry_id,requester_name,requester_email,approval_state,policy_type,max_uses,activation_duration_minutes,absolute_expires_at,status,pin_last4,used_count,activated_at,effective_expires_at,last_access_at,notes,created_at').eq('config_id', config.id).order('created_at', { ascending: false }).limit(200) : Promise.resolve({ data: [] }),
     db.from('angelcare_marketplace_public_inquiries').select('id,public_reference,full_name,email,organization,status,source_route,created_at').not('status', 'in', '(closed,spam)').order('created_at', { ascending: false }).limit(100),
-    config ? db.from('sanila_demo_access_events').select('id,grant_id,public_inquiry_id,event_type,severity,metadata,created_at').eq('config_id', config.id).order('created_at', { ascending: false }).limit(100) : Promise.resolve({ data: [] }),
+    config ? db.from('sanila_demo_access_events').select('id,grant_id,public_inquiry_id,event_type,severity,metadata,created_at').eq('config_id', config.id).order('created_at', { ascending: false }).limit(2000) : Promise.resolve({ data: [] }),
   ])
   return <SanilaDemoDesk config={config} grants={grants || []} inquiries={inquiries || []} events={events || []} />
 }

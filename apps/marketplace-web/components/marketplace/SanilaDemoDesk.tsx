@@ -4,8 +4,35 @@
 import Link from 'next/link'
 import { FormEvent, useState } from 'react'
 import SanilaLogo from '@/components/brand/SanilaLogo'
+import { SANILA_EXPERIENCE_MODULES } from '@/lib/angelcare360/experience/contract'
 
 type Row = Record<string, any>
+
+function experienceSummary(events: Row[], grantId: string) {
+  const visited = new Set<string>()
+  const favorites = new Set<string>()
+  const priorities = new Set<string>()
+  const questions: string[] = []
+  let lastActivity: string | null = null
+  let conversionIntent: string | null = null
+  const relevant = events.filter((event) => String(event.grant_id || '') === grantId).slice().reverse()
+  for (const event of relevant) {
+    const meta = event.metadata && typeof event.metadata === 'object' ? event.metadata : {}
+    const type = String(event.event_type || '')
+    if (type === 'experience_visit_reset') { visited.clear(); favorites.clear(); priorities.clear(); questions.splice(0); conversionIntent = null }
+    if (type === 'experience_module_visited' && meta.module_id) visited.add(String(meta.module_id))
+    if (type === 'experience_favorite_set' && meta.module_id) { if (meta.enabled === true) favorites.add(String(meta.module_id)); else favorites.delete(String(meta.module_id)) }
+    if (type === 'experience_priority_set' && meta.priority) { if (meta.enabled === true) priorities.add(String(meta.priority)); else priorities.delete(String(meta.priority)) }
+    if (type === 'experience_question_added' && meta.question) questions.push(String(meta.question))
+    if (type === 'experience_conversion_intent' && meta.intent) conversionIntent = String(meta.intent)
+    if (type.startsWith('experience_')) lastActivity = String(event.created_at || lastActivity || '') || lastActivity
+  }
+  return { visited: [...visited], favorites: [...favorites], priorities: [...priorities], questions, lastActivity, conversionIntent }
+}
+
+function moduleLabel(id: string) {
+  return SANILA_EXPERIENCE_MODULES.find((module) => module.id === id)?.shortLabel || id
+}
 
 export default function SanilaDemoDesk({ config, grants, inquiries, events }: { config: Row | null; grants: Row[]; inquiries: Row[]; events: Row[] }) {
   const [rows, setRows] = useState(grants)
@@ -60,14 +87,21 @@ export default function SanilaDemoDesk({ config, grants, inquiries, events }: { 
       </form>
 
       <section style={{ display: 'grid', gap: 12 }}>
-        {rows.map((row) => <article key={row.id} style={{ background: '#fff', border: '1px solid #dce6ef', borderRadius: 14, padding: 16, display: 'grid', gap: 8 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16 }}><strong>{row.requester_name}</strong><span>{row.approval_state} · {row.status}</span></div>
-          <small>{row.requester_email || '—'} · {row.policy_type} · {row.used_count || 0}/{row.max_uses || '∞'} usages · PIN ••••{row.pin_last4 || '—'} · expiration {row.effective_expires_at || row.absolute_expires_at || '—'}</small>
+        {rows.map((row) => { const xp = experienceSummary(events, String(row.id)); return <article key={row.id} style={{ background: '#fff', border: '1px solid #dce6ef', borderRadius: 18, padding: 18, display: 'grid', gap: 10, boxShadow: '0 12px 36px rgba(20,50,76,.04)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16, alignItems: 'start' }}><div><strong style={{ fontSize: 16 }}>{row.requester_name}</strong><small style={{ display: 'block', marginTop: 3, color: '#6c8398' }}>{row.requester_email || '—'}</small></div><span style={{ padding: '6px 9px', borderRadius: 999, background: '#f1f6fa', fontSize: 11, fontWeight: 850 }}>{row.approval_state} · {row.status}</span></div>
+          <small>{row.policy_type} · {row.used_count || 0}/{row.max_uses || '∞'} usages · PIN ••••{row.pin_last4 || '—'} · expiration {row.effective_expires_at || row.absolute_expires_at || '—'}</small>
+          {xp.visited.length || xp.favorites.length || xp.questions.length ? <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(150px,1fr))', gap: 8, padding: 12, borderRadius: 14, background: 'linear-gradient(135deg,#f7fbff,#f3f7fb)', border: '1px solid #dce8f1' }}>
+            <div><small style={{ color: '#71869a' }}>Exploration</small><strong style={{ display: 'block', fontSize: 18, marginTop: 3 }}>{xp.visited.length}/14</strong><span style={{ fontSize: 10, color: '#70869a' }}>{Math.round((xp.visited.length/14)*100)}% parcouru</span></div>
+            <div><small style={{ color: '#71869a' }}>Favoris</small><strong style={{ display: 'block', fontSize: 18, marginTop: 3 }}>{xp.favorites.length}</strong><span style={{ fontSize: 10, color: '#70869a' }}>{xp.favorites.slice(0,3).map(moduleLabel).join(' · ') || '—'}</span></div>
+            <div><small style={{ color: '#71869a' }}>Priorités / questions</small><strong style={{ display: 'block', fontSize: 18, marginTop: 3 }}>{xp.priorities.length} / {xp.questions.length}</strong><span style={{ fontSize: 10, color: '#70869a' }}>{xp.conversionIntent ? `Intent: ${xp.conversionIntent}` : 'Exploration en cours'}</span></div>
+            <div><small style={{ color: '#71869a' }}>Dernière activité</small><strong style={{ display: 'block', fontSize: 12, marginTop: 6 }}>{xp.lastActivity ? new Date(xp.lastActivity).toLocaleString('fr-MA') : '—'}</strong></div>
+          </div> : null}
+          {xp.questions.length ? <details><summary style={{ cursor: 'pointer', fontWeight: 850, fontSize: 12 }}>Questions du prospect ({xp.questions.length})</summary><ul style={{ marginBottom: 0 }}>{xp.questions.slice(-8).map((question, index) => <li key={`${row.id}-q-${index}`} style={{ marginTop: 5, fontSize: 11 }}>{question}</li>)}</ul></details> : null}
           {row.approval_state !== 'approved' ? <small style={{ color: '#9a6419', fontWeight: 800 }}>Accès public bloqué : approuvez formellement ce grant avant de transmettre le PIN.</small> : null}
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
             <button type="button" onClick={() => void act({ action: 'under_review', grantId: row.id })}>Sous revue</button><button type="button" onClick={() => void act({ action: 'needs_info', grantId: row.id })}>Informations requises</button><button type="button" onClick={() => void act({ action: 'approve', grantId: row.id })}>Approuver</button><button type="button" onClick={() => void act({ action: 'reject', grantId: row.id })}>Rejeter</button><button type="button" onClick={() => void act({ action: 'suspend', grantId: row.id })}>Suspendre</button><button type="button" onClick={() => void act({ action: 'reactivate', grantId: row.id })}>Réactiver</button><button type="button" onClick={() => { const expiry = window.prompt('Nouvelle expiration ISO (ex. 2026-10-01T18:00:00Z)'); if (expiry) void act({ action: 'extend', grantId: row.id, absoluteExpiresAt: expiry }) }}>Prolonger</button><button type="button" onClick={() => confirmed('regenerate_pin', row.id)}>Régénérer le PIN</button><button type="button" onClick={() => confirmed('revoke', row.id)}>Révoquer</button>
           </div>
-        </article>)}
+        </article>})}
         {!rows.length ? <p>Aucun grant. Créez-en un depuis une inquiry publique.</p> : null}
       </section>
 
