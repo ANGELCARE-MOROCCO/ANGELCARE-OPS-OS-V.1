@@ -29,7 +29,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          IMAGE="ghcr.io/angelcare-morocco/angelcare-marketplace:3a4c7f371a11f939d2292c4293fdba5d223e74b5"
+          IMAGE="ghcr.io/angelcare-morocco/angelcare-marketplace:fdaeacfb1a34c0460503f5d0d32916876d879862"
           EXPECTED_DIGEST="sha256:38385739de08166a4adaf33f4ab9935bf848610fae08841c667891631567d1fa"
 
           echo "IMAGE=$IMAGE"
