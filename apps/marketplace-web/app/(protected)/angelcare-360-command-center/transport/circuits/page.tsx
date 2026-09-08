@@ -4,10 +4,12 @@ import { RoutesCommand } from '@/components/angelcare360/transport/sovereign/Tra
 import { ANGELCARE360_TRANSPORT_NAVIGATION } from '@/data/angelcare360/transport-navigation'
 import { getTransportMobilitySnapshot } from '@/lib/angelcare360/server/transport-mobility-command'
 import styles from '@/components/angelcare360/transport/sovereign/TransportSovereign.module.css'
+import { requireAngelcare360RouteAccess } from '@/lib/angelcare360/server/route-guard'
 
 export const dynamic = 'force-dynamic'
 
 export default async function Angelcare360TransportCircuitsPage() {
+  await requireAngelcare360RouteAccess('/angelcare-360-command-center/transport/circuits')
   const snapshot = await getTransportMobilitySnapshot()
   const incomplete = snapshot.routes.filter((route) => route.status === 'active' && (!route.vehicleId || !route.driverId || route.stopCount === 0 || route.capacityPressure)).length
   return <Angelcare360TransportPageShell

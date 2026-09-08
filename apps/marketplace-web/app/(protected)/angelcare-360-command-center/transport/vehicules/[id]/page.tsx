@@ -5,11 +5,13 @@ import { VehicleDossier } from '@/components/angelcare360/transport/sovereign/Tr
 import { ANGELCARE360_TRANSPORT_NAVIGATION } from '@/data/angelcare360/transport-navigation'
 import { getTransportVehicleDossier } from '@/lib/angelcare360/server/transport-mobility-command'
 import styles from '@/components/angelcare360/transport/sovereign/TransportSovereign.module.css'
+import { requireAngelcare360RouteAccess } from '@/lib/angelcare360/server/route-guard'
 
 export const dynamic = 'force-dynamic'
 type PageProps = { params: Promise<{ id: string }> }
 
 export default async function Angelcare360TransportVehicleDetailPage({ params }: PageProps) {
+  await requireAngelcare360RouteAccess('/angelcare-360-command-center/transport/vehicules/[id]')
   const { id } = await params
   const dossier = await getTransportVehicleDossier(id)
   if (!dossier) return <Angelcare360EmptyState title="Véhicule introuvable" description="Le véhicule demandé n’existe pas pour cet établissement." actionLabel="Retour aux véhicules" actionHref="/angelcare-360-command-center/transport/vehicules" />

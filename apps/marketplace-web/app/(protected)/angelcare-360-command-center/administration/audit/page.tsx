@@ -2,10 +2,12 @@ import { redirect } from 'next/navigation'
 import Angelcare360AdministrationContextRow from '@/components/angelcare360/administration/Angelcare360AdministrationContextRow'
 import Angelcare360AdminAuditExplorer from '@/components/angelcare360/administration/Angelcare360AdminAuditExplorer'
 import { getAngelcare360AdministrationContext, listAngelcare360AdminAuditEvents } from '@/lib/angelcare360/server'
+import { requireAngelcare360RouteAccess } from '@/lib/angelcare360/server/route-guard'
 
 export const dynamic = 'force-dynamic'
 
 export default async function Angelcare360AuditPage() {
+  await requireAngelcare360RouteAccess('/angelcare-360-command-center/administration/audit')
   const state = await getAngelcare360AdministrationContext()
   if (!state?.context?.school || !state.overview) redirect('/angelcare-360-command-center/administration')
 

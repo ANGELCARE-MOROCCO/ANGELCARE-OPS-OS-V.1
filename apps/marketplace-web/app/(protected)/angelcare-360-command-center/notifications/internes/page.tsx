@@ -4,10 +4,12 @@ import Angelcare360NotificationsSectionScreen from '@/components/angelcare360/no
 import Angelcare360InternalNotificationsWorkspace from '@/components/angelcare360/notifications/Angelcare360InternalNotificationsWorkspace'
 import { listAngelcare360InternalNotifications } from '@/lib/angelcare360/server/notifications'
 import { getAngelcare360NotificationsContext, secondaryLinkStyle } from '../_utils'
+import { requireAngelcare360RouteAccess } from '@/lib/angelcare360/server/route-guard'
 
 export const dynamic = 'force-dynamic'
 
 export default async function Angelcare360InternalNotificationsPage() {
+  await requireAngelcare360RouteAccess('/angelcare-360-command-center/notifications/internes')
   const context = await getAngelcare360NotificationsContext()
   const notifications = await listAngelcare360InternalNotifications({ schoolId: context.school.id })
 

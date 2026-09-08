@@ -2,10 +2,12 @@ import { notFound } from 'next/navigation'
 import { LibraryCommandShell } from '@/components/angelcare360/library-command/LibraryCommandShell'
 import { MemberDossier } from '@/components/angelcare360/library-command/LibraryViews'
 import { getLibraryMemberDossier } from '@/lib/angelcare360/server/library-circulation-command'
+import { requireAngelcare360RouteAccess } from '@/lib/angelcare360/server/route-guard'
 
 export const dynamic = 'force-dynamic'
 
 export default async function MembreDossierPage({ params }: { params: Promise<{ id: string }> }) {
+  await requireAngelcare360RouteAccess('/angelcare-360-command-center/bibliotheque/membres/[id]')
   const { id } = await params
   const dossier = await getLibraryMemberDossier(id)
   if (!dossier) notFound()

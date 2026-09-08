@@ -5,6 +5,7 @@ import Angelcare360FinancePageShell from '@/components/angelcare360/finance/Ange
 import { ANGELCARE360_FINANCE_NAVIGATION } from '@/data/angelcare360/finance-navigation'
 import { getAngelcare360FinanceContext } from '../../_utils'
 import { getAngelcare360FeeStructureById } from '@/lib/angelcare360/server/finance'
+import { requireAngelcare360RouteAccess } from '@/lib/angelcare360/server/route-guard'
 
 export const dynamic = 'force-dynamic'
 
@@ -13,6 +14,7 @@ type PageProps = {
 }
 
 export default async function Angelcare360FinanceFeeDetailPage({ params }: PageProps) {
+  await requireAngelcare360RouteAccess('/angelcare-360-command-center/finance/frais/[id]')
   const { id } = await params
   const context = await getAngelcare360FinanceContext()
   const result = await getAngelcare360FeeStructureById({ schoolId: context.school!.id, id })

@@ -1,0 +1,2 @@
+import Link from 'next/link'
+export default function PortalNotFound(){return <section style={{border:'1px solid #dfe7f1',background:'#fff',borderRadius:24,padding:26}}><div style={{fontSize:11,fontWeight:950,color:'#57708e'}}>SANILA</div><h1>Cette page n’existe pas dans votre espace.</h1><p style={{color:'#6b7d95'}}>Utilisez la navigation de votre portail pour revenir dans un workflow publié.</p><Link href="/angelcare-360-teacher" style={{color:'#215ba9',fontWeight:900}}>Retour à l’accueil</Link></section>}

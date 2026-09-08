@@ -9,6 +9,7 @@ import Angelcare360EmptyState from '@/components/angelcare360/states/Angelcare36
 import { buildCustomerGeneratedDocumentA4Model } from '@/lib/angelcare360/documents/builders'
 import { getAngelcare360DocumentsContext } from '../../../_utils'
 import { getAngelcare360GeneratedDocumentById } from '@/lib/angelcare360/server/reports'
+import { requireAngelcare360RouteAccess } from '@/lib/angelcare360/server/route-guard'
 
 export const dynamic = 'force-dynamic'
 
@@ -17,6 +18,7 @@ type PageProps = {
 }
 
 export default async function Angelcare360GeneratedDocumentPrintPage({ params }: PageProps) {
+  await requireAngelcare360RouteAccess('/angelcare-360-command-center/documents/generated/[id]/print')
   const context = await getAngelcare360DocumentsContext()
   if (!context) notFound()
   const { id } = await params

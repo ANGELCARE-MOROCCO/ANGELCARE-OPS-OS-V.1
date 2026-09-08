@@ -8,6 +8,7 @@ import { calculateAngelcare360Averages, getAngelcare360AverageReadiness } from '
 import { listAngelcare360AcademicYears, listAngelcare360Classes, listAngelcare360Students } from '@/lib/angelcare360/server/queries'
 import { listAngelcare360Sections, listAngelcare360Subjects, listAngelcare360Terms } from '@/lib/angelcare360/server/administration'
 import { formGridStyle, optionValue } from '../_utils'
+import { requireAngelcare360RouteAccess } from '@/lib/angelcare360/server/route-guard'
 
 export const dynamic = 'force-dynamic'
 
@@ -50,6 +51,7 @@ async function calculateAveragesAction(formData: FormData) {
 }
 
 export default async function Angelcare360MoyennesPage({ searchParams }: { searchParams?: SearchParams }) {
+  await requireAngelcare360RouteAccess('/angelcare-360-command-center/academique/moyennes')
   const context = await getAngelcare360AccessContext()
   if (!context?.school) redirect('/angelcare-360-command-center')
 

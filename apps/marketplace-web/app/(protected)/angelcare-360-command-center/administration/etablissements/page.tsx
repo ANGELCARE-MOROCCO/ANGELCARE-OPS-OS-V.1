@@ -4,6 +4,7 @@ import Angelcare360AdministrationContextRow from '@/components/angelcare360/admi
 import { getAngelcare360AdministrationContext, listAngelcare360Schools } from '@/lib/angelcare360/server'
 import type { Angelcare360AdminEntityConfig } from '@/types/angelcare360/administration'
 import { mapSchoolRow } from '../_mappers'
+import { requireAngelcare360RouteAccess } from '@/lib/angelcare360/server/route-guard'
 
 export const dynamic = 'force-dynamic'
 
@@ -93,6 +94,7 @@ const SCHOOL_CONFIG: Angelcare360AdminEntityConfig = {
 }
 
 export default async function Angelcare360EtablissementsPage() {
+  await requireAngelcare360RouteAccess('/angelcare-360-command-center/administration/etablissements')
   const state = await getAngelcare360AdministrationContext()
   if (!state?.context?.school || !state.overview) redirect('/angelcare-360-command-center/administration')
 

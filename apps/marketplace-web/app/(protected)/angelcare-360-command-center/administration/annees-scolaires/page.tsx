@@ -4,6 +4,7 @@ import Angelcare360AdministrationContextRow from '@/components/angelcare360/admi
 import { getAngelcare360AdministrationContext, listAngelcare360AcademicYears } from '@/lib/angelcare360/server'
 import type { Angelcare360AdminEntityConfig } from '@/types/angelcare360/administration'
 import { mapAcademicYearRow } from '../_mappers'
+import { requireAngelcare360RouteAccess } from '@/lib/angelcare360/server/route-guard'
 
 export const dynamic = 'force-dynamic'
 
@@ -61,6 +62,7 @@ const YEAR_CONFIG: Angelcare360AdminEntityConfig = {
 }
 
 export default async function Angelcare360AnneesScolairesPage() {
+  await requireAngelcare360RouteAccess('/angelcare-360-command-center/administration/annees-scolaires')
   const state = await getAngelcare360AdministrationContext()
   if (!state?.context?.school || !state.overview) redirect('/angelcare-360-command-center/administration')
 

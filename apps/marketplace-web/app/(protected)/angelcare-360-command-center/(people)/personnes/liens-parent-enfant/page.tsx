@@ -1,3 +1,4 @@
+import { requireAngelcare360RouteAccess } from '@/lib/angelcare360/server/route-guard'
 import { redirect } from 'next/navigation'
 import Angelcare360ErrorState from '@/components/angelcare360/states/Angelcare360ErrorState'
 import Angelcare360PeopleHub from '@/components/angelcare360/people/Angelcare360PeopleHub'
@@ -13,6 +14,7 @@ import {
 export const dynamic = 'force-dynamic'
 
 export default async function Angelcare360ParentChildLinksPage() {
+  await requireAngelcare360RouteAccess('/angelcare-360-command-center/personnes/liens-parent-enfant')
   const context = await getAngelcare360AccessContext()
   if (!context?.school) redirect('/angelcare-360-command-center')
 

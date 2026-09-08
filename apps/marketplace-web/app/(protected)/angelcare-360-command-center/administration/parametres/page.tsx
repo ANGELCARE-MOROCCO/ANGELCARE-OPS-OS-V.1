@@ -3,10 +3,12 @@ import Angelcare360AdministrationContextRow from '@/components/angelcare360/admi
 import Angelcare360AdminPageShell from '@/components/angelcare360/administration/Angelcare360AdminPageShell'
 import Angelcare360SchoolSettingsForm from '@/components/angelcare360/administration/Angelcare360SchoolSettingsForm'
 import { getAngelcare360AdministrationContext, getAngelcare360SchoolSettings } from '@/lib/angelcare360/server'
+import { requireAngelcare360RouteAccess } from '@/lib/angelcare360/server/route-guard'
 
 export const dynamic = 'force-dynamic'
 
 export default async function Angelcare360ParametresPage() {
+  await requireAngelcare360RouteAccess('/angelcare-360-command-center/administration/parametres')
   const state = await getAngelcare360AdministrationContext()
   if (!state?.context?.school || !state.overview) redirect('/angelcare-360-command-center/administration')
 

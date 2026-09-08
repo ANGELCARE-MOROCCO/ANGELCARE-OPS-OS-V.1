@@ -20,6 +20,7 @@ import {
   listAngelcare360Students,
 } from '@/lib/angelcare360/server'
 import type { Angelcare360AdmissionsEntityConfig } from '@/types/angelcare360/admissions'
+import { requireAngelcare360RouteAccess } from '@/lib/angelcare360/server/route-guard'
 
 export const dynamic = 'force-dynamic'
 
@@ -128,6 +129,7 @@ const APPLICATION_CONFIG: Angelcare360AdmissionsEntityConfig = {
 }
 
 export default async function Angelcare360AdmissionsDossiersPage() {
+  await requireAngelcare360RouteAccess('/angelcare-360-command-center/admissions/dossiers')
   const context = await getAngelcare360AccessContext()
   if (!context?.school) redirect('/angelcare-360-command-center/admissions')
 

@@ -1,1 +1,3 @@
-import {getPayrollSovereignSnapshot} from '../_utils';import {Inputs} from '@/components/angelcare360/payroll-sovereign-command/PayrollViews';export const dynamic='force-dynamic';export default async function Page(){return <Inputs s={await getPayrollSovereignSnapshot()} kind={"bonus"} title={"Earnings & Recognition Studio"} copy={"Primes et earnings sans cellule magique ni montant opaque."}/> }
+import { requireAngelcare360RouteAccess } from '@/lib/angelcare360/server/route-guard'
+import {getPayrollSovereignSnapshot} from '../_utils';import {Inputs} from '@/components/angelcare360/payroll-sovereign-command/PayrollViews';export const dynamic='force-dynamic';export default async function Page(){
+  await requireAngelcare360RouteAccess('/angelcare-360-command-center/paie/primes');return <Inputs s={await getPayrollSovereignSnapshot()} kind={"bonus"} title={"Earnings & Recognition Studio"} copy={"Primes et earnings sans cellule magique ni montant opaque."}/> }

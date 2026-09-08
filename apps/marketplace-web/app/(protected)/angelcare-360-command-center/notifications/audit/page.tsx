@@ -3,10 +3,12 @@ import Angelcare360NotificationsSectionScreen from '@/components/angelcare360/no
 import Angelcare360NotificationAuditDrawer from '@/components/angelcare360/notifications/Angelcare360NotificationAuditDrawer'
 import { listAngelcare360NotificationAuditEvents } from '@/lib/angelcare360/server/notifications'
 import { getAngelcare360NotificationsContext, secondaryLinkStyle } from '../_utils'
+import { requireAngelcare360RouteAccess } from '@/lib/angelcare360/server/route-guard'
 
 export const dynamic = 'force-dynamic'
 
 export default async function Angelcare360NotificationAuditPage() {
+  await requireAngelcare360RouteAccess('/angelcare-360-command-center/notifications/audit')
   const context = await getAngelcare360NotificationsContext()
   const events = await listAngelcare360NotificationAuditEvents({ schoolId: context.school.id, filters: {} })
 

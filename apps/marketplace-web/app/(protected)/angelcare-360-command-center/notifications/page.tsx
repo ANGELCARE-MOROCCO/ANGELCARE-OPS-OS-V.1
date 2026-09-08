@@ -4,10 +4,12 @@ import Angelcare360NotificationsPageShell from '@/components/angelcare360/notifi
 import { ANGELCARE360_NOTIFICATIONS_NAVIGATION } from '@/data/angelcare360/notifications-navigation'
 import { getAngelcare360NotificationOverview } from '@/lib/angelcare360/server/notifications'
 import { getAngelcare360NotificationsContext, badgeStyle, primaryLinkStyle, secondaryLinkStyle } from './_utils'
+import { requireAngelcare360RouteAccess } from '@/lib/angelcare360/server/route-guard'
 
 export const dynamic = 'force-dynamic'
 
 export default async function Angelcare360NotificationsPage() {
+  await requireAngelcare360RouteAccess('/angelcare-360-command-center/notifications')
   const context = await getAngelcare360NotificationsContext()
   const overview = await getAngelcare360NotificationOverview({ schoolId: context.school.id })
 

@@ -1,1 +1,3 @@
-import {getPayrollSovereignSnapshot} from '../../_utils';import {RecordDetail} from '@/components/angelcare360/payroll-sovereign-command/PayrollViews';export const dynamic='force-dynamic';export default async function Page({params}:{params:Promise<{id:string}>}){const{id}=await params;return <RecordDetail s={await getPayrollSovereignSnapshot()} id={id}/> }
+import { requireAngelcare360RouteAccess } from '@/lib/angelcare360/server/route-guard'
+import {getPayrollSovereignSnapshot} from '../../_utils';import {RecordDetail} from '@/components/angelcare360/payroll-sovereign-command/PayrollViews';export const dynamic='force-dynamic';export default async function Page({params}:{params:Promise<{id:string}>}){
+  await requireAngelcare360RouteAccess('/angelcare-360-command-center/paie/dossiers/[id]');const{id}=await params;return <RecordDetail s={await getPayrollSovereignSnapshot()} id={id}/> }

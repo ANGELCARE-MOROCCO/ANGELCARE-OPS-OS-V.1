@@ -10,6 +10,7 @@ import { listAngelcare360AcademicYears, listAngelcare360Classes, listAngelcare36
 import { listAngelcare360Sections, listAngelcare360Subjects } from '@/lib/angelcare360/server/administration'
 import { optionValue, numberValue } from '../_utils'
 import Angelcare360EmptyState from '@/components/angelcare360/states/Angelcare360EmptyState'
+import { requireAngelcare360RouteAccess } from '@/lib/angelcare360/server/route-guard'
 
 export const dynamic = 'force-dynamic'
 
@@ -34,6 +35,7 @@ async function updateSubmissionAction(formData: FormData) {
 }
 
 export default async function Angelcare360SoumissionsPage({ searchParams }: { searchParams?: SearchParams }) {
+  await requireAngelcare360RouteAccess('/angelcare-360-command-center/academique/soumissions')
   const context = await getAngelcare360AccessContext()
   if (!context?.school) redirect('/angelcare-360-command-center')
 

@@ -89,10 +89,10 @@ export default function TenantExecutiveCommandCenter({ snapshot, viewerName }: P
       </section>
 
       <section className={styles.kpiGrid} aria-label="Indicateurs exécutifs">
-        <Kpi icon={Users} label="Élèves actifs" metric={snapshot.metrics.students} note="Population scolaire active dans votre établissement." href="/angelcare-360-command-center/personnes/eleves" tone="navy"/>
+        <Kpi icon={Users} label="Élèves actifs" metric={snapshot.metrics.students} note="Population scolaire active dans votre établissement." href="/angelcare-360-command-center/eleves" tone="navy"/>
         <Kpi icon={ClipboardCheck} label="Présences aujourd’hui" metric={snapshot.metrics.attendanceToday} note={attendanceRate == null ? 'Aucune présence exploitable aujourd’hui.' : `${attendanceRate}% de présence / arrivée enregistrée.`} href="/angelcare-360-command-center/presences/jour" tone="green"/>
         <Kpi icon={WalletCards} label="Factures actives" metric={snapshot.metrics.invoices} note={`${metricValue(snapshot.metrics.overdueInvoices)} échue(s) · ${metricValue(snapshot.metrics.partialInvoices)} partielle(s).`} href="/angelcare-360-command-center/finance" tone="gold"/>
-        <Kpi icon={BriefcaseBusiness} label="Personnel actif" metric={snapshot.metrics.staff} note={`${metricValue(snapshot.metrics.teachers)} enseignant(s) dans l’effectif actif.`} href="/angelcare-360-command-center/personnes/personnel" tone="violet"/>
+        <Kpi icon={BriefcaseBusiness} label="Personnel actif" metric={snapshot.metrics.staff} note={`${metricValue(snapshot.metrics.teachers)} enseignant(s) dans l’effectif actif.`} href="/angelcare-360-command-center/personnel" tone="violet"/>
         <Kpi icon={Bus} label="Circuits transport" metric={snapshot.metrics.transportRoutes} note="Circuits actifs résolus dans le périmètre de l’établissement." href="/angelcare-360-command-center/transport" tone="blue"/>
         <Kpi icon={ShieldCheck} label="Qualité à traiter" metric={snapshot.metrics.complaints} note="Réclamations ou dossiers qualité encore ouverts." href="/angelcare-360-command-center/reclamations" tone="orange"/>
       </section>

@@ -4,6 +4,7 @@ import Angelcare360AdmissionsPageShell from '@/components/angelcare360/admission
 import Angelcare360AdmissionLeadDetail from '@/components/angelcare360/admissions/Angelcare360AdmissionLeadDetail'
 import Angelcare360AdministrationContextRow from '@/components/angelcare360/administration/Angelcare360AdministrationContextRow'
 import { getAngelcare360AccessContext, getAngelcare360AdmissionLeadById } from '@/lib/angelcare360/server'
+import { requireAngelcare360RouteAccess } from '@/lib/angelcare360/server/route-guard'
 
 export const dynamic = 'force-dynamic'
 
@@ -12,6 +13,7 @@ type PageProps = {
 }
 
 export default async function Angelcare360AdmissionLeadDetailPage({ params }: PageProps) {
+  await requireAngelcare360RouteAccess('/angelcare-360-command-center/admissions/demandes/[id]')
   const { id } = await params
   const context = await getAngelcare360AccessContext()
   if (!context?.school) redirect('/angelcare-360-command-center/admissions')

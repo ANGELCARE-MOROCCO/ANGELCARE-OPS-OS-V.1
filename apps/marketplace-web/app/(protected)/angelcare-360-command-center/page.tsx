@@ -3,10 +3,12 @@ import { getSanilaCommandCenterSnapshot, isTrustedSanilaMasterDemoContext } from
 import { getSanilaDemoExperienceState } from '@/lib/angelcare360/server/demo-experience-state'
 import MasterDemoExperienceCenter from '@/components/angelcare360/demo-experience/MasterDemoExperienceCenter'
 import TenantExecutiveCommandCenter from '@/components/angelcare360/command-center/TenantExecutiveCommandCenter'
+import { requireAngelcare360RouteAccess } from '@/lib/angelcare360/server/route-guard'
 
 export const dynamic = 'force-dynamic'
 
 export default async function Angelcare360CommandCenterPage() {
+  await requireAngelcare360RouteAccess('/angelcare-360-command-center')
   const context = await getAngelcare360AccessContext()
   if (!context?.school) return null
 

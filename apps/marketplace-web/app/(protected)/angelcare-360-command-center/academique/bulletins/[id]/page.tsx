@@ -7,6 +7,7 @@ import { ANGELCARE360_ACADEMICS_NAVIGATION } from '@/data/angelcare360/academics
 import { getAngelcare360AccessContext } from '@/lib/angelcare360/server'
 import { blockAngelcare360AcademicExport, getAngelcare360ReportCardById, updateAngelcare360ReportCardStatus } from '@/lib/angelcare360/server/academics'
 import { secondaryLinkStyle } from '../../_utils'
+import { requireAngelcare360RouteAccess } from '@/lib/angelcare360/server/route-guard'
 
 export const dynamic = 'force-dynamic'
 
@@ -45,6 +46,7 @@ type PageProps = {
 }
 
 export default async function Angelcare360BulletinDetailPage({ params }: PageProps) {
+  await requireAngelcare360RouteAccess('/angelcare-360-command-center/academique/bulletins/[id]')
   const context = await getAngelcare360AccessContext()
   if (!context?.school) redirect('/angelcare-360-command-center')
   const { id } = await params

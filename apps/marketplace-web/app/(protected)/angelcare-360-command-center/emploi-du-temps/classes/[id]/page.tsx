@@ -7,10 +7,12 @@ import { getAngelcare360AccessContext } from '@/lib/angelcare360/server'
 import { listAngelcare360TimetableSlots } from '@/lib/angelcare360/server/timetable'
 import { listAngelcare360Classes } from '@/lib/angelcare360/server/queries'
 import type { Angelcare360TimetableSlotListRecord } from '@/types/angelcare360/attendance'
+import { requireAngelcare360RouteAccess } from '@/lib/angelcare360/server/route-guard'
 
 export const dynamic = 'force-dynamic'
 
 export default async function Angelcare360ClassAcademicDossierPage({ params }: { params: Promise<{ id: string }> }) {
+  await requireAngelcare360RouteAccess('/angelcare-360-command-center/emploi-du-temps/classes/[id]')
   const context = await getAngelcare360AccessContext()
   if (!context?.school) redirect('/angelcare-360-command-center')
   const { id } = await params

@@ -3,6 +3,7 @@ import Angelcare360ErrorState from '@/components/angelcare360/states/Angelcare36
 import Student360Area10Command from '@/components/angelcare360/student360-area10/Student360Area10Command'
 import { getAngelcare360AccessContext } from '@/lib/angelcare360/server/context'
 import { loadAngelcare360Area10StudentCommand } from '@/lib/angelcare360/server/student360-area10'
+import { requireAngelcare360RouteAccess } from '@/lib/angelcare360/server/route-guard'
 
 export const dynamic = 'force-dynamic'
 
@@ -15,6 +16,7 @@ function first(value: string | string[] | undefined) {
 }
 
 export default async function Angelcare360StudentsPage({ searchParams }: PageProps) {
+  await requireAngelcare360RouteAccess('/angelcare-360-command-center/eleves')
   const context = await getAngelcare360AccessContext()
   if (!context?.school) redirect('/angelcare-360-command-center')
 

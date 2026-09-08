@@ -5,10 +5,12 @@ import { getAngelcare360AccessContext } from '@/lib/angelcare360/server'
 import { listAngelcare360Classes } from '@/lib/angelcare360/server/queries'
 import { getAngelcare360SubjectsProgramOverview } from '@/lib/angelcare360/server/subjects-program-overview'
 import type { Angelcare360AdminEntityConfig } from '@/types/angelcare360/administration'
+import { requireAngelcare360RouteAccess } from '@/lib/angelcare360/server/route-guard'
 
 export const dynamic = 'force-dynamic'
 
 export default async function Angelcare360SubjectsProgramPage() {
+  await requireAngelcare360RouteAccess('/angelcare-360-command-center/matieres')
   const context = await getAngelcare360AccessContext()
   if (!context?.school) redirect('/angelcare-360-command-center')
 

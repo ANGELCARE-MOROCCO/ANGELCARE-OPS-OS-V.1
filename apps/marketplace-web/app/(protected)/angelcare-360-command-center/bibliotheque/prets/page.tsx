@@ -1,10 +1,12 @@
 import { LibraryCommandShell } from '@/components/angelcare360/library-command/LibraryCommandShell'
 import { CirculationDesk } from '@/components/angelcare360/library-command/LibraryViews'
 import { loadLibrarySnapshot } from '../_utils'
+import { requireAngelcare360RouteAccess } from '@/lib/angelcare360/server/route-guard'
 
 export const dynamic = 'force-dynamic'
 
 export default async function PretsPage({ searchParams }: { searchParams: Promise<{ q?: string | string[]; state?: string | string[] }> }) {
+  await requireAngelcare360RouteAccess('/angelcare-360-command-center/bibliotheque/prets')
   const [snapshot, query] = await Promise.all([loadLibrarySnapshot(), searchParams])
   const one = (value?: string | string[]) => Array.isArray(value) ? value[0] : value
   return <LibraryCommandShell schoolName={snapshot.schoolName} title="Circulation Desk" subtitle="Prêts atomiques · emprunteurs · échéances · retours · intégrité transactionnelle">

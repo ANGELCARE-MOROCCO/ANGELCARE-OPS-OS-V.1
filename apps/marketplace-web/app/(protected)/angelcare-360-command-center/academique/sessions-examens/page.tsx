@@ -8,6 +8,7 @@ import { createAngelcare360ExamSession, listAngelcare360ExamSessions, listAngelc
 import { listAngelcare360TeacherAssignments } from '@/lib/angelcare360/server/administration'
 import { optionValue, relatedLabel } from '../_utils'
 import Angelcare360EmptyState from '@/components/angelcare360/states/Angelcare360EmptyState'
+import { requireAngelcare360RouteAccess } from '@/lib/angelcare360/server/route-guard'
 
 export const dynamic = 'force-dynamic'
 
@@ -31,6 +32,7 @@ async function createSessionAction(formData: FormData) {
 }
 
 export default async function Angelcare360SessionsExamensPage() {
+  await requireAngelcare360RouteAccess('/angelcare-360-command-center/academique/sessions-examens')
   const context = await getAngelcare360AccessContext()
   if (!context?.school) redirect('/angelcare-360-command-center')
 

@@ -18,6 +18,7 @@ import type { AssignmentDossierKind, AssignmentDossierTab, AssignmentView } from
 import type { AccessAreaView, AccessDossierKind, AccessDossierTab } from '@/types/angelcare360/access-area'
 import type { SettingsView, SettingsDossierKind, SettingsDossierTab } from '@/types/angelcare360/settings-area'
 import type { AuditView, AuditDossierKind, AuditDossierTab } from '@/types/angelcare360/audit-area'
+import { requireAngelcare360RouteAccess } from '@/lib/angelcare360/server/route-guard'
 
 export const dynamic = 'force-dynamic'
 
@@ -26,6 +27,7 @@ export default async function Angelcare360GovernancePage({
 }: {
   searchParams?: Promise<{ plane?: string; view?: string; entity?: string; type?: string; drawer?: string; tab?: string; focus?: string }>
 }) {
+  await requireAngelcare360RouteAccess('/angelcare-360-command-center/administration')
   try {
     const emptyParams: { plane?: string; view?: string; entity?: string; type?: string; drawer?: string; tab?: string; focus?: string } = {}
     const [snapshot, institutionSnapshot, academicSnapshot, capacitySnapshot, curriculumSnapshot, assignmentSnapshot, accessSnapshot, settingsSnapshot, auditSnapshot, params] = await Promise.all([getGovernanceCommandSnapshot(), getInstitutionsSitesSnapshot(), getAcademicStructureSnapshot(), getClassesCapacitySnapshot(), getCurriculumSnapshot(), getAssignmentsSnapshot(), getAccessAreaSnapshot(), getSettingsAreaSnapshot(), getAuditAreaSnapshot(), searchParams || Promise.resolve(emptyParams)])

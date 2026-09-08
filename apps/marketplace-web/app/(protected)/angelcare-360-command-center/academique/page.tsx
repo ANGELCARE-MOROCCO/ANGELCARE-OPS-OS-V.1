@@ -4,10 +4,12 @@ import AcademicZoneAFrame from '@/components/angelcare360/zone-a-academic/Academ
 import { getAngelcare360AccessContext } from '@/lib/angelcare360/server'
 import { getAngelcare360AcademicCommandOverview } from '@/lib/angelcare360/server/academic-command-overview'
 import { getAcademicAuthoritySignals } from '@/lib/angelcare360/server/customer-academic-authority'
+import { requireAngelcare360RouteAccess } from '@/lib/angelcare360/server/route-guard'
 
 export const dynamic = 'force-dynamic'
 
 export default async function Angelcare360AcademiquePage({ searchParams }: { searchParams?: Promise<{ date?: string; plane?: string }> }) {
+  await requireAngelcare360RouteAccess('/angelcare-360-command-center/academique')
   const context = await getAngelcare360AccessContext()
   if (!context?.school) redirect('/angelcare-360-command-center')
   const query = (await searchParams) || {}

@@ -4,10 +4,12 @@ import Angelcare360ClassesSectionsOverview from '@/components/angelcare360/class
 import { getAngelcare360AdministrationContext } from '@/lib/angelcare360/server'
 import { getAngelcare360ClassesSectionsOverviewData } from '@/lib/angelcare360/server/classes-sections-overview'
 import type { Angelcare360AdminEntityConfig } from '@/types/angelcare360/administration'
+import { requireAngelcare360RouteAccess } from '@/lib/angelcare360/server/route-guard'
 
 export const dynamic = 'force-dynamic'
 
 export default async function Angelcare360ClassesSectionsPage() {
+  await requireAngelcare360RouteAccess('/angelcare-360-command-center/classes-sections')
   const state = await getAngelcare360AdministrationContext()
   if (!state?.context?.school || !state.overview) redirect('/angelcare-360-command-center')
 

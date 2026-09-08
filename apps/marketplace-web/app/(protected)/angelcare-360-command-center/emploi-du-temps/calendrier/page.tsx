@@ -7,6 +7,7 @@ import { listAngelcare360SchoolCalendarEvents, listAngelcare360TimetableSlots } 
 import { listAngelcare360Classes } from '@/lib/angelcare360/server/queries'
 import { listAngelcare360Sections, listAngelcare360Subjects, listAngelcare360TeacherAssignments } from '@/lib/angelcare360/server/administration'
 import Angelcare360EmptyState from '@/components/angelcare360/states/Angelcare360EmptyState'
+import { requireAngelcare360RouteAccess } from '@/lib/angelcare360/server/route-guard'
 
 export const dynamic = 'force-dynamic'
 
@@ -22,6 +23,7 @@ function relation(value: unknown): Row {
 }
 
 export default async function Angelcare360SchoolCalendarPage() {
+  await requireAngelcare360RouteAccess('/angelcare-360-command-center/emploi-du-temps/calendrier')
   const context = await getAngelcare360AccessContext()
   if (!context?.school) redirect('/angelcare-360-command-center')
 

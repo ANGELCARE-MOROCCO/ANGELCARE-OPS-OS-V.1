@@ -5,12 +5,14 @@ import { getAngelcare360AccessContext } from '@/lib/angelcare360/server'
 import { listAngelcare360AcademicAuditEvents } from '@/lib/angelcare360/server/academics'
 import { optionValue } from '../_utils'
 import { redirect } from 'next/navigation'
+import { requireAngelcare360RouteAccess } from '@/lib/angelcare360/server/route-guard'
 
 export const dynamic = 'force-dynamic'
 
 type SearchParams = Record<string, string | string[] | undefined>
 
 export default async function Angelcare360AuditAcademiquePage({ searchParams }: { searchParams?: SearchParams }) {
+  await requireAngelcare360RouteAccess('/angelcare-360-command-center/academique/audit')
   const context = await getAngelcare360AccessContext()
   if (!context?.school) redirect('/angelcare-360-command-center')
 

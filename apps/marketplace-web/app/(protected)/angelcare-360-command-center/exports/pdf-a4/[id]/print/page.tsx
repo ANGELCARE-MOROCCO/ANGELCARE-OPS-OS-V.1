@@ -9,6 +9,7 @@ import Angelcare360EmptyState from '@/components/angelcare360/states/Angelcare36
 import { buildCustomerExportFileA4Model } from '@/lib/angelcare360/documents/builders'
 import { getAngelcare360ExportsContext } from '../../../_utils'
 import { getAngelcare360ExportFileById } from '@/lib/angelcare360/server/reports'
+import { requireAngelcare360RouteAccess } from '@/lib/angelcare360/server/route-guard'
 
 export const dynamic = 'force-dynamic'
 
@@ -17,6 +18,7 @@ type PageProps = {
 }
 
 export default async function Angelcare360ExportPdfA4PrintPage({ params }: PageProps) {
+  await requireAngelcare360RouteAccess('/angelcare-360-command-center/exports/pdf-a4/[id]/print')
   const context = await getAngelcare360ExportsContext()
   if (!context) notFound()
   const { id } = await params

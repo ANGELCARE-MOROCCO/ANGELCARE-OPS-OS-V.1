@@ -6,10 +6,12 @@ import { getAngelcare360AccessContext } from '@/lib/angelcare360/server'
 import { listAngelcare360TimetableSlots } from '@/lib/angelcare360/server/timetable'
 import type { Angelcare360TimetableSlotListRecord } from '@/types/angelcare360/attendance'
 import Angelcare360EmptyState from '@/components/angelcare360/states/Angelcare360EmptyState'
+import { requireAngelcare360RouteAccess } from '@/lib/angelcare360/server/route-guard'
 
 export const dynamic = 'force-dynamic'
 
 export default async function Angelcare360TimetableTeachersPage() {
+  await requireAngelcare360RouteAccess('/angelcare-360-command-center/emploi-du-temps/enseignants')
   const context = await getAngelcare360AccessContext()
   if (!context?.school) redirect('/angelcare-360-command-center')
   const slots = await listAngelcare360TimetableSlots({ schoolId: context.school.id, academicYearId: context.academicYear?.id || null })

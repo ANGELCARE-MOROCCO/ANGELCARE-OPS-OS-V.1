@@ -3,12 +3,15 @@ import Angelcare360ErrorState from '@/components/angelcare360/states/Angelcare36
 import Angelcare360PeopleHub from '@/components/angelcare360/people/Angelcare360PeopleHub'
 import Angelcare360AdministrationContextRow from '@/components/angelcare360/administration/Angelcare360AdministrationContextRow'
 import { getAngelcare360AccessContext } from '@/lib/angelcare360/server'
-import { listAngelcare360Documents } from '@/lib/angelcare360/server/people'
+import { listAngelcare360Documents, listAngelcare360Students } from '@/lib/angelcare360/server/people'
+import StudentDocumentVaultUpload from '@/components/angelcare360/documents/StudentDocumentVaultUpload'
 import { createDocumentPeopleConfig } from '@/data/angelcare360/people-pages'
+import { requireAngelcare360RouteAccess } from '@/lib/angelcare360/server/route-guard'
 
 export const dynamic = 'force-dynamic'
 
 export default async function Angelcare360DocumentsPage() {
+  await requireAngelcare360RouteAccess('/angelcare-360-command-center/personnes/documents')
   const context = await getAngelcare360AccessContext()
   if (!context?.school) redirect('/angelcare-360-command-center')
 
@@ -23,7 +26,10 @@ export default async function Angelcare360DocumentsPage() {
     )
   }
 
-  const documents = await listAngelcare360Documents({ schoolId: context.school.id })
+  const [documents, students] = await Promise.all([
+    listAngelcare360Documents({ schoolId: context.school.id }),
+    listAngelcare360Students({ schoolId: context.school.id }),
+  ])
   const config = createDocumentPeopleConfig({ schoolId: context.school.id })
   const canCreate = context.access.accessLevel === 'super_admin' || context.permissions.has('documents.create')
   const canUpdate = context.access.accessLevel === 'super_admin' || context.permissions.has('documents.update')
@@ -49,25 +55,14 @@ export default async function Angelcare360DocumentsPage() {
       createDisabledReason="La création d’une référence documentaire est réservée aux rôles autorisés."
       updateDisabledReason="La modification d’une référence documentaire est réservée aux rôles autorisés."
       extraHeaderActions={
-        <button
-          type="button"
-          disabled
-          title="Le téléversement direct de fichiers reste verrouillé. Créez seulement des références documentaires."
-          style={disabledButtonStyle}
-        >
-          Téléversement direct verrouillé
-        </button>
+        <StudentDocumentVaultUpload
+          students={students.map((student) => ({
+            id: String(student.id),
+            name: String(student.full_name || `${student.first_name || ''} ${student.last_name || ''}`.trim() || student.student_code || 'Élève'),
+            code: student.student_code ? String(student.student_code) : null,
+          }))}
+        />
       }
     />
   )
-}
-
-const disabledButtonStyle: React.CSSProperties = {
-  border: '1px dashed #cbd5e1',
-  borderRadius: 14,
-  padding: '11px 14px',
-  background: '#f8fafc',
-  color: '#94a3b8',
-  fontWeight: 800,
-  cursor: 'not-allowed',
 }

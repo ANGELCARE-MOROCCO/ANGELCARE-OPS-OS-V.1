@@ -8,10 +8,12 @@ import { listAngelcare360TimetableSlots } from '@/lib/angelcare360/server/timeta
 import { listAngelcare360Staff } from '@/lib/angelcare360/server/queries'
 import { listAngelcare360TeacherAssignments } from '@/lib/angelcare360/server/administration'
 import type { Angelcare360TimetableSlotListRecord } from '@/types/angelcare360/attendance'
+import { requireAngelcare360RouteAccess } from '@/lib/angelcare360/server/route-guard'
 
 export const dynamic = 'force-dynamic'
 
 export default async function Angelcare360TeacherLoadDossierPage({ params }: { params: Promise<{ id: string }> }) {
+  await requireAngelcare360RouteAccess('/angelcare-360-command-center/emploi-du-temps/enseignants/[id]')
   const context = await getAngelcare360AccessContext()
   if (!context?.school) redirect('/angelcare-360-command-center')
   const { id } = await params

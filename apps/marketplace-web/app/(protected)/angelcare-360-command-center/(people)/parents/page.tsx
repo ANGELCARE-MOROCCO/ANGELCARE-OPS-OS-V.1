@@ -3,6 +3,7 @@ import Angelcare360ErrorState from '@/components/angelcare360/states/Angelcare36
 import Family360Area11Command from '@/components/angelcare360/family360-area11/Family360Area11Command'
 import { getAngelcare360AccessContext } from '@/lib/angelcare360/server/context'
 import { loadAngelcare360Area11FamilyCommand } from '@/lib/angelcare360/server/family360-area11'
+import { requireAngelcare360RouteAccess } from '@/lib/angelcare360/server/route-guard'
 
 export const dynamic = 'force-dynamic'
 
@@ -10,6 +11,7 @@ type PageProps = { searchParams?: Promise<Record<string,string|string[]|undefine
 function first(value:string|string[]|undefined){return Array.isArray(value)?value[0]:value}
 
 export default async function Angelcare360ParentsPage({searchParams}:PageProps){
+  await requireAngelcare360RouteAccess('/angelcare-360-command-center/parents')
   const context=await getAngelcare360AccessContext()
   if(!context?.school)redirect('/angelcare-360-command-center')
   if(!context.access.canSeePeopleData&&!context.permissions.has('parents.view')&&!context.permissions.has('angelcare360.people.view')&&context.access.accessLevel!=='super_admin'){

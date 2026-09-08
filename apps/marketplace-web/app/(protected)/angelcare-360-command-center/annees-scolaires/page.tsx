@@ -4,6 +4,7 @@ import Angelcare360AcademicYearsOverview from '@/components/angelcare360/academi
 import { getAngelcare360AccessContext } from '@/lib/angelcare360/server'
 import { getAngelcare360AcademicYearsOverviewData } from '@/lib/angelcare360/server/academic-years-overview'
 import type { Angelcare360AdminEntityConfig } from '@/types/angelcare360/administration'
+import { requireAngelcare360RouteAccess } from '@/lib/angelcare360/server/route-guard'
 
 export const dynamic = 'force-dynamic'
 
@@ -96,6 +97,7 @@ const TERM_CONFIG: Angelcare360AdminEntityConfig = {
 }
 
 export default async function Angelcare360AcademicYearsCockpitPage() {
+  await requireAngelcare360RouteAccess('/angelcare-360-command-center/annees-scolaires')
   const context = await getAngelcare360AccessContext()
   if (!context?.school) redirect('/angelcare-360-command-center')
 

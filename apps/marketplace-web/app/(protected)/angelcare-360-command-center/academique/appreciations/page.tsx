@@ -9,6 +9,7 @@ import { listAngelcare360AcademicYears, listAngelcare360Classes, listAngelcare36
 import { listAngelcare360Sections, listAngelcare360Terms, listAngelcare360TeacherAssignments } from '@/lib/angelcare360/server/administration'
 import { optionValue, numberValue, relatedLabel } from '../_utils'
 import Angelcare360EmptyState from '@/components/angelcare360/states/Angelcare360EmptyState'
+import { requireAngelcare360RouteAccess } from '@/lib/angelcare360/server/route-guard'
 
 export const dynamic = 'force-dynamic'
 
@@ -35,6 +36,7 @@ async function createCommentAction(formData: FormData) {
 }
 
 export default async function Angelcare360AppreciationsPage() {
+  await requireAngelcare360RouteAccess('/angelcare-360-command-center/academique/appreciations')
   const context = await getAngelcare360AccessContext()
   if (!context?.school) redirect('/angelcare-360-command-center')
 

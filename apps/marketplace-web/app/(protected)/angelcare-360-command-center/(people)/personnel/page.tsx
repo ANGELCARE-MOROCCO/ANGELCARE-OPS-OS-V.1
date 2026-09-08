@@ -5,10 +5,12 @@ import { getAngelcare360AccessContext } from '@/lib/angelcare360/server'
 import { listAngelcare360Staff } from '@/lib/angelcare360/server/people'
 import { getAngelcare360PersonnelOverviewData } from '@/lib/angelcare360/server/personnel-overview'
 import { createStaffPeopleConfig } from '@/data/angelcare360/people-pages'
+import { requireAngelcare360RouteAccess } from '@/lib/angelcare360/server/route-guard'
 
 export const dynamic = 'force-dynamic'
 
 export default async function Angelcare360PersonnelPage() {
+  await requireAngelcare360RouteAccess('/angelcare-360-command-center/personnel')
   const context = await getAngelcare360AccessContext()
   if (!context?.school) redirect('/angelcare-360-command-center')
 

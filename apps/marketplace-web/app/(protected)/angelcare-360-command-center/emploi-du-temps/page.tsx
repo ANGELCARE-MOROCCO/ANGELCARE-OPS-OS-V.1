@@ -5,10 +5,12 @@ import AcademicZoneAFrame from '@/components/angelcare360/zone-a-academic/Academ
 import { getAngelcare360AccessContext } from '@/lib/angelcare360/server'
 import { getAngelcare360TimetableOverview, listAngelcare360SchoolCalendarEvents, listAngelcare360TimetableSlots } from '@/lib/angelcare360/server/timetable'
 import { getAcademicAuthoritySignals } from '@/lib/angelcare360/server/customer-academic-authority'
+import { requireAngelcare360RouteAccess } from '@/lib/angelcare360/server/route-guard'
 
 export const dynamic = 'force-dynamic'
 
 export default async function Angelcare360TimetablePage({ searchParams }: { searchParams?: Promise<{ plane?: string }> }) {
+  await requireAngelcare360RouteAccess('/angelcare-360-command-center/emploi-du-temps')
   const context = await getAngelcare360AccessContext()
   if (!context?.school) redirect('/angelcare-360-command-center')
   const query = (await searchParams) || {}

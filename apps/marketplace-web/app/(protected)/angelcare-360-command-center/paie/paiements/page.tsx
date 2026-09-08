@@ -1,1 +1,3 @@
-import {getPayrollSovereignSnapshot} from '../_utils';import {Payments} from '@/components/angelcare360/payroll-sovereign-command/PayrollViews';export const dynamic='force-dynamic';export default async function Page(){return <Payments s={await getPayrollSovereignSnapshot()}/> }
+import { requireAngelcare360RouteAccess } from '@/lib/angelcare360/server/route-guard'
+import {getPayrollSovereignSnapshot} from '../_utils';import {Payments} from '@/components/angelcare360/payroll-sovereign-command/PayrollViews';export const dynamic='force-dynamic';export default async function Page(){
+  await requireAngelcare360RouteAccess('/angelcare-360-command-center/paie/paiements');return <Payments s={await getPayrollSovereignSnapshot()}/> }

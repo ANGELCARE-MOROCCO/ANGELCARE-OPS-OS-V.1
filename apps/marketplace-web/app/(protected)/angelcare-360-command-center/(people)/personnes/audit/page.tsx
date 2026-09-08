@@ -5,10 +5,12 @@ import Angelcare360PeopleAuditWorkspace from '@/components/angelcare360/people/A
 import { getAngelcare360AccessContext } from '@/lib/angelcare360/server'
 import { listAngelcare360PeopleAuditEvents } from '@/lib/angelcare360/server/people'
 import { createPeopleAuditConfig } from '@/data/angelcare360/people-pages'
+import { requireAngelcare360RouteAccess } from '@/lib/angelcare360/server/route-guard'
 
 export const dynamic = 'force-dynamic'
 
 export default async function Angelcare360PeopleAuditPage() {
+  await requireAngelcare360RouteAccess('/angelcare-360-command-center/personnes/audit')
   const context = await getAngelcare360AccessContext()
   if (!context?.school) redirect('/angelcare-360-command-center')
 

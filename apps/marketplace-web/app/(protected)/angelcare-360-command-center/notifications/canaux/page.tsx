@@ -3,10 +3,12 @@ import Angelcare360NotificationsSectionScreen from '@/components/angelcare360/no
 import Angelcare360NotificationChannelsWorkspace from '@/components/angelcare360/notifications/Angelcare360NotificationChannelsWorkspace'
 import { getAngelcare360NotificationChannelReadiness } from '@/lib/angelcare360/server/notifications'
 import { getAngelcare360NotificationsContext, secondaryLinkStyle } from '../_utils'
+import { requireAngelcare360RouteAccess } from '@/lib/angelcare360/server/route-guard'
 
 export const dynamic = 'force-dynamic'
 
 export default async function Angelcare360NotificationChannelsPage() {
+  await requireAngelcare360RouteAccess('/angelcare-360-command-center/notifications/canaux')
   const context = await getAngelcare360NotificationsContext()
   const readiness = await getAngelcare360NotificationChannelReadiness({ schoolId: context.school.id })
 

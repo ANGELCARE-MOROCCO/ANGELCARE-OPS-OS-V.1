@@ -4,6 +4,7 @@ import Angelcare360ErrorState from '@/components/angelcare360/states/Angelcare36
 import Angelcare360PeopleDossier from '@/components/angelcare360/people/Angelcare360PeopleDossier'
 import { getAngelcare360AccessContext } from '@/lib/angelcare360/server'
 import { getAngelcare360StaffById } from '@/lib/angelcare360/server/people'
+import { requireAngelcare360RouteAccess } from '@/lib/angelcare360/server/route-guard'
 
 export const dynamic = 'force-dynamic'
 
@@ -18,6 +19,7 @@ type PageProps = {
 }
 
 export default async function Angelcare360StaffDetailPage({ params }: PageProps) {
+  await requireAngelcare360RouteAccess('/angelcare-360-command-center/personnel/[id]')
   const { id } = await params
   const context = await getAngelcare360AccessContext()
   if (!context?.school) redirect('/angelcare-360-command-center')
