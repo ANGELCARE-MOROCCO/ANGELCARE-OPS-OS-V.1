@@ -12,6 +12,7 @@ function strongPassword(value: string) {
 export default async function ChangePasswordPage({ searchParams }: { searchParams?: Promise<Record<string, string | string[] | undefined>> }) {
   const user = await getCurrentAppUser()
   if (!user) redirect('/angelcare-360-access/login')
+  if ((user as { __demo?: boolean }).__demo === true) redirect('/angelcare-360-command-center')
   const params = (await searchParams) || {}
   const error = typeof params.error === 'string' ? params.error : ''
 
@@ -19,6 +20,7 @@ export default async function ChangePasswordPage({ searchParams }: { searchParam
     'use server'
     const current = await getCurrentAppUser()
     if (!current) redirect('/angelcare-360-access/login')
+    if ((current as { __demo?: boolean }).__demo === true) redirect('/angelcare-360-command-center')
     const currentPassword = String(formData.get('currentPassword') || '')
     const password = String(formData.get('password') || '')
     const confirmation = String(formData.get('confirmation') || '')

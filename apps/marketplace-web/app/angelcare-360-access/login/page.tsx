@@ -1,4 +1,5 @@
 import { APP_SESSION_COOKIE_DOMAIN } from '@/lib/auth/session'
+import { DEMO_COOKIE } from '@/lib/sanila-demo/authority'
 import type { Metadata } from 'next'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
@@ -150,6 +151,9 @@ export default async function Angelcare360CustomerLoginPage({
       .eq('id', user.id)
 
     const cookieStore = await cookies()
+
+    // A normal credential login explicitly leaves Master Demo mode.
+    cookieStore.set(DEMO_COOKIE, '', { httpOnly: true, sameSite: 'strict', secure: process.env.NODE_ENV === 'production', path: '/', expires: new Date(0) })
 
     // Remove the legacy host-only session before issuing the shared session.
     cookieStore.set(APP_SESSION_COOKIE, '', {

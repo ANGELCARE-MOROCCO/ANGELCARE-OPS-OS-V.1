@@ -111,6 +111,10 @@ export async function getCurrentAppUser() {
 export async function requireUser() {
   const user = await getCurrentAppUser()
   if (!user) redirect('/login')
+  // Master Demo is authenticated by its governed PIN/session authority, not by
+  // the underlying school-admin password. Password/MFA challenges therefore
+  // belong only to normal app sessions and must never trap an approved demo.
+  if ((user as any).__demo === true) return user
   if ((user as any).__mfaRequired) redirect('/angelcare-360-access/mfa')
   if (Boolean((user as any).must_change_password)) redirect('/angelcare-360-access/change-password')
   return user

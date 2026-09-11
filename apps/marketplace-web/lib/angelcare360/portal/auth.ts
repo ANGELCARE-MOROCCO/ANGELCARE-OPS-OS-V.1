@@ -3,6 +3,7 @@ import { cookies } from 'next/headers'
 import { createClient } from '@/lib/supabase/server'
 import { APP_SESSION_COOKIE, APP_SESSION_COOKIE_DOMAIN, generateSessionToken, verifyPassword } from '@/lib/ac360-portability/auth-session'
 import { PORTAL_DEFAULT_ROUTE } from '@/data/angelcare360/role-portals'
+import { DEMO_COOKIE } from '@/lib/sanila-demo/authority'
 import type { Angelcare360PortalKind } from '@/types/angelcare360/role-portals'
 
 export type LinkedPortalPersona = {
@@ -78,7 +79,7 @@ export async function authenticatePortalCredentials(input:{username:string;passw
   if(session.error) return {ok:false as const,error:'server' as const}
   const loginUpdate=await db.from('app_users').update({last_login_at:new Date().toISOString()}).eq('id',user.id)
   if(loginUpdate.error){await db.from('app_sessions').delete().eq('session_token',token);return {ok:false as const,error:'server' as const}}
-  const store=await cookies(); store.set(APP_SESSION_COOKIE,token,{httpOnly:true,sameSite:'lax',secure:process.env.NODE_ENV==='production',path:'/',expires:expiresAt,...(APP_SESSION_COOKIE_DOMAIN?{domain:APP_SESSION_COOKIE_DOMAIN}:{})})
+  const store=await cookies(); store.set(DEMO_COOKIE,'',{httpOnly:true,sameSite:'strict',secure:process.env.NODE_ENV==='production',path:'/',expires:new Date(0)}); store.set(APP_SESSION_COOKIE,token,{httpOnly:true,sameSite:'lax',secure:process.env.NODE_ENV==='production',path:'/',expires:expiresAt,...(APP_SESSION_COOKIE_DOMAIN?{domain:APP_SESSION_COOKIE_DOMAIN}:{})})
   await clearPortalContext()
   const safeNext=safePortalNext(text(input.next),input.requestedKind||null)
   if(personas.length===1){await setPortalContext(personas[0],expiresAt);return {ok:true as const,select:false as const,redirectTo:safeNext||PORTAL_DEFAULT_ROUTE[personas[0].kind],persona:personas[0]}}
