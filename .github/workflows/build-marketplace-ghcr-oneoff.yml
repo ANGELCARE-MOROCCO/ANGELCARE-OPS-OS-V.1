@@ -36,8 +36,15 @@ jobs:
       - name: Install Nixpacks
         run: curl -sSL https://nixpacks.com/install.sh | bash
 
+      - name: Override Nixpacks auto apt packages
+        run: |
+          cat > /tmp/nixpacks-ci.toml <<'EOF'
+          [phases.setup]
+          aptPkgs = []
+          EOF
+
       - name: Show Nixpacks build plan
-        run: nixpacks plan apps/marketplace-web
+        run: nixpacks plan apps/marketplace-web --config /tmp/nixpacks-ci.toml
 
       - name: Login to GHCR
         uses: docker/login-action@v3
@@ -49,6 +56,7 @@ jobs:
       - name: Build exact Marketplace image
         run: |
           nixpacks build apps/marketplace-web \
+            --config /tmp/nixpacks-ci.toml \
             --no-cache \
             --name "${IMAGE}:${TARGET_SHA}" \
             --platform linux/amd64 \
