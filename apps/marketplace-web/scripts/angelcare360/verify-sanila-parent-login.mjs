@@ -16,6 +16,8 @@ const page = exists(pageRel) ? read(pageRel) : ''
 const client = exists(clientRel) ? read(clientRel) : ''
 const css = exists(cssRel) ? read(cssRel) : ''
 const gateway = exists(gatewayRel) ? read(gatewayRel) : ''
+const authRel = 'lib/angelcare360/portal/auth.ts'
+const auth = exists(authRel) ? read(authRel) : ''
 const roles = exists('data/angelcare360/role-portals.ts') ? read('data/angelcare360/role-portals.ts') : ''
 
 add('dedicated parent login route exists', () => exists(pageRel))
@@ -26,21 +28,21 @@ add('official normal SANILA logo asset exists', () => exists('public/sanila/sani
 add('official white SANILA logo asset exists', () => exists('public/sanila/sanila-operating-system-logo-white.png'))
 add('SANILA parent metadata present', () => page.includes("SANILA Operating System · Espace Parent / Tuteur"))
 add('dedicated route is force dynamic', () => page.includes("export const dynamic = 'force-dynamic'"))
-add('existing login RPC reused', () => page.includes("rpc('login_app_user'"))
-add('existing app_sessions authority reused', () => page.includes("from('app_sessions').insert"))
-add('existing APP_SESSION_COOKIE reused', () => page.includes('APP_SESSION_COOKIE'))
-add('secure token generator reused', () => page.includes('generateSessionToken'))
-add('parent role is verified server side', () => page.includes('PORTAL_ROLE_KEYS.parent.includes(role)'))
+add('canonical bcrypt credential authority reused', () => page.includes('authenticatePortalCredentials') && auth.includes('verifyPassword(') && !page.includes('login_app_user') && !auth.includes('login_app_user'))
+add('existing app_sessions authority reused', () => page.includes('authenticatePortalCredentials') && auth.includes("from('app_sessions').insert"))
+add('existing APP_SESSION_COOKIE reused', () => auth.includes('APP_SESSION_COOKIE'))
+add('secure token generator reused', () => auth.includes('generateSessionToken'))
+add('parent persona is verified server side', () => page.includes("requestedKind: 'parent'") && auth.includes("from('angelcare360_parents')") && auth.includes("portal_app_user_id"))
 add('canonical parent roles exist', () => roles.includes("parent: ['parent','guardian','responsable']"))
 add('canonical parent destination exists', () => roles.includes("parent: '/angelcare-360-parent'"))
-add('inactive users rejected', () => page.includes("user.status !== 'active'"))
-add('non parent role rejected', () => page.includes("errorHref('role'"))
-add('parent default redirect present', () => page.includes("redirect(requestedNext || '/angelcare-360-parent')"))
+add('inactive users rejected', () => auth.includes("user.status!=='active'") && page.includes("errorCode === 'inactive'"))
+add('non parent role rejected', () => auth.includes("error:'role'") && page.includes("errorCode === 'role'"))
+add('parent default redirect present', () => page.includes("requestedKind: 'parent'") && auth.includes('PORTAL_DEFAULT_ROUTE[personas[0].kind]'))
 add('next redirect restricted to parent subtree', () => page.includes("value.startsWith('/angelcare-360-parent')"))
-add('session is HTTP only', () => page.includes('httpOnly: true'))
-add('session sameSite lax preserved', () => page.includes("sameSite: 'lax'"))
-add('production secure cookie preserved', () => page.includes("secure: process.env.NODE_ENV === 'production'"))
-add('last_login_at update preserved', () => page.includes('last_login_at'))
+add('session is HTTP only', () => auth.includes('httpOnly:true'))
+add('session sameSite lax preserved', () => auth.includes("sameSite:'lax'"))
+add('production secure cookie preserved', () => auth.includes("secure:process.env.NODE_ENV==='production'"))
+add('last_login_at update preserved', () => auth.includes('last_login_at'))
 add('customer broadcast snapshot reused', () => page.includes('getAngelcare360CustomerBroadcastSnapshot'))
 add('main visible brand is SANILA', () => client.includes('alt="SANILA Operating System"'))
 add('parent title exact', () => client.includes('<h2>Espace Parent / Tuteur</h2>'))
@@ -81,11 +83,11 @@ add('mobile intentional stacked layout present', () => css.includes('@media (max
 add('small mobile breakpoint present', () => css.includes('@media (max-width:560px)'))
 add('no screenshot whole-page hack', () => client.includes('<form') && client.includes('<input') && client.includes('<button'))
 add('parent badge is real DOM', () => client.includes('className={styles.parentBadge}') && client.includes('<UsersRound'))
-add('gateway parent door points to dedicated login', () => gateway.includes("href: '/angelcare-360-parent/login'"))
-add('gateway parent door no longer points to generic login', () => !gateway.includes("href: '/angelcare-360-portal/login?audience=parent'"))
-add('teacher dedicated gateway route remains intact', () => gateway.includes("href: '/angelcare-360-teacher/login'"))
-add('staff dedicated gateway route remains intact', () => gateway.includes("href: '/angelcare-360-staff/login'"))
-add('student generic route remains untouched', () => gateway.includes("href: '/angelcare-360-portal/login?audience=student'"))
+add('gateway parent door points to canonical shared role login', () => gateway.includes("href: '/angelcare-360-portal/login?audience=parent&next=/angelcare-360-parent'"))
+add('gateway parent door preserves parent target', () => gateway.includes('audience=parent&next=/angelcare-360-parent'))
+add('teacher gateway route remains intact', () => gateway.includes('audience=teacher&next=/angelcare-360-teacher'))
+add('staff gateway route remains intact', () => gateway.includes('audience=staff&next=/angelcare-360-staff'))
+add('student gateway route remains intact', () => gateway.includes('audience=student&next=/angelcare-360-student'))
 add('targeted noEmit tsconfig exists', () => exists('tsconfig.sanila-parent-login.json'))
 add('no SQL delivered in Parent login patch surface', () => {
   const patchRoots = [

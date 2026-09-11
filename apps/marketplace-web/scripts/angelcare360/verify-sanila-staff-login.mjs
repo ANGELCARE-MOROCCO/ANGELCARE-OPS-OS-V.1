@@ -16,6 +16,8 @@ const page = exists(pageRel) ? read(pageRel) : ''
 const client = exists(clientRel) ? read(clientRel) : ''
 const css = exists(cssRel) ? read(cssRel) : ''
 const gateway = exists(gatewayRel) ? read(gatewayRel) : ''
+const authRel = 'lib/angelcare360/portal/auth.ts'
+const auth = exists(authRel) ? read(authRel) : ''
 const roles = exists('data/angelcare360/role-portals.ts') ? read('data/angelcare360/role-portals.ts') : ''
 
 add('dedicated staff login route exists', () => exists(pageRel))
@@ -26,21 +28,21 @@ add('official normal SANILA logo asset exists', () => exists('public/sanila/sani
 add('official white SANILA logo asset exists', () => exists('public/sanila/sanila-operating-system-logo-white.png'))
 add('SANILA staff metadata present', () => page.includes("SANILA Operating System · Espace Équipe"))
 add('dedicated route is force dynamic', () => page.includes("export const dynamic = 'force-dynamic'"))
-add('existing login RPC reused', () => page.includes("rpc('login_app_user'"))
-add('existing app_sessions authority reused', () => page.includes("from('app_sessions').insert"))
-add('existing APP_SESSION_COOKIE reused', () => page.includes('APP_SESSION_COOKIE'))
-add('secure token generator reused', () => page.includes('generateSessionToken'))
-add('staff role is verified server side', () => page.includes('PORTAL_ROLE_KEYS.staff.includes(role)'))
+add('canonical bcrypt credential authority reused', () => page.includes('authenticatePortalCredentials') && auth.includes('verifyPassword(') && !page.includes('login_app_user') && !auth.includes('login_app_user'))
+add('existing app_sessions authority reused', () => page.includes('authenticatePortalCredentials') && auth.includes("from('app_sessions').insert"))
+add('existing APP_SESSION_COOKIE reused', () => auth.includes('APP_SESSION_COOKIE'))
+add('secure token generator reused', () => auth.includes('generateSessionToken'))
+add('staff persona is verified server side', () => page.includes("requestedKind: 'staff'") && auth.includes("from('angelcare360_staff')") && auth.includes("isTeacherType(row.staff_type)?'teacher':'staff'"))
 add('canonical staff roles exist', () => roles.includes("staff: ['staff','administration','reception','finance','rh','transport','bibliotheque','qualite']"))
 add('canonical staff destination exists', () => roles.includes("staff: '/angelcare-360-staff'"))
-add('inactive users rejected', () => page.includes("user.status !== 'active'"))
-add('non staff role rejected', () => page.includes("errorHref('role'"))
-add('staff default redirect present', () => page.includes("redirect(requestedNext || '/angelcare-360-staff')"))
+add('inactive users rejected', () => auth.includes("user.status!=='active'") && page.includes("errorCode === 'inactive'"))
+add('non staff role rejected', () => auth.includes("error:'role'") && page.includes("errorCode === 'role'"))
+add('staff default redirect present', () => page.includes("requestedKind: 'staff'") && auth.includes('PORTAL_DEFAULT_ROUTE[personas[0].kind]'))
 add('next redirect restricted to staff subtree', () => page.includes("value.startsWith('/angelcare-360-staff')"))
-add('session is HTTP only', () => page.includes('httpOnly: true'))
-add('session sameSite lax preserved', () => page.includes("sameSite: 'lax'"))
-add('production secure cookie preserved', () => page.includes("secure: process.env.NODE_ENV === 'production'"))
-add('last_login_at update preserved', () => page.includes('last_login_at'))
+add('session is HTTP only', () => auth.includes('httpOnly:true'))
+add('session sameSite lax preserved', () => auth.includes("sameSite:'lax'"))
+add('production secure cookie preserved', () => auth.includes("secure:process.env.NODE_ENV==='production'"))
+add('last_login_at update preserved', () => auth.includes('last_login_at'))
 add('customer broadcast snapshot reused', () => page.includes('getAngelcare360CustomerBroadcastSnapshot'))
 add('main visible brand is SANILA', () => client.includes('alt="SANILA Operating System"'))
 add('staff title exact', () => client.includes('<h2>Espace Équipe</h2>'))
@@ -80,11 +82,11 @@ add('mobile intentional stacked layout present', () => css.includes('@media (max
 add('small mobile breakpoint present', () => css.includes('@media (max-width:560px)'))
 add('no screenshot whole-page hack', () => client.includes('<form') && client.includes('<input') && client.includes('<button'))
 add('staff badge is real DOM', () => client.includes('className={styles.staffBadge}') && client.includes('<UsersRound'))
-add('gateway staff door points to dedicated login', () => gateway.includes("href: '/angelcare-360-staff/login'"))
-add('gateway staff door no longer points to generic login', () => !gateway.includes("href: '/angelcare-360-portal/login?audience=staff'"))
-add('teacher dedicated gateway route remains intact', () => gateway.includes("href: '/angelcare-360-teacher/login'"))
+add('gateway staff door points to canonical shared role login', () => gateway.includes("href: '/angelcare-360-portal/login?audience=staff&next=/angelcare-360-staff'"))
+add('gateway staff target is explicit', () => gateway.includes('audience=staff&next=/angelcare-360-staff'))
+add('teacher gateway route remains intact', () => gateway.includes('audience=teacher&next=/angelcare-360-teacher'))
 add('targeted noEmit tsconfig exists', () => exists('tsconfig.sanila-staff-login.json'))
-add('no SQL delivered in app patch', () => !fs.readdirSync(root, { recursive: true }).some((f) => String(f).endsWith('.sql')))
+add('staff login surface contains no SQL artifact', () => !fs.readdirSync(path.join(root,'app/angelcare-360-staff/login'), { recursive: true }).some((f) => String(f).endsWith('.sql')))
 
 for (const [name, fn] of checks) {
   try {

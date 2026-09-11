@@ -366,7 +366,10 @@ export async function upsertTenantAccessAccount(input: unknown) {
   if (result.data.app_user_id) {
     const identity = await resolveTenantAccessAppUser(db, result.data)
     if (!identity.ok || !identity.user) return { ok: false, error: identity.ok ? 'L’identité AngelCare liée est introuvable.' : identity.error }
-    await db.from('app_users').update({ full_name: fullName, email, role: APP_ROLE_MAP[roleTemplate] || 'administration', permissions: effectiveAppPermissions(result.data), ...(identity.backfill ? { username: identity.username } : {}) }).eq('id', result.data.app_user_id)
+    const priorPolicy = toRecord(before?.security_policy)
+    const forcePasswordNow = Boolean(securityPolicy.force_password_change) && !Boolean(priorPolicy.force_password_change)
+    const identityUpdate = await db.from('app_users').update({ full_name: fullName, email, role: APP_ROLE_MAP[roleTemplate] || 'administration', permissions: effectiveAppPermissions(result.data), ...(forcePasswordNow ? { must_change_password: true } : {}), ...(identity.backfill ? { username: identity.username } : {}) }).eq('id', result.data.app_user_id)
+    if (identityUpdate.error) return { ok: false, error: identityUpdate.error.message }
     if (result.data.school_id) {
       await db.from('angelcare360_user_roles').update({ status: 'paused' }).eq('app_user_id', result.data.app_user_id).eq('school_id', result.data.school_id).contains('metadata_json', { source: 'tenant-access' })
     }
@@ -525,12 +528,10 @@ export async function transferTenantOwnership(input: unknown) {
   const db = await getOperatorClient()
   const { data: target } = await db.from(ACCESS_TABLE).select('*').eq('id', toId).eq('tenant_id', tenantId).maybeSingle()
   if (!target || target.status !== 'active') return { ok: false, error: 'Le nouveau Tenant Owner doit être un administrateur actif du même tenant.' }
-  const { data: transfer, error } = await db.from(TRANSFER_TABLE).insert({ tenant_id: tenantId, from_access_account_id: fromId, to_access_account_id: toId, status: 'completed', reason, effective_at: new Date().toISOString(), requested_by: session.user.id, approved_by: session.user.id, completed_at: new Date().toISOString() }).select('*').single()
-  if (error) return { ok: false, error: error.message }
-  await db.from(ACCESS_TABLE).update({ is_primary_owner: false, updated_by: session.user.id }).eq('tenant_id', tenantId)
-  await db.from(ACCESS_TABLE).update({ is_primary_owner: true, role_template: 'tenant_owner', updated_by: session.user.id }).eq('id', toId)
-  await writeAccessEvent({ accessAccountId: toId, clientId: target.client_id, tenantId, actorUserId: session.user.id, eventType: 'ownership.transferred', severity: 'notice', summary: `Responsabilité Tenant Owner transférée à ${target.full_name}.`, metadata: { from_access_account_id: fromId, reason } })
-  return { ok: true, transfer }
+  const transferred = await db.rpc('angelcare360_transfer_tenant_ownership_v1', { p_tenant_id: tenantId, p_from_access_account_id: fromId, p_to_access_account_id: toId, p_actor_user_id: session.user.id, p_reason: reason })
+  if (transferred.error || !transferred.data) return { ok: false, error: transferred.error?.message || 'Le transfert atomique de responsabilité a échoué.' }
+  await writeAccessEvent({ accessAccountId: toId, clientId: target.client_id, tenantId, actorUserId: session.user.id, eventType: 'ownership.transferred', severity: 'notice', summary: `Responsabilité Tenant Owner transférée à ${target.full_name}; autorité et sessions réconciliées atomiquement.`, metadata: { from_access_account_id: fromId, reason } })
+  return { ok: true, transfer: transferred.data }
 }
 
 export async function requestTenantSupportAccess(input: unknown) {
@@ -543,10 +544,10 @@ export async function requestTenantSupportAccess(input: unknown) {
   const hours = Math.max(1, Math.min(24, Number(payload.durationHours || 1)))
   if (!clientId || !tenantId || !reason) return { ok: false, error: 'Client, tenant et raison support sont requis.' }
   const db = await getOperatorClient()
-  const status = accessMode === 'read_only' ? 'active' : 'requested'
-  const { data, error } = await db.from(SUPPORT_TABLE).insert({ client_id: clientId, tenant_id: tenantId, operator_user_id: session.user.id, access_mode: accessMode, reason, status, starts_at: new Date().toISOString(), expires_at: new Date(Date.now() + hours * 3600000).toISOString(), approved_by: status === 'active' ? session.user.id : null }).select('*').single()
+  const status = 'requested'
+  const { data, error } = await db.from(SUPPORT_TABLE).insert({ client_id: clientId, tenant_id: tenantId, operator_user_id: session.user.id, access_mode: accessMode, reason, status, starts_at: null, expires_at: new Date(Date.now() + hours * 3600000).toISOString(), approved_by: null }).select('*').single()
   if (error) return { ok: false, error: error.message }
-  await writeAccessEvent({ clientId, tenantId, actorUserId: session.user.id, eventType: 'support_access.requested', severity: 'warning', summary: `Accès support ${accessMode} ${status === 'active' ? 'activé' : 'demandé'}.`, metadata: { support_session_id: data.id, reason, hours } })
+  await writeAccessEvent({ clientId, tenantId, actorUserId: session.user.id, eventType: 'support_access.requested', severity: 'warning', summary: `Accès support ${accessMode} demandé; approbation indépendante obligatoire.`, metadata: { support_session_id: data.id, reason, hours } })
   return { ok: true, session: data }
 }
 
@@ -557,6 +558,7 @@ export async function approveTenantSupportAccess(input: unknown) {
   const db = await getOperatorClient()
   const { data: before } = await db.from(SUPPORT_TABLE).select('*').eq('id', id).maybeSingle()
   if (!before || before.status !== 'requested') return { ok: false, error: 'Seule une demande support en attente peut être approuvée.' }
+  if (String(before.operator_user_id) === String(actor.user.id)) return { ok: false, error: 'Séparation des responsabilités: le demandeur ne peut pas approuver sa propre session support.' }
   const { data, error } = await db.from(SUPPORT_TABLE).update({ status: 'active', approved_by: actor.user.id, starts_at: new Date().toISOString() }).eq('id', id).select('*').single()
   if (error) return { ok: false, error: error.message }
   await writeAccessEvent({ clientId: before.client_id, tenantId: before.tenant_id, actorUserId: actor.user.id, eventType: 'support_access.approved', severity: 'warning', summary: `Accès support ${before.access_mode} approuvé.`, metadata: { support_session_id: id } })
@@ -735,58 +737,108 @@ export async function completeTenantAccessToken(input: { token: string; mode: 'i
   const db = await createServiceClient()
   const digest = tokenDigest(token)
   const passwordIsStrong = password.length >= 12 && /[A-Z]/.test(password) && /[a-z]/.test(password) && /[0-9]/.test(password) && /[^A-Za-z0-9]/.test(password)
+  if (!passwordIsStrong) return { ok: false, error: 'Le mot de passe doit contenir au moins 12 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial.' }
 
   if (input.mode === 'reset') {
-    if (!passwordIsStrong) return { ok: false, error: 'Le mot de passe doit contenir au moins 12 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial.' }
     const passwordHash = await hashPassword(password)
-    const { data: reset } = await db.from(RESET_TABLE).select('*, account:angelcare360_operator_tenant_access_accounts(*)').eq('token_hash', digest).in('status', ['requested','opened']).gt('expires_at', new Date().toISOString()).maybeSingle()
+    const resetLookup = await db.from(RESET_TABLE).select('*, account:angelcare360_operator_tenant_access_accounts(*)').eq('token_hash', digest).in('status', ['requested','opened']).gt('expires_at', new Date().toISOString()).maybeSingle()
+    if (resetLookup.error) return { ok: false, error: resetLookup.error.message }
+    const reset = resetLookup.data
     if (!reset?.account?.app_user_id) return { ok: false, error: 'Lien de réinitialisation invalide ou compte non activé.' }
-    const { error } = await db.from('app_users').update({ password_hash: passwordHash, status: 'active' }).eq('id', reset.account.app_user_id)
-    if (error) return { ok: false, error: error.message }
-    await db.from('app_sessions').delete().eq('user_id', reset.account.app_user_id)
-    await db.from(RESET_TABLE).update({ status: 'completed', completed_at: new Date().toISOString() }).eq('id', reset.id)
-    await db.from(ACCESS_TABLE).update({ status: 'active', last_security_event_at: new Date().toISOString() }).eq('id', reset.account.id)
+    const identity = await db.from('app_users').update({ password_hash: passwordHash, status: 'active', must_change_password: false }).eq('id', reset.account.app_user_id).select('id').single()
+    if (identity.error) return { ok: false, error: identity.error.message }
+    const revoke = await db.from('app_sessions').delete().eq('user_id', reset.account.app_user_id)
+    if (revoke.error) return { ok: false, error: revoke.error.message }
+    const resetDone = await db.from(RESET_TABLE).update({ status: 'completed', completed_at: new Date().toISOString() }).eq('id', reset.id).select('id').single()
+    if (resetDone.error) return { ok: false, error: resetDone.error.message }
+    const accountDone = await db.from(ACCESS_TABLE).update({ status: 'active', last_security_event_at: new Date().toISOString() }).eq('id', reset.account.id).select('id').single()
+    if (accountDone.error) return { ok: false, error: accountDone.error.message }
     await writeAccessEvent({ accessAccountId: reset.account.id, clientId: reset.account.client_id, tenantId: reset.account.tenant_id, eventType: 'password_reset.completed', severity: 'notice', summary: 'Mot de passe réinitialisé et anciennes sessions révoquées.' })
     return { ok: true, mode: 'reset' as const }
   }
 
-  const { data: invitation } = await db.from(INVITE_TABLE).select('*, account:angelcare360_operator_tenant_access_accounts(*)').eq('token_hash', digest).in('status', ['invited','opened']).gt('expires_at', new Date().toISOString()).maybeSingle()
+  const inviteLookup = await db.from(INVITE_TABLE).select('*, account:angelcare360_operator_tenant_access_accounts(*)').eq('token_hash', digest).in('status', ['invited','opened']).gt('expires_at', new Date().toISOString()).maybeSingle()
+  if (inviteLookup.error) return { ok: false, error: inviteLookup.error.message }
+  const invitation = inviteLookup.data
   if (!invitation?.account || normalizeEmail(invitation.email) !== normalizeEmail(invitation.account.email) || ['revoked', 'expired', 'suspended', 'locked'].includes(String(invitation.account.status))) return { ok: false, error: 'Invitation invalide, annulée ou expirée.' }
   const account = invitation.account as Record<string, unknown>
   const identity = await resolveTenantAccessAppUser(db, account)
   if (!identity.ok) return { ok: false, error: identity.error }
-  let appUser: any
+
+  const passwordHash = await hashPassword(password)
+  let appUserId = identity.user ? String(identity.user.id) : ''
+  let createdIdentity = false
   if (!identity.user) {
-    if (!passwordIsStrong) return { ok: false, error: 'Le mot de passe doit contenir au moins 12 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial.' }
-    const passwordHash = await hashPassword(password)
-    appUser = await db.from('app_users').insert({
+    const created = await db.from('app_users').insert({
       email: asString(account.email),
       username: identity.username,
       full_name: asString(account.full_name),
       role: APP_ROLE_MAP[asString(account.role_template)] || 'administration',
       status: 'active',
       password_hash: passwordHash,
+      must_change_password: false,
       permissions: effectiveAppPermissions(account),
-    }).select('*').single()
-  } else {
-    appUser = await db.from('app_users').update({ full_name: asString(account.full_name), role: APP_ROLE_MAP[asString(account.role_template)] || 'administration', status: 'active', permissions: effectiveAppPermissions(account), ...(identity.backfill ? { username: identity.username } : {}) }).eq('id', identity.user.id).select('*').single()
+    }).select('id').single()
+    if (created.error || !created.data?.id) return { ok: false, error: created.error?.message || 'Création de l’identité impossible.' }
+    appUserId = String(created.data.id)
+    createdIdentity = true
   }
-  if (appUser.error || !appUser.data) return { ok: false, error: appUser.error?.message || 'Création de l’identité impossible.' }
-  const membership = await provisionMembership(db, account, String(appUser.data.id))
-  if (asString(account.school_id) && (!membership.schoolUserRoleId || membership.warning)) return { ok: false, error: 'Le rôle établissement actif n’a pas pu être établi. Réessayez ou contactez AngelCare.' }
+
+  const membership = await provisionMembership(db, account, appUserId)
+  if (asString(account.school_id) && (!membership.schoolUserRoleId || membership.warning)) {
+    if (createdIdentity) await db.from('app_users').delete().eq('id', appUserId)
+    else if (membership.schoolUserRoleId) await db.from('angelcare360_user_roles').update({ status: 'paused' }).eq('id', membership.schoolUserRoleId)
+    return { ok: false, error: membership.warning || 'Le rôle établissement actif n’a pas pu être établi. Réessayez ou contactez AngelCare.' }
+  }
+
+  const identityUpdate = await db.from('app_users').update({
+    full_name: asString(account.full_name),
+    email: asString(account.email),
+    username: identity.username,
+    password_hash: passwordHash,
+    must_change_password: false,
+    role: APP_ROLE_MAP[asString(account.role_template)] || 'administration',
+    status: 'active',
+    permissions: effectiveAppPermissions(account),
+  }).eq('id', appUserId).select('id').single()
+  if (identityUpdate.error) {
+    if (membership.schoolUserRoleId) await db.from('angelcare360_user_roles').update({ status: 'paused' }).eq('id', membership.schoolUserRoleId)
+    if (createdIdentity) await db.from('app_users').delete().eq('id', appUserId)
+    return { ok: false, error: identityUpdate.error.message }
+  }
+  const sessionRevoke = await db.from('app_sessions').delete().eq('user_id', appUserId)
+  if (sessionRevoke.error) {
+    if (membership.schoolUserRoleId) await db.from('angelcare360_user_roles').update({ status: 'paused' }).eq('id', membership.schoolUserRoleId)
+    return { ok: false, error: sessionRevoke.error.message }
+  }
+
   const now = new Date().toISOString()
   const requireMfa = Boolean(toRecord(account.security_policy).require_mfa)
   if (requireMfa) {
     const secret = base32Encode(crypto.randomBytes(20))
     const recoveryCodes = generateRecoveryCodes()
-    await db.from(ACCESS_TABLE).update({ app_user_id: appUser.data.id, membership_id: membership.membershipId, school_user_role_id: membership.schoolUserRoleId, status: 'activation_pending', activated_at: now, last_security_event_at: now, mfa_secret_encrypted: encryptSecret(secret), mfa_recovery_codes: recoveryCodes.map(recoveryDigest) }).eq('id', account.id)
+    const accountUpdate = await db.from(ACCESS_TABLE).update({ app_user_id: appUserId, membership_id: membership.membershipId, school_user_role_id: membership.schoolUserRoleId, status: 'activation_pending', activated_at: now, last_security_event_at: now, mfa_secret_encrypted: encryptSecret(secret), mfa_recovery_codes: recoveryCodes.map(recoveryDigest) }).eq('id', account.id).select('id').single()
+    if (accountUpdate.error) {
+      if (membership.schoolUserRoleId) await db.from('angelcare360_user_roles').update({ status: 'paused' }).eq('id', membership.schoolUserRoleId)
+      return { ok: false, error: accountUpdate.error.message }
+    }
     await writeAccessEvent({ accessAccountId: asString(account.id), clientId: asString(account.client_id), tenantId: asString(account.tenant_id), eventType: 'mfa.enrollment_required', severity: 'warning', summary: 'Mot de passe créé; enrôlement MFA obligatoire avant activation finale.' })
     const issuer = encodeURIComponent('AngelCare 360')
     const label = encodeURIComponent(`AngelCare 360:${asString(account.email)}`)
     return { ok: true, mode: 'invite' as const, mfaRequired: true, mfaSecret: secret, otpauthUri: `otpauth://totp/${label}?secret=${secret}&issuer=${issuer}&digits=6&period=30`, recoveryCodes, membershipWarning: membership.warning }
   }
-  await db.from(ACCESS_TABLE).update({ app_user_id: appUser.data.id, membership_id: membership.membershipId, school_user_role_id: membership.schoolUserRoleId, status: 'active', activated_at: now, last_security_event_at: now }).eq('id', account.id)
-  await db.from(INVITE_TABLE).update({ status: 'accepted', accepted_at: now }).eq('id', invitation.id)
+
+  const accountUpdate = await db.from(ACCESS_TABLE).update({ app_user_id: appUserId, membership_id: membership.membershipId, school_user_role_id: membership.schoolUserRoleId, status: 'active', activated_at: now, last_security_event_at: now }).eq('id', account.id).select('id').single()
+  if (accountUpdate.error) {
+    if (membership.schoolUserRoleId) await db.from('angelcare360_user_roles').update({ status: 'paused' }).eq('id', membership.schoolUserRoleId)
+    return { ok: false, error: accountUpdate.error.message }
+  }
+  const inviteUpdate = await db.from(INVITE_TABLE).update({ status: 'accepted', accepted_at: now }).eq('id', invitation.id).select('id').single()
+  if (inviteUpdate.error) {
+    await db.from(ACCESS_TABLE).update({ status: 'activation_pending' }).eq('id', account.id)
+    if (membership.schoolUserRoleId) await db.from('angelcare360_user_roles').update({ status: 'paused' }).eq('id', membership.schoolUserRoleId)
+    return { ok: false, error: inviteUpdate.error.message }
+  }
   await writeAccessEvent({ accessAccountId: asString(account.id), clientId: asString(account.client_id), tenantId: asString(account.tenant_id), eventType: 'account.activated', severity: 'notice', summary: 'Administrateur activé, rôle établissement et membership tenant provisionnés.', metadata: { membership_warning: membership.warning } })
   return { ok: true, mode: 'invite' as const, membershipWarning: membership.warning }
 }

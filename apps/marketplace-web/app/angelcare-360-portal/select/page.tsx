@@ -1,0 +1,15 @@
+import { redirect } from 'next/navigation'
+import { requireUser } from '@/lib/auth/session'
+import { listLinkedPortalPersonas, selectPortalPersona } from '@/lib/angelcare360/portal/auth'
+import type { Angelcare360PortalKind } from '@/types/angelcare360/role-portals'
+
+const labels:Record<Angelcare360PortalKind,string>={teacher:'Enseignant',parent:'Parent',student:'Élève',staff:'Équipe'}
+export default async function PortalSelectPage({searchParams}:{searchParams?:Promise<{portal?:string;next?:string}>}){
+  const user=await requireUser(); const p=searchParams?await searchParams:{}; const requested=String(p.portal||'')
+  let personas=await listLinkedPortalPersonas(String((user as Record<string,unknown>).id))
+  if(['teacher','parent','student','staff'].includes(requested)) personas=personas.filter(item=>item.kind===requested)
+  if(!personas.length) redirect('/angelcare-360-portal/login?error=role')
+  if(personas.length===1){const to=await selectPortalPersona({userId:String((user as Record<string,unknown>).id),...personas[0],next:p.next||null});redirect(to)}
+  async function choose(fd:FormData){'use server';const current=await requireUser();const kind=String(fd.get('kind')) as Angelcare360PortalKind;const to=await selectPortalPersona({userId:String((current as Record<string,unknown>).id),kind,personId:String(fd.get('personId')||''),schoolId:String(fd.get('schoolId')||''),next:String(fd.get('next')||'')});redirect(to)}
+  return <main style={{minHeight:'100vh',background:'#f4f7fa',display:'grid',placeItems:'center',padding:24,fontFamily:'Inter,system-ui,sans-serif',color:'#172b42'}}><section style={{width:'min(820px,100%)',background:'#fff',border:'1px solid #dce5ed',borderRadius:26,padding:30,boxShadow:'0 28px 90px rgba(24,47,71,.12)'}}><div style={{fontSize:10,fontWeight:900,letterSpacing:'.12em',color:'#60758b'}}>SANILA · CONTEXTE D’ACCÈS</div><h1 style={{fontSize:32,margin:'10px 0 8px'}}>Choisissez votre espace exact</h1><p style={{color:'#64748b',lineHeight:1.6}}>Votre identité possède plusieurs contextes légitimes. Le choix ci-dessous fixe à la fois le rôle, la personne et l’établissement pour cette session.</p><div style={{display:'grid',gap:12,marginTop:22}}>{personas.map(persona=><form action={choose} key={`${persona.kind}:${persona.personId}:${persona.schoolId}`} style={{display:'grid',gridTemplateColumns:'1fr auto',gap:16,alignItems:'center',padding:18,border:'1px solid #dce5ed',borderRadius:18,background:'#f9fbfd'}}><input type="hidden" name="kind" value={persona.kind}/><input type="hidden" name="personId" value={persona.personId}/><input type="hidden" name="schoolId" value={persona.schoolId}/><input type="hidden" name="next" value={p.next||''}/><div><div style={{fontWeight:950,fontSize:16}}>{labels[persona.kind]} · {persona.personLabel}</div><div style={{marginTop:4,color:'#66798d',fontSize:12}}>{persona.schoolLabel}{persona.detail?` · ${persona.detail}`:''}</div></div><button style={{border:0,borderRadius:12,background:'#174d78',color:'#fff',fontWeight:900,padding:'11px 16px',cursor:'pointer'}}>Ouvrir</button></form>)}</div></section></main>
+}

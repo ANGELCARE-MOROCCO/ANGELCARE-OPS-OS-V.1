@@ -129,7 +129,7 @@ async function getActiveSupportAccess(operatorUserId: string) {
     const supportSessionId = cookieStore.get('angelcare360_support_access')?.value
     if (!supportSessionId) return null
     const supabase = await createClient()
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('angelcare360_operator_tenant_support_access_sessions')
       .select('*, tenant:angelcare360_operator_tenants(id,school_id,tenant_slug), client:angelcare360_operator_clients(display_name)')
       .eq('id', supportSessionId)
@@ -137,8 +137,12 @@ async function getActiveSupportAccess(operatorUserId: string) {
       .eq('status', 'active')
       .gt('expires_at', new Date().toISOString())
       .maybeSingle()
-    return data?.tenant?.school_id ? data : null
-  } catch { return null }
+    if (error) throw new Error(error.message)
+    if (!data?.tenant?.school_id) throw new Angelcare360AccessError('La session support est invalide, expirée ou terminée.', 403)
+    return data
+  } catch (error) {
+    throw new Angelcare360AccessError(`Autorité d’accès support indisponible: ${error instanceof Error ? error.message : 'erreur inconnue'}`, 503)
+  }
 }
 
 async function getCurrentAcademicYear(schoolId: string): Promise<Angelcare360AcademicYearRecord | null> {
@@ -258,9 +262,12 @@ export async function getAngelcare360AccessContext(options?: {
     }
   }
   if (supportAccess) {
+    // A support session is a hard capability boundary, never an additive elevation.
+    permissions.clear()
     const supabase = await createClient()
     const allowedActions = supportAccess.access_mode === 'read_only' ? ['view','export','audit'] : supportAccess.access_mode === 'guided_support' ? ['view','export','audit','create','update','notify'] : ['view','export','audit','create','update','notify','assign','configure']
-    const { data: supportPermissions } = await supabase.from('angelcare360_permissions').select('permission_key,action_key').in('action_key', allowedActions).eq('status', 'active')
+    const { data: supportPermissions, error: supportPermissionError } = await supabase.from('angelcare360_permissions').select('permission_key,action_key').in('action_key', allowedActions).eq('status', 'active')
+    if (supportPermissionError) throw new Angelcare360AccessError(`Permissions support indisponibles: ${supportPermissionError.message}`, 503)
     for (const permission of supportPermissions || []) permissions.add(String(permission.permission_key))
   }
   const runtimeEntitlements = await loadAngelcare360RuntimeEntitlements({ userId: user.id, schoolId: school.id })
@@ -291,10 +298,12 @@ export async function requireAngelcare360Permission(
   }
 
   const explicitlyDenied = context.access.deniedPermissions.some((denied) => denied === permissionKey || (denied.endsWith('.*') && permissionKey.startsWith(denied.slice(0, -1))))
-  const permissionGranted = !explicitlyDenied && (context.access.accessLevel === 'super_admin'
-    || context.permissions.has(permissionKey)
-    || context.permissions.has('angelcare360.*')
-    || context.permissions.has('*'))
+  const permissionGranted = !explicitlyDenied && (context.supportAccess
+    ? context.permissions.has(permissionKey)
+    : context.access.accessLevel === 'super_admin'
+      || context.permissions.has(permissionKey)
+      || context.permissions.has('angelcare360.*')
+      || context.permissions.has('*'))
 
   if (!permissionGranted) {
     throw new Angelcare360AccessError('Vous n’avez pas l’autorisation requise pour cette action.', 403)
@@ -308,7 +317,7 @@ export async function requireAngelcare360Permission(
   }
 
   const moduleKey = getAngelcare360ModuleKeyForPermission(permissionKey)
-  if (moduleKey && context.access.moduleKeys.length && !context.access.moduleKeys.includes(moduleKey)) {
+  if (!context.supportAccess && moduleKey && context.access.moduleKeys.length && !context.access.moduleKeys.includes(moduleKey)) {
     throw new Angelcare360AccessError(`Le module ${moduleKey} est hors du périmètre attribué à cet administrateur.`, 403)
   }
   if (!isAngelcare360ModuleEnabled(context.runtimeEntitlements, moduleKey)) {

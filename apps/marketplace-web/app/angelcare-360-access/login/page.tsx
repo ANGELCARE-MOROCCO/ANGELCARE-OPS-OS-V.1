@@ -6,6 +6,7 @@ import Angelcare360CustomerLoginExperience from '@/components/angelcare360/auth/
 import {
   APP_SESSION_COOKIE,
   generateSessionToken,
+  verifyPassword,
 } from '@/lib/ac360-portability/auth-session'
 import { getAngelcare360CustomerBroadcastSnapshot } from '@/lib/angelcare360/customer-broadcasts'
 import { createClient } from '@/lib/supabase/server'
@@ -106,40 +107,28 @@ export default async function Angelcare360CustomerLoginPage({
 
     const supabase = await createClient()
 
-    const { data, error } = await supabase.rpc('login_app_user', {
-      input_username: username,
-      input_password: password,
-    })
+    const byUsername = await supabase
+      .from('app_users')
+      .select('id,role,permissions,password_hash,status')
+      .eq('username', username)
+      .limit(2)
+    const byEmail = byUsername.data?.length ? null : await supabase
+      .from('app_users')
+      .select('id,role,permissions,password_hash,status')
+      .ilike('email', username)
+      .limit(2)
+    const candidates = byUsername.data?.length ? byUsername.data : (byEmail?.data || [])
 
-    if (error) {
-      redirect(errorHref('invalid', requestedNext))
-    }
-
-    const rpcRow = Array.isArray(data) ? data[0] : data
-
-    const rpcUserId =
-      typeof rpcRow === 'string'
-        ? rpcRow
-        : rpcRow && typeof rpcRow === 'object' && 'id' in rpcRow
-          ? String((rpcRow as LoginUser).id || '')
-          : ''
-
-    if (!rpcUserId) {
+    if (byUsername.error || byEmail?.error || candidates.length !== 1) redirect(errorHref('invalid', requestedNext))
+    const credential = candidates[0] as LoginUser & { password_hash?: string | null; status?: string | null }
+    if (credential.status !== 'active' || !credential.password_hash || !(await verifyPassword(password, credential.password_hash))) {
       redirect(errorHref('invalid', requestedNext))
     }
 
     const user: LoginUser = {
-      id: rpcUserId,
-      role:
-        rpcRow && typeof rpcRow === 'object' && 'role' in rpcRow
-          ? String((rpcRow as LoginUser).role || '')
-          : null,
-      permissions:
-        rpcRow &&
-        typeof rpcRow === 'object' &&
-        Array.isArray((rpcRow as LoginUser).permissions)
-          ? (rpcRow as LoginUser).permissions
-          : [],
+      id: String(credential.id),
+      role: credential.role || null,
+      permissions: Array.isArray(credential.permissions) ? credential.permissions : [],
     }
 
     const token = generateSessionToken()

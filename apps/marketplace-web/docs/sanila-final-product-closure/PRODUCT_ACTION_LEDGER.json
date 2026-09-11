@@ -1,0 +1,695 @@
+{
+  "generatedAt": "SOURCE_FROZEN_2026-09-11",
+  "counts": {
+    "routeActionAssociations": 40,
+    "uniqueVisibleRoleActions": 37,
+    "blocked": 0,
+    "orphanBackendActions": 0
+  },
+  "entries": [
+    {
+      "role": "teacher",
+      "view": "attendance",
+      "action": "attendance.batch",
+      "uiDeclared": true,
+      "backendHandlers": 1,
+      "commandKeys": [
+        "teacher.attendance.batch"
+      ],
+      "resources": [
+        "angelcare360_attendance_records"
+      ],
+      "canonicalStores": [
+        "angelcare360_class_enrollments",
+        "angelcare360_attendance_sessions",
+        "angelcare360_attendance_records",
+        "angelcare360_attendance_status_history",
+        "angelcare360_student_parent_links"
+      ],
+      "status": "COMPLETE"
+    },
+    {
+      "role": "teacher",
+      "view": "attendance",
+      "action": "attendance.mark",
+      "uiDeclared": true,
+      "backendHandlers": 1,
+      "commandKeys": [
+        "teacher.attendance.mark"
+      ],
+      "resources": [
+        "angelcare360_attendance_records"
+      ],
+      "canonicalStores": [
+        "angelcare360_attendance_sessions",
+        "angelcare360_attendance_records",
+        "angelcare360_student_parent_links",
+        "angelcare360_attendance_status_history"
+      ],
+      "status": "COMPLETE"
+    },
+    {
+      "role": "teacher",
+      "view": "teaching",
+      "action": "lesson.create",
+      "uiDeclared": true,
+      "backendHandlers": 1,
+      "commandKeys": [
+        "teacher.lesson.create"
+      ],
+      "resources": [
+        "angelcare360_lessons"
+      ],
+      "canonicalStores": [
+        "angelcare360_lessons"
+      ],
+      "status": "COMPLETE"
+    },
+    {
+      "role": "teacher",
+      "view": "teaching",
+      "action": "lesson.update",
+      "uiDeclared": true,
+      "backendHandlers": 1,
+      "commandKeys": [
+        "teacher.lesson.update"
+      ],
+      "resources": [
+        "angelcare360_lessons"
+      ],
+      "canonicalStores": [
+        "angelcare360_lessons"
+      ],
+      "status": "COMPLETE"
+    },
+    {
+      "role": "teacher",
+      "view": "homework",
+      "action": "assignment.create",
+      "uiDeclared": true,
+      "backendHandlers": 1,
+      "commandKeys": [
+        "teacher.assignment.create"
+      ],
+      "resources": [
+        "angelcare360_assignments"
+      ],
+      "canonicalStores": [
+        "angelcare360_class_enrollments",
+        "angelcare360_assignments"
+      ],
+      "status": "COMPLETE"
+    },
+    {
+      "role": "teacher",
+      "view": "homework",
+      "action": "assignment.update",
+      "uiDeclared": true,
+      "backendHandlers": 1,
+      "commandKeys": [
+        "teacher.assignment.update"
+      ],
+      "resources": [
+        "angelcare360_assignments"
+      ],
+      "canonicalStores": [
+        "angelcare360_assignments"
+      ],
+      "status": "COMPLETE"
+    },
+    {
+      "role": "teacher",
+      "view": "submissions",
+      "action": "submission.grade",
+      "uiDeclared": true,
+      "backendHandlers": 1,
+      "commandKeys": [
+        "teacher.submission.grade"
+      ],
+      "resources": [
+        "angelcare360_assignment_submissions"
+      ],
+      "canonicalStores": [
+        "angelcare360_assignment_submissions",
+        "angelcare360_assignments",
+        "angelcare360_grade_submission_atomic_v1"
+      ],
+      "status": "COMPLETE"
+    },
+    {
+      "role": "teacher",
+      "view": "assessments",
+      "action": "exam.create",
+      "uiDeclared": true,
+      "backendHandlers": 1,
+      "commandKeys": [
+        "teacher.exam.create"
+      ],
+      "resources": [
+        "angelcare360_exams"
+      ],
+      "canonicalStores": [
+        "angelcare360_exams"
+      ],
+      "status": "COMPLETE"
+    },
+    {
+      "role": "teacher",
+      "view": "assessments",
+      "action": "exam.update",
+      "uiDeclared": true,
+      "backendHandlers": 1,
+      "commandKeys": [
+        "teacher.exam.update"
+      ],
+      "resources": [
+        "angelcare360_exams"
+      ],
+      "canonicalStores": [
+        "angelcare360_exams"
+      ],
+      "status": "COMPLETE"
+    },
+    {
+      "role": "teacher",
+      "view": "marks",
+      "action": "mark.upsert",
+      "uiDeclared": true,
+      "backendHandlers": 1,
+      "commandKeys": [
+        "teacher.mark.upsert"
+      ],
+      "resources": [
+        "angelcare360_marks"
+      ],
+      "canonicalStores": [
+        "angelcare360_exams",
+        "angelcare360_marks"
+      ],
+      "status": "COMPLETE"
+    },
+    {
+      "role": "teacher",
+      "view": "bulletins",
+      "action": "comment.create",
+      "uiDeclared": true,
+      "backendHandlers": 1,
+      "commandKeys": [
+        "teacher.comment.create"
+      ],
+      "resources": [
+        "angelcare360_teacher_comments"
+      ],
+      "canonicalStores": [
+        "angelcare360_teacher_comments"
+      ],
+      "status": "COMPLETE"
+    },
+    {
+      "role": "teacher",
+      "view": "families",
+      "action": "family.message",
+      "uiDeclared": true,
+      "backendHandlers": 1,
+      "commandKeys": [
+        "teacher.family.message"
+      ],
+      "resources": [
+        "angelcare360_messages"
+      ],
+      "canonicalStores": [
+        "angelcare360_student_parent_links"
+      ],
+      "status": "COMPLETE"
+    },
+    {
+      "role": "teacher",
+      "view": "families",
+      "action": "message.reply",
+      "uiDeclared": true,
+      "backendHandlers": 1,
+      "commandKeys": [
+        "${kind"
+      ],
+      "resources": [
+        "angelcare360_messages"
+      ],
+      "canonicalStores": [],
+      "status": "COMPLETE"
+    },
+    {
+      "role": "teacher",
+      "view": "tasks",
+      "action": "task.update",
+      "uiDeclared": true,
+      "backendHandlers": 1,
+      "commandKeys": [
+        "${kind"
+      ],
+      "resources": [
+        "ac360_school_tasks"
+      ],
+      "canonicalStores": [],
+      "status": "COMPLETE"
+    },
+    {
+      "role": "teacher",
+      "view": "work",
+      "action": "task.update",
+      "uiDeclared": true,
+      "backendHandlers": 1,
+      "commandKeys": [
+        "${kind"
+      ],
+      "resources": [
+        "ac360_school_tasks"
+      ],
+      "canonicalStores": [],
+      "status": "COMPLETE"
+    },
+    {
+      "role": "teacher",
+      "view": "work",
+      "action": "leave.request",
+      "uiDeclared": true,
+      "backendHandlers": 2,
+      "commandKeys": [
+        "teacher.leave.request",
+        "${kind"
+      ],
+      "resources": [
+        "ac360_school_leave_requests"
+      ],
+      "canonicalStores": [],
+      "status": "COMPLETE"
+    },
+    {
+      "role": "parent",
+      "view": "requests",
+      "action": "request.create",
+      "uiDeclared": true,
+      "backendHandlers": 1,
+      "commandKeys": [
+        "parent.request.create"
+      ],
+      "resources": [
+        "angelcare360_reclamations"
+      ],
+      "canonicalStores": [
+        "angelcare360_reclamations"
+      ],
+      "status": "COMPLETE"
+    },
+    {
+      "role": "parent",
+      "view": "attendance",
+      "action": "attendance.justify",
+      "uiDeclared": true,
+      "backendHandlers": 1,
+      "commandKeys": [
+        "parent.attendance.justify"
+      ],
+      "resources": [
+        "angelcare360_attendance_justifications"
+      ],
+      "canonicalStores": [
+        "angelcare360_attendance_records",
+        "angelcare360_attendance_justifications"
+      ],
+      "status": "COMPLETE"
+    },
+    {
+      "role": "parent",
+      "view": "meetings",
+      "action": "meeting.create",
+      "uiDeclared": true,
+      "backendHandlers": 1,
+      "commandKeys": [
+        "parent.meeting.create"
+      ],
+      "resources": [
+        "angelcare360_area12_meetings"
+      ],
+      "canonicalStores": [
+        "angelcare360_area12_meetings"
+      ],
+      "status": "COMPLETE"
+    },
+    {
+      "role": "parent",
+      "view": "meetings",
+      "action": "meeting.cancel",
+      "uiDeclared": true,
+      "backendHandlers": 1,
+      "commandKeys": [
+        "parent.meeting.cancel"
+      ],
+      "resources": [
+        "angelcare360_area12_meetings"
+      ],
+      "canonicalStores": [
+        "angelcare360_area12_meetings"
+      ],
+      "status": "COMPLETE"
+    },
+    {
+      "role": "parent",
+      "view": "satisfaction",
+      "action": "satisfaction.submit",
+      "uiDeclared": true,
+      "backendHandlers": 1,
+      "commandKeys": [
+        "parent.satisfaction.submit"
+      ],
+      "resources": [
+        "angelcare360_area12_satisfaction_responses"
+      ],
+      "canonicalStores": [
+        "angelcare360_area12_satisfaction_responses"
+      ],
+      "status": "COMPLETE"
+    },
+    {
+      "role": "parent",
+      "view": "satisfaction",
+      "action": "feedback.submit",
+      "uiDeclared": true,
+      "backendHandlers": 1,
+      "commandKeys": [
+        "parent.feedback.submit"
+      ],
+      "resources": [
+        "angelcare360_area12_feedback"
+      ],
+      "canonicalStores": [
+        "angelcare360_area12_feedback"
+      ],
+      "status": "COMPLETE"
+    },
+    {
+      "role": "parent",
+      "view": "finance",
+      "action": "request.create",
+      "uiDeclared": true,
+      "backendHandlers": 1,
+      "commandKeys": [
+        "parent.request.create"
+      ],
+      "resources": [
+        "angelcare360_reclamations"
+      ],
+      "canonicalStores": [
+        "angelcare360_reclamations"
+      ],
+      "status": "COMPLETE"
+    },
+    {
+      "role": "parent",
+      "view": "transport",
+      "action": "pickup.request",
+      "uiDeclared": true,
+      "backendHandlers": 1,
+      "commandKeys": [
+        "parent.pickup.request"
+      ],
+      "resources": [
+        "angelcare360_area11_pickup_authorizations"
+      ],
+      "canonicalStores": [
+        "angelcare360_area11_pickup_authorizations"
+      ],
+      "status": "COMPLETE"
+    },
+    {
+      "role": "parent",
+      "view": "transport",
+      "action": "pickup.revoke",
+      "uiDeclared": true,
+      "backendHandlers": 1,
+      "commandKeys": [
+        "parent.pickup.revoke"
+      ],
+      "resources": [
+        "angelcare360_area11_pickup_authorizations"
+      ],
+      "canonicalStores": [
+        "angelcare360_area11_pickup_authorizations"
+      ],
+      "status": "COMPLETE"
+    },
+    {
+      "role": "parent",
+      "view": "transport",
+      "action": "request.create",
+      "uiDeclared": true,
+      "backendHandlers": 1,
+      "commandKeys": [
+        "parent.request.create"
+      ],
+      "resources": [
+        "angelcare360_reclamations"
+      ],
+      "canonicalStores": [
+        "angelcare360_reclamations"
+      ],
+      "status": "COMPLETE"
+    },
+    {
+      "role": "parent",
+      "view": "messages",
+      "action": "teacher.message",
+      "uiDeclared": true,
+      "backendHandlers": 2,
+      "commandKeys": [
+        "parent.teacher.message",
+        "student.teacher.message"
+      ],
+      "resources": [
+        "angelcare360_messages"
+      ],
+      "canonicalStores": [
+        "angelcare360_students",
+        "angelcare360_teacher_assignments"
+      ],
+      "status": "COMPLETE"
+    },
+    {
+      "role": "parent",
+      "view": "messages",
+      "action": "message.reply",
+      "uiDeclared": true,
+      "backendHandlers": 1,
+      "commandKeys": [
+        "${kind"
+      ],
+      "resources": [
+        "angelcare360_messages"
+      ],
+      "canonicalStores": [],
+      "status": "COMPLETE"
+    },
+    {
+      "role": "parent",
+      "view": "account",
+      "action": "account.update",
+      "uiDeclared": true,
+      "backendHandlers": 1,
+      "commandKeys": [
+        "parent.account.update"
+      ],
+      "resources": [
+        "angelcare360_parents"
+      ],
+      "canonicalStores": [
+        "angelcare360_parents"
+      ],
+      "status": "COMPLETE"
+    },
+    {
+      "role": "student",
+      "view": "submissions",
+      "action": "assignment.submit",
+      "uiDeclared": true,
+      "backendHandlers": 1,
+      "commandKeys": [
+        "student.assignment.submit"
+      ],
+      "resources": [
+        "angelcare360_assignment_submissions"
+      ],
+      "canonicalStores": [
+        "angelcare360_assignments",
+        "angelcare360_assignment_submissions",
+        "angelcare360_documents",
+        "angelcare360_document_objects"
+      ],
+      "status": "COMPLETE"
+    },
+    {
+      "role": "student",
+      "view": "messages",
+      "action": "teacher.message",
+      "uiDeclared": true,
+      "backendHandlers": 2,
+      "commandKeys": [
+        "parent.teacher.message",
+        "student.teacher.message"
+      ],
+      "resources": [
+        "angelcare360_messages"
+      ],
+      "canonicalStores": [
+        "angelcare360_students",
+        "angelcare360_teacher_assignments"
+      ],
+      "status": "COMPLETE"
+    },
+    {
+      "role": "student",
+      "view": "messages",
+      "action": "message.reply",
+      "uiDeclared": true,
+      "backendHandlers": 1,
+      "commandKeys": [
+        "${kind"
+      ],
+      "resources": [
+        "angelcare360_messages"
+      ],
+      "canonicalStores": [],
+      "status": "COMPLETE"
+    },
+    {
+      "role": "staff",
+      "view": "leave",
+      "action": "leave.request",
+      "uiDeclared": true,
+      "backendHandlers": 2,
+      "commandKeys": [
+        "teacher.leave.request",
+        "${kind"
+      ],
+      "resources": [
+        "ac360_school_leave_requests"
+      ],
+      "canonicalStores": [],
+      "status": "COMPLETE"
+    },
+    {
+      "role": "staff",
+      "view": "tasks",
+      "action": "task.update",
+      "uiDeclared": true,
+      "backendHandlers": 1,
+      "commandKeys": [
+        "${kind"
+      ],
+      "resources": [
+        "ac360_school_tasks"
+      ],
+      "canonicalStores": [],
+      "status": "COMPLETE"
+    },
+    {
+      "role": "staff",
+      "view": "approvals",
+      "action": "approval.decide",
+      "uiDeclared": true,
+      "backendHandlers": 1,
+      "commandKeys": [
+        "staff.approval.decide"
+      ],
+      "resources": [
+        "angelcare360_workflow_instances"
+      ],
+      "canonicalStores": [
+        "angelcare360_workflow_instances"
+      ],
+      "status": "COMPLETE"
+    },
+    {
+      "role": "staff",
+      "view": "workflows",
+      "action": "workflow.transition",
+      "uiDeclared": true,
+      "backendHandlers": 1,
+      "commandKeys": [
+        "staff.workflow.transition"
+      ],
+      "resources": [
+        "angelcare360_workflow_instances"
+      ],
+      "canonicalStores": [
+        "angelcare360_workflow_instances"
+      ],
+      "status": "COMPLETE"
+    },
+    {
+      "role": "staff",
+      "view": "tickets",
+      "action": "incident.create",
+      "uiDeclared": true,
+      "backendHandlers": 1,
+      "commandKeys": [
+        "staff.incident.create"
+      ],
+      "resources": [
+        "ac360_school_incident_reports"
+      ],
+      "canonicalStores": [
+        "ac360_school_incident_reports"
+      ],
+      "status": "COMPLETE"
+    },
+    {
+      "role": "staff",
+      "view": "tickets",
+      "action": "incident.update",
+      "uiDeclared": true,
+      "backendHandlers": 1,
+      "commandKeys": [
+        "staff.incident.update"
+      ],
+      "resources": [
+        "ac360_school_incident_reports"
+      ],
+      "canonicalStores": [
+        "ac360_school_incident_reports"
+      ],
+      "status": "COMPLETE"
+    },
+    {
+      "role": "staff",
+      "view": "messages",
+      "action": "staff.message",
+      "uiDeclared": true,
+      "backendHandlers": 1,
+      "commandKeys": [
+        "staff.message.create"
+      ],
+      "resources": [
+        "angelcare360_messages"
+      ],
+      "canonicalStores": [
+        "angelcare360_staff"
+      ],
+      "status": "COMPLETE"
+    },
+    {
+      "role": "staff",
+      "view": "messages",
+      "action": "message.reply",
+      "uiDeclared": true,
+      "backendHandlers": 1,
+      "commandKeys": [
+        "${kind"
+      ],
+      "resources": [
+        "angelcare360_messages"
+      ],
+      "canonicalStores": [],
+      "status": "COMPLETE"
+    }
+  ],
+  "orphanBackendActions": []
+}

@@ -9,6 +9,7 @@ type CommandOptions<T> = {
   commandKey: string
   idempotencyKey: string
   permission: string
+  schoolId?: string | null
   resourceType?: string
   resourceId?: string | null
   request?: Record<string, unknown>
@@ -16,7 +17,7 @@ type CommandOptions<T> = {
 }
 
 export async function executeAngelcare360EnterpriseCommand<T>(options: CommandOptions<T>) {
-  const access = await requireAngelcare360Permission(options.permission)
+  const access = await requireAngelcare360Permission(options.permission, { schoolId: options.schoolId || null, operation: options.commandKey })
   const schoolId = String(access.school!.id)
   const userId = String(access.user.id)
   const client = await createClient()
@@ -103,6 +104,37 @@ export async function enqueueAngelcare360BackgroundJob(input: {
   return data || null
 }
 
+function workflowTransitionAllowed(schema: unknown, fromState: string, toState: string, transitionKey: string): boolean {
+  const from = String(fromState || '').trim()
+  const to = String(toState || '').trim()
+  const key = String(transitionKey || '').trim()
+  if (!from || !to) return false
+  if (Array.isArray(schema)) {
+    return schema.some((item) => {
+      if (typeof item === 'string') return item === `${from}->${to}` || item === to || item === key
+      if (!item || typeof item !== 'object' || Array.isArray(item)) return false
+      const row = item as Record<string, unknown>
+      const declaredFrom = String(row.from_state ?? row.from ?? row.source ?? '').trim()
+      const declaredTo = String(row.to_state ?? row.to ?? row.target ?? '').trim()
+      const declaredKey = String(row.transition_key ?? row.key ?? row.id ?? '').trim()
+      const fromOk = !declaredFrom || declaredFrom === '*' || declaredFrom === from
+      const toOk = declaredTo === to
+      const keyOk = !declaredKey || declaredKey === key
+      return fromOk && toOk && keyOk
+    })
+  }
+  if (schema && typeof schema === 'object') {
+    const record = schema as Record<string, unknown>
+    const value = record[from] ?? record['*']
+    if (Array.isArray(value)) return value.some((entry) => typeof entry === 'string' ? entry === to || entry === key : workflowTransitionAllowed([entry], from, to, key))
+    if (value && typeof value === 'object') {
+      const target = (value as Record<string, unknown>)[to]
+      return target === true || target === key || Boolean(target && typeof target === 'object')
+    }
+  }
+  return false
+}
+
 export async function transitionAngelcare360Workflow(input: {
   schoolId: string
   workflowInstanceId: string
@@ -113,9 +145,24 @@ export async function transitionAngelcare360Workflow(input: {
   metadata?: Record<string, unknown>
 }) {
   const client = await createClient()
-  const current = await client.from('angelcare360_workflow_instances').select('id,current_state,status').eq('school_id', input.schoolId).eq('id', input.workflowInstanceId).eq('status', 'active').limit(1).maybeSingle()
+  const current = await client.from('angelcare360_workflow_instances').select('id,definition_id,workflow_key,current_state,status').eq('school_id', input.schoolId).eq('id', input.workflowInstanceId).eq('status', 'active').limit(1).maybeSingle()
   if (current.error || !current.data) throw new Error('Workflow actif introuvable.')
+  if (!current.data.definition_id) throw new Error('Workflow sans définition gouvernée: transition refusée.')
+  const definition = await client.from('angelcare360_workflow_definitions').select('id,workflow_key,version,transition_schema,status').eq('school_id', input.schoolId).eq('id', current.data.definition_id).eq('status', 'active').limit(1).maybeSingle()
+  if (definition.error || !definition.data) throw new Error('Définition active du workflow introuvable.')
+  if (!workflowTransitionAllowed(definition.data.transition_schema, String(current.data.current_state), input.toState, input.transitionKey)) {
+    throw new Error(`Transition non autorisée: ${current.data.current_state} → ${input.toState}.`)
+  }
   const now = new Date().toISOString()
+  const terminal = ['completed','approved','rejected','cancelled'].includes(input.toState)
+  const updated = await client.from('angelcare360_workflow_instances').update({
+    current_state: input.toState,
+    status: terminal ? (input.toState === 'cancelled' ? 'cancelled' : 'completed') : 'active',
+    completed_at: terminal ? now : null,
+    updated_at: now,
+  }).eq('school_id', input.schoolId).eq('id', input.workflowInstanceId).eq('current_state', current.data.current_state).eq('status','active').select('id,current_state,status').maybeSingle()
+  if (updated.error) throw new Error(updated.error.message)
+  if (!updated.data) throw new Error('Le workflow a changé entre-temps. Rechargez avant de recommencer.')
   const transition = await client.from('angelcare360_workflow_transitions').insert({
     school_id: input.schoolId,
     workflow_instance_id: input.workflowInstanceId,
@@ -124,11 +171,13 @@ export async function transitionAngelcare360Workflow(input: {
     transition_key: input.transitionKey,
     reason: input.reason || null,
     actor_app_user_id: input.actorAppUserId,
-    metadata_json: input.metadata || {},
+    metadata_json: { ...(input.metadata || {}), workflow_key: current.data.workflow_key, definition_version: definition.data.version },
     occurred_at: now,
   })
-  if (transition.error) throw new Error(transition.error.message)
-  const update = await client.from('angelcare360_workflow_instances').update({ current_state: input.toState, updated_at: now }).eq('school_id', input.schoolId).eq('id', input.workflowInstanceId).eq('current_state', current.data.current_state)
-  if (update.error) throw new Error(update.error.message)
+  if (transition.error) {
+    const rollback = await client.from('angelcare360_workflow_instances').update({ current_state: current.data.current_state, status:'active', completed_at:null, updated_at:new Date().toISOString() }).eq('school_id',input.schoolId).eq('id',input.workflowInstanceId).eq('current_state',input.toState).select('id').maybeSingle()
+    if (rollback.error || !rollback.data) throw new Error(`Transition non journalisée et compensation impossible: ${transition.error.message}`)
+    throw new Error(`Transition annulée car le journal de workflow n’a pas pu être écrit: ${transition.error.message}`)
+  }
   return { fromState: current.data.current_state, toState: input.toState }
 }

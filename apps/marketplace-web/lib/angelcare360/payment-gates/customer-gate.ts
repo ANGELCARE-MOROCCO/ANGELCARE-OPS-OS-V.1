@@ -55,9 +55,14 @@ export async function createOnlineCheckoutSessionForGate(input: {
   returnUrl?: string | null
 }) {
   const db = await createClient()
-  const gate = await db.from('angelcare360_operator_payment_gates').select('tenant_id').eq('gate_code', input.gateCode).maybeSingle()
-  if (gate.data?.tenant_id) {
-    const safety = await assertExternalSideEffectAllowed({ channel: 'payment', operation: 'payment.checkout', tenantId: String(gate.data.tenant_id), metadata: { gate_code: input.gateCode, amount_mad: input.amountDueMad } })
+  const gate = await db.from('angelcare360_operator_payment_gates').select('gate_code,tenant_id,amount_due_mad,currency,status').eq('gate_code', input.gateCode).maybeSingle()
+  if (gate.error || !gate.data || !['active', 'online_processing', 'manual_pending'].includes(String(gate.data.status))) {
+    return { ok: false as const, locked: true as const, error: 'Gate de paiement invalide ou inactif.' }
+  }
+  const authoritativeAmount = Number(gate.data.amount_due_mad || 0)
+  const authoritativeCurrency = String(gate.data.currency || 'MAD')
+  if (gate.data.tenant_id) {
+    const safety = await assertExternalSideEffectAllowed({ channel: 'payment', operation: 'payment.checkout', tenantId: String(gate.data.tenant_id), metadata: { gate_code: String(gate.data.gate_code), amount_mad: authoritativeAmount } })
     if (!safety.allowed) return { ok: true as const, locked: true as const, simulated: true as const, checkoutUrl: null, code: safety.code, reason: 'Paiement simulé · DEMO SAFE' }
   }
   const provider = getAngelcare360PaymentProviderStatus()
@@ -69,5 +74,5 @@ export async function createOnlineCheckoutSessionForGate(input: {
       provider,
     }
   }
-  return createAngelcare360CheckoutSession(input)
+  return createAngelcare360CheckoutSession({ gateCode: String(gate.data.gate_code), amountDueMad: authoritativeAmount, currency: authoritativeCurrency, returnUrl: input.returnUrl || null })
 }

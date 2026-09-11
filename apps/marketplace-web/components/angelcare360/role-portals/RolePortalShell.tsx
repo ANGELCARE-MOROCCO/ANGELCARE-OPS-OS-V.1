@@ -2,7 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
-import { APP_SESSION_COOKIE } from '@/lib/auth/session'
+import { APP_SESSION_COOKIE, APP_SESSION_COOKIE_DOMAIN } from '@/lib/auth/session'
 import { createClient } from '@/lib/supabase/server'
 import { PARENT_PORTAL_NAV, STAFF_PORTAL_NAV, STUDENT_PORTAL_NAV, TEACHER_PORTAL_NAV } from '@/data/angelcare360/role-portals'
 import type { Angelcare360PortalKind } from '@/types/angelcare360/role-portals'
@@ -17,7 +17,7 @@ export default async function RolePortalShell({kind,schoolName,academicYear,iden
     'use server'
     const store=await cookies(); const token=store.get(APP_SESSION_COOKIE)?.value
     if(token){const db=await createClient(); await db.from('app_sessions').delete().eq('session_token',token).then(()=>null,()=>null)}
-    store.delete(APP_SESSION_COOKIE); redirect(`/angelcare-360-${kind}/login`)
+    store.set(APP_SESSION_COOKIE,'',{httpOnly:true,sameSite:'lax',secure:process.env.NODE_ENV==='production',path:'/',expires:new Date(0)}); if(APP_SESSION_COOKIE_DOMAIN) store.set(APP_SESSION_COOKIE,'',{httpOnly:true,sameSite:'lax',secure:process.env.NODE_ENV==='production',path:'/',domain:APP_SESSION_COOKIE_DOMAIN,expires:new Date(0)}); store.delete('sanila_portal_kind'); store.delete('sanila_portal_person'); store.delete('sanila_portal_school'); redirect(`/angelcare-360-${kind}/login`)
   }
   return <div className={styles.shell}>
     <header className={styles.topbar}>

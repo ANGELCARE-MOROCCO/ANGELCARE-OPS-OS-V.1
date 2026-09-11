@@ -2,430 +2,113 @@
 
 import { useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import type {
-  Angelcare360PortalKind,
-  Angelcare360PortalRecord,
-} from '@/types/angelcare360/role-portals'
+import type { Angelcare360PortalKind, Angelcare360PortalRecord } from '@/types/angelcare360/role-portals'
+import TeacherAttendanceRegister from '@/components/angelcare360/role-portals/TeacherAttendanceRegister'
 
 type PortalAction =
-  | 'assignment.create'
-  | 'submission.grade'
-  | 'comment.create'
-  | 'request.create'
-  | 'attendance.justify'
+  | 'attendance.batch' | 'attendance.mark' | 'lesson.create' | 'lesson.update' | 'assignment.create' | 'assignment.update' | 'submission.grade' | 'exam.create' | 'exam.update' | 'mark.upsert' | 'comment.create' | 'task.complete' | 'leave.request' | 'family.message' | 'message.reply'
+  | 'request.create' | 'attendance.justify' | 'meeting.create' | 'meeting.cancel' | 'satisfaction.submit' | 'feedback.submit' | 'pickup.request' | 'pickup.revoke' | 'teacher.message' | 'account.update'
   | 'assignment.submit'
-  | 'leave.request'
+  | 'task.update' | 'workflow.transition' | 'approval.decide' | 'incident.create' | 'incident.update' | 'staff.message'
 
-type ActionResponse = {
-  ok?: boolean
-  error?: string
+type ActionResponse={ok?:boolean;error?:string;documentId?:string}
+type ActionSnapshot=Record<string,unknown>
+function records(snapshot:ActionSnapshot,key:string):Angelcare360PortalRecord[]{const value=snapshot[key];return Array.isArray(value)?value as Angelcare360PortalRecord[]:[]}
+function idempotency(kind:Angelcare360PortalKind,action:PortalAction){return`${kind}:${action}:${crypto.randomUUID()}`}
+function meta(row:Angelcare360PortalRecord,key:string){const value=row.meta?.[key];return value==null?'':String(value)}
+function options(rows:Angelcare360PortalRecord[],key:string){return rows.map(row=><option key={`${key}:${row.id}`} value={meta(row,key)||row.id}>{row.title}{row.subtitle?` · ${row.subtitle}`:''}</option>)}
+
+const VIEW_ACTIONS:Record<Angelcare360PortalKind,Record<string,PortalAction[]>>={
+  teacher:{attendance:['attendance.batch','attendance.mark'],teaching:['lesson.create','lesson.update'],homework:['assignment.create','assignment.update'],submissions:['submission.grade'],assessments:['exam.create','exam.update'],marks:['mark.upsert'],bulletins:['comment.create'],families:['family.message','message.reply'],tasks:['task.update'],work:['task.update','leave.request']},
+  parent:{requests:['request.create'],attendance:['attendance.justify'],meetings:['meeting.create','meeting.cancel'],satisfaction:['satisfaction.submit','feedback.submit'],finance:['request.create'],transport:['pickup.request','pickup.revoke','request.create'],messages:['teacher.message','message.reply'],account:['account.update']},
+  student:{submissions:['assignment.submit'],messages:['teacher.message','message.reply']},
+  staff:{leave:['leave.request'],tasks:['task.update'],approvals:['approval.decide'],workflows:['workflow.transition'],tickets:['incident.create','incident.update'],messages:['staff.message','message.reply']},
 }
 
-type ActionSnapshot = Record<string, unknown>
-
-function records(
-  snapshot: ActionSnapshot,
-  key: string,
-): Angelcare360PortalRecord[] {
-  const value = snapshot[key]
-
-  return Array.isArray(value)
-    ? value as Angelcare360PortalRecord[]
-    : []
+function permissionSet(snapshot:ActionSnapshot){const value=snapshot.permissions;return new Set(Array.isArray(value)?value.map(item=>String(item)):[])}
+function actionAvailable(kind:Angelcare360PortalKind,action:PortalAction,snapshot:ActionSnapshot){
+  const perms=permissionSet(snapshot)
+  if(kind==='parent'&&['teacher.message','message.reply'].includes(action))return perms.has('parent.authorized_messages')&&records(snapshot,'teacherContacts').length>0
+  if(kind==='parent'&&['pickup.request','pickup.revoke'].includes(action))return perms.has('parent.authorized_pickup')&&(action==='pickup.request'?records(snapshot,'pickupCandidates').length>0:records(snapshot,'pickup').length>0)
+  if(kind==='parent'&&action==='attendance.justify')return records(snapshot,'attendance').some(row=>row.meta?.guardianAllowed!==false)
+  if(kind==='parent'&&action==='meeting.cancel')return records(snapshot,'meetings').length>0
+  if(kind==='parent'&&action==='request.create'&&String(snapshot.view||'')==='finance')return perms.has('parent.authorized_finance')
+  if(kind==='student'&&action==='teacher.message')return records(snapshot,'teacherContacts').length>0
+  if(kind==='student'&&action==='message.reply')return records(snapshot,'messages').some(row=>Boolean(row.meta?.senderAppUserId))
+  if(kind==='teacher'&&action==='message.reply')return records(snapshot,'communications').some(row=>Boolean(row.meta?.senderAppUserId))
+  if(kind==='teacher'&&action==='family.message')return records(snapshot,'students').length>0&&records(snapshot,'classes').length>0
+  if(kind==='staff'&&action==='staff.message')return records(snapshot,'team').some(row=>Boolean(row.meta?.staffId))
+  if(kind==='staff'&&action==='message.reply')return records(snapshot,'messages').some(row=>Boolean(row.meta?.senderAppUserId))
+  if(kind==='staff'&&action==='approval.decide')return records(snapshot,'approvals').length>0
+  if(kind==='staff'&&action==='workflow.transition')return records(snapshot,'workflows').some(row=>String(row.meta?.allowedTransitions||'').trim())
+  if(kind==='staff'&&action==='incident.update')return records(snapshot,'tickets').length>0
+  if((kind==='staff'||kind==='teacher')&&action==='leave.request')return records(snapshot,'leavePolicies').length>0
+  if(kind==='teacher'&&['lesson.update'].includes(action))return records(snapshot,'lessons').length>0
+  if(kind==='teacher'&&action==='assignment.update')return records(snapshot,'assignments').length>0
+  if(kind==='teacher'&&action==='submission.grade')return records(snapshot,'submissions').length>0
+  if(kind==='teacher'&&action==='exam.update')return records(snapshot,'exams').length>0
+  if(kind==='teacher'&&['task.complete','task.update'].includes(action))return records(snapshot,'tasks').length>0
+  return true
+}
+export default function PortalActionPanel({kind,view,snapshot}:{kind:Angelcare360PortalKind;view:string;snapshot:ActionSnapshot}){
+  const actions=useMemo(()=>(VIEW_ACTIONS[kind]?.[view]||[]).filter(action=>actionAvailable(kind,action,snapshot)),[kind,view,snapshot])
+  if(!actions.length&&!(kind==='teacher'&&view==='attendance'))return null
+  return <div style={{display:'grid',gap:12,margin:'16px 0'}}>{kind==='teacher'&&view==='attendance'?<TeacherAttendanceRegister classes={records(snapshot,'classes')} students={records(snapshot,'students')}/>:null}{actions.filter(action=>action!=='attendance.batch').map(action=><ActionForm key={action} kind={kind} action={action} snapshot={snapshot}/>)}</div>
 }
 
-function idempotency(
-  kind: Angelcare360PortalKind,
-  action: PortalAction,
-) {
-  return `${kind}:${action}:${crypto.randomUUID()}`
+function ActionForm({kind,action,snapshot}:{kind:Angelcare360PortalKind;action:PortalAction;snapshot:ActionSnapshot}){
+  const router=useRouter();const[busy,setBusy]=useState(false);const[message,setMessage]=useState<string|null>(null);const[error,setError]=useState<string|null>(null)
+  const classes=records(snapshot,'classes'),students=records(snapshot,'students'),lessons=records(snapshot,'lessons'),submissions=records(snapshot,'submissions'),attendance=records(snapshot,'attendance'),assignments=records(snapshot,'assignments'),exams=records(snapshot,'exams'),tasks=records(snapshot,'tasks'),leave=records(snapshot,'leave'),messages=kind==='teacher'?records(snapshot,'communications'):records(snapshot,'messages'),children=records(snapshot,'children'),meetings=records(snapshot,'meetings'),pickup=records(snapshot,'pickup'),teacherContacts=records(snapshot,'teacherContacts'),workflows=records(snapshot,'workflows'),approvals=records(snapshot,'approvals'),tickets=records(snapshot,'tickets'),leavePolicies=records(snapshot,'leavePolicies'),team=records(snapshot,'team')
+  async function submit(event:React.FormEvent<HTMLFormElement>){event.preventDefault();setBusy(true);setError(null);setMessage(null);let pendingAttachmentId:string|null=null;try{const form=new FormData(event.currentTarget);const body:Record<string,FormDataEntryValue>=Object.fromEntries(form.entries());if(typeof body.workflowTarget==='string'){const [workflowInstanceId,toState]=body.workflowTarget.split('|');body.workflowInstanceId=workflowInstanceId;body.toState=toState;delete body.workflowTarget}if(typeof body.approvalTarget==='string'){const [workflowInstanceId,decision]=body.approvalTarget.split('|');body.workflowInstanceId=workflowInstanceId;body.decision=decision;delete body.approvalTarget}if(typeof body.pickupTarget==='string'){const [studentId,authorizedPersonId]=body.pickupTarget.split('|');body.studentId=studentId;body.authorizedPersonId=authorizedPersonId;delete body.pickupTarget}delete body.file
+      if(action==='assignment.submit'){const file=form.get('file');if(file instanceof File&&file.size>0){const assignmentId=String(form.get('assignmentId')||'');const upload=new FormData();upload.set('assignmentId',assignmentId);upload.set('file',file);const uploadResponse=await fetch('/api/angelcare360/portal-assignment-attachments',{method:'POST',body:upload});const uploadPayload=await uploadResponse.json().catch(()=>({})) as ActionResponse;if(!uploadResponse.ok||!uploadPayload.ok||!uploadPayload.documentId)throw new Error(uploadPayload.error||'Téléversement du devoir impossible.');pendingAttachmentId=uploadPayload.documentId;body.attachmentDocumentId=uploadPayload.documentId}}
+      const response=await fetch('/api/angelcare360/portal-actions',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...body,kind,action,idempotencyKey:idempotency(kind,action)})});const payload=await response.json().catch(()=>({})) as ActionResponse;if(!response.ok||!payload.ok)throw new Error(payload.error||'Action impossible.');pendingAttachmentId=null;setMessage('Action enregistrée, autorisée et tracée.');event.currentTarget.reset();router.refresh()}catch(cause){if(pendingAttachmentId){await fetch(`/api/angelcare360/portal-assignment-attachments?documentId=${encodeURIComponent(pendingAttachmentId)}`,{method:'DELETE'}).catch(()=>undefined)}setError(cause instanceof Error?cause.message:'Action impossible.')}finally{setBusy(false)}}
+  return <section style={box}><div style={eyebrow}>Action opérationnelle</div><h2 style={heading}>{label(action)}</h2><form onSubmit={submit} style={formGrid}>{fields(action,{classes,students,lessons,submissions,attendance,assignments,exams,tasks,leave,messages,children,meetings,pickup,teacherContacts,workflows,approvals,tickets,leavePolicies,team})}<button disabled={busy} type="submit" style={button}>{busy?'Enregistrement…':buttonLabel(action)}</button></form>{error?<div style={errorStyle}>{error}</div>:null}{message?<div style={successStyle}>{message}</div>:null}</section>
 }
 
-export default function PortalActionPanel({
-  kind,
-  view,
-  snapshot,
-}: {
-  kind: Angelcare360PortalKind
-  view: string
-  snapshot: ActionSnapshot
-}) {
-  const router = useRouter()
-
-  const [busy, setBusy] = useState(false)
-  const [message, setMessage] = useState<string | null>(null)
-  const [error, setError] = useState<string | null>(null)
-
-  const action = useMemo<PortalAction | null>(() => {
-    if (kind === 'teacher' && view === 'homework') return 'assignment.create'
-    if (kind === 'teacher' && view === 'submissions') return 'submission.grade'
-    if (kind === 'teacher' && view === 'bulletins') return 'comment.create'
-    if (kind === 'parent' && view === 'requests') return 'request.create'
-    if (kind === 'parent' && view === 'attendance') return 'attendance.justify'
-    if (kind === 'student' && view === 'submissions') return 'assignment.submit'
-    if (kind === 'staff' && view === 'leave') return 'leave.request'
-    return null
-  }, [kind, view])
-
-  if (!action) return null
-
-  const actionKey = action
-
-  async function submit(
-    event: React.FormEvent<HTMLFormElement>,
-  ) {
-    event.preventDefault()
-
-    setBusy(true)
-    setError(null)
-    setMessage(null)
-
-    try {
-      const form = new FormData(event.currentTarget)
-
-      const body: Record<string, FormDataEntryValue> =
-        Object.fromEntries(form.entries())
-
-      const response = await fetch(
-        '/api/angelcare360/portal-actions',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            ...body,
-            kind,
-            action: actionKey,
-            idempotencyKey:
-              idempotency(kind, actionKey),
-          }),
-        },
-      )
-
-      const payload = await response
-        .json()
-        .catch(() => ({})) as ActionResponse
-
-      if (!response.ok || !payload.ok) {
-        throw new Error(
-          payload.error || 'Action impossible.',
-        )
-      }
-
-      setMessage('Action enregistrée et tracée.')
-      event.currentTarget.reset()
-      router.refresh()
-    } catch (cause) {
-      setError(
-        cause instanceof Error
-          ? cause.message
-          : 'Action impossible.',
-      )
-    } finally {
-      setBusy(false)
-    }
-  }
-
-  const classes = records(snapshot, 'classes')
-  const subjects = records(snapshot, 'subjects')
-  const submissions = records(snapshot, 'submissions')
-  const students = records(snapshot, 'students')
-  const attendance = records(snapshot, 'attendance')
-  const assignments = records(snapshot, 'assignments')
-
-  return (
-    <section style={box}>
-      <div
-        style={{
-          fontSize: 10,
-          fontWeight: 950,
-          textTransform: 'uppercase',
-          letterSpacing: '.12em',
-          color: '#2d64b0',
-        }}
-      >
-        Action opérationnelle
-      </div>
-
-      <h2
-        style={{
-          fontSize: 18,
-          margin: '6px 0 11px',
-          color: '#153052',
-        }}
-      >
-        {title(actionKey)}
-      </h2>
-
-      <form
-        onSubmit={submit}
-        style={{
-          display: 'grid',
-          gridTemplateColumns:
-            'repeat(auto-fit,minmax(180px,1fr))',
-          gap: 9,
-        }}
-      >
-        {actionKey === 'assignment.create' ? (
-          <>
-            <select required name="classId" style={input} defaultValue="">
-              <option value="" disabled>Classe</option>
-              {classes.map((row) => (
-                <option
-                  key={row.id}
-                  value={String(row.meta?.classId || row.id)}
-                >
-                  {row.title}
-                </option>
-              ))}
-            </select>
-
-            <select required name="subjectId" style={input} defaultValue="">
-              <option value="" disabled>Matière</option>
-              {subjects.map((row) => (
-                <option
-                  key={row.id}
-                  value={String(row.meta?.subjectId || row.id)}
-                >
-                  {row.title}
-                </option>
-              ))}
-            </select>
-
-            <input required name="title" placeholder="Titre du devoir" style={input} />
-            <input required name="dueOn" type="date" style={input} />
-            <input name="maxScore" type="number" min="1" max="100" defaultValue="20" style={input} />
-            <input name="description" placeholder="Consigne" style={input} />
-          </>
-        ) : null}
-
-        {actionKey === 'submission.grade' ? (
-          <>
-            <select required name="submissionId" style={input} defaultValue="">
-              <option value="" disabled>Soumission</option>
-              {submissions.map((row) => (
-                <option
-                  key={row.id}
-                  value={String(row.meta?.submissionId || row.id)}
-                >
-                  {row.title} · {row.subtitle || ''}
-                </option>
-              ))}
-            </select>
-
-            <input
-              required
-              name="score"
-              type="number"
-              min="0"
-              step="0.25"
-              placeholder="Score"
-              style={input}
-            />
-          </>
-        ) : null}
-
-        {actionKey === 'comment.create' ? (
-          <>
-            <select required name="studentId" style={input} defaultValue="">
-              <option value="" disabled>Élève</option>
-              {students.map((row) => (
-                <option
-                  key={row.id}
-                  value={String(row.meta?.studentId || row.id)}
-                >
-                  {row.title}
-                </option>
-              ))}
-            </select>
-
-            <select required name="classId" style={input} defaultValue="">
-              <option value="" disabled>Classe</option>
-              {classes.map((row) => (
-                <option
-                  key={row.id}
-                  value={String(row.meta?.classId || row.id)}
-                >
-                  {row.title}
-                </option>
-              ))}
-            </select>
-
-            <input
-              required
-              name="comment"
-              placeholder="Appréciation"
-              style={input}
-            />
-          </>
-        ) : null}
-
-        {actionKey === 'request.create' ? (
-          <>
-            <input
-              required
-              name="subject"
-              placeholder="Objet de la demande"
-              style={input}
-            />
-
-            <select name="relatedEntityType" style={input}>
-              <option value="operations">Vie scolaire</option>
-              <option value="attendance">Présence</option>
-              <option value="transport">Transport</option>
-              <option value="finance">Finance</option>
-            </select>
-
-            <select name="priority" style={input}>
-              <option value="medium">Normale</option>
-              <option value="high">Prioritaire</option>
-            </select>
-
-            <input
-              required
-              name="description"
-              placeholder="Description"
-              style={input}
-            />
-          </>
-        ) : null}
-
-        {actionKey === 'attendance.justify' ? (
-          <>
-            <select required name="recordId" style={input} defaultValue="">
-              <option value="" disabled>Événement de présence</option>
-              {attendance.map((row) => (
-                <option
-                  key={row.id}
-                  value={String(row.meta?.recordId || row.id)}
-                >
-                  {row.title} · {row.subtitle || row.status || ''}
-                </option>
-              ))}
-            </select>
-
-            <select name="reasonCategory" style={input}>
-              <option value="family">Familial</option>
-              <option value="medical">Médical</option>
-              <option value="transport">Transport</option>
-            </select>
-
-            <input
-              required
-              name="description"
-              placeholder="Justification"
-              style={input}
-            />
-          </>
-        ) : null}
-
-        {actionKey === 'assignment.submit' ? (
-          <>
-            <select required name="assignmentId" style={input} defaultValue="">
-              <option value="" disabled>Devoir</option>
-              {assignments.map((row) => (
-                <option
-                  key={row.id}
-                  value={String(row.meta?.assignmentId || row.id)}
-                >
-                  {row.title} · {row.date || ''}
-                </option>
-              ))}
-            </select>
-
-            <input
-              name="note"
-              placeholder="Note accompagnant la remise"
-              style={input}
-            />
-          </>
-        ) : null}
-
-        {actionKey === 'leave.request' ? (
-          <>
-            <input required name="startsOn" type="date" style={input} />
-            <input required name="endsOn" type="date" style={input} />
-            <input required name="reason" placeholder="Motif du congé" style={input} />
-          </>
-        ) : null}
-
-        <button
-          disabled={busy}
-          type="submit"
-          style={button}
-        >
-          {busy ? 'Enregistrement…' : 'Enregistrer'}
-        </button>
-      </form>
-
-      {error ? (
-        <div
-          style={{
-            marginTop: 9,
-            color: '#a8323e',
-            fontSize: 11,
-            fontWeight: 850,
-          }}
-        >
-          {error}
-        </div>
-      ) : null}
-
-      {message ? (
-        <div
-          style={{
-            marginTop: 9,
-            color: '#087151',
-            fontSize: 11,
-            fontWeight: 850,
-          }}
-        >
-          {message}
-        </div>
-      ) : null}
-    </section>
-  )
+type Sets=Record<string,Angelcare360PortalRecord[]>
+function fields(action:PortalAction,s:Sets){
+  const teacherAssignments=s.classes||[],students=s.students||[],children=s.children||[],teacherContacts=s.teacherContacts||[],messages=s.messages||[]
+  if(action==='attendance.mark')return <><select required name="teacherAssignmentId" style={input} defaultValue=""><option value="" disabled>Affectation classe / section / matière</option>{options(teacherAssignments,'teacherAssignmentId')}</select><select required name="studentId" style={input} defaultValue=""><option value="" disabled>Élève</option>{options(students,'studentId')}</select><input required name="sessionDate" type="date" style={input}/><select required name="attendanceStatus" style={input} defaultValue="present"><option value="present">Présent</option><option value="absent">Absent</option><option value="late">En retard</option><option value="excused">Excusé</option></select><input name="minutesLate" type="number" min="0" max="1440" placeholder="Minutes de retard" style={input}/><input name="note" placeholder="Note" style={input}/></>
+  if(action==='lesson.create')return <><select required name="teacherAssignmentId" style={input} defaultValue=""><option value="" disabled>Affectation</option>{options(teacherAssignments,'teacherAssignmentId')}</select><input required name="lessonDate" type="date" style={input}/><input required name="topic" placeholder="Sujet du cours" style={input}/><input name="objectives" placeholder="Objectifs" style={input}/><input name="homeworkSummary" placeholder="Travail / continuité" style={input}/></>
+  if(action==='lesson.update')return <><select required name="teacherAssignmentId" style={input} defaultValue=""><option value="" disabled>Affectation</option>{options(teacherAssignments,'teacherAssignmentId')}</select><select required name="lessonId" style={input} defaultValue=""><option value="" disabled>Cours à modifier</option>{options(s.lessons||[],'lessonId')}</select><input name="lessonDate" type="date" style={input}/><input name="topic" placeholder="Nouveau sujet" style={input}/><input name="objectives" placeholder="Objectifs" style={input}/><input name="homeworkSummary" placeholder="Travail / continuité" style={input}/></>
+  if(action==='assignment.create')return <><select required name="teacherAssignmentId" style={input} defaultValue=""><option value="" disabled>Affectation exacte</option>{options(teacherAssignments,'teacherAssignmentId')}</select><input required name="title" placeholder="Titre du devoir" style={input}/><input required name="dueOn" type="date" style={input}/><input name="maxScore" type="number" min="1" max="1000" defaultValue="20" style={input}/><input name="description" placeholder="Consigne" style={input}/></>
+  if(action==='assignment.update')return <><select required name="teacherAssignmentId" style={input} defaultValue=""><option value="" disabled>Affectation exacte</option>{options(teacherAssignments,'teacherAssignmentId')}</select><select required name="assignmentId" style={input} defaultValue=""><option value="" disabled>Devoir à modifier</option>{options(s.assignments||[],'assignmentId')}</select><input name="title" placeholder="Nouveau titre" style={input}/><input name="dueOn" type="date" style={input}/><select name="status" style={input} defaultValue=""><option value="">Conserver l’état</option><option value="published">Publié</option><option value="closed">Clôturé</option><option value="cancelled">Annulé</option></select><input name="description" placeholder="Consigne mise à jour" style={input}/></>
+  if(action==='submission.grade')return <><select required name="submissionId" style={input} defaultValue=""><option value="" disabled>Soumission</option>{options(s.submissions||[],'submissionId')}</select><input required name="score" type="number" min="0" step="0.25" placeholder="Score" style={input}/></>
+  if(action==='exam.create')return <><select required name="teacherAssignmentId" style={input} defaultValue=""><option value="" disabled>Affectation exacte</option>{options(teacherAssignments,'teacherAssignmentId')}</select><input required name="title" placeholder="Titre de l’évaluation" style={input}/><input required name="scheduledOn" type="date" style={input}/><select name="examType" style={input}><option value="assessment">Évaluation</option><option value="quiz">Quiz</option><option value="exam">Examen</option></select><input name="maxScore" type="number" min="1" defaultValue="20" style={input}/><input name="durationMinutes" type="number" min="1" placeholder="Durée (min)" style={input}/></>
+  if(action==='exam.update')return <><select required name="teacherAssignmentId" style={input} defaultValue=""><option value="" disabled>Affectation</option>{options(teacherAssignments,'teacherAssignmentId')}</select><select required name="examId" style={input} defaultValue=""><option value="" disabled>Évaluation à modifier</option>{options(s.exams||[],'examId')}</select><input name="title" placeholder="Nouveau titre" style={input}/><input name="scheduledOn" type="date" style={input}/><input name="maxScore" type="number" min="1" max="1000" placeholder="Barème" style={input}/><select name="status" style={input} defaultValue=""><option value="">Conserver l’état</option><option value="scheduled">Planifiée</option><option value="completed">Terminée</option><option value="cancelled">Annulée</option></select></>
+  if(action==='mark.upsert')return <><select required name="teacherAssignmentId" style={input} defaultValue=""><option value="" disabled>Affectation</option>{options(teacherAssignments,'teacherAssignmentId')}</select><select required name="studentId" style={input} defaultValue=""><option value="" disabled>Élève</option>{options(students,'studentId')}</select><select required name="examId" style={input} defaultValue=""><option value="" disabled>Évaluation</option>{options(s.exams||[],'examId')}</select><input required name="score" type="number" min="0" step="0.25" placeholder="Note" style={input}/></>
+  if(action==='comment.create')return <><select required name="teacherAssignmentId" style={input} defaultValue=""><option value="" disabled>Affectation</option>{options(teacherAssignments,'teacherAssignmentId')}</select><select required name="studentId" style={input} defaultValue=""><option value="" disabled>Élève</option>{options(students,'studentId')}</select><input required name="comment" placeholder="Appréciation" style={input}/></>
+  if(action==='task.complete')return <select required name="taskId" style={input} defaultValue=""><option value="" disabled>Tâche</option>{options(s.tasks||[],'taskId')}</select>
+  if(action==='leave.request')return <><select required name="policyId" style={input} defaultValue=""><option value="" disabled>Type de congé</option>{options(s.leavePolicies||[],'policyId')}</select><input required name="startsOn" type="date" style={input}/><input required name="endsOn" type="date" style={input}/><input required name="reason" placeholder="Motif" style={input}/></>
+  if(action==='family.message')return <><select required name="teacherAssignmentId" style={input} defaultValue=""><option value="" disabled>Classe / matière</option>{options(teacherAssignments,'teacherAssignmentId')}</select><select required name="studentId" style={input} defaultValue=""><option value="" disabled>Élève</option>{options(students,'studentId')}</select><input name="subject" placeholder="Objet" style={input}/><input required name="body" placeholder="Message aux responsables autorisés" style={input}/></>
+  if(action==='message.reply')return <><select required name="messageId" style={input} defaultValue=""><option value="" disabled>Message reçu</option>{messages.filter(r=>meta(r,'senderAppUserId')).map(r=><option key={r.id} value={meta(r,'messageId')||r.id}>{r.title}</option>)}</select><input required name="body" placeholder="Réponse" style={input}/></>
+  if(action==='request.create')return <><input required name="subject" placeholder="Objet de la demande" style={input}/><select name="relatedEntityType" style={input}><option value="operations">Vie scolaire</option><option value="attendance">Présence</option><option value="transport">Transport</option><option value="finance">Finance</option></select><select name="priority" style={input}><option value="medium">Normale</option><option value="high">Prioritaire</option></select><input required name="description" placeholder="Description" style={input}/></>
+  if(action==='attendance.justify')return <><select required name="recordId" style={input} defaultValue=""><option value="" disabled>Événement de présence</option>{(s.attendance||[]).filter(r=>r.meta?.guardianAllowed!==false).map(r=><option key={r.id} value={meta(r,'recordId')||r.id}>{r.title} · {r.subtitle||r.status||''}</option>)}</select><select name="reasonCategory" style={input}><option value="family">Familial</option><option value="medical">Médical</option><option value="transport">Transport</option></select><input required name="description" placeholder="Justification" style={input}/></>
+  if(action==='meeting.create')return <><select required name="studentId" style={input} defaultValue=""><option value="" disabled>Enfant</option>{options(children,'studentId')}</select><input required name="scheduledAt" type="datetime-local" style={input}/><input name="title" placeholder="Objet du rendez-vous" style={input}/><input name="description" placeholder="Contexte" style={input}/></>
+  if(action==='meeting.cancel')return <><select required name="meetingId" style={input} defaultValue=""><option value="" disabled>Rendez-vous</option>{options(s.meetings||[],'meetingId')}</select><input name="reason" placeholder="Motif d’annulation" style={input}/></>
+  if(action==='satisfaction.submit')return <><select required name="studentId" style={input} defaultValue=""><option value="" disabled>Enfant</option>{options(children,'studentId')}</select><input required name="score" type="number" min="1" max="10" placeholder="Score /10" style={input}/><input name="comment" placeholder="Commentaire" style={input}/></>
+  if(action==='feedback.submit')return <><select required name="studentId" style={input} defaultValue=""><option value="" disabled>Enfant</option>{options(children,'studentId')}</select><input name="title" placeholder="Sujet" style={input}/><input required name="body" placeholder="Votre retour" style={input}/></>
+  if(action==='pickup.request')return <><select required name="pickupTarget" style={input} defaultValue=""><option value="" disabled>Personne autorisée / enfant</option>{(s.pickupCandidates||[]).map(r=><option key={r.id} value={`${meta(r,'studentId')}|${meta(r,'authorizedPersonId')}`}>{r.title} · {r.subtitle||'Enfant'}</option>)}</select><select name="authorizationType" style={input}><option value="recurring">Récurrente</option><option value="temporary">Temporaire</option></select><input name="validUntil" type="date" style={input}/></>
+  if(action==='pickup.revoke')return <select required name="authorizationId" style={input} defaultValue=""><option value="" disabled>Autorisation</option>{options(s.pickup||[],'pickupAuthorizationId')}</select>
+  if(action==='teacher.message')return <><select required name="studentId" style={input} defaultValue=""><option value="" disabled>Enfant / élève</option>{options(children.length?children:[{id:'self',title:'Mon enseignant',meta:{studentId:'self'}}] as Angelcare360PortalRecord[],'studentId')}</select><select required name="teacherAssignmentId" style={input} defaultValue=""><option value="" disabled>Enseignant / matière</option>{options(teacherContacts,'teacherAssignmentId')}</select><input name="subject" placeholder="Objet" style={input}/><input required name="body" placeholder="Message" style={input}/></>
+  if(action==='account.update')return <><input name="phone" placeholder="Téléphone" style={input}/><input name="whatsapp" placeholder="WhatsApp" style={input}/><input name="address" placeholder="Adresse" style={input}/><select name="preferredLanguage" style={input} defaultValue="fr"><option value="fr">Français</option><option value="ar">العربية</option><option value="en">English</option></select></>
+  if(action==='staff.message')return <><select required name="recipientStaffId" style={input} defaultValue=""><option value="" disabled>Membre de l’équipe</option>{options((s.team||[]).filter(r=>Boolean(meta(r,'staffId'))),'staffId')}</select><input name="subject" placeholder="Objet" style={input}/><input required name="body" placeholder="Message interne" style={input}/></>
+  if(action==='assignment.submit')return <><select required name="assignmentId" style={input} defaultValue=""><option value="" disabled>Devoir</option>{options(s.assignments||[],'assignmentId')}</select><input name="note" placeholder="Note accompagnant la remise" style={input}/><input name="file" type="file" accept="application/pdf,image/jpeg,image/png" style={input}/></>
+  if(action==='task.update')return <><select required name="taskId" style={input} defaultValue=""><option value="" disabled>Tâche</option>{options(s.tasks||[],'taskId')}</select><select required name="status" style={input} defaultValue="in_progress"><option value="in_progress">En cours</option><option value="completed">Terminée</option><option value="blocked">Bloquée</option><option value="cancelled">Annulée</option></select></>
+  if(action==='workflow.transition')return <><select required name="workflowTarget" style={input} defaultValue=""><option value="" disabled>Transition autorisée</option>{(s.workflows||[]).flatMap(r=>String(r.meta?.allowedTransitions||'').split(',').filter(Boolean).map(target=><option key={`${r.id}:${target}`} value={`${meta(r,'workflowInstanceId')||r.id}|${target}`}>{r.title} · {r.subtitle||''} → {target.replaceAll('_',' ')}</option>))}</select><input name="reason" placeholder="Motif / note" style={input}/></>
+  if(action==='approval.decide')return <><select required name="approvalTarget" style={input} defaultValue=""><option value="" disabled>Décision autorisée</option>{(s.approvals||[]).flatMap(r=>String(r.meta?.allowedTransitions||'').split(',').filter(v=>['approved','rejected'].includes(v)).map(decision=><option key={`${r.id}:${decision}`} value={`${meta(r,'workflowInstanceId')||r.id}|${decision}`}>{r.title} · {decision==='approved'?'Approuver':'Rejeter'}</option>))}</select><input name="reason" placeholder="Motif" style={input}/></>
+  if(action==='incident.create')return <><input required name="title" placeholder="Titre du signalement" style={input}/><select name="severity" style={input}><option value="low">Faible</option><option value="medium">Moyenne</option><option value="high">Élevée</option></select><input name="location" placeholder="Lieu" style={input}/><input required name="description" placeholder="Description" style={input}/><input name="immediateAction" placeholder="Action immédiate" style={input}/></>
+  if(action==='incident.update')return <><select required name="incidentId" style={input} defaultValue=""><option value="" disabled>Signalement</option>{options(s.tickets||[],'incidentId')}</select><select required name="status" style={input}><option value="under_review">En analyse</option><option value="resolved">Résolu</option><option value="closed">Clôturé</option></select></>
+  return null
 }
 
-function title(action: PortalAction) {
-  const labels: Record<PortalAction, string> = {
-    'assignment.create': 'Publier un devoir',
-    'submission.grade': 'Corriger une soumission',
-    'comment.create': 'Ajouter une appréciation',
-    'request.create': 'Créer une demande',
-    'attendance.justify': 'Justifier une absence ou un retard',
-    'assignment.submit': 'Enregistrer ma remise',
-    'leave.request': 'Demander un congé',
-  }
-
-  return labels[action]
-}
-
-const box: React.CSSProperties = {
-  margin: '16px 0',
-  padding: 17,
-  border: '1px solid #dce6f2',
-  borderRadius: 20,
-  background: 'linear-gradient(135deg,#fff,#f7faff)',
-  boxShadow: '0 10px 30px rgba(31,56,87,.05)',
-}
-
-const input: React.CSSProperties = {
-  border: '1px solid #d8e2ee',
-  borderRadius: 12,
-  padding: '10px 11px',
-  background: '#fff',
-  color: '#18314f',
-  fontSize: 12,
-}
-
-const button: React.CSSProperties = {
-  border: 0,
-  borderRadius: 12,
-  padding: '10px 13px',
-  background: '#1f5fb8',
-  color: '#fff',
-  fontWeight: 900,
-  cursor: 'pointer',
-}
+function label(action:PortalAction){const labels:Record<PortalAction,string>={'attendance.batch':'Registre de présence','attendance.mark':'Prendre / corriger la présence','lesson.create':'Publier un cours','lesson.update':'Modifier un cours','assignment.create':'Publier un devoir','assignment.update':'Modifier / clôturer un devoir','submission.grade':'Corriger une soumission','exam.create':'Créer une évaluation','exam.update':'Modifier une évaluation','mark.upsert':'Enregistrer une note','comment.create':'Ajouter une appréciation','task.complete':'Clôturer une tâche','leave.request':'Demander un congé','family.message':'Écrire aux responsables autorisés','message.reply':'Répondre à un message','request.create':'Créer une demande','attendance.justify':'Justifier une absence ou un retard','meeting.create':'Demander un rendez-vous','meeting.cancel':'Annuler un rendez-vous','satisfaction.submit':'Donner une note de satisfaction','feedback.submit':'Envoyer un feedback','pickup.request':'Demander une autorisation de sortie','pickup.revoke':'Révoquer une autorisation','teacher.message':'Écrire à un enseignant','account.update':'Mettre à jour mes coordonnées','assignment.submit':'Remettre un devoir','task.update':'Mettre à jour une tâche','workflow.transition':'Faire avancer un workflow','approval.decide':'Décider une approbation','incident.create':'Créer un signalement','incident.update':'Mettre à jour un signalement','staff.message':'Écrire à un membre de l’équipe'};return labels[action]}
+function buttonLabel(action:PortalAction){return action==='message.reply'?'Répondre':action.includes('create')?'Créer / publier':action.includes('submit')?'Envoyer':action.includes('cancel')||action.includes('revoke')?'Confirmer':'Enregistrer'}
+const box:React.CSSProperties={padding:17,border:'1px solid #dce6f2',borderRadius:20,background:'linear-gradient(135deg,#fff,#f7faff)',boxShadow:'0 10px 30px rgba(31,56,87,.05)'}
+const eyebrow:React.CSSProperties={fontSize:10,fontWeight:950,textTransform:'uppercase',letterSpacing:'.12em',color:'#2d64b0'}
+const heading:React.CSSProperties={fontSize:18,margin:'6px 0 11px',color:'#153052'}
+const formGrid:React.CSSProperties={display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(180px,1fr))',gap:9}
+const input:React.CSSProperties={border:'1px solid #d8e2ee',borderRadius:12,padding:'10px 11px',background:'#fff',color:'#18314f',fontSize:12}
+const button:React.CSSProperties={border:0,borderRadius:12,padding:'10px 13px',background:'#1f5fb8',color:'#fff',fontWeight:900,cursor:'pointer'}
+const errorStyle:React.CSSProperties={marginTop:9,color:'#a8323e',fontSize:11,fontWeight:850}
+const successStyle:React.CSSProperties={marginTop:9,color:'#087151',fontSize:11,fontWeight:850}

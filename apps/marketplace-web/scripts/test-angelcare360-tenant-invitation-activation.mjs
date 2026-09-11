@@ -83,7 +83,8 @@ test('SERVER_VALIDATION_AND_CONFIRMATION', () => {
 })
 test('LOGIN_AFTER_ACTIVATION', () => {
   assert.match(client, /angelcare-360-access\/login\?activation=success/)
-  assert.match(login, /rpc\('login_app_user'/)
+  assert.doesNotMatch(login, /login_app_user/)
+  assert.match(login, /verifyPassword/)
   assert.match(login, /from\('app_sessions'\)\.insert/)
   assert.match(login, /httpOnly: true/)
 })

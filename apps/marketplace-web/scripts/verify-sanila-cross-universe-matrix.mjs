@@ -1,0 +1,130 @@
+import fs from 'node:fs'
+import path from 'node:path'
+const root=process.cwd(); const R=(f)=>fs.readFileSync(path.join(root,f),'utf8')
+const actions=R('lib/angelcare360/server/portal-actions.ts')
+const server=R('lib/angelcare360/portal/server.ts')
+const policy=R('lib/angelcare360/portal/policy.ts')
+const docs=R('lib/angelcare360/portal/documents.ts')
+const auth=R('lib/angelcare360/portal/auth.ts')
+const kernel=R('lib/angelcare360/server/enterprise-command-kernel.ts')
+const context=R('lib/angelcare360/server/context.ts')
+const tenantAccess=R('lib/angelcare360/operator/tenant-access.ts')
+const invites=R('lib/angelcare360/server/portal-invitations.ts')
+let pass=0,fail=0; const failures=[]
+function ok(name,cond){ if(cond){pass++;console.log(`PASS  ${name}`)} else {fail++;failures.push(name);console.error(`FAIL  ${name}`)} }
+function all(t,x){return x.every(v=>t.includes(v))}
+function around(t,needle,n=5000){const i=t.indexOf(needle);return i<0?'':t.slice(i,Math.min(t.length,i+n))}
+
+console.log('=== POSITIVE CROSS-UNIVERSE JOURNEYS ===')
+let x=around(actions,"action==='attendance.batch'",9000)
+ok('Teacher attendance writes canonical attendance sessions',x.includes('angelcare360_attendance_sessions'))
+ok('Teacher attendance writes canonical attendance records',x.includes('angelcare360_attendance_records'))
+ok('Teacher attendance writes canonical history',x.includes('angelcare360_attendance_status_history'))
+ok('Parent reads canonical attendance records',around(server,'getParentPortalSnapshot',25000).includes('angelcare360_attendance_records'))
+ok('Student reads canonical attendance records',around(server,'getStudentPortalSnapshot',20000).includes('angelcare360_attendance_records'))
+
+x=around(actions,"action==='assignment.create'",5000)
+ok('Teacher publishes canonical assignment',x.includes("from('angelcare360_assignments').insert"))
+ok('Parent learning reads canonical assignments',around(server,'getParentPortalSnapshot',25000).includes('angelcare360_assignments'))
+ok('Student homework reads canonical assignments',around(server,'getStudentPortalSnapshot',20000).includes('angelcare360_assignments'))
+
+x=around(actions,"action==='assignment.submit'",8000)
+ok('Student submits canonical assignment submission',x.includes('angelcare360_assignment_submissions'))
+ok('Student submission persists student identity',x.includes('student_id:personId'))
+ok('Student attachment tied to submission metadata',x.includes('attachment_document_id'))
+ok('Teacher reads canonical assignment submissions',around(server,'getTeacherPortalSnapshot',26000).includes('angelcare360_assignment_submissions'))
+
+x=around(actions,"action==='submission.grade'",2500)
+ok('Teacher grading uses atomic grade RPC',x.includes('angelcare360_grade_submission_atomic_v1'))
+ok('Student results read canonical marks',around(server,'getStudentPortalSnapshot',20000).includes('angelcare360_marks'))
+ok('Parent results read canonical marks',around(server,'getParentPortalSnapshot',25000).includes('angelcare360_marks'))
+
+x=around(actions,"action==='family.message'",3200)
+ok('Teacher family message resolves authorized parent links',all(x,['angelcare360_student_parent_links','can_receive_messages']))
+ok('Teacher family message writes canonical messages',x.includes('insertConversationMessage'))
+ok('Parent inbox reads canonical recipients',around(server,'getParentPortalSnapshot',25000).includes('angelcare360_message_recipients'))
+
+x=around(actions,"action==='teacher.message'",4500)
+ok('Parent message proves relationship permission',x.includes("requireParentChildCapability(client,schoolId,personId,studentId,'messages')"))
+ok('Parent message proves teacher exact child class',all(x,['angelcare360_teacher_assignments','current_class_id']))
+ok('Student message proves exact class and section teacher',around(actions,"kind==='student'&&action==='teacher.message'",3000).includes('current_section_id'))
+ok('Teacher inbox reads canonical recipients',around(server,'getTeacherPortalSnapshot',26000).includes('angelcare360_message_recipients'))
+
+x=around(actions,"action==='leave.request'",2500)
+ok('Teacher/Staff leave uses canonical School HR request authority',x.includes('requestStaffLeave')&&actions.includes('createAc360LeaveRequest'))
+ok('Teacher portal reads canonical Staff OS leave requests',around(server,'getTeacherPortalSnapshot',26000).includes('ac360_school_leave_requests'))
+ok('Staff portal reads canonical Staff OS leave requests',around(server,'getStaffPortalSnapshot',22000).includes('ac360_school_leave_requests'))
+
+x=around(actions,"action==='task.update'",2500)
+ok('Teacher/Staff task updates canonical Staff OS tasks',x.includes('updateStaffTaskPreservingMetadata'))
+ok('Task update is status-state constrained',all(x,["'todo'","'in_progress'","'completed'","'blocked'","'cancelled'"]))
+ok('Teacher reads canonical Staff OS tasks',around(server,'getTeacherPortalSnapshot',26000).includes('ac360_school_tasks'))
+ok('Staff reads canonical Staff OS tasks',around(server,'getStaffPortalSnapshot',22000).includes('ac360_school_tasks'))
+
+
+console.log('\n=== INTERNAL CONSEQUENCE NOTIFICATIONS ===')
+x=around(actions,"action==='assignment.create'",7000)
+ok('Published assignment queues internal Student consequence',all(x,['assignment.published','enqueueInternalPortalNotifications']))
+x=around(actions,"action==='attendance.batch'",9000)
+ok('Absent/late attendance queues authorized Parent consequence',all(x,['attendance.alert','can_receive_messages','angelcare360_student_parent_links']))
+x=around(actions,"action==='submission.grade'",3500)
+ok('Grading queues Student result consequence',x.includes('submission.graded'))
+x=around(actions,"action==='assignment.submit'",9000)
+ok('Student submission queues Teacher consequence',x.includes('assignment.submitted'))
+ok('Notification consequence failures can be compensated',actions.includes('discardPortalNotifications'))
+ok('Teacher notification center reads durable internal outbox',around(server,'getTeacherPortalSnapshot',30000).includes("internalPortalOutboxRows(db,schoolId,'staff',staffId)"))
+ok('Parent notification center reads durable internal outbox',around(server,'getParentPortalSnapshot',30000).includes("internalPortalOutboxRows(db,schoolId,'parent',parentId)"))
+ok('Student notification center reads durable internal outbox',around(server,'getStudentPortalSnapshot',24000).includes("internalPortalOutboxRows(db,schoolId,'student',studentId)"))
+ok('Staff notification center reads durable internal outbox',around(server,'getStaffPortalSnapshot',24000).includes("internalPortalOutboxRows(db,schoolId,'staff',staffId)"))
+ok('External notification channels are not asserted by portal consequences',!/(recipientType:[^\n]*channel:'(?:email|sms|whatsapp|push)')/.test(actions))
+
+console.log('\n=== NEGATIVE AUTHORIZATION MATRIX ===')
+ok('MFA/password-change portal gate uses canonical requireUser',/requirePortalIdentity[\s\S]{0,500}await requireUser\(\)/.test(server))
+ok('Selected portal person is server constrained',all(server,["personQuery=personQuery.eq('id',selectedPerson)","personQuery=personQuery.eq('school_id',selectedSchool)"]))
+ok('Ambiguous active persona is denied',server.includes('plusieurs profils actifs sont liés au même compte'))
+ok('Inactive school is denied',server.includes("eq('status','active')"))
+ok('Parent cannot act on unrelated child',policy.includes('Cet enfant ne fait pas partie de votre périmètre familial actif.'))
+ok('Parent finance flag is server enforced',policy.includes("capability === 'finance'"))
+ok('Parent pickup flag is server enforced',policy.includes("capability === 'pickup'"))
+ok('Parent message flag is server enforced',policy.includes("capability === 'messages'"))
+ok('Parent guardian authority is server enforced',policy.includes("capability === 'guardian'"))
+
+x=around(actions,'async function exactTeacherAssignment',2600)
+ok('Teacher scope binds staff identity',x.includes("eq('staff_id',staffId)"))
+ok('Teacher scope requires active assignment',x.includes("eq('status','active')"))
+x=around(actions,"action==='attendance.batch'",8000)
+ok('Teacher batch attendance rejects non-enrolled students',x.includes('registre contient un élève hors de votre classe ou section'))
+ok('Teacher batch attendance scopes section when assignment has section',x.includes("enrollmentQuery=enrollmentQuery.eq('section_id'"))
+x=around(actions,"action==='assignment.submit'",3000)
+ok('Student cannot submit another class assignment',x.includes("eq('class_id',identity.person.current_class_id)"))
+ok('Student cannot submit another section assignment',x.includes('Devoir hors de votre section'))
+ok('Student cannot replace graded/returned submission',x.includes("['graded','returned']"))
+
+ok('Teacher cannot open unrelated student attachment',all(docs,['teacherMayReadStudentAssignmentDocument','teacherScope','class_enrollments']))
+ok('Parent document access rechecks child relationship',docs.includes('requireParentChildCapability'))
+ok('Staff document access restricted to own staff identity',docs.includes('Document hors de votre identité professionnelle.'))
+ok('Pending attachment must belong to exact student',around(actions,"action==='assignment.submit'",5000).includes("eq('documentable_id',personId)"))
+ok('Pending attachment must belong to exact assignment',around(actions,"action==='assignment.submit'",5000).includes("str(meta.assignment_id)!==assignmentId"))
+
+x=around(actions,"action==='message.reply'",2200)
+ok('Reply requires originally received message',x.includes('assertReceivedMessage'))
+ok('Reply recipient comes from original sender',x.includes('original.sender_app_user_id'))
+
+x=around(actions,"action==='workflow.transition'",2500)
+ok('Staff workflow must be owned by current app user',x.includes("eq('owner_app_user_id',appUserId)"))
+ok('Workflow transition is definition-governed',kernel.includes('workflowTransitionAllowed'))
+ok('Workflow transition rejects stale state',kernel.includes('Le workflow a changé entre-temps'))
+ok('Workflow transition compensates journal failure',kernel.includes('Transition annulée'))
+
+ok('Portal enterprise commands pass exact school context',/executeAngelcare360EnterpriseCommand\(\{[^}]*schoolId/s.test(actions))
+ok('Command kernel binds permission to requested school',kernel.includes("schoolId: options.schoolId || null"))
+
+ok('Support mode narrows effective permissions',context.includes('supportPermissions')&&context.includes('allowedActions'))
+ok('Super admin support bypass disabled in active support context',context.includes('Boolean(supportAccess)'))
+ok('Support requester self-approval denied',tenantAccess.includes('demandé; approbation indépendante obligatoire')&&/requested_by|requester|requestedBy/.test(tenantAccess))
+ok('Portal dedicated invitation requires effective role',invites.includes('resolveEffectivePortalRole'))
+ok('Portal activation role ambiguity is denied',invites.includes('Plusieurs rôles satisfont le portail'))
+
+console.log(`\nCROSS_UNIVERSE_MATRIX_PASS=${pass}`)
+console.log(`CROSS_UNIVERSE_MATRIX_FAIL=${fail}`)
+if(fail){console.error('\nFAILURES');failures.forEach(f=>console.error(`- ${f}`));process.exit(1)}

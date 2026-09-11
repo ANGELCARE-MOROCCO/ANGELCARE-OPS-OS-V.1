@@ -1,12 +1,78 @@
 import { redirect } from 'next/navigation'
 import Image from 'next/image'
+import TenantAccessActivationClient from '@/components/angelcare360/access/TenantAccessActivationClient'
 import { acceptPortalInvitation, inspectPortalInvitationToken } from '@/lib/angelcare360/server/portal-invitations'
 
-export const dynamic='force-dynamic'
-function destination(kind:string){return kind==='parent'?'/angelcare-360-parent/login':kind==='teacher'?'/angelcare-360-teacher/login':kind==='student'?'/angelcare-360-student/login':kind==='staff'?'/angelcare-360-staff/login':'/angelcare-360-portal/login'}
-export default async function SanilaActivationPage({searchParams}:{searchParams?:Promise<{token?:string;error?:string}>}){
-  const params=searchParams?await searchParams:{}; const token=String(params.token||''); const invitation=token?await inspectPortalInvitationToken(token):null
-  async function activate(formData:FormData){'use server';const token=String(formData.get('token')||'');try{const result=await acceptPortalInvitation({token,password:String(formData.get('password')||''),passwordConfirmation:String(formData.get('passwordConfirmation')||'')});redirect(`${destination(result.portal_kind)}?activated=1`)}catch(error){redirect(`/angelcare-360-access/activate?token=${encodeURIComponent(token)}&error=${encodeURIComponent(error instanceof Error?error.message:'Activation impossible.')}`)}}
-  const invalid=!invitation||invitation.expired||!['prepared','smtp_accepted','opened'].includes(String(invitation.state))
-  return <main style={{minHeight:'100vh',display:'grid',placeItems:'center',background:'linear-gradient(150deg,#f3f7fd,#fff)',padding:24}}><section style={{width:'min(560px,100%)',background:'#fff',border:'1px solid #dfe8f4',borderRadius:28,padding:30,boxShadow:'0 30px 90px rgba(27,62,108,.12)'}}><Image src="/brand/sanila-official-logo.png" alt="SANILA" width={138} height={46} style={{width:138,height:46,objectFit:'contain',objectPosition:'left'}}/><div style={{marginTop:20,fontSize:10,fontWeight:950,letterSpacing:'.14em',textTransform:'uppercase',color:'#2d64b0'}}>Activation sécurisée</div><h1 style={{fontSize:30,letterSpacing:'-.035em',margin:'7px 0 8px',color:'#102643'}}>{invalid?'Lien indisponible':'Créez votre accès SANILA'}</h1>{invalid?<p style={{color:'#6d7e95',lineHeight:1.65}}>Ce lien est invalide, expiré ou déjà utilisé. Demandez une nouvelle invitation à votre établissement.</p>:<><p style={{color:'#6d7e95',lineHeight:1.65}}>Invitation pour <strong>{invitation.email}</strong>. Choisissez un mot de passe d’au moins 12 caractères avec majuscule, minuscule, chiffre et caractère spécial.</p>{params.error?<div style={{background:'#fff3f4',border:'1px solid #f2d4d7',color:'#9d3340',padding:12,borderRadius:12,margin:'14px 0',fontSize:12}}>{params.error}</div>:null}<form action={activate} style={{display:'grid',gap:12,marginTop:18}}><input type="hidden" name="token" value={token}/><label style={{display:'grid',gap:6,fontSize:11,fontWeight:850,color:'#36506f'}}>Mot de passe<input required minLength={12} name="password" type="password" autoComplete="new-password" style={{padding:'12px 13px',border:'1px solid #d7e1ed',borderRadius:12,fontSize:14}}/></label><label style={{display:'grid',gap:6,fontSize:11,fontWeight:850,color:'#36506f'}}>Confirmation<input required minLength={12} name="passwordConfirmation" type="password" autoComplete="new-password" style={{padding:'12px 13px',border:'1px solid #d7e1ed',borderRadius:12,fontSize:14}}/></label><button type="submit" style={{border:0,borderRadius:13,padding:'13px 16px',background:'#1f5fbd',color:'#fff',fontWeight:950,cursor:'pointer'}}>Activer mon accès</button></form></>}</section></main>
+export const dynamic = 'force-dynamic'
+
+function destination(kind: string) {
+  return kind === 'parent'
+    ? '/angelcare-360-parent/login'
+    : kind === 'teacher'
+      ? '/angelcare-360-teacher/login'
+      : kind === 'student'
+        ? '/angelcare-360-student/login'
+        : kind === 'staff'
+          ? '/angelcare-360-staff/login'
+          : '/angelcare-360-portal/login'
+}
+
+export default async function SanilaActivationPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ token?: string; error?: string; mode?: string }>
+}) {
+  const params = searchParams ? await searchParams : {}
+  const token = String(params.token || '')
+  const tenantMode = params.mode === 'invite' || params.mode === 'reset'
+
+  // Tenant administrator invitations/password resets have a distinct authority.
+  // Do not inspect them as school-role portal invitations.
+  if (tenantMode) return <TenantAccessActivationClient />
+
+  const invitation = token ? await inspectPortalInvitationToken(token) : null
+
+  async function activate(formData: FormData) {
+    'use server'
+    const activationToken = String(formData.get('token') || '')
+    let result: { portal_kind: string }
+    try {
+      result = await acceptPortalInvitation({
+        token: activationToken,
+        password: String(formData.get('password') || ''),
+        passwordConfirmation: String(formData.get('passwordConfirmation') || ''),
+      })
+    } catch (error) {
+      redirect(`/angelcare-360-access/activate?token=${encodeURIComponent(activationToken)}&error=${encodeURIComponent(error instanceof Error ? error.message : 'Activation impossible.')}`)
+    }
+    // redirect() throws internally in Next.js; keep it outside the catch so a
+    // successful activation can never be misreported as an activation error.
+    redirect(`${destination(result.portal_kind)}?activated=1`)
+  }
+
+  const invalid = !invitation || invitation.expired || !['prepared', 'smtp_accepted', 'opened'].includes(String(invitation.state))
+
+  return (
+    <main style={{ minHeight: '100vh', display: 'grid', placeItems: 'center', background: 'linear-gradient(150deg,#f3f7fd,#fff)', padding: 24 }}>
+      <section style={{ width: 'min(560px,100%)', background: '#fff', border: '1px solid #dfe8f4', borderRadius: 28, padding: 30, boxShadow: '0 30px 90px rgba(27,62,108,.12)' }}>
+        <Image src="/brand/sanila-official-logo.png" alt="SANILA" width={138} height={46} style={{ width: 138, height: 46, objectFit: 'contain', objectPosition: 'left' }} />
+        <div style={{ marginTop: 20, fontSize: 10, fontWeight: 950, letterSpacing: '.14em', textTransform: 'uppercase', color: '#2d64b0' }}>Activation sécurisée</div>
+        <h1 style={{ fontSize: 30, letterSpacing: '-.035em', margin: '7px 0 8px', color: '#102643' }}>{invalid ? 'Lien indisponible' : 'Créez votre accès SANILA'}</h1>
+        {invalid ? (
+          <p style={{ color: '#6d7e95', lineHeight: 1.65 }}>Ce lien est invalide, expiré ou déjà utilisé. Demandez une nouvelle invitation à votre établissement.</p>
+        ) : (
+          <>
+            <p style={{ color: '#6d7e95', lineHeight: 1.65 }}>Invitation pour <strong>{invitation.email}</strong>. Choisissez un mot de passe d’au moins 12 caractères avec majuscule, minuscule, chiffre et caractère spécial.</p>
+            {params.error ? <div style={{ background: '#fff3f4', border: '1px solid #f2d4d7', color: '#9d3340', padding: 12, borderRadius: 12, margin: '14px 0', fontSize: 12 }}>{params.error}</div> : null}
+            <form action={activate} style={{ display: 'grid', gap: 12, marginTop: 18 }}>
+              <input type="hidden" name="token" value={token} />
+              <label style={{ display: 'grid', gap: 6, fontSize: 11, fontWeight: 850, color: '#36506f' }}>Mot de passe<input required minLength={12} name="password" type="password" autoComplete="new-password" style={{ padding: '12px 13px', border: '1px solid #d7e1ed', borderRadius: 12, fontSize: 14 }} /></label>
+              <label style={{ display: 'grid', gap: 6, fontSize: 11, fontWeight: 850, color: '#36506f' }}>Confirmation<input required minLength={12} name="passwordConfirmation" type="password" autoComplete="new-password" style={{ padding: '12px 13px', border: '1px solid #d7e1ed', borderRadius: 12, fontSize: 14 }} /></label>
+              <button type="submit" style={{ border: 0, borderRadius: 13, padding: '13px 16px', background: '#1f5fbd', color: '#fff', fontWeight: 950, cursor: 'pointer' }}>Activer mon accès</button>
+            </form>
+          </>
+        )}
+      </section>
+    </main>
+  )
 }

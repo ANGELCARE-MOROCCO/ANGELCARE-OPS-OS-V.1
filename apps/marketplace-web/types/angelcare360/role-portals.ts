@@ -11,6 +11,7 @@ export type Angelcare360PortalRecord = {
   statusLabel?: string | null
   tone?: Angelcare360PortalTone
   date?: string | null
+  href?: string | null
   meta?: Record<string, string | number | boolean | null>
 }
 
@@ -46,6 +47,9 @@ export type Angelcare360TeacherPortalSnapshot = {
   tasks: Angelcare360PortalRecord[]
   notifications: Angelcare360PortalRecord[]
   leave: Angelcare360PortalRecord[]
+  leavePolicies: Angelcare360PortalRecord[]
+  documents: Angelcare360PortalRecord[]
+  profile: Angelcare360PortalRecord[]
   sourceWarnings: string[]
   permissions: string[]
   generatedAt: string
@@ -68,8 +72,10 @@ export type Angelcare360ParentPortalSnapshot = {
   reportCards: Angelcare360PortalRecord[]
   finance: Angelcare360PortalRecord[]
   payments: Angelcare360PortalRecord[]
+  receipts: Angelcare360PortalRecord[]
   transport: Angelcare360PortalRecord[]
   pickup: Angelcare360PortalRecord[]
+  pickupCandidates: Angelcare360PortalRecord[]
   messages: Angelcare360PortalRecord[]
   notifications: Angelcare360PortalRecord[]
   requests: Angelcare360PortalRecord[]
@@ -81,6 +87,8 @@ export type Angelcare360ParentPortalSnapshot = {
   renewals: Angelcare360PortalRecord[]
   feedback: Angelcare360PortalRecord[]
   documents: Angelcare360PortalRecord[]
+  teacherContacts: Angelcare360PortalRecord[]
+  account: Angelcare360PortalRecord[]
   sourceWarnings: string[]
   permissions: string[]
   generatedAt: string
@@ -153,6 +161,7 @@ export type Angelcare360StaffPortalSnapshot = {
   schedule: Angelcare360PortalRecord[]
   attendance: Angelcare360PortalRecord[]
   leave: Angelcare360PortalRecord[]
+  leavePolicies: Angelcare360PortalRecord[]
   tasks: Angelcare360PortalRecord[]
   approvals: Angelcare360PortalRecord[]
   workflows: Angelcare360PortalRecord[]
@@ -162,6 +171,7 @@ export type Angelcare360StaffPortalSnapshot = {
   notifications: Angelcare360PortalRecord[]
   team: Angelcare360PortalRecord[]
   history: Angelcare360PortalRecord[]
+  profile: Angelcare360PortalRecord[]
   sourceWarnings: string[]
   permissions: string[]
   generatedAt: string
@@ -187,7 +197,8 @@ export type Angelcare360StudentPortalSnapshot = {
   messages: Angelcare360PortalRecord[]
   notifications: Angelcare360PortalRecord[]
   documents: Angelcare360PortalRecord[]
-  supportTasks: Angelcare360PortalRecord[]
+  teacherContacts: Angelcare360PortalRecord[]
+  profile: Angelcare360PortalRecord[]
   sourceWarnings: string[]
   permissions: string[]
   generatedAt: string

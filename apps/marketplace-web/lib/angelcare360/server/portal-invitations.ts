@@ -1,6 +1,6 @@
 import 'server-only'
 import { createHash, randomBytes } from 'node:crypto'
-import { hashPassword } from '@/lib/auth/session'
+import { hashPassword, verifyPassword } from '@/lib/auth/session'
 import { sendAngelcare360Email } from '@/lib/angelcare360/email/email-os-bridge'
 import { Angelcare360AccessError, getAngelcare360AccessContext } from '@/lib/angelcare360/server/context'
 import { createClient } from '@/lib/supabase/server'
@@ -13,6 +13,35 @@ type DatabaseClient = Awaited<ReturnType<typeof createClient>>
 function digest(value:string){return createHash('sha256').update(value).digest('hex')}
 function baseUrl(){const raw=String(process.env.NEXT_PUBLIC_APP_URL||process.env.APP_URL||'https://my.angelcarehub.com').trim().replace(/\/$/,'');return /^https?:\/\//i.test(raw)?raw:'https://my.angelcarehub.com'}
 function profileTable(kind:Angelcare360PortalKind){return kind==='parent'?'angelcare360_parents':kind==='student'?'angelcare360_students':'angelcare360_staff'}
+const REQUIRED_PORTAL_PERMISSIONS:Record<Angelcare360PortalKind,string[]>={teacher:['eleves.view','academics.create','academics.update','examens.create','examens.update','presences.update','messagerie.create','personnel.view'],parent:['parents.view'],student:['eleves.view'],staff:['personnel.view']}
+const ROLE_HINTS:Record<Angelcare360PortalKind,string[]>={teacher:['teacher','enseignant','enseignante'],parent:['parent','guardian','tuteur','famille'],student:['student','eleve','élève'],staff:['staff','personnel','employee','employe','employé']}
+function isTeacherType(value:unknown){const v=text(value).toLowerCase();return v.includes('teach')||v.includes('enseign')}
+
+async function resolveEffectivePortalRole(db:DatabaseClient,schoolId:string,kind:Angelcare360PortalKind,requestedRoleId?:string|null){
+  const requiredPermissions=REQUIRED_PORTAL_PERMISSIONS[kind]
+  const {data:roles,error:rolesError}=await db.from('angelcare360_roles').select('id,role_key,label,status').eq('school_id',schoolId).eq('status','active').limit(200)
+  if(rolesError) throw new Angelcare360AccessError(`Rôles établissement indisponibles : ${rolesError.message}`,503)
+  const roleRows=roles||[],roleIds=roleRows.map((role)=>text(role.id)).filter(Boolean)
+  if(!roleIds.length) throw new Angelcare360AccessError('Aucun rôle actif ne peut être attribué à ce portail.',409)
+  const {data:grants,error:grantsError}=await db.from('angelcare360_role_permissions').select('role_id,permission_key,effect').in('role_id',roleIds)
+  if(grantsError) throw new Angelcare360AccessError(`Permissions des rôles indisponibles : ${grantsError.message}`,503)
+  const permissionsByRole=new Map<string,Set<string>>(),denialsByRole=new Map<string,Set<string>>()
+  for(const roleId of roleIds){permissionsByRole.set(roleId,new Set());denialsByRole.set(roleId,new Set())}
+  for(const grant of grants||[]){const roleId=text(grant.role_id),permission=text(grant.permission_key),effect=text(grant.effect,'allow').toLowerCase();if(!roleId||!permission)continue;if(effect==='deny')denialsByRole.get(roleId)?.add(permission);else permissionsByRole.get(roleId)?.add(permission)}
+  for(const roleId of roleIds) for(const denied of denialsByRole.get(roleId)||[]) permissionsByRole.get(roleId)?.delete(denied)
+  const missing=(roleId:string)=>requiredPermissions.filter((permission)=>!permissionsByRole.get(roleId)?.has(permission))
+  if(requestedRoleId){
+    const role=roleRows.find((candidate)=>text(candidate.id)===text(requestedRoleId));if(!role)throw new Angelcare360AccessError('Le rôle sélectionné n’appartient pas à cet établissement.',403)
+    const gaps=missing(text(role.id));if(gaps.length)throw new Angelcare360AccessError(`Le rôle « ${text(role.label,text(role.role_key))} » n’est pas opérationnel pour le portail ${kind}. Permissions manquantes : ${gaps.join(', ')}.`,409)
+    return text(role.id)
+  }
+  const eligible=roleRows.filter((role)=>missing(text(role.id)).length===0)
+  const hinted=eligible.filter((role)=>ROLE_HINTS[kind].some((hint)=>text(role.role_key).toLowerCase()===hint))
+  if(hinted.length===1)return text(hinted[0].id)
+  if(eligible.length===1)return text(eligible[0].id)
+  if(!eligible.length)throw new Angelcare360AccessError(`Aucun rôle actif ne satisfait le contrat opérationnel du portail ${kind}. Permissions requises : ${requiredPermissions.join(', ')}.`,409)
+  throw new Angelcare360AccessError(`Plusieurs rôles satisfont le portail ${kind}. Sélectionnez explicitement le rôle à attribuer.`,409)
+}
 
 async function requireInvitationManager(){
   const context=await getAngelcare360AccessContext()
@@ -31,9 +60,12 @@ export async function preparePortalInvitation(input:{kind:Angelcare360PortalKind
   const table=profileTable(kind)
   const {data:person,error:personError}=await db.from(table).select('*').eq('school_id',schoolId).eq('id',input.personId).eq('status','active').maybeSingle()
   if(personError||!person) throw new Angelcare360AccessError('Le profil ciblé n’appartient pas à cet établissement ou n’est pas actif.',404)
+  if(kind==='teacher' && !isTeacherType(person.staff_type)) throw new Angelcare360AccessError('Le profil sélectionné n’est pas un profil enseignant actif.',409)
+  if(kind==='staff' && isTeacherType(person.staff_type)) throw new Angelcare360AccessError('Un enseignant doit être invité avec le portail Enseignant afin de conserver son périmètre pédagogique.',409)
   if(person.portal_app_user_id) throw new Angelcare360AccessError('Ce profil possède déjà un compte portail actif.',409)
   const email=text(input.email||person.email).toLowerCase(); if(!email||!/^\S+@\S+\.\S+$/.test(email)) throw new Angelcare360AccessError('Une adresse e-mail valide est requise pour l’activation.',422)
-  return createInvitation({db,context,portalKind:kind,personId:input.personId,email,roleId:input.roleId||null,fullName:text(person.full_name,`${text(person.first_name)} ${text(person.last_name)}`.trim()||email),reason:input.reason||null})
+  const roleId=await resolveEffectivePortalRole(db,schoolId,kind,input.roleId||null)
+  return createInvitation({db,context,portalKind:kind,personId:input.personId,email,roleId,fullName:text(person.full_name,`${text(person.first_name)} ${text(person.last_name)}`.trim()||email),reason:input.reason||null})
 }
 
 export async function prepareSchoolUserInvitation(input:{email:string;fullName?:string|null;roleId:string;personId?:string|null;reason?:string|null}){
@@ -95,7 +127,20 @@ export async function acceptPortalInvitation(input:{token:string;password:string
   const invitation=await inspectPortalInvitationToken(token); if(!invitation) throw new Angelcare360AccessError('Ce lien d’activation est invalide.',404)
   if(invitation.expired||invitation.state==='expired') throw new Angelcare360AccessError('Ce lien d’activation a expiré.',410)
   if(!['prepared','smtp_accepted','opened'].includes(invitation.state)) throw new Angelcare360AccessError('Ce lien d’activation n’est plus disponible.',409)
-  const db=await createClient(); const username=text(invitation.email).toLowerCase(); const passwordHash=await hashPassword(input.password); const fullName=text(invitation.metadata_json?.full_name,username.split('@')[0])
+  const db=await createClient(); const username=text(invitation.email).toLowerCase(); const fullName=text(invitation.metadata_json?.full_name,username.split('@')[0])
+  const byEmail=await db.from('app_users').select('id,password_hash,status').ilike('email',username).limit(2)
+  const byUsername=byEmail.data?.length?null:await db.from('app_users').select('id,password_hash,status').eq('username',username).limit(2)
+  if(byEmail.error||byUsername?.error) throw new Angelcare360AccessError('Autorité d’identité indisponible.',503)
+  const existing=byEmail.data?.length?byEmail.data:(byUsername?.data||[])
+  if(existing.length>1) throw new Angelcare360AccessError('Identité ambiguë; contactez l’établissement.',409)
+  if(existing.length===1){
+    const identity=existing[0]
+    if(identity.status!=='active'||!identity.password_hash||!(await verifyPassword(input.password,String(identity.password_hash)))) throw new Angelcare360AccessError('Cette adresse possède déjà un compte. Utilisez son mot de passe actuel pour ajouter ce nouvel espace.',401)
+    const accepted=await db.rpc('angelcare360_accept_existing_portal_invitation_v1',{p_token_digest:digest(token),p_app_user_id:identity.id})
+    if(accepted.error) throw new Angelcare360AccessError(accepted.error.message||'Activation multi-rôle impossible.',500)
+    return accepted.data as {app_user_id:string;school_id:string;portal_kind:string}
+  }
+  const passwordHash=await hashPassword(input.password)
   const {data,error}=await db.rpc('angelcare360_accept_portal_invitation_v1',{p_token_digest:digest(token),p_password_hash:passwordHash,p_username:username,p_full_name:fullName})
   if(error) throw new Angelcare360AccessError(error.message||'Activation impossible.',500)
   return data as {app_user_id:string;school_id:string;portal_kind:string}

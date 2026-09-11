@@ -100,10 +100,10 @@ async function safeRows(client: ServiceClient, table: string, schoolId: string, 
   return (data || []) as ProductRealityRow[]
 }
 
-export async function requireProductRealityOperation(operationKey: string, options?: { entityId?: string | null; payload?: ProductRealityRow; allowApprovalRequired?: boolean }): Promise<ProductRealityRuntimeGate & { context: NonNullable<Awaited<ReturnType<typeof getAngelcare360AccessContext>>> }> {
+export async function requireProductRealityOperation(operationKey: string, options?: { entityId?: string | null; payload?: ProductRealityRow; allowApprovalRequired?: boolean; schoolId?: string | null }): Promise<ProductRealityRuntimeGate & { context: NonNullable<Awaited<ReturnType<typeof getAngelcare360AccessContext>>> }> {
   const definition = getProductRealityOperation(operationKey)
   if (!definition) throw new Angelcare360AccessError(`Opération produit inconnue: ${operationKey}.`, 400)
-  const context = await requireAngelcare360Permission(definition.permissionKey)
+  const context = await requireAngelcare360Permission(definition.permissionKey, { schoolId: options?.schoolId || null, operation: operationKey })
   if (definition.operatorOnly) await requireAngelcare360OperatorPermission('operator.features.update')
   if (!context.school) throw new Angelcare360AccessError('Établissement actif introuvable.', 403)
   const runtime = context.runtimeEntitlements
@@ -1978,7 +1978,7 @@ export async function executeProductRealityCommand(request: ProductRealityComman
     return executeResolvedProductRealityCommand({ request, client, schoolId, userId: session.user.id })
   }
   if (definition.operatorOnly) throw new Angelcare360AccessError('Cette opération exige l’autorité Operator.', 403)
-  const gate = await requireProductRealityOperation(request.operationKey, { entityId: request.entityId, payload: object(request.payload), allowApprovalRequired: definition.requiresApproval })
+  const gate = await requireProductRealityOperation(request.operationKey, { entityId: request.entityId, payload: object(request.payload), allowApprovalRequired: definition.requiresApproval, schoolId: request.schoolId || null })
   const client = await createServiceClient()
   if (definition.requiresApproval) return queueProductRealityApproval({ client, schoolId: gate.context.school!.id, userId: gate.context.user.id, request })
   return executeResolvedProductRealityCommand({ request, client, schoolId: gate.context.school!.id, userId: gate.context.user.id })
