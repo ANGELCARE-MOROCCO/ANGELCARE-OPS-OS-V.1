@@ -1,13 +1,16 @@
 import { requireMarketplaceApiContext } from '../auth/context'
 import { apiFailure, apiSuccess, parseJsonObject, requestId } from '../server/request'
 import { createServiceClient } from '@/lib/supabase/server'
-import { createCommerceResource, updateCommerceResource } from '../commerce-studio/repository'
-import { validateProductImportRows } from './product-doctrine'
+import { createHash } from 'node:crypto'
+import { writeMarketplaceAudit } from '../audit/write-audit'
+import { normalizeProductImportRow, validateProductImportRows, product360ContractSummary, type ProductImportMode } from './product-360-contract'
+import { applyProduct360ImportRow, restoreProduct360Snapshot, validateProductImportReferences } from './product-360-import-engine'
+import { requireProductDoctrine } from './product-doctrine'
 import { businessPulseSnapshot, customerMegaDossier, enterpriseSearch, fulfillmentMissionSnapshot, genericDocumentSnapshot, liveMarketplaceSnapshot, listBulkOperationJobs, listDocumentTemplates, listDocumentTemplateVersions, orderMegaDossier, restoreDocumentTemplateVersion, saveDocumentTemplate, segmentPreview } from './repository'
 import { buildEnterprisePdf } from './document-factory'
 import type { DocumentTemplateKey } from './types'
 
-const text=(v:unknown)=>String(v??'').trim(); const rows=(v:unknown)=>Array.isArray(v)?v as Record<string,unknown>[]:[]
+const text=(v:unknown)=>String(v??'').trim(); const rows=(v:unknown)=>Array.isArray(v)?v as Record<string,unknown>[]:[]; const object=(v:unknown)=>v&&typeof v==='object'&&!Array.isArray(v)?v as Record<string,unknown>:{}
 const pairRows=(data:Record<string,unknown>[],mapper:(row:Record<string,unknown>,index:number)=>[string,unknown]):Array<[string,unknown]>=>data.map(mapper)
 export async function handleEnterpriseSearch(request:Request){const id=requestId(request);try{await requireMarketplaceApiContext();const q=new URL(request.url).searchParams.get('q')||'';return apiSuccess(await enterpriseSearch(q),{requestId:id})}catch(e){return apiFailure(e,id)}}
 export async function handleCustomerMega(request:Request,customerId:string){const id=requestId(request);try{await requireMarketplaceApiContext();return apiSuccess(await customerMegaDossier(customerId),{requestId:id})}catch(e){return apiFailure(e,id)}}
@@ -18,8 +21,9 @@ export async function handleMissions(request:Request){const id=requestId(request
 export async function handleSegments(request:Request){const id=requestId(request);try{await requireMarketplaceApiContext();const body=request.method==='POST'?await parseJsonObject(request):{};return apiSuccess(await segmentPreview(body),{requestId:id})}catch(e){return apiFailure(e,id)}}
 export async function handleTemplates(request:Request){const id=requestId(request);try{await requireMarketplaceApiContext();if(request.method==='GET')return apiSuccess(await listDocumentTemplates(),{requestId:id});const body=await parseJsonObject(request);return apiSuccess(await saveDocumentTemplate(body as any),{requestId:id})}catch(e){return apiFailure(e,id)}}
 export async function handleTemplateVersions(request:Request,templateKey:DocumentTemplateKey){const id=requestId(request);try{await requireMarketplaceApiContext();if(request.method==='GET')return apiSuccess(await listDocumentTemplateVersions(templateKey),{requestId:id});if(request.method==='POST'){const body=await parseJsonObject(request);return apiSuccess(await restoreDocumentTemplateVersion({templateKey,versionNumber:Number(body.versionNumber)}),{requestId:id})}throw new Error('Méthode non prise en charge.')}catch(e){return apiFailure(e,id)}}
-async function existingCatalogKeys(db:any,inputRows:Record<string,unknown>[]){
-  const keys=[...new Set(inputRows.map(r=>text(r.item_key)).filter(Boolean))]
+async function existingCatalogKeys(db:any,inputRows:Record<string,unknown>[],doctrineKey:string){
+  const definition=requireProductDoctrine(doctrineKey)
+  const keys=[...new Set(inputRows.map(r=>text(normalizeProductImportRow(r,definition).item_key)).filter(Boolean))]
   const existing=new Set<string>()
   for(let i=0;i<keys.length;i+=400){
     const result=await db.from('angelcare_marketplace_catalog_items').select('item_key').in('item_key',keys.slice(i,i+400))
@@ -30,40 +34,55 @@ async function existingCatalogKeys(db:any,inputRows:Record<string,unknown>[]){
 }
 
 function importReference(id:string){const date=new Date().toISOString().slice(0,10).replaceAll('-','');return `AC-IMP-${date}-${id.replaceAll('-','').slice(0,8).toUpperCase()}`}
+function productImportFingerprint(doctrineKey:string,mode:ProductImportMode,inputRows:Record<string,unknown>[]){return createHash('sha256').update(JSON.stringify({version:3,doctrineKey,mode,rows:inputRows})).digest('hex')}
+function mode(value:unknown):ProductImportMode{return ['create','update','upsert'].includes(text(value))?text(value) as ProductImportMode:'upsert'}
 
-async function processProductImportRow(input:{db:any;context:any;doctrineKey:string;row:any}){
-  const {db,context,doctrineKey,row}=input
-  const n=(row.normalized_payload||{}) as Record<string,unknown>
-  const categoryKeys=text(n.category_keys).split(/[|,;]/).map(v=>v.trim()).filter(Boolean)
-  const territoryCodes=text(n.territory_codes).split(/[|,;]/).map(v=>v.trim()).filter(Boolean)
-  const payload:any={
-    item_key:n.item_key,slug:n.slug,kind:n.kind,sellable_type:n.sellable_type,name_fr:n.name_fr,
-    short_description_fr:n.short_description_fr||null,description_fr:n.description_fr||null,
-    price_mode:n.price_mode,price_amount:n.price_amount||null,currency_label:n.currency_label,
-    availability_status:n.availability_status,status:n.status,
-    commercial_metadata:{doctrine:doctrineKey,imported_fields:Object.fromEntries(Object.entries(n).filter(([k])=>!['category_keys','territory_codes'].includes(k)))},
-    attributes:{doctrine:doctrineKey},seo_metadata:{},
+async function rowsRequirePublishAuthority(db:any,inputRows:any[]):Promise<boolean>{
+  if(inputRows.some((row:any)=>Object.keys(object(row.source_payload)).some((key)=>key.trim().toLowerCase()==='status')&&text(row.normalized_payload?.status)==='published'))return true
+  const implicitPublishedUpdates=inputRows.filter((row:any)=>row.action==='update'&&!Object.keys(object(row.source_payload)).some((key)=>key.trim().toLowerCase()==='status')).map((row:any)=>text(row.normalized_payload?.item_key)).filter(Boolean)
+  if(!implicitPublishedUpdates.length)return false
+  for(let i=0;i<implicitPublishedUpdates.length;i+=400){
+    const result=await db.from('angelcare_marketplace_catalog_items').select('item_key,status').in('item_key',implicitPublishedUpdates.slice(i,i+400)).eq('status','published')
+    if(result.error)throw result.error
+    if((result.data||[]).length)return true
   }
-  let item:any
-  if(row.action==='update'){
-    const found=await db.from('angelcare_marketplace_catalog_items').select('id').eq('item_key',text(n.item_key)).maybeSingle()
-    if(found.error)throw found.error
-    if(found.data)item=(await updateCommerceResource({resource:'catalog-items',id:String(found.data.id),payload,context})).record
-    else item=(await createCommerceResource({resource:'catalog-items',payload,context})).record
-  }else item=(await createCommerceResource({resource:'catalog-items',payload,context})).record
-  if(item?.id&&categoryKeys.length){
-    const cats=await db.from('angelcare_marketplace_catalog_categories').select('id,category_key').in('category_key',categoryKeys)
-    if(cats.error)throw cats.error
-    const del=await db.from('angelcare_marketplace_catalog_item_categories').delete().eq('catalog_item_id',item.id)
-    if(del.error)throw del.error
-    if(cats.data?.length){const ins=await db.from('angelcare_marketplace_catalog_item_categories').insert(cats.data.map((c:any)=>({catalog_item_id:item.id,category_id:c.id})));if(ins.error)throw ins.error}
+  return false
+}
+
+function recountPreview(preview:ReturnType<typeof validateProductImportRows>){
+  for(const row of preview.rows)if(!row.valid)row.action='reject'
+  preview.valid=preview.rows.filter(row=>row.valid).length
+  preview.rejected=preview.rows.length-preview.valid
+  preview.creates=preview.rows.filter(row=>row.valid&&row.action==='create').length
+  preview.updates=preview.rows.filter(row=>row.valid&&row.action==='update').length
+  return preview
+}
+
+async function hardenProductImportPreview(input:{db:any;doctrineKey:string;inputRows:Record<string,unknown>[];mode:ProductImportMode}){
+  const existing=await existingCatalogKeys(input.db,input.inputRows,input.doctrineKey)
+  const preview=validateProductImportRows({doctrineKey:input.doctrineKey,rows:input.inputRows,existingKeys:existing,mode:input.mode})
+  const keys=new Map<string,number[]>(),slugs=new Map<string,number[]>(),skus=new Map<string,number[]>()
+  for(const row of preview.rows){
+    if(row.key)keys.set(row.key,[...(keys.get(row.key)||[]),row.row])
+    const slug=text(row.normalized.slug);if(slug)slugs.set(slug,[...(slugs.get(slug)||[]),row.row]);const sku=text(row.normalized.sku);if(sku)skus.set(sku,[...(skus.get(sku)||[]),row.row])
   }
-  if(item?.id&&territoryCodes.length){
-    const territories=await db.from('angelcare_marketplace_territories').select('id,territory_code').in('territory_code',territoryCodes)
-    if(territories.error)throw territories.error
-    if(territories.data?.length){const up=await db.from('angelcare_marketplace_catalog_availability').upsert(territories.data.map((t:any)=>({catalog_item_id:item.id,territory_id:t.id,status:'available'})),{onConflict:'catalog_item_id,territory_id'});if(up.error)throw up.error}
+  for(const row of preview.rows){
+    if(row.key&&(keys.get(row.key)?.length||0)>1){row.valid=false;row.errors.push(`item_key dupliqué dans le fichier (${keys.get(row.key)?.join(', ')}).`)}
+    const slug=text(row.normalized.slug);if(slug&&(slugs.get(slug)?.length||0)>1){row.valid=false;row.errors.push(`slug dupliqué dans le fichier (${slugs.get(slug)?.join(', ')}).`)}const sku=text(row.normalized.sku);if(sku&&(skus.get(sku)?.length||0)>1){row.valid=false;row.errors.push(`SKU dupliqué dans le fichier (${skus.get(sku)?.join(', ')}).`)}
   }
-  return{row:row.row_number,id:item?.id||null,key:text(n.item_key),action:row.action}
+  const candidateSlugs=[...new Set(preview.rows.map(row=>text(row.normalized.slug)).filter(Boolean))]
+  for(let i=0;i<candidateSlugs.length;i+=400){
+    const found=await input.db.from('angelcare_marketplace_catalog_items').select('item_key,slug').in('slug',candidateSlugs.slice(i,i+400));if(found.error)throw found.error
+    const bySlug=new Map((found.data||[]).map((row:any)=>[text(row.slug),text(row.item_key)]))
+    for(const row of preview.rows){const slug=text(row.normalized.slug),owner=bySlug.get(slug);if(slug&&owner&&owner!==row.key){row.valid=false;row.errors.push(`Le slug ${slug} appartient déjà au produit ${owner}.`)}}
+  }
+  const candidateSkus=[...new Set(preview.rows.map(row=>text(row.normalized.sku)).filter(Boolean))]
+  for(let i=0;i<candidateSkus.length;i+=400){const found=await input.db.from('angelcare_marketplace_catalog_items').select('item_key,sku').in('sku',candidateSkus.slice(i,i+400));if(found.error)throw found.error;const bySku=new Map((found.data||[]).map((row:any)=>[text(row.sku),text(row.item_key)]));for(const row of preview.rows){const sku=text(row.normalized.sku),owner=bySku.get(sku);if(sku&&owner&&owner!==row.key){row.valid=false;row.errors.push(`Le SKU ${sku} appartient déjà au produit ${owner}.`)}}}
+  const variantSkuRows=new Map<string,number[]>()
+  for(const row of preview.rows)for(const variant of Array.isArray(row.normalized.variants_json)?row.normalized.variants_json as any[]:[]){const sku=text(variant?.sku);if(sku)variantSkuRows.set(sku,[...(variantSkuRows.get(sku)||[]),row.row])}
+  for(const row of preview.rows)for(const variant of Array.isArray(row.normalized.variants_json)?row.normalized.variants_json as any[]:[]){const sku=text(variant?.sku);if(sku&&(variantSkuRows.get(sku)?.length||0)>1){row.valid=false;row.errors.push(`SKU variante ${sku} dupliqué dans le fichier (lignes ${variantSkuRows.get(sku)?.join(', ')}).`)}}
+  await validateProductImportReferences({db:input.db,rows:preview.rows})
+  return recountPreview(preview)
 }
 
 async function importJobSnapshot(db:any,jobId:string,options?:{page?:number;pageSize?:number;failedOnly?:boolean}){
@@ -79,15 +98,17 @@ async function importJobSnapshot(db:any,jobId:string,options?:{page?:number;page
 }
 
 async function refreshImportJob(db:any,jobId:string){
+  const job=await db.from('angelcare_marketplace_bulk_operation_jobs').select('status').eq('id',jobId).maybeSingle();if(job.error)throw job.error
+  if(String(job.data?.status)==='rolled_back')return job.data
   const result=await db.from('angelcare_marketplace_bulk_operation_rows').select('status').eq('job_id',jobId)
   if(result.error)throw result.error
   const statuses=(result.data||[]).map((r:any)=>String(r.status))
-  const total=statuses.length,completed=statuses.filter((s:string)=>s==='completed').length,failed=statuses.filter((s:string)=>s==='failed').length,rejected=statuses.filter((s:string)=>s==='rejected').length,processing=statuses.filter((s:string)=>s==='processing').length,pending=statuses.filter((s:string)=>s==='pending').length
-  const processed=completed+failed+rejected
+  const total=statuses.length,completed=statuses.filter((s:string)=>s==='completed').length,failed=statuses.filter((s:string)=>s==='failed').length,rejected=statuses.filter((s:string)=>s==='rejected').length,skipped=statuses.filter((s:string)=>s==='skipped').length,processing=statuses.filter((s:string)=>s==='processing').length,pending=statuses.filter((s:string)=>s==='pending').length
+  const processed=completed+failed+rejected+skipped
   const done=pending===0&&processing===0
   const status=done?(failed?'completed_with_errors':'completed'):(processing?'running':'queued')
   const progress=total?Number(((processed/total)*100).toFixed(2)):100
-  const update:any={status,processed_rows:processed,failed_rows:failed,rejected_rows:rejected,progress_percent:progress,updated_at:new Date().toISOString(),result:{completed,failed,rejected,total}}
+  const update:any={status,processed_rows:processed,failed_rows:failed,rejected_rows:rejected,progress_percent:progress,updated_at:new Date().toISOString(),result:{completed,failed,rejected,skipped,total}}
   if(done){update.completed_at=new Date().toISOString();update.result_file_name=`AC-IMPORT-${jobId.replaceAll('-','').slice(0,8).toUpperCase()}-RESULT.csv`}
   const updated=await db.from('angelcare_marketplace_bulk_operation_jobs').update(update).eq('id',jobId).select('*').single()
   if(updated.error)throw updated.error
@@ -97,62 +118,80 @@ async function refreshImportJob(db:any,jobId:string){
 export async function handleProductImportPreview(request:Request){
   const id=requestId(request)
   try{
-    const context=await requireMarketplaceApiContext();const body=await parseJsonObject(request);const doctrineKey=text(body.doctrineKey);const inputRows=rows(body.rows);const db=await createServiceClient();const existing=await existingCatalogKeys(db,inputRows)
-    const preview=validateProductImportRows({doctrineKey,rows:inputRows,existingKeys:existing})
-    return apiSuccess(preview,{requestId:id})
+    await requireMarketplaceApiContext('marketplace.catalog.view')
+    const body=await parseJsonObject(request),doctrineKey=text(body.doctrineKey),inputRows=rows(body.rows),importMode=mode(body.mode)
+    if(!inputRows.length)throw new Error('Aucune ligne à valider.')
+    if(inputRows.length>10000)throw new Error('Un import est limité à 10 000 lignes.')
+    const db=await createServiceClient(),preview=await hardenProductImportPreview({db,doctrineKey,inputRows,mode:importMode})
+    return apiSuccess({...preview,contract:product360ContractSummary(requireProductDoctrine(doctrineKey)),mode:importMode},{requestId:id})
   }catch(e){return apiFailure(e,id)}
 }
 
-// Compatibility endpoint: creates a resumable industrial job instead of blocking one request for every row.
+// Compatibility endpoint: creates a resumable industrial Product 360 job.
 export async function handleProductImportCommit(request:Request){return handleProductImportJobCreate(request)}
 
 export async function handleProductImportJobCreate(request:Request){
   const id=requestId(request)
   try{
-    const context=await requireMarketplaceApiContext();const body=await parseJsonObject(request);const doctrineKey=text(body.doctrineKey);const inputRows=rows(body.rows);const idempotencyKey=text(body.idempotencyKey)||`product-import:${crypto.randomUUID()}`;const db=await createServiceClient()
-    const existingJob=await db.from('angelcare_marketplace_bulk_operation_jobs').select('*').eq('idempotency_key',idempotencyKey).maybeSingle()
-    if(existingJob.error)throw existingJob.error
+    const context=await requireMarketplaceApiContext('marketplace.catalog.manage'),body=await parseJsonObject(request),doctrineKey=text(body.doctrineKey),inputRows=rows(body.rows),importMode=mode(body.mode),db=await createServiceClient()
+    if(!inputRows.length)throw new Error('Aucune ligne à importer.')
+    if(inputRows.length>10000)throw new Error('Un import est limité à 10 000 lignes.')
+    const fingerprint=productImportFingerprint(doctrineKey,importMode,inputRows),idempotencyKey=text(body.idempotencyKey)||`product360:${fingerprint}`
+    const existingJob=await db.from('angelcare_marketplace_bulk_operation_jobs').select('*').eq('idempotency_key',idempotencyKey).maybeSingle();if(existingJob.error)throw existingJob.error
     if(existingJob.data)return apiSuccess(await importJobSnapshot(db,String(existingJob.data.id)),{requestId:id})
-    const existing=await existingCatalogKeys(db,inputRows);const preview=validateProductImportRows({doctrineKey,rows:inputRows,existingKeys:existing})
-    const created=await db.from('angelcare_marketplace_bulk_operation_jobs').insert({operation_type:'product_doctrine_import',doctrine_key:doctrineKey,resource_type:'catalog-items',status:preview.valid?'queued':'completed',dry_run:preview,total_rows:inputRows.length,valid_rows:preview.valid,rejected_rows:preview.rejected,processed_rows:preview.rejected,failed_rows:0,progress_percent:inputRows.length?Number(((preview.rejected/inputRows.length)*100).toFixed(2)):100,idempotency_key:idempotencyKey,created_by:context.actor.id,metadata:{source:'doctrine-import-studio',resumable:true}}).select('*').single()
+    const preview=await hardenProductImportPreview({db,doctrineKey,inputRows,mode:importMode})
+    if(preview.rows.some(row=>row.valid&&text(row.normalized.status)==='published'))await requireMarketplaceApiContext('marketplace.catalog.publish')
+    else if(await rowsRequirePublishAuthority(db,preview.rows.filter(row=>row.valid).map(row=>({action:row.action,source_payload:inputRows[row.row-1]||{},normalized_payload:row.normalized}))))await requireMarketplaceApiContext('marketplace.catalog.publish')
+    const created=await db.from('angelcare_marketplace_bulk_operation_jobs').insert({operation_type:'product_360_import',doctrine_key:doctrineKey,resource_type:'catalog-items',status:preview.valid?'queued':'completed',dry_run:{doctrine:preview.doctrine.key,valid:preview.valid,rejected:preview.rejected,creates:preview.creates,updates:preview.updates,contract:product360ContractSummary(requireProductDoctrine(doctrineKey)),mode:importMode},total_rows:inputRows.length,valid_rows:preview.valid,rejected_rows:preview.rejected,processed_rows:preview.rejected,failed_rows:0,progress_percent:inputRows.length?Number(((preview.rejected/inputRows.length)*100).toFixed(2)):100,idempotency_key:idempotencyKey,created_by:context.actor.id,metadata:{source:'product-360-import-studio',resumable:true,contract_version:3,mode:importMode,fingerprint,source_name:text(body.sourceName)||null,source_sha256:text(body.sourceHash)||null,source_headers:Array.isArray(body.sourceHeaders)?body.sourceHeaders:[],mapping:object(body.mapping)}}).select('*').single()
     if(created.error||!created.data)throw created.error||new Error('Création du job impossible.')
     const jobId=String(created.data.id),publicReference=importReference(jobId)
-    const updateRef=await db.from('angelcare_marketplace_bulk_operation_jobs').update({public_reference:publicReference,updated_at:new Date().toISOString()}).eq('id',jobId)
-    if(updateRef.error)throw updateRef.error
-    const payloadRows=preview.rows.map((row,index)=>({job_id:jobId,row_number:row.row,source_payload:inputRows[index]||{},normalized_payload:row.normalized,action:row.action,status:row.valid?'pending':'rejected',errors:row.errors,warnings:row.warnings,attempts:0}))
-    for(let i=0;i<payloadRows.length;i+=400){const ins=await db.from('angelcare_marketplace_bulk_operation_rows').insert(payloadRows.slice(i,i+400));if(ins.error)throw ins.error}
-    return apiSuccess(await importJobSnapshot(db,jobId),{requestId:id})
+    try{
+      const updateRef=await db.from('angelcare_marketplace_bulk_operation_jobs').update({public_reference:publicReference,updated_at:new Date().toISOString()}).eq('id',jobId);if(updateRef.error)throw updateRef.error
+      const payloadRows=preview.rows.map((row,index)=>({job_id:jobId,row_number:row.row,source_payload:inputRows[index]||{},normalized_payload:row.normalized,action:row.action,status:row.valid?'pending':'rejected',errors:row.errors,warnings:row.warnings,attempts:0,result:{contract_version:3,fingerprint:createHash('sha256').update(JSON.stringify(row.normalized)).digest('hex')}}))
+      for(let i=0;i<payloadRows.length;i+=400){const ins=await db.from('angelcare_marketplace_bulk_operation_rows').insert(payloadRows.slice(i,i+400));if(ins.error)throw ins.error}
+      await writeMarketplaceAudit({context,requestId:id,request,action:'marketplace.catalog.product360_import.created',objectType:'bulk_operation_job',objectId:jobId,afterValue:{publicReference,doctrineKey,mode:importMode,total:inputRows.length,valid:preview.valid,rejected:preview.rejected,fingerprint},source:'product-360-import'})
+      return apiSuccess(await importJobSnapshot(db,jobId),{requestId:id})
+    }catch(error){
+      const cleanup=await db.from('angelcare_marketplace_bulk_operation_jobs').delete().eq('id',jobId)
+      if(cleanup.error){const original=error instanceof Error?error.message:String(error);throw new Error(`${original} | JOB_CLEANUP_FAILED: ${cleanup.error.message||String(cleanup.error)}`)}
+      throw error
+    }
   }catch(e){return apiFailure(e,id)}
 }
 
 export async function handleProductImportJob(request:Request,jobId:string){
   const id=requestId(request)
-  try{
-    await requireMarketplaceApiContext();const url=new URL(request.url);const db=await createServiceClient()
-    return apiSuccess(await importJobSnapshot(db,jobId,{page:Number(url.searchParams.get('page')||1),pageSize:Number(url.searchParams.get('pageSize')||100),failedOnly:url.searchParams.get('failedOnly')==='1'}),{requestId:id})
-  }catch(e){return apiFailure(e,id)}
+  try{await requireMarketplaceApiContext('marketplace.catalog.view');const url=new URL(request.url),db=await createServiceClient();return apiSuccess(await importJobSnapshot(db,jobId,{page:Number(url.searchParams.get('page')||1),pageSize:Number(url.searchParams.get('pageSize')||100),failedOnly:url.searchParams.get('failedOnly')==='1'}),{requestId:id})}catch(e){return apiFailure(e,id)}
 }
 
 export async function handleProductImportJobRun(request:Request,jobId:string){
   const id=requestId(request)
   try{
-    const context=await requireMarketplaceApiContext();const body=await parseJsonObject(request);const db=await createServiceClient();const batchSize=Math.max(1,Math.min(100,Number(body.batchSize||25)))
+    const context=await requireMarketplaceApiContext('marketplace.catalog.manage'),body=await parseJsonObject(request),db=await createServiceClient(),batchSize=Math.max(1,Math.min(100,Number(body.batchSize||25)))
     const jobResult=await db.from('angelcare_marketplace_bulk_operation_jobs').select('*').eq('id',jobId).maybeSingle();if(jobResult.error)throw jobResult.error;if(!jobResult.data)throw new Error('Job import introuvable.')
+    if(String(jobResult.data.status)==='rolled_back')throw new Error('Ce job a été rollbacké et ne peut plus être exécuté.')
     if(['completed','completed_with_errors'].includes(String(jobResult.data.status)))return apiSuccess(await importJobSnapshot(db,jobId),{requestId:id})
     const staleBefore=new Date(Date.now()-10*60*1000).toISOString();await db.from('angelcare_marketplace_bulk_operation_rows').update({status:'pending',updated_at:new Date().toISOString()}).eq('job_id',jobId).eq('status','processing').lt('updated_at',staleBefore)
     const pending=await db.from('angelcare_marketplace_bulk_operation_rows').select('*').eq('job_id',jobId).eq('status','pending').order('row_number').limit(batchSize);if(pending.error)throw pending.error
     const selected=pending.data||[]
     if(!selected.length){await refreshImportJob(db,jobId);return apiSuccess(await importJobSnapshot(db,jobId),{requestId:id})}
-    const ids=selected.map((r:any)=>r.id)
-    const claimed=await db.from('angelcare_marketplace_bulk_operation_rows').update({status:'processing',updated_at:new Date().toISOString()}).in('id',ids).eq('status','pending');if(claimed.error)throw claimed.error
+    if(await rowsRequirePublishAuthority(db,selected))await requireMarketplaceApiContext('marketplace.catalog.publish')
+    const ids=selected.map((r:any)=>r.id),claimAt=new Date().toISOString(),claimed=await db.from('angelcare_marketplace_bulk_operation_rows').update({status:'processing',updated_at:claimAt}).in('id',ids).eq('status','pending').select('*');if(claimed.error)throw claimed.error
+    const claimedRows=claimed.data||[]
+    if(!claimedRows.length){await refreshImportJob(db,jobId);return apiSuccess(await importJobSnapshot(db,jobId),{requestId:id})}
     await db.from('angelcare_marketplace_bulk_operation_jobs').update({status:'running',started_at:jobResult.data.started_at||new Date().toISOString(),updated_at:new Date().toISOString()}).eq('id',jobId)
-    for(const row of selected){
+    for(const row of claimedRows){
+      let applied:Awaited<ReturnType<typeof applyProduct360ImportRow>>|null=null
       try{
-        const result=await processProductImportRow({db,context,doctrineKey:String(jobResult.data.doctrine_key||''),row})
-        const up=await db.from('angelcare_marketplace_bulk_operation_rows').update({status:'completed',object_type:'catalog_item',object_id:result.id||null,result,attempts:Number(row.attempts||0)+1,processed_at:new Date().toISOString(),updated_at:new Date().toISOString()}).eq('id',row.id);if(up.error)throw up.error
+        applied=await applyProduct360ImportRow({db,context,doctrineKey:String(jobResult.data.doctrine_key||''),source:row.source_payload||{},normalized:row.normalized_payload||{},action:row.action,importJobId:jobId,requestId:id})
+        const evidence={item_id:applied.itemId,requested_status:applied.requestedStatus,readiness:applied.readiness,before_snapshot:applied.beforeSnapshot,after_snapshot:applied.afterSnapshot,verified_at:new Date().toISOString()}
+        const up=await db.from('angelcare_marketplace_bulk_operation_rows').update({status:'completed',object_type:'catalog_item',object_id:applied.itemId,result:{...object(row.result),...evidence},errors:[],attempts:Number(row.attempts||0)+1,processed_at:new Date().toISOString(),updated_at:new Date().toISOString()}).eq('id',row.id);if(up.error)throw up.error
+        await writeMarketplaceAudit({context,requestId:id,request,action:`marketplace.catalog.product360_import.${row.action}`,objectType:'catalog_item',objectId:applied.itemId,beforeValue:applied.beforeSnapshot,afterValue:{snapshot:applied.afterSnapshot,readiness:applied.readiness,job_id:jobId,row_number:row.row_number},source:'product-360-import'})
       }catch(error){
-        const message=error instanceof Error?error.message:String(error)
-        await db.from('angelcare_marketplace_bulk_operation_rows').update({status:'failed',errors:[...((Array.isArray(row.errors)?row.errors:[])),message],attempts:Number(row.attempts||0)+1,processed_at:new Date().toISOString(),updated_at:new Date().toISOString()}).eq('id',row.id)
+        let recoveryFailure=''
+        if(applied){try{await restoreProduct360Snapshot({db,snapshot:applied.beforeSnapshot,itemId:applied.itemId,context})}catch(recovery){recoveryFailure=recovery instanceof Error?recovery.message:String(recovery)}}
+        const base=error instanceof Error?error.message:String(error),message=recoveryFailure?`${base} | RECOVERY_FAILED: ${recoveryFailure}`:base
+        await db.from('angelcare_marketplace_bulk_operation_rows').update({status:'failed',object_id:null,errors:[...((Array.isArray(row.errors)?row.errors:[])),message],attempts:Number(row.attempts||0)+1,processed_at:new Date().toISOString(),updated_at:new Date().toISOString(),result:{...object(row.result),last_failure:message,failed_at:new Date().toISOString(),mutation_compensated:Boolean(applied&&!recoveryFailure)}}).eq('id',row.id)
       }
     }
     await refreshImportJob(db,jobId)
@@ -163,14 +202,12 @@ export async function handleProductImportJobRun(request:Request,jobId:string){
 export async function handleProductImportJobResult(request:Request,jobId:string){
   const id=requestId(request)
   try{
-    await requireMarketplaceApiContext();const db=await createServiceClient()
+    await requireMarketplaceApiContext('marketplace.catalog.export');const db=await createServiceClient()
     const jobResult=await db.from('angelcare_marketplace_bulk_operation_jobs').select('*').eq('id',jobId).maybeSingle();if(jobResult.error)throw jobResult.error;if(!jobResult.data)throw new Error('Job import introuvable.')
-    const result=await db.from('angelcare_marketplace_bulk_operation_rows').select('row_number,status,action,object_id,normalized_payload,errors,warnings,attempts,processed_at').eq('job_id',jobId).order('row_number');if(result.error)throw result.error
-    const quote=(v:unknown)=>`"${String(v??'').replaceAll('"','""')}"`
-    const headers=['row_number','status','action','item_key','object_id','attempts','errors','warnings','processed_at']
-    const lines=[headers.join(','),...(result.data||[]).map((row:any)=>[row.row_number,row.status,row.action,row.normalized_payload?.item_key,row.object_id,row.attempts,(row.errors||[]).join(' | '),(row.warnings||[]).join(' | '),row.processed_at].map(quote).join(','))]
-    const name=`${String(jobResult.data.public_reference||'ANGELCARE_IMPORT')}_RESULT.csv`
-    await db.from('angelcare_marketplace_bulk_operation_jobs').update({result_file_name:name,updated_at:new Date().toISOString()}).eq('id',jobId)
+    const result=await db.from('angelcare_marketplace_bulk_operation_rows').select('row_number,status,action,object_id,normalized_payload,result,errors,warnings,attempts,processed_at').eq('job_id',jobId).order('row_number');if(result.error)throw result.error
+    const quote=(v:unknown)=>`"${String(v??'').replaceAll('"','""')}"`,headers=['row_number','status','action','item_key','object_id','requested_status','readiness','attempts','errors','warnings','processed_at']
+    const lines=[headers.join(','),...(result.data||[]).map((row:any)=>[row.row_number,row.status,row.action,row.normalized_payload?.item_key,row.object_id,row.result?.requested_status,row.result?.readiness?.ready===true?'READY':row.result?.readiness?.reasons?.join('|')||'',row.attempts,(row.errors||[]).join(' | '),(row.warnings||[]).join(' | '),row.processed_at].map(quote).join(','))]
+    const name=`${String(jobResult.data.public_reference||'ANGELCARE_IMPORT')}_RESULT.csv`;await db.from('angelcare_marketplace_bulk_operation_jobs').update({result_file_name:name,updated_at:new Date().toISOString()}).eq('id',jobId)
     return new Response(lines.join('\n'),{status:200,headers:{'content-type':'text/csv; charset=utf-8','content-disposition':`attachment; filename="${name}"`,'x-request-id':id}})
   }catch(e){return apiFailure(e,id)}
 }
@@ -178,11 +215,33 @@ export async function handleProductImportJobResult(request:Request,jobId:string)
 export async function handleProductImportJobRetry(request:Request,jobId:string){
   const id=requestId(request)
   try{
-    await requireMarketplaceApiContext();const db=await createServiceClient()
+    const context=await requireMarketplaceApiContext('marketplace.catalog.manage'),db=await createServiceClient()
+    const jobCheck=await db.from('angelcare_marketplace_bulk_operation_jobs').select('*').eq('id',jobId).maybeSingle();if(jobCheck.error)throw jobCheck.error;if(!jobCheck.data)throw new Error('Job import introuvable.');if(String(jobCheck.data.status)==='rolled_back')throw new Error('Un job rollbacké ne peut pas être repris.')
     const reset=await db.from('angelcare_marketplace_bulk_operation_rows').update({status:'pending',processed_at:null,updated_at:new Date().toISOString()}).eq('job_id',jobId).eq('status','failed');if(reset.error)throw reset.error
     const job=await db.from('angelcare_marketplace_bulk_operation_jobs').update({status:'queued',failed_rows:0,last_error:null,completed_at:null,updated_at:new Date().toISOString()}).eq('id',jobId);if(job.error)throw job.error
-    await refreshImportJob(db,jobId)
+    await refreshImportJob(db,jobId);await writeMarketplaceAudit({context,requestId:id,request,action:'marketplace.catalog.product360_import.retry',objectType:'bulk_operation_job',objectId:jobId,source:'product-360-import'})
     return apiSuccess(await importJobSnapshot(db,jobId,{failedOnly:false}),{requestId:id})
+  }catch(e){return apiFailure(e,id)}
+}
+
+export async function handleProductImportJobRollback(request:Request,jobId:string){
+  const id=requestId(request)
+  try{
+    const context=await requireMarketplaceApiContext('marketplace.catalog.manage'),db=await createServiceClient()
+    const jobResult=await db.from('angelcare_marketplace_bulk_operation_jobs').select('*').eq('id',jobId).maybeSingle();if(jobResult.error)throw jobResult.error;if(!jobResult.data)throw new Error('Job import introuvable.')
+    if(String(jobResult.data.status)==='rolled_back')return apiSuccess(await importJobSnapshot(db,jobId),{requestId:id})
+    if(!['completed','completed_with_errors'].includes(String(jobResult.data.status)))throw new Error('Le rollback est disponible uniquement après une exécution terminée.')
+    const rowResult=await db.from('angelcare_marketplace_bulk_operation_rows').select('*').eq('job_id',jobId).eq('status','completed').order('row_number',{ascending:false});if(rowResult.error)throw rowResult.error
+    if((rowResult.data||[]).some((row:any)=>text(row.result?.before_snapshot?.status)==='published'))await requireMarketplaceApiContext('marketplace.catalog.publish')
+    const failures:string[]=[]
+    for(const row of rowResult.data||[]){
+      const itemId=text(row.object_id),before=object(row.result?.before_snapshot)
+      try{if(itemId)await restoreProduct360Snapshot({db,snapshot:Object.keys(before).length?before:null,itemId,context});await db.from('angelcare_marketplace_bulk_operation_rows').update({status:'skipped',result:{...object(row.result),rolled_back:true,rolled_back_at:new Date().toISOString()},updated_at:new Date().toISOString()}).eq('id',row.id)}catch(error){failures.push(`Ligne ${row.row_number}: ${error instanceof Error?error.message:String(error)}`)}
+    }
+    if(failures.length)throw new Error(`Rollback incomplet : ${failures.join(' | ')}`)
+    const update=await db.from('angelcare_marketplace_bulk_operation_jobs').update({status:'rolled_back',completed_at:new Date().toISOString(),updated_at:new Date().toISOString(),result:{...object(jobResult.data.result),rolled_back:true,rolled_back_at:new Date().toISOString()}}).eq('id',jobId);if(update.error)throw update.error
+    await writeMarketplaceAudit({context,requestId:id,request,action:'marketplace.catalog.product360_import.rollback',objectType:'bulk_operation_job',objectId:jobId,afterValue:{rows:(rowResult.data||[]).length},severity:'warning',source:'product-360-import'})
+    return apiSuccess(await importJobSnapshot(db,jobId),{requestId:id})
   }catch(e){return apiFailure(e,id)}
 }
 

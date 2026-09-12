@@ -17,6 +17,7 @@ import type {
 } from './types'
 import { affectedCommercePaths, refreshCommerceSurfaces } from './publication'
 import { assertInternalOrHttpUrl, safeArray, safeBoolean, safeJson, safeNumber, slugify } from './validation'
+import { evaluateProduct360Readiness, loadProduct360Snapshot } from '../enterprise-command/product-360-import-engine'
 
 type Row = Record<string, unknown>
 type DbError = { code?: string; message?: string; details?: string } | null
@@ -482,6 +483,9 @@ export async function createCommerceResource(input: {
 }): Promise<CommerceMutationResult> {
   const db = await createServiceClient()
   const payload = normalizedPayload(input.resource, input.payload, input.context)
+  if (input.resource === 'catalog-items' && text(payload.status) === 'published') {
+    throw new MarketplaceError('INVALID_STATE_TRANSITION', 'La création directe en statut publié est interdite. Créez le produit en brouillon puis utilisez la publication gouvernée Product 360.')
+  }
   if (input.resource === 'media-folders') {
     const slug = text(payload.slug)
     const parentId = nullableText(payload.parent_id)
@@ -566,6 +570,11 @@ export async function updateCommerceResource(input: {
     { ...(current as Row), ...input.payload },
     input.context,
   )
+  if (input.resource === 'catalog-items' && text(payload.status) === 'published') {
+    const snapshot = await loadProduct360Snapshot(input.id, db)
+    const readiness = evaluateProduct360Readiness({ ...snapshot, ...payload }, text(payload.sellable_type) || text(payload.kind))
+    if (!readiness.ready) throw new MarketplaceError('INVALID_STATE_TRANSITION', `Publication refusée par Product 360 readiness : ${readiness.reasons.join(', ')}.`)
+  }
   if (input.resource === 'media') await assertActiveMediaFolder(nullableText(payload.folder_id))
   if (input.resource === 'navigation-items') await assertNoHierarchyCycle(input.resource, input.id, nullableText(payload.parent_id))
   if (input.resource === 'catalog-categories') await assertNoHierarchyCycle(input.resource, input.id, nullableText(payload.parent_category_id))
@@ -631,6 +640,16 @@ export async function commerceResourceAction(input: {
     if (!ids.length) throw new MarketplaceError('VALIDATION_ERROR', 'Sélection vide pour l’action groupée.')
     const targetStatus = input.action === 'archive' ? ARCHIVE_STATUS[input.resource] || 'archived' : statusForAction(input.resource, input.action)
     if (!targetStatus) throw new MarketplaceError('VALIDATION_ERROR', 'Action groupée inconnue.')
+    if (input.resource === 'catalog-items' && input.action === 'publish') {
+      const blocked:string[]=[]
+      for (const id of ids) {
+        const snapshot=await loadProduct360Snapshot(id,db)
+        if(!Object.keys(snapshot).length){blocked.push(`${id}:NOT_FOUND`);continue}
+        const readiness=evaluateProduct360Readiness(snapshot,text(snapshot.sellable_type)||text(snapshot.kind))
+        if(!readiness.ready)blocked.push(`${text(snapshot.item_key)||id}:${readiness.reasons.join('+')}`)
+      }
+      if(blocked.length)throw new MarketplaceError('INVALID_STATE_TRANSITION',`Publication groupée refusée par Product 360 readiness : ${blocked.join(' | ')}`)
+    }
     const { data, error } = await db.from(TABLES[input.resource]).update({
       status: targetStatus,
       updated_at: new Date().toISOString(),

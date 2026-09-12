@@ -8,6 +8,7 @@ import {
   CATEGORY_NATIVE_SCHEMA_BLUEPRINTS,
   blueprintForSchema,
 } from './registry'
+import { evaluateProduct360Readiness, loadProduct360Snapshot, restoreProduct360Snapshot } from '../enterprise-command/product-360-import-engine'
 import type {
   CategoryNativeImportJob,
   CategoryNativeImportRow,
@@ -594,18 +595,15 @@ function canonicalCatalogPayload(
     attributes, ...product360,
     experience_schema_key: schema.schema_key, experience_schema_version: schema.version,
     experience_configuration: normalized,
-    status: ['published','paused','archived'].includes(status) ? status : 'draft',
+    status: status === 'published' ? 'draft' : (['paused','archived'].includes(status) ? status : 'draft'),
     updated_by: actorId, updated_at: new Date().toISOString(),
   }
 }
 
 async function fullCatalogSnapshot(itemId: string): Promise<Row> {
-  const db = await createServiceClient()
-  const { data, error } = await db.from('angelcare_marketplace_catalog_items').select(
-    '*,variants:angelcare_marketplace_catalog_variants(*),media:angelcare_marketplace_catalog_item_media(*),availability:angelcare_marketplace_catalog_availability(*),categories:angelcare_marketplace_catalog_item_categories(*)',
-  ).eq('id', itemId).maybeSingle()
-  if (error) throw dbFailure('capturer le produit avant import', error)
-  return data ? data as Row : {}
+  // Category-Native is a schema adapter; rollback evidence must use the exact same
+  // canonical Product 360 snapshot as the main industrial importer.
+  return loadProduct360Snapshot(itemId)
 }
 
 function cartesianVariantRows(schema: ExperienceSchemaRecord, normalized: Row): Array<{ key: string; label: string; options: Row }> {
@@ -734,6 +732,8 @@ export async function executeImportJob(jobId: string, context: MarketplaceReques
   let failed = 0
   for (const row of job.rows || []) {
     if (row.status !== 'valid' && row.status !== 'failed') continue
+    let beforeForRecovery:Row|null=null
+    let itemIdForRecovery=''
     try {
       const normalized = row.normalized_payload
       const identityField = text(schema.configuration.identity_field)
@@ -743,17 +743,27 @@ export async function executeImportJob(jobId: string, context: MarketplaceReques
       if (job.mode === 'create' && existing) throw new MarketplaceError('CONFLICT', `L’objet ${identity} existe déjà.`)
       if (job.mode === 'update' && !existing) throw new MarketplaceError('NOT_FOUND', `L’objet ${identity} n’existe pas pour mise à jour.`)
       const before = existing ? await fullCatalogSnapshot(text((existing as Row).id)) : null
+      beforeForRecovery=before
       const payload = canonicalCatalogPayload(schema, normalized, context.actor.id, job.id, before)
       const { data: catalogItem, error: upsertError } = await db.from('angelcare_marketplace_catalog_items').upsert({
         ...payload, ...(existing ? {} : { created_by: context.actor.id }),
       }, { onConflict: 'item_key' }).select('*').single()
       if (upsertError || !catalogItem) throw dbFailure('importer l’objet commercial', upsertError)
       const itemId = text((catalogItem as Row).id)
+      itemIdForRecovery=itemId
       await applyMediaReferences(itemId, normalized, context.actor.id)
       await applyCategories(itemId, normalized)
       await applyVariants(itemId, schema, normalized, context.actor.id)
       await applyAvailability(itemId, schema, normalized, context.actor.id)
       await applyMerchandising(itemId, normalized, context.actor.id)
+      const requestedStatus=categoryNativeText(normalized.status||'draft')
+      if(requestedStatus==='published'){
+        const snapshot=await loadProduct360Snapshot(itemId,db)
+        const readiness=evaluateProduct360Readiness(snapshot,categoryNativeText(schema.configuration.sellable_type||schema.archetype_key))
+        if(!readiness.ready)throw new MarketplaceError('INVALID_STATE_TRANSITION',`Publication refusée par Product 360 readiness : ${readiness.reasons.join(', ')}.`)
+        const published=await db.from('angelcare_marketplace_catalog_items').update({status:'published',publish_at:new Date().toISOString(),updated_by:context.actor.id,updated_at:new Date().toISOString()}).eq('id',itemId)
+        if(published.error)throw dbFailure('publier le produit importé',published.error)
+      }
       await db.from(IMPORT_ROW_TABLE).update({
         before_snapshot: before, target_item_id: itemId, status: existing ? 'updated' : 'imported',
         errors: [], updated_at: new Date().toISOString(),
@@ -762,8 +772,11 @@ export async function executeImportJob(jobId: string, context: MarketplaceReques
       else imported += 1
     } catch (error) {
       failed += 1
+      let recoveryError=''
+      if(itemIdForRecovery){try{await restoreProduct360Snapshot({db,snapshot:beforeForRecovery,itemId:itemIdForRecovery,context})}catch(recovery){recoveryError=recovery instanceof Error?recovery.message:String(recovery)}}
+      const message=error instanceof Error?error.message:'Erreur inconnue'
       await db.from(IMPORT_ROW_TABLE).update({
-        status: 'failed', errors: [error instanceof Error ? error.message : 'Erreur inconnue'], updated_at: new Date().toISOString(),
+        status: 'failed', errors: [recoveryError?`${message} | RECOVERY_FAILED: ${recoveryError}`:message], updated_at: new Date().toISOString(),
       }).eq('id', row.id)
     }
   }
@@ -789,34 +802,14 @@ export async function rollbackImportJob(jobId: string, context: MarketplaceReque
   const db = await createServiceClient()
   for (const row of job.rows || []) {
     if (!row.target_item_id || !['imported','updated','failed'].includes(row.status)) continue
-    if (row.before_snapshot && Object.keys(row.before_snapshot).length) {
-      const before = { ...row.before_snapshot }
-      const variants = rows(before.variants)
-      const media = rows(before.media)
-      const availability = rows(before.availability)
-      const categories = rows(before.categories)
-      delete before.variants; delete before.media; delete before.availability; delete before.categories
-      delete before.created_at; delete before.updated_at
-      const itemId = row.target_item_id
-      const { error } = await db.from('angelcare_marketplace_catalog_items').update({
-        ...before, updated_by: context.actor.id, updated_at: new Date().toISOString(),
-      }).eq('id', itemId)
-      if (error) throw dbFailure('restaurer le produit', error)
-      await db.from('angelcare_marketplace_catalog_variants').delete().eq('catalog_item_id', itemId)
-      await db.from('angelcare_marketplace_catalog_item_media').delete().eq('catalog_item_id', itemId)
-      await db.from('angelcare_marketplace_catalog_availability').delete().eq('catalog_item_id', itemId)
-      await db.from('angelcare_marketplace_catalog_item_categories').delete().eq('catalog_item_id', itemId)
-      if (variants.length) await db.from('angelcare_marketplace_catalog_variants').insert(variants.map((entry) => ({ ...entry, catalog_item_id: itemId })))
-      if (media.length) await db.from('angelcare_marketplace_catalog_item_media').insert(media.map((entry) => ({ ...entry, catalog_item_id: itemId })))
-      if (availability.length) await db.from('angelcare_marketplace_catalog_availability').insert(availability.map((entry) => ({ ...entry, catalog_item_id: itemId })))
-      if (categories.length) await db.from('angelcare_marketplace_catalog_item_categories').insert(categories.map((entry) => ({ ...entry, catalog_item_id: itemId })))
-    } else {
-      const { error } = await db.from('angelcare_marketplace_catalog_items').update({
-        status: 'archived', updated_by: context.actor.id, updated_at: new Date().toISOString(),
-      }).eq('id', row.target_item_id)
-      if (error) throw dbFailure('archiver l’objet créé par import', error)
-    }
-    await db.from(IMPORT_ROW_TABLE).update({ status: 'rolled_back', updated_at: new Date().toISOString() }).eq('id', row.id)
+    await restoreProduct360Snapshot({
+      db,
+      snapshot: row.before_snapshot && Object.keys(row.before_snapshot).length ? row.before_snapshot : null,
+      itemId: row.target_item_id,
+      context,
+    })
+    const { error: rowError } = await db.from(IMPORT_ROW_TABLE).update({ status: 'rolled_back', updated_at: new Date().toISOString() }).eq('id', row.id)
+    if (rowError) throw dbFailure('marquer la ligne restaurée', rowError)
   }
   const { error } = await db.from(IMPORT_JOB_TABLE).update({
     status: 'rolled_back', rolled_back_at: new Date().toISOString(), rollback_actor_id: context.actor.id,

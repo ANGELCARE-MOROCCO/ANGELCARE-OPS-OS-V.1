@@ -139,6 +139,9 @@ export type ProductDoctrineKey =
   | 'audit'
   | 'bundle'
   | 'quote_only_solution'
+  | 'digital_product'
+  | 'admission_programme'
+  | 'certification_pathway'
 
 export type ProductDoctrineField = {
   key: string

@@ -1,4 +1,4 @@
-import type { ProductDoctrineDefinition, ProductDoctrineKey, ProductImportPreview, ProductImportPreviewRow } from './types'
+import type { ProductDoctrineDefinition, ProductDoctrineKey } from './types'
 
 const baseColumns = [
   'item_key', 'slug', 'name_fr', 'short_description_fr', 'description_fr', 'price_mode', 'price_amount',
@@ -116,65 +116,56 @@ export const PRODUCT_DOCTRINES: Record<ProductDoctrineKey, ProductDoctrineDefini
   bundle: doctrine('bundle', 'Bundle', 'Composition de produits/services, prix bundle et règles.', 'kit', 'fixed', [
     field('bundle_items', 'Éléments', true, 'commercial', 'json'), field('bundle_rule', 'Règle', true, 'commercial'), field('fulfillment_strategy', 'Fulfillment', true, 'fulfillment'),
   ], ['bundle_items', 'bundle_rule', 'fulfillment_strategy']),
+
+  digital_product: doctrine('digital_product', 'Produit digital', 'Ressource numérique, licence, formats, preview et délivrance digitale.', 'product', 'fixed', [
+    field('resource_type', 'Type de ressource', true, 'commercial'),
+    field('file_formats', 'Formats de fichier', true, 'operations', 'json'),
+    field('license_type', 'Type de licence', true, 'commercial'),
+    field('digital_preview_reference', 'Référence preview digital', true, 'trust'),
+  ], ['resource_type', 'file_formats', 'license_type', 'digital_preview_reference']),
+  admission_programme: doctrine('admission_programme', 'Programme admission', 'Admission établissement avec campus, année, intake, niveau, capacité, frais et documents requis.', 'training', 'quote_only', [
+    field('establishment_code', 'Code établissement', true, 'identity'),
+    field('campus_code', 'Code campus', true, 'identity'),
+    field('academic_year', 'Année académique', true, 'commercial'),
+    field('intake_period', 'Période d’admission', true, 'commercial'),
+    field('class_level', 'Niveau / classe', true, 'commercial'),
+    field('age_min', 'Âge minimum', true, 'commercial', 'number'),
+    field('age_max', 'Âge maximum', true, 'commercial', 'number'),
+    field('capacity', 'Capacité', true, 'availability', 'number'),
+    field('tuition_display', 'Affichage frais', true, 'commercial'),
+    field('required_documents', 'Documents requis', true, 'operations', 'json'),
+  ], ['establishment_code','campus_code','academic_year','intake_period','class_level','age_min','age_max','capacity','tuition_display','required_documents']),
+  certification_pathway: doctrine('certification_pathway', 'Parcours certifiant', 'Parcours de certification avec cours composants, séquence, évaluation, retake et assiduité.', 'training', 'fixed', [
+    field('component_course_keys', 'Cours composants', true, 'operations', 'json'),
+    field('required_sequence', 'Séquence requise', true, 'operations', 'json'),
+    field('assessment_requirements', 'Exigences d’évaluation', true, 'trust', 'json'),
+    field('retake_policy', 'Politique de rattrapage', true, 'trust'),
+    field('attendance_threshold', 'Seuil d’assiduité', true, 'trust', 'number'),
+  ], ['component_course_keys','required_sequence','assessment_requirements','retake_policy','attendance_threshold']),
   quote_only_solution: doctrine('quote_only_solution', 'Solution sur devis', 'Solution configurée et qualifiée avant prix final.', 'service', 'quote_only', [
     field('qualification_questions', 'Questions qualification', true, 'commercial', 'json'), field('scope', 'Scope', true, 'commercial'), field('deliverables', 'Livrables', true, 'fulfillment', 'json'),
   ], ['qualification_questions', 'scope', 'deliverables']),
 }
 
+export function findProductDoctrine(key: string): ProductDoctrineDefinition | null {
+  return PRODUCT_DOCTRINES[key as ProductDoctrineKey] || null
+}
+
+/**
+ * Strict doctrine resolver for mutation/import paths. Unknown doctrine keys must
+ * fail closed; silently borrowing another doctrine would make readiness and
+ * persistence disagree with the operator's source file.
+ */
+export function requireProductDoctrine(key: string): ProductDoctrineDefinition {
+  const definition = findProductDoctrine(key)
+  if (!definition) throw new Error(`Doctrine Product 360 inconnue : ${key || '(vide)'}.`)
+  return definition
+}
+
+/**
+ * Legacy/read-only resolver kept for existing callers that historically expect
+ * a fallback. New mutation/readiness code must use find/requireProductDoctrine.
+ */
 export function productDoctrine(key: string): ProductDoctrineDefinition {
-  return PRODUCT_DOCTRINES[key as ProductDoctrineKey] || PRODUCT_DOCTRINES.one_time_service
-}
-
-function text(value: unknown): string { return String(value ?? '').trim() }
-function parseJson(value: unknown): unknown {
-  if (typeof value !== 'string') return value
-  const source = value.trim()
-  if (!source || (!source.startsWith('{') && !source.startsWith('['))) return value
-  try { return JSON.parse(source) } catch { return value }
-}
-
-export function normalizeProductImportRow(raw: Record<string, unknown>, definition: ProductDoctrineDefinition): Record<string, unknown> {
-  const normalized: Record<string, unknown> = {}
-  for (const [key, value] of Object.entries(raw)) normalized[key.trim()] = parseJson(value)
-  normalized.sellable_type = definition.key
-  normalized.kind = definition.catalogKind
-  normalized.price_mode = text(normalized.price_mode) || definition.defaultPriceMode
-  normalized.currency_label = text(normalized.currency_label) || 'Dh'
-  normalized.availability_status = text(normalized.availability_status) || definition.defaultAvailability
-  normalized.status = text(normalized.status) || 'draft'
-  normalized.name_fr = text(normalized.name_fr)
-  normalized.item_key = text(normalized.item_key)
-  normalized.slug = text(normalized.slug)
-  if (normalized.price_amount !== '' && normalized.price_amount != null) normalized.price_amount = Number(normalized.price_amount)
-  return normalized
-}
-
-export function validateProductImportRows(input: {
-  doctrineKey: string
-  rows: Record<string, unknown>[]
-  existingKeys?: Set<string>
-}): ProductImportPreview {
-  const definition = productDoctrine(input.doctrineKey)
-  const existingKeys = input.existingKeys || new Set<string>()
-  const rows: ProductImportPreviewRow[] = input.rows.map((raw, index) => {
-    const normalized = normalizeProductImportRow(raw, definition)
-    const errors: string[] = []
-    const warnings: string[] = []
-    for (const required of definition.requiredColumns) if (!text(normalized[required])) errors.push(`${required} est requis.`)
-    for (const doctrineField of definition.fields.filter((entry) => entry.required)) if (!text(normalized[doctrineField.key])) errors.push(`${doctrineField.label} est requis par la doctrine ${definition.label}.`)
-    if (normalized.price_amount != null && normalized.price_amount !== '' && (!Number.isFinite(Number(normalized.price_amount)) || Number(normalized.price_amount) < 0)) errors.push('price_amount doit être un montant positif ou nul.')
-    if (!text(normalized.short_description_fr)) warnings.push('Description courte FR absente.')
-    if (!text(normalized.description_fr)) warnings.push('Description complète FR absente.')
-    if (!text(normalized.category_keys)) warnings.push('Aucune catégorie fournie : le produit restera hors storefront jusqu’à assignation.')
-    const key = text(normalized.item_key)
-    return { row: index + 1, valid: errors.length === 0, action: errors.length ? 'reject' : existingKeys.has(key) ? 'update' : 'create', key, name: text(normalized.name_fr) || `Ligne ${index + 1}`, errors, warnings, normalized }
-  })
-  return {
-    doctrine: definition,
-    rows,
-    valid: rows.filter((row) => row.valid).length,
-    rejected: rows.filter((row) => !row.valid).length,
-    creates: rows.filter((row) => row.valid && row.action === 'create').length,
-    updates: rows.filter((row) => row.valid && row.action === 'update').length,
-  }
+  return findProductDoctrine(key) || PRODUCT_DOCTRINES.one_time_service
 }
