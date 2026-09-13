@@ -2,6 +2,7 @@ import { createServiceClient } from '@/lib/supabase/server'
 import type { MarketplaceRequestContext } from '../domain/types'
 import { commerceStudioData } from '../commerce-studio/repository'
 import { PRODUCT_DOCTRINES } from '../enterprise-command/product-doctrine'
+import { evaluateProduct360ReadinessRecord } from '../enterprise-command/product-360-readiness'
 import type { ProductDoctrineKey } from '../enterprise-command/types'
 import type { AtelierProduct, CategoryStat, CommerceAttention, CommerceProductAtelierSnapshot, TerritoryAvailabilityStat } from './types'
 
@@ -39,20 +40,13 @@ export async function commerceProductAtelierSnapshot(context:MarketplaceRequestC
     const categoryIds=arr(item.categories).map(row=>text(row.category_id)).filter(Boolean)
     const availability=arr(item.availability)
     const availableTerritories=new Set(availability.filter(row=>Boolean(row.available)).map(row=>text(row.territory_id)).filter(Boolean)).size
-    const missingMedia=Boolean((item as any).missing_media)||arr(item.media).filter(row=>text(row.status)!=='archived').length===0
-    const missingPrice=Boolean((item as any).missing_price)||item.price_mode!=='quote_only'&&(item.price_amount==null)&&arr(item.priceRules).filter(row=>text(row.status)==='active').length===0
-    const missingCategory=Boolean((item as any).missing_category)||categoryIds.length===0
+    const canonicalReadiness=evaluateProduct360ReadinessRecord(item,text(item.sellable_type||item.kind))
+    const missingMedia=!canonicalReadiness.checks.media
+    const missingPrice=!canonicalReadiness.checks.pricing
+    const missingCategory=!canonicalReadiness.checks.category
     const missingTranslation=Boolean((item as any).missing_translation)
     const providerCoverage=qualificationsByService.get(item.item_key)?.size||0
-    const readinessReasons:string[]=[]
-    if(!item.name_fr||!item.description_fr) readinessReasons.push('CONTENT_MISSING')
-    if(!item.seo_metadata?.title_fr&&item.name_fr) readinessReasons.push('SEO_MISSING')
-    if(missingPrice) readinessReasons.push('PRICING_MISSING')
-    if(missingCategory) readinessReasons.push('CATEGORY_MISSING')
-    if(missingMedia) readinessReasons.push('MEDIA_MISSING')
-    if(!availability.length&&item.availability_status!=='available') readinessReasons.push('AVAILABILITY_MISSING')
-    if(!Object.keys(item.fulfillment_config||{}).length) readinessReasons.push('FULFILLMENT_MISSING')
-    if(!Object.keys(item.trust_config||{}).length) readinessReasons.push('TRUST_MISSING')
+    const readinessReasons=[...canonicalReadiness.reasons]
     const reasons:string[]=[]
     if(item.status==='published'&&missingMedia)reasons.push('Média actif manquant')
     if(item.status==='published'&&missingCategory)reasons.push('Catégorie storefront manquante')

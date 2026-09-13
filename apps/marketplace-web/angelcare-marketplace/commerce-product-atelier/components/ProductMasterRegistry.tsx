@@ -1,6 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { Filter, PackagePlus, Search, X } from 'lucide-react'
 import type { CommerceProductAtelierSnapshot, ProductDrawerTab } from '../types'
 import styles from '../commerce-product-atelier.module.css'
@@ -12,13 +13,16 @@ type BulkAction = 'publish' | 'unpublish' | 'archive' | 'purge'
 type Result = { itemKey: string; id: string; previousState: string; newState: string; result: 'success' | 'blocked' | 'failed'; error?: string }
 type MediaRow = { itemKey: string; mediaReference: string; role: 'primary' | 'gallery' }
 const labels: Record<string, string> = {
-  CONTENT_MISSING: 'Contenu manquant', PRICING_MISSING: 'Pricing manquant',
-  CATEGORY_MISSING: 'Catégorie manquante', MEDIA_MISSING: 'Média manquant',
-  AVAILABILITY_MISSING: 'Disponibilité manquante', FULFILLMENT_MISSING: 'Fulfillment manquant',
-  TRUST_MISSING: 'Trust manquant', SEO_MISSING: 'SEO manquant',
+  DOCTRINE_UNKNOWN: 'Doctrine inconnue', IDENTITY_MISSING: 'Identité manquante',
+  CONTENT_MISSING: 'Contenu manquant', DOCTRINE_MISSING: 'Doctrine incomplète',
+  PRICING_MISSING: 'Pricing manquant', CATEGORY_MISSING: 'Catégorie manquante',
+  MEDIA_MISSING: 'Média principal manquant', AVAILABILITY_MISSING: 'Disponibilité manquante',
+  SEO_MISSING: 'SEO manquant', FULFILLMENT_MISSING: 'Fulfillment manquant',
+  TRUST_MISSING: 'Trust manquant',
 }
 
 export function ProductMasterRegistry({ snapshot, openCreate = false }: { snapshot: CommerceProductAtelierSnapshot; openCreate?: boolean }) {
+  const router = useRouter()
   const [query, setQuery] = useState(''), [health, setHealth] = useState('all')
   const [doctrine, setDoctrine] = useState('all'), [status, setStatus] = useState('all'), [readiness, setReadiness] = useState('all')
   const [selectedIds, setSelectedIds] = useState<string[]>([]), [drawer, setDrawer] = useState<{ id: string; tab: ProductDrawerTab } | null>(null)
@@ -56,7 +60,7 @@ export function ProductMasterRegistry({ snapshot, openCreate = false }: { snapsh
         next.push({ itemKey: item.itemKey, id: item.id, previousState: item.status, newState: item.status, result: 'failed', error: error instanceof Error ? error.message : 'Action impossible.' })
       }
     }
-    setResults(next); setNotice(`${next.filter(x => x.result === 'success').length} succès · ${next.filter(x => x.result === 'blocked').length} bloqués · ${next.filter(x => x.result === 'failed').length} échecs`); setBusy(false); setAction(null); setPurgeConfirmation('')
+    setResults(next); setNotice(`${next.filter(x => x.result === 'success').length} succès · ${next.filter(x => x.result === 'blocked').length} bloqués · ${next.filter(x => x.result === 'failed').length} échecs`); setBusy(false); setAction(null); setPurgeConfirmation(''); router.refresh()
   }
 
   async function assignCategory() {
@@ -68,7 +72,7 @@ export function ProductMasterRegistry({ snapshot, openCreate = false }: { snapsh
         next.push({ itemKey: item.itemKey, id: item.id, previousState: item.status, newState: item.status, result: 'success' })
       } catch (error) { next.push({ itemKey: item.itemKey, id: item.id, previousState: item.status, newState: item.status, result: 'failed', error: error instanceof Error ? error.message : 'Action impossible.' }) }
     }
-    setResults(next); setNotice(`${next.filter(x => x.result === 'success').length} catégorie(s) synchronisée(s)`); setBusy(false)
+    setResults(next); setNotice(`${next.filter(x => x.result === 'success').length} catégorie(s) synchronisée(s)`); setBusy(false); router.refresh()
   }
 
   async function assignMedia() {
@@ -89,7 +93,7 @@ export function ProductMasterRegistry({ snapshot, openCreate = false }: { snapsh
         next.push({ itemKey: item.itemKey, id: item.id, previousState: item.status, newState: item.status, result: 'success' })
       } catch (error) { next.push({ itemKey: item.itemKey, id: item.id, previousState: item.status, newState: item.status, result: 'failed', error: error instanceof Error ? error.message : 'Action impossible.' }) }
     }
-    setResults(next); setNotice(`${next.filter(x => x.result === 'success').length} média(s) assigné(s) · aucune publication automatique`); setMediaPreview(null); setBusy(false)
+    setResults(next); setNotice(`${next.filter(x => x.result === 'success').length} média(s) assigné(s) · aucune publication automatique`); setMediaPreview(null); setBusy(false); router.refresh()
   }
 
   return <main className={styles.canvas}>
