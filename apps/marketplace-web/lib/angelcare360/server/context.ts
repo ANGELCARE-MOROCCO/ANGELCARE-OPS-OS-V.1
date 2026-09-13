@@ -221,17 +221,23 @@ export async function getAngelcare360AccessContext(options?: {
   if (!user) return null
 
   const access = buildAngelcare360AccessProfile(user)
-  const supportAccess = await getActiveSupportAccess(user.id)
+  const supportAccess = demoContext.isDemo
+    ? null
+    : await getActiveSupportAccess(user.id)
   const schoolAuthority = resolveAngelcare360PrincipalSchoolAuthority({
     demoContext,
     supportSchoolId: supportAccess?.tenant?.school_id || null,
     requestedSchoolId: options?.schoolId || null,
   })
   const requestedSchoolId = schoolAuthority.ok ? schoolAuthority.schoolId : demoContext.schoolId
-  const school = schoolAuthority.ok
-    ? await getActiveSchool(user.id, access.accessLevel === 'super_admin' || Boolean(supportAccess), requestedSchoolId)
-    : null
   const demoAccess = buildAngelcare360DemoAccess(demoContext)
+  const school = schoolAuthority.ok
+    ? await getActiveSchool(
+        user.id,
+        access.accessLevel === 'super_admin' || Boolean(supportAccess) || Boolean(demoAccess),
+        requestedSchoolId,
+      )
+    : null
   const demoContextMismatch = demoContext.isDemo && (!schoolAuthority.ok || !school)
 
   if (!school) {
@@ -261,6 +267,41 @@ export async function getAngelcare360AccessContext(options?: {
       if (permission === denied || (denied.endsWith('.*') && permission.startsWith(denied.slice(0, -1)))) permissions.delete(permission)
     }
   }
+  if (demoAccess) {
+    // SANILA Master Demo is a governed product-wide demonstration principal.
+    // It does not inherit the implementation user's role/deny limitations.
+    //
+    // Full internal permission authority does NOT bypass:
+    // - the fixed demo-school boundary
+    // - runtime tenant/module entitlements
+    // - Master Demo mutation classification
+    // - destructive/external-side-effect blocking
+    permissions.clear()
+
+    const supabase = await createClient()
+    const { data: demoPermissions, error: demoPermissionError } = await supabase
+      .from('angelcare360_permissions')
+      .select('permission_key')
+      .eq('status', 'active')
+
+    if (demoPermissionError) {
+      throw new Angelcare360AccessError(
+        `Permissions Master Demo indisponibles: ${demoPermissionError.message}`,
+        503,
+      )
+    }
+
+    for (const permission of demoPermissions || []) {
+      if (permission.permission_key) {
+        permissions.add(String(permission.permission_key))
+      }
+    }
+
+    // Canonical wildcard used by requireAngelcare360Permission().
+    // Exact active permission keys remain present for downstream UI checks.
+    permissions.add('angelcare360.*')
+  }
+
   if (supportAccess) {
     // A support session is a hard capability boundary, never an additive elevation.
     permissions.clear()
@@ -297,7 +338,12 @@ export async function requireAngelcare360Permission(
     throw new Angelcare360AccessError('Vous devez être connecté pour utiliser AngelCare 360.', 401)
   }
 
-  const explicitlyDenied = context.access.deniedPermissions.some((denied) => denied === permissionKey || (denied.endsWith('.*') && permissionKey.startsWith(denied.slice(0, -1))))
+  const explicitlyDenied = !context.demoAccess
+    && context.access.deniedPermissions.some(
+      (denied) =>
+        denied === permissionKey
+        || (denied.endsWith('.*') && permissionKey.startsWith(denied.slice(0, -1))),
+    )
   const permissionGranted = !explicitlyDenied && (context.supportAccess
     ? context.permissions.has(permissionKey)
     : context.access.accessLevel === 'super_admin'
@@ -317,7 +363,7 @@ export async function requireAngelcare360Permission(
   }
 
   const moduleKey = getAngelcare360ModuleKeyForPermission(permissionKey)
-  if (!context.supportAccess && moduleKey && context.access.moduleKeys.length && !context.access.moduleKeys.includes(moduleKey)) {
+  if (!context.supportAccess && !context.demoAccess && moduleKey && context.access.moduleKeys.length && !context.access.moduleKeys.includes(moduleKey)) {
     throw new Angelcare360AccessError(`Le module ${moduleKey} est hors du périmètre attribué à cet administrateur.`, 403)
   }
   if (!isAngelcare360ModuleEnabled(context.runtimeEntitlements, moduleKey)) {
