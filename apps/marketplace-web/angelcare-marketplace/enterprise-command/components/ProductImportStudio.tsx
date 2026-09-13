@@ -58,16 +58,147 @@ function parseCsv(source:string){
 
 async function sha256(data:ArrayBuffer|string){const bytes=typeof data==='string'?new TextEncoder().encode(data):data;const digest=await crypto.subtle.digest('SHA-256',bytes);return [...new Uint8Array(digest)].map(byte=>byte.toString(16).padStart(2,'0')).join('')}
 function rowsToCsv(records:string[][]){const quote=(value:string)=>`"${String(value??'').replaceAll('"','""')}"`;return records.map(record=>record.map(quote).join(',')).join('\n')}
-async function xlsxToCsv(buffer:ArrayBuffer){const module:any=await import('exceljs');const ExcelJS=module.default||module;const workbook=new ExcelJS.Workbook();await workbook.xlsx.load(buffer);const sheet=workbook.worksheets[0];if(!sheet)throw new Error('Le classeur XLSX ne contient aucune feuille.');const records:string[][]=[];sheet.eachRow({includeEmpty:true},(row:{cellCount:number;getCell:(column:number)=>{text:string}})=>{const values=[] as string[];for(let column=1;column<=Math.max(sheet.columnCount,row.cellCount);column++)values.push(row.getCell(column).text??'');records.push(values)});while(records.length&&records[records.length-1].every(value=>!value.trim()))records.pop();return rowsToCsv(records)}
+type Product360TemplateManifest={
+  contract:string
+  doctrineKey:string
+  doctrineLabel:string
+  importMode:ProductImportMode
+  generatedAt:string
+}
+
+type Product360TemplateLock={
+  doctrineKey:string
+  importMode:ProductImportMode
+  source:'xlsx-manifest'|'generated-filename'
+}
+
+const PRODUCT360_TEMPLATE_CONTRACT='ANGELCARE_PRODUCT360_TEMPLATE_V1'
+
+function templateIdentityFromFilename(name:string){
+  const match=name.match(/^ANGELCARE_(.+)_(upsert|create|update)_(?:IMPORT|PRODUCT360_TEMPLATE)\.(?:csv|xlsx)$/i)
+  if(!match)return null
+  return {
+    doctrineKey:match[1],
+    importMode:match[2].toLowerCase() as ProductImportMode,
+  }
+}
+
+async function xlsxToImportPayload(buffer:ArrayBuffer){
+  const module:any=await import('exceljs')
+  const ExcelJS=module.default||module
+  const workbook=new ExcelJS.Workbook()
+
+  await workbook.xlsx.load(buffer)
+
+  const sheet=workbook.worksheets[0]
+  if(!sheet)throw new Error('Le classeur XLSX ne contient aucune feuille.')
+
+  const records:string[][]=[]
+
+  sheet.eachRow(
+    {includeEmpty:true},
+    (row:{cellCount:number;getCell:(column:number)=>{text:string}})=>{
+      const values=[] as string[]
+      for(
+        let column=1;
+        column<=Math.max(sheet.columnCount,row.cellCount);
+        column++
+      ){
+        values.push(row.getCell(column).text??'')
+      }
+      records.push(values)
+    },
+  )
+
+  while(
+    records.length &&
+    records[records.length-1].every(value=>!value.trim())
+  ){
+    records.pop()
+  }
+
+  let manifest:Product360TemplateManifest|null=null
+  const manifestSheet=workbook.getWorksheet('_ANGELCARE_IMPORT_MANIFEST')
+
+  if(manifestSheet){
+    const values:Record<string,string>={}
+
+    manifestSheet.eachRow(
+      {includeEmpty:false},
+      (row:{getCell:(column:number)=>{text:string}})=>{
+        const key=(row.getCell(1).text||'').trim()
+        const value=(row.getCell(2).text||'').trim()
+        if(key)values[key]=value
+      },
+    )
+
+    if(
+      values.contract ||
+      values.doctrine_key ||
+      values.import_mode
+    ){
+      if(values.contract!==PRODUCT360_TEMPLATE_CONTRACT){
+        throw new Error(
+          `Manifest Produit 360 incompatible: ${values.contract||'absent'}.`,
+        )
+      }
+
+      if(!values.doctrine_key){
+        throw new Error(
+          'Manifest Produit 360 invalide: doctrine_key absent.',
+        )
+      }
+
+      if(
+        values.import_mode!=='upsert' &&
+        values.import_mode!=='create' &&
+        values.import_mode!=='update'
+      ){
+        throw new Error(
+          `Manifest Produit 360 invalide: mode ${values.import_mode||'absent'}.`,
+        )
+      }
+
+      manifest={
+        contract:values.contract,
+        doctrineKey:values.doctrine_key,
+        doctrineLabel:values.doctrine_label||values.doctrine_key,
+        importMode:values.import_mode,
+        generatedAt:values.generated_at||'',
+      }
+    }
+  }
+
+  return {
+    csv:rowsToCsv(records),
+    manifest,
+  }
+}
+
+function browserDownload(blob:Blob,name:string){
+  const url=URL.createObjectURL(blob)
+  const a=document.createElement('a')
+  a.href=url
+  a.download=name
+  a.rel='noopener'
+  a.style.display='none'
+  document.body.appendChild(a)
+  a.click()
+  window.setTimeout(()=>{
+    a.remove()
+    URL.revokeObjectURL(url)
+  },1500)
+}
 
 function csvDownload(name:string,headers:string[],data:Array<Record<string,unknown>>){
   const quote=(v:unknown)=>`"${String(v??'').replaceAll('"','""')}"`
   const lines=[headers.map(quote).join(','),...data.map(row=>headers.map(h=>quote(row[h])).join(','))]
-  const blob=new Blob([lines.join('\n')],{type:'text/csv;charset=utf-8'})
-  const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=name;a.click();URL.revokeObjectURL(url)
+  const blob=new Blob(['\uFEFF',lines.join('\n')],{type:'text/csv;charset=utf-8'})
+  browserDownload(blob,name)
 }
 
 export function ProductImportStudio(){
+  const [templateLock,setTemplateLock]=useState<Product360TemplateLock|null>(null)
   const[doctrine,setDoctrine]=useState('one_time_service')
   const[importMode,setImportMode]=useState<ProductImportMode>('upsert')
   const[source,setSource]=useState('')
@@ -156,7 +287,7 @@ export function ProductImportStudio(){
 
   async function exportJobFailures(){if(!job)return;setBusy(true);try{const all:JobRow[]=[];let page=1;while(true){const r=await fetch(`/api/angelcare-marketplace/admin/enterprise-command/product-import/jobs/${job.job.id}?failedOnly=1&page=${page}&pageSize=500`,{cache:'no-store'});const p=await r.json() as Envelope<JobSnapshot>;if(!r.ok||!p.data)throw new Error(p.error?.message||'Export impossible.');all.push(...p.data.rows);if(all.length>=p.data.rowCount)break;page++}csvDownload(`${job.job.public_reference||'ANGELCARE_IMPORT'}_FAILURES.csv`,['row_number','status','action','item_key','errors','warnings'],all.map(r=>({row_number:r.row_number,status:r.status,action:r.action,item_key:String(r.normalized_payload?.item_key||''),errors:(r.errors||[]).join(' | '),warnings:(r.warnings||[]).join(' | ')})))}catch(e){setNotice(e instanceof Error?e.message:String(e))}finally{setBusy(false)}}
 
-  function template(){csvDownload(`ANGELCARE_${doctrine}_IMPORT.csv`,targets,[Object.fromEntries(targets.map(t=>[t,'']))])}
+  function template(){csvDownload(`ANGELCARE_${doctrine}_${importMode}_IMPORT.csv`,targets,[Object.fromEntries(targets.map(t=>[t,'']))]);setNotice(`Template CSV Produit 360 généré · doctrine ${doctrine} · mode ${importMode}.`)}
   async function professionalTemplate(){
     setBusy(true);setNotice('')
     try{
@@ -177,10 +308,151 @@ export function ProductImportStudio(){
       const instructions=workbook.addWorksheet('Instructions')
       instructions.addRows([['ANGELCARE PRODUCT 360 BULK INGESTION'],['Doctrine',d.label],['Doctrine key',d.key],['Colonnes canoniques',targets.length],['Règle','Aucune colonne source ne peut être ignorée silencieusement.'],['Mise à jour','Une colonne absente préserve la valeur canonique existante.'],['Publication','Toujours soumise au Product 360 readiness gate serveur.'],['JSON','Utiliser variants_json / media_json / availability_json / price_rules_json pour les collections structurées.']])
       instructions.getColumn(1).width=30;instructions.getColumn(2).width=90;instructions.getRow(1).font={bold:true,size:16}
-      const buffer=await workbook.xlsx.writeBuffer();const blob=new Blob([buffer],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`ANGELCARE_${doctrine}_PRODUCT360_TEMPLATE.xlsx`;a.click();URL.revokeObjectURL(url)
+      instructions.addRows([
+        ['Mode d’exécution',importMode],
+        ['Contrat template',PRODUCT360_TEMPLATE_CONTRACT],
+        ['Généré le',new Date().toISOString()],
+        ['Verrou doctrine','Ce classeur rétablira automatiquement sa doctrine et son mode lors du réimport.'],
+      ])
+
+      const manifest=workbook.addWorksheet('_ANGELCARE_IMPORT_MANIFEST')
+      manifest.addRows([
+        ['contract',PRODUCT360_TEMPLATE_CONTRACT],
+        ['doctrine_key',d.key],
+        ['doctrine_label',d.label],
+        ['import_mode',importMode],
+        ['generated_at',new Date().toISOString()],
+        ['canonical_field_count',String(targets.length)],
+      ])
+      manifest.state='veryHidden'
+
+      const buffer=await workbook.xlsx.writeBuffer()
+      const blob=new Blob(
+        [buffer],
+        {type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'},
+      )
+      browserDownload(
+        blob,
+        `ANGELCARE_${doctrine}_${importMode}_PRODUCT360_TEMPLATE.xlsx`,
+      )
+      setNotice(
+        `Template XLSX Produit 360 généré · ${d.label} · mode ${importMode} · verrou doctrine actif.`,
+      )
     }catch(error){setNotice(error instanceof Error?error.message:String(error))}finally{setBusy(false)}
   }
-  async function chooseCsv(files:File[]){setSelectedFiles(files);setFileError('');setPreview(null);setJob(null);setSourceHash('');const file=files[0];if(!file){setSource('');return}try{const buffer=await file.arrayBuffer();if(!buffer.byteLength)throw new Error('Le fichier est vide.');const hash=await sha256(buffer);const isXlsx=file.name.toLowerCase().endsWith('.xlsx')||file.type.includes('spreadsheetml');const text=isXlsx?await xlsxToCsv(buffer):new TextDecoder('utf-8').decode(buffer);if(!text.trim())throw new Error('Le fichier ne contient aucune donnée exploitable.');setSourceHash(hash);setSource(text)}catch(error){setSelectedFiles([]);setSource('');setSourceHash('');setFileError(error instanceof Error?error.message:'Impossible de lire le fichier.')}}
+  async function chooseCsv(files:File[]){
+    setSelectedFiles(files)
+    setFileError('')
+    setPreview(null)
+    setJob(null)
+    setSourceHash('')
+    setTemplateLock(null)
+
+    const file=files[0]
+
+    if(!file){
+      setSource('')
+      setNotice('')
+      return
+    }
+
+    try{
+      const buffer=await file.arrayBuffer()
+
+      if(!buffer.byteLength){
+        throw new Error('Le fichier est vide.')
+      }
+
+      const hash=await sha256(buffer)
+      const isXlsx=
+        file.name.toLowerCase().endsWith('.xlsx') ||
+        file.type.includes('spreadsheetml')
+
+      const filenameIdentity=templateIdentityFromFilename(file.name)
+
+      let text=''
+      let identity:
+        | {doctrineKey:string;importMode:ProductImportMode}
+        | null=filenameIdentity
+
+      let lockSource:Product360TemplateLock['source']='generated-filename'
+
+      if(isXlsx){
+        const payload=await xlsxToImportPayload(buffer)
+        text=payload.csv
+
+        if(payload.manifest){
+          const workbookIdentity={
+            doctrineKey:payload.manifest.doctrineKey,
+            importMode:payload.manifest.importMode,
+          }
+
+          if(
+            filenameIdentity &&
+            (
+              filenameIdentity.doctrineKey!==workbookIdentity.doctrineKey ||
+              filenameIdentity.importMode!==workbookIdentity.importMode
+            )
+          ){
+            throw new Error(
+              'Le nom du fichier et le manifeste XLSX Produit 360 se contredisent. Import bloqué.',
+            )
+          }
+
+          identity=workbookIdentity
+          lockSource='xlsx-manifest'
+        }
+      }else{
+        text=new TextDecoder('utf-8').decode(buffer)
+      }
+
+      if(!text.trim()){
+        throw new Error(
+          'Le fichier ne contient aucune donnée exploitable.',
+        )
+      }
+
+      if(identity){
+        const matchedDoctrine=Object.values(PRODUCT_DOCTRINES)
+          .find(candidate=>candidate.key===identity?.doctrineKey)
+
+        if(!matchedDoctrine){
+          throw new Error(
+            `Doctrine du template inconnue: ${identity.doctrineKey}.`,
+          )
+        }
+
+        setDoctrine(identity.doctrineKey)
+        setImportMode(identity.importMode)
+        setTemplateLock({
+          doctrineKey:identity.doctrineKey,
+          importMode:identity.importMode,
+          source:lockSource,
+        })
+
+        setNotice(
+          `Template reconnu et verrouillé · ${matchedDoctrine.label} · mode ${identity.importMode}.`,
+        )
+      }else{
+        setNotice(
+          'Fichier externe sans manifeste Produit 360: doctrine et mode restent sous contrôle opérateur.',
+        )
+      }
+
+      setSourceHash(hash)
+      setSource(text)
+    }catch(error){
+      setSelectedFiles([])
+      setSource('')
+      setSourceHash('')
+      setTemplateLock(null)
+      setFileError(
+        error instanceof Error
+          ? error.message
+          : 'Impossible de lire le fichier.',
+      )
+    }
+  }
   function pasteCsv(value:string){setSelectedFiles([]);setFileError('');setSourceHash('');setSource(value)}
   function updateCell(index:number,key:string,value:string){setEditable(rows=>rows.map((row,i)=>i===index?{...row,[key]:value}:row));setPreview(null);setJob(null)}
   function rejected(){if(!preview)return;csvDownload('ANGELCARE_IMPORT_REJECTED.csv',['row','key','name','errors'],preview.rows.filter(r=>!r.valid).map(r=>({row:r.row,key:r.key,name:r.name,errors:r.errors.join(' | ')})))}
@@ -188,7 +460,7 @@ export function ProductImportStudio(){
   return <div className={styles.command}>
     <section className={styles.hero}><div className={styles.eyebrow}>Marketplace · Product 360 Bulk Ingestion</div><h1 className={styles.title}>Import Produit 360 · mapping déterministe · dry-run réel · exécution reprenable</h1><p className={styles.lead}>Une seule autorité d’ingestion pour créer ou mettre à jour le dossier Produit 360 canonique. Chaque champ reconnu possède une destination réelle, chaque publication traverse le readiness gate et chaque ligne conserve ses preuves avant/après.</p></section>
     <div className={styles.grid2}>
-      <section className={styles.panel}><F label="Doctrine"><select className={styles.select} value={doctrine} onChange={e=>setDoctrine(e.target.value)}>{Object.values(PRODUCT_DOCTRINES).map(x=><option value={x.key} key={x.key}>{x.label}</option>)}</select></F><F label="Mode d’exécution"><select className={styles.select} value={importMode} onChange={e=>{setImportMode(e.target.value as ProductImportMode);setPreview(null);setJob(null)}}><option value="upsert">Upsert contrôlé · créer ou mettre à jour</option><option value="create">Création uniquement · refuser l’existant</option><option value="update">Mise à jour uniquement · refuser l’absent</option></select></F><MarketplaceFilePicker accept={PRODUCT_IMPORT_ACCEPT} files={selectedFiles} onFilesChange={(files)=>void chooseCsv(files)} label="Importer CSV / XLSX" description="CSV ou XLSX · première feuille du classeur · aucune exécution automatique"/>{fileError?<div className={styles.notice} role="alert">{fileError}</div>:null}{'parseError' in parsed&&parsed.parseError?<div className={styles.notice} role="alert">{parsed.parseError}</div>:null}<F label="Coller le CSV"><textarea className={styles.textarea} style={{minHeight:260}} value={source} onChange={e=>pasteCsv(e.target.value)} placeholder="Collez ici le contenu CSV…"/></F><div className={styles.toolbar}><button className={styles.buttonSecondary} type="button" onClick={()=>void professionalTemplate()} disabled={busy}><Download size={14}/>Template XLSX Pro</button><button className={styles.buttonSecondary} type="button" onClick={template}><Download size={14}/>Template CSV</button><button className={styles.buttonSecondary} type="button" disabled={!parsed.headers.length} onClick={autoMap}><Wand2 size={14}/>Auto-map</button><button className={styles.button} type="button" disabled={busy||!mappedRows.length||Boolean(unmappedHeaders.length)||Boolean(duplicateTargets.length)} onClick={()=>void dry()}><FileSpreadsheet size={14}/>Dry-run {mappedRows.length}</button></div></section>
+      <section className={styles.panel}><F label="Doctrine"><select className={styles.select} value={doctrine} disabled={Boolean(templateLock)} onChange={e=>setDoctrine(e.target.value)}>{Object.values(PRODUCT_DOCTRINES).map(x=><option value={x.key} key={x.key}>{x.label}</option>)}</select></F><F label="Mode d’exécution"><select className={styles.select} value={importMode} disabled={Boolean(templateLock)} onChange={e=>{setImportMode(e.target.value as ProductImportMode);setPreview(null);setJob(null)}}><option value="upsert">Upsert contrôlé · créer ou mettre à jour</option><option value="create">Création uniquement · refuser l’existant</option><option value="update">Mise à jour uniquement · refuser l’absent</option></select></F><MarketplaceFilePicker accept={PRODUCT_IMPORT_ACCEPT} files={selectedFiles} onFilesChange={(files)=>void chooseCsv(files)} label="Importer CSV / XLSX" description="CSV ou XLSX · première feuille du classeur · aucune exécution automatique"/>{fileError?<div className={styles.notice} role="alert">{fileError}</div>:null}{'parseError' in parsed&&parsed.parseError?<div className={styles.notice} role="alert">{parsed.parseError}</div>:null}<F label="Coller le CSV"><textarea className={styles.textarea} style={{minHeight:260}} value={source} onChange={e=>{setTemplateLock(null);pasteCsv(e.target.value)}} placeholder="Collez ici le contenu CSV…"/></F><div className={styles.toolbar}><button className={styles.buttonSecondary} type="button" onClick={()=>void professionalTemplate()} disabled={busy}><Download size={14}/>Template XLSX Pro</button><button className={styles.buttonSecondary} type="button" onClick={template}><Download size={14}/>Template CSV</button><button className={styles.buttonSecondary} type="button" disabled={!parsed.headers.length} onClick={autoMap}><Wand2 size={14}/>Auto-map</button><button className={styles.button} type="button" disabled={busy||!mappedRows.length||Boolean(unmappedHeaders.length)||Boolean(duplicateTargets.length)} onClick={()=>void dry()}><FileSpreadsheet size={14}/>Dry-run {mappedRows.length}</button></div></section>
       <section className={styles.panel}><div className={styles.panelTitle}><h3>{d.label}</h3><span className={styles.chip}>{parsed.headers.length} colonnes · {editable.length} lignes</span></div><p className={styles.muted}>{d.description}</p><div className={styles.metricGrid}><Metric label="Colonnes 360 disponibles" value={String(contract.columnCount)}/><Metric label="Requises doctrine" value={String(contract.doctrineRequired.length)}/><Metric label="Requises publication" value={String(contract.publishRequired.length)}/><Metric label="Mode" value={importMode}/></div><h4>Champs doctrine requis</h4><div className={styles.toolbar}>{d.requiredColumns.map(x=><span className={styles.chip} key={x}>{x}</span>)}</div>{notice?<div className={styles.notice} style={{marginTop:14}}>{notice}</div>:null}</section>
     </div>
 
