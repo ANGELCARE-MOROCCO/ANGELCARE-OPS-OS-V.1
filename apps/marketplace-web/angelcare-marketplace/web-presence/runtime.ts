@@ -9,7 +9,7 @@ const assetUrl=(scope:WebPresenceScope,slot:string,revision:number)=>`/api/angel
 async function socialAssetUrl(configuration:WebPresenceConfiguration,key:string|null):Promise<string|undefined>{if(!key)return undefined;try{return String((await resolveAsset(key)).public_url||'')||undefined}catch{return undefined}}
 
 export async function buildWebPresenceMetadata(scope:WebPresenceScope,locale:WebPresenceLocale='fr'):Promise<Metadata>{
-  const {configuration:c,revision}=await getPublishedWebPresence(scope),localized=c.localizedMetadata[locale]||c.localizedMetadata[c.identity.defaultLocale],socialImage=await socialAssetUrl(c,localized.socialImageAssetKey||c.social.defaultImageAssetKey),faviconUrl=c.icons.favicon.assetKey?assetUrl(scope,'favicon',revision):'/favicon.ico',iconUrl=c.icons.highResolution.assetKey?assetUrl(scope,'icon',revision):'/favicon.ico',appleUrl=c.icons.appleTouch.assetKey?assetUrl(scope,'apple-touch-icon',revision):'/favicon.ico'
+  const {configuration:c,revision}=await getPublishedWebPresence(scope),localized=c.localizedMetadata[locale]||c.localizedMetadata[c.identity.defaultLocale],socialKey=localized.socialImageAssetKey||c.social.defaultImageAssetKey||c.icons.organizationLogo.assetKey||c.icons.highResolution.assetKey||c.icons.favicon.assetKey,socialImage=await socialAssetUrl(c,socialKey),faviconUrl=c.icons.favicon.assetKey?assetUrl(scope,'favicon',revision):'/favicon.ico',iconUrl=c.icons.highResolution.assetKey?assetUrl(scope,'icon',revision):'/favicon.ico',appleUrl=c.icons.appleTouch.assetKey?assetUrl(scope,'apple-touch-icon',revision):'/favicon.ico'
   return {
     metadataBase:new URL(c.identity.canonicalOrigin),
     title:{default:localized.defaultTitle||c.identity.defaultTitle,template:c.identity.titleTemplate},
