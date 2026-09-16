@@ -105,3 +105,22 @@ export function validateConfiguration(configuration: WebPresenceConfiguration, a
   if(!configuration.manifest.startUrl.startsWith(configuration.manifest.scope.replace(/\/$/,'')))blocker('INVALID_MANIFEST','manifest.startUrl','start_url doit appartenir au scope du manifest.')
   return { valid: !issues.some(issue => issue.severity==='blocker'), blockers: issues.filter(issue=>issue.severity==='blocker'), warnings: issues.filter(issue=>issue.severity==='warning'), checkedAt:new Date().toISOString() }
 }
+
+/**
+ * Publication validation is intentionally advisory.
+ * Structural/security parsing remains strict in parseWebPresenceConfiguration(),
+ * while operational incompleteness (missing favicon, Apple icon, social image,
+ * manifest assets, structured-data optionality, etc.) never blocks publication.
+ */
+export function validateConfigurationForPublication(configuration: WebPresenceConfiguration, assets: WebPresenceMediaAsset[]): ValidationResult {
+  const strict = validateConfiguration(configuration, assets)
+  const seen = new Set<string>()
+  const warnings = [...strict.warnings, ...strict.blockers.map(issue => ({ ...issue, severity: 'warning' as const }))]
+    .filter(issue => {
+      const key = `${issue.code}:${issue.field}:${issue.message}`
+      if (seen.has(key)) return false
+      seen.add(key)
+      return true
+    })
+  return { valid: true, blockers: [], warnings, checkedAt: new Date().toISOString() }
+}

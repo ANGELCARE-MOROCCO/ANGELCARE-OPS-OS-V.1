@@ -10,6 +10,7 @@ export default async function Page({ params }: { params: Promise<{ pageId: strin
     initialPage={bundle.page}
     blocks={bundle.blocks}
     versions={bundle.versions}
+    revisions={bundle.revisions}
     permissions={{
       edit: hasMarketplacePermission(context, 'marketplace.cms.edit'),
       blocks: hasMarketplacePermission(context, 'marketplace.cms.blocks.manage'),

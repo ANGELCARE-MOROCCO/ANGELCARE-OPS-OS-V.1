@@ -20,7 +20,7 @@ import {
   ShieldCheck,
   X,
 } from 'lucide-react'
-import type { CmsBlock, CmsPage, CmsPageStatus, CmsPageVersion } from '../types'
+import type { CmsBlock, CmsPage, CmsPageStatus, CmsPageVersion, CmsRevision, PreviewSession } from '../types'
 import styles from '../experience.module.css'
 
 type Tab = 'overview' | 'content' | 'seo' | 'history'
@@ -37,6 +37,7 @@ interface Props {
   initialPage: CmsPage
   blocks: CmsBlock[]
   versions: CmsPageVersion[]
+  revisions?: CmsRevision[]
   permissions: Permissions
 }
 
@@ -62,7 +63,7 @@ const transitionLabels: Partial<Record<CmsPageStatus, string>> = {
   draft: 'Renvoyer au brouillon',
 }
 
-async function request<T>(url: string, options: RequestInit): Promise<T> {
+async function request<T>(url: string, options: RequestInit = {}): Promise<T> {
   const response = await fetch(url, options)
   const payload = await response.json() as { data?: T; error?: { message?: string; details?: { fieldErrors?: Record<string, string[]> } } }
   if (!response.ok || !payload.data) {
@@ -79,7 +80,7 @@ function displayDate(value: string | null) {
   return Number.isNaN(date.valueOf()) ? value : new Intl.DateTimeFormat('fr-FR', { dateStyle: 'medium', timeStyle: 'short' }).format(date)
 }
 
-export function PageDossierClient({ initialPage, blocks, versions, permissions }: Props) {
+export function PageDossierClient({ initialPage, blocks, versions, revisions = [], permissions }: Props) {
   const [page, setPage] = useState(initialPage)
   const [tab, setTab] = useState<Tab>('overview')
   const [dirty, setDirty] = useState(false)
@@ -87,7 +88,8 @@ export function PageDossierClient({ initialPage, blocks, versions, permissions }
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
   const [pendingTarget, setPendingTarget] = useState<CmsPageStatus | null>(null)
-  const [rollbackVersion, setRollbackVersion] = useState<CmsPageVersion | null>(null)
+  const [rollbackVersion, setRollbackVersion] = useState<CmsPageVersion | CmsRevision | null>(null)
+  const [previewSessions, setPreviewSessions] = useState<PreviewSession[]>([])
   const transitionDialog = useRef<HTMLDialogElement>(null)
   const rollbackDialog = useRef<HTMLDialogElement>(null)
   const reasonRef = useRef<HTMLTextAreaElement>(null)
@@ -101,6 +103,15 @@ export function PageDossierClient({ initialPage, blocks, versions, permissions }
     { label: 'Traduction', ready: page.locale === 'fr' || page.translation_status === 'approved', evidence: page.translation_status },
   ], [blocks.length, page])
   const ready = readiness.every((item) => item.ready)
+  const lifecycleTargets = useMemo(() => { const base = transitions[page.status]; return page.publication_state === 'published' && !base.includes('retired') ? [...base, 'retired' as CmsPageStatus] : base }, [page.publication_state, page.status])
+  const publicLocale = page.published_locale || page.locale
+  const publicSlug = page.published_slug || page.slug
+  const publicHref = publicSlug === 'accueil' ? `/angelcare-marketplace/${publicLocale}` : `/angelcare-marketplace/${publicLocale}/${publicSlug}`
+
+  useEffect(() => {
+    if (!permissions.preview) return
+    void request<PreviewSession[]>(`/api/angelcare-marketplace/cms/previews?pageId=${page.id}`).then(setPreviewSessions).catch(() => setPreviewSessions([]))
+  }, [page.id, permissions.preview])
 
   useEffect(() => {
     function beforeUnload(event: BeforeUnloadEvent) {
@@ -146,6 +157,7 @@ export function PageDossierClient({ initialPage, blocks, versions, permissions }
           sensitive: form.get('sensitive') === 'on',
           scheduled_at: form.get('scheduled_at') || null,
           changeSummary: form.get('changeSummary'),
+          expectedVersion: page.current_version,
         }),
       }),
       'Page versionnée et métadonnées enregistrées.',
@@ -184,7 +196,7 @@ export function PageDossierClient({ initialPage, blocks, versions, permissions }
     setPendingTarget(null)
   }
 
-  function openRollback(version: CmsPageVersion) {
+  function openRollback(version: CmsPageVersion | CmsRevision) {
     setRollbackVersion(version)
     rollbackDialog.current?.showModal()
     window.setTimeout(() => rollbackReasonRef.current?.focus(), 0)
@@ -202,9 +214,9 @@ export function PageDossierClient({ initialPage, blocks, versions, permissions }
       () => request<CmsPage>(`/api/angelcare-marketplace/cms/pages/${page.id}/rollback`, {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ versionNumber: rollbackVersion.version_number, reason }),
+        body: JSON.stringify({ versionNumber: 'revision_number' in rollbackVersion ? rollbackVersion.revision_number : rollbackVersion.version_number, reason }),
       }),
-      `Version ${rollbackVersion.version_number} restaurée et auditée.`,
+      `Version ${'revision_number' in rollbackVersion ? rollbackVersion.revision_number : rollbackVersion.version_number} restaurée en nouveau brouillon et auditée.`,
     )
     if (!result) return
     setPage(result)
@@ -214,21 +226,22 @@ export function PageDossierClient({ initialPage, blocks, versions, permissions }
 
   async function preview() {
     const session = await run(
-      () => request<{ preview_token: string }>(`/api/angelcare-marketplace/cms/pages/${page.id}/preview`, { method: 'POST' }),
-      'Preview gouvernée créée pour deux heures.',
+      () => request<{ preview_token: string; revision_id?: string | null; version_number: number }>(`/api/angelcare-marketplace/cms/pages/${page.id}/preview`, { method: 'POST' }),
+      'Preview immuable, révision-pinnée et gouvernée créée pour deux heures.',
     )
-    if (session) window.open(`/angelcare-marketplace/preview/${session.preview_token}`, '_blank', 'noopener,noreferrer')
+    if (session) { window.open(`/angelcare-marketplace/preview/${session.preview_token}`, '_blank', 'noopener,noreferrer'); void request<PreviewSession[]>(`/api/angelcare-marketplace/cms/previews?pageId=${page.id}`).then(setPreviewSessions).catch(() => undefined) }
   }
 
   return (
     <main className={styles.pageDossier}>
       <header className={styles.dossierHeader}>
         <div>
-          <span>BOUTIQUE · PAGE 360</span>
+          <span>EXPERIENCE STUDIO · PAGE AUTHORITY</span>
           <h1>{page.title}</h1>
-          <p>/{page.locale}/{page.slug} · {page.public_reference} · version {page.current_version}</p>
+          <p>/{page.locale}/{page.slug} · {page.public_reference} · draft v{page.current_version} · publié {page.published_version ? `v${page.published_version}` : 'jamais'}</p>
           <div className={styles.dossierBadges}>
             <span className={styles.status} data-status={page.status}>{page.status}</span>
+            <span className={styles.status} data-status={page.publication_state || (page.published_version ? 'published' : 'never_published')}>{page.publication_state || (page.published_version ? 'published' : 'never_published')}</span>
             <span className={styles.status} data-status={page.translation_status}><Languages size={12}/>{page.translation_status}</span>
             {page.sensitive ? <span data-risk="true"><ShieldCheck size={12}/> sensible</span> : null}
             {dirty ? <span data-risk="true"><AlertTriangle size={12}/> non enregistré</span> : null}
@@ -261,7 +274,7 @@ export function PageDossierClient({ initialPage, blocks, versions, permissions }
                   <header><Languages size={17}/><div><strong>SEO & gouvernance locale</strong><span>La validation serveur bloque les publications incomplètes.</span></div></header>
                   <label>Titre SEO<input name="seo_title" defaultValue={page.seo_title || ''}/></label>
                   <label>Description SEO<textarea name="seo_description" defaultValue={page.seo_description || ''} rows={3}/></label>
-                  <div className={styles.formTwo}><label>Statut traduction<select name="translation_status" defaultValue={page.translation_status}><option value="source">source</option><option value="missing">missing</option><option value="draft">draft</option><option value="reviewed">reviewed</option><option value="approved">approved</option><option value="stale">stale</option></select></label><label>Publication planifiée<input name="scheduled_at" type="datetime-local" defaultValue={page.scheduled_at || ''}/></label></div>
+                  <div className={styles.formTwo}><label>Statut traduction<select name="translation_status" defaultValue={page.translation_status}><option value="source">source</option><option value="missing">missing</option><option value="draft">draft</option><option value="reviewed">reviewed</option><option value="approved">approved</option><option value="stale">stale</option></select></label><label>Publication planifiée<input name="scheduled_at" type="datetime-local" defaultValue={page.scheduled_at ? new Date(page.scheduled_at).toISOString().slice(0,16) : ''}/></label></div>
                   <label className={styles.checkLine}><input name="sensitive" type="checkbox" defaultChecked={page.sensitive}/> Contenu sensible soumis au gate de fraîcheur</label>
                   <label>Résumé du changement<textarea name="changeSummary" required placeholder="Pourquoi cette version est-elle créée ?" rows={2}/></label>
                 </div>
@@ -282,8 +295,9 @@ export function PageDossierClient({ initialPage, blocks, versions, permissions }
           {tab === 'history' ? (
             <section className={styles.versionTimeline}>
               <header><div><span>IMMUTABLE PAGE HISTORY</span><h2>Versions, auteur et restauration</h2></div><History size={19}/></header>
-              {versions.map((version) => <article key={version.id}><div className={styles.versionMarker}><FileClock size={15}/></div><div><strong>Version {version.version_number} · {version.title}</strong><span>{version.status} · {displayDate(version.created_at)}</span><p>{version.change_summary || 'Snapshot créé avant modification.'}</p><small>Auteur {version.created_by || 'non renseigné'}</small></div>{permissions.rollback ? <button type="button" className={styles.secondary} disabled={busy} onClick={() => openRollback(version)}><RotateCcw size={14}/> Restaurer</button> : <button type="button" className={styles.secondary} disabled title="Permission marketplace.cms.rollback requise"><RotateCcw size={14}/> Restaurer</button>}</article>)}
-              {!versions.length ? <div className={styles.empty}>Aucune version antérieure conservée.</div> : null}
+              {revisions.map((revision) => <article key={revision.id}><div className={styles.versionMarker}><FileClock size={15}/></div><div><strong>Révision {revision.revision_number} · {revision.state}</strong><span>Document schema v{revision.schema_version} · {displayDate(revision.created_at)}</span><p>{revision.change_summary || 'Révision de composition durable.'}</p><small>Auteur {revision.created_by || 'non renseigné'} · SHA {revision.checksum.slice(0,12)}</small></div>{permissions.rollback ? <button type="button" className={styles.secondary} disabled={busy || revision.revision_number === page.current_version} onClick={() => openRollback(revision)}><RotateCcw size={14}/> Restaurer</button> : <button type="button" className={styles.secondary} disabled title="Permission marketplace.cms.rollback requise"><RotateCcw size={14}/> Restaurer</button>}</article>)}
+              {!revisions.length ? versions.map((version) => <article key={version.id}><div className={styles.versionMarker}><FileClock size={15}/></div><div><strong>Version legacy {version.version_number} · {version.title}</strong><span>{version.status} · {displayDate(version.created_at)}</span><p>{version.change_summary || 'Snapshot legacy créé avant modification.'}</p><small>Auteur {version.created_by || 'non renseigné'}</small></div>{permissions.rollback ? <button type="button" className={styles.secondary} disabled={busy} onClick={() => openRollback(version)}><RotateCcw size={14}/> Restaurer</button> : <button type="button" className={styles.secondary} disabled><RotateCcw size={14}/> Restaurer</button>}</article>) : null}
+              {!revisions.length && !versions.length ? <div className={styles.empty}>Aucune révision antérieure conservée.</div> : null}
             </section>
           ) : null}
         </div>
@@ -295,7 +309,7 @@ export function PageDossierClient({ initialPage, blocks, versions, permissions }
           </section>
           <section>
             <span>LIFECYCLE COMMANDS</span><h2>{page.status}</h2>
-            <div className={styles.lifecycleActions}>{transitions[page.status].map((target) => permissions.transitions[target] ? <button type="button" key={target} data-danger={['retired', 'archived', 'draft'].includes(target)} disabled={busy || dirty || ((target === 'published' || target === 'scheduled') && !ready)} onClick={() => openTransition(target)}><Send size={14}/>{transitionLabels[target] || target}</button> : <button type="button" key={target} disabled title={`Permission requise pour ${target}`}><Send size={14}/>{transitionLabels[target] || target}</button>)}</div>
+            <div className={styles.lifecycleActions}>{lifecycleTargets.map((target) => permissions.transitions[target] ? <button type="button" key={target} data-danger={['retired', 'archived', 'draft'].includes(target)} disabled={busy || dirty || ((target === 'published' || target === 'scheduled') && !ready)} onClick={() => openTransition(target)}><Send size={14}/>{transitionLabels[target] || target}</button> : <button type="button" key={target} disabled title={`Permission requise pour ${target}`}><Send size={14}/>{transitionLabels[target] || target}</button>)}</div>
             {dirty ? <p className={styles.railHint}>Enregistrez la fiche avant une transition.</p> : null}
             {!ready ? <p className={styles.railHint}>Le serveur refusera publication et planification tant que les critères de readiness restent incomplets.</p> : null}
           </section>
@@ -304,8 +318,9 @@ export function PageDossierClient({ initialPage, blocks, versions, permissions }
             <Link href="/angelcare-marketplace/admin/localization/inventory"><Languages size={14}/> Inventaire localisation</Link>
             <Link href="/angelcare-marketplace/admin/media"><Blocks size={14}/> Media Library</Link>
             <Link href="/angelcare-marketplace/admin/publication"><Clock3 size={14}/> Historique publication</Link>
-            {page.status === 'published' ? <a href={`/angelcare-marketplace/${page.locale}/${page.slug}`} target="_blank"><ExternalLink size={14}/> Ouvrir la page publique</a> : null}
+            {page.publication_state === 'published' ? <a href={publicHref} target="_blank" rel="noreferrer"><ExternalLink size={14}/> Ouvrir la version publiée</a> : null}
           </section>
+          {permissions.preview ? <section><span>PREVIEWS ACTIVES</span><h2>{previewSessions.length} session(s)</h2><div className={styles.previewSessionList}>{previewSessions.slice(0,6).map(session => <div key={session.id}><div><strong>v{session.version_number}</strong><small>{session.revision_id ? `Révision ${session.revision_id.slice(0,8)}` : 'Legacy'} · expire {displayDate(session.expires_at)}</small></div><button type="button" onClick={() => void request<PreviewSession>('/api/angelcare-marketplace/cms/previews',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({previewId:session.id})}).then(() => setPreviewSessions(items => items.filter(item => item.id !== session.id))).catch(caught => setError(caught instanceof Error ? caught.message : 'Révocation impossible.'))}>Révoquer</button></div>)}</div>{!previewSessions.length ? <p className={styles.railHint}>Aucune URL preview active.</p> : null}</section> : null}
         </aside>
       </section>
 
@@ -320,9 +335,9 @@ export function PageDossierClient({ initialPage, blocks, versions, permissions }
       </dialog>
 
       <dialog className={styles.governedDialog} ref={rollbackDialog} onCancel={() => setRollbackVersion(null)}>
-        <header><div><span>RESTAURATION DE VERSION</span><h2>Restaurer la version {rollbackVersion?.version_number}</h2></div><button type="button" aria-label="Fermer" disabled={busy} onClick={() => rollbackDialog.current?.close()}><X size={17}/></button></header>
+        <header><div><span>RESTAURATION DE VERSION</span><h2>Restaurer la version {rollbackVersion ? ('revision_number' in rollbackVersion ? rollbackVersion.revision_number : rollbackVersion.version_number) : '—'}</h2></div><button type="button" aria-label="Fermer" disabled={busy} onClick={() => rollbackDialog.current?.close()}><X size={17}/></button></header>
         <div className={styles.dialogBody}>
-          <dl><div><dt>Page</dt><dd>{page.public_reference}</dd></div><div><dt>Version actuelle</dt><dd>{page.current_version}</dd></div><div><dt>Version cible</dt><dd>{rollbackVersion?.version_number}</dd></div><div><dt>Réversibilité</dt><dd>Le rollback crée une nouvelle trace serveur; l’historique antérieur reste conservé.</dd></div></dl>
+          <dl><div><dt>Page</dt><dd>{page.public_reference}</dd></div><div><dt>Version actuelle</dt><dd>{page.current_version}</dd></div><div><dt>Version cible</dt><dd>{rollbackVersion ? ('revision_number' in rollbackVersion ? rollbackVersion.revision_number : rollbackVersion.version_number) : '—'}</dd></div><div><dt>Réversibilité</dt><dd>Le rollback crée une nouvelle trace serveur; l’historique antérieur reste conservé.</dd></div></dl>
           <label>Motif obligatoire<textarea ref={rollbackReasonRef} rows={4} placeholder="Incident, régression ou décision éditoriale…"/></label>
         </div>
         <footer><button type="button" disabled={busy} onClick={() => rollbackDialog.current?.close()}>Annuler</button><button type="button" data-danger="true" disabled={busy || !rollbackVersion} onClick={() => void confirmRollback()}>{busy ? <Loader2 className={styles.spin} size={15}/> : <RotateCcw size={15}/>} Restaurer</button></footer>

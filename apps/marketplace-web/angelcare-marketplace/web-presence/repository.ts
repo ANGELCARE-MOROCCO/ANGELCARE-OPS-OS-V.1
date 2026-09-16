@@ -6,8 +6,9 @@ import type { MarketplaceRequestContext } from '@/angelcare-marketplace/domain/t
 import { writeMarketplaceAudit } from '@/angelcare-marketplace/audit/write-audit'
 import { compiledWebPresence, WEB_PRESENCE_CACHE_TAG, WEB_PRESENCE_ROUTES } from './fallback'
 import { nextWebPresenceVersionNumber, resolveWebPresenceAuthorityState } from './authority-state'
-import { checksumConfiguration, parseWebPresenceConfiguration, validateConfiguration, WebPresenceInputError } from './schema'
-import type { ValidationResult, WebPresenceConfiguration, WebPresenceMediaAsset, WebPresenceProfile, WebPresenceScope, WebPresenceSnapshot, WebPresenceVersion } from './types'
+import { checksumConfiguration, parseWebPresenceConfiguration, validateConfiguration, validateConfigurationForPublication, WebPresenceInputError } from './schema'
+import { WEB_PRESENCE_LOCALES } from './types'
+import type { ValidationIssue, ValidationResult, WebPresenceConfiguration, WebPresenceMediaAsset, WebPresenceProfile, WebPresenceScope, WebPresenceSnapshot, WebPresenceVersion } from './types'
 
 type Row = Record<string, unknown>
 const asRow = (value:unknown):Row => value && typeof value==='object' && !Array.isArray(value) ? value as Row : {}
@@ -46,6 +47,194 @@ export async function createWebPresenceDraft(scope:WebPresenceScope,context:Mark
 export async function updateWebPresenceDraft(versionId:string,expectedRevision:number,configurationInput:unknown,summary:string,context:MarketplaceRequestContext,requestId:string,request?:Request):Promise<WebPresenceVersion>{const current=await versionById(versionId);if(current.versionNumber!==expectedRevision||!['DRAFT','VALIDATED'].includes(current.lifecycleState))throw new WebPresenceInputError('STALE_REVISION','Le brouillon a changé ou n’est plus éditable.',409);const configuration=parseWebPresenceConfiguration(configurationInput),db=await createServiceClient(),result=await db.from('angelcare_marketplace_web_presence_versions').update({configuration,configuration_checksum:checksumConfiguration(configuration),change_summary:summary||current.changeSummary,lifecycle_state:'DRAFT',validation_result:null,validated_by:null,validated_at:null}).eq('id',versionId).eq('version_number',expectedRevision).in('lifecycle_state',['DRAFT','VALIDATED']).select('*').maybeSingle();if(result.error||!result.data)throw new WebPresenceInputError('STALE_REVISION','Conflit de révision : rechargez le workspace.',409);await writeMarketplaceAudit({context,requestId,action:'web_presence.draft.changed',objectType:'web_presence_version',objectId:versionId,beforeValue:{checksum:current.configurationChecksum},afterValue:{checksum:checksumConfiguration(configuration)},reason:summary,source:'web-presence',request});return mapVersion(result.data as Row)}
 
 export async function validateWebPresenceDraft(versionId:string,context:MarketplaceRequestContext,requestId:string,request?:Request):Promise<WebPresenceVersion>{const version=await versionById(versionId);if(version.lifecycleState!=='DRAFT')throw new WebPresenceInputError('VALIDATION_FAILED','Seul un brouillon peut être validé.',409);const assets=await listWebPresenceAssets(),validation=validateConfiguration(version.configuration,assets),db=await createServiceClient(),result=await db.from('angelcare_marketplace_web_presence_versions').update({lifecycle_state:validation.valid?'VALIDATED':'DRAFT',validation_result:validation,validated_by:validation.valid?context.actor.id:null,validated_at:validation.valid?validation.checkedAt:null}).eq('id',versionId).eq('lifecycle_state','DRAFT').select('*').maybeSingle();if(result.error||!result.data)throw new WebPresenceInputError('STALE_REVISION','Le brouillon a été modifié pendant sa validation.',409);await writeMarketplaceAudit({context,requestId,action:validation.valid?'web_presence.validation.requested':'web_presence.validation.failed',objectType:'web_presence_version',objectId:versionId,afterValue:{valid:validation.valid,blockerCodes:validation.blockers.map(item=>item.code),warningCodes:validation.warnings.map(item=>item.code)},result:validation.valid?'success':'failed',source:'web-presence',request});return mapVersion(result.data as Row)}
+
+
+function publicationInputWithSafeFallback(scope: WebPresenceScope, input: unknown) {
+  const fallback = compiledWebPresence(scope) as unknown as Record<string, unknown>
+  const warnings: ValidationIssue[] = []
+  const note = (field: string) => warnings.push({
+    code: 'SAFE_FALLBACK_APPLIED',
+    field,
+    message: `${field} est absent; la valeur AngelCare sûre existante est conservée pour cette publication.`,
+    severity: 'warning',
+  })
+  const walk = (base: unknown, incoming: unknown, path: string): unknown => {
+    if (Array.isArray(base)) {
+      if (incoming === undefined) { note(path); return structuredClone(base) }
+      return incoming
+    }
+    if (base && typeof base === 'object') {
+      if (incoming !== undefined && (!incoming || typeof incoming !== 'object' || Array.isArray(incoming))) return incoming
+      const source = incoming && typeof incoming === 'object' ? incoming as Record<string, unknown> : {}
+      const result: Record<string, unknown> = { ...source }
+      for (const [key, value] of Object.entries(base as Record<string, unknown>)) {
+        result[key] = walk(value, source[key], path ? `${path}.${key}` : key)
+      }
+      return result
+    }
+    if (typeof base === 'string' && base.trim() && (incoming === undefined || incoming === null || (typeof incoming === 'string' && !incoming.trim()))) {
+      note(path)
+      return base
+    }
+    if (incoming === undefined) {
+      if (base !== null && base !== '' && base !== undefined) note(path)
+      return structuredClone(base)
+    }
+    return incoming
+  }
+  const merged = walk(fallback, input, '') as Record<string, unknown>
+  const structured = merged.structuredData && typeof merged.structuredData === 'object' && !Array.isArray(merged.structuredData) ? merged.structuredData as Record<string, unknown> : null
+  const organization = structured?.organization && typeof structured.organization === 'object' && !Array.isArray(structured.organization) ? structured.organization as Record<string, unknown> : null
+  if (organization?.address && typeof organization.address === 'object' && !Array.isArray(organization.address)) {
+    const address = organization.address as Record<string, unknown>
+    const complete = ['street','locality','region','postalCode','country'].every(key => typeof address[key] === 'string' && String(address[key]).trim())
+    if (!complete) {
+      organization.address = null
+      warnings.push({ code: 'OPTIONAL_SECTION_OMITTED', field: 'structuredData.organization.address', message: 'Adresse structurée incomplète; elle est omise sans bloquer la publication.', severity: 'warning' })
+    }
+  }
+  if (organization && Array.isArray(organization.contactPoints)) {
+    const original = organization.contactPoints
+    const valid = original.filter(point => {
+      if (!point || typeof point !== 'object' || Array.isArray(point)) return false
+      const row = point as Record<string, unknown>
+      return ['type','telephone','email'].every(key => typeof row[key] === 'string' && String(row[key]).trim()) && Array.isArray(row.languages)
+    })
+    if (valid.length !== original.length) warnings.push({ code: 'OPTIONAL_SECTION_OMITTED', field: 'structuredData.organization.contactPoints', message: `${original.length-valid.length} point(s) de contact incomplet(s) ignoré(s); les autres valeurs seront publiées.`, severity: 'warning' })
+    organization.contactPoints = valid
+  }
+  return { input: merged as unknown, warnings }
+}
+
+function publicationMediaSafety(configuration: WebPresenceConfiguration, assets: WebPresenceMediaAsset[]) {
+  const safe = structuredClone(configuration)
+  const byKey = new Map(assets.map(asset => [asset.assetKey, asset]))
+  const warnings: ValidationIssue[] = []
+  const usable = (key: string | null) => {
+    if (!key) return true
+    const asset = byKey.get(key)
+    return Boolean(asset && asset.status === 'active' && asset.rightsStatus && asset.optimizationStatus === 'ready')
+  }
+  const drop = (field: string, message: string) => warnings.push({ code: 'ASSET_OMITTED_AT_PUBLICATION', field, message, severity: 'warning' })
+  for (const slot of Object.keys(safe.icons) as Array<keyof WebPresenceConfiguration['icons']>) {
+    const key = safe.icons[slot].assetKey
+    if (key && !usable(key)) {
+      safe.icons[slot].assetKey = null
+      drop(`icons.${slot}`, `Le média ${key} n’est pas livrable actuellement; ce slot est publié sans ce média et le runtime utilisera son fallback lorsqu’il existe.`)
+    }
+  }
+  if (safe.social.defaultImageAssetKey && !usable(safe.social.defaultImageAssetKey)) {
+    const key = safe.social.defaultImageAssetKey
+    safe.social.defaultImageAssetKey = null
+    drop('social.defaultImageAssetKey', `L’image sociale ${key} n’est pas livrable; la publication continue avec le fallback de marque disponible.`)
+  }
+  for (const locale of WEB_PRESENCE_LOCALES) {
+    const key = safe.localizedMetadata[locale].socialImageAssetKey
+    if (key && !usable(key)) {
+      safe.localizedMetadata[locale].socialImageAssetKey = null
+      drop(`localizedMetadata.${locale}.socialImageAssetKey`, `L’image sociale ${locale.toUpperCase()} ${key} n’est pas livrable; la publication continue avec le fallback disponible.`)
+    }
+  }
+  return { configuration: safe, warnings }
+}
+
+/**
+ * Canonical operator path: one request saves the current configuration, performs
+ * advisory validation, creates/updates the internal immutable revision, and
+ * atomically publishes it. Draft/validate remain internal compatibility details.
+ */
+export async function publishWebPresenceOneClick(
+  scope: WebPresenceScope,
+  configurationInput: unknown,
+  expectedCurrentRevision: number,
+  summary: string,
+  context: MarketplaceRequestContext,
+  requestId: string,
+  _request?: Request,
+) {
+  const preparedInput = publicationInputWithSafeFallback(scope, configurationInput)
+  const parsed = parseWebPresenceConfiguration(preparedInput.input)
+  const assets = await listWebPresenceAssets()
+  const mediaSafe = publicationMediaSafety(parsed, assets)
+  const validation = validateConfigurationForPublication(mediaSafe.configuration, assets)
+  validation.warnings = [...preparedInput.warnings, ...mediaSafe.warnings, ...validation.warnings]
+
+  const db = await createServiceClient()
+  const profile = await profileByScope(scope)
+  const open = await db
+    .from('angelcare_marketplace_web_presence_versions')
+    .select('*')
+    .eq('profile_id', profile.id)
+    .in('lifecycle_state', ['DRAFT', 'VALIDATED'])
+    .order('version_number', { ascending: false })
+    .limit(1)
+    .maybeSingle()
+  if (open.error) throw new WebPresenceInputError('PUBLICATION_BLOCKED', `Préparation de publication impossible (${open.error.code || 'DB_READ'}).`, 500)
+
+  const now = new Date().toISOString()
+  const checksum = checksumConfiguration(mediaSafe.configuration)
+  let prepared: WebPresenceVersion
+  if (open.data) {
+    const updated = await db
+      .from('angelcare_marketplace_web_presence_versions')
+      .update({
+        configuration: mediaSafe.configuration,
+        configuration_checksum: checksum,
+        change_summary: summary.trim() || 'Publication Web Presence',
+        lifecycle_state: 'VALIDATED',
+        validation_result: validation,
+        validated_by: context.actor.id,
+        validated_at: now,
+      })
+      .eq('id', String(open.data.id))
+      .in('lifecycle_state', ['DRAFT', 'VALIDATED'])
+      .select('*')
+      .maybeSingle()
+    if (updated.error || !updated.data) throw new WebPresenceInputError('STALE_REVISION', 'La révision de travail a changé pendant la publication. Rechargez puis republiez.', 409)
+    prepared = mapVersion(updated.data as Row)
+  } else {
+    const versionNumber = await nextVersionNumber(profile.id)
+    const inserted = await db
+      .from('angelcare_marketplace_web_presence_versions')
+      .insert({
+        profile_id: profile.id,
+        version_number: versionNumber,
+        lifecycle_state: 'VALIDATED',
+        configuration: mediaSafe.configuration,
+        configuration_checksum: checksum,
+        validation_result: validation,
+        change_summary: summary.trim() || 'Publication Web Presence',
+        created_by: context.actor.id,
+        validated_by: context.actor.id,
+        validated_at: now,
+      })
+      .select('*')
+      .single()
+    if (inserted.error || !inserted.data) throw new WebPresenceInputError('STALE_REVISION', `Création de la révision de publication impossible (${inserted.error?.code || 'DB_INSERT'}). Rechargez puis republiez.`, 409)
+    prepared = mapVersion(inserted.data as Row)
+  }
+
+  const call = await db.rpc('angelcare_marketplace_publish_web_presence', {
+    p_profile_id: profile.id,
+    p_version_id: prepared.id,
+    p_expected_current_revision: expectedCurrentRevision,
+    p_actor_id: context.actor.id,
+    p_request_id: requestId,
+  })
+  if (call.error) {
+    if (call.error.message.includes('STALE_REVISION')) throw new WebPresenceInputError('STALE_REVISION', 'Une publication plus récente existe déjà. Rechargez la page puis republiez.', 409)
+    throw new WebPresenceInputError('PUBLICATION_BLOCKED', `La publication atomique a été refusée (${call.error.code || 'DB_RPC'}). Aucune nouvelle version n’a été activée.`, 500)
+  }
+
+  await invalidateWebPresence(scope)
+  return {
+    ...publicationResult(profile, { ...prepared, lifecycleState: 'PUBLISHED', publishedAt: now }, requestId, 'PUBLISHED'),
+    publicationMode: 'ONE_CLICK' as const,
+    warningCount: validation.warnings.length,
+    warnings: validation.warnings,
+    configurationChecksum: checksum,
+  }
+}
 
 function publicationResult(profile:WebPresenceProfile,version:WebPresenceVersion,requestId:string,result:string){return {requestId,profileId:profile.id,versionId:version.id,revision:version.versionNumber,result,affectedScopes:[profile.scopeKey],affectedRoutes:WEB_PRESENCE_ROUTES[profile.scopeKey]}}
 export async function publishWebPresence(versionId:string,expectedCurrentRevision:number,context:MarketplaceRequestContext,requestId:string,_request?:Request){const db=await createServiceClient(),version=await versionById(versionId),profile=await profileByScope((await profileForVersion(version.profileId)).scopeKey);if(version.lifecycleState!=='VALIDATED'||!version.validationResult?.valid)throw new WebPresenceInputError('PUBLICATION_BLOCKED','La révision doit être validée sans blocker.',409);const call=await db.rpc('angelcare_marketplace_publish_web_presence',{p_profile_id:profile.id,p_version_id:version.id,p_expected_current_revision:expectedCurrentRevision,p_actor_id:context.actor.id,p_request_id:requestId});if(call.error){if(call.error.message.includes('STALE_REVISION'))throw new WebPresenceInputError('STALE_REVISION','Une publication plus récente existe déjà.',409);throw new WebPresenceInputError('PUBLICATION_BLOCKED','La publication atomique a été refusée.',409)}await invalidateWebPresence(profile.scopeKey);return publicationResult(profile,{...version,lifecycleState:'PUBLISHED',publishedAt:new Date().toISOString()},requestId,'PUBLISHED')}
