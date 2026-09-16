@@ -7,7 +7,6 @@ import { writeMarketplaceAudit } from '@/angelcare-marketplace/audit/write-audit
 import { compiledWebPresence, WEB_PRESENCE_CACHE_TAG, WEB_PRESENCE_ROUTES } from './fallback'
 import { nextWebPresenceVersionNumber, resolveWebPresenceAuthorityState } from './authority-state'
 import { checksumConfiguration, parseWebPresenceConfiguration, validateConfiguration, validateConfigurationForPublication, WebPresenceInputError } from './schema'
-import { WEB_PRESENCE_LOCALES } from './types'
 import type { ValidationIssue, ValidationResult, WebPresenceConfiguration, WebPresenceHealthStatus, WebPresenceMediaAsset, WebPresenceProbeEvidence, WebPresenceProfile, WebPresenceScope, WebPresenceSnapshot, WebPresenceVerificationSummary, WebPresenceVersion } from './types'
 
 type Row = Record<string, unknown>
@@ -99,12 +98,7 @@ export async function validateWebPresenceDraft(versionId:string,context:Marketpl
 function publicationInputWithSafeFallback(scope: WebPresenceScope, input: unknown) {
   const fallback = compiledWebPresence(scope) as unknown as Record<string, unknown>
   const warnings: ValidationIssue[] = []
-  const note = (field: string) => warnings.push({
-    code: 'SAFE_FALLBACK_APPLIED',
-    field,
-    message: `${field} est absent; la valeur AngelCare sûre existante est conservée pour cette publication.`,
-    severity: 'warning',
-  })
+  const note = (_field: string) => undefined
   const walk = (base: unknown, incoming: unknown, path: string): unknown => {
     if (Array.isArray(base)) {
       if (incoming === undefined) { note(path); return structuredClone(base) }
@@ -137,7 +131,6 @@ function publicationInputWithSafeFallback(scope: WebPresenceScope, input: unknow
     const complete = ['street','locality','region','postalCode','country'].every(key => typeof address[key] === 'string' && String(address[key]).trim())
     if (!complete) {
       organization.address = null
-      warnings.push({ code: 'OPTIONAL_SECTION_OMITTED', field: 'structuredData.organization.address', message: 'Adresse structurée incomplète; elle est omise sans bloquer la publication.', severity: 'warning' })
     }
   }
   if (organization && Array.isArray(organization.contactPoints)) {
@@ -147,42 +140,16 @@ function publicationInputWithSafeFallback(scope: WebPresenceScope, input: unknow
       const row = point as Record<string, unknown>
       return ['type','telephone','email'].every(key => typeof row[key] === 'string' && String(row[key]).trim()) && Array.isArray(row.languages)
     })
-    if (valid.length !== original.length) warnings.push({ code: 'OPTIONAL_SECTION_OMITTED', field: 'structuredData.organization.contactPoints', message: `${original.length-valid.length} point(s) de contact incomplet(s) ignoré(s); les autres valeurs seront publiées.`, severity: 'warning' })
     organization.contactPoints = valid
   }
   return { input: merged as unknown, warnings }
 }
 
-function publicationMediaSafety(configuration: WebPresenceConfiguration, assets: WebPresenceMediaAsset[]) {
-  const safe = structuredClone(configuration)
-  const byKey = new Map(assets.map(asset => [asset.assetKey, asset]))
-  const warnings: ValidationIssue[] = []
-  const usable = (key: string | null) => {
-    if (!key) return true
-    const asset = byKey.get(key)
-    return Boolean(asset && asset.status === 'active' && asset.rightsStatus && asset.optimizationStatus === 'ready')
-  }
-  const drop = (field: string, message: string) => warnings.push({ code: 'ASSET_OMITTED_AT_PUBLICATION', field, message, severity: 'warning' })
-  for (const slot of Object.keys(safe.icons) as Array<keyof WebPresenceConfiguration['icons']>) {
-    const key = safe.icons[slot].assetKey
-    if (key && !usable(key)) {
-      safe.icons[slot].assetKey = null
-      drop(`icons.${slot}`, `Le média ${key} n’est pas livrable actuellement; ce slot est publié sans ce média et le runtime utilisera son fallback lorsqu’il existe.`)
-    }
-  }
-  if (safe.social.defaultImageAssetKey && !usable(safe.social.defaultImageAssetKey)) {
-    const key = safe.social.defaultImageAssetKey
-    safe.social.defaultImageAssetKey = null
-    drop('social.defaultImageAssetKey', `L’image sociale ${key} n’est pas livrable; la publication continue avec le fallback de marque disponible.`)
-  }
-  for (const locale of WEB_PRESENCE_LOCALES) {
-    const key = safe.localizedMetadata[locale].socialImageAssetKey
-    if (key && !usable(key)) {
-      safe.localizedMetadata[locale].socialImageAssetKey = null
-      drop(`localizedMetadata.${locale}.socialImageAssetKey`, `L’image sociale ${locale.toUpperCase()} ${key} n’est pas livrable; la publication continue avec le fallback disponible.`)
-    }
-  }
-  return { configuration: safe, warnings }
+function publicationMediaSafety(configuration: WebPresenceConfiguration, _assets: WebPresenceMediaAsset[]) {
+  // Admin authority: once a Media Library asset is selected, publication preserves it exactly.
+  // No rights flag, optimization flag, status flag, MIME family, dimensions, aspect ratio,
+  // or "official" metadata is allowed to silently remove the operator's selected asset.
+  return { configuration: structuredClone(configuration), warnings: [] as ValidationIssue[] }
 }
 
 /**
@@ -289,4 +256,4 @@ async function profileForVersion(profileId:string):Promise<WebPresenceProfile>{c
 export async function rollbackWebPresence(scope:WebPresenceScope,sourceVersionId:string,expectedCurrentRevision:number,reason:string,context:MarketplaceRequestContext,requestId:string,_request?:Request){if(reason.trim().length<10)throw new WebPresenceInputError('VALIDATION_FAILED','Une raison de restauration explicite est requise.');const db=await createServiceClient(),profile=await profileByScope(scope),call=await db.rpc('angelcare_marketplace_rollback_web_presence',{p_profile_id:profile.id,p_source_version_id:sourceVersionId,p_expected_current_revision:expectedCurrentRevision,p_reason:reason.trim(),p_actor_id:context.actor.id,p_request_id:requestId});if(call.error){if(call.error.message.includes('STALE_REVISION'))throw new WebPresenceInputError('STALE_REVISION','La révision publiée a changé.',409);throw new WebPresenceInputError('PUBLICATION_BLOCKED','La restauration atomique a été refusée.',409)}const row=asRow(call.data),version=await versionById(str(row.version_id));await invalidateWebPresence(scope);return publicationResult(profile,version,requestId,'ROLLED_BACK')}
 export async function webPresenceHistory(scope:WebPresenceScope):Promise<WebPresenceVersion[]>{const profile=await profileByScope(scope),db=await createServiceClient(),result=await db.from('angelcare_marketplace_web_presence_versions').select('*').eq('profile_id',profile.id).order('version_number',{ascending:false}).limit(100);if(result.error)throw result.error;return rows(result.data).map(mapVersion)}
 export async function invalidateWebPresence(scope:WebPresenceScope){revalidateTag(WEB_PRESENCE_CACHE_TAG,'max');revalidatePath('/','layout');revalidatePath('/angelcare-marketplace','layout');for(const path of ['/robots.txt','/sitemap.xml','/manifest.webmanifest',...WEB_PRESENCE_ROUTES[scope]])revalidatePath(path)}
-export async function resolveAsset(assetKey:string){const db=await createServiceClient(),result=await db.from('angelcare_marketplace_media_assets').select('id,asset_key,file_name,mime_type,size_bytes,width,height,rights_status,status,public_url,metadata,storage_bucket,storage_path').eq('asset_key',assetKey).eq('status','active').maybeSingle();if(result.error||!result.data)throw new WebPresenceInputError('INVALID_ASSET','Média publié introuvable.',404);return result.data as Row}
+export async function resolveAsset(assetKey:string){const db=await createServiceClient(),result=await db.from('angelcare_marketplace_media_assets').select('id,asset_key,file_name,mime_type,size_bytes,width,height,rights_status,status,public_url,metadata,storage_bucket,storage_path').eq('asset_key',assetKey).maybeSingle();if(result.error||!result.data)throw new WebPresenceInputError('INVALID_ASSET','Média sélectionné introuvable dans la Media Library.',404);return result.data as Row}
