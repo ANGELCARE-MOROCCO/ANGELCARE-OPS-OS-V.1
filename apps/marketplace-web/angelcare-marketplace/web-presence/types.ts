@@ -152,6 +152,38 @@ export interface WebPresenceVersion {
   publishedAt: string | null
 }
 
+export type WebPresenceProbeStatus = 'PASS' | 'WARN' | 'FAIL' | 'SKIPPED' | 'INCONCLUSIVE'
+export type WebPresenceHealthStatus = 'HEALTHY' | 'WARNING' | 'DEGRADED' | 'FAILED' | 'NOT_VERIFIED'
+
+export interface WebPresenceProbeEvidence {
+  checkKey: string
+  label: string
+  kind: 'html' | 'asset' | 'robots' | 'sitemap' | 'manifest'
+  checkedUrl: string
+  httpStatus: number
+  contentType: string
+  effectiveValues: Record<string, unknown>
+  checkedAt: string
+  publishedRevision: number
+  requestId: string
+  status: WebPresenceProbeStatus
+  result: 'PASS' | 'FAIL'
+  failures: string[]
+  warnings: string[]
+  attempts: number
+  latencyMs: number
+}
+
+export interface WebPresenceVerificationSummary {
+  requestId: string
+  checkedAt: string
+  result: 'PASS' | 'FAIL'
+  healthStatus: WebPresenceHealthStatus
+  versionId: string | null
+  publishedRevision: number
+  evidence: WebPresenceProbeEvidence[]
+}
+
 export interface WebPresenceSnapshot {
   profile: WebPresenceProfile
   draft: WebPresenceVersion | null
@@ -162,5 +194,5 @@ export interface WebPresenceSnapshot {
   persistenceAvailable: boolean
   persistenceState: WebPresencePersistenceState
   fallbackActive: boolean
-  verification: Record<string, unknown> | null
+  verification: WebPresenceVerificationSummary | null
 }

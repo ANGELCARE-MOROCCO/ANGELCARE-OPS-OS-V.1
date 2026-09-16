@@ -8,7 +8,7 @@ import { compiledWebPresence, WEB_PRESENCE_CACHE_TAG, WEB_PRESENCE_ROUTES } from
 import { nextWebPresenceVersionNumber, resolveWebPresenceAuthorityState } from './authority-state'
 import { checksumConfiguration, parseWebPresenceConfiguration, validateConfiguration, validateConfigurationForPublication, WebPresenceInputError } from './schema'
 import { WEB_PRESENCE_LOCALES } from './types'
-import type { ValidationIssue, ValidationResult, WebPresenceConfiguration, WebPresenceMediaAsset, WebPresenceProfile, WebPresenceScope, WebPresenceSnapshot, WebPresenceVersion } from './types'
+import type { ValidationIssue, ValidationResult, WebPresenceConfiguration, WebPresenceHealthStatus, WebPresenceMediaAsset, WebPresenceProbeEvidence, WebPresenceProfile, WebPresenceScope, WebPresenceSnapshot, WebPresenceVerificationSummary, WebPresenceVersion } from './types'
 
 type Row = Record<string, unknown>
 const asRow = (value:unknown):Row => value && typeof value==='object' && !Array.isArray(value) ? value as Row : {}
@@ -19,6 +19,53 @@ const nullable = (value:unknown):string|null => value == null ? null : String(va
 function mapProfile(row:Row):WebPresenceProfile { return { id:str(row.id),scopeKey:str(row.scope_key) as WebPresenceScope,domain:str(row.domain),defaultLocale:(str(row.default_locale)||'fr') as WebPresenceProfile['defaultLocale'],supportedLocales:(Array.isArray(row.supported_locales)?row.supported_locales:['fr','en','ar']) as WebPresenceProfile['supportedLocales'],currentPublishedVersionId:nullable(row.current_published_version_id),status:str(row.status) } }
 function mapVersion(row:Row):WebPresenceVersion { return { id:str(row.id),profileId:str(row.profile_id),versionNumber:Number(row.version_number||0),lifecycleState:str(row.lifecycle_state) as WebPresenceVersion['lifecycleState'],configuration:parseWebPresenceConfiguration(row.configuration),configurationChecksum:str(row.configuration_checksum),validationResult:row.validation_result?row.validation_result as unknown as ValidationResult:null,changeSummary:nullable(row.change_summary),createdBy:nullable(row.created_by),validatedBy:nullable(row.validated_by),publishedBy:nullable(row.published_by),createdAt:str(row.created_at),validatedAt:nullable(row.validated_at),publishedAt:nullable(row.published_at) } }
 function mapAsset(row:Row):WebPresenceMediaAsset { const folder=asRow(row.folder);return { id:str(row.id),assetKey:str(row.asset_key),fileName:str(row.file_name),mimeType:str(row.mime_type),sizeBytes:Number(row.size_bytes||0),width:row.width==null?null:Number(row.width),height:row.height==null?null:Number(row.height),folder:str(folder.name)||null,rightsStatus:str(row.rights_status),optimizationStatus:str(row.optimization_status),status:str(row.status),publicUrl:str(row.public_url),metadata:asRow(row.metadata) } }
+
+function healthFromEvidence(evidence:WebPresenceProbeEvidence[]):WebPresenceHealthStatus {
+  if (!evidence.length) return 'NOT_VERIFIED'
+  if (evidence.some(item => item.status === 'FAIL')) return 'FAILED'
+  if (evidence.some(item => item.status === 'INCONCLUSIVE')) return 'DEGRADED'
+  if (evidence.some(item => item.status === 'WARN')) return 'WARNING'
+  return 'HEALTHY'
+}
+function mapVerification(row:Row|null|undefined):WebPresenceVerificationSummary|null {
+  if(!row)return null
+  const rawEvidence=Array.isArray(row.evidence)?row.evidence:[]
+  const evidence=rawEvidence.map((value,index)=>{
+    const item=asRow(value)
+    const failures=Array.isArray(item.failures)?item.failures.map(String):[]
+    const warnings=Array.isArray(item.warnings)?item.warnings.map(String):[]
+    const legacyResult=str(item.result)==='FAIL'?'FAIL':'PASS'
+    const rawStatus=str(item.status)
+    const status=(['PASS','WARN','FAIL','SKIPPED','INCONCLUSIVE'].includes(rawStatus)?rawStatus:(legacyResult==='FAIL'?'FAIL':'PASS')) as WebPresenceProbeEvidence['status']
+    return {
+      checkKey:str(item.checkKey)||`legacy-${index+1}`,
+      label:str(item.label)||str(item.checkedUrl)||`Contrôle ${index+1}`,
+      kind:(['html','asset','robots','sitemap','manifest'].includes(str(item.kind))?str(item.kind):'html') as WebPresenceProbeEvidence['kind'],
+      checkedUrl:str(item.checkedUrl),
+      httpStatus:Number(item.httpStatus||0),
+      contentType:str(item.contentType),
+      effectiveValues:asRow(item.effectiveValues),
+      checkedAt:str(item.checkedAt)||str(row.checked_at),
+      publishedRevision:Number(item.publishedRevision||0),
+      requestId:str(item.requestId)||str(row.request_id),
+      status,
+      result:(status==='FAIL'?'FAIL':'PASS') as 'PASS'|'FAIL',
+      failures,
+      warnings,
+      attempts:Number(item.attempts||1),
+      latencyMs:Number(item.latencyMs||0),
+    }
+  })
+  return {
+    requestId:str(row.request_id),
+    checkedAt:str(row.checked_at),
+    result:str(row.result)==='FAIL'?'FAIL':'PASS',
+    healthStatus:healthFromEvidence(evidence),
+    versionId:nullable(row.version_id),
+    publishedRevision:evidence[0]?.publishedRevision||0,
+    evidence,
+  }
+}
 
 async function profileByScope(scope:WebPresenceScope):Promise<WebPresenceProfile> {
   const db=await createServiceClient(), result=await db.from('angelcare_marketplace_web_presence_profiles').select('*').eq('scope_key',scope).maybeSingle()
@@ -35,10 +82,10 @@ const cachedPublished = unstable_cache(async(scope:WebPresenceScope):Promise<{co
 export async function getPublishedWebPresence(scope:WebPresenceScope){return cachedPublished(scope)}
 
 const cachedRevision=unstable_cache(async(scope:WebPresenceScope,revision:number)=>{const profile=await profileByScope(scope),db=await createServiceClient(),result=await db.from('angelcare_marketplace_web_presence_versions').select('*').eq('profile_id',profile.id).eq('version_number',revision).in('lifecycle_state',['PUBLISHED','SUPERSEDED','ROLLED_BACK']).maybeSingle();if(result.error||!result.data)return null;const version=mapVersion(result.data as Row);return{configuration:version.configuration,revision:version.versionNumber,versionId:version.id,fallback:false as const}},['angelcare-marketplace-web-presence-revision'],{tags:[WEB_PRESENCE_CACHE_TAG]})
-export async function getWebPresenceRevision(scope:WebPresenceScope,revision:number){const current=await getPublishedWebPresence(scope);if(!Number.isSafeInteger(revision)||revision<1||revision===current.revision)return current;return await cachedRevision(scope,revision)||current}
+export async function getWebPresenceRevision(scope:WebPresenceScope,revision:number){const current=await getPublishedWebPresence(scope);if(!Number.isSafeInteger(revision)||revision<1)return current;if(revision===current.revision)return current;const historical=await cachedRevision(scope,revision);if(!historical)throw new WebPresenceInputError('PUBLICATION_BLOCKED',`La révision Web Presence r${revision} est introuvable ou non publiable.`,404);return historical}
 
 export async function getWebPresenceSnapshot(scope:WebPresenceScope):Promise<WebPresenceSnapshot>{
-  try { const db=await createServiceClient(),profile=await profileByScope(scope);const [versions,assets,verification]=await Promise.all([db.from('angelcare_marketplace_web_presence_versions').select('*').eq('profile_id',profile.id).order('version_number',{ascending:false}).limit(30),listWebPresenceAssets(),db.from('angelcare_marketplace_web_presence_verifications').select('*').eq('profile_id',profile.id).order('checked_at',{ascending:false}).limit(1).maybeSingle()]);if(versions.error)throw versions.error;const authority=resolveWebPresenceAuthorityState(scope,rows(versions.data).map(mapVersion),profile.currentPublishedVersionId);return {profile,...authority,mediaAssets:assets,affectedRoutes:WEB_PRESENCE_ROUTES[scope],persistenceAvailable:true,verification:verification.data as Record<string,unknown>|null} } catch { const configuration=compiledWebPresence(scope);return {profile:{id:'compiled-fallback',scopeKey:scope,domain:'my.angelcarehub.com',defaultLocale:'fr',supportedLocales:['fr','en','ar'],currentPublishedVersionId:null,status:'fallback'},draft:null,published:null,effectiveConfiguration:configuration,mediaAssets:[],affectedRoutes:WEB_PRESENCE_ROUTES[scope],persistenceAvailable:false,persistenceState:'UNAVAILABLE',fallbackActive:true,verification:null} }
+  try { const db=await createServiceClient(),profile=await profileByScope(scope);const [versions,assets,verification]=await Promise.all([db.from('angelcare_marketplace_web_presence_versions').select('*').eq('profile_id',profile.id).order('version_number',{ascending:false}).limit(30),listWebPresenceAssets(),db.from('angelcare_marketplace_web_presence_verifications').select('*').eq('profile_id',profile.id).order('checked_at',{ascending:false}).limit(1).maybeSingle()]);if(versions.error)throw versions.error;const authority=resolveWebPresenceAuthorityState(scope,rows(versions.data).map(mapVersion),profile.currentPublishedVersionId);return {profile,...authority,mediaAssets:assets,affectedRoutes:WEB_PRESENCE_ROUTES[scope],persistenceAvailable:true,verification:mapVerification((verification.data as Row|null) || null)} } catch { const configuration=compiledWebPresence(scope);return {profile:{id:'compiled-fallback',scopeKey:scope,domain:'my.angelcarehub.com',defaultLocale:'fr',supportedLocales:['fr','en','ar'],currentPublishedVersionId:null,status:'fallback'},draft:null,published:null,effectiveConfiguration:configuration,mediaAssets:[],affectedRoutes:WEB_PRESENCE_ROUTES[scope],persistenceAvailable:false,persistenceState:'UNAVAILABLE',fallbackActive:true,verification:null} }
 }
 
 async function nextVersionNumber(profileId:string):Promise<number>{const db=await createServiceClient(),result=await db.from('angelcare_marketplace_web_presence_versions').select('version_number').eq('profile_id',profileId).order('version_number',{ascending:false}).limit(1).maybeSingle();if(result.error)throw result.error;return nextWebPresenceVersionNumber(result.data?.version_number)}

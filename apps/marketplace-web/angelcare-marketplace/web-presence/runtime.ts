@@ -1,6 +1,7 @@
 import 'server-only'
 import type { Metadata, MetadataRoute } from 'next'
 import { createServiceClient } from '@/lib/supabase/server'
+import { createMarketplaceMediaDeliveryUrl } from '@/angelcare-marketplace/commerce-studio/media-storage'
 import { getPublishedWebPresence, getWebPresenceRevision, resolveAsset } from './repository'
 import type { WebPresenceConfiguration, WebPresenceLocale, WebPresenceScope } from './types'
 
@@ -18,7 +19,7 @@ export async function buildWebPresenceMetadata(scope:WebPresenceScope,locale:Web
     authors:[{name:c.sharedMetadata.authorsOrganization}],creator:c.sharedMetadata.creator,publisher:c.sharedMetadata.publisher,
     referrer:c.sharedMetadata.referrer,category:c.sharedMetadata.category,classification:c.sharedMetadata.classification,
     formatDetection:c.sharedMetadata.formatDetection,
-    icons:{icon:[{url:faviconUrl,sizes:'any'},{url:iconUrl,sizes:'192x192'}],apple:[{url:appleUrl,sizes:'180x180'}]},
+    icons:{icon:[{url:faviconUrl,sizes:'any'},{url:iconUrl,sizes:'512x512'}],apple:[{url:appleUrl,sizes:'180x180'}]},
     openGraph:{type:'website',siteName:c.social.openGraphSiteName,locale:c.social.openGraphLocale,alternateLocale:c.social.alternateLocales,title:localized.openGraphTitle,description:localized.openGraphDescription,url:scope==='MARKETPLACE'?'/angelcare-marketplace': '/',images:socialImage?[{url:socialImage}]:undefined},
     twitter:{card:c.social.twitterCard,title:localized.socialTitle,description:localized.socialDescription,site:c.social.twitterSite||undefined,creator:c.social.twitterCreator||undefined,images:socialImage?[socialImage]:undefined},
     verification:{google:c.verification.google||undefined,other:c.verification.bing?{'msvalidate.01':[c.verification.bing]}:undefined},
@@ -36,4 +37,51 @@ export async function buildManifest():Promise<MetadataRoute.Manifest>{const {con
 
 export async function buildStructuredData(scope:WebPresenceScope){const {configuration:c,revision}=await getPublishedWebPresence(scope),org=c.structuredData.organization,website=c.structuredData.website,logo=org.brandName&&c.icons.organizationLogo.assetKey?`${ORIGIN}${assetUrl(scope,'organization-logo',revision)}`:undefined;return [{ '@context':'https://schema.org','@type':'Organization',name:org.brandName,legalName:org.legalName||undefined,url:org.canonicalUrl,logo,description:org.description,telephone:org.telephone||undefined,email:org.email||undefined,address:org.address?{'@type':'PostalAddress',streetAddress:org.address.street,addressLocality:org.address.locality,addressRegion:org.address.region,postalCode:org.address.postalCode,addressCountry:org.address.country}:undefined,sameAs:org.socialProfiles.length?org.socialProfiles:undefined,foundingDate:org.foundingDate||undefined,contactPoint:org.contactPoints.map(point=>({'@type':'ContactPoint',contactType:point.type,telephone:point.telephone,email:point.email,availableLanguage:point.languages}))},{'@context':'https://schema.org','@type':'WebSite',name:website.siteName,alternateName:website.alternateName,url:website.url,inLanguage:website.supportedLanguages}]}
 
-export async function publicAsset(slot:string,scope:WebPresenceScope,requestedRevision:number){const published=await getWebPresenceRevision(scope,requestedRevision),icons=published.configuration.icons,key=slot==='favicon'?icons.favicon.assetKey:slot==='icon'?icons.highResolution.assetKey:slot==='apple-touch-icon'?icons.appleTouch.assetKey:slot==='manifest-192'?icons.manifest192.assetKey:slot==='manifest-512'?icons.manifest512.assetKey:slot==='organization-logo'?icons.organizationLogo.assetKey:null;if(!key)return null;const asset=await resolveAsset(key),db=await createServiceClient(),download=await db.storage.from(String(asset.storage_bucket)).download(String(asset.storage_path));if(download.error||!download.data)return null;return {blob:download.data,type:String(asset.mime_type),etag:`\"${published.revision}-${String(asset.id)}\"`,revision:published.revision}}
+export class WebPresencePublicAssetError extends Error {
+  readonly code:string
+  readonly status:number
+  constructor(code:string,message:string,status=404){super(message);this.name='WebPresencePublicAssetError';this.code=code;this.status=status}
+}
+
+const assetKeyForSlot=(slot:string,icons:WebPresenceConfiguration['icons'])=>slot==='favicon'?icons.favicon.assetKey:slot==='icon'?icons.highResolution.assetKey:slot==='apple-touch-icon'?icons.appleTouch.assetKey:slot==='manifest-192'?icons.manifest192.assetKey:slot==='manifest-512'?icons.manifest512.assetKey:slot==='mask-icon'?icons.monochromeMask.assetKey:slot==='organization-logo'?icons.organizationLogo.assetKey:null
+
+async function fetchGatewayAsset(assetId:string,expectedMime:string){
+  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),12_000)
+  try{
+    const response=await fetch(createMarketplaceMediaDeliveryUrl(assetId,5*60*1000),{cache:'no-store',redirect:'follow',signal:controller.signal})
+    if(!response.ok)throw new WebPresencePublicAssetError('MEDIA_GATEWAY_HTTP_ERROR',`Le stockage média a répondu HTTP ${response.status}.`,502)
+    const contentType=response.headers.get('content-type')||expectedMime
+    if(!contentType.startsWith('image/'))throw new WebPresencePublicAssetError('MEDIA_GATEWAY_INVALID_CONTENT_TYPE','Le stockage média n’a pas renvoyé une image.',502)
+    const blob=await response.blob()
+    if(!blob.size)throw new WebPresencePublicAssetError('MEDIA_GATEWAY_EMPTY_BODY','Le stockage média a renvoyé un fichier vide.',502)
+    return {blob,type:contentType}
+  }catch(error){
+    if(error instanceof WebPresencePublicAssetError)throw error
+    if(error instanceof Error&&error.name==='AbortError')throw new WebPresencePublicAssetError('MEDIA_GATEWAY_TIMEOUT','Le stockage média n’a pas répondu dans le délai attendu.',504)
+    throw new WebPresencePublicAssetError('MEDIA_GATEWAY_UNAVAILABLE','Le stockage média est indisponible.',503)
+  }finally{clearTimeout(timer)}
+}
+
+export async function publicAsset(slot:string,scope:WebPresenceScope,requestedRevision:number){
+  const published=await getWebPresenceRevision(scope,requestedRevision)
+  const key=assetKeyForSlot(slot,published.configuration.icons)
+  if(!key)throw new WebPresencePublicAssetError('ASSET_SLOT_UNCONFIGURED','Aucun média n’est configuré pour ce slot.',404)
+  let asset:Awaited<ReturnType<typeof resolveAsset>>
+  try{asset=await resolveAsset(key)}catch{throw new WebPresencePublicAssetError('MEDIA_RECORD_NOT_FOUND','Le média configuré n’est plus actif ou est introuvable.',404)}
+  const mimeType=String(asset.mime_type||'')
+  if(!mimeType.startsWith('image/'))throw new WebPresencePublicAssetError('UNSUPPORTED_MIME','Le média configuré n’est pas une image livrable.',415)
+  const storageBucket=String(asset.storage_bucket||'')
+  let blob:Blob,type=mimeType
+  if(storageBucket==='marketplace-windows-media'){
+    const delivered=await fetchGatewayAsset(String(asset.id),mimeType)
+    blob=delivered.blob
+    type=delivered.type
+  }else{
+    const storagePath=String(asset.storage_path||'')
+    if(!storageBucket||!storagePath)throw new WebPresencePublicAssetError('STORAGE_REFERENCE_MISSING','La référence de stockage du média est incomplète.',404)
+    const db=await createServiceClient(),download=await db.storage.from(storageBucket).download(storagePath)
+    if(download.error||!download.data)throw new WebPresencePublicAssetError('STORAGE_OBJECT_MISSING','Le fichier média n’existe pas dans son stockage déclaré.',404)
+    blob=download.data
+  }
+  return {blob,type,etag:`"${published.revision}-${String(asset.id)}"`,revision:published.revision,fileName:String(asset.file_name||slot)}
+}
