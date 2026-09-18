@@ -4,16 +4,17 @@ import { createServiceClient } from '@/lib/supabase/server'
 import { writeMarketplaceAudit } from '../audit/write-audit'
 import type { MarketplaceRequestContext } from '../domain/types'
 import { MarketplaceError } from '../server/errors'
+import { marketplaceDatabaseError } from '../studio-universal/database-error'
 import { validateBlockDocument, validatePageForPublication, validatePageTransition } from './validation'
 import type {
   CmsBlock, CmsCta, CmsDependencyEdge, CmsMenu, CmsPage, CmsPageDetail, CmsPageStatus, CmsRevision,
   CmsSymbol, CmsTemplate, ExperienceMediaAsset, PreviewSession, PublicationJob,
 } from './types'
 
-function dbError(operation: string, error: { code?: string; message?: string } | null) {
-  const missing = error?.code === '42P01' || String(error?.message || '').includes('angelcare_marketplace_cms_')
+function dbError(operation: string, error: { code?: string; message?: string; details?: string; hint?: string; constraint?: string } | null) {
   const conflict = error?.code === '40001' || String(error?.message || '').includes('CMS_VERSION_CONFLICT')
-  return new MarketplaceError(conflict ? 'INVALID_STATE_TRANSITION' : missing ? 'CONFIGURATION_ERROR' : 'INTERNAL_ERROR', conflict ? 'Cette page a été modifiée ailleurs. Rechargez la version courante avant de réenregistrer.' : missing ? 'Les migrations Experience Builder doivent être appliquées.' : `Le CMS n’a pas pu ${operation}.`)
+  if (conflict) return new MarketplaceError('INVALID_STATE_TRANSITION', 'Cette page a été modifiée ailleurs. Rechargez la version courante avant de réenregistrer.', { cause: error, retryable: true })
+  return marketplaceDatabaseError(operation, error)
 }
 function coreMissing(error: { code?: string; message?: string } | null | undefined) { return ['42P01','42703','42883'].includes(String(error?.code || '')) || /angelcare_marketplace_(save_cms|cms_revisions|cms_dependency)/.test(String(error?.message || '')) }
 function asRecord(value: unknown): Record<string, unknown> { return value && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, unknown> : {} }

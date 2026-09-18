@@ -7,6 +7,7 @@ import styles from '../public.module.css'
 import { searchDiscovery } from '../../catalog-discovery/repository'
 import { CatalogCard } from '../../catalog-discovery/components/CatalogCard'
 import { createServiceClient } from '@/lib/supabase/server'
+import { isStudioCmsBlock, StudioPublishedRenderer } from '../../studio-universal/StudioPublishedRenderer'
 
 function text(value: unknown, fallback = '') { return typeof value === 'string' ? value : fallback }
 function list(value: unknown): Record<string, unknown>[] { return Array.isArray(value) ? value.filter((item): item is Record<string, unknown> => Boolean(item) && typeof item === 'object' && !Array.isArray(item)) : [] }
@@ -92,6 +93,7 @@ async function ExperienceBlock({ block, allBlocks, locale, route, depth = 0 }: {
 
 export async function PublicPageRenderer({ experience, locale }: { experience: PublicPageExperience; locale: 'fr' | 'en' | 'ar' }) {
   const route = `/angelcare-marketplace/${locale}/${experience.page.slug}`
+  if (experience.blocks.some(isStudioCmsBlock)) return <StudioPublishedRenderer blocks={experience.blocks} locale={locale}/>
   const roots = experience.blocks.filter(block => !block.parent_block_key || !experience.blocks.some(parent => parent.block_key === block.parent_block_key)).sort((a, b) => a.sort_order - b.sort_order)
   return <>{roots.map(block => <ExperienceBlock block={block} allBlocks={experience.blocks} locale={locale} route={route} key={block.id || block.block_key} />)}</>
 }

@@ -1,0 +1,1 @@
+:root{--golden-navy:#071b35;--golden-gap:24px}.hero{background:#071b35;color:white;padding:48px;border-radius:24px}.hero h1{font-size:48px;line-height:1.05}.stats{display:grid;gap:var(--golden-gap)}@media(max-width:767px){.hero{padding:24px}.hero h1{font-size:34px}}@media(min-width:900px){.stats{grid-template-columns:repeat(3,1fr)}}

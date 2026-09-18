@@ -1,11 +1,11 @@
 import { createServiceClient } from '@/lib/supabase/server'
 import { MarketplaceError } from '../server/errors'
+import { marketplaceDatabaseError } from '../studio-universal/database-error'
 import type { CmsBlock, CmsMenuItem, CmsPage, CmsRevision } from '../experience-builder/types'
 import type { PublicInquiryInput, PublicInquiryRecord, PublicPageExperience } from './types'
 
-function publicError(operation: string, error: { code?: string; message?: string } | null) {
-  const missing = error?.code === '42P01' || String(error?.message || '').includes('angelcare_marketplace_cms_')
-  return new MarketplaceError(missing ? 'CONFIGURATION_ERROR' : 'INTERNAL_ERROR', missing ? 'L’univers public nécessite les migrations Ultra Delivery 1/5.' : `L’univers public n’a pas pu ${operation}.`)
+function publicError(operation: string, error: { code?: string; message?: string; details?: string; hint?: string; constraint?: string } | null) {
+  return marketplaceDatabaseError(operation, error)
 }
 function coreMissing(error:{code?:string;message?:string}|null|undefined){return['42P01','42703'].includes(String(error?.code||''))||/cms_revisions|publication_state/.test(String(error?.message||''))}
 function rec(value:unknown):Record<string,unknown>{return value&&typeof value==='object'&&!Array.isArray(value)?value as Record<string,unknown>: {}}

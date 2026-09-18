@@ -1,0 +1,6 @@
+import { requireMarketplaceApiContext } from '@/angelcare-marketplace/auth/context'
+import { apiFailure, apiSuccess, cleanOptionalText, cleanText, parseJsonObject, requestId, requireText } from '@/angelcare-marketplace/server/request'
+import { createStudioPage, studioPageIndex } from '@/angelcare-marketplace/studio-universal/repository'
+
+export async function GET(request:Request){const id=requestId(request);try{const context=await requireMarketplaceApiContext('marketplace.cms.view');return apiSuccess(await studioPageIndex(context),{requestId:id})}catch(error){return apiFailure(error,id)}}
+export async function POST(request:Request){const id=requestId(request);try{const context=await requireMarketplaceApiContext('marketplace.cms.create');const body=await parseJsonObject(request);const page=await createStudioPage({title:requireText(body.title,'title','Nom de l’expérience',240),slug:cleanOptionalText(body.slug,180)||undefined,locale:cleanText(body.locale||'fr',5),description:cleanOptionalText(body.description,2000),templatePageId:cleanOptionalText(body.templatePageId,100),context,requestId:id});return apiSuccess(page,{requestId:id,status:201})}catch(error){return apiFailure(error,id)}}

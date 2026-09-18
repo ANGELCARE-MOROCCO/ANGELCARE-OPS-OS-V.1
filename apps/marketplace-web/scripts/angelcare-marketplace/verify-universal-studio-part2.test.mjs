@@ -1,0 +1,33 @@
+import test from 'node:test'
+import assert from 'node:assert/strict'
+import fs from 'node:fs'
+import path from 'node:path'
+
+const root=process.cwd(),studio='angelcare-marketplace/studio-universal'
+const read=rel=>fs.readFileSync(path.join(root,rel),'utf8')
+const source=rel=>read(`${studio}/${rel}`)
+const exists=rel=>fs.existsSync(path.join(root,rel))
+
+test('Part 2 core modules exist',()=>{for(const file of ['css-fidelity.ts','accessibility.ts','interaction-adapters.ts','contrast.ts','audit-ledger.ts','components/StudioInteractiveRuntime.tsx','components/StudioCandidatePreview.tsx'])assert.equal(exists(`${studio}/${file}`),true,file)})
+test('CSS engine handles specificity important inheritance variables and exact conditional rules',()=>{const s=source('css-fidelity.ts');for(const token of ['studioSpecificity','important','INHERITED','resolveVar','customProperties','media','container','supports','scopedImportedCss'])assert.match(s,new RegExp(token))})
+test('CSS accounting does not silently label unmapped base declarations preserved',()=>{const s=source('import-compiler.ts');assert.match(s,/mappedReview/);assert.match(s,/studioDesignPropertySupported/);assert.match(s,/unexplainedDrops:0/)})
+test('opacity has one explicit Studio 0..100 contract',()=>{const compiler=source('css-fidelity.ts'),design=source('design.tsx');assert.match(compiler,/n <= 1 \? n \* 100 : n/);assert.match(design,/Number\(value\.opacity\).*\/ 100/)})
+test('arbitrary safe responsive rules are scoped to imported block IDs',()=>{const s=source('css-fidelity.ts');assert.match(s,/data-ac-studio-block/);assert.match(s,/@media/);assert.match(s,/@container/);assert.match(s,/@supports/)})
+test('candidate and published runtime both apply imported rules',()=>{assert.match(source('components/StudioDesignShell.tsx'),/scopedImportedCss/);assert.match(source('StudioPublishedRenderer.tsx'),/scopedImportedCss/)})
+test('interaction adapters cover the required safe families',()=>{const s=source('interaction-adapters.ts');for(const token of ['accordion','tabs','dialog','popover','carousel','menu','form','canvas'])assert.match(s,new RegExp(token))})
+test('runtime provides native controlled tabs dialog carousel menu and neutralized forms',()=>{const s=source('components/StudioInteractiveRuntime.tsx');for(const token of ["studio_tabs","studio_dialog","studio_carousel","studio_menu","studio_form",'aria-modal','role="tabpanel"','disabled'])assert.match(s,new RegExp(token))})
+test('foreign form destination is stripped during import',()=>{const s=source('import-compiler.ts');assert.match(s,/name==='formaction'\|\|name==='action'/);assert.match(s,/workflow AngelCare approuvé/)})
+test('accessibility audit covers alt labels headings ids names language',()=>{const s=source('accessibility.ts');for(const token of ['IMG_ALT_MISSING','FORM_LABEL_MISSING','HEADING_LEVEL_JUMP','DUPLICATE_ID','INTERACTIVE_NAME_MISSING','LANG_MISSING'])assert.match(s,new RegExp(token))})
+test('accessibility contributes to fidelity and human review',()=>{const s=source('import-compiler.ts');assert.match(s,/accessibility\.score/);assert.match(s,/ACCESSIBILITY_REVIEW/)})
+test('source contrast is reviewed instead of silently rewritten',()=>{assert.match(source('contrast.ts'),/studioContrastRatio/);assert.match(source('import-compiler.ts'),/SOURCE_CONTRAST_REVIEW/)})
+test('full-page shell is protected by default',()=>{const s=source('import-compiler.ts');assert.match(s,/preserve-global-shell/);assert.match(s,/IGNORED_WITH_REASON/);assert.match(s,/GLOBAL_SHELL_PROTECTED/)})
+test('SEO evidence is extracted without overwriting Web Presence',()=>{const s=source('accessibility.ts');for(const token of ['canonical','robots','ogTitle','ogDescription','jsonLdCount'])assert.match(s,new RegExp(token));assert.doesNotMatch(source('import-compiler.ts'),/update.*web.?presence/i)})
+test('candidate review exposes accessibility SEO shell and interactions',()=>{const s=source('components/UniversalImportWorkbench.tsx');for(const token of ['candidate.accessibility','candidate.seo','candidate.shell','candidate.interactions','StudioCandidatePreview'])assert.match(s,new RegExp(token.replace('.','\\.')))})
+test('candidate preview uses canonical Studio block runtime',()=>{const s=source('components/StudioCandidatePreview.tsx');assert.match(s,/StudioBlockRuntime/);assert.match(s,/StudioDesignShell/);assert.match(s,/canonical-studio-block-runtime/)})
+test('re-import choices preserve update variant append and replace',()=>{const s=source('components/UniversalImportWorkbench.tsx');for(const token of ["applyMode==='replace'","applyMode==='variant'","applyMode==='update'",'Source déjà présente'])assert.ok(s.includes(token),token)})
+test('published runtime has locale and RTL direction',()=>{const s=source('StudioPublishedRenderer.tsx');assert.match(s,/lang=\{locale\}/);assert.match(s,/locale==='ar'\?'rtl':'ltr'/)})
+test('Studio links existing Theme Web Presence Navigation Footer and Pages authorities',()=>{const s=source('components/UniversalExperienceStudio.tsx');for(const route of ['/admin/homepage/composer','/admin/configuration/web-presence','/admin/navigation','/admin/footer-studio','/admin/experience/pages'])assert.ok(s.includes(route),route)})
+test('audit ledger is machine readable and does not claim Web Presence fully finished',()=>{const s=source('audit-ledger.ts');assert.match(s,/A57/);assert.match(s,/A64/);assert.match(s,/A78/);assert.match(s,/SEO integration/);assert.match(s,/PARTIAL/)})
+test('advanced golden fixture covers interactions shell accessibility variables arbitrary queries',()=>{const html=read('scripts/angelcare-marketplace/fixtures/universal-studio-advanced.html'),css=read('scripts/angelcare-marketplace/fixtures/universal-studio-advanced.css');for(const token of ['role="tablist"','aria-roledescription="carousel"','<details>','<dialog>','<form action=','<header>','<footer>'])assert.match(html,new RegExp(token));for(const token of ['--brand','@media (orientation:landscape)','@container','@supports','prefers-reduced-motion','forced-colors'])assert.ok(css.includes(token),token)})
+test('developer contract locks Part 2 invariants',()=>{const s=source('developer-contract.ts');for(const token of ['cssCascade','cssInheritance','cssVariables','arbitraryResponsiveRules','interactionAdapters','candidateRuntimePreview','globalShellProtection','accessibilityAudit'])assert.match(s,new RegExp(token))})
+test('Part 2 adds no SQL or migration',()=>{const dir=path.join(root,'supabase/migrations');const added=fs.existsSync(dir)?fs.readdirSync(dir).filter(name=>/universal.*studio.*part.?2|puck.*part.?2/i.test(name)):[];assert.deepEqual(added,[])})

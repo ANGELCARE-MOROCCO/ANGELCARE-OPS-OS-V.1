@@ -7,6 +7,7 @@ import type { CmsPage, PublicationJob } from '../types'
 import styles from '../experience.module.css'
 
 const commands = [
+  { href: '/angelcare-marketplace/admin/experience/studio', title: 'Marketplace Studio', text: 'Composition visuelle Puck, import universel, preview sécurisé et publication gouvernée.', icon: Blocks, tone: 'blue' },
   { href: '/angelcare-marketplace/admin/experience/pages', title: 'Pages', text: 'Identités stables, brouillons, révisions, routes et publication.', icon: Waypoints, tone: 'blue' },
   { href: '/angelcare-marketplace/admin/experience/block-library', title: 'Blocs', text: 'Contrat canonique, champs, design, bindings et readiness runtime.', icon: Blocks, tone: 'sky' },
   { href: '/angelcare-marketplace/admin/experience/templates', title: 'Templates', text: 'Créer depuis une composition versionnée sans générer de code caché.', icon: FileStack, tone: 'violet' },
