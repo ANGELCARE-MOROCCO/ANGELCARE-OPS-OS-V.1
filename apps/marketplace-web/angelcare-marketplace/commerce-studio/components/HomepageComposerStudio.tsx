@@ -1,1 +1,1 @@
-export { HomepageDesigner2 as HomepageComposerStudio } from '../../category-native/components/HomepageDesigner2'
+export { ThemeStudio as HomepageComposerStudio } from '../../theme-studio/ThemeStudio'

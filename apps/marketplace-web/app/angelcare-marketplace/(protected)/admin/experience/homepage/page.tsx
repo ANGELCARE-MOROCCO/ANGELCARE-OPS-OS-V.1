@@ -1,2 +1,2 @@
-import {redirect} from 'next/navigation'
-export default async function Page(){redirect('/angelcare-marketplace/admin/homepage')}
+import { HomepageComposerPage } from '@/angelcare-marketplace/commerce-studio/admin-pages'
+export default async function Page(){return HomepageComposerPage({ mode: 'theme-studio' })}

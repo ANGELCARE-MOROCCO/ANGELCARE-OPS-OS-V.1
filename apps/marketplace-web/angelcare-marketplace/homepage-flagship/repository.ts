@@ -3,6 +3,7 @@ import { createServiceClient } from '@/lib/supabase/server'
 import type { CmsMenuItem } from '../experience-builder/types'
 import { MarketplaceError } from '../server/errors'
 import { resolveTerritoryId } from '../public-universe/repository'
+import { publishedThemeStudioState } from '../theme-studio/repository'
 import type {
   HomepageAcademyCohort,
   HomepageAdminData,
@@ -231,11 +232,11 @@ export async function getHomepageExperience(input: { locale: HomepageLocale; ter
   const definitions = new Map(rows(badgeDefinitionsRaw).map((row) => [text(row.badge_key), text(row.name_fr)]))
   const trustSignals: HomepageTrustSignal[] = rows(badgeRows).slice(0, 6).map((row) => ({ id: text(row.object_id) + text(row.badge_key), name: definitions.get(text(row.badge_key)) || text(row.badge_key), verification_reference: text(row.verification_reference), valid_until: nullableText(row.valid_until), public_claims: stringArray(row.public_claims) }))
 
-  const [navigation, territory, selection] = await Promise.all([listNavigation(locale, territoryId), listTerritory(territoryCode), visitorSelection()])
+  const [navigation, territory, selection, themeState] = await Promise.all([listNavigation(locale, territoryId), listTerritory(territoryCode), visitorSelection(), publishedThemeStudioState(locale).catch(() => ({ theme: undefined, active: false }))])
   const published = items.filter((item) => !territoryId || !item.territory_id || item.territory_id === territoryId)
 
   return {
-    locale, territory, navigation, campaigns: rows(effectiveCampaignRows).map(mapCampaign), categories, collections, composition,
+    locale, theme: themeState.theme, themeStudioPublished: themeState.active, territory, navigation, campaigns: rows(effectiveCampaignRows).map(mapCampaign), categories, collections, composition,
     popularItems: placementItems('popular'), bestPickItems: placementItems('best-pick'), newArrivalItems: placementItems('new-arrival'),
     featuredItems: published.filter((item) => item.featured).slice(0, 14),
     availableItems: published.filter((item) => item.availability_status === 'available').slice(0, 12),

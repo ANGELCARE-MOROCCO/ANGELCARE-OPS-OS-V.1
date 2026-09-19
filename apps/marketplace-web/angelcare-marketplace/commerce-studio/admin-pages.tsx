@@ -13,6 +13,7 @@ import { NavigationStudio } from './components/NavigationStudio'
 import { ProductStudio } from './components/ProductStudio'
 import { PublicationStudio } from './components/PublicationStudio'
 import { categoryNativeStudioData } from '../category-native/repository'
+import { getHomepageExperience } from '../homepage-flagship/repository'
 
 export async function CommerceCommandPage() {
   const context = await requireMarketplacePageContext('marketplace.commerce.view')
@@ -31,7 +32,12 @@ export async function HomepageComposerPage({ mode = 'composer' }: { mode?: strin
   if (mode === 'hero') return <HeroCampaignStudio initialCampaigns={data.campaigns} media={data.media} canManage={canManage} canViewHistory={canViewHistory}/>
   if (mode === 'collections') return <CollectionStudio initialCollections={data.collections} items={data.catalogItems} media={data.media} canManage={canManage} canViewHistory={canViewHistory}/>
   const categoryNative = await categoryNativeStudioData()
-  return <HomepageComposerStudio initialSections={data.sections} collections={data.collections} blocks={categoryNative.homepageBlocks} schemas={categoryNative.schemas} mode={mode} canManage={canManage} canViewHistory={canViewHistory}/>
+  const [fr, en, ar] = await Promise.all([
+    getHomepageExperience({ locale: 'fr' }),
+    getHomepageExperience({ locale: 'en' }).catch(() => getHomepageExperience({ locale: 'fr' }).then((value) => ({ ...value, locale: 'en' as const }))),
+    getHomepageExperience({ locale: 'ar' }).catch(() => getHomepageExperience({ locale: 'fr' }).then((value) => ({ ...value, locale: 'ar' as const }))),
+  ])
+  return <HomepageComposerStudio initialSections={data.sections} collections={data.collections} blocks={categoryNative.homepageBlocks} schemas={categoryNative.schemas} experiences={{ fr, en, ar }} media={data.media} canManage={canManage} canViewHistory={canViewHistory}/>
 }
 export async function NavigationPage({ mode = 'header' }: { mode?: string }) {
   const context = await requireMarketplacePageContext('marketplace.navigation.view')
