@@ -15,6 +15,7 @@ import { studioTrustInspectorDeveloperContractCsv, studioTrustInspectorDeveloper
 import { studioGovernanceDeveloperContractCsv, studioGovernanceDeveloperContractJson, studioGovernanceDeveloperContractTxt } from '@/angelcare-marketplace/studio-governance-engine/developer-contract'
 import { studioDependencyInvalidationDeveloperContractCsv, studioDependencyInvalidationDeveloperContractJson, studioDependencyInvalidationDeveloperContractTxt } from '@/angelcare-marketplace/studio-dependency-invalidation/developer-contract'
 import { studioContractSaturationDeveloperContractCsv, studioContractSaturationDeveloperContractJson, studioContractSaturationDeveloperContractTxt } from '@/angelcare-marketplace/studio-contract-saturation/developer-contract'
+import { homepageProMaxDeveloperContractCsv, homepageProMaxDeveloperContractJson, homepageProMaxDeveloperContractTxt, HOMEPAGE_PRO_MAX_DEVELOPER_CONTRACT_SHA256 } from '@/angelcare-marketplace/studio-homepage-pro-max/developer-contract'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -24,6 +25,12 @@ export async function GET(request: Request) {
   const params=new URL(request.url).searchParams
   const format = params.get('format') || 'json'
   const scope = params.get('scope') || 'experience-core'
+  if(scope==='homepage-pro-max'){
+    const contract=homepageProMaxDeveloperContractJson();const json=JSON.stringify(contract,null,2);const headers={'Cache-Control':'no-store','X-Studio-Homepage-Pro-Max-SHA256':HOMEPAGE_PRO_MAX_DEVELOPER_CONTRACT_SHA256};
+    if(format==='txt')return new Response(homepageProMaxDeveloperContractTxt(),{headers:{...headers,'Content-Type':'text/plain; charset=utf-8','Content-Disposition':'attachment; filename="angelcare-marketplace-homepage-pro-max.txt"'}});
+    if(format==='csv')return new Response(homepageProMaxDeveloperContractCsv(),{headers:{...headers,'Content-Type':'text/csv; charset=utf-8','Content-Disposition':'attachment; filename="angelcare-marketplace-homepage-pro-max.csv"'}});
+    return new Response(json,{headers:{...headers,'Content-Type':'application/json; charset=utf-8','Content-Disposition':'attachment; filename="angelcare-marketplace-homepage-pro-max.json"'}})
+  }
   if(scope==='contract-saturation'){
     const contract=studioContractSaturationDeveloperContractJson();const json=JSON.stringify(contract,null,2);const headers={'Cache-Control':'no-store','X-Studio-Contract-P13-SHA256':contract.hash};
     if(format==='txt')return new Response(studioContractSaturationDeveloperContractTxt(),{headers:{...headers,'Content-Type':'text/plain; charset=utf-8','Content-Disposition':'attachment; filename="angelcare-marketplace-studio-contract-saturation-p13.txt"'}});

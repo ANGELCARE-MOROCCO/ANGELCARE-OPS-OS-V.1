@@ -8,6 +8,8 @@ import { designToStyle, responsiveDataAttributes } from './design'
 import { scopedImportedCss } from './css-fidelity'
 import type { StudioBlockProps, StudioPickerData } from './types'
 import { StudioBlockRuntime } from './components/StudioBlockRuntime'
+import { HomepageProMaxSectionRuntime } from '@/angelcare-marketplace/studio-homepage-pro-max/components/HomepageProMaxSectionRuntime'
+import { HOMEPAGE_PRO_MAX_COMPONENT_KEYS } from '@/angelcare-marketplace/studio-homepage-pro-max/recipe'
 import { StudioVisualCatalogueRuntime } from './components/StudioVisualCatalogueRuntime'
 import { canonicalStudioBlockType, studioVisualExperience } from './visual-catalogue'
 import styles from './components/studio-runtime.module.css'
@@ -20,6 +22,7 @@ import type { StudioAttributionContext } from '@/angelcare-marketplace/studio-at
 import { sanitizeStudioAttribution,studioAttributionForInteraction } from '@/angelcare-marketplace/studio-attribution/context'
 
 const s=(value:unknown)=>value==null?'':String(value)
+const isHomepageProMaxType=(type:string)=>HOMEPAGE_PRO_MAX_COMPONENT_KEYS.includes(type)
 const children=(component:ComponentData)=>{const value=(component.props as Record<string,unknown>)?.content;return Array.isArray(value)?value as ComponentData[]:[]}
 export function isStudioCmsBlock(block:CmsBlock){const settings=block.settings as Record<string,unknown>|undefined;return String(settings?.studioFormat||'').startsWith('angelcare-puck-')||block.block_type.startsWith('ac_')||block.block_type.startsWith('studio_')||Boolean(block.content?.__studioPuck)}
 
@@ -71,6 +74,7 @@ async function RenderComponent({component,pickers,locale,attribution}:{component
   if(props.hidden===true)return null
   const nested=children(component)
   const importedCss=scopedImportedCss(id, props.__studioImportedRules)
+  if(isHomepageProMaxType(type))return <HomepageProMaxSectionRuntime type={type} props={props as any} pickers={pickers} mode="published"/>
   if(type.startsWith('ac_')){
     const style={...designToStyle(props.sourceDesign),backgroundColor:s((props as any).backgroundColor)||undefined,'--ac-layout-max':s((props as any).maxWidth)||'1460px','--ac-cols-mobile':String((props as any).columnsMobile||1),'--ac-cols-tablet':String((props as any).columnsTablet||2),'--ac-cols-desktop':String((props as any).columnsDesktop||4),'--ac-gap-mobile':`${Number((props as any).gapMobile||16)}px`,'--ac-gap-tablet':`${Number((props as any).gapTablet||20)}px`,'--ac-gap-desktop':`${Number((props as any).gapDesktop||24)}px`,'--ac-stack-direction':s((props as any).direction)||'column'} as React.CSSProperties
     const kind=type.replace('ac_','');const klass=(styles as Record<string,string>)[kind]||styles.layout

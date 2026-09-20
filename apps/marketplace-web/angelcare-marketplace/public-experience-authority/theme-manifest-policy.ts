@@ -1,0 +1,3 @@
+import type {PublicExperienceThemeManifest} from './types'
+export const PUBLIC_EXPERIENCE_THEME_REQUIRED_CAPABILITIES=['canonical-route','native-fallback','public-safe-projection','desktop-mobile-native'] as const
+export function normalizePowerMaxThemeManifest(manifest:PublicExperienceThemeManifest):PublicExperienceThemeManifest{return{...manifest,requiredCapabilities:[...new Set([...manifest.requiredCapabilities,...PUBLIC_EXPERIENCE_THEME_REQUIRED_CAPABILITIES])],responsiveContract:'desktop-mobile-native',commerceContract:'canonical-only',fallbackContract:'native-fallback',seoContract:'canonical-route-owned',accessibilityContract:'wcag-operational',performanceContract:'bounded-runtime'}}

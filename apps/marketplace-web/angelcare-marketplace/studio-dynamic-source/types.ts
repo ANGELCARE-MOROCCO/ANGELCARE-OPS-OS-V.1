@@ -4,8 +4,11 @@ import type { StudioSourceEntity, StudioSourceReference } from '@/angelcare-mark
 export const STUDIO_DYNAMIC_SOURCE_VERSION=1 as const
 export const STUDIO_DYNAMIC_EMPTY_POLICIES=['preserve_static','empty','hide_block'] as const
 export const STUDIO_DYNAMIC_STRATEGIES=['source_query','catalog_published','catalog_featured','catalog_available','catalog_newest','merchandising_popular','merchandising_best_pick','merchandising_new_arrival','category_items','collection_items','experience_schema_items'] as const
+// Additive PEA extension: keeps the immutable P06 base strategy contract at 11 while enabling relation-aware worlds.
+export const PUBLIC_EXPERIENCE_RELATION_DYNAMIC_STRATEGIES=['compatible_accessories','bundle_members','frequently_bought_together','similar_items'] as const
+export const STUDIO_DYNAMIC_STRATEGIES_ALL=[...STUDIO_DYNAMIC_STRATEGIES,...PUBLIC_EXPERIENCE_RELATION_DYNAMIC_STRATEGIES] as const
 export type StudioDynamicEmptyPolicy=typeof STUDIO_DYNAMIC_EMPTY_POLICIES[number]
-export type StudioDynamicStrategy=typeof STUDIO_DYNAMIC_STRATEGIES[number]
+export type StudioDynamicStrategy=typeof STUDIO_DYNAMIC_STRATEGIES_ALL[number]
 export type StudioDynamicSort='canonical'|'recommended'|'newest'|'price_asc'|'price_desc'
 export type StudioDynamicContextMode='inherit'|'global'|'specific'
 export type StudioDynamicAudienceMode='inherit'|'none'|'specific'

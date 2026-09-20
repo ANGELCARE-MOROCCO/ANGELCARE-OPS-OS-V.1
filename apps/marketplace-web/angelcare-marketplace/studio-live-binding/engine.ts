@@ -5,7 +5,7 @@ import type { StudioBindingReport, StudioBindingResolutionEntry, StudioBindingVa
 const clone=<T,>(value:T):T=>JSON.parse(JSON.stringify(value)) as T
 const missing=(value:unknown)=>value===null||value===undefined||value===''||(Array.isArray(value)&&value.length===0)
 const preview=(value:unknown)=>{if(value===null||value===undefined)return '—';if(Array.isArray(value))return `${value.length} élément(s)`;const text=typeof value==='string'?value:JSON.stringify(value);return String(text).replace(/\s+/g,' ').slice(0,120)}
-const typeOk=(value:unknown,type:StudioBindingValueType)=>type==='text'?typeof value==='string':type==='number'?typeof value==='number'&&Number.isFinite(value):type==='boolean'?typeof value==='boolean':type==='url'?typeof value==='string'&&(/^(https?:\/\/|\/)/.test(value)):type==='items'?Array.isArray(value):false
+const typeOk=(value:unknown,type:StudioBindingValueType)=>type==='text'?typeof value==='string':type==='number'?typeof value==='number'&&Number.isFinite(value):type==='boolean'?typeof value==='boolean':type==='url'?typeof value==='string'&&(/^(https?:\/\/|\/)/.test(value)):type==='items'?Array.isArray(value):type==='object'?Boolean(value)&&typeof value==='object'&&!Array.isArray(value):false
 
 export function applyStudioLiveBindings(data:Data,context:StudioLiveBindingContext):{data:Data;report:StudioBindingReport}{
   const copy=clone(data),entries:StudioBindingResolutionEntry[]=[];const touched=new Set<string>()

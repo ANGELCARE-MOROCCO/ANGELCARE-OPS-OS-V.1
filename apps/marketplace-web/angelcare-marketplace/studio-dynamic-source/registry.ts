@@ -1,13 +1,13 @@
 import { getStudioSourceDescriptor, STUDIO_SOURCE_DESCRIPTORS } from '@/angelcare-marketplace/studio-source-registry/registry'
 import type { StudioDynamicSourceProfile, StudioDynamicSourceReference, StudioDynamicStrategy } from './types'
-import { STUDIO_DYNAMIC_EMPTY_POLICIES, STUDIO_DYNAMIC_SOURCE_VERSION, STUDIO_DYNAMIC_STRATEGIES } from './types'
+import { PUBLIC_EXPERIENCE_RELATION_DYNAMIC_STRATEGIES, STUDIO_DYNAMIC_EMPTY_POLICIES, STUDIO_DYNAMIC_SOURCE_VERSION, STUDIO_DYNAMIC_STRATEGIES } from './types'
 
 const generic=['source_query'] as const
-const catalog=[...generic,'catalog_published','catalog_featured','catalog_available','catalog_newest','merchandising_popular','merchandising_best_pick','merchandising_new_arrival','category_items','collection_items','experience_schema_items'] as const
+const catalog=[...generic,'catalog_published','catalog_featured','catalog_available','catalog_newest','merchandising_popular','merchandising_best_pick','merchandising_new_arrival','category_items','collection_items','experience_schema_items','compatible_accessories','bundle_members','frequently_bought_together','similar_items'] as const
 const p=(sourceId:string,label:string,allowedStrategies:readonly StudioDynamicStrategy[],allowedFilters:string[]=[],allowedSorts:StudioDynamicSourceProfile['allowedSorts']=['canonical'],defaultLimit=8,maxLimit=24):StudioDynamicSourceProfile=>({sourceId,label,description:getStudioSourceDescriptor(sourceId)?.description||'',publicRuntimeSafe:Boolean(getStudioSourceDescriptor(sourceId)?.governance.publicSafeProjection),allowedStrategies,allowedFilters,allowedSorts,defaultLimit,maxLimit})
 
 export const STUDIO_DYNAMIC_SOURCE_PROFILES:readonly StudioDynamicSourceProfile[]=[
-  p('catalog.items','Produits, services, formations et SaaS',catalog,['kind','category_key','experience_schema_key','availability_status'],['canonical','recommended','newest','price_asc','price_desc'],8,24),
+  p('catalog.items','Produits, services, formations et SaaS',catalog,['kind','category_key','experience_schema_key','availability_status','anchor_item_id'],['canonical','recommended','newest','price_asc','price_desc'],8,24),
   p('catalog.categories','Catégories',generic,['status'],['canonical'],8,24),
   p('homepage.collections','Collections',generic,['status','selection_method'],['canonical'],8,18),
   p('homepage.campaigns','Campagnes homepage',generic,['status'],['canonical'],6,12),
@@ -40,7 +40,7 @@ export function studioDynamicSourceProfile(sourceId:string){return STUDIO_DYNAMI
 const plain=(v:unknown):v is Record<string,unknown>=>Boolean(v)&&typeof v==='object'&&!Array.isArray(v)
 export function isStudioDynamicSourceReference(value:unknown):value is StudioDynamicSourceReference{
   if(!plain(value)||value.version!==STUDIO_DYNAMIC_SOURCE_VERSION||typeof value.sourceId!=='string'||!STUDIO_DYNAMIC_SOURCE_BY_ID.has(value.sourceId))return false
-  if(typeof value.strategy!=='string'||!STUDIO_DYNAMIC_STRATEGIES.includes(value.strategy as any))return false
+  if(typeof value.strategy!=='string'||(!STUDIO_DYNAMIC_STRATEGIES.includes(value.strategy as any)&&!PUBLIC_EXPERIENCE_RELATION_DYNAMIC_STRATEGIES.includes(value.strategy as any)))return false
   const profile=studioDynamicSourceProfile(value.sourceId);if(!profile||!profile.allowedStrategies.includes(value.strategy as StudioDynamicStrategy))return false
   if(typeof value.limit!=='number'||!Number.isInteger(value.limit)||value.limit<1||value.limit>profile.maxLimit)return false
   if(typeof value.emptyPolicy!=='string'||!STUDIO_DYNAMIC_EMPTY_POLICIES.includes(value.emptyPolicy as any))return false

@@ -1,7 +1,7 @@
 'use client'
 import Link from 'next/link'
 import {usePathname} from 'next/navigation'
-import {BadgeDollarSign,Boxes,CalendarDays,ChartNoAxesCombined,FolderTree,Gauge,HeartHandshake,LayoutTemplate,Megaphone,Network,PackageSearch,ShieldCheck,UsersRound} from 'lucide-react'
+import {BadgeDollarSign,Boxes,CalendarDays,ChartNoAxesCombined,FolderTree,Gauge,HeartHandshake,LayoutTemplate,Megaphone,Network,PackageSearch,ShieldCheck,Sparkles,UsersRound} from 'lucide-react'
 import styles from '../design-system/marketplace.module.css'
 import {cx} from '../design-system/ui'
 
@@ -21,12 +21,13 @@ const masters=[
  {id:'13',href:'/angelcare-marketplace/admin/trust',label:'Trust & qualité',icon:ShieldCheck},
  {id:'14',href:'/angelcare-marketplace/admin/analytics',label:'Analytics & intelligence',icon:ChartNoAxesCombined},
  {id:'15',href:'/angelcare-marketplace/admin/configuration',label:'Paramètres & gouvernance',icon:Boxes},
+ {id:'16',href:'/angelcare-marketplace/admin/public-experience-authority',label:'Public Experience Pro Max',icon:Sparkles},
 ] as const
 
 export function AdminNavigation({collapsed=false}:{collapsed?:boolean}){
  const pathname=usePathname()
  return <nav className={styles.sidebarNav} aria-label="Marketplace Admin">
   <div className={styles.navGroup}><div className={styles.navGroupLabel}>ANGELCARE MARKETPLACE</div></div>
-  <div className={styles.navGroup}><div className={styles.navGroupLabel}>15 WORKSPACES</div>{masters.map(({id,href,label,icon:Icon})=>{const active=pathname===href||(href!=='/angelcare-marketplace/admin'&&pathname.startsWith(`${href}/`));return <Link key={`${id}-${href}`} href={href} className={cx(styles.sideNavLink,active&&styles.sideNavLinkActive)} aria-current={active?'page':undefined} title={collapsed?`${id} · ${label}`:undefined}><span className={styles.sideNavIcon}><Icon size={17}/></span><span className={styles.sideNavLabel}>{id} · {label}</span></Link>})}</div>
+  <div className={styles.navGroup}><div className={styles.navGroupLabel}>16 WORKSPACES</div>{masters.map(({id,href,label,icon:Icon})=>{const active=pathname===href||(href!=='/angelcare-marketplace/admin'&&pathname.startsWith(`${href}/`));return <Link key={`${id}-${href}`} href={href} className={cx(styles.sideNavLink,active&&styles.sideNavLinkActive)} aria-current={active?'page':undefined} title={collapsed?`${id} · ${label}`:undefined}><span className={styles.sideNavIcon}><Icon size={17}/></span><span className={styles.sideNavLabel}>{id} · {label}</span></Link>})}</div>
  </nav>
 }

@@ -3,16 +3,22 @@ import {ArrowRight,CheckCircle2,Search,ShieldCheck,Sparkles} from 'lucide-react'
 import type {StorefrontExperience} from '../types'
 import {CatalogCard} from './CatalogCard'
 import styles from '../catalog-discovery.module.css'
+import {StudioPublishedDataRenderer} from '@/angelcare-marketplace/studio-universal/StudioPublishedRenderer'
+import {preparePublicStorefrontWorld} from '@/angelcare-marketplace/public-experience-authority/storefront-runtime'
+import {CanonicalAtomicStorefrontWorld} from '@/angelcare-marketplace/public-experience-authority/components/CanonicalAtomicStorefrontWorld'
 
 const text=(v:unknown,f='')=>typeof v==='string'?v:f
 const truth=(v:unknown,f=true)=>typeof v==='boolean'?v:f
-export function Storefront({experience}:{experience:StorefrontExperience}){
+export async function Storefront({experience}:{experience:StorefrontExperience}){
+ const world=await preparePublicStorefrontWorld(experience)
+ if(world.status==='BUILTIN_READY'&&world.builtinWorldId)return <CanonicalAtomicStorefrontWorld experience={experience} density={world.density}/>
+ if(world.status==='READY'&&world.data)return <div data-ac-storefront-runtime="public-experience-authority" data-ac-storefront-key={experience.key} data-ac-template-key={world.templateKey||undefined} data-ac-template-revision={world.revisionId||undefined}><StudioPublishedDataRenderer data={world.data} locale={experience.locale} territoryId={null} audienceId={null} attribution={world.attribution||undefined} dynamicAlreadyApplied dynamicReport={world.dynamicReport}/></div>
  const {locale,hero}=experience;const config=experience.experienceConfig||{};const filters=experience.filterConfig||{};const sections=experience.storefrontSections||[]
  const featuredTitle=text(config.featured_title,locale==='fr'?'Sélection mise en avant':locale==='ar'?'مختارات مميزة':'Featured selection')
  const inventoryTitle=text(config.inventory_title,locale==='fr'?'Tout découvrir':locale==='ar'?'اكتشف الكل':'Discover everything')
  const searchPlaceholder=text(config.search_placeholder,locale==='fr'?'Que recherchez-vous ?':locale==='ar'?'ماذا تبحث؟':'What are you looking for?')
  const showFeatured=truth(filters.show_featured,true),showCollections=truth(filters.show_collections,true)
- return <main className={styles.storefront} dir={locale==='ar'?'rtl':'ltr'} data-theme={hero.visualTheme}>
+ return <main className={styles.storefront} data-ac-storefront-runtime="native" data-ac-storefront-fallback={world.reason||undefined} dir={locale==='ar'?'rtl':'ltr'} data-theme={hero.visualTheme}>
   <section className={styles.storefrontHero}><div><span>{hero.eyebrow}</span><h1>{hero.title}</h1><p>{hero.lead}</p><form action={`/angelcare-marketplace/${locale}/marketplace/search`}><Search size={20}/><input name="q" placeholder={searchPlaceholder}/><input type="hidden" name="category" value={experience.key}/><button type="submit">{locale==='fr'?'Explorer':locale==='ar'?'استكشف':'Explore'}</button></form><div className={styles.heroSignals}><span><ShieldCheck size={15}/>{locale==='fr'?'Preuves de confiance actives':locale==='ar'?'أدلة ثقة فعالة':'Active trust evidence'}</span><span><CheckCircle2 size={15}/>{experience.items.length} {locale==='fr'?'offres publiées':locale==='ar'?'عروض منشورة':'published offers'}</span></div></div><div className={styles.storefrontVisual}><Sparkles size={52}/><strong>ANGELCARE</strong><span>{hero.visualTheme.toUpperCase()}</span></div></section>
   {showFeatured&&experience.featured.length?<section className={styles.featuredRail}><header><div><span>CURATED FOR THIS UNIVERSE</span><h2>{featuredTitle}</h2></div></header><div>{experience.featured.map(item=><CatalogCard key={item.id} item={item} locale={locale} variant="wide"/>)}</div></section>:null}
   <section className={styles.storefrontInventory}><aside><span>DISCOVERY MAP</span><h2>{locale==='fr'?'Affinez votre choix':locale==='ar'?'حدد اختيارك':'Refine your choice'}</h2>{Object.entries(experience.facets).map(([key,values])=><div key={key}><strong>{key}</strong>{values.slice(0,8).map(value=><Link key={value.value} href={`/angelcare-marketplace/${locale}/marketplace/search?category=${experience.key}&${key}=${encodeURIComponent(value.value)}`}>{value.value}<b>{value.count}</b></Link>)}</div>)}</aside><div><header><div><span>LIVE CATALOG</span><h2>{inventoryTitle}</h2></div><Link href={`/angelcare-marketplace/${locale}/marketplace/search?category=${experience.key}`}>{locale==='fr'?'Voir les filtres':locale==='ar'?'عرض التصفية':'Open filters'}<ArrowRight size={16}/></Link></header><div className={styles.cardGrid}>{experience.items.map(item=><CatalogCard key={item.id} item={item} locale={locale}/>)}</div></div></section>

@@ -1,0 +1,22 @@
+import type {AdaptiveExperienceData} from '@/angelcare-marketplace/category-native-experience/types'
+import type {PublicExperienceMasterDomain,PublicExperienceRelationGraph} from './types'
+
+const obj=(v:unknown):Record<string,unknown>=>v&&typeof v==='object'&&!Array.isArray(v)?v as Record<string,unknown>:{ }
+const arr=(v:unknown)=>Array.isArray(v)?v:[]
+const truthy=(v:unknown)=>v!==null&&v!==undefined&&v!==''
+
+function fieldMap(data:AdaptiveExperienceData){return Object.fromEntries(data.fieldValues.map(row=>[row.field.field_key,row.value]))}
+function valuesByHints(fields:Record<string,unknown>,hints:string[]){return Object.entries(fields).filter(([key,value])=>truthy(value)&&hints.some(h=>key.toLowerCase().includes(h))).map(([key,value])=>({key,value}))}
+
+export function buildDomainExtension(input:{data:AdaptiveExperienceData;masterDomain:PublicExperienceMasterDomain|null;raw:Record<string,unknown>;relations:PublicExperienceRelationGraph;providerProjection?:unknown[];academyProjection?:Record<string,unknown>|null}){
+ const {data,masterDomain,raw,relations}=input,fields=fieldMap(data),metadata=obj(data.item.metadata),fulfillment=obj(raw.fulfillmentConfig),territory=obj(raw.territoryConfig),trust=obj(raw.trustConfig),commercial=obj(raw.commercialMetadata),experience=obj(raw.experienceConfig),attributes=obj(raw.attributes)
+ const shared={fields,metadata,commercial,experience,attributes,seo:obj(raw.seoMetadata),territory,fulfillment,trust,relationGraph:relations,sellableType:raw.sellableType||null}
+ if(masterDomain==='b2c_product_digital')return{...shared,product:{specifications:valuesByHints(fields,['spec','dimension','weight','material','age','format','language']),delivery:fulfillment,warranty:trust.guarantees||null,accessories:relations.accessories,bundles:relations.bundles,upsells:relations.upsells,alternatives:relations.alternatives,digitalDelivery:valuesByHints(fields,['download','access','digital','license']),subscription:valuesByHints(fields,['subscription','cadence','frequency'])}}
+ if(masterDomain==='b2c_service_family')return{...shared,service:{plans:valuesByHints(fields,['plan','formula','forfait','package']),coverage:territory,bookingModes:valuesByHints(fields,['booking','reservation','mode']),scheduleRules:valuesByHints(fields,['schedule','horaire','time','recurrence','date']),providers:input.providerProjection||[],requirements:valuesByHints(fields,['requirement','eligib','need','child','age']),urgency:valuesByHints(fields,['urgent','emergency','last_minute','delay'])}}
+ if(masterDomain==='academy_admission'){
+  const canonical=input.academyProjection||null
+  return{...shared,academy:canonical?{...canonical,curriculum:valuesByHints(fields,['curriculum','programme','module','lesson','outcome','objective']),modules:valuesByHints(fields,['module','lesson']),nextCohort:(canonical as any).cohorts?.[0]||null,capacity:(canonical as any).cohorts?.[0]?Math.max(0,Number((canonical as any).cohorts[0].capacity||0)-Number((canonical as any).cohorts[0].enrolledCount||0)):data.availability.availableQuantity,certification:{courseType:(canonical as any).course?.certificateType||null,validityDays:(canonical as any).course?.certificateValidityDays||null,claims:data.trust.filter(row=>/certif|dipl[oô]me|accr[eé]dit|agr[eé]ment/i.test(row.label)),fields:valuesByHints(fields,['certif','diploma','credential'])},admission:valuesByHints(fields,['admission','application','prerequisite','eligib'])}:{curriculum:valuesByHints(fields,['curriculum','programme','module','lesson','outcome','objective']),modules:valuesByHints(fields,['module','lesson']),trainers:valuesByHints(fields,['trainer','formateur','faculty']),nextCohort:valuesByHints(fields,['cohort','session','start_date','next_session']),capacity:data.availability.availableQuantity,certification:{claims:data.trust.filter(row=>/certif|dipl[oô]me|accr[eé]dit|agr[eé]ment/i.test(row.label)),fields:valuesByHints(fields,['certif','diploma','credential'])},admission:valuesByHints(fields,['admission','application','prerequisite','eligib'])}}
+ }
+ if(masterDomain==='b2b_institutional')return{...shared,b2b:{organisationFit:valuesByHints(fields,['organisation','organization','sector','site','employee','property','school','hotel']),deploymentModel:valuesByHints(fields,['deploy','implementation','rollout','site','capacity']),diagnostic:valuesByHints(fields,['diagnostic','assessment','audit','readiness']),programmes:relations.recommendations,portfolioProof:data.trust}}
+ return shared
+}

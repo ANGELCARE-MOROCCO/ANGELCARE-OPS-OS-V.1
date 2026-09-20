@@ -9,6 +9,8 @@ import { StudioBlockRuntime } from './components/StudioBlockRuntime'
 import { StudioDesignShell } from './components/StudioDesignShell'
 import { StudioVisualCatalogueRuntime } from './components/StudioVisualCatalogueRuntime'
 import { MediaField, RecordField } from './components/StudioFields'
+import { createHomepageProMaxPuckComponents,HOMEPAGE_PRO_MAX_COMPONENT_KEYS } from '@/angelcare-marketplace/studio-homepage-pro-max/puck'
+import { HOMEPAGE_PRO_MAX_CATEGORY_ID,HOMEPAGE_PRO_MAX_CATEGORY_LABEL } from '@/angelcare-marketplace/studio-homepage-pro-max/types'
 import { StudioActionField } from '@/angelcare-marketplace/studio-action-registry/components/StudioActionField'
 import { StudioLiveBindingField } from '@/angelcare-marketplace/studio-live-binding/components/StudioLiveBindingField'
 import { StudioDynamicSourceField } from '@/angelcare-marketplace/studio-dynamic-source/components/StudioDynamicSourceField'
@@ -80,5 +82,7 @@ export function createAngelCarePuckConfig(pickers:StudioPickerData):Config{
   const baseCategories=Object.fromEntries(groups.map(group=>[group,{title:labels[group],defaultExpanded:['content','commerce','layout'].includes(group),components:group==='layout'?[...STUDIO_LAYOUT_KEYS,...ANGELCARE_STUDIO_BLOCK_CONTRACTS.filter(row=>row.group===group&&!row.allowChildren).map(row=>row.type)]:ANGELCARE_STUDIO_BLOCK_CONTRACTS.filter(row=>row.group===group&&!row.allowChildren).map(row=>row.type)}]))
   const visualCategories=Object.fromEntries(ANGELCARE_STUDIO_VISUAL_CATEGORIES.map(category=>[`visual-${category.key}`,{title:`${String(category.order).padStart(2,'0')} · ${category.title}`,defaultExpanded:category.order<=2,components:[...category.componentKeys]}]))
   const categories={...visualCategories,...baseCategories} as unknown as Config['categories']
+  Object.assign(components, createHomepageProMaxPuckComponents(pickers))
+  ;(categories as any)[HOMEPAGE_PRO_MAX_CATEGORY_ID]={title:HOMEPAGE_PRO_MAX_CATEGORY_LABEL,defaultExpanded:true,components:[...HOMEPAGE_PRO_MAX_COMPONENT_KEYS]}
   return {components,categories}
 }

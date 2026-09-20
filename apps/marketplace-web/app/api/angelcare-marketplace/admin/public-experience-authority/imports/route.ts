@@ -1,0 +1,7 @@
+import type {Data} from '@puckeditor/core'
+import {requireMarketplaceApiContext} from '@/angelcare-marketplace/auth/context'
+import {importPublicExperienceTheme} from '@/angelcare-marketplace/public-experience-authority/repository'
+import type {PublicExperienceThemeImportInput} from '@/angelcare-marketplace/public-experience-authority/types'
+import {MarketplaceError} from '@/angelcare-marketplace/server/errors'
+import {apiFailure,apiSuccess,parseJsonObject,requestId} from '@/angelcare-marketplace/server/request'
+export async function POST(request:Request){const id=requestId(request);try{const context=await requireMarketplaceApiContext('marketplace.admin.access');const body=await parseJsonObject(request);if(!body.manifest||typeof body.manifest!=='object'||Array.isArray(body.manifest))throw new MarketplaceError('VALIDATION_ERROR','Manifest Public Experience requis.');const input:PublicExperienceThemeImportInput={name:String(body.name||'').trim(),description:typeof body.description==='string'?body.description:null,publish:body.publish===true,data:body.data&&typeof body.data==='object'&&!Array.isArray(body.data)?body.data as unknown as Data:null,templateId:typeof body.templateId==='string'&&body.templateId.trim()?body.templateId.trim():null,manifest:body.manifest as PublicExperienceThemeImportInput['manifest']};return apiSuccess(await importPublicExperienceTheme(input,context,id),{requestId:id,status:201})}catch(error){return apiFailure(error,id)}}

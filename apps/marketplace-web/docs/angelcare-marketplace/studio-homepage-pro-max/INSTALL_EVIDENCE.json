@@ -1,0 +1,26 @@
+{
+  "installedAt": "2026-09-20T13:51:35.419726+00:00",
+  "changedFiles": [
+    "angelcare-marketplace/studio-homepage-pro-max/components/HomepageProMaxLibrary.tsx",
+    "angelcare-marketplace/studio-homepage-pro-max/components/HomepageProMaxSectionRuntime.tsx",
+    "angelcare-marketplace/studio-homepage-pro-max/components/LiveCountdown.tsx",
+    "angelcare-marketplace/studio-homepage-pro-max/components/homepage-pro-max-library.module.css",
+    "angelcare-marketplace/studio-homepage-pro-max/components/homepage-pro-max.module.css",
+    "angelcare-marketplace/studio-homepage-pro-max/developer-contract.ts",
+    "angelcare-marketplace/studio-homepage-pro-max/puck.tsx",
+    "angelcare-marketplace/studio-homepage-pro-max/recipe.ts",
+    "angelcare-marketplace/studio-homepage-pro-max/types.ts",
+    "angelcare-marketplace/studio-universal/StudioPublishedRenderer.tsx",
+    "angelcare-marketplace/studio-universal/components/UniversalExperienceStudio.tsx",
+    "angelcare-marketplace/studio-universal/developer-contract.ts",
+    "angelcare-marketplace/studio-universal/puck-config.tsx",
+    "app/api/angelcare-marketplace/cms/developer-contract/route.ts",
+    "docs/angelcare-marketplace/studio-homepage-pro-max/WORLD_01_BLUEPRINT.md",
+    "docs/angelcare-marketplace/studio-homepage-pro-max/WORLD_01_MACHINE_CONTRACT.json",
+    "public/angelcare-marketplace/studio/homepage-pro-max/world-01-reference.png",
+    "scripts/angelcare-marketplace/__pycache__/verify-homepage-pro-max-world01.cpython-313.pyc",
+    "scripts/angelcare-marketplace/verify-homepage-pro-max-world01.py"
+  ],
+  "referenceSha256": "37a379977685225be5313d10b73ca12c4c0621daccce7ea5cb03ea992f4c7f6d",
+  "backup": "/Users/user/Desktop/angelcare-platform/apps/marketplace-web/.angelcare_patch_backups/homepage-pro-max-world01-20260920-135135"
+}

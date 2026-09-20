@@ -15,6 +15,7 @@ import { STUDIO_TRUST_INSPECTOR_DEVELOPER_CONTRACT } from '@/angelcare-marketpla
 import { STUDIO_GOVERNANCE_DEVELOPER_CONTRACT } from '@/angelcare-marketplace/studio-governance-engine/developer-contract'
 import { STUDIO_DEPENDENCY_INVALIDATION_DEVELOPER_CONTRACT } from '@/angelcare-marketplace/studio-dependency-invalidation/developer-contract'
 import { STUDIO_CONTRACT_SATURATION_DEVELOPER_CONTRACT } from '@/angelcare-marketplace/studio-contract-saturation/developer-contract'
+import { HOMEPAGE_PRO_MAX_DEVELOPER_CONTRACT } from '@/angelcare-marketplace/studio-homepage-pro-max/developer-contract'
 
 export const ANGELCARE_STUDIO_DEVELOPER_CONTRACT = {
   schemaVersion: '2026-09-20.P13',
@@ -43,6 +44,9 @@ export const ANGELCARE_STUDIO_DEVELOPER_CONTRACT = {
     contractSaturationScopes: STUDIO_CONTRACT_SATURATION_DEVELOPER_CONTRACT.scopeCount,
     contractSaturationStableIds: STUDIO_CONTRACT_SATURATION_DEVELOPER_CONTRACT.stableIdentifierCount,
     contractSaturationCrossLinks: STUDIO_CONTRACT_SATURATION_DEVELOPER_CONTRACT.crossLinkCount,
+    homepageProMaxCategories: 1,
+    homepageProMaxWorlds: HOMEPAGE_PRO_MAX_DEVELOPER_CONTRACT.worlds.length,
+    homepageProMaxSections: HOMEPAGE_PRO_MAX_DEVELOPER_CONTRACT.worlds[0].sectionCount,
   },
   structuralPrimitives: [...ANGELCARE_STUDIO_MANIFEST.structuralPrimitives],
   blocks: ANGELCARE_STUDIO_BLOCK_CONTRACTS.map((block) => ({
@@ -68,6 +72,7 @@ export const ANGELCARE_STUDIO_DEVELOPER_CONTRACT = {
   governancePolicy: STUDIO_GOVERNANCE_DEVELOPER_CONTRACT,
   dependencyInvalidation: STUDIO_DEPENDENCY_INVALIDATION_DEVELOPER_CONTRACT,
   developerContractSaturation: STUDIO_CONTRACT_SATURATION_DEVELOPER_CONTRACT,
+  homepageProMax: HOMEPAGE_PRO_MAX_DEVELOPER_CONTRACT,
   sourceRegistry: {
     schemaVersion: '2026-09-19.P01',
     sources: STUDIO_SOURCE_DESCRIPTORS.map(source=>({id:source.id,p00CandidateId:source.p00CandidateId,domain:source.domain,entityType:source.entityType,label:source.label,authority:source.authority,capabilities:source.capabilities,governance:source.governance,runtime:source.runtime})),
@@ -125,6 +130,9 @@ export const ANGELCARE_STUDIO_DEVELOPER_CONTRACT = {
     p13StableIdentifierPolicy: true,
     p13CrossPhaseLinksExplicit: true,
     p13BreakingChangePolicy: true,
+    homepageProMaxCategory11: true,
+    homepageProMaxFullPageWorld: true,
+    homepageProMaxFakeCommercialData: false,
     attributionUsesExistingAuthoritiesOnly: true,
     templateAssignmentsReuseExistingAuthorities: true,
     nativeCategoryExperienceFallback: true,

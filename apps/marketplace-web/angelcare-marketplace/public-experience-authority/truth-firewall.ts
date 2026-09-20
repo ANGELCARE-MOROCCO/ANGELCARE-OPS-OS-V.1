@@ -1,0 +1,17 @@
+import type {PublicExperience360,PublicExperienceTruthDecision,PublicExperienceTruthReport} from './types'
+
+const decision=(key:string,label:string,state:PublicExperienceTruthDecision['state'],reason:string,authority:string|null):PublicExperienceTruthDecision=>({key,label,state,reason,authority})
+const obj=(value:unknown):Record<string,unknown>=>value&&typeof value==='object'&&!Array.isArray(value)?value as Record<string,unknown>:{ }
+const arr=(value:unknown)=>Array.isArray(value)?value:[]
+const nonEmpty=(value:unknown)=>value!==null&&value!==undefined&&value!==''&&value!==false
+export function evaluatePublicExperienceTruth(data:PublicExperience360):PublicExperienceTruthReport{
+ const d:PublicExperienceTruthDecision[]=[],ext=obj(data.domainExtension),commercial=obj(ext.commercial),experience=obj(ext.experience),fields=obj(ext.fields),academy=obj(ext.academy)
+ d.push(decision('price','Prix',data.pricing.amount!==null||data.pricing.mode==='quote_only'?'PROVEN':'ABSENT',data.pricing.amount!==null?'Montant issu de l’autorité pricing.':data.pricing.mode==='quote_only'?'Prix explicitement sur devis.':'Aucun prix canonique disponible.',data.pricing.source))
+ d.push(decision('availability','Disponibilité',data.availability.status?'PROVEN':'ABSENT',data.availability.status?`Statut ${data.availability.status} fourni par ${data.availability.authority}.`:'Aucune disponibilité canonique.','availability:'+data.availability.authority))
+ const ratingOk=data.reviews.rating!==null&&data.reviews.count!==null&&data.reviews.count>0;d.push(decision('rating','Avis / note',ratingOk?'PROVEN':'ABSENT',ratingOk?`${data.reviews.rating}/5 · ${data.reviews.count} avis.`:'Aucune note publique vérifiable; tout badge note doit être masqué.',data.reviews.source))
+ const scarcity=data.availability.availableQuantity!==null;d.push(decision('scarcity','Rareté / places restantes',scarcity?'PROVEN':'ABSENT',scarcity?`Quantité/capacité publique: ${data.availability.availableQuantity}.`:'Aucune quantité publique; interdiction de fabriquer “plus que X”.','availability:'+data.availability.authority))
+ const academyCert=obj(academy.certification),academyCertClaims=arr(academyCert.claims),academyCertFields=arr(academyCert.fields),certification=data.trust.claims.some(row=>/certif|agr[eé]ment|dipl[oô]me|accr[eé]dit/i.test(row.label)&&Boolean(row.evidenceReference||row.status==='verified'))||academyCertClaims.length>0||academyCertFields.length>0;d.push(decision('certification','Certification',certification?'PROVEN':'ABSENT',certification?'Preuve/certification publique détectée.':'Aucune certification vérifiée; les claims certification doivent disparaître.',certification?'trust/academy-authority':null))
+ const promoKeys=['promotion','discount','campaign','promo','compare_at','compareAt','sale','offer','offer_ends_at','ends_at'],promo=promoKeys.some(key=>nonEmpty(commercial[key])||nonEmpty(experience[key])||nonEmpty(fields[key]));d.push(decision('promotion','Promotion / urgence commerciale',promo?'PROVEN':'ABSENT',promo?'Signal promotionnel présent dans les données canoniques.':'Aucune promotion canonique détectée; pas de faux discount/countdown.',promo?'commercial/experience-fields':null))
+ const blocked=d.filter(x=>x.state==='BLOCKED').length,proven=d.filter(x=>x.state==='PROVEN').length
+ return{level:blocked?'BLOCKED':'READY',decisions:d,blockedClaims:blocked,provenClaims:proven,warnings:d.filter(x=>x.state==='ABSENT').map(x=>`${x.label}: masquer tout claim non prouvé.`)}
+}

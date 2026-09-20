@@ -4,8 +4,8 @@ export const STUDIO_LIVE_BINDING_VERSION = 1 as const
 export const STUDIO_BINDING_MISSING_POLICIES = ['preserve_static','empty','omit','hide_block'] as const
 
 export type StudioBindingMissingPolicy = typeof STUDIO_BINDING_MISSING_POLICIES[number]
-export type StudioBindingValueType = 'text' | 'number' | 'boolean' | 'url' | 'items'
-export type StudioBindingGroup = 'identity' | 'content' | 'schema' | 'commerce' | 'availability' | 'media' | 'trust' | 'configuration'
+export type StudioBindingValueType = 'text' | 'number' | 'boolean' | 'url' | 'items' | 'object'
+export type StudioBindingGroup = 'identity' | 'content' | 'schema' | 'commerce' | 'availability' | 'media' | 'trust' | 'configuration' | 'reviews' | 'relations' | 'service' | 'product' | 'academy' | 'b2b' | 'storefront'
 export type StudioBindingResolutionStatus = 'BOUND' | 'MISSING_PRESERVED' | 'MISSING_EMPTIED' | 'MISSING_OMITTED' | 'BLOCK_HIDDEN' | 'UNKNOWN_BINDING' | 'INCOMPATIBLE_TARGET'
 
 export interface StudioLiveBindingReference {
