@@ -21,7 +21,7 @@ import type { ConversionEvidenceRecord, ConversionSession, ConversionStatus } fr
 import styles from '../conversion.module.css'
 
 type Envelope<T> = { data: T }
-type DossierTab = 'overview' | 'configuration' | 'price' | 'availability' | 'consents' | 'evidence'
+type DossierTab = 'overview' | 'origin' | 'configuration' | 'price' | 'availability' | 'consents' | 'evidence'
 
 const recoveryTargets: Array<{ value: ConversionStatus; label: string; purpose: string }> = [
   { value: 'configuring', label: 'Reprendre la configuration', purpose: 'Rouvre le choix et la configuration de l’offre.' },
@@ -105,6 +105,7 @@ export function ConversionSessionDossier({
 
   const tabs: Array<{ key: DossierTab; label: string; count?: number }> = [
     { key: 'overview', label: 'Vue d’ensemble' },
+    { key: 'origin', label: 'Origine Studio' },
     { key: 'configuration', label: 'Identité & configuration' },
     { key: 'price', label: 'Prix' },
     { key: 'availability', label: 'Disponibilité' },
@@ -157,6 +158,7 @@ export function ConversionSessionDossier({
           <div className={styles.dossierTimeline}><h3>Chronologie persistée</h3><div><History size={17}/><span>Dernière activité</span><strong>{new Date(session.last_activity_at).toLocaleString('fr-FR')}</strong></div><div><ArrowRight size={17}/><span>Soumission</span><strong>{session.submitted_at ? new Date(session.submitted_at).toLocaleString('fr-FR') : 'Non soumise'}</strong></div><div><BadgeCheck size={17}/><span>Confirmation</span><strong>{session.confirmed_at ? new Date(session.confirmed_at).toLocaleString('fr-FR') : 'Non confirmée'}</strong></div></div>
         </> : null}
 
+        {tab === 'origin' ? <><header><div><span>STUDIO ORIGIN</span><h2>Origine & attribution</h2></div></header>{displayJson(((session.metadata||{}).studioAttribution&&typeof (session.metadata||{}).studioAttribution==='object'?(session.metadata||{}).studioAttribution:{}) as Record<string,unknown>)}</> : null}
         {tab === 'configuration' ? <><header><div><span>SESSION CONTEXT</span><h2>Identité & configuration</h2></div></header><h3>Contexte d’identité</h3>{displayJson(session.identity_context)}<h3>Configuration de parcours</h3>{displayJson(session.configuration)}<h3>Éligibilité</h3>{displayJson(session.eligibility_result)}</> : null}
         {tab === 'price' ? <><header><div><span>PRICE SNAPSHOT</span><h2>Autorité tarifaire figée</h2></div></header>{session.priceSnapshot ? <dl className={styles.dossierObjectGrid}><Fact label="Source" value={session.priceSnapshot.pricing_source}/><Fact label="Statut" value={session.priceSnapshot.status}/><Fact label="Modèle" value={session.priceSnapshot.pricing_model}/><Fact label="Quantité" value={session.priceSnapshot.quantity}/><Fact label="Unitaire" value={session.priceSnapshot.unit_price == null ? 'Sur devis' : `${session.priceSnapshot.unit_price} ${session.priceSnapshot.currency_label}`}/><Fact label="Sous-total" value={session.priceSnapshot.subtotal == null ? '—' : session.priceSnapshot.subtotal}/><Fact label="Remise" value={session.priceSnapshot.discount_total}/><Fact label="Taxe" value={session.priceSnapshot.tax_total}/><Fact label="Total" value={session.priceSnapshot.grand_total == null ? 'Sur devis' : `${session.priceSnapshot.grand_total} ${session.priceSnapshot.currency_label}`}/><Fact label="Valide jusqu’au" value={new Date(session.priceSnapshot.valid_until).toLocaleString('fr-FR')}/><Fact label="Empreinte source" value={session.priceSnapshot.source_hash}/></dl> : <div className={styles.dossierEmpty}>Aucun snapshot de prix réel n’a encore été enregistré.</div>}</> : null}
         {tab === 'availability' ? <><header><div><span>AVAILABILITY DECISION</span><h2>Disponibilité & territoire</h2></div></header>{displayJson(session.availability_result)}</> : null}

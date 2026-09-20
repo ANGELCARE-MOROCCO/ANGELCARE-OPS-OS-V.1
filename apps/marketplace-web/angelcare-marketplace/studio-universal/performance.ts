@@ -1,4 +1,5 @@
 import type { Data } from '@puckeditor/core'
+import { isStudioWorkflowReference } from '@/angelcare-marketplace/studio-workflows/reference'
 
 export interface StudioPerformanceReport {
   blocks: number
@@ -23,7 +24,7 @@ export function auditStudioPerformance(data: Data): StudioPerformanceReport {
     if(props.__studioImported) importedBlocks++
     if(String(block.type||'').startsWith('studio_') && ['studio_tabs','studio_dialog','studio_carousel','studio_menu','studio_form','studio_accordion'].includes(String(block.type))) interactiveBlocks++
     if(block.type==='studio_island') controlledIslands++
-    if(props.__studioReviewRequired) reviewRequiredBlocks++
+    if(props.__studioReviewRequired && !(block.type==='studio_form'&&isStudioWorkflowReference(props.__studioWorkflow))) reviewRequiredBlocks++
     itemRows += arr(props.items).length
     importedRuleCount += arr(props.__studioImportedRules).length
   }

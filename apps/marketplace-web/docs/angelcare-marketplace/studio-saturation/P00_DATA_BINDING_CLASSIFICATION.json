@@ -1,0 +1,127 @@
+{
+  "schema_version": 1,
+  "field_families": [
+    {
+      "field_family": "catalog identity/content",
+      "examples": [
+        "name",
+        "short_description",
+        "description",
+        "slug",
+        "kind"
+      ],
+      "classification": [
+        "PUBLIC_SAFE",
+        "LIVE_BINDABLE"
+      ],
+      "authority": "catalog discovery"
+    },
+    {
+      "field_family": "pricing",
+      "examples": [
+        "price mode",
+        "current resolved price",
+        "currency"
+      ],
+      "classification": [
+        "PUBLIC_SAFE",
+        "LIVE_BINDABLE",
+        "REQUIRES_PRICING_AUTHORITY"
+      ],
+      "authority": "Conversion/Finance/Catalog pricing"
+    },
+    {
+      "field_family": "availability",
+      "examples": [
+        "status",
+        "quantity",
+        "time window",
+        "reason"
+      ],
+      "classification": [
+        "PUBLIC_SAFE",
+        "LIVE_BINDABLE",
+        "REQUIRES_CURRENT_AVAILABILITY"
+      ],
+      "authority": "catalog/conversion availability"
+    },
+    {
+      "field_family": "media",
+      "examples": [
+        "primary media",
+        "gallery",
+        "alt"
+      ],
+      "classification": [
+        "PUBLIC_SAFE",
+        "LIVE_BINDABLE"
+      ],
+      "authority": "Media Vault + item media"
+    },
+    {
+      "field_family": "variants/configuration",
+      "examples": [
+        "variant groups",
+        "public schema fields"
+      ],
+      "classification": [
+        "PUBLIC_SAFE",
+        "LIVE_BINDABLE",
+        "REQUIRES_SCHEMA_CONTEXT"
+      ],
+      "authority": "Category-Native"
+    },
+    {
+      "field_family": "trust",
+      "examples": [
+        "verified badges",
+        "evidence-backed public claims"
+      ],
+      "classification": [
+        "PUBLIC_SAFE",
+        "LIVE_BINDABLE",
+        "VERIFIED_ONLY"
+      ],
+      "authority": "Trust/Category-Native"
+    },
+    {
+      "field_family": "internal finance",
+      "examples": [
+        "margin",
+        "internal reconciliation",
+        "provider payable"
+      ],
+      "classification": [
+        "ADMIN_ONLY",
+        "NOT_STUDIO_BINDABLE"
+      ],
+      "authority": "Finance"
+    },
+    {
+      "field_family": "customer PII",
+      "examples": [
+        "email",
+        "phone",
+        "address"
+      ],
+      "classification": [
+        "SENSITIVE",
+        "NOT_GENERAL_STUDIO_BINDABLE"
+      ],
+      "authority": "Customer/CRM"
+    },
+    {
+      "field_family": "operational internals",
+      "examples": [
+        "provider eligibility internals",
+        "incidents",
+        "case notes"
+      ],
+      "classification": [
+        "ADMIN_ONLY",
+        "NOT_STUDIO_BINDABLE"
+      ],
+      "authority": "Operations/Provider"
+    }
+  ]
+}

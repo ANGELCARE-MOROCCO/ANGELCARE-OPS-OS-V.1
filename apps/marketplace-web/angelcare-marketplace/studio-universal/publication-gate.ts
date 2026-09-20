@@ -1,4 +1,5 @@
 import type { ComponentData, Data } from '@puckeditor/core'
+import { isStudioWorkflowReference } from '@/angelcare-marketplace/studio-workflows/reference'
 
 export interface StudioPublicationGate {
   pass: boolean
@@ -21,7 +22,7 @@ function walk(content: unknown, out: ComponentData[]) {
 export function studioPublicationGate(data: Data): StudioPublicationGate {
   const components:ComponentData[]=[]
   walk(data.content,components)
-  const reviewRequiredBlocks=components.filter(row=>Boolean((row.props as Record<string,unknown>|undefined)?.__studioReviewRequired)).map(row=>String((row.props as Record<string,unknown>|undefined)?.id||row.type))
+  const reviewRequiredBlocks=components.filter(row=>{const props=(row.props as Record<string,unknown>|undefined)||{};if(!props.__studioReviewRequired)return false;if(row.type==='studio_form'&&isStudioWorkflowReference(props.__studioWorkflow))return false;return true}).map(row=>String((row.props as Record<string,unknown>|undefined)?.id||row.type))
   const controlledIslands=components.filter(row=>row.type==='studio_island').map(row=>String((row.props as Record<string,unknown>|undefined)?.id||row.type))
   const blockers:string[]=[]
   if(controlledIslands.length) blockers.push('CONTROLLED_ISLAND_REVIEW')

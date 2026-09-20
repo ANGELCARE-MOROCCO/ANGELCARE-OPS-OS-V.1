@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "opportunities": [
+    {
+      "current_field": "primaryCtaHref / secondaryCtaHref",
+      "current_mode": "raw URL text",
+      "replace_with": "action + destination picker",
+      "patch": "P02/P03"
+    },
+    {
+      "current_field": "items[].href",
+      "current_mode": "raw URL text",
+      "replace_with": "action descriptor",
+      "patch": "P03"
+    },
+    {
+      "current_field": "mediaUrl",
+      "current_mode": "raw external URL optional",
+      "replace_with": "Media Vault default; external URL advanced fallback",
+      "patch": "P02"
+    },
+    {
+      "current_field": "collectionKey",
+      "current_mode": "basic select",
+      "replace_with": "searchable visual collection picker",
+      "patch": "P02"
+    },
+    {
+      "current_field": "categoryKey",
+      "current_mode": "basic select",
+      "replace_with": "hierarchical searchable category picker",
+      "patch": "P02"
+    },
+    {
+      "current_field": "catalog item references",
+      "current_mode": "not exposed",
+      "replace_with": "searchable visual product/service picker",
+      "patch": "P01/P02"
+    },
+    {
+      "current_field": "CMS page destination",
+      "current_mode": "manual href",
+      "replace_with": "CMS page destination picker",
+      "patch": "P01/P02/P03"
+    },
+    {
+      "current_field": "experience schema",
+      "current_mode": "not Studio-selectable",
+      "replace_with": "schema picker",
+      "patch": "P01/P02/P04"
+    },
+    {
+      "current_field": "territory",
+      "current_mode": "not universal Studio input",
+      "replace_with": "territory picker/context",
+      "patch": "P01/P02"
+    },
+    {
+      "current_field": "Academy programme/cohort",
+      "current_mode": "not Studio-selectable",
+      "replace_with": "Academy source picker",
+      "patch": "P01/P02"
+    },
+    {
+      "current_field": "workflow/form type",
+      "current_mode": "visual block semantics/manual routing",
+      "replace_with": "canonical workflow picker",
+      "patch": "P03/P07"
+    },
+    {
+      "current_field": "template assignment",
+      "current_mode": "schema strings exist but no Studio resolver",
+      "replace_with": "template assignment picker + inheritance UI",
+      "patch": "P04"
+    },
+    {
+      "current_field": "homepage cards",
+      "current_mode": "special-case collection/category blocks",
+      "replace_with": "dynamic source query builder",
+      "patch": "P06"
+    }
+  ]
+}

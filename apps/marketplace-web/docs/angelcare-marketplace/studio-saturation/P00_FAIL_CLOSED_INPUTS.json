@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "failure_conditions": [
+    {
+      "condition": "item missing/unpublished",
+      "public_policy": "404/hide target; never render stale copied facts",
+      "studio_policy": "show broken binding + block publish when required"
+    },
+    {
+      "condition": "template missing/archived",
+      "public_policy": "deterministic fallback chain; never arbitrary template",
+      "studio_policy": "surface resolver fallback and assignment issue"
+    },
+    {
+      "condition": "media missing/inactive",
+      "public_policy": "safe placeholder/omit optional media",
+      "studio_policy": "broken Media Vault reference warning"
+    },
+    {
+      "condition": "price unavailable",
+      "public_policy": "quote-only/explicit unavailable according to canonical policy; never invent amount",
+      "studio_policy": "binding state warning"
+    },
+    {
+      "condition": "availability unavailable",
+      "public_policy": "disable/redirect action according to canonical availability decision",
+      "studio_policy": "show consequence"
+    },
+    {
+      "condition": "action disabled/unauthorized",
+      "public_policy": "hide/disable/fail closed",
+      "studio_policy": "cannot publish required invalid action"
+    },
+    {
+      "condition": "workflow unavailable",
+      "public_policy": "block submission with explicit safe failure",
+      "studio_policy": "workflow binding blocker"
+    },
+    {
+      "condition": "collection empty",
+      "public_policy": "hide optional block or render configured empty state",
+      "studio_policy": "preview empty-state evidence"
+    },
+    {
+      "condition": "source API failure",
+      "public_policy": "fail safely without stale invented data",
+      "studio_policy": "source health warning"
+    }
+  ]
+}

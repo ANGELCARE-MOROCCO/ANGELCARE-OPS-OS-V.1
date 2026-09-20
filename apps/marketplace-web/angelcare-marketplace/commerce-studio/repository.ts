@@ -18,6 +18,7 @@ import type {
 import { affectedCommercePaths, refreshCommerceSurfaces } from './publication'
 import { assertInternalOrHttpUrl, safeArray, safeBoolean, safeJson, safeNumber, slugify } from './validation'
 import { evaluateProduct360Readiness, loadProduct360Snapshot } from '../enterprise-command/product-360-import-engine'
+import { invalidateStudioCommerceMutation } from '../studio-dependency-invalidation/invalidation'
 
 type Row = Record<string, unknown>
 type DbError = { code?: string; message?: string; details?: string } | null
@@ -523,7 +524,7 @@ export async function createCommerceResource(input: {
   await versionRecord({ resource: input.resource, row: data as Row, action: 'created', actorId: input.context.actor.id })
   const paths = affectedCommercePaths({ objectType: input.resource, locale: nullableText((data as Row).locale), slug: nullableText((data as Row).slug) })
   refreshCommerceSurfaces(paths)
-  const eventId = await publicationEvent({ resource: input.resource, row: data as Row, action: 'created', actorId: input.context.actor.id, paths })
+  const eventId = await publicationEvent({ resource: input.resource, row: data as Row, action: 'created', actorId: input.context.actor.id, paths });await invalidateStudioCommerceMutation({resource:input.resource,id:String((data as Row).id||''),slug:nullableText((data as Row).slug),locale:nullableText((data as Row).locale),reason:`commerce ${input.resource} created`,context:input.context})
   return { record: data as CommerceRecord, affectedPaths: paths, publicationEventId: eventId }
 }
 
@@ -588,7 +589,7 @@ export async function updateCommerceResource(input: {
   await versionRecord({ resource: input.resource, row: data as Row, action: 'updated', actorId: input.context.actor.id })
   const paths = affectedCommercePaths({ objectType: input.resource, locale: nullableText((data as Row).locale), slug: nullableText((data as Row).slug) })
   refreshCommerceSurfaces(paths)
-  const eventId = await publicationEvent({ resource: input.resource, row: data as Row, action: 'updated', actorId: input.context.actor.id, paths })
+  const eventId = await publicationEvent({ resource: input.resource, row: data as Row, action: 'updated', actorId: input.context.actor.id, paths });await invalidateStudioCommerceMutation({resource:input.resource,id:String((data as Row).id||input.id),slug:nullableText((data as Row).slug),locale:nullableText((data as Row).locale),reason:`commerce ${input.resource} updated`,context:input.context})
   return { record: data as CommerceRecord, affectedPaths: paths, publicationEventId: eventId }
 }
 
@@ -609,7 +610,7 @@ export async function archiveCommerceResource(input: {
   await versionRecord({ resource: input.resource, row: data as Row, action: 'archived', actorId: input.context.actor.id })
   const paths = affectedCommercePaths({ objectType: input.resource, locale: nullableText((data as Row).locale), slug: nullableText((data as Row).slug) })
   refreshCommerceSurfaces(paths)
-  const eventId = await publicationEvent({ resource: input.resource, row: data as Row, action: 'archived', actorId: input.context.actor.id, paths })
+  const eventId = await publicationEvent({ resource: input.resource, row: data as Row, action: 'archived', actorId: input.context.actor.id, paths });await invalidateStudioCommerceMutation({resource:input.resource,id:String((data as Row).id||input.id),slug:nullableText((data as Row).slug),locale:nullableText((data as Row).locale),reason:`commerce ${input.resource} archived`,context:input.context})
   return { record: data as CommerceRecord, affectedPaths: paths, publicationEventId: eventId }
 }
 
@@ -866,7 +867,7 @@ export async function registerUploadedMedia(input: {
     rights_status: 'owned', status: 'active', created_by: input.context.actor.id, updated_by: input.context.actor.id,
   }).select('*').single()
   if (error || !data) throw fail('enregistrer le média', error)
-  await versionRecord({ resource: 'media', row: data as Row, action: 'uploaded', actorId: input.context.actor.id })
+  await versionRecord({ resource: 'media', row: data as Row, action: 'uploaded', actorId: input.context.actor.id });await invalidateStudioCommerceMutation({resource:'media',id:String(data.id),reason:'media uploaded',context:input.context})
   return mapMedia(data as Row)
 }
 
@@ -928,6 +929,6 @@ export async function permanentlyDeleteMediaMetadata(input: { id: string; contex
   if (!current) throw new MarketplaceError('NOT_FOUND', 'Média introuvable.')
   const { data, error } = await db.from('angelcare_marketplace_media_assets').delete().eq('id', input.id).select('*').single()
   if (error || !data) throw fail('supprimer définitivement le média', error)
-  await versionRecord({ resource: 'media', row: current as Row, action: 'permanently_deleted', actorId: input.context.actor.id })
+  await versionRecord({ resource: 'media', row: current as Row, action: 'permanently_deleted', actorId: input.context.actor.id });await invalidateStudioCommerceMutation({resource:'media',id:input.id,reason:'media permanently deleted',context:input.context})
   return mapMedia(data as Row)
 }

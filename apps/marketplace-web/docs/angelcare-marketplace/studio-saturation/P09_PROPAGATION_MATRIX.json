@@ -1,0 +1,12 @@
+{
+  "studio_page": ["page", "published_revision", "block", "interaction", "action/workflow"],
+  "assigned_template": ["template", "template_revision", "template_scope", "item", "collection", "placement", "campaign", "audience", "territory", "block", "interaction"],
+  "internal_navigation": "bounded ac_* query provenance",
+  "external_navigation": "never decorated",
+  "public_inquiry": "source_metadata.studioAttribution",
+  "conversion": "conversion_sessions.metadata.studioAttribution",
+  "family": "audit_events.after_value.source_attribution",
+  "b2b": "public_events.event_data.studioAttribution",
+  "admin_visibility": ["Public Inquiry Command", "Conversion Session 360"],
+  "existing_authorities_only": true
+}

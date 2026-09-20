@@ -246,7 +246,18 @@
     "access-governance:command:typecheck": "NODE_OPTIONS=--max-old-space-size=8192 tsc -p tsconfig.access-governance-command.json --pretty false",
     "product360-import:static": "rm -rf .product360-import-static && tsc -p tsconfig.product360-import-static.json --pretty false",
     "product360-import:verify": "npm run product360-import:static && node scripts/angelcare-marketplace/verify-product360-import-hardening.mjs && rm -rf .product360-import-static",
-    "marketplace-studio:verify": "node scripts/angelcare-marketplace/verify-universal-studio.test.mjs"
+    "marketplace-studio:verify": "node scripts/angelcare-marketplace/verify-universal-studio.test.mjs",
+    "marketplace-studio:verify:transplant": "node scripts/angelcare-marketplace/verify-design-studio-transplant.mjs",
+    "marketplace-studio:verify:catalogue:01": "node scripts/angelcare-marketplace/verify-studio-catalogue-category-01.mjs",
+    "marketplace-studio:verify:catalogue:02": "node scripts/angelcare-marketplace/verify-studio-catalogue-category-02.mjs",
+    "marketplace-studio:verify:catalogue:03": "node scripts/angelcare-marketplace/verify-studio-catalogue-category-03.mjs",
+    "marketplace-studio:verify:catalogue:04": "node scripts/angelcare-marketplace/verify-studio-catalogue-category-04.mjs",
+    "marketplace-studio:verify:catalogue:05": "node scripts/angelcare-marketplace/verify-studio-catalogue-category-05.mjs",
+    "marketplace-studio:verify:catalogue:06": "node scripts/angelcare-marketplace/verify-studio-catalogue-category-06.mjs",
+    "marketplace-studio:verify:catalogue:07": "node scripts/angelcare-marketplace/verify-studio-catalogue-category-07.mjs",
+    "marketplace-studio:verify:catalogue:08": "node scripts/angelcare-marketplace/verify-studio-catalogue-category-08.mjs",
+    "marketplace-studio:verify:catalogue:09": "node scripts/angelcare-marketplace/verify-studio-catalogue-category-09.mjs",
+    "marketplace-studio:verify:catalogue:10": "node scripts/angelcare-marketplace/verify-studio-catalogue-category-10.mjs"
   },
   "dependencies": {
     "@google/genai": "^2.12.0",

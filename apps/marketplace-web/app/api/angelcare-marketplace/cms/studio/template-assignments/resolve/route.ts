@@ -1,0 +1,5 @@
+import { requireMarketplaceApiContext } from '@/angelcare-marketplace/auth/context'
+import { apiFailure, apiSuccess, requestId } from '@/angelcare-marketplace/server/request'
+import { resolveStudioTemplateForCatalogItem } from '@/angelcare-marketplace/studio-template-assignment/resolver'
+export const runtime='nodejs';export const dynamic='force-dynamic'
+export async function GET(request:Request){const id=requestId(request);try{await requireMarketplaceApiContext('marketplace.cms.view');const url=new URL(request.url);const locale=['fr','en','ar'].includes(url.searchParams.get('locale')||'')?url.searchParams.get('locale') as 'fr'|'en'|'ar':'fr';const itemId=url.searchParams.get('itemId')||undefined;const slug=url.searchParams.get('slug')||undefined;if(!itemId&&!slug)throw new Error('Produit/service requis.');return apiSuccess(await resolveStudioTemplateForCatalogItem({itemId,slug,locale,collectionId:url.searchParams.get('collectionId'),placementId:url.searchParams.get('placementId')}),{requestId:id})}catch(error){return apiFailure(error,id)}}

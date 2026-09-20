@@ -1,0 +1,34 @@
+{
+  "phase": "P06",
+  "runtime_contract": {
+    "persisted_value": "versioned dynamic-source recipe only",
+    "resolution": "request-time against P01/canonical Marketplace authorities",
+    "materialization": "runtime clone only",
+    "public_studio_runtime": true,
+    "assigned_category_native_template_switch": false,
+    "catalog_runtime_authority": "Catalog Discovery + existing Homepage Merchandising",
+    "generic_runtime_authority": "P01 Universal Source Registry",
+    "structured_actions": "P03 reused for materialized cards",
+    "context": [
+      "locale",
+      "territory",
+      "audience"
+    ],
+    "fail_closed": [
+      "invalid recipe",
+      "unsupported source",
+      "non-public-safe projection",
+      "resolver error"
+    ],
+    "empty_policies": [
+      "preserve_static",
+      "empty",
+      "hide_block"
+    ],
+    "max_catalog_limit": 24,
+    "api_routes": 2
+  },
+  "database_schema_change": false,
+  "sql_required": false,
+  "migration_required": false
+}

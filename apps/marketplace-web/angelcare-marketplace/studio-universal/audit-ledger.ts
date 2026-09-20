@@ -8,7 +8,7 @@ const rows:Array<[string,string,StudioAuditState,string,boolean]> = [
 ['A02','Preservation contract','PASS','Experience Core, Theme, Vault, Web Presence and public runtime reused.',true],
 ['A03','No duplicate architecture','PASS','No second auth/theme/page authority/browser store.',true],
 ['A04','AngelCare visual identity','PASS','Studio uses AngelCare native design system only.',true],
-['A05','VoltHub contamination','NO','No VoltHub identity or EV semantics in Studio.',true],
+['A05','Donor identity contamination','NO','No donor identity or unrelated business semantics in Studio.',true],
 ['A06','Official logo integrity','PASS','Studio does not regenerate brand assets.',true],
 ['A07','One official Studio','PASS','Official workspace manifest.',true],
 ['A08','Workspace registry','PASS','Stable workspace id/key/route/version/capabilities.',true],

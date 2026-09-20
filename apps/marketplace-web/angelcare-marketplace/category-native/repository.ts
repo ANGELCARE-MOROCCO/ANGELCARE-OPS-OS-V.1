@@ -3,6 +3,7 @@ import type { MarketplaceRequestContext } from '../domain/types'
 import { MarketplaceError } from '../server/errors'
 import { refreshCommerceSurfaces } from '../commerce-studio/publication'
 import { slugify } from '../commerce-studio/validation'
+import { invalidateStudioReference } from '../studio-dependency-invalidation/invalidation'
 import {
   CATEGORY_NATIVE_HOMEPAGE_BLOCKS,
   CATEGORY_NATIVE_SCHEMA_BLUEPRINTS,
@@ -388,6 +389,7 @@ export async function saveExperienceSchema(
   const result = await getExperienceSchema(schemaKey)
   if (!result) throw new MarketplaceError('INTERNAL_ERROR', 'Schéma enregistré mais introuvable.')
   await schemaVersion(result, existing ? 'updated' : 'created', context.actor.id)
+  await invalidateStudioReference({reference:{sourceId:'experience.schemas',entityId:result.id},reason:`experience_schema.${existing?'updated':'created'}`,context})
   return result
 }
 
@@ -422,7 +424,7 @@ export async function saveSchemaField(
   const { data, error } = await db.from(FIELD_TABLE).upsert(row, { onConflict: 'schema_id,field_key' }).select('*').single()
   if (error || !data) throw dbFailure('enregistrer le champ', error)
   const updatedSchema = await getExperienceSchema(schemaKey)
-  if (updatedSchema) await schemaVersion(updatedSchema, `field.${fieldKey}.saved`, context.actor.id)
+  if (updatedSchema) { await schemaVersion(updatedSchema, `field.${fieldKey}.saved`, context.actor.id); await invalidateStudioReference({reference:{sourceId:'experience.schemas',entityId:updatedSchema.id},reason:`experience_schema.field.${fieldKey}.saved`,context}) }
   return mapField(data as Row)
 }
 
@@ -443,6 +445,7 @@ export async function reorderSchemaFields(
   const result = await getExperienceSchema(schemaKey)
   if (!result) throw new MarketplaceError('INTERNAL_ERROR', 'Schéma introuvable après réordonnancement.')
   await schemaVersion(result, 'fields.reordered', context.actor.id)
+  await invalidateStudioReference({reference:{sourceId:'experience.schemas',entityId:result.id},reason:'experience_schema.fields.reordered',context})
   return result
 }
 
@@ -481,6 +484,7 @@ export async function schemaAction(
   const result = await getExperienceSchema(schemaKey)
   if (!result) throw new MarketplaceError('INTERNAL_ERROR', 'Schéma introuvable après action.')
   await schemaVersion(result, action, context.actor.id)
+  await invalidateStudioReference({reference:{sourceId:'experience.schemas',entityId:result.id},reason:`experience_schema.${action}`,context})
   return result
 }
 
@@ -768,6 +772,7 @@ export async function executeImportJob(jobId: string, context: MarketplaceReques
         before_snapshot: before, target_item_id: itemId, status: existing ? 'updated' : 'imported',
         errors: [], updated_at: new Date().toISOString(),
       }).eq('id', row.id)
+      await invalidateStudioReference({reference:{sourceId:'catalog.items',entityId:itemId},reason:`category_native_import.${existing?'updated':'created'}`,context,slug:categoryNativeText((catalogItem as Row).slug),locale:categoryNativeText((catalogItem as Row).locale||'fr')})
       if (existing) updated += 1
       else imported += 1
     } catch (error) {
@@ -810,6 +815,7 @@ export async function rollbackImportJob(jobId: string, context: MarketplaceReque
     })
     const { error: rowError } = await db.from(IMPORT_ROW_TABLE).update({ status: 'rolled_back', updated_at: new Date().toISOString() }).eq('id', row.id)
     if (rowError) throw dbFailure('marquer la ligne restaurée', rowError)
+    await invalidateStudioReference({reference:{sourceId:'catalog.items',entityId:row.target_item_id},reason:'category_native_import.rollback',context})
   }
   const { error } = await db.from(IMPORT_JOB_TABLE).update({
     status: 'rolled_back', rolled_back_at: new Date().toISOString(), rollback_actor_id: context.actor.id,

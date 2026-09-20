@@ -1,0 +1,2167 @@
+{
+  "schema_version": 1,
+  "generated_from": "ANGELCARE_MARKETPLACE_WEB_WITH_COMPLETE_DESIGN_STUDIO_20260919",
+  "summary": {
+    "api_routes": 569,
+    "admin_pages": 564,
+    "public_locale_pages": 93,
+    "other_marketplace_pages": 37,
+    "data_authorities": 324,
+    "permissions": 536,
+    "export_authority_files": 259
+  },
+  "capabilities": [
+    {
+      "capability_id": "catalog.items",
+      "domain": "catalog",
+      "entity_type": "catalog_item",
+      "canonical_name": "Produits / services / formations / offres SaaS",
+      "read_authority": "angelcare-marketplace/total-commerce-control/repository.ts",
+      "write_authority": "angelcare-marketplace/total-commerce-control/repository.ts",
+      "repository": "angelcare-marketplace/total-commerce-control/repository.ts",
+      "service": null,
+      "data_authorities": [
+        "angelcare_marketplace_catalog_items",
+        "angelcare_marketplace_catalog_discovery_v"
+      ],
+      "api_routes": [
+        "/api/angelcare-marketplace/admin/catalog/items",
+        "/api/angelcare-marketplace/public/catalog/[slug]"
+      ],
+      "public_routes": [
+        "/angelcare-marketplace/[locale]/marketplace/item/[itemSlug]"
+      ],
+      "admin_routes": [
+        "/angelcare-marketplace/admin/catalog/items"
+      ],
+      "stable_identifier": "id",
+      "display_identifier": "public_reference",
+      "publication_model": "catalog status + publication controls",
+      "permission_model": "existing Marketplace RBAC",
+      "audit_model": "Marketplace audit/events",
+      "can_create": true,
+      "can_read": true,
+      "can_update": true,
+      "can_delete": true,
+      "can_select_in_studio": false,
+      "can_bind_in_studio": true,
+      "can_execute_from_studio": false,
+      "picker_candidate": true,
+      "action_candidate": true,
+      "template_binding_candidate": true,
+      "admin_destination": "/angelcare-marketplace/admin/catalog/items",
+      "source_of_truth_status": "CANONICAL",
+      "shadow_implementation_allowed": false,
+      "studio_wiring_status": "PARTIALLY_WIRED",
+      "gaps": [
+        "Studio has no catalog-item picker",
+        "Studio public product-template resolution not connected to item/schema assignment"
+      ],
+      "risks": [],
+      "notes": ""
+    },
+    {
+      "capability_id": "catalog.categories",
+      "domain": "catalog",
+      "entity_type": "catalog_category",
+      "canonical_name": "Catégories et sous-catégories",
+      "read_authority": "angelcare-marketplace/total-commerce-control/repository.ts",
+      "write_authority": "angelcare-marketplace/total-commerce-control/repository.ts",
+      "repository": "angelcare-marketplace/total-commerce-control/repository.ts",
+      "service": null,
+      "data_authorities": [
+        "angelcare_marketplace_catalog_categories",
+        "angelcare_marketplace_category_discovery_v"
+      ],
+      "api_routes": [
+        "/api/angelcare-marketplace/admin/catalog/categories"
+      ],
+      "public_routes": [
+        "/angelcare-marketplace/[locale]/marketplace/category/[categorySlug]"
+      ],
+      "admin_routes": [
+        "/angelcare-marketplace/admin/catalog/categories"
+      ],
+      "stable_identifier": "category_key",
+      "display_identifier": "name_fr",
+      "publication_model": "draft/published/archived",
+      "permission_model": "existing Marketplace RBAC",
+      "audit_model": "Marketplace audit/events",
+      "can_create": true,
+      "can_read": true,
+      "can_update": true,
+      "can_delete": true,
+      "can_select_in_studio": true,
+      "can_bind_in_studio": true,
+      "can_execute_from_studio": false,
+      "picker_candidate": true,
+      "action_candidate": true,
+      "template_binding_candidate": true,
+      "admin_destination": "/angelcare-marketplace/admin/catalog/categories",
+      "source_of_truth_status": "CANONICAL",
+      "shadow_implementation_allowed": false,
+      "studio_wiring_status": "PARTIALLY_WIRED",
+      "gaps": [
+        "Studio category picker exists but is basic select, not universal visual picker"
+      ],
+      "risks": [],
+      "notes": ""
+    },
+    {
+      "capability_id": "catalog.variants",
+      "domain": "catalog",
+      "entity_type": "catalog_variant",
+      "canonical_name": "Variantes catalogue",
+      "read_authority": "angelcare-marketplace/total-commerce-control/repository.ts",
+      "write_authority": "angelcare-marketplace/total-commerce-control/repository.ts",
+      "repository": "angelcare-marketplace/total-commerce-control/repository.ts",
+      "service": null,
+      "data_authorities": [
+        "angelcare_marketplace_catalog_variants"
+      ],
+      "api_routes": [
+        "/api/angelcare-marketplace/admin/catalog/items/[itemId]/variants"
+      ],
+      "public_routes": [],
+      "admin_routes": [
+        "/angelcare-marketplace/admin/catalog/items"
+      ],
+      "stable_identifier": "id",
+      "display_identifier": "public_reference",
+      "publication_model": "domain-specific",
+      "permission_model": "existing Marketplace RBAC",
+      "audit_model": "Marketplace audit/events",
+      "can_create": true,
+      "can_read": true,
+      "can_update": true,
+      "can_delete": true,
+      "can_select_in_studio": false,
+      "can_bind_in_studio": false,
+      "can_execute_from_studio": false,
+      "picker_candidate": true,
+      "action_candidate": false,
+      "template_binding_candidate": true,
+      "admin_destination": "/angelcare-marketplace/admin/catalog/items",
+      "source_of_truth_status": "CANONICAL",
+      "shadow_implementation_allowed": false,
+      "studio_wiring_status": "NOT_WIRED",
+      "gaps": [
+        "Not exposed to Studio binding/pickers"
+      ],
+      "risks": [],
+      "notes": ""
+    },
+    {
+      "capability_id": "catalog.availability",
+      "domain": "catalog",
+      "entity_type": "availability",
+      "canonical_name": "Disponibilité",
+      "read_authority": "angelcare-marketplace/category-native-experience/repository.ts",
+      "write_authority": "angelcare-marketplace/category-native-experience/repository.ts",
+      "repository": "angelcare-marketplace/category-native-experience/repository.ts",
+      "service": null,
+      "data_authorities": [
+        "angelcare_marketplace_catalog_availability",
+        "angelcare_marketplace_conversion_availability_holds",
+        "angelcare_marketplace_experience_availability_results"
+      ],
+      "api_routes": [
+        "/api/angelcare-marketplace/admin/catalog/items/[itemId]/availability",
+        "/api/angelcare-marketplace/conversion/sessions/[sessionKey]/availability"
+      ],
+      "public_routes": [],
+      "admin_routes": [
+        "/angelcare-marketplace/admin/catalog/items"
+      ],
+      "stable_identifier": "catalog_item_id",
+      "display_identifier": "status",
+      "publication_model": "runtime/current decision",
+      "permission_model": "existing Marketplace RBAC",
+      "audit_model": "Marketplace audit/events",
+      "can_create": true,
+      "can_read": true,
+      "can_update": true,
+      "can_delete": false,
+      "can_select_in_studio": false,
+      "can_bind_in_studio": false,
+      "can_execute_from_studio": false,
+      "picker_candidate": false,
+      "action_candidate": true,
+      "template_binding_candidate": false,
+      "admin_destination": "/angelcare-marketplace/admin/catalog/items",
+      "source_of_truth_status": "CANONICAL",
+      "shadow_implementation_allowed": false,
+      "studio_wiring_status": "NOT_WIRED",
+      "gaps": [
+        "Studio cannot declare availability-bound action semantics yet"
+      ],
+      "risks": [],
+      "notes": ""
+    },
+    {
+      "capability_id": "catalog.discovery",
+      "domain": "catalog",
+      "entity_type": "discovery_read_model",
+      "canonical_name": "Public discovery/search",
+      "read_authority": "angelcare-marketplace/catalog-discovery/repository.ts",
+      "write_authority": "angelcare-marketplace/catalog-discovery/repository.ts",
+      "repository": "angelcare-marketplace/catalog-discovery/repository.ts",
+      "service": null,
+      "data_authorities": [
+        "angelcare_marketplace_catalog_discovery_v",
+        "angelcare_marketplace_catalog_collections_v"
+      ],
+      "api_routes": [
+        "/api/angelcare-marketplace/public/catalog/[slug]"
+      ],
+      "public_routes": [
+        "/angelcare-marketplace/[locale]/marketplace",
+        "/angelcare-marketplace/[locale]/marketplace/search"
+      ],
+      "admin_routes": [
+        "/angelcare-marketplace/admin/catalog"
+      ],
+      "stable_identifier": "item_key",
+      "display_identifier": "name",
+      "publication_model": "published-only read model",
+      "permission_model": "existing Marketplace RBAC",
+      "audit_model": "Marketplace audit/events",
+      "can_create": false,
+      "can_read": true,
+      "can_update": false,
+      "can_delete": false,
+      "can_select_in_studio": false,
+      "can_bind_in_studio": true,
+      "can_execute_from_studio": false,
+      "picker_candidate": true,
+      "action_candidate": false,
+      "template_binding_candidate": false,
+      "admin_destination": "/angelcare-marketplace/admin/catalog",
+      "source_of_truth_status": "CANONICAL",
+      "shadow_implementation_allowed": false,
+      "studio_wiring_status": "PARTIALLY_WIRED",
+      "gaps": [
+        "Studio only uses discovery for product_grid; no universal dynamic source descriptor"
+      ],
+      "risks": [],
+      "notes": ""
+    },
+    {
+      "capability_id": "merchandising.collections",
+      "domain": "merchandising",
+      "entity_type": "collection",
+      "canonical_name": "Collections merchandising/homepage",
+      "read_authority": "angelcare-marketplace/homepage-final/repository.ts",
+      "write_authority": "angelcare-marketplace/homepage-final/repository.ts",
+      "repository": "angelcare-marketplace/homepage-final/repository.ts",
+      "service": null,
+      "data_authorities": [
+        "angelcare_marketplace_homepage_collections",
+        "angelcare_marketplace_homepage_collection_items",
+        "angelcare_marketplace_catalog_collections_v"
+      ],
+      "api_routes": [
+        "/api/angelcare-marketplace/admin/homepage/collections"
+      ],
+      "public_routes": [],
+      "admin_routes": [
+        "/angelcare-marketplace/admin/merchandising/collections"
+      ],
+      "stable_identifier": "collection_key",
+      "display_identifier": "title",
+      "publication_model": "draft/approved/scheduled/active/archived",
+      "permission_model": "existing Marketplace RBAC",
+      "audit_model": "Marketplace audit/events",
+      "can_create": true,
+      "can_read": true,
+      "can_update": true,
+      "can_delete": true,
+      "can_select_in_studio": true,
+      "can_bind_in_studio": true,
+      "can_execute_from_studio": false,
+      "picker_candidate": true,
+      "action_candidate": true,
+      "template_binding_candidate": true,
+      "admin_destination": "/angelcare-marketplace/admin/merchandising/collections",
+      "source_of_truth_status": "CANONICAL",
+      "shadow_implementation_allowed": false,
+      "studio_wiring_status": "PARTIALLY_WIRED",
+      "gaps": [
+        "Basic Studio collection picker exists",
+        "No collection-context template inheritance contract yet"
+      ],
+      "risks": [],
+      "notes": ""
+    },
+    {
+      "capability_id": "merchandising.homepage",
+      "domain": "homepage",
+      "entity_type": "homepage_composition",
+      "canonical_name": "Homepage sections / placements / campaigns",
+      "read_authority": "angelcare-marketplace/homepage-final/repository.ts",
+      "write_authority": "angelcare-marketplace/homepage-final/repository.ts",
+      "repository": "angelcare-marketplace/homepage-final/repository.ts",
+      "service": null,
+      "data_authorities": [
+        "angelcare_marketplace_homepage_sections",
+        "angelcare_marketplace_homepage_placements",
+        "angelcare_marketplace_homepage_campaigns",
+        "angelcare_marketplace_homepage_versions",
+        "angelcare_marketplace_homepage_release_dossiers"
+      ],
+      "api_routes": [
+        "/api/angelcare-marketplace/admin/homepage/sections",
+        "/api/angelcare-marketplace/admin/homepage/placements",
+        "/api/angelcare-marketplace/admin/homepage/campaigns",
+        "/api/angelcare-marketplace/admin/homepage/publish"
+      ],
+      "public_routes": [],
+      "admin_routes": [
+        "/angelcare-marketplace/admin/experience/homepage"
+      ],
+      "stable_identifier": "id",
+      "display_identifier": "public_reference",
+      "publication_model": "versioned release dossier + approval/publication evidence",
+      "permission_model": "existing Marketplace RBAC",
+      "audit_model": "Marketplace audit/events",
+      "can_create": true,
+      "can_read": true,
+      "can_update": true,
+      "can_delete": true,
+      "can_select_in_studio": false,
+      "can_bind_in_studio": false,
+      "can_execute_from_studio": false,
+      "picker_candidate": true,
+      "action_candidate": false,
+      "template_binding_candidate": true,
+      "admin_destination": "/angelcare-marketplace/admin/experience/homepage",
+      "source_of_truth_status": "CANONICAL",
+      "shadow_implementation_allowed": false,
+      "studio_wiring_status": "NOT_WIRED",
+      "gaps": [
+        "Studio mega-homepage source model is not unified with existing homepage authorities"
+      ],
+      "risks": [],
+      "notes": ""
+    },
+    {
+      "capability_id": "merchandising.audiences",
+      "domain": "homepage",
+      "entity_type": "audience_rule",
+      "canonical_name": "Audience targeting",
+      "read_authority": "angelcare-marketplace/homepage-final/repository.ts",
+      "write_authority": "angelcare-marketplace/homepage-final/repository.ts",
+      "repository": "angelcare-marketplace/homepage-final/repository.ts",
+      "service": null,
+      "data_authorities": [
+        "angelcare_marketplace_homepage_audience_rules",
+        "angelcare_marketplace_segment_memberships",
+        "angelcare_marketplace_saved_segments"
+      ],
+      "api_routes": [
+        "/api/angelcare-marketplace/admin/homepage/campaigns"
+      ],
+      "public_routes": [],
+      "admin_routes": [
+        "/angelcare-marketplace/admin/experience/homepage/audiences"
+      ],
+      "stable_identifier": "id",
+      "display_identifier": "public_reference",
+      "publication_model": "domain-specific",
+      "permission_model": "existing Marketplace RBAC",
+      "audit_model": "Marketplace audit/events",
+      "can_create": true,
+      "can_read": true,
+      "can_update": true,
+      "can_delete": true,
+      "can_select_in_studio": false,
+      "can_bind_in_studio": false,
+      "can_execute_from_studio": false,
+      "picker_candidate": true,
+      "action_candidate": false,
+      "template_binding_candidate": false,
+      "admin_destination": "/angelcare-marketplace/admin/experience/homepage/audiences",
+      "source_of_truth_status": "CANONICAL",
+      "shadow_implementation_allowed": false,
+      "studio_wiring_status": "NOT_WIRED",
+      "gaps": [
+        "Not exposed as Studio targeting/source context"
+      ],
+      "risks": [],
+      "notes": ""
+    },
+    {
+      "capability_id": "media.assets",
+      "domain": "media",
+      "entity_type": "media_asset",
+      "canonical_name": "Media Vault",
+      "read_authority": "angelcare-marketplace/commerce-studio/media-storage-api.ts",
+      "write_authority": "angelcare-marketplace/commerce-studio/media-storage-api.ts",
+      "repository": "angelcare-marketplace/commerce-studio/media-storage-api.ts",
+      "service": null,
+      "data_authorities": [
+        "angelcare_marketplace_media_assets",
+        "angelcare_marketplace_media_folders",
+        "angelcare_marketplace_media_usage"
+      ],
+      "api_routes": [
+        "/api/angelcare-marketplace/admin/media",
+        "/api/angelcare-marketplace/admin/media/upload"
+      ],
+      "public_routes": [],
+      "admin_routes": [
+        "/angelcare-marketplace/admin/media/library"
+      ],
+      "stable_identifier": "asset_key",
+      "display_identifier": "file_name",
+      "publication_model": "active/archived/deleted + rights/usage",
+      "permission_model": "existing Marketplace RBAC",
+      "audit_model": "Marketplace audit/events",
+      "can_create": true,
+      "can_read": true,
+      "can_update": true,
+      "can_delete": true,
+      "can_select_in_studio": true,
+      "can_bind_in_studio": true,
+      "can_execute_from_studio": false,
+      "picker_candidate": true,
+      "action_candidate": false,
+      "template_binding_candidate": false,
+      "admin_destination": "/angelcare-marketplace/admin/media/library",
+      "source_of_truth_status": "CANONICAL",
+      "shadow_implementation_allowed": false,
+      "studio_wiring_status": "FULLY_WIRED",
+      "gaps": [
+        "Studio Media Vault field is functional but future universal picker can add filtering/context"
+      ],
+      "risks": [],
+      "notes": ""
+    },
+    {
+      "capability_id": "cms.pages",
+      "domain": "content_experience",
+      "entity_type": "cms_page",
+      "canonical_name": "Experience Core pages",
+      "read_authority": "angelcare-marketplace/experience-builder/repository.ts",
+      "write_authority": "angelcare-marketplace/experience-builder/repository.ts",
+      "repository": "angelcare-marketplace/experience-builder/repository.ts",
+      "service": null,
+      "data_authorities": [
+        "angelcare_marketplace_cms_pages",
+        "angelcare_marketplace_cms_blocks",
+        "angelcare_marketplace_cms_page_versions",
+        "angelcare_marketplace_cms_revisions"
+      ],
+      "api_routes": [
+        "/api/angelcare-marketplace/cms/pages",
+        "/api/angelcare-marketplace/cms/studio/pages"
+      ],
+      "public_routes": [
+        "/angelcare-marketplace/[locale]/[[...slug]]"
+      ],
+      "admin_routes": [
+        "/angelcare-marketplace/admin/experience/pages"
+      ],
+      "stable_identifier": "route_key",
+      "display_identifier": "title",
+      "publication_model": "draft/review/approved/scheduled/published/archived + revisions",
+      "permission_model": "existing Marketplace RBAC",
+      "audit_model": "Marketplace audit/events",
+      "can_create": true,
+      "can_read": true,
+      "can_update": true,
+      "can_delete": true,
+      "can_select_in_studio": false,
+      "can_bind_in_studio": true,
+      "can_execute_from_studio": false,
+      "picker_candidate": true,
+      "action_candidate": true,
+      "template_binding_candidate": true,
+      "admin_destination": "/angelcare-marketplace/admin/experience/pages",
+      "source_of_truth_status": "CANONICAL",
+      "shadow_implementation_allowed": false,
+      "studio_wiring_status": "PARTIALLY_WIRED",
+      "gaps": [
+        "Studio edits pages natively",
+        "Page destination picker/action registry not yet universal"
+      ],
+      "risks": [],
+      "notes": ""
+    },
+    {
+      "capability_id": "cms.templates",
+      "domain": "content_experience",
+      "entity_type": "cms_template",
+      "canonical_name": "Experience Core templates",
+      "read_authority": "angelcare-marketplace/experience-builder/repository.ts",
+      "write_authority": "angelcare-marketplace/experience-builder/repository.ts",
+      "repository": "angelcare-marketplace/experience-builder/repository.ts",
+      "service": null,
+      "data_authorities": [
+        "angelcare_marketplace_cms_templates",
+        "angelcare_marketplace_cms_template_revisions"
+      ],
+      "api_routes": [
+        "/api/angelcare-marketplace/cms/templates"
+      ],
+      "public_routes": [],
+      "admin_routes": [
+        "/angelcare-marketplace/admin/experience/templates"
+      ],
+      "stable_identifier": "template_key",
+      "display_identifier": "name",
+      "publication_model": "current_revision/published_revision/status",
+      "permission_model": "existing Marketplace RBAC",
+      "audit_model": "Marketplace audit/events",
+      "can_create": true,
+      "can_read": true,
+      "can_update": true,
+      "can_delete": true,
+      "can_select_in_studio": false,
+      "can_bind_in_studio": false,
+      "can_execute_from_studio": false,
+      "picker_candidate": true,
+      "action_candidate": false,
+      "template_binding_candidate": true,
+      "admin_destination": "/angelcare-marketplace/admin/experience/templates",
+      "source_of_truth_status": "CANONICAL",
+      "shadow_implementation_allowed": false,
+      "studio_wiring_status": "NOT_WIRED",
+      "gaps": [
+        "Not yet the deterministic product/category/family template resolver"
+      ],
+      "risks": [],
+      "notes": ""
+    },
+    {
+      "capability_id": "cms.symbols",
+      "domain": "content_experience",
+      "entity_type": "cms_symbol",
+      "canonical_name": "Reusable symbols",
+      "read_authority": "angelcare-marketplace/experience-builder/repository.ts",
+      "write_authority": "angelcare-marketplace/experience-builder/repository.ts",
+      "repository": "angelcare-marketplace/experience-builder/repository.ts",
+      "service": null,
+      "data_authorities": [
+        "angelcare_marketplace_cms_symbols",
+        "angelcare_marketplace_cms_symbol_revisions"
+      ],
+      "api_routes": [
+        "/api/angelcare-marketplace/cms/symbols"
+      ],
+      "public_routes": [],
+      "admin_routes": [
+        "/angelcare-marketplace/admin/experience/symbols"
+      ],
+      "stable_identifier": "symbol_key",
+      "display_identifier": "name",
+      "publication_model": "current_revision/published_revision/status",
+      "permission_model": "existing Marketplace RBAC",
+      "audit_model": "Marketplace audit/events",
+      "can_create": true,
+      "can_read": true,
+      "can_update": true,
+      "can_delete": true,
+      "can_select_in_studio": false,
+      "can_bind_in_studio": true,
+      "can_execute_from_studio": false,
+      "picker_candidate": true,
+      "action_candidate": false,
+      "template_binding_candidate": false,
+      "admin_destination": "/angelcare-marketplace/admin/experience/symbols",
+      "source_of_truth_status": "CANONICAL",
+      "shadow_implementation_allowed": false,
+      "studio_wiring_status": "NOT_WIRED",
+      "gaps": [
+        "Not surfaced in Studio universal source picker"
+      ],
+      "risks": [],
+      "notes": ""
+    },
+    {
+      "capability_id": "cms.dependencies",
+      "domain": "content_experience",
+      "entity_type": "dependency_edge",
+      "canonical_name": "Experience dependency graph",
+      "read_authority": "angelcare-marketplace/experience-builder/repository.ts",
+      "write_authority": "angelcare-marketplace/experience-builder/repository.ts",
+      "repository": "angelcare-marketplace/experience-builder/repository.ts",
+      "service": null,
+      "data_authorities": [
+        "angelcare_marketplace_cms_dependency_edges"
+      ],
+      "api_routes": [
+        "/api/angelcare-marketplace/cms/dependencies"
+      ],
+      "public_routes": [],
+      "admin_routes": [
+        "/angelcare-marketplace/admin/experience/dependencies"
+      ],
+      "stable_identifier": "id",
+      "display_identifier": "target_type/target_id",
+      "publication_model": "revision scoped",
+      "permission_model": "existing Marketplace RBAC",
+      "audit_model": "Marketplace audit/events",
+      "can_create": true,
+      "can_read": true,
+      "can_update": true,
+      "can_delete": true,
+      "can_select_in_studio": false,
+      "can_bind_in_studio": false,
+      "can_execute_from_studio": false,
+      "picker_candidate": false,
+      "action_candidate": false,
+      "template_binding_candidate": false,
+      "admin_destination": "/angelcare-marketplace/admin/experience/dependencies",
+      "source_of_truth_status": "CANONICAL",
+      "shadow_implementation_allowed": false,
+      "studio_wiring_status": "PARTIALLY_WIRED",
+      "gaps": [
+        "Existing CMS dependencies do not yet cover all future Studio live bindings/actions"
+      ],
+      "risks": [],
+      "notes": ""
+    },
+    {
+      "capability_id": "studio.authoring",
+      "domain": "content_experience",
+      "entity_type": "studio_document",
+      "canonical_name": "Universal Studio / Puck",
+      "read_authority": "angelcare-marketplace/studio-universal/repository.ts",
+      "write_authority": "angelcare-marketplace/studio-universal/repository.ts",
+      "repository": "angelcare-marketplace/studio-universal/repository.ts",
+      "service": null,
+      "data_authorities": [
+        "angelcare_marketplace_cms_pages",
+        "angelcare_marketplace_cms_blocks"
+      ],
+      "api_routes": [
+        "/api/angelcare-marketplace/cms/studio/pages",
+        "/api/angelcare-marketplace/cms/studio/pages/[pageId]/draft",
+        "/api/angelcare-marketplace/cms/studio/pages/[pageId]/preview",
+        "/api/angelcare-marketplace/cms/studio/pages/[pageId]/publish"
+      ],
+      "public_routes": [
+        "/angelcare-marketplace/preview/[token]"
+      ],
+      "admin_routes": [
+        "/angelcare-marketplace/admin/experience/studio"
+      ],
+      "stable_identifier": "id",
+      "display_identifier": "public_reference",
+      "publication_model": "Experience Core governance",
+      "permission_model": "existing Marketplace RBAC",
+      "audit_model": "Marketplace audit/events",
+      "can_create": true,
+      "can_read": true,
+      "can_update": true,
+      "can_delete": true,
+      "can_select_in_studio": true,
+      "can_bind_in_studio": true,
+      "can_execute_from_studio": true,
+      "picker_candidate": false,
+      "action_candidate": false,
+      "template_binding_candidate": false,
+      "admin_destination": "/angelcare-marketplace/admin/experience/studio",
+      "source_of_truth_status": "CANONICAL",
+      "shadow_implementation_allowed": false,
+      "studio_wiring_status": "FULLY_WIRED",
+      "gaps": [
+        "Authoring itself is native; source/action universe remains limited"
+      ],
+      "risks": [],
+      "notes": ""
+    },
+    {
+      "capability_id": "category_native.schemas",
+      "domain": "category_native",
+      "entity_type": "experience_schema",
+      "canonical_name": "Category-Native Experience Schemas",
+      "read_authority": "angelcare-marketplace/category-native/repository.ts",
+      "write_authority": "angelcare-marketplace/category-native/repository.ts",
+      "repository": "angelcare-marketplace/category-native/repository.ts",
+      "service": null,
+      "data_authorities": [
+        "angelcare_marketplace_experience_schemas"
+      ],
+      "api_routes": [
+        "/api/angelcare-marketplace/admin/category-native/schemas"
+      ],
+      "public_routes": [
+        "/angelcare-marketplace/[locale]/marketplace/category-native"
+      ],
+      "admin_routes": [
+        "/angelcare-marketplace/admin/category-native/schemas"
+      ],
+      "stable_identifier": "schema_key",
+      "display_identifier": "name_fr",
+      "publication_model": "draft/active/paused/archived + version",
+      "permission_model": "existing Marketplace RBAC",
+      "audit_model": "Marketplace audit/events",
+      "can_create": true,
+      "can_read": true,
+      "can_update": true,
+      "can_delete": true,
+      "can_select_in_studio": false,
+      "can_bind_in_studio": true,
+      "can_execute_from_studio": false,
+      "picker_candidate": true,
+      "action_candidate": false,
+      "template_binding_candidate": true,
+      "admin_destination": "/angelcare-marketplace/admin/category-native/schemas",
+      "source_of_truth_status": "CANONICAL",
+      "shadow_implementation_allowed": false,
+      "studio_wiring_status": "NOT_WIRED",
+      "gaps": [
+        "Schema template fields exist but Studio does not resolve them into CMS/Studio templates"
+      ],
+      "risks": [],
+      "notes": ""
+    },
+    {
+      "capability_id": "category_native.runtime",
+      "domain": "category_native",
+      "entity_type": "adaptive_experience",
+      "canonical_name": "Adaptive product/service experience",
+      "read_authority": "angelcare-marketplace/category-native-experience/repository.ts",
+      "write_authority": "angelcare-marketplace/category-native-experience/repository.ts",
+      "repository": "angelcare-marketplace/category-native-experience/repository.ts",
+      "service": null,
+      "data_authorities": [
+        "angelcare_marketplace_experience_schemas",
+        "angelcare_marketplace_catalog_items",
+        "angelcare_marketplace_catalog_item_media",
+        "angelcare_marketplace_catalog_variants"
+      ],
+      "api_routes": [
+        "/api/angelcare-marketplace/conversion/category-native/session"
+      ],
+      "public_routes": [
+        "/angelcare-marketplace/[locale]/marketplace/item/[itemSlug]",
+        "/angelcare-marketplace/[locale]/experience/[itemSlug]"
+      ],
+      "admin_routes": [
+        "/angelcare-marketplace/admin/category-native"
+      ],
+      "stable_identifier": "id",
+      "display_identifier": "public_reference",
+      "publication_model": "published catalog + active schema",
+      "permission_model": "existing Marketplace RBAC",
+      "audit_model": "Marketplace audit/events",
+      "can_create": true,
+      "can_read": true,
+      "can_update": true,
+      "can_delete": true,
+      "can_select_in_studio": false,
+      "can_bind_in_studio": true,
+      "can_execute_from_studio": false,
+      "picker_candidate": false,
+      "action_candidate": true,
+      "template_binding_candidate": true,
+      "admin_destination": "/angelcare-marketplace/admin/category-native",
+      "source_of_truth_status": "CANONICAL",
+      "shadow_implementation_allowed": false,
+      "studio_wiring_status": "PARALLEL_NATIVE_RUNTIME",
+      "gaps": [
+        "Public product/service pages render AdaptiveExperience directly; no Studio template resolver yet"
+      ],
+      "risks": [],
+      "notes": ""
+    },
+    {
+      "capability_id": "conversion.sessions",
+      "domain": "conversion",
+      "entity_type": "conversion_session",
+      "canonical_name": "Conversion Universe",
+      "read_authority": "angelcare-marketplace/conversion-universe/repository.ts",
+      "write_authority": "angelcare-marketplace/conversion-universe/repository.ts",
+      "repository": "angelcare-marketplace/conversion-universe/repository.ts",
+      "service": null,
+      "data_authorities": [
+        "angelcare_marketplace_conversion_sessions",
+        "angelcare_marketplace_conversion_price_snapshots",
+        "angelcare_marketplace_conversion_availability_holds",
+        "angelcare_marketplace_conversion_consents",
+        "angelcare_marketplace_conversion_outcomes",
+        "angelcare_marketplace_conversion_events"
+      ],
+      "api_routes": [
+        "/api/angelcare-marketplace/conversion/sessions",
+        "/api/angelcare-marketplace/conversion/category-native/session"
+      ],
+      "public_routes": [],
+      "admin_routes": [
+        "/angelcare-marketplace/admin/conversion/sessions"
+      ],
+      "stable_identifier": "session_key",
+      "display_identifier": "public_reference",
+      "publication_model": "runtime transactional state",
+      "permission_model": "existing Marketplace RBAC",
+      "audit_model": "Marketplace audit/events",
+      "can_create": true,
+      "can_read": true,
+      "can_update": true,
+      "can_delete": false,
+      "can_select_in_studio": false,
+      "can_bind_in_studio": false,
+      "can_execute_from_studio": false,
+      "picker_candidate": false,
+      "action_candidate": true,
+      "template_binding_candidate": false,
+      "admin_destination": "/angelcare-marketplace/admin/conversion/sessions",
+      "source_of_truth_status": "CANONICAL",
+      "shadow_implementation_allowed": false,
+      "studio_wiring_status": "NOT_WIRED",
+      "gaps": [
+        "Studio CTAs/forms do not universally dispatch through Conversion Universe"
+      ],
+      "risks": [],
+      "notes": ""
+    },
+    {
+      "capability_id": "conversion.quote_basket",
+      "domain": "conversion",
+      "entity_type": "quote_basket",
+      "canonical_name": "Quote basket",
+      "read_authority": "angelcare-marketplace/conversion-universe/repository.ts",
+      "write_authority": "angelcare-marketplace/conversion-universe/repository.ts",
+      "repository": "angelcare-marketplace/conversion-universe/repository.ts",
+      "service": null,
+      "data_authorities": [
+        "angelcare_marketplace_quote_baskets",
+        "angelcare_marketplace_quote_basket_items"
+      ],
+      "api_routes": [
+        "/api/angelcare-marketplace/quote-baskets",
+        "/api/angelcare-marketplace/conversion/basket"
+      ],
+      "public_routes": [
+        "/angelcare-marketplace/[locale]/quote-basket"
+      ],
+      "admin_routes": [
+        "/angelcare-marketplace/admin/quote-baskets"
+      ],
+      "stable_identifier": "id",
+      "display_identifier": "public_reference",
+      "publication_model": "active/submitted/converted/expired",
+      "permission_model": "existing Marketplace RBAC",
+      "audit_model": "Marketplace audit/events",
+      "can_create": true,
+      "can_read": true,
+      "can_update": true,
+      "can_delete": true,
+      "can_select_in_studio": false,
+      "can_bind_in_studio": false,
+      "can_execute_from_studio": false,
+      "picker_candidate": false,
+      "action_candidate": true,
+      "template_binding_candidate": false,
+      "admin_destination": "/angelcare-marketplace/admin/quote-baskets",
+      "source_of_truth_status": "CANONICAL",
+      "shadow_implementation_allowed": false,
+      "studio_wiring_status": "NOT_WIRED",
+      "gaps": [
+        "No structured Studio add-to-quote action"
+      ],
+      "risks": [],
+      "notes": ""
+    },
+    {
+      "capability_id": "commerce.checkout",
+      "domain": "conversion",
+      "entity_type": "checkout",
+      "canonical_name": "Checkout orchestration",
+      "read_authority": "angelcare-marketplace/conversion-universe/repository.ts",
+      "write_authority": "angelcare-marketplace/conversion-universe/repository.ts",
+      "repository": "angelcare-marketplace/conversion-universe/repository.ts",
+      "service": null,
+      "data_authorities": [
+        "angelcare_marketplace_conversion_sessions",
+        "angelcare_marketplace_payment_intents"
+      ],
+      "api_routes": [
+        "/api/angelcare-marketplace/checkout/payment-methods"
+      ],
+      "public_routes": [
+        "/angelcare-marketplace/[locale]/checkout"
+      ],
+      "admin_routes": [
+        "/angelcare-marketplace/admin/conversion"
+      ],
+      "stable_identifier": "session_key",
+      "display_identifier": "public_reference",
+      "publication_model": "transactional",
+      "permission_model": "existing Marketplace RBAC",
+      "audit_model": "Marketplace audit/events",
+      "can_create": true,
+      "can_read": true,
+      "can_update": true,
+      "can_delete": false,
+      "can_select_in_studio": false,
+      "can_bind_in_studio": false,
+      "can_execute_from_studio": false,
+      "picker_candidate": false,
+      "action_candidate": true,
+      "template_binding_candidate": false,
+      "admin_destination": "/angelcare-marketplace/admin/conversion",
+      "source_of_truth_status": "CANONICAL",
+      "shadow_implementation_allowed": false,
+      "studio_wiring_status": "NOT_WIRED",
+      "gaps": [
+        "Studio has no canonical checkout.start action descriptor"
+      ],
+      "risks": [],
+      "notes": ""
+    },
+    {
+      "capability_id": "journeys.orders_bookings",
+      "domain": "journey_orders",
+      "entity_type": "journey",
+      "canonical_name": "Orders / bookings / service journeys",
+      "read_authority": "angelcare-marketplace/journey-control/repository.ts",
+      "write_authority": "angelcare-marketplace/journey-control/repository.ts",
+      "repository": "angelcare-marketplace/journey-control/repository.ts",
+      "service": null,
+      "data_authorities": [
+        "angelcare_marketplace_journeys",
+        "angelcare_marketplace_journey_events",
+        "angelcare_marketplace_journey_actions",
+        "angelcare_marketplace_order_lines",
+        "angelcare_marketplace_order_events"
+      ],
+      "api_routes": [
+        "/api/angelcare-marketplace/journeys",
+        "/api/angelcare-marketplace/admin/orders"
+      ],
+      "public_routes": [
+        "/angelcare-marketplace/[locale]/account/journeys"
+      ],
+      "admin_routes": [
+        "/angelcare-marketplace/admin/orders"
+      ],
+      "stable_identifier": "id",
+      "display_identifier": "public_reference",
+      "publication_model": "business lifecycle state",
+      "permission_model": "existing Marketplace RBAC",
+      "audit_model": "Marketplace audit/events",
+      "can_create": true,
+      "can_read": true,
+      "can_update": true,
+      "can_delete": true,
+      "can_select_in_studio": false,
+      "can_bind_in_studio": false,
+      "can_execute_from_studio": false,
+      "picker_candidate": false,
+      "action_candidate": true,
+      "template_binding_candidate": false,
+      "admin_destination": "/angelcare-marketplace/admin/orders",
+      "source_of_truth_status": "CANONICAL",
+      "shadow_implementation_allowed": false,
+      "studio_wiring_status": "NOT_WIRED",
+      "gaps": [
+        "Studio does not expose canonical journey/order/booking consequences"
+      ],
+      "risks": [],
+      "notes": ""
+    },
+    {
+      "capability_id": "public.inquiries",
+      "domain": "public_interactions",
+      "entity_type": "public_inquiry",
+      "canonical_name": "Public inquiries/contact",
+      "read_authority": "angelcare-marketplace/public-universe/repository.ts",
+      "write_authority": "angelcare-marketplace/public-universe/repository.ts",
+      "repository": "angelcare-marketplace/public-universe/repository.ts",
+      "service": null,
+      "data_authorities": [
+        "angelcare_marketplace_public_inquiries",
+        "angelcare_marketplace_public_inquiry_events",
+        "angelcare_marketplace_public_events"
+      ],
+      "api_routes": [
+        "/api/angelcare-marketplace/public/inquiries"
+      ],
+      "public_routes": [],
+      "admin_routes": [
+        "/angelcare-marketplace/admin/public-inquiries"
+      ],
+      "stable_identifier": "id",
+      "display_identifier": "public_reference",
+      "publication_model": "new/triaged/in_progress/qualified/closed/spam",
+      "permission_model": "existing Marketplace RBAC",
+      "audit_model": "Marketplace audit/events",
+      "can_create": true,
+      "can_read": true,
+      "can_update": true,
+      "can_delete": true,
+      "can_select_in_studio": false,
+      "can_bind_in_studio": false,
+      "can_execute_from_studio": false,
+      "picker_candidate": false,
+      "action_candidate": true,
+      "template_binding_candidate": false,
+      "admin_destination": "/angelcare-marketplace/admin/public-inquiries",
+      "source_of_truth_status": "CANONICAL",
+      "shadow_implementation_allowed": false,
+      "studio_wiring_status": "NOT_WIRED",
+      "gaps": [
+        "PublicInquiryForm exists, but Studio inquiry/form blocks do not universally use it"
+      ],
+      "risks": [],
+      "notes": ""
+    },
+    {
+      "capability_id": "customers.accounts",
+      "domain": "customer",
+      "entity_type": "customer_account",
+      "canonical_name": "Customer accounts",
+      "read_authority": "angelcare-marketplace/customer-commerce/admin-repository.ts",
+      "write_authority": "angelcare-marketplace/customer-commerce/admin-repository.ts",
+      "repository": "angelcare-marketplace/customer-commerce/admin-repository.ts",
+      "service": null,
+      "data_authorities": [
+        "angelcare_marketplace_customer_accounts",
+        "angelcare_marketplace_customer_addresses",
+        "angelcare_marketplace_customer_notification_preferences"
+      ],
+      "api_routes": [
+        "/api/angelcare-marketplace/admin/customers"
+      ],
+      "public_routes": [
+        "/angelcare-marketplace/[locale]/account"
+      ],
+      "admin_routes": [
+        "/angelcare-marketplace/admin/customers"
+      ],
+      "stable_identifier": "id",
+      "display_identifier": "display_name",
+      "publication_model": "account lifecycle",
+      "permission_model": "existing Marketplace RBAC",
+      "audit_model": "Marketplace audit/events",
+      "can_create": true,
+      "can_read": true,
+      "can_update": true,
+      "can_delete": true,
+      "can_select_in_studio": false,
+      "can_bind_in_studio": false,
+      "can_execute_from_studio": false,
+      "picker_candidate": true,
+      "action_candidate": false,
+      "template_binding_candidate": false,
+      "admin_destination": "/angelcare-marketplace/admin/customers",
+      "source_of_truth_status": "CANONICAL",
+      "shadow_implementation_allowed": false,
+      "studio_wiring_status": "NOT_WIRED",
+      "gaps": [
+        "Customer identity should remain operational/admin-only except contextual actions"
+      ],
+      "risks": [],
+      "notes": ""
+    },
+    {
+      "capability_id": "crm",
+      "domain": "crm",
+      "entity_type": "crm_account_lead_opportunity",
+      "canonical_name": "CRM accounts / leads / opportunities / quotes / tasks",
+      "read_authority": "angelcare-marketplace/customer-relationship-command/repository.ts",
+      "write_authority": "angelcare-marketplace/customer-relationship-command/repository.ts",
+      "repository": "angelcare-marketplace/customer-relationship-command/repository.ts",
+      "service": null,
+      "data_authorities": [
+        "angelcare_marketplace_crm_accounts",
+        "angelcare_marketplace_crm_leads",
+        "angelcare_marketplace_crm_opportunities",
+        "angelcare_marketplace_crm_quotes",
+        "angelcare_marketplace_crm_tasks",
+        "angelcare_marketplace_crm_communication_logs"
+      ],
+      "api_routes": [
+        "/api/angelcare-marketplace/crm/quotes"
+      ],
+      "public_routes": [],
+      "admin_routes": [
+        "/angelcare-marketplace/admin/customers"
+      ],
+      "stable_identifier": "id",
+      "display_identifier": "public_reference",
+      "publication_model": "operational lifecycle",
+      "permission_model": "existing Marketplace RBAC",
+      "audit_model": "Marketplace audit/events",
+      "can_create": true,
+      "can_read": true,
+      "can_update": true,
+      "can_delete": true,
+      "can_select_in_studio": false,
+      "can_bind_in_studio": false,
+      "can_execute_from_studio": false,
+      "picker_candidate": false,
+      "action_candidate": true,
+      "template_binding_candidate": false,
+      "admin_destination": "/angelcare-marketplace/admin/customers",
+      "source_of_truth_status": "CANONICAL",
+      "shadow_implementation_allowed": false,
+      "studio_wiring_status": "NOT_WIRED",
+      "gaps": [
+        "Studio-origin attribution/actions not standardized"
+      ],
+      "risks": [],
+      "notes": ""
+    },
+    {
+      "capability_id": "subscriptions",
+      "domain": "subscriptions",
+      "entity_type": "subscription",
+      "canonical_name": "Customer subscriptions",
+      "read_authority": "angelcare-marketplace/customer-commerce/repository.ts",
+      "write_authority": "angelcare-marketplace/customer-commerce/repository.ts",
+      "repository": "angelcare-marketplace/customer-commerce/repository.ts",
+      "service": null,
+      "data_authorities": [
+        "angelcare_marketplace_customer_subscriptions"
+      ],
+      "api_routes": [
+        "/api/angelcare-marketplace/admin/subscriptions"
+      ],
+      "public_routes": [
+        "/angelcare-marketplace/[locale]/subscription/[itemSlug]"
+      ],
+      "admin_routes": [
+        "/angelcare-marketplace/admin/subscriptions"
+      ],
+      "stable_identifier": "id",
+      "display_identifier": "public_reference",
+      "publication_model": "subscription lifecycle",
+      "permission_model": "existing Marketplace RBAC",
+      "audit_model": "Marketplace audit/events",
+      "can_create": true,
+      "can_read": true,
+      "can_update": true,
+      "can_delete": true,
+      "can_select_in_studio": false,
+      "can_bind_in_studio": false,
+      "can_execute_from_studio": false,
+      "picker_candidate": false,
+      "action_candidate": true,
+      "template_binding_candidate": false,
+      "admin_destination": "/angelcare-marketplace/admin/subscriptions",
+      "source_of_truth_status": "CANONICAL",
+      "shadow_implementation_allowed": false,
+      "studio_wiring_status": "NOT_WIRED",
+      "gaps": [
+        "No structured Studio subscription.start action"
+      ],
+      "risks": [],
+      "notes": ""
+    },
+    {
+      "capability_id": "academy",
+      "domain": "academy",
+      "entity_type": "academy_program",
+      "canonical_name": "Academy programmes/cohorts/enrollments",
+      "read_authority": "angelcare-marketplace/academy-engine/repository.ts",
+      "write_authority": "angelcare-marketplace/academy-engine/repository.ts",
+      "repository": "angelcare-marketplace/academy-engine/repository.ts",
+      "service": null,
+      "data_authorities": [
+        "angelcare_marketplace_academy_programs",
+        "angelcare_marketplace_academy_courses",
+        "angelcare_marketplace_academy_cohorts",
+        "angelcare_marketplace_academy_enrollments",
+        "angelcare_marketplace_academy_sessions"
+      ],
+      "api_routes": [
+        "/api/angelcare-marketplace/academy/programs",
+        "/api/angelcare-marketplace/academy/enrollments"
+      ],
+      "public_routes": [
+        "/angelcare-marketplace/[locale]/academy/programs/[slug]"
+      ],
+      "admin_routes": [
+        "/angelcare-marketplace/admin/academy"
+      ],
+      "stable_identifier": "id",
+      "display_identifier": "name/title",
+      "publication_model": "domain-specific",
+      "permission_model": "existing Marketplace RBAC",
+      "audit_model": "Marketplace audit/events",
+      "can_create": true,
+      "can_read": true,
+      "can_update": true,
+      "can_delete": true,
+      "can_select_in_studio": false,
+      "can_bind_in_studio": false,
+      "can_execute_from_studio": false,
+      "picker_candidate": true,
+      "action_candidate": true,
+      "template_binding_candidate": true,
+      "admin_destination": "/angelcare-marketplace/admin/academy",
+      "source_of_truth_status": "CANONICAL",
+      "shadow_implementation_allowed": false,
+      "studio_wiring_status": "NOT_WIRED",
+      "gaps": [
+        "Studio has no Academy entity picker or enrollment action mapping"
+      ],
+      "risks": [],
+      "notes": ""
+    },
+    {
+      "capability_id": "family.requests",
+      "domain": "family",
+      "entity_type": "family_request",
+      "canonical_name": "Family requests / quote requests",
+      "read_authority": "angelcare-marketplace/family-experience/repository.ts",
+      "write_authority": "angelcare-marketplace/family-experience/repository.ts",
+      "repository": "angelcare-marketplace/family-experience/repository.ts",
+      "service": null,
+      "data_authorities": [
+        "angelcare_marketplace_family_quote_requests",
+        "angelcare_marketplace_family_accounts",
+        "angelcare_marketplace_family_children"
+      ],
+      "api_routes": [
+        "/api/angelcare-marketplace/admin/family-requests"
+      ],
+      "public_routes": [
+        "/angelcare-marketplace/[locale]/family/request"
+      ],
+      "admin_routes": [
+        "/angelcare-marketplace/admin/family-requests"
+      ],
+      "stable_identifier": "id",
+      "display_identifier": "public_reference",
+      "publication_model": "domain-specific",
+      "permission_model": "existing Marketplace RBAC",
+      "audit_model": "Marketplace audit/events",
+      "can_create": true,
+      "can_read": true,
+      "can_update": true,
+      "can_delete": true,
+      "can_select_in_studio": false,
+      "can_bind_in_studio": false,
+      "can_execute_from_studio": false,
+      "picker_candidate": false,
+      "action_candidate": true,
+      "template_binding_candidate": false,
+      "admin_destination": "/angelcare-marketplace/admin/family-requests",
+      "source_of_truth_status": "CANONICAL",
+      "shadow_implementation_allowed": false,
+      "studio_wiring_status": "NOT_WIRED",
+      "gaps": [
+        "No Studio family_request.start canonical action"
+      ],
+      "risks": [],
+      "notes": ""
+    },
+    {
+      "capability_id": "providers",
+      "domain": "provider_workforce",
+      "entity_type": "provider_profile",
+      "canonical_name": "Providers / qualifications / availability",
+      "read_authority": "angelcare-marketplace/provider-workforce/repository.ts",
+      "write_authority": "angelcare-marketplace/provider-workforce/repository.ts",
+      "repository": "angelcare-marketplace/provider-workforce/repository.ts",
+      "service": null,
+      "data_authorities": [
+        "angelcare_marketplace_provider_profiles",
+        "angelcare_marketplace_provider_service_qualifications",
+        "angelcare_marketplace_provider_availability_rules",
+        "angelcare_marketplace_provider_operational_eligibility"
+      ],
+      "api_routes": [],
+      "public_routes": [],
+      "admin_routes": [
+        "/angelcare-marketplace/admin/providers"
+      ],
+      "stable_identifier": "id",
+      "display_identifier": "display_name",
+      "publication_model": "domain-specific",
+      "permission_model": "existing Marketplace RBAC",
+      "audit_model": "Marketplace audit/events",
+      "can_create": true,
+      "can_read": true,
+      "can_update": true,
+      "can_delete": true,
+      "can_select_in_studio": false,
+      "can_bind_in_studio": true,
+      "can_execute_from_studio": false,
+      "picker_candidate": true,
+      "action_candidate": false,
+      "template_binding_candidate": false,
+      "admin_destination": "/angelcare-marketplace/admin/providers",
+      "source_of_truth_status": "CANONICAL",
+      "shadow_implementation_allowed": false,
+      "studio_wiring_status": "NOT_WIRED",
+      "gaps": [
+        "Potential trust/provider binding must expose public-safe projection only"
+      ],
+      "risks": [],
+      "notes": ""
+    },
+    {
+      "capability_id": "vendors",
+      "domain": "vendor",
+      "entity_type": "vendor",
+      "canonical_name": "Vendors",
+      "read_authority": "angelcare-marketplace/vendor-authority/repository.ts",
+      "write_authority": "angelcare-marketplace/vendor-authority/repository.ts",
+      "repository": "angelcare-marketplace/vendor-authority/repository.ts",
+      "service": null,
+      "data_authorities": [
+        "angelcare_marketplace_vendor_links",
+        "angelcare_marketplace_vendor_contracts",
+        "angelcare_marketplace_vendor_inventory_authority"
+      ],
+      "api_routes": [],
+      "public_routes": [],
+      "admin_routes": [
+        "/angelcare-marketplace/admin/vendors"
+      ],
+      "stable_identifier": "id",
+      "display_identifier": "public_reference",
+      "publication_model": "domain-specific",
+      "permission_model": "existing Marketplace RBAC",
+      "audit_model": "Marketplace audit/events",
+      "can_create": true,
+      "can_read": true,
+      "can_update": true,
+      "can_delete": true,
+      "can_select_in_studio": false,
+      "can_bind_in_studio": false,
+      "can_execute_from_studio": false,
+      "picker_candidate": true,
+      "action_candidate": false,
+      "template_binding_candidate": false,
+      "admin_destination": "/angelcare-marketplace/admin/vendors",
+      "source_of_truth_status": "CANONICAL",
+      "shadow_implementation_allowed": false,
+      "studio_wiring_status": "NOT_WIRED",
+      "gaps": [
+        "Public-safe vendor bindings need explicit projection"
+      ],
+      "risks": [],
+      "notes": ""
+    },
+    {
+      "capability_id": "suppliers",
+      "domain": "supplier",
+      "entity_type": "supplier",
+      "canonical_name": "Suppliers",
+      "read_authority": "angelcare-marketplace/total-commerce-control/repository.ts",
+      "write_authority": "angelcare-marketplace/total-commerce-control/repository.ts",
+      "repository": "angelcare-marketplace/total-commerce-control/repository.ts",
+      "service": null,
+      "data_authorities": [
+        "angelcare_marketplace_suppliers"
+      ],
+      "api_routes": [
+        "/api/angelcare-marketplace/admin/suppliers"
+      ],
+      "public_routes": [],
+      "admin_routes": [
+        "/angelcare-marketplace/admin/suppliers"
+      ],
+      "stable_identifier": "id",
+      "display_identifier": "public_reference",
+      "publication_model": "domain-specific",
+      "permission_model": "existing Marketplace RBAC",
+      "audit_model": "Marketplace audit/events",
+      "can_create": true,
+      "can_read": true,
+      "can_update": true,
+      "can_delete": true,
+      "can_select_in_studio": false,
+      "can_bind_in_studio": false,
+      "can_execute_from_studio": false,
+      "picker_candidate": true,
+      "action_candidate": false,
+      "template_binding_candidate": false,
+      "admin_destination": "/angelcare-marketplace/admin/suppliers",
+      "source_of_truth_status": "CANONICAL",
+      "shadow_implementation_allowed": false,
+      "studio_wiring_status": "NOT_WIRED",
+      "gaps": [
+        "Mostly admin/operational; future Studio exposure must be policy-controlled"
+      ],
+      "risks": [],
+      "notes": ""
+    },
+    {
+      "capability_id": "promotions",
+      "domain": "promotions",
+      "entity_type": "promotion",
+      "canonical_name": "Promotions",
+      "read_authority": "angelcare-marketplace/conversion-universe/repository.ts",
+      "write_authority": "angelcare-marketplace/conversion-universe/repository.ts",
+      "repository": "angelcare-marketplace/conversion-universe/repository.ts",
+      "service": null,
+      "data_authorities": [
+        "angelcare_marketplace_promotions",
+        "angelcare_marketplace_promotion_targets"
+      ],
+      "api_routes": [
+        "/api/angelcare-marketplace/admin/promotions"
+      ],
+      "public_routes": [],
+      "admin_routes": [
+        "/angelcare-marketplace/admin/promotions"
+      ],
+      "stable_identifier": "id",
+      "display_identifier": "name",
+      "publication_model": "domain-specific",
+      "permission_model": "existing Marketplace RBAC",
+      "audit_model": "Marketplace audit/events",
+      "can_create": true,
+      "can_read": true,
+      "can_update": true,
+      "can_delete": true,
+      "can_select_in_studio": false,
+      "can_bind_in_studio": true,
+      "can_execute_from_studio": false,
+      "picker_candidate": true,
+      "action_candidate": false,
+      "template_binding_candidate": false,
+      "admin_destination": "/angelcare-marketplace/admin/promotions",
+      "source_of_truth_status": "CANONICAL",
+      "shadow_implementation_allowed": false,
+      "studio_wiring_status": "NOT_WIRED",
+      "gaps": [
+        "Automatic promotion resolution exists in conversion; Studio should not calculate discounts itself"
+      ],
+      "risks": [],
+      "notes": ""
+    },
+    {
+      "capability_id": "finance.pricing",
+      "domain": "finance",
+      "entity_type": "pricing_authority",
+      "canonical_name": "Finance price books/rules",
+      "read_authority": "angelcare-marketplace/financial-control-ledger/repository.ts",
+      "write_authority": "angelcare-marketplace/financial-control-ledger/repository.ts",
+      "repository": "angelcare-marketplace/financial-control-ledger/repository.ts",
+      "service": null,
+      "data_authorities": [
+        "angelcare_marketplace_finance_price_books",
+        "angelcare_marketplace_finance_price_rules",
+        "angelcare_marketplace_conversion_price_snapshots"
+      ],
+      "api_routes": [],
+      "public_routes": [],
+      "admin_routes": [
+        "/angelcare-marketplace/admin/finance"
+      ],
+      "stable_identifier": "id",
+      "display_identifier": "name/reference",
+      "publication_model": "domain-specific",
+      "permission_model": "existing Marketplace RBAC",
+      "audit_model": "Marketplace audit/events",
+      "can_create": true,
+      "can_read": true,
+      "can_update": true,
+      "can_delete": true,
+      "can_select_in_studio": false,
+      "can_bind_in_studio": true,
+      "can_execute_from_studio": false,
+      "picker_candidate": false,
+      "action_candidate": false,
+      "template_binding_candidate": false,
+      "admin_destination": "/angelcare-marketplace/admin/finance",
+      "source_of_truth_status": "CANONICAL",
+      "shadow_implementation_allowed": false,
+      "studio_wiring_status": "NOT_WIRED",
+      "gaps": [
+        "Studio must bind only resolved public pricing, never become pricing authority"
+      ],
+      "risks": [],
+      "notes": ""
+    },
+    {
+      "capability_id": "payments",
+      "domain": "payments",
+      "entity_type": "payment_intent",
+      "canonical_name": "Payments/refunds/reconciliation",
+      "read_authority": "angelcare-marketplace/customer-commerce/admin-repository.ts",
+      "write_authority": "angelcare-marketplace/customer-commerce/admin-repository.ts",
+      "repository": "angelcare-marketplace/customer-commerce/admin-repository.ts",
+      "service": null,
+      "data_authorities": [
+        "angelcare_marketplace_payment_intents",
+        "angelcare_marketplace_payment_attempts",
+        "angelcare_marketplace_payment_refunds",
+        "angelcare_marketplace_payment_reconciliation_items"
+      ],
+      "api_routes": [
+        "/api/angelcare-marketplace/payments/intents"
+      ],
+      "public_routes": [
+        "/angelcare-marketplace/[locale]/account/payments"
+      ],
+      "admin_routes": [
+        "/angelcare-marketplace/admin/payments"
+      ],
+      "stable_identifier": "id",
+      "display_identifier": "public_reference",
+      "publication_model": "domain-specific",
+      "permission_model": "existing Marketplace RBAC",
+      "audit_model": "Marketplace audit/events",
+      "can_create": true,
+      "can_read": true,
+      "can_update": true,
+      "can_delete": true,
+      "can_select_in_studio": false,
+      "can_bind_in_studio": false,
+      "can_execute_from_studio": false,
+      "picker_candidate": false,
+      "action_candidate": true,
+      "template_binding_candidate": false,
+      "admin_destination": "/angelcare-marketplace/admin/payments",
+      "source_of_truth_status": "CANONICAL",
+      "shadow_implementation_allowed": false,
+      "studio_wiring_status": "NOT_WIRED",
+      "gaps": [
+        "Studio may initiate canonical checkout, never provider-specific payment behavior"
+      ],
+      "risks": [],
+      "notes": ""
+    },
+    {
+      "capability_id": "wallet",
+      "domain": "wallet",
+      "entity_type": "wallet_account",
+      "canonical_name": "Wallet",
+      "read_authority": "angelcare-marketplace/customer-commerce/wallet-admin.ts",
+      "write_authority": "angelcare-marketplace/customer-commerce/wallet-admin.ts",
+      "repository": "angelcare-marketplace/customer-commerce/wallet-admin.ts",
+      "service": null,
+      "data_authorities": [
+        "angelcare_marketplace_wallet_accounts",
+        "angelcare_marketplace_wallet_ledger_entries",
+        "angelcare_marketplace_wallet_policies"
+      ],
+      "api_routes": [
+        "/api/angelcare-marketplace/wallet/transactions"
+      ],
+      "public_routes": [
+        "/angelcare-marketplace/[locale]/account/wallet"
+      ],
+      "admin_routes": [
+        "/angelcare-marketplace/admin/wallet"
+      ],
+      "stable_identifier": "id",
+      "display_identifier": "public_reference",
+      "publication_model": "domain-specific",
+      "permission_model": "existing Marketplace RBAC",
+      "audit_model": "Marketplace audit/events",
+      "can_create": true,
+      "can_read": true,
+      "can_update": true,
+      "can_delete": true,
+      "can_select_in_studio": false,
+      "can_bind_in_studio": true,
+      "can_execute_from_studio": false,
+      "picker_candidate": false,
+      "action_candidate": false,
+      "template_binding_candidate": false,
+      "admin_destination": "/angelcare-marketplace/admin/wallet",
+      "source_of_truth_status": "CANONICAL",
+      "shadow_implementation_allowed": false,
+      "studio_wiring_status": "NOT_WIRED",
+      "gaps": [
+        "Only public-safe benefits should be bindable"
+      ],
+      "risks": [],
+      "notes": ""
+    },
+    {
+      "capability_id": "territories",
+      "domain": "territory",
+      "entity_type": "territory",
+      "canonical_name": "Territories / city zones",
+      "read_authority": "angelcare-marketplace/territory-os/repository.ts",
+      "write_authority": "angelcare-marketplace/territory-os/repository.ts",
+      "repository": "angelcare-marketplace/territory-os/repository.ts",
+      "service": null,
+      "data_authorities": [
+        "angelcare_marketplace_territories",
+        "angelcare_marketplace_territory_city_zones",
+        "angelcare_marketplace_territory_settings"
+      ],
+      "api_routes": [],
+      "public_routes": [],
+      "admin_routes": [
+        "/angelcare-marketplace/admin/territories"
+      ],
+      "stable_identifier": "territory_code",
+      "display_identifier": "name",
+      "publication_model": "domain-specific",
+      "permission_model": "existing Marketplace RBAC",
+      "audit_model": "Marketplace audit/events",
+      "can_create": true,
+      "can_read": true,
+      "can_update": true,
+      "can_delete": true,
+      "can_select_in_studio": false,
+      "can_bind_in_studio": true,
+      "can_execute_from_studio": false,
+      "picker_candidate": true,
+      "action_candidate": false,
+      "template_binding_candidate": false,
+      "admin_destination": "/angelcare-marketplace/admin/territories",
+      "source_of_truth_status": "CANONICAL",
+      "shadow_implementation_allowed": false,
+      "studio_wiring_status": "NOT_WIRED",
+      "gaps": [
+        "Studio has no universal territory context picker"
+      ],
+      "risks": [],
+      "notes": ""
+    },
+    {
+      "capability_id": "live_experience",
+      "domain": "live_experience",
+      "entity_type": "campaign_experiment",
+      "canonical_name": "Live Experience campaigns/audiences/experiments",
+      "read_authority": "angelcare-marketplace/live-experience-command/repository.ts",
+      "write_authority": "angelcare-marketplace/live-experience-command/repository.ts",
+      "repository": "angelcare-marketplace/live-experience-command/repository.ts",
+      "service": null,
+      "data_authorities": [
+        "angelcare_marketplace_live_experience_campaigns",
+        "angelcare_marketplace_live_experience_experiments",
+        "angelcare_marketplace_live_experience_schedules",
+        "angelcare_marketplace_live_experience_versions"
+      ],
+      "api_routes": [
+        "/api/angelcare-marketplace/live-experience/resolve",
+        "/api/angelcare-marketplace/live-experience/interactions"
+      ],
+      "public_routes": [],
+      "admin_routes": [
+        "/angelcare-marketplace/admin/live-experience-command"
+      ],
+      "stable_identifier": "id",
+      "display_identifier": "public_reference",
+      "publication_model": "domain-specific",
+      "permission_model": "existing Marketplace RBAC",
+      "audit_model": "Marketplace audit/events",
+      "can_create": true,
+      "can_read": true,
+      "can_update": true,
+      "can_delete": true,
+      "can_select_in_studio": false,
+      "can_bind_in_studio": true,
+      "can_execute_from_studio": false,
+      "picker_candidate": true,
+      "action_candidate": false,
+      "template_binding_candidate": false,
+      "admin_destination": "/angelcare-marketplace/admin/live-experience-command",
+      "source_of_truth_status": "CANONICAL",
+      "shadow_implementation_allowed": false,
+      "studio_wiring_status": "NOT_WIRED",
+      "gaps": [
+        "Studio campaign/experiment context not unified with Live Experience resolver"
+      ],
+      "risks": [],
+      "notes": ""
+    },
+    {
+      "capability_id": "navigation",
+      "domain": "content_experience",
+      "entity_type": "navigation",
+      "canonical_name": "Header/mobile/mega-menu navigation",
+      "read_authority": "angelcare-marketplace/total-commerce-control/repository.ts",
+      "write_authority": "angelcare-marketplace/total-commerce-control/repository.ts",
+      "repository": "angelcare-marketplace/total-commerce-control/repository.ts",
+      "service": null,
+      "data_authorities": [
+        "angelcare_marketplace_public_navigation_v"
+      ],
+      "api_routes": [
+        "/api/angelcare-marketplace/admin/navigation/items"
+      ],
+      "public_routes": [],
+      "admin_routes": [
+        "/angelcare-marketplace/admin/navigation"
+      ],
+      "stable_identifier": "id",
+      "display_identifier": "label",
+      "publication_model": "domain-specific",
+      "permission_model": "existing Marketplace RBAC",
+      "audit_model": "Marketplace audit/events",
+      "can_create": true,
+      "can_read": true,
+      "can_update": true,
+      "can_delete": true,
+      "can_select_in_studio": false,
+      "can_bind_in_studio": false,
+      "can_execute_from_studio": false,
+      "picker_candidate": true,
+      "action_candidate": true,
+      "template_binding_candidate": false,
+      "admin_destination": "/angelcare-marketplace/admin/navigation",
+      "source_of_truth_status": "CANONICAL",
+      "shadow_implementation_allowed": false,
+      "studio_wiring_status": "NOT_WIRED",
+      "gaps": [
+        "Studio uses raw href instead of canonical navigation destination picker"
+      ],
+      "risks": [],
+      "notes": ""
+    },
+    {
+      "capability_id": "footer",
+      "domain": "footer",
+      "entity_type": "footer_profile",
+      "canonical_name": "Footer Studio",
+      "read_authority": "angelcare-marketplace/footer-studio/repository.ts",
+      "write_authority": "angelcare-marketplace/footer-studio/repository.ts",
+      "repository": "angelcare-marketplace/footer-studio/repository.ts",
+      "service": null,
+      "data_authorities": [
+        "angelcare_marketplace_footer_profiles",
+        "angelcare_marketplace_footer_sections",
+        "angelcare_marketplace_footer_links",
+        "angelcare_marketplace_footer_themes"
+      ],
+      "api_routes": [
+        "/api/angelcare-marketplace/admin/footer-studio/profiles"
+      ],
+      "public_routes": [],
+      "admin_routes": [
+        "/angelcare-marketplace/admin/footer-studio"
+      ],
+      "stable_identifier": "id",
+      "display_identifier": "public_reference",
+      "publication_model": "domain-specific",
+      "permission_model": "existing Marketplace RBAC",
+      "audit_model": "Marketplace audit/events",
+      "can_create": true,
+      "can_read": true,
+      "can_update": true,
+      "can_delete": true,
+      "can_select_in_studio": false,
+      "can_bind_in_studio": false,
+      "can_execute_from_studio": false,
+      "picker_candidate": true,
+      "action_candidate": false,
+      "template_binding_candidate": false,
+      "admin_destination": "/angelcare-marketplace/admin/footer-studio",
+      "source_of_truth_status": "CANONICAL",
+      "shadow_implementation_allowed": false,
+      "studio_wiring_status": "NOT_WIRED",
+      "gaps": [
+        "Independent authority exists; future source registry can expose safe references without duplicating footer studio"
+      ],
+      "risks": [],
+      "notes": ""
+    },
+    {
+      "capability_id": "b2b",
+      "domain": "b2b",
+      "entity_type": "b2b_program",
+      "canonical_name": "B2B organizations/programmes/diagnostics",
+      "read_authority": "angelcare-marketplace/b2b-verticals/repository.ts",
+      "write_authority": "angelcare-marketplace/b2b-verticals/repository.ts",
+      "repository": "angelcare-marketplace/b2b-verticals/repository.ts",
+      "service": null,
+      "data_authorities": [
+        "angelcare_marketplace_b2b_organizations",
+        "angelcare_marketplace_b2b_programs",
+        "angelcare_marketplace_b2b_diagnostics",
+        "angelcare_marketplace_b2b_public_requests"
+      ],
+      "api_routes": [
+        "/api/angelcare-marketplace/b2b/programs",
+        "/api/angelcare-marketplace/b2b/public/diagnostics"
+      ],
+      "public_routes": [
+        "/angelcare-marketplace/[locale]/establishments/request"
+      ],
+      "admin_routes": [
+        "/angelcare-marketplace/admin/operations/b2b"
+      ],
+      "stable_identifier": "id",
+      "display_identifier": "public_reference",
+      "publication_model": "domain-specific",
+      "permission_model": "existing Marketplace RBAC",
+      "audit_model": "Marketplace audit/events",
+      "can_create": true,
+      "can_read": true,
+      "can_update": true,
+      "can_delete": true,
+      "can_select_in_studio": false,
+      "can_bind_in_studio": false,
+      "can_execute_from_studio": false,
+      "picker_candidate": true,
+      "action_candidate": true,
+      "template_binding_candidate": true,
+      "admin_destination": "/angelcare-marketplace/admin/operations/b2b",
+      "source_of_truth_status": "CANONICAL",
+      "shadow_implementation_allowed": false,
+      "studio_wiring_status": "NOT_WIRED",
+      "gaps": [
+        "No Studio B2B workflow/action registry"
+      ],
+      "risks": [],
+      "notes": ""
+    },
+    {
+      "capability_id": "partner_os",
+      "domain": "partner",
+      "entity_type": "partner_plan",
+      "canonical_name": "Partner plans/subscriptions/tenants",
+      "read_authority": "angelcare-marketplace/partner-os/repository.ts",
+      "write_authority": "angelcare-marketplace/partner-os/repository.ts",
+      "repository": "angelcare-marketplace/partner-os/repository.ts",
+      "service": null,
+      "data_authorities": [
+        "angelcare_marketplace_partner_plans",
+        "angelcare_marketplace_partner_subscriptions",
+        "angelcare_marketplace_partner_tenants"
+      ],
+      "api_routes": [],
+      "public_routes": [
+        "/angelcare-marketplace/[locale]/partner-os"
+      ],
+      "admin_routes": [
+        "/angelcare-marketplace/admin/partner-os"
+      ],
+      "stable_identifier": "id",
+      "display_identifier": "public_reference",
+      "publication_model": "domain-specific",
+      "permission_model": "existing Marketplace RBAC",
+      "audit_model": "Marketplace audit/events",
+      "can_create": true,
+      "can_read": true,
+      "can_update": true,
+      "can_delete": true,
+      "can_select_in_studio": false,
+      "can_bind_in_studio": false,
+      "can_execute_from_studio": false,
+      "picker_candidate": true,
+      "action_candidate": true,
+      "template_binding_candidate": true,
+      "admin_destination": "/angelcare-marketplace/admin/partner-os",
+      "source_of_truth_status": "CANONICAL",
+      "shadow_implementation_allowed": false,
+      "studio_wiring_status": "NOT_WIRED",
+      "gaps": [
+        "No Studio partner plan/source/action mapping"
+      ],
+      "risks": [],
+      "notes": ""
+    },
+    {
+      "capability_id": "trust_quality",
+      "domain": "trust_quality",
+      "entity_type": "trust_evidence",
+      "canonical_name": "Trust / badges / quality",
+      "read_authority": "angelcare-marketplace/trust-quality/repository.ts",
+      "write_authority": "angelcare-marketplace/trust-quality/repository.ts",
+      "repository": "angelcare-marketplace/trust-quality/repository.ts",
+      "service": null,
+      "data_authorities": [
+        "angelcare_marketplace_trust_badge_definitions",
+        "angelcare_marketplace_trust_badge_issuances",
+        "angelcare_marketplace_trust_evidence",
+        "angelcare_marketplace_quality_assessments"
+      ],
+      "api_routes": [],
+      "public_routes": [
+        "/angelcare-marketplace/[locale]/trust"
+      ],
+      "admin_routes": [
+        "/angelcare-marketplace/admin/trust"
+      ],
+      "stable_identifier": "id",
+      "display_identifier": "label/reference",
+      "publication_model": "domain-specific",
+      "permission_model": "existing Marketplace RBAC",
+      "audit_model": "Marketplace audit/events",
+      "can_create": true,
+      "can_read": true,
+      "can_update": true,
+      "can_delete": true,
+      "can_select_in_studio": false,
+      "can_bind_in_studio": true,
+      "can_execute_from_studio": false,
+      "picker_candidate": true,
+      "action_candidate": false,
+      "template_binding_candidate": false,
+      "admin_destination": "/angelcare-marketplace/admin/trust",
+      "source_of_truth_status": "CANONICAL",
+      "shadow_implementation_allowed": false,
+      "studio_wiring_status": "NOT_WIRED",
+      "gaps": [
+        "Studio trust blocks should bind verified public-safe claims, not authored assertions"
+      ],
+      "risks": [],
+      "notes": ""
+    },
+    {
+      "capability_id": "operations",
+      "domain": "operations",
+      "entity_type": "operations_mission",
+      "canonical_name": "Operations / fulfillment",
+      "read_authority": "angelcare-marketplace/operations-execution/repository.ts",
+      "write_authority": "angelcare-marketplace/operations-execution/repository.ts",
+      "repository": "angelcare-marketplace/operations-execution/repository.ts",
+      "service": null,
+      "data_authorities": [
+        "angelcare_marketplace_operations_missions",
+        "angelcare_marketplace_operations_incidents",
+        "angelcare_marketplace_fulfillment_cases",
+        "angelcare_marketplace_fulfillment_events"
+      ],
+      "api_routes": [],
+      "public_routes": [],
+      "admin_routes": [
+        "/angelcare-marketplace/admin/operations"
+      ],
+      "stable_identifier": "id",
+      "display_identifier": "public_reference",
+      "publication_model": "domain-specific",
+      "permission_model": "existing Marketplace RBAC",
+      "audit_model": "Marketplace audit/events",
+      "can_create": true,
+      "can_read": true,
+      "can_update": true,
+      "can_delete": true,
+      "can_select_in_studio": false,
+      "can_bind_in_studio": false,
+      "can_execute_from_studio": false,
+      "picker_candidate": false,
+      "action_candidate": false,
+      "template_binding_candidate": false,
+      "admin_destination": "/angelcare-marketplace/admin/operations",
+      "source_of_truth_status": "CANONICAL",
+      "shadow_implementation_allowed": false,
+      "studio_wiring_status": "NOT_WIRED",
+      "gaps": [
+        "Studio should hand over outcomes, never execute operational internals directly"
+      ],
+      "risks": [],
+      "notes": ""
+    },
+    {
+      "capability_id": "analytics",
+      "domain": "analytics",
+      "entity_type": "analytics_snapshot",
+      "canonical_name": "Analytics / data quality",
+      "read_authority": "angelcare-marketplace/analytics-security/repository.ts",
+      "write_authority": "angelcare-marketplace/analytics-security/repository.ts",
+      "repository": "angelcare-marketplace/analytics-security/repository.ts",
+      "service": null,
+      "data_authorities": [
+        "angelcare_marketplace_analytics_snapshots",
+        "angelcare_marketplace_analytics_metric_definitions",
+        "angelcare_marketplace_analytics_data_quality_events"
+      ],
+      "api_routes": [
+        "/api/angelcare-marketplace/analytics/summary"
+      ],
+      "public_routes": [],
+      "admin_routes": [
+        "/angelcare-marketplace/admin/analytics"
+      ],
+      "stable_identifier": "id",
+      "display_identifier": "metric/reference",
+      "publication_model": "domain-specific",
+      "permission_model": "existing Marketplace RBAC",
+      "audit_model": "Marketplace audit/events",
+      "can_create": true,
+      "can_read": true,
+      "can_update": true,
+      "can_delete": true,
+      "can_select_in_studio": false,
+      "can_bind_in_studio": false,
+      "can_execute_from_studio": false,
+      "picker_candidate": false,
+      "action_candidate": false,
+      "template_binding_candidate": false,
+      "admin_destination": "/angelcare-marketplace/admin/analytics",
+      "source_of_truth_status": "CANONICAL",
+      "shadow_implementation_allowed": false,
+      "studio_wiring_status": "NOT_WIRED",
+      "gaps": [
+        "Studio attribution must feed canonical analytics in P09"
+      ],
+      "risks": [],
+      "notes": ""
+    },
+    {
+      "capability_id": "localization",
+      "domain": "localization",
+      "entity_type": "translation",
+      "canonical_name": "Localization / translations",
+      "read_authority": "angelcare-marketplace/localization-intelligence/repository.ts",
+      "write_authority": "angelcare-marketplace/localization-intelligence/repository.ts",
+      "repository": "angelcare-marketplace/localization-intelligence/repository.ts",
+      "service": null,
+      "data_authorities": [
+        "angelcare_marketplace_translations",
+        "angelcare_marketplace_translation_memory",
+        "angelcare_marketplace_translation_candidates"
+      ],
+      "api_routes": [],
+      "public_routes": [],
+      "admin_routes": [
+        "/angelcare-marketplace/admin/localization"
+      ],
+      "stable_identifier": "id",
+      "display_identifier": "key",
+      "publication_model": "domain-specific",
+      "permission_model": "existing Marketplace RBAC",
+      "audit_model": "Marketplace audit/events",
+      "can_create": true,
+      "can_read": true,
+      "can_update": true,
+      "can_delete": true,
+      "can_select_in_studio": false,
+      "can_bind_in_studio": true,
+      "can_execute_from_studio": false,
+      "picker_candidate": false,
+      "action_candidate": false,
+      "template_binding_candidate": false,
+      "admin_destination": "/angelcare-marketplace/admin/localization",
+      "source_of_truth_status": "CANONICAL",
+      "shadow_implementation_allowed": false,
+      "studio_wiring_status": "NOT_WIRED",
+      "gaps": [
+        "Studio locale content still primarily authored directly; localization authority should be discoverable where appropriate"
+      ],
+      "risks": [],
+      "notes": ""
+    },
+    {
+      "capability_id": "web_presence",
+      "domain": "web_presence",
+      "entity_type": "web_presence_profile",
+      "canonical_name": "Web Presence",
+      "read_authority": "angelcare-marketplace/web-presence/repository.ts",
+      "write_authority": "angelcare-marketplace/web-presence/repository.ts",
+      "repository": "angelcare-marketplace/web-presence/repository.ts",
+      "service": null,
+      "data_authorities": [
+        "angelcare_marketplace_web_presence_profiles",
+        "angelcare_marketplace_web_presence_versions",
+        "angelcare_marketplace_web_presence_verifications"
+      ],
+      "api_routes": [
+        "/api/angelcare-marketplace/admin/web-presence/drafts"
+      ],
+      "public_routes": [],
+      "admin_routes": [
+        "/angelcare-marketplace/admin/configuration/web-presence"
+      ],
+      "stable_identifier": "id",
+      "display_identifier": "profile/reference",
+      "publication_model": "version/validate/publish/rollback",
+      "permission_model": "existing Marketplace RBAC",
+      "audit_model": "Marketplace audit/events",
+      "can_create": true,
+      "can_read": true,
+      "can_update": true,
+      "can_delete": true,
+      "can_select_in_studio": false,
+      "can_bind_in_studio": false,
+      "can_execute_from_studio": false,
+      "picker_candidate": false,
+      "action_candidate": false,
+      "template_binding_candidate": false,
+      "admin_destination": "/angelcare-marketplace/admin/configuration/web-presence",
+      "source_of_truth_status": "CANONICAL",
+      "shadow_implementation_allowed": false,
+      "studio_wiring_status": "NOT_WIRED",
+      "gaps": [
+        "Must remain independent canonical authority; Studio should not shadow global presence configuration"
+      ],
+      "risks": [],
+      "notes": ""
+    },
+    {
+      "capability_id": "audit",
+      "domain": "audit_governance",
+      "entity_type": "audit_event",
+      "canonical_name": "Marketplace audit",
+      "read_authority": "angelcare-marketplace/audit/write-audit.ts",
+      "write_authority": "angelcare-marketplace/audit/write-audit.ts",
+      "repository": "angelcare-marketplace/audit/write-audit.ts",
+      "service": null,
+      "data_authorities": [
+        "angelcare_marketplace_audit_events"
+      ],
+      "api_routes": [],
+      "public_routes": [],
+      "admin_routes": [
+        "/angelcare-marketplace/admin/security-audit"
+      ],
+      "stable_identifier": "id",
+      "display_identifier": "action",
+      "publication_model": "domain-specific",
+      "permission_model": "existing Marketplace RBAC",
+      "audit_model": "Marketplace audit/events",
+      "can_create": true,
+      "can_read": true,
+      "can_update": false,
+      "can_delete": false,
+      "can_select_in_studio": false,
+      "can_bind_in_studio": false,
+      "can_execute_from_studio": false,
+      "picker_candidate": false,
+      "action_candidate": false,
+      "template_binding_candidate": false,
+      "admin_destination": "/angelcare-marketplace/admin/security-audit",
+      "source_of_truth_status": "CANONICAL",
+      "shadow_implementation_allowed": false,
+      "studio_wiring_status": "PARTIALLY_WIRED",
+      "gaps": [
+        "Studio save/publish/duplicate already audit; future actions/bindings need origin metadata"
+      ],
+      "risks": [],
+      "notes": ""
+    },
+    {
+      "capability_id": "security.permissions",
+      "domain": "security_permissions",
+      "entity_type": "permission",
+      "canonical_name": "Marketplace RBAC/role permissions",
+      "read_authority": "angelcare-marketplace/auth/context.ts",
+      "write_authority": "angelcare-marketplace/auth/context.ts",
+      "repository": "angelcare-marketplace/auth/context.ts",
+      "service": null,
+      "data_authorities": [
+        "angelcare_marketplace_role_permissions",
+        "angelcare_marketplace_user_role_assignments"
+      ],
+      "api_routes": [],
+      "public_routes": [],
+      "admin_routes": [
+        "/angelcare-marketplace/admin/security"
+      ],
+      "stable_identifier": "permission_key",
+      "display_identifier": "permission_key",
+      "publication_model": "domain-specific",
+      "permission_model": "existing Marketplace RBAC",
+      "audit_model": "Marketplace audit/events",
+      "can_create": true,
+      "can_read": true,
+      "can_update": true,
+      "can_delete": false,
+      "can_select_in_studio": false,
+      "can_bind_in_studio": false,
+      "can_execute_from_studio": false,
+      "picker_candidate": false,
+      "action_candidate": false,
+      "template_binding_candidate": false,
+      "admin_destination": "/angelcare-marketplace/admin/security",
+      "source_of_truth_status": "CANONICAL",
+      "shadow_implementation_allowed": false,
+      "studio_wiring_status": "PARTIALLY_WIRED",
+      "gaps": [
+        "Future registries must declare required permission and public-safe exposure"
+      ],
+      "risks": [],
+      "notes": ""
+    }
+  ]
+}

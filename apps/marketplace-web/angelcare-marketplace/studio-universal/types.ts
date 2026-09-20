@@ -1,4 +1,10 @@
 import type { ComponentData, Data } from '@puckeditor/core'
+import type { StudioSourceReference } from '@/angelcare-marketplace/studio-source-registry/types'
+import type { StudioActionReference, StudioResolvedAction } from '@/angelcare-marketplace/studio-action-registry/types'
+import type { StudioLiveBindingMap } from '@/angelcare-marketplace/studio-live-binding/types'
+import type { StudioDynamicSourceReference } from '@/angelcare-marketplace/studio-dynamic-source/types'
+import type { StudioWorkflowReference } from '@/angelcare-marketplace/studio-workflows/types'
+import type { StudioAttributionContext } from '@/angelcare-marketplace/studio-attribution/types'
 
 export type StudioLocale = 'fr' | 'en' | 'ar'
 export type StudioDevice = 'mobile' | 'tablet' | 'desktop' | 'wide'
@@ -70,13 +76,17 @@ export interface StudioBlockProps extends Record<string, unknown> {
   body?: string
   primaryCtaLabel?: string
   primaryCtaHref?: string
+  primaryAction?: StudioActionReference | null
+  __studioResolvedPrimaryAction?: StudioResolvedAction | null
   secondaryCtaLabel?: string
   secondaryCtaHref?: string
-  mediaAssetKey?: string
+  secondaryAction?: StudioActionReference | null
+  __studioResolvedSecondaryAction?: StudioResolvedAction | null
+  mediaAssetKey?: string | StudioSourceReference
   mediaUrl?: string
   mediaAlt?: string
-  collectionKey?: string
-  categoryKey?: string
+  collectionKey?: string | StudioSourceReference
+  categoryKey?: string | StudioSourceReference
   items?: Array<Record<string, unknown>>
   sourceDesign?: StudioDesignStyle
   responsive?: StudioResponsiveState
@@ -90,6 +100,10 @@ export interface StudioBlockProps extends Record<string, unknown> {
   __studioImportedRules?: StudioImportedCssRule[]
   __studioInteractionKind?: string
   __studioReviewRequired?: boolean
+  __studioBindings?: StudioLiveBindingMap
+  __studioDynamicSource?: StudioDynamicSourceReference
+  __studioWorkflow?: StudioWorkflowReference
+  __studioAttribution?: StudioAttributionContext
 }
 
 export interface StudioPickerAsset {

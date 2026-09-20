@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "phase": "P04",
+  "precedence": ["exact_item", "placement", "collection", "experience_schema", "category", "family", "marketplace_default"],
+  "scopes": [
+    {"rank": 1, "scope": "exact_item", "target": "catalog.items", "authority": "angelcare_marketplace_catalog_items.experience_config", "picker": "P02 Universal Source Picker"},
+    {"rank": 2, "scope": "placement", "target": "existing homepage placement", "authority": "angelcare_marketplace_configurations:studio.template.placement.*", "picker": "bounded P04 view over existing homepage placements"},
+    {"rank": 3, "scope": "collection", "target": "homepage.collections", "authority": "angelcare_marketplace_homepage_collections.settings", "picker": "P02 Universal Source Picker"},
+    {"rank": 4, "scope": "experience_schema", "target": "experience.schemas", "authority": "angelcare_marketplace_experience_schemas.configuration", "picker": "P02 Universal Source Picker"},
+    {"rank": 5, "scope": "category", "target": "catalog.categories", "authority": "angelcare_marketplace_catalog_categories.experience_config", "picker": "P02 Universal Source Picker"},
+    {"rank": 6, "scope": "family", "target": "controlled Marketplace family", "authority": "angelcare_marketplace_configurations:studio.template.family.*", "picker": "derived controlled family list"},
+    {"rank": 7, "scope": "marketplace_default", "target": "Marketplace", "authority": "angelcare_marketplace_configurations:studio.template.default", "picker": "none"}
+  ],
+  "template_authority": "angelcare_marketplace_cms_templates + published_revision_id",
+  "fallback": "Category-Native AdaptiveExperience",
+  "new_assignment_table": false,
+  "new_admin_workspace": false,
+  "sql_required": false
+}

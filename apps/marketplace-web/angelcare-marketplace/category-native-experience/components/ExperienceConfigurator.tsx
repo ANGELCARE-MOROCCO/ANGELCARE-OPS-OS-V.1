@@ -4,6 +4,8 @@ import { ArrowRight, CheckCircle2, LoaderCircle, RotateCcw, ShieldCheck } from '
 import type { ExperienceFieldBlueprint } from '../../category-native/types'
 import type { AdaptiveExperienceData, CategoryNativeCommitResult, CategoryNativeSession } from '../types'
 import styles from '../experience.module.css'
+import { hasStudioAttributionSearch,studioAttributionFromSearch } from '../../studio-attribution/context'
+import { clientStudioAttribution } from '../../studio-attribution/client'
 
 type ApiEnvelope<T> = { data?: T; error?: { message?: string; fieldErrors?: Record<string, string[]> } }
 const excludedKeys = new Set([
@@ -80,7 +82,7 @@ export function ExperienceConfigurator({data}:{data:AdaptiveExperienceData}) {
 
   async function ensureSession() {
     if (session) return session
-    const created=await api<CategoryNativeSession>('/api/angelcare-marketplace/conversion/category-native/session',{method:'POST',body:JSON.stringify({itemSlug:data.item.slug,locale:data.locale,visitorReference:visitorReference(),idempotencyKey:`experience:${data.item.id}:${crypto.randomUUID()}`,sourceRoute:window.location.pathname,initialConfiguration:configuration})})
+    const created=await api<CategoryNativeSession>('/api/angelcare-marketplace/conversion/category-native/session',{method:'POST',body:JSON.stringify({itemSlug:data.item.slug,locale:data.locale,visitorReference:visitorReference(),idempotencyKey:`experience:${data.item.id}:${crypto.randomUUID()}`,sourceRoute:window.location.pathname,initialConfiguration:configuration,attribution:hasStudioAttributionSearch(window.location.search)?clientStudioAttribution(studioAttributionFromSearch(window.location.search,{locale:data.locale,surface:'assigned_template'}),{interactionId:'category_native_session'}):undefined})})
     setSession(created)
     return created
   }

@@ -1,3 +1,4 @@
+import type { StudioAttributionInput } from '@/angelcare-marketplace/studio-attribution/types'
 import type { CatalogLocale, DiscoveryItem } from '../catalog-discovery/types'
 import type {
   ExperienceFieldBlueprint,
@@ -176,6 +177,7 @@ export interface CategoryNativeSessionCreateInput {
   sourceRoute?: string
   territoryCode?: string | null
   initialConfiguration?: Record<string, unknown>
+  attribution?: StudioAttributionInput
 }
 
 export interface CategoryNativeCommitResult {

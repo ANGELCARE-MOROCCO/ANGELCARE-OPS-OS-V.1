@@ -1,0 +1,13 @@
+{
+  "sources": {
+    "catalog.items": "entity+family tags + 3 canonical item paths",
+    "catalog.categories": "entity+family tags",
+    "homepage.collections": "entity+family tags",
+    "homepage.campaigns": "entity+family tags",
+    "media.assets": "entity+family tags",
+    "content.templates": "template+revision+assignment tags",
+    "content.pages": "page tag+public path"
+  },
+  "fallback": "cache miss reads canonical authority",
+  "impactInspector": "read-only"
+}

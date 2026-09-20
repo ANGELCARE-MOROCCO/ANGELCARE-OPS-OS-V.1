@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "surfaces": [
+    {
+      "surface": "Studio CMS public page",
+      "entrypoint": "/angelcare-marketplace/[locale]/[[...slug]]",
+      "loader": "public-universe / Experience Core",
+      "renderer": "PublicPageRenderer → StudioPublishedRenderer",
+      "business_authority": "Experience Core + catalog discovery for commerce blocks",
+      "studio_status": "WIRED"
+    },
+    {
+      "surface": "Product/service detail",
+      "entrypoint": "/angelcare-marketplace/[locale]/marketplace/item/[itemSlug]",
+      "loader": "category-native-experience/getAdaptiveExperience",
+      "renderer": "AdaptiveExperience",
+      "business_authority": "Category-Native + catalog + pricing/availability/trust",
+      "studio_status": "NOT_TEMPLATE_RESOLVED"
+    },
+    {
+      "surface": "Generic adaptive experience",
+      "entrypoint": "/angelcare-marketplace/[locale]/experience/[itemSlug]",
+      "loader": "category-native-experience/getAdaptiveExperience",
+      "renderer": "AdaptiveExperience",
+      "business_authority": "Category-Native + Conversion Universe",
+      "studio_status": "NOT_TEMPLATE_RESOLVED"
+    },
+    {
+      "surface": "Booking",
+      "entrypoint": "/angelcare-marketplace/[locale]/booking/[itemSlug]",
+      "loader": "category-native-experience/getAdaptiveExperience",
+      "renderer": "AdaptiveExperience focusConfigurator",
+      "business_authority": "Category-Native + Conversion Universe",
+      "studio_status": "NOT_ACTION_RESOLVED"
+    },
+    {
+      "surface": "Quotation",
+      "entrypoint": "/angelcare-marketplace/[locale]/quotation/[itemSlug]",
+      "loader": "category-native-experience/getAdaptiveExperience",
+      "renderer": "AdaptiveExperience focusConfigurator",
+      "business_authority": "Conversion Universe",
+      "studio_status": "NOT_ACTION_RESOLVED"
+    },
+    {
+      "surface": "Subscription",
+      "entrypoint": "/angelcare-marketplace/[locale]/subscription/[itemSlug]",
+      "loader": "category-native-experience/getAdaptiveExperience",
+      "renderer": "AdaptiveExperience focusConfigurator",
+      "business_authority": "Conversion Universe/subscription authority",
+      "studio_status": "NOT_ACTION_RESOLVED"
+    },
+    {
+      "surface": "Marketplace discovery",
+      "entrypoint": "/angelcare-marketplace/[locale]/marketplace",
+      "loader": "catalog-discovery/searchDiscovery + storefrontExperience",
+      "renderer": "catalog discovery components",
+      "business_authority": "catalog discovery views",
+      "studio_status": "PARTIAL_COMMERCE_BLOCK_REUSE"
+    },
+    {
+      "surface": "Checkout",
+      "entrypoint": "/angelcare-marketplace/[locale]/checkout",
+      "loader": "Conversion Universe / customer commerce",
+      "renderer": "checkout pages",
+      "business_authority": "Conversion Universe + payment authority",
+      "studio_status": "NOT_ACTION_RESOLVED"
+    },
+    {
+      "surface": "Academy programme",
+      "entrypoint": "/angelcare-marketplace/[locale]/academy/programs/[slug]",
+      "loader": "Academy public surface",
+      "renderer": "PublicAcademyExperience",
+      "business_authority": "Academy Engine",
+      "studio_status": "NOT_TEMPLATE_RESOLVED"
+    }
+  ]
+}

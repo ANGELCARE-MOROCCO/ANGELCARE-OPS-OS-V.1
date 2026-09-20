@@ -1,0 +1,109 @@
+{
+  "schema_version": 1,
+  "gaps": [
+    {
+      "gap_id": "G01",
+      "severity": "P0",
+      "area": "Source registry",
+      "current": "Studio picker data exposes media/categories/collections only",
+      "required": "Universal canonical source registry over all public-safe Marketplace authorities",
+      "future_patch": "P01"
+    },
+    {
+      "gap_id": "G02",
+      "severity": "P0",
+      "area": "Picker UX",
+      "current": "Basic HTML selects + raw text fields",
+      "required": "Searchable visual/hierarchical universal pickers with hidden IDs",
+      "future_patch": "P02"
+    },
+    {
+      "gap_id": "G03",
+      "severity": "P0",
+      "area": "Actions",
+      "current": "primaryCtaHref/secondaryCtaHref and item hrefs are raw text URLs",
+      "required": "Typed action descriptors resolved by canonical action registry",
+      "future_patch": "P03"
+    },
+    {
+      "gap_id": "G04",
+      "severity": "P0",
+      "area": "Template assignment",
+      "current": "Category-Native schema contains template fields but public item routes render AdaptiveExperience directly",
+      "required": "Deterministic item/context/schema/category/family/default Studio template resolver",
+      "future_patch": "P04"
+    },
+    {
+      "gap_id": "G05",
+      "severity": "P0",
+      "area": "Live bindings",
+      "current": "Studio blocks mostly own authored props; commerce blocks query discovery ad hoc",
+      "required": "Typed live binding engine to canonical fields/read models",
+      "future_patch": "P05"
+    },
+    {
+      "gap_id": "G06",
+      "severity": "P0",
+      "area": "Dynamic sources",
+      "current": "product_grid/category and collection_rail are special cases",
+      "required": "Unified dynamic content source descriptor for homepage/landing sections",
+      "future_patch": "P06"
+    },
+    {
+      "gap_id": "G07",
+      "severity": "P0",
+      "area": "Forms/conversion",
+      "current": "Canonical PublicInquiryForm and Conversion Universe exist outside universal Studio action/form semantics",
+      "required": "Workflow-backed Studio forms/actions routed to existing engines",
+      "future_patch": "P07"
+    },
+    {
+      "gap_id": "G08",
+      "severity": "P0",
+      "area": "Runtime",
+      "current": "CMS Studio runtime and Category-Native runtime are both native but not unified by a template/action resolver",
+      "required": "One orchestration resolver across preview/public/item/action contexts",
+      "future_patch": "P08"
+    },
+    {
+      "gap_id": "G09",
+      "severity": "P1",
+      "area": "Attribution",
+      "current": "Source route/session exists in several engines; Studio page/template/block/CTA provenance is not universal",
+      "required": "Origin metadata propagated to conversions/admin/analytics",
+      "future_patch": "P09"
+    },
+    {
+      "gap_id": "G10",
+      "severity": "P1",
+      "area": "Admin trust",
+      "current": "Admin sees fields/URLs but not standardized action consequence chain",
+      "required": "Trust Inspector showing source, validation, creates, admin destination, permissions",
+      "future_patch": "P10"
+    },
+    {
+      "gap_id": "G11",
+      "severity": "P0",
+      "area": "Governance",
+      "current": "Strong per-core governance exists",
+      "required": "Unified fail-closed policies for source/action/template/binding resolution",
+      "future_patch": "P11"
+    },
+    {
+      "gap_id": "G12",
+      "severity": "P1",
+      "area": "Dependency invalidation",
+      "current": "Experience Core dependencies exist mainly for CMS revisions/templates/symbols",
+      "required": "Extend dependency graph to live source bindings/template assignments/action targets and cache invalidation",
+      "future_patch": "P12"
+    },
+    {
+      "gap_id": "G13",
+      "severity": "P1",
+      "area": "Developer contract",
+      "current": "Studio developer contract exists but does not enumerate total Marketplace source/action/template universe",
+      "required": "Machine-readable source/action/template/binding/workflow registries + anti-shadow invariants",
+      "future_patch": "P13"
+    }
+  ]
+}

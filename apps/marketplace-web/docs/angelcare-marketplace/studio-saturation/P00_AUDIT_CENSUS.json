@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "audit_authorities": [
+    {
+      "domain": "global_marketplace",
+      "authority": "angelcare-marketplace/audit/write-audit.ts",
+      "data_authorities": [
+        "angelcare_marketplace_audit_events"
+      ],
+      "coverage": "canonical cross-domain audit writer"
+    },
+    {
+      "domain": "content_experience",
+      "authority": "Experience Core revisions/publication jobs/dependency edges",
+      "data_authorities": [
+        "angelcare_marketplace_cms_revisions",
+        "angelcare_marketplace_cms_page_versions",
+        "angelcare_marketplace_cms_publication_jobs",
+        "angelcare_marketplace_cms_dependency_edges"
+      ],
+      "coverage": "page/template/symbol/version/publication provenance"
+    },
+    {
+      "domain": "conversion",
+      "authority": "Conversion Universe events/outcomes",
+      "data_authorities": [
+        "angelcare_marketplace_conversion_events",
+        "angelcare_marketplace_conversion_outcomes"
+      ],
+      "coverage": "session and conversion lifecycle"
+    },
+    {
+      "domain": "journey_orders",
+      "authority": "Journey Control events",
+      "data_authorities": [
+        "angelcare_marketplace_journey_events",
+        "angelcare_marketplace_order_events",
+        "angelcare_marketplace_order_line_events"
+      ],
+      "coverage": "journey/order lifecycle"
+    },
+    {
+      "domain": "public_inquiries",
+      "authority": "Public Universe inquiry/public events",
+      "data_authorities": [
+        "angelcare_marketplace_public_inquiry_events",
+        "angelcare_marketplace_public_events"
+      ],
+      "coverage": "public inquiry submission and operator lifecycle"
+    },
+    {
+      "domain": "homepage",
+      "authority": "Homepage release/version evidence",
+      "data_authorities": [
+        "angelcare_marketplace_homepage_versions",
+        "angelcare_marketplace_homepage_release_dossiers",
+        "angelcare_marketplace_homepage_interactions"
+      ],
+      "coverage": "homepage release and engagement"
+    },
+    {
+      "domain": "live_experience",
+      "authority": "Live Experience audit/versioning",
+      "data_authorities": [
+        "angelcare_marketplace_live_experience_audit_events",
+        "angelcare_marketplace_live_experience_versions"
+      ],
+      "coverage": "campaign/experience changes"
+    },
+    {
+      "domain": "finance_payments",
+      "authority": "payment/reconciliation event tables",
+      "data_authorities": [
+        "angelcare_marketplace_payment_provider_events",
+        "angelcare_marketplace_finance_reconciliation_events"
+      ],
+      "coverage": "financial operational evidence"
+    }
+  ]
+}

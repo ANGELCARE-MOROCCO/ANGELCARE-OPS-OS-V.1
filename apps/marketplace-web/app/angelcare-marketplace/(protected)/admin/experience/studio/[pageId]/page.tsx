@@ -6,6 +6,7 @@ import { loadStudioDocument } from '@/angelcare-marketplace/studio-universal/rep
 export default async function Page({params}:{params:Promise<{pageId:string}>}){
   const context=await requireMarketplacePageContext()
   const {pageId}=await params
-  const [{detail,data},pickers]=await Promise.all([loadStudioDocument(pageId),loadStudioPickerData()])
+  const {detail,data}=await loadStudioDocument(pageId)
+  const pickers=await loadStudioPickerData(data)
   return <UniversalExperienceStudio page={detail.page} initialData={data} pickers={pickers} canPreview={hasMarketplacePermission(context,'marketplace.cms.preview')} canPublish={hasMarketplacePermission(context,'marketplace.cms.publish')}/>
 }

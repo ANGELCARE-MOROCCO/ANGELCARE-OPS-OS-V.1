@@ -431,6 +431,7 @@ export async function createCategoryNativeSession(input: CategoryNativeSessionCr
     itemSlug: input.itemSlug, locale: input.locale, journey: journeyForSchema(experience.schema), visitorReference: input.visitorReference,
     sourceRoute: input.sourceRoute, territoryCode: input.territoryCode, idempotencyKey: input.idempotencyKey,
     initialConfiguration: { ...validation.normalized, experienceSchemaKey: experience.schema.schema_key, experienceSchemaVersion: experience.schema.version, operationsHandoverType: experience.schema.operations_handover_type },
+    attribution: input.attribution,
   })
   const db = await createServiceClient()
   const sessionKey = randomUUID()

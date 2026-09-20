@@ -1,0 +1,25 @@
+{
+  "phase": "P09",
+  "name": "Origin / Attribution Propagation",
+  "version": 1,
+  "dimensions": 28,
+  "surfaces": ["studio_page", "assigned_template"],
+  "propagation": ["page_or_template", "block", "interaction", "action_or_workflow", "canonical_business_authority", "existing_admin_destination"],
+  "authorities": {
+    "public_inquiry": "angelcare_marketplace_public_inquiries.source_metadata",
+    "conversion_session": "angelcare_marketplace_conversion_sessions.metadata",
+    "family_quote_request": "angelcare_marketplace_audit_events.after_value",
+    "b2b_public_request": "angelcare_marketplace_public_events.event_data"
+  },
+  "url_policy": {
+    "internal_only": true,
+    "raw_visitor_reference": false,
+    "visitor_hash": false,
+    "referrer_query": false,
+    "arbitrary_current_query": false,
+    "bounded_non_pii_origin_ids": true
+  },
+  "database_schema_change": false,
+  "sql_required": false,
+  "p10_trust_inspector": false
+}

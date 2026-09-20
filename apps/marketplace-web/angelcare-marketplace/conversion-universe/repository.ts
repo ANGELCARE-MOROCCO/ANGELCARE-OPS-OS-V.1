@@ -129,6 +129,7 @@ function mapSession(row: Row, item?: DiscoveryItem | null): ConversionSession {
     confirmed_at: nullableText(row.confirmed_at),
     outcome_type: nullableText(row.outcome_type),
     outcome_id: nullableText(row.outcome_id),
+    metadata: objectValue(row.metadata),
     item: item || null,
     priceSnapshot: mapPrice(priceRows[0] || null),
     consents: consentRows.map(mapConsent),
@@ -280,12 +281,13 @@ export async function createPublicConversionSession(input: ConversionSessionCrea
       configuration: input.initialConfiguration || {},
       source_route: input.sourceRoute || null,
       idempotency_key: input.idempotencyKey,
+      metadata: input.attribution ? { studioAttribution: serverStudioAttribution(input.attribution,undefined,input.visitorReference) } : {},
       expires_at: new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString(),
     })
     .select('*')
     .single()
   if (error || !data) throw fail('créer la session de conversion', error)
-  await recordEvent(String(data.id), 'session.created', { journey: resolvedJourney, itemId: item.id })
+  await recordEvent(String(data.id), 'session.created', { journey: resolvedJourney, itemId: item.id, ...(input.attribution ? {studioAttribution:serverStudioAttribution(input.attribution,undefined,input.visitorReference)} : {}) })
   return mapSession(data as Row, item)
 }
 

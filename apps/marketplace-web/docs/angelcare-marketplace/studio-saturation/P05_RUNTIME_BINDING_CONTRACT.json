@@ -1,0 +1,29 @@
+{
+  "schema_version": "2026-09-19.P05",
+  "resolution_chain": [
+    "P04 resolves winning published template revision",
+    "Category-Native loads current localized item, schema, public fields, variants, media, pricing, availability and trust",
+    "P05 creates a public-safe typed binding context",
+    "P05 loads the exact P04 published template revision",
+    "P05 applies explicit per-field bindings to a cloned Puck document",
+    "P05 records bound, missing and blocker diagnostics",
+    "P05 returns BOUND or FALLBACK_NATIVE without mutating business authorities"
+  ],
+  "missing_data_policies": {
+    "preserve_static": "Leave the template-authored fallback untouched.",
+    "empty": "Replace with a value-type-safe empty value.",
+    "omit": "Remove only the target property from the runtime clone.",
+    "hide_block": "Mark only the affected runtime block hidden."
+  },
+  "fail_closed": [
+    "unknown binding",
+    "unknown target",
+    "incompatible target type",
+    "missing/unpublished P04 template revision"
+  ],
+  "authoring_preview_endpoint": "/api/angelcare-marketplace/cms/studio/live-bindings/preview",
+  "registry_endpoint": "/api/angelcare-marketplace/cms/studio/live-bindings",
+  "public_runtime_switch": "deferred_to_P08",
+  "dynamic_source_composition": "deferred_to_P06",
+  "database_change": false
+}

@@ -1,0 +1,111 @@
+{
+  "schema_version": 1,
+  "patches": {
+    "P01": {
+      "name": "Universal Source Registry",
+      "requires": [
+        "P00 capability registry",
+        "source registry candidates",
+        "public-safe projections",
+        "permission map"
+      ]
+    },
+    "P02": {
+      "name": "Universal Picker Framework",
+      "requires": [
+        "P01 source registry",
+        "zero-typing map",
+        "Media Vault authority"
+      ]
+    },
+    "P03": {
+      "name": "Universal Action Registry",
+      "requires": [
+        "action candidates",
+        "admin destination map",
+        "Conversion/Public Inquiry/route authorities"
+      ]
+    },
+    "P04": {
+      "name": "Template Assignment & Inheritance",
+      "requires": [
+        "Category-Native template fields",
+        "Experience Core templates",
+        "catalog/schema/category/collection identities"
+      ]
+    },
+    "P05": {
+      "name": "Live Data Binding Engine",
+      "requires": [
+        "catalog discovery",
+        "pricing/availability/trust public-safe projections",
+        "P01"
+      ]
+    },
+    "P06": {
+      "name": "Dynamic Content Source Engine",
+      "requires": [
+        "collections/categories/catalog discovery/homepage/campaign/audience/territory authorities"
+      ]
+    },
+    "P07": {
+      "name": "Native Forms & Conversion Wiring",
+      "requires": [
+        "PublicInquiryForm/public-universe",
+        "Conversion Universe",
+        "Family/Academy/B2B workflows",
+        "P03"
+      ]
+    },
+    "P08": {
+      "name": "Public Runtime Orchestrator",
+      "requires": [
+        "StudioPublishedRenderer",
+        "AdaptiveExperience",
+        "template resolver",
+        "binding engine",
+        "action registry"
+      ]
+    },
+    "P09": {
+      "name": "Origin / Attribution Propagation",
+      "requires": [
+        "audit/events/conversion source_route/session metadata",
+        "Studio page/template/block/CTA identities"
+      ]
+    },
+    "P10": {
+      "name": "Studio Trust Inspector",
+      "requires": [
+        "source/action/template metadata",
+        "admin destination map",
+        "permission/validation metadata"
+      ]
+    },
+    "P11": {
+      "name": "Permissions / Governance / Fail-Closed",
+      "requires": [
+        "536 discovered Marketplace permission strings",
+        "publication models",
+        "failure matrix",
+        "P01-P10"
+      ]
+    },
+    "P12": {
+      "name": "Dependency + Cache + Invalidation",
+      "requires": [
+        "cms_dependency_edges",
+        "template/source/binding/action identities",
+        "runtime revalidation points"
+      ]
+    },
+    "P13": {
+      "name": "Developer Contract Saturation",
+      "requires": [
+        "all prior registries",
+        "anti-shadow invariants",
+        "machine-readable diagnostics"
+      ]
+    }
+  }
+}

@@ -93,7 +93,7 @@ const studioCategory=(group:string):BlockDefinition['category']=>group==='layout
 const studioEditor=(group:string):BlockDefinition['editor']=>group==='layout'?'structural':group==='commerce'?'commerce':group==='media'?'media':group==='conversion'?'cta':'items'
 function studioDefinition(type:string):BlockDefinition|null{
   const studio=studioBlockContract(type);if(!studio)return null
-  const allowedKeys=[...new Set([...studio.fields,'responsive','hidden','locked','sourceDesign','__studioPuck'])]
+  const allowedKeys=[...new Set([...studio.fields,'responsive','hidden','locked','sourceDesign','__studioPuck','__studioBindings','__studioDynamicSource'])]
   return {type:type as CmsBlockType,schemaVersion:2,name:studio.label,purpose:studio.purpose,category:studioCategory(studio.group),editor:studioEditor(studio.group),allowedKeys,fields:fields(allowedKeys),defaults:{},validation:{required:[]},requiresCta:false,sensitive:false,designCapabilities:design,accessibility:a11y,seoEffects:[],bindings:studio.group==='media'?['media.assets']:studio.group==='commerce'?['catalog.items','catalog.categories','homepage.collections']:[],nesting:{canHaveChildren:Boolean(studio.allowChildren),allowedParents:studio.allowChildren?'root_or_structural':'root_or_structural',slots:studio.allowChildren?['default']:undefined},analyticsHooks:[],runtimeStatus:'ready',editorStatus:'ready'}
 }
 export function blockDefinition(type:CmsBlockType|string){const definition=byType.get(String(type))||studioDefinition(String(type));if(!definition)throw new Error(`Type de bloc non enregistré : ${type}`);return definition}
