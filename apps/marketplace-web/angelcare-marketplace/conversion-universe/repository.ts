@@ -1,3 +1,4 @@
+import { serverStudioAttribution } from '@/angelcare-marketplace/studio-attribution/server'
 import { createHash, randomUUID } from 'node:crypto'
 import { createServiceClient } from '@/lib/supabase/server'
 import { writeMarketplaceAudit } from '../audit/write-audit'
