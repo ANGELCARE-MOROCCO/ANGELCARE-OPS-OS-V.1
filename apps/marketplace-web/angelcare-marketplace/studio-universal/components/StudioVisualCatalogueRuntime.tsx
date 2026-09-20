@@ -14,7 +14,8 @@ const itemTitle=(row:Record<string,unknown>,index:number)=>text(row.title)||text
 const itemBody=(row:Record<string,unknown>)=>text(row.body)||text(row.description)||text(row.value)
 
 function mediaSource(props:StudioBlockProps,pickers:StudioPickerData){
-  if(props.mediaAssetKey){const match=isStudioSourceReference(props.mediaAssetKey)?pickers.media.find(row=>row.id===props.mediaAssetKey.entityId):pickers.media.find(row=>row.assetKey===props.mediaAssetKey);if(match?.publicUrl)return match.publicUrl}
+  const mediaAssetKey=props.mediaAssetKey
+  if(mediaAssetKey){const match=isStudioSourceReference(mediaAssetKey)?pickers.media.find(row=>row.id===mediaAssetKey.entityId):pickers.media.find(row=>row.assetKey===mediaAssetKey);if(match?.publicUrl)return match.publicUrl}
   return safeHref(props.mediaUrl)
 }
 

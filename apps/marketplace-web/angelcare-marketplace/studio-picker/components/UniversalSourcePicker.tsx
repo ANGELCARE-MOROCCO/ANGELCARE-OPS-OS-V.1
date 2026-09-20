@@ -89,7 +89,7 @@ export function UniversalSourcePicker(props:UniversalPickerProps){
         try{return await validatePickerReference(reference,controller.signal)}catch{return {status:'UNSUPPORTED',reference,reason:'Validation indisponible.'} as const}
       }))
       if(controller.signal.aborted)return
-      setEntities(current=>{const next={...current};rows.forEach((validation,index)=>{if(validation.entity)next[refKey(refs[index])]=validation.entity});return next})
+      setEntities(current=>{const next={...current};rows.forEach((validation,index)=>{if('entity' in validation&&validation.entity)next[refKey(refs[index])]=validation.entity});return next})
       setValidations(current=>{const next={...current};rows.forEach((validation,index)=>{next[refKey(refs[index])]={status:validation.status,reason:validation.reason}});return next})
     }finally{}
   },[refs.map(refKey).join('|')])

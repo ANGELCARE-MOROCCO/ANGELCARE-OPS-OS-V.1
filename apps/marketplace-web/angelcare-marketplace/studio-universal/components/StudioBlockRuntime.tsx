@@ -12,8 +12,9 @@ const text = (value: unknown, fallback = '') => typeof value === 'string' ? valu
 const rows = (value: unknown) => Array.isArray(value) ? value.filter(row => row && typeof row === 'object') as Array<Record<string, unknown>> : []
 
 function mediaUrl(props: StudioBlockProps, pickers: StudioPickerData) {
-  if (props.mediaAssetKey) {
-    const match=isStudioSourceReference(props.mediaAssetKey)?pickers.media.find(row=>row.id===props.mediaAssetKey.entityId):pickers.media.find(row=>row.assetKey===props.mediaAssetKey)
+  const mediaAssetKey=props.mediaAssetKey
+  if (mediaAssetKey) {
+    const match=isStudioSourceReference(mediaAssetKey)?pickers.media.find(row=>row.id===mediaAssetKey.entityId):pickers.media.find(row=>row.assetKey===mediaAssetKey)
     return match?.publicUrl || text(props.mediaUrl)
   }
   return text(props.mediaUrl)
