@@ -63,3 +63,26 @@ export const HOMEPAGE_PRO_MAX_WORLD_01={
  sectionCount:HOMEPAGE_PRO_MAX_SECTION_DEFINITIONS.length,
  build:buildHomepageProMaxWorld01Data,
 } as const
+
+export const HOMEPAGE_PRO_MAX_PERSISTENCE_TYPES:Readonly<Record<string,string>>={
+ ac_home_pro_max_urgency:'section',
+ ac_home_pro_max_header:'section',
+ ac_home_pro_max_nav:'section',
+ ac_home_pro_max_hero:'hero',
+ ac_home_pro_max_trust:'trust_strip',
+ ac_home_pro_max_categories:'category_grid',
+ ac_home_pro_max_promos:'collection_rail',
+ ac_home_pro_max_flash:'product_grid',
+ ac_home_pro_max_services:'service_grid',
+ ac_home_pro_max_packs:'product_grid',
+ ac_home_pro_max_academy:'service_grid',
+ ac_home_pro_max_b2b:'cta_band',
+ ac_home_pro_max_guides_experts:'editorial',
+ ac_home_pro_max_collections:'collection_rail',
+ ac_home_pro_max_community:'cta_band',
+ ac_home_pro_max_commitments:'trust_strip',
+ ac_home_pro_max_faq:'faq',
+ ac_home_pro_max_footer:'section',
+} as const
+
+export function homepageProMaxPersistenceType(type:string){return HOMEPAGE_PRO_MAX_PERSISTENCE_TYPES[type]||type}

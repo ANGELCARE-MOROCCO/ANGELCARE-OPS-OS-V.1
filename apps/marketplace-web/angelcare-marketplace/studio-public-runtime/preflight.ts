@@ -10,7 +10,7 @@ const obj=(v:unknown):Record<string,unknown>=>v&&typeof v==='object'&&!Array.isA
 const children=(c:ComponentData)=>Array.isArray(obj(c.props).content)?obj(c.props).content as ComponentData[]:[]
 const okAction=(status:string)=>status==='READY'||status==='CONTEXT_REQUIRED'
 
-export async function preflightStudioRuntime(data:Data,locale:'fr'|'en'|'ar'):Promise<StudioRuntimePreflightReport>{
+export async function preflightStudioRuntime(data:Data,locale:'fr'|'en'|'ar',actionContext?:{itemId?:string|null;itemSlug?:string|null}):Promise<StudioRuntimePreflightReport>{
   const entries:StudioRuntimePreflightEntry[]=[]
   let actionCount=0,workflowCount=0
   const walk=async(component:ComponentData):Promise<void>=>{
@@ -34,7 +34,7 @@ export async function preflightStudioRuntime(data:Data,locale:'fr'|'en'|'ar'):Pr
       if(raw===undefined||raw===null)continue
       actionCount++
       if(!isStudioActionReference(raw)){entries.push({kind:'action',blockId,identifier:slot,status:'INVALID',note:'Action Studio invalide.'});continue}
-      const resolved=await resolveStudioPublicAction(raw,locale)
+      const resolved=await resolveStudioPublicAction(raw,locale,actionContext)
       if(resolved?.status==='WORKFLOW_REQUIRED'&&workflowActionId===raw.actionId){entries.push({kind:'action',blockId,identifier:raw.actionId,status:'WORKFLOW_READY',note:'Action exécutée par le workflow natif du bloc.'});continue}
       entries.push({kind:'action',blockId,identifier:raw.actionId,status:resolved?.status||'INVALID',note:resolved?.reason||resolved?.canonicalEngine||'Action résolue.'})
     }

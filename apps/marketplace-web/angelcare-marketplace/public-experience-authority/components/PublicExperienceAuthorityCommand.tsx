@@ -9,10 +9,10 @@ import {WorldImportLab} from './WorldImportLab'
 import {DigitalTwinWorkbench,FinalCertificationWorkbench,ImpactWorkbench,ReadinessWorkbench,StateLabWorkbench,TruthFirewallWorkbench} from './PowerMaxWorkbench'
 import styles from './public-experience-authority.module.css'
 
-export type PublicExperienceAuthorityView='overview'|'digital-twin'|'detail-themes'|'storefronts'|'assignments'|'imports'|'compatibility'|'impact'|'readiness'|'truth'|'state-lab'|'certification'|'contracts'
+export type PublicExperienceAuthorityView='overview'|'digital-twin'|'detail-themes'|'storefronts'|'assignments'|'imports'|'world-factory'|'compatibility'|'impact'|'readiness'|'truth'|'state-lab'|'certification'|'contracts'
 const base='/angelcare-marketplace/admin/public-experience-authority'
 const tabs:[PublicExperienceAuthorityView,string,string][]=[
- ['overview','Commandement',''],['digital-twin','Digital Twin','/digital-twin'],['detail-themes','4 thèmes atomiques','/detail-themes'],['storefronts','12 storefronts','/storefronts'],['assignments','Assignations','/assignments'],['imports','Import Worlds','/imports'],['compatibility','Compatibilité','/compatibility'],['impact','Impact Graph','/impact'],['readiness','Readiness','/readiness'],['truth','Truth Firewall','/truth'],['state-lab','State Lab','/state-lab'],['certification','Final Gate','/certification'],['contracts','Contrats','/contracts'],
+ ['overview','Commandement',''],['digital-twin','Digital Twin','/digital-twin'],['detail-themes','4 thèmes atomiques','/detail-themes'],['storefronts','12 storefronts','/storefronts'],['assignments','Assignations','/assignments'],['imports','Import Worlds','/imports'],['world-factory','World Factory','/world-factory'],['compatibility','Compatibilité','/compatibility'],['impact','Impact Graph','/impact'],['readiness','Readiness','/readiness'],['truth','Truth Firewall','/truth'],['state-lab','State Lab','/state-lab'],['certification','Final Gate','/certification'],['contracts','Contrats','/contracts'],
 ]
 const labelScope:Record<PublicExperienceDetailScope,string>={business_family:'Famille business',doctrine:'Doctrine',master_domain:'Master domain'}
 const themeLabel=(theme:PublicExperienceThemeSummary|null|undefined)=>theme?`${theme.templateName} · ${theme.manifest?.themeVersion||'non enregistré'}`:'Native / aucun override'
@@ -67,7 +67,7 @@ export function PublicExperienceAuthorityCommand({snapshot,view='overview',canMa
  {view==='detail-themes'?<><DomainCards snapshot={snapshot} canManage={canManage}/><DoctrineMatrix snapshot={snapshot} canManage={canManage}/></>:null}
  {view==='storefronts'?<StorefrontCards snapshot={snapshot} canManage={canManage}/>:null}
  {view==='assignments'?<><DoctrineMatrix snapshot={snapshot} canManage={canManage}/><BusinessFamilyMatrix snapshot={snapshot} canManage={canManage}/></>:null}
- {view==='imports'?<WorldImportLab snapshot={snapshot} canManage={canManage}/>:null}
+ {view==='imports'||view==='world-factory'?<WorldImportLab snapshot={snapshot} canManage={canManage}/>:null}
  {view==='compatibility'?<><ThemeRegistry snapshot={snapshot}/><SectionHead eyebrow="COVERAGE" title="Compatibilité déclarative" copy="Les thèmes detail sont compatibles par master domain/doctrine/famille; les storefront worlds par storefront key."/><div className={styles.panel}><div className={styles.themeList}>{[...detailThemes,...storefrontThemes].map(theme=><article className={styles.themeCard} key={theme.templateId}><div><strong>{theme.templateName}</strong><small>{theme.manifest?.themeKind} · v{theme.manifest?.themeVersion}</small></div><span className={styles.pill}>{theme.manifest?.themeKind==='detail'?`${theme.manifest.acceptedDoctrineKeys.length} doctrines`:`${theme.manifest?.acceptedStorefrontKeys.length} storefronts`}</span><span className={styles.fingerprint}>{theme.manifest?.requiredActions.join(' · ')||'Actions natives selon doctrine'}</span><span className={styles.pill} data-state="on">FAIL-CLOSED</span></article>)}</div></div></>:null}
  {view==='digital-twin'?<DigitalTwinWorkbench/>:null}
  {view==='impact'?<ImpactWorkbench snapshot={snapshot}/>:null}

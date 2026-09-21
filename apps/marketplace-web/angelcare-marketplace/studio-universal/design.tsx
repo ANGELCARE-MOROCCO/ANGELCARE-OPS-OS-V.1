@@ -105,12 +105,29 @@ export function createStudioDesignFields() {
   }
 }
 
+const responsiveStyleFields=()=>({
+  paddingTop:{type:'number' as const,label:'Padding haut',min:0,max:180},paddingBottom:{type:'number' as const,label:'Padding bas',min:0,max:180},
+  paddingLeft:{type:'number' as const,label:'Padding gauche',min:0,max:120},paddingRight:{type:'number' as const,label:'Padding droite',min:0,max:120},
+  gap:{type:'number' as const,label:'Espacement',min:0,max:120},fontSize:{type:'number' as const,label:'Taille texte',min:0,max:96},
+  maxWidth:{type:'text' as const,label:'Largeur max'},textAlign:{type:'select' as const,label:'Alignement',options:[{label:'Début',value:'start'},{label:'Centre',value:'center'},{label:'Fin',value:'end'}]},
+})
 export const responsiveField = {
   type: 'object' as const,
-  label: 'Responsive',
+  label: 'Responsive Pro',
   objectFields: {
     mobileVisible: { type: 'radio' as const, label: 'Mobile', options: [{ label: 'Visible', value: true }, { label: 'Masqué', value: false }] },
     tabletVisible: { type: 'radio' as const, label: 'Tablette', options: [{ label: 'Visible', value: true }, { label: 'Masqué', value: false }] },
     desktopVisible: { type: 'radio' as const, label: 'Desktop', options: [{ label: 'Visible', value: true }, { label: 'Masqué', value: false }] },
+    mobileStyle:{type:'object' as const,label:'Mobile · réglages',objectFields:responsiveStyleFields()},
+    tabletStyle:{type:'object' as const,label:'Tablette · réglages',objectFields:responsiveStyleFields()},
+    desktopStyle:{type:'object' as const,label:'Desktop · réglages',objectFields:responsiveStyleFields()},
   },
 }
+
+const cssValue=(key:string,value:unknown)=>{if(value===undefined||value===null||value==='')return'';if(['paddingTop','paddingRight','paddingBottom','paddingLeft','gap','fontSize'].includes(key))return `${Number(value)||0}px`;return String(value)}
+const styleCss=(style?:StudioDesignStyle)=>style?Object.entries(style).filter(([key,value])=>value!==undefined&&value!==null&&value!==''&&['paddingTop','paddingRight','paddingBottom','paddingLeft','gap','fontSize','maxWidth','textAlign'].includes(key)).map(([key,value])=>`${key.replace(/[A-Z]/g,m=>`-${m.toLowerCase()}`)}:${cssValue(key,value)}`).join(';'):''
+export function responsiveStyleCss(blockId:string,value?:StudioResponsiveState){if(!value)return'';const safe=blockId.replace(/[^a-zA-Z0-9_-]/g,'');if(!safe)return'';const mobile=styleCss(value.mobileStyle),tablet=styleCss(value.tabletStyle),desktop=styleCss(value.desktopStyle);return[
+ mobile?`@media(max-width:640px){[data-ac-studio-block=\"${safe}\"]{${mobile}}}`:'',
+ tablet?`@media(min-width:641px) and (max-width:900px){[data-ac-studio-block=\"${safe}\"]{${tablet}}}`:'',
+ desktop?`@media(min-width:901px){[data-ac-studio-block=\"${safe}\"]{${desktop}}}`:'',
+].filter(Boolean).join('')}

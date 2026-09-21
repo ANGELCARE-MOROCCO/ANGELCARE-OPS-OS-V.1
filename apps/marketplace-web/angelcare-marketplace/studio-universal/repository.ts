@@ -12,6 +12,8 @@ import { evaluateStudioDocumentPolicy,assertStudioPolicy } from '@/angelcare-mar
 import { auditStudioPolicyDecision } from '@/angelcare-marketplace/studio-governance-engine/audit'
 import { syncStudioDocumentDependencies } from '@/angelcare-marketplace/studio-dependency-invalidation/repository'
 import { invalidateStudioPage } from '@/angelcare-marketplace/studio-dependency-invalidation/invalidation'
+import { validateStudioPageJson } from './page-json'
+import { validateBlockDocument } from '@/angelcare-marketplace/experience-builder/validation'
 
 const slugify=(value:string)=>value.normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,160)
 const stableRouteKey=(locale:string,slug:string)=>`studio.${locale}.${slug.replace(/-/g,'.')}`.slice(0,120)
@@ -61,11 +63,11 @@ export async function duplicateStudioPage(input:{pageId:string;context:Marketpla
   return page
 }
 
+export async function preflightStudioDraft(input:{pageId:string;data:Data;context:MarketplaceRequestContext;requestId:string}){const current=await getPageDetail(input.pageId);const data=validateStudioPageJson(input.data);const blocks=puckDataToCmsBlocks(data);validateBlockDocument(blocks);const policy=await evaluateStudioDocumentPolicy({mode:'draft',data,context:input.context,page:policyPage(current.page as unknown as Record<string,unknown>),requestId:input.requestId});assertStudioPolicy(policy);return{data,blocks,policy}}
+
 export async function saveStudioDraft(input:{pageId:string;data:Data;context:MarketplaceRequestContext;requestId:string;reason?:string}){
-  const current=await getPageDetail(input.pageId)
-  const policy=await evaluateStudioDocumentPolicy({mode:'draft',data:input.data,context:input.context,page:policyPage(current.page as unknown as Record<string,unknown>),requestId:input.requestId})
-  assertStudioPolicy(policy)
-  const blocks=puckDataToCmsBlocks(input.data)
+  const preflight=await preflightStudioDraft({pageId:input.pageId,data:input.data,context:input.context,requestId:input.requestId})
+  const blocks=preflight.blocks
   const saved=await saveBlocks({pageId:input.pageId,blocks,context:input.context,requestId:input.requestId});await syncStudioDocumentDependencies({pageId:input.pageId,revisionId:saved.revision?.id,data:input.data})
   await writeMarketplaceAudit({context:input.context,requestId:input.requestId,action:'marketplace.studio.draft.saved',objectType:'cms_page',objectId:input.pageId,result:'success',severity:'info',reason:input.reason||'Autosave Puck Studio',source:'angelcare-marketplace-studio',afterValue:{blockCount:blocks.length}})
   return {blocks:saved.blocks,data:cmsBlocksToPuckData(saved.blocks)}

@@ -19,6 +19,7 @@ export interface StudioDynamicSourceReference{
   strategy:StudioDynamicStrategy
   query?:string
   filters?:Record<string,string|number|boolean|null>
+  anchorMode?:'explicit'|'current_item'
   sort?:StudioDynamicSort
   limit:number
   category?:StudioSourceReference|null
@@ -69,6 +70,8 @@ export interface StudioDynamicResolveContext{
   territoryId?:string|null
   territoryCode?:string|null
   audienceId?:string|null
+  itemId?:string|null
+  itemSlug?:string|null
   visibility:'admin_preview'|'public_runtime'
 }
 export interface StudioDynamicSourceResult{

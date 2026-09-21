@@ -2,6 +2,7 @@ import type { StorefrontKey } from '@/angelcare-marketplace/catalog-discovery/ty
 import { PUBLIC_EXPERIENCE_AUTHORITY_VERSION, type PublicExperienceAssignmentLifecycle, type PublicExperienceDetailAssignment, type PublicExperienceDetailScope, type PublicExperienceMasterDomain, type PublicExperienceStorefrontAssignment, type PublicExperienceThemeManifest } from './types'
 import {normalizeAssignmentLifecycle} from './assignment-lifecycle'
 import { PUBLIC_EXPERIENCE_MASTER_DOMAINS, PUBLIC_EXPERIENCE_STOREFRONTS } from './registry'
+import {parseWorldFactoryRecord} from './world-factory/serialization'
 
 export const PEA_CONFIG_PREFIX='public-experience.'
 export const PEA_THEME_MANIFEST_PREFIX=`${PEA_CONFIG_PREFIX}theme-manifest.`
@@ -28,7 +29,7 @@ export function parseThemeManifest(value:unknown):PublicExperienceThemeManifest|
     acceptedMasterDomains,acceptedDoctrineKeys:arr(row.acceptedDoctrineKeys),acceptedBusinessFamilyKeys:arr(row.acceptedBusinessFamilyKeys),acceptedStorefrontKeys,
     requiredBindings:arr(row.requiredBindings),optionalBindings:arr(row.optionalBindings),requiredActions:arr(row.requiredActions),optionalActions:arr(row.optionalActions),requiredWorkflows:arr(row.requiredWorkflows),requiredCapabilities:arr(row.requiredCapabilities),slots,
     responsiveContract:'desktop-mobile-native',commerceContract:'canonical-only',fallbackContract:'native-fallback',seoContract:'canonical-route-owned',accessibilityContract:'wcag-operational',performanceContract:'bounded-runtime',compatibilityVersion:1,
-    structuralFingerprint:text(row.structuralFingerprint),visualFingerprint:text(row.visualFingerprint),sourceLabel:text(row.sourceLabel),importedAt:text(row.importedAt),importedBy:text(row.importedBy)||null,
+    structuralFingerprint:text(row.structuralFingerprint),visualFingerprint:text(row.visualFingerprint),sourceLabel:text(row.sourceLabel),importedAt:text(row.importedAt),importedBy:text(row.importedBy)||null,factory:parseWorldFactoryRecord(row.factory),
   }
 }
 

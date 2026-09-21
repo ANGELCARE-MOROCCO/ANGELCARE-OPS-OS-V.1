@@ -24,12 +24,14 @@ async function navigationHref(entityId:string,locale:'fr'|'en'|'ar'){
   return null
 }
 
-export async function resolveStudioPublicAction(action:StudioActionReference|null|undefined,localeInput:string):Promise<StudioResolvedAction|null>{
+export async function resolveStudioPublicAction(action:StudioActionReference|null|undefined,localeInput:string,context?:{itemId?:string|null;itemSlug?:string|null}):Promise<StudioResolvedAction|null>{
   if(!action)return null
+  if(action.targetMode==='current_item'&&!action.target&&context?.itemId)action={...action,target:{sourceId:'catalog.items',entityId:context.itemId}}
   const descriptor=getStudioActionDescriptor(action.actionId);if(!descriptor)return{status:'INVALID',actionId:action.actionId,label:'Action inconnue',href:null,external:false,newWindow:false,canonicalEngine:'unknown',creates:null,adminDestination:null,target:action.target,reason:'Action Studio non enregistrée.',validations:[]}
   const base={actionId:descriptor.id,label:descriptor.label,canonicalEngine:descriptor.canonicalEngine,creates:descriptor.creates,adminDestination:descriptor.adminDestination,target:action.target,validations:descriptor.validations,newWindow:action.newWindow??Boolean(descriptor.defaultNewWindow)}
   if(descriptor.executionMode==='external'){const href=safeExternalStudioUrl(action.externalUrl);return href?{...base,status:'READY',href,external:true}:{...base,status:'UNSAFE_EXTERNAL_URL',href:null,external:true,reason:'URL externe refusée par la politique Studio.'}}
   if(descriptor.executionMode==='workflow'&&descriptor.p07WorkflowRequired)return{...base,status:'WORKFLOW_REQUIRED',href:null,external:false,reason:'Workflow reconnu; rendu/formulaire natif finalisé en P07.'}
+  if(descriptor.targetRequired&&!action.target&&action.targetMode==='current_item')return{...base,status:'CONTEXT_REQUIRED' as const,href:null,external:false,reason:'Le World attend l’offre canonique courante comme cible.'}
   if(descriptor.targetRequired&&!action.target)return{...base,status:'TARGET_REQUIRED',href:null,external:false,reason:'Sélection canonique requise.'}
   if(action.target&&descriptor.targetSources.length&&!descriptor.targetSources.includes(action.target.sourceId))return{...base,status:'TARGET_UNSUPPORTED',href:null,external:false,reason:'Type de cible non autorisé pour cette action.'}
   const locale=localeOf(localeInput)

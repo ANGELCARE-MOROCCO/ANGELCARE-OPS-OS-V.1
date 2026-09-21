@@ -91,6 +91,7 @@ export interface PublicExperienceThemeManifest {
   sourceLabel: string
   importedAt: string
   importedBy: string | null
+  factory?: import('./world-factory/types').PublicExperienceWorldFactoryRecord | null
 }
 
 export interface PublicExperienceThemeSummary {

@@ -1,5 +1,8 @@
 import type { ComponentData, Data } from '@puckeditor/core'
-import type { StudioPickerData } from '@/angelcare-marketplace/studio-universal/types'
+import type { StudioPickerData,StudioResponsiveState,StudioDesignStyle } from '@/angelcare-marketplace/studio-universal/types'
+import type { StudioSourceReference } from '@/angelcare-marketplace/studio-source-registry/types'
+import type { StudioActionReference,StudioResolvedAction } from '@/angelcare-marketplace/studio-action-registry/types'
+import type { StudioAttributionContext } from '@/angelcare-marketplace/studio-attribution/types'
 
 export const HOMEPAGE_PRO_MAX_CATEGORY_ID='homepage_pro_max' as const
 export const HOMEPAGE_PRO_MAX_CATEGORY_LABEL='11 · HOMEPAGE PRO MAX' as const
@@ -16,10 +19,11 @@ export interface HomepageProMaxItem extends Record<string,unknown>{
   subtitle?:string
   body?:string
   mediaUrl?:string
-  mediaAssetKey?:string
+  mediaAssetKey?:string|StudioSourceReference
   href?:string
   ctaLabel?:string
   priceMad?:number|string
+  currencyLabel?:string
   compareAtMad?:number|string
   rating?:number|string
   reviewCount?:number|string
@@ -33,20 +37,27 @@ export interface HomepageProMaxSectionProps extends Record<string,unknown>{
   eyebrow?:string
   subtitle?:string
   body?:string
-  mediaAssetKey?:string
+  mediaAssetKey?:string|StudioSourceReference
   mediaUrl?:string
   mediaAlt?:string
   primaryCtaLabel?:string
   primaryCtaHref?:string
+  primaryAction?:StudioActionReference|null
+  __studioResolvedPrimaryAction?:StudioResolvedAction|null
   secondaryCtaLabel?:string
   secondaryCtaHref?:string
+  secondaryAction?:StudioActionReference|null
+  __studioResolvedSecondaryAction?:StudioResolvedAction|null
+  __studioAttribution?:StudioAttributionContext
   items?:HomepageProMaxItem[]
-  categoryKey?:string
-  collectionKey?:string
+  categoryKey?:string|StudioSourceReference
+  collectionKey?:string|StudioSourceReference
   density?:'dense'|'balanced'|'editorial'
   background?:'white'|'soft-blue'|'soft-pink'|'navy'|'transparent'
   emptyPolicy?:'hide'|'editor-placeholder'|'preserve-shell'
   hidden?:boolean
+  responsive?:StudioResponsiveState
+  sourceDesign?:StudioDesignStyle
   endsAt?:string
   badge?:string
   __studioDynamicSource?:import("../studio-dynamic-source/types").StudioDynamicSourceReference

@@ -15,8 +15,8 @@ async function territoryCode(context:StudioDynamicResolveContext,recipe:StudioDy
 async function refMetadata(ref:StudioSourceReference|undefined|null,table:string,field:string){if(!ref)return'';const db=await createServiceClient();const r=await db.from(table).select(field).eq('id',ref.entityId).maybeSingle();return text((r.data as any)?.[field])}
 async function placementIds(badge:string,context:StudioDynamicResolveContext,limit:number):Promise<string[]>{const db=await createServiceClient();const now=new Date().toISOString();let q:any=db.from('angelcare_marketplace_homepage_placements').select('catalog_item_id').eq('status','active').eq('merchandising_badge',badge).eq('locale',context.locale).lte('starts_at',now).or(`ends_at.is.null,ends_at.gte.${now}`).order('priority').order('sort_order').limit(Math.min(limit,24));if(context.territoryId)q=q.or(`territory_id.is.null,territory_id.eq.${context.territoryId}`);const{data,error}=await q;if(error)return[];return(data||[]).map((row:any)=>text(row.catalog_item_id)).filter(Boolean)}
 
-async function relationIds(recipe:StudioDynamicSourceReference):Promise<string[]>{
-  const anchor=typeof recipe.filters?.anchor_item_id==='string'?recipe.filters.anchor_item_id:'';if(!anchor)return[]
+async function relationIds(recipe:StudioDynamicSourceReference,context:StudioDynamicResolveContext):Promise<string[]>{
+  const explicit=typeof recipe.filters?.anchor_item_id==='string'?recipe.filters.anchor_item_id:'';const anchor=explicit||(recipe.anchorMode==='current_item'?text(context.itemId):'');if(!anchor)return[]
   const db=await createServiceClient();const result=await db.from('angelcare_marketplace_catalog_items').select('relation_config').eq('id',anchor).eq('status','published').maybeSingle();if(result.error||!result.data)return[]
   const relation=result.data.relation_config&&typeof result.data.relation_config==='object'&&!Array.isArray(result.data.relation_config)?result.data.relation_config as Record<string,unknown>:{ }
   const field=recipe.strategy==='compatible_accessories'?'cross_sell_ids':recipe.strategy==='bundle_members'?'bundle_ids':recipe.strategy==='frequently_bought_together'?'upsell_ids':'alternative_ids'
@@ -34,7 +34,7 @@ export async function resolveCatalogDynamicSource(recipe:StudioDynamicSourceRefe
   if(recipe.strategy==='collection_items'){
     const ids=await collectionIds(recipe);if(!ids.length)return[];const result=await searchDiscovery({locale:context.locale,territoryCode:territory,limit:240});const map=new Map(result.items.map(item=>[item.id,item]));return ids.map((id:string)=>map.get(id)).filter(Boolean).slice(0,limit).map(entity)
   }
-  if(['compatible_accessories','bundle_members','frequently_bought_together','similar_items'].includes(recipe.strategy)){const ids=await relationIds(recipe);if(!ids.length)return[];const result=await searchDiscovery({locale:context.locale,territoryCode:territory,limit:240});const map=new Map(result.items.map(item=>[item.id,item]));return ids.map((id:string)=>map.get(id)).filter(Boolean).slice(0,limit).map(entity)}
+  if(['compatible_accessories','bundle_members','frequently_bought_together','similar_items'].includes(recipe.strategy)){const ids=await relationIds(recipe,context);if(!ids.length)return[];const result=await searchDiscovery({locale:context.locale,territoryCode:territory,limit:240});const map=new Map(result.items.map(item=>[item.id,item]));return ids.map((id:string)=>map.get(id)).filter(Boolean).slice(0,limit).map(entity)}
   let category=typeof recipe.filters?.category_key==='string'?recipe.filters.category_key:null
   if(recipe.strategy==='category_items')category=await refMetadata(recipe.category,'angelcare_marketplace_catalog_categories','category_key')||null
   const availability=recipe.strategy==='catalog_available'?'available':typeof recipe.filters?.availability_status==='string'?recipe.filters.availability_status:null

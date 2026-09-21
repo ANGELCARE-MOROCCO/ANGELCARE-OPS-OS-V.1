@@ -4,7 +4,10 @@ import type { StudioPickerData } from '@/angelcare-marketplace/studio-universal/
 import { MediaField,RecordField } from '@/angelcare-marketplace/studio-universal/components/StudioFields'
 import { HOMEPAGE_PRO_MAX_COMPONENT_KEYS,HOMEPAGE_PRO_MAX_SECTION_DEFINITIONS } from './recipe'
 import type { HomepageProMaxSectionProps } from './types'
-import { HomepageProMaxSectionRuntime } from './components/HomepageProMaxSectionRuntime'
+import { HomepageProMaxEditorRuntime } from './components/HomepageProMaxEditorRuntime'
+import { StudioDynamicSourceField } from '@/angelcare-marketplace/studio-dynamic-source/components/StudioDynamicSourceField'
+import { createStudioDesignFields,responsiveField,DEFAULT_STUDIO_DESIGN } from '@/angelcare-marketplace/studio-universal/design'
+import { StudioActionField } from '@/angelcare-marketplace/studio-action-registry/components/StudioActionField'
 
 const choice=(label:string,options:Array<{label:string;value:string}>)=>({type:'select' as const,label,options})
 const yesNo=(label:string)=>({type:'radio' as const,label,options:[{label:'Oui',value:true},{label:'Non',value:false}]})
@@ -13,15 +16,16 @@ const itemFields={
 }
 function fields(pickers:StudioPickerData){return {
  title:{type:'text' as const,label:'Titre'},eyebrow:{type:'text' as const,label:'Eyebrow'},subtitle:{type:'textarea' as const,label:'Sous-titre'},body:{type:'textarea' as const,label:'Texte'},
- mediaAssetKey:{type:'custom' as const,label:'Media Vault',render:({value,onChange}:any)=><MediaField value={typeof value==='string'?value:''} onChange={onChange}/>},mediaUrl:{type:'text' as const,label:'URL média externe · secours'},mediaAlt:{type:'text' as const,label:'Texte alternatif'},
- categoryKey:{type:'custom' as const,label:'Catégorie réelle',render:({value,onChange}:any)=><RecordField kind="category" value={typeof value==='string'?value:''} onChange={onChange}/>},collectionKey:{type:'custom' as const,label:'Collection réelle',render:({value,onChange}:any)=><RecordField kind="collection" value={typeof value==='string'?value:''} onChange={onChange}/>},
- primaryCtaLabel:{type:'text' as const,label:'CTA principal'},primaryCtaHref:{type:'text' as const,label:'Destination CTA'},secondaryCtaLabel:{type:'text' as const,label:'CTA secondaire'},secondaryCtaHref:{type:'text' as const,label:'Destination secondaire'},
+ mediaAssetKey:{type:'custom' as const,label:'Media Vault',render:({value,onChange}:any)=><MediaField value={value} onChange={onChange}/>},mediaUrl:{type:'text' as const,label:'URL média externe · secours'},mediaAlt:{type:'text' as const,label:'Texte alternatif'},
+ categoryKey:{type:'custom' as const,label:'Catégorie réelle',render:({value,onChange}:any)=><RecordField kind="category" value={value} onChange={onChange}/>},collectionKey:{type:'custom' as const,label:'Collection réelle',render:({value,onChange}:any)=><RecordField kind="collection" value={value} onChange={onChange}/>},
+ primaryCtaLabel:{type:'text' as const,label:'CTA principal'},primaryAction:{type:'custom' as const,label:'Action principale · canonique',render:({value,onChange}:any)=><StudioActionField value={value} onChange={onChange} label="Action principale"/>},primaryCtaHref:{type:'text' as const,label:'Destination CTA · legacy'},secondaryCtaLabel:{type:'text' as const,label:'CTA secondaire'},secondaryAction:{type:'custom' as const,label:'Action secondaire · canonique',render:({value,onChange}:any)=><StudioActionField value={value} onChange={onChange} label="Action secondaire"/>},secondaryCtaHref:{type:'text' as const,label:'Destination secondaire · legacy'},
  endsAt:{type:'text' as const,label:'Fin de campagne ISO · source réelle'},badge:{type:'text' as const,label:'Badge'},
- __studioDynamicSource:{type:'object' as const,label:'Source dynamique P06',objectFields:{sourceId:choice('Source',[{label:'Catalogue réel',value:'catalog.items'},{label:'Collections réelles',value:'homepage.collections'},{label:'Campagnes réelles',value:'homepage.campaigns'}]),strategy:choice('Stratégie',[{label:'Sélection mise en avant',value:'featured'},{label:'Disponible maintenant',value:'available_now'},{label:'Populaire',value:'popular'},{label:'Nouveautés',value:'newest'},{label:'Par catégorie',value:'category_items'},{label:'Par collection',value:'collection_items'}]),limit:{type:'number' as const,label:'Limite',min:1,max:24}}},
+ __studioDynamicSource:{type:'custom' as const,label:'Données réelles · P06',render:({value,onChange}:any)=><StudioDynamicSourceField value={value} onChange={onChange} allowedSources={['catalog.items','homepage.collections','homepage.campaigns']}/>},
  items:{type:'array' as const,label:'Overrides éditoriaux / contenu approuvé',arrayFields:itemFields,defaultItemProps:(index:number)=>({title:`Élément ${index+1}`}),getItemSummary:(item:Record<string,unknown>,index:number)=>String(item.title||`Élément ${index+1}`),max:24},
+ sourceDesign:{type:'object' as const,label:'Design avancé',objectFields:createStudioDesignFields()},responsive:responsiveField,
  density:choice('Densité',[{label:'Dense',value:'dense'},{label:'Équilibrée',value:'balanced'},{label:'Éditoriale',value:'editorial'}]),background:choice('Fond',[{label:'Blanc',value:'white'},{label:'Bleu doux',value:'soft-blue'},{label:'Rose doux',value:'soft-pink'},{label:'Navy',value:'navy'},{label:'Transparent',value:'transparent'}]),emptyPolicy:choice('Si vide',[{label:'Masquer en public',value:'hide'},{label:'Placeholder éditeur',value:'editor-placeholder'},{label:'Conserver le shell',value:'preserve-shell'}]),hidden:yesNo('Masqué'),
 }}
 export function createHomepageProMaxPuckComponents(pickers:StudioPickerData):Config['components']{
- return Object.fromEntries(HOMEPAGE_PRO_MAX_SECTION_DEFINITIONS.map(def=>[def.type,{label:def.label,fields:fields(pickers),defaultProps:def.defaultProps,render:(props:HomepageProMaxSectionProps)=><HomepageProMaxSectionRuntime type={def.type} props={props} pickers={pickers} mode="editor"/>,resolvePermissions:async()=>({edit:true,drag:true,delete:true,duplicate:true,insert:true})}])) as Config['components']
+ return Object.fromEntries(HOMEPAGE_PRO_MAX_SECTION_DEFINITIONS.map(def=>[def.type,{label:def.label,fields:fields(pickers),defaultProps:{...def.defaultProps,sourceDesign:{...DEFAULT_STUDIO_DESIGN},responsive:def.defaultProps.responsive||{mobileVisible:true,tabletVisible:true,desktopVisible:true}},render:(props:HomepageProMaxSectionProps)=><HomepageProMaxEditorRuntime type={def.type} props={props} pickers={pickers}/>,resolvePermissions:async()=>({edit:true,drag:true,delete:true,duplicate:true,insert:true})}])) as Config['components']
 }
 export { HOMEPAGE_PRO_MAX_COMPONENT_KEYS }

@@ -1,6 +1,7 @@
 import type { ComponentData, Data } from '@puckeditor/core'
 import type { CmsBlock } from '@/angelcare-marketplace/experience-builder/types'
 import { canonicalStudioBlockType, studioVisualExperience, visualAliasFromMetadata } from './visual-catalogue'
+import { homepageProMaxPersistenceType } from '@/angelcare-marketplace/studio-homepage-pro-max/recipe'
 
 const clone=<T,>(value:T):T=>JSON.parse(JSON.stringify(value)) as T
 const string=(value:unknown)=>value==null?'':String(value)
@@ -36,7 +37,7 @@ export function puckDataToCmsBlocks(data:Data){
     const props=(component?.props||{}) as Record<string,unknown>
     const componentType=string(component.type)||'block'
     const visual=studioVisualExperience(componentType)
-    const canonicalType=canonicalStudioBlockType(componentType)
+    const canonicalType=homepageProMaxPersistenceType(canonicalStudioBlockType(componentType))
     const id=string(props.id)||stableStudioId(componentType,index,Date.now().toString(36))
     const publicContent:Record<string,unknown>={...props,__studioPuck:clone(component)}
     delete publicContent.id

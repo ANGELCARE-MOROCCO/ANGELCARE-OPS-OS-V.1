@@ -19,9 +19,9 @@ export async function prepareStudioPublicRuntime(input:{experience:AdaptiveExper
     if(bound.status!=='BOUND'||!bound.data)return fallback('BOUND_TEMPLATE_UNAVAILABLE',base,{bound,bindingReport:bound.report})
     if(bound.report.blockerCount>0)return fallback('BINDING_BLOCKER',base,{bound,bindingReport:bound.report})
     if(!Array.isArray(bound.data.content)||bound.data.content.length===0)return fallback('EMPTY_TEMPLATE',base,{bound,bindingReport:bound.report})
-    const dynamic=await applyStudioDynamicSources(bound.data,{locale,territoryId,audienceId:input.audienceId||null,visibility:input.visibility||'public_runtime'})
+    const dynamic=await applyStudioDynamicSources(bound.data,{locale,territoryId,audienceId:input.audienceId||null,itemId:input.experience.item.id,itemSlug:input.experience.item.slug,visibility:input.visibility||'public_runtime'})
     if(dynamic.report.blockerCount>0)return fallback('DYNAMIC_SOURCE_BLOCKER',base,{bound,bindingReport:bound.report,dynamicReport:dynamic.report})
-    const preflight=await preflightStudioRuntime(dynamic.data,locale)
+    const preflight=await preflightStudioRuntime(dynamic.data,locale,{itemId:input.experience.item.id,itemSlug:input.experience.item.slug})
     if(preflight.blockerCount>0){const workflowBlock=preflight.entries.some(row=>row.kind==='workflow'&&!['READY'].includes(row.status));return fallback(workflowBlock?'WORKFLOW_BLOCKER':'ACTION_BLOCKER',base,{bound,bindingReport:bound.report,dynamicReport:dynamic.report,preflight})}
     const attribution=assignedTemplateAttribution({locale,territoryId,audienceId:input.audienceId||null,collectionId:input.collectionId||null,placementId:input.placementId||null,campaignId:input.campaignId||null,itemId:input.experience.item.id,itemSlug:input.experience.item.slug,templateId:input.resolution.templateId,templateKey:input.resolution.templateKey,templateRevisionId:input.resolution.templateRevisionId,templateScope:input.resolution.matchedScope})
     const policy=evaluateStudioRuntimePolicy({mode:'public_runtime',data:dynamic.data,templateRevisionId:input.resolution.templateRevisionId,matchedScope:input.resolution.matchedScope,bindingBlockers:bound.report.blockerCount,dynamicBlockers:dynamic.report.blockerCount,preflightBlockers:preflight.blockerCount,territoryId,attributionSafe:true})

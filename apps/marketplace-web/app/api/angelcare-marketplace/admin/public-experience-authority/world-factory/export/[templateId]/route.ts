@@ -1,0 +1,4 @@
+import {requireMarketplaceApiContext} from '@/angelcare-marketplace/auth/context'
+import {exportPublicExperienceWorldPackage} from '@/angelcare-marketplace/public-experience-authority/repository'
+import {apiFailure,requestId} from '@/angelcare-marketplace/server/request'
+export async function GET(request:Request,{params}:{params:Promise<{templateId:string}>}){const id=requestId(request);try{const context=await requireMarketplaceApiContext('marketplace.admin.access'),{templateId}=await params,pkg=await exportPublicExperienceWorldPackage(templateId,context);return new Response(JSON.stringify(pkg,null,2),{status:200,headers:{'content-type':'application/json; charset=utf-8','content-disposition':`attachment; filename="angelcare-world-${templateId}.json"`,'x-request-id':id}})}catch(error){return apiFailure(error,id)}}

@@ -46,6 +46,7 @@ export function isStudioDynamicSourceReference(value:unknown):value is StudioDyn
   if(typeof value.emptyPolicy!=='string'||!STUDIO_DYNAMIC_EMPTY_POLICIES.includes(value.emptyPolicy as any))return false
   if(value.query!==undefined&&(typeof value.query!=='string'||value.query.length>120))return false
   const filters=plain(value.filters)?value.filters:{};if(Object.keys(filters).length>8||Object.keys(filters).some(key=>!profile.allowedFilters.includes(key)))return false
+  if(value.anchorMode!==undefined&&!['explicit','current_item'].includes(String(value.anchorMode)))return false
   if(value.sort!==undefined&&!profile.allowedSorts.includes(value.sort as any))return false
   return true
 }

@@ -3,7 +3,7 @@ import type { StudioSourceReference } from '@/angelcare-marketplace/studio-sourc
 export type StudioActionCategory='navigation'|'commerce'|'conversion'|'workflow'|'external'
 export type StudioActionExecutionMode='route'|'workflow'|'external'
 export type StudioActionValidation='target'|'publication'|'availability'|'pricing'|'consent'|'basket_context'
-export type StudioActionResolutionStatus='READY'|'INVALID'|'TARGET_REQUIRED'|'TARGET_UNSUPPORTED'|'TARGET_NOT_FOUND'|'TARGET_NOT_PUBLISHED'|'DISABLED'|'WORKFLOW_REQUIRED'|'CONTEXT_REQUIRED'|'UNSAFE_EXTERNAL_URL'
+export type StudioActionResolutionStatus='READY'|'INVALID'|'TARGET_REQUIRED'|'CONTEXT_REQUIRED'|'TARGET_UNSUPPORTED'|'TARGET_NOT_FOUND'|'TARGET_NOT_PUBLISHED'|'DISABLED'|'WORKFLOW_REQUIRED'|'UNSAFE_EXTERNAL_URL'
 
 export interface StudioActionDescriptor{
   id:string
@@ -26,6 +26,7 @@ export interface StudioActionDescriptor{
 export interface StudioActionReference{
   version:1
   actionId:string
+  targetMode?:'explicit'|'current_item'|'none'
   target?:StudioSourceReference|null
   externalUrl?:string|null
   newWindow?:boolean

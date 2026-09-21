@@ -17,6 +17,11 @@ import { PUBLIC_EXPERIENCE_DOCTRINES, PUBLIC_EXPERIENCE_MASTER_DOMAINS, PUBLIC_E
 import { detailAssignmentConfigKey, parseDetailAssignment, parseStorefrontAssignment, parseThemeManifest, PEA_CONFIG_PREFIX, storefrontAssignmentConfigKey, themeManifestConfigKey, safePublicExperienceKey } from './reference'
 import type { PublicExperienceAssignmentLifecycle, PublicExperienceAuthoritySnapshot, PublicExperienceBusinessFamily, PublicExperienceDetailAssignment, PublicExperienceDetailScope, PublicExperienceMasterDomain, PublicExperienceStorefrontAssignment, PublicExperienceThemeImportInput, PublicExperienceThemeManifest, PublicExperienceThemeSummary } from './types'
 import {canonicalBuiltinManifest,canonicalBuiltinThemeSummaries,canonicalDetailWorld,canonicalStorefrontWorld,isCanonicalBuiltinWorld} from './canonical-worlds'
+import {buildWorldFactoryRecord} from './world-factory/compiler'
+import {worldFactoryManifestFields} from './world-factory/manifest-bridge'
+import {materializeWorldFactoryData} from './world-factory/materializer'
+import {createWorldFactoryPackage} from './world-factory/package-format'
+import {validateStudioPageJson} from '@/angelcare-marketplace/studio-universal/page-json'
 import {normalizeAssignmentLifecycle,validateAssignmentLifecycle} from './assignment-lifecycle'
 import type { StorefrontKey } from '@/angelcare-marketplace/catalog-discovery/types'
 
@@ -83,9 +88,81 @@ function normalizeManifest(input:PublicExperienceThemeImportInput['manifest'],co
 async function saveManifest(templateId:string,manifest:PublicExperienceThemeManifest,context:MarketplaceRequestContext){return setConfig({key:themeManifestConfigKey(templateId),label:`Public Experience Theme · ${manifest.themeName}`,description:`Manifest ${manifest.themeKind} v${manifest.themeVersion}.`,value:manifest,context})}
 
 export async function importPublicExperienceTheme(input:PublicExperienceThemeImportInput,context:MarketplaceRequestContext,requestId:string){
-  assertManage(context);if(!input.name.trim())throw new MarketplaceError('VALIDATION_ERROR','Nom de thème requis.');const db=await createServiceClient();let templateId=input.templateId||null;let created=false;let data=input.data||null
-  if(!templateId){if(!data)throw new MarketplaceError('VALIDATION_ERROR','Données Puck requises pour créer un nouveau thème.');assertSafeData(data);const templateKey=`pea-${safePublicExperienceKey(input.name)}-${Date.now().toString(36)}`;const template=await db.from('angelcare_marketplace_cms_templates').insert({template_key:templateKey,name:input.name,description:input.description||null,category:input.manifest.themeKind==='storefront'?'public-experience-storefront':'public-experience-detail',status:input.publish?'published':'draft',owner_id:context.actor.id,created_by:context.actor.id,updated_by:context.actor.id}).select('*').single();if(template.error||!template.data)throw new MarketplaceError('INTERNAL_ERROR','Impossible de créer le template Experience Core.',{cause:template.error});templateId=String(template.data.id);const digest=checksum(data);const revision=await db.from('angelcare_marketplace_cms_template_revisions').insert({template_id:templateId,revision_number:1,document:data,checksum:digest,change_summary:'Import Public Experience Authority',created_by:context.actor.id}).select('*').single();if(revision.error||!revision.data)throw new MarketplaceError('INTERNAL_ERROR','Impossible de créer la révision du world.',{cause:revision.error});const patch:Record<string,unknown>={current_revision_id:revision.data.id,updated_by:context.actor.id,updated_at:new Date().toISOString()};if(input.publish){patch.status='published';patch.published_revision_id=revision.data.id}const updated=await db.from('angelcare_marketplace_cms_templates').update(patch).eq('id',templateId).select('*').single();if(updated.error)throw new MarketplaceError('INTERNAL_ERROR','Impossible de finaliser le template Experience Core.',{cause:updated.error});created=true}else{const existing=await db.from('angelcare_marketplace_cms_templates').select('id,name,status,published_revision_id,current_revision_id').eq('id',templateId).neq('status','archived').maybeSingle();if(existing.error||!existing.data)throw new MarketplaceError('NOT_FOUND','Template Experience Core introuvable.')}
-  const manifest=normalizeManifest(input.manifest,context,data);const compile=compilePublicExperienceTheme({manifest,masterDomain:manifest.acceptedMasterDomains[0]||null,doctrineKeys:manifest.acceptedDoctrineKeys,storefrontKey:manifest.acceptedStorefrontKeys[0]||null});if(!compile.compatible)throw new MarketplaceError('VALIDATION_ERROR',`World Pro Max non certifiable: ${compile.blockers.join(' ')}`);const manifestWrite=await saveManifest(templateId!,manifest,context);await writeMarketplaceAudit({context,requestId,action:created?'marketplace.public_experience.theme.imported':'marketplace.public_experience.theme.registered',objectType:'public_experience_theme',objectId:templateId!,beforeValue:manifestWrite.before,afterValue:{templateId,manifest},reason:`${manifest.themeKind} ${manifest.themeVersion}`,severity:'warning',source:'public-experience-authority'});if(input.publish)await invalidateStudioTemplate({templateId:templateId!,reason:'Public Experience theme imported/published',context,requestId});return{templateId,created,published:input.publish,manifest,compile}
+  assertManage(context)
+  if(!input.name.trim())throw new MarketplaceError('VALIDATION_ERROR','Nom de thème requis.')
+  const db=await createServiceClient()
+  let templateId=input.templateId||null,created=false,data=input.data||null
+  let existingTemplate:Record<string,unknown>|null=null
+
+  if(templateId){
+    const existing=await db.from('angelcare_marketplace_cms_templates').select('id,name,status,published_revision_id,current_revision_id').eq('id',templateId).neq('status','archived').maybeSingle()
+    if(existing.error||!existing.data)throw new MarketplaceError('NOT_FOUND','Template Experience Core introuvable.')
+    existingTemplate=existing.data as Record<string,unknown>
+    if(!data){
+      const revisionId=String(existing.data.published_revision_id||existing.data.current_revision_id||'')
+      if(!revisionId)throw new MarketplaceError('VALIDATION_ERROR','Le template Experience Core ne possède aucune révision exploitable.')
+      const revision=await db.from('angelcare_marketplace_cms_template_revisions').select('document').eq('id',revisionId).maybeSingle()
+      if(revision.error||!revision.data?.document)throw new MarketplaceError('NOT_FOUND','Révision Experience Core introuvable.')
+      data=revision.data.document as unknown as Data
+    }
+  }
+
+  if(!data)throw new MarketplaceError('VALIDATION_ERROR','Données Puck requises pour certifier le world.')
+  assertSafeData(data)
+
+  let manifest=normalizeManifest(input.manifest,context,data)
+  if(manifest.factory){
+    const source=manifest.factory.source
+    const rebuilt=buildWorldFactoryRecord(data,{themeKind:manifest.themeKind,masterDomain:manifest.factory.masterDomain,doctrineKeys:manifest.factory.doctrineKeys,storefrontKeys:manifest.factory.storefrontKeys,strictVisualFidelity:manifest.factory.strictVisualFidelity,visualReferences:manifest.factory.visualReferences,overrides:manifest.factory.overrides,worldKey:manifest.factory.revision.worldKey,revision:manifest.factory.revision.revision,supersedes:manifest.factory.revision.supersedes,source:{kind:source.kind,label:source.label,sourceFingerprint:source.sourceFingerprint,safeToApply:source.safeToApply,upstreamBlockingCodes:source.upstreamBlockingCodes,upstreamReviewCodes:source.upstreamReviewCodes}})
+    if(rebuilt.candidateFingerprint!==manifest.factory.candidateFingerprint||rebuilt.compiledFingerprint!==manifest.factory.compiledFingerprint)throw new MarketplaceError('VALIDATION_ERROR','World Factory fingerprint mismatch. Relancez l’analyse avant enregistrement.')
+    data=validateStudioPageJson(materializeWorldFactoryData(validateStudioPageJson(data),rebuilt))
+    assertSafeData(data)
+    manifest=normalizePowerMaxThemeManifest({...manifest,...worldFactoryManifestFields(rebuilt),factory:rebuilt,structuralFingerprint:checksum(data)})
+  }
+
+  const compile=compilePublicExperienceTheme({manifest,masterDomain:manifest.acceptedMasterDomains[0]||null,doctrineKeys:manifest.acceptedDoctrineKeys,storefrontKey:manifest.acceptedStorefrontKeys[0]||null})
+  if(!compile.compatible)throw new MarketplaceError('VALIDATION_ERROR',`World Pro Max non certifiable: ${compile.blockers.join(' ')}`)
+  if(input.publish&&manifest.factory&&!manifest.factory.certification.productionEligible)throw new MarketplaceError('NOT_READY','Publication World Factory bloquée: la certification de fidélité / runtime n’est pas productionEligible.')
+
+  if(!templateId){
+    const templateKey=`pea-${safePublicExperienceKey(input.name)}-${Date.now().toString(36)}`
+    const template=await db.from('angelcare_marketplace_cms_templates').insert({template_key:templateKey,name:input.name,description:input.description||null,category:manifest.themeKind==='storefront'?'public-experience-storefront':'public-experience-detail',status:input.publish?'published':'draft',owner_id:context.actor.id,created_by:context.actor.id,updated_by:context.actor.id}).select('*').single()
+    if(template.error||!template.data)throw new MarketplaceError('INTERNAL_ERROR','Impossible de créer le template Experience Core.',{cause:template.error})
+    templateId=String(template.data.id)
+    const digest=checksum(data)
+    const revision=await db.from('angelcare_marketplace_cms_template_revisions').insert({template_id:templateId,revision_number:1,document:data,checksum:digest,change_summary:'Import Public Experience World Factory',created_by:context.actor.id}).select('*').single()
+    if(revision.error||!revision.data)throw new MarketplaceError('INTERNAL_ERROR','Impossible de créer la révision du world.',{cause:revision.error})
+    const patch:Record<string,unknown>={current_revision_id:revision.data.id,updated_by:context.actor.id,updated_at:new Date().toISOString()}
+    if(input.publish){patch.status='published';patch.published_revision_id=revision.data.id}
+    const updated=await db.from('angelcare_marketplace_cms_templates').update(patch).eq('id',templateId).select('*').single()
+    if(updated.error)throw new MarketplaceError('INTERNAL_ERROR','Impossible de finaliser le template Experience Core.',{cause:updated.error})
+    created=true
+  }else if(manifest.factory){
+    const latest=await db.from('angelcare_marketplace_cms_template_revisions').select('revision_number').eq('template_id',templateId).order('revision_number',{ascending:false}).limit(1).maybeSingle()
+    if(latest.error)throw new MarketplaceError('INTERNAL_ERROR','Impossible de lire la dernière révision World.',{cause:latest.error})
+    const revisionNumber=Math.max(1,Number(latest.data?.revision_number||0)+1),digest=checksum(data)
+    const revision=await db.from('angelcare_marketplace_cms_template_revisions').insert({template_id:templateId,revision_number:revisionNumber,document:data,checksum:digest,change_summary:`World Factory ${manifest.factory.compiledFingerprint} · immutable revision`,created_by:context.actor.id}).select('*').single()
+    if(revision.error||!revision.data)throw new MarketplaceError('INTERNAL_ERROR','Impossible de créer la révision immuable World Factory.',{cause:revision.error})
+    const patch:Record<string,unknown>={current_revision_id:revision.data.id,updated_by:context.actor.id,updated_at:new Date().toISOString()}
+    if(input.publish){patch.status='published';patch.published_revision_id=revision.data.id}
+    const updated=await db.from('angelcare_marketplace_cms_templates').update(patch).eq('id',templateId).select('*').single()
+    if(updated.error)throw new MarketplaceError('INTERNAL_ERROR','Impossible d’attacher la révision immuable World Factory.',{cause:updated.error})
+  }
+
+  const manifestWrite=await saveManifest(templateId!,manifest,context)
+  await writeMarketplaceAudit({context,requestId,action:created?'marketplace.public_experience.theme.imported':'marketplace.public_experience.theme.registered',objectType:'public_experience_theme',objectId:templateId!,beforeValue:manifestWrite.before,afterValue:{templateId,manifest,compile,existingTemplate},reason:`${manifest.themeKind} ${manifest.themeVersion}`,severity:'warning',source:'public-experience-authority'})
+  if(input.publish)await invalidateStudioTemplate({templateId:templateId!,reason:'Public Experience theme imported/published',context,requestId})
+  return{templateId,created,published:input.publish,manifest,compile}
+}
+
+export async function exportPublicExperienceWorldPackage(templateId:string,context:MarketplaceRequestContext){
+  if(!hasMarketplacePermission(context,'marketplace.admin.access'))throw new MarketplaceError('PERMISSION_DENIED','Accès Marketplace requis.')
+  const db=await createServiceClient(),template=await db.from('angelcare_marketplace_cms_templates').select('id,template_key,name,description,status,published_revision_id,current_revision_id').eq('id',templateId).neq('status','archived').maybeSingle()
+  if(template.error||!template.data)throw new MarketplaceError('NOT_FOUND','World Experience Core introuvable.')
+  const manifest=await getPublicExperienceThemeManifest(templateId);if(!manifest?.factory)throw new MarketplaceError('VALIDATION_ERROR','Ce template n’est pas un World Factory exportable.')
+  const revisionId=String(template.data.published_revision_id||template.data.current_revision_id||'');if(!revisionId)throw new MarketplaceError('NOT_FOUND','Révision World introuvable.')
+  const revision=await db.from('angelcare_marketplace_cms_template_revisions').select('document,revision_number,checksum').eq('id',revisionId).maybeSingle();if(revision.error||!revision.data?.document)throw new MarketplaceError('NOT_FOUND','Document World introuvable.')
+  return createWorldFactoryPackage({name:String(template.data.name||''),description:template.data.description?String(template.data.description):null,themeVersion:manifest.themeVersion,manifest:manifest as unknown as Record<string,unknown>,factory:manifest.factory,data:revision.data.document as unknown as Data})
 }
 
 export async function getPublicExperienceThemeManifest(templateId:string){if(isCanonicalBuiltinWorld(templateId))return canonicalBuiltinManifest(templateId);const db=await createServiceClient();const result=await db.from('angelcare_marketplace_configurations').select('value').eq('config_key',themeManifestConfigKey(templateId)).is('territory_id',null).is('tenant_id',null).is('locale',null).maybeSingle();return result.error||!result.data?null:parseThemeManifest(result.data.value)}
