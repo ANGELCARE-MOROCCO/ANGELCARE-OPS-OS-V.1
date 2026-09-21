@@ -4,6 +4,7 @@ import { isStudioVisualExperience } from './visual-catalogue'
 import { isStudioLiveBindingReference, studioBindingTarget } from '@/angelcare-marketplace/studio-live-binding/registry'
 import { isStudioDynamicSourceReference } from '@/angelcare-marketplace/studio-dynamic-source/registry'
 import { isStudioWorkflowReference } from '@/angelcare-marketplace/studio-workflows/reference'
+import { HOMEPAGE_PRO_MAX_COMPONENT_KEYS } from '@/angelcare-marketplace/studio-homepage-pro-max/recipe'
 
 export const STUDIO_PAGE_JSON_FORMAT='angelcare-puck-page-v1' as const
 export const STUDIO_PAGE_JSON_MAX_BYTES=5_000_000
@@ -13,6 +14,7 @@ const MAX_STRING=250_000
 const blockedKeys=new Set(['__proto__','prototype','constructor'])
 const urlKeys=new Set(['href','primaryCtaHref','secondaryCtaHref','mediaUrl','url','src'])
 const unsafeScheme=/^(?:javascript|vbscript|data\s*:\s*text\/html)/i
+const isRegisteredStudioBlockType=(type:string)=>STUDIO_BLOCK_TYPES.has(type)||isStudioVisualExperience(type)||HOMEPAGE_PRO_MAX_COMPONENT_KEYS.includes(type)
 
 const plain=(value:unknown):value is Record<string,unknown>=>Boolean(value)&&typeof value==='object'&&!Array.isArray(value)
 const clone=<T,>(value:T):T=>JSON.parse(JSON.stringify(value)) as T
@@ -49,7 +51,7 @@ function inspectWorkflow(value:unknown){if(value===undefined)return;if(!isStudio
 function inspectComponent(component:unknown,state:{components:number},depth=0){
   if(!plain(component))throw new Error('Chaque bloc Puck doit être un objet.')
   const type=typeof component.type==='string'?component.type:''
-  if(!type||(!STUDIO_BLOCK_TYPES.has(type)&&!isStudioVisualExperience(type)))throw new Error(`Type de bloc non enregistré: ${type||'(vide)'}.`)
+  if(!type||!isRegisteredStudioBlockType(type))throw new Error(`Type de bloc non enregistré: ${type||'(vide)'}.`)
   state.components+=1
   if(state.components>MAX_COMPONENTS)throw new Error(`Le document dépasse ${MAX_COMPONENTS} blocs.`)
   if(depth>MAX_DEPTH)throw new Error('La hiérarchie de blocs est trop profonde.')

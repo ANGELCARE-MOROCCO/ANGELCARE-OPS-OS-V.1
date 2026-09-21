@@ -1,0 +1,1542 @@
+{
+  "schemaVersion": "2026-09-20.PRODUCT-PRO-MAX.01",
+  "worldId": "ac.product.pro-max.commerce.01",
+  "name": "AngelCare Product Page Pro Max 01 — Commerce Immersive",
+  "type": "PRODUCT_PAGE_WORLD",
+  "status": "APPROVED_VISUALS_TO_BUILD_CONSTITUTION",
+  "referenceAuthority": {
+    "desktop": {
+      "file": "APPROVED_DESKTOP_REFERENCE.png",
+      "width": 935,
+      "height": 1683,
+      "sha256": "32b8a7a604391a7519d963e6a2344fb96c8263e3c9a690b9eb7ca5bd30f2e694"
+    },
+    "mobileMontage": {
+      "file": "APPROVED_MOBILE_REFERENCE.png",
+      "width": 941,
+      "height": 1672,
+      "sha256": "9fc064fbc27005cc2e63d10979d521f3ea958b9f290e8ab9a76eeed5f8e5c4df",
+      "interpretation": "Three reference scroll-state panels for one continuous mobile PDP, not three separate pages."
+    },
+    "officialLogoSource": {
+      "file": "AC LOGO CORPORATE .png",
+      "sha256": "d0c6f556e929f4b1b9a1fd4d00229f595f174ee3c43e6fbc25b4af870785a30a",
+      "policy": "crop/mask only to exclude Corporate Care subtitle and yellow underline; never redraw/recolor/regenerate."
+    }
+  },
+  "canonicalFrame": {
+    "desktop": {
+      "width": 1440,
+      "height": 2592,
+      "gridColumns": 12,
+      "maxContent": 1380,
+      "outerGutter": 30
+    },
+    "mobile": {
+      "viewportWidth": 390,
+      "certificationHeight": 844,
+      "gridColumns": 4,
+      "gutter": 14
+    }
+  },
+  "templateCompatibility": {
+    "supportedScopes": [
+      "EXACT_ITEM",
+      "PLACEMENT",
+      "COLLECTION",
+      "EXPERIENCE_SCHEMA",
+      "CATEGORY",
+      "FAMILY",
+      "MARKETPLACE_DEFAULT"
+    ],
+    "precedence": "EXACT_ITEM>PLACEMENT>COLLECTION>EXPERIENCE_SCHEMA>CATEGORY>FAMILY>MARKETPLACE_DEFAULT",
+    "publicAuthority": "Experience Core published revision + P08 public runtime",
+    "fallback": "Category-Native",
+    "persistedBusinessFacts": "FORBIDDEN"
+  },
+  "truthRules": {
+    "currency": "MAD/Dhs only",
+    "price": "canonical catalog authority",
+    "compareAtPrice": "render only when legitimate and temporally valid",
+    "discount": "computed from valid price authority; never typed as independent fact",
+    "stock": "canonical inventory/availability authority",
+    "salesProof": "approved real metric only; otherwise hidden",
+    "ratingReviews": "canonical review authority only",
+    "delivery": "canonical shipping/fulfillment authority",
+    "variants": "canonical item/variant authority",
+    "bundle": "canonical bundle if available, otherwise compatible curated collection without false bundle semantics",
+    "compatibility": "canonical compatibility/relationship authority",
+    "recommendations": "canonical P06 dynamic source or curated canonical references",
+    "countdown": "real campaign starts_at/ends_at only",
+    "fakeData": "FORBIDDEN"
+  },
+  "rootSections": [
+    {
+      "id": "P00",
+      "component": "UrgencyCampaignBar",
+      "label": "Bandeau d’urgence commercial",
+      "referenceY": {
+        "start": 0,
+        "end": 25,
+        "height": 25
+      },
+      "canonical1440Y": {
+        "start": 0,
+        "end": 39,
+        "height": 39
+      },
+      "dataClass": "campaign",
+      "editable": true,
+      "movable": true,
+      "duplicable": true,
+      "removable": true,
+      "governance": [
+        "P03_ACTIONS",
+        "P05_BINDINGS",
+        "P06_DYNAMIC_WHERE_APPLICABLE",
+        "P08_RUNTIME",
+        "P11_POLICY",
+        "P12_DEPENDENCIES",
+        "P13_STABLE_ID"
+      ]
+    },
+    {
+      "id": "P01",
+      "component": "CommerceHeader",
+      "label": "Header marque + recherche + compte/favoris/panier",
+      "referenceY": {
+        "start": 25,
+        "end": 70,
+        "height": 45
+      },
+      "canonical1440Y": {
+        "start": 39,
+        "end": 108,
+        "height": 69
+      },
+      "dataClass": "navigation+identity",
+      "editable": true,
+      "movable": true,
+      "duplicable": true,
+      "removable": true,
+      "governance": [
+        "P03_ACTIONS",
+        "P05_BINDINGS",
+        "P06_DYNAMIC_WHERE_APPLICABLE",
+        "P08_RUNTIME",
+        "P11_POLICY",
+        "P12_DEPENDENCIES",
+        "P13_STABLE_ID"
+      ]
+    },
+    {
+      "id": "P02",
+      "component": "PrimaryTaxonomyNav",
+      "label": "Navigation univers/catégories",
+      "referenceY": {
+        "start": 70,
+        "end": 91,
+        "height": 21
+      },
+      "canonical1440Y": {
+        "start": 108,
+        "end": 140,
+        "height": 32
+      },
+      "dataClass": "taxonomy",
+      "editable": true,
+      "movable": true,
+      "duplicable": true,
+      "removable": true,
+      "governance": [
+        "P03_ACTIONS",
+        "P05_BINDINGS",
+        "P06_DYNAMIC_WHERE_APPLICABLE",
+        "P08_RUNTIME",
+        "P11_POLICY",
+        "P12_DEPENDENCIES",
+        "P13_STABLE_ID"
+      ]
+    },
+    {
+      "id": "P03",
+      "component": "BreadcrumbTrail",
+      "label": "Fil d’Ariane canonique",
+      "referenceY": {
+        "start": 91,
+        "end": 115,
+        "height": 24
+      },
+      "canonical1440Y": {
+        "start": 140,
+        "end": 177,
+        "height": 37
+      },
+      "dataClass": "navigation",
+      "editable": true,
+      "movable": true,
+      "duplicable": true,
+      "removable": true,
+      "governance": [
+        "P03_ACTIONS",
+        "P05_BINDINGS",
+        "P06_DYNAMIC_WHERE_APPLICABLE",
+        "P08_RUNTIME",
+        "P11_POLICY",
+        "P12_DEPENDENCIES",
+        "P13_STABLE_ID"
+      ]
+    },
+    {
+      "id": "P04",
+      "component": "ProductMediaGallery",
+      "label": "Galerie média produit + miniatures",
+      "referenceY": {
+        "start": 115,
+        "end": 474,
+        "height": 359
+      },
+      "canonical1440Y": {
+        "start": 177,
+        "end": 730,
+        "height": 553
+      },
+      "dataClass": "catalog.media",
+      "editable": true,
+      "movable": true,
+      "duplicable": true,
+      "removable": true,
+      "governance": [
+        "P03_ACTIONS",
+        "P05_BINDINGS",
+        "P06_DYNAMIC_WHERE_APPLICABLE",
+        "P08_RUNTIME",
+        "P11_POLICY",
+        "P12_DEPENDENCIES",
+        "P13_STABLE_ID"
+      ]
+    },
+    {
+      "id": "P05",
+      "component": "ProductIdentityPanel",
+      "label": "Identité produit + badges + preuve + bénéfices",
+      "referenceY": {
+        "start": 115,
+        "end": 474,
+        "height": 359
+      },
+      "canonical1440Y": {
+        "start": 177,
+        "end": 730,
+        "height": 553
+      },
+      "dataClass": "catalog.item",
+      "editable": true,
+      "movable": true,
+      "duplicable": true,
+      "removable": true,
+      "governance": [
+        "P03_ACTIONS",
+        "P05_BINDINGS",
+        "P06_DYNAMIC_WHERE_APPLICABLE",
+        "P08_RUNTIME",
+        "P11_POLICY",
+        "P12_DEPENDENCIES",
+        "P13_STABLE_ID"
+      ]
+    },
+    {
+      "id": "P06",
+      "component": "PurchaseDecisionBox",
+      "label": "Prix + stock + variante + quantité + achat",
+      "referenceY": {
+        "start": 115,
+        "end": 474,
+        "height": 359
+      },
+      "canonical1440Y": {
+        "start": 177,
+        "end": 730,
+        "height": 553
+      },
+      "dataClass": "commerce",
+      "editable": true,
+      "movable": true,
+      "duplicable": true,
+      "removable": true,
+      "governance": [
+        "P03_ACTIONS",
+        "P05_BINDINGS",
+        "P06_DYNAMIC_WHERE_APPLICABLE",
+        "P08_RUNTIME",
+        "P11_POLICY",
+        "P12_DEPENDENCIES",
+        "P13_STABLE_ID"
+      ]
+    },
+    {
+      "id": "P07",
+      "component": "AssuranceProofStrip",
+      "label": "Livraison + familles + paiement + retours + support",
+      "referenceY": {
+        "start": 474,
+        "end": 544,
+        "height": 70
+      },
+      "canonical1440Y": {
+        "start": 730,
+        "end": 838,
+        "height": 108
+      },
+      "dataClass": "trust",
+      "editable": true,
+      "movable": true,
+      "duplicable": true,
+      "removable": true,
+      "governance": [
+        "P03_ACTIONS",
+        "P05_BINDINGS",
+        "P06_DYNAMIC_WHERE_APPLICABLE",
+        "P08_RUNTIME",
+        "P11_POLICY",
+        "P12_DEPENDENCIES",
+        "P13_STABLE_ID"
+      ]
+    },
+    {
+      "id": "P08",
+      "component": "LifestyleBenefitBanner",
+      "label": "Bannière lifestyle + bénéfices produit",
+      "referenceY": {
+        "start": 544,
+        "end": 684,
+        "height": 140
+      },
+      "canonical1440Y": {
+        "start": 838,
+        "end": 1053,
+        "height": 216
+      },
+      "dataClass": "editorial+catalog",
+      "editable": true,
+      "movable": true,
+      "duplicable": true,
+      "removable": true,
+      "governance": [
+        "P03_ACTIONS",
+        "P05_BINDINGS",
+        "P06_DYNAMIC_WHERE_APPLICABLE",
+        "P08_RUNTIME",
+        "P11_POLICY",
+        "P12_DEPENDENCIES",
+        "P13_STABLE_ID"
+      ]
+    },
+    {
+      "id": "P09",
+      "component": "ProductAnchorTabs",
+      "label": "Navigation ancrée description/caractéristiques/avis/FAQ",
+      "referenceY": {
+        "start": 684,
+        "end": 716,
+        "height": 32
+      },
+      "canonical1440Y": {
+        "start": 1053,
+        "end": 1103,
+        "height": 49
+      },
+      "dataClass": "navigation",
+      "editable": true,
+      "movable": true,
+      "duplicable": true,
+      "removable": true,
+      "governance": [
+        "P03_ACTIONS",
+        "P05_BINDINGS",
+        "P06_DYNAMIC_WHERE_APPLICABLE",
+        "P08_RUNTIME",
+        "P11_POLICY",
+        "P12_DEPENDENCIES",
+        "P13_STABLE_ID"
+      ]
+    },
+    {
+      "id": "P10",
+      "component": "ProductDescription",
+      "label": "Description longue + média éditorial",
+      "referenceY": {
+        "start": 716,
+        "end": 1034,
+        "height": 318
+      },
+      "canonical1440Y": {
+        "start": 1103,
+        "end": 1592,
+        "height": 490
+      },
+      "dataClass": "content+catalog",
+      "editable": true,
+      "movable": true,
+      "duplicable": true,
+      "removable": true,
+      "governance": [
+        "P03_ACTIONS",
+        "P05_BINDINGS",
+        "P06_DYNAMIC_WHERE_APPLICABLE",
+        "P08_RUNTIME",
+        "P11_POLICY",
+        "P12_DEPENDENCIES",
+        "P13_STABLE_ID"
+      ]
+    },
+    {
+      "id": "P11",
+      "component": "TechnicalSpecifications",
+      "label": "Tableau de caractéristiques techniques",
+      "referenceY": {
+        "start": 716,
+        "end": 1034,
+        "height": 318
+      },
+      "canonical1440Y": {
+        "start": 1103,
+        "end": 1592,
+        "height": 490
+      },
+      "dataClass": "catalog.specs",
+      "editable": true,
+      "movable": true,
+      "duplicable": true,
+      "removable": true,
+      "governance": [
+        "P03_ACTIONS",
+        "P05_BINDINGS",
+        "P06_DYNAMIC_WHERE_APPLICABLE",
+        "P08_RUNTIME",
+        "P11_POLICY",
+        "P12_DEPENDENCIES",
+        "P13_STABLE_ID"
+      ]
+    },
+    {
+      "id": "P12",
+      "component": "ReviewSummaryAndFeed",
+      "label": "Note agrégée + avis clients",
+      "referenceY": {
+        "start": 716,
+        "end": 1034,
+        "height": 318
+      },
+      "canonical1440Y": {
+        "start": 1103,
+        "end": 1592,
+        "height": 490
+      },
+      "dataClass": "reviews",
+      "editable": true,
+      "movable": true,
+      "duplicable": true,
+      "removable": true,
+      "governance": [
+        "P03_ACTIONS",
+        "P05_BINDINGS",
+        "P06_DYNAMIC_WHERE_APPLICABLE",
+        "P08_RUNTIME",
+        "P11_POLICY",
+        "P12_DEPENDENCIES",
+        "P13_STABLE_ID"
+      ]
+    },
+    {
+      "id": "P13",
+      "component": "ProductFAQ",
+      "label": "Questions fréquentes produit",
+      "referenceY": {
+        "start": 716,
+        "end": 1034,
+        "height": 318
+      },
+      "canonical1440Y": {
+        "start": 1103,
+        "end": 1592,
+        "height": 490
+      },
+      "dataClass": "faq",
+      "editable": true,
+      "movable": true,
+      "duplicable": true,
+      "removable": true,
+      "governance": [
+        "P03_ACTIONS",
+        "P05_BINDINGS",
+        "P06_DYNAMIC_WHERE_APPLICABLE",
+        "P08_RUNTIME",
+        "P11_POLICY",
+        "P12_DEPENDENCIES",
+        "P13_STABLE_ID"
+      ]
+    },
+    {
+      "id": "P14",
+      "component": "BundleCrossSell",
+      "label": "Souvent achetés ensemble",
+      "referenceY": {
+        "start": 1034,
+        "end": 1228,
+        "height": 194
+      },
+      "canonical1440Y": {
+        "start": 1592,
+        "end": 1891,
+        "height": 299
+      },
+      "dataClass": "recommendation+cart",
+      "editable": true,
+      "movable": true,
+      "duplicable": true,
+      "removable": true,
+      "governance": [
+        "P03_ACTIONS",
+        "P05_BINDINGS",
+        "P06_DYNAMIC_WHERE_APPLICABLE",
+        "P08_RUNTIME",
+        "P11_POLICY",
+        "P12_DEPENDENCIES",
+        "P13_STABLE_ID"
+      ]
+    },
+    {
+      "id": "P15",
+      "component": "CompatibleAccessories",
+      "label": "Accessoires compatibles",
+      "referenceY": {
+        "start": 1034,
+        "end": 1228,
+        "height": 194
+      },
+      "canonical1440Y": {
+        "start": 1592,
+        "end": 1891,
+        "height": 299
+      },
+      "dataClass": "recommendation",
+      "editable": true,
+      "movable": true,
+      "duplicable": true,
+      "removable": true,
+      "governance": [
+        "P03_ACTIONS",
+        "P05_BINDINGS",
+        "P06_DYNAMIC_WHERE_APPLICABLE",
+        "P08_RUNTIME",
+        "P11_POLICY",
+        "P12_DEPENDENCIES",
+        "P13_STABLE_ID"
+      ]
+    },
+    {
+      "id": "P16",
+      "component": "SimilarProducts",
+      "label": "Produits similaires",
+      "referenceY": {
+        "start": 1034,
+        "end": 1228,
+        "height": 194
+      },
+      "canonical1440Y": {
+        "start": 1592,
+        "end": 1891,
+        "height": 299
+      },
+      "dataClass": "recommendation",
+      "editable": true,
+      "movable": true,
+      "duplicable": true,
+      "removable": true,
+      "governance": [
+        "P03_ACTIONS",
+        "P05_BINDINGS",
+        "P06_DYNAMIC_WHERE_APPLICABLE",
+        "P08_RUNTIME",
+        "P11_POLICY",
+        "P12_DEPENDENCIES",
+        "P13_STABLE_ID"
+      ]
+    },
+    {
+      "id": "P17",
+      "component": "ParentGuideRail",
+      "label": "Conseils & inspirations pour parents",
+      "referenceY": {
+        "start": 1228,
+        "end": 1399,
+        "height": 171
+      },
+      "canonical1440Y": {
+        "start": 1891,
+        "end": 2155,
+        "height": 263
+      },
+      "dataClass": "content",
+      "editable": true,
+      "movable": true,
+      "duplicable": true,
+      "removable": true,
+      "governance": [
+        "P03_ACTIONS",
+        "P05_BINDINGS",
+        "P06_DYNAMIC_WHERE_APPLICABLE",
+        "P08_RUNTIME",
+        "P11_POLICY",
+        "P12_DEPENDENCIES",
+        "P13_STABLE_ID"
+      ]
+    },
+    {
+      "id": "P18",
+      "component": "CommunityJoinPanel",
+      "label": "Communauté AngelCare",
+      "referenceY": {
+        "start": 1228,
+        "end": 1399,
+        "height": 171
+      },
+      "canonical1440Y": {
+        "start": 1891,
+        "end": 2155,
+        "height": 263
+      },
+      "dataClass": "community",
+      "editable": true,
+      "movable": true,
+      "duplicable": true,
+      "removable": true,
+      "governance": [
+        "P03_ACTIONS",
+        "P05_BINDINGS",
+        "P06_DYNAMIC_WHERE_APPLICABLE",
+        "P08_RUNTIME",
+        "P11_POLICY",
+        "P12_DEPENDENCIES",
+        "P13_STABLE_ID"
+      ]
+    },
+    {
+      "id": "P19",
+      "component": "MissionBrandPanel",
+      "label": "Mission/raison d’être produit",
+      "referenceY": {
+        "start": 1228,
+        "end": 1399,
+        "height": 171
+      },
+      "canonical1440Y": {
+        "start": 1891,
+        "end": 2155,
+        "height": 263
+      },
+      "dataClass": "brand",
+      "editable": true,
+      "movable": true,
+      "duplicable": true,
+      "removable": true,
+      "governance": [
+        "P03_ACTIONS",
+        "P05_BINDINGS",
+        "P06_DYNAMIC_WHERE_APPLICABLE",
+        "P08_RUNTIME",
+        "P11_POLICY",
+        "P12_DEPENDENCIES",
+        "P13_STABLE_ID"
+      ]
+    },
+    {
+      "id": "P20",
+      "component": "SecondaryTrustStrip",
+      "label": "Preuves de confiance finales",
+      "referenceY": {
+        "start": 1399,
+        "end": 1472,
+        "height": 73
+      },
+      "canonical1440Y": {
+        "start": 2155,
+        "end": 2267,
+        "height": 112
+      },
+      "dataClass": "trust",
+      "editable": true,
+      "movable": true,
+      "duplicable": true,
+      "removable": true,
+      "governance": [
+        "P03_ACTIONS",
+        "P05_BINDINGS",
+        "P06_DYNAMIC_WHERE_APPLICABLE",
+        "P08_RUNTIME",
+        "P11_POLICY",
+        "P12_DEPENDENCIES",
+        "P13_STABLE_ID"
+      ]
+    },
+    {
+      "id": "P21",
+      "component": "MegaCommerceFooter",
+      "label": "Footer complet + app + newsletter + légal",
+      "referenceY": {
+        "start": 1472,
+        "end": 1683,
+        "height": 211
+      },
+      "canonical1440Y": {
+        "start": 2267,
+        "end": 2592,
+        "height": 325
+      },
+      "dataClass": "navigation+brand",
+      "editable": true,
+      "movable": true,
+      "duplicable": true,
+      "removable": true,
+      "governance": [
+        "P03_ACTIONS",
+        "P05_BINDINGS",
+        "P06_DYNAMIC_WHERE_APPLICABLE",
+        "P08_RUNTIME",
+        "P11_POLICY",
+        "P12_DEPENDENCIES",
+        "P13_STABLE_ID"
+      ]
+    }
+  ],
+  "childComponents": [
+    {
+      "parent": "P00",
+      "component": "UrgencyCampaignBar",
+      "contract": "campaign message, discount claim, real endsAt, CTA, market"
+    },
+    {
+      "parent": "P01",
+      "component": "OfficialLogoSlot",
+      "contract": "immutable official logo crop/mask only"
+    },
+    {
+      "parent": "P01",
+      "component": "GlobalSearch",
+      "contract": "query input, suggestions, submit action"
+    },
+    {
+      "parent": "P01",
+      "component": "AccountShortcut",
+      "contract": "auth-aware account entry"
+    },
+    {
+      "parent": "P01",
+      "component": "FavoritesShortcut",
+      "contract": "wishlist entry + live count"
+    },
+    {
+      "parent": "P01",
+      "component": "CartShortcut",
+      "contract": "cart entry + live item count"
+    },
+    {
+      "parent": "P02",
+      "component": "TaxonomyNavItem",
+      "contract": "canonical category/navigation reference"
+    },
+    {
+      "parent": "P03",
+      "component": "BreadcrumbItem",
+      "contract": "canonical navigable ancestry"
+    },
+    {
+      "parent": "P04",
+      "component": "GalleryThumbnailRail",
+      "contract": "ordered media thumbnails"
+    },
+    {
+      "parent": "P04",
+      "component": "PrimaryProductMedia",
+      "contract": "image/video with focal point + zoom"
+    },
+    {
+      "parent": "P04",
+      "component": "GalleryOverflowTile",
+      "contract": "+N additional media trigger"
+    },
+    {
+      "parent": "P05",
+      "component": "MerchandisingBadge",
+      "contract": "best-seller/new/promo states from real authority"
+    },
+    {
+      "parent": "P05",
+      "component": "ProductTitle",
+      "contract": "canonical title"
+    },
+    {
+      "parent": "P05",
+      "component": "BrandByline",
+      "contract": "canonical brand/vendor identity"
+    },
+    {
+      "parent": "P05",
+      "component": "RatingSummary",
+      "contract": "real aggregate rating and review count"
+    },
+    {
+      "parent": "P05",
+      "component": "SalesProof",
+      "contract": "real sales metric only when governed"
+    },
+    {
+      "parent": "P05",
+      "component": "BenefitChecklist",
+      "contract": "authoritative product benefits"
+    },
+    {
+      "parent": "P05",
+      "component": "FeatureIconGrid",
+      "contract": "4 compact benefit/spec proof cells"
+    },
+    {
+      "parent": "P06",
+      "component": "CompareAtPrice",
+      "contract": "legitimate historical/reference price only"
+    },
+    {
+      "parent": "P06",
+      "component": "CurrentPrice",
+      "contract": "MAD/Dhs only"
+    },
+    {
+      "parent": "P06",
+      "component": "SavingsBadge",
+      "contract": "computed from valid promotion"
+    },
+    {
+      "parent": "P06",
+      "component": "StockState",
+      "contract": "inventory/availability truth"
+    },
+    {
+      "parent": "P06",
+      "component": "DeliveryPromise",
+      "contract": "shipping authority"
+    },
+    {
+      "parent": "P06",
+      "component": "VariantSelector",
+      "contract": "canonical variant/color options"
+    },
+    {
+      "parent": "P06",
+      "component": "QuantityStepper",
+      "contract": "bounded quantity"
+    },
+    {
+      "parent": "P06",
+      "component": "AddToCartCTA",
+      "contract": "P03 cart.add"
+    },
+    {
+      "parent": "P06",
+      "component": "BuyNowCTA",
+      "contract": "P03 checkout.start/buy_now"
+    },
+    {
+      "parent": "P06",
+      "component": "AdviceCTA",
+      "contract": "P03 contact/advice workflow"
+    },
+    {
+      "parent": "P06",
+      "component": "FavoriteCTA",
+      "contract": "wishlist toggle"
+    },
+    {
+      "parent": "P06",
+      "component": "PurchaseTrustGrid",
+      "contract": "payment, returns, refund, support"
+    },
+    {
+      "parent": "P07",
+      "component": "TrustProofItem",
+      "contract": "icon + approved proof copy"
+    },
+    {
+      "parent": "P08",
+      "component": "LifestyleMediaLeft",
+      "contract": "governed editorial media"
+    },
+    {
+      "parent": "P08",
+      "component": "BenefitPictogram",
+      "contract": "benefit icon + label"
+    },
+    {
+      "parent": "P08",
+      "component": "LifestyleMediaRight",
+      "contract": "governed editorial media"
+    },
+    {
+      "parent": "P09",
+      "component": "AnchorTab",
+      "contract": "scroll target + active state"
+    },
+    {
+      "parent": "P10",
+      "component": "DescriptionCopy",
+      "contract": "canonical/editorial description"
+    },
+    {
+      "parent": "P10",
+      "component": "DescriptionMedia",
+      "contract": "governed product lifestyle media"
+    },
+    {
+      "parent": "P10",
+      "component": "UseCaseIconRow",
+      "contract": "contextual use-case benefits"
+    },
+    {
+      "parent": "P11",
+      "component": "SpecificationTable",
+      "contract": "key/value specs with schema mapping"
+    },
+    {
+      "parent": "P12",
+      "component": "ReviewAggregate",
+      "contract": "rating, distribution, count"
+    },
+    {
+      "parent": "P12",
+      "component": "ReviewCard",
+      "contract": "verified review content + media if approved"
+    },
+    {
+      "parent": "P13",
+      "component": "FAQAccordion",
+      "contract": "question + answer + accessible expand"
+    },
+    {
+      "parent": "P14",
+      "component": "BundleComposer",
+      "contract": "main item + compatible items + computed bundle"
+    },
+    {
+      "parent": "P14",
+      "component": "BundlePricePanel",
+      "contract": "valid bundle saving + add pack"
+    },
+    {
+      "parent": "P15",
+      "component": "AccessoryCard",
+      "contract": "canonical accessory recommendation"
+    },
+    {
+      "parent": "P16",
+      "component": "SimilarProductCard",
+      "contract": "canonical related item"
+    },
+    {
+      "parent": "P17",
+      "component": "GuideCard",
+      "contract": "approved editorial content reference"
+    },
+    {
+      "parent": "P18",
+      "component": "CommunityMediaMosaic",
+      "contract": "governed community imagery"
+    },
+    {
+      "parent": "P18",
+      "component": "CommunityJoinCTA",
+      "contract": "community/newsletter workflow"
+    },
+    {
+      "parent": "P19",
+      "component": "MissionStatement",
+      "contract": "brand statement"
+    },
+    {
+      "parent": "P19",
+      "component": "MissionMedia",
+      "contract": "governed family/product image"
+    },
+    {
+      "parent": "P20",
+      "component": "TrustProofItem",
+      "contract": "secondary assurance cell"
+    },
+    {
+      "parent": "P21",
+      "component": "OfficialFooterLogo",
+      "contract": "immutable official logo"
+    },
+    {
+      "parent": "P21",
+      "component": "FooterNavGroup",
+      "contract": "canonical navigation group"
+    },
+    {
+      "parent": "P21",
+      "component": "AppBadgeGroup",
+      "contract": "approved store badges"
+    },
+    {
+      "parent": "P21",
+      "component": "NewsletterForm",
+      "contract": "canonical consent + newsletter workflow"
+    },
+    {
+      "parent": "P21",
+      "component": "LegalLinks",
+      "contract": "canonical legal navigation"
+    }
+  ],
+  "desktopGeometry": [
+    {
+      "mode": "desktop_reference",
+      "id": "D00",
+      "parent": "P00",
+      "x": 0,
+      "y": 0,
+      "width": 935,
+      "height": 25,
+      "canonical_x": 0,
+      "canonical_y": 0,
+      "canonical_width": 1440,
+      "canonical_height": 39
+    },
+    {
+      "mode": "desktop_reference",
+      "id": "D01",
+      "parent": "P01",
+      "x": 0,
+      "y": 25,
+      "width": 935,
+      "height": 45,
+      "canonical_x": 0,
+      "canonical_y": 39,
+      "canonical_width": 1440,
+      "canonical_height": 69
+    },
+    {
+      "mode": "desktop_reference",
+      "id": "D02",
+      "parent": "P02",
+      "x": 0,
+      "y": 70,
+      "width": 935,
+      "height": 21,
+      "canonical_x": 0,
+      "canonical_y": 108,
+      "canonical_width": 1440,
+      "canonical_height": 32
+    },
+    {
+      "mode": "desktop_reference",
+      "id": "D03",
+      "parent": "P03",
+      "x": 20,
+      "y": 91,
+      "width": 895,
+      "height": 24,
+      "canonical_x": 31,
+      "canonical_y": 140,
+      "canonical_width": 1378,
+      "canonical_height": 37
+    },
+    {
+      "mode": "desktop_reference",
+      "id": "D04_MEDIA_RAIL",
+      "parent": "P04",
+      "x": 20,
+      "y": 115,
+      "width": 61,
+      "height": 359,
+      "canonical_x": 31,
+      "canonical_y": 177,
+      "canonical_width": 94,
+      "canonical_height": 553
+    },
+    {
+      "mode": "desktop_reference",
+      "id": "D04_MAIN_MEDIA",
+      "parent": "P04",
+      "x": 86,
+      "y": 115,
+      "width": 332,
+      "height": 359,
+      "canonical_x": 132,
+      "canonical_y": 177,
+      "canonical_width": 511,
+      "canonical_height": 553
+    },
+    {
+      "mode": "desktop_reference",
+      "id": "D05_IDENTITY",
+      "parent": "P05",
+      "x": 427,
+      "y": 115,
+      "width": 231,
+      "height": 359,
+      "canonical_x": 658,
+      "canonical_y": 177,
+      "canonical_width": 356,
+      "canonical_height": 553
+    },
+    {
+      "mode": "desktop_reference",
+      "id": "D06_PURCHASE",
+      "parent": "P06",
+      "x": 671,
+      "y": 115,
+      "width": 244,
+      "height": 359,
+      "canonical_x": 1033,
+      "canonical_y": 177,
+      "canonical_width": 376,
+      "canonical_height": 553
+    },
+    {
+      "mode": "desktop_reference",
+      "id": "D07",
+      "parent": "P07",
+      "x": 20,
+      "y": 474,
+      "width": 895,
+      "height": 70,
+      "canonical_x": 31,
+      "canonical_y": 730,
+      "canonical_width": 1378,
+      "canonical_height": 108
+    },
+    {
+      "mode": "desktop_reference",
+      "id": "D08",
+      "parent": "P08",
+      "x": 20,
+      "y": 544,
+      "width": 895,
+      "height": 140,
+      "canonical_x": 31,
+      "canonical_y": 838,
+      "canonical_width": 1378,
+      "canonical_height": 216
+    },
+    {
+      "mode": "desktop_reference",
+      "id": "D09",
+      "parent": "P09",
+      "x": 20,
+      "y": 684,
+      "width": 895,
+      "height": 32,
+      "canonical_x": 31,
+      "canonical_y": 1053,
+      "canonical_width": 1378,
+      "canonical_height": 49
+    },
+    {
+      "mode": "desktop_reference",
+      "id": "D10_DESC",
+      "parent": "P10",
+      "x": 20,
+      "y": 716,
+      "width": 309,
+      "height": 318,
+      "canonical_x": 31,
+      "canonical_y": 1103,
+      "canonical_width": 476,
+      "canonical_height": 490
+    },
+    {
+      "mode": "desktop_reference",
+      "id": "D11_SPECS",
+      "parent": "P11",
+      "x": 339,
+      "y": 716,
+      "width": 194,
+      "height": 318,
+      "canonical_x": 522,
+      "canonical_y": 1103,
+      "canonical_width": 299,
+      "canonical_height": 490
+    },
+    {
+      "mode": "desktop_reference",
+      "id": "D12_REVIEWS",
+      "parent": "P12",
+      "x": 543,
+      "y": 716,
+      "width": 183,
+      "height": 318,
+      "canonical_x": 836,
+      "canonical_y": 1103,
+      "canonical_width": 282,
+      "canonical_height": 490
+    },
+    {
+      "mode": "desktop_reference",
+      "id": "D13_FAQ",
+      "parent": "P13",
+      "x": 736,
+      "y": 716,
+      "width": 179,
+      "height": 318,
+      "canonical_x": 1134,
+      "canonical_y": 1103,
+      "canonical_width": 276,
+      "canonical_height": 490
+    },
+    {
+      "mode": "desktop_reference",
+      "id": "D14_BUNDLE",
+      "parent": "P14",
+      "x": 20,
+      "y": 1034,
+      "width": 309,
+      "height": 194,
+      "canonical_x": 31,
+      "canonical_y": 1592,
+      "canonical_width": 476,
+      "canonical_height": 299
+    },
+    {
+      "mode": "desktop_reference",
+      "id": "D15_ACCESSORIES",
+      "parent": "P15",
+      "x": 339,
+      "y": 1034,
+      "width": 287,
+      "height": 194,
+      "canonical_x": 522,
+      "canonical_y": 1592,
+      "canonical_width": 442,
+      "canonical_height": 299
+    },
+    {
+      "mode": "desktop_reference",
+      "id": "D16_SIMILAR",
+      "parent": "P16",
+      "x": 636,
+      "y": 1034,
+      "width": 279,
+      "height": 194,
+      "canonical_x": 980,
+      "canonical_y": 1592,
+      "canonical_width": 430,
+      "canonical_height": 299
+    },
+    {
+      "mode": "desktop_reference",
+      "id": "D17_GUIDES",
+      "parent": "P17",
+      "x": 20,
+      "y": 1228,
+      "width": 385,
+      "height": 171,
+      "canonical_x": 31,
+      "canonical_y": 1891,
+      "canonical_width": 593,
+      "canonical_height": 263
+    },
+    {
+      "mode": "desktop_reference",
+      "id": "D18_COMMUNITY",
+      "parent": "P18",
+      "x": 415,
+      "y": 1228,
+      "width": 219,
+      "height": 171,
+      "canonical_x": 639,
+      "canonical_y": 1891,
+      "canonical_width": 337,
+      "canonical_height": 263
+    },
+    {
+      "mode": "desktop_reference",
+      "id": "D19_MISSION",
+      "parent": "P19",
+      "x": 644,
+      "y": 1228,
+      "width": 271,
+      "height": 171,
+      "canonical_x": 992,
+      "canonical_y": 1891,
+      "canonical_width": 417,
+      "canonical_height": 263
+    },
+    {
+      "mode": "desktop_reference",
+      "id": "D20",
+      "parent": "P20",
+      "x": 20,
+      "y": 1399,
+      "width": 895,
+      "height": 73,
+      "canonical_x": 31,
+      "canonical_y": 2155,
+      "canonical_width": 1378,
+      "canonical_height": 112
+    },
+    {
+      "mode": "desktop_reference",
+      "id": "D21",
+      "parent": "P21",
+      "x": 0,
+      "y": 1472,
+      "width": 935,
+      "height": 211,
+      "canonical_x": 0,
+      "canonical_y": 2267,
+      "canonical_width": 1440,
+      "canonical_height": 325
+    }
+  ],
+  "mobileReferencePanels": [
+    {
+      "id": "M-A",
+      "label": "Top / achat",
+      "referenceCrop": {
+        "x": 0,
+        "y": 0,
+        "width": 313,
+        "height": 1672
+      },
+      "requiredSequence": [
+        "urgency",
+        "compact_header",
+        "search",
+        "quick_categories",
+        "breadcrumb",
+        "gallery",
+        "product_title",
+        "rating_sales",
+        "description_summary",
+        "price_savings",
+        "stock",
+        "delivery",
+        "variant",
+        "quantity",
+        "add_to_cart",
+        "buy_now",
+        "favorite_share",
+        "purchase_trust",
+        "lifestyle_teaser"
+      ],
+      "stickyPurchaseBar": true
+    },
+    {
+      "id": "M-B",
+      "label": "Milieu / preuve",
+      "referenceCrop": {
+        "x": 314,
+        "y": 0,
+        "width": 313,
+        "height": 1672
+      },
+      "requiredSequence": [
+        "benefit_checklist",
+        "feature_icon_grid",
+        "loyalty_value",
+        "description",
+        "technical_specs",
+        "reviews",
+        "community_panel"
+      ],
+      "stickyPurchaseBar": true
+    },
+    {
+      "id": "M-C",
+      "label": "Bas / cross-sell",
+      "referenceCrop": {
+        "x": 628,
+        "y": 0,
+        "width": 313,
+        "height": 1672
+      },
+      "requiredSequence": [
+        "compatible_accessories",
+        "bundle_cross_sell",
+        "similar_products",
+        "faq",
+        "parent_guides",
+        "app_promotion",
+        "trust_icons"
+      ],
+      "stickyPurchaseBar": true
+    }
+  ],
+  "responsive": {
+    "desktop": ">=1280: approved three-column top fold, four-column detail band, three-column cross-sell band",
+    "laptop": "1024-1279: media/identity/purchase preserve hierarchy; purchase may narrow; detail columns reflow 2x2",
+    "tablet": "768-1023: media + purchase first, identity integrated, horizontal recommendation rails, specs/reviews stacked",
+    "mobile": "<=767: one continuous PDP; reference M-A/M-B/M-C are scroll-state captures; sticky purchase bar persistent after price block; no horizontal overflow."
+  },
+  "states": {
+    "global": [
+      "LOADING",
+      "READY",
+      "PARTIAL",
+      "EMPTY",
+      "ERROR",
+      "POLICY_BLOCKED",
+      "FALLBACK_NATIVE"
+    ],
+    "purchase": [
+      "IN_STOCK",
+      "LOW_STOCK",
+      "OUT_OF_STOCK",
+      "PREORDER",
+      "UNAVAILABLE_TERRITORY",
+      "VARIANT_UNAVAILABLE"
+    ],
+    "promotion": [
+      "ACTIVE",
+      "SCHEDULED",
+      "EXPIRED",
+      "INELIGIBLE"
+    ],
+    "review": [
+      "AVAILABLE",
+      "NO_REVIEWS",
+      "HIDDEN_BY_POLICY"
+    ]
+  },
+  "actions": [
+    {
+      "id": "product.open_media",
+      "effect": "open gallery/zoom",
+      "businessMutation": false
+    },
+    {
+      "id": "cart.add",
+      "effect": "canonical cart add",
+      "businessMutation": true
+    },
+    {
+      "id": "checkout.start",
+      "effect": "canonical buy-now/checkout",
+      "businessMutation": true
+    },
+    {
+      "id": "wishlist.toggle",
+      "effect": "canonical favorite toggle",
+      "businessMutation": true
+    },
+    {
+      "id": "support.ask_advice",
+      "effect": "existing advice/contact workflow",
+      "businessMutation": true
+    },
+    {
+      "id": "share.open",
+      "effect": "native/share-sheet compatible action",
+      "businessMutation": false
+    },
+    {
+      "id": "variant.select",
+      "effect": "select canonical variant",
+      "businessMutation": false
+    },
+    {
+      "id": "quantity.change",
+      "effect": "bounded local purchase intent state",
+      "businessMutation": false
+    },
+    {
+      "id": "bundle.add",
+      "effect": "canonical multi-item/cart operation",
+      "businessMutation": true
+    },
+    {
+      "id": "recommendation.open",
+      "effect": "open canonical item",
+      "businessMutation": false
+    },
+    {
+      "id": "review.open_all",
+      "effect": "open canonical review surface",
+      "businessMutation": false
+    },
+    {
+      "id": "faq.toggle",
+      "effect": "accessible disclosure",
+      "businessMutation": false
+    },
+    {
+      "id": "community.join",
+      "effect": "existing community/newsletter workflow",
+      "businessMutation": true
+    },
+    {
+      "id": "newsletter.subscribe",
+      "effect": "existing consented newsletter workflow",
+      "businessMutation": true
+    },
+    {
+      "id": "appstore.open",
+      "effect": "approved external store link",
+      "businessMutation": false
+    }
+  ],
+  "analytics": [
+    "pdp_view",
+    "gallery_media_view",
+    "gallery_zoom",
+    "variant_select",
+    "quantity_change",
+    "add_to_cart",
+    "buy_now",
+    "wishlist_toggle",
+    "advice_start",
+    "delivery_open",
+    "review_impression",
+    "review_open_all",
+    "faq_open",
+    "bundle_impression",
+    "bundle_add",
+    "accessory_impression",
+    "accessory_add",
+    "similar_impression",
+    "similar_click",
+    "guide_click",
+    "community_join",
+    "app_store_click",
+    "newsletter_submit"
+  ],
+  "nonNegotiables": [
+    "official AngelCare logo only",
+    "no Corporate Care subtitle or yellow underline in rendered logo",
+    "MAD/Dhs only",
+    "no fake price, stock, reviews, sales, urgency or partner claims",
+    "no duplicated business facts in Studio document",
+    "no raw IDs in normal admin UX",
+    "no iframe or screenshot-as-page implementation",
+    "all root sections remain editable after template apply",
+    "mobile is a dedicated responsive composition, not a squeezed desktop",
+    "unknown canonical references fail closed",
+    "no customer-facing internal engineering error text",
+    "no localStorage/sessionStorage business authority",
+    "no eval/new Function/dangerous executable imports"
+  ],
+  "acceptance": {
+    "desktopMajorLayoutDeviationTarget": "<=2% at canonical reference geometry after real-data substitution",
+    "mobileThreeAnchorStatesRequired": true,
+    "stickyMobilePurchaseBarRequired": true,
+    "allRootSectionsEditable": true,
+    "allActionsResolvable": true,
+    "previewPublicParity": true,
+    "realDataOnly": true,
+    "keyboardUsable": true,
+    "screenReaderSemantics": true,
+    "reducedMotionSupported": true,
+    "noHorizontalOverflowMobile": true,
+    "publicFallbackSafe": true
+  }
+}

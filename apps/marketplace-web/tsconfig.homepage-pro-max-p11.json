@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "incremental": false
+  },
+  "files": [
+    "next-env.d.ts",
+    "angelcare-marketplace/studio-homepage-pro-max/recipe.ts",
+    "angelcare-marketplace/studio-universal/page-json.ts",
+    "angelcare-marketplace/studio-universal/components/UniversalExperienceStudio.tsx"
+  ]
+}

@@ -1,11 +1,12 @@
 import type {StorefrontKey} from '@/angelcare-marketplace/catalog-discovery/types'
 import {PUBLIC_EXPERIENCE_DOCTRINES,PUBLIC_EXPERIENCE_STOREFRONTS} from './registry'
 import type {PublicExperienceDensityMode,PublicExperienceMasterDomain,PublicExperienceThemeManifest,PublicExperienceThemeSummary} from './types'
+import {PRODUCT_PRO_MAX_WORLD01_ID,PRODUCT_PRO_MAX_WORLD01_TEMPLATE_KEY,PRODUCT_PRO_MAX_WORLD01_VISUAL_FINGERPRINT,PRODUCT_PRO_MAX_WORLD01_SECTION_IDS} from './product-worlds/pro-max-01/contract'
 
 export const PEA_BUILTIN_PREFIX='builtin:pea:' as const
 export const PEA_BUILTIN_REVISION='builtin-rev-20260920-final-closure' as const
 
-type DetailRecipe={id:string;templateKey:string;name:string;domain:PublicExperienceMasterDomain;eyebrow:string;promise:string;modules:string[];accent:'pink'|'blue'|'violet'|'cyan'}
+type DetailRecipe={id:string;templateKey:string;name:string;domain:PublicExperienceMasterDomain;eyebrow:string;promise:string;modules:string[];accent:'pink'|'blue'|'violet'|'cyan';fingerprint?:string}
 type StorefrontRecipe={id:string;templateKey:string;name:string;storefrontKey:StorefrontKey;density:PublicExperienceDensityMode;accent:'pink'|'blue'|'violet'|'cyan'|'amber'|'emerald';modules:string[];headline:string}
 
 const domainDoctrines=(domain:PublicExperienceMasterDomain)=>PUBLIC_EXPERIENCE_DOCTRINES.filter(row=>row.masterDomain===domain).map(row=>row.key)
@@ -13,6 +14,7 @@ const domainDoctrines=(domain:PublicExperienceMasterDomain)=>PUBLIC_EXPERIENCE_D
 export const PEA_CANONICAL_DETAIL_WORLDS:readonly DetailRecipe[]=[
  {id:'builtin:pea:detail:b2c-service-family:v1',templateKey:'pea-atomic-service-pro-max-01',name:'Service / Family · Atomic Pro Max',domain:'b2c_service_family',eyebrow:'ANGELCARE SERVICES',promise:'Comprendre, choisir, vérifier puis réserver sans rupture.',accent:'pink',modules:['decision-fold','trust-rail','service-value','plans','how-it-works','providers','reviews','related','faq','conversion-close']},
  {id:'builtin:pea:detail:b2c-product-digital:v1',templateKey:'pea-atomic-product-pro-max-01',name:'Product / Digital · Atomic Pro Max',domain:'b2c_product_digital',eyebrow:'ANGELCARE MARKETPLACE',promise:'Découvrir, comparer, configurer et acheter depuis une seule décision.',accent:'blue',modules:['decision-fold','trust-rail','specifications','variants','delivery','bundles','recommendations','reviews','faq','conversion-close']},
+ {id:PRODUCT_PRO_MAX_WORLD01_ID,templateKey:PRODUCT_PRO_MAX_WORLD01_TEMPLATE_KEY,name:'Product Page Pro Max World 01 · Commerce Immersive',domain:'b2c_product_digital',eyebrow:'ANGELCARE MARKETPLACE',promise:'Voir, comprendre, comparer et acheter dans une expérience produit complète.',accent:'pink',modules:[...PRODUCT_PRO_MAX_WORLD01_SECTION_IDS],fingerprint:PRODUCT_PRO_MAX_WORLD01_VISUAL_FINGERPRINT},
  {id:'builtin:pea:detail:academy-admission:v1',templateKey:'pea-atomic-academy-pro-max-01',name:'Academy / Admission · Atomic Pro Max',domain:'academy_admission',eyebrow:'ANGELCARE ACADEMY',promise:'Apprendre, prouver, s’inscrire et suivre la bonne trajectoire.',accent:'violet',modules:['decision-fold','course-metrics','learning-outcomes','curriculum','cohort','trainers','certification','reviews','related','advisor-close']},
  {id:'builtin:pea:detail:b2b-institutional:v1',templateKey:'pea-atomic-b2b-pro-max-01',name:'B2B / Institutional · Atomic Pro Max',domain:'b2b_institutional',eyebrow:'ANGELCARE PARTNERS',promise:'Qualifier le besoin, prouver le fit, cadrer le déploiement et convertir proprement.',accent:'cyan',modules:['decision-fold','organisation-fit','diagnostic','programme-architecture','deployment','portfolio-proof','trust','related','faq','quote-close']},
 ] as const
@@ -37,7 +39,7 @@ function manifestBase(input:{kind:'detail'|'storefront';name:string;version:stri
 }
 
 export const PEA_BUILTIN_MANIFESTS=new Map<string,PublicExperienceThemeManifest>([
- ...PEA_CANONICAL_DETAIL_WORLDS.map(row=>[row.id,manifestBase({kind:'detail',name:row.name,version:'1.0.0',domains:[row.domain],doctrines:domainDoctrines(row.domain),storefronts:[],fingerprint:`atomic-${row.domain}-20260920-v1`})] as const),
+ ...PEA_CANONICAL_DETAIL_WORLDS.map(row=>[row.id,manifestBase({kind:'detail',name:row.name,version:'1.0.0',domains:[row.domain],doctrines:domainDoctrines(row.domain),storefronts:[],fingerprint:row.fingerprint||`atomic-${row.domain}-20260920-v1`})] as const),
  ...PEA_CANONICAL_STOREFRONT_WORLDS.map(row=>[row.id,manifestBase({kind:'storefront',name:row.name,version:'1.0.0',domains:[],doctrines:[],storefronts:[row.storefrontKey],fingerprint:`storefront-${row.storefrontKey}-20260920-v1`})] as const),
 ])
 

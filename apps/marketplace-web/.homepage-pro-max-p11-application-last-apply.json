@@ -1,0 +1,17 @@
+{
+  "patch": "ANGELCARE_HOMEPAGE_PRO_MAX_P11_APPLICATION_FIX_FINAL_20260921",
+  "changed": [
+    "angelcare-marketplace/studio-homepage-pro-max/recipe.ts",
+    "angelcare-marketplace/studio-universal/page-json.ts",
+    "angelcare-marketplace/studio-universal/components/UniversalExperienceStudio.tsx",
+    "tsconfig.homepage-pro-max-p11.json",
+    "scripts/angelcare-marketplace/verify-homepage-pro-max-p11-application.mjs"
+  ],
+  "backup": "/Users/user/Desktop/angelcare-platform/apps/marketplace-web/.angelcare_patch_backups/homepage-pro-max-p11-application-20260921-111917",
+  "databaseSchemaChange": false,
+  "sqlRequired": false,
+  "migration": false,
+  "commit": false,
+  "push": false,
+  "deploy": false
+}

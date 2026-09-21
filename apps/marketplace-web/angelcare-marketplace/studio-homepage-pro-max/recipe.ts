@@ -1,7 +1,10 @@
 import type { Data } from '@puckeditor/core'
 import { HOMEPAGE_PRO_MAX_CATEGORY_ID,HOMEPAGE_PRO_MAX_WORLD_ID,HOMEPAGE_PRO_MAX_WORLD_REVISION,type HomepageProMaxInsertMode,type HomepageProMaxSectionDefinition } from './types'
+import type { StudioDynamicSourceReference, StudioDynamicStrategy } from '@/angelcare-marketplace/studio-dynamic-source/types'
 
 const responsive={mobileVisible:true,tabletVisible:true,desktopVisible:true}
+
+const catalogDynamicSource=(strategy:StudioDynamicStrategy,limit:number):StudioDynamicSourceReference=>({version:1,sourceId:'catalog.items',strategy,limit,emptyPolicy:'hide_block'})
 const meta=(id:string)=>({
   id,
   density:'dense' as const,
@@ -19,13 +22,13 @@ export const HOMEPAGE_PRO_MAX_SECTION_DEFINITIONS:readonly HomepageProMaxSection
  {id:'S04',type:'ac_home_pro_max_trust',label:'S04 · Bande de confiance',purpose:'Preuves approuvées uniquement.',dataClass:'trust',defaultProps:{...meta('homepro-s04'),title:'La confiance avant tout'}},
  {id:'S05',type:'ac_home_pro_max_categories',label:'S05 · Univers rapides',purpose:'Rail des catégories réelles.',dataClass:'taxonomy',defaultProps:{...meta('homepro-s05'),title:'Explorer AngelCare'}},
  {id:'S06',type:'ac_home_pro_max_promos',label:'S06 · Triptyque commercial',purpose:'Campagne famille + Academy + B2B.',dataClass:'campaign',defaultProps:{...meta('homepro-s06'),title:'À découvrir maintenant'}},
- {id:'S07',type:'ac_home_pro_max_flash',label:'S07 · Offres flash',purpose:'Pression commerciale fondée sur campagnes réelles.',dataClass:'catalog',defaultProps:{...meta('homepro-s07'),title:'Offres flash du moment',emptyPolicy:'hide',__studioDynamicSource:{sourceId:'catalog.items',strategy:'featured',limit:6}}},
- {id:'S08',type:'ac_home_pro_max_services',label:'S08 · Services cette semaine',purpose:'Services disponibles et aide humaine.',dataClass:'services',defaultProps:{...meta('homepro-s08'),title:'Services disponibles cette semaine',emptyPolicy:'hide',__studioDynamicSource:{sourceId:'catalog.items',strategy:'available_now',limit:6}}},
- {id:'S09',type:'ac_home_pro_max_packs',label:'S09 · Packs + meilleures ventes',purpose:'Collections/packs et best sellers réels.',dataClass:'catalog',defaultProps:{...meta('homepro-s09'),title:'Packs famille & bébé',subtitle:'Nos meilleures ventes',emptyPolicy:'hide',__studioDynamicSource:{sourceId:'catalog.items',strategy:'popular',limit:8}}},
+ {id:'S07',type:'ac_home_pro_max_flash',label:'S07 · Offres flash',purpose:'Pression commerciale fondée sur campagnes réelles.',dataClass:'catalog',defaultProps:{...meta('homepro-s07'),title:'Offres flash du moment',emptyPolicy:'hide',__studioDynamicSource:catalogDynamicSource('catalog_featured',6)}},
+ {id:'S08',type:'ac_home_pro_max_services',label:'S08 · Services cette semaine',purpose:'Services disponibles et aide humaine.',dataClass:'services',defaultProps:{...meta('homepro-s08'),title:'Services disponibles cette semaine',emptyPolicy:'hide',__studioDynamicSource:catalogDynamicSource('catalog_available',6)}},
+ {id:'S09',type:'ac_home_pro_max_packs',label:'S09 · Packs + meilleures ventes',purpose:'Collections/packs et best sellers réels.',dataClass:'catalog',defaultProps:{...meta('homepro-s09'),title:'Packs famille & bébé',subtitle:'Nos meilleures ventes',emptyPolicy:'hide',__studioDynamicSource:catalogDynamicSource('merchandising_popular',8)}},
  {id:'S10',type:'ac_home_pro_max_academy',label:'S10 · Academy urgence',purpose:'Formations + capacité réelle + bannière.',dataClass:'academy',defaultProps:{...meta('homepro-s10'),title:'Formations Academy',subtitle:'Dernières places uniquement si la capacité réelle le confirme',emptyPolicy:'hide'}},
  {id:'S11',type:'ac_home_pro_max_b2b',label:'S11 · Solutions professionnelles',purpose:'Crèches, écoles, maternités, hôtels et entreprises.',dataClass:'b2b',defaultProps:{...meta('homepro-s11'),title:'Solutions pour crèches, écoles, maternités, hôtels et entreprises',primaryCtaLabel:'Demander un devis',primaryCtaHref:'#'}},
  {id:'S12',type:'ac_home_pro_max_guides_experts',label:'S12 · Guides + experts',purpose:'Contenus éditoriaux et profils réels.',dataClass:'content+people',defaultProps:{...meta('homepro-s12'),title:'Guides & conseils pour parents',subtitle:'Nos experts recommandés',emptyPolicy:'hide'}},
- {id:'S13',type:'ac_home_pro_max_collections',label:'S13 · Collections + nouveautés',purpose:'Collections thématiques et nouvelles publications.',dataClass:'catalog',defaultProps:{...meta('homepro-s13'),title:'Nos collections thématiques',subtitle:'Dernières nouveautés',emptyPolicy:'hide',__studioDynamicSource:{sourceId:'catalog.items',strategy:'newest',limit:8}}},
+ {id:'S13',type:'ac_home_pro_max_collections',label:'S13 · Collections + nouveautés',purpose:'Collections thématiques et nouvelles publications.',dataClass:'catalog',defaultProps:{...meta('homepro-s13'),title:'Nos collections thématiques',subtitle:'Dernières nouveautés',emptyPolicy:'hide',__studioDynamicSource:catalogDynamicSource('catalog_newest',8)}},
  {id:'S14',type:'ac_home_pro_max_community',label:'S14 · Communauté + app + offre',purpose:'Communauté, application et campagne valide.',dataClass:'engagement',defaultProps:{...meta('homepro-s14'),title:'Rejoignez la communauté AngelCare',primaryCtaLabel:'Nous rejoindre',primaryCtaHref:'#'}},
  {id:'S15',type:'ac_home_pro_max_commitments',label:'S15 · Engagements + confiance',purpose:'Valeurs et logos approuvés seulement.',dataClass:'trust',defaultProps:{...meta('homepro-s15'),title:'Nos engagements'}},
  {id:'S16',type:'ac_home_pro_max_faq',label:'S16 · FAQ + témoignage + mission',purpose:'Réassurance, témoignage réel et mission.',dataClass:'trust+content',defaultProps:{...meta('homepro-s16'),title:'Questions fréquentes'}},
