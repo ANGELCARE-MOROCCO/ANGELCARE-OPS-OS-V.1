@@ -42,9 +42,14 @@ const sectionData=()=>HOMEPAGE_PRO_MAX_SECTION_DEFINITIONS.map(row=>({type:row.t
 
 export function buildHomepageProMaxWorld01Data(current?:Data,mode:HomepageProMaxInsertMode='replace'):Data{
  const root=current?.root?clone(current.root):({props:{}} as Data['root'])
+ const rootProps=((root?.props||{}) as Record<string,unknown>)
+ const replacementRootProps:Record<string,unknown>={}
+ for(const key of ['title','locale','pageId'] as const){const value=rootProps[key];if(typeof value==='string'&&value)replacementRootProps[key]=value}
  const existing=Array.isArray(current?.content)?clone(current!.content):[]
  const content=mode==='append'?[...existing,...sectionData()]:sectionData()
- return {content,root:{...root,props:{...(root?.props||{}),__homepageProMaxWorld:{worldId:HOMEPAGE_PRO_MAX_WORLD_ID,revision:HOMEPAGE_PRO_MAX_WORLD_REVISION,referenceSha256:'37a379977685225be5313d10b73ca12c4c0621daccce7ea5cb03ea992f4c7f6d'}}}} as Data
+ const homepageWorld={worldId:HOMEPAGE_PRO_MAX_WORLD_ID,revision:HOMEPAGE_PRO_MAX_WORLD_REVISION,referenceSha256:'37a379977685225be5313d10b73ca12c4c0621daccce7ea5cb03ea992f4c7f6d'}
+ const nextRoot=mode==='replace'?({props:{...replacementRootProps,__homepageProMaxWorld:homepageWorld}} as Data['root']):({...root,props:{...rootProps,__homepageProMaxWorld:homepageWorld}} as Data['root'])
+ return {content,root:nextRoot} as Data
 }
 
 export const HOMEPAGE_PRO_MAX_WORLD_01={

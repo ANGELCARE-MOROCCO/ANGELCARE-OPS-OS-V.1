@@ -49,7 +49,7 @@ export interface HomepageProMaxSectionProps extends Record<string,unknown>{
   hidden?:boolean
   endsAt?:string
   badge?:string
-  __studioDynamicSource?:Record<string,unknown>
+  __studioDynamicSource?:import("../studio-dynamic-source/types").StudioDynamicSourceReference
   __studioAction?:Record<string,unknown>
 }
 
