@@ -1,0 +1,20 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "incremental": false
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.d.ts",
+
+    "angelcare-marketplace/public-experience-authority/**/*.ts",
+    "angelcare-marketplace/public-experience-authority/**/*.tsx",
+
+    "app/api/angelcare-marketplace/admin/public-experience-authority/**/*.ts",
+    "app/api/angelcare-marketplace/admin/public-experience-authority/**/*.tsx",
+
+    "app/angelcare-marketplace/(protected)/admin/public-experience-authority/**/*.ts",
+    "app/angelcare-marketplace/(protected)/admin/public-experience-authority/**/*.tsx"
+  ]
+}
