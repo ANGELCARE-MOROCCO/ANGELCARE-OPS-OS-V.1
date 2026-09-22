@@ -37,6 +37,70 @@ async function loadPublishedExperience(page:CmsPage):Promise<{page:CmsPage;block
   const legacy=await db.from('angelcare_marketplace_cms_blocks').select('*').eq('page_id',page.id).eq('status','active').order('sort_order');if(legacy.error)throw publicError('charger les blocs',legacy.error);return{page,blocks:await hydrateCanonicalMedia((legacy.data||[]) as CmsBlock[])}
 }
 
+
+function isHomepageProMaxPublishedBlock(block:CmsBlock):boolean{
+  const content=rec(block.content)
+  const stored=rec(content.__studioPuck)
+  const type=String(stored.type||'')
+  return type.startsWith('ac_home_pro_max_')
+}
+
+/**
+ * Canonical public Homepage bridge for the modern Studio/Puck authority.
+ *
+ * Blue/green doctrine:
+ * - any published CMS page whose route_key belongs to the `public.home*` family
+ *   may become a Homepage candidate;
+ * - only a published revision containing Homepage Pro Max Puck blocks qualifies;
+ * - the newest qualifying publication wins;
+ * - callers can safely fall back to the legacy Homepage Flagship when none qualifies.
+ *
+ * This intentionally avoids hard-coding a page UUID and lets a freshly created
+ * governed page supersede a legacy Homepage without mutating the old record.
+ */
+export async function getPublishedStudioHomepage(input:{locale:string;territoryCode?:string|null}):Promise<PublicPageExperience|null>{
+  const supabase=await createServiceClient()
+  const territoryId=await resolveTerritoryId(input.territoryCode||'MA-MASTER')
+  const loadCandidates=async(locale:string)=>{
+    let query=supabase.from('angelcare_marketplace_cms_pages').select('*')
+      .eq('publication_state','published')
+      .eq('published_locale',locale)
+      .like('route_key','public.home%')
+    if(territoryId)query=query.or(`published_territory_id.is.null,published_territory_id.eq.${territoryId}`)
+    else query=query.is('published_territory_id',null)
+    const modern=await query
+      .order('published_at',{ascending:false,nullsFirst:false})
+      .order('updated_at',{ascending:false,nullsFirst:false})
+      .limit(20)
+    if(!modern.error)return modern
+    if(!coreMissing(modern.error))return modern
+    let legacy=supabase.from('angelcare_marketplace_cms_pages').select('*')
+      .eq('status','published')
+      .eq('locale',locale)
+      .like('route_key','public.home%')
+    if(territoryId)legacy=legacy.or(`territory_id.is.null,territory_id.eq.${territoryId}`)
+    else legacy=legacy.is('territory_id',null)
+    return legacy.order('published_at',{ascending:false,nullsFirst:false}).order('updated_at',{ascending:false,nullsFirst:false}).limit(20)
+  }
+  const localized=await loadCandidates(input.locale)
+  if(localized.error)throw publicError('charger les candidates Homepage Studio',localized.error)
+  let candidates=(localized.data||[]) as CmsPage[]
+  if(!candidates.length&&input.locale!=='fr'){
+    const fallback=await loadCandidates('fr')
+    if(fallback.error)throw publicError('charger la Homepage Studio française de repli',fallback.error)
+    candidates=(fallback.data||[]) as CmsPage[]
+  }
+  for(const candidate of candidates){
+    const locale=String(candidate.published_locale||candidate.locale||input.locale)
+    const slug=String(candidate.published_slug||candidate.slug||'')
+    if(!slug)continue
+    const experience=await getPublicPage({locale,slug,territoryCode:input.territoryCode||null})
+    if(!experience)continue
+    if(experience.blocks.some(isHomepageProMaxPublishedBlock))return experience
+  }
+  return null
+}
+
 export async function getPublicPage(input: { locale: string; slug: string; territoryCode?: string | null }): Promise<PublicPageExperience | null> {
   const supabase = await createServiceClient(); const territoryId = await resolveTerritoryId(input.territoryCode || 'MA-MASTER')
   const loadPage = async (locale: string) => {

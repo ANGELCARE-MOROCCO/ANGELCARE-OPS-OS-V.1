@@ -9,7 +9,7 @@ import { searchDiscovery } from '@/angelcare-marketplace/catalog-discovery/repos
 import type { CatalogLocale } from '@/angelcare-marketplace/catalog-discovery/types'
 import { GlobalPublicShell } from '@/angelcare-marketplace/public-universe/components/GlobalPublicShell'
 import { PublicPageRenderer } from '@/angelcare-marketplace/public-universe/components/PublicPageRenderer'
-import { getPublicPage, publicRoutePath } from '@/angelcare-marketplace/public-universe/repository'
+import { getPublicPage, getPublishedStudioHomepage, publicRoutePath } from '@/angelcare-marketplace/public-universe/repository'
 import { SanilaPublicUniverse } from '@/angelcare-marketplace/sanila-public/SanilaPublicUniverse'
 import { isSanilaPublicRoute, resolveSanilaPublicSlug } from '@/angelcare-marketplace/sanila-public/content'
 import { getSanilaPublicMetadata } from '@/angelcare-marketplace/sanila-public/metadata'
@@ -36,6 +36,12 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   if (locale === 'fr' && isSanilaPublicRoute(slug)) return getSanilaPublicMetadata(slug)
   if (alias) return { title: 'ANGELCARE Marketplace', alternates: { canonical: `/angelcare-marketplace/${locale}/${alias}` } }
   if (slug === 'accueil') {
+    const studioHomepage = await getPublishedStudioHomepage({ locale }).catch(() => null)
+    if (studioHomepage) return {
+      title: translated(studioHomepage.page.seo_title || studioHomepage.page.title),
+      description: translated(studioHomepage.page.seo_description || studioHomepage.page.description),
+      alternates: { canonical: `/angelcare-marketplace/${locale}` },
+    }
     const homepage = await getHomepageExperience({ locale }).catch(() => null)
     const campaign = homepage?.campaigns[0]
     if (campaign) return { title: translated(campaign.title), description: translated(campaign.subtitle), alternates: { canonical: `/angelcare-marketplace/${locale}` } }
@@ -58,6 +64,19 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
     return <SanilaPublicUniverse slug={sanilaSlug} locale={locale} />
   }
   if (slug === 'accueil') {
+    // MODERN STUDIO HOMEPAGE AUTHORITY — blue/green, fail-open.
+    // A freshly published Homepage Pro Max page wins without mutating the legacy
+    // Homepage record. If none is published/valid, the established Flagship path
+    // remains the continuity fallback.
+    const studioHomepage = await getPublishedStudioHomepage({ locale }).catch(() => null)
+    if (studioHomepage) {
+      return (
+        <GlobalPublicShell locale={locale} navigation={studioHomepage.navigation} variant="marketplace">
+          <PublicPageRenderer experience={studioHomepage} locale={locale} />
+        </GlobalPublicShell>
+      )
+    }
+
     // MARKETPLACE_LOCALE_ROOT_FAIL_OPEN
     //
     // The canonical public entrypoint must remain commercially available
