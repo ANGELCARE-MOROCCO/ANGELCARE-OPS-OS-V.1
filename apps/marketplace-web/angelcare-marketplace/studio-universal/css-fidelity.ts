@@ -1,5 +1,3 @@
-'use client'
-
 import type { StudioDesignStyle, StudioImportedCssRule } from './types'
 
 type Declaration = { property: string; value: string; important: boolean }
