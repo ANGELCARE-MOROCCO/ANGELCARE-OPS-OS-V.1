@@ -1,0 +1,2 @@
+apps/marketplace-web/angelcare-marketplace/sanila-public/components/SanilaVisualSystems.tsx
+apps/marketplace-web/public/sanila/sanila-operating-system-logo-white.png

@@ -1,0 +1,7 @@
+import { getSanilaPublicPage } from '../content'
+import { CapabilityIndex, ClosingStatement, ContextPhoto, InstitutionalContextBand, OutcomeStrip, ProcessSequence, SectionHeading } from '../components/SanilaExperience'
+import styles from '../SanilaPublic.module.css'
+export function NurserySolutionPage(){const page=getSanilaPublicPage('solutions/creches-maternelles')!;return <>
+<section className={styles.solutionHeroInstitution}><div><span className={styles.kicker}>CRÈCHES & MATERNELLES</span><h1>{page.title}</h1><p>{page.subtitle}</p></div><ContextPhoto src="/sanila/parent-login/sanila-parent-morocco-approved.webp" alt="Famille dans un contexte SANILA" ratio="wide" label="La confiance famille se construit dans les routines."/></section><OutcomeStrip page={page}/>
+<section className={`${styles.section} ${styles.sectionSoft}`}><SectionHeading index="01" eyebrow="RÉALITÉ DU TERRAIN" title="Le quotidien combine confiance, présence, équipes, communication et paiement."/><InstitutionalContextBand title="Une structure petite par la taille peut être grande par la complexité relationnelle." items={['Accueil famille','Routines enfant','Présences','Équipe','Communication','Paiements','Sécurité','Clôture journée']}/></section>
+<section className={styles.section}><ProcessSequence steps={page.workflow} variant="journey"/></section><section className={`${styles.section} ${styles.sectionCompact}`}><CapabilityIndex page={page} columns={3}/></section><ClosingStatement page={page}/></>}
