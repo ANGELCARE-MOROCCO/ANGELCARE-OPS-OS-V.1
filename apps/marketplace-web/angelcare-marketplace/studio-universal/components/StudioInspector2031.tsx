@@ -45,6 +45,10 @@ const provenance = (key: string) => {
 const bool = (value: unknown, fallback = true) => (typeof value === 'boolean' ? value : fallback)
 const record = (value: unknown): Record<string, unknown> =>
   value && typeof value === 'object' && !Array.isArray(value) ? (value as Record<string, unknown>) : {}
+const text = (value: unknown) => (typeof value === 'string' ? value : value == null ? '' : String(value))
+
+const standardTabs: Tab[] = ['content', 'design', 'responsive']
+const advancedTabs: Tab[] = ['overview', 'content', 'data', 'design', 'responsive', 'truth', 'diagnostics']
 
 export function StudioInspector2031({
   page,
@@ -64,7 +68,7 @@ export function StudioInspector2031({
   onPatchSelected: (id: string, patch: Record<string, unknown>) => void
 }) {
   const selected = usePuck((api) => api.selectedItem) as any
-  const [tab, setTab] = useState<Tab>('overview')
+  const [tab, setTab] = useState<Tab>('content')
   const [mode, setMode] = useState<Mode>('standard')
 
   const props = record(selected?.props)
@@ -85,71 +89,73 @@ export function StudioInspector2031({
     device === 'mobile' ? 'mobileStyle' : device === 'tablet' ? 'tabletStyle' : 'desktopStyle'
   const deviceStyle = record(responsive[deviceStyleKey])
 
-  const patchResponsive = (key: string, value: boolean) => {
-    if (id) onPatchSelected(id, { responsive: { ...responsive, [key]: value } })
-  }
-  const patchDesign = (key: string, value: unknown) => {
-    if (id) onPatchSelected(id, { sourceDesign: { ...design, [key]: value } })
-  }
+  const patch = (next: Record<string, unknown>) => { if (id) onPatchSelected(id, next) }
+  const patchResponsive = (key: string, value: boolean) => patch({ responsive: { ...responsive, [key]: value } })
+  const patchDesign = (key: string, value: unknown) => patch({ sourceDesign: { ...design, [key]: value } })
   const patchDeviceStyle = (key: string, value: unknown) => {
-    if (!id) return
-    onPatchSelected(id, {
-      responsive: {
-        ...responsive,
-        [deviceStyleKey]: { ...deviceStyle, [key]: value },
-      },
-    })
+    patch({ responsive: { ...responsive, [deviceStyleKey]: { ...deviceStyle, [key]: value } } })
+  }
+  const changeMode = (next: Mode) => {
+    setMode(next)
+    if (next === 'standard' && !standardTabs.includes(tab)) setTab('content')
   }
 
   if (!selected) {
     return (
       <div className={styles.futureInspectorEmpty}>
-        <WandSparkles size={26} />
-        <strong>Inspector 2031</strong>
-        <p>
-          Sélectionnez un bloc. L’inspecteur affichera sa santé, ses données, son design, son responsive et sa provenance.
-        </p>
+        <WandSparkles size={27} />
+        <strong>Inspecteur Pro</strong>
+        <p>Sélectionnez une section dans le canvas. Le parcours commence par le contenu essentiel, puis le design et le responsive.</p>
+        <div className={styles.inspectorEmptySteps}><span>1 · Contenu</span><span>2 · Design</span><span>3 · Responsive</span></div>
         <div className={styles.readinessMini}>
           <span data-state={doctor.ready ? 'pass' : 'warn'}>Document {doctor.ready ? 'PASS' : 'À revoir'}</span>
           <span data-state={serverReady ? 'pass' : 'neutral'}>Save {serverReady ? 'READY' : 'Preflight'}</span>
-          <span data-state={materialization.report?.blockerCount === 0 ? 'pass' : 'warn'}>
-            Sources {materialization.report?.blockerCount === 0 ? 'PASS' : 'À vérifier'}
-          </span>
+          <span data-state={materialization.report?.blockerCount === 0 ? 'pass' : 'warn'}>Sources {materialization.report?.blockerCount === 0 ? 'PASS' : 'À vérifier'}</span>
         </div>
       </div>
     )
   }
 
-  const visibleTabs = tabs.filter(([key]) => mode !== 'standard' || ['overview', 'content', 'data', 'responsive'].includes(key))
+  const visibleTabs = tabs.filter(([key]) => (mode === 'standard' ? standardTabs : advancedTabs).includes(key))
+  const hasPrimaryAction = props.primaryCtaLabel !== undefined || ['ac_home_pro_max_hero','ac_home_pro_max_b2b','ac_home_pro_max_community','ac_home_pro_max_services','ac_home_pro_max_academy'].includes(type)
+  const hasSecondaryAction = props.secondaryCtaLabel !== undefined || type === 'ac_home_pro_max_hero'
+  const hasMedia = props.mediaUrl !== undefined || props.mediaAssetKey !== undefined || ['ac_home_pro_max_hero'].includes(type)
+  const hasBody = props.body !== undefined || ['ac_home_pro_max_hero'].includes(type)
+  const hasCampaignDate = props.endsAt !== undefined || ['ac_home_pro_max_urgency','ac_home_pro_max_flash'].includes(type)
 
   return (
     <div className={styles.futureInspector}>
       <div className={styles.inspectorIdentity}>
         <div>
           <span>{def?.id || 'BLOC'} · {def?.dataClass || 'Studio'}</span>
-          <strong>{def?.label || type}</strong>
-          <code>{id || 'ID manquant'}</code>
+          <strong>{def?.label?.replace(/^S\d+\s*·\s*/, '') || type}</strong>
+          <small>{def?.purpose || 'Composant AngelCare éditable.'}</small>
         </div>
-        <div className={styles.healthDots}>
+        <div className={styles.healthDots} title="Santé · source · sauvegarde">
           <i data-state={doctor.blockers ? 'bad' : 'good'} />
           <i data-state={source?.status === 'RESOLVED' ? 'good' : 'neutral'} />
           <i data-state={serverReady ? 'good' : 'neutral'} />
         </div>
       </div>
 
+      <div className={styles.inspectorJourney} aria-label="Parcours d’édition">
+        <button data-active={tab === 'content'} onClick={() => setTab('content')}><b>1</b><span>Contenu</span></button>
+        <button data-active={tab === 'design'} onClick={() => setTab('design')}><b>2</b><span>Design</span></button>
+        <button data-active={tab === 'responsive'} onClick={() => setTab('responsive')}><b>3</b><span>Responsive</span></button>
+        <button data-active={tab === 'data'} disabled={mode === 'standard'} onClick={() => setTab('data')}><b>4</b><span>Vérifier</span></button>
+      </div>
+
       <div className={styles.inspectorModes}>
         {(['standard', 'advanced', 'developer'] as const).map((row) => (
-          <button key={row} data-active={mode === row} onClick={() => setMode(row)}>
+          <button key={row} data-active={mode === row} onClick={() => changeMode(row)}>
             {row === 'standard' ? 'Standard' : row === 'advanced' ? 'Avancé' : 'Developer'}
           </button>
         ))}
       </div>
 
-      <div className={styles.inspectorTabs}>
-        {visibleTabs.map(([key, label]) => (
-          <button key={key} data-active={tab === key} onClick={() => setTab(key)}>{label}</button>
-        ))}
-      </div>
+      {mode !== 'standard' ? <div className={styles.inspectorTabs}>
+        {visibleTabs.map(([key, label]) => <button key={key} data-active={tab === key} onClick={() => setTab(key)}>{label}</button>)}
+      </div> : null}
 
       {tab === 'overview' ? (
         <div className={styles.inspectorPane}>
@@ -159,28 +165,33 @@ export function StudioInspector2031({
             <article><Eye/><span>Résolus</span><strong>{source?.count ?? materializedItems.length}</strong></article>
             <article><ShieldCheck/><span>Save</span><strong>{serverReady ? 'READY' : 'PREFLIGHT'}</strong></article>
           </div>
-          <section className={styles.inspectorCard}>
-            <h4>Mission du bloc</h4>
-            <p>{def?.purpose || 'Composant AngelCare éditable.'}</p>
-          </section>
+          <section className={styles.inspectorCard}><h4>Mission</h4><p>{def?.purpose || 'Composant AngelCare éditable.'}</p></section>
           <section className={styles.inspectorCard}>
             <h4>Provenance</h4>
-            <div className={styles.provenanceRows}>
-              {Object.keys(props).filter((key) => !['id', 'items'].includes(key)).slice(0, 20).map((key) => (
-                <div key={key}><code>{key}</code><span>{provenance(key)}</span></div>
-              ))}
-            </div>
+            <div className={styles.provenanceRows}>{Object.keys(props).filter((key) => !['id', 'items'].includes(key)).slice(0, 20).map((key) => <div key={key}><code>{key}</code><span>{provenance(key)}</span></div>)}</div>
           </section>
         </div>
       ) : null}
 
       {tab === 'content' ? (
         <div className={styles.inspectorPane}>
-          <div className={styles.inspectorNotice}>
-            <SlidersHorizontal size={15}/>
-            <div><strong>Édition localisée</strong><span>Les champs Puck restent l’autorité d’édition. Les badges indiquent leur provenance.</span></div>
-          </div>
-          <Puck.Fields wrapFields={false}/>
+          <div className={styles.inspectorNotice}><SlidersHorizontal size={15}/><div><strong>Essentiel</strong><span>Modifiez le contenu visible sans entrer dans les réglages techniques.</span></div></div>
+          <section className={styles.inspectorCard}>
+            <div className={styles.cardTitleRow}><div><span>CONTENU</span><h4>Texte & conversion</h4></div><span className={styles.safePill}>SAFE EDIT</span></div>
+            <div className={styles.quickFields}>
+              {props.eyebrow !== undefined || type === 'ac_home_pro_max_hero' ? <label><span>Eyebrow</span><input value={text(props.eyebrow)} onChange={(e)=>patch({eyebrow:e.target.value})}/></label> : null}
+              <label><span>Titre</span><textarea rows={2} value={text(props.title)} onChange={(e)=>patch({title:e.target.value})}/></label>
+              {props.subtitle !== undefined ? <label><span>Sous-titre</span><textarea rows={3} value={text(props.subtitle)} onChange={(e)=>patch({subtitle:e.target.value})}/></label> : null}
+              {hasBody ? <label><span>Texte</span><textarea rows={4} value={text(props.body)} onChange={(e)=>patch({body:e.target.value})}/></label> : null}
+              {hasPrimaryAction ? <div className={styles.quickFieldGroup}><strong>Action principale</strong><label><span>Libellé</span><input value={text(props.primaryCtaLabel)} onChange={(e)=>patch({primaryCtaLabel:e.target.value})}/></label><label><span>Destination legacy</span><input value={text(props.primaryCtaHref)} onChange={(e)=>patch({primaryCtaHref:e.target.value})}/></label></div> : null}
+              {hasSecondaryAction ? <div className={styles.quickFieldGroup}><strong>Action secondaire</strong><label><span>Libellé</span><input value={text(props.secondaryCtaLabel)} onChange={(e)=>patch({secondaryCtaLabel:e.target.value})}/></label><label><span>Destination legacy</span><input value={text(props.secondaryCtaHref)} onChange={(e)=>patch({secondaryCtaHref:e.target.value})}/></label></div> : null}
+              {hasMedia ? <div className={styles.quickFieldGroup}><strong>Média</strong><label><span>URL de secours</span><input value={text(props.mediaUrl)} onChange={(e)=>patch({mediaUrl:e.target.value})}/></label><label><span>Texte alternatif</span><input value={text(props.mediaAlt)} onChange={(e)=>patch({mediaAlt:e.target.value})}/></label><small>Le Media Vault canonique reste disponible dans le mode Avancé.</small></div> : null}
+              {hasCampaignDate ? <label><span>Fin de campagne ISO</span><input value={text(props.endsAt)} onChange={(e)=>patch({endsAt:e.target.value})}/></label> : null}
+              <label className={styles.visibilityField}><span>Section visible</span><input type="checkbox" checked={!bool(props.hidden,false)} onChange={(e)=>patch({hidden:!e.target.checked})}/></label>
+            </div>
+          </section>
+          {source ? <section className={styles.sourceSummary}><Database size={15}/><div><strong>{source.authority || source.sourceId}</strong><span>{source.status} · {source.count} élément(s) résolu(s)</span></div></section> : null}
+          {mode !== 'standard' ? <section className={styles.inspectorCard}><div className={styles.cardTitleRow}><div><span>RÉGLAGES COMPLETS</span><h4>Champs Puck canoniques</h4></div><span className={styles.advancedPill}>AVANCÉ</span></div><Puck.Fields wrapFields={false}/></section> : null}
         </div>
       ) : null}
 
@@ -188,52 +199,25 @@ export function StudioInspector2031({
         <div className={styles.inspectorPane}>
           <section className={styles.inspectorCard}>
             <h4>Source réelle</h4>
-            {source ? (
-              <>
-                <dl className={styles.sourceFacts}>
-                  <div><dt>Authority</dt><dd>{source.authority || source.sourceId}</dd></div>
-                  <div><dt>Source</dt><dd>{source.sourceId}</dd></div>
-                  <div><dt>Strategy</dt><dd>{source.strategy}</dd></div>
-                  <div><dt>Status</dt><dd>{source.status}</dd></div>
-                  <div><dt>Resolved</dt><dd>{source.count}</dd></div>
-                </dl>
-                <p>{source.note}</p>
-              </>
-            ) : <p>Ce bloc n’utilise pas de source dynamique P06.</p>}
+            {source ? <><dl className={styles.sourceFacts}><div><dt>Authority</dt><dd>{source.authority || source.sourceId}</dd></div><div><dt>Source</dt><dd>{source.sourceId}</dd></div><div><dt>Strategy</dt><dd>{source.strategy}</dd></div><div><dt>Status</dt><dd>{source.status}</dd></div><div><dt>Resolved</dt><dd>{source.count}</dd></div></dl><p>{source.note}</p></> : <p>Ce bloc n’utilise pas de source dynamique P06.</p>}
           </section>
-          {materializedItems.length ? (
-            <section className={styles.inspectorCard}>
-              <h4>Aperçu canonique · {materializedItems.length}</h4>
-              <div className={styles.resolvedList}>
-                {materializedItems.slice(0, 12).map((row: any, index: number) => (
-                  <article key={row.id || index}>
-                    {row.mediaUrl ? <img src={String(row.mediaUrl)} alt=""/> : <span/>}
-                    <div>
-                      <strong>{String(row.title || 'Ressource')}</strong>
-                      <small>{row.priceMad != null ? `${row.priceMad} ${row.currencyLabel || 'MAD'}` : String(row.subtitle || row.body || '')}</small>
-                    </div>
-                  </article>
-                ))}
-              </div>
-            </section>
-          ) : null}
+          {materializedItems.length ? <section className={styles.inspectorCard}><h4>Aperçu canonique · {materializedItems.length}</h4><div className={styles.resolvedList}>{materializedItems.slice(0, 12).map((row: any, index: number) => <article key={row.id || index}>{row.mediaUrl ? <img src={String(row.mediaUrl)} alt=""/> : <span/>}<div><strong>{String(row.title || 'Ressource')}</strong><small>{row.priceMad != null ? `${row.priceMad} ${row.currencyLabel || 'MAD'}` : String(row.subtitle || row.body || '')}</small></div></article>)}</div></section> : null}
         </div>
       ) : null}
 
       {tab === 'design' ? (
         <div className={styles.inspectorPane}>
+          <div className={styles.inspectorNotice}><WandSparkles size={15}/><div><strong>Personnalisation gouvernée</strong><span>Tokens visuels uniquement. Aucun CSS libre ni changement de contrat.</span></div></div>
           <section className={styles.inspectorCard}>
-            <h4>Design gouverné · direct</h4>
-            <p>Tokens structurés uniquement. Aucun CSS arbitraire n’est requis pour les réglages courants.</p>
+            <div className={styles.cardTitleRow}><div><span>APPARENCE</span><h4>Composition de la section</h4></div><span className={styles.safePill}>TOKENS</span></div>
             <div className={styles.designControls}>
-              <label><span>Fond</span><select value={String(props.background || 'white')} onChange={(e) => id && onPatchSelected(id, { background: e.target.value })}><option value="white">Blanc</option><option value="soft-blue">Bleu doux</option><option value="soft-pink">Rose doux</option><option value="navy">Navy</option><option value="transparent">Transparent</option></select></label>
-              <label><span>Densité</span><select value={String(props.density || 'dense')} onChange={(e) => id && onPatchSelected(id, { density: e.target.value })}><option value="dense">Dense</option><option value="balanced">Équilibrée</option><option value="editorial">Éditoriale</option></select></label>
+              <label><span>Fond</span><select value={String(props.background || 'white')} onChange={(e) => patch({ background: e.target.value })}><option value="white">Blanc</option><option value="soft-blue">Bleu doux</option><option value="soft-pink">Rose doux</option><option value="navy">Navy</option><option value="transparent">Transparent</option></select></label>
+              <label><span>Densité</span><select value={String(props.density || 'dense')} onChange={(e) => patch({ density: e.target.value })}><option value="dense">Dense</option><option value="balanced">Équilibrée</option><option value="editorial">Éditoriale</option></select></label>
               <label><span>Padding haut</span><input type="number" min="0" max="240" value={Number(design.paddingTop || 0)} onChange={(e) => patchDesign('paddingTop', Number(e.target.value))}/></label>
               <label><span>Padding bas</span><input type="number" min="0" max="240" value={Number(design.paddingBottom || 0)} onChange={(e) => patchDesign('paddingBottom', Number(e.target.value))}/></label>
               <label><span>Gap</span><input type="number" min="0" max="160" value={Number(design.gap || 0)} onChange={(e) => patchDesign('gap', Number(e.target.value))}/></label>
               <label><span>Rayon</span><input type="number" min="0" max="100" value={Number(design.borderRadius || 0)} onChange={(e) => patchDesign('borderRadius', Number(e.target.value))}/></label>
-              <label><span>Largeur max</span><input value={String(design.maxWidth || '')} placeholder="ex. 1380px" onChange={(e) => patchDesign('maxWidth', e.target.value)}/></label>
-              <label><span>Alignement</span><select value={String(design.textAlign || 'start')} onChange={(e) => patchDesign('textAlign', e.target.value)}><option value="start">Début</option><option value="center">Centre</option><option value="end">Fin</option></select></label>
+              {mode !== 'standard' ? <><label><span>Largeur max</span><input value={String(design.maxWidth || '')} placeholder="ex. 1380px" onChange={(e) => patchDesign('maxWidth', e.target.value)}/></label><label><span>Alignement</span><select value={String(design.textAlign || 'start')} onChange={(e) => patchDesign('textAlign', e.target.value)}><option value="start">Début</option><option value="center">Centre</option><option value="end">Fin</option></select></label></> : null}
             </div>
           </section>
         </div>
@@ -242,7 +226,7 @@ export function StudioInspector2031({
       {tab === 'responsive' ? (
         <div className={styles.inspectorPane}>
           <section className={styles.inspectorCard}>
-            <h4>Responsive Pro · visibilité</h4>
+            <div className={styles.cardTitleRow}><div><span>VISIBILITÉ</span><h4>Responsive</h4></div><span className={styles.devicePill}>{device.toUpperCase()}</span></div>
             <div className={styles.responsiveSwitches}>
               <label><Smartphone/><span>Mobile</span><input type="checkbox" checked={bool(responsive.mobileVisible)} onChange={(e) => patchResponsive('mobileVisible', e.target.checked)}/></label>
               <label><Tablet/><span>Tablette</span><input type="checkbox" checked={bool(responsive.tabletVisible)} onChange={(e) => patchResponsive('tabletVisible', e.target.checked)}/></label>
@@ -251,46 +235,21 @@ export function StudioInspector2031({
           </section>
           <section className={styles.inspectorCard}>
             <h4>Réglages du device courant · {device}</h4>
-            <p>Ces valeurs sont compilées en règles responsive gouvernées et partagées avec le runtime public.</p>
-            {device === 'wide' ? <p>Le mode Wide hérite du contrat Desktop.</p> : (
-              <div className={styles.designControls}>
-                <label><span>Padding haut</span><input type="number" min="0" max="180" value={Number(deviceStyle.paddingTop || 0)} onChange={(e) => patchDeviceStyle('paddingTop', Number(e.target.value))}/></label>
-                <label><span>Padding bas</span><input type="number" min="0" max="180" value={Number(deviceStyle.paddingBottom || 0)} onChange={(e) => patchDeviceStyle('paddingBottom', Number(e.target.value))}/></label>
-                <label><span>Gap</span><input type="number" min="0" max="120" value={Number(deviceStyle.gap || 0)} onChange={(e) => patchDeviceStyle('gap', Number(e.target.value))}/></label>
-                <label><span>Taille texte</span><input type="number" min="0" max="96" value={Number(deviceStyle.fontSize || 0)} onChange={(e) => patchDeviceStyle('fontSize', Number(e.target.value))}/></label>
-                <label><span>Largeur max</span><input value={String(deviceStyle.maxWidth || '')} onChange={(e) => patchDeviceStyle('maxWidth', e.target.value)}/></label>
-                <label><span>Alignement</span><select value={String(deviceStyle.textAlign || 'start')} onChange={(e) => patchDeviceStyle('textAlign', e.target.value)}><option value="start">Début</option><option value="center">Centre</option><option value="end">Fin</option></select></label>
-              </div>
-            )}
+            <p>Valeurs compilées dans le contrat responsive partagé avec le runtime.</p>
+            {device === 'wide' ? <p>Wide hérite du contrat Desktop.</p> : <div className={styles.designControls}>
+              <label><span>Padding haut</span><input type="number" min="0" max="180" value={Number(deviceStyle.paddingTop || 0)} onChange={(e) => patchDeviceStyle('paddingTop', Number(e.target.value))}/></label>
+              <label><span>Padding bas</span><input type="number" min="0" max="180" value={Number(deviceStyle.paddingBottom || 0)} onChange={(e) => patchDeviceStyle('paddingBottom', Number(e.target.value))}/></label>
+              <label><span>Gap</span><input type="number" min="0" max="120" value={Number(deviceStyle.gap || 0)} onChange={(e) => patchDeviceStyle('gap', Number(e.target.value))}/></label>
+              <label><span>Taille texte</span><input type="number" min="0" max="96" value={Number(deviceStyle.fontSize || 0)} onChange={(e) => patchDeviceStyle('fontSize', Number(e.target.value))}/></label>
+              {mode !== 'standard' ? <><label><span>Largeur max</span><input value={String(deviceStyle.maxWidth || '')} onChange={(e) => patchDeviceStyle('maxWidth', e.target.value)}/></label><label><span>Alignement</span><select value={String(deviceStyle.textAlign || 'start')} onChange={(e) => patchDeviceStyle('textAlign', e.target.value)}><option value="start">Début</option><option value="center">Centre</option><option value="end">Fin</option></select></label></> : null}
+            </div>}
           </section>
         </div>
       ) : null}
 
-      {tab === 'truth' ? (
-        <div className={styles.inspectorPane}>
-          <section className={styles.inspectorCard}>
-            <h4>Vérité & commerce</h4>
-            <p>{source?.sourceId === 'catalog.items' ? 'Prix, disponibilité et identité affichés dans le canvas proviennent du Catalog Discovery canonique. Ils ne sont pas copiés dans le draft.' : 'Aucune vérité commerciale dynamique détectée sur ce bloc.'}</p>
-            <span className={styles.truthPill}>{source?.status === 'RESOLVED' ? 'CANONICAL · PROVEN' : 'DRAFT · REVIEW'}</span>
-          </section>
-        </div>
-      ) : null}
+      {tab === 'truth' ? <div className={styles.inspectorPane}><section className={styles.inspectorCard}><h4>Vérité & commerce</h4><p>{source?.sourceId === 'catalog.items' ? 'Prix, disponibilité et identité affichés dans le canvas proviennent du Catalog Discovery canonique. Ils ne sont pas copiés dans le draft.' : 'Aucune vérité commerciale dynamique détectée sur ce bloc.'}</p><span className={styles.truthPill}>{source?.status === 'RESOLVED' ? 'CANONICAL · PROVEN' : 'DRAFT · REVIEW'}</span></section></div> : null}
 
-      {tab === 'diagnostics' ? (
-        <div className={styles.inspectorPane}>
-          <section className={styles.inspectorCard}>
-            <h4>Document Doctor</h4>
-            <p>{doctor.blockers} blocker(s) · {doctor.repairable} réparation(s) sûre(s) · {doctor.warnings} warning(s).</p>
-            <button className={styles.inspectorAction} onClick={onOpenDoctor}><Activity size={14}/> Ouvrir le diagnostic complet</button>
-          </section>
-          {mode === 'developer' ? (
-            <section className={styles.inspectorCard}>
-              <h4>Contrat technique</h4>
-              <pre>{JSON.stringify({ pageId: page.id, type, id, source, props: Object.keys(props) }, null, 2)}</pre>
-            </section>
-          ) : null}
-        </div>
-      ) : null}
+      {tab === 'diagnostics' ? <div className={styles.inspectorPane}><section className={styles.inspectorCard}><h4>Document Doctor</h4><p>{doctor.blockers} blocker(s) · {doctor.repairable} réparation(s) sûre(s) · {doctor.warnings} warning(s).</p><button className={styles.inspectorAction} onClick={onOpenDoctor}><Activity size={14}/> Ouvrir le diagnostic complet</button></section>{mode === 'developer' ? <section className={styles.inspectorCard}><h4>Contrat technique</h4><pre>{JSON.stringify({ pageId: page.id, type, id, source, props: Object.keys(props) }, null, 2)}</pre></section> : null}</div> : null}
     </div>
   )
 }
