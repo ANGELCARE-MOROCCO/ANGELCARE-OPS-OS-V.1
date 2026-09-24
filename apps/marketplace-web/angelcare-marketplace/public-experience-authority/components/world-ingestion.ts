@@ -64,7 +64,9 @@ export async function droppedFiles(transfer:DataTransfer):Promise<IngestedWorldF
 
 async function inflateRaw(bytes:Uint8Array):Promise<Uint8Array>{
  if(typeof DecompressionStream==='undefined')throw new Error('Ce navigateur ne peut pas décompresser ce ZIP. Utilisez Chrome/Edge récent ou importez le dossier directement.')
- const stream=new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate-raw' as any))
+ const blobBuffer=new ArrayBuffer(bytes.byteLength)
+ new Uint8Array(blobBuffer).set(bytes)
+ const stream=new Blob([blobBuffer]).stream().pipeThrough(new DecompressionStream('deflate-raw' as any))
  return new Uint8Array(await new Response(stream).arrayBuffer())
 }
 function u16(view:DataView,offset:number){return view.getUint16(offset,true)}
@@ -97,7 +99,9 @@ export async function unzipWorld(file:File):Promise<IngestedWorldFile[]>{
   else if(method===8)content=await inflateRaw(compressed)
   else throw new Error(`Compression ZIP non supportée (${method}) pour ${path}.`)
   if(uncompressedSize&&content.byteLength!==uncompressedSize)throw new Error(`Taille ZIP incohérente: ${path}`)
-  out.push({file:new File([content],path.split('/').pop()||path,{type:mime(path)}),path})
+  const fileBuffer=new ArrayBuffer(content.byteLength)
+  new Uint8Array(fileBuffer).set(content)
+  out.push({file:new File([fileBuffer],path.split('/').pop()||path,{type:mime(path)}),path})
  }
  return out
 }
