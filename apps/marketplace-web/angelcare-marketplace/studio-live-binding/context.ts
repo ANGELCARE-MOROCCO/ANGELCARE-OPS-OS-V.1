@@ -38,6 +38,17 @@ export function createCatalogItemLiveBindingContext(data:AdaptiveExperienceData)
   return{
     summary:{itemId:data.item.id,itemSlug:data.item.slug,itemName:data.item.name,locale:data.locale,schemaKey:data.schema.schema_key,family:data.definition.family,priceAuthority:data.price.source,availabilityAuthority:data.availability.authority,mediaCount:data.media.length,publicFieldCount:data.fieldValues.length,trustClaimCount:data.trust.length,variantCount:data.variants.length},
     values:{
+      'identity.name':data.item.name,
+      'identity.shortDescription':data.item.short_description,
+      'identity.description':data.item.description,
+      'media.primary':primary?.url||null,
+      'pricing.current':data.price.amount,
+      'pricing.label':data.price.label,
+      'pricing.currency':data.price.currencyLabel,
+      'availability.status':availabilityLabel(data.locale,data.availability.status),
+      'availability.quantity':data.availability.availableQuantity,
+      'seo.schema':data.schema.schema_key,
+      'product.variants':variants,
       'item.name':data.item.name,'item.short_description':data.item.short_description,'item.description':data.item.description,
       'schema.name':data.locale==='ar'?data.schema.name_ar:data.locale==='en'?data.schema.name_en:data.schema.name_fr,'schema.description':data.schema.description_fr,
       'price.label':data.price.label,'price.amount':data.price.amount,'price.currency':data.price.currencyLabel,'price.mode':data.price.mode,

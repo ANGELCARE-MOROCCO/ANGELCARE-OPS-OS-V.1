@@ -1,9 +1,10 @@
 import type { StudioBindingTargetDescriptor, StudioBindingValueType, StudioLiveBindingDescriptor, StudioLiveBindingMap, StudioLiveBindingReference } from './types'
 import { STUDIO_BINDING_MISSING_POLICIES, STUDIO_LIVE_BINDING_VERSION } from './types'
+import { PUBLIC_EXPERIENCE_TYPED_BINDINGS } from '@/angelcare-marketplace/public-experience-authority/typed-bindings'
 
 const descriptor=(key:string,label:string,description:string,group:StudioLiveBindingDescriptor['group'],valueType:StudioBindingValueType,authority:string):StudioLiveBindingDescriptor=>({key,label,description,group,valueType,publicSafe:true,authority,freshness:'request'})
 
-export const STUDIO_LIVE_BINDINGS: readonly StudioLiveBindingDescriptor[] = [
+const BASE_STUDIO_LIVE_BINDINGS: readonly StudioLiveBindingDescriptor[] = [
   descriptor('item.name','Nom du produit / service','Nom localisé issu du catalogue publié.','identity','text','Category-Native / catalog item'),
   descriptor('item.short_description','Description courte','Description courte localisée du catalogue.','content','text','Category-Native / catalog item'),
   descriptor('item.description','Description complète','Description publique localisée du catalogue.','content','text','Category-Native / catalog item'),
@@ -24,7 +25,60 @@ export const STUDIO_LIVE_BINDINGS: readonly StudioLiveBindingDescriptor[] = [
   descriptor('experience.fields','Champs publics Experience','Tous les champs publics du schéma avec valeurs formatées.','configuration','items','Category-Native / public schema fields'),
   descriptor('variants.items','Variantes actives','Variantes actives publiées pour l’offre.','configuration','items','Category-Native / catalog variants'),
   descriptor('variants.count','Nombre de variantes','Nombre de variantes actives.','configuration','number','Category-Native / catalog variants'),
-] as const
+ ] as const
+
+const publicExperienceBindingGroup = (
+  key: string,
+): StudioLiveBindingDescriptor['group'] => {
+  const prefix = key.split('.')[0]
+
+  if (prefix === 'pricing') return 'commerce'
+  if (prefix === 'seo') return 'schema'
+
+  if (
+    [
+      'identity',
+      'availability',
+      'media',
+      'trust',
+      'reviews',
+      'relations',
+      'product',
+      'service',
+      'academy',
+      'b2b',
+      'storefront',
+    ].includes(prefix)
+  ) {
+    return prefix as StudioLiveBindingDescriptor['group']
+  }
+
+  return 'content'
+}
+
+const PUBLIC_EXPERIENCE_STUDIO_BINDINGS: readonly StudioLiveBindingDescriptor[] =
+  PUBLIC_EXPERIENCE_TYPED_BINDINGS
+    .filter(
+      (row) =>
+        !BASE_STUDIO_LIVE_BINDINGS.some(
+          (existing) => existing.key === row.key,
+        ),
+    )
+    .map((row) =>
+      descriptor(
+        row.key,
+        row.label,
+        `Binding Public Experience canonique · ${row.authority}`,
+        publicExperienceBindingGroup(row.key),
+        row.valueType as StudioBindingValueType,
+        row.authority,
+      ),
+    )
+
+export const STUDIO_LIVE_BINDINGS: readonly StudioLiveBindingDescriptor[] = [
+  ...BASE_STUDIO_LIVE_BINDINGS,
+  ...PUBLIC_EXPERIENCE_STUDIO_BINDINGS,
+]
 
 export const STUDIO_BINDING_TARGETS: readonly StudioBindingTargetDescriptor[] = [
   {key:'eyebrow',label:'Eyebrow',accepts:['text']},
