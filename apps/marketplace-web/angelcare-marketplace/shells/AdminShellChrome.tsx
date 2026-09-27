@@ -2,11 +2,12 @@
 
 import Image from 'next/image'
 import { useEffect, useState, type ReactNode } from 'react'
-import { Globe2, PanelLeftClose, PanelLeftOpen, ShieldCheck } from 'lucide-react'
+import { PanelLeftClose, PanelLeftOpen } from 'lucide-react'
 import styles from '../design-system/marketplace.module.css'
+import type { AdminShellSnapshot, AdminShellWorkspace } from '../admin-shell/types'
+import { AdminShellCommandSurface } from '../admin-shell/AdminShellCommandSurface'
 import { AdminNavigation } from './AdminNavigation'
 import { AdminLogoutButton } from '../auth/admin/AdminLogoutButton'
-import { GlobalCommandPalette } from '../enterprise-command/components/GlobalCommandPalette'
 import { GovernedActionProvider } from './GovernedActionProvider'
 import { AdminWorkspaceContextNav } from './AdminWorkspaceContextNav'
 
@@ -18,6 +19,8 @@ export function AdminShellChrome({
   roleKeys,
   territoryId,
   permissionCount,
+  snapshot,
+  workspaces,
   children,
 }: {
   actorDisplayName: string
@@ -25,6 +28,8 @@ export function AdminShellChrome({
   roleKeys: string[]
   territoryId: string | null
   permissionCount: number
+  snapshot: AdminShellSnapshot
+  workspaces: AdminShellWorkspace[]
   children: ReactNode
 }) {
   const [collapsed, setCollapsed] = useState(false)
@@ -57,7 +62,7 @@ export function AdminShellChrome({
       <aside className={styles.sidebar} aria-label="Navigation principale Marketplace Admin">
         <div className={styles.sidebarHeader}>
           <div className={styles.sidebarBrand}>
-            <Image src="/logo.png" alt="ANGELCARE" width={170} height={58} />
+            <Image src="/logo.png" alt="ANGELCARE" width={170} height={58} priority />
             <span>Marketplace · Master Backoffice</span>
           </div>
           <button
@@ -78,7 +83,7 @@ export function AdminShellChrome({
             <div className={styles.identityCopy}>
               <div className={styles.identityName}>{actorDisplayName}</div>
               <div className={styles.identityMeta}>
-                {roleKeys.join(' · ')}<br />
+                {roleKeys.join(' · ') || 'Opérateur Marketplace'}<br />
                 {actorEmail || 'Identité interne'}
               </div>
             </div>
@@ -87,20 +92,12 @@ export function AdminShellChrome({
         </div>
       </aside>
       <section className={styles.workspace}>
-        <header className={styles.topbar}>
-          <span className={styles.topbarTitle}>ANGELCARE BUILD 360 · Commandement global</span>
-          <div className={styles.topbarMeta}>
-            <GlobalCommandPalette />
-            <span className={styles.scopeBadge}>
-              <Globe2 size={13} />
-              {territoryId || 'Périmètre global'}
-            </span>
-            <span className={styles.scopeBadge}>
-              <ShieldCheck size={13} />
-              {permissionCount} permissions
-            </span>
-          </div>
-        </header>
+        <AdminShellCommandSurface
+          snapshot={snapshot}
+          workspaces={workspaces}
+          territoryId={territoryId}
+          permissionCount={permissionCount}
+        />
         <AdminWorkspaceContextNav />
         <main className={`${styles.content} ${styles.adminContent}`}><GovernedActionProvider>{children}</GovernedActionProvider></main>
       </section>

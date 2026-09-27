@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto'
 import { createServiceClient } from '@/lib/supabase/server'
 import { writeMarketplaceAudit } from '../audit/write-audit'
 import type { MarketplaceRequestContext } from '../domain/types'
@@ -33,12 +34,47 @@ export async function transitionEnterpriseOrder(input:{orderId:string;status:Jou
 
 export async function recordOrderLineEvent(input:{orderId:string;body:Record<string,unknown>;context:MarketplaceRequestContext;requestId:string;request:Request}):Promise<{id:string}>{await getAdminJourney(input.orderId,input.context);const db=await createServiceClient();const{data,error}=await db.from('angelcare_marketplace_order_line_events').insert({journey_id:input.orderId,line_reference:requiredText(input.body.lineReference,'lineReference',120),event_type:requiredText(input.body.eventType,'eventType',120),status:String(input.body.status||'recorded'),quantity:numberValue(input.body.quantity)||1,amount:input.body.amount==null?null:numberValue(input.body.amount),currency_label:'Dh',reason:optionalText(input.body.reason,1000),evidence:objectValue(input.body.evidence),created_by:input.context.actor.id}).select('id').single();if(error||!data)throw fail('enregistrer l’événement de ligne',error);await writeMarketplaceAudit({context:input.context,requestId:input.requestId,action:'marketplace.order.line_event.recorded',objectType:'marketplace_journey',objectId:input.orderId,result:'success',severity:'warning',afterValue:{eventId:data.id,eventType:input.body.eventType},source:'enterprise-order-command',request:input.request});return{id:String(data.id)}}
 
-export async function importWalletPolicyAssignments(input:{csvText:string;mode:'validate'|'upsert';reason:string|null;context:MarketplaceRequestContext;requestId:string;request:Request}){
- const lines=input.csvText.replace(/\r/g,'').split('\n').filter(Boolean);if(lines.length<2)throw new MarketplaceError('VALIDATION_ERROR','Le CSV doit contenir un en-tête et au moins une ligne.')
- const headers=lines[0].split(',').map((x)=>x.trim());const required=['policy_key','customer_email','starts_at','ends_at','status'];for(const key of required)if(!headers.includes(key))throw new MarketplaceError('VALIDATION_ERROR',`Colonne requise absente: ${key}`)
- const parsed=lines.slice(1).map((line,index)=>{const values=line.split(',').map((x)=>x.trim());return{row:index+2,data:Object.fromEntries(headers.map((h,i)=>[h,values[i]||'']))}})
- const db=await createServiceClient();const results=[] as Array<Record<string,unknown>>
- for(const entry of parsed){const d=entry.data;const[{data:policy},{data:customer}]=await Promise.all([db.from('angelcare_marketplace_wallet_policies').select('id').eq('policy_key',d.policy_key).maybeSingle(),db.from('angelcare_marketplace_customer_accounts').select('id').ilike('email',d.customer_email).maybeSingle()]);if(!policy||!customer){results.push({row:entry.row,status:'invalid',error:!policy?'policy_not_found':'customer_not_found'});continue}if(input.mode==='upsert'){const{error}=await db.from('angelcare_marketplace_wallet_policy_assignments').upsert({policy_id:policy.id,customer_account_id:customer.id,status:d.status||'active',starts_at:d.starts_at||null,ends_at:d.ends_at||null,assigned_by:input.context.actor.id},{onConflict:'policy_id,customer_account_id'});if(error){results.push({row:entry.row,status:'invalid',error:error.message});continue}}results.push({row:entry.row,status:input.mode==='upsert'?'imported':'valid'})}
- await writeMarketplaceAudit({context:input.context,requestId:input.requestId,action:'marketplace.wallet.policy_assignments.imported',objectType:'wallet_policy_import',objectId:crypto.randomUUID(),result:'success',severity:'warning',reason:input.reason,afterValue:{mode:input.mode,rows:results.length,invalid:results.filter((r)=>r.status==='invalid').length},source:'ac-wallet-import-factory',request:input.request})
- return{mode:input.mode,total:results.length,valid:results.filter((r)=>r.status!=='invalid').length,invalid:results.filter((r)=>r.status==='invalid').length,rows:results}
+type WalletImportCell=Record<string,string>
+function parseWalletCsv(source:string):Array<{row:number;data:WalletImportCell}>{
+ const text=source.replace(/^\uFEFF/,'');const records:string[][]=[];let row:string[]=[],field='',quoted=false
+ for(let index=0;index<text.length;index+=1){const char=text[index];if(quoted){if(char==='"'&&text[index+1]==='"'){field+='"';index+=1}else if(char==='"')quoted=false;else field+=char}else if(char==='"')quoted=true;else if(char===','){row.push(field);field=''}else if(char==='\n'||char==='\r'){if(char==='\r'&&text[index+1]==='\n')index+=1;row.push(field);field='';if(row.some(value=>value.trim()))records.push(row);row=[]}else field+=char}
+ if(quoted)throw new MarketplaceError('VALIDATION_ERROR','CSV Wallet invalide : guillemet non fermé.')
+ row.push(field);if(row.some(value=>value.trim()))records.push(row)
+ if(records.length<2)throw new MarketplaceError('VALIDATION_ERROR','Le CSV doit contenir un en-tête et au moins une ligne.')
+ if(records.length>5001)throw new MarketplaceError('VALIDATION_ERROR','Import Wallet limité à 5 000 lignes par lot.')
+ const headers=records[0].map(value=>value.trim());const required=['policy_key','customer_email','starts_at','ends_at','status'];for(const key of required)if(!headers.includes(key))throw new MarketplaceError('VALIDATION_ERROR',`Colonne requise absente: ${key}`)
+ if(headers.some((header,index)=>!header||headers.indexOf(header)!==index))throw new MarketplaceError('VALIDATION_ERROR','En-têtes Wallet vides ou dupliqués.')
+ return records.slice(1).map((values,index)=>({row:index+2,data:Object.fromEntries(headers.map((header,column)=>[header,(values[column]||'').trim()]))}))
+}
+function walletImportToken(csvText:string){return createHash('sha256').update(csvText.replace(/\r\n/g,'\n').trim()).digest('hex')}
+function validIsoDate(value:string){if(!value)return true;const date=new Date(value);return !Number.isNaN(date.getTime())}
+
+export async function importWalletPolicyAssignments(input:{csvText:string;mode:'validate'|'upsert';reason:string|null;preflightToken?:string|null;context:MarketplaceRequestContext;requestId:string;request:Request}){
+ const parsed=parseWalletCsv(input.csvText),db=await createServiceClient(),results=[] as Array<Record<string,unknown>>,token=walletImportToken(input.csvText)
+ if(input.mode==='upsert'&&input.preflightToken!==token)throw new MarketplaceError('VALIDATION_ERROR','Préflight Wallet absent ou périmé. Relancez la validation sur exactement ce CSV.')
+ const seen=new Set<string>()
+ for(const entry of parsed){
+  const d=entry.data,key=`${(d.policy_key||'').toLowerCase()}::${(d.customer_email||'').toLowerCase()}`
+  if(seen.has(key)){results.push({row:entry.row,status:'invalid',action:'blocked',error:'duplicate_assignment_in_file'});continue}seen.add(key)
+  if(!d.policy_key||!d.customer_email){results.push({row:entry.row,status:'invalid',action:'blocked',error:'identity_missing'});continue}
+  if(!validIsoDate(d.starts_at)||!validIsoDate(d.ends_at)){results.push({row:entry.row,status:'invalid',action:'blocked',error:'invalid_date'});continue}
+  if(d.starts_at&&d.ends_at&&new Date(d.ends_at).getTime()<new Date(d.starts_at).getTime()){results.push({row:entry.row,status:'invalid',action:'blocked',error:'end_before_start'});continue}
+  const[{data:policy},{data:customer}]=await Promise.all([
+   db.from('angelcare_marketplace_wallet_policies').select('id,policy_key').eq('policy_key',d.policy_key).maybeSingle(),
+   db.from('angelcare_marketplace_customer_accounts').select('id,email').ilike('email',d.customer_email).maybeSingle(),
+  ])
+  if(!policy||!customer){results.push({row:entry.row,status:'invalid',action:'blocked',error:!policy?'policy_not_found':'customer_not_found'});continue}
+  const{data:existing}=await db.from('angelcare_marketplace_wallet_policy_assignments').select('id,status,starts_at,ends_at').eq('policy_id',policy.id).eq('customer_account_id',customer.id).maybeSingle()
+  const next={status:d.status||'active',starts_at:d.starts_at||null,ends_at:d.ends_at||null}
+  const unchanged=existing!=null&&String(existing.status||'')===next.status&&String(existing.starts_at||'')===String(next.starts_at||'')&&String(existing.ends_at||'')===String(next.ends_at||'')
+  const action=existing?(unchanged?'unchanged':'update'):'create'
+  if(input.mode==='upsert'&&action!=='unchanged'){
+   const{error}=await db.from('angelcare_marketplace_wallet_policy_assignments').upsert({policy_id:policy.id,customer_account_id:customer.id,...next,assigned_by:input.context.actor.id},{onConflict:'policy_id,customer_account_id'})
+   if(error){results.push({row:entry.row,status:'invalid',action:'blocked',error:error.message});continue}
+  }
+  results.push({row:entry.row,status:input.mode==='upsert'?(action==='unchanged'?'unchanged':'imported'):'valid',action,policy_key:d.policy_key,customer_email:d.customer_email})
+ }
+ const invalid=results.filter(row=>row.status==='invalid').length,creates=results.filter(row=>row.action==='create').length,updates=results.filter(row=>row.action==='update').length,unchanged=results.filter(row=>row.action==='unchanged').length
+ await writeMarketplaceAudit({context:input.context,requestId:input.requestId,action:input.mode==='upsert'?'marketplace.wallet.policy_assignments.imported':'marketplace.wallet.policy_assignments.previewed',objectType:'wallet_policy_import',objectId:crypto.randomUUID(),result:'success',severity:'warning',reason:input.reason,afterValue:{mode:input.mode,rows:results.length,invalid,creates,updates,unchanged},source:'ac-wallet-import-factory',request:input.request})
+ return{mode:input.mode,total:results.length,valid:results.length-invalid,invalid,creates,updates,unchanged,preflightToken:token,rows:results}
 }

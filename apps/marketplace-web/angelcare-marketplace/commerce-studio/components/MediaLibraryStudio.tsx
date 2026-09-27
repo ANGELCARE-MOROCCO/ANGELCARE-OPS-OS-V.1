@@ -15,7 +15,7 @@ import { MEDIA_ACCEPT, MEDIA_ALLOWED_MIME, MEDIA_MAX_BYTES, csvEscape, detectPro
 
 type UploadSession = { assetId: string; uploadUrl: string; completionUrl: string }
 type PreflightResult = { checksumSha256: string; errors: string[]; duplicate: MediaAsset | null; state: 'READY' | 'FAILED' }
-type QueueItem = { id: string; file: File; checksum: string; reference: string; altTextFr: string; folderId: string; role: MediaRole; state: QueueState; progress: number; error: string; duplicate: MediaAsset | null; duplicatePolicy: DuplicatePolicy; asset: MediaAsset | null; productIds: string[] }
+type QueueItem = { id: string; file: File; checksum: string; reference: string; altTextFr: string; folderId: string; relativeFolderPath: string; role: MediaRole; state: QueueState; progress: number; error: string; duplicate: MediaAsset | null; duplicatePolicy: DuplicatePolicy; asset: MediaAsset | null; productIds: string[] }
 type MappingResult = { queueId: string; productId: string; label: string; state: 'SUCCESS' | 'FAILED'; error?: string }
 
 function putFile(url: string, file: File, onProgress: (value: number) => void) {
@@ -30,8 +30,9 @@ function putFile(url: string, file: File, onProgress: (value: number) => void) {
   })
 }
 
+function sourceFolderPath(file:File):string{const path=file.webkitRelativePath||'';const parts=path.split('/').filter(Boolean);return parts.length>1?parts.slice(0,-1).join('/'):''}
 function newQueueItem(file: File): QueueItem {
-  return { id: crypto.randomUUID(), file, checksum: '', reference: detectProductReference(file.name), altTextFr: file.name.replace(/\.[^.]+$/, '').replaceAll(/[-_]+/g, ' '), folderId: '', role: 'gallery', state: 'PENDING', progress: 0, error: '', duplicate: null, duplicatePolicy: 'USE_EXISTING', asset: null, productIds: [] }
+  return { id: crypto.randomUUID(), file, checksum: '', reference: detectProductReference(file.name), altTextFr: file.name.replace(/\.[^.]+$/, '').replaceAll(/[-_]+/g, ' '), folderId: '', relativeFolderPath: sourceFolderPath(file), role: 'gallery', state: 'PENDING', progress: 0, error: '', duplicate: null, duplicatePolicy: 'USE_EXISTING', asset: null, productIds: [] }
 }
 
 function folderBreadcrumb(folderId: string, folders: MediaFolder[]): string {
@@ -50,9 +51,12 @@ export function MediaLibraryStudio({ initialMedia, initialFolders, catalogItems,
   const [selected, setSelected] = useState<MediaAsset | null>(null), [selectedAssetIds, setSelectedAssetIds] = useState<string[]>([])
   const [showFolder, setShowFolder] = useState(false), [activeFolderId, setActiveFolderId] = useState('')
   const [queue, setQueue] = useState<QueueItem[]>([]), [manifestFiles, setManifestFiles] = useState<File[]>([]), [manifestErrors, setManifestErrors] = useState<string[]>([])
+  const [sourceKind,setSourceKind]=useState<'files'|'folder'>('files')
   const [preflighting, setPreflighting] = useState(false), [uploading, setUploading] = useState(false), [mappingPreview, setMappingPreview] = useState(false), [mappingResults, setMappingResults] = useState<MappingResult[]>([])
   const [usages, setUsages] = useState<MediaUsageReference[]>([]), [usageBusy, setUsageBusy] = useState(false), [replacementFiles, setReplacementFiles] = useState<File[]>([])
   const cancelled = useRef(new Set<string>())
+  const foldersRef=useRef<MediaFolder[]>(initialFolders)
+  const folderCreationRef=useRef(new Map<string,Promise<string>>())
   const mutation = useStudioMutation()
   const folderById = useMemo(() => new Map(folders.map(folder => [folder.id, folder])), [folders])
   const filtered = useMemo(() => media.filter(asset => {
@@ -63,7 +67,24 @@ export function MediaLibraryStudio({ initialMedia, initialFolders, catalogItems,
   }), [media, query, folderFilter, mimeFilter, assignmentFilter])
 
   function patchQueue(id: string, patch: Partial<QueueItem>) { setQueue(current => current.map(item => item.id === id ? { ...item, ...patch } : item)) }
-  function chooseFiles(files: File[]) { cancelled.current.clear(); setMappingPreview(false); setMappingResults([]); setManifestFiles([]); setManifestErrors([]); setQueue(files.map(file => ({ ...newQueueItem(file), folderId: activeFolderId }))) }
+  function chooseFiles(files: File[],kind:'files'|'folder'='files') { cancelled.current.clear(); setSourceKind(kind); setMappingPreview(false); setMappingResults([]); setManifestFiles([]); setManifestErrors([]); setQueue(files.map(file => ({ ...newQueueItem(file), folderId: activeFolderId }))) }
+  function mergeFolder(record:MediaFolder){foldersRef.current=[...foldersRef.current.filter(folder=>folder.id!==record.id),record].sort((a,b)=>a.name.localeCompare(b.name));setFolders(foldersRef.current)}
+  async function ensureFolderPath(path:string,rootId:string):Promise<string>{
+    const segments=path.split('/').map(part=>part.trim()).filter(Boolean)
+    let parentId=rootId||''
+    for(const segment of segments){
+      const existing=foldersRef.current.find(folder=>(folder.parent_id||'')===parentId&&folder.name.trim().toLowerCase()===segment.toLowerCase())
+      if(existing){parentId=existing.id;continue}
+      const key=`${parentId}::${segment.toLowerCase()}`
+      let pending=folderCreationRef.current.get(key)
+      if(!pending){
+        pending=apiRequest<{record:MediaFolder}>('/api/angelcare-marketplace/admin/commerce/media-folders',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({name:segment,parent_id:parentId||null,status:'active'})}).then(result=>{mergeFolder(result.record);return result.record.id}).finally(()=>folderCreationRef.current.delete(key))
+        folderCreationRef.current.set(key,pending)
+      }
+      parentId=await pending
+    }
+    return parentId
+  }
 
   async function applyManifest(files: File[]) {
     setManifestFiles(files)
@@ -112,10 +133,12 @@ export function MediaLibraryStudio({ initialMedia, initialFolders, catalogItems,
     if (item.duplicate && item.duplicatePolicy === 'USE_EXISTING') { patchQueue(item.id, { state: 'SUCCESS', progress: 100, asset: item.duplicate }); return item.duplicate }
     patchQueue(item.id, { state: 'UPLOADING', progress: 0, error: '' })
     try {
+      const resolvedFolderId=item.relativeFolderPath?await ensureFolderPath(item.relativeFolderPath,item.folderId):item.folderId
+      if(resolvedFolderId!==item.folderId)patchQueue(item.id,{folderId:resolvedFolderId,relativeFolderPath:''})
       const replaceAssetId = item.duplicate && item.duplicatePolicy === 'REPLACE_EXISTING' ? item.duplicate.id : null
-      const session = await apiRequest<UploadSession>('/api/angelcare-marketplace/admin/media/upload-session', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ fileName: item.file.name, mimeType: item.file.type, sizeBytes: item.file.size, folderId: item.folderId || null, altTextFr: item.altTextFr, replaceAssetId }) })
+      const session = await apiRequest<UploadSession>('/api/angelcare-marketplace/admin/media/upload-session', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ fileName: item.file.name, mimeType: item.file.type, sizeBytes: item.file.size, folderId: resolvedFolderId || null, altTextFr: item.altTextFr, replaceAssetId }) })
       await putFile(session.uploadUrl, item.file, progress => patchQueue(item.id, { progress }))
-      const asset = await apiRequest<MediaAsset>(session.completionUrl, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ fileName: item.file.name, mimeType: item.file.type, sizeBytes: item.file.size, checksumSha256: item.checksum, folderId: item.folderId || null, altTextFr: item.altTextFr, productReference: item.reference }) })
+      const asset = await apiRequest<MediaAsset>(session.completionUrl, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ fileName: item.file.name, mimeType: item.file.type, sizeBytes: item.file.size, checksumSha256: item.checksum, folderId: resolvedFolderId || null, altTextFr: item.altTextFr, productReference: item.reference }) })
       patchQueue(item.id, { state: 'SUCCESS', progress: 100, asset }); setMedia(current => [asset, ...current.filter(candidate => candidate.id !== asset.id)]); return asset
     } catch (error) { patchQueue(item.id, { state: 'FAILED', error: error instanceof Error ? error.message : 'Échec du téléversement.' }); return null }
   }
@@ -127,7 +150,7 @@ export function MediaLibraryStudio({ initialMedia, initialFolders, catalogItems,
     event.preventDefault()
     const form = new FormData(event.currentTarget)
     const result = await mutation.run(() => apiRequest<{ record: MediaFolder }>('/api/angelcare-marketplace/admin/commerce/media-folders', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ name: String(form.get('name') || ''), parent_id: activeFolderId || null, status: 'active' }) }), 'Dossier média prêt.')
-    if (result) { setFolders(current => [...current.filter(folder => folder.id !== result.record.id), result.record].sort((a, b) => a.name.localeCompare(b.name))); setActiveFolderId(result.record.id); setShowFolder(false) }
+    if (result) { mergeFolder(result.record); setActiveFolderId(result.record.id); setShowFolder(false) }
   }
 
   async function patchAssets(payload: (asset: MediaAsset) => Record<string, unknown>) {
@@ -176,11 +199,11 @@ export function MediaLibraryStudio({ initialMedia, initialFolders, catalogItems,
   return <main className={styles.shell} data-readonly={!canManage}>
     <section className={styles.workspaceHero} data-accent="media"><div><span>MEDIA LIBRARY · {mode.toUpperCase()}</span><h1>Ingestion média opérationnelle.</h1><p>Préflight, file d’attente bornée, dossiers canoniques, métadonnées et affectations — aucune publication automatique.</p></div><div className={styles.workspaceStats}><strong>{media.length}</strong><span>assets persistants</span></div></section>
     {!canManage ? <p className={styles.permissionBanner}>Bibliothèque en lecture seule · permission marketplace.media.manage requise.</p> : null}<StudioNotice message={mutation.message} error={mutation.error} onClose={mutation.clear}/>
-    <section className={styles.mediaOperationsGrid}><aside className={styles.uploadPanel}><h2><UploadCloud size={20}/> Lot à téléverser</h2><MarketplaceFilePicker accept={MEDIA_ACCEPT} files={queue.map(item => item.file)} onFilesChange={chooseFiles} label="Choisir plusieurs médias" description="Sélection multiple ou glisser-déposer · préflight obligatoire · 40 Mo par fichier" maxSizeBytes={MEDIA_MAX_BYTES} multiple deferValidation disabled={!canManage || uploading}/><label className={styles.field}><span>Dossier actif</span><select value={activeFolderId} onChange={event => setActiveFolderId(event.target.value)}><option value="">Racine Marketplace</option>{folders.map(folder => <option value={folder.id} key={folder.id}>{folderBreadcrumb(folder.id, folders)}</option>)}</select></label><p className={styles.folderBreadcrumb}>{folderBreadcrumb(activeFolderId, folders)}</p><button type="button" className={styles.secondaryAction} onClick={() => setShowFolder(value => !value)}><FolderPlus size={16}/> Créer un dossier ici</button>{showFolder ? <form className={styles.inlineFolderForm} onSubmit={createFolder}><Field name="name" label="Nom du dossier" required/><button className={styles.primaryAction} type="submit">Créer</button></form> : null}<h3>Manifeste facultatif</h3><MarketplaceFilePicker accept=".csv,text/csv" files={manifestFiles} onFilesChange={files => void applyManifest(files)} label="Associer un manifeste CSV" description="file_name, product_reference, role, alt_text_fr, folder_slug" disabled={!queue.length || uploading}/>{manifestErrors.map(error => <p className={styles.queueError} key={error}>{error}</p>)}<div className={styles.batchActions}><button type="button" onClick={() => void preflight()} disabled={!queue.length || preflighting || uploading}>Préflight complet</button><button type="button" onClick={() => void executeQueue(queue.filter(item => item.state === 'READY'))} disabled={uploading || !queue.some(item => item.state === 'READY') || manifestErrors.length > 0}>Téléverser les READY</button><button type="button" onClick={() => void executeQueue(queue.filter(item => item.state === 'FAILED'))} disabled={uploading || !queue.some(item => item.state === 'FAILED')}>Réessayer les échecs</button></div><a className={styles.storageHealthLink} href="/angelcare-marketplace/admin/configuration/storage/media">État du stockage média Marketplace</a></aside>
+    <section className={styles.mediaOperationsGrid}><aside className={styles.uploadPanel}><h2><UploadCloud size={20}/> Lot à téléverser</h2><div className={styles.ingestionSourceGrid}><MarketplaceFilePicker accept={MEDIA_ACCEPT} files={sourceKind==='files'?queue.map(item => item.file):[]} onFilesChange={files=>chooseFiles(files,'files')} label="Choisir plusieurs médias" description="Sélection multiple ou glisser-déposer · préflight obligatoire · 40 Mo par fichier" maxSizeBytes={MEDIA_MAX_BYTES} multiple deferValidation disabled={!canManage || uploading}/><MarketplaceFilePicker accept={MEDIA_ACCEPT} files={sourceKind==='folder'?queue.map(item => item.file):[]} onFilesChange={files=>chooseFiles(files,'folder')} label="Sélectionner un dossier complet" description="Arborescence locale conservée à l’exécution · préflight avant upload" maxSizeBytes={MEDIA_MAX_BYTES} multiple directory deferValidation disabled={!canManage || uploading}/></div>{sourceKind==='folder'&&queue.length?<p className={styles.folderImportSummary}><FolderInput size={14}/><strong>{queue.length} fichier(s)</strong><span>{new Set(queue.map(item=>item.relativeFolderPath).filter(Boolean)).size} dossier(s) source · création des dossiers seulement lors du téléversement explicite</span></p>:null}<label className={styles.field}><span>Dossier actif</span><select value={activeFolderId} onChange={event => setActiveFolderId(event.target.value)}><option value="">Racine Marketplace</option>{folders.map(folder => <option value={folder.id} key={folder.id}>{folderBreadcrumb(folder.id, folders)}</option>)}</select></label><p className={styles.folderBreadcrumb}>{folderBreadcrumb(activeFolderId, folders)}</p><button type="button" className={styles.secondaryAction} onClick={() => setShowFolder(value => !value)}><FolderPlus size={16}/> Créer un dossier ici</button>{showFolder ? <form className={styles.inlineFolderForm} onSubmit={createFolder}><Field name="name" label="Nom du dossier" required/><button className={styles.primaryAction} type="submit">Créer</button></form> : null}<h3>Manifeste facultatif</h3><MarketplaceFilePicker accept=".csv,text/csv" files={manifestFiles} onFilesChange={files => void applyManifest(files)} label="Associer un manifeste CSV" description="file_name, product_reference, role, alt_text_fr, folder_slug" disabled={!queue.length || uploading}/>{manifestErrors.map(error => <p className={styles.queueError} key={error}>{error}</p>)}<div className={styles.batchActions}><button type="button" onClick={() => void preflight()} disabled={!queue.length || preflighting || uploading}>Préflight complet</button><button type="button" onClick={() => void executeQueue(queue.filter(item => item.state === 'READY'))} disabled={uploading || !queue.some(item => item.state === 'READY') || manifestErrors.length > 0}>Téléverser les READY</button><button type="button" onClick={() => void executeQueue(queue.filter(item => item.state === 'FAILED'))} disabled={uploading || !queue.some(item => item.state === 'FAILED')}>Réessayer les échecs</button></div><a className={styles.storageHealthLink} href="/angelcare-marketplace/admin/configuration/storage/media">État du stockage média Marketplace</a></aside>
       <section className={styles.batchPanel}>
         <header><div><span>BATCH PREFLIGHT</span><h2>{queue.length} fichier(s)</h2></div><strong>CONCURRENCY=3</strong></header>
         <div className={styles.batchTableWrap}><table className={styles.batchTable}><thead><tr><th>Fichier</th><th>Référence suggérée</th><th>Alt FR</th><th>Dossier</th><th>Rôle</th><th>Doublon</th><th>État</th><th>Action</th></tr></thead><tbody>{queue.map(item => <tr key={item.id} data-state={item.state}>
-          <td><strong>{item.file.name}</strong><small>{item.file.type || 'MIME absent'} · {formatMarketplaceFileSize(item.file.size)}</small>{item.asset ? <small>{item.asset.asset_key} · {item.asset.status} · {item.productIds.length ? `${item.productIds.length} affectation(s)` : 'non assigné'}</small> : null}{item.error ? <em>{item.error}</em> : null}</td>
+          <td><strong>{item.file.name}</strong><small>{item.file.type || 'MIME absent'} · {formatMarketplaceFileSize(item.file.size)}</small>{item.relativeFolderPath?<small>Dossier source · {item.relativeFolderPath}</small>:null}{item.asset ? <small>{item.asset.asset_key} · {item.asset.status} · {item.productIds.length ? `${item.productIds.length} affectation(s)` : 'non assigné'}</small> : null}{item.error ? <em>{item.error}</em> : null}</td>
           <td><input value={item.reference} onChange={event => patchQueue(item.id, { reference: event.target.value })} placeholder="HS-AC-001"/></td>
           <td><input value={item.altTextFr} onChange={event => patchQueue(item.id, { altTextFr: event.target.value })}/></td>
           <td><select value={item.folderId} onChange={event => patchQueue(item.id, { folderId: event.target.value })}><option value="">Racine</option>{folders.map(folder => <option key={folder.id} value={folder.id}>{folder.name}</option>)}</select></td>

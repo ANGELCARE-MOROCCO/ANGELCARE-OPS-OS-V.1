@@ -1,6 +1,6 @@
 'use client'
 
-import { useId, useRef, useState, type DragEvent } from 'react'
+import { useEffect, useId, useRef, useState, type DragEvent } from 'react'
 import { FileUp, RotateCcw, Trash2 } from 'lucide-react'
 import styles from './marketplace-file-picker.module.css'
 
@@ -34,6 +34,7 @@ type MarketplaceFilePickerProps = {
   className?: string
   inputAriaLabel?: string
   deferValidation?: boolean
+  directory?: boolean
 }
 
 export function MarketplaceFilePicker({
@@ -48,11 +49,19 @@ export function MarketplaceFilePicker({
   className,
   inputAriaLabel,
   deferValidation = false,
+  directory = false,
 }: MarketplaceFilePickerProps) {
   const inputRef = useRef<HTMLInputElement>(null)
   const descriptionId = useId()
   const [dragActive, setDragActive] = useState(false)
   const [error, setError] = useState('')
+
+  useEffect(() => {
+    const input=inputRef.current
+    if(!input)return
+    if(directory){input.setAttribute('webkitdirectory','');input.setAttribute('directory','')}
+    else{input.removeAttribute('webkitdirectory');input.removeAttribute('directory')}
+  },[directory])
 
   function openPicker() {
     if (disabled) return
@@ -64,7 +73,7 @@ export function MarketplaceFilePicker({
 
   function selectFiles(candidates: File[]) {
     setDragActive(false)
-    const selected = multiple ? candidates : candidates.slice(0, 1)
+    const selected = (multiple || directory) ? candidates : candidates.slice(0, 1)
     if (!selected.length) return
     if (deferValidation) {
       setError('')
@@ -108,7 +117,7 @@ export function MarketplaceFilePicker({
       className={styles.nativeInput}
       type="file"
       accept={accept}
-      multiple={multiple}
+      multiple={multiple || directory}
       disabled={disabled}
       tabIndex={-1}
       aria-label={inputAriaLabel || label}
@@ -127,12 +136,12 @@ export function MarketplaceFilePicker({
       onDrop={onDrop}
     >
       <FileUp aria-hidden="true" />
-      <strong>{dragActive ? 'Déposez le fichier ici' : files.length ? 'Remplacer le fichier' : label}</strong>
+      <strong>{dragActive ? 'Déposez le fichier ici' : files.length ? (directory ? 'Remplacer le dossier' : 'Remplacer le fichier') : label}</strong>
       <span id={descriptionId}>{description}</span>
     </button>
     {files.length ? <div className={styles.selection} role="status" aria-live="polite">
       <div className={styles.fileList}>{files.map((file) => <dl key={`${file.name}:${file.size}:${file.lastModified}`}>
-        <div><dt>FILE_NAME</dt><dd>{file.name}</dd></div>
+        <div><dt>{file.webkitRelativePath?'FILE_PATH':'FILE_NAME'}</dt><dd>{file.webkitRelativePath||file.name}</dd></div>
         <div><dt>FILE_SIZE</dt><dd>{formatMarketplaceFileSize(file.size)}</dd></div>
         <div><dt>FILE_TYPE</dt><dd>{file.type || 'type non déclaré'}</dd></div>
         <div><dt>READY_FOR_VALIDATION</dt><dd>YES</dd></div>
