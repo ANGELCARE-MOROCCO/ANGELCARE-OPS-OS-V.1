@@ -6,8 +6,10 @@ import type {
   RowValidationResult,
 } from './types'
 import {
+  CATEGORY_NATIVE_DEFERRED_MEDIA_KEYS,
   CATEGORY_NATIVE_PRODUCT360_ENRICHMENT_KEYS,
   categoryNativeCsvFields,
+  validateCategoryNativeDoctrineBridge,
   validateProduct360Enrichment,
 } from './product360-enrichment'
 
@@ -163,7 +165,7 @@ export function validateCategoryNativeRow(
     warnings.push(`Le template est en version ${String(normalized.template_version)} alors que le schéma actif est en version ${schema.version}.`)
   }
 
-  for (const field of categoryNativeCsvFields(schema.fields)) {
+  for (const field of categoryNativeCsvFields(schema)) {
     const raw = row[field.field_key]
     const empty = raw === null || raw === undefined || categoryNativeText(raw) === ''
     if (field.required && empty && field.default_value === null) {
@@ -186,19 +188,33 @@ export function validateCategoryNativeRow(
   const priceValue = categoryNativeNumber(
     normalized.price_amount ?? normalized.starting_price_dh ?? normalized.recurring_fee_dh,
   )
-  if (priceMode && !['quote_only', 'free'].includes(priceMode) && priceValue === null) {
-    warnings.push('Un mode de prix visible est défini sans montant de référence.')
-  }
-
   const categoryKeys = categoryNativeList(normalized.category_keys)
-  if (!categoryKeys.length) warnings.push('Aucune catégorie canonique n’est renseignée.')
 
   const mediaReference = categoryNativeText(normalized.primary_image_reference)
   if (!mediaReference && schema.media_requirements.primary === true) {
-    errors.push('Une image principale Media Library est requise.')
+    warnings.push('Média principal différé : assignez-le manuellement depuis Media Vault après import.')
+  }
+  if (!categoryNativeText(normalized.name_fr)) errors.push('name_fr est requis pour fermer le readiness Identité.')
+  if (!categoryNativeText(normalized.short_description_fr)) errors.push('short_description_fr est requis pour fermer le readiness Contenu.')
+  if (!categoryNativeText(normalized.description_fr)) errors.push('description_fr est requis pour fermer le readiness Contenu.')
+
+  if (priceMode && !['quote_only', 'free'].includes(priceMode) && priceValue === null) {
+    errors.push('Un mode de prix visible exige un montant de référence afin de fermer le readiness Pricing.')
+  }
+  if (!categoryKeys.length) errors.push('Au moins une catégorie canonique est requise pour fermer le readiness Catégorie.')
+  const territoryCodes = categoryNativeList(normalized.territory_codes)
+  if (!territoryCodes.length) errors.push('Au moins un territory_code est requis pour créer la disponibilité canonique à l’import.')
+  if (schema.availability_authority === 'inventory') {
+    const stock = categoryNativeNumber(normalized.stock_quantity)
+    if (stock === null || stock <= 0) errors.push('stock_quantity doit être supérieur à 0 pour fermer le readiness Disponibilité d’un produit géré par inventaire.')
+  }
+  if (categoryNativeText(normalized.status) === 'published' && !mediaReference) {
+    normalized.status = 'draft'
+    warnings.push('Publication différée automatiquement : le produit reste draft jusqu’à l’assignation manuelle du média principal.')
   }
 
   errors.push(...validateProduct360Enrichment(normalized))
+  errors.push(...validateCategoryNativeDoctrineBridge(schema, normalized))
 
   return {
     rowNumber,
@@ -276,7 +292,7 @@ function csvEscape(value: unknown): string {
 export function categoryNativeCsvTemplate(
   schema: ExperienceSchemaBlueprint,
 ): CsvTemplateDocument {
-  const fields = categoryNativeCsvFields(schema.fields)
+  const fields = categoryNativeCsvFields(schema)
   const headers = ['template_version', 'schema_key', ...fields.map((field) => field.field_key)]
   const example: Record<string, unknown> = {
     template_version: schema.version,
@@ -284,7 +300,7 @@ export function categoryNativeCsvTemplate(
   }
 
   for (const field of fields) {
-    if (CATEGORY_NATIVE_PRODUCT360_ENRICHMENT_KEYS.has(field.field_key)) {
+    if (CATEGORY_NATIVE_PRODUCT360_ENRICHMENT_KEYS.has(field.field_key) || CATEGORY_NATIVE_DEFERRED_MEDIA_KEYS.has(field.field_key) || field.section_key === 'product_360_doctrine') {
       example[field.field_key] = ''
     } else if (field.default_value !== null && field.default_value !== undefined) {
       example[field.field_key] = field.default_value

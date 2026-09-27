@@ -336,18 +336,24 @@ async function validateCityZoneIds(db:any,entries:Array<{cityZoneId:string;terri
 }
 
 async function syncAvailability(db:any,itemId:string,actorId:string,source:Record<string,unknown>,normalized:Record<string,unknown>):Promise<void>{
-  const touched=['territory_codes','availability_json','availability_audience','availability_capacity','availability_starts_at','availability_ends_at','availability_reason'].some((key)=>hasOwn(source,key))
+  const touched=['availability_status','territory_codes','availability_json','availability_audience','availability_capacity','availability_starts_at','availability_ends_at','availability_reason'].some((key)=>hasOwn(source,key))
   if(!touched)return
   const structured=rows(normalized.availability_json)
   const simpleCodes=list(normalized.territory_codes)
   const allCodes=unique([...simpleCodes,...structured.map((entry)=>text(entry.territory_code)).filter(Boolean)])
   const territories=await resolveTerritories(db,allCodes)
   const desired:Row[]=[]
+  const simpleAvailable=text(normalized.availability_status)!=='unavailable'&&text(normalized.availability_status)!=='out_of_stock'
   if(structured.length){
-    for(const entry of structured){const code=text(entry.territory_code);desired.push({territory_id:code?territories.get(code):nullableText(entry.territory_id),city_zone_id:nullableText(entry.city_zone_id),audience:text(entry.audience)||'all',available:entry.available===undefined?true:bool(entry.available)===true,capacity_limit:number(entry.capacity_limit),starts_at:nullableText(entry.starts_at),ends_at:nullableText(entry.ends_at),reason:nullableText(entry.reason)})}
-  }else{
-    for(const code of simpleCodes)desired.push({territory_id:territories.get(code),city_zone_id:null,audience:text(normalized.availability_audience)||'all',available:text(normalized.availability_status)!=='unavailable'&&text(normalized.availability_status)!=='out_of_stock',capacity_limit:number(normalized.availability_capacity),starts_at:nullableText(normalized.availability_starts_at),ends_at:nullableText(normalized.availability_ends_at),reason:nullableText(normalized.availability_reason)})
+    for(const entry of structured){const code=text(entry.territory_code);desired.push({territory_id:code?territories.get(code):nullableText(entry.territory_id),city_zone_id:nullableText(entry.city_zone_id),audience:text(entry.audience)||'all',available:entry.available===undefined?simpleAvailable:bool(entry.available)===true,capacity_limit:number(entry.capacity_limit),starts_at:nullableText(entry.starts_at),ends_at:nullableText(entry.ends_at),reason:nullableText(entry.reason)})}
+  }else if(simpleCodes.length){
+    for(const code of simpleCodes)desired.push({territory_id:territories.get(code),city_zone_id:null,audience:text(normalized.availability_audience)||'all',available:simpleAvailable,capacity_limit:number(normalized.availability_capacity),starts_at:nullableText(normalized.availability_starts_at),ends_at:nullableText(normalized.availability_ends_at),reason:nullableText(normalized.availability_reason)})
+  }else if(hasOwn(source,'availability_status')){
+    // Product 360 imports may intentionally target global availability without a territory list.
+    // Materialise a canonical child record so readiness and Product Command see the same truth.
+    desired.push({territory_id:null,city_zone_id:null,audience:text(normalized.availability_audience)||'all',available:simpleAvailable,capacity_limit:number(normalized.availability_capacity),starts_at:nullableText(normalized.availability_starts_at),ends_at:nullableText(normalized.availability_ends_at),reason:nullableText(normalized.availability_reason)||'Product 360 import'})
   }
+  if(!desired.length)fail('La disponibilité a été touchée mais aucune cible canonique exploitable n’a été produite.')
   const existing=await db.from('angelcare_marketplace_catalog_availability').select('*').eq('catalog_item_id',itemId);if(existing.error)throw existing.error
   const keepIds:string[]=[]
   for(const entry of desired){
@@ -358,6 +364,8 @@ async function syncAvailability(db:any,itemId:string,actorId:string,source:Recor
   }
   const removeIds=(existing.data||[]).map((entry:any)=>text(entry.id)).filter((id:string)=>id&&!keepIds.includes(id))
   if(removeIds.length){const del=await db.from('angelcare_marketplace_catalog_availability').delete().in('id',removeIds);if(del.error)throw del.error}
+  const canonicalStatus=desired.some((entry)=>entry.available===true)?'available':(text(normalized.availability_status)||'unavailable')
+  const statusUpdate=await db.from('angelcare_marketplace_catalog_items').update({availability_status:canonicalStatus,updated_by:actorId,updated_at:new Date().toISOString()}).eq('id',itemId);if(statusUpdate.error)throw statusUpdate.error
 }
 
 async function resolvePriceBook(db:any,reference:string):Promise<Row|null>{
@@ -461,6 +469,8 @@ export async function applyProduct360ImportRow(input:ApplyInput):Promise<{itemId
     let after=await fullCatalogSnapshot(db,itemId)
     const readiness=evaluateProduct360Readiness(after,input.doctrineKey)
     const requestedStatus=hasOwn(input.source,'status')?(text(input.normalized.status)||'draft'):(text(existing?.status)||'draft')
+    const nonMediaBlockers=readiness.reasons.filter((reason)=>reason!=='MEDIA_MISSING')
+    if(nonMediaBlockers.length)fail(`Import Product 360 incomplet hors média : ${nonMediaBlockers.join(', ')}. La ligne est restaurée ; corrigez la source avant retry.`)
     if(requestedStatus==='published'){
       if(!readiness.ready)fail(`Publication refusée par Product 360 readiness : ${readiness.reasons.join(', ')}.`)
       const published=await db.from('angelcare_marketplace_catalog_items').update({status:'published',publish_at:new Date().toISOString(),updated_by:input.context.actor.id,updated_at:new Date().toISOString()}).eq('id',itemId);if(published.error)throw published.error
@@ -497,8 +507,12 @@ export async function validateProductImportReferences(input:{db?:any;rows:Array<
       for(const priceRule of rows(row.normalized.price_rules_json)){const reference=text(priceRule.price_book_reference||priceRule.price_book||priceRule.price_book_id);if(reference)await resolvePriceBook(db,reference)}
       if(list(row.normalized.sourcing_preferred_provider_refs).length)await resolveProviderRefs(db,list(row.normalized.sourcing_preferred_provider_refs))
       if(list(row.normalized.sourcing_preferred_vendor_refs).length)await resolveVendorRefs(db,list(row.normalized.sourcing_preferred_vendor_refs))
-      const own=await db.from('angelcare_marketplace_catalog_items').select('id').eq('item_key',text(row.normalized.item_key)).maybeSingle();if(own.error)throw own.error
+      const own=await db.from('angelcare_marketplace_catalog_items').select('id,item_key,slug,sku').eq('item_key',text(row.normalized.item_key)).maybeSingle();if(own.error)throw own.error
       const ownId=text(own.data?.id)
+      const slug=text(row.normalized.slug)
+      if(slug){const slugOwner=await db.from('angelcare_marketplace_catalog_items').select('id,item_key').eq('slug',slug).maybeSingle();if(slugOwner.error)throw slugOwner.error;if(slugOwner.data&&text(slugOwner.data.id)!==ownId)fail(`Slug déjà utilisé par ${text(slugOwner.data.item_key)||text(slugOwner.data.id)} : ${slug}.`)}
+      const sku=text(row.normalized.sku)
+      if(sku){const skuOwner=await db.from('angelcare_marketplace_catalog_items').select('id,item_key').eq('sku',sku).maybeSingle();if(skuOwner.error)throw skuOwner.error;if(skuOwner.data&&text(skuOwner.data.id)!==ownId)fail(`SKU déjà utilisé par ${text(skuOwner.data.item_key)||text(skuOwner.data.id)} : ${sku}.`)}
       const relationRefs=unique(['relation_cross_sell_refs','relation_upsell_refs','relation_alternative_refs','relation_bundle_refs'].flatMap((key)=>list(row.normalized[key])))
       if(relationRefs.length)await resolveProductRefs(db,relationRefs,ownId)
       const structuredVariants=rows(row.normalized.variants_json)

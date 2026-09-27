@@ -47,8 +47,8 @@ export const PRODUCT_360_IMPORT_FIELDS: Product360ImportField[] = [
   f('commercial_preparation','Préparation client','commercial'), f('commercial_cancellation_copy','Explication annulation','commercial'),
   f('commercial_after_purchase','Après achat','commercial'),
 
-  f('price_mode','Mode de prix','pricing','text',{options:['fixed','starting_from','quote_only','subscription']}),
-  f('price_amount','Prix affiché','pricing','number',{aliases:['prix','prix_affiche','prix_affiché','montant']}), f('currency_label','Devise','pricing','text',{aliases:['devise','currency']}),
+  f('price_mode','Mode de prix','pricing','text',{options:['fixed','starting_from','quote_only','subscription'],aliases:['pricing_mode']}),
+  f('price_amount','Prix affiché','pricing','number',{aliases:['prix','prix_affiche','prix_affiché','montant','starting_price_dh','recurring_fee_dh']}), f('currency_label','Devise','pricing','text',{aliases:['devise','currency']}),
   f('price_rule_price_book','Price book (ID / référence / nom)','pricing'),
   f('price_rule_model','Modèle Finance','pricing','text',{options:['fixed','hourly','daily','per_child','per_employee','per_room','per_site','per_session','per_learner','per_assessment','subscription','usage_based','tiered','package','custom_approved']}),
   f('price_rule_unit','Unité Finance','pricing'), f('price_rule_minimum','Prix minimum','pricing','number'),
@@ -133,6 +133,13 @@ for (const field of PRODUCT_360_IMPORT_FIELDS) {
   ALIAS_TO_KEY.set(normalizeHeaderKey(field.key), field.key)
   for (const alias of field.aliases || []) ALIAS_TO_KEY.set(normalizeHeaderKey(alias), field.key)
 }
+const DOCTRINE_COMPATIBILITY_ALIASES: Array<[string,string]> = [
+  ['intended_audience','audience'],['delivery_modality','format'],['certificate_enabled','certificate'],
+  ['start_date','starts_at'],['end_date','ends_at'],['seat_capacity','capacity'],
+  ['minimum_lead_time_hours','booking_lead_hours'],['cancellation_policy_key','cancellation_policy'],
+  ['organization_type','buyer_type'],['onboarding_type','activation_flow'],['report_type','report_template'],
+]
+for (const [alias,key] of DOCTRINE_COMPATIBILITY_ALIASES) ALIAS_TO_KEY.set(normalizeHeaderKey(alias),key)
 
 const text = (value: unknown): string => String(value ?? '').trim()
 const present = (value: unknown): boolean => {
@@ -252,6 +259,33 @@ export function normalizeProductImportRow(raw: Record<string, unknown>, definiti
 
 function pushUnique(target: string[], message: string) { if (!target.includes(message)) target.push(message) }
 
+const NON_MEDIA_FULFILLMENT_KEYS = [
+  'fulfillment_mode','fulfillment_lead_time','fulfillment_delivery_method','fulfillment_capacity_model','fulfillment_customer_handover',
+]
+const NON_MEDIA_TRUST_KEYS = [
+  'trust_headline','trust_certifications','trust_guarantees','trust_safety_information','trust_provider_requirements',
+]
+
+function validateNonMediaClosure(normalized: Record<string,unknown>, errors: string[]): void {
+  if (!present(normalized.short_description_fr)) pushUnique(errors,'Description courte FR est requise pour fermer le readiness Contenu.')
+  if (!present(normalized.description_fr)) pushUnique(errors,'Description complète FR est requise pour fermer le readiness Contenu.')
+  const hasPricing = text(normalized.price_mode)==='quote_only'
+    || number(normalized.price_amount)!==null
+    || (Array.isArray(normalized.price_rules_json) && (normalized.price_rules_json as unknown[]).length>0)
+    || (present(normalized.price_rule_price_book) && number(normalized.price_rule_standard)!==null)
+  if (!hasPricing) pushUnique(errors,'Pricing Product 360 incomplet : fournissez price_amount, une règle Finance ou quote_only.')
+  if (!list(normalized.category_keys).length && !present(normalized.primary_category_key)) pushUnique(errors,'Au moins une catégorie canonique est requise pour fermer le readiness Catégorie.')
+  const hasAvailability = text(normalized.availability_status)==='available'
+    || list(normalized.territory_codes).length>0
+    || (Array.isArray(normalized.availability_json) && (normalized.availability_json as unknown[]).length>0)
+  if (!hasAvailability) pushUnique(errors,'Disponibilité Product 360 incomplète : fournissez territory_codes, availability_json ou availability_status=available.')
+  if (!present(normalized.seo_title_fr) || !present(normalized.seo_description_fr)) pushUnique(errors,'SEO Product 360 incomplet : seo_title_fr et seo_description_fr sont requis.')
+  const missingFulfillment = NON_MEDIA_FULFILLMENT_KEYS.filter((key)=>!present(normalized[key]))
+  if (missingFulfillment.length) pushUnique(errors,`Fulfillment Product 360 incomplet : ${missingFulfillment.join(', ')}.`)
+  const missingTrust = NON_MEDIA_TRUST_KEYS.filter((key)=>!present(normalized[key]))
+  if (missingTrust.length) pushUnique(errors,`Trust Product 360 incomplet : ${missingTrust.join(', ')}.`)
+}
+
 export function validateProduct360NormalizedRow(input: {
   raw: Record<string, unknown>
   normalized: Record<string, unknown>
@@ -299,6 +333,7 @@ export function validateProduct360NormalizedRow(input: {
     if(doctrineField.type==='date'&&!validDate(normalized[doctrineField.key]))pushUnique(errors,`${doctrineField.label} doit être une date ISO exploitable.`)
     if(doctrineField.type==='enum'&&doctrineField.options?.length&&present(normalized[doctrineField.key])&&!doctrineField.options.includes(text(normalized[doctrineField.key])))pushUnique(errors,`${doctrineField.label} doit être l’une des valeurs : ${doctrineField.options.join(', ')}.`)
   }
+  if (!updatingExisting) validateNonMediaClosure(normalized,errors)
   const mediaRows=Array.isArray(normalized.media_json)?normalized.media_json as Array<Record<string,unknown>>:[]
   if(sourceHas(raw,'media_json')){
     const mediaKeys=mediaRows.map((entry,index)=>text(entry.media_key)||`#${index+1}`)
@@ -384,10 +419,7 @@ export function validateProduct360NormalizedRow(input: {
   } else if (requestedStatus === 'published' && updatingExisting) {
     warnings.push('Publication demandée sur une mise à jour partielle : le readiness gate Product 360 vérifiera le dossier canonique fusionné avant toute publication.')
   } else {
-    if (!present(normalized.short_description_fr)) warnings.push('Description courte FR absente.')
-    if (!present(normalized.description_fr)) warnings.push('Description complète FR absente.')
-    if (!list(normalized.category_keys).length) warnings.push('Aucune catégorie fournie : le produit restera hors storefront jusqu’à assignation.')
-    if (!present(normalized.primary_image_reference) && !present(normalized.media_json)) warnings.push('Aucun média principal fourni.')
+    if (!present(normalized.primary_image_reference) && !present(normalized.media_json)) warnings.push('Média principal différé : l’import peut fermer tous les autres readiness gates, puis le média sera assigné manuellement.')
   }
   const action: ProductImportPreviewRow['action'] = errors.length ? 'reject' : existing ? 'update' : 'create'
   return { errors, warnings, action }
@@ -417,6 +449,18 @@ export function validateProductImportRows(input: {
       normalized,
     }
   })
+  for (const [field,label] of [['item_key','item_key'],['slug','slug'],['sku','SKU']] as const) {
+    const values = rows.map((row)=>text(row.normalized[field])).filter(Boolean)
+    const duplicates = new Set(values.filter((value,index)=>values.indexOf(value)!==index))
+    if (!duplicates.size) continue
+    for (const row of rows) {
+      const value=text(row.normalized[field])
+      if (!value || !duplicates.has(value)) continue
+      pushUnique(row.errors,`${label} dupliqué dans le fichier : ${value}.`)
+      row.valid=false
+      row.action='reject'
+    }
+  }
   return {
     doctrine: definition,
     rows,

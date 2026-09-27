@@ -398,9 +398,22 @@ function normalizedPayload(resource: CommerceResource, payload: Row, context: Ma
     available: safeBoolean(payload.available, true), sort_order: safeNumber(payload.sort_order, 0), status: text(payload.status) || 'active',
   }
   if (resource === 'catalog-availability') return {
-    ...payload, ...common, audience: text(payload.audience) || 'all', available: safeBoolean(payload.available),
-    capacity_limit: payload.capacity_limit === '' ? null : safeNumber(payload.capacity_limit), starts_at: nullableText(payload.starts_at),
-    ends_at: nullableText(payload.ends_at), reason: nullableText(payload.reason), updated_by: context.actor.id,
+    catalog_item_id: text(payload.catalog_item_id),
+    territory_id: nullableText(payload.territory_id),
+    city_zone_id: nullableText(payload.city_zone_id),
+    audience: text(payload.audience) || 'all',
+    available: safeBoolean(payload.available),
+    capacity_limit:
+      payload.capacity_limit === '' ||
+      payload.capacity_limit === null ||
+      payload.capacity_limit === undefined
+        ? null
+        : Math.max(0, Math.trunc(safeNumber(payload.capacity_limit))),
+    starts_at: nullableText(payload.starts_at),
+    ends_at: nullableText(payload.ends_at),
+    reason: nullableText(payload.reason),
+    updated_at: new Date().toISOString(),
+    updated_by: context.actor.id,
   }
   if (resource === 'price-rules') return {
     ...payload, ...common, pricing_model: text(payload.pricing_model) || 'fixed', unit_label: nullableText(payload.unit_label),
