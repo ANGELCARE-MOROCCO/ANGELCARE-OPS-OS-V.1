@@ -104,6 +104,8 @@ export interface StudioBlockProps extends Record<string, unknown> {
   __studioDynamicSource?: StudioDynamicSourceReference
   __studioWorkflow?: StudioWorkflowReference
   __studioAttribution?: StudioAttributionContext
+  __worldFactory?: Record<string, unknown>
+  __worldFactoryOperability?: Record<string, unknown>
 }
 
 export interface StudioPickerAsset {

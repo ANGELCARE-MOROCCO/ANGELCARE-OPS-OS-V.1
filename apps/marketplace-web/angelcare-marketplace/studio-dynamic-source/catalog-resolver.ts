@@ -25,6 +25,19 @@ async function relationIds(recipe:StudioDynamicSourceReference,context:StudioDyn
 
 async function collectionIds(recipe:StudioDynamicSourceReference):Promise<string[]>{const ref=recipe.collection;if(!ref||ref.sourceId!=='homepage.collections')return[];const db=await createServiceClient();const{data,error}=await db.from('angelcare_marketplace_homepage_collection_items').select('catalog_item_id').eq('collection_id',ref.entityId).in('status',['active','scheduled','eligible','configured']).order('sort_order').limit(120);if(error)return[];return(data||[]).map((row:any)=>text(row.catalog_item_id)).filter(Boolean)}
 
+const matchesRecipe=(row:any,recipe:StudioDynamicSourceReference)=>{
+  const kind=typeof recipe.filters?.kind==='string'?recipe.filters.kind:''
+  const availability=typeof recipe.filters?.availability_status==='string'?recipe.filters.availability_status:''
+  const category=typeof recipe.filters?.category_key==='string'?recipe.filters.category_key:''
+  return (!kind||text(row.kind)===kind)&&(!availability||text(row.availability_status)===availability)&&(!category||text(row.category_key)===category)
+}
+const merchandise=(rows:any[],recipe:StudioDynamicSourceReference,limit:number)=>{
+  const excluded=new Set(recipe.merchandising?.excludedEntityIds||[]),pinned=recipe.merchandising?.pinnedEntityIds||[]
+  const filtered=rows.filter(row=>row&&!excluded.has(text(row.id))&&matchesRecipe(row,recipe)),map=new Map(filtered.map(row=>[text(row.id),row]))
+  const ordered=[...pinned.map(id=>map.get(id)).filter(Boolean),...filtered.filter(row=>!pinned.includes(text(row.id)))]
+  return ordered.slice(0,limit)
+}
+
 export async function resolveCatalogDynamicSource(recipe:StudioDynamicSourceReference,context:StudioDynamicResolveContext):Promise<StudioSourceEntity[]>{
   const limit=Math.max(1,Math.min(recipe.limit,24)),territory=await territoryCode(context,recipe),sort=recipe.sort&&recipe.sort!=='canonical'?recipe.sort:'recommended'
   if(['merchandising_popular','merchandising_best_pick','merchandising_new_arrival'].includes(recipe.strategy)){
@@ -32,7 +45,7 @@ export async function resolveCatalogDynamicSource(recipe:StudioDynamicSourceRefe
     const result=await searchDiscovery({locale:context.locale,territoryCode:territory,limit:120});const map=new Map(result.items.map(item=>[item.id,item]));return ids.map((id:string)=>map.get(id)).filter(Boolean).slice(0,limit).map(entity)
   }
   if(recipe.strategy==='collection_items'){
-    const ids=await collectionIds(recipe);if(!ids.length)return[];const result=await searchDiscovery({locale:context.locale,territoryCode:territory,limit:240});const map=new Map(result.items.map(item=>[item.id,item]));return ids.map((id:string)=>map.get(id)).filter(Boolean).slice(0,limit).map(entity)
+    const ids=await collectionIds(recipe);if(!ids.length)return[];const result=await searchDiscovery({locale:context.locale,territoryCode:territory,limit:240});const map=new Map(result.items.map(item=>[item.id,item]));return merchandise(ids.map((id:string)=>map.get(id)).filter(Boolean),recipe,limit).map(entity)
   }
   if(['compatible_accessories','bundle_members','frequently_bought_together','similar_items'].includes(recipe.strategy)){const ids=await relationIds(recipe,context);if(!ids.length)return[];const result=await searchDiscovery({locale:context.locale,territoryCode:territory,limit:240});const map=new Map(result.items.map(item=>[item.id,item]));return ids.map((id:string)=>map.get(id)).filter(Boolean).slice(0,limit).map(entity)}
   let category=typeof recipe.filters?.category_key==='string'?recipe.filters.category_key:null
@@ -46,5 +59,5 @@ export async function resolveCatalogDynamicSource(recipe:StudioDynamicSourceRefe
   const effectiveSort=recipe.strategy==='catalog_newest'?'newest':sort
   const result=await searchDiscovery({locale:context.locale,territoryCode:territory,query:recipe.strategy==='source_query'?recipe.query:undefined,kind,category,availability,sort:effectiveSort,limit:recipe.strategy==='catalog_featured'?Math.max(limit,24):limit})
   const rows=recipe.strategy==='catalog_featured'?result.items.filter(item=>item.featured):result.items
-  return rows.slice(0,limit).map(entity)
+  return merchandise(rows,recipe,limit).map(entity)
 }

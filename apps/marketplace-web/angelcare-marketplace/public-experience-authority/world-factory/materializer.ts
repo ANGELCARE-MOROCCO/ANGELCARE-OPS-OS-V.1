@@ -1,6 +1,7 @@
 import type {ComponentData,Data} from '@puckeditor/core'
 import {getStudioActionDescriptor} from '@/angelcare-marketplace/studio-action-registry/registry'
 import type {PublicExperienceWorldFactoryRecord} from './types'
+import {materializedOperabilityForBlock} from './operability'
 
 const clone=<T,>(value:T):T=>JSON.parse(JSON.stringify(value)) as T
 const rec=(value:unknown):Record<string,unknown>=>value&&typeof value==='object'&&!Array.isArray(value)?value as Record<string,unknown>:{ }
@@ -26,9 +27,12 @@ export function materializeWorldFactoryData(source:Data,factory:PublicExperience
   const actions=actionsByBlock.get(blockId)||[]
   for(const row of actions){const descriptor=getStudioActionDescriptor(row.actionId!);if(!descriptor)continue;const reference={version:1,actionId:row.actionId,targetMode:row.targetMode,...(row.targetMode==='none'?{}:{})};if(row.intent==='primary')props.primaryAction=reference;else if(row.intent==='secondary')props.secondaryAction=reference}
   const relation=relationByBlock.get(blockId)
+  const repeater=factory.operability.repeaters.find(row=>row.blockId===blockId&&row.targetKey==='items')
   if(relation)props.__studioDynamicSource={version:1,sourceId:'catalog.items',strategy:relation.strategy,limit:relation.limit,filters:{},anchorMode:'current_item',sort:'recommended',emptyPolicy:relation.emptyPolicy}
-  props.__worldFactory={engineVersion:factory.engineVersion,schemaVersion:factory.schemaVersion,compiledFingerprint:factory.compiledFingerprint,blockId}
+  else if(repeater?.source==='dynamic_source'&&repeater.sourceId&&repeater.strategy)props.__studioDynamicSource={version:1,sourceId:repeater.sourceId,strategy:repeater.strategy,query:repeater.query||'',limit:repeater.limit,filters:repeater.filters||{},context:repeater.context||{territoryMode:'inherit',audienceMode:'inherit'},merchandising:repeater.merchandising||{mode:'automatic',pinnedEntityIds:[],excludedEntityIds:[],orderedEntityIds:[],manualEntityIds:[]},sort:repeater.sort||'canonical',emptyPolicy:repeater.emptyPolicy==='block_publish'?'hide_block':repeater.emptyPolicy==='omit'?'hide_block':repeater.emptyPolicy}
+  props.__worldFactory={engineVersion:factory.engineVersion,schemaVersion:factory.schemaVersion,compiledFingerprint:factory.compiledFingerprint,blockId,role:factory.semanticSlots.find(row=>row.blockId===blockId)?.role||'unknown'}
+  props.__worldFactoryOperability=materializedOperabilityForBlock(factory.operability,blockId)
  })
- const root=rec(data.root);root.__worldFactory={engineVersion:factory.engineVersion,schemaVersion:factory.schemaVersion,compilerProfile:factory.compilerProfile,candidateFingerprint:factory.candidateFingerprint,compiledFingerprint:factory.compiledFingerprint,worldKey:factory.revision.worldKey,revision:factory.revision.revision};data.root=root
+ const root=rec(data.root);root.__worldFactory={engineVersion:factory.engineVersion,schemaVersion:factory.schemaVersion,compilerProfile:factory.compilerProfile,candidateFingerprint:factory.candidateFingerprint,compiledFingerprint:factory.compiledFingerprint,worldKey:factory.revision.worldKey,revision:factory.revision.revision};root.__worldFactoryOperability={version:factory.operability.version,density:factory.operability.density,localization:factory.operability.localization,tokens:factory.operability.tokens,performance:factory.operability.performance,shell:factory.operability.shell,editing:factory.operability.editing,inspector:factory.operability.inspector};data.root=root
  return data
 }

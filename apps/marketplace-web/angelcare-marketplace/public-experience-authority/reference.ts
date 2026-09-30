@@ -23,7 +23,7 @@ export function parseThemeManifest(value:unknown):PublicExperienceThemeManifest|
   if(row.version!==PUBLIC_EXPERIENCE_AUTHORITY_VERSION||!['detail','storefront'].includes(themeKind))return null
   const acceptedMasterDomains=arr(row.acceptedMasterDomains).filter(key=>PUBLIC_EXPERIENCE_MASTER_DOMAINS.some(domain=>domain.key===key)) as PublicExperienceMasterDomain[]
   const acceptedStorefrontKeys=arr(row.acceptedStorefrontKeys).filter(key=>PUBLIC_EXPERIENCE_STOREFRONTS.some(storefront=>storefront.key===key)) as StorefrontKey[]
-  const slots=Array.isArray(row.slots)?row.slots.filter(entry=>entry&&typeof entry==='object'&&!Array.isArray(entry)).map(entry=>{const slot=rec(entry);return{blockId:text(slot.blockId),slot:text(slot.slot) as any,confidence:Number(slot.confidence||0),reason:text(slot.reason)}}).filter(slot=>slot.blockId&&slot.slot):[]
+  const slots=Array.isArray(row.slots)?row.slots.filter(entry=>entry&&typeof entry==='object'&&!Array.isArray(entry)).map(entry=>{const slot=rec(entry);return{blockId:text(slot.blockId),slot:text(slot.slot) as any,confidence:Number(slot.confidence||0),reason:text(slot.reason),semanticRole:text(slot.semanticRole) as any||undefined,supplementalRoles:arr(slot.supplementalRoles) as any,capabilityKey:text(slot.capabilityKey)||null}}).filter(slot=>slot.blockId&&slot.slot):[]
   return{
     version:1,themeKind:themeKind as 'detail'|'storefront',themeName:text(row.themeName),themeVersion:text(row.themeVersion)||'1.0.0',
     acceptedMasterDomains,acceptedDoctrineKeys:arr(row.acceptedDoctrineKeys),acceptedBusinessFamilyKeys:arr(row.acceptedBusinessFamilyKeys),acceptedStorefrontKeys,

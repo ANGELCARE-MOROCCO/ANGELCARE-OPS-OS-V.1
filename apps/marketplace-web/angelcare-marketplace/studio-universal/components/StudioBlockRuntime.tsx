@@ -7,6 +7,7 @@ import { StudioControlledIsland } from './StudioControlledIsland'
 import { StudioActionLink } from '@/angelcare-marketplace/studio-action-registry/components/StudioActionLink'
 import { StudioWorkflowForm } from '@/angelcare-marketplace/studio-workflows/components/StudioWorkflowForm'
 import styles from './studio-runtime.module.css'
+import {worldMediaPresentation} from '../world-operability'
 
 const text = (value: unknown, fallback = '') => typeof value === 'string' ? value : value == null ? fallback : String(value)
 const rows = (value: unknown) => Array.isArray(value) ? value.filter(row => row && typeof row === 'object') as Array<Record<string, unknown>> : []
@@ -21,6 +22,15 @@ function mediaUrl(props: StudioBlockProps, pickers: StudioPickerData) {
 }
 function linkedLabel(value:unknown){if(isStudioSourceReference(value))return 'Sélection canonique AngelCare';return text(value)}
 
+const rec=(value:unknown):Record<string,unknown>=>value&&typeof value==='object'&&!Array.isArray(value)?value as Record<string,unknown>:{ }
+function mediaVariantUrl(value:unknown,pickers:StudioPickerData){const row=rec(value),asset=String(row.assetKey||''),url=String(row.url||'');if(asset){const match=pickers.media.find(item=>item.assetKey===asset||item.id===asset);if(match?.publicUrl)return match.publicUrl}return url}
+function WorldMedia({props,pickers,src,alt}:{props:StudioBlockProps;pickers:StudioPickerData;src:string;alt:string}){
+  const presentation=worldMediaPresentation(props),responsive=rec(presentation?.responsive),mobile=mediaVariantUrl(responsive.mobile,pickers),tablet=mediaVariantUrl(responsive.tablet,pickers),desktop=mediaVariantUrl(responsive.desktop,pickers)
+  const style=presentation?{objectFit:presentation.fit as any,objectPosition:presentation.position,aspectRatio:presentation.aspectRatio||undefined}:undefined
+  if(!mobile&&!tablet&&!desktop)return <img className={styles.media} src={src} alt={alt} style={style}/>
+  return <picture><source media="(max-width: 720px)" srcSet={mobile||tablet||desktop||src}/><source media="(max-width: 1050px)" srcSet={tablet||desktop||src}/>{desktop?<source media="(min-width: 1051px)" srcSet={desktop}/>:null}<img className={styles.media} src={src} alt={alt} style={style}/></picture>
+}
+
 export function StudioBlockRuntime({ type, props, pickers, locale='fr', editorMode=false }: { type: string; props: StudioBlockProps; pickers: StudioPickerData; locale?:'fr'|'en'|'ar'; editorMode?:boolean }) {
   const title = text(props.title)
   const lead = text(props.lead)
@@ -31,7 +41,7 @@ export function StudioBlockRuntime({ type, props, pickers, locale='fr', editorMo
   if (type === 'studio_island') return <StudioControlledIsland props={props}/>
   if (type === 'studio_image') {
     const src = mediaUrl(props, pickers)
-    return src ? <img className={styles.media} src={src} alt={text(props.mediaAlt)} /> : <div className={styles.block}>Sélectionnez un média depuis le Vault.</div>
+    return src ? <WorldMedia props={props} pickers={pickers} src={src} alt={text(props.mediaAlt)}/> : <div className={styles.block}>Sélectionnez un média depuis le Vault.</div>
   }
   if (type === 'studio_button') return <div className={styles.actions}>{props.primaryAction?<StudioActionLink action={props.__studioResolvedPrimaryAction} attribution={props.__studioAttribution} interactionId="primary">{text(props.primaryCtaLabel,'Action')}</StudioActionLink>:<a href={text(props.primaryCtaHref)||'#'}>{text(props.primaryCtaLabel,'Action')}</a>}</div>
   if ((type==='inquiry_form'||type==='studio_form')&&props.__studioWorkflow) return <StudioWorkflowForm reference={props.__studioWorkflow} title={title||undefined} lead={lead||undefined} locale={locale} editorMode={editorMode} attribution={props.__studioAttribution} interactionId="workflow"/>
@@ -44,7 +54,7 @@ export function StudioBlockRuntime({ type, props, pickers, locale='fr', editorMo
     {title ? <h2 className={styles.title}>{title}</h2> : null}
     {lead ? <p className={styles.lead}>{lead}</p> : null}
     {body ? <div className={styles.body}>{body}</div> : null}
-    {src ? <img className={styles.media} src={src} alt={text(props.mediaAlt, title)} /> : null}
+    {src ? <WorldMedia props={props} pickers={pickers} src={src} alt={text(props.mediaAlt, title)}/> : null}
     {items.length ? <div className={styles.items}>{items.map((item,index)=><article className={styles.item} key={index}><strong>{text(item.title,text(item.label,`Élément ${index+1}`))}</strong><p>{text(item.body,text(item.description,text(item.value)))}</p>{item.__studioResolvedAction?<StudioActionLink action={item.__studioResolvedAction as any} attribution={props.__studioAttribution} interactionId={`item:${index}`}>{text(item.actionLabel,'Découvrir')}</StudioActionLink>:null}</article>)}</div> : null}
     {props.collectionKey ? <div className={styles.lead}>Collection liée : {linkedLabel(props.collectionKey)}</div> : null}
     {props.categoryKey ? <div className={styles.lead}>Catégorie liée : {linkedLabel(props.categoryKey)}</div> : null}

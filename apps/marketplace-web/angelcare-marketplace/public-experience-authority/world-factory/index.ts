@@ -9,3 +9,5 @@ export * from './fingerprint'
 export * from './migrations'
 export * from './materializer'
 export * from './package-format'
+
+export * from './operability'

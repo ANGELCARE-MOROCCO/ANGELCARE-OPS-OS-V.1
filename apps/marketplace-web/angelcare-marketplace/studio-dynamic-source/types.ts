@@ -31,6 +31,10 @@ export interface StudioDynamicSourceReference{
     audienceMode?:StudioDynamicAudienceMode
     audience?:StudioSourceReference|null
   }
+  merchandising?:{
+    pinnedEntityIds?:string[]
+    excludedEntityIds?:string[]
+  }
   emptyPolicy:StudioDynamicEmptyPolicy
 }
 

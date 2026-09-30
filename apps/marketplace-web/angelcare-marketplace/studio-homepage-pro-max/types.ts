@@ -18,6 +18,7 @@ export interface HomepageProMaxItem extends Record<string,unknown>{
   title?:string
   subtitle?:string
   body?:string
+  icon?:string
   mediaUrl?:string
   mediaAssetKey?:string|StudioSourceReference
   href?:string
@@ -38,8 +39,14 @@ export interface HomepageProMaxSectionProps extends Record<string,unknown>{
   subtitle?:string
   body?:string
   mediaAssetKey?:string|StudioSourceReference
+  mediaTabletAssetKey?:string|StudioSourceReference
+  mediaMobileAssetKey?:string|StudioSourceReference
   mediaUrl?:string
   mediaAlt?:string
+  mediaFit?:'cover'|'contain'|'fill'
+  mediaPosition?:string
+  mediaAspect?:string
+  mediaOverlay?:number
   primaryCtaLabel?:string
   primaryCtaHref?:string
   primaryAction?:StudioActionReference|null

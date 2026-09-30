@@ -1,10 +1,10 @@
 import type {Data} from '@puckeditor/core'
 import type {PublicExperienceMasterDomain,PublicExperienceReadinessLevel,PublicExperienceThemeKind} from '../types'
 
-export const PUBLIC_EXPERIENCE_WORLD_FACTORY_ENGINE_VERSION=2 as const
-export const PUBLIC_EXPERIENCE_WORLD_FACTORY_SCHEMA_VERSION=2 as const
+export const PUBLIC_EXPERIENCE_WORLD_FACTORY_ENGINE_VERSION=3 as const
+export const PUBLIC_EXPERIENCE_WORLD_FACTORY_SCHEMA_VERSION=3 as const
 export const PUBLIC_EXPERIENCE_WORLD_FACTORY_PACKAGE_VERSION=1 as const
-export const PUBLIC_EXPERIENCE_WORLD_FACTORY_COMPILER_PROFILE='pea-world-factory-2026.09-sovereign-v2' as const
+export const PUBLIC_EXPERIENCE_WORLD_FACTORY_COMPILER_PROFILE='pea-world-factory-2030-operability-v3' as const
 export const PUBLIC_EXPERIENCE_WORLD_FACTORY_RUNTIME='pea-v1' as const
 
 export type WorldFactoryGateState='PASS'|'WATCH'|'BLOCKED'
@@ -12,6 +12,144 @@ export type WorldFactorySourceKind='url'|'html'|'file'|'existing'|'package'
 export type WorldFactoryLifecycleState='ANALYZED'|'REVIEW_REQUIRED'|'CERTIFIED'|'REGISTERED'|'SUPERSEDED'|'REJECTED'
 export type WorldFactoryVisualReferenceKind='desktop'|'mobile'
 export type WorldFactoryTargetMode='explicit'|'current_item'|'none'
+
+export type WorldFactoryDensityMode='premium'|'commerce'|'hyper_commerce'|'festival'
+export type WorldFactoryEmptyPolicy='preserve_static'|'empty'|'omit'|'hide_block'|'block_publish'
+export type WorldFactoryConditionOperator='exists'|'not_empty'|'equals'|'not_equals'|'includes'|'gt'|'gte'|'lt'|'lte'
+export type WorldFactoryConditionSource='prop'|'context'|'binding'
+export type WorldFactoryConditionEffect='show'|'hide'|'block_publish'
+export interface WorldFactoryConditionRule{
+ id:string
+ blockId:string
+ source:WorldFactoryConditionSource
+ key:string
+ operator:WorldFactoryConditionOperator
+ value?:unknown
+ effect:WorldFactoryConditionEffect
+ reason:string
+}
+export interface WorldFactoryRepeaterContract{
+ blockId:string
+ targetKey:string
+ source:'binding'|'dynamic_source'|'static'
+ bindingKey?:string|null
+ sourceId?:string|null
+ strategy?:string|null
+ query?:string|null
+ filters?:Record<string,string|number|boolean|null>
+ context?:{territoryMode?:'inherit'|'global'|'specific';audienceMode?:'inherit'|'none'|'specific'}
+ merchandising?:{mode?:'automatic'|'curated'|'manual';pinnedEntityIds?:string[];excludedEntityIds?:string[];orderedEntityIds?:string[];manualEntityIds?:string[]}
+ limit:number
+ sort:string
+ emptyPolicy:WorldFactoryEmptyPolicy
+ itemVariant:string|null
+}
+export interface WorldFactoryResponsiveMediaVariant{assetKey?:string|null;bindingKey?:string|null;url?:string|null}
+export interface WorldFactoryMediaContract{
+ blockId:string
+ targetKey:string
+ kind:'primary'|'gallery'|'item'
+ source:'binding'|'media_vault'|'package_asset'|'static'
+ bindingKey:string|null
+ assetRole:string|null
+ required:boolean
+ presentation:{fit:'cover'|'contain'|'fill'|'none'|'scale-down';position:string;aspectRatio:string|null;overlay:string|null;focalPoint:{x:number;y:number}|null}
+ responsive:{desktop:WorldFactoryResponsiveMediaVariant|null;tablet:WorldFactoryResponsiveMediaVariant|null;mobile:WorldFactoryResponsiveMediaVariant|null}
+}
+export interface WorldFactoryInteractionContract{
+ blockId:string
+ kind:'accordion'|'tabs'|'dialog'|'carousel'|'menu'|'sticky_conversion'|'gallery_zoom'|'variant_selector'|'quantity_selector'|'schedule_selector'|'progressive_disclosure'
+ status:'SUPPORTED'|'REVIEW'
+ configuration:Record<string,unknown>
+}
+export interface WorldFactoryAssetManifestEntry{
+ key:string
+ path:string
+ kind:'image'|'video'|'icon'|'document'|'reference'|'other'
+ sha256:string|null
+ required:boolean
+ mimeType:string|null
+ license:string|null
+ provenance:string|null
+}
+export interface WorldFactoryTokenContract{
+ colors:Record<string,string>
+ typography:Record<string,string|number>
+ spacing:Record<string,string|number>
+ radii:Record<string,string|number>
+ shadows:Record<string,string>
+ layout:Record<string,string|number>
+ motion:Record<string,string|number|boolean>
+}
+export interface WorldFactoryBlockCapability{
+ blockId:string
+ blockType:string
+ role:WorldFactorySemanticRole
+ acceptsBindings:boolean
+ acceptsDynamicSource:boolean
+ acceptsMedia:boolean
+ acceptsActions:boolean
+ acceptsChildren:boolean
+ acceptsRepeaters:boolean
+ acceptsConditions:boolean
+ acceptsDesign:boolean
+ acceptsResponsive:boolean
+ editableFields:string[]
+ inspectorSections:Array<'content'|'data'|'media'|'actions'|'display'|'design'|'responsive'|'conditions'|'seo'|'accessibility'>
+}
+export interface WorldFactoryLocalizationContract{
+ defaultLocale:'fr'|'en'|'ar'
+ locales:Array<'fr'|'en'|'ar'>
+ rtlLocales:Array<'ar'>
+ themeStrings:'localized-map'
+ fallback:'default-locale'
+ missingTranslation:'warn'|'block_publish'
+}
+export interface WorldFactoryPerformanceBudget{
+ maxRootBlocks:number
+ maxTotalBlocks:number
+ maxDynamicSources:number
+ maxAboveFoldMedia:number
+ maxMediaAssets:number
+ maxDocumentBytes:number
+ maxInteractions:number
+}
+export interface WorldFactoryShellContract{
+ mode:'marketplace_global'|'page_local'|'promoted'
+ allowGlobalHeaderOverride:boolean
+ allowGlobalFooterOverride:boolean
+ allowGlobalNavigationOverride:boolean
+}
+export interface WorldFactoryEditingContract{
+ uiLed:true
+ rawJsonRequired:false
+ allowBlockMove:boolean
+ allowBlockDuplicate:boolean
+ allowBlockHide:boolean
+ allowBindingChange:boolean
+ allowActionChange:boolean
+ allowMediaReplace:boolean
+ allowDesignChange:boolean
+ allowResponsiveChange:boolean
+ allowConditionChange:boolean
+ immutableBusinessTruth:true
+}
+export interface WorldFactoryOperabilityContract{
+ version:1
+ density:WorldFactoryDensityMode|null
+ blockCapabilities:WorldFactoryBlockCapability[]
+ conditions:WorldFactoryConditionRule[]
+ repeaters:WorldFactoryRepeaterContract[]
+ media:WorldFactoryMediaContract[]
+ interactions:WorldFactoryInteractionContract[]
+ localization:WorldFactoryLocalizationContract
+ tokens:WorldFactoryTokenContract
+ assets:WorldFactoryAssetManifestEntry[]
+ performance:WorldFactoryPerformanceBudget
+ shell:WorldFactoryShellContract
+ editing:WorldFactoryEditingContract
+ inspector:{generatedFromCapabilities:true;hideUnsupportedFields:true;showAuthorityOwnership:true;showInheritance:true}
+}
 export type WorldFactorySemanticRole=
  |'hero'|'identity'|'media'|'pricing'|'availability'|'variants'|'specifications'|'reviews'|'trust'|'faq'
  |'primary_conversion'|'secondary_conversion'|'bundle'|'accessories'|'recommendations'|'related'
@@ -176,6 +314,7 @@ export interface PublicExperienceWorldFactoryRecord{
  truthRequirements:WorldFactoryTruthRequirement[]
  responsive:WorldFactoryResponsiveEvidence
  capabilities:WorldFactoryCapabilityDecision[]
+ operability:WorldFactoryOperabilityContract
  certification:WorldFactoryCertification
  compatibility:WorldFactoryCompatibility
  revision:WorldFactoryRevisionIdentity
@@ -194,6 +333,7 @@ export interface BuildWorldFactoryInput{
  worldKey?:string|null
  revision?:number
  supersedes?:string|null
+ operability?:Partial<WorldFactoryOperabilityContract>
 }
 export interface WorldFactoryCompileOutput{
  record:PublicExperienceWorldFactoryRecord
@@ -205,5 +345,6 @@ export interface WorldFactoryPackage{
  exportedAt:string
  world:{name:string;description:string|null;themeVersion:string;manifest:Record<string,unknown>;factory:PublicExperienceWorldFactoryRecord}
  data:Data
+ assets?:WorldFactoryAssetManifestEntry[]
  fingerprints:{document:string;factory:string;package:string}
 }

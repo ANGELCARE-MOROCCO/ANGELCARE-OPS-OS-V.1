@@ -45,7 +45,7 @@ export const PEA_BUILTIN_MANIFESTS=new Map<string,PublicExperienceThemeManifest>
 
 export function isCanonicalBuiltinWorld(templateId:string|null|undefined){return typeof templateId==='string'&&templateId.startsWith(PEA_BUILTIN_PREFIX)&&PEA_BUILTIN_MANIFESTS.has(templateId)}
 export function canonicalBuiltinManifest(templateId:string){return PEA_BUILTIN_MANIFESTS.get(templateId)||null}
-export function canonicalDetailWorld(domain:PublicExperienceMasterDomain|null){return PEA_CANONICAL_DETAIL_WORLDS.find(row=>row.domain===domain)||null}
+export function canonicalDetailWorld(domain:PublicExperienceMasterDomain|null){if(domain==='b2c_product_digital')return PEA_CANONICAL_DETAIL_WORLDS.find(row=>row.id===PRODUCT_PRO_MAX_WORLD01_ID)||null;return PEA_CANONICAL_DETAIL_WORLDS.find(row=>row.domain===domain)||null}
 export function canonicalDetailWorldById(id:string){return PEA_CANONICAL_DETAIL_WORLDS.find(row=>row.id===id)||null}
 export function canonicalStorefrontWorld(key:StorefrontKey){return PEA_CANONICAL_STOREFRONT_WORLDS.find(row=>row.storefrontKey===key)||null}
 export function canonicalStorefrontWorldById(id:string){return PEA_CANONICAL_STOREFRONT_WORLDS.find(row=>row.id===id)||null}

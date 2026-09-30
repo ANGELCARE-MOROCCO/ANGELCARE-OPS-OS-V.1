@@ -61,6 +61,9 @@ export interface PublicExperienceThemeSlot {
     | 'final_cta'
   confidence: number
   reason: string
+  semanticRole?: import('./world-factory/types').WorldFactorySemanticRole
+  supplementalRoles?: import('./world-factory/types').WorldFactorySemanticRole[]
+  capabilityKey?: string | null
 }
 
 export interface PublicExperienceThemeManifest {

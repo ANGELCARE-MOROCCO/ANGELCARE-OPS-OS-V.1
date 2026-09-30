@@ -21,14 +21,34 @@ import { applyStudioDynamicSources } from '@/angelcare-marketplace/studio-dynami
 import type { StudioDynamicSourceReport } from '@/angelcare-marketplace/studio-dynamic-source/types'
 import type { StudioAttributionContext } from '@/angelcare-marketplace/studio-attribution/types'
 import { sanitizeStudioAttribution,studioAttributionForInteraction } from '@/angelcare-marketplace/studio-attribution/context'
+import {shouldRenderWorldBlock} from './world-operability'
 
 const s=(value:unknown)=>value==null?'':String(value)
 const isHomepageProMaxType=(type:string)=>HOMEPAGE_PRO_MAX_COMPONENT_KEYS.includes(type)
 const children=(component:ComponentData)=>{const value=(component.props as Record<string,unknown>)?.content;return Array.isArray(value)?value as ComponentData[]:[]}
+
+const localizedKeys=new Set(['fr','en','ar'])
+function localizeWorldValue(value:unknown,locale:'fr'|'en'|'ar'):unknown{
+  if(Array.isArray(value))return value.map(item=>localizeWorldValue(item,locale))
+  if(!value||typeof value!=='object')return value
+  const row=value as Record<string,unknown>,keys=Object.keys(row)
+  if(keys.some(key=>localizedKeys.has(key))&&keys.every(key=>localizedKeys.has(key)||key.startsWith('__'))){const picked=row[locale]??row.fr??row.en??row.ar;return localizeWorldValue(picked,locale)}
+  return Object.fromEntries(Object.entries(row).map(([key,item])=>[key,localizeWorldValue(item,locale)]))
+}
+function worldRootStyle(data:Data):React.CSSProperties{
+  const op=((data.root as Record<string,unknown>|undefined)?.__worldFactoryOperability||{}) as Record<string,unknown>
+  const tokens=(op.tokens&&typeof op.tokens==='object'&&!Array.isArray(op.tokens)?op.tokens:{}) as Record<string,unknown>
+  const style:Record<string,string|number>={}
+  for(const family of ['colors','typography','spacing','radii','shadows','layout','motion']){
+    const values=(tokens[family]&&typeof tokens[family]==='object'&&!Array.isArray(tokens[family])?tokens[family]:{}) as Record<string,unknown>
+    for(const [key,value] of Object.entries(values)){if(['string','number'].includes(typeof value))style[`--ac-world-${family}-${key.replace(/[^a-zA-Z0-9_-]/g,'-')}`]=value as string|number}
+  }
+  return style as React.CSSProperties
+}
 export function isStudioCmsBlock(block:CmsBlock){const settings=block.settings as Record<string,unknown>|undefined;return String(settings?.studioFormat||'').startsWith('angelcare-puck-')||block.block_type.startsWith('ac_')||block.block_type.startsWith('studio_')||Boolean(block.content?.__studioPuck)}
 
 async function mediaPickers(data:Data):Promise<StudioPickerData>{
-  const keys=new Set<string>(),ids=new Set<string>();const walk=(value:unknown)=>{if(!value||typeof value!=='object')return;if(Array.isArray(value)){value.forEach(walk);return}const row=value as Record<string,unknown>;const media=row.mediaAssetKey;if(typeof media==='string'&&media)keys.add(media);else if(isStudioSourceReference(media)&&media.sourceId==='media.assets')ids.add(media.entityId);Object.values(row).forEach(walk)};walk(data.content)
+  const keys=new Set<string>(),ids=new Set<string>();const walk=(value:unknown)=>{if(!value||typeof value!=='object')return;if(Array.isArray(value)){value.forEach(walk);return}const row=value as Record<string,unknown>;const candidates=[row.mediaAssetKey,row.assetKey,row.mediaTabletAssetKey,row.mediaMobileAssetKey];for(const media of candidates){if(typeof media==='string'&&media)keys.add(media);else if(isStudioSourceReference(media)&&media.sourceId==='media.assets')ids.add(media.entityId)}Object.values(row).forEach(walk)};walk(data.content);walk((data.root as Record<string,unknown>|undefined)?.__worldFactoryOperability)
   if(!keys.size&&!ids.size)return {media:[],categories:[],collections:[]}
   const db=await createServiceClient();const [byKey,byId]=await Promise.all([
     keys.size?db.from('angelcare_marketplace_media_assets').select('id,asset_key,file_name,public_url,desktop_url,width,height,mime_type,status').in('asset_key',[...keys]):Promise.resolve({data:[]}),
@@ -70,25 +90,26 @@ async function hydrateActions(props:StudioBlockProps,locale:'fr'|'en'|'ar',actio
   return next
 }
 
-async function RenderComponent({component,pickers,locale,attribution,actionContext}:{component:ComponentData;pickers:StudioPickerData;locale:'fr'|'en'|'ar';attribution?:StudioAttributionContext;actionContext?:{itemId?:string|null;itemSlug?:string|null}}){
-  const type=s(component.type),rawProps=(component.props||{}) as StudioBlockProps,hydrated=await hydrateActions(rawProps,locale,actionContext),id=s(hydrated.id)||type,blockAttribution=attribution?studioAttributionForInteraction(attribution,{blockId:id}):undefined,props={...hydrated,__studioAttribution:blockAttribution}
+async function RenderComponent({component,pickers,locale,territoryId,audienceId,attribution,actionContext}:{component:ComponentData;pickers:StudioPickerData;locale:'fr'|'en'|'ar';territoryId?:string|null;audienceId?:string|null;attribution?:StudioAttributionContext;actionContext?:{itemId?:string|null;itemSlug?:string|null}}){
+  const type=s(component.type),rawProps=localizeWorldValue((component.props||{}) as StudioBlockProps,locale) as StudioBlockProps,hydrated=await hydrateActions(rawProps,locale,actionContext),id=s(hydrated.id)||type,blockAttribution=attribution?studioAttributionForInteraction(attribution,{blockId:id}):undefined,props={...hydrated,__studioAttribution:blockAttribution}
   if(props.hidden===true)return null
+  const worldVisibility=shouldRenderWorldBlock(props,{locale,territoryId,audienceId});if(!worldVisibility.render)return null
   const nested=children(component)
   const importedCss=scopedImportedCss(id, props.__studioImportedRules)
   if(isHomepageProMaxType(type))return <StudioDesignShell blockId={id} style={props.sourceDesign} responsive={props.responsive} importedRules={props.__studioImportedRules} hidden={props.hidden}><HomepageProMaxSectionRuntime type={type} props={{...props,hidden:false} as any} pickers={pickers} mode="published"/></StudioDesignShell>
   if(type.startsWith('ac_')){
     const style={...designToStyle(props.sourceDesign),backgroundColor:s((props as any).backgroundColor)||undefined,'--ac-layout-max':s((props as any).maxWidth)||'1460px','--ac-cols-mobile':String((props as any).columnsMobile||1),'--ac-cols-tablet':String((props as any).columnsTablet||2),'--ac-cols-desktop':String((props as any).columnsDesktop||4),'--ac-gap-mobile':`${Number((props as any).gapMobile||16)}px`,'--ac-gap-tablet':`${Number((props as any).gapTablet||20)}px`,'--ac-gap-desktop':`${Number((props as any).gapDesktop||24)}px`,'--ac-stack-direction':s((props as any).direction)||'column'} as React.CSSProperties
     const kind=type.replace('ac_','');const klass=(styles as Record<string,string>)[kind]||styles.layout
-    return <div className={`${styles.layout} ${klass}`} data-ac-studio-block={id} style={style} {...responsiveDataAttributes(props.responsive)}>{importedCss?<style>{importedCss}</style>:null}{await Promise.all(nested.map((child,index)=><RenderComponent key={s(child.props?.id)||index} component={child} pickers={pickers} locale={locale} attribution={attribution} actionContext={actionContext}/>))}</div>
+    return <div className={`${styles.layout} ${klass}`} data-ac-studio-block={id} style={style} {...responsiveDataAttributes(props.responsive)}>{importedCss?<style>{importedCss}</style>:null}{await Promise.all(nested.map((child,index)=><RenderComponent key={s(child.props?.id)||index} component={child} pickers={pickers} locale={locale} territoryId={territoryId} audienceId={audienceId} attribution={attribution} actionContext={actionContext}/>))}</div>
   }
   const visual=studioVisualExperience(type)
   if(visual){
     const canonical=canonicalStudioBlockType(type)
     const commerce=canonical==='product_grid'||canonical==='collection_rail'?<Commerce type={canonical} props={props} locale={locale}/>:undefined
-    return <div data-ac-studio-block={id} data-ac-studio-visual={visual.key} style={designToStyle(props.sourceDesign)} {...responsiveDataAttributes(props.responsive)}>{importedCss?<style>{importedCss}</style>:null}<StudioVisualCatalogueRuntime definition={visual} props={props} pickers={pickers} locale={locale}>{commerce}</StudioVisualCatalogueRuntime></div>
+    return <div data-ac-studio-block={id} data-ac-world-role={s((props.__worldFactory as any)?.role)||undefined} data-ac-studio-visual={visual.key} style={designToStyle(props.sourceDesign)} {...responsiveDataAttributes(props.responsive)}>{importedCss?<style>{importedCss}</style>:null}<StudioVisualCatalogueRuntime definition={visual} props={props} pickers={pickers} locale={locale}>{commerce}</StudioVisualCatalogueRuntime></div>
   }
-  if(type==='product_grid'||type==='collection_rail')return <div data-ac-studio-block={id} style={designToStyle(props.sourceDesign)} {...responsiveDataAttributes(props.responsive)}>{importedCss?<style>{importedCss}</style>:null}<Commerce type={type} props={props} locale={locale}/></div>
-  return <div data-ac-studio-block={id} style={designToStyle(props.sourceDesign)} {...responsiveDataAttributes(props.responsive)}>{importedCss?<style>{importedCss}</style>:null}<StudioBlockRuntime type={type} props={props} pickers={pickers} locale={locale}/></div>
+  if(type==='product_grid'||type==='collection_rail')return <div data-ac-studio-block={id} data-ac-world-role={s((props.__worldFactory as any)?.role)||undefined} style={designToStyle(props.sourceDesign)} {...responsiveDataAttributes(props.responsive)}>{importedCss?<style>{importedCss}</style>:null}<Commerce type={type} props={props} locale={locale}/></div>
+  return <div data-ac-studio-block={id} data-ac-world-role={s((props.__worldFactory as any)?.role)||undefined} style={designToStyle(props.sourceDesign)} {...responsiveDataAttributes(props.responsive)}>{importedCss?<style>{importedCss}</style>:null}<StudioBlockRuntime type={type} props={props} pickers={pickers} locale={locale}/></div>
 }
 
 const emptyDynamicReport=():StudioDynamicSourceReport=>({sourceCount:0,resolvedCount:0,emptyCount:0,blockerCount:0,blocksTouched:0,entries:[]})
@@ -97,7 +118,7 @@ export async function StudioPublishedDataRenderer({data:sourceData,locale,territ
   const dynamic=dynamicAlreadyApplied?{data:sourceData,report:dynamicReport||emptyDynamicReport()}:await applyStudioDynamicSources(sourceData,{locale,territoryId,audienceId,visibility:'public_runtime'})
   const data=dynamic.data
   const pickers=await mediaPickers(data)
-  const runtimeAttribution=attribution?sanitizeStudioAttribution(attribution,{locale,territoryId,audienceId}):undefined;return <div lang={locale} dir={locale==='ar'?'rtl':'ltr'} data-ac-studio-runtime="published" data-ac-studio-dynamic-sources={dynamic.report.sourceCount} data-ac-studio-dynamic-blockers={dynamic.report.blockerCount}>{await Promise.all((data.content||[]).map((component,index)=><RenderComponent key={s(component.props?.id)||index} component={component} pickers={pickers} locale={locale} attribution={runtimeAttribution} actionContext={{itemId:currentItemId,itemSlug:currentItemSlug}}/>))}</div>
+  const runtimeAttribution=attribution?sanitizeStudioAttribution(attribution,{locale,territoryId,audienceId}):undefined;return <div lang={locale} dir={locale==='ar'?'rtl':'ltr'} style={worldRootStyle(data)} data-ac-studio-runtime="published" data-ac-studio-dynamic-sources={dynamic.report.sourceCount} data-ac-studio-dynamic-blockers={dynamic.report.blockerCount} data-ac-world-operability={String(Boolean((data.root as any)?.__worldFactoryOperability))}>{await Promise.all((data.content||[]).map((component,index)=><RenderComponent key={s(component.props?.id)||index} component={component} pickers={pickers} locale={locale} territoryId={territoryId} audienceId={audienceId} attribution={runtimeAttribution} actionContext={{itemId:currentItemId,itemSlug:currentItemSlug}}/>))}</div>
 }
 
 export async function StudioPublishedRenderer({blocks,locale,territoryId=null,audienceId=null,attribution}:{blocks:CmsBlock[];locale:'fr'|'en'|'ar';territoryId?:string|null;audienceId?:string|null;attribution?:StudioAttributionContext}){

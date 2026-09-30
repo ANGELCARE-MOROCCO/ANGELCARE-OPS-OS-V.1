@@ -2,254 +2,68 @@
 
 import { Puck, createUsePuck } from '@puckeditor/core'
 import { useMemo, useState } from 'react'
-import {
-  Activity,
-  CheckCircle2,
-  Database,
-  Eye,
-  Monitor,
-  ShieldCheck,
-  SlidersHorizontal,
-  Smartphone,
-  Tablet,
-  WandSparkles,
-} from 'lucide-react'
+import { Activity, CheckCircle2, Database, Eye, ImagePlus, Monitor, ShieldCheck, SlidersHorizontal, Smartphone, Tablet, WandSparkles } from 'lucide-react'
 import type { CmsPage } from '@/angelcare-marketplace/experience-builder/types'
 import { HOMEPAGE_PRO_MAX_SECTION_DEFINITIONS } from '@/angelcare-marketplace/studio-homepage-pro-max/recipe'
+import { homepageCapability, type HomepageCapabilityTab } from '@/angelcare-marketplace/studio-homepage-pro-max/capabilities'
+import { StudioDynamicSourceField } from '@/angelcare-marketplace/studio-dynamic-source/components/StudioDynamicSourceField'
+import { MediaField } from './StudioFields'
 import { diagnoseStudioDocument } from '../document-doctor'
 import type { StudioMaterializationState } from './StudioMaterializationContext'
 import styles from './studio-workspace.module.css'
 
-const usePuck = createUsePuck()
-type Tab = 'overview' | 'content' | 'data' | 'design' | 'responsive' | 'truth' | 'diagnostics'
-type Mode = 'standard' | 'advanced' | 'developer'
-type DeviceStyleKey = 'mobileStyle' | 'tabletStyle' | 'desktopStyle'
+const usePuck=createUsePuck()
+type Tab=HomepageCapabilityTab|'overview'|'conditions'|'seo'|'accessibility'|'truth'|'diagnostics'
+type Mode='standard'|'advanced'|'developer'
+type DeviceStyleKey='mobileStyle'|'tabletStyle'|'desktopStyle'
+const labels:Record<Tab,string>={overview:'Vue 360',content:'Contenu',source:'Source',media:'Média',actions:'Actions',display:'Affichage',design:'Design',responsive:'Responsive',conditions:'Conditions',seo:'SEO',accessibility:'Accessibilité',truth:'Vérité',diagnostics:'Diagnostic'}
+const bool=(v:unknown,f=true)=>typeof v==='boolean'?v:f
+const record=(v:unknown):Record<string,unknown>=>v&&typeof v==='object'&&!Array.isArray(v)?v as Record<string,unknown>:{}
+const text=(v:unknown)=>typeof v==='string'?v:v==null?'':String(v)
+const provenance=(key:string)=>key.startsWith('__studio')?'GOUVERNÉ':key.toLowerCase().includes('price')||key.toLowerCase().includes('rating')?'CATALOGUE 🔒':key.includes('media')?'MEDIA VAULT':['collectionKey','categoryKey'].includes(key)?'CANONIQUE':'HOMEPAGE ✎'
 
-const tabs: [Tab, string][] = [
-  ['overview', 'Vue 360'],
-  ['content', 'Contenu'],
-  ['data', 'Données'],
-  ['design', 'Design'],
-  ['responsive', 'Responsive'],
-  ['truth', 'Vérité'],
-  ['diagnostics', 'Diagnostic'],
-]
+export function StudioInspector2031({page,data,device,materialization,serverReady,onOpenDoctor,onPatchSelected}:{page:CmsPage;data:any;device:'mobile'|'tablet'|'desktop'|'wide';materialization:StudioMaterializationState;serverReady:boolean|null;onOpenDoctor:()=>void;onPatchSelected:(id:string,patch:Record<string,unknown>)=>void}){
+ const selected=usePuck(api=>api.selectedItem) as any
+ const[tab,setTab]=useState<Tab>('content'),[mode,setMode]=useState<Mode>('standard')
+ const props=record(selected?.props),id=typeof props.id==='string'?props.id:'',type=String(selected?.type||''),def=HOMEPAGE_PRO_MAX_SECTION_DEFINITIONS.find(row=>row.type===type),cap=homepageCapability(type)
+ const worldOp=record(props.__worldFactoryOperability),worldCapability=record(worldOp.capability),worldSections=Array.isArray(worldCapability.inspectorSections)?worldCapability.inspectorSections.map(String):[],isImportedWorld=Boolean(Object.keys(worldCapability).length)
+ const doctor=useMemo(()=>diagnoseStudioDocument(data),[data]),source=materialization.report?.entries.find(row=>row.blockId===id)
+ const materializedItems=useMemo(()=>{if(!materialization.data||!id)return[];const component=(materialization.data.content||[]).find((row:any)=>row?.props?.id===id) as any;return Array.isArray(component?.props?.items)?component.props.items:[]},[id,materialization.data])
+ const responsive=record(props.responsive),design=record(props.sourceDesign),deviceStyleKey:DeviceStyleKey=device==='mobile'?'mobileStyle':device==='tablet'?'tabletStyle':'desktopStyle',deviceStyle=record(responsive[deviceStyleKey])
+ const patch=(next:Record<string,unknown>)=>{if(id)onPatchSelected(id,next)},patchResponsive=(key:string,value:boolean)=>patch({responsive:{...responsive,[key]:value}}),patchDesign=(key:string,value:unknown)=>patch({sourceDesign:{...design,[key]:value}}),patchDeviceStyle=(key:string,value:unknown)=>patch({responsive:{...responsive,[deviceStyleKey]:{...deviceStyle,[key]:value}}})
+ if(!selected)return <div className={styles.futureInspectorEmpty}><WandSparkles size={27}/><strong>Inspecteur Pro Max</strong><p>Sélectionnez une section. L’inspecteur s’adapte automatiquement à ses vraies capacités.</p><div className={styles.inspectorEmptySteps}><span>1 · Sélectionner</span><span>2 · Contrôler</span><span>3 · Voir live</span><span>4 · Publier</span></div><div className={styles.readinessMini}><span data-state={doctor.ready?'pass':'warn'}>Document {doctor.ready?'PASS':'À revoir'}</span><span data-state={serverReady?'pass':'neutral'}>Save {serverReady?'READY':'Preflight'}</span><span data-state={materialization.report?.blockerCount===0?'pass':'warn'}>Sources {materialization.report?.blockerCount===0?'PASS':'À vérifier'}</span></div></div>
+ const worldPrimary=worldSections.map(section=>section==='data'?'source':section).filter((section):section is Tab=>Object.prototype.hasOwnProperty.call(labels,section))
+ const primary=(isImportedWorld?(worldPrimary.length?worldPrimary:['content','design','responsive']):(cap?.tabs||['content','design','responsive'])) as readonly Tab[]
+ const visible:Tab[]=mode==='standard'?[...primary]:['overview',...primary,'truth','diagnostics'].filter((value,index,rows)=>rows.indexOf(value)===index) as Tab[]
+ if(!visible.includes(tab))queueMicrotask(()=>setTab(visible[0]||'content'))
+ const dynamic=props.__studioDynamicSource
+ const hasItems=Boolean((cap?.items||worldCapability.acceptsRepeaters)&&Array.isArray(props.items))
+ return <div className={styles.futureInspector}>
+  <div className={styles.inspectorIdentity}><div><span>{def?.id||(isImportedWorld?'WORLD FACTORY':'BLOC')} · {def?.dataClass||(isImportedWorld?String(worldCapability.role||'Imported World'):'Studio')}</span><strong>{def?.label?.replace(/^S\d+\s*·\s*/,'')||type}</strong><small>{def?.purpose||(isImportedWorld?'Bloc importé gouverné par son contrat de capacité World Factory 2030.':'Composant AngelCare éditable.')}</small></div><div className={styles.healthDots} title="Santé · source · sauvegarde"><i data-state={doctor.blockers?'bad':'good'}/><i data-state={source?.status==='RESOLVED'?'good':'neutral'}/><i data-state={serverReady?'good':'neutral'}/></div></div>
+  <div className={styles.capabilityStrip}>{primary.map(key=><span key={key}>{labels[key]}</span>)}</div>
+  <div className={styles.inspectorModes}>{(['standard','advanced','developer'] as const).map(row=><button key={row} data-active={mode===row} onClick={()=>setMode(row)}>{row==='standard'?'Opérateur':row==='advanced'?'Avancé':'Developer'}</button>)}</div>
+  <div className={styles.inspectorTabs}>{visible.map(key=><button key={key} data-active={tab===key} onClick={()=>setTab(key)}>{labels[key]}</button>)}</div>
 
-const provenance = (key: string) => {
-  if (key.startsWith('__studio')) return 'GOUVERNÉ'
-  if (key.toLowerCase().includes('price') || key.toLowerCase().includes('rating')) return 'CANONIQUE'
-  if (key.includes('media')) return 'MEDIA VAULT'
-  if (['collectionKey', 'categoryKey'].includes(key)) return 'CANONIQUE'
-  return 'ÉDITABLE'
-}
-const bool = (value: unknown, fallback = true) => (typeof value === 'boolean' ? value : fallback)
-const record = (value: unknown): Record<string, unknown> =>
-  value && typeof value === 'object' && !Array.isArray(value) ? (value as Record<string, unknown>) : {}
-const text = (value: unknown) => (typeof value === 'string' ? value : value == null ? '' : String(value))
+  {tab==='overview'?<div className={styles.inspectorPane}><div className={styles.healthGrid}><article><CheckCircle2/><span>Document</span><strong>{doctor.blockers?'BLOCK':'PASS'}</strong></article><article><Database/><span>Source</span><strong>{source?.status||'STATIQUE'}</strong></article><article><Eye/><span>Résolus</span><strong>{source?.count??materializedItems.length}</strong></article><article><ShieldCheck/><span>Save</span><strong>{serverReady?'READY':'PREFLIGHT'}</strong></article></div><section className={styles.inspectorCard}><h4>Capacités du bloc</h4><div className={styles.provenanceRows}>{primary.map(key=><div key={key}><code>{labels[key]}</code><span>ACTIF</span></div>)}</div></section></div>:null}
 
-const standardTabs: Tab[] = ['content', 'design', 'responsive']
-const advancedTabs: Tab[] = ['overview', 'content', 'data', 'design', 'responsive', 'truth', 'diagnostics']
+  {tab==='content'?<div className={styles.inspectorPane}><div className={styles.inspectorNotice}><SlidersHorizontal size={15}/><div><strong>Contenu visible</strong><span>Éditez uniquement ce que ce bloc expose réellement.</span></div></div><section className={styles.inspectorCard}><div className={styles.cardTitleRow}><div><span>CONTENU</span><h4>Texte & structure</h4></div><span className={styles.safePill}>HOMEPAGE ✎</span></div><div className={styles.quickFields}><label><span>Titre</span><textarea rows={2} value={text(props.title)} onChange={e=>patch({title:e.target.value})}/></label>{props.eyebrow!==undefined?<label><span>Eyebrow</span><input value={text(props.eyebrow)} onChange={e=>patch({eyebrow:e.target.value})}/></label>:null}{props.subtitle!==undefined?<label><span>Sous-titre</span><textarea rows={3} value={text(props.subtitle)} onChange={e=>patch({subtitle:e.target.value})}/></label>:null}{props.body!==undefined?<label><span>Texte</span><textarea rows={4} value={text(props.body)} onChange={e=>patch({body:e.target.value})}/></label>:null}<label className={styles.visibilityField}><span>Section visible</span><input type="checkbox" checked={!bool(props.hidden,false)} onChange={e=>patch({hidden:!e.target.checked})}/></label></div></section>{hasItems?<section className={styles.inspectorCard}><div className={styles.cardTitleRow}><div><span>ÉLÉMENTS</span><h4>{cap?.nestedLabel||'Contenu du bloc'} · {(props.items as any[]).length}</h4></div><span className={styles.advancedPill}>STRUCTURÉ</span></div><p>Ajout, suppression, ordre, médias et détails sont disponibles dans les champs structurés ci-dessous.</p><Puck.Fields wrapFields={false}/></section>:mode!=='standard'?<section className={styles.inspectorCard}><Puck.Fields wrapFields={false}/></section>:null}</div>:null}
 
-export function StudioInspector2031({
-  page,
-  data,
-  device,
-  materialization,
-  serverReady,
-  onOpenDoctor,
-  onPatchSelected,
-}: {
-  page: CmsPage
-  data: any
-  device: 'mobile' | 'tablet' | 'desktop' | 'wide'
-  materialization: StudioMaterializationState
-  serverReady: boolean | null
-  onOpenDoctor: () => void
-  onPatchSelected: (id: string, patch: Record<string, unknown>) => void
-}) {
-  const selected = usePuck((api) => api.selectedItem) as any
-  const [tab, setTab] = useState<Tab>('content')
-  const [mode, setMode] = useState<Mode>('standard')
+  {tab==='source'?<div className={styles.inspectorPane}><div className={styles.inspectorNotice}><Database size={15}/><div><strong>Que doit montrer ce bloc ?</strong><span>Filtrez et merchandisez les ressources canoniques sans dupliquer leur vérité métier.</span></div></div>{(cap?.source||worldCapability.acceptsDynamicSource)?<StudioDynamicSourceField value={dynamic} onChange={value=>patch({__studioDynamicSource:value})} allowedSources={['catalog.items','homepage.collections','homepage.campaigns']} fixedKind={cap?.fixedKind} defaultStrategy={cap?.defaultStrategy} semanticLabel={cap?.nestedLabel||def?.label||String(worldCapability.role||'Contenu Marketplace')}/>:<section className={styles.inspectorCard}><h4>Données liées</h4><p>Ce bloc n’annonce pas de source dynamique. Les bindings importés restent pilotés par le contrat du world.</p>{mode!=='standard'?<Puck.Fields wrapFields={false}/>:null}</section>}{materializedItems.length?<section className={styles.inspectorCard}><div className={styles.cardTitleRow}><div><span>LIVE RESULT</span><h4>{materializedItems.length} élément(s) résolu(s)</h4></div><span className={styles.safePill}>CATALOGUE 🔒</span></div><div className={styles.resolvedList}>{materializedItems.slice(0,12).map((row:any,index:number)=><article key={row.id||index}>{row.mediaUrl?<img src={String(row.mediaUrl)} alt=""/>:<span/>}<div><strong>{String(row.title||'Ressource')}</strong><small>{row.priceMad!=null?`${row.priceMad} ${row.currencyLabel||'MAD'}`:String(row.subtitle||row.body||'')}</small></div></article>)}</div></section>:null}</div>:null}
 
-  const props = record(selected?.props)
-  const id = typeof props.id === 'string' ? props.id : ''
-  const type = String(selected?.type || '')
-  const def = HOMEPAGE_PRO_MAX_SECTION_DEFINITIONS.find((row) => row.type === type)
-  const doctor = useMemo(() => diagnoseStudioDocument(data), [data])
-  const source = materialization.report?.entries.find((row) => row.blockId === id)
-  const materializedItems = useMemo(() => {
-    if (!materialization.data || !id) return []
-    const component = (materialization.data.content || []).find((row: any) => row?.props?.id === id) as any
-    return Array.isArray(component?.props?.items) ? component.props.items : []
-  }, [id, materialization.data])
+  {tab==='media'?<div className={styles.inspectorPane}><div className={styles.inspectorNotice}><ImagePlus size={15}/><div><strong>Média du bloc</strong><span>Sélectionnez un asset du Media Vault ou téléversez un nouveau média sans quitter l’inspecteur.</span></div></div>{(cap?.sectionMedia||worldCapability.acceptsMedia)?<section className={styles.inspectorCard}><div className={styles.cardTitleRow}><div><span>MEDIA VAULT</span><h4>Desktop / principal</h4></div><span className={styles.safePill}>CANONIQUE</span></div><MediaField value={props.mediaAssetKey as any} onChange={value=>patch({mediaAssetKey:value})}/><details className={styles.mediaVariantDetails}><summary>Variantes responsive & cadrage</summary><div className={styles.mediaVariantGrid}><div><strong>Tablette</strong><MediaField value={props.mediaTabletAssetKey as any} onChange={value=>patch({mediaTabletAssetKey:value})}/></div><div><strong>Mobile</strong><MediaField value={props.mediaMobileAssetKey as any} onChange={value=>patch({mediaMobileAssetKey:value})}/></div></div><div className={styles.quickFields}><label><span>Ajustement</span><select value={text(props.mediaFit)||'cover'} onChange={e=>patch({mediaFit:e.target.value})}><option value="cover">Couvrir</option><option value="contain">Contenir</option><option value="fill">Étirer</option></select></label><label><span>Point focal / position</span><input value={text(props.mediaPosition)||'50% 50%'} onChange={e=>patch({mediaPosition:e.target.value})}/></label><label><span>Ratio</span><input value={text(props.mediaAspect)} placeholder="16 / 9" onChange={e=>patch({mediaAspect:e.target.value})}/></label><label><span>Overlay 0 → 0.8</span><input type="number" min="0" max="0.8" step="0.05" value={Number(props.mediaOverlay||0)} onChange={e=>patch({mediaOverlay:Number(e.target.value)})}/></label></div></details><div className={styles.quickFields}><label><span>URL secours</span><input value={text(props.mediaUrl)} onChange={e=>patch({mediaUrl:e.target.value})}/></label><label><span>Texte alternatif</span><input value={text(props.mediaAlt)} onChange={e=>patch({mediaAlt:e.target.value})}/></label></div></section>:null}{(cap?.itemMedia||worldCapability.acceptsRepeaters&&worldCapability.acceptsMedia)?<section className={styles.inspectorCard}><h4>Médias des éléments</h4><p>Chaque carte/élément dispose maintenant d’un Media Vault canonique dans son éditeur structuré.</p><Puck.Fields wrapFields={false}/></section>:null}</div>:null}
 
-  const responsive = record(props.responsive)
-  const design = record(props.sourceDesign)
-  const deviceStyleKey: DeviceStyleKey =
-    device === 'mobile' ? 'mobileStyle' : device === 'tablet' ? 'tabletStyle' : 'desktopStyle'
-  const deviceStyle = record(responsive[deviceStyleKey])
+  {tab==='actions'?<div className={styles.inspectorPane}><section className={styles.inspectorCard}><div className={styles.cardTitleRow}><div><span>CONVERSION</span><h4>Actions du bloc</h4></div><span className={styles.safePill}>GOUVERNÉ</span></div><div className={styles.quickFields}><label><span>CTA principal</span><input value={text(props.primaryCtaLabel)} onChange={e=>patch({primaryCtaLabel:e.target.value})}/></label><label><span>Destination legacy</span><input value={text(props.primaryCtaHref)} onChange={e=>patch({primaryCtaHref:e.target.value})}/></label>{props.secondaryCtaLabel!==undefined?<><label><span>CTA secondaire</span><input value={text(props.secondaryCtaLabel)} onChange={e=>patch({secondaryCtaLabel:e.target.value})}/></label><label><span>Destination secondaire</span><input value={text(props.secondaryCtaHref)} onChange={e=>patch({secondaryCtaHref:e.target.value})}/></label></>:null}</div>{mode!=='standard'?<Puck.Fields wrapFields={false}/>:null}</section></div>:null}
 
-  const patch = (next: Record<string, unknown>) => { if (id) onPatchSelected(id, next) }
-  const patchResponsive = (key: string, value: boolean) => patch({ responsive: { ...responsive, [key]: value } })
-  const patchDesign = (key: string, value: unknown) => patch({ sourceDesign: { ...design, [key]: value } })
-  const patchDeviceStyle = (key: string, value: unknown) => {
-    patch({ responsive: { ...responsive, [deviceStyleKey]: { ...deviceStyle, [key]: value } } })
-  }
-  const changeMode = (next: Mode) => {
-    setMode(next)
-    if (next === 'standard' && !standardTabs.includes(tab)) setTab('content')
-  }
+  {tab==='display'?<div className={styles.inspectorPane}><section className={styles.inspectorCard}><div className={styles.cardTitleRow}><div><span>AFFICHAGE</span><h4>Composition & ordre</h4></div><span className={styles.advancedPill}>PLACEMENT</span></div><p>Les éléments structurés contrôlent ordre, badges, médias et destinations. La vérité commerciale reste verrouillée dans le Catalogue.</p><Puck.Fields wrapFields={false}/></section></div>:null}
 
-  if (!selected) {
-    return (
-      <div className={styles.futureInspectorEmpty}>
-        <WandSparkles size={27} />
-        <strong>Inspecteur Pro</strong>
-        <p>Sélectionnez une section dans le canvas. Le parcours commence par le contenu essentiel, puis le design et le responsive.</p>
-        <div className={styles.inspectorEmptySteps}><span>1 · Contenu</span><span>2 · Design</span><span>3 · Responsive</span></div>
-        <div className={styles.readinessMini}>
-          <span data-state={doctor.ready ? 'pass' : 'warn'}>Document {doctor.ready ? 'PASS' : 'À revoir'}</span>
-          <span data-state={serverReady ? 'pass' : 'neutral'}>Save {serverReady ? 'READY' : 'Preflight'}</span>
-          <span data-state={materialization.report?.blockerCount === 0 ? 'pass' : 'warn'}>Sources {materialization.report?.blockerCount === 0 ? 'PASS' : 'À vérifier'}</span>
-        </div>
-      </div>
-    )
-  }
+  {tab==='design'?<div className={styles.inspectorPane}><div className={styles.inspectorNotice}><WandSparkles size={15}/><div><strong>Personnalisation gouvernée</strong><span>Tokens visuels partagés avec le runtime public.</span></div></div><section className={styles.inspectorCard}><div className={styles.cardTitleRow}><div><span>APPARENCE</span><h4>Composition de la section</h4></div><span className={styles.safePill}>TOKENS</span></div><div className={styles.designControls}><label><span>Fond</span><select value={String(props.background||'white')} onChange={e=>patch({background:e.target.value})}><option value="white">Blanc</option><option value="soft-blue">Bleu doux</option><option value="soft-pink">Rose doux</option><option value="navy">Navy</option><option value="transparent">Transparent</option></select></label><label><span>Densité</span><select value={String(props.density||'dense')} onChange={e=>patch({density:e.target.value})}><option value="dense">Dense</option><option value="balanced">Équilibrée</option><option value="editorial">Éditoriale</option></select></label><label><span>Padding haut</span><input type="number" min="0" max="240" value={Number(design.paddingTop||0)} onChange={e=>patchDesign('paddingTop',Number(e.target.value))}/></label><label><span>Padding bas</span><input type="number" min="0" max="240" value={Number(design.paddingBottom||0)} onChange={e=>patchDesign('paddingBottom',Number(e.target.value))}/></label><label><span>Gap</span><input type="number" min="0" max="160" value={Number(design.gap||0)} onChange={e=>patchDesign('gap',Number(e.target.value))}/></label><label><span>Rayon</span><input type="number" min="0" max="100" value={Number(design.borderRadius||0)} onChange={e=>patchDesign('borderRadius',Number(e.target.value))}/></label>{mode!=='standard'?<><label><span>Largeur max</span><input value={String(design.maxWidth||'')} onChange={e=>patchDesign('maxWidth',e.target.value)}/></label><label><span>Alignement</span><select value={String(design.textAlign||'start')} onChange={e=>patchDesign('textAlign',e.target.value)}><option value="start">Début</option><option value="center">Centre</option><option value="end">Fin</option></select></label></>:null}</div></section></div>:null}
 
-  const visibleTabs = tabs.filter(([key]) => (mode === 'standard' ? standardTabs : advancedTabs).includes(key))
-  const hasPrimaryAction = props.primaryCtaLabel !== undefined || ['ac_home_pro_max_hero','ac_home_pro_max_b2b','ac_home_pro_max_community','ac_home_pro_max_services','ac_home_pro_max_academy'].includes(type)
-  const hasSecondaryAction = props.secondaryCtaLabel !== undefined || type === 'ac_home_pro_max_hero'
-  const hasMedia = props.mediaUrl !== undefined || props.mediaAssetKey !== undefined || ['ac_home_pro_max_hero'].includes(type)
-  const hasBody = props.body !== undefined || ['ac_home_pro_max_hero'].includes(type)
-  const hasCampaignDate = props.endsAt !== undefined || ['ac_home_pro_max_urgency','ac_home_pro_max_flash'].includes(type)
+  {tab==='responsive'?<div className={styles.inspectorPane}><section className={styles.inspectorCard}><div className={styles.cardTitleRow}><div><span>VISIBILITÉ</span><h4>Responsive</h4></div><span className={styles.devicePill}>{device.toUpperCase()}</span></div><div className={styles.responsiveSwitches}><label><Smartphone/><span>Mobile</span><input type="checkbox" checked={bool(responsive.mobileVisible)} onChange={e=>patchResponsive('mobileVisible',e.target.checked)}/></label><label><Tablet/><span>Tablette</span><input type="checkbox" checked={bool(responsive.tabletVisible)} onChange={e=>patchResponsive('tabletVisible',e.target.checked)}/></label><label><Monitor/><span>Desktop</span><input type="checkbox" checked={bool(responsive.desktopVisible)} onChange={e=>patchResponsive('desktopVisible',e.target.checked)}/></label></div></section><section className={styles.inspectorCard}><h4>Réglages du device courant · {device}</h4>{device==='wide'?<p>Wide hérite du contrat Desktop.</p>:<div className={styles.designControls}><label><span>Padding haut</span><input type="number" min="0" max="180" value={Number(deviceStyle.paddingTop||0)} onChange={e=>patchDeviceStyle('paddingTop',Number(e.target.value))}/></label><label><span>Padding bas</span><input type="number" min="0" max="180" value={Number(deviceStyle.paddingBottom||0)} onChange={e=>patchDeviceStyle('paddingBottom',Number(e.target.value))}/></label><label><span>Gap</span><input type="number" min="0" max="120" value={Number(deviceStyle.gap||0)} onChange={e=>patchDeviceStyle('gap',Number(e.target.value))}/></label><label><span>Taille texte</span><input type="number" min="0" max="96" value={Number(deviceStyle.fontSize||0)} onChange={e=>patchDeviceStyle('fontSize',Number(e.target.value))}/></label></div>}</section></div>:null}
 
-  return (
-    <div className={styles.futureInspector}>
-      <div className={styles.inspectorIdentity}>
-        <div>
-          <span>{def?.id || 'BLOC'} · {def?.dataClass || 'Studio'}</span>
-          <strong>{def?.label?.replace(/^S\d+\s*·\s*/, '') || type}</strong>
-          <small>{def?.purpose || 'Composant AngelCare éditable.'}</small>
-        </div>
-        <div className={styles.healthDots} title="Santé · source · sauvegarde">
-          <i data-state={doctor.blockers ? 'bad' : 'good'} />
-          <i data-state={source?.status === 'RESOLVED' ? 'good' : 'neutral'} />
-          <i data-state={serverReady ? 'good' : 'neutral'} />
-        </div>
-      </div>
-
-      <div className={styles.inspectorJourney} aria-label="Parcours d’édition">
-        <button data-active={tab === 'content'} onClick={() => setTab('content')}><b>1</b><span>Contenu</span></button>
-        <button data-active={tab === 'design'} onClick={() => setTab('design')}><b>2</b><span>Design</span></button>
-        <button data-active={tab === 'responsive'} onClick={() => setTab('responsive')}><b>3</b><span>Responsive</span></button>
-        <button data-active={tab === 'data'} disabled={mode === 'standard'} onClick={() => setTab('data')}><b>4</b><span>Vérifier</span></button>
-      </div>
-
-      <div className={styles.inspectorModes}>
-        {(['standard', 'advanced', 'developer'] as const).map((row) => (
-          <button key={row} data-active={mode === row} onClick={() => changeMode(row)}>
-            {row === 'standard' ? 'Standard' : row === 'advanced' ? 'Avancé' : 'Developer'}
-          </button>
-        ))}
-      </div>
-
-      {mode !== 'standard' ? <div className={styles.inspectorTabs}>
-        {visibleTabs.map(([key, label]) => <button key={key} data-active={tab === key} onClick={() => setTab(key)}>{label}</button>)}
-      </div> : null}
-
-      {tab === 'overview' ? (
-        <div className={styles.inspectorPane}>
-          <div className={styles.healthGrid}>
-            <article><CheckCircle2/><span>Document</span><strong>{doctor.blockers ? 'BLOCK' : 'PASS'}</strong></article>
-            <article><Database/><span>Source</span><strong>{source?.status || 'STATIQUE'}</strong></article>
-            <article><Eye/><span>Résolus</span><strong>{source?.count ?? materializedItems.length}</strong></article>
-            <article><ShieldCheck/><span>Save</span><strong>{serverReady ? 'READY' : 'PREFLIGHT'}</strong></article>
-          </div>
-          <section className={styles.inspectorCard}><h4>Mission</h4><p>{def?.purpose || 'Composant AngelCare éditable.'}</p></section>
-          <section className={styles.inspectorCard}>
-            <h4>Provenance</h4>
-            <div className={styles.provenanceRows}>{Object.keys(props).filter((key) => !['id', 'items'].includes(key)).slice(0, 20).map((key) => <div key={key}><code>{key}</code><span>{provenance(key)}</span></div>)}</div>
-          </section>
-        </div>
-      ) : null}
-
-      {tab === 'content' ? (
-        <div className={styles.inspectorPane}>
-          <div className={styles.inspectorNotice}><SlidersHorizontal size={15}/><div><strong>Essentiel</strong><span>Modifiez le contenu visible sans entrer dans les réglages techniques.</span></div></div>
-          <section className={styles.inspectorCard}>
-            <div className={styles.cardTitleRow}><div><span>CONTENU</span><h4>Texte & conversion</h4></div><span className={styles.safePill}>SAFE EDIT</span></div>
-            <div className={styles.quickFields}>
-              {props.eyebrow !== undefined || type === 'ac_home_pro_max_hero' ? <label><span>Eyebrow</span><input value={text(props.eyebrow)} onChange={(e)=>patch({eyebrow:e.target.value})}/></label> : null}
-              <label><span>Titre</span><textarea rows={2} value={text(props.title)} onChange={(e)=>patch({title:e.target.value})}/></label>
-              {props.subtitle !== undefined ? <label><span>Sous-titre</span><textarea rows={3} value={text(props.subtitle)} onChange={(e)=>patch({subtitle:e.target.value})}/></label> : null}
-              {hasBody ? <label><span>Texte</span><textarea rows={4} value={text(props.body)} onChange={(e)=>patch({body:e.target.value})}/></label> : null}
-              {hasPrimaryAction ? <div className={styles.quickFieldGroup}><strong>Action principale</strong><label><span>Libellé</span><input value={text(props.primaryCtaLabel)} onChange={(e)=>patch({primaryCtaLabel:e.target.value})}/></label><label><span>Destination legacy</span><input value={text(props.primaryCtaHref)} onChange={(e)=>patch({primaryCtaHref:e.target.value})}/></label></div> : null}
-              {hasSecondaryAction ? <div className={styles.quickFieldGroup}><strong>Action secondaire</strong><label><span>Libellé</span><input value={text(props.secondaryCtaLabel)} onChange={(e)=>patch({secondaryCtaLabel:e.target.value})}/></label><label><span>Destination legacy</span><input value={text(props.secondaryCtaHref)} onChange={(e)=>patch({secondaryCtaHref:e.target.value})}/></label></div> : null}
-              {hasMedia ? <div className={styles.quickFieldGroup}><strong>Média</strong><label><span>URL de secours</span><input value={text(props.mediaUrl)} onChange={(e)=>patch({mediaUrl:e.target.value})}/></label><label><span>Texte alternatif</span><input value={text(props.mediaAlt)} onChange={(e)=>patch({mediaAlt:e.target.value})}/></label><small>Le Media Vault canonique reste disponible dans le mode Avancé.</small></div> : null}
-              {hasCampaignDate ? <label><span>Fin de campagne ISO</span><input value={text(props.endsAt)} onChange={(e)=>patch({endsAt:e.target.value})}/></label> : null}
-              <label className={styles.visibilityField}><span>Section visible</span><input type="checkbox" checked={!bool(props.hidden,false)} onChange={(e)=>patch({hidden:!e.target.checked})}/></label>
-            </div>
-          </section>
-          {source ? <section className={styles.sourceSummary}><Database size={15}/><div><strong>{source.authority || source.sourceId}</strong><span>{source.status} · {source.count} élément(s) résolu(s)</span></div></section> : null}
-          {mode !== 'standard' ? <section className={styles.inspectorCard}><div className={styles.cardTitleRow}><div><span>RÉGLAGES COMPLETS</span><h4>Champs Puck canoniques</h4></div><span className={styles.advancedPill}>AVANCÉ</span></div><Puck.Fields wrapFields={false}/></section> : null}
-        </div>
-      ) : null}
-
-      {tab === 'data' ? (
-        <div className={styles.inspectorPane}>
-          <section className={styles.inspectorCard}>
-            <h4>Source réelle</h4>
-            {source ? <><dl className={styles.sourceFacts}><div><dt>Authority</dt><dd>{source.authority || source.sourceId}</dd></div><div><dt>Source</dt><dd>{source.sourceId}</dd></div><div><dt>Strategy</dt><dd>{source.strategy}</dd></div><div><dt>Status</dt><dd>{source.status}</dd></div><div><dt>Resolved</dt><dd>{source.count}</dd></div></dl><p>{source.note}</p></> : <p>Ce bloc n’utilise pas de source dynamique P06.</p>}
-          </section>
-          {materializedItems.length ? <section className={styles.inspectorCard}><h4>Aperçu canonique · {materializedItems.length}</h4><div className={styles.resolvedList}>{materializedItems.slice(0, 12).map((row: any, index: number) => <article key={row.id || index}>{row.mediaUrl ? <img src={String(row.mediaUrl)} alt=""/> : <span/>}<div><strong>{String(row.title || 'Ressource')}</strong><small>{row.priceMad != null ? `${row.priceMad} ${row.currencyLabel || 'MAD'}` : String(row.subtitle || row.body || '')}</small></div></article>)}</div></section> : null}
-        </div>
-      ) : null}
-
-      {tab === 'design' ? (
-        <div className={styles.inspectorPane}>
-          <div className={styles.inspectorNotice}><WandSparkles size={15}/><div><strong>Personnalisation gouvernée</strong><span>Tokens visuels uniquement. Aucun CSS libre ni changement de contrat.</span></div></div>
-          <section className={styles.inspectorCard}>
-            <div className={styles.cardTitleRow}><div><span>APPARENCE</span><h4>Composition de la section</h4></div><span className={styles.safePill}>TOKENS</span></div>
-            <div className={styles.designControls}>
-              <label><span>Fond</span><select value={String(props.background || 'white')} onChange={(e) => patch({ background: e.target.value })}><option value="white">Blanc</option><option value="soft-blue">Bleu doux</option><option value="soft-pink">Rose doux</option><option value="navy">Navy</option><option value="transparent">Transparent</option></select></label>
-              <label><span>Densité</span><select value={String(props.density || 'dense')} onChange={(e) => patch({ density: e.target.value })}><option value="dense">Dense</option><option value="balanced">Équilibrée</option><option value="editorial">Éditoriale</option></select></label>
-              <label><span>Padding haut</span><input type="number" min="0" max="240" value={Number(design.paddingTop || 0)} onChange={(e) => patchDesign('paddingTop', Number(e.target.value))}/></label>
-              <label><span>Padding bas</span><input type="number" min="0" max="240" value={Number(design.paddingBottom || 0)} onChange={(e) => patchDesign('paddingBottom', Number(e.target.value))}/></label>
-              <label><span>Gap</span><input type="number" min="0" max="160" value={Number(design.gap || 0)} onChange={(e) => patchDesign('gap', Number(e.target.value))}/></label>
-              <label><span>Rayon</span><input type="number" min="0" max="100" value={Number(design.borderRadius || 0)} onChange={(e) => patchDesign('borderRadius', Number(e.target.value))}/></label>
-              {mode !== 'standard' ? <><label><span>Largeur max</span><input value={String(design.maxWidth || '')} placeholder="ex. 1380px" onChange={(e) => patchDesign('maxWidth', e.target.value)}/></label><label><span>Alignement</span><select value={String(design.textAlign || 'start')} onChange={(e) => patchDesign('textAlign', e.target.value)}><option value="start">Début</option><option value="center">Centre</option><option value="end">Fin</option></select></label></> : null}
-            </div>
-          </section>
-        </div>
-      ) : null}
-
-      {tab === 'responsive' ? (
-        <div className={styles.inspectorPane}>
-          <section className={styles.inspectorCard}>
-            <div className={styles.cardTitleRow}><div><span>VISIBILITÉ</span><h4>Responsive</h4></div><span className={styles.devicePill}>{device.toUpperCase()}</span></div>
-            <div className={styles.responsiveSwitches}>
-              <label><Smartphone/><span>Mobile</span><input type="checkbox" checked={bool(responsive.mobileVisible)} onChange={(e) => patchResponsive('mobileVisible', e.target.checked)}/></label>
-              <label><Tablet/><span>Tablette</span><input type="checkbox" checked={bool(responsive.tabletVisible)} onChange={(e) => patchResponsive('tabletVisible', e.target.checked)}/></label>
-              <label><Monitor/><span>Desktop</span><input type="checkbox" checked={bool(responsive.desktopVisible)} onChange={(e) => patchResponsive('desktopVisible', e.target.checked)}/></label>
-            </div>
-          </section>
-          <section className={styles.inspectorCard}>
-            <h4>Réglages du device courant · {device}</h4>
-            <p>Valeurs compilées dans le contrat responsive partagé avec le runtime.</p>
-            {device === 'wide' ? <p>Wide hérite du contrat Desktop.</p> : <div className={styles.designControls}>
-              <label><span>Padding haut</span><input type="number" min="0" max="180" value={Number(deviceStyle.paddingTop || 0)} onChange={(e) => patchDeviceStyle('paddingTop', Number(e.target.value))}/></label>
-              <label><span>Padding bas</span><input type="number" min="0" max="180" value={Number(deviceStyle.paddingBottom || 0)} onChange={(e) => patchDeviceStyle('paddingBottom', Number(e.target.value))}/></label>
-              <label><span>Gap</span><input type="number" min="0" max="120" value={Number(deviceStyle.gap || 0)} onChange={(e) => patchDeviceStyle('gap', Number(e.target.value))}/></label>
-              <label><span>Taille texte</span><input type="number" min="0" max="96" value={Number(deviceStyle.fontSize || 0)} onChange={(e) => patchDeviceStyle('fontSize', Number(e.target.value))}/></label>
-              {mode !== 'standard' ? <><label><span>Largeur max</span><input value={String(deviceStyle.maxWidth || '')} onChange={(e) => patchDeviceStyle('maxWidth', e.target.value)}/></label><label><span>Alignement</span><select value={String(deviceStyle.textAlign || 'start')} onChange={(e) => patchDeviceStyle('textAlign', e.target.value)}><option value="start">Début</option><option value="center">Centre</option><option value="end">Fin</option></select></label></> : null}
-            </div>}
-          </section>
-        </div>
-      ) : null}
-
-      {tab === 'truth' ? <div className={styles.inspectorPane}><section className={styles.inspectorCard}><h4>Vérité & commerce</h4><p>{source?.sourceId === 'catalog.items' ? 'Prix, disponibilité et identité affichés dans le canvas proviennent du Catalog Discovery canonique. Ils ne sont pas copiés dans le draft.' : 'Aucune vérité commerciale dynamique détectée sur ce bloc.'}</p><span className={styles.truthPill}>{source?.status === 'RESOLVED' ? 'CANONICAL · PROVEN' : 'DRAFT · REVIEW'}</span></section></div> : null}
-
-      {tab === 'diagnostics' ? <div className={styles.inspectorPane}><section className={styles.inspectorCard}><h4>Document Doctor</h4><p>{doctor.blockers} blocker(s) · {doctor.repairable} réparation(s) sûre(s) · {doctor.warnings} warning(s).</p><button className={styles.inspectorAction} onClick={onOpenDoctor}><Activity size={14}/> Ouvrir le diagnostic complet</button></section>{mode === 'developer' ? <section className={styles.inspectorCard}><h4>Contrat technique</h4><pre>{JSON.stringify({ pageId: page.id, type, id, source, props: Object.keys(props) }, null, 2)}</pre></section> : null}</div> : null}
-    </div>
-  )
+  {tab==='conditions'?<div className={styles.inspectorPane}><div className={styles.inspectorNotice}><SlidersHorizontal size={15}/><div><strong>Conditions déclaratives</strong><span>Aucun JavaScript de thème. Les règles restent portables et gouvernées.</span></div></div><section className={styles.inspectorCard}><div className={styles.cardTitleRow}><div><span>WORLD CONDITIONS</span><h4>{Array.isArray(worldOp.conditions)?worldOp.conditions.length:0} règle(s)</h4></div><span className={styles.safePill}>DÉCLARATIF</span></div>{Array.isArray(worldOp.conditions)&&worldOp.conditions.length?<div className={styles.provenanceRows}>{worldOp.conditions.map((raw,index)=>{const rule=record(raw);return <div key={String(rule.id||index)}><code>{String(rule.source||'prop')}.{String(rule.key||'')}</code><span>{String(rule.operator||'exists')} → {String(rule.effect||'show')}</span></div>})}</div>:<p>Aucune condition déclarée pour ce bloc. Ajoutez les règles dans le fichier world/package puis réimportez une nouvelle révision certifiée.</p>}</section></div>:null}
+  {tab==='seo'?<div className={styles.inspectorPane}><section className={styles.inspectorCard}><div className={styles.cardTitleRow}><div><span>SEO CONTRACT</span><h4>Route canonique propriétaire</h4></div><span className={styles.safePill}>SAFE</span></div><p>Le world peut structurer titres, FAQ et présentation sémantique, mais ne remplace jamais l’URL canonique ni l’identité SEO de la route.</p><Puck.Fields wrapFields={false}/></section></div>:null}
+  {tab==='accessibility'?<div className={styles.inspectorPane}><section className={styles.inspectorCard}><div className={styles.cardTitleRow}><div><span>ACCESSIBILITY</span><h4>Contrat WCAG opérationnel</h4></div><span className={styles.safePill}>REQUIRED</span></div><p>Alt média, labels d’actions, clavier, focus, RTL et reduced-motion restent des exigences de certification du world.</p><div className={styles.provenanceRows}><div><code>locale</code><span>FR · EN · AR</span></div><div><code>rtl</code><span>AR</span></div><div><code>business truth</code><span>IMMUTABLE</span></div></div></section></div>:null}
+  {tab==='truth'?<div className={styles.inspectorPane}><section className={styles.inspectorCard}><h4>Autorité & vérité</h4><p>{source?.sourceId==='catalog.items'?'Prix, disponibilité et identité proviennent du Catalogue canonique. Homepage contrôle uniquement sélection et présentation.':'Ce bloc reste sous l’autorité Homepage et ses sources configurées.'}</p><div className={styles.provenanceRows}>{Object.keys(props).filter(key=>!['id','items'].includes(key)).slice(0,24).map(key=><div key={key}><code>{key}</code><span>{provenance(key)}</span></div>)}</div></section></div>:null}
+  {tab==='diagnostics'?<div className={styles.inspectorPane}><section className={styles.inspectorCard}><h4>Document Doctor</h4><p>{doctor.blockers} blocker(s) · {doctor.repairable} réparation(s) sûre(s) · {doctor.warnings} warning(s).</p><button className={styles.inspectorAction} onClick={onOpenDoctor}><Activity size={14}/> Ouvrir le diagnostic complet</button></section>{mode==='developer'?<section className={styles.inspectorCard}><h4>Contrat technique</h4><pre>{JSON.stringify({pageId:page.id,type,id,capability:cap,worldCapability,worldOperability:worldOp,source,props:Object.keys(props)},null,2)}</pre></section>:null}</div>:null}
+ </div>
 }

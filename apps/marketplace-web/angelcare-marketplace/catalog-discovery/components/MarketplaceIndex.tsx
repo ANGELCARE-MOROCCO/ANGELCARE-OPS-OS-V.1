@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import {ArrowRight,BookOpenCheck,Building2,HeartHandshake,Hotel,PackageOpen,Search,ShieldCheck,Sparkles,UsersRound,HeartPulse,BriefcaseBusiness} from 'lucide-react'
+import {ArrowRight,BadgeCheck,BookOpenCheck,Building2,HeartHandshake,Hotel,Network,PackageOpen,Search,ShieldCheck,Sparkles,UsersRound,HeartPulse,BriefcaseBusiness} from 'lucide-react'
 import type {DiscoverySearch as DiscoverySearchData,StorefrontKey} from '../types'
 import {catalogCopy} from '../content'
 import {CategoryNativeCard} from '../../category-native-experience/components/CategoryNativeCard'
@@ -10,8 +10,8 @@ import {PublicSurfaceSections} from '../../total-commerce-control/components/Pub
 import {DiscoverySearch} from './DiscoverySearch'
 import {PublicPromotionRail} from '../../enterprise-closure/components/PublicPromotionRail'
 import styles from '../catalog-discovery.module.css'
-const iconMap:Record<string,typeof Search>={families:UsersRound,'home-services':HeartHandshake,development:Sparkles,kits:PackageOpen,academy:BookOpenCheck,establishments:Building2,hospitality:Hotel,'quality-check':ShieldCheck,'health-partners':HeartPulse,corporates:BriefcaseBusiness}
-const defaultEntries:StorefrontKey[]=['families','home-services','development','kits','academy','establishments','hospitality','quality-check']
+const iconMap:Record<string,typeof Search>={families:UsersRound,'home-services':HeartHandshake,development:Sparkles,kits:PackageOpen,academy:BookOpenCheck,establishments:Building2,hospitality:Hotel,'health-partners':HeartPulse,corporates:BriefcaseBusiness,'partner-os':Network,'quality-check':ShieldCheck,professionals:BadgeCheck}
+const defaultEntries:StorefrontKey[]=['families','home-services','development','kits','academy','establishments','hospitality','health-partners','corporates','partner-os','quality-check','professionals']
 const text=(v:unknown,f='')=>typeof v==='string'?v:f
 export async function MarketplaceIndex({data}:{data:DiscoverySearchData}){
  const schemaKeys:string[]=[...new Set<string>(data.items.map((item)=>String(item.metadata.experience_schema_key||'')).filter(Boolean))]

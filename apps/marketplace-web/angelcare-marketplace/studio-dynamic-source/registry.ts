@@ -48,5 +48,9 @@ export function isStudioDynamicSourceReference(value:unknown):value is StudioDyn
   const filters=plain(value.filters)?value.filters:{};if(Object.keys(filters).length>8||Object.keys(filters).some(key=>!profile.allowedFilters.includes(key)))return false
   if(value.anchorMode!==undefined&&!['explicit','current_item'].includes(String(value.anchorMode)))return false
   if(value.sort!==undefined&&!profile.allowedSorts.includes(value.sort as any))return false
+  if(value.merchandising!==undefined){
+    if(!plain(value.merchandising))return false
+    for(const key of ['pinnedEntityIds','excludedEntityIds'] as const){const rows=(value.merchandising as any)[key];if(rows!==undefined&&(!Array.isArray(rows)||rows.length>24||rows.some((id:unknown)=>typeof id!=='string'||!id)))return false}
+  }
   return true
 }
