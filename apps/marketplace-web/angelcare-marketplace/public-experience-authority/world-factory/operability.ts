@@ -96,7 +96,7 @@ export function buildWorldFactoryOperability(input:{
       acceptsResponsive:true,
       editableFields:[...(block?.fields||[])],
       allowedSourceIds:slot.role.startsWith('storefront_')?[...(storefrontPack?.supportedSourceIds||[])]:relation?.sourceId?[relation.sourceId]:[],
-      merchandisingModes:(slot.role.startsWith('storefront_')||Boolean(relation))?['automatic','curated','manual','hybrid'] as Array<'automatic'|'curated'|'manual'|'hybrid'>:['automatic'],
+      merchandisingModes:((slot.role.startsWith('storefront_')||Boolean(relation))?['automatic','curated','manual','hybrid']:['automatic']) as WorldFactoryOperabilityContract['blockCapabilities'][number]['merchandisingModes'],
       inspectorSections:roleInspectorSections(slot),
     }
     const override=requestedCaps.get(slot.blockId)
