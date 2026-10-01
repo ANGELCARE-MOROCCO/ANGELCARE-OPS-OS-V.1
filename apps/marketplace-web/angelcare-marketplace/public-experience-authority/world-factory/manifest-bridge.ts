@@ -3,11 +3,11 @@ import type {PublicExperienceWorldFactoryRecord,WorldFactorySemanticRole} from '
 
 const legacySlot=(role:WorldFactorySemanticRole,index:number):PublicExperienceThemeSlot['slot']=>{
  if(role==='hero'||role==='storefront_hero')return'hero'
- if(role==='trust')return'trust'
+ if(role==='trust'||role==='storefront_trust')return'trust'
  if(role==='storefront_facets'||role==='navigation')return'facets'
- if(role==='primary_conversion'||role==='secondary_conversion'||role==='footer')return'final_cta'
- if(role==='storefront_collection')return index%3===0?'collection_1':index%2===0?'collection_2':'collection_0'
- if(['storefront_inventory','recommendations','accessories','bundle','related','storefront_campaigns'].includes(role))return index%2===0?'featured_items':'inventory_items'
+ if(role==='primary_conversion'||role==='secondary_conversion'||role==='storefront_final_conversion'||role==='storefront_diagnostic'||role==='storefront_referral'||role==='footer')return'final_cta'
+ if(role==='storefront_collection'||role==='storefront_pathways'||role==='storefront_seasonal'||role==='storefront_use_cases'||role==='storefront_editorial')return index%3===0?'collection_1':index%2===0?'collection_2':'collection_0'
+ if(['storefront_inventory','recommendations','accessories','bundle','related','storefront_campaigns','storefront_availability','storefront_sessions','storefront_segments','storefront_benefits','storefront_impact','storefront_plans','storefront_capabilities','storefront_framework','storefront_assessment','storefront_qualifications','storefront_professional_availability','storefront_comparison','storefront_proof'].includes(role))return index%2===0?'featured_items':'inventory_items'
  return'featured_items'
 }
 export function worldFactoryLegacySlots(record:PublicExperienceWorldFactoryRecord):PublicExperienceThemeSlot[]{return record.semanticSlots.filter(row=>row.role!=='unknown').map((row,index)=>({blockId:row.blockId,slot:legacySlot(row.role,index),confidence:row.confidence,reason:`World Factory ${row.role}: ${row.evidence.join(', ')||'semantic inference'}`,semanticRole:row.role,supplementalRoles:row.supplementalRoles,capabilityKey:`wf:${row.blockId}`}))}

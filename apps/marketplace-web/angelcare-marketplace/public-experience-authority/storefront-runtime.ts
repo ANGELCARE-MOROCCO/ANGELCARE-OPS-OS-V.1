@@ -21,13 +21,46 @@ const object=(value:unknown):Record<string,unknown>=>value&&typeof value==='obje
 const blocks=(value:unknown):CmsBlock[]=>Array.isArray(value)?value.filter((row):row is CmsBlock=>Boolean(row)&&typeof row==='object'&&!Array.isArray(row)):[]
 const clone=<T,>(value:T):T=>JSON.parse(JSON.stringify(value)) as T
 const idOf=(component:ComponentData,index:number)=>String((component.props as Record<string,unknown>)?.id||`${component.type}-${index+1}`)
-const materialized=(item:StorefrontExperience['items'][number])=>({title:item.name,label:item.category_title||'',body:item.short_description||'',description:item.short_description||'',mediaUrl:item.media_url||'',mediaAlt:item.name,value:item.id,__studioSourceReference:{sourceId:'catalog.items',entityId:item.id},action:{version:1,actionId:'catalog.open_item',target:{sourceId:'catalog.items',entityId:item.id}},actionLabel:'Découvrir'})
+const materialized=(item:StorefrontExperience['items'][number])=>({title:item.name,label:item.category_title||'',body:item.short_description||'',description:item.short_description||'',mediaUrl:item.media_url||'',mediaAlt:item.name,value:item.id,status:item.availability_status,priceMode:item.price_mode,priceMad:item.price_amount,currencyLabel:item.currency_label,trustLabels:item.trust_labels,metadata:item.metadata,__studioSourceReference:{sourceId:'catalog.items',entityId:item.id},action:{version:1,actionId:'catalog.open_item',target:{sourceId:'catalog.items',entityId:item.id}},actionLabel:'Découvrir'})
 
 function templateData(document:unknown):Data{const doc=object(document);if(Array.isArray(doc.content))return doc as unknown as Data;return cmsBlocksToPuckData(blocks(doc.blocks),{locale:'fr'})}
 function slotMap(manifest:PublicExperienceThemeManifest){const map=new Map<string,PublicExperienceThemeSlot>();for(const slot of manifest.slots)if(slot.blockId)map.set(slot.blockId,slot);return map}
+const list=(value:unknown):Record<string,unknown>[]=>Array.isArray(value)?value.filter((row):row is Record<string,unknown>=>Boolean(row)&&typeof row==='object'&&!Array.isArray(row)):[]
+const text=(value:unknown)=>typeof value==='string'?value.trim():''
+const semanticConfigRows=(experience:StorefrontExperience,role:string)=>{const key=role.replace('storefront_',''),aliases=new Set([role,key,key.replaceAll('_','-')]);return (experience.storefrontSections||[]).filter(section=>aliases.has(text(section.type).toLowerCase())||aliases.has(text(section.key||section.role).toLowerCase())).flatMap(section=>list(section.items).length?list(section.items):[section])}
+const facetRows=(experience:StorefrontExperience,key:'category'|'kind'|'availability')=>(experience.facets[key]||[]).map(row=>({title:row.value,label:`${row.count} offre${row.count>1?'s':''}`,value:row.value,count:row.count}))
+const trustRows=(experience:StorefrontExperience)=>[...new Set(experience.items.flatMap(item=>item.trust_labels||[]).filter(Boolean))].slice(0,12).map(label=>({title:label,body:'Signal public issu de l’autorité de confiance.'}))
+function semanticRows(experience:StorefrontExperience,role:string,legacySlot:PublicExperienceThemeSlot['slot'],density:'premium'|'commerce'|'hyper_commerce'|'festival'){
+ const plan=storefrontMerchandisingPlan(experience,density),configured=semanticConfigRows(experience,role);if(configured.length)return configured
+ if(role==='storefront_categories'||role==='storefront_segments')return facetRows(experience,experience.facets.category?.length?'category':'kind')
+ if(role==='storefront_facets')return Object.entries(experience.facets).flatMap(([key,values])=>values.map(row=>({title:row.value,label:key,value:row.value,count:row.count})))
+ if(role==='storefront_inventory')return experience.items.filter(item=>item.availability_status!=='unavailable').slice(0,plan.inventoryLimit).map(materialized)
+ if(role==='storefront_availability'||role==='storefront_professional_availability')return experience.items.filter(item=>item.availability_status&&!['unavailable','hidden','blocked'].includes(item.availability_status.toLowerCase())).slice(0,plan.inventoryLimit).map(materialized)
+ if(role==='storefront_sessions')return experience.items.filter(item=>item.kind==='training'||/cohort|session/i.test(JSON.stringify(item.metadata))).slice(0,plan.inventoryLimit).map(materialized)
+ if(role==='storefront_plans')return experience.items.filter(item=>item.price_mode==='subscription'||item.kind==='saas_module').slice(0,plan.inventoryLimit).map(materialized)
+ if(role==='storefront_assessment')return experience.items.filter(item=>item.kind==='audit').slice(0,plan.inventoryLimit).map(materialized)
+ if(role==='storefront_qualifications')return experience.items.filter(item=>item.kind==='training'||/qualification|credential|certif/i.test(JSON.stringify(item.metadata))).slice(0,plan.inventoryLimit).map(materialized)
+ if(role==='storefront_pathways')return experience.collections.slice(0,plan.collectionLimit).map(collection=>({id:collection.id,title:collection.title,body:collection.subtitle||'',label:`${collection.items.length} offre${collection.items.length>1?'s':''}`,value:collection.collection_key}))
+ if(role==='storefront_collection'){
+  const idx=legacySlot.startsWith('collection_')?Number(legacySlot.split('_')[1]||0):0,collection=experience.collections[idx]||experience.collections[0];return collection?collection.items.map(materialized):[]
+ }
+ if(role==='storefront_comparison')return (experience.featured.length?experience.featured:experience.items).slice(0,Math.min(6,plan.featuredLimit)).map(materialized)
+ if(role==='storefront_seasonal'||role==='storefront_use_cases'||role==='storefront_editorial')return (experience.featured.length?experience.featured:experience.items).slice(0,plan.featuredLimit).map(materialized)
+ if(role==='storefront_proof'||role==='storefront_trust')return trustRows(experience)
+ if(role==='storefront_campaigns')return []
+ return []
+}
+function applySemanticRole(props:Record<string,unknown>,slot:PublicExperienceThemeSlot,experience:StorefrontExperience,density:'premium'|'commerce'|'hyper_commerce'|'festival'){
+ const role=slot.semanticRole;if(!role||!role.startsWith('storefront_'))return false
+ props.__storefrontSemantic={version:2,role,storefrontKey:experience.key,density,authority:'Public Experience Authority / Storefront360',immutableBusinessTruth:true}
+ if(role==='storefront_hero'){props.eyebrow=experience.hero.eyebrow;props.title=experience.hero.title;props.lead=experience.hero.lead;return true}
+ const values=semanticRows(experience,role,slot.slot,density);if(values.length)props.items=values
+ if(role==='storefront_final_conversion'){props.storefrontKey=experience.key;props.offerCount=experience.items.length}
+ return true
+}
 function applySlots(data:Data,experience:StorefrontExperience,manifest:PublicExperienceThemeManifest,density:'premium'|'commerce'|'hyper_commerce'|'festival'):Data{
  const copy=clone(data),slots=slotMap(manifest),collections=experience.collections,plan=storefrontMerchandisingPlan(experience,density)
- const walk=(component:ComponentData,index:number)=>{const props=(component.props||{}) as Record<string,unknown>,slot=slots.get(idOf(component,index));if(slot){if(slot.slot==='hero'){props.eyebrow=experience.hero.eyebrow;props.title=experience.hero.title;props.lead=experience.hero.lead}else if(slot.slot==='featured_items')props.items=experience.featured.slice(0,plan.featuredLimit).map(materialized);else if(slot.slot==='inventory_items')props.items=experience.items.filter(item=>item.availability_status!=='unavailable').slice(0,plan.inventoryLimit).map(materialized);else if(slot.slot.startsWith('collection_')){const idx=Number(slot.slot.split('_')[1]||0),collection=collections[idx];if(collection){props.title=collection.title;props.lead=collection.subtitle||'';props.items=collection.items.map(materialized)}}else if(slot.slot==='facets'){props.items=Object.entries(experience.facets).slice(0,10).map(([key,values])=>({title:key,label:`${values.length} options`,body:values.slice(0,5).map(v=>`${v.value} (${v.count})`).join(' · ')}))}else if(slot.slot==='trust'){props.items=[{title:'Catalogue canonique',body:`${experience.items.length} offres publiées`},{title:'Données live',body:'Prix, disponibilité et preuves restent gouvernés par leurs autorités natives.'}]}}const nested=Array.isArray(props.content)?props.content as ComponentData[]:[];nested.forEach(walk)}
+ const walk=(component:ComponentData,index:number)=>{const props=(component.props||{}) as Record<string,unknown>,slot=slots.get(idOf(component,index));if(slot){if(!applySemanticRole(props,slot,experience,density)){if(slot.slot==='hero'){props.eyebrow=experience.hero.eyebrow;props.title=experience.hero.title;props.lead=experience.hero.lead}else if(slot.slot==='featured_items')props.items=experience.featured.slice(0,plan.featuredLimit).map(materialized);else if(slot.slot==='inventory_items')props.items=experience.items.filter(item=>item.availability_status!=='unavailable').slice(0,plan.inventoryLimit).map(materialized);else if(slot.slot.startsWith('collection_')){const idx=Number(slot.slot.split('_')[1]||0),collection=collections[idx];if(collection){props.title=collection.title;props.lead=collection.subtitle||'';props.items=collection.items.map(materialized)}}else if(slot.slot==='facets'){props.items=Object.entries(experience.facets).slice(0,10).map(([key,values])=>({title:key,label:`${values.length} options`,body:values.slice(0,5).map(v=>`${v.value} (${v.count})`).join(' · ')}))}else if(slot.slot==='trust'){props.items=trustRows(experience)}}}const nested=Array.isArray(props.content)?props.content as ComponentData[]:[];nested.forEach(walk)}
  ;(copy.content||[]).forEach(walk);return copy
 }
 

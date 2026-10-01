@@ -11,3 +11,5 @@ export * from './materializer'
 export * from './package-format'
 
 export * from './operability'
+
+export * from './storefront-capabilities'

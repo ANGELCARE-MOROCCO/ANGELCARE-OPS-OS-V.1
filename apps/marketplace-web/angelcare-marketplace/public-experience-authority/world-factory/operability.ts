@@ -1,5 +1,6 @@
 import type {Data} from '@puckeditor/core'
 import {studioBlockContract} from '@/angelcare-marketplace/studio-universal/block-contracts'
+import {worldFactoryStorefrontPack} from './storefront-capabilities'
 import type {
   PublicExperienceWorldFactoryRecord,
   WorldFactoryActionPlan,
@@ -21,13 +22,13 @@ const content=(data:Data)=>Array.isArray(data.content)?data.content:[]
 
 const roleInspectorSections=(slot:WorldFactorySemanticSlot):WorldFactoryOperabilityContract['blockCapabilities'][number]['inspectorSections']=>{
   const sections:Array<'content'|'data'|'media'|'actions'|'display'|'design'|'responsive'|'conditions'|'seo'|'accessibility'>=['content']
-  const mediaRoles=new Set(['hero','media','storefront_hero','editorial'])
-  const dataRoles=new Set(['pricing','availability','variants','specifications','reviews','trust','bundle','accessories','recommendations','related','service_plans','service_schedule','service_coverage','service_providers','academy_curriculum','academy_cohort','academy_trainers','academy_certification','academy_admission','b2b_fit','b2b_programme','b2b_deployment','b2b_proof','storefront_categories','storefront_inventory','storefront_collection','storefront_facets','storefront_campaigns'])
+  const mediaRoles=new Set(['hero','media','storefront_hero','editorial','storefront_editorial','storefront_proof','storefront_use_cases','storefront_benefits'])
+  const dataRoles=new Set(['pricing','availability','variants','specifications','reviews','trust','bundle','accessories','recommendations','related','service_plans','service_schedule','service_coverage','service_providers','academy_curriculum','academy_cohort','academy_trainers','academy_certification','academy_admission','b2b_fit','b2b_programme','b2b_deployment','b2b_proof','storefront_categories','storefront_inventory','storefront_collection','storefront_facets','storefront_campaigns','storefront_availability','storefront_process','storefront_pathways','storefront_sessions','storefront_segments','storefront_diagnostic','storefront_seasonal','storefront_use_cases','storefront_boundary','storefront_referral','storefront_benefits','storefront_impact','storefront_plans','storefront_capabilities','storefront_framework','storefront_assessment','storefront_qualifications','storefront_professional_availability','storefront_comparison','storefront_editorial','storefront_proof','storefront_trust','storefront_final_conversion'])
   if(dataRoles.has(slot.role)||slot.supplementalRoles.some(role=>dataRoles.has(role)))sections.push('data')
   if(mediaRoles.has(slot.role)||slot.supplementalRoles.some(role=>mediaRoles.has(role)))sections.push('media')
-  if(['primary_conversion','secondary_conversion'].includes(slot.role)||slot.supplementalRoles.some(role=>['primary_conversion','secondary_conversion'].includes(role)))sections.push('actions')
+  if(['primary_conversion','secondary_conversion','storefront_final_conversion','storefront_diagnostic','storefront_referral'].includes(slot.role)||slot.supplementalRoles.some(role=>['primary_conversion','secondary_conversion','storefront_final_conversion','storefront_diagnostic','storefront_referral'].includes(role)))sections.push('actions')
   sections.push('display','design','responsive','conditions','accessibility')
-  if(['hero','identity','editorial','faq','navigation','footer'].includes(slot.role))sections.push('seo')
+  if(['hero','identity','editorial','faq','navigation','footer','storefront_hero','storefront_editorial','storefront_proof'].includes(slot.role))sections.push('seo')
   return unique(sections)
 }
 
@@ -46,14 +47,16 @@ const interactionKind=(type:string,role:string):WorldFactoryInteractionContract[
   if(type==='studio_dialog')return'dialog'
   if(type==='studio_carousel'||type==='media_gallery')return'carousel'
   if(type==='studio_menu'||role==='navigation')return'menu'
-  if(role==='primary_conversion')return'sticky_conversion'
+  if(role==='primary_conversion'||role==='storefront_final_conversion')return'sticky_conversion'
+  if(role==='storefront_facets'||role==='storefront_comparison')return'tabs'
+  if(role==='storefront_process'||role==='storefront_pathways'||role==='storefront_sessions'||role==='storefront_framework')return'accordion'
   if(role==='variants')return'variant_selector'
   if(role==='service_schedule'||role==='academy_cohort')return'schedule_selector'
   return null
 }
 
-const isMediaRole=(role:string)=>['hero','media','storefront_hero','editorial'].includes(role)
-const isRepeaterRole=(role:string)=>['variants','specifications','reviews','trust','faq','bundle','accessories','recommendations','related','service_plans','service_schedule','service_coverage','service_providers','academy_curriculum','academy_cohort','academy_trainers','academy_certification','academy_admission','b2b_fit','b2b_programme','b2b_deployment','b2b_proof','storefront_categories','storefront_inventory','storefront_collection','storefront_facets','storefront_campaigns'].includes(role)
+const isMediaRole=(role:string)=>['hero','media','storefront_hero','editorial','storefront_editorial','storefront_proof','storefront_use_cases','storefront_benefits'].includes(role)
+const isRepeaterRole=(role:string)=>['variants','specifications','reviews','trust','faq','bundle','accessories','recommendations','related','service_plans','service_schedule','service_coverage','service_providers','academy_curriculum','academy_cohort','academy_trainers','academy_certification','academy_admission','b2b_fit','b2b_programme','b2b_deployment','b2b_proof','storefront_categories','storefront_inventory','storefront_collection','storefront_facets','storefront_campaigns','storefront_availability','storefront_process','storefront_pathways','storefront_sessions','storefront_segments','storefront_diagnostic','storefront_seasonal','storefront_use_cases','storefront_boundary','storefront_referral','storefront_benefits','storefront_impact','storefront_plans','storefront_capabilities','storefront_framework','storefront_assessment','storefront_qualifications','storefront_professional_availability','storefront_comparison','storefront_editorial','storefront_proof','storefront_trust'].includes(role)
 
 export function buildWorldFactoryOperability(input:{
   data:Data
@@ -65,6 +68,7 @@ export function buildWorldFactoryOperability(input:{
   requested?:Partial<WorldFactoryOperabilityContract>
 }):WorldFactoryOperabilityContract{
   const requested=input.requested||{}
+  const storefrontPack=worldFactoryStorefrontPack(input.storefrontKeys.length===1?input.storefrontKeys[0]:null)
   const bindingsByBlock=new Map<string,WorldFactoryBindingPlan[]>()
   for(const row of input.bindingPlan){const list=bindingsByBlock.get(row.blockId)||[];list.push(row);bindingsByBlock.set(row.blockId,list)}
   const actionsByBlock=new Map<string,WorldFactoryActionPlan[]>()
@@ -91,6 +95,8 @@ export function buildWorldFactoryOperability(input:{
       acceptsDesign:Boolean(block?.fields.includes('sourceDesign')??true),
       acceptsResponsive:true,
       editableFields:[...(block?.fields||[])],
+      allowedSourceIds:slot.role.startsWith('storefront_')?[...(storefrontPack?.supportedSourceIds||[])]:relation?.sourceId?[relation.sourceId]:[],
+      merchandisingModes:(slot.role.startsWith('storefront_')||Boolean(relation))?['automatic','curated','manual','hybrid'] as Array<'automatic'|'curated'|'manual'|'hybrid'>:['automatic'],
       inspectorSections:roleInspectorSections(slot),
     }
     const override=requestedCaps.get(slot.blockId)

@@ -95,6 +95,8 @@ export interface WorldFactoryBlockCapability{
  acceptsDesign:boolean
  acceptsResponsive:boolean
  editableFields:string[]
+ allowedSourceIds:string[]
+ merchandisingModes:Array<'automatic'|'curated'|'manual'|'hybrid'>
  inspectorSections:Array<'content'|'data'|'media'|'actions'|'display'|'design'|'responsive'|'conditions'|'seo'|'accessibility'>
 }
 export interface WorldFactoryLocalizationContract{
@@ -157,6 +159,12 @@ export type WorldFactorySemanticRole=
  |'academy_curriculum'|'academy_cohort'|'academy_trainers'|'academy_certification'|'academy_admission'
  |'b2b_fit'|'b2b_programme'|'b2b_deployment'|'b2b_proof'
  |'storefront_hero'|'storefront_categories'|'storefront_inventory'|'storefront_collection'|'storefront_facets'|'storefront_campaigns'
+ |'storefront_availability'|'storefront_process'|'storefront_pathways'|'storefront_sessions'
+ |'storefront_segments'|'storefront_diagnostic'|'storefront_seasonal'|'storefront_use_cases'
+ |'storefront_boundary'|'storefront_referral'|'storefront_benefits'|'storefront_impact'
+ |'storefront_plans'|'storefront_capabilities'|'storefront_framework'|'storefront_assessment'
+ |'storefront_qualifications'|'storefront_professional_availability'|'storefront_comparison'
+ |'storefront_editorial'|'storefront_proof'|'storefront_trust'|'storefront_final_conversion'
  |'editorial'|'navigation'|'footer'|'unknown'
 
 export interface WorldFactorySourceEvidence{
