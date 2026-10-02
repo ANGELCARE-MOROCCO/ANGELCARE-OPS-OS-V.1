@@ -48,7 +48,7 @@ function inspectBindingMap(value:unknown){
 function inspectDynamicSource(value:unknown){if(value===undefined)return;if(!isStudioDynamicSourceReference(value))throw new Error('Configuration de source dynamique invalide.')}
 function inspectWorkflow(value:unknown){if(value===undefined)return;if(!isStudioWorkflowReference(value))throw new Error('Configuration de workflow AngelCare invalide.')}
 
-const IMPORTABLE_SEMANTIC_WORLD_BLOCK_TYPES=new Set<string>(['ac_academy_section', 'ac_academy_world', 'ac_b2b_world', 'ac_product_section', 'ac_product_world', 'ac_service_section', 'ac_service_world']);
+const IMPORTABLE_SEMANTIC_WORLD_BLOCK_TYPES=new Set<string>(['ac_academy_section', 'ac_academy_world', 'ac_b2b_section', 'ac_b2b_world', 'ac_product_section', 'ac_product_world', 'ac_service_section', 'ac_service_world']);
 function inspectComponent(component:unknown,state:{components:number},depth=0){
   if(!plain(component))throw new Error('Chaque bloc Puck doit être un objet.')
   const type=typeof component.type==='string'?component.type:''
