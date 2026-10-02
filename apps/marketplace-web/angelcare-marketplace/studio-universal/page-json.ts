@@ -48,10 +48,11 @@ function inspectBindingMap(value:unknown){
 function inspectDynamicSource(value:unknown){if(value===undefined)return;if(!isStudioDynamicSourceReference(value))throw new Error('Configuration de source dynamique invalide.')}
 function inspectWorkflow(value:unknown){if(value===undefined)return;if(!isStudioWorkflowReference(value))throw new Error('Configuration de workflow AngelCare invalide.')}
 
+const IMPORTABLE_SEMANTIC_WORLD_BLOCK_TYPES=new Set<string>(['ac_academy_section', 'ac_academy_world', 'ac_b2b_world', 'ac_product_section', 'ac_product_world', 'ac_service_section', 'ac_service_world']);
 function inspectComponent(component:unknown,state:{components:number},depth=0){
   if(!plain(component))throw new Error('Chaque bloc Puck doit être un objet.')
   const type=typeof component.type==='string'?component.type:''
-  if(!type||!isRegisteredStudioBlockType(type))throw new Error(`Type de bloc non enregistré: ${type||'(vide)'}.`)
+  if(!IMPORTABLE_SEMANTIC_WORLD_BLOCK_TYPES.has(type)&&(!type||!isRegisteredStudioBlockType(type)))throw new Error(`Type de bloc non enregistré: ${type||'(vide)'}.`)
   state.components+=1
   if(state.components>MAX_COMPONENTS)throw new Error(`Le document dépasse ${MAX_COMPONENTS} blocs.`)
   if(depth>MAX_DEPTH)throw new Error('La hiérarchie de blocs est trop profonde.')
