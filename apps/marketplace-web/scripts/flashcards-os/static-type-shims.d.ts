@@ -64,7 +64,7 @@ declare module 'lucide-react' {
   export const Ban: any
   export const CalendarClock: any
   export const CircleAlert: any
-  export const CircleCheck: any
+  export const CheckCircle2: any
   export const CircleDollarSign: any
   export const CircleDot: any
   export const Crosshair: any

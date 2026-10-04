@@ -30,6 +30,12 @@ const files={
  serviceCss:'angelcare-marketplace/studio-universal/components/studio-service-world-runtime.module.css',
  academyCss:'angelcare-marketplace/studio-universal/components/studio-academy-world-runtime.module.css',
  b2bCss:'angelcare-marketplace/studio-universal/components/studio-b2b-world-runtime.module.css',
+ renderer:'angelcare-marketplace/studio-universal/StudioPublishedRenderer.tsx',
+ visualAuthority:'angelcare-marketplace/studio-universal/world-visual-authority.ts',
+ worldShell:'angelcare-marketplace/studio-universal/components/StudioWorldLayoutShell.tsx',
+ candidate:'angelcare-marketplace/studio-universal/components/StudioCandidatePreview.tsx',
+ storefrontRuntime:'angelcare-marketplace/public-experience-authority/storefront-runtime.ts',
+ storefrontRoute:'angelcare-marketplace/catalog-discovery/components/Storefront.tsx',
 }
 
 console.log('========================================================================')
@@ -45,6 +51,17 @@ const product=read(files.product),productActions=read(files.productActions)
 const service=read(files.service),serviceActions=read(files.serviceActions)
 const academy=read(files.academy),academyActions=read(files.academyActions)
 const b2b=read(files.b2b),b2bActions=read(files.b2bActions)
+const renderer=read(files.renderer),visualAuthority=read(files.visualAuthority),worldShell=read(files.worldShell),candidate=read(files.candidate),storefrontRuntime=read(files.storefrontRuntime),storefrontRoute=read(files.storefrontRoute)
+
+// Permanent World visual-authority closure.
+check(visualAuthority.includes('hasImportedWorldAnatomy')&&visualAuthority.includes('shouldUseNativeAtomicFallback'),'WORLD VISUAL AUTHORITY HELPER')
+check(renderer.includes('StudioWorldLayoutShell')&&renderer.includes('authority="world-factory"'),'IMPORTED WORLD TREE PRESERVED')
+check(renderer.includes("nativeAtomicFallback&&type==='ac_product_world'")&&renderer.includes("nativeAtomicFallback&&type==='ac_service_world'")&&renderer.includes("nativeAtomicFallback&&type==='ac_academy_world'")&&renderer.includes("nativeAtomicFallback&&type==='ac_b2b_world'"),'ATOMIC RUNTIMES FALLBACK ONLY')
+check(!renderer.includes('StudioStorefrontSemanticRuntime')&&!renderer.includes('currentStorefrontExperience'),'STOREFRONT VISUAL REPLACEMENT REMOVED')
+check(storefrontRuntime.includes('applySemanticRole')&&storefrontRuntime.includes('__storefrontSemantic'),'STOREFRONT DATA HYDRATES IMPORTED BLOCKS')
+check(!storefrontRoute.includes('currentStorefrontExperience={experience}')&&storefrontRoute.includes('dynamicAlreadyApplied'),'STOREFRONT ROUTE USES HYDRATED WORLD')
+check(candidate.includes('StudioWorldLayoutShell')&&candidate.includes('StudioVisualCatalogueRuntime')&&candidate.includes('HomepageProMaxSectionRuntime'),'PREVIEW PUBLIC VISUAL GRAMMAR PARITY')
+check(worldShell.includes('sourceDesign')&&worldShell.includes('__studioImportedRules')&&worldShell.includes('responsive'),'SOURCE DESIGN CSS RESPONSIVE PRESERVED')
 
 // Shared dynamic source closure.
 for(const token of [
@@ -128,7 +145,7 @@ for(const [name,world,actions,cssPath] of [
 }
 
 // Syntax transpilation.
-const tsFiles=[files.dyn,files.eng,files.actionRegistry,files.util,files.product,files.productActions,files.service,files.serviceActions,files.academy,files.academyActions,files.b2b,files.b2bActions]
+const tsFiles=[files.dyn,files.eng,files.actionRegistry,files.util,files.product,files.productActions,files.service,files.serviceActions,files.academy,files.academyActions,files.b2b,files.b2bActions,files.renderer,files.visualAuthority,files.worldShell,files.candidate,files.storefrontRuntime,files.storefrontRoute]
 let syntaxErrors=[]
 for(const f of tsFiles){
  const out=ts.transpileModule(read(f),{fileName:f,reportDiagnostics:true,compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.ESNext,moduleResolution:ts.ModuleResolutionKind.Bundler,jsx:ts.JsxEmit.Preserve}})

@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { ArrowRight, CircleAlert, CircleCheck, Clock3, Database, ShieldCheck } from 'lucide-react'
+import { ArrowRight, CircleAlert, CheckCircle2, Clock3, Database, ShieldCheck } from 'lucide-react'
 import styles from '../flashcards-os.module.css'
 
 export function formatDate(value: string | null) {
@@ -26,7 +26,7 @@ export function StatusPill({ value }: { value: string }) {
 }
 
 export function ProviderBadge({ provider, configured, status }: { provider: string; configured: boolean; status: string }) {
-  const Icon = configured && status === 'healthy' ? CircleCheck : configured ? CircleAlert : Clock3
+  const Icon = configured && status === 'healthy' ? CheckCircle2 : configured ? CircleAlert : Clock3
   return (
     <span className={`${styles.providerBadge} ${configured ? styles.providerConfigured : styles.providerUnconfigured}`}>
       <Icon size={14} /> {provider} · {configured ? status : 'configuration requise'}

@@ -7,7 +7,7 @@ const read=rel=>fs.readFileSync(path.join(root,rel),'utf8')
 const has=(rel,...tokens)=>{const body=read(rel);for(const token of tokens)assert.ok(body.includes(token),`${rel} missing ${token}`)}
 const wf='angelcare-marketplace/public-experience-authority/world-factory/'
 
-test('World Factory v2 contract is versioned and forward-compatible',()=>has(wf+'types.ts','ENGINE_VERSION=2','SCHEMA_VERSION=2','pea-world-factory-2026.09-sovereign-v2','capability-negotiation','immutableAfterCertification:true'))
+test('World Factory v3 contract is versioned and forward-compatible',()=>has(wf+'types.ts','ENGINE_VERSION=3','SCHEMA_VERSION=3','pea-world-factory-2030-operability-v3','capability-negotiation','immutableAfterCertification:true'))
 test('four detail domain packs and storefront pack are explicit',()=>has(wf+'domain-packs.ts','b2c_product_digital','b2c_service_family','academy_admission','b2b_institutional','WORLD_FACTORY_STOREFRONT_REQUIRED_ROLES'))
 test('semantic compiler supports multiple roles per visual block',()=>has(wf+'compiler.ts','supplementalRoles','supplementalRoleOverrides','scoredRoles'))
 test('compiler recursively traverses nested Puck components',()=>has(wf+'compiler.ts','flattenComponents','props.${key}.${index}','root.${index}'))
@@ -18,7 +18,7 @@ test('capabilities are negotiated against explicit installed registry',()=>has(w
 test('truth dimensions are first class',()=>has(wf+'compiler.ts',"['promotion'","['scarcity'","['rating'","['certification'","['pricing'","['availability'","['trust'"))
 test('desktop and mobile visual evidence are critical certification inputs',()=>has(wf+'compiler.ts',"referenceScore('desktop')","referenceScore('mobile')","gate('visual'"))
 test('compiled fingerprints are deterministic and separated from runtime timestamps',()=>has(wf+'fingerprint.ts','stableWorldJson','deterministicWorldFingerprint'))
-test('v1 to v2 migration exists without DB migration',()=>has(wf+'migrations.ts','v1-to-v2-sovereign-contract','migrateWorldFactoryRecord'))
+test('v1 to v2 and v2 to v3 migrations exist without DB migration',()=>has(wf+'migrations.ts','v1-to-v2-sovereign-contract','v2-to-v3-2030-operability','migrateWorldFactoryRecord'))
 test('portable World Package v1 is exportable and parseable',()=>has(wf+'package-format.ts','angelcare-world-package-v1','createWorldFactoryPackage','parseWorldFactoryPackage'))
 test('materializer injects bindings actions relations and factory identity',()=>has(wf+'materializer.ts','__studioBindings','primaryAction','secondaryAction','__studioDynamicSource','__worldFactory'))
 test('materializer recursively traverses nested Puck components',()=>has(wf+'materializer.ts','props.${key}.${index}','root.${index}'))
