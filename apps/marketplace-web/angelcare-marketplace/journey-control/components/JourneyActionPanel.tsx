@@ -1,37 +1,8 @@
 'use client'
 import { useState } from 'react'
 import { ArrowRight, CheckCircle2, Clock3, FileUp, Loader2 } from 'lucide-react'
+import type { CatalogLocale } from '../../catalog-discovery/types'
 import type { JourneyAction } from '../types'
 import styles from '../journey.module.css'
-
-export function JourneyActionPanel({ journeyId, actions }: { journeyId: string; actions: JourneyAction[] }) {
-  const [busy, setBusy] = useState<string | null>(null)
-  const [message, setMessage] = useState<string | null>(null)
-  async function complete(action: JourneyAction) {
-    setBusy(action.id); setMessage(null)
-    try {
-      const response = await fetch(`/api/angelcare-marketplace/journeys/${journeyId}/actions/${action.id}/complete`, {
-        method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ evidence: { channel: 'customer-command' } }),
-      })
-      const payload = await response.json() as { ok?: boolean; error?: { message?: string } }
-      if (!response.ok) throw new Error(payload.error?.message || 'Action impossible')
-      setMessage('Action enregistrée avec preuve. Actualisation du parcours…')
-      window.location.reload()
-    } catch (error) { setMessage(error instanceof Error ? error.message : 'Action impossible') }
-    finally { setBusy(null) }
-  }
-  const open = actions.filter((action) => action.status === 'open')
-  return <section className={styles.actionPanel} aria-labelledby="journey-actions-title">
-    <div className={styles.sectionHeading}><div><span>NEXT ACTION COMMAND</span><h2 id="journey-actions-title">Ce que vous devez faire maintenant</h2></div><strong>{open.length}</strong></div>
-    {open.length ? <div className={styles.actionList}>{open.map((action) => <article className={styles.actionCard} key={action.id}>
-      <div className={styles.actionIcon}>{action.action_key.includes('document') ? <FileUp size={20}/> : <Clock3 size={20}/>}</div>
-      <div className={styles.actionCopy}><h3>{action.title}</h3>{action.description ? <p>{action.description}</p> : null}
-        <div className={styles.actionMeta}>{action.due_at ? <span>Échéance {new Date(action.due_at).toLocaleDateString('fr')}</span> : <span>Sans échéance imposée</span>}{action.consequence ? <span>{action.consequence}</span> : null}</div>
-      </div>
-      <button className={styles.primaryButton} type="button" disabled={busy === action.id} onClick={() => void complete(action)}>
-        {busy === action.id ? <Loader2 size={16} className={styles.spin}/> : <CheckCircle2 size={16}/>} Confirmer <ArrowRight size={16}/>
-      </button>
-    </article>)}</div> : <div className={styles.successState}><CheckCircle2 size={22}/><div><strong>Vous êtes à jour.</strong><p>Aucune action client n’est actuellement requise.</p></div></div>}
-    {message ? <p className={styles.feedback}>{message}</p> : null}
-  </section>
-}
+const copy={fr:{eyebrow:'À FAIRE',title:'Vos prochaines actions',due:'À faire avant',none:'Aucune date limite',confirm:'Confirmer',saved:'Action enregistrée. Mise à jour de votre dossier…',error:'Action impossible',ok:'Vous êtes à jour.',okBody:'Aucune action n’est requise de votre part pour le moment.'},en:{eyebrow:'TO DO',title:'Your next actions',due:'Due by',none:'No deadline',confirm:'Confirm',saved:'Action recorded. Updating your journey…',error:'Action could not be completed',ok:'You are up to date.',okBody:'Nothing is currently required from you.'},ar:{eyebrow:'المطلوب منك',title:'خطواتك التالية',due:'قبل',none:'بدون موعد نهائي',confirm:'تأكيد',saved:'تم تسجيل الإجراء. يتم تحديث ملفك…',error:'تعذر تنفيذ الإجراء',ok:'أنت على اطلاع.',okBody:'لا يوجد إجراء مطلوب منك حالياً.'}} as const
+export function JourneyActionPanel({journeyId,actions,locale}:{journeyId:string;actions:JourneyAction[];locale:CatalogLocale}){const t=copy[locale];const[busy,setBusy]=useState<string|null>(null);const[message,setMessage]=useState<string|null>(null);async function complete(action:JourneyAction){setBusy(action.id);setMessage(null);try{const response=await fetch(`/api/angelcare-marketplace/journeys/${journeyId}/actions/${action.id}/complete`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({evidence:{channel:'customer-os'}})});const payload=await response.json() as {error?:{message?:string}};if(!response.ok)throw new Error(payload.error?.message||t.error);setMessage(t.saved);window.setTimeout(()=>window.location.reload(),550)}catch(error){setMessage(error instanceof Error?error.message:t.error)}finally{setBusy(null)}}const open=actions.filter(action=>action.status==='open');return <section className={styles.actionPanel} aria-labelledby="journey-actions-title"><div className={styles.sectionHeading}><div><span>{t.eyebrow}</span><h2 id="journey-actions-title">{t.title}</h2></div><strong>{open.length}</strong></div>{open.length?<div className={styles.actionList}>{open.map(action=><article className={styles.actionCard} key={action.id}><div className={styles.actionIcon}>{action.action_key.includes('document')?<FileUp size={20}/>:<Clock3 size={20}/>}</div><div className={styles.actionCopy}><h3>{action.title}</h3>{action.description?<p>{action.description}</p>:null}<div className={styles.actionMeta}>{action.due_at?<span>{t.due} {new Date(action.due_at).toLocaleDateString(locale)}</span>:<span>{t.none}</span>}{action.consequence?<span>{action.consequence}</span>:null}</div></div><button className={styles.primaryButton} type="button" disabled={busy===action.id} onClick={()=>void complete(action)}>{busy===action.id?<Loader2 size={16} className={styles.spin}/>:<CheckCircle2 size={16}/>} {t.confirm} <ArrowRight size={16}/></button></article>)}</div>:<div className={styles.successState}><CheckCircle2 size={22}/><div><strong>{t.ok}</strong><p>{t.okBody}</p></div></div>}{message?<p className={styles.feedback} role="status">{message}</p>:null}</section>}

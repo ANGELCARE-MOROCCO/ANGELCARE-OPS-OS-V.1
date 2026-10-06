@@ -56,6 +56,7 @@ export const ANGELCARE_STUDIO_BLOCK_CONTRACTS: readonly StudioBlockContract[] = 
   contract('studio_carousel','Carousel','interactive','Carousel contrôlé et accessible sans dépendance au JS source.',['eyebrow','title','lead','items','sourceDesign'],'adapter'),
   contract('studio_menu','Menu local','interactive','Menu/disclosure local gouverné sans modifier la navigation globale.',['title','items','sourceDesign'],'adapter'),
   contract('studio_form','Formulaire à relier','conversion','Structure de formulaire importée, destination neutralisée jusqu’à un workflow AngelCare approuvé.',['title','lead','items','__studioWorkflow','sourceDesign'],'adapter',{requiresReview:true}),
+  contract('homepage_world','Homepage World source-owned','content','Composition homepage source-owned persistée dans Experience Core; le contenu public est rendu par le world runtime canonique.',['worldId','worldRevision','referenceImage','density','compositionMode','dataMode','shellMode'],'native',{requiresReview:true}),
   contract('studio_island','Îlot contrôlé','extension','Fallback explicite pour capacité externe non reconstructible.',['title','body','sourceDesign'],'controlled-island',{requiresReview:true}),
 ] as const
 

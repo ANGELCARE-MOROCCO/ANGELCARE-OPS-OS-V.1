@@ -11,6 +11,7 @@ import {
   getJourneyAdminSummary,
   listAdminJourneys,
   listCustomerJourneys,
+  resolveAdminChangeRequest,
   transitionAdminJourney,
 } from './repository'
 import { journeyRisk, journeyStatus, journeyType, objectValue, requiredText } from './validation'
@@ -83,6 +84,23 @@ export async function handleAdminJourneys(request: Request) {
     const context = await requireMarketplaceApiContext('marketplace.journeys.view')
     const url = new URL(request.url)
     return apiSuccess(await listAdminJourneys(context, { journeyType: journeyType(url.searchParams.get('journeyType')), status: journeyStatus(url.searchParams.get('status')), riskLevel: journeyRisk(url.searchParams.get('riskLevel')), query: url.searchParams.get('q') || undefined }), { requestId: id })
+  } catch (error) { return apiFailure(error, id) }
+}
+
+export async function handleAdminChangeRequest(request: Request, journeyId: string, changeRequestId: string) {
+  const id = requestId(request)
+  try {
+    const context = await requireMarketplaceApiContext('marketplace.journeys.manage')
+    const body = await parseJsonObject(request)
+    const allowed = ['under_review', 'approved', 'rejected', 'completed', 'cancelled'] as const
+    const status = allowed.find((entry) => entry === body.status)
+    if (!status) throw new Error('Statut de demande invalide.')
+    return apiSuccess(await resolveAdminChangeRequest({
+      journeyId, changeRequestId, status,
+      reason: requiredText(body.reason, 'reason', 2000),
+      customerMessage: typeof body.customerMessage === 'string' ? body.customerMessage.slice(0, 2000) : undefined,
+      context, requestId: id, request,
+    }), { requestId: id })
   } catch (error) { return apiFailure(error, id) }
 }
 

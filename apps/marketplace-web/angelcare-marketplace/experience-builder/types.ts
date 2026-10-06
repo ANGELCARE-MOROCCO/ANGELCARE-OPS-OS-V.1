@@ -5,7 +5,7 @@ export type CmsBlockType =
   | 'trust_strip' | 'proof_grid' | 'stats' | 'editorial' | 'story' | 'testimonials' | 'partner_logos' | 'comparison' | 'pricing'
   | 'timeline' | 'process' | 'cta_band' | 'faq' | 'inquiry_form' | 'marketplace_entry' | 'partner_os_entry' | 'academy_entry'
   | 'family_story' | 'media_gallery' | 'video' | 'territory_map' | 'quote' | 'download' | 'contact'
-  | 'section' | 'container' | 'stack' | 'columns' | 'grid' | 'symbol'
+  | 'section' | 'container' | 'stack' | 'columns' | 'grid' | 'symbol' | 'homepage_world'
 
 export interface CmsPage {
   id: string

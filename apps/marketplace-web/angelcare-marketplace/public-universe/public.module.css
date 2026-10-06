@@ -63,3 +63,12 @@
 .experienceGrid{display:grid;grid-template-columns:repeat(var(--experience-grid-columns,3),minmax(0,1fr));gap:var(--experience-gap,16px)}
 @media(max-width:900px){.experienceGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.experienceColumns,.experienceColumns[data-ratio]{grid-template-columns:1fr}}
 @media(max-width:620px){.experienceGrid{grid-template-columns:1fr}.experienceStack[data-direction="horizontal"]{flex-direction:column}}
+
+/* Atomic storefront navigation — source-owned 12-storefront authority */
+.marketStorefrontRail{display:flex;align-items:center;gap:3px;min-width:0;overflow-x:auto;scrollbar-width:none;scroll-snap-type:x proximity}.marketStorefrontRail::-webkit-scrollbar{display:none}.marketStorefrontLink{position:relative;flex:0 0 auto;min-height:36px;display:inline-flex;align-items:center;scroll-snap-align:start;border:1px solid transparent}.marketStorefrontLink:before{content:"";position:absolute;left:10px;right:10px;bottom:4px;height:2px;border-radius:99px;background:#d92654;opacity:0;transform:scaleX(.45);transition:opacity .16s ease,transform .16s ease}.marketStorefrontLink:hover:before,.marketStorefrontLink:focus-visible:before{opacity:1;transform:scaleX(1)}.marketStorefrontLink[data-accent=blue]:before{background:#2878c8}.marketStorefrontLink[data-accent=violet]:before{background:#7557ce}.marketStorefrontLink[data-accent=cyan]:before{background:#1284a3}.marketStorefrontLink[data-accent=amber]:before{background:#d18a21}.marketStorefrontLink[data-accent=emerald]:before{background:#1d8b68}.marketAllLink{flex:0 0 auto;margin-left:5px;background:#081f3d!important;color:#fff!important;font-weight:900!important}.marketNav>div{gap:8px}.marketLocale{flex:0 0 auto}.publicRoot[dir="rtl"] .marketAllLink{margin-left:0;margin-right:5px}@media(max-width:1120px){.marketStorefrontRail{padding-right:6px}.marketNav>div{overflow:visible}.marketLocale{position:sticky;right:0;background:#fff;box-shadow:-12px 0 18px #fff}}@media(max-width:760px){.marketStorefrontLink{min-height:34px}.marketLocale{position:absolute;right:8px;top:9px}.marketStorefrontRail{width:calc(100% - 102px)}}
+
+/* ATOMIC STOREFRONT NAV PRO MAX — 12 storefronts remain dense but fully legible/tappable. */
+.marketNav a{font-size:10px}
+.marketStorefrontLink{min-height:42px;padding:10px 12px!important}
+.marketAllLink{min-height:42px;display:inline-flex;align-items:center}
+@media(max-width:760px){.marketStorefrontLink{min-height:40px;font-size:9px}.marketAllLink{min-height:40px;font-size:9px}}

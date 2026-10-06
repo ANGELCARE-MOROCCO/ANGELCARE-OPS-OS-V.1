@@ -764,7 +764,7 @@ export function LivingMarketplaceHomepage({ experience }: { experience: Homepage
       </section>
 
       <nav className={styles.floatingActions} aria-label="Marketplace quick actions">
-        <Link href={`/angelcare-marketplace/${locale}/marketplace?saved=1`}><Heart size={19}/>{saved.size ? <span>{saved.size}</span> : null}</Link>
+        <Link href={`/angelcare-marketplace/${locale}/account/saved`}><Heart size={19}/>{saved.size ? <span>{saved.size}</span> : null}</Link>
         <Link href={`/angelcare-marketplace/${locale}/quote-basket`}><ShoppingBag size={19}/></Link>
       </nav>
     </div>
