@@ -29,6 +29,9 @@ import {StudioServiceWorldRuntime} from './components/StudioServiceWorldRuntime'
 import {StudioAcademyWorldRuntime} from './components/StudioAcademyWorldRuntime'
 import {StudioB2BWorldRuntime} from './components/StudioB2BWorldRuntime'
 import {shouldUseNativeAtomicFallback} from './world-visual-authority'
+import { LIVING_MARKETPLACE_COMPONENT_TYPE, LIVING_MARKETPLACE_WORLD_ID } from '@/angelcare-marketplace/homepage-living-marketplace/world'
+import { LivingMarketplaceHomepage } from '@/angelcare-marketplace/homepage-living-marketplace/components/LivingMarketplaceHomepage'
+import { getHomepageExperience } from '@/angelcare-marketplace/homepage-flagship/repository'
 
 const s=(value:unknown)=>value==null?'':String(value)
 const isHomepageProMaxType=(type:string)=>HOMEPAGE_PRO_MAX_COMPONENT_KEYS.includes(type)
@@ -107,6 +110,11 @@ async function RenderComponent({component,pickers,locale,territoryId,audienceId,
   if(nativeAtomicFallback&&type==='ac_service_world'&&currentExperience360?.classification.masterDomain==='b2c_service_family'&&currentTruthReport)return <div data-ac-world-visual-authority="native-fallback" data-ac-world-type={type}><StudioServiceWorldRuntime data={currentExperience360} truthReport={currentTruthReport} worldProps={props as Record<string,unknown>}/></div>
   if(nativeAtomicFallback&&type==='ac_academy_world'&&currentExperience360?.classification.masterDomain==='academy_admission'&&currentTruthReport)return <div data-ac-world-visual-authority="native-fallback" data-ac-world-type={type}><StudioAcademyWorldRuntime data={currentExperience360} truthReport={currentTruthReport} worldProps={props as Record<string,unknown>}/></div>
   if(nativeAtomicFallback&&type==='ac_b2b_world'&&currentExperience360?.classification.masterDomain==='b2b_institutional'&&currentTruthReport)return <div data-ac-world-visual-authority="native-fallback" data-ac-world-type={type}><StudioB2BWorldRuntime data={currentExperience360} truthReport={currentTruthReport} worldProps={props as Record<string,unknown>}/></div>
+  if(type===LIVING_MARKETPLACE_COMPONENT_TYPE){
+    const experience=await getHomepageExperience({locale}).catch(()=>null)
+    if(!experience)return <section data-ac-homepage-world={LIVING_MARKETPLACE_WORLD_ID} data-ac-homepage-runtime="canonical-data-unavailable" className={styles.block}><span className={styles.eyebrow}>ANGELCARE MARKETPLACE</span><h2 className={styles.title}>Marketplace temporairement indisponible</h2><p className={styles.lead}>Les données canoniques nécessaires à cette homepage ne sont pas disponibles. Aucun contenu commercial de démonstration n’est affiché.</p></section>
+    return <LivingMarketplaceHomepage experience={experience}/>
+  }
   if(isHomepageProMaxType(type))return <StudioDesignShell blockId={id} style={props.sourceDesign} responsive={props.responsive} importedRules={props.__studioImportedRules} hidden={props.hidden}><HomepageProMaxSectionRuntime type={type} props={{...props,hidden:false} as any} pickers={pickers} mode="published"/></StudioDesignShell>
   if(type.startsWith('ac_')){
     return <StudioWorldLayoutShell type={type} props={props} authority="world-factory">{await Promise.all(nested.map((child,index)=><RenderComponent key={s(child.props?.id)||index} component={child} pickers={pickers} locale={locale} territoryId={territoryId} audienceId={audienceId} attribution={attribution} actionContext={actionContext} currentExperience360={currentExperience360} currentTruthReport={currentTruthReport}/>))}</StudioWorldLayoutShell>

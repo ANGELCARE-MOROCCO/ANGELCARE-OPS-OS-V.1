@@ -1,6 +1,7 @@
 import type { Data } from '@puckeditor/core'
 import { HOMEPAGE_PRO_MAX_CATEGORY_ID,HOMEPAGE_PRO_MAX_WORLD_ID,HOMEPAGE_PRO_MAX_WORLD_REVISION,type HomepageProMaxInsertMode,type HomepageProMaxSectionDefinition } from './types'
 import type { StudioDynamicSourceReference, StudioDynamicStrategy } from '@/angelcare-marketplace/studio-dynamic-source/types'
+import { LIVING_MARKETPLACE_COMPONENT_TYPE } from '@/angelcare-marketplace/homepage-living-marketplace/world'
 
 const responsive={mobileVisible:true,tabletVisible:true,desktopVisible:true}
 
@@ -35,7 +36,7 @@ export const HOMEPAGE_PRO_MAX_SECTION_DEFINITIONS:readonly HomepageProMaxSection
  {id:'S17',type:'ac_home_pro_max_footer',label:'S17 · Mega Footer',purpose:'Navigation, aide, apps, newsletter et légal.',dataClass:'navigation',defaultProps:{...meta('homepro-s17'),title:'AngelCare',body:'Des enfants épanouis. Des parents sereins. Un avenir plus doux.',items:[{badge:'Nos univers',title:'Services'},{badge:'Nos univers',title:'Academy'},{badge:'Nos univers',title:'Produits'},{badge:'Nos univers',title:'Solutions pro'},{badge:'Aide & contact',title:'Centre d’aide'},{badge:'Aide & contact',title:'Nous contacter'},{badge:'Aide & contact',title:'FAQ'},{badge:'À propos',title:'Notre mission'},{badge:'À propos',title:'Nos engagements'},{badge:'À propos',title:'Carrières'},{badge:'Restez informé !',title:'Newsletter',body:'Newsletter et communications soumises au consentement.'}]}},
 ] as const
 
-export const HOMEPAGE_PRO_MAX_COMPONENT_KEYS=HOMEPAGE_PRO_MAX_SECTION_DEFINITIONS.map(row=>row.type) as readonly string[]
+export const HOMEPAGE_PRO_MAX_COMPONENT_KEYS=[...HOMEPAGE_PRO_MAX_SECTION_DEFINITIONS.map(row=>row.type),LIVING_MARKETPLACE_COMPONENT_TYPE] as readonly string[]
 
 const clone=<T,>(v:T):T=>JSON.parse(JSON.stringify(v)) as T
 const sectionData=()=>HOMEPAGE_PRO_MAX_SECTION_DEFINITIONS.map(row=>({type:row.type,props:clone(row.defaultProps)}))
@@ -83,6 +84,7 @@ export const HOMEPAGE_PRO_MAX_PERSISTENCE_TYPES:Readonly<Record<string,string>>=
  ac_home_pro_max_commitments:'trust_strip',
  ac_home_pro_max_faq:'faq',
  ac_home_pro_max_footer:'section',
+ [LIVING_MARKETPLACE_COMPONENT_TYPE]:'homepage_world',
 } as const
 
 export function homepageProMaxPersistenceType(type:string){return HOMEPAGE_PRO_MAX_PERSISTENCE_TYPES[type]||type}

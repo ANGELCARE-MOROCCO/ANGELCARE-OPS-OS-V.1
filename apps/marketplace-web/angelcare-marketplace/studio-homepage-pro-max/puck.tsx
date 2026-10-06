@@ -9,6 +9,8 @@ import { StudioDynamicSourceField } from '@/angelcare-marketplace/studio-dynamic
 import { createStudioDesignFields,responsiveField,DEFAULT_STUDIO_DESIGN } from '@/angelcare-marketplace/studio-universal/design'
 import { StudioActionField } from '@/angelcare-marketplace/studio-action-registry/components/StudioActionField'
 import { homepageCapability } from './capabilities'
+import { LivingMarketplaceWorldEditor } from '@/angelcare-marketplace/homepage-living-marketplace/components/LivingMarketplaceWorldEditor'
+import { LIVING_MARKETPLACE_COMPONENT_TYPE, LIVING_MARKETPLACE_WORLD_ID, LIVING_MARKETPLACE_WORLD_REVISION } from '@/angelcare-marketplace/homepage-living-marketplace/world'
 
 const choice=(label:string,options:Array<{label:string;value:string}>)=>({type:'select' as const,label,options})
 const yesNo=(label:string)=>({type:'radio' as const,label,options:[{label:'Oui',value:true},{label:'Non',value:false}]})
@@ -26,6 +28,16 @@ function fields(type:string,pickers:StudioPickerData){const cap=homepageCapabili
  f.sourceDesign={type:'object',label:'Design avancé',objectFields:createStudioDesignFields()};f.responsive=responsiveField;f.density=choice('Densité',[{label:'Dense',value:'dense'},{label:'Équilibrée',value:'balanced'},{label:'Éditoriale',value:'editorial'}]);f.background=choice('Fond',[{label:'Blanc',value:'white'},{label:'Bleu doux',value:'soft-blue'},{label:'Rose doux',value:'soft-pink'},{label:'Navy',value:'navy'},{label:'Transparent',value:'transparent'}]);f.emptyPolicy=choice('Si vide',[{label:'Masquer en public',value:'hide'},{label:'Placeholder éditeur',value:'editor-placeholder'},{label:'Conserver le shell',value:'preserve-shell'}]);f.hidden=yesNo('Masqué')
  return f}
 export function createHomepageProMaxPuckComponents(pickers:StudioPickerData):Config['components']{
- return Object.fromEntries(HOMEPAGE_PRO_MAX_SECTION_DEFINITIONS.map(def=>[def.type,{label:def.label,fields:fields(def.type,pickers),defaultProps:{...def.defaultProps,sourceDesign:{...DEFAULT_STUDIO_DESIGN},responsive:def.defaultProps.responsive||{mobileVisible:true,tabletVisible:true,desktopVisible:true}},render:(props:HomepageProMaxSectionProps)=><HomepageProMaxEditorRuntime type={def.type} props={props} pickers={pickers}/>,resolvePermissions:async()=>({edit:true,drag:true,delete:true,duplicate:true,insert:true})}])) as Config['components']
+ const legacy=Object.fromEntries(HOMEPAGE_PRO_MAX_SECTION_DEFINITIONS.map(def=>[def.type,{label:def.label,fields:fields(def.type,pickers),defaultProps:{...def.defaultProps,sourceDesign:{...DEFAULT_STUDIO_DESIGN},responsive:def.defaultProps.responsive||{mobileVisible:true,tabletVisible:true,desktopVisible:true}},render:(props:HomepageProMaxSectionProps)=><HomepageProMaxEditorRuntime type={def.type} props={props} pickers={pickers}/>,resolvePermissions:async()=>({edit:true,drag:true,delete:true,duplicate:true,insert:true})}])) as Config['components']
+ return {
+  ...legacy,
+  [LIVING_MARKETPLACE_COMPONENT_TYPE]:{
+   label:'WORLD 02 · Living Marketplace — source-owned',
+   fields:{},
+   defaultProps:{id:'home-living-marketplace-world-02',worldId:LIVING_MARKETPLACE_WORLD_ID,worldRevision:LIVING_MARKETPLACE_WORLD_REVISION,density:'maximum',compositionMode:'hardcoded-source-owned',dataMode:'canonical-live',shellMode:'body-only',hidden:false,locked:true,responsive:{mobileVisible:true,tabletVisible:true,desktopVisible:true}},
+   render:()=> <LivingMarketplaceWorldEditor/>,
+   resolvePermissions:async()=>({edit:false,drag:true,delete:true,duplicate:false,insert:true}),
+  } as any,
+ } as Config['components']
 }
 export { HOMEPAGE_PRO_MAX_COMPONENT_KEYS }
