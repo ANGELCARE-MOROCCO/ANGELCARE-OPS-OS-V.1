@@ -9,7 +9,8 @@
     "angelcare-marketplace/studio-homepage-pro-max/puck.tsx",
     "angelcare-marketplace/studio-homepage-pro-max/components/HomepageProMaxLibrary.tsx",
     "angelcare-marketplace/studio-homepage-pro-max/developer-contract.ts",
-    "angelcare-marketplace/studio-universal/StudioPublishedRenderer.tsx"
+    "angelcare-marketplace/studio-universal/StudioPublishedRenderer.tsx",
+    "app/angelcare-marketplace/preview/[token]/page.tsx"
   ],
   "exclude": ["node_modules", ".next", "backups", "_archive", ".angelcare_backups"]
 }

@@ -7,13 +7,15 @@ import styles from '../catalog-discovery.module.css'
 import {StudioPublishedDataRenderer} from '@/angelcare-marketplace/studio-universal/StudioPublishedRenderer'
 import {preparePublicStorefrontWorld} from '@/angelcare-marketplace/public-experience-authority/storefront-runtime'
 import {CanonicalAtomicStorefrontWorld} from '@/angelcare-marketplace/public-experience-authority/components/CanonicalAtomicStorefrontWorld'
+import {FamiliesStorefrontProMax} from '@/angelcare-marketplace/families-storefront/components/FamiliesStorefrontProMax'
 
 const text=(v:unknown,f='')=>typeof v==='string'?v:f
 const truth=(v:unknown,f=true)=>typeof v==='boolean'?v:f
 export async function Storefront({experience,nativeFallback}:{experience:StorefrontExperience;nativeFallback?:ReactNode}){
  const world=await preparePublicStorefrontWorld(experience)
+ if(world.status==='READY'&&world.data)return <div data-ac-storefront-runtime="public-experience-authority" data-ac-storefront-key={experience.key} data-ac-template-key={world.templateKey||undefined} data-ac-template-revision={world.revisionId||undefined}><StudioPublishedDataRenderer data={world.data} locale={experience.locale} territoryId={experience.territoryId||null} audienceId={null} attribution={world.attribution||undefined} dynamicAlreadyApplied dynamicReport={world.dynamicReport}/></div>
+ if(experience.key==='families')return <FamiliesStorefrontProMax experience={experience} builtinWorldId={world.status==='BUILTIN_READY'?world.builtinWorldId:null}/>
  if(world.status==='BUILTIN_READY'&&world.builtinWorldId)return <CanonicalAtomicStorefrontWorld experience={experience} density={world.density}/>
- if(world.status==='READY'&&world.data)return <div data-ac-storefront-runtime="public-experience-authority" data-ac-storefront-key={experience.key} data-ac-template-key={world.templateKey||undefined} data-ac-template-revision={world.revisionId||undefined}><StudioPublishedDataRenderer data={world.data} locale={experience.locale} territoryId={null} audienceId={null} attribution={world.attribution||undefined} dynamicAlreadyApplied dynamicReport={world.dynamicReport}/></div>
  if(nativeFallback)return <div data-ac-storefront-runtime="native-specialized" data-ac-storefront-key={experience.key} data-ac-storefront-fallback={world.reason||'NATIVE_SPECIALIZED'}>{nativeFallback}</div>
  const {locale,hero}=experience;const config=experience.experienceConfig||{};const filters=experience.filterConfig||{};const sections=experience.storefrontSections||[]
  const featuredTitle=text(config.featured_title,locale==='fr'?'Sélection mise en avant':locale==='ar'?'مختارات مميزة':'Featured selection')

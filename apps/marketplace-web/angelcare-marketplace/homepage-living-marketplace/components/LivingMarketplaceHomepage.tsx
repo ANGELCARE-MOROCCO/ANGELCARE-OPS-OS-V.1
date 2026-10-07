@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useMemo, useState, type ReactNode } from 'react'
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import {
   ArrowRight,
   BadgeCheck,
@@ -10,12 +10,14 @@ import {
   CalendarDays,
   Check,
   ChevronRight,
+  ChevronLeft,
   ClipboardCheck,
   GraduationCap,
   Heart,
   Hotel,
-  MapPin,
   PackageOpen,
+  Pause,
+  Play,
   Search,
   ShieldCheck,
   ShoppingBag,
@@ -34,6 +36,10 @@ import type {
 } from '@/angelcare-marketplace/homepage-flagship/types'
 import { LIVING_MARKETPLACE_WORLD_ID } from '../world'
 import styles from './living-marketplace.module.css'
+import { CommerceRail } from './CommerceRail'
+import { LIVING_EDITORIAL_MEDIA as media, photographicMedia } from '../media'
+import { editorialJourneys, editorialWords, type EditorialShelfKind } from '../discovery'
+import { getPublicStorefrontNavigation } from '@/angelcare-marketplace/public-experience-authority/storefront-navigation'
 
 const copy = {
   fr: {
@@ -42,37 +48,37 @@ const copy = {
     heroBody: 'Services, produits, développement, Academy et solutions professionnelles réunis dans une seule Marketplace AngelCare.',
     heroNote: 'Grandir ensemble, en toute confiance.',
     heroCommunity: "Plus qu'un service, un écosystème pour la famille.",
-    heroCommunityBody: 'Des parcours utiles, des offres publiées et une équipe AngelCare quand vous avez besoin d’être guidé.',
+    heroCommunityBody: 'Des découvertes pour les enfants. Du soutien pour les parents. Une équipe pour vous guider.',
     discover: 'Explorer la Marketplace',
     family: 'Trouver une solution famille',
-    trustTitle: 'La Marketplace en direct',
+    trustTitle: 'Votre univers AngelCare',
     categories: 'Explorer les univers AngelCare',
-    categoriesSub: 'Accédez immédiatement aux catégories réellement publiées.',
+    categoriesSub: 'Des services, des idées et des solutions pour toute la vie de famille.',
     now: 'À découvrir maintenant',
     flash: 'Sélections commerciales du moment',
-    flashSub: 'Offres publiées et données commerciales réelles, sans prix ni urgence inventés.',
-    services: 'Services disponibles',
-    servicesSub: 'Des services publiés, qualifiables et reliés au parcours de réservation.',
+    flashSub: 'Des idées utiles pour la famille, choisies dans le catalogue AngelCare.',
+    services: 'Services pour votre quotidien',
+    servicesSub: 'Garde, accompagnement et activités : trouvez le service adapté à votre quotidien.',
     help: 'Besoin d’un coup de main ?',
     helpBody: 'Décrivez votre besoin ou lancez un diagnostic familial avant de réserver.',
     helpCta: 'Démarrer mon besoin',
     packs: 'Produits, kits & développement',
-    packsSub: 'Des supports et produits publiés dans le catalogue AngelCare.',
-    best: 'Nos sélections populaires',
+    packsSub: 'Apprendre, jouer, explorer : des ressources pour chaque nouvelle découverte.',
+    best: 'Nos coups de cœur',
     academy: 'Academy · Formations & cohortes',
-    academySub: 'Parcours de formation reliés à l’inscription réelle.',
+    academySub: 'Apprenez, pratiquez et préparez votre prochaine étape.',
     academyCta: 'Voir toute l’Academy',
     academyBanner: 'Développez vos compétences pour un avenir plus serein.',
-    academyBannerBody: 'Programmes publiés, formats visibles et inscription reliée au parcours Academy.',
+    academyBannerBody: 'Explorez les programmes, choisissez votre format et préparez votre inscription.',
     b2b: 'Solutions pour crèches, écoles, maternités, hôtels et entreprises',
-    b2bSub: 'Entrez dans le bon parcours professionnel sans passer par une page générique.',
+    b2bSub: 'Des projets adaptés à votre établissement et aux familles que vous accompagnez.',
     quote: 'Demander un devis',
     guides: 'Guides & accompagnement',
-    guidesSub: 'Des raccourcis utiles, visuels et directement reliés aux bons parcours.',
+    guidesSub: 'Des repères pour choisir, apprendre et avancer avec confiance.',
     humanHelp: 'Un accompagnement humain quand votre choix mérite d’être clarifié.',
-    humanHelpBody: 'AngelCare vous aide à transformer un besoin familial en parcours concret, sans inventer une recommandation automatique.',
+    humanHelpBody: 'Prenez le temps de préciser votre besoin. Trouvez le bon point de départ avec AngelCare.',
     collections: 'Collections & nouveautés',
-    collectionsSub: 'Collections actives et dernières publications réellement identifiées comme nouveautés.',
+    collectionsSub: 'Parcourez les collections et découvrez les dernières sélections.',
     account: 'Votre espace AngelCare',
     accountBody: 'Retrouvez réservations, commandes, inscriptions, paiements et support.',
     accountCta: 'Ouvrir mon espace',
@@ -80,10 +86,10 @@ const copy = {
     supportBody: 'Expliquez votre besoin et entrez dans le parcours famille approprié.',
     supportCta: 'Être accompagné',
     commitments: 'Confiance & preuves',
-    commitmentsSub: 'Seules les preuves publiques et actives de votre Marketplace sont affichées.',
+    commitmentsSub: 'Découvrez les engagements et les informations de vérification AngelCare.',
     faq: 'Questions fréquentes',
-    mission: 'Un écosystème AngelCare, pas une simple vitrine.',
-    missionBody: 'La homepage relie directement la découverte aux parcours famille, commerce, Academy et professionnels.',
+    mission: 'Grandir ensemble. À chaque étape.',
+    missionBody: 'Des découvertes aux grands projets, trouvez votre prochaine étape avec AngelCare.',
     all: 'Voir tout',
     available: 'Disponible',
     restricted: 'Selon territoire',
@@ -105,37 +111,37 @@ const copy = {
     heroBody: 'Services, products, development, Academy and professional solutions together in one AngelCare Marketplace.',
     heroNote: 'Growing together, with confidence.',
     heroCommunity: 'More than a service: a family ecosystem.',
-    heroCommunityBody: 'Useful journeys, published offers and the AngelCare team when you need guidance.',
+    heroCommunityBody: 'Discoveries for children. Support for parents. A team to guide you.',
     discover: 'Explore the Marketplace',
     family: 'Find a family solution',
-    trustTitle: 'Marketplace live',
+    trustTitle: 'Your AngelCare universe',
     categories: 'Explore AngelCare universes',
-    categoriesSub: 'Open the categories that are actually published.',
+    categoriesSub: 'Services, ideas and solutions for every stage of family life.',
     now: 'Discover now',
     flash: 'Current commercial selections',
-    flashSub: 'Published offers and real commercial data, with no invented pricing or urgency.',
-    services: 'Available services',
-    servicesSub: 'Published services connected to the real booking journey.',
+    flashSub: 'Useful ideas for family life, selected from the AngelCare catalogue.',
+    services: 'Services for everyday life',
+    servicesSub: 'Care, support and activities for your everyday family needs.',
     help: 'Need a hand?',
     helpBody: 'Describe your need or start a family diagnostic before booking.',
     helpCta: 'Start my request',
     packs: 'Products, kits & development',
-    packsSub: 'Published learning and family products from the AngelCare catalogue.',
-    best: 'Popular selections',
+    packsSub: 'Learn, play and explore with resources for each new discovery.',
+    best: 'Our picks',
     academy: 'Academy · Training & cohorts',
-    academySub: 'Training connected to real enrollment journeys.',
+    academySub: 'Learn, practise and prepare your next step.',
     academyCta: 'Open Academy',
     academyBanner: 'Build skills for a more confident future.',
-    academyBannerBody: 'Published programs, visible delivery formats and connected Academy enrollment.',
+    academyBannerBody: 'Explore programmes, find your learning format and plan your next step.',
     b2b: 'Solutions for childcare centers, schools, maternity partners, hotels and companies',
     b2bSub: 'Enter the right professional journey directly.',
     quote: 'Request a quote',
     guides: 'Guides & human guidance',
     guidesSub: 'Useful, visual shortcuts directly connected to the right journeys.',
     humanHelp: 'Human guidance when your choice deserves clarification.',
-    humanHelpBody: 'AngelCare helps turn a family need into a concrete journey without inventing an automated recommendation.',
+    humanHelpBody: 'Take time to clarify your needs and find the right starting point with AngelCare.',
     collections: 'Collections & new arrivals',
-    collectionsSub: 'Active collections and catalogue entries genuinely identified as new arrivals.',
+    collectionsSub: 'Browse collections and discover the latest selections.',
     account: 'Your AngelCare space',
     accountBody: 'Bookings, orders, enrollments, payments and support in one place.',
     accountCta: 'Open my account',
@@ -143,9 +149,9 @@ const copy = {
     supportBody: 'Describe your need and enter the appropriate family journey.',
     supportCta: 'Get guidance',
     commitments: 'Trust & evidence',
-    commitmentsSub: 'Only active public evidence from the Marketplace is displayed.',
+    commitmentsSub: 'Explore AngelCare commitments and verification information.',
     faq: 'Frequently asked questions',
-    mission: 'An AngelCare ecosystem, not a simple storefront.',
+    mission: 'Growing together. At every stage.',
     missionBody: 'The homepage connects discovery directly to family, commerce, Academy and professional journeys.',
     all: 'View all',
     available: 'Available',
@@ -176,7 +182,7 @@ const copy = {
     categoriesSub: 'الوصول مباشرة إلى الفئات المنشورة فعليًا.',
     now: 'اكتشف الآن',
     flash: 'اختيارات تجارية حالية',
-    flashSub: 'عروض منشورة وبيانات تجارية حقيقية دون أسعار أو استعجال مخترع.',
+    flashSub: 'أفكار مفيدة لحياة الأسرة من كتالوج أنجل كير.',
     services: 'الخدمات المتاحة',
     servicesSub: 'خدمات منشورة مرتبطة بمسار الحجز الحقيقي.',
     help: 'هل تحتاج إلى مساعدة؟',
@@ -206,9 +212,9 @@ const copy = {
     supportBody: 'صف احتياجك وادخل إلى مسار الأسرة المناسب.',
     supportCta: 'احصل على المرافقة',
     commitments: 'الثقة والأدلة',
-    commitmentsSub: 'لا تظهر إلا الأدلة العامة والنشطة في Marketplace.',
+    commitmentsSub: 'اكتشف التزامات أنجل كير ومعلومات التحقق.',
     faq: 'الأسئلة الشائعة',
-    mission: 'منظومة AngelCare، وليست مجرد واجهة.',
+    mission: 'نكبر معًا في كل مرحلة.',
     missionBody: 'تربط الصفحة الرئيسية الاكتشاف مباشرة بمسارات الأسرة والتجارة وAcademy والمهنيين.',
     all: 'عرض الكل',
     available: 'متاح',
@@ -256,12 +262,13 @@ function campaignHref(campaign: HomepageCampaign | null | undefined, locale: Hom
 function collectionHref(collection: HomepageCollection, locale: HomepageLocale) {
   const first = collection.items[0]
   if (!first) return `/angelcare-marketplace/${locale}/marketplace`
-  return `/angelcare-marketplace/${locale}/marketplace/${encodeURIComponent(first.slug)}?collection=${encodeURIComponent(collection.id)}`
+  return `/angelcare-marketplace/${locale}/marketplace/item/${encodeURIComponent(first.slug)}?collection=${encodeURIComponent(collection.id)}`
 }
 
 function priceLabel(item: HomepageItem, locale: HomepageLocale) {
   const c = copy[locale]
-  if (item.price_mode === 'quote_only' || item.price_amount === null) return c.quotePrice
+  if (item.price_mode === 'quote_only') return c.quotePrice
+  if (item.price_amount === null) return locale === 'fr' ? 'Prix à confirmer' : locale === 'en' ? 'Price to confirm' : 'السعر قيد التأكيد'
   const value = new Intl.NumberFormat(locale === 'ar' ? 'ar-MA' : locale === 'en' ? 'en-MA' : 'fr-MA', { maximumFractionDigits: 2 }).format(item.price_amount)
   const prefix = item.price_mode === 'starting_from' ? `${c.from} ` : ''
   return `${prefix}${value} ${item.currency_label || 'MAD'}`
@@ -280,11 +287,11 @@ function firstMedia(items: HomepageItem[]) {
 }
 
 function track(payload: Record<string, unknown>) {
-  void fetch('/api/angelcare-marketplace/homepage/engagement', {
+  return fetch('/api/angelcare-marketplace/homepage/engagement', {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify(payload),
-  }).catch(() => undefined)
+  })
 }
 
 function SectionHead({ eyebrow, title, body, href, locale }: { eyebrow: string; title: string; body?: string; href?: string; locale: HomepageLocale }) {
@@ -300,18 +307,20 @@ function SectionHead({ eyebrow, title, body, href, locale }: { eyebrow: string; 
   )
 }
 
-function ItemCard({ item, locale, saved, onSave, signal }: { item: HomepageItem; locale: HomepageLocale; saved: boolean; onSave: (item: HomepageItem) => void; signal?: string | null }) {
+function ItemCard({ item, locale, saved, onSave, signal, pending }: { item: HomepageItem; locale: HomepageLocale; saved: boolean; onSave: (item: HomepageItem) => void; signal?: string | null; pending?: boolean }) {
   const detail = itemDetailHref(locale, item)
   const journey = journeyForItem(item)
-  const action = journeyPath(locale, item)
+  const unavailable = ['out_of_stock', 'unavailable', 'paused'].includes(item.availability_status)
+  const action = unavailable ? detail : journeyPath(locale, item)
+  const [imageFailed, setImageFailed] = useState(false)
   return (
     <article className={styles.itemCard} data-kind={item.kind}>
-      <Link className={styles.itemMedia} href={detail} onClick={() => track({ event_name: 'living_home.item_opened', locale, catalog_item_id: item.id, route: detail })}>
-        {item.media_url ? <img src={item.media_url} alt={item.name} loading="lazy"/> : <div className={styles.mediaFallback}><Sparkles/><span>ANGELCARE</span></div>}
+      <Link className={styles.itemMedia} href={detail} onClick={() => void track({ event_name: 'living_home.item_opened', locale, catalog_item_id: item.id, route: detail }).catch(() => undefined)}>
+        {item.media_url && !imageFailed ? <img src={item.media_url} alt={item.name} loading="lazy" onError={() => setImageFailed(true)}/> : <div className={styles.mediaFallback}><PackageOpen/><span>{locale === 'fr' ? 'Visuel à venir' : locale === 'en' ? 'Image coming soon' : 'الصورة قريباً'}</span></div>}
         <span className={styles.kindPill}>{item.category_title || item.kind.replaceAll('_', ' ')}</span>
         {signal ? <span className={styles.signalPill}>{signal}</span> : null}
       </Link>
-      <button type="button" className={styles.saveButton} data-active={saved || undefined} aria-label={saved ? copy[locale].unsaved : copy[locale].saved} onClick={() => onSave(item)}>
+      <button type="button" className={styles.saveButton} disabled={pending} aria-pressed={saved} data-active={saved || undefined} aria-label={saved ? copy[locale].unsaved : copy[locale].saved} onClick={() => onSave(item)}>
         <Heart size={18} fill={saved ? 'currentColor' : 'none'}/>
       </button>
       <div className={styles.itemBody}>
@@ -323,8 +332,8 @@ function ItemCard({ item, locale, saved, onSave, signal }: { item: HomepageItem;
         {item.short_description ? <p>{item.short_description}</p> : <div className={styles.itemDescriptionSpacer}/>} 
         <div className={styles.itemFoot}>
           <strong>{priceLabel(item, locale)}</strong>
-          <Link className={styles.itemCta} href={action} onClick={() => track({ event_name: 'living_home.conversion_started', locale, catalog_item_id: item.id, route: action, event_data: { journey } })}>
-            {journeyLabel(journey, locale)}<ArrowRight size={14}/>
+          <Link className={styles.itemCta} href={action} onClick={() => void track({ event_name: 'living_home.conversion_started', locale, catalog_item_id: item.id, route: action, event_data: { journey } }).catch(() => undefined)}>
+            {unavailable ? copy[locale].details : journeyLabel(journey, locale)}<ArrowRight size={14}/>
           </Link>
         </div>
       </div>
@@ -332,27 +341,27 @@ function ItemCard({ item, locale, saved, onSave, signal }: { item: HomepageItem;
   )
 }
 
-function DenseRail({ items, locale, saved, onSave, popular, newest }: { items: HomepageItem[]; locale: HomepageLocale; saved: Set<string>; onSave: (item: HomepageItem) => void; popular?: Set<string>; newest?: Set<string> }) {
-  return (
-    <div className={styles.denseRail}>
-      {items.map((item) => (
-        <ItemCard
-          key={item.id}
-          item={item}
-          locale={locale}
-          saved={saved.has(item.id)}
-          onSave={onSave}
-          signal={newest?.has(item.id)
-            ? (locale === 'fr' ? 'Nouveau' : locale === 'en' ? 'New' : 'جديد')
-            : popular?.has(item.id)
-              ? (locale === 'fr' ? 'Populaire' : locale === 'en' ? 'Popular' : 'رائج')
-              : item.featured
-                ? (locale === 'fr' ? 'Sélection' : locale === 'en' ? 'Featured' : 'مختار')
-                : null}
-        />
-      ))}
-    </div>
-  )
+function DenseRail({ items, locale, saved, onSave, popular, newest, pending, label }: { items: HomepageItem[]; locale: HomepageLocale; saved: Set<string>; onSave: (item: HomepageItem) => void; popular?: Set<string>; newest?: Set<string>; pending?: boolean; label?: string }) {
+  return <CommerceRail label={label || copy[locale].discover} locale={locale}>
+    {items.map(item => <ItemCard key={item.id} item={item} locale={locale} saved={saved.has(item.id)} onSave={onSave} pending={pending}
+      signal={newest?.has(item.id) ? (locale === 'fr' ? 'Nouveau' : locale === 'en' ? 'New' : 'جديد')
+        : popular?.has(item.id) ? (locale === 'fr' ? 'Populaire' : locale === 'en' ? 'Popular' : 'رائج')
+        : item.featured ? (locale === 'fr' ? 'Sélection' : locale === 'en' ? 'Featured' : 'مختار') : null}/>) }
+  </CommerceRail>
+}
+
+function DiscoveryShelf({ locale, title, href, kind }: { locale: HomepageLocale; title: string; href: string; kind: EditorialShelfKind }) {
+  const entries = editorialJourneys(kind)
+  return <div className={styles.discoveryShelf} data-ac-editorial-shelf={kind}>
+    <div className={styles.discoveryStatus}><span><Sparkles size={13}/>{locale === 'fr' ? 'Sélection en préparation' : locale === 'en' ? 'Selection in preparation' : 'اختيارات قيد الإعداد'}</span><small>{locale === 'fr' ? 'En attendant, explorez ces parcours' : locale === 'en' ? 'Meanwhile, explore these journeys' : 'استكشف هذه المسارات في انتظار العروض'}</small></div>
+    <CommerceRail label={title} locale={locale} compact className={styles.discoveryRail}>
+      {entries.map((entry) => <Link className={styles.discoveryCard} href={`/angelcare-marketplace/${locale}/${entry.path}`} key={entry.key} data-tone={entry.tone} data-ac-editorial-journey={entry.key}>
+        <div className={styles.discoveryCardPhoto}><img src={entry.image} alt="" loading="lazy"/><span>{locale === 'fr' ? 'À explorer' : locale === 'en' ? 'Explore' : 'اكتشف'}</span></div>
+        <div className={styles.discoveryCardBody}><small>{editorialWords(entry.detail, locale)}</small><strong>{editorialWords(entry.title, locale)}</strong><em>{locale === 'fr' ? 'Découvrir le parcours' : locale === 'en' ? 'Discover the journey' : 'اكتشف المسار'}<ArrowRight size={13}/></em></div>
+      </Link>)}
+    </CommerceRail>
+    <Link className={styles.discoveryAll} href={href}>{locale === 'fr' ? 'Explorer cet univers' : locale === 'en' ? 'Explore this universe' : 'استكشف هذا العالم'}<ArrowRight size={13}/></Link>
+  </div>
 }
 
 function JourneyPromo({ title, body, href, media, tone, icon }: { title: string; body: string; href: string; media?: string | null; tone: 'pink' | 'blue' | 'green'; icon: ReactNode }) {
@@ -421,7 +430,26 @@ export function LivingMarketplaceHomepage({ experience }: { experience: Homepage
   const { locale } = experience
   const c = copy[locale]
   const [saved, setSaved] = useState(() => new Set(experience.selection.saved))
+  const [savePending, setSavePending] = useState(false)
+  const [saveError, setSaveError] = useState('')
+  const saving = useRef(false)
+  const selectionChanged = useRef(false)
+  const [heroIndex, setHeroIndex] = useState(0)
+  const [heroAuto, setHeroAuto] = useState(true)
+  const [reducedMotion, setReducedMotion] = useState(false)
+  const heroInteraction = useRef(false)
+  useEffect(() => {
+    const controller = new AbortController()
+    void fetch('/api/angelcare-marketplace/homepage/engagement', { signal: controller.signal })
+      .then(response => response.ok ? response.json() : null)
+      .then(result => {
+        if (selectionChanged.current || !Array.isArray(result?.data)) return
+        setSaved(new Set(result.data.filter((row: { selection_type: string }) => row.selection_type === 'saved').map((row: { catalog_item_id: string }) => row.catalog_item_id)))
+      }).catch(() => undefined)
+    return () => controller.abort()
+  }, [])
   const all = useMemo(() => uniqueItems(
+    experience.catalogItems || [],
     experience.featuredItems,
     experience.availableItems,
     experience.popularItems,
@@ -433,43 +461,80 @@ export function LivingMarketplaceHomepage({ experience }: { experience: Homepage
     experience.organizationItems,
     ...experience.collections.map((collection) => collection.items),
   ), [experience])
-  const products = useMemo(() => uniqueItems(experience.developmentItems, experience.popularItems, experience.bestPickItems, experience.featuredItems, experience.newArrivalItems).filter((item) => item.kind === 'product' || item.kind === 'kit'), [experience])
-  const services = useMemo(() => uniqueItems(experience.availableItems, experience.familyItems, experience.featuredItems).filter((item) => item.kind === 'service'), [experience])
-  const academy = useMemo(() => uniqueItems(experience.academyItems, experience.availableItems).filter((item) => item.kind === 'training'), [experience])
-  const organizations = useMemo(() => uniqueItems(experience.organizationItems, experience.featuredItems).filter((item) => item.metadata.audience === 'organization' || item.kind === 'audit' || item.kind === 'saas_module'), [experience])
-  const flash = useMemo(() => uniqueItems(experience.bestPickItems, experience.popularItems, experience.featuredItems, experience.availableItems).slice(0, 6), [experience])
-  const newItems = useMemo(() => uniqueItems(experience.newArrivalItems).slice(0, 6), [experience.newArrivalItems])
+  const products = useMemo(() => uniqueItems(experience.developmentItems, experience.popularItems, experience.bestPickItems, experience.featuredItems, experience.newArrivalItems, all).filter((item) => item.kind === 'product' || item.kind === 'kit'), [experience, all])
+  const services = useMemo(() => uniqueItems(experience.availableItems, experience.familyItems, experience.featuredItems, all).filter((item) => item.kind === 'service' && item.metadata.audience !== 'organization'), [experience, all])
+  const academy = useMemo(() => uniqueItems(experience.academyItems, experience.availableItems, all).filter((item) => item.kind === 'training'), [experience, all])
+  const organizations = useMemo(() => uniqueItems(experience.organizationItems, experience.featuredItems, all).filter((item) => item.metadata.audience === 'organization' || item.kind === 'audit' || item.kind === 'saas_module'), [experience, all])
+  const flash = useMemo(() => uniqueItems(experience.bestPickItems, experience.popularItems, experience.featuredItems, experience.availableItems, all).slice(0, 18), [experience, all])
+  const newItems = useMemo(() => uniqueItems(experience.newArrivalItems).slice(0, 12), [experience.newArrivalItems])
   const popularSet = useMemo(() => new Set(experience.popularItems.map((item) => item.id)), [experience.popularItems])
   const newestSet = useMemo(() => new Set(experience.newArrivalItems.map((item) => item.id)), [experience.newArrivalItems])
   const heroCampaign = experience.campaigns[0] || null
-  const heroMedia = heroCampaign?.desktop_asset_url || firstMedia(experience.familyItems) || firstMedia(services) || firstMedia(products) || firstMedia(all)
-  const familyMedia = firstMedia(experience.familyItems) || firstMedia(services) || heroMedia
-  const academyMedia = firstMedia(academy) || heroMedia
-  const orgMedia = firstMedia(organizations)
-  const productMedia = firstMedia(products) || heroMedia
-  const campaignMedia = heroCampaign?.desktop_asset_url || heroMedia
+  const heroSlides = [
+    ...experience.campaigns.filter(campaign => photographicMedia(campaign.desktop_asset_url)).slice(0, 4).map(campaign => ({ image: campaign.desktop_asset_url, mobile: campaign.mobile_asset_url, title: campaign.title, href: campaignHref(campaign, locale) })),
+    { image: media.family, mobile: null, title: c.heroNote, href: `/angelcare-marketplace/${locale}/families` },
+    { image: media.care, mobile: null, title: c.services, href: `/angelcare-marketplace/${locale}/home-services` },
+    { image: media.development, mobile: null, title: c.packs, href: `/angelcare-marketplace/${locale}/development` },
+  ]
+  const slideCount = heroSlides.length
+  useEffect(() => {
+    const preference = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const update = () => setReducedMotion(preference.matches)
+    update(); preference.addEventListener('change', update)
+    return () => preference.removeEventListener('change', update)
+  }, [])
+  useEffect(() => {
+    if (!heroAuto || reducedMotion || slideCount < 2) return
+    const interval = window.setInterval(() => { if (!heroInteraction.current) setHeroIndex(index => (index + 1) % slideCount) }, 6500)
+    return () => window.clearInterval(interval)
+  }, [heroAuto, reducedMotion, slideCount])
+  const chooseSlide = (index: number) => { setHeroIndex((index + slideCount) % slideCount); setHeroAuto(false) }
+  const slide = heroSlides[heroIndex % heroSlides.length]
+  const heroMedia = slide.image
+  const familyMedia = media.care
+  const academyMedia = media.academy
+  const orgMedia = media.professional
+  const campaignMedia = photographicMedia(heroCampaign?.desktop_asset_url) || media.family
+  const storefronts = getPublicStorefrontNavigation(locale)
+  const storefrontImages = [media.family, media.care, media.development, media.flashcards, media.academy, media.preschool, media.hospitality, media.health, media.corporate, media.desk, media.professional, media.support]
 
-  const toggleSaved = (item: HomepageItem) => {
-    setSaved((current) => {
-      const next = new Set(current)
-      const active = !next.has(item.id)
-      if (active) next.add(item.id)
-      else next.delete(item.id)
-      track({ event_name: 'living_home.selection_changed', locale, catalog_item_id: item.id, selection_type: 'saved', active, route: itemDetailHref(locale, item) })
-      return next
-    })
+  const toggleSaved = async (item: HomepageItem) => {
+    if (saving.current) return
+    saving.current = true
+    selectionChanged.current = true
+    setSavePending(true)
+    setSaveError('')
+    const active = !saved.has(item.id)
+    try {
+      const response = await track({ event_name: 'living_home.selection_changed', locale, catalog_item_id: item.id, selection_type: 'saved', active, territory_code: experience.territory?.territory_code, route: itemDetailHref(locale, item) })
+      if (!response.ok) throw new Error('selection_save_failed')
+      setSaved(current => {
+        const next = new Set(current)
+        if (active) next.add(item.id)
+        else next.delete(item.id)
+        return next
+      })
+    } catch {
+      setSaveError(locale === 'fr' ? 'Votre favori n’a pas pu être enregistré. Réessayez.' : locale === 'en' ? 'Your saved item could not be updated. Please retry.' : 'تعذر حفظ اختيارك. حاول مرة أخرى.')
+    } finally {
+      saving.current = false
+      setSavePending(false)
+    }
   }
 
   const liveProofs = experience.trustSignals.slice(0, 6)
-  const stats = [
-    { value: experience.categories.length, label: c.published, icon: <Search/> },
-    { value: services.length, label: c.offers, icon: <CalendarDays/> },
-    { value: academy.length, label: c.academyCount, icon: <GraduationCap/> },
-    { value: experience.collections.length, label: c.collectionsCount, icon: <PackageOpen/> },
+  const shortcutCopy = locale === 'fr' ? ['Services à domicile', 'Produits & kits', 'Formation Academy', 'Solutions professionnelles', 'Votre espace', 'Une équipe à votre écoute'] : locale === 'en' ? ['Home services', 'Products & kits', 'Academy training', 'Professional solutions', 'Your account', 'Human guidance'] : ['خدمات منزلية', 'منتجات ومجموعات', 'تكوين الأكاديمية', 'حلول مهنية', 'حسابك', 'مرافقة بشرية']
+  const shortcuts = [
+    { icon: <CalendarDays/>, label: shortcutCopy[0], path: 'home-services' },
+    { icon: <ShoppingBag/>, label: shortcutCopy[1], path: 'kits' },
+    { icon: <GraduationCap/>, label: shortcutCopy[2], path: 'academy' },
+    { icon: <Building2/>, label: shortcutCopy[3], path: 'professionals' },
+    { icon: <UsersRound/>, label: shortcutCopy[4], path: 'account' },
+    { icon: <Heart/>, label: shortcutCopy[5], path: 'family/request' },
   ]
 
   const faqs = locale === 'fr' ? [
-    ['Comment réserver un service ?', 'Ouvrez une offre de service puis utilisez son parcours de réservation. La disponibilité est revalidée dans le parcours.'],
+    ['Comment réserver un service ?', 'Ouvrez une offre de service puis utilisez son parcours de réservation. Les créneaux et les conditions sont confirmés avant votre engagement.'],
     ['Comment commander un produit ?', 'Les produits et kits utilisent le panier Marketplace puis le checkout canonique.'],
     ['Comment rejoindre une formation Academy ?', 'Les formations publiées ouvrent leur parcours d’inscription Academy.'],
     ['Je représente une organisation : par où commencer ?', 'Choisissez votre univers professionnel — établissement, santé, hospitality ou corporate — puis ouvrez une demande ou une proposition.'],
@@ -486,14 +551,11 @@ export function LivingMarketplaceHomepage({ experience }: { experience: Homepage
   ]
 
   const sectorMedia = [
-    organizations[0]?.media_url || orgMedia,
-    organizations[1]?.media_url || orgMedia,
-    organizations[2]?.media_url || orgMedia,
-    organizations[3]?.media_url || orgMedia,
+    media.preschool, media.health, media.hospitality, media.corporate,
   ]
 
   return (
-    <div className={styles.world} data-ac-homepage-world={LIVING_MARKETPLACE_WORLD_ID} dir={locale === 'ar' ? 'rtl' : 'ltr'}>
+    <div className={styles.world} data-ac-homepage-world={LIVING_MARKETPLACE_WORLD_ID} data-ac-homepage-visual="immersive-r4" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
       {heroCampaign ? (
         <section className={styles.urgencyBar}>
           <div><Sparkles size={15}/><strong>{heroCampaign.eyebrow || heroCampaign.title}</strong><span>{heroCampaign.subtitle}</span></div>
@@ -514,10 +576,17 @@ export function LivingMarketplaceHomepage({ experience }: { experience: Homepage
             {heroCampaign ? <Link className={styles.heroCampaignLink} href={campaignHref(heroCampaign, locale)}><Sparkles size={14}/><span>{heroCampaign.title}</span><ArrowRight size={14}/></Link> : null}
           </div>
 
-          <div className={styles.heroMediaPanel}>
-            {heroMedia ? <img className={styles.heroImage} src={heroMedia} alt={c.heroTitle} fetchPriority="high"/> : <div className={styles.heroMediaFallback}><Heart/><strong>ANGELCARE</strong></div>}
+          <div className={styles.heroMediaPanel} onMouseEnter={() => { heroInteraction.current = true }} onMouseLeave={() => { heroInteraction.current = false }} onFocusCapture={() => { heroInteraction.current = true }} onBlurCapture={event => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) heroInteraction.current = false }}>
+            {heroMedia ? <picture>{slide.mobile ? <source media="(max-width: 600px)" srcSet={slide.mobile}/> : null}<img className={styles.heroImage} src={heroMedia} alt={slide.title} fetchPriority="high"/></picture> : <div className={styles.heroMediaFallback}><Heart/><strong>ANGELCARE</strong></div>}
             <div className={styles.heroMediaShade}/>
-            <div className={styles.heroHandwritten}>{c.heroNote}<Heart size={17}/></div>
+            <Link className={styles.heroHandwritten} href={slide.href}>{slide.title}<ArrowRight size={17}/></Link>
+            <div className={styles.heroSlideControls} role="group" aria-label={c.discover}>
+              <button className={styles.heroTransport} type="button" onClick={() => chooseSlide(heroIndex - 1)} aria-label={locale === 'fr' ? 'Image précédente' : locale === 'en' ? 'Previous image' : 'الصورة السابقة'}>{locale === 'ar' ? <ChevronRight/> : <ChevronLeft/>}</button>
+              {heroSlides.map((entry, index) => <button type="button" key={`${entry.image}-${index}`} data-ac-hero-slide={index} aria-label={entry.title} aria-pressed={index === heroIndex % slideCount} onClick={() => chooseSlide(index)}/>)}
+              <button className={styles.heroTransport} type="button" onClick={() => chooseSlide(heroIndex + 1)} aria-label={locale === 'fr' ? 'Image suivante' : locale === 'en' ? 'Next image' : 'الصورة التالية'}>{locale === 'ar' ? <ChevronLeft/> : <ChevronRight/>}</button>
+              {!reducedMotion ? <button className={styles.heroTransport} type="button" data-ac-hero-autoplay={heroAuto} onClick={() => setHeroAuto(active => !active)} aria-label={heroAuto ? (locale === 'fr' ? 'Mettre le diaporama en pause' : locale === 'en' ? 'Pause slideshow' : 'إيقاف العرض') : (locale === 'fr' ? 'Reprendre le diaporama' : locale === 'en' ? 'Resume slideshow' : 'استئناف العرض')}>{heroAuto ? <Pause/> : <Play/>}</button> : null}
+              <span className={styles.heroSlideCount}>{String(heroIndex % slideCount + 1).padStart(2, '0')} / {String(slideCount).padStart(2, '0')}</span>
+            </div>
             <div className={styles.heroMediaBadge}><BadgeCheck/><span>{experience.territory?.name || 'AngelCare Marketplace'}</span></div>
           </div>
 
@@ -528,7 +597,7 @@ export function LivingMarketplaceHomepage({ experience }: { experience: Homepage
             <ul>
               <li><Check/>{locale === 'fr' ? 'Services, produits & Academy' : locale === 'en' ? 'Services, products & Academy' : 'خدمات ومنتجات وAcademy'}</li>
               <li><Check/>{locale === 'fr' ? 'Parcours famille & professionnels' : locale === 'en' ? 'Family & professional journeys' : 'مسارات الأسرة والمهنيين'}</li>
-              <li><Check/>{locale === 'fr' ? 'Données commerciales réelles' : locale === 'en' ? 'Real commercial data' : 'بيانات تجارية حقيقية'}</li>
+              <li><Check/>{locale === 'fr' ? 'Un choix pour chaque besoin' : locale === 'en' ? 'A choice for every need' : 'اختيارات لكل احتياج'}</li>
             </ul>
             <Link href={`/angelcare-marketplace/${locale}/family/request`}><UsersRound size={16}/>{c.supportCta}<ArrowRight size={15}/></Link>
           </aside>
@@ -536,48 +605,59 @@ export function LivingMarketplaceHomepage({ experience }: { experience: Homepage
       </section>
 
       <section className={styles.liveStrip} aria-label={c.trustTitle}>
-        {stats.map((stat) => <article key={stat.label}>{stat.icon}<div><strong>{stat.value}</strong><span>{stat.label}</span></div></article>)}
-        {experience.territory ? <article><MapPin/><div><strong>{experience.territory.name}</strong><span>{experience.territory.territory_code}</span></div></article> : null}
+        {shortcuts.map(shortcut => <Link href={`/angelcare-marketplace/${locale}/${shortcut.path}`} key={shortcut.path}>{shortcut.icon}<strong>{shortcut.label}</strong><ArrowRight size={12}/></Link>)}
       </section>
 
-      {experience.categories.length ? (
-        <section className={styles.section}>
-          <SectionHead eyebrow="DISCOVERY" title={c.categories} body={c.categoriesSub} href={`/angelcare-marketplace/${locale}/marketplace`} locale={locale}/>
-          <div className={styles.categoryRail}>
-            {experience.categories.slice(0, 12).map((category) => (
-              <Link key={category.id} className={styles.categoryCard} href={categoryHref(locale, category)}>
-                {category.cover_asset_url ? <img src={category.cover_asset_url} alt="" loading="lazy"/> : <span className={styles.categoryFallback}><Sparkles/></span>}
-                <strong>{category.title}</strong>
-                <small>{category.item_count}</small>
-              </Link>
-            ))}
-          </div>
-        </section>
-      ) : null}
+      <nav className={styles.jumpNav} aria-label={c.discover}>
+        {[['selections', c.now], ['services', c.services], ['products', c.packs], ['academy', c.academy], ['professional', locale === 'fr' ? 'Professionnels' : locale === 'en' ? 'Professionals' : 'المهنيون'], ['discovery', c.collections]].map(([anchor, label]) => <a key={anchor} href={`#living-${anchor}`}>{label}</a>)}
+      </nav>
+      {saveError ? <p className={styles.selectionError} role="alert">{saveError}</p> : null}
+      <section className={styles.section} id="living-universes">
+        <SectionHead eyebrow={locale === 'fr' ? 'VOS UNIVERS' : locale === 'en' ? 'YOUR UNIVERSES' : 'عوالمك'} title={c.categories} href={`/angelcare-marketplace/${locale}/marketplace`} locale={locale}/>
+        <CommerceRail label={c.categories} locale={locale} compact className={styles.universeRail}>
+          {storefronts.map((storefront, index) => <Link className={styles.universeCard} href={storefront.href} key={storefront.key} data-ac-world-universe={storefront.key} data-accent={storefront.accent}>
+            <span><img src={storefrontImages[index]} alt="" loading="lazy"/></span><strong>{storefront.label}</strong>
+          </Link>)}
+        </CommerceRail>
+        {experience.categories.length ? <div className={styles.categoryChips}>{experience.categories.map(category => <Link key={category.id} href={categoryHref(locale, category)}>{category.title}<ChevronRight size={12}/></Link>)}</div> : null}
+      </section>
 
       <section className={styles.section}>
         <SectionHead eyebrow="MERCHANDISING" title={c.now} locale={locale}/>
         <div className={styles.promoGrid}>
-          <JourneyPromo title={locale === 'fr' ? 'Familles & services du quotidien' : locale === 'en' ? 'Families & everyday services' : 'الأسرة والخدمات اليومية'} body={locale === 'fr' ? 'Garde, accompagnement, activités et parcours familiaux.' : locale === 'en' ? 'Care, support, activities and family journeys.' : 'رعاية ومرافقة وأنشطة ومسارات أسرية.'} href={`/angelcare-marketplace/${locale}/families`} media={familyMedia} tone="pink" icon={<Heart/>}/>
-          <JourneyPromo title="AngelCare Academy" body={locale === 'fr' ? 'Formations publiées et inscriptions reliées.' : locale === 'en' ? 'Published training and connected enrollment.' : 'تكوينات منشورة وتسجيل مرتبط.'} href={`/angelcare-marketplace/${locale}/academy`} media={academyMedia} tone="blue" icon={<GraduationCap/>}/>
+          <JourneyPromo title={locale === 'fr' ? 'Familles & services du quotidien' : locale === 'en' ? 'Families & everyday services' : 'الأسرة والخدمات اليومية'} body={locale === 'fr' ? 'Garde, accompagnement, activités et parcours familiaux.' : locale === 'en' ? 'Care, support, activities and family journeys.' : 'رعاية ومرافقة وأنشطة ومسارات أسرية.'} href={`/angelcare-marketplace/${locale}/families`} media={media.newborn} tone="pink" icon={<Heart/>}/>
+          <JourneyPromo title="AngelCare Academy" body={locale === 'fr' ? 'Apprendre, pratiquer et ouvrir de nouvelles perspectives.' : locale === 'en' ? 'Learn, practise and open new possibilities.' : 'تعلم وممارسة وآفاق جديدة.'} href={`/angelcare-marketplace/${locale}/academy`} media={academyMedia} tone="blue" icon={<GraduationCap/>}/>
           <JourneyPromo title={locale === 'fr' ? 'Solutions professionnelles' : locale === 'en' ? 'Professional solutions' : 'حلول مهنية'} body={locale === 'fr' ? 'Crèches, écoles, santé, hospitality et entreprises.' : locale === 'en' ? 'Childcare, schools, health, hospitality and companies.' : 'حضانات ومدارس وصحة وفنادق وشركات.'} href={`/angelcare-marketplace/${locale}/professionals`} media={orgMedia} tone="green" icon={<Building2/>}/>
         </div>
       </section>
 
-      {flash.length ? (
-        <section className={`${styles.section} ${styles.commerceSection}`}>
-          <SectionHead eyebrow="LIVE COMMERCE" title={c.flash} body={c.flashSub} href={`/angelcare-marketplace/${locale}/marketplace`} locale={locale}/>
-          <DenseRail items={flash} locale={locale} saved={saved} onSave={toggleSaved} popular={popularSet} newest={newestSet}/>
-        </section>
-      ) : null}
+      <section className={styles.section}>
+        <SectionHead eyebrow="ANGELCARE FAMILY" title={locale === 'fr' ? 'Une solution pour chaque moment' : locale === 'en' ? 'A solution for every moment' : 'حل لكل لحظة'} href={`/angelcare-marketplace/${locale}/families`} locale={locale}/>
+        <CommerceRail label={locale === 'fr' ? 'Vos besoins en famille' : locale === 'en' ? 'Family needs' : 'احتياجات الأسرة'} locale={locale} className={styles.situationRail}>
+          {[
+            { anchor: 'garde-ponctuelle', title: ['Quelques heures pour vous', 'A few hours for you', 'بضع ساعات لكم'], body: ['Garde ponctuelle', 'One-time childcare', 'رعاية مؤقتة'], image: media.care, icon: <Heart/> },
+            { anchor: 'sortie-ecole', title: ['Après l’école, tout continue', 'Life after school', 'بعد المدرسة'], body: ['Sortie d’école & relais', 'School pickup & care', 'استلام ورعاية'], image: media.school, icon: <CalendarDays/> },
+            { anchor: 'montessori-domicile', title: ['Découvrir à son rythme', 'Discover at their own pace', 'اكتشاف بإيقاعهم'], body: ['Montessori à domicile', 'Montessori at home', 'مونتيسوري في المنزل'], image: media.development, icon: <Sparkles/> },
+            { anchor: 'accompagnement-personnalise', title: ['Du soutien au quotidien', 'Support for everyday life', 'دعم للحياة اليومية'], body: ['Accompagnement personnalisé', 'Personalised support', 'مرافقة شخصية'], image: media.support, icon: <UsersRound/> },
+            { anchor: 'voyage', title: ['Voyager en famille', 'Travel as a family', 'السفر مع الأسرة'], body: ['Garde en hôtel & voyage', 'Hotel & travel childcare', 'رعاية في السفر'], image: media.hospitality, icon: <Hotel/> },
+            { anchor: 'flashcards', title: ['Jouer, apprendre, grandir', 'Play, learn, grow', 'اللعب والتعلم والنمو'], body: ['Flashcards & apprentissage', 'Flashcards & learning', 'بطاقات وتعلم'], image: media.flashcards, icon: <BookOpenCheck/> },
+          ].map((need, index) => <Link className={styles.situationCard} href={`/angelcare-marketplace/${locale}/families#${need.anchor}`} key={need.anchor} data-tone={index % 3}>
+            <img src={need.image} alt="" loading="lazy"/><span>{need.icon}</span><div><small>{need.body[locale === 'fr' ? 0 : locale === 'en' ? 1 : 2]}</small><strong>{need.title[locale === 'fr' ? 0 : locale === 'en' ? 1 : 2]}</strong><em>{c.details}<ArrowRight size={13}/></em></div>
+          </Link>)}
+        </CommerceRail>
+      </section>
 
-      {services.length ? (
-        <section className={styles.section}>
+        <section id="living-selections" className={`${styles.section} ${styles.commerceSection}`}>
+          <SectionHead eyebrow={locale === 'fr' ? 'DÉCOUVERTES DU MOMENT' : locale === 'en' ? 'CURRENT DISCOVERIES' : 'اكتشافات حالية'} title={c.flash} body={c.flashSub} href={`/angelcare-marketplace/${locale}/marketplace`} locale={locale}/>
+          {flash.length ? <DenseRail items={flash} label={c.flash} locale={locale} saved={saved} onSave={toggleSaved} popular={popularSet} newest={newestSet} pending={savePending}/> : <DiscoveryShelf locale={locale} title={c.flash} href={`/angelcare-marketplace/${locale}/marketplace`} kind="selections"/>}
+        </section>
+
+        <section id="living-services" className={styles.section}>
           <SectionHead eyebrow="SERVICES" title={c.services} body={c.servicesSub} href={`/angelcare-marketplace/${locale}/home-services`} locale={locale}/>
           <div className={styles.splitCommerce}>
-            <div className={styles.serviceGrid}>{services.slice(0, 6).map((item) => <ItemCard key={item.id} item={item} locale={locale} saved={saved.has(item.id)} onSave={toggleSaved} signal={null}/>)}</div>
+            <div>{services.length ? <DenseRail items={services.slice(0, 12)} label={c.services} locale={locale} saved={saved} onSave={toggleSaved} pending={savePending}/> : <DiscoveryShelf locale={locale} title={c.services} href={`/angelcare-marketplace/${locale}/home-services`} kind="services"/>}</div>
             <aside className={styles.helpCard}>
-              {familyMedia ? <img className={styles.helpMedia} src={familyMedia} alt="" loading="lazy"/> : null}
+              {familyMedia ? <img className={styles.helpMedia} src={media.newborn} alt="" loading="lazy"/> : null}
               <div className={styles.helpOverlay}/>
               <div className={styles.helpContent}>
                 <div className={styles.helpIcon}><UsersRound/></div>
@@ -595,28 +675,22 @@ export function LivingMarketplaceHomepage({ experience }: { experience: Homepage
             </aside>
           </div>
         </section>
-      ) : null}
 
-      {products.length ? (
-        <section className={`${styles.section} ${styles.dualCommerce}`}>
+        <section id="living-products" className={`${styles.section} ${styles.dualCommerce}`}>
           <div>
-            <SectionHead eyebrow="PRODUCTS & KITS" title={c.packs} body={c.packsSub} href={`/angelcare-marketplace/${locale}/kits`} locale={locale}/>
-            <DenseRail items={products.slice(0, 6)} locale={locale} saved={saved} onSave={toggleSaved} popular={popularSet} newest={newestSet}/>
+            <SectionHead eyebrow={locale === 'fr' ? 'GRANDIR & JOUER' : locale === 'en' ? 'GROW & PLAY' : 'النمو واللعب'} title={c.packs} body={c.packsSub} href={`/angelcare-marketplace/${locale}/kits`} locale={locale}/>
+            {products.length ? <DenseRail items={products.slice(0, 12)} label={c.packs} locale={locale} saved={saved} onSave={toggleSaved} popular={popularSet} newest={newestSet} pending={savePending}/> : <DiscoveryShelf locale={locale} title={c.packs} href={`/angelcare-marketplace/${locale}/kits`} kind="products"/>}
           </div>
-          {experience.popularItems.length ? (
             <div>
-              <SectionHead eyebrow="POPULAR" title={c.best} href={`/angelcare-marketplace/${locale}/marketplace`} locale={locale}/>
-              <DenseRail items={uniqueItems(experience.popularItems, products).slice(0, 6)} locale={locale} saved={saved} onSave={toggleSaved} popular={popularSet}/>
+              <SectionHead eyebrow={locale === 'fr' ? 'À EXPLORER' : locale === 'en' ? 'EXPLORE' : 'اكتشف'} title={c.best} href={`/angelcare-marketplace/${locale}/marketplace`} locale={locale}/>
+              {experience.bestPickItems.length ? <DenseRail items={experience.bestPickItems.slice(0, 12)} label={c.best} locale={locale} saved={saved} onSave={toggleSaved} popular={popularSet} pending={savePending}/> : <DiscoveryShelf locale={locale} title={c.best} href={`/angelcare-marketplace/${locale}/development`} kind="picks"/>}
             </div>
-          ) : null}
         </section>
-      ) : null}
 
-      {(academy.length || experience.academyCohorts.length) ? (
-        <section className={`${styles.section} ${styles.academySection}`}>
+        <section id="living-academy" className={`${styles.section} ${styles.academySection}`}>
           <SectionHead eyebrow="ANGELCARE ACADEMY" title={c.academy} body={c.academySub} href={`/angelcare-marketplace/${locale}/academy`} locale={locale}/>
           <div className={styles.academyLayout}>
-            <div>{academy.length ? <DenseRail items={academy.slice(0, 4)} locale={locale} saved={saved} onSave={toggleSaved} newest={newestSet}/> : null}</div>
+            <div>{academy.length ? <DenseRail items={academy.slice(0, 12)} label={c.academy} locale={locale} saved={saved} onSave={toggleSaved} newest={newestSet} pending={savePending}/> : <DiscoveryShelf locale={locale} title={c.academy} href={`/angelcare-marketplace/${locale}/academy`} kind="academy"/>}</div>
             <aside className={styles.academySide}>
               <Link className={styles.academyVisual} href={`/angelcare-marketplace/${locale}/academy`}>
                 {academyMedia ? <img src={academyMedia} alt="" loading="lazy"/> : <div className={styles.academyVisualFallback}><GraduationCap/></div>}
@@ -648,9 +722,8 @@ export function LivingMarketplaceHomepage({ experience }: { experience: Homepage
             </aside>
           </div>
         </section>
-      ) : null}
 
-      <section className={`${styles.section} ${styles.b2bSection}`}>
+      <section id="living-professional" className={`${styles.section} ${styles.b2bSection}`}>
         <SectionHead eyebrow="B2B / INSTITUTIONAL" title={c.b2b} body={c.b2bSub} locale={locale}/>
         <div className={styles.b2bGrid}>
           {[
@@ -670,20 +743,20 @@ export function LivingMarketplaceHomepage({ experience }: { experience: Homepage
             <ArrowRight/>
           </Link>
         </div>
-        {organizations.length ? <div className={styles.organizationRail}><DenseRail items={organizations.slice(0, 5)} locale={locale} saved={saved} onSave={toggleSaved}/></div> : null}
+        {organizations.length ? <div className={styles.organizationRail}><DenseRail items={organizations.slice(0, 12)} label={c.b2b} locale={locale} saved={saved} onSave={toggleSaved} pending={savePending}/></div> : null}
       </section>
 
       <section className={`${styles.section} ${styles.guideSection}`}>
         <SectionHead eyebrow="ORIENTATION" title={c.guides} body={c.guidesSub} locale={locale}/>
         <div className={styles.guideExperience}>
           <div className={styles.guideGrid}>
-            <GuideCard href={`/angelcare-marketplace/${locale}/home-services`} media={familyMedia} icon={<CalendarDays/>} title={locale === 'fr' ? 'Choisir un service' : locale === 'en' ? 'Choose a service' : 'اختيار خدمة'} body={locale === 'fr' ? 'Passez des univers aux services publiés et disponibles.' : locale === 'en' ? 'Move from universes to published available services.' : 'انتقل من العوالم إلى الخدمات المنشورة والمتاحة.'} locale={locale}/>
-            <GuideCard href={`/angelcare-marketplace/${locale}/family/diagnostic`} media={heroMedia} icon={<Search/>} title={locale === 'fr' ? 'Clarifier votre besoin' : locale === 'en' ? 'Clarify your need' : 'حدد احتياجك'} body={locale === 'fr' ? 'Le diagnostic structure votre besoin avant recommandation.' : locale === 'en' ? 'The diagnostic structures your needs before recommendation.' : 'ينظم التشخيص احتياجك قبل التوصية.'} locale={locale}/>
-            <GuideCard href={`/angelcare-marketplace/${locale}/trust`} media={productMedia} icon={<BadgeCheck/>} title={locale === 'fr' ? 'Vérifier la confiance' : locale === 'en' ? 'Verify trust' : 'تحقق من الثقة'} body={locale === 'fr' ? 'Accédez aux standards, sécurité et preuves publiques.' : locale === 'en' ? 'Open standards, safety and public evidence.' : 'الوصول إلى المعايير والسلامة والأدلة العامة.'} locale={locale}/>
-            <GuideCard href={`/angelcare-marketplace/${locale}/academy`} media={academyMedia} icon={<BookOpenCheck/>} title="AngelCare Academy" body={locale === 'fr' ? 'Explorez les programmes et parcours de formation publiés.' : locale === 'en' ? 'Explore published programs and training journeys.' : 'استكشف البرامج ومسارات التكوين المنشورة.'} locale={locale}/>
+            <GuideCard href={`/angelcare-marketplace/${locale}/home-services`} media={media.school} icon={<CalendarDays/>} title={locale === 'fr' ? 'Choisir un service' : locale === 'en' ? 'Choose a service' : 'اختيار خدمة'} body={locale === 'fr' ? 'Trouvez le point de départ adapté à votre quotidien.' : locale === 'en' ? 'Find a starting point that fits your everyday life.' : 'انتقل من العوالم إلى الخدمات المنشورة والمتاحة.'} locale={locale}/>
+            <GuideCard href={`/angelcare-marketplace/${locale}/family/diagnostic`} media={media.support} icon={<Search/>} title={locale === 'fr' ? 'Clarifier votre besoin' : locale === 'en' ? 'Clarify your need' : 'حدد احتياجك'} body={locale === 'fr' ? 'Le diagnostic structure votre besoin avant recommandation.' : locale === 'en' ? 'The diagnostic structures your needs before recommendation.' : 'ينظم التشخيص احتياجك قبل التوصية.'} locale={locale}/>
+            <GuideCard href={`/angelcare-marketplace/${locale}/trust`} media={media.health} icon={<BadgeCheck/>} title={locale === 'fr' ? 'Vérifier la confiance' : locale === 'en' ? 'Verify trust' : 'تحقق من الثقة'} body={locale === 'fr' ? 'Accédez aux standards, sécurité et preuves publiques.' : locale === 'en' ? 'Open standards, safety and public evidence.' : 'الوصول إلى المعايير والسلامة والأدلة العامة.'} locale={locale}/>
+            <GuideCard href={`/angelcare-marketplace/${locale}/academy`} media={academyMedia} icon={<BookOpenCheck/>} title="AngelCare Academy" body={locale === 'fr' ? 'Apprenez et préparez votre prochaine étape.' : locale === 'en' ? 'Learn and prepare for your next step.' : 'استكشف البرامج ومسارات التكوين المنشورة.'} locale={locale}/>
           </div>
           <aside className={styles.humanGuidance}>
-            {familyMedia ? <img src={familyMedia} alt="" loading="lazy"/> : <div className={styles.humanGuidanceFallback}><UsersRound/></div>}
+            {familyMedia ? <img src={media.support} alt="" loading="lazy"/> : <div className={styles.humanGuidanceFallback}><UsersRound/></div>}
             <div className={styles.humanGuidanceVeil}/>
             <div className={styles.humanGuidanceCopy}>
               <span>ANGELCARE HUMAN GUIDANCE</span>
@@ -696,26 +769,22 @@ export function LivingMarketplaceHomepage({ experience }: { experience: Homepage
         </div>
       </section>
 
-      {(experience.collections.length || newItems.length) ? (
-        <section className={styles.section}>
-          <SectionHead eyebrow="CURATION" title={c.collections} body={c.collectionsSub} href={`/angelcare-marketplace/${locale}/marketplace`} locale={locale}/>
-          {experience.collections.length ? <div className={styles.collectionGrid}>{experience.collections.slice(0, 4).map((collection) => <CollectionCard key={collection.id} collection={collection} locale={locale}/>)}</div> : null}
-          {newItems.length ? (
+        <section id="living-discovery" className={`${styles.section} ${styles.discoverySplit}`}>
+          <div><SectionHead eyebrow="COLLECTIONS" title={c.collections} body={c.collectionsSub} href={`/angelcare-marketplace/${locale}/marketplace`} locale={locale}/>
+          {experience.collections.length ? <CommerceRail label={c.collections} locale={locale} compact className={styles.collectionsRail}>{experience.collections.slice(0, 12).map((collection) => <CollectionCard key={collection.id} collection={collection} locale={locale}/>)}</CommerceRail> : <DiscoveryShelf locale={locale} title={c.collections} href={`/angelcare-marketplace/${locale}/marketplace`} kind="collections"/>}</div>
             <div className={styles.newArrivalBlock}>
               <SectionHead eyebrow="NEW" title={locale === 'fr' ? 'Dernières nouveautés' : locale === 'en' ? 'Latest arrivals' : 'أحدث الإضافات'} locale={locale}/>
-              <DenseRail items={newItems} locale={locale} saved={saved} onSave={toggleSaved} newest={newestSet}/>
+              {newItems.length ? <DenseRail items={newItems} label={c.collections} locale={locale} saved={saved} onSave={toggleSaved} newest={newestSet} pending={savePending}/> : <DiscoveryShelf locale={locale} title={locale === 'fr' ? 'Les nouveautés se préparent' : locale === 'en' ? 'New arrivals are on their way' : 'جديد قيد الإعداد'} href={`/angelcare-marketplace/${locale}/marketplace`} kind="arrivals"/>}
             </div>
-          ) : null}
         </section>
-      ) : null}
 
       <section className={`${styles.section} ${styles.engagementGrid}`}>
-        <EngagementCard href={`/angelcare-marketplace/${locale}/account`} media={productMedia} tone="blue" icon={<UsersRound/>} eyebrow="ACCOUNT" title={c.account} body={c.accountBody} cta={c.accountCta}/>
-        <EngagementCard href={`/angelcare-marketplace/${locale}/family/request`} media={familyMedia} tone="pink" icon={<Heart/>} eyebrow="HUMAN SUPPORT" title={c.support} body={c.supportBody} cta={c.supportCta}/>
+        <EngagementCard href={`/angelcare-marketplace/${locale}/account`} media={media.desk} tone="blue" icon={<UsersRound/>} eyebrow="ACCOUNT" title={c.account} body={c.accountBody} cta={c.accountCta}/>
+        <EngagementCard href={`/angelcare-marketplace/${locale}/family/request`} media={media.newborn} tone="pink" icon={<Heart/>} eyebrow="HUMAN SUPPORT" title={c.support} body={c.supportBody} cta={c.supportCta}/>
         {heroCampaign ? (
           <EngagementCard href={campaignHref(heroCampaign, locale)} media={campaignMedia} tone="green" icon={<Star/>} eyebrow="CAMPAIGN" title={heroCampaign.title} body={heroCampaign.subtitle || c.flashSub} cta={heroCampaign.primary_cta_label || c.discover}/>
         ) : (
-          <EngagementCard href={`/angelcare-marketplace/${locale}/marketplace`} media={heroMedia} tone="green" icon={<ShoppingBag/>} eyebrow="MARKETPLACE" title={locale === 'fr' ? 'Continuer à explorer' : locale === 'en' ? 'Keep exploring' : 'واصل الاستكشاف'} body={locale === 'fr' ? 'Produits, services, Academy et solutions professionnelles.' : locale === 'en' ? 'Products, services, Academy and professional solutions.' : 'منتجات وخدمات وAcademy وحلول مهنية.'} cta={c.discover}/>
+          <EngagementCard href={`/angelcare-marketplace/${locale}/marketplace`} media={media.flashcards} tone="green" icon={<ShoppingBag/>} eyebrow="MARKETPLACE" title={locale === 'fr' ? 'Continuer à explorer' : locale === 'en' ? 'Keep exploring' : 'واصل الاستكشاف'} body={locale === 'fr' ? 'Produits, services, Academy et solutions professionnelles.' : locale === 'en' ? 'Products, services, Academy and professional solutions.' : 'منتجات وخدمات وAcademy وحلول مهنية.'} cta={c.discover}/>
         )}
       </section>
 
@@ -738,8 +807,8 @@ export function LivingMarketplaceHomepage({ experience }: { experience: Homepage
           <div className={styles.truthNotice}>
             <ShieldCheck/>
             <div>
-              <strong>{locale === 'fr' ? 'Aucune preuve publique inventée.' : locale === 'en' ? 'No public evidence is invented.' : 'لا يتم اختراع أي دليل عام.'}</strong>
-              <p>{locale === 'fr' ? 'Ce bloc s’enrichit automatiquement lorsque des preuves publiques actives sont disponibles.' : locale === 'en' ? 'This block fills automatically when active public evidence is available.' : 'يتم ملء هذا القسم تلقائيًا عند توفر أدلة عامة نشطة.'}</p>
+              <strong>{locale === 'fr' ? 'Découvrez nos engagements.' : locale === 'en' ? 'Explore our commitments.' : 'اكتشف التزاماتنا.'}</strong>
+              <p>{locale === 'fr' ? 'Consultez les standards, les parcours de sécurité et les informations de vérification AngelCare.' : locale === 'en' ? 'Read AngelCare standards, safety journeys and verification information.' : 'يتم ملء هذا القسم تلقائيًا عند توفر أدلة عامة نشطة.'}</p>
             </div>
           </div>
         )}

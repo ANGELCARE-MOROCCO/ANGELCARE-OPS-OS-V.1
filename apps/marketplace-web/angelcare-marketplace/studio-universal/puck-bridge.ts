@@ -17,6 +17,7 @@ export function cmsBlocksToPuckData(blocks:CmsBlock[],root?:Record<string,unknow
     const stored=block.content?.__studioPuck
     if(stored&&typeof stored==='object'&&!Array.isArray(stored)){
       const restored=clone(stored as ComponentData) as ComponentData
+      restored.props={...restored.props,hidden:block.status==='hidden'||restored.props?.hidden===true}
       if(visualAlias)restored.type=visualAlias
       return restored
     }

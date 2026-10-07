@@ -3,6 +3,7 @@ import { MarketplaceError } from '../server/errors'
 import { marketplaceDatabaseError } from '../studio-universal/database-error'
 import type { CmsBlock, CmsMenuItem, CmsPage, CmsRevision } from '../experience-builder/types'
 import type { PublicInquiryInput, PublicInquiryRecord, PublicPageExperience } from './types'
+import { isLivingMarketplaceComponent } from '../homepage-living-marketplace/world'
 
 function publicError(operation: string, error: { code?: string; message?: string; details?: string; hint?: string; constraint?: string } | null) {
   return marketplaceDatabaseError(operation, error)
@@ -39,10 +40,11 @@ async function loadPublishedExperience(page:CmsPage):Promise<{page:CmsPage;block
 
 
 function isHomepageProMaxPublishedBlock(block:CmsBlock):boolean{
+  if(block.status==='hidden'||block.status==='archived')return false
   const content=rec(block.content)
   const stored=rec(content.__studioPuck)
   const type=String(stored.type||'')
-  return type.startsWith('ac_home_pro_max_')
+  return type.startsWith('ac_home_pro_max_') || isLivingMarketplaceComponent({type:block.block_type,props:content})
 }
 
 /**
@@ -91,12 +93,13 @@ export async function getPublishedStudioHomepage(input:{locale:string;territoryC
     candidates=(fallback.data||[]) as CmsPage[]
   }
   for(const candidate of candidates){
-    const locale=String(candidate.published_locale||candidate.locale||input.locale)
-    const slug=String(candidate.published_slug||candidate.slug||'')
-    if(!slug)continue
-    const experience=await getPublicPage({locale,slug,territoryCode:input.territoryCode||null})
-    if(!experience)continue
-    if(experience.blocks.some(isHomepageProMaxPublishedBlock))return experience
+    // Read this exact candidate's immutable revision. A second lookup by slug
+    // can resolve a different page or discard a territory-scoped publication.
+    const published=await loadPublishedExperience(candidate)
+    if(!published.blocks.some(isHomepageProMaxPublishedBlock))continue
+    const navigation=await supabase.from('angelcare_marketplace_public_navigation_v').select('*').eq('locale',input.locale).or(territoryId?`territory_id.is.null,territory_id.eq.${territoryId}`:'territory_id.is.null').order('sort_order')
+    if(navigation.error)throw publicError('charger la navigation Homepage Studio',navigation.error)
+    return {...published,navigation:(navigation.data||[]) as CmsMenuItem[]}
   }
   return null
 }

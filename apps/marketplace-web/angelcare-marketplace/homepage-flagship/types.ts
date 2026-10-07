@@ -132,6 +132,8 @@ export interface HomepageSectionDefinition {
 
 export interface HomepageExperience {
   locale: HomepageLocale
+  /** Published, territory-eligible inventory, including unavailable entries. */
+  catalogItems?: HomepageItem[]
   theme?: HomepageThemeConfig
   themeStudioPublished?: boolean
   territory: HomepageTerritory | null

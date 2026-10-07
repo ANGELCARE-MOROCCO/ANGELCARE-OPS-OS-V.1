@@ -13,5 +13,6 @@ export default async function Page({ params }: { params: Promise<{ token: string
   if (!bundle) notFound()
   const locale = bundle.page.locale
   const experience = { page: bundle.page, blocks: bundle.blocks, navigation: [] }
-  return <GlobalPublicShell locale={locale} navigation={[]} preview><PublicPageRenderer experience={experience} locale={locale} /></GlobalPublicShell>
+  const homepage = bundle.page.route_key.startsWith('public.home') || bundle.blocks.some(block => block.block_type === 'homepage_world')
+  return <GlobalPublicShell locale={locale} navigation={[]} preview variant={homepage ? 'marketplace' : 'standard'}><PublicPageRenderer experience={experience} locale={locale} /></GlobalPublicShell>
 }

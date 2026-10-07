@@ -1,0 +1,25 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "incremental": false
+  },
+  "include": [
+    "next-env.d.ts",
+    "angelcare-marketplace/families-storefront/**/*.ts",
+    "angelcare-marketplace/families-storefront/**/*.tsx",
+    "angelcare-marketplace/catalog-discovery/repository.ts",
+    "angelcare-marketplace/catalog-discovery/components/Storefront.tsx",
+    "angelcare-marketplace/family-experience/components/QuoteRequestForm.tsx",
+    "app/angelcare-marketplace/[locale]/families/page.tsx",
+    "app/angelcare-marketplace/[locale]/family/request/page.tsx",
+    "app/angelcare-marketplace/(family)/family/request/page.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    ".next",
+    "backups",
+    "_archive",
+    ".angelcare_backups"
+  ]
+}

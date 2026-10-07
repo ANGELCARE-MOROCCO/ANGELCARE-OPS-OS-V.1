@@ -93,9 +93,9 @@ async function listNavigation(locale: HomepageLocale, territoryId: string | null
   return (fallback.data || []) as CmsMenuItem[]
 }
 
-async function listTerritory(territoryCode: string): Promise<HomepageTerritory | null> {
+async function listTerritory(territoryCode: string, territoryId?: string): Promise<HomepageTerritory | null> {
   const supabase = await createServiceClient()
-  const { data: territory } = await supabase.from('angelcare_marketplace_territories').select('*').eq('territory_code', territoryCode).maybeSingle()
+  const { data: territory } = await supabase.from('angelcare_marketplace_territories').select('*').eq(territoryId ? 'id' : 'territory_code', territoryId || territoryCode).maybeSingle()
   if (!territory) return null
   const { data: cities } = await supabase.from('angelcare_marketplace_territory_city_zones').select('id,city_name,zone_name,coverage_status').eq('territory_id', territory.id).in('coverage_status', ['active', 'limited']).order('city_name')
   return {
@@ -118,10 +118,10 @@ async function visitorSelection(): Promise<{ saved: string[]; compare: string[] 
   }
 }
 
-export async function getHomepageExperience(input: { locale: HomepageLocale; territoryCode?: string }): Promise<HomepageExperience> {
+export async function getHomepageExperience(input: { locale: HomepageLocale; territoryCode?: string; territoryId?: string }): Promise<HomepageExperience> {
   const locale = input.locale
   const territoryCode = input.territoryCode || 'MA-MASTER'
-  const territoryId = await resolveTerritoryId(territoryCode)
+  const territoryId = input.territoryId || await resolveTerritoryId(territoryCode)
   const supabase = await createServiceClient()
   const now = new Date().toISOString()
 
@@ -130,7 +130,7 @@ export async function getHomepageExperience(input: { locale: HomepageLocale; ter
   const { data: campaignRows, error: campaignError } = await campaignQuery.order('priority').limit(8)
   if (campaignError) throw homepageFailure('charger les campagnes', campaignError)
 
-  const [{ data: categoryRows }, { data: itemRows }, { data: mediaRows }, { data: linkRows }, { data: collectionRows }, { data: collectionItemRows }, { data: sectionRows }, { data: placementRows }] = await Promise.all([
+  const [{ data: categoryRows }, { data: itemRows, error: itemError }, { data: mediaRows }, { data: linkRows }, { data: collectionRows }, { data: collectionItemRows }, { data: sectionRows }, { data: placementRows }] = await Promise.all([
     supabase.from('angelcare_marketplace_catalog_categories').select('*').eq('locale', locale).eq('status', 'published').order('sort_order'),
     supabase.from('angelcare_marketplace_catalog_items').select('*').eq('status', 'published').order('featured', { ascending: false }).order('updated_at', { ascending: false }).limit(120),
     supabase.from('angelcare_marketplace_catalog_item_media').select('*').eq('status', 'active').order('sort_order'),
@@ -140,6 +140,7 @@ export async function getHomepageExperience(input: { locale: HomepageLocale; ter
     supabase.from('angelcare_marketplace_homepage_sections').select('*').eq('locale', locale).eq('status', 'active').eq('visible', true).lte('starts_at', now).or(`ends_at.is.null,ends_at.gte.${now}`).order('sort_order'),
     supabase.from('angelcare_marketplace_homepage_placements').select('*').eq('locale', locale).eq('status', 'active').lte('starts_at', now).or(`ends_at.is.null,ends_at.gte.${now}`).order('priority').order('sort_order'),
   ])
+  if(itemError)throw homepageFailure('charger les offres publiées',itemError)
 
   const fallbackCampaignRows = locale !== 'fr' && !rows(campaignRows).length
     ? (await supabase.from('angelcare_marketplace_homepage_campaigns').select('*').eq('locale', 'fr').eq('status', 'active').lte('starts_at', now).or(`ends_at.is.null,ends_at.gte.${now}`).order('priority').limit(8)).data
@@ -160,7 +161,12 @@ export async function getHomepageExperience(input: { locale: HomepageLocale; ter
 
   const itemRowsSafe = rows(itemRows)
   const linkRowsSafe = rows(linkRows)
-  const mediaMap = new Map(rows(mediaRows).map((row) => [text(row.catalog_item_id), text(row.asset_url)]))
+  const mediaMap = new Map<string,string>()
+  // Rows are ordered by sort_order: retain the first cover, not the last image.
+  for(const row of rows(mediaRows)){
+    const id=text(row.catalog_item_id),url=text(row.asset_url)
+    if(url&&!mediaMap.has(id))mediaMap.set(id,url)
+  }
   const rawCategories = rows(effectiveCategoryRows)
   const countByCategory = new Map<string, number>()
   for (const link of linkRowsSafe) countByCategory.set(text(link.category_id), (countByCategory.get(text(link.category_id)) || 0) + 1)
@@ -174,12 +180,13 @@ export async function getHomepageExperience(input: { locale: HomepageLocale; ter
 
   const trustByObject = new Map<string, string[]>()
   const { data: badgeRows } = await supabase.from('angelcare_marketplace_trust_badge_issuances').select('object_id,badge_key,status,valid_until,verification_reference,public_claims').eq('status', 'active')
-  for (const badge of rows(badgeRows)) {
+  const currentBadgeRows = rows(badgeRows).filter(row => !row.valid_until || (Number.isFinite(Date.parse(text(row.valid_until))) && Date.parse(text(row.valid_until)) >= Date.now()))
+  for (const badge of currentBadgeRows) {
     const objectId = text(badge.object_id)
     trustByObject.set(objectId, [...(trustByObject.get(objectId) || []), text(badge.badge_key)])
   }
 
-  const items = itemRowsSafe.map((row) => mapItem(row, locale, mediaMap.get(text(row.id)) || null, categoryByItem.get(text(row.id)), trustByObject.get(text(row.id)) || []))
+  const items = itemRowsSafe.filter(row=>!row.territory_id||text(row.territory_id)===territoryId).map((row) => mapItem(row, locale, mediaMap.get(text(row.id)) || null, categoryByItem.get(text(row.id)), trustByObject.get(text(row.id)) || []))
   const itemById = new Map(items.map((item) => [item.id, item]))
   const collectionLinks = rows(collectionItemRows)
   const collections: HomepageCollection[] = rows(effectiveCollectionRows).map((row) => ({
@@ -230,13 +237,13 @@ export async function getHomepageExperience(input: { locale: HomepageLocale; ter
   const partnerPlans: HomepagePartnerPlan[] = rows(plansRaw).map((row) => ({ id: text(row.id), plan_key: text(row.plan_key), name: localized(row, 'name', locale), description: localized(row, 'description', locale) || null, billing_period: text(row.billing_period), base_price: nullableNumber(row.base_price), currency_label: text(row.currency_label) || 'Dh', modules: planModuleRows.filter((module) => text(module.plan_id) === text(row.id)).map((module) => text(module.module_key)) }))
 
   const definitions = new Map(rows(badgeDefinitionsRaw).map((row) => [text(row.badge_key), text(row.name_fr)]))
-  const trustSignals: HomepageTrustSignal[] = rows(badgeRows).slice(0, 6).map((row) => ({ id: text(row.object_id) + text(row.badge_key), name: definitions.get(text(row.badge_key)) || text(row.badge_key), verification_reference: text(row.verification_reference), valid_until: nullableText(row.valid_until), public_claims: stringArray(row.public_claims) }))
+  const trustSignals: HomepageTrustSignal[] = currentBadgeRows.filter(row=>stringArray(row.public_claims).length > 0 || Boolean(row.verification_reference)).slice(0, 6).map((row) => ({ id: text(row.object_id) + text(row.badge_key), name: definitions.get(text(row.badge_key)) || text(row.badge_key), verification_reference: text(row.verification_reference), valid_until: nullableText(row.valid_until), public_claims: stringArray(row.public_claims) }))
 
-  const [navigation, territory, selection, themeState] = await Promise.all([listNavigation(locale, territoryId), listTerritory(territoryCode), visitorSelection(), publishedThemeStudioState(locale).catch(() => ({ theme: undefined, active: false }))])
-  const published = items.filter((item) => !territoryId || !item.territory_id || item.territory_id === territoryId)
+  const [navigation, territory, selection, themeState] = await Promise.all([listNavigation(locale, territoryId), listTerritory(territoryCode, input.territoryId), visitorSelection(), publishedThemeStudioState(locale).catch(() => ({ theme: undefined, active: false }))])
+  const published = items.filter((item) => !item.territory_id || item.territory_id === territoryId)
 
   return {
-    locale, theme: themeState.theme, themeStudioPublished: themeState.active, territory, navigation, campaigns: rows(effectiveCampaignRows).map(mapCampaign), categories, collections, composition,
+    locale, catalogItems:published, theme: themeState.theme, themeStudioPublished: themeState.active, territory, navigation, campaigns: rows(effectiveCampaignRows).filter(row=>!row.territory_id||text(row.territory_id)===territoryId).map(mapCampaign), categories, collections, composition,
     popularItems: placementItems('popular'), bestPickItems: placementItems('best-pick'), newArrivalItems: placementItems('new-arrival'),
     featuredItems: published.filter((item) => item.featured).slice(0, 14),
     availableItems: published.filter((item) => item.availability_status === 'available').slice(0, 12),

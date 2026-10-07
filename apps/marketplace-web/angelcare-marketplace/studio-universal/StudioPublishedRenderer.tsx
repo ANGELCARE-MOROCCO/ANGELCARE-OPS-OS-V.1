@@ -29,7 +29,7 @@ import {StudioServiceWorldRuntime} from './components/StudioServiceWorldRuntime'
 import {StudioAcademyWorldRuntime} from './components/StudioAcademyWorldRuntime'
 import {StudioB2BWorldRuntime} from './components/StudioB2BWorldRuntime'
 import {shouldUseNativeAtomicFallback} from './world-visual-authority'
-import { LIVING_MARKETPLACE_COMPONENT_TYPE, LIVING_MARKETPLACE_WORLD_ID } from '@/angelcare-marketplace/homepage-living-marketplace/world'
+import { LIVING_MARKETPLACE_WORLD_ID, isLivingMarketplaceComponent, livingMarketplaceComponentInData } from '@/angelcare-marketplace/homepage-living-marketplace/world'
 import { LivingMarketplaceHomepage } from '@/angelcare-marketplace/homepage-living-marketplace/components/LivingMarketplaceHomepage'
 import { getHomepageExperience } from '@/angelcare-marketplace/homepage-flagship/repository'
 
@@ -55,7 +55,7 @@ function worldRootStyle(data:Data):React.CSSProperties{
   }
   return style as React.CSSProperties
 }
-export function isStudioCmsBlock(block:CmsBlock){const settings=block.settings as Record<string,unknown>|undefined;return String(settings?.studioFormat||'').startsWith('angelcare-puck-')||block.block_type.startsWith('ac_')||block.block_type.startsWith('studio_')||Boolean(block.content?.__studioPuck)}
+export function isStudioCmsBlock(block:CmsBlock){const settings=block.settings as Record<string,unknown>|undefined;return block.block_type==='homepage_world'||String(settings?.studioFormat||'').startsWith('angelcare-puck-')||block.block_type.startsWith('ac_')||block.block_type.startsWith('studio_')||Boolean(block.content?.__studioPuck)}
 
 async function mediaPickers(data:Data):Promise<StudioPickerData>{
   const keys=new Set<string>(),ids=new Set<string>();const walk=(value:unknown)=>{if(!value||typeof value!=='object')return;if(Array.isArray(value)){value.forEach(walk);return}const row=value as Record<string,unknown>;const candidates=[row.mediaAssetKey,row.assetKey,row.mediaTabletAssetKey,row.mediaMobileAssetKey];for(const media of candidates){if(typeof media==='string'&&media)keys.add(media);else if(isStudioSourceReference(media)&&media.sourceId==='media.assets')ids.add(media.entityId)}Object.values(row).forEach(walk)};walk(data.content);walk((data.root as Record<string,unknown>|undefined)?.__worldFactoryOperability)
@@ -110,8 +110,8 @@ async function RenderComponent({component,pickers,locale,territoryId,audienceId,
   if(nativeAtomicFallback&&type==='ac_service_world'&&currentExperience360?.classification.masterDomain==='b2c_service_family'&&currentTruthReport)return <div data-ac-world-visual-authority="native-fallback" data-ac-world-type={type}><StudioServiceWorldRuntime data={currentExperience360} truthReport={currentTruthReport} worldProps={props as Record<string,unknown>}/></div>
   if(nativeAtomicFallback&&type==='ac_academy_world'&&currentExperience360?.classification.masterDomain==='academy_admission'&&currentTruthReport)return <div data-ac-world-visual-authority="native-fallback" data-ac-world-type={type}><StudioAcademyWorldRuntime data={currentExperience360} truthReport={currentTruthReport} worldProps={props as Record<string,unknown>}/></div>
   if(nativeAtomicFallback&&type==='ac_b2b_world'&&currentExperience360?.classification.masterDomain==='b2b_institutional'&&currentTruthReport)return <div data-ac-world-visual-authority="native-fallback" data-ac-world-type={type}><StudioB2BWorldRuntime data={currentExperience360} truthReport={currentTruthReport} worldProps={props as Record<string,unknown>}/></div>
-  if(type===LIVING_MARKETPLACE_COMPONENT_TYPE){
-    const experience=await getHomepageExperience({locale}).catch(()=>null)
+  if(isLivingMarketplaceComponent(component)){
+    const experience=await getHomepageExperience({locale,territoryId:territoryId||undefined}).catch(()=>null)
     if(!experience)return <section data-ac-homepage-world={LIVING_MARKETPLACE_WORLD_ID} data-ac-homepage-runtime="canonical-data-unavailable" className={styles.block}><span className={styles.eyebrow}>ANGELCARE MARKETPLACE</span><h2 className={styles.title}>Marketplace temporairement indisponible</h2><p className={styles.lead}>Les données canoniques nécessaires à cette homepage ne sont pas disponibles. Aucun contenu commercial de démonstration n’est affiché.</p></section>
     return <LivingMarketplaceHomepage experience={experience}/>
   }
@@ -133,6 +133,14 @@ async function RenderComponent({component,pickers,locale,territoryId,audienceId,
 const emptyDynamicReport=():StudioDynamicSourceReport=>({sourceCount:0,resolvedCount:0,emptyCount:0,blockerCount:0,blocksTouched:0,entries:[]})
 
 export async function StudioPublishedDataRenderer({data:sourceData,locale,territoryId=null,audienceId=null,attribution,dynamicAlreadyApplied=false,dynamicReport=null,currentItemId=null,currentItemSlug=null,currentExperience360=null,currentTruthReport=null}:{data:Data;locale:'fr'|'en'|'ar';territoryId?:string|null;audienceId?:string|null;attribution?:StudioAttributionContext;dynamicAlreadyApplied?:boolean;dynamicReport?:StudioDynamicSourceReport|null;currentItemId?:string|null;currentItemSlug?:string|null;currentExperience360?:PublicExperience360|null;currentTruthReport?:PublicExperienceTruthReport|null}){
+  // A selected source-owned homepage owns the body. Old appended CMS sections
+  // must not surround it or hydrate unrelated commerce sources.
+  const livingWorld=livingMarketplaceComponentInData(sourceData)
+  if(livingWorld){
+    const visibility=shouldRenderWorldBlock(livingWorld.props as StudioBlockProps,{locale,territoryId,audienceId})
+    if(!visibility.render)return null
+    return <div data-ac-studio-runtime="published" data-ac-homepage-renderer="living-marketplace-world-02"><RenderComponent component={livingWorld} pickers={{media:[],categories:[],collections:[]}} locale={locale} territoryId={territoryId} audienceId={audienceId} attribution={attribution}/></div>
+  }
   const dynamic=dynamicAlreadyApplied?{data:sourceData,report:dynamicReport||emptyDynamicReport()}:await applyStudioDynamicSources(sourceData,{locale,territoryId,audienceId,visibility:'public_runtime'})
   const data=dynamic.data
   const pickers=await mediaPickers(data)
