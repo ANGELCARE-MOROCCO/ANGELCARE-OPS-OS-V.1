@@ -3,11 +3,13 @@ import type { MarketplaceRequestContext } from '../domain/types'
 import { MarketplaceError } from '../server/errors'
 import { refreshCommerceSurfaces } from '../commerce-studio/publication'
 import { slugify } from '../commerce-studio/validation'
+import { invalidateStudioReference } from '../studio-dependency-invalidation/invalidation'
 import {
   CATEGORY_NATIVE_HOMEPAGE_BLOCKS,
   CATEGORY_NATIVE_SCHEMA_BLUEPRINTS,
   blueprintForSchema,
 } from './registry'
+import { evaluateProduct360Readiness, loadProduct360Snapshot, restoreProduct360Snapshot } from '../enterprise-command/product-360-import-engine'
 import type {
   CategoryNativeImportJob,
   CategoryNativeImportRow,
@@ -31,6 +33,11 @@ import {
   parseCategoryNativeCsv,
   validateCategoryNativeRow,
 } from './validation'
+import {
+  CATEGORY_NATIVE_PRODUCT360_ENRICHMENT_KEYS,
+  categoryNativeDoctrineAttributes,
+  product360CatalogPatch,
+} from './product360-enrichment'
 
 type Row = Record<string, unknown>
 type DbError = { code?: string; message?: string; details?: string } | null
@@ -224,6 +231,18 @@ function mapImportRow(row: Row): CategoryNativeImportRow {
   }
 }
 
+function canonicalCategoryNativeConfiguration(record: Pick<ExperienceSchemaRecord,'schema_key'|'configuration'>): Record<string, unknown> {
+  const source = blueprintForSchema(record.schema_key)
+  const configuration = { ...record.configuration }
+  // These three keys define the canonical bridge into Product 360 and must not drift
+  // independently in persisted schema metadata. Other operator configuration stays local.
+  for (const key of ['identity_field','catalog_kind','sellable_type'] as const) {
+    const canonical = source?.configuration?.[key]
+    if (canonical !== undefined && canonical !== null && String(canonical).trim()) configuration[key] = canonical
+  }
+  return configuration
+}
+
 function schemaRecordAsBlueprint(record: ExperienceSchemaRecord): ExperienceSchemaBlueprint {
   return {
     schema_key: record.schema_key, version: record.version, segment_key: record.segment_key, vertical_key: record.vertical_key,
@@ -235,7 +254,7 @@ function schemaRecordAsBlueprint(record: ExperienceSchemaRecord): ExperienceSche
     availability_authority: record.availability_authority, pricing_modes: record.pricing_modes,
     media_requirements: record.media_requirements, search_filters: record.search_filters,
     comparison_fields: record.comparison_fields, analytics_dimensions: record.analytics_dimensions,
-    configuration: record.configuration, status: record.status,
+    configuration: canonicalCategoryNativeConfiguration(record), status: record.status,
     fields: record.fields, variant_groups: record.variant_groups,
   }
 }
@@ -383,6 +402,7 @@ export async function saveExperienceSchema(
   const result = await getExperienceSchema(schemaKey)
   if (!result) throw new MarketplaceError('INTERNAL_ERROR', 'Schéma enregistré mais introuvable.')
   await schemaVersion(result, existing ? 'updated' : 'created', context.actor.id)
+  await invalidateStudioReference({reference:{sourceId:'experience.schemas',entityId:result.id},reason:`experience_schema.${existing?'updated':'created'}`,context})
   return result
 }
 
@@ -417,7 +437,7 @@ export async function saveSchemaField(
   const { data, error } = await db.from(FIELD_TABLE).upsert(row, { onConflict: 'schema_id,field_key' }).select('*').single()
   if (error || !data) throw dbFailure('enregistrer le champ', error)
   const updatedSchema = await getExperienceSchema(schemaKey)
-  if (updatedSchema) await schemaVersion(updatedSchema, `field.${fieldKey}.saved`, context.actor.id)
+  if (updatedSchema) { await schemaVersion(updatedSchema, `field.${fieldKey}.saved`, context.actor.id); await invalidateStudioReference({reference:{sourceId:'experience.schemas',entityId:updatedSchema.id},reason:`experience_schema.field.${fieldKey}.saved`,context}) }
   return mapField(data as Row)
 }
 
@@ -438,6 +458,7 @@ export async function reorderSchemaFields(
   const result = await getExperienceSchema(schemaKey)
   if (!result) throw new MarketplaceError('INTERNAL_ERROR', 'Schéma introuvable après réordonnancement.')
   await schemaVersion(result, 'fields.reordered', context.actor.id)
+  await invalidateStudioReference({reference:{sourceId:'experience.schemas',entityId:result.id},reason:'experience_schema.fields.reordered',context})
   return result
 }
 
@@ -476,6 +497,7 @@ export async function schemaAction(
   const result = await getExperienceSchema(schemaKey)
   if (!result) throw new MarketplaceError('INTERNAL_ERROR', 'Schéma introuvable après action.')
   await schemaVersion(result, action, context.actor.id)
+  await invalidateStudioReference({reference:{sourceId:'experience.schemas',entityId:result.id},reason:`experience_schema.${action}`,context})
   return result
 }
 
@@ -496,6 +518,8 @@ export async function createImportPreview(input: {
   if (sourceRows.length > 10000) throw new MarketplaceError('VALIDATION_ERROR', 'Un import est limité à 10 000 lignes.')
   const validated = sourceRows.map((row, index) => validateCategoryNativeRow(blueprint, row, index + 2))
   const db = await createServiceClient()
+  await validateCategoryNativeImportReferences(db, validated)
+  await validateCategoryNativeIdentityConflicts(db, schema, validated, input.mode)
   const validRows = validated.filter((row) => row.valid).length
   const invalidRows = validated.length - validRows
   const { data: job, error: jobError } = await db.from(IMPORT_JOB_TABLE).insert({
@@ -546,8 +570,10 @@ function canonicalCatalogPayload(
   normalized: Record<string, unknown>,
   actorId: string,
   importJobId: string,
+  existing: Row | null,
 ): Row {
-  const identityField = text(schema.configuration.identity_field)
+  const canonicalConfiguration = canonicalCategoryNativeConfiguration(schema)
+  const identityField = text(canonicalConfiguration.identity_field)
   const identity = categoryNativeText(normalized[identityField])
   const actualPricingModel = categoryNativeText(normalized.price_mode || normalized.pricing_mode || 'quote_only')
   const amount = categoryNativeNumber(
@@ -561,14 +587,18 @@ function canonicalCatalogPayload(
     'description_fr','description_en','description_ar','price_mode','pricing_mode','price_amount','starting_price_dh',
     'recurring_fee_dh','currency_label','status','featured','popular','best_pick','territory_codes','category_keys',
     'primary_image_reference','gallery_references','stock_quantity',
+    ...CATEGORY_NATIVE_PRODUCT360_ENRICHMENT_KEYS,
   ])
-  const attributes = Object.fromEntries(Object.entries(normalized).filter(([key]) => !canonicalKeys.has(key)))
+  const nativeAttributes = Object.fromEntries(Object.entries(normalized).filter(([key]) => !canonicalKeys.has(key)))
+  const doctrineAttributes = categoryNativeDoctrineAttributes(schema, normalized)
+  const attributes = { ...nativeAttributes, ...doctrineAttributes }
+  const product360 = product360CatalogPatch(normalized, existing)
   return {
     item_key: identity,
     sku: categoryNativeOptionalText(normalized.sku),
     slug: slugify(categoryNativeText(normalized.slug || normalized.name_fr || identity)),
-    kind: categoryNativeText(schema.configuration.catalog_kind || 'service'),
-    sellable_type: categoryNativeText(schema.configuration.sellable_type || schema.archetype_key),
+    kind: categoryNativeText(canonicalConfiguration.catalog_kind || 'service'),
+    sellable_type: categoryNativeText(canonicalConfiguration.sellable_type || schema.archetype_key),
     name_fr: categoryNativeText(normalized.name_fr), name_en: categoryNativeOptionalText(normalized.name_en),
     name_ar: categoryNativeOptionalText(normalized.name_ar), short_description_fr: categoryNativeOptionalText(normalized.short_description_fr),
     short_description_en: categoryNativeOptionalText(normalized.short_description_en), short_description_ar: categoryNativeOptionalText(normalized.short_description_ar),
@@ -584,21 +614,18 @@ function canonicalCatalogPayload(
       segment_key: schema.segment_key, vertical_key: schema.vertical_key, category_key: schema.category_key,
       subcategory_key: schema.subcategory_key, pricing_model: actualPricingModel, import_job_id: importJobId,
     },
-    seo_metadata: {}, attributes,
+    attributes, ...product360,
     experience_schema_key: schema.schema_key, experience_schema_version: schema.version,
     experience_configuration: normalized,
-    status: ['published','paused','archived'].includes(status) ? status : 'draft',
+    status: status === 'published' ? 'draft' : (['paused','archived'].includes(status) ? status : 'draft'),
     updated_by: actorId, updated_at: new Date().toISOString(),
   }
 }
 
 async function fullCatalogSnapshot(itemId: string): Promise<Row> {
-  const db = await createServiceClient()
-  const { data, error } = await db.from('angelcare_marketplace_catalog_items').select(
-    '*,variants:angelcare_marketplace_catalog_variants(*),media:angelcare_marketplace_catalog_item_media(*),availability:angelcare_marketplace_catalog_availability(*),categories:angelcare_marketplace_catalog_item_categories(*)',
-  ).eq('id', itemId).maybeSingle()
-  if (error) throw dbFailure('capturer le produit avant import', error)
-  return data ? data as Row : {}
+  // Category-Native is a schema adapter; rollback evidence must use the exact same
+  // canonical Product 360 snapshot as the main industrial importer.
+  return loadProduct360Snapshot(itemId)
 }
 
 function cartesianVariantRows(schema: ExperienceSchemaRecord, normalized: Row): Array<{ key: string; label: string; options: Row }> {
@@ -617,6 +644,107 @@ function cartesianVariantRows(schema: ExperienceSchemaRecord, normalized: Row): 
     const label = Object.values(options).map(String).join(' · ')
     return { key: slugify(label), label, options }
   })
+}
+
+async function resolveCategoryNativeCategories(db: any, keys: string[]): Promise<Row[]> {
+  const wanted = [...new Set(keys.filter(Boolean))]
+  if (!wanted.length) return []
+  const { data, error } = await db.from('angelcare_marketplace_catalog_categories')
+    .select('id,category_key,territory_id,locale,status')
+    .in('category_key', wanted)
+    .eq('locale', 'fr')
+    .neq('status', 'archived')
+  if (error) throw dbFailure('résoudre les catégories', error)
+  const grouped = new Map<string, Row[]>()
+  for (const row of rows(data)) grouped.set(text(row.category_key), [...(grouped.get(text(row.category_key)) || []), row])
+  const resolved: Row[] = []
+  for (const key of wanted) {
+    const candidates = grouped.get(key) || []
+    if (!candidates.length) throw new MarketplaceError('VALIDATION_ERROR', `Catégorie canonique introuvable : ${key}.`)
+    const global = candidates.filter((entry) => !text(entry.territory_id))
+    const chosen = global.length === 1 ? global[0] : candidates.length === 1 ? candidates[0] : null
+    if (!chosen) throw new MarketplaceError('VALIDATION_ERROR', `Catégorie ambiguë ${key} : plusieurs catégories FR existent selon le territoire.`)
+    resolved.push(chosen)
+  }
+  return resolved
+}
+
+async function resolveCategoryNativeTerritories(db: any, codes: string[]): Promise<Map<string, string>> {
+  const wanted = [...new Set(codes.filter(Boolean))]
+  const resolved = new Map<string, string>()
+  if (!wanted.length) return resolved
+  const { data, error } = await db.from('angelcare_marketplace_territories')
+    .select('id,territory_code,status')
+    .in('territory_code', wanted)
+  if (error) throw dbFailure('résoudre les territoires', error)
+  for (const row of rows(data)) resolved.set(text(row.territory_code), text(row.id))
+  const missing = wanted.filter((code) => !resolved.has(code))
+  if (missing.length) throw new MarketplaceError('VALIDATION_ERROR', `Territoires introuvables : ${missing.join(', ')}.`)
+  return resolved
+}
+
+async function validateCategoryNativeImportReferences(
+  db: any,
+  validated: RowValidationResult[],
+): Promise<void> {
+  for (const row of validated) {
+    if (!row.valid) continue
+    try {
+      await resolveCategoryNativeCategories(db, categoryNativeList(row.normalized.category_keys))
+      await resolveCategoryNativeTerritories(db, categoryNativeList(row.normalized.territory_codes))
+    } catch (error) {
+      row.valid = false
+      row.errors.push(error instanceof Error ? error.message : String(error))
+    }
+  }
+}
+
+async function validateCategoryNativeIdentityConflicts(
+  db: any,
+  schema: ExperienceSchemaRecord,
+  validated: RowValidationResult[],
+  mode: CategoryNativeImportJob['mode'],
+): Promise<void> {
+  const canonicalConfiguration = canonicalCategoryNativeConfiguration(schema)
+  const identityField = text(canonicalConfiguration.identity_field)
+  const candidates = validated.filter((row) => row.valid).map((row) => ({
+    row,
+    identity: categoryNativeText(row.normalized[identityField]),
+    slug: slugify(categoryNativeText(row.normalized.slug || row.normalized.name_fr || row.normalized[identityField])),
+    sku: categoryNativeText(row.normalized.sku),
+  }))
+  for (const [key,label] of [['identity','item_key'],['slug','slug'],['sku','SKU']] as const) {
+    const values=candidates.map((entry)=>entry[key]).filter(Boolean)
+    const duplicates=new Set(values.filter((value,index)=>values.indexOf(value)!==index))
+    for (const entry of candidates) {
+      if (!entry[key] || !duplicates.has(entry[key])) continue
+      entry.row.valid=false
+      entry.row.errors.push(`${label} dupliqué dans le fichier : ${entry[key]}.`)
+    }
+  }
+  const active=candidates.filter((entry)=>entry.row.valid)
+  const identities=[...new Set(active.map((entry)=>entry.identity).filter(Boolean))]
+  const slugs=[...new Set(active.map((entry)=>entry.slug).filter(Boolean))]
+  const skus=[...new Set(active.map((entry)=>entry.sku).filter(Boolean))]
+  const [byIdentity,bySlug,bySku]=await Promise.all([
+    identities.length?db.from('angelcare_marketplace_catalog_items').select('id,item_key,slug,sku').in('item_key',identities):Promise.resolve({data:[],error:null}),
+    slugs.length?db.from('angelcare_marketplace_catalog_items').select('id,item_key,slug,sku').in('slug',slugs):Promise.resolve({data:[],error:null}),
+    skus.length?db.from('angelcare_marketplace_catalog_items').select('id,item_key,slug,sku').in('sku',skus):Promise.resolve({data:[],error:null}),
+  ])
+  for (const result of [byIdentity,bySlug,bySku]) if (result.error) throw dbFailure('prévalider les identités Product 360',result.error)
+  const ownByIdentity=new Map(rows(byIdentity.data).map((entry)=>[text(entry.item_key),entry]))
+  const ownerBySlug=new Map(rows(bySlug.data).map((entry)=>[text(entry.slug),entry]))
+  const ownerBySku=new Map(rows(bySku.data).map((entry)=>[text(entry.sku),entry]))
+  for (const entry of active) {
+    const own=ownByIdentity.get(entry.identity)
+    if (mode==='create'&&own) { entry.row.valid=false;entry.row.errors.push(`L’objet ${entry.identity} existe déjà : mode création uniquement.`);continue }
+    if (mode==='update'&&!own) { entry.row.valid=false;entry.row.errors.push(`L’objet ${entry.identity} n’existe pas : mode mise à jour uniquement.`);continue }
+    const ownId=text(own?.id)
+    const slugOwner=ownerBySlug.get(entry.slug)
+    if (slugOwner&&text(slugOwner.id)!==ownId) { entry.row.valid=false;entry.row.errors.push(`Slug déjà utilisé par ${text(slugOwner.item_key)||text(slugOwner.id)} : ${entry.slug}.`) }
+    const skuOwner=entry.sku?ownerBySku.get(entry.sku):null
+    if (skuOwner&&text(skuOwner.id)!==ownId) { entry.row.valid=false;entry.row.errors.push(`SKU déjà utilisé par ${text(skuOwner.item_key)||text(skuOwner.id)} : ${entry.sku}.`) }
+  }
 }
 
 async function applyMediaReferences(itemId: string, normalized: Row, actorId: string): Promise<void> {
@@ -646,18 +774,20 @@ async function applyMediaReferences(itemId: string, normalized: Row, actorId: st
 
 async function applyCategories(itemId: string, normalized: Row): Promise<void> {
   const keys = categoryNativeList(normalized.category_keys)
-  if (!keys.length) return
+  if (!keys.length) throw new MarketplaceError('VALIDATION_ERROR', 'Au moins une catégorie canonique est requise.')
   const db = await createServiceClient()
-  const { data, error } = await db.from('angelcare_marketplace_catalog_categories').select('id,category_key').in('category_key', keys).eq('locale', 'fr')
-  if (error) throw dbFailure('résoudre les catégories', error)
-  const categoryRows = rows(data)
-  for (const [index, category] of categoryRows.entries()) {
-    const { error: assignmentError } = await db.from('angelcare_marketplace_catalog_item_categories').upsert({
-      catalog_item_id: itemId, category_id: text(category.id), is_primary: index === 0, sort_order: index * 10,
-      updated_at: new Date().toISOString(),
-    }, { onConflict: 'catalog_item_id,category_id' })
-    if (assignmentError) throw dbFailure('assigner les catégories', assignmentError)
-  }
+  const categoryRows = await resolveCategoryNativeCategories(db, keys)
+  const { error: deleteError } = await db.from('angelcare_marketplace_catalog_item_categories').delete().eq('catalog_item_id', itemId)
+  if (deleteError) throw dbFailure('remplacer les catégories', deleteError)
+  const payload = categoryRows.map((category, index) => ({
+    catalog_item_id: itemId,
+    category_id: text(category.id),
+    is_primary: index === 0,
+    sort_order: index * 10,
+    updated_at: new Date().toISOString(),
+  }))
+  const { error: assignmentError } = await db.from('angelcare_marketplace_catalog_item_categories').insert(payload)
+  if (assignmentError) throw dbFailure('assigner les catégories', assignmentError)
 }
 
 async function applyVariants(itemId: string, schema: ExperienceSchemaRecord, normalized: Row, actorId: string): Promise<void> {
@@ -676,20 +806,53 @@ async function applyVariants(itemId: string, schema: ExperienceSchemaRecord, nor
 
 async function applyAvailability(itemId: string, schema: ExperienceSchemaRecord, normalized: Row, actorId: string): Promise<void> {
   const territoryCodes = categoryNativeList(normalized.territory_codes)
-  if (!territoryCodes.length) return
+  if (!territoryCodes.length) throw new MarketplaceError('VALIDATION_ERROR', 'Au moins un territoire est requis pour créer la disponibilité canonique.')
   const db = await createServiceClient()
-  const { data, error } = await db.from('angelcare_marketplace_territories').select('id,territory_code').in('territory_code', territoryCodes)
-  if (error) throw dbFailure('résoudre les territoires', error)
+  const territories = await resolveCategoryNativeTerritories(db, territoryCodes)
   const capacity = categoryNativeNumber(normalized.stock_quantity ?? normalized.capacity ?? normalized.seat_capacity ?? normalized.children_capacity)
-  for (const territory of rows(data)) {
-    const { error: availabilityError } = await db.from('angelcare_marketplace_catalog_availability').upsert({
-      catalog_item_id: itemId, territory_id: text(territory.id), city_zone_id: null, audience: 'all',
-      available: schema.availability_authority === 'inventory' ? (capacity !== null && capacity > 0) : true,
-      capacity_limit: capacity === null ? null : Math.max(0, Math.trunc(capacity)), reason: `Import ${schema.schema_key}`,
-      updated_by: actorId, updated_at: new Date().toISOString(),
-    }, { onConflict: 'catalog_item_id,territory_id,city_zone_id,audience' })
-    if (availabilityError) throw dbFailure('configurer la disponibilité', availabilityError)
+  const available = schema.availability_authority === 'inventory' ? (capacity !== null && capacity > 0) : true
+  const existingResult = await db.from('angelcare_marketplace_catalog_availability').select('*').eq('catalog_item_id', itemId)
+  if (existingResult.error) throw dbFailure('charger les disponibilités', existingResult.error)
+  const existing = rows(existingResult.data)
+  const keepIds: string[] = []
+  for (const code of territoryCodes) {
+    const territoryId = territories.get(code)
+    if (!territoryId) throw new MarketplaceError('VALIDATION_ERROR', `Territoire introuvable : ${code}.`)
+    const match = existing.find((entry) => text(entry.territory_id) === territoryId && !text(entry.city_zone_id) && text(entry.audience || 'all') === 'all')
+    const payload = {
+      catalog_item_id: itemId,
+      territory_id: territoryId,
+      city_zone_id: null,
+      audience: 'all',
+      available,
+      capacity_limit: capacity === null ? null : Math.max(0, Math.trunc(capacity)),
+      starts_at: null,
+      ends_at: null,
+      reason: `Import ${schema.schema_key}`,
+      updated_by: actorId,
+      updated_at: new Date().toISOString(),
+    }
+    if (match) {
+      const updated = await db.from('angelcare_marketplace_catalog_availability').update(payload).eq('id', match.id).select('id').single()
+      if (updated.error) throw dbFailure('mettre à jour la disponibilité', updated.error)
+      keepIds.push(text(updated.data?.id || match.id))
+    } else {
+      const inserted = await db.from('angelcare_marketplace_catalog_availability').insert(payload).select('id').single()
+      if (inserted.error) throw dbFailure('configurer la disponibilité', inserted.error)
+      keepIds.push(text(inserted.data?.id))
+    }
   }
+  const removeIds = existing.map((entry) => text(entry.id)).filter((id) => id && !keepIds.includes(id))
+  if (removeIds.length) {
+    const removed = await db.from('angelcare_marketplace_catalog_availability').delete().in('id', removeIds)
+    if (removed.error) throw dbFailure('remplacer les disponibilités', removed.error)
+  }
+  const statusUpdate = await db.from('angelcare_marketplace_catalog_items').update({
+    availability_status: available ? 'available' : 'out_of_stock',
+    updated_by: actorId,
+    updated_at: new Date().toISOString(),
+  }).eq('id', itemId)
+  if (statusUpdate.error) throw dbFailure('synchroniser le statut de disponibilité', statusUpdate.error)
 }
 
 async function applyMerchandising(itemId: string, normalized: Row, actorId: string): Promise<void> {
@@ -727,36 +890,58 @@ export async function executeImportJob(jobId: string, context: MarketplaceReques
   let failed = 0
   for (const row of job.rows || []) {
     if (row.status !== 'valid' && row.status !== 'failed') continue
+    let beforeForRecovery:Row|null=null
+    let itemIdForRecovery=''
     try {
       const normalized = row.normalized_payload
-      const identityField = text(schema.configuration.identity_field)
+      const canonicalConfiguration = canonicalCategoryNativeConfiguration(schema)
+      const identityField = text(canonicalConfiguration.identity_field)
+      const doctrineKey = categoryNativeText(canonicalConfiguration.sellable_type || schema.archetype_key)
       const identity = categoryNativeText(normalized[identityField])
       const { data: existing, error: existingError } = await db.from('angelcare_marketplace_catalog_items').select('id').eq('item_key', identity).maybeSingle()
       if (existingError) throw dbFailure('rechercher le produit existant', existingError)
       if (job.mode === 'create' && existing) throw new MarketplaceError('CONFLICT', `L’objet ${identity} existe déjà.`)
       if (job.mode === 'update' && !existing) throw new MarketplaceError('NOT_FOUND', `L’objet ${identity} n’existe pas pour mise à jour.`)
       const before = existing ? await fullCatalogSnapshot(text((existing as Row).id)) : null
-      const payload = canonicalCatalogPayload(schema, normalized, context.actor.id, job.id)
+      beforeForRecovery=before
+      const payload = canonicalCatalogPayload(schema, normalized, context.actor.id, job.id, before)
       const { data: catalogItem, error: upsertError } = await db.from('angelcare_marketplace_catalog_items').upsert({
         ...payload, ...(existing ? {} : { created_by: context.actor.id }),
       }, { onConflict: 'item_key' }).select('*').single()
       if (upsertError || !catalogItem) throw dbFailure('importer l’objet commercial', upsertError)
       const itemId = text((catalogItem as Row).id)
+      itemIdForRecovery=itemId
       await applyMediaReferences(itemId, normalized, context.actor.id)
       await applyCategories(itemId, normalized)
       await applyVariants(itemId, schema, normalized, context.actor.id)
       await applyAvailability(itemId, schema, normalized, context.actor.id)
       await applyMerchandising(itemId, normalized, context.actor.id)
+      const closureSnapshot=await loadProduct360Snapshot(itemId,db)
+      const closureReadiness=evaluateProduct360Readiness(closureSnapshot,doctrineKey)
+      const nonMediaBlockers=closureReadiness.reasons.filter((reason)=>reason!=='MEDIA_MISSING')
+      if(nonMediaBlockers.length)throw new MarketplaceError('VALIDATION_ERROR',`Import incomplet hors média : ${nonMediaBlockers.join(', ')}. La ligne a été restaurée ; corrigez le CSV avant retry.`)
+      const requestedStatus=categoryNativeText(normalized.status||'draft')
+      if(requestedStatus==='published'){
+        const snapshot=await loadProduct360Snapshot(itemId,db)
+        const readiness=evaluateProduct360Readiness(snapshot,doctrineKey)
+        if(!readiness.ready)throw new MarketplaceError('INVALID_STATE_TRANSITION',`Publication refusée par Product 360 readiness : ${readiness.reasons.join(', ')}.`)
+        const published=await db.from('angelcare_marketplace_catalog_items').update({status:'published',publish_at:new Date().toISOString(),updated_by:context.actor.id,updated_at:new Date().toISOString()}).eq('id',itemId)
+        if(published.error)throw dbFailure('publier le produit importé',published.error)
+      }
       await db.from(IMPORT_ROW_TABLE).update({
         before_snapshot: before, target_item_id: itemId, status: existing ? 'updated' : 'imported',
         errors: [], updated_at: new Date().toISOString(),
       }).eq('id', row.id)
+      await invalidateStudioReference({reference:{sourceId:'catalog.items',entityId:itemId},reason:`category_native_import.${existing?'updated':'created'}`,context,slug:categoryNativeText((catalogItem as Row).slug),locale:categoryNativeText((catalogItem as Row).locale||'fr')})
       if (existing) updated += 1
       else imported += 1
     } catch (error) {
       failed += 1
+      let recoveryError=''
+      if(itemIdForRecovery){try{await restoreProduct360Snapshot({db,snapshot:beforeForRecovery,itemId:itemIdForRecovery,context})}catch(recovery){recoveryError=recovery instanceof Error?recovery.message:String(recovery)}}
+      const message=error instanceof Error?error.message:'Erreur inconnue'
       await db.from(IMPORT_ROW_TABLE).update({
-        status: 'failed', errors: [error instanceof Error ? error.message : 'Erreur inconnue'], updated_at: new Date().toISOString(),
+        status: 'failed', errors: [recoveryError?`${message} | RECOVERY_FAILED: ${recoveryError}`:message], updated_at: new Date().toISOString(),
       }).eq('id', row.id)
     }
   }
@@ -782,34 +967,15 @@ export async function rollbackImportJob(jobId: string, context: MarketplaceReque
   const db = await createServiceClient()
   for (const row of job.rows || []) {
     if (!row.target_item_id || !['imported','updated','failed'].includes(row.status)) continue
-    if (row.before_snapshot && Object.keys(row.before_snapshot).length) {
-      const before = { ...row.before_snapshot }
-      const variants = rows(before.variants)
-      const media = rows(before.media)
-      const availability = rows(before.availability)
-      const categories = rows(before.categories)
-      delete before.variants; delete before.media; delete before.availability; delete before.categories
-      delete before.created_at; delete before.updated_at
-      const itemId = row.target_item_id
-      const { error } = await db.from('angelcare_marketplace_catalog_items').update({
-        ...before, updated_by: context.actor.id, updated_at: new Date().toISOString(),
-      }).eq('id', itemId)
-      if (error) throw dbFailure('restaurer le produit', error)
-      await db.from('angelcare_marketplace_catalog_variants').delete().eq('catalog_item_id', itemId)
-      await db.from('angelcare_marketplace_catalog_item_media').delete().eq('catalog_item_id', itemId)
-      await db.from('angelcare_marketplace_catalog_availability').delete().eq('catalog_item_id', itemId)
-      await db.from('angelcare_marketplace_catalog_item_categories').delete().eq('catalog_item_id', itemId)
-      if (variants.length) await db.from('angelcare_marketplace_catalog_variants').insert(variants.map((entry) => ({ ...entry, catalog_item_id: itemId })))
-      if (media.length) await db.from('angelcare_marketplace_catalog_item_media').insert(media.map((entry) => ({ ...entry, catalog_item_id: itemId })))
-      if (availability.length) await db.from('angelcare_marketplace_catalog_availability').insert(availability.map((entry) => ({ ...entry, catalog_item_id: itemId })))
-      if (categories.length) await db.from('angelcare_marketplace_catalog_item_categories').insert(categories.map((entry) => ({ ...entry, catalog_item_id: itemId })))
-    } else {
-      const { error } = await db.from('angelcare_marketplace_catalog_items').update({
-        status: 'archived', updated_by: context.actor.id, updated_at: new Date().toISOString(),
-      }).eq('id', row.target_item_id)
-      if (error) throw dbFailure('archiver l’objet créé par import', error)
-    }
-    await db.from(IMPORT_ROW_TABLE).update({ status: 'rolled_back', updated_at: new Date().toISOString() }).eq('id', row.id)
+    await restoreProduct360Snapshot({
+      db,
+      snapshot: row.before_snapshot && Object.keys(row.before_snapshot).length ? row.before_snapshot : null,
+      itemId: row.target_item_id,
+      context,
+    })
+    const { error: rowError } = await db.from(IMPORT_ROW_TABLE).update({ status: 'rolled_back', updated_at: new Date().toISOString() }).eq('id', row.id)
+    if (rowError) throw dbFailure('marquer la ligne restaurée', rowError)
+    await invalidateStudioReference({reference:{sourceId:'catalog.items',entityId:row.target_item_id},reason:'category_native_import.rollback',context})
   }
   const { error } = await db.from(IMPORT_JOB_TABLE).update({
     status: 'rolled_back', rolled_back_at: new Date().toISOString(), rollback_actor_id: context.actor.id,

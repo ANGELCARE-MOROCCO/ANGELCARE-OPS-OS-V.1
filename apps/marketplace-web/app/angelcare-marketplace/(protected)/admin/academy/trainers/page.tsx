@@ -1,3 +1,2 @@
-import { requireMarketplacePageContext } from '@/angelcare-marketplace/auth/context'
-import { TrainerWorkspace } from '@/angelcare-marketplace/academy-engine/components/TrainerWorkspace'
-export default async function Page(){const context=await requireMarketplacePageContext('marketplace.academy.view');void context;return <TrainerWorkspace />}
+import {AcademyFinalPage} from '@/angelcare-marketplace/academy-engine/final-admin-page'
+export default function Page(){return <AcademyFinalPage mode="trainers"/>}

@@ -2,6 +2,7 @@ import { getAngelcare360AccessContext } from '@/lib/angelcare360/server/context'
 import { getAngelcare360PaymentProviderStatus, createAngelcare360CheckoutSession } from '@/lib/angelcare360/payments/provider'
 import { createClient } from '@/lib/supabase/server'
 import type { Angelcare360PaymentGateRecord } from '@/types/angelcare360/payment-gates'
+import { assertExternalSideEffectAllowed } from '@/lib/sanila-demo/safety'
 
 export async function getActiveCustomerPaymentGate(options?: { schoolId?: string | null }) {
   const context = await getAngelcare360AccessContext(options)
@@ -53,6 +54,17 @@ export async function createOnlineCheckoutSessionForGate(input: {
   currency?: string | null
   returnUrl?: string | null
 }) {
+  const db = await createClient()
+  const gate = await db.from('angelcare360_operator_payment_gates').select('gate_code,tenant_id,amount_due_mad,currency,status').eq('gate_code', input.gateCode).maybeSingle()
+  if (gate.error || !gate.data || !['active', 'online_processing', 'manual_pending'].includes(String(gate.data.status))) {
+    return { ok: false as const, locked: true as const, error: 'Gate de paiement invalide ou inactif.' }
+  }
+  const authoritativeAmount = Number(gate.data.amount_due_mad || 0)
+  const authoritativeCurrency = String(gate.data.currency || 'MAD')
+  if (gate.data.tenant_id) {
+    const safety = await assertExternalSideEffectAllowed({ channel: 'payment', operation: 'payment.checkout', tenantId: String(gate.data.tenant_id), metadata: { gate_code: String(gate.data.gate_code), amount_mad: authoritativeAmount } })
+    if (!safety.allowed) return { ok: true as const, locked: true as const, simulated: true as const, checkoutUrl: null, code: safety.code, reason: 'Paiement simulé · DEMO SAFE' }
+  }
   const provider = getAngelcare360PaymentProviderStatus()
   if (!provider.configured) {
     return {
@@ -62,5 +74,5 @@ export async function createOnlineCheckoutSessionForGate(input: {
       provider,
     }
   }
-  return createAngelcare360CheckoutSession(input)
+  return createAngelcare360CheckoutSession({ gateCode: String(gate.data.gate_code), amountDueMad: authoritativeAmount, currency: authoritativeCurrency, returnUrl: input.returnUrl || null })
 }

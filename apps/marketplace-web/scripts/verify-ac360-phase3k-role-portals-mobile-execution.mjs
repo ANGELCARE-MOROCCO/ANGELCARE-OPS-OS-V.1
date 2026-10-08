@@ -79,11 +79,11 @@ if (!nextConfig.includes('webpackBuildWorker: false') || !nextConfig.includes('c
   console.error('❌ Vercel build stability lock missing from next.config.ts')
   process.exit(1)
 }
-if (!pkg.includes('NODE_OPTIONS=--max-old-space-size=16384 next build --webpack') || !pkg.includes('"node": "20.x"') || nvmrc.trim() !== '20') {
-  console.error('❌ Node/Vercel build memory lock missing from package.json or .nvmrc')
+if (!pkg.includes('NODE_OPTIONS=--max-old-space-size=16384 next build --turbopack') || !pkg.includes('\"node\": \"22.x\"') || nvmrc.trim() !== '20') {
+  console.error('❌ Repository build/toolchain pins changed unexpectedly')
   process.exit(1)
 }
 
 console.log('✅ AC360 Phase 3K role-based portals, permission-aware navigation & mobile execution verification passed.')
 console.log('✅ French-native role portals, permission-aware module visibility, mobile execution dock, governance/billing signals and premium white UI confirmed.')
-console.log('✅ Vercel build stability lock preserved: webpack cache disabled, Node 20, 16GB build command.')
+console.log('✅ Build stability lock preserved: package Node 22 engine, original .nvmrc 20 pin, 16GB Turbopack build command.')

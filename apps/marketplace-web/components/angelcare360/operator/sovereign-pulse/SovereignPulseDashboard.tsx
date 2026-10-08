@@ -34,7 +34,7 @@ import {
   X,
   Zap,
 } from 'lucide-react'
-import AngelCareLogo from '@/components/brand/AngelCareLogo'
+import SanilaLogo from '@/components/brand/SanilaLogo'
 import type {
   SovereignPulseMode,
   SovereignPulsePrivacy,
@@ -447,9 +447,9 @@ export default function SovereignPulseDashboard({ initialSnapshot, initialMode, 
 
       <header className={styles.crown}>
         <div className={styles.brandLockup}>
-          <div className={styles.logoHalo}><AngelCareLogo size={mode === 'wall' ? 'md' : 'sm'} /></div>
+          <div className={styles.logoHalo}><SanilaLogo variant="normal" width={mode === 'wall' ? 62 : 52} height={mode === 'wall' ? 22 : 18}/></div>
           <div className={styles.brandCopy}>
-            <div className={styles.eyebrow}>ANGELCARE 360 · LIVE EXECUTIVE COMMAND</div>
+            <div className={styles.eyebrow}>SANILA OS · LIVE EXECUTIVE COMMAND</div>
             <div className={styles.crownTitle}>SOVEREIGN PULSE</div>
             <div className={styles.crownSubtitle}>{snapshot.headline}</div>
           </div>
@@ -636,8 +636,8 @@ function OverviewScene({ snapshot, privacy, mode, setInspector }: { snapshot: So
           <div className={styles.coreNode}>
             <div className={styles.coreOrbit}><i /><i /><i /></div>
             <div className={styles.coreInner}>
-              <AngelCareLogo size={mode === 'wall' ? 'lg' : 'md'} />
-              <span>ANGELCARE 360</span>
+              <SanilaLogo variant="normal" width={mode === 'wall' ? 118 : 102} height={mode === 'wall' ? 41 : 36}/>
+              <span>SANILA OS</span>
               <strong>{snapshot.globalHealth}%</strong>
               <small>NETWORK HEALTH</small>
             </div>

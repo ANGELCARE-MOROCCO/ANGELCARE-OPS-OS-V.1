@@ -1,0 +1,15 @@
+EXPECTED DELTA FROM FRESH PRODUCTION SCHEMA
++ 2 partial/conditional unique indexes
++ 5 service-role-only SQL functions
+
+Expected unchanged:
+= angelcare360_library_books
+= angelcare360_library_copies
+= angelcare360_library_loans
+= angelcare360_students
+= angelcare360_staff
+= angelcare360_audit_logs
+= all RLS enablement
+= all existing policies
+= all existing FK constraints
+= all existing data

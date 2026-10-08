@@ -1,4 +1,5 @@
 import type { CmsMenuItem } from '../experience-builder/types'
+import type { HomepageThemeConfig } from '../theme-studio/theme-config'
 
 export type HomepageLocale = 'fr' | 'en' | 'ar'
 export type HomepageAudience = 'family' | 'organization' | 'professional'
@@ -131,6 +132,10 @@ export interface HomepageSectionDefinition {
 
 export interface HomepageExperience {
   locale: HomepageLocale
+  /** Published, territory-eligible inventory, including unavailable entries. */
+  catalogItems?: HomepageItem[]
+  theme?: HomepageThemeConfig
+  themeStudioPublished?: boolean
   territory: HomepageTerritory | null
   navigation: CmsMenuItem[]
   campaigns: HomepageCampaign[]

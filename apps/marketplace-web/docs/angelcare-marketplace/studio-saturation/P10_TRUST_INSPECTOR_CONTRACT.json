@@ -1,0 +1,32 @@
+{
+  "phase": "P10",
+  "name": "Studio Trust Inspector",
+  "schemaVersion": "2026-09-19.P10",
+  "purpose": "Explain, before publication, what a Studio document reads, resolves, renders, executes, creates, attributes and hands over across the existing Marketplace authorities.",
+  "layers": [
+    "P01 canonical sources",
+    "P03 structured actions",
+    "P04 template inheritance",
+    "P05 live bindings",
+    "P06 dynamic sources",
+    "P07 native workflows",
+    "P08 public runtime",
+    "P09 origin attribution"
+  ],
+  "states": ["READY", "ATTENTION", "BLOCKED"],
+  "invariants": {
+    "readOnly": true,
+    "advisoryOnly": true,
+    "noMutation": true,
+    "noPublishGateChange": true,
+    "samePublicRuntimeOrchestrator": true,
+    "existingAuthoritiesOnly": true,
+    "noShadowAnalytics": true,
+    "noNewAdminWorkspace": true,
+    "p11GovernanceEngine": false,
+    "sqlRequired": false,
+    "databaseSchemaChange": false,
+    "localBuild": false,
+    "globalTypescript": false
+  }
+}

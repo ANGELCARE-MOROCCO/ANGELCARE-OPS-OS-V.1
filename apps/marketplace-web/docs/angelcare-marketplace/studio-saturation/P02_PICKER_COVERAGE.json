@@ -1,0 +1,311 @@
+{
+  "schema_version": 1,
+  "phase": "P02",
+  "p01_registered": 20,
+  "p02_accounted_for": 20,
+  "picker_supported": 20,
+  "display_only": 0,
+  "intentionally_hidden": 0,
+  "sources": [
+    {
+      "source_id": "catalog.items",
+      "p00_candidate_id": "catalog_item",
+      "label": "Produit / service / formation / SaaS",
+      "label_plural": "Produits, services, formations et SaaS",
+      "picker_status": "PICKER_SUPPORTED",
+      "modes": {
+        "single": true,
+        "multiple": true,
+        "search": true,
+        "browse": true,
+        "hierarchical": false,
+        "media": false
+      }
+    },
+    {
+      "source_id": "catalog.categories",
+      "p00_candidate_id": "catalog_category",
+      "label": "Catégorie",
+      "label_plural": "Catégories",
+      "picker_status": "PICKER_SUPPORTED",
+      "modes": {
+        "single": true,
+        "multiple": true,
+        "search": true,
+        "browse": true,
+        "hierarchical": true,
+        "media": false
+      }
+    },
+    {
+      "source_id": "homepage.collections",
+      "p00_candidate_id": "homepage_collection",
+      "label": "Collection",
+      "label_plural": "Collections",
+      "picker_status": "PICKER_SUPPORTED",
+      "modes": {
+        "single": true,
+        "multiple": true,
+        "search": true,
+        "browse": true,
+        "hierarchical": false,
+        "media": false
+      }
+    },
+    {
+      "source_id": "media.assets",
+      "p00_candidate_id": "media_asset",
+      "label": "Média",
+      "label_plural": "Médias",
+      "picker_status": "PICKER_SUPPORTED",
+      "modes": {
+        "single": true,
+        "multiple": true,
+        "search": true,
+        "browse": true,
+        "hierarchical": false,
+        "media": true
+      }
+    },
+    {
+      "source_id": "content.pages",
+      "p00_candidate_id": "cms_page",
+      "label": "Page CMS / Studio",
+      "label_plural": "Pages CMS / Studio",
+      "picker_status": "PICKER_SUPPORTED",
+      "modes": {
+        "single": true,
+        "multiple": true,
+        "search": true,
+        "browse": true,
+        "hierarchical": false,
+        "media": false
+      }
+    },
+    {
+      "source_id": "content.templates",
+      "p00_candidate_id": "cms_template",
+      "label": "Template Experience Core",
+      "label_plural": "Templates Experience Core",
+      "picker_status": "PICKER_SUPPORTED",
+      "modes": {
+        "single": true,
+        "multiple": false,
+        "search": true,
+        "browse": true,
+        "hierarchical": false,
+        "media": false
+      }
+    },
+    {
+      "source_id": "content.symbols",
+      "p00_candidate_id": "cms_symbol",
+      "label": "Symbole réutilisable",
+      "label_plural": "Symboles réutilisables",
+      "picker_status": "PICKER_SUPPORTED",
+      "modes": {
+        "single": true,
+        "multiple": true,
+        "search": true,
+        "browse": true,
+        "hierarchical": false,
+        "media": false
+      }
+    },
+    {
+      "source_id": "experience.schemas",
+      "p00_candidate_id": "experience_schema",
+      "label": "Schéma Category-Native",
+      "label_plural": "Schémas Category-Native",
+      "picker_status": "PICKER_SUPPORTED",
+      "modes": {
+        "single": true,
+        "multiple": true,
+        "search": true,
+        "browse": true,
+        "hierarchical": true,
+        "media": false
+      }
+    },
+    {
+      "source_id": "homepage.campaigns",
+      "p00_candidate_id": "homepage_campaign",
+      "label": "Campagne homepage",
+      "label_plural": "Campagnes homepage",
+      "picker_status": "PICKER_SUPPORTED",
+      "modes": {
+        "single": true,
+        "multiple": true,
+        "search": true,
+        "browse": true,
+        "hierarchical": false,
+        "media": false
+      }
+    },
+    {
+      "source_id": "experience.live_campaigns",
+      "p00_candidate_id": "live_experience_campaign",
+      "label": "Campagne Live Experience",
+      "label_plural": "Campagnes Live Experience",
+      "picker_status": "PICKER_SUPPORTED",
+      "modes": {
+        "single": true,
+        "multiple": true,
+        "search": true,
+        "browse": true,
+        "hierarchical": false,
+        "media": false
+      }
+    },
+    {
+      "source_id": "audience.segments",
+      "p00_candidate_id": "audience_segment",
+      "label": "Audience / segment",
+      "label_plural": "Audiences et segments",
+      "picker_status": "PICKER_SUPPORTED",
+      "modes": {
+        "single": true,
+        "multiple": true,
+        "search": true,
+        "browse": true,
+        "hierarchical": false,
+        "media": false
+      }
+    },
+    {
+      "source_id": "context.territories",
+      "p00_candidate_id": "territory",
+      "label": "Territoire",
+      "label_plural": "Territoires",
+      "picker_status": "PICKER_SUPPORTED",
+      "modes": {
+        "single": true,
+        "multiple": true,
+        "search": true,
+        "browse": true,
+        "hierarchical": true,
+        "media": false
+      }
+    },
+    {
+      "source_id": "academy.programmes",
+      "p00_candidate_id": "academy_program",
+      "label": "Programme Academy",
+      "label_plural": "Programmes Academy",
+      "picker_status": "PICKER_SUPPORTED",
+      "modes": {
+        "single": true,
+        "multiple": true,
+        "search": true,
+        "browse": true,
+        "hierarchical": false,
+        "media": false
+      }
+    },
+    {
+      "source_id": "academy.cohorts",
+      "p00_candidate_id": "academy_cohort",
+      "label": "Cohorte Academy",
+      "label_plural": "Cohortes Academy",
+      "picker_status": "PICKER_SUPPORTED",
+      "modes": {
+        "single": true,
+        "multiple": true,
+        "search": true,
+        "browse": true,
+        "hierarchical": false,
+        "media": false
+      }
+    },
+    {
+      "source_id": "providers.profiles",
+      "p00_candidate_id": "provider_profile",
+      "label": "Provider",
+      "label_plural": "Providers",
+      "picker_status": "PICKER_SUPPORTED",
+      "modes": {
+        "single": true,
+        "multiple": true,
+        "search": true,
+        "browse": true,
+        "hierarchical": false,
+        "media": false
+      }
+    },
+    {
+      "source_id": "commerce.promotions",
+      "p00_candidate_id": "promotion",
+      "label": "Promotion",
+      "label_plural": "Promotions",
+      "picker_status": "PICKER_SUPPORTED",
+      "modes": {
+        "single": true,
+        "multiple": true,
+        "search": true,
+        "browse": true,
+        "hierarchical": false,
+        "media": false
+      }
+    },
+    {
+      "source_id": "partners.plans",
+      "p00_candidate_id": "partner_plan",
+      "label": "Plan partenaire",
+      "label_plural": "Plans partenaires",
+      "picker_status": "PICKER_SUPPORTED",
+      "modes": {
+        "single": true,
+        "multiple": true,
+        "search": true,
+        "browse": true,
+        "hierarchical": false,
+        "media": false
+      }
+    },
+    {
+      "source_id": "b2b.programmes",
+      "p00_candidate_id": "b2b_program",
+      "label": "Programme B2B",
+      "label_plural": "Programmes B2B",
+      "picker_status": "PICKER_SUPPORTED",
+      "modes": {
+        "single": true,
+        "multiple": true,
+        "search": true,
+        "browse": true,
+        "hierarchical": false,
+        "media": false
+      }
+    },
+    {
+      "source_id": "trust.claims",
+      "p00_candidate_id": "trust_claim",
+      "label": "Preuve / badge confiance",
+      "label_plural": "Preuves et badges confiance",
+      "picker_status": "PICKER_SUPPORTED",
+      "modes": {
+        "single": true,
+        "multiple": true,
+        "search": true,
+        "browse": true,
+        "hierarchical": false,
+        "media": false
+      }
+    },
+    {
+      "source_id": "navigation.destinations",
+      "p00_candidate_id": "navigation_destination",
+      "label": "Destination interne",
+      "label_plural": "Destinations internes",
+      "picker_status": "PICKER_SUPPORTED",
+      "modes": {
+        "single": true,
+        "multiple": false,
+        "search": true,
+        "browse": true,
+        "hierarchical": false,
+        "media": false
+      }
+    }
+  ]
+}

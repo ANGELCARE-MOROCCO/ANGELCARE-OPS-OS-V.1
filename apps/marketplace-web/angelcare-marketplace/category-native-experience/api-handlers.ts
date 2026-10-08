@@ -1,3 +1,4 @@
+import type { CategoryNativeSessionCreateInput } from './types'
 import { requireMarketplaceApiContext } from '../auth/context'
 import { apiFailure, apiSuccess, parseJsonObject, requestId } from '../server/request'
 import { MarketplaceError } from '../server/errors'
@@ -116,6 +117,7 @@ export async function handleCategoryNativeSessionCreate(request: Request): Promi
       sourceRoute: body.sourceRoute ? String(body.sourceRoute) : undefined,
       territoryCode: body.territoryCode ? String(body.territoryCode) : null,
       initialConfiguration: body.initialConfiguration && typeof body.initialConfiguration === 'object' && !Array.isArray(body.initialConfiguration) ? body.initialConfiguration as Record<string, unknown> : {},
+      attribution: body.attribution && typeof body.attribution === 'object' && !Array.isArray(body.attribution) ? body.attribution as CategoryNativeSessionCreateInput['attribution'] : undefined,
     })
     return apiSuccess(session, { requestId: rid, status: 201 })
   } catch (error) { return apiFailure(error, rid) }

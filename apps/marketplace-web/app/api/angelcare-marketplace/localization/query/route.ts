@@ -1,1 +1,3 @@
-import { apiSuccess } from '@/angelcare-marketplace/server/request'; export const dynamic='force-dynamic'; export async function GET(){return apiSuccess({domain:'query',status:'registered',message:'Surface Mega ZIP 03 prête et gouvernée.'})}
+import {handleInventory} from '@/angelcare-marketplace/localization-intelligence/api-handlers'
+export const dynamic='force-dynamic'
+export const GET=handleInventory

@@ -45,7 +45,7 @@ import {
   Wrench,
   Zap,
 } from 'lucide-react'
-import AngelCareLogo from '@/components/brand/AngelCareLogo'
+import SanilaLogo from '@/components/brand/SanilaLogo'
 import type { SovereignEntity, SovereignWorkspaceSnapshot } from '../SovereignTypes'
 import styles from './ServiceIndustrialMissionNetwork.module.css'
 
@@ -200,7 +200,7 @@ export default function ServiceIndustrialMissionNetwork({ snapshot, onOpen }: Pr
     <div className={styles.network} data-view={activeView} data-motion={visible ? 'active' : 'paused'}>
       <header className={styles.authorityCrown}>
         <div className={styles.brandIdentity}>
-          <AngelCareLogo size="md" priority />
+          <SanilaLogo variant="white" width={134} height={47} priority />
           <div>
             <span>Service Industrial</span>
             <strong>Mission Network</strong>

@@ -1,0 +1,48 @@
+{
+  "phase": "P08",
+  "policy": "fail closed to Category-Native",
+  "matrix": [
+    {
+      "condition": "no resolved published template",
+      "reason": "NO_RESOLVED_TEMPLATE",
+      "result": "Category-Native"
+    },
+    {
+      "condition": "published revision unavailable",
+      "reason": "BOUND_TEMPLATE_UNAVAILABLE",
+      "result": "Category-Native"
+    },
+    {
+      "condition": "unknown/incompatible live binding",
+      "reason": "BINDING_BLOCKER",
+      "result": "Category-Native"
+    },
+    {
+      "condition": "invalid/non-public/error dynamic source",
+      "reason": "DYNAMIC_SOURCE_BLOCKER",
+      "result": "Category-Native"
+    },
+    {
+      "condition": "invalid/unpublished/unsafe structured action",
+      "reason": "ACTION_BLOCKER",
+      "result": "Category-Native"
+    },
+    {
+      "condition": "invalid/missing-target workflow",
+      "reason": "WORKFLOW_BLOCKER",
+      "result": "Category-Native"
+    },
+    {
+      "condition": "empty assigned template",
+      "reason": "EMPTY_TEMPLATE",
+      "result": "Category-Native"
+    },
+    {
+      "condition": "unexpected runtime preparation error",
+      "reason": "RUNTIME_ERROR",
+      "result": "Category-Native"
+    }
+  ],
+  "silent_partial_render": false,
+  "shadow_runtime": false
+}

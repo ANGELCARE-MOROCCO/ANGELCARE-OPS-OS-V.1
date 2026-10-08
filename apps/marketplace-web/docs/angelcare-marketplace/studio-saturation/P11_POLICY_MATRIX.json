@@ -1,0 +1,101 @@
+{
+  "schema_version": "2026-09-20.P11",
+  "rules": [
+    {
+      "rule": "RBAC_PERMISSION",
+      "draft": true,
+      "preview": true,
+      "publish": true,
+      "template_assignment": true,
+      "public_runtime": true
+    },
+    {
+      "rule": "MUTATION_AUTHORITY",
+      "draft": true,
+      "preview": true,
+      "publish": true,
+      "template_assignment": true,
+      "public_runtime": true
+    },
+    {
+      "rule": "DOCUMENT_INTEGRITY",
+      "draft": true,
+      "preview": true,
+      "publish": true,
+      "template_assignment": true,
+      "public_runtime": true
+    },
+    {
+      "rule": "SOURCE_REFERENCE_VALIDITY",
+      "draft": false,
+      "preview": true,
+      "publish": true,
+      "template_assignment": true,
+      "public_runtime": true
+    },
+    {
+      "rule": "PAGE_LIFECYCLE",
+      "draft": false,
+      "preview": true,
+      "publish": true,
+      "template_assignment": true,
+      "public_runtime": true
+    },
+    {
+      "rule": "TEMPLATE_INTEGRITY",
+      "draft": false,
+      "preview": true,
+      "publish": true,
+      "template_assignment": true,
+      "public_runtime": true
+    },
+    {
+      "rule": "BINDING_INTEGRITY",
+      "draft": false,
+      "preview": true,
+      "publish": true,
+      "template_assignment": true,
+      "public_runtime": true
+    },
+    {
+      "rule": "DYNAMIC_SOURCE_INTEGRITY",
+      "draft": false,
+      "preview": true,
+      "publish": true,
+      "template_assignment": true,
+      "public_runtime": true
+    },
+    {
+      "rule": "ACTION_INTEGRITY",
+      "draft": false,
+      "preview": true,
+      "publish": true,
+      "template_assignment": true,
+      "public_runtime": true
+    },
+    {
+      "rule": "WORKFLOW_INTEGRITY",
+      "draft": false,
+      "preview": true,
+      "publish": true,
+      "template_assignment": true,
+      "public_runtime": true
+    },
+    {
+      "rule": "ROUTE_SAFETY",
+      "draft": true,
+      "preview": true,
+      "publish": true,
+      "template_assignment": true,
+      "public_runtime": true
+    },
+    {
+      "rule": "TERRITORY_SCOPE",
+      "draft": true,
+      "preview": true,
+      "publish": true,
+      "template_assignment": true,
+      "public_runtime": true
+    }
+  ]
+}

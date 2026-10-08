@@ -1,0 +1,15 @@
+SQL REQUIRED: YES
+
+Why:
+- Production contains both legacy angelcare360_transport_* and advanced ac360_school_transport_* authorities.
+- Advanced functions already exist, but several cross-organization / stop-route invariants are not enforced by composite foreign keys.
+- Existing open-run and event RPCs accept references that can be structurally valid yet belong to another organization.
+- The package therefore adds service-role-only guarded RPCs without creating tables or rewriting RLS.
+
+Execution order on SELF-HOSTED Supabase:
+1. 01_PREFLIGHT.sql
+2. 02_MIGRATION.sql
+3. 03_POSTCHECK.sql
+
+Do not run 04_ROLLBACK.sql unless intentionally reversing this package.
+Fresh schema SHA256: 94947c54f8702d2ee17cdbd8142549af5ec4b6b8df57dba64ba8be3cb9d63d8c

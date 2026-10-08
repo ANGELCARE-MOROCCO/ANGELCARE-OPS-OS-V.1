@@ -1,0 +1,926 @@
+{
+  "schemaVersion": "2026-09-20.HOMEPAGE-PRO-MAX.WORLD01",
+  "worldId": "ac.home.family.hypercommerce.01",
+  "name": "AngelCare Mega Home World 01 — Famille & Bébé Hyper-Commerce",
+  "type": "FULL_PAGE_WORLD",
+  "approvedReference": {
+    "file": "public/angelcare-marketplace/studio/homepage-pro-max/world-01-reference.png",
+    "width": 841,
+    "height": 1870,
+    "sha256": "37a379977685225be5313d10b73ca12c4c0621daccce7ea5cb03ea992f4c7f6d"
+  },
+  "canonicalDesignFrame": {
+    "width": 1440,
+    "height": 3202,
+    "sourceScale": 1.7122473246135552
+  },
+  "insertion": {
+    "libraryGroup": "11 · HOMEPAGE PRO MAX",
+    "defaultMode": "REPLACE_PAGE",
+    "alternateMode": "INSERT_COMPOSITION",
+    "afterApply": "FULLY_EDITABLE_PUCK_TREE"
+  },
+  "brand": {
+    "logoPolicy": "OFFICIAL_ASSET_ONLY",
+    "logoTransformation": "crop/mask only to remove Corporate Care subtitle and yellow underline; never redraw/recolor/approximate the ANGEL CARE wordmark or symbols",
+    "background": "#FFFFFF",
+    "primaryNavy": "#092E73",
+    "commercePink": "#FF2D6F",
+    "actionBlue": "#0875F5",
+    "successGreen": "#12A56B",
+    "warningAmber": "#FFA51F",
+    "softBlue": "#EFF7FF",
+    "softPink": "#FFF1F6",
+    "radiusScale": [
+      8,
+      12,
+      16,
+      24
+    ],
+    "shadowPolicy": "soft/elevated only on cards, hero overlays and sticky layers"
+  },
+  "grid": {
+    "desktopColumns": 12,
+    "desktopMaxContent": 1360,
+    "desktopOuterGutter": 40,
+    "columnGap": 16,
+    "sectionGap": 18,
+    "mobileColumns": 4,
+    "mobileGutter": 16,
+    "mobileGap": 10
+  },
+  "sections": [
+    {
+      "id": "S00",
+      "component": "UrgencyBar",
+      "label": "Bandeau d’urgence commercial",
+      "referencePx": {
+        "x": 0,
+        "y": 0,
+        "width": 841,
+        "height": 28
+      },
+      "canonical1440Px": {
+        "x": 0,
+        "y": 0,
+        "width": 1440,
+        "height": 48
+      },
+      "layout": "full",
+      "dataClass": "campaign",
+      "adminControls": [
+        "visibility",
+        "schedule",
+        "audience",
+        "territory",
+        "title",
+        "subtitle",
+        "sourceMode",
+        "sourceRef",
+        "sort",
+        "limit",
+        "cta",
+        "density",
+        "background",
+        "desktopLayout",
+        "mobileLayout",
+        "emptyPolicy"
+      ],
+      "states": [
+        "loading",
+        "ready",
+        "empty",
+        "partial",
+        "error",
+        "fallback"
+      ]
+    },
+    {
+      "id": "S01",
+      "component": "CommerceHeader",
+      "label": "Header principal + logo + recherche + compte/favoris/panier",
+      "referencePx": {
+        "x": 0,
+        "y": 28,
+        "width": 841,
+        "height": 50
+      },
+      "canonical1440Px": {
+        "x": 0,
+        "y": 48,
+        "width": 1440,
+        "height": 86
+      },
+      "layout": "full",
+      "dataClass": "mixed",
+      "adminControls": [
+        "visibility",
+        "schedule",
+        "audience",
+        "territory",
+        "title",
+        "subtitle",
+        "sourceMode",
+        "sourceRef",
+        "sort",
+        "limit",
+        "cta",
+        "density",
+        "background",
+        "desktopLayout",
+        "mobileLayout",
+        "emptyPolicy"
+      ],
+      "states": [
+        "loading",
+        "ready",
+        "empty",
+        "partial",
+        "error",
+        "fallback"
+      ]
+    },
+    {
+      "id": "S02",
+      "component": "PrimaryNav",
+      "label": "Navigation familles/catégories",
+      "referencePx": {
+        "x": 0,
+        "y": 78,
+        "width": 841,
+        "height": 17
+      },
+      "canonical1440Px": {
+        "x": 0,
+        "y": 134,
+        "width": 1440,
+        "height": 29
+      },
+      "layout": "full",
+      "dataClass": "taxonomy",
+      "adminControls": [
+        "visibility",
+        "schedule",
+        "audience",
+        "territory",
+        "title",
+        "subtitle",
+        "sourceMode",
+        "sourceRef",
+        "sort",
+        "limit",
+        "cta",
+        "density",
+        "background",
+        "desktopLayout",
+        "mobileLayout",
+        "emptyPolicy"
+      ],
+      "states": [
+        "loading",
+        "ready",
+        "empty",
+        "partial",
+        "error",
+        "fallback"
+      ]
+    },
+    {
+      "id": "S03",
+      "component": "HeroFamilyCommerce",
+      "label": "Hero famille + proposition de valeur + communauté",
+      "referencePx": {
+        "x": 0,
+        "y": 95,
+        "width": 841,
+        "height": 221
+      },
+      "canonical1440Px": {
+        "x": 0,
+        "y": 163,
+        "width": 1440,
+        "height": 378
+      },
+      "layout": "full",
+      "dataClass": "campaign",
+      "adminControls": [
+        "visibility",
+        "schedule",
+        "audience",
+        "territory",
+        "title",
+        "subtitle",
+        "sourceMode",
+        "sourceRef",
+        "sort",
+        "limit",
+        "cta",
+        "density",
+        "background",
+        "desktopLayout",
+        "mobileLayout",
+        "emptyPolicy"
+      ],
+      "states": [
+        "loading",
+        "ready",
+        "empty",
+        "partial",
+        "error",
+        "fallback"
+      ]
+    },
+    {
+      "id": "S04",
+      "component": "TrustProofStrip",
+      "label": "Preuves de confiance / livraison / paiement / retours / écoute",
+      "referencePx": {
+        "x": 0,
+        "y": 316,
+        "width": 841,
+        "height": 42
+      },
+      "canonical1440Px": {
+        "x": 0,
+        "y": 541,
+        "width": 1440,
+        "height": 72
+      },
+      "layout": "full",
+      "dataClass": "trust",
+      "adminControls": [
+        "visibility",
+        "schedule",
+        "audience",
+        "territory",
+        "title",
+        "subtitle",
+        "sourceMode",
+        "sourceRef",
+        "sort",
+        "limit",
+        "cta",
+        "density",
+        "background",
+        "desktopLayout",
+        "mobileLayout",
+        "emptyPolicy"
+      ],
+      "states": [
+        "loading",
+        "ready",
+        "empty",
+        "partial",
+        "error",
+        "fallback"
+      ]
+    },
+    {
+      "id": "S05",
+      "component": "CategoryIconRail",
+      "label": "Rail d’accès rapide aux univers",
+      "referencePx": {
+        "x": 0,
+        "y": 358,
+        "width": 841,
+        "height": 56
+      },
+      "canonical1440Px": {
+        "x": 0,
+        "y": 613,
+        "width": 1440,
+        "height": 96
+      },
+      "layout": "12-grid",
+      "dataClass": "taxonomy",
+      "adminControls": [
+        "visibility",
+        "schedule",
+        "audience",
+        "territory",
+        "title",
+        "subtitle",
+        "sourceMode",
+        "sourceRef",
+        "sort",
+        "limit",
+        "cta",
+        "density",
+        "background",
+        "desktopLayout",
+        "mobileLayout",
+        "emptyPolicy"
+      ],
+      "states": [
+        "loading",
+        "ready",
+        "empty",
+        "partial",
+        "error",
+        "fallback"
+      ]
+    },
+    {
+      "id": "S06",
+      "component": "PromoTriptych",
+      "label": "Trois panneaux promotionnels/editoriaux",
+      "referencePx": {
+        "x": 0,
+        "y": 414,
+        "width": 841,
+        "height": 79
+      },
+      "canonical1440Px": {
+        "x": 0,
+        "y": 709,
+        "width": 1440,
+        "height": 135
+      },
+      "layout": "3-col",
+      "dataClass": "campaign",
+      "adminControls": [
+        "visibility",
+        "schedule",
+        "audience",
+        "territory",
+        "title",
+        "subtitle",
+        "sourceMode",
+        "sourceRef",
+        "sort",
+        "limit",
+        "cta",
+        "density",
+        "background",
+        "desktopLayout",
+        "mobileLayout",
+        "emptyPolicy"
+      ],
+      "states": [
+        "loading",
+        "ready",
+        "empty",
+        "partial",
+        "error",
+        "fallback"
+      ]
+    },
+    {
+      "id": "S07",
+      "component": "FlashDealsShelf",
+      "label": "Offres flash / promotions produits",
+      "referencePx": {
+        "x": 0,
+        "y": 493,
+        "width": 841,
+        "height": 183
+      },
+      "canonical1440Px": {
+        "x": 0,
+        "y": 844,
+        "width": 1440,
+        "height": 313
+      },
+      "layout": "main+rail",
+      "dataClass": "catalog",
+      "adminControls": [
+        "visibility",
+        "schedule",
+        "audience",
+        "territory",
+        "title",
+        "subtitle",
+        "sourceMode",
+        "sourceRef",
+        "sort",
+        "limit",
+        "cta",
+        "density",
+        "background",
+        "desktopLayout",
+        "mobileLayout",
+        "emptyPolicy"
+      ],
+      "states": [
+        "loading",
+        "ready",
+        "empty",
+        "partial",
+        "error",
+        "fallback"
+      ]
+    },
+    {
+      "id": "S08",
+      "component": "ServiceAvailabilityShelf",
+      "label": "Services disponibles cette semaine + aide humaine",
+      "referencePx": {
+        "x": 0,
+        "y": 676,
+        "width": 841,
+        "height": 144
+      },
+      "canonical1440Px": {
+        "x": 0,
+        "y": 1157,
+        "width": 1440,
+        "height": 247
+      },
+      "layout": "main+aside",
+      "dataClass": "services",
+      "adminControls": [
+        "visibility",
+        "schedule",
+        "audience",
+        "territory",
+        "title",
+        "subtitle",
+        "sourceMode",
+        "sourceRef",
+        "sort",
+        "limit",
+        "cta",
+        "density",
+        "background",
+        "desktopLayout",
+        "mobileLayout",
+        "emptyPolicy"
+      ],
+      "states": [
+        "loading",
+        "ready",
+        "empty",
+        "partial",
+        "error",
+        "fallback"
+      ]
+    },
+    {
+      "id": "S09",
+      "component": "FamilyPacksAndBestSellers",
+      "label": "Packs famille & bébé + meilleures ventes",
+      "referencePx": {
+        "x": 0,
+        "y": 820,
+        "width": 841,
+        "height": 150
+      },
+      "canonical1440Px": {
+        "x": 0,
+        "y": 1404,
+        "width": 1440,
+        "height": 257
+      },
+      "layout": "2-col",
+      "dataClass": "catalog",
+      "adminControls": [
+        "visibility",
+        "schedule",
+        "audience",
+        "territory",
+        "title",
+        "subtitle",
+        "sourceMode",
+        "sourceRef",
+        "sort",
+        "limit",
+        "cta",
+        "density",
+        "background",
+        "desktopLayout",
+        "mobileLayout",
+        "emptyPolicy"
+      ],
+      "states": [
+        "loading",
+        "ready",
+        "empty",
+        "partial",
+        "error",
+        "fallback"
+      ]
+    },
+    {
+      "id": "S10",
+      "component": "AcademyUrgency",
+      "label": "Formations Academy dernières places + bannière",
+      "referencePx": {
+        "x": 0,
+        "y": 970,
+        "width": 841,
+        "height": 160
+      },
+      "canonical1440Px": {
+        "x": 0,
+        "y": 1661,
+        "width": 1440,
+        "height": 274
+      },
+      "layout": "main+aside",
+      "dataClass": "academy",
+      "adminControls": [
+        "visibility",
+        "schedule",
+        "audience",
+        "territory",
+        "title",
+        "subtitle",
+        "sourceMode",
+        "sourceRef",
+        "sort",
+        "limit",
+        "cta",
+        "density",
+        "background",
+        "desktopLayout",
+        "mobileLayout",
+        "emptyPolicy"
+      ],
+      "states": [
+        "loading",
+        "ready",
+        "empty",
+        "partial",
+        "error",
+        "fallback"
+      ]
+    },
+    {
+      "id": "S11",
+      "component": "B2BSectorSolutions",
+      "label": "Solutions par secteur + demande de devis",
+      "referencePx": {
+        "x": 0,
+        "y": 1130,
+        "width": 841,
+        "height": 105
+      },
+      "canonical1440Px": {
+        "x": 0,
+        "y": 1935,
+        "width": 1440,
+        "height": 180
+      },
+      "layout": "main+aside",
+      "dataClass": "b2b",
+      "adminControls": [
+        "visibility",
+        "schedule",
+        "audience",
+        "territory",
+        "title",
+        "subtitle",
+        "sourceMode",
+        "sourceRef",
+        "sort",
+        "limit",
+        "cta",
+        "density",
+        "background",
+        "desktopLayout",
+        "mobileLayout",
+        "emptyPolicy"
+      ],
+      "states": [
+        "loading",
+        "ready",
+        "empty",
+        "partial",
+        "error",
+        "fallback"
+      ]
+    },
+    {
+      "id": "S12",
+      "component": "GuidesAndExperts",
+      "label": "Guides conseils + experts recommandés",
+      "referencePx": {
+        "x": 0,
+        "y": 1235,
+        "width": 841,
+        "height": 115
+      },
+      "canonical1440Px": {
+        "x": 0,
+        "y": 2115,
+        "width": 1440,
+        "height": 197
+      },
+      "layout": "2-col",
+      "dataClass": "content+people",
+      "adminControls": [
+        "visibility",
+        "schedule",
+        "audience",
+        "territory",
+        "title",
+        "subtitle",
+        "sourceMode",
+        "sourceRef",
+        "sort",
+        "limit",
+        "cta",
+        "density",
+        "background",
+        "desktopLayout",
+        "mobileLayout",
+        "emptyPolicy"
+      ],
+      "states": [
+        "loading",
+        "ready",
+        "empty",
+        "partial",
+        "error",
+        "fallback"
+      ]
+    },
+    {
+      "id": "S13",
+      "component": "CollectionsAndNewArrivals",
+      "label": "Collections thématiques + nouveautés",
+      "referencePx": {
+        "x": 0,
+        "y": 1350,
+        "width": 841,
+        "height": 125
+      },
+      "canonical1440Px": {
+        "x": 0,
+        "y": 2312,
+        "width": 1440,
+        "height": 214
+      },
+      "layout": "2-col",
+      "dataClass": "catalog",
+      "adminControls": [
+        "visibility",
+        "schedule",
+        "audience",
+        "territory",
+        "title",
+        "subtitle",
+        "sourceMode",
+        "sourceRef",
+        "sort",
+        "limit",
+        "cta",
+        "density",
+        "background",
+        "desktopLayout",
+        "mobileLayout",
+        "emptyPolicy"
+      ],
+      "states": [
+        "loading",
+        "ready",
+        "empty",
+        "partial",
+        "error",
+        "fallback"
+      ]
+    },
+    {
+      "id": "S14",
+      "component": "CommunityAppWelcome",
+      "label": "Communauté + application + offre première commande",
+      "referencePx": {
+        "x": 0,
+        "y": 1475,
+        "width": 841,
+        "height": 119
+      },
+      "canonical1440Px": {
+        "x": 0,
+        "y": 2526,
+        "width": 1440,
+        "height": 204
+      },
+      "layout": "3-col",
+      "dataClass": "engagement",
+      "adminControls": [
+        "visibility",
+        "schedule",
+        "audience",
+        "territory",
+        "title",
+        "subtitle",
+        "sourceMode",
+        "sourceRef",
+        "sort",
+        "limit",
+        "cta",
+        "density",
+        "background",
+        "desktopLayout",
+        "mobileLayout",
+        "emptyPolicy"
+      ],
+      "states": [
+        "loading",
+        "ready",
+        "empty",
+        "partial",
+        "error",
+        "fallback"
+      ]
+    },
+    {
+      "id": "S15",
+      "component": "CommitmentsAndTrustMarks",
+      "label": "Engagements + logos de confiance",
+      "referencePx": {
+        "x": 0,
+        "y": 1594,
+        "width": 841,
+        "height": 74
+      },
+      "canonical1440Px": {
+        "x": 0,
+        "y": 2729,
+        "width": 1440,
+        "height": 127
+      },
+      "layout": "2-col",
+      "dataClass": "trust",
+      "adminControls": [
+        "visibility",
+        "schedule",
+        "audience",
+        "territory",
+        "title",
+        "subtitle",
+        "sourceMode",
+        "sourceRef",
+        "sort",
+        "limit",
+        "cta",
+        "density",
+        "background",
+        "desktopLayout",
+        "mobileLayout",
+        "emptyPolicy"
+      ],
+      "states": [
+        "loading",
+        "ready",
+        "empty",
+        "partial",
+        "error",
+        "fallback"
+      ]
+    },
+    {
+      "id": "S16",
+      "component": "FAQTestimonialMission",
+      "label": "FAQ + témoignage + mission AngelCare",
+      "referencePx": {
+        "x": 0,
+        "y": 1668,
+        "width": 841,
+        "height": 118
+      },
+      "canonical1440Px": {
+        "x": 0,
+        "y": 2856,
+        "width": 1440,
+        "height": 202
+      },
+      "layout": "3-col",
+      "dataClass": "trust+content",
+      "adminControls": [
+        "visibility",
+        "schedule",
+        "audience",
+        "territory",
+        "title",
+        "subtitle",
+        "sourceMode",
+        "sourceRef",
+        "sort",
+        "limit",
+        "cta",
+        "density",
+        "background",
+        "desktopLayout",
+        "mobileLayout",
+        "emptyPolicy"
+      ],
+      "states": [
+        "loading",
+        "ready",
+        "empty",
+        "partial",
+        "error",
+        "fallback"
+      ]
+    },
+    {
+      "id": "S17",
+      "component": "MegaFooter",
+      "label": "Footer marque + univers + aide + social + newsletter",
+      "referencePx": {
+        "x": 0,
+        "y": 1786,
+        "width": 841,
+        "height": 84
+      },
+      "canonical1440Px": {
+        "x": 0,
+        "y": 3058,
+        "width": 1440,
+        "height": 144
+      },
+      "layout": "full",
+      "dataClass": "navigation",
+      "adminControls": [
+        "visibility",
+        "schedule",
+        "audience",
+        "territory",
+        "title",
+        "subtitle",
+        "sourceMode",
+        "sourceRef",
+        "sort",
+        "limit",
+        "cta",
+        "density",
+        "background",
+        "desktopLayout",
+        "mobileLayout",
+        "emptyPolicy"
+      ],
+      "states": [
+        "loading",
+        "ready",
+        "empty",
+        "partial",
+        "error",
+        "fallback"
+      ]
+    }
+  ],
+  "truthRules": {
+    "prices": "must come from canonical catalog authority; currency MAD/Dhs only",
+    "discounts": "show only when governed promotional price/compare-at price is valid",
+    "countdowns": "show only when campaign has real starts_at/ends_at; hide at expiry",
+    "stockBadges": "show only from real inventory/availability authority",
+    "academyCapacity": "Dernières places only from real remaining capacity",
+    "ratingsReviews": "show only from real review authority",
+    "trustCounts": "hide unless approved live KPI source exists",
+    "partnerLogos": "approved partner/media asset only",
+    "fakeData": "FORBIDDEN"
+  },
+  "authorityRules": {
+    "catalog": "P01 registered canonical catalog sources",
+    "media": "media.assets / Media Vault",
+    "templates": "Experience Core published template revision",
+    "actions": "P03 structured action registry",
+    "bindings": "P05 live binding engine",
+    "dynamic": "P06 dynamic source engine",
+    "workflows": "P07 native workflows/conversion",
+    "publicRuntime": "P08 orchestrator",
+    "governance": "P11 fail-closed policy",
+    "freshness": "P12 dependency/cache invalidation"
+  },
+  "nonNegotiables": [
+    "no localStorage authority",
+    "no duplicated business facts",
+    "no raw IDs in normal admin UX",
+    "no fake price/stock/review/urgency",
+    "no iframe/template black box",
+    "all blocks remain editable after page-world apply",
+    "mobile is separately composed, not desktop squeezed",
+    "unknown/invalid canonical references fail closed"
+  ],
+  "responsive": {
+    "desktop": ">=1280: canonical dense 12-column world",
+    "laptop": "1024-1279: preserve section order; reduce card counts; right rails collapse selectively",
+    "tablet": "768-1023: 8-column, stacked hero, horizontal rails, sidebars move below primary content",
+    "mobile": "<=767: dedicated 4-column commerce world; bottom commerce navigation; swipe shelves; sticky actions; no horizontal overflow"
+  },
+  "acceptance": {
+    "visualReferenceMatch": "target <= 2% major-layout deviation at canonical viewport after real data substitution",
+    "allSectionsEditable": true,
+    "realDataOnly": true,
+    "allActionsResolvable": true,
+    "emptyStatesDesigned": true,
+    "keyboardUsable": true,
+    "reducedMotionSupported": true,
+    "publicFallbackSafe": true
+  },
+  "category": {
+    "id": "homepage_pro_max",
+    "ordinal": 11,
+    "label": "HOMEPAGE PRO MAX",
+    "legacyVisualCategoriesPreserved": 10
+  },
+  "worldContract": {
+    "stableId": "ac.homepage.pro-max.family-commerce.01",
+    "revision": 1,
+    "sectionCount": 18,
+    "pageTree": "EDITABLE_PUCK_ROOT_SECTIONS",
+    "monolith": false
+  }
+}

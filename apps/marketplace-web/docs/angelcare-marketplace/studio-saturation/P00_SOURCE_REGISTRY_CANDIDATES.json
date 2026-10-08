@@ -1,0 +1,185 @@
+{
+  "schema_version": 1,
+  "sources": [
+    {
+      "source_id": "catalog_item",
+      "label": "Produit / service / formation / SaaS",
+      "authority": "angelcare_marketplace_catalog_items + catalog_discovery_v",
+      "picker": "searchable_visual_single_or_multi",
+      "public_safe_projection": true,
+      "current_studio": "PARTIAL_RUNTIME_ONLY",
+      "p01": "MANDATORY"
+    },
+    {
+      "source_id": "catalog_category",
+      "label": "Catégorie",
+      "authority": "angelcare_marketplace_catalog_categories",
+      "picker": "hierarchical_searchable",
+      "public_safe_projection": true,
+      "current_studio": "BASIC_SELECT",
+      "p01": "MANDATORY"
+    },
+    {
+      "source_id": "homepage_collection",
+      "label": "Collection",
+      "authority": "angelcare_marketplace_homepage_collections + items",
+      "picker": "searchable_visual",
+      "public_safe_projection": true,
+      "current_studio": "BASIC_SELECT",
+      "p01": "MANDATORY"
+    },
+    {
+      "source_id": "media_asset",
+      "label": "Media Vault",
+      "authority": "angelcare_marketplace_media_assets",
+      "picker": "media_vault",
+      "public_safe_projection": true,
+      "current_studio": "WIRED",
+      "p01": "MANDATORY"
+    },
+    {
+      "source_id": "cms_page",
+      "label": "Page CMS / Studio",
+      "authority": "angelcare_marketplace_cms_pages",
+      "picker": "searchable_destination",
+      "public_safe_projection": true,
+      "current_studio": "NOT_PICKABLE",
+      "p01": "MANDATORY"
+    },
+    {
+      "source_id": "cms_template",
+      "label": "Template Experience Core",
+      "authority": "angelcare_marketplace_cms_templates",
+      "picker": "searchable_template",
+      "public_safe_projection": false,
+      "current_studio": "NOT_PICKABLE",
+      "p01": "MANDATORY"
+    },
+    {
+      "source_id": "cms_symbol",
+      "label": "Symbole réutilisable",
+      "authority": "angelcare_marketplace_cms_symbols",
+      "picker": "searchable_visual",
+      "public_safe_projection": true,
+      "current_studio": "NOT_PICKABLE",
+      "p01": "MANDATORY"
+    },
+    {
+      "source_id": "experience_schema",
+      "label": "Schéma Category-Native",
+      "authority": "angelcare_marketplace_experience_schemas",
+      "picker": "hierarchical_searchable",
+      "public_safe_projection": true,
+      "current_studio": "NOT_PICKABLE",
+      "p01": "MANDATORY"
+    },
+    {
+      "source_id": "homepage_campaign",
+      "label": "Campagne homepage",
+      "authority": "angelcare_marketplace_homepage_campaigns",
+      "picker": "searchable",
+      "public_safe_projection": true,
+      "current_studio": "NOT_PICKABLE",
+      "p01": "MANDATORY"
+    },
+    {
+      "source_id": "live_experience_campaign",
+      "label": "Campagne Live Experience",
+      "authority": "angelcare_marketplace_live_experience_campaigns",
+      "picker": "searchable",
+      "public_safe_projection": true,
+      "current_studio": "NOT_PICKABLE",
+      "p01": "MANDATORY"
+    },
+    {
+      "source_id": "audience_segment",
+      "label": "Audience / segment",
+      "authority": "homepage audience rules + saved segments + segment memberships",
+      "picker": "searchable",
+      "public_safe_projection": false,
+      "current_studio": "NOT_PICKABLE",
+      "p01": "MANDATORY"
+    },
+    {
+      "source_id": "territory",
+      "label": "Territoire",
+      "authority": "angelcare_marketplace_territories",
+      "picker": "hierarchical_searchable",
+      "public_safe_projection": true,
+      "current_studio": "NOT_PICKABLE",
+      "p01": "MANDATORY"
+    },
+    {
+      "source_id": "academy_program",
+      "label": "Programme Academy",
+      "authority": "angelcare_marketplace_academy_programs",
+      "picker": "searchable_visual",
+      "public_safe_projection": true,
+      "current_studio": "NOT_PICKABLE",
+      "p01": "MANDATORY"
+    },
+    {
+      "source_id": "academy_cohort",
+      "label": "Cohorte Academy",
+      "authority": "angelcare_marketplace_academy_cohorts",
+      "picker": "searchable",
+      "public_safe_projection": true,
+      "current_studio": "NOT_PICKABLE",
+      "p01": "OPTIONAL_ADVANCED"
+    },
+    {
+      "source_id": "provider_profile",
+      "label": "Provider",
+      "authority": "angelcare_marketplace_provider_profiles",
+      "picker": "searchable_public_projection",
+      "public_safe_projection": true,
+      "current_studio": "NOT_PICKABLE",
+      "p01": "MANDATORY_FOR_TRUST_USE_CASES"
+    },
+    {
+      "source_id": "promotion",
+      "label": "Promotion",
+      "authority": "angelcare_marketplace_promotions",
+      "picker": "searchable",
+      "public_safe_projection": true,
+      "current_studio": "NOT_PICKABLE",
+      "p01": "ADVANCED"
+    },
+    {
+      "source_id": "partner_plan",
+      "label": "Plan partenaire",
+      "authority": "angelcare_marketplace_partner_plans",
+      "picker": "searchable",
+      "public_safe_projection": true,
+      "current_studio": "NOT_PICKABLE",
+      "p01": "ADVANCED"
+    },
+    {
+      "source_id": "b2b_program",
+      "label": "Programme B2B",
+      "authority": "angelcare_marketplace_b2b_programs",
+      "picker": "searchable",
+      "public_safe_projection": true,
+      "current_studio": "NOT_PICKABLE",
+      "p01": "ADVANCED"
+    },
+    {
+      "source_id": "trust_claim",
+      "label": "Preuve / badge confiance",
+      "authority": "trust badge issuances + trust evidence",
+      "picker": "verified_public_claims",
+      "public_safe_projection": true,
+      "current_studio": "NOT_PICKABLE",
+      "p01": "MANDATORY_FOR_TRUST_BLOCKS"
+    },
+    {
+      "source_id": "navigation_destination",
+      "label": "Destination interne",
+      "authority": "public navigation + CMS/catalog route registries",
+      "picker": "destination_picker",
+      "public_safe_projection": true,
+      "current_studio": "RAW_HREF",
+      "p01": "MANDATORY"
+    }
+  ]
+}

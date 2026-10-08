@@ -1,10 +1,12 @@
 import { redirect } from 'next/navigation'
+import { headers } from 'next/headers'
 import { createServiceClient, createUserClient } from '@/lib/supabase/server'
 import type { CatalogLocale } from '../catalog-discovery/types'
 import type { MarketplacePermission, MarketplaceRequestContext } from '../domain/types'
 import { MarketplaceError } from '../server/errors'
 import { emailValue, localeValue, passwordValue, phoneValue, requiredText } from './validation'
 import type { CustomerAccount, CustomerContext } from './types'
+import { CUSTOMER_ACCESS_REVISION, customerReturnTo } from './auth-navigation'
 
 const CUSTOMER_PERMISSIONS: MarketplacePermission[] = [
   'marketplace.workspace.access',
@@ -19,6 +21,11 @@ const CUSTOMER_PERMISSIONS: MarketplacePermission[] = [
   'marketplace.family.profile.manage',
   'marketplace.family.children.view',
   'marketplace.family.children.manage',
+  'marketplace.family.diagnostics.create',
+  'marketplace.family.diagnostics.view',
+  'marketplace.family.requests.create',
+  'marketplace.family.requests.view',
+  'marketplace.family.missions.view',
   'marketplace.family.support.create',
   'marketplace.family.support.view',
 ]
@@ -70,8 +77,14 @@ export async function getCustomerContext(): Promise<CustomerContext | null> {
   if (error || !user) return null
   let account = await customerAccountByAuthId(user.id)
   if (!account) return null
+  if (!['active','pending_verification'].includes(account.status) || !user.email_confirmed_at) return null
+  if (account.status === 'pending_verification' || !account.email_verified_at) {
+    const db = await createServiceClient()
+    const { data: updated, error: syncError } = await db.from('angelcare_marketplace_customer_accounts').update({ status: 'active', email_verified_at: user.email_confirmed_at, updated_at: new Date().toISOString() }).eq('id', account.id).in('status', ['active', 'pending_verification']).select('*').maybeSingle()
+    if (syncError || !updated) throw new MarketplaceError('INTERNAL_ERROR', 'Impossible de confirmer le dossier client.', { cause: syncError })
+    account = mapAccount(updated as Row)
+  }
   account = await ensureFamilyLink(account)
-  if (!['active','pending_verification'].includes(account.status)) return null
   const marketplace: MarketplaceRequestContext = {
     actor: { id: user.id, email: account.email, displayName: account.display_name, sourceRole: 'marketplace_customer' },
     roleKeys: ['marketplace_customer'], permissions: CUSTOMER_PERMISSIONS,
@@ -89,11 +102,15 @@ export async function requireCustomerContext(): Promise<CustomerContext> {
 
 export async function requireCustomerPageContext(locale: CatalogLocale, returnTo?: string): Promise<CustomerContext> {
   const context = await getCustomerContext()
-  if (!context) redirect(`/angelcare-marketplace/${locale}/auth/login?returnTo=${encodeURIComponent(returnTo || `/angelcare-marketplace/${locale}/account`)}`)
+  if (!context) {
+    const target = customerReturnTo(returnTo || (await headers()).get('x-angelcare-customer-path'), locale)
+    redirect(`/angelcare-marketplace/${locale}/auth/login?returnTo=${encodeURIComponent(target)}`)
+  }
   return context
 }
 
-export async function registerCustomer(input: { fullName: unknown; email: unknown; phone?: unknown; password: unknown; locale?: unknown; accountKind?: unknown; returnTo?: string }): Promise<{ account: CustomerAccount | null; verificationRequired: boolean }> {
+export async function registerCustomer(input: { fullName: unknown; email: unknown; phone?: unknown; password: unknown; locale?: unknown; accountKind?: unknown; returnTo?: string; destination?: unknown; accepted?: unknown }): Promise<{ account: CustomerAccount | null; verificationRequired: boolean }> {
+  if (input.accepted !== true) throw new MarketplaceError('VALIDATION_ERROR', 'Votre accord est requis pour créer le compte.', { fieldErrors: { accepted: ['Consentement requis.'] } })
   const fullName = requiredText(input.fullName, 'fullName', 180)
   const email = emailValue(input.email)
   const phone = phoneValue(input.phone)
@@ -103,16 +120,19 @@ export async function registerCustomer(input: { fullName: unknown; email: unknow
   const userClient = await createUserClient()
   const { data, error } = await userClient.auth.signUp({
     email, password,
-    options: { data: { full_name: fullName, phone, marketplace_account_kind: accountKind, locale }, emailRedirectTo: input.returnTo },
+    options: { data: { full_name: fullName, phone, marketplace_account_kind: accountKind, locale, marketplace_return_to: customerReturnTo(input.destination, locale), marketplace_customer_consent: { version: CUSTOMER_ACCESS_REVISION, accepted_at: new Date().toISOString(), purpose: 'customer_account', marketing: false } }, emailRedirectTo: input.returnTo },
   })
   if (error) throw new MarketplaceError('CONFLICT', error.message || 'Inscription impossible.', { cause: error })
-  if (!data.user?.id) return { account: null, verificationRequired: true }
+  // Supabase can return an obfuscated user for an existing email. Do not reset an existing profile.
+  if (!data.user?.id || data.user.identities?.length === 0) return { account: null, verificationRequired: true }
+  const existing = await customerAccountByAuthId(data.user.id)
+  if (existing) return { account: null, verificationRequired: true }
   const db = await createServiceClient()
-  const { data: row, error: accountError } = await db.from('angelcare_marketplace_customer_accounts').upsert({
+  const { data: row, error: accountError } = await db.from('angelcare_marketplace_customer_accounts').insert({
     auth_user_id: data.user.id, account_kind: accountKind, status: data.user.email_confirmed_at ? 'active' : 'pending_verification',
     display_name: fullName, email, phone, preferred_locale: locale,
     email_verified_at: data.user.email_confirmed_at || null, premium_status: false, updated_at: new Date().toISOString(),
-  }, { onConflict: 'auth_user_id' }).select('*').single()
+  }).select('*').single()
   if (accountError || !row) throw new MarketplaceError('INTERNAL_ERROR', 'Le compte sécurisé existe, mais son dossier Marketplace n’a pas pu être initialisé.', { cause: accountError })
   return { account: mapAccount(row as Row), verificationRequired: !data.session }
 }
@@ -123,12 +143,16 @@ export async function loginCustomer(input: { email: unknown; password: unknown }
   if (error || !data.user) throw new MarketplaceError('AUTHENTICATION_REQUIRED', 'Email ou mot de passe incorrect.', { cause: error })
   const account = await customerAccountByAuthId(data.user.id)
   if (!account) throw new MarketplaceError('CONFIGURATION_ERROR', 'Le compte existe mais son dossier Marketplace est introuvable.')
-  if (account.status === 'suspended' || account.status === 'closed') throw new MarketplaceError('PERMISSION_DENIED', 'Ce compte ne peut pas se connecter actuellement.')
+  if (account.status === 'suspended' || account.status === 'closed' || !data.user.email_confirmed_at) {
+    await userClient.auth.signOut({ scope: 'local' })
+    throw new MarketplaceError('PERMISSION_DENIED', 'Ce compte ne peut pas se connecter actuellement.')
+  }
   const db = await createServiceClient()
-  await db.from('angelcare_marketplace_customer_accounts').update({
+  const { error: syncError } = await db.from('angelcare_marketplace_customer_accounts').update({
     status: 'active', email_verified_at: data.user.email_confirmed_at || account.email_verified_at,
     last_login_at: new Date().toISOString(), updated_at: new Date().toISOString(),
   }).eq('id', account.id)
+  if (syncError) throw new MarketplaceError('INTERNAL_ERROR', 'Impossible de confirmer le dossier client.', { cause: syncError })
   return { ...account, status: 'active', email_verified_at: data.user.email_confirmed_at || account.email_verified_at }
 }
 
@@ -145,6 +169,7 @@ export async function requestCustomerRecovery(email: unknown, redirectTo: string
 }
 
 export async function updateCustomerPassword(password: unknown): Promise<void> {
+  await requireCustomerContext()
   const userClient = await createUserClient()
   const { error } = await userClient.auth.updateUser({ password: passwordValue(password) })
   if (error) throw new MarketplaceError('INTERNAL_ERROR', 'Impossible de mettre à jour le mot de passe.', { cause: error })

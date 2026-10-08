@@ -104,6 +104,9 @@ function mapJourney(row: Row): MarketplaceJourney {
     scheduled_start_at: nullableText(row.scheduled_start_at), scheduled_end_at: nullableText(row.scheduled_end_at),
     completed_at: nullableText(row.completed_at), financial_status: objectValue(row.financial_status),
     fulfillment_status: objectValue(row.fulfillment_status), customer_context: objectValue(row.customer_context),
+    metadata: objectValue(row.metadata), customer_account_id: nullableText(row.customer_account_id),
+    creation_source: text(row.creation_source) || 'customer_checkout',
+    assisted_order_payload: objectValue(row.assisted_order_payload),
     events: asRows(row.events).map(mapEvent), actions: asRows(row.actions).map(mapAction),
     documents: asRows(row.documents).map(mapDocument), notifications: asRows(row.notifications).map(mapNotification),
     change_requests: asRows(row.change_requests).map(mapChangeRequest), recovery_cases: asRows(row.recovery_cases).map(mapRecovery),
@@ -130,7 +133,15 @@ async function customerJourneyRows(context: MarketplaceRequestContext): Promise<
   const db = await createServiceClient()
   const familyId = await familyAccountId(context.actor.id)
   let query = db.from('angelcare_marketplace_journeys').select(detailSelect).order('updated_at', { ascending: false })
-  if (context.tenantId) query = query.eq('tenant_id', context.tenantId)
+  if (context.actor.sourceRole === 'marketplace_customer') {
+    const { data: account, error: accountError } = await db.from('angelcare_marketplace_customer_accounts').select('id').eq('auth_user_id', context.actor.id).maybeSingle()
+    if (accountError) throw fail('résoudre le propriétaire client', accountError)
+    const owners = [`owner_user_id.eq.${context.actor.id}`]
+    if (familyId) owners.push(`family_account_id.eq.${familyId}`)
+    if (account?.id) owners.push(`customer_account_id.eq.${account.id}`)
+    query = query.or(owners.join(','))
+  }
+  else if (context.tenantId) query = query.eq('tenant_id', context.tenantId)
   else if (familyId) query = query.or(`owner_user_id.eq.${context.actor.id},family_account_id.eq.${familyId}`)
   else query = query.eq('owner_user_id', context.actor.id)
   const { data, error } = await query
@@ -277,6 +288,77 @@ export async function getJourneyAdminSummary(context: MarketplaceRequestContext)
     failedNotifications: journeys.reduce((count, journey) => count + journey.notifications.filter((notification) => notification.status === 'failed').length, 0),
     byType, byStatus, journeys,
   }
+}
+
+export async function resolveAdminChangeRequest(input: {
+  journeyId: string
+  changeRequestId: string
+  status: JourneyChangeRequest['status']
+  reason: string
+  customerMessage?: string
+  context: MarketplaceRequestContext
+  requestId: string
+  request: Request
+}): Promise<MarketplaceJourney> {
+  const journey = await getAdminJourney(input.journeyId, input.context)
+  const current = journey.change_requests.find((entry) => entry.id === input.changeRequestId)
+  if (!current) throw new MarketplaceError('NOT_FOUND', 'Demande de changement introuvable.')
+
+  const transitions: Record<JourneyChangeRequest['status'], JourneyChangeRequest['status'][]> = {
+    submitted: ['under_review', 'approved', 'rejected', 'cancelled'],
+    under_review: ['approved', 'rejected', 'cancelled'],
+    approved: ['completed', 'cancelled'],
+    rejected: [],
+    completed: [],
+    cancelled: [],
+  }
+  if (!transitions[current.status].includes(input.status)) {
+    throw new MarketplaceError('CONFLICT', `Transition de demande invalide : ${current.status} → ${input.status}.`)
+  }
+
+  const db = await createServiceClient()
+  const now = new Date().toISOString()
+  const terminal = ['rejected', 'completed', 'cancelled'].includes(input.status)
+  const policyDecision = {
+    ...current.policy_decision,
+    operator_reason: input.reason,
+    customer_message: input.customerMessage?.trim() || null,
+    decided_by: input.context.actor.id,
+    decided_at: now,
+    decision_status: input.status,
+  }
+  const { error } = await db.from('angelcare_marketplace_journey_change_requests').update({
+    status: input.status,
+    policy_decision: policyDecision,
+    reviewed_by: input.context.actor.id,
+    resolved_at: terminal ? now : null,
+    updated_at: now,
+  }).eq('id', input.changeRequestId).eq('journey_id', input.journeyId)
+  if (error) throw fail('traiter la demande de changement', error)
+
+  const customerTitle = input.status === 'under_review' ? 'Votre demande est en cours d’examen'
+    : input.status === 'approved' ? 'Votre demande a été approuvée'
+    : input.status === 'rejected' ? 'Décision sur votre demande'
+    : input.status === 'completed' ? 'Votre demande a été traitée'
+    : 'Votre demande a été clôturée'
+  await db.from('angelcare_marketplace_journey_events').insert({
+    journey_id: input.journeyId,
+    event_key: `change_request_${input.status}`,
+    title: customerTitle,
+    description: input.customerMessage?.trim() || null,
+    status: journey.status,
+    authority_type: 'journey_change_request',
+    authority_object_id: input.changeRequestId,
+    evidence: { request_type: current.request_type, decision_status: input.status },
+    customer_visible: true,
+    occurred_at: now,
+  })
+  await writeMarketplaceAudit({
+    context: input.context, requestId: input.requestId, action: 'marketplace.journey.change_request.resolved',
+    objectType: 'marketplace_journey_change_request', objectId: input.changeRequestId, result: 'success', reason: input.reason,
+    source: 'journey-control', request: input.request,
+  })
+  return getAdminJourney(input.journeyId, input.context)
 }
 
 export async function transitionAdminJourney(input: {

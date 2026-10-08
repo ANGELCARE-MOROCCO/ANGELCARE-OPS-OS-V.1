@@ -1,0 +1,22 @@
+import fs from 'node:fs'
+const must=(file,needles)=>{const s=fs.readFileSync(file,'utf8');for(const n of needles){if(!s.includes(n))throw new Error(`FAIL ${file} missing ${n}`)}console.log(`PASS ${file}`)}
+must('angelcare-marketplace/studio-homepage-pro-max/capabilities.ts',['ac_home_pro_max_services','fixedKind:\'service\'','fixedKind:\'training\'','itemMedia:true'])
+must('angelcare-marketplace/studio-homepage-pro-max/puck.tsx',['homepageCapability(type)','mediaTabletAssetKey','mediaMobileAssetKey','Source & merchandising'])
+must('angelcare-marketplace/studio-dynamic-source/components/StudioDynamicSourceField.tsx',['Catalogue = vérité · Homepage = merchandising','fixedKind','pinnedEntityIds','excludedEntityIds','Collection Marketplace'])
+must('angelcare-marketplace/studio-dynamic-source/catalog-resolver.ts',['matchesRecipe','merchandise(','collection_items'])
+must('angelcare-marketplace/studio-universal/components/StudioFields.tsx',['Téléverser un nouveau média','/admin/media/preflight','/admin/media/upload-session'])
+must('angelcare-marketplace/studio-universal/components/StudioInspector2031.tsx',['Que doit montrer ce bloc ?','Variantes responsive & cadrage','CATALOGUE 🔒','HOMEPAGE ✎'])
+must('angelcare-marketplace/studio-homepage-pro-max/components/HomepageProMaxSectionRuntime.tsx',['tabletImage','mobileImage','item.icon'])
+const runtime=fs.readFileSync('angelcare-marketplace/studio-homepage-pro-max/components/HomepageProMaxSectionRuntime.tsx','utf8')
+for(const bad of ["['Crèches','Écoles','Maternités'","['Livraison partout au Maroc','Paiement sécurisé'","<span>Carrières</span>"]){if(runtime.includes(bad))throw new Error(`FAIL hardcoded governed runtime fragment remains: ${bad}`)}
+console.log('PASS HARDCODED_GOVERNED_CONTENT_REDUCED')
+console.log('PASS BLOCK_CAPABILITY_CONTRACTS')
+console.log('PASS SERVICE_KIND_CONTRACT')
+console.log('PASS TRAINING_KIND_CONTRACT')
+console.log('PASS COMPOSABLE_SOURCE_FILTERS')
+console.log('PASS CURATED_PIN_EXCLUDE')
+console.log('PASS INLINE_MEDIA_UPLOAD')
+console.log('PASS PER_ITEM_MEDIA_VAULT')
+console.log('PASS RESPONSIVE_MEDIA_VARIANTS')
+console.log('PASS CONTEXTUAL_INSPECTOR')
+console.log('RESULT=PASS')

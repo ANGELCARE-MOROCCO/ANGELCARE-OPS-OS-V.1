@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from '@/lib/supabase/contract-client'
 
 export type PermanentDeleteMode = 'smoke_only' | 'force_confirmed'
 

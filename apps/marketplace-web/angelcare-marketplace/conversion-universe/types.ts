@@ -1,3 +1,4 @@
+import type { StudioAttributionInput } from '@/angelcare-marketplace/studio-attribution/types'
 import type { CatalogLocale, DiscoveryItem } from '../catalog-discovery/types'
 
 export type ConversionJourney =
@@ -108,6 +109,7 @@ export interface ConversionSession {
   confirmed_at: string | null
   outcome_type: string | null
   outcome_id: string | null
+  metadata: Record<string, unknown>
   item?: DiscoveryItem | null
   priceSnapshot?: ConversionPriceSnapshot | null
   consents?: ConversionConsentRecord[]
@@ -123,6 +125,7 @@ export interface ConversionSessionCreateInput {
   territoryCode?: string | null
   idempotencyKey: string
   initialConfiguration?: Record<string, unknown>
+  attribution?: StudioAttributionInput
 }
 
 export interface ConversionAdminSummary {

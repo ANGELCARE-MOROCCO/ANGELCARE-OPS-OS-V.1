@@ -11,11 +11,14 @@ import type {
   CommerceStudioSummary,
   HomepageSectionRecord,
   MediaAsset,
+  MediaFolder,
   MerchandisingAssignment,
   NavigationMenuRecord,
 } from './types'
 import { affectedCommercePaths, refreshCommerceSurfaces } from './publication'
 import { assertInternalOrHttpUrl, safeArray, safeBoolean, safeJson, safeNumber, slugify } from './validation'
+import { evaluateProduct360Readiness, loadProduct360Snapshot } from '../enterprise-command/product-360-import-engine'
+import { invalidateStudioCommerceMutation } from '../studio-dependency-invalidation/invalidation'
 
 type Row = Record<string, unknown>
 type DbError = { code?: string; message?: string; details?: string } | null
@@ -86,11 +89,13 @@ function mapMedia(row: Row): MediaAsset {
     ...row,
     id: text(row.id), asset_key: text(row.asset_key), folder_id: nullableText(row.folder_id),
     file_name: text(row.file_name), media_type: text(row.media_type), mime_type: text(row.mime_type),
+    size_bytes: Number(row.size_bytes || 0),
     storage_bucket: text(row.storage_bucket), storage_path: text(row.storage_path), public_url: text(row.public_url),
     desktop_url: text(row.desktop_url), tablet_url: nullableText(row.tablet_url), mobile_url: nullableText(row.mobile_url),
     square_url: nullableText(row.square_url), alt_text_fr: text(row.alt_text_fr), alt_text_en: nullableText(row.alt_text_en),
     alt_text_ar: nullableText(row.alt_text_ar), focal_point: record(row.focal_point), rights_status: text(row.rights_status),
     rights_expires_at: nullableText(row.rights_expires_at), usage_count: Number(row.usage_count || 0),
+    metadata: record(row.metadata),
     status: text(row.status), created_at: text(row.created_at), updated_at: text(row.updated_at),
   }
 }
@@ -187,9 +192,11 @@ export async function commerceStudioData(context: MarketplaceRequestContext): Pr
   const territoryFilter = <T extends { or: (value: string) => T }>(query: T): T => scopedTerritory
     ? query.or(`territory_id.is.null,territory_id.eq.${scopedTerritory}`)
     : query
-  const [summary, media, sections, campaigns, collections, placements, menus, items, categories, priceBooks, territories, versions, events] = await Promise.all([
+  const [summary, media, mediaFolders, catalogMedia, sections, campaigns, collections, placements, menus, items, categories, priceBooks, territories, versions, events] = await Promise.all([
     commerceStudioSummary(),
     db.from('angelcare_marketplace_media_assets').select('*').order('updated_at', { ascending: false }).limit(500),
+    db.from('angelcare_marketplace_media_folders').select('*').neq('status', 'archived').order('name').limit(1000),
+    db.from('angelcare_marketplace_catalog_item_media').select('media_key,asset_url,status').neq('status', 'archived').limit(5000),
     territoryFilter(db.from('angelcare_marketplace_homepage_sections').select('*')).order('sort_order'),
     territoryFilter(db.from('angelcare_marketplace_homepage_campaigns').select('*')).order('priority'),
     territoryFilter(db.from('angelcare_marketplace_homepage_collections').select('*,items:angelcare_marketplace_homepage_collection_items(*)')).order('sort_order'),
@@ -202,12 +209,18 @@ export async function commerceStudioData(context: MarketplaceRequestContext): Pr
     db.from('angelcare_marketplace_commerce_versions').select('*').order('created_at', { ascending: false }).limit(100),
     db.from('angelcare_marketplace_commerce_publication_events').select('*').order('created_at', { ascending: false }).limit(100),
   ])
-  for (const result of [media, sections, campaigns, collections, placements, menus, items, categories]) {
+  for (const result of [media, mediaFolders, catalogMedia, sections, campaigns, collections, placements, menus, items, categories]) {
     if (result.error) throw fail('charger Commerce Studio', result.error)
   }
+  const assignments = rows(catalogMedia.data)
+  const mappedMedia = rows(media.data).map(row => {
+    const asset = mapMedia(row)
+    const references = assignments.filter(entry => [asset.public_url, asset.desktop_url, asset.tablet_url, asset.mobile_url, asset.square_url].filter(Boolean).includes(text(entry.asset_url)))
+    return { ...asset, usage_count: Math.max(asset.usage_count, references.length), assignment_roles: [...new Set(references.map(entry => text(entry.media_key) === 'primary' ? 'primary' : 'gallery'))] }
+  })
   return {
     summary,
-    media: rows(media.data).map(mapMedia), sections: rows(sections.data).map(mapSection),
+    media: mappedMedia, mediaFolders: rows(mediaFolders.data) as MediaFolder[], sections: rows(sections.data).map(mapSection),
     campaigns: rows(campaigns.data) as CommerceRecord[], collections: rows(collections.data) as CommerceRecord[],
     placements: rows(placements.data) as MerchandisingAssignment[], menus: rows(menus.data) as NavigationMenuRecord[],
     catalogItems: rows(items.data).map(mapItem), categories: rows(categories.data).map(mapCategory),
@@ -231,7 +244,11 @@ export async function getCommerceResource(resource: CommerceResource, id: string
   const db = await createServiceClient()
   let query = db.from(TABLES[resource]).select('*').eq('id', id)
   if (resource === 'catalog-items') {
-    query = db.from(TABLES[resource]).select('*,variants:angelcare_marketplace_catalog_variants(*),media:angelcare_marketplace_catalog_item_media(*),availability:angelcare_marketplace_catalog_availability(*),categories:angelcare_marketplace_catalog_item_categories(*),priceRules:angelcare_marketplace_finance_price_rules(*)').eq('id', id)
+    // IMPORTANT: finance_price_rules.catalog_item_id exists in production, but it is not
+    // declared as a FK to catalog_items. PostgREST therefore cannot safely embed it here.
+    // Load only canonical child resources that have real relationships here. Price rules
+    // are exposed through their independent catalog_item_id-scoped API route.
+    query = db.from(TABLES[resource]).select('*,variants:angelcare_marketplace_catalog_variants(*),media:angelcare_marketplace_catalog_item_media(*),availability:angelcare_marketplace_catalog_availability(*),categories:angelcare_marketplace_catalog_item_categories(*)').eq('id', id)
   }
   if (resource === 'catalog-categories') {
     query = db.from(TABLES[resource]).select('*,items:angelcare_marketplace_catalog_item_categories(*)').eq('id', id)
@@ -241,7 +258,11 @@ export async function getCommerceResource(resource: CommerceResource, id: string
   }
   const { data, error } = await query.maybeSingle()
   if (error) throw fail(`charger ${resource}`, error)
-  return data as CommerceRecord | null
+  if (!data) return null
+  if (resource === 'catalog-items') {
+    return { ...(data as Row), priceRules: [] } as unknown as CommerceRecord
+  }
+  return data as CommerceRecord
 }
 
 function normalizedPayload(resource: CommerceResource, payload: Row, context: MarketplaceRequestContext): Row {
@@ -303,6 +324,8 @@ function normalizedPayload(resource: CommerceResource, payload: Row, context: Ma
     price_amount: payload.price_amount === '' || payload.price_amount === null || payload.price_amount === undefined ? null : safeNumber(payload.price_amount),
     featured: safeBoolean(payload.featured), availability_status: text(payload.availability_status) || 'configuration_required',
     commercial_metadata: safeJson(payload.commercial_metadata), seo_metadata: safeJson(payload.seo_metadata), attributes: safeJson(payload.attributes),
+    experience_config: safeJson(payload.experience_config), territory_config: safeJson(payload.territory_config), fulfillment_config: safeJson(payload.fulfillment_config),
+    trust_config: safeJson(payload.trust_config), relation_config: safeJson(payload.relation_config),
     status: text(payload.status) || 'draft', created_by: context.actor.id,
   }
   if (resource === 'catalog-categories') return {
@@ -313,6 +336,8 @@ function normalizedPayload(resource: CommerceResource, payload: Row, context: Ma
     visual_theme: text(payload.visual_theme) || 'navy', storefront_template: text(payload.storefront_template) || 'mixed',
     allowed_sellable_types: safeArray(payload.allowed_sellable_types), available_filters: safeJson(payload.available_filters),
     sort_order: safeNumber(payload.sort_order, 100), visible: safeBoolean(payload.visible, true), seo_metadata: safeJson(payload.seo_metadata),
+    experience_config: safeJson(payload.experience_config), hero_content: safeJson(payload.hero_content),
+    storefront_sections: Array.isArray(payload.storefront_sections) ? payload.storefront_sections : [], filter_config: safeJson(payload.filter_config),
     status: text(payload.status) || 'draft', created_by: context.actor.id,
   }
   if (resource === 'homepage-collections') return {
@@ -373,9 +398,22 @@ function normalizedPayload(resource: CommerceResource, payload: Row, context: Ma
     available: safeBoolean(payload.available, true), sort_order: safeNumber(payload.sort_order, 0), status: text(payload.status) || 'active',
   }
   if (resource === 'catalog-availability') return {
-    ...payload, ...common, audience: text(payload.audience) || 'all', available: safeBoolean(payload.available),
-    capacity_limit: payload.capacity_limit === '' ? null : safeNumber(payload.capacity_limit), starts_at: nullableText(payload.starts_at),
-    ends_at: nullableText(payload.ends_at), reason: nullableText(payload.reason), updated_by: context.actor.id,
+    catalog_item_id: text(payload.catalog_item_id),
+    territory_id: nullableText(payload.territory_id),
+    city_zone_id: nullableText(payload.city_zone_id),
+    audience: text(payload.audience) || 'all',
+    available: safeBoolean(payload.available),
+    capacity_limit:
+      payload.capacity_limit === '' ||
+      payload.capacity_limit === null ||
+      payload.capacity_limit === undefined
+        ? null
+        : Math.max(0, Math.trunc(safeNumber(payload.capacity_limit))),
+    starts_at: nullableText(payload.starts_at),
+    ends_at: nullableText(payload.ends_at),
+    reason: nullableText(payload.reason),
+    updated_at: new Date().toISOString(),
+    updated_by: context.actor.id,
   }
   if (resource === 'price-rules') return {
     ...payload, ...common, pricing_model: text(payload.pricing_model) || 'fixed', unit_label: nullableText(payload.unit_label),
@@ -459,15 +497,72 @@ export async function createCommerceResource(input: {
 }): Promise<CommerceMutationResult> {
   const db = await createServiceClient()
   const payload = normalizedPayload(input.resource, input.payload, input.context)
+  if (input.resource === 'catalog-items' && text(payload.status) === 'published') {
+    throw new MarketplaceError('INVALID_STATE_TRANSITION', 'La création directe en statut publié est interdite. Créez le produit en brouillon puis utilisez la publication gouvernée Product 360.')
+  }
+  if (input.resource === 'media-folders') {
+    const slug = text(payload.slug)
+    const parentId = nullableText(payload.parent_id)
+    let existingQuery = db.from(TABLES[input.resource]).select('*').eq('slug', slug)
+    existingQuery = parentId ? existingQuery.eq('parent_id', parentId) : existingQuery.is('parent_id', null)
+    const existing = await existingQuery.maybeSingle()
+    if (existing.error) throw fail('vérifier le dossier média', existing.error)
+    if (existing.data) {
+      if (existing.data.status === 'archived') {
+        const restored = await db.from(TABLES[input.resource]).update({ name: text(payload.name), status: 'active', updated_at: new Date().toISOString(), updated_by: input.context.actor.id }).eq('id', existing.data.id).select('*').single()
+        if (restored.error || !restored.data) throw fail('réactiver le dossier média', restored.error)
+        return { record: restored.data as CommerceRecord, affectedPaths: [], publicationEventId: null }
+      }
+      return { record: existing.data as CommerceRecord, affectedPaths: [], publicationEventId: null }
+    }
+  }
+  if (input.resource === 'catalog-media') {
+    const existing = await db.from(TABLES[input.resource]).select('id').eq('catalog_item_id', text(payload.catalog_item_id)).eq('media_key', text(payload.media_key)).maybeSingle()
+    if (existing.error) throw fail('vérifier l’affectation média produit', existing.error)
+    if (existing.data?.id) return updateCommerceResource({ resource: input.resource, id: String(existing.data.id), payload, context: input.context })
+  }
   if (input.resource === 'navigation-items') await assertNoHierarchyCycle(input.resource, null, nullableText(payload.parent_id))
   if (input.resource === 'catalog-categories') await assertNoHierarchyCycle(input.resource, null, nullableText(payload.parent_category_id))
   const { data, error } = await db.from(TABLES[input.resource]).insert(payload).select('*').single()
-  if (error || !data) throw fail(`créer ${input.resource}`, error)
+  if (error || !data) {
+    if (input.resource === 'media-folders' && error?.code === '23505') {
+      const parentId = nullableText(payload.parent_id)
+      let collision = db.from(TABLES[input.resource]).select('*').eq('slug', text(payload.slug))
+      collision = parentId ? collision.eq('parent_id', parentId) : collision.is('parent_id', null)
+      const resolved = await collision.maybeSingle()
+      if (!resolved.error && resolved.data) return { record: resolved.data as CommerceRecord, affectedPaths: [], publicationEventId: null }
+    }
+    throw fail(`créer ${input.resource}`, error)
+  }
   await versionRecord({ resource: input.resource, row: data as Row, action: 'created', actorId: input.context.actor.id })
   const paths = affectedCommercePaths({ objectType: input.resource, locale: nullableText((data as Row).locale), slug: nullableText((data as Row).slug) })
   refreshCommerceSurfaces(paths)
-  const eventId = await publicationEvent({ resource: input.resource, row: data as Row, action: 'created', actorId: input.context.actor.id, paths })
+  const eventId = await publicationEvent({ resource: input.resource, row: data as Row, action: 'created', actorId: input.context.actor.id, paths });await invalidateStudioCommerceMutation({resource:input.resource,id:String((data as Row).id||''),slug:nullableText((data as Row).slug),locale:nullableText((data as Row).locale),reason:`commerce ${input.resource} created`,context:input.context})
   return { record: data as CommerceRecord, affectedPaths: paths, publicationEventId: eventId }
+}
+
+export async function assertActiveMediaFolder(folderId: string | null): Promise<void> {
+  if (!folderId) return
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(folderId)) {
+    throw new MarketplaceError('VALIDATION_ERROR', 'Le dossier média sélectionné est invalide.')
+  }
+  const db = await createServiceClient()
+  const { data, error } = await db.from('angelcare_marketplace_media_folders').select('id').eq('id', folderId).eq('status', 'active').maybeSingle()
+  if (error) throw fail('vérifier le dossier média', error)
+  if (!data) throw new MarketplaceError('VALIDATION_ERROR', 'Le dossier média sélectionné n’existe plus ou est archivé.')
+}
+
+export async function findMediaByChecksums(checksums: string[]): Promise<Record<string, MediaAsset>> {
+  const unique = [...new Set(checksums.map(value => value.trim().toLowerCase()).filter(value => /^[a-f0-9]{64}$/.test(value)))]
+  if (!unique.length) return {}
+  const db = await createServiceClient()
+  const matches: Record<string, MediaAsset> = {}
+  for (const checksum of unique) {
+    const { data, error } = await db.from('angelcare_marketplace_media_assets').select('*').contains('metadata', { sha256: checksum }).neq('status', 'archived').limit(1).maybeSingle()
+    if (error) throw fail('rechercher les doublons média', error)
+    if (data) matches[checksum] = mapMedia(data as Row)
+  }
+  return matches
 }
 
 export async function updateCommerceResource(input: {
@@ -489,6 +584,12 @@ export async function updateCommerceResource(input: {
     { ...(current as Row), ...input.payload },
     input.context,
   )
+  if (input.resource === 'catalog-items' && text(payload.status) === 'published') {
+    const snapshot = await loadProduct360Snapshot(input.id, db)
+    const readiness = evaluateProduct360Readiness({ ...snapshot, ...payload }, text(payload.sellable_type) || text(payload.kind))
+    if (!readiness.ready) throw new MarketplaceError('INVALID_STATE_TRANSITION', `Publication refusée par Product 360 readiness : ${readiness.reasons.join(', ')}.`)
+  }
+  if (input.resource === 'media') await assertActiveMediaFolder(nullableText(payload.folder_id))
   if (input.resource === 'navigation-items') await assertNoHierarchyCycle(input.resource, input.id, nullableText(payload.parent_id))
   if (input.resource === 'catalog-categories') await assertNoHierarchyCycle(input.resource, input.id, nullableText(payload.parent_category_id))
   delete payload.id
@@ -501,7 +602,7 @@ export async function updateCommerceResource(input: {
   await versionRecord({ resource: input.resource, row: data as Row, action: 'updated', actorId: input.context.actor.id })
   const paths = affectedCommercePaths({ objectType: input.resource, locale: nullableText((data as Row).locale), slug: nullableText((data as Row).slug) })
   refreshCommerceSurfaces(paths)
-  const eventId = await publicationEvent({ resource: input.resource, row: data as Row, action: 'updated', actorId: input.context.actor.id, paths })
+  const eventId = await publicationEvent({ resource: input.resource, row: data as Row, action: 'updated', actorId: input.context.actor.id, paths });await invalidateStudioCommerceMutation({resource:input.resource,id:String((data as Row).id||input.id),slug:nullableText((data as Row).slug),locale:nullableText((data as Row).locale),reason:`commerce ${input.resource} updated`,context:input.context})
   return { record: data as CommerceRecord, affectedPaths: paths, publicationEventId: eventId }
 }
 
@@ -522,7 +623,7 @@ export async function archiveCommerceResource(input: {
   await versionRecord({ resource: input.resource, row: data as Row, action: 'archived', actorId: input.context.actor.id })
   const paths = affectedCommercePaths({ objectType: input.resource, locale: nullableText((data as Row).locale), slug: nullableText((data as Row).slug) })
   refreshCommerceSurfaces(paths)
-  const eventId = await publicationEvent({ resource: input.resource, row: data as Row, action: 'archived', actorId: input.context.actor.id, paths })
+  const eventId = await publicationEvent({ resource: input.resource, row: data as Row, action: 'archived', actorId: input.context.actor.id, paths });await invalidateStudioCommerceMutation({resource:input.resource,id:String((data as Row).id||input.id),slug:nullableText((data as Row).slug),locale:nullableText((data as Row).locale),reason:`commerce ${input.resource} archived`,context:input.context})
   return { record: data as CommerceRecord, affectedPaths: paths, publicationEventId: eventId }
 }
 
@@ -553,6 +654,16 @@ export async function commerceResourceAction(input: {
     if (!ids.length) throw new MarketplaceError('VALIDATION_ERROR', 'Sélection vide pour l’action groupée.')
     const targetStatus = input.action === 'archive' ? ARCHIVE_STATUS[input.resource] || 'archived' : statusForAction(input.resource, input.action)
     if (!targetStatus) throw new MarketplaceError('VALIDATION_ERROR', 'Action groupée inconnue.')
+    if (input.resource === 'catalog-items' && input.action === 'publish') {
+      const blocked:string[]=[]
+      for (const id of ids) {
+        const snapshot=await loadProduct360Snapshot(id,db)
+        if(!Object.keys(snapshot).length){blocked.push(`${id}:NOT_FOUND`);continue}
+        const readiness=evaluateProduct360Readiness(snapshot,text(snapshot.sellable_type)||text(snapshot.kind))
+        if(!readiness.ready)blocked.push(`${text(snapshot.item_key)||id}:${readiness.reasons.join('+')}`)
+      }
+      if(blocked.length)throw new MarketplaceError('INVALID_STATE_TRANSITION',`Publication groupée refusée par Product 360 readiness : ${blocked.join(' | ')}`)
+    }
     const { data, error } = await db.from(TABLES[input.resource]).update({
       status: targetStatus,
       updated_at: new Date().toISOString(),
@@ -568,6 +679,39 @@ export async function commerceResourceAction(input: {
   }
   if (input.action === 'archive') {
     return archiveCommerceResource({ resource: input.resource, id: input.id, context: input.context })
+  }
+  if (input.action === 'purge' && input.resource === 'catalog-items') {
+    const original = await getCommerceResource('catalog-items', input.id)
+    if (!original) throw new MarketplaceError('NOT_FOUND', 'Produit introuvable.')
+    if (text(input.payload.confirmation_reference) !== text(original.public_reference)) {
+      throw new MarketplaceError('VALIDATION_ERROR', 'La référence de confirmation ne correspond pas au produit.')
+    }
+    if (text(original.status) !== 'archived') {
+      throw new MarketplaceError('INVALID_STATE_TRANSITION', 'Le produit doit être archivé avant toute purge définitive.')
+    }
+    const blockers = [
+      ['orders','angelcare_marketplace_order_lines','catalog_item_id'],
+      ['conversion_sessions','angelcare_marketplace_conversion_sessions','catalog_item_id'],
+      ['subscriptions','angelcare_marketplace_customer_subscriptions','catalog_item_id'],
+      ['crm_quotes','angelcare_marketplace_crm_quote_lines','catalog_item_id'],
+      ['quote_baskets','angelcare_marketplace_quote_basket_items','catalog_item_id'],
+      ['academy_courses','angelcare_marketplace_academy_courses','catalog_item_id'],
+      ['availability_holds','angelcare_marketplace_conversion_availability_holds','catalog_item_id'],
+    ] as const
+    const dependencyResults = await Promise.all(blockers.map(async ([key, table, column]) => {
+      const result = await db.from(table).select('id', { count: 'exact', head: true }).eq(column, input.id)
+      if (result.error) throw fail(`vérifier les dépendances ${key}`, result.error)
+      return { key, count: result.count || 0 }
+    }))
+    const activeBlockers = dependencyResults.filter(entry => entry.count > 0)
+    if (activeBlockers.length) {
+      throw new MarketplaceError('VALIDATION_ERROR', `Purge interdite: dépendances transactionnelles (${activeBlockers.map(entry => `${entry.key}:${entry.count}`).join(', ')}). Utilisez l’archive.`)
+    }
+    const { error } = await db.from('angelcare_marketplace_catalog_items').delete().eq('id', input.id)
+    if (error) throw fail('purger définitivement le produit', error)
+    const paths = affectedCommercePaths({ objectType: 'catalog-items', slug: nullableText(original.slug) })
+    refreshCommerceSurfaces(paths)
+    return { record: { id: input.id, public_reference: original.public_reference, status: 'purged' } as CommerceRecord, affectedPaths: paths, publicationEventId: null }
   }
   if (input.action === 'duplicate') {
     const original = await getCommerceResource(input.resource, input.id)
@@ -736,6 +880,68 @@ export async function registerUploadedMedia(input: {
     rights_status: 'owned', status: 'active', created_by: input.context.actor.id, updated_by: input.context.actor.id,
   }).select('*').single()
   if (error || !data) throw fail('enregistrer le média', error)
-  await versionRecord({ resource: 'media', row: data as Row, action: 'uploaded', actorId: input.context.actor.id })
+  await versionRecord({ resource: 'media', row: data as Row, action: 'uploaded', actorId: input.context.actor.id });await invalidateStudioCommerceMutation({resource:'media',id:String(data.id),reason:'media uploaded',context:input.context})
+  return mapMedia(data as Row)
+}
+
+export async function registerPendingGatewayMedia(input: {
+  id: string
+  fileName: string
+  mimeType: string
+  sizeBytes: number
+  folderId: string | null
+  altTextFr: string
+  publicUrl: string
+  context: MarketplaceRequestContext
+}): Promise<MediaAsset> {
+  await assertActiveMediaFolder(input.folderId)
+  const db = await createServiceClient()
+  const { data, error } = await db.from('angelcare_marketplace_media_assets').insert({
+    id: input.id,
+    asset_key: `media-${input.id}`,
+    folder_id: input.folderId,
+    file_name: input.fileName,
+    media_type: input.mimeType.startsWith('video/') ? 'video' : input.mimeType === 'application/pdf' ? 'document' : 'image',
+    mime_type: input.mimeType,
+    size_bytes: input.sizeBytes,
+    storage_bucket: 'marketplace-windows-media',
+    storage_path: `assets/${input.id}`,
+    public_url: input.publicUrl,
+    desktop_url: input.publicUrl,
+    tablet_url: input.publicUrl,
+    mobile_url: input.publicUrl,
+    square_url: input.publicUrl,
+    alt_text_fr: input.altTextFr,
+    rights_status: 'owned',
+    optimization_status: 'processing',
+    metadata: { storage_backend: 'windows_self_hosted', upload_state: 'awaiting_binary' },
+    status: 'processing',
+    created_by: input.context.actor.id,
+    updated_by: input.context.actor.id,
+  }).select('*').single()
+  if (error || !data) throw fail('préparer le média Marketplace', error)
+  await versionRecord({ resource: 'media', row: data as Row, action: 'upload_session_created', actorId: input.context.actor.id })
+  return mapMedia(data as Row)
+}
+
+export async function markGatewayMediaFailed(input: { id: string; message: string; context: MarketplaceRequestContext }): Promise<void> {
+  const db = await createServiceClient()
+  await db.from('angelcare_marketplace_media_assets').update({
+    status: 'failed',
+    optimization_status: 'failed',
+    metadata: { storage_backend: 'windows_self_hosted', upload_state: 'failed', failure_reason: input.message.slice(0, 500) },
+    updated_by: input.context.actor.id,
+    updated_at: new Date().toISOString(),
+  }).eq('id', input.id).eq('status', 'processing')
+}
+
+export async function permanentlyDeleteMediaMetadata(input: { id: string; context: MarketplaceRequestContext }): Promise<MediaAsset> {
+  const db = await createServiceClient()
+  const { data: current, error: readError } = await db.from('angelcare_marketplace_media_assets').select('*').eq('id', input.id).maybeSingle()
+  if (readError) throw fail('charger le média à supprimer', readError)
+  if (!current) throw new MarketplaceError('NOT_FOUND', 'Média introuvable.')
+  const { data, error } = await db.from('angelcare_marketplace_media_assets').delete().eq('id', input.id).select('*').single()
+  if (error || !data) throw fail('supprimer définitivement le média', error)
+  await versionRecord({ resource: 'media', row: current as Row, action: 'permanently_deleted', actorId: input.context.actor.id });await invalidateStudioCommerceMutation({resource:'media',id:input.id,reason:'media permanently deleted',context:input.context})
   return mapMedia(data as Row)
 }

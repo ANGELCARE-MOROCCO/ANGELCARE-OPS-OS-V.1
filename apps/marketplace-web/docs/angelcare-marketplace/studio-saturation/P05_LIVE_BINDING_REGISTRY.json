@@ -1,0 +1,23 @@
+{
+  "schema_version": "2026-09-19.P05",
+  "authority": "angelcare-marketplace/studio-live-binding/registry.ts",
+  "context_authority": "Category-Native AdaptiveExperienceData",
+  "template_authority": "Experience Core published template revision",
+  "binding_count": 20,
+  "target_count": 9,
+  "missing_policies": ["preserve_static", "empty", "omit", "hide_block"],
+  "binding_families": {
+    "identity": ["item.name"],
+    "content": ["item.short_description", "item.description"],
+    "schema": ["schema.name", "schema.description"],
+    "commerce": ["price.label", "price.amount", "price.currency", "price.mode"],
+    "availability": ["availability.label", "availability.reason", "availability.available_quantity"],
+    "media": ["media.primary.url", "media.primary.alt", "media.gallery"],
+    "trust": ["trust.primary", "trust.claims"],
+    "configuration": ["experience.fields", "variants.items", "variants.count"]
+  },
+  "persistence": "Studio stores binding instructions only under props.__studioBindings; hydrated business values are request/runtime copies only.",
+  "database_change": false,
+  "sql_required": false,
+  "p08_render_switch": false
+}

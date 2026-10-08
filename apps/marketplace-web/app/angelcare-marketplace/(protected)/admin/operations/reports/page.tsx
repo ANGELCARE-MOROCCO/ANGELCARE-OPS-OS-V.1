@@ -1,3 +1,4 @@
 import { requireMarketplacePageContext } from '@/angelcare-marketplace/auth/context'
-import { ValidationBoard } from '@/angelcare-marketplace/operations-execution/components/ValidationBoard'
-export default async function Page(){const context=await requireMarketplacePageContext('marketplace.operations.view');void context;return <ValidationBoard/>}
+import { ReportRegister } from '@/angelcare-marketplace/operations-execution/components/OperationsEvidenceRegisters'
+import { listMissionReportsAdmin } from '@/angelcare-marketplace/operations-execution/repository'
+export default async function Page(){const context=await requireMarketplacePageContext('marketplace.operations.view');return <ReportRegister items={await listMissionReportsAdmin(context)}/>}

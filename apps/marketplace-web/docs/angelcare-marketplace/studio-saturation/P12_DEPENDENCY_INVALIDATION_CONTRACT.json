@@ -1,0 +1,19 @@
+{
+  "phase": "P12",
+  "dependencyAuthority": "angelcare_marketplace_cms_dependency_edges",
+  "cacheRootTag": "acm:studio:p12",
+  "taggedReads": [
+    "template-resolution",
+    "template-revision",
+    "dynamic-source"
+  ],
+  "automaticInvalidationAuthorities": [
+    "Experience Core",
+    "P04 Template Assignment",
+    "Complete Commerce Administration",
+    "Marketplace Core"
+  ],
+  "previewCache": "BYPASS",
+  "shadowStore": false,
+  "sql": false
+}

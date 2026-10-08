@@ -86,7 +86,9 @@ const itemDetail=read('angelcare-marketplace/catalog-discovery/components/ItemDe
 check('conversion UI contains no hard-coded Moroccan city catalogue',!/(Rabat|Casablanca|Kénitra|Tanger|Marrakech)/.test(serviceBooking+itemDetail))
 check('catalog CTA resolves journey-specific conversion',itemDetail.includes('journeyPath(locale,item)')&&itemDetail.includes('journeyLabel(journeyForItem(item),locale)'))
 const nav=read('angelcare-marketplace/shells/AdminNavigation.tsx')
-check('Conversion Command mounted in navigation',nav.includes("/angelcare-marketplace/admin/conversion"))
+// Conversion is a specialist tool owned by the canonical Orders workspace.
+const ordersCommand=read('angelcare-marketplace/customer-commerce/components/EnterpriseOrderCommand.tsx')
+check('Conversion specialist owned by Orders workspace',nav.includes("/angelcare-marketplace/admin/orders")&&ordersCommand.includes('/angelcare-marketplace/admin/conversion')&&exists('app/angelcare-marketplace/(protected)/admin/conversion/page.tsx'))
 const permissionTypes=read('angelcare-marketplace/domain/types.ts')
 const permissionCatalog=read('angelcare-marketplace/permissions/permission-catalog.ts')
 for(const permission of ['marketplace.conversion.view','marketplace.conversion.manage','marketplace.conversion.recover','marketplace.conversion.configuration.manage','marketplace.conversion.analytics.view','marketplace.conversion.export'])check(`permission ${permission}`,permissionTypes.includes(permission)&&permissionCatalog.includes(permission))

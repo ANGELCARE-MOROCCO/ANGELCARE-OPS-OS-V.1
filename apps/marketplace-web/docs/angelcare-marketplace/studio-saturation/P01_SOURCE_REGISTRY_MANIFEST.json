@@ -1,0 +1,246 @@
+{
+  "schema_version": 1,
+  "mission": "P01 Universal Source Registry",
+  "generated_at": "2026-09-19",
+  "counts": {
+    "p00_candidates": 20,
+    "registered_sources": 20,
+    "adapters": 20,
+    "api_routes": 6
+  },
+  "sources": [
+    {
+      "source_id": "catalog.items",
+      "p00_candidate_id": "catalog_item",
+      "p00_capability_id": "catalog",
+      "domain": "catalog",
+      "entity_type": "catalog_item",
+      "label": "Produit / service / formation / SaaS",
+      "authority": "catalog-discovery",
+      "permission": "marketplace.catalog.view",
+      "runtime_adapter": "catalogItems"
+    },
+    {
+      "source_id": "catalog.categories",
+      "p00_candidate_id": "catalog_category",
+      "p00_capability_id": "catalog",
+      "domain": "catalog",
+      "entity_type": "catalog_category",
+      "label": "Catégorie",
+      "authority": "catalog-categories",
+      "permission": "marketplace.catalog.view",
+      "runtime_adapter": "catalogCategories"
+    },
+    {
+      "source_id": "homepage.collections",
+      "p00_candidate_id": "homepage_collection",
+      "p00_capability_id": "homepage_merchandising",
+      "domain": "merchandising",
+      "entity_type": "homepage_collection",
+      "label": "Collection",
+      "authority": "homepage-flagship",
+      "permission": "marketplace.homepage.view",
+      "runtime_adapter": "homepageCollections"
+    },
+    {
+      "source_id": "media.assets",
+      "p00_candidate_id": "media_asset",
+      "p00_capability_id": "media_vault",
+      "domain": "media",
+      "entity_type": "media_asset",
+      "label": "Média",
+      "authority": "media-vault",
+      "permission": "marketplace.media.view",
+      "runtime_adapter": "mediaAssets"
+    },
+    {
+      "source_id": "content.pages",
+      "p00_candidate_id": "cms_page",
+      "p00_capability_id": "experience_core",
+      "domain": "content",
+      "entity_type": "cms_page",
+      "label": "Page CMS / Studio",
+      "authority": "experience-core",
+      "permission": "marketplace.cms.view",
+      "runtime_adapter": "cmsPages"
+    },
+    {
+      "source_id": "content.templates",
+      "p00_candidate_id": "cms_template",
+      "p00_capability_id": "experience_core",
+      "domain": "content",
+      "entity_type": "cms_template",
+      "label": "Template Experience Core",
+      "authority": "experience-core",
+      "permission": "marketplace.cms.view",
+      "runtime_adapter": "cmsTemplates"
+    },
+    {
+      "source_id": "content.symbols",
+      "p00_candidate_id": "cms_symbol",
+      "p00_capability_id": "experience_core",
+      "domain": "content",
+      "entity_type": "cms_symbol",
+      "label": "Symbole réutilisable",
+      "authority": "experience-core",
+      "permission": "marketplace.cms.view",
+      "runtime_adapter": "cmsSymbols"
+    },
+    {
+      "source_id": "experience.schemas",
+      "p00_candidate_id": "experience_schema",
+      "p00_capability_id": "category_native",
+      "domain": "experience",
+      "entity_type": "experience_schema",
+      "label": "Schéma Category-Native",
+      "authority": "category-native",
+      "permission": "marketplace.experience_schema.view",
+      "runtime_adapter": "experienceSchemas"
+    },
+    {
+      "source_id": "homepage.campaigns",
+      "p00_candidate_id": "homepage_campaign",
+      "p00_capability_id": "homepage_merchandising",
+      "domain": "campaign",
+      "entity_type": "homepage_campaign",
+      "label": "Campagne homepage",
+      "authority": "homepage-flagship",
+      "permission": "marketplace.homepage.view",
+      "runtime_adapter": "homepageCampaigns"
+    },
+    {
+      "source_id": "experience.live_campaigns",
+      "p00_candidate_id": "live_experience_campaign",
+      "p00_capability_id": "live_experience",
+      "domain": "campaign",
+      "entity_type": "live_experience_campaign",
+      "label": "Campagne Live Experience",
+      "authority": "live-experience-command",
+      "permission": "marketplace.cms.view",
+      "runtime_adapter": "liveCampaigns"
+    },
+    {
+      "source_id": "audience.segments",
+      "p00_candidate_id": "audience_segment",
+      "p00_capability_id": "audience_targeting",
+      "domain": "audience",
+      "entity_type": "saved_segment",
+      "label": "Audience / segment",
+      "authority": "enterprise-command-segments",
+      "permission": "marketplace.admin.access",
+      "runtime_adapter": "audienceSegments"
+    },
+    {
+      "source_id": "context.territories",
+      "p00_candidate_id": "territory",
+      "p00_capability_id": "territory_control",
+      "domain": "context",
+      "entity_type": "territory",
+      "label": "Territoire",
+      "authority": "territory-authority",
+      "permission": "marketplace.territories.view",
+      "runtime_adapter": "territories"
+    },
+    {
+      "source_id": "academy.programmes",
+      "p00_candidate_id": "academy_program",
+      "p00_capability_id": "academy",
+      "domain": "academy",
+      "entity_type": "academy_program",
+      "label": "Programme Academy",
+      "authority": "academy-engine",
+      "permission": "marketplace.academy.view",
+      "runtime_adapter": "academyPrograms"
+    },
+    {
+      "source_id": "academy.cohorts",
+      "p00_candidate_id": "academy_cohort",
+      "p00_capability_id": "academy",
+      "domain": "academy",
+      "entity_type": "academy_cohort",
+      "label": "Cohorte Academy",
+      "authority": "academy-engine",
+      "permission": "marketplace.academy.view",
+      "runtime_adapter": "academyCohorts"
+    },
+    {
+      "source_id": "providers.profiles",
+      "p00_candidate_id": "provider_profile",
+      "p00_capability_id": "provider_workforce",
+      "domain": "provider",
+      "entity_type": "provider_profile",
+      "label": "Provider",
+      "authority": "provider-workforce",
+      "permission": "marketplace.providers.view",
+      "runtime_adapter": "providerProfiles"
+    },
+    {
+      "source_id": "commerce.promotions",
+      "p00_candidate_id": "promotion",
+      "p00_capability_id": "promotions",
+      "domain": "commerce",
+      "entity_type": "promotion",
+      "label": "Promotion",
+      "authority": "enterprise-closure",
+      "permission": "marketplace.catalog.view",
+      "runtime_adapter": "promotions"
+    },
+    {
+      "source_id": "partners.plans",
+      "p00_candidate_id": "partner_plan",
+      "p00_capability_id": "partner_os",
+      "domain": "partner",
+      "entity_type": "partner_plan",
+      "label": "Plan partenaire",
+      "authority": "partner-os",
+      "permission": "marketplace.partner_os.plans.view",
+      "runtime_adapter": "partnerPlans"
+    },
+    {
+      "source_id": "b2b.programmes",
+      "p00_candidate_id": "b2b_program",
+      "p00_capability_id": "b2b",
+      "domain": "b2b",
+      "entity_type": "b2b_program",
+      "label": "Programme B2B",
+      "authority": "b2b-verticals",
+      "permission": "marketplace.b2b.programs.view",
+      "runtime_adapter": "b2bPrograms"
+    },
+    {
+      "source_id": "trust.claims",
+      "p00_candidate_id": "trust_claim",
+      "p00_capability_id": "trust_quality",
+      "domain": "trust",
+      "entity_type": "trust_claim",
+      "label": "Preuve / badge confiance",
+      "authority": "trust-quality",
+      "permission": "marketplace.catalog.view",
+      "runtime_adapter": "trustClaims"
+    },
+    {
+      "source_id": "navigation.destinations",
+      "p00_candidate_id": "navigation_destination",
+      "p00_capability_id": "navigation",
+      "domain": "navigation",
+      "entity_type": "navigation_destination",
+      "label": "Destination interne",
+      "authority": "public-navigation+experience-core+catalog",
+      "permission": "marketplace.cms.view",
+      "runtime_adapter": "navigationDestinations"
+    }
+  ],
+  "invariants": {
+    "registry_is_business_authority": false,
+    "canonical_references_only": true,
+    "permission_aware": true,
+    "bounded_search": true,
+    "fail_closed": true,
+    "shadow_storage": false,
+    "database_change": false,
+    "sql_required": false,
+    "local_build": false,
+    "global_typescript": false,
+    "p02_picker_ui": false
+  }
+}

@@ -1,0 +1,3 @@
+import Link from 'next/link'
+import styles from '@/components/angelcare360/claims/sovereign-reintegration/TrustResolutionSovereign.module.css'
+export default function NotFound(){return <section className={styles.page}><div className={styles.masthead}><div className={styles.mastheadCopy}><span className={styles.eyebrow}>Trust Resolution</span><h1>Dossier introuvable</h1><p>Cette réclamation n’existe pas dans le contexte actuellement accessible ou n’est plus disponible.</p></div><Link className={styles.actionButton} href="/angelcare-360-command-center/reclamations/tickets">Retour aux dossiers</Link></div></section>}

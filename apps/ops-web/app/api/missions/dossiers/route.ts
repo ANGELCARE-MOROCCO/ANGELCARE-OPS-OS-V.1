@@ -50,7 +50,7 @@ async function ensureRowExists(
 
 export async function GET() {
   try {
-    const { createClient } = await import('@supabase/supabase-js')
+    const { createClient } = await import('@/lib/supabase/contract-client')
 
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL
     const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY

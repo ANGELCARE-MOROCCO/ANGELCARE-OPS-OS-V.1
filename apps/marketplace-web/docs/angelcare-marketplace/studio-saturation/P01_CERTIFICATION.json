@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "mission": "P01 Universal Source Registry",
+  "status": "PASS",
+  "counts": {
+    "p00_candidates": 20,
+    "registered_sources": 20,
+    "adapters": 20,
+    "api_routes": 6
+  },
+  "gates": [
+    "P00_TRACEABILITY_EXACT",
+    "ADAPTER_COVERAGE_EXACT",
+    "PERMISSION_PROPAGATION",
+    "BOUNDED_SEARCH",
+    "FAIL_CLOSED",
+    "CANONICAL_REFERENCE_VALIDATION",
+    "DEVELOPER_CONTRACT",
+    "TARGETED_TYPESCRIPT_TRANSPILE"
+  ],
+  "database_change": false,
+  "sql_required": false,
+  "migration": false,
+  "local_build": false,
+  "global_typescript": false,
+  "next": "P02 Universal Picker Framework after installed verifier PASS",
+  "fresh_baseline_install_verification": true,
+  "package_files": 21,
+  "certified_result": {
+    "p00_candidates": 20,
+    "registered_sources": 20,
+    "adapters": 20,
+    "api_routes": 6
+  }
+}

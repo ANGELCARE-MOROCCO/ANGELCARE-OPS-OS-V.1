@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { CatalogLocale, DiscoveryItem } from '../../catalog-discovery/types'
+import { hasStudioAttributionSearch,studioAttributionFromSearch } from '../../studio-attribution/context'
+import { clientStudioAttribution } from '../../studio-attribution/client'
 import type {
   ConversionAvailabilityDecision,
   ConversionJourney,
@@ -66,6 +68,7 @@ export function useConversionEngine(input: {
             sourceRoute: window.location.pathname,
             territoryCode: input.territoryCode || null,
             idempotencyKey: `session:${createKey.current}`,
+            attribution: hasStudioAttributionSearch(window.location.search) ? clientStudioAttribution(studioAttributionFromSearch(window.location.search,{locale:input.locale,surface:'assigned_template'}),{interactionId:'conversion_session'}) : undefined,
           }),
         })
         if (!cancelled) {

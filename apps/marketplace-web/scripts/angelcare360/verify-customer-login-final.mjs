@@ -11,7 +11,7 @@ const files = {
   component: 'components/angelcare360/auth/Angelcare360CustomerLoginExperience.tsx',
   css: 'components/angelcare360/auth/Angelcare360CustomerLoginExperience.module.css',
   feed: 'lib/angelcare360/customer-broadcasts.ts',
-  logo: 'public/brand/angelcare-official-user-transparent.png',
+  logo: 'public/sanila/sanila-operating-system-logo-white.png',
   hero: 'public/angelcare360/login/angelcare360-executive-morocco.webp',
   tsconfig: 'tsconfig.angelcare360-customer-login-final.json',
 }
@@ -50,12 +50,12 @@ if (!failures.length) {
   check('operator/customer post-login routing remains present', page.includes("'/angelcare-360-operator'") && page.includes("'/angelcare-360-command-center'"))
   check('MFA/protected boundary was not replaced by client auth', !component.includes('login_app_user') && !component.includes('app_sessions'))
 
-  check('official user logo is rendered', component.includes('/brand/angelcare-official-user-transparent.png'))
+  check('official white SANILA logo is rendered', component.includes('/sanila/sanila-operating-system-logo-white.png'))
   check('approved executive hero is rendered', component.includes('/angelcare360/login/angelcare360-executive-morocco.webp'))
   check('SANILA identity present', component.includes('SANILA Operating System'))
-  check('AngelCare 360 product identity present', component.includes('ANGELCARE 360'))
+  check('legacy AngelCare 360 product identity absent', !component.includes('ANGELCARE 360'))
   check('school-pilotage descriptor present', component.includes('Pilotage établissement scolaire'))
-  check('2026 copyright present', component.includes('© 2026 ANGELCARE 360'))
+  check('2026 SANILA copyright present', component.includes('© 2026 SANILA Operating System'))
   check('obsolete 2024 copyright absent', !component.includes('© 2024'))
 
   check('clock uses browser Intl formatter', component.includes("new Intl.DateTimeFormat('fr-FR'"))

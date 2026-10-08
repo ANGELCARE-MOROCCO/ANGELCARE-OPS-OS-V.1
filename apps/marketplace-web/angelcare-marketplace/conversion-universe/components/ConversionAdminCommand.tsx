@@ -12,23 +12,52 @@ const laneMeta = {
   quality_assessment: { label: 'Quality Check 360', icon: ShieldCheck },
 } as const
 
+const accessLinks = [
+  ['Sessions', '/angelcare-marketplace/admin/conversion/sessions'],
+  ['Paniers', '/angelcare-marketplace/admin/conversion/baskets'],
+  ['Bookings', '/angelcare-marketplace/admin/conversion/bookings'],
+  ['Inscriptions', '/angelcare-marketplace/admin/conversion/enrollments'],
+  ['Quotations', '/angelcare-marketplace/admin/conversion/quotations'],
+  ['Consentements', '/angelcare-marketplace/admin/conversion/consents'],
+  ['Holds', '/angelcare-marketplace/admin/conversion/holds'],
+  ['Exceptions', '/angelcare-marketplace/admin/conversion/exceptions'],
+  ['Abandonnement', '/angelcare-marketplace/admin/conversion/abandonment'],
+] as const
+
 export function ConversionAdminCommand({ summary, sessions }: { summary: ConversionAdminSummary; sessions: ConversionSession[] }) {
   const metrics = [
-    ['Sessions actives', summary.activeSessions, Gauge],
-    ['Prêtes à confirmer', summary.readyForConfirmation, BadgeCheck],
-    ['Transmises aujourd’hui', summary.submittedToday, ArrowRight],
-    ['Holds bientôt expirés', summary.expiringHolds, Clock3],
-    ['Sur devis', summary.quoteRequired, FileText],
-    ['Échecs', summary.failedSessions, AlertTriangle],
-    ['Abandons', summary.abandoned, UsersRound],
-    ['Exceptions critiques', summary.criticalExceptions, AlertTriangle],
+    ['Sessions actives', summary.activeSessions, 'Parcours ouverts', Gauge, 'neutral'],
+    ['Prêtes à confirmer', summary.readyForConfirmation, 'ready', BadgeCheck, 'success'],
+    ['Transmises aujourd’hui', summary.submittedToday, 'submitted', ArrowRight, 'neutral'],
+    ['Holds expirants', summary.expiringHolds, '< 30 min', Clock3, 'warning'],
+    ['Sur devis', summary.quoteRequired, 'quote_required', FileText, 'purple'],
+    ['Échecs', summary.failedSessions, 'failed', AlertTriangle, 'danger'],
+    ['Abandons', summary.abandoned, 'expired', UsersRound, 'warning'],
+    ['Exceptions critiques', summary.criticalExceptions, 'high / critical', AlertTriangle, 'danger'],
   ] as const
-  return <div className={styles.adminRoot}>
-    <section className={styles.adminHero}>
-      <div><span>CONVERSION COMMAND AUTHORITY</span><h1>Du clic Marketplace au handover canonique, sans promesse fabriquée.</h1><p>Sessions, paniers, disponibilité, prix, consentements, exceptions et résultats convergent dans un cockpit de conversion gouverné.</p><div className={styles.adminHeroActions}><Link href="/angelcare-marketplace/admin/conversion/sessions">Ouvrir les sessions <ArrowRight size={17}/></Link><Link href="/angelcare-marketplace/admin/conversion/exceptions">Exceptions & récupération <RefreshCcw size={17}/></Link></div></div><div className={styles.adminPulse}><strong>{summary.activeSessions}</strong><span>parcours ouverts</span><i/><small>{summary.submittedToday} transmis aujourd’hui</small></div>
-    </section>
-    <section className={styles.adminMetrics}>{metrics.map(([label,value,Icon])=><article key={label}><Icon size={19}/><strong>{value}</strong><span>{label}</span></article>)}</section>
-    <section className={styles.adminSection}><header><div><span>JOURNEY CONTROL</span><h2>Six lignes de conversion spécialisées</h2></div><Link href="/angelcare-marketplace/admin/conversion/analytics">Voir l’analytics <ArrowRight size={16}/></Link></header><div className={styles.journeyLanes}>{Object.entries(laneMeta).map(([key,meta])=>{const Icon=meta.icon;const count=summary.conversionByJourney.find(entry=>entry.journey===key)?.count||0;return <Link href={`/angelcare-marketplace/admin/conversion/sessions?journey=${key}`} key={key}><Icon size={24}/><span>{key.replaceAll('_',' ')}</span><h3>{meta.label}</h3><strong>{count}</strong><small>sessions enregistrées</small><ArrowRight size={17}/></Link>})}</div></section>
-    <section className={styles.adminSection}><header><div><span>LIVE CONVERSION QUEUE</span><h2>Dernières sessions</h2></div><Link href="/angelcare-marketplace/admin/conversion/sessions">Tout ouvrir <ArrowRight size={16}/></Link></header><div className={styles.adminTable}><div className={styles.adminTableHead}><span>Référence</span><span>Parcours</span><span>Offre</span><span>Statut</span><span>Dernière activité</span></div>{sessions.slice(0,12).map(session=><div className={styles.adminTableRow} key={session.id}><div><b>{session.public_reference}</b><small>{session.session_key.slice(0,8)}</small></div><span>{session.journey.replaceAll('_',' ')}</span><div><b>{session.item?.name||session.catalog_item_id}</b><small>{session.item?.public_reference}</small></div><span data-status={session.status}>{session.status}</span><time>{new Date(session.last_activity_at).toLocaleString('fr-FR')}</time></div>)}{!sessions.length?<div className={styles.adminEmpty}>Aucune session réelle.</div>:null}</div></section>
-  </div>
+
+  return <main className={styles.conversionCommandRoot}>
+    <header className={styles.conversionCommandHeader}>
+      <div><h1>Conversion Command Authority</h1><p>Sessions, paniers, disponibilité, prix, consentements, exceptions et résultats dans un cockpit gouverné.</p></div>
+      <div><Link href="/angelcare-marketplace/admin/conversion/exceptions">Exceptions & récupération</Link><Link href="/angelcare-marketplace/admin/conversion/sessions">Ouvrir sessions</Link></div>
+    </header>
+    <section className={styles.conversionCommandMetrics}>{metrics.map(([label, value, hint, Icon, tone]) => <article key={label} data-tone={tone}><div><Icon size={15}/><span>{label}</span></div><strong>{value.toLocaleString('fr-FR')}</strong><small>{hint}</small></article>)}</section>
+    <div className={styles.conversionCommandLayout}>
+      <div className={styles.conversionCommandMain}>
+        <section className={styles.conversionCommandPanel}>
+          <header><div><h2>Six lignes de conversion spécialisées</h2><p>Du clic Marketplace au handover canonique.</p></div></header>
+          <div className={styles.conversionLaneGrid}>{Object.entries(laneMeta).map(([key, meta]) => { const Icon = meta.icon; const count = summary.conversionByJourney.find((entry) => entry.journey === key)?.count || 0; return <Link href={`/angelcare-marketplace/admin/conversion/sessions?journey=${key}`} key={key}><span>{key}</span><Icon size={18}/><strong>{meta.label}</strong><b>{count.toLocaleString('fr-FR')}</b></Link> })}</div>
+        </section>
+        <section className={styles.conversionCommandPanel}>
+          <header><div><h2>Dernières sessions</h2><p>Sessions réelles, sans promesse de résultat fabriquée.</p></div><Link href="/angelcare-marketplace/admin/conversion/sessions">Tout ouvrir <ArrowRight size={14}/></Link></header>
+          <div className={styles.conversionCommandTable}><table><thead><tr><th>Référence</th><th>Parcours</th><th>Offre</th><th>Statut</th><th>Dernière activité</th></tr></thead><tbody>{sessions.slice(0, 12).map((session) => <tr key={session.id}><td><Link href={`/angelcare-marketplace/admin/conversion/sessions/${session.id}`}>{session.public_reference}</Link><small>{session.session_key.slice(0, 8)}</small></td><td>{session.journey.replaceAll('_', ' ')}</td><td><strong>{session.item?.name || session.catalog_item_id}</strong><small>{session.item?.public_reference}</small></td><td><span data-status={session.status}>{session.status}</span></td><td>{new Date(session.last_activity_at).toLocaleString('fr-FR')}</td></tr>)}</tbody></table>{!sessions.length ? <div>Aucune session réelle.</div> : null}</div>
+        </section>
+      </div>
+      <aside className={styles.conversionCommandRail}>
+        <section><h2>Accès conversion</h2>{accessLinks.map(([label, href]) => <Link href={href} key={href}>{label}<ArrowRight size={14}/></Link>)}</section>
+        <section><span>PRINCIPE DE VÉRITÉ</span><p>Prix, disponibilité, consentements, exceptions et outcome restent prouvés par la session. Aucun résultat n’est annoncé avant confirmation réelle.</p></section>
+        <section><span>INTERVENTION</span><h3>Traiter les exceptions</h3><p>{summary.criticalExceptions} exception(s) critique(s) et {summary.failedSessions} session(s) en échec.</p><Link href="/angelcare-marketplace/admin/conversion/exceptions"><RefreshCcw size={14}/> Ouvrir la file</Link></section>
+      </aside>
+    </div>
+  </main>
 }

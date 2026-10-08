@@ -1,0 +1,4 @@
+import {requireMarketplaceApiContext} from '../auth/context'
+import {apiFailure,apiSuccess,cleanOptionalText,parseJsonObject,requestId,requireText} from '../server/request'
+import {listWorkspaceAccess,setWorkspaceAccess} from './repository'
+export async function handleWorkspaceAccess(request:Request){const id=requestId(request);try{const context=await requireMarketplaceApiContext('marketplace.admin.access');if(request.method==='GET')return apiSuccess(await listWorkspaceAccess(),{requestId:id});const b=await parseJsonObject(request);return apiSuccess(await setWorkspaceAccess({appUserId:requireText(b.appUserId,'appUserId','Utilisateur',100),workspaceKey:requireText(b.workspaceKey,'workspaceKey','Workspace',180),enabled:b.enabled===true,reason:cleanOptionalText(b.reason,1000),context,requestId:id,request}),{requestId:id})}catch(e){return apiFailure(e,id)}}

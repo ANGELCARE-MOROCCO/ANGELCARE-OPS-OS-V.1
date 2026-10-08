@@ -235,9 +235,9 @@ export default function Angelcare360TeachersOverview({
 
       <section style={kpiGridStyle}>
         <Kpi label="Enseignants actifs" value={String(activeRows.length)} note={assignmentReadyCount ? `${assignmentReadyCount} avec affectation` : 'Aucune affectation'} tone="green" href="/angelcare-360-command-center/enseignants" icon="EN" />
-        <Kpi label="Présence équipe" value={formatPercent(overview.attendance.presenceRate)} note={overview.attendance.expectedToday ? `${availableCount}/${overview.attendance.expectedToday} contrôlé(s)` : 'Pointage équipe non ouvert'} tone={overview.attendance.presenceRate === null ? 'slate' : 'blue'} href="/angelcare-360-command-center/presences/personnel" icon="PR" />
+        <Kpi label="Présence équipe" value={formatPercent(overview.attendance.presenceRate)} note={overview.attendance.expectedToday ? `${availableCount}/${overview.attendance.expectedToday} contrôlé(s)` : 'Pointage équipe non ouvert'} tone={overview.attendance.presenceRate === null ? 'slate' : 'blue'} href="/angelcare-360-command-center/personnel" icon="PR" />
         <Kpi label="Cours aujourd’hui" value={String(overview.schedule.coursesToday)} note={overview.schedule.coursesToday ? 'Planifiés aujourd’hui' : 'Aucun cours planifié'} tone={overview.schedule.coursesToday ? 'purple' : 'slate'} href="/angelcare-360-command-center/emploi-du-temps" icon="CO" />
-        <Kpi label="Remplacements ouverts" value={String(overview.replacements.openCount)} note={replacementUrgency ? 'À couvrir rapidement' : 'Aucun remplacement ouvert'} tone={replacementUrgency ? 'orange' : 'green'} href="/angelcare-360-command-center/emploi-du-temps/remplacements" icon="RP" />
+        <Kpi label="Remplacements ouverts" value={String(overview.replacements.openCount)} note={replacementUrgency ? 'À couvrir rapidement' : 'Aucun remplacement ouvert'} tone={replacementUrgency ? 'orange' : 'green'} href="/angelcare-360-command-center/enseignants" icon="RP" />
         <Kpi label="Formations à planifier" value={String(overview.training.toPlanCount)} note={overview.training.toPlanCount ? 'Développement à organiser' : 'Plan formation à jour'} tone={overview.training.toPlanCount ? 'pink' : 'green'} href="#formation" icon="FO" />
       </section>
 
@@ -247,7 +247,7 @@ export default function Angelcare360TeachersOverview({
         </button>
         <Link href="/angelcare-360-command-center/administration/affectations" style={actionButtonStyle}>Affecter à une classe</Link>
         <Link href="/angelcare-360-command-center/emploi-du-temps" style={actionButtonStyle}>Publier emploi du temps</Link>
-        <Link href="/angelcare-360-command-center/qualite-terrain" style={actionButtonStyle}>Ajouter observation</Link>
+        <Link href="/angelcare-360-command-center/reclamations" style={actionButtonStyle}>Ajouter observation</Link>
         <Link href="/angelcare-360-command-center/personnes/documents" style={actionButtonStyle}>Gérer documents</Link>
         <div style={searchWrapStyle}>
           <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Rechercher enseignant, classe, matière…" style={searchInputStyle} />
@@ -365,7 +365,7 @@ export default function Angelcare360TeachersOverview({
         </article>
 
         <aside style={sidePanelStyle}>
-          <PanelTitle eyebrow="Remplacements urgents" title="Couverture pédagogique" href="/angelcare-360-command-center/emploi-du-temps/remplacements" />
+          <PanelTitle eyebrow="Remplacements urgents" title="Couverture pédagogique" href="/angelcare-360-command-center/enseignants" />
           {overview.replacements.urgent.length ? (
             <div style={sideListStyle}>
               {overview.replacements.urgent.map((item) => (

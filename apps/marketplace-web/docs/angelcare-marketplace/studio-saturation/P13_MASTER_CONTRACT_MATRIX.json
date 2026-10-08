@@ -1,0 +1,12 @@
+{
+  "schemaVersion":"2026-09-20.P13",
+  "scopeCount":14,
+  "phaseCount":14,
+  "crossLinkCount":24,
+  "contractScopes":["capability-census","studio-foundation","source-registry","picker","actions","template-assignment","live-bindings","dynamic-sources","workflows","public-runtime","attribution","trust-inspector","governance-policy","dependency-invalidation"],
+  "exports":["json","txt","csv"],
+  "api":"/api/angelcare-marketplace/cms/developer-contract?scope=contract-saturation",
+  "studioInspector":"Contrat P13",
+  "adminDeveloperSurface":"/angelcare-marketplace/admin/experience/developer",
+  "invariants":{"machineReadable":true,"allScopesFingerprinted":true,"stableIdentifierPolicy":true,"crossPhaseLinksExplicit":true,"noBusinessMutation":true,"noNewAdminWorkspace":true,"noSql":true,"localBuild":false,"globalTypescript":false}
+}

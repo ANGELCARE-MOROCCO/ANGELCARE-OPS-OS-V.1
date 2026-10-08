@@ -1,0 +1,4 @@
+1 restrictive duplicate CHECK removed from angelcare360_inventory_movements.
+2 service-role-only functions added for atomic movement authority and integrity readiness.
+1 partial non-unique barcode lookup index added.
+No table created. No column added. No RLS/policy altered. No production data rewritten.

@@ -1,0 +1,17 @@
+{
+  "phase": "P07",
+  "submission_path": "Studio workflow reference -> public workflow API -> existing canonical authority",
+  "authoring_submission_enabled": false,
+  "canonical_engines": [
+    "Public Universe createPublicInquiry",
+    "Conversion Universe",
+    "Family Experience createQuoteRequest",
+    "B2B Verticals createPublicDiagnosticRequest"
+  ],
+  "conversion_guards": ["published target", "pricing revalidation", "availability revalidation", "consent", "idempotency"],
+  "failure_policy": "fail closed; no shadow inbox or fallback write",
+  "public_internal_metadata_exposure": false,
+  "business_facts_persisted_in_studio": false,
+  "p09_attribution_hooks_only": true,
+  "p08_assigned_template_render_switch": false
+}

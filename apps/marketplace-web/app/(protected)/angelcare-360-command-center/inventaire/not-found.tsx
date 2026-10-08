@@ -1,0 +1,3 @@
+import Link from 'next/link'
+import styles from '@/components/angelcare360/material-command/MaterialCommand.module.css'
+export default function NotFound() { return <main className={styles.page}><section className={styles.sectionPage}><div className={styles.sectionHero}><div><p className={styles.eyebrow}>SANILA · MATÉRIEL</p><h1>Dossier matériel introuvable.</h1><p>La ressource demandée n’existe pas dans l’établissement actif, a été archivée ou n’est pas accessible avec votre contexte.</p></div><Link className={styles.button} href="/angelcare-360-command-center/inventaire/articles">Retour au registre</Link></div></section></main> }

@@ -35,7 +35,7 @@ import {
   X,
   Zap,
 } from 'lucide-react'
-import AngelCareLogo from '@/components/brand/AngelCareLogo'
+import SanilaLogo from '@/components/brand/SanilaLogo'
 import type {
   ExecutiveAgendaStream,
   ExecutiveBoardSession,
@@ -507,7 +507,7 @@ export default function ExecutiveCommandCabinet({ initialSnapshot, initialScene,
           <div className={styles.healthOrb}><strong>{snapshot.strategicHealth}%</strong><span>Strategic health</span></div>
         </div>
         <div className={styles.pulseMap}>
-          <div className={styles.pulseCore}><AngelCareLogo size="sm" /><strong>EXECUTIVE</strong><span>COMMAND CABINET</span></div>
+          <div className={styles.pulseCore}><SanilaLogo variant="normal" width={92} height={32}/><strong>EXECUTIVE</strong><span>COMMAND CABINET</span></div>
           {pulseEntries.map(([key, value], index) => (
             <button key={key} className={`${styles.pulseNode} ${styles[`pulseNode${index + 1}`]}`} onClick={() => setInspector({ eyebrow: 'Company pulse', title: statusLabel(key), summary: 'Composite live reading from the authoritative operating sources.', rows: [{ label: 'Health', value: `${value}%` }, { label: 'State', value: value >= 80 ? 'Strong' : value >= 60 ? 'Attention' : 'Intervention' }] })}>
               <span>{statusLabel(key)}</span><strong>{value}%</strong><i style={{ '--health': `${value}%` } as CSSProperties} />
@@ -717,7 +717,7 @@ export default function ExecutiveCommandCabinet({ initialSnapshot, initialScene,
   return <div className={styles.workspace}>
     <div className={styles.ambientOne} /><div className={styles.ambientTwo} />
     <header className={styles.executiveCrown}>
-      <div className={styles.brandLockup}><AngelCareLogo size="sm" /><div><span>DIRECTION GÉNÉRALE</span><strong>Executive Command Cabinet</strong></div></div>
+      <div className={styles.brandLockup}><SanilaLogo variant="normal" width={112} height={39}/><div><span>DIRECTION GÉNÉRALE</span><strong>Executive Command Cabinet</strong></div></div>
       <div className={styles.crownStatus}>
         <span className={`${styles.liveDot} ${snapshot.sourceState === 'live' ? styles.live : snapshot.sourceState === 'partial' ? styles.partial : styles.offline}`} />
         <div><strong>{snapshot.sourceState === 'live' ? 'LIVE EXECUTIVE TRUTH' : snapshot.sourceState === 'partial' ? 'PARTIAL SOURCE' : 'SOURCE DEGRADED'}</strong><span>Synced {formatTime(snapshot.generatedAt)}</span></div>

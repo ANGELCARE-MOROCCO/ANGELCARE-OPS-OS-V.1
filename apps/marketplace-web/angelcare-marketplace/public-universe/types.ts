@@ -19,6 +19,7 @@ export interface PublicInquiryInput {
   locale: 'fr' | 'en' | 'ar'
   territoryCode?: string | null
   honeypot?: string | null
+  sourceMetadata?: Record<string, unknown>
 }
 
 export interface PublicInquiryRecord {
@@ -37,4 +38,5 @@ export interface PublicInquiryRecord {
   territory_id: string | null
   locale: string
   created_at: string
+  source_metadata?: Record<string, unknown>
 }

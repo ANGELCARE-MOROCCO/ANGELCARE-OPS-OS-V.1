@@ -1,0 +1,18 @@
+'use client'
+import {usePathname,useSearchParams} from 'next/navigation'
+import {useEffect,useMemo,useRef} from 'react'
+import {resolveRuntimeText,type LocalizationDictionary,type RuntimeLocale} from '../runtime-dictionary'
+
+const ATTRIBUTES=['aria-label','title','placeholder','alt'] as const
+function localeFrom(pathname:string,requested:string|null):RuntimeLocale{const pathLocale=pathname.match(/^\/angelcare-marketplace\/(fr|en|ar)(?:\/|$)/)?.[1];return(pathLocale||requested||'fr')as RuntimeLocale}
+function preserveWhitespace(original:string,translation:string){const lead=original.match(/^\s*/)?.[0]||'',trail=original.match(/\s*$/)?.[0]||'';return`${lead}${translation}${trail}`}
+function translateTree(root:ParentNode,dictionary:LocalizationDictionary){
+ const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode(node){const parent=node.parentElement;if(!parent||parent.closest('script,style,code,pre,textarea,[data-localization-ignore]')||!node.nodeValue?.trim())return NodeFilter.FILTER_REJECT;return NodeFilter.FILTER_ACCEPT}});const textNodes:Text[]=[];while(walker.nextNode())textNodes.push(walker.currentNode as Text)
+ for(const node of textNodes){const source=node.nodeValue?.trim()||'',target=resolveRuntimeText(source,dictionary);if(target!==source&&node.nodeValue)node.nodeValue=preserveWhitespace(node.nodeValue,target)}
+ for(const element of root.querySelectorAll<HTMLElement>('[data-localization-key], [aria-label], [title], [placeholder], [alt]')){const key=element.dataset.localizationKey;if(key&&dictionary.byKey[key]){const target=element.dataset.localizationTarget||'text';if(target==='text')element.textContent=dictionary.byKey[key];else element.setAttribute(target,dictionary.byKey[key])}for(const attribute of ATTRIBUTES){const source=element.getAttribute(attribute)?.trim();if(source){const target=resolveRuntimeText(source,dictionary);if(target!==source)element.setAttribute(attribute,target)}}}
+}
+export function LocalizationRuntime({children}:{children:React.ReactNode}){const pathname=usePathname(),search=useSearchParams(),locale=useMemo(()=>localeFrom(pathname,search.get('locale')),[pathname,search]),root=useRef<HTMLDivElement>(null)
+ const scope=pathname.includes('/admin')?'admin':/\/(account|customer|family|workspace)(\/|$)/.test(pathname)?'private':'public'
+ useEffect(()=>{const html=document.documentElement,previousLang=html.lang,previousDir=html.dir;html.lang=locale;html.dir=locale==='ar'?'rtl':'ltr';return()=>{html.lang=previousLang;html.dir=previousDir}},[locale])
+ useEffect(()=>{let active=true,observer:MutationObserver|null=null;if(locale==='fr')return;void fetch(`/api/angelcare-marketplace/localization/runtime/${locale}?scope=${scope}`,{cache:'no-store'}).then(response=>response.ok?response.json():Promise.reject(new Error('Localization runtime unavailable'))).then((payload:{data:LocalizationDictionary})=>{if(!active||!root.current)return;translateTree(root.current,payload.data);observer=new MutationObserver(records=>{for(const record of records){if(record.type==='characterData'&&record.target.parentElement)translateTree(record.target.parentElement,payload.data);for(const node of record.addedNodes)if(node.nodeType===Node.ELEMENT_NODE||node.nodeType===Node.TEXT_NODE)translateTree(node.nodeType===Node.ELEMENT_NODE?node as Element:node.parentElement||root.current!,payload.data)}});observer.observe(root.current,{subtree:true,childList:true,characterData:true})}).catch(()=>undefined);return()=>{active=false;observer?.disconnect()}},[locale,scope])
+ return <div ref={root} lang={locale} dir={locale==='ar'?'rtl':'ltr'} data-marketplace-locale={locale}>{children}</div>}

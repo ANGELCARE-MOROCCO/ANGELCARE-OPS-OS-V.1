@@ -1,0 +1,26 @@
+{
+  "schemaVersion":"2026-09-20.P13",
+  "levels":["PATCH_SAFE","MIGRATION_REQUIRED","BREAKING_FORBIDDEN"],
+  "stableClasses":{
+    "source_ids":"BREAKING_FORBIDDEN",
+    "picker_modes":"MIGRATION_REQUIRED",
+    "action_ids":"BREAKING_FORBIDDEN",
+    "template_scopes":"BREAKING_FORBIDDEN",
+    "binding_keys":"BREAKING_FORBIDDEN",
+    "dynamic_strategies":"MIGRATION_REQUIRED",
+    "workflow_ids":"BREAKING_FORBIDDEN",
+    "runtime_fallback_reasons":"PATCH_SAFE",
+    "attribution_dimensions":"MIGRATION_REQUIRED",
+    "trust_states":"MIGRATION_REQUIRED",
+    "governance_rule_ids":"BREAKING_FORBIDDEN",
+    "cache_tag_namespace":"MIGRATION_REQUIRED"
+  },
+  "rules":[
+    "Semantic changes bump the owning contract schema version",
+    "MIGRATION_REQUIRED changes ship a deterministic migration/compatibility path",
+    "BREAKING_FORBIDDEN identifiers are never silently renamed or removed",
+    "Legacy canonical references remain resolvable until migration is complete",
+    "Shadow business authorities are never valid compatibility mechanisms",
+    "Every governed architecture change refreshes the P13 master hash and cross-links"
+  ]
+}

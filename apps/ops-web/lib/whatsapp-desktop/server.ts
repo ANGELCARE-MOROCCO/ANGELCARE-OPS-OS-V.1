@@ -1,5 +1,5 @@
 import crypto from "node:crypto"
-import { createClient as createSupabaseAdminClient } from "@supabase/supabase-js"
+import { createClient as createSupabaseAdminClient } from '@/lib/supabase/contract-client'
 import { NextRequest, NextResponse } from "next/server"
 import { getCurrentAppUser } from "@/lib/auth/session"
 import { createClient as createSupabaseServerClient } from "@/lib/supabase/server"

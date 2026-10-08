@@ -2,6 +2,7 @@
 
 import { createBrowserClient } from '@supabase/ssr'
 import type { SupabaseClient } from '@supabase/supabase-js'
+import { wrapSupabaseClient } from '@/lib/supabase/contract-safe'
 
 type TrainingHubGlobal = typeof globalThis & {
   __angelcareTrainingHubBrowserClient?: SupabaseClient
@@ -34,13 +35,13 @@ export function getTrainingHubBrowserClient() {
     return g.__angelcareTrainingHubBrowserClient
   }
 
-  g.__angelcareTrainingHubBrowserClient = createBrowserClient(
+  g.__angelcareTrainingHubBrowserClient = wrapSupabaseClient(createBrowserClient(
     requireEnv('NEXT_PUBLIC_SUPABASE_URL', process.env.NEXT_PUBLIC_SUPABASE_URL),
     requireEnv(
       'NEXT_PUBLIC_SUPABASE_ANON_KEY',
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLIC_ANON_KEY,
     ),
-  )
+  ))
 
   return g.__angelcareTrainingHubBrowserClient
 }

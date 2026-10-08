@@ -2,6 +2,7 @@ import { createHash, randomUUID } from 'node:crypto'
 import { createClient } from '@/lib/supabase/server'
 import { Angelcare360AccessError, getAngelcare360AccessContext } from '@/lib/angelcare360/server/context'
 import { recordAngelcare360AuditEventServer } from '@/lib/angelcare360/server/audit'
+import { getSanilaBusinessClock, getSanilaBusinessDate } from '@/lib/angelcare360/server/business-clock'
 import type {
   AcademicAttentionItem,
   AcademicCalendarFinding,
@@ -64,9 +65,7 @@ function now() {
   return new Date().toISOString()
 }
 
-function dateOnly() {
-  return new Date().toISOString().slice(0, 10)
-}
+function dateOnly(context?: Awaited<ReturnType<typeof getAngelcare360AccessContext>>) { return getSanilaBusinessDate(context) }
 
 function stableHash(value: unknown) {
   return createHash('sha256').update(JSON.stringify(value)).digest('hex')
@@ -242,15 +241,14 @@ function periodClosureAttention(input: { period: Row; attendanceSessions: Row[];
   return result
 }
 
-function periodRecord(period: Row, year: Row, findings: AcademicCalendarFinding[], allAttention: AcademicAttentionItem[]): AcademicPeriodRecord {
+function periodRecord(period: Row, year: Row, findings: AcademicCalendarFinding[], allAttention: AcademicAttentionItem[], businessDate: string, businessNow: number): AcademicPeriodRecord {
   const metadata = row(period.metadata_json)
   const status = academicStatus(text(period.status), metadata, text(period.status) === 'active')
-  const today = Date.now()
-  const isCurrent = Date.parse(text(period.starts_on)) <= today && Date.parse(text(period.ends_on)) >= today && text(period.status) !== 'closed'
+  const isCurrent = Date.parse(text(period.starts_on)) <= businessNow && Date.parse(text(period.ends_on)) >= businessNow && text(period.status) !== 'closed'
   const periodFindings = findings.filter((item) => item.periodId === text(period.id))
   const periodAttention = allAttention.filter((item) => item.periodId === text(period.id))
   return {
-    id: text(period.id), academicYearId: text(period.academic_year_id), code: text(period.term_code), label: text(period.label), startsOn: text(period.starts_on), endsOn: text(period.ends_on), orderIndex: numeric(period.order_index, 1), technicalStatus: text(period.status, 'planned'), status, statusLabel: statusLabel(status), tone: toneFor(status, periodAttention.filter((item) => item.severity === 'blocking').length + periodFindings.filter((item) => item.severity === 'blocking').length), termType: optionalText(metadata.term_type), daysRemaining: isCurrent ? daysBetween(dateOnly(), text(period.ends_on)) : null, isCurrent, closureBlockers: periodAttention.filter((item) => item.severity === 'blocking').length, attention: periodAttention, findings: periodFindings, updatedAt: optionalText(period.updated_at),
+    id: text(period.id), academicYearId: text(period.academic_year_id), code: text(period.term_code), label: text(period.label), startsOn: text(period.starts_on), endsOn: text(period.ends_on), orderIndex: numeric(period.order_index, 1), technicalStatus: text(period.status, 'planned'), status, statusLabel: statusLabel(status), tone: toneFor(status, periodAttention.filter((item) => item.severity === 'blocking').length + periodFindings.filter((item) => item.severity === 'blocking').length), termType: optionalText(metadata.term_type), daysRemaining: isCurrent ? daysBetween(businessDate, text(period.ends_on)) : null, isCurrent, closureBlockers: periodAttention.filter((item) => item.severity === 'blocking').length, attention: periodAttention, findings: periodFindings, updatedAt: optionalText(period.updated_at),
   }
 }
 
@@ -395,6 +393,8 @@ async function audit(input: { schoolId: string; action: string; entityType: stri
 
 export async function getAcademicStructureSnapshot(): Promise<AcademicStructureSnapshot> {
   const context = await requireAreaContext()
+  const businessClock = getSanilaBusinessClock(context)
+  const businessNow = businessClock.instant.getTime()
   const db = await createClient()
   const schoolId = context.school!.id
   const [years, periods, classes, sections, enrollments, students, assignments, staff, userRoles, sites, tasksRows, notesRows, transitionRows, transitionItemRows, attendanceSessions, reportCards, validationBatches, publicationRuns, auditRows] = await Promise.all([
@@ -435,14 +435,14 @@ export async function getAcademicStructureSnapshot(): Promise<AcademicStructureS
     const attention = [...attentionForYear(year, requirements, findings, transition), ...closureAttention]
     const metadata = row(year.metadata_json)
     const status = academicStatus(text(year.status), metadata, boolean(year.is_current))
-    const currentPeriod = yearPeriods.find((item) => Date.parse(text(item.starts_on)) <= Date.now() && Date.parse(text(item.ends_on)) >= Date.now() && text(item.status) !== 'closed')
+    const currentPeriod = yearPeriods.find((item) => Date.parse(text(item.starts_on)) <= businessNow && Date.parse(text(item.ends_on)) >= businessNow && text(item.status) !== 'closed')
     const successor = years.find((item) => text(item.id) === optionalText(metadata.successor_academic_year_id)) || years.find((item) => Date.parse(text(item.starts_on)) > Date.parse(text(year.starts_on)))
     const complete = requirements.filter((item) => item.applicable && item.passed).length
     const requiredCount = requirements.filter((item) => item.applicable).length
     const blockers = requirements.filter((item) => item.applicable && item.blocking && !item.passed).length + findings.filter((item) => item.severity === 'blocking').length
     const nextRequirement = requirements.find((item) => item.applicable && !item.passed)
     return {
-      id: yearId, code: text(year.year_code), label: text(year.label), startsOn: text(year.starts_on), endsOn: text(year.ends_on), technicalStatus: text(year.status, 'planned'), status, statusLabel: statusLabel(status), tone: toneFor(status, blockers), isCurrent: boolean(year.is_current) || text(year.status) === 'active', currentPeriodId: optionalText(currentPeriod?.id), currentPeriodLabel: optionalText(currentPeriod?.label), responsibleUserId: optionalText(metadata.responsible_user_id), responsibleLabel: optionalText(metadata.responsible_label), classCount: yearClasses.length, childrenCount: new Set(yearEnrollments.map((item) => text(item.student_id))).size, periodCount: yearPeriods.length, preparationComplete: complete, preparationRequired: requiredCount, blockersCount: blockers, warningsCount: attention.filter((item) => item.severity === 'warning').length, closureBlockers: closureAttention.filter((item) => item.severity === 'blocking').length + yearPeriods.filter((item) => text(item.status) !== 'closed').length, nextActionLabel: nextRequirement?.actionLabel || (status === 'active' ? 'Préparer l’année suivante' : status === 'closed' ? 'Consulter l’historique' : 'Rendre l’année active'), nextActionKey: nextRequirement?.actionKey || (status === 'active' ? 'academic_transition.prepare_target' : status === 'closed' ? null : 'academic_year.activate'), successorYearId: optionalText(successor?.id), successorYearLabel: optionalText(successor?.label), periods: yearPeriods.map((period) => periodRecord(period, year, findings, attention)), requirements, attention, tasks: yearTasks, notes: notes.filter((item) => item.academicYearId === yearId), history: auditRows.filter((item) => text(item.entity_id) === yearId || text(item.module) === 'academic_structure_area').slice(0, 100).map((item) => mapHistory(item)), transition, updatedAt: optionalText(year.updated_at),
+      id: yearId, code: text(year.year_code), label: text(year.label), startsOn: text(year.starts_on), endsOn: text(year.ends_on), technicalStatus: text(year.status, 'planned'), status, statusLabel: statusLabel(status), tone: toneFor(status, blockers), isCurrent: boolean(year.is_current) || text(year.status) === 'active', currentPeriodId: optionalText(currentPeriod?.id), currentPeriodLabel: optionalText(currentPeriod?.label), responsibleUserId: optionalText(metadata.responsible_user_id), responsibleLabel: optionalText(metadata.responsible_label), classCount: yearClasses.length, childrenCount: new Set(yearEnrollments.map((item) => text(item.student_id))).size, periodCount: yearPeriods.length, preparationComplete: complete, preparationRequired: requiredCount, blockersCount: blockers, warningsCount: attention.filter((item) => item.severity === 'warning').length, closureBlockers: closureAttention.filter((item) => item.severity === 'blocking').length + yearPeriods.filter((item) => text(item.status) !== 'closed').length, nextActionLabel: nextRequirement?.actionLabel || (status === 'active' ? 'Préparer l’année suivante' : status === 'closed' ? 'Consulter l’historique' : 'Rendre l’année active'), nextActionKey: nextRequirement?.actionKey || (status === 'active' ? 'academic_transition.prepare_target' : status === 'closed' ? null : 'academic_year.activate'), successorYearId: optionalText(successor?.id), successorYearLabel: optionalText(successor?.label), periods: yearPeriods.map((period) => periodRecord(period, year, findings, attention, businessClock.date, businessNow)), requirements, attention, tasks: yearTasks, notes: notes.filter((item) => item.academicYearId === yearId), history: auditRows.filter((item) => text(item.entity_id) === yearId || text(item.module) === 'academic_structure_area').slice(0, 100).map((item) => mapHistory(item)), transition, updatedAt: optionalText(year.updated_at),
     }
   })
   const currentYear = yearRecords.find((item) => item.isCurrent) || yearRecords.find((item) => item.status === 'active') || yearRecords[0] || null
@@ -822,16 +822,16 @@ export async function executeAcademicStructureAction(request: AcademicStructureA
             const { error } = await db.from('angelcare360_class_enrollments').update({ class_id: targetClassId, section_id: item.target_section_id || null, enrollment_status: 'enrolled', status: 'active', promoted_from_class_id: item.source_class_id || null, transfer_reason: reason, updated_by: userId, updated_at: now(), metadata_json: { ...row(row(existingEnrollment).metadata_json), area2_rollover_run_id: runId, transition_decision: decision, execution_id: executionId } }).eq('school_id', schoolId).eq('id', row(existingEnrollment).id)
             if (error) throw new Error('L’inscription cible n’a pas pu être mise à jour.')
           } else {
-            const { error } = await db.from('angelcare360_class_enrollments').insert({ school_id: schoolId, academic_year_id: run.target_academic_year_id, student_id: item.student_id, class_id: targetClassId, section_id: item.target_section_id || null, enrollment_status: 'enrolled', enrolled_on: dateOnly(), promoted_from_class_id: item.source_class_id || null, transfer_reason: reason, status: 'active', metadata_json: { area2_rollover_run_id: runId, transition_decision: decision, execution_id: executionId }, created_by: userId, updated_by: userId })
+            const { error } = await db.from('angelcare360_class_enrollments').insert({ school_id: schoolId, academic_year_id: run.target_academic_year_id, student_id: item.student_id, class_id: targetClassId, section_id: item.target_section_id || null, enrollment_status: 'enrolled', enrolled_on: dateOnly(context), promoted_from_class_id: item.source_class_id || null, transfer_reason: reason, status: 'active', metadata_json: { area2_rollover_run_id: runId, transition_decision: decision, execution_id: executionId }, created_by: userId, updated_by: userId })
             if (error) throw new Error('La nouvelle inscription n’a pas pu être créée.')
           }
-          await db.from('angelcare360_class_enrollments').update({ status: 'inactive', left_on: dateOnly(), transfer_reason: `Passage vers ${text(run.target_academic_year_id)}`, updated_by: userId, updated_at: now() }).eq('school_id', schoolId).eq('student_id', item.student_id).eq('academic_year_id', run.source_academic_year_id).eq('status', 'active')
+          await db.from('angelcare360_class_enrollments').update({ status: 'inactive', left_on: dateOnly(context), transfer_reason: `Passage vers ${text(run.target_academic_year_id)}`, updated_by: userId, updated_at: now() }).eq('school_id', schoolId).eq('student_id', item.student_id).eq('academic_year_id', run.source_academic_year_id).eq('status', 'active')
           await db.from('angelcare360_students').update({ current_class_id: targetClassId, current_section_id: item.target_section_id || null, admission_status: 'enrolled', status: 'active', updated_by: userId, updated_at: now(), metadata_json: { area2_rollover_run_id: runId, transition_decision: decision, execution_id: executionId } }).eq('school_id', schoolId).eq('id', item.student_id)
         } else if (decision === 'withdraw' || decision === 'graduate') {
-          await db.from('angelcare360_class_enrollments').update({ status: 'inactive', left_on: dateOnly(), transfer_reason: decision, updated_by: userId, updated_at: now() }).eq('school_id', schoolId).eq('student_id', item.student_id).eq('academic_year_id', run.source_academic_year_id).eq('status', 'active')
-          await db.from('angelcare360_students').update({ admission_status: decision === 'graduate' ? 'graduated' : 'withdrawn', status: 'inactive', exit_date: dateOnly(), updated_by: userId, updated_at: now() }).eq('school_id', schoolId).eq('id', item.student_id)
+          await db.from('angelcare360_class_enrollments').update({ status: 'inactive', left_on: dateOnly(context), transfer_reason: decision, updated_by: userId, updated_at: now() }).eq('school_id', schoolId).eq('student_id', item.student_id).eq('academic_year_id', run.source_academic_year_id).eq('status', 'active')
+          await db.from('angelcare360_students').update({ admission_status: decision === 'graduate' ? 'graduated' : 'withdrawn', status: 'inactive', exit_date: dateOnly(context), updated_by: userId, updated_at: now() }).eq('school_id', schoolId).eq('id', item.student_id)
         } else if (decision === 'suspend' || decision === 'change_institution') {
-          await db.from('angelcare360_class_enrollments').update({ status: 'inactive', left_on: dateOnly(), transfer_reason: decision, updated_by: userId, updated_at: now() }).eq('school_id', schoolId).eq('student_id', item.student_id).eq('academic_year_id', run.source_academic_year_id).eq('status', 'active')
+          await db.from('angelcare360_class_enrollments').update({ status: 'inactive', left_on: dateOnly(context), transfer_reason: decision, updated_by: userId, updated_at: now() }).eq('school_id', schoolId).eq('student_id', item.student_id).eq('academic_year_id', run.source_academic_year_id).eq('status', 'active')
           await db.from('angelcare360_students').update({ status: 'inactive', updated_by: userId, updated_at: now(), metadata_json: { area2_rollover_run_id: runId, transition_decision: decision, execution_id: executionId } }).eq('school_id', schoolId).eq('id', item.student_id)
         }
         const { error } = await db.from('angelcare360_governance_rollover_items').update({ state: 'completed', execution_id: executionId, executed_at: now(), blocker_reason: null, result_json: { ok: true, decision, target_academic_year_id: run.target_academic_year_id, target_class_id: targetClassId, executed_at: now() }, updated_at: now() }).eq('school_id', schoolId).eq('id', itemId)

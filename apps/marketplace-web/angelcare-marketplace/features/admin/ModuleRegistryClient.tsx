@@ -14,7 +14,6 @@ import {
 import type {
   MarketplaceModule,
   MarketplaceModuleStatus,
-  MarketplacePermission,
 } from '../../domain/types'
 import styles from '../../design-system/marketplace.module.css'
 import { Button, StatusChip } from '../../design-system/ui'
@@ -47,10 +46,12 @@ const transitionOptions: MarketplaceModuleStatus[] = [
 
 export function ModuleRegistryClient({
   initialModules,
-  permissions,
+  canCreate,
+  canUpdate,
 }: {
   initialModules: MarketplaceModule[]
-  permissions: MarketplacePermission[]
+  canCreate: boolean
+  canUpdate: boolean
 }) {
   const [modules, setModules] = useState(initialModules)
   const [query, setQuery] = useState('')
@@ -62,8 +63,6 @@ export function ModuleRegistryClient({
   const [reason, setReason] = useState('')
   const [isPending, startTransition] = useTransition()
 
-  const canCreate = permissions.includes('marketplace.modules.create')
-  const canUpdate = permissions.includes('marketplace.modules.update')
   const filtered = useMemo(() => {
     const normalized = query.trim().toLowerCase()
     return modules.filter((module) => {

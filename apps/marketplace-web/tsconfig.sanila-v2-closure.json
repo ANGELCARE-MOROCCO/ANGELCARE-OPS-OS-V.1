@@ -1,0 +1,25 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": { "noEmit": true, "incremental": false },
+  "include": [
+    "lib/angelcare360/server/business-clock.ts",
+    "lib/angelcare360/server/academic-command-overview.ts",
+    "lib/angelcare360/server/academic-structure-area.ts",
+    "lib/angelcare360/server/academics.ts",
+    "lib/angelcare360/server/direction-command.ts",
+    "lib/angelcare360/server/finance-authority.ts",
+    "lib/angelcare360/server/inventory-material-command.ts",
+    "lib/angelcare360/server/inventory.ts",
+    "lib/angelcare360/server/people.ts",
+    "lib/angelcare360/server/presences-overview.ts",
+    "lib/angelcare360/server/transport-mobility-command.ts",
+    "lib/angelcare360/server/transport.ts",
+    "lib/angelcare360/server/admissions.ts",
+    "lib/angelcare360/server/attendance.ts",
+    "lib/angelcare360/server/finance.ts",
+    "app/(protected)/angelcare-360-command-center/presences/classes/page.tsx",
+    "app/(protected)/angelcare-360-command-center/presences/classes/[id]/page.tsx",
+    "next-env.d.ts", "types/**/*.d.ts"
+  ],
+  "exclude": ["node_modules", ".next"]
+}

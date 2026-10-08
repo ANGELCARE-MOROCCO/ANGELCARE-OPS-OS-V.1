@@ -1,0 +1,28 @@
+{
+  "phase": "P07",
+  "name": "Native Forms & Conversion Wiring",
+  "workflow_count": 11,
+  "execution_families": {
+    "public_inquiry": 2,
+    "conversion": 4,
+    "family_request": 1,
+    "b2b_diagnostic": 4
+  },
+  "workflows": [
+    "inquiry.general",
+    "inquiry.partner",
+    "booking.service",
+    "quotation.request",
+    "academy.enrollment",
+    "subscription.partner",
+    "family.request",
+    "b2b.establishment",
+    "b2b.hospitality",
+    "b2b.health_partner",
+    "b2b.corporate"
+  ],
+  "new_admin_workspace": false,
+  "shadow_submission_store": false,
+  "sql_required": false,
+  "p08_assigned_template_render_switch": false
+}

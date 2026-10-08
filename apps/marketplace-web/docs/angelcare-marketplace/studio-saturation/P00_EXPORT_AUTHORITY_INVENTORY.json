@@ -1,0 +1,2135 @@
+[
+  {
+    "file": "angelcare-marketplace/studio-universal/performance.ts",
+    "exports": [
+      "auditStudioPerformance"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/studio-universal/puck-bridge.ts",
+    "exports": [
+      "stableStudioId",
+      "cmsBlocksToPuckData",
+      "puckDataToCmsBlocks",
+      "fingerprintsInData",
+      "rekeyComponent"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/studio-universal/css-fidelity.ts",
+    "exports": [
+      "studioDesignPropertySupported",
+      "studioSpecificity",
+      "safeCssDeclaration",
+      "parseStudioCss",
+      "declarationsToStudioDesign",
+      "computeStudioElementStyle",
+      "scopedImportedCss"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/studio-universal/picker-data.ts",
+    "exports": [
+      "loadStudioPickerData"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/studio-universal/block-experience.ts",
+    "exports": [
+      "ANGELCARE_STUDIO_BLOCK_EXPERIENCE",
+      "studioBlockExperienceByLabel",
+      "studioBlockFamilies",
+      "studioBlockSearchMatches"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/studio-universal/controlled-islands.ts",
+    "exports": [
+      "controlledIslandPolicy",
+      "controlledIslandCanPublish"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/studio-universal/runtime-acceptance.ts",
+    "exports": [
+      "ANGELCARE_STUDIO_RUNTIME_ACCEPTANCE",
+      "studioAcceptanceSummary"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/studio-universal/block-contracts.ts",
+    "exports": [
+      "ANGELCARE_STUDIO_BLOCK_CONTRACTS",
+      "STUDIO_STRUCTURAL_TYPES",
+      "STUDIO_BLOCK_TYPES",
+      "STUDIO_BLOCK_COUNT",
+      "STUDIO_STRUCTURAL_COUNT",
+      "studioBlockContract"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/studio-universal/StudioPublishedRenderer.tsx",
+    "exports": [
+      "isStudioCmsBlock",
+      "StudioPublishedRenderer"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/studio-universal/audit-ledger.ts",
+    "exports": [
+      "ANGELCARE_STUDIO_AUDIT_CONTROLS",
+      "studioAuditSummary"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/studio-universal/repository.ts",
+    "exports": [
+      "studioPageIndex",
+      "createStudioPage",
+      "loadStudioDocument",
+      "duplicateStudioPage",
+      "saveStudioDraft",
+      "createStudioPreview",
+      "publishStudioPage"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/studio-universal/database-error.ts",
+    "exports": [
+      "marketplaceDatabaseError"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/studio-universal/manifest.ts",
+    "exports": [
+      "ANGELCARE_STUDIO_VERSION",
+      "ANGELCARE_STUDIO_MANIFEST"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/studio-universal/import-compiler.ts",
+    "exports": [
+      "compileUniversalExperience"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/studio-universal/page-json.ts",
+    "exports": [
+      "STUDIO_PAGE_JSON_FORMAT",
+      "STUDIO_PAGE_JSON_MAX_BYTES",
+      "validateStudioPageJson",
+      "studioPageJsonEnvelope",
+      "studioPageComponentCount"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/studio-universal/interaction-adapters.ts",
+    "exports": [
+      "detectStudioInteractions",
+      "interactionComponentForElement",
+      "interactionItems"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/studio-universal/contrast.ts",
+    "exports": [
+      "studioContrastRatio",
+      "studioContrastReview"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/studio-universal/design.tsx",
+    "exports": [
+      "DEFAULT_STUDIO_DESIGN",
+      "designToStyle",
+      "responsiveDataAttributes",
+      "createStudioDesignFields",
+      "responsiveField"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/studio-universal/accessibility.ts",
+    "exports": [
+      "analyzeStudioAccessibility",
+      "analyzeStudioSeo",
+      "analyzeStudioShell"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/studio-universal/developer-contract.ts",
+    "exports": [
+      "ANGELCARE_STUDIO_DEVELOPER_CONTRACT",
+      "studioDeveloperContractTxt",
+      "studioDeveloperContractCsv"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/studio-universal/publication-gate.ts",
+    "exports": [
+      "studioPublicationGate"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/studio-universal/puck-config.tsx",
+    "exports": [
+      "createAngelCarePuckConfig"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/studio-universal/governance.ts",
+    "exports": [
+      "loadStudioGovernance",
+      "updateStudioSeo"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/studio-universal/runtime-parity.ts",
+    "exports": [
+      "studioRuntimeParityReport"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/studio-universal/capture.ts",
+    "exports": [
+      "captureExternalExperience"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/studio-universal/release-contract.ts",
+    "exports": [
+      "ANGELCARE_MARKETPLACE_RELEASE_CONTRACT",
+      "marketplaceReleaseChain"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/studio-universal/visual-catalogue.ts",
+    "exports": [
+      "ANGELCARE_STUDIO_VISUAL_EXPERIENCES",
+      "ANGELCARE_STUDIO_VISUAL_CATEGORIES",
+      "ANGELCARE_STUDIO_VISUAL_EXPERIENCE_COUNT",
+      "ANGELCARE_STUDIO_VISUAL_CATEGORY_COUNT",
+      "studioVisualExperience",
+      "studioVisualCategory",
+      "canonicalStudioBlockType",
+      "isStudioVisualExperience",
+      "visualAliasFromMetadata",
+      "studioVisualDefaultProps",
+      "visualSearchText",
+      "validateStudioVisualCatalogue"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/studio-universal/capability-registry.ts",
+    "exports": [
+      "ANGELCARE_WEB_CAPABILITY_REGISTRY",
+      "detectedCapabilities"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/studio-universal/release-readiness.ts",
+    "exports": [
+      "studioReleaseReadiness"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/studio-universal/components/StudioVisualCatalogueRuntime.tsx",
+    "exports": [
+      "StudioVisualCatalogueRuntime"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/studio-universal/components/UniversalExperienceStudio.tsx",
+    "exports": [
+      "UniversalExperienceStudio"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/studio-universal/components/StudioBlockRuntime.tsx",
+    "exports": [
+      "StudioBlockRuntime"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/studio-universal/components/StudioLayouts.tsx",
+    "exports": [
+      "STUDIO_LAYOUT_KEYS",
+      "createStudioLayoutComponents"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/studio-universal/components/StudioDesignShell.tsx",
+    "exports": [
+      "StudioDesignShell"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/studio-universal/components/StudioIndex.tsx",
+    "exports": [
+      "StudioIndex"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/studio-universal/components/StudioReleasePanel.tsx",
+    "exports": [
+      "StudioReleasePanel"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/studio-universal/components/StudioInteractiveRuntime.tsx",
+    "exports": [
+      "StudioInteractiveRuntime"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/studio-universal/components/StudioFields.tsx",
+    "exports": [
+      "MediaField",
+      "RecordField"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/studio-universal/components/StudioCandidatePreview.tsx",
+    "exports": [
+      "StudioCandidatePreview"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/studio-universal/components/PuckOperatorTools.tsx",
+    "exports": [
+      "PuckOperatorTools"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/studio-universal/components/StudioGovernancePanel.tsx",
+    "exports": [
+      "StudioGovernancePanel"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/studio-universal/components/UniversalImportWorkbench.tsx",
+    "exports": [
+      "UniversalImportWorkbench"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/studio-universal/components/StudioControlledIsland.tsx",
+    "exports": [
+      "StudioControlledIsland"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/catalog-discovery/repository.ts",
+    "exports": [
+      "searchDiscovery",
+      "storefrontExperience",
+      "getDiscoveryItem"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/catalog-discovery/content.ts",
+    "exports": [
+      "catalogCopy",
+      "storefrontHero"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/catalog-discovery/components/Storefront.tsx",
+    "exports": [
+      "Storefront"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/catalog-discovery/components/CatalogCard.tsx",
+    "exports": [
+      "CatalogCard"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/catalog-discovery/components/MarketplaceIndex.tsx",
+    "exports": [
+      "MarketplaceIndex"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/catalog-discovery/components/ItemDetail.tsx",
+    "exports": [
+      "ItemDetail"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/catalog-discovery/components/DiscoverySearch.tsx",
+    "exports": [
+      "DiscoverySearch"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/catalog-discovery/components/CatalogAdminCommand.tsx",
+    "exports": [
+      "CatalogAdminCommand"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/category-native/registry.ts",
+    "exports": [
+      "CATEGORY_NATIVE_SCHEMA_BLUEPRINTS",
+      "CATEGORY_NATIVE_HOMEPAGE_BLOCKS",
+      "CATEGORY_NATIVE_SEGMENTS",
+      "CATEGORY_NATIVE_VERTICALS",
+      "blueprintForSchema",
+      "blockForKey"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/category-native/product360-enrichment.ts",
+    "exports": [
+      "CATEGORY_NATIVE_PRODUCT360_ENRICHMENT_FIELDS",
+      "CATEGORY_NATIVE_PRODUCT360_ENRICHMENT_KEYS",
+      "categoryNativeCsvFields",
+      "validateProduct360Enrichment",
+      "product360CatalogPatch"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/category-native/api-handlers.ts",
+    "exports": [
+      "handleCategoryNativeSummary",
+      "handleExperienceSchemas",
+      "handleExperienceSchema",
+      "handleExperienceSchemaAction",
+      "handleSchemaFields",
+      "handleSchemaField",
+      "handleSchemaFieldReorder",
+      "handleCsvTemplate",
+      "handleCategoryNativeImports",
+      "handleCategoryNativeImport",
+      "handleCategoryNativeImportAction",
+      "handleHomepageBlocks"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/category-native/repository.ts",
+    "exports": [
+      "listExperienceSchemas",
+      "getExperienceSchema",
+      "listHomepageBlocks",
+      "listCategoryNativeImports",
+      "categoryNativeSummary",
+      "categoryNativeStudioData",
+      "saveExperienceSchema",
+      "saveSchemaField",
+      "reorderSchemaFields",
+      "schemaAction",
+      "createImportPreview",
+      "getImportJob",
+      "executeImportJob",
+      "rollbackImportJob",
+      "validateRowsInMemory"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/category-native/admin-pages.tsx",
+    "exports": [
+      "CategoryNativeCommandPage",
+      "SchemaArchitecturePage",
+      "ArchetypePage",
+      "CsvTemplateFactoryPage",
+      "CsvImportPage",
+      "HomepageDesigner2Page"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/category-native/validation.ts",
+    "exports": [
+      "categoryNativeText",
+      "categoryNativeOptionalText",
+      "categoryNativeBoolean",
+      "categoryNativeNumber",
+      "categoryNativeList",
+      "categoryNativeObject",
+      "validateCategoryNativeRow",
+      "parseCategoryNativeCsv",
+      "categoryNativeCsvTemplate",
+      "assertCategoryNativeSchemaKey"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/category-native/components/CategoryNativeCommand.tsx",
+    "exports": [
+      "CategoryNativeCommand"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/category-native/components/SchemaArchitectureStudio.tsx",
+    "exports": [
+      "SchemaArchitectureStudio"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/category-native/components/CsvTemplateFactory.tsx",
+    "exports": [
+      "CsvTemplateFactory"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/category-native/components/CategoryNativeClient.tsx",
+    "exports": [
+      "categoryNativeRequest",
+      "useCategoryNativeMutation"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/category-native/components/ArchetypeStudio.tsx",
+    "exports": [
+      "ArchetypeStudio"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/category-native/components/HomepageDesigner2.tsx",
+    "exports": [
+      "HomepageDesigner2"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/category-native/components/CsvImportStudio.tsx",
+    "exports": [
+      "CsvImportStudio"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/category-native-experience/registry.ts",
+    "exports": [
+      "CATEGORY_NATIVE_EXPERIENCE_DEFINITIONS",
+      "CATEGORY_NATIVE_EXPERIENCE_DESIGN",
+      "categoryNativeExperienceDefinition",
+      "CATEGORY_NATIVE_EXPERIENCE_FAMILIES"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/category-native-experience/api-handlers.ts",
+    "exports": [
+      "handlePublicCategoryNativeExperience",
+      "handlePublicCategoryNativeConfiguration",
+      "handlePublicCategoryNativePricing",
+      "handlePublicCategoryNativeAvailability",
+      "handlePublicCategoryNativeRecommendations",
+      "handleCategoryNativeFilters",
+      "handleCategoryNativeCompare",
+      "handleCategoryNativeSessionCreate",
+      "handleCategoryNativeSession",
+      "handleCategoryNativeConfigurationUpdate",
+      "handleCategoryNativeRevalidate",
+      "handleCategoryNativeCommit",
+      "handleCategoryNativeJourney"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/category-native-experience/repository.ts",
+    "exports": [
+      "getAdaptiveExperience",
+      "categoryNativeFilters",
+      "compareCategoryNativeItems",
+      "createCategoryNativeSession",
+      "getCategoryNativeSession",
+      "updateCategoryNativeConfiguration",
+      "revalidateCategoryNativeSession",
+      "commitCategoryNativeSession",
+      "categoryNativeJourneyContinuity"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/category-native-experience/validation.ts",
+    "exports": [
+      "categoryNativeLocale",
+      "validateCategoryNativeConfiguration",
+      "assertValidCategoryNativeConfiguration",
+      "formatCategoryNativeValue"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/category-native-experience/content.ts",
+    "exports": [
+      "categoryNativeCopy",
+      "categoryNativeFamilyCopy"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/category-native-experience/components/ExperienceFieldMatrix.tsx",
+    "exports": [
+      "ExperienceFieldMatrix"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/category-native-experience/components/AdaptiveExperience.tsx",
+    "exports": [
+      "AdaptiveExperience"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/category-native-experience/components/CategoryNativeCard.tsx",
+    "exports": [
+      "CategoryNativeCard"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/category-native-experience/components/ExperienceTrustPanel.tsx",
+    "exports": [
+      "ExperienceTrustPanel"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/category-native-experience/components/CategoryNativeFilters.tsx",
+    "exports": [
+      "CategoryNativeFilters"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/category-native-experience/components/ExperienceHero.tsx",
+    "exports": [
+      "ExperienceHero"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/category-native-experience/components/ExperienceFamilySections.tsx",
+    "exports": [
+      "ExperienceFamilySections"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/category-native-experience/components/ExperienceConfigurator.tsx",
+    "exports": [
+      "ExperienceConfigurator"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/category-native-experience/components/CategoryNativeCompare.tsx",
+    "exports": [
+      "CategoryNativeCompare"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/category-native-experience/components/ExperienceMediaGallery.tsx",
+    "exports": [
+      "ExperienceMediaGallery"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/conversion-universe/api-handlers.ts",
+    "exports": [
+      "handleConversionSessions",
+      "handleConversionSession",
+      "handlePriceRevalidation",
+      "handleAvailabilityRevalidation",
+      "handleConversionConsent",
+      "handleConversionConfirmation",
+      "handlePublicBasket",
+      "handlePublicBasketItems",
+      "handleConversionAdminSummary",
+      "handleConversionAdminSessions",
+      "handleConversionRecovery",
+      "handleBasketCheckout"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/conversion-universe/repository.ts",
+    "exports": [
+      "getConversionItem",
+      "createPublicConversionSession",
+      "getPublicConversionSession",
+      "updatePublicConversionSession",
+      "revalidateConversionPrice",
+      "revalidateConversionAvailability",
+      "recordConversionConsent",
+      "confirmPublicConversion",
+      "getOrCreatePublicBasket",
+      "addPublicBasketItem",
+      "removePublicBasketItem",
+      "conversionAdminSummary",
+      "listConversionSessions",
+      "recoverConversionSession",
+      "getConversionOptions",
+      "createConversionSessionFromBasket",
+      "getConversionAdminSession",
+      "listConversionBaskets",
+      "listConversionEvidence"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/conversion-universe/validation.ts",
+    "exports": [
+      "locale",
+      "journey",
+      "status",
+      "object",
+      "requiredText",
+      "optionalText",
+      "positiveNumber",
+      "createInput"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/conversion-universe/content.ts",
+    "exports": [
+      "conversionCopy",
+      "journeyForItem",
+      "journeyPath",
+      "journeyLabel"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/conversion-universe/components/ConversionBasketBoard.tsx",
+    "exports": [
+      "ConversionBasketBoard"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/conversion-universe/components/AcademyEnrollmentExperience.tsx",
+    "exports": [
+      "AcademyEnrollmentExperience"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/conversion-universe/components/ConversionAdminCommand.tsx",
+    "exports": [
+      "ConversionAdminCommand"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/conversion-universe/components/ConversionEvidenceBoard.tsx",
+    "exports": [
+      "ConversionEvidenceBoard"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/conversion-universe/components/ServiceBookingExperience.tsx",
+    "exports": [
+      "ServiceBookingExperience"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/conversion-universe/components/CheckoutExperience.tsx",
+    "exports": [
+      "CheckoutExperience"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/conversion-universe/components/useConversionEngine.ts",
+    "exports": [
+      "useConversionEngine"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/conversion-universe/components/B2BQuotationExperience.tsx",
+    "exports": [
+      "B2BQuotationExperience"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/conversion-universe/components/ConversionFrame.tsx",
+    "exports": [
+      "ConversionFrame",
+      "EvidencePanel"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/conversion-universe/components/BasketExperience.tsx",
+    "exports": [
+      "BasketExperience"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/conversion-universe/components/PartnerSubscriptionExperience.tsx",
+    "exports": [
+      "PartnerSubscriptionExperience"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/conversion-universe/components/ConversionSessionDossier.tsx",
+    "exports": [
+      "ConversionSessionDossier"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/conversion-universe/components/QualityAssessmentExperience.tsx",
+    "exports": [
+      "QualityAssessmentExperience"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/conversion-universe/components/ConversionQueueBoard.tsx",
+    "exports": [
+      "ConversionQueueBoard"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/customer-commerce/payment-admin.ts",
+    "exports": [
+      "paymentAdminSummary",
+      "transitionPaymentReconciliation"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/customer-commerce/payment-adapters.ts",
+    "exports": [
+      "paymentAdapter",
+      "paymentProviderReadiness"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/customer-commerce/customer-auth.ts",
+    "exports": [
+      "getCustomerContext",
+      "requireCustomerContext",
+      "requireCustomerPageContext",
+      "registerCustomer",
+      "loginCustomer",
+      "logoutCustomer",
+      "requestCustomerRecovery",
+      "updateCustomerPassword",
+      "claimGuestCommerce",
+      "sendCustomerMagicLink",
+      "sendCustomerPhoneOtp",
+      "verifyCustomerPhoneOtp",
+      "logoutCustomerEverywhere",
+      "customerSessionSummary"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/customer-commerce/paypal-admin.ts",
+    "exports": [
+      "paypalAdminHealth",
+      "runPayPalSafeConnectionTest"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/customer-commerce/paypal.ts",
+    "exports": [
+      "getPayPalConfig",
+      "paypalConfigured",
+      "paypalConfigurationStatus",
+      "testPayPalConnection",
+      "dhToPayPalAmount",
+      "payPalAmountToDh",
+      "createPayPalOrder",
+      "showPayPalOrder",
+      "capturePayPalOrder",
+      "refundPayPalCapture",
+      "showPayPalRefund",
+      "verifyPayPalWebhook"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/customer-commerce/admin-repository.ts",
+    "exports": [
+      "adminWalletCommand",
+      "adminOrderCommand",
+      "adminWalletPolicies",
+      "saveWalletPolicy",
+      "transitionWalletPolicy",
+      "simulateWalletPolicy",
+      "adjustWallet",
+      "setWalletRestriction",
+      "transitionEnterpriseOrder",
+      "recordOrderLineEvent",
+      "importWalletPolicyAssignments"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/customer-commerce/api-handlers.ts",
+    "exports": [
+      "handleCustomerRegister",
+      "handleCustomerLogin",
+      "handleCustomerLogout",
+      "handleCustomerRecovery",
+      "handleCustomerPasswordReset",
+      "handleCustomerMe",
+      "handleCustomerPortfolio",
+      "handleWalletSummary",
+      "handleWalletTransactions",
+      "handleWalletComparison",
+      "handleWalletTopUpQuote",
+      "handleWalletTopUpCreate",
+      "handleCheckoutPaymentMethods",
+      "handlePaymentIntentCreate",
+      "handleAdminPaymentSummary",
+      "handleAdminPaymentReconciliationTransition",
+      "handleAdminWalletReconciliationTransition",
+      "handleAdminWalletSummary",
+      "handleAdminWalletPolicies",
+      "handleAdminWalletPolicy",
+      "handleAdminWalletSimulation",
+      "handleAdminWalletAdjustment",
+      "handleAdminWalletRestriction",
+      "handleAdminEnterpriseOrders",
+      "handleAdminEnterpriseOrder",
+      "handleAdminOrderLineEvent",
+      "handleCustomerMagicLink",
+      "handleCustomerPhoneOtp",
+      "handleCustomerSessions",
+      "handlePaymentWebhook",
+      "handlePayPalReturn",
+      "handlePayPalCancel",
+      "handleAdminPaymentRefund",
+      "handleAdminWalletPolicyImport"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/customer-commerce/repository.ts",
+    "exports": [
+      "getOrCreateWallet",
+      "getWalletSummary",
+      "walletEntries",
+      "eligiblePaymentMethods",
+      "walletComparisonForCustomer",
+      "quoteWalletTopUp",
+      "createPaymentIntent",
+      "createWalletTopUp",
+      "captureWalletTopUp",
+      "getCustomerPortfolio",
+      "walletAdminSummary",
+      "enterpriseOrderSummary",
+      "capturePayPalBrowserReturn",
+      "cancelPayPalBrowserReturn",
+      "processPaymentProviderWebhook",
+      "createPaymentRefund"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/customer-commerce/order-permissions.ts",
+    "exports": [
+      "readOnlyOrderPermissions"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/customer-commerce/paypal-admin-api.ts",
+    "exports": [
+      "handlePayPalAdminHealth"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/customer-commerce/validation.ts",
+    "exports": [
+      "localeValue",
+      "requiredText",
+      "optionalText",
+      "positiveMoney",
+      "emailValue",
+      "phoneValue",
+      "passwordValue",
+      "PAYMENT_METHODS",
+      "paymentMethod",
+      "objectValue",
+      "stringArray"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/customer-commerce/wallet-admin.ts",
+    "exports": [
+      "walletAuthoritySnapshot",
+      "transitionWalletReconciliation"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/customer-commerce/wallet-policy.ts",
+    "exports": [
+      "activeWalletPolicies",
+      "evaluateWalletComparison",
+      "walletPoliciesForAdmin"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/customer-commerce/content.ts",
+    "exports": [
+      "AC_WALLET_FEATURES",
+      "PAYMENT_METHOD_COPY",
+      "WALLET_BUCKET_COPY",
+      "customerCopy"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/customer-commerce/components/WalletTransactions.tsx",
+    "exports": [
+      "WalletTransactions"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/customer-commerce/components/CustomerPortalCommand.tsx",
+    "exports": [
+      "CustomerPortalCommand"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/customer-commerce/components/EnterpriseOrderCommand.tsx",
+    "exports": [
+      "EnterpriseOrderCommand"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/customer-commerce/components/WalletPolicyStudio.tsx",
+    "exports": [
+      "WalletPolicyStudio"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/customer-commerce/components/CheckoutPaymentStage.tsx",
+    "exports": [
+      "CheckoutPaymentStage"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/customer-commerce/components/CustomerAuthExperience.tsx",
+    "exports": [
+      "CustomerAuthExperience"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/customer-commerce/components/PayPalOperations.tsx",
+    "exports": [
+      "PayPalOperations"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/customer-commerce/components/WalletTopUpStudio.tsx",
+    "exports": [
+      "WalletTopUpStudio"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/customer-commerce/components/AdminWalletCommand.tsx",
+    "exports": [
+      "AdminWalletCommand"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/customer-commerce/components/CustomerPortfolioWorkspace.tsx",
+    "exports": [
+      "CustomerPortfolioWorkspace"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/customer-commerce/components/CustomerSettingsWorkspace.tsx",
+    "exports": [
+      "CustomerSettingsWorkspace"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/customer-commerce/components/PaymentAdminCommand.tsx",
+    "exports": [
+      "PaymentAdminCommand"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/customer-commerce/components/WalletDashboard.tsx",
+    "exports": [
+      "WalletDashboard"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/customer-commerce/components/WalletPolicyImportStudio.tsx",
+    "exports": [
+      "WalletPolicyImportStudio"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/customer-commerce/components/WalletBenefitTeaser.tsx",
+    "exports": [
+      "WalletBenefitTeaser"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/customer-commerce/components/CustomerPaymentsWorkspace.tsx",
+    "exports": [
+      "CustomerPaymentsWorkspace"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/customer-commerce/components/AssistedOrderComposer.tsx",
+    "exports": [
+      "AssistedOrderComposer"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/customer-commerce/components/WalletAuthorityClient.tsx",
+    "exports": [
+      "WalletAuthorityClient"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/customer-commerce/components/CustomerPortalNavigation.tsx",
+    "exports": [
+      "CustomerPortalNavigation"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/experience-builder/block-registry.ts",
+    "exports": [
+      "STRUCTURAL_BLOCK_TYPES",
+      "CMS_BLOCK_REGISTRY",
+      "blockDefinition",
+      "isStructuralBlock",
+      "CMS_BLOCK_REGISTRY_VERSION"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/experience-builder/api-handlers.ts",
+    "exports": [
+      "handlePages",
+      "handlePage",
+      "handleBlocks",
+      "handlePageTransition",
+      "handlePageRollback",
+      "handleMenus",
+      "handleCtas",
+      "handlePublishing",
+      "handlePreview",
+      "handlePreviewSessions",
+      "handleExperienceMedia",
+      "handleDependencies",
+      "handleTemplates",
+      "handleSymbols"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/experience-builder/repository.ts",
+    "exports": [
+      "listPages",
+      "getRevisionDetail",
+      "getPageDetail",
+      "createPage",
+      "updatePage",
+      "saveBlocks",
+      "transitionPage",
+      "rollbackPage",
+      "listMenus",
+      "listCtas",
+      "listPublicationJobs",
+      "createPreview",
+      "getPreview",
+      "listPreviewSessions",
+      "revokePreview",
+      "listExperienceMediaAssets",
+      "listDependencyEdges",
+      "listTemplates",
+      "savePageAsTemplate",
+      "instantiateTemplate",
+      "listSymbols",
+      "saveBlockAsSymbol",
+      "runDuePublicationJobs",
+      "updateTemplateFromPage",
+      "publishTemplate",
+      "archiveTemplate",
+      "listSymbolRevisions",
+      "updateSymbolFromBlock",
+      "publishSymbol",
+      "restoreSymbolRevision",
+      "archiveSymbol"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/experience-builder/developer-contract.ts",
+    "exports": [
+      "buildExperienceDeveloperContract",
+      "developerContractTxt",
+      "developerContractCsv"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/experience-builder/validation.ts",
+    "exports": [
+      "validateLocale",
+      "validatePageTransition",
+      "validateBlockDocument",
+      "validatePageForPublication"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/experience-builder/components/PageRegistry.tsx",
+    "exports": [
+      "PageRegistry"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/experience-builder/components/CreatePageClient.tsx",
+    "exports": [
+      "CreatePageClient"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/experience-builder/components/PageBuilderClient.tsx",
+    "exports": [
+      "PageBuilderClient"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/experience-builder/components/PageDossierClient.tsx",
+    "exports": [
+      "PageDossierClient"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/experience-builder/components/ReusableExperienceStudio.tsx",
+    "exports": [
+      "ReusableExperienceStudio"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/experience-builder/components/DependencyGraphWorkspace.tsx",
+    "exports": [
+      "DependencyGraphWorkspace"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/experience-builder/components/ExperienceCommand.tsx",
+    "exports": [
+      "ExperienceCommand"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/experience-builder/components/BlockContractRegistry.tsx",
+    "exports": [
+      "BlockContractRegistry"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/experience-builder/components/ExperienceHealthWorkspace.tsx",
+    "exports": [
+      "ExperienceHealthWorkspace"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/experience-builder/components/PublishingRunway.tsx",
+    "exports": [
+      "PublishingRunway"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/homepage-final/admin-page.tsx",
+    "exports": [
+      "HomepageReleasePage"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/homepage-final/api-handlers.ts",
+    "exports": [
+      "handleHomepageReleases"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/homepage-final/repository.ts",
+    "exports": [
+      "homepageReleaseSnapshot",
+      "createHomepageRelease",
+      "transitionHomepageRelease"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/homepage-final/components/HomepageReleaseAuthority.tsx",
+    "exports": [
+      "HomepageReleaseAuthority"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/homepage-flagship/admin-page.tsx",
+    "exports": [
+      "HomepageAdminPage"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/homepage-flagship/api-handlers.ts",
+    "exports": [
+      "handleHomepageAdmin",
+      "handleHomepageEngagement"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/homepage-flagship/repository.ts",
+    "exports": [
+      "getHomepageExperience",
+      "getHomepageAdminData",
+      "listHomepageAdminKind",
+      "createHomepageAdminRecord",
+      "updateHomepageAdminRecord",
+      "archiveHomepageAdminRecord"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/homepage-flagship/copy.ts",
+    "exports": [
+      "homepageCopy"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/homepage-flagship/components/HomepageFlagship.tsx",
+    "exports": [
+      "HomepageFlagship"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/homepage-flagship/components/HomepageAdminCommand.tsx",
+    "exports": [
+      "HomepageAdminCommand"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/journey-control/api-handlers.ts",
+    "exports": [
+      "handleCustomerAccount",
+      "handleCustomerJourneys",
+      "handleCustomerJourney",
+      "handleCompleteCustomerAction",
+      "handleCreateChangeRequest",
+      "handleCreateRecovery",
+      "handleAcknowledgeNotification",
+      "handleAdminSummary",
+      "handleAdminJourneys",
+      "handleAdminJourney"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/journey-control/repository.ts",
+    "exports": [
+      "listCustomerJourneys",
+      "getCustomerAccountSummary",
+      "getCustomerJourney",
+      "completeCustomerAction",
+      "createCustomerChangeRequest",
+      "createCustomerRecoveryCase",
+      "acknowledgeCustomerNotification",
+      "listAdminJourneys",
+      "getAdminJourney",
+      "getJourneyAdminSummary",
+      "transitionAdminJourney"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/journey-control/validation.ts",
+    "exports": [
+      "requiredText",
+      "optionalText",
+      "objectValue",
+      "journeyType",
+      "journeyStatus",
+      "journeyRisk"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/journey-control/content.ts",
+    "exports": [
+      "journeyTypeLabels",
+      "statusLabels",
+      "accountCopy",
+      "journeyAccent"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/journey-control/components/JourneyAdminCommand.tsx",
+    "exports": [
+      "JourneyAdminCommand"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/journey-control/components/PartnerActivationJourney.tsx",
+    "exports": [
+      "PartnerActivationJourney"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/journey-control/components/JourneyAdminDetail.tsx",
+    "exports": [
+      "JourneyAdminDetail"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/journey-control/components/ProductOrderJourney.tsx",
+    "exports": [
+      "ProductOrderJourney"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/journey-control/components/JourneyHero.tsx",
+    "exports": [
+      "JourneyHero"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/journey-control/components/JourneyTimeline.tsx",
+    "exports": [
+      "JourneyTimeline"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/journey-control/components/FamilyBookingJourney.tsx",
+    "exports": [
+      "FamilyBookingJourney"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/journey-control/components/AccountCommand.tsx",
+    "exports": [
+      "AccountCommand"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/journey-control/components/AcademyEnrollmentJourney.tsx",
+    "exports": [
+      "AcademyEnrollmentJourney"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/journey-control/components/DocumentVault.tsx",
+    "exports": [
+      "DocumentVault"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/journey-control/components/JourneyExperience.tsx",
+    "exports": [
+      "JourneyExperience"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/journey-control/components/QualityAssessmentJourney.tsx",
+    "exports": [
+      "QualityAssessmentJourney"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/journey-control/components/B2BQuotationJourney.tsx",
+    "exports": [
+      "B2BQuotationJourney"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/journey-control/components/NotificationCenter.tsx",
+    "exports": [
+      "NotificationCenter"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/journey-control/components/JourneyActionPanel.tsx",
+    "exports": [
+      "JourneyActionPanel"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/journey-control/components/RecoveryPanel.tsx",
+    "exports": [
+      "RecoveryPanel"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/academy-engine/final-repository.ts",
+    "exports": [
+      "academyFinalSnapshot",
+      "createAcademySession",
+      "transitionAcademySession",
+      "transitionAcademyCohort",
+      "createAcademyAssessment",
+      "reviewAssessmentResult",
+      "createAcademyRemediation",
+      "transitionAcademyRemediation",
+      "transitionAcademyB2B",
+      "transitionAcademyPublication",
+      "assignAcademyTrainer"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/academy-engine/final-admin-page.tsx",
+    "exports": [
+      "AcademyFinalPage"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/academy-engine/api-handlers.ts",
+    "exports": [
+      "handleAcademySummary",
+      "handlePrograms",
+      "handleCohorts",
+      "handleAttendance",
+      "handleAssessmentResult",
+      "handleCertificates",
+      "handleCertificateDecision"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/academy-engine/repository.ts",
+    "exports": [
+      "academySummary",
+      "academyCommand",
+      "listPrograms",
+      "listCohorts",
+      "listCertificates",
+      "createCohort",
+      "recordAttendance",
+      "recordAssessmentResult",
+      "decideCertificate"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/academy-engine/final-validation.ts",
+    "exports": [
+      "assertCohortFinalTransition",
+      "assertSessionTransition",
+      "assertB2BTransition",
+      "assertAcademyPublicationTransition"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/academy-engine/validation.ts",
+    "exports": [
+      "parseCohortInput",
+      "parseAttendanceInput",
+      "parseAssessmentResultInput",
+      "parseCertificateDecision"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/academy-engine/final-api-handlers.ts",
+    "exports": [
+      "handleAcademyFinalSnapshot",
+      "handleAcademySessionCreate",
+      "handleAcademySessionTransition",
+      "handleAcademyCohortTransition",
+      "handleAcademyB2BTransition",
+      "handleAcademyRemediationTransition",
+      "handleAcademyAssessmentCreate",
+      "handleAssessmentResultReview",
+      "handleAcademyRemediationCreate",
+      "handleAcademyPublicationTransition",
+      "handleAcademyTrainerAssignment"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/academy-engine/components/AcademyCommand.tsx",
+    "exports": [
+      "AcademyCommand"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/academy-engine/components/CohortCommand.tsx",
+    "exports": [
+      "CohortCommand"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/academy-engine/components/CertificateAuthority.tsx",
+    "exports": [
+      "CertificateAuthority"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/academy-engine/components/AcademyFinalCommand.tsx",
+    "exports": [
+      "AcademyFinalCommand"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/academy-engine/components/PublicAcademyExperience.tsx",
+    "exports": [
+      "PublicAcademyExperience"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/academy-engine/components/CatalogRegistry.tsx",
+    "exports": [
+      "CatalogRegistry"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/total-commerce-control/api-handlers.ts",
+    "exports": [
+      "handleFrontendSurfaces",
+      "handleFrontendSurface",
+      "handleFrontendSurfaceSections",
+      "handlePublishFrontendSurface",
+      "handleSearchRules",
+      "handleAssistedOrders",
+      "handlePublicInquiryAdmin"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/total-commerce-control/repository.ts",
+    "exports": [
+      "listFrontendSurfaces",
+      "getFrontendSurface",
+      "getPublishedSurface",
+      "saveFrontendSurface",
+      "saveSurfaceSections",
+      "publishFrontendSurface",
+      "frontendControlSnapshot",
+      "listSearchRules",
+      "saveSearchRule",
+      "expandDiscoveryQuery",
+      "assistedOrderOptions",
+      "createAssistedOrder",
+      "listCustomerCommerce",
+      "getCustomerCommerceDossier",
+      "convertInquiryToCustomer",
+      "listMediaUsageReferences",
+      "discoveryPresentation",
+      "productExcellenceSnapshot",
+      "updatePublicInquiry"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/total-commerce-control/surface-registry.ts",
+    "exports": [
+      "FRONTEND_SURFACE_REGISTRY",
+      "SURFACE_BY_KEY"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/total-commerce-control/components/ProductExcellenceCommand.tsx",
+    "exports": [
+      "ProductExcellenceCommand"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/total-commerce-control/components/InquiryCommandCenter.tsx",
+    "exports": [
+      "InquiryCommandCenter"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/total-commerce-control/components/FrontendControlCommand.tsx",
+    "exports": [
+      "FrontendControlCommand"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/total-commerce-control/components/PublicDiscoveryAssist.tsx",
+    "exports": [
+      "PublicDiscoveryAssist"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/total-commerce-control/components/DiscoveryControl.tsx",
+    "exports": [
+      "DiscoveryControl"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/total-commerce-control/components/CustomerCommerceCommand.tsx",
+    "exports": [
+      "CustomerCommerceCommand"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/total-commerce-control/components/SurfaceRegistryStudio.tsx",
+    "exports": [
+      "SurfaceRegistryStudio"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/total-commerce-control/components/PublicSurfaceSections.tsx",
+    "exports": [
+      "PublicSurfaceSections"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/total-commerce-control/components/SurfaceExperienceStudio.tsx",
+    "exports": [
+      "SurfaceExperienceStudio"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/total-commerce-control/components/CustomerCommerceDossier.tsx",
+    "exports": [
+      "CustomerCommerceDossier"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/customer-relationship-command/crm-activity-api.ts",
+    "exports": [
+      "handleCustomerCrmActivity",
+      "handleCustomerCrmTasks",
+      "handleCustomerCrmTask",
+      "handleCustomerCrmCommunications"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/customer-relationship-command/repository.ts",
+    "exports": [
+      "customerRelationshipOverview"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/customer-relationship-command/crm-activity.ts",
+    "exports": [
+      "listCustomerCrmActivity",
+      "createCustomerCrmTask",
+      "updateCustomerCrmTask",
+      "logCustomerCrmCommunication"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/customer-relationship-command/admin-pages.tsx",
+    "exports": [
+      "CustomerRegistryPage",
+      "CustomerCreatePage",
+      "CustomerDossierPage",
+      "CustomerSegmentsPage",
+      "CustomerSupportPage",
+      "CustomerHealthPage"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/customer-relationship-command/components/FamilyRelationshipWorkspace.tsx",
+    "exports": [
+      "FamilyRelationshipWorkspace"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/customer-relationship-command/components/CustomerRegistryWorkspace.tsx",
+    "exports": [
+      "CustomerRegistryWorkspace"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/customer-relationship-command/components/CustomerActivityWorkspace.tsx",
+    "exports": [
+      "CustomerActivityWorkspace"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/customer-relationship-command/components/SegmentIntelligenceWorkspace.tsx",
+    "exports": [
+      "SegmentIntelligenceWorkspace"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/customer-relationship-command/components/CustomerRelationshipShell.tsx",
+    "exports": [
+      "CustomerRelationshipShell"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/customer-relationship-command/components/CRMRelationshipWorkspace.tsx",
+    "exports": [
+      "CRMRelationshipWorkspace"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/customer-relationship-command/components/CustomerApprovedWorkspaces.tsx",
+    "exports": [
+      "CustomerCreateWorkspace",
+      "CustomerHealthWorkspace"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/customer-relationship-command/components/CustomerCasesWorkspace.tsx",
+    "exports": [
+      "CustomerCasesWorkspace"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/customer-relationship-command/components/CustomerRelationshipDrawers.tsx",
+    "exports": [
+      "RelationshipDrawerHost",
+      "RelationshipObjectDock",
+      "CreateCustomerDrawer"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/customer-relationship-command/components/CustomerRelationshipCommandCenter.tsx",
+    "exports": [
+      "CustomerRelationshipCommandCenter"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/live-experience-command/registry.ts",
+    "exports": [
+      "LIVE_CAPABILITIES",
+      "LIVE_PLACEMENTS",
+      "POPUP_PURPOSES",
+      "BROADCAST_PURPOSES",
+      "PROOF_PURPOSES",
+      "LIVE_PURPOSES",
+      "POPUP_THEMES",
+      "BROADCAST_THEMES",
+      "PROOF_THEMES",
+      "LIVE_THEMES",
+      "LIVE_PRESETS",
+      "LIVE_PRESET_COUNTS",
+      "SAFE_FALLBACK"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/live-experience-command/governance-admin-page.tsx",
+    "exports": [
+      "LiveGovernancePage"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/live-experience-command/api-handlers.ts",
+    "exports": [
+      "handleLiveSummary",
+      "handleLiveCampaigns",
+      "handleLiveCampaign",
+      "handleLiveCampaignAction",
+      "handleLiveSimulate",
+      "handleLiveSourceRefresh",
+      "handlePublicLiveResolve",
+      "handleLiveSourceStatus",
+      "handlePublicLiveInteraction"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/live-experience-command/repository.ts",
+    "exports": [
+      "safeLiveSource",
+      "liveExperienceSummary",
+      "saveLiveCampaign",
+      "liveCampaignAction",
+      "simulateLiveExperience",
+      "resolveLiveExperiences",
+      "recordLiveInteraction",
+      "refreshCanonicalSource",
+      "transitionCanonicalSource",
+      "listLiveGovernance",
+      "saveLiveGovernance",
+      "transitionLiveGovernance"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/live-experience-command/governance-api-handlers.ts",
+    "exports": [
+      "handleLiveGovernance"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/live-experience-command/admin-pages.tsx",
+    "exports": [
+      "LiveExperiencePage"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/live-experience-command/components/LiveExperienceCommand.tsx",
+    "exports": [
+      "LiveExperienceCommand"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/live-experience-command/components/LiveGovernanceCommand.tsx",
+    "exports": [
+      "LiveGovernanceCommand"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/live-experience-command/components/LiveExperienceLayer.tsx",
+    "exports": [
+      "LiveExperienceLayer"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/live-experience-command/components/LiveProofSources.tsx",
+    "exports": [
+      "LiveProofSources"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/public-universe/api-handlers.ts",
+    "exports": [
+      "handlePublicInquiry",
+      "handlePublicEvent"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/public-universe/repository.ts",
+    "exports": [
+      "publicRoutePath",
+      "listPublicInquiries",
+      "resolveTerritoryId",
+      "getPublicPage",
+      "createPublicInquiry",
+      "recordPublicEvent"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/public-universe/components/GlobalPublicShell.tsx",
+    "exports": [
+      "GlobalPublicShell"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/public-universe/components/PublicPageRenderer.tsx",
+    "exports": [
+      "PublicPageRenderer"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/public-universe/components/PublicInquiryForm.tsx",
+    "exports": [
+      "PublicInquiryForm"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/marketplace-core/api-handlers.ts",
+    "exports": [
+      "handleCatalogSummary",
+      "handleCatalog",
+      "handlePublicCatalogItem",
+      "handleCatalogTransition",
+      "handleSuppliers",
+      "handleQuoteBaskets",
+      "handleQuoteBasketItems"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/marketplace-core/repository.ts",
+    "exports": [
+      "catalogSummary",
+      "listCatalogItems",
+      "getCatalogItemBySlug",
+      "createCatalogItem",
+      "transitionCatalogItem",
+      "listSuppliers",
+      "listQuoteBaskets",
+      "createQuoteBasket",
+      "addQuoteBasketItem"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/marketplace-core/validation.ts",
+    "exports": [
+      "assertCatalogTransition",
+      "assertPublishedItem"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/marketplace-core/components/QuoteBasketBoard.tsx",
+    "exports": [
+      "QuoteBasketBoard"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/marketplace-core/components/PublicCatalogDetail.tsx",
+    "exports": [
+      "PublicCatalogDetail"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/marketplace-core/components/PublicMarketplace.tsx",
+    "exports": [
+      "PublicMarketplace"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/marketplace-core/components/MarketplaceCommand.tsx",
+    "exports": [
+      "MarketplaceCommand"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/marketplace-core/components/SupplierCommand.tsx",
+    "exports": [
+      "SupplierCommand"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/marketplace-core/components/CatalogRegistry.tsx",
+    "exports": [
+      "CatalogRegistry"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/territory-os/scope.ts",
+    "exports": [
+      "hasGlobalTerritoryScope",
+      "allowedTerritoryIds",
+      "assertTerritoryScope",
+      "applyTerritoryScope"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/territory-os/constants.ts",
+    "exports": [
+      "TERRITORY_BASE_ROUTE",
+      "TERRITORY_API_ROUTE",
+      "TERRITORY_STATUS_TRANSITIONS",
+      "TERRITORY_STATUS_LABELS",
+      "TERRITORY_HEALTH_LABELS",
+      "TERRITORY_LAUNCH_GATES",
+      "SOFT_LAUNCH_REQUIRED_GATES",
+      "TERRITORY_SETTING_DEFINITIONS"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/territory-os/client-api.ts",
+    "exports": [
+      "TerritoryClientError",
+      "territoryRequest"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/territory-os/api-handlers.ts",
+    "exports": [
+      "handleTerritoriesGet",
+      "handleTerritoriesPost",
+      "handleTerritoryGet",
+      "handleTerritoryPatch",
+      "handleTerritoryClonePost",
+      "handleTerritoryTransitionPost",
+      "handleTerritoryTemplatesGet",
+      "handleTerritorySettingsGet",
+      "handleTerritorySettingPatch",
+      "handleTerritoryOverridesGet",
+      "handleTerritoryOverridesPost",
+      "handleTerritoryOverrideGet",
+      "handleTerritoryOverrideReviewPost",
+      "handleTerritoryOverrideRollbackPost",
+      "handleTerritoryReadinessGet",
+      "handleTerritoryReadinessPatch",
+      "handleTerritoryReadinessValidatePost",
+      "handleTerritoryReadinessSignOffPost",
+      "handleTerritoryHealthGet",
+      "handleTerritoryHealthPost",
+      "handleTerritoryPreviewGet",
+      "handleTerritoryExportGet"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/territory-os/repository.ts",
+    "exports": [
+      "listTerritories",
+      "summarizeTerritories",
+      "getTerritoryByCode",
+      "listTerritoryTemplates",
+      "createTerritory",
+      "updateTerritory",
+      "cloneTerritory",
+      "transitionTerritory",
+      "listTerritorySettings",
+      "updateTerritorySetting",
+      "listTerritoryOverrides",
+      "createTerritoryOverride",
+      "getTerritoryOverride",
+      "reviewTerritoryOverride",
+      "rollbackTerritoryOverride",
+      "listTerritoryLaunchChecks",
+      "updateTerritoryLaunchCheck",
+      "validateTerritoryReadiness",
+      "signOffTerritoryReadiness",
+      "listTerritoryHealthEvents",
+      "createTerritoryHealthEvent",
+      "getTerritoryDetailBundle",
+      "listRecentTerritoryHealthEvents",
+      "countOpenCriticalTerritoryEvents"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/territory-os/format.ts",
+    "exports": [
+      "formatTerritoryStatus",
+      "formatTerritoryHealth",
+      "formatDate",
+      "formatDateTime",
+      "ownerLabel"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/territory-os/readiness.ts",
+    "exports": [
+      "isTerritoryGatePassed",
+      "calculateTerritoryReadiness"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/territory-os/validation.ts",
+    "exports": [
+      "asRecord",
+      "asStringArray",
+      "asLocaleArray",
+      "asLocale",
+      "asTerritoryStatus",
+      "asTerritoryHealth",
+      "asTerritoryType",
+      "asOverrideStatus",
+      "asGateStatus",
+      "asGateRequirement",
+      "requireTerritoryCode",
+      "requireCountryCode",
+      "requireTimezone",
+      "optionalIsoDate",
+      "asNumber"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/territory-os/components/CreateTerritoryWizard.tsx",
+    "exports": [
+      "CreateTerritoryWizard"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/territory-os/components/TerritorySettingsClient.tsx",
+    "exports": [
+      "TerritorySettingsClient"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/territory-os/components/TerritoryPrimitives.tsx",
+    "exports": [
+      "TerritoryStatusPill",
+      "TerritoryHealthPill",
+      "ReadinessBar",
+      "ScoreRing",
+      "GateStatusPill",
+      "CommandPanel",
+      "TerritoryEmpty",
+      "GateIcon"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/territory-os/components/TerritoryTransitionActions.tsx",
+    "exports": [
+      "TerritoryTransitionActions"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/territory-os/components/TerritoryCommandCockpit.tsx",
+    "exports": [
+      "TerritoryCommandCockpit"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/territory-os/components/OverrideStudioClient.tsx",
+    "exports": [
+      "OverrideStudioClient"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/territory-os/components/TerritoryDetailCommand.tsx",
+    "exports": [
+      "TerritoryDetailCommand"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/territory-os/components/TerritoryPreview.tsx",
+    "exports": [
+      "TerritoryPreview"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/territory-os/components/CloneTerritoryWizard.tsx",
+    "exports": [
+      "CloneTerritoryWizard"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/territory-os/components/ReadinessBoardClient.tsx",
+    "exports": [
+      "ReadinessBoardClient"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/territory-os/components/TerritoryHealthClient.tsx",
+    "exports": [
+      "TerritoryHealthClient"
+    ]
+  },
+  {
+    "file": "angelcare-marketplace/territory-os/components/TerritoryRegistryClient.tsx",
+    "exports": [
+      "TerritoryRegistryClient"
+    ]
+  }
+]

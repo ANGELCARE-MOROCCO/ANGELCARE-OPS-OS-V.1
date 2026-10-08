@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { getAngelcare360AccessContext, requireAngelcare360Permission } from './context'
+import { getSanilaBusinessDate } from './business-clock'
 import { recordAngelcare360AuditEventServer } from './audit'
 import {
   angelcare360TransportAssignmentCancelSchema,
@@ -1002,7 +1003,7 @@ export async function createAngelcare360TransportAssignment(input: unknown): Pro
     vehicle_id: parsed.data.vehicleId || null,
     pickup_stop_id: parsed.data.pickupStopId || null,
     dropoff_stop_id: parsed.data.dropoffStopId || null,
-    assigned_on: parsed.data.assignedOn || new Date().toISOString().slice(0, 10),
+    assigned_on: parsed.data.assignedOn || getSanilaBusinessDate(context),
     status: parsed.data.status,
     updated_by: context.user.id,
     created_by: context.user.id,

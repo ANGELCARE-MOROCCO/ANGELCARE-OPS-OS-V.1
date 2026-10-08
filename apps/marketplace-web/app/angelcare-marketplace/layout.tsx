@@ -1,16 +1,21 @@
 import type { Metadata } from 'next'
-import type { ReactNode } from 'react'
+import { Suspense, type ReactNode } from 'react'
 import styles from '@/angelcare-marketplace/design-system/marketplace.module.css'
+import { LocalizationRuntime } from '@/angelcare-marketplace/localization-intelligence/components/LocalizationRuntime'
+import { buildWebPresenceMetadata } from '@/angelcare-marketplace/web-presence/runtime'
+import { MarketplaceTelemetry } from '@/angelcare-marketplace/store-xray/MarketplaceTelemetry'
 
-export const metadata: Metadata = {
-  title: {
-    default: 'ANGELCARE Marketplace 360',
-    template: '%s · ANGELCARE Marketplace 360',
-  },
-  description:
-    'Fondation gouvernée du Marketplace Kids 360 ANGELCARE : public, SaaS, opérations, Academy, confiance et expansion territoriale.',
+export async function generateMetadata(): Promise<Metadata> {
+  return buildWebPresenceMetadata('MARKETPLACE')
 }
 
 export default function AngelCareMarketplaceLayout({ children }: { children: ReactNode }) {
-  return <div className={styles.scope}>{children}</div>
+  return (
+    <div className={styles.scope}>
+      <Suspense fallback={null}><MarketplaceTelemetry /></Suspense>
+      <Suspense fallback={children}>
+        <LocalizationRuntime>{children}</LocalizationRuntime>
+      </Suspense>
+    </div>
+  )
 }

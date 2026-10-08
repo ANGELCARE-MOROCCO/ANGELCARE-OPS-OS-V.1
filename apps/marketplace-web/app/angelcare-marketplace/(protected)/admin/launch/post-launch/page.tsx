@@ -1,1 +1,2 @@
-export { default } from '../monitoring/page'
+import {redirect} from 'next/navigation'
+export default function Page(){redirect('/angelcare-marketplace/admin/launch/monitoring')}

@@ -1,0 +1,52 @@
+{
+  "phase": "P06",
+  "title": "Dynamic Content Source Engine",
+  "schema_version": "2026-09-19.P06",
+  "source_count": 12,
+  "strategy_count": 11,
+  "empty_policy_count": 3,
+  "sources": [
+    "catalog.items",
+    "catalog.categories",
+    "homepage.collections",
+    "homepage.campaigns",
+    "experience.live_campaigns",
+    "academy.programmes",
+    "academy.cohorts",
+    "providers.profiles",
+    "commerce.promotions",
+    "partners.plans",
+    "b2b.programmes",
+    "trust.claims"
+  ],
+  "strategies": [
+    "source_query",
+    "catalog_published",
+    "catalog_featured",
+    "catalog_available",
+    "catalog_newest",
+    "merchandising_popular",
+    "merchandising_best_pick",
+    "merchandising_new_arrival",
+    "category_items",
+    "collection_items",
+    "experience_schema_items"
+  ],
+  "empty_policies": [
+    "preserve_static",
+    "empty",
+    "hide_block"
+  ],
+  "p01_registry_authority": true,
+  "p02_canonical_selectors": true,
+  "p03_action_reuse": true,
+  "p05_runtime_clone_composition": true,
+  "business_facts_persisted_in_studio": false,
+  "public_safe_projection_required": true,
+  "sql_required": false,
+  "migration_required": false,
+  "local_build": false,
+  "global_typescript": false,
+  "p07_workflow_submissions": false,
+  "p08_assigned_template_render_switch": false
+}

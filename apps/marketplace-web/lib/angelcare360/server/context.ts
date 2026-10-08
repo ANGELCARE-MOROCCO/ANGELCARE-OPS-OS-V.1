@@ -4,9 +4,16 @@ import { cookies } from 'next/headers'
 import type { Angelcare360AccessProfile, Angelcare360SessionUser } from '@/types/angelcare360/module'
 import type { Angelcare360PermissionRecord, Angelcare360RoleRecord } from '@/types/angelcare360/rbac'
 import { buildAngelcare360AccessProfile, normalizeAngelcare360User } from '@/lib/angelcare360/permissions'
-import { loadAngelcare360RuntimeEntitlements } from '@/lib/angelcare360/server/entitlements'
+import { createAngelcare360DemoContextMismatchEntitlements, loadAngelcare360RuntimeEntitlements } from '@/lib/angelcare360/server/entitlements'
 import { getAngelcare360ModuleKeyForPermission, isAngelcare360ModuleEnabled } from '@/lib/angelcare360/entitlements'
 import type { Angelcare360RuntimeEntitlements } from '@/types/angelcare360/entitlements'
+import { classifyMasterDemoOperation } from '@/lib/sanila-demo/policy'
+import {
+  buildAngelcare360DemoAccess,
+  extractTrustedAngelcare360DemoPrincipalContext,
+  resolveAngelcare360PrincipalSchoolAuthority,
+  type Angelcare360DemoAccess,
+} from '@/lib/angelcare360/principal-context-authority'
 
 export type Angelcare360SchoolRecord = {
   id: string
@@ -59,6 +66,7 @@ export type Angelcare360AccessContext = {
   primaryRoleKey: string | null
   runtimeEntitlements: Angelcare360RuntimeEntitlements
   supportAccess?: Record<string, unknown> | null
+  demoAccess?: Angelcare360DemoAccess | null
 }
 
 export class Angelcare360AccessError extends Error {
@@ -121,7 +129,7 @@ async function getActiveSupportAccess(operatorUserId: string) {
     const supportSessionId = cookieStore.get('angelcare360_support_access')?.value
     if (!supportSessionId) return null
     const supabase = await createClient()
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('angelcare360_operator_tenant_support_access_sessions')
       .select('*, tenant:angelcare360_operator_tenants(id,school_id,tenant_slug), client:angelcare360_operator_clients(display_name)')
       .eq('id', supportSessionId)
@@ -129,8 +137,12 @@ async function getActiveSupportAccess(operatorUserId: string) {
       .eq('status', 'active')
       .gt('expires_at', new Date().toISOString())
       .maybeSingle()
-    return data?.tenant?.school_id ? data : null
-  } catch { return null }
+    if (error) throw new Error(error.message)
+    if (!data?.tenant?.school_id) throw new Angelcare360AccessError('La session support est invalide, expirée ou terminée.', 403)
+    return data
+  } catch (error) {
+    throw new Angelcare360AccessError(`Autorité d’accès support indisponible: ${error instanceof Error ? error.message : 'erreur inconnue'}`, 503)
+  }
 }
 
 async function getCurrentAcademicYear(schoolId: string): Promise<Angelcare360AcademicYearRecord | null> {
@@ -203,14 +215,30 @@ export async function getAngelcare360AccessContext(options?: {
   schoolId?: string | null
 }): Promise<Angelcare360AccessContext | null> {
   const rawUser = await getCurrentAppUser()
+  const demoContext = extractTrustedAngelcare360DemoPrincipalContext(rawUser)
   const user = normalizeAngelcare360User(rawUser as Partial<Angelcare360SessionUser> | null)
 
   if (!user) return null
 
   const access = buildAngelcare360AccessProfile(user)
-  const supportAccess = await getActiveSupportAccess(user.id)
-  const requestedSchoolId = supportAccess?.tenant?.school_id || options?.schoolId
-  const school = await getActiveSchool(user.id, access.accessLevel === 'super_admin' || Boolean(supportAccess), requestedSchoolId)
+  const supportAccess = demoContext.isDemo
+    ? null
+    : await getActiveSupportAccess(user.id)
+  const schoolAuthority = resolveAngelcare360PrincipalSchoolAuthority({
+    demoContext,
+    supportSchoolId: supportAccess?.tenant?.school_id || null,
+    requestedSchoolId: options?.schoolId || null,
+  })
+  const requestedSchoolId = schoolAuthority.ok ? schoolAuthority.schoolId : demoContext.schoolId
+  const demoAccess = buildAngelcare360DemoAccess(demoContext)
+  const school = schoolAuthority.ok
+    ? await getActiveSchool(
+        user.id,
+        access.accessLevel === 'super_admin' || Boolean(supportAccess) || Boolean(demoAccess),
+        requestedSchoolId,
+      )
+    : null
+  const demoContextMismatch = demoContext.isDemo && (!schoolAuthority.ok || !school)
 
   if (!school) {
     return {
@@ -222,8 +250,11 @@ export async function getAngelcare360AccessContext(options?: {
       roles: [],
       permissions: new Set<string>(),
       primaryRoleKey: null,
-      runtimeEntitlements: await loadAngelcare360RuntimeEntitlements({ userId: user.id, schoolId: null }),
+      runtimeEntitlements: demoContextMismatch
+        ? createAngelcare360DemoContextMismatchEntitlements(demoContext.schoolId)
+        : await loadAngelcare360RuntimeEntitlements({ userId: user.id, schoolId: null }),
       supportAccess,
+      demoAccess,
     }
   }
 
@@ -236,10 +267,48 @@ export async function getAngelcare360AccessContext(options?: {
       if (permission === denied || (denied.endsWith('.*') && permission.startsWith(denied.slice(0, -1)))) permissions.delete(permission)
     }
   }
+  if (demoAccess) {
+    // SANILA Master Demo is a governed product-wide demonstration principal.
+    // It does not inherit the implementation user's role/deny limitations.
+    //
+    // Full internal permission authority does NOT bypass:
+    // - the fixed demo-school boundary
+    // - runtime tenant/module entitlements
+    // - Master Demo mutation classification
+    // - destructive/external-side-effect blocking
+    permissions.clear()
+
+    const supabase = await createClient()
+    const { data: demoPermissions, error: demoPermissionError } = await supabase
+      .from('angelcare360_permissions')
+      .select('permission_key')
+      .eq('status', 'active')
+
+    if (demoPermissionError) {
+      throw new Angelcare360AccessError(
+        `Permissions Master Demo indisponibles: ${demoPermissionError.message}`,
+        503,
+      )
+    }
+
+    for (const permission of demoPermissions || []) {
+      if (permission.permission_key) {
+        permissions.add(String(permission.permission_key))
+      }
+    }
+
+    // Canonical wildcard used by requireAngelcare360Permission().
+    // Exact active permission keys remain present for downstream UI checks.
+    permissions.add('angelcare360.*')
+  }
+
   if (supportAccess) {
+    // A support session is a hard capability boundary, never an additive elevation.
+    permissions.clear()
     const supabase = await createClient()
     const allowedActions = supportAccess.access_mode === 'read_only' ? ['view','export','audit'] : supportAccess.access_mode === 'guided_support' ? ['view','export','audit','create','update','notify'] : ['view','export','audit','create','update','notify','assign','configure']
-    const { data: supportPermissions } = await supabase.from('angelcare360_permissions').select('permission_key,action_key').in('action_key', allowedActions).eq('status', 'active')
+    const { data: supportPermissions, error: supportPermissionError } = await supabase.from('angelcare360_permissions').select('permission_key,action_key').in('action_key', allowedActions).eq('status', 'active')
+    if (supportPermissionError) throw new Angelcare360AccessError(`Permissions support indisponibles: ${supportPermissionError.message}`, 503)
     for (const permission of supportPermissions || []) permissions.add(String(permission.permission_key))
   }
   const runtimeEntitlements = await loadAngelcare360RuntimeEntitlements({ userId: user.id, schoolId: school.id })
@@ -255,12 +324,13 @@ export async function getAngelcare360AccessContext(options?: {
     primaryRoleKey,
     runtimeEntitlements,
     supportAccess,
+    demoAccess,
   }
 }
 
 export async function requireAngelcare360Permission(
   permissionKey: string,
-  options?: { schoolId?: string | null; context?: Angelcare360AccessContext | null },
+  options?: { schoolId?: string | null; context?: Angelcare360AccessContext | null; operation?: string },
 ) {
   const context = options?.context ?? (await getAngelcare360AccessContext({ schoolId: options?.schoolId }))
 
@@ -268,18 +338,32 @@ export async function requireAngelcare360Permission(
     throw new Angelcare360AccessError('Vous devez être connecté pour utiliser AngelCare 360.', 401)
   }
 
-  const explicitlyDenied = context.access.deniedPermissions.some((denied) => denied === permissionKey || (denied.endsWith('.*') && permissionKey.startsWith(denied.slice(0, -1))))
-  const permissionGranted = !explicitlyDenied && (context.access.accessLevel === 'super_admin'
-    || context.permissions.has(permissionKey)
-    || context.permissions.has('angelcare360.*')
-    || context.permissions.has('*'))
+  const explicitlyDenied = !context.demoAccess
+    && context.access.deniedPermissions.some(
+      (denied) =>
+        denied === permissionKey
+        || (denied.endsWith('.*') && permissionKey.startsWith(denied.slice(0, -1))),
+    )
+  const permissionGranted = !explicitlyDenied && (context.supportAccess
+    ? context.permissions.has(permissionKey)
+    : context.access.accessLevel === 'super_admin'
+      || context.permissions.has(permissionKey)
+      || context.permissions.has('angelcare360.*')
+      || context.permissions.has('*'))
 
   if (!permissionGranted) {
     throw new Angelcare360AccessError('Vous n’avez pas l’autorisation requise pour cette action.', 403)
   }
 
+  if (context.demoAccess) {
+    const mutationClass = classifyMasterDemoOperation(options?.operation || permissionKey)
+    if (mutationClass === 'BLOCKED_DESTRUCTIVE' || mutationClass === 'BLOCKED_EXTERNAL_SIDE_EFFECT') {
+      throw new Angelcare360AccessError(`Action bloquée par la politique Master Demo (${mutationClass}).`, 403)
+    }
+  }
+
   const moduleKey = getAngelcare360ModuleKeyForPermission(permissionKey)
-  if (moduleKey && context.access.moduleKeys.length && !context.access.moduleKeys.includes(moduleKey)) {
+  if (!context.supportAccess && !context.demoAccess && moduleKey && context.access.moduleKeys.length && !context.access.moduleKeys.includes(moduleKey)) {
     throw new Angelcare360AccessError(`Le module ${moduleKey} est hors du périmètre attribué à cet administrateur.`, 403)
   }
   if (!isAngelcare360ModuleEnabled(context.runtimeEntitlements, moduleKey)) {
@@ -291,5 +375,13 @@ export async function requireAngelcare360Permission(
     )
   }
 
+  return context
+}
+
+export async function assertAngelcare360DemoOperationAllowed(operation: string) {
+  const context = await getAngelcare360AccessContext()
+  if (!context?.demoAccess) return context
+  const mutationClass = classifyMasterDemoOperation(operation)
+  if (mutationClass === 'BLOCKED_DESTRUCTIVE' || mutationClass === 'BLOCKED_EXTERNAL_SIDE_EFFECT') throw new Angelcare360AccessError(`Action bloquée par la politique Master Demo (${mutationClass}).`, 403)
   return context
 }

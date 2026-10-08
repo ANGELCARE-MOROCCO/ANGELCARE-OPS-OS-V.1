@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "base": "/api/angelcare-marketplace/cms/studio/sources",
+  "routes": [
+    {
+      "method": "GET",
+      "path": "/api/angelcare-marketplace/cms/studio/sources",
+      "purpose": "list authorized source descriptors"
+    },
+    {
+      "method": "GET",
+      "path": "/api/angelcare-marketplace/cms/studio/sources/[sourceId]",
+      "purpose": "source descriptor"
+    },
+    {
+      "method": "GET",
+      "path": "/api/angelcare-marketplace/cms/studio/sources/[sourceId]/search",
+      "purpose": "bounded search"
+    },
+    {
+      "method": "GET",
+      "path": "/api/angelcare-marketplace/cms/studio/sources/[sourceId]/browse",
+      "purpose": "bounded browse"
+    },
+    {
+      "method": "GET",
+      "path": "/api/angelcare-marketplace/cms/studio/sources/[sourceId]/entities/[entityId]",
+      "purpose": "canonical entity projection"
+    },
+    {
+      "method": "POST",
+      "path": "/api/angelcare-marketplace/cms/studio/sources/[sourceId]/validate",
+      "purpose": "canonical reference validation"
+    }
+  ]
+}

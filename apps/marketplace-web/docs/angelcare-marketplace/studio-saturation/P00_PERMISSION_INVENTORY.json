@@ -1,0 +1,4742 @@
+[
+  {
+    "permission": "marketplace.academy.assessments.manage",
+    "files": [
+      "angelcare-marketplace/academy-engine/api-handlers.ts",
+      "angelcare-marketplace/academy-engine/final-api-handlers.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.academy.attendance.manage",
+    "files": [
+      "angelcare-marketplace/academy-engine/api-handlers.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.academy.b2b.manage",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.academy.catalog.manage",
+    "files": [
+      "angelcare-marketplace/academy-engine/final-api-handlers.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.academy.certificates.issue",
+    "files": [
+      "angelcare-marketplace/academy-engine/api-handlers.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.academy.certificates.revoke",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.academy.certificates.suspend",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.academy.cohorts.manage",
+    "files": [
+      "angelcare-marketplace/academy-engine/api-handlers.ts",
+      "angelcare-marketplace/academy-engine/final-api-handlers.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.academy.learner.access",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.academy.manage",
+    "files": [
+      "angelcare-marketplace/academy-engine/final-api-handlers.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.academy.sessions.manage",
+    "files": [
+      "angelcare-marketplace/academy-engine/final-api-handlers.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.academy.trainer.access",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(trainer)/trainer/assessments/page.tsx",
+      "app/angelcare-marketplace/(trainer)/trainer/attendance/page.tsx",
+      "app/angelcare-marketplace/(trainer)/trainer/cohorts/page.tsx",
+      "app/angelcare-marketplace/(trainer)/trainer/page.tsx",
+      "app/angelcare-marketplace/(trainer)/trainer/sessions/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.academy.view",
+    "files": [
+      "angelcare-marketplace/academy-engine/api-handlers.ts",
+      "angelcare-marketplace/academy-engine/final-admin-page.tsx",
+      "angelcare-marketplace/academy-engine/final-api-handlers.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/final-vertical/registry.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/academy/catalog/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/academy/certificates/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/academy/cohorts/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/academy/compliance/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/academy/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.access.denied",
+    "files": [
+      "angelcare-marketplace/auth/context.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.action.updated",
+    "files": [
+      "angelcare-marketplace/sovereign-control/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.admin.access",
+    "files": [
+      "angelcare-marketplace/admin-control-plane/api-handlers.ts",
+      "angelcare-marketplace/auth/admin/admin-auth.ts",
+      "angelcare-marketplace/auth/context.ts",
+      "angelcare-marketplace/b2b-verticals/repository.ts",
+      "angelcare-marketplace/customer-relationship-command/admin-pages.tsx",
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/enterprise-closure/api-handlers.ts",
+      "angelcare-marketplace/enterprise-command/sovereign-api-handlers.ts",
+      "angelcare-marketplace/features/workspace/WorkspaceHome.tsx",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/shells/WorkspaceShell.tsx",
+      "angelcare-marketplace/workspace-access/admin-page.tsx",
+      "angelcare-marketplace/workspace-access/api-handlers.ts",
+      "app/angelcare-marketplace/(protected)/admin/bulk-operations/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/business-pulse/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/catalog/import/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/commerce-factory/availability/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/commerce-factory/categories/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/commerce-factory/collections/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/commerce-factory/doctrines/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/commerce-factory/imports/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/commerce-factory/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/commerce-factory/pricing/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/commerce-factory/products/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/customers-revenue/activity/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/customers-revenue/crm/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/customers-revenue/families/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/customers-revenue/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/documents/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/enterprise-command/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/layout.tsx",
+      "app/angelcare-marketplace/(protected)/admin/live-map/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/my-workspace/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/operations/mission-control/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/reality-readiness/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/segments/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/subscriptions/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/workspaces/page.tsx",
+      "app/api/angelcare-marketplace/admin/customers-revenue/overview/route.ts",
+      "app/api/angelcare-marketplace/admin/enterprise-command/command-center/route.ts",
+      "app/api/angelcare-marketplace/admin/reality/health/route.ts",
+      "app/api/angelcare-marketplace/localization/runtime/[locale]/route.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.admin.login.failed",
+    "files": [
+      "angelcare-marketplace/auth/admin/admin-auth.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.admin.login.success",
+    "files": [
+      "angelcare-marketplace/auth/admin/admin-auth.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.analytics.data_quality.manage",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.analytics.definitions.manage",
+    "files": [
+      "angelcare-marketplace/analytics-security/api-handlers.ts",
+      "angelcare-marketplace/analytics-security/components/AnalyticsRefreshDesk.tsx",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/analytics/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.analytics.executive",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.analytics.export",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.analytics.finance",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.analytics.security",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.analytics.view",
+    "files": [
+      "angelcare-marketplace/analytics-security/api-handlers.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/final-vertical/registry.ts",
+      "angelcare-marketplace/footer-studio/admin-pages.tsx",
+      "angelcare-marketplace/footer-studio/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/analytics/academy/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/analytics/b2b/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/analytics/data-quality/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/analytics/families/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/analytics/finance/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/analytics/marketplace/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/analytics/operations/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/analytics/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/analytics/providers/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/analytics/territories/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/analytics/trust/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.approval.created",
+    "files": [
+      "angelcare-marketplace/sovereign-control/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.archetype.manage",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.archetype.view",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.audience.manage",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.audit.export",
+    "files": [
+      "angelcare-marketplace/api/handlers.ts",
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/security-audit/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.audit.exported",
+    "files": [
+      "angelcare-marketplace/api/handlers.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.audit.view",
+    "files": [
+      "angelcare-marketplace/api/handlers.ts",
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/security-audit/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.b2b.conversions.manage",
+    "files": [
+      "angelcare-marketplace/b2b-verticals/api-handlers.ts",
+      "angelcare-marketplace/b2b-verticals/components/B2BOperatorDesk.tsx",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/verticals/establishments/conversions/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/verticals/organizations/[organizationId]/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.b2b.corporate_quota_consumed",
+    "files": [
+      "angelcare-marketplace/b2b-verticals/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.b2b.corporates.eligibility_manage",
+    "files": [
+      "angelcare-marketplace/b2b-verticals/api-handlers.ts",
+      "angelcare-marketplace/b2b-verticals/components/CorporateEligibilityCommand.tsx",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/verticals/corporates/eligibility/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.b2b.corporates.impact_view",
+    "files": [
+      "angelcare-marketplace/b2b-verticals/api-handlers.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.b2b.corporates.manage",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.b2b.corporates.view",
+    "files": [
+      "angelcare-marketplace/b2b-verticals/api-handlers.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/verticals/corporates/impact/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/verticals/corporates/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/verticals/corporates/programs/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/verticals/corporates/usage/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.b2b.create",
+    "files": [
+      "angelcare-marketplace/b2b-verticals/api-handlers.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.b2b.diagnostic_converted",
+    "files": [
+      "angelcare-marketplace/b2b-verticals/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.b2b.diagnostic_created",
+    "files": [
+      "angelcare-marketplace/b2b-verticals/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.b2b.diagnostics.manage",
+    "files": [
+      "angelcare-marketplace/b2b-verticals/api-handlers.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.b2b.diagnostics.qualify",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.b2b.diagnostics.review",
+    "files": [
+      "angelcare-marketplace/b2b-verticals/api-handlers.ts",
+      "angelcare-marketplace/b2b-verticals/components/B2BOperatorDesk.tsx",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/verticals/organizations/[organizationId]/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.b2b.diagnostics.view",
+    "files": [
+      "angelcare-marketplace/b2b-verticals/api-handlers.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/verticals/establishments/diagnostics/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.b2b.establishments.manage",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/verticals/establishments/proposals/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.b2b.establishments.quality_review",
+    "files": [
+      "angelcare-marketplace/b2b-verticals/api-handlers.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/verticals/establishments/quality-checks/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.b2b.establishments.view",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/verticals/establishments/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.b2b.export",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.b2b.health_partners.compliance_review",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/verticals/health-partners/compliance/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/verticals/health-partners/consents/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.b2b.health_partners.manage",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.b2b.health_partners.sensitive_approve",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.b2b.health_partners.view",
+    "files": [
+      "angelcare-marketplace/b2b-verticals/api-handlers.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/verticals/health-partners/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/verticals/health-partners/programs/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/verticals/health-partners/referrals/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.b2b.hospitality.approve",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.b2b.hospitality.manage",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.b2b.hospitality.view",
+    "files": [
+      "angelcare-marketplace/b2b-verticals/api-handlers.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/verticals/hospitality/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/verticals/hospitality/programs/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/verticals/hospitality/properties/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/verticals/hospitality/readiness/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/verticals/hospitality/reports/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.b2b.manage",
+    "files": [
+      "angelcare-marketplace/b2b-verticals/repository.ts",
+      "angelcare-marketplace/b2b-verticals/validation.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.b2b.organizations.assign",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.b2b.organizations.merge",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.b2b.programs.activate",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.b2b.programs.approve",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.b2b.programs.manage",
+    "files": [
+      "angelcare-marketplace/b2b-verticals/api-handlers.ts",
+      "angelcare-marketplace/b2b-verticals/components/B2BOperatorDesk.tsx",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/verticals/organizations/[organizationId]/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.b2b.programs.pause",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.b2b.programs.view",
+    "files": [
+      "angelcare-marketplace/b2b-verticals/api-handlers.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.b2b.readiness.review",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.b2b.reports.view",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.b2b.view",
+    "files": [
+      "angelcare-marketplace/b2b-verticals/api-handlers.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/verticals/organizations/[organizationId]/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/verticals/organizations/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/verticals/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.backoffice.actions.manage",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/sovereign-control/api-handlers.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.backoffice.actions.view",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/sovereign-control/api-handlers.ts",
+      "app/angelcare-marketplace/(protected)/admin/action-center/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.backoffice.approvals.create",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/sovereign-control/api-handlers.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.backoffice.approvals.decide",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/sovereign-control/api-handlers.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.backoffice.approvals.override",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.backoffice.approvals.review",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.backoffice.approvals.view",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/sovereign-control/api-handlers.ts",
+      "app/angelcare-marketplace/(protected)/admin/approvals/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.backoffice.audit.export",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.backoffice.briefs.create",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.backoffice.briefs.manage",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.backoffice.briefs.publish",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.backoffice.briefs.view",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/sovereign-control/api-handlers.ts",
+      "app/angelcare-marketplace/(protected)/admin/executive-briefs/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.backoffice.cockpit.view",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/command/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.backoffice.command.view",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/sovereign-control/api-handlers.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.backoffice.objects.comment",
+    "files": [
+      "angelcare-marketplace/customer-relationship-command/admin-pages.tsx",
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/sovereign-control/api-handlers.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.backoffice.objects.export",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.backoffice.objects.view",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/sovereign-control/api-handlers.ts",
+      "app/angelcare-marketplace/(protected)/admin/objects/[objectType]/[objectId]/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.backoffice.search",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/sovereign-control/api-handlers.ts",
+      "app/angelcare-marketplace/(protected)/admin/search/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.backup.manage",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.backup.view",
+    "files": [
+      "angelcare-marketplace/analytics-security/api-handlers.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.booking.created",
+    "files": [
+      "angelcare-marketplace/enterprise-closure/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.booking.updated",
+    "files": [
+      "angelcare-marketplace/enterprise-closure/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.broadcast.manage",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.capability.enabled",
+    "files": [
+      "angelcare-marketplace/features/admin/FeatureFlagsClient.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.catalog.availability.manage",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.catalog.commissions.manage",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.catalog.commissions.view",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.catalog.export",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/enterprise-command/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.catalog.item_created",
+    "files": [
+      "angelcare-marketplace/marketplace-core/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.catalog.manage",
+    "files": [
+      "angelcare-marketplace/category-native/admin-pages.tsx",
+      "angelcare-marketplace/commerce-studio/api-handlers.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/enterprise-command/api-handlers.ts",
+      "angelcare-marketplace/marketplace-core/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.catalog.product360_import.created",
+    "files": [
+      "angelcare-marketplace/enterprise-command/api-handlers.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.catalog.product360_import.retry",
+    "files": [
+      "angelcare-marketplace/enterprise-command/api-handlers.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.catalog.product360_import.rollback",
+    "files": [
+      "angelcare-marketplace/enterprise-command/api-handlers.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.catalog.publish",
+    "files": [
+      "angelcare-marketplace/category-native/api-handlers.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/enterprise-command/api-handlers.ts",
+      "angelcare-marketplace/marketplace-core/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.catalog.purge",
+    "files": [
+      "angelcare-marketplace/commerce-studio/api-handlers.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.catalog.review",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.catalog.suppliers.manage",
+    "files": [
+      "angelcare-marketplace/admin-control-plane/api-handlers.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.catalog.suppliers.view",
+    "files": [
+      "angelcare-marketplace/admin-control-plane/api-handlers.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/marketplace-core/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/suppliers/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.catalog.view",
+    "files": [
+      "angelcare-marketplace/commerce-studio/admin-pages.tsx",
+      "angelcare-marketplace/commerce-studio/api-handlers.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/enterprise-command/api-handlers.ts",
+      "angelcare-marketplace/marketplace-core/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/catalog/items/new/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/catalog/items/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/marketplace/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.categories.manage",
+    "files": [
+      "angelcare-marketplace/commerce-studio/admin-pages.tsx",
+      "angelcare-marketplace/commerce-studio/api-handlers.ts",
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.category_native.import.validated",
+    "files": [
+      "angelcare-marketplace/category-native/api-handlers.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.category_native.schema.created",
+    "files": [
+      "angelcare-marketplace/category-native/api-handlers.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.category_native.schema.updated",
+    "files": [
+      "angelcare-marketplace/category-native/api-handlers.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.category_native_import.manage",
+    "files": [
+      "angelcare-marketplace/category-native/admin-pages.tsx",
+      "angelcare-marketplace/category-native/api-handlers.ts",
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.category_native_import.view",
+    "files": [
+      "angelcare-marketplace/category-native/admin-pages.tsx",
+      "angelcare-marketplace/category-native/api-handlers.ts",
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.cms.approve",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/experience-builder/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/experience/pages/[pageId]/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.cms.archive",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/experience-builder/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/experience/pages/[pageId]/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.cms.blocks.manage",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/experience-builder/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/experience/pages/[pageId]/builder/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/experience/pages/[pageId]/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/experience/symbols/page.tsx",
+      "app/api/angelcare-marketplace/cms/studio/capture/route.ts",
+      "app/api/angelcare-marketplace/cms/studio/pages/[pageId]/draft/route.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.cms.blocks_saved_legacy",
+    "files": [
+      "angelcare-marketplace/experience-builder/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.cms.create",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/experience-builder/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/experience/pages/new/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/experience/pages/page.tsx",
+      "app/api/angelcare-marketplace/cms/studio/pages/[pageId]/duplicate/route.ts",
+      "app/api/angelcare-marketplace/cms/studio/pages/route.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.cms.ctas.manage",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.cms.draft_revision_saved",
+    "files": [
+      "angelcare-marketplace/experience-builder/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.cms.edit",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/experience-builder/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/experience/pages/[pageId]/page.tsx",
+      "app/api/angelcare-marketplace/cms/studio/pages/[pageId]/seo/route.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.cms.export",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/experience/developer/page.tsx",
+      "app/api/angelcare-marketplace/cms/developer-contract/route.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.cms.menus.manage",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.cms.page_created",
+    "files": [
+      "angelcare-marketplace/experience-builder/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.cms.page_instantiated_from_template",
+    "files": [
+      "angelcare-marketplace/experience-builder/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.cms.page_rolled_back",
+    "files": [
+      "angelcare-marketplace/experience-builder/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.cms.page_updated",
+    "files": [
+      "angelcare-marketplace/experience-builder/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.cms.page_updated_legacy",
+    "files": [
+      "angelcare-marketplace/experience-builder/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.cms.pages.manage",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/experience-builder/api-handlers.ts",
+      "angelcare-marketplace/homepage-flagship/admin-page.tsx",
+      "angelcare-marketplace/homepage-flagship/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/experience/templates/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.cms.preview",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/experience-builder/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/experience/pages/[pageId]/builder/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/experience/pages/[pageId]/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/experience/studio/[pageId]/page.tsx",
+      "app/api/angelcare-marketplace/cms/studio/pages/[pageId]/preview/route.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.cms.preview_created",
+    "files": [
+      "angelcare-marketplace/experience-builder/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.cms.preview_revoked",
+    "files": [
+      "angelcare-marketplace/experience-builder/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.cms.publish",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/experience-builder/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/experience/pages/[pageId]/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/experience/studio/[pageId]/page.tsx",
+      "app/api/angelcare-marketplace/cms/studio/pages/[pageId]/publish/route.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.cms.redirects.manage",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.cms.review",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/experience-builder/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/experience/pages/[pageId]/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.cms.rollback",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/experience-builder/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/experience/pages/[pageId]/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.cms.schedule",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/experience-builder/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/experience/pages/[pageId]/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.cms.submit",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/experience-builder/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/experience/pages/[pageId]/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.cms.symbol_archived",
+    "files": [
+      "angelcare-marketplace/experience-builder/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.cms.symbol_created",
+    "files": [
+      "angelcare-marketplace/experience-builder/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.cms.symbol_published",
+    "files": [
+      "angelcare-marketplace/experience-builder/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.cms.symbol_restored",
+    "files": [
+      "angelcare-marketplace/experience-builder/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.cms.symbol_version_published",
+    "files": [
+      "angelcare-marketplace/experience-builder/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.cms.symbol_version_saved",
+    "files": [
+      "angelcare-marketplace/experience-builder/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.cms.template_archived",
+    "files": [
+      "angelcare-marketplace/experience-builder/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.cms.template_created",
+    "files": [
+      "angelcare-marketplace/experience-builder/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.cms.template_published",
+    "files": [
+      "angelcare-marketplace/experience-builder/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.cms.template_version_published",
+    "files": [
+      "angelcare-marketplace/experience-builder/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.cms.template_version_saved",
+    "files": [
+      "angelcare-marketplace/experience-builder/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.cms.view",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/experience-builder/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/experience/block-library/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/experience/ctas/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/experience/dependencies/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/experience/health/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/experience/menus/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/experience/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/experience/pages/[pageId]/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/experience/pages/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/experience/publishing/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/experience/studio/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/experience/symbols/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/experience/templates/page.tsx",
+      "app/api/angelcare-marketplace/cms/studio/audit/route.ts",
+      "app/api/angelcare-marketplace/cms/studio/governance/route.ts",
+      "app/api/angelcare-marketplace/cms/studio/manifest/route.ts",
+      "app/api/angelcare-marketplace/cms/studio/pages/[pageId]/health/route.ts",
+      "app/api/angelcare-marketplace/cms/studio/pages/route.ts",
+      "app/api/angelcare-marketplace/cms/studio/release-readiness/route.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.commerce.export",
+    "files": [
+      "angelcare-marketplace/commerce-studio/admin-pages.tsx",
+      "angelcare-marketplace/commerce-studio/import-export.ts",
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.commerce.import",
+    "files": [
+      "angelcare-marketplace/commerce-studio/import-export.ts",
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/commerce-studio/import-export/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.commerce.import.executed",
+    "files": [
+      "angelcare-marketplace/commerce-studio/import-export.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.commerce.import.previewed",
+    "files": [
+      "angelcare-marketplace/commerce-studio/import-export.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.commerce.view",
+    "files": [
+      "angelcare-marketplace/commerce-studio/admin-pages.tsx",
+      "angelcare-marketplace/commerce-studio/api-handlers.ts",
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/final-vertical/registry.ts",
+      "angelcare-marketplace/footer-studio/admin-pages.tsx",
+      "angelcare-marketplace/footer-studio/api-handlers.ts",
+      "angelcare-marketplace/growth-experience-command/GrowthExperienceAreaPage.tsx",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/production-activation/admin-page.tsx",
+      "angelcare-marketplace/production-activation/api-handlers.ts",
+      "angelcare-marketplace/total-commerce-control/api-handlers.ts",
+      "app/angelcare-marketplace/(protected)/admin/boutique/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/frontend-experiences/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/frontend-experiences/preview/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/frontend-experiences/surfaces/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/product-excellence/page.tsx",
+      "app/api/angelcare-marketplace/admin/media/[mediaId]/usage/route.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.complaints.export",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.complaints.investigate",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.complaints.manage",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/trust-quality/api-handlers.ts",
+      "angelcare-marketplace/trust-quality/components/TrustDecisionDesk.tsx",
+      "app/angelcare-marketplace/(protected)/admin/trust/complaints/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.complaints.resolve",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.complaints.view",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/trust-quality/api-handlers.ts",
+      "app/angelcare-marketplace/(protected)/admin/trust/complaints/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.compliance.approve",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.compliance.review",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/trust/compliance/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.configuration.manage",
+    "files": [
+      "angelcare-marketplace/api/handlers.ts",
+      "angelcare-marketplace/customer-commerce/paypal-admin-api.ts",
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/configuration/integrations/payments/paypal/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/configuration/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.configuration.updated",
+    "files": [
+      "angelcare-marketplace/server/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.configuration.view",
+    "files": [
+      "angelcare-marketplace/api/handlers.ts",
+      "angelcare-marketplace/customer-commerce/paypal-admin-api.ts",
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/configuration/integrations/payments/paypal/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/configuration/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.conversion.analytics.view",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/conversion/analytics/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.conversion.configuration.manage",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/conversion/configuration/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.conversion.export",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.conversion.manage",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.conversion.recover",
+    "files": [
+      "angelcare-marketplace/conversion-universe/api-handlers.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/conversion/sessions/[sessionId]/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.conversion.session_recovered",
+    "files": [
+      "angelcare-marketplace/conversion-universe/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.conversion.view",
+    "files": [
+      "angelcare-marketplace/conversion-universe/api-handlers.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/growth-experience-command/GrowthExperienceAreaPage.tsx",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/conversion/abandonment/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/conversion/baskets/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/conversion/bookings/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/conversion/consents/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/conversion/enrollments/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/conversion/exceptions/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/conversion/holds/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/conversion/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/conversion/quotations/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/conversion/sessions/[sessionId]/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/conversion/sessions/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.crm.account_created",
+    "files": [
+      "angelcare-marketplace/commercial-pipeline/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.crm.accounts.manage",
+    "files": [
+      "angelcare-marketplace/commercial-pipeline/api-handlers.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.crm.communication.logged",
+    "files": [
+      "angelcare-marketplace/customer-relationship-command/crm-activity.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.crm.communications.log",
+    "files": [
+      "angelcare-marketplace/customer-relationship-command/admin-pages.tsx",
+      "angelcare-marketplace/customer-relationship-command/crm-activity-api.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.crm.contacts.manage",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.crm.export",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.crm.lead_created",
+    "files": [
+      "angelcare-marketplace/commercial-pipeline/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.crm.leads.manage",
+    "files": [
+      "angelcare-marketplace/commercial-pipeline/api-handlers.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.crm.opportunities.manage",
+    "files": [
+      "angelcare-marketplace/commercial-pipeline/api-handlers.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.crm.opportunities.transition",
+    "files": [
+      "angelcare-marketplace/commercial-pipeline/api-handlers.ts",
+      "angelcare-marketplace/customer-relationship-command/admin-pages.tsx",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.crm.opportunity_created",
+    "files": [
+      "angelcare-marketplace/commercial-pipeline/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.crm.proof_packs.manage",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.crm.proof_packs.view",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.crm.quote_created",
+    "files": [
+      "angelcare-marketplace/commercial-pipeline/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.crm.quotes.approve",
+    "files": [
+      "angelcare-marketplace/commercial-pipeline/api-handlers.ts",
+      "angelcare-marketplace/customer-relationship-command/admin-pages.tsx",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/commercial/quotes/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.crm.quotes.manage",
+    "files": [
+      "angelcare-marketplace/commercial-pipeline/api-handlers.ts",
+      "angelcare-marketplace/customer-relationship-command/admin-pages.tsx",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/commercial/quotes/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.crm.quotes.view",
+    "files": [
+      "angelcare-marketplace/commercial-pipeline/api-handlers.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/commercial/quotes/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.crm.task.created",
+    "files": [
+      "angelcare-marketplace/customer-relationship-command/crm-activity.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.crm.task.updated",
+    "files": [
+      "angelcare-marketplace/customer-relationship-command/crm-activity.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.crm.tasks.manage",
+    "files": [
+      "angelcare-marketplace/customer-relationship-command/admin-pages.tsx",
+      "angelcare-marketplace/customer-relationship-command/crm-activity-api.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.crm.view",
+    "files": [
+      "angelcare-marketplace/commercial-pipeline/api-handlers.ts",
+      "angelcare-marketplace/customer-relationship-command/crm-activity-api.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/commercial/leads/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/commercial/opportunities/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/commercial/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.customer.address.created",
+    "files": [
+      "angelcare-marketplace/admin-control-plane/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.customer.address.updated",
+    "files": [
+      "angelcare-marketplace/admin-control-plane/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.customer.created",
+    "files": [
+      "angelcare-marketplace/admin-control-plane/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.customer.family_linked",
+    "files": [
+      "angelcare-marketplace/admin-control-plane/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.customer.updated",
+    "files": [
+      "angelcare-marketplace/admin-control-plane/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.development.activity_created",
+    "files": [
+      "angelcare-marketplace/development-engine/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.development.export",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.development.kits.manage",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.development.kits.view",
+    "files": [
+      "angelcare-marketplace/development-engine/api-handlers.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/development/kits/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.development.manage",
+    "files": [
+      "angelcare-marketplace/development-engine/api-handlers.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.development.publish",
+    "files": [
+      "angelcare-marketplace/development-engine/api-handlers.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.development.supplier_specs.manage",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.development.supplier_specs.view",
+    "files": [
+      "angelcare-marketplace/development-engine/api-handlers.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/development/supplier-specs/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.development.view",
+    "files": [
+      "angelcare-marketplace/development-engine/api-handlers.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/development/activities/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/development/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.domain-key",
+    "files": [
+      "angelcare-marketplace/features/admin/ModuleRegistryClient.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.emergency_broadcast.manage",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/live-experience-command/admin-pages.tsx",
+      "angelcare-marketplace/live-experience-command/api-handlers.ts",
+      "angelcare-marketplace/live-experience-command/components/LiveExperienceCommand.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.experience_schema.manage",
+    "files": [
+      "angelcare-marketplace/category-native/admin-pages.tsx",
+      "angelcare-marketplace/category-native/api-handlers.ts",
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.experience_schema.view",
+    "files": [
+      "angelcare-marketplace/category-native/admin-pages.tsx",
+      "angelcare-marketplace/category-native/api-handlers.ts",
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.experiment.manage",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.family.access",
+    "files": [
+      "angelcare-marketplace/auth/context.ts",
+      "angelcare-marketplace/customer-commerce/customer-auth.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(family)/family/layout.tsx",
+      "app/api/angelcare-marketplace/localization/runtime/[locale]/route.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.family.account_updated",
+    "files": [
+      "angelcare-marketplace/family-experience/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.family.admin.manage",
+    "files": [
+      "angelcare-marketplace/admin-control-plane/api-handlers.ts",
+      "angelcare-marketplace/customer-relationship-command/admin-pages.tsx",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/enterprise-closure/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.family.admin.view",
+    "files": [
+      "angelcare-marketplace/admin-control-plane/api-handlers.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/family-experience/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/customers/commerce/[customerId]/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/customers/commerce/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/families/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/family-requests/[requestId]/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/family-requests/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.family.admin_updated",
+    "files": [
+      "angelcare-marketplace/admin-control-plane/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.family.child.admin_created",
+    "files": [
+      "angelcare-marketplace/admin-control-plane/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.family.child.admin_updated",
+    "files": [
+      "angelcare-marketplace/admin-control-plane/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.family.child_created",
+    "files": [
+      "angelcare-marketplace/family-experience/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.family.children.manage",
+    "files": [
+      "angelcare-marketplace/auth/context.ts",
+      "angelcare-marketplace/customer-commerce/customer-auth.ts",
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/family-experience/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(family)/family/children/new/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.family.children.view",
+    "files": [
+      "angelcare-marketplace/auth/context.ts",
+      "angelcare-marketplace/customer-commerce/customer-auth.ts",
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/family-experience/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(family)/family/children/[childId]/page.tsx",
+      "app/angelcare-marketplace/(family)/family/children/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.family.dashboard",
+    "files": [
+      "angelcare-marketplace/auth/context.ts",
+      "angelcare-marketplace/customer-commerce/customer-auth.ts",
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/family-experience/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(family)/family/dashboard/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.family.diagnostic_submitted",
+    "files": [
+      "angelcare-marketplace/family-experience/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.family.diagnostics.create",
+    "files": [
+      "angelcare-marketplace/auth/context.ts",
+      "angelcare-marketplace/customer-commerce/customer-auth.ts",
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/family-experience/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(family)/family/diagnostic/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.family.diagnostics.view",
+    "files": [
+      "angelcare-marketplace/auth/context.ts",
+      "angelcare-marketplace/customer-commerce/customer-auth.ts",
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/family-experience/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.family.documents.manage",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.family.documents.view",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.family.export",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.family.feedback.create",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.family.feedback.view",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.family.guardian.created",
+    "files": [
+      "angelcare-marketplace/enterprise-closure/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.family.guardian.updated",
+    "files": [
+      "angelcare-marketplace/enterprise-closure/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.family.missions.manage",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.family.missions.view",
+    "files": [
+      "angelcare-marketplace/auth/context.ts",
+      "angelcare-marketplace/customer-commerce/customer-auth.ts",
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/family-experience/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(family)/family/missions/[missionId]/page.tsx",
+      "app/angelcare-marketplace/(family)/family/missions/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.family.profile.manage",
+    "files": [
+      "angelcare-marketplace/auth/context.ts",
+      "angelcare-marketplace/customer-commerce/customer-auth.ts",
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/family-experience/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.family.profile.view",
+    "files": [
+      "angelcare-marketplace/auth/context.ts",
+      "angelcare-marketplace/customer-commerce/customer-auth.ts",
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/family-experience/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(family)/family/account/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.family.quote_request_submitted",
+    "files": [
+      "angelcare-marketplace/family-experience/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.family.reports.publish",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.family.reports.view",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.family.requests.create",
+    "files": [
+      "angelcare-marketplace/auth/context.ts",
+      "angelcare-marketplace/customer-commerce/customer-auth.ts",
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/family-experience/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(family)/family/request/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.family.requests.manage",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/family-experience/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.family.requests.qualify",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/family-experience/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.family.requests.view",
+    "files": [
+      "angelcare-marketplace/auth/context.ts",
+      "angelcare-marketplace/customer-commerce/customer-auth.ts",
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/family-experience/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(family)/family/requests/[requestId]/page.tsx",
+      "app/angelcare-marketplace/(family)/family/requests/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.family.support.create",
+    "files": [
+      "angelcare-marketplace/auth/context.ts",
+      "angelcare-marketplace/customer-commerce/customer-auth.ts",
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/family-experience/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.family.support.manage",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.family.support.view",
+    "files": [
+      "angelcare-marketplace/auth/context.ts",
+      "angelcare-marketplace/customer-commerce/customer-auth.ts",
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/family-experience/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(family)/family/support/[ticketId]/page.tsx",
+      "app/angelcare-marketplace/(family)/family/support/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.family.support_opened",
+    "files": [
+      "angelcare-marketplace/family-experience/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.feature_flag.created",
+    "files": [
+      "angelcare-marketplace/server/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.feature_flag.updated",
+    "files": [
+      "angelcare-marketplace/server/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.feature_flags.manage",
+    "files": [
+      "angelcare-marketplace/api/handlers.ts",
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/feature-flags/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.feature_flags.view",
+    "files": [
+      "angelcare-marketplace/api/handlers.ts",
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/feature-flags/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.finance.exceptions.approve",
+    "files": [
+      "angelcare-marketplace/admin-control-plane/api-handlers.ts",
+      "angelcare-marketplace/admin-control-plane/components/PaymentCommand.tsx",
+      "angelcare-marketplace/customer-commerce/api-handlers.ts",
+      "angelcare-marketplace/customer-relationship-command/admin-pages.tsx",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/enterprise-command/components/PaymentMegaCommand.tsx",
+      "angelcare-marketplace/finance-authority/api-handlers.ts",
+      "angelcare-marketplace/finance-authority/components/FinanceDecisionClients.tsx",
+      "angelcare-marketplace/financial-control-ledger/FinanceAreaPage.tsx",
+      "angelcare-marketplace/financial-control-ledger/components/FinanceDrawers.tsx",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/finance/margins/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/finance/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/payments/[paymentIntentId]/command/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/payments/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/wallet/customers/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.finance.export",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/payments/[paymentIntentId]/command/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.finance.invoice.created",
+    "files": [
+      "angelcare-marketplace/enterprise-closure/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.finance.invoice.updated",
+    "files": [
+      "angelcare-marketplace/enterprise-closure/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.finance.manage",
+    "files": [
+      "angelcare-marketplace/admin-control-plane/api-handlers.ts",
+      "angelcare-marketplace/customer-relationship-command/admin-pages.tsx",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/enterprise-closure/api-handlers.ts",
+      "angelcare-marketplace/enterprise-closure/components/InvoiceCommand.tsx",
+      "angelcare-marketplace/enterprise-closure/components/ReceiptCommand.tsx",
+      "angelcare-marketplace/financial-control-ledger/FinanceAreaPage.tsx",
+      "angelcare-marketplace/financial-control-ledger/components/FinanceDrawers.tsx",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/finance/invoices/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/finance/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/finance/receipts/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/orders/[orderId]/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/orders/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/payments/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.finance.margins.view",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/finance-authority/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/finance/margins/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.finance.price_books.approve",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/finance-authority/api-handlers.ts",
+      "angelcare-marketplace/finance-authority/components/FinanceDecisionClients.tsx",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/finance/price-books/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.finance.price_books.manage",
+    "files": [
+      "angelcare-marketplace/customer-commerce/api-handlers.ts",
+      "angelcare-marketplace/customer-commerce/components/WalletPolicyImportStudio.tsx",
+      "angelcare-marketplace/customer-commerce/components/WalletPolicyStudio.tsx",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/finance-authority/api-handlers.ts",
+      "angelcare-marketplace/finance-authority/components/FinanceDecisionClients.tsx",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/wallet/policies/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.finance.receipt.issued",
+    "files": [
+      "angelcare-marketplace/enterprise-closure/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.finance.reconciliation.manage",
+    "files": [
+      "angelcare-marketplace/customer-commerce/api-handlers.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/finance-authority/api-handlers.ts",
+      "angelcare-marketplace/finance-authority/components/FinanceDecisionClients.tsx",
+      "angelcare-marketplace/financial-control-ledger/FinanceAreaPage.tsx",
+      "angelcare-marketplace/financial-control-ledger/components/FinanceDrawers.tsx",
+      "angelcare-marketplace/operations-reconciliation/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/finance/invoice-readiness/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/finance/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/finance/reconciliation/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/wallet/reconciliation/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.finance.revenue.view",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/finance-authority/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/finance/revenue-streams/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.finance.view",
+    "files": [
+      "angelcare-marketplace/admin-control-plane/api-handlers.ts",
+      "angelcare-marketplace/customer-commerce/api-handlers.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/enterprise-closure/api-handlers.ts",
+      "angelcare-marketplace/finance-authority/api-handlers.ts",
+      "angelcare-marketplace/financial-control-ledger/FinanceAreaPage.tsx",
+      "angelcare-marketplace/financial-control-ledger/api-handlers.ts",
+      "angelcare-marketplace/operations-reconciliation/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/finance/invoice-readiness/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/finance/invoices/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/finance/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/finance/price-books/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/finance/receipts/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/finance/reconciliation/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/operations/reconciliation/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/operations/settlements/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/payments/[paymentIntentId]/command/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/payments/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/wallet/customers/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/wallet/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.foundation.view",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.frontend_surface.published",
+    "files": [
+      "angelcare-marketplace/total-commerce-control/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.frontend_surface.saved",
+    "files": [
+      "angelcare-marketplace/total-commerce-control/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.frontend_surface.sections_saved",
+    "files": [
+      "angelcare-marketplace/total-commerce-control/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.growth.experiments.manage",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/final-authority/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/reality-completion/domain-contract.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.growth.view",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/final-authority/api-handlers.ts",
+      "angelcare-marketplace/final-vertical/registry.ts",
+      "angelcare-marketplace/growth-experience-command/GrowthExperienceAreaPage.tsx",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.homepage.manage",
+    "files": [
+      "angelcare-marketplace/category-native/admin-pages.tsx",
+      "angelcare-marketplace/category-native/api-handlers.ts",
+      "angelcare-marketplace/commerce-studio/admin-pages.tsx",
+      "angelcare-marketplace/commerce-studio/api-handlers.ts",
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/homepage-final/admin-page.tsx",
+      "angelcare-marketplace/homepage-final/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/theme-studio/api-handlers.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.homepage.view",
+    "files": [
+      "angelcare-marketplace/category-native/admin-pages.tsx",
+      "angelcare-marketplace/category-native/api-handlers.ts",
+      "angelcare-marketplace/commerce-studio/admin-pages.tsx",
+      "angelcare-marketplace/commerce-studio/api-handlers.ts",
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/final-vertical/registry.ts",
+      "angelcare-marketplace/homepage-final/admin-page.tsx",
+      "angelcare-marketplace/homepage-final/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/theme-studio/api-handlers.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.intelligence.metrics.manage",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/reality-completion/domain-contract.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.intelligence.view",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/executive-control-center/ExecutiveControlAreaPage.tsx",
+      "angelcare-marketplace/final-authority/api-handlers.ts",
+      "angelcare-marketplace/final-vertical/registry.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.journey.action.completed",
+    "files": [
+      "angelcare-marketplace/journey-control/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.journey.change_requested",
+    "files": [
+      "angelcare-marketplace/journey-control/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.journey.recovery.opened",
+    "files": [
+      "angelcare-marketplace/journey-control/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.journey.transitioned",
+    "files": [
+      "angelcare-marketplace/journey-control/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.journeys.actions.manage",
+    "files": [
+      "angelcare-marketplace/customer-commerce/customer-auth.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.journeys.analytics.view",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.journeys.configuration.manage",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.journeys.documents.manage",
+    "files": [
+      "angelcare-marketplace/customer-commerce/customer-auth.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.journeys.export",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.journeys.manage",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/journey-control/api-handlers.ts",
+      "angelcare-marketplace/journey-control/components/JourneyAdminDetail.tsx",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/journeys/[journeyId]/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.journeys.notifications.manage",
+    "files": [
+      "angelcare-marketplace/customer-commerce/customer-auth.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.journeys.recovery.manage",
+    "files": [
+      "angelcare-marketplace/customer-commerce/customer-auth.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.journeys.view",
+    "files": [
+      "angelcare-marketplace/category-native-experience/api-handlers.ts",
+      "angelcare-marketplace/customer-commerce/customer-auth.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/journey-control/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/journeys/[journeyId]/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/journeys/action-center/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/journeys/analytics/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/journeys/assessments/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/journeys/bookings/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/journeys/configuration/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/journeys/documents/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/journeys/enrollments/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/journeys/exceptions/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/journeys/fulfillment/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/journeys/notifications/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/journeys/orders/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/journeys/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/journeys/quotations/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/journeys/recovery/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/journeys/subscriptions/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.launch.approve",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/final-authority/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/reality-completion/domain-contract.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.launch.gates.manage",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/launch-assurance/api-handlers.ts",
+      "angelcare-marketplace/launch-assurance/components/LaunchGovernanceDesk.tsx",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/launch/gates/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/launch/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/launch/release/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.launch.gates.review",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.launch.monitoring",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/final-authority/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.launch.pause",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.launch.post_launch.manage",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.launch.release.approve",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/launch-assurance/api-handlers.ts",
+      "angelcare-marketplace/launch-assurance/components/LaunchGovernanceDesk.tsx",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/launch/gates/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/launch/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/launch/release/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.launch.rollback_authorize",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.launch.view",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/final-authority/api-handlers.ts",
+      "angelcare-marketplace/final-vertical/registry.ts",
+      "angelcare-marketplace/launch-assurance/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/launch/approvals/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/launch/evidence/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/launch/gates/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/launch/monitoring/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/launch/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/launch/release/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/launch/runbook/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.launch.waivers.approve",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.live_experience.analytics.view",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.live_experience.manage",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/live-experience-command/admin-pages.tsx",
+      "angelcare-marketplace/live-experience-command/api-handlers.ts",
+      "angelcare-marketplace/live-experience-command/governance-admin-page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.live_experience.publish",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/live-experience-command/admin-pages.tsx",
+      "angelcare-marketplace/live-experience-command/api-handlers.ts",
+      "angelcare-marketplace/live-experience-command/components/LiveExperienceCommand.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.live_experience.view",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/final-vertical/registry.ts",
+      "angelcare-marketplace/live-experience-command/admin-pages.tsx",
+      "angelcare-marketplace/live-experience-command/api-handlers.ts",
+      "angelcare-marketplace/live-experience-command/governance-admin-page.tsx",
+      "angelcare-marketplace/live-experience-command/governance-api-handlers.ts",
+      "app/angelcare-marketplace/(protected)/admin/live-experience-command/proof-sources/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.localization.access",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/final-vertical/registry.ts",
+      "angelcare-marketplace/growth-experience-command/GrowthExperienceAreaPage.tsx",
+      "angelcare-marketplace/localization-intelligence/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/localization/csv/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/localization/imports/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/localization/page.tsx",
+      "app/api/angelcare-marketplace/localization/imports/route.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.localization.audit.export",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.localization.csv.apply",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/api/angelcare-marketplace/localization/imports/route.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.localization.csv.export",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/localization-intelligence/final-admin-page.tsx",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/api/angelcare-marketplace/localization/exports/route.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.localization.csv.import",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/api/angelcare-marketplace/localization/imports/route.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.localization.csv.rollback",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/api/angelcare-marketplace/localization/imports/route.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.localization.csv.validate",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/api/angelcare-marketplace/localization/imports/route.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.localization.glossary.manage",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/localization-intelligence/final-admin-page.tsx",
+      "angelcare-marketplace/localization-intelligence/final-api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.localization.glossary.view",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/localization-intelligence/final-admin-page.tsx",
+      "angelcare-marketplace/localization-intelligence/final-api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.localization.inventory.classify",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.localization.inventory.export",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.localization.inventory.view",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/localization-intelligence/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/localization/rtl-lab/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.localization.memory.curate",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/localization-intelligence/final-admin-page.tsx",
+      "angelcare-marketplace/localization-intelligence/final-api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.localization.memory.view",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/localization-intelligence/final-admin-page.tsx",
+      "angelcare-marketplace/localization-intelligence/final-api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.localization.readiness.view",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/localization-intelligence/final-admin-page.tsx",
+      "angelcare-marketplace/localization-intelligence/final-api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.localization.rules.manage",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.localization.rules.view",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.localization.scan.completed",
+    "files": [
+      "angelcare-marketplace/localization-intelligence/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.localization.scans.cancel",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.localization.scans.configure",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.localization.scans.run",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/localization-intelligence/api-handlers.ts",
+      "angelcare-marketplace/localization-intelligence/final-admin-page.tsx",
+      "angelcare-marketplace/localization-intelligence/final-api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/localization/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.localization.scans.view",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/localization/scanner/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.localization.sensitive.approve",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.localization.sensitive.review",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.localization.seo.manage",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/localization-intelligence/final-admin-page.tsx",
+      "angelcare-marketplace/localization-intelligence/final-api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.localization.seo.view",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/localization-intelligence/final-admin-page.tsx",
+      "angelcare-marketplace/localization-intelligence/final-api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.localization.sources.manage",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/localization-intelligence/final-admin-page.tsx",
+      "angelcare-marketplace/localization-intelligence/final-api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.localization.sources.view",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/localization-intelligence/final-admin-page.tsx",
+      "angelcare-marketplace/localization-intelligence/final-api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.localization.translations.approve",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/localization-intelligence/final-admin-page.tsx",
+      "angelcare-marketplace/localization-intelligence/final-api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.localization.translations.archive",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/localization-intelligence/final-api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.localization.translations.assign",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.localization.translations.create",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.localization.translations.edit",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/localization-intelligence/final-admin-page.tsx",
+      "angelcare-marketplace/localization-intelligence/final-api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.localization.translations.publish",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/localization-intelligence/final-admin-page.tsx",
+      "angelcare-marketplace/localization-intelligence/final-api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.localization.translations.review",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/localization-intelligence/final-admin-page.tsx",
+      "angelcare-marketplace/localization-intelligence/final-api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.localization.translations.submit",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/localization-intelligence/final-admin-page.tsx",
+      "angelcare-marketplace/localization-intelligence/final-api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.localization.translations.view",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/localization-intelligence/final-admin-page.tsx",
+      "angelcare-marketplace/localization-intelligence/final-api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.media.manage",
+    "files": [
+      "angelcare-marketplace/commerce-studio/admin-pages.tsx",
+      "angelcare-marketplace/commerce-studio/api-handlers.ts",
+      "angelcare-marketplace/commerce-studio/media-storage-api.ts",
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.media.permanently_deleted",
+    "files": [
+      "angelcare-marketplace/commerce-studio/media-storage-api.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.media.replace_session_created",
+    "files": [
+      "angelcare-marketplace/commerce-studio/media-storage-api.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.media.replaced",
+    "files": [
+      "angelcare-marketplace/commerce-studio/api-handlers.ts",
+      "angelcare-marketplace/commerce-studio/media-storage-api.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.media.transformed",
+    "files": [
+      "angelcare-marketplace/commerce-studio/api-handlers.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.media.upload_session_created",
+    "files": [
+      "angelcare-marketplace/commerce-studio/media-storage-api.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.media.uploaded",
+    "files": [
+      "angelcare-marketplace/commerce-studio/api-handlers.ts",
+      "angelcare-marketplace/commerce-studio/media-storage-api.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.media.view",
+    "files": [
+      "angelcare-marketplace/commerce-studio/admin-pages.tsx",
+      "angelcare-marketplace/commerce-studio/api-handlers.ts",
+      "angelcare-marketplace/commerce-studio/media-storage-api.ts",
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/experience-builder/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/configuration/storage/media/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.merchandising.manage",
+    "files": [
+      "angelcare-marketplace/commerce-studio/admin-pages.tsx",
+      "angelcare-marketplace/commerce-studio/api-handlers.ts",
+      "angelcare-marketplace/commerce-studio/components/MerchandisingStudio.tsx",
+      "angelcare-marketplace/customer-relationship-command/admin-pages.tsx",
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/enterprise-closure/api-handlers.ts",
+      "angelcare-marketplace/enterprise-closure/components/PromotionCommand.tsx",
+      "angelcare-marketplace/growth-experience-command/GrowthExperienceAreaPage.tsx",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/total-commerce-control/api-handlers.ts",
+      "angelcare-marketplace/total-commerce-control/components/DiscoveryControl.tsx",
+      "app/angelcare-marketplace/(protected)/admin/discovery-control/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/promotions/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/segments/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.merchandising.view",
+    "files": [
+      "angelcare-marketplace/commerce-studio/admin-pages.tsx",
+      "angelcare-marketplace/commerce-studio/api-handlers.ts",
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/enterprise-closure/api-handlers.ts",
+      "angelcare-marketplace/growth-experience-command/GrowthExperienceAreaPage.tsx",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/total-commerce-control/api-handlers.ts",
+      "app/angelcare-marketplace/(protected)/admin/discovery-control/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/promotions/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.module.registered",
+    "files": [
+      "angelcare-marketplace/server/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.module.updated",
+    "files": [
+      "angelcare-marketplace/server/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.modules.archive",
+    "files": [
+      "angelcare-marketplace/api/handlers.ts",
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.modules.create",
+    "files": [
+      "angelcare-marketplace/api/handlers.ts",
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/modules/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.modules.disable",
+    "files": [
+      "angelcare-marketplace/api/handlers.ts",
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.modules.enable",
+    "files": [
+      "angelcare-marketplace/api/handlers.ts",
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.modules.update",
+    "files": [
+      "angelcare-marketplace/api/handlers.ts",
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/modules/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.modules.view",
+    "files": [
+      "angelcare-marketplace/api/handlers.ts",
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/modules/[moduleKey]/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/modules/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.navigation.manage",
+    "files": [
+      "angelcare-marketplace/commerce-studio/admin-pages.tsx",
+      "angelcare-marketplace/commerce-studio/api-handlers.ts",
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.navigation.view",
+    "files": [
+      "angelcare-marketplace/commerce-studio/admin-pages.tsx",
+      "angelcare-marketplace/commerce-studio/api-handlers.ts",
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.object.comment_added",
+    "files": [
+      "angelcare-marketplace/sovereign-control/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.operating_kernel.approve",
+    "files": [
+      "angelcare-marketplace/admin-operating/api-handlers.ts",
+      "angelcare-marketplace/domain/types.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.operating_kernel.manage",
+    "files": [
+      "angelcare-marketplace/admin-operating/api-handlers.ts",
+      "angelcare-marketplace/customer-relationship-command/admin-pages.tsx",
+      "angelcare-marketplace/domain/types.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.operating_kernel.view",
+    "files": [
+      "angelcare-marketplace/admin-operating/api-handlers.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "app/angelcare-marketplace/(protected)/admin/operating/[caseId]/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/operating/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.operations.assign",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/operations-execution/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.operations.checklists.manage",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.operations.closure.approve",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/operations-execution/api-handlers.ts",
+      "angelcare-marketplace/operations-execution/components/DailyClosureBoard.tsx",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/operations/closure/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.operations.dispatch.manage",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/operations-execution/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/operations/dispatch/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.operations.dispute.opened",
+    "files": [
+      "angelcare-marketplace/operations-reconciliation/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.operations.disputes.manage",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/operations-reconciliation/api-handlers.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.operations.evidence.manage",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/operations-reconciliation/api-handlers.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.operations.evidence.submitted",
+    "files": [
+      "angelcare-marketplace/operations-reconciliation/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.operations.fulfillment.transitioned",
+    "files": [
+      "angelcare-marketplace/operations-reconciliation/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.operations.incidents.escalate",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.operations.incidents.manage",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/operations-execution/api-handlers.ts",
+      "angelcare-marketplace/operations-reconciliation/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.operations.incidents.view",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.operations.live.view",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.operations.missions.create",
+    "files": [
+      "angelcare-marketplace/admin-control-plane/api-handlers.ts",
+      "angelcare-marketplace/customer-relationship-command/admin-pages.tsx",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/enterprise-closure/api-handlers.ts",
+      "angelcare-marketplace/operations-execution/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/bookings/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/orders/[orderId]/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/orders/new/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/orders/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.operations.missions.manage",
+    "files": [
+      "angelcare-marketplace/customer-commerce/api-handlers.ts",
+      "angelcare-marketplace/customer-relationship-command/admin-pages.tsx",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/enterprise-closure/api-handlers.ts",
+      "angelcare-marketplace/enterprise-command/sovereign-api-handlers.ts",
+      "angelcare-marketplace/operations-execution/api-handlers.ts",
+      "angelcare-marketplace/operations-execution/components/MissionDossier.tsx",
+      "angelcare-marketplace/operations-reconciliation/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/total-commerce-control/api-handlers.ts",
+      "app/angelcare-marketplace/(protected)/admin/bookings/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/operations/missions/[missionId]/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/orders/[orderId]/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/orders/page.tsx",
+      "app/angelcare-marketplace/(provider)/provider/missions/[missionId]/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.operations.proof.export",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.operations.reassign",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.operations.reconciliation.approve",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/operations-reconciliation/api-handlers.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.operations.reconciliation.handed_over",
+    "files": [
+      "angelcare-marketplace/operations-reconciliation/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.operations.recovery.created",
+    "files": [
+      "angelcare-marketplace/operations-reconciliation/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.operations.recovery.manage",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/operations-reconciliation/api-handlers.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.operations.reports.review",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.operations.reports.validate",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.operations.returns.manage",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/operations-reconciliation/api-handlers.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.operations.settlement.readiness_updated",
+    "files": [
+      "angelcare-marketplace/operations-reconciliation/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.operations.view",
+    "files": [
+      "angelcare-marketplace/admin-control-plane/api-handlers.ts",
+      "angelcare-marketplace/customer-commerce/api-handlers.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/enterprise-closure/api-handlers.ts",
+      "angelcare-marketplace/operations-execution/api-handlers.ts",
+      "angelcare-marketplace/operations-reconciliation/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/total-commerce-control/api-handlers.ts",
+      "angelcare-marketplace/vendor-authority/api-handlers.ts",
+      "app/angelcare-marketplace/(protected)/admin/bookings/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/operations/academy/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/operations/action-center/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/operations/analytics/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/operations/b2b/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/operations/checklists/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/operations/closure/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/operations/configuration/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/operations/disputes/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/operations/escalations/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/operations/exceptions/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/operations/fulfillment/[caseId]/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/operations/fulfillment/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/operations/incidents/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/operations/live/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/operations/missions/[missionId]/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/operations/missions/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/operations/orders/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/operations/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/operations/partner-os/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/operations/proof/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/operations/quality-check/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/operations/recovery/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/operations/replacements/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/operations/reports/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/operations/returns/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/operations/services/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/operations/today/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/operations/validation/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/orders-fulfillment/layout.tsx",
+      "app/angelcare-marketplace/(protected)/admin/orders/[orderId]/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/orders/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/vendors/catalog-links/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/vendors/contracts/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/vendors/disputes/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/vendors/inventory/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/vendors/onboarding/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/vendors/orders/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/vendors/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/vendors/performance/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/vendors/quality/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/vendors/registry/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/vendors/settlements/page.tsx",
+      "app/api/angelcare-marketplace/admin/transaction-flight-deck/snapshot/route.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.order.assisted_created",
+    "files": [
+      "angelcare-marketplace/total-commerce-control/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.order.line.created",
+    "files": [
+      "angelcare-marketplace/enterprise-closure/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.order.line.updated",
+    "files": [
+      "angelcare-marketplace/enterprise-closure/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.order.line_event.recorded",
+    "files": [
+      "angelcare-marketplace/customer-commerce/admin-repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.order.manual_created",
+    "files": [
+      "angelcare-marketplace/admin-control-plane/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.order.sovereign_operated",
+    "files": [
+      "angelcare-marketplace/enterprise-command/sovereign-repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.partner_os.admin.view",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/partner-os/api-handlers.ts",
+      "angelcare-marketplace/partner-os/validation.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/partner-os/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/partner-os/tenants/[tenantId]/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/partner-os/tenants/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/verticals/organizations/[organizationId]/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.partner_os.export",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.partner_os.module_upserted",
+    "files": [
+      "angelcare-marketplace/partner-os/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.partner_os.modules.manage",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/partner-os/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.partner_os.onboarding.manage",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/partner-os/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.partner_os.onboarding_check_updated",
+    "files": [
+      "angelcare-marketplace/partner-os/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.partner_os.plans.manage",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.partner_os.plans.view",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/partner-os/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/partner-os/plans/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.partner_os.public.view",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.partner_os.subscription_assigned",
+    "files": [
+      "angelcare-marketplace/partner-os/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.partner_os.subscriptions.manage",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/partner-os/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.partner_os.subscriptions.view",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/partner-os/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.partner_os.tenant.access",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/partner-os/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(tenant)/partner/dashboard/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.partner_os.tenant.members.manage",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.partner_os.tenant_created",
+    "files": [
+      "angelcare-marketplace/partner-os/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.partner_os.tenants.create",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/partner-os/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.partner_os.tenants.manage",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/partner-os/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.partner_os.usage.manage",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.partner_os.usage.view",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.payment.manual_captured",
+    "files": [
+      "angelcare-marketplace/admin-control-plane/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.payment.manual_created",
+    "files": [
+      "angelcare-marketplace/admin-control-plane/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.performance.view",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/final-authority/api-handlers.ts",
+      "angelcare-marketplace/final-vertical/registry.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.popup.manage",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.promotion.created",
+    "files": [
+      "angelcare-marketplace/enterprise-closure/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.promotion.updated",
+    "files": [
+      "angelcare-marketplace/enterprise-closure/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.proof_widget.manage",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/live-experience-command/admin-pages.tsx",
+      "angelcare-marketplace/live-experience-command/api-handlers.ts",
+      "app/angelcare-marketplace/(protected)/admin/live-experience-command/proof-sources/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.providers.availability.manage",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/provider-workforce/api-handlers.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.providers.certifications.review",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/provider-workforce/api-handlers.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.providers.create",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/provider-workforce/api-handlers.ts",
+      "app/angelcare-marketplace/(protected)/admin/providers/assignments/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/providers/dossiers/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/providers/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.providers.documents.review",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/provider-workforce/api-handlers.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.providers.eligibility.review",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/provider-workforce/api-handlers.ts",
+      "angelcare-marketplace/provider-workforce/components/ProviderDossier.tsx",
+      "app/angelcare-marketplace/(protected)/admin/providers/dossiers/[providerId]/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.providers.manage",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/provider-workforce/api-handlers.ts",
+      "angelcare-marketplace/provider-workforce/components/ProviderDossier.tsx",
+      "app/angelcare-marketplace/(protected)/admin/providers/dossiers/[providerId]/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.providers.missions.view",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(provider)/provider/missions/[missionId]/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.providers.payable_eligibility.review",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/provider-workforce/api-handlers.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.providers.performance.view",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/provider-workforce/api-handlers.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.providers.reports.submit",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.providers.self.access",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/operations-execution/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(provider)/provider/availability/page.tsx",
+      "app/angelcare-marketplace/(provider)/provider/certifications/page.tsx",
+      "app/angelcare-marketplace/(provider)/provider/documents/page.tsx",
+      "app/angelcare-marketplace/(provider)/provider/missions/page.tsx",
+      "app/angelcare-marketplace/(provider)/provider/onboarding/page.tsx",
+      "app/angelcare-marketplace/(provider)/provider/page.tsx",
+      "app/angelcare-marketplace/(provider)/provider/payments/page.tsx",
+      "app/angelcare-marketplace/(provider)/provider/reports/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.providers.suspend",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.providers.view",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/network-capacity-grid/NetworkAreaPage.tsx",
+      "angelcare-marketplace/network-capacity-grid/api-handlers.ts",
+      "angelcare-marketplace/operations-reconciliation/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/provider-workforce/api-handlers.ts",
+      "app/angelcare-marketplace/(protected)/admin/providers/assignments/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/providers/availability/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/providers/certifications/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/providers/commerce/disputes/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/providers/commerce/evidence/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/providers/commerce/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/providers/commerce/payables/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/providers/commerce/quality/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/providers/commerce/readiness/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/providers/documents/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/providers/dossiers/[providerId]/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/providers/dossiers/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/providers/eligibility/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/providers/onboarding/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/providers/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/providers/payable-eligibility/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/providers/performance/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.public.analytics.view",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.public.content.preview",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.public.inquiries.export",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.public.inquiries.manage",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/total-commerce-control/api-handlers.ts",
+      "app/angelcare-marketplace/(protected)/admin/sanila-demo/page.tsx",
+      "app/api/angelcare-marketplace/admin/sanila-demo/route.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.public.inquiries.view",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/public-inquiries/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.public_inquiry.customer_linked",
+    "files": [
+      "angelcare-marketplace/total-commerce-control/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.public_inquiry.updated",
+    "files": [
+      "angelcare-marketplace/total-commerce-control/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.publication.manage",
+    "files": [
+      "angelcare-marketplace/category-native/admin-pages.tsx",
+      "angelcare-marketplace/commerce-studio/admin-pages.tsx",
+      "angelcare-marketplace/commerce-studio/api-handlers.ts",
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/footer-studio/admin-pages.tsx",
+      "angelcare-marketplace/footer-studio/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/production-activation/admin-page.tsx",
+      "angelcare-marketplace/production-activation/api-handlers.ts",
+      "angelcare-marketplace/production-activation/components/ActivationCommand.tsx",
+      "angelcare-marketplace/total-commerce-control/api-handlers.ts",
+      "app/angelcare-marketplace/(protected)/admin/frontend-experiences/marketplace/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/frontend-experiences/surfaces/[surfaceKey]/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/frontend-experiences/verticals/[surfaceKey]/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/localization/page.tsx",
+      "app/api/angelcare-marketplace/admin/publication/preview/route.ts",
+      "app/api/angelcare-marketplace/admin/publication/refresh/route.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.qa.defects.manage",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/final-authority/api-handlers.ts",
+      "angelcare-marketplace/launch-assurance/api-handlers.ts",
+      "angelcare-marketplace/launch-assurance/components/LaunchGovernanceDesk.tsx",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/reality-completion/domain-contract.ts",
+      "app/angelcare-marketplace/(protected)/admin/quality-assurance/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.qa.execute",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.qa.manage",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.qa.release_review",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.qa.view",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/final-authority/api-handlers.ts",
+      "angelcare-marketplace/final-vertical/registry.ts",
+      "angelcare-marketplace/launch-assurance/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/quality-assurance/accessibility/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/quality-assurance/defects/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/quality-assurance/localization/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/quality-assurance/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/quality-assurance/performance/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/quality-assurance/regressions/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/quality-assurance/release/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/quality-assurance/security/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/quality-assurance/suites/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.quality.assessments.approve",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.quality.assessments.manage",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/trust-quality/api-handlers.ts",
+      "angelcare-marketplace/trust-quality/components/TrustDecisionDesk.tsx",
+      "app/angelcare-marketplace/(protected)/admin/trust/quality-check-360/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.quality.corrective_actions.close",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.quality.corrective_actions.manage",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/trust-quality/api-handlers.ts",
+      "angelcare-marketplace/trust-quality/components/TrustDecisionDesk.tsx",
+      "app/angelcare-marketplace/(protected)/admin/trust/corrective-actions/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.quality.findings.manage",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.quality.view",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/trust-quality/api-handlers.ts",
+      "app/angelcare-marketplace/(protected)/admin/trust/corrective-actions/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/trust/non-conformities/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/trust/quality-check-360/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.quote_basket.create",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/marketplace-core/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.quote_basket.created",
+    "files": [
+      "angelcare-marketplace/marketplace-core/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.quote_basket.item_added",
+    "files": [
+      "angelcare-marketplace/marketplace-core/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.quote_basket.manage",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/marketplace-core/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.quote_basket.view",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/marketplace-core/api-handlers.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/quote-baskets/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.readiness.review",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.readiness.sign_off",
+    "files": [
+      "angelcare-marketplace/api/handlers.ts",
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/readiness/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.readiness.signed_off",
+    "files": [
+      "angelcare-marketplace/server/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.readiness.update",
+    "files": [
+      "angelcare-marketplace/api/handlers.ts",
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/readiness/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.readiness.updated",
+    "files": [
+      "angelcare-marketplace/server/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.readiness.view",
+    "files": [
+      "angelcare-marketplace/api/handlers.ts",
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/features/workspace/WorkspaceHome.tsx",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/readiness/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.recovery_test.approve",
+    "files": [
+      "angelcare-marketplace/analytics-security/api-handlers.ts",
+      "angelcare-marketplace/analytics-security/components/SecurityGovernanceDesk.tsx",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/security/backups/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/security/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/security/tenant-isolation/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.security.access_review",
+    "files": [
+      "angelcare-marketplace/analytics-security/api-handlers.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.security.assess",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.security.events.view",
+    "files": [
+      "angelcare-marketplace/analytics-security/api-handlers.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/security/events/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.security.isolation.review",
+    "files": [
+      "angelcare-marketplace/analytics-security/api-handlers.ts",
+      "angelcare-marketplace/analytics-security/components/SecurityGovernanceDesk.tsx",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/security/backups/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/security/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/security/tenant-isolation/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.security.manage",
+    "files": [
+      "angelcare-marketplace/customer-commerce/api-handlers.ts",
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/reality-completion/domain-contract.ts",
+      "app/angelcare-marketplace/(protected)/admin/wallet/customers/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/wallet/risk/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.security.retention.manage",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.security.roles.manage",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.security.separation_of_duties.review",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.security.view",
+    "files": [
+      "angelcare-marketplace/analytics-security/api-handlers.ts",
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/final-authority/api-handlers.ts",
+      "angelcare-marketplace/final-vertical/registry.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/admin/security/backups/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/security/data-retention/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/security/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.segment.archived",
+    "files": [
+      "angelcare-marketplace/enterprise-command/sovereign-repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.segment.created",
+    "files": [
+      "angelcare-marketplace/enterprise-command/sovereign-repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.segment.updated",
+    "files": [
+      "angelcare-marketplace/enterprise-command/sovereign-repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.sensitive_content.approve",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/trust-quality/api-handlers.ts",
+      "angelcare-marketplace/trust-quality/components/TrustDecisionDesk.tsx",
+      "app/angelcare-marketplace/(protected)/admin/trust/sensitive-content/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.sensitive_content.review",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/trust-quality/api-handlers.ts",
+      "app/angelcare-marketplace/(protected)/admin/trust/sensitive-content/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.seo.manage",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.studio.draft.saved",
+    "files": [
+      "angelcare-marketplace/studio-universal/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.studio.page.created",
+    "files": [
+      "angelcare-marketplace/studio-universal/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.studio.page.duplicated",
+    "files": [
+      "angelcare-marketplace/studio-universal/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.studio.page.published",
+    "files": [
+      "angelcare-marketplace/studio-universal/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.subscription.created",
+    "files": [
+      "angelcare-marketplace/enterprise-closure/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.subscription.updated",
+    "files": [
+      "angelcare-marketplace/enterprise-closure/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.supplier.created",
+    "files": [
+      "angelcare-marketplace/admin-control-plane/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.supplier.updated",
+    "files": [
+      "angelcare-marketplace/admin-control-plane/repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.territories.approve_live",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/territory-os/api-handlers.ts",
+      "app/angelcare-marketplace/(protected)/admin/territories/[territoryCode]/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.territories.approve_soft_launch",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/territory-os/api-handlers.ts",
+      "app/angelcare-marketplace/(protected)/admin/territories/[territoryCode]/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.territories.archive",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/territory-os/api-handlers.ts",
+      "app/angelcare-marketplace/(protected)/admin/territories/[territoryCode]/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.territories.clone",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/territory-os/api-handlers.ts",
+      "app/angelcare-marketplace/(protected)/admin/territories/clone/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.territories.create",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/territory-os/api-handlers.ts",
+      "app/angelcare-marketplace/(protected)/admin/territories/new/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.territories.export",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/territory-os/api-handlers.ts",
+      "app/angelcare-marketplace/(protected)/admin/territories/registry/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.territories.pause",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/territory-os/api-handlers.ts",
+      "app/angelcare-marketplace/(protected)/admin/territories/[territoryCode]/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.territories.preview",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/territory-os/api-handlers.ts",
+      "app/angelcare-marketplace/(protected)/admin/territories/[territoryCode]/preview/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.territories.resume",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/territory-os/api-handlers.ts",
+      "app/angelcare-marketplace/(protected)/admin/territories/[territoryCode]/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.territories.submit_review",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/territory-os/api-handlers.ts",
+      "app/angelcare-marketplace/(protected)/admin/territories/[territoryCode]/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.territories.update",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/territory-os/api-handlers.ts",
+      "app/angelcare-marketplace/(protected)/admin/territories/[territoryCode]/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.territories.view",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/territory-os/api-handlers.ts",
+      "app/angelcare-marketplace/(protected)/admin/territories/[territoryCode]/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/territories/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/territories/registry/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.territory_health.manage",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/territory-os/api-handlers.ts",
+      "app/angelcare-marketplace/(protected)/admin/territories/[territoryCode]/health/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.territory_health.view",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/territory-os/api-handlers.ts",
+      "app/angelcare-marketplace/(protected)/admin/territories/[territoryCode]/health/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.territory_overrides.approve",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/territory-os/api-handlers.ts",
+      "app/angelcare-marketplace/(protected)/admin/territories/[territoryCode]/overrides/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.territory_overrides.create",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/territory-os/api-handlers.ts",
+      "app/angelcare-marketplace/(protected)/admin/territories/[territoryCode]/overrides/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.territory_overrides.reject",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/territory-os/api-handlers.ts",
+      "app/angelcare-marketplace/(protected)/admin/territories/[territoryCode]/overrides/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.territory_overrides.review",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.territory_overrides.rollback",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/territory-os/api-handlers.ts",
+      "app/angelcare-marketplace/(protected)/admin/territories/[territoryCode]/overrides/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.territory_overrides.view",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/territory-os/api-handlers.ts",
+      "app/angelcare-marketplace/(protected)/admin/territories/[territoryCode]/overrides/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.territory_readiness.manage",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/territory-os/api-handlers.ts",
+      "app/angelcare-marketplace/(protected)/admin/territories/[territoryCode]/readiness/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.territory_readiness.review",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/territory-os/api-handlers.ts",
+      "app/angelcare-marketplace/(protected)/admin/territories/[territoryCode]/readiness/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.territory_readiness.sign_off",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/territory-os/api-handlers.ts",
+      "app/angelcare-marketplace/(protected)/admin/territories/[territoryCode]/readiness/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.territory_readiness.view",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/territory-os/api-handlers.ts",
+      "app/angelcare-marketplace/(protected)/admin/territories/[territoryCode]/readiness/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.territory_settings.manage",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/territory-os/api-handlers.ts",
+      "app/angelcare-marketplace/(protected)/admin/territories/[territoryCode]/settings/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.territory_settings.view",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/territory-os/api-handlers.ts",
+      "app/angelcare-marketplace/(protected)/admin/territories/[territoryCode]/settings/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.trust.badges.issue",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.trust.badges.revoke",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.trust.badges.suspend",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.trust.evidence.review",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.trust.manage",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/reality-completion/domain-contract.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.trust.sops.approve",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.trust.sops.manage",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/trust-quality/api-handlers.ts",
+      "angelcare-marketplace/trust-quality/components/TrustDecisionDesk.tsx",
+      "app/angelcare-marketplace/(protected)/admin/trust/sops/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.trust.view",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/final-vertical/registry.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "angelcare-marketplace/trust-quality/api-handlers.ts",
+      "app/angelcare-marketplace/(protected)/admin/trust/badges/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/trust/evidence/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/trust/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/trust/sops/page.tsx",
+      "app/angelcare-marketplace/(protected)/admin/trust/standards/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.vendors.contracts.manage",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/vendor-authority/api-handlers.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.vendors.inventory.manage",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/vendor-authority/api-handlers.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.vendors.manage",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/vendor-authority/api-handlers.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.vendors.orders.manage",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/vendor-authority/api-handlers.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.vendors.quality.manage",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/vendor-authority/api-handlers.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.vendors.settlements.manage",
+    "files": [
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/vendor-authority/api-handlers.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.wallet.adjusted",
+    "files": [
+      "angelcare-marketplace/customer-commerce/admin-repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.wallet.policy.created",
+    "files": [
+      "angelcare-marketplace/customer-commerce/admin-repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.wallet.policy.updated",
+    "files": [
+      "angelcare-marketplace/customer-commerce/admin-repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.wallet.policy_assignments.imported",
+    "files": [
+      "angelcare-marketplace/customer-commerce/admin-repository.ts"
+    ]
+  },
+  {
+    "permission": "marketplace.web_presence.manage",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/web-presence/api.ts",
+      "app/angelcare-marketplace/(protected)/admin/configuration/web-presence/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.web_presence.publish",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/web-presence/api.ts",
+      "app/angelcare-marketplace/(protected)/admin/configuration/web-presence/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.web_presence.rollback",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/web-presence/api.ts",
+      "app/angelcare-marketplace/(protected)/admin/configuration/web-presence/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.web_presence.verify",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/web-presence/api.ts",
+      "app/angelcare-marketplace/(protected)/admin/configuration/web-presence/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.web_presence.view",
+    "files": [
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/web-presence/api.ts",
+      "app/angelcare-marketplace/(protected)/admin/configuration/web-presence/page.tsx"
+    ]
+  },
+  {
+    "permission": "marketplace.workspace.access",
+    "files": [
+      "angelcare-marketplace/customer-commerce/customer-auth.ts",
+      "angelcare-marketplace/domain/constants.ts",
+      "angelcare-marketplace/domain/types.ts",
+      "angelcare-marketplace/permissions/permission-catalog.ts",
+      "app/angelcare-marketplace/(protected)/account/page.tsx",
+      "app/angelcare-marketplace/(protected)/workspace/page.tsx"
+    ]
+  }
+]

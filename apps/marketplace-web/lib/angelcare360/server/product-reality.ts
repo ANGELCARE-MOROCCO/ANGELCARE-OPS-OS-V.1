@@ -7,7 +7,7 @@ import { requireAngelcare360OperatorPermission } from '@/lib/angelcare360/operat
 import { loadAngelcare360RuntimeEntitlements } from '@/lib/angelcare360/server/entitlements'
 import { ANGELCARE360_PRODUCT_REALITY_OPERATIONS, ANGELCARE360_REALITY_POLICY_DEFAULTS, getProductRealityOperation } from '@/data/angelcare360/product-reality'
 import { getAngelcare360RouteBinding } from '@/data/angelcare360/product-constitution'
-import { isAngelcare360CapabilityEnabled, isAngelcare360FeatureEnabled, isAngelcare360ModuleEnabled, isAngelcare360OperationEnabled } from '@/lib/angelcare360/entitlements'
+import { isAngelcare360ModuleEnabled, isAngelcare360OperationEnabled } from '@/lib/angelcare360/entitlements'
 import { Angelcare360AccessError, getAngelcare360AccessContext, requireAngelcare360Permission } from '@/lib/angelcare360/server/context'
 import { recordAngelcare360AuditEventServer } from '@/lib/angelcare360/server/audit'
 import type {
@@ -100,22 +100,18 @@ async function safeRows(client: ServiceClient, table: string, schoolId: string, 
   return (data || []) as ProductRealityRow[]
 }
 
-export async function requireProductRealityOperation(operationKey: string, options?: { entityId?: string | null; payload?: ProductRealityRow; allowApprovalRequired?: boolean }): Promise<ProductRealityRuntimeGate & { context: NonNullable<Awaited<ReturnType<typeof getAngelcare360AccessContext>>> }> {
+export async function requireProductRealityOperation(operationKey: string, options?: { entityId?: string | null; payload?: ProductRealityRow; allowApprovalRequired?: boolean; schoolId?: string | null }): Promise<ProductRealityRuntimeGate & { context: NonNullable<Awaited<ReturnType<typeof getAngelcare360AccessContext>>> }> {
   const definition = getProductRealityOperation(operationKey)
   if (!definition) throw new Angelcare360AccessError(`Opération produit inconnue: ${operationKey}.`, 400)
-  const context = await requireAngelcare360Permission(definition.permissionKey)
+  const context = await requireAngelcare360Permission(definition.permissionKey, { schoolId: options?.schoolId || null, operation: operationKey })
   if (definition.operatorOnly) await requireAngelcare360OperatorPermission('operator.features.update')
   if (!context.school) throw new Angelcare360AccessError('Établissement actif introuvable.', 403)
   const runtime = context.runtimeEntitlements
   const moduleAllowed = isAngelcare360ModuleEnabled(runtime, definition.moduleKey)
-  const capabilityAllowed = isAngelcare360CapabilityEnabled(runtime, definition.capabilityKey)
-  const featureAllowed = isAngelcare360FeatureEnabled(runtime, definition.featureKey)
   const operationAllowed = isAngelcare360OperationEnabled(runtime, operationKey)
-  let allowed = moduleAllowed && capabilityAllowed && featureAllowed && operationAllowed
+  let allowed = moduleAllowed && operationAllowed
   let reason: string | null = null
   if (!moduleAllowed) reason = runtime.restrictedModules.find((item) => item.key === definition.moduleKey)?.reason || `Le module ${definition.moduleKey} n’est pas actif.`
-  else if (!capabilityAllowed) reason = runtime.restrictedCapabilities.find((item) => item.key === definition.capabilityKey)?.reason || `La capability ${definition.capabilityKey} n’est pas active.`
-  else if (!featureAllowed) reason = runtime.restrictedFeatures.find((item) => item.key === definition.featureKey)?.reason || `La feature ${definition.featureKey} n’est pas active.`
   else if (!operationAllowed) reason = runtime.restrictedOperations.find((item) => item.key === operationKey)?.reason || `L’opération ${operationKey} est verrouillée.`
 
   const client = await createServiceClient()
@@ -467,9 +463,12 @@ async function executeOperationGate(context: ExecutionContext) {
 
 async function executeInstitutionTransition(context: ExecutionContext) {
   const payload = object(context.request.payload)
-  const schoolId = context.request.entityId || context.schoolId
+  const schoolId = context.schoolId
+  if (context.request.entityId && context.request.entityId !== schoolId) {
+    throw new Angelcare360AccessError('L’établissement ciblé ne fait pas partie de votre périmètre autorisé.', 403)
+  }
   const target = required(payload, 'targetState', 'Le nouvel état')
-  const { data: current, error } = await context.client.from('angelcare360_schools').select('*').eq('id', schoolId).single()
+  const { data: current, error } = await context.client.from('angelcare360_schools').select('*').eq('id', context.schoolId).single()
   if (error) throw new Error(error.message)
   const before = current as ProductRealityRow
   const from = string(before.metadata_json && object(before.metadata_json).reality_state, string(before.status, 'draft'))
@@ -489,7 +488,7 @@ async function executeInstitutionTransition(context: ExecutionContext) {
   if (blockers.length) return { message: 'Transition bloquée par la readiness.', record: before, blockers }
   const operationalStatus = target === 'active' ? 'active' : target === 'suspended' ? 'suspended' : target === 'archived' ? 'archived' : string(before.status)
   const metadata = { ...object(before.metadata_json), reality_state: target, reality_policy_version: number(policy?.version_number, 1), reality_effective_at: context.request.effectiveAt || now() }
-  const { data, error: updateError } = await context.client.from('angelcare360_schools').update({ status: operationalStatus, metadata_json: metadata, updated_by: context.userId, updated_at: now() }).eq('id', schoolId).select('*').single()
+  const { data, error: updateError } = await context.client.from('angelcare360_schools').update({ status: operationalStatus, metadata_json: metadata, updated_by: context.userId, updated_at: now() }).eq('id', context.schoolId).select('*').single()
   if (updateError) throw new Error(updateError.message)
   await context.client.from('angelcare360_institution_lifecycle_events').insert({ school_id: context.schoolId, institution_id: schoolId, from_state: from, to_state: target, reason: context.request.reason, policy_version: number(policy?.version_number, 1), effective_at: context.request.effectiveAt || now(), execution_id: context.executionId, actor_user_id: context.userId })
   await audit(context, { entityType: 'angelcare360_schools', entityId: schoolId, before, after: data as ProductRealityRow })
@@ -1979,7 +1978,7 @@ export async function executeProductRealityCommand(request: ProductRealityComman
     return executeResolvedProductRealityCommand({ request, client, schoolId, userId: session.user.id })
   }
   if (definition.operatorOnly) throw new Angelcare360AccessError('Cette opération exige l’autorité Operator.', 403)
-  const gate = await requireProductRealityOperation(request.operationKey, { entityId: request.entityId, payload: object(request.payload), allowApprovalRequired: definition.requiresApproval })
+  const gate = await requireProductRealityOperation(request.operationKey, { entityId: request.entityId, payload: object(request.payload), allowApprovalRequired: definition.requiresApproval, schoolId: request.schoolId || null })
   const client = await createServiceClient()
   if (definition.requiresApproval) return queueProductRealityApproval({ client, schoolId: gate.context.school!.id, userId: gate.context.user.id, request })
   return executeResolvedProductRealityCommand({ request, client, schoolId: gate.context.school!.id, userId: gate.context.user.id })
@@ -2074,8 +2073,6 @@ async function requireQueuedProductRealityOperation(
   if (definition.operatorOnly) throw new Error(`L’opération ${operationKey} exige une exécution directe par un Operator authentifié.`)
   const runtime = await loadAngelcare360RuntimeEntitlements({ userId, schoolId })
   const allowed = isAngelcare360ModuleEnabled(runtime, definition.moduleKey)
-    && isAngelcare360CapabilityEnabled(runtime, definition.capabilityKey)
-    && isAngelcare360FeatureEnabled(runtime, definition.featureKey)
     && isAngelcare360OperationEnabled(runtime, operationKey)
   if (!allowed) throw new Error(`Entitlement runtime refusé pour ${operationKey}.`)
   const { data: overrideGate, error: gateError } = await client

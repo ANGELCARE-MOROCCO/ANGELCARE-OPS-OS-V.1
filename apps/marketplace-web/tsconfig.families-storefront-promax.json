@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true
+  },
+  "include": [
+    "angelcare-marketplace/families-storefront/**/*.ts",
+    "angelcare-marketplace/families-storefront/**/*.tsx",
+    "angelcare-marketplace/catalog-discovery/repository.ts",
+    "angelcare-marketplace/catalog-discovery/components/Storefront.tsx",
+    "angelcare-marketplace/public-experience-authority/canonical-worlds.ts",
+    "app/angelcare-marketplace/[locale]/families/page.tsx",
+    "scripts/angelcare-marketplace/families-storefront-css-modules.d.ts"
+  ]
+}

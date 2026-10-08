@@ -1,0 +1,13 @@
+DATABASE OBJECTS INTRODUCED
+public.ux_ac360_library_one_active_loan_per_copy
+public.ux_ac360_library_copy_barcode
+public.angelcare360_library_integrity_status_v1(uuid)
+public.angelcare360_library_create_loan_v1(uuid,uuid,text,uuid,timestamptz,uuid,text)
+public.angelcare360_library_return_loan_v1(uuid,uuid,timestamptz,text,text,uuid,text)
+public.angelcare360_library_mark_lost_v1(uuid,uuid,uuid,text)
+public.angelcare360_library_cancel_loan_v1(uuid,uuid,uuid,text)
+
+NO TABLES CREATED
+NO COLUMNS ADDED
+NO EXISTING RLS/POLICIES CHANGED
+NO EXISTING ROWS REWRITTEN

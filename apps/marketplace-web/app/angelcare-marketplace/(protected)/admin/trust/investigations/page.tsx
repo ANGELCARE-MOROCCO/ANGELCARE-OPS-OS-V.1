@@ -1,1 +1,2 @@
-export { default } from '../complaints/page'
+import { redirect } from 'next/navigation'
+export default function Page(){redirect('/angelcare-marketplace/admin/trust/complaints')}

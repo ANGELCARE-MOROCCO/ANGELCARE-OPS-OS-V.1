@@ -1,0 +1,11 @@
+{
+  "raw_visitor_reference_persisted_in_attribution": false,
+  "visitor_reference_server_hash_only": true,
+  "raw_referrer_query_persisted": false,
+  "referrer_fields": ["host", "path"],
+  "full_current_query_persisted_as_page_route": false,
+  "external_url_decoration": false,
+  "field_length_bounded": true,
+  "shadow_tracking_table": false,
+  "business_pii_added_to_url": false
+}

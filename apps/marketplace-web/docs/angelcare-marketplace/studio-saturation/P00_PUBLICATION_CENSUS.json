@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "publication_models": [
+    {
+      "entity": "catalog_item",
+      "authority": "catalog item status + admin publication/transition",
+      "states": [
+        "draft",
+        "published",
+        "paused/archived/domain-specific"
+      ],
+      "studio_rule": "bind published public-safe facts only"
+    },
+    {
+      "entity": "catalog_category",
+      "authority": "catalog category status",
+      "states": [
+        "draft",
+        "published",
+        "archived"
+      ],
+      "studio_rule": "public source only when eligible"
+    },
+    {
+      "entity": "cms_page",
+      "authority": "Experience Core transitionPage/publication jobs",
+      "states": [
+        "draft",
+        "review/approved",
+        "scheduled",
+        "published",
+        "archived"
+      ],
+      "studio_rule": "Studio already governed by this authority"
+    },
+    {
+      "entity": "cms_template",
+      "authority": "Experience Core current/published revision",
+      "states": [
+        "draft",
+        "published",
+        "archived"
+      ],
+      "studio_rule": "P04 may resolve only valid published template revision at public runtime"
+    },
+    {
+      "entity": "cms_symbol",
+      "authority": "Experience Core current/published revision",
+      "states": [
+        "draft",
+        "published",
+        "archived"
+      ],
+      "studio_rule": "resolve published revision publicly"
+    },
+    {
+      "entity": "experience_schema",
+      "authority": "Category-Native schema status/version",
+      "states": [
+        "draft",
+        "active",
+        "paused",
+        "archived"
+      ],
+      "studio_rule": "P04 schema assignment requires active schema"
+    },
+    {
+      "entity": "homepage_release",
+      "authority": "Homepage release dossier",
+      "states": [
+        "draft",
+        "content_ready",
+        "approval_pending",
+        "approved",
+        "scheduled",
+        "published",
+        "verification",
+        "accepted",
+        "superseded",
+        "archived"
+      ],
+      "studio_rule": "do not bypass homepage governance"
+    },
+    {
+      "entity": "media_asset",
+      "authority": "Media Vault status/rights",
+      "states": [
+        "active",
+        "archived/deleted/domain-specific"
+      ],
+      "studio_rule": "public render only usable public asset"
+    },
+    {
+      "entity": "live_experience_campaign",
+      "authority": "Live Experience status/version/schedule",
+      "states": [
+        "draft/active/scheduled/paused/archived domain-specific"
+      ],
+      "studio_rule": "resolve only currently eligible campaign"
+    }
+  ]
+}

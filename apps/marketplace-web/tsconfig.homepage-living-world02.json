@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {"noEmit": true, "incremental": false},
+  "include": [
+    "next-env.d.ts",
+    "angelcare-marketplace/homepage-living-marketplace/**/*.ts",
+    "angelcare-marketplace/homepage-living-marketplace/**/*.tsx",
+    "angelcare-marketplace/studio-homepage-pro-max/recipe.ts",
+    "angelcare-marketplace/studio-homepage-pro-max/puck.tsx",
+    "angelcare-marketplace/studio-homepage-pro-max/components/HomepageProMaxLibrary.tsx",
+    "angelcare-marketplace/studio-homepage-pro-max/developer-contract.ts",
+    "angelcare-marketplace/studio-universal/StudioPublishedRenderer.tsx",
+    "app/angelcare-marketplace/preview/[token]/page.tsx"
+  ],
+  "exclude": ["node_modules", ".next", "backups", "_archive", ".angelcare_backups"]
+}

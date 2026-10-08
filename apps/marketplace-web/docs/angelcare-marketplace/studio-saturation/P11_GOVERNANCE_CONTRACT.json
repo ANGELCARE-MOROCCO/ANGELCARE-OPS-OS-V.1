@@ -1,0 +1,52 @@
+{
+  "schema_version": "2026-09-20.P11",
+  "phase": "P11",
+  "name": "Permissions / Governance / Fail-Closed",
+  "policy_rules": 12,
+  "policy_modes": 5,
+  "decisions": [
+    "ALLOW",
+    "BLOCK",
+    "FALLBACK"
+  ],
+  "modes": [
+    "draft",
+    "preview",
+    "publish",
+    "template_assignment",
+    "public_runtime"
+  ],
+  "rules": [
+    "RBAC_PERMISSION",
+    "MUTATION_AUTHORITY",
+    "DOCUMENT_INTEGRITY",
+    "SOURCE_REFERENCE_VALIDITY",
+    "PAGE_LIFECYCLE",
+    "TEMPLATE_INTEGRITY",
+    "BINDING_INTEGRITY",
+    "DYNAMIC_SOURCE_INTEGRITY",
+    "ACTION_INTEGRITY",
+    "WORKFLOW_INTEGRITY",
+    "ROUTE_SAFETY",
+    "TERRITORY_SCOPE"
+  ],
+  "enforcement": {
+    "draft": "allow incomplete but reject invalid/tampered policy-critical metadata",
+    "preview": "block unsafe document/references/actions/workflows",
+    "publish": "fail closed and preserve Experience Core approval lifecycle",
+    "template_assignment": "require scope-specific write authority and canonical target/template",
+    "public_runtime": "fallback Category-Native on policy blocker"
+  },
+  "authorities": {
+    "rbac": "existing Marketplace RBAC",
+    "publication": "Experience Core",
+    "audit": "angelcare_marketplace_audit_events",
+    "fallback": "Category-Native Experience"
+  },
+  "sql_required": false,
+  "database_schema_change": false,
+  "new_admin_workspace": false,
+  "shadow_policy_store": false,
+  "local_build": false,
+  "global_typescript": false
+}

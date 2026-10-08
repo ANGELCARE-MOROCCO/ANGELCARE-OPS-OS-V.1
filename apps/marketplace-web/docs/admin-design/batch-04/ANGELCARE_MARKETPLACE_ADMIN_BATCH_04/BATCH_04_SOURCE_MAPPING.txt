@@ -1,0 +1,736 @@
+ANGELCARE MARKETPLACE ADMIN — BATCH 04 FINAL
+COMMANDES & RÉSERVATIONS / ORDERS / BOOKINGS / QUOTES / ENROLLMENTS / SUBSCRIPTIONS / CONVERSION
+SOURCE/BACKEND MAPPING — 2026-08-27
+
+STATUS
+------
+THIS BATCH SUPERSEDES AND INVALIDATES ALL PREVIOUS BATCH 04 PROJECTION SETS.
+
+The 10 PNGs in this directory are the corrected final Batch 04 design authority.
+They intentionally preserve the visual/product shell established by approved
+Batches 01–03 and change only the Commandes & réservations workspace content.
+
+CURRENT SOURCE AUTHORITY
+------------------------
+ANGELCARE_MARKETPLACE_WEB_20260826-221837.zip
+apps/marketplace-web
+
+VISUAL / PRODUCT COHERENCE CONTRACT
+-----------------------------------
+All Batch 04 screens use the same permanent primary Marketplace Admin tree:
+
+Accueil
+Commandes & réservations
+Produits & services
+Catégories & collections
+Clients
+Boutique
+Marketing & promotions
+Opérations
+Prestataires & fournisseurs
+Academy
+B2B & partenaires
+Finance
+Trust & qualité
+Analytics & intelligence
+Paramètres & gouvernance
+
+Commandes & réservations is the active primary workspace in every Batch 04 PNG.
+
+Do NOT replace this shell with technical route groups such as Catalogue,
+Fournisseurs, Contenu, Reports & BI, Conversion, Journey Control, etc.
+Those may remain specialist destinations behind the human-facing workspaces.
+
+Brand rendering in this design authority is text-only: ANGELCARE MARKETPLACE.
+Do not invent, redraw or approximate an AngelCare logo.
+
+BACKEND FREEZE
+--------------
+Existing Marketplace APIs, repositories, permissions, data models and lifecycle
+authorities remain canonical.
+
+NO SQL.
+NO migrations.
+NO new tables.
+NO parallel Order engine.
+NO parallel Booking engine.
+NO parallel Quote engine.
+NO parallel Subscription engine.
+NO parallel Conversion engine.
+NO fake payment state.
+NO fake Wallet state.
+NO fake availability.
+NO fake consent.
+NO fake conversion outcome.
+
+Illustrative customer names, references, amounts and counts visible in PNGs are
+UI sample records only. Screen controls and workflow dimensions are grounded in
+the current source.
+
+======================================================================
+SOURCE COMPONENTS VERIFIED
+======================================================================
+
+angelcare-marketplace/customer-commerce/components/EnterpriseOrderCommand.tsx
+angelcare-marketplace/admin-control-plane/components/ManualOrderCommand.tsx
+angelcare-marketplace/enterprise-closure/components/OrderDossier.tsx
+angelcare-marketplace/enterprise-command/components/OrderMegaCommand.tsx
+angelcare-marketplace/enterprise-command/components/OrderInlineOperations.tsx
+angelcare-marketplace/enterprise-closure/components/BookingCommand.tsx
+angelcare-marketplace/commercial-pipeline/components/QuoteRegistry.tsx
+angelcare-marketplace/marketplace-core/components/QuoteBasketBoard.tsx
+angelcare-marketplace/enterprise-closure/components/SubscriptionCommand.tsx
+angelcare-marketplace/conversion-universe/components/ConversionAdminCommand.tsx
+angelcare-marketplace/conversion-universe/components/ConversionQueueBoard.tsx
+angelcare-marketplace/conversion-universe/components/ConversionBasketBoard.tsx
+angelcare-marketplace/conversion-universe/components/ConversionEvidenceBoard.tsx
+angelcare-marketplace/conversion-universe/components/useConversionEngine.ts
+angelcare-marketplace/conversion-universe/types.ts
+angelcare-marketplace/customer-commerce/admin-repository.ts
+angelcare-marketplace/enterprise-closure/repository.ts
+angelcare-marketplace/enterprise-command/repository.ts
+angelcare-marketplace/conversion-universe/repository.ts
+angelcare-marketplace/permissions/permission-catalog.ts
+
+======================================================================
+CURRENT PAGE GUARDS VERIFIED
+======================================================================
+
+/admin/orders
+  marketplace.operations.view
+
+/admin/orders/new
+  marketplace.operations.missions.create
+
+/admin/orders/[orderId]
+  marketplace.operations.view
+
+/admin/orders/[orderId]/command
+  marketplace.admin.access
+
+/admin/bookings
+  marketplace.operations.view
+
+/admin/commercial/quotes
+  marketplace.crm.quotes.view
+
+/admin/quote-baskets
+  marketplace.quote_basket.view
+
+/admin/subscriptions
+  marketplace.admin.access
+
+/admin/conversion
+/admin/conversion/sessions
+/admin/conversion/sessions/[sessionId]
+/admin/conversion/baskets
+/admin/conversion/bookings
+/admin/conversion/enrollments
+/admin/conversion/quotations
+/admin/conversion/consents
+/admin/conversion/holds
+/admin/conversion/exceptions
+/admin/conversion/abandonment
+  marketplace.conversion.view
+
+/admin/conversion/analytics
+  marketplace.conversion.analytics.view
+
+/admin/conversion/configuration
+  marketplace.conversion.configuration.manage
+
+======================================================================
+BATCH 04 FINAL ROUTE DISPOSITION
+======================================================================
+
+/angelcare-marketplace/admin/orders
+  CANONICAL -> 02 Orders Enterprise Command
+
+/angelcare-marketplace/admin/orders/new
+  CANONICAL ACTION -> 03 Manual Order Command
+
+/angelcare-marketplace/admin/orders/[orderId]
+  MERGE INTO DOSSIER -> 04 Order 360
+
+/angelcare-marketplace/admin/orders/[orderId]/command
+  ADVANCED TOOL / MERGE INTO DOSSIER -> 04 Mega Order Command access
+
+/angelcare-marketplace/admin/bookings
+  CANONICAL -> 05 Booking Command
+
+/angelcare-marketplace/admin/commercial/quotes
+  CANONICAL -> 06 Quotes
+
+/angelcare-marketplace/admin/quote-baskets
+  MERGE INTO STUDIO -> 06 Quote Baskets
+
+/angelcare-marketplace/admin/subscriptions
+  CANONICAL -> 08 Recurring Commerce
+
+/angelcare-marketplace/admin/conversion
+  ADVANCED CANONICAL TOOL -> 09 Conversion Command Authority
+
+/angelcare-marketplace/admin/conversion/sessions
+  MERGE INTO CONTROL ROOM -> 09 Conversion Cockpit
+
+/angelcare-marketplace/admin/conversion/sessions/[sessionId]
+  MERGE INTO DOSSIER -> 10 Conversion Session 360
+
+/angelcare-marketplace/admin/conversion/enrollments
+  CANONICAL SUBVIEW -> 07 Academy Enrollment Control
+
+/angelcare-marketplace/admin/conversion/bookings
+/angelcare-marketplace/admin/conversion/quotations
+/angelcare-marketplace/admin/conversion/baskets
+/angelcare-marketplace/admin/conversion/consents
+/angelcare-marketplace/admin/conversion/holds
+/angelcare-marketplace/admin/conversion/exceptions
+/angelcare-marketplace/admin/conversion/abandonment
+  MERGE INTO CONTROL ROOM / QUEUE -> 09 + 10
+  Preserve specialist route compatibility; do not create competing sidebar items.
+
+DEFERRED BUT NOT FORGOTTEN
+--------------------------
+
+/angelcare-marketplace/admin/conversion/analytics
+  DEFER TO: Analytics & intelligence batch.
+  Conversion operational counters remain visible contextually in Batch 04,
+  but the full analytics authority must not be duplicated here.
+
+/angelcare-marketplace/admin/conversion/configuration
+  DEFER TO: Paramètres & gouvernance / advanced conversion configuration.
+
+/angelcare-marketplace/admin/journeys/orders
+/angelcare-marketplace/admin/journeys/bookings
+/angelcare-marketplace/admin/journeys/enrollments
+/angelcare-marketplace/admin/journeys/subscriptions
+/angelcare-marketplace/admin/journeys/assessments
+  DEFER TO: Operations / Journey Control batch.
+  These are post-conversion specialist operating authorities, not duplicate
+  Commandes & réservations primary pages.
+
+/angelcare-marketplace/admin/operations/orders
+/angelcare-marketplace/admin/orders-fulfillment/**
+  DEFER TO: Operations batch.
+
+/angelcare-marketplace/admin/finance-monetization/subscriptions
+  DEFER TO: Finance batch.
+  Batch 04 owns recurring commercial lifecycle; Finance owns monetization,
+  collection, reconciliation and finance-specific subscription controls.
+
+/angelcare-marketplace/admin/approvals
+  DEFER TO: global Action/Approval Center and Launch/Governance authority.
+
+======================================================================
+REAL API / MUTATION AUTHORITIES VERIFIED
+======================================================================
+
+ORDERS
+------
+GET/POST
+/api/angelcare-marketplace/admin/orders
+
+PATCH
+/api/angelcare-marketplace/admin/orders/[orderId]
+
+GET
+/api/angelcare-marketplace/admin/enterprise/orders/[orderId]
+
+POST
+/api/angelcare-marketplace/admin/enterprise/orders/[orderId]/lines
+
+PATCH
+/api/angelcare-marketplace/admin/enterprise/orders/[orderId]/lines/[lineId]
+
+GET
+/api/angelcare-marketplace/admin/enterprise-command/orders/[orderId]
+
+PATCH / operations
+/api/angelcare-marketplace/admin/enterprise-command/orders/[orderId]/operate
+
+Document export authority referenced by Mega Command:
+/api/angelcare-marketplace/admin/enterprise-command/documents/export
+
+BOOKINGS
+--------
+GET/POST
+/api/angelcare-marketplace/admin/bookings
+
+PATCH
+/api/angelcare-marketplace/admin/bookings/[bookingId]
+
+QUOTES
+------
+GET/POST
+/api/angelcare-marketplace/crm/quotes
+
+POST transition
+/api/angelcare-marketplace/crm/quotes/[quoteId]/transition
+
+POST approval
+/api/angelcare-marketplace/crm/quotes/[quoteId]/approval
+
+QUOTE BASKETS
+-------------
+Current QuoteBasketBoard is backed by the Marketplace quote-basket repository
+and /admin/quote-baskets page authority. Public/conversion basket operations are
+also represented by the Conversion Universe basket APIs listed below.
+
+SUBSCRIPTIONS
+-------------
+GET/POST
+/api/angelcare-marketplace/admin/subscriptions
+
+PATCH
+/api/angelcare-marketplace/admin/subscriptions/[subscriptionId]
+
+CONVERSION UNIVERSE
+-------------------
+Visitor/session authority:
+/api/angelcare-marketplace/conversion/sessions
+/api/angelcare-marketplace/conversion/sessions/[sessionKey]
+/api/angelcare-marketplace/conversion/sessions/[sessionKey]/price
+/api/angelcare-marketplace/conversion/sessions/[sessionKey]/availability
+/api/angelcare-marketplace/conversion/sessions/[sessionKey]/consent
+/api/angelcare-marketplace/conversion/sessions/[sessionKey]/confirm
+
+Basket / checkout authority:
+/api/angelcare-marketplace/conversion/basket
+/api/angelcare-marketplace/conversion/basket/[basketId]/items
+/api/angelcare-marketplace/conversion/basket/[basketId]/checkout
+
+Admin repository authority exposes Conversion Admin summary, sessions,
+specialist queues, evidence and recovery without creating a second engine.
+
+======================================================================
+SOURCE-CONFIRMED ORDER / JOURNEY TYPES
+======================================================================
+
+EnterpriseOrderCommand filters:
+product_order
+kit_order
+family_booking
+recurring_service
+academy_enrollment
+b2b_quotation
+hospitality_programme
+corporate_benefit
+quality_assessment
+
+ManualOrderCommand additionally supports:
+partner_activation
+
+ManualOrderCommand source-confirmed fields:
+- customer
+- commercial title
+- Journey type
+- amount in Dh
+- payment method
+- external provider/payment reference
+- scheduled start
+- scheduled end
+- operator notes
+- create Payment Intent boolean
+
+Manual payment methods in current source:
+manual_verified
+bank_transfer
+cash_on_delivery
+pay_at_location
+invoice
+
+======================================================================
+SOURCE-CONFIRMED CONVERSION MODEL
+======================================================================
+
+Conversion journeys:
+service_booking
+product_checkout
+academy_enrollment
+b2b_quotation
+partner_subscription
+quality_assessment
+
+Conversion statuses:
+draft
+configuring
+identity_pending
+eligibility_pending
+availability_pending
+consent_pending
+review
+ready
+submitted
+confirmed
+handover_pending
+expired
+cancelled
+failed
+
+Conversion price snapshot tracks:
+- pricing source
+- price book / price rule
+- currency
+- pricing model
+- quantity
+- subtotal
+- discount
+- tax
+- grand total
+- status: valid / quote_required / expired / rejected
+- source hash
+- valid_until
+- evidence
+
+Availability decision tracks:
+- status: available / hold_required / configuration_required / unavailable
+- authority: catalog / academy / inventory / provider / corporate_quota / manual_review
+- quantity
+- available quantity
+- source ID
+- start/end time
+- reason
+- evidence
+
+Consent records track:
+- consent key
+- consent version
+- locale
+- accepted boolean
+- accepted_at
+- text hash
+- evidence
+
+Outcome tracks:
+- outcome type
+- canonical object type
+- canonical object ID
+- public reference
+- status: created / submitted / handover_pending / failed
+- handover payload
+
+Evidence records are source-confirmed as:
+hold
+consent
+exception
+
+======================================================================
+01 — COMMANDES & RÉSERVATIONS COMMAND CENTER
+======================================================================
+
+PNG:
+01_COMMANDES_RESERVATIONS_COMMAND_CENTER.png
+
+FINAL HOME:
+Commandes & réservations
+
+SOURCE AUTHORITIES:
+EnterpriseOrderCommand
+ConversionAdminCommand
+BookingCommand
+QuoteRegistry
+SubscriptionCommand
+
+Purpose:
+Human-facing entry point that exposes the real commercial object pressure while
+linking to specialist canonical workspaces. It is NOT a new aggregation backend.
+
+======================================================================
+02 — ORDERS ENTERPRISE COMMAND
+======================================================================
+
+PNG:
+02_ORDERS_ENTERPRISE_COMMAND.png
+
+ROUTE:
+/admin/orders
+
+SOURCE:
+EnterpriseOrderCommand
+adminOrderCommand()
+assistedOrderOptions()
+
+Real controls represented:
+- search reference/title/customer/source
+- Journey type filter
+- creation source filter
+- status filter
+- payment obligation / Wallet contribution / external contribution
+- fulfillment state
+- risk / next action
+- open selected dossier
+- status transition: in_preparation, in_progress, completed, recovery, cancelled
+
+======================================================================
+03 — MANUAL ORDER COMMAND
+======================================================================
+
+PNG:
+03_MANUAL_ORDER_COMMAND.png
+
+ROUTE:
+/admin/orders/new
+
+SOURCE:
+ManualOrderCommand
+
+Real write:
+POST /api/angelcare-marketplace/admin/orders
+with action=manual_create
+
+The form must not create an Admin-only shadow order.
+
+======================================================================
+04 — ORDER 360 + MEGA ORDER COMMAND
+======================================================================
+
+PNG:
+04_ORDER_360_MEGA_COMMAND.png
+
+ROUTES:
+/admin/orders/[orderId]
+/admin/orders/[orderId]/command
+
+SOURCES:
+OrderDossier
+OrderMegaCommand
+OrderInlineOperations
+
+OrderDossier real controls:
+- list active/cancelled lines
+- add catalogue item or manual line
+- edit title
+- edit quantity
+- edit unit price
+- edit discount
+- remove / restore line
+- recalculated active-line total
+
+Mega Command current domain tabs include:
+Command
+Payments
+Fulfillment
+Documents
+Refunds
+Timeline
+Relations
+Communications
+Incidents
+
+Do not move Finance-specific dossiers into this workspace; only contextual
+payment/refund state belongs here.
+
+======================================================================
+05 — BOOKINGS COMMAND
+======================================================================
+
+PNG:
+05_BOOKINGS_COMMAND.png
+
+ROUTE:
+/admin/bookings
+
+SOURCE:
+BookingCommand
+
+Source-backed behavior:
+- search customer / catalogue offer / public reference / title
+- create booking
+- select customer
+- select catalogue item or manual service
+- Journey type
+- planned start/end
+- amount
+- status-cycle actions through existing Booking API
+
+======================================================================
+06 — QUOTES + QUOTE BASKETS
+======================================================================
+
+PNG:
+06_QUOTES_QUOTE_BASKETS.png
+
+ROUTES:
+/admin/commercial/quotes
+/admin/quote-baskets
+
+SOURCES:
+QuoteRegistry
+QuoteBasketBoard
+
+Quote source-backed creation fields:
+- opportunity
+- subtotal
+- discount total
+- tax total
+- computed grand total
+- valid_until
+- terms
+
+Quote lifecycle authority supports explicit transition and approval APIs.
+
+QuoteBasket source truth:
+- public reference
+- selected lines
+- basket status
+- grand total
+- currency
+- tenant/family-public context
+- expiration
+
+======================================================================
+07 — ENROLLMENTS CONVERSION CONTROL
+======================================================================
+
+PNG:
+07_ENROLLMENTS_CONVERSION_CONTROL.png
+
+ROUTE:
+/admin/conversion/enrollments
+
+SOURCE:
+ConversionQueueBoard
+listConversionSessions(... journey='academy_enrollment')
+
+This screen is deliberately Conversion-backed rather than inventing a second
+Admissions/Enrollment engine.
+
+It exposes session state, price, availability, consent and handover truth.
+
+======================================================================
+08 — SUBSCRIPTIONS COMMAND
+======================================================================
+
+PNG:
+08_SUBSCRIPTIONS_COMMAND.png
+
+ROUTE:
+/admin/subscriptions
+
+SOURCE:
+SubscriptionCommand
+
+Real create/update fields:
+- customer
+- catalogue item or service without catalogue
+- amount
+- billing period: weekly / monthly / quarterly / yearly
+- starts_at
+- quantity
+- currency label
+- next billing fields already carried by the subscription record
+- renewal mode
+
+Real lifecycle actions:
+active
+paused
+cancelled
+
+Cancellation writes renewal_mode=non_renewing and an operator cancel reason.
+
+======================================================================
+09 — CONVERSION UNIVERSE COCKPIT
+======================================================================
+
+PNG:
+09_CONVERSION_UNIVERSE_COCKPIT.png
+
+ROUTE:
+/admin/conversion
+
+SOURCE:
+ConversionAdminCommand
+ConversionQueueBoard
+ConversionBasketBoard
+ConversionEvidenceBoard
+
+Source-confirmed summary metrics:
+- active sessions
+- ready for confirmation
+- submitted today
+- abandoned
+- expiring holds
+- quote required
+- failed sessions
+- critical exceptions
+
+Six specialist conversion lanes are source-confirmed and remain visible without
+becoming six new global sidebar modules.
+
+======================================================================
+10 — CONVERSION SESSION 360 + EVIDENCE & RECOVERY
+======================================================================
+
+PNG:
+10_CONVERSION_SESSION_360_EVIDENCE_RECOVERY.png
+
+ROUTES:
+/admin/conversion/sessions/[sessionId]
+plus contextual merge of:
+/admin/conversion/consents
+/admin/conversion/holds
+/admin/conversion/exceptions
+/admin/conversion/abandonment
+
+SOURCES:
+ConversionQueueBoard
+ConversionEvidenceBoard
+Conversion types/repository
+
+Purpose:
+A single evidence-oriented conversion dossier showing:
+- identity/context
+- configuration
+- price snapshot
+- availability decision
+- consent versions/acceptance
+- current status
+- failure information
+- canonical outcome if it exists
+- holds / consent / exception evidence
+- recovery action entry
+
+Critical truth rule:
+No public or Admin confirmation may be represented as complete merely because a
+UI screen exists. The canonical outcome must exist and required conversion
+authorities must have passed.
+
+======================================================================
+CODEX IMPLEMENTATION RULE
+======================================================================
+
+When this folder is placed under admin-design/batch-04/, every PNG in this
+folder is approved visual authority.
+
+Codex must use:
+1. PNG = final visual/UIX projection authority.
+2. this TXT = route/backend/function mapping authority.
+3. current Marketplace source = ultimate technical/business truth.
+
+If an illustrative PNG control cannot be mapped to current backend authority,
+Codex must NOT fabricate it. Record the mismatch and preserve backend truth.
+
+Codex must consolidate old frontend generations into the canonical interfaces;
+do not create a parallel fourth/fifth implementation.
+
+NO SQL.
+NO migrations.
+NO commit.
+NO push.
+NO deployment.
+
+======================================================================
+FILES IN THIS FINAL BATCH
+======================================================================
+
+01_COMMANDES_RESERVATIONS_COMMAND_CENTER.png
+02_ORDERS_ENTERPRISE_COMMAND.png
+03_MANUAL_ORDER_COMMAND.png
+04_ORDER_360_MEGA_COMMAND.png
+05_BOOKINGS_COMMAND.png
+06_QUOTES_QUOTE_BASKETS.png
+07_ENROLLMENTS_CONVERSION_CONTROL.png
+08_SUBSCRIPTIONS_COMMAND.png
+09_CONVERSION_UNIVERSE_COCKPIT.png
+10_CONVERSION_SESSION_360_EVIDENCE_RECOVERY.png
+BATCH_04_SOURCE_MAPPING.txt

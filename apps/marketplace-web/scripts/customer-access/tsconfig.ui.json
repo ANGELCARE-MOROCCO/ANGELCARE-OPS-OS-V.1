@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "target": "ES2022", "lib": ["DOM", "DOM.Iterable", "ES2022"],
+    "module": "ESNext", "moduleResolution": "Bundler", "jsx": "react-jsx",
+    "strict": true, "skipLibCheck": true, "noEmit": true, "esModuleInterop": true,
+    "types": ["node", "react"], "baseUrl": "../..", "paths": { "@/*": ["./*"] }
+  },
+  "include": [
+    "ui-css.d.ts",
+    "../../angelcare-marketplace/customer-commerce/components/CustomerAuthExperience.tsx",
+    "../../angelcare-marketplace/customer-commerce/components/CustomerAccessShell.tsx",
+    "../../angelcare-marketplace/customer-commerce/components/CustomerVerifiedExperience.tsx",
+    "../../angelcare-marketplace/customer-commerce/components/CustomerConfirmationResend.tsx",
+    "../../angelcare-marketplace/customer-commerce/auth-navigation.ts",
+    "../../angelcare-marketplace/customer-commerce/customer-access-copy.ts",
+    "../../angelcare-marketplace/customer-commerce/customer-session-bridge.ts"
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "incremental": false
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.d.ts",
+    "angelcare-marketplace/public-experience-authority/world-factory/**/*.ts",
+    "angelcare-marketplace/public-experience-authority/types.ts",
+    "angelcare-marketplace/public-experience-authority/reference.ts",
+    "angelcare-marketplace/public-experience-authority/theme-compiler.ts",
+    "angelcare-marketplace/public-experience-authority/repository.ts",
+    "angelcare-marketplace/public-experience-authority/components/WorldImportLab.tsx",
+    "angelcare-marketplace/public-experience-authority/components/PublicExperienceAuthorityCommand.tsx",
+    "angelcare-marketplace/studio-action-registry/types.ts",
+    "angelcare-marketplace/studio-action-registry/public-resolver.ts",
+    "angelcare-marketplace/studio-dynamic-source/**/*.ts",
+    "angelcare-marketplace/studio-public-runtime/**/*.ts",
+    "angelcare-marketplace/studio-public-runtime/**/*.tsx",
+    "angelcare-marketplace/studio-universal/StudioPublishedRenderer.tsx",
+    "app/api/angelcare-marketplace/admin/public-experience-authority/world-factory/**/*.ts",
+    "app/angelcare-marketplace/(protected)/admin/public-experience-authority/world-factory/page.tsx"
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "skipLibCheck": true,
+    "incremental": false
+  },
+  "include": [],
+  "exclude": [
+    "node_modules",
+    ".next",
+    "deployment",
+    ".angelcare_backups"
+  ],
+  "files": [
+    "app/(protected)/angelcare-360-command-center/transport/_utils.ts",
+    "app/(protected)/angelcare-360-command-center/transport/affectations/page.tsx",
+    "app/(protected)/angelcare-360-command-center/transport/arrets/page.tsx",
+    "app/(protected)/angelcare-360-command-center/transport/audit/page.tsx",
+    "app/(protected)/angelcare-360-command-center/transport/chauffeurs/[id]/page.tsx",
+    "app/(protected)/angelcare-360-command-center/transport/chauffeurs/page.tsx",
+    "app/(protected)/angelcare-360-command-center/transport/circuits/[id]/page.tsx",
+    "app/(protected)/angelcare-360-command-center/transport/circuits/page.tsx",
+    "app/(protected)/angelcare-360-command-center/transport/courses/[id]/page.tsx",
+    "app/(protected)/angelcare-360-command-center/transport/courses/page.tsx",
+    "app/(protected)/angelcare-360-command-center/transport/depot/page.tsx",
+    "app/(protected)/angelcare-360-command-center/transport/error.tsx",
+    "app/(protected)/angelcare-360-command-center/transport/incidents/page.tsx",
+    "app/(protected)/angelcare-360-command-center/transport/layout.tsx",
+    "app/(protected)/angelcare-360-command-center/transport/loading.tsx",
+    "app/(protected)/angelcare-360-command-center/transport/not-found.tsx",
+    "app/(protected)/angelcare-360-command-center/transport/notifications/page.tsx",
+    "app/(protected)/angelcare-360-command-center/transport/page.tsx",
+    "app/(protected)/angelcare-360-command-center/transport/ramassage/page.tsx",
+    "app/(protected)/angelcare-360-command-center/transport/securite/page.tsx",
+    "app/(protected)/angelcare-360-command-center/transport/vehicules/[id]/page.tsx",
+    "app/(protected)/angelcare-360-command-center/transport/vehicules/page.tsx",
+    "app/api/angelcare360/transport-command/route.ts",
+    "components/angelcare360/transport-command/TransportActions.tsx",
+    "components/angelcare360/transport-command/TransportCommandShell.tsx",
+    "components/angelcare360/transport-command/TransportViews.tsx",
+    "lib/angelcare360/server/transport-mobility-command.ts",
+    "types/angelcare360/transport-mobility.ts"
+  ]
+}

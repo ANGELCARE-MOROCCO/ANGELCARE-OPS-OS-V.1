@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { ArrowRight, BadgeCheck, CheckCircle2, Eye, EyeOff, KeyRound, LockKeyhole, ShieldCheck } from 'lucide-react'
 import { useSearchParams } from 'next/navigation'
-import BrandRuntimeLockup from '@/components/brand/BrandRuntimeLockup'
+import SanilaLogo from '@/components/brand/SanilaLogo'
 import type { BrandRuntime } from '@/types/angelcare360/operator/branding'
 import styles from './TenantAccessActivationClient.module.css'
 
@@ -23,7 +23,8 @@ type TokenState = {
 export default function TenantAccessActivationClient() {
   const params = useSearchParams()
   const token = params.get('token') || ''
-  const [state, setState] = useState<TokenState | null>(null)
+  const requestedMode = params.get('mode') === 'reset' ? 'reset' : 'invite'
+  const [state, setState] = useState<TokenState | null>(() => token ? null : { ok: false, error: 'Lien d’activation incomplet.' })
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
   const [visible, setVisible] = useState(false)
@@ -34,15 +35,22 @@ export default function TenantAccessActivationClient() {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    if (!token) { setState({ ok: false, error: 'Lien d’activation incomplet.' }); return }
-    fetch(`/api/angelcare360/access/activate?token=${encodeURIComponent(token)}`, { cache: 'no-store' })
+    if (!token) return
+    fetch(`/api/angelcare360/access/activate?token=${encodeURIComponent(token)}&mode=${requestedMode}`, { cache: 'no-store' })
       .then(async (response) => {
         const result = await response.json()
         if (!response.ok || !result.ok) throw new Error(result.error || 'Lien invalide ou expiré.')
         setState(result)
       })
       .catch((reason) => setState({ ok: false, error: reason instanceof Error ? reason.message : 'Lien invalide.' }))
-  }, [token])
+  }, [requestedMode, token])
+
+  useEffect(() => {
+    if (!completed) return
+    window.history.replaceState(null, '', '/angelcare-360-access/activate?status=completed')
+    const redirectTimer = window.setTimeout(() => window.location.replace('/angelcare-360-access/login?activation=success'), 1400)
+    return () => window.clearTimeout(redirectTimer)
+  }, [completed])
 
   const strength = useMemo(() => {
     let score = 0
@@ -66,7 +74,7 @@ export default function TenantAccessActivationClient() {
       const response = await fetch('/api/angelcare360/access/activate', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ token, mode: state?.tokenType === 'password_reset' ? 'reset' : 'invite', password }),
+        body: JSON.stringify({ token, mode: state?.tokenType === 'password_reset' ? 'reset' : 'invite', password, passwordConfirmation: confirm }),
       })
       const result = await response.json()
       if (!response.ok || !result.ok) throw new Error(result.error || 'Activation impossible.')
@@ -95,8 +103,8 @@ export default function TenantAccessActivationClient() {
 
   return <main className={styles.page}>
     <section className={styles.brandPanel}>
-      <div className={styles.brandMark}><BrandRuntimeLockup runtime={state?.brandRuntime || null} priority /></div>
-      <div className={styles.brandCopy}><small>ANGELCARE · SANILA OS</small><h1>Accès administrateur sécurisé</h1><p>Votre identité, votre rôle, votre établissement et les modules contractés sont gouvernés séparément. AngelCare ne connaît et ne conserve jamais votre mot de passe en clair.</p></div>
+      <div className={styles.brandMark}><SanilaLogo variant="white" width={188} height={66} priority /></div>
+      <div className={styles.brandCopy}><small>SANILA OPERATING SYSTEM · BY ANGELCARE</small><h1>Accès administrateur sécurisé</h1><p>Votre identité, votre rôle, votre établissement et les modules contractés sont gouvernés séparément. AngelCare ne connaît et ne conserve jamais votre mot de passe en clair.</p></div>
       <div className={styles.securityList}>
         <div><ShieldCheck size={20}/><span><strong>Activation privée</strong><small>Lien unique, limité dans le temps.</small></span></div>
         <div><LockKeyhole size={20}/><span><strong>Mot de passe confidentiel</strong><small>Défini uniquement par vous.</small></span></div>
@@ -106,7 +114,7 @@ export default function TenantAccessActivationClient() {
 
     <section className={styles.formPanel}>
       {!state ? <div className={styles.loading}><span/><h2>Validation du lien sécurisé…</h2></div> : null}
-      {state && !state.ok ? <div className={styles.invalid}><LockKeyhole size={34}/><h2>Lien indisponible</h2><p>{state.error}</p><a href="/login">Retour à la connexion</a></div> : null}
+      {state && !state.ok ? <div className={styles.invalid}><LockKeyhole size={34}/><h2>Lien indisponible</h2><p>{state.error}</p><a href="/angelcare-360-access/login">Retour à la connexion</a></div> : null}
       {state?.ok && mfaSetup && !completed ? <div className={styles.form}>
         <div className={styles.formHeader}><small>MFA OBLIGATOIRE</small><h2>Protégez votre compte avec Authenticator</h2><p>Ajoutez le compte manuellement dans Google Authenticator, Microsoft Authenticator, 1Password ou une application TOTP compatible.</p></div>
         <div className={styles.identityCard}><div><span>Clé secrète</span><strong>{mfaSetup.secret}</strong></div><div><span>Standard</span><strong>TOTP · 6 chiffres · 30 sec</strong></div></div>
@@ -116,7 +124,7 @@ export default function TenantAccessActivationClient() {
         {error ? <p className={styles.error}>{error}</p> : null}
         <button className={styles.submit} type="button" disabled={busy || mfaCode.length !== 6} onClick={confirmMfa}>{busy ? 'Vérification…' : 'Vérifier et activer mon compte'}<ArrowRight size={18}/></button>
       </div> : null}
-      {state?.ok && completed ? <div className={styles.success}><CheckCircle2 size={44}/><small>ACCÈS ACTIVÉ</small><h2>{isReset ? 'Mot de passe renouvelé' : 'Compte administrateur prêt'}</h2><p>Votre accès à {organization} est sécurisé. Vous pouvez maintenant vous connecter avec <strong>{email}</strong>.</p><a href="/login">Accéder à la connexion <ArrowRight size={17}/></a></div> : null}
+      {state?.ok && completed ? <div className={styles.success}><CheckCircle2 size={44}/><small>ACCÈS ACTIVÉ</small><h2>{isReset ? 'Mot de passe renouvelé' : 'Compte administrateur prêt'}</h2><p>Votre accès à {organization} est sécurisé. Redirection vers la connexion avec <strong>{email}</strong>.</p><a href="/angelcare-360-access/login?activation=success">Accéder à la connexion <ArrowRight size={17}/></a></div> : null}
       {state?.ok && !completed && !mfaSetup ? <form onSubmit={submit} className={styles.form}>
         <div className={styles.formHeader}><small>{isReset ? 'RÉCUPÉRATION SÉCURISÉE' : 'INVITATION ADMINISTRATEUR'}</small><h2>{isReset ? 'Choisissez un nouveau mot de passe' : `Bienvenue${person ? `, ${person}` : ''}`}</h2><p>{organization}{state.tenant?.tenant_slug ? ` · ${state.tenant.tenant_slug}` : ''}</p></div>
         <div className={styles.identityCard}><div><span>Compte</span><strong>{email}</strong></div><div><span>Rôle</span><strong>{String(state.account?.role_template || 'Administrateur tenant').replaceAll('_', ' ')}</strong></div></div>

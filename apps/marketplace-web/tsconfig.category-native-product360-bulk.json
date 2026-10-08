@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "skipLibCheck": true,
+    "incremental": false
+  },
+  "include": [
+    "angelcare-marketplace/category-native/**/*.ts",
+    "app/api/angelcare-marketplace/admin/category-native/**/*.ts"
+  ],
+  "exclude": ["node_modules", ".next"]
+}

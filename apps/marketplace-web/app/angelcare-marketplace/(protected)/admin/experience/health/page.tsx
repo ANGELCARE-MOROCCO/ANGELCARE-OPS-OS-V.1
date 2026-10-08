@@ -1,0 +1,5 @@
+import { requireMarketplacePageContext } from '@/angelcare-marketplace/auth/context'
+import { PageHeader } from '@/angelcare-marketplace/design-system/ui'
+import { ExperienceHealthWorkspace } from '@/angelcare-marketplace/experience-builder/components/ExperienceHealthWorkspace'
+import { listDependencyEdges, listPages, listPublicationJobs, listSymbols, listTemplates } from '@/angelcare-marketplace/experience-builder/repository'
+export default async function Page(){await requireMarketplacePageContext('marketplace.cms.view');const[pages,jobs,edges,templates,symbols]=await Promise.all([listPages(),listPublicationJobs(),listDependencyEdges(),listTemplates(),listSymbols()]);return <><PageHeader eyebrow="EXPERIENCE HEALTH" title="Readiness sans tyrannie globale" description="Errors, warnings et infos ciblés par domaine. Un défaut favicon ne bloque jamais une publication page sans relation directe."/><ExperienceHealthWorkspace pages={pages} jobs={jobs} edges={edges} templates={templates} symbols={symbols}/></>}

@@ -1,0 +1,58 @@
+parent_section,component,contract
+P00,UrgencyCampaignBar,"campaign message, discount claim, real endsAt, CTA, market"
+P01,OfficialLogoSlot,immutable official logo crop/mask only
+P01,GlobalSearch,"query input, suggestions, submit action"
+P01,AccountShortcut,auth-aware account entry
+P01,FavoritesShortcut,wishlist entry + live count
+P01,CartShortcut,cart entry + live item count
+P02,TaxonomyNavItem,canonical category/navigation reference
+P03,BreadcrumbItem,canonical navigable ancestry
+P04,GalleryThumbnailRail,ordered media thumbnails
+P04,PrimaryProductMedia,image/video with focal point + zoom
+P04,GalleryOverflowTile,+N additional media trigger
+P05,MerchandisingBadge,best-seller/new/promo states from real authority
+P05,ProductTitle,canonical title
+P05,BrandByline,canonical brand/vendor identity
+P05,RatingSummary,real aggregate rating and review count
+P05,SalesProof,real sales metric only when governed
+P05,BenefitChecklist,authoritative product benefits
+P05,FeatureIconGrid,4 compact benefit/spec proof cells
+P06,CompareAtPrice,legitimate historical/reference price only
+P06,CurrentPrice,MAD/Dhs only
+P06,SavingsBadge,computed from valid promotion
+P06,StockState,inventory/availability truth
+P06,DeliveryPromise,shipping authority
+P06,VariantSelector,canonical variant/color options
+P06,QuantityStepper,bounded quantity
+P06,AddToCartCTA,P03 cart.add
+P06,BuyNowCTA,P03 checkout.start/buy_now
+P06,AdviceCTA,P03 contact/advice workflow
+P06,FavoriteCTA,wishlist toggle
+P06,PurchaseTrustGrid,"payment, returns, refund, support"
+P07,TrustProofItem,icon + approved proof copy
+P08,LifestyleMediaLeft,governed editorial media
+P08,BenefitPictogram,benefit icon + label
+P08,LifestyleMediaRight,governed editorial media
+P09,AnchorTab,scroll target + active state
+P10,DescriptionCopy,canonical/editorial description
+P10,DescriptionMedia,governed product lifestyle media
+P10,UseCaseIconRow,contextual use-case benefits
+P11,SpecificationTable,key/value specs with schema mapping
+P12,ReviewAggregate,"rating, distribution, count"
+P12,ReviewCard,verified review content + media if approved
+P13,FAQAccordion,question + answer + accessible expand
+P14,BundleComposer,main item + compatible items + computed bundle
+P14,BundlePricePanel,valid bundle saving + add pack
+P15,AccessoryCard,canonical accessory recommendation
+P16,SimilarProductCard,canonical related item
+P17,GuideCard,approved editorial content reference
+P18,CommunityMediaMosaic,governed community imagery
+P18,CommunityJoinCTA,community/newsletter workflow
+P19,MissionStatement,brand statement
+P19,MissionMedia,governed family/product image
+P20,TrustProofItem,secondary assurance cell
+P21,OfficialFooterLogo,immutable official logo
+P21,FooterNavGroup,canonical navigation group
+P21,AppBadgeGroup,approved store badges
+P21,NewsletterForm,canonical consent + newsletter workflow
+P21,LegalLinks,canonical legal navigation

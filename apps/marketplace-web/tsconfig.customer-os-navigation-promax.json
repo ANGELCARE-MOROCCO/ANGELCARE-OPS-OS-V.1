@@ -1,0 +1,28 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {"incremental": false, "noEmit": true},
+  "include": [
+    "next-env.d.ts",
+    "angelcare-marketplace/public-experience-authority/storefront-navigation.ts",
+    "angelcare-marketplace/public-universe/components/GlobalPublicShell.tsx",
+    "angelcare-marketplace/customer-commerce/api-handlers.ts",
+    "angelcare-marketplace/customer-commerce/repository.ts",
+    "angelcare-marketplace/customer-commerce/types.ts",
+    "angelcare-marketplace/customer-commerce/components/Customer*.tsx",
+    "angelcare-marketplace/family-experience/components/FamilyShell.tsx",
+    "angelcare-marketplace/homepage-flagship/api-handlers.ts",
+    "angelcare-marketplace/homepage-flagship/components/HomepageFlagship.tsx",
+    "angelcare-marketplace/homepage-living-marketplace/components/LivingMarketplaceHomepage.tsx",
+    "angelcare-marketplace/category-native-experience/comparison-selection.ts",
+    "angelcare-marketplace/journey-control/api-handlers.ts",
+    "angelcare-marketplace/journey-control/repository.ts",
+    "angelcare-marketplace/journey-control/types.ts",
+    "angelcare-marketplace/journey-control/components/*.tsx",
+    "app/angelcare-marketplace/(family)/family/layout.tsx",
+    "app/angelcare-marketplace/[locale]/account/**/*.tsx",
+    "app/angelcare-marketplace/[locale]/marketplace/compare/page.tsx",
+    "app/api/angelcare-marketplace/customer/addresses/**/*.ts",
+    "app/api/angelcare-marketplace/journeys/admin/[journeyId]/change-requests/[changeRequestId]/route.ts"
+  ],
+  "exclude": ["node_modules"]
+}

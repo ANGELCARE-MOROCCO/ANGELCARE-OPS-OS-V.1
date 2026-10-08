@@ -2,6 +2,7 @@ import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 import { cookies } from 'next/headers'
 import { getMissingSupabaseServerEnv, getSupabaseEnv } from './env'
+import { wrapSupabaseClient } from './contract-safe'
 
 async function cookieAdapter() {
   const cookieStore = await cookies()
@@ -44,7 +45,7 @@ export async function createUserClient() {
     throw new Error('Missing Supabase server env value: NEXT_PUBLIC_SUPABASE_ANON_KEY.')
   }
 
-  return createServerClient(env.url, env.anonKey, { cookies: await cookieAdapter() })
+  return wrapSupabaseClient(createServerClient(env.url, env.anonKey, { cookies: await cookieAdapter() }))
 }
 
 /**
@@ -61,13 +62,13 @@ export async function createServiceClient() {
     )
   }
 
-  return createSupabaseClient(env.url, env.serviceRoleKey, {
+  return wrapSupabaseClient(createSupabaseClient(env.url, env.serviceRoleKey, {
     auth: {
       persistSession: false,
       autoRefreshToken: false,
       detectSessionInUrl: false,
     },
-  })
+  }))
 }
 
 /** @deprecated Prefer createUserClient() or createServiceClient() explicitly. */

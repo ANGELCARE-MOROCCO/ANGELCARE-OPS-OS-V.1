@@ -1,5 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { getAngelcare360AcademicOverview } from '@/lib/angelcare360/server/academics'
+import { getAngelcare360AccessContext } from '@/lib/angelcare360/server/context'
+import { getSanilaBusinessDate } from '@/lib/angelcare360/server/business-clock'
 
 type Row = Record<string, unknown>
 
@@ -96,10 +98,10 @@ function asObject(value: unknown): Row {
   return value && typeof value === 'object' && !Array.isArray(value) ? value as Row : {}
 }
 
-function dateKey(value?: string | null) {
-  if (!value) return new Date().toISOString().slice(0, 10)
+function dateKey(value: string | null | undefined, fallback: string) {
+  if (!value) return fallback
   const parsed = new Date(`${value.slice(0, 10)}T12:00:00`)
-  if (Number.isNaN(parsed.getTime())) return new Date().toISOString().slice(0, 10)
+  if (Number.isNaN(parsed.getTime())) return fallback
   return parsed.toISOString().slice(0, 10)
 }
 
@@ -255,7 +257,7 @@ function buildSixWeekBuckets(input: {
   const buckets = Array.from({ length: 6 }, (_, index) => {
     const end = addDays(input.selectedDate, -(5 - index) * 7)
     const start = addDays(end, -6)
-    const termStart = input.termStart ? dateKey(input.termStart) : null
+    const termStart = input.termStart ? dateKey(input.termStart, input.selectedDate) : null
     const weekNumber = termStart
       ? Math.max(1, Math.floor((dateAtNoon(end).getTime() - dateAtNoon(termStart).getTime()) / 604800000) + 1)
       : null
@@ -417,7 +419,8 @@ export async function getAngelcare360AcademicCommandOverview(input: {
   academicYearLabel?: string | null
   selectedDate?: string | null
 }): Promise<Angelcare360AcademicCommandOverviewData> {
-  const selectedDate = dateKey(input.selectedDate)
+  const context = await getAngelcare360AccessContext({ schoolId: input.schoolId })
+  const selectedDate = dateKey(input.selectedDate, getSanilaBusinessDate(context))
   const warnings: string[] = []
   const client = await createClient()
   const baseOverview = await getAngelcare360AcademicOverview({ schoolId: input.schoolId })

@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from '@/lib/supabase/contract-client'
 
 function browserSupabase() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL

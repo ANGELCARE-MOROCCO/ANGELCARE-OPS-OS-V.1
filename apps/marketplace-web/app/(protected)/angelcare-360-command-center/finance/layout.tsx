@@ -1,0 +1,6 @@
+import type { ReactNode } from 'react'
+import ZoneCFrame from '@/components/angelcare360/zone-c-finance-reporting/ZoneCFrame'
+
+export default function FinanceLayout({ children }: { children: ReactNode }) {
+  return <ZoneCFrame domain="finance">{children}</ZoneCFrame>
+}

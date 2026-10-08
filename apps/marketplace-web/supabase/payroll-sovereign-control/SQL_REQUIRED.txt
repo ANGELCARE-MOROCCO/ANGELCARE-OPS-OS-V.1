@@ -1,0 +1,3 @@
+SQL REQUIRED: YES
+Reason: sovereign payroll transaction and cross-authority integrity guards are not present in the fresh production schema.
+Installer does NOT execute SQL.

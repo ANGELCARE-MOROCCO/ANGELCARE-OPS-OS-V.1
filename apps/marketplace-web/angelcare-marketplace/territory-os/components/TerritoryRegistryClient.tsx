@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useMemo, useState } from 'react'
-import { ArrowUpRight, Download, Eye, Filter, MoreHorizontal, Search } from 'lucide-react'
+import { ArrowUpRight, Download, Eye, Filter, Search } from 'lucide-react'
 import type { Territory } from '../types'
 import styles from '../territory-os.module.css'
 import { ReadinessBar, TerritoryEmpty, TerritoryHealthPill, TerritoryStatusPill } from './TerritoryPrimitives'
@@ -45,7 +45,7 @@ export function TerritoryRegistryClient({ territories, canExport }: { territorie
                   <td><ReadinessBar value={territory.readiness_score} /></td>
                   <td><TerritoryHealthPill status={territory.health_status} /></td>
                   <td><span className={styles.ownerBlock}><strong>{territory.target_launch_at ? new Date(territory.target_launch_at).toLocaleDateString('fr-FR') : 'Non planifié'}</strong><span>{territory.currency_label} · {territory.timezone}</span></span></td>
-                  <td><div className={styles.rowActions}><Link href={`/angelcare-marketplace/admin/territories/${territory.territory_code}`} className={styles.iconAction} aria-label={`Ouvrir ${territory.name}`}><Eye size={14} /></Link><Link href={`/angelcare-marketplace/admin/territories/${territory.territory_code}/readiness`} className={styles.iconAction} aria-label="Ouvrir la readiness"><ArrowUpRight size={14} /></Link><button className={styles.iconAction} aria-label="Actions supplémentaires"><MoreHorizontal size={14} /></button></div></td>
+                  <td><div className={styles.rowActions}><Link href={`/angelcare-marketplace/admin/territories/${territory.territory_code}`} className={styles.iconAction} aria-label={`Ouvrir ${territory.name}`}><Eye size={14} /></Link><Link href={`/angelcare-marketplace/admin/territories/${territory.territory_code}/readiness`} className={styles.iconAction} aria-label="Ouvrir la readiness"><ArrowUpRight size={14} /></Link></div></td>
                 </tr>
               ))}
             </tbody>

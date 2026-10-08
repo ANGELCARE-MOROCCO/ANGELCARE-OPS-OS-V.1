@@ -3,6 +3,8 @@ import {
   getAngelcare360DailyAttendanceState,
   listAngelcare360AttendanceJustifications,
 } from '@/lib/angelcare360/server/attendance'
+import { getAngelcare360AccessContext } from '@/lib/angelcare360/server/context'
+import { getSanilaBusinessDate } from '@/lib/angelcare360/server/business-clock'
 
 type Row = Record<string, unknown>
 
@@ -111,10 +113,10 @@ function asObject(value: unknown): Row {
   return value && typeof value === 'object' && !Array.isArray(value) ? value as Row : {}
 }
 
-function dayKey(value?: string | null) {
-  if (!value) return new Date().toISOString().slice(0, 10)
+function dayKey(value: string | null | undefined, fallback: string) {
+  if (!value) return fallback
   const parsed = new Date(`${value}T12:00:00`)
-  if (Number.isNaN(parsed.getTime())) return new Date().toISOString().slice(0, 10)
+  if (Number.isNaN(parsed.getTime())) return fallback
   return parsed.toISOString().slice(0, 10)
 }
 
@@ -203,7 +205,8 @@ export async function getAngelcare360PresencesOverview(input: {
   selectedDate?: string | null
   activeAcademicYearLabel?: string | null
 }): Promise<Angelcare360PresencesOverviewData> {
-  const selectedDate = dayKey(input.selectedDate)
+  const context = await getAngelcare360AccessContext({ schoolId: input.schoolId })
+  const selectedDate = dayKey(input.selectedDate, getSanilaBusinessDate(context))
   const warnings: string[] = []
   const dailyState = await getAngelcare360DailyAttendanceState({
     schoolId: input.schoolId,

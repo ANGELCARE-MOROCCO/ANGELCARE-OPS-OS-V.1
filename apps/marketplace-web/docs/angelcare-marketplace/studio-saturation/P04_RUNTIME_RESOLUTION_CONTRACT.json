@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "phase": "P04",
+  "entrypoints": [
+    "app/angelcare-marketplace/[locale]/marketplace/[slug]/page.tsx",
+    "app/angelcare-marketplace/[locale]/marketplace/item/[itemSlug]/page.tsx",
+    "app/angelcare-marketplace/[locale]/experience/[itemSlug]/page.tsx"
+  ],
+  "resolver": "resolveStudioTemplateForCatalogItem",
+  "rules": {
+    "first_valid_published_assignment_wins": true,
+    "missing_template_continues": true,
+    "unpublished_template_continues": true,
+    "target_mismatch_continues": true,
+    "no_assignment_preserves_native_runtime": true,
+    "contextual_collection_supported": true,
+    "contextual_placement_supported": true,
+    "p05_live_binding": false,
+    "p08_template_renderer_switch": false
+  },
+  "runtime_provenance": ["status", "matchedScope", "templateKey", "publishedRevisionId", "candidate chain"]
+}

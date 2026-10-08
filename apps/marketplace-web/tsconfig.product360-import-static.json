@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "strict": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "outDir": ".product360-import-static",
+    "rootDir": ".",
+    "noEmitOnError": true
+  },
+  "include": [
+    "angelcare-marketplace/enterprise-command/types.ts",
+    "angelcare-marketplace/enterprise-command/product-doctrine.ts",
+    "angelcare-marketplace/enterprise-command/product-360-contract.ts",
+    "angelcare-marketplace/enterprise-command/product-360-readiness.ts"
+  ]
+}

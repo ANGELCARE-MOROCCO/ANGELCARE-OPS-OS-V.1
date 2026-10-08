@@ -1,3 +1,2 @@
-import { HomepageAdminPage } from '@/angelcare-marketplace/homepage-flagship/admin-page'
-export const metadata={title:'Homepage Flagship · ANGELCARE Marketplace'}
-export default async function Page(){return <HomepageAdminPage mode="overview"/>}
+import { HomepageComposerPage } from '@/angelcare-marketplace/commerce-studio/admin-pages'
+export default async function Page(){return HomepageComposerPage({ mode: 'theme-studio' })}

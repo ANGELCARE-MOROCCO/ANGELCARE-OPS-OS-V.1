@@ -1,6 +1,10 @@
 import {createServiceClient} from '@/lib/supabase/server'
 import {MarketplaceError} from '../server/errors'
 import {storefrontHero} from './content'
+import {expandDiscoveryQuery,listSearchRules} from '../total-commerce-control/repository'
+import {FAMILY_ATOMIC_SCHEMA_KEYS} from '../families-storefront/contract'
+import {isHomeServiceOffer} from '../home-services-storefront/experience'
+import {isFamilyOffer} from '../families-storefront/experience'
 import type {CatalogLocale,DiscoveryCategory,DiscoveryCollection,DiscoveryItem,DiscoverySearch,StorefrontExperience,StorefrontKey} from './types'
 type Row=Record<string,unknown>
 const text=(v:unknown)=>typeof v==='string'?v:'';const nullable=(v:unknown)=>text(v)||null;const num=(v:unknown)=>v===null||v===undefined||v===''?null:Number(v);const rows=(v:unknown):Row[]=>Array.isArray(v)?v.filter((x):x is Row=>!!x&&typeof x==='object'):[];const arr=(v:unknown)=>Array.isArray(v)?v.map(String):[]
@@ -8,6 +12,128 @@ function fail(op:string,e:{code?:string;message?:string}|null){const missing=e?.
 function local(row:Row,base:string,locale:CatalogLocale){return text(row[`${base}_${locale}`])||text(row[`${base}_fr`])||text(row[base])}
 function mapItem(row:Row,locale:CatalogLocale):DiscoveryItem{return {id:text(row.id),public_reference:text(row.public_reference),item_key:text(row.item_key),slug:text(row.slug),kind:text(row.kind) as DiscoveryItem['kind'],name:local(row,'name',locale),short_description:local(row,'short_description',locale)||null,description:local(row,'description',locale)||null,currency_label:text(row.currency_label)||'Dh',price_mode:text(row.price_mode) as DiscoveryItem['price_mode'],price_amount:num(row.price_amount),featured:Boolean(row.featured),availability_status:text(row.availability_status),territory_id:nullable(row.territory_id),category_key:nullable(row.category_key),category_title:local(row,'category_title',locale)||null,media_url:nullable(row.media_url),trust_labels:arr(row.trust_labels),metadata:{...((row.commercial_metadata&&typeof row.commercial_metadata==='object'?row.commercial_metadata:{}) as Record<string,unknown>),experience_schema_key:nullable(row.experience_schema_key),experience_schema_version:Number(row.experience_schema_version||1),experience_configuration:(row.experience_configuration&&typeof row.experience_configuration==='object'?row.experience_configuration:{}) as Record<string,unknown>}}}
 function mapCategory(row:Row):DiscoveryCategory{return {id:text(row.id),category_key:text(row.category_key),slug:text(row.slug),title:text(row.title),short_description:nullable(row.short_description),visual_theme:text(row.visual_theme)||'navy',cover_asset_url:nullable(row.cover_asset_url),item_count:Number(row.item_count||0),allowed_filters:arr(row.allowed_filters),storefront_template:text(row.storefront_template)||'mixed'}}
-export async function searchDiscovery(input:{locale:CatalogLocale;query?:string;territoryCode?:string|null;kind?:string|null;category?:string|null;availability?:string|null;sort?:string|null;limit?:number}):Promise<DiscoverySearch>{const db=await createServiceClient();let q=db.from('angelcare_marketplace_catalog_discovery_v').select('*',{count:'exact'}).eq('status','published');if(input.query){const safe=input.query.replaceAll('%','').replaceAll(',',' ');q=q.or(`name_fr.ilike.%${safe}%,name_en.ilike.%${safe}%,name_ar.ilike.%${safe}%,short_description_fr.ilike.%${safe}%`)}if(input.kind)q=q.eq('kind',input.kind);if(input.category)q=q.eq('category_key',input.category);if(input.availability)q=q.eq('availability_status',input.availability);if(input.territoryCode)q=q.or(`territory_code.is.null,territory_code.eq.${input.territoryCode}`);switch(input.sort){case'newest':q=q.order('published_at',{ascending:false});break;case'price_asc':q=q.order('price_amount',{ascending:true,nullsFirst:false});break;case'price_desc':q=q.order('price_amount',{ascending:false,nullsFirst:false});break;default:q=q.order('featured',{ascending:false}).order('merchandising_priority',{ascending:false}).order('name_fr')}const {data,error,count}=await q.limit(Math.min(input.limit||120,240));if(error)throw fail('rechercher dans le catalogue',error);const items=rows(data).map(r=>mapItem(r,input.locale));const {data:cats,error:catError}=await db.from('angelcare_marketplace_category_discovery_v').select('*').eq('locale',input.locale).eq('status','published').order('sort_order');if(catError)throw fail('charger les catégories',catError);const categories=rows(cats).map(mapCategory);const facets:DiscoverySearch['facets']={kind:[],availability:[],category:[]};for(const key of ['kind','availability_status','category_key'] as const){const counts=new Map<string,number>();for(const item of items){const value=key==='kind'?item.kind:key==='availability_status'?item.availability_status:item.category_key||'';if(value)counts.set(value,(counts.get(value)||0)+1)}facets[key==='availability_status'?'availability':key==='category_key'?'category':'kind']=[...counts].map(([value,c])=>({value,count:c}))}return {locale:input.locale,query:input.query||'',territoryCode:input.territoryCode||null,kind:input.kind||null,category:input.category||null,availability:input.availability||null,sort:input.sort||'recommended',items,categories,total:count||items.length,facets}}
-export async function storefrontExperience(input:{locale:CatalogLocale;key:StorefrontKey;territoryCode?:string|null}):Promise<StorefrontExperience>{const search=await searchDiscovery({locale:input.locale,territoryCode:input.territoryCode,category:input.key,limit:120});const db=await createServiceClient();const {data}=await db.from('angelcare_marketplace_catalog_collections_v').select('*').eq('locale',input.locale).contains('storefront_keys',[input.key]).eq('status','active').order('sort_order');const collections=rows(data).map((r):DiscoveryCollection=>({id:text(r.id),collection_key:text(r.collection_key),title:text(r.title),subtitle:nullable(r.subtitle),layout_variant:text(r.layout_variant)||'rail',selection_method:text(r.selection_method),items:rows(r.items).map(x=>mapItem(x,input.locale))}));return {locale:input.locale,key:input.key,category:search.categories.find(c=>c.category_key===input.key)||null,hero:storefrontHero(input.key,input.locale),items:search.items,featured:search.items.filter(i=>i.featured).slice(0,8),collections,facets:search.facets}}
-export async function getDiscoveryItem(input:{locale:CatalogLocale;slug:string;territoryCode?:string|null}):Promise<DiscoveryItem|null>{const db=await createServiceClient();let q=db.from('angelcare_marketplace_catalog_discovery_v').select('*').eq('slug',input.slug).eq('status','published');if(input.territoryCode)q=q.or(`territory_code.is.null,territory_code.eq.${input.territoryCode}`);const {data,error}=await q.maybeSingle();if(error)throw fail('charger la fiche commerciale',error);return data?mapItem(data as Row,input.locale):null}
+export async function searchDiscovery(input:{locale:CatalogLocale;query?:string;territoryCode?:string|null;kind?:string|null;category?:string|null;availability?:string|null;sort?:string|null;limit?:number;offset?:number}):Promise<DiscoverySearch>{
+ const db=await createServiceClient();let q=db.from('angelcare_marketplace_catalog_discovery_v').select('*',{count:'exact'}).eq('status','published');
+ const expanded=input.query?await expandDiscoveryQuery(input.query,input.locale).catch(()=>({query:input.query||'',original:input.query||'',rules:[]})):null
+ if(expanded?.query){const terms=[...new Set(expanded.query.split(/\s+/).map(term=>term.replaceAll('%','').replaceAll(',','').trim()).filter(term=>term.length>1))].slice(0,8);if(terms.length){const clauses:string[]=[];for(const term of terms){clauses.push(`name_fr.ilike.%${term}%`,`name_en.ilike.%${term}%`,`name_ar.ilike.%${term}%`,`short_description_fr.ilike.%${term}%`)}q=q.or(clauses.join(','))}}
+ if(input.kind)q=q.eq('kind',input.kind);if(input.category)q=q.eq('category_key',input.category);if(input.availability)q=q.eq('availability_status',input.availability);if(input.territoryCode)q=q.or(`territory_code.is.null,territory_code.eq.${input.territoryCode}`);
+ switch(input.sort){case'newest':q=q.order('published_at',{ascending:false});break;case'price_asc':q=q.order('price_amount',{ascending:true,nullsFirst:false});break;case'price_desc':q=q.order('price_amount',{ascending:false,nullsFirst:false});break;default:q=q.order('featured',{ascending:false}).order('merchandising_priority',{ascending:false}).order('name_fr')}
+ const pageLimit=Math.max(1,Math.min(input.limit||120,240)),offset=Math.max(0,Math.floor(input.offset||0));const {data,error,count}=await q.range(offset,offset+pageLimit-1);if(error)throw fail('rechercher dans le catalogue',error);let items=rows(data).map(r=>mapItem(r,input.locale));
+ if(input.query){const rules=await listSearchRules().catch(()=>[]);const lower=input.query.trim().toLowerCase();const active=rules.filter(rule=>rule.status==='active'&&(!rule.locale||rule.locale===input.locale)&&rule.query_pattern.trim().toLowerCase()===lower);const pin=new Set(active.filter(rule=>rule.rule_type==='pin').map(rule=>rule.catalog_item_id).filter(Boolean));const bury=new Set(active.filter(rule=>rule.rule_type==='bury').map(rule=>rule.catalog_item_id).filter(Boolean));items=[...items].sort((a,b)=>{const pa=pin.has(a.id)?1:0,pb=pin.has(b.id)?1:0,ba=bury.has(a.id)?1:0,bb=bury.has(b.id)?1:0;return pb-pa||ba-bb})}
+ const localizedCategories=await db.from('angelcare_marketplace_category_discovery_v').select('*').eq('locale',input.locale).eq('status','published').order('sort_order');if(localizedCategories.error)throw fail('charger les catégories',localizedCategories.error);const fallbackCategories=!localizedCategories.data?.length&&input.locale!=='fr'?await db.from('angelcare_marketplace_category_discovery_v').select('*').eq('locale','fr').eq('status','published').order('sort_order'):null;if(fallbackCategories?.error)throw fail('charger les catégories françaises de repli',fallbackCategories.error);const categories=rows(localizedCategories.data?.length?localizedCategories.data:fallbackCategories?.data).map(mapCategory);const facets:DiscoverySearch['facets']={kind:[],availability:[],category:[]};for(const key of ['kind','availability_status','category_key'] as const){const counts=new Map<string,number>();for(const item of items){const value=key==='kind'?item.kind:key==='availability_status'?item.availability_status:item.category_key||'';if(value)counts.set(value,(counts.get(value)||0)+1)}facets[key==='availability_status'?'availability':key==='category_key'?'category':'kind']=[...counts].map(([value,c])=>({value,count:c}))}return {locale:input.locale,query:input.query||'',territoryCode:input.territoryCode||null,kind:input.kind||null,category:input.category||null,availability:input.availability||null,sort:input.sort||'recommended',items,categories,total:count||items.length,facets}
+}
+
+async function familyOrchestrationSearch(input:{locale:CatalogLocale;territoryCode?:string|null}):Promise<DiscoverySearch>{
+ const db=await createServiceClient()
+ const territoryCode=input.territoryCode||'MA-MASTER'
+ const territory=await db.from('angelcare_marketplace_territories').select('id').eq('territory_code',territoryCode).maybeSingle()
+ if(territory.error)throw fail('résoudre le territoire famille',territory.error)
+ const territoryId=territory.data?.id?String(territory.data.id):null
+ // Category membership is a display authority, never a substitute for an operational schema.
+ let categoryQuery=db.from('angelcare_marketplace_catalog_categories').select('id').eq('category_key','families').eq('status','published').eq('visible',true)
+ categoryQuery=territoryId?categoryQuery.or('territory_id.is.null,territory_id.eq.'+territoryId):categoryQuery.is('territory_id',null)
+ const categoryResult=await categoryQuery
+ if(categoryResult.error)throw fail('charger les affectations famille',categoryResult.error)
+ const categoryIds=rows(categoryResult.data).map(row=>text(row.id)).filter(Boolean)
+ const memberIds=new Set<string>()
+ for(let start=0;start<categoryIds.length;start+=100){
+  for(let offset=0;;offset+=240){
+   const page=await db.from('angelcare_marketplace_catalog_item_categories').select('id,catalog_item_id').in('category_id',categoryIds.slice(start,start+100)).order('id').range(offset,offset+239)
+   if(page.error)throw fail('charger les membres de la catégorie famille',page.error)
+   const batch=rows(page.data);batch.forEach(row=>memberIds.add(text(row.catalog_item_id)))
+   if(batch.length<240)break
+  }
+ }
+ const publishedRows=new Map<string,Row>()
+ const loadPublished=async(filter:'schema'|'members',ids:string[])=>{
+  for(let offset=0;;offset+=240){
+   let q=db.from('angelcare_marketplace_catalog_discovery_v').select('*').eq('status','published').in(filter==='schema'?'experience_schema_key':'id',ids)
+   q=territoryId?q.or('territory_id.is.null,territory_id.eq.'+territoryId):q.is('territory_id',null)
+   const page=await q.order('featured',{ascending:false}).order('merchandising_priority',{ascending:false}).order('name_fr').order('id').range(offset,offset+239)
+   if(page.error)throw fail('charger les offres famille publiées',page.error)
+   const batch=rows(page.data);batch.forEach(row=>publishedRows.set(text(row.id),row))
+   if(batch.length<240)break
+  }
+ }
+ await loadPublished('schema',[...FAMILY_ATOMIC_SCHEMA_KEYS])
+ const membership=[...memberIds].filter(Boolean)
+ for(let start=0;start<membership.length;start+=100)await loadPublished('members',membership.slice(start,start+100))
+ // Read only the public merchandising fields required by legacy service cards.
+ // Fulfilment internals, provider IDs and customer preparation are not sent to the client.
+ const publicAttributes=new Map<string,Row>()
+ const serviceIds=[...publishedRows.values()].filter(row=>row.kind==='service'&&memberIds.has(text(row.id))).map(row=>text(row.id))
+ for(let start=0;start<serviceIds.length;start+=100){
+  const result=await db.from('angelcare_marketplace_catalog_items').select('id,sellable_type,attributes').in('id',serviceIds.slice(start,start+100)).eq('status','published')
+  if(result.error)throw fail('charger les caractéristiques des services famille',result.error)
+  rows(result.data).forEach(row=>publicAttributes.set(text(row.id),row))
+ }
+ const items=[...publishedRows.values()].map(row=>{
+  const item=mapItem(row,input.locale)
+  const service=publicAttributes.get(item.id)
+  const attributes=service?.attributes&&typeof service.attributes==='object'&&!Array.isArray(service.attributes)?service.attributes as Row:{}
+  item.metadata={...item.metadata,family_storefront_assignment:memberIds.has(item.id),family_service_capability:text(attributes.provider_capability),family_sellable_type:text(service?.sellable_type),family_card_details:['age_range','duration','language','format'].map(key=>text(attributes[key])).filter(Boolean).slice(0,2)}
+  return item
+ }).filter(isFamilyOffer)
+ const localizedCategories=await db.from('angelcare_marketplace_category_discovery_v').select('*').eq('locale',input.locale).eq('status','published').order('sort_order');if(localizedCategories.error)throw fail('charger les catégories famille',localizedCategories.error);const fallbackCategories=!localizedCategories.data?.length&&input.locale!=='fr'?await db.from('angelcare_marketplace_category_discovery_v').select('*').eq('locale','fr').eq('status','published').order('sort_order'):null;if(fallbackCategories?.error)throw fail('charger les catégories françaises de repli',fallbackCategories.error);const categories=rows(localizedCategories.data?.length?localizedCategories.data:fallbackCategories?.data).map(mapCategory);
+ const facets:DiscoverySearch['facets']={kind:[],availability:[],category:[]};for(const key of ['kind','availability_status','category_key'] as const){const counts=new Map<string,number>();for(const item of items){const value=key==='kind'?item.kind:key==='availability_status'?item.availability_status:item.category_key||'';if(value)counts.set(value,(counts.get(value)||0)+1)}facets[key==='availability_status'?'availability':key==='category_key'?'category':'kind']=[...counts].map(([value,c])=>({value,count:c}))}
+ return{locale:input.locale,query:'',territoryId,territoryCode,kind:null,category:'families',availability:null,sort:'recommended',items,categories,total:items.length,facets}
+}
+
+async function homeServicesSearch(input:{locale:CatalogLocale;territoryCode?:string|null}):Promise<DiscoverySearch>{
+ const db=await createServiceClient(),territoryCode=input.territoryCode||'MA-MASTER'
+ const territory=await db.from('angelcare_marketplace_territories').select('id').eq('territory_code',territoryCode).maybeSingle()
+ if(territory.error)throw fail('résoudre le territoire des services',territory.error)
+ const territoryId=territory.data?.id?String(territory.data.id):null
+ let categoryQuery=db.from('angelcare_marketplace_catalog_categories').select('*').eq('category_key','home-services').eq('status','published').eq('visible',true)
+ categoryQuery=territoryId?categoryQuery.or('territory_id.is.null,territory_id.eq.'+territoryId):categoryQuery.is('territory_id',null)
+ const categoryResult=await categoryQuery
+ if(categoryResult.error)throw fail('charger les catégories de services',categoryResult.error)
+ const categoryIds=rows(categoryResult.data).map(row=>text(row.id)).filter(Boolean),memberIds=new Set<string>()
+ for(let start=0;start<categoryIds.length;start+=100){
+  for(let offset=0;;offset+=240){
+   const result=await db.from('angelcare_marketplace_catalog_item_categories').select('id,catalog_item_id').in('category_id',categoryIds.slice(start,start+100)).order('id').range(offset,offset+239)
+   if(result.error)throw fail('charger les affectations de services',result.error)
+   const batch=rows(result.data);batch.forEach(row=>{if(text(row.catalog_item_id))memberIds.add(text(row.catalog_item_id))});if(batch.length<240)break
+  }
+ }
+ const published=new Map<string,Row>(),members=[...memberIds]
+ for(let start=0;start<members.length;start+=100){
+  for(let offset=0;;offset+=240){
+   let query=db.from('angelcare_marketplace_catalog_discovery_v').select('*').eq('status','published').eq('kind','service').in('id',members.slice(start,start+100))
+   query=territoryId?query.or('territory_id.is.null,territory_id.eq.'+territoryId):query.is('territory_id',null)
+   const result=await query.order('featured',{ascending:false}).order('merchandising_priority',{ascending:false}).order('name_fr').order('id').range(offset,offset+239)
+   if(result.error)throw fail('charger les services publiés',result.error)
+   const batch=rows(result.data);batch.forEach(row=>published.set(text(row.id),row));if(batch.length<240)break
+  }
+ }
+ const attributes=new Map<string,Row>(),ids=[...published.keys()]
+ for(let start=0;start<ids.length;start+=100){
+  const result=await db.from('angelcare_marketplace_catalog_items').select('id,sellable_type,attributes').eq('status','published').in('id',ids.slice(start,start+100))
+  if(result.error)throw fail('charger les caractéristiques des services',result.error)
+  rows(result.data).forEach(row=>attributes.set(text(row.id),row))
+ }
+ const items=[...published.values()].map(row=>{
+  const item=mapItem(row,input.locale),source=attributes.get(item.id)
+  const fields=source?.attributes&&typeof source.attributes==='object'&&!Array.isArray(source.attributes)?source.attributes as Row:{}
+  const config=item.metadata.experience_configuration as Row
+  // Deliberately serialize public card fields only, not dispatch/provider internals.
+  const details=Object.fromEntries(['age_range','duration','format','language'].map(key=>[key,text(fields[key])||text(config[key])]).filter(([,value])=>!!value))
+  item.metadata={...item.metadata,home_service_assignment:memberIds.has(item.id)&&!!source,home_service_capability:text(fields.provider_capability),home_service_sellable_type:text(source?.sellable_type),home_service_details:details}
+  return item
+ }).filter(isHomeServiceOffer)
+ const facets:DiscoverySearch['facets']={kind:[{value:'service',count:items.length}],availability:[],category:[{value:'home-services',count:items.length}]}
+ const availability=new Map<string,number>();items.forEach(item=>availability.set(item.availability_status,(availability.get(item.availability_status)||0)+1));facets.availability=[...availability].map(([value,count])=>({value,count}))
+ const categoryRows=rows(categoryResult.data),localized=categoryRows.filter(row=>row.locale===input.locale),categories=(localized.length?localized:categoryRows.filter(row=>row.locale==='fr')).map(row=>mapCategory({...row,item_count:items.length}))
+ return {locale:input.locale,query:'',territoryId,territoryCode,kind:'service',category:'home-services',availability:null,sort:'recommended',items,categories,total:items.length,facets}
+}
+
+export async function getDiscoveryItemById(input:{locale:CatalogLocale;id:string;territoryCode?:string|null}):Promise<DiscoveryItem|null>{const db=await createServiceClient();let q=db.from('angelcare_marketplace_catalog_discovery_v').select('*').eq('id',input.id).eq('status','published');if(input.territoryCode)q=q.or(`territory_code.is.null,territory_code.eq.${input.territoryCode}`);const {data,error}=await q.maybeSingle();if(error)throw fail('charger la fiche commerciale',error);return data?mapItem(data as Row,input.locale):null}
+export async function storefrontExperience(input:{locale:CatalogLocale;key:StorefrontKey;territoryCode?:string|null}):Promise<StorefrontExperience>{
+ const search=input.key==='families'?await familyOrchestrationSearch({locale:input.locale,territoryCode:input.territoryCode}):input.key==='home-services'?await homeServicesSearch({locale:input.locale,territoryCode:input.territoryCode}):await searchDiscovery({locale:input.locale,territoryCode:input.territoryCode,category:input.key,limit:120});const db=await createServiceClient();
+ const localizedCollections=await db.from('angelcare_marketplace_catalog_collections_v').select('*').eq('locale',input.locale).contains('storefront_keys',[input.key]).eq('status','active').order('sort_order');if(localizedCollections.error)throw fail('charger les collections',localizedCollections.error);const fallbackCollections=!localizedCollections.data?.length&&input.locale!=='fr'?await db.from('angelcare_marketplace_catalog_collections_v').select('*').eq('locale','fr').contains('storefront_keys',[input.key]).eq('status','active').order('sort_order'):null;if(fallbackCollections?.error)throw fail('charger les collections françaises de repli',fallbackCollections.error);const collections=rows(localizedCollections.data?.length?localizedCollections.data:fallbackCollections?.data).map((r):DiscoveryCollection=>({id:text(r.id),collection_key:text(r.collection_key),title:text(r.title),subtitle:nullable(r.subtitle),layout_variant:text(r.layout_variant)||'rail',selection_method:text(r.selection_method),items:input.key==='families'||input.key==='home-services'?rows(r.items).map(row=>search.items.find(item=>item.id===text(row.id))).filter((item):item is DiscoveryItem=>!!item):rows(r.items).map(x=>mapItem(x,input.locale))}));
+ const fallback=storefrontHero(input.key,input.locale);let hero=fallback;let experienceConfig:Record<string,unknown>={};let storefrontSections:Array<Record<string,unknown>>=[];let filterConfig:Record<string,unknown>={};
+ let categoryResult=await db.from('angelcare_marketplace_catalog_categories').select('hero_content,experience_config,storefront_sections,filter_config').eq('category_key',input.key).eq('locale',input.locale).eq('status','published').maybeSingle();if(!categoryResult.data&&!categoryResult.error&&input.locale!=='fr')categoryResult=await db.from('angelcare_marketplace_catalog_categories').select('hero_content,experience_config,storefront_sections,filter_config').eq('category_key',input.key).eq('locale','fr').eq('status','published').maybeSingle();
+ if(!categoryResult.error&&categoryResult.data){const row=categoryResult.data as Row;const h=row.hero_content&&typeof row.hero_content==='object'&&!Array.isArray(row.hero_content)?row.hero_content as Row:{};hero={eyebrow:text(h.eyebrow)||fallback.eyebrow,title:text(h.title)||fallback.title,lead:text(h.lead)||fallback.lead,visualTheme:search.categories.find(c=>c.category_key===input.key)?.visual_theme||fallback.visualTheme};experienceConfig=row.experience_config&&typeof row.experience_config==='object'&&!Array.isArray(row.experience_config)?row.experience_config as Record<string,unknown>:{};storefrontSections=Array.isArray(row.storefront_sections)?row.storefront_sections.filter((x):x is Record<string,unknown>=>!!x&&typeof x==='object'&&!Array.isArray(x)):[];filterConfig=row.filter_config&&typeof row.filter_config==='object'&&!Array.isArray(row.filter_config)?row.filter_config as Record<string,unknown>:{}}
+ return {territoryId:search.territoryId||null,territoryCode:search.territoryCode,locale:input.locale,key:input.key,category:search.categories.find(c=>c.category_key===input.key)||null,hero,items:search.items,featured:search.items.filter(i=>i.featured).slice(0,8),collections,facets:search.facets,experienceConfig,storefrontSections,filterConfig}
+}
+export async function getDiscoveryItem(input:{locale:CatalogLocale;slug:string;territoryCode?:string|null}):Promise<DiscoveryItem|null>{const db=await createServiceClient();let q=db.from('angelcare_marketplace_catalog_discovery_v').select('*').eq('slug',input.slug).eq('status','published');if(input.territoryCode)q=q.or(`territory_code.is.null,territory_code.eq.${input.territoryCode}`);const {data,error}=await q.maybeSingle();if(error)throw fail('charger la fiche commerciale',error);if(!data)return null;const item=mapItem(data as Row,input.locale);const configs=await db.from('angelcare_marketplace_catalog_items').select('experience_config,territory_config,fulfillment_config,trust_config,relation_config,seo_metadata,attributes').eq('id',item.id).maybeSingle();if(!configs.error&&configs.data){const row=configs.data as Row;item.metadata={...item.metadata,experience_config:row.experience_config||{},territory_config:row.territory_config||{},fulfillment_config:row.fulfillment_config||{},trust_config:row.trust_config||{},relation_config:row.relation_config||{},seo_metadata:row.seo_metadata||{},attributes:row.attributes||{}}}return item}

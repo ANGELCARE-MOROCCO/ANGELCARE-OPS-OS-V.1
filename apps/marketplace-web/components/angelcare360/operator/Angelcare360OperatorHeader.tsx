@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { Bell, Command, Menu, ShieldCheck } from 'lucide-react'
-import AngelCareLogo from '@/components/brand/AngelCareLogo'
+import SanilaLogo from '@/components/brand/SanilaLogo'
 import type { Angelcare360AccessProfile, Angelcare360SessionUser } from '@/types/angelcare360/module'
 import type { Angelcare360OperatorExperienceProfile } from './Angelcare360OperatorExperience'
 import styles from './Angelcare360OperatorExperience.module.css'
@@ -41,10 +41,10 @@ export default function Angelcare360OperatorHeader({
             <Menu size={18} aria-hidden="true" />
           </button>
         ) : null}
-        <Link href="/angelcare-360-operator" className={styles.headerBrandLink} aria-label="Retour au commandement AngelCare 360 Operator">
-          <AngelCareLogo size="sm" showText />
+        <Link href="/angelcare-360-operator" className={styles.headerBrandLink} aria-label="Retour au commandement SANILA Operator">
+          <SanilaLogo variant="normal" width={118} height={41} priority />
           <span className={styles.headerBrandCopy}>
-            <span className={styles.headerProduct}>ANGELCARE 360 OPERATOR</span>
+            <span className={styles.headerProduct}>SANILA OPERATING SYSTEM</span>
             <span className={styles.headerRoute}>{profile.districtLabel} · {profile.routeLabel}</span>
           </span>
         </Link>

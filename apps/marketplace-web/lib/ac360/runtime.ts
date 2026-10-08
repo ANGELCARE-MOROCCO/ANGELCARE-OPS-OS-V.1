@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createClient } from '@/lib/supabase/server'
 import { getCurrentUser } from '@/lib/getUser'
+import { getCurrentAppUser } from '@/lib/auth/session'
 import type { Ac360AccessDecision } from './types'
 
 export type Ac360CurrentUser = {
@@ -32,7 +34,11 @@ export function isAc360RuntimeAdmin(user: Ac360CurrentUser) {
 }
 
 export async function requireAc360Admin() {
-  const user = (await getCurrentUser().catch(() => null)) as Ac360CurrentUser
+  let user = (await getCurrentUser().catch(() => null)) as Ac360CurrentUser
+  if (!user) {
+    const schoolSessionUser = await getCurrentAppUser().catch(() => null) as (Ac360CurrentUser & { __demo?: boolean }) | null
+    if (schoolSessionUser?.__demo) user = schoolSessionUser
+  }
   if (!user?.id) {
     return { ok: false as const, status: 401, error: 'Unauthorized AC360 session. Please sign in again.', user: null }
   }
@@ -102,7 +108,7 @@ export async function getAc360CurrentContext(orgId?: string) {
   if (membershipError) return { ok: false, error: membershipError.message, user, context: null }
 
   let org = memberships?.[0]?.organization || null
-  let membership = memberships?.[0] || null
+  const membership = memberships?.[0] || null
 
   if (!org && orgId) {
     const { data: orgRow, error: orgError } = await db.from('ac360_organizations').select('*').eq('id', orgId).maybeSingle()

@@ -1,2 +1,2 @@
-import { MediaPage } from '@/angelcare-marketplace/commerce-studio/admin-pages'
-export default async function Page(){return MediaPage({ mode: 'upload' })}
+import { redirect } from 'next/navigation'
+export default function Page(){redirect('/angelcare-marketplace/admin/imports/media')}

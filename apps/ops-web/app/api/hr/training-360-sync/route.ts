@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { createClient } from "@supabase/supabase-js"
+import { createClient } from '@/lib/supabase/contract-client'
 
 function getSupabaseAdmin() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL

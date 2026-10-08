@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "sources": [
+    {
+      "source_id": "catalog.items",
+      "permission": "marketplace.catalog.view"
+    },
+    {
+      "source_id": "catalog.categories",
+      "permission": "marketplace.catalog.view"
+    },
+    {
+      "source_id": "homepage.collections",
+      "permission": "marketplace.homepage.view"
+    },
+    {
+      "source_id": "media.assets",
+      "permission": "marketplace.media.view"
+    },
+    {
+      "source_id": "content.pages",
+      "permission": "marketplace.cms.view"
+    },
+    {
+      "source_id": "content.templates",
+      "permission": "marketplace.cms.view"
+    },
+    {
+      "source_id": "content.symbols",
+      "permission": "marketplace.cms.view"
+    },
+    {
+      "source_id": "experience.schemas",
+      "permission": "marketplace.experience_schema.view"
+    },
+    {
+      "source_id": "homepage.campaigns",
+      "permission": "marketplace.homepage.view"
+    },
+    {
+      "source_id": "experience.live_campaigns",
+      "permission": "marketplace.cms.view"
+    },
+    {
+      "source_id": "audience.segments",
+      "permission": "marketplace.admin.access"
+    },
+    {
+      "source_id": "context.territories",
+      "permission": "marketplace.territories.view"
+    },
+    {
+      "source_id": "academy.programmes",
+      "permission": "marketplace.academy.view"
+    },
+    {
+      "source_id": "academy.cohorts",
+      "permission": "marketplace.academy.view"
+    },
+    {
+      "source_id": "providers.profiles",
+      "permission": "marketplace.providers.view"
+    },
+    {
+      "source_id": "commerce.promotions",
+      "permission": "marketplace.catalog.view"
+    },
+    {
+      "source_id": "partners.plans",
+      "permission": "marketplace.partner_os.plans.view"
+    },
+    {
+      "source_id": "b2b.programmes",
+      "permission": "marketplace.b2b.programs.view"
+    },
+    {
+      "source_id": "trust.claims",
+      "permission": "marketplace.catalog.view"
+    },
+    {
+      "source_id": "navigation.destinations",
+      "permission": "marketplace.cms.view"
+    }
+  ]
+}

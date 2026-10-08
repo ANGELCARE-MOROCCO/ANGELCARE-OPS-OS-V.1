@@ -1,0 +1,3539 @@
+[
+  {
+    "name": "angelcare_marketplace_academy_assessment_results",
+    "domain": "academy",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/academy-engine/final-repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_academy_assessments",
+    "domain": "academy",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/academy-engine/final-repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_academy_attendance_records",
+    "domain": "academy",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/academy-engine/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_academy_b2b_training_orders",
+    "domain": "academy",
+    "occurrences": 3,
+    "files": [
+      "angelcare-marketplace/academy-engine/final-repository.ts",
+      "angelcare-marketplace/academy-engine/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_academy_certificates",
+    "domain": "academy",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/academy-engine/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_academy_cohorts",
+    "domain": "academy",
+    "occurrences": 11,
+    "files": [
+      "angelcare-marketplace/academy-engine/final-repository.ts",
+      "angelcare-marketplace/academy-engine/repository.ts",
+      "angelcare-marketplace/conversion-universe/repository.ts",
+      "angelcare-marketplace/homepage-flagship/repository.ts",
+      "angelcare-marketplace/live-experience-command/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_academy_courses",
+    "domain": "academy",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/homepage-flagship/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_academy_enrollments",
+    "domain": "academy",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/conversion-universe/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_academy_programs",
+    "domain": "academy",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/academy-engine/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_academy_remediations",
+    "domain": "academy",
+    "occurrences": 3,
+    "files": [
+      "angelcare-marketplace/academy-engine/final-repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_academy_sessions",
+    "domain": "academy",
+    "occurrences": 3,
+    "files": [
+      "angelcare-marketplace/academy-engine/final-repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_activation_checks",
+    "domain": "publication_release",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/production-activation/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_activation_readiness_v",
+    "domain": "publication_release",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/production-activation/repository.ts"
+    ],
+    "source_of_truth_status": "READ_MODEL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_activation_runs",
+    "domain": "publication_release",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/production-activation/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_admin_action_items",
+    "domain": "admin_operating",
+    "occurrences": 4,
+    "files": [
+      "angelcare-marketplace/family-experience/repository.ts",
+      "angelcare-marketplace/sovereign-control/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_admin_comments",
+    "domain": "admin_operating",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/sovereign-control/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_admin_search_v",
+    "domain": "admin_operating",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/sovereign-control/repository.ts"
+    ],
+    "source_of_truth_status": "READ_MODEL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_analytics_data_quality_events",
+    "domain": "analytics",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/analytics-security/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_analytics_metric_definitions",
+    "domain": "analytics",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/analytics-security/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_analytics_snapshots",
+    "domain": "analytics",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/analytics-security/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_approval_requests",
+    "domain": "audit_governance",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/sovereign-control/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_audit_events",
+    "domain": "audit_governance",
+    "occurrences": 9,
+    "files": [
+      "angelcare-marketplace/audit/write-audit.ts",
+      "angelcare-marketplace/b2b-verticals/repository.ts",
+      "angelcare-marketplace/customer-relationship-command/crm-activity.ts",
+      "angelcare-marketplace/enterprise-command/repository.ts",
+      "angelcare-marketplace/server/repository.ts",
+      "angelcare-marketplace/sovereign-control/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_b2b_contacts",
+    "domain": "b2b",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/b2b-verticals/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_b2b_diagnostics",
+    "domain": "b2b",
+    "occurrences": 4,
+    "files": [
+      "angelcare-marketplace/b2b-verticals/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_b2b_organization_sites",
+    "domain": "b2b",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/b2b-verticals/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_b2b_organizations",
+    "domain": "b2b",
+    "occurrences": 5,
+    "files": [
+      "angelcare-marketplace/b2b-verticals/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_b2b_programs",
+    "domain": "b2b",
+    "occurrences": 4,
+    "files": [
+      "angelcare-marketplace/b2b-verticals/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_b2b_public_requests",
+    "domain": "b2b",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/b2b-verticals/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_b2b_readiness_checks",
+    "domain": "b2b",
+    "occurrences": 4,
+    "files": [
+      "angelcare-marketplace/b2b-verticals/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_b2b_recommendations",
+    "domain": "b2b",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/b2b-verticals/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_b2b_reports",
+    "domain": "b2b",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/b2b-verticals/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_backup_register",
+    "domain": "publication_release",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/analytics-security/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_bulk_operation_jobs",
+    "domain": "admin_operating",
+    "occurrences": 16,
+    "files": [
+      "angelcare-marketplace/enterprise-command/api-handlers.ts",
+      "angelcare-marketplace/enterprise-command/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_bulk_operation_rows",
+    "domain": "admin_operating",
+    "occurrences": 12,
+    "files": [
+      "angelcare-marketplace/enterprise-command/api-handlers.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_catalog_availability",
+    "domain": "catalog",
+    "occurrences": 11,
+    "files": [
+      "angelcare-marketplace/category-native/repository.ts",
+      "angelcare-marketplace/conversion-universe/repository.ts",
+      "angelcare-marketplace/enterprise-command/product-360-import-engine.ts",
+      "angelcare-marketplace/live-experience-command/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_catalog_categories",
+    "domain": "catalog",
+    "occurrences": 12,
+    "files": [
+      "angelcare-marketplace/catalog-discovery/repository.ts",
+      "angelcare-marketplace/category-native/repository.ts",
+      "angelcare-marketplace/enterprise-command/product-360-import-engine.ts",
+      "angelcare-marketplace/enterprise-command/repository.ts",
+      "angelcare-marketplace/homepage-flagship/repository.ts",
+      "angelcare-marketplace/studio-universal/picker-data.ts",
+      "angelcare-marketplace/theme-studio/repository.ts",
+      "angelcare-marketplace/total-commerce-control/repository.ts",
+      "angelcare-marketplace/web-presence/runtime.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_catalog_collections_v",
+    "domain": "catalog",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/catalog-discovery/repository.ts"
+    ],
+    "source_of_truth_status": "READ_MODEL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_catalog_discovery_v",
+    "domain": "catalog",
+    "occurrences": 5,
+    "files": [
+      "angelcare-marketplace/catalog-discovery/repository.ts",
+      "angelcare-marketplace/conversion-universe/repository.ts",
+      "angelcare-marketplace/enterprise-closure/repository.ts",
+      "angelcare-marketplace/total-commerce-control/repository.ts"
+    ],
+    "source_of_truth_status": "READ_MODEL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_catalog_item_categories",
+    "domain": "catalog",
+    "occurrences": 14,
+    "files": [
+      "angelcare-marketplace/category-native/repository.ts",
+      "angelcare-marketplace/commerce-studio/repository.ts",
+      "angelcare-marketplace/enterprise-command/product-360-import-engine.ts",
+      "angelcare-marketplace/enterprise-command/repository.ts",
+      "angelcare-marketplace/homepage-flagship/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_catalog_item_media",
+    "domain": "catalog",
+    "occurrences": 10,
+    "files": [
+      "angelcare-marketplace/category-native/repository.ts",
+      "angelcare-marketplace/commerce-studio/repository.ts",
+      "angelcare-marketplace/enterprise-command/product-360-import-engine.ts",
+      "angelcare-marketplace/homepage-flagship/repository.ts",
+      "angelcare-marketplace/total-commerce-control/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_catalog_items",
+    "domain": "catalog",
+    "occurrences": 49,
+    "files": [
+      "angelcare-marketplace/catalog-discovery/repository.ts",
+      "angelcare-marketplace/category-native-experience/repository.ts",
+      "angelcare-marketplace/category-native/repository.ts",
+      "angelcare-marketplace/commerce-studio/repository.ts",
+      "angelcare-marketplace/enterprise-closure/repository.ts",
+      "angelcare-marketplace/enterprise-command/api-handlers.ts",
+      "angelcare-marketplace/enterprise-command/product-360-import-engine.ts",
+      "angelcare-marketplace/enterprise-command/repository.ts",
+      "angelcare-marketplace/financial-control-ledger/repository.ts",
+      "angelcare-marketplace/homepage-flagship/repository.ts",
+      "angelcare-marketplace/live-experience-command/repository.ts",
+      "angelcare-marketplace/marketplace-core/repository.ts",
+      "angelcare-marketplace/total-commerce-control/repository.ts",
+      "angelcare-marketplace/web-presence/runtime.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_catalog_variants",
+    "domain": "catalog",
+    "occurrences": 9,
+    "files": [
+      "angelcare-marketplace/category-native/repository.ts",
+      "angelcare-marketplace/enterprise-command/product-360-import-engine.ts",
+      "angelcare-marketplace/total-commerce-control/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_category_admin_v",
+    "domain": "category",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/commerce-studio/repository.ts"
+    ],
+    "source_of_truth_status": "READ_MODEL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_category_discovery_v",
+    "domain": "category",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/catalog-discovery/repository.ts"
+    ],
+    "source_of_truth_status": "READ_MODEL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_category_native_import_jobs_v",
+    "domain": "category",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/category-native/repository.ts"
+    ],
+    "source_of_truth_status": "READ_MODEL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_cms_blocks",
+    "domain": "content_experience",
+    "occurrences": 5,
+    "files": [
+      "angelcare-marketplace/experience-builder/repository.ts",
+      "angelcare-marketplace/public-universe/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_cms_ctas",
+    "domain": "content_experience",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/experience-builder/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_cms_dependency_edges",
+    "domain": "content_experience",
+    "occurrences": 4,
+    "files": [
+      "angelcare-marketplace/experience-builder/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_cms_menu_items",
+    "domain": "content_experience",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/experience-builder/repository.ts",
+      "angelcare-marketplace/total-commerce-control/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_cms_menus",
+    "domain": "content_experience",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/commerce-studio/repository.ts",
+      "angelcare-marketplace/experience-builder/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_cms_page_versions",
+    "domain": "content_experience",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/experience-builder/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_cms_pages",
+    "domain": "content_experience",
+    "occurrences": 17,
+    "files": [
+      "angelcare-marketplace/experience-builder/repository.ts",
+      "angelcare-marketplace/public-universe/repository.ts",
+      "angelcare-marketplace/studio-universal/repository.ts",
+      "angelcare-marketplace/total-commerce-control/repository.ts",
+      "angelcare-marketplace/web-presence/runtime.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_cms_preview_sessions",
+    "domain": "content_experience",
+    "occurrences": 6,
+    "files": [
+      "angelcare-marketplace/experience-builder/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_cms_publication_jobs",
+    "domain": "content_experience",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/experience-builder/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_cms_revisions",
+    "domain": "content_experience",
+    "occurrences": 5,
+    "files": [
+      "angelcare-marketplace/experience-builder/repository.ts",
+      "angelcare-marketplace/public-universe/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_cms_symbol_revisions",
+    "domain": "content_experience",
+    "occurrences": 8,
+    "files": [
+      "angelcare-marketplace/experience-builder/repository.ts",
+      "angelcare-marketplace/public-universe/components/PublicPageRenderer.tsx"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_cms_symbols",
+    "domain": "content_experience",
+    "occurrences": 10,
+    "files": [
+      "angelcare-marketplace/experience-builder/repository.ts",
+      "angelcare-marketplace/public-universe/components/PublicPageRenderer.tsx"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_cms_template_revisions",
+    "domain": "content_experience",
+    "occurrences": 3,
+    "files": [
+      "angelcare-marketplace/experience-builder/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_cms_templates",
+    "domain": "content_experience",
+    "occurrences": 9,
+    "files": [
+      "angelcare-marketplace/experience-builder/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_commerce_item_admin_v",
+    "domain": "commerce",
+    "occurrences": 3,
+    "files": [
+      "angelcare-marketplace/commerce-studio/repository.ts",
+      "angelcare-marketplace/total-commerce-control/repository.ts"
+    ],
+    "source_of_truth_status": "READ_MODEL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_commerce_publication_events",
+    "domain": "commerce",
+    "occurrences": 4,
+    "files": [
+      "angelcare-marketplace/commerce-studio/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_commerce_versions",
+    "domain": "commerce",
+    "occurrences": 4,
+    "files": [
+      "angelcare-marketplace/commerce-studio/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_complaints",
+    "domain": "complaints",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/trust-quality/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_compliance_reviews",
+    "domain": "trust_quality",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/trust-quality/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_configurations",
+    "domain": "configurations",
+    "occurrences": 3,
+    "files": [
+      "angelcare-marketplace/server/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_conversion_availability_holds",
+    "domain": "conversion",
+    "occurrences": 3,
+    "files": [
+      "angelcare-marketplace/conversion-universe/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_conversion_consents",
+    "domain": "conversion",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/conversion-universe/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_conversion_events",
+    "domain": "conversion",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/conversion-universe/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_conversion_exceptions",
+    "domain": "conversion",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/conversion-universe/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_conversion_outcomes",
+    "domain": "conversion",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/conversion-universe/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_conversion_price_snapshots",
+    "domain": "conversion",
+    "occurrences": 3,
+    "files": [
+      "angelcare-marketplace/conversion-universe/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_conversion_sessions",
+    "domain": "conversion",
+    "occurrences": 18,
+    "files": [
+      "angelcare-marketplace/commerce-product-atelier/repository.ts",
+      "angelcare-marketplace/conversion-universe/repository.ts",
+      "angelcare-marketplace/customer-commerce/repository.ts",
+      "angelcare-marketplace/enterprise-command/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_corporate_eligibility_rules",
+    "domain": "b2b",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/b2b-verticals/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_corporate_quota_allocations",
+    "domain": "b2b",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/b2b-verticals/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_crm_accounts",
+    "domain": "crm",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/commercial-pipeline/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_crm_communication_logs",
+    "domain": "crm",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/customer-relationship-command/crm-activity.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_crm_leads",
+    "domain": "crm",
+    "occurrences": 7,
+    "files": [
+      "angelcare-marketplace/commercial-pipeline/repository.ts",
+      "angelcare-marketplace/conversion-universe/repository.ts",
+      "angelcare-marketplace/customer-relationship-command/repository.ts",
+      "angelcare-marketplace/enterprise-command/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_crm_opportunities",
+    "domain": "crm",
+    "occurrences": 11,
+    "files": [
+      "angelcare-marketplace/b2b-verticals/repository.ts",
+      "angelcare-marketplace/commercial-pipeline/repository.ts",
+      "angelcare-marketplace/customer-relationship-command/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_crm_pipeline_events",
+    "domain": "crm",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/commercial-pipeline/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_crm_proof_pack_items",
+    "domain": "crm",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/commercial-pipeline/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_crm_proof_packs",
+    "domain": "crm",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/commercial-pipeline/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_crm_quotes",
+    "domain": "crm",
+    "occurrences": 9,
+    "files": [
+      "angelcare-marketplace/commercial-pipeline/repository.ts",
+      "angelcare-marketplace/enterprise-command/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_crm_tasks",
+    "domain": "crm",
+    "occurrences": 5,
+    "files": [
+      "angelcare-marketplace/commercial-pipeline/repository.ts",
+      "angelcare-marketplace/customer-relationship-command/crm-activity.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_customer_accounts",
+    "domain": "customer",
+    "occurrences": 33,
+    "files": [
+      "angelcare-marketplace/admin-control-plane/repository.ts",
+      "angelcare-marketplace/customer-commerce/admin-repository.ts",
+      "angelcare-marketplace/customer-commerce/customer-auth.ts",
+      "angelcare-marketplace/customer-commerce/payment-admin.ts",
+      "angelcare-marketplace/customer-relationship-command/crm-activity.ts",
+      "angelcare-marketplace/customer-relationship-command/repository.ts",
+      "angelcare-marketplace/enterprise-closure/repository.ts",
+      "angelcare-marketplace/enterprise-command/repository.ts",
+      "angelcare-marketplace/financial-control-ledger/repository.ts",
+      "angelcare-marketplace/total-commerce-control/repository.ts",
+      "angelcare-marketplace/transaction-flight-deck/repository.ts",
+      "app/angelcare-marketplace/auth/confirm/route.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_customer_addresses",
+    "domain": "customer",
+    "occurrences": 10,
+    "files": [
+      "angelcare-marketplace/admin-control-plane/repository.ts",
+      "angelcare-marketplace/customer-relationship-command/repository.ts",
+      "angelcare-marketplace/enterprise-command/repository.ts",
+      "angelcare-marketplace/enterprise-command/sovereign-repository.ts",
+      "angelcare-marketplace/total-commerce-control/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_customer_notification_preferences",
+    "domain": "customer",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/admin-control-plane/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_customer_organization_memberships",
+    "domain": "customer",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/admin-control-plane/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_customer_segment_metrics",
+    "domain": "customer",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/enterprise-command/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_customer_subscriptions",
+    "domain": "customer",
+    "occurrences": 5,
+    "files": [
+      "angelcare-marketplace/customer-relationship-command/repository.ts",
+      "angelcare-marketplace/enterprise-closure/repository.ts",
+      "angelcare-marketplace/financial-control-ledger/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_defects",
+    "domain": "defects",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/final-authority/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_development_activities",
+    "domain": "development",
+    "occurrences": 6,
+    "files": [
+      "angelcare-marketplace/development-engine/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_development_categories",
+    "domain": "development",
+    "occurrences": 3,
+    "files": [
+      "angelcare-marketplace/development-engine/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_development_kits",
+    "domain": "development",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/development-engine/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_development_supplier_specs",
+    "domain": "development",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/development-engine/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_disputes",
+    "domain": "disputes",
+    "occurrences": 5,
+    "files": [
+      "angelcare-marketplace/operations-reconciliation/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_document_exports",
+    "domain": "documents",
+    "occurrences": 3,
+    "files": [
+      "angelcare-marketplace/enterprise-command/api-handlers.ts",
+      "angelcare-marketplace/enterprise-command/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_document_template_versions",
+    "domain": "documents",
+    "occurrences": 4,
+    "files": [
+      "angelcare-marketplace/enterprise-command/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_document_templates",
+    "domain": "documents",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/enterprise-command/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_establishment_quality_checks",
+    "domain": "b2b",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/b2b-verticals/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_executive_briefs",
+    "domain": "executive",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/sovereign-control/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_experience_availability_results",
+    "domain": "category_native",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/category-native-experience/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_experience_configuration_snapshots",
+    "domain": "category_native",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/category-native-experience/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_experience_handover_events",
+    "domain": "category_native",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/category-native-experience/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_experience_price_results",
+    "domain": "category_native",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/category-native-experience/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_experience_schemas",
+    "domain": "category_native",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/category-native-experience/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_experience_sessions",
+    "domain": "category_native",
+    "occurrences": 5,
+    "files": [
+      "angelcare-marketplace/category-native-experience/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_experiments",
+    "domain": "experiments",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/final-authority/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_family_accounts",
+    "domain": "family",
+    "occurrences": 12,
+    "files": [
+      "angelcare-marketplace/admin-control-plane/repository.ts",
+      "angelcare-marketplace/customer-commerce/customer-auth.ts",
+      "angelcare-marketplace/customer-relationship-command/repository.ts",
+      "angelcare-marketplace/family-experience/repository.ts",
+      "angelcare-marketplace/journey-control/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_family_children",
+    "domain": "family",
+    "occurrences": 8,
+    "files": [
+      "angelcare-marketplace/admin-control-plane/repository.ts",
+      "angelcare-marketplace/customer-relationship-command/repository.ts",
+      "angelcare-marketplace/family-experience/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_family_diagnostics",
+    "domain": "family",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/family-experience/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_family_guardians",
+    "domain": "family",
+    "occurrences": 5,
+    "files": [
+      "angelcare-marketplace/customer-relationship-command/repository.ts",
+      "angelcare-marketplace/enterprise-closure/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_family_mission_reports",
+    "domain": "family",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/family-experience/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_family_mission_timeline",
+    "domain": "family",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/family-experience/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_family_missions",
+    "domain": "family",
+    "occurrences": 4,
+    "files": [
+      "angelcare-marketplace/customer-relationship-command/repository.ts",
+      "angelcare-marketplace/family-experience/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_family_quote_requests",
+    "domain": "family",
+    "occurrences": 10,
+    "files": [
+      "angelcare-marketplace/admin-control-plane/repository.ts",
+      "angelcare-marketplace/conversion-universe/repository.ts",
+      "angelcare-marketplace/customer-relationship-command/repository.ts",
+      "angelcare-marketplace/enterprise-command/repository.ts",
+      "angelcare-marketplace/family-experience/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_family_support_messages",
+    "domain": "family",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/family-experience/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_family_support_tickets",
+    "domain": "family",
+    "occurrences": 6,
+    "files": [
+      "angelcare-marketplace/admin-control-plane/repository.ts",
+      "angelcare-marketplace/customer-relationship-command/repository.ts",
+      "angelcare-marketplace/enterprise-command/command-center-repository.ts",
+      "angelcare-marketplace/family-experience/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_feature_flags",
+    "domain": "platform_governance",
+    "occurrences": 4,
+    "files": [
+      "angelcare-marketplace/server/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_finance_invoice_lines",
+    "domain": "finance",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/enterprise-closure/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_finance_invoice_readiness",
+    "domain": "finance",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/enterprise-closure/repository.ts",
+      "angelcare-marketplace/finance-authority/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_finance_invoices",
+    "domain": "finance",
+    "occurrences": 10,
+    "files": [
+      "angelcare-marketplace/customer-relationship-command/repository.ts",
+      "angelcare-marketplace/enterprise-closure/repository.ts",
+      "angelcare-marketplace/enterprise-command/command-center-repository.ts",
+      "angelcare-marketplace/financial-control-ledger/repository.ts",
+      "angelcare-marketplace/transaction-flight-deck/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_finance_margin_exceptions",
+    "domain": "finance",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/finance-authority/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_finance_price_books",
+    "domain": "finance",
+    "occurrences": 8,
+    "files": [
+      "angelcare-marketplace/commerce-studio/repository.ts",
+      "angelcare-marketplace/enterprise-command/product-360-import-engine.ts",
+      "angelcare-marketplace/finance-authority/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_finance_price_rules",
+    "domain": "finance",
+    "occurrences": 12,
+    "files": [
+      "angelcare-marketplace/conversion-universe/repository.ts",
+      "angelcare-marketplace/enterprise-command/product-360-import-engine.ts",
+      "angelcare-marketplace/finance-authority/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_finance_receipts",
+    "domain": "finance",
+    "occurrences": 5,
+    "files": [
+      "angelcare-marketplace/enterprise-closure/repository.ts",
+      "angelcare-marketplace/enterprise-command/repository.ts",
+      "angelcare-marketplace/financial-control-ledger/repository.ts",
+      "angelcare-marketplace/transaction-flight-deck/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_finance_reconciliation_events",
+    "domain": "finance",
+    "occurrences": 4,
+    "files": [
+      "angelcare-marketplace/finance-authority/repository.ts",
+      "angelcare-marketplace/financial-control-ledger/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_finance_revenue_streams",
+    "domain": "finance",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/enterprise-closure/repository.ts",
+      "angelcare-marketplace/finance-authority/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_footer_analytics_events",
+    "domain": "footer",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/footer-studio/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_footer_capabilities",
+    "domain": "footer",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/footer-studio/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_footer_component_definitions",
+    "domain": "footer",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/footer-studio/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_footer_contact_desks",
+    "domain": "footer",
+    "occurrences": 4,
+    "files": [
+      "angelcare-marketplace/footer-studio/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_footer_links",
+    "domain": "footer",
+    "occurrences": 3,
+    "files": [
+      "angelcare-marketplace/footer-studio/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_footer_profile_versions",
+    "domain": "footer",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/footer-studio/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_footer_profiles",
+    "domain": "footer",
+    "occurrences": 4,
+    "files": [
+      "angelcare-marketplace/footer-studio/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_footer_schedules",
+    "domain": "footer",
+    "occurrences": 6,
+    "files": [
+      "angelcare-marketplace/footer-studio/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_footer_sections",
+    "domain": "footer",
+    "occurrences": 4,
+    "files": [
+      "angelcare-marketplace/footer-studio/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_footer_targeting_rules",
+    "domain": "footer",
+    "occurrences": 4,
+    "files": [
+      "angelcare-marketplace/footer-studio/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_footer_themes",
+    "domain": "footer",
+    "occurrences": 3,
+    "files": [
+      "angelcare-marketplace/footer-studio/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_frontend_surfaces",
+    "domain": "content_experience",
+    "occurrences": 5,
+    "files": [
+      "angelcare-marketplace/total-commerce-control/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_fulfillment_cases",
+    "domain": "fulfillment",
+    "occurrences": 7,
+    "files": [
+      "angelcare-marketplace/customer-commerce/admin-repository.ts",
+      "angelcare-marketplace/enterprise-command/repository.ts",
+      "angelcare-marketplace/operations-reconciliation/repository.ts",
+      "angelcare-marketplace/transaction-flight-deck/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_fulfillment_events",
+    "domain": "fulfillment",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/operations-reconciliation/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_fulfillment_evidence",
+    "domain": "fulfillment",
+    "occurrences": 5,
+    "files": [
+      "angelcare-marketplace/operations-reconciliation/repository.ts",
+      "angelcare-marketplace/transaction-flight-deck/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_fulfillment_obligations",
+    "domain": "fulfillment",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/operations-reconciliation/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_glossary_terms",
+    "domain": "platform_governance",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/localization-intelligence/final-repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_health_consent_requirements",
+    "domain": "health_adjacent",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/b2b-verticals/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_health_support_boundaries",
+    "domain": "health_adjacent",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/b2b-verticals/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_homepage_audience_rules",
+    "domain": "homepage_merchandising",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/homepage-final/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_homepage_campaigns",
+    "domain": "homepage_merchandising",
+    "occurrences": 5,
+    "files": [
+      "angelcare-marketplace/commerce-studio/repository.ts",
+      "angelcare-marketplace/homepage-final/repository.ts",
+      "angelcare-marketplace/homepage-flagship/repository.ts",
+      "angelcare-marketplace/theme-studio/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_homepage_collection_items",
+    "domain": "homepage_merchandising",
+    "occurrences": 5,
+    "files": [
+      "angelcare-marketplace/commerce-studio/repository.ts",
+      "angelcare-marketplace/homepage-flagship/repository.ts",
+      "angelcare-marketplace/public-universe/components/PublicPageRenderer.tsx",
+      "angelcare-marketplace/studio-universal/StudioPublishedRenderer.tsx"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_homepage_collections",
+    "domain": "homepage_merchandising",
+    "occurrences": 8,
+    "files": [
+      "angelcare-marketplace/commerce-studio/repository.ts",
+      "angelcare-marketplace/homepage-final/repository.ts",
+      "angelcare-marketplace/homepage-flagship/repository.ts",
+      "angelcare-marketplace/public-universe/components/PublicPageRenderer.tsx",
+      "angelcare-marketplace/studio-universal/StudioPublishedRenderer.tsx",
+      "angelcare-marketplace/studio-universal/picker-data.ts",
+      "angelcare-marketplace/total-commerce-control/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_homepage_interactions",
+    "domain": "homepage_merchandising",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/homepage-flagship/api-handlers.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_homepage_placements",
+    "domain": "homepage_merchandising",
+    "occurrences": 12,
+    "files": [
+      "angelcare-marketplace/category-native/repository.ts",
+      "angelcare-marketplace/commerce-studio/repository.ts",
+      "angelcare-marketplace/enterprise-command/product-360-import-engine.ts",
+      "angelcare-marketplace/homepage-final/repository.ts",
+      "angelcare-marketplace/homepage-flagship/repository.ts",
+      "angelcare-marketplace/total-commerce-control/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_homepage_release_dossiers",
+    "domain": "homepage_merchandising",
+    "occurrences": 5,
+    "files": [
+      "angelcare-marketplace/homepage-final/repository.ts",
+      "angelcare-marketplace/theme-studio/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_homepage_sections",
+    "domain": "homepage_merchandising",
+    "occurrences": 6,
+    "files": [
+      "angelcare-marketplace/commerce-studio/repository.ts",
+      "angelcare-marketplace/homepage-final/repository.ts",
+      "angelcare-marketplace/homepage-flagship/repository.ts",
+      "angelcare-marketplace/theme-studio/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_homepage_territory_rules",
+    "domain": "homepage_merchandising",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/homepage-final/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_homepage_versions",
+    "domain": "homepage_merchandising",
+    "occurrences": 11,
+    "files": [
+      "angelcare-marketplace/homepage-final/repository.ts",
+      "angelcare-marketplace/theme-studio/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_homepage_visitor_selections",
+    "domain": "homepage_merchandising",
+    "occurrences": 4,
+    "files": [
+      "angelcare-marketplace/homepage-flagship/api-handlers.ts",
+      "angelcare-marketplace/homepage-flagship/repository.ts",
+      "angelcare-marketplace/total-commerce-control/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_hospitality_properties",
+    "domain": "b2b",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/b2b-verticals/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_journey_actions",
+    "domain": "journey_orders",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/journey-control/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_journey_change_requests",
+    "domain": "journey_orders",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/journey-control/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_journey_events",
+    "domain": "journey_orders",
+    "occurrences": 8,
+    "files": [
+      "angelcare-marketplace/admin-control-plane/repository.ts",
+      "angelcare-marketplace/enterprise-closure/repository.ts",
+      "angelcare-marketplace/enterprise-command/repository.ts",
+      "angelcare-marketplace/enterprise-command/sovereign-repository.ts",
+      "angelcare-marketplace/journey-control/repository.ts",
+      "angelcare-marketplace/total-commerce-control/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_journey_links",
+    "domain": "journey_orders",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/total-commerce-control/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_journey_notifications",
+    "domain": "journey_orders",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/journey-control/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_journey_participants",
+    "domain": "journey_orders",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/admin-control-plane/repository.ts",
+      "angelcare-marketplace/total-commerce-control/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_journey_recovery_cases",
+    "domain": "journey_orders",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/journey-control/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_journeys",
+    "domain": "journeys",
+    "occurrences": 37,
+    "files": [
+      "angelcare-marketplace/admin-control-plane/repository.ts",
+      "angelcare-marketplace/customer-commerce/repository.ts",
+      "angelcare-marketplace/customer-relationship-command/repository.ts",
+      "angelcare-marketplace/enterprise-closure/repository.ts",
+      "angelcare-marketplace/enterprise-command/command-center-repository.ts",
+      "angelcare-marketplace/enterprise-command/repository.ts",
+      "angelcare-marketplace/enterprise-command/sovereign-repository.ts",
+      "angelcare-marketplace/financial-control-ledger/repository.ts",
+      "angelcare-marketplace/journey-control/repository.ts",
+      "angelcare-marketplace/total-commerce-control/repository.ts",
+      "angelcare-marketplace/transaction-flight-deck/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_launch_approvals",
+    "domain": "publication_release",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/launch-assurance/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_launch_evidence",
+    "domain": "publication_release",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/launch-assurance/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_launch_gates",
+    "domain": "publication_release",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/launch-assurance/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_launch_runbooks",
+    "domain": "publication_release",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/launch-assurance/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_live_experience_audit_events",
+    "domain": "live_experience",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/live-experience-command/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_live_experience_campaigns",
+    "domain": "live_experience",
+    "occurrences": 8,
+    "files": [
+      "angelcare-marketplace/live-experience-command/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_live_experience_experiments",
+    "domain": "live_experience",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/live-experience-command/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_live_experience_schedules",
+    "domain": "live_experience",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/live-experience-command/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_live_experience_source_snapshots",
+    "domain": "live_experience",
+    "occurrences": 4,
+    "files": [
+      "angelcare-marketplace/live-experience-command/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_live_experience_versions",
+    "domain": "live_experience",
+    "occurrences": 3,
+    "files": [
+      "angelcare-marketplace/live-experience-command/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_locale_readiness_snapshots",
+    "domain": "localization",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/localization-intelligence/final-repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_localization_scan_runs",
+    "domain": "localization",
+    "occurrences": 5,
+    "files": [
+      "angelcare-marketplace/localization-intelligence/localization-os.ts",
+      "angelcare-marketplace/localization-intelligence/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_localization_source_registries",
+    "domain": "localization",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/localization-intelligence/final-repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_media_assets",
+    "domain": "media",
+    "occurrences": 21,
+    "files": [
+      "angelcare-marketplace/category-native/repository.ts",
+      "angelcare-marketplace/commerce-studio/media-storage-api.ts",
+      "angelcare-marketplace/commerce-studio/repository.ts",
+      "angelcare-marketplace/enterprise-command/product-360-import-engine.ts",
+      "angelcare-marketplace/experience-builder/repository.ts",
+      "angelcare-marketplace/public-universe/repository.ts",
+      "angelcare-marketplace/studio-universal/StudioPublishedRenderer.tsx",
+      "angelcare-marketplace/studio-universal/picker-data.ts",
+      "angelcare-marketplace/total-commerce-control/repository.ts",
+      "angelcare-marketplace/web-presence/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_media_folders",
+    "domain": "media",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/commerce-studio/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_media_usage",
+    "domain": "media",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/total-commerce-control/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_modules",
+    "domain": "modules",
+    "occurrences": 7,
+    "files": [
+      "angelcare-marketplace/server/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_object_relations",
+    "domain": "admin_operating",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/sovereign-control/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_operating_approvals",
+    "domain": "operations",
+    "occurrences": 3,
+    "files": [
+      "angelcare-marketplace/admin-operating/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_operating_assignments",
+    "domain": "operations",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/admin-operating/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_operating_cases",
+    "domain": "operations",
+    "occurrences": 10,
+    "files": [
+      "angelcare-marketplace/admin-operating/repository.ts",
+      "angelcare-marketplace/customer-relationship-command/repository.ts",
+      "angelcare-marketplace/enterprise-command/command-center-repository.ts",
+      "angelcare-marketplace/transaction-flight-deck/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_operating_comments",
+    "domain": "operations",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/admin-operating/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_operating_evidence",
+    "domain": "operations",
+    "occurrences": 3,
+    "files": [
+      "angelcare-marketplace/admin-operating/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_operating_exceptions",
+    "domain": "operations",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/admin-operating/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_operating_recovery_actions",
+    "domain": "operations",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/admin-operating/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_operating_timeline",
+    "domain": "operations",
+    "occurrences": 6,
+    "files": [
+      "angelcare-marketplace/admin-operating/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_operations_assignment_proposals",
+    "domain": "operations",
+    "occurrences": 3,
+    "files": [
+      "angelcare-marketplace/network-capacity-grid/repository.ts",
+      "angelcare-marketplace/operations-execution/repository.ts",
+      "angelcare-marketplace/transaction-flight-deck/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_operations_check_events",
+    "domain": "operations",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/operations-execution/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_operations_checklist_runs",
+    "domain": "operations",
+    "occurrences": 3,
+    "files": [
+      "angelcare-marketplace/operations-execution/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_operations_incidents",
+    "domain": "operations",
+    "occurrences": 7,
+    "files": [
+      "angelcare-marketplace/network-capacity-grid/repository.ts",
+      "angelcare-marketplace/operations-execution/repository.ts",
+      "angelcare-marketplace/transaction-flight-deck/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_operations_mission_briefs",
+    "domain": "operations",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/operations-execution/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_operations_mission_reports",
+    "domain": "operations",
+    "occurrences": 3,
+    "files": [
+      "angelcare-marketplace/operations-execution/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_operations_missions",
+    "domain": "operations",
+    "occurrences": 7,
+    "files": [
+      "angelcare-marketplace/enterprise-command/command-center-repository.ts",
+      "angelcare-marketplace/enterprise-command/repository.ts",
+      "angelcare-marketplace/network-capacity-grid/repository.ts",
+      "angelcare-marketplace/operations-execution/repository.ts",
+      "angelcare-marketplace/transaction-flight-deck/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_operator_workspaces",
+    "domain": "admin_operating",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/enterprise-command/sovereign-repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_order_events",
+    "domain": "journey_orders",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/customer-commerce/admin-repository.ts",
+      "angelcare-marketplace/total-commerce-control/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_order_line_events",
+    "domain": "journey_orders",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/customer-commerce/admin-repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_order_lines",
+    "domain": "journey_orders",
+    "occurrences": 9,
+    "files": [
+      "angelcare-marketplace/commerce-product-atelier/repository.ts",
+      "angelcare-marketplace/enterprise-closure/repository.ts",
+      "angelcare-marketplace/transaction-flight-deck/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_partner_module_activations",
+    "domain": "partner",
+    "occurrences": 3,
+    "files": [
+      "angelcare-marketplace/partner-os/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_partner_onboarding_checks",
+    "domain": "partner",
+    "occurrences": 6,
+    "files": [
+      "angelcare-marketplace/partner-os/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_partner_plan_modules",
+    "domain": "partner",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/homepage-flagship/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_partner_plans",
+    "domain": "partner",
+    "occurrences": 4,
+    "files": [
+      "angelcare-marketplace/conversion-universe/repository.ts",
+      "angelcare-marketplace/homepage-flagship/repository.ts",
+      "angelcare-marketplace/partner-os/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_partner_subscriptions",
+    "domain": "partner",
+    "occurrences": 6,
+    "files": [
+      "angelcare-marketplace/conversion-universe/repository.ts",
+      "angelcare-marketplace/partner-os/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_partner_tenant_members",
+    "domain": "partner",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/partner-os/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_partner_tenants",
+    "domain": "partner",
+    "occurrences": 10,
+    "files": [
+      "angelcare-marketplace/network-capacity-grid/repository.ts",
+      "angelcare-marketplace/partner-os/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_partner_usage_counters",
+    "domain": "partner",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/partner-os/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_payment_attempts",
+    "domain": "payments",
+    "occurrences": 13,
+    "files": [
+      "angelcare-marketplace/admin-control-plane/repository.ts",
+      "angelcare-marketplace/customer-commerce/payment-admin.ts",
+      "angelcare-marketplace/customer-commerce/repository.ts",
+      "angelcare-marketplace/financial-control-ledger/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_payment_disputes",
+    "domain": "payments",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/customer-commerce/payment-admin.ts",
+      "angelcare-marketplace/financial-control-ledger/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_payment_intents",
+    "domain": "payments",
+    "occurrences": 47,
+    "files": [
+      "angelcare-marketplace/admin-control-plane/repository.ts",
+      "angelcare-marketplace/conversion-universe/repository.ts",
+      "angelcare-marketplace/customer-commerce/admin-repository.ts",
+      "angelcare-marketplace/customer-commerce/payment-admin.ts",
+      "angelcare-marketplace/customer-commerce/paypal-admin.ts",
+      "angelcare-marketplace/customer-commerce/repository.ts",
+      "angelcare-marketplace/customer-relationship-command/repository.ts",
+      "angelcare-marketplace/enterprise-closure/repository.ts",
+      "angelcare-marketplace/enterprise-command/command-center-repository.ts",
+      "angelcare-marketplace/enterprise-command/repository.ts",
+      "angelcare-marketplace/financial-control-ledger/repository.ts",
+      "angelcare-marketplace/total-commerce-control/repository.ts",
+      "angelcare-marketplace/transaction-flight-deck/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_payment_provider_events",
+    "domain": "payments",
+    "occurrences": 6,
+    "files": [
+      "angelcare-marketplace/customer-commerce/payment-admin.ts",
+      "angelcare-marketplace/customer-commerce/paypal-admin.ts",
+      "angelcare-marketplace/customer-commerce/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_payment_reconciliation_items",
+    "domain": "payments",
+    "occurrences": 5,
+    "files": [
+      "angelcare-marketplace/customer-commerce/payment-admin.ts",
+      "angelcare-marketplace/financial-control-ledger/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_payment_refunds",
+    "domain": "payments",
+    "occurrences": 11,
+    "files": [
+      "angelcare-marketplace/admin-control-plane/repository.ts",
+      "angelcare-marketplace/customer-commerce/payment-admin.ts",
+      "angelcare-marketplace/customer-commerce/repository.ts",
+      "angelcare-marketplace/customer-relationship-command/repository.ts",
+      "angelcare-marketplace/enterprise-command/command-center-repository.ts",
+      "angelcare-marketplace/enterprise-command/repository.ts",
+      "angelcare-marketplace/financial-control-ledger/repository.ts",
+      "angelcare-marketplace/transaction-flight-deck/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_post_launch_reviews",
+    "domain": "post",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/launch-assurance/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_promotion_targets",
+    "domain": "promotions",
+    "occurrences": 3,
+    "files": [
+      "angelcare-marketplace/enterprise-closure/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_promotions",
+    "domain": "promotions",
+    "occurrences": 4,
+    "files": [
+      "angelcare-marketplace/conversion-universe/repository.ts",
+      "angelcare-marketplace/enterprise-closure/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_provider_assignments",
+    "domain": "provider_workforce",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/network-capacity-grid/repository.ts",
+      "angelcare-marketplace/provider-workforce/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_provider_availability_exceptions",
+    "domain": "provider_workforce",
+    "occurrences": 3,
+    "files": [
+      "angelcare-marketplace/network-capacity-grid/repository.ts",
+      "angelcare-marketplace/provider-workforce/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_provider_availability_rules",
+    "domain": "provider_workforce",
+    "occurrences": 5,
+    "files": [
+      "angelcare-marketplace/network-capacity-grid/repository.ts",
+      "angelcare-marketplace/provider-workforce/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_provider_certifications",
+    "domain": "provider_workforce",
+    "occurrences": 5,
+    "files": [
+      "angelcare-marketplace/network-capacity-grid/repository.ts",
+      "angelcare-marketplace/provider-workforce/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_provider_documents",
+    "domain": "provider_workforce",
+    "occurrences": 5,
+    "files": [
+      "angelcare-marketplace/network-capacity-grid/repository.ts",
+      "angelcare-marketplace/provider-workforce/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_provider_links",
+    "domain": "provider_workforce",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/enterprise-command/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_provider_operational_eligibility",
+    "domain": "provider_workforce",
+    "occurrences": 5,
+    "files": [
+      "angelcare-marketplace/academy-engine/final-repository.ts",
+      "angelcare-marketplace/network-capacity-grid/repository.ts",
+      "angelcare-marketplace/provider-workforce/repository.ts",
+      "angelcare-marketplace/transaction-flight-deck/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_provider_payable_eligibility",
+    "domain": "provider_workforce",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/provider-workforce/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_provider_performance_events",
+    "domain": "provider_workforce",
+    "occurrences": 3,
+    "files": [
+      "angelcare-marketplace/network-capacity-grid/repository.ts",
+      "angelcare-marketplace/provider-workforce/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_provider_profiles",
+    "domain": "provider_workforce",
+    "occurrences": 14,
+    "files": [
+      "angelcare-marketplace/academy-engine/final-repository.ts",
+      "angelcare-marketplace/commerce-product-atelier/repository.ts",
+      "angelcare-marketplace/enterprise-command/command-center-repository.ts",
+      "angelcare-marketplace/enterprise-command/product-360-import-engine.ts",
+      "angelcare-marketplace/network-capacity-grid/repository.ts",
+      "angelcare-marketplace/provider-workforce/repository.ts",
+      "angelcare-marketplace/transaction-flight-deck/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_provider_service_qualifications",
+    "domain": "provider_workforce",
+    "occurrences": 7,
+    "files": [
+      "angelcare-marketplace/commerce-product-atelier/repository.ts",
+      "angelcare-marketplace/network-capacity-grid/repository.ts",
+      "angelcare-marketplace/provider-workforce/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_public_events",
+    "domain": "public_interactions",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/public-universe/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_public_inquiries",
+    "domain": "public_interactions",
+    "occurrences": 15,
+    "files": [
+      "angelcare-marketplace/customer-relationship-command/repository.ts",
+      "angelcare-marketplace/enterprise-command/repository.ts",
+      "angelcare-marketplace/public-universe/repository.ts",
+      "angelcare-marketplace/total-commerce-control/repository.ts",
+      "app/angelcare-marketplace/(protected)/admin/sanila-demo/page.tsx",
+      "app/api/angelcare-marketplace/admin/sanila-demo/route.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_public_inquiry_events",
+    "domain": "public_interactions",
+    "occurrences": 3,
+    "files": [
+      "angelcare-marketplace/total-commerce-control/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_public_navigation_v",
+    "domain": "public_interactions",
+    "occurrences": 3,
+    "files": [
+      "angelcare-marketplace/homepage-flagship/repository.ts",
+      "angelcare-marketplace/public-universe/repository.ts"
+    ],
+    "source_of_truth_status": "READ_MODEL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_qa_defects",
+    "domain": "qa",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/launch-assurance/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_qa_release_candidates",
+    "domain": "qa",
+    "occurrences": 3,
+    "files": [
+      "angelcare-marketplace/launch-assurance/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_qa_test_results",
+    "domain": "qa",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/launch-assurance/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_qa_test_runs",
+    "domain": "qa",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/launch-assurance/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_qa_test_suites",
+    "domain": "qa",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/launch-assurance/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_quality_assessments",
+    "domain": "trust_quality",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/trust-quality/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_quality_corrective_actions",
+    "domain": "trust_quality",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/trust-quality/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_quality_frameworks",
+    "domain": "trust_quality",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/conversion-universe/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_quality_non_conformities",
+    "domain": "trust_quality",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/trust-quality/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_quote_basket_items",
+    "domain": "quotes",
+    "occurrences": 7,
+    "files": [
+      "angelcare-marketplace/conversion-universe/repository.ts",
+      "angelcare-marketplace/marketplace-core/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_quote_baskets",
+    "domain": "quotes",
+    "occurrences": 14,
+    "files": [
+      "angelcare-marketplace/conversion-universe/repository.ts",
+      "angelcare-marketplace/marketplace-core/repository.ts",
+      "angelcare-marketplace/total-commerce-control/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_readiness_checks",
+    "domain": "qa",
+    "occurrences": 4,
+    "files": [
+      "angelcare-marketplace/server/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_reality_command_events",
+    "domain": "platform_governance",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/reality-completion/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_recently_viewed",
+    "domain": "search_discovery",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/total-commerce-control/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_reconciliation_cases",
+    "domain": "reconciliation",
+    "occurrences": 6,
+    "files": [
+      "angelcare-marketplace/operations-reconciliation/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_reconciliation_lines",
+    "domain": "reconciliation",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/operations-reconciliation/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_recovery_plans",
+    "domain": "operations",
+    "occurrences": 5,
+    "files": [
+      "angelcare-marketplace/operations-reconciliation/repository.ts",
+      "angelcare-marketplace/transaction-flight-deck/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_recovery_tests",
+    "domain": "operations",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/analytics-security/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_reference_register",
+    "domain": "platform_governance",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/enterprise-command/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_release_records",
+    "domain": "publication_release",
+    "occurrences": 3,
+    "files": [
+      "angelcare-marketplace/final-authority/repository.ts",
+      "angelcare-marketplace/server/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_replacement_cases",
+    "domain": "fulfillment",
+    "occurrences": 3,
+    "files": [
+      "angelcare-marketplace/operations-reconciliation/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_return_cases",
+    "domain": "fulfillment",
+    "occurrences": 3,
+    "files": [
+      "angelcare-marketplace/operations-reconciliation/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_role_permissions",
+    "domain": "security_permissions",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/auth/admin/admin-auth.ts",
+      "angelcare-marketplace/auth/context.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_saved_segments",
+    "domain": "segments",
+    "occurrences": 4,
+    "files": [
+      "angelcare-marketplace/enterprise-command/sovereign-repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_search_rules",
+    "domain": "search_discovery",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/total-commerce-control/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_security_access_reviews",
+    "domain": "security_permissions",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/analytics-security/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_security_events",
+    "domain": "security_permissions",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/analytics-security/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_security_isolation_tests",
+    "domain": "security_permissions",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/analytics-security/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_security_retention_policies",
+    "domain": "security_permissions",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/analytics-security/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_segment_memberships",
+    "domain": "segments",
+    "occurrences": 3,
+    "files": [
+      "angelcare-marketplace/conversion-universe/repository.ts",
+      "angelcare-marketplace/enterprise-command/sovereign-repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_sensitive_content_reviews",
+    "domain": "security_permissions",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/trust-quality/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_seo_metadata",
+    "domain": "content_experience",
+    "occurrences": 3,
+    "files": [
+      "angelcare-marketplace/localization-intelligence/final-repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_settlement_readiness",
+    "domain": "finance",
+    "occurrences": 4,
+    "files": [
+      "angelcare-marketplace/operations-reconciliation/repository.ts",
+      "angelcare-marketplace/vendor-authority/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_suppliers",
+    "domain": "suppliers",
+    "occurrences": 6,
+    "files": [
+      "angelcare-marketplace/admin-control-plane/repository.ts",
+      "angelcare-marketplace/marketplace-core/repository.ts",
+      "angelcare-marketplace/network-capacity-grid/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_surface_sections",
+    "domain": "content_experience",
+    "occurrences": 5,
+    "files": [
+      "angelcare-marketplace/total-commerce-control/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_surface_versions",
+    "domain": "content_experience",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/total-commerce-control/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_territories",
+    "domain": "territories",
+    "occurrences": 20,
+    "files": [
+      "angelcare-marketplace/category-native/repository.ts",
+      "angelcare-marketplace/commerce-studio/repository.ts",
+      "angelcare-marketplace/conversion-universe/repository.ts",
+      "angelcare-marketplace/enterprise-command/command-center-repository.ts",
+      "angelcare-marketplace/enterprise-command/product-360-import-engine.ts",
+      "angelcare-marketplace/enterprise-command/repository.ts",
+      "angelcare-marketplace/homepage-flagship/repository.ts",
+      "angelcare-marketplace/network-capacity-grid/repository.ts",
+      "angelcare-marketplace/public-universe/repository.ts",
+      "angelcare-marketplace/territory-os/repository.ts",
+      "angelcare-marketplace/total-commerce-control/repository.ts",
+      "angelcare-marketplace/transaction-flight-deck/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_territory_assignments",
+    "domain": "territory",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/territory-os/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_territory_city_zones",
+    "domain": "territory",
+    "occurrences": 3,
+    "files": [
+      "angelcare-marketplace/enterprise-command/product-360-import-engine.ts",
+      "angelcare-marketplace/homepage-flagship/repository.ts",
+      "angelcare-marketplace/territory-os/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_territory_health_events",
+    "domain": "territory",
+    "occurrences": 4,
+    "files": [
+      "angelcare-marketplace/territory-os/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_territory_launch_approvals",
+    "domain": "territory",
+    "occurrences": 3,
+    "files": [
+      "angelcare-marketplace/territory-os/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_territory_launch_checks",
+    "domain": "territory",
+    "occurrences": 4,
+    "files": [
+      "angelcare-marketplace/territory-os/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_territory_override_reviews",
+    "domain": "territory",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/territory-os/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_territory_overrides",
+    "domain": "territory",
+    "occurrences": 5,
+    "files": [
+      "angelcare-marketplace/territory-os/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_territory_settings",
+    "domain": "territory",
+    "occurrences": 8,
+    "files": [
+      "angelcare-marketplace/territory-os/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_territory_support_contacts",
+    "domain": "territory",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/territory-os/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_territory_templates",
+    "domain": "territory",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/territory-os/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_translation_apply_changes",
+    "domain": "localization",
+    "occurrences": 4,
+    "files": [
+      "angelcare-marketplace/localization-intelligence/localization-os.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_translation_candidates",
+    "domain": "localization",
+    "occurrences": 8,
+    "files": [
+      "angelcare-marketplace/localization-intelligence/final-repository.ts",
+      "angelcare-marketplace/localization-intelligence/localization-os.ts",
+      "angelcare-marketplace/localization-intelligence/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_translation_exports",
+    "domain": "localization",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/localization-intelligence/localization-os.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_translation_import_rows",
+    "domain": "localization",
+    "occurrences": 5,
+    "files": [
+      "angelcare-marketplace/localization-intelligence/localization-os.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_translation_imports",
+    "domain": "localization",
+    "occurrences": 6,
+    "files": [
+      "angelcare-marketplace/localization-intelligence/localization-os.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_translation_inventory_v",
+    "domain": "localization",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/localization-intelligence/final-repository.ts"
+    ],
+    "source_of_truth_status": "READ_MODEL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_translation_memory",
+    "domain": "localization",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/localization-intelligence/final-repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_translation_reviews",
+    "domain": "localization",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/localization-intelligence/final-repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_translations",
+    "domain": "translations",
+    "occurrences": 12,
+    "files": [
+      "angelcare-marketplace/localization-intelligence/final-repository.ts",
+      "angelcare-marketplace/localization-intelligence/localization-os.ts",
+      "angelcare-marketplace/localization-intelligence/runtime.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_trust_badge_definitions",
+    "domain": "trust_quality",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/homepage-flagship/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_trust_badge_issuances",
+    "domain": "trust_quality",
+    "occurrences": 3,
+    "files": [
+      "angelcare-marketplace/homepage-flagship/repository.ts",
+      "angelcare-marketplace/live-experience-command/repository.ts",
+      "angelcare-marketplace/trust-quality/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_trust_evidence",
+    "domain": "trust_quality",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/trust-quality/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_trust_sops",
+    "domain": "trust_quality",
+    "occurrences": 3,
+    "files": [
+      "angelcare-marketplace/trust-quality/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_trust_standards",
+    "domain": "trust_quality",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/trust-quality/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_user_role_assignments",
+    "domain": "security_permissions",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/auth/admin/admin-auth.ts",
+      "angelcare-marketplace/auth/context.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_vendor_contracts",
+    "domain": "vendor",
+    "occurrences": 5,
+    "files": [
+      "angelcare-marketplace/network-capacity-grid/repository.ts",
+      "angelcare-marketplace/vendor-authority/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_vendor_inventory_authority",
+    "domain": "vendor",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/vendor-authority/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_vendor_links",
+    "domain": "vendor",
+    "occurrences": 4,
+    "files": [
+      "angelcare-marketplace/enterprise-command/product-360-import-engine.ts",
+      "angelcare-marketplace/network-capacity-grid/repository.ts",
+      "angelcare-marketplace/vendor-authority/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_vendor_orders",
+    "domain": "vendor",
+    "occurrences": 4,
+    "files": [
+      "angelcare-marketplace/network-capacity-grid/repository.ts",
+      "angelcare-marketplace/vendor-authority/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_vendor_performance_events",
+    "domain": "vendor",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/network-capacity-grid/repository.ts",
+      "angelcare-marketplace/vendor-authority/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_vendor_quality_reviews",
+    "domain": "vendor",
+    "occurrences": 4,
+    "files": [
+      "angelcare-marketplace/network-capacity-grid/repository.ts",
+      "angelcare-marketplace/vendor-authority/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_wallet_accounts",
+    "domain": "wallet",
+    "occurrences": 11,
+    "files": [
+      "angelcare-marketplace/admin-control-plane/repository.ts",
+      "angelcare-marketplace/customer-commerce/admin-repository.ts",
+      "angelcare-marketplace/customer-commerce/repository.ts",
+      "angelcare-marketplace/customer-relationship-command/repository.ts",
+      "angelcare-marketplace/enterprise-command/repository.ts",
+      "angelcare-marketplace/financial-control-ledger/repository.ts",
+      "angelcare-marketplace/live-experience-command/repository.ts",
+      "angelcare-marketplace/total-commerce-control/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_wallet_balance_buckets",
+    "domain": "wallet",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/customer-commerce/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_wallet_ledger_entries",
+    "domain": "wallet",
+    "occurrences": 3,
+    "files": [
+      "angelcare-marketplace/customer-commerce/repository.ts",
+      "angelcare-marketplace/financial-control-ledger/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_wallet_policies",
+    "domain": "wallet",
+    "occurrences": 7,
+    "files": [
+      "angelcare-marketplace/customer-commerce/admin-repository.ts",
+      "angelcare-marketplace/customer-commerce/wallet-policy.ts",
+      "angelcare-marketplace/live-experience-command/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_wallet_policy_assignments",
+    "domain": "wallet",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/customer-commerce/admin-repository.ts",
+      "angelcare-marketplace/customer-commerce/wallet-policy.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_wallet_policy_evaluations",
+    "domain": "wallet",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/customer-commerce/wallet-policy.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_wallet_policy_versions",
+    "domain": "wallet",
+    "occurrences": 1,
+    "files": [
+      "angelcare-marketplace/customer-commerce/admin-repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_wallet_reconciliation_items",
+    "domain": "wallet",
+    "occurrences": 5,
+    "files": [
+      "angelcare-marketplace/customer-commerce/repository.ts",
+      "angelcare-marketplace/customer-commerce/wallet-admin.ts",
+      "angelcare-marketplace/financial-control-ledger/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_wallet_risk_cases",
+    "domain": "wallet",
+    "occurrences": 4,
+    "files": [
+      "angelcare-marketplace/customer-commerce/admin-repository.ts",
+      "angelcare-marketplace/customer-commerce/wallet-admin.ts",
+      "angelcare-marketplace/financial-control-ledger/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_wallet_topups",
+    "domain": "wallet",
+    "occurrences": 4,
+    "files": [
+      "angelcare-marketplace/customer-commerce/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_web_presence_profiles",
+    "domain": "web_presence",
+    "occurrences": 4,
+    "files": [
+      "angelcare-marketplace/web-presence/api.ts",
+      "angelcare-marketplace/web-presence/repository.ts",
+      "angelcare-marketplace/web-presence/verification.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_web_presence_verifications",
+    "domain": "web_presence",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/web-presence/repository.ts",
+      "angelcare-marketplace/web-presence/verification.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_web_presence_versions",
+    "domain": "web_presence",
+    "occurrences": 12,
+    "files": [
+      "angelcare-marketplace/web-presence/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "angelcare_marketplace_workspace_access",
+    "domain": "workspace_access",
+    "occurrences": 3,
+    "files": [
+      "angelcare-marketplace/auth/context.ts",
+      "angelcare-marketplace/workspace-access/repository.ts"
+    ],
+    "source_of_truth_status": "CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "app_audit_logs",
+    "domain": "app",
+    "occurrences": 2,
+    "files": [
+      "angelcare-marketplace/auth/admin/admin-auth.ts"
+    ],
+    "source_of_truth_status": "PLATFORM_CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "app_sessions",
+    "domain": "app",
+    "occurrences": 3,
+    "files": [
+      "angelcare-marketplace/auth/admin/admin-auth.ts",
+      "app/api/angelcare-marketplace/admin/auth/logout/route.ts"
+    ],
+    "source_of_truth_status": "PLATFORM_CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "app_users",
+    "domain": "app",
+    "occurrences": 3,
+    "files": [
+      "angelcare-marketplace/auth/admin/admin-auth.ts",
+      "angelcare-marketplace/workspace-access/repository.ts"
+    ],
+    "source_of_truth_status": "PLATFORM_CANONICAL",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "sanila_demo_access_events",
+    "domain": "sanila",
+    "occurrences": 1,
+    "files": [
+      "app/angelcare-marketplace/(protected)/admin/sanila-demo/page.tsx"
+    ],
+    "source_of_truth_status": "ADJACENT_SPECIALIZED",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "sanila_demo_access_grants",
+    "domain": "sanila",
+    "occurrences": 11,
+    "files": [
+      "app/angelcare-marketplace/(protected)/admin/sanila-demo/page.tsx",
+      "app/api/angelcare-marketplace/admin/sanila-demo/route.ts"
+    ],
+    "source_of_truth_status": "ADJACENT_SPECIALIZED",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "sanila_demo_configs",
+    "domain": "sanila",
+    "occurrences": 1,
+    "files": [
+      "app/angelcare-marketplace/(protected)/admin/sanila-demo/page.tsx"
+    ],
+    "source_of_truth_status": "ADJACENT_SPECIALIZED",
+    "shadow_implementation_allowed": false
+  },
+  {
+    "name": "sanila_demo_sessions",
+    "domain": "sanila",
+    "occurrences": 2,
+    "files": [
+      "app/api/angelcare-marketplace/admin/sanila-demo/route.ts"
+    ],
+    "source_of_truth_status": "ADJACENT_SPECIALIZED",
+    "shadow_implementation_allowed": false
+  }
+]

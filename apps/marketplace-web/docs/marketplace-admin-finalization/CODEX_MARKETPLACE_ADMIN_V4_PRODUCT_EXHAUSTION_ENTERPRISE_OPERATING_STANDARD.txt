@@ -1,0 +1,1380 @@
+ANGELCARE MARKETPLACE ADMIN
+V4 — PRODUCT EXHAUSTION & ENTERPRISE OPERATING STANDARD
+=======================================================
+
+STATUS
+------
+This V4 is the highest governing execution authority for the final
+ANGELCARE MARKETPLACE ADMIN frontend productization.
+
+It supersedes V1, V2 and V3 wherever a conflict exists.
+V2 and V3 remain supporting doctrine, but V4 is final authority.
+
+PROJECT ROOT
+------------
+~/Desktop/angelcare-platform/apps/marketplace-web
+
+APPROVED DESIGN AUTHORITY
+-------------------------
+admin-design/batch-01/
+through
+admin-design/batch-11/
+
+Everything already inside admin-design/ is APPROVED.
+
+The 110 approved PNG projections are the VISUAL FLOOR.
+They are not the functional ceiling.
+
+The BATCH_01_SOURCE_MAPPING.txt through BATCH_11_SOURCE_MAPPING.txt files
+are the SOURCE CAPABILITY MAPS.
+
+The existing Marketplace backend is the ultimate business truth.
+
+=======================================================
+THE ACTUAL MISSION
+=======================================================
+
+The final AngelCare Marketplace Admin must become a mature,
+commercially operable, deeply integrated Marketplace Operating System.
+
+The operator must be able to run the Marketplace without needing developers
+for normal day-to-day commercial, operational, storefront, customer,
+provider, Academy, B2B, finance, quality and governance work that the
+existing backend already supports.
+
+The product is NOT complete because:
+- 110 screens exist
+- all routes render
+- TypeScript passes
+- screenshots look premium
+- tables show data
+- buttons exist
+- a build succeeds
+
+The product is complete only when:
+
+EVERY OPERATOR-RELEVANT EXISTING CAPABILITY
+HAS BEEN:
+1. discovered
+2. classified
+3. assigned to a canonical workspace
+4. exposed through a mature interaction
+5. permission-bound
+6. state-complete
+7. error-complete
+8. recovery-aware where supported
+9. linked to related objects
+10. verified
+
+=======================================================
+ZERO ORPHANED CAPABILITY RULE
+=======================================================
+
+THIS IS THE MOST IMPORTANT RULE IN V4.
+
+Codex must inventory the entire Marketplace Admin source surface and identify
+every operator-relevant:
+
+- page route
+- API route
+- repository function
+- service function
+- business mutation
+- lifecycle transition
+- permission
+- object action
+- publishing action
+- bulk action
+- import/export action
+- scheduling action
+- approval/rejection action
+- assignment action
+- recovery action
+- version/history action
+- evidence action
+- configuration authority
+- storefront authority
+- finance authority
+- quality authority
+- analytics authority
+
+Every capability receives exactly one disposition:
+
+EXPOSED_CANONICALLY
+EXPOSED_AS_ADVANCED_TOOL
+MERGED_INTO_DOSSIER
+MERGED_INTO_STUDIO
+MERGED_INTO_CONTROL_ROOM
+INTERNAL_ONLY_NOT_OPERATOR_FACING
+LEGACY_COMPATIBILITY_ONLY
+BLOCKED_BY_PROVEN_BACKEND_GAP
+DEPRECATED_REMOVE_LATER
+
+NO operator-relevant capability may remain:
+- hidden accidentally
+- trapped only in a legacy route
+- implemented in code but unreachable
+- available only through source-code knowledge
+- duplicated in competing admin generations
+
+Create:
+
+docs/marketplace-admin-finalization/
+ADMIN_CAPABILITY_EXHAUSTION_MATRIX.csv
+
+Columns:
+
+domain
+source_file
+source_symbol
+capability_type
+capability
+canonical_workspace
+canonical_route
+interaction_surface
+permission
+disposition
+implementation_status
+verification_status
+notes
+
+FINAL RELEASE GATE:
+ZERO UNDISPOSITIONED OPERATOR-RELEVANT CAPABILITIES.
+
+=======================================================
+USER AUTONOMY STANDARD
+=======================================================
+
+For every operator-relevant capability supported by the source,
+the operator must be able to complete the workflow in the Admin.
+
+Examples:
+
+CATALOG
+create -> enrich -> price -> classify -> media -> availability ->
+territory -> trust -> preview -> publish -> update -> pause/archive
+
+CATEGORY
+create -> hierarchy -> storefront composition -> assign products ->
+filters/sort -> SEO -> preview -> publish
+
+CUSTOMER
+create -> inspect -> relate family -> commercial activity -> support ->
+payments/documents -> communication -> next action
+
+ORDER
+create/receive -> inspect -> payment state -> fulfillment -> provider ->
+evidence -> exception -> recovery -> completion
+
+STOREFRONT
+compose -> preview -> validate -> schedule/publish -> inspect history
+
+PROMOTION
+create -> eligibility -> targeting -> scheduling -> preview ->
+activate -> pause -> inspect outcome where source supports it
+
+PROVIDER
+onboard -> documents -> certification -> eligibility -> availability ->
+assignment -> mission -> evidence -> quality -> payable readiness
+
+ACADEMY
+program -> cohort -> session -> trainer -> attendance -> assessment ->
+remediation -> certificate -> eligibility
+
+B2B
+organization -> dossier -> plan/program -> subscription -> usage ->
+quality -> finance
+
+FINANCE
+payment -> evidence -> invoice/receipt -> refund/exception ->
+wallet where relevant -> reconciliation -> ledger closure
+
+QUALITY
+check -> evidence -> issue -> investigation -> CAPA -> verification -> closure
+
+LAUNCH
+readiness -> blockers -> evidence -> approvals -> release candidate ->
+activation -> post-launch observation
+
+If a source-supported next step exists but the UI does not expose it,
+the workflow is INCOMPLETE.
+
+=======================================================
+GLOBAL ADMIN PRODUCT CONSTITUTION
+=======================================================
+
+PRIMARY SIDEBAR IS FROZEN:
+
+1. Accueil
+2. Commandes & réservations
+3. Produits & services
+4. Catégories & collections
+5. Clients
+6. Boutique
+7. Marketing & promotions
+8. Opérations
+9. Prestataires & fournisseurs
+10. Academy
+11. B2B & partenaires
+12. Finance
+13. Trust & qualité
+14. Analytics & intelligence
+15. Paramètres & gouvernance
+
+No alternate primary navigation.
+No route dump.
+No technical engine pollution.
+No duplicate workspace generations visible to users.
+
+=======================================================
+GLOBAL POWER LAYER
+=======================================================
+
+The final Admin shell should provide the strongest feasible operator power
+without inventing backend business authority.
+
+Where technically feasible:
+
+GLOBAL SEARCH / OBJECT FINDER
+- product
+- category
+- customer
+- family
+- order
+- booking
+- quote
+- subscription
+- provider
+- vendor
+- supplier
+- organization
+- payment
+- invoice
+- Academy object
+- quality case
+- internal/public reference
+
+COMMAND PALETTE
+- navigate workspace
+- open recent object
+- quick create
+- execute safe contextual commands
+- search by reference
+
+QUICK CREATE
+- source-supported major object creation shortcuts
+
+RECENTS
+- recently viewed objects
+- recent operational objects
+- safe local persistence if server persistence does not exist
+
+GLOBAL ATTENTION
+Where existing data supports it:
+- failed actions
+- pending approvals
+- overdue/blocked cases
+- missing evidence
+- unreconciled finance items
+- provider readiness problems
+- publication/readiness blockers
+
+Do not invent notification persistence.
+
+=======================================================
+ENTERPRISE NAVIGATION MODEL
+=======================================================
+
+Every object page must provide:
+
+- canonical breadcrumb
+- object reference
+- object type
+- status
+- parent/workspace
+- previous list context when possible
+- related object links
+- open-in-new-tab-safe hrefs
+- copy reference
+- copy deep link
+
+List -> dossier -> drawer -> related object navigation must not feel chaotic.
+
+=======================================================
+REGISTRY STANDARD — NON-NEGOTIABLE
+=======================================================
+
+Every serious registry must use an enterprise data-grid pattern where relevant.
+
+Required where source-supported:
+
+- search
+- advanced filters
+- filter chips
+- clear filters
+- sort
+- pagination
+- row count
+- column configuration
+- density control
+- sticky header
+- status badges
+- warnings
+- owner/assignee
+- territory
+- last updated
+- canonical reference
+- row actions
+- row inspector
+- bulk selection
+- export
+- bulk action toolbar
+
+Saved view behavior:
+- use existing server saved-view authority if present
+- otherwise safe local user preference storage may be used for purely UI preferences
+- never pretend local preferences are globally shared
+
+No giant card list when a real registry requires table density.
+
+=======================================================
+ADVANCED FILTER BUILDER
+=======================================================
+
+Where the underlying data supports sufficient structured fields,
+registries should support advanced filtering beyond one dropdown.
+
+Pattern:
+
+FILTER GROUP
+AND / OR only if safe and maintainable
+field
+operator
+value
+remove rule
+add rule
+apply
+reset
+
+Do not create a fake query language.
+Do not invent fields.
+
+=======================================================
+360 DOSSIER STANDARD
+=======================================================
+
+Major objects require 360 dossiers.
+
+HEADER:
+- identity
+- canonical reference
+- status
+- lifecycle
+- owner
+- territory
+- primary action
+- overflow actions
+
+SUMMARY:
+- only critical facts
+
+MAIN BODY:
+- domain tabs
+- relationships
+- operational state
+- financial state where relevant
+- quality state where relevant
+- documents/evidence
+- activity
+- history/audit
+
+RIGHT RAIL:
+- next actions
+- blockers
+- alerts
+- dependencies
+- related objects
+- quick links
+
+BOTTOM / TIMELINE:
+- source-backed meaningful events
+
+No major dossier may be only a long vertical form.
+
+=======================================================
+STUDIO STANDARD
+=======================================================
+
+Homepage, Category Storefront, Page Builder, Navigation, Footer,
+Live Experience, Merchandising, Category-Native, Price Book and comparable
+configuration surfaces must behave like real studios.
+
+PREFERRED STRUCTURE:
+
+LEFT PANEL
+- hierarchy
+- block tree
+- page structure
+- component list
+
+CENTER
+- working canvas
+- real preview
+- selected object context
+
+RIGHT INSPECTOR
+- configuration
+- styling/data fields
+- visibility
+- schedule
+- validation
+
+TOP COMMAND BAR
+- draft status
+- locale
+- viewport
+- preview
+- save
+- schedule
+- publish
+
+SECONDARY
+- readiness
+- dependencies
+- history
+- versions
+- rollback when source-supported
+
+No giant vertical settings form when a visual operating studio is appropriate.
+
+=======================================================
+CONTROL ROOM STANDARD
+=======================================================
+
+Operations, Supply, Finance, Trust, Analytics and Launch control rooms must
+operate around prioritized action.
+
+Mandatory questions:
+
+WHAT NEEDS ATTENTION?
+WHY?
+WHO OWNS IT?
+HOW URGENT?
+WHAT IS BLOCKED?
+WHAT CAN I DO NOW?
+WHAT EVIDENCE EXISTS?
+WHAT HAPPENS IF NOTHING CHANGES?
+
+Use:
+- priority queues
+- exception groups
+- ownership
+- SLA/age
+- risk/readiness
+- next action
+- evidence
+- drilldown
+- recovery
+- handoff
+
+No KPI-only executive wallpaper.
+
+=======================================================
+DRAWER / INSPECTOR STANDARD
+=======================================================
+
+Drawers are first-class product surfaces.
+
+Use drawers where context preservation matters.
+
+Examples:
+- customer quick dossier
+- product quick inspector
+- provider eligibility review
+- mission assignment
+- fulfillment investigation
+- payment investigation
+- refund review
+- invoice readiness
+- publication readiness
+- quality evidence review
+- incident investigation
+- history/audit
+- relationship inspection
+
+A mature drawer includes:
+
+HEADER
+- object
+- reference
+- status
+
+BODY
+- contextual facts
+- dependencies
+- evidence
+- editable fields if permitted
+
+FOOTER
+- actions
+- validation
+- warnings
+
+STATES
+- loading
+- error
+- permission denied
+- success
+- unsaved
+- conflict if detectable
+
+=======================================================
+MODAL STANDARD
+=======================================================
+
+Never use browser alert/prompt/confirm for serious operations.
+
+Use purpose-built modals.
+
+HIGH-RISK MODAL MUST INCLUDE:
+- exact object
+- current state
+- target state
+- consequences
+- dependency impact
+- amount/value impact when relevant
+- reason
+- notes
+- evidence where relevant
+- permission/approval requirement
+- reversibility warning
+- confirm action
+
+Examples:
+publish
+refund
+reject
+approve
+archive
+cancel
+wallet adjustment
+margin exception
+quality disposition
+certificate revocation
+territory override
+launch activation
+
+=======================================================
+MULTI-STEP WORKFLOW STANDARD
+=======================================================
+
+When source complexity justifies it, use multi-step guided workflows.
+
+Potential patterns:
+- create product
+- create manual order
+- provider onboarding
+- refund investigation
+- bulk import
+- publication readiness
+- launch readiness
+
+Steps should include:
+- progress
+- validation
+- back/next
+- save draft where supported
+- final review
+- success outcome
+
+Do not invent persistence between steps if backend does not support it.
+
+=======================================================
+ASYNC JOB / LONG-RUNNING OPERATION STANDARD
+=======================================================
+
+If the source has imports, exports, batch jobs, publication jobs,
+reconciliation jobs or long-running operations:
+
+Build a serious JOB EXPERIENCE.
+
+Expose where supported:
+- job ID
+- type
+- initiated by
+- created at
+- status
+- progress
+- rows/items processed
+- success count
+- failure count
+- warnings
+- downloadable failure artifact if source exists
+- retry
+- rollback where supported
+- history
+
+Do not block the UI with fake progress.
+
+Create:
+ADMIN_ASYNC_JOB_REGISTER.csv
+
+=======================================================
+VERSIONING / DIFF / HISTORY STANDARD
+=======================================================
+
+Where source has version/history semantics:
+
+Expose:
+- current version
+- prior versions
+- publication version
+- actor
+- timestamp
+- reason
+- compare changes
+- restore/rollback where supported
+
+Use a DIFF VIEW when beneficial:
+- changed fields
+- before
+- after
+
+No fabricated version control.
+
+=======================================================
+RELATIONSHIP GRAPH / CONTEXT STANDARD
+=======================================================
+
+Major objects should expose related records in a navigable manner.
+
+Product:
+category
+collections
+promotion
+orders
+fulfillment
+provider/supplier
+quality
+
+Customer:
+family
+orders
+bookings
+quotes
+subscriptions
+payments
+support
+communications
+
+Provider:
+documents
+certifications
+availability
+assignments
+missions
+quality
+payables
+
+Organization:
+contacts
+plans
+subscriptions
+programs
+Academy
+usage
+finance
+
+Do not create a visual graph unless useful.
+A structured relationship panel is sufficient.
+
+=======================================================
+INLINE EDITING STANDARD
+=======================================================
+
+Use inline editing for low-risk, high-frequency edits only.
+
+Examples where safe:
+- labels
+- tags
+- assignment
+- sort order
+- simple visibility flag
+
+Do NOT inline-edit:
+- refunds
+- payment states
+- approval decisions
+- margin exceptions
+- compliance decisions
+- publication transitions
+- certificate decisions
+
+=======================================================
+BULK OPERATIONS STANDARD
+=======================================================
+
+Where backend bulk authority exists:
+
+- select rows
+- select page
+- select matching scope only if supported safely
+- bulk toolbar
+- action scope summary
+- permission check
+- consequence preview
+- confirmation
+- progress/job state
+- partial success
+- failure reporting
+
+Do not fake governed bulk operations with naive client-side loops.
+
+=======================================================
+IMPORT / EXPORT STANDARD
+=======================================================
+
+IMPORT:
+- template download
+- field/column documentation
+- dry run
+- row validation
+- error report
+- warning report
+- execute valid rows where source supports it
+- history
+- rollback where source supports it
+
+EXPORT:
+- current filtered set vs all
+- file format
+- generated timestamp
+- asynchronous generation if real source requires it
+
+No placeholder downloads.
+
+=======================================================
+PUBLICATION STANDARD
+=======================================================
+
+For all publishable objects:
+
+Expose where supported:
+- draft
+- readiness
+- blocking errors
+- warnings
+- preview
+- locale
+- territory
+- audience
+- schedule
+- publication action
+- current live status
+- publication history
+- rollback/restore if available
+
+A publish button without readiness context is immature.
+
+=======================================================
+PREVIEW / IMPACT STANDARD
+=======================================================
+
+Before source-supported changes with downstream effects, show impact.
+
+Product publication:
+public catalog impact
+
+Category:
+storefront impact
+
+Homepage:
+public homepage impact
+
+Navigation:
+header/mobile/footer impact
+
+Promotion:
+eligibility/audience/schedule impact
+
+Price:
+margin/customer impact where computable
+
+Provider:
+dispatch eligibility impact
+
+Quality:
+public trust/badge impact
+
+Certificate:
+provider eligibility impact
+
+No invented calculations.
+
+=======================================================
+PERMISSION STANDARD
+=======================================================
+
+Every sensitive interaction maps to actual permission authority.
+
+Create:
+ADMIN_PERMISSION_COVERAGE.csv
+
+Columns:
+workspace
+route
+object
+action
+permission
+server_authority
+frontend_behavior
+verified
+
+Frontend behavior:
+VISIBLE_ENABLED
+VISIBLE_DISABLED_WITH_REASON
+READ_ONLY
+HIDDEN
+APPROVAL_REQUIRED
+
+Never use frontend visibility as the security boundary.
+
+=======================================================
+APPROVAL / SEPARATION-OF-DUTIES STANDARD
+=======================================================
+
+Where source supports governed approvals:
+
+Display:
+- submitter
+- reviewer
+- approval state
+- decision history
+- reason
+- evidence
+- blocked self-approval where backend enforces it
+- next authority
+
+Applicable to source-supported:
+- margin exceptions
+- quality decisions
+- publication
+- finance
+- launch
+- provider eligibility
+- other governed transitions
+
+=======================================================
+ACTIVITY / AUDIT STANDARD
+=======================================================
+
+If source exposes audit/history/activity:
+surface it.
+
+Meaningful events:
+- creation
+- edit
+- status transition
+- assignment
+- approval
+- rejection
+- publish
+- unpublish
+- refund
+- reconciliation
+- evidence upload
+- incident resolution
+- quality disposition
+
+Show:
+actor
+time
+action
+reason
+reference
+related object
+
+No fake audit history.
+
+=======================================================
+COLLABORATION STANDARD
+=======================================================
+
+Where existing authority supports assignments/notes/tasks/comments:
+
+Expose:
+- owner
+- assignee
+- note
+- internal comment
+- due date
+- next action
+- handoff
+- escalation
+
+Do not invent collaborative persistence if not present.
+
+=======================================================
+ERROR STANDARD
+=======================================================
+
+Every canonical page must have a professional failure state.
+
+Do not:
+- show blank page
+- expose raw stack trace
+- lose user input
+- show generic "Something went wrong" only
+
+Explain:
+- what failed
+- what was not changed
+- whether retry is safe
+- what operator should do
+- reference/error identifier when available
+
+=======================================================
+CONFLICT / UNSAVED STANDARD
+=======================================================
+
+All editing workflows must handle:
+
+- dirty state
+- save in progress
+- save success
+- save failure
+- navigation-away warning
+- cancel changes
+
+If the architecture exposes concurrency/version conflict:
+show conflict resolution.
+
+If it does not:
+do not claim concurrency protection.
+
+=======================================================
+STATE COMPLETENESS STANDARD
+=======================================================
+
+For every canonical route, record applicable:
+
+LOADING
+SKELETON
+EMPTY
+FIRST_USE
+POPULATED
+FILTERED_EMPTY
+PARTIAL
+STALE
+VALIDATION_ERROR
+SERVER_ERROR
+PERMISSION_DENIED
+BLOCKED
+DEPENDENCY_MISSING
+APPROVAL_PENDING
+SUCCESS
+SAVE_FAILURE
+UNSAVED
+CONFLICT
+PAUSED
+ARCHIVED
+NOT_READY
+
+Create:
+ADMIN_STATE_COVERAGE.csv
+
+=======================================================
+ACCESSIBILITY STANDARD
+=======================================================
+
+Mandatory:
+- keyboard access
+- semantic HTML
+- correct labels
+- visible focus
+- modal focus trap
+- drawer focus management
+- Escape handling
+- screen reader meaning
+- table semantics
+- contrast
+- status not color-only
+- reduced-motion respect
+
+Create:
+ADMIN_ACCESSIBILITY_ACCEPTANCE.md
+
+=======================================================
+PERFORMANCE STANDARD
+=======================================================
+
+The Admin must remain viable with real data.
+
+Do:
+- paginate
+- server filter/search when architecture supports it
+- lazy-load expensive tabs
+- avoid fetching unused data
+- avoid huge client bundles
+- preserve server/client separation
+- cache only safely
+- virtualize large grids only when needed
+
+Do not produce fake benchmark numbers.
+
+Create:
+ADMIN_PERFORMANCE_NOTES.md
+
+=======================================================
+RESPONSIVE STANDARD
+=======================================================
+
+Desktop is primary.
+
+Support:
+- wide desktop
+- standard laptop
+- tablet-safe layout
+- controlled small-screen fallback
+
+Do not destroy desktop density for mobile-first aesthetics.
+
+Tables:
+- deliberate horizontal strategy
+- column prioritization
+- inspector fallback
+
+Drawers/modals must remain usable.
+
+=======================================================
+VISUAL FIDELITY / DESIGN ACCEPTANCE
+=======================================================
+
+The approved PNGs are a visual floor.
+
+Codex must not merely approximate them.
+
+For every implemented canonical screen:
+
+1. run local app when possible
+2. capture screenshot with Playwright or existing tooling
+3. compare against approved PNG
+4. correct:
+   - hierarchy
+   - density
+   - shell
+   - spacing
+   - panel composition
+   - typography
+   - action placement
+   - visual identity
+5. preserve deeper source-supported interactions beyond the static image
+
+Create:
+FINAL_UI_EVIDENCE/batch-01 ... batch-11
+
+If auth/runtime prevents capture:
+document exact gate.
+
+No claim of visual completion without actual runtime inspection when feasible.
+
+=======================================================
+NO GENERICIZATION RULE
+=======================================================
+
+Shared system:
+- shell
+- tokens
+- buttons
+- form fields
+- grid primitives
+- modal base
+- drawer base
+- badge base
+- state surfaces
+
+Purpose-specific products:
+- registry composition
+- 360 dossier
+- studio
+- command center
+- evidence desk
+- finance authority
+- launch authority
+
+Do not create one AdminTemplate component and flatten everything.
+
+=======================================================
+WORKSPACE-SPECIFIC ACCEPTANCE
+=======================================================
+
+ACCUEIL
+Must be an operator command home:
+attention, recent work, quick create, operational health, cross-domain shortcuts.
+
+COMMANDES & RÉSERVATIONS
+Must support transaction lifecycle and conversion intervention.
+
+PRODUITS & SERVICES
+Must provide complete commercial object management.
+
+CATÉGORIES & COLLECTIONS
+Must provide taxonomy + public category control + native schema/import tooling.
+
+CLIENTS
+Must provide CRM/Customer 360 and actionable support/commercial continuity.
+
+BOUTIQUE
+Must permit storefront operation without developer intervention for source-supported areas.
+
+MARKETING & PROMOTIONS
+Must permit activation/targeting/merchandising/live experience execution.
+
+OPÉRATIONS
+Must operate fulfillment, exceptions, recovery, reconciliation handoff, territory and bulk operations.
+
+PRESTATAIRES & FOURNISSEURS
+Must operate supply eligibility, readiness, capacity, vendor/supplier governance.
+
+ACADEMY
+Must operate competence lifecycle through certification.
+
+B2B & PARTENAIRES
+Must operate enterprise organization/program/subscription relationships.
+
+FINANCE
+Must operate payments/refunds/invoices/receipts/wallet/pricing/margins/reconciliation safely.
+
+TRUST & QUALITÉ
+Must operate quality evidence, investigation, nonconformity and CAPA.
+
+ANALYTICS & INTELLIGENCE
+Must surface governed, traceable business intelligence without invented numbers.
+
+PARAMÈTRES & GOUVERNANCE
+Must control security/configuration/modules/workspaces/readiness/release governance.
+
+=======================================================
+BOARD / INVESTOR EVIDENCE STANDARD
+=======================================================
+
+Create:
+
+INVESTOR_PRODUCT_EVIDENCE_INDEX.md
+
+Every claim must map to:
+claim
+workspace
+route
+backend authority
+permission
+interaction
+verification
+evidence artifact
+runtime gate
+
+Create:
+INVESTOR_DEMO_RUNBOOK.md
+
+The demo must prove at least:
+
+1. Launch Product -> Storefront
+2. Customer -> Conversion -> Order
+3. Order -> Fulfillment -> Provider
+4. Failure -> Exception -> Recovery
+5. Provider -> Eligibility -> Mission -> Quality
+6. Payment -> Invoice/Receipt -> Refund/Reconciliation
+7. Quality issue -> Investigation -> CAPA
+8. Executive metric -> drilldown -> source object
+9. Readiness blocker -> resolution -> launch gate
+
+No demo-only fake behavior.
+
+=======================================================
+DOCUMENTATION / OPERATOR READINESS
+=======================================================
+
+The project also needs future user documentation.
+
+Codex must leave implementation metadata sufficient to build a real Admin manual.
+
+Create:
+ADMIN_OPERATOR_DOCUMENTATION_INDEX.md
+
+For each workspace:
+purpose
+main routes
+objects
+actions
+permissions
+important states
+dangerous actions
+common workflows
+recovery paths
+known limitations
+
+Do not write a marketing brochure.
+Write operator truth.
+
+=======================================================
+FINAL ARTIFACT SET
+=======================================================
+
+Maintain/create:
+
+ADMIN_FINALIZATION_LEDGER.md
+ADMIN_CANONICAL_TREE.md
+ADMIN_ROUTE_DISPOSITION.csv
+ADMIN_CAPABILITY_EXHAUSTION_MATRIX.csv
+ADMIN_ACTION_CAPABILITY_MATRIX.csv
+ADMIN_MODAL_DRAWER_REGISTER.csv
+ADMIN_ASYNC_JOB_REGISTER.csv
+ADMIN_STATE_COVERAGE.csv
+ADMIN_PERMISSION_COVERAGE.csv
+ADMIN_LINK_INTEGRITY.csv
+ADMIN_RUNTIME_GATES.md
+ADMIN_PERFORMANCE_NOTES.md
+ADMIN_ACCESSIBILITY_ACCEPTANCE.md
+ENTERPRISE_CAPABILITY_BENCHMARK.md
+INVESTOR_PRODUCT_EVIDENCE_INDEX.md
+INVESTOR_DEMO_RUNBOOK.md
+ADMIN_OPERATOR_DOCUMENTATION_INDEX.md
+ADMIN_FINAL_ACCEPTANCE.md
+
+=======================================================
+ABSOLUTE REJECTION CONDITIONS
+=======================================================
+
+REJECT the implementation if ANY of these remain:
+
+- operator-relevant backend capability not dispositioned
+- source-supported capability exists only in a hidden legacy page
+- dead button
+- fake button
+- fake export
+- fake import
+- fake publish
+- fake refund
+- fake approval
+- fake success toast
+- browser prompt/confirm for serious action
+- generic CRUD page where a serious workflow is required
+- major dossier implemented as one giant form
+- control room implemented as KPI cards only
+- studio implemented as plain settings form
+- no error state
+- no permission state
+- no unsaved-change state for editors
+- source-supported recovery hidden
+- source-supported history/evidence hidden
+- source-supported bulk capability hidden
+- broken links
+- unexplained 404
+- alternate primary sidebar
+- duplicate new backend/business engine
+- SQL/migration added
+- unrelated product modified
+- unsupported analytics/AI shown as truth
+- visual implementation not inspected at runtime when runtime is available
+- final claims not traceable to evidence
+
+=======================================================
+MATURITY RATINGS
+=======================================================
+
+Only:
+
+RELEASE_READY
+RELEASE_READY_WITH_RUNTIME_VERIFICATION
+BLOCKED_BY_PROVEN_BACKEND_GAP
+
+Never:
+GOOD_ENOUGH
+MVP
+DEMO_READY
+MOSTLY_COMPLETE
+VISUALLY_DONE
+
+=======================================================
+AUTONOMOUS EXECUTION
+=======================================================
+
+Codex must execute continuously.
+
+Do not stop for batch approval.
+
+Stop only for:
+A. proven backend gap
+B. SQL/schema requirement
+C. external credential/runtime gate
+D. destructive ambiguity
+E. commit/push/deploy permission
+F. completion
+
+If one capability is blocked:
+record it and continue all non-blocked work.
+
+=======================================================
+GIT / RELEASE SAFETY
+=======================================================
+
+Before edits:
+git branch --show-current
+git status --short
+
+Do not reset pre-existing work.
+Do not overwrite unrelated changes.
+Do not checkout destructively.
+
+NO COMMIT.
+NO PUSH.
+NO DEPLOY.
+
+=======================================================
+MANDATORY STARTUP RESPONSE
+=======================================================
+
+Codex's first response after receiving the V4 ignition command must report:
+
+V4 FOUND: YES/NO
+V3 FOUND: YES/NO
+V2 FOUND: YES/NO
+BATCH MAPPINGS FOUND: X/11
+APPROVED PNGs FOUND: X/110
+CURRENT BRANCH:
+PRE-EXISTING MODIFIED FILES:
+PRE-EXISTING UNTRACKED FILES:
+IMMEDIATE HARD GATE: YES/NO
+
+Then immediately begin source audit.
+
+Do not wait for approval.
+
+=======================================================
+FINAL DIRECTIVE
+=======================================================
+
+THE JOB IS NOT TO MAKE THE ADMIN LOOK COMPLETE.
+
+THE JOB IS TO EXHAUST THE REAL MARKETPLACE CAPABILITY SURFACE
+AND TURN IT INTO ONE COHERENT, MATURE, OPERATOR-POWERFUL PRODUCT.
+
+ZERO ORPHANED CAPABILITIES.
+ZERO HIDDEN OPERATOR POWER.
+ZERO DEAD UI.
+ZERO FAKE AUTHORITY.
+ZERO GENERICIZATION.
+ZERO SILENT SCOPE REDUCTION.
+
+MAKE EVERY OPERATOR-RELEVANT BACKEND CAPABILITY
+DISCOVERABLE,
+ACTIONABLE,
+SAFE,
+TRACEABLE,
+RECOVERABLE WHERE SUPPORTED,
+AND COHERENTLY PLACED.
+
+BUILD THE OPERATING SYSTEM.
+PROVE THE OPERATING SYSTEM.
+
+BEGIN.

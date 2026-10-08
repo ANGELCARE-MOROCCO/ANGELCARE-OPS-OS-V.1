@@ -1,0 +1,159 @@
+{
+  "generatedAt": "2026-08-29T03:26:11.389Z",
+  "baseURL": "http://127.0.0.1:3003",
+  "auth": {
+    "transactionFlightDeckAnonymous": {
+      "status": 401,
+      "rejected": true,
+      "leakedData": false
+    },
+    "adminRedirect": {
+      "label": "Unauthenticated Admin",
+      "path": "/angelcare-marketplace/admin",
+      "status": 200,
+      "finalUrl": "http://127.0.0.1:3003/angelcare-marketplace/admin",
+      "title": "Marketplace Operator Excellence · ANGELCARE Marketplace 360",
+      "heading": "Commandez le Marketplace depuis une identité vérifiée.",
+      "bodyLength": 0,
+      "blank": true,
+      "overlay": false,
+      "fatalText": false,
+      "pass": true
+    },
+    "authorizedAdmin": {
+      "label": "Authorized Admin",
+      "path": "/angelcare-marketplace/admin",
+      "status": 200,
+      "finalUrl": "http://127.0.0.1:3003/angelcare-marketplace/admin",
+      "title": "Marketplace Operator Excellence · ANGELCARE Marketplace 360",
+      "heading": "Le business se pilote ici.",
+      "bodyLength": 2083,
+      "blank": false,
+      "overlay": false,
+      "fatalText": false,
+      "pass": true
+    },
+    "transactionFlightDeckAuthorized": {
+      "status": 200,
+      "hasDataEnvelope": true,
+      "bodyLength": 1159,
+      "pass": true
+    }
+  },
+  "workspaces": [
+    {
+      "label": "Commandes & réservations",
+      "path": "/angelcare-marketplace/admin/orders",
+      "status": 200,
+      "finalUrl": "http://127.0.0.1:3003/angelcare-marketplace/admin/orders",
+      "title": "ANGELCARE Marketplace 360",
+      "heading": "Centre de commandement commercial",
+      "bodyLength": 1548,
+      "blank": false,
+      "overlay": false,
+      "fatalText": false,
+      "pass": true
+    },
+    {
+      "label": "Prestataires & fournisseurs",
+      "path": "/angelcare-marketplace/admin/supply-network",
+      "status": 200,
+      "finalUrl": "http://127.0.0.1:3003/angelcare-marketplace/admin/supply-network",
+      "title": "ANGELCARE Marketplace 360",
+      "heading": "Network Capacity Grid",
+      "bodyLength": 2176,
+      "blank": false,
+      "overlay": false,
+      "fatalText": false,
+      "pass": true
+    },
+    {
+      "label": "Trust & qualité",
+      "path": "/angelcare-marketplace/admin/trust",
+      "status": 200,
+      "finalUrl": "http://127.0.0.1:3003/angelcare-marketplace/admin/trust",
+      "title": "ANGELCARE Marketplace 360",
+      "heading": "La confiance devient une preuve opérable.",
+      "bodyLength": 1845,
+      "blank": false,
+      "overlay": false,
+      "fatalText": false,
+      "pass": true
+    }
+  ],
+  "criticalFlows": [
+    {
+      "label": "Order",
+      "path": "/angelcare-marketplace/admin/orders",
+      "status": 200,
+      "finalUrl": "http://127.0.0.1:3003/angelcare-marketplace/admin/orders",
+      "title": "ANGELCARE Marketplace 360",
+      "heading": "Centre de commandement commercial",
+      "bodyLength": 1548,
+      "blank": false,
+      "overlay": false,
+      "fatalText": false,
+      "pass": true
+    },
+    {
+      "label": "Provider/Supply",
+      "path": "/angelcare-marketplace/admin/supply-network",
+      "status": 200,
+      "finalUrl": "http://127.0.0.1:3003/angelcare-marketplace/admin/supply-network",
+      "title": "ANGELCARE Marketplace 360",
+      "heading": "Network Capacity Grid",
+      "bodyLength": 2176,
+      "blank": false,
+      "overlay": false,
+      "fatalText": false,
+      "pass": true
+    },
+    {
+      "label": "Trust",
+      "path": "/angelcare-marketplace/admin/trust",
+      "status": 200,
+      "finalUrl": "http://127.0.0.1:3003/angelcare-marketplace/admin/trust",
+      "title": "ANGELCARE Marketplace 360",
+      "heading": "La confiance devient une preuve opérable.",
+      "bodyLength": 1845,
+      "blank": false,
+      "overlay": false,
+      "fatalText": false,
+      "pass": true
+    }
+  ],
+  "consoleErrors": [
+    "WebSocket connection to 'ws://127.0.0.1:3003/_next/webpack-hmr?id=7ZaFIvSdv0mSo4ioSZGEU' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE",
+    "WebSocket connection to 'ws://127.0.0.1:3003/_next/webpack-hmr?id=7ZaFIvSdv0mSo4ioSZGEU' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE",
+    "WebSocket connection to 'ws://127.0.0.1:3003/_next/webpack-hmr?id=7ZaFIvSdv0mSo4ioSZGEU' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE",
+    "WebSocket connection to 'ws://127.0.0.1:3003/_next/webpack-hmr?id=7ZaFIvSdv0mSo4ioSZGEU' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE",
+    "WebSocket connection to 'ws://127.0.0.1:3003/_next/webpack-hmr?id=2D0l5QNlRSM1XH7NK8l8t' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE",
+    "WebSocket connection to 'ws://127.0.0.1:3003/_next/webpack-hmr?id=2D0l5QNlRSM1XH7NK8l8t' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE",
+    "WebSocket connection to 'ws://127.0.0.1:3003/_next/webpack-hmr?id=p1BN8rUs_C02Ve9TBObKE' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE",
+    "WebSocket connection to 'ws://127.0.0.1:3003/_next/webpack-hmr?id=p1BN8rUs_C02Ve9TBObKE' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE",
+    "WebSocket connection to 'ws://127.0.0.1:3003/_next/webpack-hmr?id=n2A0Wb-xiTxwVW0qNQAXq' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE",
+    "WebSocket connection to 'ws://127.0.0.1:3003/_next/webpack-hmr?id=ZmzfHp5cKuE4SLLY-0Vln' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE",
+    "WebSocket connection to 'ws://127.0.0.1:3003/_next/webpack-hmr?id=CLQo72NxMU7sxNXqx_M6L' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE",
+    "WebSocket connection to 'ws://127.0.0.1:3003/_next/webpack-hmr?id=4l1zu38PD0iTmorwU2cuK' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE",
+    "WebSocket connection to 'ws://127.0.0.1:3003/_next/webpack-hmr?id=4l1zu38PD0iTmorwU2cuK' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+  ],
+  "pageErrors": [],
+  "publicMarketplace": {
+    "status": 200,
+    "finalUrl": "http://127.0.0.1:3003/angelcare-marketplace/fr",
+    "title": "Le Marketplace qui transforme un besoin familial en parcours maîtrisé. · ANGELCARE Marketplace 360",
+    "bodyLength": 11309,
+    "blank": false,
+    "overlay": true,
+    "pass": true
+  },
+  "summary": {
+    "runtimeAuth": true,
+    "workspacesPassed": 3,
+    "workspacesTotal": 3,
+    "criticalFlowsPassed": 3,
+    "criticalFlowsTotal": 3,
+    "flightDeckAuth": true,
+    "publicMarketplace": true
+  }
+}

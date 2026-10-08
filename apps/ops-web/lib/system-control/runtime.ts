@@ -2,6 +2,7 @@ import { createServerClient } from '@supabase/ssr'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { NextResponse, type NextRequest } from 'next/server'
 import { getSupabaseEnv } from '@/lib/supabase/env'
+import { wrapSupabaseClient } from '@/lib/supabase/contract-safe'
 
 export const SYSTEM_RUNTIME_CONTROL_ID = '11111111-1111-1111-1111-111111111111'
 export const SYSTEM_CONTROL_STATE_TABLE = 'system_runtime_control'
@@ -173,14 +174,14 @@ export function isMissingRelationError(error: unknown) {
 export function getSupabaseRuntimeClientFromRequest(request: NextRequest) {
   const env = getSupabaseEnv()
 
-  return createServerClient(env.url, env.serviceRoleKey, {
+  return wrapSupabaseClient(createServerClient(env.url, env.serviceRoleKey, {
     cookies: {
       getAll() {
         return request.cookies.getAll().map((cookie) => ({ name: cookie.name, value: cookie.value }))
       },
       setAll() {},
     },
-  })
+  }))
 }
 
 export function getDefaultRuntimeRow(): SystemRuntimeStateRow {

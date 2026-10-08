@@ -1,2 +1,2 @@
-import { CsvImportPage } from '@/angelcare-marketplace/category-native/admin-pages'
-export default CsvImportPage
+import { redirect } from 'next/navigation'
+export default function Page(){redirect('/angelcare-marketplace/admin/imports/category-native')}

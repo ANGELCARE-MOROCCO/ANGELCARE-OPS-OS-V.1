@@ -37,6 +37,11 @@ export type MarketplacePermission =
   | 'marketplace.feature_flags.manage'
   | 'marketplace.configuration.view'
   | 'marketplace.configuration.manage'
+  | 'marketplace.web_presence.view'
+  | 'marketplace.web_presence.manage'
+  | 'marketplace.web_presence.publish'
+  | 'marketplace.web_presence.rollback'
+  | 'marketplace.web_presence.verify'
   | 'marketplace.audit.view'
   | 'marketplace.audit.export'
   | 'marketplace.security.view'
@@ -183,6 +188,7 @@ export type MarketplacePermission =
   | 'marketplace.development.export'
   | 'marketplace.catalog.view'
   | 'marketplace.catalog.manage'
+  | 'marketplace.catalog.purge'
   | 'marketplace.catalog.review'
   | 'marketplace.catalog.publish'
   | 'marketplace.catalog.availability.manage'
@@ -336,6 +342,7 @@ export type MarketplacePermission =
   | 'marketplace.compliance.review'
   | 'marketplace.compliance.approve'
   | 'marketplace.finance.view'
+  | 'marketplace.finance.manage'
   | 'marketplace.finance.price_books.manage'
   | 'marketplace.finance.price_books.approve'
   | 'marketplace.finance.margins.view'
@@ -410,6 +417,20 @@ export type MarketplacePermission =
   | 'marketplace.archetype.manage'
   | 'marketplace.category_native_import.view'
   | 'marketplace.category_native_import.manage'
+  | 'marketplace.operating_kernel.view'
+  | 'marketplace.operating_kernel.manage'
+  | 'marketplace.operating_kernel.approve'
+  | 'marketplace.operations.evidence.manage'
+  | 'marketplace.operations.returns.manage'
+  | 'marketplace.operations.disputes.manage'
+  | 'marketplace.operations.recovery.manage'
+  | 'marketplace.operations.reconciliation.approve'
+  | 'marketplace.vendors.manage'
+  | 'marketplace.vendors.contracts.manage'
+  | 'marketplace.vendors.orders.manage'
+  | 'marketplace.vendors.inventory.manage'
+  | 'marketplace.vendors.quality.manage'
+  | 'marketplace.vendors.settlements.manage'
 export interface MarketplaceActor {
   id: string
   email: string | null
@@ -433,6 +454,7 @@ export interface MarketplaceRequestContext {
   tenantId: string | null
   locale: 'fr' | 'en' | 'ar'
   sessionReference: string | null
+  workspaceKeys?: string[]
 }
 
 export interface MarketplaceModule {

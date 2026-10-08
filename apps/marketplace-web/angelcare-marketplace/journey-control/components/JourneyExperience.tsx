@@ -10,6 +10,7 @@ import { JourneyHero } from './JourneyHero'
 import { JourneyTimeline } from './JourneyTimeline'
 import { NotificationCenter } from './NotificationCenter'
 import { RecoveryPanel } from './RecoveryPanel'
+import { CustomerChangeRequestPanel } from './CustomerChangeRequestPanel'
 import type { MarketplaceJourney } from '../types'
 import styles from '../journey.module.css'
 
@@ -27,6 +28,6 @@ export function JourneyExperience({ journey }: { journey: MarketplaceJourney }) 
             : <B2BQuotationJourney journey={journey}/>
   return <main className={styles.journeyShell} dir={journey.locale === 'ar' ? 'rtl' : 'ltr'}>
     <JourneyHero journey={journey}/>
-    <div className={styles.journeyLayout}><div className={styles.journeyMain}><JourneyActionPanel journeyId={journey.id} actions={journey.actions}/>{typeSpecific}<JourneyTimeline events={journey.events} locale={journey.locale}/><DocumentVault documents={journey.documents}/></div><aside className={styles.journeyAside}><NotificationCenter notifications={journey.notifications}/><RecoveryPanel journeyId={journey.id} cases={journey.recovery_cases}/></aside></div>
+    <div className={styles.journeyLayout}><div className={styles.journeyMain}><JourneyActionPanel journeyId={journey.id} actions={journey.actions} locale={journey.locale}/>{typeSpecific}<CustomerChangeRequestPanel journey={journey}/><JourneyTimeline events={journey.events} locale={journey.locale}/><DocumentVault documents={journey.documents} locale={journey.locale}/></div><aside className={styles.journeyAside}><NotificationCenter notifications={journey.notifications} locale={journey.locale}/><RecoveryPanel journeyId={journey.id} cases={journey.recovery_cases} locale={journey.locale}/></aside></div>
   </main>
 }

@@ -1,0 +1,17 @@
+ANGELCARE PRODUCT PAGE PRO MAX WORLD 01 — APPROVED REFERENCE HASHES
+
+DESKTOP
+file=references/APPROVED_DESKTOP_REFERENCE.png
+size=935x1683
+sha256=32b8a7a604391a7519d963e6a2344fb96c8263e3c9a690b9eb7ca5bd30f2e694
+
+MOBILE_MONTAGE
+file=references/APPROVED_MOBILE_REFERENCE.png
+size=941x1672
+sha256=9fc064fbc27005cc2e63d10979d521f3ea958b9f290e8ab9a76eeed5f8e5c4df
+
+OFFICIAL_LOGO_SOURCE
+file=AC LOGO CORPORATE .png
+size=2048x682
+sha256=d0c6f556e929f4b1b9a1fd4d00229f595f174ee3c43e6fbc25b4af870785a30a
+policy=crop/mask only; remove Corporate Care subtitle and yellow underline; no redraw/recolor/regeneration.

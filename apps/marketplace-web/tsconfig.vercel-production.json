@@ -1,0 +1,51 @@
+{
+  "extends": "./tsconfig.json",
+
+  "include": [
+    "next-env.d.ts",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts",
+
+    "angelcare-marketplace/**/*.ts",
+    "angelcare-marketplace/**/*.tsx",
+
+    "app/angelcare-marketplace/**/*.ts",
+    "app/angelcare-marketplace/**/*.tsx",
+
+    "app/api/angelcare-marketplace/**/*.ts",
+    "app/api/angelcare-marketplace/**/*.tsx",
+
+    "app/(protected)/angelcare-360-command-center/**/*.ts",
+    "app/(protected)/angelcare-360-command-center/**/*.tsx",
+
+    "app/angelcare-360-*/**/*.ts",
+    "app/angelcare-360-*/**/*.tsx",
+
+    "app/api/angelcare360/**/*.ts",
+    "app/api/angelcare360/**/*.tsx",
+
+    "components/angelcare360/**/*.ts",
+    "components/angelcare360/**/*.tsx",
+
+    "lib/angelcare360/**/*.ts",
+    "lib/angelcare360/**/*.tsx",
+
+    "lib/ac360-portability/**/*.ts",
+    "lib/ac360-portability/**/*.tsx",
+
+    "data/angelcare360/**/*.ts",
+    "data/angelcare360/**/*.tsx",
+
+    "types/angelcare360/**/*.ts",
+    "types/angelcare360/**/*.tsx"
+  ],
+
+  "exclude": [
+    "node_modules",
+    ".next",
+    "components/carelink/**/*",
+    "lib/carelink/**/*",
+    "app/**/carelink/**/*",
+    "types/carelink/**/*"
+  ]
+}

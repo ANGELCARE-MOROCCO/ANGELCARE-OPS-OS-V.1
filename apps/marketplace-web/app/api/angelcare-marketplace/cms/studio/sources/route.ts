@@ -1,0 +1,7 @@
+import { requireMarketplaceApiContext } from '@/angelcare-marketplace/auth/context'
+import { apiFailure, apiSuccess, requestId } from '@/angelcare-marketplace/server/request'
+import { listAuthorizedStudioSources } from '@/angelcare-marketplace/studio-source-registry/resolver'
+
+export const runtime='nodejs'
+export const dynamic='force-dynamic'
+export async function GET(request:Request){const id=requestId(request);try{const context=await requireMarketplaceApiContext('marketplace.cms.view');return apiSuccess({sources:listAuthorizedStudioSources(context)},{requestId:id})}catch(error){return apiFailure(error,id)}}

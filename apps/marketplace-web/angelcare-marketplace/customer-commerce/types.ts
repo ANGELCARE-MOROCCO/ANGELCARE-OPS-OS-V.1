@@ -1,4 +1,4 @@
-import type { CatalogLocale } from '../catalog-discovery/types'
+import type { CatalogLocale, DiscoveryItem } from '../catalog-discovery/types'
 import type { MarketplaceRequestContext } from '../domain/types'
 import type { JourneyType, MarketplaceJourney } from '../journey-control/types'
 
@@ -33,6 +33,24 @@ export interface CustomerContext {
   authUserId: string
   locale: CatalogLocale
   marketplace: MarketplaceRequestContext
+}
+
+export interface CustomerAddress {
+  id: string
+  customer_account_id: string
+  address_type: string
+  label: string | null
+  recipient_name: string | null
+  phone: string | null
+  city: string
+  address_line: string
+  postal_code: string | null
+  territory_id: string | null
+  is_default: boolean
+  service_instructions: string | null
+  status: 'active' | 'archived'
+  created_at: string
+  updated_at: string
 }
 
 export type PaymentMethodKind =
@@ -96,6 +114,9 @@ export interface PaymentIntent {
   refunded_amount: number
   due_now_amount: number
   due_later_amount: number
+  wallet_contribution: number
+  external_contribution: number
+  metadata: Record<string, unknown>
   idempotency_key: string
   selected_method: PaymentMethodKind | null
   provider_key: string | null
@@ -324,6 +345,7 @@ export interface CustomerPortfolio {
   filter: JourneyType | 'all'
   counts: Record<string, number>
   pendingPayments: PaymentIntent[]
+  catalogItems: Record<string, DiscoveryItem>
 }
 
 export interface WalletAdminSummary {
@@ -358,6 +380,8 @@ export interface EnterpriseOrderRecord {
   riskLevel: string
   nextAction: string | null
   updatedAt: string
+  creationSource: string
+  customerAccountId: string | null
   journey: MarketplaceJourney | null
 }
 

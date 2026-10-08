@@ -1,0 +1,183 @@
+{
+  "schema_version": 1,
+  "actions": [
+    {
+      "action_id": "navigation.open",
+      "label": "Ouvrir une destination interne",
+      "target_types": [
+        "cms_page",
+        "catalog_item",
+        "catalog_category",
+        "collection",
+        "account_surface"
+      ],
+      "backend_authority": "route/source registry",
+      "creates": null,
+      "admin_destination": null,
+      "current_studio": "RAW_HREF",
+      "p03": "MANDATORY"
+    },
+    {
+      "action_id": "catalog.open_item",
+      "label": "Ouvrir une offre",
+      "target_types": [
+        "catalog_item"
+      ],
+      "backend_authority": "catalog discovery + Category-Native runtime",
+      "creates": null,
+      "admin_destination": "/angelcare-marketplace/admin/catalog/items",
+      "current_studio": "RAW_HREF_OR_CARD_RUNTIME",
+      "p03": "MANDATORY"
+    },
+    {
+      "action_id": "catalog.open_category",
+      "label": "Ouvrir une catégorie",
+      "target_types": [
+        "catalog_category"
+      ],
+      "backend_authority": "catalog discovery",
+      "creates": null,
+      "admin_destination": "/angelcare-marketplace/admin/catalog/categories",
+      "current_studio": "RAW_HREF",
+      "p03": "MANDATORY"
+    },
+    {
+      "action_id": "catalog.open_collection",
+      "label": "Ouvrir une collection",
+      "target_types": [
+        "homepage_collection"
+      ],
+      "backend_authority": "homepage/catalog collection authority",
+      "creates": null,
+      "admin_destination": "/angelcare-marketplace/admin/merchandising/collections",
+      "current_studio": "RAW_HREF",
+      "p03": "MANDATORY"
+    },
+    {
+      "action_id": "booking.start",
+      "label": "Démarrer une réservation",
+      "target_types": [
+        "catalog_item"
+      ],
+      "backend_authority": "Category-Native + Conversion Universe",
+      "creates": "conversion_session → journey/outcome",
+      "admin_destination": "/angelcare-marketplace/admin/bookings",
+      "current_studio": "NOT_WIRED",
+      "p03": "MANDATORY"
+    },
+    {
+      "action_id": "quotation.start",
+      "label": "Démarrer une demande de devis",
+      "target_types": [
+        "catalog_item"
+      ],
+      "backend_authority": "Conversion Universe / quote basket",
+      "creates": "quote_basket / conversion outcome",
+      "admin_destination": "/angelcare-marketplace/admin/quote-baskets",
+      "current_studio": "NOT_WIRED",
+      "p03": "MANDATORY"
+    },
+    {
+      "action_id": "basket.add",
+      "label": "Ajouter au panier/devis",
+      "target_types": [
+        "catalog_item"
+      ],
+      "backend_authority": "Conversion Universe basket",
+      "creates": "quote_basket_item",
+      "admin_destination": "/angelcare-marketplace/admin/quote-baskets",
+      "current_studio": "NOT_WIRED",
+      "p03": "MANDATORY"
+    },
+    {
+      "action_id": "checkout.start",
+      "label": "Démarrer le checkout",
+      "target_types": [
+        "conversion_session",
+        "quote_basket"
+      ],
+      "backend_authority": "Conversion Universe + customer-commerce",
+      "creates": "conversion/payment journey",
+      "admin_destination": "/angelcare-marketplace/admin/conversion",
+      "current_studio": "NOT_WIRED",
+      "p03": "MANDATORY"
+    },
+    {
+      "action_id": "inquiry.submit",
+      "label": "Envoyer une demande/contact",
+      "target_types": [
+        "inquiry_workflow"
+      ],
+      "backend_authority": "public-universe/createPublicInquiry",
+      "creates": "public_inquiry + public_event",
+      "admin_destination": "/angelcare-marketplace/admin/public-inquiries",
+      "current_studio": "VISUAL_ONLY_OR_RAW_LINK",
+      "p03": "MANDATORY"
+    },
+    {
+      "action_id": "academy.enroll",
+      "label": "S’inscrire à une formation",
+      "target_types": [
+        "academy_program",
+        "academy_cohort",
+        "catalog_item"
+      ],
+      "backend_authority": "Academy Engine + Conversion Universe",
+      "creates": "academy_enrollment / conversion outcome",
+      "admin_destination": "/angelcare-marketplace/admin/academy",
+      "current_studio": "NOT_WIRED",
+      "p03": "MANDATORY"
+    },
+    {
+      "action_id": "subscription.start",
+      "label": "Souscrire",
+      "target_types": [
+        "catalog_item",
+        "partner_plan"
+      ],
+      "backend_authority": "Conversion Universe / subscriptions",
+      "creates": "customer_subscription / outcome",
+      "admin_destination": "/angelcare-marketplace/admin/subscriptions",
+      "current_studio": "NOT_WIRED",
+      "p03": "MANDATORY"
+    },
+    {
+      "action_id": "family_request.start",
+      "label": "Créer une demande famille",
+      "target_types": [
+        "catalog_item",
+        "family_workflow"
+      ],
+      "backend_authority": "Family Experience / Conversion Universe",
+      "creates": "family_quote_request / journey",
+      "admin_destination": "/angelcare-marketplace/admin/family-requests",
+      "current_studio": "NOT_WIRED",
+      "p03": "MANDATORY"
+    },
+    {
+      "action_id": "b2b.request",
+      "label": "Créer une demande B2B",
+      "target_types": [
+        "b2b_program",
+        "b2b_vertical"
+      ],
+      "backend_authority": "B2B verticals",
+      "creates": "b2b_public_request / diagnostic",
+      "admin_destination": "/angelcare-marketplace/admin/operations/b2b",
+      "current_studio": "NOT_WIRED",
+      "p03": "ADVANCED"
+    },
+    {
+      "action_id": "external.open",
+      "label": "Ouvrir une URL externe approuvée",
+      "target_types": [
+        "external_url"
+      ],
+      "backend_authority": "Studio URL safety policy",
+      "creates": null,
+      "admin_destination": null,
+      "current_studio": "RAW_HREF",
+      "p03": "SUPPORTED_FALLBACK"
+    }
+  ]
+}

@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react"
 import {
   BarChart3,
   CalendarDays,
-  CircleCheck,
+  CheckCircle2,
   Clock3,
   FileText,
   Flame,
@@ -174,7 +174,7 @@ function UniformRevenueSidebar({
         {item("/revenue-command-center", <Radar />, "Command Center", "prospects")}
         {item("/revenue-command-center/prospects/directory", <MapPinned />, "Prospects Directory", "directory")}
         {item("/revenue-command-center/partnerships", <Handshake />, "Partner Program", "partner")}
-        {item("/revenue-command-center/daily-tasks", <CircleCheck />, "Tasks & Actions", "tasks")}
+        {item("/revenue-command-center/daily-tasks", <CheckCircle2 />, "Tasks & Actions", "tasks")}
         {item("/revenue-command-center/appointments", <CalendarDays />, "Calendar", "appointments")}
         {item("/revenue-command-center/campaigns", <Mail />, "Email Campaigns", "email")}
         {item("/revenue-command-center/follow-ups", <MessageCircle />, "WhatsApp Center", "whatsapp")}

@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "routes": {
+    "navigation.open": "navigation.destinations/content.pages → published internal route",
+    "catalog.open_item": "/angelcare-marketplace/{locale}/marketplace/item/{slug}",
+    "catalog.open_category": "/angelcare-marketplace/{locale}/marketplace/category/{slug}",
+    "catalog.open_collection": "/angelcare-marketplace/{locale}?collection={collection_key}",
+    "booking.start": "/angelcare-marketplace/{locale}/booking/{itemSlug}",
+    "quotation.start": "/angelcare-marketplace/{locale}/quotation/{itemSlug}",
+    "basket.add": "/angelcare-marketplace/{locale}/basket?item={itemSlug}",
+    "checkout.start": "basket context → checkout; no context → canonical basket",
+    "inquiry.submit": "recognized + fail-closed WORKFLOW_REQUIRED until P07 native form wiring",
+    "academy.enroll": "catalog item → /enrollment/{itemSlug}; Academy entity → /academy/request",
+    "subscription.start": "catalog item → /subscription/{itemSlug}; partner plan → /partner-os/contact",
+    "family_request.start": "/angelcare-marketplace/{locale}/family/request",
+    "b2b.request": "existing vertical request route (corporates/hospitality/health-partners)",
+    "external.open": "approved http(s)/mailto/tel only"
+  }
+}

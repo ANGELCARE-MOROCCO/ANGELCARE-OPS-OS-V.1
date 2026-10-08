@@ -1,6 +1,6 @@
 "use client"
 
-import { createClient } from "@supabase/supabase-js"
+import { createClient } from '@/lib/supabase/contract-client'
 
 export const emailOSRealtime =
   typeof window !== "undefined"

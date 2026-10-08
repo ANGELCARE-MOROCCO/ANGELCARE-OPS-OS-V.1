@@ -1,0 +1,34 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "incremental": false,
+    "skipLibCheck": true
+  },
+  "files": [
+    "app/(protected)/angelcare-360-command-center/reclamations/_utils.ts",
+    "app/(protected)/angelcare-360-command-center/reclamations/layout.tsx",
+    "app/(protected)/angelcare-360-command-center/reclamations/page.tsx",
+    "app/(protected)/angelcare-360-command-center/reclamations/loading.tsx",
+    "app/(protected)/angelcare-360-command-center/reclamations/error.tsx",
+    "app/(protected)/angelcare-360-command-center/reclamations/not-found.tsx",
+    "app/(protected)/angelcare-360-command-center/reclamations/tickets/page.tsx",
+    "app/(protected)/angelcare-360-command-center/reclamations/tickets/[id]/page.tsx",
+    "app/(protected)/angelcare-360-command-center/reclamations/assignations/page.tsx",
+    "app/(protected)/angelcare-360-command-center/reclamations/priorites/page.tsx",
+    "app/(protected)/angelcare-360-command-center/reclamations/audit/page.tsx",
+    "app/api/angelcare360/claims/route.ts",
+    "components/angelcare360/claims/claimPresentation.ts",
+    "components/angelcare360/claims/Angelcare360TrustResolutionCommand.tsx",
+    "components/angelcare360/claims/Angelcare360ClaimCreateStudio.tsx",
+    "components/angelcare360/claims/Angelcare360ClaimActionStudio.tsx",
+    "components/angelcare360/claims/Angelcare360ClaimTicketDetail.tsx",
+    "components/angelcare360/claims/Angelcare360ClaimTicketsWorkspace.tsx",
+    "components/angelcare360/claims/Angelcare360ClaimAssignmentsWorkspace.tsx",
+    "components/angelcare360/claims/Angelcare360ClaimPriorityWorkspace.tsx",
+    "components/angelcare360/claims/Angelcare360ClaimAuditDrawer.tsx",
+    "components/angelcare360/claims/Angelcare360ClaimsSectionScreen.tsx",
+    "lib/angelcare360/server/claims.ts",
+    "types/angelcare360/communications.ts"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "rbac_authority": "angelcare-marketplace/auth/context.ts + angelcare_marketplace_role_permissions/user_role_assignments",
+  "permissions_discovered": 536,
+  "publication_authorities": [
+    "Experience Core",
+    "Catalog publication/transition",
+    "Homepage release dossier",
+    "Category-Native schema status",
+    "Media Vault status",
+    "Live Experience scheduling"
+  ],
+  "sensitive_data_rule": "P01/P05 registries must expose public-safe projections only; PII/internal finance/operations are not general Studio-bindable",
+  "fail_closed_rule": "missing/unpublished/unauthorized/unavailable targets must hide, disable, fallback deterministically or block publish; never invent business state",
+  "audit_rule": "all future Studio mutations/actions/assignments must use existing audit/event authorities and add origin metadata rather than create a shadow audit ledger",
+  "permission_rule": "every future source/action descriptor declares read/execute/manage permissions where applicable"
+}

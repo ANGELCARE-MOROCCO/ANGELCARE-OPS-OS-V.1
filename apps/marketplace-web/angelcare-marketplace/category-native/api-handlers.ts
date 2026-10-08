@@ -177,6 +177,14 @@ export async function handleCategoryNativeImportAction(request: Request, params:
   try {
     const { jobId, action } = await params
     const context = await requireMarketplaceApiContext('marketplace.category_native_import.manage')
+    const currentJob = await getImportJob(jobId)
+    if (!currentJob) throw new MarketplaceError('NOT_FOUND', 'Import introuvable.')
+    const needsPublishAuthority = action === 'execute'
+      ? (currentJob.rows || []).some((row) => String(row.normalized_payload?.status || '').trim() === 'published')
+      : action === 'rollback'
+        ? (currentJob.rows || []).some((row) => String(row.before_snapshot?.status || '').trim() === 'published')
+        : false
+    if (needsPublishAuthority) await requireMarketplaceApiContext('marketplace.catalog.publish')
     const job = action === 'execute'
       ? await executeImportJob(jobId, context)
       : action === 'rollback'

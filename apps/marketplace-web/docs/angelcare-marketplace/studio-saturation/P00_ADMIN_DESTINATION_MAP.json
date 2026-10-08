@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "mappings": [
+    {
+      "customer_action": "General inquiry / contact",
+      "canonical_engine": "public-universe/createPublicInquiry",
+      "canonical_object": "angelcare_marketplace_public_inquiries",
+      "admin_destination": "/angelcare-marketplace/admin/public-inquiries",
+      "new_workspace_required": false
+    },
+    {
+      "customer_action": "Booking/service request",
+      "canonical_engine": "Category-Native + Conversion Universe",
+      "canonical_object": "conversion session / journey",
+      "admin_destination": "/angelcare-marketplace/admin/bookings",
+      "new_workspace_required": false
+    },
+    {
+      "customer_action": "Quotation / quote basket",
+      "canonical_engine": "Conversion Universe",
+      "canonical_object": "quote basket / conversion outcome",
+      "admin_destination": "/angelcare-marketplace/admin/quote-baskets",
+      "new_workspace_required": false
+    },
+    {
+      "customer_action": "Checkout/order",
+      "canonical_engine": "Conversion Universe + Journey Control",
+      "canonical_object": "journey/order",
+      "admin_destination": "/angelcare-marketplace/admin/orders",
+      "new_workspace_required": false
+    },
+    {
+      "customer_action": "Academy enrollment",
+      "canonical_engine": "Academy Engine + Conversion Universe",
+      "canonical_object": "academy enrollment",
+      "admin_destination": "/angelcare-marketplace/admin/academy",
+      "new_workspace_required": false
+    },
+    {
+      "customer_action": "Subscription",
+      "canonical_engine": "Customer Commerce / Conversion Universe",
+      "canonical_object": "customer subscription",
+      "admin_destination": "/angelcare-marketplace/admin/subscriptions",
+      "new_workspace_required": false
+    },
+    {
+      "customer_action": "Family request",
+      "canonical_engine": "Family Experience",
+      "canonical_object": "family quote request / journey",
+      "admin_destination": "/angelcare-marketplace/admin/family-requests",
+      "new_workspace_required": false
+    },
+    {
+      "customer_action": "Payment",
+      "canonical_engine": "Customer Commerce payment authority",
+      "canonical_object": "payment intent",
+      "admin_destination": "/angelcare-marketplace/admin/payments",
+      "new_workspace_required": false
+    },
+    {
+      "customer_action": "B2B request/diagnostic",
+      "canonical_engine": "B2B Verticals",
+      "canonical_object": "b2b public request / diagnostic",
+      "admin_destination": "/angelcare-marketplace/admin/operations/b2b",
+      "new_workspace_required": false
+    }
+  ]
+}

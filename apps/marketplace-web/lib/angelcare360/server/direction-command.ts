@@ -2,6 +2,7 @@ import { createHash, randomUUID } from 'node:crypto'
 import { createClient } from '@/lib/supabase/server'
 import { getAngelcare360AccessContext, Angelcare360AccessError } from '@/lib/angelcare360/server/context'
 import { recordAngelcare360AuditEventServer } from '@/lib/angelcare360/server/audit'
+import { getSanilaBusinessClock, getSanilaBusinessDate } from '@/lib/angelcare360/server/business-clock'
 import {
   actionsForMatter,
   DIRECTION_DOMAINS,
@@ -352,10 +353,10 @@ function projectionFor(map: Map<string, Row>, fingerprint: string) {
   return map.get(fingerprint) || null
 }
 
-async function synthesizeMatters(db: Db, schoolId: string, projection: Map<string, Row>, canDecide: boolean, currency: string) {
+async function synthesizeMatters(db: Db, schoolId: string, projection: Map<string, Row>, canDecide: boolean, currency: string, businessNow: number) {
   const matters: DirectionMatter[] = []
   const warnings: string[] = []
-  const now = new Date()
+  const now = new Date(businessNow)
   const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString()
 
   const [
@@ -390,7 +391,7 @@ async function synthesizeMatters(db: Db, schoolId: string, projection: Map<strin
     const status = text(row.status).toLowerCase()
     const balanceMinor = minorFromUnknown(row.balance_due ?? row.balance ?? row.total_amount)
     const dueAt = optionalText(row.due_date)
-    const overdue = status === 'overdue' || (dueAt ? Date.parse(dueAt) < Date.now() && balanceMinor > 0 : false)
+    const overdue = status === 'overdue' || (dueAt ? Date.parse(dueAt) < businessNow && balanceMinor > 0 : false)
     if (!overdue && !['partial', 'partially_paid', 'disputed'].includes(status)) continue
     const id = text(row.id)
     const fingerprint = `finance:invoice:${id}`
@@ -584,7 +585,7 @@ async function synthesizeMatters(db: Db, schoolId: string, projection: Map<strin
     const id = text(row.id)
     const dueAt = optionalText(row.due_at || row.commitment_due_at)
     const fingerprint = `finance:payment-commitment:${id}`
-    const broken = ['broken', 'defaulted'].includes(status) || Boolean(dueAt && Date.parse(dueAt) < Date.now())
+    const broken = ['broken', 'defaulted'].includes(status) || Boolean(dueAt && Date.parse(dueAt) < businessNow)
     matters.push(buildMatter({
       fingerprint,
       title: broken ? 'Engagement de paiement rompu' : 'Engagement de paiement à surveiller',
@@ -780,12 +781,14 @@ export async function getDirectionCommandSnapshot(): Promise<DirectionCommandSna
   const schoolId = context.school!.id
   const canDecide = DECISION_ACCESS.has(context.access.accessLevel)
   const projection = await loadProjectionMap(db, schoolId)
+  const businessClock = getSanilaBusinessClock(context)
   const { matters: rawMatters, warnings } = await synthesizeMatters(
     db,
     schoolId,
     projection,
     canDecide,
     context.schoolSettings?.default_currency || context.school!.currency || 'Dh',
+    businessClock.instant.getTime(),
   )
   const persistedMatterIds = rawMatters.filter((item) => projection.has(item.fingerprint)).map((item) => item.id)
   const eventMap = await loadDirectionEvents(db, schoolId, persistedMatterIds)
@@ -814,7 +817,7 @@ export async function getDirectionCommandSnapshot(): Promise<DirectionCommandSna
   const active = matters.filter((item) => !TERMINAL_STATES.has(item.state))
   const critical = active.filter((item) => item.severity === 'critical').length
   const decisionsRequired = active.filter((item) => item.state === 'decision_required' || item.lane === 'decision').length + decisions.filter((item) => ['submitted', 'evidence_required'].includes(item.state)).length
-  const commitmentsDue = commitments.filter((item) => item.state !== 'completed' && item.dueAt && Date.parse(item.dueAt) <= Date.now() + 86400000).length
+  const commitmentsDue = commitments.filter((item) => item.state !== 'completed' && item.dueAt && Date.parse(item.dueAt) <= businessClock.instant.getTime() + 86400000).length
   const financialExposureMinor = active.reduce((sum, item) => sum + (item.impact.financialMinor || 0), 0)
   const peopleAffected = active.reduce((sum, item) => sum + (item.impact.peopleCount || 0), 0)
   const unacknowledged = active.filter((item) => item.state === 'new').length
@@ -986,7 +989,7 @@ export async function executeDirectionMatterAction(request: DirectionMatterActio
   } else if (request.action === 'snooze') {
     const snoozedUntil = request.snoozedUntil && Number.isFinite(Date.parse(request.snoozedUntil))
       ? new Date(request.snoozedUntil).toISOString()
-      : new Date(Date.now() + 86400000).toISOString()
+      : new Date(getSanilaBusinessClock(context).instant.getTime() + 86400000).toISOString()
     Object.assign(patch, { state: 'snoozed', snoozed_until: snoozedUntil, snooze_reason: reason })
     label = 'Matter reporté'
     tone = 'warning'
@@ -1063,7 +1066,7 @@ export async function createDirectionDecision(request: DirectionDecisionCreateRe
   const impact = request.impact || {}
   const payload = {
     school_id: schoolId,
-    decision_code: `DEC-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}-${randomUUID().slice(0, 6).toUpperCase()}`,
+    decision_code: `DEC-${getSanilaBusinessDate(context).replace(/-/g, '')}-${randomUUID().slice(0, 6).toUpperCase()}`,
     matter_id: request.matterId || null,
     title: request.title.trim(),
     question: request.question.trim(),
@@ -1167,7 +1170,7 @@ export async function createDirectionCommitment(request: DirectionCommitmentCrea
   }
   const payload = {
     school_id: schoolId,
-    commitment_code: `COM-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}-${randomUUID().slice(0, 6).toUpperCase()}`,
+    commitment_code: `COM-${getSanilaBusinessDate(context).replace(/-/g, '')}-${randomUUID().slice(0, 6).toUpperCase()}`,
     matter_id: request.matterId || null,
     decision_id: request.decisionId || null,
     title: request.title.trim(),

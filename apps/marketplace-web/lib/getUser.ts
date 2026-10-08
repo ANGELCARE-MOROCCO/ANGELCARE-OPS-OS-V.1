@@ -1,9 +1,11 @@
 import { cookies } from 'next/headers'
 import { createServiceClient } from '@/lib/supabase/server'
 import { APP_SESSION_COOKIE } from '@/lib/auth/session'
+import { DEMO_COOKIE } from '@/lib/sanila-demo/authority'
 
 export async function getCurrentUser() {
   const cookieStore = await cookies()
+  if (cookieStore.get(DEMO_COOKIE)?.value) return null
   const token = cookieStore.get(APP_SESSION_COOKIE)?.value
 
   if (!token) return null

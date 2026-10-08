@@ -1,0 +1,41 @@
+{
+  "phase": "P08",
+  "name": "Public Runtime Orchestrator",
+  "entrypoint_count": 3,
+  "entrypoints": [
+    {
+      "route": "/angelcare-marketplace/[locale]/marketplace/[slug]",
+      "context": [
+        "collection",
+        "placement"
+      ],
+      "renderer": "PublicCatalogExperience"
+    },
+    {
+      "route": "/angelcare-marketplace/[locale]/marketplace/item/[itemSlug]",
+      "context": [
+        "collection",
+        "placement"
+      ],
+      "renderer": "PublicCatalogExperience"
+    },
+    {
+      "route": "/angelcare-marketplace/[locale]/experience/[itemSlug]",
+      "context": [
+        "collection",
+        "placement"
+      ],
+      "renderer": "PublicCatalogExperience"
+    }
+  ],
+  "native_conversion_routes_preserved": [
+    "/booking/[itemSlug]",
+    "/quotation/[itemSlug]",
+    "/enrollment/[itemSlug]",
+    "/subscription/[itemSlug]",
+    "/experience/[itemSlug]/configure"
+  ],
+  "assigned_template_switch": true,
+  "p09_attribution_expansion": false,
+  "sql_required": false
+}

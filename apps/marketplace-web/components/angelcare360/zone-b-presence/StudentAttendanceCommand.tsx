@@ -1,0 +1,16 @@
+'use client'
+import Link from 'next/link'
+import { useMemo, useState } from 'react'
+import type { Angelcare360AttendanceRecordListRecord } from '@/types/angelcare360/attendance'
+import styles from './PresenceZoneBFrame.module.css'
+import { attendanceLabel, dateFr, initials } from './presence-ui'
+import { StudentAttendanceQuickPeek, TonePill } from './PresenceCommandSurfaces'
+
+export default function StudentAttendanceCommand({records}:{records:Angelcare360AttendanceRecordListRecord[]}){
+ const [search,setSearch]=useState(''); const [status,setStatus]=useState('all'); const [selected,setSelected]=useState<Angelcare360AttendanceRecordListRecord|null>(null)
+ const rows=useMemo(()=>records.filter((r)=>{const q=search.toLowerCase().trim();return (!q||`${r.student_full_name||''} ${r.class_name||''} ${r.student_code||''}`.toLowerCase().includes(q))&&(status==='all'||r.attendance_status===status)}),[records,search,status])
+ return <div className={styles.page} data-zone-b-page="students"><section className={styles.crown}><div className={styles.crownTop}><div><h2 className={styles.crownTitle}>Student Attendance Command</h2><p className={styles.crownSub}>Rechercher un élève par son nom ou sa classe, puis ouvrir son contexte de présence sans exposer d’identifiant technique.</p></div><div className={styles.contextPills}><span className={styles.pillBlue}>{records.length} relevé(s) chargés</span></div></div></section>
+ <div className={styles.filters}><input className={styles.input} placeholder="Rechercher un élève ou une classe…" value={search} onChange={(e)=>setSearch(e.target.value)}/><select className={styles.select} value={status} onChange={(e)=>setStatus(e.target.value)}><option value="all">Tous les états</option><option value="present">Présents</option><option value="absent">Absents</option><option value="late">Retards</option><option value="left_early">Sorties anticipées</option><option value="excused">Absences autorisées</option></select></div>
+ <section className={styles.panel}><div className={styles.panelHeader}><div><div className={styles.panelEyebrow}>Élèves</div><h3 className={styles.panelTitle}>Présence individuelle</h3></div></div><div className={styles.list}>{rows.length?rows.map((r)=><button type="button" key={r.id} className={styles.listButton} onClick={()=>setSelected(r)}><span className={styles.avatar}>{initials(r.student_full_name)}</span><span className={styles.rowCopy}><strong className={styles.rowTitle}>{r.student_full_name||'Élève'}</strong><span className={styles.rowMeta}>{r.class_name||'Classe non renseignée'} · {dateFr(r.session_date)}</span></span><span className={styles.rowRight}><TonePill value={r.attendance_status}/></span></button>):<div className={styles.empty}><strong className={styles.emptyTitle}>Aucun relevé correspondant</strong><p className={styles.emptyText}>Modifiez la recherche ou le filtre d’état.</p></div>}</div></section>
+ <div data-zone-b-secondary="true" className={styles.section}><span>Besoin du dossier complet ? </span><Link className={styles.actionLink} href="/angelcare-360-command-center/eleves">Ouvrir Élèves 360</Link></div><StudentAttendanceQuickPeek open={Boolean(selected)} onClose={()=>setSelected(null)} record={selected}/></div>
+}

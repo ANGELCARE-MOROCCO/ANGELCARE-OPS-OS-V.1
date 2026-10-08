@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { listAngelcare360AcademicYears } from './queries'
 import { listAngelcare360Sections, listAngelcare360Subjects, listAngelcare360TeacherAssignments, listAngelcare360Terms } from './administration'
 import { getAngelcare360AccessContext, requireAngelcare360Permission } from './context'
+import { getSanilaBusinessDate } from './business-clock'
 import { recordAngelcare360AuditEventServer } from './audit'
 import { listAngelcare360ClassEnrollments } from './people'
 import {
@@ -1407,7 +1408,7 @@ export async function createAngelcare360ReportCardDraft(input: Record<string, un
     section_id: parsed.data.sectionId || null,
     term_id: parsed.data.termId,
     report_card_code: parsed.data.reportCardCode || buildCode('RPT'),
-    generated_on: parsed.data.generatedOn || new Date().toISOString().slice(0, 10),
+    generated_on: parsed.data.generatedOn || getSanilaBusinessDate(context),
     status: 'draft',
     metadata_json: { source: 'phase7' },
   }

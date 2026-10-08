@@ -1,0 +1,17 @@
+{
+  "signals": [
+    {"area":"sources","authority":"P01 Source Registry","shows":["source","entity","validation","permission","publication awareness","admin destination"]},
+    {"area":"templates","authority":"P04 Assignment Resolver","shows":["precedence","winning scope","published template","published revision","provenance"]},
+    {"area":"bindings","authority":"P05 Live Binding Registry/Runtime","shows":["binding key","target","authority","missing policy","compatibility","runtime blockers"]},
+    {"area":"dynamic_sources","authority":"P06 Dynamic Source Engine","shows":["source","strategy","authority","resolved count","empty policy","blockers"]},
+    {"area":"actions","authority":"P03 Action Registry","shows":["status","canonical engine","created object","validations","admin destination"]},
+    {"area":"workflows","authority":"P07 Workflow Registry","shows":["execution","canonical engine","created object","consents","admin destination"]},
+    {"area":"runtime","authority":"P08 Public Runtime Orchestrator","shows":["STUDIO_READY or FALLBACK_NATIVE","fallback reason","binding/dynamic/preflight blockers"]},
+    {"area":"attribution","authority":"P09 Attribution Contract","shows":["page/template/block/action/workflow context","campaign/audience/territory","privacy invariants"]}
+  ],
+  "statusRules": {
+    "READY": "No blocker and no warning detected by the advisory inspection.",
+    "ATTENTION": "No blocker, but one or more warnings require operator awareness.",
+    "BLOCKED": "At least one invalid canonical reference, incompatible binding, source/action/workflow blocker, permission failure or runtime preparation blocker is present. P10 reports it but does not itself change publication policy."
+  }
+}

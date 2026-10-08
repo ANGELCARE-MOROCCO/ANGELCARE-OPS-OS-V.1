@@ -8,7 +8,7 @@ interface InventoryRow {
   source_line?: number | null
   source_text_fr: string
   domain: string
-  freshness_state: FreshnessState
+  freshness_state?: FreshnessState
   en_translation?: string | null
   ar_translation?: string | null
   sensitivity: string

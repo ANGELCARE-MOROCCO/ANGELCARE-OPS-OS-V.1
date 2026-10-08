@@ -31,6 +31,31 @@ function pickSchoolId(input?: string | null, contextSchoolId?: string | null) {
   return input || contextSchoolId || null
 }
 
+async function requireSchoolMutationPermission(permissionKey: string, requestedSchoolId: string) {
+  const context = await requireAngelcare360Permission(permissionKey, { schoolId: requestedSchoolId })
+  if (!context.school || context.school.id !== requestedSchoolId) {
+    throw new Error('L’établissement ciblé ne fait pas partie de votre périmètre autorisé.')
+  }
+  return context.school.id
+}
+
+async function assertSchoolOwnedReferences(
+  supabase: DatabaseClient,
+  schoolId: string,
+  references: Array<{ table: string; id?: string | null; label: string }>,
+) {
+  for (const reference of references) {
+    if (!reference.id) continue
+    const { data } = await supabase
+      .from(reference.table)
+      .select('id')
+      .eq('school_id', schoolId)
+      .eq('id', reference.id)
+      .maybeSingle()
+    if (!data) throw new Error(`${reference.label} ne fait pas partie de l’établissement autorisé.`)
+  }
+}
+
 async function countRows(table: string, schoolId?: string | null, filters?: Array<[string, string, unknown]>) {
   const supabase = await createClient()
   let query = supabase.from(table).select('id', { count: 'exact', head: true })
@@ -345,7 +370,10 @@ export async function createAngelcare360School(input: unknown): Promise<Mutation
   const parsed = angelcare360SchoolAdminSchema.safeParse(input)
   if (!parsed.success) return { ok: false, error: parsed.errors[0]?.message || 'Payload établissement invalide.' }
 
-  await requireAngelcare360Permission('parametres.create')
+  const context = await requireAngelcare360Permission('parametres.create')
+  if (context.access.accessLevel !== 'super_admin') {
+    throw new Error('La création d’un établissement nécessite une autorité plateforme.')
+  }
   const supabase = await createClient()
   const data = parsed.data
   const payload = {
@@ -400,9 +428,9 @@ export async function updateAngelcare360School(input: unknown): Promise<Mutation
   const parsed = angelcare360SchoolAdminSchema.safeParse(input)
   if (!parsed.success) return { ok: false, error: parsed.errors[0]?.message || 'Payload établissement invalide.' }
   if (!parsed.data.id) return { ok: false, error: 'L’identifiant de l’établissement est requis.' }
-  await requireAngelcare360Permission('parametres.update')
+  const schoolId = await requireSchoolMutationPermission('parametres.update', parsed.data.id)
   const supabase = await createClient()
-  const before = await supabase.from('angelcare360_schools').select('*').eq('id', parsed.data.id).maybeSingle()
+  const before = await supabase.from('angelcare360_schools').select('*').eq('id', schoolId).maybeSingle()
   const data = parsed.data
   const { error } = await supabase
     .from('angelcare360_schools')
@@ -426,7 +454,7 @@ export async function updateAngelcare360School(input: unknown): Promise<Mutation
       },
       updated_at: new Date().toISOString(),
     })
-    .eq('id', parsed.data.id)
+    .eq('id', schoolId)
 
   if (error) return { ok: false, error: error.message }
 
@@ -435,50 +463,50 @@ export async function updateAngelcare360School(input: unknown): Promise<Mutation
     action: 'school.updated',
     category: 'settings',
     severity: 'info',
-    schoolId: parsed.data.id,
+    schoolId,
     entityType: 'school',
-    entityId: parsed.data.id,
+    entityId: schoolId,
     beforeData: (before.data as Record<string, unknown>) || {},
     afterData: data as unknown as Record<string, unknown>,
   })
 
   if (!auditResult.ok) return { ok: false, error: auditResult.error || 'École mise à jour, mais audit impossible.' }
-  return { ok: true, record: { id: parsed.data.id } }
+  return { ok: true, record: { id: schoolId } }
 }
 
 export async function changeAngelcare360SchoolStatus(input: { id: string; status: 'active' | 'inactive' | 'suspended' | 'archived' }) {
-  await requireAngelcare360Permission('parametres.update')
+  const schoolId = await requireSchoolMutationPermission('parametres.update', input.id)
   const supabase = await createClient()
-  const before = await supabase.from('angelcare360_schools').select('*').eq('id', input.id).maybeSingle()
+  const before = await supabase.from('angelcare360_schools').select('*').eq('id', schoolId).maybeSingle()
   const { error } = await supabase
     .from('angelcare360_schools')
     .update({ status: input.status, updated_at: new Date().toISOString() })
-    .eq('id', input.id)
+    .eq('id', schoolId)
   if (error) return { ok: false, error: error.message }
   const auditResult = await recordAngelcare360AuditEventServer({
     module: 'parametres',
     action: 'school.status_changed',
     category: 'settings',
     severity: 'warning',
-    schoolId: input.id,
+    schoolId,
     entityType: 'school',
-    entityId: input.id,
+    entityId: schoolId,
     beforeData: (before.data as Record<string, unknown>) || {},
     afterData: { status: input.status },
   })
   if (!auditResult.ok) return { ok: false, error: auditResult.error || 'Statut mis à jour, mais audit impossible.' }
-  return { ok: true, record: { id: input.id } }
+  return { ok: true, record: { id: schoolId } }
 }
 
 export async function createAngelcare360AcademicYear(input: unknown) {
   const parsed = angelcare360AcademicYearAdminSchema.safeParse(input)
   if (!parsed.success) return { ok: false, error: parsed.errors[0]?.message || 'Payload année scolaire invalide.' }
-  await requireAngelcare360Permission('annees_scolaires.create')
+  const schoolId = await requireSchoolMutationPermission('annees_scolaires.create', parsed.data.schoolId)
   const supabase = await createClient()
   const { data: record, error } = await supabase
     .from('angelcare360_academic_years')
     .insert({
-      school_id: parsed.data.schoolId,
+      school_id: schoolId,
       year_code: parsed.data.yearCode,
       label: parsed.data.label,
       starts_on: parsed.data.startsOn,
@@ -495,7 +523,7 @@ export async function createAngelcare360AcademicYear(input: unknown) {
     await supabase
       .from('angelcare360_academic_years')
       .update({ is_current: false })
-      .eq('school_id', parsed.data.schoolId)
+      .eq('school_id', schoolId)
       .neq('id', record.id)
   }
 
@@ -504,7 +532,7 @@ export async function createAngelcare360AcademicYear(input: unknown) {
     action: 'academic_year.created',
     category: 'settings',
     severity: 'notice',
-    schoolId: parsed.data.schoolId,
+    schoolId,
     entityType: 'academic_year',
     entityId: record.id,
     afterData: parsed.data as unknown as Record<string, unknown>,
@@ -517,9 +545,9 @@ export async function updateAngelcare360AcademicYear(input: unknown) {
   const parsed = angelcare360AcademicYearAdminSchema.safeParse(input)
   if (!parsed.success) return { ok: false, error: parsed.errors[0]?.message || 'Payload année scolaire invalide.' }
   if (!parsed.data.id) return { ok: false, error: 'L’identifiant de l’année scolaire est requis.' }
-  await requireAngelcare360Permission('annees_scolaires.update')
+  const schoolId = await requireSchoolMutationPermission('annees_scolaires.update', parsed.data.schoolId)
   const supabase = await createClient()
-  const before = await supabase.from('angelcare360_academic_years').select('*').eq('id', parsed.data.id).maybeSingle()
+  const before = await supabase.from('angelcare360_academic_years').select('*').eq('school_id', schoolId).eq('id', parsed.data.id).maybeSingle()
   const { error } = await supabase
     .from('angelcare360_academic_years')
     .update({
@@ -531,6 +559,7 @@ export async function updateAngelcare360AcademicYear(input: unknown) {
       status: parsed.data.status,
       updated_at: new Date().toISOString(),
     })
+    .eq('school_id', schoolId)
     .eq('id', parsed.data.id)
   if (error) return { ok: false, error: error.message }
 
@@ -539,7 +568,7 @@ export async function updateAngelcare360AcademicYear(input: unknown) {
     action: 'academic_year.updated',
     category: 'settings',
     severity: 'info',
-    schoolId: parsed.data.schoolId,
+    schoolId,
     entityType: 'academic_year',
     entityId: parsed.data.id,
     beforeData: (before.data as Record<string, unknown>) || {},
@@ -550,15 +579,17 @@ export async function updateAngelcare360AcademicYear(input: unknown) {
 }
 
 export async function setAngelcare360ActiveAcademicYear(input: { schoolId: string; academicYearId: string }) {
-  await requireAngelcare360Permission('annees_scolaires.update')
+  const schoolId = await requireSchoolMutationPermission('annees_scolaires.update', input.schoolId)
   const supabase = await createClient()
+  await assertSchoolOwnedReferences(supabase, schoolId, [{ table: 'angelcare360_academic_years', id: input.academicYearId, label: "L’année scolaire" }])
   await supabase
     .from('angelcare360_academic_years')
     .update({ is_current: false, status: 'planned', updated_at: new Date().toISOString() })
-    .eq('school_id', input.schoolId)
+    .eq('school_id', schoolId)
   const { error } = await supabase
     .from('angelcare360_academic_years')
     .update({ is_current: true, status: 'active', updated_at: new Date().toISOString() })
+    .eq('school_id', schoolId)
     .eq('id', input.academicYearId)
   if (error) return { ok: false, error: error.message }
   await recordAngelcare360AuditEventServer({
@@ -566,7 +597,7 @@ export async function setAngelcare360ActiveAcademicYear(input: { schoolId: strin
     action: 'academic_year.activated',
     category: 'settings',
     severity: 'warning',
-    schoolId: input.schoolId,
+    schoolId,
     entityType: 'academic_year',
     entityId: input.academicYearId,
     afterData: { is_current: true, status: 'active' },
@@ -577,12 +608,13 @@ export async function setAngelcare360ActiveAcademicYear(input: { schoolId: strin
 export async function createAngelcare360Term(input: unknown) {
   const parsed = angelcare360TermAdminSchema.safeParse(input)
   if (!parsed.success) return { ok: false, error: parsed.errors[0]?.message || 'Payload période invalide.' }
-  await requireAngelcare360Permission('annees_scolaires.update')
+  const schoolId = await requireSchoolMutationPermission('annees_scolaires.update', parsed.data.schoolId)
   const supabase = await createClient()
+  await assertSchoolOwnedReferences(supabase, schoolId, [{ table: 'angelcare360_academic_years', id: parsed.data.academicYearId, label: "L’année scolaire" }])
   const { data: record, error } = await supabase
     .from('angelcare360_terms')
     .insert({
-      school_id: parsed.data.schoolId,
+      school_id: schoolId,
       academic_year_id: parsed.data.academicYearId,
       term_code: parsed.data.termCode,
       label: parsed.data.label,
@@ -600,7 +632,7 @@ export async function createAngelcare360Term(input: unknown) {
     action: 'term.created',
     category: 'settings',
     severity: 'notice',
-    schoolId: parsed.data.schoolId,
+    schoolId,
     entityType: 'term',
     entityId: record.id,
     afterData: parsed.data as unknown as Record<string, unknown>,
@@ -612,9 +644,9 @@ export async function updateAngelcare360Term(input: unknown) {
   const parsed = angelcare360TermAdminSchema.safeParse(input)
   if (!parsed.success) return { ok: false, error: parsed.errors[0]?.message || 'Payload période invalide.' }
   if (!parsed.data.id) return { ok: false, error: 'L’identifiant de la période est requis.' }
-  await requireAngelcare360Permission('annees_scolaires.update')
+  const schoolId = await requireSchoolMutationPermission('annees_scolaires.update', parsed.data.schoolId)
   const supabase = await createClient()
-  const before = await supabase.from('angelcare360_terms').select('*').eq('id', parsed.data.id).maybeSingle()
+  const before = await supabase.from('angelcare360_terms').select('*').eq('school_id', schoolId).eq('id', parsed.data.id).maybeSingle()
   const { error } = await supabase
     .from('angelcare360_terms')
     .update({
@@ -627,6 +659,7 @@ export async function updateAngelcare360Term(input: unknown) {
       metadata_json: { term_type: parsed.data.termType || null },
       updated_at: new Date().toISOString(),
     })
+    .eq('school_id', schoolId)
     .eq('id', parsed.data.id)
   if (error) return { ok: false, error: error.message }
   await recordAngelcare360AuditEventServer({
@@ -634,7 +667,7 @@ export async function updateAngelcare360Term(input: unknown) {
     action: 'term.updated',
     category: 'settings',
     severity: 'info',
-    schoolId: parsed.data.schoolId,
+    schoolId,
     entityType: 'term',
     entityId: parsed.data.id,
     beforeData: (before.data as Record<string, unknown>) || {},
@@ -646,12 +679,16 @@ export async function updateAngelcare360Term(input: unknown) {
 export async function createAngelcare360Class(input: unknown) {
   const parsed = angelcare360ClassAdminSchema.safeParse(input)
   if (!parsed.success) return { ok: false, error: parsed.errors[0]?.message || 'Payload classe invalide.' }
-  await requireAngelcare360Permission('classes.create')
+  const schoolId = await requireSchoolMutationPermission('classes.create', parsed.data.schoolId)
   const supabase = await createClient()
+  await assertSchoolOwnedReferences(supabase, schoolId, [
+    { table: 'angelcare360_academic_years', id: parsed.data.academicYearId, label: "L’année scolaire" },
+    { table: 'angelcare360_staff', id: parsed.data.homeroomStaffId, label: 'Le responsable de classe' },
+  ])
   const { data: record, error } = await supabase
     .from('angelcare360_classes')
     .insert({
-      school_id: parsed.data.schoolId,
+      school_id: schoolId,
       academic_year_id: parsed.data.academicYearId,
       class_code: parsed.data.classCode,
       name: parsed.data.name,
@@ -670,7 +707,7 @@ export async function createAngelcare360Class(input: unknown) {
     action: 'class.created',
     category: 'settings',
     severity: 'notice',
-    schoolId: parsed.data.schoolId,
+    schoolId,
     entityType: 'class',
     entityId: record.id,
     afterData: parsed.data as unknown as Record<string, unknown>,
@@ -682,9 +719,13 @@ export async function updateAngelcare360Class(input: unknown) {
   const parsed = angelcare360ClassAdminSchema.safeParse(input)
   if (!parsed.success) return { ok: false, error: parsed.errors[0]?.message || 'Payload classe invalide.' }
   if (!parsed.data.id) return { ok: false, error: 'L’identifiant de la classe est requis.' }
-  await requireAngelcare360Permission('classes.update')
+  const schoolId = await requireSchoolMutationPermission('classes.update', parsed.data.schoolId)
   const supabase = await createClient()
-  const before = await supabase.from('angelcare360_classes').select('*').eq('id', parsed.data.id).maybeSingle()
+  await assertSchoolOwnedReferences(supabase, schoolId, [
+    { table: 'angelcare360_academic_years', id: parsed.data.academicYearId, label: "L’année scolaire" },
+    { table: 'angelcare360_staff', id: parsed.data.homeroomStaffId, label: 'Le responsable de classe' },
+  ])
+  const before = await supabase.from('angelcare360_classes').select('*').eq('school_id', schoolId).eq('id', parsed.data.id).maybeSingle()
   const { error } = await supabase
     .from('angelcare360_classes')
     .update({
@@ -698,6 +739,7 @@ export async function updateAngelcare360Class(input: unknown) {
       metadata_json: { description: parsed.data.description || null },
       updated_at: new Date().toISOString(),
     })
+    .eq('school_id', schoolId)
     .eq('id', parsed.data.id)
   if (error) return { ok: false, error: error.message }
   await recordAngelcare360AuditEventServer({
@@ -705,7 +747,7 @@ export async function updateAngelcare360Class(input: unknown) {
     action: 'class.updated',
     category: 'settings',
     severity: 'info',
-    schoolId: parsed.data.schoolId,
+    schoolId,
     entityType: 'class',
     entityId: parsed.data.id,
     beforeData: (before.data as Record<string, unknown>) || {},
@@ -717,12 +759,17 @@ export async function updateAngelcare360Class(input: unknown) {
 export async function createAngelcare360Section(input: unknown) {
   const parsed = angelcare360SectionAdminSchema.safeParse(input)
   if (!parsed.success) return { ok: false, error: parsed.errors[0]?.message || 'Payload section invalide.' }
-  await requireAngelcare360Permission('classes.create')
+  const schoolId = await requireSchoolMutationPermission('classes.create', parsed.data.schoolId)
   const supabase = await createClient()
+  await assertSchoolOwnedReferences(supabase, schoolId, [
+    { table: 'angelcare360_academic_years', id: parsed.data.academicYearId, label: "L’année scolaire" },
+    { table: 'angelcare360_classes', id: parsed.data.classId, label: 'La classe' },
+    { table: 'angelcare360_staff', id: parsed.data.mainTeacherId, label: "L’enseignant principal" },
+  ])
   const { data: record, error } = await supabase
     .from('angelcare360_sections')
     .insert({
-      school_id: parsed.data.schoolId,
+      school_id: schoolId,
       academic_year_id: parsed.data.academicYearId,
       class_id: parsed.data.classId,
       section_code: parsed.data.sectionCode,
@@ -740,7 +787,7 @@ export async function createAngelcare360Section(input: unknown) {
     action: 'section.created',
     category: 'settings',
     severity: 'notice',
-    schoolId: parsed.data.schoolId,
+    schoolId,
     entityType: 'section',
     entityId: record.id,
     afterData: parsed.data as unknown as Record<string, unknown>,
@@ -752,9 +799,14 @@ export async function updateAngelcare360Section(input: unknown) {
   const parsed = angelcare360SectionAdminSchema.safeParse(input)
   if (!parsed.success) return { ok: false, error: parsed.errors[0]?.message || 'Payload section invalide.' }
   if (!parsed.data.id) return { ok: false, error: 'L’identifiant de la section est requis.' }
-  await requireAngelcare360Permission('classes.update')
+  const schoolId = await requireSchoolMutationPermission('classes.update', parsed.data.schoolId)
   const supabase = await createClient()
-  const before = await supabase.from('angelcare360_sections').select('*').eq('id', parsed.data.id).maybeSingle()
+  await assertSchoolOwnedReferences(supabase, schoolId, [
+    { table: 'angelcare360_academic_years', id: parsed.data.academicYearId, label: "L’année scolaire" },
+    { table: 'angelcare360_classes', id: parsed.data.classId, label: 'La classe' },
+    { table: 'angelcare360_staff', id: parsed.data.mainTeacherId, label: "L’enseignant principal" },
+  ])
+  const before = await supabase.from('angelcare360_sections').select('*').eq('school_id', schoolId).eq('id', parsed.data.id).maybeSingle()
   const { error } = await supabase
     .from('angelcare360_sections')
     .update({
@@ -766,6 +818,7 @@ export async function updateAngelcare360Section(input: unknown) {
       metadata_json: { main_teacher_id: parsed.data.mainTeacherId || null },
       updated_at: new Date().toISOString(),
     })
+    .eq('school_id', schoolId)
     .eq('id', parsed.data.id)
   if (error) return { ok: false, error: error.message }
   await recordAngelcare360AuditEventServer({
@@ -773,7 +826,7 @@ export async function updateAngelcare360Section(input: unknown) {
     action: 'section.updated',
     category: 'settings',
     severity: 'info',
-    schoolId: parsed.data.schoolId,
+    schoolId,
     entityType: 'section',
     entityId: parsed.data.id,
     beforeData: (before.data as Record<string, unknown>) || {},
@@ -785,12 +838,12 @@ export async function updateAngelcare360Section(input: unknown) {
 export async function createAngelcare360Subject(input: unknown) {
   const parsed = angelcare360SubjectAdminSchema.safeParse(input)
   if (!parsed.success) return { ok: false, error: parsed.errors[0]?.message || 'Payload matière invalide.' }
-  await requireAngelcare360Permission('matieres.create')
+  const schoolId = await requireSchoolMutationPermission('matieres.create', parsed.data.schoolId)
   const supabase = await createClient()
   const { data: record, error } = await supabase
     .from('angelcare360_subjects')
     .insert({
-      school_id: parsed.data.schoolId,
+      school_id: schoolId,
       subject_code: parsed.data.subjectCode,
       name: parsed.data.name,
       short_name: parsed.data.shortName || null,
@@ -802,13 +855,13 @@ export async function createAngelcare360Subject(input: unknown) {
     .single()
   if (error) return { ok: false, error: error.message }
 
-  await syncSubjectClassLinks(supabase, parsed.data.schoolId, record.id, parsed.data.linkedClassIds)
+  await syncSubjectClassLinks(supabase, schoolId, record.id, parsed.data.linkedClassIds)
   await recordAngelcare360AuditEventServer({
     module: 'matieres',
     action: 'subject.created',
     category: 'settings',
     severity: 'notice',
-    schoolId: parsed.data.schoolId,
+    schoolId,
     entityType: 'subject',
     entityId: record.id,
     afterData: parsed.data as unknown as Record<string, unknown>,
@@ -820,9 +873,9 @@ export async function updateAngelcare360Subject(input: unknown) {
   const parsed = angelcare360SubjectAdminSchema.safeParse(input)
   if (!parsed.success) return { ok: false, error: parsed.errors[0]?.message || 'Payload matière invalide.' }
   if (!parsed.data.id) return { ok: false, error: 'L’identifiant de la matière est requis.' }
-  await requireAngelcare360Permission('matieres.update')
+  const schoolId = await requireSchoolMutationPermission('matieres.update', parsed.data.schoolId)
   const supabase = await createClient()
-  const before = await supabase.from('angelcare360_subjects').select('*').eq('id', parsed.data.id).maybeSingle()
+  const before = await supabase.from('angelcare360_subjects').select('*').eq('school_id', schoolId).eq('id', parsed.data.id).maybeSingle()
   const { error } = await supabase
     .from('angelcare360_subjects')
     .update({
@@ -834,15 +887,16 @@ export async function updateAngelcare360Subject(input: unknown) {
       status: parsed.data.status,
       updated_at: new Date().toISOString(),
     })
+    .eq('school_id', schoolId)
     .eq('id', parsed.data.id)
   if (error) return { ok: false, error: error.message }
-  await syncSubjectClassLinks(supabase, parsed.data.schoolId, parsed.data.id, parsed.data.linkedClassIds)
+  await syncSubjectClassLinks(supabase, schoolId, parsed.data.id, parsed.data.linkedClassIds)
   await recordAngelcare360AuditEventServer({
     module: 'matieres',
     action: 'subject.updated',
     category: 'settings',
     severity: 'info',
-    schoolId: parsed.data.schoolId,
+    schoolId,
     entityType: 'subject',
     entityId: parsed.data.id,
     beforeData: (before.data as Record<string, unknown>) || {},
@@ -852,6 +906,7 @@ export async function updateAngelcare360Subject(input: unknown) {
 }
 
 async function syncSubjectClassLinks(supabase: DatabaseClient, schoolId: string, subjectId: string, classIds: string[]) {
+  await Promise.all(classIds.map((classId) => assertSchoolOwnedReferences(supabase, schoolId, [{ table: 'angelcare360_classes', id: classId, label: 'La classe liée' }])))
   await supabase.from('angelcare360_class_subjects').delete().eq('school_id', schoolId).eq('subject_id', subjectId)
   if (classIds.length === 0) return
   const classes = classIds.map((classId) => ({
@@ -870,12 +925,19 @@ async function syncSubjectClassLinks(supabase: DatabaseClient, schoolId: string,
 export async function createAngelcare360TeacherAssignment(input: unknown) {
   const parsed = angelcare360TeacherAssignmentAdminSchema.safeParse(input)
   if (!parsed.success) return { ok: false, error: parsed.errors[0]?.message || 'Payload affectation invalide.' }
-  await requireAngelcare360Permission('enseignants.assign')
+  const schoolId = await requireSchoolMutationPermission('enseignants.assign', parsed.data.schoolId)
   const supabase = await createClient()
+  await assertSchoolOwnedReferences(supabase, schoolId, [
+    { table: 'angelcare360_academic_years', id: parsed.data.academicYearId, label: "L’année scolaire" },
+    { table: 'angelcare360_staff', id: parsed.data.staffId, label: "L’enseignant" },
+    { table: 'angelcare360_classes', id: parsed.data.classId, label: 'La classe' },
+    { table: 'angelcare360_sections', id: parsed.data.sectionId, label: 'La section' },
+    { table: 'angelcare360_subjects', id: parsed.data.subjectId, label: 'La matière' },
+  ])
   const { data: record, error } = await supabase
     .from('angelcare360_teacher_assignments')
     .insert({
-      school_id: parsed.data.schoolId,
+      school_id: schoolId,
       academic_year_id: parsed.data.academicYearId,
       staff_id: parsed.data.staffId,
       class_id: parsed.data.classId || null,
@@ -895,7 +957,7 @@ export async function createAngelcare360TeacherAssignment(input: unknown) {
     action: 'teacher_assignment.created',
     category: 'staff',
     severity: 'notice',
-    schoolId: parsed.data.schoolId,
+    schoolId,
     entityType: 'teacher_assignment',
     entityId: record.id,
     afterData: parsed.data as unknown as Record<string, unknown>,
@@ -907,9 +969,16 @@ export async function updateAngelcare360TeacherAssignment(input: unknown) {
   const parsed = angelcare360TeacherAssignmentAdminSchema.safeParse(input)
   if (!parsed.success) return { ok: false, error: parsed.errors[0]?.message || 'Payload affectation invalide.' }
   if (!parsed.data.id) return { ok: false, error: 'L’identifiant de l’affectation est requis.' }
-  await requireAngelcare360Permission('enseignants.assign')
+  const schoolId = await requireSchoolMutationPermission('enseignants.assign', parsed.data.schoolId)
   const supabase = await createClient()
-  const before = await supabase.from('angelcare360_teacher_assignments').select('*').eq('id', parsed.data.id).maybeSingle()
+  await assertSchoolOwnedReferences(supabase, schoolId, [
+    { table: 'angelcare360_academic_years', id: parsed.data.academicYearId, label: "L’année scolaire" },
+    { table: 'angelcare360_staff', id: parsed.data.staffId, label: "L’enseignant" },
+    { table: 'angelcare360_classes', id: parsed.data.classId, label: 'La classe' },
+    { table: 'angelcare360_sections', id: parsed.data.sectionId, label: 'La section' },
+    { table: 'angelcare360_subjects', id: parsed.data.subjectId, label: 'La matière' },
+  ])
+  const before = await supabase.from('angelcare360_teacher_assignments').select('*').eq('school_id', schoolId).eq('id', parsed.data.id).maybeSingle()
   const { error } = await supabase
     .from('angelcare360_teacher_assignments')
     .update({
@@ -925,6 +994,7 @@ export async function updateAngelcare360TeacherAssignment(input: unknown) {
       status: parsed.data.status,
       updated_at: new Date().toISOString(),
     })
+    .eq('school_id', schoolId)
     .eq('id', parsed.data.id)
   if (error) return { ok: false, error: error.message }
   await recordAngelcare360AuditEventServer({
@@ -932,7 +1002,7 @@ export async function updateAngelcare360TeacherAssignment(input: unknown) {
     action: 'teacher_assignment.updated',
     category: 'staff',
     severity: 'info',
-    schoolId: parsed.data.schoolId,
+    schoolId,
     entityType: 'teacher_assignment',
     entityId: parsed.data.id,
     beforeData: (before.data as Record<string, unknown>) || {},
@@ -944,11 +1014,11 @@ export async function updateAngelcare360TeacherAssignment(input: unknown) {
 export async function updateAngelcare360SchoolSettings(input: unknown) {
   const parsed = angelcare360SchoolSettingsSchema.safeParse(input)
   if (!parsed.success) return { ok: false, error: parsed.errors[0]?.message || 'Payload paramètres invalide.' }
-  await requireAngelcare360Permission('parametres.update')
+  const schoolId = await requireSchoolMutationPermission('parametres.update', parsed.data.schoolId)
   const supabase = await createClient()
-  const before = await supabase.from('angelcare360_school_settings').select('*').eq('school_id', parsed.data.schoolId).maybeSingle()
+  const before = await supabase.from('angelcare360_school_settings').select('*').eq('school_id', schoolId).maybeSingle()
   const { error } = await supabase.from('angelcare360_school_settings').upsert({
-    school_id: parsed.data.schoolId,
+    school_id: schoolId,
     default_language: parsed.data.defaultLanguage,
     default_currency: parsed.data.defaultCurrency,
     default_timezone: parsed.data.defaultTimezone,
@@ -970,7 +1040,7 @@ export async function updateAngelcare360SchoolSettings(input: unknown) {
     action: 'school_settings.updated',
     category: 'settings',
     severity: 'warning',
-    schoolId: parsed.data.schoolId,
+    schoolId,
     entityType: 'school_settings',
     entityId: before.data?.id || null,
     beforeData: (before.data as Record<string, unknown>) || {},
@@ -978,18 +1048,19 @@ export async function updateAngelcare360SchoolSettings(input: unknown) {
   })
 
   if (!auditResult.ok) return { ok: false, error: auditResult.error || 'Paramètres enregistrés, mais audit impossible.' }
-  return { ok: true, record: { id: before.data?.id || parsed.data.schoolId } }
+  return { ok: true, record: { id: before.data?.id || schoolId } }
 }
 
 export async function updateAngelcare360RolePermissions(input: unknown) {
   const parsed = angelcare360RolePermissionsSchema.safeParse(input)
   if (!parsed.success) return { ok: false, error: parsed.errors[0]?.message || 'Payload RBAC invalide.' }
-  await requireAngelcare360Permission('securite.configure')
+  const schoolId = await requireSchoolMutationPermission('securite.configure', parsed.data.schoolId)
   const supabase = await createClient()
 
   const { data: role } = await supabase
     .from('angelcare360_roles')
-    .select('id, role_key, label, scope, is_system_locked, status')
+    .select('id, school_id, role_key, label, scope, is_system_locked, status')
+    .eq('school_id', schoolId)
     .eq('id', parsed.data.roleId)
     .maybeSingle()
 
@@ -1016,7 +1087,7 @@ export async function updateAngelcare360RolePermissions(input: unknown) {
     action: 'role_permissions.updated',
     category: 'rbac',
     severity: 'critical',
-    schoolId: parsed.data.schoolId,
+    schoolId,
     entityType: 'role',
     entityId: parsed.data.roleId,
     afterData: { permissionKeys: parsed.data.permissionKeys, roleKey: role.role_key },

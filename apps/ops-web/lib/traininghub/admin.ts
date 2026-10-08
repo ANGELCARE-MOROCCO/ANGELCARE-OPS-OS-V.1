@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from '@/lib/supabase/contract-client'
 import { getSupabaseEnv } from '@/lib/supabase/env'
 import { TrainingHubHttpError } from './auth'
 

@@ -1,1 +1,2 @@
-export { default } from '../margins/page'
+import { redirect } from 'next/navigation'
+export default function Page(){redirect('/angelcare-marketplace/admin/finance/margins?focus=exceptions')}

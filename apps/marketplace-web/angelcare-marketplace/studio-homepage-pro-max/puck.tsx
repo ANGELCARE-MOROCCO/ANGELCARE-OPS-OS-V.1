@@ -1,0 +1,43 @@
+'use client'
+import type { Config } from '@puckeditor/core'
+import type { StudioPickerData } from '@/angelcare-marketplace/studio-universal/types'
+import { MediaField,RecordField } from '@/angelcare-marketplace/studio-universal/components/StudioFields'
+import { HOMEPAGE_PRO_MAX_COMPONENT_KEYS,HOMEPAGE_PRO_MAX_SECTION_DEFINITIONS } from './recipe'
+import type { HomepageProMaxSectionProps } from './types'
+import { HomepageProMaxEditorRuntime } from './components/HomepageProMaxEditorRuntime'
+import { StudioDynamicSourceField } from '@/angelcare-marketplace/studio-dynamic-source/components/StudioDynamicSourceField'
+import { createStudioDesignFields,responsiveField,DEFAULT_STUDIO_DESIGN } from '@/angelcare-marketplace/studio-universal/design'
+import { StudioActionField } from '@/angelcare-marketplace/studio-action-registry/components/StudioActionField'
+import { homepageCapability } from './capabilities'
+import { LivingMarketplaceWorldEditor } from '@/angelcare-marketplace/homepage-living-marketplace/components/LivingMarketplaceWorldEditor'
+import { LIVING_MARKETPLACE_COMPONENT_TYPE, LIVING_MARKETPLACE_WORLD_ID, LIVING_MARKETPLACE_WORLD_REVISION } from '@/angelcare-marketplace/homepage-living-marketplace/world'
+
+const choice=(label:string,options:Array<{label:string;value:string}>)=>({type:'select' as const,label,options})
+const yesNo=(label:string)=>({type:'radio' as const,label,options:[{label:'Oui',value:true},{label:'Non',value:false}]})
+function itemFields(){return {
+ title:{type:'text' as const,label:'Titre / libellé'},subtitle:{type:'text' as const,label:'Sous-titre'},body:{type:'textarea' as const,label:'Texte'},icon:{type:'text' as const,label:'Icône / symbole'},mediaAssetKey:{type:'custom' as const,label:'Media Vault',render:({value,onChange}:any)=><MediaField value={value} onChange={onChange}/>},mediaUrl:{type:'text' as const,label:'URL média · secours'},href:{type:'text' as const,label:'Destination'},ctaLabel:{type:'text' as const,label:'CTA'},badge:{type:'text' as const,label:'Badge'},priceMad:{type:'number' as const,label:'Prix MAD · vérité canonique uniquement'},compareAtMad:{type:'number' as const,label:'Prix barré MAD · vérité canonique'},rating:{type:'number' as const,label:'Note réelle'},reviewCount:{type:'number' as const,label:'Avis réels'},
+}}
+function fields(type:string,pickers:StudioPickerData){const cap=homepageCapability(type);const f:any={}
+ if(cap?.content!==false){f.title={type:'text',label:'Titre'};f.eyebrow={type:'text',label:'Eyebrow'};f.subtitle={type:'textarea',label:'Sous-titre'};f.body={type:'textarea',label:'Texte'}}
+ if(cap?.sectionMedia){f.mediaAssetKey={type:'custom',label:'Media · Desktop / principal',render:({value,onChange}:any)=><MediaField value={value} onChange={onChange}/>};f.mediaTabletAssetKey={type:'custom',label:'Media · Tablette (optionnel)',render:({value,onChange}:any)=><MediaField value={value} onChange={onChange}/>};f.mediaMobileAssetKey={type:'custom',label:'Media · Mobile (optionnel)',render:({value,onChange}:any)=><MediaField value={value} onChange={onChange}/>};f.mediaUrl={type:'text',label:'URL média externe · secours'};f.mediaAlt={type:'text',label:'Texte alternatif'};f.mediaFit=choice('Ajustement média',[{label:'Couvrir',value:'cover'},{label:'Contenir',value:'contain'},{label:'Étirer',value:'fill'}]);f.mediaPosition={type:'text',label:'Point focal / position · ex. 50% 40%'};f.mediaAspect={type:'text',label:'Ratio · ex. 16 / 9'};f.mediaOverlay={type:'number',label:'Overlay média · 0 à 0.8'}}
+ if(cap?.actions){f.primaryCtaLabel={type:'text',label:'CTA principal'};f.primaryAction={type:'custom',label:'Action principale · canonique',render:({value,onChange}:any)=><StudioActionField value={value} onChange={onChange} label="Action principale"/>};f.primaryCtaHref={type:'text',label:'Destination CTA · legacy'};f.secondaryCtaLabel={type:'text',label:'CTA secondaire'};f.secondaryAction={type:'custom',label:'Action secondaire · canonique',render:({value,onChange}:any)=><StudioActionField value={value} onChange={onChange} label="Action secondaire"/>};f.secondaryCtaHref={type:'text',label:'Destination secondaire · legacy'}}
+ if(['ac_home_pro_max_urgency','ac_home_pro_max_flash'].includes(type)){f.endsAt={type:'text',label:'Fin de campagne ISO'};f.badge={type:'text',label:'Badge'}}
+ if(cap?.dynamicSource)f.__studioDynamicSource={type:'custom',label:'Source & merchandising',render:({value,onChange}:any)=><StudioDynamicSourceField value={value} onChange={onChange} allowedSources={['catalog.items','homepage.collections','homepage.campaigns']} fixedKind={cap.fixedKind} defaultStrategy={cap.defaultStrategy} semanticLabel={cap.nestedLabel||'Contenu Marketplace'}/>}
+ if(cap?.items)f.items={type:'array',label:cap.nestedLabel||'Éléments du bloc',arrayFields:itemFields(),defaultItemProps:(index:number)=>({title:`Élément ${index+1}`}),getItemSummary:(item:Record<string,unknown>,index:number)=>String(item.title||`Élément ${index+1}`),max:cap.maxItems||24}
+ if(['ac_home_pro_max_categories','ac_home_pro_max_collections'].includes(type)){f.categoryKey={type:'custom',label:'Catégorie réelle',render:({value,onChange}:any)=><RecordField kind="category" value={value} onChange={onChange}/>};f.collectionKey={type:'custom',label:'Collection réelle',render:({value,onChange}:any)=><RecordField kind="collection" value={value} onChange={onChange}/>}}
+ f.sourceDesign={type:'object',label:'Design avancé',objectFields:createStudioDesignFields()};f.responsive=responsiveField;f.density=choice('Densité',[{label:'Dense',value:'dense'},{label:'Équilibrée',value:'balanced'},{label:'Éditoriale',value:'editorial'}]);f.background=choice('Fond',[{label:'Blanc',value:'white'},{label:'Bleu doux',value:'soft-blue'},{label:'Rose doux',value:'soft-pink'},{label:'Navy',value:'navy'},{label:'Transparent',value:'transparent'}]);f.emptyPolicy=choice('Si vide',[{label:'Masquer en public',value:'hide'},{label:'Placeholder éditeur',value:'editor-placeholder'},{label:'Conserver le shell',value:'preserve-shell'}]);f.hidden=yesNo('Masqué')
+ return f}
+export function createHomepageProMaxPuckComponents(pickers:StudioPickerData):Config['components']{
+ const legacy=Object.fromEntries(HOMEPAGE_PRO_MAX_SECTION_DEFINITIONS.map(def=>[def.type,{label:def.label,fields:fields(def.type,pickers),defaultProps:{...def.defaultProps,sourceDesign:{...DEFAULT_STUDIO_DESIGN},responsive:def.defaultProps.responsive||{mobileVisible:true,tabletVisible:true,desktopVisible:true}},render:(props:HomepageProMaxSectionProps)=><HomepageProMaxEditorRuntime type={def.type} props={props} pickers={pickers}/>,resolvePermissions:async()=>({edit:true,drag:true,delete:true,duplicate:true,insert:true})}])) as Config['components']
+ return {
+  ...legacy,
+  [LIVING_MARKETPLACE_COMPONENT_TYPE]:{
+   label:'WORLD 02 · Living Marketplace — source-owned',
+   fields:{},
+   defaultProps:{id:'home-living-marketplace-world-02',worldId:LIVING_MARKETPLACE_WORLD_ID,worldRevision:LIVING_MARKETPLACE_WORLD_REVISION,density:'maximum',compositionMode:'hardcoded-source-owned',dataMode:'canonical-live',shellMode:'body-only',hidden:false,locked:true,responsive:{mobileVisible:true,tabletVisible:true,desktopVisible:true}},
+   render:()=> <LivingMarketplaceWorldEditor/>,
+   resolvePermissions:async()=>({edit:false,drag:true,delete:true,duplicate:false,insert:true}),
+  } as any,
+ } as Config['components']
+}
+export { HOMEPAGE_PRO_MAX_COMPONENT_KEYS }

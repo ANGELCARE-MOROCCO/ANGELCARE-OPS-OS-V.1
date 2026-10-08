@@ -79,5 +79,6 @@ export function createInput(value: Record<string, unknown>): ConversionSessionCr
     territoryCode: optionalText(value.territoryCode, 80),
     idempotencyKey: requiredText(value.idempotencyKey, 'idempotencyKey', 220),
     initialConfiguration: object(value.initialConfiguration),
+    attribution: value.attribution&&typeof value.attribution==='object'&&!Array.isArray(value.attribution)?value.attribution as ConversionSessionCreateInput['attribution']:undefined,
   }
 }

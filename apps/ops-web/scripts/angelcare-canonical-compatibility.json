@@ -1,0 +1,714 @@
+{
+  "column_aliases": {
+    "ac_capital_command_activity": {
+      "action_href": null,
+      "affected_records": null,
+      "audit_ref": null,
+      "client_action_id": "command_key",
+      "detail_json": "result_snapshot",
+      "is_read": null,
+      "message": "summary",
+      "route": null,
+      "stage": null,
+      "title": null,
+      "updated_at": null
+    },
+    "ac_whatsapp_stop_list": {
+      "contact_id": null
+    },
+    "academy_alerts": {
+      "trainee_id": "related_trainee_id",
+      "updated_at": null
+    },
+    "academy_notification_queue": {
+      "entity": null
+    },
+    "academy_partner_activities": {
+      "action_type": "action",
+      "due_date": null,
+      "notes": null,
+      "owner": null,
+      "partner_id": "entity_id",
+      "partner_name": null,
+      "priority": null,
+      "status": null,
+      "title": "summary",
+      "updated_at": null
+    },
+    "academy_partners": {
+      "updated_at": null
+    },
+    "academy_placement_cases": {
+      "partner_name": null
+    },
+    "academy_trainer_assignments": {
+      "assignment_date": "starts_at",
+      "cohort_label": "cohort_title",
+      "cohort_reference": "cohort_id",
+      "delivery_format": "delivery_mode",
+      "end_time": "ends_at",
+      "program_label": "program_title",
+      "start_time": "starts_at"
+    },
+    "ai_provider_usage_ledger": {
+      "created_at": "occurred_at"
+    },
+    "app_users": {
+      "name": "full_name",
+      "role_key": "role",
+      "user_email": "email"
+    },
+    "audit_change_logs": {
+      "action": "operation",
+      "actor_user_id": "user_id",
+      "entity_id": "record_id",
+      "entity_type": "table_name",
+      "message": "reason",
+      "metadata": null,
+      "severity": null
+    },
+    "audit_security_logs": {
+      "actor_user_id": "user_id",
+      "entity_id": "target_id",
+      "entity_type": "target_type",
+      "message": "details",
+      "metadata": "details",
+      "severity": "risk_level"
+    },
+    "auto_events": {
+      "title": null
+    },
+    "b2b_automation_rules": {
+      "last_run_at": "updated_at"
+    },
+    "b2b_campaign_prospects": {
+      "current_step_order": "sequence_step",
+      "last_step_at": "last_action_at"
+    },
+    "b2b_campaigns": {
+      "enrolled_count": null
+    },
+    "b2b_direct_actions": {
+      "action_type": "action_title",
+      "channel": "action_channel",
+      "created_by": "actor_id"
+    },
+    "b2b_prospects": {
+      "campaign_status": "status",
+      "last_campaign_touch_at": "last_contact_at",
+      "priority": null
+    },
+    "b2b_sequences": {
+      "description": "objective"
+    },
+    "b2b_workspace_automation_rules": {
+      "action": null,
+      "ai_brief": null,
+      "cadence": null,
+      "channels": null,
+      "condition": null,
+      "deleted_at": null,
+      "expected_impact": null,
+      "field_key": null,
+      "owner": null,
+      "payload": null,
+      "score_delta": null,
+      "sector": null,
+      "severity": null,
+      "status": null,
+      "trigger": "trigger_key",
+      "updated_by": null
+    },
+    "b2b_workspace_partner_programs": {
+      "deleted_at": null,
+      "payload": null,
+      "pricing_models": "pricing_models",
+      "sector": "sector_focus",
+      "status": null
+    },
+    "b2b_workspace_reports": {
+      "actionPlan": null,
+      "alerts": null,
+      "coaching": null,
+      "congratulations": null,
+      "created_by": null,
+      "deleted_at": null,
+      "executive_summary": "summary",
+      "generated_at": "created_at",
+      "is_active": null,
+      "kind": null,
+      "kpis": null,
+      "marketInsights": null,
+      "owner": "owner_id",
+      "payload": null,
+      "period": null,
+      "purpose": "report_type",
+      "reference": null,
+      "reminders": null,
+      "revenueMoves": null,
+      "sector": null,
+      "status": null,
+      "title": null,
+      "updated_at": null,
+      "updated_by": null
+    },
+    "b2b_workspace_settings": {
+      "settings": "value",
+      "workspace_key": "config_key"
+    },
+    "bd_automation_logs": {
+      "action": null,
+      "error": null,
+      "message": null,
+      "payload": null,
+      "rule_name": null,
+      "status": null,
+      "trigger_type": null
+    },
+    "bd_tasks": {
+      "end_at": "planned_end_at",
+      "is_archived": null
+    },
+    "caregiver_checkins": {
+      "created_at": "event_time"
+    },
+    "carelink_mission_action_logs": {
+      "canonical_bridge_status": null,
+      "created_by": null
+    },
+    "carelink_mission_notifications": {
+      "mission_code": null
+    },
+    "connect_action_assignees": {
+      "created_at": "assigned_at"
+    },
+    "core_organizations": {
+      "access_status": "status",
+      "archived_at": null,
+      "deleted_at": null,
+      "display_name": "name",
+      "is_active": null
+    },
+    "email_audit_logs": {
+      "account_id": null,
+      "details": "payload",
+      "entity_id": null,
+      "entity_type": null
+    },
+    "email_messages": {
+      "message_id": "message_id_header",
+      "provider_uid": "provider_message_id",
+      "raw_headers": "metadata"
+    },
+    "email_os_core_access_audit": {
+      "actor": "principal_id",
+      "resource": "mailbox_id"
+    },
+    "email_os_core_attachments": {
+      "mailbox_id": null
+    },
+    "email_os_core_inbox": {
+      "external_id": "provider_uid",
+      "message_id": "provider_uid"
+    },
+    "email_os_core_provider_logs": {
+      "email_address": null,
+      "error": "message",
+      "provider_profile_id": null,
+      "test_type": "action",
+      "tested_at": "created_at"
+    },
+    "email_os_message_assignments": {
+      "note": null,
+      "status": null
+    },
+    "email_threads": {
+      "account_id": "mailbox_id",
+      "assigned_owner_label": "owner_name",
+      "external_thread_id": "thread_key",
+      "participants": null
+    },
+    "hr_activity_events": {
+      "action": "event_type",
+      "entity_id": "source_ref",
+      "entity_type": "source",
+      "metadata": "payload"
+    },
+    "hr_activity_timeline": {
+      "actor_id": "actor_user_id"
+    },
+    "hr_approval_requests": {
+      "approver_name": null,
+      "request_type": "approval_type",
+      "requester_name": null
+    },
+    "hr_approvals": {
+      "entity_id": "source_record_id",
+      "entity_type": null,
+      "request_type": "approval_type"
+    },
+    "hr_attendance": {
+      "work_date": "attendance_date"
+    },
+    "hr_audit_logs": {
+      "entity": "entity_type"
+    },
+    "hr_data_quality_checks": {
+      "check_type": "check_key",
+      "entity_id": "source_record_id",
+      "entity_table": "source_table",
+      "finding": "details",
+      "notes": "details",
+      "recommended_fix": "recommendation"
+    },
+    "hr_employee_360_audit_events": {
+      "action": "action",
+      "actor_id": "actor_id",
+      "actor_name": "actor_name",
+      "after_state": null,
+      "before_state": null,
+      "correlation_id": null,
+      "domain": null,
+      "employee_id": "entity_id",
+      "event_type": "event_type",
+      "metadata": "payload",
+      "organization_id": null,
+      "risk_level": null,
+      "summary": "summary",
+      "tenant_id": null,
+      "title": "summary"
+    },
+    "hr_employee_360_idempotency": {
+      "employee_id": "scope",
+      "response_payload": "result"
+    },
+    "hr_employee_cases": {
+      "case_type": null,
+      "created_by": "actor_user_id",
+      "description": null,
+      "domain": null,
+      "due_at": null,
+      "employee_id": "entity_id",
+      "metadata": "payload",
+      "owner_id": "actor_id",
+      "owner_name": "actor_name",
+      "priority": null,
+      "status": null,
+      "title": "summary",
+      "updated_at": null,
+      "updated_by": null
+    },
+    "hr_employee_lifecycle_events": {
+      "actor_id": "actor_id",
+      "actor_name": "actor_name",
+      "effective_at": "created_at",
+      "employee_id": "entity_id",
+      "employee_version": null,
+      "from_state": null,
+      "metadata": "payload",
+      "reason": "summary",
+      "to_state": null
+    },
+    "hr_interview_activity": {
+      "action": "action",
+      "candidate_id": null,
+      "event_type": "event_type",
+      "interview_id": "entity_id",
+      "metadata": "payload",
+      "notes": null,
+      "title": "summary"
+    },
+    "hr_interviews": {
+      "cancellation_reason": "notes",
+      "pipeline_stage_after": null,
+      "updated_by": null,
+      "version": null
+    },
+    "hr_notifications": {
+      "audience_role": "audience",
+      "body": "message",
+      "payload": null,
+      "user_id": null
+    },
+    "hr_onboarding_documents": {
+      "document_key": "id",
+      "storage_bucket": null,
+      "storage_path": "file_url"
+    },
+    "hr_record_links": {
+      "link_type": "action",
+      "notes": "summary",
+      "source_id": "record_id",
+      "source_table": "source_table",
+      "status": null,
+      "target_id": "entity_id",
+      "target_table": null
+    },
+    "hr_staff_profiles": {
+      "archive_reason": null,
+      "archived_by": null,
+      "lifecycle_state": "employment_status",
+      "terminated_at": "end_date",
+      "termination_reason": null,
+      "updated_by": null,
+      "version": null
+    },
+    "hr_training_course_assignments": {
+      "attempt_count": null,
+      "course_title": "training_title",
+      "delayed_reason": null,
+      "employee_id": "staff_id",
+      "evidence_url": "resource_url",
+      "pass_score": null,
+      "resource_id": null,
+      "scheduled_at": "start_at",
+      "score_percent": "score",
+      "session_mode": "assignment_type",
+      "trainer_name": null
+    },
+    "hr_training_course_command_extensions": {
+      "assessment_capture_mode": null,
+      "course_builder_prompt": null,
+      "course_title": "training_title",
+      "html_course_code": null,
+      "live_assessment_enabled": null,
+      "notes": "notes",
+      "pass_score": null,
+      "resource_id": null
+    },
+    "hsd_handoff_amendments": {
+      "code": null,
+      "requested_by": "created_by"
+    },
+    "incidents": {
+      "metadata": null
+    },
+    "intervention_config_audit_logs": {
+      "created_at": "at",
+      "entity_id": "entityId",
+      "entity_type": "entityType",
+      "risk_level": "riskLevel"
+    },
+    "intervention_config_items": {
+      "audit_event": null,
+      "code": "config_key",
+      "id": "item_key",
+      "impacts": null,
+      "metadata": "value",
+      "owner_role": null,
+      "scope": "config_group",
+      "status": null
+    },
+    "leads": {
+      "assigned_user_id": "assigned_to"
+    },
+    "learn_assignments": {
+      "completed_at": null,
+      "completion_status": "status",
+      "site_id": null
+    },
+    "learn_certificates": {
+      "expires_at": null,
+      "site_id": null
+    },
+    "learn_progress": {
+      "last_accessed_at": "last_activity_at",
+      "lesson_id": "module_id",
+      "organization_id": null,
+      "progress_status": "status",
+      "score_percent": null,
+      "site_id": null
+    },
+    "learn_quizzes": {
+      "created_at": null
+    },
+    "learn_refresh_reminders": {
+      "completed_at": null,
+      "due_at": "due_date",
+      "reminder_status": "status",
+      "site_id": null
+    },
+    "market_content_source_replacements": {
+      "requested_at": "created_at"
+    },
+    "market_os_actions": {
+      "owner_agent": "actor_name"
+    },
+    "marketing_ai_schedules": {
+      "metadata": "context",
+      "model": null,
+      "provider_type": null,
+      "status": null
+    },
+    "missions": {
+      "address": "home_address"
+    },
+    "opsos_action_logs": {
+      "actor": "created_by",
+      "payload_json": "payload",
+      "reason": null,
+      "result_json": "result"
+    },
+    "partner_activity_events": {
+      "body": null,
+      "event_type": "event_type",
+      "metadata": "payload",
+      "organization_id": "organization_id",
+      "title": null
+    },
+    "partner_requests": {
+      "description": null,
+      "metadata": "payload",
+      "priority": null,
+      "request_type": "event_type",
+      "requester_user_id": "actor_user_id",
+      "title": null
+    },
+    "revenue_document_command_view": {
+      "file_name": null,
+      "file_size": null,
+      "mime_type": null,
+      "storage_bucket": null,
+      "storage_path": "file_url",
+      "uploaded_by": "created_by",
+      "version": null
+    },
+    "service_pricing_rules": {
+      "notes": null,
+      "region": null,
+      "status": null
+    },
+    "system_runtime_events": {
+      "message": null,
+      "metadata": null,
+      "module_key": null,
+      "route": null,
+      "severity": null
+    },
+    "traininghub_internal_actions": {
+      "action": "event_type",
+      "entity_id": null,
+      "metadata": "payload",
+      "module": null,
+      "notes": null,
+      "organization_id": "organization_id",
+      "status": "status"
+    },
+    "trn_attendance_records": {
+      "created_at": null
+    },
+    "trn_delivery_checklists": {
+      "checklist_title": "item_label",
+      "created_at": null,
+      "status": null
+    },
+    "trn_session_dates": {
+      "end_at": "ends_at",
+      "location_address": null,
+      "start_at": "starts_at"
+    },
+    "trn_session_participants": {
+      "status": "attendance_status"
+    },
+    "trn_session_resources_allocated": {
+      "notes": null,
+      "status": "delivery_status"
+    },
+    "trn_session_trainers": {
+      "assignment_status": "status"
+    },
+    "whatsapp_contact_attempts": {
+      "business_stage_update": null
+    },
+    "workspace_broadcast_memo_targets": {
+      "target_user_id": "user_id"
+    }
+  },
+  "drop_filters": {
+    "hr_interviews": [
+      "version"
+    ],
+    "hr_staff_profiles": [
+      "version"
+    ]
+  },
+  "missing_rpc_shims": [
+    "connect_current_user_ids",
+    "hr_onboarding_ensure_journey",
+    "hr_onboarding_execute"
+  ],
+  "relation_aliases": {
+    "ac_capital_command_activity": {
+      "sink": "result_snapshot",
+      "table": "ac_capital_command_results"
+    },
+    "academy_partner_activities": {
+      "scope": {
+        "event_type": "academy_partner_activity"
+      },
+      "sink": "payload",
+      "table": "hr_activity_log"
+    },
+    "b2b_workspace_automation_rules": {
+      "table": "b2b_automation_rules"
+    },
+    "b2b_workspace_partner_programs": {
+      "table": "b2b_partner_programs"
+    },
+    "b2b_workspace_reports": {
+      "table": "b2b_reports"
+    },
+    "b2b_workspace_settings": {
+      "scope": {
+        "config_group": "b2b_workspace_settings"
+      },
+      "sink": "value",
+      "table": "b2b_config_items"
+    },
+    "hr_employee_360_audit_events": {
+      "scope": {
+        "entity_table": "hr_employee_360_audit_events"
+      },
+      "sink": "payload",
+      "table": "hr_activity_log"
+    },
+    "hr_employee_360_idempotency": {
+      "sink": "result",
+      "table": "angelcare_marketplace_command_idempotency"
+    },
+    "hr_employee_cases": {
+      "scope": {
+        "entity_table": "hr_employee_cases"
+      },
+      "sink": "payload",
+      "table": "hr_activity_log"
+    },
+    "hr_employee_lifecycle_events": {
+      "scope": {
+        "entity_table": "hr_employee_lifecycle_events"
+      },
+      "sink": "payload",
+      "table": "hr_activity_log"
+    },
+    "hr_interview_activity": {
+      "scope": {
+        "event_type": "hr_interview_activity"
+      },
+      "sink": "payload",
+      "table": "hr_activity_log"
+    },
+    "hr_openings": {
+      "table": "hr_job_openings"
+    },
+    "hr_record_links": {
+      "scope": {
+        "event_type": "hr_record_link"
+      },
+      "sink": "payload",
+      "table": "hr_activity_log"
+    },
+    "hr_training_course_assignments": {
+      "sink": "metadata",
+      "table": "hr_training_assignments"
+    },
+    "hr_training_course_command_extensions": {
+      "sink": "metadata",
+      "table": "hr_training_assignments"
+    },
+    "intervention_config_audit_logs": {
+      "sink": "metadata",
+      "table": "intervention_audit_logs"
+    },
+    "intervention_config_items": {
+      "sink": "value",
+      "table": "b2b_config_items"
+    },
+    "marketing_ai_schedules": {
+      "sink": "context",
+      "table": "market_ai_command_schedules"
+    },
+    "partner_activity_events": {
+      "scope": {
+        "source_type": "partner_activity_events"
+      },
+      "sink": "payload",
+      "table": "auto_events"
+    },
+    "partner_requests": {
+      "scope": {
+        "source_type": "partner_requests"
+      },
+      "sink": "payload",
+      "table": "auto_events"
+    },
+    "revenue_command_analytics_view": {
+      "scope": {
+        "record_type": "analytics"
+      },
+      "sink": "metadata",
+      "table": "revenue_command_records"
+    },
+    "revenue_command_center_analytics": {
+      "scope": {
+        "record_type": "analytics"
+      },
+      "sink": "metadata",
+      "table": "revenue_command_records"
+    },
+    "revenue_document_command_view": {
+      "sink": "metadata",
+      "table": "revenue_documents"
+    },
+    "traininghub_internal_actions": {
+      "scope": {
+        "source_type": "traininghub_internal_actions"
+      },
+      "sink": "payload",
+      "table": "auto_events"
+    },
+    "workspace_broadcast_memo_targets": {
+      "table": "workspace_broadcast_memo_receipts"
+    }
+  },
+  "table_sinks": {
+    "academy_notification_queue": "metadata",
+    "academy_placement_cases": "metadata",
+    "audit_change_logs": "new_values",
+    "audit_security_logs": "details",
+    "auto_events": "payload",
+    "b2b_direct_actions": "metadata",
+    "bd_automation_logs": "result",
+    "bd_tasks": "data",
+    "carelink_mission_action_logs": "payload",
+    "carelink_mission_notifications": "payload",
+    "core_organizations": "metadata",
+    "email_audit_logs": "payload",
+    "email_messages": "metadata",
+    "email_os_core_provider_logs": "metadata",
+    "email_os_message_assignments": "metadata_json",
+    "email_threads": "metadata",
+    "hr_activity_events": "payload",
+    "hr_activity_timeline": "metadata",
+    "hr_approval_requests": "metadata",
+    "hr_approvals": "payload",
+    "hr_audit_logs": "metadata",
+    "hr_data_quality_checks": "details",
+    "hr_notifications": "notes",
+    "hr_staff_profiles": "metadata",
+    "incidents": null,
+    "learn_assignments": "metadata",
+    "learn_certificates": "metadata",
+    "learn_progress": "metadata",
+    "learn_quizzes": "metadata",
+    "learn_refresh_reminders": "metadata",
+    "opsos_action_logs": "payload",
+    "system_runtime_events": "payload",
+    "trn_attendance_records": "metadata",
+    "trn_delivery_checklists": "metadata",
+    "trn_session_dates": "metadata",
+    "trn_session_participants": "metadata",
+    "trn_session_resources_allocated": "metadata",
+    "trn_session_trainers": "metadata",
+    "whatsapp_contact_attempts": "metadata"
+  }
+}

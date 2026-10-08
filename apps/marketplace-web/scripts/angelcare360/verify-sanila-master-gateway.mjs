@@ -8,7 +8,7 @@ const files = {
   css: path.join(root, 'components/angelcare360/gateway/SanilaMasterGateway.module.css'),
   broadcast: path.join(root, 'lib/angelcare360/customer-broadcasts.ts'),
   api: path.join(root, 'app/api/angelcare360/customer-broadcasts/route.ts'),
-  logo: path.join(root, 'public/brand/angelcare-official-user-transparent.png'),
+  logo: path.join(root, 'public/sanila/sanila-operating-system-logo-white.png'),
 }
 const authorityFiles = {
   portalLogin: path.join(root, 'app/angelcare-360-portal/login/page.tsx'),
@@ -41,14 +41,14 @@ check('canonical role portal types exist', fs.existsSync(authorityFiles.rolePort
 check('canonical auth session authority exists', fs.existsSync(authorityFiles.authSession))
 const portalLogin = text(authorityFiles.portalLogin)
 const rolePortals = text(authorityFiles.rolePortals)
-check('role portal login uses login_app_user authority', portalLogin.includes("rpc('login_app_user'"))
+check('role portal login uses canonical bcrypt credential authority', portalLogin.includes('verifyPassword') && !portalLogin.includes("rpc('login_app_user'"))
 check('role portal login creates protected app session', portalLogin.includes("from('app_sessions').insert"))
-check('role portal login resolves portal role server-side', portalLogin.includes('roleKind(') && portalLogin.includes('PORTAL_ROLE_KEYS'))
+check('role portal login resolves linked personas server-side', portalLogin.includes('linkedPersonas') && portalLogin.includes('portal_app_user_id') && portalLogin.includes('sanila_portal_kind'))
 check('staff role mapping is explicitly supported', rolePortals.includes("staff: ['staff','administration','reception','finance','rh','transport','bibliotheque','qualite']"))
 check('gateway public route exists', fs.existsSync(files.page))
 check('gateway client experience exists', fs.existsSync(files.component))
 check('gateway CSS exists', fs.existsSync(files.css))
-check('official user logo exists', fs.existsSync(files.logo))
+check('official white-transparent SANILA logo exists', fs.existsSync(files.logo))
 check('all five signed role portraits exist', assets.every(fs.existsSync))
 check('server page reuses broadcast authority', page.includes('getAngelcare360CustomerBroadcastSnapshot'))
 check('server page renders SanilaMasterGateway', page.includes('<SanilaMasterGateway'))
@@ -66,7 +66,7 @@ check('teacher routes through existing role login authority', component.includes
 check('staff routes through existing role login authority', component.includes('audience=staff'))
 check('parent routes through existing role login authority', component.includes('audience=parent'))
 check('student routes through existing role login authority', component.includes('audience=student'))
-check('official logo wired in fixed live bar', component.includes('/brand/angelcare-official-user-transparent.png'))
+check('official white SANILA logo wired in fixed live bar', component.includes('/sanila/sanila-operating-system-logo-white.png'))
 check('browser clock uses Intl.DateTimeFormat', component.includes("new Intl.DateTimeFormat('fr-FR'"))
 check('clock updates by timeout not page rebuild', component.includes('60_000 - (now.getSeconds() * 1000 + now.getMilliseconds())'))
 check('no setInterval in gateway', !component.includes('setInterval('))

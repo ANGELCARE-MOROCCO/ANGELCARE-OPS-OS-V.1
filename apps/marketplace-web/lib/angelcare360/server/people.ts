@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { getAngelcare360AccessContext, requireAngelcare360Permission } from './context'
+import { getSanilaBusinessDate } from './business-clock'
 import { recordAngelcare360AuditEventServer } from './audit'
 import {
   angelcare360DocumentReferenceSchema,
@@ -897,7 +898,7 @@ export async function createAngelcare360Student(input: unknown) {
     admission_status: parsed.data.admissionStatus,
     status: parsed.data.status,
     transport_required: Boolean(parsed.data.transportRequired),
-    admission_date: parsed.data.admissionStatus === 'enrolled' ? new Date().toISOString().slice(0, 10) : null,
+    admission_date: parsed.data.admissionStatus === 'enrolled' ? getSanilaBusinessDate(context) : null,
     created_by: context.user.id,
     updated_by: context.user.id,
     metadata_json: {
@@ -1018,7 +1019,7 @@ export async function changeAngelcare360StudentStatus(input: { schoolId?: string
     .from('angelcare360_students')
     .update({
       status: input.status,
-      exit_date: input.status === 'archived' ? new Date().toISOString().slice(0, 10) : null,
+      exit_date: input.status === 'archived' ? getSanilaBusinessDate(context) : null,
       updated_by: context.user.id,
       updated_at: new Date().toISOString(),
     })
@@ -1083,7 +1084,7 @@ export async function assignAngelcare360StudentToClass(input: unknown) {
     section_id: parsed.data.sectionId || null,
     enrollment_number: parsed.data.enrollmentNumber || null,
     enrollment_status: 'enrolled',
-    enrolled_on: new Date().toISOString().slice(0, 10),
+    enrolled_on: getSanilaBusinessDate(context),
     status: parsed.data.status,
     updated_by: context.user.id,
     created_by: context.user.id,

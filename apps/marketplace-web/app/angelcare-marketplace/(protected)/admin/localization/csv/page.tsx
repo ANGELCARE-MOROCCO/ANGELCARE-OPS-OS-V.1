@@ -1,1 +1,2 @@
-import { CsvCenter } from '@/angelcare-marketplace/localization-intelligence/components/CsvCenter'; export default function Page(){return <CsvCenter/>}
+import { redirect } from 'next/navigation'
+export default function Page(){redirect('/angelcare-marketplace/admin/imports/localization')}

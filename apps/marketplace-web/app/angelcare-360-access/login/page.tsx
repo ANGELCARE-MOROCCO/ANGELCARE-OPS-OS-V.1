@@ -1,3 +1,5 @@
+import { APP_SESSION_COOKIE_DOMAIN } from '@/lib/auth/session'
+import { DEMO_COOKIE } from '@/lib/sanila-demo/authority'
 import type { Metadata } from 'next'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
@@ -5,6 +7,7 @@ import Angelcare360CustomerLoginExperience from '@/components/angelcare360/auth/
 import {
   APP_SESSION_COOKIE,
   generateSessionToken,
+  verifyPassword,
 } from '@/lib/ac360-portability/auth-session'
 import { getAngelcare360CustomerBroadcastSnapshot } from '@/lib/angelcare360/customer-broadcasts'
 import { createClient } from '@/lib/supabase/server'
@@ -28,7 +31,7 @@ const OPERATOR_ROLES = new Set([
 
 export const dynamic = 'force-dynamic'
 export const metadata: Metadata = {
-  title: 'AngelCare 360 · Connexion établissement',
+  title: 'SANILA Operating System · Connexion établissement',
   description: 'SANILA Operating System · Pilotage établissement scolaire.',
 }
 
@@ -105,40 +108,28 @@ export default async function Angelcare360CustomerLoginPage({
 
     const supabase = await createClient()
 
-    const { data, error } = await supabase.rpc('login_app_user', {
-      input_username: username,
-      input_password: password,
-    })
+    const byUsername = await supabase
+      .from('app_users')
+      .select('id,role,permissions,password_hash,status')
+      .eq('username', username)
+      .limit(2)
+    const byEmail = byUsername.data?.length ? null : await supabase
+      .from('app_users')
+      .select('id,role,permissions,password_hash,status')
+      .ilike('email', username)
+      .limit(2)
+    const candidates = byUsername.data?.length ? byUsername.data : (byEmail?.data || [])
 
-    if (error) {
-      redirect(errorHref('invalid', requestedNext))
-    }
-
-    const rpcRow = Array.isArray(data) ? data[0] : data
-
-    const rpcUserId =
-      typeof rpcRow === 'string'
-        ? rpcRow
-        : rpcRow && typeof rpcRow === 'object' && 'id' in rpcRow
-          ? String((rpcRow as LoginUser).id || '')
-          : ''
-
-    if (!rpcUserId) {
+    if (byUsername.error || byEmail?.error || candidates.length !== 1) redirect(errorHref('invalid', requestedNext))
+    const credential = candidates[0] as LoginUser & { password_hash?: string | null; status?: string | null }
+    if (credential.status !== 'active' || !credential.password_hash || !(await verifyPassword(password, credential.password_hash))) {
       redirect(errorHref('invalid', requestedNext))
     }
 
     const user: LoginUser = {
-      id: rpcUserId,
-      role:
-        rpcRow && typeof rpcRow === 'object' && 'role' in rpcRow
-          ? String((rpcRow as LoginUser).role || '')
-          : null,
-      permissions:
-        rpcRow &&
-        typeof rpcRow === 'object' &&
-        Array.isArray((rpcRow as LoginUser).permissions)
-          ? (rpcRow as LoginUser).permissions
-          : [],
+      id: String(credential.id),
+      role: credential.role || null,
+      permissions: Array.isArray(credential.permissions) ? credential.permissions : [],
     }
 
     const token = generateSessionToken()
@@ -161,11 +152,25 @@ export default async function Angelcare360CustomerLoginPage({
 
     const cookieStore = await cookies()
 
+    // A normal credential login explicitly leaves Master Demo mode.
+    cookieStore.set(DEMO_COOKIE, '', { httpOnly: true, sameSite: 'strict', secure: process.env.NODE_ENV === 'production', path: '/', expires: new Date(0) })
+
+    // Remove the legacy host-only session before issuing the shared session.
+    cookieStore.set(APP_SESSION_COOKIE, '', {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+      path: '/',
+      maxAge: 0,
+    })
     cookieStore.set(APP_SESSION_COOKIE, token, {
       httpOnly: true,
       sameSite: 'lax',
       secure: process.env.NODE_ENV === 'production',
       path: '/',
+      ...(APP_SESSION_COOKIE_DOMAIN
+        ? { domain: APP_SESSION_COOKIE_DOMAIN }
+        : {}),
       expires: expiresAt,
     })
 

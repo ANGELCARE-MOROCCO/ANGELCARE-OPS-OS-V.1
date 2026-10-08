@@ -1,4 +1,5 @@
-import {requireMarketplacePageContext} from '@/angelcare-marketplace/auth/context'
-import {AuthorityWorkspace} from '@/angelcare-marketplace/final-authority/components/AuthorityWorkspace'
-import {listSecurityControls} from '@/angelcare-marketplace/final-authority/repository'
-export default async function Page(){const c=await requireMarketplacePageContext('marketplace.security.view');return <AuthorityWorkspace eyebrow="GOVERNED CONTROL SURFACE" title="Security · Tenant Isolation" copy="Evidence, owner, status, expiry and action remain persistent and auditable." items={await listSecurityControls()}/>}
+import { hasMarketplacePermission, requireMarketplacePageContext } from '@/angelcare-marketplace/auth/context'
+import { listAccessReviews, listIsolationTests, listRecoveryTests, securitySummary } from '@/angelcare-marketplace/analytics-security/repository'
+import { SecurityCommand } from '@/angelcare-marketplace/analytics-security/components/SecurityCommand'
+import { SecurityGovernanceDesk } from '@/angelcare-marketplace/analytics-security/components/SecurityGovernanceDesk'
+export default async function Page(){const context=await requireMarketplacePageContext('marketplace.security.isolation.review');const[summary,reviews,tests,recovery]=await Promise.all([securitySummary(),listAccessReviews(context),listIsolationTests(context),listRecoveryTests()]);return <><SecurityCommand summary={summary} reviews={reviews} tests={tests}/><SecurityGovernanceDesk tests={tests} recovery={recovery} canTest={hasMarketplacePermission(context,'marketplace.security.isolation.review')} canApproveRecovery={hasMarketplacePermission(context,'marketplace.recovery_test.approve')}/></>}

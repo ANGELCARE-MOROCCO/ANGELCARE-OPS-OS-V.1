@@ -1,0 +1,31 @@
+{
+  "phase": "P08",
+  "pipeline": [
+    "P04 template assignment",
+    "P05 published template revision + live bindings",
+    "P06 dynamic source materialization",
+    "P03 action preflight",
+    "P07 workflow preflight",
+    "Studio published renderer"
+  ],
+  "ready_status": "STUDIO_READY",
+  "fallback_status": "FALLBACK_NATIVE",
+  "fallback_renderer": "Category-Native Experience",
+  "fallback_reasons": [
+    "NO_RESOLVED_TEMPLATE",
+    "BOUND_TEMPLATE_UNAVAILABLE",
+    "BINDING_BLOCKER",
+    "DYNAMIC_SOURCE_BLOCKER",
+    "ACTION_BLOCKER",
+    "WORKFLOW_BLOCKER",
+    "EMPTY_TEMPLATE",
+    "RUNTIME_ERROR"
+  ],
+  "admin_preview_same_orchestrator": true,
+  "public_entrypoints": 3,
+  "runtime_clone_only": true,
+  "canonical_business_authorities_preserved": true,
+  "database_schema_change": false,
+  "sql_required": false,
+  "p09_attribution_expansion": false
+}

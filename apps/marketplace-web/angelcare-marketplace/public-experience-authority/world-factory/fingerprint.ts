@@ -1,0 +1,3 @@
+const stableVisit=(value:unknown):unknown=>Array.isArray(value)?value.map(stableVisit):value&&typeof value==='object'?Object.fromEntries(Object.entries(value as Record<string,unknown>).sort(([a],[b])=>a.localeCompare(b)).map(([key,row])=>[key,stableVisit(row)])):value
+export const stableWorldJson=(value:unknown)=>JSON.stringify(stableVisit(value))
+export function deterministicWorldFingerprint(value:unknown){const input=stableWorldJson(value);let h1=0x811c9dc5,h2=0x9e3779b9,h3=0x85ebca6b,h4=0xc2b2ae35;for(let i=0;i<input.length;i++){const c=input.charCodeAt(i);h1=Math.imul(h1^c,16777619);h2=Math.imul(h2^c,2246822519);h3=Math.imul(h3^c,3266489917);h4=Math.imul(h4^c,668265263)}return[h1,h2,h3,h4].map(v=>(v>>>0).toString(16).padStart(8,'0')).join('')}

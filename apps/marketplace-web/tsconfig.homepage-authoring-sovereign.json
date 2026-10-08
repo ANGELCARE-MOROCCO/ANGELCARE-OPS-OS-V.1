@@ -1,0 +1,31 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "incremental": false
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.d.ts",
+    "angelcare-marketplace/catalog-discovery/repository.ts",
+    "angelcare-marketplace/studio-dynamic-source/engine.ts",
+    "angelcare-marketplace/studio-homepage-pro-max/**/*.ts",
+    "angelcare-marketplace/studio-homepage-pro-max/**/*.tsx",
+    "angelcare-marketplace/studio-universal/catalog-source-gateway.ts",
+    "angelcare-marketplace/studio-universal/document-doctor.ts",
+    "angelcare-marketplace/studio-universal/puck-bridge.ts",
+    "angelcare-marketplace/studio-universal/repository.ts",
+    "angelcare-marketplace/studio-universal/StudioPublishedRenderer.tsx",
+    "angelcare-marketplace/studio-universal/components/StudioMaterializationContext.tsx",
+    "angelcare-marketplace/studio-universal/components/StudioInspector2031.tsx",
+    "angelcare-marketplace/studio-universal/components/StudioDocumentDoctorPanel.tsx",
+    "angelcare-marketplace/studio-universal/components/StudioHomepageHealthPanel.tsx",
+    "angelcare-marketplace/studio-universal/components/StudioFields.tsx",
+    "angelcare-marketplace/studio-universal/components/UniversalExperienceStudio.tsx",
+    "app/api/angelcare-marketplace/cms/studio/dynamic-sources/preview/route.ts",
+    "app/api/angelcare-marketplace/cms/studio/pages/[pageId]/preflight/route.ts",
+    "app/api/angelcare-marketplace/cms/studio/sources/[sourceId]/**/*.ts",
+    "angelcare-marketplace/studio-universal/design.tsx",
+    "angelcare-marketplace/studio-universal/components/StudioDesignShell.tsx"
+  ]
+}

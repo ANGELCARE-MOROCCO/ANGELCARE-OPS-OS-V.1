@@ -12,6 +12,7 @@ import {
 } from './repository'
 import type { HomepageAdminKind } from './types'
 import { createServiceClient } from '@/lib/supabase/server'
+import { getCustomerContext } from '../customer-commerce/customer-auth'
 
 const VISITOR_COOKIE = 'angelcare_marketplace_visitor'
 const kinds = new Set<HomepageAdminKind>(['campaigns', 'sections', 'collections', 'placements', 'audience-rules', 'territory-rules', 'assets'])
@@ -106,8 +107,11 @@ export async function handleHomepageEngagement(request: Request): Promise<Respon
     let visitorReference = store.get(VISITOR_COOKIE)?.value || ''
     if (!visitorReference) visitorReference = crypto.randomUUID()
     const supabase = await createServiceClient()
+    const customer = await getCustomerContext().catch(() => null)
     if (request.method === 'GET') {
-      const { data, error } = await supabase.from('angelcare_marketplace_homepage_visitor_selections').select('catalog_item_id,selection_type').eq('visitor_reference', visitorReference).eq('active', true)
+      let query = supabase.from('angelcare_marketplace_homepage_visitor_selections').select('catalog_item_id,selection_type').eq('active', true)
+      query = customer?.account.id ? query.or(`visitor_reference.eq.${visitorReference},customer_account_id.eq.${customer.account.id}`) : query.eq('visitor_reference', visitorReference)
+      const { data, error } = await query
       if (error) throw new MarketplaceError('INTERNAL_ERROR', 'Impossible de charger les sélections.', { cause: error })
       const response = apiSuccess(data || [], { requestId: rid })
       response.cookies.set(VISITOR_COOKIE, visitorReference, { httpOnly: true, sameSite: 'lax', secure: process.env.NODE_ENV === 'production', maxAge: 60 * 60 * 24 * 180, path: '/' })
@@ -121,8 +125,12 @@ export async function handleHomepageEngagement(request: Request): Promise<Respon
     const selectionType = cleanOptionalText(body.selection_type, 20)
     const active = body.active !== false
     if (catalogItemId && (selectionType === 'saved' || selectionType === 'compare')) {
-      const { error } = await supabase.from('angelcare_marketplace_homepage_visitor_selections').upsert({ visitor_reference: visitorReference, selection_type: selectionType, catalog_item_id: catalogItemId, locale, territory_id: territoryId, active, updated_at: new Date().toISOString() }, { onConflict: 'visitor_reference,selection_type,catalog_item_id' })
+      const { error } = await supabase.from('angelcare_marketplace_homepage_visitor_selections').upsert({ visitor_reference: visitorReference, customer_account_id: customer?.account.id || null, selection_type: selectionType, catalog_item_id: catalogItemId, locale, territory_id: territoryId, active, updated_at: new Date().toISOString() }, { onConflict: 'visitor_reference,selection_type,catalog_item_id' })
       if (error) throw new MarketplaceError('INTERNAL_ERROR', 'La sélection n’a pas pu être enregistrée.', { cause: error })
+      if (customer?.account.id) {
+        const { error: accountSelectionError } = await supabase.from('angelcare_marketplace_homepage_visitor_selections').update({ active, updated_at: new Date().toISOString() }).eq('customer_account_id', customer.account.id).eq('selection_type', selectionType).eq('catalog_item_id', catalogItemId)
+        if (accountSelectionError) throw new MarketplaceError('INTERNAL_ERROR', 'La sélection du compte n’a pas pu être synchronisée.', { cause: accountSelectionError })
+      }
     }
     await supabase.from('angelcare_marketplace_homepage_interactions').insert({ visitor_reference: visitorReference, event_name: eventName || 'homepage.interaction', locale, territory_id: territoryId, campaign_id: cleanOptionalText(body.campaign_id, 64), collection_id: cleanOptionalText(body.collection_id, 64), catalog_item_id: catalogItemId, category_key: cleanOptionalText(body.category_key, 120), route: cleanText(body.route, 500), event_data: body.event_data && typeof body.event_data === 'object' ? body.event_data : {} })
     const response = apiSuccess({ recorded: true }, { requestId: rid, status: 201 })

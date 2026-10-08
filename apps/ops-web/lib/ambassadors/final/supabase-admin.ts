@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from '@/lib/supabase/contract-client';
 import { assertRequiredAmbassadorEnv } from './env';
 
 export function createAmbassadorSupabaseAdminClient() {

@@ -1,0 +1,295 @@
+ANGELCARE MARKETPLACE ADMIN — BATCH 03
+CLIENTS / CRM / CUSTOMER 360 / FAMILY 360 / SEGMENTS / SUPPORT
+SOURCE/BACKEND MAPPING — 2026-08-27
+
+STATUS
+------
+These 10 PNGs are final frontend projections grounded in the current
+ANGELCARE_MARKETPLACE_WEB_20260826-221837.zip source and the zero-blind
+Marketplace admin audit already established in this project thread.
+
+VISUAL RULE
+-----------
+The PNGs in this folder are the approved UI/UX projection authority for Batch 03
+once placed by the user inside admin-design/.
+
+BUSINESS / TECHNICAL RULE
+-------------------------
+Existing Marketplace APIs, repositories, permissions and lifecycle authorities
+remain canonical. Do not invent backend functionality only to imitate a visual.
+
+NO SQL / NO MIGRATIONS / NO NEW CRM ENGINE / NO PARALLEL CUSTOMER BACKEND.
+
+Illustrative names, amounts, counts and timelines visible in the PNGs are UI
+sample content only. Controls, information architecture, route families and
+workflow dimensions are source-grounded.
+
+======================================================================
+BATCH 03 THEME
+======================================================================
+This batch covers the Customer / CRM operating authority:
+- customer registry
+- customer creation
+- customer 360 operating dossier
+- commercial portfolio view
+- payments and documents view
+- family / dependants management
+- segments and audiences
+- tickets and claims support workspace
+- activity and communications
+- customer health / retention control
+
+======================================================================
+CURRENT ROUTE FAMILIES ACCOUNTED FOR IN BATCH 03
+======================================================================
+/angelcare-marketplace/admin/customers
+/angelcare-marketplace/admin/customers/new
+/angelcare-marketplace/admin/customers/[customerId]
+/angelcare-marketplace/admin/customers/[customerId]/commercial
+/angelcare-marketplace/admin/customers/[customerId]/payments
+/angelcare-marketplace/admin/customers/[customerId]/family
+/angelcare-marketplace/admin/customers/[customerId]/activity
+/angelcare-marketplace/admin/customers/segments
+/angelcare-marketplace/admin/customers/support
+/angelcare-marketplace/admin/customers/health
+
+Note:
+Exact folder/file implementation names in the current source may vary by page
+wrapper, admin-page adapter, or workspace composition layer. The batch remains
+mapped to these customer-authority route families and capabilities.
+
+======================================================================
+SOURCE-CAPABILITY AUTHORITY USED FOR THIS BATCH
+======================================================================
+Verified during the Marketplace admin zero-blind audit:
+- Customers authority
+- Families authority
+- Customer revenue / finance authority
+- Support / tickets / claims authority
+- Segments / growth audience authority
+- Communications / activity authority
+- Health / trust / retention authority
+
+Representative capability groups surfaced in the audit:
+- customer search, segmentation, profile and lifecycle control
+- customer / family dossier management
+- orders, reservations, subscriptions, tickets, notes, reminders
+- payments, invoices, receipts, reimbursements, wallet or account balances
+- documents and attestations
+- engagement tracking and communications
+- health / satisfaction / retention scoring
+- quick actions, follow-up and operational reminders
+
+======================================================================
+01 — CUSTOMERS / CRM COMMAND CENTER
+======================================================================
+PNG:
+01_CUSTOMERS_CRM_COMMAND_CENTER.png
+
+FINAL HOME:
+Clients -> Registre & centre de commandement CRM
+
+PRIMARY SOURCE ROUTE FAMILY:
+/angelcare-marketplace/admin/customers
+
+SOURCE-CONFIRMED CAPABILITIES PROJECTED:
+- unified customer registry
+- global search and filters
+- lifecycle / status visibility
+- customer value and recent activity columns
+- quick access to dossier, ticketing, orders and actions
+- KPI strip and operational queue
+
+======================================================================
+02 — ADD CUSTOMER FORM
+======================================================================
+PNG:
+02_ADD_CUSTOMER_FORM.png
+
+FINAL HOME:
+Clients -> Ajouter un client
+
+PRIMARY SOURCE ROUTE FAMILY:
+/angelcare-marketplace/admin/customers/new
+
+SOURCE-CONFIRMED CAPABILITIES PROJECTED:
+- create customer record
+- identity and contact capture
+- customer type / source / territory
+- relationship and consent capture
+- operational tags and notes
+- save / draft / validate action pattern
+
+======================================================================
+03 — CUSTOMER 360 OVERVIEW
+======================================================================
+PNG:
+03_CUSTOMER_360_OVERVIEW.png
+
+FINAL HOME:
+Clients -> Client 360 -> Vue d'ensemble
+
+PRIMARY SOURCE ROUTE FAMILY:
+/angelcare-marketplace/admin/customers/[customerId]
+
+SOURCE-CONFIRMED CAPABILITIES PROJECTED:
+- customer master identity card
+- lifecycle and ownership indicators
+- profile / address / consents
+- active services and recent transactions
+- activation checklist, health summary and reminders
+- quick actions to create order, booking, quote, ticket and message
+
+======================================================================
+04 — CUSTOMER 360 / COMMERCIAL PORTFOLIO
+======================================================================
+PNG:
+04_CUSTOMER_360_COMMERCIAL_PORTFOLIO.png
+
+FINAL HOME:
+Clients -> Client 360 -> Portefeuille commercial
+
+PRIMARY SOURCE ROUTE FAMILY:
+/angelcare-marketplace/admin/customers/[customerId]/commercial
+
+SOURCE-CONFIRMED CAPABILITIES PROJECTED:
+- commercial object timeline
+- orders, reservations, quotes and subscriptions
+- owner attribution
+- renewal and follow-up visibility
+- portfolio totals and conversion view
+- create new commercial object action
+
+======================================================================
+05 — CUSTOMER 360 / PAYMENTS & DOCUMENTS
+======================================================================
+PNG:
+05_CUSTOMER_360_PAYMENTS_DOCUMENTS.png
+
+FINAL HOME:
+Clients -> Client 360 -> Paiements & documents
+
+PRIMARY SOURCE ROUTE FAMILY:
+/angelcare-marketplace/admin/customers/[customerId]/payments
+
+SOURCE-CONFIRMED CAPABILITIES PROJECTED:
+- balance and credit status
+- payment methods and movements
+- invoices, receipts and due balances
+- account statements and downloadable documents
+- billing alerts and collection reminders
+- finance quick actions
+
+======================================================================
+06 — FAMILY 360 / RELATIONS & DEPENDANTS
+======================================================================
+PNG:
+06_FAMILY_360_RELATIONS_DEPENDANTS.png
+
+FINAL HOME:
+Clients -> Famille 360 -> Relations & dépendants
+
+PRIMARY SOURCE ROUTE FAMILY:
+/angelcare-marketplace/admin/customers/[customerId]/family
+
+SOURCE-CONFIRMED CAPABILITIES PROJECTED:
+- household members registry
+- parents, children and beneficiaries
+- linked services per member
+- tutors, emergency contacts and addresses
+- family documents / missing items / reminders
+- invite-to-portal and family checklist actions
+
+======================================================================
+07 — SEGMENTS & AUDIENCES STUDIO
+======================================================================
+PNG:
+07_SEGMENTS_AUDIENCES_STUDIO.png
+
+FINAL HOME:
+Clients -> Segments & audiences
+
+PRIMARY SOURCE ROUTE FAMILY:
+/angelcare-marketplace/admin/customers/segments
+
+SOURCE-CONFIRMED CAPABILITIES PROJECTED:
+- segment registry
+- audience rule builder
+- activation / archiving
+- audience estimate preview
+- linked campaigns and linked promotions / collections
+- export and duplicate actions
+
+======================================================================
+08 — SUPPORT / TICKETS & CLAIMS CENTER
+======================================================================
+PNG:
+08_SUPPORT_TICKETS_CLAIMS_CENTER.png
+
+FINAL HOME:
+Clients -> Support -> Tickets & réclamations
+
+PRIMARY SOURCE ROUTE FAMILY:
+/angelcare-marketplace/admin/customers/support
+
+SOURCE-CONFIRMED CAPABILITIES PROJECTED:
+- support queue and ticket registry
+- priority / SLA / ownership tracking
+- claim status and resolution visibility
+- filtering and triage actions
+- fast creation / assignment / follow-up patterns
+
+======================================================================
+09 — CUSTOMER ACTIVITY & COMMUNICATIONS
+======================================================================
+PNG:
+09_CUSTOMER_ACTIVITY_COMMUNICATIONS.png
+
+FINAL HOME:
+Clients -> Client 360 -> Activité & communications
+
+PRIMARY SOURCE ROUTE FAMILY:
+/angelcare-marketplace/admin/customers/[customerId]/activity
+
+SOURCE-CONFIRMED CAPABILITIES PROJECTED:
+- activity chronology
+- outbound and inbound communication timeline
+- notes and internal tasks
+- preferred channels
+- recent linked business events (order / payment / ticket / reservation)
+- plan action, send message and log follow-up
+
+======================================================================
+10 — CUSTOMER HEALTH & RETENTION
+======================================================================
+PNG:
+10_CUSTOMER_HEALTH_RETENTION.png
+
+FINAL HOME:
+Clients -> Santé client & rétention
+
+PRIMARY SOURCE ROUTE FAMILY:
+/angelcare-marketplace/admin/customers/health
+
+SOURCE-CONFIRMED CAPABILITIES PROJECTED:
+- account health score
+- retention risk / churn watch
+- service, support and payment indicators
+- customer health distribution table
+- alerts, trends and intervention recommendations
+- retention-oriented operational cockpit
+
+======================================================================
+FILE LIST INCLUDED IN THIS ZIP
+======================================================================
+01_CUSTOMERS_CRM_COMMAND_CENTER.png
+02_ADD_CUSTOMER_FORM.png
+03_CUSTOMER_360_OVERVIEW.png
+04_CUSTOMER_360_COMMERCIAL_PORTFOLIO.png
+05_CUSTOMER_360_PAYMENTS_DOCUMENTS.png
+06_FAMILY_360_RELATIONS_DEPENDANTS.png
+07_SEGMENTS_AUDIENCES_STUDIO.png
+08_SUPPORT_TICKETS_CLAIMS_CENTER.png
+09_CUSTOMER_ACTIVITY_COMMUNICATIONS.png
+10_CUSTOMER_HEALTH_RETENTION.png
+BATCH_03_SOURCE_MAPPING.txt

@@ -1,0 +1,21 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "skipLibCheck": true,
+    "incremental": false
+  },
+  "include": [
+    "components/angelcare360/transport/sovereign/transport-sovereign-css.d.ts",
+    "angelcare-marketplace/commerce-studio/media-library-operations.ts",
+    "angelcare-marketplace/commerce-studio/media-storage.ts",
+    "angelcare-marketplace/commerce-studio/media-storage-api.ts",
+    "angelcare-marketplace/commerce-studio/repository.ts",
+    "angelcare-marketplace/commerce-studio/types.ts",
+    "angelcare-marketplace/commerce-studio/admin-pages.tsx",
+    "angelcare-marketplace/commerce-studio/components/MediaLibraryStudio.tsx",
+    "angelcare-marketplace/components/MarketplaceFilePicker.tsx",
+    "app/api/angelcare-marketplace/admin/media/preflight/route.ts"
+  ],
+  "exclude": ["node_modules", ".next"]
+}

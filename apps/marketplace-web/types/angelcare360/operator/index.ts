@@ -55,6 +55,8 @@ export type Angelcare360OperatorPermission =
   | 'operator.service.update'
   | 'operator.audit.view'
   | 'operator.settings.manage'
+  | 'operator.demo.environment.view'
+  | 'operator.demo.environment.manage'
 
 export type Angelcare360OperatorClientStatus = 'prospect' | 'pilot' | 'active' | 'suspended' | 'churned' | 'archived'
 export type Angelcare360OperatorClientLifecycleStage =

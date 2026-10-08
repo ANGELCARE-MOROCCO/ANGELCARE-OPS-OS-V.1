@@ -1,14 +1,14 @@
 "use client"
 
 import Link from 'next/link'
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import type { CSSProperties } from 'react'
-import { Activity, ArchiveRestore, Blocks, CalendarClock, Check, ChevronLeft, ChevronRight, CircleGauge, ContactRound, Copy, FileClock, Globe2, Languages, LayoutDashboard, Link2, Monitor, Palette, Plus, Rocket, Save, Search, Settings2, ShieldCheck, Smartphone, Tablet, Target } from 'lucide-react'
+import { Activity, ArchiveRestore, Blocks, CalendarClock, Check, ChevronLeft, ChevronRight, CircleGauge, ContactRound, Copy, FileClock, Globe2, Languages, LayoutDashboard, Link2, Monitor, Palette, Plus, Rocket, Save, Search, Settings2, ShieldCheck, Smartphone, Tablet, Target, X } from 'lucide-react'
 import { FooterExperience } from './FooterExperience'
 import styles from '../footer-studio.module.css'
 import type { FooterLocale, FooterProfile, FooterSection, FooterStudioMode, FooterStudioSummary, FooterTheme } from '../types'
 
-type Props={summary:FooterStudioSummary;mode:FooterStudioMode;actorName:string}
+type Props={summary:FooterStudioSummary;mode:FooterStudioMode;actorName:string;canManage:boolean;canViewAnalytics:boolean}
 const modes:Array<{key:FooterStudioMode;label:string;icon:typeof LayoutDashboard}>=[
   {key:'command',label:'Cockpit exécutif',icon:LayoutDashboard},{key:'profiles',label:'Profils',icon:Copy},{key:'composer',label:'Composer',icon:Blocks},{key:'themes',label:'8 thèmes',icon:Palette},{key:'components',label:'Composants',icon:CircleGauge},{key:'contacts',label:'Contacts',icon:ContactRound},{key:'navigation',label:'Navigation',icon:Link2},{key:'localization',label:'Localisation',icon:Languages},{key:'targeting',label:'Ciblage',icon:Target},{key:'schedules',label:'Programmation',icon:CalendarClock},{key:'history',label:'Historique',icon:FileClock},{key:'analytics',label:'Analytics',icon:Activity},{key:'settings',label:'Paramètres',icon:Settings2},
 ]
@@ -16,7 +16,7 @@ const localeLabels={fr:'Français',en:'English',ar:'العربية'} as const
 async function api(url:string,method='GET',body?:unknown){const response=await fetch(url,{method,headers:body?{'content-type':'application/json'}:undefined,body:body?JSON.stringify(body):undefined});const json=await response.json();if(!response.ok)throw new Error(json?.error?.message||'Action impossible.');return json.data}
 const local=(value:Record<string,string>|undefined,locale:FooterLocale)=>value?.[locale]||value?.fr||''
 
-export function FooterStudioCommand({summary,mode,actorName}:Props){
+export function FooterStudioCommand({summary,mode,actorName,canManage,canViewAnalytics}:Props){
   const [profiles,setProfiles]=useState(summary.profiles)
   const [contactDesks,setContactDesks]=useState(summary.contact_desks)
   const [targetRules,setTargetRules]=useState(summary.targeting_rules)
@@ -32,7 +32,7 @@ export function FooterStudioCommand({summary,mode,actorName}:Props){
   const selectedSection=profile?.sections.find((item)=>item.id===selectedSectionId)||profile?.sections[0]
   const preview=profile?{locale,pathname:'/angelcare-marketplace/fr',profile,contact_desks:contactDesks,resolved_rule_keys:['studio-preview'],preview:true}:null
   const filteredFeatures=useMemo(()=>summary.capability_count,[summary.capability_count])
-  const act=async(fn:()=>Promise<void>)=>{setBusy(true);setNotice('');try{await fn();setNotice('Action enregistrée et auditée.')}catch(error){setNotice(error instanceof Error?error.message:'Action impossible.')}finally{setBusy(false)}}
+  const act=async(fn:()=>Promise<void>)=>{if(!canManage){setNotice('Lecture seule · permission marketplace.publication.manage requise.');return}setBusy(true);setNotice('');try{await fn();setNotice('Action enregistrée et auditée.')}catch(error){setNotice(error instanceof Error?error.message:'Action impossible.')}finally{setBusy(false)}}
   const updateProfile=(patch:Partial<FooterProfile>)=>setProfiles((items)=>items.map((item)=>item.id===profile.id?{...item,...patch}:item))
   const saveProfile=()=>act(async()=>{const result=await api(`/api/angelcare-marketplace/admin/footer-studio/profiles/${profile.id}`,'PATCH',{profile_key:profile.profile_key,name:profile.name,description:profile.description,theme_id:profile.theme_id,is_default:profile.is_default,locale_strategy:profile.locale_strategy,settings:profile.settings,brand:profile.brand,authority_statement:profile.authority_statement,status:profile.status});setProfiles((items)=>items.map((item)=>item.id===profile.id?{...item,...result.record,theme:item.theme,sections:item.sections}:item))})
   const profileAction=(action:string)=>act(async()=>{const result=await api(`/api/angelcare-marketplace/admin/footer-studio/profiles/${profile.id}/actions/${action}`,'POST',{});if(result.record)setProfiles((items)=>items.map((item)=>item.id===profile.id?{...item,...result.record,theme:item.theme,sections:item.sections}:item))})
@@ -47,12 +47,14 @@ export function FooterStudioCommand({summary,mode,actorName}:Props){
   const saveTargetRule=(body:unknown)=>act(async()=>{const record=await api('/api/angelcare-marketplace/admin/footer-studio/targeting','POST',body);setTargetRules((items)=>[record,...items])})
   const saveSchedule=(body:unknown)=>act(async()=>{const record=await api('/api/angelcare-marketplace/admin/footer-studio/schedules','POST',body);setSchedules((items)=>[record,...items])})
   const runSchedules=()=>act(async()=>{await api('/api/angelcare-marketplace/admin/footer-studio/schedules/run','POST',{});window.location.reload()})
+  if(mode==='analytics'&&!canViewAnalytics)return <div className={styles.adminEmpty}>Accès Analytics refusé · permission marketplace.analytics.view requise.</div>
   if(!profile)return <div className={styles.adminEmpty}>La migration Footer Studio doit être appliquée.</div>
   const themeStyle=(theme:FooterTheme)=>({'--theme-a':theme.tokens.background,'--theme-b':theme.tokens.background_alt,'--theme-accent':theme.tokens.accent,'--theme-surface':theme.tokens.surface} as CSSProperties)
-  return <div className={styles.studioRoot}>
+  return <div className={styles.studioRoot} data-readonly={!canManage}>
     <aside className={styles.studioRail}><Link href="/angelcare-marketplace/admin" className={styles.back}><ChevronLeft size={16}/>Marketplace Admin</Link><div className={styles.studioBrand}><span>ANGELCARE BUILD 360</span><strong>Footer Command Studio</strong><small>Navigation · Contacts · Trust · Closing Experience</small></div><nav>{modes.map((item)=>{const Icon=item.icon;return <Link href={item.key==='command'?'/angelcare-marketplace/admin/footer-studio':`/angelcare-marketplace/admin/footer-studio/${item.key}`} data-active={mode===item.key} key={item.key}><Icon size={17}/><span>{item.label}</span></Link>})}</nav><div className={styles.railEvidence}><ShieldCheck size={18}/><div><strong>Autorité gouvernée</strong><span>{filteredFeatures} capacités · {summary.component_count} blocs</span></div></div></aside>
     <main className={styles.studioMain}>
-      <header className={styles.commandHeader}><div><span>FOOTER MASTER CONTROL</span><h1>{modes.find((item)=>item.key===mode)?.label}</h1><p>Composer, cibler, localiser et publier l’expérience de clôture mondiale ANGELCARE sans retour au code.</p></div><div className={styles.headerActions}><span className={styles.actor}>{actorName}</span><button onClick={saveProfile} disabled={busy}><Save size={16}/>Enregistrer</button><button className={styles.primary} onClick={()=>profileAction('publish')} disabled={busy}><Rocket size={16}/>Publier</button></div></header>
+      <header className={styles.commandHeader}><div><span>FOOTER MASTER CONTROL</span><h1>{modes.find((item)=>item.key===mode)?.label}</h1><p>Composer, cibler, localiser et publier l’expérience de clôture mondiale ANGELCARE sans retour au code.</p></div><div className={styles.headerActions}><span className={styles.actor}>{actorName}</span><button onClick={saveProfile} disabled={busy||!canManage} title={!canManage?'Permission marketplace.publication.manage requise':undefined}><Save size={16}/>Enregistrer</button><FooterPublishDialog profile={profile} busy={busy} canManage={canManage} onConfirm={()=>profileAction('publish')}/></div></header>
+      {!canManage?<div className={styles.permissionBanner}>Footer Studio en lecture seule · les APIs imposent marketplace.publication.manage pour toute mutation.</div>:null}
       {notice?<div className={styles.notice}><Check size={15}/>{notice}</div>:null}
       <section className={styles.commandBar}><label>Profil<select value={profile.id} onChange={(e)=>setSelectedId(e.target.value)}>{profiles.map((item)=><option value={item.id} key={item.id}>{local(item.name,locale)} · {item.status}</option>)}</select></label><label>Langue<select value={locale} onChange={(e)=>setLocale(e.target.value as FooterLocale)}>{(['fr','en','ar'] as const).map((code)=><option value={code} key={code}>{localeLabels[code]}</option>)}</select></label><div className={styles.deviceSwitch}><button data-active={device==='desktop'} onClick={()=>setDevice('desktop')}><Monitor size={16}/></button><button data-active={device==='tablet'} onClick={()=>setDevice('tablet')}><Tablet size={16}/></button><button data-active={device==='mobile'} onClick={()=>setDevice('mobile')}><Smartphone size={16}/></button></div><button onClick={duplicateProfile}><Copy size={15}/>Dupliquer</button><button onClick={()=>profileAction('suspend')}><ArchiveRestore size={15}/>Suspendre</button></section>
       {mode==='command'?<div className={styles.executiveGrid}><article><span>Profils</span><strong>{profiles.length}</strong><p>Global, B2C, B2B, Academy et futurs contextes.</p></article><article><span>Thèmes premium</span><strong>{summary.themes.length}</strong><p>Tous compatibles FR, EN, AR/RTL et accordéons mobiles.</p></article><article><span>Contacts gouvernés</span><strong>{contactDesks.length}</strong><p>Cellules professionnelles, horaires, territoires et escalades.</p></article><article><span>Capacités</span><strong>{summary.capability_count}</strong><p>Composition, ciblage, publication, analytics et sécurité.</p></article><article><span>Publications</span><strong>{profiles.filter((x)=>x.status==='published').length}</strong><p>Profils actifs avec version et restauration.</p></article><article><span>Interactions</span><strong>{summary.analytics.total_events}</strong><p>Liens, emails, accordéons et autorité finale.</p></article></div>:null}
@@ -71,6 +73,24 @@ export function FooterStudioCommand({summary,mode,actorName}:Props){
       {mode!=='composer'&&preview?<section className={styles.livePreview}><header><div><span>LIVE PRODUCTION COMPONENT</span><strong>Prévisualisation réelle · {local(profile.theme.name,locale)}</strong></div><div><button onClick={()=>setDevice('desktop')}><Monitor/></button><button onClick={()=>setDevice('tablet')}><Tablet/></button><button onClick={()=>setDevice('mobile')}><Smartphone/></button></div></header><div data-device={device}><FooterExperience experience={preview} preview/></div></section>:null}
     </main>
   </div>
+}
+
+function FooterPublishDialog({profile,busy,canManage,onConfirm}:{profile:FooterProfile;busy:boolean;canManage:boolean;onConfirm:()=>Promise<void>}){
+  const dialogRef=useRef<HTMLDialogElement>(null)
+  const confirm=async()=>{await onConfirm();dialogRef.current?.close()}
+  return <>
+    <button className={styles.primary} onClick={()=>dialogRef.current?.showModal()} disabled={busy||!canManage} title={!canManage?'Permission marketplace.publication.manage requise':undefined}><Rocket size={16}/>Publier</button>
+    <dialog ref={dialogRef} className={styles.publishDialog} onCancel={()=>dialogRef.current?.close()}>
+      <header><div><span>ACTION GOUVERNÉE</span><h2>Publier le Footer</h2><p>Vérifiez l’identité, l’impact public et la possibilité de restauration avant confirmation.</p></div><button aria-label="Fermer" onClick={()=>dialogRef.current?.close()}><X size={18}/></button></header>
+      <section className={styles.publishSummary}>
+        <div><span>Profil</span><strong>{local(profile.name,'fr')}</strong><small>{profile.profile_key}</small></div>
+        <div><span>État actuel</span><strong>{profile.status}</strong><small>Version {profile.version_number}</small></div>
+        <div><span>État proposé</span><strong>published</strong><small>Visible sur les surfaces ciblées</small></div>
+      </section>
+      <section className={styles.publishImpact}><ShieldCheck size={20}/><div><strong>Impact public contrôlé</strong><p>Cette version devient le Footer actif pour ses routes, langues, audiences et territoires. Un instantané versionné permet une restauration depuis l’historique.</p></div></section>
+      <footer><button onClick={()=>dialogRef.current?.close()} disabled={busy}>Annuler</button><button className={styles.primary} onClick={()=>void confirm()} disabled={busy||!canManage}><Rocket size={16}/>{busy?'Publication…':'Confirmer la publication'}</button></footer>
+    </dialog>
+  </>
 }
 
 function TargetingEditor({profileId,rules,onSave}:{profileId:string;rules:FooterStudioSummary['targeting_rules'];onSave:(body:unknown)=>void}){

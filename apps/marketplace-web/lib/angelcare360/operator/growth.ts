@@ -5,6 +5,7 @@ import { createOperatorContract } from './contracts'
 import { createOperatorSubscription } from './subscriptions'
 import { getOperatorClient, asNumber, asString, asStringArray, toRecord } from './shared'
 import { compileTenantEntitlements, loadProductKernelSnapshot } from './product-kernel'
+import { provisionGrowthInstitutionSanilaSchool } from './institution-school-provisioning'
 import type {
   GrowthAccountPlanRecord,
   GrowthApprovalRecord,
@@ -491,6 +492,7 @@ export async function executeGrowthOperation(operation: string, input: Record<st
   if (entityName === 'client') return executeClientOperation(verb, input)
   if (entityName === 'prospect' && verb === 'convert') return convertProspect(input)
   if (entityName === 'prospect' && verb === 'merge') return mergeProspects(input)
+  if (entityName === 'institution' && verb === 'provision_school') return provisionGrowthInstitutionSanilaSchool(input)
   if (entityName === 'offer' && verb === 'convert_contract') return convertOfferToContract(input)
   if (entityName === 'contract' && verb === 'activate') return activateContract(input)
   if (!(entityName in TABLES)) return { ok: false, error: 'Commande commerciale inconnue.' }

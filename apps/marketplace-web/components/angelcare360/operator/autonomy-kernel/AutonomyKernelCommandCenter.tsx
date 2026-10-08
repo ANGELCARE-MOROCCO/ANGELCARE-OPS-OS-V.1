@@ -25,6 +25,7 @@ import {
   SlidersHorizontal,
   X,
 } from 'lucide-react'
+import SanilaLogo from '@/components/brand/SanilaLogo'
 import type {
   AutonomyKernelOperation,
   AutonomyKernelScene,
@@ -120,7 +121,7 @@ export default function AutonomyKernelCommandCenter({ initialSnapshot, activeSce
     <section className={styles.kernel} data-motion="finite">
       <header className={styles.crown}>
         <div className={styles.crownIdentity}>
-          <img src="/brand/angelcare-official-inverse.webp" alt="AngelCare" className={styles.inverseLogo} />
+          <SanilaLogo variant="white" width={152} height={54} className={styles.inverseLogo} priority />
           <div>
             <span className={styles.eyebrow}>SANILA OS · TEN-YEAR AUTONOMY KERNEL</span>
             <h1>Configurable Platform Authority</h1>

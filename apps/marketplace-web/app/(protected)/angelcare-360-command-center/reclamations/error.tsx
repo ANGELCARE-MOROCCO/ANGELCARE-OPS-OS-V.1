@@ -1,0 +1,3 @@
+'use client'
+import styles from '@/components/angelcare360/claims/sovereign-reintegration/TrustResolutionSovereign.module.css'
+export default function ErrorState({reset}:{error:Error&{digest?:string};reset:()=>void}){return <section className={styles.page}><div className={styles.masthead}><div className={styles.mastheadCopy}><span className={styles.eyebrow}>Trust Resolution · indisponible</span><h1>Les réclamations n’ont pas pu être chargées.</h1><p>Aucune modification n’a été appliquée. Les dossiers existants restent inchangés. Réessayez lorsque l’autorité de données est disponible.</p></div><button className={styles.actionButton} onClick={reset}>Réessayer</button></div></section>}

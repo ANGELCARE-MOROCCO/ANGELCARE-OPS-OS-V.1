@@ -1,0 +1,32 @@
+{
+  "mission": "P00_MARKETPLACE_CAPABILITY_CENSUS",
+  "status": "PASS",
+  "baseline": "ANGELCARE_MARKETPLACE_WEB_WITH_COMPLETE_DESIGN_STUDIO_20260919",
+  "counts": {
+    "api_routes": 569,
+    "admin_pages": 564,
+    "public_locale_pages": 93,
+    "other_marketplace_pages": 37,
+    "data_authorities": 324,
+    "permissions": 536,
+    "export_authority_files": 259,
+    "curated_capabilities": 46,
+    "source_candidates": 20,
+    "action_candidates": 14,
+    "runtime_surfaces": 9,
+    "gaps": 13,
+    "zero_typing_opportunities": 13
+  },
+  "invariants": {
+    "shadow_system_created": false,
+    "database_change": false,
+    "sql_required": false,
+    "migration": false,
+    "local_build": false,
+    "global_typescript": false,
+    "commit": false,
+    "push": false,
+    "deploy": false
+  },
+  "validation_issues": []
+}

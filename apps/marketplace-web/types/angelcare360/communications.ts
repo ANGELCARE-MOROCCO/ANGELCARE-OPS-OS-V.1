@@ -178,6 +178,13 @@ export interface Angelcare360ReclamationRecord {
   resolution_summary?: string | null
   status_history_json?: Array<Record<string, unknown>> | null
   internal_notes_json?: Array<Record<string, unknown>> | null
+  submitted_by_parent_id?: Angelcare360UUID | null
+  submitted_by_student_id?: Angelcare360UUID | null
+  submitted_by_staff_id?: Angelcare360UUID | null
+  assigned_at?: string | null
+  created_at?: string | null
+  updated_at?: string | null
+  metadata_json?: Record<string, unknown> | null
   resolved_at?: string | null
   closed_at?: string | null
 }

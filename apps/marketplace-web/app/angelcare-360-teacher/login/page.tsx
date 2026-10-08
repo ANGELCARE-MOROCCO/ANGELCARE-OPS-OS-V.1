@@ -1,11 +1,8 @@
 import type { Metadata } from 'next'
-import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
+import { authenticatePortalCredentials } from '@/lib/angelcare360/portal/auth'
 import SanilaTeacherLoginExperience from '@/components/angelcare360/teacher-auth/SanilaTeacherLoginExperience'
-import { APP_SESSION_COOKIE, generateSessionToken } from '@/lib/ac360-portability/auth-session'
-import { PORTAL_ROLE_KEYS } from '@/data/angelcare360/role-portals'
 import { getAngelcare360CustomerBroadcastSnapshot } from '@/lib/angelcare360/customer-broadcasts'
-import { createClient } from '@/lib/supabase/server'
 
 export const dynamic = 'force-dynamic'
 
@@ -51,64 +48,17 @@ export default async function SanilaTeacherLoginPage({
 
   async function loginAction(formData: FormData) {
     'use server'
-
-    const username = String(formData.get('username') || '').trim().toLowerCase()
+    const username = String(formData.get('username') || '')
     const password = String(formData.get('password') || '')
     const requestedNext = normalizeTeacherNext(String(formData.get('next') || '').trim())
-
-    if (!username || !password) redirect(errorHref('missing', requestedNext))
-
-    const supabase = await createClient()
-    const { data, error } = await supabase.rpc('login_app_user', {
-      input_username: username,
-      input_password: password,
+    const result = await authenticatePortalCredentials({
+      username,
+      password,
+      requestedKind: 'teacher',
+      next: requestedNext,
     })
-
-    if (error) redirect(errorHref('invalid', requestedNext))
-
-    const row = Array.isArray(data) ? data[0] : data
-    const userId =
-      typeof row === 'string'
-        ? row
-        : row && typeof row === 'object' && 'id' in row
-          ? String((row as { id?: string }).id || '')
-          : ''
-
-    if (!userId) redirect(errorHref('invalid', requestedNext))
-
-    const { data: user } = await supabase
-      .from('app_users')
-      .select('id,role,status')
-      .eq('id', userId)
-      .maybeSingle()
-
-    if (!user || user.status !== 'active') redirect(errorHref('inactive', requestedNext))
-
-    const role = String(user.role || '').trim().toLowerCase()
-    if (!PORTAL_ROLE_KEYS.teacher.includes(role)) redirect(errorHref('role', requestedNext))
-
-    const token = generateSessionToken()
-    const expiresAt = new Date(Date.now() + 12 * 60 * 60 * 1000)
-    const { error: sessionError } = await supabase.from('app_sessions').insert({
-      user_id: userId,
-      session_token: token,
-      expires_at: expiresAt.toISOString(),
-    })
-
-    if (sessionError) redirect(errorHref('server', requestedNext))
-
-    await supabase.from('app_users').update({ last_login_at: new Date().toISOString() }).eq('id', userId)
-
-    const cookieStore = await cookies()
-    cookieStore.set(APP_SESSION_COOKIE, token, {
-      httpOnly: true,
-      sameSite: 'lax',
-      secure: process.env.NODE_ENV === 'production',
-      path: '/',
-      expires: expiresAt,
-    })
-
-    redirect(requestedNext || '/angelcare-360-teacher')
+    if (!result.ok) redirect(errorHref(result.error, requestedNext))
+    redirect(result.redirectTo)
   }
 
   const initialBroadcasts = await getAngelcare360CustomerBroadcastSnapshot()

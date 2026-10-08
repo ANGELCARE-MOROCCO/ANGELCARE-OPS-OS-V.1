@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useState } from 'react'
 import { Activity, BadgeCheck, CircleAlert, ExternalLink, Gauge, Play, Rocket, ShieldCheck } from 'lucide-react'
+import { useGovernedAction } from '@/angelcare-marketplace/shells/GovernedActionProvider'
 import type { ActivationCommandData, ActivationRun } from '../types'
 import styles from '../production-activation.module.css'
 
@@ -13,7 +14,8 @@ async function runScan(): Promise<ActivationRun> {
   return payload.data
 }
 
-export function ActivationCommand({ initialData }: { initialData: ActivationCommandData }) {
+export function ActivationCommand({ initialData, canRun }: { initialData: ActivationCommandData; canRun: boolean }) {
+  const requestAction = useGovernedAction()
   const [run, setRun] = useState(initialData.latestRun)
   const [busy, setBusy] = useState(false)
   const [message, setMessage] = useState('')
@@ -21,6 +23,8 @@ export function ActivationCommand({ initialData }: { initialData: ActivationComm
   const score = run?.score ?? 0
 
   async function execute() {
+    const reason = await requestAction({title:'Exécuter le readiness scan de production',objectLabel:'Marketplace public activation',currentState:run?.status||'not_run',nextState:'new persisted readiness run',consequence:'Le serveur mesure les contenus, catégories, médias, navigation et placements réels puis persiste chaque résultat.',permission:'marketplace.publication.manage'})
+    if (!reason) return
     setBusy(true)
     setMessage('')
     try {
@@ -41,10 +45,11 @@ export function ActivationCommand({ initialData }: { initialData: ActivationComm
         <h1>Production Activation Command</h1>
         <p>Le dernier cockpit avant go-live : contenu réel, synchronisation publique, runtime, sécurité, UIX et preuve de lancement. Aucun résultat n’est fabriqué.</p>
         <div className={styles.heroActions}>
-          <button type="button" onClick={() => void execute()} disabled={busy}><Play size={17}/>{busy ? 'Contrôle en cours…' : 'Exécuter le readiness scan'}</button>
+          <button type="button" onClick={() => void execute()} disabled={busy||!canRun}><Play size={17}/>{busy ? 'Contrôle en cours…' : 'Exécuter le readiness scan'}</button>
           <Link href="/angelcare-marketplace/admin/catalog/items/new"><Rocket size={17}/> Créer la première offre réelle</Link>
         </div>
         {message ? <div className={styles.notice}>{message}</div> : null}
+        {!canRun ? <div className={styles.notice}>Lecture seule · permission <code>marketplace.publication.manage</code> requise.</div> : null}
       </div>
       <div className={styles.score} data-ready={run?.status === 'passed'}>
         <Gauge size={30}/><strong>{score}%</strong><span>{run?.status || 'not_run'}</span>
