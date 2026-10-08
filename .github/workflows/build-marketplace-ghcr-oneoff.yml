@@ -6,13 +6,20 @@ on:
       - upgrade/next-angelcare-upgrade
     paths:
       - ".github/workflows/build-marketplace-ghcr-oneoff.yml"
+      - "apps/marketplace-web/**"
+  workflow_dispatch:
+    inputs:
+      source_sha:
+        description: "Exact Marketplace source commit to build"
+        required: false
+        type: string
 
 permissions:
   contents: read
   packages: write
 
 env:
-  TARGET_SHA: 2bf63347850cc6437a906cf192b5e466288891c8
+  TARGET_SHA: ${{ inputs.source_sha || github.sha }}
   IMAGE: ghcr.io/angelcare-morocco/angelcare-marketplace
 
 jobs:
