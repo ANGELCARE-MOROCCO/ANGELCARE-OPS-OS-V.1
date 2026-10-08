@@ -1,0 +1,129 @@
+{
+  "release": "FAMILIES_IMMERSIVE_GATEWAY_R2",
+  "prepared_utc": "2026-10-08",
+  "implementation_scope": "apps/marketplace-web",
+  "sections": 16,
+  "main_destinations": [
+    "home-services",
+    "development",
+    "kits"
+  ],
+  "locales": [
+    "fr",
+    "en",
+    "ar"
+  ],
+  "scoped_typescript": {
+    "status": "PASS",
+    "config": "scripts/families-gateway-r2/tsconfig.ui.json",
+    "extends_monorepo_config": false
+  },
+  "runtime": {
+    "new_gateway": {
+      "passed": 29,
+      "total": 29
+    },
+    "existing_families_compatibility": {
+      "passed": 35,
+      "total": 35
+    }
+  },
+  "browser": {
+    "passed": 39,
+    "checks": [
+      "SIXTEEN_DISTINCT_SECTIONS",
+      "THREE_GATEWAY_DESTINATIONS",
+      "NO_DUPLICATE_IDS",
+      "NEED_SELECTION_UPDATES_FINDER",
+      "RECURRING_IS_NOT_INFERRED_FROM_PRICE",
+      "AGE_SELECTION_AND_RESET",
+      "CONFIGURED_LANGUAGE_GOAL",
+      "KIT_SWITCH_CHANGES_REAL_OFFER",
+      "SEARCH_EMPTY_AND_RECOVERY",
+      "ALL_SIXTEEN_SCHEMAS_REACHABLE",
+      "LOCAL_ANCHORS_RESOLVE",
+      "CANONICAL_CARD_DETAIL_LINKS",
+      "SAVE_USES_EXISTING_ENGAGEMENT_API",
+      "FAILED_SAVE_IS_VISIBLE_AND_DOES_NOT_FAKE_SUCCESS",
+      "RECENT_OFFER_IS_REMEMBERED_WITHOUT_INTERFERING_WITH_NAVIGATION",
+      "ALL_FAMILIES_IMAGES_RESOLVE",
+      "EXISTING_HEADER_FOOTER_AND_TWELVE_STOREFRONTS_PRESERVED",
+      "INCOMING_LEGACY_HASH_OPENS_DIRECTORY",
+      "LEGACY_POSTPARTUM_HASH_SELECTS_EXISTING_CAPABILITY",
+      "LEGACY_EXTRA_SECTION_ANCHORS_PRESERVED",
+      "NO_HORIZONTAL_OVERFLOW_fr_390",
+      "SECTION_HEADINGS_STAY_INSIDE_VIEWPORT_fr_390",
+      "LOCALE_ROUTES_fr_390",
+      "NO_HORIZONTAL_OVERFLOW_en_320",
+      "SECTION_HEADINGS_STAY_INSIDE_VIEWPORT_en_320",
+      "LOCALE_ROUTES_en_320",
+      "NO_HORIZONTAL_OVERFLOW_ar_390",
+      "SECTION_HEADINGS_STAY_INSIDE_VIEWPORT_ar_390",
+      "LOCALE_ROUTES_ar_390",
+      "RTL_390",
+      "NO_HORIZONTAL_OVERFLOW_ar_1440",
+      "SECTION_HEADINGS_STAY_INSIDE_VIEWPORT_ar_1440",
+      "LOCALE_ROUTES_ar_1440",
+      "RTL_1440",
+      "NO_HORIZONTAL_OVERFLOW_fr_768",
+      "SECTION_HEADINGS_STAY_INSIDE_VIEWPORT_fr_768",
+      "LOCALE_ROUTES_fr_768",
+      "EMPTY_CATALOGUE_RETAINS_GATEWAYS_AND_REAL_STATES",
+      "NO_BROWSER_RUNTIME_ERRORS"
+    ],
+    "errors": []
+  },
+  "installer": {
+    "passed": 11,
+    "checks": [
+      "CLEAN_BASELINE_INSTALL_SUCCEEDS",
+      "ALL_PAYLOAD_CODE_HASHES_MATCH",
+      "PREVIOUS_ENTRY_POINT_BACKED_UP",
+      "SECOND_APPLY_IS_IDEMPOTENT",
+      "EXPLICIT_ROLLBACK_SUCCEEDS",
+      "NEW_PATCH_FILES_REMOVED_BY_ROLLBACK",
+      "SOURCE_DRIFT_STOPS_BEFORE_WRITES",
+      "FAILED_GATE_TRIGGERS_AUTOMATIC_ROLLBACK",
+      "FAILED_GATE_LEAVES_NO_INSTALLED_PATCH_FILES",
+      "EXISTING_OPERATOR_MEDIA_PRESERVED",
+      "ROLLBACK_REFUSES_TO_ERASE_LATER_EDITS"
+    ]
+  },
+  "visual_review": {
+    "status": "PASS",
+    "desktop_width": 1440,
+    "mobile_widths": [
+      320,
+      390
+    ],
+    "tablet_width": 768,
+    "rtl_widths": [
+      390,
+      1440
+    ],
+    "photographs": "Decoded and painted before full-page capture",
+    "mobile_heading_visibility": "Verified for all tested locale/width pairs"
+  },
+  "runtime_evidence_scope": "Source-level fixtures and actual React components; engagement success/failure mocked explicitly",
+  "release_state": {
+    "installed_on_user_machine": false,
+    "full_marketplace_image_build": false,
+    "committed": false,
+    "pushed": false,
+    "deployed": false
+  },
+  "preserved": [
+    "Atomic import engines",
+    "Canonical eligible item identities and detail journeys",
+    "Price and availability authority",
+    "Published custom Studio world precedence",
+    "Global Marketplace shell and 12-storefront navigation",
+    "Four legacy capability anchors and all 16 atomic directory anchors"
+  ],
+  "remaining_release_gates": [
+    "Full Marketplace image build",
+    "Exact commit SHA and immutable GHCR digest verification",
+    "Coolify deployment",
+    "Deployed storefront, imagery, auth/save and journey checks"
+  ]
+}
