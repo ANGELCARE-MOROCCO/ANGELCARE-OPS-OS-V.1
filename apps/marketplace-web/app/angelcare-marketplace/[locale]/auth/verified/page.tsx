@@ -1,5 +1,31 @@
-import Link from 'next/link'
-import { BadgeCheck } from 'lucide-react'
+import { notFound, redirect } from 'next/navigation'
+import { createUserClient } from '@/lib/supabase/server'
+import { getCustomerContext } from '@/angelcare-marketplace/customer-commerce/customer-auth'
+import { customerReturnTo } from '@/angelcare-marketplace/customer-commerce/auth-navigation'
+import { CustomerVerifiedExperience } from '@/angelcare-marketplace/customer-commerce/components/CustomerVerifiedExperience'
+import type { CustomerAccessPageProps } from '@/angelcare-marketplace/customer-commerce/customer-access-page'
 import type { CatalogLocale } from '@/angelcare-marketplace/catalog-discovery/types'
-import styles from '@/angelcare-marketplace/customer-commerce/customer-commerce.module.css'
-export default async function Page({params}:{params:Promise<{locale:string}>}){const{locale:raw}=await params;const locale=(raw==='en'||raw==='ar'?raw:'fr') as CatalogLocale;return <main className={styles.root} dir={locale==='ar'?'rtl':'ltr'}><div className={styles.authShell}><section className={styles.authCard}><BadgeCheck size={44}/><span className={styles.eyebrow}>IDENTITY VERIFIED</span><h1>{locale==='fr'?'Votre identité est confirmée':locale==='ar'?'تم تأكيد هويتك':'Your identity is confirmed'}</h1><p>{locale==='fr'?'Vous pouvez maintenant ouvrir Mon ANGELCARE, retrouver votre panier et activer AC Wallet.':locale==='ar'?'يمكنك الآن فتح حساب ANGELCARE واستعادة سلتك وتفعيل محفظة AC.':'You can now open Mon ANGELCARE, recover your basket and activate AC Wallet.'}</p><Link className={styles.primaryButton} href={`/angelcare-marketplace/${locale}/account`}>Mon ANGELCARE</Link></section></div></main>}
+
+export const dynamic = 'force-dynamic'
+export default async function Page({ params, searchParams }: CustomerAccessPageProps) {
+  const [{ locale: raw }, query] = await Promise.all([params, searchParams])
+  if (!['fr', 'en', 'ar'].includes(raw)) notFound()
+  const locale = raw as CatalogLocale
+  if (typeof query.code === 'string' || typeof query.token_hash === 'string') {
+    const values = new URLSearchParams({ locale, flow: 'signup', returnTo: customerReturnTo(query.returnTo, locale) })
+    for (const key of ['code', 'token_hash', 'type']) if (typeof query[key] === 'string') values.set(key, query[key])
+    redirect(`/angelcare-marketplace/auth/callback?${values}`)
+  }
+  let state: 'confirmed' | 'invalid' | 'pending' = 'invalid'
+  let destination = customerReturnTo(query.returnTo, locale)
+  if (query.state !== 'invalid' && !query.error) {
+    try {
+      const client = await createUserClient(), { data: { user }, error } = await client.auth.getUser()
+      if (!error && user?.email_confirmed_at) {
+        destination = customerReturnTo(query.returnTo || user.user_metadata?.marketplace_return_to, locale)
+        state = await getCustomerContext() && query.state !== 'pending' ? 'confirmed' : 'pending'
+      }
+    } catch { state = 'pending' }
+  }
+  return <CustomerVerifiedExperience locale={locale} returnTo={destination} state={state}/>
+}

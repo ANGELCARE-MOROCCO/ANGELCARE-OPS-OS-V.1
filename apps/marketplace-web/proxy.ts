@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server'
+import { refreshCustomerSession } from '@/angelcare-marketplace/customer-commerce/customer-session-proxy'
 
 function hasCookie(request: NextRequest, names: string[]) {
   return names.some((name) => Boolean(request.cookies.get(name)?.value))
@@ -78,8 +79,9 @@ function buildCareLinkMobileLoginRequiredResponse(request: NextRequest) {
   return redirectWithNext(request, '/carelink/login')
 }
 
-export function proxy(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname
+  if (/^\/angelcare-marketplace\/(fr|en|ar)\/(account|auth|family)(?:\/|$)/.test(pathname) || pathname.startsWith('/angelcare-marketplace/family/')) return refreshCustomerSession(request)
 
   if (isCareLinkOpsProtectedPath(pathname)) {
     if (!isCareLinkOpsAuthorizedActor(request)) {
@@ -116,6 +118,10 @@ export function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
+    '/angelcare-marketplace/:locale/account/:path*',
+    '/angelcare-marketplace/:locale/auth/:path*',
+    '/angelcare-marketplace/:locale/family/:path*',
+    '/angelcare-marketplace/family/:path*',
     '/carelink/:path*',
     '/carelink-ops/:path*',
     '/api/carelink/:path*',

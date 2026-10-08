@@ -133,7 +133,15 @@ async function customerJourneyRows(context: MarketplaceRequestContext): Promise<
   const db = await createServiceClient()
   const familyId = await familyAccountId(context.actor.id)
   let query = db.from('angelcare_marketplace_journeys').select(detailSelect).order('updated_at', { ascending: false })
-  if (context.tenantId) query = query.eq('tenant_id', context.tenantId)
+  if (context.actor.sourceRole === 'marketplace_customer') {
+    const { data: account, error: accountError } = await db.from('angelcare_marketplace_customer_accounts').select('id').eq('auth_user_id', context.actor.id).maybeSingle()
+    if (accountError) throw fail('résoudre le propriétaire client', accountError)
+    const owners = [`owner_user_id.eq.${context.actor.id}`]
+    if (familyId) owners.push(`family_account_id.eq.${familyId}`)
+    if (account?.id) owners.push(`customer_account_id.eq.${account.id}`)
+    query = query.or(owners.join(','))
+  }
+  else if (context.tenantId) query = query.eq('tenant_id', context.tenantId)
   else if (familyId) query = query.or(`owner_user_id.eq.${context.actor.id},family_account_id.eq.${familyId}`)
   else query = query.eq('owner_user_id', context.actor.id)
   const { data, error } = await query

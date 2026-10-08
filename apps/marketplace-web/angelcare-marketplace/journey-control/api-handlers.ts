@@ -1,4 +1,5 @@
 import { requireMarketplaceApiContext } from '../auth/context'
+import { getCustomerContext } from '../customer-commerce/customer-auth'
 import { apiFailure, apiSuccess, parseJsonObject, requestId } from '../server/request'
 import {
   acknowledgeCustomerNotification,
@@ -17,11 +18,15 @@ import {
 import { journeyRisk, journeyStatus, journeyType, objectValue, requiredText } from './validation'
 
 const locale = (value: unknown): 'fr' | 'en' | 'ar' => value === 'en' || value === 'ar' ? value : 'fr'
+async function customerJourneyContext() {
+  const customer = await getCustomerContext()
+  return customer?.marketplace || requireMarketplaceApiContext()
+}
 
 export async function handleCustomerAccount(request: Request) {
   const id = requestId(request)
   try {
-    const context = await requireMarketplaceApiContext()
+    const context = await customerJourneyContext()
     const url = new URL(request.url)
     return apiSuccess(await getCustomerAccountSummary(context, locale(url.searchParams.get('locale'))), { requestId: id })
   } catch (error) { return apiFailure(error, id) }
@@ -29,20 +34,20 @@ export async function handleCustomerAccount(request: Request) {
 
 export async function handleCustomerJourneys(request: Request) {
   const id = requestId(request)
-  try { return apiSuccess(await listCustomerJourneys(await requireMarketplaceApiContext()), { requestId: id }) }
+  try { return apiSuccess(await listCustomerJourneys(await customerJourneyContext()), { requestId: id }) }
   catch (error) { return apiFailure(error, id) }
 }
 
 export async function handleCustomerJourney(request: Request, journeyId: string) {
   const id = requestId(request)
-  try { return apiSuccess(await getCustomerJourney(journeyId, await requireMarketplaceApiContext()), { requestId: id }) }
+  try { return apiSuccess(await getCustomerJourney(journeyId, await customerJourneyContext()), { requestId: id }) }
   catch (error) { return apiFailure(error, id) }
 }
 
 export async function handleCompleteCustomerAction(request: Request, journeyId: string, actionId: string) {
   const id = requestId(request)
   try {
-    const context = await requireMarketplaceApiContext()
+    const context = await customerJourneyContext()
     const body = await parseJsonObject(request)
     return apiSuccess(await completeCustomerAction({ journeyId, actionId, evidence: objectValue(body.evidence), context, requestId: id, request }), { requestId: id })
   } catch (error) { return apiFailure(error, id) }
@@ -51,7 +56,7 @@ export async function handleCompleteCustomerAction(request: Request, journeyId: 
 export async function handleCreateChangeRequest(request: Request, journeyId: string) {
   const id = requestId(request)
   try {
-    const context = await requireMarketplaceApiContext()
+    const context = await customerJourneyContext()
     const body = await parseJsonObject(request)
     return apiSuccess(await createCustomerChangeRequest({ journeyId, requestType: requiredText(body.requestType, 'requestType', 80), reason: requiredText(body.reason, 'reason', 2000), requestedChanges: objectValue(body.requestedChanges), context, requestId: id, request }), { requestId: id, status: 201 })
   } catch (error) { return apiFailure(error, id) }
@@ -60,7 +65,7 @@ export async function handleCreateChangeRequest(request: Request, journeyId: str
 export async function handleCreateRecovery(request: Request, journeyId: string) {
   const id = requestId(request)
   try {
-    const context = await requireMarketplaceApiContext()
+    const context = await customerJourneyContext()
     const body = await parseJsonObject(request)
     return apiSuccess(await createCustomerRecoveryCase({ journeyId, issueType: requiredText(body.issueType, 'issueType', 100), urgency: journeyRisk(body.urgency) || 'medium', summary: requiredText(body.summary, 'summary', 3000), evidence: objectValue(body.evidence), context, requestId: id, request }), { requestId: id, status: 201 })
   } catch (error) { return apiFailure(error, id) }
@@ -68,7 +73,7 @@ export async function handleCreateRecovery(request: Request, journeyId: string) 
 
 export async function handleAcknowledgeNotification(request: Request, notificationId: string) {
   const id = requestId(request)
-  try { await acknowledgeCustomerNotification(notificationId, await requireMarketplaceApiContext()); return apiSuccess({ acknowledged: true }, { requestId: id }) }
+  try { await acknowledgeCustomerNotification(notificationId, await customerJourneyContext()); return apiSuccess({ acknowledged: true }, { requestId: id }) }
   catch (error) { return apiFailure(error, id) }
 }
 

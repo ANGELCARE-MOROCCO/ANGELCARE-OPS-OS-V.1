@@ -4,11 +4,11 @@ import { ArrowRight, ChevronLeft, ChevronRight, Grid2X2, Heart, Pause, Play, X }
 import Link from 'next/link'
 import type { CatalogLocale } from '@/angelcare-marketplace/catalog-discovery/types'
 import { FAMILY_ATOMIC_STORIES } from '../contract'
-import { FAMILY_CHAPTERS, familyLabel, familyRequestHref, familyWords } from '../experience'
+import { FAMILY_CHAPTERS, FAMILY_SERVICE_SECTIONS, familyDisplayLabel, familyLabel, familyRequestHref, familyWords } from '../experience'
 import { FAMILY_EDITORIAL_MEDIA, FAMILY_HERO_MEDIA } from '../media'
 import styles from './families-storefront.module.css'
 
-export function FamiliesNavigation({ locale }: { locale: CatalogLocale }) {
+export function FamiliesNavigation({ locale, extraSections = [] }: { locale: CatalogLocale; extraSections?: typeof FAMILY_SERVICE_SECTIONS }) {
   const [active, setActive] = useState('family-needs')
   const [progress, setProgress] = useState(0)
   const dialog = useRef<HTMLDialogElement>(null)
@@ -18,7 +18,7 @@ export function FamiliesNavigation({ locale }: { locale: CatalogLocale }) {
     const world=document.querySelector<HTMLElement>('[data-ac-families-storefront]')
     const headers=[...document.querySelectorAll<HTMLElement>('header,nav')].filter(node=>!world?.contains(node)&&getComputedStyle(node).position==='sticky')
     let stickyOffset=0
-    const measure=()=>{stickyOffset=headers.reduce((height,node)=>Math.max(height,node.offsetHeight+(parseFloat(getComputedStyle(node).top)||0)),0);world?.style.setProperty('--family-sticky-offset',stickyOffset+'px')}
+    const measure=()=>{stickyOffset=headers.reduce((height,node)=>{const top=parseFloat(getComputedStyle(node).top)||0;const rect=node.getBoundingClientRect();const visibleForms=[...node.querySelectorAll<HTMLElement>('form')].filter(form=>form.getClientRects().length);const extent=Math.max(node.offsetHeight,...visibleForms.map(form=>form.getBoundingClientRect().bottom-rect.top));return Math.max(height,extent+top)},0);world?.style.setProperty('--family-sticky-offset',stickyOffset+'px')}
     const resize=new ResizeObserver(measure);headers.forEach(node=>resize.observe(node));measure()
     const update = () => {
       frame = 0
@@ -31,9 +31,10 @@ export function FamiliesNavigation({ locale }: { locale: CatalogLocale }) {
       }
     }
     const scroll = () => { if (!frame) frame = requestAnimationFrame(update) }
-    addEventListener('scroll', scroll, { passive: true }); addEventListener('resize', scroll)
+    const viewportResize = () => { measure(); scroll() }
+    addEventListener('scroll', scroll, { passive: true }); addEventListener('resize', viewportResize)
     update()
-    return () => { removeEventListener('scroll', scroll); removeEventListener('resize', scroll); cancelAnimationFrame(frame); resize.disconnect() }
+    return () => { removeEventListener('scroll', scroll); removeEventListener('resize', viewportResize); cancelAnimationFrame(frame); resize.disconnect() }
   }, [])
   const close = () => dialog.current?.close()
   const navigation = [{ key: 'family-needs', label: familyWords(['Explorer', 'Explore', 'استكشفوا'], locale) }, ...FAMILY_CHAPTERS.map(chapter => ({ key: 'family-' + chapter.key, label: familyWords(chapter.title, locale) })), { key: 'family-collections', label: familyWords(['Collections', 'Collections', 'مجموعات'], locale) }, { key: 'family-guidance', label: familyWords(['Être accompagné', 'Get guidance', 'المرافقة'], locale) }]
@@ -49,6 +50,7 @@ export function FamiliesNavigation({ locale }: { locale: CatalogLocale }) {
     <dialog ref={dialog} className={styles.universeDialog} aria-labelledby="family-dialog-title" onClick={event => { if (event.target === event.currentTarget) close() }}>
       <div className={styles.dialogHeader}><div><small>ANGELCARE · FAMILIES</small><h2 id="family-dialog-title">{familyWords(['Votre univers famille', 'Your family universe', 'عالم أسرتكم'], locale)}</h2></div><button type="button" onClick={close} aria-label={familyWords(['Fermer', 'Close', 'إغلاق'], locale)}><X /></button></div>
       <div className={styles.dialogGrid}>{FAMILY_ATOMIC_STORIES.map(story => <a href={'#' + story.anchor} key={story.schemaKey} onClick={close}><img src={FAMILY_EDITORIAL_MEDIA[story.schemaKey]} alt="" width={120} height={90} loading="lazy" /><strong>{familyLabel(story.schemaKey, locale)}</strong><ArrowRight size={15} /></a>)}</div>
+      {extraSections.length ? <div className={styles.serviceShortcuts}>{extraSections.map(section => <a href={'#' + section.anchor} key={section.key} onClick={close}><strong>{familyDisplayLabel(section.key, locale)}</strong><ArrowRight size={15} /></a>)}</div> : null}
     </dialog>
   </>
 }

@@ -11,10 +11,11 @@ import {FamiliesStorefrontProMax} from '@/angelcare-marketplace/families-storefr
 
 const text=(v:unknown,f='')=>typeof v==='string'?v:f
 const truth=(v:unknown,f=true)=>typeof v==='boolean'?v:f
-export async function Storefront({experience,nativeFallback}:{experience:StorefrontExperience;nativeFallback?:ReactNode}){
+export async function Storefront({experience,nativeFallback,discoveryState}:{experience:StorefrontExperience;nativeFallback?:ReactNode;discoveryState?:Record<string,string>}){
  const world=await preparePublicStorefrontWorld(experience)
  if(world.status==='READY'&&world.data)return <div data-ac-storefront-runtime="public-experience-authority" data-ac-storefront-key={experience.key} data-ac-template-key={world.templateKey||undefined} data-ac-template-revision={world.revisionId||undefined}><StudioPublishedDataRenderer data={world.data} locale={experience.locale} territoryId={experience.territoryId||null} audienceId={null} attribution={world.attribution||undefined} dynamicAlreadyApplied dynamicReport={world.dynamicReport}/></div>
  if(experience.key==='families')return <FamiliesStorefrontProMax experience={experience} builtinWorldId={world.status==='BUILTIN_READY'?world.builtinWorldId:null}/>
+ if(experience.key==='home-services'){const {HomeServicesStorefront}=await import('@/angelcare-marketplace/home-services-storefront/components/HomeServicesStorefront');return <HomeServicesStorefront experience={experience} initialSearch={discoveryState} builtinWorldId={world.status==='BUILTIN_READY'?world.builtinWorldId:null}/>}
  if(world.status==='BUILTIN_READY'&&world.builtinWorldId)return <CanonicalAtomicStorefrontWorld experience={experience} density={world.density}/>
  if(nativeFallback)return <div data-ac-storefront-runtime="native-specialized" data-ac-storefront-key={experience.key} data-ac-storefront-fallback={world.reason||'NATIVE_SPECIALIZED'}>{nativeFallback}</div>
  const {locale,hero}=experience;const config=experience.experienceConfig||{};const filters=experience.filterConfig||{};const sections=experience.storefrontSections||[]

@@ -670,9 +670,9 @@
 .itemMedia { aspect-ratio:1.2/1; margin:0; border-radius:0; background:#f8faff; }
 .itemMedia > img { object-fit:contain; padding:5px; }
 .itemCard[data-kind="service"] .itemMedia > img,.itemCard[data-kind="training"] .itemMedia > img { object-fit:cover; padding:0; }
-.kindPill { inset-inline-start:6px; bottom:6px; max-width:calc(100% - 12px); font-size:9px; padding:4px 6px; }
-.signalPill { top:7px; inset-inline-start:7px; font-size:9px; border-radius:4px; padding:4px 7px; }
-.saveButton { top:7px; right:7px; width:27px; height:27px; border:1px solid #fff8; border-radius:50%; background:#fffdf7ed; color:#e9407a; }
+.kindPill { inset:auto; inset-inline-start:6px; bottom:6px; width:max-content; max-width:calc(100% - 12px); height:auto; min-height:24px; display:block; box-sizing:border-box; font-size:9px; line-height:16px; padding:4px 6px; }
+.signalPill { inset:auto; top:7px; inset-inline-start:7px; width:max-content; max-width:calc(100% - 48px); height:auto; min-height:24px; display:block; box-sizing:border-box; font-size:9px; line-height:16px; border-radius:4px; padding:4px 7px; }
+.saveButton { top:7px; right:auto; inset-inline-end:7px; width:27px; height:27px; border:1px solid #fff8; border-radius:50%; background:#fffdf7ed; color:#e9407a; }
 .saveButton:disabled { opacity:.55; }
 .itemBody { padding:9px; }
 .itemBody h3 { height:35px; min-height:35px; margin:5px 0; font-size:12px; line-height:1.4; }
