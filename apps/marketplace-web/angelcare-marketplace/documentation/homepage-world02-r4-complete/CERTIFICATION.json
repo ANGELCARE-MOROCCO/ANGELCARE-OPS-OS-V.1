@@ -1,0 +1,67 @@
+{
+  "release": "HOMEPAGE_WORLD02_R4_COMPLETE",
+  "prepared_utc": "2026-10-09T00:25:53.534Z",
+  "source": "Available Marketplace source snapshot; live Mac checkout and deployed HEAD not accessible",
+  "typescript": {
+    "status": "PASS",
+    "program_source_files": 21,
+    "scope": "New homepage modules and local type dependencies; narrow Next Link/Image and Puck declarations; no global program"
+  },
+  "runtime": {
+    "passed": 71,
+    "scope": "Actual compiled canonical discovery and persisted World 02 functions"
+  },
+  "browser": {
+    "passed": 82,
+    "scope": "Actual homepage and shell components; local canonical snapshot and synthetic edge-case fixtures for behavioral tests; screenshots use snapshot only. Original offer artwork cached read-only from the production media IDs (60/60). Next link/image adapters and engagement API mocked. Production route and deployment checks pending."
+  },
+  "families_compatibility": {
+    "passed": 35,
+    "scope": "Existing compatibility verifier against local snapshot"
+  },
+  "logos": {
+    "transparent": true,
+    "footer_visible_rgb": "255,255,255",
+    "origin": "Supplied 01-image.png; existing prepared exact-mark transparent derivatives reused"
+  },
+  "release_state": {
+    "installed_on_user_mac": false,
+    "committed": false,
+    "pushed": false,
+    "image_built": false,
+    "deployed": false
+  },
+  "required_release_gates": [
+    "Full Marketplace image build",
+    "Exact source SHA and immutable GHCR digest",
+    "Deployed storefront/API/journey checks"
+  ],
+  "visual_rebuild": {
+    "reference": "Supplied live homepage screenshot",
+    "visual": "Fuchsia/navy commerce; six-card desktop discovery shelves; full offer artwork; colour-coded section compositions; active section navigation; pausable chapter progress",
+    "preview_media": {
+      "origin": "Exact original catalogue media cached read-only for local verification",
+      "passed": 60,
+      "total": 60,
+      "production_payload": false
+    },
+    "supersedes": "Unapplied ANGELCARE_HOMEPAGE_R4_COMPLETE_20261008.zip"
+  },
+  "installer": {
+    "passed": 12,
+    "checks": [
+      "APPLY_ALL_PAYLOAD_HASHES",
+      "IDEMPOTENCE_WITHOUT_EXTRA_BACKUP",
+      "ROLLBACK_RESTORES_EXACT_BASELINE",
+      "DESTINATION_DRIFT_FAILS_BEFORE_WRITES",
+      "PROTECTED_GUARD_DRIFT_FAILS_BEFORE_WRITES",
+      "CORRUPT_PACKAGE_REFUSED",
+      "EXISTING_EDITORIAL_MEDIA_PRESERVED",
+      "ROLLBACK_REFUSES_LATER_EDITS",
+      "GATE_FAILURE_AUTOMATIC_ROLLBACK",
+      "SYMLINK_DESTINATION_REFUSED",
+      "MISSING_REQUIRED_BASELINE_REFUSED",
+      "ACCEPTS_EXACT_PRIOR_PREPARED_PATCH"
+    ]
+  }
+}

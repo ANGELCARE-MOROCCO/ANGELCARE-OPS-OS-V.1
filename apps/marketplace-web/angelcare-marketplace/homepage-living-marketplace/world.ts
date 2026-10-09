@@ -67,7 +67,8 @@ export function buildLivingMarketplaceWorld02Data(current?: Data, mode: LivingMa
 export const LIVING_MARKETPLACE_WORLD_02 = {
   id: LIVING_MARKETPLACE_WORLD_ID,
   label: 'AngelCare Living Marketplace — Hyper-Commerce 02',
-  description: 'Homepage body hardcodée · Visual Pro Max R2 · ultra-dense, photographique et vivante · données canoniques · routes réelles · shell global préservé.',
+  description: 'Homepage World 02 · 24 expériences commerciales distinctes · découverte interactive · médias complets · FR/EN/AR · catalogue canonique · parcours existants.',
+  experienceVersion: 'r4-complete',
   revision: LIVING_MARKETPLACE_WORLD_REVISION,
   componentType: LIVING_MARKETPLACE_COMPONENT_TYPE,
   referenceImage: LIVING_MARKETPLACE_REFERENCE_IMAGE,

@@ -58,7 +58,7 @@ export function FooterExperience({experience,marketplace=true,preview=false}:Pro
     <div className={styles.publicShell}>
       <section className={styles.brandAuthority} aria-labelledby="footer-brand-title">
         <Link href={`/angelcare-marketplace/${locale}`} className={styles.whiteLogo} aria-label="ANGELCARE Global Marketplace" onClick={click('link_click','brand-logo')}>
-          <Image src="/b2b-plaquette-partenaires/assets/angelcare-original-logo.png" alt="ANGELCARE" width={722} height={198}/>
+          <Image src="/angelcare-marketplace/brand/angelcare-logo-footer-white.png" alt="ANGELCARE" width={722} height={188}/>
         </Link>
         <span className={styles.brandEyebrow}>{localized(brand.eyebrow,locale,'ANGELCARE GLOBAL MARKETPLACE')}</span>
         <h2 id="footer-brand-title">{localized(brand.title,locale)}</h2>
