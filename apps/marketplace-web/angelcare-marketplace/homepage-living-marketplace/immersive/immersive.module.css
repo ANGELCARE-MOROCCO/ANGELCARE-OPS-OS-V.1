@@ -2854,11 +2854,11 @@
   animation-play-state: paused;
 }
 
-[data-reveal] {
+.home [data-reveal] {
   opacity: 1;
 }
 
-[data-animated="true"][data-entered="true"] {
+.home [data-animated="true"][data-entered="true"] {
   animation: sectionIn 0.6s ease-out both;
 }
 
