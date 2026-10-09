@@ -5,6 +5,7 @@ import {PublicAcademyExperience} from '@/angelcare-marketplace/academy-engine/co
 import {getPublishedSurface} from '@/angelcare-marketplace/total-commerce-control/repository'
 import {Storefront} from '@/angelcare-marketplace/catalog-discovery/components/Storefront'
 import {storefrontExperience} from '@/angelcare-marketplace/catalog-discovery/repository'
+import {academyContext} from '@/angelcare-marketplace/storefront-immersive/native-context'
 
 export default async function Page({params}:{params:Promise<{locale:string}>}){
  const {locale}=await params
@@ -16,5 +17,5 @@ export default async function Page({params}:{params:Promise<{locale:string}>}){
   getPublishedSurface('academy',{locale:safeLocale}).catch(()=>null),
   storefrontExperience({locale:safeLocale,key:'academy'}),
  ])
- return <Storefront experience={storefront} nativeFallback={<PublicAcademyExperience programs={programs} locale={safeLocale} experience={experience}/>}/>
+ return <Storefront experience={storefront} nativeContext={academyContext(safeLocale,programs,experience)} nativeFallback={<PublicAcademyExperience programs={programs} locale={safeLocale} experience={experience}/>}/>
 }

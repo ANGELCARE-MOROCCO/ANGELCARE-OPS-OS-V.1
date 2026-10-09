@@ -1,3 +1,5 @@
-import { PublicEstablishmentsExperience } from '@/angelcare-marketplace/b2b-verticals/components/PublicEstablishmentsExperience'
-import { publicVerticalSnapshot } from '@/angelcare-marketplace/b2b-verticals/repository'
-export default async function Page({params}:{params:Promise<{locale:string}>}){const {locale:raw}=await params;const locale=raw==='ar'?'ar':raw==='en'?'en':'fr';const snapshot=await publicVerticalSnapshot('establishment');return <PublicEstablishmentsExperience locale={locale} mode="quality-check-360" activePrograms={snapshot.activePrograms} organizations={snapshot.organizations}/>}
+import {EnquiryPage} from '@/angelcare-marketplace/business-worlds/EnquiryPage'
+export default async function Page({params,searchParams}:{params:Promise<{locale:string}>;searchParams:Promise<Record<string,string|string[]|undefined>>}){
+ const [{locale},query]=await Promise.all([params,searchParams])
+ return <EnquiryPage world="quality-check" rawLocale={locale} brief={query.brief} sourceRoute="establishments/quality-check-360"/>
+}

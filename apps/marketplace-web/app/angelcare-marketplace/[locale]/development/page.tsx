@@ -5,6 +5,7 @@ import {getPublishedSurface} from '@/angelcare-marketplace/total-commerce-contro
 import {Storefront} from '@/angelcare-marketplace/catalog-discovery/components/Storefront'
 import {storefrontExperience} from '@/angelcare-marketplace/catalog-discovery/repository'
 import type {CatalogLocale} from '@/angelcare-marketplace/catalog-discovery/types'
+import {developmentContext} from '@/angelcare-marketplace/storefront-immersive/native-context'
 
 export default async function Page({params}:{params:Promise<{locale:string}>}){
  const {locale}=await params
@@ -17,5 +18,5 @@ export default async function Page({params}:{params:Promise<{locale:string}>}){
   getPublishedSurface('development',{locale:safe}).catch(()=>null),
   storefrontExperience({locale:safe,key:'development'}),
  ])
- return <Storefront experience={storefront} nativeFallback={<PublicDevelopmentExperience locale={safe} categories={categories} activities={activities} kits={kits} experience={experience}/>}/>
+ return <Storefront experience={storefront} nativeContext={developmentContext(safe,categories,activities,kits,experience)} nativeFallback={<PublicDevelopmentExperience locale={safe} categories={categories} activities={activities} kits={kits} experience={experience}/>}/>
 }

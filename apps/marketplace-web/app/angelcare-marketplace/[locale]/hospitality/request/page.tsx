@@ -1,2 +1,5 @@
-import { PublicDiagnosticForm } from '@/angelcare-marketplace/b2b-verticals/components/PublicDiagnosticForm'
-export default async function Page({params}:{params:Promise<{locale:string}>}){const {locale:raw}=await params;const locale=raw==='ar'?'ar':raw==='en'?'en':'fr';return <main style={{maxWidth:980,margin:'0 auto',padding:'48px 24px'}}><PublicDiagnosticForm locale={locale} vertical="hospitality"/></main>}
+import {EnquiryPage} from '@/angelcare-marketplace/business-worlds/EnquiryPage'
+export default async function Page({params,searchParams}:{params:Promise<{locale:string}>;searchParams:Promise<Record<string,string|string[]|undefined>>}){
+ const [{locale},query]=await Promise.all([params,searchParams])
+ return <EnquiryPage world="hospitality" rawLocale={locale} brief={query.brief} sourceRoute="hospitality/request"/>
+}

@@ -3,6 +3,7 @@ import {publicVerticalSnapshot} from '@/angelcare-marketplace/b2b-verticals/repo
 import {getPublishedSurface} from '@/angelcare-marketplace/total-commerce-control/repository'
 import {Storefront} from '@/angelcare-marketplace/catalog-discovery/components/Storefront'
 import {storefrontExperience} from '@/angelcare-marketplace/catalog-discovery/repository'
+import {surfaceContext} from '@/angelcare-marketplace/storefront-immersive/native-context'
 
 export default async function Page({params}:{params:Promise<{locale:string}>}){
  const {locale:raw}=await params
@@ -12,5 +13,5 @@ export default async function Page({params}:{params:Promise<{locale:string}>}){
   getPublishedSurface('hospitality',{locale}).catch(()=>null),
   storefrontExperience({locale,key:'hospitality'}),
  ])
- return <Storefront experience={storefront} nativeFallback={<PublicHospitalityExperience locale={locale} mode="hospitality" activePrograms={snapshot.activePrograms} organizations={snapshot.organizations} experience={experience}/>}/>
+ return <Storefront experience={storefront} nativeContext={surfaceContext(experience)} nativeFallback={<PublicHospitalityExperience locale={locale} mode="hospitality" activePrograms={snapshot.activePrograms} organizations={snapshot.organizations} experience={experience}/>}/>
 }

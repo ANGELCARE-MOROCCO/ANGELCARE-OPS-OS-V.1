@@ -1,1 +1,5 @@
-export default function Page(){return <main style={{maxWidth:760,margin:'0 auto',padding:'70px 24px'}}><p style={{letterSpacing:'.18em',fontWeight:850,color:'#a51d2a'}}>PARTNER OS DEMO</p><h1 style={{fontSize:48,color:'#071d3d'}}>Qualifier votre établissement</h1><p>La demande de démonstration doit être enregistrée via le moteur d’entrées publiques et convertie en lead CRM avec preuve de consentement.</p></main>}
+import {EnquiryPage} from '@/angelcare-marketplace/business-worlds/EnquiryPage'
+export default async function Page({params,searchParams}:{params:Promise<{locale:string}>;searchParams:Promise<Record<string,string|string[]|undefined>>}){
+ const [{locale},query]=await Promise.all([params,searchParams])
+ return <EnquiryPage world="partner-os" rawLocale={locale} brief={query.brief} sourceRoute="partner-os/contact"/>
+}
