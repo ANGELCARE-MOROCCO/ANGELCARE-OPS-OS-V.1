@@ -12,7 +12,7 @@ import type { StudioBlockProps, StudioLocale, StudioPickerData } from '../types'
 import styles from './studio-runtime.module.css'
 import { AtomicExperienceFrame, AtomicOfferSection } from '../../atomic-offer-experience/AtomicExperience'
 import { AtomicStudioLivePreview } from '../../atomic-offer-experience/StudioLivePreview'
-import { isAtomicRoot, type AtomicSectionProps } from '../../atomic-offer-experience/model'
+import { isAtomicRoot, isAtomicSectionProps } from '../../atomic-offer-experience/model'
 
 const s=(value:unknown)=>value==null?'':String(value)
 const nested=(component:ComponentData)=>{const value=(component.props as Record<string,unknown>)?.content;return Array.isArray(value)?value as ComponentData[]:[]}
@@ -23,7 +23,7 @@ function CandidateComponent({component,pickers,locale}:{component:ComponentData;
   const type=s(component.type),props=(component.props||{}) as StudioBlockProps,id=s(props.id)||type
   if(props.hidden===true)return null
   if(isAtomicRoot(type,props))return <AtomicStudioLivePreview component={component} locale={locale}><AtomicExperienceFrame type={type} props={props} locale={locale} data={null}>{nested(component).map((child,index)=><CandidateComponent key={s(child.props?.id)||index} component={child} pickers={pickers} locale={locale}/>)}</AtomicExperienceFrame></AtomicStudioLivePreview>
-  if(type==='atomic_offer_section')return <AtomicOfferSection props={props as AtomicSectionProps} editorMode/>
+  if(type==='atomic_offer_section')return isAtomicSectionProps(props)?<AtomicOfferSection props={props} editorMode/>:null
 
   if(type.startsWith('ac_')){
     return <StudioWorldLayoutShell type={type} props={props} authority="candidate-world-factory">{nested(component).map((child,index)=><CandidateComponent key={s(child.props?.id)||index} component={child} pickers={pickers} locale={locale}/>)}</StudioWorldLayoutShell>

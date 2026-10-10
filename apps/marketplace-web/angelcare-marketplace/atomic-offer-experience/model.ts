@@ -19,6 +19,9 @@ export type AtomicSectionProps = Record<string, unknown> & {
   hidden?: boolean; doctrineKeys?: string; enableSelection?: boolean;
   relationKind?: string;
 }
+export function isAtomicSectionProps(props: Record<string, unknown>): props is AtomicSectionProps {
+  return typeof props.id === 'string' && ATOMIC_ROLES.some(role => role === props.role)
+}
 export const record = (value: unknown): Record<string, unknown> => value !== null && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, unknown> : {}
 export function present(value: unknown): boolean {
   if(value === null || value === undefined) return false
