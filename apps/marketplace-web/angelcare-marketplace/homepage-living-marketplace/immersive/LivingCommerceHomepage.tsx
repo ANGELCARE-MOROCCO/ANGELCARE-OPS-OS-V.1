@@ -1,5 +1,5 @@
 "use client";
-import Link from "next/link";
+import Link from '@/angelcare-marketplace/navigation-care-orbit/CareOrbitLink';
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowUpRight,

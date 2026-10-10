@@ -23,7 +23,7 @@ async function request<T>(url: string, init?: RequestInit): Promise<T> {
 
 const value = (row: RequestRow | FamilyRow | null | undefined, key: string) => row?.[key] === null || row?.[key] === undefined ? '—' : String(row[key])
 
-export function FamilyRequestDossier({ item, family }: { item: RequestRow | null; family: FamilyRow | null }) {
+export function FamilyRequestDossier({ item, family, canCreateOrder=false }: { item: RequestRow | null; family: FamilyRow | null;canCreateOrder?:boolean }) {
   const currentStatus = value(item, 'status')
   const [status, setStatus] = useState(['qualified', 'proposal_ready', 'declined'].includes(currentStatus) ? currentStatus : 'qualified')
   const [notes, setNotes] = useState(value(item, 'qualification_notes') === '—' ? '' : value(item, 'qualification_notes'))
@@ -59,7 +59,7 @@ export function FamilyRequestDossier({ item, family }: { item: RequestRow | null
         title={value(item, 'public_reference')}
         description={value(item, 'next_action') === '—' ? 'Dossier de demande famille.' : value(item, 'next_action')}
         breadcrumbs={<Link href="/angelcare-marketplace/admin/family-requests">← Retour aux demandes familles</Link>}
-        actions={<Link className={styles.buttonSecondary} href={`/angelcare-marketplace/admin/customers?query=${encodeURIComponent(value(family, 'email') === '—' ? value(family, 'display_name') : value(family, 'email'))}`}>Ouvrir Customer Command</Link>}
+        actions={<>{canCreateOrder&&['submitted','qualified','proposal_ready','accepted'].includes(currentStatus)?<Link className={styles.buttonPrimary} href={`/angelcare-marketplace/admin/orders?${new URLSearchParams({familyRequest:value(item,'id'),guestName:value(family,'display_name')==='—'?'':value(family,'display_name'),guestEmail:value(family,'email')==='—'?'':value(family,'email'),guestPhone:value(family,'phone')==='—'?'':value(family,'phone')}).toString()}`}>Préparer la réservation</Link>:null}<Link className={styles.buttonSecondary} href={`/angelcare-marketplace/admin/customers?query=${encodeURIComponent(value(family, 'email') === '—' ? value(family, 'display_name') : value(family, 'email'))}`}>Ouvrir Customer Command</Link></>}
       />
 
       {error ? <div className={styles.noticeDanger} style={{ marginBottom: 14 }}>{error}</div> : null}

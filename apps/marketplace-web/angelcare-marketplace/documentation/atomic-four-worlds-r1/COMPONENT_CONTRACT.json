@@ -1,0 +1,1916 @@
+[
+  {
+    "world": "product",
+    "domain": "b2c_product_digital",
+    "root": "ac_product_world",
+    "sections": [
+      {
+        "id": "ao-product-01",
+        "role": "opening",
+        "title": {
+          "fr": "Découvrir, imaginer, choisir.",
+          "en": "Discover. Imagine. Choose.",
+          "ar": "اكتشف وتخيّل واختر."
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "gallery-split",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-product-02",
+        "role": "benefits",
+        "title": {
+          "fr": "De petites découvertes. De grandes possibilités.",
+          "en": "Small discoveries. Bigger possibilities.",
+          "ar": "اكتشافات صغيرة وإمكانات كبيرة."
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "bento",
+        "fieldSections": "learning,audience",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-product-03",
+        "role": "story",
+        "title": {
+          "fr": "L’histoire de votre prochaine découverte",
+          "en": "The story of your next discovery",
+          "ar": "قصة اكتشافك القادم"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "bento",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-product-04",
+        "role": "contents",
+        "title": {
+          "fr": "Tout ce qui vous attend à l’intérieur",
+          "en": "Everything waiting inside",
+          "ar": "كل ما ينتظرك في الداخل"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "comparison",
+        "fieldSections": "contents",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-product-05",
+        "role": "choices",
+        "title": {
+          "fr": "Choisissez votre version",
+          "en": "Choose your version",
+          "ar": "اختر نسختك"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "strip",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-product-06",
+        "role": "facts",
+        "title": {
+          "fr": "Formats et déclinaisons publiés",
+          "en": "Published formats and variations",
+          "ar": "الصيغ والنسخ المنشورة"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "strip",
+        "fieldSections": "variants",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-product-07",
+        "role": "plans",
+        "title": {
+          "fr": "Les options de votre découverte",
+          "en": "Options for your discovery",
+          "ar": "خيارات اكتشافك"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "comparison",
+        "fieldSections": "configuration",
+        "enableSelection": true,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-product-08",
+        "role": "facts",
+        "title": {
+          "fr": "Quantités et zones publiées",
+          "en": "Published quantities and areas",
+          "ar": "الكميات والمناطق المنشورة"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "strip",
+        "fieldSections": "availability",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-product-09",
+        "role": "facts",
+        "title": {
+          "fr": "À chacun sa manière d’explorer",
+          "en": "More than one way to explore",
+          "ar": "لكل شخص طريقته في الاكتشاف"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "timeline",
+        "fieldSections": "usage",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-product-10",
+        "role": "facts",
+        "title": {
+          "fr": "Les détails font la différence",
+          "en": "Details make the difference",
+          "ar": "التفاصيل تصنع الفرق"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "ledger",
+        "fieldSections": "specifications,packaging",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-product-11",
+        "role": "plans",
+        "title": {
+          "fr": "Une découverte qui revient",
+          "en": "Discovery that keeps coming",
+          "ar": "اكتشاف يتجدد"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "comparison",
+        "fieldSections": "subscription",
+        "enableSelection": true,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-product-12",
+        "role": "facts",
+        "title": {
+          "fr": "Votre ressource, dans le bon format",
+          "en": "Your resource in the right format",
+          "ar": "مواردك بالتنسيق المناسب"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "strip",
+        "fieldSections": "digital",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-product-13",
+        "role": "facts",
+        "title": {
+          "fr": "Un accès clairement défini",
+          "en": "Access, clearly defined",
+          "ar": "وصول محدد بوضوح"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "ledger",
+        "fieldSections": "license,access",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-product-14",
+        "role": "gallery",
+        "title": {
+          "fr": "Regardez chaque détail, sans découpe",
+          "en": "Every detail, fully in view",
+          "ar": "شاهد كل التفاصيل دون قص"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "bento",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-product-15",
+        "role": "facts",
+        "title": {
+          "fr": "Bien accompagné, dès le premier usage",
+          "en": "Support from the very first use",
+          "ar": "دعم منذ الاستخدام الأول"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "strip",
+        "fieldSections": "safety,accessibility",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-product-16",
+        "role": "deployment",
+        "title": {
+          "fr": "De votre panier à votre expérience",
+          "en": "From your basket to your experience",
+          "ar": "من سلتك إلى تجربتك"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "timeline",
+        "bindingKey": "product.delivery",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-product-17",
+        "role": "facts",
+        "title": {
+          "fr": "Prolonger le plaisir de découvrir",
+          "en": "Keep the discoveries going",
+          "ar": "واصل متعة الاكتشاف"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "ribbon",
+        "fieldSections": "after_sales",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-product-18",
+        "role": "proof",
+        "title": {
+          "fr": "Des engagements accompagnés de preuves",
+          "en": "Commitments with evidence",
+          "ar": "التزامات مدعومة بالأدلة"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "bento",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-product-19",
+        "role": "reviews",
+        "title": {
+          "fr": "Ce que les avis publiés nous disent",
+          "en": "What published reviews tell us",
+          "ar": "ما تقوله التقييمات المنشورة"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "bento",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-product-20",
+        "role": "faq",
+        "title": {
+          "fr": "Les réponses avant votre choix",
+          "en": "Answers before you choose",
+          "ar": "إجابات قبل الاختيار"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "strip",
+        "fieldKeys": "faq,frequently_asked_questions",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-product-21",
+        "role": "related",
+        "title": {
+          "fr": "Continuez votre découverte",
+          "en": "Keep exploring",
+          "ar": "واصل الاكتشاف"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "bento",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-product-22",
+        "role": "related",
+        "title": {
+          "fr": "Les offres reliées dans un même ensemble",
+          "en": "Offers connected in one collection",
+          "ar": "عروض مرتبطة في مجموعة واحدة"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "strip",
+        "relationKind": "bundle",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-product-23",
+        "role": "related",
+        "title": {
+          "fr": "Des accessoires reliés à cette offre",
+          "en": "Accessories connected to this offer",
+          "ar": "ملحقات مرتبطة بهذا العرض"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "strip",
+        "relationKind": "accessory",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-product-24",
+        "role": "related",
+        "title": {
+          "fr": "Des alternatives à explorer",
+          "en": "Alternatives to explore",
+          "ar": "بدائل للاستكشاف"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "comparison",
+        "relationKind": "alternative",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-product-25",
+        "role": "decision",
+        "title": {
+          "fr": "Et si votre prochaine découverte commençait ici ?",
+          "en": "What if your next discovery starts here?",
+          "ar": "ماذا لو بدأ اكتشافك القادم هنا؟"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "bento",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      }
+    ]
+  },
+  {
+    "world": "service",
+    "domain": "b2c_service_family",
+    "root": "ac_service_world",
+    "sections": [
+      {
+        "id": "ao-service-01",
+        "role": "opening",
+        "title": {
+          "fr": "Une aide qui épouse votre vie",
+          "en": "Support that fits your life",
+          "ar": "دعم يناسب حياتك"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "service-theatre",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-service-02",
+        "role": "benefits",
+        "title": {
+          "fr": "Pour votre famille. À votre rythme.",
+          "en": "For your family. At your pace.",
+          "ar": "لعائلتك وبإيقاعك"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "bento",
+        "fieldSections": "eligibility,scope,support",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-service-03",
+        "role": "plans",
+        "title": {
+          "fr": "Ponctuel ou récurrent : les possibilités publiées",
+          "en": "One-time or recurring: published possibilities",
+          "ar": "لمرة واحدة أو بشكل متكرر: الخيارات المنشورة"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "comparison",
+        "fieldSections": "recurrence",
+        "enableSelection": true,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-service-04",
+        "role": "schedule",
+        "title": {
+          "fr": "Dessinez le rythme qui vous convient",
+          "en": "Shape the rhythm that fits",
+          "ar": "حدد الإيقاع المناسب لك"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "strip",
+        "fieldSections": "availability,schedule",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-service-05",
+        "role": "facts",
+        "title": {
+          "fr": "Un lieu, une zone, un contexte",
+          "en": "A place. An area. A context.",
+          "ar": "مكان ومنطقة وسياق"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "strip",
+        "fieldSections": "coverage,venue,event",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-service-06",
+        "role": "story",
+        "title": {
+          "fr": "Une expérience à comprendre avant de réserver",
+          "en": "Understand the experience before booking",
+          "ar": "افهم التجربة قبل الحجز"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "bento",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-service-07",
+        "role": "providers",
+        "title": {
+          "fr": "Les compétences qui accompagnent votre demande",
+          "en": "The people behind your request",
+          "ar": "الكفاءات التي ترافق طلبك"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "portrait",
+        "bindingKey": "service.providers",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-service-08",
+        "role": "facts",
+        "title": {
+          "fr": "Des activités qui donnent du sens au temps passé",
+          "en": "Activities that make time meaningful",
+          "ar": "أنشطة تمنح الوقت معنى"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "bento",
+        "fieldSections": "configuration,learning,programme",
+        "enableSelection": true,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-service-09",
+        "role": "deployment",
+        "title": {
+          "fr": "De l’arrivée au retour : le parcours",
+          "en": "From arrival to return: the journey",
+          "ar": "من الوصول إلى العودة: المسار"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "timeline",
+        "fieldSections": "pickup,aftercare,transport,logistics",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-service-10",
+        "role": "facts",
+        "title": {
+          "fr": "Les conditions à connaître avant de choisir",
+          "en": "What to know before choosing",
+          "ar": "ما ينبغي معرفته قبل الاختيار"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "ledger",
+        "fieldSections": "safety,policy,exceptions",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-service-11",
+        "role": "facts",
+        "title": {
+          "fr": "Urgence : les règles de cette offre",
+          "en": "Urgency: this offer’s rules",
+          "ar": "الحالات العاجلة: قواعد هذا العرض"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "ribbon",
+        "fieldSections": "urgency",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-service-12",
+        "role": "facts",
+        "title": {
+          "fr": "Continuité, langues et accompagnement",
+          "en": "Continuity, languages and support",
+          "ar": "الاستمرارية واللغات والدعم"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "comparison",
+        "fieldSections": "matching",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-service-13",
+        "role": "facts",
+        "title": {
+          "fr": "Ce qui est inclus dans la réalisation",
+          "en": "What delivery includes",
+          "ar": "ما تتضمنه الخدمة"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "strip",
+        "fieldSections": "delivery,reporting,billing",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-service-14",
+        "role": "gallery",
+        "title": {
+          "fr": "Une fenêtre sur votre expérience",
+          "en": "A window into your experience",
+          "ar": "نافذة على تجربتك"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "bento",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-service-15",
+        "role": "facts",
+        "title": {
+          "fr": "Le cadre opérationnel publié",
+          "en": "The published operating framework",
+          "ar": "الإطار التشغيلي المنشور"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "ledger",
+        "fieldSections": "operations,capacity",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-service-16",
+        "role": "proof",
+        "title": {
+          "fr": "La confiance, avec ses preuves",
+          "en": "Trust with evidence",
+          "ar": "ثقة مع أدلة"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "bento",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-service-17",
+        "role": "reviews",
+        "title": {
+          "fr": "Les retours publiés",
+          "en": "Published feedback",
+          "ar": "الآراء المنشورة"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "bento",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-service-18",
+        "role": "faq",
+        "title": {
+          "fr": "Un choix éclairé, sans zone d’ombre",
+          "en": "An informed choice, with clear answers",
+          "ar": "اختيار واعٍ وإجابات واضحة"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "bento",
+        "fieldKeys": "faq,frequently_asked_questions",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-service-19",
+        "role": "related",
+        "title": {
+          "fr": "D’autres chemins pour votre famille",
+          "en": "Other paths for your family",
+          "ar": "مسارات أخرى لعائلتك"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "bento",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-service-20",
+        "role": "decision",
+        "title": {
+          "fr": "Votre besoin mérite une réponse adaptée",
+          "en": "Your needs deserve the right response",
+          "ar": "احتياجك يستحق الاستجابة المناسبة"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "bento",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      }
+    ]
+  },
+  {
+    "world": "academy",
+    "domain": "academy_admission",
+    "root": "ac_academy_world",
+    "sections": [
+      {
+        "id": "ao-academy-01",
+        "role": "opening",
+        "title": {
+          "fr": "Ouvrez votre prochain chapitre",
+          "en": "Open your next chapter",
+          "ar": "افتح فصلك القادم"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "campus-ledger",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-academy-02",
+        "role": "benefits",
+        "title": {
+          "fr": "Ce que vous allez explorer et développer",
+          "en": "What you will explore and develop",
+          "ar": "ما ستكتشفه وتطوره"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "bento",
+        "fieldKeys": "learning_outcomes,workshop_theme,course_subject,intended_audience,audience_types",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-academy-03",
+        "role": "curriculum",
+        "title": {
+          "fr": "Entrez dans le programme",
+          "en": "Step inside the programme",
+          "ar": "ادخل إلى البرنامج"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "timeline",
+        "fieldSections": "learning,programme,pathway",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-academy-04",
+        "role": "curriculum",
+        "title": {
+          "fr": "Le programme détaillé, module par module",
+          "en": "Inside each module",
+          "ar": "داخل كل وحدة"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "timeline",
+        "bindingKey": "academy.modules",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-academy-05",
+        "role": "cohorts",
+        "title": {
+          "fr": "Votre prochaine session commence ici",
+          "en": "Your next session starts here",
+          "ar": "دورتك القادمة تبدأ هنا"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "strip",
+        "bindingKey": "academy.cohorts",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-academy-06",
+        "role": "facts",
+        "title": {
+          "fr": "Le calendrier publié",
+          "en": "The published calendar",
+          "ar": "الجدول المنشور"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "ledger",
+        "fieldSections": "cohort",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-academy-07",
+        "role": "trainers",
+        "title": {
+          "fr": "Apprendre auprès de personnes identifiées",
+          "en": "Learn with identified people",
+          "ar": "تعلّم مع أشخاص معروفين"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "portrait",
+        "bindingKey": "academy.trainers",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-academy-08",
+        "role": "story",
+        "title": {
+          "fr": "Le sens de votre parcours",
+          "en": "The purpose of your pathway",
+          "ar": "معنى مسارك"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "bento",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-academy-09",
+        "role": "facts",
+        "title": {
+          "fr": "Apprendre dans le format qui vous convient",
+          "en": "Learn in the format that fits",
+          "ar": "تعلّم بالشكل المناسب لك"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "comparison",
+        "fieldSections": "delivery,access",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-academy-10",
+        "role": "facts",
+        "title": {
+          "fr": "Où et pour qui : le périmètre publié",
+          "en": "Where and for whom: the published scope",
+          "ar": "أين ولمن: النطاق المنشور"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "strip",
+        "fieldSections": "coverage,scope,availability",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-academy-11",
+        "role": "facts",
+        "title": {
+          "fr": "Avant de commencer",
+          "en": "Before you begin",
+          "ar": "قبل أن تبدأ"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "strip",
+        "fieldKeys": "prerequisites,required_documents,age_min,age_max,practical_requirement,attendance_threshold",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-academy-12",
+        "role": "facts",
+        "title": {
+          "fr": "De l’apprentissage à l’évaluation",
+          "en": "From learning to assessment",
+          "ar": "من التعلم إلى التقييم"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "timeline",
+        "fieldSections": "assessment,credential",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-academy-13",
+        "role": "facts",
+        "title": {
+          "fr": "Admission : préparer chaque étape",
+          "en": "Admission: prepare each step",
+          "ar": "القبول: الاستعداد لكل خطوة"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "bento",
+        "fieldSections": "admission,establishment,options",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-academy-14",
+        "role": "contents",
+        "title": {
+          "fr": "Les ressources qui vous accompagnent",
+          "en": "Resources for the journey",
+          "ar": "الموارد التي ترافقك"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "ribbon",
+        "fieldSections": "contents",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-academy-15",
+        "role": "gallery",
+        "title": {
+          "fr": "Découvrez les médias de ce parcours",
+          "en": "Explore this pathway’s media",
+          "ar": "استكشف صور هذا المسار"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "bento",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-academy-16",
+        "role": "proof",
+        "title": {
+          "fr": "Les preuves du parcours",
+          "en": "Evidence for the pathway",
+          "ar": "أدلة المسار"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "bento",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-academy-17",
+        "role": "reviews",
+        "title": {
+          "fr": "Les avis publiés",
+          "en": "Published reviews",
+          "ar": "التقييمات المنشورة"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "bento",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-academy-18",
+        "role": "related",
+        "title": {
+          "fr": "Construisez la suite de votre parcours",
+          "en": "Build your next step",
+          "ar": "ابنِ الخطوة التالية في مسارك"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "bento",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-academy-19",
+        "role": "decision",
+        "title": {
+          "fr": "Un prochain chapitre à construire ensemble",
+          "en": "A next chapter to build together",
+          "ar": "فصل قادم نبنيه معاً"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "bento",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      }
+    ]
+  },
+  {
+    "world": "b2b",
+    "domain": "b2b_institutional",
+    "root": "ac_b2b_world",
+    "sections": [
+      {
+        "id": "ao-b2b-01",
+        "role": "opening",
+        "title": {
+          "fr": "L’ambition prend une forme concrète",
+          "en": "Turn ambition into a concrete plan",
+          "ar": "حوّل الطموح إلى خطة ملموسة"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "solution-stage",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-b2b-02",
+        "role": "facts",
+        "title": {
+          "fr": "Votre organisation, votre périmètre",
+          "en": "Your organisation. Your scope.",
+          "ar": "مؤسستك ونطاقك"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "bento",
+        "fieldSections": "scope,property,partner,venue",
+        "enableSelection": true,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-b2b-03",
+        "role": "benefits",
+        "title": {
+          "fr": "Ce que la solution met à votre disposition",
+          "en": "What the solution makes possible",
+          "ar": "ما توفره الحلول لك"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "comparison",
+        "fieldSections": "benefit,programme,plan",
+        "enableSelection": true,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-b2b-04",
+        "role": "deployment",
+        "title": {
+          "fr": "Déployer avec un cadre explicite",
+          "en": "Deploy within a clear framework",
+          "ar": "التنفيذ ضمن إطار واضح"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "timeline",
+        "fieldSections": "delivery,onboarding,schedule",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-b2b-05",
+        "role": "facts",
+        "title": {
+          "fr": "Les capacités et limites publiées",
+          "en": "Published capacities and limits",
+          "ar": "القدرات والحدود المنشورة"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "ledger",
+        "fieldSections": "limits",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-b2b-06",
+        "role": "story",
+        "title": {
+          "fr": "Une solution à comprendre dans son ensemble",
+          "en": "Understand the whole solution",
+          "ar": "افهم الحل بصورة متكاملة"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "bento",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-b2b-07",
+        "role": "facts",
+        "title": {
+          "fr": "Les équipes, les rôles, l’organisation",
+          "en": "Teams, roles and organisation",
+          "ar": "الفرق والأدوار والتنظيم"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "portrait",
+        "fieldSections": "staffing,operations",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-b2b-08",
+        "role": "facts",
+        "title": {
+          "fr": "Le cadre commercial, sans raccourci",
+          "en": "The commercial framework, clearly stated",
+          "ar": "الإطار التجاري بوضوح"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "comparison",
+        "fieldSections": "commercial,finance,billing,conversion",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-b2b-09",
+        "role": "facts",
+        "title": {
+          "fr": "Les zones couvertes",
+          "en": "Published coverage",
+          "ar": "التغطية المنشورة"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "strip",
+        "fieldSections": "coverage",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-b2b-10",
+        "role": "facts",
+        "title": {
+          "fr": "Intégrations et circulation de l’information",
+          "en": "Integrations and information flows",
+          "ar": "التكامل وتدفق المعلومات"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "strip",
+        "fieldSections": "integration,reporting",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-b2b-11",
+        "role": "facts",
+        "title": {
+          "fr": "Protection, accès et limites de responsabilité",
+          "en": "Protection, access and responsibility boundaries",
+          "ar": "الحماية والوصول وحدود المسؤولية"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "ledger",
+        "fieldSections": "safety,security,privacy,eligibility",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-b2b-12",
+        "role": "facts",
+        "title": {
+          "fr": "Du diagnostic au dossier de preuve",
+          "en": "From diagnosis to evidence",
+          "ar": "من التشخيص إلى الأدلة"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "bento",
+        "fieldSections": "diagnostic,assessment,evidence",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-b2b-13",
+        "role": "facts",
+        "title": {
+          "fr": "L’accompagnement après le démarrage",
+          "en": "Support after launch",
+          "ar": "الدعم بعد الانطلاق"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "ribbon",
+        "fieldSections": "support,followup",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-b2b-14",
+        "role": "gallery",
+        "title": {
+          "fr": "Explorez les médias de cette solution",
+          "en": "Explore this solution’s media",
+          "ar": "استكشف صور هذا الحل"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "bento",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-b2b-15",
+        "role": "proof",
+        "title": {
+          "fr": "Les engagements étayés",
+          "en": "Evidence-backed commitments",
+          "ar": "التزامات مدعومة بالأدلة"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "bento",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-b2b-16",
+        "role": "reviews",
+        "title": {
+          "fr": "Les retours publiés",
+          "en": "Published feedback",
+          "ar": "الآراء المنشورة"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "bento",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-b2b-17",
+        "role": "faq",
+        "title": {
+          "fr": "Clarifier avant de décider",
+          "en": "Clarify before deciding",
+          "ar": "توضيح قبل اتخاذ القرار"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "bento",
+        "fieldKeys": "faq,frequently_asked_questions",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-b2b-18",
+        "role": "related",
+        "title": {
+          "fr": "Les solutions qui peuvent compléter votre réflexion",
+          "en": "Solutions to extend your thinking",
+          "ar": "حلول توسّع رؤيتك"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "bento",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-b2b-19",
+        "role": "decision",
+        "title": {
+          "fr": "Passons de votre intention à un projet précis",
+          "en": "From your intent to a clear project",
+          "ar": "من نيتك إلى مشروع واضح"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "ANGELCARE · EXPÉRIENCE",
+          "en": "ANGELCARE · EXPERIENCE",
+          "ar": "ANGELCARE · تجربة"
+        },
+        "layout": "bento",
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      }
+    ]
+  }
+]

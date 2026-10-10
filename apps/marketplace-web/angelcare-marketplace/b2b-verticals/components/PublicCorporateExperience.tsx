@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import Link from '@/angelcare-marketplace/navigation-care-orbit/CareOrbitLink'
 import type {PublishedSurfaceExperience} from '../../total-commerce-control/types'
 import {PublicSurfaceSections} from '../../total-commerce-control/components/PublicSurfaceSections'
 import styles from '../b2b.module.css'

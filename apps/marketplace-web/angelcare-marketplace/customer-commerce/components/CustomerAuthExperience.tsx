@@ -1,6 +1,7 @@
 'use client'
+import {careOrbitLocation} from '@/angelcare-marketplace/navigation-care-orbit/client-controller'
 import { useEffect, useRef, useState, type FormEvent } from 'react'
-import Link from 'next/link'
+import Link from '@/angelcare-marketplace/navigation-care-orbit/CareOrbitLink'
 import { ArrowRight, Check, Eye, EyeOff, KeyRound, LockKeyhole, Mail, Route, ShieldCheck } from 'lucide-react'
 import type { CatalogLocale } from '../../catalog-discovery/types'
 import { customerAuthHref, customerReturnTo, passwordChecks, type CustomerAuthMode } from '../auth-navigation'
@@ -62,7 +63,7 @@ export function CustomerAuthExperience({ locale, mode, returnTo, initialError }:
       const fragment = new URLSearchParams(window.location.hash.slice(1))
       if (!fragment.has('access_token') && !fragment.has('error')) return
       setChecking(true)
-      void establishCustomerFragmentSession().then(() => window.location.replace(mode === 'recover' ? customerAuthHref(locale, 'reset', destination) : destination)).catch(() => { if (active) { setError(t.invalidLead); setChecking(false) } })
+      void establishCustomerFragmentSession().then(() => careOrbitLocation.replace(mode === 'recover' ? customerAuthHref(locale, 'reset', destination) : destination)).catch(() => { if (active) { setError(t.invalidLead); setChecking(false) } })
       return () => { active = false }
     }
     void establishCustomerFragmentSession().then(() => requestAccess('/api/angelcare-marketplace/customer/me', undefined, 'GET')).then(data => {
@@ -101,7 +102,7 @@ export function CustomerAuthExperience({ locale, mode, returnTo, initialError }:
       else if (mode === 'recover') { setResult('recovery'); setCooldown(45) }
       else if (mode === 'register' && data.verificationRequired) { setResult('signup'); setCooldown(45) }
       else if (mode === 'reset') { setResult('password'); setForm(current => ({ ...current, password: '', confirm: '' })) }
-      else window.location.assign(destination)
+      else careOrbitLocation.assign(destination)
     } catch (reason) {
       const problem = reason instanceof AccessRequestError ? reason : new AccessRequestError('INTERNAL_ERROR', '')
       setReference(problem.reference)

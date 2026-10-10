@@ -19,6 +19,7 @@ export function AdminShellChrome({
   roleKeys,
   territoryId,
   permissionCount,
+  canHotline,
   snapshot,
   workspaces,
   children,
@@ -28,6 +29,7 @@ export function AdminShellChrome({
   roleKeys: string[]
   territoryId: string | null
   permissionCount: number
+  canHotline?: boolean
   snapshot: AdminShellSnapshot
   workspaces: AdminShellWorkspace[]
   children: ReactNode
@@ -62,7 +64,7 @@ export function AdminShellChrome({
       <aside className={styles.sidebar} aria-label="Navigation principale Marketplace Admin">
         <div className={styles.sidebarHeader}>
           <div className={styles.sidebarBrand}>
-            <Image src="/logo.png" alt="ANGELCARE" width={170} height={58} priority />
+            <Image src="/brand/angelcare-pearl-rim-colour-r1.png" alt="ANGELCARE" width={170} height={58} priority />
             <span>Marketplace · Master Backoffice</span>
           </div>
           <button
@@ -76,7 +78,7 @@ export function AdminShellChrome({
             {collapsed ? <PanelLeftOpen size={16} /> : <PanelLeftClose size={16} />}
           </button>
         </div>
-        <AdminNavigation collapsed={collapsed} />
+        <AdminNavigation collapsed={collapsed} canHotline={canHotline} />
         <div className={styles.sidebarFooter}>
           <div className={styles.identityCard} title={collapsed ? `${actorDisplayName} · ${roleKeys.join(' · ') || 'Opérateur Marketplace'}` : undefined}>
             <div className={styles.identityAvatar} aria-hidden="true">{actorDisplayName.trim().charAt(0).toUpperCase() || 'A'}</div>

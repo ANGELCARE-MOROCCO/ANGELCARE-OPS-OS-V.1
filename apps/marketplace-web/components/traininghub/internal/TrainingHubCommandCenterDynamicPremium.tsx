@@ -237,7 +237,7 @@ export default function TrainingHubCommandCenterDynamicPremium() {
       <aside style={sidebarShell}>
         <div style={sidebarBrandCard}>
           <div style={sidebarLogoFrame}>
-            <img src="/logo.png" alt="AngelCare" style={sidebarLogo} />
+            <img src="/brand/angelcare-pearl-rim-colour-r1.png" alt="AngelCare" style={sidebarLogo} />
           </div>
           <div style={sidebarProductTitle}>
             <strong>TrainingHub</strong>

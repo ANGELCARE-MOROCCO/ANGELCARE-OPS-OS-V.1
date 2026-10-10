@@ -1,0 +1,313 @@
+{
+  "revision": "R3",
+  "editorialNotice": "AI-generated illustrative editorial contexts, not records of named staff, actual facilities or canonical sellable products.",
+  "worlds": {
+    "corporates": [
+      {
+        "key": "corporate",
+        "purpose": "Employee confidence",
+        "url": "/angelcare-marketplace/storefront-imagery-r3/corporates/corporate.webp"
+      },
+      {
+        "key": "family",
+        "purpose": "Family benefits in real life",
+        "url": "/angelcare-marketplace/storefront-imagery-r3/corporates/family.webp"
+      },
+      {
+        "key": "homework",
+        "purpose": "After-school continuity",
+        "url": "/angelcare-marketplace/storefront-imagery-r3/corporates/homework.webp"
+      },
+      {
+        "key": "newborn",
+        "purpose": "Parenthood and return to work",
+        "url": "/angelcare-marketplace/storefront-imagery-r3/corporates/newborn.webp"
+      },
+      {
+        "key": "urgent",
+        "purpose": "Backup childcare",
+        "url": "/angelcare-marketplace/storefront-imagery-r3/corporates/urgent.webp"
+      },
+      {
+        "key": "desk",
+        "purpose": "Employer programme planning",
+        "url": "/angelcare-marketplace/storefront-imagery-r3/corporates/desk.webp"
+      },
+      {
+        "key": "holidays",
+        "purpose": "Employer family day",
+        "url": "/angelcare-marketplace/storefront-imagery-r3/corporates/holidays.webp"
+      }
+    ],
+    "establishments": [
+      {
+        "key": "school",
+        "purpose": "An educational environment",
+        "url": "/angelcare-marketplace/storefront-imagery-r3/establishments/school.webp"
+      },
+      {
+        "key": "preschool",
+        "purpose": "Early-years observation",
+        "url": "/angelcare-marketplace/storefront-imagery-r3/establishments/preschool.webp"
+      },
+      {
+        "key": "professional",
+        "purpose": "The establishment team",
+        "url": "/angelcare-marketplace/storefront-imagery-r3/establishments/professional.webp"
+      },
+      {
+        "key": "family",
+        "purpose": "School-parent relationship",
+        "url": "/angelcare-marketplace/storefront-imagery-r3/establishments/family.webp"
+      },
+      {
+        "key": "desk",
+        "purpose": "Leadership and organisation",
+        "url": "/angelcare-marketplace/storefront-imagery-r3/establishments/desk.webp"
+      },
+      {
+        "key": "academy",
+        "purpose": "In-school team learning",
+        "url": "/angelcare-marketplace/storefront-imagery-r3/establishments/academy.webp"
+      }
+    ],
+    "health-partners": [
+      {
+        "key": "health",
+        "purpose": "Maternity-to-home partnership",
+        "url": "/angelcare-marketplace/storefront-imagery-r3/health-partners/health.webp"
+      },
+      {
+        "key": "newborn",
+        "purpose": "Preparing for the first days",
+        "url": "/angelcare-marketplace/storefront-imagery-r3/health-partners/newborn.webp"
+      },
+      {
+        "key": "support",
+        "purpose": "Family workshop and orientation",
+        "url": "/angelcare-marketplace/storefront-imagery-r3/health-partners/support.webp"
+      },
+      {
+        "key": "family",
+        "purpose": "Returning home together",
+        "url": "/angelcare-marketplace/storefront-imagery-r3/health-partners/family.webp"
+      },
+      {
+        "key": "academy",
+        "purpose": "Partner coordination workshop",
+        "url": "/angelcare-marketplace/storefront-imagery-r3/health-partners/academy.webp"
+      },
+      {
+        "key": "care",
+        "purpose": "Mother-and-baby support at home",
+        "url": "/angelcare-marketplace/storefront-imagery-r3/health-partners/care.webp"
+      }
+    ],
+    "hospitality": [
+      {
+        "key": "hospitality",
+        "purpose": "A family-friendly Moroccan stay",
+        "url": "/angelcare-marketplace/storefront-imagery-r3/hospitality/hospitality.webp"
+      },
+      {
+        "key": "games",
+        "purpose": "Kids-club discovery",
+        "url": "/angelcare-marketplace/storefront-imagery-r3/hospitality/games.webp"
+      },
+      {
+        "key": "care",
+        "purpose": "Guest childcare in the stay",
+        "url": "/angelcare-marketplace/storefront-imagery-r3/hospitality/care.webp"
+      },
+      {
+        "key": "family",
+        "purpose": "Family concierge",
+        "url": "/angelcare-marketplace/storefront-imagery-r3/hospitality/family.webp"
+      },
+      {
+        "key": "holidays",
+        "purpose": "Seasonal experiences",
+        "url": "/angelcare-marketplace/storefront-imagery-r3/hospitality/holidays.webp"
+      },
+      {
+        "key": "montessori",
+        "purpose": "Purposeful play while travelling",
+        "url": "/angelcare-marketplace/storefront-imagery-r3/hospitality/montessori.webp"
+      }
+    ],
+    "partner-os": [
+      {
+        "key": "desk",
+        "purpose": "An organisation workspace",
+        "url": "/angelcare-marketplace/storefront-imagery-r3/partner-os/desk.webp"
+      },
+      {
+        "key": "professional",
+        "purpose": "Roles working together",
+        "url": "/angelcare-marketplace/storefront-imagery-r3/partner-os/professional.webp"
+      },
+      {
+        "key": "academy",
+        "purpose": "A prepared activation",
+        "url": "/angelcare-marketplace/storefront-imagery-r3/partner-os/academy.webp"
+      }
+    ],
+    "professionals": [
+      {
+        "key": "professional",
+        "purpose": "Professional identity and purpose",
+        "url": "/angelcare-marketplace/storefront-imagery-r3/professionals/professional.webp"
+      },
+      {
+        "key": "preschool",
+        "purpose": "Educational practice",
+        "url": "/angelcare-marketplace/storefront-imagery-r3/professionals/preschool.webp"
+      },
+      {
+        "key": "care",
+        "purpose": "Working with families",
+        "url": "/angelcare-marketplace/storefront-imagery-r3/professionals/care.webp"
+      },
+      {
+        "key": "games",
+        "purpose": "Leading a creative activity",
+        "url": "/angelcare-marketplace/storefront-imagery-r3/professionals/games.webp"
+      },
+      {
+        "key": "academy",
+        "purpose": "Learning with peers",
+        "url": "/angelcare-marketplace/storefront-imagery-r3/professionals/academy.webp"
+      }
+    ],
+    "quality-check": [
+      {
+        "key": "school",
+        "purpose": "Observation in context",
+        "url": "/angelcare-marketplace/storefront-imagery-r3/quality-check/school.webp"
+      },
+      {
+        "key": "desk",
+        "purpose": "Evidence that can be discussed",
+        "url": "/angelcare-marketplace/storefront-imagery-r3/quality-check/desk.webp"
+      },
+      {
+        "key": "professional",
+        "purpose": "A shared improvement conversation",
+        "url": "/angelcare-marketplace/storefront-imagery-r3/quality-check/professional.webp"
+      }
+    ],
+    "development": [
+      {
+        "key": "development",
+        "purpose": "A child’s world of discovery",
+        "url": "/angelcare-marketplace/storefront-imagery-r3/development/development.webp"
+      },
+      {
+        "key": "flashcards",
+        "purpose": "Language and expression",
+        "url": "/angelcare-marketplace/storefront-imagery-r3/development/flashcards.webp"
+      },
+      {
+        "key": "montessori",
+        "purpose": "Everyday autonomy",
+        "url": "/angelcare-marketplace/storefront-imagery-r3/development/montessori.webp"
+      },
+      {
+        "key": "games",
+        "purpose": "Creativity and cooperation",
+        "url": "/angelcare-marketplace/storefront-imagery-r3/development/games.webp"
+      },
+      {
+        "key": "homework",
+        "purpose": "Attention and learning",
+        "url": "/angelcare-marketplace/storefront-imagery-r3/development/homework.webp"
+      },
+      {
+        "key": "family",
+        "purpose": "Parent participation",
+        "url": "/angelcare-marketplace/storefront-imagery-r3/development/family.webp"
+      }
+    ],
+    "kits": [
+      {
+        "key": "kits",
+        "purpose": "Materials that invite exploration",
+        "url": "/angelcare-marketplace/storefront-imagery-r3/kits/kits.webp"
+      },
+      {
+        "key": "flashcards",
+        "purpose": "Picture cards in use",
+        "url": "/angelcare-marketplace/storefront-imagery-r3/kits/flashcards.webp"
+      },
+      {
+        "key": "montessori",
+        "purpose": "A Montessori-inspired selection",
+        "url": "/angelcare-marketplace/storefront-imagery-r3/kits/montessori.webp"
+      },
+      {
+        "key": "games",
+        "purpose": "Play beyond the box",
+        "url": "/angelcare-marketplace/storefront-imagery-r3/kits/games.webp"
+      },
+      {
+        "key": "digital",
+        "purpose": "A resource from screen to activity",
+        "url": "/angelcare-marketplace/storefront-imagery-r3/kits/digital.webp"
+      },
+      {
+        "key": "family",
+        "purpose": "A shared family ritual",
+        "url": "/angelcare-marketplace/storefront-imagery-r3/kits/family.webp"
+      }
+    ],
+    "academy": [
+      {
+        "key": "academy",
+        "purpose": "A purposeful learning environment",
+        "url": "/angelcare-marketplace/storefront-imagery-r3/academy/academy.webp"
+      },
+      {
+        "key": "professional",
+        "purpose": "Skills practised thoughtfully",
+        "url": "/angelcare-marketplace/storefront-imagery-r3/academy/professional.webp"
+      },
+      {
+        "key": "care",
+        "purpose": "Learning safe caregiving practice",
+        "url": "/angelcare-marketplace/storefront-imagery-r3/academy/care.webp"
+      },
+      {
+        "key": "montessori",
+        "purpose": "Pedagogical practice",
+        "url": "/angelcare-marketplace/storefront-imagery-r3/academy/montessori.webp"
+      },
+      {
+        "key": "school",
+        "purpose": "A team learning together",
+        "url": "/angelcare-marketplace/storefront-imagery-r3/academy/school.webp"
+      },
+      {
+        "key": "desk",
+        "purpose": "Preparing a learning pathway",
+        "url": "/angelcare-marketplace/storefront-imagery-r3/academy/desk.webp"
+      }
+    ]
+  },
+  "aliases": {
+    "development": {
+      "kits": "montessori",
+      "care": "family"
+    },
+    "kits": {
+      "development": "games",
+      "academy": "family"
+    },
+    "academy": {
+      "development": "montessori",
+      "preschool": "care"
+    }
+  },
+  "existingLayouts": "Unchanged",
+  "canonicalItemMedia": "Unchanged",
+  "publishedStudioPrecedence": "Unchanged"
+}

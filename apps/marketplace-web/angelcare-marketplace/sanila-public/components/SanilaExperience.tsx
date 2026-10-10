@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import Link from 'next/link'
+import Link from '@/angelcare-marketplace/navigation-care-orbit/CareOrbitLink'
 import type { CSSProperties, ReactNode } from 'react'
 
 import { CUSTOMER_ACCESS, PRODUCT_DOMAINS, sanilaHref } from '../content'

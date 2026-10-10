@@ -1,2 +1,3 @@
-import { PublicAcademyExperience } from '@/angelcare-marketplace/academy-engine/components/PublicAcademyExperience'
-export default async function Page({params}:{params:Promise<{locale:string}>}){const {locale}=await params;const safe=locale==='ar'||locale==='en'?locale:'fr';return <PublicAcademyExperience programs={[]} locale={safe}/>}
+import {AcademyPage} from '@/angelcare-marketplace/specialist-worlds/AcademyPage'
+export const dynamic='force-dynamic'
+export default async function Page({params,searchParams}:{params:Promise<{locale:string}>;searchParams:Promise<{brief?:string|string[]}>}){const [{locale},query]=await Promise.all([params,searchParams]);return <AcademyPage rawLocale={locale}/>;}

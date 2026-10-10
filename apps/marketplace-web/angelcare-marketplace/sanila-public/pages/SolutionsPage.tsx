@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import Link from '@/angelcare-marketplace/navigation-care-orbit/CareOrbitLink'
 import { getSanilaPublicPage, sanilaHref } from '../content'
 import { ClosingStatement, SectionHeading } from '../components/SanilaExperience'
 import { SolutionOperatingProfile } from '../components/SanilaVisualSystems'

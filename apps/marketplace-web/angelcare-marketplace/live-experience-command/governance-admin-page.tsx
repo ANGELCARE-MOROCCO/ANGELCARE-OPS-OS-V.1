@@ -1,4 +1,4 @@
 import {hasMarketplacePermission,requireMarketplaceWorkspacePageContext} from '../auth/context'
 import {LiveGovernanceCommand} from './components/LiveGovernanceCommand'
-import {listLiveGovernance,type LiveGovernanceMode} from './repository'
-export async function LiveGovernancePage({mode}:{mode:LiveGovernanceMode}){const context=await requireMarketplaceWorkspacePageContext(`live_experience.${mode}`,'marketplace.live_experience.view');const data=await listLiveGovernance(mode,context);return <LiveGovernanceCommand mode={mode} rows={data.rows} canManage={hasMarketplacePermission(context,'marketplace.live_experience.manage')}/>}
+import {listLiveGovernance,liveExperienceSummary,type LiveGovernanceMode} from './repository'
+export async function LiveGovernancePage({mode}:{mode:LiveGovernanceMode}){const context=await requireMarketplaceWorkspacePageContext(`live_experience.${mode}`,'marketplace.live_experience.view');const [data,summary]=await Promise.all([listLiveGovernance(mode,context),liveExperienceSummary(context)]);return <LiveGovernanceCommand mode={mode} rows={data.rows} campaigns={summary.campaigns} canPublish={hasMarketplacePermission(context,'marketplace.live_experience.publish')} canManage={hasMarketplacePermission(context,'marketplace.live_experience.manage')}/>}

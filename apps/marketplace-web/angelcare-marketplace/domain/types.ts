@@ -24,6 +24,15 @@ export type MarketplaceReadinessStatus = 'not_started' | 'in_progress' | 'ready'
 export type MarketplaceAuditResult = 'success' | 'denied' | 'failed'
 
 export type MarketplacePermission =
+  | 'marketplace.hotline.view'
+  | 'marketplace.hotline.answer'
+  | 'marketplace.hotline.manage'
+  | 'marketplace.hotline.supervise'
+  | 'marketplace.hotline.settings'
+  | 'marketplace.hotline.publish'
+  | 'marketplace.hotline.media'
+  | 'marketplace.hotline.purge'
+
   | 'marketplace.foundation.view'
   | 'marketplace.workspace.access'
   | 'marketplace.admin.access'

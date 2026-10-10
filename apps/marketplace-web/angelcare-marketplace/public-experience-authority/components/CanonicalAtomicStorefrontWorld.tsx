@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import Link from '@/angelcare-marketplace/navigation-care-orbit/CareOrbitLink'
 import {ArrowRight,CheckCircle2,Compass,Filter,Layers3,Search,ShieldCheck,Sparkles,TrendingUp} from 'lucide-react'
 import type {StorefrontExperience} from '@/angelcare-marketplace/catalog-discovery/types'
 import {CatalogCard} from '@/angelcare-marketplace/catalog-discovery/components/CatalogCard'

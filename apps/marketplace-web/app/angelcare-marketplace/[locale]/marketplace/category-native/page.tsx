@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import Link from '@/angelcare-marketplace/navigation-care-orbit/CareOrbitLink'
 import { ArrowRight, BookOpenCheck, Building2, GraduationCap, HeartHandshake, PackageOpen, ShieldCheck } from 'lucide-react'
 import { CATEGORY_NATIVE_EXPERIENCE_DEFINITIONS } from '@/angelcare-marketplace/category-native-experience/registry'
 import { categoryNativeLocale } from '@/angelcare-marketplace/category-native-experience/validation'

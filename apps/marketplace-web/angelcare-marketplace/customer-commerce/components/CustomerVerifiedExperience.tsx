@@ -1,6 +1,7 @@
 'use client'
+import {careOrbitLocation} from '@/angelcare-marketplace/navigation-care-orbit/client-controller'
 import { useEffect, useState } from 'react'
-import Link from 'next/link'
+import Link from '@/angelcare-marketplace/navigation-care-orbit/CareOrbitLink'
 import { ArrowRight, MailCheck, ShieldAlert, ShieldCheck } from 'lucide-react'
 import type { CatalogLocale } from '../../catalog-discovery/types'
 import { customerAuthHref } from '../auth-navigation'
@@ -15,7 +16,7 @@ export function CustomerVerifiedExperience({ locale, returnTo, state }: { locale
   useEffect(() => {
     if (!window.location.hash) return
     setBusy(true)
-    void establishCustomerFragmentSession().then(() => window.location.replace(customerAuthHref(locale, 'verified', returnTo))).catch(() => { setFailed(true); setBusy(false) })
+    void establishCustomerFragmentSession().then(() => careOrbitLocation.replace(customerAuthHref(locale, 'verified', returnTo))).catch(() => { setFailed(true); setBusy(false) })
   }, [locale, returnTo])
   const current = failed ? 'invalid' : state
   return <CustomerAccessShell locale={locale} mode="verified" returnTo={returnTo}><div className={styles.content}>

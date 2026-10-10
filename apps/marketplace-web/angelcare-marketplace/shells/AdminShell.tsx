@@ -1,3 +1,4 @@
+import { hasMarketplacePermission } from '../auth/context'
 import type { ReactNode } from 'react'
 import type { MarketplaceRequestContext } from '../domain/types'
 import { ADMIN_WORKSPACE_REGISTRY } from '../admin-excellence/workspace-registry'
@@ -37,7 +38,7 @@ const IMPORT_WORKSPACES: AdminShellWorkspace[] = [
 ]
 
 function workspaces(): AdminShellWorkspace[] {
-  const existing = ADMIN_WORKSPACE_REGISTRY.map(({ href, domain, label, dynamic }) => ({ href, domain, label, dynamic }))
+  const existing = [...ADMIN_WORKSPACE_REGISTRY,{href:'/angelcare-marketplace/admin/hotline',domain:'hotline',label:'HOTLINE · Réception',dynamic:false,source:'hotline-os-r1'},{href:'/angelcare-marketplace/admin/hotline/settings',domain:'hotline',label:'HOTLINE · Studio',dynamic:false,source:'hotline-os-r1'}].map(({ href, domain, label, dynamic }) => ({ href, domain, label, dynamic }))
   const seen = new Set(existing.map((item) => item.href))
   const withSanila = [...existing, ...SANILA_WORKSPACES.filter((item) => !seen.has(item.href))]
   const seenAll = new Set(withSanila.map((item) => item.href))
@@ -53,6 +54,7 @@ export async function AdminShell({ context, children }: { context: MarketplaceRe
       roleKeys={context.roleKeys}
       territoryId={context.territoryId}
       permissionCount={context.permissions.length}
+      canHotline={hasMarketplacePermission(context,'marketplace.hotline.view')}
       snapshot={snapshot}
       workspaces={workspaces()}
     >

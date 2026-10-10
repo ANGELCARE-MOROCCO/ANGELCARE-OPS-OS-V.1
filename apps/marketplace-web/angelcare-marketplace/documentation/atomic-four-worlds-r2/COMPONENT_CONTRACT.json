@@ -1,0 +1,2302 @@
+[
+  {
+    "world": "product",
+    "domain": "b2c_product_digital",
+    "root": "ac_product_world",
+    "sections": [
+      {
+        "id": "ao-product-01",
+        "role": "opening",
+        "title": {
+          "fr": "Votre prochaine découverte",
+          "en": "Your next discovery",
+          "ar": "اكتشافك القادم"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "gallery-split",
+        "navTitle": {
+          "fr": "Découvrir",
+          "en": "Discover",
+          "ar": "اكتشف"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-product-02",
+        "role": "benefits",
+        "title": {
+          "fr": "Grandir, explorer, s’émerveiller",
+          "en": "Grow, explore, wonder",
+          "ar": "نمو واكتشاف ودهشة"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "bento",
+        "fieldSections": "learning,audience",
+        "navTitle": {
+          "fr": "Bénéfices",
+          "en": "Benefits",
+          "ar": "الفوائد"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-product-03",
+        "role": "story",
+        "title": {
+          "fr": "Imaginez-le dans votre quotidien",
+          "en": "Imagine it in your everyday life",
+          "ar": "تخيّله في حياتك اليومية"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "bento",
+        "navTitle": {
+          "fr": "L’expérience",
+          "en": "The experience",
+          "ar": "التجربة"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-product-04",
+        "role": "contents",
+        "title": {
+          "fr": "Ouvrez la boîte des possibilités",
+          "en": "Open a world of possibilities",
+          "ar": "افتح عالم الإمكانات"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "comparison",
+        "fieldSections": "contents",
+        "navTitle": {
+          "fr": "À l’intérieur",
+          "en": "Inside",
+          "ar": "المحتوى"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-product-05",
+        "role": "choices",
+        "title": {
+          "fr": "À vous de choisir",
+          "en": "Make it yours",
+          "ar": "اختر ما يناسبك"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "strip",
+        "navTitle": {
+          "fr": "Vos choix",
+          "en": "Your choices",
+          "ar": "خياراتك"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-product-06",
+        "role": "facts",
+        "title": {
+          "fr": "Les formats à comparer",
+          "en": "Compare the formats",
+          "ar": "قارن الصيغ"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "strip",
+        "fieldSections": "variants",
+        "navTitle": {
+          "fr": "Formats",
+          "en": "Formats",
+          "ar": "الصيغ"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-product-07",
+        "role": "plans",
+        "title": {
+          "fr": "Composez votre expérience",
+          "en": "Build your experience",
+          "ar": "صمّم تجربتك"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "comparison",
+        "fieldSections": "configuration",
+        "enableSelection": true,
+        "navTitle": {
+          "fr": "Options",
+          "en": "Options",
+          "ar": "الخيارات"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-product-08",
+        "role": "facts",
+        "title": {
+          "fr": "Préparer votre découverte",
+          "en": "Plan your discovery",
+          "ar": "خطط لاكتشافك"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "strip",
+        "fieldSections": "availability",
+        "navTitle": {
+          "fr": "Disponibilité",
+          "en": "Availability",
+          "ar": "التوفر"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-product-09",
+        "role": "facts",
+        "title": {
+          "fr": "Et maintenant, on explore ?",
+          "en": "Ready to explore?",
+          "ar": "هل أنت مستعد للاكتشاف؟"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "timeline",
+        "fieldSections": "usage",
+        "navTitle": {
+          "fr": "Utilisation",
+          "en": "How to use",
+          "ar": "الاستخدام"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-product-10",
+        "role": "facts",
+        "title": {
+          "fr": "Chaque détail compte",
+          "en": "Every detail matters",
+          "ar": "كل تفصيل مهم"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "ledger",
+        "fieldSections": "specifications,packaging",
+        "navTitle": {
+          "fr": "Caractéristiques",
+          "en": "Specifications",
+          "ar": "المواصفات"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-product-11",
+        "role": "plans",
+        "title": {
+          "fr": "Le plaisir se renouvelle",
+          "en": "Keep discovery going",
+          "ar": "جدّد متعة الاكتشاف"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "comparison",
+        "fieldSections": "subscription",
+        "enableSelection": true,
+        "navTitle": {
+          "fr": "Options",
+          "en": "Options",
+          "ar": "الخيارات"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-product-12",
+        "role": "facts",
+        "title": {
+          "fr": "Votre ressource, votre format",
+          "en": "Your resource, your format",
+          "ar": "مواردك وصيغتك"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "strip",
+        "fieldSections": "digital",
+        "navTitle": {
+          "fr": "Détails",
+          "en": "Details",
+          "ar": "التفاصيل"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-product-13",
+        "role": "facts",
+        "title": {
+          "fr": "Accès et droits d’utilisation",
+          "en": "Access and usage rights",
+          "ar": "الوصول وحقوق الاستخدام"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "ledger",
+        "fieldSections": "license,access",
+        "navTitle": {
+          "fr": "Détails",
+          "en": "Details",
+          "ar": "التفاصيل"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-product-14",
+        "role": "facts",
+        "title": {
+          "fr": "Explorer en toute connaissance",
+          "en": "Explore with confidence",
+          "ar": "اكتشف على بيّنة"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "strip",
+        "fieldSections": "safety,accessibility",
+        "navTitle": {
+          "fr": "Bon à savoir",
+          "en": "Good to know",
+          "ar": "ما يجب معرفته"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-product-15",
+        "role": "deployment",
+        "title": {
+          "fr": "De votre panier à chez vous",
+          "en": "From your basket to your home",
+          "ar": "من سلتك إلى منزلك"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "timeline",
+        "bindingKey": "product.delivery",
+        "navTitle": {
+          "fr": "Le parcours",
+          "en": "Your journey",
+          "ar": "المسار"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-product-16",
+        "role": "facts",
+        "title": {
+          "fr": "Après votre découverte",
+          "en": "After your discovery",
+          "ar": "بعد اكتشافك"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "ribbon",
+        "fieldSections": "after_sales",
+        "navTitle": {
+          "fr": "Après l’achat",
+          "en": "After purchase",
+          "ar": "بعد الشراء"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-product-17",
+        "role": "proof",
+        "title": {
+          "fr": "Des engagements vérifiables",
+          "en": "Evidence you can explore",
+          "ar": "أدلة يمكنك استكشافها"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "bento",
+        "navTitle": {
+          "fr": "Confiance",
+          "en": "Evidence",
+          "ar": "الأدلة"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-product-18",
+        "role": "reviews",
+        "title": {
+          "fr": "Ils partagent leur expérience",
+          "en": "Shared experiences",
+          "ar": "تجارب مشتركة"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "bento",
+        "navTitle": {
+          "fr": "Avis",
+          "en": "Reviews",
+          "ar": "التقييمات"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-product-19",
+        "role": "faq",
+        "title": {
+          "fr": "Vos questions, nos réponses",
+          "en": "Your questions answered",
+          "ar": "إجابات عن أسئلتك"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "strip",
+        "fieldKeys": "faq,frequently_asked_questions",
+        "navTitle": {
+          "fr": "Questions",
+          "en": "Questions",
+          "ar": "الأسئلة"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-product-20",
+        "role": "related",
+        "title": {
+          "fr": "À découvrir aussi",
+          "en": "Keep discovering",
+          "ar": "اكتشف أيضاً"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "bento",
+        "navTitle": {
+          "fr": "À découvrir",
+          "en": "Explore more",
+          "ar": "اكتشف المزيد"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-product-21",
+        "role": "related",
+        "title": {
+          "fr": "À explorer ensemble",
+          "en": "Explore together",
+          "ar": "اكتشفها معاً"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "strip",
+        "relationKind": "bundle",
+        "navTitle": {
+          "fr": "À découvrir",
+          "en": "Explore more",
+          "ar": "اكتشف المزيد"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-product-22",
+        "role": "related",
+        "title": {
+          "fr": "Les petits plus",
+          "en": "Thoughtful additions",
+          "ar": "إضافات مميزة"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "strip",
+        "relationKind": "accessory",
+        "navTitle": {
+          "fr": "À découvrir",
+          "en": "Explore more",
+          "ar": "اكتشف المزيد"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-product-23",
+        "role": "related",
+        "title": {
+          "fr": "D’autres façons de découvrir",
+          "en": "More ways to discover",
+          "ar": "طرق أخرى للاكتشاف"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "comparison",
+        "relationKind": "alternative",
+        "navTitle": {
+          "fr": "À découvrir",
+          "en": "Explore more",
+          "ar": "اكتشف المزيد"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-product-24",
+        "role": "decision",
+        "title": {
+          "fr": "La prochaine découverte vous attend",
+          "en": "Your next discovery awaits",
+          "ar": "اكتشافك القادم ينتظرك"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "bento",
+        "navTitle": {
+          "fr": "Votre choix",
+          "en": "Your choice",
+          "ar": "اختيارك"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      }
+    ]
+  },
+  {
+    "world": "service",
+    "domain": "b2c_service_family",
+    "root": "ac_service_world",
+    "sections": [
+      {
+        "id": "ao-service-01",
+        "role": "opening",
+        "title": {
+          "fr": "Du temps pour votre famille",
+          "en": "Time for your family",
+          "ar": "وقت لعائلتك"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "service-theatre",
+        "navTitle": {
+          "fr": "Découvrir",
+          "en": "Discover",
+          "ar": "اكتشف"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-service-02",
+        "role": "benefits",
+        "title": {
+          "fr": "L’accompagnement qui compte",
+          "en": "Support that matters",
+          "ar": "الدعم الذي يهمك"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "bento",
+        "fieldSections": "eligibility,scope,support",
+        "navTitle": {
+          "fr": "Bénéfices",
+          "en": "Benefits",
+          "ar": "الفوائد"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-service-03",
+        "role": "plans",
+        "title": {
+          "fr": "Un rythme qui vous ressemble",
+          "en": "A rhythm that fits",
+          "ar": "إيقاع يناسبك"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "comparison",
+        "fieldSections": "recurrence",
+        "enableSelection": true,
+        "navTitle": {
+          "fr": "Options",
+          "en": "Options",
+          "ar": "الخيارات"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-service-04",
+        "role": "schedule",
+        "title": {
+          "fr": "Imaginons votre organisation",
+          "en": "Shape your weekly rhythm",
+          "ar": "صمّم إيقاع أسبوعك"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "strip",
+        "fieldSections": "availability,schedule",
+        "navTitle": {
+          "fr": "Votre rythme",
+          "en": "Your rhythm",
+          "ar": "إيقاعك"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-service-05",
+        "role": "facts",
+        "title": {
+          "fr": "Là où votre vie se déroule",
+          "en": "Where life happens",
+          "ar": "حيث تجري حياتك"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "strip",
+        "fieldSections": "coverage,venue,event",
+        "navTitle": {
+          "fr": "Zones & lieux",
+          "en": "Areas & places",
+          "ar": "المناطق والأماكن"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-service-06",
+        "role": "story",
+        "title": {
+          "fr": "Un quotidien mieux accompagné",
+          "en": "Support for everyday life",
+          "ar": "دعم لحياتك اليومية"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "bento",
+        "navTitle": {
+          "fr": "L’expérience",
+          "en": "The experience",
+          "ar": "التجربة"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-service-07",
+        "role": "providers",
+        "title": {
+          "fr": "Les personnes derrière l’accompagnement",
+          "en": "The people behind the care",
+          "ar": "الأشخاص وراء الرعاية"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "portrait",
+        "bindingKey": "service.providers",
+        "navTitle": {
+          "fr": "Accompagnement",
+          "en": "Care team",
+          "ar": "فريق الرعاية"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-service-08",
+        "role": "facts",
+        "title": {
+          "fr": "Des moments qui prennent du sens",
+          "en": "Make time meaningful",
+          "ar": "وقت يحمل معنى"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "bento",
+        "fieldSections": "configuration,learning,programme",
+        "enableSelection": true,
+        "navTitle": {
+          "fr": "Activités",
+          "en": "Activities",
+          "ar": "الأنشطة"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-service-09",
+        "role": "deployment",
+        "title": {
+          "fr": "De la prise en charge au retour",
+          "en": "From arrival to return",
+          "ar": "من الوصول إلى العودة"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "timeline",
+        "fieldSections": "pickup,aftercare,transport,logistics",
+        "navTitle": {
+          "fr": "Le parcours",
+          "en": "Your journey",
+          "ar": "المسار"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-service-10",
+        "role": "facts",
+        "title": {
+          "fr": "Un cadre clair pour choisir",
+          "en": "Clarity before you choose",
+          "ar": "وضوح قبل الاختيار"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "ledger",
+        "fieldSections": "safety,policy,exceptions",
+        "navTitle": {
+          "fr": "Conditions",
+          "en": "Conditions",
+          "ar": "الشروط"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-service-11",
+        "role": "facts",
+        "title": {
+          "fr": "Quand le besoin ne peut pas attendre",
+          "en": "When your need cannot wait",
+          "ar": "حين لا يحتمل احتياجك الانتظار"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "ribbon",
+        "fieldSections": "urgency",
+        "navTitle": {
+          "fr": "Détails",
+          "en": "Details",
+          "ar": "التفاصيل"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-service-12",
+        "role": "facts",
+        "title": {
+          "fr": "La continuité de votre accompagnement",
+          "en": "Continuity of care",
+          "ar": "استمرارية الرعاية"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "comparison",
+        "fieldSections": "matching",
+        "navTitle": {
+          "fr": "Continuité",
+          "en": "Continuity",
+          "ar": "الاستمرارية"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-service-13",
+        "role": "facts",
+        "title": {
+          "fr": "Comprendre ce qui vous attend",
+          "en": "Know what to expect",
+          "ar": "افهم ما ينتظرك"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "strip",
+        "fieldSections": "delivery,reporting,billing",
+        "navTitle": {
+          "fr": "Ce qui est inclus",
+          "en": "What is included",
+          "ar": "ما يتضمنه العرض"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-service-14",
+        "role": "facts",
+        "title": {
+          "fr": "Un accompagnement organisé",
+          "en": "Care with a clear framework",
+          "ar": "رعاية ضمن إطار واضح"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "ledger",
+        "fieldSections": "operations,capacity",
+        "navTitle": {
+          "fr": "Organisation",
+          "en": "Organisation",
+          "ar": "التنظيم"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-service-15",
+        "role": "proof",
+        "title": {
+          "fr": "La confiance se construit",
+          "en": "Trust, built on evidence",
+          "ar": "ثقة مبنية على الأدلة"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "bento",
+        "navTitle": {
+          "fr": "Confiance",
+          "en": "Evidence",
+          "ar": "الأدلة"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-service-16",
+        "role": "reviews",
+        "title": {
+          "fr": "Des expériences partagées",
+          "en": "Shared experiences",
+          "ar": "تجارب مشتركة"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "bento",
+        "navTitle": {
+          "fr": "Avis",
+          "en": "Reviews",
+          "ar": "التقييمات"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-service-17",
+        "role": "faq",
+        "title": {
+          "fr": "Avant de nous confier votre besoin",
+          "en": "Before you take the next step",
+          "ar": "قبل الخطوة التالية"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "bento",
+        "fieldKeys": "faq,frequently_asked_questions",
+        "navTitle": {
+          "fr": "Questions",
+          "en": "Questions",
+          "ar": "الأسئلة"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-service-18",
+        "role": "related",
+        "title": {
+          "fr": "Pour chaque moment de vie",
+          "en": "For every stage of life",
+          "ar": "لكل مرحلة من الحياة"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "bento",
+        "navTitle": {
+          "fr": "À découvrir",
+          "en": "Explore more",
+          "ar": "اكتشف المزيد"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-service-19",
+        "role": "decision",
+        "title": {
+          "fr": "Faisons place à votre besoin",
+          "en": "Make room for your needs",
+          "ar": "لنوفر مساحة لاحتياجك"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "bento",
+        "navTitle": {
+          "fr": "Votre choix",
+          "en": "Your choice",
+          "ar": "اختيارك"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      }
+    ]
+  },
+  {
+    "world": "academy",
+    "domain": "academy_admission",
+    "root": "ac_academy_world",
+    "sections": [
+      {
+        "id": "ao-academy-01",
+        "role": "opening",
+        "title": {
+          "fr": "Votre prochain chapitre",
+          "en": "Your next chapter",
+          "ar": "فصلك القادم"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "campus-ledger",
+        "navTitle": {
+          "fr": "Découvrir",
+          "en": "Discover",
+          "ar": "اكتشف"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-academy-02",
+        "role": "benefits",
+        "title": {
+          "fr": "Les perspectives qui s’ouvrent",
+          "en": "New perspectives ahead",
+          "ar": "آفاق جديدة أمامك"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "bento",
+        "fieldKeys": "learning_outcomes,workshop_theme,course_subject,intended_audience,audience_types",
+        "navTitle": {
+          "fr": "Bénéfices",
+          "en": "Benefits",
+          "ar": "الفوائد"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-academy-03",
+        "role": "curriculum",
+        "title": {
+          "fr": "Construisez votre parcours",
+          "en": "Build your pathway",
+          "ar": "ابنِ مسارك"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "timeline",
+        "fieldSections": "learning,programme,pathway",
+        "navTitle": {
+          "fr": "Programme",
+          "en": "Programme",
+          "ar": "البرنامج"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-academy-04",
+        "role": "curriculum",
+        "title": {
+          "fr": "Au cœur du programme",
+          "en": "Inside the programme",
+          "ar": "في قلب البرنامج"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "timeline",
+        "bindingKey": "academy.modules",
+        "navTitle": {
+          "fr": "Modules",
+          "en": "Modules",
+          "ar": "الوحدات"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-academy-05",
+        "role": "cohorts",
+        "title": {
+          "fr": "Choisissez votre prochaine session",
+          "en": "Choose your next session",
+          "ar": "اختر دورتك القادمة"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "strip",
+        "bindingKey": "academy.cohorts",
+        "navTitle": {
+          "fr": "Sessions",
+          "en": "Sessions",
+          "ar": "الدورات"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-academy-06",
+        "role": "facts",
+        "title": {
+          "fr": "Un rythme pour apprendre",
+          "en": "A rhythm for learning",
+          "ar": "إيقاع للتعلم"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "ledger",
+        "fieldSections": "cohort",
+        "navTitle": {
+          "fr": "Calendrier",
+          "en": "Calendar",
+          "ar": "الجدول"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-academy-07",
+        "role": "trainers",
+        "title": {
+          "fr": "Celles et ceux qui vous accompagnent",
+          "en": "Meet the learning team",
+          "ar": "تعرّف على فريق التعلم"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "portrait",
+        "bindingKey": "academy.trainers",
+        "navTitle": {
+          "fr": "Équipe",
+          "en": "Learning team",
+          "ar": "الفريق"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-academy-08",
+        "role": "story",
+        "title": {
+          "fr": "Donnez du sens à votre ambition",
+          "en": "Give your ambition purpose",
+          "ar": "امنح طموحك معنى"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "bento",
+        "navTitle": {
+          "fr": "L’expérience",
+          "en": "The experience",
+          "ar": "التجربة"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-academy-09",
+        "role": "facts",
+        "title": {
+          "fr": "Apprendre à votre manière",
+          "en": "Learn your way",
+          "ar": "تعلّم بطريقتك"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "comparison",
+        "fieldSections": "delivery,access",
+        "navTitle": {
+          "fr": "Format & accès",
+          "en": "Format & access",
+          "ar": "الصيغة والوصول"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-academy-10",
+        "role": "facts",
+        "title": {
+          "fr": "Un parcours fait pour qui ?",
+          "en": "Who is this pathway for?",
+          "ar": "لمن هذا المسار؟"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "strip",
+        "fieldSections": "coverage,scope,availability",
+        "navTitle": {
+          "fr": "Détails",
+          "en": "Details",
+          "ar": "التفاصيل"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-academy-11",
+        "role": "facts",
+        "title": {
+          "fr": "Préparez votre première étape",
+          "en": "Prepare your first step",
+          "ar": "استعد لخطوتك الأولى"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "strip",
+        "fieldKeys": "prerequisites,required_documents,age_min,age_max,practical_requirement,attendance_threshold",
+        "navTitle": {
+          "fr": "Détails",
+          "en": "Details",
+          "ar": "التفاصيل"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-academy-12",
+        "role": "facts",
+        "title": {
+          "fr": "De la pratique à la reconnaissance",
+          "en": "From practice to recognition",
+          "ar": "من الممارسة إلى الاعتراف"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "timeline",
+        "fieldSections": "assessment,credential",
+        "navTitle": {
+          "fr": "Évaluation",
+          "en": "Assessment",
+          "ar": "التقييم"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-academy-13",
+        "role": "facts",
+        "title": {
+          "fr": "Votre admission, étape par étape",
+          "en": "Your admission, step by step",
+          "ar": "قبولك خطوة بخطوة"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "bento",
+        "fieldSections": "admission,establishment,options",
+        "navTitle": {
+          "fr": "Détails",
+          "en": "Details",
+          "ar": "التفاصيل"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-academy-14",
+        "role": "contents",
+        "title": {
+          "fr": "Vos ressources pour progresser",
+          "en": "Resources to move forward",
+          "ar": "موارد للتقدم"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "ribbon",
+        "fieldSections": "contents",
+        "navTitle": {
+          "fr": "À l’intérieur",
+          "en": "Inside",
+          "ar": "المحتوى"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-academy-15",
+        "role": "proof",
+        "title": {
+          "fr": "Des repères pour votre confiance",
+          "en": "Evidence for your confidence",
+          "ar": "أدلة لثقتك"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "bento",
+        "navTitle": {
+          "fr": "Confiance",
+          "en": "Evidence",
+          "ar": "الأدلة"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-academy-16",
+        "role": "reviews",
+        "title": {
+          "fr": "Leurs expériences d’apprentissage",
+          "en": "Shared learning experiences",
+          "ar": "تجارب تعلم مشتركة"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "bento",
+        "navTitle": {
+          "fr": "Avis",
+          "en": "Reviews",
+          "ar": "التقييمات"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-academy-17",
+        "role": "related",
+        "title": {
+          "fr": "Et si vous poursuiviez l’aventure ?",
+          "en": "Where could you go next?",
+          "ar": "إلى أين تمضي بعد ذلك؟"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "bento",
+        "navTitle": {
+          "fr": "À découvrir",
+          "en": "Explore more",
+          "ar": "اكتشف المزيد"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-academy-18",
+        "role": "decision",
+        "title": {
+          "fr": "Un nouveau chapitre commence ici",
+          "en": "A new chapter starts here",
+          "ar": "فصل جديد يبدأ هنا"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "bento",
+        "navTitle": {
+          "fr": "Votre choix",
+          "en": "Your choice",
+          "ar": "اختيارك"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      }
+    ]
+  },
+  {
+    "world": "b2b",
+    "domain": "b2b_institutional",
+    "root": "ac_b2b_world",
+    "sections": [
+      {
+        "id": "ao-b2b-01",
+        "role": "opening",
+        "title": {
+          "fr": "Une ambition. Un projet concret.",
+          "en": "Ambition. Made concrete.",
+          "ar": "طموح يتحول إلى مشروع."
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "solution-stage",
+        "navTitle": {
+          "fr": "Découvrir",
+          "en": "Discover",
+          "ar": "اكتشف"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-b2b-02",
+        "role": "facts",
+        "title": {
+          "fr": "Votre organisation au centre",
+          "en": "Your organisation at the centre",
+          "ar": "مؤسستك في المركز"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "bento",
+        "fieldSections": "scope,property,partner,venue",
+        "enableSelection": true,
+        "navTitle": {
+          "fr": "Votre périmètre",
+          "en": "Your scope",
+          "ar": "نطاقك"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-b2b-03",
+        "role": "benefits",
+        "title": {
+          "fr": "Les leviers de votre programme",
+          "en": "Your programme’s possibilities",
+          "ar": "إمكانات برنامجك"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "comparison",
+        "fieldSections": "benefit,programme,plan",
+        "enableSelection": true,
+        "navTitle": {
+          "fr": "Bénéfices",
+          "en": "Benefits",
+          "ar": "الفوائد"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-b2b-04",
+        "role": "deployment",
+        "title": {
+          "fr": "Du projet à sa mise en œuvre",
+          "en": "From intent to implementation",
+          "ar": "من النية إلى التنفيذ"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "timeline",
+        "fieldSections": "delivery,onboarding,schedule",
+        "navTitle": {
+          "fr": "Le parcours",
+          "en": "Your journey",
+          "ar": "المسار"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-b2b-05",
+        "role": "facts",
+        "title": {
+          "fr": "Un périmètre à dimensionner",
+          "en": "Shape the right scope",
+          "ar": "حدد النطاق المناسب"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "ledger",
+        "fieldSections": "limits",
+        "navTitle": {
+          "fr": "Détails",
+          "en": "Details",
+          "ar": "التفاصيل"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-b2b-06",
+        "role": "story",
+        "title": {
+          "fr": "Une vision à partager",
+          "en": "A shared vision",
+          "ar": "رؤية مشتركة"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "bento",
+        "navTitle": {
+          "fr": "L’expérience",
+          "en": "The experience",
+          "ar": "التجربة"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-b2b-07",
+        "role": "facts",
+        "title": {
+          "fr": "Les équipes qui font vivre le projet",
+          "en": "The teams behind the project",
+          "ar": "الفرق وراء المشروع"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "portrait",
+        "fieldSections": "staffing,operations",
+        "navTitle": {
+          "fr": "Détails",
+          "en": "Details",
+          "ar": "التفاصيل"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-b2b-08",
+        "role": "facts",
+        "title": {
+          "fr": "Un cadre commercial explicite",
+          "en": "A clear commercial framework",
+          "ar": "إطار تجاري واضح"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "comparison",
+        "fieldSections": "commercial,finance,billing,conversion",
+        "navTitle": {
+          "fr": "Cadre commercial",
+          "en": "Commercial terms",
+          "ar": "الشروط التجارية"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-b2b-09",
+        "role": "facts",
+        "title": {
+          "fr": "Là où votre organisation agit",
+          "en": "Where your organisation operates",
+          "ar": "حيث تعمل مؤسستك"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "strip",
+        "fieldSections": "coverage",
+        "navTitle": {
+          "fr": "Détails",
+          "en": "Details",
+          "ar": "التفاصيل"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-b2b-10",
+        "role": "facts",
+        "title": {
+          "fr": "Connecter les bons éléments",
+          "en": "Connect what matters",
+          "ar": "اربط العناصر المهمة"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "strip",
+        "fieldSections": "integration,reporting",
+        "navTitle": {
+          "fr": "Intégrations",
+          "en": "Integrations",
+          "ar": "التكامل"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-b2b-11",
+        "role": "facts",
+        "title": {
+          "fr": "Confiance, protection et responsabilité",
+          "en": "Trust, protection and responsibility",
+          "ar": "الثقة والحماية والمسؤولية"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "ledger",
+        "fieldSections": "safety,security,privacy,eligibility",
+        "navTitle": {
+          "fr": "Protection",
+          "en": "Protection",
+          "ar": "الحماية"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-b2b-12",
+        "role": "facts",
+        "title": {
+          "fr": "Mesurer, documenter, comprendre",
+          "en": "Measure, document, understand",
+          "ar": "قياس وتوثيق وفهم"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "bento",
+        "fieldSections": "diagnostic,assessment,evidence",
+        "navTitle": {
+          "fr": "Diagnostic",
+          "en": "Assessment",
+          "ar": "التقييم"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-b2b-13",
+        "role": "facts",
+        "title": {
+          "fr": "Accompagner la suite",
+          "en": "Support for what comes next",
+          "ar": "دعم لما يأتي بعد ذلك"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "ribbon",
+        "fieldSections": "support,followup",
+        "navTitle": {
+          "fr": "Accompagnement",
+          "en": "Support",
+          "ar": "الدعم"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-b2b-14",
+        "role": "proof",
+        "title": {
+          "fr": "Des engagements documentés",
+          "en": "Documented commitments",
+          "ar": "التزامات موثقة"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "bento",
+        "navTitle": {
+          "fr": "Confiance",
+          "en": "Evidence",
+          "ar": "الأدلة"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-b2b-15",
+        "role": "reviews",
+        "title": {
+          "fr": "Les retours d’expérience",
+          "en": "Shared experiences",
+          "ar": "تجارب مشتركة"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "bento",
+        "navTitle": {
+          "fr": "Avis",
+          "en": "Reviews",
+          "ar": "التقييمات"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-b2b-16",
+        "role": "faq",
+        "title": {
+          "fr": "Éclairer votre décision",
+          "en": "Clarify your decision",
+          "ar": "وضّح قرارك"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "bento",
+        "fieldKeys": "faq,frequently_asked_questions",
+        "navTitle": {
+          "fr": "Questions",
+          "en": "Questions",
+          "ar": "الأسئلة"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-b2b-17",
+        "role": "related",
+        "title": {
+          "fr": "Élargissez votre réflexion",
+          "en": "Expand your thinking",
+          "ar": "وسّع رؤيتك"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "bento",
+        "navTitle": {
+          "fr": "À découvrir",
+          "en": "Explore more",
+          "ar": "اكتشف المزيد"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      },
+      {
+        "id": "ao-b2b-18",
+        "role": "decision",
+        "title": {
+          "fr": "Passons de l’ambition au projet",
+          "en": "Turn ambition into a project",
+          "ar": "حوّل الطموح إلى مشروع"
+        },
+        "lead": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "eyebrow": {
+          "fr": "",
+          "en": "",
+          "ar": ""
+        },
+        "layout": "bento",
+        "navTitle": {
+          "fr": "Votre choix",
+          "en": "Your choice",
+          "ar": "اختيارك"
+        },
+        "mediaIndex": 1,
+        "sourcePolicy": "Registered public projection or native public-visible field only",
+        "emptyPolicy": "Hide complete section and its navigation anchor"
+      }
+    ]
+  }
+]

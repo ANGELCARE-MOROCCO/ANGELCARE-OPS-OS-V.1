@@ -3,7 +3,8 @@ import Link from "next/link";
 import { useState } from "react";
 import { ArrowUpRight, Check, Lightbulb, BookOpen } from "lucide-react";
 import type { CatalogLocale } from "../catalog-discovery/types";
-import { photo, tr, w } from "./content";
+import { tr, w } from "./content";
+import { storefrontPhoto } from "../storefront-immersive/editorial-media";
 import { routeFor } from "./contract";
 import s from "./education.module.css";
 export function EducationalDiscovery({
@@ -217,7 +218,7 @@ export function EducationalDiscovery({
           ))}
         </div>
         <div className={s.learningPanel}>
-          <img src={photo(topics[active].image)} alt="" loading="lazy" />
+          <img src={storefrontPhoto(world, topics[active].image)} alt="" loading="lazy" />
           <div>
             <BookOpen size={25} />
             <h3>{tr(topics[active].title, locale)}</h3>

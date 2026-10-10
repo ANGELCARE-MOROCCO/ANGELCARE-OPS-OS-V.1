@@ -15,6 +15,8 @@ export interface StudioBlockContract {
 const contract = (type: string, label: string, group: StudioBlockGroup, purpose: string, fields: string[], runtime: StudioBlockContract['runtime'] = 'native', extra: Partial<StudioBlockContract> = {}): StudioBlockContract => ({ type, label, group, purpose, fields, runtime, ...extra })
 
 export const ANGELCARE_STUDIO_BLOCK_CONTRACTS: readonly StudioBlockContract[] = [
+  contract('atomic_offer_group','Atomic · composition conditionnelle','layout','Colonnes de composants publics qui se réorganisent lorsque les sources sont absentes.',['content','layout','sourceDesign','responsive'],'native',{allowChildren:true}),
+  contract('atomic_offer_section','Atomic · composant conditionnel','interactive','Composant commercial alimenté uniquement par les projections publiques de l’offre courante.',['role','title','lead','eyebrow','bindingKey','fieldSections','fieldKeys','doctrineKeys','layout','relationKind','enableSelection','navTitle','mediaIndex','sourceDesign'],'native'),
   contract('ac_section','Section','layout','Section de page pleine largeur.',['content','backgroundColor','maxWidth','paddingYMobile','paddingYTablet','paddingYDesktop','sourceDesign'],'native',{allowChildren:true}),
   contract('ac_container','Conteneur','layout','Conteneur de largeur maîtrisée.',['content','maxWidth','paddingXMobile','paddingXTablet','paddingXDesktop','sourceDesign'],'native',{allowChildren:true}),
   contract('ac_columns','Colonnes','layout','Composition multi-colonnes responsive.',['content','columnsMobile','columnsTablet','columnsDesktop','gapMobile','gapTablet','gapDesktop','sourceDesign'],'native',{allowChildren:true}),

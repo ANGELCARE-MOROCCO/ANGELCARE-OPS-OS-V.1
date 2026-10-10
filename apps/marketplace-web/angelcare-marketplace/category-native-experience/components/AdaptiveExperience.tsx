@@ -1,3 +1,4 @@
+import {ConfiguratorPage} from '../../customer-experience/ConfiguratorPage'
 import { CATEGORY_NATIVE_EXPERIENCE_DESIGN } from '../registry'
 import { categoryNativeCopy } from '../content'
 import type { AdaptiveExperienceData } from '../types'
@@ -10,7 +11,7 @@ import { ExperienceHero } from './ExperienceHero'
 import { ExperienceTrustPanel } from './ExperienceTrustPanel'
 import styles from '../experience.module.css'
 import { WalletBenefitTeaser } from '../../customer-commerce/components/WalletBenefitTeaser'
-export function CategoryNativeExperience({data,focusConfigurator=false,templateResolution=null}:{data:AdaptiveExperienceData;focusConfigurator?:boolean;templateResolution?:StudioResolvedTemplate|null}){const design=CATEGORY_NATIVE_EXPERIENCE_DESIGN[data.definition.family];const copy=categoryNativeCopy(data.locale);return <main className={styles.experience} dir={data.locale==='ar'?'rtl':'ltr'} data-theme={design.theme} data-family={data.definition.family} data-studio-template-status={templateResolution?.status||'UNRESOLVED'} data-studio-template-scope={templateResolution?.matchedScope||undefined} data-studio-template-key={templateResolution?.templateKey||undefined}>
+export function CategoryNativeExperience({data,focusConfigurator=false,templateResolution=null}:{data:AdaptiveExperienceData;focusConfigurator?:boolean;templateResolution?:StudioResolvedTemplate|null}){if(focusConfigurator)return <ConfiguratorPage data={data}/>;const design=CATEGORY_NATIVE_EXPERIENCE_DESIGN[data.definition.family];const copy=categoryNativeCopy(data.locale);return <main className={styles.experience} dir={data.locale==='ar'?'rtl':'ltr'} data-theme={design.theme} data-family={data.definition.family} data-studio-template-status={templateResolution?.status||'UNRESOLVED'} data-studio-template-scope={templateResolution?.matchedScope||undefined} data-studio-template-key={templateResolution?.templateKey||undefined}>
   <ExperienceHero data={data}/>
   <nav className={styles.anchorNav}><div><a href="#details">{copy.details}</a><a href="#journey">{copy.guidance}</a><a href="#configure">{copy.configuration}</a><a href="#trust">{copy.trust}</a></div></nav>
   <div className={styles.content}>

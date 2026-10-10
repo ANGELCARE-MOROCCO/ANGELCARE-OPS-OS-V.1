@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import Link from 'next/link'
+import Link from '@/angelcare-marketplace/navigation-care-orbit/CareOrbitLink'
 import { ArrowUpRight, ChevronLeft, HeartHandshake, LockKeyhole, Sparkles, WalletCards } from 'lucide-react'
 import type { CatalogLocale } from '../../catalog-discovery/types'
 import { CUSTOMER_LOGO, customerAuthHref, customerLocaleReturnTo, type CustomerAuthMode } from '../auth-navigation'

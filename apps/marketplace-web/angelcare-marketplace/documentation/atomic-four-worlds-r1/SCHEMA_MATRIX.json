@@ -1,0 +1,3787 @@
+[
+  {
+    "schemaKey": "flashcards-learning-product",
+    "domain": "b2c_product_digital",
+    "world": "product",
+    "conversionTemplate": "product_checkout",
+    "availabilityAuthority": "inventory",
+    "operationsHandover": "inventory_fulfillment",
+    "publicFields": [
+      {
+        "key": "name_fr",
+        "section": "identity",
+        "labelFr": "Nom français"
+      },
+      {
+        "key": "name_en",
+        "section": "identity",
+        "labelFr": "Nom anglais"
+      },
+      {
+        "key": "name_ar",
+        "section": "identity",
+        "labelFr": "Nom arabe"
+      },
+      {
+        "key": "short_description_fr",
+        "section": "content",
+        "labelFr": "Promesse commerciale"
+      },
+      {
+        "key": "description_fr",
+        "section": "content",
+        "labelFr": "Description complète"
+      },
+      {
+        "key": "primary_image_reference",
+        "section": "media",
+        "labelFr": "Image principale"
+      },
+      {
+        "key": "gallery_references",
+        "section": "media",
+        "labelFr": "Galerie média"
+      },
+      {
+        "key": "price_mode",
+        "section": "pricing",
+        "labelFr": "Mode de prix"
+      },
+      {
+        "key": "price_amount",
+        "section": "pricing",
+        "labelFr": "Prix en Dh"
+      },
+      {
+        "key": "territory_codes",
+        "section": "availability",
+        "labelFr": "Territoires"
+      },
+      {
+        "key": "stock_quantity",
+        "section": "availability",
+        "labelFr": "Stock disponible"
+      },
+      {
+        "key": "learning_theme",
+        "section": "learning",
+        "labelFr": "Thème pédagogique"
+      },
+      {
+        "key": "learning_objectives",
+        "section": "learning",
+        "labelFr": "Objectifs pédagogiques"
+      },
+      {
+        "key": "age_min",
+        "section": "audience",
+        "labelFr": "Âge minimum"
+      },
+      {
+        "key": "age_max",
+        "section": "audience",
+        "labelFr": "Âge maximum"
+      },
+      {
+        "key": "level",
+        "section": "audience",
+        "labelFr": "Niveau"
+      },
+      {
+        "key": "language",
+        "section": "learning",
+        "labelFr": "Langue principale"
+      },
+      {
+        "key": "number_of_cards",
+        "section": "specifications",
+        "labelFr": "Nombre de cartes"
+      },
+      {
+        "key": "card_width_cm",
+        "section": "specifications",
+        "labelFr": "Largeur carte (cm)"
+      },
+      {
+        "key": "card_height_cm",
+        "section": "specifications",
+        "labelFr": "Hauteur carte (cm)"
+      },
+      {
+        "key": "orientation",
+        "section": "specifications",
+        "labelFr": "Orientation"
+      },
+      {
+        "key": "material",
+        "section": "specifications",
+        "labelFr": "Matériau"
+      },
+      {
+        "key": "finish",
+        "section": "specifications",
+        "labelFr": "Finition"
+      },
+      {
+        "key": "primary_color",
+        "section": "variants",
+        "labelFr": "Couleur principale"
+      },
+      {
+        "key": "variant_languages",
+        "section": "variants",
+        "labelFr": "Variantes de langue"
+      },
+      {
+        "key": "variant_colors",
+        "section": "variants",
+        "labelFr": "Variantes couleur"
+      },
+      {
+        "key": "box_dimensions",
+        "section": "packaging",
+        "labelFr": "Dimensions boîte"
+      },
+      {
+        "key": "weight_grams",
+        "section": "packaging",
+        "labelFr": "Poids (g)"
+      },
+      {
+        "key": "included_guide",
+        "section": "contents",
+        "labelFr": "Guide inclus"
+      },
+      {
+        "key": "activity_suggestions",
+        "section": "contents",
+        "labelFr": "Suggestions d’activités"
+      },
+      {
+        "key": "competency_domains",
+        "section": "learning",
+        "labelFr": "Compétences visées"
+      },
+      {
+        "key": "replacement_cards_available",
+        "section": "after_sales",
+        "labelFr": "Cartes de remplacement"
+      }
+    ]
+  },
+  {
+    "schemaKey": "montessori-development-kit",
+    "domain": "b2c_product_digital",
+    "world": "product",
+    "conversionTemplate": "product_checkout",
+    "availabilityAuthority": "inventory",
+    "operationsHandover": "inventory_fulfillment",
+    "publicFields": [
+      {
+        "key": "name_fr",
+        "section": "identity",
+        "labelFr": "Nom français"
+      },
+      {
+        "key": "name_en",
+        "section": "identity",
+        "labelFr": "Nom anglais"
+      },
+      {
+        "key": "name_ar",
+        "section": "identity",
+        "labelFr": "Nom arabe"
+      },
+      {
+        "key": "short_description_fr",
+        "section": "content",
+        "labelFr": "Promesse commerciale"
+      },
+      {
+        "key": "description_fr",
+        "section": "content",
+        "labelFr": "Description complète"
+      },
+      {
+        "key": "primary_image_reference",
+        "section": "media",
+        "labelFr": "Image principale"
+      },
+      {
+        "key": "gallery_references",
+        "section": "media",
+        "labelFr": "Galerie média"
+      },
+      {
+        "key": "price_mode",
+        "section": "pricing",
+        "labelFr": "Mode de prix"
+      },
+      {
+        "key": "price_amount",
+        "section": "pricing",
+        "labelFr": "Prix en Dh"
+      },
+      {
+        "key": "territory_codes",
+        "section": "availability",
+        "labelFr": "Territoires"
+      },
+      {
+        "key": "stock_quantity",
+        "section": "availability",
+        "labelFr": "Stock disponible"
+      },
+      {
+        "key": "kit_type",
+        "section": "learning",
+        "labelFr": "Type de kit"
+      },
+      {
+        "key": "learning_domains",
+        "section": "learning",
+        "labelFr": "Domaines pédagogiques"
+      },
+      {
+        "key": "components",
+        "section": "contents",
+        "labelFr": "Composants du kit"
+      },
+      {
+        "key": "difficulty",
+        "section": "audience",
+        "labelFr": "Difficulté"
+      },
+      {
+        "key": "age_min",
+        "section": "audience",
+        "labelFr": "Âge minimum"
+      },
+      {
+        "key": "age_max",
+        "section": "audience",
+        "labelFr": "Âge maximum"
+      },
+      {
+        "key": "supervision_level",
+        "section": "safety",
+        "labelFr": "Niveau de supervision"
+      },
+      {
+        "key": "materials",
+        "section": "specifications",
+        "labelFr": "Matériaux"
+      },
+      {
+        "key": "storage_solution",
+        "section": "packaging",
+        "labelFr": "Solution de rangement"
+      },
+      {
+        "key": "activity_guide_reference",
+        "section": "contents",
+        "labelFr": "Guide d’activités"
+      },
+      {
+        "key": "replacement_components",
+        "section": "after_sales",
+        "labelFr": "Composants remplaçables"
+      },
+      {
+        "key": "refill_options",
+        "section": "after_sales",
+        "labelFr": "Options de recharge"
+      },
+      {
+        "key": "variant_sizes",
+        "section": "variants",
+        "labelFr": "Tailles de kit"
+      },
+      {
+        "key": "variant_themes",
+        "section": "variants",
+        "labelFr": "Thèmes"
+      }
+    ]
+  },
+  {
+    "schemaKey": "development-game",
+    "domain": "b2c_product_digital",
+    "world": "product",
+    "conversionTemplate": "product_checkout",
+    "availabilityAuthority": "inventory",
+    "operationsHandover": "inventory_fulfillment",
+    "publicFields": [
+      {
+        "key": "name_fr",
+        "section": "identity",
+        "labelFr": "Nom français"
+      },
+      {
+        "key": "name_en",
+        "section": "identity",
+        "labelFr": "Nom anglais"
+      },
+      {
+        "key": "name_ar",
+        "section": "identity",
+        "labelFr": "Nom arabe"
+      },
+      {
+        "key": "short_description_fr",
+        "section": "content",
+        "labelFr": "Promesse commerciale"
+      },
+      {
+        "key": "description_fr",
+        "section": "content",
+        "labelFr": "Description complète"
+      },
+      {
+        "key": "primary_image_reference",
+        "section": "media",
+        "labelFr": "Image principale"
+      },
+      {
+        "key": "gallery_references",
+        "section": "media",
+        "labelFr": "Galerie média"
+      },
+      {
+        "key": "price_mode",
+        "section": "pricing",
+        "labelFr": "Mode de prix"
+      },
+      {
+        "key": "price_amount",
+        "section": "pricing",
+        "labelFr": "Prix en Dh"
+      },
+      {
+        "key": "territory_codes",
+        "section": "availability",
+        "labelFr": "Territoires"
+      },
+      {
+        "key": "stock_quantity",
+        "section": "availability",
+        "labelFr": "Stock disponible"
+      },
+      {
+        "key": "competency_areas",
+        "section": "learning",
+        "labelFr": "Compétences développées"
+      },
+      {
+        "key": "players_min",
+        "section": "usage",
+        "labelFr": "Joueurs minimum"
+      },
+      {
+        "key": "players_max",
+        "section": "usage",
+        "labelFr": "Joueurs maximum"
+      },
+      {
+        "key": "play_duration_minutes",
+        "section": "usage",
+        "labelFr": "Durée de jeu"
+      },
+      {
+        "key": "indoor_outdoor",
+        "section": "usage",
+        "labelFr": "Environnement"
+      },
+      {
+        "key": "assembly_required",
+        "section": "usage",
+        "labelFr": "Assemblage requis"
+      },
+      {
+        "key": "rules_reference",
+        "section": "contents",
+        "labelFr": "Règles du jeu"
+      },
+      {
+        "key": "language_dependency",
+        "section": "learning",
+        "labelFr": "Dépendance linguistique"
+      },
+      {
+        "key": "accessibility_notes",
+        "section": "accessibility",
+        "labelFr": "Accessibilité"
+      }
+    ]
+  },
+  {
+    "schemaKey": "activity-subscription-box",
+    "domain": "b2c_product_digital",
+    "world": "product",
+    "conversionTemplate": "subscription_checkout",
+    "availabilityAuthority": "inventory_calendar",
+    "operationsHandover": "inventory_subscription_fulfillment",
+    "publicFields": [
+      {
+        "key": "name_fr",
+        "section": "identity",
+        "labelFr": "Nom français"
+      },
+      {
+        "key": "name_en",
+        "section": "identity",
+        "labelFr": "Nom anglais"
+      },
+      {
+        "key": "name_ar",
+        "section": "identity",
+        "labelFr": "Nom arabe"
+      },
+      {
+        "key": "short_description_fr",
+        "section": "content",
+        "labelFr": "Promesse commerciale"
+      },
+      {
+        "key": "description_fr",
+        "section": "content",
+        "labelFr": "Description complète"
+      },
+      {
+        "key": "primary_image_reference",
+        "section": "media",
+        "labelFr": "Image principale"
+      },
+      {
+        "key": "gallery_references",
+        "section": "media",
+        "labelFr": "Galerie média"
+      },
+      {
+        "key": "price_mode",
+        "section": "pricing",
+        "labelFr": "Mode de prix"
+      },
+      {
+        "key": "price_amount",
+        "section": "pricing",
+        "labelFr": "Prix en Dh"
+      },
+      {
+        "key": "territory_codes",
+        "section": "availability",
+        "labelFr": "Territoires"
+      },
+      {
+        "key": "stock_quantity",
+        "section": "availability",
+        "labelFr": "Stock disponible"
+      },
+      {
+        "key": "box_theme",
+        "section": "contents",
+        "labelFr": "Thème de la box"
+      },
+      {
+        "key": "activity_count",
+        "section": "contents",
+        "labelFr": "Nombre d’activités"
+      },
+      {
+        "key": "subscription_frequencies",
+        "section": "subscription",
+        "labelFr": "Fréquences"
+      },
+      {
+        "key": "subscription_duration_months",
+        "section": "subscription",
+        "labelFr": "Durées disponibles"
+      },
+      {
+        "key": "child_age_bands",
+        "section": "audience",
+        "labelFr": "Tranches d’âge"
+      },
+      {
+        "key": "sibling_option",
+        "section": "configuration",
+        "labelFr": "Option fratrie"
+      },
+      {
+        "key": "personalization_options",
+        "section": "configuration",
+        "labelFr": "Personnalisation"
+      },
+      {
+        "key": "monthly_theme_calendar",
+        "section": "subscription",
+        "labelFr": "Calendrier des thèmes"
+      },
+      {
+        "key": "pause_skip_rules",
+        "section": "subscription",
+        "labelFr": "Règles pause / saut"
+      }
+    ]
+  },
+  {
+    "schemaKey": "digital-learning-resource",
+    "domain": "b2c_product_digital",
+    "world": "product",
+    "conversionTemplate": "digital_checkout",
+    "availabilityAuthority": "digital_entitlement",
+    "operationsHandover": "digital_fulfillment",
+    "publicFields": [
+      {
+        "key": "name_fr",
+        "section": "identity",
+        "labelFr": "Nom français"
+      },
+      {
+        "key": "name_en",
+        "section": "identity",
+        "labelFr": "Nom anglais"
+      },
+      {
+        "key": "name_ar",
+        "section": "identity",
+        "labelFr": "Nom arabe"
+      },
+      {
+        "key": "short_description_fr",
+        "section": "content",
+        "labelFr": "Promesse commerciale"
+      },
+      {
+        "key": "description_fr",
+        "section": "content",
+        "labelFr": "Description complète"
+      },
+      {
+        "key": "primary_image_reference",
+        "section": "media",
+        "labelFr": "Image principale"
+      },
+      {
+        "key": "gallery_references",
+        "section": "media",
+        "labelFr": "Galerie média"
+      },
+      {
+        "key": "price_mode",
+        "section": "pricing",
+        "labelFr": "Mode de prix"
+      },
+      {
+        "key": "price_amount",
+        "section": "pricing",
+        "labelFr": "Prix en Dh"
+      },
+      {
+        "key": "territory_codes",
+        "section": "availability",
+        "labelFr": "Territoires"
+      },
+      {
+        "key": "stock_quantity",
+        "section": "availability",
+        "labelFr": "Stock disponible"
+      },
+      {
+        "key": "resource_type",
+        "section": "digital",
+        "labelFr": "Type de ressource"
+      },
+      {
+        "key": "file_formats",
+        "section": "digital",
+        "labelFr": "Formats de fichier"
+      },
+      {
+        "key": "license_type",
+        "section": "license",
+        "labelFr": "Type de licence"
+      },
+      {
+        "key": "download_limit",
+        "section": "license",
+        "labelFr": "Limite téléchargements"
+      },
+      {
+        "key": "access_duration_days",
+        "section": "license",
+        "labelFr": "Durée d’accès (jours)"
+      },
+      {
+        "key": "printing_instructions",
+        "section": "usage",
+        "labelFr": "Instructions impression"
+      },
+      {
+        "key": "update_eligibility",
+        "section": "license",
+        "labelFr": "Mises à jour incluses"
+      },
+      {
+        "key": "digital_preview_reference",
+        "section": "media",
+        "labelFr": "Aperçu digital"
+      }
+    ]
+  },
+  {
+    "schemaKey": "home-childcare-one-time",
+    "domain": "b2c_service_family",
+    "world": "service",
+    "conversionTemplate": "service_booking",
+    "availabilityAuthority": "provider_capacity",
+    "operationsHandover": "family_provider_mission",
+    "publicFields": [
+      {
+        "key": "name_fr",
+        "section": "identity",
+        "labelFr": "Nom français"
+      },
+      {
+        "key": "name_en",
+        "section": "identity",
+        "labelFr": "Nom anglais"
+      },
+      {
+        "key": "name_ar",
+        "section": "identity",
+        "labelFr": "Nom arabe"
+      },
+      {
+        "key": "short_description_fr",
+        "section": "content",
+        "labelFr": "Promesse de service"
+      },
+      {
+        "key": "description_fr",
+        "section": "content",
+        "labelFr": "Description complète"
+      },
+      {
+        "key": "primary_image_reference",
+        "section": "media",
+        "labelFr": "Image principale"
+      },
+      {
+        "key": "gallery_references",
+        "section": "media",
+        "labelFr": "Galerie"
+      },
+      {
+        "key": "territory_codes",
+        "section": "coverage",
+        "labelFr": "Territoires servis"
+      },
+      {
+        "key": "price_mode",
+        "section": "pricing",
+        "labelFr": "Mode de tarification"
+      },
+      {
+        "key": "price_amount",
+        "section": "pricing",
+        "labelFr": "Prix de référence en Dh"
+      },
+      {
+        "key": "minimum_lead_time_hours",
+        "section": "availability",
+        "labelFr": "Préavis minimum (heures)"
+      },
+      {
+        "key": "available_days",
+        "section": "availability",
+        "labelFr": "Jours disponibles"
+      },
+      {
+        "key": "available_time_windows",
+        "section": "availability",
+        "labelFr": "Plages horaires"
+      },
+      {
+        "key": "age_min",
+        "section": "eligibility",
+        "labelFr": "Âge minimum"
+      },
+      {
+        "key": "age_max",
+        "section": "eligibility",
+        "labelFr": "Âge maximum"
+      },
+      {
+        "key": "children_min",
+        "section": "eligibility",
+        "labelFr": "Nombre minimum d’enfants"
+      },
+      {
+        "key": "children_max",
+        "section": "eligibility",
+        "labelFr": "Nombre maximum d’enfants"
+      },
+      {
+        "key": "minimum_duration_hours",
+        "section": "schedule",
+        "labelFr": "Durée minimum (heures)"
+      },
+      {
+        "key": "maximum_duration_hours",
+        "section": "schedule",
+        "labelFr": "Durée maximum (heures)"
+      },
+      {
+        "key": "additional_child_price_dh",
+        "section": "pricing",
+        "labelFr": "Supplément par enfant"
+      },
+      {
+        "key": "same_day_enabled",
+        "section": "availability",
+        "labelFr": "Réservation le jour même"
+      },
+      {
+        "key": "caregiver_language_options",
+        "section": "matching",
+        "labelFr": "Langues caregiver"
+      },
+      {
+        "key": "activity_options",
+        "section": "configuration",
+        "labelFr": "Activités proposées"
+      },
+      {
+        "key": "meal_support_enabled",
+        "section": "configuration",
+        "labelFr": "Assistance repas"
+      },
+      {
+        "key": "bedtime_support_enabled",
+        "section": "configuration",
+        "labelFr": "Routine coucher"
+      },
+      {
+        "key": "schoolwork_support_enabled",
+        "section": "configuration",
+        "labelFr": "Aide devoirs"
+      },
+      {
+        "key": "cancellation_policy_key",
+        "section": "policy",
+        "labelFr": "Politique d’annulation"
+      }
+    ]
+  },
+  {
+    "schemaKey": "home-childcare-recurring",
+    "domain": "b2c_service_family",
+    "world": "service",
+    "conversionTemplate": "recurring_booking",
+    "availabilityAuthority": "provider_capacity",
+    "operationsHandover": "family_provider_recurring_mission",
+    "publicFields": [
+      {
+        "key": "name_fr",
+        "section": "identity",
+        "labelFr": "Nom français"
+      },
+      {
+        "key": "name_en",
+        "section": "identity",
+        "labelFr": "Nom anglais"
+      },
+      {
+        "key": "name_ar",
+        "section": "identity",
+        "labelFr": "Nom arabe"
+      },
+      {
+        "key": "short_description_fr",
+        "section": "content",
+        "labelFr": "Promesse de service"
+      },
+      {
+        "key": "description_fr",
+        "section": "content",
+        "labelFr": "Description complète"
+      },
+      {
+        "key": "primary_image_reference",
+        "section": "media",
+        "labelFr": "Image principale"
+      },
+      {
+        "key": "gallery_references",
+        "section": "media",
+        "labelFr": "Galerie"
+      },
+      {
+        "key": "territory_codes",
+        "section": "coverage",
+        "labelFr": "Territoires servis"
+      },
+      {
+        "key": "price_mode",
+        "section": "pricing",
+        "labelFr": "Mode de tarification"
+      },
+      {
+        "key": "price_amount",
+        "section": "pricing",
+        "labelFr": "Prix de référence en Dh"
+      },
+      {
+        "key": "minimum_lead_time_hours",
+        "section": "availability",
+        "labelFr": "Préavis minimum (heures)"
+      },
+      {
+        "key": "available_days",
+        "section": "availability",
+        "labelFr": "Jours disponibles"
+      },
+      {
+        "key": "available_time_windows",
+        "section": "availability",
+        "labelFr": "Plages horaires"
+      },
+      {
+        "key": "age_min",
+        "section": "eligibility",
+        "labelFr": "Âge minimum"
+      },
+      {
+        "key": "age_max",
+        "section": "eligibility",
+        "labelFr": "Âge maximum"
+      },
+      {
+        "key": "children_min",
+        "section": "eligibility",
+        "labelFr": "Nombre minimum d’enfants"
+      },
+      {
+        "key": "children_max",
+        "section": "eligibility",
+        "labelFr": "Nombre maximum d’enfants"
+      },
+      {
+        "key": "minimum_duration_hours",
+        "section": "schedule",
+        "labelFr": "Durée minimum (heures)"
+      },
+      {
+        "key": "maximum_duration_hours",
+        "section": "schedule",
+        "labelFr": "Durée maximum (heures)"
+      },
+      {
+        "key": "additional_child_price_dh",
+        "section": "pricing",
+        "labelFr": "Supplément par enfant"
+      },
+      {
+        "key": "same_day_enabled",
+        "section": "availability",
+        "labelFr": "Réservation le jour même"
+      },
+      {
+        "key": "caregiver_language_options",
+        "section": "matching",
+        "labelFr": "Langues caregiver"
+      },
+      {
+        "key": "activity_options",
+        "section": "configuration",
+        "labelFr": "Activités proposées"
+      },
+      {
+        "key": "meal_support_enabled",
+        "section": "configuration",
+        "labelFr": "Assistance repas"
+      },
+      {
+        "key": "bedtime_support_enabled",
+        "section": "configuration",
+        "labelFr": "Routine coucher"
+      },
+      {
+        "key": "schoolwork_support_enabled",
+        "section": "configuration",
+        "labelFr": "Aide devoirs"
+      },
+      {
+        "key": "cancellation_policy_key",
+        "section": "policy",
+        "labelFr": "Politique d’annulation"
+      },
+      {
+        "key": "recurrence_types",
+        "section": "recurrence",
+        "labelFr": "Récurrences autorisées"
+      },
+      {
+        "key": "minimum_commitment_weeks",
+        "section": "recurrence",
+        "labelFr": "Engagement minimum (semaines)"
+      },
+      {
+        "key": "monthly_included_hours",
+        "section": "recurrence",
+        "labelFr": "Heures mensuelles incluses"
+      },
+      {
+        "key": "pause_enabled",
+        "section": "recurrence",
+        "labelFr": "Pause autorisée"
+      },
+      {
+        "key": "schedule_change_limit",
+        "section": "recurrence",
+        "labelFr": "Modifications par mois"
+      },
+      {
+        "key": "provider_continuity_preference",
+        "section": "matching",
+        "labelFr": "Continuité caregiver"
+      },
+      {
+        "key": "substitute_provider_policy",
+        "section": "matching",
+        "labelFr": "Politique remplaçant"
+      }
+    ]
+  },
+  {
+    "schemaKey": "school-pickup-care",
+    "domain": "b2c_service_family",
+    "world": "service",
+    "conversionTemplate": "route_booking",
+    "availabilityAuthority": "route_provider_capacity",
+    "operationsHandover": "family_transport_dispatch",
+    "publicFields": [
+      {
+        "key": "name_fr",
+        "section": "identity",
+        "labelFr": "Nom français"
+      },
+      {
+        "key": "name_en",
+        "section": "identity",
+        "labelFr": "Nom anglais"
+      },
+      {
+        "key": "name_ar",
+        "section": "identity",
+        "labelFr": "Nom arabe"
+      },
+      {
+        "key": "short_description_fr",
+        "section": "content",
+        "labelFr": "Promesse de service"
+      },
+      {
+        "key": "description_fr",
+        "section": "content",
+        "labelFr": "Description complète"
+      },
+      {
+        "key": "primary_image_reference",
+        "section": "media",
+        "labelFr": "Image principale"
+      },
+      {
+        "key": "gallery_references",
+        "section": "media",
+        "labelFr": "Galerie"
+      },
+      {
+        "key": "territory_codes",
+        "section": "coverage",
+        "labelFr": "Territoires servis"
+      },
+      {
+        "key": "price_mode",
+        "section": "pricing",
+        "labelFr": "Mode de tarification"
+      },
+      {
+        "key": "price_amount",
+        "section": "pricing",
+        "labelFr": "Prix de référence en Dh"
+      },
+      {
+        "key": "minimum_lead_time_hours",
+        "section": "availability",
+        "labelFr": "Préavis minimum (heures)"
+      },
+      {
+        "key": "available_days",
+        "section": "availability",
+        "labelFr": "Jours disponibles"
+      },
+      {
+        "key": "available_time_windows",
+        "section": "availability",
+        "labelFr": "Plages horaires"
+      },
+      {
+        "key": "school_codes",
+        "section": "pickup",
+        "labelFr": "Écoles couvertes"
+      },
+      {
+        "key": "pickup_windows",
+        "section": "pickup",
+        "labelFr": "Plages de sortie"
+      },
+      {
+        "key": "transport_enabled",
+        "section": "transport",
+        "labelFr": "Transport disponible"
+      },
+      {
+        "key": "home_supervision_enabled",
+        "section": "aftercare",
+        "labelFr": "Supervision à domicile"
+      },
+      {
+        "key": "homework_support_enabled",
+        "section": "aftercare",
+        "labelFr": "Aide aux devoirs"
+      },
+      {
+        "key": "authorized_pickup_protocol",
+        "section": "safety",
+        "labelFr": "Protocole personne autorisée"
+      },
+      {
+        "key": "handover_proof_type",
+        "section": "safety",
+        "labelFr": "Preuve de remise"
+      },
+      {
+        "key": "route_authority",
+        "section": "transport",
+        "labelFr": "Autorité itinéraire"
+      },
+      {
+        "key": "lateness_policy",
+        "section": "exceptions",
+        "labelFr": "Gestion retard"
+      },
+      {
+        "key": "backup_transport_rule",
+        "section": "exceptions",
+        "labelFr": "Solution transport de secours"
+      }
+    ]
+  },
+  {
+    "schemaKey": "overnight-extended-care",
+    "domain": "b2c_service_family",
+    "world": "service",
+    "conversionTemplate": "service_request",
+    "availabilityAuthority": "reviewed_provider_capacity",
+    "operationsHandover": "family_provider_mission",
+    "publicFields": [
+      {
+        "key": "name_fr",
+        "section": "identity",
+        "labelFr": "Nom français"
+      },
+      {
+        "key": "name_en",
+        "section": "identity",
+        "labelFr": "Nom anglais"
+      },
+      {
+        "key": "name_ar",
+        "section": "identity",
+        "labelFr": "Nom arabe"
+      },
+      {
+        "key": "short_description_fr",
+        "section": "content",
+        "labelFr": "Promesse de service"
+      },
+      {
+        "key": "description_fr",
+        "section": "content",
+        "labelFr": "Description complète"
+      },
+      {
+        "key": "primary_image_reference",
+        "section": "media",
+        "labelFr": "Image principale"
+      },
+      {
+        "key": "gallery_references",
+        "section": "media",
+        "labelFr": "Galerie"
+      },
+      {
+        "key": "territory_codes",
+        "section": "coverage",
+        "labelFr": "Territoires servis"
+      },
+      {
+        "key": "price_mode",
+        "section": "pricing",
+        "labelFr": "Mode de tarification"
+      },
+      {
+        "key": "price_amount",
+        "section": "pricing",
+        "labelFr": "Prix de référence en Dh"
+      },
+      {
+        "key": "minimum_lead_time_hours",
+        "section": "availability",
+        "labelFr": "Préavis minimum (heures)"
+      },
+      {
+        "key": "available_days",
+        "section": "availability",
+        "labelFr": "Jours disponibles"
+      },
+      {
+        "key": "available_time_windows",
+        "section": "availability",
+        "labelFr": "Plages horaires"
+      },
+      {
+        "key": "age_min",
+        "section": "eligibility",
+        "labelFr": "Âge minimum"
+      },
+      {
+        "key": "maximum_continuous_hours",
+        "section": "schedule",
+        "labelFr": "Durée continue maximale"
+      },
+      {
+        "key": "sleeping_arrangement_requirements",
+        "section": "safety",
+        "labelFr": "Exigences couchage caregiver"
+      },
+      {
+        "key": "bedtime_support",
+        "section": "configuration",
+        "labelFr": "Routine coucher"
+      },
+      {
+        "key": "morning_routine_support",
+        "section": "configuration",
+        "labelFr": "Routine matin"
+      },
+      {
+        "key": "school_dropoff_enabled",
+        "section": "transport",
+        "labelFr": "Dépôt école"
+      },
+      {
+        "key": "night_price_modifier",
+        "section": "pricing",
+        "labelFr": "Majoration nuit (%)"
+      },
+      {
+        "key": "enhanced_consent_required",
+        "section": "safety",
+        "labelFr": "Consentement renforcé"
+      }
+    ]
+  },
+  {
+    "schemaKey": "emergency-last-minute-care",
+    "domain": "b2c_service_family",
+    "world": "service",
+    "conversionTemplate": "urgent_request",
+    "availabilityAuthority": "urgent_provider_capacity",
+    "operationsHandover": "family_provider_urgent_pool",
+    "publicFields": [
+      {
+        "key": "name_fr",
+        "section": "identity",
+        "labelFr": "Nom français"
+      },
+      {
+        "key": "name_en",
+        "section": "identity",
+        "labelFr": "Nom anglais"
+      },
+      {
+        "key": "name_ar",
+        "section": "identity",
+        "labelFr": "Nom arabe"
+      },
+      {
+        "key": "short_description_fr",
+        "section": "content",
+        "labelFr": "Promesse de service"
+      },
+      {
+        "key": "description_fr",
+        "section": "content",
+        "labelFr": "Description complète"
+      },
+      {
+        "key": "primary_image_reference",
+        "section": "media",
+        "labelFr": "Image principale"
+      },
+      {
+        "key": "gallery_references",
+        "section": "media",
+        "labelFr": "Galerie"
+      },
+      {
+        "key": "territory_codes",
+        "section": "coverage",
+        "labelFr": "Territoires servis"
+      },
+      {
+        "key": "price_mode",
+        "section": "pricing",
+        "labelFr": "Mode de tarification"
+      },
+      {
+        "key": "price_amount",
+        "section": "pricing",
+        "labelFr": "Prix de référence en Dh"
+      },
+      {
+        "key": "minimum_lead_time_hours",
+        "section": "availability",
+        "labelFr": "Préavis minimum (heures)"
+      },
+      {
+        "key": "available_days",
+        "section": "availability",
+        "labelFr": "Jours disponibles"
+      },
+      {
+        "key": "available_time_windows",
+        "section": "availability",
+        "labelFr": "Plages horaires"
+      },
+      {
+        "key": "maximum_lead_time_hours",
+        "section": "urgency",
+        "labelFr": "Besoin dans moins de (heures)"
+      },
+      {
+        "key": "urgent_provider_pool",
+        "section": "capacity",
+        "labelFr": "Pool urgent requis"
+      },
+      {
+        "key": "urgency_price_modifier",
+        "section": "pricing",
+        "labelFr": "Majoration urgence (%)"
+      },
+      {
+        "key": "rapid_confirmation_sla_minutes",
+        "section": "operations",
+        "labelFr": "SLA confirmation (minutes)"
+      },
+      {
+        "key": "request_expiration_minutes",
+        "section": "operations",
+        "labelFr": "Expiration demande (minutes)"
+      },
+      {
+        "key": "excluded_complexity_flags",
+        "section": "safety",
+        "labelFr": "Situations exclues en urgence"
+      }
+    ]
+  },
+  {
+    "schemaKey": "hotel-travel-childcare",
+    "domain": "b2c_service_family",
+    "world": "service",
+    "conversionTemplate": "hotel_service_request",
+    "availabilityAuthority": "hospitality_provider_capacity",
+    "operationsHandover": "hospitality_provider_mission",
+    "publicFields": [
+      {
+        "key": "name_fr",
+        "section": "identity",
+        "labelFr": "Nom français"
+      },
+      {
+        "key": "name_en",
+        "section": "identity",
+        "labelFr": "Nom anglais"
+      },
+      {
+        "key": "name_ar",
+        "section": "identity",
+        "labelFr": "Nom arabe"
+      },
+      {
+        "key": "short_description_fr",
+        "section": "content",
+        "labelFr": "Promesse de service"
+      },
+      {
+        "key": "description_fr",
+        "section": "content",
+        "labelFr": "Description complète"
+      },
+      {
+        "key": "primary_image_reference",
+        "section": "media",
+        "labelFr": "Image principale"
+      },
+      {
+        "key": "gallery_references",
+        "section": "media",
+        "labelFr": "Galerie"
+      },
+      {
+        "key": "territory_codes",
+        "section": "coverage",
+        "labelFr": "Territoires servis"
+      },
+      {
+        "key": "price_mode",
+        "section": "pricing",
+        "labelFr": "Mode de tarification"
+      },
+      {
+        "key": "price_amount",
+        "section": "pricing",
+        "labelFr": "Prix de référence en Dh"
+      },
+      {
+        "key": "minimum_lead_time_hours",
+        "section": "availability",
+        "labelFr": "Préavis minimum (heures)"
+      },
+      {
+        "key": "available_days",
+        "section": "availability",
+        "labelFr": "Jours disponibles"
+      },
+      {
+        "key": "available_time_windows",
+        "section": "availability",
+        "labelFr": "Plages horaires"
+      },
+      {
+        "key": "property_types",
+        "section": "venue",
+        "labelFr": "Types d’hébergement"
+      },
+      {
+        "key": "reservation_reference_required",
+        "section": "venue",
+        "labelFr": "Référence réservation requise"
+      },
+      {
+        "key": "room_access_policy",
+        "section": "safety",
+        "labelFr": "Politique accès chambre"
+      },
+      {
+        "key": "multilingual_provider_required",
+        "section": "matching",
+        "labelFr": "Caregiver multilingue"
+      },
+      {
+        "key": "hotel_billing_modes",
+        "section": "billing",
+        "labelFr": "Modes de facturation"
+      },
+      {
+        "key": "late_night_enabled",
+        "section": "schedule",
+        "labelFr": "Service tardif"
+      }
+    ]
+  },
+  {
+    "schemaKey": "events-group-childcare",
+    "domain": "b2c_service_family",
+    "world": "service",
+    "conversionTemplate": "b2b_quote",
+    "availabilityAuthority": "event_staffing_capacity",
+    "operationsHandover": "event_operations_programme",
+    "publicFields": [
+      {
+        "key": "name_fr",
+        "section": "identity",
+        "labelFr": "Nom français"
+      },
+      {
+        "key": "name_en",
+        "section": "identity",
+        "labelFr": "Nom anglais"
+      },
+      {
+        "key": "name_ar",
+        "section": "identity",
+        "labelFr": "Nom arabe"
+      },
+      {
+        "key": "short_description_fr",
+        "section": "content",
+        "labelFr": "Promesse de service"
+      },
+      {
+        "key": "description_fr",
+        "section": "content",
+        "labelFr": "Description complète"
+      },
+      {
+        "key": "primary_image_reference",
+        "section": "media",
+        "labelFr": "Image principale"
+      },
+      {
+        "key": "gallery_references",
+        "section": "media",
+        "labelFr": "Galerie"
+      },
+      {
+        "key": "territory_codes",
+        "section": "coverage",
+        "labelFr": "Territoires servis"
+      },
+      {
+        "key": "price_mode",
+        "section": "pricing",
+        "labelFr": "Mode de tarification"
+      },
+      {
+        "key": "price_amount",
+        "section": "pricing",
+        "labelFr": "Prix de référence en Dh"
+      },
+      {
+        "key": "minimum_lead_time_hours",
+        "section": "availability",
+        "labelFr": "Préavis minimum (heures)"
+      },
+      {
+        "key": "available_days",
+        "section": "availability",
+        "labelFr": "Jours disponibles"
+      },
+      {
+        "key": "available_time_windows",
+        "section": "availability",
+        "labelFr": "Plages horaires"
+      },
+      {
+        "key": "event_types",
+        "section": "event",
+        "labelFr": "Types d’événement"
+      },
+      {
+        "key": "children_capacity",
+        "section": "scope",
+        "labelFr": "Capacité enfants"
+      },
+      {
+        "key": "age_group_distribution",
+        "section": "scope",
+        "labelFr": "Répartition des âges"
+      },
+      {
+        "key": "staffing_ratio",
+        "section": "operations",
+        "labelFr": "Ratio encadrement"
+      },
+      {
+        "key": "activity_programme_options",
+        "section": "programme",
+        "labelFr": "Programmes d’activités"
+      },
+      {
+        "key": "space_requirements_m2",
+        "section": "venue",
+        "labelFr": "Surface minimum m²"
+      },
+      {
+        "key": "setup_teardown_required",
+        "section": "operations",
+        "labelFr": "Installation / démontage"
+      },
+      {
+        "key": "quotation_required",
+        "section": "pricing",
+        "labelFr": "Devis requis"
+      }
+    ]
+  },
+  {
+    "schemaKey": "holiday-excursion-programme",
+    "domain": "b2c_service_family",
+    "world": "service",
+    "conversionTemplate": "programme_booking",
+    "availabilityAuthority": "programme_capacity",
+    "operationsHandover": "programme_transport_operations",
+    "publicFields": [
+      {
+        "key": "name_fr",
+        "section": "identity",
+        "labelFr": "Nom du programme"
+      },
+      {
+        "key": "name_en",
+        "section": "identity",
+        "labelFr": "Nom anglais"
+      },
+      {
+        "key": "name_ar",
+        "section": "identity",
+        "labelFr": "Nom arabe"
+      },
+      {
+        "key": "short_description_fr",
+        "section": "content",
+        "labelFr": "Promesse programme"
+      },
+      {
+        "key": "description_fr",
+        "section": "content",
+        "labelFr": "Description complète"
+      },
+      {
+        "key": "primary_image_reference",
+        "section": "media",
+        "labelFr": "Visuel principal"
+      },
+      {
+        "key": "territory_codes",
+        "section": "coverage",
+        "labelFr": "Territoires"
+      },
+      {
+        "key": "pricing_mode",
+        "section": "pricing",
+        "labelFr": "Mode commercial"
+      },
+      {
+        "key": "starting_price_dh",
+        "section": "pricing",
+        "labelFr": "Prix de départ Dh"
+      },
+      {
+        "key": "implementation_lead_time_days",
+        "section": "delivery",
+        "labelFr": "Délai de mise en œuvre (jours)"
+      },
+      {
+        "key": "programme_start_date",
+        "section": "schedule",
+        "labelFr": "Date de début"
+      },
+      {
+        "key": "programme_end_date",
+        "section": "schedule",
+        "labelFr": "Date de fin"
+      },
+      {
+        "key": "meeting_point",
+        "section": "logistics",
+        "labelFr": "Point de rendez-vous"
+      },
+      {
+        "key": "transport_enabled",
+        "section": "logistics",
+        "labelFr": "Transport inclus"
+      },
+      {
+        "key": "capacity",
+        "section": "availability",
+        "labelFr": "Capacité"
+      },
+      {
+        "key": "age_min",
+        "section": "eligibility",
+        "labelFr": "Âge minimum"
+      },
+      {
+        "key": "age_max",
+        "section": "eligibility",
+        "labelFr": "Âge maximum"
+      },
+      {
+        "key": "meal_included",
+        "section": "programme",
+        "labelFr": "Repas inclus"
+      },
+      {
+        "key": "authorization_documents",
+        "section": "safety",
+        "labelFr": "Autorisations requises"
+      },
+      {
+        "key": "weather_policy",
+        "section": "exceptions",
+        "labelFr": "Politique météo"
+      },
+      {
+        "key": "waitlist_enabled",
+        "section": "availability",
+        "labelFr": "Liste d’attente"
+      }
+    ]
+  },
+  {
+    "schemaKey": "montessori-home-service",
+    "domain": "b2c_service_family",
+    "world": "service",
+    "conversionTemplate": "service_booking",
+    "availabilityAuthority": "certified_provider_capacity",
+    "operationsHandover": "family_provider_development_mission",
+    "publicFields": [
+      {
+        "key": "name_fr",
+        "section": "identity",
+        "labelFr": "Nom français"
+      },
+      {
+        "key": "name_en",
+        "section": "identity",
+        "labelFr": "Nom anglais"
+      },
+      {
+        "key": "name_ar",
+        "section": "identity",
+        "labelFr": "Nom arabe"
+      },
+      {
+        "key": "short_description_fr",
+        "section": "content",
+        "labelFr": "Promesse de service"
+      },
+      {
+        "key": "description_fr",
+        "section": "content",
+        "labelFr": "Description complète"
+      },
+      {
+        "key": "primary_image_reference",
+        "section": "media",
+        "labelFr": "Image principale"
+      },
+      {
+        "key": "gallery_references",
+        "section": "media",
+        "labelFr": "Galerie"
+      },
+      {
+        "key": "territory_codes",
+        "section": "coverage",
+        "labelFr": "Territoires servis"
+      },
+      {
+        "key": "price_mode",
+        "section": "pricing",
+        "labelFr": "Mode de tarification"
+      },
+      {
+        "key": "price_amount",
+        "section": "pricing",
+        "labelFr": "Prix de référence en Dh"
+      },
+      {
+        "key": "minimum_lead_time_hours",
+        "section": "availability",
+        "labelFr": "Préavis minimum (heures)"
+      },
+      {
+        "key": "available_days",
+        "section": "availability",
+        "labelFr": "Jours disponibles"
+      },
+      {
+        "key": "available_time_windows",
+        "section": "availability",
+        "labelFr": "Plages horaires"
+      },
+      {
+        "key": "age_min",
+        "section": "eligibility",
+        "labelFr": "Âge minimum"
+      },
+      {
+        "key": "age_max",
+        "section": "eligibility",
+        "labelFr": "Âge maximum"
+      },
+      {
+        "key": "development_domains",
+        "section": "learning",
+        "labelFr": "Domaines de développement"
+      },
+      {
+        "key": "session_objectives",
+        "section": "learning",
+        "labelFr": "Objectifs de séance"
+      },
+      {
+        "key": "material_requirements",
+        "section": "delivery",
+        "labelFr": "Matériel requis"
+      },
+      {
+        "key": "session_duration_minutes",
+        "section": "schedule",
+        "labelFr": "Durée séance (minutes)"
+      },
+      {
+        "key": "programme_length_sessions",
+        "section": "schedule",
+        "labelFr": "Nombre de séances"
+      },
+      {
+        "key": "parent_participation",
+        "section": "delivery",
+        "labelFr": "Participation parent"
+      },
+      {
+        "key": "provider_certification",
+        "section": "matching",
+        "labelFr": "Certification intervenant"
+      },
+      {
+        "key": "kit_included",
+        "section": "delivery",
+        "labelFr": "Kit inclus"
+      }
+    ]
+  },
+  {
+    "schemaKey": "learning-homework-support",
+    "domain": "b2c_service_family",
+    "world": "service",
+    "conversionTemplate": "service_booking",
+    "availabilityAuthority": "tutor_capacity",
+    "operationsHandover": "family_tutor_mission",
+    "publicFields": [
+      {
+        "key": "name_fr",
+        "section": "identity",
+        "labelFr": "Nom français"
+      },
+      {
+        "key": "name_en",
+        "section": "identity",
+        "labelFr": "Nom anglais"
+      },
+      {
+        "key": "name_ar",
+        "section": "identity",
+        "labelFr": "Nom arabe"
+      },
+      {
+        "key": "short_description_fr",
+        "section": "content",
+        "labelFr": "Promesse de service"
+      },
+      {
+        "key": "description_fr",
+        "section": "content",
+        "labelFr": "Description complète"
+      },
+      {
+        "key": "primary_image_reference",
+        "section": "media",
+        "labelFr": "Image principale"
+      },
+      {
+        "key": "gallery_references",
+        "section": "media",
+        "labelFr": "Galerie"
+      },
+      {
+        "key": "territory_codes",
+        "section": "coverage",
+        "labelFr": "Territoires servis"
+      },
+      {
+        "key": "price_mode",
+        "section": "pricing",
+        "labelFr": "Mode de tarification"
+      },
+      {
+        "key": "price_amount",
+        "section": "pricing",
+        "labelFr": "Prix de référence en Dh"
+      },
+      {
+        "key": "minimum_lead_time_hours",
+        "section": "availability",
+        "labelFr": "Préavis minimum (heures)"
+      },
+      {
+        "key": "available_days",
+        "section": "availability",
+        "labelFr": "Jours disponibles"
+      },
+      {
+        "key": "available_time_windows",
+        "section": "availability",
+        "labelFr": "Plages horaires"
+      },
+      {
+        "key": "school_levels",
+        "section": "learning",
+        "labelFr": "Niveaux scolaires"
+      },
+      {
+        "key": "subjects",
+        "section": "learning",
+        "labelFr": "Matières"
+      },
+      {
+        "key": "curriculum",
+        "section": "learning",
+        "labelFr": "Programme scolaire"
+      },
+      {
+        "key": "delivery_modes",
+        "section": "delivery",
+        "labelFr": "Modes de séance"
+      },
+      {
+        "key": "session_duration_minutes",
+        "section": "schedule",
+        "labelFr": "Durée séance"
+      },
+      {
+        "key": "progress_report_enabled",
+        "section": "reporting",
+        "labelFr": "Compte rendu parent"
+      },
+      {
+        "key": "tutor_qualification",
+        "section": "matching",
+        "labelFr": "Qualification intervenant"
+      }
+    ]
+  },
+  {
+    "schemaKey": "non-medical-support-service",
+    "domain": "b2c_service_family",
+    "world": "service",
+    "conversionTemplate": "suitability_request",
+    "availabilityAuthority": "reviewed_provider_capacity",
+    "operationsHandover": "family_specialized_provider_mission",
+    "publicFields": [
+      {
+        "key": "name_fr",
+        "section": "identity",
+        "labelFr": "Nom français"
+      },
+      {
+        "key": "name_en",
+        "section": "identity",
+        "labelFr": "Nom anglais"
+      },
+      {
+        "key": "name_ar",
+        "section": "identity",
+        "labelFr": "Nom arabe"
+      },
+      {
+        "key": "short_description_fr",
+        "section": "content",
+        "labelFr": "Promesse de service"
+      },
+      {
+        "key": "description_fr",
+        "section": "content",
+        "labelFr": "Description complète"
+      },
+      {
+        "key": "primary_image_reference",
+        "section": "media",
+        "labelFr": "Image principale"
+      },
+      {
+        "key": "gallery_references",
+        "section": "media",
+        "labelFr": "Galerie"
+      },
+      {
+        "key": "territory_codes",
+        "section": "coverage",
+        "labelFr": "Territoires servis"
+      },
+      {
+        "key": "price_mode",
+        "section": "pricing",
+        "labelFr": "Mode de tarification"
+      },
+      {
+        "key": "price_amount",
+        "section": "pricing",
+        "labelFr": "Prix de référence en Dh"
+      },
+      {
+        "key": "minimum_lead_time_hours",
+        "section": "availability",
+        "labelFr": "Préavis minimum (heures)"
+      },
+      {
+        "key": "available_days",
+        "section": "availability",
+        "labelFr": "Jours disponibles"
+      },
+      {
+        "key": "available_time_windows",
+        "section": "availability",
+        "labelFr": "Plages horaires"
+      },
+      {
+        "key": "supported_accommodations",
+        "section": "support",
+        "labelFr": "Aménagements supportés"
+      },
+      {
+        "key": "non_medical_boundary",
+        "section": "safety",
+        "labelFr": "Limite non médicale"
+      },
+      {
+        "key": "excluded_medical_actions",
+        "section": "safety",
+        "labelFr": "Actes médicaux exclus"
+      },
+      {
+        "key": "provider_training_requirements",
+        "section": "matching",
+        "labelFr": "Formation intervenant"
+      },
+      {
+        "key": "suitability_review_conditions",
+        "section": "eligibility",
+        "labelFr": "Conditions d’adéquation"
+      },
+      {
+        "key": "supporting_documents_allowed",
+        "section": "configuration",
+        "labelFr": "Documents facultatifs"
+      }
+    ]
+  },
+  {
+    "schemaKey": "preschool-admission",
+    "domain": "academy_admission",
+    "world": "academy",
+    "conversionTemplate": "admission_application",
+    "availabilityAuthority": "class_capacity",
+    "operationsHandover": "angelcare360_admissions",
+    "publicFields": [
+      {
+        "key": "name_fr",
+        "section": "identity",
+        "labelFr": "Nom du programme"
+      },
+      {
+        "key": "name_en",
+        "section": "identity",
+        "labelFr": "Nom anglais"
+      },
+      {
+        "key": "name_ar",
+        "section": "identity",
+        "labelFr": "Nom arabe"
+      },
+      {
+        "key": "short_description_fr",
+        "section": "content",
+        "labelFr": "Promesse programme"
+      },
+      {
+        "key": "description_fr",
+        "section": "content",
+        "labelFr": "Description complète"
+      },
+      {
+        "key": "primary_image_reference",
+        "section": "media",
+        "labelFr": "Visuel principal"
+      },
+      {
+        "key": "territory_codes",
+        "section": "coverage",
+        "labelFr": "Territoires"
+      },
+      {
+        "key": "pricing_mode",
+        "section": "pricing",
+        "labelFr": "Mode commercial"
+      },
+      {
+        "key": "starting_price_dh",
+        "section": "pricing",
+        "labelFr": "Prix de départ Dh"
+      },
+      {
+        "key": "implementation_lead_time_days",
+        "section": "delivery",
+        "labelFr": "Délai de mise en œuvre (jours)"
+      },
+      {
+        "key": "establishment_code",
+        "section": "establishment",
+        "labelFr": "Établissement"
+      },
+      {
+        "key": "campus_code",
+        "section": "establishment",
+        "labelFr": "Campus"
+      },
+      {
+        "key": "academic_year",
+        "section": "programme",
+        "labelFr": "Année scolaire"
+      },
+      {
+        "key": "intake_period",
+        "section": "programme",
+        "labelFr": "Période d’admission"
+      },
+      {
+        "key": "class_level",
+        "section": "programme",
+        "labelFr": "Niveau de classe"
+      },
+      {
+        "key": "age_min",
+        "section": "eligibility",
+        "labelFr": "Âge minimum"
+      },
+      {
+        "key": "age_max",
+        "section": "eligibility",
+        "labelFr": "Âge maximum"
+      },
+      {
+        "key": "capacity",
+        "section": "availability",
+        "labelFr": "Places disponibles"
+      },
+      {
+        "key": "registration_fee_dh",
+        "section": "pricing",
+        "labelFr": "Frais d’inscription"
+      },
+      {
+        "key": "tuition_display",
+        "section": "pricing",
+        "labelFr": "Scolarité"
+      },
+      {
+        "key": "meal_option",
+        "section": "options",
+        "labelFr": "Option repas"
+      },
+      {
+        "key": "transport_option",
+        "section": "options",
+        "labelFr": "Option transport"
+      },
+      {
+        "key": "required_documents",
+        "section": "admission",
+        "labelFr": "Documents requis"
+      },
+      {
+        "key": "visit_booking_enabled",
+        "section": "admission",
+        "labelFr": "Visite sur rendez-vous"
+      },
+      {
+        "key": "waitlist_enabled",
+        "section": "admission",
+        "labelFr": "Liste d’attente"
+      }
+    ]
+  },
+  {
+    "schemaKey": "academy-course",
+    "domain": "academy_admission",
+    "world": "academy",
+    "conversionTemplate": "course_enrollment",
+    "availabilityAuthority": "course_availability",
+    "operationsHandover": "academy_course_enrollment",
+    "publicFields": [
+      {
+        "key": "name_fr",
+        "section": "identity",
+        "labelFr": "Nom du programme"
+      },
+      {
+        "key": "name_en",
+        "section": "identity",
+        "labelFr": "Nom anglais"
+      },
+      {
+        "key": "name_ar",
+        "section": "identity",
+        "labelFr": "Nom arabe"
+      },
+      {
+        "key": "short_description_fr",
+        "section": "content",
+        "labelFr": "Promesse programme"
+      },
+      {
+        "key": "description_fr",
+        "section": "content",
+        "labelFr": "Description complète"
+      },
+      {
+        "key": "primary_image_reference",
+        "section": "media",
+        "labelFr": "Visuel principal"
+      },
+      {
+        "key": "territory_codes",
+        "section": "coverage",
+        "labelFr": "Territoires"
+      },
+      {
+        "key": "pricing_mode",
+        "section": "pricing",
+        "labelFr": "Mode commercial"
+      },
+      {
+        "key": "starting_price_dh",
+        "section": "pricing",
+        "labelFr": "Prix de départ Dh"
+      },
+      {
+        "key": "implementation_lead_time_days",
+        "section": "delivery",
+        "labelFr": "Délai de mise en œuvre (jours)"
+      },
+      {
+        "key": "course_subject",
+        "section": "learning",
+        "labelFr": "Sujet du cours"
+      },
+      {
+        "key": "level",
+        "section": "learning",
+        "labelFr": "Niveau"
+      },
+      {
+        "key": "intended_audience",
+        "section": "audience",
+        "labelFr": "Public cible"
+      },
+      {
+        "key": "learning_outcomes",
+        "section": "learning",
+        "labelFr": "Résultats pédagogiques"
+      },
+      {
+        "key": "prerequisites",
+        "section": "learning",
+        "labelFr": "Prérequis"
+      },
+      {
+        "key": "duration_hours",
+        "section": "delivery",
+        "labelFr": "Durée (heures)"
+      },
+      {
+        "key": "delivery_modality",
+        "section": "delivery",
+        "labelFr": "Modalité"
+      },
+      {
+        "key": "language",
+        "section": "delivery",
+        "labelFr": "Langue"
+      },
+      {
+        "key": "assessment_type",
+        "section": "assessment",
+        "labelFr": "Évaluation"
+      },
+      {
+        "key": "certificate_enabled",
+        "section": "credential",
+        "labelFr": "Certificat"
+      }
+    ]
+  },
+  {
+    "schemaKey": "academy-cohort",
+    "domain": "academy_admission",
+    "world": "academy",
+    "conversionTemplate": "cohort_enrollment",
+    "availabilityAuthority": "cohort_seats",
+    "operationsHandover": "academy_cohort_enrollment",
+    "publicFields": [
+      {
+        "key": "name_fr",
+        "section": "identity",
+        "labelFr": "Nom du programme"
+      },
+      {
+        "key": "name_en",
+        "section": "identity",
+        "labelFr": "Nom anglais"
+      },
+      {
+        "key": "name_ar",
+        "section": "identity",
+        "labelFr": "Nom arabe"
+      },
+      {
+        "key": "short_description_fr",
+        "section": "content",
+        "labelFr": "Promesse programme"
+      },
+      {
+        "key": "description_fr",
+        "section": "content",
+        "labelFr": "Description complète"
+      },
+      {
+        "key": "primary_image_reference",
+        "section": "media",
+        "labelFr": "Visuel principal"
+      },
+      {
+        "key": "territory_codes",
+        "section": "coverage",
+        "labelFr": "Territoires"
+      },
+      {
+        "key": "pricing_mode",
+        "section": "pricing",
+        "labelFr": "Mode commercial"
+      },
+      {
+        "key": "starting_price_dh",
+        "section": "pricing",
+        "labelFr": "Prix de départ Dh"
+      },
+      {
+        "key": "implementation_lead_time_days",
+        "section": "delivery",
+        "labelFr": "Délai de mise en œuvre (jours)"
+      },
+      {
+        "key": "course_subject",
+        "section": "learning",
+        "labelFr": "Sujet du cours"
+      },
+      {
+        "key": "level",
+        "section": "learning",
+        "labelFr": "Niveau"
+      },
+      {
+        "key": "intended_audience",
+        "section": "audience",
+        "labelFr": "Public cible"
+      },
+      {
+        "key": "learning_outcomes",
+        "section": "learning",
+        "labelFr": "Résultats pédagogiques"
+      },
+      {
+        "key": "prerequisites",
+        "section": "learning",
+        "labelFr": "Prérequis"
+      },
+      {
+        "key": "duration_hours",
+        "section": "delivery",
+        "labelFr": "Durée (heures)"
+      },
+      {
+        "key": "delivery_modality",
+        "section": "delivery",
+        "labelFr": "Modalité"
+      },
+      {
+        "key": "language",
+        "section": "delivery",
+        "labelFr": "Langue"
+      },
+      {
+        "key": "assessment_type",
+        "section": "assessment",
+        "labelFr": "Évaluation"
+      },
+      {
+        "key": "certificate_enabled",
+        "section": "credential",
+        "labelFr": "Certificat"
+      },
+      {
+        "key": "cohort_code",
+        "section": "cohort",
+        "labelFr": "Code cohorte"
+      },
+      {
+        "key": "start_date",
+        "section": "cohort",
+        "labelFr": "Date de début"
+      },
+      {
+        "key": "end_date",
+        "section": "cohort",
+        "labelFr": "Date de fin"
+      },
+      {
+        "key": "session_calendar",
+        "section": "cohort",
+        "labelFr": "Calendrier des sessions"
+      },
+      {
+        "key": "seat_capacity",
+        "section": "cohort",
+        "labelFr": "Capacité"
+      },
+      {
+        "key": "enrollment_open_at",
+        "section": "cohort",
+        "labelFr": "Ouverture inscriptions"
+      },
+      {
+        "key": "enrollment_close_at",
+        "section": "cohort",
+        "labelFr": "Clôture inscriptions"
+      },
+      {
+        "key": "trainer_reference",
+        "section": "cohort",
+        "labelFr": "Formateur"
+      },
+      {
+        "key": "attendance_requirement_percent",
+        "section": "cohort",
+        "labelFr": "Présence minimum %"
+      },
+      {
+        "key": "waitlist_enabled",
+        "section": "cohort",
+        "labelFr": "Liste d’attente"
+      }
+    ]
+  },
+  {
+    "schemaKey": "certification-pathway",
+    "domain": "academy_admission",
+    "world": "academy",
+    "conversionTemplate": "pathway_enrollment",
+    "availabilityAuthority": "pathway_eligibility",
+    "operationsHandover": "academy_pathway_enrollment",
+    "publicFields": [
+      {
+        "key": "name_fr",
+        "section": "identity",
+        "labelFr": "Nom du programme"
+      },
+      {
+        "key": "name_en",
+        "section": "identity",
+        "labelFr": "Nom anglais"
+      },
+      {
+        "key": "name_ar",
+        "section": "identity",
+        "labelFr": "Nom arabe"
+      },
+      {
+        "key": "short_description_fr",
+        "section": "content",
+        "labelFr": "Promesse programme"
+      },
+      {
+        "key": "description_fr",
+        "section": "content",
+        "labelFr": "Description complète"
+      },
+      {
+        "key": "primary_image_reference",
+        "section": "media",
+        "labelFr": "Visuel principal"
+      },
+      {
+        "key": "territory_codes",
+        "section": "coverage",
+        "labelFr": "Territoires"
+      },
+      {
+        "key": "pricing_mode",
+        "section": "pricing",
+        "labelFr": "Mode commercial"
+      },
+      {
+        "key": "starting_price_dh",
+        "section": "pricing",
+        "labelFr": "Prix de départ Dh"
+      },
+      {
+        "key": "implementation_lead_time_days",
+        "section": "delivery",
+        "labelFr": "Délai de mise en œuvre (jours)"
+      },
+      {
+        "key": "component_course_keys",
+        "section": "pathway",
+        "labelFr": "Cours composant le parcours"
+      },
+      {
+        "key": "required_sequence",
+        "section": "pathway",
+        "labelFr": "Séquence obligatoire"
+      },
+      {
+        "key": "practical_requirement",
+        "section": "pathway",
+        "labelFr": "Exigence pratique"
+      },
+      {
+        "key": "assessment_requirements",
+        "section": "pathway",
+        "labelFr": "Évaluations requises"
+      },
+      {
+        "key": "retake_policy",
+        "section": "pathway",
+        "labelFr": "Politique de rattrapage"
+      },
+      {
+        "key": "attendance_threshold",
+        "section": "pathway",
+        "labelFr": "Seuil de présence %"
+      },
+      {
+        "key": "certificate_validity_months",
+        "section": "credential",
+        "labelFr": "Validité certificat (mois)"
+      },
+      {
+        "key": "renewal_enabled",
+        "section": "credential",
+        "labelFr": "Renouvellement"
+      }
+    ]
+  },
+  {
+    "schemaKey": "parent-workshop",
+    "domain": "academy_admission",
+    "world": "academy",
+    "conversionTemplate": "event_enrollment",
+    "availabilityAuthority": "event_capacity",
+    "operationsHandover": "academy_event_enrollment",
+    "publicFields": [
+      {
+        "key": "name_fr",
+        "section": "identity",
+        "labelFr": "Nom du programme"
+      },
+      {
+        "key": "name_en",
+        "section": "identity",
+        "labelFr": "Nom anglais"
+      },
+      {
+        "key": "name_ar",
+        "section": "identity",
+        "labelFr": "Nom arabe"
+      },
+      {
+        "key": "short_description_fr",
+        "section": "content",
+        "labelFr": "Promesse programme"
+      },
+      {
+        "key": "description_fr",
+        "section": "content",
+        "labelFr": "Description complète"
+      },
+      {
+        "key": "primary_image_reference",
+        "section": "media",
+        "labelFr": "Visuel principal"
+      },
+      {
+        "key": "territory_codes",
+        "section": "coverage",
+        "labelFr": "Territoires"
+      },
+      {
+        "key": "pricing_mode",
+        "section": "pricing",
+        "labelFr": "Mode commercial"
+      },
+      {
+        "key": "starting_price_dh",
+        "section": "pricing",
+        "labelFr": "Prix de départ Dh"
+      },
+      {
+        "key": "implementation_lead_time_days",
+        "section": "delivery",
+        "labelFr": "Délai de mise en œuvre (jours)"
+      },
+      {
+        "key": "workshop_theme",
+        "section": "learning",
+        "labelFr": "Thème atelier"
+      },
+      {
+        "key": "event_format",
+        "section": "delivery",
+        "labelFr": "Format"
+      },
+      {
+        "key": "household_access_count",
+        "section": "access",
+        "labelFr": "Accès par foyer"
+      },
+      {
+        "key": "replay_access_days",
+        "section": "access",
+        "labelFr": "Replay (jours)"
+      },
+      {
+        "key": "downloadable_guide",
+        "section": "contents",
+        "labelFr": "Guide téléchargeable"
+      },
+      {
+        "key": "participation_certificate",
+        "section": "credential",
+        "labelFr": "Attestation de participation"
+      }
+    ]
+  },
+  {
+    "schemaKey": "institutional-training",
+    "domain": "academy_admission",
+    "world": "academy",
+    "conversionTemplate": "b2b_quote",
+    "availabilityAuthority": "trainer_capacity",
+    "operationsHandover": "academy_b2b_delivery",
+    "publicFields": [
+      {
+        "key": "name_fr",
+        "section": "identity",
+        "labelFr": "Nom du programme"
+      },
+      {
+        "key": "name_en",
+        "section": "identity",
+        "labelFr": "Nom anglais"
+      },
+      {
+        "key": "name_ar",
+        "section": "identity",
+        "labelFr": "Nom arabe"
+      },
+      {
+        "key": "short_description_fr",
+        "section": "content",
+        "labelFr": "Promesse programme"
+      },
+      {
+        "key": "description_fr",
+        "section": "content",
+        "labelFr": "Description complète"
+      },
+      {
+        "key": "primary_image_reference",
+        "section": "media",
+        "labelFr": "Visuel principal"
+      },
+      {
+        "key": "territory_codes",
+        "section": "coverage",
+        "labelFr": "Territoires"
+      },
+      {
+        "key": "pricing_mode",
+        "section": "pricing",
+        "labelFr": "Mode commercial"
+      },
+      {
+        "key": "starting_price_dh",
+        "section": "pricing",
+        "labelFr": "Prix de départ Dh"
+      },
+      {
+        "key": "implementation_lead_time_days",
+        "section": "delivery",
+        "labelFr": "Délai de mise en œuvre (jours)"
+      },
+      {
+        "key": "audience_types",
+        "section": "scope",
+        "labelFr": "Publics professionnels"
+      },
+      {
+        "key": "participant_minimum",
+        "section": "scope",
+        "labelFr": "Participants minimum"
+      },
+      {
+        "key": "participant_maximum",
+        "section": "scope",
+        "labelFr": "Participants maximum"
+      },
+      {
+        "key": "training_modules",
+        "section": "programme",
+        "labelFr": "Modules de formation"
+      },
+      {
+        "key": "onsite_online_modes",
+        "section": "delivery",
+        "labelFr": "Modes disponibles"
+      },
+      {
+        "key": "certification_required",
+        "section": "credential",
+        "labelFr": "Certification requise"
+      },
+      {
+        "key": "customization_level",
+        "section": "programme",
+        "labelFr": "Niveau de personnalisation"
+      }
+    ]
+  },
+  {
+    "schemaKey": "school-managed-programme",
+    "domain": "b2b_institutional",
+    "world": "b2b",
+    "conversionTemplate": "b2b_quote",
+    "availabilityAuthority": "operations_capacity",
+    "operationsHandover": "crm_programme_operations",
+    "publicFields": [
+      {
+        "key": "name_fr",
+        "section": "identity",
+        "labelFr": "Nom de la solution"
+      },
+      {
+        "key": "name_en",
+        "section": "identity",
+        "labelFr": "Nom anglais"
+      },
+      {
+        "key": "name_ar",
+        "section": "identity",
+        "labelFr": "Nom arabe"
+      },
+      {
+        "key": "short_description_fr",
+        "section": "content",
+        "labelFr": "Promesse exécutive"
+      },
+      {
+        "key": "description_fr",
+        "section": "content",
+        "labelFr": "Description complète"
+      },
+      {
+        "key": "primary_image_reference",
+        "section": "media",
+        "labelFr": "Visuel principal"
+      },
+      {
+        "key": "organization_type",
+        "section": "scope",
+        "labelFr": "Type d’organisation"
+      },
+      {
+        "key": "site_minimum",
+        "section": "scope",
+        "labelFr": "Sites minimum"
+      },
+      {
+        "key": "site_maximum",
+        "section": "scope",
+        "labelFr": "Sites maximum"
+      },
+      {
+        "key": "territory_codes",
+        "section": "coverage",
+        "labelFr": "Territoires"
+      },
+      {
+        "key": "pricing_mode",
+        "section": "pricing",
+        "labelFr": "Mode commercial"
+      },
+      {
+        "key": "starting_price_dh",
+        "section": "pricing",
+        "labelFr": "Prix de départ Dh"
+      },
+      {
+        "key": "quotation_required",
+        "section": "conversion",
+        "labelFr": "Devis requis"
+      },
+      {
+        "key": "implementation_lead_time_days",
+        "section": "delivery",
+        "labelFr": "Délai de mise en œuvre"
+      },
+      {
+        "key": "programme_modules",
+        "section": "programme",
+        "labelFr": "Modules du programme"
+      },
+      {
+        "key": "children_capacity",
+        "section": "scope",
+        "labelFr": "Capacité enfants"
+      },
+      {
+        "key": "age_groups",
+        "section": "scope",
+        "labelFr": "Tranches d’âge"
+      },
+      {
+        "key": "operating_schedule",
+        "section": "delivery",
+        "labelFr": "Planning d’exploitation"
+      },
+      {
+        "key": "staffing_model",
+        "section": "operations",
+        "labelFr": "Modèle de staffing"
+      },
+      {
+        "key": "provider_ratio",
+        "section": "operations",
+        "labelFr": "Ratio intervenant/enfants"
+      },
+      {
+        "key": "transport_required",
+        "section": "delivery",
+        "labelFr": "Transport requis"
+      },
+      {
+        "key": "reporting_frequency",
+        "section": "reporting",
+        "labelFr": "Fréquence reporting"
+      },
+      {
+        "key": "contract_duration_months",
+        "section": "commercial",
+        "labelFr": "Durée contrat (mois)"
+      }
+    ]
+  },
+  {
+    "schemaKey": "school-staff-reinforcement",
+    "domain": "b2b_institutional",
+    "world": "b2b",
+    "conversionTemplate": "b2b_quote",
+    "availabilityAuthority": "provider_capacity",
+    "operationsHandover": "provider_workforce_operations",
+    "publicFields": [
+      {
+        "key": "name_fr",
+        "section": "identity",
+        "labelFr": "Nom de la solution"
+      },
+      {
+        "key": "name_en",
+        "section": "identity",
+        "labelFr": "Nom anglais"
+      },
+      {
+        "key": "name_ar",
+        "section": "identity",
+        "labelFr": "Nom arabe"
+      },
+      {
+        "key": "short_description_fr",
+        "section": "content",
+        "labelFr": "Promesse exécutive"
+      },
+      {
+        "key": "description_fr",
+        "section": "content",
+        "labelFr": "Description complète"
+      },
+      {
+        "key": "primary_image_reference",
+        "section": "media",
+        "labelFr": "Visuel principal"
+      },
+      {
+        "key": "organization_type",
+        "section": "scope",
+        "labelFr": "Type d’organisation"
+      },
+      {
+        "key": "site_minimum",
+        "section": "scope",
+        "labelFr": "Sites minimum"
+      },
+      {
+        "key": "site_maximum",
+        "section": "scope",
+        "labelFr": "Sites maximum"
+      },
+      {
+        "key": "territory_codes",
+        "section": "coverage",
+        "labelFr": "Territoires"
+      },
+      {
+        "key": "pricing_mode",
+        "section": "pricing",
+        "labelFr": "Mode commercial"
+      },
+      {
+        "key": "starting_price_dh",
+        "section": "pricing",
+        "labelFr": "Prix de départ Dh"
+      },
+      {
+        "key": "quotation_required",
+        "section": "conversion",
+        "labelFr": "Devis requis"
+      },
+      {
+        "key": "implementation_lead_time_days",
+        "section": "delivery",
+        "labelFr": "Délai de mise en œuvre"
+      },
+      {
+        "key": "required_roles",
+        "section": "staffing",
+        "labelFr": "Rôles requis"
+      },
+      {
+        "key": "personnel_count",
+        "section": "staffing",
+        "labelFr": "Nombre de personnes"
+      },
+      {
+        "key": "shift_patterns",
+        "section": "schedule",
+        "labelFr": "Horaires / shifts"
+      },
+      {
+        "key": "qualification_requirements",
+        "section": "staffing",
+        "labelFr": "Qualifications"
+      },
+      {
+        "key": "replacement_sla_hours",
+        "section": "operations",
+        "labelFr": "SLA remplacement (heures)"
+      },
+      {
+        "key": "attendance_reporting",
+        "section": "reporting",
+        "labelFr": "Reporting présence"
+      },
+      {
+        "key": "billing_basis",
+        "section": "pricing",
+        "labelFr": "Base de facturation"
+      }
+    ]
+  },
+  {
+    "schemaKey": "hospitality-kids-programme",
+    "domain": "b2b_institutional",
+    "world": "b2b",
+    "conversionTemplate": "b2b_quote",
+    "availabilityAuthority": "operations_capacity",
+    "operationsHandover": "crm_hospitality_operations",
+    "publicFields": [
+      {
+        "key": "name_fr",
+        "section": "identity",
+        "labelFr": "Nom de la solution"
+      },
+      {
+        "key": "name_en",
+        "section": "identity",
+        "labelFr": "Nom anglais"
+      },
+      {
+        "key": "name_ar",
+        "section": "identity",
+        "labelFr": "Nom arabe"
+      },
+      {
+        "key": "short_description_fr",
+        "section": "content",
+        "labelFr": "Promesse exécutive"
+      },
+      {
+        "key": "description_fr",
+        "section": "content",
+        "labelFr": "Description complète"
+      },
+      {
+        "key": "primary_image_reference",
+        "section": "media",
+        "labelFr": "Visuel principal"
+      },
+      {
+        "key": "organization_type",
+        "section": "scope",
+        "labelFr": "Type d’organisation"
+      },
+      {
+        "key": "site_minimum",
+        "section": "scope",
+        "labelFr": "Sites minimum"
+      },
+      {
+        "key": "site_maximum",
+        "section": "scope",
+        "labelFr": "Sites maximum"
+      },
+      {
+        "key": "territory_codes",
+        "section": "coverage",
+        "labelFr": "Territoires"
+      },
+      {
+        "key": "pricing_mode",
+        "section": "pricing",
+        "labelFr": "Mode commercial"
+      },
+      {
+        "key": "starting_price_dh",
+        "section": "pricing",
+        "labelFr": "Prix de départ Dh"
+      },
+      {
+        "key": "quotation_required",
+        "section": "conversion",
+        "labelFr": "Devis requis"
+      },
+      {
+        "key": "implementation_lead_time_days",
+        "section": "delivery",
+        "labelFr": "Délai de mise en œuvre"
+      },
+      {
+        "key": "property_types",
+        "section": "property",
+        "labelFr": "Type de propriété"
+      },
+      {
+        "key": "property_size_rooms",
+        "section": "property",
+        "labelFr": "Nombre de chambres"
+      },
+      {
+        "key": "programme_modules",
+        "section": "programme",
+        "labelFr": "Modules"
+      },
+      {
+        "key": "operating_hours",
+        "section": "operations",
+        "labelFr": "Horaires d’exploitation"
+      },
+      {
+        "key": "expected_child_volume",
+        "section": "scope",
+        "labelFr": "Volume enfants estimé"
+      },
+      {
+        "key": "multilingual_needs",
+        "section": "staffing",
+        "labelFr": "Langues requises"
+      },
+      {
+        "key": "guest_booking_integration",
+        "section": "integration",
+        "labelFr": "Intégration réservation hôtel"
+      },
+      {
+        "key": "billing_model",
+        "section": "billing",
+        "labelFr": "Modèle de facturation"
+      },
+      {
+        "key": "pilot_enabled",
+        "section": "commercial",
+        "labelFr": "Pilote disponible"
+      }
+    ]
+  },
+  {
+    "schemaKey": "corporate-childcare-benefit",
+    "domain": "b2b_institutional",
+    "world": "b2b",
+    "conversionTemplate": "b2b_quote",
+    "availabilityAuthority": "benefit_budget_capacity",
+    "operationsHandover": "crm_corporate_benefit_operations",
+    "publicFields": [
+      {
+        "key": "name_fr",
+        "section": "identity",
+        "labelFr": "Nom de la solution"
+      },
+      {
+        "key": "name_en",
+        "section": "identity",
+        "labelFr": "Nom anglais"
+      },
+      {
+        "key": "name_ar",
+        "section": "identity",
+        "labelFr": "Nom arabe"
+      },
+      {
+        "key": "short_description_fr",
+        "section": "content",
+        "labelFr": "Promesse exécutive"
+      },
+      {
+        "key": "description_fr",
+        "section": "content",
+        "labelFr": "Description complète"
+      },
+      {
+        "key": "primary_image_reference",
+        "section": "media",
+        "labelFr": "Visuel principal"
+      },
+      {
+        "key": "organization_type",
+        "section": "scope",
+        "labelFr": "Type d’organisation"
+      },
+      {
+        "key": "site_minimum",
+        "section": "scope",
+        "labelFr": "Sites minimum"
+      },
+      {
+        "key": "site_maximum",
+        "section": "scope",
+        "labelFr": "Sites maximum"
+      },
+      {
+        "key": "territory_codes",
+        "section": "coverage",
+        "labelFr": "Territoires"
+      },
+      {
+        "key": "pricing_mode",
+        "section": "pricing",
+        "labelFr": "Mode commercial"
+      },
+      {
+        "key": "starting_price_dh",
+        "section": "pricing",
+        "labelFr": "Prix de départ Dh"
+      },
+      {
+        "key": "quotation_required",
+        "section": "conversion",
+        "labelFr": "Devis requis"
+      },
+      {
+        "key": "implementation_lead_time_days",
+        "section": "delivery",
+        "labelFr": "Délai de mise en œuvre"
+      },
+      {
+        "key": "benefit_models",
+        "section": "benefit",
+        "labelFr": "Modèles de bénéfice"
+      },
+      {
+        "key": "employee_population",
+        "section": "scope",
+        "labelFr": "Population salariés"
+      },
+      {
+        "key": "employer_contribution_type",
+        "section": "finance",
+        "labelFr": "Contribution employeur"
+      },
+      {
+        "key": "employer_contribution_value",
+        "section": "finance",
+        "labelFr": "Valeur contribution"
+      },
+      {
+        "key": "employee_eligibility_rules",
+        "section": "eligibility",
+        "labelFr": "Règles d’éligibilité"
+      },
+      {
+        "key": "usage_limits",
+        "section": "benefit",
+        "labelFr": "Limites d’usage"
+      },
+      {
+        "key": "covered_service_keys",
+        "section": "benefit",
+        "labelFr": "Services couverts"
+      },
+      {
+        "key": "company_billing_cycle",
+        "section": "billing",
+        "labelFr": "Cycle de facturation"
+      },
+      {
+        "key": "privacy_boundary",
+        "section": "privacy",
+        "labelFr": "Limite de visibilité employeur"
+      }
+    ]
+  },
+  {
+    "schemaKey": "health-adjacent-programme",
+    "domain": "b2b_institutional",
+    "world": "b2b",
+    "conversionTemplate": "b2b_quote",
+    "availabilityAuthority": "operations_capacity",
+    "operationsHandover": "crm_health_partner_operations",
+    "publicFields": [
+      {
+        "key": "name_fr",
+        "section": "identity",
+        "labelFr": "Nom de la solution"
+      },
+      {
+        "key": "name_en",
+        "section": "identity",
+        "labelFr": "Nom anglais"
+      },
+      {
+        "key": "name_ar",
+        "section": "identity",
+        "labelFr": "Nom arabe"
+      },
+      {
+        "key": "short_description_fr",
+        "section": "content",
+        "labelFr": "Promesse exécutive"
+      },
+      {
+        "key": "description_fr",
+        "section": "content",
+        "labelFr": "Description complète"
+      },
+      {
+        "key": "primary_image_reference",
+        "section": "media",
+        "labelFr": "Visuel principal"
+      },
+      {
+        "key": "organization_type",
+        "section": "scope",
+        "labelFr": "Type d’organisation"
+      },
+      {
+        "key": "site_minimum",
+        "section": "scope",
+        "labelFr": "Sites minimum"
+      },
+      {
+        "key": "site_maximum",
+        "section": "scope",
+        "labelFr": "Sites maximum"
+      },
+      {
+        "key": "territory_codes",
+        "section": "coverage",
+        "labelFr": "Territoires"
+      },
+      {
+        "key": "pricing_mode",
+        "section": "pricing",
+        "labelFr": "Mode commercial"
+      },
+      {
+        "key": "starting_price_dh",
+        "section": "pricing",
+        "labelFr": "Prix de départ Dh"
+      },
+      {
+        "key": "quotation_required",
+        "section": "conversion",
+        "labelFr": "Devis requis"
+      },
+      {
+        "key": "implementation_lead_time_days",
+        "section": "delivery",
+        "labelFr": "Délai de mise en œuvre"
+      },
+      {
+        "key": "partner_types",
+        "section": "partner",
+        "labelFr": "Types de partenaire"
+      },
+      {
+        "key": "programme_modules",
+        "section": "programme",
+        "labelFr": "Modules non médicaux"
+      },
+      {
+        "key": "operating_hours",
+        "section": "delivery",
+        "labelFr": "Horaires"
+      },
+      {
+        "key": "expected_family_volume",
+        "section": "scope",
+        "labelFr": "Volume familles"
+      },
+      {
+        "key": "non_medical_scope_statement",
+        "section": "safety",
+        "labelFr": "Déclaration périmètre non médical"
+      },
+      {
+        "key": "prohibited_medical_claims",
+        "section": "safety",
+        "labelFr": "Actes et promesses interdits"
+      },
+      {
+        "key": "safeguarding_requirements",
+        "section": "safety",
+        "labelFr": "Exigences safeguarding"
+      }
+    ]
+  },
+  {
+    "schemaKey": "event-venue-programme",
+    "domain": "b2b_institutional",
+    "world": "b2b",
+    "conversionTemplate": "b2b_quote",
+    "availabilityAuthority": "event_operations_capacity",
+    "operationsHandover": "crm_event_operations",
+    "publicFields": [
+      {
+        "key": "name_fr",
+        "section": "identity",
+        "labelFr": "Nom de la solution"
+      },
+      {
+        "key": "name_en",
+        "section": "identity",
+        "labelFr": "Nom anglais"
+      },
+      {
+        "key": "name_ar",
+        "section": "identity",
+        "labelFr": "Nom arabe"
+      },
+      {
+        "key": "short_description_fr",
+        "section": "content",
+        "labelFr": "Promesse exécutive"
+      },
+      {
+        "key": "description_fr",
+        "section": "content",
+        "labelFr": "Description complète"
+      },
+      {
+        "key": "primary_image_reference",
+        "section": "media",
+        "labelFr": "Visuel principal"
+      },
+      {
+        "key": "organization_type",
+        "section": "scope",
+        "labelFr": "Type d’organisation"
+      },
+      {
+        "key": "site_minimum",
+        "section": "scope",
+        "labelFr": "Sites minimum"
+      },
+      {
+        "key": "site_maximum",
+        "section": "scope",
+        "labelFr": "Sites maximum"
+      },
+      {
+        "key": "territory_codes",
+        "section": "coverage",
+        "labelFr": "Territoires"
+      },
+      {
+        "key": "pricing_mode",
+        "section": "pricing",
+        "labelFr": "Mode commercial"
+      },
+      {
+        "key": "starting_price_dh",
+        "section": "pricing",
+        "labelFr": "Prix de départ Dh"
+      },
+      {
+        "key": "quotation_required",
+        "section": "conversion",
+        "labelFr": "Devis requis"
+      },
+      {
+        "key": "implementation_lead_time_days",
+        "section": "delivery",
+        "labelFr": "Délai de mise en œuvre"
+      },
+      {
+        "key": "venue_types",
+        "section": "venue",
+        "labelFr": "Types de lieu"
+      },
+      {
+        "key": "programme_mode",
+        "section": "programme",
+        "labelFr": "Mode programme"
+      },
+      {
+        "key": "expected_attendance",
+        "section": "scope",
+        "labelFr": "Fréquentation estimée"
+      },
+      {
+        "key": "expected_child_volume",
+        "section": "scope",
+        "labelFr": "Volume enfants"
+      },
+      {
+        "key": "space_requirements",
+        "section": "venue",
+        "labelFr": "Exigences espace"
+      },
+      {
+        "key": "security_access_requirements",
+        "section": "security",
+        "labelFr": "Accès / sécurité"
+      },
+      {
+        "key": "equipment_requirements",
+        "section": "delivery",
+        "labelFr": "Équipements"
+      },
+      {
+        "key": "staffing_requirements",
+        "section": "operations",
+        "labelFr": "Staffing"
+      }
+    ]
+  },
+  {
+    "schemaKey": "partner-os-plan",
+    "domain": "b2b_institutional",
+    "world": "b2b",
+    "conversionTemplate": "subscription_request",
+    "availabilityAuthority": "tenant_provisioning",
+    "operationsHandover": "partner_tenant_provisioning",
+    "publicFields": [
+      {
+        "key": "name_fr",
+        "section": "identity",
+        "labelFr": "Nom de la solution"
+      },
+      {
+        "key": "name_en",
+        "section": "identity",
+        "labelFr": "Nom anglais"
+      },
+      {
+        "key": "name_ar",
+        "section": "identity",
+        "labelFr": "Nom arabe"
+      },
+      {
+        "key": "short_description_fr",
+        "section": "content",
+        "labelFr": "Promesse exécutive"
+      },
+      {
+        "key": "description_fr",
+        "section": "content",
+        "labelFr": "Description complète"
+      },
+      {
+        "key": "primary_image_reference",
+        "section": "media",
+        "labelFr": "Visuel principal"
+      },
+      {
+        "key": "organization_type",
+        "section": "scope",
+        "labelFr": "Type d’organisation"
+      },
+      {
+        "key": "site_minimum",
+        "section": "scope",
+        "labelFr": "Sites minimum"
+      },
+      {
+        "key": "site_maximum",
+        "section": "scope",
+        "labelFr": "Sites maximum"
+      },
+      {
+        "key": "territory_codes",
+        "section": "coverage",
+        "labelFr": "Territoires"
+      },
+      {
+        "key": "pricing_mode",
+        "section": "pricing",
+        "labelFr": "Mode commercial"
+      },
+      {
+        "key": "starting_price_dh",
+        "section": "pricing",
+        "labelFr": "Prix de départ Dh"
+      },
+      {
+        "key": "quotation_required",
+        "section": "conversion",
+        "labelFr": "Devis requis"
+      },
+      {
+        "key": "implementation_lead_time_days",
+        "section": "delivery",
+        "labelFr": "Délai de mise en œuvre"
+      },
+      {
+        "key": "tenant_type",
+        "section": "plan",
+        "labelFr": "Type de tenant"
+      },
+      {
+        "key": "included_modules",
+        "section": "plan",
+        "labelFr": "Modules inclus"
+      },
+      {
+        "key": "user_limit",
+        "section": "limits",
+        "labelFr": "Limite utilisateurs"
+      },
+      {
+        "key": "site_limit",
+        "section": "limits",
+        "labelFr": "Limite sites"
+      },
+      {
+        "key": "usage_limits",
+        "section": "limits",
+        "labelFr": "Limites d’usage"
+      },
+      {
+        "key": "storage_gb",
+        "section": "limits",
+        "labelFr": "Stockage (Go)"
+      },
+      {
+        "key": "support_level",
+        "section": "support",
+        "labelFr": "Niveau de support"
+      },
+      {
+        "key": "onboarding_type",
+        "section": "onboarding",
+        "labelFr": "Onboarding"
+      },
+      {
+        "key": "setup_fee_dh",
+        "section": "pricing",
+        "labelFr": "Frais setup"
+      },
+      {
+        "key": "recurring_fee_dh",
+        "section": "pricing",
+        "labelFr": "Abonnement"
+      },
+      {
+        "key": "billing_period",
+        "section": "pricing",
+        "labelFr": "Période de facturation"
+      },
+      {
+        "key": "trial_days",
+        "section": "commercial",
+        "labelFr": "Essai (jours)"
+      },
+      {
+        "key": "add_on_keys",
+        "section": "plan",
+        "labelFr": "Add-ons disponibles"
+      }
+    ]
+  },
+  {
+    "schemaKey": "quality-check-assessment",
+    "domain": "b2b_institutional",
+    "world": "b2b",
+    "conversionTemplate": "assessment_request",
+    "availabilityAuthority": "assessor_capacity",
+    "operationsHandover": "quality_assessment_operations",
+    "publicFields": [
+      {
+        "key": "name_fr",
+        "section": "identity",
+        "labelFr": "Nom de la solution"
+      },
+      {
+        "key": "name_en",
+        "section": "identity",
+        "labelFr": "Nom anglais"
+      },
+      {
+        "key": "name_ar",
+        "section": "identity",
+        "labelFr": "Nom arabe"
+      },
+      {
+        "key": "short_description_fr",
+        "section": "content",
+        "labelFr": "Promesse exécutive"
+      },
+      {
+        "key": "description_fr",
+        "section": "content",
+        "labelFr": "Description complète"
+      },
+      {
+        "key": "primary_image_reference",
+        "section": "media",
+        "labelFr": "Visuel principal"
+      },
+      {
+        "key": "organization_type",
+        "section": "scope",
+        "labelFr": "Type d’organisation"
+      },
+      {
+        "key": "site_minimum",
+        "section": "scope",
+        "labelFr": "Sites minimum"
+      },
+      {
+        "key": "site_maximum",
+        "section": "scope",
+        "labelFr": "Sites maximum"
+      },
+      {
+        "key": "territory_codes",
+        "section": "coverage",
+        "labelFr": "Territoires"
+      },
+      {
+        "key": "pricing_mode",
+        "section": "pricing",
+        "labelFr": "Mode commercial"
+      },
+      {
+        "key": "starting_price_dh",
+        "section": "pricing",
+        "labelFr": "Prix de départ Dh"
+      },
+      {
+        "key": "quotation_required",
+        "section": "conversion",
+        "labelFr": "Devis requis"
+      },
+      {
+        "key": "implementation_lead_time_days",
+        "section": "delivery",
+        "labelFr": "Délai de mise en œuvre"
+      },
+      {
+        "key": "assessment_framework",
+        "section": "assessment",
+        "labelFr": "Référentiel"
+      },
+      {
+        "key": "site_count",
+        "section": "scope",
+        "labelFr": "Nombre de sites"
+      },
+      {
+        "key": "assessment_scope",
+        "section": "assessment",
+        "labelFr": "Périmètre"
+      },
+      {
+        "key": "evidence_requirements",
+        "section": "evidence",
+        "labelFr": "Preuves requises"
+      },
+      {
+        "key": "assessment_mode",
+        "section": "delivery",
+        "labelFr": "Mode"
+      },
+      {
+        "key": "duration_days",
+        "section": "delivery",
+        "labelFr": "Durée (jours)"
+      },
+      {
+        "key": "report_type",
+        "section": "reporting",
+        "labelFr": "Type de rapport"
+      },
+      {
+        "key": "corrective_action_support",
+        "section": "followup",
+        "labelFr": "Support actions correctives"
+      },
+      {
+        "key": "followup_assessment_enabled",
+        "section": "followup",
+        "labelFr": "Évaluation de suivi"
+      }
+    ]
+  },
+  {
+    "schemaKey": "custom-managed-solution",
+    "domain": "b2b_institutional",
+    "world": "b2b",
+    "conversionTemplate": "guided_diagnostic",
+    "availabilityAuthority": "commercial_review",
+    "operationsHandover": "crm_solution_design",
+    "publicFields": [
+      {
+        "key": "name_fr",
+        "section": "identity",
+        "labelFr": "Nom de la solution"
+      },
+      {
+        "key": "name_en",
+        "section": "identity",
+        "labelFr": "Nom anglais"
+      },
+      {
+        "key": "name_ar",
+        "section": "identity",
+        "labelFr": "Nom arabe"
+      },
+      {
+        "key": "short_description_fr",
+        "section": "content",
+        "labelFr": "Promesse exécutive"
+      },
+      {
+        "key": "description_fr",
+        "section": "content",
+        "labelFr": "Description complète"
+      },
+      {
+        "key": "primary_image_reference",
+        "section": "media",
+        "labelFr": "Visuel principal"
+      },
+      {
+        "key": "organization_type",
+        "section": "scope",
+        "labelFr": "Type d’organisation"
+      },
+      {
+        "key": "site_minimum",
+        "section": "scope",
+        "labelFr": "Sites minimum"
+      },
+      {
+        "key": "site_maximum",
+        "section": "scope",
+        "labelFr": "Sites maximum"
+      },
+      {
+        "key": "territory_codes",
+        "section": "coverage",
+        "labelFr": "Territoires"
+      },
+      {
+        "key": "pricing_mode",
+        "section": "pricing",
+        "labelFr": "Mode commercial"
+      },
+      {
+        "key": "starting_price_dh",
+        "section": "pricing",
+        "labelFr": "Prix de départ Dh"
+      },
+      {
+        "key": "quotation_required",
+        "section": "conversion",
+        "labelFr": "Devis requis"
+      },
+      {
+        "key": "implementation_lead_time_days",
+        "section": "delivery",
+        "labelFr": "Délai de mise en œuvre"
+      },
+      {
+        "key": "solution_scope",
+        "section": "scope",
+        "labelFr": "Périmètre de solution"
+      },
+      {
+        "key": "site_count",
+        "section": "scope",
+        "labelFr": "Nombre de sites"
+      },
+      {
+        "key": "beneficiary_volume",
+        "section": "scope",
+        "labelFr": "Volume bénéficiaires"
+      },
+      {
+        "key": "objectives",
+        "section": "diagnostic",
+        "labelFr": "Objectifs"
+      },
+      {
+        "key": "required_components",
+        "section": "diagnostic",
+        "labelFr": "Composants requis"
+      },
+      {
+        "key": "budget_range_dh",
+        "section": "commercial",
+        "labelFr": "Fourchette budget Dh"
+      },
+      {
+        "key": "target_start_date",
+        "section": "commercial",
+        "labelFr": "Date cible"
+      },
+      {
+        "key": "document_requirements",
+        "section": "diagnostic",
+        "labelFr": "Documents attendus"
+      },
+      {
+        "key": "meeting_required",
+        "section": "conversion",
+        "labelFr": "Réunion requise"
+      }
+    ]
+  }
+]

@@ -1,5 +1,5 @@
 'use client'
-import Link from 'next/link'
+import Link from '@/angelcare-marketplace/navigation-care-orbit/CareOrbitLink'
 import { useEffect, useMemo, useRef, useState, type ReactNode, type RefObject } from 'react'
 import { ArrowRight, ArrowUpRight, ArrowUp, Heart, Search, Sparkles, ShieldCheck, MapPin, BookOpen, PackageOpen, CalendarDays, Check, X, ChevronDown } from 'lucide-react'
 import type { CatalogLocale, DiscoveryItem, StorefrontExperience } from '../../catalog-discovery/types'

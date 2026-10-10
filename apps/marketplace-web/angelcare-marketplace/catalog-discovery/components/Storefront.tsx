@@ -1,5 +1,5 @@
 import type {ReactNode} from 'react'
-import Link from 'next/link'
+import Link from '@/angelcare-marketplace/navigation-care-orbit/CareOrbitLink'
 import {ArrowRight,CheckCircle2,Search,ShieldCheck,Sparkles} from 'lucide-react'
 import type {StorefrontExperience} from '../types'
 import {CatalogCard} from './CatalogCard'

@@ -48,7 +48,7 @@ function status(value: unknown): 'draft' | 'published' | 'archived' {
 function activeThemeFallback(): MarketplaceThemeSettings {
   return {
     ...marketplaceTheme,
-    logoUrl: '/b2b-plaquette-partenaires/assets/angelcare-original-logo.png',
+    logoUrl: '/brand/angelcare-pearl-rim-colour-r1.png',
     logoAlt: 'AngelCare',
     logoWidthPx: 52,
     logoHeightPx: 52,
@@ -96,7 +96,7 @@ function mapTheme(row: DbRow): MarketplaceThemeSettings {
     productCardStyle: String(row.product_card_style || marketplaceTheme.productCardStyle),
     gridDensity: row.grid_density === 'compact' || row.grid_density === 'dense' ? row.grid_density : 'comfortable',
     marketplaceMode: row.marketplace_mode === 'editorial' || row.marketplace_mode === 'wholesale' || row.marketplace_mode === 'classic' ? row.marketplace_mode : 'premium',
-    logoUrl: String(row.logo_url || '/b2b-plaquette-partenaires/assets/angelcare-original-logo.png'),
+    logoUrl: String(row.logo_url || '/brand/angelcare-pearl-rim-colour-r1.png'),
     logoAlt: String(row.logo_alt || 'AngelCare'),
     logoWidthPx: n(row.logo_width_px, 52),
     logoHeightPx: n(row.logo_height_px, 52),
@@ -481,7 +481,7 @@ function themeToAdminRow(theme: MarketplaceThemeSettings): DbRow {
     product_card_style: theme.productCardStyle,
     grid_density: theme.gridDensity,
     marketplace_mode: theme.marketplaceMode,
-    logo_url: theme.logoUrl || '/b2b-plaquette-partenaires/assets/angelcare-original-logo.png',
+    logo_url: theme.logoUrl || '/brand/angelcare-pearl-rim-colour-r1.png',
     logo_alt: theme.logoAlt || 'AngelCare',
     logo_width_px: theme.logoWidthPx || 52,
     logo_height_px: theme.logoHeightPx || 52,

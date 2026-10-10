@@ -8,7 +8,7 @@ import styles from "./bulk5-experience.module.css"
 
 export function Bulk5BrandCrown({ eyebrow, title, description, actions, returnTo }: { eyebrow: string; title: string; description: string; actions?: React.ReactNode; returnTo?: string }) {
   return <header className={styles.brandCrown}>
-    <div className={styles.brandIdentity}><img src="/logo.png" alt="AngelCare"/><span><small>ANGELCARE · SANILA MARKET OS</small><strong>Proof & Human Authority System</strong></span></div>
+    <div className={styles.brandIdentity}><img src="/brand/angelcare-pearl-rim-colour-r1.png" alt="AngelCare"/><span><small>ANGELCARE · SANILA MARKET OS</small><strong>Proof & Human Authority System</strong></span></div>
     <div className={styles.brandNarrative}><span>{eyebrow}</span><h1>{title}</h1><p>{description}</p></div>
     <div className={styles.brandActions}>{returnTo ? <Link href={returnTo}><ArrowLeft/> Retour au contexte</Link> : null}{actions}</div>
   </header>

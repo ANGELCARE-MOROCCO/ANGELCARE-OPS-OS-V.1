@@ -9,6 +9,7 @@ export interface MarketplaceAccessWorkspace {
 }
 
 export const MARKETPLACE_ACCESS_WORKSPACES = [
+  {key:'workspace.hotline',label:'HOTLINE',route:'/angelcare-marketplace/admin/hotline',mission:'Réception, conseillers, dossiers et parcours IVR.',domains:['hotline']},
   { key:'workspace.commerce_revenue', label:'Commerce & Revenue', route:'/angelcare-marketplace/admin/catalog', mission:'Catalogue, commerce, pipeline, conversion, commandes, paiements et Wallet.', domains:['catalog','commercial','conversion','orders','payments','wallet','commerce','crm','development','quote_basket'] },
   { key:'workspace.customers', label:'Customers', route:'/angelcare-marketplace/admin/customers', mission:'Dossiers clients, familles, service, historique et relation client.', domains:['family','customers','customer','backoffice'] },
   { key:'workspace.operations', label:'Operations', route:'/angelcare-marketplace/admin/operations/fulfillment', mission:'Fulfillment, territoires, parcours, incidents, preuves, recovery et reconciliation opérationnelle.', domains:['operations','territories','territory_health','territory_overrides','territory_readiness','territory_settings','journey','journeys'] },
@@ -32,6 +33,7 @@ for (const workspace of MARKETPLACE_ACCESS_WORKSPACES) {
 }
 
 const SENSITIVE_PERMISSION_MARKERS = [
+  'hotline.publish','hotline.purge','hotline.settings','hotline.media','hotline.supervise',
   'certificates.revoke',
   'sensitive_approve',
   'approvals.override',

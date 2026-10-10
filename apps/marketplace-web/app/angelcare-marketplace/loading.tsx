@@ -1,8 +1,10 @@
+import {CareOrbitFallbackSignal} from '@/angelcare-marketplace/navigation-care-orbit/CareOrbitRouteLoading'
 import styles from '@/angelcare-marketplace/design-system/marketplace.module.css'
 
 export default function MarketplaceLoading() {
   return (
     <div className={styles.scope}>
+      <CareOrbitFallbackSignal/>
       <div className={styles.publicMain}>
         <div className={styles.stack} aria-label="Chargement ANGELCARE Marketplace">
           <div className={styles.skeleton} style={{ width: 160, height: 28 }} />

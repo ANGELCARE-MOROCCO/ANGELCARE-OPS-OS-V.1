@@ -106,7 +106,7 @@ export function buildWorldFactoryOperability(input:{
   const inferredConditions:WorldFactoryConditionRule[]=[]
   for(const slot of input.slots){
     const bindings=(bindingsByBlock.get(slot.blockId)||[]).filter(row=>row.status==='RESOLVED')
-    if(!slot.required){
+    if(!slot.required&&!['atomic_offer_section','atomic_offer_group'].includes(slot.blockType)){
       const itemBinding=bindings.find(row=>row.targetKey==='items')
       if(itemBinding)inferredConditions.push({id:`${slot.blockId}:auto-hide-empty`,blockId:slot.blockId,source:'prop',key:'items',operator:'not_empty',effect:'show',reason:`Optional semantic module ${slot.role} hides when its canonical collection is empty.`})
     }

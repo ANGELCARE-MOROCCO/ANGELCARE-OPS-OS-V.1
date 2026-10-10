@@ -1,7 +1,7 @@
 'use client'
 import Link from 'next/link'
 import {usePathname} from 'next/navigation'
-import {BadgeDollarSign,Boxes,CalendarDays,ChartNoAxesCombined,FolderTree,Gauge,HeartHandshake,LayoutTemplate,Megaphone,Network,PackageSearch,School,ShieldCheck,Sparkles,UploadCloud,UsersRound} from 'lucide-react'
+import {BadgeDollarSign,Boxes,CalendarDays,ChartNoAxesCombined,FolderTree,Gauge,HeartHandshake,LayoutTemplate,Megaphone,Network,PackageSearch,School,ShieldCheck,Sparkles,UploadCloud,UsersRound,Headphones} from 'lucide-react'
 import styles from '../design-system/marketplace.module.css'
 import {cx} from '../design-system/ui'
 
@@ -24,12 +24,14 @@ const masters=[
  {id:'16',href:'/angelcare-marketplace/admin/public-experience-authority',label:'Public Experience Pro Max',icon:Sparkles},
  {id:'17',href:'/angelcare-marketplace/admin/sanila',label:'SANILA',icon:School},
  {id:'18',href:'/angelcare-marketplace/admin/imports',label:'Imports & ingestion',icon:UploadCloud},
+ {id:'19',href:'/angelcare-marketplace/admin/hotline',label:'HOTLINE',icon:Headphones},
 ] as const
 
-export function AdminNavigation({collapsed=false}:{collapsed?:boolean}){
+export function AdminNavigation({collapsed=false,canHotline=false}:{collapsed?:boolean;canHotline?:boolean}){
  const pathname=usePathname()
+ const visible=masters.filter(m=>m.id!=='19'||canHotline)
  return <nav className={styles.sidebarNav} aria-label="Marketplace Admin">
   <div className={styles.navGroup}><div className={styles.navGroupLabel}>ANGELCARE MARKETPLACE</div></div>
-  <div className={styles.navGroup}><div className={styles.navGroupLabel}>18 WORKSPACES</div>{masters.map(({id,href,label,icon:Icon})=>{const active=pathname===href||(href!=='/angelcare-marketplace/admin'&&pathname.startsWith(`${href}/`));return <Link key={`${id}-${href}`} href={href} className={cx(styles.sideNavLink,active&&styles.sideNavLinkActive)} aria-current={active?'page':undefined} title={collapsed?`${id} · ${label}`:undefined}><span className={styles.sideNavIcon}><Icon size={17}/></span><span className={styles.sideNavLabel}>{id} · {label}</span></Link>})}</div>
+  <div className={styles.navGroup}><div className={styles.navGroupLabel}>{visible.length} WORKSPACES</div>{visible.map(({id,href,label,icon:Icon})=>{const active=pathname===href||(href!=='/angelcare-marketplace/admin'&&pathname.startsWith(`${href}/`));return <Link key={`${id}-${href}`} href={href} className={cx(styles.sideNavLink,active&&styles.sideNavLinkActive)} aria-current={active?'page':undefined} title={collapsed?`${id} · ${label}`:undefined}><span className={styles.sideNavIcon}><Icon size={17}/></span><span className={styles.sideNavLabel}>{id} · {label}</span></Link>})}</div>
  </nav>
 }

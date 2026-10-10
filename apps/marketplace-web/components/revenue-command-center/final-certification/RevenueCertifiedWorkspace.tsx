@@ -444,7 +444,7 @@ export default function RevenueCertifiedWorkspace(props: WorkspaceProps) {
     <main className={`${styles.page} ${styles[`accent_${contract.accent}`] || ""}`}>
       <header className={styles.hero}>
         <div className={styles.brandLine}>
-          <Image src="/logo.png" alt="AngelCare" width={142} height={42} className={styles.logo} priority />
+          <Image src="/brand/angelcare-pearl-rim-colour-r1.png" alt="AngelCare" width={142} height={42} className={styles.logo} priority />
           <span className={styles.brandDivider} />
           <span>ANGELCARE · SANILA REVENUE OS</span>
           <span className={styles.certifiedBadge}><ShieldCheck /> FINAL CERTIFICATION</span>

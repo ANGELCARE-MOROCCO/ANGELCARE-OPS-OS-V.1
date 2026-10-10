@@ -1,3 +1,4 @@
+import {LiveExperienceSlot} from '../../live-experience-command/components/LiveExperienceSlot'
 import Link from 'next/link'
 import { ArrowRight, BellRing, CalendarCheck, CheckCircle2, FileText, LifeBuoy, PackageCheck, ShieldCheck, Sparkles } from 'lucide-react'
 import { accountCopy, journeyAccent, journeyTypeLabels, statusLabels } from '../content'
@@ -7,7 +8,7 @@ import styles from '../journey.module.css'
 export function AccountCommand({ data }: { data: CustomerAccountSummary }) {
   const copy = accountCopy[data.locale]
   const rtl = data.locale === 'ar'
-  return <main className={styles.accountShell} dir={rtl ? 'rtl' : 'ltr'}>
+  return <main className={styles.accountShell} dir={rtl ? 'rtl' : 'ltr'}><LiveExperienceSlot name="account"/>
     <section className={styles.accountHero}>
       <div className={styles.heroGlow}/><div className={styles.accountHeroCopy}><span>{copy.eyebrow}</span><h1>{copy.title}</h1><p>{copy.description}</p>
         <div className={styles.heroActions}><Link className={styles.heroPrimary} href={`/angelcare-marketplace/${data.locale}/account/action-center`}><Sparkles size={18}/>{copy.actions}<ArrowRight size={17}/></Link><Link className={styles.heroSecondary} href={`/angelcare-marketplace/${data.locale}/marketplace`}>Explorer le Marketplace</Link></div>

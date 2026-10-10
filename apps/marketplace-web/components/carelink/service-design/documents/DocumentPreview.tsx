@@ -7,7 +7,7 @@ import { paginateServiceDocument } from './previewLayout'
 import type { ServiceDocumentSectionKey, ServiceDocumentSource, ServiceDocumentSettings } from './types'
 import styles from './ServiceDocumentStudio.module.css'
 
-const logoPath = '/b2b-plaquette-partenaires/assets/angelcare-original-logo.png'
+const logoPath = '/brand/angelcare-pearl-rim-colour-r1.png'
 const show = (value?: string | number | null) => value === undefined || value === null || value === '' ? 'Non renseigné' : String(value)
 const money = (value?: number | null, currency = 'Dh') => value === null || value === undefined ? 'Sur devis' : `${new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 2 }).format(value)} ${currency}`
 

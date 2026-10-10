@@ -146,7 +146,7 @@ export default function TrainingHubCommandCenterPremiumProduction() {
     <main style={pageStyle}>
       <aside style={sidebarStyle}>
         <div style={logoBlockStyle}>
-          <img src="/logo.png" alt="AngelCare" style={logoStyle} />
+          <img src="/brand/angelcare-pearl-rim-colour-r1.png" alt="AngelCare" style={logoStyle} />
           <div style={brandTextStyle}>
             <strong>TrainingHub</strong>
             <span>Portail partenaires</span>

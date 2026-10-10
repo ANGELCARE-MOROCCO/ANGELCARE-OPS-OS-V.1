@@ -181,7 +181,7 @@ export default function TrainingHubPartnersPortfolioProduction() {
     <main style={page}>
       <aside style={sidebar}>
         <div style={brandCard}>
-          <img src="/logo.png" alt="AngelCare" style={logo} />
+          <img src="/brand/angelcare-pearl-rim-colour-r1.png" alt="AngelCare" style={logo} />
           <strong>TrainingHub</strong>
           <span>Internal Admin OS</span>
         </div>

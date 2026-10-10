@@ -1,3 +1,4 @@
+import {requireMarketplaceApiContext} from '../auth/context'
 import { randomBytes, randomUUID } from 'node:crypto'
 import { createServiceClient } from '@/lib/supabase/server'
 import { writeMarketplaceAudit } from '../audit/write-audit'
@@ -287,7 +288,7 @@ export async function createAdminCustomer(input: {
   } = {
     email: input.email,
     password: temporaryPassword,
-    email_confirm: true,
+    email_confirm: false,
     user_metadata: {
       full_name: input.displayName,
       marketplace_account_kind: input.accountKind,
@@ -312,14 +313,14 @@ export async function createAdminCustomer(input: {
       .insert({
         auth_user_id: authData.user.id,
         account_kind: input.accountKind,
-        status: 'active',
+        status: 'pending_verification',
         display_name: input.displayName,
         email: input.email,
         phone: input.phone || null,
         preferred_locale: input.preferredLocale,
         territory_id: input.territoryId || null,
         premium_status: Boolean(input.premiumStatus),
-        email_verified_at: new Date().toISOString(),
+        email_verified_at: null,
       })
       .select('*')
       .single()
@@ -384,7 +385,7 @@ export async function updateAdminCustomer(input: {
   const authPatch: { email?: string; email_confirm?: boolean; phone?: string; user_metadata?: Record<string, unknown> } = {}
   if (input.patch.email && input.patch.email !== text(before.email)) {
     authPatch.email = input.patch.email
-    authPatch.email_confirm = true
+    authPatch.email_confirm = false
   }
   if (input.patch.phone && input.patch.phone !== text(before.phone)) authPatch.phone = input.patch.phone
   if (input.patch.displayName || input.patch.accountKind || input.patch.preferredLocale) {
@@ -395,7 +396,7 @@ export async function updateAdminCustomer(input: {
     }
   }
 
-  if (Object.keys(authPatch).length) {
+  if (before.auth_user_id && Object.keys(authPatch).length) {
     const { error } = await db.auth.admin.updateUserById(String(before.auth_user_id), authPatch)
     if (error) throw new MarketplaceError('CONFLICT', error.message || 'Le compte Auth n’a pas pu être mis à jour.', { cause: error })
   }
@@ -409,6 +410,7 @@ export async function updateAdminCustomer(input: {
   if (input.patch.preferredLocale !== undefined) payload.preferred_locale = input.patch.preferredLocale
   if (input.patch.premiumStatus !== undefined) payload.premium_status = input.patch.premiumStatus
   if (input.patch.territoryId !== undefined) payload.territory_id = input.patch.territoryId || null
+  if(before.auth_user_id&&authPatch.email){payload.email_verified_at=null;if(['active','pending_verification'].includes(String(before.status)))payload.status='pending_verification'}
 
   const { data, error } = await db
     .from('angelcare_marketplace_customer_accounts')
@@ -419,7 +421,7 @@ export async function updateAdminCustomer(input: {
   if (error || !data) throw fail('mettre à jour le client', error)
 
   let finalAccount = data as Row
-  if (finalAccount.account_kind === 'family') {
+  if (finalAccount.account_kind === 'family' && finalAccount.auth_user_id) {
     const family = await ensureFamilyForCustomer(finalAccount, input.context)
     finalAccount = { ...finalAccount, family_account_id: family.id }
   }
@@ -684,6 +686,7 @@ export async function createManualOrder(input: ManualOrderInput & { context: Mar
     id: journeyId,
     journey_type: input.journeyType,
     status: 'registered',
+    customer_account_id: account.id, creation_source:'admin_manual_order',
     locale: input.context.locale,
     title,
     subtitle: input.notes || null,
@@ -863,7 +866,8 @@ export async function adminPaymentSummary(): Promise<AdminPaymentSummary> {
   }
 }
 
-export async function adminPaymentDossier(paymentId: string): Promise<AdminPaymentDossier> {
+export async function adminPaymentDossier(paymentId: string, inputContext?:MarketplaceRequestContext): Promise<AdminPaymentDossier> {
+  const context=inputContext||await requireMarketplaceApiContext('marketplace.finance.view')
   const db = await createServiceClient()
   const { data: payment, error } = await db.from('angelcare_marketplace_payment_intents').select('*').eq('id', paymentId).single()
   if (error || !payment) throw new MarketplaceError('NOT_FOUND', 'Paiement introuvable.', { cause: error || undefined })
@@ -879,101 +883,17 @@ export async function adminPaymentDossier(paymentId: string): Promise<AdminPayme
     ? (await db.from('angelcare_marketplace_journeys').select('*').eq('id', String(payment.canonical_object_id)).maybeSingle()).data as Row | null
     : null
 
+  let scope:Row|null=order;if(!scope&&payment.customer_account_id)scope=await customerRow(String(payment.customer_account_id));if(context.tenantId&&scope?.tenant_id!==context.tenantId||context.territoryId&&scope?.territory_id!==context.territoryId)throw new MarketplaceError('PERMISSION_DENIED','Paiement hors périmètre.');
   const summary = await adminPaymentSummary()
   const mapped = summary.payments.find((entry) => entry.id === paymentId)
-  if (!mapped) throw new MarketplaceError('NOT_FOUND', 'Paiement introuvable dans le registre opérateur.')
+  if (!mapped) return {payment:{...payment,customer_name:'Client',customer_reference:null,order_reference:order?.public_reference||null,order_title:order?.title||null} as AdminPaymentRecord, attempts:rows(attempts),refunds:rows(refunds),order}
   return { payment: mapped, attempts: rows(attempts), refunds: rows(refunds), order }
 }
 
-export async function captureAdminPayment(input: {
-  paymentId: string
-  amount?: number
-  providerReference?: string | null
-  reason: string
-  context: MarketplaceRequestContext
-  request: Request
-}): Promise<Record<string, unknown>> {
-  const db = await createServiceClient()
-  const { data: intent, error } = await db.from('angelcare_marketplace_payment_intents').select('*').eq('id', input.paymentId).single()
-  if (error || !intent) throw new MarketplaceError('NOT_FOUND', 'Paiement introuvable.', { cause: error || undefined })
-
-  const currentCaptured = num(intent.captured_amount)
-  const refundableExpected = Math.max(0, num(intent.expected_amount) - currentCaptured)
-  const captureAmount = input.amount == null ? refundableExpected : num(input.amount)
-  if (captureAmount <= 0) throw new MarketplaceError('VALIDATION_ERROR', 'Le montant de capture doit être supérieur à 0.')
-  if (captureAmount > refundableExpected) throw new MarketplaceError('VALIDATION_ERROR', `Le montant restant à capturer est de ${refundableExpected.toFixed(2)} Dh.`)
-  if (['failed', 'cancelled', 'expired', 'refunded', 'disputed', 'chargeback'].includes(text(intent.status))) {
-    throw new MarketplaceError('CONFLICT', 'Ce paiement ne peut plus être capturé dans son état actuel.')
-  }
-
-  const nextCaptured = currentCaptured + captureAmount
-  const nextStatus = nextCaptured >= num(intent.expected_amount) ? 'captured' : 'partially_captured'
-  const now = new Date().toISOString()
-  const nextReference = input.providerReference || nullable(intent.provider_reference)
-
-  const { count: attemptCount } = await db.from('angelcare_marketplace_payment_attempts').select('id', { count: 'exact', head: true }).eq('payment_intent_id', input.paymentId)
-  const nextAttemptNumber = attemptCount || 0
-
-  const { error: updateError } = await db.from('angelcare_marketplace_payment_intents').update({
-    status: nextStatus,
-    authorized_amount: Math.max(num(intent.authorized_amount), nextCaptured),
-    captured_amount: nextCaptured,
-    provider_reference: nextReference,
-    updated_at: now,
-  }).eq('id', input.paymentId)
-  if (updateError) throw fail('enregistrer la capture du paiement', updateError)
-
-  const { error: attemptError } = await db.from('angelcare_marketplace_payment_attempts').insert({
-    payment_intent_id: input.paymentId,
-    attempt_number: nextAttemptNumber + 1,
-    method_kind: text(intent.selected_method) || 'manual_verified',
-    status: nextStatus,
-    amount: captureAmount,
-    idempotency_key: `admin-capture:${input.paymentId}:${nextAttemptNumber + 1}:${nextCaptured}`,
-    provider_key: text(intent.provider_key) || 'manual_verified',
-    provider_reference: nextReference,
-    customer_message: 'Paiement vérifié manuellement par ANGELCARE.',
-    provider_evidence: { operatorCapture: true, reason: input.reason },
-  })
-  if (attemptError) throw fail('enregistrer la preuve de capture', attemptError)
-
-  if (intent.canonical_object_id) {
-    const { data: order } = await db.from('angelcare_marketplace_journeys').select('id,financial_status').eq('id', String(intent.canonical_object_id)).maybeSingle()
-    if (order) {
-      const financial = order.financial_status && typeof order.financial_status === 'object' ? order.financial_status as Row : {}
-      await db.from('angelcare_marketplace_journeys').update({
-        financial_status: { ...financial, status: nextStatus, captured_amount: nextCaptured, payment_intent_id: input.paymentId },
-        updated_at: now,
-      }).eq('id', String(intent.canonical_object_id))
-      await db.from('angelcare_marketplace_journey_events').insert({
-        journey_id: String(intent.canonical_object_id),
-        event_key: 'manual_payment_captured',
-        title: 'Paiement vérifié',
-        description: input.reason,
-        status: 'awaiting_angelcare',
-        authority_type: 'payment_command',
-        authority_object_id: input.paymentId,
-        evidence: { capturedAmount: captureAmount, capturedTotal: nextCaptured },
-        customer_visible: true,
-        occurred_at: now,
-      })
-    }
-  }
-
-  await writeMarketplaceAudit({
-    context: input.context,
-    requestId: randomUUID(),
-    action: 'marketplace.payment.manual_captured',
-    objectType: 'payment_intent',
-    objectId: input.paymentId,
-    result: 'success',
-    severity: 'warning',
-    source: 'admin-payment-command',
-    request: input.request,
-    reason: input.reason,
-    afterValue: { status: nextStatus, capturedAmount: nextCaptured, providerReference: nextReference },
-  })
-  return adminPaymentDossier(input.paymentId)
+export async function captureAdminPayment(input:{paymentId:string;amount?:number;providerReference?:string|null;reason:string;idempotencyKey:string;context:MarketplaceRequestContext;request:Request}):Promise<Record<string,unknown>> {
+ const db=await createServiceClient();const dossier=await adminPaymentDossier(input.paymentId,input.context);const linked=dossier.order;let scoped:Row|null=linked;if(!scoped&&dossier.payment.customer_account_id)scoped=await customerRow(String(dossier.payment.customer_account_id));if(input.context.tenantId&&scoped?.tenant_id!==input.context.tenantId||input.context.territoryId&&scoped?.territory_id!==input.context.territoryId)throw new MarketplaceError('PERMISSION_DENIED','Paiement hors périmètre.');const {data,error}=await db.rpc('angelcare_marketplace_record_manual_capture',{p_id:input.paymentId,p_amount:input.amount??null,p_reference:input.providerReference,p_reason:input.reason,p_actor:input.context.actor.id,p_key:input.idempotencyKey});
+ if(error||!data)throw new MarketplaceError(error?.code==='PGRST202'?'CONFIGURATION_ERROR':'CONFLICT',error?.message||'Capture impossible.',{cause:error||undefined});
+ return {...await adminPaymentDossier(input.paymentId,input.context)}
 }
 
 export async function transitionAdminPayment(input: {
@@ -1009,7 +929,7 @@ export async function transitionAdminPayment(input: {
     beforeValue: before,
     afterValue: { status: input.status },
   })
-  return adminPaymentDossier(input.paymentId)
+  return {...await adminPaymentDossier(input.paymentId,input.context)}
 }
 
 export async function createManualPayment(input: {

@@ -10,7 +10,7 @@ export const PRODUCT_PRO_MAX_WORLD01_REFERENCE={
  desktop:{width:935,height:1683,sha256:PRODUCT_PRO_MAX_WORLD01_DESKTOP_SHA256},
  mobile:{width:941,height:1672,sha256:PRODUCT_PRO_MAX_WORLD01_MOBILE_SHA256,viewportWidth:390,viewportHeight:844},
  canonicalDesktop:{width:1440,height:2592,maxContent:1380,gutter:30},
- logo:'/brand/angelcare-official-user-transparent.png',
+ logo:'/brand/angelcare-pearl-rim-colour-r1.png',
  fakeCommercialData:'FORBIDDEN',
  currency:'MAD/Dhs',
  fallback:'Category-Native',

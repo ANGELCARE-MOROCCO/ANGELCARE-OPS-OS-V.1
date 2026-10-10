@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import Link from '@/angelcare-marketplace/navigation-care-orbit/CareOrbitLink'
 import { ArrowUpRight, CalendarDays, GraduationCap, MapPin, Package, Sparkles } from 'lucide-react'
 import type { DiscoveryItem } from '../../catalog-discovery/types'
 import type { CatalogLocale } from '../../catalog-discovery/types'

@@ -24,7 +24,6 @@ import {
   C,
   PROFILES,
   isImmersiveKey,
-  photo,
   tr,
   w,
   type ImmersiveKey,
@@ -51,6 +50,7 @@ import { Action, Empty, Head, OfferCard, Photo, Rail } from "./ExperienceUI";
 import { SignatureExperience } from "./SignatureExperiences";
 import { useSelections } from "./useSelections";
 import { EducationalDiscovery } from "../business-worlds/EducationalDiscovery";
+import { storefrontPhoto } from "./editorial-media";
 import s from "./storefront.module.css";
 
 const relatedLabel = (key: string, locale: CatalogLocale) =>
@@ -102,6 +102,7 @@ function World({
     profile = PROFILES[worldKey],
     t = (value: Parameters<typeof tr>[0]) => tr(value, locale),
     base = baseHref(locale);
+  const photo = (key: string) => storefrontPhoto(worldKey, key);
   const items = useMemo(() => canonicalItems(experience), [experience]),
     selection = useSelections(experience, items);
   const featured = useMemo(
@@ -314,7 +315,7 @@ function World({
         </div>
         <div className={s.heroVisual}>
           <Photo
-            src={offerMediaOrEditorial(copy.media_url, profile.photo)}
+            src={offerMediaOrEditorial(copy.media_url, profile.photo, worldKey)}
             alt={t(profile.label)}
             priority
           />
@@ -1092,7 +1093,7 @@ function World({
     </div>
   );
 }
-function offerMediaOrEditorial(value: unknown, key: string) {
+function offerMediaOrEditorial(value: unknown, key: string, world: ImmersiveKey) {
   const href = safeHref(value, "");
-  return href || photo(key);
+  return href || storefrontPhoto(world, key);
 }

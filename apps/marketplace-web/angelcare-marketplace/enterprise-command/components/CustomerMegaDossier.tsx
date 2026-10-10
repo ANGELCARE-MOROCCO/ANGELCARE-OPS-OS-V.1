@@ -1,6 +1,8 @@
 'use client'
 
 import Link from 'next/link'
+import {CustomerHotlineHistory} from '../../hotline-os/components/CustomerHotlineHistory'
+import {CustomerAccessPanel} from '../../operational-intake/CustomerAccessPanel'
 import { useEffect, useState } from 'react'
 import { Archive, CalendarDays, Download, Expand, ExternalLink, FileText, MessageSquareText, Minimize2, ReceiptText, RotateCcw, ShoppingBag, WalletCards, X } from 'lucide-react'
 import type { CustomerMegaDossier, DocumentTemplateKey, EnterpriseTimelineEvent } from '../types'
@@ -15,7 +17,7 @@ type Envelope<T> = { data: T }
 const txt = (record: Record<string, unknown> | null | undefined, key: string) => String(record?.[key] ?? '')
 const money = (value: unknown) => `${Number(value || 0).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} Dh`
 
-export type CustomerDossierTab = '360' | 'Opérer' | 'Famille' | 'Portefeuille' | 'Commerce' | 'Finance' | 'CRM' | 'Expérience' | 'Activité' | 'Documents'
+export type CustomerDossierTab = 'HOTLINE' | '360' | 'Opérer' | 'Famille' | 'Portefeuille' | 'Commerce' | 'Finance' | 'CRM' | 'Expérience' | 'Activité' | 'Documents'
 
 export function CustomerMegaDossierOverlay({
   customerId,
@@ -70,7 +72,7 @@ export function CustomerMegaDossierOverlay({
     return () => { active = false }
   }, [customerId, initialData])
 
-  const tabs: CustomerDossierTab[] = ['360', 'Opérer', 'Famille', 'Portefeuille', 'Finance', 'CRM', 'Expérience', 'Activité', 'Documents']
+  const tabs: CustomerDossierTab[] = ['HOTLINE', '360', 'Opérer', 'Famille', 'Portefeuille', 'Finance', 'CRM', 'Expérience', 'Activité', 'Documents']
   const canonicalRoutes: Partial<Record<CustomerDossierTab, string>> = {
     '360': `/angelcare-marketplace/admin/customers/${customerId}`,
     Famille: `/angelcare-marketplace/admin/customers/${customerId}/family`,
@@ -165,6 +167,8 @@ export function CustomerMegaDossierOverlay({
       </div>
 
       <main className={styles.dossierBody}>
+        {tab==='HOTLINE'?<CustomerHotlineHistory customerId={customerId}/>:null}
+        {permissions.manageCustomer&&tab==='360'?<CustomerAccessPanel customerId={customerId}/>:null}
         {error ? <div className={styles.error}>{error}</div> : !data ? <div className={styles.panel}>Chargement du dossier complet…</div> : <>
           {tab === '360' ? <div className={styles.grid2}>
             <div className={styles.panel}>

@@ -32,6 +32,8 @@ import {shouldUseNativeAtomicFallback} from './world-visual-authority'
 import { LIVING_MARKETPLACE_WORLD_ID, isLivingMarketplaceComponent, livingMarketplaceComponentInData } from '@/angelcare-marketplace/homepage-living-marketplace/world'
 import { LivingMarketplaceHomepage } from '@/angelcare-marketplace/homepage-living-marketplace/components/LivingMarketplaceHomepage'
 import { getHomepageExperience } from '@/angelcare-marketplace/homepage-flagship/repository'
+import { AtomicExperienceFrame, AtomicOfferSection, AtomicOfferGroup } from '../atomic-offer-experience/AtomicExperience'
+import { isAtomicRoot, ATOMIC_ROOTS, publicAtomicProjection, type AtomicSectionProps } from '../atomic-offer-experience/model'
 
 const s=(value:unknown)=>value==null?'':String(value)
 const isHomepageProMaxType=(type:string)=>HOMEPAGE_PRO_MAX_COMPONENT_KEYS.includes(type)
@@ -105,6 +107,9 @@ async function RenderComponent({component,pickers,locale,territoryId,audienceId,
   if(props.hidden===true)return null
   const worldVisibility=shouldRenderWorldBlock(props,{locale,territoryId,audienceId});if(!worldVisibility.render)return null
   const nested=children(component)
+  if(isAtomicRoot(type,props)&&currentExperience360?.classification.masterDomain===ATOMIC_ROOTS[type])return <AtomicExperienceFrame key={`${currentExperience360.identity.id}:${locale}`} type={type} props={props} data={publicAtomicProjection(currentExperience360)} locale={locale}>{await Promise.all(nested.map((child,index)=><RenderComponent key={s(child.props?.id)||index} component={child} pickers={pickers} locale={locale} territoryId={territoryId} audienceId={audienceId} attribution={attribution} actionContext={actionContext} currentExperience360={currentExperience360} currentTruthReport={currentTruthReport}/>))}</AtomicExperienceFrame>
+  if(type==='atomic_offer_group')return <AtomicOfferGroup props={props}>{await Promise.all(nested.map((child,index)=><RenderComponent key={s(child.props?.id)||index} component={child} pickers={pickers} locale={locale} territoryId={territoryId} audienceId={audienceId} attribution={attribution} actionContext={actionContext} currentExperience360={currentExperience360} currentTruthReport={currentTruthReport}/>))}</AtomicOfferGroup>
+  if(type==='atomic_offer_section')return <AtomicOfferSection props={props as AtomicSectionProps}/>
   const nativeAtomicFallback=shouldUseNativeAtomicFallback(type,component)
   if(nativeAtomicFallback&&type==='ac_product_world'&&currentExperience360?.classification.masterDomain==='b2c_product_digital'&&currentTruthReport)return <div data-ac-world-visual-authority="native-fallback" data-ac-world-type={type}><StudioProductWorldRuntime data={currentExperience360} truthReport={currentTruthReport} worldProps={props as Record<string,unknown>}/></div>
   if(nativeAtomicFallback&&type==='ac_service_world'&&currentExperience360?.classification.masterDomain==='b2c_service_family'&&currentTruthReport)return <div data-ac-world-visual-authority="native-fallback" data-ac-world-type={type}><StudioServiceWorldRuntime data={currentExperience360} truthReport={currentTruthReport} worldProps={props as Record<string,unknown>}/></div>

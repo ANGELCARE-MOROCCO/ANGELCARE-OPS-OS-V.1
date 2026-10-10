@@ -1,0 +1,14 @@
+export type IntakeSource='journey'|'b2b'|'inquiry'|'family'
+export type IntakeRow={source_type:IntakeSource;source_id:string;reference:string;title:string;contact_name:string;email:string|null;phone:string|null;organization:string|null;vertical:string|null;source_route:string|null;status:string;payment_status:string|null;amount:number|null;currency:string;owner_id:string|null;territory_id:string|null;tenant_id:string|null;created_at:string;updated_at:string;customer_id:string|null;journey_id:string|null;detail_url:string;source_data:Record<string,unknown>}
+export type IntakeSnapshot={rows:IntakeRow[];total:number;page:number;pageSize:number;generatedAt:string;sources:IntakeSource[];canManage:Partial<Record<IntakeSource,boolean>>;canConvertB2b:boolean;canCreateOrder:boolean}
+export const SOURCE_LABELS:Record<IntakeSource,string>={journey:'Commandes & parcours',b2b:'Projets B2B',inquiry:'Demandes publiques',family:'Besoins familles'}
+export function intakeState(status:string){return ['completed','cancelled','closed','spam','archived','rejected','declined','converted'].includes(status)?'closed':['submitted','registered','new','awaiting_angelcare'].includes(status)?'new':'active'}
+export function validAction(source:IntakeSource,status:string,action:string){
+ if(action==='claim'||action==='note')return true
+ if(source==='b2b')return action==='triage'&&status==='submitted'||action==='qualify'&&['submitted','triaged','qualified'].includes(status)||action==='diagnostic'&&['qualified','converted'].includes(status)||action==='crm'&&['qualified','converted'].includes(status)||action==='reject'&&['submitted','triaged','qualified'].includes(status)||action==='archive'&&['rejected','converted'].includes(status)
+ if(source==='journey')return action==='qualify'&&['registered','awaiting_customer','awaiting_angelcare'].includes(status)||action==='cancel'&&['registered','awaiting_customer','awaiting_angelcare','qualified','scheduled','in_preparation','blocked','recovery'].includes(status)
+ if(source==='family')return action==='qualify'&&['submitted','qualified'].includes(status)||action==='proposal'&&['submitted','qualified'].includes(status)||action==='reject'&&['submitted','qualified'].includes(status)
+ return action==='qualify'&&!['closed','spam'].includes(status)||action==='close'&&!['closed','spam'].includes(status)
+}
+export function requestedMethod(value:unknown){return typeof value==='string'&&['cash_on_delivery','card','ac_wallet','bank_transfer','invoice','pay_at_location','manual_verified','deposit','installment','corporate_allowance','voucher'].includes(value)?value:'manual_verified'}
+export function normalizedFinance(finance:Record<string,unknown>,payment?:Record<string,unknown>|null){const raw=payment?.expected_amount??finance.expected_amount??finance.grand_total??finance.amount;return {amount:raw==null?null:Number(raw),status:String(payment?.status??finance.payment_status??finance.status??'pending')}}

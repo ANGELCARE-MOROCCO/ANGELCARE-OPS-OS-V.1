@@ -117,7 +117,7 @@ export default function Bulk4TemplateFoundryWorkspace() {
       <div className={styles.templateAnatomyViewer}>
         <header><span><LayoutTemplate/><small>ANATOMY VIEWER</small></span><TonePill tone={selected.tone}>{selected.category}</TonePill></header>
         <div className={styles.anatomyPreview}>
-          <div className={styles.anatomyBrand}><img src="/logo.png" alt=""/><span>{selected.code}</span></div>
+          <div className={styles.anatomyBrand}><img src="/brand/angelcare-pearl-rim-colour-r1.png" alt=""/><span>{selected.code}</span></div>
           <div className={styles.anatomyZones}>{selected.anatomy.map((zone, index) => <article key={zone} className={index === 0 ? styles.anatomyPrimary : ""}><span>{String(index + 1).padStart(2, "0")}</span><strong>{zone}</strong><small>{selected.slots[index]?.label || "Zone structurante"}</small></article>)}</div>
           <footer>{selected.outputProfiles.map((profile) => <span key={profile.id}>{profile.dimensions}</span>)}</footer>
         </div>

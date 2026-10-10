@@ -632,7 +632,7 @@ function Header() {
     <header style={headerStyle}>
       <div style={brandAreaStyle}>
         <div style={logoFrameStyle}>
-          <img src="/logo.png" alt="AngelCare" style={logoImageStyle} />
+          <img src="/brand/angelcare-pearl-rim-colour-r1.png" alt="AngelCare" style={logoImageStyle} />
         </div>
         <div>
           <div style={brandTitleStyle}>TRAININGHUB PARTNER PORTAL</div>

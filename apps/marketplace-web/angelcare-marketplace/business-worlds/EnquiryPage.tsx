@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from '@/angelcare-marketplace/navigation-care-orbit/CareOrbitLink';
 import type { CatalogLocale } from "../catalog-discovery/types";
 import { GlobalPublicShell } from "../public-universe/components/GlobalPublicShell";
 import { B, WORLDS, tr, type BusinessKey } from "./content";

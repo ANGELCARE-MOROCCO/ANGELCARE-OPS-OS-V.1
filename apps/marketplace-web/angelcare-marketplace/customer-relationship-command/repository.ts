@@ -1,3 +1,4 @@
+import {readAllPages} from '../operational-intake/pagination'
 import { createServiceClient } from '@/lib/supabase/server'
 import type {
   CrmRelationshipOpportunity, CustomerCaseRecord, CustomerRelationshipOverview, FamilyRelationship,
@@ -23,7 +24,7 @@ async function optional<T>(fn: () => PromiseLike<{ data?: unknown; error?: unkno
 
 function amountFromJourney(row: Row) {
   const financial = row.financial_status && typeof row.financial_status === 'object' ? row.financial_status as Row : {}
-  return num(financial.grand_total || financial.total || financial.amount || financial.order_total)
+  return num(financial.grand_total ?? financial.expected_amount ?? financial.amount ?? financial.total ?? financial.order_total)
 }
 
 export async function customerRelationshipOverview(): Promise<CustomerRelationshipOverview> {
@@ -32,24 +33,24 @@ export async function customerRelationshipOverview(): Promise<CustomerRelationsh
   const activitySince = new Date(Date.now() - 30 * 86400000).toISOString()
 
   const [customersRaw, addressesRaw, journeysRaw, paymentsRaw, refundsRaw, walletsRaw, subscriptionsRaw, invoicesRaw, casesRaw, familySupportRaw, familiesRaw, guardiansRaw, childrenRaw, familyRequestsRaw, familyMissionsRaw, opportunitiesRaw, leadsRaw, inquiriesRaw] = await Promise.all([
-    optional<Row[]>(() => db.from('angelcare_marketplace_customer_accounts').select('id,public_reference,account_kind,status,display_name,email,phone,preferred_locale,family_account_id,crm_account_id,premium_status,created_at,updated_at,metadata').order('updated_at',{ascending:false}).limit(500), []),
-    optional<Row[]>(() => db.from('angelcare_marketplace_customer_addresses').select('id,customer_account_id,label,city,address_line,is_default,status,updated_at').eq('status','active').limit(1500), []),
-    optional<Row[]>(() => db.from('angelcare_marketplace_journeys').select('id,public_reference,journey_type,status,title,customer_account_id,family_account_id,scheduled_start_at,scheduled_end_at,financial_status,risk_level,created_at,updated_at').order('updated_at',{ascending:false}).limit(3000), []),
-    optional<Row[]>(() => db.from('angelcare_marketplace_payment_intents').select('id,public_reference,customer_account_id,status,expected_amount,captured_amount,refunded_amount,wallet_contribution,created_at,updated_at').order('updated_at',{ascending:false}).limit(3000), []),
-    optional<Row[]>(() => db.from('angelcare_marketplace_payment_refunds').select('id,payment_intent_id,requested_amount,external_refund_amount,wallet_restore_amount,status,created_at').gte('created_at',activitySince).limit(1500), []),
-    optional<Row[]>(() => db.from('angelcare_marketplace_wallet_accounts').select('id,customer_account_id,status,available_balance,lifetime_spent,updated_at').limit(1000), []),
-    optional<Row[]>(() => db.from('angelcare_marketplace_customer_subscriptions').select('id,public_reference,customer_account_id,status,amount,created_at,updated_at').limit(1500), []),
-    optional<Row[]>(() => db.from('angelcare_marketplace_finance_invoices').select('id,public_reference,customer_account_id,status,total_amount,paid_amount,balance_due,due_at,updated_at').limit(2000), []),
-    optional<Row[]>(() => db.from('angelcare_marketplace_operating_cases').select('id,public_reference,workspace_key,customer_id,title,status,priority,risk_level,next_action,due_at,financial_exposure,currency_label,source_reference,updated_at').in('status',[...openCaseStatuses]).order('updated_at',{ascending:false}).limit(1000), []),
-    optional<Row[]>(() => db.from('angelcare_marketplace_family_support_tickets').select('id,public_reference,family_account_id,status,priority,subject,updated_at').not('status','in','("resolved","closed")').limit(1000), []),
-    optional<Row[]>(() => db.from('angelcare_marketplace_family_accounts').select('id,public_reference,display_name,city,status,created_at,updated_at').limit(600), []),
-    optional<Row[]>(() => db.from('angelcare_marketplace_family_guardians').select('id,public_reference,family_account_id,customer_account_id,full_name,relationship,email,phone,is_primary,status').neq('status','archived').limit(1600), []),
-    optional<Row[]>(() => db.from('angelcare_marketplace_family_children').select('id,public_reference,family_account_id,first_name,birth_date,school_level,status').neq('status','archived').limit(1600), []),
-    optional<Row[]>(() => db.from('angelcare_marketplace_family_quote_requests').select('id,family_account_id,status,updated_at').not('status','in','("accepted","declined","cancelled")').limit(1200), []),
-    optional<Row[]>(() => db.from('angelcare_marketplace_family_missions').select('id,family_account_id,status,updated_at').not('status','in','("completed","cancelled")').limit(1200), []),
-    optional<Row[]>(() => db.from('angelcare_marketplace_crm_opportunities').select('id,public_reference,account_id,lead_id,name,stage,estimated_value,probability,expected_close_at,next_action,next_action_at,updated_at').order('updated_at',{ascending:false}).limit(600), []),
-    optional<Row[]>(() => db.from('angelcare_marketplace_crm_leads').select('id,public_reference,name,email,phone,status,source,updated_at').order('updated_at',{ascending:false}).limit(600), []),
-    optional<Row[]>(() => db.from('angelcare_marketplace_public_inquiries').select('id,public_reference,linked_customer_account_id,full_name,status,created_at,updated_at').gte('updated_at',activitySince).order('updated_at',{ascending:false}).limit(1000), []),
+    readAllPages<Row>(()=>db.from('angelcare_marketplace_customer_accounts').select('id,public_reference,account_kind,status,display_name,email,phone,preferred_locale,family_account_id,crm_account_id,premium_status,created_at,updated_at,metadata').order('updated_at',{ascending:false}).order('id')),
+    readAllPages<Row>(()=>db.from('angelcare_marketplace_customer_addresses').select('id,customer_account_id,label,city,address_line,is_default,status,updated_at').eq('status','active').order('id')),
+    readAllPages<Row>(()=>db.from('angelcare_marketplace_journeys').select('id,public_reference,journey_type,status,title,customer_account_id,family_account_id,scheduled_start_at,scheduled_end_at,financial_status,risk_level,created_at,updated_at').order('updated_at',{ascending:false}).order('id')),
+    readAllPages<Row>(()=>db.from('angelcare_marketplace_payment_intents').select('id,public_reference,customer_account_id,status,expected_amount,captured_amount,refunded_amount,wallet_contribution,created_at,updated_at').order('updated_at',{ascending:false}).order('id')),
+    readAllPages<Row>(()=>db.from('angelcare_marketplace_payment_refunds').select('id,payment_intent_id,requested_amount,external_refund_amount,wallet_restore_amount,status,created_at').gte('created_at',activitySince).order('id')),
+    readAllPages<Row>(()=>db.from('angelcare_marketplace_wallet_accounts').select('id,customer_account_id,status,available_balance,lifetime_spent,updated_at').order('id')),
+    readAllPages<Row>(()=>db.from('angelcare_marketplace_customer_subscriptions').select('id,public_reference,customer_account_id,status,amount,created_at,updated_at').order('id')),
+    readAllPages<Row>(()=>db.from('angelcare_marketplace_finance_invoices').select('id,public_reference,customer_account_id,status,total_amount,paid_amount,balance_due,due_at,updated_at').order('id')),
+    readAllPages<Row>(()=>db.from('angelcare_marketplace_operating_cases').select('id,public_reference,workspace_key,customer_id,title,status,priority,risk_level,next_action,due_at,financial_exposure,currency_label,source_reference,updated_at').in('status',[...openCaseStatuses]).order('updated_at',{ascending:false}).order('id')),
+    readAllPages<Row>(()=>db.from('angelcare_marketplace_family_support_tickets').select('id,public_reference,family_account_id,status,priority,subject,updated_at').not('status','in','("resolved","closed")').order('id')),
+    readAllPages<Row>(()=>db.from('angelcare_marketplace_family_accounts').select('id,public_reference,display_name,city,status,created_at,updated_at').order('id')),
+    readAllPages<Row>(()=>db.from('angelcare_marketplace_family_guardians').select('id,public_reference,family_account_id,customer_account_id,full_name,relationship,email,phone,is_primary,status').neq('status','archived').order('id')),
+    readAllPages<Row>(()=>db.from('angelcare_marketplace_family_children').select('id,public_reference,family_account_id,first_name,birth_date,school_level,status').neq('status','archived').order('id')),
+    readAllPages<Row>(()=>db.from('angelcare_marketplace_family_quote_requests').select('id,family_account_id,status,updated_at').not('status','in','("accepted","declined","cancelled")').order('id')),
+    readAllPages<Row>(()=>db.from('angelcare_marketplace_family_missions').select('id,family_account_id,status,updated_at').not('status','in','("completed","cancelled")').order('id')),
+    readAllPages<Row>(()=>db.from('angelcare_marketplace_crm_opportunities').select('id,public_reference,account_id,lead_id,name,stage,estimated_value,probability,expected_close_at,next_action,next_action_at,updated_at').order('updated_at',{ascending:false}).order('id')),
+    readAllPages<Row>(()=>db.from('angelcare_marketplace_crm_leads').select('id,public_reference,name,email,phone,status,source,updated_at').order('updated_at',{ascending:false}).order('id')),
+    readAllPages<Row>(()=>db.from('angelcare_marketplace_public_inquiries').select('id,public_reference,linked_customer_account_id,full_name,status,created_at,updated_at').gte('updated_at',activitySince).order('updated_at',{ascending:false}).order('id')),
   ])
 
   const customers = rows(customersRaw), addresses = rows(addressesRaw), journeys = rows(journeysRaw), payments = rows(paymentsRaw), refunds = rows(refundsRaw), wallets = rows(walletsRaw), subscriptions = rows(subscriptionsRaw), invoices = rows(invoicesRaw), cases = rows(casesRaw), families = rows(familiesRaw), guardians = rows(guardiansRaw), children = rows(childrenRaw), familyRequests = rows(familyRequestsRaw), familyMissions = rows(familyMissionsRaw), opportunities = rows(opportunitiesRaw), inquiries = rows(inquiriesRaw)

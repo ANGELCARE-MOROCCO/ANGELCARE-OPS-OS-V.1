@@ -21,8 +21,8 @@ import type {
 export const BRAND_MAX_ASSET_BYTES = 500_000
 export const BRAND_MAX_DIMENSION = 1600
 export const BRAND_ALLOWED_MIME_TYPES = ['image/png', 'image/jpeg', 'image/webp'] as const
-export const ANGELCARE_OFFICIAL_LOGO_URL = '/brand/angelcare-official.webp'
-export const ANGELCARE_OFFICIAL_LOGO_PNG_URL = '/logo.png'
+export const ANGELCARE_OFFICIAL_LOGO_URL = '/brand/angelcare-pearl-rim-colour-r1.png'
+export const ANGELCARE_OFFICIAL_LOGO_PNG_URL = '/brand/angelcare-pearl-rim-colour-r1.png'
 
 const PROFILE_TABLE = 'angelcare360_operator_brand_profiles'
 const ASSET_TABLE = 'angelcare360_operator_brand_assets'

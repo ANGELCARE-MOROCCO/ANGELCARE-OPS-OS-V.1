@@ -270,7 +270,7 @@ export default function AiDirectorUniverseShell({ active, children }: { active: 
     <section className={styles.shell} data-view={active} data-ai-universe-shell="true">
       <header className={styles.commandHeader}>
         <div className={styles.brandBlock}>
-          <div className={styles.logoPlate}><Image src="/logo.png" alt="AngelCare" width={54} height={54} priority /></div>
+          <div className={styles.logoPlate}><Image src="/brand/angelcare-pearl-rim-colour-r1.png" alt="AngelCare" width={54} height={54} priority /></div>
           <div className={styles.brandCopy}>
             <span>SANILA MARKET OS · CONTENT COMMAND CENTER 360</span>
             <div><h1>{current.label}</h1><AiStatus tone={active === 'recovery' ? 'warning' : 'success'}>Espace protégé</AiStatus></div>

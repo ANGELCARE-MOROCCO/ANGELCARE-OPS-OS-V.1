@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import Link from '@/angelcare-marketplace/navigation-care-orbit/CareOrbitLink'
 import {ArrowRight,BadgeCheck,BookOpenCheck,Building2,HeartHandshake,Hotel,Network,PackageOpen,Search,ShieldCheck,Sparkles,UsersRound,HeartPulse,BriefcaseBusiness} from 'lucide-react'
 import type {DiscoverySearch as DiscoverySearchData,StorefrontKey} from '../types'
 import {catalogCopy} from '../content'

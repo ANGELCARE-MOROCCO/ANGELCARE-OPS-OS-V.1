@@ -1,4 +1,5 @@
 'use client'
+import {careOrbitLocation} from '@/angelcare-marketplace/navigation-care-orbit/client-controller'
 
 import {useEffect,useMemo,useState} from 'react'
 import {ArrowRight,Heart,LoaderCircle,MessageCircle,Minus,Plus,Share2,ShoppingCart,Zap} from 'lucide-react'
@@ -75,7 +76,7 @@ export function ProductCommerceActions({locale,itemSlug,variantGroups,maxQuantit
  async function act(mode:'basket'|'checkout'){
   if(!available||busy)return
   setBusy(mode);setMessage('')
-  try{const visitor=visitorReference(),basket=await ensureBasket(locale,visitor);await addSlug({basketId:basket.id,visitor,locale,slug:itemSlug,quantity,configuration});window.location.assign(mode==='checkout'?`/angelcare-marketplace/${locale}/checkout?basket=${encodeURIComponent(basket.id)}&kind=transactional`:`/angelcare-marketplace/${locale}/basket`)}catch(error){setMessage(error instanceof Error?error.message:copy[l].actionFail);setBusy(null)}
+  try{const visitor=visitorReference(),basket=await ensureBasket(locale,visitor);await addSlug({basketId:basket.id,visitor,locale,slug:itemSlug,quantity,configuration});careOrbitLocation.assign(mode==='checkout'?`/angelcare-marketplace/${locale}/checkout?basket=${encodeURIComponent(basket.id)}&kind=transactional`:`/angelcare-marketplace/${locale}/basket`)}catch(error){setMessage(error instanceof Error?error.message:copy[l].actionFail);setBusy(null)}
  }
  return <div className={styles.purchaseControls}>
   {variantGroups.length?<div className={styles.variantGroups}>{variantGroups.map(group=><div className={styles.variantGroup} key={group.key}><span>{group.label}</span><div>{group.values.map(option=><button type="button" key={option} aria-pressed={configuration[group.key]===option} data-selected={configuration[group.key]===option} onClick={()=>setConfiguration(current=>({...current,[group.key]:option}))}>{languageValue(option,l)}</button>)}</div></div>)}</div>:null}
@@ -87,7 +88,7 @@ export function ProductCommerceActions({locale,itemSlug,variantGroups,maxQuantit
 
 export function QuickBasketButton({locale,slugs,label,className}:{locale:string;slugs:string[];label?:string;className?:string}){
  const l=localeOf(locale),[busy,setBusy]=useState(false),[message,setMessage]=useState('')
- async function add(){if(busy||!slugs.length)return;setBusy(true);setMessage('');try{const visitor=visitorReference(),basket=await ensureBasket(locale,visitor);for(const slug of [...new Set(slugs.filter(Boolean))])await addSlug({basketId:basket.id,visitor,locale,slug,quantity:1,configuration:{}});window.location.assign(`/angelcare-marketplace/${locale}/basket`)}catch(error){setMessage(error instanceof Error?error.message:copy[l].basketFail);setBusy(false)}}
+ async function add(){if(busy||!slugs.length)return;setBusy(true);setMessage('');try{const visitor=visitorReference(),basket=await ensureBasket(locale,visitor);for(const slug of [...new Set(slugs.filter(Boolean))])await addSlug({basketId:basket.id,visitor,locale,slug,quantity:1,configuration:{}});careOrbitLocation.assign(`/angelcare-marketplace/${locale}/basket`)}catch(error){setMessage(error instanceof Error?error.message:copy[l].basketFail);setBusy(false)}}
  return <div className={styles.quickBasketWrap}><button type="button" className={className||styles.quickBasket} onClick={()=>void add()} disabled={busy||!slugs.length}>{busy?<LoaderCircle className={styles.spin}/>:<ShoppingCart/>}{label||copy[l].add}</button>{message?<small role="status">{message}</small>:null}</div>
 }
 

@@ -473,7 +473,7 @@ export default function ContentResearchControlWorkspace() {
     <main className={styles.canvas}>
       <section className={styles.hero}>
         <div className={styles.heroIdentity}>
-          <div className={styles.logoPlate}><Image src="/logo.png" alt="ANGELCARE" width={132} height={46} style={{ width: 132, height: 'auto' }} priority /></div>
+          <div className={styles.logoPlate}><Image src="/brand/angelcare-pearl-rim-colour-r1.png" alt="ANGELCARE" width={132} height={46} style={{ width: 132, height: 'auto' }} priority /></div>
           <div><span className={styles.eyebrow}>SANILA MARKET OS · CONTENT COMMAND CENTER 360</span><h1>Contrôle Recherche IA</h1><p>Gouvernez chaque recherche Tavily, chaque analyse OpenRouter, chaque agent Content Command, chaque fréquence, quota et création interne.</p></div>
         </div>
         <div className={styles.heroCommand}>

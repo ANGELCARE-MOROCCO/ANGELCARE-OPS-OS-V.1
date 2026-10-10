@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import Link from '@/angelcare-marketplace/navigation-care-orbit/CareOrbitLink'
 import type { CSSProperties, ReactNode } from 'react'
 import type { CmsBlock } from '../../experience-builder/types'
 import type { PublicPageExperience } from '../types'

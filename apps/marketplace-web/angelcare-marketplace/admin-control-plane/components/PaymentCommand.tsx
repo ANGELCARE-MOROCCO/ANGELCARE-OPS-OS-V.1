@@ -1,3 +1,4 @@
+import {useRef} from 'react'
 "use client"
 
 import { useMemo, useState } from 'react'
@@ -39,6 +40,7 @@ export function PaymentCommand({ initial, canCreate, canManage, canRefund }: { i
   const [providerReference, setProviderReference] = useState('')
   const [note, setNote] = useState('')
 
+  const captureKey=useRef('')
   const [captureAmount, setCaptureAmount] = useState('')
   const [captureReference, setCaptureReference] = useState('')
   const [actionReason, setActionReason] = useState('')
@@ -110,13 +112,14 @@ export function PaymentCommand({ initial, canCreate, canManage, canRefund }: { i
         method: 'PATCH',
         body: JSON.stringify({
           action,
+          idempotencyKey:captureKey.current||(captureKey.current=crypto.randomUUID()),
           amount: action === 'capture' && captureAmount ? Number(captureAmount) : undefined,
           providerReference: captureReference || null,
           reason: `${actionReason || `Action opérateur : ${action}`} · ${governedReason}`,
         }),
       })
       setSelected(result)
-      setNotice(action === 'capture' ? 'Capture enregistrée.' : action === 'failed' ? 'Paiement déclaré en échec.' : 'Paiement annulé.')
+      captureKey.current='';setNotice(action === 'capture' ? 'Capture enregistrée.' : action === 'failed' ? 'Paiement déclaré en échec.' : 'Paiement annulé.')
       setCaptureAmount('')
       setCaptureReference('')
       setActionReason('')
@@ -219,7 +222,7 @@ export function PaymentCommand({ initial, canCreate, canManage, canRefund }: { i
                 <div className={styles.fieldGroup} style={{ gridColumn: '1 / -1' }}><label className={styles.fieldLabel}>Motif / preuve</label><textarea className={styles.textArea} value={actionReason} onChange={(event) => setActionReason(event.target.value)} /></div>
               </div>
               <div className={styles.pageActions} style={{ justifyContent: 'flex-start', marginTop: 12 }}>
-                <Button disabled={!canManage || busy || ['captured', 'refunded', 'partially_refunded'].includes(selected.payment.status)} onClick={() => void mutatePayment('capture')}><CheckCircle2 size={15} /> Capturer</Button>
+                <Button disabled={!canManage || busy || !captureReference.trim() || !actionReason.trim() || selected.payment.selected_method==='ac_wallet' || ['captured', 'refunded', 'partially_refunded'].includes(selected.payment.status)} onClick={() => void mutatePayment('capture')}><CheckCircle2 size={15} /> Capturer</Button>
                 <Button variant="secondary" disabled={!canManage || busy || ['captured', 'refunded', 'partially_refunded', 'failed', 'cancelled'].includes(selected.payment.status)} onClick={() => void mutatePayment('failed')}><XCircle size={15} /> Déclarer échec</Button>
                 <Button variant="danger" disabled={!canManage || busy || ['captured', 'refunded', 'partially_refunded', 'failed', 'cancelled'].includes(selected.payment.status)} onClick={() => void mutatePayment('cancelled')}>Annuler</Button>
               </div>

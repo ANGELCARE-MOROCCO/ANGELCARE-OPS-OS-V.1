@@ -4,6 +4,7 @@ const b=(key:string,label:string,domain:PublicExperienceMasterDomain|'shared',va
 
 export const PUBLIC_EXPERIENCE_TYPED_BINDINGS:readonly PublicExperienceBindingDescriptor[]=[
  b('identity.name','Nom public','shared','text','Category-Native / Catalog',['all']),
+ b('content.fields','Champs publics natifs','shared','items','Experience Schema public_visible'),
  b('identity.shortDescription','Description courte','shared','text','Category-Native / Catalog'),
  b('identity.description','Description complète','shared','text','Category-Native / Catalog'),
  b('media.primary','Média principal','shared','url','Catalog Media',['all']),
@@ -32,6 +33,7 @@ export const PUBLIC_EXPERIENCE_TYPED_BINDINGS:readonly PublicExperienceBindingDe
  b('academy.modules','Modules','academy_admission','items','Academy Engine'),
  b('academy.trainers','Formateurs','academy_admission','items','Academy Engine'),
  b('academy.nextCohort','Prochaine cohorte','academy_admission','object','Academy Cohorts'),
+ b('academy.cohorts','Sessions publiées','academy_admission','items','Academy Cohorts'),
  b('academy.capacity','Capacité','academy_admission','number','Academy Cohorts'),
  b('academy.certification','Certification','academy_admission','object','Certificate Authority'),
  b('academy.admission','Admission','academy_admission','object','Admissions authority',['preschool-admission']),

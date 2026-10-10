@@ -128,7 +128,7 @@ export default function TrainingHubCommandCenterPolishedFinal() {
     <main style={page}>
       <aside style={sidebar}>
         <div style={brand}>
-          <img src="/logo.png" alt="AngelCare" style={logo} />
+          <img src="/brand/angelcare-pearl-rim-colour-r1.png" alt="AngelCare" style={logo} />
           <div><strong>TrainingHub</strong><span>Command Center</span></div>
         </div>
 

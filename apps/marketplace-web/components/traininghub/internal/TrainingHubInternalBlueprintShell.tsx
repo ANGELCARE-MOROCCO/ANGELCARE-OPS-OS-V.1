@@ -628,7 +628,7 @@ export function TrainingHubInternalBlueprintShell({ moduleKey, entityId }: { mod
       <aside style={sidebarStyle}>
         <div style={brandBlockStyle}>
           <div style={logoFrameStyle}>
-            <img src="/logo.png" alt="AngelCare" style={logoStyle} />
+            <img src="/brand/angelcare-pearl-rim-colour-r1.png" alt="AngelCare" style={logoStyle} />
           </div>
           <div>
             <strong style={brandTitleStyle}>TrainingHub</strong>

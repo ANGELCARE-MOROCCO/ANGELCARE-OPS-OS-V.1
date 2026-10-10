@@ -1691,7 +1691,7 @@ export default function EnterpriseComposeModal({
 
                     <div className="mt-5 rounded-[24px] border border-slate-200 bg-[linear-gradient(135deg,#ffffff_0%,#f8fbff_100%)] p-4">
                       <div className="flex items-start gap-3">
-                        <img src="/logo.png" alt="AngelCare" className="h-10 w-auto object-contain" />
+                        <img src="/brand/angelcare-pearl-rim-colour-r1.png" alt="AngelCare" className="h-10 w-auto object-contain" />
                         <div className="min-w-0"><div className="text-xs font-black uppercase tracking-[.16em] text-blue-700">Signature {activeSignature.unit}</div><div className="mt-1 text-sm font-black text-slate-950">Équipe {activeSignature.unit || "ANGELCARE"}</div><div className="mt-1 text-xs font-semibold leading-5 text-slate-500">{activeSignature.line1} {activeSignature.line2}</div><div className="mt-2 text-xs font-bold text-slate-600">{activeMailbox?.email || ""}</div></div>
                         <span className="ml-auto rounded-full bg-emerald-50 px-2 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-700">Incluse à l’envoi</span>
                       </div>

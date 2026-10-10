@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import Link from '@/angelcare-marketplace/navigation-care-orbit/CareOrbitLink'
 import { GitCompareArrows, MapPin, ShieldCheck, ShoppingBag } from 'lucide-react'
 import { categoryNativeFamilyCopy } from '../content'
 import type { AdaptiveExperienceData } from '../types'

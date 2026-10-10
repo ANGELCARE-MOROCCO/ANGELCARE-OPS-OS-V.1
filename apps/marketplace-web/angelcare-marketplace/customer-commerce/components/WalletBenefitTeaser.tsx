@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
-import Link from 'next/link'
+import Link from '@/angelcare-marketplace/navigation-care-orbit/CareOrbitLink'
 import { Sparkles, WalletCards } from 'lucide-react'
 import type { CatalogLocale } from '../../catalog-discovery/types'
 import type { WalletComparison } from '../types'

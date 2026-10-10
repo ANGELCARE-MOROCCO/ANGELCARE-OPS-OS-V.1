@@ -180,7 +180,7 @@ export default function TrainingHubCommandCenterProductionFinal() {
     <main style={page}>
       <aside style={sidebar}>
         <div style={brand}>
-          <img src="/logo.png" alt="AngelCare" style={logo} />
+          <img src="/brand/angelcare-pearl-rim-colour-r1.png" alt="AngelCare" style={logo} />
           <div style={brandLine}>
             <span style={appIcon}>☷</span>
             <div><strong>TrainingHub</strong><small>Portail partenaires</small></div>

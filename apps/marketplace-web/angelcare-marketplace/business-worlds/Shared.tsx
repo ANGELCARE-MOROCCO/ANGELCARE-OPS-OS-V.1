@@ -45,6 +45,7 @@ import {
 } from "./content";
 import { prioritySummary, publicEvent, routeFor } from "./contract";
 import { Enquiry } from "./Enquiry";
+import { storefrontPhoto } from "../storefront-immersive/editorial-media";
 import s from "./business.module.css";
 interface WorldState {
   world: BusinessKey;
@@ -182,11 +183,12 @@ export function Picture({
   className?: string;
 }) {
   const [failed, setFailed] = useState(false);
+  const world = useContext(Context)?.world;
   return (
     <div className={`${s.picture} ${className}`} data-editorial-image={name}>
       {!failed ? (
         <img
-          src={photo(name)}
+          src={world ? storefrontPhoto(world, name) : photo(name)}
           alt={alt}
           loading={priority ? "eager" : "lazy"}
           decoding="async"

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import Link from 'next/link'
+import Link from '@/angelcare-marketplace/navigation-care-orbit/CareOrbitLink'
 import Image from 'next/image'
 
 import { CUSTOMER_ACCESS, sanilaHref } from '../content'

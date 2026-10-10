@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import Link from '@/angelcare-marketplace/navigation-care-orbit/CareOrbitLink'
 import { ArrowLeft, CalendarDays, CircleDollarSign, MapPin, ShieldCheck } from 'lucide-react'
 import { journeyAccent, journeyTypeLabels, statusLabels } from '../content'
 import type { MarketplaceJourney } from '../types'

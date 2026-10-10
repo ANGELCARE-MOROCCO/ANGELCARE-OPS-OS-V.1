@@ -214,7 +214,7 @@ export default function AmbassadorMarketSidebar() {
               <div className="flex items-center gap-3">
                 <div className="grid h-11 w-11 shrink-0 place-items-center overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
                   <img
-                    src="/b2b-plaquette-partenaires/assets/angelcare-original-logo.png"
+                    src="/brand/angelcare-pearl-rim-colour-r1.png"
                     alt="AngelCare"
                     className="h-full w-full object-contain p-1.5"
                   />

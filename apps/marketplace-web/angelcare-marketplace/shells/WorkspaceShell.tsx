@@ -24,7 +24,7 @@ export function WorkspaceShell({
       <aside className={styles.sidebar}>
         <div className={styles.sidebarHeader}>
           <div className={styles.sidebarBrand}>
-            <Image src="/logo.png" alt="ANGELCARE" width={170} height={58} />
+            <Image src="/brand/angelcare-pearl-rim-colour-r1.png" alt="ANGELCARE" width={170} height={58} />
             <span>Marketplace 360</span>
           </div>
         </div>

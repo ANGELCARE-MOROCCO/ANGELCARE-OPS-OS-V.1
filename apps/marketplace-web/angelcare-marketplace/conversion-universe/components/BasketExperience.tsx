@@ -1,100 +1,23 @@
 'use client'
+import {useLiveJourneySignals} from '../../live-experience-command/journey-events'
+import {LiveExperienceSlot} from '../../live-experience-command/components/LiveExperienceSlot'
+import Link from '@/angelcare-marketplace/navigation-care-orbit/CareOrbitLink'
+import {useEffect,useRef,useState} from 'react'
+import {ArrowRight,Baby,BookOpen,Check,Layers,Minus,Plus,RefreshCw,ShoppingBag,Sparkles,Trash2} from 'lucide-react'
+import type {CatalogLocale,DiscoveryItem} from '../../catalog-discovery/types'
+import {commerceApi,commerceVisitor} from '../../customer-experience/client'
+import {lineName,money,needsQuote,publicSelections,selectionLabel,type Basket} from '../../customer-experience/contracts'
+import {commerceCopy} from '../../customer-experience/copy'
+import styles from '../../customer-experience/commerce.module.css'
 
-import Link from 'next/link'
-import { useEffect, useRef, useState } from 'react'
-import { ArrowRight, BadgeCheck, Minus, PackageCheck, Plus, ShieldCheck, ShoppingBag, Trash2 } from 'lucide-react'
-import type { CatalogLocale, DiscoveryItem } from '../../catalog-discovery/types'
-import styles from '../conversion.module.css'
-
-type BasketItem = {
-  id: string
-  catalog_item_id: string
-  quantity: number
-  unit_price: number | null
-  line_total: number | null
-  price_status?: string
-  availability_status?: string
-  catalog_item?: { slug?: string; name_fr?: string; name_en?: string; name_ar?: string; kind?: string; currency_label?: string }
-}
-type Basket = { id: string; public_reference: string; basket_kind: string; currency_label: string; subtotal: number; grand_total: number; pricing_status?: string; items: BasketItem[] }
-type Envelope<T> = { data: T }
-
-function visitorReference() {
-  const name = 'ac_marketplace_visitor'
-  const current = document.cookie.split('; ').find(entry => entry.startsWith(`${name}=`))?.split('=')[1]
-  if (current) return decodeURIComponent(current)
-  const value = crypto.randomUUID()
-  document.cookie = `${name}=${encodeURIComponent(value)}; path=/; max-age=31536000; samesite=lax`
-  return value
-}
-
-async function json<T>(url: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(url, { ...init, headers: { 'content-type': 'application/json', ...(init?.headers || {}) } })
-  const payload = await response.json() as Envelope<T> | { error?: { message?: string } }
-  if (!response.ok || !('data' in payload)) throw new Error('error' in payload ? payload.error?.message || 'Opération impossible.' : 'Opération impossible.')
-  return payload.data
-}
-
-export function BasketExperience({ locale, initialItem = null, kind = 'transactional' }: { locale: CatalogLocale; initialItem?: DiscoveryItem | null; kind?: 'transactional' | 'quotation' }) {
-  const [basket, setBasket] = useState<Basket | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const visitor = useRef('')
-  const seeded = useRef(false)
-
-  async function refresh() {
-    const data = await json<Basket>(`/api/angelcare-marketplace/conversion/basket?locale=${locale}&kind=${kind}`, { headers: { 'x-marketplace-visitor': visitor.current } })
-    setBasket(data)
-    return data
-  }
-
-  useEffect(() => {
-    visitor.current = visitorReference()
-    let cancelled = false
-    async function load() {
-      try {
-        const current = await refresh()
-        if (initialItem && !seeded.current && !current.items?.some(line => line.catalog_item_id === initialItem.id)) {
-          seeded.current = true
-          await json(`/api/angelcare-marketplace/conversion/basket/${current.id}/items`, {
-            method: 'POST',
-            body: JSON.stringify({ visitorReference: visitor.current, itemSlug: initialItem.slug, locale, quantity: 1, configuration: {} }),
-          })
-          await refresh()
-        }
-      } catch (reason) {
-        if (!cancelled) setError(reason instanceof Error ? reason.message : 'Impossible de charger le panier.')
-      } finally {
-        if (!cancelled) setLoading(false)
-      }
-    }
-    void load()
-    return () => { cancelled = true }
-  }, [initialItem, kind, locale])
-
-  async function remove(itemId: string) {
-    if (!basket) return
-    try {
-      await json(`/api/angelcare-marketplace/conversion/basket/${basket.id}/items`, { method: 'DELETE', body: JSON.stringify({ visitorReference: visitor.current, itemId }) })
-      await refresh()
-    } catch (reason) { setError(reason instanceof Error ? reason.message : 'Suppression impossible.') }
-  }
-
-  const quoteRequired = basket?.items?.some(item => item.unit_price === null || item.price_status === 'quote_required')
-  return <main className={styles.basketRoot} dir={locale === 'ar' ? 'rtl' : 'ltr'} data-kind={kind}>
-    <section className={styles.basketHero}><div><span>{kind === 'quotation' ? 'ANGELCARE QUOTE BASKET' : 'ANGELCARE SECURE BASKET'}</span><h1>{kind === 'quotation' ? (locale === 'fr' ? 'Composez une demande multi-solutions' : locale === 'ar' ? 'أنشئ طلبًا متعدد الحلول' : 'Build a multi-solution request') : (locale === 'fr' ? 'Votre sélection, prête à être revérifiée' : locale === 'ar' ? 'اختياراتك جاهزة لإعادة التحقق' : 'Your selection, ready for revalidation')}</h1><p>{locale === 'fr' ? 'Chaque ligne conserve son autorité de prix, de disponibilité et de confiance. Aucun montant ou stock n’est inventé.' : locale === 'ar' ? 'يحتفظ كل عنصر بمرجعية السعر والتوفر والثقة. لا يتم اختلاق أي مبلغ أو مخزون.' : 'Every line preserves its price, availability and trust authority. No amount or stock is fabricated.'}</p></div><div><ShoppingBag size={48}/><strong>{basket?.items?.length || 0}</strong><span>{locale === 'fr' ? 'offres sélectionnées' : locale === 'ar' ? 'عروض مختارة' : 'selected offers'}</span></div></section>
-    {error ? <div className={styles.errorBanner}>{error}</div> : null}
-    <section className={styles.basketLayout} aria-busy={loading}>
-      <div className={styles.basketLines}>
-        <header><span>SELECTION</span><h2>{kind === 'quotation' ? 'Périmètre de proposition' : 'Articles et services'}</h2></header>
-        {loading ? <div className={styles.loadingState}>Chargement du panier gouverné…</div> : null}
-        {!loading && !basket?.items?.length ? <div className={styles.emptyBasket}><PackageCheck size={52}/><h3>{locale === 'fr' ? 'Votre sélection est vide' : locale === 'ar' ? 'اختياراتك فارغة' : 'Your selection is empty'}</h3><p>{locale === 'fr' ? 'Ajoutez des offres publiées depuis le catalogue.' : locale === 'ar' ? 'أضف عروضًا منشورة من الكتالوج.' : 'Add published offers from the catalog.'}</p><Link href={`/angelcare-marketplace/${locale}/marketplace`}>Explorer le Marketplace <ArrowRight size={17}/></Link></div> : null}
-        {basket?.items?.map(line => {
-          const name = locale === 'ar' ? line.catalog_item?.name_ar : locale === 'en' ? line.catalog_item?.name_en : line.catalog_item?.name_fr
-          return <article className={styles.basketLine} key={line.id}><div className={styles.lineVisual}><PackageCheck size={30}/></div><div className={styles.lineCopy}><span>{line.catalog_item?.kind || 'marketplace'}</span><h3>{name || line.catalog_item_id}</h3><div><BadgeCheck size={14}/>{line.availability_status || 'availability recheck required'}</div></div><div className={styles.quantityControl}><button type="button" disabled><Minus size={14}/></button><strong>{line.quantity}</strong><button type="button" disabled><Plus size={14}/></button></div><div className={styles.linePrice}><strong>{line.unit_price === null ? (locale === 'fr' ? 'Sur devis' : locale === 'ar' ? 'حسب العرض' : 'Quote') : `${new Intl.NumberFormat(locale).format(line.line_total || 0)} ${basket.currency_label}`}</strong><small>{line.price_status || 'snapshot'}</small></div><button className={styles.removeLine} type="button" onClick={() => void remove(line.id)} aria-label="Retirer"><Trash2 size={17}/></button></article>
-        })}
-      </div>
-      <aside className={styles.basketSummary}><span>COMMERCIAL CONTROL</span><h2>{locale === 'fr' ? 'Résumé de décision' : locale === 'ar' ? 'ملخص القرار' : 'Decision summary'}</h2><div><small>Sous-total connu</small><strong>{new Intl.NumberFormat(locale).format(basket?.subtotal || 0)} {basket?.currency_label || 'Dh'}</strong></div>{quoteRequired ? <p className={styles.quoteNotice}><ShieldCheck size={18}/>{locale === 'fr' ? 'Certaines lignes exigent une proposition qualifiée. Aucun total final ne sera affiché avant validation.' : locale === 'ar' ? 'تتطلب بعض العناصر عرضًا مؤهلاً. لن يتم عرض إجمالي نهائي قبل التحقق.' : 'Some lines require a qualified proposal. No final total will be displayed before validation.'}</p> : null}<ul><li><BadgeCheck size={15}/>Prix revérifié avant confirmation</li><li><BadgeCheck size={15}/>Disponibilité et capacité revérifiées</li><li><BadgeCheck size={15}/>Consentements versionnés</li></ul>{basket?.items?.length ? <Link href={`/angelcare-marketplace/${locale}/checkout?basket=${basket.id}&kind=${kind}`}>{kind === 'quotation' ? (locale === 'fr' ? 'Préparer la demande' : 'Prepare request') : (locale === 'fr' ? 'Passer à la vérification' : 'Proceed to review')}<ArrowRight size={18}/></Link> : <button disabled>Panier vide</button>}<Link className={styles.continueShopping} href={`/angelcare-marketplace/${locale}/marketplace`}>Continuer l’exploration</Link></aside>
-    </section>
-  </main>
+export function BasketExperience({locale,initialItem=null,kind='transactional'}:{locale:CatalogLocale;initialItem?:DiscoveryItem|null;kind?:'transactional'|'quotation'}) {
+ const t=commerceCopy[locale],base=`/angelcare-marketplace/${locale}`
+ const [basket,setBasket]=useState<Basket|null>(null),[loading,setLoading]=useState(true),[error,setError]=useState(''),[busy,setBusy]=useState(''),[attempt,setAttempt]=useState(0)
+ const visitor=useRef(''),seeded=useRef(false),lock=useRef(false)
+ async function read(){return commerceApi<Basket>(`/api/angelcare-marketplace/conversion/basket?locale=${locale}&kind=${kind}`,{headers:{'x-marketplace-visitor':visitor.current}})}
+ useEffect(()=>{visitor.current=commerceVisitor();let cancelled=false;setLoading(true);setError('');async function load(){try{let current=await read();if(initialItem&&!seeded.current&&!current.items.some(line=>line.catalog_item_id===initialItem.id)){await commerceApi(`/api/angelcare-marketplace/conversion/basket/${current.id}/items`,{method:'POST',body:JSON.stringify({visitorReference:visitor.current,itemSlug:initialItem.slug,locale,quantity:1,configuration:{}})});seeded.current=true;current=await read()}if(!cancelled)setBasket(current)}catch(reason){if(!cancelled)setError(reason instanceof Error?reason.message:t.retry)}finally{if(!cancelled)setLoading(false)}}void load();return()=>{cancelled=true}},[locale,kind,initialItem,attempt])
+ async function mutate(id:string,quantity?:number){if(!basket||lock.current)return;lock.current=true;setBusy(id);setError('');try{await commerceApi(`/api/angelcare-marketplace/conversion/basket/${basket.id}/items`,{method:quantity===undefined?'DELETE':'PATCH',body:JSON.stringify({visitorReference:visitor.current,itemId:id,quantity})});setBasket(await read())}catch(reason){setError(reason instanceof Error?reason.message:t.retry)}finally{lock.current=false;setBusy('')}}
+ useLiveJourneySignals({stage:'basket',signature:JSON.stringify(basket?.items.map(i=>[i.id,i.quantity])),error:Boolean(error)})
+ const quoted=needsQuote(basket)||kind==='quotation'
+ return <main className={styles.root} dir={locale==='ar'?'rtl':'ltr'} data-ac-commerce="basket" data-kind={kind}><LiveExperienceSlot name="basket"/><section className={styles.hero}><div><span className={styles.eyebrow}><Sparkles size={15}/> ANGELCARE · {t.selection}</span><h1>{kind==='quotation'?t.quoteTitle:t.basket}</h1><p>{kind==='quotation'?t.quoteBody:t.basketBody}</p><div className={styles.chips}><span><Check size={14}/>{t.saved}</span><span>{t.secure}</span></div></div><div className={styles.orb} aria-hidden="true"><div className={styles.orbCore}><ShoppingBag size={30}/><strong>{basket?.items.length??'—'}</strong><span>{t.offers}</span></div></div></section><nav className={styles.tabs} aria-label={t.selection}><Link href={`${base}/basket`} aria-current={kind==='transactional'?'page':undefined}>{locale==='fr'?'Panier achats':locale==='ar'?'سلة التسوق':'Shopping basket'}</Link><Link href={`${base}/quote-basket`} aria-current={kind==='quotation'?'page':undefined}>{locale==='fr'?'Panier projets & devis':locale==='ar'?'سلة المشاريع والعروض':'Projects & quotes'}</Link></nav>{error?<div className={styles.error} role="alert"><RefreshCw size={18}/><span>{error}</span><button className={styles.secondary} onClick={()=>setAttempt(n=>n+1)} disabled={Boolean(busy)||loading}>{t.retry}</button></div>:null}<div className={styles.layout} aria-busy={loading||Boolean(busy)}><section className={styles.panel}><header className={styles.panelHead}><h2>{t.selection}</h2><span className={styles.count}>{basket?.items.length??'—'} {t.offers}</span></header>{loading?<><p role="status">{t.loading}</p><div className={styles.skeleton}/><div className={styles.skeleton}/></>:!error&&!basket?.items.length?<div className={styles.empty}><ShoppingBag size={48}/><h2>{t.empty}</h2><p>{t.emptyBody}</p><Link className={styles.primary} href={`${base}/marketplace`}>{t.explore}<ArrowRight size={17}/></Link></div>:null}{!loading&&basket?.items.map(line=><article className={styles.line} key={line.id} data-basket-line={line.id}><Link className={styles.media} href={line.catalog_item?.slug?`${base}/marketplace/item/${line.catalog_item.slug}`:`${base}/marketplace`} aria-label={lineName(line,locale)}>{line.media_url?<img src={line.media_url} alt={lineName(line,locale)} loading="lazy"/>:<ShoppingBag size={28}/>}</Link><div><span className={styles.lineMeta}>{line.catalog_item?.kind?.replaceAll('_',' ')}</span><h3><Link href={line.catalog_item?.slug?`${base}/marketplace/item/${line.catalog_item.slug}`:`${base}/marketplace`}>{lineName(line,locale)}</Link></h3><div className={styles.lineDetail}>{publicSelections(line.configuration).map(choice=><span key={choice.key}>{selectionLabel(choice.key,locale)} : {choice.value}</span>)}</div><small className={styles.lineDetail}>{t.estimate}</small></div><div className={styles.lineRight}><strong>{line.unit_price==null?t.quote:money(line.line_total,locale,basket.currency_label)}</strong><div className={styles.qty}><button aria-label={`${t.less} · ${lineName(line,locale)}`} disabled={Boolean(busy)||line.quantity<=1} onClick={()=>void mutate(line.id,line.quantity-1)}><Minus size={14}/></button><output aria-label={t.quantity}>{line.quantity}</output><button aria-label={`${t.more} · ${lineName(line,locale)}`} disabled={Boolean(busy)||line.quantity>=99} onClick={()=>void mutate(line.id,line.quantity+1)}><Plus size={14}/></button></div><button className={styles.remove} disabled={Boolean(busy)} onClick={()=>void mutate(line.id)} aria-label={`${t.remove} · ${lineName(line,locale)}`}><Trash2 size={14}/>{busy===line.id?'…':t.remove}</button></div></article>)}</section><aside className={styles.summary}><section className={styles.summaryMain}><span className={styles.eyebrow}>{t.connected}</span><h2>{t.selection}</h2><small>{quoted?t.known:t.selection}</small><strong>{basket?money(basket.subtotal,locale,basket.currency_label):'—'}</strong><p>{quoted?t.quoteNote:t.estimate}</p><hr/><p><Check size={14}/> {t.saved}</p>{basket?.items.length&&!loading&&!busy&&!error?<Link className={styles.primary} href={`${base}/checkout?basket=${basket.id}&kind=${kind}`}>{quoted?t.request:t.checkout}<ArrowRight size={17}/></Link>:<button className={styles.primary} disabled>{t.checkout}</button>}<Link className={styles.secondary} style={{display:'flex',marginTop:10}} href={`${base}/marketplace`}>{t.explore}</Link></section><Link className={styles.help} href={`${base}/account/support`}><Sparkles size={22}/><div><strong>{t.support}</strong><p>{t.overview}</p></div></Link></aside></div><section className={styles.discovery} aria-label={t.explore}>{[{href:'home-services',Icon:Baby,fr:'Un service qui simplifie la vie',en:'Care that fits your life',ar:'رعاية تناسب حياتك'},{href:'development',Icon:BookOpen,fr:'Apprendre, jouer, grandir',en:'Learn, play, grow',ar:'تعلّم والعب وانمُ'},{href:'kits',Icon:Layers,fr:'De belles idées à explorer',en:'Ideas worth exploring',ar:'أفكار تستحق الاكتشاف'}].map(card=><Link href={`${base}/${card.href}`} key={card.href}><card.Icon size={28}/><div><strong>{card[locale]}</strong><small>{t.explore} →</small></div></Link>)}</section></main>
 }

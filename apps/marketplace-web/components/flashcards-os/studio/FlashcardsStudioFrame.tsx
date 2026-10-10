@@ -54,7 +54,7 @@ export default function FlashcardsStudioFrame({ children }: { children: React.Re
   return <section className={styles.studio} data-compact={compact} data-focus={focus} data-density={density} data-accent={identity.accent}>
     <aside className={`${styles.sidebar} ${mobile ? styles.sidebarMobileOpen : ''}`}>
       <div className={styles.brandCorner}>
-        <Link href="/flashcards-os" aria-label="ANGELCARE Flashcards OS"><img src="/b2b-plaquette-partenaires/assets/angelcare-original-logo.png" alt="ANGELCARE"/><span><strong>Flashcards OS</strong><small>Product & Learning Studio</small></span></Link>
+        <Link href="/flashcards-os" aria-label="ANGELCARE Flashcards OS"><img src="/brand/angelcare-pearl-rim-colour-r1.png" alt="ANGELCARE"/><span><strong>Flashcards OS</strong><small>Product & Learning Studio</small></span></Link>
         <button type="button" className={styles.mobileClose} onClick={() => setMobile(false)}><X size={17}/></button>
       </div>
       <button type="button" className={styles.collapseButton} onClick={() => setCompact((value) => !value)}>{compact ? <PanelLeftOpen size={16}/> : <PanelLeftClose size={16}/>}<span>{compact ? 'Étendre' : 'Réduire le studio'}</span></button>

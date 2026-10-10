@@ -1,0 +1,5142 @@
+{
+  "format": "angelcare-world-package-v1",
+  "packageVersion": 1,
+  "exportedAt": "2026-10-10T02:15:14.040Z",
+  "world": {
+    "name": "AngelCare · Solution Command R1",
+    "description": "Editable data-driven atomic composition. Published public offer projections only. No synthetic offer data or static transaction values.",
+    "themeVersion": "1.0.0",
+    "manifest": {
+      "version": 1,
+      "themeKind": "detail",
+      "themeName": "AngelCare · Solution Command R1",
+      "themeVersion": "1.0.0",
+      "acceptedMasterDomains": [
+        "b2b_institutional"
+      ],
+      "acceptedDoctrineKeys": [
+        "school-managed-programme",
+        "school-staff-reinforcement",
+        "hospitality-kids-programme",
+        "corporate-childcare-benefit",
+        "health-adjacent-programme",
+        "event-venue-programme",
+        "partner-os-plan",
+        "quality-check-assessment",
+        "custom-managed-solution"
+      ],
+      "acceptedBusinessFamilyKeys": [],
+      "acceptedStorefrontKeys": [],
+      "responsiveContract": "desktop-mobile-native",
+      "commerceContract": "canonical-only",
+      "fallbackContract": "native-fallback",
+      "seoContract": "canonical-route-owned",
+      "accessibilityContract": "wcag-operational",
+      "performanceContract": "bounded-runtime",
+      "compatibilityVersion": 1,
+      "sourceLabel": "AngelCare · Solution Command R1",
+      "importedAt": "2026-10-10T02:15:14.040Z",
+      "importedBy": null,
+      "requiredBindings": [
+        "identity.name"
+      ],
+      "optionalBindings": [
+        "content.fields",
+        "identity.description",
+        "media.gallery",
+        "trust.claims",
+        "reviews.summary",
+        "relations.recommendations"
+      ],
+      "requiredActions": [
+        "quotation.start",
+        "b2b.request"
+      ],
+      "optionalActions": [
+        "b2b.request"
+      ],
+      "requiredWorkflows": [],
+      "requiredCapabilities": [
+        "public-experience-360",
+        "canonical-route",
+        "native-fallback",
+        "world-factory-v3",
+        "truth-firewall",
+        "capability-negotiation",
+        "b2b-semantic-runtime-v2",
+        "canonical-actions",
+        "quotation-authority",
+        "relation-dynamic-sources",
+        "responsive-runtime",
+        "theme-operability-v1",
+        "declarative-conditions",
+        "ui-led-theme-operation",
+        "fr-en-ar-rtl",
+        "theme-token-contract"
+      ],
+      "slots": [
+        {
+          "blockId": "ao-b2b-world",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory editorial: operator-override",
+          "semanticRole": "editorial",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:ao-b2b-world"
+        },
+        {
+          "blockId": "ao-b2b-01",
+          "slot": "hero",
+          "confidence": 1,
+          "reason": "World Factory hero: operator-override",
+          "semanticRole": "hero",
+          "supplementalRoles": [
+            "identity",
+            "pricing",
+            "availability",
+            "primary_conversion"
+          ],
+          "capabilityKey": "wf:ao-b2b-01"
+        },
+        {
+          "blockId": "ao-b2b-02",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory specifications: operator-override",
+          "semanticRole": "specifications",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:ao-b2b-02"
+        },
+        {
+          "blockId": "ao-b2b-03",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory editorial: operator-override",
+          "semanticRole": "editorial",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:ao-b2b-03"
+        },
+        {
+          "blockId": "ao-b2b-04",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory b2b_deployment: operator-override",
+          "semanticRole": "b2b_deployment",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:ao-b2b-04"
+        },
+        {
+          "blockId": "ao-b2b-05",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory specifications: operator-override",
+          "semanticRole": "specifications",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:ao-b2b-05"
+        },
+        {
+          "blockId": "ao-b2b-06",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory editorial: operator-override",
+          "semanticRole": "editorial",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:ao-b2b-06"
+        },
+        {
+          "blockId": "ao-b2b-07",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory specifications: operator-override",
+          "semanticRole": "specifications",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:ao-b2b-07"
+        },
+        {
+          "blockId": "ao-b2b-08",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory specifications: operator-override",
+          "semanticRole": "specifications",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:ao-b2b-08"
+        },
+        {
+          "blockId": "ao-b2b-09",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory specifications: operator-override",
+          "semanticRole": "specifications",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:ao-b2b-09"
+        },
+        {
+          "blockId": "ao-b2b-10",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory specifications: operator-override",
+          "semanticRole": "specifications",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:ao-b2b-10"
+        },
+        {
+          "blockId": "ao-b2b-11",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory specifications: operator-override",
+          "semanticRole": "specifications",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:ao-b2b-11"
+        },
+        {
+          "blockId": "ao-b2b-12",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory specifications: operator-override",
+          "semanticRole": "specifications",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:ao-b2b-12"
+        },
+        {
+          "blockId": "ao-b2b-13",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory specifications: operator-override",
+          "semanticRole": "specifications",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:ao-b2b-13"
+        },
+        {
+          "blockId": "ao-b2b-14",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory media: operator-override",
+          "semanticRole": "media",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:ao-b2b-14"
+        },
+        {
+          "blockId": "ao-b2b-15",
+          "slot": "trust",
+          "confidence": 1,
+          "reason": "World Factory trust: operator-override",
+          "semanticRole": "trust",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:ao-b2b-15"
+        },
+        {
+          "blockId": "ao-b2b-16",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory reviews: operator-override",
+          "semanticRole": "reviews",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:ao-b2b-16"
+        },
+        {
+          "blockId": "ao-b2b-17",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory faq: operator-override",
+          "semanticRole": "faq",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:ao-b2b-17"
+        },
+        {
+          "blockId": "ao-b2b-18",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory recommendations: operator-override",
+          "semanticRole": "recommendations",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:ao-b2b-18"
+        },
+        {
+          "blockId": "ao-b2b-19",
+          "slot": "final_cta",
+          "confidence": 1,
+          "reason": "World Factory primary_conversion: operator-override",
+          "semanticRole": "primary_conversion",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:ao-b2b-19"
+        }
+      ],
+      "structuralFingerprint": "e0e9fff6193925fa3642d7d442da3786",
+      "visualFingerprint": "desktop:bedefb4d4c338ac89d2b5c18935ac24762dc49b97e0d9fdedbdead1b3f2fed98|mobile:13fd8ac13e48a6664bf2276612e62f5ac9dc03c10d27c33a4077f914efab8221",
+      "factory": {
+        "engineVersion": 3,
+        "schemaVersion": 3,
+        "compilerProfile": "pea-world-factory-2030-operability-v3",
+        "candidateFingerprint": "515b3bc7856d8767c6ed910b6383c8b3",
+        "documentFingerprint": "0d376c3a22c18136a3e6194436a45eca",
+        "compiledFingerprint": "e0e9fff6193925fa3642d7d442da3786",
+        "themeKind": "detail",
+        "masterDomain": "b2b_institutional",
+        "doctrineKeys": [
+          "school-managed-programme",
+          "school-staff-reinforcement",
+          "hospitality-kids-programme",
+          "corporate-childcare-benefit",
+          "health-adjacent-programme",
+          "event-venue-programme",
+          "partner-os-plan",
+          "quality-check-assessment",
+          "custom-managed-solution"
+        ],
+        "storefrontKeys": [],
+        "strictVisualFidelity": true,
+        "source": {
+          "kind": "package",
+          "label": "AngelCare · Solution Command R1",
+          "sourceFingerprint": "0d376c3a22c18136a3e6194436a45eca",
+          "safeToApply": true,
+          "upstreamBlockingCodes": [],
+          "upstreamReviewCodes": [],
+          "compilerFingerprint": "e1742f02ddeb67d2e0332d667625ada6",
+          "importedAt": "2026-10-10T02:15:14.038Z"
+        },
+        "visualReferences": [
+          {
+            "kind": "desktop",
+            "filename": "APPROVED_DESKTOP_REFERENCE.png",
+            "sha256": "bedefb4d4c338ac89d2b5c18935ac24762dc49b97e0d9fdedbdead1b3f2fed98",
+            "width": 1440,
+            "height": 7892,
+            "reviewed": false,
+            "reviewNote": "Agent-reviewed synthetic QA reference. Operator comparison with a real compatible offer remains required in Studio.",
+            "comparison": {
+              "status": "PENDING",
+              "score": null,
+              "structuralScore": null,
+              "responsiveScore": null,
+              "note": "Awaiting explicit Studio operator review.",
+              "reviewedAt": null
+            }
+          },
+          {
+            "kind": "mobile",
+            "filename": "APPROVED_MOBILE_REFERENCE.png",
+            "sha256": "13fd8ac13e48a6664bf2276612e62f5ac9dc03c10d27c33a4077f914efab8221",
+            "width": 390,
+            "height": 10585,
+            "reviewed": false,
+            "reviewNote": "Agent-reviewed synthetic QA reference. Operator comparison with a real compatible offer remains required in Studio.",
+            "comparison": {
+              "status": "PENDING",
+              "score": null,
+              "structuralScore": null,
+              "responsiveScore": null,
+              "note": "Awaiting explicit Studio operator review.",
+              "reviewedAt": null
+            }
+          }
+        ],
+        "semanticSlots": [
+          {
+            "blockId": "ao-b2b-world",
+            "blockType": "ac_b2b_world",
+            "path": "root.0",
+            "role": "editorial",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "ao-b2b-01",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.0",
+            "role": "hero",
+            "supplementalRoles": [
+              "identity",
+              "pricing",
+              "availability",
+              "primary_conversion"
+            ],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": true
+          },
+          {
+            "blockId": "ao-b2b-02",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.1",
+            "role": "specifications",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "ao-b2b-03",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.2",
+            "role": "editorial",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "ao-b2b-04",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.3",
+            "role": "b2b_deployment",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "ao-b2b-05",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.4",
+            "role": "specifications",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "ao-b2b-06",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.5",
+            "role": "editorial",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "ao-b2b-07",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.6",
+            "role": "specifications",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "ao-b2b-08",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.7",
+            "role": "specifications",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "ao-b2b-09",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.8",
+            "role": "specifications",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "ao-b2b-10",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.9",
+            "role": "specifications",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "ao-b2b-11",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.10",
+            "role": "specifications",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "ao-b2b-12",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.11",
+            "role": "specifications",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "ao-b2b-13",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.12",
+            "role": "specifications",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "ao-b2b-14",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.13",
+            "role": "media",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "ao-b2b-15",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.14",
+            "role": "trust",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "ao-b2b-16",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.15",
+            "role": "reviews",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "ao-b2b-17",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.16",
+            "role": "faq",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "ao-b2b-18",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.17",
+            "role": "recommendations",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "ao-b2b-19",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.18",
+            "role": "primary_conversion",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": true
+          }
+        ],
+        "bindingPlan": [
+          {
+            "blockId": "ao-b2b-01",
+            "role": "hero",
+            "bindingKey": "identity.name",
+            "targetKey": "title",
+            "authority": "Category-Native / Catalog",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "ao-b2b-02",
+            "role": "specifications",
+            "bindingKey": "content.fields",
+            "targetKey": "items",
+            "authority": "Experience Schema public_visible",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "ao-b2b-03",
+            "role": "editorial",
+            "bindingKey": "content.fields",
+            "targetKey": "items",
+            "authority": "Experience Schema public_visible",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "ao-b2b-04",
+            "role": "b2b_deployment",
+            "bindingKey": "content.fields",
+            "targetKey": "items",
+            "authority": "Experience Schema public_visible",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "ao-b2b-05",
+            "role": "specifications",
+            "bindingKey": "content.fields",
+            "targetKey": "items",
+            "authority": "Experience Schema public_visible",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "ao-b2b-06",
+            "role": "editorial",
+            "bindingKey": "identity.description",
+            "targetKey": "title",
+            "authority": "Category-Native / Catalog",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "ao-b2b-07",
+            "role": "specifications",
+            "bindingKey": "content.fields",
+            "targetKey": "items",
+            "authority": "Experience Schema public_visible",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "ao-b2b-08",
+            "role": "specifications",
+            "bindingKey": "content.fields",
+            "targetKey": "items",
+            "authority": "Experience Schema public_visible",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "ao-b2b-09",
+            "role": "specifications",
+            "bindingKey": "content.fields",
+            "targetKey": "items",
+            "authority": "Experience Schema public_visible",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "ao-b2b-10",
+            "role": "specifications",
+            "bindingKey": "content.fields",
+            "targetKey": "items",
+            "authority": "Experience Schema public_visible",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "ao-b2b-11",
+            "role": "specifications",
+            "bindingKey": "content.fields",
+            "targetKey": "items",
+            "authority": "Experience Schema public_visible",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "ao-b2b-12",
+            "role": "specifications",
+            "bindingKey": "content.fields",
+            "targetKey": "items",
+            "authority": "Experience Schema public_visible",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "ao-b2b-13",
+            "role": "specifications",
+            "bindingKey": "content.fields",
+            "targetKey": "items",
+            "authority": "Experience Schema public_visible",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "ao-b2b-14",
+            "role": "media",
+            "bindingKey": "media.gallery",
+            "targetKey": "items",
+            "authority": "Catalog Media",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "ao-b2b-15",
+            "role": "trust",
+            "bindingKey": "trust.claims",
+            "targetKey": "items",
+            "authority": "Trust authority",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "ao-b2b-16",
+            "role": "reviews",
+            "bindingKey": "reviews.summary",
+            "targetKey": "items",
+            "authority": "Review authority",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "ao-b2b-17",
+            "role": "faq",
+            "bindingKey": "content.fields",
+            "targetKey": "items",
+            "authority": "Experience Schema public_visible",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "ao-b2b-18",
+            "role": "recommendations",
+            "bindingKey": "relations.recommendations",
+            "targetKey": "items",
+            "authority": "Catalog Discovery",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "ao-b2b-19",
+            "role": "primary_conversion",
+            "bindingKey": "identity.name",
+            "targetKey": "title",
+            "authority": "Category-Native / Catalog",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          }
+        ],
+        "actionPlan": [
+          {
+            "blockId": "ao-b2b-01",
+            "role": "hero",
+            "intent": "primary",
+            "actionId": "quotation.start",
+            "workflowId": null,
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "canonicalEngine": "Conversion Universe / quote basket",
+            "targetMode": "current_item",
+            "targetSourceId": "catalog.items",
+            "reason": "Canonical action · Conversion Universe / quote basket",
+            "manualOverride": false
+          },
+          {
+            "blockId": "ao-b2b-19",
+            "role": "primary_conversion",
+            "intent": "secondary",
+            "actionId": "b2b.request",
+            "workflowId": null,
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "canonicalEngine": "B2B verticals",
+            "targetMode": "current_item",
+            "targetSourceId": "catalog.items",
+            "reason": "Operator action override.",
+            "manualOverride": true
+          },
+          {
+            "blockId": "ao-b2b-19",
+            "role": "primary_conversion",
+            "intent": "secondary",
+            "actionId": "b2b.request",
+            "workflowId": null,
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "canonicalEngine": "B2B verticals",
+            "targetMode": "current_item",
+            "targetSourceId": "catalog.items",
+            "reason": "Operator action override.",
+            "manualOverride": true
+          }
+        ],
+        "relationPlan": [
+          {
+            "blockId": "ao-b2b-18",
+            "role": "recommendations",
+            "strategy": "similar_items",
+            "sourceId": "catalog.items",
+            "anchorMode": "current_item",
+            "limit": 12,
+            "emptyPolicy": "preserve_static",
+            "status": "RESOLVED"
+          }
+        ],
+        "truthRequirements": [
+          {
+            "key": "promotion",
+            "blockId": "ao-b2b-world",
+            "required": false,
+            "status": "NOT_SHOWN",
+            "authority": null,
+            "evidence": "Promotion claim detected"
+          },
+          {
+            "key": "scarcity",
+            "blockId": "ao-b2b-world",
+            "required": false,
+            "status": "NOT_SHOWN",
+            "authority": null,
+            "evidence": "Scarcity language detected"
+          },
+          {
+            "key": "rating",
+            "blockId": "ao-b2b-16",
+            "required": true,
+            "status": "GOVERNED",
+            "authority": "Public Experience Truth Firewall",
+            "evidence": "Rating/review language detected"
+          },
+          {
+            "key": "certification",
+            "blockId": "ao-b2b-world",
+            "required": false,
+            "status": "NOT_SHOWN",
+            "authority": null,
+            "evidence": "Certification language detected"
+          },
+          {
+            "key": "pricing",
+            "blockId": "ao-b2b-01",
+            "required": false,
+            "status": "NOT_SHOWN",
+            "authority": null,
+            "evidence": "Pricing language detected"
+          },
+          {
+            "key": "availability",
+            "blockId": "ao-b2b-01",
+            "required": true,
+            "status": "GOVERNED",
+            "authority": "Public Experience Truth Firewall",
+            "evidence": "Availability language detected"
+          },
+          {
+            "key": "trust",
+            "blockId": "ao-b2b-15",
+            "required": false,
+            "status": "NOT_SHOWN",
+            "authority": null,
+            "evidence": "Trust language detected"
+          }
+        ],
+        "responsive": {
+          "nativeDesktop": true,
+          "nativeMobile": true,
+          "responsiveHints": 19,
+          "breakpointHints": 57,
+          "horizontalOverflowRisk": false,
+          "fixedWidthEvidence": [],
+          "notes": [
+            "Responsive metadata detected.",
+            "No obvious fixed-width overflow evidence."
+          ]
+        },
+        "capabilities": [
+          {
+            "capability": "b2b-semantic-runtime-v2",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Studio B2B Semantic Runtime V2",
+            "detail": "Capability supported by installed canonical runtime."
+          },
+          {
+            "capability": "canonical-actions",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Studio Action Registry",
+            "detail": "Capability supported by installed canonical runtime."
+          },
+          {
+            "capability": "canonical-route",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Marketplace route/source registry",
+            "detail": "Capability supported by installed canonical runtime."
+          },
+          {
+            "capability": "native-fallback",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Category-Native / Public Experience runtime",
+            "detail": "Capability supported by installed canonical runtime."
+          },
+          {
+            "capability": "public-experience-360",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "PublicExperience360",
+            "detail": "Capability supported by installed canonical runtime."
+          },
+          {
+            "capability": "quotation-authority",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Conversion Universe",
+            "detail": "Capability supported by installed canonical runtime."
+          },
+          {
+            "capability": "relation-dynamic-sources",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Studio Dynamic Source / Catalog Relations",
+            "detail": "Capability supported by installed canonical runtime."
+          },
+          {
+            "capability": "responsive-runtime",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Studio public runtime",
+            "detail": "Capability supported by installed canonical runtime."
+          },
+          {
+            "capability": "truth-firewall",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Public Experience Truth Firewall",
+            "detail": "Capability supported by installed canonical runtime."
+          },
+          {
+            "capability": "theme-operability-v1",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "World Factory 2030 Operability Kernel",
+            "detail": "Capability supported by installed 2030 theme operating kernel."
+          },
+          {
+            "capability": "declarative-conditions",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Studio Published Runtime",
+            "detail": "Capability supported by installed 2030 theme operating kernel."
+          },
+          {
+            "capability": "ui-led-theme-operation",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Public Experience Authority / World Factory",
+            "detail": "Capability supported by installed 2030 theme operating kernel."
+          },
+          {
+            "capability": "fr-en-ar-rtl",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Studio Published Runtime",
+            "detail": "Capability supported by installed 2030 theme operating kernel."
+          },
+          {
+            "capability": "theme-token-contract",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Studio Design Runtime",
+            "detail": "Capability supported by installed 2030 theme operating kernel."
+          }
+        ],
+        "operability": {
+          "version": 1,
+          "density": null,
+          "blockCapabilities": [
+            {
+              "blockId": "ao-b2b-world",
+              "blockType": "ac_b2b_world",
+              "role": "editorial",
+              "acceptsBindings": false,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": true,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": false,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "media",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility",
+                "seo"
+              ]
+            },
+            {
+              "blockId": "ao-b2b-01",
+              "blockType": "atomic_offer_section",
+              "role": "hero",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": true,
+              "acceptsActions": true,
+              "acceptsChildren": false,
+              "acceptsRepeaters": false,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "media",
+                "actions",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility",
+                "seo"
+              ]
+            },
+            {
+              "blockId": "ao-b2b-02",
+              "blockType": "atomic_offer_section",
+              "role": "specifications",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "ao-b2b-03",
+              "blockType": "atomic_offer_section",
+              "role": "editorial",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": true,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "media",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility",
+                "seo"
+              ]
+            },
+            {
+              "blockId": "ao-b2b-04",
+              "blockType": "atomic_offer_section",
+              "role": "b2b_deployment",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "ao-b2b-05",
+              "blockType": "atomic_offer_section",
+              "role": "specifications",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "ao-b2b-06",
+              "blockType": "atomic_offer_section",
+              "role": "editorial",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": true,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": false,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "media",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility",
+                "seo"
+              ]
+            },
+            {
+              "blockId": "ao-b2b-07",
+              "blockType": "atomic_offer_section",
+              "role": "specifications",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "ao-b2b-08",
+              "blockType": "atomic_offer_section",
+              "role": "specifications",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "ao-b2b-09",
+              "blockType": "atomic_offer_section",
+              "role": "specifications",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "ao-b2b-10",
+              "blockType": "atomic_offer_section",
+              "role": "specifications",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "ao-b2b-11",
+              "blockType": "atomic_offer_section",
+              "role": "specifications",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "ao-b2b-12",
+              "blockType": "atomic_offer_section",
+              "role": "specifications",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "ao-b2b-13",
+              "blockType": "atomic_offer_section",
+              "role": "specifications",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "ao-b2b-14",
+              "blockType": "atomic_offer_section",
+              "role": "media",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": true,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "media",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "ao-b2b-15",
+              "blockType": "atomic_offer_section",
+              "role": "trust",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "ao-b2b-16",
+              "blockType": "atomic_offer_section",
+              "role": "reviews",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "ao-b2b-17",
+              "blockType": "atomic_offer_section",
+              "role": "faq",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility",
+                "seo"
+              ]
+            },
+            {
+              "blockId": "ao-b2b-18",
+              "blockType": "atomic_offer_section",
+              "role": "recommendations",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": true,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [
+                "catalog.items"
+              ],
+              "merchandisingModes": [
+                "automatic",
+                "curated",
+                "manual",
+                "hybrid"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "ao-b2b-19",
+              "blockType": "atomic_offer_section",
+              "role": "primary_conversion",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": true,
+              "acceptsChildren": false,
+              "acceptsRepeaters": false,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "actions",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            }
+          ],
+          "conditions": [],
+          "repeaters": [
+            {
+              "blockId": "ao-b2b-02",
+              "targetKey": "items",
+              "source": "binding",
+              "bindingKey": "content.fields",
+              "sourceId": null,
+              "strategy": null,
+              "limit": 24,
+              "sort": "canonical",
+              "emptyPolicy": "omit",
+              "itemVariant": null
+            },
+            {
+              "blockId": "ao-b2b-03",
+              "targetKey": "items",
+              "source": "binding",
+              "bindingKey": "content.fields",
+              "sourceId": null,
+              "strategy": null,
+              "limit": 24,
+              "sort": "canonical",
+              "emptyPolicy": "omit",
+              "itemVariant": null
+            },
+            {
+              "blockId": "ao-b2b-04",
+              "targetKey": "items",
+              "source": "binding",
+              "bindingKey": "content.fields",
+              "sourceId": null,
+              "strategy": null,
+              "limit": 24,
+              "sort": "canonical",
+              "emptyPolicy": "omit",
+              "itemVariant": null
+            },
+            {
+              "blockId": "ao-b2b-05",
+              "targetKey": "items",
+              "source": "binding",
+              "bindingKey": "content.fields",
+              "sourceId": null,
+              "strategy": null,
+              "limit": 24,
+              "sort": "canonical",
+              "emptyPolicy": "omit",
+              "itemVariant": null
+            },
+            {
+              "blockId": "ao-b2b-07",
+              "targetKey": "items",
+              "source": "binding",
+              "bindingKey": "content.fields",
+              "sourceId": null,
+              "strategy": null,
+              "limit": 24,
+              "sort": "canonical",
+              "emptyPolicy": "omit",
+              "itemVariant": null
+            },
+            {
+              "blockId": "ao-b2b-08",
+              "targetKey": "items",
+              "source": "binding",
+              "bindingKey": "content.fields",
+              "sourceId": null,
+              "strategy": null,
+              "limit": 24,
+              "sort": "canonical",
+              "emptyPolicy": "omit",
+              "itemVariant": null
+            },
+            {
+              "blockId": "ao-b2b-09",
+              "targetKey": "items",
+              "source": "binding",
+              "bindingKey": "content.fields",
+              "sourceId": null,
+              "strategy": null,
+              "limit": 24,
+              "sort": "canonical",
+              "emptyPolicy": "omit",
+              "itemVariant": null
+            },
+            {
+              "blockId": "ao-b2b-10",
+              "targetKey": "items",
+              "source": "binding",
+              "bindingKey": "content.fields",
+              "sourceId": null,
+              "strategy": null,
+              "limit": 24,
+              "sort": "canonical",
+              "emptyPolicy": "omit",
+              "itemVariant": null
+            },
+            {
+              "blockId": "ao-b2b-11",
+              "targetKey": "items",
+              "source": "binding",
+              "bindingKey": "content.fields",
+              "sourceId": null,
+              "strategy": null,
+              "limit": 24,
+              "sort": "canonical",
+              "emptyPolicy": "omit",
+              "itemVariant": null
+            },
+            {
+              "blockId": "ao-b2b-12",
+              "targetKey": "items",
+              "source": "binding",
+              "bindingKey": "content.fields",
+              "sourceId": null,
+              "strategy": null,
+              "limit": 24,
+              "sort": "canonical",
+              "emptyPolicy": "omit",
+              "itemVariant": null
+            },
+            {
+              "blockId": "ao-b2b-13",
+              "targetKey": "items",
+              "source": "binding",
+              "bindingKey": "content.fields",
+              "sourceId": null,
+              "strategy": null,
+              "limit": 24,
+              "sort": "canonical",
+              "emptyPolicy": "omit",
+              "itemVariant": null
+            },
+            {
+              "blockId": "ao-b2b-14",
+              "targetKey": "items",
+              "source": "binding",
+              "bindingKey": "media.gallery",
+              "sourceId": null,
+              "strategy": null,
+              "limit": 24,
+              "sort": "canonical",
+              "emptyPolicy": "omit",
+              "itemVariant": null
+            },
+            {
+              "blockId": "ao-b2b-15",
+              "targetKey": "items",
+              "source": "binding",
+              "bindingKey": "trust.claims",
+              "sourceId": null,
+              "strategy": null,
+              "limit": 24,
+              "sort": "canonical",
+              "emptyPolicy": "omit",
+              "itemVariant": null
+            },
+            {
+              "blockId": "ao-b2b-16",
+              "targetKey": "items",
+              "source": "binding",
+              "bindingKey": "reviews.summary",
+              "sourceId": null,
+              "strategy": null,
+              "limit": 24,
+              "sort": "canonical",
+              "emptyPolicy": "omit",
+              "itemVariant": null
+            },
+            {
+              "blockId": "ao-b2b-17",
+              "targetKey": "items",
+              "source": "binding",
+              "bindingKey": "content.fields",
+              "sourceId": null,
+              "strategy": null,
+              "limit": 24,
+              "sort": "canonical",
+              "emptyPolicy": "omit",
+              "itemVariant": null
+            },
+            {
+              "blockId": "ao-b2b-18",
+              "targetKey": "items",
+              "source": "dynamic_source",
+              "bindingKey": null,
+              "sourceId": "catalog.items",
+              "strategy": "similar_items",
+              "limit": 12,
+              "sort": "recommended",
+              "emptyPolicy": "preserve_static",
+              "itemVariant": null
+            }
+          ],
+          "media": [
+            {
+              "blockId": "ao-b2b-14",
+              "targetKey": "items",
+              "kind": "gallery",
+              "source": "binding",
+              "bindingKey": "media.gallery",
+              "assetRole": null,
+              "required": false,
+              "presentation": {
+                "fit": "cover",
+                "position": "50% 50%",
+                "aspectRatio": null,
+                "overlay": null,
+                "focalPoint": null
+              },
+              "responsive": {
+                "desktop": null,
+                "tablet": null,
+                "mobile": null
+              }
+            }
+          ],
+          "interactions": [
+            {
+              "blockId": "ao-b2b-17",
+              "kind": "accordion",
+              "status": "SUPPORTED",
+              "configuration": {}
+            },
+            {
+              "blockId": "ao-b2b-19",
+              "kind": "sticky_conversion",
+              "status": "SUPPORTED",
+              "configuration": {}
+            }
+          ],
+          "localization": {
+            "defaultLocale": "fr",
+            "locales": [
+              "fr",
+              "en",
+              "ar"
+            ],
+            "rtlLocales": [
+              "ar"
+            ],
+            "themeStrings": "localized-map",
+            "fallback": "default-locale",
+            "missingTranslation": "warn"
+          },
+          "tokens": {
+            "colors": {},
+            "typography": {},
+            "spacing": {},
+            "radii": {},
+            "shadows": {},
+            "layout": {},
+            "motion": {}
+          },
+          "assets": [],
+          "performance": {
+            "maxRootBlocks": 40,
+            "maxTotalBlocks": 160,
+            "maxDynamicSources": 24,
+            "maxAboveFoldMedia": 6,
+            "maxMediaAssets": 80,
+            "maxDocumentBytes": 1500000,
+            "maxInteractions": 40
+          },
+          "shell": {
+            "mode": "marketplace_global",
+            "allowGlobalHeaderOverride": false,
+            "allowGlobalFooterOverride": false,
+            "allowGlobalNavigationOverride": false
+          },
+          "editing": {
+            "uiLed": true,
+            "rawJsonRequired": false,
+            "allowBlockMove": true,
+            "allowBlockDuplicate": true,
+            "allowBlockHide": true,
+            "allowBindingChange": true,
+            "allowActionChange": true,
+            "allowMediaReplace": true,
+            "allowDesignChange": true,
+            "allowResponsiveChange": true,
+            "allowConditionChange": true,
+            "immutableBusinessTruth": true
+          },
+          "inspector": {
+            "generatedFromCapabilities": true,
+            "hideUnsupportedFields": true,
+            "showAuthorityOwnership": true,
+            "showInheritance": true
+          }
+        },
+        "certification": {
+          "level": "BLOCKED",
+          "lifecycle": "REVIEW_REQUIRED",
+          "productionEligible": false,
+          "coverage": {
+            "semantic": 100,
+            "binding": 100,
+            "action": 100,
+            "truth": 100,
+            "responsive": 100,
+            "visual": 50,
+            "overall": 92
+          },
+          "gates": [
+            {
+              "id": "source-safety",
+              "label": "Source sanitized",
+              "state": "PASS",
+              "critical": true,
+              "detail": "Universal Import candidate has no upstream blocker."
+            },
+            {
+              "id": "domain",
+              "label": "Master domain / doctrines",
+              "state": "PASS",
+              "critical": true,
+              "detail": "b2b_institutional · 9 doctrine(s)"
+            },
+            {
+              "id": "storefront-shell",
+              "label": "Global shell authority",
+              "state": "PASS",
+              "critical": true,
+              "detail": "Global AngelCare header/navigation/footer remain outside the imported Storefront World."
+            },
+            {
+              "id": "semantic",
+              "label": "Semantic anatomy",
+              "state": "PASS",
+              "critical": true,
+              "detail": "Required roles covered (100%)."
+            },
+            {
+              "id": "bindings",
+              "label": "Canonical binding coverage",
+              "state": "PASS",
+              "critical": true,
+              "detail": "2/2 required bindings resolved."
+            },
+            {
+              "id": "actions",
+              "label": "Canonical action coverage",
+              "state": "PASS",
+              "critical": true,
+              "detail": "2/2 required actions resolved; current-item targets supported for catalog actions."
+            },
+            {
+              "id": "relations",
+              "label": "Contextual relation sources",
+              "state": "PASS",
+              "critical": false,
+              "detail": "1 relation rail(s) compiled with current-item anchor."
+            },
+            {
+              "id": "truth",
+              "label": "Truth Firewall contract",
+              "state": "PASS",
+              "critical": true,
+              "detail": "Commercial claims are classified for Truth Firewall enforcement."
+            },
+            {
+              "id": "responsive",
+              "label": "Responsive contract",
+              "state": "PASS",
+              "critical": true,
+              "detail": "Responsive metadata detected. No obvious fixed-width overflow evidence."
+            },
+            {
+              "id": "visual",
+              "label": "Approved desktop/mobile reference",
+              "state": "BLOCKED",
+              "critical": true,
+              "detail": "Strict visual fidelity requires approved desktop + mobile references."
+            },
+            {
+              "id": "capabilities",
+              "label": "Capability negotiation",
+              "state": "PASS",
+              "critical": true,
+              "detail": "14 requested runtime capabilities negotiated."
+            },
+            {
+              "id": "operability",
+              "label": "2030 no-code operability",
+              "state": "PASS",
+              "critical": true,
+              "detail": "20 block capability contracts · 16 repeaters · 1 media contracts · FR/EN/AR + RTL."
+            },
+            {
+              "id": "fallback",
+              "label": "Native fallback",
+              "state": "PASS",
+              "critical": true,
+              "detail": "Category-Native/native fallback remains mandatory."
+            }
+          ],
+          "blockers": [
+            "visual: Strict visual fidelity requires approved desktop + mobile references."
+          ],
+          "warnings": [],
+          "certifiedAt": null
+        },
+        "compatibility": {
+          "minimumRuntime": "pea-v1",
+          "maximumRuntime": null,
+          "forwardPolicy": "capability-negotiation",
+          "unknownFields": "preserve",
+          "nativeFallback": true,
+          "schemaVersion": 3,
+          "compilerProfile": "pea-world-factory-2030-operability-v3"
+        },
+        "revision": {
+          "worldKey": null,
+          "revision": 1,
+          "supersedes": null,
+          "immutableAfterCertification": true
+        },
+        "overrides": {
+          "roleOverrides": {
+            "ao-b2b-world": "editorial",
+            "ao-b2b-01": "hero",
+            "ao-b2b-02": "specifications",
+            "ao-b2b-03": "editorial",
+            "ao-b2b-04": "b2b_deployment",
+            "ao-b2b-05": "specifications",
+            "ao-b2b-06": "editorial",
+            "ao-b2b-07": "specifications",
+            "ao-b2b-08": "specifications",
+            "ao-b2b-09": "specifications",
+            "ao-b2b-10": "specifications",
+            "ao-b2b-11": "specifications",
+            "ao-b2b-12": "specifications",
+            "ao-b2b-13": "specifications",
+            "ao-b2b-14": "media",
+            "ao-b2b-15": "trust",
+            "ao-b2b-16": "reviews",
+            "ao-b2b-17": "faq",
+            "ao-b2b-18": "recommendations",
+            "ao-b2b-19": "primary_conversion"
+          },
+          "supplementalRoleOverrides": {
+            "ao-b2b-01": [
+              "identity",
+              "pricing",
+              "availability",
+              "primary_conversion"
+            ]
+          },
+          "bindingOverrides": [],
+          "actionOverrides": [
+            {
+              "blockId": "ao-b2b-19",
+              "intent": "secondary",
+              "actionId": "b2b.request",
+              "targetMode": "current_item"
+            }
+          ],
+          "note": "Conditional public-source components. No static sellable data. Agent-reviewed fixture screenshots are QA references, not proof of production offers."
+        },
+        "provenance": {
+          "createdBy": "WORLD_FACTORY",
+          "manualOverrides": 22,
+          "notes": [
+            "No hardcoded production theme requirement.",
+            "UI-led import/assign/update contract active.",
+            "No foreign code execution.",
+            "Business authorities remain canonical.",
+            "Inference is reviewable and versioned.",
+            "Certified revisions are immutable; changes create a new revision."
+          ]
+        }
+      }
+    },
+    "factory": {
+      "engineVersion": 3,
+      "schemaVersion": 3,
+      "compilerProfile": "pea-world-factory-2030-operability-v3",
+      "candidateFingerprint": "515b3bc7856d8767c6ed910b6383c8b3",
+      "documentFingerprint": "0d376c3a22c18136a3e6194436a45eca",
+      "compiledFingerprint": "e0e9fff6193925fa3642d7d442da3786",
+      "themeKind": "detail",
+      "masterDomain": "b2b_institutional",
+      "doctrineKeys": [
+        "school-managed-programme",
+        "school-staff-reinforcement",
+        "hospitality-kids-programme",
+        "corporate-childcare-benefit",
+        "health-adjacent-programme",
+        "event-venue-programme",
+        "partner-os-plan",
+        "quality-check-assessment",
+        "custom-managed-solution"
+      ],
+      "storefrontKeys": [],
+      "strictVisualFidelity": true,
+      "source": {
+        "kind": "package",
+        "label": "AngelCare · Solution Command R1",
+        "sourceFingerprint": "0d376c3a22c18136a3e6194436a45eca",
+        "safeToApply": true,
+        "upstreamBlockingCodes": [],
+        "upstreamReviewCodes": [],
+        "compilerFingerprint": "e1742f02ddeb67d2e0332d667625ada6",
+        "importedAt": "2026-10-10T02:15:14.038Z"
+      },
+      "visualReferences": [
+        {
+          "kind": "desktop",
+          "filename": "APPROVED_DESKTOP_REFERENCE.png",
+          "sha256": "bedefb4d4c338ac89d2b5c18935ac24762dc49b97e0d9fdedbdead1b3f2fed98",
+          "width": 1440,
+          "height": 7892,
+          "reviewed": false,
+          "reviewNote": "Agent-reviewed synthetic QA reference. Operator comparison with a real compatible offer remains required in Studio.",
+          "comparison": {
+            "status": "PENDING",
+            "score": null,
+            "structuralScore": null,
+            "responsiveScore": null,
+            "note": "Awaiting explicit Studio operator review.",
+            "reviewedAt": null
+          }
+        },
+        {
+          "kind": "mobile",
+          "filename": "APPROVED_MOBILE_REFERENCE.png",
+          "sha256": "13fd8ac13e48a6664bf2276612e62f5ac9dc03c10d27c33a4077f914efab8221",
+          "width": 390,
+          "height": 10585,
+          "reviewed": false,
+          "reviewNote": "Agent-reviewed synthetic QA reference. Operator comparison with a real compatible offer remains required in Studio.",
+          "comparison": {
+            "status": "PENDING",
+            "score": null,
+            "structuralScore": null,
+            "responsiveScore": null,
+            "note": "Awaiting explicit Studio operator review.",
+            "reviewedAt": null
+          }
+        }
+      ],
+      "semanticSlots": [
+        {
+          "blockId": "ao-b2b-world",
+          "blockType": "ac_b2b_world",
+          "path": "root.0",
+          "role": "editorial",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "ao-b2b-01",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.0",
+          "role": "hero",
+          "supplementalRoles": [
+            "identity",
+            "pricing",
+            "availability",
+            "primary_conversion"
+          ],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": true
+        },
+        {
+          "blockId": "ao-b2b-02",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.1",
+          "role": "specifications",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "ao-b2b-03",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.2",
+          "role": "editorial",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "ao-b2b-04",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.3",
+          "role": "b2b_deployment",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "ao-b2b-05",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.4",
+          "role": "specifications",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "ao-b2b-06",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.5",
+          "role": "editorial",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "ao-b2b-07",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.6",
+          "role": "specifications",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "ao-b2b-08",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.7",
+          "role": "specifications",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "ao-b2b-09",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.8",
+          "role": "specifications",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "ao-b2b-10",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.9",
+          "role": "specifications",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "ao-b2b-11",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.10",
+          "role": "specifications",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "ao-b2b-12",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.11",
+          "role": "specifications",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "ao-b2b-13",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.12",
+          "role": "specifications",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "ao-b2b-14",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.13",
+          "role": "media",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "ao-b2b-15",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.14",
+          "role": "trust",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "ao-b2b-16",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.15",
+          "role": "reviews",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "ao-b2b-17",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.16",
+          "role": "faq",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "ao-b2b-18",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.17",
+          "role": "recommendations",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "ao-b2b-19",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.18",
+          "role": "primary_conversion",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": true
+        }
+      ],
+      "bindingPlan": [
+        {
+          "blockId": "ao-b2b-01",
+          "role": "hero",
+          "bindingKey": "identity.name",
+          "targetKey": "title",
+          "authority": "Category-Native / Catalog",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "ao-b2b-02",
+          "role": "specifications",
+          "bindingKey": "content.fields",
+          "targetKey": "items",
+          "authority": "Experience Schema public_visible",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "ao-b2b-03",
+          "role": "editorial",
+          "bindingKey": "content.fields",
+          "targetKey": "items",
+          "authority": "Experience Schema public_visible",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "ao-b2b-04",
+          "role": "b2b_deployment",
+          "bindingKey": "content.fields",
+          "targetKey": "items",
+          "authority": "Experience Schema public_visible",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "ao-b2b-05",
+          "role": "specifications",
+          "bindingKey": "content.fields",
+          "targetKey": "items",
+          "authority": "Experience Schema public_visible",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "ao-b2b-06",
+          "role": "editorial",
+          "bindingKey": "identity.description",
+          "targetKey": "title",
+          "authority": "Category-Native / Catalog",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "ao-b2b-07",
+          "role": "specifications",
+          "bindingKey": "content.fields",
+          "targetKey": "items",
+          "authority": "Experience Schema public_visible",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "ao-b2b-08",
+          "role": "specifications",
+          "bindingKey": "content.fields",
+          "targetKey": "items",
+          "authority": "Experience Schema public_visible",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "ao-b2b-09",
+          "role": "specifications",
+          "bindingKey": "content.fields",
+          "targetKey": "items",
+          "authority": "Experience Schema public_visible",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "ao-b2b-10",
+          "role": "specifications",
+          "bindingKey": "content.fields",
+          "targetKey": "items",
+          "authority": "Experience Schema public_visible",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "ao-b2b-11",
+          "role": "specifications",
+          "bindingKey": "content.fields",
+          "targetKey": "items",
+          "authority": "Experience Schema public_visible",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "ao-b2b-12",
+          "role": "specifications",
+          "bindingKey": "content.fields",
+          "targetKey": "items",
+          "authority": "Experience Schema public_visible",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "ao-b2b-13",
+          "role": "specifications",
+          "bindingKey": "content.fields",
+          "targetKey": "items",
+          "authority": "Experience Schema public_visible",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "ao-b2b-14",
+          "role": "media",
+          "bindingKey": "media.gallery",
+          "targetKey": "items",
+          "authority": "Catalog Media",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "ao-b2b-15",
+          "role": "trust",
+          "bindingKey": "trust.claims",
+          "targetKey": "items",
+          "authority": "Trust authority",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "ao-b2b-16",
+          "role": "reviews",
+          "bindingKey": "reviews.summary",
+          "targetKey": "items",
+          "authority": "Review authority",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "ao-b2b-17",
+          "role": "faq",
+          "bindingKey": "content.fields",
+          "targetKey": "items",
+          "authority": "Experience Schema public_visible",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "ao-b2b-18",
+          "role": "recommendations",
+          "bindingKey": "relations.recommendations",
+          "targetKey": "items",
+          "authority": "Catalog Discovery",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "ao-b2b-19",
+          "role": "primary_conversion",
+          "bindingKey": "identity.name",
+          "targetKey": "title",
+          "authority": "Category-Native / Catalog",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        }
+      ],
+      "actionPlan": [
+        {
+          "blockId": "ao-b2b-01",
+          "role": "hero",
+          "intent": "primary",
+          "actionId": "quotation.start",
+          "workflowId": null,
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "canonicalEngine": "Conversion Universe / quote basket",
+          "targetMode": "current_item",
+          "targetSourceId": "catalog.items",
+          "reason": "Canonical action · Conversion Universe / quote basket",
+          "manualOverride": false
+        },
+        {
+          "blockId": "ao-b2b-19",
+          "role": "primary_conversion",
+          "intent": "secondary",
+          "actionId": "b2b.request",
+          "workflowId": null,
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "canonicalEngine": "B2B verticals",
+          "targetMode": "current_item",
+          "targetSourceId": "catalog.items",
+          "reason": "Operator action override.",
+          "manualOverride": true
+        },
+        {
+          "blockId": "ao-b2b-19",
+          "role": "primary_conversion",
+          "intent": "secondary",
+          "actionId": "b2b.request",
+          "workflowId": null,
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "canonicalEngine": "B2B verticals",
+          "targetMode": "current_item",
+          "targetSourceId": "catalog.items",
+          "reason": "Operator action override.",
+          "manualOverride": true
+        }
+      ],
+      "relationPlan": [
+        {
+          "blockId": "ao-b2b-18",
+          "role": "recommendations",
+          "strategy": "similar_items",
+          "sourceId": "catalog.items",
+          "anchorMode": "current_item",
+          "limit": 12,
+          "emptyPolicy": "preserve_static",
+          "status": "RESOLVED"
+        }
+      ],
+      "truthRequirements": [
+        {
+          "key": "promotion",
+          "blockId": "ao-b2b-world",
+          "required": false,
+          "status": "NOT_SHOWN",
+          "authority": null,
+          "evidence": "Promotion claim detected"
+        },
+        {
+          "key": "scarcity",
+          "blockId": "ao-b2b-world",
+          "required": false,
+          "status": "NOT_SHOWN",
+          "authority": null,
+          "evidence": "Scarcity language detected"
+        },
+        {
+          "key": "rating",
+          "blockId": "ao-b2b-16",
+          "required": true,
+          "status": "GOVERNED",
+          "authority": "Public Experience Truth Firewall",
+          "evidence": "Rating/review language detected"
+        },
+        {
+          "key": "certification",
+          "blockId": "ao-b2b-world",
+          "required": false,
+          "status": "NOT_SHOWN",
+          "authority": null,
+          "evidence": "Certification language detected"
+        },
+        {
+          "key": "pricing",
+          "blockId": "ao-b2b-01",
+          "required": false,
+          "status": "NOT_SHOWN",
+          "authority": null,
+          "evidence": "Pricing language detected"
+        },
+        {
+          "key": "availability",
+          "blockId": "ao-b2b-01",
+          "required": true,
+          "status": "GOVERNED",
+          "authority": "Public Experience Truth Firewall",
+          "evidence": "Availability language detected"
+        },
+        {
+          "key": "trust",
+          "blockId": "ao-b2b-15",
+          "required": false,
+          "status": "NOT_SHOWN",
+          "authority": null,
+          "evidence": "Trust language detected"
+        }
+      ],
+      "responsive": {
+        "nativeDesktop": true,
+        "nativeMobile": true,
+        "responsiveHints": 19,
+        "breakpointHints": 57,
+        "horizontalOverflowRisk": false,
+        "fixedWidthEvidence": [],
+        "notes": [
+          "Responsive metadata detected.",
+          "No obvious fixed-width overflow evidence."
+        ]
+      },
+      "capabilities": [
+        {
+          "capability": "b2b-semantic-runtime-v2",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Studio B2B Semantic Runtime V2",
+          "detail": "Capability supported by installed canonical runtime."
+        },
+        {
+          "capability": "canonical-actions",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Studio Action Registry",
+          "detail": "Capability supported by installed canonical runtime."
+        },
+        {
+          "capability": "canonical-route",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Marketplace route/source registry",
+          "detail": "Capability supported by installed canonical runtime."
+        },
+        {
+          "capability": "native-fallback",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Category-Native / Public Experience runtime",
+          "detail": "Capability supported by installed canonical runtime."
+        },
+        {
+          "capability": "public-experience-360",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "PublicExperience360",
+          "detail": "Capability supported by installed canonical runtime."
+        },
+        {
+          "capability": "quotation-authority",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Conversion Universe",
+          "detail": "Capability supported by installed canonical runtime."
+        },
+        {
+          "capability": "relation-dynamic-sources",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Studio Dynamic Source / Catalog Relations",
+          "detail": "Capability supported by installed canonical runtime."
+        },
+        {
+          "capability": "responsive-runtime",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Studio public runtime",
+          "detail": "Capability supported by installed canonical runtime."
+        },
+        {
+          "capability": "truth-firewall",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Public Experience Truth Firewall",
+          "detail": "Capability supported by installed canonical runtime."
+        },
+        {
+          "capability": "theme-operability-v1",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "World Factory 2030 Operability Kernel",
+          "detail": "Capability supported by installed 2030 theme operating kernel."
+        },
+        {
+          "capability": "declarative-conditions",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Studio Published Runtime",
+          "detail": "Capability supported by installed 2030 theme operating kernel."
+        },
+        {
+          "capability": "ui-led-theme-operation",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Public Experience Authority / World Factory",
+          "detail": "Capability supported by installed 2030 theme operating kernel."
+        },
+        {
+          "capability": "fr-en-ar-rtl",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Studio Published Runtime",
+          "detail": "Capability supported by installed 2030 theme operating kernel."
+        },
+        {
+          "capability": "theme-token-contract",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Studio Design Runtime",
+          "detail": "Capability supported by installed 2030 theme operating kernel."
+        }
+      ],
+      "operability": {
+        "version": 1,
+        "density": null,
+        "blockCapabilities": [
+          {
+            "blockId": "ao-b2b-world",
+            "blockType": "ac_b2b_world",
+            "role": "editorial",
+            "acceptsBindings": false,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": true,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": false,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "media",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility",
+              "seo"
+            ]
+          },
+          {
+            "blockId": "ao-b2b-01",
+            "blockType": "atomic_offer_section",
+            "role": "hero",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": true,
+            "acceptsActions": true,
+            "acceptsChildren": false,
+            "acceptsRepeaters": false,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "media",
+              "actions",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility",
+              "seo"
+            ]
+          },
+          {
+            "blockId": "ao-b2b-02",
+            "blockType": "atomic_offer_section",
+            "role": "specifications",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "ao-b2b-03",
+            "blockType": "atomic_offer_section",
+            "role": "editorial",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": true,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "media",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility",
+              "seo"
+            ]
+          },
+          {
+            "blockId": "ao-b2b-04",
+            "blockType": "atomic_offer_section",
+            "role": "b2b_deployment",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "ao-b2b-05",
+            "blockType": "atomic_offer_section",
+            "role": "specifications",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "ao-b2b-06",
+            "blockType": "atomic_offer_section",
+            "role": "editorial",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": true,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": false,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "media",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility",
+              "seo"
+            ]
+          },
+          {
+            "blockId": "ao-b2b-07",
+            "blockType": "atomic_offer_section",
+            "role": "specifications",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "ao-b2b-08",
+            "blockType": "atomic_offer_section",
+            "role": "specifications",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "ao-b2b-09",
+            "blockType": "atomic_offer_section",
+            "role": "specifications",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "ao-b2b-10",
+            "blockType": "atomic_offer_section",
+            "role": "specifications",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "ao-b2b-11",
+            "blockType": "atomic_offer_section",
+            "role": "specifications",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "ao-b2b-12",
+            "blockType": "atomic_offer_section",
+            "role": "specifications",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "ao-b2b-13",
+            "blockType": "atomic_offer_section",
+            "role": "specifications",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "ao-b2b-14",
+            "blockType": "atomic_offer_section",
+            "role": "media",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": true,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "media",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "ao-b2b-15",
+            "blockType": "atomic_offer_section",
+            "role": "trust",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "ao-b2b-16",
+            "blockType": "atomic_offer_section",
+            "role": "reviews",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "ao-b2b-17",
+            "blockType": "atomic_offer_section",
+            "role": "faq",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility",
+              "seo"
+            ]
+          },
+          {
+            "blockId": "ao-b2b-18",
+            "blockType": "atomic_offer_section",
+            "role": "recommendations",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": true,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [
+              "catalog.items"
+            ],
+            "merchandisingModes": [
+              "automatic",
+              "curated",
+              "manual",
+              "hybrid"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "ao-b2b-19",
+            "blockType": "atomic_offer_section",
+            "role": "primary_conversion",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": true,
+            "acceptsChildren": false,
+            "acceptsRepeaters": false,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "actions",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          }
+        ],
+        "conditions": [],
+        "repeaters": [
+          {
+            "blockId": "ao-b2b-02",
+            "targetKey": "items",
+            "source": "binding",
+            "bindingKey": "content.fields",
+            "sourceId": null,
+            "strategy": null,
+            "limit": 24,
+            "sort": "canonical",
+            "emptyPolicy": "omit",
+            "itemVariant": null
+          },
+          {
+            "blockId": "ao-b2b-03",
+            "targetKey": "items",
+            "source": "binding",
+            "bindingKey": "content.fields",
+            "sourceId": null,
+            "strategy": null,
+            "limit": 24,
+            "sort": "canonical",
+            "emptyPolicy": "omit",
+            "itemVariant": null
+          },
+          {
+            "blockId": "ao-b2b-04",
+            "targetKey": "items",
+            "source": "binding",
+            "bindingKey": "content.fields",
+            "sourceId": null,
+            "strategy": null,
+            "limit": 24,
+            "sort": "canonical",
+            "emptyPolicy": "omit",
+            "itemVariant": null
+          },
+          {
+            "blockId": "ao-b2b-05",
+            "targetKey": "items",
+            "source": "binding",
+            "bindingKey": "content.fields",
+            "sourceId": null,
+            "strategy": null,
+            "limit": 24,
+            "sort": "canonical",
+            "emptyPolicy": "omit",
+            "itemVariant": null
+          },
+          {
+            "blockId": "ao-b2b-07",
+            "targetKey": "items",
+            "source": "binding",
+            "bindingKey": "content.fields",
+            "sourceId": null,
+            "strategy": null,
+            "limit": 24,
+            "sort": "canonical",
+            "emptyPolicy": "omit",
+            "itemVariant": null
+          },
+          {
+            "blockId": "ao-b2b-08",
+            "targetKey": "items",
+            "source": "binding",
+            "bindingKey": "content.fields",
+            "sourceId": null,
+            "strategy": null,
+            "limit": 24,
+            "sort": "canonical",
+            "emptyPolicy": "omit",
+            "itemVariant": null
+          },
+          {
+            "blockId": "ao-b2b-09",
+            "targetKey": "items",
+            "source": "binding",
+            "bindingKey": "content.fields",
+            "sourceId": null,
+            "strategy": null,
+            "limit": 24,
+            "sort": "canonical",
+            "emptyPolicy": "omit",
+            "itemVariant": null
+          },
+          {
+            "blockId": "ao-b2b-10",
+            "targetKey": "items",
+            "source": "binding",
+            "bindingKey": "content.fields",
+            "sourceId": null,
+            "strategy": null,
+            "limit": 24,
+            "sort": "canonical",
+            "emptyPolicy": "omit",
+            "itemVariant": null
+          },
+          {
+            "blockId": "ao-b2b-11",
+            "targetKey": "items",
+            "source": "binding",
+            "bindingKey": "content.fields",
+            "sourceId": null,
+            "strategy": null,
+            "limit": 24,
+            "sort": "canonical",
+            "emptyPolicy": "omit",
+            "itemVariant": null
+          },
+          {
+            "blockId": "ao-b2b-12",
+            "targetKey": "items",
+            "source": "binding",
+            "bindingKey": "content.fields",
+            "sourceId": null,
+            "strategy": null,
+            "limit": 24,
+            "sort": "canonical",
+            "emptyPolicy": "omit",
+            "itemVariant": null
+          },
+          {
+            "blockId": "ao-b2b-13",
+            "targetKey": "items",
+            "source": "binding",
+            "bindingKey": "content.fields",
+            "sourceId": null,
+            "strategy": null,
+            "limit": 24,
+            "sort": "canonical",
+            "emptyPolicy": "omit",
+            "itemVariant": null
+          },
+          {
+            "blockId": "ao-b2b-14",
+            "targetKey": "items",
+            "source": "binding",
+            "bindingKey": "media.gallery",
+            "sourceId": null,
+            "strategy": null,
+            "limit": 24,
+            "sort": "canonical",
+            "emptyPolicy": "omit",
+            "itemVariant": null
+          },
+          {
+            "blockId": "ao-b2b-15",
+            "targetKey": "items",
+            "source": "binding",
+            "bindingKey": "trust.claims",
+            "sourceId": null,
+            "strategy": null,
+            "limit": 24,
+            "sort": "canonical",
+            "emptyPolicy": "omit",
+            "itemVariant": null
+          },
+          {
+            "blockId": "ao-b2b-16",
+            "targetKey": "items",
+            "source": "binding",
+            "bindingKey": "reviews.summary",
+            "sourceId": null,
+            "strategy": null,
+            "limit": 24,
+            "sort": "canonical",
+            "emptyPolicy": "omit",
+            "itemVariant": null
+          },
+          {
+            "blockId": "ao-b2b-17",
+            "targetKey": "items",
+            "source": "binding",
+            "bindingKey": "content.fields",
+            "sourceId": null,
+            "strategy": null,
+            "limit": 24,
+            "sort": "canonical",
+            "emptyPolicy": "omit",
+            "itemVariant": null
+          },
+          {
+            "blockId": "ao-b2b-18",
+            "targetKey": "items",
+            "source": "dynamic_source",
+            "bindingKey": null,
+            "sourceId": "catalog.items",
+            "strategy": "similar_items",
+            "limit": 12,
+            "sort": "recommended",
+            "emptyPolicy": "preserve_static",
+            "itemVariant": null
+          }
+        ],
+        "media": [
+          {
+            "blockId": "ao-b2b-14",
+            "targetKey": "items",
+            "kind": "gallery",
+            "source": "binding",
+            "bindingKey": "media.gallery",
+            "assetRole": null,
+            "required": false,
+            "presentation": {
+              "fit": "cover",
+              "position": "50% 50%",
+              "aspectRatio": null,
+              "overlay": null,
+              "focalPoint": null
+            },
+            "responsive": {
+              "desktop": null,
+              "tablet": null,
+              "mobile": null
+            }
+          }
+        ],
+        "interactions": [
+          {
+            "blockId": "ao-b2b-17",
+            "kind": "accordion",
+            "status": "SUPPORTED",
+            "configuration": {}
+          },
+          {
+            "blockId": "ao-b2b-19",
+            "kind": "sticky_conversion",
+            "status": "SUPPORTED",
+            "configuration": {}
+          }
+        ],
+        "localization": {
+          "defaultLocale": "fr",
+          "locales": [
+            "fr",
+            "en",
+            "ar"
+          ],
+          "rtlLocales": [
+            "ar"
+          ],
+          "themeStrings": "localized-map",
+          "fallback": "default-locale",
+          "missingTranslation": "warn"
+        },
+        "tokens": {
+          "colors": {},
+          "typography": {},
+          "spacing": {},
+          "radii": {},
+          "shadows": {},
+          "layout": {},
+          "motion": {}
+        },
+        "assets": [],
+        "performance": {
+          "maxRootBlocks": 40,
+          "maxTotalBlocks": 160,
+          "maxDynamicSources": 24,
+          "maxAboveFoldMedia": 6,
+          "maxMediaAssets": 80,
+          "maxDocumentBytes": 1500000,
+          "maxInteractions": 40
+        },
+        "shell": {
+          "mode": "marketplace_global",
+          "allowGlobalHeaderOverride": false,
+          "allowGlobalFooterOverride": false,
+          "allowGlobalNavigationOverride": false
+        },
+        "editing": {
+          "uiLed": true,
+          "rawJsonRequired": false,
+          "allowBlockMove": true,
+          "allowBlockDuplicate": true,
+          "allowBlockHide": true,
+          "allowBindingChange": true,
+          "allowActionChange": true,
+          "allowMediaReplace": true,
+          "allowDesignChange": true,
+          "allowResponsiveChange": true,
+          "allowConditionChange": true,
+          "immutableBusinessTruth": true
+        },
+        "inspector": {
+          "generatedFromCapabilities": true,
+          "hideUnsupportedFields": true,
+          "showAuthorityOwnership": true,
+          "showInheritance": true
+        }
+      },
+      "certification": {
+        "level": "BLOCKED",
+        "lifecycle": "REVIEW_REQUIRED",
+        "productionEligible": false,
+        "coverage": {
+          "semantic": 100,
+          "binding": 100,
+          "action": 100,
+          "truth": 100,
+          "responsive": 100,
+          "visual": 50,
+          "overall": 92
+        },
+        "gates": [
+          {
+            "id": "source-safety",
+            "label": "Source sanitized",
+            "state": "PASS",
+            "critical": true,
+            "detail": "Universal Import candidate has no upstream blocker."
+          },
+          {
+            "id": "domain",
+            "label": "Master domain / doctrines",
+            "state": "PASS",
+            "critical": true,
+            "detail": "b2b_institutional · 9 doctrine(s)"
+          },
+          {
+            "id": "storefront-shell",
+            "label": "Global shell authority",
+            "state": "PASS",
+            "critical": true,
+            "detail": "Global AngelCare header/navigation/footer remain outside the imported Storefront World."
+          },
+          {
+            "id": "semantic",
+            "label": "Semantic anatomy",
+            "state": "PASS",
+            "critical": true,
+            "detail": "Required roles covered (100%)."
+          },
+          {
+            "id": "bindings",
+            "label": "Canonical binding coverage",
+            "state": "PASS",
+            "critical": true,
+            "detail": "2/2 required bindings resolved."
+          },
+          {
+            "id": "actions",
+            "label": "Canonical action coverage",
+            "state": "PASS",
+            "critical": true,
+            "detail": "2/2 required actions resolved; current-item targets supported for catalog actions."
+          },
+          {
+            "id": "relations",
+            "label": "Contextual relation sources",
+            "state": "PASS",
+            "critical": false,
+            "detail": "1 relation rail(s) compiled with current-item anchor."
+          },
+          {
+            "id": "truth",
+            "label": "Truth Firewall contract",
+            "state": "PASS",
+            "critical": true,
+            "detail": "Commercial claims are classified for Truth Firewall enforcement."
+          },
+          {
+            "id": "responsive",
+            "label": "Responsive contract",
+            "state": "PASS",
+            "critical": true,
+            "detail": "Responsive metadata detected. No obvious fixed-width overflow evidence."
+          },
+          {
+            "id": "visual",
+            "label": "Approved desktop/mobile reference",
+            "state": "BLOCKED",
+            "critical": true,
+            "detail": "Strict visual fidelity requires approved desktop + mobile references."
+          },
+          {
+            "id": "capabilities",
+            "label": "Capability negotiation",
+            "state": "PASS",
+            "critical": true,
+            "detail": "14 requested runtime capabilities negotiated."
+          },
+          {
+            "id": "operability",
+            "label": "2030 no-code operability",
+            "state": "PASS",
+            "critical": true,
+            "detail": "20 block capability contracts · 16 repeaters · 1 media contracts · FR/EN/AR + RTL."
+          },
+          {
+            "id": "fallback",
+            "label": "Native fallback",
+            "state": "PASS",
+            "critical": true,
+            "detail": "Category-Native/native fallback remains mandatory."
+          }
+        ],
+        "blockers": [
+          "visual: Strict visual fidelity requires approved desktop + mobile references."
+        ],
+        "warnings": [],
+        "certifiedAt": null
+      },
+      "compatibility": {
+        "minimumRuntime": "pea-v1",
+        "maximumRuntime": null,
+        "forwardPolicy": "capability-negotiation",
+        "unknownFields": "preserve",
+        "nativeFallback": true,
+        "schemaVersion": 3,
+        "compilerProfile": "pea-world-factory-2030-operability-v3"
+      },
+      "revision": {
+        "worldKey": null,
+        "revision": 1,
+        "supersedes": null,
+        "immutableAfterCertification": true
+      },
+      "overrides": {
+        "roleOverrides": {
+          "ao-b2b-world": "editorial",
+          "ao-b2b-01": "hero",
+          "ao-b2b-02": "specifications",
+          "ao-b2b-03": "editorial",
+          "ao-b2b-04": "b2b_deployment",
+          "ao-b2b-05": "specifications",
+          "ao-b2b-06": "editorial",
+          "ao-b2b-07": "specifications",
+          "ao-b2b-08": "specifications",
+          "ao-b2b-09": "specifications",
+          "ao-b2b-10": "specifications",
+          "ao-b2b-11": "specifications",
+          "ao-b2b-12": "specifications",
+          "ao-b2b-13": "specifications",
+          "ao-b2b-14": "media",
+          "ao-b2b-15": "trust",
+          "ao-b2b-16": "reviews",
+          "ao-b2b-17": "faq",
+          "ao-b2b-18": "recommendations",
+          "ao-b2b-19": "primary_conversion"
+        },
+        "supplementalRoleOverrides": {
+          "ao-b2b-01": [
+            "identity",
+            "pricing",
+            "availability",
+            "primary_conversion"
+          ]
+        },
+        "bindingOverrides": [],
+        "actionOverrides": [
+          {
+            "blockId": "ao-b2b-19",
+            "intent": "secondary",
+            "actionId": "b2b.request",
+            "targetMode": "current_item"
+          }
+        ],
+        "note": "Conditional public-source components. No static sellable data. Agent-reviewed fixture screenshots are QA references, not proof of production offers."
+      },
+      "provenance": {
+        "createdBy": "WORLD_FACTORY",
+        "manualOverrides": 22,
+        "notes": [
+          "No hardcoded production theme requirement.",
+          "UI-led import/assign/update contract active.",
+          "No foreign code execution.",
+          "Business authorities remain canonical.",
+          "Inference is reviewable and versioned.",
+          "Certified revisions are immutable; changes create a new revision."
+        ]
+      }
+    }
+  },
+  "data": {
+    "root": {
+      "props": {
+        "locale": "fr",
+        "direction": "ltr"
+      }
+    },
+    "content": [
+      {
+        "type": "ac_b2b_world",
+        "props": {
+          "id": "ao-b2b-world",
+          "atomicExperienceVersion": 1,
+          "accent": "#0754b6",
+          "companion": "#02746f",
+          "hidden": false,
+          "sourceDesign": {},
+          "content": [
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "ao-b2b-01",
+                "bindingKey": "",
+                "fieldSections": "",
+                "fieldKeys": "",
+                "doctrineKeys": "",
+                "enableSelection": false,
+                "hidden": false,
+                "responsive": {
+                  "mobileVisible": true,
+                  "tabletVisible": true,
+                  "desktopVisible": true
+                },
+                "sourceDesign": {},
+                "role": "opening",
+                "title": {
+                  "fr": "L’ambition prend une forme concrète",
+                  "en": "Turn ambition into a concrete plan",
+                  "ar": "حوّل الطموح إلى خطة ملموسة"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "eyebrow": {
+                  "fr": "ANGELCARE · EXPÉRIENCE",
+                  "en": "ANGELCARE · EXPERIENCE",
+                  "ar": "ANGELCARE · تجربة"
+                },
+                "layout": "solution-stage"
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "ao-b2b-02",
+                "bindingKey": "",
+                "fieldSections": "scope,property,partner,venue",
+                "fieldKeys": "",
+                "doctrineKeys": "",
+                "enableSelection": true,
+                "hidden": false,
+                "responsive": {
+                  "mobileVisible": true,
+                  "tabletVisible": true,
+                  "desktopVisible": true
+                },
+                "sourceDesign": {},
+                "role": "facts",
+                "title": {
+                  "fr": "Votre organisation, votre périmètre",
+                  "en": "Your organisation. Your scope.",
+                  "ar": "مؤسستك ونطاقك"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "eyebrow": {
+                  "fr": "ANGELCARE · EXPÉRIENCE",
+                  "en": "ANGELCARE · EXPERIENCE",
+                  "ar": "ANGELCARE · تجربة"
+                },
+                "layout": "bento"
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "ao-b2b-03",
+                "bindingKey": "",
+                "fieldSections": "benefit,programme,plan",
+                "fieldKeys": "",
+                "doctrineKeys": "",
+                "enableSelection": true,
+                "hidden": false,
+                "responsive": {
+                  "mobileVisible": true,
+                  "tabletVisible": true,
+                  "desktopVisible": true
+                },
+                "sourceDesign": {},
+                "role": "benefits",
+                "title": {
+                  "fr": "Ce que la solution met à votre disposition",
+                  "en": "What the solution makes possible",
+                  "ar": "ما توفره الحلول لك"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "eyebrow": {
+                  "fr": "ANGELCARE · EXPÉRIENCE",
+                  "en": "ANGELCARE · EXPERIENCE",
+                  "ar": "ANGELCARE · تجربة"
+                },
+                "layout": "comparison"
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "ao-b2b-04",
+                "bindingKey": "",
+                "fieldSections": "delivery,onboarding,schedule",
+                "fieldKeys": "",
+                "doctrineKeys": "",
+                "enableSelection": false,
+                "hidden": false,
+                "responsive": {
+                  "mobileVisible": true,
+                  "tabletVisible": true,
+                  "desktopVisible": true
+                },
+                "sourceDesign": {},
+                "role": "deployment",
+                "title": {
+                  "fr": "Déployer avec un cadre explicite",
+                  "en": "Deploy within a clear framework",
+                  "ar": "التنفيذ ضمن إطار واضح"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "eyebrow": {
+                  "fr": "ANGELCARE · EXPÉRIENCE",
+                  "en": "ANGELCARE · EXPERIENCE",
+                  "ar": "ANGELCARE · تجربة"
+                },
+                "layout": "timeline"
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "ao-b2b-05",
+                "bindingKey": "",
+                "fieldSections": "limits",
+                "fieldKeys": "",
+                "doctrineKeys": "",
+                "enableSelection": false,
+                "hidden": false,
+                "responsive": {
+                  "mobileVisible": true,
+                  "tabletVisible": true,
+                  "desktopVisible": true
+                },
+                "sourceDesign": {},
+                "role": "facts",
+                "title": {
+                  "fr": "Les capacités et limites publiées",
+                  "en": "Published capacities and limits",
+                  "ar": "القدرات والحدود المنشورة"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "eyebrow": {
+                  "fr": "ANGELCARE · EXPÉRIENCE",
+                  "en": "ANGELCARE · EXPERIENCE",
+                  "ar": "ANGELCARE · تجربة"
+                },
+                "layout": "ledger"
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "ao-b2b-06",
+                "bindingKey": "",
+                "fieldSections": "",
+                "fieldKeys": "",
+                "doctrineKeys": "",
+                "enableSelection": false,
+                "hidden": false,
+                "responsive": {
+                  "mobileVisible": true,
+                  "tabletVisible": true,
+                  "desktopVisible": true
+                },
+                "sourceDesign": {},
+                "role": "story",
+                "title": {
+                  "fr": "Une solution à comprendre dans son ensemble",
+                  "en": "Understand the whole solution",
+                  "ar": "افهم الحل بصورة متكاملة"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "eyebrow": {
+                  "fr": "ANGELCARE · EXPÉRIENCE",
+                  "en": "ANGELCARE · EXPERIENCE",
+                  "ar": "ANGELCARE · تجربة"
+                },
+                "layout": "bento"
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "ao-b2b-07",
+                "bindingKey": "",
+                "fieldSections": "staffing,operations",
+                "fieldKeys": "",
+                "doctrineKeys": "",
+                "enableSelection": false,
+                "hidden": false,
+                "responsive": {
+                  "mobileVisible": true,
+                  "tabletVisible": true,
+                  "desktopVisible": true
+                },
+                "sourceDesign": {},
+                "role": "facts",
+                "title": {
+                  "fr": "Les équipes, les rôles, l’organisation",
+                  "en": "Teams, roles and organisation",
+                  "ar": "الفرق والأدوار والتنظيم"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "eyebrow": {
+                  "fr": "ANGELCARE · EXPÉRIENCE",
+                  "en": "ANGELCARE · EXPERIENCE",
+                  "ar": "ANGELCARE · تجربة"
+                },
+                "layout": "portrait"
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "ao-b2b-08",
+                "bindingKey": "",
+                "fieldSections": "commercial,finance,billing,conversion",
+                "fieldKeys": "",
+                "doctrineKeys": "",
+                "enableSelection": false,
+                "hidden": false,
+                "responsive": {
+                  "mobileVisible": true,
+                  "tabletVisible": true,
+                  "desktopVisible": true
+                },
+                "sourceDesign": {},
+                "role": "facts",
+                "title": {
+                  "fr": "Le cadre commercial, sans raccourci",
+                  "en": "The commercial framework, clearly stated",
+                  "ar": "الإطار التجاري بوضوح"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "eyebrow": {
+                  "fr": "ANGELCARE · EXPÉRIENCE",
+                  "en": "ANGELCARE · EXPERIENCE",
+                  "ar": "ANGELCARE · تجربة"
+                },
+                "layout": "comparison"
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "ao-b2b-09",
+                "bindingKey": "",
+                "fieldSections": "coverage",
+                "fieldKeys": "",
+                "doctrineKeys": "",
+                "enableSelection": false,
+                "hidden": false,
+                "responsive": {
+                  "mobileVisible": true,
+                  "tabletVisible": true,
+                  "desktopVisible": true
+                },
+                "sourceDesign": {},
+                "role": "facts",
+                "title": {
+                  "fr": "Les zones couvertes",
+                  "en": "Published coverage",
+                  "ar": "التغطية المنشورة"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "eyebrow": {
+                  "fr": "ANGELCARE · EXPÉRIENCE",
+                  "en": "ANGELCARE · EXPERIENCE",
+                  "ar": "ANGELCARE · تجربة"
+                },
+                "layout": "strip"
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "ao-b2b-10",
+                "bindingKey": "",
+                "fieldSections": "integration,reporting",
+                "fieldKeys": "",
+                "doctrineKeys": "",
+                "enableSelection": false,
+                "hidden": false,
+                "responsive": {
+                  "mobileVisible": true,
+                  "tabletVisible": true,
+                  "desktopVisible": true
+                },
+                "sourceDesign": {},
+                "role": "facts",
+                "title": {
+                  "fr": "Intégrations et circulation de l’information",
+                  "en": "Integrations and information flows",
+                  "ar": "التكامل وتدفق المعلومات"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "eyebrow": {
+                  "fr": "ANGELCARE · EXPÉRIENCE",
+                  "en": "ANGELCARE · EXPERIENCE",
+                  "ar": "ANGELCARE · تجربة"
+                },
+                "layout": "strip"
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "ao-b2b-11",
+                "bindingKey": "",
+                "fieldSections": "safety,security,privacy,eligibility",
+                "fieldKeys": "",
+                "doctrineKeys": "",
+                "enableSelection": false,
+                "hidden": false,
+                "responsive": {
+                  "mobileVisible": true,
+                  "tabletVisible": true,
+                  "desktopVisible": true
+                },
+                "sourceDesign": {},
+                "role": "facts",
+                "title": {
+                  "fr": "Protection, accès et limites de responsabilité",
+                  "en": "Protection, access and responsibility boundaries",
+                  "ar": "الحماية والوصول وحدود المسؤولية"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "eyebrow": {
+                  "fr": "ANGELCARE · EXPÉRIENCE",
+                  "en": "ANGELCARE · EXPERIENCE",
+                  "ar": "ANGELCARE · تجربة"
+                },
+                "layout": "ledger"
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "ao-b2b-12",
+                "bindingKey": "",
+                "fieldSections": "diagnostic,assessment,evidence",
+                "fieldKeys": "",
+                "doctrineKeys": "",
+                "enableSelection": false,
+                "hidden": false,
+                "responsive": {
+                  "mobileVisible": true,
+                  "tabletVisible": true,
+                  "desktopVisible": true
+                },
+                "sourceDesign": {},
+                "role": "facts",
+                "title": {
+                  "fr": "Du diagnostic au dossier de preuve",
+                  "en": "From diagnosis to evidence",
+                  "ar": "من التشخيص إلى الأدلة"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "eyebrow": {
+                  "fr": "ANGELCARE · EXPÉRIENCE",
+                  "en": "ANGELCARE · EXPERIENCE",
+                  "ar": "ANGELCARE · تجربة"
+                },
+                "layout": "bento"
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "ao-b2b-13",
+                "bindingKey": "",
+                "fieldSections": "support,followup",
+                "fieldKeys": "",
+                "doctrineKeys": "",
+                "enableSelection": false,
+                "hidden": false,
+                "responsive": {
+                  "mobileVisible": true,
+                  "tabletVisible": true,
+                  "desktopVisible": true
+                },
+                "sourceDesign": {},
+                "role": "facts",
+                "title": {
+                  "fr": "L’accompagnement après le démarrage",
+                  "en": "Support after launch",
+                  "ar": "الدعم بعد الانطلاق"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "eyebrow": {
+                  "fr": "ANGELCARE · EXPÉRIENCE",
+                  "en": "ANGELCARE · EXPERIENCE",
+                  "ar": "ANGELCARE · تجربة"
+                },
+                "layout": "ribbon"
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "ao-b2b-14",
+                "bindingKey": "",
+                "fieldSections": "",
+                "fieldKeys": "",
+                "doctrineKeys": "",
+                "enableSelection": false,
+                "hidden": false,
+                "responsive": {
+                  "mobileVisible": true,
+                  "tabletVisible": true,
+                  "desktopVisible": true
+                },
+                "sourceDesign": {},
+                "role": "gallery",
+                "title": {
+                  "fr": "Explorez les médias de cette solution",
+                  "en": "Explore this solution’s media",
+                  "ar": "استكشف صور هذا الحل"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "eyebrow": {
+                  "fr": "ANGELCARE · EXPÉRIENCE",
+                  "en": "ANGELCARE · EXPERIENCE",
+                  "ar": "ANGELCARE · تجربة"
+                },
+                "layout": "bento"
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "ao-b2b-15",
+                "bindingKey": "",
+                "fieldSections": "",
+                "fieldKeys": "",
+                "doctrineKeys": "",
+                "enableSelection": false,
+                "hidden": false,
+                "responsive": {
+                  "mobileVisible": true,
+                  "tabletVisible": true,
+                  "desktopVisible": true
+                },
+                "sourceDesign": {},
+                "role": "proof",
+                "title": {
+                  "fr": "Les engagements étayés",
+                  "en": "Evidence-backed commitments",
+                  "ar": "التزامات مدعومة بالأدلة"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "eyebrow": {
+                  "fr": "ANGELCARE · EXPÉRIENCE",
+                  "en": "ANGELCARE · EXPERIENCE",
+                  "ar": "ANGELCARE · تجربة"
+                },
+                "layout": "bento"
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "ao-b2b-16",
+                "bindingKey": "",
+                "fieldSections": "",
+                "fieldKeys": "",
+                "doctrineKeys": "",
+                "enableSelection": false,
+                "hidden": false,
+                "responsive": {
+                  "mobileVisible": true,
+                  "tabletVisible": true,
+                  "desktopVisible": true
+                },
+                "sourceDesign": {},
+                "role": "reviews",
+                "title": {
+                  "fr": "Les retours publiés",
+                  "en": "Published feedback",
+                  "ar": "الآراء المنشورة"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "eyebrow": {
+                  "fr": "ANGELCARE · EXPÉRIENCE",
+                  "en": "ANGELCARE · EXPERIENCE",
+                  "ar": "ANGELCARE · تجربة"
+                },
+                "layout": "bento"
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "ao-b2b-17",
+                "bindingKey": "",
+                "fieldSections": "",
+                "fieldKeys": "faq,frequently_asked_questions",
+                "doctrineKeys": "",
+                "enableSelection": false,
+                "hidden": false,
+                "responsive": {
+                  "mobileVisible": true,
+                  "tabletVisible": true,
+                  "desktopVisible": true
+                },
+                "sourceDesign": {},
+                "role": "faq",
+                "title": {
+                  "fr": "Clarifier avant de décider",
+                  "en": "Clarify before deciding",
+                  "ar": "توضيح قبل اتخاذ القرار"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "eyebrow": {
+                  "fr": "ANGELCARE · EXPÉRIENCE",
+                  "en": "ANGELCARE · EXPERIENCE",
+                  "ar": "ANGELCARE · تجربة"
+                },
+                "layout": "bento"
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "ao-b2b-18",
+                "bindingKey": "",
+                "fieldSections": "",
+                "fieldKeys": "",
+                "doctrineKeys": "",
+                "enableSelection": false,
+                "hidden": false,
+                "responsive": {
+                  "mobileVisible": true,
+                  "tabletVisible": true,
+                  "desktopVisible": true
+                },
+                "sourceDesign": {},
+                "role": "related",
+                "title": {
+                  "fr": "Les solutions qui peuvent compléter votre réflexion",
+                  "en": "Solutions to extend your thinking",
+                  "ar": "حلول توسّع رؤيتك"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "eyebrow": {
+                  "fr": "ANGELCARE · EXPÉRIENCE",
+                  "en": "ANGELCARE · EXPERIENCE",
+                  "ar": "ANGELCARE · تجربة"
+                },
+                "layout": "bento"
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "ao-b2b-19",
+                "bindingKey": "",
+                "fieldSections": "",
+                "fieldKeys": "",
+                "doctrineKeys": "",
+                "enableSelection": false,
+                "hidden": false,
+                "responsive": {
+                  "mobileVisible": true,
+                  "tabletVisible": true,
+                  "desktopVisible": true
+                },
+                "sourceDesign": {},
+                "role": "decision",
+                "title": {
+                  "fr": "Passons de votre intention à un projet précis",
+                  "en": "From your intent to a clear project",
+                  "ar": "من نيتك إلى مشروع واضح"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "eyebrow": {
+                  "fr": "ANGELCARE · EXPÉRIENCE",
+                  "en": "ANGELCARE · EXPERIENCE",
+                  "ar": "ANGELCARE · تجربة"
+                },
+                "layout": "bento"
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "assets": [],
+  "fingerprints": {
+    "document": "0d376c3a22c18136a3e6194436a45eca",
+    "factory": "e8c8dc57d5c925a7c5e3f3ebd31c8d13",
+    "package": "caaeeca4792305e00f511baa2c66ead4"
+  }
+}

@@ -172,7 +172,7 @@ export function CareLinkOpsApprovedSidebar({
             <div className="pointer-events-none absolute -right-16 -top-16 h-36 w-36 rounded-full bg-blue-100 blur-3xl" />
             <Link href="/carelink-ops" onClick={() => onMobileOpenChange(false)} className={collapsed ? 'relative flex justify-center' : 'relative block'}>
               <div className={collapsed ? 'relative h-11 w-12' : 'relative h-12 w-full'}>
-                <Image src="/b2b-plaquette-partenaires/assets/angelcare-original-logo.png" alt="AngelCare" fill priority className={collapsed ? 'object-contain' : 'object-contain object-left'} sizes={collapsed ? '48px' : '230px'} />
+                <Image src="/brand/angelcare-pearl-rim-colour-r1.png" alt="AngelCare" fill priority className={collapsed ? 'object-contain' : 'object-contain object-left'} sizes={collapsed ? '48px' : '230px'} />
               </div>
               {!collapsed ? (
                 <div className="mt-3 border-t border-slate-100 pt-3">

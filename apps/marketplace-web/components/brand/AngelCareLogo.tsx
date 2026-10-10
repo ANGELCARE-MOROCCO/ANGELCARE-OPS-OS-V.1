@@ -9,10 +9,10 @@ type AngelCareLogoProps = {
 }
 
 const sizeMap = {
-  xs: { width: 64, height: 48 },
-  sm: { width: 96, height: 72 },
-  md: { width: 136, height: 101 },
-  lg: { width: 184, height: 136 },
+  xs: { width: 64, height: 22 },
+  sm: { width: 96, height: 32 },
+  md: { width: 136, height: 46 },
+  lg: { width: 184, height: 62 },
 } as const
 
 export default function AngelCareLogo({
@@ -24,8 +24,8 @@ export default function AngelCareLogo({
 }: AngelCareLogoProps) {
   const dims = sizeMap[size]
   const source = inverse
-    ? '/brand/angelcare-official-inverse.webp'
-    : '/brand/angelcare-official.webp'
+    ? '/brand/angelcare-pearl-rim-white-r1.png'
+    : '/brand/angelcare-pearl-rim-colour-r1.png'
 
   return (
     <div
@@ -39,7 +39,7 @@ export default function AngelCareLogo({
       >
         <Image
           src={source}
-          alt="AngelCare — identité officielle complète"
+          alt="AngelCare — logo officiel Pearl Rim"
           fill
           sizes={`${dims.width}px`}
           priority={priority || size === 'lg'}

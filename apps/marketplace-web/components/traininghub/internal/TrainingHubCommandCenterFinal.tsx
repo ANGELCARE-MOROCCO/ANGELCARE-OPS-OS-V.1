@@ -101,7 +101,7 @@ export default function TrainingHubCommandCenterFinal() {
   return (
     <main className="thcc-page">
       <aside className="thcc-sidebar">
-        <div className="thcc-logo-zone"><img src="/logo.png" alt="AngelCare" /><div><strong>TrainingHub</strong><span>Portail partenaires</span></div></div>
+        <div className="thcc-logo-zone"><img src="/brand/angelcare-pearl-rim-colour-r1.png" alt="AngelCare" /><div><strong>TrainingHub</strong><span>Portail partenaires</span></div></div>
         <nav className="thcc-nav">
           {sideGroups.map((group) => <div key={group.title} className="thcc-nav-group"><div className="thcc-nav-title">{group.title}</div>{group.items.map((item) => <Link key={`${group.title}-${item.label}`} href={item.href} className={item.active ? 'thcc-nav-link active' : 'thcc-nav-link'}><span>{item.icon}</span><b>{item.label}</b></Link>)}</div>)}
         </nav>

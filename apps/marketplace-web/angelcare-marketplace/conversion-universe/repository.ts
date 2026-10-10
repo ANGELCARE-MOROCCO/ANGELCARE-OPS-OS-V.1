@@ -1,3 +1,5 @@
+import { getCustomerContext } from '../customer-commerce/customer-auth'
+import { stableConfiguration, basketSignature, validQuantity } from '../customer-experience/contracts'
 import { serverStudioAttribution } from '@/angelcare-marketplace/studio-attribution/server'
 import { createHash, randomUUID } from 'node:crypto'
 import { createServiceClient } from '@/lib/supabase/server'
@@ -186,7 +188,7 @@ async function itemById(itemId: string, locale: CatalogLocale): Promise<Discover
 }
 
 
-async function resolveAutomaticPromotion(input: { item?: DiscoveryItem | null; subtotal: number; territoryId?: string | null; customerAccountId?: string | null }): Promise<{ id:string; name:string; discount:number } | null> {
+export async function resolveAutomaticPromotion(input: { item?: DiscoveryItem | null; subtotal: number; territoryId?: string | null; customerAccountId?: string | null }): Promise<{ id:string; name:string; discount:number } | null> {
   if (!Number.isFinite(input.subtotal) || input.subtotal <= 0) return null
   const db = await createServiceClient()
   const now = new Date().toISOString()
@@ -266,6 +268,7 @@ export async function createPublicConversionSession(input: ConversionSessionCrea
 
   const item = await getDiscoveryItem({ locale: input.locale, slug: input.itemSlug, territoryCode: input.territoryCode })
   if (!item) throw new MarketplaceError('NOT_FOUND', 'Cette offre n’est pas disponible dans le Marketplace publié.')
+  const customer = await getCustomerContext()
   const resolvedJourney = input.journey || journeyForItem(item)
   const territoryId = await territoryIdForCode(input.territoryCode)
   const sessionKey = randomUUID()
@@ -273,6 +276,7 @@ export async function createPublicConversionSession(input: ConversionSessionCrea
     .from('angelcare_marketplace_conversion_sessions')
     .insert({
       session_key: sessionKey,
+      customer_account_id: customer?.account.id || null, family_account_id: customer?.account.family_account_id || null,
       journey: resolvedJourney,
       status: 'configuring',
       locale: input.locale,
@@ -349,7 +353,7 @@ export async function revalidateConversionPrice(input: {
   if (basketId) {
     const basketResult = await db
       .from('angelcare_marketplace_quote_baskets')
-      .select('currency_label,items:angelcare_marketplace_quote_basket_items(catalog_item_id,quantity,unit_price)')
+      .select('currency_label,items:angelcare_marketplace_quote_basket_items(id,catalog_item_id,quantity,unit_price,configuration)')
       .eq('id', basketId)
       .single()
     if (basketResult.error || !basketResult.data) throw fail('charger les lignes du panier', basketResult.error)
@@ -370,11 +374,14 @@ export async function revalidateConversionPrice(input: {
       if (ruleResult.error && ruleResult.error.code !== 'PGRST116') throw fail('résoudre le prix d’une ligne', ruleResult.error)
       const rule = ruleResult.data as Row | null
       const quantity = Math.max(1, numberValue(line.quantity))
-      const unitPrice = rule ? numberValue(rule.standard_price) : line.unit_price === null || line.unit_price === undefined ? null : numberValue(line.unit_price)
+      const published = await itemById(text(line.catalog_item_id),text(row.locale) as CatalogLocale)
+      if (!published) throw new MarketplaceError('NOT_FOUND','Une offre du panier n’est plus publiée.')
+      const unitPrice = published.price_mode === 'quote_only' ? null : rule ? numberValue(rule.standard_price) : published.price_amount
       if (unitPrice === null) quoteRequired = true
       else subtotal += unitPrice * quantity
       if (rule) financeRules += 1
       evidenceLines.push({
+        lineId: text(line.id), configuration: objectValue(line.configuration),
         catalogItemId: text(line.catalog_item_id),
         quantity,
         unitPrice,
@@ -406,12 +413,12 @@ export async function revalidateConversionPrice(input: {
         status: quoteRequired ? 'quote_required' : 'valid',
         source_hash: sourceHash,
         valid_until: validUntil,
-        evidence: { basketId, lineCount: lines.length, lines: evidenceLines, automaticPromotion },
+        evidence: { basketId, basketSignature:basketSignature(lines), lineCount: lines.length, lines: evidenceLines, automaticPromotion },
       })
       .select('*')
       .single()
     if (error || !data) throw fail('enregistrer le prix du panier', error)
-    await db.from('angelcare_marketplace_conversion_sessions').update({ price_snapshot_id: data.id, last_activity_at: new Date().toISOString() }).eq('id', text(row.id))
+    await db.from('angelcare_marketplace_conversion_sessions').update({ price_snapshot_id: data.id, ...(quoteRequired && row.journey === 'product_checkout' ? {journey:'b2b_quotation'} : {}), last_activity_at: new Date().toISOString() }).eq('id', text(row.id))
     await recordEvent(text(row.id), 'price.revalidated', { priceSnapshotId: data.id, status: data.status, basketId, lineCount: lines.length })
     return mapPrice(data as Row) as ConversionPriceSnapshot
   }
@@ -622,229 +629,32 @@ async function createLead(input: {
 }
 
 export async function confirmPublicConversion(input: {
-  sessionKey: string
-  visitorReference: string
-  idempotencyKey: string
-  paymentIntentId?: string | null
+  sessionKey: string; visitorReference: string; idempotencyKey: string; paymentIntentId?: string | null
 }): Promise<ConversionOutcome> {
   const db = await createServiceClient()
-  const hash = visitorHash(input.visitorReference)
-  const row = await sessionRowByKey(input.sessionKey, hash)
-  if (!row) throw new MarketplaceError('NOT_FOUND', 'Session de conversion introuvable.')
+  const row = await sessionRowByKey(input.sessionKey, visitorHash(input.visitorReference))
+  if (!row) throw new MarketplaceError('NOT_FOUND', 'Session introuvable.')
   const existing = asRows(row.outcomes)[0]
   if (existing) return mapOutcome(existing) as ConversionOutcome
-  if (new Date(text(row.expires_at)).getTime() <= Date.now()) throw new MarketplaceError('CONFLICT', 'Cette session a expiré.')
-  const item = await itemById(text(row.catalog_item_id), text(row.locale) as CatalogLocale)
-  if (!item) throw new MarketplaceError('NOT_FOUND', 'Offre publiée introuvable.')
-  const price = mapPrice(asRows(row.price_snapshots)[0] || null)
-  if (!price) throw new MarketplaceError('VALIDATION_ERROR', 'Le prix ou le statut devis doit être revérifié avant confirmation.')
-  if (price.status === 'valid' && new Date(price.valid_until).getTime() <= Date.now()) {
-    throw new MarketplaceError('CONFLICT', 'Le prix a expiré et doit être revérifié.')
-  }
-  const availability = objectValue(row.availability_result)
-  if (availability.status === 'unavailable') throw new MarketplaceError('CONFLICT', 'La disponibilité sélectionnée n’est plus valide.')
-  const consents = asRows(row.consents).map(mapConsent)
-  const mandatory = ['marketplace_terms', 'privacy_notice']
-  if (item.category_key === 'health-partners') mandatory.push('non_medical_boundary')
-  const missing = mandatory.filter(key => !consents.some(consent => consent.consent_key === key && consent.accepted))
-  if (missing.length) throw new MarketplaceError('VALIDATION_ERROR', `Consentements requis manquants : ${missing.join(', ')}.`)
-
-  const identity = objectValue(row.identity_context)
+  const customer = await getCustomerContext()
   const configuration = objectValue(row.configuration)
-  const journey = text(row.journey) as ConversionJourney
-
-  // Financial authority: a transactional checkout cannot become a canonical
-  // outcome until its payment is captured. Wallet-only payments are authorized
-  // at reservation time and committed atomically here before confirmation.
-  let confirmedPaymentIntentId: string | null = null
-  let confirmedPaymentMetadata: Record<string, unknown> = {}
-  if (journey === 'product_checkout' && numberValue(price.grand_total) > 0) {
-    if (!input.paymentIntentId) {
-      throw new MarketplaceError('VALIDATION_ERROR', 'Une preuve de paiement capturé est requise avant confirmation de la commande.')
-    }
-    const paymentResult = await db
-      .from('angelcare_marketplace_payment_intents')
-      .select('*')
-      .eq('id', input.paymentIntentId)
-      .eq('conversion_session_id', text(row.id))
-      .maybeSingle()
-    if (paymentResult.error) throw fail('vérifier le paiement de la conversion', paymentResult.error)
-    if (!paymentResult.data) throw new MarketplaceError('CONFLICT', 'Le paiement ne correspond pas à cette session de conversion.')
-    const payment = paymentResult.data as Row
-    if (Math.abs(numberValue(payment.expected_amount) - numberValue(price.grand_total)) > 0.02) {
-      throw new MarketplaceError('CONFLICT', 'Le montant du paiement ne correspond pas au prix verrouillé de la conversion.')
-    }
-    const paymentStatus = text(payment.status)
-    if (text(payment.provider_key) === 'ac_wallet' && paymentStatus === 'authorized') {
-      const reservationId = nullableText(payment.wallet_reservation_id)
-      if (!reservationId) throw new MarketplaceError('CONFLICT', 'La réservation AC Wallet requise est absente.')
-      const committed = await db.rpc('angelcare_marketplace_wallet_commit_reservation', {
-        p_reservation_id: reservationId,
-        p_order_reference: text(payment.public_reference),
-        p_payment_reference: text(payment.provider_reference) || text(payment.public_reference),
-      })
-      if (committed.error) throw fail('capturer la réservation AC Wallet', committed.error)
-      const captured = await db
-        .from('angelcare_marketplace_payment_intents')
-        .update({
-          status: 'captured',
-          authorized_amount: numberValue(payment.expected_amount),
-          captured_amount: numberValue(payment.expected_amount),
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', text(payment.id))
-      if (captured.error) throw fail('finaliser le paiement AC Wallet', captured.error)
-    } else if (!['captured', 'reconciled'].includes(paymentStatus)) {
-      throw new MarketplaceError('DEPENDENCY_BLOCKED', `Le paiement doit être capturé avant confirmation (état actuel : ${paymentStatus || 'inconnu'}).`)
-    }
-    confirmedPaymentIntentId = text(payment.id)
-    confirmedPaymentMetadata = objectValue(payment.metadata)
+  const payment = objectValue(configuration.payment)
+  const {data,error} = await db.rpc('angelcare_marketplace_receive_conversion', {
+    p_session_key: input.sessionKey, p_visitor_hash: visitorHash(input.visitorReference),
+    p_customer_id: customer?.account.id || null,
+    p_payment_id: input.paymentIntentId || nullableText(payment.paymentIntentId),
+    p_method: text(payment.method) || 'manual_verified', p_idempotency: `receive:${text(row.id)}`,
+  })
+  if (error) {
+    const message = String(error.message || '')
+    const userMessage = message.includes('CONSENT') ? 'Acceptez les consentements requis.'
+      : message.includes('CONTACT') ? 'Votre nom et un moyen de contact sont requis.'
+      : message.includes('RECHECK') ? 'La sélection ou le prix a changé. Revérifiez votre panier.'
+      : message.includes('EXPIRED') ? 'Ce parcours a expiré. Reprenez avec votre panier conservé.'
+      : message.includes('MISMATCH') ? 'Les références client ou paiement ne correspondent pas à ce parcours.'
+      : 'La réception ne peut pas être enregistrée. Vos choix sont conservés; réessayez.'
+    throw new MarketplaceError(error.code === 'PGRST202' || message.includes('TRIGGER_REQUIRED') ? 'CONFIGURATION_ERROR' : message.includes('INTAKE_') ? 'CONFLICT' : 'INTERNAL_ERROR', userMessage, {cause:error})
   }
-
-  let canonicalObjectType = 'marketplace_conversion_handover'
-  let canonicalObjectId: string | null = null
-  let publicReference = text(row.public_reference)
-  let outcomeType = 'request_created'
-  let outcomeStatus: ConversionOutcome['status'] = 'handover_pending'
-
-  if (journey === 'service_booking' && row.family_account_id) {
-    const { data, error } = await db
-      .from('angelcare_marketplace_family_quote_requests')
-      .insert({
-        family_account_id: row.family_account_id,
-        child_id: nullableText(configuration.childId),
-        diagnostic_id: nullableText(configuration.diagnosticId),
-        service_family: item.item_key,
-        city: text(configuration.city) || text(identity.city) || 'À confirmer',
-        requested_start_date: nullableText(configuration.requestedDate),
-        schedule: objectValue(configuration.schedule),
-        duration_expectation: nullableText(configuration.duration),
-        location_notes: nullableText(configuration.locationNotes),
-        priorities: Array.isArray(configuration.priorities) ? configuration.priorities.map(String) : [],
-        status: 'submitted',
-        submitted_at: new Date().toISOString(),
-      })
-      .select('id,public_reference')
-      .single()
-    if (error || !data) throw fail('créer la demande famille', error)
-    canonicalObjectType = 'family_quote_request'
-    canonicalObjectId = String(data.id)
-    publicReference = String(data.public_reference)
-    outcomeType = 'booking_request_created'
-    outcomeStatus = 'submitted'
-  } else if (journey === 'academy_enrollment' && configuration.cohortId && identity.learnerUserId) {
-    const { data, error } = await db
-      .from('angelcare_marketplace_academy_enrollments')
-      .upsert({
-        cohort_id: configuration.cohortId,
-        learner_user_id: identity.learnerUserId,
-        learner_provider_id: nullableText(identity.providerId),
-        organization_id: nullableText(identity.organizationId),
-        status: 'enrolled',
-        territory_id: nullableText(row.territory_id),
-        tenant_id: nullableText(row.tenant_id),
-      }, { onConflict: 'cohort_id,learner_user_id' })
-      .select('id')
-      .single()
-    if (error || !data) throw fail('créer l’inscription Academy', error)
-    canonicalObjectType = 'academy_enrollment'
-    canonicalObjectId = String(data.id)
-    publicReference = text(configuration.cohortReference) || text(row.public_reference)
-    outcomeType = 'enrollment_created'
-    outcomeStatus = 'created'
-  } else if (journey === 'partner_subscription' && row.tenant_id && configuration.planId) {
-    const { data, error } = await db
-      .from('angelcare_marketplace_partner_subscriptions')
-      .insert({
-        tenant_id: row.tenant_id,
-        plan_id: configuration.planId,
-        status: 'draft',
-        renewal_mode: text(configuration.renewalMode) || 'manual',
-        amount: price.grand_total,
-        currency_label: price.currency_label,
-      })
-      .select('id,public_reference')
-      .single()
-    if (error || !data) throw fail('créer la demande d’abonnement', error)
-    canonicalObjectType = 'partner_subscription'
-    canonicalObjectId = String(data.id)
-    publicReference = String(data.public_reference)
-    outcomeType = 'subscription_request_created'
-    outcomeStatus = 'created'
-  } else {
-    const lead = await createLead({ session: row, item, identity, journey })
-    canonicalObjectType = 'crm_lead'
-    canonicalObjectId = lead.id
-    publicReference = lead.public_reference
-    outcomeType = journey === 'product_checkout'
-      ? 'order_handover_created'
-      : journey === 'academy_enrollment'
-        ? 'enrollment_request_created'
-        : journey === 'quality_assessment'
-          ? 'assessment_request_created'
-          : journey === 'partner_subscription'
-            ? 'subscription_request_created'
-            : journey === 'b2b_quotation'
-              ? 'quotation_request_created'
-              : 'booking_request_created'
-    outcomeStatus = 'handover_pending'
-  }
-
-  const { data, error } = await db
-    .from('angelcare_marketplace_conversion_outcomes')
-    .insert({
-      session_id: row.id,
-      outcome_type: outcomeType,
-      canonical_object_type: canonicalObjectType,
-      canonical_object_id: canonicalObjectId,
-      public_reference: publicReference,
-      status: outcomeStatus,
-      handover_payload: {
-        itemId: item.id,
-        itemKey: item.item_key,
-        journey,
-        identity,
-        configuration,
-        priceSnapshotId: price.id,
-        priceStatus: price.status,
-        availability,
-      },
-      idempotency_key: input.idempotencyKey,
-    })
-    .select('*')
-    .single()
-  if (error || !data) throw fail('enregistrer le résultat de conversion', error)
-
-  if (confirmedPaymentIntentId) {
-    const paymentBind = await db
-      .from('angelcare_marketplace_payment_intents')
-      .update({
-        canonical_object_type: canonicalObjectType,
-        canonical_object_id: canonicalObjectId,
-        metadata: {
-          ...confirmedPaymentMetadata,
-          conversion_outcome_id: data.id,
-          conversion_outcome_type: outcomeType,
-        },
-        updated_at: new Date().toISOString(),
-      })
-      .eq('id', confirmedPaymentIntentId)
-    if (paymentBind.error) throw fail('lier le paiement au résultat canonique', paymentBind.error)
-  }
-
-  await db
-    .from('angelcare_marketplace_conversion_sessions')
-    .update({
-      status: outcomeStatus === 'handover_pending' ? 'handover_pending' : 'confirmed',
-      submitted_at: new Date().toISOString(),
-      confirmed_at: outcomeStatus === 'handover_pending' ? null : new Date().toISOString(),
-      outcome_type: outcomeType,
-      outcome_id: data.id,
-      last_activity_at: new Date().toISOString(),
-    })
-    .eq('id', text(row.id))
-  await db.from('angelcare_marketplace_conversion_availability_holds').update({ status: 'confirmed', confirmed_at: new Date().toISOString() }).eq('session_id', text(row.id)).eq('status', 'held')
-  await recordEvent(text(row.id), 'conversion.confirmed', { outcomeId: data.id, outcomeType, canonicalObjectType, canonicalObjectId })
   return mapOutcome(data as Row) as ConversionOutcome
 }
 
@@ -864,7 +674,19 @@ export async function getOrCreatePublicBasket(input: {
     .eq('basket_status', 'draft')
     .maybeSingle()
   if (existing.error) throw fail('charger le panier', existing.error)
-  if (existing.data) return existing.data
+  if (existing.data) {
+    const lines = asRows(existing.data.items)
+    const ids = [...new Set(lines.map(line => text(line.catalog_item_id)))]
+    const media = new Map<string, string | null>()
+    for (let start = 0; start < ids.length; start += 100) {
+      let query = db.from('angelcare_marketplace_catalog_discovery_v').select('id,media_url').eq('status','published').in('id',ids.slice(start,start+100))
+      if (existing.data.territory_id) query = query.or(`territory_id.is.null,territory_id.eq.${existing.data.territory_id}`)
+      const result = await query
+      if (result.error) throw fail('charger les visuels du panier',result.error)
+      for (const row of asRows(result.data)) media.set(text(row.id),nullableText(row.media_url))
+    }
+    return {...existing.data,items:lines.map(line=>({...line,media_url:media.get(text(line.catalog_item_id))??null}))}
+  }
   const territoryId = await territoryIdForCode(input.territoryCode)
   const { data, error } = await db
     .from('angelcare_marketplace_quote_baskets')
@@ -898,15 +720,16 @@ export async function addPublicBasketItem(input: {
   const item = await getDiscoveryItem({ locale: input.locale, slug: input.itemSlug })
   if (!item) throw new MarketplaceError('NOT_FOUND', 'Offre publiée introuvable.')
   const unitPrice = item.price_mode === 'quote_only' ? null : item.price_amount
-  const quantity = Math.max(1, input.quantity)
+  const quantity = validQuantity(input.quantity)
+  if (quantity === null) throw new MarketplaceError('VALIDATION_ERROR','Quantité entière requise entre 1 et 99.')
   const existing = await db
     .from('angelcare_marketplace_quote_basket_items')
-    .select('id')
+    .select('id,configuration')
     .eq('basket_id', input.basketId)
     .eq('catalog_item_id', item.id)
     .is('catalog_variant_id', null)
-    .maybeSingle()
   if (existing.error) throw fail('vérifier la ligne du panier', existing.error)
+  const matched = asRows(existing.data).find(line => stableConfiguration(line.configuration) === stableConfiguration(input.configuration || {}))
 
   const line = {
     quantity,
@@ -919,8 +742,8 @@ export async function addPublicBasketItem(input: {
     source_version: item.metadata.source_version || null,
     expires_at: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
   }
-  const mutation = existing.data
-    ? db.from('angelcare_marketplace_quote_basket_items').update(line).eq('id', existing.data.id)
+  const mutation = matched
+    ? db.from('angelcare_marketplace_quote_basket_items').update(line).eq('id', text(matched.id))
     : db.from('angelcare_marketplace_quote_basket_items').insert({
         ...line,
         basket_id: input.basketId,
@@ -930,6 +753,23 @@ export async function addPublicBasketItem(input: {
   if (error || !data) throw fail('ajouter l’offre au panier', error)
   await recalculateBasket(input.basketId)
   return data
+}
+
+export async function updatePublicBasketItem(input: { visitorReference: string; basketId: string; itemId: string; quantity: number }) {
+  const quantity = validQuantity(input.quantity)
+  if (quantity === null) throw new MarketplaceError('VALIDATION_ERROR','Quantité entière requise entre 1 et 99.')
+  const db = await createServiceClient()
+  const basket = await db.from('angelcare_marketplace_quote_baskets').select('id,locale').eq('id',input.basketId).eq('visitor_reference_hash',visitorHash(input.visitorReference)).eq('basket_status','draft').single()
+  if (basket.error || !basket.data) throw new MarketplaceError('NOT_FOUND','Panier introuvable.')
+  const line = await db.from('angelcare_marketplace_quote_basket_items').select('catalog_item_id').eq('id',input.itemId).eq('basket_id',input.basketId).single()
+  if (line.error || !line.data) throw new MarketplaceError('NOT_FOUND','Ligne introuvable.')
+  const item = await itemById(text(line.data.catalog_item_id),text(basket.data.locale) as CatalogLocale)
+  if (!item) throw new MarketplaceError('NOT_FOUND','Offre publiée introuvable.')
+  const unitPrice = item.price_mode === 'quote_only' ? null : item.price_amount
+  const result = await db.from('angelcare_marketplace_quote_basket_items').update({quantity,unit_price:unitPrice,line_total:unitPrice===null?null:unitPrice*quantity,price_status:unitPrice===null?'quote_required':'catalog_snapshot',updated_at:new Date().toISOString()}).eq('id',input.itemId).eq('basket_id',input.basketId).select('*').single()
+  if (result.error || !result.data) throw fail('modifier la quantité',result.error)
+  await recalculateBasket(input.basketId)
+  return result.data
 }
 
 export async function removePublicBasketItem(input: { visitorReference: string; basketId: string; itemId: string }) {
@@ -950,7 +790,8 @@ async function recalculateBasket(basketId: string) {
   const rows = asRows(data)
   const subtotal = rows.reduce((sum, row) => sum + numberValue(row.line_total), 0)
   const quoteRequired = rows.some(row => text(row.price_status) === 'quote_required')
-  await db.from('angelcare_marketplace_quote_baskets').update({ subtotal, grand_total: subtotal, pricing_status: quoteRequired ? 'mixed_quote_required' : 'catalog_snapshot', updated_at: new Date().toISOString() }).eq('id', basketId)
+  const result = await db.from('angelcare_marketplace_quote_baskets').update({ subtotal, grand_total: subtotal, pricing_status: quoteRequired ? 'mixed_quote_required' : 'catalog_snapshot', updated_at: new Date().toISOString() }).eq('id', basketId)
+  if (result.error) throw fail('mettre à jour le panier',result.error)
 }
 
 async function recordEvent(sessionId: string, eventType: string, payload: Record<string, unknown>) {
@@ -1177,7 +1018,8 @@ export async function createConversionSessionFromBasket(input: {
     const replay = await getPublicConversionSession(String(existing.data.session_key), input.visitorReference)
     if (replay) return replay
   }
-  const journey: ConversionJourney = basket.basket_kind === 'quotation' ? 'b2b_quotation' : 'product_checkout'
+  const journey: ConversionJourney = basket.basket_kind === 'quotation' || items.some(line => line.unit_price == null || line.price_status === 'quote_required') ? 'b2b_quotation' : 'product_checkout'
+  const customer=await getCustomerContext()
   const { data, error: insertError } = await db.from('angelcare_marketplace_conversion_sessions').insert({
     session_key: randomUUID(),
     journey,
@@ -1185,7 +1027,8 @@ export async function createConversionSessionFromBasket(input: {
     locale: input.locale,
     territory_id: basket.territory_id,
     tenant_id: basket.tenant_id,
-    family_account_id: basket.family_account_id,
+    family_account_id: customer?.account.family_account_id||basket.family_account_id,
+    customer_account_id: customer?.account.id||null,
     catalog_item_id: item.id,
     quote_basket_id: basket.id,
     visitor_reference_hash: hash,

@@ -40,7 +40,7 @@ export function CommercialCoreBar({ active }: { active: CommercialModule }) {
     <section className={styles.coreBar} aria-label="SANILA Commercial Core">
       <div className={styles.coreIdentity}>
         <div className={styles.logoPlate}>
-          <Image src="/logo.png" alt="ANGELCARE" width={220} height={72} className={styles.logo} priority />
+          <Image src="/brand/angelcare-pearl-rim-colour-r1.png" alt="ANGELCARE" width={220} height={72} className={styles.logo} priority />
         </div>
         <div>
           <span className={styles.coreEyebrow}>ANGELCARE SANILA OS</span>

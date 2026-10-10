@@ -18,6 +18,8 @@ import { StudioWorkflowField } from '@/angelcare-marketplace/studio-workflows/co
 import { studioDynamicSourcesForBlock } from '@/angelcare-marketplace/studio-dynamic-source/registry'
 import { studioBindingTargetsForFields } from '@/angelcare-marketplace/studio-live-binding/registry'
 import { ANGELCARE_STUDIO_VISUAL_CATEGORIES, ANGELCARE_STUDIO_VISUAL_EXPERIENCES, studioVisualDefaultProps } from './visual-catalogue'
+import { registerAtomicComponents } from '../atomic-offer-experience/editor-registration'
+import { createAtomicPuckComponents, ATOMIC_PUCK_KEYS } from '../atomic-offer-experience/puck'
 
 const groups = ['content','media','commerce','discovery','trust','conversion','interactive','layout','extension'] as const
 const labels: Record<string,string> = {content:'Contenu',media:'Média',commerce:'Commerce',discovery:'Découverte',trust:'Confiance',conversion:'Conversion',interactive:'Interactif',layout:'Mise en page',extension:'Extensions contrôlées'}
@@ -83,6 +85,8 @@ export function createAngelCarePuckConfig(pickers:StudioPickerData):Config{
   const visualCategories=Object.fromEntries(ANGELCARE_STUDIO_VISUAL_CATEGORIES.map(category=>[`visual-${category.key}`,{title:`${String(category.order).padStart(2,'0')} · ${category.title}`,defaultExpanded:category.order<=2,components:[...category.componentKeys]}]))
   const categories={...visualCategories,...baseCategories} as unknown as Config['categories']
   Object.assign(components, createHomepageProMaxPuckComponents(pickers))
+  registerAtomicComponents(components as any, createAtomicPuckComponents())
+  ;(categories as any)['atomic-offer-experiences']={title:'Atomic · 4 mondes commerciaux',defaultExpanded:true,components:[...ATOMIC_PUCK_KEYS]}
   ;(categories as any)[HOMEPAGE_PRO_MAX_CATEGORY_ID]={title:HOMEPAGE_PRO_MAX_CATEGORY_LABEL,defaultExpanded:true,components:[...HOMEPAGE_PRO_MAX_COMPONENT_KEYS]}
   return {components,categories}
 }

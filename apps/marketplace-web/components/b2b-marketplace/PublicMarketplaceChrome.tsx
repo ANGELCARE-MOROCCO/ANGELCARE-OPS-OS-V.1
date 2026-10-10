@@ -10,10 +10,10 @@ export default async function PublicMarketplaceChrome({ children }: { children: 
   const footerQuick = navigation.filter((item) => item.location === 'footer-quick').sort((a, b) => a.order - b.order)
   const footerCommercial = navigation.filter((item) => item.location === 'footer-commercial').sort((a, b) => a.order - b.order)
   const mobileItems = mobileNav.length ? mobileNav : mainNav
-  const logoWidth = Math.max(32, Math.min(theme.logoWidthPx || 52, 220))
-  const logoHeight = Math.max(32, Math.min(theme.logoHeightPx || 52, 120))
+  const logoWidth = Math.max(120, Math.min(theme.logoWidthPx || 168, 220))
+  const logoHeight = Math.round(logoWidth / 3)
   const showText = theme.logoDisplayMode !== 'symbol-only'
-  const showLogo = theme.logoDisplayMode !== 'wordmark-only'
+  const showLogo = true // Official AngelCare identity remains visible.
   const menuClass = theme.menuStyle === 'underline'
     ? 'hidden items-center gap-5 lg:flex'
     : 'hidden items-center gap-1 rounded-full border border-[#dbe6f3] bg-[#f7faff] p-1.5 shadow-inner lg:flex'
@@ -40,7 +40,7 @@ export default async function PublicMarketplaceChrome({ children }: { children: 
             <Link href="/b2b-marketplace" className="group flex min-w-0 items-center gap-3">
               {showLogo ? (
                 <div className="flex items-center justify-center rounded-[20px] border border-[#dbe6f3] bg-white p-1 shadow-lg shadow-slate-200/70" style={{ width: logoWidth, height: logoHeight }}>
-                  <img src={theme.logoUrl || '/b2b-plaquette-partenaires/assets/angelcare-original-logo.png'} alt={theme.logoAlt || 'AngelCare'} className="h-full w-full object-contain" />
+                  <img src={'/brand/angelcare-pearl-rim-colour-r1.png'} alt={theme.logoAlt || 'AngelCare'} className="h-full w-full object-contain" />
                 </div>
               ) : null}
               {showText ? (
@@ -82,7 +82,7 @@ export default async function PublicMarketplaceChrome({ children }: { children: 
           <div className="mx-auto grid max-w-7xl gap-8 px-5 py-12 md:grid-cols-[1.6fr_1fr_1fr]">
             <div>
               <div className="flex items-center gap-3">
-                {showLogo ? <div className="flex items-center justify-center rounded-2xl border border-[#dbe6f3] bg-white p-1 shadow-sm" style={{ width: Math.min(logoWidth, 58), height: Math.min(logoHeight, 58) }}><img src={theme.logoUrl || '/b2b-plaquette-partenaires/assets/angelcare-original-logo.png'} alt={theme.logoAlt || 'AngelCare'} className="h-full w-full object-contain" /></div> : null}
+                {showLogo ? <div className="flex items-center justify-center rounded-2xl border border-[#dbe6f3] bg-white p-1 shadow-sm" style={{ width: Math.min(logoWidth, 168), height: Math.round(Math.min(logoWidth, 168) / 3) }}><img src={'/brand/angelcare-pearl-rim-colour-r1.png'} alt={theme.logoAlt || 'AngelCare'} className="h-full w-full object-contain" /></div> : null}
                 <div>
                   <div className="text-lg font-black" style={{ color: theme.primaryColor || '#092e63' }}>AngelCare B2B Marketplace</div>
                   <div className="text-xs font-bold uppercase tracking-[0.18em] text-slate-400">Catalogue public premium</div>

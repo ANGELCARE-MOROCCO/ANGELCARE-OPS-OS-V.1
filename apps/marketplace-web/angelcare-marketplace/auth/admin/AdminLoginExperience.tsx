@@ -42,7 +42,7 @@ export function AdminLoginExperience({ returnTo }: { returnTo: string }) {
     <main className={styles.page}>
       <section className={styles.brandPanel} aria-label="ANGELCARE Marketplace Administration">
         <div className={styles.brandTop}>
-          <Image src="/brand/angelcare-official-inverse.webp" alt="ANGELCARE" width={180} height={58} priority />
+          <Image src="/brand/angelcare-pearl-rim-white-r1.png" alt="ANGELCARE" width={180} height={58} priority />
           <span>MARKETPLACE · ADMIN AUTHORITY</span>
         </div>
         <div className={styles.brandCopy}>

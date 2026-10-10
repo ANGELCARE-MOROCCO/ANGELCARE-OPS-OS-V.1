@@ -1,0 +1,7 @@
+'use client'
+import {useState} from 'react'
+import {ImageIcon} from 'lucide-react'
+import type {CategoryNativeMedia} from '../category-native-experience/types'
+import type {Locale} from './contracts'
+import styles from './commerce.module.css'
+export function ConfigurationMedia({media,name,locale}:{media:CategoryNativeMedia[];name:string;locale:Locale}) {const [active,setActive]=useState(0);const images=media.filter(entry=>entry.url&&['image','photo','primary','gallery','video'].some(type=>entry.type.toLowerCase().includes(type)));const safe=images.length?images:media.filter(entry=>entry.url);const selected=safe[active]||safe[0];return <div><div className={styles.configPicture}>{selected?selected.type.includes('video')?<video controls playsInline preload="metadata" style={{width:'100%',maxHeight:300}} src={selected.url}/>:<img src={selected.url} alt={selected.alt||name}/>:<><ImageIcon size={45}/><span>{locale==='fr'?'Visuel non renseigné':locale==='ar'?'لم تضاف صورة':'No image provided'} · {name}</span></>}</div>{safe.length>1?<div className={styles.chips} role="group" aria-label={locale==='fr'?'Galerie':locale==='ar'?'المعرض':'Gallery'}>{safe.map((entry,index)=><button className={styles.secondary} style={{width:50,minHeight:50,padding:5}} key={entry.id||entry.url} aria-pressed={active===index} aria-label={entry.alt||`${name} ${index+1}`} onClick={()=>setActive(index)}>{entry.type.includes('video')?'▶':<img src={entry.url} alt="" style={{width:38,height:38,objectFit:'contain'}}/>}</button>)}</div>:null}</div>}

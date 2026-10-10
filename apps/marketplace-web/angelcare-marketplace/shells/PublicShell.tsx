@@ -12,7 +12,7 @@ export function PublicShell({ children }: { children: ReactNode }) {
         <div className={styles.headerInner}>
           <Link href="/angelcare-marketplace" className={styles.brand} aria-label="ANGELCARE Marketplace">
             <Image
-              src="/logo.png"
+              src="/brand/angelcare-pearl-rim-colour-r1.png"
               alt="ANGELCARE"
               width={180}
               height={62}

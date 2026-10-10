@@ -1,6 +1,7 @@
 "use client"
+import {careOrbitLocation} from '@/angelcare-marketplace/navigation-care-orbit/client-controller'
 
-import Link from 'next/link'
+import Link from '@/angelcare-marketplace/navigation-care-orbit/CareOrbitLink'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { ChangeEvent, CSSProperties, FormEvent } from 'react'
 import {
@@ -172,7 +173,7 @@ export function HomepageFlagship({ experience, editor }: { experience: HomepageE
     const params = new URLSearchParams({ q: query, audience, territory: experience.territory?.territory_code || 'MA-MASTER' })
     if (date) params.set('date', date)
     track({ event_name: 'search.submitted', locale, territory_code: experience.territory?.territory_code, route: `/angelcare-marketplace/${locale}/marketplace?${params.toString()}`, event_data: { query, audience, date } })
-    window.location.href = `/angelcare-marketplace/${locale}/marketplace?${params.toString()}`
+    careOrbitLocation.assign(`/angelcare-marketplace/${locale}/marketplace?${params.toString()}`)
   }
 
   const audienceCards = [

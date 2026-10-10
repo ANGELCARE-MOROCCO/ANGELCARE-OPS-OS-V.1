@@ -119,7 +119,7 @@ export function EnterpriseOrderCommand({
         <h1>Centre de commandement commercial</h1>
         <p>Une vue opérateur des commandes canoniques, de leurs obligations financières, de leur fulfillment et de leur prochaine action.</p>
       </div>
-      <div className={styles.orderHeaderActions}>
+      <div className={styles.orderHeaderActions}><Link className={styles.secondaryButton} href="/angelcare-marketplace/admin/intake">Réception & qualification</Link>
         <Link className={styles.secondaryButton} href="/angelcare-marketplace/admin/bookings">Réservations</Link>
         {permissions.createOrder
           ? <AssistedOrderComposer options={options} initialQuery={initialQuery} onCreated={() => location.reload()} />
@@ -163,7 +163,7 @@ export function EnterpriseOrderCommand({
               <td>{journeyLabels[record.journeyType] || record.journeyType}</td>
               <td>{record.creationSource}</td>
               <td><span className={styles.status} data-state={record.status}>{record.status}</span></td>
-              <td><strong>{record.paymentAmount.toLocaleString('fr-FR')} Dh</strong><small>{record.walletContribution.toLocaleString('fr-FR')} AC + {record.externalContribution.toLocaleString('fr-FR')} Dh</small></td>
+              <td><strong>{record.paymentStatus === 'quote_required' ? 'À établir' : `${record.paymentAmount.toLocaleString('fr-FR')} Dh`}</strong><small>{record.walletContribution.toLocaleString('fr-FR')} AC + {record.externalContribution.toLocaleString('fr-FR')} Dh</small></td>
               <td><strong>{record.fulfillmentStatus}</strong><small>{record.nextAction || 'Aucune prochaine action déclarée'}</small></td>
               <td><button className={styles.secondaryButton} onClick={() => setSelectedId(record.id)}>Ouvrir</button></td>
             </tr>)}</tbody>

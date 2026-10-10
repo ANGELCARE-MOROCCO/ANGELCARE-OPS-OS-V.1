@@ -127,7 +127,7 @@ export function CustomerCommand({ initial, initialCustomerId, initialCreateKind 
         }),
       })
       setPortfolio((current) => ({ ...current, customers: [result.customer, ...current.customers], total: current.total + 1 }))
-      setCreateResult(`Compte créé. Mot de passe temporaire : ${result.temporaryPassword}`)
+      setCreateResult(`Compte créé, confirmation email requise. Mot de passe provisoire : ${result.temporaryPassword}`)
       setCreateName('')
       setCreateEmail('')
       setCreatePhone('')

@@ -253,7 +253,7 @@ export default function AuthorizedWorkspaceHub({ initialData }: { initialData: A
                 <div className="flex flex-wrap items-center gap-3">
                   <div className="inline-flex min-h-[58px] items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-2.5 shadow-sm">
                     <Image
-                      src="/logo.png"
+                      src="/brand/angelcare-pearl-rim-colour-r1.png"
                       alt="AngelCare"
                       width={146}
                       height={50}

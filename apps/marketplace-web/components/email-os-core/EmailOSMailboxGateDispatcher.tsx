@@ -762,7 +762,7 @@ export default function EmailOSMailboxGateDispatcher() {
             <div className="flex flex-col gap-3 border-b border-slate-200/70 pb-3 lg:flex-row lg:items-center lg:justify-between">
               <div className="flex min-w-0 items-center gap-3">
                 <div className="flex shrink-0 items-center rounded-[18px] border border-white bg-white/95 px-2.5 py-2 shadow-[0_10px_28px_rgba(15,23,42,.07)] ring-1 ring-slate-200/70">
-                  <img src="/logo.png" alt="AngelCare official logo" className="h-9 w-auto object-contain sm:h-10" />
+                  <img src="/brand/angelcare-pearl-rim-colour-r1.png" alt="AngelCare official logo" className="h-9 w-auto object-contain sm:h-10" />
                 </div>
                 <div className="min-w-0 border-l border-slate-200 pl-3">
                   <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1">

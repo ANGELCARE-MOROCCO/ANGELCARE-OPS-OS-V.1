@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import Link from '@/angelcare-marketplace/navigation-care-orbit/CareOrbitLink'
 import type { CategoryNativeCompareResult } from '../types'
 import { formatCategoryNativeValue } from '../validation'
 import styles from '../experience.module.css'

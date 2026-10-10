@@ -15,6 +15,7 @@ export default async function Page({ params, searchParams }: { params: Promise<{
   const kind = first(query.kind) === 'quotation' ? 'quotation' : 'transactional'
   const surfaceKey=first(query.stage)==='confirmation'?'order-success':'checkout';const surface=await getPublishedSurface(surfaceKey,{locale}).catch(()=>null)
   return <><CheckoutExperience
+    requestedStage={first(query.stage)||null}
     locale={locale as CatalogLocale}
     basketId={basketId}
     kind={kind}

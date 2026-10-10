@@ -16,6 +16,8 @@ import {
 } from '../conversion-universe/repository'
 import type { ConversionAvailabilityDecision, ConversionJourney } from '../conversion-universe/types'
 import { categoryNativeExperienceDefinition } from './registry'
+import { atomicJourneyIntent, assertAtomicCohortBelongsToOffer } from '../atomic-offer-experience/journey-intent'
+import { loadAcademyPublicProjection } from '../public-experience-authority/public-safe-projections'
 import { assertValidCategoryNativeConfiguration, formatCategoryNativeValue, validateCategoryNativeConfiguration } from './validation'
 import type {
   AdaptiveExperienceData,
@@ -427,6 +429,9 @@ export async function createCategoryNativeSession(input: CategoryNativeSessionCr
   const experience = await getAdaptiveExperience({ locale: input.locale, slug: input.itemSlug, territoryCode: input.territoryCode })
   if (!experience) throw new MarketplaceError('NOT_FOUND', 'Offre category-native introuvable.')
   const validation = validateCategoryNativeConfiguration(experience.schema, input.initialConfiguration || {})
+  const intent=atomicJourneyIntent(experience.schema,input.initialConfiguration||{})
+  try{await assertAtomicCohortBelongsToOffer(intent,experience.item.id,loadAcademyPublicProjection)}catch{throw new MarketplaceError('VALIDATION_ERROR','La session choisie n’est pas ouverte pour cette offre.')}
+  validation.normalized={...validation.normalized,...intent}
   const conversion = await createPublicConversionSession({
     itemSlug: input.itemSlug, locale: input.locale, journey: journeyForSchema(experience.schema), visitorReference: input.visitorReference,
     sourceRoute: input.sourceRoute, territoryCode: input.territoryCode, idempotencyKey: input.idempotencyKey,
@@ -458,6 +463,9 @@ export async function updateCategoryNativeConfiguration(input: { sessionKey: str
   if (!row) throw new MarketplaceError('NOT_FOUND', 'Session category-native introuvable.')
   const schema = await publishedSchema(text(row.schema_key))
   const validation = validateCategoryNativeConfiguration(schema, { ...object(row.configuration), ...input.configuration })
+  const intent=atomicJourneyIntent(schema,{...object(row.configuration),...input.configuration})
+  try{await assertAtomicCohortBelongsToOffer(intent,text(row.catalog_item_id),loadAcademyPublicProjection)}catch{throw new MarketplaceError('VALIDATION_ERROR','La session choisie n’est pas ouverte pour cette offre.')}
+  validation.normalized={...validation.normalized,...intent}
   const conversionSessionKey = text(row.conversion_session_key)
   const db = await createServiceClient()
   let conversion = null
@@ -480,6 +488,7 @@ export async function revalidateCategoryNativeSession(input: { sessionKey: strin
   if (!row) throw new MarketplaceError('NOT_FOUND', 'Session category-native introuvable.')
   const schema = await publishedSchema(text(row.schema_key))
   assertValidCategoryNativeConfiguration(schema, object(row.configuration))
+  try{await assertAtomicCohortBelongsToOffer(atomicJourneyIntent(schema,object(row.configuration)),text(row.catalog_item_id),loadAcademyPublicProjection)}catch{throw new MarketplaceError('VALIDATION_ERROR','La session choisie n’est plus ouverte pour cette offre.')}
   const conversionSessionKey = text(row.conversion_session_key)
   if (!conversionSessionKey) throw new MarketplaceError('CONFIGURATION_ERROR', 'La session de conversion liée est absente.')
   const [price, availability] = await Promise.all([
@@ -502,6 +511,7 @@ export async function commitCategoryNativeSession(input: { sessionKey: string; v
   if (!row) throw new MarketplaceError('NOT_FOUND', 'Session category-native introuvable.')
   const schema = await publishedSchema(text(row.schema_key))
   assertValidCategoryNativeConfiguration(schema, object(row.configuration))
+  try{await assertAtomicCohortBelongsToOffer(atomicJourneyIntent(schema,object(row.configuration)),text(row.catalog_item_id),loadAcademyPublicProjection)}catch{throw new MarketplaceError('VALIDATION_ERROR','La session choisie n’est plus ouverte pour cette offre.')}
   if (!input.consents.terms || !input.consents.privacy) throw new MarketplaceError('VALIDATION_ERROR', 'Les consentements obligatoires doivent être acceptés explicitement.')
   if ((schema.schema_key === 'non-medical-support-service' || schema.schema_key === 'health-adjacent-programme') && !input.consents.nonMedical) throw new MarketplaceError('VALIDATION_ERROR', 'La limite strictement non médicale doit être reconnue explicitement.')
   const conversionSessionKey = text(row.conversion_session_key)

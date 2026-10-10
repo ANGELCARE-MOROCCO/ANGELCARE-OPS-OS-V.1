@@ -151,7 +151,7 @@ const genericCardAdapter: PaymentProviderAdapter = {
   methods: ['card', 'deposit', 'installment'],
   configured: () => {
     const provider = String(process.env.ANGELCARE_PAYMENT_PROVIDER || '').trim().toLowerCase()
-    return Boolean(provider && provider !== 'paypal' && process.env.ANGELCARE_PAYMENT_PROVIDER_SECRET)
+    return false // No tokenized provider action is implemented for this generic boundary.
   },
   async create(input) {
     if (!this.configured()) throw new MarketplaceError('CONFIGURATION_ERROR', 'Le prestataire de carte n’est pas encore activé. Choisissez un autre moyen ou configurez l’adaptateur de paiement.')

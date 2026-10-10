@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import Link from '@/angelcare-marketplace/navigation-care-orbit/CareOrbitLink'
 import { ArrowRight, ShieldCheck } from 'lucide-react'
 import type { AdaptiveExperienceData } from '../types'
 import styles from '../experience.module.css'

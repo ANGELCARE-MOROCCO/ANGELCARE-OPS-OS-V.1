@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect } from 'react'
+import {navigationController} from '@/angelcare-marketplace/navigation-care-orbit/client-controller'
 import styles from '@/angelcare-marketplace/design-system/marketplace.module.css'
 import { Button, ButtonLink, StatePanel } from '@/angelcare-marketplace/design-system/ui'
 
@@ -12,6 +13,7 @@ export default function MarketplaceError({
   reset: () => void
 }) {
   useEffect(() => {
+    navigationController()?.dismiss()
     console.error('ANGELCARE Marketplace route error', error.digest || error.name)
   }, [error])
 

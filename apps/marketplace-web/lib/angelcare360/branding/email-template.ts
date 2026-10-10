@@ -5,7 +5,7 @@ function escapeHtml(value: string) { return value.replace(/[&<>"']/g, (character
 
 export async function renderAngelcare360BrandedEmail(input: { subject: string; body: string; bodyHtml?: string | null; clientId?: string | null; tenantId?: string | null }) {
   const runtime = await resolveBrandRuntime({ clientId: input.clientId, tenantId: input.tenantId }).catch(() => null)
-  const official = runtime?.officialLogoUrl || '/brand/angelcare-official.webp'
+  const official = '/brand/angelcare-pearl-rim-colour-r1.png'
   const appUrl = String(process.env.NEXT_PUBLIC_APP_URL || process.env.APP_URL || 'http://localhost:3000').replace(/\/$/, '')
   const absolute = (path: string) => path.startsWith('http') ? path : `${appUrl}${path}`
   const mode = runtime?.resolvedMode || 'angelcare_only'

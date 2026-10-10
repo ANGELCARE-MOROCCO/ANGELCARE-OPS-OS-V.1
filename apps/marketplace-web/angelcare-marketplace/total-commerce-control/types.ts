@@ -101,6 +101,9 @@ export type AssistedOrderOptions={
 }
 
 export type AssistedOrderInput={
+  idempotencyKey?:string
+  familyRequestId?:string|null
+
   customerAccountId?:string|null
   guestName?:string|null
   guestEmail?:string|null

@@ -2650,7 +2650,7 @@ function safeAttachmentList(row: MessageRow) {
                 <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-sky-500 via-blue-600 to-violet-600" />
                 <div className="flex min-w-0 items-start gap-4">
                   <div className="relative flex h-[60px] w-[60px] shrink-0 items-center justify-center rounded-[20px] border border-slate-200 bg-white p-2 shadow-[0_14px_32px_rgba(15,23,42,.11)]">
-                    <img src="/b2b-plaquette-partenaires/assets/angelcare-original-logo.png" alt="AngelCare" className="max-h-11 max-w-11 object-contain" />
+                    <img src="/brand/angelcare-pearl-rim-colour-r1.png" alt="AngelCare" className="max-h-11 max-w-11 object-contain" />
                     <span className={`absolute -bottom-1 -right-1 h-4 w-4 rounded-full border-[3px] border-white ${mailboxHealthState === "operational" ? "bg-emerald-500" : mailboxHealthState === "syncing" ? "animate-pulse bg-sky-500" : mailboxHealthState === "degraded" ? "bg-rose-500" : "bg-amber-400"}`} />
                   </div>
 

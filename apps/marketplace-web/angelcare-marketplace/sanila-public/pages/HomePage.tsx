@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import Link from 'next/link'
+import Link from '@/angelcare-marketplace/navigation-care-orbit/CareOrbitLink'
 
 import { getSanilaPublicPage, sanilaHref } from '../content'
 import { SanilaIcon } from '../SanilaIcon'

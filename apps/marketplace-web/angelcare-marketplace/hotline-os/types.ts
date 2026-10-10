@@ -1,0 +1,14 @@
+export type Locale='ar'|'fr'|'en'
+export type Copy=Record<Locale,string>
+export type QueueKey='family'|'commerce'|'academy'|'b2b'|'access'|'finance'|'quality'|'general'
+export type NodeKind='menu'|'condition'|'queue'|'offline'
+export interface RouteChoice {key:string;label:Copy;next:string;assign?:{rhythm:'one_time'|'recurring'}}
+export interface RouteNode {id:string;kind:NodeKind;title:Copy;prompt:Partial<Record<Locale,string>>;choices:RouteChoice[];queue?:QueueKey;condition?:'locale'|'rhythm';matches?:Record<string,string>;otherwise?:string;x:number;y:number}
+export interface HotlineConfig {enabled:boolean;label:Copy;entry:string;nodes:RouteNode[];locales:Locale[];hours:{start:number;end:number;staffTarget:number}[];holidayDates:string[];maxWaitSeconds:number;maxQueue:number;offerSeconds:number;reconnectSeconds:number;musicAssetId:string;greeting:Partial<Record<Locale,string>>;closed:Partial<Record<Locale,string>>;error:Partial<Record<Locale,string>>;queues:{key:QueueKey;label:Copy}[]}
+export interface AudioAsset {id:string;label:string;locale:Locale|'all';purpose:'greeting'|'menu'|'closed'|'error'|'music';transcript:string;duration_seconds:number;sha256:string;status:'uploading'|'ready'|'archived'|'failed';mime_type:string;size_bytes:number;created_at:string;deliveryUrl?:string}
+export interface Agent {actor_id:string;display_name:string;locales:Locale[];queues:QueueKey[];status:'ready'|'busy'|'away'|'offline';enabled:boolean;heartbeat_at:string;current_session_id:string|null}
+export type SessionState='queued'|'offered'|'connecting'|'connected'|'ended'|'abandoned'|'failed'|'callback'|'message'
+export interface Session {held:boolean;id:string;public_reference:string;case_id:string;locale:Locale;queue_key:QueueKey;channel:'voice'|'chat';state:SessionState;agent_id:string|null;created_at:string;connected_at:string|null;ended_at:string|null;expires_at:string;room_name:string;context:Record<string,string>;version_id:string;display_name:string;contact:string}
+export interface SupportCase {retention_hold:boolean;id:string;public_reference:string;customer_id:string|null;display_name:string;contact:string;locale:Locale;queue_key:QueueKey;subject:string;details:string;status:string;classification:string;priority:'normal'|'high';assigned_to:string|null;follow_up_at:string|null;created_at:string;version:number;native_reference:string;native_kind:string}
+export interface CaseEvent {id:string;case_id:string;session_id:string|null;kind:string;body:string;visible_to_customer:boolean;actor_id:string|null;created_at:string}
+export interface PublicSnapshot {session:Session;case:Pick<SupportCase,'public_reference'|'status'|'follow_up_at'>;events:CaseEvent[];position:number|null;agents:number;averageSeconds:number|null;estimatedWaitSeconds:number|null;freshAt:string;agentName:string|null;musicUrl:string|null}

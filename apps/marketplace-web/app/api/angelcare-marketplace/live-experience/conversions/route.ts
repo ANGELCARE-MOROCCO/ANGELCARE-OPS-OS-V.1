@@ -1,2 +1,2 @@
-import { handlePublicLiveInteraction } from '@/angelcare-marketplace/live-experience-command/api-handlers'
-export const POST=handlePublicLiveInteraction
+import {handleLiveReceipt} from '@/angelcare-marketplace/live-experience-command/api-handlers'
+export const POST=handleLiveReceipt

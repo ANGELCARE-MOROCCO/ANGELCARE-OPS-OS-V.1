@@ -1,4 +1,5 @@
 'use client'
+import {careOrbitLocation} from '@/angelcare-marketplace/navigation-care-orbit/client-controller'
 
 import {useEffect,useMemo,useState} from 'react'
 import {ArrowRight,Heart,LoaderCircle,Minus,Plus,ShoppingCart,Zap} from 'lucide-react'
@@ -63,7 +64,7 @@ export function ProductCommerceActions({locale,itemSlug,variantGroups,maxQuantit
   try{
    const visitor=visitorReference(),basket=await ensureBasket(locale,visitor)
    await addSlug({basketId:basket.id,visitor,locale,slug:itemSlug,quantity,configuration})
-   window.location.assign(mode==='checkout'?`/angelcare-marketplace/${locale}/checkout?basket=${encodeURIComponent(basket.id)}&kind=transactional`:`/angelcare-marketplace/${locale}/basket`)
+   careOrbitLocation.assign(mode==='checkout'?`/angelcare-marketplace/${locale}/checkout?basket=${encodeURIComponent(basket.id)}&kind=transactional`:`/angelcare-marketplace/${locale}/basket`)
   }catch(error){setMessage(error instanceof Error?error.message:'Action impossible.');setBusy(null)}
  }
  return <div className={styles.purchaseControls}>
@@ -83,7 +84,7 @@ export function QuickBasketButton({locale,slugs,label='Ajouter',className}:{loca
   try{
    const visitor=visitorReference(),basket=await ensureBasket(locale,visitor)
    for(const slug of [...new Set(slugs.filter(Boolean))])await addSlug({basketId:basket.id,visitor,locale,slug,quantity:1,configuration:{}})
-   window.location.assign(`/angelcare-marketplace/${locale}/basket`)
+   careOrbitLocation.assign(`/angelcare-marketplace/${locale}/basket`)
   }catch(error){setMessage(error instanceof Error?error.message:'Action panier impossible.');setBusy(false)}
  }
  return <div className={styles.quickBasketWrap}><button type="button" className={className||styles.quickBasket} onClick={()=>void add()} disabled={busy||!slugs.length}>{busy?<LoaderCircle className={styles.spin}/>:<ShoppingCart/>}{label}</button>{message?<small role="status">{message}</small>:null}</div>

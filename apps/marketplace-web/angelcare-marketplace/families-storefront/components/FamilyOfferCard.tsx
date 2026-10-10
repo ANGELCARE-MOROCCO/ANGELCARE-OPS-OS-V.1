@@ -1,5 +1,5 @@
 'use client'
-import Link from 'next/link'
+import Link from '@/angelcare-marketplace/navigation-care-orbit/CareOrbitLink'
 import { ArrowRight, Heart, ImageIcon, LoaderCircle } from 'lucide-react'
 import type { CatalogLocale, DiscoveryItem } from '@/angelcare-marketplace/catalog-discovery/types'
 import { familyAction, familyAvailability, familyAvailable, familyDetailHref, familyPrice, familyWords } from '../experience'

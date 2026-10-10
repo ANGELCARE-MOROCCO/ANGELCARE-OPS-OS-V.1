@@ -224,7 +224,7 @@ export default function Bulk4DigitalStudioWorkspace() {
       <div className={styles.masterCompositionCanvas}>
         <header><span><Palette/><small>MASTER COMPOSITION</small></span><div><button onClick={() => newBranch("channel")}><GitBranch/> Branche canal</button><button onClick={() => newBranch("language")}><Languages/> Localiser</button></div></header>
         <div className={styles.masterPreview}>
-          <div className={styles.previewBrand}><img src="/logo.png" alt="AngelCare"/><span>{draft.service || "ANGELCARE"}</span></div>
+          <div className={styles.previewBrand}><img src="/brand/angelcare-pearl-rim-colour-r1.png" alt="AngelCare"/><span>{draft.service || "ANGELCARE"}</span></div>
           <div className={styles.previewVisual}><ContentMediaPreview source={{ title: draft.title || draft.visualSubject || "Source de production", url: draft.sourceUrl || null, filename: draft.sourceUrl || draft.visualSubject || null, sourceLabel: "Digital Studio · Source de composition" }} mode="studio" fit="contain"/></div>
           <div className={styles.previewCopy}><small>{draft.city} · {draft.language.toUpperCase()}</small><h2>{draft.headline || "Headline à constituer"}</h2><p>{draft.supportingCopy || "Supporting copy non renseignée."}</p><strong>{draft.proofPoint || "Preuve ou bénéfice à documenter"}</strong><button>{draft.cta || "CTA requis"}</button></div>
           <footer><span>{version}</span><span>{template.code}</span><span>{draft.partnerName ? `Co-brand: ${draft.partnerName}` : "AngelCare master"}</span></footer>

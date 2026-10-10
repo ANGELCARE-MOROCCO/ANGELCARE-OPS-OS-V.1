@@ -1,3 +1,4 @@
+import {requireCustomerSameOrigin} from '../customer-commerce/customer-access-api'
 import { requireMarketplaceApiContext } from '../auth/context'
 import { apiFailure, apiSuccess, cleanOptionalText, cleanText, parseJsonObject, requestId, requireText } from '../server/request'
 import { MarketplaceError } from '../server/errors'
@@ -259,13 +260,15 @@ export async function handleAdminPayments(request: Request) {
 export async function handleAdminPayment(request: Request, paymentId: string) {
   const rid = requestId(request)
   try {
-    const context = await requireMarketplaceApiContext('marketplace.finance.exceptions.approve')
+    const context = await requireMarketplaceApiContext(request.method === 'GET' ? 'marketplace.finance.view' : 'marketplace.finance.exceptions.approve')
     if (request.method === 'GET') return apiSuccess(await adminPaymentDossier(paymentId), { requestId: rid })
+    requireCustomerSameOrigin(request)
     const body = await parseJsonObject(request)
     const action = String(body.action || '')
     if (action === 'capture') {
       return apiSuccess(await captureAdminPayment({
         paymentId,
+        idempotencyKey: requireText(body.idempotencyKey, 'idempotencyKey', 'Clé de capture', 200),
         amount: body.amount === undefined || body.amount === '' ? undefined : numberField(body.amount, 'Montant de capture', 0.01),
         providerReference: cleanOptionalText(body.providerReference, 240),
         reason: requireText(body.reason, 'reason', 'Motif', 1000),

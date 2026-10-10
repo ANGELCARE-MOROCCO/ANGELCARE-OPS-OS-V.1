@@ -1,7 +1,7 @@
 import type { CatalogLocale } from '../catalog-discovery/types'
 
 export const CUSTOMER_ACCESS_REVISION = 'customer-access-premium-r1-20261007'
-export const CUSTOMER_LOGO = '/angelcare-marketplace/customer-access/angelcare-official-logo.png'
+export const CUSTOMER_LOGO = '/brand/angelcare-pearl-rim-colour-r1.png'
 export type CustomerAuthMode = 'login' | 'register' | 'recover' | 'reset'
 
 /** Keep navigation local to the public/customer Marketplace. Never accept an origin. */

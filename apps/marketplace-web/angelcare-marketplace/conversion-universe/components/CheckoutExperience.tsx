@@ -1,179 +1,92 @@
 'use client'
+import {useLiveJourneySignals} from '../../live-experience-command/journey-events'
+import {LiveExperienceSlot} from '../../live-experience-command/components/LiveExperienceSlot'
+import {careOrbitLocation} from '@/angelcare-marketplace/navigation-care-orbit/client-controller'
+import Link from '@/angelcare-marketplace/navigation-care-orbit/CareOrbitLink'
+import {useEffect,useRef,useState} from 'react'
+import {ArrowRight,Check,CheckCircle2,ClipboardCopy,Contact,LockKeyhole,RefreshCw,ShoppingBag,Sparkles} from 'lucide-react'
+import type {CatalogLocale} from '../../catalog-discovery/types'
+import type {ConversionAvailabilityDecision,ConversionOutcome,ConversionPriceSnapshot,ConversionSession} from '../types'
+import type {CustomerAccount,CustomerAddress} from '../../customer-commerce/types'
+import {CheckoutPaymentStage} from '../../customer-commerce/components/CheckoutPaymentStage'
+import {commerceApi,commerceVisitor} from '../../customer-experience/client'
+import {lineName,money,needsQuote,outcomeLabel,type Basket} from '../../customer-experience/contracts'
+import {commerceCopy} from '../../customer-experience/copy'
+import styles from '../../customer-experience/commerce.module.css'
 
-import { useEffect, useRef, useState } from 'react'
-import { BadgeCheck, Check, MapPin, PackageCheck, ShieldCheck } from 'lucide-react'
-import type { CatalogLocale } from '../../catalog-discovery/types'
-import type { ConversionOutcome, ConversionPriceSnapshot, ConversionSession } from '../types'
-import { CheckoutPaymentStage } from '../../customer-commerce/components/CheckoutPaymentStage'
-import styles from '../conversion.module.css'
+type PaymentSelection={paymentIntentId:string|null;status:string;method:string;walletContribution:number}
+const obj=(value:unknown):Record<string,unknown>=>value&&typeof value==='object'&&!Array.isArray(value)?value as Record<string,unknown>:{}
+const str=(value:unknown)=>typeof value==='string'?value:''
+const validPrice=(price:ConversionPriceSnapshot|null)=>Boolean(price&&['valid','quote_required'].includes(price.status)&&Date.parse(price.valid_until)>Date.now())
 
-type Envelope<T> = { data: T }
-type BasketItem = { id: string; quantity: number; line_total: number | null; catalog_item?: { name_fr?: string; name_en?: string; name_ar?: string; kind?: string } }
-type Basket = { id: string; public_reference: string; basket_kind: string; currency_label: string; subtotal: number; items: BasketItem[] }
-type PaymentSelection = { paymentIntentId: string; status: string; method: string; walletContribution: number }
+export function CheckoutExperience({locale,basketId,kind,resumeSessionKey=null,resumedPaymentIntentId=null,paypalState=null,requestedStage=null}:{locale:CatalogLocale;basketId:string;kind:'transactional'|'quotation';resumeSessionKey?:string|null;resumedPaymentIntentId?:string|null;paypalState?:string|null;requestedStage?:string|null}) {
+ const t=commerceCopy[locale],base=`/angelcare-marketplace/${locale}`
+ const visitor=useRef(''),key=useRef(''),actionLock=useRef(false),heading=useRef<HTMLHeadingElement>(null)
+ const [step,setStep]=useState(0),[basket,setBasket]=useState<Basket|null>(null),[session,setSession]=useState<ConversionSession|null>(null),[price,setPrice]=useState<ConversionPriceSnapshot|null>(null),[availability,setAvailability]=useState<ConversionAvailabilityDecision|null>(null),[payment,setPayment]=useState<PaymentSelection|null>(null),[outcome,setOutcome]=useState<ConversionOutcome|null>(null),[error,setError]=useState(''),[busy,setBusy]=useState(true),[attempt,setAttempt]=useState(0),[copied,setCopied]=useState(false)
+ const [agreements,setAgreements]=useState({terms:false,privacy:false,scope:false,nonMedical:false})
+ const [addresses,setAddresses]=useState<CustomerAddress[]>([]),[selectedAddress,setSelectedAddress]=useState('')
+ const [form,setForm]=useState({fullName:'',email:'',phone:'',city:'',address:'',postalCode:'',deliveryNotes:'',organizationName:''})
+ useLiveJourneySignals({stage:'checkout',error:Boolean(error),completed:Boolean(outcome?.public_reference),receipt:outcome&&session?{outcomeId:outcome.id,sessionKey:session.session_key,visitorReference:visitor.current}:null})
+ const quoted=kind==='quotation'||needsQuote(basket)||session?.journey==='b2b_quotation'||price?.status==='quote_required'
+ const nonMedical=session?.item?.category_key==='health-partners'
+ const deliver=basket?.items.some(line=>['product','kit'].includes(line.catalog_item?.kind||''))&&!quoted
+ const set=(name:keyof typeof form,value:string)=>setForm(current=>({...current,[name]:value}))
+ const quantity=basket?.items.reduce((sum,line)=>sum+Number(line.quantity),0)||1
+ const paid=Boolean(payment&&['captured','reconciled'].includes(payment.status)||(payment?.method==='ac_wallet'&&payment.status==='authorized'))
+ const accepted=agreements.terms&&agreements.privacy&&agreements.scope&&(!nonMedical||agreements.nonMedical)
+ const steps=quoted?[0,1,2,4,5]:[0,1,2,3,4,5]
+ const haveVerified=validPrice(price)&&Boolean(availability)
+ useEffect(()=>{if(!busy)heading.current?.focus()},[step])
+ useEffect(()=>{let cancelled=false;void commerceApi<{authenticated:boolean;account:CustomerAccount|null}>('/api/angelcare-marketplace/customer/me').then(async current=>{if(cancelled||!current.authenticated||!current.account)return;const account=current.account;setForm(form=>({...form,fullName:form.fullName||account.display_name,email:form.email||account.email||'',phone:form.phone||account.phone||''}));const data=await commerceApi<{addresses:CustomerAddress[]}>('/api/angelcare-marketplace/customer/addresses');if(!cancelled)setAddresses(data.addresses.filter(address=>address.status==='active'))}).catch(()=>{/* Guests and manual contact entry remain supported when account lookup is unavailable. */});return()=>{cancelled=true}},[])
 
-function visitorReference() {
-  const name = 'ac_marketplace_visitor'
-  const current = document.cookie.split('; ').find((entry) => entry.startsWith(`${name}=`))?.split('=')[1]
-  if (current) return decodeURIComponent(current)
-  const value = crypto.randomUUID()
-  document.cookie = `${name}=${encodeURIComponent(value)}; path=/; max-age=31536000; samesite=lax`
-  return value
-}
-
-async function json<T>(url: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(url, { ...init, headers: { 'content-type': 'application/json', ...(init?.headers || {}) } })
-  const payload = await response.json() as Envelope<T> | { error?: { message?: string } }
-  if (!response.ok || !('data' in payload)) throw new Error('error' in payload ? payload.error?.message || 'Opération impossible.' : 'Opération impossible.')
-  return payload.data
-}
-
-function stringValue(value: unknown): string { return typeof value === 'string' ? value : '' }
-function numberValue(value: unknown): number { const n = Number(value); return Number.isFinite(n) ? n : 0 }
-function objectValue(value: unknown): Record<string, unknown> { return value && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, unknown> : {} }
-
-export function CheckoutExperience({
-  locale,
-  basketId,
-  kind,
-  resumeSessionKey = null,
-  resumedPaymentIntentId = null,
-  paypalState = null,
-}: {
-  locale: CatalogLocale
-  basketId: string
-  kind: 'transactional' | 'quotation'
-  resumeSessionKey?: string | null
-  resumedPaymentIntentId?: string | null
-  paypalState?: string | null
-}) {
-  const visitor = useRef('')
-  const key = useRef(crypto.randomUUID())
-  const [step, setStep] = useState(1)
-  const [basket, setBasket] = useState<Basket | null>(null)
-  const [session, setSession] = useState<ConversionSession | null>(null)
-  const [price, setPrice] = useState<ConversionPriceSnapshot | null>(null)
-  const [payment, setPayment] = useState<PaymentSelection | null>(null)
-  const [outcome, setOutcome] = useState<ConversionOutcome | null>(null)
-  const [error, setError] = useState<string | null>(null)
-  const [busy, setBusy] = useState(true)
-  const [form, setForm] = useState({ fullName: '', email: '', phone: '', city: '', address: '', postalCode: '', deliveryNotes: '' })
-  const set = (name: keyof typeof form, value: string) => setForm((current) => ({ ...current, [name]: value }))
-
-  useEffect(() => {
-    visitor.current = visitorReference()
-    let cancelled = false
-    async function load() {
-      try {
-        const current = await json<Basket>(`/api/angelcare-marketplace/conversion/basket?locale=${locale}&kind=${kind}`, { headers: { 'x-marketplace-visitor': visitor.current } })
-        if (current.id !== basketId) throw new Error('Le panier demandé n’est plus le panier actif.')
-
-        const active = resumeSessionKey
-          ? await json<ConversionSession>(`/api/angelcare-marketplace/conversion/sessions/${encodeURIComponent(resumeSessionKey)}`, { headers: { 'x-marketplace-visitor': visitor.current } })
-          : await json<ConversionSession>(`/api/angelcare-marketplace/conversion/basket/${basketId}/checkout`, { method: 'POST', body: JSON.stringify({ visitorReference: visitor.current, locale, idempotencyKey: `checkout:${key.current}` }) })
-
-        if (active.quote_basket_id && active.quote_basket_id !== basketId) throw new Error('La session de reprise ne correspond pas à ce panier.')
-        if (cancelled) return
-
-        setBasket(current)
-        setSession(active)
-        if (active.priceSnapshot) setPrice(active.priceSnapshot)
-
-        if (resumeSessionKey) {
-          const identity = objectValue(active.identity_context)
-          const configuration = objectValue(active.configuration)
-          const delivery = objectValue(configuration.deliveryAddress)
-          const storedPayment = objectValue(configuration.payment)
-          setForm({
-            fullName: stringValue(identity.fullName),
-            email: stringValue(identity.email),
-            phone: stringValue(identity.phone),
-            city: stringValue(identity.city) || stringValue(delivery.city),
-            address: stringValue(delivery.address),
-            postalCode: stringValue(delivery.postalCode),
-            deliveryNotes: stringValue(delivery.notes),
-          })
-          const paymentIntentId = resumedPaymentIntentId || stringValue(storedPayment.paymentIntentId)
-          const restored = paymentIntentId ? {
-            paymentIntentId,
-            status: paypalState === 'captured' ? 'captured' : stringValue(storedPayment.status),
-            method: stringValue(storedPayment.method) || 'card',
-            walletContribution: numberValue(storedPayment.walletContribution),
-          } : null
-          setPayment(restored)
-          if (paypalState === 'cancelled') {
-            setError('Paiement PayPal annulé. Choisissez un moyen de paiement pour reprendre.')
-            setStep(3)
-          } else if (paypalState === 'captured' || ['captured', 'authorized'].includes(restored?.status || '')) {
-            setStep(4)
-          } else {
-            setStep(kind === 'quotation' ? 4 : 3)
-          }
-        }
-      } catch (reason) {
-        if (!cancelled) setError(reason instanceof Error ? reason.message : 'Checkout indisponible.')
-      } finally {
-        if (!cancelled) setBusy(false)
-      }
-    }
-    void load()
-    return () => { cancelled = true }
-  }, [basketId, kind, locale, paypalState, resumeSessionKey, resumedPaymentIntentId])
-
-  async function update(payload: Record<string, unknown>) {
-    if (!session) throw new Error('Session indisponible.')
-    const data = await json<ConversionSession>(`/api/angelcare-marketplace/conversion/sessions/${session.session_key}`, { method: 'PATCH', body: JSON.stringify({ ...payload, visitorReference: visitor.current }) })
-    setSession(data)
-    return data
-  }
-
-  async function identity() {
-    setBusy(true); setError(null)
-    try {
-      await update({ identity: { ...form, fullName: form.fullName }, configuration: { basketId, deliveryAddress: { city: form.city, address: form.address, postalCode: form.postalCode, notes: form.deliveryNotes } }, status: 'availability_pending' })
-      const snapshot = await json<ConversionPriceSnapshot>(`/api/angelcare-marketplace/conversion/sessions/${session?.session_key}/price`, { method: 'POST', body: JSON.stringify({ visitorReference: visitor.current, quantity: basket?.items.reduce((sum, item) => sum + Number(item.quantity || 0), 0) || 1 }) })
-      setPrice(snapshot)
-      await json(`/api/angelcare-marketplace/conversion/sessions/${session?.session_key}/availability`, { method: 'POST', body: JSON.stringify({ visitorReference: visitor.current, quantity: basket?.items.reduce((sum, item) => sum + Number(item.quantity || 0), 0) || 1, configuration: { basketId, city: form.city } }) })
-      setStep(2)
-    } catch (reason) { setError(reason instanceof Error ? reason.message : 'Vérification impossible.') } finally { setBusy(false) }
-  }
-
-  async function consents() {
-    if (!session) return
-    setBusy(true)
-    try {
-      for (const consentKey of ['marketplace_terms', 'privacy_notice', 'order_or_quote_scope']) await json(`/api/angelcare-marketplace/conversion/sessions/${session.session_key}/consent`, { method: 'POST', body: JSON.stringify({ visitorReference: visitor.current, consentKey, consentVersion: '2026.1', locale, accepted: true, evidence: { basketId } }) })
-      await update({ status: 'review' })
-      setStep(kind === 'quotation' ? 4 : 3)
-    } catch (reason) { setError(reason instanceof Error ? reason.message : 'Consentement impossible.') } finally { setBusy(false) }
-  }
-
-  async function paymentComplete(selection: PaymentSelection) {
-    setPayment(selection)
-    await update({ configuration: { ...(session?.configuration || {}), payment: { ...selection } }, status: 'review' })
-    setStep(4)
-  }
-
-  async function paymentExternalAction(selection: PaymentSelection & { customerActionUrl: string }) {
-    const stored = { paymentIntentId: selection.paymentIntentId, status: selection.status, method: selection.method, walletContribution: selection.walletContribution }
-    setPayment(stored)
-    await update({ configuration: { ...(session?.configuration || {}), payment: stored }, status: 'review' })
-    window.location.assign(selection.customerActionUrl)
-  }
-
-  async function confirm() {
-    if (!session) return
-    setBusy(true)
-    try {
-      await update({ status: 'ready', configuration: { ...(session.configuration || {}), payment } })
-      const result = await json<ConversionOutcome>(`/api/angelcare-marketplace/conversion/sessions/${session.session_key}/confirm`, { method: 'POST', body: JSON.stringify({ visitorReference: visitor.current, idempotencyKey: `confirm:${session.id}`, paymentIntentId: payment?.paymentIntentId || null }) })
-      setOutcome(result)
-      setStep(5)
-    } catch (reason) { setError(reason instanceof Error ? reason.message : 'Confirmation impossible.') } finally { setBusy(false) }
-  }
-
-  const labels = locale === 'fr' ? ['Identité & livraison', 'Consentements', 'Paiement', 'Révision', 'Confirmation'] : locale === 'ar' ? ['الهوية والتسليم', 'الموافقات', 'الدفع', 'المراجعة', 'التأكيد'] : ['Identity & delivery', 'Consents', 'Payment', 'Review', 'Confirmation']
-  const capturedExternal = payment?.status === 'captured'
-
-  return <main className={styles.checkoutRoot} dir={locale === 'ar' ? 'rtl' : 'ltr'} data-kind={kind}><header><div><span>ANGELCARE CHECKOUT & PAYMENT AUTHORITY</span><h1>{kind === 'quotation' ? 'Vérification de la demande de proposition' : 'Vérification de la commande'}</h1><p>Prix, disponibilité, consentements et moyen de paiement sont revérifiés côté serveur. Un retour navigateur ne vaut jamais preuve de paiement.</p></div><div><ShieldCheck size={35}/><b>{basket?.public_reference || '—'}</b><small>Session gouvernée</small></div></header>{error ? <div className={styles.errorBanner}>{error}</div> : null}<nav className={styles.checkoutSteps}>{labels.map((label, index) => <div key={label} data-active={step === index + 1} data-complete={step > index + 1}><span>{step > index + 1 ? <Check size={14}/> : index + 1}</span><b>{label}</b></div>)}</nav><section className={styles.checkoutLayout} aria-busy={busy}><div className={styles.checkoutMain}>{step === 1 ? <section className={styles.stagePanel}><div className={styles.stageHeading}><span>01 · IDENTITY & DELIVERY</span><h2>Responsable et destination</h2></div><div className={styles.identityGrid}><label><span>Nom complet</span><input value={form.fullName} onChange={(event) => set('fullName', event.target.value)}/></label><label><span>Email</span><input type="email" value={form.email} onChange={(event) => set('email', event.target.value)}/></label><label><span>Téléphone</span><input value={form.phone} onChange={(event) => set('phone', event.target.value)}/></label><label><span><MapPin size={16}/>Ville</span><input value={form.city} onChange={(event) => set('city', event.target.value)}/></label><label><span>Adresse</span><input value={form.address} onChange={(event) => set('address', event.target.value)}/></label><label><span>Code postal</span><input value={form.postalCode} onChange={(event) => set('postalCode', event.target.value)}/></label></div><label className={styles.fullField}><span>Instructions</span><textarea rows={3} value={form.deliveryNotes} onChange={(event) => set('deliveryNotes', event.target.value)}/></label><div className={styles.stageActions}><button disabled={!form.fullName || !form.email || !form.city} onClick={() => void identity()}>Revérifier et continuer</button></div></section> : null}{step === 2 ? <section className={styles.stagePanel}><div className={styles.stageHeading}><span>02 · EXPLICIT CONSENT</span><h2>Conditions de commande ou proposition</h2></div><div className={styles.consentCards}><article><BadgeCheck/><div><b>Conditions Marketplace</b><p>Objet, prix, disponibilité et responsabilité de la demande.</p></div></article><article><ShieldCheck/><div><b>Vie privée</b><p>Données strictement nécessaires au parcours, à la sécurité et à l’exécution.</p></div></article><article><PackageCheck/><div><b>Nature de l’issue</b><p>{kind === 'quotation' ? 'Une demande de devis ne constitue pas une vente confirmée.' : 'Une commande n’est confirmée qu’après résultat canonique et paiement éligible.'}</p></div></article></div><div className={styles.stageActions}><button className={styles.secondaryButton} onClick={() => setStep(1)}>Retour</button><button onClick={() => void consents()}>Accepter explicitement</button></div></section> : null}{step === 3 && kind === 'transactional' && session && price ? <CheckoutPaymentStage locale={locale} amount={Number(price.grand_total ?? basket?.subtotal ?? 0)} conversionSessionId={session.id} onBack={() => setStep(2)} onComplete={(value) => void paymentComplete(value)} onExternalAction={(value) => paymentExternalAction(value)}/> : null}{step === 4 ? <section className={styles.stagePanel}><div className={styles.stageHeading}><span>04 · FINAL REVIEW</span><h2>Révision avant engagement</h2></div><div className={styles.reviewGrid}><article><span>Client</span><b>{form.fullName}</b><small>{form.email} · {form.phone}</small></article><article><span>Total revérifié</span><b>{Number(price?.grand_total || basket?.subtotal || 0).toLocaleString(locale)} {basket?.currency_label || 'Dh'}</b><small>{payment ? `${payment.walletContribution.toLocaleString(locale)} AC Wallet · ${payment.method}${capturedExternal ? ' · PayPal confirmé' : ''}` : kind === 'quotation' ? 'Devis requis' : 'Méthode en attente'}</small></article><article><span>Destination</span><b>{form.city}</b><small>{form.address}</small></article></div><div className={styles.stageActions}><button className={styles.secondaryButton} disabled={capturedExternal} onClick={() => setStep(kind === 'quotation' ? 2 : 3)}>Retour</button><button onClick={() => void confirm()}>{kind === 'quotation' ? 'Transmettre la demande' : 'Confirmer l’engagement'}</button></div></section> : null}{step === 5 ? <section className={styles.confirmationPanel}><PackageCheck size={48}/><span>05 · CANONICAL OUTCOME</span><h2>{outcome?.public_reference || 'Résultat enregistré'}</h2><p>Votre demande a été enregistrée dans le parcours ANGELCARE.</p><a href={`/angelcare-marketplace/${locale}/account`}>Ouvrir Mon ANGELCARE</a></section> : null}</div><aside className={styles.checkoutAside}><section><span>Panier</span><b>{basket?.items.length || 0} ligne(s)</b><strong>{Number(price?.grand_total || basket?.subtotal || 0).toLocaleString(locale)} {basket?.currency_label || 'Dh'}</strong></section><section><ShieldCheck/><b>Intégrité transactionnelle</b><small>Prix, disponibilité et paiement sont server-side, idempotents et auditables.</small></section></aside></section></main>
+ useEffect(()=>{visitor.current=commerceVisitor();let cancelled=false;setBusy(true);setError('');async function load(){try{
+   const current=await commerceApi<Basket>(`/api/angelcare-marketplace/conversion/basket?locale=${locale}&kind=${kind}`,{headers:{'x-marketplace-visitor':visitor.current}})
+   if(current.id!==basketId||!current.items.length)throw Error(t.empty)
+   let stored='';try{stored=sessionStorage.getItem(`ac-checkout:${basketId}`)||''}catch{/* Storage is optional. */}
+   const resume=resumeSessionKey||stored
+   if(!key.current)key.current=crypto.randomUUID()
+   const active=resume?await commerceApi<ConversionSession>(`/api/angelcare-marketplace/conversion/sessions/${encodeURIComponent(resume)}`,{headers:{'x-marketplace-visitor':visitor.current}}):await commerceApi<ConversionSession>(`/api/angelcare-marketplace/conversion/basket/${basketId}/checkout`,{method:'POST',body:JSON.stringify({visitorReference:visitor.current,locale,idempotencyKey:`checkout:${basketId}:${key.current}`})})
+   if(active.quote_basket_id!==basketId)throw Error(t.retry)
+   if(cancelled)return
+   setBasket(current);setSession(active);setPrice(active.priceSnapshot||null)
+   const identity=obj(active.identity_context),configuration=obj(active.configuration),delivery=obj(configuration.deliveryAddress),storedPayment=obj(configuration.payment)
+   setForm({fullName:str(identity.fullName),email:str(identity.email),phone:str(identity.phone),city:str(identity.city)||str(delivery.city),address:str(delivery.address),postalCode:str(delivery.postalCode),deliveryNotes:str(delivery.notes),organizationName:str(identity.organizationName)})
+   const consent=(name:string)=>Boolean(active.consents?.some(x=>x.consent_key===name&&x.accepted))
+   const restoredAgreements={terms:consent('marketplace_terms'),privacy:consent('privacy_notice'),scope:consent('order_or_quote_scope'),nonMedical:consent('non_medical_boundary')};setAgreements(restoredAgreements)
+   const availabilityValue=obj(active.availability_result)
+   const hasAvailability=typeof availabilityValue.status==='string'
+   if(hasAvailability)setAvailability(availabilityValue as unknown as ConversionAvailabilityDecision)
+   const paymentId=resumedPaymentIntentId||str(storedPayment.paymentIntentId)
+   // Browser query values are not proof of payment. The confirmation endpoint
+   // alone accepts a captured/authorized payment from its financial authority.
+   const restoredPayment=paymentId?{paymentIntentId:paymentId,status:str(storedPayment.status),method:str(storedPayment.method),walletContribution:Number(storedPayment.walletContribution)||0}:null
+   setPayment(restoredPayment)
+   if(active.outcome?.public_reference){setOutcome(active.outcome);setStep(5)}else if(Date.parse(active.expires_at)<=Date.now()){throw Error(locale==='fr'?'Ce parcours a expiré. Reprenez la vérification avec votre panier conservé.':locale==='ar'?'انتهت صلاحية هذا المسار. أعد التحقق من السلة المحفوظة.':'This journey has expired. Restart with your retained basket.')}
+   else if(requestedStage==='identity')setStep(0)
+   else if(validPrice(active.priceSnapshot||null)&&hasAvailability&&restoredAgreements.terms&&restoredAgreements.privacy&&restoredAgreements.scope&&(active.item?.category_key!=='health-partners'||restoredAgreements.nonMedical))setStep(active.journey==='b2b_quotation'||Number(active.priceSnapshot?.grand_total)===0||restoredPayment&&['captured','reconciled','authorized'].includes(restoredPayment.status)||paypalState==='captured'?4:3)
+   else if(str(identity.fullName)&&str(identity.email))setStep(1)
+   else setStep(0)
+   try{sessionStorage.setItem(`ac-checkout:${basketId}`,active.session_key)}catch{/* No contact information is stored here. */}
+   const url=new URL(window.location.href);url.searchParams.set('resume',active.session_key);history.replaceState(null,'',url)
+   if(paypalState==='cancelled')setError(t.cancelPayment)
+ }catch(reason){if(!cancelled)setError(reason instanceof Error?reason.message:t.retry)}finally{if(!cancelled)setBusy(false)}}void load();return()=>{cancelled=true}},[basketId,kind,locale,resumeSessionKey,resumedPaymentIntentId,paypalState,attempt,requestedStage])
+ async function patch(payload:Record<string,unknown>){if(!session)throw Error(t.retry);const active=await commerceApi<ConversionSession>(`/api/angelcare-marketplace/conversion/sessions/${session.session_key}`,{method:'PATCH',body:JSON.stringify({...payload,visitorReference:visitor.current})});setSession(active);return active}
+ async function run(work:()=>Promise<void>){if(actionLock.current)return;actionLock.current=true;setBusy(true);setError('');try{await work()}catch(reason){setError(reason instanceof Error?reason.message:t.retry)}finally{actionLock.current=false;setBusy(false)}}
+ async function contact(){await run(async()=>{await patch({identity:form,configuration:{...session?.configuration,basketId,deliveryAddress:{city:form.city,address:form.address,postalCode:form.postalCode,notes:form.deliveryNotes}},status:'availability_pending'});setPrice(null);setAvailability(null);setPayment(null);setStep(1)})}
+ async function verify(){await run(async()=>{if(!session)return;const snapshot=await commerceApi<ConversionPriceSnapshot>(`/api/angelcare-marketplace/conversion/sessions/${session.session_key}/price`,{method:'POST',body:JSON.stringify({visitorReference:visitor.current,quantity})});setPrice(snapshot);const result=await commerceApi<ConversionAvailabilityDecision>(`/api/angelcare-marketplace/conversion/sessions/${session.session_key}/availability`,{method:'POST',body:JSON.stringify({visitorReference:visitor.current,quantity,configuration:{...session.configuration,basketId,city:form.city}})});setAvailability(result);setStep(2)})}
+ async function consent(){await run(async()=>{if(!session||!accepted||!haveVerified)return;for(const consentKey of ['marketplace_terms','privacy_notice','order_or_quote_scope',...(nonMedical?['non_medical_boundary']:[])])await commerceApi(`/api/angelcare-marketplace/conversion/sessions/${session.session_key}/consent`,{method:'POST',body:JSON.stringify({visitorReference:visitor.current,consentKey,consentVersion:'2026.1',locale,accepted:true,evidence:{basketId}})});await patch({status:'review'});setStep(quoted||price?.grand_total===0?4:3)})}
+ async function paymentComplete(selection:PaymentSelection){await patch({configuration:{...session?.configuration,payment:selection},status:'review'});setPayment(selection);setStep(4)}
+ async function paymentExternal(selection:PaymentSelection&{customerActionUrl:string}){const url=new URL(selection.customerActionUrl,location.origin);if(!['https:','http:'].includes(url.protocol))throw Error(t.retry);await patch({configuration:{...session?.configuration,payment:{paymentIntentId:selection.paymentIntentId,status:selection.status,method:selection.method,walletContribution:selection.walletContribution}},status:'review'});if(!session)throw Error(t.retry);const receipt=await commerceApi<ConversionOutcome>(`/api/angelcare-marketplace/conversion/sessions/${session.session_key}/confirm`,{method:'POST',body:JSON.stringify({visitorReference:visitor.current,idempotencyKey:`confirm:${session.id}`,paymentIntentId:selection.paymentIntentId})});if(!receipt.id)throw Error(t.retry);setOutcome(receipt);careOrbitLocation.assign(url.href)}
+ async function confirm(){await run(async()=>{if(!session||!haveVerified||!accepted||outcome)return;await patch({status:'ready',configuration:{...session.configuration,payment}});const result=await commerceApi<ConversionOutcome>(`/api/angelcare-marketplace/conversion/sessions/${session.session_key}/confirm`,{method:'POST',body:JSON.stringify({visitorReference:visitor.current,idempotencyKey:`confirm:${session.id}`,paymentIntentId:payment?.paymentIntentId||null})});if(!result.public_reference||!result.id||result.status==='failed')throw Error(t.retry);setOutcome(result);setStep(5)})}
+ async function copy(){try{await navigator.clipboard.writeText(outcome?.public_reference||'');setCopied(true)}catch{setError(t.copy)}}
+ const edit=(target:number)=>{if(!busy&&!outcome&&(!paid||target>=4)){setStep(target);setError('')}}
+ const restart=()=>{try{sessionStorage.removeItem(`ac-checkout:${basketId}`)}catch{}const url=new URL(location.href);for(const name of ['resume','paypal','paymentIntent','stage'])url.searchParams.delete(name);careOrbitLocation.assign(url.href)}
+ return <main className={styles.root} dir={locale==='ar'?'rtl':'ltr'} data-ac-commerce="checkout" data-step={step}><LiveExperienceSlot name={outcome?"confirmation":"checkout"}/><header className={styles.hero}><div><span className={styles.eyebrow}><Sparkles size={15}/> ANGELCARE · {quoted?t.request:t.checkout}</span><h1>{step===5?t.outcome:quoted?t.quoteTitle:t.checkoutTitle}</h1><p>{quoted?t.quoteBody:t.checkoutBody}</p><div className={styles.chips}><span><LockKeyhole size={13}/>{t.secure}</span>{basket?<span>{basket.public_reference}</span>:null}</div></div><div className={styles.orb} aria-hidden="true"><div className={styles.orbCore}>{step===5?<CheckCircle2 size={40}/>:<ShoppingBag size={32}/>}<strong>{steps.indexOf(step)+1}/{steps.length}</strong><span>{t.stages[step]}</span></div></div></header><nav className={styles.steps} aria-label={t.checkout}>{steps.map((stage,index)=><button key={stage} disabled={busy||stage>=step||Boolean(outcome)||paid&&stage<4} onClick={()=>edit(stage)} aria-current={stage===step?'step':undefined} data-complete={stage<step}><span>{stage<step?<Check size={14}/>:index+1}</span>{t.stages[stage]}</button>)}</nav>{error?<div className={styles.error} role="alert"><RefreshCw size={18}/><span>{error}</span>{!basket?<button className={styles.secondary} disabled={busy} onClick={()=>setAttempt(n=>n+1)}>{t.retry}</button>:null}<button className={styles.secondary} disabled={busy||Boolean(outcome)} onClick={session&&Date.parse(session.expires_at)<=Date.now()?restart:()=>edit(1)}>{t.restart}</button></div>:null}<div className={styles.layout} aria-busy={busy}><div>{!basket?<section className={styles.panel}><p role="status">{busy?t.loading:t.retry}</p>{busy?<div className={styles.skeleton}/>:<Link className={styles.primary} href={`${base}/${kind==='quotation'?'quote-basket':'basket'}`}>{t.back}</Link>}</section>:<>
+ {step===0?<section className={styles.panel}><span className={styles.eyebrow}><Contact size={15}/> 01 · {t.stages[0]}</span><h2 ref={heading} tabIndex={-1}>{t.contact}</h2><p>{t.contactBody}</p><form onSubmit={event=>{event.preventDefault();void contact()}}><fieldset style={{border:0,padding:0,margin:0}} disabled={busy}>{deliver&&addresses.length?<label className={styles.field} style={{marginTop:20}}><span>{locale==='fr'?'Choisir une adresse enregistrée':locale==='ar'?'اختيار عنوان محفوظ':'Choose a saved address'}</span><select value={selectedAddress} onChange={e=>{setSelectedAddress(e.target.value);const address=addresses.find(address=>address.id===e.target.value);if(address)setForm(current=>({...current,fullName:address.recipient_name||current.fullName,phone:address.phone||current.phone,city:address.city,address:address.address_line,postalCode:address.postal_code||'',deliveryNotes:address.service_instructions||''}))}}><option value="">{locale==='fr'?'Saisir une adresse':locale==='ar'?'إدخال عنوان':'Enter an address'}</option>{addresses.map(address=><option key={address.id} value={address.id}>{address.label||address.city} · {address.address_line}</option>)}</select></label>:null}<div className={styles.formGrid}>{(['fullName','email','phone','city',...(deliver?['address','postalCode']:[]),...(quoted?['organizationName']:[])] as Array<keyof typeof form>).map(name=><label className={styles.field} key={name}><span>{({fullName:t.name,email:t.email,phone:t.phone,city:t.city,address:t.address,postalCode:t.postal,organizationName:t.organisation,deliveryNotes:t.notes})[name]}{['fullName','email','city'].includes(name)||deliver&&name==='address'?' *':''}</span><input type={name==='email'?'email':name==='phone'?'tel':'text'} autoComplete={name==='fullName'?'name':name==='address'?'street-address':name==='city'?'address-level2':name==='postalCode'?'postal-code':name==='organizationName'?'organization':name==='phone'?'tel':'email'} required={['fullName','email','city'].includes(name)||deliver&&name==='address'} value={form[name]} onChange={event=>set(name,event.target.value)} maxLength={name==='address'?400:200}/></label>)}<label className={`${styles.field} ${styles.fullField}`}><span>{t.notes}</span><textarea rows={3} maxLength={2000} value={form.deliveryNotes} onChange={event=>set('deliveryNotes',event.target.value)}/></label></div><div className={styles.hint}><LockKeyhole size={14}/>{t.privacyHint}</div><div className={styles.actions}><Link className={styles.secondary} href={`${base}/${kind==='quotation'?'quote-basket':'basket'}`}>{t.back}</Link><button className={styles.primary}>{busy?'…':t.next}<ArrowRight size={16}/></button></div></fieldset></form></section>:null}
+ {step===1?<section className={styles.panel}><span className={styles.eyebrow}>02 · {t.stages[1]}</span><h2 ref={heading} tabIndex={-1}>{t.verify}</h2><p>{t.verifyBody}</p>{availability?.status==='unavailable'?<div className={styles.notice}>{locale==='fr'?'Disponibilité à confirmer par AngelCare : votre envoi est une demande de validation, pas une réservation garantie.':locale==='ar'?'التوفر يحتاج إلى تأكيد أنجلكير. إرسال الطلب لا يعني حجزًا مؤكدًا.':'Availability needs AngelCare validation. Submission is not a guaranteed reservation.'}</div>:null}<div className={styles.verification}>{basket.items.map(line=><article key={line.id}><ShoppingBag size={24}/><div><strong>{lineName(line,locale)}</strong><small>{t.quantity}: {line.quantity} · {line.unit_price==null?t.quote:money(line.line_total,locale,basket.currency_label)}</small></div></article>)}</div><p>{quoted?t.quoteNote:t.estimate}</p><div className={styles.actions}><button className={styles.secondary} disabled={busy} onClick={()=>edit(0)}>{t.back}</button><button className={styles.primary} disabled={busy} onClick={()=>void verify()}>{busy?'…':t.check}<RefreshCw size={16}/></button></div></section>:null}
+ {step===2?<section className={styles.panel}><span className={styles.eyebrow}>03 · {t.stages[2]}</span><h2 ref={heading} tabIndex={-1}>{t.agreements}</h2><p>{quoted?t.quoteNote:t.scope}</p>{availability?.status==='unavailable'?<p role="status" className={styles.notice}>{locale==='fr'?'Disponibilité non confirmée : AngelCare doit valider votre demande avant toute réservation.':locale==='ar'?'التوفر غير مؤكد. يجب التحقق من الطلب قبل الحجز.':'Availability is unconfirmed. AngelCare must validate the request before a booking is confirmed.'}</p>:null}{([{key:'terms',text:t.terms,href:'terms'},{key:'privacy',text:t.privacy,href:'privacy'},{key:'scope',text:t.scope,href:null},...(nonMedical?[{key:'nonMedical',text:t.nonMedical,href:null}]:[])] as Array<{key:keyof typeof agreements;text:string;href:string|null}>).map(consent=><label className={styles.checkRow} key={consent.key}><input type="checkbox" checked={agreements[consent.key]} disabled={busy} onChange={event=>setAgreements(current=>({...current,[consent.key]:event.target.checked}))}/><span>{consent.text}{consent.href?<><br/><Link href={`${base}/${consent.href}`} target="_blank" rel="noopener">{t.read} ↗</Link></>:null}</span></label>)}<div className={styles.actions}><button className={styles.secondary} disabled={busy} onClick={()=>edit(1)}>{t.back}</button><button className={styles.primary} disabled={busy||!accepted||!haveVerified} onClick={()=>void consent()}>{busy?'…':t.next}<ArrowRight size={16}/></button></div></section>:null}
+ {step===3&&session&&price&&price.grand_total!==null?<CheckoutPaymentStage locale={locale} amount={price.grand_total} conversionSessionId={session.id} onBack={()=>edit(2)} onComplete={paymentComplete} onExternalAction={paymentExternal}/>:null}
+ {step===4?<section className={styles.panel}><span className={styles.eyebrow}>05 · {t.stages[4]}</span><h2 ref={heading} tabIndex={-1}>{t.review}</h2><div className={styles.review}><article><span>{t.contact}</span><strong>{form.fullName}</strong><small>{form.email} · {form.phone}</small></article><article><span>{quoted?t.request:t.total}</span><strong>{quoted?t.quote:money(price?.grand_total,locale,price?.currency_label)}</strong><small>{payment?.method||t.estimate}</small></article><article><span>{quoted?t.organisation:t.city}</span><strong>{quoted?form.organizationName||form.city:form.city}</strong><small>{form.address}</small></article><article><span>{t.selection}</span><strong>{basket.items.length} {t.offers}</strong><small>{t.saved}</small></article></div>{payment&&!paid&&!quoted?<div className={styles.help}><LockKeyhole/><div><strong>{t.pendingPayment}</strong><p><Link href={`${base}/account/payments`}>{t.overview} →</Link></p></div></div>:null}<p>{quoted?t.quoteNote:t.estimate}</p><div className={styles.actions}><button className={styles.secondary} disabled={busy||paid} onClick={()=>edit(quoted?2:3)}>{t.back}</button><button className={styles.primary} disabled={busy||!haveVerified||!accepted||!quoted&&Number(price?.grand_total)>0&&!payment} onClick={()=>void confirm()}>{busy?'…':t.confirm}<ArrowRight size={16}/></button></div></section>:null}
+ {step===5&&outcome?<section className={`${styles.panel} ${styles.outcome}`}><CheckCircle2 size={48}/><span className={styles.eyebrow}>{t.completed}</span><h2 ref={heading} tabIndex={-1}>{t.outcome}</h2><span className={styles.status}>{locale==='fr'?'Reçue · validation AngelCare':locale==='ar'?'تم الاستلام · بانتظار التحقق':'Received · AngelCare validation'}</span><strong className={styles.reference}>{outcome.public_reference}</strong><button className={styles.secondary} onClick={()=>void copy()}><ClipboardCopy size={16}/>{copied?t.copied:t.copy}</button><p>{locale==='fr'?'Votre demande est enregistrée. AngelCare validera les détails, la disponibilité et les modalités de paiement.':locale==='ar'?'تم تسجيل طلبك. ستتحقق أنجلكير من التفاصيل والتوفر وطريقة الدفع.':'Your request is recorded. AngelCare will validate details, availability and payment arrangements.'}</p><div className={styles.actions}><Link className={styles.primary} href={`${base}/account`}>{t.account}<ArrowRight size={16}/></Link><Link className={styles.secondary} href={`${base}/account/support`}>{t.support}</Link></div></section>:null}
+ </>}</div><aside className={styles.summary}><section className={styles.summaryMain}><span className={styles.eyebrow}>{t.selection}</span><h2>{basket?.items.length??'—'} {t.offers}</h2><div className={styles.asideLines}>{basket?.items.map(line=><div className={styles.asideLine} key={line.id}><div className={styles.media}>{line.media_url?<img src={line.media_url} alt="" loading="lazy"/>:<ShoppingBag size={20}/>}</div><div>{lineName(line,locale)}<small>{t.quantity}: {line.quantity}</small></div></div>)}</div><hr/><small>{quoted?t.quote:price?t.total:t.known}</small><strong>{quoted?t.quote:money(price?price.grand_total:basket?.subtotal,locale,price?.currency_label||basket?.currency_label)}</strong><p>{quoted?t.quoteNote:t.estimate}</p>{price&&price.discount_total>0?<p>{locale==='fr'?'Réduction appliquée':locale==='ar'?'التخفيض المطبق':'Applied discount'}: {money(price.discount_total,locale,price.currency_label)}</p>:null}</section><Link className={styles.help} href={`${base}/account/support`}><Sparkles size={22}/><div><strong>{t.support}</strong><p>{t.secure}</p></div></Link></aside></div></main>
 }

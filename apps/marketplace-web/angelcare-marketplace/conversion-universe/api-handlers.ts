@@ -2,6 +2,7 @@ import { requireMarketplaceApiContext } from '../auth/context'
 import { apiFailure, apiSuccess, parseJsonObject, requestId } from '../server/request'
 import {
   addPublicBasketItem,
+  updatePublicBasketItem,
   confirmPublicConversion,
   conversionAdminSummary,
   createConversionSessionFromBasket,
@@ -142,6 +143,9 @@ export async function handlePublicBasketItems(request: Request, basketId: string
   try {
     const body = await parseJsonObject(request)
     const visitorReference = requiredText(visitor(request, body), 'visitorReference', 180)
+    if (request.method === 'PATCH') {
+      return apiSuccess(await updatePublicBasketItem({visitorReference,basketId,itemId:requiredText(body.itemId,'itemId',80),quantity:Number(body.quantity)}),{requestId:id})
+    }
     if (request.method === 'DELETE') {
       return apiSuccess(await removePublicBasketItem({
         visitorReference,
