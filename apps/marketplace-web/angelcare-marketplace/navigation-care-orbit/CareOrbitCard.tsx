@@ -13,6 +13,6 @@ export function CareOrbitCard({ locale, phase = 'pending', target, onDismiss }: 
     <div className={styles.message} role="status" aria-live="polite" aria-atomic="true"><h2>{phase === 'offline' ? t.offline : delayed ? t.slow : t.title}</h2><p>{phase === 'offline' ? t.offlineBody : delayed ? t.slowBody : t.body}</p></div>
     <div className={styles.dots} aria-hidden="true"><i/><i/><i/></div>
     {delayed && onDismiss ? <div className={styles.actions}>{target ? <a href={target} data-care-orbit-ignore>{t.direct}</a> : null}<button type="button" onClick={onDismiss}>{t.dismiss}</button></div> : null}
-    <small className={styles.signature}>{t.brand}</small>
+    <img className={styles.brandLogo} src="/brand/angelcare-pearl-rim-colour-r1.png" alt="AngelCare" width="76" height="26"/>
   </section>
 }

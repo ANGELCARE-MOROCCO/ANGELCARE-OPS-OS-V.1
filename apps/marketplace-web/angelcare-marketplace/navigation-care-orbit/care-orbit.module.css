@@ -14,3 +14,8 @@
 @media(max-width:480px){.card{padding:20px 22px 17px;border-radius:27px;width:min(345px,calc(100vw - 32px))}.art{height:128px;transform:scale(.92);margin-bottom:0}.scaffold{grid-template-columns:1fr 1fr}.scaffold>div:last-child{display:none}}
 @media(prefers-reduced-motion:reduce){.card,.heart,.aura,.ringOne,.ringTwo,.dots i,.sparkOne,.sparkTwo{animation:none}.dots i{opacity:.85}}
 @media(forced-colors:active){.card{border:2px solid CanvasText;background:Canvas;color:CanvasText}.message h2,.message p,.signature,.close{color:CanvasText}.ringOne,.ringTwo{border-color:CanvasText}.card:before,.aura{display:none}.actions a,.actions button{color:ButtonText;background:ButtonFace;border-color:ButtonText}}
+
+/* Compact refinement: roughly 15% narrower, retaining readable type and 44px controls. */
+.card{width:min(332px,calc(100vw - 32px));padding:19px 22px 15px;border-radius:28px}.card:before{border-radius:30px}.art{height:118px;margin-bottom:4px;transform:scale(.85);transform-origin:center center}.message h2{font-size:clamp(20px,3.6vw,24px)}.message p{font-size:13px;margin-top:7px}.dots{gap:13px;margin:15px 0 11px}.dots i{width:10px;height:10px}.brandLogo{display:block;width:76px;height:26px;object-fit:contain;margin:0 auto;max-width:100%}.actions{margin:12px 0}.actions a,.actions button{min-height:44px}
+@media(max-width:480px){.card{width:min(300px,calc(100vw - 32px));padding:17px 19px 14px;border-radius:25px}.art{height:109px;transform:scale(.8);margin-bottom:1px}.message h2{font-size:21px}.brandLogo{width:70px;height:24px}}
+@media(forced-colors:active){.brandLogo{forced-color-adjust:none}}
