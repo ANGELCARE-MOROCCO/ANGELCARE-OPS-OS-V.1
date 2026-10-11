@@ -3,9 +3,9 @@ export type NavigationPhase = 'idle' | 'pending' | 'slow' | 'offline'
 export type NavigationState = { id: number; phase: NavigationPhase; visible: boolean; target: string | null; from: string; locale: CareLocale }
 export const IDLE: NavigationState = Object.freeze({ id: 0, phase: 'idle', visible: false, target: null, from: '', locale: 'fr' })
 export const copy = {
-  fr: { title: 'Votre page arrive…', body: 'Nous ouvrons votre destination', slow: 'Cela prend un peu plus de temps.', slowBody: 'Vous pouvez patienter ou ouvrir la destination directement.', offline: 'Votre connexion fait une pause.', offlineBody: 'Reconnectez-vous pour poursuivre votre visite.', close: 'Masquer le chargement', direct: 'Ouvrir la page', dismiss: 'Masquer', brand: 'AngelCare Marketplace' },
-  en: { title: 'Your page is on its way…', body: 'Opening your destination', slow: 'This is taking a little longer.', slowBody: 'You can wait or open the destination directly.', offline: 'Your connection is taking a break.', offlineBody: 'Reconnect to continue exploring.', close: 'Hide loading indicator', direct: 'Open page', dismiss: 'Hide', brand: 'AngelCare Marketplace' },
-  ar: { title: 'صفحتك في الطريق…', body: 'نفتح وجهتك الآن', slow: 'يستغرق هذا وقتاً أطول قليلاً.', slowBody: 'يمكنك الانتظار أو فتح الوجهة مباشرة.', offline: 'اتصالك يأخذ استراحة.', offlineBody: 'أعد الاتصال لمتابعة التصفح.', close: 'إخفاء مؤشر التحميل', direct: 'فتح الصفحة', dismiss: 'إخفاء', brand: 'سوق أنجل كير' },
+  fr: { title: 'À VOTRE SERVICE', body: 'VEUILLEZ PATIENTER SVP...', slow: 'À VOTRE SERVICE', slowBody: 'VEUILLEZ PATIENTER SVP...', offline: 'À VOTRE SERVICE', offlineBody: 'Connexion interrompue. Veuillez vous reconnecter.', close: 'Masquer', direct: 'Ouvrir la page', dismiss: 'Masquer', brand: 'AngelCare Marketplace' },
+  en: { title: 'AT YOUR SERVICE', body: 'PLEASE HOLD', slow: 'AT YOUR SERVICE', slowBody: 'PLEASE HOLD', offline: 'AT YOUR SERVICE', offlineBody: 'Connection interrupted. Please reconnect.', close: 'Hide', direct: 'Open page', dismiss: 'Hide', brand: 'AngelCare Marketplace' },
+  ar: { title: 'في خدمتكم', body: 'يرجى الانتظار من فضلكم...', slow: 'في خدمتكم', slowBody: 'يرجى الانتظار من فضلكم...', offline: 'في خدمتكم', offlineBody: 'انقطع الاتصال. يرجى إعادة الاتصال.', close: 'إخفاء', direct: 'فتح الصفحة', dismiss: 'إخفاء', brand: 'سوق أنجل كير' },
 } as const
 export function publicRoute(path: string): boolean {
   // Public storefronts AND authenticated customer surfaces; never operator/tenant worlds.

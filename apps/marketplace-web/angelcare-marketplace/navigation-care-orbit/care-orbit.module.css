@@ -19,3 +19,21 @@
 .card{width:min(332px,calc(100vw - 32px));padding:19px 22px 15px;border-radius:28px}.card:before{border-radius:30px}.art{height:118px;margin-bottom:4px;transform:scale(.85);transform-origin:center center}.message h2{font-size:clamp(20px,3.6vw,24px)}.message p{font-size:13px;margin-top:7px}.dots{gap:13px;margin:15px 0 11px}.dots i{width:10px;height:10px}.brandLogo{display:block;width:76px;height:26px;object-fit:contain;margin:0 auto;max-width:100%}.actions{margin:12px 0}.actions a,.actions button{min-height:44px}
 @media(max-width:480px){.card{width:min(300px,calc(100vw - 32px));padding:17px 19px 14px;border-radius:25px}.art{height:109px;transform:scale(.8);margin-bottom:1px}.message h2{font-size:21px}.brandLogo{width:70px;height:24px}}
 @media(forced-colors:active){.brandLogo{forced-color-adjust:none}}
+
+/* Service contour: the four accents of the official AngelCare logo. */
+.card{--green:#24b844;--cyan:#05b9e9;--amber:#ffac18;--pink:#ed438d;border:1px solid #e4dbea;background:radial-gradient(ellipse at 95% 0%,#fbeef375,transparent 62%),radial-gradient(ellipse at 0% 100%,#eaf5ff80,transparent 70%),#fffdfef5;box-shadow:0 18px 58px #273b6424,0 4px 16px #9d82bc18,inset 0 0 0 1px #ffffffb8}
+.card:before{inset:-1px;background:linear-gradient(115deg,#24b84433,#05b9e938 35%,#ffac1833 68%,#ed438d2e);filter:blur(2px);opacity:.28}
+.art{width:216px;height:118px;transform:none;margin-bottom:5px}
+.aura{inset:11px 44px;background:radial-gradient(ellipse,#edf5ff75,#f9eaf330 52%,transparent 72%)}
+.heart{width:65px;filter:drop-shadow(0 4px 7px #b6809914);animation:care-heart-soft 3.5s ease-in-out infinite}
+.contourOrbit{position:absolute;width:120px;height:120px;inset-block-start:-1px;inset-inline-start:48px;animation:care-contour-spin 5.6s linear infinite;direction:ltr}
+.contourOrbit svg{display:block;width:100%;height:100%}.contourTrack{stroke:#dce6ee;stroke-width:.8}
+.sparkOne{font-size:15px;right:31px;top:15px;color:#7ab8d1}.sparkTwo{font-size:12px;left:32px;top:91px;color:#d2a157}
+.message h2{font-size:clamp(18px,3.5vw,22px);line-height:1.28;letter-spacing:.15px;color:#17345b}.message p{font-size:12px;line-height:1.6;font-weight:600;letter-spacing:.45px;color:#5a6579}
+.dots{gap:12px;margin:14px 0 11px}.dots i{width:7px;height:7px;background:var(--green);box-shadow:none;animation-duration:1.8s}.dots i:nth-child(2){background:var(--cyan);box-shadow:none;animation-delay:.2s}.dots i:nth-child(3){background:var(--amber);box-shadow:none;animation-delay:.4s}.dots i:nth-child(4){background:var(--pink);animation-delay:.6s}
+.card[data-phase="offline"] .contourOrbit,.card[data-phase="offline"] .heart,.card[data-phase="offline"] .dots i{animation-play-state:paused}
+@keyframes care-contour-spin{to{transform:rotate(360deg)}}
+@keyframes care-heart-soft{0%,100%{transform:translateY(1px) scale(.99)}50%{transform:translateY(-2px) scale(1.015)}}
+@media(max-width:480px){.art{height:109px;transform:none}.contourOrbit{width:110px;height:110px;inset-inline-start:53px;inset-block-start:0}.heart{width:60px}.message h2{font-size:19px}.message p{font-size:11px}}
+@media(prefers-reduced-motion:reduce){.contourOrbit,.heart,.aura,.dots i,.sparkOne,.sparkTwo{animation:none}}
+@media(forced-colors:active){.card{background:Canvas;color:CanvasText;border:1px solid CanvasText}.message h2,.message p{color:CanvasText}.contourOrbit circle{stroke:CanvasText}.dots i{background:CanvasText}.heart path{stroke:CanvasText;fill:Canvas}.card:before{display:none}}

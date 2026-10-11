@@ -13,6 +13,7 @@ import { designToStyle, responsiveDataAttributes } from '../studio-universal/des
 import type { StudioDesignStyle, StudioResponsiveState } from '../studio-universal/types'
 import styles from './atomic.module.css'
 import {Context,useExperience,type ExperienceContext} from './context'
+import {DiscoveryGuide,OfferInformationExplorer} from './DiscoveryTools'
 import {Benefits,People,Programme,PublishedPlans,Specifications,Deployment,ReviewSummary} from './RichModules'
 
 const noHeadingRoles=new Set(['opening','decision'])
@@ -97,27 +98,28 @@ export function AtomicExperienceFrame({type,props,data,locale,children,previewOn
   }
   if(data&&ATOMIC_ROOTS[type]!==data.classification.masterDomain)return null
   if(!data)return <article className={styles.experience} data-domain={ATOMIC_ROOTS[type]} style={frameStyle(props)} dir={locale==='ar'?'rtl':'ltr'}><div className={styles.editorNotice}>{c.preview}</div>{children}</article>
-  const context:ExperienceContext={data,locale,selection,setChoice,quantity,setQuantity:v=>{setQuantity(v);setBasketId(null)},busy,message,act,basketId,previewOnly}
+  const context:ExperienceContext={data,locale,selection,setChoice,quantity,setQuantity:v=>{setQuantity(v);setSelection(current=>{const next={...current,quantity:v};if(!previewOnly)saveSelection(data.identity.slug,locale,next);return next});setBasketId(null);setMessage('')},busy,message,act,basketId,previewOnly}
   return <Context.Provider value={context}><article className={styles.experience} style={frameStyle(props)} lang={locale} dir={locale==='ar'?'rtl':'ltr'} data-ac-atomic-experience="1" data-domain={data.classification.masterDomain} data-doctrine={data.classification.doctrineKey}>
     <div className={styles.ambient} aria-hidden="true"/>
     <div className={styles.composition}>{Array.isArray(children)?children[0]:null}
-    {nav.length?<nav className={styles.sectionNav} aria-label={c.details}>{nav.map(s=><a key={s.id} href={`#${s.id}`} aria-current={active===s.id?'location':undefined}>{localeText(s.navTitle,locale)||localeText(s.title,locale)||s.role}</a>)}</nav>:null}
-    {Array.isArray(children)?children.slice(1):children}</div>
+    {nav.length?<nav className={styles.sectionNav} aria-label={c.details}>{nav.map(s=><a key={s.id} href={`#${s.id}`} {...responsiveDataAttributes(s.responsive as StudioResponsiveState|undefined)} aria-current={active===s.id?'location':undefined}>{localeText(s.navTitle,locale)||localeText(s.title,locale)||s.role}</a>)}</nav>:null}
+    <DiscoveryGuide sections={visible}/>{Array.isArray(children)?children.slice(1):children}</div>
     {!atFooter&&visible.some(s=>s.role==='decision'||s.role==='opening')?<div className={styles.mobileDecision}><div><small>{data.identity.name}</small><strong>{price(data,locale)}</strong></div><button type="button" onClick={()=>document.getElementById(visible.find(s=>s.role==='decision')?.id||visible[0]?.id)?.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'center'})}>{c.choose}<ArrowRight size={16}/></button></div>:null}
   </article></Context.Provider>
 }
 
 function Gallery({compact=false}:{compact?:boolean}){
   const x=useExperience(),[selected,setSelected]=useState(0),dialog=useRef<HTMLDialogElement>(null),opener=useRef<HTMLButtonElement>(null)
+  useEffect(()=>{setSelected(0);dialog.current?.close()},[x?.data.identity.id])
   if(!x)return null
-  const media=x.data.media.filter(m=>publicUrl(m.url)),active=media[selected]||media[0],c=atomicCopy(x.locale)
+  const media=x.data.media.filter(m=>publicUrl(m.url)),index=Math.min(selected,Math.max(0,media.length-1)),active=media[index],c=atomicCopy(x.locale)
   if(!active)return null
   const video=active.type==='video'||active.type==='video/mp4'
   const renderMedia=(large:boolean)=>video?<video src={active.url} controls preload="metadata" aria-label={active.alt||x.data.identity.name}/>:<img src={active.url} alt={active.alt||x.data.identity.name} loading={compact?'eager':'lazy'} fetchPriority={compact?'high':'auto'} className={large?styles.zoomImage:styles.fitImage}/>
-  return <div className={styles.gallery} data-compact={compact}>
-    <div className={styles.mediaStage}>{renderMedia(false)}{!video?<button ref={opener} className={styles.zoom} type="button" aria-label={c.zoom} onClick={()=>dialog.current?.showModal()}><Maximize2 size={18}/></button>:null}<span className={styles.mediaCount}>{selected+1} / {media.length}</span></div>
-    {media.length>1?<div className={styles.thumbnails}>{media.map((m,i)=><button type="button" key={m.id||i} aria-label={`${i+1} · ${m.alt||x.data.identity.name}`} aria-pressed={i===selected} onClick={()=>setSelected(i)}>{m.type==='video'?<span>▶</span>:<img src={m.url} alt="" loading="lazy"/>}</button>)}</div>:null}
-    <dialog ref={dialog} className={styles.lightbox} onClose={()=>opener.current?.focus()}><div className={styles.lightboxBar}><strong>{x.data.identity.name}</strong><button type="button" onClick={()=>dialog.current?.close()} aria-label={c.close}><X/></button></div>{renderMedia(true)}{media.length>1?<div className={styles.lightboxControls}><button type="button" aria-label={c.previous} onClick={()=>setSelected(i=>(i-1+media.length)%media.length)}><ChevronLeft/></button><span>{selected+1} / {media.length}</span><button type="button" aria-label={c.next} onClick={()=>setSelected(i=>(i+1)%media.length)}><ChevronRight/></button></div>:null}</dialog>
+  return <div className={styles.gallery} data-compact={compact} onKeyDown={e=>{if(media.length<2||e.target instanceof HTMLVideoElement)return;if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.preventDefault();setSelected(i=>(i+(e.key==='ArrowRight'?1:media.length-1))%media.length)}}}>
+    <div className={styles.mediaStage}>{renderMedia(false)}{!video?<button ref={opener} className={styles.zoom} type="button" aria-label={c.zoom} onClick={()=>dialog.current?.showModal()}><Maximize2 size={18}/></button>:null}<span className={styles.mediaCount}>{index+1} / {media.length}</span></div>
+    {media.length>1?<div className={styles.thumbnails}>{media.map((m,i)=><button type="button" key={m.id||i} aria-label={`${i+1} · ${m.alt||x.data.identity.name}`} aria-pressed={i===index} onClick={()=>setSelected(i)}>{m.type==='video'?<span>▶</span>:<img src={m.url} alt="" loading="lazy"/>}</button>)}</div>:null}
+    <dialog ref={dialog} className={styles.lightbox} onClose={()=>{dialog.current?.querySelectorAll('video').forEach(v=>v.pause());opener.current?.focus()}}><div className={styles.lightboxBar}><strong>{x.data.identity.name}</strong><button type="button" onClick={()=>dialog.current?.close()} aria-label={c.close}><X/></button></div>{renderMedia(true)}{media.length>1?<div className={styles.lightboxControls}><button type="button" aria-label={c.previous} onClick={()=>setSelected(i=>(i-1+media.length)%media.length)}><ChevronLeft/></button><span>{index+1} / {media.length}</span><button type="button" aria-label={c.next} onClick={()=>setSelected(i=>(i+1)%media.length)}><ChevronRight/></button></div>:null}</dialog>
   </div>
 }
 
@@ -137,19 +139,19 @@ function VariantChoices(){
 }
 
 function Decision({compact=false}:{compact?:boolean}){
-  const x=useExperience();if(!x)return null
+  const x=useExperience(),[copyFeedback,setCopyFeedback]=useState('');if(!x)return null
   const c=atomicCopy(x.locale),state=actionState(x.data),product=state.path==='basket',max=x.data.availability.availableQuantity===null?99:Math.min(99,Math.max(0,Math.floor(x.data.availability.availableQuantity))),selected=Object.entries(x.selection).filter(([,v])=>present(v))
   const choiceLabel=(key:string)=>x.data.content.fields.find(f=>f.key===key)?.label||({requestedDate:c.date,requestedTime:c.time,cohortId:c.chooseCohort,quantity:c.quantity} as Record<string,string>)[key]||label(x.data.variants.groups.find(g=>fieldKey(g)===key)||{},x.locale)||c.choose
   const choiceValue=(key:string,value:unknown)=>key==='cohortId'?String((Array.isArray(record(x.data.domainExtension.academy).cohorts)?record(x.data.domainExtension.academy).cohorts as Record<string,unknown>[]:[]).find(r=>r.id===value)?.name||c.chooseCohort):display(value,x.locale)
-  async function copy(){try{await navigator.clipboard.writeText(`${x!.data.identity.name}\n${selected.map(([k,v])=>`${choiceLabel(k)}: ${choiceValue(k,v)}`).join('\n')}`)}catch{}}
-  return <div className={styles.decision} data-compact={compact}><div className={styles.decisionTop}><span>{c.selection}</span><Sparkles size={18}/></div><strong className={styles.price}>{price(x.data,x.locale)}</strong><small>{c.review}</small>
+  async function copy(){try{await navigator.clipboard.writeText(`${x!.data.identity.name}\n${selected.map(([k,v])=>`${choiceLabel(k)}: ${choiceValue(k,v)}`).join('\n')}`);setCopyFeedback(c.copied)}catch{setCopyFeedback(c.apiError)}}
+  return <div className={styles.decision} data-compact={compact} aria-busy={x.busy}><div className={styles.decisionTop}><span>{c.selection}</span><Sparkles size={18}/></div><strong className={styles.price}>{price(x.data,x.locale)}</strong><small>{c.review}</small>
     {x.data.classification.masterDomain==='b2c_service_family'?<div className={styles.intentFields}><label>{c.date}<input type="date" value={typeof x.selection.requestedDate==='string'?x.selection.requestedDate:''} onChange={e=>x.setChoice('requestedDate',e.target.value)}/></label><label>{c.time}<input type="time" value={typeof x.selection.requestedTime==='string'?x.selection.requestedTime:''} onChange={e=>x.setChoice('requestedTime',e.target.value)}/></label></div>:null}
     {product?<><VariantChoices/><div className={styles.quantity}><label htmlFor={`quantity-${compact?'opening':'decision'}`}>{c.quantity}</label><div><button type="button" aria-label={`${c.quantity} −`} disabled={x.quantity<=1||x.busy} onClick={()=>x.setQuantity(Math.max(1,x.quantity-1))}><Minus size={16}/></button><input id={`quantity-${compact?'opening':'decision'}`} type="number" min="1" max={Math.max(1,max)} value={x.quantity} disabled={!max||x.busy} onChange={e=>x.setQuantity(Math.min(Math.max(1,max),Math.max(1,Math.floor(Number(e.target.value)||1))))}/><button type="button" aria-label={`${c.quantity} +`} disabled={x.quantity>=max||x.busy} onClick={()=>x.setQuantity(Math.min(max,x.quantity+1))}><Plus size={16}/></button></div></div></>:null}
-    {selected.length?<details className={styles.brief} open={!compact}><summary>{c.selection} · {selected.length}</summary>{selected.map(([k,v])=><div key={k}><span>{choiceLabel(k)}</span><strong>{choiceValue(k,v)}</strong></div>)}<button type="button" onClick={()=>void copy()}><Copy size={14}/>{c.copy}</button></details>:null}
+    {selected.length?<details className={styles.brief} open={!compact}><summary>{c.selection} · {selected.length}</summary>{selected.map(([k,v])=><div key={k}><span>{choiceLabel(k)}</span><strong>{choiceValue(k,v)}</strong></div>)}<button type="button" onClick={()=>void copy()}><Copy size={14}/>{c.copy}</button>{copyFeedback?<p role="status">{copyFeedback}</p>:null}</details>:null}
     {!state.enabled?<p className={styles.actionMessage} role="status">{c[state.reason as keyof typeof c]||c.apiError}</p>:null}
     {x.basketId?<div className={styles.success} role="status"><Check size={18}/><a href={`/angelcare-marketplace/${x.locale}/basket`}>{c.added}</a><a href={`/angelcare-marketplace/${x.locale}/checkout?basket=${encodeURIComponent(x.basketId)}&kind=transactional`}>{c.checkout}<ArrowRight size={16}/></a></div>:<button className={styles.primaryButton} type="button" disabled={!state.enabled||x.busy||x.previewOnly} onClick={()=>void x.act()}>{x.busy?c.busy:product?c.add:c.continue}<ArrowRight size={18}/></button>}
     {product&&!x.basketId?<button className={styles.secondaryButton} type="button" disabled={!state.enabled||x.busy||x.previewOnly} onClick={()=>void x.act('checkout')}>{({fr:'Commander maintenant',en:'Buy now',ar:'اشترِ الآن'})[x.locale]}<ArrowRight size={15}/></button>:null}
-    {x.message?<p className={styles.actionMessage} role="alert">{x.message}</p>:null}
+    {x.message?<p className={styles.actionMessage} role="alert">{x.message}</p>:null}{compact?<OfferInformationExplorer/>:null}
   </div>
 }
 
