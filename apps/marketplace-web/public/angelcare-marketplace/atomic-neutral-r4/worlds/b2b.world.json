@@ -1,0 +1,4282 @@
+{
+  "format": "angelcare-world-package-v1",
+  "packageVersion": 1,
+  "exportedAt": "2026-10-12T01:07:04.607Z",
+  "world": {
+    "name": "B2B · Neutral Organisation R4",
+    "description": "Editable neutral Studio composition. Public fields only; canonical actions, no fabricated content. Pixel comparison pending deployed visual acceptance.",
+    "themeVersion": "4.0.0",
+    "manifest": {
+      "themeKind": "detail",
+      "masterDomain": "b2b_institutional",
+      "doctrineKeys": [
+        "school-managed-programme",
+        "school-staff-reinforcement",
+        "hospitality-kids-programme",
+        "corporate-childcare-benefit",
+        "health-adjacent-programme",
+        "event-venue-programme",
+        "partner-os-plan",
+        "quality-check-assessment",
+        "custom-managed-solution"
+      ],
+      "name": "B2B · Neutral Organisation R4",
+      "templateKey": "ac.neutral.b2b.r4",
+      "themeVersion": "4.0.0",
+      "requiredBindings": [
+        "identity.name",
+        "identity.shortDescription",
+        "media.primary",
+        "identity.description",
+        "media.gallery",
+        "pricing.current",
+        "pricing.label",
+        "pricing.currency",
+        "availability.status",
+        "availability.quantity"
+      ],
+      "optionalBindings": [
+        "b2b.organisationFit",
+        "content.fields",
+        "b2b.deploymentModel",
+        "identity.description",
+        "trust.claims",
+        "relations.recommendations"
+      ],
+      "requiredActions": [
+        "quotation.start"
+      ],
+      "optionalActions": [
+        "quotation.start"
+      ],
+      "requiredWorkflows": [],
+      "requiredCapabilities": [
+        "public-experience-360",
+        "canonical-route",
+        "native-fallback",
+        "world-factory-v3",
+        "truth-firewall",
+        "capability-negotiation",
+        "b2b-semantic-runtime-v2",
+        "canonical-actions",
+        "quotation-authority",
+        "relation-dynamic-sources",
+        "responsive-runtime",
+        "theme-operability-v1",
+        "declarative-conditions",
+        "ui-led-theme-operation",
+        "fr-en-ar-rtl",
+        "theme-token-contract"
+      ],
+      "slots": [
+        {
+          "blockId": "neutral-b2b-world-r4",
+          "slot": "hero",
+          "confidence": 1,
+          "reason": "World Factory hero: operator-override",
+          "semanticRole": "hero",
+          "supplementalRoles": [
+            "identity",
+            "media",
+            "pricing",
+            "availability"
+          ],
+          "capabilityKey": "wf:neutral-b2b-world-r4"
+        },
+        {
+          "blockId": "neutral-b2b-01",
+          "slot": "hero",
+          "confidence": 1,
+          "reason": "World Factory hero: operator-override",
+          "semanticRole": "hero",
+          "supplementalRoles": [
+            "identity",
+            "media",
+            "pricing",
+            "availability",
+            "primary_conversion"
+          ],
+          "capabilityKey": "wf:neutral-b2b-01"
+        },
+        {
+          "blockId": "neutral-b2b-02",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory b2b_fit: operator-override",
+          "semanticRole": "b2b_fit",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:neutral-b2b-02"
+        },
+        {
+          "blockId": "neutral-b2b-03",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory b2b_programme: operator-override",
+          "semanticRole": "b2b_programme",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:neutral-b2b-03"
+        },
+        {
+          "blockId": "neutral-b2b-04",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory b2b_deployment: operator-override",
+          "semanticRole": "b2b_deployment",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:neutral-b2b-04"
+        },
+        {
+          "blockId": "neutral-b2b-05",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory specifications: operator-override",
+          "semanticRole": "specifications",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:neutral-b2b-05"
+        },
+        {
+          "blockId": "neutral-b2b-06",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory editorial: operator-override",
+          "semanticRole": "editorial",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:neutral-b2b-06"
+        },
+        {
+          "blockId": "neutral-b2b-07",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory specifications: operator-override",
+          "semanticRole": "specifications",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:neutral-b2b-07"
+        },
+        {
+          "blockId": "neutral-b2b-08",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory editorial: operator-override",
+          "semanticRole": "editorial",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:neutral-b2b-08"
+        },
+        {
+          "blockId": "neutral-b2b-09",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory faq: operator-override",
+          "semanticRole": "faq",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:neutral-b2b-09"
+        },
+        {
+          "blockId": "neutral-b2b-10",
+          "slot": "trust",
+          "confidence": 1,
+          "reason": "World Factory trust: operator-override",
+          "semanticRole": "trust",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:neutral-b2b-10"
+        },
+        {
+          "blockId": "neutral-b2b-11",
+          "slot": "inventory_items",
+          "confidence": 1,
+          "reason": "World Factory recommendations: operator-override",
+          "semanticRole": "recommendations",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:neutral-b2b-11"
+        },
+        {
+          "blockId": "neutral-b2b-12",
+          "slot": "final_cta",
+          "confidence": 1,
+          "reason": "World Factory primary_conversion: operator-override",
+          "semanticRole": "primary_conversion",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:neutral-b2b-12"
+        }
+      ],
+      "structuralFingerprint": "b2a67a3098dee208c5ebcd1c222cc0d4",
+      "visualFingerprint": "b2a67a3098dee208c5ebcd1c222cc0d4",
+      "factory": {
+        "engineVersion": 3,
+        "schemaVersion": 3,
+        "compilerProfile": "pea-world-factory-2030-operability-v3",
+        "candidateFingerprint": "02eb2bc9bf5349f10fcbead10c4dc715",
+        "documentFingerprint": "c8c0dbba80fb10265e3a0e54996619c2",
+        "compiledFingerprint": "b2a67a3098dee208c5ebcd1c222cc0d4",
+        "themeKind": "detail",
+        "masterDomain": "b2b_institutional",
+        "doctrineKeys": [
+          "school-managed-programme",
+          "school-staff-reinforcement",
+          "hospitality-kids-programme",
+          "corporate-childcare-benefit",
+          "health-adjacent-programme",
+          "event-venue-programme",
+          "partner-os-plan",
+          "quality-check-assessment",
+          "custom-managed-solution"
+        ],
+        "storefrontKeys": [],
+        "strictVisualFidelity": false,
+        "source": {
+          "kind": "package",
+          "label": "B2B · Neutral Organisation R4",
+          "sourceFingerprint": "c8c0dbba80fb10265e3a0e54996619c2",
+          "safeToApply": true,
+          "upstreamBlockingCodes": [],
+          "upstreamReviewCodes": [
+            "PIXEL_COMPARISON_PENDING"
+          ],
+          "compilerFingerprint": "631e2a37a469e3a71922a86fcb3fe90b",
+          "importedAt": "2026-10-12T01:07:04.582Z"
+        },
+        "visualReferences": [],
+        "semanticSlots": [
+          {
+            "blockId": "neutral-b2b-world-r4",
+            "blockType": "ac_b2b_world",
+            "path": "root.0",
+            "role": "hero",
+            "supplementalRoles": [
+              "identity",
+              "media",
+              "pricing",
+              "availability"
+            ],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": true
+          },
+          {
+            "blockId": "neutral-b2b-01",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.0",
+            "role": "hero",
+            "supplementalRoles": [
+              "identity",
+              "media",
+              "pricing",
+              "availability",
+              "primary_conversion"
+            ],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": true
+          },
+          {
+            "blockId": "neutral-b2b-02",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.1",
+            "role": "b2b_fit",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "neutral-b2b-03",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.2",
+            "role": "b2b_programme",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "neutral-b2b-04",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.3",
+            "role": "b2b_deployment",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "neutral-b2b-05",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.4",
+            "role": "specifications",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "neutral-b2b-06",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.5",
+            "role": "editorial",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "neutral-b2b-07",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.6",
+            "role": "specifications",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "neutral-b2b-08",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.7",
+            "role": "editorial",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "neutral-b2b-09",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.8",
+            "role": "faq",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "neutral-b2b-10",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.9",
+            "role": "trust",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "neutral-b2b-11",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.10",
+            "role": "recommendations",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "neutral-b2b-12",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.11",
+            "role": "primary_conversion",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": true
+          }
+        ],
+        "bindingPlan": [
+          {
+            "blockId": "neutral-b2b-world-r4",
+            "role": "hero",
+            "bindingKey": "identity.name",
+            "targetKey": "title",
+            "authority": "Category-Native / Catalog",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Public-safe binding · Category-Native / Catalog",
+            "manualOverride": false,
+            "missingPolicy": "hide_block"
+          },
+          {
+            "blockId": "neutral-b2b-world-r4",
+            "role": "hero",
+            "bindingKey": "identity.shortDescription",
+            "targetKey": "lead",
+            "authority": "Category-Native / Catalog",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Public-safe binding · Category-Native / Catalog",
+            "manualOverride": false,
+            "missingPolicy": "hide_block"
+          },
+          {
+            "blockId": "neutral-b2b-world-r4",
+            "role": "hero",
+            "bindingKey": "media.primary",
+            "targetKey": "mediaUrl",
+            "authority": "Catalog Media",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Public-safe binding · Catalog Media",
+            "manualOverride": false,
+            "missingPolicy": "hide_block"
+          },
+          {
+            "blockId": "neutral-b2b-world-r4",
+            "role": "identity",
+            "bindingKey": "identity.name",
+            "targetKey": "title",
+            "authority": "Category-Native / Catalog",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Public-safe binding · Category-Native / Catalog",
+            "manualOverride": false,
+            "missingPolicy": "hide_block"
+          },
+          {
+            "blockId": "neutral-b2b-world-r4",
+            "role": "identity",
+            "bindingKey": "identity.shortDescription",
+            "targetKey": "lead",
+            "authority": "Category-Native / Catalog",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Public-safe binding · Category-Native / Catalog",
+            "manualOverride": false,
+            "missingPolicy": "hide_block"
+          },
+          {
+            "blockId": "neutral-b2b-world-r4",
+            "role": "identity",
+            "bindingKey": "identity.description",
+            "targetKey": "body",
+            "authority": "Category-Native / Catalog",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Public-safe binding · Category-Native / Catalog",
+            "manualOverride": false,
+            "missingPolicy": "hide_block"
+          },
+          {
+            "blockId": "neutral-b2b-world-r4",
+            "role": "media",
+            "bindingKey": "media.primary",
+            "targetKey": "mediaUrl",
+            "authority": "Catalog Media",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Public-safe binding · Catalog Media",
+            "manualOverride": false,
+            "missingPolicy": "hide_block"
+          },
+          {
+            "blockId": "neutral-b2b-world-r4",
+            "role": "media",
+            "bindingKey": "media.gallery",
+            "targetKey": "items",
+            "authority": "Catalog Media",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Public-safe binding · Catalog Media",
+            "manualOverride": false,
+            "missingPolicy": "hide_block"
+          },
+          {
+            "blockId": "neutral-b2b-world-r4",
+            "role": "pricing",
+            "bindingKey": "pricing.current",
+            "targetKey": "title",
+            "authority": "Catalog / Finance pricing",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Public-safe binding · Catalog / Finance pricing",
+            "manualOverride": false,
+            "missingPolicy": "hide_block"
+          },
+          {
+            "blockId": "neutral-b2b-world-r4",
+            "role": "pricing",
+            "bindingKey": "pricing.label",
+            "targetKey": "lead",
+            "authority": "Catalog / Finance pricing",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Public-safe binding · Catalog / Finance pricing",
+            "manualOverride": false,
+            "missingPolicy": "hide_block"
+          },
+          {
+            "blockId": "neutral-b2b-world-r4",
+            "role": "pricing",
+            "bindingKey": "pricing.currency",
+            "targetKey": "body",
+            "authority": "Catalog / Finance pricing",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Public-safe binding · Catalog / Finance pricing",
+            "manualOverride": false,
+            "missingPolicy": "hide_block"
+          },
+          {
+            "blockId": "neutral-b2b-world-r4",
+            "role": "availability",
+            "bindingKey": "availability.status",
+            "targetKey": "title",
+            "authority": "Category-Native availability",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Public-safe binding · Category-Native availability",
+            "manualOverride": false,
+            "missingPolicy": "hide_block"
+          },
+          {
+            "blockId": "neutral-b2b-world-r4",
+            "role": "availability",
+            "bindingKey": "availability.quantity",
+            "targetKey": "lead",
+            "authority": "Category-Native availability",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Public-safe binding · Category-Native availability",
+            "manualOverride": false,
+            "missingPolicy": "hide_block"
+          },
+          {
+            "blockId": "neutral-b2b-01",
+            "role": "hero",
+            "bindingKey": "identity.name",
+            "targetKey": "title",
+            "authority": "Category-Native / Catalog",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "neutral-b2b-02",
+            "role": "b2b_fit",
+            "bindingKey": "b2b.organisationFit",
+            "targetKey": "items",
+            "authority": "B2B Organization360",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "neutral-b2b-03",
+            "role": "b2b_programme",
+            "bindingKey": "content.fields",
+            "targetKey": "items",
+            "authority": "Experience Schema public_visible",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "neutral-b2b-04",
+            "role": "b2b_deployment",
+            "bindingKey": "b2b.deploymentModel",
+            "targetKey": "items",
+            "authority": "B2B programme authority",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "neutral-b2b-05",
+            "role": "specifications",
+            "bindingKey": "content.fields",
+            "targetKey": "items",
+            "authority": "Experience Schema public_visible",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "neutral-b2b-06",
+            "role": "editorial",
+            "bindingKey": "identity.description",
+            "targetKey": "title",
+            "authority": "Category-Native / Catalog",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "neutral-b2b-07",
+            "role": "specifications",
+            "bindingKey": "content.fields",
+            "targetKey": "items",
+            "authority": "Experience Schema public_visible",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "neutral-b2b-09",
+            "role": "faq",
+            "bindingKey": "content.fields",
+            "targetKey": "items",
+            "authority": "Experience Schema public_visible",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "neutral-b2b-10",
+            "role": "trust",
+            "bindingKey": "trust.claims",
+            "targetKey": "items",
+            "authority": "Trust authority",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "neutral-b2b-11",
+            "role": "recommendations",
+            "bindingKey": "relations.recommendations",
+            "targetKey": "items",
+            "authority": "Catalog Discovery",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "neutral-b2b-12",
+            "role": "primary_conversion",
+            "bindingKey": "identity.name",
+            "targetKey": "title",
+            "authority": "Category-Native / Catalog",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          }
+        ],
+        "actionPlan": [
+          {
+            "blockId": "neutral-b2b-01",
+            "role": "hero",
+            "intent": "primary",
+            "actionId": "quotation.start",
+            "workflowId": null,
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "canonicalEngine": "Conversion Universe / quote basket",
+            "targetMode": "current_item",
+            "targetSourceId": "catalog.items",
+            "reason": "Canonical action · Conversion Universe / quote basket",
+            "manualOverride": false
+          },
+          {
+            "blockId": "neutral-b2b-12",
+            "role": "primary_conversion",
+            "intent": "secondary",
+            "actionId": "quotation.start",
+            "workflowId": null,
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "canonicalEngine": "Conversion Universe / quote basket",
+            "targetMode": "current_item",
+            "targetSourceId": "catalog.items",
+            "reason": "Operator action override.",
+            "manualOverride": true
+          },
+          {
+            "blockId": "neutral-b2b-12",
+            "role": "primary_conversion",
+            "intent": "secondary",
+            "actionId": "quotation.start",
+            "workflowId": null,
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "canonicalEngine": "Conversion Universe / quote basket",
+            "targetMode": "current_item",
+            "targetSourceId": "catalog.items",
+            "reason": "Operator action override.",
+            "manualOverride": true
+          }
+        ],
+        "relationPlan": [
+          {
+            "blockId": "neutral-b2b-11",
+            "role": "recommendations",
+            "strategy": "similar_items",
+            "sourceId": "catalog.items",
+            "anchorMode": "current_item",
+            "limit": 12,
+            "emptyPolicy": "preserve_static",
+            "status": "RESOLVED"
+          }
+        ],
+        "truthRequirements": [
+          {
+            "key": "promotion",
+            "blockId": "neutral-b2b-world-r4",
+            "required": false,
+            "status": "NOT_SHOWN",
+            "authority": null,
+            "evidence": "Promotion claim detected"
+          },
+          {
+            "key": "scarcity",
+            "blockId": "neutral-b2b-world-r4",
+            "required": false,
+            "status": "NOT_SHOWN",
+            "authority": null,
+            "evidence": "Scarcity language detected"
+          },
+          {
+            "key": "rating",
+            "blockId": "__world__",
+            "required": false,
+            "status": "NOT_SHOWN",
+            "authority": null,
+            "evidence": "Rating/review language detected"
+          },
+          {
+            "key": "certification",
+            "blockId": "neutral-b2b-world-r4",
+            "required": false,
+            "status": "NOT_SHOWN",
+            "authority": null,
+            "evidence": "Certification language detected"
+          },
+          {
+            "key": "pricing",
+            "blockId": "neutral-b2b-world-r4",
+            "required": false,
+            "status": "NOT_SHOWN",
+            "authority": null,
+            "evidence": "Pricing language detected"
+          },
+          {
+            "key": "availability",
+            "blockId": "neutral-b2b-world-r4",
+            "required": false,
+            "status": "NOT_SHOWN",
+            "authority": null,
+            "evidence": "Availability language detected"
+          },
+          {
+            "key": "trust",
+            "blockId": "neutral-b2b-10",
+            "required": false,
+            "status": "NOT_SHOWN",
+            "authority": null,
+            "evidence": "Trust language detected"
+          }
+        ],
+        "responsive": {
+          "nativeDesktop": true,
+          "nativeMobile": true,
+          "responsiveHints": 12,
+          "breakpointHints": 36,
+          "horizontalOverflowRisk": false,
+          "fixedWidthEvidence": [],
+          "notes": [
+            "Responsive metadata detected.",
+            "No obvious fixed-width overflow evidence."
+          ]
+        },
+        "capabilities": [
+          {
+            "capability": "b2b-semantic-runtime-v2",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Studio B2B Semantic Runtime V2",
+            "detail": "Capability supported by installed canonical runtime."
+          },
+          {
+            "capability": "canonical-actions",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Studio Action Registry",
+            "detail": "Capability supported by installed canonical runtime."
+          },
+          {
+            "capability": "canonical-route",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Marketplace route/source registry",
+            "detail": "Capability supported by installed canonical runtime."
+          },
+          {
+            "capability": "native-fallback",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Category-Native / Public Experience runtime",
+            "detail": "Capability supported by installed canonical runtime."
+          },
+          {
+            "capability": "public-experience-360",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "PublicExperience360",
+            "detail": "Capability supported by installed canonical runtime."
+          },
+          {
+            "capability": "quotation-authority",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Conversion Universe",
+            "detail": "Capability supported by installed canonical runtime."
+          },
+          {
+            "capability": "relation-dynamic-sources",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Studio Dynamic Source / Catalog Relations",
+            "detail": "Capability supported by installed canonical runtime."
+          },
+          {
+            "capability": "responsive-runtime",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Studio public runtime",
+            "detail": "Capability supported by installed canonical runtime."
+          },
+          {
+            "capability": "truth-firewall",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Public Experience Truth Firewall",
+            "detail": "Capability supported by installed canonical runtime."
+          },
+          {
+            "capability": "theme-operability-v1",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "World Factory 2030 Operability Kernel",
+            "detail": "Capability supported by installed 2030 theme operating kernel."
+          },
+          {
+            "capability": "declarative-conditions",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Studio Published Runtime",
+            "detail": "Capability supported by installed 2030 theme operating kernel."
+          },
+          {
+            "capability": "ui-led-theme-operation",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Public Experience Authority / World Factory",
+            "detail": "Capability supported by installed 2030 theme operating kernel."
+          },
+          {
+            "capability": "fr-en-ar-rtl",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Studio Published Runtime",
+            "detail": "Capability supported by installed 2030 theme operating kernel."
+          },
+          {
+            "capability": "theme-token-contract",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Studio Design Runtime",
+            "detail": "Capability supported by installed 2030 theme operating kernel."
+          }
+        ],
+        "operability": {
+          "version": 1,
+          "density": null,
+          "blockCapabilities": [
+            {
+              "blockId": "neutral-b2b-world-r4",
+              "blockType": "ac_b2b_world",
+              "role": "hero",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": true,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "media",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility",
+                "seo"
+              ]
+            },
+            {
+              "blockId": "neutral-b2b-01",
+              "blockType": "atomic_offer_section",
+              "role": "hero",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": true,
+              "acceptsActions": true,
+              "acceptsChildren": false,
+              "acceptsRepeaters": false,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "media",
+                "actions",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility",
+                "seo"
+              ]
+            },
+            {
+              "blockId": "neutral-b2b-02",
+              "blockType": "atomic_offer_section",
+              "role": "b2b_fit",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "neutral-b2b-03",
+              "blockType": "atomic_offer_section",
+              "role": "b2b_programme",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "neutral-b2b-04",
+              "blockType": "atomic_offer_section",
+              "role": "b2b_deployment",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "neutral-b2b-05",
+              "blockType": "atomic_offer_section",
+              "role": "specifications",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "neutral-b2b-06",
+              "blockType": "atomic_offer_section",
+              "role": "editorial",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": true,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": false,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "media",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility",
+                "seo"
+              ]
+            },
+            {
+              "blockId": "neutral-b2b-07",
+              "blockType": "atomic_offer_section",
+              "role": "specifications",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "neutral-b2b-08",
+              "blockType": "atomic_offer_section",
+              "role": "editorial",
+              "acceptsBindings": false,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": true,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": false,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "media",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility",
+                "seo"
+              ]
+            },
+            {
+              "blockId": "neutral-b2b-09",
+              "blockType": "atomic_offer_section",
+              "role": "faq",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility",
+                "seo"
+              ]
+            },
+            {
+              "blockId": "neutral-b2b-10",
+              "blockType": "atomic_offer_section",
+              "role": "trust",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "neutral-b2b-11",
+              "blockType": "atomic_offer_section",
+              "role": "recommendations",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": true,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [
+                "catalog.items"
+              ],
+              "merchandisingModes": [
+                "automatic",
+                "curated",
+                "manual",
+                "hybrid"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "neutral-b2b-12",
+              "blockType": "atomic_offer_section",
+              "role": "primary_conversion",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": true,
+              "acceptsChildren": false,
+              "acceptsRepeaters": false,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "actions",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            }
+          ],
+          "conditions": [],
+          "repeaters": [
+            {
+              "blockId": "neutral-b2b-world-r4",
+              "targetKey": "items",
+              "source": "binding",
+              "bindingKey": "media.gallery",
+              "sourceId": null,
+              "strategy": null,
+              "limit": 24,
+              "sort": "canonical",
+              "emptyPolicy": "hide_block",
+              "itemVariant": null
+            },
+            {
+              "blockId": "neutral-b2b-02",
+              "targetKey": "items",
+              "source": "binding",
+              "bindingKey": "b2b.organisationFit",
+              "sourceId": null,
+              "strategy": null,
+              "limit": 24,
+              "sort": "canonical",
+              "emptyPolicy": "omit",
+              "itemVariant": null
+            },
+            {
+              "blockId": "neutral-b2b-03",
+              "targetKey": "items",
+              "source": "binding",
+              "bindingKey": "content.fields",
+              "sourceId": null,
+              "strategy": null,
+              "limit": 24,
+              "sort": "canonical",
+              "emptyPolicy": "omit",
+              "itemVariant": null
+            },
+            {
+              "blockId": "neutral-b2b-04",
+              "targetKey": "items",
+              "source": "binding",
+              "bindingKey": "b2b.deploymentModel",
+              "sourceId": null,
+              "strategy": null,
+              "limit": 24,
+              "sort": "canonical",
+              "emptyPolicy": "omit",
+              "itemVariant": null
+            },
+            {
+              "blockId": "neutral-b2b-05",
+              "targetKey": "items",
+              "source": "binding",
+              "bindingKey": "content.fields",
+              "sourceId": null,
+              "strategy": null,
+              "limit": 24,
+              "sort": "canonical",
+              "emptyPolicy": "omit",
+              "itemVariant": null
+            },
+            {
+              "blockId": "neutral-b2b-07",
+              "targetKey": "items",
+              "source": "binding",
+              "bindingKey": "content.fields",
+              "sourceId": null,
+              "strategy": null,
+              "limit": 24,
+              "sort": "canonical",
+              "emptyPolicy": "omit",
+              "itemVariant": null
+            },
+            {
+              "blockId": "neutral-b2b-09",
+              "targetKey": "items",
+              "source": "binding",
+              "bindingKey": "content.fields",
+              "sourceId": null,
+              "strategy": null,
+              "limit": 24,
+              "sort": "canonical",
+              "emptyPolicy": "omit",
+              "itemVariant": null
+            },
+            {
+              "blockId": "neutral-b2b-10",
+              "targetKey": "items",
+              "source": "binding",
+              "bindingKey": "trust.claims",
+              "sourceId": null,
+              "strategy": null,
+              "limit": 24,
+              "sort": "canonical",
+              "emptyPolicy": "omit",
+              "itemVariant": null
+            },
+            {
+              "blockId": "neutral-b2b-11",
+              "targetKey": "items",
+              "source": "dynamic_source",
+              "bindingKey": null,
+              "sourceId": "catalog.items",
+              "strategy": "similar_items",
+              "limit": 12,
+              "sort": "recommended",
+              "emptyPolicy": "preserve_static",
+              "itemVariant": null
+            }
+          ],
+          "media": [
+            {
+              "blockId": "neutral-b2b-world-r4",
+              "targetKey": "mediaUrl",
+              "kind": "primary",
+              "source": "binding",
+              "bindingKey": "media.primary",
+              "assetRole": null,
+              "required": true,
+              "presentation": {
+                "fit": "cover",
+                "position": "50% 50%",
+                "aspectRatio": null,
+                "overlay": null,
+                "focalPoint": null
+              },
+              "responsive": {
+                "desktop": null,
+                "tablet": null,
+                "mobile": null
+              }
+            },
+            {
+              "blockId": "neutral-b2b-world-r4",
+              "targetKey": "mediaUrl",
+              "kind": "primary",
+              "source": "binding",
+              "bindingKey": "media.primary",
+              "assetRole": null,
+              "required": true,
+              "presentation": {
+                "fit": "cover",
+                "position": "50% 50%",
+                "aspectRatio": null,
+                "overlay": null,
+                "focalPoint": null
+              },
+              "responsive": {
+                "desktop": null,
+                "tablet": null,
+                "mobile": null
+              }
+            },
+            {
+              "blockId": "neutral-b2b-world-r4",
+              "targetKey": "items",
+              "kind": "gallery",
+              "source": "binding",
+              "bindingKey": "media.gallery",
+              "assetRole": null,
+              "required": true,
+              "presentation": {
+                "fit": "cover",
+                "position": "50% 50%",
+                "aspectRatio": null,
+                "overlay": null,
+                "focalPoint": null
+              },
+              "responsive": {
+                "desktop": null,
+                "tablet": null,
+                "mobile": null
+              }
+            }
+          ],
+          "interactions": [
+            {
+              "blockId": "neutral-b2b-09",
+              "kind": "accordion",
+              "status": "SUPPORTED",
+              "configuration": {}
+            },
+            {
+              "blockId": "neutral-b2b-12",
+              "kind": "sticky_conversion",
+              "status": "SUPPORTED",
+              "configuration": {}
+            }
+          ],
+          "localization": {
+            "defaultLocale": "fr",
+            "locales": [
+              "fr",
+              "en",
+              "ar"
+            ],
+            "rtlLocales": [
+              "ar"
+            ],
+            "themeStrings": "localized-map",
+            "fallback": "default-locale",
+            "missingTranslation": "warn"
+          },
+          "tokens": {
+            "colors": {},
+            "typography": {},
+            "spacing": {},
+            "radii": {},
+            "shadows": {},
+            "layout": {},
+            "motion": {}
+          },
+          "assets": [],
+          "performance": {
+            "maxRootBlocks": 40,
+            "maxTotalBlocks": 160,
+            "maxDynamicSources": 24,
+            "maxAboveFoldMedia": 6,
+            "maxMediaAssets": 80,
+            "maxDocumentBytes": 1500000,
+            "maxInteractions": 40
+          },
+          "shell": {
+            "mode": "marketplace_global",
+            "allowGlobalHeaderOverride": false,
+            "allowGlobalFooterOverride": false,
+            "allowGlobalNavigationOverride": false
+          },
+          "editing": {
+            "uiLed": true,
+            "rawJsonRequired": false,
+            "allowBlockMove": true,
+            "allowBlockDuplicate": true,
+            "allowBlockHide": true,
+            "allowBindingChange": true,
+            "allowActionChange": true,
+            "allowMediaReplace": true,
+            "allowDesignChange": true,
+            "allowResponsiveChange": true,
+            "allowConditionChange": true,
+            "immutableBusinessTruth": true
+          },
+          "inspector": {
+            "generatedFromCapabilities": true,
+            "hideUnsupportedFields": true,
+            "showAuthorityOwnership": true,
+            "showInheritance": true
+          }
+        },
+        "certification": {
+          "level": "READY",
+          "lifecycle": "CERTIFIED",
+          "productionEligible": true,
+          "coverage": {
+            "semantic": 100,
+            "binding": 100,
+            "action": 100,
+            "truth": 100,
+            "responsive": 100,
+            "visual": 0,
+            "overall": 83
+          },
+          "gates": [
+            {
+              "id": "source-safety",
+              "label": "Source sanitized",
+              "state": "PASS",
+              "critical": true,
+              "detail": "Universal Import candidate has no upstream blocker."
+            },
+            {
+              "id": "domain",
+              "label": "Master domain / doctrines",
+              "state": "PASS",
+              "critical": true,
+              "detail": "b2b_institutional · 9 doctrine(s)"
+            },
+            {
+              "id": "storefront-shell",
+              "label": "Global shell authority",
+              "state": "PASS",
+              "critical": true,
+              "detail": "Global AngelCare header/navigation/footer remain outside the imported Storefront World."
+            },
+            {
+              "id": "semantic",
+              "label": "Semantic anatomy",
+              "state": "PASS",
+              "critical": true,
+              "detail": "Required roles covered (100%)."
+            },
+            {
+              "id": "bindings",
+              "label": "Canonical binding coverage",
+              "state": "PASS",
+              "critical": true,
+              "detail": "15/15 required bindings resolved."
+            },
+            {
+              "id": "actions",
+              "label": "Canonical action coverage",
+              "state": "PASS",
+              "critical": true,
+              "detail": "2/2 required actions resolved; current-item targets supported for catalog actions."
+            },
+            {
+              "id": "relations",
+              "label": "Contextual relation sources",
+              "state": "PASS",
+              "critical": false,
+              "detail": "1 relation rail(s) compiled with current-item anchor."
+            },
+            {
+              "id": "truth",
+              "label": "Truth Firewall contract",
+              "state": "PASS",
+              "critical": true,
+              "detail": "Commercial claims are classified for Truth Firewall enforcement."
+            },
+            {
+              "id": "responsive",
+              "label": "Responsive contract",
+              "state": "PASS",
+              "critical": true,
+              "detail": "Responsive metadata detected. No obvious fixed-width overflow evidence."
+            },
+            {
+              "id": "visual",
+              "label": "Approved desktop/mobile reference",
+              "state": "PASS",
+              "critical": false,
+              "detail": "Desktop + mobile reference evidence approved."
+            },
+            {
+              "id": "capabilities",
+              "label": "Capability negotiation",
+              "state": "PASS",
+              "critical": true,
+              "detail": "14 requested runtime capabilities negotiated."
+            },
+            {
+              "id": "operability",
+              "label": "2030 no-code operability",
+              "state": "PASS",
+              "critical": true,
+              "detail": "13 block capability contracts · 9 repeaters · 3 media contracts · FR/EN/AR + RTL."
+            },
+            {
+              "id": "fallback",
+              "label": "Native fallback",
+              "state": "PASS",
+              "critical": true,
+              "detail": "Category-Native/native fallback remains mandatory."
+            }
+          ],
+          "blockers": [],
+          "warnings": [],
+          "certifiedAt": "2026-10-12T01:07:04.582Z"
+        },
+        "compatibility": {
+          "minimumRuntime": "pea-v1",
+          "maximumRuntime": null,
+          "forwardPolicy": "capability-negotiation",
+          "unknownFields": "preserve",
+          "nativeFallback": true,
+          "schemaVersion": 3,
+          "compilerProfile": "pea-world-factory-2030-operability-v3"
+        },
+        "revision": {
+          "worldKey": "ac.neutral.b2b.r4",
+          "revision": 4,
+          "supersedes": null,
+          "immutableAfterCertification": true
+        },
+        "overrides": {
+          "roleOverrides": {
+            "neutral-b2b-world-r4": "hero",
+            "neutral-b2b-01": "hero",
+            "neutral-b2b-02": "b2b_fit",
+            "neutral-b2b-03": "b2b_programme",
+            "neutral-b2b-04": "b2b_deployment",
+            "neutral-b2b-05": "specifications",
+            "neutral-b2b-06": "editorial",
+            "neutral-b2b-07": "specifications",
+            "neutral-b2b-08": "editorial",
+            "neutral-b2b-09": "faq",
+            "neutral-b2b-10": "trust",
+            "neutral-b2b-11": "recommendations",
+            "neutral-b2b-12": "primary_conversion"
+          },
+          "supplementalRoleOverrides": {
+            "neutral-b2b-world-r4": [
+              "identity",
+              "media",
+              "pricing",
+              "availability"
+            ],
+            "neutral-b2b-01": [
+              "identity",
+              "media",
+              "pricing",
+              "availability",
+              "primary_conversion"
+            ]
+          },
+          "bindingOverrides": [],
+          "actionOverrides": [
+            {
+              "blockId": "neutral-b2b-12",
+              "intent": "secondary",
+              "actionId": "quotation.start",
+              "targetMode": "current_item"
+            }
+          ],
+          "note": null
+        },
+        "provenance": {
+          "createdBy": "WORLD_FACTORY",
+          "manualOverrides": 16,
+          "notes": [
+            "No hardcoded production theme requirement.",
+            "UI-led import/assign/update contract active.",
+            "No foreign code execution.",
+            "Business authorities remain canonical.",
+            "Inference is reviewable and versioned.",
+            "Certified revisions are immutable; changes create a new revision."
+          ]
+        }
+      }
+    },
+    "factory": {
+      "engineVersion": 3,
+      "schemaVersion": 3,
+      "compilerProfile": "pea-world-factory-2030-operability-v3",
+      "candidateFingerprint": "02eb2bc9bf5349f10fcbead10c4dc715",
+      "documentFingerprint": "c8c0dbba80fb10265e3a0e54996619c2",
+      "compiledFingerprint": "b2a67a3098dee208c5ebcd1c222cc0d4",
+      "themeKind": "detail",
+      "masterDomain": "b2b_institutional",
+      "doctrineKeys": [
+        "school-managed-programme",
+        "school-staff-reinforcement",
+        "hospitality-kids-programme",
+        "corporate-childcare-benefit",
+        "health-adjacent-programme",
+        "event-venue-programme",
+        "partner-os-plan",
+        "quality-check-assessment",
+        "custom-managed-solution"
+      ],
+      "storefrontKeys": [],
+      "strictVisualFidelity": false,
+      "source": {
+        "kind": "package",
+        "label": "B2B · Neutral Organisation R4",
+        "sourceFingerprint": "c8c0dbba80fb10265e3a0e54996619c2",
+        "safeToApply": true,
+        "upstreamBlockingCodes": [],
+        "upstreamReviewCodes": [
+          "PIXEL_COMPARISON_PENDING"
+        ],
+        "compilerFingerprint": "631e2a37a469e3a71922a86fcb3fe90b",
+        "importedAt": "2026-10-12T01:07:04.582Z"
+      },
+      "visualReferences": [],
+      "semanticSlots": [
+        {
+          "blockId": "neutral-b2b-world-r4",
+          "blockType": "ac_b2b_world",
+          "path": "root.0",
+          "role": "hero",
+          "supplementalRoles": [
+            "identity",
+            "media",
+            "pricing",
+            "availability"
+          ],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": true
+        },
+        {
+          "blockId": "neutral-b2b-01",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.0",
+          "role": "hero",
+          "supplementalRoles": [
+            "identity",
+            "media",
+            "pricing",
+            "availability",
+            "primary_conversion"
+          ],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": true
+        },
+        {
+          "blockId": "neutral-b2b-02",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.1",
+          "role": "b2b_fit",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "neutral-b2b-03",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.2",
+          "role": "b2b_programme",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "neutral-b2b-04",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.3",
+          "role": "b2b_deployment",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "neutral-b2b-05",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.4",
+          "role": "specifications",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "neutral-b2b-06",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.5",
+          "role": "editorial",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "neutral-b2b-07",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.6",
+          "role": "specifications",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "neutral-b2b-08",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.7",
+          "role": "editorial",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "neutral-b2b-09",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.8",
+          "role": "faq",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "neutral-b2b-10",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.9",
+          "role": "trust",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "neutral-b2b-11",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.10",
+          "role": "recommendations",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "neutral-b2b-12",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.11",
+          "role": "primary_conversion",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": true
+        }
+      ],
+      "bindingPlan": [
+        {
+          "blockId": "neutral-b2b-world-r4",
+          "role": "hero",
+          "bindingKey": "identity.name",
+          "targetKey": "title",
+          "authority": "Category-Native / Catalog",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Public-safe binding · Category-Native / Catalog",
+          "manualOverride": false,
+          "missingPolicy": "hide_block"
+        },
+        {
+          "blockId": "neutral-b2b-world-r4",
+          "role": "hero",
+          "bindingKey": "identity.shortDescription",
+          "targetKey": "lead",
+          "authority": "Category-Native / Catalog",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Public-safe binding · Category-Native / Catalog",
+          "manualOverride": false,
+          "missingPolicy": "hide_block"
+        },
+        {
+          "blockId": "neutral-b2b-world-r4",
+          "role": "hero",
+          "bindingKey": "media.primary",
+          "targetKey": "mediaUrl",
+          "authority": "Catalog Media",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Public-safe binding · Catalog Media",
+          "manualOverride": false,
+          "missingPolicy": "hide_block"
+        },
+        {
+          "blockId": "neutral-b2b-world-r4",
+          "role": "identity",
+          "bindingKey": "identity.name",
+          "targetKey": "title",
+          "authority": "Category-Native / Catalog",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Public-safe binding · Category-Native / Catalog",
+          "manualOverride": false,
+          "missingPolicy": "hide_block"
+        },
+        {
+          "blockId": "neutral-b2b-world-r4",
+          "role": "identity",
+          "bindingKey": "identity.shortDescription",
+          "targetKey": "lead",
+          "authority": "Category-Native / Catalog",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Public-safe binding · Category-Native / Catalog",
+          "manualOverride": false,
+          "missingPolicy": "hide_block"
+        },
+        {
+          "blockId": "neutral-b2b-world-r4",
+          "role": "identity",
+          "bindingKey": "identity.description",
+          "targetKey": "body",
+          "authority": "Category-Native / Catalog",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Public-safe binding · Category-Native / Catalog",
+          "manualOverride": false,
+          "missingPolicy": "hide_block"
+        },
+        {
+          "blockId": "neutral-b2b-world-r4",
+          "role": "media",
+          "bindingKey": "media.primary",
+          "targetKey": "mediaUrl",
+          "authority": "Catalog Media",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Public-safe binding · Catalog Media",
+          "manualOverride": false,
+          "missingPolicy": "hide_block"
+        },
+        {
+          "blockId": "neutral-b2b-world-r4",
+          "role": "media",
+          "bindingKey": "media.gallery",
+          "targetKey": "items",
+          "authority": "Catalog Media",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Public-safe binding · Catalog Media",
+          "manualOverride": false,
+          "missingPolicy": "hide_block"
+        },
+        {
+          "blockId": "neutral-b2b-world-r4",
+          "role": "pricing",
+          "bindingKey": "pricing.current",
+          "targetKey": "title",
+          "authority": "Catalog / Finance pricing",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Public-safe binding · Catalog / Finance pricing",
+          "manualOverride": false,
+          "missingPolicy": "hide_block"
+        },
+        {
+          "blockId": "neutral-b2b-world-r4",
+          "role": "pricing",
+          "bindingKey": "pricing.label",
+          "targetKey": "lead",
+          "authority": "Catalog / Finance pricing",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Public-safe binding · Catalog / Finance pricing",
+          "manualOverride": false,
+          "missingPolicy": "hide_block"
+        },
+        {
+          "blockId": "neutral-b2b-world-r4",
+          "role": "pricing",
+          "bindingKey": "pricing.currency",
+          "targetKey": "body",
+          "authority": "Catalog / Finance pricing",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Public-safe binding · Catalog / Finance pricing",
+          "manualOverride": false,
+          "missingPolicy": "hide_block"
+        },
+        {
+          "blockId": "neutral-b2b-world-r4",
+          "role": "availability",
+          "bindingKey": "availability.status",
+          "targetKey": "title",
+          "authority": "Category-Native availability",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Public-safe binding · Category-Native availability",
+          "manualOverride": false,
+          "missingPolicy": "hide_block"
+        },
+        {
+          "blockId": "neutral-b2b-world-r4",
+          "role": "availability",
+          "bindingKey": "availability.quantity",
+          "targetKey": "lead",
+          "authority": "Category-Native availability",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Public-safe binding · Category-Native availability",
+          "manualOverride": false,
+          "missingPolicy": "hide_block"
+        },
+        {
+          "blockId": "neutral-b2b-01",
+          "role": "hero",
+          "bindingKey": "identity.name",
+          "targetKey": "title",
+          "authority": "Category-Native / Catalog",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "neutral-b2b-02",
+          "role": "b2b_fit",
+          "bindingKey": "b2b.organisationFit",
+          "targetKey": "items",
+          "authority": "B2B Organization360",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "neutral-b2b-03",
+          "role": "b2b_programme",
+          "bindingKey": "content.fields",
+          "targetKey": "items",
+          "authority": "Experience Schema public_visible",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "neutral-b2b-04",
+          "role": "b2b_deployment",
+          "bindingKey": "b2b.deploymentModel",
+          "targetKey": "items",
+          "authority": "B2B programme authority",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "neutral-b2b-05",
+          "role": "specifications",
+          "bindingKey": "content.fields",
+          "targetKey": "items",
+          "authority": "Experience Schema public_visible",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "neutral-b2b-06",
+          "role": "editorial",
+          "bindingKey": "identity.description",
+          "targetKey": "title",
+          "authority": "Category-Native / Catalog",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "neutral-b2b-07",
+          "role": "specifications",
+          "bindingKey": "content.fields",
+          "targetKey": "items",
+          "authority": "Experience Schema public_visible",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "neutral-b2b-09",
+          "role": "faq",
+          "bindingKey": "content.fields",
+          "targetKey": "items",
+          "authority": "Experience Schema public_visible",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "neutral-b2b-10",
+          "role": "trust",
+          "bindingKey": "trust.claims",
+          "targetKey": "items",
+          "authority": "Trust authority",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "neutral-b2b-11",
+          "role": "recommendations",
+          "bindingKey": "relations.recommendations",
+          "targetKey": "items",
+          "authority": "Catalog Discovery",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "neutral-b2b-12",
+          "role": "primary_conversion",
+          "bindingKey": "identity.name",
+          "targetKey": "title",
+          "authority": "Category-Native / Catalog",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        }
+      ],
+      "actionPlan": [
+        {
+          "blockId": "neutral-b2b-01",
+          "role": "hero",
+          "intent": "primary",
+          "actionId": "quotation.start",
+          "workflowId": null,
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "canonicalEngine": "Conversion Universe / quote basket",
+          "targetMode": "current_item",
+          "targetSourceId": "catalog.items",
+          "reason": "Canonical action · Conversion Universe / quote basket",
+          "manualOverride": false
+        },
+        {
+          "blockId": "neutral-b2b-12",
+          "role": "primary_conversion",
+          "intent": "secondary",
+          "actionId": "quotation.start",
+          "workflowId": null,
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "canonicalEngine": "Conversion Universe / quote basket",
+          "targetMode": "current_item",
+          "targetSourceId": "catalog.items",
+          "reason": "Operator action override.",
+          "manualOverride": true
+        },
+        {
+          "blockId": "neutral-b2b-12",
+          "role": "primary_conversion",
+          "intent": "secondary",
+          "actionId": "quotation.start",
+          "workflowId": null,
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "canonicalEngine": "Conversion Universe / quote basket",
+          "targetMode": "current_item",
+          "targetSourceId": "catalog.items",
+          "reason": "Operator action override.",
+          "manualOverride": true
+        }
+      ],
+      "relationPlan": [
+        {
+          "blockId": "neutral-b2b-11",
+          "role": "recommendations",
+          "strategy": "similar_items",
+          "sourceId": "catalog.items",
+          "anchorMode": "current_item",
+          "limit": 12,
+          "emptyPolicy": "preserve_static",
+          "status": "RESOLVED"
+        }
+      ],
+      "truthRequirements": [
+        {
+          "key": "promotion",
+          "blockId": "neutral-b2b-world-r4",
+          "required": false,
+          "status": "NOT_SHOWN",
+          "authority": null,
+          "evidence": "Promotion claim detected"
+        },
+        {
+          "key": "scarcity",
+          "blockId": "neutral-b2b-world-r4",
+          "required": false,
+          "status": "NOT_SHOWN",
+          "authority": null,
+          "evidence": "Scarcity language detected"
+        },
+        {
+          "key": "rating",
+          "blockId": "__world__",
+          "required": false,
+          "status": "NOT_SHOWN",
+          "authority": null,
+          "evidence": "Rating/review language detected"
+        },
+        {
+          "key": "certification",
+          "blockId": "neutral-b2b-world-r4",
+          "required": false,
+          "status": "NOT_SHOWN",
+          "authority": null,
+          "evidence": "Certification language detected"
+        },
+        {
+          "key": "pricing",
+          "blockId": "neutral-b2b-world-r4",
+          "required": false,
+          "status": "NOT_SHOWN",
+          "authority": null,
+          "evidence": "Pricing language detected"
+        },
+        {
+          "key": "availability",
+          "blockId": "neutral-b2b-world-r4",
+          "required": false,
+          "status": "NOT_SHOWN",
+          "authority": null,
+          "evidence": "Availability language detected"
+        },
+        {
+          "key": "trust",
+          "blockId": "neutral-b2b-10",
+          "required": false,
+          "status": "NOT_SHOWN",
+          "authority": null,
+          "evidence": "Trust language detected"
+        }
+      ],
+      "responsive": {
+        "nativeDesktop": true,
+        "nativeMobile": true,
+        "responsiveHints": 12,
+        "breakpointHints": 36,
+        "horizontalOverflowRisk": false,
+        "fixedWidthEvidence": [],
+        "notes": [
+          "Responsive metadata detected.",
+          "No obvious fixed-width overflow evidence."
+        ]
+      },
+      "capabilities": [
+        {
+          "capability": "b2b-semantic-runtime-v2",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Studio B2B Semantic Runtime V2",
+          "detail": "Capability supported by installed canonical runtime."
+        },
+        {
+          "capability": "canonical-actions",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Studio Action Registry",
+          "detail": "Capability supported by installed canonical runtime."
+        },
+        {
+          "capability": "canonical-route",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Marketplace route/source registry",
+          "detail": "Capability supported by installed canonical runtime."
+        },
+        {
+          "capability": "native-fallback",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Category-Native / Public Experience runtime",
+          "detail": "Capability supported by installed canonical runtime."
+        },
+        {
+          "capability": "public-experience-360",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "PublicExperience360",
+          "detail": "Capability supported by installed canonical runtime."
+        },
+        {
+          "capability": "quotation-authority",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Conversion Universe",
+          "detail": "Capability supported by installed canonical runtime."
+        },
+        {
+          "capability": "relation-dynamic-sources",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Studio Dynamic Source / Catalog Relations",
+          "detail": "Capability supported by installed canonical runtime."
+        },
+        {
+          "capability": "responsive-runtime",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Studio public runtime",
+          "detail": "Capability supported by installed canonical runtime."
+        },
+        {
+          "capability": "truth-firewall",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Public Experience Truth Firewall",
+          "detail": "Capability supported by installed canonical runtime."
+        },
+        {
+          "capability": "theme-operability-v1",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "World Factory 2030 Operability Kernel",
+          "detail": "Capability supported by installed 2030 theme operating kernel."
+        },
+        {
+          "capability": "declarative-conditions",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Studio Published Runtime",
+          "detail": "Capability supported by installed 2030 theme operating kernel."
+        },
+        {
+          "capability": "ui-led-theme-operation",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Public Experience Authority / World Factory",
+          "detail": "Capability supported by installed 2030 theme operating kernel."
+        },
+        {
+          "capability": "fr-en-ar-rtl",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Studio Published Runtime",
+          "detail": "Capability supported by installed 2030 theme operating kernel."
+        },
+        {
+          "capability": "theme-token-contract",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Studio Design Runtime",
+          "detail": "Capability supported by installed 2030 theme operating kernel."
+        }
+      ],
+      "operability": {
+        "version": 1,
+        "density": null,
+        "blockCapabilities": [
+          {
+            "blockId": "neutral-b2b-world-r4",
+            "blockType": "ac_b2b_world",
+            "role": "hero",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": true,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "media",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility",
+              "seo"
+            ]
+          },
+          {
+            "blockId": "neutral-b2b-01",
+            "blockType": "atomic_offer_section",
+            "role": "hero",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": true,
+            "acceptsActions": true,
+            "acceptsChildren": false,
+            "acceptsRepeaters": false,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "media",
+              "actions",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility",
+              "seo"
+            ]
+          },
+          {
+            "blockId": "neutral-b2b-02",
+            "blockType": "atomic_offer_section",
+            "role": "b2b_fit",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "neutral-b2b-03",
+            "blockType": "atomic_offer_section",
+            "role": "b2b_programme",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "neutral-b2b-04",
+            "blockType": "atomic_offer_section",
+            "role": "b2b_deployment",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "neutral-b2b-05",
+            "blockType": "atomic_offer_section",
+            "role": "specifications",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "neutral-b2b-06",
+            "blockType": "atomic_offer_section",
+            "role": "editorial",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": true,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": false,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "media",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility",
+              "seo"
+            ]
+          },
+          {
+            "blockId": "neutral-b2b-07",
+            "blockType": "atomic_offer_section",
+            "role": "specifications",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "neutral-b2b-08",
+            "blockType": "atomic_offer_section",
+            "role": "editorial",
+            "acceptsBindings": false,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": true,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": false,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "media",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility",
+              "seo"
+            ]
+          },
+          {
+            "blockId": "neutral-b2b-09",
+            "blockType": "atomic_offer_section",
+            "role": "faq",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility",
+              "seo"
+            ]
+          },
+          {
+            "blockId": "neutral-b2b-10",
+            "blockType": "atomic_offer_section",
+            "role": "trust",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "neutral-b2b-11",
+            "blockType": "atomic_offer_section",
+            "role": "recommendations",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": true,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [
+              "catalog.items"
+            ],
+            "merchandisingModes": [
+              "automatic",
+              "curated",
+              "manual",
+              "hybrid"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "neutral-b2b-12",
+            "blockType": "atomic_offer_section",
+            "role": "primary_conversion",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": true,
+            "acceptsChildren": false,
+            "acceptsRepeaters": false,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "actions",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          }
+        ],
+        "conditions": [],
+        "repeaters": [
+          {
+            "blockId": "neutral-b2b-world-r4",
+            "targetKey": "items",
+            "source": "binding",
+            "bindingKey": "media.gallery",
+            "sourceId": null,
+            "strategy": null,
+            "limit": 24,
+            "sort": "canonical",
+            "emptyPolicy": "hide_block",
+            "itemVariant": null
+          },
+          {
+            "blockId": "neutral-b2b-02",
+            "targetKey": "items",
+            "source": "binding",
+            "bindingKey": "b2b.organisationFit",
+            "sourceId": null,
+            "strategy": null,
+            "limit": 24,
+            "sort": "canonical",
+            "emptyPolicy": "omit",
+            "itemVariant": null
+          },
+          {
+            "blockId": "neutral-b2b-03",
+            "targetKey": "items",
+            "source": "binding",
+            "bindingKey": "content.fields",
+            "sourceId": null,
+            "strategy": null,
+            "limit": 24,
+            "sort": "canonical",
+            "emptyPolicy": "omit",
+            "itemVariant": null
+          },
+          {
+            "blockId": "neutral-b2b-04",
+            "targetKey": "items",
+            "source": "binding",
+            "bindingKey": "b2b.deploymentModel",
+            "sourceId": null,
+            "strategy": null,
+            "limit": 24,
+            "sort": "canonical",
+            "emptyPolicy": "omit",
+            "itemVariant": null
+          },
+          {
+            "blockId": "neutral-b2b-05",
+            "targetKey": "items",
+            "source": "binding",
+            "bindingKey": "content.fields",
+            "sourceId": null,
+            "strategy": null,
+            "limit": 24,
+            "sort": "canonical",
+            "emptyPolicy": "omit",
+            "itemVariant": null
+          },
+          {
+            "blockId": "neutral-b2b-07",
+            "targetKey": "items",
+            "source": "binding",
+            "bindingKey": "content.fields",
+            "sourceId": null,
+            "strategy": null,
+            "limit": 24,
+            "sort": "canonical",
+            "emptyPolicy": "omit",
+            "itemVariant": null
+          },
+          {
+            "blockId": "neutral-b2b-09",
+            "targetKey": "items",
+            "source": "binding",
+            "bindingKey": "content.fields",
+            "sourceId": null,
+            "strategy": null,
+            "limit": 24,
+            "sort": "canonical",
+            "emptyPolicy": "omit",
+            "itemVariant": null
+          },
+          {
+            "blockId": "neutral-b2b-10",
+            "targetKey": "items",
+            "source": "binding",
+            "bindingKey": "trust.claims",
+            "sourceId": null,
+            "strategy": null,
+            "limit": 24,
+            "sort": "canonical",
+            "emptyPolicy": "omit",
+            "itemVariant": null
+          },
+          {
+            "blockId": "neutral-b2b-11",
+            "targetKey": "items",
+            "source": "dynamic_source",
+            "bindingKey": null,
+            "sourceId": "catalog.items",
+            "strategy": "similar_items",
+            "limit": 12,
+            "sort": "recommended",
+            "emptyPolicy": "preserve_static",
+            "itemVariant": null
+          }
+        ],
+        "media": [
+          {
+            "blockId": "neutral-b2b-world-r4",
+            "targetKey": "mediaUrl",
+            "kind": "primary",
+            "source": "binding",
+            "bindingKey": "media.primary",
+            "assetRole": null,
+            "required": true,
+            "presentation": {
+              "fit": "cover",
+              "position": "50% 50%",
+              "aspectRatio": null,
+              "overlay": null,
+              "focalPoint": null
+            },
+            "responsive": {
+              "desktop": null,
+              "tablet": null,
+              "mobile": null
+            }
+          },
+          {
+            "blockId": "neutral-b2b-world-r4",
+            "targetKey": "mediaUrl",
+            "kind": "primary",
+            "source": "binding",
+            "bindingKey": "media.primary",
+            "assetRole": null,
+            "required": true,
+            "presentation": {
+              "fit": "cover",
+              "position": "50% 50%",
+              "aspectRatio": null,
+              "overlay": null,
+              "focalPoint": null
+            },
+            "responsive": {
+              "desktop": null,
+              "tablet": null,
+              "mobile": null
+            }
+          },
+          {
+            "blockId": "neutral-b2b-world-r4",
+            "targetKey": "items",
+            "kind": "gallery",
+            "source": "binding",
+            "bindingKey": "media.gallery",
+            "assetRole": null,
+            "required": true,
+            "presentation": {
+              "fit": "cover",
+              "position": "50% 50%",
+              "aspectRatio": null,
+              "overlay": null,
+              "focalPoint": null
+            },
+            "responsive": {
+              "desktop": null,
+              "tablet": null,
+              "mobile": null
+            }
+          }
+        ],
+        "interactions": [
+          {
+            "blockId": "neutral-b2b-09",
+            "kind": "accordion",
+            "status": "SUPPORTED",
+            "configuration": {}
+          },
+          {
+            "blockId": "neutral-b2b-12",
+            "kind": "sticky_conversion",
+            "status": "SUPPORTED",
+            "configuration": {}
+          }
+        ],
+        "localization": {
+          "defaultLocale": "fr",
+          "locales": [
+            "fr",
+            "en",
+            "ar"
+          ],
+          "rtlLocales": [
+            "ar"
+          ],
+          "themeStrings": "localized-map",
+          "fallback": "default-locale",
+          "missingTranslation": "warn"
+        },
+        "tokens": {
+          "colors": {},
+          "typography": {},
+          "spacing": {},
+          "radii": {},
+          "shadows": {},
+          "layout": {},
+          "motion": {}
+        },
+        "assets": [],
+        "performance": {
+          "maxRootBlocks": 40,
+          "maxTotalBlocks": 160,
+          "maxDynamicSources": 24,
+          "maxAboveFoldMedia": 6,
+          "maxMediaAssets": 80,
+          "maxDocumentBytes": 1500000,
+          "maxInteractions": 40
+        },
+        "shell": {
+          "mode": "marketplace_global",
+          "allowGlobalHeaderOverride": false,
+          "allowGlobalFooterOverride": false,
+          "allowGlobalNavigationOverride": false
+        },
+        "editing": {
+          "uiLed": true,
+          "rawJsonRequired": false,
+          "allowBlockMove": true,
+          "allowBlockDuplicate": true,
+          "allowBlockHide": true,
+          "allowBindingChange": true,
+          "allowActionChange": true,
+          "allowMediaReplace": true,
+          "allowDesignChange": true,
+          "allowResponsiveChange": true,
+          "allowConditionChange": true,
+          "immutableBusinessTruth": true
+        },
+        "inspector": {
+          "generatedFromCapabilities": true,
+          "hideUnsupportedFields": true,
+          "showAuthorityOwnership": true,
+          "showInheritance": true
+        }
+      },
+      "certification": {
+        "level": "READY",
+        "lifecycle": "CERTIFIED",
+        "productionEligible": true,
+        "coverage": {
+          "semantic": 100,
+          "binding": 100,
+          "action": 100,
+          "truth": 100,
+          "responsive": 100,
+          "visual": 0,
+          "overall": 83
+        },
+        "gates": [
+          {
+            "id": "source-safety",
+            "label": "Source sanitized",
+            "state": "PASS",
+            "critical": true,
+            "detail": "Universal Import candidate has no upstream blocker."
+          },
+          {
+            "id": "domain",
+            "label": "Master domain / doctrines",
+            "state": "PASS",
+            "critical": true,
+            "detail": "b2b_institutional · 9 doctrine(s)"
+          },
+          {
+            "id": "storefront-shell",
+            "label": "Global shell authority",
+            "state": "PASS",
+            "critical": true,
+            "detail": "Global AngelCare header/navigation/footer remain outside the imported Storefront World."
+          },
+          {
+            "id": "semantic",
+            "label": "Semantic anatomy",
+            "state": "PASS",
+            "critical": true,
+            "detail": "Required roles covered (100%)."
+          },
+          {
+            "id": "bindings",
+            "label": "Canonical binding coverage",
+            "state": "PASS",
+            "critical": true,
+            "detail": "15/15 required bindings resolved."
+          },
+          {
+            "id": "actions",
+            "label": "Canonical action coverage",
+            "state": "PASS",
+            "critical": true,
+            "detail": "2/2 required actions resolved; current-item targets supported for catalog actions."
+          },
+          {
+            "id": "relations",
+            "label": "Contextual relation sources",
+            "state": "PASS",
+            "critical": false,
+            "detail": "1 relation rail(s) compiled with current-item anchor."
+          },
+          {
+            "id": "truth",
+            "label": "Truth Firewall contract",
+            "state": "PASS",
+            "critical": true,
+            "detail": "Commercial claims are classified for Truth Firewall enforcement."
+          },
+          {
+            "id": "responsive",
+            "label": "Responsive contract",
+            "state": "PASS",
+            "critical": true,
+            "detail": "Responsive metadata detected. No obvious fixed-width overflow evidence."
+          },
+          {
+            "id": "visual",
+            "label": "Approved desktop/mobile reference",
+            "state": "PASS",
+            "critical": false,
+            "detail": "Desktop + mobile reference evidence approved."
+          },
+          {
+            "id": "capabilities",
+            "label": "Capability negotiation",
+            "state": "PASS",
+            "critical": true,
+            "detail": "14 requested runtime capabilities negotiated."
+          },
+          {
+            "id": "operability",
+            "label": "2030 no-code operability",
+            "state": "PASS",
+            "critical": true,
+            "detail": "13 block capability contracts · 9 repeaters · 3 media contracts · FR/EN/AR + RTL."
+          },
+          {
+            "id": "fallback",
+            "label": "Native fallback",
+            "state": "PASS",
+            "critical": true,
+            "detail": "Category-Native/native fallback remains mandatory."
+          }
+        ],
+        "blockers": [],
+        "warnings": [],
+        "certifiedAt": "2026-10-12T01:07:04.582Z"
+      },
+      "compatibility": {
+        "minimumRuntime": "pea-v1",
+        "maximumRuntime": null,
+        "forwardPolicy": "capability-negotiation",
+        "unknownFields": "preserve",
+        "nativeFallback": true,
+        "schemaVersion": 3,
+        "compilerProfile": "pea-world-factory-2030-operability-v3"
+      },
+      "revision": {
+        "worldKey": "ac.neutral.b2b.r4",
+        "revision": 4,
+        "supersedes": null,
+        "immutableAfterCertification": true
+      },
+      "overrides": {
+        "roleOverrides": {
+          "neutral-b2b-world-r4": "hero",
+          "neutral-b2b-01": "hero",
+          "neutral-b2b-02": "b2b_fit",
+          "neutral-b2b-03": "b2b_programme",
+          "neutral-b2b-04": "b2b_deployment",
+          "neutral-b2b-05": "specifications",
+          "neutral-b2b-06": "editorial",
+          "neutral-b2b-07": "specifications",
+          "neutral-b2b-08": "editorial",
+          "neutral-b2b-09": "faq",
+          "neutral-b2b-10": "trust",
+          "neutral-b2b-11": "recommendations",
+          "neutral-b2b-12": "primary_conversion"
+        },
+        "supplementalRoleOverrides": {
+          "neutral-b2b-world-r4": [
+            "identity",
+            "media",
+            "pricing",
+            "availability"
+          ],
+          "neutral-b2b-01": [
+            "identity",
+            "media",
+            "pricing",
+            "availability",
+            "primary_conversion"
+          ]
+        },
+        "bindingOverrides": [],
+        "actionOverrides": [
+          {
+            "blockId": "neutral-b2b-12",
+            "intent": "secondary",
+            "actionId": "quotation.start",
+            "targetMode": "current_item"
+          }
+        ],
+        "note": null
+      },
+      "provenance": {
+        "createdBy": "WORLD_FACTORY",
+        "manualOverrides": 16,
+        "notes": [
+          "No hardcoded production theme requirement.",
+          "UI-led import/assign/update contract active.",
+          "No foreign code execution.",
+          "Business authorities remain canonical.",
+          "Inference is reviewable and versioned.",
+          "Certified revisions are immutable; changes create a new revision."
+        ]
+      }
+    }
+  },
+  "data": {
+    "root": {
+      "props": {
+        "title": "B2B · Neutral Organisation R4"
+      }
+    },
+    "content": [
+      {
+        "type": "ac_b2b_world",
+        "props": {
+          "id": "neutral-b2b-world-r4",
+          "atomicExperienceVersion": 1,
+          "neutralExperienceRevision": 4,
+          "accent": "#008373",
+          "companion": "#dba127",
+          "ink": "#102e4d",
+          "content": [
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "neutral-b2b-01",
+                "role": "opening",
+                "title": {
+                  "fr": "Votre organisation, votre projet",
+                  "en": "Your organisation, your project",
+                  "ar": "مؤسستك ومشروعك"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "eyebrow": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "solution-stage",
+                "navTitle": {
+                  "fr": "Votre organisation, votre projet",
+                  "en": "Your organisation, your project",
+                  "ar": "مؤسستك ومشروعك"
+                },
+                "neutralExperienceRevision": 4,
+                "heroFactLimit": 5,
+                "mediaIndex": 1,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {}
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "neutral-b2b-02",
+                "role": "facts",
+                "title": {
+                  "fr": "Une solution adaptée à votre contexte",
+                  "en": "A solution that fits your context",
+                  "ar": "حل يناسب سياقك"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "eyebrow": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "ledger",
+                "navTitle": {
+                  "fr": "Une solution adaptée à votre contexte",
+                  "en": "A solution that fits your context",
+                  "ar": "حل يناسب سياقك"
+                },
+                "neutralExperienceRevision": 4,
+                "heroFactLimit": 5,
+                "mediaIndex": 1,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {},
+                "bindingKey": "b2b.organisationFit"
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "neutral-b2b-03",
+                "role": "benefits",
+                "title": {
+                  "fr": "Définissez ce qui compte",
+                  "en": "Define what matters",
+                  "ar": "حدّد ما يهمك"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "eyebrow": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "bento",
+                "navTitle": {
+                  "fr": "Définissez ce qui compte",
+                  "en": "Define what matters",
+                  "ar": "حدّد ما يهمك"
+                },
+                "neutralExperienceRevision": 4,
+                "heroFactLimit": 5,
+                "mediaIndex": 1,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {},
+                "fieldSections": "programme,scope,benefits",
+                "enableSelection": true
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "neutral-b2b-04",
+                "role": "deployment",
+                "title": {
+                  "fr": "Du périmètre à la mise en œuvre",
+                  "en": "From scope to implementation",
+                  "ar": "من النطاق إلى التنفيذ"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "eyebrow": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "bento",
+                "navTitle": {
+                  "fr": "Du périmètre à la mise en œuvre",
+                  "en": "From scope to implementation",
+                  "ar": "من النطاق إلى التنفيذ"
+                },
+                "neutralExperienceRevision": 4,
+                "heroFactLimit": 5,
+                "mediaIndex": 1,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {},
+                "bindingKey": "b2b.deploymentModel"
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "neutral-b2b-05",
+                "role": "facts",
+                "title": {
+                  "fr": "Le cadre de votre projet",
+                  "en": "Your project framework",
+                  "ar": "إطار مشروعك"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "eyebrow": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "ledger",
+                "navTitle": {
+                  "fr": "Le cadre de votre projet",
+                  "en": "Your project framework",
+                  "ar": "إطار مشروعك"
+                },
+                "neutralExperienceRevision": 4,
+                "heroFactLimit": 5,
+                "mediaIndex": 1,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {},
+                "fieldSections": "delivery,limits,operations,requirements,compliance"
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "neutral-b2b-06",
+                "role": "story",
+                "title": {
+                  "fr": "Votre solution, en détail",
+                  "en": "Your solution in detail",
+                  "ar": "حلّك بالتفصيل"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "eyebrow": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "bento",
+                "navTitle": {
+                  "fr": "Votre solution, en détail",
+                  "en": "Your solution in detail",
+                  "ar": "حلّك بالتفصيل"
+                },
+                "neutralExperienceRevision": 4,
+                "heroFactLimit": 5,
+                "mediaIndex": 1,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {}
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "neutral-b2b-07",
+                "role": "facts",
+                "title": {
+                  "fr": "Les informations pour préparer votre brief",
+                  "en": "Information to prepare your brief",
+                  "ar": "معلومات لتحضير ملخّصك"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "eyebrow": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "ledger",
+                "navTitle": {
+                  "fr": "Les informations pour préparer votre brief",
+                  "en": "Information to prepare your brief",
+                  "ar": "معلومات لتحضير ملخّصك"
+                },
+                "neutralExperienceRevision": 4,
+                "heroFactLimit": 5,
+                "mediaIndex": 1,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {},
+                "bindingKey": "content.fields",
+                "enableSelection": true
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "neutral-b2b-08",
+                "role": "assistance",
+                "title": {
+                  "fr": "Parlons de vos priorités.",
+                  "en": "Let’s discuss your priorities.",
+                  "ar": "لنتحدث عن أولوياتك."
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "eyebrow": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "bento",
+                "navTitle": {
+                  "fr": "Parlons de vos priorités.",
+                  "en": "Let’s discuss your priorities.",
+                  "ar": "لنتحدث عن أولوياتك."
+                },
+                "neutralExperienceRevision": 4,
+                "heroFactLimit": 5,
+                "mediaIndex": 1,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {}
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "neutral-b2b-09",
+                "role": "faq",
+                "title": {
+                  "fr": "Vos questions de décideur",
+                  "en": "Your decision-maker questions",
+                  "ar": "أسئلتك كصانع قرار"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "eyebrow": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "bento",
+                "navTitle": {
+                  "fr": "Vos questions de décideur",
+                  "en": "Your decision-maker questions",
+                  "ar": "أسئلتك كصانع قرار"
+                },
+                "neutralExperienceRevision": 4,
+                "heroFactLimit": 5,
+                "mediaIndex": 1,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {},
+                "fieldSections": "faq"
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "neutral-b2b-10",
+                "role": "proof",
+                "title": {
+                  "fr": "Les preuves documentées",
+                  "en": "Documented evidence",
+                  "ar": "الأدلة الموثقة"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "eyebrow": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "bento",
+                "navTitle": {
+                  "fr": "Les preuves documentées",
+                  "en": "Documented evidence",
+                  "ar": "الأدلة الموثقة"
+                },
+                "neutralExperienceRevision": 4,
+                "heroFactLimit": 5,
+                "mediaIndex": 1,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {}
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "neutral-b2b-11",
+                "role": "related",
+                "title": {
+                  "fr": "Solutions complémentaires",
+                  "en": "Complementary solutions",
+                  "ar": "حلول مكملة"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "eyebrow": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "bento",
+                "navTitle": {
+                  "fr": "Solutions complémentaires",
+                  "en": "Complementary solutions",
+                  "ar": "حلول مكملة"
+                },
+                "neutralExperienceRevision": 4,
+                "heroFactLimit": 5,
+                "mediaIndex": 1,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {}
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "neutral-b2b-12",
+                "role": "decision",
+                "title": {
+                  "fr": "Votre projet, clairement posé",
+                  "en": "Your project, clearly defined",
+                  "ar": "مشروعك محدّد بوضوح"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "eyebrow": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "bento",
+                "navTitle": {
+                  "fr": "Votre projet, clairement posé",
+                  "en": "Your project, clearly defined",
+                  "ar": "مشروعك محدّد بوضوح"
+                },
+                "neutralExperienceRevision": 4,
+                "heroFactLimit": 5,
+                "mediaIndex": 1,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {}
+              }
+            }
+          ],
+          "sourceDesign": {}
+        }
+      }
+    ]
+  },
+  "assets": [],
+  "fingerprints": {
+    "document": "c8c0dbba80fb10265e3a0e54996619c2",
+    "factory": "dc7e52971167c027efc92f074ecb6f4b",
+    "package": "6dfee13786a5bdc7de1ee60f665dbd2b"
+  }
+}

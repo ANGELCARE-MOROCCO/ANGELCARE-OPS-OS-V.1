@@ -9,7 +9,7 @@ export const ATOMIC_ROOTS: Record<string, PublicExperienceMasterDomain> = {
   ac_product_world: 'b2c_product_digital', ac_service_world: 'b2c_service_family',
   ac_academy_world: 'academy_admission', ac_b2b_world: 'b2b_institutional',
 }
-export const ATOMIC_ROLES = ['opening','story','gallery','facts','benefits','contents','choices','schedule','plans','providers','curriculum','cohorts','trainers','deployment','proof','reviews','faq','related','decision'] as const
+export const ATOMIC_ROLES = ['opening','story','gallery','facts','benefits','contents','choices','schedule','plans','providers','curriculum','cohorts','trainers','deployment','proof','reviews','faq','related','decision','assistance'] as const
 export type AtomicRole = typeof ATOMIC_ROLES[number]
 export type AtomicLocale = 'fr'|'en'|'ar'
 export type AtomicRow = { key: string; title: string; body: string; value: unknown; raw: Record<string, unknown> }
@@ -88,6 +88,7 @@ export function bindingValue(data: PublicExperience360, key: string | undefined)
 export function sectionValue(data: PublicExperience360, props: AtomicSectionProps): unknown {
   const keys = list(props.fieldKeys), sections = list(props.fieldSections)
   if(keys.length || sections.length) return data.content.fields.filter(f=>present(f.value) && (keys.includes(f.key) || sections.includes(f.section)))
+  if(props.role === 'assistance') return data.identity.name
   if(props.role === 'opening' || props.role === 'decision') return data.identity.name
   if(props.role === 'story') return data.identity.description
   if(props.role === 'gallery') return data.media.filter(m=>publicUrl(m.url))

@@ -257,8 +257,8 @@ async function syncMedia(db:any,itemId:string,actorId:string,source:Record<strin
   if(!hasOwn(source,'primary_image_reference')&&!hasOwn(source,'gallery_references')&&!hasOwn(source,'media_json'))return
   const desired:Row[]=[]
   for(const entry of rows(normalized.media_json)) desired.push({...entry})
-  if(hasOwn(source,'gallery_references')) for(const [index,reference] of list(normalized.gallery_references).entries()) desired.push({media_key:`gallery-${index+1}`,reference,sort_order:(index+1)*10})
-  if(hasOwn(source,'primary_image_reference')&&text(normalized.primary_image_reference)) desired.unshift({media_key:'primary',reference:text(normalized.primary_image_reference),sort_order:0})
+  if(!hasOwn(source,'media_json')&&hasOwn(source,'gallery_references')) for(const [index,reference] of list(normalized.gallery_references).entries()) desired.push({media_key:`gallery-${index+1}`,reference,sort_order:(index+1)*10})
+  if(!desired.some(entry=>entry.media_key==='primary')&&hasOwn(source,'primary_image_reference')&&text(normalized.primary_image_reference)) desired.unshift({media_key:'primary',reference:text(normalized.primary_image_reference),sort_order:0})
   const deduped=new Map<string,Row>()
   for(const [index,entry] of desired.entries()){
     const key=text(entry.media_key)||(index===0?'primary':`gallery-${index}`)

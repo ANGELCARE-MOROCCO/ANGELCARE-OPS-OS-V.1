@@ -1,3 +1,4 @@
+import { PRODUCT_360_IMPORT_FIELDS } from '../enterprise-command/product-360-contract'
 import { findProductDoctrine } from '../enterprise-command/product-doctrine'
 import type { ExperienceFieldBlueprint, ExperienceSchemaBlueprint } from './types'
 
@@ -190,8 +191,16 @@ export function categoryNativeDoctrineFields(schema: ExperienceSchemaBlueprint):
     ...CATEGORY_NATIVE_PRODUCT360_ENRICHMENT_FIELDS.map((entry) => entry.field_key),
   ])
   return definition.fields
-    .filter((entry) => entry.required && !native.has(entry.key))
+    .filter((entry) => !native.has(entry.key))
     .map((entry) => doctrineFieldBlueprint(entry.key, entry.label, entry.type, entry.options))
+}
+
+export function categoryNative360Fields(): ExperienceFieldBlueprint[] {
+  return PRODUCT_360_IMPORT_FIELDS.filter(f=>!['item_key','kind','sellable_type'].includes(f.key)).map((f,index)=>({
+    ...field(f.key,f.label,f.help||'Champ Product 360 · '+f.group),section_key:'product_360_'+f.group,
+    field_type:(f.kind==='json'?'json':f.kind==='list'?'list':f.kind==='number'?'number':f.kind==='boolean'?'boolean':f.kind==='date'?'datetime':'text') as ExperienceFieldBlueprint['field_type'],
+    allowed_values:f.options||[],required:false,sort_order:12000+index,
+  }))
 }
 
 export function categoryNativeCsvFields(schema: ExperienceSchemaBlueprint): ExperienceFieldBlueprint[] {
@@ -205,6 +214,9 @@ export function categoryNativeCsvFields(schema: ExperienceSchemaBlueprint): Expe
     ...nativeFields,
     ...CATEGORY_NATIVE_PRODUCT360_ENRICHMENT_FIELDS,
     ...categoryNativeDoctrineFields(schema),
+    ...categoryNative360Fields(),
+    field('_population_contract','Contrat de population','r1 pour le parcours coordonné ; vide conserve le parcours historique.'),
+    {...field('_clear_fields','Champs à effacer','Liste explicite de champs optionnels, séparés par |.'),field_type:'list'},
   ].filter((entry) => {
     if (seen.has(entry.field_key)) return false
     seen.add(entry.field_key)

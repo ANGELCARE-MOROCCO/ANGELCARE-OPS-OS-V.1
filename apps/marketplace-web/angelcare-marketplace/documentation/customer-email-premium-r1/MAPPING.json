@@ -1,0 +1,297 @@
+{
+  "templates": [
+    {
+      "key": "welcome",
+      "family": "account",
+      "wiring": "template_ready_no_dispatcher_added",
+      "locales": [
+        "fr",
+        "en",
+        "ar"
+      ]
+    },
+    {
+      "key": "order_received",
+      "family": "commerce",
+      "wiring": "template_ready_no_dispatcher_added",
+      "locales": [
+        "fr",
+        "en",
+        "ar"
+      ]
+    },
+    {
+      "key": "order_preparing",
+      "family": "commerce",
+      "wiring": "template_ready_no_dispatcher_added",
+      "locales": [
+        "fr",
+        "en",
+        "ar"
+      ]
+    },
+    {
+      "key": "order_dispatched",
+      "family": "commerce",
+      "wiring": "template_ready_no_dispatcher_added",
+      "locales": [
+        "fr",
+        "en",
+        "ar"
+      ]
+    },
+    {
+      "key": "order_delivered",
+      "family": "commerce",
+      "wiring": "template_ready_no_dispatcher_added",
+      "locales": [
+        "fr",
+        "en",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking_received",
+      "family": "care",
+      "wiring": "template_ready_no_dispatcher_added",
+      "locales": [
+        "fr",
+        "en",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking_confirmed",
+      "family": "care",
+      "wiring": "template_ready_no_dispatcher_added",
+      "locales": [
+        "fr",
+        "en",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking_changed",
+      "family": "care",
+      "wiring": "template_ready_no_dispatcher_added",
+      "locales": [
+        "fr",
+        "en",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking_cancelled",
+      "family": "care",
+      "wiring": "template_ready_no_dispatcher_added",
+      "locales": [
+        "fr",
+        "en",
+        "ar"
+      ]
+    },
+    {
+      "key": "recurring_received",
+      "family": "care",
+      "wiring": "template_ready_no_dispatcher_added",
+      "locales": [
+        "fr",
+        "en",
+        "ar"
+      ]
+    },
+    {
+      "key": "recurring_schedule",
+      "family": "care",
+      "wiring": "template_ready_no_dispatcher_added",
+      "locales": [
+        "fr",
+        "en",
+        "ar"
+      ]
+    },
+    {
+      "key": "enrollment_received",
+      "family": "academy",
+      "wiring": "template_ready_no_dispatcher_added",
+      "locales": [
+        "fr",
+        "en",
+        "ar"
+      ]
+    },
+    {
+      "key": "enrollment_confirmed",
+      "family": "academy",
+      "wiring": "template_ready_no_dispatcher_added",
+      "locales": [
+        "fr",
+        "en",
+        "ar"
+      ]
+    },
+    {
+      "key": "project_received",
+      "family": "business",
+      "wiring": "template_ready_no_dispatcher_added",
+      "locales": [
+        "fr",
+        "en",
+        "ar"
+      ]
+    },
+    {
+      "key": "proposal_ready",
+      "family": "business",
+      "wiring": "template_ready_no_dispatcher_added",
+      "locales": [
+        "fr",
+        "en",
+        "ar"
+      ]
+    },
+    {
+      "key": "payment_pending",
+      "family": "finance",
+      "wiring": "template_ready_no_dispatcher_added",
+      "locales": [
+        "fr",
+        "en",
+        "ar"
+      ]
+    },
+    {
+      "key": "payment_received",
+      "family": "finance",
+      "wiring": "template_ready_no_dispatcher_added",
+      "locales": [
+        "fr",
+        "en",
+        "ar"
+      ]
+    },
+    {
+      "key": "refund_recorded",
+      "family": "finance",
+      "wiring": "template_ready_no_dispatcher_added",
+      "locales": [
+        "fr",
+        "en",
+        "ar"
+      ]
+    },
+    {
+      "key": "wallet_credit",
+      "family": "finance",
+      "wiring": "template_ready_no_dispatcher_added",
+      "locales": [
+        "fr",
+        "en",
+        "ar"
+      ]
+    },
+    {
+      "key": "support_received",
+      "family": "support",
+      "wiring": "template_ready_no_dispatcher_added",
+      "locales": [
+        "fr",
+        "en",
+        "ar"
+      ]
+    },
+    {
+      "key": "support_reply",
+      "family": "support",
+      "wiring": "template_ready_no_dispatcher_added",
+      "locales": [
+        "fr",
+        "en",
+        "ar"
+      ]
+    },
+    {
+      "key": "request_closed",
+      "family": "support",
+      "wiring": "template_ready_no_dispatcher_added",
+      "locales": [
+        "fr",
+        "en",
+        "ar"
+      ]
+    },
+    {
+      "key": "auth_signup",
+      "family": "account",
+      "wiring": "existing_auth_worker",
+      "locales": [
+        "fr",
+        "en",
+        "ar"
+      ]
+    },
+    {
+      "key": "auth_recovery",
+      "family": "security",
+      "wiring": "existing_auth_worker",
+      "locales": [
+        "fr",
+        "en",
+        "ar"
+      ]
+    },
+    {
+      "key": "auth_magiclink",
+      "family": "security",
+      "wiring": "existing_auth_worker",
+      "locales": [
+        "fr",
+        "en",
+        "ar"
+      ]
+    },
+    {
+      "key": "auth_invite",
+      "family": "account",
+      "wiring": "existing_auth_worker",
+      "locales": [
+        "fr",
+        "en",
+        "ar"
+      ]
+    },
+    {
+      "key": "auth_email_change",
+      "family": "security",
+      "wiring": "existing_auth_worker",
+      "locales": [
+        "fr",
+        "en",
+        "ar"
+      ]
+    },
+    {
+      "key": "auth_reauthentication",
+      "family": "security",
+      "wiring": "existing_auth_worker",
+      "locales": [
+        "fr",
+        "en",
+        "ar"
+      ]
+    },
+    {
+      "key": "auth_password_changed_notification",
+      "family": "security",
+      "wiring": "existing_auth_worker",
+      "locales": [
+        "fr",
+        "en",
+        "ar"
+      ]
+    }
+  ],
+  "sourceContract": "angelcare-marketplace/customer-commerce/customer-email-design/catalog.ts",
+  "statesMustBeMappedFromPersistedNativeEvents": true,
+  "productionSendingActivatedForNewEvents": false
+}

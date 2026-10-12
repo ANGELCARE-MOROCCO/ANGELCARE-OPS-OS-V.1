@@ -157,6 +157,8 @@ export function validateCategoryNativeRow(
   }
   const errors: string[] = []
   const warnings: string[] = []
+  const known=new Set(['template_version','schema_key',...categoryNativeCsvFields(schema).map(f=>f.field_key)])
+  for(const key of Object.keys(row))if(!known.has(key)&&String(row[key]??'').trim())(row._population_contract==='r1'?errors:warnings).push('Colonne inconnue : '+key)
 
   if (normalized.schema_key !== schema.schema_key) {
     errors.push(`Le schema_key attendu est ${schema.schema_key}.`)

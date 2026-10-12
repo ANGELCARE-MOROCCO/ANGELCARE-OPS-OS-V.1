@@ -1,3 +1,5 @@
+import { PRODUCT_360_IMPORT_FIELDS, normalizeProductImportRow } from '../enterprise-command/product-360-contract'
+import { requireProductDoctrine } from '../enterprise-command/product-doctrine'
 import { createServiceClient } from '@/lib/supabase/server'
 import type { MarketplaceRequestContext } from '../domain/types'
 import { MarketplaceError } from '../server/errors'
@@ -9,7 +11,7 @@ import {
   CATEGORY_NATIVE_SCHEMA_BLUEPRINTS,
   blueprintForSchema,
 } from './registry'
-import { evaluateProduct360Readiness, loadProduct360Snapshot, restoreProduct360Snapshot } from '../enterprise-command/product-360-import-engine'
+import { evaluateProduct360Readiness, loadProduct360Snapshot, restoreProduct360Snapshot, applyProduct360ImportRow } from '../enterprise-command/product-360-import-engine'
 import type {
   CategoryNativeImportJob,
   CategoryNativeImportRow,
@@ -261,14 +263,13 @@ function schemaRecordAsBlueprint(record: ExperienceSchemaRecord): ExperienceSche
 
 export async function listExperienceSchemas(): Promise<ExperienceSchemaRecord[]> {
   const db = await createServiceClient()
-  const { data, error } = await db.from(SCHEMA_TABLE).select(
+  const complete:Row[]=[]
+  for(let offset=0;;offset+=200){const {data,error}=await db.from(SCHEMA_TABLE).select(
     '*,fields:angelcare_marketplace_experience_schema_fields(*),variant_groups:angelcare_marketplace_experience_variant_groups(*),attribute_groups:angelcare_marketplace_experience_attribute_groups(*),csv_templates:angelcare_marketplace_schema_csv_templates(*)',
-  ).order('segment_key').order('vertical_key').order('name_fr')
-  if (error) {
-    if (error.code === '42P01') return CATEGORY_NATIVE_SCHEMA_BLUEPRINTS.map(fallbackSchema)
-    throw dbFailure('charger le registre des schémas', error)
-  }
-  return rows(data).map(mapSchema)
+  ).order('segment_key').order('vertical_key').order('name_fr').order('id').range(offset,offset+199)
+  if(error){if(error.code==='42P01'&&offset===0)return CATEGORY_NATIVE_SCHEMA_BLUEPRINTS.map(fallbackSchema);throw dbFailure('charger le registre complet des schémas',error)}
+  complete.push(...rows(data));if(rows(data).length<200)break}
+  return complete.map(mapSchema)
 }
 
 export async function getExperienceSchema(schemaKey: string): Promise<ExperienceSchemaRecord | null> {
@@ -542,10 +543,11 @@ export async function createImportPreview(input: {
 
 export async function getImportJob(jobId: string): Promise<CategoryNativeImportJob | null> {
   const db = await createServiceClient()
-  const { data, error } = await db.from(IMPORT_JOB_TABLE).select('*,rows:angelcare_marketplace_category_native_import_rows(*)').eq('id', jobId).maybeSingle()
+  const { data, error } = await db.from(IMPORT_JOB_TABLE).select('*').eq('id', jobId).maybeSingle()
   if (error) throw dbFailure('charger le job d’import', error)
   if (!data) return null
-  const mapped = mapImportJob(data as Row)
+  const completeRows:Row[]=[];for(let offset=0;;offset+=250){const page=await db.from(IMPORT_ROW_TABLE).select('*').eq('job_id',jobId).order('row_number').order('id').range(offset,offset+249);if(page.error)throw dbFailure('charger les lignes d’import',page.error);completeRows.push(...rows(page.data));if(rows(page.data).length<250)break}
+  const mapped = mapImportJob({...data,rows:completeRows} as Row)
   const schema = await getExperienceSchemaById(mapped.schema_id)
   return { ...mapped, schema_key: schema?.schema_key, schema_name_fr: schema?.name_fr }
 }
@@ -588,10 +590,11 @@ function canonicalCatalogPayload(
     'recurring_fee_dh','currency_label','status','featured','popular','best_pick','territory_codes','category_keys',
     'primary_image_reference','gallery_references','stock_quantity',
     ...CATEGORY_NATIVE_PRODUCT360_ENRICHMENT_KEYS,
+    ...PRODUCT_360_IMPORT_FIELDS.map(f=>f.key),'_population_contract','_clear_fields',
   ])
-  const nativeAttributes = Object.fromEntries(Object.entries(normalized).filter(([key]) => !canonicalKeys.has(key)))
+  const nativeAttributes = Object.fromEntries(Object.entries(normalized).filter(([key,value]) => !canonicalKeys.has(key)&&value!==null&&value!==undefined&&String(value)!==''))
   const doctrineAttributes = categoryNativeDoctrineAttributes(schema, normalized)
-  const attributes = { ...nativeAttributes, ...doctrineAttributes }
+  const attributes = { ...object(existing?.attributes), ...nativeAttributes, ...doctrineAttributes }
   const product360 = product360CatalogPatch(normalized, existing)
   return {
     item_key: identity,
@@ -610,6 +613,7 @@ function canonicalCatalogPayload(
       ? (stock !== null && stock > 0 ? 'available' : 'out_of_stock')
       : 'configuration_required',
     commercial_metadata: {
+      ...object(existing?.commercial_metadata),
       experience_schema_key: schema.schema_key, experience_schema_version: schema.version,
       segment_key: schema.segment_key, vertical_key: schema.vertical_key, category_key: schema.category_key,
       subcategory_key: schema.subcategory_key, pricing_model: actualPricingModel, import_job_id: importJobId,
@@ -687,11 +691,16 @@ async function validateCategoryNativeImportReferences(
   db: any,
   validated: RowValidationResult[],
 ): Promise<void> {
+  const categoryCache=new Map<string,Promise<Row[]>>(),territoryCache=new Map<string,Promise<Map<string,string>>>()
   for (const row of validated) {
     if (!row.valid) continue
     try {
-      await resolveCategoryNativeCategories(db, categoryNativeList(row.normalized.category_keys))
-      await resolveCategoryNativeTerritories(db, categoryNativeList(row.normalized.territory_codes))
+      const categories=categoryNativeList(row.normalized.category_keys),territories=categoryNativeList(row.normalized.territory_codes)
+      const categoryKey=JSON.stringify(categories),territoryKey=JSON.stringify(territories)
+      if(!categoryCache.has(categoryKey))categoryCache.set(categoryKey,resolveCategoryNativeCategories(db,categories))
+      if(!territoryCache.has(territoryKey))territoryCache.set(territoryKey,resolveCategoryNativeTerritories(db,territories))
+      await categoryCache.get(categoryKey)
+      await territoryCache.get(territoryKey)
     } catch (error) {
       row.valid = false
       row.errors.push(error instanceof Error ? error.message : String(error))
@@ -726,11 +735,8 @@ async function validateCategoryNativeIdentityConflicts(
   const identities=[...new Set(active.map((entry)=>entry.identity).filter(Boolean))]
   const slugs=[...new Set(active.map((entry)=>entry.slug).filter(Boolean))]
   const skus=[...new Set(active.map((entry)=>entry.sku).filter(Boolean))]
-  const [byIdentity,bySlug,bySku]=await Promise.all([
-    identities.length?db.from('angelcare_marketplace_catalog_items').select('id,item_key,slug,sku').in('item_key',identities):Promise.resolve({data:[],error:null}),
-    slugs.length?db.from('angelcare_marketplace_catalog_items').select('id,item_key,slug,sku').in('slug',slugs):Promise.resolve({data:[],error:null}),
-    skus.length?db.from('angelcare_marketplace_catalog_items').select('id,item_key,slug,sku').in('sku',skus):Promise.resolve({data:[],error:null}),
-  ])
+  async function batchedIdentity(column:string,values:string[]){const complete:Row[]=[];for(let start=0;start<values.length;start+=100){const result=await db.from('angelcare_marketplace_catalog_items').select('id,item_key,slug,sku').in(column,values.slice(start,start+100));if(result.error)return result;complete.push(...rows(result.data))}return{data:complete,error:null}}
+  const [byIdentity,bySlug,bySku]=await Promise.all([batchedIdentity('item_key',identities),batchedIdentity('slug',slugs),batchedIdentity('sku',skus)])
   for (const result of [byIdentity,bySlug,bySku]) if (result.error) throw dbFailure('prévalider les identités Product 360',result.error)
   const ownByIdentity=new Map(rows(byIdentity.data).map((entry)=>[text(entry.item_key),entry]))
   const ownerBySlug=new Map(rows(bySlug.data).map((entry)=>[text(entry.slug),entry]))
@@ -872,7 +878,7 @@ async function applyMerchandising(itemId: string, normalized: Row, actorId: stri
   }
 }
 
-export async function executeImportJob(jobId: string, context: MarketplaceRequestContext): Promise<CategoryNativeImportJob> {
+export async function executeImportJob(jobId: string, context: MarketplaceRequestContext, options: {maxRows?:number} = {}): Promise<CategoryNativeImportJob> {
   const job = await getImportJob(jobId)
   if (!job) throw new MarketplaceError('NOT_FOUND', 'Job d’import introuvable.')
   if (!['validated','partial','failed'].includes(job.status)) {
@@ -885,10 +891,12 @@ export async function executeImportJob(jobId: string, context: MarketplaceReques
   if (!schema) throw new MarketplaceError('NOT_FOUND', 'Schéma du job introuvable.')
   const db = await createServiceClient()
   await db.from(IMPORT_JOB_TABLE).update({ status: 'importing' }).eq('id', job.id)
-  let imported = 0
-  let updated = 0
-  let failed = 0
-  for (const row of job.rows || []) {
+  let imported = (job.rows||[]).filter(row=>row.status==='imported').length
+  let updated = (job.rows||[]).filter(row=>row.status==='updated').length
+  let failed = (job.rows||[]).filter(row=>row.status==='failed').length
+  const pendingRows=(job.rows||[]).filter(row=>row.status==='valid'||row.status==='failed');const processingRows=pendingRows.slice(0,options.maxRows||pendingRows.length)
+  for (const row of processingRows) {
+    if(row.status==='failed')failed-=1
     if (row.status !== 'valid' && row.status !== 'failed') continue
     let beforeForRecovery:Row|null=null
     let itemIdForRecovery=''
@@ -916,6 +924,20 @@ export async function executeImportJob(jobId: string, context: MarketplaceReques
       await applyVariants(itemId, schema, normalized, context.actor.id)
       await applyAvailability(itemId, schema, normalized, context.actor.id)
       await applyMerchandising(itemId, normalized, context.actor.id)
+      // Full generated profiles project through the existing Product 360 authority.
+      // Historical imports without the contract retain their existing path.
+      if(normalized._population_contract==='r1'){
+        const definition=requireProductDoctrine(doctrineKey)
+        const clear=new Set(categoryNativeList(normalized._clear_fields))
+        const projection:Row={item_key:identity,slug:payload.slug,name_fr:normalized.name_fr,status:'draft'}
+        for(const field of PRODUCT_360_IMPORT_FIELDS){const value=normalized[field.key];if(clear.has(field.key))projection[field.key]='';else if(value!==null&&value!==undefined&&String(value)!=='')projection[field.key]=value;else if(clear.has(field.key))projection[field.key]=''}
+        Object.assign(projection,categoryNativeDoctrineAttributes(schema,normalized))
+        projection.item_key=identity;projection.status='draft';projection.price_mode=payload.price_mode
+        const normalized360=normalizeProductImportRow(projection,definition)
+        await applyProduct360ImportRow({db,context,doctrineKey,source:projection,normalized:normalized360,action:'update',importJobId:job.id})
+        // Preserve exact pre-existing category IDs, including distinct locale records.
+        if(before&&!clear.has('category_keys')){const currentLinks=await db.from('angelcare_marketplace_catalog_item_categories').select('category_id,is_primary').eq('catalog_item_id',itemId);if(currentLinks.error)throw currentLinks.error;const ids=new Set(rows(currentLinks.data).map(link=>text(link.category_id)));const kept=rows(before.categories).filter(link=>!ids.has(text(link.category_id))).map((link,index)=>({catalog_item_id:itemId,category_id:link.category_id,is_primary:false,sort_order:rows(currentLinks.data).length*10+index*10}));if(kept.length){const added=await db.from('angelcare_marketplace_catalog_item_categories').insert(kept);if(added.error)throw added.error}}
+      }
       const closureSnapshot=await loadProduct360Snapshot(itemId,db)
       const closureReadiness=evaluateProduct360Readiness(closureSnapshot,doctrineKey)
       const nonMediaBlockers=closureReadiness.reasons.filter((reason)=>reason!=='MEDIA_MISSING')
@@ -928,10 +950,11 @@ export async function executeImportJob(jobId: string, context: MarketplaceReques
         const published=await db.from('angelcare_marketplace_catalog_items').update({status:'published',publish_at:new Date().toISOString(),updated_by:context.actor.id,updated_at:new Date().toISOString()}).eq('id',itemId)
         if(published.error)throw dbFailure('publier le produit importé',published.error)
       }
-      await db.from(IMPORT_ROW_TABLE).update({
+      const rowAcknowledgement=await db.from(IMPORT_ROW_TABLE).update({
         before_snapshot: before, target_item_id: itemId, status: existing ? 'updated' : 'imported',
         errors: [], updated_at: new Date().toISOString(),
       }).eq('id', row.id)
+      if(rowAcknowledgement.error)throw dbFailure('enregistrer la preuve de ligne',rowAcknowledgement.error)
       await invalidateStudioReference({reference:{sourceId:'catalog.items',entityId:itemId},reason:`category_native_import.${existing?'updated':'created'}`,context,slug:categoryNativeText((catalogItem as Row).slug),locale:categoryNativeText((catalogItem as Row).locale||'fr')})
       if (existing) updated += 1
       else imported += 1
@@ -945,7 +968,8 @@ export async function executeImportJob(jobId: string, context: MarketplaceReques
       }).eq('id', row.id)
     }
   }
-  const status = failed ? (imported + updated ? 'partial' : 'failed') : 'completed'
+  const remaining=pendingRows.length-processingRows.length
+  const status = remaining>0?'partial':failed ? (imported + updated ? 'partial' : 'failed') : 'completed'
   const { error: jobError } = await db.from(IMPORT_JOB_TABLE).update({
     status, imported_rows: imported, updated_rows: updated, failed_rows: failed,
     executed_at: new Date().toISOString(), error_summary: { failed },

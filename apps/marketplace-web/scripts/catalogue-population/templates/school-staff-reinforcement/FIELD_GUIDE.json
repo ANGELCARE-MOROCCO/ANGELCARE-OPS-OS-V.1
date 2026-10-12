@@ -1,0 +1,1155 @@
+{
+  "schemaKey": "school-staff-reinforcement",
+  "sourceVersion": 1,
+  "title": "Renfort de personnel école & crèche",
+  "category": "staff_reinforcement",
+  "subcategory": "staffing",
+  "sellableType": "b2b_solution",
+  "identityField": "solution_key",
+  "columns": [
+    {
+      "key": "solution_key",
+      "label": "Clé solution",
+      "type": "text",
+      "required": true,
+      "allowedValues": [],
+      "help": ""
+    },
+    {
+      "key": "name_fr",
+      "label": "Nom de la solution",
+      "type": "text",
+      "required": true,
+      "allowedValues": [],
+      "help": ""
+    },
+    {
+      "key": "name_en",
+      "label": "Nom anglais",
+      "type": "text",
+      "required": false,
+      "allowedValues": [],
+      "help": ""
+    },
+    {
+      "key": "name_ar",
+      "label": "Nom arabe",
+      "type": "text",
+      "required": false,
+      "allowedValues": [],
+      "help": ""
+    },
+    {
+      "key": "short_description_fr",
+      "label": "Promesse exécutive",
+      "type": "textarea",
+      "required": true,
+      "allowedValues": [],
+      "help": ""
+    },
+    {
+      "key": "description_fr",
+      "label": "Description complète",
+      "type": "richtext",
+      "required": true,
+      "allowedValues": [],
+      "help": ""
+    },
+    {
+      "key": "primary_image_reference",
+      "label": "Visuel principal",
+      "type": "media",
+      "required": false,
+      "allowedValues": [],
+      "help": "Visuel principal · Média différé : assignable manuellement après import."
+    },
+    {
+      "key": "organization_type",
+      "label": "Type d’organisation",
+      "type": "select",
+      "required": true,
+      "allowedValues": [
+        "school",
+        "creche",
+        "hotel",
+        "resort",
+        "corporate",
+        "clinic",
+        "hospital",
+        "venue",
+        "public_institution",
+        "association",
+        "other"
+      ],
+      "help": ""
+    },
+    {
+      "key": "site_minimum",
+      "label": "Sites minimum",
+      "type": "integer",
+      "required": false,
+      "allowedValues": [],
+      "help": ""
+    },
+    {
+      "key": "site_maximum",
+      "label": "Sites maximum",
+      "type": "integer",
+      "required": false,
+      "allowedValues": [],
+      "help": ""
+    },
+    {
+      "key": "territory_codes",
+      "label": "Territoires",
+      "type": "territory_list",
+      "required": true,
+      "allowedValues": [],
+      "help": ""
+    },
+    {
+      "key": "pricing_mode",
+      "label": "Mode commercial",
+      "type": "select",
+      "required": true,
+      "allowedValues": [
+        "starting_from",
+        "per_site",
+        "per_participant",
+        "subscription",
+        "quote_only"
+      ],
+      "help": ""
+    },
+    {
+      "key": "starting_price_dh",
+      "label": "Prix de départ Dh",
+      "type": "money",
+      "required": false,
+      "allowedValues": [],
+      "help": ""
+    },
+    {
+      "key": "quotation_required",
+      "label": "Devis requis",
+      "type": "boolean",
+      "required": true,
+      "allowedValues": [],
+      "help": ""
+    },
+    {
+      "key": "implementation_lead_time_days",
+      "label": "Délai de mise en œuvre",
+      "type": "integer",
+      "required": false,
+      "allowedValues": [],
+      "help": ""
+    },
+    {
+      "key": "category_keys",
+      "label": "Catégories",
+      "type": "list",
+      "required": true,
+      "allowedValues": [],
+      "help": ""
+    },
+    {
+      "key": "status",
+      "label": "Statut",
+      "type": "select",
+      "required": true,
+      "allowedValues": [
+        "draft",
+        "published",
+        "paused",
+        "archived"
+      ],
+      "help": ""
+    },
+    {
+      "key": "required_roles",
+      "label": "Rôles requis",
+      "type": "multiselect",
+      "required": true,
+      "allowedValues": [
+        "caregiver",
+        "teacher_assistant",
+        "activity_facilitator",
+        "coordinator",
+        "driver",
+        "supervisor"
+      ],
+      "help": ""
+    },
+    {
+      "key": "personnel_count",
+      "label": "Nombre de personnes",
+      "type": "integer",
+      "required": true,
+      "allowedValues": [],
+      "help": ""
+    },
+    {
+      "key": "shift_patterns",
+      "label": "Horaires / shifts",
+      "type": "json",
+      "required": true,
+      "allowedValues": [],
+      "help": ""
+    },
+    {
+      "key": "qualification_requirements",
+      "label": "Qualifications",
+      "type": "list",
+      "required": true,
+      "allowedValues": [],
+      "help": ""
+    },
+    {
+      "key": "replacement_sla_hours",
+      "label": "SLA remplacement (heures)",
+      "type": "integer",
+      "required": true,
+      "allowedValues": [],
+      "help": ""
+    },
+    {
+      "key": "attendance_reporting",
+      "label": "Reporting présence",
+      "type": "boolean",
+      "required": true,
+      "allowedValues": [],
+      "help": ""
+    },
+    {
+      "key": "billing_basis",
+      "label": "Base de facturation",
+      "type": "select",
+      "required": true,
+      "allowedValues": [
+        "hourly",
+        "daily",
+        "monthly",
+        "per_shift",
+        "quote_only"
+      ],
+      "help": ""
+    },
+    {
+      "key": "seo_title_fr",
+      "label": "Meta title FR",
+      "type": "text",
+      "required": true,
+      "allowedValues": [],
+      "help": "Titre SEO français du produit."
+    },
+    {
+      "key": "seo_description_fr",
+      "label": "Meta description FR",
+      "type": "text",
+      "required": true,
+      "allowedValues": [],
+      "help": "Description SEO française du produit."
+    },
+    {
+      "key": "seo_title_en",
+      "label": "Meta title EN",
+      "type": "text",
+      "required": false,
+      "allowedValues": [],
+      "help": "Titre SEO anglais facultatif."
+    },
+    {
+      "key": "seo_description_en",
+      "label": "Meta description EN",
+      "type": "text",
+      "required": false,
+      "allowedValues": [],
+      "help": "Description SEO anglaise facultative."
+    },
+    {
+      "key": "seo_title_ar",
+      "label": "Meta title AR",
+      "type": "text",
+      "required": false,
+      "allowedValues": [],
+      "help": "Titre SEO arabe facultatif."
+    },
+    {
+      "key": "seo_description_ar",
+      "label": "Meta description AR",
+      "type": "text",
+      "required": false,
+      "allowedValues": [],
+      "help": "Description SEO arabe facultative."
+    },
+    {
+      "key": "seo_canonical_url",
+      "label": "URL canonique SEO",
+      "type": "text",
+      "required": false,
+      "allowedValues": [],
+      "help": "URL canonique facultative."
+    },
+    {
+      "key": "seo_social_title",
+      "label": "Titre social",
+      "type": "text",
+      "required": false,
+      "allowedValues": [],
+      "help": "Titre utilisé lors du partage social."
+    },
+    {
+      "key": "seo_social_description",
+      "label": "Description sociale",
+      "type": "text",
+      "required": false,
+      "allowedValues": [],
+      "help": "Description utilisée lors du partage social."
+    },
+    {
+      "key": "fulfillment_mode",
+      "label": "Modèle de fulfillment",
+      "type": "select",
+      "required": true,
+      "allowedValues": [
+        "angelcare_internal",
+        "provider",
+        "vendor",
+        "academy",
+        "digital",
+        "shipment",
+        "hybrid"
+      ],
+      "help": "Autorité qui délivre le service."
+    },
+    {
+      "key": "fulfillment_lead_time",
+      "label": "Délai de fulfillment",
+      "type": "text",
+      "required": true,
+      "allowedValues": [],
+      "help": "Délai opérationnel communiqué au client."
+    },
+    {
+      "key": "fulfillment_delivery_method",
+      "label": "Méthode de délivrance",
+      "type": "text",
+      "required": true,
+      "allowedValues": [],
+      "help": "Lieu et mode de réalisation du service."
+    },
+    {
+      "key": "fulfillment_capacity_model",
+      "label": "Modèle de capacité",
+      "type": "select",
+      "required": true,
+      "allowedValues": [
+        "unlimited",
+        "stock",
+        "slots",
+        "provider_capacity",
+        "cohort_capacity"
+      ],
+      "help": "Autorité de capacité applicable."
+    },
+    {
+      "key": "fulfillment_customer_handover",
+      "label": "Déroulé client",
+      "type": "text",
+      "required": true,
+      "allowedValues": [],
+      "help": "Étapes entre la commande et la réalisation."
+    },
+    {
+      "key": "fulfillment_notes",
+      "label": "Instructions opérations",
+      "type": "text",
+      "required": false,
+      "allowedValues": [],
+      "help": "Consignes internes de fulfillment."
+    },
+    {
+      "key": "trust_headline",
+      "label": "Promesse de confiance",
+      "type": "text",
+      "required": true,
+      "allowedValues": [],
+      "help": "Promesse de confiance vérifiable par le client."
+    },
+    {
+      "key": "trust_certifications",
+      "label": "Certifications et preuves",
+      "type": "text",
+      "required": true,
+      "allowedValues": [],
+      "help": "Qualifications et preuves applicables."
+    },
+    {
+      "key": "trust_guarantees",
+      "label": "Garanties",
+      "type": "text",
+      "required": true,
+      "allowedValues": [],
+      "help": "Garanties et recours proposés au client."
+    },
+    {
+      "key": "trust_safety_information",
+      "label": "Sécurité et limites",
+      "type": "text",
+      "required": true,
+      "allowedValues": [],
+      "help": "Mesures de sécurité, limites et exclusions."
+    },
+    {
+      "key": "trust_provider_requirements",
+      "label": "Exigences prestataire",
+      "type": "text",
+      "required": true,
+      "allowedValues": [],
+      "help": "Exigences imposées au professionnel affecté."
+    },
+    {
+      "key": "trust_proof_urls",
+      "label": "Liens de preuve",
+      "type": "text",
+      "required": false,
+      "allowedValues": [],
+      "help": "Liens de preuve facultatifs, séparés par une barre verticale."
+    },
+    {
+      "key": "buyer_type",
+      "label": "Type acheteur",
+      "type": "text",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ canonique Product 360. Il est auto-dérivé du schéma natif lorsque possible ; sinon il doit être fourni dans le CSV."
+    },
+    {
+      "key": "scope",
+      "label": "Scope",
+      "type": "text",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ canonique Product 360. Il est auto-dérivé du schéma natif lorsque possible ; sinon il doit être fourni dans le CSV."
+    },
+    {
+      "key": "deliverables",
+      "label": "Livrables",
+      "type": "json",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ canonique Product 360. Il est auto-dérivé du schéma natif lorsque possible ; sinon il doit être fourni dans le CSV."
+    },
+    {
+      "key": "deployment_model",
+      "label": "Déploiement",
+      "type": "text",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ canonique Product 360. Il est auto-dérivé du schéma natif lorsque possible ; sinon il doit être fourni dans le CSV."
+    },
+    {
+      "key": "minimum_volume",
+      "label": "Volume minimum",
+      "type": "number",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ canonique Product 360. Il est auto-dérivé du schéma natif lorsque possible ; sinon il doit être fourni dans le CSV."
+    },
+    {
+      "key": "slug",
+      "label": "Slug",
+      "type": "text",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · identity"
+    },
+    {
+      "key": "sku",
+      "label": "SKU / référence",
+      "type": "text",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · identity"
+    },
+    {
+      "key": "short_description_en",
+      "label": "Description courte EN",
+      "type": "text",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · content"
+    },
+    {
+      "key": "short_description_ar",
+      "label": "Description courte AR",
+      "type": "text",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · content"
+    },
+    {
+      "key": "description_en",
+      "label": "Description complète EN",
+      "type": "text",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · content"
+    },
+    {
+      "key": "description_ar",
+      "label": "Description complète AR",
+      "type": "text",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · content"
+    },
+    {
+      "key": "commercial_promise",
+      "label": "Promesse commerciale",
+      "type": "text",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · commercial"
+    },
+    {
+      "key": "commercial_highlights",
+      "label": "Points forts",
+      "type": "text",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · commercial"
+    },
+    {
+      "key": "commercial_inclusions",
+      "label": "Inclus",
+      "type": "text",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · commercial"
+    },
+    {
+      "key": "commercial_exclusions",
+      "label": "Non inclus",
+      "type": "text",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · commercial"
+    },
+    {
+      "key": "commercial_eligibility",
+      "label": "Éligibilité",
+      "type": "text",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · commercial"
+    },
+    {
+      "key": "commercial_preparation",
+      "label": "Préparation client",
+      "type": "text",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · commercial"
+    },
+    {
+      "key": "commercial_cancellation_copy",
+      "label": "Explication annulation",
+      "type": "text",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · commercial"
+    },
+    {
+      "key": "commercial_after_purchase",
+      "label": "Après achat",
+      "type": "text",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · commercial"
+    },
+    {
+      "key": "price_mode",
+      "label": "Mode de prix",
+      "type": "text",
+      "required": false,
+      "allowedValues": [
+        "fixed",
+        "starting_from",
+        "quote_only",
+        "subscription"
+      ],
+      "help": "Champ Product 360 · pricing"
+    },
+    {
+      "key": "price_amount",
+      "label": "Prix affiché",
+      "type": "number",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · pricing"
+    },
+    {
+      "key": "currency_label",
+      "label": "Devise",
+      "type": "text",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · pricing"
+    },
+    {
+      "key": "price_rule_price_book",
+      "label": "Price book (ID / référence / nom)",
+      "type": "text",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · pricing"
+    },
+    {
+      "key": "price_rule_model",
+      "label": "Modèle Finance",
+      "type": "text",
+      "required": false,
+      "allowedValues": [
+        "fixed",
+        "hourly",
+        "daily",
+        "per_child",
+        "per_employee",
+        "per_room",
+        "per_site",
+        "per_session",
+        "per_learner",
+        "per_assessment",
+        "subscription",
+        "usage_based",
+        "tiered",
+        "package",
+        "custom_approved"
+      ],
+      "help": "Champ Product 360 · pricing"
+    },
+    {
+      "key": "price_rule_unit",
+      "label": "Unité Finance",
+      "type": "text",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · pricing"
+    },
+    {
+      "key": "price_rule_minimum",
+      "label": "Prix minimum",
+      "type": "number",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · pricing"
+    },
+    {
+      "key": "price_rule_standard",
+      "label": "Prix standard",
+      "type": "number",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · pricing"
+    },
+    {
+      "key": "price_rule_maximum",
+      "label": "Prix maximum",
+      "type": "number",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · pricing"
+    },
+    {
+      "key": "price_rule_cost_basis",
+      "label": "Coût de base",
+      "type": "number",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · pricing"
+    },
+    {
+      "key": "price_rule_target_margin",
+      "label": "Marge cible",
+      "type": "number",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · pricing"
+    },
+    {
+      "key": "price_rule_floor_margin",
+      "label": "Marge plancher",
+      "type": "number",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · pricing"
+    },
+    {
+      "key": "price_rule_maximum_discount",
+      "label": "Remise max",
+      "type": "number",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · pricing"
+    },
+    {
+      "key": "price_rule_commission_rate",
+      "label": "Commission",
+      "type": "number",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · pricing"
+    },
+    {
+      "key": "price_rules_json",
+      "label": "Règles Finance structurées JSON",
+      "type": "json",
+      "required": false,
+      "allowedValues": [],
+      "help": "Tableau de règles Finance pour parité complète avec le dossier Product 360. Remplace le set de règles importables pour ce produit."
+    },
+    {
+      "key": "gallery_references",
+      "label": "Galerie (asset_key/URL séparés par |)",
+      "type": "list",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · media"
+    },
+    {
+      "key": "media_json",
+      "label": "Médias structurés JSON",
+      "type": "json",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · media"
+    },
+    {
+      "key": "primary_category_key",
+      "label": "Catégorie principale",
+      "type": "text",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · categories"
+    },
+    {
+      "key": "variants_json",
+      "label": "Variantes structurées JSON",
+      "type": "json",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · variants"
+    },
+    {
+      "key": "availability_status",
+      "label": "État global de disponibilité",
+      "type": "text",
+      "required": false,
+      "allowedValues": [
+        "available",
+        "unavailable",
+        "configuration_required",
+        "out_of_stock",
+        "territory_restricted"
+      ],
+      "help": "Champ Product 360 · availability"
+    },
+    {
+      "key": "availability_audience",
+      "label": "Audience disponibilité",
+      "type": "text",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · availability"
+    },
+    {
+      "key": "availability_capacity",
+      "label": "Capacité",
+      "type": "number",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · availability"
+    },
+    {
+      "key": "availability_starts_at",
+      "label": "Disponibilité début",
+      "type": "datetime",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · availability"
+    },
+    {
+      "key": "availability_ends_at",
+      "label": "Disponibilité fin",
+      "type": "datetime",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · availability"
+    },
+    {
+      "key": "availability_reason",
+      "label": "Motif disponibilité",
+      "type": "text",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · availability"
+    },
+    {
+      "key": "availability_json",
+      "label": "Disponibilités structurées JSON",
+      "type": "json",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · availability"
+    },
+    {
+      "key": "territory_mode",
+      "label": "Mode de couverture",
+      "type": "text",
+      "required": false,
+      "allowedValues": [
+        "national",
+        "selected_territories",
+        "remote_only",
+        "site_specific"
+      ],
+      "help": "Champ Product 360 · territory"
+    },
+    {
+      "key": "territory_fallback_behavior",
+      "label": "Comportement hors territoire",
+      "type": "text",
+      "required": false,
+      "allowedValues": [
+        "hide",
+        "show_unavailable",
+        "request_quote",
+        "collect_interest"
+      ],
+      "help": "Champ Product 360 · territory"
+    },
+    {
+      "key": "territory_delivery_radius_km",
+      "label": "Rayon km",
+      "type": "number",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · territory"
+    },
+    {
+      "key": "territory_message",
+      "label": "Message territoire",
+      "type": "text",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · territory"
+    },
+    {
+      "key": "sourcing_source_type",
+      "label": "Source exécution",
+      "type": "text",
+      "required": false,
+      "allowedValues": [
+        "internal",
+        "provider_pool",
+        "vendor",
+        "academy_trainer",
+        "mixed"
+      ],
+      "help": "Champ Product 360 · sourcing"
+    },
+    {
+      "key": "sourcing_preferred_provider_refs",
+      "label": "Providers préférés",
+      "type": "list",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · sourcing"
+    },
+    {
+      "key": "sourcing_preferred_vendor_refs",
+      "label": "Vendors préférés",
+      "type": "list",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · sourcing"
+    },
+    {
+      "key": "sourcing_required_capabilities",
+      "label": "Capacités requises",
+      "type": "list",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · sourcing"
+    },
+    {
+      "key": "sourcing_assignment_strategy",
+      "label": "Stratégie sourcing",
+      "type": "text",
+      "required": false,
+      "allowedValues": [
+        "manual",
+        "best_available",
+        "territory_first",
+        "quality_first",
+        "cost_first"
+      ],
+      "help": "Champ Product 360 · sourcing"
+    },
+    {
+      "key": "sourcing_notes",
+      "label": "Instructions sourcing",
+      "type": "text",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · sourcing"
+    },
+    {
+      "key": "relation_cross_sell_refs",
+      "label": "Cross-sell produits",
+      "type": "list",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · relations"
+    },
+    {
+      "key": "relation_upsell_refs",
+      "label": "Upsell produits",
+      "type": "list",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · relations"
+    },
+    {
+      "key": "relation_alternative_refs",
+      "label": "Alternatives",
+      "type": "list",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · relations"
+    },
+    {
+      "key": "relation_bundle_refs",
+      "label": "Bundles",
+      "type": "list",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · relations"
+    },
+    {
+      "key": "relation_message",
+      "label": "Message de recommandation",
+      "type": "text",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · relations"
+    },
+    {
+      "key": "merchandising_badge",
+      "label": "Badge commercial",
+      "type": "text",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · merchandising"
+    },
+    {
+      "key": "merchandising_priority",
+      "label": "Priorité merchandising",
+      "type": "number",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · merchandising"
+    },
+    {
+      "key": "merchandising_card_variant",
+      "label": "Variante de card",
+      "type": "text",
+      "required": false,
+      "allowedValues": [
+        "default",
+        "premium",
+        "editorial",
+        "compact",
+        "wide"
+      ],
+      "help": "Champ Product 360 · merchandising"
+    },
+    {
+      "key": "merchandising_featured_copy",
+      "label": "Copy de mise en avant",
+      "type": "text",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · merchandising"
+    },
+    {
+      "key": "merchandising_seasonal_label",
+      "label": "Label saisonnier",
+      "type": "text",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · merchandising"
+    },
+    {
+      "key": "featured",
+      "label": "Featured",
+      "type": "boolean",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · merchandising"
+    },
+    {
+      "key": "popular",
+      "label": "Popular",
+      "type": "boolean",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · merchandising"
+    },
+    {
+      "key": "best_pick",
+      "label": "Best pick",
+      "type": "boolean",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · merchandising"
+    },
+    {
+      "key": "discovery_age_range",
+      "label": "Âge / audience",
+      "type": "text",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · discovery"
+    },
+    {
+      "key": "discovery_duration",
+      "label": "Durée",
+      "type": "text",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · discovery"
+    },
+    {
+      "key": "discovery_format",
+      "label": "Format",
+      "type": "text",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · discovery"
+    },
+    {
+      "key": "discovery_language",
+      "label": "Langue",
+      "type": "text",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · discovery"
+    },
+    {
+      "key": "discovery_keywords",
+      "label": "Mots-clés",
+      "type": "list",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · discovery"
+    },
+    {
+      "key": "discovery_filter_tags",
+      "label": "Tags filtres",
+      "type": "list",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · discovery"
+    },
+    {
+      "key": "presentation_hero_variant",
+      "label": "Hero",
+      "type": "text",
+      "required": false,
+      "allowedValues": [
+        "default",
+        "editorial",
+        "service",
+        "product",
+        "academy",
+        "b2b"
+      ],
+      "help": "Champ Product 360 · presentation"
+    },
+    {
+      "key": "presentation_decision_headline",
+      "label": "Headline de décision",
+      "type": "text",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · presentation"
+    },
+    {
+      "key": "presentation_decision_support",
+      "label": "Pourquoi choisir",
+      "type": "text",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · presentation"
+    },
+    {
+      "key": "presentation_what_happens_next",
+      "label": "Ce qui se passe ensuite",
+      "type": "text",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · presentation"
+    },
+    {
+      "key": "presentation_comparison_message",
+      "label": "Comparaison / différence",
+      "type": "text",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · presentation"
+    },
+    {
+      "key": "presentation_faq_summary",
+      "label": "FAQ / objections",
+      "type": "text",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · presentation"
+    },
+    {
+      "key": "import_note",
+      "label": "Note opérateur",
+      "type": "text",
+      "required": false,
+      "allowedValues": [],
+      "help": "Champ Product 360 · governance"
+    },
+    {
+      "key": "_population_contract",
+      "label": "Contrat de population",
+      "type": "text",
+      "required": false,
+      "allowedValues": [],
+      "help": "r1 pour le parcours coordonné ; vide conserve le parcours historique."
+    },
+    {
+      "key": "_clear_fields",
+      "label": "Champs à effacer",
+      "type": "list",
+      "required": false,
+      "allowedValues": [],
+      "help": "Liste explicite de champs optionnels, séparés par |."
+    }
+  ],
+  "notes": [
+    "Référence documentaire du code source ; le template téléchargé dans l’atelier utilise la version du schéma persistant actif.",
+    "Les noms de colonnes sont canoniques ; les contenus FR/EN/AR sont séparés.",
+    "Choisir create/update/upsert dans le lot. Les offres issues du coordinateur restent draft.",
+    "Les champs optionnels vides en update conservent l’existant ; _clear_fields contient les clés à effacer explicitement, séparées par |.",
+    "Médias : chemin relatif exact + identité de l’offre. primary ou gallery, ordre unique, alt FR/EN/AR.",
+    "Les JSON doivent rester des JSON valides ; les listes natives utilisent |."
+  ]
+}

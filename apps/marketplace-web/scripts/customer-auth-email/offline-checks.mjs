@@ -1,6 +1,14 @@
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
-import { composeAuthEmail, classifyDeliveryError, escapeHtml } from '../../angelcare-marketplace/customer-commerce/auth-email-native/messages.ts'
+import { registerHooks } from 'node:module'
+// Source-only checks on Node 24: resolve the new renderer's relative TS modules.
+registerHooks({resolve(specifier,context,nextResolve){
+ try{return nextResolve(specifier,context)}catch(error){
+  if(error.code==='ERR_MODULE_NOT_FOUND'&&specifier.startsWith('.')&&/\/(customer-email-design\/|auth-email-native\/messages\.ts)/.test(context.parentURL||'')&&!/\.[a-z]+$/i.test(specifier))return nextResolve(specifier+'.ts',context)
+  throw error
+ }
+}})
+const { composeAuthEmail, classifyDeliveryError, escapeHtml } = await import('../../angelcare-marketplace/customer-commerce/auth-email-native/messages.ts')
 let checks=0
 function check(name,fn){fn();checks++;console.log('PASS '+name)}
 const config={authOrigin:'https://angelcare-supabase.duckdns.org',marketplaceOrigin:'https://my.angelcarehub.com'}

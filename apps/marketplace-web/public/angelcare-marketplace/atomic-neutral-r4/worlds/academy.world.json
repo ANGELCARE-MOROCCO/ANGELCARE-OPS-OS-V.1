@@ -1,0 +1,4928 @@
+{
+  "format": "angelcare-world-package-v1",
+  "packageVersion": 1,
+  "exportedAt": "2026-10-12T01:07:04.501Z",
+  "world": {
+    "name": "Academy · Neutral Learning R4",
+    "description": "Editable neutral Studio composition. Public fields only; canonical actions, no fabricated content. Pixel comparison pending deployed visual acceptance.",
+    "themeVersion": "4.0.0",
+    "manifest": {
+      "themeKind": "detail",
+      "masterDomain": "academy_admission",
+      "doctrineKeys": [
+        "preschool-admission",
+        "academy-course",
+        "academy-cohort",
+        "certification-pathway",
+        "parent-workshop",
+        "institutional-training"
+      ],
+      "name": "Academy · Neutral Learning R4",
+      "templateKey": "ac.neutral.academy.r4",
+      "themeVersion": "4.0.0",
+      "requiredBindings": [
+        "identity.name",
+        "identity.shortDescription",
+        "media.primary",
+        "identity.description",
+        "media.gallery",
+        "pricing.current",
+        "pricing.label",
+        "pricing.currency",
+        "availability.status",
+        "availability.quantity"
+      ],
+      "optionalBindings": [
+        "academy.curriculum",
+        "content.fields",
+        "academy.cohorts",
+        "academy.trainers",
+        "identity.description",
+        "relations.recommendations",
+        "trust.claims",
+        "reviews.summary"
+      ],
+      "requiredActions": [
+        "academy.enroll",
+        "quotation.start"
+      ],
+      "optionalActions": [
+        "inquiry.submit"
+      ],
+      "requiredWorkflows": [],
+      "requiredCapabilities": [
+        "public-experience-360",
+        "canonical-route",
+        "native-fallback",
+        "world-factory-v3",
+        "truth-firewall",
+        "capability-negotiation",
+        "academy-authority",
+        "academy-semantic-runtime-v2",
+        "canonical-actions",
+        "relation-dynamic-sources",
+        "responsive-runtime",
+        "theme-operability-v1",
+        "declarative-conditions",
+        "ui-led-theme-operation",
+        "fr-en-ar-rtl",
+        "theme-token-contract"
+      ],
+      "slots": [
+        {
+          "blockId": "neutral-academy-world-r4",
+          "slot": "hero",
+          "confidence": 1,
+          "reason": "World Factory hero: operator-override",
+          "semanticRole": "hero",
+          "supplementalRoles": [
+            "identity",
+            "media",
+            "pricing",
+            "availability"
+          ],
+          "capabilityKey": "wf:neutral-academy-world-r4"
+        },
+        {
+          "blockId": "neutral-academy-01",
+          "slot": "hero",
+          "confidence": 1,
+          "reason": "World Factory hero: operator-override",
+          "semanticRole": "hero",
+          "supplementalRoles": [
+            "identity",
+            "media",
+            "pricing",
+            "availability",
+            "primary_conversion"
+          ],
+          "capabilityKey": "wf:neutral-academy-01"
+        },
+        {
+          "blockId": "neutral-academy-02",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory academy_curriculum: operator-override",
+          "semanticRole": "academy_curriculum",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:neutral-academy-02"
+        },
+        {
+          "blockId": "neutral-academy-03",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory specifications: operator-override",
+          "semanticRole": "specifications",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:neutral-academy-03"
+        },
+        {
+          "blockId": "neutral-academy-04",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory academy_cohort: operator-override",
+          "semanticRole": "academy_cohort",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:neutral-academy-04"
+        },
+        {
+          "blockId": "neutral-academy-05",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory academy_trainers: operator-override",
+          "semanticRole": "academy_trainers",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:neutral-academy-05"
+        },
+        {
+          "blockId": "neutral-academy-06",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory academy_admission: operator-override",
+          "semanticRole": "academy_admission",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:neutral-academy-06"
+        },
+        {
+          "blockId": "neutral-academy-07",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory specifications: operator-override",
+          "semanticRole": "specifications",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:neutral-academy-07"
+        },
+        {
+          "blockId": "neutral-academy-08",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory editorial: operator-override",
+          "semanticRole": "editorial",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:neutral-academy-08"
+        },
+        {
+          "blockId": "neutral-academy-09",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory editorial: operator-override",
+          "semanticRole": "editorial",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:neutral-academy-09"
+        },
+        {
+          "blockId": "neutral-academy-10",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory recommendations: operator-override",
+          "semanticRole": "recommendations",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:neutral-academy-10"
+        },
+        {
+          "blockId": "neutral-academy-11",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory faq: operator-override",
+          "semanticRole": "faq",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:neutral-academy-11"
+        },
+        {
+          "blockId": "neutral-academy-12",
+          "slot": "trust",
+          "confidence": 1,
+          "reason": "World Factory trust: operator-override",
+          "semanticRole": "trust",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:neutral-academy-12"
+        },
+        {
+          "blockId": "neutral-academy-13",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory reviews: operator-override",
+          "semanticRole": "reviews",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:neutral-academy-13"
+        },
+        {
+          "blockId": "neutral-academy-14",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory specifications: operator-override",
+          "semanticRole": "specifications",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:neutral-academy-14"
+        },
+        {
+          "blockId": "neutral-academy-15",
+          "slot": "final_cta",
+          "confidence": 1,
+          "reason": "World Factory primary_conversion: operator-override",
+          "semanticRole": "primary_conversion",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:neutral-academy-15"
+        }
+      ],
+      "structuralFingerprint": "99297ac0254f9e04787181c27a77d640",
+      "visualFingerprint": "99297ac0254f9e04787181c27a77d640",
+      "factory": {
+        "engineVersion": 3,
+        "schemaVersion": 3,
+        "compilerProfile": "pea-world-factory-2030-operability-v3",
+        "candidateFingerprint": "1b391f6e965aa27e8ebe78fa5bb9ec0a",
+        "documentFingerprint": "13fcd18ce0f4bf483548b05e07462914",
+        "compiledFingerprint": "99297ac0254f9e04787181c27a77d640",
+        "themeKind": "detail",
+        "masterDomain": "academy_admission",
+        "doctrineKeys": [
+          "preschool-admission",
+          "academy-course",
+          "academy-cohort",
+          "certification-pathway",
+          "parent-workshop",
+          "institutional-training"
+        ],
+        "storefrontKeys": [],
+        "strictVisualFidelity": false,
+        "source": {
+          "kind": "package",
+          "label": "Academy · Neutral Learning R4",
+          "sourceFingerprint": "13fcd18ce0f4bf483548b05e07462914",
+          "safeToApply": true,
+          "upstreamBlockingCodes": [],
+          "upstreamReviewCodes": [
+            "PIXEL_COMPARISON_PENDING"
+          ],
+          "compilerFingerprint": "6d060bf889a29fd4a9cb0a5aba16a930",
+          "importedAt": "2026-10-12T01:07:04.472Z"
+        },
+        "visualReferences": [],
+        "semanticSlots": [
+          {
+            "blockId": "neutral-academy-world-r4",
+            "blockType": "ac_academy_world",
+            "path": "root.0",
+            "role": "hero",
+            "supplementalRoles": [
+              "identity",
+              "media",
+              "pricing",
+              "availability"
+            ],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": true
+          },
+          {
+            "blockId": "neutral-academy-01",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.0",
+            "role": "hero",
+            "supplementalRoles": [
+              "identity",
+              "media",
+              "pricing",
+              "availability",
+              "primary_conversion"
+            ],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": true
+          },
+          {
+            "blockId": "neutral-academy-02",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.1",
+            "role": "academy_curriculum",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "neutral-academy-03",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.2",
+            "role": "specifications",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "neutral-academy-04",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.3",
+            "role": "academy_cohort",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "neutral-academy-05",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.4",
+            "role": "academy_trainers",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "neutral-academy-06",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.5",
+            "role": "academy_admission",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "neutral-academy-07",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.6",
+            "role": "specifications",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "neutral-academy-08",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.7",
+            "role": "editorial",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "neutral-academy-09",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.8",
+            "role": "editorial",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "neutral-academy-10",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.9",
+            "role": "recommendations",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "neutral-academy-11",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.10",
+            "role": "faq",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "neutral-academy-12",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.11",
+            "role": "trust",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "neutral-academy-13",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.12",
+            "role": "reviews",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "neutral-academy-14",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.13",
+            "role": "specifications",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "neutral-academy-15",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.14",
+            "role": "primary_conversion",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": true
+          }
+        ],
+        "bindingPlan": [
+          {
+            "blockId": "neutral-academy-world-r4",
+            "role": "hero",
+            "bindingKey": "identity.name",
+            "targetKey": "title",
+            "authority": "Category-Native / Catalog",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Public-safe binding · Category-Native / Catalog",
+            "manualOverride": false,
+            "missingPolicy": "hide_block"
+          },
+          {
+            "blockId": "neutral-academy-world-r4",
+            "role": "hero",
+            "bindingKey": "identity.shortDescription",
+            "targetKey": "lead",
+            "authority": "Category-Native / Catalog",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Public-safe binding · Category-Native / Catalog",
+            "manualOverride": false,
+            "missingPolicy": "hide_block"
+          },
+          {
+            "blockId": "neutral-academy-world-r4",
+            "role": "hero",
+            "bindingKey": "media.primary",
+            "targetKey": "mediaUrl",
+            "authority": "Catalog Media",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Public-safe binding · Catalog Media",
+            "manualOverride": false,
+            "missingPolicy": "hide_block"
+          },
+          {
+            "blockId": "neutral-academy-world-r4",
+            "role": "identity",
+            "bindingKey": "identity.name",
+            "targetKey": "title",
+            "authority": "Category-Native / Catalog",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Public-safe binding · Category-Native / Catalog",
+            "manualOverride": false,
+            "missingPolicy": "hide_block"
+          },
+          {
+            "blockId": "neutral-academy-world-r4",
+            "role": "identity",
+            "bindingKey": "identity.shortDescription",
+            "targetKey": "lead",
+            "authority": "Category-Native / Catalog",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Public-safe binding · Category-Native / Catalog",
+            "manualOverride": false,
+            "missingPolicy": "hide_block"
+          },
+          {
+            "blockId": "neutral-academy-world-r4",
+            "role": "identity",
+            "bindingKey": "identity.description",
+            "targetKey": "body",
+            "authority": "Category-Native / Catalog",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Public-safe binding · Category-Native / Catalog",
+            "manualOverride": false,
+            "missingPolicy": "hide_block"
+          },
+          {
+            "blockId": "neutral-academy-world-r4",
+            "role": "media",
+            "bindingKey": "media.primary",
+            "targetKey": "mediaUrl",
+            "authority": "Catalog Media",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Public-safe binding · Catalog Media",
+            "manualOverride": false,
+            "missingPolicy": "hide_block"
+          },
+          {
+            "blockId": "neutral-academy-world-r4",
+            "role": "media",
+            "bindingKey": "media.gallery",
+            "targetKey": "items",
+            "authority": "Catalog Media",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Public-safe binding · Catalog Media",
+            "manualOverride": false,
+            "missingPolicy": "hide_block"
+          },
+          {
+            "blockId": "neutral-academy-world-r4",
+            "role": "pricing",
+            "bindingKey": "pricing.current",
+            "targetKey": "title",
+            "authority": "Catalog / Finance pricing",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Public-safe binding · Catalog / Finance pricing",
+            "manualOverride": false,
+            "missingPolicy": "hide_block"
+          },
+          {
+            "blockId": "neutral-academy-world-r4",
+            "role": "pricing",
+            "bindingKey": "pricing.label",
+            "targetKey": "lead",
+            "authority": "Catalog / Finance pricing",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Public-safe binding · Catalog / Finance pricing",
+            "manualOverride": false,
+            "missingPolicy": "hide_block"
+          },
+          {
+            "blockId": "neutral-academy-world-r4",
+            "role": "pricing",
+            "bindingKey": "pricing.currency",
+            "targetKey": "body",
+            "authority": "Catalog / Finance pricing",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Public-safe binding · Catalog / Finance pricing",
+            "manualOverride": false,
+            "missingPolicy": "hide_block"
+          },
+          {
+            "blockId": "neutral-academy-world-r4",
+            "role": "availability",
+            "bindingKey": "availability.status",
+            "targetKey": "title",
+            "authority": "Category-Native availability",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Public-safe binding · Category-Native availability",
+            "manualOverride": false,
+            "missingPolicy": "hide_block"
+          },
+          {
+            "blockId": "neutral-academy-world-r4",
+            "role": "availability",
+            "bindingKey": "availability.quantity",
+            "targetKey": "lead",
+            "authority": "Category-Native availability",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Public-safe binding · Category-Native availability",
+            "manualOverride": false,
+            "missingPolicy": "hide_block"
+          },
+          {
+            "blockId": "neutral-academy-01",
+            "role": "hero",
+            "bindingKey": "identity.name",
+            "targetKey": "title",
+            "authority": "Category-Native / Catalog",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "neutral-academy-02",
+            "role": "academy_curriculum",
+            "bindingKey": "academy.curriculum",
+            "targetKey": "items",
+            "authority": "Academy Engine",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "neutral-academy-03",
+            "role": "specifications",
+            "bindingKey": "content.fields",
+            "targetKey": "items",
+            "authority": "Experience Schema public_visible",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "neutral-academy-04",
+            "role": "academy_cohort",
+            "bindingKey": "academy.cohorts",
+            "targetKey": "items",
+            "authority": "Academy Cohorts",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "neutral-academy-05",
+            "role": "academy_trainers",
+            "bindingKey": "academy.trainers",
+            "targetKey": "items",
+            "authority": "Academy Engine",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "neutral-academy-06",
+            "role": "academy_admission",
+            "bindingKey": "content.fields",
+            "targetKey": "items",
+            "authority": "Experience Schema public_visible",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "neutral-academy-07",
+            "role": "specifications",
+            "bindingKey": "content.fields",
+            "targetKey": "items",
+            "authority": "Experience Schema public_visible",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "neutral-academy-08",
+            "role": "editorial",
+            "bindingKey": "identity.description",
+            "targetKey": "title",
+            "authority": "Category-Native / Catalog",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "neutral-academy-10",
+            "role": "recommendations",
+            "bindingKey": "relations.recommendations",
+            "targetKey": "items",
+            "authority": "Catalog Discovery",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "neutral-academy-11",
+            "role": "faq",
+            "bindingKey": "content.fields",
+            "targetKey": "items",
+            "authority": "Experience Schema public_visible",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "neutral-academy-12",
+            "role": "trust",
+            "bindingKey": "trust.claims",
+            "targetKey": "items",
+            "authority": "Trust authority",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "neutral-academy-13",
+            "role": "reviews",
+            "bindingKey": "reviews.summary",
+            "targetKey": "items",
+            "authority": "Review authority",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "neutral-academy-14",
+            "role": "specifications",
+            "bindingKey": "content.fields",
+            "targetKey": "items",
+            "authority": "Experience Schema public_visible",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "neutral-academy-15",
+            "role": "primary_conversion",
+            "bindingKey": "identity.name",
+            "targetKey": "title",
+            "authority": "Category-Native / Catalog",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          }
+        ],
+        "actionPlan": [
+          {
+            "blockId": "neutral-academy-01",
+            "role": "hero",
+            "intent": "primary",
+            "actionId": "academy.enroll",
+            "workflowId": null,
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "canonicalEngine": "Academy Engine + Conversion Universe",
+            "targetMode": "current_item",
+            "targetSourceId": "catalog.items",
+            "reason": "Canonical action · Academy Engine + Conversion Universe",
+            "manualOverride": false
+          },
+          {
+            "blockId": "neutral-academy-15",
+            "role": "primary_conversion",
+            "intent": "secondary",
+            "actionId": "quotation.start",
+            "workflowId": null,
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "canonicalEngine": "Conversion Universe / quote basket",
+            "targetMode": "current_item",
+            "targetSourceId": "catalog.items",
+            "reason": "Canonical action · Conversion Universe / quote basket",
+            "manualOverride": false
+          },
+          {
+            "blockId": "neutral-academy-15",
+            "role": "primary_conversion",
+            "intent": "secondary",
+            "actionId": "inquiry.submit",
+            "workflowId": null,
+            "confidence": 1,
+            "required": false,
+            "status": "REVIEW",
+            "canonicalEngine": "public-universe/createPublicInquiry",
+            "targetMode": "none",
+            "targetSourceId": null,
+            "reason": "Canonical action · public-universe/createPublicInquiry",
+            "manualOverride": false
+          }
+        ],
+        "relationPlan": [
+          {
+            "blockId": "neutral-academy-10",
+            "role": "recommendations",
+            "strategy": "similar_items",
+            "sourceId": "catalog.items",
+            "anchorMode": "current_item",
+            "limit": 12,
+            "emptyPolicy": "preserve_static",
+            "status": "RESOLVED"
+          }
+        ],
+        "truthRequirements": [
+          {
+            "key": "promotion",
+            "blockId": "neutral-academy-world-r4",
+            "required": false,
+            "status": "NOT_SHOWN",
+            "authority": null,
+            "evidence": "Promotion claim detected"
+          },
+          {
+            "key": "scarcity",
+            "blockId": "neutral-academy-world-r4",
+            "required": false,
+            "status": "NOT_SHOWN",
+            "authority": null,
+            "evidence": "Scarcity language detected"
+          },
+          {
+            "key": "rating",
+            "blockId": "neutral-academy-13",
+            "required": true,
+            "status": "GOVERNED",
+            "authority": "Public Experience Truth Firewall",
+            "evidence": "Rating/review language detected"
+          },
+          {
+            "key": "certification",
+            "blockId": "neutral-academy-world-r4",
+            "required": false,
+            "status": "NOT_SHOWN",
+            "authority": null,
+            "evidence": "Certification language detected"
+          },
+          {
+            "key": "pricing",
+            "blockId": "neutral-academy-world-r4",
+            "required": false,
+            "status": "NOT_SHOWN",
+            "authority": null,
+            "evidence": "Pricing language detected"
+          },
+          {
+            "key": "availability",
+            "blockId": "neutral-academy-world-r4",
+            "required": false,
+            "status": "NOT_SHOWN",
+            "authority": null,
+            "evidence": "Availability language detected"
+          },
+          {
+            "key": "trust",
+            "blockId": "neutral-academy-12",
+            "required": false,
+            "status": "NOT_SHOWN",
+            "authority": null,
+            "evidence": "Trust language detected"
+          }
+        ],
+        "responsive": {
+          "nativeDesktop": true,
+          "nativeMobile": true,
+          "responsiveHints": 15,
+          "breakpointHints": 45,
+          "horizontalOverflowRisk": false,
+          "fixedWidthEvidence": [],
+          "notes": [
+            "Responsive metadata detected.",
+            "No obvious fixed-width overflow evidence."
+          ]
+        },
+        "capabilities": [
+          {
+            "capability": "academy-authority",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Academy Engine",
+            "detail": "Capability supported by installed canonical runtime."
+          },
+          {
+            "capability": "academy-semantic-runtime-v2",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Studio Academy Semantic Runtime V2",
+            "detail": "Capability supported by installed canonical runtime."
+          },
+          {
+            "capability": "canonical-actions",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Studio Action Registry",
+            "detail": "Capability supported by installed canonical runtime."
+          },
+          {
+            "capability": "canonical-route",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Marketplace route/source registry",
+            "detail": "Capability supported by installed canonical runtime."
+          },
+          {
+            "capability": "native-fallback",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Category-Native / Public Experience runtime",
+            "detail": "Capability supported by installed canonical runtime."
+          },
+          {
+            "capability": "public-experience-360",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "PublicExperience360",
+            "detail": "Capability supported by installed canonical runtime."
+          },
+          {
+            "capability": "relation-dynamic-sources",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Studio Dynamic Source / Catalog Relations",
+            "detail": "Capability supported by installed canonical runtime."
+          },
+          {
+            "capability": "responsive-runtime",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Studio public runtime",
+            "detail": "Capability supported by installed canonical runtime."
+          },
+          {
+            "capability": "truth-firewall",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Public Experience Truth Firewall",
+            "detail": "Capability supported by installed canonical runtime."
+          },
+          {
+            "capability": "theme-operability-v1",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "World Factory 2030 Operability Kernel",
+            "detail": "Capability supported by installed 2030 theme operating kernel."
+          },
+          {
+            "capability": "declarative-conditions",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Studio Published Runtime",
+            "detail": "Capability supported by installed 2030 theme operating kernel."
+          },
+          {
+            "capability": "ui-led-theme-operation",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Public Experience Authority / World Factory",
+            "detail": "Capability supported by installed 2030 theme operating kernel."
+          },
+          {
+            "capability": "fr-en-ar-rtl",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Studio Published Runtime",
+            "detail": "Capability supported by installed 2030 theme operating kernel."
+          },
+          {
+            "capability": "theme-token-contract",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Studio Design Runtime",
+            "detail": "Capability supported by installed 2030 theme operating kernel."
+          }
+        ],
+        "operability": {
+          "version": 1,
+          "density": null,
+          "blockCapabilities": [
+            {
+              "blockId": "neutral-academy-world-r4",
+              "blockType": "ac_academy_world",
+              "role": "hero",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": true,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "media",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility",
+                "seo"
+              ]
+            },
+            {
+              "blockId": "neutral-academy-01",
+              "blockType": "atomic_offer_section",
+              "role": "hero",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": true,
+              "acceptsActions": true,
+              "acceptsChildren": false,
+              "acceptsRepeaters": false,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "media",
+                "actions",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility",
+                "seo"
+              ]
+            },
+            {
+              "blockId": "neutral-academy-02",
+              "blockType": "atomic_offer_section",
+              "role": "academy_curriculum",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "neutral-academy-03",
+              "blockType": "atomic_offer_section",
+              "role": "specifications",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "neutral-academy-04",
+              "blockType": "atomic_offer_section",
+              "role": "academy_cohort",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "neutral-academy-05",
+              "blockType": "atomic_offer_section",
+              "role": "academy_trainers",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "neutral-academy-06",
+              "blockType": "atomic_offer_section",
+              "role": "academy_admission",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "neutral-academy-07",
+              "blockType": "atomic_offer_section",
+              "role": "specifications",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "neutral-academy-08",
+              "blockType": "atomic_offer_section",
+              "role": "editorial",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": true,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": false,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "media",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility",
+                "seo"
+              ]
+            },
+            {
+              "blockId": "neutral-academy-09",
+              "blockType": "atomic_offer_section",
+              "role": "editorial",
+              "acceptsBindings": false,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": true,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": false,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "media",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility",
+                "seo"
+              ]
+            },
+            {
+              "blockId": "neutral-academy-10",
+              "blockType": "atomic_offer_section",
+              "role": "recommendations",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": true,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [
+                "catalog.items"
+              ],
+              "merchandisingModes": [
+                "automatic",
+                "curated",
+                "manual",
+                "hybrid"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "neutral-academy-11",
+              "blockType": "atomic_offer_section",
+              "role": "faq",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility",
+                "seo"
+              ]
+            },
+            {
+              "blockId": "neutral-academy-12",
+              "blockType": "atomic_offer_section",
+              "role": "trust",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "neutral-academy-13",
+              "blockType": "atomic_offer_section",
+              "role": "reviews",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "neutral-academy-14",
+              "blockType": "atomic_offer_section",
+              "role": "specifications",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "neutral-academy-15",
+              "blockType": "atomic_offer_section",
+              "role": "primary_conversion",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": true,
+              "acceptsChildren": false,
+              "acceptsRepeaters": false,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "actions",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            }
+          ],
+          "conditions": [],
+          "repeaters": [
+            {
+              "blockId": "neutral-academy-world-r4",
+              "targetKey": "items",
+              "source": "binding",
+              "bindingKey": "media.gallery",
+              "sourceId": null,
+              "strategy": null,
+              "limit": 24,
+              "sort": "canonical",
+              "emptyPolicy": "hide_block",
+              "itemVariant": null
+            },
+            {
+              "blockId": "neutral-academy-02",
+              "targetKey": "items",
+              "source": "binding",
+              "bindingKey": "academy.curriculum",
+              "sourceId": null,
+              "strategy": null,
+              "limit": 24,
+              "sort": "canonical",
+              "emptyPolicy": "omit",
+              "itemVariant": null
+            },
+            {
+              "blockId": "neutral-academy-03",
+              "targetKey": "items",
+              "source": "binding",
+              "bindingKey": "content.fields",
+              "sourceId": null,
+              "strategy": null,
+              "limit": 24,
+              "sort": "canonical",
+              "emptyPolicy": "omit",
+              "itemVariant": null
+            },
+            {
+              "blockId": "neutral-academy-04",
+              "targetKey": "items",
+              "source": "binding",
+              "bindingKey": "academy.cohorts",
+              "sourceId": null,
+              "strategy": null,
+              "limit": 24,
+              "sort": "canonical",
+              "emptyPolicy": "omit",
+              "itemVariant": null
+            },
+            {
+              "blockId": "neutral-academy-05",
+              "targetKey": "items",
+              "source": "binding",
+              "bindingKey": "academy.trainers",
+              "sourceId": null,
+              "strategy": null,
+              "limit": 24,
+              "sort": "canonical",
+              "emptyPolicy": "omit",
+              "itemVariant": null
+            },
+            {
+              "blockId": "neutral-academy-06",
+              "targetKey": "items",
+              "source": "binding",
+              "bindingKey": "content.fields",
+              "sourceId": null,
+              "strategy": null,
+              "limit": 24,
+              "sort": "canonical",
+              "emptyPolicy": "omit",
+              "itemVariant": null
+            },
+            {
+              "blockId": "neutral-academy-07",
+              "targetKey": "items",
+              "source": "binding",
+              "bindingKey": "content.fields",
+              "sourceId": null,
+              "strategy": null,
+              "limit": 24,
+              "sort": "canonical",
+              "emptyPolicy": "omit",
+              "itemVariant": null
+            },
+            {
+              "blockId": "neutral-academy-10",
+              "targetKey": "items",
+              "source": "dynamic_source",
+              "bindingKey": null,
+              "sourceId": "catalog.items",
+              "strategy": "similar_items",
+              "limit": 12,
+              "sort": "recommended",
+              "emptyPolicy": "preserve_static",
+              "itemVariant": null
+            },
+            {
+              "blockId": "neutral-academy-11",
+              "targetKey": "items",
+              "source": "binding",
+              "bindingKey": "content.fields",
+              "sourceId": null,
+              "strategy": null,
+              "limit": 24,
+              "sort": "canonical",
+              "emptyPolicy": "omit",
+              "itemVariant": null
+            },
+            {
+              "blockId": "neutral-academy-12",
+              "targetKey": "items",
+              "source": "binding",
+              "bindingKey": "trust.claims",
+              "sourceId": null,
+              "strategy": null,
+              "limit": 24,
+              "sort": "canonical",
+              "emptyPolicy": "omit",
+              "itemVariant": null
+            },
+            {
+              "blockId": "neutral-academy-13",
+              "targetKey": "items",
+              "source": "binding",
+              "bindingKey": "reviews.summary",
+              "sourceId": null,
+              "strategy": null,
+              "limit": 24,
+              "sort": "canonical",
+              "emptyPolicy": "omit",
+              "itemVariant": null
+            },
+            {
+              "blockId": "neutral-academy-14",
+              "targetKey": "items",
+              "source": "binding",
+              "bindingKey": "content.fields",
+              "sourceId": null,
+              "strategy": null,
+              "limit": 24,
+              "sort": "canonical",
+              "emptyPolicy": "omit",
+              "itemVariant": null
+            }
+          ],
+          "media": [
+            {
+              "blockId": "neutral-academy-world-r4",
+              "targetKey": "mediaUrl",
+              "kind": "primary",
+              "source": "binding",
+              "bindingKey": "media.primary",
+              "assetRole": null,
+              "required": true,
+              "presentation": {
+                "fit": "cover",
+                "position": "50% 50%",
+                "aspectRatio": null,
+                "overlay": null,
+                "focalPoint": null
+              },
+              "responsive": {
+                "desktop": null,
+                "tablet": null,
+                "mobile": null
+              }
+            },
+            {
+              "blockId": "neutral-academy-world-r4",
+              "targetKey": "mediaUrl",
+              "kind": "primary",
+              "source": "binding",
+              "bindingKey": "media.primary",
+              "assetRole": null,
+              "required": true,
+              "presentation": {
+                "fit": "cover",
+                "position": "50% 50%",
+                "aspectRatio": null,
+                "overlay": null,
+                "focalPoint": null
+              },
+              "responsive": {
+                "desktop": null,
+                "tablet": null,
+                "mobile": null
+              }
+            },
+            {
+              "blockId": "neutral-academy-world-r4",
+              "targetKey": "items",
+              "kind": "gallery",
+              "source": "binding",
+              "bindingKey": "media.gallery",
+              "assetRole": null,
+              "required": true,
+              "presentation": {
+                "fit": "cover",
+                "position": "50% 50%",
+                "aspectRatio": null,
+                "overlay": null,
+                "focalPoint": null
+              },
+              "responsive": {
+                "desktop": null,
+                "tablet": null,
+                "mobile": null
+              }
+            }
+          ],
+          "interactions": [
+            {
+              "blockId": "neutral-academy-04",
+              "kind": "schedule_selector",
+              "status": "SUPPORTED",
+              "configuration": {}
+            },
+            {
+              "blockId": "neutral-academy-11",
+              "kind": "accordion",
+              "status": "SUPPORTED",
+              "configuration": {}
+            },
+            {
+              "blockId": "neutral-academy-15",
+              "kind": "sticky_conversion",
+              "status": "SUPPORTED",
+              "configuration": {}
+            }
+          ],
+          "localization": {
+            "defaultLocale": "fr",
+            "locales": [
+              "fr",
+              "en",
+              "ar"
+            ],
+            "rtlLocales": [
+              "ar"
+            ],
+            "themeStrings": "localized-map",
+            "fallback": "default-locale",
+            "missingTranslation": "warn"
+          },
+          "tokens": {
+            "colors": {},
+            "typography": {},
+            "spacing": {},
+            "radii": {},
+            "shadows": {},
+            "layout": {},
+            "motion": {}
+          },
+          "assets": [],
+          "performance": {
+            "maxRootBlocks": 40,
+            "maxTotalBlocks": 160,
+            "maxDynamicSources": 24,
+            "maxAboveFoldMedia": 6,
+            "maxMediaAssets": 80,
+            "maxDocumentBytes": 1500000,
+            "maxInteractions": 40
+          },
+          "shell": {
+            "mode": "marketplace_global",
+            "allowGlobalHeaderOverride": false,
+            "allowGlobalFooterOverride": false,
+            "allowGlobalNavigationOverride": false
+          },
+          "editing": {
+            "uiLed": true,
+            "rawJsonRequired": false,
+            "allowBlockMove": true,
+            "allowBlockDuplicate": true,
+            "allowBlockHide": true,
+            "allowBindingChange": true,
+            "allowActionChange": true,
+            "allowMediaReplace": true,
+            "allowDesignChange": true,
+            "allowResponsiveChange": true,
+            "allowConditionChange": true,
+            "immutableBusinessTruth": true
+          },
+          "inspector": {
+            "generatedFromCapabilities": true,
+            "hideUnsupportedFields": true,
+            "showAuthorityOwnership": true,
+            "showInheritance": true
+          }
+        },
+        "certification": {
+          "level": "READY",
+          "lifecycle": "CERTIFIED",
+          "productionEligible": true,
+          "coverage": {
+            "semantic": 100,
+            "binding": 100,
+            "action": 100,
+            "truth": 100,
+            "responsive": 100,
+            "visual": 0,
+            "overall": 83
+          },
+          "gates": [
+            {
+              "id": "source-safety",
+              "label": "Source sanitized",
+              "state": "PASS",
+              "critical": true,
+              "detail": "Universal Import candidate has no upstream blocker."
+            },
+            {
+              "id": "domain",
+              "label": "Master domain / doctrines",
+              "state": "PASS",
+              "critical": true,
+              "detail": "academy_admission · 6 doctrine(s)"
+            },
+            {
+              "id": "storefront-shell",
+              "label": "Global shell authority",
+              "state": "PASS",
+              "critical": true,
+              "detail": "Global AngelCare header/navigation/footer remain outside the imported Storefront World."
+            },
+            {
+              "id": "semantic",
+              "label": "Semantic anatomy",
+              "state": "PASS",
+              "critical": true,
+              "detail": "Required roles covered (100%)."
+            },
+            {
+              "id": "bindings",
+              "label": "Canonical binding coverage",
+              "state": "PASS",
+              "critical": true,
+              "detail": "15/15 required bindings resolved."
+            },
+            {
+              "id": "actions",
+              "label": "Canonical action coverage",
+              "state": "PASS",
+              "critical": true,
+              "detail": "2/2 required actions resolved; current-item targets supported for catalog actions."
+            },
+            {
+              "id": "relations",
+              "label": "Contextual relation sources",
+              "state": "PASS",
+              "critical": false,
+              "detail": "1 relation rail(s) compiled with current-item anchor."
+            },
+            {
+              "id": "truth",
+              "label": "Truth Firewall contract",
+              "state": "PASS",
+              "critical": true,
+              "detail": "Commercial claims are classified for Truth Firewall enforcement."
+            },
+            {
+              "id": "responsive",
+              "label": "Responsive contract",
+              "state": "PASS",
+              "critical": true,
+              "detail": "Responsive metadata detected. No obvious fixed-width overflow evidence."
+            },
+            {
+              "id": "visual",
+              "label": "Approved desktop/mobile reference",
+              "state": "PASS",
+              "critical": false,
+              "detail": "Desktop + mobile reference evidence approved."
+            },
+            {
+              "id": "capabilities",
+              "label": "Capability negotiation",
+              "state": "PASS",
+              "critical": true,
+              "detail": "14 requested runtime capabilities negotiated."
+            },
+            {
+              "id": "operability",
+              "label": "2030 no-code operability",
+              "state": "PASS",
+              "critical": true,
+              "detail": "16 block capability contracts · 12 repeaters · 3 media contracts · FR/EN/AR + RTL."
+            },
+            {
+              "id": "fallback",
+              "label": "Native fallback",
+              "state": "PASS",
+              "critical": true,
+              "detail": "Category-Native/native fallback remains mandatory."
+            }
+          ],
+          "blockers": [],
+          "warnings": [],
+          "certifiedAt": "2026-10-12T01:07:04.472Z"
+        },
+        "compatibility": {
+          "minimumRuntime": "pea-v1",
+          "maximumRuntime": null,
+          "forwardPolicy": "capability-negotiation",
+          "unknownFields": "preserve",
+          "nativeFallback": true,
+          "schemaVersion": 3,
+          "compilerProfile": "pea-world-factory-2030-operability-v3"
+        },
+        "revision": {
+          "worldKey": "ac.neutral.academy.r4",
+          "revision": 4,
+          "supersedes": null,
+          "immutableAfterCertification": true
+        },
+        "overrides": {
+          "roleOverrides": {
+            "neutral-academy-world-r4": "hero",
+            "neutral-academy-01": "hero",
+            "neutral-academy-02": "academy_curriculum",
+            "neutral-academy-03": "specifications",
+            "neutral-academy-04": "academy_cohort",
+            "neutral-academy-05": "academy_trainers",
+            "neutral-academy-06": "academy_admission",
+            "neutral-academy-07": "specifications",
+            "neutral-academy-08": "editorial",
+            "neutral-academy-09": "editorial",
+            "neutral-academy-10": "recommendations",
+            "neutral-academy-11": "faq",
+            "neutral-academy-12": "trust",
+            "neutral-academy-13": "reviews",
+            "neutral-academy-14": "specifications",
+            "neutral-academy-15": "primary_conversion"
+          },
+          "supplementalRoleOverrides": {
+            "neutral-academy-world-r4": [
+              "identity",
+              "media",
+              "pricing",
+              "availability"
+            ],
+            "neutral-academy-01": [
+              "identity",
+              "media",
+              "pricing",
+              "availability",
+              "primary_conversion"
+            ]
+          },
+          "bindingOverrides": [],
+          "actionOverrides": [],
+          "note": null
+        },
+        "provenance": {
+          "createdBy": "WORLD_FACTORY",
+          "manualOverrides": 18,
+          "notes": [
+            "No hardcoded production theme requirement.",
+            "UI-led import/assign/update contract active.",
+            "No foreign code execution.",
+            "Business authorities remain canonical.",
+            "Inference is reviewable and versioned.",
+            "Certified revisions are immutable; changes create a new revision."
+          ]
+        }
+      }
+    },
+    "factory": {
+      "engineVersion": 3,
+      "schemaVersion": 3,
+      "compilerProfile": "pea-world-factory-2030-operability-v3",
+      "candidateFingerprint": "1b391f6e965aa27e8ebe78fa5bb9ec0a",
+      "documentFingerprint": "13fcd18ce0f4bf483548b05e07462914",
+      "compiledFingerprint": "99297ac0254f9e04787181c27a77d640",
+      "themeKind": "detail",
+      "masterDomain": "academy_admission",
+      "doctrineKeys": [
+        "preschool-admission",
+        "academy-course",
+        "academy-cohort",
+        "certification-pathway",
+        "parent-workshop",
+        "institutional-training"
+      ],
+      "storefrontKeys": [],
+      "strictVisualFidelity": false,
+      "source": {
+        "kind": "package",
+        "label": "Academy · Neutral Learning R4",
+        "sourceFingerprint": "13fcd18ce0f4bf483548b05e07462914",
+        "safeToApply": true,
+        "upstreamBlockingCodes": [],
+        "upstreamReviewCodes": [
+          "PIXEL_COMPARISON_PENDING"
+        ],
+        "compilerFingerprint": "6d060bf889a29fd4a9cb0a5aba16a930",
+        "importedAt": "2026-10-12T01:07:04.472Z"
+      },
+      "visualReferences": [],
+      "semanticSlots": [
+        {
+          "blockId": "neutral-academy-world-r4",
+          "blockType": "ac_academy_world",
+          "path": "root.0",
+          "role": "hero",
+          "supplementalRoles": [
+            "identity",
+            "media",
+            "pricing",
+            "availability"
+          ],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": true
+        },
+        {
+          "blockId": "neutral-academy-01",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.0",
+          "role": "hero",
+          "supplementalRoles": [
+            "identity",
+            "media",
+            "pricing",
+            "availability",
+            "primary_conversion"
+          ],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": true
+        },
+        {
+          "blockId": "neutral-academy-02",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.1",
+          "role": "academy_curriculum",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "neutral-academy-03",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.2",
+          "role": "specifications",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "neutral-academy-04",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.3",
+          "role": "academy_cohort",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "neutral-academy-05",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.4",
+          "role": "academy_trainers",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "neutral-academy-06",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.5",
+          "role": "academy_admission",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "neutral-academy-07",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.6",
+          "role": "specifications",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "neutral-academy-08",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.7",
+          "role": "editorial",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "neutral-academy-09",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.8",
+          "role": "editorial",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "neutral-academy-10",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.9",
+          "role": "recommendations",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "neutral-academy-11",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.10",
+          "role": "faq",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "neutral-academy-12",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.11",
+          "role": "trust",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "neutral-academy-13",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.12",
+          "role": "reviews",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "neutral-academy-14",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.13",
+          "role": "specifications",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "neutral-academy-15",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.14",
+          "role": "primary_conversion",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": true
+        }
+      ],
+      "bindingPlan": [
+        {
+          "blockId": "neutral-academy-world-r4",
+          "role": "hero",
+          "bindingKey": "identity.name",
+          "targetKey": "title",
+          "authority": "Category-Native / Catalog",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Public-safe binding · Category-Native / Catalog",
+          "manualOverride": false,
+          "missingPolicy": "hide_block"
+        },
+        {
+          "blockId": "neutral-academy-world-r4",
+          "role": "hero",
+          "bindingKey": "identity.shortDescription",
+          "targetKey": "lead",
+          "authority": "Category-Native / Catalog",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Public-safe binding · Category-Native / Catalog",
+          "manualOverride": false,
+          "missingPolicy": "hide_block"
+        },
+        {
+          "blockId": "neutral-academy-world-r4",
+          "role": "hero",
+          "bindingKey": "media.primary",
+          "targetKey": "mediaUrl",
+          "authority": "Catalog Media",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Public-safe binding · Catalog Media",
+          "manualOverride": false,
+          "missingPolicy": "hide_block"
+        },
+        {
+          "blockId": "neutral-academy-world-r4",
+          "role": "identity",
+          "bindingKey": "identity.name",
+          "targetKey": "title",
+          "authority": "Category-Native / Catalog",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Public-safe binding · Category-Native / Catalog",
+          "manualOverride": false,
+          "missingPolicy": "hide_block"
+        },
+        {
+          "blockId": "neutral-academy-world-r4",
+          "role": "identity",
+          "bindingKey": "identity.shortDescription",
+          "targetKey": "lead",
+          "authority": "Category-Native / Catalog",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Public-safe binding · Category-Native / Catalog",
+          "manualOverride": false,
+          "missingPolicy": "hide_block"
+        },
+        {
+          "blockId": "neutral-academy-world-r4",
+          "role": "identity",
+          "bindingKey": "identity.description",
+          "targetKey": "body",
+          "authority": "Category-Native / Catalog",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Public-safe binding · Category-Native / Catalog",
+          "manualOverride": false,
+          "missingPolicy": "hide_block"
+        },
+        {
+          "blockId": "neutral-academy-world-r4",
+          "role": "media",
+          "bindingKey": "media.primary",
+          "targetKey": "mediaUrl",
+          "authority": "Catalog Media",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Public-safe binding · Catalog Media",
+          "manualOverride": false,
+          "missingPolicy": "hide_block"
+        },
+        {
+          "blockId": "neutral-academy-world-r4",
+          "role": "media",
+          "bindingKey": "media.gallery",
+          "targetKey": "items",
+          "authority": "Catalog Media",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Public-safe binding · Catalog Media",
+          "manualOverride": false,
+          "missingPolicy": "hide_block"
+        },
+        {
+          "blockId": "neutral-academy-world-r4",
+          "role": "pricing",
+          "bindingKey": "pricing.current",
+          "targetKey": "title",
+          "authority": "Catalog / Finance pricing",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Public-safe binding · Catalog / Finance pricing",
+          "manualOverride": false,
+          "missingPolicy": "hide_block"
+        },
+        {
+          "blockId": "neutral-academy-world-r4",
+          "role": "pricing",
+          "bindingKey": "pricing.label",
+          "targetKey": "lead",
+          "authority": "Catalog / Finance pricing",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Public-safe binding · Catalog / Finance pricing",
+          "manualOverride": false,
+          "missingPolicy": "hide_block"
+        },
+        {
+          "blockId": "neutral-academy-world-r4",
+          "role": "pricing",
+          "bindingKey": "pricing.currency",
+          "targetKey": "body",
+          "authority": "Catalog / Finance pricing",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Public-safe binding · Catalog / Finance pricing",
+          "manualOverride": false,
+          "missingPolicy": "hide_block"
+        },
+        {
+          "blockId": "neutral-academy-world-r4",
+          "role": "availability",
+          "bindingKey": "availability.status",
+          "targetKey": "title",
+          "authority": "Category-Native availability",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Public-safe binding · Category-Native availability",
+          "manualOverride": false,
+          "missingPolicy": "hide_block"
+        },
+        {
+          "blockId": "neutral-academy-world-r4",
+          "role": "availability",
+          "bindingKey": "availability.quantity",
+          "targetKey": "lead",
+          "authority": "Category-Native availability",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Public-safe binding · Category-Native availability",
+          "manualOverride": false,
+          "missingPolicy": "hide_block"
+        },
+        {
+          "blockId": "neutral-academy-01",
+          "role": "hero",
+          "bindingKey": "identity.name",
+          "targetKey": "title",
+          "authority": "Category-Native / Catalog",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "neutral-academy-02",
+          "role": "academy_curriculum",
+          "bindingKey": "academy.curriculum",
+          "targetKey": "items",
+          "authority": "Academy Engine",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "neutral-academy-03",
+          "role": "specifications",
+          "bindingKey": "content.fields",
+          "targetKey": "items",
+          "authority": "Experience Schema public_visible",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "neutral-academy-04",
+          "role": "academy_cohort",
+          "bindingKey": "academy.cohorts",
+          "targetKey": "items",
+          "authority": "Academy Cohorts",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "neutral-academy-05",
+          "role": "academy_trainers",
+          "bindingKey": "academy.trainers",
+          "targetKey": "items",
+          "authority": "Academy Engine",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "neutral-academy-06",
+          "role": "academy_admission",
+          "bindingKey": "content.fields",
+          "targetKey": "items",
+          "authority": "Experience Schema public_visible",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "neutral-academy-07",
+          "role": "specifications",
+          "bindingKey": "content.fields",
+          "targetKey": "items",
+          "authority": "Experience Schema public_visible",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "neutral-academy-08",
+          "role": "editorial",
+          "bindingKey": "identity.description",
+          "targetKey": "title",
+          "authority": "Category-Native / Catalog",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "neutral-academy-10",
+          "role": "recommendations",
+          "bindingKey": "relations.recommendations",
+          "targetKey": "items",
+          "authority": "Catalog Discovery",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "neutral-academy-11",
+          "role": "faq",
+          "bindingKey": "content.fields",
+          "targetKey": "items",
+          "authority": "Experience Schema public_visible",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "neutral-academy-12",
+          "role": "trust",
+          "bindingKey": "trust.claims",
+          "targetKey": "items",
+          "authority": "Trust authority",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "neutral-academy-13",
+          "role": "reviews",
+          "bindingKey": "reviews.summary",
+          "targetKey": "items",
+          "authority": "Review authority",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "neutral-academy-14",
+          "role": "specifications",
+          "bindingKey": "content.fields",
+          "targetKey": "items",
+          "authority": "Experience Schema public_visible",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "neutral-academy-15",
+          "role": "primary_conversion",
+          "bindingKey": "identity.name",
+          "targetKey": "title",
+          "authority": "Category-Native / Catalog",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        }
+      ],
+      "actionPlan": [
+        {
+          "blockId": "neutral-academy-01",
+          "role": "hero",
+          "intent": "primary",
+          "actionId": "academy.enroll",
+          "workflowId": null,
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "canonicalEngine": "Academy Engine + Conversion Universe",
+          "targetMode": "current_item",
+          "targetSourceId": "catalog.items",
+          "reason": "Canonical action · Academy Engine + Conversion Universe",
+          "manualOverride": false
+        },
+        {
+          "blockId": "neutral-academy-15",
+          "role": "primary_conversion",
+          "intent": "secondary",
+          "actionId": "quotation.start",
+          "workflowId": null,
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "canonicalEngine": "Conversion Universe / quote basket",
+          "targetMode": "current_item",
+          "targetSourceId": "catalog.items",
+          "reason": "Canonical action · Conversion Universe / quote basket",
+          "manualOverride": false
+        },
+        {
+          "blockId": "neutral-academy-15",
+          "role": "primary_conversion",
+          "intent": "secondary",
+          "actionId": "inquiry.submit",
+          "workflowId": null,
+          "confidence": 1,
+          "required": false,
+          "status": "REVIEW",
+          "canonicalEngine": "public-universe/createPublicInquiry",
+          "targetMode": "none",
+          "targetSourceId": null,
+          "reason": "Canonical action · public-universe/createPublicInquiry",
+          "manualOverride": false
+        }
+      ],
+      "relationPlan": [
+        {
+          "blockId": "neutral-academy-10",
+          "role": "recommendations",
+          "strategy": "similar_items",
+          "sourceId": "catalog.items",
+          "anchorMode": "current_item",
+          "limit": 12,
+          "emptyPolicy": "preserve_static",
+          "status": "RESOLVED"
+        }
+      ],
+      "truthRequirements": [
+        {
+          "key": "promotion",
+          "blockId": "neutral-academy-world-r4",
+          "required": false,
+          "status": "NOT_SHOWN",
+          "authority": null,
+          "evidence": "Promotion claim detected"
+        },
+        {
+          "key": "scarcity",
+          "blockId": "neutral-academy-world-r4",
+          "required": false,
+          "status": "NOT_SHOWN",
+          "authority": null,
+          "evidence": "Scarcity language detected"
+        },
+        {
+          "key": "rating",
+          "blockId": "neutral-academy-13",
+          "required": true,
+          "status": "GOVERNED",
+          "authority": "Public Experience Truth Firewall",
+          "evidence": "Rating/review language detected"
+        },
+        {
+          "key": "certification",
+          "blockId": "neutral-academy-world-r4",
+          "required": false,
+          "status": "NOT_SHOWN",
+          "authority": null,
+          "evidence": "Certification language detected"
+        },
+        {
+          "key": "pricing",
+          "blockId": "neutral-academy-world-r4",
+          "required": false,
+          "status": "NOT_SHOWN",
+          "authority": null,
+          "evidence": "Pricing language detected"
+        },
+        {
+          "key": "availability",
+          "blockId": "neutral-academy-world-r4",
+          "required": false,
+          "status": "NOT_SHOWN",
+          "authority": null,
+          "evidence": "Availability language detected"
+        },
+        {
+          "key": "trust",
+          "blockId": "neutral-academy-12",
+          "required": false,
+          "status": "NOT_SHOWN",
+          "authority": null,
+          "evidence": "Trust language detected"
+        }
+      ],
+      "responsive": {
+        "nativeDesktop": true,
+        "nativeMobile": true,
+        "responsiveHints": 15,
+        "breakpointHints": 45,
+        "horizontalOverflowRisk": false,
+        "fixedWidthEvidence": [],
+        "notes": [
+          "Responsive metadata detected.",
+          "No obvious fixed-width overflow evidence."
+        ]
+      },
+      "capabilities": [
+        {
+          "capability": "academy-authority",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Academy Engine",
+          "detail": "Capability supported by installed canonical runtime."
+        },
+        {
+          "capability": "academy-semantic-runtime-v2",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Studio Academy Semantic Runtime V2",
+          "detail": "Capability supported by installed canonical runtime."
+        },
+        {
+          "capability": "canonical-actions",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Studio Action Registry",
+          "detail": "Capability supported by installed canonical runtime."
+        },
+        {
+          "capability": "canonical-route",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Marketplace route/source registry",
+          "detail": "Capability supported by installed canonical runtime."
+        },
+        {
+          "capability": "native-fallback",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Category-Native / Public Experience runtime",
+          "detail": "Capability supported by installed canonical runtime."
+        },
+        {
+          "capability": "public-experience-360",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "PublicExperience360",
+          "detail": "Capability supported by installed canonical runtime."
+        },
+        {
+          "capability": "relation-dynamic-sources",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Studio Dynamic Source / Catalog Relations",
+          "detail": "Capability supported by installed canonical runtime."
+        },
+        {
+          "capability": "responsive-runtime",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Studio public runtime",
+          "detail": "Capability supported by installed canonical runtime."
+        },
+        {
+          "capability": "truth-firewall",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Public Experience Truth Firewall",
+          "detail": "Capability supported by installed canonical runtime."
+        },
+        {
+          "capability": "theme-operability-v1",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "World Factory 2030 Operability Kernel",
+          "detail": "Capability supported by installed 2030 theme operating kernel."
+        },
+        {
+          "capability": "declarative-conditions",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Studio Published Runtime",
+          "detail": "Capability supported by installed 2030 theme operating kernel."
+        },
+        {
+          "capability": "ui-led-theme-operation",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Public Experience Authority / World Factory",
+          "detail": "Capability supported by installed 2030 theme operating kernel."
+        },
+        {
+          "capability": "fr-en-ar-rtl",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Studio Published Runtime",
+          "detail": "Capability supported by installed 2030 theme operating kernel."
+        },
+        {
+          "capability": "theme-token-contract",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Studio Design Runtime",
+          "detail": "Capability supported by installed 2030 theme operating kernel."
+        }
+      ],
+      "operability": {
+        "version": 1,
+        "density": null,
+        "blockCapabilities": [
+          {
+            "blockId": "neutral-academy-world-r4",
+            "blockType": "ac_academy_world",
+            "role": "hero",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": true,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "media",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility",
+              "seo"
+            ]
+          },
+          {
+            "blockId": "neutral-academy-01",
+            "blockType": "atomic_offer_section",
+            "role": "hero",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": true,
+            "acceptsActions": true,
+            "acceptsChildren": false,
+            "acceptsRepeaters": false,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "media",
+              "actions",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility",
+              "seo"
+            ]
+          },
+          {
+            "blockId": "neutral-academy-02",
+            "blockType": "atomic_offer_section",
+            "role": "academy_curriculum",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "neutral-academy-03",
+            "blockType": "atomic_offer_section",
+            "role": "specifications",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "neutral-academy-04",
+            "blockType": "atomic_offer_section",
+            "role": "academy_cohort",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "neutral-academy-05",
+            "blockType": "atomic_offer_section",
+            "role": "academy_trainers",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "neutral-academy-06",
+            "blockType": "atomic_offer_section",
+            "role": "academy_admission",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "neutral-academy-07",
+            "blockType": "atomic_offer_section",
+            "role": "specifications",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "neutral-academy-08",
+            "blockType": "atomic_offer_section",
+            "role": "editorial",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": true,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": false,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "media",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility",
+              "seo"
+            ]
+          },
+          {
+            "blockId": "neutral-academy-09",
+            "blockType": "atomic_offer_section",
+            "role": "editorial",
+            "acceptsBindings": false,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": true,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": false,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "media",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility",
+              "seo"
+            ]
+          },
+          {
+            "blockId": "neutral-academy-10",
+            "blockType": "atomic_offer_section",
+            "role": "recommendations",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": true,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [
+              "catalog.items"
+            ],
+            "merchandisingModes": [
+              "automatic",
+              "curated",
+              "manual",
+              "hybrid"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "neutral-academy-11",
+            "blockType": "atomic_offer_section",
+            "role": "faq",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility",
+              "seo"
+            ]
+          },
+          {
+            "blockId": "neutral-academy-12",
+            "blockType": "atomic_offer_section",
+            "role": "trust",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "neutral-academy-13",
+            "blockType": "atomic_offer_section",
+            "role": "reviews",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "neutral-academy-14",
+            "blockType": "atomic_offer_section",
+            "role": "specifications",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "neutral-academy-15",
+            "blockType": "atomic_offer_section",
+            "role": "primary_conversion",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": true,
+            "acceptsChildren": false,
+            "acceptsRepeaters": false,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "actions",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          }
+        ],
+        "conditions": [],
+        "repeaters": [
+          {
+            "blockId": "neutral-academy-world-r4",
+            "targetKey": "items",
+            "source": "binding",
+            "bindingKey": "media.gallery",
+            "sourceId": null,
+            "strategy": null,
+            "limit": 24,
+            "sort": "canonical",
+            "emptyPolicy": "hide_block",
+            "itemVariant": null
+          },
+          {
+            "blockId": "neutral-academy-02",
+            "targetKey": "items",
+            "source": "binding",
+            "bindingKey": "academy.curriculum",
+            "sourceId": null,
+            "strategy": null,
+            "limit": 24,
+            "sort": "canonical",
+            "emptyPolicy": "omit",
+            "itemVariant": null
+          },
+          {
+            "blockId": "neutral-academy-03",
+            "targetKey": "items",
+            "source": "binding",
+            "bindingKey": "content.fields",
+            "sourceId": null,
+            "strategy": null,
+            "limit": 24,
+            "sort": "canonical",
+            "emptyPolicy": "omit",
+            "itemVariant": null
+          },
+          {
+            "blockId": "neutral-academy-04",
+            "targetKey": "items",
+            "source": "binding",
+            "bindingKey": "academy.cohorts",
+            "sourceId": null,
+            "strategy": null,
+            "limit": 24,
+            "sort": "canonical",
+            "emptyPolicy": "omit",
+            "itemVariant": null
+          },
+          {
+            "blockId": "neutral-academy-05",
+            "targetKey": "items",
+            "source": "binding",
+            "bindingKey": "academy.trainers",
+            "sourceId": null,
+            "strategy": null,
+            "limit": 24,
+            "sort": "canonical",
+            "emptyPolicy": "omit",
+            "itemVariant": null
+          },
+          {
+            "blockId": "neutral-academy-06",
+            "targetKey": "items",
+            "source": "binding",
+            "bindingKey": "content.fields",
+            "sourceId": null,
+            "strategy": null,
+            "limit": 24,
+            "sort": "canonical",
+            "emptyPolicy": "omit",
+            "itemVariant": null
+          },
+          {
+            "blockId": "neutral-academy-07",
+            "targetKey": "items",
+            "source": "binding",
+            "bindingKey": "content.fields",
+            "sourceId": null,
+            "strategy": null,
+            "limit": 24,
+            "sort": "canonical",
+            "emptyPolicy": "omit",
+            "itemVariant": null
+          },
+          {
+            "blockId": "neutral-academy-10",
+            "targetKey": "items",
+            "source": "dynamic_source",
+            "bindingKey": null,
+            "sourceId": "catalog.items",
+            "strategy": "similar_items",
+            "limit": 12,
+            "sort": "recommended",
+            "emptyPolicy": "preserve_static",
+            "itemVariant": null
+          },
+          {
+            "blockId": "neutral-academy-11",
+            "targetKey": "items",
+            "source": "binding",
+            "bindingKey": "content.fields",
+            "sourceId": null,
+            "strategy": null,
+            "limit": 24,
+            "sort": "canonical",
+            "emptyPolicy": "omit",
+            "itemVariant": null
+          },
+          {
+            "blockId": "neutral-academy-12",
+            "targetKey": "items",
+            "source": "binding",
+            "bindingKey": "trust.claims",
+            "sourceId": null,
+            "strategy": null,
+            "limit": 24,
+            "sort": "canonical",
+            "emptyPolicy": "omit",
+            "itemVariant": null
+          },
+          {
+            "blockId": "neutral-academy-13",
+            "targetKey": "items",
+            "source": "binding",
+            "bindingKey": "reviews.summary",
+            "sourceId": null,
+            "strategy": null,
+            "limit": 24,
+            "sort": "canonical",
+            "emptyPolicy": "omit",
+            "itemVariant": null
+          },
+          {
+            "blockId": "neutral-academy-14",
+            "targetKey": "items",
+            "source": "binding",
+            "bindingKey": "content.fields",
+            "sourceId": null,
+            "strategy": null,
+            "limit": 24,
+            "sort": "canonical",
+            "emptyPolicy": "omit",
+            "itemVariant": null
+          }
+        ],
+        "media": [
+          {
+            "blockId": "neutral-academy-world-r4",
+            "targetKey": "mediaUrl",
+            "kind": "primary",
+            "source": "binding",
+            "bindingKey": "media.primary",
+            "assetRole": null,
+            "required": true,
+            "presentation": {
+              "fit": "cover",
+              "position": "50% 50%",
+              "aspectRatio": null,
+              "overlay": null,
+              "focalPoint": null
+            },
+            "responsive": {
+              "desktop": null,
+              "tablet": null,
+              "mobile": null
+            }
+          },
+          {
+            "blockId": "neutral-academy-world-r4",
+            "targetKey": "mediaUrl",
+            "kind": "primary",
+            "source": "binding",
+            "bindingKey": "media.primary",
+            "assetRole": null,
+            "required": true,
+            "presentation": {
+              "fit": "cover",
+              "position": "50% 50%",
+              "aspectRatio": null,
+              "overlay": null,
+              "focalPoint": null
+            },
+            "responsive": {
+              "desktop": null,
+              "tablet": null,
+              "mobile": null
+            }
+          },
+          {
+            "blockId": "neutral-academy-world-r4",
+            "targetKey": "items",
+            "kind": "gallery",
+            "source": "binding",
+            "bindingKey": "media.gallery",
+            "assetRole": null,
+            "required": true,
+            "presentation": {
+              "fit": "cover",
+              "position": "50% 50%",
+              "aspectRatio": null,
+              "overlay": null,
+              "focalPoint": null
+            },
+            "responsive": {
+              "desktop": null,
+              "tablet": null,
+              "mobile": null
+            }
+          }
+        ],
+        "interactions": [
+          {
+            "blockId": "neutral-academy-04",
+            "kind": "schedule_selector",
+            "status": "SUPPORTED",
+            "configuration": {}
+          },
+          {
+            "blockId": "neutral-academy-11",
+            "kind": "accordion",
+            "status": "SUPPORTED",
+            "configuration": {}
+          },
+          {
+            "blockId": "neutral-academy-15",
+            "kind": "sticky_conversion",
+            "status": "SUPPORTED",
+            "configuration": {}
+          }
+        ],
+        "localization": {
+          "defaultLocale": "fr",
+          "locales": [
+            "fr",
+            "en",
+            "ar"
+          ],
+          "rtlLocales": [
+            "ar"
+          ],
+          "themeStrings": "localized-map",
+          "fallback": "default-locale",
+          "missingTranslation": "warn"
+        },
+        "tokens": {
+          "colors": {},
+          "typography": {},
+          "spacing": {},
+          "radii": {},
+          "shadows": {},
+          "layout": {},
+          "motion": {}
+        },
+        "assets": [],
+        "performance": {
+          "maxRootBlocks": 40,
+          "maxTotalBlocks": 160,
+          "maxDynamicSources": 24,
+          "maxAboveFoldMedia": 6,
+          "maxMediaAssets": 80,
+          "maxDocumentBytes": 1500000,
+          "maxInteractions": 40
+        },
+        "shell": {
+          "mode": "marketplace_global",
+          "allowGlobalHeaderOverride": false,
+          "allowGlobalFooterOverride": false,
+          "allowGlobalNavigationOverride": false
+        },
+        "editing": {
+          "uiLed": true,
+          "rawJsonRequired": false,
+          "allowBlockMove": true,
+          "allowBlockDuplicate": true,
+          "allowBlockHide": true,
+          "allowBindingChange": true,
+          "allowActionChange": true,
+          "allowMediaReplace": true,
+          "allowDesignChange": true,
+          "allowResponsiveChange": true,
+          "allowConditionChange": true,
+          "immutableBusinessTruth": true
+        },
+        "inspector": {
+          "generatedFromCapabilities": true,
+          "hideUnsupportedFields": true,
+          "showAuthorityOwnership": true,
+          "showInheritance": true
+        }
+      },
+      "certification": {
+        "level": "READY",
+        "lifecycle": "CERTIFIED",
+        "productionEligible": true,
+        "coverage": {
+          "semantic": 100,
+          "binding": 100,
+          "action": 100,
+          "truth": 100,
+          "responsive": 100,
+          "visual": 0,
+          "overall": 83
+        },
+        "gates": [
+          {
+            "id": "source-safety",
+            "label": "Source sanitized",
+            "state": "PASS",
+            "critical": true,
+            "detail": "Universal Import candidate has no upstream blocker."
+          },
+          {
+            "id": "domain",
+            "label": "Master domain / doctrines",
+            "state": "PASS",
+            "critical": true,
+            "detail": "academy_admission · 6 doctrine(s)"
+          },
+          {
+            "id": "storefront-shell",
+            "label": "Global shell authority",
+            "state": "PASS",
+            "critical": true,
+            "detail": "Global AngelCare header/navigation/footer remain outside the imported Storefront World."
+          },
+          {
+            "id": "semantic",
+            "label": "Semantic anatomy",
+            "state": "PASS",
+            "critical": true,
+            "detail": "Required roles covered (100%)."
+          },
+          {
+            "id": "bindings",
+            "label": "Canonical binding coverage",
+            "state": "PASS",
+            "critical": true,
+            "detail": "15/15 required bindings resolved."
+          },
+          {
+            "id": "actions",
+            "label": "Canonical action coverage",
+            "state": "PASS",
+            "critical": true,
+            "detail": "2/2 required actions resolved; current-item targets supported for catalog actions."
+          },
+          {
+            "id": "relations",
+            "label": "Contextual relation sources",
+            "state": "PASS",
+            "critical": false,
+            "detail": "1 relation rail(s) compiled with current-item anchor."
+          },
+          {
+            "id": "truth",
+            "label": "Truth Firewall contract",
+            "state": "PASS",
+            "critical": true,
+            "detail": "Commercial claims are classified for Truth Firewall enforcement."
+          },
+          {
+            "id": "responsive",
+            "label": "Responsive contract",
+            "state": "PASS",
+            "critical": true,
+            "detail": "Responsive metadata detected. No obvious fixed-width overflow evidence."
+          },
+          {
+            "id": "visual",
+            "label": "Approved desktop/mobile reference",
+            "state": "PASS",
+            "critical": false,
+            "detail": "Desktop + mobile reference evidence approved."
+          },
+          {
+            "id": "capabilities",
+            "label": "Capability negotiation",
+            "state": "PASS",
+            "critical": true,
+            "detail": "14 requested runtime capabilities negotiated."
+          },
+          {
+            "id": "operability",
+            "label": "2030 no-code operability",
+            "state": "PASS",
+            "critical": true,
+            "detail": "16 block capability contracts · 12 repeaters · 3 media contracts · FR/EN/AR + RTL."
+          },
+          {
+            "id": "fallback",
+            "label": "Native fallback",
+            "state": "PASS",
+            "critical": true,
+            "detail": "Category-Native/native fallback remains mandatory."
+          }
+        ],
+        "blockers": [],
+        "warnings": [],
+        "certifiedAt": "2026-10-12T01:07:04.472Z"
+      },
+      "compatibility": {
+        "minimumRuntime": "pea-v1",
+        "maximumRuntime": null,
+        "forwardPolicy": "capability-negotiation",
+        "unknownFields": "preserve",
+        "nativeFallback": true,
+        "schemaVersion": 3,
+        "compilerProfile": "pea-world-factory-2030-operability-v3"
+      },
+      "revision": {
+        "worldKey": "ac.neutral.academy.r4",
+        "revision": 4,
+        "supersedes": null,
+        "immutableAfterCertification": true
+      },
+      "overrides": {
+        "roleOverrides": {
+          "neutral-academy-world-r4": "hero",
+          "neutral-academy-01": "hero",
+          "neutral-academy-02": "academy_curriculum",
+          "neutral-academy-03": "specifications",
+          "neutral-academy-04": "academy_cohort",
+          "neutral-academy-05": "academy_trainers",
+          "neutral-academy-06": "academy_admission",
+          "neutral-academy-07": "specifications",
+          "neutral-academy-08": "editorial",
+          "neutral-academy-09": "editorial",
+          "neutral-academy-10": "recommendations",
+          "neutral-academy-11": "faq",
+          "neutral-academy-12": "trust",
+          "neutral-academy-13": "reviews",
+          "neutral-academy-14": "specifications",
+          "neutral-academy-15": "primary_conversion"
+        },
+        "supplementalRoleOverrides": {
+          "neutral-academy-world-r4": [
+            "identity",
+            "media",
+            "pricing",
+            "availability"
+          ],
+          "neutral-academy-01": [
+            "identity",
+            "media",
+            "pricing",
+            "availability",
+            "primary_conversion"
+          ]
+        },
+        "bindingOverrides": [],
+        "actionOverrides": [],
+        "note": null
+      },
+      "provenance": {
+        "createdBy": "WORLD_FACTORY",
+        "manualOverrides": 18,
+        "notes": [
+          "No hardcoded production theme requirement.",
+          "UI-led import/assign/update contract active.",
+          "No foreign code execution.",
+          "Business authorities remain canonical.",
+          "Inference is reviewable and versioned.",
+          "Certified revisions are immutable; changes create a new revision."
+        ]
+      }
+    }
+  },
+  "data": {
+    "root": {
+      "props": {
+        "title": "Academy · Neutral Learning R4"
+      }
+    },
+    "content": [
+      {
+        "type": "ac_academy_world",
+        "props": {
+          "id": "neutral-academy-world-r4",
+          "atomicExperienceVersion": 1,
+          "neutralExperienceRevision": 4,
+          "accent": "#075bda",
+          "companion": "#efb225",
+          "ink": "#102e4d",
+          "content": [
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "neutral-academy-01",
+                "role": "opening",
+                "title": {
+                  "fr": "Votre prochain parcours",
+                  "en": "Your next pathway",
+                  "ar": "مسارك القادم"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "eyebrow": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "campus-ledger",
+                "navTitle": {
+                  "fr": "Votre prochain parcours",
+                  "en": "Your next pathway",
+                  "ar": "مسارك القادم"
+                },
+                "neutralExperienceRevision": 4,
+                "heroFactLimit": 5,
+                "mediaIndex": 1,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {}
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "neutral-academy-02",
+                "role": "curriculum",
+                "title": {
+                  "fr": "Explorez le programme",
+                  "en": "Explore the programme",
+                  "ar": "استكشف البرنامج"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "eyebrow": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "bento",
+                "navTitle": {
+                  "fr": "Explorez le programme",
+                  "en": "Explore the programme",
+                  "ar": "استكشف البرنامج"
+                },
+                "neutralExperienceRevision": 4,
+                "heroFactLimit": 5,
+                "mediaIndex": 1,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {},
+                "bindingKey": "academy.curriculum"
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "neutral-academy-03",
+                "role": "benefits",
+                "title": {
+                  "fr": "Ce que vous pourrez développer",
+                  "en": "What you can develop",
+                  "ar": "ما يمكنك تطويره"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "eyebrow": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "bento",
+                "navTitle": {
+                  "fr": "Ce que vous pourrez développer",
+                  "en": "What you can develop",
+                  "ar": "ما يمكنك تطويره"
+                },
+                "neutralExperienceRevision": 4,
+                "heroFactLimit": 5,
+                "mediaIndex": 1,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {},
+                "fieldSections": "learning,outcomes,objectives,competencies"
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "neutral-academy-04",
+                "role": "cohorts",
+                "title": {
+                  "fr": "Choisissez votre session",
+                  "en": "Choose your session",
+                  "ar": "اختر دورتك"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "eyebrow": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "bento",
+                "navTitle": {
+                  "fr": "Choisissez votre session",
+                  "en": "Choose your session",
+                  "ar": "اختر دورتك"
+                },
+                "neutralExperienceRevision": 4,
+                "heroFactLimit": 5,
+                "mediaIndex": 1,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {},
+                "bindingKey": "academy.cohorts"
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "neutral-academy-05",
+                "role": "trainers",
+                "title": {
+                  "fr": "Le cadre de votre apprentissage",
+                  "en": "Your learning framework",
+                  "ar": "إطار تعلّمك"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "eyebrow": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "bento",
+                "navTitle": {
+                  "fr": "Le cadre de votre apprentissage",
+                  "en": "Your learning framework",
+                  "ar": "إطار تعلّمك"
+                },
+                "neutralExperienceRevision": 4,
+                "heroFactLimit": 5,
+                "mediaIndex": 1,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {},
+                "bindingKey": "academy.trainers"
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "neutral-academy-06",
+                "role": "facts",
+                "title": {
+                  "fr": "Modalités et conditions du parcours",
+                  "en": "Pathway format and requirements",
+                  "ar": "صيغة المسار وشروطه"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "eyebrow": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "ledger",
+                "navTitle": {
+                  "fr": "Modalités et conditions du parcours",
+                  "en": "Pathway format and requirements",
+                  "ar": "صيغة المسار وشروطه"
+                },
+                "neutralExperienceRevision": 4,
+                "heroFactLimit": 5,
+                "mediaIndex": 1,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {},
+                "fieldSections": "delivery,audience,eligibility,admission,requirements"
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "neutral-academy-07",
+                "role": "contents",
+                "title": {
+                  "fr": "Ressources et accompagnement",
+                  "en": "Resources and support",
+                  "ar": "الموارد والمرافقة"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "eyebrow": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "bento",
+                "navTitle": {
+                  "fr": "Ressources et accompagnement",
+                  "en": "Resources and support",
+                  "ar": "الموارد والمرافقة"
+                },
+                "neutralExperienceRevision": 4,
+                "heroFactLimit": 5,
+                "mediaIndex": 1,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {},
+                "fieldSections": "resources,materials,modules,support"
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "neutral-academy-08",
+                "role": "story",
+                "title": {
+                  "fr": "Comprenez le parcours",
+                  "en": "Understand the pathway",
+                  "ar": "افهم المسار"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "eyebrow": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "bento",
+                "navTitle": {
+                  "fr": "Comprenez le parcours",
+                  "en": "Understand the pathway",
+                  "ar": "افهم المسار"
+                },
+                "neutralExperienceRevision": 4,
+                "heroFactLimit": 5,
+                "mediaIndex": 1,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {}
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "neutral-academy-09",
+                "role": "assistance",
+                "title": {
+                  "fr": "Quel parcours vous correspond ?",
+                  "en": "Which pathway fits you?",
+                  "ar": "أي مسار يناسبك؟"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "eyebrow": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "bento",
+                "navTitle": {
+                  "fr": "Quel parcours vous correspond ?",
+                  "en": "Which pathway fits you?",
+                  "ar": "أي مسار يناسبك؟"
+                },
+                "neutralExperienceRevision": 4,
+                "heroFactLimit": 5,
+                "mediaIndex": 1,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {}
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "neutral-academy-10",
+                "role": "related",
+                "title": {
+                  "fr": "D’autres parcours à explorer",
+                  "en": "More pathways to explore",
+                  "ar": "مسارات أخرى لاستكشافها"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "eyebrow": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "bento",
+                "navTitle": {
+                  "fr": "D’autres parcours à explorer",
+                  "en": "More pathways to explore",
+                  "ar": "مسارات أخرى لاستكشافها"
+                },
+                "neutralExperienceRevision": 4,
+                "heroFactLimit": 5,
+                "mediaIndex": 1,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {}
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "neutral-academy-11",
+                "role": "faq",
+                "title": {
+                  "fr": "Avant votre inscription",
+                  "en": "Before you enrol",
+                  "ar": "قبل التسجيل"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "eyebrow": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "bento",
+                "navTitle": {
+                  "fr": "Avant votre inscription",
+                  "en": "Before you enrol",
+                  "ar": "قبل التسجيل"
+                },
+                "neutralExperienceRevision": 4,
+                "heroFactLimit": 5,
+                "mediaIndex": 1,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {},
+                "fieldSections": "faq"
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "neutral-academy-12",
+                "role": "proof",
+                "title": {
+                  "fr": "Les preuves documentées",
+                  "en": "Documented evidence",
+                  "ar": "الأدلة الموثقة"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "eyebrow": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "bento",
+                "navTitle": {
+                  "fr": "Les preuves documentées",
+                  "en": "Documented evidence",
+                  "ar": "الأدلة الموثقة"
+                },
+                "neutralExperienceRevision": 4,
+                "heroFactLimit": 5,
+                "mediaIndex": 1,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {}
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "neutral-academy-13",
+                "role": "reviews",
+                "title": {
+                  "fr": "Les avis publiés",
+                  "en": "Published reviews",
+                  "ar": "التقييمات المنشورة"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "eyebrow": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "bento",
+                "navTitle": {
+                  "fr": "Les avis publiés",
+                  "en": "Published reviews",
+                  "ar": "التقييمات المنشورة"
+                },
+                "neutralExperienceRevision": 4,
+                "heroFactLimit": 5,
+                "mediaIndex": 1,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {}
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "neutral-academy-14",
+                "role": "facts",
+                "title": {
+                  "fr": "Toutes les informations du parcours",
+                  "en": "All pathway information",
+                  "ar": "كل معلومات المسار"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "eyebrow": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "ledger",
+                "navTitle": {
+                  "fr": "Toutes les informations du parcours",
+                  "en": "All pathway information",
+                  "ar": "كل معلومات المسار"
+                },
+                "neutralExperienceRevision": 4,
+                "heroFactLimit": 5,
+                "mediaIndex": 1,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {},
+                "bindingKey": "content.fields"
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "neutral-academy-15",
+                "role": "decision",
+                "title": {
+                  "fr": "Préparez la prochaine étape",
+                  "en": "Prepare your next step",
+                  "ar": "حضّر خطوتك المقبلة"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "eyebrow": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "bento",
+                "navTitle": {
+                  "fr": "Préparez la prochaine étape",
+                  "en": "Prepare your next step",
+                  "ar": "حضّر خطوتك المقبلة"
+                },
+                "neutralExperienceRevision": 4,
+                "heroFactLimit": 5,
+                "mediaIndex": 1,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {}
+              }
+            }
+          ],
+          "sourceDesign": {}
+        }
+      }
+    ]
+  },
+  "assets": [],
+  "fingerprints": {
+    "document": "13fcd18ce0f4bf483548b05e07462914",
+    "factory": "1e5b3b182e38d454ae594c622f643748",
+    "package": "11d4119c424d6bd8a3256666ae176d6c"
+  }
+}

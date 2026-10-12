@@ -1,12 +1,4 @@
-import { requireMarketplacePageContext } from '@/angelcare-marketplace/auth/context'
-import { commerceProductAtelierSnapshot } from '@/angelcare-marketplace/commerce-product-atelier/repository'
-import { ProductMasterRegistry } from '@/angelcare-marketplace/commerce-product-atelier/components/ProductMasterRegistry'
-
-export const dynamic = 'force-dynamic'
-
-export default async function Page({ searchParams }: { searchParams?: Promise<Record<string, string | string[] | undefined>> }) {
-  const context = await requireMarketplacePageContext('marketplace.catalog.view')
-  const snapshot = await commerceProductAtelierSnapshot(context)
-  const params = searchParams ? await searchParams : {}
-  return <ProductMasterRegistry snapshot={snapshot} openCreate={params.create === '1'} />
-}
+import {requireMarketplacePageContext,hasMarketplacePermission} from '@/angelcare-marketplace/auth/context'
+import {PopulationWorkspace} from '@/angelcare-marketplace/catalogue-population/components/PopulationWorkspace'
+export const dynamic='force-dynamic'
+export default async function Page(){const context=await requireMarketplacePageContext('marketplace.catalog.view');return <PopulationWorkspace permissions={{manage:hasMarketplacePermission(context,'marketplace.catalog.manage'),categories:hasMarketplacePermission(context,'marketplace.categories.manage'),media:hasMarketplacePermission(context,'marketplace.media.manage'),importsView:hasMarketplacePermission(context,'marketplace.category_native_import.view'),mediaView:hasMarketplacePermission(context,'marketplace.media.view'),imports:hasMarketplacePermission(context,'marketplace.category_native_import.manage'),publish:hasMarketplacePermission(context,'marketplace.catalog.publish'),schemas:hasMarketplacePermission(context,'marketplace.experience_schema.view'),export:hasMarketplacePermission(context,'marketplace.catalog.export')}}/>}

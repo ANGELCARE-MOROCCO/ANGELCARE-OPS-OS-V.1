@@ -13,10 +13,12 @@ import { designToStyle, responsiveDataAttributes } from '../studio-universal/des
 import type { StudioDesignStyle, StudioResponsiveState } from '../studio-universal/types'
 import styles from './atomic.module.css'
 import {Context,useExperience,type ExperienceContext} from './context'
+import {serviceIntentContract,heroFacts,selectableCohort,publicRows} from './neutral-data'
+import {NeutralOpening,NativeDecisionChoices,NativeScopeInputs,neutralActionLabel,NeutralExplorer,NeutralContents,NeutralAssistance} from './NeutralModules'
 import {DiscoveryGuide,OfferInformationExplorer} from './DiscoveryTools'
 import {Benefits,People,Programme,PublishedPlans,Specifications,Deployment,ReviewSummary} from './RichModules'
 
-const noHeadingRoles=new Set(['opening','decision'])
+const noHeadingRoles=new Set(['opening','decision','assistance'])
 const label=(r:Record<string,unknown>,locale:AtomicLocale)=>String(r[`label_${locale}`]||r.label||r.group_key||r.key||'')
 const options=(r:Record<string,unknown>)=>Array.isArray(r.values)?r.values.filter((v):v is string=>typeof v==='string'&&v.trim().length>0):[]
 const fieldKey=(r:Record<string,unknown>)=>String(r.group_key||r.key||'')
@@ -98,12 +100,12 @@ export function AtomicExperienceFrame({type,props,data,locale,children,previewOn
   }
   if(data&&ATOMIC_ROOTS[type]!==data.classification.masterDomain)return null
   if(!data)return <article className={styles.experience} data-domain={ATOMIC_ROOTS[type]} style={frameStyle(props)} dir={locale==='ar'?'rtl':'ltr'}><div className={styles.editorNotice}>{c.preview}</div>{children}</article>
-  const context:ExperienceContext={data,locale,selection,setChoice,quantity,setQuantity:v=>{setQuantity(v);setSelection(current=>{const next={...current,quantity:v};if(!previewOnly)saveSelection(data.identity.slug,locale,next);return next});setBasketId(null);setMessage('')},busy,message,act,basketId,previewOnly}
-  return <Context.Provider value={context}><article className={styles.experience} style={frameStyle(props)} lang={locale} dir={locale==='ar'?'rtl':'ltr'} data-ac-atomic-experience="1" data-domain={data.classification.masterDomain} data-doctrine={data.classification.doctrineKey}>
+  const context:ExperienceContext={data,locale,selection,setChoice,quantity,setQuantity:v=>{setQuantity(v);setSelection(current=>{const next={...current,quantity:v};if(!previewOnly)saveSelection(data.identity.slug,locale,next);return next});setBasketId(null);setMessage('')},busy,message,act,basketId,previewOnly,neutralRevision:props.neutralExperienceRevision===0?undefined:4}
+  return <Context.Provider value={context}><article className={styles.experience} style={frameStyle(props)} lang={locale} dir={locale==='ar'?'rtl':'ltr'} data-ac-atomic-experience="1" data-neutral-revision={props.neutralExperienceRevision===0?undefined:4} data-domain={data.classification.masterDomain} data-doctrine={data.classification.doctrineKey}>
     <div className={styles.ambient} aria-hidden="true"/>
     <div className={styles.composition}>{Array.isArray(children)?children[0]:null}
     {nav.length?<nav className={styles.sectionNav} aria-label={c.details}>{nav.map(s=><a key={s.id} href={`#${s.id}`} {...responsiveDataAttributes(s.responsive as StudioResponsiveState|undefined)} aria-current={active===s.id?'location':undefined}>{localeText(s.navTitle,locale)||localeText(s.title,locale)||s.role}</a>)}</nav>:null}
-    <DiscoveryGuide sections={visible}/>{Array.isArray(children)?children.slice(1):children}</div>
+    <DiscoveryGuide sections={visible}/>{Array.isArray(children)?children.slice(1):children}{props.neutralExperienceRevision!==0&&props.showDefaultAssistance!==false&&!visible.some(s=>s.role==='assistance')?<section className={styles.section} data-neutral-editorial-help="default"><NeutralAssistance props={{id:'neutral-default-advice',role:'assistance'}}/></section>:null}</div>
     {!atFooter&&visible.some(s=>s.role==='decision'||s.role==='opening')?<div className={styles.mobileDecision}><div><small>{data.identity.name}</small><strong>{price(data,locale)}</strong></div><button type="button" onClick={()=>document.getElementById(visible.find(s=>s.role==='decision')?.id||visible[0]?.id)?.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'center'})}>{c.choose}<ArrowRight size={16}/></button></div>:null}
   </article></Context.Provider>
 }
@@ -114,11 +116,11 @@ function Gallery({compact=false}:{compact?:boolean}){
   if(!x)return null
   const media=x.data.media.filter(m=>publicUrl(m.url)),index=Math.min(selected,Math.max(0,media.length-1)),active=media[index],c=atomicCopy(x.locale)
   if(!active)return null
-  const video=active.type==='video'||active.type==='video/mp4'
-  const renderMedia=(large:boolean)=>video?<video src={active.url} controls preload="metadata" aria-label={active.alt||x.data.identity.name}/>:<img src={active.url} alt={active.alt||x.data.identity.name} loading={compact?'eager':'lazy'} fetchPriority={compact?'high':'auto'} className={large?styles.zoomImage:styles.fitImage}/>
+  const video=active.type==='video'||active.type.startsWith('video/'),audio=active.type==='audio'||active.type.startsWith('audio/'),image=active.type==='image'||active.type.startsWith('image/')
+  const renderMedia=(large:boolean)=>video?<video src={active.url} controls preload="metadata" aria-label={active.alt||x.data.identity.name}/>:audio?<audio src={active.url} controls preload="metadata" aria-label={active.alt||x.data.identity.name}/>:!image?<a className={styles.documentMedia} href={active.url} target="_blank" rel="noopener noreferrer">{active.alt||x.data.identity.name}<ArrowUpRight size={22}/></a>:<img src={active.url} alt={active.alt||x.data.identity.name} loading={compact?'eager':'lazy'} fetchPriority={compact?'high':'auto'} className={large?styles.zoomImage:styles.fitImage}/>
   return <div className={styles.gallery} data-compact={compact} onKeyDown={e=>{if(media.length<2||e.target instanceof HTMLVideoElement)return;if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.preventDefault();setSelected(i=>(i+(e.key==='ArrowRight'?1:media.length-1))%media.length)}}}>
-    <div className={styles.mediaStage}>{renderMedia(false)}{!video?<button ref={opener} className={styles.zoom} type="button" aria-label={c.zoom} onClick={()=>dialog.current?.showModal()}><Maximize2 size={18}/></button>:null}<span className={styles.mediaCount}>{index+1} / {media.length}</span></div>
-    {media.length>1?<div className={styles.thumbnails}>{media.map((m,i)=><button type="button" key={m.id||i} aria-label={`${i+1} · ${m.alt||x.data.identity.name}`} aria-pressed={i===index} onClick={()=>setSelected(i)}>{m.type==='video'?<span>▶</span>:<img src={m.url} alt="" loading="lazy"/>}</button>)}</div>:null}
+    <div className={styles.mediaStage}>{renderMedia(false)}{image?<button ref={opener} className={styles.zoom} type="button" aria-label={c.zoom} onClick={()=>dialog.current?.showModal()}><Maximize2 size={18}/></button>:null}<span className={styles.mediaCount}>{index+1} / {media.length}</span></div>
+    {media.length>1?<div className={styles.thumbnails}>{media.map((m,i)=><button type="button" key={m.id||i} aria-label={`${i+1} · ${m.alt||x.data.identity.name}`} aria-pressed={i===index} onClick={()=>setSelected(i)}>{m.type==='image'||m.type.startsWith('image/')?<img src={m.url} alt="" loading="lazy"/>:<span>{m.type.startsWith('video')?'▶':m.type.startsWith('audio')?'♪':'↗'}</span>}</button>)}</div>:null}
     <dialog ref={dialog} className={styles.lightbox} onClose={()=>{dialog.current?.querySelectorAll('video').forEach(v=>v.pause());opener.current?.focus()}}><div className={styles.lightboxBar}><strong>{x.data.identity.name}</strong><button type="button" onClick={()=>dialog.current?.close()} aria-label={c.close}><X/></button></div>{renderMedia(true)}{media.length>1?<div className={styles.lightboxControls}><button type="button" aria-label={c.previous} onClick={()=>setSelected(i=>(i-1+media.length)%media.length)}><ChevronLeft/></button><span>{index+1} / {media.length}</span><button type="button" aria-label={c.next} onClick={()=>setSelected(i=>(i+1)%media.length)}><ChevronRight/></button></div>:null}</dialog>
   </div>
 }
@@ -145,11 +147,12 @@ function Decision({compact=false}:{compact?:boolean}){
   const choiceValue=(key:string,value:unknown)=>key==='cohortId'?String((Array.isArray(record(x.data.domainExtension.academy).cohorts)?record(x.data.domainExtension.academy).cohorts as Record<string,unknown>[]:[]).find(r=>r.id===value)?.name||c.chooseCohort):display(value,x.locale)
   async function copy(){try{await navigator.clipboard.writeText(`${x!.data.identity.name}\n${selected.map(([k,v])=>`${choiceLabel(k)}: ${choiceValue(k,v)}`).join('\n')}`);setCopyFeedback(c.copied)}catch{setCopyFeedback(c.apiError)}}
   return <div className={styles.decision} data-compact={compact} aria-busy={x.busy}><div className={styles.decisionTop}><span>{c.selection}</span><Sparkles size={18}/></div><strong className={styles.price}>{price(x.data,x.locale)}</strong><small>{c.review}</small>
-    {x.data.classification.masterDomain==='b2c_service_family'?<div className={styles.intentFields}><label>{c.date}<input type="date" value={typeof x.selection.requestedDate==='string'?x.selection.requestedDate:''} onChange={e=>x.setChoice('requestedDate',e.target.value)}/></label><label>{c.time}<input type="time" value={typeof x.selection.requestedTime==='string'?x.selection.requestedTime:''} onChange={e=>x.setChoice('requestedTime',e.target.value)}/></label></div>:null}
+    {x.data.classification.masterDomain==='b2c_service_family'&&(serviceIntentContract(x.data).date||serviceIntentContract(x.data).time)?<div className={styles.intentFields}>{serviceIntentContract(x.data).date?<label>{c.date}<input type="date" value={typeof x.selection.requestedDate==='string'?x.selection.requestedDate:''} onChange={e=>x.setChoice('requestedDate',e.target.value)}/></label>:null}{serviceIntentContract(x.data).time?<label>{c.time}<input type="time" value={typeof x.selection.requestedTime==='string'?x.selection.requestedTime:''} onChange={e=>x.setChoice('requestedTime',e.target.value)}/></label>:null}</div>:null}
+    {!product?<><NativeDecisionChoices/><NativeScopeInputs/></>:null}
     {product?<><VariantChoices/><div className={styles.quantity}><label htmlFor={`quantity-${compact?'opening':'decision'}`}>{c.quantity}</label><div><button type="button" aria-label={`${c.quantity} −`} disabled={x.quantity<=1||x.busy} onClick={()=>x.setQuantity(Math.max(1,x.quantity-1))}><Minus size={16}/></button><input id={`quantity-${compact?'opening':'decision'}`} type="number" min="1" max={Math.max(1,max)} value={x.quantity} disabled={!max||x.busy} onChange={e=>x.setQuantity(Math.min(Math.max(1,max),Math.max(1,Math.floor(Number(e.target.value)||1))))}/><button type="button" aria-label={`${c.quantity} +`} disabled={x.quantity>=max||x.busy} onClick={()=>x.setQuantity(Math.min(max,x.quantity+1))}><Plus size={16}/></button></div></div></>:null}
     {selected.length?<details className={styles.brief} open={!compact}><summary>{c.selection} · {selected.length}</summary>{selected.map(([k,v])=><div key={k}><span>{choiceLabel(k)}</span><strong>{choiceValue(k,v)}</strong></div>)}<button type="button" onClick={()=>void copy()}><Copy size={14}/>{c.copy}</button>{copyFeedback?<p role="status">{copyFeedback}</p>:null}</details>:null}
     {!state.enabled?<p className={styles.actionMessage} role="status">{c[state.reason as keyof typeof c]||c.apiError}</p>:null}
-    {x.basketId?<div className={styles.success} role="status"><Check size={18}/><a href={`/angelcare-marketplace/${x.locale}/basket`}>{c.added}</a><a href={`/angelcare-marketplace/${x.locale}/checkout?basket=${encodeURIComponent(x.basketId)}&kind=transactional`}>{c.checkout}<ArrowRight size={16}/></a></div>:<button className={styles.primaryButton} type="button" disabled={!state.enabled||x.busy||x.previewOnly} onClick={()=>void x.act()}>{x.busy?c.busy:product?c.add:c.continue}<ArrowRight size={18}/></button>}
+    {x.basketId?<div className={styles.success} role="status"><Check size={18}/><a href={`/angelcare-marketplace/${x.locale}/basket`}>{c.added}</a><a href={`/angelcare-marketplace/${x.locale}/checkout?basket=${encodeURIComponent(x.basketId)}&kind=transactional`}>{c.checkout}<ArrowRight size={16}/></a></div>:<button className={styles.primaryButton} type="button" disabled={!state.enabled||x.busy||x.previewOnly} onClick={()=>void x.act()}>{x.busy?c.busy:product?c.add:x.neutralRevision===4?neutralActionLabel(x.data,x.locale):c.continue}<ArrowRight size={18}/></button>}
     {product&&!x.basketId?<button className={styles.secondaryButton} type="button" disabled={!state.enabled||x.busy||x.previewOnly} onClick={()=>void x.act('checkout')}>{({fr:'Commander maintenant',en:'Buy now',ar:'اشترِ الآن'})[x.locale]}<ArrowRight size={15}/></button>:null}
     {x.message?<p className={styles.actionMessage} role="alert">{x.message}</p>:null}{compact?<OfferInformationExplorer/>:null}
   </div>
@@ -157,14 +160,15 @@ function Decision({compact=false}:{compact?:boolean}){
 
 function Opening({props}:{props:AtomicSectionProps}){
   const x=useExperience();if(!x)return null
-  const c=atomicCopy(x.locale),data=x.data,fields=data.content.fields.filter(f=>['age_min','age_max','duration_hours','duration_minutes','delivery_modality','minimum_duration_hours','maximum_duration_hours','minimum_commitment_weeks','monthly_included_hours','language','organisation_type'].includes(f.key)&&present(f.value)).slice(0,6)
+  const c=atomicCopy(x.locale),data=x.data,fields=heroFacts(data,props)
   const hasMedia=data.media.some(m=>publicUrl(m.url))
+  if(x.neutralRevision===4&&props.neutralExperienceRevision!==0)return <NeutralOpening props={props} gallery={hasMedia?<Gallery compact/>:null} decision={<Decision compact/>} engagement={<Engagement/>}/>
   return <div className={styles.opening} data-layout={props.layout||'gallery-split'} data-has-media={hasMedia}><div className={styles.openingIntro}><a className={styles.back} href={`/angelcare-marketplace/${x.locale}/marketplace`}>{c.back}<ArrowUpRight size={14}/></a><span className={styles.eyebrow}>{localeText(props.eyebrow,x.locale)||data.content.schemaName}</span><h1>{data.identity.name}</h1>{data.identity.shortDescription?<p className={styles.heroLead}>{data.identity.shortDescription}</p>:null}{fields.length?<div className={styles.heroFacts}>{fields.map(f=><span key={f.key}><small>{f.label}</small><strong>{display(f.value,x.locale)}</strong></span>)}</div>:null}<div className={styles.heroMeta}>{data.reviews.source&&data.reviews.count!==null&&data.reviews.count>0&&data.reviews.rating!==null?<a href={`#${sectionsFrom(props.content).find(s=>s.role==='reviews')?.id||'reviews'}`} onClick={e=>{e.preventDefault();document.querySelector('[data-role=reviews]')?.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'})}}><span aria-hidden="true">★</span> {data.reviews.rating} / 5 · {data.reviews.count} {c.rating}</a>:null}{data.availability.availableQuantity!==null?<span>{c.capacity} · {data.availability.availableQuantity}</span>:null}</div><Engagement/></div>{hasMedia?<div className={styles.openingMedia}><Gallery compact/></div>:null}<div className={styles.openingDecision}><Decision compact/></div><span className={styles.heroWatermark} aria-hidden="true">ANGELCARE</span></div>
 }
 
 function FieldCards({value,props}:{value:unknown;props:AtomicSectionProps}){
   const x=useExperience();if(!x)return null
-  const filtered=rows(value,x.locale)
+  const filtered=publicRows(x.data,value,x.locale)
   const selectable=props.enableSelection===true
   return <><div className={styles.cards} data-layout={props.layout||'bento'}>{filtered.map((r,i)=><div key={r.key} className={styles.card} data-index={i%6}>
     <span className={styles.cardIndex}>{String(i+1).padStart(2,'0')}</span>{r.title?<h3>{r.title.replaceAll('_',' ')}</h3>:null}
@@ -199,7 +203,7 @@ function Cohorts({value}:{value:unknown}){
   const list=Array.isArray(value)?value:present(value)?[value]:[],c=atomicCopy(x.locale)
   return <div className={styles.cohorts}>{list.map((v,i)=>{const r=record(v),id=typeof r.id==='string'?r.id:'',title=String(r.title||r.name||r.code||r.label||''),start=String(r.startDate||r.startsAt||r.start_date||'')
     const capacity=typeof r.capacity==='number'?r.capacity:null,enrolled=typeof r.enrolledCount==='number'?r.enrolledCount:null,remaining=capacity!==null&&enrolled!==null?Math.max(0,capacity-enrolled):null
-    return <article key={id||i}><div className={styles.cohortDate}>{start?<time dateTime={start}>{Number.isFinite(new Date(start).getTime())?new Intl.DateTimeFormat(x.locale,{day:'numeric',month:'short'}).format(new Date(start)):start}</time>:<span>{String(i+1).padStart(2,'0')}</span>}</div><div><h3>{title||x.data.identity.name}</h3><p>{display(r.description||r.location||r.modality||'',x.locale)}</p>{remaining!==null?<small>{c.capacity} · {remaining}</small>:null}</div>{id&&r.status==='enrollment_open'?<button type="button" aria-pressed={x.selection.cohortId===id} disabled={remaining===0} onClick={()=>x.setChoice('cohortId',id)}>{c.chooseCohort}<ArrowRight size={16}/></button>:null}</article>
+    return <article key={id||i}><div className={styles.cohortDate}>{start?<time dateTime={start}>{Number.isFinite(new Date(start).getTime())?new Intl.DateTimeFormat(x.locale,{day:'numeric',month:'short'}).format(new Date(start)):start}</time>:<span>{String(i+1).padStart(2,'0')}</span>}</div><div><h3>{title||x.data.identity.name}</h3><p>{display(r.description||r.location||r.modality||'',x.locale)}</p>{remaining!==null?<small>{c.capacity} · {remaining}</small>:null}</div>{id&&r.status==='enrollment_open'?<button type="button" aria-pressed={x.selection.cohortId===id} disabled={!selectableCohort(r)} onClick={()=>x.setChoice('cohortId',id)}>{c.chooseCohort}<ArrowRight size={16}/></button>:null}</article>
   })}</div>
 }
 
@@ -219,11 +223,11 @@ export function AtomicOfferSection({props,editorMode=false}:{props:AtomicSection
   if(props.role==='opening')body=<Opening props={props}/>
   else if(props.role==='gallery')body=<Gallery/>
   else if(props.role==='decision')body=<div className={styles.finalDecision}><div><span className={styles.eyebrow}>{eyebrow||atomicCopy(x.locale).selection}</span><h2>{title||x.data.identity.name}</h2>{lead?<p>{lead}</p>:null}<p>{x.data.identity.shortDescription}</p><Engagement/></div><Decision/></div>
-  else if(props.role==='story'){const image=x.data.media.filter(m=>m.type!=='video'&&publicUrl(m.url))[Math.max(0,Number(props.mediaIndex)||1)];body=<div className={styles.story} data-has-image={!!image}>{image?<img src={image.url} alt={image.alt||x.data.identity.name} loading="lazy"/>:null}<div><span className={styles.storyMark} aria-hidden="true">✦</span><p>{display(value,x.locale)}</p></div></div>}
+  else if(props.role==='story'){const image=x.data.media.filter(m=>(m.type==='image'||m.type.startsWith('image/'))&&publicUrl(m.url))[Math.max(0,props.mediaIndex==null?1:Number(props.mediaIndex)||0)];body=<div className={styles.story} data-has-image={!!image}>{image?<img src={image.url} alt={image.alt||x.data.identity.name} loading="lazy"/>:null}<div><span className={styles.storyMark} aria-hidden="true">✦</span><p>{display(value,x.locale)}</p></div></div>}
   else if(props.role==='choices')body=<VariantChoices/>
   else if(props.role==='curriculum')body=<Programme value={value}/>
   else if(props.role==='faq')body=<Disclosure value={value} role={props.role}/>
-  else if(props.role==='contents')body=<ContentExplorer value={value}/>
+  else if(props.role==='contents')body=x.neutralRevision===4&&props.neutralExperienceRevision!==0?<NeutralContents value={value}/>:<ContentExplorer value={value}/>
   else if(props.role==='schedule')body=<Schedule value={value} props={props}/>
   else if(props.role==='cohorts')body=<Cohorts value={value}/>
   else if(props.role==='related')body=<Related value={value}/>
@@ -233,7 +237,8 @@ export function AtomicOfferSection({props,editorMode=false}:{props:AtomicSection
   else if(props.role==='benefits')body=<Benefits value={value}/>
   else if(props.role==='plans')body=<PublishedPlans value={value} props={props}/>
   else if(props.role==='deployment')body=<Deployment value={value}/>
-  else if(props.layout==='ledger')body=<Specifications value={value} props={props}/>
+  else if(props.role==='assistance')body=<NeutralAssistance props={props}/>
+  else if(props.layout==='ledger')body=x.neutralRevision===4&&props.neutralExperienceRevision!==0?<NeutralExplorer value={value}/>:<Specifications value={value} props={props}/>
   else body=<FieldCards value={value} props={props}/>
   const design=designToStyle(props.sourceDesign as StudioDesignStyle|undefined)
   return <section id={props.id||id} className={styles.section} data-role={props.role} data-layout={props.layout} data-ac-atomic-section={props.id} style={design} {...responsiveDataAttributes(props.responsive as StudioResponsiveState|undefined)}>

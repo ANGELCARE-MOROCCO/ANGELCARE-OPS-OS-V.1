@@ -227,7 +227,7 @@ export interface PublicExperience360 {
   generatedAt:string
   classification:PublicExperienceClassification
   identity:{id:string;publicReference:string;itemKey:string;slug:string;name:string;shortDescription:string|null;description:string|null}
-  content:{schemaName:string;schemaDescription:string;fields:Array<{key:string;section:string;label:string;value:unknown;formatted:string}>}
+  content:{schemaName:string;schemaDescription:string;fields:Array<{key:string;section:string;label:string;value:unknown;formatted:string;inputType?:string;options?:string[];required?:boolean}>}
   media:Array<{id:string;key:string;type:string;url:string;alt:string;sortOrder:number}>
   pricing:{mode:string;amount:number|null;currency:string;label:string;source:string}
   availability:{status:string;authority:string;availableQuantity:number|null;startsAt:string|null;endsAt:string|null;reason:string|null}

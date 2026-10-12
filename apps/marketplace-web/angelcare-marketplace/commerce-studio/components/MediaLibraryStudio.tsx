@@ -89,18 +89,20 @@ export function MediaLibraryStudio({ initialMedia, initialFolders, catalogItems,
   async function applyManifest(files: File[]) {
     setManifestFiles(files)
     if (!files[0]) { setManifestErrors([]); return }
+    try {
     const parsed = parseMediaManifest(await files[0].text())
-    const matched = matchManifestFiles(queue.map(item => item.file.name), parsed.rows)
+    const matched = matchManifestFiles(queue.map(item => item.file.webkitRelativePath||item.file.name), parsed.rows)
     const errors = [...parsed.errors]
     if (matched.unmatchedFiles.length) errors.push(`Fichiers sans ligne manifeste: ${matched.unmatchedFiles.join(', ')}.`)
     if (matched.unmatchedRows.length) errors.push(`Lignes sans fichier local: ${matched.unmatchedRows.map(row => row.fileName).join(', ')}.`)
     setManifestErrors(errors)
     setQueue(current => current.map(item => {
-      const row = matched.matches.find(match => match.fileName.toLowerCase() === item.file.name.toLowerCase())?.row
+      const row = matched.matches.find(match => match.fileName.toLowerCase() === (item.file.webkitRelativePath||item.file.name).toLowerCase())?.row
       if (!row) return item
       const folder = folders.find(candidate => candidate.slug.toLowerCase() === row.folderSlug.toLowerCase())
       return { ...item, reference: row.productReference || item.reference, role: row.role, altTextFr: row.altTextFr || item.altTextFr, folderId: folder?.id || item.folderId, error: row.folderSlug && !folder ? `Dossier manifeste introuvable: ${row.folderSlug}` : '' }
     }))
+    } catch(error) { setManifestErrors([error instanceof Error?error.message:'Manifeste média invalide.']) }
   }
 
   async function preflight() {
@@ -122,7 +124,7 @@ export function MediaLibraryStudio({ initialMedia, initialFolders, catalogItems,
       setQueue(local.map(item => {
         if (item.state !== 'READY') return item
         const result = remote[index++]
-        const productIds = item.reference ? catalogItems.filter(product => [product.public_reference, product.item_key, product.sku].some(value => String(value || '').toUpperCase().startsWith(item.reference.toUpperCase()))).map(product => product.id) : []
+        const productIds = item.reference ? catalogItems.filter(product => [product.public_reference, product.item_key, product.sku].some(value => String(value || '').toUpperCase()===item.reference.toUpperCase())).map(product => product.id) : []
         return { ...item, duplicate: result?.duplicate || null, error: result?.errors.join(' ') || '', state: result?.state || 'FAILED', productIds }
       }))
     } catch (error) { await mutation.run(() => Promise.reject(error), '') } finally { setPreflighting(false) }

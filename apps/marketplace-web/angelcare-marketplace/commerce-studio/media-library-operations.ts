@@ -54,6 +54,8 @@ export function parseMediaManifest(source: string): { rows: MediaManifestRow[]; 
 }
 
 export function matchManifestFiles(fileNames: string[], rows: MediaManifestRow[]) {
+  const seen=new Set<string>();for(const row of rows){const key=row.fileName.toLowerCase();if(seen.has(key))throw Error('Chemin média ambigu dans le manifeste : '+row.fileName);seen.add(key)}
+  if(new Set(fileNames.map(x=>x.toLowerCase())).size!==fileNames.length)throw Error('Chemins de fichiers ambigus : utilisez des chemins relatifs uniques.')
   const byName = new Map(rows.map(row => [row.fileName.toLowerCase(), row]))
   const matches = fileNames.map(fileName => ({ fileName, row: byName.get(fileName.toLowerCase()) || null }))
   const selected = new Set(fileNames.map(value => value.toLowerCase()))

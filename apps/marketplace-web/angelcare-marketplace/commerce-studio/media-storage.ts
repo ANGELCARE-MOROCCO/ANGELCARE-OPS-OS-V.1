@@ -142,7 +142,7 @@ export async function imageDerivatives(input: {
     desktop: { width: 1800, height: 1200, fit: 'inside' as const },
     tablet: { width: 1200, height: 1000, fit: 'inside' as const },
     mobile: { width: 768, height: 960, fit: 'inside' as const },
-    square: { width: 900, height: 900, fit: 'cover' as const },
+    square: { width: 900, height: 900, fit: 'inside' as const },
   }
   const records = {} as MarketplaceImageDerivatives
   for (const [variant, specification] of Object.entries(specifications) as [MarketplaceImageVariant, typeof specifications.desktop][]) {

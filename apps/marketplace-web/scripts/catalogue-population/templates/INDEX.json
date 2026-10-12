@@ -1,0 +1,219 @@
+[
+  {
+    "schemaKey": "home-childcare-one-time",
+    "title": "Garde d’enfants à domicile · ponctuelle",
+    "columnCount": 135,
+    "identityField": "service_key",
+    "sellableType": "one_time_service"
+  },
+  {
+    "schemaKey": "home-childcare-recurring",
+    "title": "Garde d’enfants à domicile · récurrente",
+    "columnCount": 142,
+    "identityField": "service_key",
+    "sellableType": "recurring_service"
+  },
+  {
+    "schemaKey": "school-pickup-care",
+    "title": "Sortie d’école & garde après l’école",
+    "columnCount": 130,
+    "identityField": "service_key",
+    "sellableType": "family_service"
+  },
+  {
+    "schemaKey": "overnight-extended-care",
+    "title": "Garde de nuit & horaires étendus",
+    "columnCount": 128,
+    "identityField": "service_key",
+    "sellableType": "one_time_service"
+  },
+  {
+    "schemaKey": "emergency-last-minute-care",
+    "title": "Garde urgente & dernière minute",
+    "columnCount": 126,
+    "identityField": "service_key",
+    "sellableType": "one_time_service"
+  },
+  {
+    "schemaKey": "hotel-travel-childcare",
+    "title": "Garde hôtel, voyage & lieu temporaire",
+    "columnCount": 126,
+    "identityField": "service_key",
+    "sellableType": "one_time_service"
+  },
+  {
+    "schemaKey": "events-group-childcare",
+    "title": "Garde événementielle & groupe",
+    "columnCount": 128,
+    "identityField": "service_key",
+    "sellableType": "one_time_service"
+  },
+  {
+    "schemaKey": "holiday-excursion-programme",
+    "title": "Programmes vacances & excursions",
+    "columnCount": 130,
+    "identityField": "programme_key",
+    "sellableType": "academy_programme"
+  },
+  {
+    "schemaKey": "montessori-home-service",
+    "title": "Montessori à domicile",
+    "columnCount": 130,
+    "identityField": "service_key",
+    "sellableType": "one_time_service"
+  },
+  {
+    "schemaKey": "learning-homework-support",
+    "title": "Soutien scolaire & devoirs",
+    "columnCount": 127,
+    "identityField": "service_key",
+    "sellableType": "one_time_service"
+  },
+  {
+    "schemaKey": "non-medical-support-service",
+    "title": "Support enfant non médical",
+    "columnCount": 126,
+    "identityField": "service_key",
+    "sellableType": "one_time_service"
+  },
+  {
+    "schemaKey": "flashcards-learning-product",
+    "title": "Flashcards & cartes pédagogiques",
+    "columnCount": 138,
+    "identityField": "item_key",
+    "sellableType": "physical_product"
+  },
+  {
+    "schemaKey": "montessori-development-kit",
+    "title": "Kits Montessori & développement",
+    "columnCount": 130,
+    "identityField": "item_key",
+    "sellableType": "kit"
+  },
+  {
+    "schemaKey": "development-game",
+    "title": "Jeux de développement",
+    "columnCount": 126,
+    "identityField": "item_key",
+    "sellableType": "physical_product"
+  },
+  {
+    "schemaKey": "activity-subscription-box",
+    "title": "Box d’activités & abonnement",
+    "columnCount": 126,
+    "identityField": "item_key",
+    "sellableType": "physical_product"
+  },
+  {
+    "schemaKey": "digital-learning-resource",
+    "title": "Ressources pédagogiques digitales",
+    "columnCount": 120,
+    "identityField": "item_key",
+    "sellableType": "digital_product"
+  },
+  {
+    "schemaKey": "preschool-admission",
+    "title": "Admission crèche & préscolaire",
+    "columnCount": 129,
+    "identityField": "programme_key",
+    "sellableType": "admission_programme"
+  },
+  {
+    "schemaKey": "academy-course",
+    "title": "Cours Academy",
+    "columnCount": 127,
+    "identityField": "programme_key",
+    "sellableType": "course"
+  },
+  {
+    "schemaKey": "academy-cohort",
+    "title": "Cohorte Academy",
+    "columnCount": 139,
+    "identityField": "programme_key",
+    "sellableType": "cohort"
+  },
+  {
+    "schemaKey": "certification-pathway",
+    "title": "Parcours certifiant",
+    "columnCount": 122,
+    "identityField": "programme_key",
+    "sellableType": "certification_pathway"
+  },
+  {
+    "schemaKey": "parent-workshop",
+    "title": "Atelier parents",
+    "columnCount": 126,
+    "identityField": "programme_key",
+    "sellableType": "academy_programme"
+  },
+  {
+    "schemaKey": "institutional-training",
+    "title": "Formation professionnelle & institutionnelle",
+    "columnCount": 127,
+    "identityField": "programme_key",
+    "sellableType": "academy_programme"
+  },
+  {
+    "schemaKey": "school-managed-programme",
+    "title": "Programme géré école & crèche",
+    "columnCount": 132,
+    "identityField": "solution_key",
+    "sellableType": "b2b_solution"
+  },
+  {
+    "schemaKey": "school-staff-reinforcement",
+    "title": "Renfort de personnel école & crèche",
+    "columnCount": 130,
+    "identityField": "solution_key",
+    "sellableType": "b2b_solution"
+  },
+  {
+    "schemaKey": "hospitality-kids-programme",
+    "title": "Programme Hospitality Kids Friendly",
+    "columnCount": 132,
+    "identityField": "solution_key",
+    "sellableType": "b2b_solution"
+  },
+  {
+    "schemaKey": "corporate-childcare-benefit",
+    "title": "Bénéfice childcare collaborateurs",
+    "columnCount": 132,
+    "identityField": "solution_key",
+    "sellableType": "b2b_solution"
+  },
+  {
+    "schemaKey": "health-adjacent-programme",
+    "title": "Programme partenaire santé non médical",
+    "columnCount": 130,
+    "identityField": "solution_key",
+    "sellableType": "b2b_solution"
+  },
+  {
+    "schemaKey": "event-venue-programme",
+    "title": "Programme lieux, événements & institutions",
+    "columnCount": 131,
+    "identityField": "solution_key",
+    "sellableType": "b2b_solution"
+  },
+  {
+    "schemaKey": "partner-os-plan",
+    "title": "Plan Partner OS",
+    "columnCount": 135,
+    "identityField": "solution_key",
+    "sellableType": "partner_os_plan"
+  },
+  {
+    "schemaKey": "quality-check-assessment",
+    "title": "Évaluation Quality Check 360",
+    "columnCount": 130,
+    "identityField": "solution_key",
+    "sellableType": "quality_assessment"
+  },
+  {
+    "schemaKey": "custom-managed-solution",
+    "title": "Solution gérée sur mesure",
+    "columnCount": 132,
+    "identityField": "solution_key",
+    "sellableType": "b2b_solution"
+  }
+]
