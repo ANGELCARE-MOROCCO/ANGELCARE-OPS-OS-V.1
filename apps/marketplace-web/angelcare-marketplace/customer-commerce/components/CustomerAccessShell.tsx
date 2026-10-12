@@ -6,7 +6,7 @@ import { CUSTOMER_LOGO, customerAuthHref, customerLocaleReturnTo, type CustomerA
 import { customerAccessCopy } from '../customer-access-copy'
 import styles from '../customer-access.module.css'
 
-export function CustomerAccessShell({ locale, mode, returnTo, children }: { locale: CatalogLocale; mode: CustomerAuthMode | 'verified'; returnTo: string; children: ReactNode }) {
+export function CustomerAccessShell({ locale, mode, returnTo, children }: { locale: CatalogLocale; mode: CustomerAuthMode | 'verified' | 'complete-profile'; returnTo: string; children: ReactNode }) {
   const t = customerAccessCopy(locale)
   return <main className={styles.root} dir={locale === 'ar' ? 'rtl' : 'ltr'} lang={locale} data-localization-ignore>
     <a className={styles.skip} href="#customer-access-form">{t.access}</a>

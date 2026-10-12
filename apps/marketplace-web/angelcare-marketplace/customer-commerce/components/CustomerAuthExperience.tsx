@@ -7,6 +7,7 @@ import type { CatalogLocale } from '../../catalog-discovery/types'
 import { customerAuthHref, customerReturnTo, passwordChecks, type CustomerAuthMode } from '../auth-navigation'
 import { customerAccessCopy } from '../customer-access-copy'
 import { CustomerAccessShell } from './CustomerAccessShell'
+import { CustomerSocialAccess } from './CustomerSocialAccess'
 import { establishCustomerFragmentSession } from '../customer-session-bridge'
 import styles from '../customer-access.module.css'
 
@@ -122,6 +123,7 @@ export function CustomerAuthExperience({ locale, mode, returnTo, initialError }:
     {!result && (mode === 'login' || mode === 'register') ? <nav className={styles.tabs} aria-label={t.access}><Link href={customerAuthHref(locale, 'login', destination)} aria-current={mode === 'login' ? 'page' : undefined}>{t.tabLogin}</Link><Link href={customerAuthHref(locale, 'register', destination)} aria-current={mode === 'register' ? 'page' : undefined}>{t.tabRegister}</Link></nav> : null}
     {continueJourney ? <div className={styles.continuation}><Route size={19}/><div><strong>{t.continuation}</strong><p>{t.continueLead}</p></div></div> : null}
     {error ? <div className={styles.message} role="alert" tabIndex={-1}>{error}{reference ? <small>{t.reference}: {reference}</small> : null}</div> : null}
+    {!result && (mode === 'login' || mode === 'register') ? <CustomerSocialAccess locale={locale} intent={mode} returnTo={destination} disabled={busy || checking}/> : null}
     {result ? <div className={styles.result}><div className={styles.resultIcon}>{result === 'password' ? <ShieldCheck size={32}/> : <Mail size={32}/>}</div>{result !== 'password' ? <p><strong dir="ltr">{form.email}</strong></p> : null}
       {result === 'signup' ? <button className={styles.secondary} disabled={busy || cooldown > 0} onClick={() => void execute('resend')}>{busy ? t.sending : t.resend}{cooldown > 0 ? ` · ${cooldown}s` : ''}</button> : null}
       {result !== 'password' && result !== 'signup' ? <button className={styles.secondary} disabled={busy || cooldown > 0} onClick={() => void execute(result === 'magic' ? 'magic' : 'primary')}>{busy ? t.sending : mode === 'recover' ? t.submitRecover : t.magic}{cooldown > 0 ? ` · ${cooldown}s` : ''}</button> : null}

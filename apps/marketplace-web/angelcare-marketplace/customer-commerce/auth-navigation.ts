@@ -23,7 +23,7 @@ export function customerReturnTo(value: unknown, locale: CatalogLocale): string 
   } catch { return fallback }
 }
 
-export function customerAuthHref(locale: CatalogLocale, mode: CustomerAuthMode | 'verified', returnTo?: unknown): string {
+export function customerAuthHref(locale: CatalogLocale, mode: CustomerAuthMode | 'verified' | 'complete-profile', returnTo?: unknown): string {
   return `/angelcare-marketplace/${locale}/auth/${mode}?returnTo=${encodeURIComponent(customerReturnTo(returnTo, locale))}`
 }
 

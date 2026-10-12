@@ -7,6 +7,7 @@ import { MarketplaceError } from '../server/errors'
 import { emailValue, localeValue, passwordValue, phoneValue, requiredText } from './validation'
 import type { CustomerAccount, CustomerContext } from './types'
 import { CUSTOMER_ACCESS_REVISION, customerReturnTo } from './auth-navigation'
+import { completionHref, supportedSocialIdentity } from './customer-social/contracts'
 
 const CUSTOMER_PERMISSIONS: MarketplacePermission[] = [
   'marketplace.workspace.access',
@@ -104,6 +105,8 @@ export async function requireCustomerPageContext(locale: CatalogLocale, returnTo
   const context = await getCustomerContext()
   if (!context) {
     const target = customerReturnTo(returnTo || (await headers()).get('x-angelcare-customer-path'), locale)
+    const client = await createUserClient(), auth = await client.auth.getUser(), user = auth.data.user
+    if (!auth.error && user?.email_confirmed_at && supportedSocialIdentity(user) && !await customerAccountByAuthId(user.id)) redirect(completionHref(locale, target))
     redirect(`/angelcare-marketplace/${locale}/auth/login?returnTo=${encodeURIComponent(target)}`)
   }
   return context
