@@ -216,7 +216,7 @@ export function categoryNativeCsvFields(schema: ExperienceSchemaBlueprint): Expe
     ...categoryNativeDoctrineFields(schema),
     ...categoryNative360Fields(),
     field('_population_contract','Contrat de population','r1 pour le parcours coordonné ; vide conserve le parcours historique.'),
-    {...field('_clear_fields','Champs à effacer','Liste explicite de champs optionnels, séparés par |.'),field_type:'list'},
+    {...field('_clear_fields','Champs à effacer','Liste explicite de champs optionnels, séparés par |.'),field_type:'list' as const},
   ].filter((entry) => {
     if (seen.has(entry.field_key)) return false
     seen.add(entry.field_key)
