@@ -173,7 +173,7 @@ function FieldCards({value,props}:{value:unknown;props:AtomicSectionProps}){
   return <><div className={styles.cards} data-layout={props.layout||'bento'}>{filtered.map((r,i)=><div key={r.key} className={styles.card} data-index={i%6}>
     <span className={styles.cardIndex}>{String(i+1).padStart(2,'0')}</span>{r.title?<h3>{r.title.replaceAll('_',' ')}</h3>:null}
     {selectable&&Array.isArray(r.value)&&r.value.every(v=>typeof v==='string')?<div className={styles.pills}>{(r.value as string[]).map(v=><button type="button" key={v} aria-pressed={Array.isArray(x.selection[r.key])&&(x.selection[r.key] as string[]).includes(v)} onClick={()=>{const current=Array.isArray(x.selection[r.key])?x.selection[r.key] as string[]:[];x.setChoice(r.key,current.includes(v)?current.filter(a=>a!==v):[...current,v])}}>{display(v,x.locale)}</button>)}</div>:selectable&&typeof r.value==='number'&&['site_count','beneficiary_volume','employee_population','expected_child_volume','expected_attendance','personnel_count'].includes(r.key)?<label className={styles.intentFields}>{r.title}<input type="number" min="0" value={typeof x.selection[r.key]==='number'?String(x.selection[r.key]):String(r.value)} onChange={e=>x.setChoice(r.key,e.target.value===''?'':Number(e.target.value))}/></label>:<p>{r.body}</p>}
-    {publicUrl(r.raw.url||r.raw.mediaUrl||r.raw.imageUrl)?<img src={publicUrl(r.raw.url||r.raw.mediaUrl||r.raw.imageUrl)!} alt={r.title} loading="lazy"/>:null}
+    {publicUrl(atomicCardMediaCandidate(r.raw))?<img src={publicUrl(atomicCardMediaCandidate(r.raw))!} alt={r.title} loading="lazy"/>:null}
   </div>)}</div></>
 }
 
@@ -259,4 +259,26 @@ export function AtomicDocumentPreview({component,data,locale,previewOnly=false}:
   const props=record(component.props)
   function render(children:unknown):ReactNode{return Array.isArray(children)?children.map((c:ComponentData,i)=>c.type==='atomic_offer_section'?<AtomicOfferSection key={String(c.props.id)||i} props={c.props as AtomicSectionProps}/>:c.type==='atomic_offer_group'?<AtomicOfferGroup key={String(c.props?.id)||i} props={record(c.props)}>{render(record(c.props).content)}</AtomicOfferGroup>:<div key={String(c.props?.id)||i}>{render(record(c.props).content)}</div>):null}
   return <AtomicExperienceFrame key={`${data.identity.id}:${locale}`} type={component.type} props={props} data={data} locale={locale} previewOnly={previewOnly}>{render(props.content)}</AtomicExperienceFrame>
+}
+
+function atomicCardMediaCandidate(raw: unknown): string {
+  if (
+    raw === null ||
+    typeof raw !== 'object' ||
+    Array.isArray(raw)
+  ) {
+    return '';
+  }
+
+  const fields = raw as Record<string, unknown>;
+
+  for (const key of ['url', 'mediaUrl', 'imageUrl'] as const) {
+    const value = fields[key];
+
+    if (typeof value === 'string' && value.trim().length > 0) {
+      return value;
+    }
+  }
+
+  return '';
 }
