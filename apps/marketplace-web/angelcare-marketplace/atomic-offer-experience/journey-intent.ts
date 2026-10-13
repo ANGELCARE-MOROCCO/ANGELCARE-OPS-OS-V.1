@@ -3,7 +3,7 @@ import type { ExperienceSchemaBlueprint } from '../category-native/types'
 const obj=(v:unknown):Record<string,unknown>=>v&&typeof v==='object'&&!Array.isArray(v)?v as Record<string,unknown>:{}
 const text=(v:unknown,max=200)=>typeof v==='string'?v.trim().slice(0,max):''
 const date=(v:unknown)=>{const s=text(v,10);if(!/^\d{4}-\d{2}-\d{2}$/.test(s))return '';const d=new Date(`${s}T12:00:00Z`);return Number.isFinite(d.getTime())&&d.toISOString().slice(0,10)===s?s:''}
-export const ATOMIC_INTENT_KEYS=['requestedDate','requestedTime','duration','city','cohortId','quantity'] as const
+export const ATOMIC_INTENT_KEYS=['requestedDate','requestedTime','duration','city','cohortId','quantity','childrenCount','learnerType','learningGoal','organizationName'] as const
 /** This extends customer intent only. Schema fields, imports, price and capacity stay authoritative. */
 export function atomicJourneyIntent(schema:ExperienceSchemaBlueprint,configuration:Record<string,unknown>):Record<string,unknown>{
   const out:Record<string,unknown>={}
@@ -14,6 +14,8 @@ export function atomicJourneyIntent(schema:ExperienceSchemaBlueprint,configurati
     if(requestedDate)out.requestedDate=requestedDate
     if(requestedTime)out.requestedTime=requestedTime
     if(city)out.city=city
+    const children=Number(configuration.childrenCount)
+    if(Number.isInteger(children)&&children>=1&&children<=99)out.childrenCount=children
     if(duration)out.duration=duration
     // Preserve selected schema-native recurrence and published day preferences in the operational handover.
     const source=obj(configuration.schedule),nativeDays=Array.isArray(configuration.available_days)?configuration.available_days:source.days
@@ -21,7 +23,11 @@ export function atomicJourneyIntent(schema:ExperienceSchemaBlueprint,configurati
     const recurrence=Array.isArray(configuration.recurrence_types)?configuration.recurrence_types.filter((v):v is string=>typeof v==='string'&&v.length<=40).slice(0,4):[]
     if(requestedTime||days.length||recurrence.length)out.schedule={...(requestedTime?{time:requestedTime}:{}),...(days.length?{days}:{}),...(recurrence.length?{recurrence}:{})}
   }
-  if(['course_enrollment','cohort_enrollment','pathway_enrollment','event_enrollment'].includes(schema.conversion_template)){
+  if(['course_enrollment','cohort_enrollment','pathway_enrollment','event_enrollment'].includes(schema.conversion_template)||schema.schema_key==='institutional-training'){
+    const learnerType=text(configuration.learnerType,20),goal=text(configuration.learningGoal,1000),organisation=text(configuration.organizationName,240)
+    if(['individual','organization'].includes(learnerType))out.learnerType=learnerType
+    if(goal)out.learningGoal=goal
+    if(organisation)out.organizationName=organisation
     const id=text(configuration.cohortId,36)
     if(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id))out.cohortId=id
   }

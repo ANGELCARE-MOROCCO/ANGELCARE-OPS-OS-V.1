@@ -1,0 +1,5031 @@
+{
+  "format": "angelcare-world-package-v1",
+  "packageVersion": 1,
+  "exportedAt": "2026-10-13T01:19:15.689Z",
+  "world": {
+    "name": "Service · Commerce Pro Max R1",
+    "description": "Professional light service presentation, complete published media, one-time and recurring planning, conditional content, native booking handoff, in-page family advice and native category recommendations.",
+    "themeVersion": "1.0.0",
+    "manifest": {
+      "themeKind": "detail",
+      "masterDomain": "b2c_service_family",
+      "doctrineKeys": [],
+      "name": "Service · Commerce Pro Max R1",
+      "templateKey": "ac.service.commerce.promax.r1",
+      "themeVersion": "1.0.0",
+      "requiredBindings": [
+        "identity.name",
+        "identity.shortDescription",
+        "media.primary",
+        "identity.description",
+        "media.gallery",
+        "pricing.current",
+        "pricing.label",
+        "pricing.currency",
+        "availability.status",
+        "availability.quantity"
+      ],
+      "optionalBindings": [
+        "identity.description",
+        "service.plans",
+        "service.scheduleRules",
+        "service.coverage",
+        "service.providers",
+        "trust.claims",
+        "content.fields",
+        "reviews.summary",
+        "relations.recommendations"
+      ],
+      "requiredActions": [
+        "booking.start"
+      ],
+      "optionalActions": [
+        "booking.start"
+      ],
+      "requiredWorkflows": [],
+      "requiredCapabilities": [
+        "public-experience-360",
+        "canonical-route",
+        "native-fallback",
+        "world-factory-v3",
+        "truth-firewall",
+        "capability-negotiation",
+        "booking-authority",
+        "canonical-actions",
+        "relation-dynamic-sources",
+        "responsive-runtime",
+        "service-semantic-runtime-v2",
+        "theme-operability-v1",
+        "declarative-conditions",
+        "ui-led-theme-operation",
+        "fr-en-ar-rtl",
+        "theme-token-contract"
+      ],
+      "slots": [
+        {
+          "blockId": "service-commerce-promax-r1",
+          "slot": "hero",
+          "confidence": 1,
+          "reason": "World Factory hero: operator-override",
+          "semanticRole": "hero",
+          "supplementalRoles": [
+            "identity",
+            "media",
+            "pricing",
+            "availability"
+          ],
+          "capabilityKey": "wf:service-commerce-promax-r1"
+        },
+        {
+          "blockId": "service-commerce-opening",
+          "slot": "hero",
+          "confidence": 1,
+          "reason": "World Factory hero: operator-override",
+          "semanticRole": "hero",
+          "supplementalRoles": [
+            "identity",
+            "media",
+            "pricing",
+            "availability",
+            "primary_conversion"
+          ],
+          "capabilityKey": "wf:service-commerce-opening"
+        },
+        {
+          "blockId": "service-commerce-signals",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory specifications: operator-override",
+          "semanticRole": "specifications",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:service-commerce-signals"
+        },
+        {
+          "blockId": "service-commerce-description",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory editorial: operator-override",
+          "semanticRole": "editorial",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:service-commerce-description"
+        },
+        {
+          "blockId": "service-commerce-included",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory specifications: operator-override",
+          "semanticRole": "specifications",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:service-commerce-included"
+        },
+        {
+          "blockId": "service-commerce-plans",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory service_plans: operator-override",
+          "semanticRole": "service_plans",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:service-commerce-plans"
+        },
+        {
+          "blockId": "service-commerce-planning",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory service_schedule: operator-override",
+          "semanticRole": "service_schedule",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:service-commerce-planning"
+        },
+        {
+          "blockId": "service-commerce-process",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory editorial: operator-override",
+          "semanticRole": "editorial",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:service-commerce-process"
+        },
+        {
+          "blockId": "service-commerce-preparation",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory specifications: operator-override",
+          "semanticRole": "specifications",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:service-commerce-preparation"
+        },
+        {
+          "blockId": "service-commerce-coverage",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory service_coverage: operator-override",
+          "semanticRole": "service_coverage",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:service-commerce-coverage"
+        },
+        {
+          "blockId": "service-commerce-providers",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory service_providers: operator-override",
+          "semanticRole": "service_providers",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:service-commerce-providers"
+        },
+        {
+          "blockId": "service-commerce-conditions",
+          "slot": "trust",
+          "confidence": 1,
+          "reason": "World Factory trust: operator-override",
+          "semanticRole": "trust",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:service-commerce-conditions"
+        },
+        {
+          "blockId": "service-commerce-details",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory specifications: operator-override",
+          "semanticRole": "specifications",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:service-commerce-details"
+        },
+        {
+          "blockId": "service-commerce-reviews",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory reviews: operator-override",
+          "semanticRole": "reviews",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:service-commerce-reviews"
+        },
+        {
+          "blockId": "service-commerce-faq",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory faq: operator-override",
+          "semanticRole": "faq",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:service-commerce-faq"
+        },
+        {
+          "blockId": "service-commerce-assistance",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory editorial: operator-override",
+          "semanticRole": "editorial",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:service-commerce-assistance"
+        },
+        {
+          "blockId": "service-commerce-recap",
+          "slot": "final_cta",
+          "confidence": 1,
+          "reason": "World Factory primary_conversion: operator-override",
+          "semanticRole": "primary_conversion",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:service-commerce-recap"
+        },
+        {
+          "blockId": "service-commerce-recommended",
+          "slot": "inventory_items",
+          "confidence": 1,
+          "reason": "World Factory recommendations: operator-override",
+          "semanticRole": "recommendations",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:service-commerce-recommended"
+        }
+      ],
+      "structuralFingerprint": "458c61080ae55fe04ddf617c38204b64",
+      "visualFingerprint": "desktop:c895feff014b26729e7d261db5ee13c5c56743a57e98a781500a884a15fa4cdb|mobile:fb24ed27d8882ba98602585dba52284265fcf45ee2e20af7f20ba76e59d92e24",
+      "factory": {
+        "engineVersion": 3,
+        "schemaVersion": 3,
+        "compilerProfile": "pea-world-factory-2030-operability-v3",
+        "candidateFingerprint": "57cc85e44e8df52434b9071845be4930",
+        "documentFingerprint": "f994d9831e265e5748ceac25e6b7c17b",
+        "compiledFingerprint": "458c61080ae55fe04ddf617c38204b64",
+        "themeKind": "detail",
+        "masterDomain": "b2c_service_family",
+        "doctrineKeys": [],
+        "storefrontKeys": [],
+        "strictVisualFidelity": false,
+        "source": {
+          "kind": "existing",
+          "label": "Service Commerce Pro Max R1",
+          "sourceFingerprint": "service-commerce-promax-r1",
+          "safeToApply": true,
+          "upstreamBlockingCodes": [],
+          "upstreamReviewCodes": [
+            "DEPLOYED_ACCEPTANCE_PENDING"
+          ],
+          "compilerFingerprint": "b53ae24c6bfd04e8ed9f2c0e38b2434c",
+          "importedAt": "2026-10-13T01:19:15.669Z"
+        },
+        "visualReferences": [
+          {
+            "kind": "desktop",
+            "filename": "service-published-desktop.png",
+            "sha256": "c895feff014b26729e7d261db5ee13c5c56743a57e98a781500a884a15fa4cdb",
+            "width": 1440,
+            "height": 7108,
+            "reviewed": false,
+            "reviewNote": "Actual delivered code render, inspected for clipping and media fit. Customer aesthetic approval and deployed acceptance remain pending."
+          },
+          {
+            "kind": "mobile",
+            "filename": "service-published-mobile.png",
+            "sha256": "fb24ed27d8882ba98602585dba52284265fcf45ee2e20af7f20ba76e59d92e24",
+            "width": 390,
+            "height": 11510,
+            "reviewed": false,
+            "reviewNote": "Actual delivered code render, inspected for clipping and media fit. Customer aesthetic approval and deployed acceptance remain pending."
+          }
+        ],
+        "semanticSlots": [
+          {
+            "blockId": "service-commerce-promax-r1",
+            "blockType": "ac_service_world",
+            "path": "root.0",
+            "role": "hero",
+            "supplementalRoles": [
+              "identity",
+              "media",
+              "pricing",
+              "availability"
+            ],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": true
+          },
+          {
+            "blockId": "service-commerce-opening",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.0",
+            "role": "hero",
+            "supplementalRoles": [
+              "identity",
+              "media",
+              "pricing",
+              "availability",
+              "primary_conversion"
+            ],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": true
+          },
+          {
+            "blockId": "service-commerce-signals",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.1",
+            "role": "specifications",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "service-commerce-description",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.2",
+            "role": "editorial",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "service-commerce-included",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.3",
+            "role": "specifications",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "service-commerce-plans",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.4",
+            "role": "service_plans",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "service-commerce-planning",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.5",
+            "role": "service_schedule",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "service-commerce-process",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.6",
+            "role": "editorial",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "service-commerce-preparation",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.7",
+            "role": "specifications",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "service-commerce-coverage",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.8",
+            "role": "service_coverage",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "service-commerce-providers",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.9",
+            "role": "service_providers",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "service-commerce-conditions",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.10",
+            "role": "trust",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "service-commerce-details",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.11",
+            "role": "specifications",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "service-commerce-reviews",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.12",
+            "role": "reviews",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "service-commerce-faq",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.13",
+            "role": "faq",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "service-commerce-assistance",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.14",
+            "role": "editorial",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "service-commerce-recap",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.15",
+            "role": "primary_conversion",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": true
+          },
+          {
+            "blockId": "service-commerce-recommended",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.16",
+            "role": "recommendations",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          }
+        ],
+        "bindingPlan": [
+          {
+            "blockId": "service-commerce-promax-r1",
+            "role": "hero",
+            "bindingKey": "identity.name",
+            "targetKey": "title",
+            "authority": "Category-Native / Catalog",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Public-safe binding · Category-Native / Catalog",
+            "manualOverride": false,
+            "missingPolicy": "hide_block"
+          },
+          {
+            "blockId": "service-commerce-promax-r1",
+            "role": "hero",
+            "bindingKey": "identity.shortDescription",
+            "targetKey": "lead",
+            "authority": "Category-Native / Catalog",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Public-safe binding · Category-Native / Catalog",
+            "manualOverride": false,
+            "missingPolicy": "hide_block"
+          },
+          {
+            "blockId": "service-commerce-promax-r1",
+            "role": "hero",
+            "bindingKey": "media.primary",
+            "targetKey": "mediaUrl",
+            "authority": "Catalog Media",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Public-safe binding · Catalog Media",
+            "manualOverride": false,
+            "missingPolicy": "hide_block"
+          },
+          {
+            "blockId": "service-commerce-promax-r1",
+            "role": "identity",
+            "bindingKey": "identity.name",
+            "targetKey": "title",
+            "authority": "Category-Native / Catalog",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Public-safe binding · Category-Native / Catalog",
+            "manualOverride": false,
+            "missingPolicy": "hide_block"
+          },
+          {
+            "blockId": "service-commerce-promax-r1",
+            "role": "identity",
+            "bindingKey": "identity.shortDescription",
+            "targetKey": "lead",
+            "authority": "Category-Native / Catalog",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Public-safe binding · Category-Native / Catalog",
+            "manualOverride": false,
+            "missingPolicy": "hide_block"
+          },
+          {
+            "blockId": "service-commerce-promax-r1",
+            "role": "identity",
+            "bindingKey": "identity.description",
+            "targetKey": "body",
+            "authority": "Category-Native / Catalog",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Public-safe binding · Category-Native / Catalog",
+            "manualOverride": false,
+            "missingPolicy": "hide_block"
+          },
+          {
+            "blockId": "service-commerce-promax-r1",
+            "role": "media",
+            "bindingKey": "media.primary",
+            "targetKey": "mediaUrl",
+            "authority": "Catalog Media",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Public-safe binding · Catalog Media",
+            "manualOverride": false,
+            "missingPolicy": "hide_block"
+          },
+          {
+            "blockId": "service-commerce-promax-r1",
+            "role": "media",
+            "bindingKey": "media.gallery",
+            "targetKey": "items",
+            "authority": "Catalog Media",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Public-safe binding · Catalog Media",
+            "manualOverride": false,
+            "missingPolicy": "hide_block"
+          },
+          {
+            "blockId": "service-commerce-promax-r1",
+            "role": "pricing",
+            "bindingKey": "pricing.current",
+            "targetKey": "title",
+            "authority": "Catalog / Finance pricing",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Public-safe binding · Catalog / Finance pricing",
+            "manualOverride": false,
+            "missingPolicy": "hide_block"
+          },
+          {
+            "blockId": "service-commerce-promax-r1",
+            "role": "pricing",
+            "bindingKey": "pricing.label",
+            "targetKey": "lead",
+            "authority": "Catalog / Finance pricing",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Public-safe binding · Catalog / Finance pricing",
+            "manualOverride": false,
+            "missingPolicy": "hide_block"
+          },
+          {
+            "blockId": "service-commerce-promax-r1",
+            "role": "pricing",
+            "bindingKey": "pricing.currency",
+            "targetKey": "body",
+            "authority": "Catalog / Finance pricing",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Public-safe binding · Catalog / Finance pricing",
+            "manualOverride": false,
+            "missingPolicy": "hide_block"
+          },
+          {
+            "blockId": "service-commerce-promax-r1",
+            "role": "availability",
+            "bindingKey": "availability.status",
+            "targetKey": "title",
+            "authority": "Category-Native availability",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Public-safe binding · Category-Native availability",
+            "manualOverride": false,
+            "missingPolicy": "hide_block"
+          },
+          {
+            "blockId": "service-commerce-promax-r1",
+            "role": "availability",
+            "bindingKey": "availability.quantity",
+            "targetKey": "lead",
+            "authority": "Category-Native availability",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Public-safe binding · Category-Native availability",
+            "manualOverride": false,
+            "missingPolicy": "hide_block"
+          },
+          {
+            "blockId": "service-commerce-opening",
+            "role": "hero",
+            "bindingKey": "identity.name",
+            "targetKey": "title",
+            "authority": "Category-Native / Catalog",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "service-commerce-description",
+            "role": "editorial",
+            "bindingKey": "identity.description",
+            "targetKey": "title",
+            "authority": "Category-Native / Catalog",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "service-commerce-plans",
+            "role": "service_plans",
+            "bindingKey": "service.plans",
+            "targetKey": "items",
+            "authority": "Experience public fields",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "service-commerce-planning",
+            "role": "service_schedule",
+            "bindingKey": "service.scheduleRules",
+            "targetKey": "items",
+            "authority": "Availability authority",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "service-commerce-coverage",
+            "role": "service_coverage",
+            "bindingKey": "service.coverage",
+            "targetKey": "items",
+            "authority": "Territory authority",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "service-commerce-providers",
+            "role": "service_providers",
+            "bindingKey": "service.providers",
+            "targetKey": "items",
+            "authority": "Provider public-safe projection",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "service-commerce-conditions",
+            "role": "trust",
+            "bindingKey": "trust.claims",
+            "targetKey": "items",
+            "authority": "Trust authority",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "service-commerce-details",
+            "role": "specifications",
+            "bindingKey": "content.fields",
+            "targetKey": "items",
+            "authority": "Experience Schema public_visible",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "service-commerce-reviews",
+            "role": "reviews",
+            "bindingKey": "reviews.summary",
+            "targetKey": "items",
+            "authority": "Review authority",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "service-commerce-recap",
+            "role": "primary_conversion",
+            "bindingKey": "identity.name",
+            "targetKey": "title",
+            "authority": "Category-Native / Catalog",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "service-commerce-recommended",
+            "role": "recommendations",
+            "bindingKey": "relations.recommendations",
+            "targetKey": "items",
+            "authority": "Catalog Discovery",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          }
+        ],
+        "actionPlan": [
+          {
+            "blockId": "service-commerce-opening",
+            "role": "hero",
+            "intent": "primary",
+            "actionId": "booking.start",
+            "workflowId": null,
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "canonicalEngine": "Category-Native + Conversion Universe",
+            "targetMode": "current_item",
+            "targetSourceId": "catalog.items",
+            "reason": "Canonical action · Category-Native + Conversion Universe",
+            "manualOverride": false
+          },
+          {
+            "blockId": "service-commerce-recap",
+            "role": "primary_conversion",
+            "intent": "secondary",
+            "actionId": "booking.start",
+            "workflowId": null,
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "canonicalEngine": "Category-Native + Conversion Universe",
+            "targetMode": "current_item",
+            "targetSourceId": "catalog.items",
+            "reason": "Operator action override.",
+            "manualOverride": true
+          },
+          {
+            "blockId": "service-commerce-recap",
+            "role": "primary_conversion",
+            "intent": "secondary",
+            "actionId": "booking.start",
+            "workflowId": null,
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "canonicalEngine": "Category-Native + Conversion Universe",
+            "targetMode": "current_item",
+            "targetSourceId": "catalog.items",
+            "reason": "Operator action override.",
+            "manualOverride": true
+          }
+        ],
+        "relationPlan": [
+          {
+            "blockId": "service-commerce-recommended",
+            "role": "recommendations",
+            "strategy": "similar_items",
+            "sourceId": "catalog.items",
+            "anchorMode": "current_item",
+            "limit": 12,
+            "emptyPolicy": "preserve_static",
+            "status": "RESOLVED"
+          }
+        ],
+        "truthRequirements": [
+          {
+            "key": "promotion",
+            "blockId": "service-commerce-promax-r1",
+            "required": false,
+            "status": "NOT_SHOWN",
+            "authority": null,
+            "evidence": "Promotion claim detected"
+          },
+          {
+            "key": "scarcity",
+            "blockId": "service-commerce-promax-r1",
+            "required": false,
+            "status": "NOT_SHOWN",
+            "authority": null,
+            "evidence": "Scarcity language detected"
+          },
+          {
+            "key": "rating",
+            "blockId": "service-commerce-reviews",
+            "required": true,
+            "status": "GOVERNED",
+            "authority": "Public Experience Truth Firewall",
+            "evidence": "Rating/review language detected"
+          },
+          {
+            "key": "certification",
+            "blockId": "service-commerce-promax-r1",
+            "required": false,
+            "status": "NOT_SHOWN",
+            "authority": null,
+            "evidence": "Certification language detected"
+          },
+          {
+            "key": "pricing",
+            "blockId": "service-commerce-promax-r1",
+            "required": false,
+            "status": "NOT_SHOWN",
+            "authority": null,
+            "evidence": "Pricing language detected"
+          },
+          {
+            "key": "availability",
+            "blockId": "service-commerce-promax-r1",
+            "required": false,
+            "status": "NOT_SHOWN",
+            "authority": null,
+            "evidence": "Availability language detected"
+          },
+          {
+            "key": "trust",
+            "blockId": "service-commerce-conditions",
+            "required": false,
+            "status": "NOT_SHOWN",
+            "authority": null,
+            "evidence": "Trust language detected"
+          }
+        ],
+        "responsive": {
+          "nativeDesktop": true,
+          "nativeMobile": true,
+          "responsiveHints": 17,
+          "breakpointHints": 51,
+          "horizontalOverflowRisk": false,
+          "fixedWidthEvidence": [],
+          "notes": [
+            "Responsive metadata detected.",
+            "No obvious fixed-width overflow evidence."
+          ]
+        },
+        "capabilities": [
+          {
+            "capability": "booking-authority",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Category-Native + Conversion Universe",
+            "detail": "Capability supported by installed canonical runtime."
+          },
+          {
+            "capability": "canonical-actions",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Studio Action Registry",
+            "detail": "Capability supported by installed canonical runtime."
+          },
+          {
+            "capability": "canonical-route",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Marketplace route/source registry",
+            "detail": "Capability supported by installed canonical runtime."
+          },
+          {
+            "capability": "native-fallback",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Category-Native / Public Experience runtime",
+            "detail": "Capability supported by installed canonical runtime."
+          },
+          {
+            "capability": "public-experience-360",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "PublicExperience360",
+            "detail": "Capability supported by installed canonical runtime."
+          },
+          {
+            "capability": "relation-dynamic-sources",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Studio Dynamic Source / Catalog Relations",
+            "detail": "Capability supported by installed canonical runtime."
+          },
+          {
+            "capability": "responsive-runtime",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Studio public runtime",
+            "detail": "Capability supported by installed canonical runtime."
+          },
+          {
+            "capability": "service-semantic-runtime-v2",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Studio Service Semantic Runtime V2",
+            "detail": "Capability supported by installed canonical runtime."
+          },
+          {
+            "capability": "truth-firewall",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Public Experience Truth Firewall",
+            "detail": "Capability supported by installed canonical runtime."
+          },
+          {
+            "capability": "theme-operability-v1",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "World Factory 2030 Operability Kernel",
+            "detail": "Capability supported by installed 2030 theme operating kernel."
+          },
+          {
+            "capability": "declarative-conditions",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Studio Published Runtime",
+            "detail": "Capability supported by installed 2030 theme operating kernel."
+          },
+          {
+            "capability": "ui-led-theme-operation",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Public Experience Authority / World Factory",
+            "detail": "Capability supported by installed 2030 theme operating kernel."
+          },
+          {
+            "capability": "fr-en-ar-rtl",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Studio Published Runtime",
+            "detail": "Capability supported by installed 2030 theme operating kernel."
+          },
+          {
+            "capability": "theme-token-contract",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Studio Design Runtime",
+            "detail": "Capability supported by installed 2030 theme operating kernel."
+          }
+        ],
+        "operability": {
+          "version": 1,
+          "density": null,
+          "blockCapabilities": [
+            {
+              "blockId": "service-commerce-promax-r1",
+              "blockType": "ac_service_world",
+              "role": "hero",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": true,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "media",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility",
+                "seo"
+              ]
+            },
+            {
+              "blockId": "service-commerce-opening",
+              "blockType": "atomic_offer_section",
+              "role": "hero",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": true,
+              "acceptsActions": true,
+              "acceptsChildren": false,
+              "acceptsRepeaters": false,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "productRole",
+                "serviceRole",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "media",
+                "actions",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility",
+                "seo"
+              ]
+            },
+            {
+              "blockId": "service-commerce-signals",
+              "blockType": "atomic_offer_section",
+              "role": "specifications",
+              "acceptsBindings": false,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "productRole",
+                "serviceRole",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "service-commerce-description",
+              "blockType": "atomic_offer_section",
+              "role": "editorial",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": true,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": false,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "productRole",
+                "serviceRole",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "media",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility",
+                "seo"
+              ]
+            },
+            {
+              "blockId": "service-commerce-included",
+              "blockType": "atomic_offer_section",
+              "role": "specifications",
+              "acceptsBindings": false,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "productRole",
+                "serviceRole",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "service-commerce-plans",
+              "blockType": "atomic_offer_section",
+              "role": "service_plans",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "productRole",
+                "serviceRole",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "service-commerce-planning",
+              "blockType": "atomic_offer_section",
+              "role": "service_schedule",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "productRole",
+                "serviceRole",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "service-commerce-process",
+              "blockType": "atomic_offer_section",
+              "role": "editorial",
+              "acceptsBindings": false,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": true,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": false,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "productRole",
+                "serviceRole",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "media",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility",
+                "seo"
+              ]
+            },
+            {
+              "blockId": "service-commerce-preparation",
+              "blockType": "atomic_offer_section",
+              "role": "specifications",
+              "acceptsBindings": false,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "productRole",
+                "serviceRole",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "service-commerce-coverage",
+              "blockType": "atomic_offer_section",
+              "role": "service_coverage",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "productRole",
+                "serviceRole",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "service-commerce-providers",
+              "blockType": "atomic_offer_section",
+              "role": "service_providers",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "productRole",
+                "serviceRole",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "service-commerce-conditions",
+              "blockType": "atomic_offer_section",
+              "role": "trust",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "productRole",
+                "serviceRole",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "service-commerce-details",
+              "blockType": "atomic_offer_section",
+              "role": "specifications",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "productRole",
+                "serviceRole",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "service-commerce-reviews",
+              "blockType": "atomic_offer_section",
+              "role": "reviews",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "productRole",
+                "serviceRole",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "service-commerce-faq",
+              "blockType": "atomic_offer_section",
+              "role": "faq",
+              "acceptsBindings": false,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "productRole",
+                "serviceRole",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility",
+                "seo"
+              ]
+            },
+            {
+              "blockId": "service-commerce-assistance",
+              "blockType": "atomic_offer_section",
+              "role": "editorial",
+              "acceptsBindings": false,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": true,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": false,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "productRole",
+                "serviceRole",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "media",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility",
+                "seo"
+              ]
+            },
+            {
+              "blockId": "service-commerce-recap",
+              "blockType": "atomic_offer_section",
+              "role": "primary_conversion",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": true,
+              "acceptsChildren": false,
+              "acceptsRepeaters": false,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "productRole",
+                "serviceRole",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "actions",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "service-commerce-recommended",
+              "blockType": "atomic_offer_section",
+              "role": "recommendations",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": true,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "productRole",
+                "serviceRole",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [
+                "catalog.items"
+              ],
+              "merchandisingModes": [
+                "automatic",
+                "curated",
+                "manual",
+                "hybrid"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            }
+          ],
+          "conditions": [],
+          "repeaters": [
+            {
+              "blockId": "service-commerce-promax-r1",
+              "targetKey": "items",
+              "source": "binding",
+              "bindingKey": "media.gallery",
+              "sourceId": null,
+              "strategy": null,
+              "limit": 24,
+              "sort": "canonical",
+              "emptyPolicy": "hide_block",
+              "itemVariant": null
+            },
+            {
+              "blockId": "service-commerce-plans",
+              "targetKey": "items",
+              "source": "binding",
+              "bindingKey": "service.plans",
+              "sourceId": null,
+              "strategy": null,
+              "limit": 24,
+              "sort": "canonical",
+              "emptyPolicy": "omit",
+              "itemVariant": null
+            },
+            {
+              "blockId": "service-commerce-planning",
+              "targetKey": "items",
+              "source": "binding",
+              "bindingKey": "service.scheduleRules",
+              "sourceId": null,
+              "strategy": null,
+              "limit": 24,
+              "sort": "canonical",
+              "emptyPolicy": "omit",
+              "itemVariant": null
+            },
+            {
+              "blockId": "service-commerce-coverage",
+              "targetKey": "items",
+              "source": "binding",
+              "bindingKey": "service.coverage",
+              "sourceId": null,
+              "strategy": null,
+              "limit": 24,
+              "sort": "canonical",
+              "emptyPolicy": "omit",
+              "itemVariant": null
+            },
+            {
+              "blockId": "service-commerce-providers",
+              "targetKey": "items",
+              "source": "binding",
+              "bindingKey": "service.providers",
+              "sourceId": null,
+              "strategy": null,
+              "limit": 24,
+              "sort": "canonical",
+              "emptyPolicy": "omit",
+              "itemVariant": null
+            },
+            {
+              "blockId": "service-commerce-conditions",
+              "targetKey": "items",
+              "source": "binding",
+              "bindingKey": "trust.claims",
+              "sourceId": null,
+              "strategy": null,
+              "limit": 24,
+              "sort": "canonical",
+              "emptyPolicy": "omit",
+              "itemVariant": null
+            },
+            {
+              "blockId": "service-commerce-details",
+              "targetKey": "items",
+              "source": "binding",
+              "bindingKey": "content.fields",
+              "sourceId": null,
+              "strategy": null,
+              "limit": 24,
+              "sort": "canonical",
+              "emptyPolicy": "omit",
+              "itemVariant": null
+            },
+            {
+              "blockId": "service-commerce-reviews",
+              "targetKey": "items",
+              "source": "binding",
+              "bindingKey": "reviews.summary",
+              "sourceId": null,
+              "strategy": null,
+              "limit": 24,
+              "sort": "canonical",
+              "emptyPolicy": "omit",
+              "itemVariant": null
+            },
+            {
+              "blockId": "service-commerce-recommended",
+              "targetKey": "items",
+              "source": "dynamic_source",
+              "bindingKey": null,
+              "sourceId": "catalog.items",
+              "strategy": "similar_items",
+              "limit": 12,
+              "sort": "recommended",
+              "emptyPolicy": "preserve_static",
+              "itemVariant": null
+            }
+          ],
+          "media": [
+            {
+              "blockId": "service-commerce-promax-r1",
+              "targetKey": "mediaUrl",
+              "kind": "primary",
+              "source": "binding",
+              "bindingKey": "media.primary",
+              "assetRole": null,
+              "required": true,
+              "presentation": {
+                "fit": "cover",
+                "position": "50% 50%",
+                "aspectRatio": null,
+                "overlay": null,
+                "focalPoint": null
+              },
+              "responsive": {
+                "desktop": null,
+                "tablet": null,
+                "mobile": null
+              }
+            },
+            {
+              "blockId": "service-commerce-promax-r1",
+              "targetKey": "mediaUrl",
+              "kind": "primary",
+              "source": "binding",
+              "bindingKey": "media.primary",
+              "assetRole": null,
+              "required": true,
+              "presentation": {
+                "fit": "cover",
+                "position": "50% 50%",
+                "aspectRatio": null,
+                "overlay": null,
+                "focalPoint": null
+              },
+              "responsive": {
+                "desktop": null,
+                "tablet": null,
+                "mobile": null
+              }
+            },
+            {
+              "blockId": "service-commerce-promax-r1",
+              "targetKey": "items",
+              "kind": "gallery",
+              "source": "binding",
+              "bindingKey": "media.gallery",
+              "assetRole": null,
+              "required": true,
+              "presentation": {
+                "fit": "cover",
+                "position": "50% 50%",
+                "aspectRatio": null,
+                "overlay": null,
+                "focalPoint": null
+              },
+              "responsive": {
+                "desktop": null,
+                "tablet": null,
+                "mobile": null
+              }
+            }
+          ],
+          "interactions": [
+            {
+              "blockId": "service-commerce-planning",
+              "kind": "schedule_selector",
+              "status": "SUPPORTED",
+              "configuration": {}
+            },
+            {
+              "blockId": "service-commerce-faq",
+              "kind": "accordion",
+              "status": "SUPPORTED",
+              "configuration": {}
+            },
+            {
+              "blockId": "service-commerce-recap",
+              "kind": "sticky_conversion",
+              "status": "SUPPORTED",
+              "configuration": {}
+            }
+          ],
+          "localization": {
+            "defaultLocale": "fr",
+            "locales": [
+              "fr",
+              "en",
+              "ar"
+            ],
+            "rtlLocales": [
+              "ar"
+            ],
+            "themeStrings": "localized-map",
+            "fallback": "default-locale",
+            "missingTranslation": "warn"
+          },
+          "tokens": {
+            "colors": {},
+            "typography": {},
+            "spacing": {},
+            "radii": {},
+            "shadows": {},
+            "layout": {},
+            "motion": {}
+          },
+          "assets": [],
+          "performance": {
+            "maxRootBlocks": 40,
+            "maxTotalBlocks": 160,
+            "maxDynamicSources": 24,
+            "maxAboveFoldMedia": 6,
+            "maxMediaAssets": 80,
+            "maxDocumentBytes": 1500000,
+            "maxInteractions": 40
+          },
+          "shell": {
+            "mode": "marketplace_global",
+            "allowGlobalHeaderOverride": false,
+            "allowGlobalFooterOverride": false,
+            "allowGlobalNavigationOverride": false
+          },
+          "editing": {
+            "uiLed": true,
+            "rawJsonRequired": false,
+            "allowBlockMove": true,
+            "allowBlockDuplicate": true,
+            "allowBlockHide": true,
+            "allowBindingChange": true,
+            "allowActionChange": true,
+            "allowMediaReplace": true,
+            "allowDesignChange": true,
+            "allowResponsiveChange": true,
+            "allowConditionChange": true,
+            "immutableBusinessTruth": true
+          },
+          "inspector": {
+            "generatedFromCapabilities": true,
+            "hideUnsupportedFields": true,
+            "showAuthorityOwnership": true,
+            "showInheritance": true
+          }
+        },
+        "certification": {
+          "level": "READY",
+          "lifecycle": "CERTIFIED",
+          "productionEligible": true,
+          "coverage": {
+            "semantic": 100,
+            "binding": 100,
+            "action": 100,
+            "truth": 100,
+            "responsive": 100,
+            "visual": 50,
+            "overall": 92
+          },
+          "gates": [
+            {
+              "id": "source-safety",
+              "label": "Source sanitized",
+              "state": "PASS",
+              "critical": true,
+              "detail": "Universal Import candidate has no upstream blocker."
+            },
+            {
+              "id": "domain",
+              "label": "Master domain / doctrines",
+              "state": "PASS",
+              "critical": true,
+              "detail": "b2c_service_family · 0 doctrine(s)"
+            },
+            {
+              "id": "storefront-shell",
+              "label": "Global shell authority",
+              "state": "PASS",
+              "critical": true,
+              "detail": "Global AngelCare header/navigation/footer remain outside the imported Storefront World."
+            },
+            {
+              "id": "semantic",
+              "label": "Semantic anatomy",
+              "state": "PASS",
+              "critical": true,
+              "detail": "Required roles covered (100%)."
+            },
+            {
+              "id": "bindings",
+              "label": "Canonical binding coverage",
+              "state": "PASS",
+              "critical": true,
+              "detail": "15/15 required bindings resolved."
+            },
+            {
+              "id": "actions",
+              "label": "Canonical action coverage",
+              "state": "PASS",
+              "critical": true,
+              "detail": "2/2 required actions resolved; current-item targets supported for catalog actions."
+            },
+            {
+              "id": "relations",
+              "label": "Contextual relation sources",
+              "state": "PASS",
+              "critical": false,
+              "detail": "1 relation rail(s) compiled with current-item anchor."
+            },
+            {
+              "id": "truth",
+              "label": "Truth Firewall contract",
+              "state": "PASS",
+              "critical": true,
+              "detail": "Commercial claims are classified for Truth Firewall enforcement."
+            },
+            {
+              "id": "responsive",
+              "label": "Responsive contract",
+              "state": "PASS",
+              "critical": true,
+              "detail": "Responsive metadata detected. No obvious fixed-width overflow evidence."
+            },
+            {
+              "id": "visual",
+              "label": "Approved desktop/mobile reference",
+              "state": "PASS",
+              "critical": false,
+              "detail": "Desktop + mobile reference evidence approved."
+            },
+            {
+              "id": "capabilities",
+              "label": "Capability negotiation",
+              "state": "PASS",
+              "critical": true,
+              "detail": "14 requested runtime capabilities negotiated."
+            },
+            {
+              "id": "operability",
+              "label": "2030 no-code operability",
+              "state": "PASS",
+              "critical": true,
+              "detail": "18 block capability contracts · 9 repeaters · 3 media contracts · FR/EN/AR + RTL."
+            },
+            {
+              "id": "fallback",
+              "label": "Native fallback",
+              "state": "PASS",
+              "critical": true,
+              "detail": "Category-Native/native fallback remains mandatory."
+            }
+          ],
+          "blockers": [],
+          "warnings": [],
+          "certifiedAt": "2026-10-13T01:19:15.669Z"
+        },
+        "compatibility": {
+          "minimumRuntime": "pea-v1",
+          "maximumRuntime": null,
+          "forwardPolicy": "capability-negotiation",
+          "unknownFields": "preserve",
+          "nativeFallback": true,
+          "schemaVersion": 3,
+          "compilerProfile": "pea-world-factory-2030-operability-v3"
+        },
+        "revision": {
+          "worldKey": "ac.service.commerce.promax.r1",
+          "revision": 1,
+          "supersedes": null,
+          "immutableAfterCertification": true
+        },
+        "overrides": {
+          "roleOverrides": {
+            "service-commerce-promax-r1": "hero",
+            "service-commerce-opening": "hero",
+            "service-commerce-signals": "specifications",
+            "service-commerce-description": "editorial",
+            "service-commerce-included": "specifications",
+            "service-commerce-plans": "service_plans",
+            "service-commerce-planning": "service_schedule",
+            "service-commerce-process": "editorial",
+            "service-commerce-preparation": "specifications",
+            "service-commerce-coverage": "service_coverage",
+            "service-commerce-providers": "service_providers",
+            "service-commerce-conditions": "trust",
+            "service-commerce-details": "specifications",
+            "service-commerce-reviews": "reviews",
+            "service-commerce-faq": "faq",
+            "service-commerce-assistance": "editorial",
+            "service-commerce-recap": "primary_conversion",
+            "service-commerce-recommended": "recommendations"
+          },
+          "supplementalRoleOverrides": {
+            "service-commerce-promax-r1": [
+              "identity",
+              "media",
+              "pricing",
+              "availability"
+            ],
+            "service-commerce-opening": [
+              "identity",
+              "media",
+              "pricing",
+              "availability",
+              "primary_conversion"
+            ]
+          },
+          "bindingOverrides": [],
+          "actionOverrides": [
+            {
+              "blockId": "service-commerce-recap",
+              "intent": "secondary",
+              "actionId": "booking.start",
+              "targetMode": "current_item"
+            }
+          ],
+          "note": "Service-only renderer; chapters are conditional on published public data. The final configurator remains the native price and availability authority."
+        },
+        "provenance": {
+          "createdBy": "WORLD_FACTORY",
+          "manualOverrides": 21,
+          "notes": [
+            "No hardcoded production theme requirement.",
+            "UI-led import/assign/update contract active.",
+            "No foreign code execution.",
+            "Business authorities remain canonical.",
+            "Inference is reviewable and versioned.",
+            "Certified revisions are immutable; changes create a new revision."
+          ]
+        }
+      }
+    },
+    "factory": {
+      "engineVersion": 3,
+      "schemaVersion": 3,
+      "compilerProfile": "pea-world-factory-2030-operability-v3",
+      "candidateFingerprint": "57cc85e44e8df52434b9071845be4930",
+      "documentFingerprint": "f994d9831e265e5748ceac25e6b7c17b",
+      "compiledFingerprint": "458c61080ae55fe04ddf617c38204b64",
+      "themeKind": "detail",
+      "masterDomain": "b2c_service_family",
+      "doctrineKeys": [],
+      "storefrontKeys": [],
+      "strictVisualFidelity": false,
+      "source": {
+        "kind": "existing",
+        "label": "Service Commerce Pro Max R1",
+        "sourceFingerprint": "service-commerce-promax-r1",
+        "safeToApply": true,
+        "upstreamBlockingCodes": [],
+        "upstreamReviewCodes": [
+          "DEPLOYED_ACCEPTANCE_PENDING"
+        ],
+        "compilerFingerprint": "b53ae24c6bfd04e8ed9f2c0e38b2434c",
+        "importedAt": "2026-10-13T01:19:15.669Z"
+      },
+      "visualReferences": [
+        {
+          "kind": "desktop",
+          "filename": "service-published-desktop.png",
+          "sha256": "c895feff014b26729e7d261db5ee13c5c56743a57e98a781500a884a15fa4cdb",
+          "width": 1440,
+          "height": 7108,
+          "reviewed": false,
+          "reviewNote": "Actual delivered code render, inspected for clipping and media fit. Customer aesthetic approval and deployed acceptance remain pending."
+        },
+        {
+          "kind": "mobile",
+          "filename": "service-published-mobile.png",
+          "sha256": "fb24ed27d8882ba98602585dba52284265fcf45ee2e20af7f20ba76e59d92e24",
+          "width": 390,
+          "height": 11510,
+          "reviewed": false,
+          "reviewNote": "Actual delivered code render, inspected for clipping and media fit. Customer aesthetic approval and deployed acceptance remain pending."
+        }
+      ],
+      "semanticSlots": [
+        {
+          "blockId": "service-commerce-promax-r1",
+          "blockType": "ac_service_world",
+          "path": "root.0",
+          "role": "hero",
+          "supplementalRoles": [
+            "identity",
+            "media",
+            "pricing",
+            "availability"
+          ],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": true
+        },
+        {
+          "blockId": "service-commerce-opening",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.0",
+          "role": "hero",
+          "supplementalRoles": [
+            "identity",
+            "media",
+            "pricing",
+            "availability",
+            "primary_conversion"
+          ],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": true
+        },
+        {
+          "blockId": "service-commerce-signals",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.1",
+          "role": "specifications",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "service-commerce-description",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.2",
+          "role": "editorial",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "service-commerce-included",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.3",
+          "role": "specifications",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "service-commerce-plans",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.4",
+          "role": "service_plans",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "service-commerce-planning",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.5",
+          "role": "service_schedule",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "service-commerce-process",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.6",
+          "role": "editorial",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "service-commerce-preparation",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.7",
+          "role": "specifications",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "service-commerce-coverage",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.8",
+          "role": "service_coverage",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "service-commerce-providers",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.9",
+          "role": "service_providers",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "service-commerce-conditions",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.10",
+          "role": "trust",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "service-commerce-details",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.11",
+          "role": "specifications",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "service-commerce-reviews",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.12",
+          "role": "reviews",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "service-commerce-faq",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.13",
+          "role": "faq",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "service-commerce-assistance",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.14",
+          "role": "editorial",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "service-commerce-recap",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.15",
+          "role": "primary_conversion",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": true
+        },
+        {
+          "blockId": "service-commerce-recommended",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.16",
+          "role": "recommendations",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        }
+      ],
+      "bindingPlan": [
+        {
+          "blockId": "service-commerce-promax-r1",
+          "role": "hero",
+          "bindingKey": "identity.name",
+          "targetKey": "title",
+          "authority": "Category-Native / Catalog",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Public-safe binding · Category-Native / Catalog",
+          "manualOverride": false,
+          "missingPolicy": "hide_block"
+        },
+        {
+          "blockId": "service-commerce-promax-r1",
+          "role": "hero",
+          "bindingKey": "identity.shortDescription",
+          "targetKey": "lead",
+          "authority": "Category-Native / Catalog",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Public-safe binding · Category-Native / Catalog",
+          "manualOverride": false,
+          "missingPolicy": "hide_block"
+        },
+        {
+          "blockId": "service-commerce-promax-r1",
+          "role": "hero",
+          "bindingKey": "media.primary",
+          "targetKey": "mediaUrl",
+          "authority": "Catalog Media",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Public-safe binding · Catalog Media",
+          "manualOverride": false,
+          "missingPolicy": "hide_block"
+        },
+        {
+          "blockId": "service-commerce-promax-r1",
+          "role": "identity",
+          "bindingKey": "identity.name",
+          "targetKey": "title",
+          "authority": "Category-Native / Catalog",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Public-safe binding · Category-Native / Catalog",
+          "manualOverride": false,
+          "missingPolicy": "hide_block"
+        },
+        {
+          "blockId": "service-commerce-promax-r1",
+          "role": "identity",
+          "bindingKey": "identity.shortDescription",
+          "targetKey": "lead",
+          "authority": "Category-Native / Catalog",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Public-safe binding · Category-Native / Catalog",
+          "manualOverride": false,
+          "missingPolicy": "hide_block"
+        },
+        {
+          "blockId": "service-commerce-promax-r1",
+          "role": "identity",
+          "bindingKey": "identity.description",
+          "targetKey": "body",
+          "authority": "Category-Native / Catalog",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Public-safe binding · Category-Native / Catalog",
+          "manualOverride": false,
+          "missingPolicy": "hide_block"
+        },
+        {
+          "blockId": "service-commerce-promax-r1",
+          "role": "media",
+          "bindingKey": "media.primary",
+          "targetKey": "mediaUrl",
+          "authority": "Catalog Media",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Public-safe binding · Catalog Media",
+          "manualOverride": false,
+          "missingPolicy": "hide_block"
+        },
+        {
+          "blockId": "service-commerce-promax-r1",
+          "role": "media",
+          "bindingKey": "media.gallery",
+          "targetKey": "items",
+          "authority": "Catalog Media",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Public-safe binding · Catalog Media",
+          "manualOverride": false,
+          "missingPolicy": "hide_block"
+        },
+        {
+          "blockId": "service-commerce-promax-r1",
+          "role": "pricing",
+          "bindingKey": "pricing.current",
+          "targetKey": "title",
+          "authority": "Catalog / Finance pricing",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Public-safe binding · Catalog / Finance pricing",
+          "manualOverride": false,
+          "missingPolicy": "hide_block"
+        },
+        {
+          "blockId": "service-commerce-promax-r1",
+          "role": "pricing",
+          "bindingKey": "pricing.label",
+          "targetKey": "lead",
+          "authority": "Catalog / Finance pricing",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Public-safe binding · Catalog / Finance pricing",
+          "manualOverride": false,
+          "missingPolicy": "hide_block"
+        },
+        {
+          "blockId": "service-commerce-promax-r1",
+          "role": "pricing",
+          "bindingKey": "pricing.currency",
+          "targetKey": "body",
+          "authority": "Catalog / Finance pricing",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Public-safe binding · Catalog / Finance pricing",
+          "manualOverride": false,
+          "missingPolicy": "hide_block"
+        },
+        {
+          "blockId": "service-commerce-promax-r1",
+          "role": "availability",
+          "bindingKey": "availability.status",
+          "targetKey": "title",
+          "authority": "Category-Native availability",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Public-safe binding · Category-Native availability",
+          "manualOverride": false,
+          "missingPolicy": "hide_block"
+        },
+        {
+          "blockId": "service-commerce-promax-r1",
+          "role": "availability",
+          "bindingKey": "availability.quantity",
+          "targetKey": "lead",
+          "authority": "Category-Native availability",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Public-safe binding · Category-Native availability",
+          "manualOverride": false,
+          "missingPolicy": "hide_block"
+        },
+        {
+          "blockId": "service-commerce-opening",
+          "role": "hero",
+          "bindingKey": "identity.name",
+          "targetKey": "title",
+          "authority": "Category-Native / Catalog",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "service-commerce-description",
+          "role": "editorial",
+          "bindingKey": "identity.description",
+          "targetKey": "title",
+          "authority": "Category-Native / Catalog",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "service-commerce-plans",
+          "role": "service_plans",
+          "bindingKey": "service.plans",
+          "targetKey": "items",
+          "authority": "Experience public fields",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "service-commerce-planning",
+          "role": "service_schedule",
+          "bindingKey": "service.scheduleRules",
+          "targetKey": "items",
+          "authority": "Availability authority",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "service-commerce-coverage",
+          "role": "service_coverage",
+          "bindingKey": "service.coverage",
+          "targetKey": "items",
+          "authority": "Territory authority",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "service-commerce-providers",
+          "role": "service_providers",
+          "bindingKey": "service.providers",
+          "targetKey": "items",
+          "authority": "Provider public-safe projection",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "service-commerce-conditions",
+          "role": "trust",
+          "bindingKey": "trust.claims",
+          "targetKey": "items",
+          "authority": "Trust authority",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "service-commerce-details",
+          "role": "specifications",
+          "bindingKey": "content.fields",
+          "targetKey": "items",
+          "authority": "Experience Schema public_visible",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "service-commerce-reviews",
+          "role": "reviews",
+          "bindingKey": "reviews.summary",
+          "targetKey": "items",
+          "authority": "Review authority",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "service-commerce-recap",
+          "role": "primary_conversion",
+          "bindingKey": "identity.name",
+          "targetKey": "title",
+          "authority": "Category-Native / Catalog",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "service-commerce-recommended",
+          "role": "recommendations",
+          "bindingKey": "relations.recommendations",
+          "targetKey": "items",
+          "authority": "Catalog Discovery",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        }
+      ],
+      "actionPlan": [
+        {
+          "blockId": "service-commerce-opening",
+          "role": "hero",
+          "intent": "primary",
+          "actionId": "booking.start",
+          "workflowId": null,
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "canonicalEngine": "Category-Native + Conversion Universe",
+          "targetMode": "current_item",
+          "targetSourceId": "catalog.items",
+          "reason": "Canonical action · Category-Native + Conversion Universe",
+          "manualOverride": false
+        },
+        {
+          "blockId": "service-commerce-recap",
+          "role": "primary_conversion",
+          "intent": "secondary",
+          "actionId": "booking.start",
+          "workflowId": null,
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "canonicalEngine": "Category-Native + Conversion Universe",
+          "targetMode": "current_item",
+          "targetSourceId": "catalog.items",
+          "reason": "Operator action override.",
+          "manualOverride": true
+        },
+        {
+          "blockId": "service-commerce-recap",
+          "role": "primary_conversion",
+          "intent": "secondary",
+          "actionId": "booking.start",
+          "workflowId": null,
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "canonicalEngine": "Category-Native + Conversion Universe",
+          "targetMode": "current_item",
+          "targetSourceId": "catalog.items",
+          "reason": "Operator action override.",
+          "manualOverride": true
+        }
+      ],
+      "relationPlan": [
+        {
+          "blockId": "service-commerce-recommended",
+          "role": "recommendations",
+          "strategy": "similar_items",
+          "sourceId": "catalog.items",
+          "anchorMode": "current_item",
+          "limit": 12,
+          "emptyPolicy": "preserve_static",
+          "status": "RESOLVED"
+        }
+      ],
+      "truthRequirements": [
+        {
+          "key": "promotion",
+          "blockId": "service-commerce-promax-r1",
+          "required": false,
+          "status": "NOT_SHOWN",
+          "authority": null,
+          "evidence": "Promotion claim detected"
+        },
+        {
+          "key": "scarcity",
+          "blockId": "service-commerce-promax-r1",
+          "required": false,
+          "status": "NOT_SHOWN",
+          "authority": null,
+          "evidence": "Scarcity language detected"
+        },
+        {
+          "key": "rating",
+          "blockId": "service-commerce-reviews",
+          "required": true,
+          "status": "GOVERNED",
+          "authority": "Public Experience Truth Firewall",
+          "evidence": "Rating/review language detected"
+        },
+        {
+          "key": "certification",
+          "blockId": "service-commerce-promax-r1",
+          "required": false,
+          "status": "NOT_SHOWN",
+          "authority": null,
+          "evidence": "Certification language detected"
+        },
+        {
+          "key": "pricing",
+          "blockId": "service-commerce-promax-r1",
+          "required": false,
+          "status": "NOT_SHOWN",
+          "authority": null,
+          "evidence": "Pricing language detected"
+        },
+        {
+          "key": "availability",
+          "blockId": "service-commerce-promax-r1",
+          "required": false,
+          "status": "NOT_SHOWN",
+          "authority": null,
+          "evidence": "Availability language detected"
+        },
+        {
+          "key": "trust",
+          "blockId": "service-commerce-conditions",
+          "required": false,
+          "status": "NOT_SHOWN",
+          "authority": null,
+          "evidence": "Trust language detected"
+        }
+      ],
+      "responsive": {
+        "nativeDesktop": true,
+        "nativeMobile": true,
+        "responsiveHints": 17,
+        "breakpointHints": 51,
+        "horizontalOverflowRisk": false,
+        "fixedWidthEvidence": [],
+        "notes": [
+          "Responsive metadata detected.",
+          "No obvious fixed-width overflow evidence."
+        ]
+      },
+      "capabilities": [
+        {
+          "capability": "booking-authority",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Category-Native + Conversion Universe",
+          "detail": "Capability supported by installed canonical runtime."
+        },
+        {
+          "capability": "canonical-actions",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Studio Action Registry",
+          "detail": "Capability supported by installed canonical runtime."
+        },
+        {
+          "capability": "canonical-route",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Marketplace route/source registry",
+          "detail": "Capability supported by installed canonical runtime."
+        },
+        {
+          "capability": "native-fallback",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Category-Native / Public Experience runtime",
+          "detail": "Capability supported by installed canonical runtime."
+        },
+        {
+          "capability": "public-experience-360",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "PublicExperience360",
+          "detail": "Capability supported by installed canonical runtime."
+        },
+        {
+          "capability": "relation-dynamic-sources",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Studio Dynamic Source / Catalog Relations",
+          "detail": "Capability supported by installed canonical runtime."
+        },
+        {
+          "capability": "responsive-runtime",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Studio public runtime",
+          "detail": "Capability supported by installed canonical runtime."
+        },
+        {
+          "capability": "service-semantic-runtime-v2",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Studio Service Semantic Runtime V2",
+          "detail": "Capability supported by installed canonical runtime."
+        },
+        {
+          "capability": "truth-firewall",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Public Experience Truth Firewall",
+          "detail": "Capability supported by installed canonical runtime."
+        },
+        {
+          "capability": "theme-operability-v1",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "World Factory 2030 Operability Kernel",
+          "detail": "Capability supported by installed 2030 theme operating kernel."
+        },
+        {
+          "capability": "declarative-conditions",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Studio Published Runtime",
+          "detail": "Capability supported by installed 2030 theme operating kernel."
+        },
+        {
+          "capability": "ui-led-theme-operation",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Public Experience Authority / World Factory",
+          "detail": "Capability supported by installed 2030 theme operating kernel."
+        },
+        {
+          "capability": "fr-en-ar-rtl",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Studio Published Runtime",
+          "detail": "Capability supported by installed 2030 theme operating kernel."
+        },
+        {
+          "capability": "theme-token-contract",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Studio Design Runtime",
+          "detail": "Capability supported by installed 2030 theme operating kernel."
+        }
+      ],
+      "operability": {
+        "version": 1,
+        "density": null,
+        "blockCapabilities": [
+          {
+            "blockId": "service-commerce-promax-r1",
+            "blockType": "ac_service_world",
+            "role": "hero",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": true,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "media",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility",
+              "seo"
+            ]
+          },
+          {
+            "blockId": "service-commerce-opening",
+            "blockType": "atomic_offer_section",
+            "role": "hero",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": true,
+            "acceptsActions": true,
+            "acceptsChildren": false,
+            "acceptsRepeaters": false,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "productRole",
+              "serviceRole",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "media",
+              "actions",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility",
+              "seo"
+            ]
+          },
+          {
+            "blockId": "service-commerce-signals",
+            "blockType": "atomic_offer_section",
+            "role": "specifications",
+            "acceptsBindings": false,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "productRole",
+              "serviceRole",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "service-commerce-description",
+            "blockType": "atomic_offer_section",
+            "role": "editorial",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": true,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": false,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "productRole",
+              "serviceRole",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "media",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility",
+              "seo"
+            ]
+          },
+          {
+            "blockId": "service-commerce-included",
+            "blockType": "atomic_offer_section",
+            "role": "specifications",
+            "acceptsBindings": false,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "productRole",
+              "serviceRole",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "service-commerce-plans",
+            "blockType": "atomic_offer_section",
+            "role": "service_plans",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "productRole",
+              "serviceRole",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "service-commerce-planning",
+            "blockType": "atomic_offer_section",
+            "role": "service_schedule",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "productRole",
+              "serviceRole",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "service-commerce-process",
+            "blockType": "atomic_offer_section",
+            "role": "editorial",
+            "acceptsBindings": false,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": true,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": false,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "productRole",
+              "serviceRole",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "media",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility",
+              "seo"
+            ]
+          },
+          {
+            "blockId": "service-commerce-preparation",
+            "blockType": "atomic_offer_section",
+            "role": "specifications",
+            "acceptsBindings": false,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "productRole",
+              "serviceRole",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "service-commerce-coverage",
+            "blockType": "atomic_offer_section",
+            "role": "service_coverage",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "productRole",
+              "serviceRole",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "service-commerce-providers",
+            "blockType": "atomic_offer_section",
+            "role": "service_providers",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "productRole",
+              "serviceRole",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "service-commerce-conditions",
+            "blockType": "atomic_offer_section",
+            "role": "trust",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "productRole",
+              "serviceRole",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "service-commerce-details",
+            "blockType": "atomic_offer_section",
+            "role": "specifications",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "productRole",
+              "serviceRole",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "service-commerce-reviews",
+            "blockType": "atomic_offer_section",
+            "role": "reviews",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "productRole",
+              "serviceRole",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "service-commerce-faq",
+            "blockType": "atomic_offer_section",
+            "role": "faq",
+            "acceptsBindings": false,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "productRole",
+              "serviceRole",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility",
+              "seo"
+            ]
+          },
+          {
+            "blockId": "service-commerce-assistance",
+            "blockType": "atomic_offer_section",
+            "role": "editorial",
+            "acceptsBindings": false,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": true,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": false,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "productRole",
+              "serviceRole",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "media",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility",
+              "seo"
+            ]
+          },
+          {
+            "blockId": "service-commerce-recap",
+            "blockType": "atomic_offer_section",
+            "role": "primary_conversion",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": true,
+            "acceptsChildren": false,
+            "acceptsRepeaters": false,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "productRole",
+              "serviceRole",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "actions",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "service-commerce-recommended",
+            "blockType": "atomic_offer_section",
+            "role": "recommendations",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": true,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "productRole",
+              "serviceRole",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [
+              "catalog.items"
+            ],
+            "merchandisingModes": [
+              "automatic",
+              "curated",
+              "manual",
+              "hybrid"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          }
+        ],
+        "conditions": [],
+        "repeaters": [
+          {
+            "blockId": "service-commerce-promax-r1",
+            "targetKey": "items",
+            "source": "binding",
+            "bindingKey": "media.gallery",
+            "sourceId": null,
+            "strategy": null,
+            "limit": 24,
+            "sort": "canonical",
+            "emptyPolicy": "hide_block",
+            "itemVariant": null
+          },
+          {
+            "blockId": "service-commerce-plans",
+            "targetKey": "items",
+            "source": "binding",
+            "bindingKey": "service.plans",
+            "sourceId": null,
+            "strategy": null,
+            "limit": 24,
+            "sort": "canonical",
+            "emptyPolicy": "omit",
+            "itemVariant": null
+          },
+          {
+            "blockId": "service-commerce-planning",
+            "targetKey": "items",
+            "source": "binding",
+            "bindingKey": "service.scheduleRules",
+            "sourceId": null,
+            "strategy": null,
+            "limit": 24,
+            "sort": "canonical",
+            "emptyPolicy": "omit",
+            "itemVariant": null
+          },
+          {
+            "blockId": "service-commerce-coverage",
+            "targetKey": "items",
+            "source": "binding",
+            "bindingKey": "service.coverage",
+            "sourceId": null,
+            "strategy": null,
+            "limit": 24,
+            "sort": "canonical",
+            "emptyPolicy": "omit",
+            "itemVariant": null
+          },
+          {
+            "blockId": "service-commerce-providers",
+            "targetKey": "items",
+            "source": "binding",
+            "bindingKey": "service.providers",
+            "sourceId": null,
+            "strategy": null,
+            "limit": 24,
+            "sort": "canonical",
+            "emptyPolicy": "omit",
+            "itemVariant": null
+          },
+          {
+            "blockId": "service-commerce-conditions",
+            "targetKey": "items",
+            "source": "binding",
+            "bindingKey": "trust.claims",
+            "sourceId": null,
+            "strategy": null,
+            "limit": 24,
+            "sort": "canonical",
+            "emptyPolicy": "omit",
+            "itemVariant": null
+          },
+          {
+            "blockId": "service-commerce-details",
+            "targetKey": "items",
+            "source": "binding",
+            "bindingKey": "content.fields",
+            "sourceId": null,
+            "strategy": null,
+            "limit": 24,
+            "sort": "canonical",
+            "emptyPolicy": "omit",
+            "itemVariant": null
+          },
+          {
+            "blockId": "service-commerce-reviews",
+            "targetKey": "items",
+            "source": "binding",
+            "bindingKey": "reviews.summary",
+            "sourceId": null,
+            "strategy": null,
+            "limit": 24,
+            "sort": "canonical",
+            "emptyPolicy": "omit",
+            "itemVariant": null
+          },
+          {
+            "blockId": "service-commerce-recommended",
+            "targetKey": "items",
+            "source": "dynamic_source",
+            "bindingKey": null,
+            "sourceId": "catalog.items",
+            "strategy": "similar_items",
+            "limit": 12,
+            "sort": "recommended",
+            "emptyPolicy": "preserve_static",
+            "itemVariant": null
+          }
+        ],
+        "media": [
+          {
+            "blockId": "service-commerce-promax-r1",
+            "targetKey": "mediaUrl",
+            "kind": "primary",
+            "source": "binding",
+            "bindingKey": "media.primary",
+            "assetRole": null,
+            "required": true,
+            "presentation": {
+              "fit": "cover",
+              "position": "50% 50%",
+              "aspectRatio": null,
+              "overlay": null,
+              "focalPoint": null
+            },
+            "responsive": {
+              "desktop": null,
+              "tablet": null,
+              "mobile": null
+            }
+          },
+          {
+            "blockId": "service-commerce-promax-r1",
+            "targetKey": "mediaUrl",
+            "kind": "primary",
+            "source": "binding",
+            "bindingKey": "media.primary",
+            "assetRole": null,
+            "required": true,
+            "presentation": {
+              "fit": "cover",
+              "position": "50% 50%",
+              "aspectRatio": null,
+              "overlay": null,
+              "focalPoint": null
+            },
+            "responsive": {
+              "desktop": null,
+              "tablet": null,
+              "mobile": null
+            }
+          },
+          {
+            "blockId": "service-commerce-promax-r1",
+            "targetKey": "items",
+            "kind": "gallery",
+            "source": "binding",
+            "bindingKey": "media.gallery",
+            "assetRole": null,
+            "required": true,
+            "presentation": {
+              "fit": "cover",
+              "position": "50% 50%",
+              "aspectRatio": null,
+              "overlay": null,
+              "focalPoint": null
+            },
+            "responsive": {
+              "desktop": null,
+              "tablet": null,
+              "mobile": null
+            }
+          }
+        ],
+        "interactions": [
+          {
+            "blockId": "service-commerce-planning",
+            "kind": "schedule_selector",
+            "status": "SUPPORTED",
+            "configuration": {}
+          },
+          {
+            "blockId": "service-commerce-faq",
+            "kind": "accordion",
+            "status": "SUPPORTED",
+            "configuration": {}
+          },
+          {
+            "blockId": "service-commerce-recap",
+            "kind": "sticky_conversion",
+            "status": "SUPPORTED",
+            "configuration": {}
+          }
+        ],
+        "localization": {
+          "defaultLocale": "fr",
+          "locales": [
+            "fr",
+            "en",
+            "ar"
+          ],
+          "rtlLocales": [
+            "ar"
+          ],
+          "themeStrings": "localized-map",
+          "fallback": "default-locale",
+          "missingTranslation": "warn"
+        },
+        "tokens": {
+          "colors": {},
+          "typography": {},
+          "spacing": {},
+          "radii": {},
+          "shadows": {},
+          "layout": {},
+          "motion": {}
+        },
+        "assets": [],
+        "performance": {
+          "maxRootBlocks": 40,
+          "maxTotalBlocks": 160,
+          "maxDynamicSources": 24,
+          "maxAboveFoldMedia": 6,
+          "maxMediaAssets": 80,
+          "maxDocumentBytes": 1500000,
+          "maxInteractions": 40
+        },
+        "shell": {
+          "mode": "marketplace_global",
+          "allowGlobalHeaderOverride": false,
+          "allowGlobalFooterOverride": false,
+          "allowGlobalNavigationOverride": false
+        },
+        "editing": {
+          "uiLed": true,
+          "rawJsonRequired": false,
+          "allowBlockMove": true,
+          "allowBlockDuplicate": true,
+          "allowBlockHide": true,
+          "allowBindingChange": true,
+          "allowActionChange": true,
+          "allowMediaReplace": true,
+          "allowDesignChange": true,
+          "allowResponsiveChange": true,
+          "allowConditionChange": true,
+          "immutableBusinessTruth": true
+        },
+        "inspector": {
+          "generatedFromCapabilities": true,
+          "hideUnsupportedFields": true,
+          "showAuthorityOwnership": true,
+          "showInheritance": true
+        }
+      },
+      "certification": {
+        "level": "READY",
+        "lifecycle": "CERTIFIED",
+        "productionEligible": true,
+        "coverage": {
+          "semantic": 100,
+          "binding": 100,
+          "action": 100,
+          "truth": 100,
+          "responsive": 100,
+          "visual": 50,
+          "overall": 92
+        },
+        "gates": [
+          {
+            "id": "source-safety",
+            "label": "Source sanitized",
+            "state": "PASS",
+            "critical": true,
+            "detail": "Universal Import candidate has no upstream blocker."
+          },
+          {
+            "id": "domain",
+            "label": "Master domain / doctrines",
+            "state": "PASS",
+            "critical": true,
+            "detail": "b2c_service_family · 0 doctrine(s)"
+          },
+          {
+            "id": "storefront-shell",
+            "label": "Global shell authority",
+            "state": "PASS",
+            "critical": true,
+            "detail": "Global AngelCare header/navigation/footer remain outside the imported Storefront World."
+          },
+          {
+            "id": "semantic",
+            "label": "Semantic anatomy",
+            "state": "PASS",
+            "critical": true,
+            "detail": "Required roles covered (100%)."
+          },
+          {
+            "id": "bindings",
+            "label": "Canonical binding coverage",
+            "state": "PASS",
+            "critical": true,
+            "detail": "15/15 required bindings resolved."
+          },
+          {
+            "id": "actions",
+            "label": "Canonical action coverage",
+            "state": "PASS",
+            "critical": true,
+            "detail": "2/2 required actions resolved; current-item targets supported for catalog actions."
+          },
+          {
+            "id": "relations",
+            "label": "Contextual relation sources",
+            "state": "PASS",
+            "critical": false,
+            "detail": "1 relation rail(s) compiled with current-item anchor."
+          },
+          {
+            "id": "truth",
+            "label": "Truth Firewall contract",
+            "state": "PASS",
+            "critical": true,
+            "detail": "Commercial claims are classified for Truth Firewall enforcement."
+          },
+          {
+            "id": "responsive",
+            "label": "Responsive contract",
+            "state": "PASS",
+            "critical": true,
+            "detail": "Responsive metadata detected. No obvious fixed-width overflow evidence."
+          },
+          {
+            "id": "visual",
+            "label": "Approved desktop/mobile reference",
+            "state": "PASS",
+            "critical": false,
+            "detail": "Desktop + mobile reference evidence approved."
+          },
+          {
+            "id": "capabilities",
+            "label": "Capability negotiation",
+            "state": "PASS",
+            "critical": true,
+            "detail": "14 requested runtime capabilities negotiated."
+          },
+          {
+            "id": "operability",
+            "label": "2030 no-code operability",
+            "state": "PASS",
+            "critical": true,
+            "detail": "18 block capability contracts · 9 repeaters · 3 media contracts · FR/EN/AR + RTL."
+          },
+          {
+            "id": "fallback",
+            "label": "Native fallback",
+            "state": "PASS",
+            "critical": true,
+            "detail": "Category-Native/native fallback remains mandatory."
+          }
+        ],
+        "blockers": [],
+        "warnings": [],
+        "certifiedAt": "2026-10-13T01:19:15.669Z"
+      },
+      "compatibility": {
+        "minimumRuntime": "pea-v1",
+        "maximumRuntime": null,
+        "forwardPolicy": "capability-negotiation",
+        "unknownFields": "preserve",
+        "nativeFallback": true,
+        "schemaVersion": 3,
+        "compilerProfile": "pea-world-factory-2030-operability-v3"
+      },
+      "revision": {
+        "worldKey": "ac.service.commerce.promax.r1",
+        "revision": 1,
+        "supersedes": null,
+        "immutableAfterCertification": true
+      },
+      "overrides": {
+        "roleOverrides": {
+          "service-commerce-promax-r1": "hero",
+          "service-commerce-opening": "hero",
+          "service-commerce-signals": "specifications",
+          "service-commerce-description": "editorial",
+          "service-commerce-included": "specifications",
+          "service-commerce-plans": "service_plans",
+          "service-commerce-planning": "service_schedule",
+          "service-commerce-process": "editorial",
+          "service-commerce-preparation": "specifications",
+          "service-commerce-coverage": "service_coverage",
+          "service-commerce-providers": "service_providers",
+          "service-commerce-conditions": "trust",
+          "service-commerce-details": "specifications",
+          "service-commerce-reviews": "reviews",
+          "service-commerce-faq": "faq",
+          "service-commerce-assistance": "editorial",
+          "service-commerce-recap": "primary_conversion",
+          "service-commerce-recommended": "recommendations"
+        },
+        "supplementalRoleOverrides": {
+          "service-commerce-promax-r1": [
+            "identity",
+            "media",
+            "pricing",
+            "availability"
+          ],
+          "service-commerce-opening": [
+            "identity",
+            "media",
+            "pricing",
+            "availability",
+            "primary_conversion"
+          ]
+        },
+        "bindingOverrides": [],
+        "actionOverrides": [
+          {
+            "blockId": "service-commerce-recap",
+            "intent": "secondary",
+            "actionId": "booking.start",
+            "targetMode": "current_item"
+          }
+        ],
+        "note": "Service-only renderer; chapters are conditional on published public data. The final configurator remains the native price and availability authority."
+      },
+      "provenance": {
+        "createdBy": "WORLD_FACTORY",
+        "manualOverrides": 21,
+        "notes": [
+          "No hardcoded production theme requirement.",
+          "UI-led import/assign/update contract active.",
+          "No foreign code execution.",
+          "Business authorities remain canonical.",
+          "Inference is reviewable and versioned.",
+          "Certified revisions are immutable; changes create a new revision."
+        ]
+      }
+    }
+  },
+  "data": {
+    "root": {
+      "props": {
+        "title": "Service · Commerce Pro Max R1"
+      }
+    },
+    "content": [
+      {
+        "type": "ac_service_world",
+        "props": {
+          "id": "service-commerce-promax-r1",
+          "atomicExperienceVersion": 1,
+          "serviceCommerceRevision": 1,
+          "serviceMediaSlots": {
+            "context": "context",
+            "description": "description",
+            "included": "included",
+            "detail": "detail"
+          },
+          "content": [
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "service-commerce-opening",
+                "role": "opening",
+                "serviceRole": "opening",
+                "title": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "service-theatre",
+                "hidden": false,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {}
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "service-commerce-signals",
+                "role": "facts",
+                "serviceRole": "signals",
+                "title": {
+                  "fr": "Votre prestation, en clair",
+                  "en": "Your service, clearly",
+                  "ar": "خدمتك بوضوح"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "strip",
+                "hidden": false,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {}
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "service-commerce-description",
+                "role": "story",
+                "serviceRole": "description",
+                "title": {
+                  "fr": "Bien comprendre cette prestation",
+                  "en": "Understand this service",
+                  "ar": "افهم هذه الخدمة"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "ledger",
+                "hidden": false,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {}
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "service-commerce-included",
+                "role": "benefits",
+                "serviceRole": "included",
+                "title": {
+                  "fr": "Ce qui est inclus dans votre accompagnement",
+                  "en": "What your support includes",
+                  "ar": "ما تشمله مرافقتك"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "bento",
+                "hidden": false,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {}
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "service-commerce-plans",
+                "role": "plans",
+                "serviceRole": "plans",
+                "title": {
+                  "fr": "Choisissez le format qui vous convient",
+                  "en": "Choose the format that fits",
+                  "ar": "اختر الصيغة المناسبة"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "comparison",
+                "bindingKey": "service.plans",
+                "hidden": false,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {}
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "service-commerce-planning",
+                "role": "schedule",
+                "serviceRole": "planning",
+                "title": {
+                  "fr": "Votre rythme, votre organisation",
+                  "en": "Your rhythm, your organisation",
+                  "ar": "وتيرتك وتنظيمك"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "timeline",
+                "bindingKey": "service.scheduleRules",
+                "hidden": false,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {}
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "service-commerce-process",
+                "role": "facts",
+                "serviceRole": "process",
+                "title": {
+                  "fr": "Votre mission, étape par étape",
+                  "en": "Your service, step by step",
+                  "ar": "خدمتك خطوة بخطوة"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "timeline",
+                "hidden": false,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {}
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "service-commerce-preparation",
+                "role": "facts",
+                "serviceRole": "preparation",
+                "title": {
+                  "fr": "Préparer votre prestation",
+                  "en": "Prepare your service",
+                  "ar": "حضّر خدمتك"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "ledger",
+                "hidden": false,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {}
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "service-commerce-coverage",
+                "role": "facts",
+                "serviceRole": "coverage",
+                "title": {
+                  "fr": "Le lieu et le cadre de votre prestation",
+                  "en": "Your service location and setting",
+                  "ar": "موقع خدمتك وإطارها"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "ledger",
+                "bindingKey": "service.coverage",
+                "hidden": false,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {}
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "service-commerce-providers",
+                "role": "providers",
+                "serviceRole": "providers",
+                "title": {
+                  "fr": "Les profils publics de cette prestation",
+                  "en": "Public profiles for this service",
+                  "ar": "الملفات العامة لهذه الخدمة"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "portrait",
+                "bindingKey": "service.providers",
+                "hidden": false,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {}
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "service-commerce-conditions",
+                "role": "proof",
+                "serviceRole": "conditions",
+                "title": {
+                  "fr": "Cadre & modalités de la prestation",
+                  "en": "Service scope & arrangements",
+                  "ar": "إطار الخدمة وشروطها"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "ledger",
+                "hidden": false,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {}
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "service-commerce-details",
+                "role": "facts",
+                "serviceRole": "details",
+                "title": {
+                  "fr": "Tous les détails qui comptent",
+                  "en": "Every detail that matters",
+                  "ar": "كل التفاصيل المهمة"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "ledger",
+                "bindingKey": "content.fields",
+                "hidden": false,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {}
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "service-commerce-reviews",
+                "role": "reviews",
+                "serviceRole": "reviews",
+                "title": {
+                  "fr": "Avis clients",
+                  "en": "Customer reviews",
+                  "ar": "آراء العملاء"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "ledger",
+                "hidden": false,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {}
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "service-commerce-faq",
+                "role": "faq",
+                "serviceRole": "faq",
+                "title": {
+                  "fr": "Questions fréquentes",
+                  "en": "Frequently asked questions",
+                  "ar": "الأسئلة الشائعة"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "ledger",
+                "hidden": false,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {}
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "service-commerce-assistance",
+                "role": "assistance",
+                "serviceRole": "assistance",
+                "title": {
+                  "fr": "Votre besoin mérite le bon accompagnement.",
+                  "en": "Your needs deserve the right support.",
+                  "ar": "احتياجك يستحق المساندة المناسبة."
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "ribbon",
+                "hidden": false,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {}
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "service-commerce-recap",
+                "role": "decision",
+                "serviceRole": "recap",
+                "title": {
+                  "fr": "Votre sélection",
+                  "en": "Your selection",
+                  "ar": "اختيارك"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "ribbon",
+                "hidden": false,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {}
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "service-commerce-recommended",
+                "role": "related",
+                "serviceRole": "recommended",
+                "title": {
+                  "fr": "D’autres services à découvrir",
+                  "en": "Other services to discover",
+                  "ar": "خدمات أخرى للاكتشاف"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "rail",
+                "bindingKey": "relations.recommendations",
+                "hidden": false,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {}
+              }
+            }
+          ],
+          "hidden": false,
+          "sourceDesign": {}
+        }
+      }
+    ],
+    "zones": {}
+  },
+  "assets": [],
+  "fingerprints": {
+    "document": "f994d9831e265e5748ceac25e6b7c17b",
+    "factory": "7d2a45bf2e0b3b67de20fe83ac482a03",
+    "package": "2815db20de1a46f86200adc4d75e705c"
+  }
+}

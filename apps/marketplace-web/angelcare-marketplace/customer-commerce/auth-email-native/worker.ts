@@ -46,5 +46,6 @@ export async function processOneAuthEmail(): Promise<Record<string,unknown>> {
 }
 export async function readAuthEmailStatus(): Promise<unknown> {
  const db=await createServiceClient();const {data,error}=await db.rpc('angelcare_marketplace_auth_email_status')
- if(error)throw Error('AUTH_EMAIL_LEDGER_UNAVAILABLE');return data
+ if(error)throw Error('AUTH_EMAIL_LEDGER_UNAVAILABLE');
+ return {...(data as Record<string,unknown>),runtime:{authOrigin:process.env.NEXT_PUBLIC_SUPABASE_URL||null,marketplaceOrigin:process.env.ANGELCARE_AUTH_EMAIL_MARKETPLACE_ORIGIN||'https://my.angelcarehub.com',workerSecretConfigured:(process.env.ANGELCARE_AUTH_EMAIL_WORKER_SECRET||'').length>=32,bridgeUrlConfigured:Boolean(process.env.EMAIL_OS_BRIDGE_URL?.trim()),bridgeTokenConfigured:Boolean(process.env.EMAIL_OS_BRIDGE_TOKEN?.trim()),sender:'supports@angelcarehub.ma'},inboxDelivery:'not_observed'}
 }

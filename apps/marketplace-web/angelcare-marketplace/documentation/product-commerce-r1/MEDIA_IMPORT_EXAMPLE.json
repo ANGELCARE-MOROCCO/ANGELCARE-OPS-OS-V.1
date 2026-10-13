@@ -1,0 +1,7 @@
+[
+  {"media_key":"primary","reference":"YOUR_PRIMARY_ASSET_KEY","sort_order":0,"status":"active","alt_text_fr":"Produit — vue principale"},
+  {"media_key":"context","reference":"YOUR_CONTEXT_ASSET_KEY","sort_order":200,"status":"active","alt_text_fr":"Produit en contexte"},
+  {"media_key":"description","reference":"YOUR_DESCRIPTION_ASSET_KEY","sort_order":210,"status":"active","alt_text_fr":"Détail du produit"},
+  {"media_key":"contents","reference":"YOUR_CONTENTS_ASSET_KEY","sort_order":220,"status":"active","alt_text_fr":"Contenu inclus"},
+  {"media_key":"detail","reference":"YOUR_DETAIL_ASSET_KEY","sort_order":230,"status":"active","alt_text_fr":"Détail complémentaire"}
+]

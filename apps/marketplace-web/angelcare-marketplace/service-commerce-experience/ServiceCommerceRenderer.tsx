@@ -1,0 +1,6 @@
+import {ServiceCommerceExperience} from './ServiceCommerceExperience'
+import {shouldRenderWorldBlock} from '../studio-universal/world-operability'
+import type {StudioBlockProps} from '../studio-universal/types'
+import {buildServiceView} from './model'
+import type {PublicExperience360,PublicExperienceTruthReport} from '../public-experience-authority/types'
+export function ServiceCommerceRenderer({data,truthReport,worldProps={}}:{data:PublicExperience360;truthReport:PublicExperienceTruthReport;worldProps?:Record<string,unknown>}){if(data.classification.masterDomain!=='b2c_service_family')return null;return <ServiceCommerceExperience key={data.identity.id+':'+data.classification.locale} view={buildServiceView(data,truthReport,{...worldProps,...(Array.isArray(worldProps.content)?{content:worldProps.content.map(c=>{const row=c as {props?:Record<string,unknown>};const p=row.props||{};const permitted=shouldRenderWorldBlock(p as StudioBlockProps,{locale:data.classification.locale==='ar'?'ar':data.classification.locale==='en'?'en':'fr',territoryId:data.classification.territoryId,audienceId:data.classification.audienceId});return {...row,props:{...p,hidden:p.hidden===true||!permitted.render}}})}:{})})}/>}

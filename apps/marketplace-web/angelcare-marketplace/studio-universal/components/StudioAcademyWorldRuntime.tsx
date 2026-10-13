@@ -1,3 +1,5 @@
+import {AcademyCommerceRenderer} from '../../academy-commerce-experience/AcademyCommerceRenderer'
+import {isAcademyCourseData} from '../../academy-commerce-experience/model'
 import Link from '@/angelcare-marketplace/navigation-care-orbit/CareOrbitLink'
 import {ArrowRight,Award,BadgeCheck,BookOpen,BriefcaseBusiness,CalendarDays,CheckCircle2,ChevronDown,ChevronRight,Clock3,GraduationCap,Layers3,Play,ShieldCheck,Sparkles,Star,Target,Users2,Video} from 'lucide-react'
 import type {PublicExperience360,PublicExperienceTruthReport} from '@/angelcare-marketplace/public-experience-authority/types'
@@ -111,6 +113,7 @@ function Advisor({data,variant}:{data:PublicExperience360;variant:'certification
 
 export async function StudioAcademyWorldRuntime({data,truthReport,worldProps}:{data:PublicExperience360;truthReport:PublicExperienceTruthReport;worldProps:WorldProps}){
  if(data.classification.masterDomain!=='academy_admission')return null
+ if(worldProps.academyCommerceRevision!==0&&isAcademyCourseData(data))return <AcademyCommerceRenderer data={data} truthReport={truthReport} worldProps={{...worldProps,content:[]}}/>
  const variant=visualVariant(worldProps),worldKey=text(worldProps.worldKey)||`ac.academy.course.immersive.${variant}.2030.v2`
  return <main className={styles.root} dir={data.classification.locale==='ar'?'rtl':'ltr'} data-ac-public-experience="studio-academy-semantic-runtime-v2" data-ac-academy-world-key={worldKey} data-ac-academy-variant={variant} data-ac-academy-doctrine={data.classification.doctrineKey}>
   {sectionEnabled(worldProps,'c00-campaign')?campaignSection({data,truth:truthReport}):null}

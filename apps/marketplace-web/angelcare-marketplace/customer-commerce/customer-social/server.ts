@@ -22,7 +22,7 @@ export async function socialReadiness(){
  try{
   if(!env.url||!env.anonKey)return{providers,profileReady,settingsAvailable}
   const db=await createServiceClient()
-  const [settings,ledger]=await Promise.allSettled([fetch(env.url.replace(/\/$/,'')+'/auth/v1/settings',{headers:{apikey:env.anonKey},cache:'no-store',signal:AbortSignal.timeout(5000)}),db.rpc('angelcare_marketplace_customer_social_ready')])
+  const [settings,ledger]=await Promise.allSettled([fetch(env.url.replace(/\/$/,'')+'/auth/v1/settings',{headers:{apikey:env.anonKey},cache:'no-store',signal:AbortSignal.timeout(8000)}),db.rpc('angelcare_marketplace_customer_social_ready').abortSignal(AbortSignal.timeout(8000))])
   if(settings.status==='fulfilled'&&settings.value.ok){const data=await settings.value.json();for(const p of SOCIAL_PROVIDERS)providers[p]=data.external?.[p]===true;settingsAvailable=true}
   profileReady=ledger.status==='fulfilled'&&!ledger.value.error&&ledger.value.data===CUSTOMER_SOCIAL_REVISION
  }catch{/* Configuration failure never advertises a ready provider. */}

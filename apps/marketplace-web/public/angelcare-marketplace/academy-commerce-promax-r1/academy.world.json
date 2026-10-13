@@ -1,0 +1,5464 @@
+{
+  "format": "angelcare-world-package-v1",
+  "packageVersion": 1,
+  "exportedAt": "2026-10-13T02:37:00.278Z",
+  "world": {
+    "name": "Academy · Commerce Pro Max R1",
+    "description": "Professional light Academy course presentation, contained gallery, curriculum explorer, source-based sessions, learner brief, conditional credentials, native enrolment handoff, in-page Academy advice and native course recommendations.",
+    "themeVersion": "1.0.0",
+    "manifest": {
+      "themeKind": "detail",
+      "masterDomain": "academy_admission",
+      "doctrineKeys": [
+        "academy-course",
+        "academy-cohort",
+        "certification-pathway",
+        "parent-workshop",
+        "institutional-training"
+      ],
+      "name": "Academy · Commerce Pro Max R1",
+      "templateKey": "ac.academy.commerce.promax.r1",
+      "themeVersion": "1.0.0",
+      "requiredBindings": [
+        "identity.name",
+        "identity.shortDescription",
+        "media.primary",
+        "identity.description",
+        "media.gallery",
+        "pricing.current",
+        "pricing.label",
+        "pricing.currency",
+        "availability.status",
+        "availability.quantity"
+      ],
+      "optionalBindings": [
+        "identity.description",
+        "academy.curriculum",
+        "content.fields",
+        "academy.cohorts",
+        "academy.certification",
+        "academy.trainers",
+        "trust.claims",
+        "reviews.summary",
+        "relations.recommendations"
+      ],
+      "requiredActions": [
+        "academy.enroll"
+      ],
+      "optionalActions": [
+        "academy.enroll"
+      ],
+      "requiredWorkflows": [],
+      "requiredCapabilities": [
+        "public-experience-360",
+        "canonical-route",
+        "native-fallback",
+        "world-factory-v3",
+        "truth-firewall",
+        "capability-negotiation",
+        "academy-authority",
+        "academy-semantic-runtime-v2",
+        "canonical-actions",
+        "relation-dynamic-sources",
+        "responsive-runtime",
+        "theme-operability-v1",
+        "declarative-conditions",
+        "ui-led-theme-operation",
+        "fr-en-ar-rtl",
+        "theme-token-contract"
+      ],
+      "slots": [
+        {
+          "blockId": "academy-commerce-promax-r1",
+          "slot": "hero",
+          "confidence": 1,
+          "reason": "World Factory hero: operator-override",
+          "semanticRole": "hero",
+          "supplementalRoles": [
+            "identity",
+            "media",
+            "pricing",
+            "availability"
+          ],
+          "capabilityKey": "wf:academy-commerce-promax-r1"
+        },
+        {
+          "blockId": "academy-commerce-opening",
+          "slot": "hero",
+          "confidence": 1,
+          "reason": "World Factory hero: operator-override",
+          "semanticRole": "hero",
+          "supplementalRoles": [
+            "identity",
+            "media",
+            "pricing",
+            "availability",
+            "primary_conversion"
+          ],
+          "capabilityKey": "wf:academy-commerce-opening"
+        },
+        {
+          "blockId": "academy-commerce-signals",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory specifications: operator-override",
+          "semanticRole": "specifications",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:academy-commerce-signals"
+        },
+        {
+          "blockId": "academy-commerce-description",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory editorial: operator-override",
+          "semanticRole": "editorial",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:academy-commerce-description"
+        },
+        {
+          "blockId": "academy-commerce-outcomes",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory editorial: operator-override",
+          "semanticRole": "editorial",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:academy-commerce-outcomes"
+        },
+        {
+          "blockId": "academy-commerce-curriculum",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory academy_curriculum: operator-override",
+          "semanticRole": "academy_curriculum",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:academy-commerce-curriculum"
+        },
+        {
+          "blockId": "academy-commerce-included",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory specifications: operator-override",
+          "semanticRole": "specifications",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:academy-commerce-included"
+        },
+        {
+          "blockId": "academy-commerce-organisation",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory specifications: operator-override",
+          "semanticRole": "specifications",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:academy-commerce-organisation"
+        },
+        {
+          "blockId": "academy-commerce-cohorts",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory academy_cohort: operator-override",
+          "semanticRole": "academy_cohort",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:academy-commerce-cohorts"
+        },
+        {
+          "blockId": "academy-commerce-pathway",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory editorial: operator-override",
+          "semanticRole": "editorial",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:academy-commerce-pathway"
+        },
+        {
+          "blockId": "academy-commerce-assessment",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory academy_certification: operator-override",
+          "semanticRole": "academy_certification",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:academy-commerce-assessment"
+        },
+        {
+          "blockId": "academy-commerce-trainers",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory academy_trainers: operator-override",
+          "semanticRole": "academy_trainers",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:academy-commerce-trainers"
+        },
+        {
+          "blockId": "academy-commerce-process",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory editorial: operator-override",
+          "semanticRole": "editorial",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:academy-commerce-process"
+        },
+        {
+          "blockId": "academy-commerce-conditions",
+          "slot": "trust",
+          "confidence": 1,
+          "reason": "World Factory trust: operator-override",
+          "semanticRole": "trust",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:academy-commerce-conditions"
+        },
+        {
+          "blockId": "academy-commerce-details",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory specifications: operator-override",
+          "semanticRole": "specifications",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:academy-commerce-details"
+        },
+        {
+          "blockId": "academy-commerce-reviews",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory reviews: operator-override",
+          "semanticRole": "reviews",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:academy-commerce-reviews"
+        },
+        {
+          "blockId": "academy-commerce-faq",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory faq: operator-override",
+          "semanticRole": "faq",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:academy-commerce-faq"
+        },
+        {
+          "blockId": "academy-commerce-assistance",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory editorial: operator-override",
+          "semanticRole": "editorial",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:academy-commerce-assistance"
+        },
+        {
+          "blockId": "academy-commerce-recap",
+          "slot": "final_cta",
+          "confidence": 1,
+          "reason": "World Factory primary_conversion: operator-override",
+          "semanticRole": "primary_conversion",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:academy-commerce-recap"
+        },
+        {
+          "blockId": "academy-commerce-recommended",
+          "slot": "inventory_items",
+          "confidence": 1,
+          "reason": "World Factory recommendations: operator-override",
+          "semanticRole": "recommendations",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:academy-commerce-recommended"
+        }
+      ],
+      "structuralFingerprint": "a1840bb68b2f37aeba1d02126dbf617a",
+      "visualFingerprint": "desktop:8ea630dd4048c7f7667faeffd350a648be3247d19c6b12d50488aa663723873b|mobile:cd0f8c3d79aec2a408d3907cb95704e815d7609f64ea80df520bba1734f412bd",
+      "factory": {
+        "engineVersion": 3,
+        "schemaVersion": 3,
+        "compilerProfile": "pea-world-factory-2030-operability-v3",
+        "candidateFingerprint": "11d26ae0d6b04ad456d6da86dd3bef60",
+        "documentFingerprint": "23380fea671695aa17638d16963f88be",
+        "compiledFingerprint": "a1840bb68b2f37aeba1d02126dbf617a",
+        "themeKind": "detail",
+        "masterDomain": "academy_admission",
+        "doctrineKeys": [
+          "academy-course",
+          "academy-cohort",
+          "certification-pathway",
+          "parent-workshop",
+          "institutional-training"
+        ],
+        "storefrontKeys": [],
+        "strictVisualFidelity": false,
+        "source": {
+          "kind": "existing",
+          "label": "Academy Commerce Pro Max R1",
+          "sourceFingerprint": "academy-commerce-promax-r1",
+          "safeToApply": true,
+          "upstreamBlockingCodes": [],
+          "upstreamReviewCodes": [
+            "DEPLOYED_ACCEPTANCE_PENDING"
+          ],
+          "compilerFingerprint": "57940bacf96d706c93d49f60ebb459e8",
+          "importedAt": "2026-10-13T02:37:00.258Z"
+        },
+        "visualReferences": [
+          {
+            "kind": "desktop",
+            "filename": "academy-published-desktop.png",
+            "sha256": "8ea630dd4048c7f7667faeffd350a648be3247d19c6b12d50488aa663723873b",
+            "width": 1440,
+            "height": 7966,
+            "reviewed": false,
+            "reviewNote": "Actual delivered code render, inspected for clipping and media fit. Customer aesthetic approval and deployed acceptance remain pending."
+          },
+          {
+            "kind": "mobile",
+            "filename": "academy-published-mobile.png",
+            "sha256": "cd0f8c3d79aec2a408d3907cb95704e815d7609f64ea80df520bba1734f412bd",
+            "width": 390,
+            "height": 13662,
+            "reviewed": false,
+            "reviewNote": "Actual delivered code render, inspected for clipping and media fit. Customer aesthetic approval and deployed acceptance remain pending."
+          }
+        ],
+        "semanticSlots": [
+          {
+            "blockId": "academy-commerce-promax-r1",
+            "blockType": "ac_academy_world",
+            "path": "root.0",
+            "role": "hero",
+            "supplementalRoles": [
+              "identity",
+              "media",
+              "pricing",
+              "availability"
+            ],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": true
+          },
+          {
+            "blockId": "academy-commerce-opening",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.0",
+            "role": "hero",
+            "supplementalRoles": [
+              "identity",
+              "media",
+              "pricing",
+              "availability",
+              "primary_conversion"
+            ],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": true
+          },
+          {
+            "blockId": "academy-commerce-signals",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.1",
+            "role": "specifications",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "academy-commerce-description",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.2",
+            "role": "editorial",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "academy-commerce-outcomes",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.3",
+            "role": "editorial",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "academy-commerce-curriculum",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.4",
+            "role": "academy_curriculum",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "academy-commerce-included",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.5",
+            "role": "specifications",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "academy-commerce-organisation",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.6",
+            "role": "specifications",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "academy-commerce-cohorts",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.7",
+            "role": "academy_cohort",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "academy-commerce-pathway",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.8",
+            "role": "editorial",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "academy-commerce-assessment",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.9",
+            "role": "academy_certification",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "academy-commerce-trainers",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.10",
+            "role": "academy_trainers",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "academy-commerce-process",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.11",
+            "role": "editorial",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "academy-commerce-conditions",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.12",
+            "role": "trust",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "academy-commerce-details",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.13",
+            "role": "specifications",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "academy-commerce-reviews",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.14",
+            "role": "reviews",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "academy-commerce-faq",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.15",
+            "role": "faq",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "academy-commerce-assistance",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.16",
+            "role": "editorial",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "academy-commerce-recap",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.17",
+            "role": "primary_conversion",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": true
+          },
+          {
+            "blockId": "academy-commerce-recommended",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.18",
+            "role": "recommendations",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          }
+        ],
+        "bindingPlan": [
+          {
+            "blockId": "academy-commerce-promax-r1",
+            "role": "hero",
+            "bindingKey": "identity.name",
+            "targetKey": "title",
+            "authority": "Category-Native / Catalog",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Public-safe binding · Category-Native / Catalog",
+            "manualOverride": false,
+            "missingPolicy": "hide_block"
+          },
+          {
+            "blockId": "academy-commerce-promax-r1",
+            "role": "hero",
+            "bindingKey": "identity.shortDescription",
+            "targetKey": "lead",
+            "authority": "Category-Native / Catalog",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Public-safe binding · Category-Native / Catalog",
+            "manualOverride": false,
+            "missingPolicy": "hide_block"
+          },
+          {
+            "blockId": "academy-commerce-promax-r1",
+            "role": "hero",
+            "bindingKey": "media.primary",
+            "targetKey": "mediaUrl",
+            "authority": "Catalog Media",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Public-safe binding · Catalog Media",
+            "manualOverride": false,
+            "missingPolicy": "hide_block"
+          },
+          {
+            "blockId": "academy-commerce-promax-r1",
+            "role": "identity",
+            "bindingKey": "identity.name",
+            "targetKey": "title",
+            "authority": "Category-Native / Catalog",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Public-safe binding · Category-Native / Catalog",
+            "manualOverride": false,
+            "missingPolicy": "hide_block"
+          },
+          {
+            "blockId": "academy-commerce-promax-r1",
+            "role": "identity",
+            "bindingKey": "identity.shortDescription",
+            "targetKey": "lead",
+            "authority": "Category-Native / Catalog",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Public-safe binding · Category-Native / Catalog",
+            "manualOverride": false,
+            "missingPolicy": "hide_block"
+          },
+          {
+            "blockId": "academy-commerce-promax-r1",
+            "role": "identity",
+            "bindingKey": "identity.description",
+            "targetKey": "body",
+            "authority": "Category-Native / Catalog",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Public-safe binding · Category-Native / Catalog",
+            "manualOverride": false,
+            "missingPolicy": "hide_block"
+          },
+          {
+            "blockId": "academy-commerce-promax-r1",
+            "role": "media",
+            "bindingKey": "media.primary",
+            "targetKey": "mediaUrl",
+            "authority": "Catalog Media",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Public-safe binding · Catalog Media",
+            "manualOverride": false,
+            "missingPolicy": "hide_block"
+          },
+          {
+            "blockId": "academy-commerce-promax-r1",
+            "role": "media",
+            "bindingKey": "media.gallery",
+            "targetKey": "items",
+            "authority": "Catalog Media",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Public-safe binding · Catalog Media",
+            "manualOverride": false,
+            "missingPolicy": "hide_block"
+          },
+          {
+            "blockId": "academy-commerce-promax-r1",
+            "role": "pricing",
+            "bindingKey": "pricing.current",
+            "targetKey": "title",
+            "authority": "Catalog / Finance pricing",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Public-safe binding · Catalog / Finance pricing",
+            "manualOverride": false,
+            "missingPolicy": "hide_block"
+          },
+          {
+            "blockId": "academy-commerce-promax-r1",
+            "role": "pricing",
+            "bindingKey": "pricing.label",
+            "targetKey": "lead",
+            "authority": "Catalog / Finance pricing",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Public-safe binding · Catalog / Finance pricing",
+            "manualOverride": false,
+            "missingPolicy": "hide_block"
+          },
+          {
+            "blockId": "academy-commerce-promax-r1",
+            "role": "pricing",
+            "bindingKey": "pricing.currency",
+            "targetKey": "body",
+            "authority": "Catalog / Finance pricing",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Public-safe binding · Catalog / Finance pricing",
+            "manualOverride": false,
+            "missingPolicy": "hide_block"
+          },
+          {
+            "blockId": "academy-commerce-promax-r1",
+            "role": "availability",
+            "bindingKey": "availability.status",
+            "targetKey": "title",
+            "authority": "Category-Native availability",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Public-safe binding · Category-Native availability",
+            "manualOverride": false,
+            "missingPolicy": "hide_block"
+          },
+          {
+            "blockId": "academy-commerce-promax-r1",
+            "role": "availability",
+            "bindingKey": "availability.quantity",
+            "targetKey": "lead",
+            "authority": "Category-Native availability",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Public-safe binding · Category-Native availability",
+            "manualOverride": false,
+            "missingPolicy": "hide_block"
+          },
+          {
+            "blockId": "academy-commerce-opening",
+            "role": "hero",
+            "bindingKey": "identity.name",
+            "targetKey": "title",
+            "authority": "Category-Native / Catalog",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "academy-commerce-description",
+            "role": "editorial",
+            "bindingKey": "identity.description",
+            "targetKey": "title",
+            "authority": "Category-Native / Catalog",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "academy-commerce-curriculum",
+            "role": "academy_curriculum",
+            "bindingKey": "academy.curriculum",
+            "targetKey": "items",
+            "authority": "Academy Engine",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "academy-commerce-organisation",
+            "role": "specifications",
+            "bindingKey": "content.fields",
+            "targetKey": "items",
+            "authority": "Experience Schema public_visible",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "academy-commerce-cohorts",
+            "role": "academy_cohort",
+            "bindingKey": "academy.cohorts",
+            "targetKey": "items",
+            "authority": "Academy Cohorts",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "academy-commerce-assessment",
+            "role": "academy_certification",
+            "bindingKey": "academy.certification",
+            "targetKey": "items",
+            "authority": "Certificate Authority",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "academy-commerce-trainers",
+            "role": "academy_trainers",
+            "bindingKey": "academy.trainers",
+            "targetKey": "items",
+            "authority": "Academy Engine",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "academy-commerce-conditions",
+            "role": "trust",
+            "bindingKey": "trust.claims",
+            "targetKey": "items",
+            "authority": "Trust authority",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "academy-commerce-details",
+            "role": "specifications",
+            "bindingKey": "content.fields",
+            "targetKey": "items",
+            "authority": "Experience Schema public_visible",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "academy-commerce-reviews",
+            "role": "reviews",
+            "bindingKey": "reviews.summary",
+            "targetKey": "items",
+            "authority": "Review authority",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "academy-commerce-recap",
+            "role": "primary_conversion",
+            "bindingKey": "identity.name",
+            "targetKey": "title",
+            "authority": "Category-Native / Catalog",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "academy-commerce-recommended",
+            "role": "recommendations",
+            "bindingKey": "relations.recommendations",
+            "targetKey": "items",
+            "authority": "Catalog Discovery",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          }
+        ],
+        "actionPlan": [
+          {
+            "blockId": "academy-commerce-opening",
+            "role": "hero",
+            "intent": "primary",
+            "actionId": "academy.enroll",
+            "workflowId": null,
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "canonicalEngine": "Academy Engine + Conversion Universe",
+            "targetMode": "current_item",
+            "targetSourceId": "catalog.items",
+            "reason": "Canonical action · Academy Engine + Conversion Universe",
+            "manualOverride": false
+          },
+          {
+            "blockId": "academy-commerce-recap",
+            "role": "primary_conversion",
+            "intent": "secondary",
+            "actionId": "academy.enroll",
+            "workflowId": null,
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "canonicalEngine": "Academy Engine + Conversion Universe",
+            "targetMode": "current_item",
+            "targetSourceId": "catalog.items",
+            "reason": "Operator action override.",
+            "manualOverride": true
+          },
+          {
+            "blockId": "academy-commerce-recap",
+            "role": "primary_conversion",
+            "intent": "secondary",
+            "actionId": "academy.enroll",
+            "workflowId": null,
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "canonicalEngine": "Academy Engine + Conversion Universe",
+            "targetMode": "current_item",
+            "targetSourceId": "catalog.items",
+            "reason": "Operator action override.",
+            "manualOverride": true
+          }
+        ],
+        "relationPlan": [
+          {
+            "blockId": "academy-commerce-recommended",
+            "role": "recommendations",
+            "strategy": "similar_items",
+            "sourceId": "catalog.items",
+            "anchorMode": "current_item",
+            "limit": 12,
+            "emptyPolicy": "preserve_static",
+            "status": "RESOLVED"
+          }
+        ],
+        "truthRequirements": [
+          {
+            "key": "promotion",
+            "blockId": "academy-commerce-promax-r1",
+            "required": false,
+            "status": "NOT_SHOWN",
+            "authority": null,
+            "evidence": "Promotion claim detected"
+          },
+          {
+            "key": "scarcity",
+            "blockId": "academy-commerce-promax-r1",
+            "required": false,
+            "status": "NOT_SHOWN",
+            "authority": null,
+            "evidence": "Scarcity language detected"
+          },
+          {
+            "key": "rating",
+            "blockId": "academy-commerce-reviews",
+            "required": true,
+            "status": "GOVERNED",
+            "authority": "Public Experience Truth Firewall",
+            "evidence": "Rating/review language detected"
+          },
+          {
+            "key": "certification",
+            "blockId": "academy-commerce-promax-r1",
+            "required": true,
+            "status": "GOVERNED",
+            "authority": "Public Experience Truth Firewall",
+            "evidence": "Certification language detected"
+          },
+          {
+            "key": "pricing",
+            "blockId": "academy-commerce-promax-r1",
+            "required": false,
+            "status": "NOT_SHOWN",
+            "authority": null,
+            "evidence": "Pricing language detected"
+          },
+          {
+            "key": "availability",
+            "blockId": "academy-commerce-promax-r1",
+            "required": false,
+            "status": "NOT_SHOWN",
+            "authority": null,
+            "evidence": "Availability language detected"
+          },
+          {
+            "key": "trust",
+            "blockId": "academy-commerce-conditions",
+            "required": false,
+            "status": "NOT_SHOWN",
+            "authority": null,
+            "evidence": "Trust language detected"
+          }
+        ],
+        "responsive": {
+          "nativeDesktop": true,
+          "nativeMobile": true,
+          "responsiveHints": 19,
+          "breakpointHints": 57,
+          "horizontalOverflowRisk": false,
+          "fixedWidthEvidence": [],
+          "notes": [
+            "Responsive metadata detected.",
+            "No obvious fixed-width overflow evidence."
+          ]
+        },
+        "capabilities": [
+          {
+            "capability": "academy-authority",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Academy Engine",
+            "detail": "Capability supported by installed canonical runtime."
+          },
+          {
+            "capability": "academy-semantic-runtime-v2",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Studio Academy Semantic Runtime V2",
+            "detail": "Capability supported by installed canonical runtime."
+          },
+          {
+            "capability": "canonical-actions",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Studio Action Registry",
+            "detail": "Capability supported by installed canonical runtime."
+          },
+          {
+            "capability": "canonical-route",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Marketplace route/source registry",
+            "detail": "Capability supported by installed canonical runtime."
+          },
+          {
+            "capability": "native-fallback",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Category-Native / Public Experience runtime",
+            "detail": "Capability supported by installed canonical runtime."
+          },
+          {
+            "capability": "public-experience-360",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "PublicExperience360",
+            "detail": "Capability supported by installed canonical runtime."
+          },
+          {
+            "capability": "relation-dynamic-sources",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Studio Dynamic Source / Catalog Relations",
+            "detail": "Capability supported by installed canonical runtime."
+          },
+          {
+            "capability": "responsive-runtime",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Studio public runtime",
+            "detail": "Capability supported by installed canonical runtime."
+          },
+          {
+            "capability": "truth-firewall",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Public Experience Truth Firewall",
+            "detail": "Capability supported by installed canonical runtime."
+          },
+          {
+            "capability": "theme-operability-v1",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "World Factory 2030 Operability Kernel",
+            "detail": "Capability supported by installed 2030 theme operating kernel."
+          },
+          {
+            "capability": "declarative-conditions",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Studio Published Runtime",
+            "detail": "Capability supported by installed 2030 theme operating kernel."
+          },
+          {
+            "capability": "ui-led-theme-operation",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Public Experience Authority / World Factory",
+            "detail": "Capability supported by installed 2030 theme operating kernel."
+          },
+          {
+            "capability": "fr-en-ar-rtl",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Studio Published Runtime",
+            "detail": "Capability supported by installed 2030 theme operating kernel."
+          },
+          {
+            "capability": "theme-token-contract",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Studio Design Runtime",
+            "detail": "Capability supported by installed 2030 theme operating kernel."
+          }
+        ],
+        "operability": {
+          "version": 1,
+          "density": null,
+          "blockCapabilities": [
+            {
+              "blockId": "academy-commerce-promax-r1",
+              "blockType": "ac_academy_world",
+              "role": "hero",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": true,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "media",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility",
+                "seo"
+              ]
+            },
+            {
+              "blockId": "academy-commerce-opening",
+              "blockType": "atomic_offer_section",
+              "role": "hero",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": true,
+              "acceptsActions": true,
+              "acceptsChildren": false,
+              "acceptsRepeaters": false,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "productRole",
+                "serviceRole",
+                "academyRole",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "media",
+                "actions",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility",
+                "seo"
+              ]
+            },
+            {
+              "blockId": "academy-commerce-signals",
+              "blockType": "atomic_offer_section",
+              "role": "specifications",
+              "acceptsBindings": false,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "productRole",
+                "serviceRole",
+                "academyRole",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "academy-commerce-description",
+              "blockType": "atomic_offer_section",
+              "role": "editorial",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": true,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": false,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "productRole",
+                "serviceRole",
+                "academyRole",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "media",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility",
+                "seo"
+              ]
+            },
+            {
+              "blockId": "academy-commerce-outcomes",
+              "blockType": "atomic_offer_section",
+              "role": "editorial",
+              "acceptsBindings": false,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": true,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": false,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "productRole",
+                "serviceRole",
+                "academyRole",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "media",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility",
+                "seo"
+              ]
+            },
+            {
+              "blockId": "academy-commerce-curriculum",
+              "blockType": "atomic_offer_section",
+              "role": "academy_curriculum",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "productRole",
+                "serviceRole",
+                "academyRole",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "academy-commerce-included",
+              "blockType": "atomic_offer_section",
+              "role": "specifications",
+              "acceptsBindings": false,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "productRole",
+                "serviceRole",
+                "academyRole",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "academy-commerce-organisation",
+              "blockType": "atomic_offer_section",
+              "role": "specifications",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "productRole",
+                "serviceRole",
+                "academyRole",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "academy-commerce-cohorts",
+              "blockType": "atomic_offer_section",
+              "role": "academy_cohort",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "productRole",
+                "serviceRole",
+                "academyRole",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "academy-commerce-pathway",
+              "blockType": "atomic_offer_section",
+              "role": "editorial",
+              "acceptsBindings": false,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": true,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": false,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "productRole",
+                "serviceRole",
+                "academyRole",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "media",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility",
+                "seo"
+              ]
+            },
+            {
+              "blockId": "academy-commerce-assessment",
+              "blockType": "atomic_offer_section",
+              "role": "academy_certification",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "productRole",
+                "serviceRole",
+                "academyRole",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "academy-commerce-trainers",
+              "blockType": "atomic_offer_section",
+              "role": "academy_trainers",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "productRole",
+                "serviceRole",
+                "academyRole",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "academy-commerce-process",
+              "blockType": "atomic_offer_section",
+              "role": "editorial",
+              "acceptsBindings": false,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": true,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": false,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "productRole",
+                "serviceRole",
+                "academyRole",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "media",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility",
+                "seo"
+              ]
+            },
+            {
+              "blockId": "academy-commerce-conditions",
+              "blockType": "atomic_offer_section",
+              "role": "trust",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "productRole",
+                "serviceRole",
+                "academyRole",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "academy-commerce-details",
+              "blockType": "atomic_offer_section",
+              "role": "specifications",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "productRole",
+                "serviceRole",
+                "academyRole",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "academy-commerce-reviews",
+              "blockType": "atomic_offer_section",
+              "role": "reviews",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "productRole",
+                "serviceRole",
+                "academyRole",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "academy-commerce-faq",
+              "blockType": "atomic_offer_section",
+              "role": "faq",
+              "acceptsBindings": false,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "productRole",
+                "serviceRole",
+                "academyRole",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility",
+                "seo"
+              ]
+            },
+            {
+              "blockId": "academy-commerce-assistance",
+              "blockType": "atomic_offer_section",
+              "role": "editorial",
+              "acceptsBindings": false,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": true,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": false,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "productRole",
+                "serviceRole",
+                "academyRole",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "media",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility",
+                "seo"
+              ]
+            },
+            {
+              "blockId": "academy-commerce-recap",
+              "blockType": "atomic_offer_section",
+              "role": "primary_conversion",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": true,
+              "acceptsChildren": false,
+              "acceptsRepeaters": false,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "productRole",
+                "serviceRole",
+                "academyRole",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "actions",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "academy-commerce-recommended",
+              "blockType": "atomic_offer_section",
+              "role": "recommendations",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": true,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "productRole",
+                "serviceRole",
+                "academyRole",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [
+                "catalog.items"
+              ],
+              "merchandisingModes": [
+                "automatic",
+                "curated",
+                "manual",
+                "hybrid"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            }
+          ],
+          "conditions": [],
+          "repeaters": [
+            {
+              "blockId": "academy-commerce-promax-r1",
+              "targetKey": "items",
+              "source": "binding",
+              "bindingKey": "media.gallery",
+              "sourceId": null,
+              "strategy": null,
+              "limit": 24,
+              "sort": "canonical",
+              "emptyPolicy": "hide_block",
+              "itemVariant": null
+            },
+            {
+              "blockId": "academy-commerce-curriculum",
+              "targetKey": "items",
+              "source": "binding",
+              "bindingKey": "academy.curriculum",
+              "sourceId": null,
+              "strategy": null,
+              "limit": 24,
+              "sort": "canonical",
+              "emptyPolicy": "omit",
+              "itemVariant": null
+            },
+            {
+              "blockId": "academy-commerce-organisation",
+              "targetKey": "items",
+              "source": "binding",
+              "bindingKey": "content.fields",
+              "sourceId": null,
+              "strategy": null,
+              "limit": 24,
+              "sort": "canonical",
+              "emptyPolicy": "omit",
+              "itemVariant": null
+            },
+            {
+              "blockId": "academy-commerce-cohorts",
+              "targetKey": "items",
+              "source": "binding",
+              "bindingKey": "academy.cohorts",
+              "sourceId": null,
+              "strategy": null,
+              "limit": 24,
+              "sort": "canonical",
+              "emptyPolicy": "omit",
+              "itemVariant": null
+            },
+            {
+              "blockId": "academy-commerce-assessment",
+              "targetKey": "items",
+              "source": "binding",
+              "bindingKey": "academy.certification",
+              "sourceId": null,
+              "strategy": null,
+              "limit": 24,
+              "sort": "canonical",
+              "emptyPolicy": "omit",
+              "itemVariant": null
+            },
+            {
+              "blockId": "academy-commerce-trainers",
+              "targetKey": "items",
+              "source": "binding",
+              "bindingKey": "academy.trainers",
+              "sourceId": null,
+              "strategy": null,
+              "limit": 24,
+              "sort": "canonical",
+              "emptyPolicy": "omit",
+              "itemVariant": null
+            },
+            {
+              "blockId": "academy-commerce-conditions",
+              "targetKey": "items",
+              "source": "binding",
+              "bindingKey": "trust.claims",
+              "sourceId": null,
+              "strategy": null,
+              "limit": 24,
+              "sort": "canonical",
+              "emptyPolicy": "omit",
+              "itemVariant": null
+            },
+            {
+              "blockId": "academy-commerce-details",
+              "targetKey": "items",
+              "source": "binding",
+              "bindingKey": "content.fields",
+              "sourceId": null,
+              "strategy": null,
+              "limit": 24,
+              "sort": "canonical",
+              "emptyPolicy": "omit",
+              "itemVariant": null
+            },
+            {
+              "blockId": "academy-commerce-reviews",
+              "targetKey": "items",
+              "source": "binding",
+              "bindingKey": "reviews.summary",
+              "sourceId": null,
+              "strategy": null,
+              "limit": 24,
+              "sort": "canonical",
+              "emptyPolicy": "omit",
+              "itemVariant": null
+            },
+            {
+              "blockId": "academy-commerce-recommended",
+              "targetKey": "items",
+              "source": "dynamic_source",
+              "bindingKey": null,
+              "sourceId": "catalog.items",
+              "strategy": "similar_items",
+              "limit": 12,
+              "sort": "recommended",
+              "emptyPolicy": "preserve_static",
+              "itemVariant": null
+            }
+          ],
+          "media": [
+            {
+              "blockId": "academy-commerce-promax-r1",
+              "targetKey": "mediaUrl",
+              "kind": "primary",
+              "source": "binding",
+              "bindingKey": "media.primary",
+              "assetRole": null,
+              "required": true,
+              "presentation": {
+                "fit": "cover",
+                "position": "50% 50%",
+                "aspectRatio": null,
+                "overlay": null,
+                "focalPoint": null
+              },
+              "responsive": {
+                "desktop": null,
+                "tablet": null,
+                "mobile": null
+              }
+            },
+            {
+              "blockId": "academy-commerce-promax-r1",
+              "targetKey": "mediaUrl",
+              "kind": "primary",
+              "source": "binding",
+              "bindingKey": "media.primary",
+              "assetRole": null,
+              "required": true,
+              "presentation": {
+                "fit": "cover",
+                "position": "50% 50%",
+                "aspectRatio": null,
+                "overlay": null,
+                "focalPoint": null
+              },
+              "responsive": {
+                "desktop": null,
+                "tablet": null,
+                "mobile": null
+              }
+            },
+            {
+              "blockId": "academy-commerce-promax-r1",
+              "targetKey": "items",
+              "kind": "gallery",
+              "source": "binding",
+              "bindingKey": "media.gallery",
+              "assetRole": null,
+              "required": true,
+              "presentation": {
+                "fit": "cover",
+                "position": "50% 50%",
+                "aspectRatio": null,
+                "overlay": null,
+                "focalPoint": null
+              },
+              "responsive": {
+                "desktop": null,
+                "tablet": null,
+                "mobile": null
+              }
+            }
+          ],
+          "interactions": [
+            {
+              "blockId": "academy-commerce-cohorts",
+              "kind": "schedule_selector",
+              "status": "SUPPORTED",
+              "configuration": {}
+            },
+            {
+              "blockId": "academy-commerce-faq",
+              "kind": "accordion",
+              "status": "SUPPORTED",
+              "configuration": {}
+            },
+            {
+              "blockId": "academy-commerce-recap",
+              "kind": "sticky_conversion",
+              "status": "SUPPORTED",
+              "configuration": {}
+            }
+          ],
+          "localization": {
+            "defaultLocale": "fr",
+            "locales": [
+              "fr",
+              "en",
+              "ar"
+            ],
+            "rtlLocales": [
+              "ar"
+            ],
+            "themeStrings": "localized-map",
+            "fallback": "default-locale",
+            "missingTranslation": "warn"
+          },
+          "tokens": {
+            "colors": {},
+            "typography": {},
+            "spacing": {},
+            "radii": {},
+            "shadows": {},
+            "layout": {},
+            "motion": {}
+          },
+          "assets": [],
+          "performance": {
+            "maxRootBlocks": 40,
+            "maxTotalBlocks": 160,
+            "maxDynamicSources": 24,
+            "maxAboveFoldMedia": 6,
+            "maxMediaAssets": 80,
+            "maxDocumentBytes": 1500000,
+            "maxInteractions": 40
+          },
+          "shell": {
+            "mode": "marketplace_global",
+            "allowGlobalHeaderOverride": false,
+            "allowGlobalFooterOverride": false,
+            "allowGlobalNavigationOverride": false
+          },
+          "editing": {
+            "uiLed": true,
+            "rawJsonRequired": false,
+            "allowBlockMove": true,
+            "allowBlockDuplicate": true,
+            "allowBlockHide": true,
+            "allowBindingChange": true,
+            "allowActionChange": true,
+            "allowMediaReplace": true,
+            "allowDesignChange": true,
+            "allowResponsiveChange": true,
+            "allowConditionChange": true,
+            "immutableBusinessTruth": true
+          },
+          "inspector": {
+            "generatedFromCapabilities": true,
+            "hideUnsupportedFields": true,
+            "showAuthorityOwnership": true,
+            "showInheritance": true
+          }
+        },
+        "certification": {
+          "level": "READY",
+          "lifecycle": "CERTIFIED",
+          "productionEligible": true,
+          "coverage": {
+            "semantic": 100,
+            "binding": 100,
+            "action": 100,
+            "truth": 100,
+            "responsive": 100,
+            "visual": 50,
+            "overall": 92
+          },
+          "gates": [
+            {
+              "id": "source-safety",
+              "label": "Source sanitized",
+              "state": "PASS",
+              "critical": true,
+              "detail": "Universal Import candidate has no upstream blocker."
+            },
+            {
+              "id": "domain",
+              "label": "Master domain / doctrines",
+              "state": "PASS",
+              "critical": true,
+              "detail": "academy_admission · 5 doctrine(s)"
+            },
+            {
+              "id": "storefront-shell",
+              "label": "Global shell authority",
+              "state": "PASS",
+              "critical": true,
+              "detail": "Global AngelCare header/navigation/footer remain outside the imported Storefront World."
+            },
+            {
+              "id": "semantic",
+              "label": "Semantic anatomy",
+              "state": "PASS",
+              "critical": true,
+              "detail": "Required roles covered (100%)."
+            },
+            {
+              "id": "bindings",
+              "label": "Canonical binding coverage",
+              "state": "PASS",
+              "critical": true,
+              "detail": "15/15 required bindings resolved."
+            },
+            {
+              "id": "actions",
+              "label": "Canonical action coverage",
+              "state": "PASS",
+              "critical": true,
+              "detail": "2/2 required actions resolved; current-item targets supported for catalog actions."
+            },
+            {
+              "id": "relations",
+              "label": "Contextual relation sources",
+              "state": "PASS",
+              "critical": false,
+              "detail": "1 relation rail(s) compiled with current-item anchor."
+            },
+            {
+              "id": "truth",
+              "label": "Truth Firewall contract",
+              "state": "PASS",
+              "critical": true,
+              "detail": "Commercial claims are classified for Truth Firewall enforcement."
+            },
+            {
+              "id": "responsive",
+              "label": "Responsive contract",
+              "state": "PASS",
+              "critical": true,
+              "detail": "Responsive metadata detected. No obvious fixed-width overflow evidence."
+            },
+            {
+              "id": "visual",
+              "label": "Approved desktop/mobile reference",
+              "state": "PASS",
+              "critical": false,
+              "detail": "Desktop + mobile reference evidence approved."
+            },
+            {
+              "id": "capabilities",
+              "label": "Capability negotiation",
+              "state": "PASS",
+              "critical": true,
+              "detail": "14 requested runtime capabilities negotiated."
+            },
+            {
+              "id": "operability",
+              "label": "2030 no-code operability",
+              "state": "PASS",
+              "critical": true,
+              "detail": "20 block capability contracts · 10 repeaters · 3 media contracts · FR/EN/AR + RTL."
+            },
+            {
+              "id": "fallback",
+              "label": "Native fallback",
+              "state": "PASS",
+              "critical": true,
+              "detail": "Category-Native/native fallback remains mandatory."
+            }
+          ],
+          "blockers": [],
+          "warnings": [],
+          "certifiedAt": "2026-10-13T02:37:00.258Z"
+        },
+        "compatibility": {
+          "minimumRuntime": "pea-v1",
+          "maximumRuntime": null,
+          "forwardPolicy": "capability-negotiation",
+          "unknownFields": "preserve",
+          "nativeFallback": true,
+          "schemaVersion": 3,
+          "compilerProfile": "pea-world-factory-2030-operability-v3"
+        },
+        "revision": {
+          "worldKey": "ac.academy.commerce.promax.r1",
+          "revision": 1,
+          "supersedes": null,
+          "immutableAfterCertification": true
+        },
+        "overrides": {
+          "roleOverrides": {
+            "academy-commerce-promax-r1": "hero",
+            "academy-commerce-opening": "hero",
+            "academy-commerce-signals": "specifications",
+            "academy-commerce-description": "editorial",
+            "academy-commerce-outcomes": "editorial",
+            "academy-commerce-curriculum": "academy_curriculum",
+            "academy-commerce-included": "specifications",
+            "academy-commerce-organisation": "specifications",
+            "academy-commerce-cohorts": "academy_cohort",
+            "academy-commerce-pathway": "editorial",
+            "academy-commerce-assessment": "academy_certification",
+            "academy-commerce-trainers": "academy_trainers",
+            "academy-commerce-process": "editorial",
+            "academy-commerce-conditions": "trust",
+            "academy-commerce-details": "specifications",
+            "academy-commerce-reviews": "reviews",
+            "academy-commerce-faq": "faq",
+            "academy-commerce-assistance": "editorial",
+            "academy-commerce-recap": "primary_conversion",
+            "academy-commerce-recommended": "recommendations"
+          },
+          "supplementalRoleOverrides": {
+            "academy-commerce-promax-r1": [
+              "identity",
+              "media",
+              "pricing",
+              "availability"
+            ],
+            "academy-commerce-opening": [
+              "identity",
+              "media",
+              "pricing",
+              "availability",
+              "primary_conversion"
+            ]
+          },
+          "bindingOverrides": [],
+          "actionOverrides": [
+            {
+              "blockId": "academy-commerce-recap",
+              "intent": "secondary",
+              "actionId": "academy.enroll",
+              "targetMode": "current_item"
+            }
+          ],
+          "note": "Course-only renderer; chapters are conditional on published public data. The final configurator remains the native price and availability authority."
+        },
+        "provenance": {
+          "createdBy": "WORLD_FACTORY",
+          "manualOverrides": 23,
+          "notes": [
+            "No hardcoded production theme requirement.",
+            "UI-led import/assign/update contract active.",
+            "No foreign code execution.",
+            "Business authorities remain canonical.",
+            "Inference is reviewable and versioned.",
+            "Certified revisions are immutable; changes create a new revision."
+          ]
+        }
+      }
+    },
+    "factory": {
+      "engineVersion": 3,
+      "schemaVersion": 3,
+      "compilerProfile": "pea-world-factory-2030-operability-v3",
+      "candidateFingerprint": "11d26ae0d6b04ad456d6da86dd3bef60",
+      "documentFingerprint": "23380fea671695aa17638d16963f88be",
+      "compiledFingerprint": "a1840bb68b2f37aeba1d02126dbf617a",
+      "themeKind": "detail",
+      "masterDomain": "academy_admission",
+      "doctrineKeys": [
+        "academy-course",
+        "academy-cohort",
+        "certification-pathway",
+        "parent-workshop",
+        "institutional-training"
+      ],
+      "storefrontKeys": [],
+      "strictVisualFidelity": false,
+      "source": {
+        "kind": "existing",
+        "label": "Academy Commerce Pro Max R1",
+        "sourceFingerprint": "academy-commerce-promax-r1",
+        "safeToApply": true,
+        "upstreamBlockingCodes": [],
+        "upstreamReviewCodes": [
+          "DEPLOYED_ACCEPTANCE_PENDING"
+        ],
+        "compilerFingerprint": "57940bacf96d706c93d49f60ebb459e8",
+        "importedAt": "2026-10-13T02:37:00.258Z"
+      },
+      "visualReferences": [
+        {
+          "kind": "desktop",
+          "filename": "academy-published-desktop.png",
+          "sha256": "8ea630dd4048c7f7667faeffd350a648be3247d19c6b12d50488aa663723873b",
+          "width": 1440,
+          "height": 7966,
+          "reviewed": false,
+          "reviewNote": "Actual delivered code render, inspected for clipping and media fit. Customer aesthetic approval and deployed acceptance remain pending."
+        },
+        {
+          "kind": "mobile",
+          "filename": "academy-published-mobile.png",
+          "sha256": "cd0f8c3d79aec2a408d3907cb95704e815d7609f64ea80df520bba1734f412bd",
+          "width": 390,
+          "height": 13662,
+          "reviewed": false,
+          "reviewNote": "Actual delivered code render, inspected for clipping and media fit. Customer aesthetic approval and deployed acceptance remain pending."
+        }
+      ],
+      "semanticSlots": [
+        {
+          "blockId": "academy-commerce-promax-r1",
+          "blockType": "ac_academy_world",
+          "path": "root.0",
+          "role": "hero",
+          "supplementalRoles": [
+            "identity",
+            "media",
+            "pricing",
+            "availability"
+          ],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": true
+        },
+        {
+          "blockId": "academy-commerce-opening",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.0",
+          "role": "hero",
+          "supplementalRoles": [
+            "identity",
+            "media",
+            "pricing",
+            "availability",
+            "primary_conversion"
+          ],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": true
+        },
+        {
+          "blockId": "academy-commerce-signals",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.1",
+          "role": "specifications",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "academy-commerce-description",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.2",
+          "role": "editorial",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "academy-commerce-outcomes",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.3",
+          "role": "editorial",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "academy-commerce-curriculum",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.4",
+          "role": "academy_curriculum",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "academy-commerce-included",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.5",
+          "role": "specifications",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "academy-commerce-organisation",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.6",
+          "role": "specifications",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "academy-commerce-cohorts",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.7",
+          "role": "academy_cohort",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "academy-commerce-pathway",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.8",
+          "role": "editorial",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "academy-commerce-assessment",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.9",
+          "role": "academy_certification",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "academy-commerce-trainers",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.10",
+          "role": "academy_trainers",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "academy-commerce-process",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.11",
+          "role": "editorial",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "academy-commerce-conditions",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.12",
+          "role": "trust",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "academy-commerce-details",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.13",
+          "role": "specifications",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "academy-commerce-reviews",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.14",
+          "role": "reviews",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "academy-commerce-faq",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.15",
+          "role": "faq",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "academy-commerce-assistance",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.16",
+          "role": "editorial",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "academy-commerce-recap",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.17",
+          "role": "primary_conversion",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": true
+        },
+        {
+          "blockId": "academy-commerce-recommended",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.18",
+          "role": "recommendations",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        }
+      ],
+      "bindingPlan": [
+        {
+          "blockId": "academy-commerce-promax-r1",
+          "role": "hero",
+          "bindingKey": "identity.name",
+          "targetKey": "title",
+          "authority": "Category-Native / Catalog",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Public-safe binding · Category-Native / Catalog",
+          "manualOverride": false,
+          "missingPolicy": "hide_block"
+        },
+        {
+          "blockId": "academy-commerce-promax-r1",
+          "role": "hero",
+          "bindingKey": "identity.shortDescription",
+          "targetKey": "lead",
+          "authority": "Category-Native / Catalog",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Public-safe binding · Category-Native / Catalog",
+          "manualOverride": false,
+          "missingPolicy": "hide_block"
+        },
+        {
+          "blockId": "academy-commerce-promax-r1",
+          "role": "hero",
+          "bindingKey": "media.primary",
+          "targetKey": "mediaUrl",
+          "authority": "Catalog Media",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Public-safe binding · Catalog Media",
+          "manualOverride": false,
+          "missingPolicy": "hide_block"
+        },
+        {
+          "blockId": "academy-commerce-promax-r1",
+          "role": "identity",
+          "bindingKey": "identity.name",
+          "targetKey": "title",
+          "authority": "Category-Native / Catalog",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Public-safe binding · Category-Native / Catalog",
+          "manualOverride": false,
+          "missingPolicy": "hide_block"
+        },
+        {
+          "blockId": "academy-commerce-promax-r1",
+          "role": "identity",
+          "bindingKey": "identity.shortDescription",
+          "targetKey": "lead",
+          "authority": "Category-Native / Catalog",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Public-safe binding · Category-Native / Catalog",
+          "manualOverride": false,
+          "missingPolicy": "hide_block"
+        },
+        {
+          "blockId": "academy-commerce-promax-r1",
+          "role": "identity",
+          "bindingKey": "identity.description",
+          "targetKey": "body",
+          "authority": "Category-Native / Catalog",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Public-safe binding · Category-Native / Catalog",
+          "manualOverride": false,
+          "missingPolicy": "hide_block"
+        },
+        {
+          "blockId": "academy-commerce-promax-r1",
+          "role": "media",
+          "bindingKey": "media.primary",
+          "targetKey": "mediaUrl",
+          "authority": "Catalog Media",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Public-safe binding · Catalog Media",
+          "manualOverride": false,
+          "missingPolicy": "hide_block"
+        },
+        {
+          "blockId": "academy-commerce-promax-r1",
+          "role": "media",
+          "bindingKey": "media.gallery",
+          "targetKey": "items",
+          "authority": "Catalog Media",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Public-safe binding · Catalog Media",
+          "manualOverride": false,
+          "missingPolicy": "hide_block"
+        },
+        {
+          "blockId": "academy-commerce-promax-r1",
+          "role": "pricing",
+          "bindingKey": "pricing.current",
+          "targetKey": "title",
+          "authority": "Catalog / Finance pricing",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Public-safe binding · Catalog / Finance pricing",
+          "manualOverride": false,
+          "missingPolicy": "hide_block"
+        },
+        {
+          "blockId": "academy-commerce-promax-r1",
+          "role": "pricing",
+          "bindingKey": "pricing.label",
+          "targetKey": "lead",
+          "authority": "Catalog / Finance pricing",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Public-safe binding · Catalog / Finance pricing",
+          "manualOverride": false,
+          "missingPolicy": "hide_block"
+        },
+        {
+          "blockId": "academy-commerce-promax-r1",
+          "role": "pricing",
+          "bindingKey": "pricing.currency",
+          "targetKey": "body",
+          "authority": "Catalog / Finance pricing",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Public-safe binding · Catalog / Finance pricing",
+          "manualOverride": false,
+          "missingPolicy": "hide_block"
+        },
+        {
+          "blockId": "academy-commerce-promax-r1",
+          "role": "availability",
+          "bindingKey": "availability.status",
+          "targetKey": "title",
+          "authority": "Category-Native availability",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Public-safe binding · Category-Native availability",
+          "manualOverride": false,
+          "missingPolicy": "hide_block"
+        },
+        {
+          "blockId": "academy-commerce-promax-r1",
+          "role": "availability",
+          "bindingKey": "availability.quantity",
+          "targetKey": "lead",
+          "authority": "Category-Native availability",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Public-safe binding · Category-Native availability",
+          "manualOverride": false,
+          "missingPolicy": "hide_block"
+        },
+        {
+          "blockId": "academy-commerce-opening",
+          "role": "hero",
+          "bindingKey": "identity.name",
+          "targetKey": "title",
+          "authority": "Category-Native / Catalog",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "academy-commerce-description",
+          "role": "editorial",
+          "bindingKey": "identity.description",
+          "targetKey": "title",
+          "authority": "Category-Native / Catalog",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "academy-commerce-curriculum",
+          "role": "academy_curriculum",
+          "bindingKey": "academy.curriculum",
+          "targetKey": "items",
+          "authority": "Academy Engine",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "academy-commerce-organisation",
+          "role": "specifications",
+          "bindingKey": "content.fields",
+          "targetKey": "items",
+          "authority": "Experience Schema public_visible",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "academy-commerce-cohorts",
+          "role": "academy_cohort",
+          "bindingKey": "academy.cohorts",
+          "targetKey": "items",
+          "authority": "Academy Cohorts",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "academy-commerce-assessment",
+          "role": "academy_certification",
+          "bindingKey": "academy.certification",
+          "targetKey": "items",
+          "authority": "Certificate Authority",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "academy-commerce-trainers",
+          "role": "academy_trainers",
+          "bindingKey": "academy.trainers",
+          "targetKey": "items",
+          "authority": "Academy Engine",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "academy-commerce-conditions",
+          "role": "trust",
+          "bindingKey": "trust.claims",
+          "targetKey": "items",
+          "authority": "Trust authority",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "academy-commerce-details",
+          "role": "specifications",
+          "bindingKey": "content.fields",
+          "targetKey": "items",
+          "authority": "Experience Schema public_visible",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "academy-commerce-reviews",
+          "role": "reviews",
+          "bindingKey": "reviews.summary",
+          "targetKey": "items",
+          "authority": "Review authority",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "academy-commerce-recap",
+          "role": "primary_conversion",
+          "bindingKey": "identity.name",
+          "targetKey": "title",
+          "authority": "Category-Native / Catalog",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "academy-commerce-recommended",
+          "role": "recommendations",
+          "bindingKey": "relations.recommendations",
+          "targetKey": "items",
+          "authority": "Catalog Discovery",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        }
+      ],
+      "actionPlan": [
+        {
+          "blockId": "academy-commerce-opening",
+          "role": "hero",
+          "intent": "primary",
+          "actionId": "academy.enroll",
+          "workflowId": null,
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "canonicalEngine": "Academy Engine + Conversion Universe",
+          "targetMode": "current_item",
+          "targetSourceId": "catalog.items",
+          "reason": "Canonical action · Academy Engine + Conversion Universe",
+          "manualOverride": false
+        },
+        {
+          "blockId": "academy-commerce-recap",
+          "role": "primary_conversion",
+          "intent": "secondary",
+          "actionId": "academy.enroll",
+          "workflowId": null,
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "canonicalEngine": "Academy Engine + Conversion Universe",
+          "targetMode": "current_item",
+          "targetSourceId": "catalog.items",
+          "reason": "Operator action override.",
+          "manualOverride": true
+        },
+        {
+          "blockId": "academy-commerce-recap",
+          "role": "primary_conversion",
+          "intent": "secondary",
+          "actionId": "academy.enroll",
+          "workflowId": null,
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "canonicalEngine": "Academy Engine + Conversion Universe",
+          "targetMode": "current_item",
+          "targetSourceId": "catalog.items",
+          "reason": "Operator action override.",
+          "manualOverride": true
+        }
+      ],
+      "relationPlan": [
+        {
+          "blockId": "academy-commerce-recommended",
+          "role": "recommendations",
+          "strategy": "similar_items",
+          "sourceId": "catalog.items",
+          "anchorMode": "current_item",
+          "limit": 12,
+          "emptyPolicy": "preserve_static",
+          "status": "RESOLVED"
+        }
+      ],
+      "truthRequirements": [
+        {
+          "key": "promotion",
+          "blockId": "academy-commerce-promax-r1",
+          "required": false,
+          "status": "NOT_SHOWN",
+          "authority": null,
+          "evidence": "Promotion claim detected"
+        },
+        {
+          "key": "scarcity",
+          "blockId": "academy-commerce-promax-r1",
+          "required": false,
+          "status": "NOT_SHOWN",
+          "authority": null,
+          "evidence": "Scarcity language detected"
+        },
+        {
+          "key": "rating",
+          "blockId": "academy-commerce-reviews",
+          "required": true,
+          "status": "GOVERNED",
+          "authority": "Public Experience Truth Firewall",
+          "evidence": "Rating/review language detected"
+        },
+        {
+          "key": "certification",
+          "blockId": "academy-commerce-promax-r1",
+          "required": true,
+          "status": "GOVERNED",
+          "authority": "Public Experience Truth Firewall",
+          "evidence": "Certification language detected"
+        },
+        {
+          "key": "pricing",
+          "blockId": "academy-commerce-promax-r1",
+          "required": false,
+          "status": "NOT_SHOWN",
+          "authority": null,
+          "evidence": "Pricing language detected"
+        },
+        {
+          "key": "availability",
+          "blockId": "academy-commerce-promax-r1",
+          "required": false,
+          "status": "NOT_SHOWN",
+          "authority": null,
+          "evidence": "Availability language detected"
+        },
+        {
+          "key": "trust",
+          "blockId": "academy-commerce-conditions",
+          "required": false,
+          "status": "NOT_SHOWN",
+          "authority": null,
+          "evidence": "Trust language detected"
+        }
+      ],
+      "responsive": {
+        "nativeDesktop": true,
+        "nativeMobile": true,
+        "responsiveHints": 19,
+        "breakpointHints": 57,
+        "horizontalOverflowRisk": false,
+        "fixedWidthEvidence": [],
+        "notes": [
+          "Responsive metadata detected.",
+          "No obvious fixed-width overflow evidence."
+        ]
+      },
+      "capabilities": [
+        {
+          "capability": "academy-authority",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Academy Engine",
+          "detail": "Capability supported by installed canonical runtime."
+        },
+        {
+          "capability": "academy-semantic-runtime-v2",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Studio Academy Semantic Runtime V2",
+          "detail": "Capability supported by installed canonical runtime."
+        },
+        {
+          "capability": "canonical-actions",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Studio Action Registry",
+          "detail": "Capability supported by installed canonical runtime."
+        },
+        {
+          "capability": "canonical-route",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Marketplace route/source registry",
+          "detail": "Capability supported by installed canonical runtime."
+        },
+        {
+          "capability": "native-fallback",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Category-Native / Public Experience runtime",
+          "detail": "Capability supported by installed canonical runtime."
+        },
+        {
+          "capability": "public-experience-360",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "PublicExperience360",
+          "detail": "Capability supported by installed canonical runtime."
+        },
+        {
+          "capability": "relation-dynamic-sources",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Studio Dynamic Source / Catalog Relations",
+          "detail": "Capability supported by installed canonical runtime."
+        },
+        {
+          "capability": "responsive-runtime",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Studio public runtime",
+          "detail": "Capability supported by installed canonical runtime."
+        },
+        {
+          "capability": "truth-firewall",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Public Experience Truth Firewall",
+          "detail": "Capability supported by installed canonical runtime."
+        },
+        {
+          "capability": "theme-operability-v1",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "World Factory 2030 Operability Kernel",
+          "detail": "Capability supported by installed 2030 theme operating kernel."
+        },
+        {
+          "capability": "declarative-conditions",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Studio Published Runtime",
+          "detail": "Capability supported by installed 2030 theme operating kernel."
+        },
+        {
+          "capability": "ui-led-theme-operation",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Public Experience Authority / World Factory",
+          "detail": "Capability supported by installed 2030 theme operating kernel."
+        },
+        {
+          "capability": "fr-en-ar-rtl",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Studio Published Runtime",
+          "detail": "Capability supported by installed 2030 theme operating kernel."
+        },
+        {
+          "capability": "theme-token-contract",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Studio Design Runtime",
+          "detail": "Capability supported by installed 2030 theme operating kernel."
+        }
+      ],
+      "operability": {
+        "version": 1,
+        "density": null,
+        "blockCapabilities": [
+          {
+            "blockId": "academy-commerce-promax-r1",
+            "blockType": "ac_academy_world",
+            "role": "hero",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": true,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "media",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility",
+              "seo"
+            ]
+          },
+          {
+            "blockId": "academy-commerce-opening",
+            "blockType": "atomic_offer_section",
+            "role": "hero",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": true,
+            "acceptsActions": true,
+            "acceptsChildren": false,
+            "acceptsRepeaters": false,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "productRole",
+              "serviceRole",
+              "academyRole",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "media",
+              "actions",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility",
+              "seo"
+            ]
+          },
+          {
+            "blockId": "academy-commerce-signals",
+            "blockType": "atomic_offer_section",
+            "role": "specifications",
+            "acceptsBindings": false,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "productRole",
+              "serviceRole",
+              "academyRole",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "academy-commerce-description",
+            "blockType": "atomic_offer_section",
+            "role": "editorial",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": true,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": false,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "productRole",
+              "serviceRole",
+              "academyRole",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "media",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility",
+              "seo"
+            ]
+          },
+          {
+            "blockId": "academy-commerce-outcomes",
+            "blockType": "atomic_offer_section",
+            "role": "editorial",
+            "acceptsBindings": false,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": true,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": false,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "productRole",
+              "serviceRole",
+              "academyRole",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "media",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility",
+              "seo"
+            ]
+          },
+          {
+            "blockId": "academy-commerce-curriculum",
+            "blockType": "atomic_offer_section",
+            "role": "academy_curriculum",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "productRole",
+              "serviceRole",
+              "academyRole",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "academy-commerce-included",
+            "blockType": "atomic_offer_section",
+            "role": "specifications",
+            "acceptsBindings": false,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "productRole",
+              "serviceRole",
+              "academyRole",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "academy-commerce-organisation",
+            "blockType": "atomic_offer_section",
+            "role": "specifications",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "productRole",
+              "serviceRole",
+              "academyRole",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "academy-commerce-cohorts",
+            "blockType": "atomic_offer_section",
+            "role": "academy_cohort",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "productRole",
+              "serviceRole",
+              "academyRole",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "academy-commerce-pathway",
+            "blockType": "atomic_offer_section",
+            "role": "editorial",
+            "acceptsBindings": false,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": true,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": false,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "productRole",
+              "serviceRole",
+              "academyRole",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "media",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility",
+              "seo"
+            ]
+          },
+          {
+            "blockId": "academy-commerce-assessment",
+            "blockType": "atomic_offer_section",
+            "role": "academy_certification",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "productRole",
+              "serviceRole",
+              "academyRole",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "academy-commerce-trainers",
+            "blockType": "atomic_offer_section",
+            "role": "academy_trainers",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "productRole",
+              "serviceRole",
+              "academyRole",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "academy-commerce-process",
+            "blockType": "atomic_offer_section",
+            "role": "editorial",
+            "acceptsBindings": false,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": true,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": false,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "productRole",
+              "serviceRole",
+              "academyRole",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "media",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility",
+              "seo"
+            ]
+          },
+          {
+            "blockId": "academy-commerce-conditions",
+            "blockType": "atomic_offer_section",
+            "role": "trust",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "productRole",
+              "serviceRole",
+              "academyRole",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "academy-commerce-details",
+            "blockType": "atomic_offer_section",
+            "role": "specifications",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "productRole",
+              "serviceRole",
+              "academyRole",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "academy-commerce-reviews",
+            "blockType": "atomic_offer_section",
+            "role": "reviews",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "productRole",
+              "serviceRole",
+              "academyRole",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "academy-commerce-faq",
+            "blockType": "atomic_offer_section",
+            "role": "faq",
+            "acceptsBindings": false,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "productRole",
+              "serviceRole",
+              "academyRole",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility",
+              "seo"
+            ]
+          },
+          {
+            "blockId": "academy-commerce-assistance",
+            "blockType": "atomic_offer_section",
+            "role": "editorial",
+            "acceptsBindings": false,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": true,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": false,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "productRole",
+              "serviceRole",
+              "academyRole",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "media",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility",
+              "seo"
+            ]
+          },
+          {
+            "blockId": "academy-commerce-recap",
+            "blockType": "atomic_offer_section",
+            "role": "primary_conversion",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": true,
+            "acceptsChildren": false,
+            "acceptsRepeaters": false,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "productRole",
+              "serviceRole",
+              "academyRole",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "actions",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "academy-commerce-recommended",
+            "blockType": "atomic_offer_section",
+            "role": "recommendations",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": true,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "productRole",
+              "serviceRole",
+              "academyRole",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [
+              "catalog.items"
+            ],
+            "merchandisingModes": [
+              "automatic",
+              "curated",
+              "manual",
+              "hybrid"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          }
+        ],
+        "conditions": [],
+        "repeaters": [
+          {
+            "blockId": "academy-commerce-promax-r1",
+            "targetKey": "items",
+            "source": "binding",
+            "bindingKey": "media.gallery",
+            "sourceId": null,
+            "strategy": null,
+            "limit": 24,
+            "sort": "canonical",
+            "emptyPolicy": "hide_block",
+            "itemVariant": null
+          },
+          {
+            "blockId": "academy-commerce-curriculum",
+            "targetKey": "items",
+            "source": "binding",
+            "bindingKey": "academy.curriculum",
+            "sourceId": null,
+            "strategy": null,
+            "limit": 24,
+            "sort": "canonical",
+            "emptyPolicy": "omit",
+            "itemVariant": null
+          },
+          {
+            "blockId": "academy-commerce-organisation",
+            "targetKey": "items",
+            "source": "binding",
+            "bindingKey": "content.fields",
+            "sourceId": null,
+            "strategy": null,
+            "limit": 24,
+            "sort": "canonical",
+            "emptyPolicy": "omit",
+            "itemVariant": null
+          },
+          {
+            "blockId": "academy-commerce-cohorts",
+            "targetKey": "items",
+            "source": "binding",
+            "bindingKey": "academy.cohorts",
+            "sourceId": null,
+            "strategy": null,
+            "limit": 24,
+            "sort": "canonical",
+            "emptyPolicy": "omit",
+            "itemVariant": null
+          },
+          {
+            "blockId": "academy-commerce-assessment",
+            "targetKey": "items",
+            "source": "binding",
+            "bindingKey": "academy.certification",
+            "sourceId": null,
+            "strategy": null,
+            "limit": 24,
+            "sort": "canonical",
+            "emptyPolicy": "omit",
+            "itemVariant": null
+          },
+          {
+            "blockId": "academy-commerce-trainers",
+            "targetKey": "items",
+            "source": "binding",
+            "bindingKey": "academy.trainers",
+            "sourceId": null,
+            "strategy": null,
+            "limit": 24,
+            "sort": "canonical",
+            "emptyPolicy": "omit",
+            "itemVariant": null
+          },
+          {
+            "blockId": "academy-commerce-conditions",
+            "targetKey": "items",
+            "source": "binding",
+            "bindingKey": "trust.claims",
+            "sourceId": null,
+            "strategy": null,
+            "limit": 24,
+            "sort": "canonical",
+            "emptyPolicy": "omit",
+            "itemVariant": null
+          },
+          {
+            "blockId": "academy-commerce-details",
+            "targetKey": "items",
+            "source": "binding",
+            "bindingKey": "content.fields",
+            "sourceId": null,
+            "strategy": null,
+            "limit": 24,
+            "sort": "canonical",
+            "emptyPolicy": "omit",
+            "itemVariant": null
+          },
+          {
+            "blockId": "academy-commerce-reviews",
+            "targetKey": "items",
+            "source": "binding",
+            "bindingKey": "reviews.summary",
+            "sourceId": null,
+            "strategy": null,
+            "limit": 24,
+            "sort": "canonical",
+            "emptyPolicy": "omit",
+            "itemVariant": null
+          },
+          {
+            "blockId": "academy-commerce-recommended",
+            "targetKey": "items",
+            "source": "dynamic_source",
+            "bindingKey": null,
+            "sourceId": "catalog.items",
+            "strategy": "similar_items",
+            "limit": 12,
+            "sort": "recommended",
+            "emptyPolicy": "preserve_static",
+            "itemVariant": null
+          }
+        ],
+        "media": [
+          {
+            "blockId": "academy-commerce-promax-r1",
+            "targetKey": "mediaUrl",
+            "kind": "primary",
+            "source": "binding",
+            "bindingKey": "media.primary",
+            "assetRole": null,
+            "required": true,
+            "presentation": {
+              "fit": "cover",
+              "position": "50% 50%",
+              "aspectRatio": null,
+              "overlay": null,
+              "focalPoint": null
+            },
+            "responsive": {
+              "desktop": null,
+              "tablet": null,
+              "mobile": null
+            }
+          },
+          {
+            "blockId": "academy-commerce-promax-r1",
+            "targetKey": "mediaUrl",
+            "kind": "primary",
+            "source": "binding",
+            "bindingKey": "media.primary",
+            "assetRole": null,
+            "required": true,
+            "presentation": {
+              "fit": "cover",
+              "position": "50% 50%",
+              "aspectRatio": null,
+              "overlay": null,
+              "focalPoint": null
+            },
+            "responsive": {
+              "desktop": null,
+              "tablet": null,
+              "mobile": null
+            }
+          },
+          {
+            "blockId": "academy-commerce-promax-r1",
+            "targetKey": "items",
+            "kind": "gallery",
+            "source": "binding",
+            "bindingKey": "media.gallery",
+            "assetRole": null,
+            "required": true,
+            "presentation": {
+              "fit": "cover",
+              "position": "50% 50%",
+              "aspectRatio": null,
+              "overlay": null,
+              "focalPoint": null
+            },
+            "responsive": {
+              "desktop": null,
+              "tablet": null,
+              "mobile": null
+            }
+          }
+        ],
+        "interactions": [
+          {
+            "blockId": "academy-commerce-cohorts",
+            "kind": "schedule_selector",
+            "status": "SUPPORTED",
+            "configuration": {}
+          },
+          {
+            "blockId": "academy-commerce-faq",
+            "kind": "accordion",
+            "status": "SUPPORTED",
+            "configuration": {}
+          },
+          {
+            "blockId": "academy-commerce-recap",
+            "kind": "sticky_conversion",
+            "status": "SUPPORTED",
+            "configuration": {}
+          }
+        ],
+        "localization": {
+          "defaultLocale": "fr",
+          "locales": [
+            "fr",
+            "en",
+            "ar"
+          ],
+          "rtlLocales": [
+            "ar"
+          ],
+          "themeStrings": "localized-map",
+          "fallback": "default-locale",
+          "missingTranslation": "warn"
+        },
+        "tokens": {
+          "colors": {},
+          "typography": {},
+          "spacing": {},
+          "radii": {},
+          "shadows": {},
+          "layout": {},
+          "motion": {}
+        },
+        "assets": [],
+        "performance": {
+          "maxRootBlocks": 40,
+          "maxTotalBlocks": 160,
+          "maxDynamicSources": 24,
+          "maxAboveFoldMedia": 6,
+          "maxMediaAssets": 80,
+          "maxDocumentBytes": 1500000,
+          "maxInteractions": 40
+        },
+        "shell": {
+          "mode": "marketplace_global",
+          "allowGlobalHeaderOverride": false,
+          "allowGlobalFooterOverride": false,
+          "allowGlobalNavigationOverride": false
+        },
+        "editing": {
+          "uiLed": true,
+          "rawJsonRequired": false,
+          "allowBlockMove": true,
+          "allowBlockDuplicate": true,
+          "allowBlockHide": true,
+          "allowBindingChange": true,
+          "allowActionChange": true,
+          "allowMediaReplace": true,
+          "allowDesignChange": true,
+          "allowResponsiveChange": true,
+          "allowConditionChange": true,
+          "immutableBusinessTruth": true
+        },
+        "inspector": {
+          "generatedFromCapabilities": true,
+          "hideUnsupportedFields": true,
+          "showAuthorityOwnership": true,
+          "showInheritance": true
+        }
+      },
+      "certification": {
+        "level": "READY",
+        "lifecycle": "CERTIFIED",
+        "productionEligible": true,
+        "coverage": {
+          "semantic": 100,
+          "binding": 100,
+          "action": 100,
+          "truth": 100,
+          "responsive": 100,
+          "visual": 50,
+          "overall": 92
+        },
+        "gates": [
+          {
+            "id": "source-safety",
+            "label": "Source sanitized",
+            "state": "PASS",
+            "critical": true,
+            "detail": "Universal Import candidate has no upstream blocker."
+          },
+          {
+            "id": "domain",
+            "label": "Master domain / doctrines",
+            "state": "PASS",
+            "critical": true,
+            "detail": "academy_admission · 5 doctrine(s)"
+          },
+          {
+            "id": "storefront-shell",
+            "label": "Global shell authority",
+            "state": "PASS",
+            "critical": true,
+            "detail": "Global AngelCare header/navigation/footer remain outside the imported Storefront World."
+          },
+          {
+            "id": "semantic",
+            "label": "Semantic anatomy",
+            "state": "PASS",
+            "critical": true,
+            "detail": "Required roles covered (100%)."
+          },
+          {
+            "id": "bindings",
+            "label": "Canonical binding coverage",
+            "state": "PASS",
+            "critical": true,
+            "detail": "15/15 required bindings resolved."
+          },
+          {
+            "id": "actions",
+            "label": "Canonical action coverage",
+            "state": "PASS",
+            "critical": true,
+            "detail": "2/2 required actions resolved; current-item targets supported for catalog actions."
+          },
+          {
+            "id": "relations",
+            "label": "Contextual relation sources",
+            "state": "PASS",
+            "critical": false,
+            "detail": "1 relation rail(s) compiled with current-item anchor."
+          },
+          {
+            "id": "truth",
+            "label": "Truth Firewall contract",
+            "state": "PASS",
+            "critical": true,
+            "detail": "Commercial claims are classified for Truth Firewall enforcement."
+          },
+          {
+            "id": "responsive",
+            "label": "Responsive contract",
+            "state": "PASS",
+            "critical": true,
+            "detail": "Responsive metadata detected. No obvious fixed-width overflow evidence."
+          },
+          {
+            "id": "visual",
+            "label": "Approved desktop/mobile reference",
+            "state": "PASS",
+            "critical": false,
+            "detail": "Desktop + mobile reference evidence approved."
+          },
+          {
+            "id": "capabilities",
+            "label": "Capability negotiation",
+            "state": "PASS",
+            "critical": true,
+            "detail": "14 requested runtime capabilities negotiated."
+          },
+          {
+            "id": "operability",
+            "label": "2030 no-code operability",
+            "state": "PASS",
+            "critical": true,
+            "detail": "20 block capability contracts · 10 repeaters · 3 media contracts · FR/EN/AR + RTL."
+          },
+          {
+            "id": "fallback",
+            "label": "Native fallback",
+            "state": "PASS",
+            "critical": true,
+            "detail": "Category-Native/native fallback remains mandatory."
+          }
+        ],
+        "blockers": [],
+        "warnings": [],
+        "certifiedAt": "2026-10-13T02:37:00.258Z"
+      },
+      "compatibility": {
+        "minimumRuntime": "pea-v1",
+        "maximumRuntime": null,
+        "forwardPolicy": "capability-negotiation",
+        "unknownFields": "preserve",
+        "nativeFallback": true,
+        "schemaVersion": 3,
+        "compilerProfile": "pea-world-factory-2030-operability-v3"
+      },
+      "revision": {
+        "worldKey": "ac.academy.commerce.promax.r1",
+        "revision": 1,
+        "supersedes": null,
+        "immutableAfterCertification": true
+      },
+      "overrides": {
+        "roleOverrides": {
+          "academy-commerce-promax-r1": "hero",
+          "academy-commerce-opening": "hero",
+          "academy-commerce-signals": "specifications",
+          "academy-commerce-description": "editorial",
+          "academy-commerce-outcomes": "editorial",
+          "academy-commerce-curriculum": "academy_curriculum",
+          "academy-commerce-included": "specifications",
+          "academy-commerce-organisation": "specifications",
+          "academy-commerce-cohorts": "academy_cohort",
+          "academy-commerce-pathway": "editorial",
+          "academy-commerce-assessment": "academy_certification",
+          "academy-commerce-trainers": "academy_trainers",
+          "academy-commerce-process": "editorial",
+          "academy-commerce-conditions": "trust",
+          "academy-commerce-details": "specifications",
+          "academy-commerce-reviews": "reviews",
+          "academy-commerce-faq": "faq",
+          "academy-commerce-assistance": "editorial",
+          "academy-commerce-recap": "primary_conversion",
+          "academy-commerce-recommended": "recommendations"
+        },
+        "supplementalRoleOverrides": {
+          "academy-commerce-promax-r1": [
+            "identity",
+            "media",
+            "pricing",
+            "availability"
+          ],
+          "academy-commerce-opening": [
+            "identity",
+            "media",
+            "pricing",
+            "availability",
+            "primary_conversion"
+          ]
+        },
+        "bindingOverrides": [],
+        "actionOverrides": [
+          {
+            "blockId": "academy-commerce-recap",
+            "intent": "secondary",
+            "actionId": "academy.enroll",
+            "targetMode": "current_item"
+          }
+        ],
+        "note": "Course-only renderer; chapters are conditional on published public data. The final configurator remains the native price and availability authority."
+      },
+      "provenance": {
+        "createdBy": "WORLD_FACTORY",
+        "manualOverrides": 23,
+        "notes": [
+          "No hardcoded production theme requirement.",
+          "UI-led import/assign/update contract active.",
+          "No foreign code execution.",
+          "Business authorities remain canonical.",
+          "Inference is reviewable and versioned.",
+          "Certified revisions are immutable; changes create a new revision."
+        ]
+      }
+    }
+  },
+  "data": {
+    "root": {
+      "props": {
+        "title": "Academy · Commerce Pro Max R1"
+      }
+    },
+    "content": [
+      {
+        "type": "ac_academy_world",
+        "props": {
+          "id": "academy-commerce-promax-r1",
+          "atomicExperienceVersion": 1,
+          "academyCommerceRevision": 1,
+          "academyMediaSlots": {
+            "context": "context",
+            "description": "description",
+            "included": "included",
+            "detail": "detail"
+          },
+          "content": [
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "academy-commerce-opening",
+                "role": "opening",
+                "academyRole": "opening",
+                "title": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "campus-ledger",
+                "hidden": false,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {}
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "academy-commerce-signals",
+                "role": "facts",
+                "academyRole": "signals",
+                "title": {
+                  "fr": "Votre formation, en clair",
+                  "en": "Your course, clearly",
+                  "ar": "دورتك بوضوح"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "strip",
+                "hidden": false,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {}
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "academy-commerce-description",
+                "role": "story",
+                "academyRole": "description",
+                "title": {
+                  "fr": "Une formation pour faire avancer votre projet.",
+                  "en": "Learning that moves your project forward.",
+                  "ar": "تدريب يدفع مشروعك إلى الأمام."
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "ledger",
+                "hidden": false,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {}
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "academy-commerce-outcomes",
+                "role": "benefits",
+                "academyRole": "outcomes",
+                "title": {
+                  "fr": "Ce que vous saurez faire",
+                  "en": "What you will be able to do",
+                  "ar": "ما ستتمكن من القيام به"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "bento",
+                "hidden": false,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {}
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "academy-commerce-curriculum",
+                "role": "curriculum",
+                "academyRole": "curriculum",
+                "title": {
+                  "fr": "Explorez le programme",
+                  "en": "Explore the programme",
+                  "ar": "استكشف البرنامج"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "ledger",
+                "bindingKey": "academy.curriculum",
+                "hidden": false,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {}
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "academy-commerce-included",
+                "role": "contents",
+                "academyRole": "included",
+                "title": {
+                  "fr": "Tout ce qui accompagne votre formation",
+                  "en": "Everything that comes with your learning",
+                  "ar": "كل ما يرافق تدريبك"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "bento",
+                "hidden": false,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {}
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "academy-commerce-organisation",
+                "role": "admission",
+                "academyRole": "organisation",
+                "title": {
+                  "fr": "Un cadre adapté à votre projet",
+                  "en": "A setting that fits your project",
+                  "ar": "إطار مناسب لمشروعك"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "ledger",
+                "bindingKey": "content.fields",
+                "hidden": false,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {}
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "academy-commerce-cohorts",
+                "role": "cohorts",
+                "academyRole": "cohorts",
+                "title": {
+                  "fr": "Choisissez votre prochaine session",
+                  "en": "Choose your next session",
+                  "ar": "اختر دورتك القادمة"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "comparison",
+                "bindingKey": "academy.cohorts",
+                "hidden": false,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {}
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "academy-commerce-pathway",
+                "role": "pathways",
+                "academyRole": "pathway",
+                "title": {
+                  "fr": "Votre trajectoire, étape par étape",
+                  "en": "Your pathway, step by step",
+                  "ar": "مسارك خطوة بخطوة"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "timeline",
+                "hidden": false,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {}
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "academy-commerce-assessment",
+                "role": "credentials",
+                "academyRole": "assessment",
+                "title": {
+                  "fr": "Évaluation & modalités du programme",
+                  "en": "Assessment & programme arrangements",
+                  "ar": "تقييم البرنامج وشروطه"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "ledger",
+                "bindingKey": "academy.certification",
+                "hidden": false,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {}
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "academy-commerce-trainers",
+                "role": "trainers",
+                "academyRole": "trainers",
+                "title": {
+                  "fr": "Votre équipe pédagogique",
+                  "en": "Your teaching team",
+                  "ar": "فريقك التعليمي"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "portrait",
+                "bindingKey": "academy.trainers",
+                "hidden": false,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {}
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "academy-commerce-process",
+                "role": "facts",
+                "academyRole": "process",
+                "title": {
+                  "fr": "Avant, pendant, après : un parcours accompagné",
+                  "en": "Before, during and after: a guided journey",
+                  "ar": "قبل وأثناء وبعد: مسار مع مرافقة"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "timeline",
+                "hidden": false,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {}
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "academy-commerce-conditions",
+                "role": "proof",
+                "academyRole": "conditions",
+                "title": {
+                  "fr": "Cadre & conditions de la formation",
+                  "en": "Course scope & conditions",
+                  "ar": "إطار الدورة وشروطها"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "ledger",
+                "hidden": false,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {}
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "academy-commerce-details",
+                "role": "facts",
+                "academyRole": "details",
+                "title": {
+                  "fr": "Modalités & informations utiles",
+                  "en": "Arrangements & useful information",
+                  "ar": "الشروط والمعلومات المفيدة"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "ledger",
+                "bindingKey": "content.fields",
+                "hidden": false,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {}
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "academy-commerce-reviews",
+                "role": "reviews",
+                "academyRole": "reviews",
+                "title": {
+                  "fr": "Avis & retours d’expérience",
+                  "en": "Reviews & learner feedback",
+                  "ar": "الآراء وتجارب المتعلمين"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "ledger",
+                "hidden": false,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {}
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "academy-commerce-faq",
+                "role": "faq",
+                "academyRole": "faq",
+                "title": {
+                  "fr": "Vos questions, simplement",
+                  "en": "Your questions, answered",
+                  "ar": "إجابات عن أسئلتك"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "ledger",
+                "hidden": false,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {}
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "academy-commerce-assistance",
+                "role": "assistance",
+                "academyRole": "assistance",
+                "title": {
+                  "fr": "Votre projet mérite la bonne formation.",
+                  "en": "Your project deserves the right learning.",
+                  "ar": "مشروعك يستحق التدريب المناسب."
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "ribbon",
+                "hidden": false,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {}
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "academy-commerce-recap",
+                "role": "decision",
+                "academyRole": "recap",
+                "title": {
+                  "fr": "Votre projet de formation",
+                  "en": "Your learning project",
+                  "ar": "مشروعك التعليمي"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "ribbon",
+                "hidden": false,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {}
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "academy-commerce-recommended",
+                "role": "related",
+                "academyRole": "recommended",
+                "title": {
+                  "fr": "Continuez à faire grandir vos compétences",
+                  "en": "Keep developing your skills",
+                  "ar": "واصل تطوير مهاراتك"
+                },
+                "lead": {
+                  "fr": "",
+                  "en": "",
+                  "ar": ""
+                },
+                "layout": "rail",
+                "bindingKey": "relations.recommendations",
+                "hidden": false,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "sourceDesign": {}
+              }
+            }
+          ],
+          "hidden": false,
+          "sourceDesign": {}
+        }
+      }
+    ],
+    "zones": {}
+  },
+  "assets": [],
+  "fingerprints": {
+    "document": "23380fea671695aa17638d16963f88be",
+    "factory": "51bc03388387b5a498eb8eb6b7afd8a0",
+    "package": "28e86756d2868d72d194a9d0d0e3f8e6"
+  }
+}

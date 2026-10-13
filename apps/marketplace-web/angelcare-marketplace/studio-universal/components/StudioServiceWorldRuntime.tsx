@@ -1,3 +1,4 @@
+import {ServiceCommerceRenderer} from '../../service-commerce-experience/ServiceCommerceRenderer'
 import Link from '@/angelcare-marketplace/navigation-care-orbit/CareOrbitLink'
 import {ArrowRight,BadgeCheck,CalendarDays,Check,CheckCircle2,ChevronDown,ChevronRight,Clock3,HeartHandshake,MapPin,MessageCircle,ShieldCheck,Sparkles,Star,Users2} from 'lucide-react'
 import type {PublicExperience360,PublicExperienceTruthReport} from '@/angelcare-marketplace/public-experience-authority/types'
@@ -130,6 +131,7 @@ function FAQ({data,worldProps}:{data:PublicExperience360;worldProps:WorldProps})
 
 export async function StudioServiceWorldRuntime({data,truthReport,worldProps}:{data:PublicExperience360;truthReport:PublicExperienceTruthReport;worldProps:WorldProps}){
  if(data.classification.masterDomain!=='b2c_service_family')return null
+ if(worldProps.serviceCommerceRevision!==0)return <ServiceCommerceRenderer data={data} truthReport={truthReport} worldProps={{...worldProps,content:[]}}/>
  const worldKey=text(worldProps.worldKey)||'ac.service.booking.immersive.2030.v2'
  return <main className={styles.root} dir={data.classification.locale==='ar'?'rtl':'ltr'} data-ac-public-experience="studio-service-semantic-runtime-v2" data-ac-service-world-key={worldKey} data-ac-service-doctrine={data.classification.doctrineKey}>
   {sectionEnabled(worldProps,'s00-campaign')?<UrgencyBar data={data} truth={truthReport}/>:null}

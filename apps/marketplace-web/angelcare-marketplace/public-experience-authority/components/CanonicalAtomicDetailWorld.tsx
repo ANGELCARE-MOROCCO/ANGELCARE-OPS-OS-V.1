@@ -1,3 +1,6 @@
+import {AcademyCommerceRenderer} from '../../academy-commerce-experience/AcademyCommerceRenderer'
+import {isAcademyCourseData} from '../../academy-commerce-experience/model'
+import {ServiceCommerceRenderer} from '../../service-commerce-experience/ServiceCommerceRenderer'
 import {nativeDetailText as tr} from './native-detail-copy'
 import Link from '@/angelcare-marketplace/navigation-care-orbit/CareOrbitLink'
 import {ArrowRight,CalendarDays,CheckCircle2,ChevronRight,Clock3,GraduationCap,Heart,Layers3,MapPin,PackageCheck,ShieldCheck,ShoppingBag,Sparkles,Star,Users2} from 'lucide-react'
@@ -43,6 +46,8 @@ function DomainModules({data}:{data:PublicExperience360}){const ext=o(data.domai
 }
 
 export async function CanonicalAtomicDetailWorld({data,truthReport,authority}:{data:PublicExperience360;truthReport:PublicExperienceTruthReport;authority:string}){
+ if(data.classification.masterDomain==='b2c_service_family')return <ServiceCommerceRenderer data={data} truthReport={truthReport}/>
+ if(isAcademyCourseData(data))return <AcademyCommerceRenderer data={data} truthReport={truthReport}/>
  const recipe=canonicalDetailWorld(data.classification.masterDomain);if(!recipe)return null
  const primary=primaryAction(data),secondary=secondaryAction(data,primary),price=money(data,data.pricing.amount,data.pricing.currency,data.pricing.label),available=data.availability.status&&!['unavailable','out_of_stock','closed','paused'].includes(data.availability.status.toLowerCase())
  const actionLabel=tr(data,primary==='basket.add'?'Ajouter au panier':primary==='booking.start'?'Réserver maintenant':primary==='academy.enroll'?"S’inscrire":primary==='quotation.start'||primary==='b2b.request'?'Demander un devis':primary==='subscription.start'?'Choisir ce plan':'Continuer')

@@ -1,0 +1,4477 @@
+{
+  "format": "angelcare-world-package-v1",
+  "packageVersion": 1,
+  "exportedAt": "2026-10-12T23:46:39.731Z",
+  "world": {
+    "name": "Product · Commerce Light R3",
+    "description": "Professional light Product layout, technical line indicators, native category recommendations at the end, conditional public data, configurable Product360 media and canonical basket/advice authorities.",
+    "themeVersion": "3.0.0",
+    "manifest": {
+      "themeKind": "detail",
+      "masterDomain": "b2c_product_digital",
+      "doctrineKeys": [],
+      "name": "Product · Commerce Light R3",
+      "templateKey": "ac.product.commerce.complete.r1",
+      "themeVersion": "3.0.0",
+      "requiredBindings": [
+        "identity.name",
+        "identity.shortDescription",
+        "media.primary"
+      ],
+      "optionalBindings": [
+        "media.gallery",
+        "identity.description",
+        "trust.claims",
+        "reviews.summary",
+        "relations.recommendations"
+      ],
+      "requiredActions": [
+        "basket.add",
+        "checkout.start"
+      ],
+      "optionalActions": [
+        "inquiry.submit"
+      ],
+      "requiredWorkflows": [],
+      "requiredCapabilities": [
+        "public-experience-360",
+        "canonical-route",
+        "native-fallback",
+        "world-factory-v3",
+        "truth-firewall",
+        "capability-negotiation",
+        "canonical-actions",
+        "canonical-basket",
+        "canonical-checkout",
+        "product-semantic-runtime-v2",
+        "relation-dynamic-sources",
+        "responsive-runtime",
+        "theme-operability-v1",
+        "declarative-conditions",
+        "ui-led-theme-operation",
+        "fr-en-ar-rtl",
+        "theme-token-contract"
+      ],
+      "slots": [
+        {
+          "blockId": "product-commerce-r1",
+          "slot": "hero",
+          "confidence": 1,
+          "reason": "World Factory hero: operator-override",
+          "semanticRole": "hero",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:product-commerce-r1"
+        },
+        {
+          "blockId": "pc-opening",
+          "slot": "hero",
+          "confidence": 1,
+          "reason": "World Factory hero: operator-override",
+          "semanticRole": "hero",
+          "supplementalRoles": [
+            "identity",
+            "media",
+            "pricing",
+            "availability",
+            "variants",
+            "primary_conversion"
+          ],
+          "capabilityKey": "wf:pc-opening"
+        },
+        {
+          "blockId": "pc-assurance",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory editorial: operator-override",
+          "semanticRole": "editorial",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:pc-assurance"
+        },
+        {
+          "blockId": "pc-context",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory media: operator-override",
+          "semanticRole": "media",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:pc-context"
+        },
+        {
+          "blockId": "pc-description",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory editorial: operator-override",
+          "semanticRole": "editorial",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:pc-description"
+        },
+        {
+          "blockId": "pc-specifications",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory specifications: operator-override",
+          "semanticRole": "specifications",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:pc-specifications"
+        },
+        {
+          "blockId": "pc-contents",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory bundle: operator-override",
+          "semanticRole": "bundle",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:pc-contents"
+        },
+        {
+          "blockId": "pc-usage",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory editorial: operator-override",
+          "semanticRole": "editorial",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:pc-usage"
+        },
+        {
+          "blockId": "pc-fulfillment",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory delivery: operator-override",
+          "semanticRole": "delivery",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:pc-fulfillment"
+        },
+        {
+          "blockId": "pc-conditions",
+          "slot": "trust",
+          "confidence": 1,
+          "reason": "World Factory trust: operator-override",
+          "semanticRole": "trust",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:pc-conditions"
+        },
+        {
+          "blockId": "pc-reviews",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory reviews: operator-override",
+          "semanticRole": "reviews",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:pc-reviews"
+        },
+        {
+          "blockId": "pc-faq",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory faq: operator-override",
+          "semanticRole": "faq",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:pc-faq"
+        },
+        {
+          "blockId": "pc-bundle",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory bundle: operator-override",
+          "semanticRole": "bundle",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:pc-bundle"
+        },
+        {
+          "blockId": "pc-accessories",
+          "slot": "inventory_items",
+          "confidence": 1,
+          "reason": "World Factory accessories: operator-override",
+          "semanticRole": "accessories",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:pc-accessories"
+        },
+        {
+          "blockId": "pc-alternatives",
+          "slot": "featured_items",
+          "confidence": 1,
+          "reason": "World Factory recommendations: operator-override",
+          "semanticRole": "recommendations",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:pc-alternatives"
+        },
+        {
+          "blockId": "pc-assistance",
+          "slot": "final_cta",
+          "confidence": 1,
+          "reason": "World Factory secondary_conversion: operator-override",
+          "semanticRole": "secondary_conversion",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:pc-assistance"
+        },
+        {
+          "blockId": "pc-recap",
+          "slot": "final_cta",
+          "confidence": 1,
+          "reason": "World Factory primary_conversion: operator-override",
+          "semanticRole": "primary_conversion",
+          "supplementalRoles": [],
+          "capabilityKey": "wf:pc-recap"
+        }
+      ],
+      "structuralFingerprint": "2aa6f261aad0fd91e95947213e605f35",
+      "visualFingerprint": "desktop:bcbb751d4cabbb0905623e2585139ef5f6650b9355fbb7080af7477fb39884af|mobile:2a1fbac80c7c573dc238550e7487c4e953597b5775b9931dae087187ffbda227",
+      "factory": {
+        "engineVersion": 3,
+        "schemaVersion": 3,
+        "compilerProfile": "pea-world-factory-2030-operability-v3",
+        "candidateFingerprint": "6a931da123682bad8efa57770eaf3371",
+        "documentFingerprint": "7e99597671ad9c02624eedac4334863e",
+        "compiledFingerprint": "2aa6f261aad0fd91e95947213e605f35",
+        "themeKind": "detail",
+        "masterDomain": "b2c_product_digital",
+        "doctrineKeys": [],
+        "storefrontKeys": [],
+        "strictVisualFidelity": false,
+        "source": {
+          "kind": "existing",
+          "label": "Product Commerce Light R3",
+          "sourceFingerprint": "product-commerce-light-r3",
+          "safeToApply": true,
+          "upstreamBlockingCodes": [],
+          "upstreamReviewCodes": [
+            "DEPLOYED_ACCEPTANCE_PENDING"
+          ],
+          "compilerFingerprint": "4e470c5c6afb36b44116b690a48d3090",
+          "importedAt": "2026-10-12T23:46:39.715Z"
+        },
+        "visualReferences": [
+          {
+            "kind": "desktop",
+            "filename": "product-real-booklet-desktop.png",
+            "sha256": "bcbb751d4cabbb0905623e2585139ef5f6650b9355fbb7080af7477fb39884af",
+            "width": 1440,
+            "height": 4806,
+            "reviewed": false,
+            "reviewNote": "Actual delivered code render. Customer aesthetic approval and deployed acceptance remain pending."
+          },
+          {
+            "kind": "mobile",
+            "filename": "product-real-mobile.png",
+            "sha256": "2a1fbac80c7c573dc238550e7487c4e953597b5775b9931dae087187ffbda227",
+            "width": 390,
+            "height": 8245,
+            "reviewed": false,
+            "reviewNote": "Actual delivered code render. Customer aesthetic approval and deployed acceptance remain pending."
+          }
+        ],
+        "semanticSlots": [
+          {
+            "blockId": "product-commerce-r1",
+            "blockType": "ac_product_world",
+            "path": "root.0",
+            "role": "hero",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": true
+          },
+          {
+            "blockId": "pc-opening",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.0",
+            "role": "hero",
+            "supplementalRoles": [
+              "identity",
+              "media",
+              "pricing",
+              "availability",
+              "variants",
+              "primary_conversion"
+            ],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": true
+          },
+          {
+            "blockId": "pc-assurance",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.1",
+            "role": "editorial",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "pc-context",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.2",
+            "role": "media",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": true
+          },
+          {
+            "blockId": "pc-description",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.3",
+            "role": "editorial",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "pc-specifications",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.4",
+            "role": "specifications",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "pc-contents",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.5",
+            "role": "bundle",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "pc-usage",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.6",
+            "role": "editorial",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "pc-fulfillment",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.7",
+            "role": "delivery",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "pc-conditions",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.8",
+            "role": "trust",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "pc-reviews",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.9",
+            "role": "reviews",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "pc-faq",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.10",
+            "role": "faq",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "pc-bundle",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.11",
+            "role": "bundle",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "pc-accessories",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.12",
+            "role": "accessories",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "pc-alternatives",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.13",
+            "role": "recommendations",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "pc-assistance",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.14",
+            "role": "secondary_conversion",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": false
+          },
+          {
+            "blockId": "pc-recap",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.15",
+            "role": "primary_conversion",
+            "supplementalRoles": [],
+            "confidence": 1,
+            "evidence": [
+              "operator-override"
+            ],
+            "required": true
+          },
+          {
+            "blockId": "pc-recommended",
+            "blockType": "atomic_offer_section",
+            "path": "root.0.props.content.16",
+            "role": "unknown",
+            "supplementalRoles": [],
+            "confidence": 0.05,
+            "evidence": [],
+            "required": false
+          }
+        ],
+        "bindingPlan": [
+          {
+            "blockId": "product-commerce-r1",
+            "role": "hero",
+            "bindingKey": "identity.name",
+            "targetKey": "title",
+            "authority": "Category-Native / Catalog",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Public-safe binding · Category-Native / Catalog",
+            "manualOverride": false,
+            "missingPolicy": "hide_block"
+          },
+          {
+            "blockId": "product-commerce-r1",
+            "role": "hero",
+            "bindingKey": "identity.shortDescription",
+            "targetKey": "lead",
+            "authority": "Category-Native / Catalog",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Public-safe binding · Category-Native / Catalog",
+            "manualOverride": false,
+            "missingPolicy": "hide_block"
+          },
+          {
+            "blockId": "product-commerce-r1",
+            "role": "hero",
+            "bindingKey": "media.primary",
+            "targetKey": "mediaUrl",
+            "authority": "Catalog Media",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Public-safe binding · Catalog Media",
+            "manualOverride": false,
+            "missingPolicy": "hide_block"
+          },
+          {
+            "blockId": "pc-opening",
+            "role": "hero",
+            "bindingKey": "identity.name",
+            "targetKey": "title",
+            "authority": "Category-Native / Catalog",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "pc-context",
+            "role": "media",
+            "bindingKey": "media.gallery",
+            "targetKey": "items",
+            "authority": "Catalog Media",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "pc-description",
+            "role": "editorial",
+            "bindingKey": "identity.description",
+            "targetKey": "title",
+            "authority": "Category-Native / Catalog",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "pc-conditions",
+            "role": "trust",
+            "bindingKey": "trust.claims",
+            "targetKey": "items",
+            "authority": "Trust authority",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "pc-reviews",
+            "role": "reviews",
+            "bindingKey": "reviews.summary",
+            "targetKey": "items",
+            "authority": "Review authority",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "pc-bundle",
+            "role": "bundle",
+            "bindingKey": "relations.recommendations",
+            "targetKey": "items",
+            "authority": "Catalog Discovery",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "pc-accessories",
+            "role": "accessories",
+            "bindingKey": "relations.recommendations",
+            "targetKey": "items",
+            "authority": "Catalog Discovery",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "pc-alternatives",
+            "role": "recommendations",
+            "bindingKey": "relations.recommendations",
+            "targetKey": "items",
+            "authority": "Catalog Discovery",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "pc-recap",
+            "role": "primary_conversion",
+            "bindingKey": "identity.name",
+            "targetKey": "title",
+            "authority": "Category-Native / Catalog",
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          },
+          {
+            "blockId": "pc-recommended",
+            "role": "unknown",
+            "bindingKey": "relations.recommendations",
+            "targetKey": "items",
+            "authority": "Catalog Discovery",
+            "confidence": 1,
+            "required": false,
+            "status": "RESOLVED",
+            "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+            "manualOverride": false,
+            "missingPolicy": "omit"
+          }
+        ],
+        "actionPlan": [
+          {
+            "blockId": "pc-opening",
+            "role": "hero",
+            "intent": "primary",
+            "actionId": "basket.add",
+            "workflowId": null,
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "canonicalEngine": "Conversion Universe BasketExperience + /conversion/basket/*/items",
+            "targetMode": "current_item",
+            "targetSourceId": "catalog.items",
+            "reason": "Canonical action · Conversion Universe BasketExperience + /conversion/basket/*/items",
+            "manualOverride": false
+          },
+          {
+            "blockId": "pc-assistance",
+            "role": "secondary_conversion",
+            "intent": "secondary",
+            "actionId": "checkout.start",
+            "workflowId": null,
+            "confidence": 1,
+            "required": true,
+            "status": "RESOLVED",
+            "canonicalEngine": "Conversion Universe + customer-commerce",
+            "targetMode": "current_item",
+            "targetSourceId": "catalog.items",
+            "reason": "Canonical action · Conversion Universe + customer-commerce",
+            "manualOverride": false
+          },
+          {
+            "blockId": "pc-recap",
+            "role": "primary_conversion",
+            "intent": "secondary",
+            "actionId": "inquiry.submit",
+            "workflowId": null,
+            "confidence": 1,
+            "required": false,
+            "status": "REVIEW",
+            "canonicalEngine": "public-universe/createPublicInquiry",
+            "targetMode": "none",
+            "targetSourceId": null,
+            "reason": "Canonical action · public-universe/createPublicInquiry",
+            "manualOverride": false
+          }
+        ],
+        "relationPlan": [
+          {
+            "blockId": "pc-contents",
+            "role": "bundle",
+            "strategy": "bundle_members",
+            "sourceId": "catalog.items",
+            "anchorMode": "current_item",
+            "limit": 12,
+            "emptyPolicy": "preserve_static",
+            "status": "RESOLVED"
+          },
+          {
+            "blockId": "pc-bundle",
+            "role": "bundle",
+            "strategy": "bundle_members",
+            "sourceId": "catalog.items",
+            "anchorMode": "current_item",
+            "limit": 12,
+            "emptyPolicy": "preserve_static",
+            "status": "RESOLVED"
+          },
+          {
+            "blockId": "pc-accessories",
+            "role": "accessories",
+            "strategy": "compatible_accessories",
+            "sourceId": "catalog.items",
+            "anchorMode": "current_item",
+            "limit": 12,
+            "emptyPolicy": "preserve_static",
+            "status": "RESOLVED"
+          },
+          {
+            "blockId": "pc-alternatives",
+            "role": "recommendations",
+            "strategy": "similar_items",
+            "sourceId": "catalog.items",
+            "anchorMode": "current_item",
+            "limit": 12,
+            "emptyPolicy": "preserve_static",
+            "status": "RESOLVED"
+          }
+        ],
+        "truthRequirements": [
+          {
+            "key": "promotion",
+            "blockId": "product-commerce-r1",
+            "required": false,
+            "status": "NOT_SHOWN",
+            "authority": null,
+            "evidence": "Promotion claim detected"
+          },
+          {
+            "key": "scarcity",
+            "blockId": "product-commerce-r1",
+            "required": false,
+            "status": "NOT_SHOWN",
+            "authority": null,
+            "evidence": "Scarcity language detected"
+          },
+          {
+            "key": "rating",
+            "blockId": "pc-reviews",
+            "required": true,
+            "status": "GOVERNED",
+            "authority": "Public Experience Truth Firewall",
+            "evidence": "Rating/review language detected"
+          },
+          {
+            "key": "certification",
+            "blockId": "product-commerce-r1",
+            "required": false,
+            "status": "NOT_SHOWN",
+            "authority": null,
+            "evidence": "Certification language detected"
+          },
+          {
+            "key": "pricing",
+            "blockId": "pc-opening",
+            "required": false,
+            "status": "NOT_SHOWN",
+            "authority": null,
+            "evidence": "Pricing language detected"
+          },
+          {
+            "key": "availability",
+            "blockId": "pc-opening",
+            "required": false,
+            "status": "NOT_SHOWN",
+            "authority": null,
+            "evidence": "Availability language detected"
+          },
+          {
+            "key": "trust",
+            "blockId": "pc-conditions",
+            "required": false,
+            "status": "NOT_SHOWN",
+            "authority": null,
+            "evidence": "Trust language detected"
+          }
+        ],
+        "responsive": {
+          "nativeDesktop": true,
+          "nativeMobile": true,
+          "responsiveHints": 17,
+          "breakpointHints": 51,
+          "horizontalOverflowRisk": false,
+          "fixedWidthEvidence": [],
+          "notes": [
+            "Responsive metadata detected.",
+            "No obvious fixed-width overflow evidence."
+          ]
+        },
+        "capabilities": [
+          {
+            "capability": "canonical-actions",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Studio Action Registry",
+            "detail": "Capability supported by installed canonical runtime."
+          },
+          {
+            "capability": "canonical-basket",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Conversion Universe",
+            "detail": "Capability supported by installed canonical runtime."
+          },
+          {
+            "capability": "canonical-checkout",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Conversion Universe",
+            "detail": "Capability supported by installed canonical runtime."
+          },
+          {
+            "capability": "canonical-route",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Marketplace route/source registry",
+            "detail": "Capability supported by installed canonical runtime."
+          },
+          {
+            "capability": "native-fallback",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Category-Native / Public Experience runtime",
+            "detail": "Capability supported by installed canonical runtime."
+          },
+          {
+            "capability": "product-semantic-runtime-v2",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Studio Product Semantic Runtime V2",
+            "detail": "Capability supported by installed canonical runtime."
+          },
+          {
+            "capability": "public-experience-360",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "PublicExperience360",
+            "detail": "Capability supported by installed canonical runtime."
+          },
+          {
+            "capability": "relation-dynamic-sources",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Studio Dynamic Source / Catalog Relations",
+            "detail": "Capability supported by installed canonical runtime."
+          },
+          {
+            "capability": "responsive-runtime",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Studio public runtime",
+            "detail": "Capability supported by installed canonical runtime."
+          },
+          {
+            "capability": "truth-firewall",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Public Experience Truth Firewall",
+            "detail": "Capability supported by installed canonical runtime."
+          },
+          {
+            "capability": "theme-operability-v1",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "World Factory 2030 Operability Kernel",
+            "detail": "Capability supported by installed 2030 theme operating kernel."
+          },
+          {
+            "capability": "declarative-conditions",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Studio Published Runtime",
+            "detail": "Capability supported by installed 2030 theme operating kernel."
+          },
+          {
+            "capability": "ui-led-theme-operation",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Public Experience Authority / World Factory",
+            "detail": "Capability supported by installed 2030 theme operating kernel."
+          },
+          {
+            "capability": "fr-en-ar-rtl",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Studio Published Runtime",
+            "detail": "Capability supported by installed 2030 theme operating kernel."
+          },
+          {
+            "capability": "theme-token-contract",
+            "requested": true,
+            "status": "SUPPORTED",
+            "authority": "Studio Design Runtime",
+            "detail": "Capability supported by installed 2030 theme operating kernel."
+          }
+        ],
+        "operability": {
+          "version": 1,
+          "density": null,
+          "blockCapabilities": [
+            {
+              "blockId": "product-commerce-r1",
+              "blockType": "ac_product_world",
+              "role": "hero",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": true,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": false,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "media",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility",
+                "seo"
+              ]
+            },
+            {
+              "blockId": "pc-opening",
+              "blockType": "atomic_offer_section",
+              "role": "hero",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": true,
+              "acceptsActions": true,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "productRole",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "media",
+                "actions",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility",
+                "seo"
+              ]
+            },
+            {
+              "blockId": "pc-assurance",
+              "blockType": "atomic_offer_section",
+              "role": "editorial",
+              "acceptsBindings": false,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": true,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": false,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "productRole",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "media",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility",
+                "seo"
+              ]
+            },
+            {
+              "blockId": "pc-context",
+              "blockType": "atomic_offer_section",
+              "role": "media",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": true,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "productRole",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "media",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "pc-description",
+              "blockType": "atomic_offer_section",
+              "role": "editorial",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": true,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": false,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "productRole",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "media",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility",
+                "seo"
+              ]
+            },
+            {
+              "blockId": "pc-specifications",
+              "blockType": "atomic_offer_section",
+              "role": "specifications",
+              "acceptsBindings": false,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "productRole",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "pc-contents",
+              "blockType": "atomic_offer_section",
+              "role": "bundle",
+              "acceptsBindings": false,
+              "acceptsDynamicSource": true,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "productRole",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [
+                "catalog.items"
+              ],
+              "merchandisingModes": [
+                "automatic",
+                "curated",
+                "manual",
+                "hybrid"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "pc-usage",
+              "blockType": "atomic_offer_section",
+              "role": "editorial",
+              "acceptsBindings": false,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": true,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": false,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "productRole",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "media",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility",
+                "seo"
+              ]
+            },
+            {
+              "blockId": "pc-fulfillment",
+              "blockType": "atomic_offer_section",
+              "role": "delivery",
+              "acceptsBindings": false,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": false,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "productRole",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "pc-conditions",
+              "blockType": "atomic_offer_section",
+              "role": "trust",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "productRole",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "pc-reviews",
+              "blockType": "atomic_offer_section",
+              "role": "reviews",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "productRole",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "pc-faq",
+              "blockType": "atomic_offer_section",
+              "role": "faq",
+              "acceptsBindings": false,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "productRole",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility",
+                "seo"
+              ]
+            },
+            {
+              "blockId": "pc-bundle",
+              "blockType": "atomic_offer_section",
+              "role": "bundle",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": true,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "productRole",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [
+                "catalog.items"
+              ],
+              "merchandisingModes": [
+                "automatic",
+                "curated",
+                "manual",
+                "hybrid"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "pc-accessories",
+              "blockType": "atomic_offer_section",
+              "role": "accessories",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": true,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "productRole",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [
+                "catalog.items"
+              ],
+              "merchandisingModes": [
+                "automatic",
+                "curated",
+                "manual",
+                "hybrid"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "pc-alternatives",
+              "blockType": "atomic_offer_section",
+              "role": "recommendations",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": true,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "productRole",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [
+                "catalog.items"
+              ],
+              "merchandisingModes": [
+                "automatic",
+                "curated",
+                "manual",
+                "hybrid"
+              ],
+              "inspectorSections": [
+                "content",
+                "data",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "pc-assistance",
+              "blockType": "atomic_offer_section",
+              "role": "secondary_conversion",
+              "acceptsBindings": false,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": true,
+              "acceptsChildren": false,
+              "acceptsRepeaters": false,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "productRole",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "actions",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "pc-recap",
+              "blockType": "atomic_offer_section",
+              "role": "primary_conversion",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": true,
+              "acceptsChildren": false,
+              "acceptsRepeaters": false,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "productRole",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "actions",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            },
+            {
+              "blockId": "pc-recommended",
+              "blockType": "atomic_offer_section",
+              "role": "unknown",
+              "acceptsBindings": true,
+              "acceptsDynamicSource": false,
+              "acceptsMedia": false,
+              "acceptsActions": false,
+              "acceptsChildren": false,
+              "acceptsRepeaters": true,
+              "acceptsConditions": true,
+              "acceptsDesign": true,
+              "acceptsResponsive": true,
+              "editableFields": [
+                "role",
+                "productRole",
+                "title",
+                "lead",
+                "eyebrow",
+                "bindingKey",
+                "fieldSections",
+                "fieldKeys",
+                "doctrineKeys",
+                "layout",
+                "relationKind",
+                "enableSelection",
+                "navTitle",
+                "mediaIndex",
+                "neutralExperienceRevision",
+                "heroFieldKeys",
+                "heroFactLimit",
+                "assistanceImage",
+                "contactLabel",
+                "sourceDesign"
+              ],
+              "allowedSourceIds": [],
+              "merchandisingModes": [
+                "automatic"
+              ],
+              "inspectorSections": [
+                "content",
+                "display",
+                "design",
+                "responsive",
+                "conditions",
+                "accessibility"
+              ]
+            }
+          ],
+          "conditions": [],
+          "repeaters": [
+            {
+              "blockId": "pc-context",
+              "targetKey": "items",
+              "source": "binding",
+              "bindingKey": "media.gallery",
+              "sourceId": null,
+              "strategy": null,
+              "limit": 24,
+              "sort": "canonical",
+              "emptyPolicy": "omit",
+              "itemVariant": null
+            },
+            {
+              "blockId": "pc-contents",
+              "targetKey": "items",
+              "source": "dynamic_source",
+              "bindingKey": null,
+              "sourceId": "catalog.items",
+              "strategy": "bundle_members",
+              "limit": 12,
+              "sort": "recommended",
+              "emptyPolicy": "preserve_static",
+              "itemVariant": null
+            },
+            {
+              "blockId": "pc-conditions",
+              "targetKey": "items",
+              "source": "binding",
+              "bindingKey": "trust.claims",
+              "sourceId": null,
+              "strategy": null,
+              "limit": 24,
+              "sort": "canonical",
+              "emptyPolicy": "omit",
+              "itemVariant": null
+            },
+            {
+              "blockId": "pc-reviews",
+              "targetKey": "items",
+              "source": "binding",
+              "bindingKey": "reviews.summary",
+              "sourceId": null,
+              "strategy": null,
+              "limit": 24,
+              "sort": "canonical",
+              "emptyPolicy": "omit",
+              "itemVariant": null
+            },
+            {
+              "blockId": "pc-bundle",
+              "targetKey": "items",
+              "source": "dynamic_source",
+              "bindingKey": null,
+              "sourceId": "catalog.items",
+              "strategy": "bundle_members",
+              "limit": 12,
+              "sort": "recommended",
+              "emptyPolicy": "preserve_static",
+              "itemVariant": null
+            },
+            {
+              "blockId": "pc-accessories",
+              "targetKey": "items",
+              "source": "dynamic_source",
+              "bindingKey": null,
+              "sourceId": "catalog.items",
+              "strategy": "compatible_accessories",
+              "limit": 12,
+              "sort": "recommended",
+              "emptyPolicy": "preserve_static",
+              "itemVariant": null
+            },
+            {
+              "blockId": "pc-alternatives",
+              "targetKey": "items",
+              "source": "dynamic_source",
+              "bindingKey": null,
+              "sourceId": "catalog.items",
+              "strategy": "similar_items",
+              "limit": 12,
+              "sort": "recommended",
+              "emptyPolicy": "preserve_static",
+              "itemVariant": null
+            },
+            {
+              "blockId": "pc-recommended",
+              "targetKey": "items",
+              "source": "binding",
+              "bindingKey": "relations.recommendations",
+              "sourceId": null,
+              "strategy": null,
+              "limit": 24,
+              "sort": "canonical",
+              "emptyPolicy": "omit",
+              "itemVariant": null
+            }
+          ],
+          "media": [
+            {
+              "blockId": "product-commerce-r1",
+              "targetKey": "mediaUrl",
+              "kind": "primary",
+              "source": "binding",
+              "bindingKey": "media.primary",
+              "assetRole": null,
+              "required": true,
+              "presentation": {
+                "fit": "cover",
+                "position": "50% 50%",
+                "aspectRatio": null,
+                "overlay": null,
+                "focalPoint": null
+              },
+              "responsive": {
+                "desktop": null,
+                "tablet": null,
+                "mobile": null
+              }
+            },
+            {
+              "blockId": "pc-context",
+              "targetKey": "items",
+              "kind": "gallery",
+              "source": "binding",
+              "bindingKey": "media.gallery",
+              "assetRole": null,
+              "required": false,
+              "presentation": {
+                "fit": "cover",
+                "position": "50% 50%",
+                "aspectRatio": null,
+                "overlay": null,
+                "focalPoint": null
+              },
+              "responsive": {
+                "desktop": null,
+                "tablet": null,
+                "mobile": null
+              }
+            }
+          ],
+          "interactions": [
+            {
+              "blockId": "pc-faq",
+              "kind": "accordion",
+              "status": "SUPPORTED",
+              "configuration": {}
+            },
+            {
+              "blockId": "pc-recap",
+              "kind": "sticky_conversion",
+              "status": "SUPPORTED",
+              "configuration": {}
+            }
+          ],
+          "localization": {
+            "defaultLocale": "fr",
+            "locales": [
+              "fr",
+              "en",
+              "ar"
+            ],
+            "rtlLocales": [
+              "ar"
+            ],
+            "themeStrings": "localized-map",
+            "fallback": "default-locale",
+            "missingTranslation": "warn"
+          },
+          "tokens": {
+            "colors": {},
+            "typography": {},
+            "spacing": {},
+            "radii": {},
+            "shadows": {},
+            "layout": {},
+            "motion": {}
+          },
+          "assets": [],
+          "performance": {
+            "maxRootBlocks": 40,
+            "maxTotalBlocks": 160,
+            "maxDynamicSources": 24,
+            "maxAboveFoldMedia": 6,
+            "maxMediaAssets": 80,
+            "maxDocumentBytes": 1500000,
+            "maxInteractions": 40
+          },
+          "shell": {
+            "mode": "marketplace_global",
+            "allowGlobalHeaderOverride": false,
+            "allowGlobalFooterOverride": false,
+            "allowGlobalNavigationOverride": false
+          },
+          "editing": {
+            "uiLed": true,
+            "rawJsonRequired": false,
+            "allowBlockMove": true,
+            "allowBlockDuplicate": true,
+            "allowBlockHide": true,
+            "allowBindingChange": true,
+            "allowActionChange": true,
+            "allowMediaReplace": true,
+            "allowDesignChange": true,
+            "allowResponsiveChange": true,
+            "allowConditionChange": true,
+            "immutableBusinessTruth": true
+          },
+          "inspector": {
+            "generatedFromCapabilities": true,
+            "hideUnsupportedFields": true,
+            "showAuthorityOwnership": true,
+            "showInheritance": true
+          }
+        },
+        "certification": {
+          "level": "READY",
+          "lifecycle": "CERTIFIED",
+          "productionEligible": true,
+          "coverage": {
+            "semantic": 100,
+            "binding": 100,
+            "action": 100,
+            "truth": 100,
+            "responsive": 100,
+            "visual": 50,
+            "overall": 92
+          },
+          "gates": [
+            {
+              "id": "source-safety",
+              "label": "Source sanitized",
+              "state": "PASS",
+              "critical": true,
+              "detail": "Universal Import candidate has no upstream blocker."
+            },
+            {
+              "id": "domain",
+              "label": "Master domain / doctrines",
+              "state": "PASS",
+              "critical": true,
+              "detail": "b2c_product_digital · 0 doctrine(s)"
+            },
+            {
+              "id": "storefront-shell",
+              "label": "Global shell authority",
+              "state": "PASS",
+              "critical": true,
+              "detail": "Global AngelCare header/navigation/footer remain outside the imported Storefront World."
+            },
+            {
+              "id": "semantic",
+              "label": "Semantic anatomy",
+              "state": "PASS",
+              "critical": true,
+              "detail": "Required roles covered (100%)."
+            },
+            {
+              "id": "bindings",
+              "label": "Canonical binding coverage",
+              "state": "PASS",
+              "critical": true,
+              "detail": "5/5 required bindings resolved."
+            },
+            {
+              "id": "actions",
+              "label": "Canonical action coverage",
+              "state": "PASS",
+              "critical": true,
+              "detail": "2/2 required actions resolved; current-item targets supported for catalog actions."
+            },
+            {
+              "id": "relations",
+              "label": "Contextual relation sources",
+              "state": "PASS",
+              "critical": false,
+              "detail": "4 relation rail(s) compiled with current-item anchor."
+            },
+            {
+              "id": "truth",
+              "label": "Truth Firewall contract",
+              "state": "PASS",
+              "critical": true,
+              "detail": "Commercial claims are classified for Truth Firewall enforcement."
+            },
+            {
+              "id": "responsive",
+              "label": "Responsive contract",
+              "state": "PASS",
+              "critical": true,
+              "detail": "Responsive metadata detected. No obvious fixed-width overflow evidence."
+            },
+            {
+              "id": "visual",
+              "label": "Approved desktop/mobile reference",
+              "state": "PASS",
+              "critical": false,
+              "detail": "Desktop + mobile reference evidence approved."
+            },
+            {
+              "id": "capabilities",
+              "label": "Capability negotiation",
+              "state": "PASS",
+              "critical": true,
+              "detail": "15 requested runtime capabilities negotiated."
+            },
+            {
+              "id": "operability",
+              "label": "2030 no-code operability",
+              "state": "PASS",
+              "critical": true,
+              "detail": "18 block capability contracts · 8 repeaters · 2 media contracts · FR/EN/AR + RTL."
+            },
+            {
+              "id": "fallback",
+              "label": "Native fallback",
+              "state": "PASS",
+              "critical": true,
+              "detail": "Category-Native/native fallback remains mandatory."
+            }
+          ],
+          "blockers": [],
+          "warnings": [],
+          "certifiedAt": "2026-10-12T23:46:39.715Z"
+        },
+        "compatibility": {
+          "minimumRuntime": "pea-v1",
+          "maximumRuntime": null,
+          "forwardPolicy": "capability-negotiation",
+          "unknownFields": "preserve",
+          "nativeFallback": true,
+          "schemaVersion": 3,
+          "compilerProfile": "pea-world-factory-2030-operability-v3"
+        },
+        "revision": {
+          "worldKey": "ac.product.commerce.complete.r1",
+          "revision": 3,
+          "supersedes": "eaf1499d28fc9c09821f957f89abb8f5",
+          "immutableAfterCertification": true
+        },
+        "overrides": {
+          "roleOverrides": {
+            "product-commerce-r1": "hero",
+            "pc-opening": "hero",
+            "pc-assurance": "editorial",
+            "pc-context": "media",
+            "pc-description": "editorial",
+            "pc-specifications": "specifications",
+            "pc-contents": "bundle",
+            "pc-usage": "editorial",
+            "pc-fulfillment": "delivery",
+            "pc-conditions": "trust",
+            "pc-reviews": "reviews",
+            "pc-faq": "faq",
+            "pc-bundle": "bundle",
+            "pc-accessories": "accessories",
+            "pc-alternatives": "recommendations",
+            "pc-assistance": "secondary_conversion",
+            "pc-recap": "primary_conversion"
+          },
+          "supplementalRoleOverrides": {
+            "pc-opening": [
+              "identity",
+              "media",
+              "pricing",
+              "availability",
+              "variants",
+              "primary_conversion"
+            ]
+          },
+          "bindingOverrides": [],
+          "actionOverrides": [],
+          "note": null
+        },
+        "provenance": {
+          "createdBy": "WORLD_FACTORY",
+          "manualOverrides": 18,
+          "notes": [
+            "No hardcoded production theme requirement.",
+            "UI-led import/assign/update contract active.",
+            "No foreign code execution.",
+            "Business authorities remain canonical.",
+            "Inference is reviewable and versioned.",
+            "Certified revisions are immutable; changes create a new revision."
+          ]
+        }
+      }
+    },
+    "factory": {
+      "engineVersion": 3,
+      "schemaVersion": 3,
+      "compilerProfile": "pea-world-factory-2030-operability-v3",
+      "candidateFingerprint": "6a931da123682bad8efa57770eaf3371",
+      "documentFingerprint": "7e99597671ad9c02624eedac4334863e",
+      "compiledFingerprint": "2aa6f261aad0fd91e95947213e605f35",
+      "themeKind": "detail",
+      "masterDomain": "b2c_product_digital",
+      "doctrineKeys": [],
+      "storefrontKeys": [],
+      "strictVisualFidelity": false,
+      "source": {
+        "kind": "existing",
+        "label": "Product Commerce Light R3",
+        "sourceFingerprint": "product-commerce-light-r3",
+        "safeToApply": true,
+        "upstreamBlockingCodes": [],
+        "upstreamReviewCodes": [
+          "DEPLOYED_ACCEPTANCE_PENDING"
+        ],
+        "compilerFingerprint": "4e470c5c6afb36b44116b690a48d3090",
+        "importedAt": "2026-10-12T23:46:39.715Z"
+      },
+      "visualReferences": [
+        {
+          "kind": "desktop",
+          "filename": "product-real-booklet-desktop.png",
+          "sha256": "bcbb751d4cabbb0905623e2585139ef5f6650b9355fbb7080af7477fb39884af",
+          "width": 1440,
+          "height": 4806,
+          "reviewed": false,
+          "reviewNote": "Actual delivered code render. Customer aesthetic approval and deployed acceptance remain pending."
+        },
+        {
+          "kind": "mobile",
+          "filename": "product-real-mobile.png",
+          "sha256": "2a1fbac80c7c573dc238550e7487c4e953597b5775b9931dae087187ffbda227",
+          "width": 390,
+          "height": 8245,
+          "reviewed": false,
+          "reviewNote": "Actual delivered code render. Customer aesthetic approval and deployed acceptance remain pending."
+        }
+      ],
+      "semanticSlots": [
+        {
+          "blockId": "product-commerce-r1",
+          "blockType": "ac_product_world",
+          "path": "root.0",
+          "role": "hero",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": true
+        },
+        {
+          "blockId": "pc-opening",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.0",
+          "role": "hero",
+          "supplementalRoles": [
+            "identity",
+            "media",
+            "pricing",
+            "availability",
+            "variants",
+            "primary_conversion"
+          ],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": true
+        },
+        {
+          "blockId": "pc-assurance",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.1",
+          "role": "editorial",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "pc-context",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.2",
+          "role": "media",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": true
+        },
+        {
+          "blockId": "pc-description",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.3",
+          "role": "editorial",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "pc-specifications",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.4",
+          "role": "specifications",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "pc-contents",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.5",
+          "role": "bundle",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "pc-usage",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.6",
+          "role": "editorial",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "pc-fulfillment",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.7",
+          "role": "delivery",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "pc-conditions",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.8",
+          "role": "trust",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "pc-reviews",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.9",
+          "role": "reviews",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "pc-faq",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.10",
+          "role": "faq",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "pc-bundle",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.11",
+          "role": "bundle",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "pc-accessories",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.12",
+          "role": "accessories",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "pc-alternatives",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.13",
+          "role": "recommendations",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "pc-assistance",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.14",
+          "role": "secondary_conversion",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": false
+        },
+        {
+          "blockId": "pc-recap",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.15",
+          "role": "primary_conversion",
+          "supplementalRoles": [],
+          "confidence": 1,
+          "evidence": [
+            "operator-override"
+          ],
+          "required": true
+        },
+        {
+          "blockId": "pc-recommended",
+          "blockType": "atomic_offer_section",
+          "path": "root.0.props.content.16",
+          "role": "unknown",
+          "supplementalRoles": [],
+          "confidence": 0.05,
+          "evidence": [],
+          "required": false
+        }
+      ],
+      "bindingPlan": [
+        {
+          "blockId": "product-commerce-r1",
+          "role": "hero",
+          "bindingKey": "identity.name",
+          "targetKey": "title",
+          "authority": "Category-Native / Catalog",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Public-safe binding · Category-Native / Catalog",
+          "manualOverride": false,
+          "missingPolicy": "hide_block"
+        },
+        {
+          "blockId": "product-commerce-r1",
+          "role": "hero",
+          "bindingKey": "identity.shortDescription",
+          "targetKey": "lead",
+          "authority": "Category-Native / Catalog",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Public-safe binding · Category-Native / Catalog",
+          "manualOverride": false,
+          "missingPolicy": "hide_block"
+        },
+        {
+          "blockId": "product-commerce-r1",
+          "role": "hero",
+          "bindingKey": "media.primary",
+          "targetKey": "mediaUrl",
+          "authority": "Catalog Media",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Public-safe binding · Catalog Media",
+          "manualOverride": false,
+          "missingPolicy": "hide_block"
+        },
+        {
+          "blockId": "pc-opening",
+          "role": "hero",
+          "bindingKey": "identity.name",
+          "targetKey": "title",
+          "authority": "Category-Native / Catalog",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "pc-context",
+          "role": "media",
+          "bindingKey": "media.gallery",
+          "targetKey": "items",
+          "authority": "Catalog Media",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "pc-description",
+          "role": "editorial",
+          "bindingKey": "identity.description",
+          "targetKey": "title",
+          "authority": "Category-Native / Catalog",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "pc-conditions",
+          "role": "trust",
+          "bindingKey": "trust.claims",
+          "targetKey": "items",
+          "authority": "Trust authority",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "pc-reviews",
+          "role": "reviews",
+          "bindingKey": "reviews.summary",
+          "targetKey": "items",
+          "authority": "Review authority",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "pc-bundle",
+          "role": "bundle",
+          "bindingKey": "relations.recommendations",
+          "targetKey": "items",
+          "authority": "Catalog Discovery",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "pc-accessories",
+          "role": "accessories",
+          "bindingKey": "relations.recommendations",
+          "targetKey": "items",
+          "authority": "Catalog Discovery",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "pc-alternatives",
+          "role": "recommendations",
+          "bindingKey": "relations.recommendations",
+          "targetKey": "items",
+          "authority": "Catalog Discovery",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "pc-recap",
+          "role": "primary_conversion",
+          "bindingKey": "identity.name",
+          "targetKey": "title",
+          "authority": "Category-Native / Catalog",
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        },
+        {
+          "blockId": "pc-recommended",
+          "role": "unknown",
+          "bindingKey": "relations.recommendations",
+          "targetKey": "items",
+          "authority": "Catalog Discovery",
+          "confidence": 1,
+          "required": false,
+          "status": "RESOLVED",
+          "reason": "Atomic projection contract: whole-section absence is evaluated against public data by the conditional renderer.",
+          "manualOverride": false,
+          "missingPolicy": "omit"
+        }
+      ],
+      "actionPlan": [
+        {
+          "blockId": "pc-opening",
+          "role": "hero",
+          "intent": "primary",
+          "actionId": "basket.add",
+          "workflowId": null,
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "canonicalEngine": "Conversion Universe BasketExperience + /conversion/basket/*/items",
+          "targetMode": "current_item",
+          "targetSourceId": "catalog.items",
+          "reason": "Canonical action · Conversion Universe BasketExperience + /conversion/basket/*/items",
+          "manualOverride": false
+        },
+        {
+          "blockId": "pc-assistance",
+          "role": "secondary_conversion",
+          "intent": "secondary",
+          "actionId": "checkout.start",
+          "workflowId": null,
+          "confidence": 1,
+          "required": true,
+          "status": "RESOLVED",
+          "canonicalEngine": "Conversion Universe + customer-commerce",
+          "targetMode": "current_item",
+          "targetSourceId": "catalog.items",
+          "reason": "Canonical action · Conversion Universe + customer-commerce",
+          "manualOverride": false
+        },
+        {
+          "blockId": "pc-recap",
+          "role": "primary_conversion",
+          "intent": "secondary",
+          "actionId": "inquiry.submit",
+          "workflowId": null,
+          "confidence": 1,
+          "required": false,
+          "status": "REVIEW",
+          "canonicalEngine": "public-universe/createPublicInquiry",
+          "targetMode": "none",
+          "targetSourceId": null,
+          "reason": "Canonical action · public-universe/createPublicInquiry",
+          "manualOverride": false
+        }
+      ],
+      "relationPlan": [
+        {
+          "blockId": "pc-contents",
+          "role": "bundle",
+          "strategy": "bundle_members",
+          "sourceId": "catalog.items",
+          "anchorMode": "current_item",
+          "limit": 12,
+          "emptyPolicy": "preserve_static",
+          "status": "RESOLVED"
+        },
+        {
+          "blockId": "pc-bundle",
+          "role": "bundle",
+          "strategy": "bundle_members",
+          "sourceId": "catalog.items",
+          "anchorMode": "current_item",
+          "limit": 12,
+          "emptyPolicy": "preserve_static",
+          "status": "RESOLVED"
+        },
+        {
+          "blockId": "pc-accessories",
+          "role": "accessories",
+          "strategy": "compatible_accessories",
+          "sourceId": "catalog.items",
+          "anchorMode": "current_item",
+          "limit": 12,
+          "emptyPolicy": "preserve_static",
+          "status": "RESOLVED"
+        },
+        {
+          "blockId": "pc-alternatives",
+          "role": "recommendations",
+          "strategy": "similar_items",
+          "sourceId": "catalog.items",
+          "anchorMode": "current_item",
+          "limit": 12,
+          "emptyPolicy": "preserve_static",
+          "status": "RESOLVED"
+        }
+      ],
+      "truthRequirements": [
+        {
+          "key": "promotion",
+          "blockId": "product-commerce-r1",
+          "required": false,
+          "status": "NOT_SHOWN",
+          "authority": null,
+          "evidence": "Promotion claim detected"
+        },
+        {
+          "key": "scarcity",
+          "blockId": "product-commerce-r1",
+          "required": false,
+          "status": "NOT_SHOWN",
+          "authority": null,
+          "evidence": "Scarcity language detected"
+        },
+        {
+          "key": "rating",
+          "blockId": "pc-reviews",
+          "required": true,
+          "status": "GOVERNED",
+          "authority": "Public Experience Truth Firewall",
+          "evidence": "Rating/review language detected"
+        },
+        {
+          "key": "certification",
+          "blockId": "product-commerce-r1",
+          "required": false,
+          "status": "NOT_SHOWN",
+          "authority": null,
+          "evidence": "Certification language detected"
+        },
+        {
+          "key": "pricing",
+          "blockId": "pc-opening",
+          "required": false,
+          "status": "NOT_SHOWN",
+          "authority": null,
+          "evidence": "Pricing language detected"
+        },
+        {
+          "key": "availability",
+          "blockId": "pc-opening",
+          "required": false,
+          "status": "NOT_SHOWN",
+          "authority": null,
+          "evidence": "Availability language detected"
+        },
+        {
+          "key": "trust",
+          "blockId": "pc-conditions",
+          "required": false,
+          "status": "NOT_SHOWN",
+          "authority": null,
+          "evidence": "Trust language detected"
+        }
+      ],
+      "responsive": {
+        "nativeDesktop": true,
+        "nativeMobile": true,
+        "responsiveHints": 17,
+        "breakpointHints": 51,
+        "horizontalOverflowRisk": false,
+        "fixedWidthEvidence": [],
+        "notes": [
+          "Responsive metadata detected.",
+          "No obvious fixed-width overflow evidence."
+        ]
+      },
+      "capabilities": [
+        {
+          "capability": "canonical-actions",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Studio Action Registry",
+          "detail": "Capability supported by installed canonical runtime."
+        },
+        {
+          "capability": "canonical-basket",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Conversion Universe",
+          "detail": "Capability supported by installed canonical runtime."
+        },
+        {
+          "capability": "canonical-checkout",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Conversion Universe",
+          "detail": "Capability supported by installed canonical runtime."
+        },
+        {
+          "capability": "canonical-route",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Marketplace route/source registry",
+          "detail": "Capability supported by installed canonical runtime."
+        },
+        {
+          "capability": "native-fallback",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Category-Native / Public Experience runtime",
+          "detail": "Capability supported by installed canonical runtime."
+        },
+        {
+          "capability": "product-semantic-runtime-v2",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Studio Product Semantic Runtime V2",
+          "detail": "Capability supported by installed canonical runtime."
+        },
+        {
+          "capability": "public-experience-360",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "PublicExperience360",
+          "detail": "Capability supported by installed canonical runtime."
+        },
+        {
+          "capability": "relation-dynamic-sources",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Studio Dynamic Source / Catalog Relations",
+          "detail": "Capability supported by installed canonical runtime."
+        },
+        {
+          "capability": "responsive-runtime",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Studio public runtime",
+          "detail": "Capability supported by installed canonical runtime."
+        },
+        {
+          "capability": "truth-firewall",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Public Experience Truth Firewall",
+          "detail": "Capability supported by installed canonical runtime."
+        },
+        {
+          "capability": "theme-operability-v1",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "World Factory 2030 Operability Kernel",
+          "detail": "Capability supported by installed 2030 theme operating kernel."
+        },
+        {
+          "capability": "declarative-conditions",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Studio Published Runtime",
+          "detail": "Capability supported by installed 2030 theme operating kernel."
+        },
+        {
+          "capability": "ui-led-theme-operation",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Public Experience Authority / World Factory",
+          "detail": "Capability supported by installed 2030 theme operating kernel."
+        },
+        {
+          "capability": "fr-en-ar-rtl",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Studio Published Runtime",
+          "detail": "Capability supported by installed 2030 theme operating kernel."
+        },
+        {
+          "capability": "theme-token-contract",
+          "requested": true,
+          "status": "SUPPORTED",
+          "authority": "Studio Design Runtime",
+          "detail": "Capability supported by installed 2030 theme operating kernel."
+        }
+      ],
+      "operability": {
+        "version": 1,
+        "density": null,
+        "blockCapabilities": [
+          {
+            "blockId": "product-commerce-r1",
+            "blockType": "ac_product_world",
+            "role": "hero",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": true,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": false,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "media",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility",
+              "seo"
+            ]
+          },
+          {
+            "blockId": "pc-opening",
+            "blockType": "atomic_offer_section",
+            "role": "hero",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": true,
+            "acceptsActions": true,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "productRole",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "media",
+              "actions",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility",
+              "seo"
+            ]
+          },
+          {
+            "blockId": "pc-assurance",
+            "blockType": "atomic_offer_section",
+            "role": "editorial",
+            "acceptsBindings": false,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": true,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": false,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "productRole",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "media",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility",
+              "seo"
+            ]
+          },
+          {
+            "blockId": "pc-context",
+            "blockType": "atomic_offer_section",
+            "role": "media",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": true,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "productRole",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "media",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "pc-description",
+            "blockType": "atomic_offer_section",
+            "role": "editorial",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": true,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": false,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "productRole",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "media",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility",
+              "seo"
+            ]
+          },
+          {
+            "blockId": "pc-specifications",
+            "blockType": "atomic_offer_section",
+            "role": "specifications",
+            "acceptsBindings": false,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "productRole",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "pc-contents",
+            "blockType": "atomic_offer_section",
+            "role": "bundle",
+            "acceptsBindings": false,
+            "acceptsDynamicSource": true,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "productRole",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [
+              "catalog.items"
+            ],
+            "merchandisingModes": [
+              "automatic",
+              "curated",
+              "manual",
+              "hybrid"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "pc-usage",
+            "blockType": "atomic_offer_section",
+            "role": "editorial",
+            "acceptsBindings": false,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": true,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": false,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "productRole",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "media",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility",
+              "seo"
+            ]
+          },
+          {
+            "blockId": "pc-fulfillment",
+            "blockType": "atomic_offer_section",
+            "role": "delivery",
+            "acceptsBindings": false,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": false,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "productRole",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "pc-conditions",
+            "blockType": "atomic_offer_section",
+            "role": "trust",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "productRole",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "pc-reviews",
+            "blockType": "atomic_offer_section",
+            "role": "reviews",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "productRole",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "pc-faq",
+            "blockType": "atomic_offer_section",
+            "role": "faq",
+            "acceptsBindings": false,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "productRole",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility",
+              "seo"
+            ]
+          },
+          {
+            "blockId": "pc-bundle",
+            "blockType": "atomic_offer_section",
+            "role": "bundle",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": true,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "productRole",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [
+              "catalog.items"
+            ],
+            "merchandisingModes": [
+              "automatic",
+              "curated",
+              "manual",
+              "hybrid"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "pc-accessories",
+            "blockType": "atomic_offer_section",
+            "role": "accessories",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": true,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "productRole",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [
+              "catalog.items"
+            ],
+            "merchandisingModes": [
+              "automatic",
+              "curated",
+              "manual",
+              "hybrid"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "pc-alternatives",
+            "blockType": "atomic_offer_section",
+            "role": "recommendations",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": true,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "productRole",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [
+              "catalog.items"
+            ],
+            "merchandisingModes": [
+              "automatic",
+              "curated",
+              "manual",
+              "hybrid"
+            ],
+            "inspectorSections": [
+              "content",
+              "data",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "pc-assistance",
+            "blockType": "atomic_offer_section",
+            "role": "secondary_conversion",
+            "acceptsBindings": false,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": true,
+            "acceptsChildren": false,
+            "acceptsRepeaters": false,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "productRole",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "actions",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "pc-recap",
+            "blockType": "atomic_offer_section",
+            "role": "primary_conversion",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": true,
+            "acceptsChildren": false,
+            "acceptsRepeaters": false,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "productRole",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "actions",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          },
+          {
+            "blockId": "pc-recommended",
+            "blockType": "atomic_offer_section",
+            "role": "unknown",
+            "acceptsBindings": true,
+            "acceptsDynamicSource": false,
+            "acceptsMedia": false,
+            "acceptsActions": false,
+            "acceptsChildren": false,
+            "acceptsRepeaters": true,
+            "acceptsConditions": true,
+            "acceptsDesign": true,
+            "acceptsResponsive": true,
+            "editableFields": [
+              "role",
+              "productRole",
+              "title",
+              "lead",
+              "eyebrow",
+              "bindingKey",
+              "fieldSections",
+              "fieldKeys",
+              "doctrineKeys",
+              "layout",
+              "relationKind",
+              "enableSelection",
+              "navTitle",
+              "mediaIndex",
+              "neutralExperienceRevision",
+              "heroFieldKeys",
+              "heroFactLimit",
+              "assistanceImage",
+              "contactLabel",
+              "sourceDesign"
+            ],
+            "allowedSourceIds": [],
+            "merchandisingModes": [
+              "automatic"
+            ],
+            "inspectorSections": [
+              "content",
+              "display",
+              "design",
+              "responsive",
+              "conditions",
+              "accessibility"
+            ]
+          }
+        ],
+        "conditions": [],
+        "repeaters": [
+          {
+            "blockId": "pc-context",
+            "targetKey": "items",
+            "source": "binding",
+            "bindingKey": "media.gallery",
+            "sourceId": null,
+            "strategy": null,
+            "limit": 24,
+            "sort": "canonical",
+            "emptyPolicy": "omit",
+            "itemVariant": null
+          },
+          {
+            "blockId": "pc-contents",
+            "targetKey": "items",
+            "source": "dynamic_source",
+            "bindingKey": null,
+            "sourceId": "catalog.items",
+            "strategy": "bundle_members",
+            "limit": 12,
+            "sort": "recommended",
+            "emptyPolicy": "preserve_static",
+            "itemVariant": null
+          },
+          {
+            "blockId": "pc-conditions",
+            "targetKey": "items",
+            "source": "binding",
+            "bindingKey": "trust.claims",
+            "sourceId": null,
+            "strategy": null,
+            "limit": 24,
+            "sort": "canonical",
+            "emptyPolicy": "omit",
+            "itemVariant": null
+          },
+          {
+            "blockId": "pc-reviews",
+            "targetKey": "items",
+            "source": "binding",
+            "bindingKey": "reviews.summary",
+            "sourceId": null,
+            "strategy": null,
+            "limit": 24,
+            "sort": "canonical",
+            "emptyPolicy": "omit",
+            "itemVariant": null
+          },
+          {
+            "blockId": "pc-bundle",
+            "targetKey": "items",
+            "source": "dynamic_source",
+            "bindingKey": null,
+            "sourceId": "catalog.items",
+            "strategy": "bundle_members",
+            "limit": 12,
+            "sort": "recommended",
+            "emptyPolicy": "preserve_static",
+            "itemVariant": null
+          },
+          {
+            "blockId": "pc-accessories",
+            "targetKey": "items",
+            "source": "dynamic_source",
+            "bindingKey": null,
+            "sourceId": "catalog.items",
+            "strategy": "compatible_accessories",
+            "limit": 12,
+            "sort": "recommended",
+            "emptyPolicy": "preserve_static",
+            "itemVariant": null
+          },
+          {
+            "blockId": "pc-alternatives",
+            "targetKey": "items",
+            "source": "dynamic_source",
+            "bindingKey": null,
+            "sourceId": "catalog.items",
+            "strategy": "similar_items",
+            "limit": 12,
+            "sort": "recommended",
+            "emptyPolicy": "preserve_static",
+            "itemVariant": null
+          },
+          {
+            "blockId": "pc-recommended",
+            "targetKey": "items",
+            "source": "binding",
+            "bindingKey": "relations.recommendations",
+            "sourceId": null,
+            "strategy": null,
+            "limit": 24,
+            "sort": "canonical",
+            "emptyPolicy": "omit",
+            "itemVariant": null
+          }
+        ],
+        "media": [
+          {
+            "blockId": "product-commerce-r1",
+            "targetKey": "mediaUrl",
+            "kind": "primary",
+            "source": "binding",
+            "bindingKey": "media.primary",
+            "assetRole": null,
+            "required": true,
+            "presentation": {
+              "fit": "cover",
+              "position": "50% 50%",
+              "aspectRatio": null,
+              "overlay": null,
+              "focalPoint": null
+            },
+            "responsive": {
+              "desktop": null,
+              "tablet": null,
+              "mobile": null
+            }
+          },
+          {
+            "blockId": "pc-context",
+            "targetKey": "items",
+            "kind": "gallery",
+            "source": "binding",
+            "bindingKey": "media.gallery",
+            "assetRole": null,
+            "required": false,
+            "presentation": {
+              "fit": "cover",
+              "position": "50% 50%",
+              "aspectRatio": null,
+              "overlay": null,
+              "focalPoint": null
+            },
+            "responsive": {
+              "desktop": null,
+              "tablet": null,
+              "mobile": null
+            }
+          }
+        ],
+        "interactions": [
+          {
+            "blockId": "pc-faq",
+            "kind": "accordion",
+            "status": "SUPPORTED",
+            "configuration": {}
+          },
+          {
+            "blockId": "pc-recap",
+            "kind": "sticky_conversion",
+            "status": "SUPPORTED",
+            "configuration": {}
+          }
+        ],
+        "localization": {
+          "defaultLocale": "fr",
+          "locales": [
+            "fr",
+            "en",
+            "ar"
+          ],
+          "rtlLocales": [
+            "ar"
+          ],
+          "themeStrings": "localized-map",
+          "fallback": "default-locale",
+          "missingTranslation": "warn"
+        },
+        "tokens": {
+          "colors": {},
+          "typography": {},
+          "spacing": {},
+          "radii": {},
+          "shadows": {},
+          "layout": {},
+          "motion": {}
+        },
+        "assets": [],
+        "performance": {
+          "maxRootBlocks": 40,
+          "maxTotalBlocks": 160,
+          "maxDynamicSources": 24,
+          "maxAboveFoldMedia": 6,
+          "maxMediaAssets": 80,
+          "maxDocumentBytes": 1500000,
+          "maxInteractions": 40
+        },
+        "shell": {
+          "mode": "marketplace_global",
+          "allowGlobalHeaderOverride": false,
+          "allowGlobalFooterOverride": false,
+          "allowGlobalNavigationOverride": false
+        },
+        "editing": {
+          "uiLed": true,
+          "rawJsonRequired": false,
+          "allowBlockMove": true,
+          "allowBlockDuplicate": true,
+          "allowBlockHide": true,
+          "allowBindingChange": true,
+          "allowActionChange": true,
+          "allowMediaReplace": true,
+          "allowDesignChange": true,
+          "allowResponsiveChange": true,
+          "allowConditionChange": true,
+          "immutableBusinessTruth": true
+        },
+        "inspector": {
+          "generatedFromCapabilities": true,
+          "hideUnsupportedFields": true,
+          "showAuthorityOwnership": true,
+          "showInheritance": true
+        }
+      },
+      "certification": {
+        "level": "READY",
+        "lifecycle": "CERTIFIED",
+        "productionEligible": true,
+        "coverage": {
+          "semantic": 100,
+          "binding": 100,
+          "action": 100,
+          "truth": 100,
+          "responsive": 100,
+          "visual": 50,
+          "overall": 92
+        },
+        "gates": [
+          {
+            "id": "source-safety",
+            "label": "Source sanitized",
+            "state": "PASS",
+            "critical": true,
+            "detail": "Universal Import candidate has no upstream blocker."
+          },
+          {
+            "id": "domain",
+            "label": "Master domain / doctrines",
+            "state": "PASS",
+            "critical": true,
+            "detail": "b2c_product_digital · 0 doctrine(s)"
+          },
+          {
+            "id": "storefront-shell",
+            "label": "Global shell authority",
+            "state": "PASS",
+            "critical": true,
+            "detail": "Global AngelCare header/navigation/footer remain outside the imported Storefront World."
+          },
+          {
+            "id": "semantic",
+            "label": "Semantic anatomy",
+            "state": "PASS",
+            "critical": true,
+            "detail": "Required roles covered (100%)."
+          },
+          {
+            "id": "bindings",
+            "label": "Canonical binding coverage",
+            "state": "PASS",
+            "critical": true,
+            "detail": "5/5 required bindings resolved."
+          },
+          {
+            "id": "actions",
+            "label": "Canonical action coverage",
+            "state": "PASS",
+            "critical": true,
+            "detail": "2/2 required actions resolved; current-item targets supported for catalog actions."
+          },
+          {
+            "id": "relations",
+            "label": "Contextual relation sources",
+            "state": "PASS",
+            "critical": false,
+            "detail": "4 relation rail(s) compiled with current-item anchor."
+          },
+          {
+            "id": "truth",
+            "label": "Truth Firewall contract",
+            "state": "PASS",
+            "critical": true,
+            "detail": "Commercial claims are classified for Truth Firewall enforcement."
+          },
+          {
+            "id": "responsive",
+            "label": "Responsive contract",
+            "state": "PASS",
+            "critical": true,
+            "detail": "Responsive metadata detected. No obvious fixed-width overflow evidence."
+          },
+          {
+            "id": "visual",
+            "label": "Approved desktop/mobile reference",
+            "state": "PASS",
+            "critical": false,
+            "detail": "Desktop + mobile reference evidence approved."
+          },
+          {
+            "id": "capabilities",
+            "label": "Capability negotiation",
+            "state": "PASS",
+            "critical": true,
+            "detail": "15 requested runtime capabilities negotiated."
+          },
+          {
+            "id": "operability",
+            "label": "2030 no-code operability",
+            "state": "PASS",
+            "critical": true,
+            "detail": "18 block capability contracts · 8 repeaters · 2 media contracts · FR/EN/AR + RTL."
+          },
+          {
+            "id": "fallback",
+            "label": "Native fallback",
+            "state": "PASS",
+            "critical": true,
+            "detail": "Category-Native/native fallback remains mandatory."
+          }
+        ],
+        "blockers": [],
+        "warnings": [],
+        "certifiedAt": "2026-10-12T23:46:39.715Z"
+      },
+      "compatibility": {
+        "minimumRuntime": "pea-v1",
+        "maximumRuntime": null,
+        "forwardPolicy": "capability-negotiation",
+        "unknownFields": "preserve",
+        "nativeFallback": true,
+        "schemaVersion": 3,
+        "compilerProfile": "pea-world-factory-2030-operability-v3"
+      },
+      "revision": {
+        "worldKey": "ac.product.commerce.complete.r1",
+        "revision": 3,
+        "supersedes": "eaf1499d28fc9c09821f957f89abb8f5",
+        "immutableAfterCertification": true
+      },
+      "overrides": {
+        "roleOverrides": {
+          "product-commerce-r1": "hero",
+          "pc-opening": "hero",
+          "pc-assurance": "editorial",
+          "pc-context": "media",
+          "pc-description": "editorial",
+          "pc-specifications": "specifications",
+          "pc-contents": "bundle",
+          "pc-usage": "editorial",
+          "pc-fulfillment": "delivery",
+          "pc-conditions": "trust",
+          "pc-reviews": "reviews",
+          "pc-faq": "faq",
+          "pc-bundle": "bundle",
+          "pc-accessories": "accessories",
+          "pc-alternatives": "recommendations",
+          "pc-assistance": "secondary_conversion",
+          "pc-recap": "primary_conversion"
+        },
+        "supplementalRoleOverrides": {
+          "pc-opening": [
+            "identity",
+            "media",
+            "pricing",
+            "availability",
+            "variants",
+            "primary_conversion"
+          ]
+        },
+        "bindingOverrides": [],
+        "actionOverrides": [],
+        "note": null
+      },
+      "provenance": {
+        "createdBy": "WORLD_FACTORY",
+        "manualOverrides": 18,
+        "notes": [
+          "No hardcoded production theme requirement.",
+          "UI-led import/assign/update contract active.",
+          "No foreign code execution.",
+          "Business authorities remain canonical.",
+          "Inference is reviewable and versioned.",
+          "Certified revisions are immutable; changes create a new revision."
+        ]
+      }
+    }
+  },
+  "data": {
+    "root": {
+      "props": {
+        "title": "Product · Commerce Light R3"
+      }
+    },
+    "content": [
+      {
+        "type": "ac_product_world",
+        "props": {
+          "id": "product-commerce-r1",
+          "atomicExperienceVersion": 1,
+          "productCommerceRevision": 1,
+          "productMediaSlots": {
+            "context": "context",
+            "description": "description",
+            "contents": "contents",
+            "detail": "detail"
+          },
+          "content": [
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "pc-opening",
+                "role": "opening",
+                "productRole": "opening",
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "hidden": false,
+                "primaryAction": {
+                  "version": 1,
+                  "actionId": "basket.add",
+                  "targetMode": "current_item"
+                }
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "pc-assurance",
+                "role": "benefits",
+                "productRole": "assurance",
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "hidden": false
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "pc-context",
+                "role": "gallery",
+                "productRole": "context",
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "hidden": false
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "pc-description",
+                "role": "story",
+                "productRole": "description",
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "hidden": false
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "pc-specifications",
+                "role": "facts",
+                "productRole": "specifications",
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "hidden": false
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "pc-contents",
+                "role": "contents",
+                "productRole": "contents",
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "hidden": false
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "pc-usage",
+                "role": "facts",
+                "productRole": "usage",
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "hidden": false
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "pc-fulfillment",
+                "role": "facts",
+                "productRole": "fulfillment",
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "hidden": false
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "pc-conditions",
+                "role": "proof",
+                "productRole": "conditions",
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "hidden": false
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "pc-reviews",
+                "role": "reviews",
+                "productRole": "reviews",
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "hidden": false
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "pc-faq",
+                "role": "faq",
+                "productRole": "faq",
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "hidden": false
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "pc-bundle",
+                "role": "related",
+                "productRole": "bundle",
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "hidden": false
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "pc-accessories",
+                "role": "related",
+                "productRole": "accessories",
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "hidden": false
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "pc-alternatives",
+                "role": "related",
+                "productRole": "alternatives",
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "hidden": false
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "pc-assistance",
+                "role": "assistance",
+                "productRole": "assistance",
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "hidden": false,
+                "secondaryAction": {
+                  "version": 1,
+                  "actionId": "checkout.start",
+                  "targetMode": "current_item"
+                }
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "pc-recap",
+                "role": "decision",
+                "productRole": "recap",
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                },
+                "hidden": false
+              }
+            },
+            {
+              "type": "atomic_offer_section",
+              "props": {
+                "id": "pc-recommended",
+                "role": "related",
+                "productRole": "recommended",
+                "title": {
+                  "fr": "À découvrir aussi",
+                  "en": "Recommended products",
+                  "ar": "منتجات قد تعجبك"
+                },
+                "bindingKey": "relations.recommendations",
+                "layout": "rail",
+                "relationKind": "recommendation",
+                "hidden": false,
+                "responsive": {
+                  "desktopVisible": true,
+                  "tabletVisible": true,
+                  "mobileVisible": true
+                }
+              }
+            }
+          ],
+          "productVisualRevision": 3
+        }
+      }
+    ]
+  },
+  "assets": [],
+  "fingerprints": {
+    "document": "7e99597671ad9c02624eedac4334863e",
+    "factory": "73b15686ba934b6ae72a23142cfb211e",
+    "package": "85630d268d71bdfaf0d3df3c2e927f4e"
+  }
+}

@@ -26,12 +26,17 @@ import {shouldRenderWorldBlock} from './world-operability'
 import type {PublicExperience360,PublicExperienceTruthReport} from '@/angelcare-marketplace/public-experience-authority/types'
 import {StudioProductWorldRuntime} from './components/StudioProductWorldRuntime'
 import {StudioServiceWorldRuntime} from './components/StudioServiceWorldRuntime'
+import {ServiceCommerceRenderer} from '../service-commerce-experience/ServiceCommerceRenderer'
+import {isServiceCommerceRoot} from '../service-commerce-experience/model'
 import {StudioAcademyWorldRuntime} from './components/StudioAcademyWorldRuntime'
+import {AcademyCommerceRenderer} from '../academy-commerce-experience/AcademyCommerceRenderer'
+import {isAcademyCommerceRoot,isAcademyCourseData} from '../academy-commerce-experience/model'
 import {StudioB2BWorldRuntime} from './components/StudioB2BWorldRuntime'
 import {shouldUseNativeAtomicFallback} from './world-visual-authority'
 import { LIVING_MARKETPLACE_WORLD_ID, isLivingMarketplaceComponent, livingMarketplaceComponentInData } from '@/angelcare-marketplace/homepage-living-marketplace/world'
 import { LivingMarketplaceHomepage } from '@/angelcare-marketplace/homepage-living-marketplace/components/LivingMarketplaceHomepage'
 import { getHomepageExperience } from '@/angelcare-marketplace/homepage-flagship/repository'
+import {ProductCommerceRenderer} from '../product-commerce-experience/ProductCommerceRenderer'
 import { AtomicExperienceFrame, AtomicOfferSection, AtomicOfferGroup } from '../atomic-offer-experience/AtomicExperience'
 import { isAtomicRoot, isAtomicSectionProps, ATOMIC_ROOTS, publicAtomicProjection } from '../atomic-offer-experience/model'
 
@@ -107,6 +112,9 @@ async function RenderComponent({component,pickers,locale,territoryId,audienceId,
   if(props.hidden===true)return null
   const worldVisibility=shouldRenderWorldBlock(props,{locale,territoryId,audienceId});if(!worldVisibility.render)return null
   const nested=children(component)
+  if(type==='ac_product_world'&&props.productCommerceRevision===1&&currentExperience360?.classification.masterDomain==='b2c_product_digital'&&currentTruthReport)return <ProductCommerceRenderer data={currentExperience360} truthReport={currentTruthReport} worldProps={props}/>
+  if(type==='ac_service_world'&&isServiceCommerceRoot(props)&&currentExperience360?.classification.masterDomain==='b2c_service_family'&&currentTruthReport)return <ServiceCommerceRenderer data={currentExperience360} truthReport={currentTruthReport} worldProps={props}/>
+  if(type==='ac_academy_world'&&isAcademyCommerceRoot(props)&&currentExperience360&&isAcademyCourseData(currentExperience360)&&currentTruthReport)return <AcademyCommerceRenderer data={currentExperience360} truthReport={currentTruthReport} worldProps={props}/>
   if(isAtomicRoot(type,props)&&currentExperience360?.classification.masterDomain===ATOMIC_ROOTS[type])return <AtomicExperienceFrame key={`${currentExperience360.identity.id}:${locale}`} type={type} props={props} data={publicAtomicProjection(currentExperience360)} locale={locale}>{await Promise.all(nested.map((child,index)=><RenderComponent key={s(child.props?.id)||index} component={child} pickers={pickers} locale={locale} territoryId={territoryId} audienceId={audienceId} attribution={attribution} actionContext={actionContext} currentExperience360={currentExperience360} currentTruthReport={currentTruthReport}/>))}</AtomicExperienceFrame>
   if(type==='atomic_offer_group')return <AtomicOfferGroup props={props}>{await Promise.all(nested.map((child,index)=><RenderComponent key={s(child.props?.id)||index} component={child} pickers={pickers} locale={locale} territoryId={territoryId} audienceId={audienceId} attribution={attribution} actionContext={actionContext} currentExperience360={currentExperience360} currentTruthReport={currentTruthReport}/>))}</AtomicOfferGroup>
   if(type==='atomic_offer_section')return isAtomicSectionProps(props)?<AtomicOfferSection props={props}/>:null
