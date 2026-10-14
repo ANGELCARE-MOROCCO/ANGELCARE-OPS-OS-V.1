@@ -114,6 +114,7 @@ export const SOVEREIGN_TOWERS: SovereignTowerDefinition[] = [
       { label: 'Runtime & Release', href: '/angelcare-360-operator/platform?view=runtime' },
       { label: 'Economics & Policy', href: '/angelcare-360-operator/platform?view=governance' },
       { label: 'Ten-Year Autonomy Kernel', href: '/angelcare-360-operator/platform/autonomy-kernel' },
+      { label: 'Emails & correspondance', href: '/angelcare-360-operator/email-command' },
 
     ],
   },

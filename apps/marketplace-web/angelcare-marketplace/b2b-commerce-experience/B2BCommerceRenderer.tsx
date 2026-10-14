@@ -1,0 +1,6 @@
+import {buildB2BView} from './model'
+import {B2BCommerceExperience} from './B2BCommerceExperience'
+import {shouldRenderWorldBlock} from '../studio-universal/world-operability'
+import type {StudioBlockProps} from '../studio-universal/types'
+import type {PublicExperience360,PublicExperienceTruthReport} from '../public-experience-authority/types'
+export function B2BCommerceRenderer({data,truthReport,worldProps={}}:{data:PublicExperience360;truthReport:PublicExperienceTruthReport;worldProps?:Record<string,unknown>}){if(data.classification.masterDomain!=='b2b_institutional')return null;const content=Array.isArray(worldProps.content)?worldProps.content.map(row=>{const block=row as {props?:Record<string,unknown>},props=block.props||{},permitted=shouldRenderWorldBlock(props as StudioBlockProps,{locale:data.classification.locale==='ar'?'ar':data.classification.locale==='en'?'en':'fr',territoryId:data.classification.territoryId,audienceId:data.classification.audienceId});return {...block,props:{...props,hidden:props.hidden===true||!permitted.render}}}):undefined;return <B2BCommerceExperience key={data.identity.id+data.classification.locale} view={buildB2BView(data,truthReport,{...worldProps,...(content?{content}:{})})}/>}

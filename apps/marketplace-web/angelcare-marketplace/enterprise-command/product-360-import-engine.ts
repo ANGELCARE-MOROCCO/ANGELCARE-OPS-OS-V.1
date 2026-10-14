@@ -16,6 +16,8 @@ type ApplyInput = {
   action: 'create' | 'update'
   importJobId: string
   requestId?: string
+  /** Reserved for the R2 server-side plan compiler. It never bypasses publication. */
+  allowIncompleteDraft?: boolean
 }
 
 export type { Product360Readiness } from './product-360-readiness'
@@ -470,7 +472,7 @@ export async function applyProduct360ImportRow(input:ApplyInput):Promise<{itemId
     const readiness=evaluateProduct360Readiness(after,input.doctrineKey)
     const requestedStatus=hasOwn(input.source,'status')?(text(input.normalized.status)||'draft'):(text(existing?.status)||'draft')
     const nonMediaBlockers=readiness.reasons.filter((reason)=>reason!=='MEDIA_MISSING')
-    if(nonMediaBlockers.length)fail(`Import Product 360 incomplet hors média : ${nonMediaBlockers.join(', ')}. La ligne est restaurée ; corrigez la source avant retry.`)
+    if(nonMediaBlockers.length && !input.allowIncompleteDraft)fail(`Import Product 360 incomplet hors média : ${nonMediaBlockers.join(', ')}. La ligne est restaurée ; corrigez la source avant retry.`)
     if(requestedStatus==='published'){
       if(!readiness.ready)fail(`Publication refusée par Product 360 readiness : ${readiness.reasons.join(', ')}.`)
       const published=await db.from('angelcare_marketplace_catalog_items').update({status:'published',publish_at:new Date().toISOString(),updated_by:input.context.actor.id,updated_at:new Date().toISOString()}).eq('id',itemId);if(published.error)throw published.error

@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import {ImportWorkspace} from '@/angelcare-marketplace/catalogue-import/ImportWorkspace'
 import { notFound } from 'next/navigation'
 import { hasMarketplacePermission, requireMarketplacePageContext } from '@/angelcare-marketplace/auth/context'
 import { categoryNativeStudioData } from '@/angelcare-marketplace/category-native/repository'
@@ -23,13 +24,9 @@ export default async function Page({params}:{params:Promise<{section:string}>}){
   if(section==='overview'){
     await requireMarketplacePageContext('marketplace.admin.access')
     content=<ImportCommandOverview/>
-  }else if(section==='product'){
-    await requireMarketplacePageContext('marketplace.admin.access')
-    content=<ProductImportStudio/>
-  }else if(section==='category-native'){
+  }else if(section==='product'||section==='category-native'){
     const context=await requireMarketplacePageContext('marketplace.category_native_import.view')
-    const data=await categoryNativeStudioData()
-    content=<CsvImportStudio schemas={data.schemas} initialImports={data.imports} canManage={hasMarketplacePermission(context,'marketplace.category_native_import.manage')}/>
+    content=<ImportWorkspace permissions={{manage:hasMarketplacePermission(context,'marketplace.catalog.manage')&&hasMarketplacePermission(context,'marketplace.category_native_import.manage'),media:hasMarketplacePermission(context,'marketplace.media.manage'),categories:hasMarketplacePermission(context,'marketplace.categories.manage'),export:hasMarketplacePermission(context,'marketplace.catalog.export'),publish:hasMarketplacePermission(context,'marketplace.catalog.publish')}}/>
   }else if(section==='media'){
     const context=await requireMarketplacePageContext('marketplace.media.view')
     const data=await commerceStudioData(context)

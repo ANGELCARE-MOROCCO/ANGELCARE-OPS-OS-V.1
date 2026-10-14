@@ -1,0 +1,1862 @@
+[
+  {
+    "key": "flashcards-learning-product",
+    "domain": "product",
+    "treatment": "cards",
+    "labels": {
+      "fr": "Flashcards & cartes pédagogiques",
+      "en": "Flashcards and learning cards",
+      "ar": "بطاقات تعليمية"
+    },
+    "stories": [
+      {
+        "role": "desire",
+        "heading": {
+          "fr": "Une petite carte. Un grand moment de découverte.",
+          "en": "A little card. A whole moment of discovery.",
+          "ar": "بطاقة صغيرة، ولحظة اكتشاف كبيرة."
+        },
+        "body": {
+          "fr": "Des images à regarder, des mots à partager, des découvertes à accompagner.",
+          "en": "Pictures to explore, words to share, discoveries to support.",
+          "ar": "صور للاستكشاف وكلمات للمشاركة واكتشافات للمرافقة."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/storefront-imagery-r3--kits--flashcards.webp",
+        "action": "contents",
+        "focus": "50% 50%"
+      },
+      {
+        "role": "understand",
+        "heading": {
+          "fr": "Choisissez les cartes qui vous parlent.",
+          "en": "Find the cards that fit your needs.",
+          "ar": "اختر البطاقات المناسبة لاحتياجاتك."
+        },
+        "body": {
+          "fr": "Explorez les thèmes, les langues et le contenu renseignés dans cette offre.",
+          "en": "Explore the themes, languages and contents supplied for this offer.",
+          "ar": "استعرض المواضيع واللغات والمحتويات الموضحة في هذا العرض."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/storefront-imagery-r3--development--flashcards.webp",
+        "action": "contents",
+        "focus": "50% 50%"
+      },
+      {
+        "role": "guidance",
+        "heading": {
+          "fr": "Un conseil pour bien commencer ?",
+          "en": "A little guidance to get started?",
+          "ar": "نصيحة لبداية مناسبة؟"
+        },
+        "body": {
+          "fr": "Parlons de vos besoins avant de choisir votre format ou votre collection.",
+          "en": "Discuss your needs before choosing your format or collection.",
+          "ar": "ناقش احتياجاتك قبل اختيار الصيغة أو المجموعة."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/families-world-r2--flashcards.jpg",
+        "action": "advice",
+        "focus": "50% 50%"
+      }
+    ]
+  },
+  {
+    "key": "montessori-development-kit",
+    "domain": "product",
+    "treatment": "kit",
+    "labels": {
+      "fr": "Kits Montessori & développement",
+      "en": "Montessori and development kits",
+      "ar": "أطقم مونتيسوري والتطوير"
+    },
+    "stories": [
+      {
+        "role": "desire",
+        "heading": {
+          "fr": "Le plaisir de découvrir, à portée de main.",
+          "en": "Discovery, right at your fingertips.",
+          "ar": "متعة الاكتشاف بين يديك."
+        },
+        "body": {
+          "fr": "Un contexte de découverte pour imaginer vos prochains temps d’activité.",
+          "en": "A discovery setting to inspire your next activity moments.",
+          "ar": "أجواء اكتشاف تلهم أوقات أنشطتك القادمة."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/storefront-imagery-r3--kits--kits.webp",
+        "action": "contents",
+        "focus": "50% 50%"
+      },
+      {
+        "role": "understand",
+        "heading": {
+          "fr": "Chaque élément a sa place.",
+          "en": "Every element has its place.",
+          "ar": "لكل عنصر مكانه."
+        },
+        "body": {
+          "fr": "Consultez les composants et les conseils publiés avant de préparer votre choix.",
+          "en": "Review the published components and guidance before choosing.",
+          "ar": "راجع المكونات والنصائح المنشورة قبل اختيارك."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/storefront-imagery-r3--development--montessori.webp",
+        "action": "contents",
+        "focus": "50% 50%"
+      },
+      {
+        "role": "guidance",
+        "heading": {
+          "fr": "Trouvons le kit adapté à votre projet.",
+          "en": "Find the kit that suits your plans.",
+          "ar": "لنجد المجموعة المناسبة لاحتياجاتك."
+        },
+        "body": {
+          "fr": "Âge, usage, matériaux : préparez votre échange avec AngelCare.",
+          "en": "Age, use, materials: prepare your conversation with AngelCare.",
+          "ar": "العمر والاستخدام والمواد: حضر تواصلك مع AngelCare."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/storefront-imagery-r3--kits--montessori.webp",
+        "action": "advice",
+        "focus": "50% 50%"
+      }
+    ]
+  },
+  {
+    "key": "development-game",
+    "domain": "product",
+    "treatment": "play",
+    "labels": {
+      "fr": "Jeux de développement",
+      "en": "Development games",
+      "ar": "ألعاب التطوير"
+    },
+    "stories": [
+      {
+        "role": "desire",
+        "heading": {
+          "fr": "Jouer ouvre de nouvelles possibilités.",
+          "en": "Play opens new possibilities.",
+          "ar": "اللعب يفتح إمكانيات جديدة."
+        },
+        "body": {
+          "fr": "Des moments de jeu à imaginer selon le rythme et les intérêts de votre enfant.",
+          "en": "Imagine play moments around your child’s pace and interests.",
+          "ar": "تخيل أوقات لعب تناسب إيقاع طفلك واهتماماته."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/storefront-imagery-r3--kits--games.webp",
+        "action": "usage",
+        "focus": "50% 50%"
+      },
+      {
+        "role": "understand",
+        "heading": {
+          "fr": "Comprendre le jeu avant de choisir.",
+          "en": "Understand the game before choosing.",
+          "ar": "افهم اللعبة قبل اختيارها."
+        },
+        "body": {
+          "fr": "Découvrez le fonctionnement, le public et les indications disponibles.",
+          "en": "Explore the mechanics, intended players and available guidance.",
+          "ar": "اكتشف طريقة اللعب والجمهور المستهدف والإرشادات المتاحة."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/storefront-imagery-r3--development--games.webp",
+        "action": "usage",
+        "focus": "50% 50%"
+      },
+      {
+        "role": "guidance",
+        "heading": {
+          "fr": "Quel jeu pour votre prochain moment ensemble ?",
+          "en": "Which game for your next shared moment?",
+          "ar": "أي لعبة لوقتكم القادم معاً؟"
+        },
+        "body": {
+          "fr": "Comparez les usages et préparez vos questions avec notre équipe.",
+          "en": "Compare uses and prepare your questions with our team.",
+          "ar": "قارن الاستخدامات وحضر أسئلتك مع فريقنا."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/families-world-r2--games.jpg",
+        "action": "advice",
+        "focus": "50% 50%"
+      }
+    ]
+  },
+  {
+    "key": "activity-subscription-box",
+    "domain": "product",
+    "treatment": "subscription",
+    "labels": {
+      "fr": "Box d’activités & abonnement",
+      "en": "Activity and subscription boxes",
+      "ar": "صناديق الأنشطة والاشتراك"
+    },
+    "stories": [
+      {
+        "role": "desire",
+        "heading": {
+          "fr": "Donnez un rythme à vos découvertes.",
+          "en": "Give discovery a rhythm.",
+          "ar": "امنح الاكتشاف إيقاعاً."
+        },
+        "body": {
+          "fr": "Imaginez vos prochains moments d’activité, puis examinez les modalités de la box.",
+          "en": "Imagine your next activity moments, then review the box arrangements.",
+          "ar": "تخيل أوقات الأنشطة القادمة، ثم راجع تفاصيل الصندوق."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/families-world-r2--box.jpg",
+        "action": "contents",
+        "focus": "50% 50%"
+      },
+      {
+        "role": "understand",
+        "heading": {
+          "fr": "Le contenu, puis les modalités.",
+          "en": "Contents first, then arrangements.",
+          "ar": "المحتويات ثم التفاصيل."
+        },
+        "body": {
+          "fr": "Fréquence, engagement et éléments inclus : tout se consulte dans le dossier.",
+          "en": "Frequency, commitment and included elements are available in the dossier.",
+          "ar": "يمكن مراجعة الوتيرة والالتزام والعناصر المضمنة في الملف."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/storefront-imagery-r3--kits--family.webp",
+        "action": "contents",
+        "focus": "50% 50%"
+      },
+      {
+        "role": "guidance",
+        "heading": {
+          "fr": "Un abonnement qui correspond à votre rythme.",
+          "en": "A subscription that fits your rhythm.",
+          "ar": "اشتراك يناسب إيقاعك."
+        },
+        "body": {
+          "fr": "Faites le point sur vos usages avant de préparer votre abonnement.",
+          "en": "Review your needs before preparing your subscription.",
+          "ar": "راجع احتياجاتك قبل إعداد اشتراكك."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/storefront-imagery-r3--development--family.webp",
+        "action": "advice",
+        "focus": "50% 50%"
+      }
+    ]
+  },
+  {
+    "key": "digital-learning-resource",
+    "domain": "product",
+    "treatment": "digital",
+    "labels": {
+      "fr": "Ressources pédagogiques digitales",
+      "en": "Digital learning resources",
+      "ar": "موارد تعليمية رقمية"
+    },
+    "stories": [
+      {
+        "role": "desire",
+        "heading": {
+          "fr": "Une ressource. De nouvelles idées à explorer.",
+          "en": "One resource. New ideas to explore.",
+          "ar": "مورد واحد، وأفكار جديدة للاستكشاف."
+        },
+        "body": {
+          "fr": "Imaginez comment intégrer ces ressources à vos activités et à votre organisation.",
+          "en": "Imagine how these resources could fit your activities and organisation.",
+          "ar": "تخيل كيفية دمج هذه الموارد في أنشطتك وتنظيمك."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/storefront-imagery-r3--kits--digital.webp",
+        "action": "usage",
+        "focus": "50% 50%"
+      },
+      {
+        "role": "understand",
+        "heading": {
+          "fr": "Le bon format pour votre usage.",
+          "en": "The right format for your use.",
+          "ar": "الصيغة المناسبة لاستخدامك."
+        },
+        "body": {
+          "fr": "Vérifiez les fichiers, l’accès et la licence décrits pour cette ressource.",
+          "en": "Check the files, access and licence described for this resource.",
+          "ar": "تحقق من الملفات والوصول والترخيص الموضح لهذا المورد."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/families-world-r2--digital.jpg",
+        "action": "usage",
+        "focus": "50% 50%"
+      },
+      {
+        "role": "guidance",
+        "heading": {
+          "fr": "Préparez votre prochaine activité.",
+          "en": "Prepare your next activity.",
+          "ar": "حضر نشاطك القادم."
+        },
+        "body": {
+          "fr": "Notre équipe peut vous orienter sur le choix et les informations disponibles.",
+          "en": "Our team can guide you through the choice and available information.",
+          "ar": "يمكن لفريقنا إرشادك في الاختيار والمعلومات المتاحة."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/storefront-imagery-r3--academy--desk.webp",
+        "action": "advice",
+        "focus": "50% 50%"
+      }
+    ]
+  },
+  {
+    "key": "home-childcare-one-time",
+    "domain": "service",
+    "treatment": "occasion",
+    "labels": {
+      "fr": "Garde d’enfants à domicile · ponctuelle",
+      "en": "One-time home childcare",
+      "ar": "رعاية الأطفال المنزلية لمرة واحدة"
+    },
+    "stories": [
+      {
+        "role": "desire",
+        "heading": {
+          "fr": "Un besoin précis. Un moment à organiser.",
+          "en": "A specific need. A moment to arrange.",
+          "ar": "حاجة محددة ووقت لتنظيمه."
+        },
+        "body": {
+          "fr": "Une sortie, une journée chargée ou un temps pour vous : préparez votre demande.",
+          "en": "An outing, a busy day or time for yourself: prepare your request.",
+          "ar": "خروج أو يوم مزدحم أو وقت لنفسك: حضر طلبك."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/storefront-imagery-r3--corporates--urgent.webp",
+        "action": "included",
+        "focus": "50% 50%"
+      },
+      {
+        "role": "understand",
+        "heading": {
+          "fr": "Le bon cadre pour votre prestation.",
+          "en": "The right setting for your service.",
+          "ar": "الإطار المناسب لخدمتك."
+        },
+        "body": {
+          "fr": "Précisez le créneau, les besoins de l’enfant et les consignes utiles.",
+          "en": "Specify the slot, the child’s needs and useful instructions.",
+          "ar": "حدد الموعد واحتياجات الطفل والتعليمات المفيدة."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/families-world-r2--care.jpg",
+        "action": "included",
+        "focus": "50% 50%"
+      },
+      {
+        "role": "guidance",
+        "heading": {
+          "fr": "Parlons de votre prochain créneau.",
+          "en": "Discuss your next care slot.",
+          "ar": "لنتحدث عن موعد المرافقة القادم."
+        },
+        "body": {
+          "fr": "Un échange aide à préparer la demande et à vérifier la suite.",
+          "en": "A conversation helps prepare the request and check the next step.",
+          "ar": "يساعد الحوار على إعداد الطلب والتحقق من الخطوة التالية."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/specialist-worlds-r1--family-concierge.webp",
+        "action": "advice",
+        "focus": "50% 50%"
+      }
+    ]
+  },
+  {
+    "key": "home-childcare-recurring",
+    "domain": "service",
+    "treatment": "rhythm",
+    "labels": {
+      "fr": "Garde d’enfants à domicile · récurrente",
+      "en": "Recurring home childcare",
+      "ar": "رعاية أطفال منزلية متكررة"
+    },
+    "stories": [
+      {
+        "role": "desire",
+        "heading": {
+          "fr": "Une semaine mieux organisée commence ici.",
+          "en": "A better organised week starts here.",
+          "ar": "أسبوع أكثر تنظيماً يبدأ من هنا."
+        },
+        "body": {
+          "fr": "Imaginez un rythme familial plus clair, puis construisez votre planning souhaité.",
+          "en": "Imagine a clearer family rhythm, then build your preferred schedule.",
+          "ar": "تخيل إيقاعاً عائلياً أوضح، ثم أنشئ جدولك المرغوب."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/storefront-imagery-r3--corporates--family.webp",
+        "action": "planning",
+        "focus": "50% 50%"
+      },
+      {
+        "role": "understand",
+        "heading": {
+          "fr": "Vos jours. Vos horaires. Votre rythme.",
+          "en": "Your days. Your hours. Your rhythm.",
+          "ar": "أيامك وساعاتك وإيقاعك."
+        },
+        "body": {
+          "fr": "Explorez les jours, la durée et les modalités de récurrence publiés.",
+          "en": "Explore the published days, duration and recurring arrangements.",
+          "ar": "استعرض الأيام والمدة وتفاصيل التكرار المنشورة."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/storefront-imagery-r3--professionals--care.webp",
+        "action": "planning",
+        "focus": "50% 50%"
+      },
+      {
+        "role": "guidance",
+        "heading": {
+          "fr": "Construisons votre demande de garde régulière.",
+          "en": "Prepare your recurring-care request.",
+          "ar": "لنحضر طلب المرافقة المنتظمة."
+        },
+        "body": {
+          "fr": "Partagez les habitudes du foyer et les besoins à prendre en compte.",
+          "en": "Share household routines and the needs to consider.",
+          "ar": "شارك عادات المنزل والاحتياجات الواجب مراعاتها."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/families-world-r2--family.jpg",
+        "action": "advice",
+        "focus": "50% 50%"
+      }
+    ]
+  },
+  {
+    "key": "school-pickup-care",
+    "domain": "service",
+    "treatment": "transition",
+    "labels": {
+      "fr": "Sortie d’école & garde après l’école",
+      "en": "School pickup and after-school care",
+      "ar": "الاستلام من المدرسة والرعاية بعدها"
+    },
+    "stories": [
+      {
+        "role": "desire",
+        "heading": {
+          "fr": "De l’école à la maison, un temps à préparer.",
+          "en": "From school to home, time to prepare.",
+          "ar": "من المدرسة إلى المنزل، وقت للتحضير."
+        },
+        "body": {
+          "fr": "Imaginez une transition après l’école adaptée à votre organisation familiale.",
+          "en": "Imagine an after-school transition that fits your family organisation.",
+          "ar": "تخيل انتقالاً بعد المدرسة يناسب تنظيم عائلتك."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/living-world-02--school-editorial-r4.jpg",
+        "action": "planning",
+        "focus": "50% 50%"
+      },
+      {
+        "role": "understand",
+        "heading": {
+          "fr": "Chaque passage compte.",
+          "en": "Every handover matters.",
+          "ar": "كل انتقال مهم."
+        },
+        "body": {
+          "fr": "Lieux, horaires et consignes : consultez le périmètre et préparez la suite.",
+          "en": "Locations, times and instructions: review the scope and prepare the next step.",
+          "ar": "الأماكن والمواعيد والتعليمات: راجع النطاق وحضر الخطوة التالية."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/storefront-imagery-r3--establishments--family.webp",
+        "action": "planning",
+        "focus": "50% 50%"
+      },
+      {
+        "role": "guidance",
+        "heading": {
+          "fr": "Organisons votre après-école.",
+          "en": "Prepare your after-school arrangements.",
+          "ar": "لننظم وقت ما بعد المدرسة."
+        },
+        "body": {
+          "fr": "Présentez votre besoin à AngelCare pour préparer un échange utile.",
+          "en": "Share your needs with AngelCare to prepare a useful conversation.",
+          "ar": "شارك احتياجاتك مع AngelCare لتحضير حوار مفيد."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/families-world-r2--school.jpg",
+        "action": "advice",
+        "focus": "50% 50%"
+      }
+    ]
+  },
+  {
+    "key": "overnight-extended-care",
+    "domain": "service",
+    "treatment": "evening",
+    "labels": {
+      "fr": "Garde de nuit & horaires étendus",
+      "en": "Overnight and extended-hours care",
+      "ar": "الرعاية الليلية والممتدة"
+    },
+    "stories": [
+      {
+        "role": "desire",
+        "heading": {
+          "fr": "Des horaires étendus, un cadre à définir.",
+          "en": "Extended hours, a setting to define.",
+          "ar": "ساعات ممتدة وإطار يجب تحديده."
+        },
+        "body": {
+          "fr": "Un contexte calme pour imaginer l’accompagnement souhaité en soirée ou la nuit.",
+          "en": "A calm context for imagining evening or overnight support.",
+          "ar": "أجواء هادئة لتصور المرافقة المطلوبة مساءً أو ليلاً."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/families-world-r2--evening.jpg",
+        "action": "planning",
+        "focus": "50% 50%"
+      },
+      {
+        "role": "understand",
+        "heading": {
+          "fr": "Préparer la continuité de l’accompagnement.",
+          "en": "Prepare continuity of care.",
+          "ar": "حضر استمرارية المرافقة."
+        },
+        "body": {
+          "fr": "Consultez les plages horaires et les dispositions décrites dans l’offre.",
+          "en": "Review the time windows and arrangements described in the offer.",
+          "ar": "راجع الفترات الزمنية والترتيبات الموضحة في العرض."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/storefront-imagery-r3--hospitality--care.webp",
+        "action": "planning",
+        "focus": "50% 50%"
+      },
+      {
+        "role": "guidance",
+        "heading": {
+          "fr": "Prenons le temps de préciser votre besoin.",
+          "en": "Take time to clarify your needs.",
+          "ar": "لنخصص وقتاً لتوضيح احتياجاتك."
+        },
+        "body": {
+          "fr": "Habitudes, horaires et consignes du foyer peuvent guider votre demande.",
+          "en": "Household routines, times and instructions can guide your request.",
+          "ar": "يمكن لعادات المنزل والمواعيد والتعليمات توجيه طلبك."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/storefront-imagery-r3--health-partners--support.webp",
+        "action": "advice",
+        "focus": "50% 50%"
+      }
+    ]
+  },
+  {
+    "key": "emergency-last-minute-care",
+    "domain": "service",
+    "treatment": "urgent",
+    "labels": {
+      "fr": "Garde urgente & dernière minute",
+      "en": "Emergency and last-minute childcare",
+      "ar": "رعاية طارئة وفي اللحظة الأخيرة"
+    },
+    "stories": [
+      {
+        "role": "desire",
+        "heading": {
+          "fr": "Un imprévu ? Préparons la prochaine étape.",
+          "en": "An unexpected need? Prepare the next step.",
+          "ar": "حاجة غير متوقعة؟ لنحضر الخطوة التالية."
+        },
+        "body": {
+          "fr": "Rassemblez les informations essentielles pour transmettre une demande claire.",
+          "en": "Gather essential information to submit a clear request.",
+          "ar": "اجمع المعلومات الأساسية لتقديم طلب واضح."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/families-world-r2--urgent.jpg",
+        "action": "planning",
+        "focus": "50% 50%"
+      },
+      {
+        "role": "understand",
+        "heading": {
+          "fr": "Aller à l’essentiel.",
+          "en": "Focus on what matters.",
+          "ar": "ركز على الأساسيات."
+        },
+        "body": {
+          "fr": "Lieu, horaires et besoins : les modalités publiées orientent la demande.",
+          "en": "Location, times and needs: published arrangements guide the request.",
+          "ar": "المكان والمواعيد والاحتياجات: توجه التفاصيل المنشورة الطلب."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/specialist-worlds-r1--emergency-support.webp",
+        "action": "planning",
+        "focus": "50% 50%"
+      },
+      {
+        "role": "guidance",
+        "heading": {
+          "fr": "Expliquez-nous votre situation.",
+          "en": "Tell us about your situation.",
+          "ar": "اشرح لنا وضعك."
+        },
+        "body": {
+          "fr": "L’équipe reprend les informations pour examiner la suite possible.",
+          "en": "The team reviews the information to assess possible next steps.",
+          "ar": "يراجع الفريق المعلومات لدراسة الخطوات الممكنة."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/storefront-imagery-r3--corporates--urgent.webp",
+        "action": "advice",
+        "focus": "50% 50%"
+      }
+    ]
+  },
+  {
+    "key": "hotel-travel-childcare",
+    "domain": "service",
+    "treatment": "travel",
+    "labels": {
+      "fr": "Garde hôtel, voyage & lieu temporaire",
+      "en": "Hotel and travel childcare",
+      "ar": "رعاية الأطفال في الفندق والسفر"
+    },
+    "stories": [
+      {
+        "role": "desire",
+        "heading": {
+          "fr": "Voyager en famille, avec un besoin bien défini.",
+          "en": "Family travel, with clearly defined needs.",
+          "ar": "سفر عائلي باحتياجات محددة بوضوح."
+        },
+        "body": {
+          "fr": "Imaginez votre séjour et préparez le contexte de l’accompagnement souhaité.",
+          "en": "Imagine your stay and prepare the context for your preferred support.",
+          "ar": "تخيل إقامتك وحضر سياق المرافقة المطلوبة."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/storefront-imagery-r3--hospitality--hospitality.webp",
+        "action": "coverage",
+        "focus": "50% 50%"
+      },
+      {
+        "role": "understand",
+        "heading": {
+          "fr": "Le lieu change. Le cadre reste essentiel.",
+          "en": "The location changes. The setting still matters.",
+          "ar": "يتغير المكان، ويظل الإطار أساسياً."
+        },
+        "body": {
+          "fr": "Consultez la couverture, les lieux et les dispositions de cette prestation.",
+          "en": "Review coverage, locations and arrangements for this service.",
+          "ar": "راجع التغطية والأماكن وترتيبات هذه الخدمة."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/specialist-worlds-r1--guest-childcare.webp",
+        "action": "coverage",
+        "focus": "50% 50%"
+      },
+      {
+        "role": "guidance",
+        "heading": {
+          "fr": "Préparons votre demande pour le séjour.",
+          "en": "Prepare your request for the stay.",
+          "ar": "لنحضر طلبك للإقامة."
+        },
+        "body": {
+          "fr": "Dates, établissement et habitudes de l’enfant aident à organiser l’échange.",
+          "en": "Dates, property and the child’s routines help organise the conversation.",
+          "ar": "تساعد التواريخ ومكان الإقامة وعادات الطفل على تنظيم الحوار."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/storefront-imagery-r3--hospitality--family.webp",
+        "action": "advice",
+        "focus": "50% 50%"
+      }
+    ]
+  },
+  {
+    "key": "events-group-childcare",
+    "domain": "service",
+    "treatment": "group",
+    "labels": {
+      "fr": "Garde événementielle & groupe",
+      "en": "Event and group childcare",
+      "ar": "رعاية الأطفال للفعاليات والمجموعات"
+    },
+    "stories": [
+      {
+        "role": "desire",
+        "heading": {
+          "fr": "Un événement se prépare aussi pour les enfants.",
+          "en": "An event deserves a children’s plan too.",
+          "ar": "المناسبة تحتاج أيضاً إلى خطة للأطفال."
+        },
+        "body": {
+          "fr": "Imaginez les temps d’accueil, les activités et les besoins du groupe.",
+          "en": "Imagine reception, activities and the needs of the group.",
+          "ar": "تخيل الاستقبال والأنشطة واحتياجات المجموعة."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/specialist-worlds-r1--family-days.webp",
+        "action": "included",
+        "focus": "50% 50%"
+      },
+      {
+        "role": "understand",
+        "heading": {
+          "fr": "Définir le groupe et son programme.",
+          "en": "Define the group and its programme.",
+          "ar": "حدد المجموعة وبرنامجها."
+        },
+        "body": {
+          "fr": "Le nombre de participants, le lieu et le périmètre guident la préparation.",
+          "en": "Participants, location and scope guide preparation.",
+          "ar": "يوجه المشاركون والمكان والنطاق عملية التحضير."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/specialist-worlds-r1--kids-club.webp",
+        "action": "included",
+        "focus": "50% 50%"
+      },
+      {
+        "role": "guidance",
+        "heading": {
+          "fr": "Construisons votre demande événementielle.",
+          "en": "Prepare your event request.",
+          "ar": "لنحضر طلب مناسبتك."
+        },
+        "body": {
+          "fr": "Partagez les informations utiles avec l’équipe AngelCare.",
+          "en": "Share useful information with the AngelCare team.",
+          "ar": "شارك المعلومات المفيدة مع فريق AngelCare."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/storefront-imagery-r3--hospitality--holidays.webp",
+        "action": "advice",
+        "focus": "50% 50%"
+      }
+    ]
+  },
+  {
+    "key": "holiday-excursion-programme",
+    "domain": "service",
+    "treatment": "holiday",
+    "labels": {
+      "fr": "Programmes vacances & excursions",
+      "en": "Holiday and excursion programmes",
+      "ar": "برامج العطل والرحلات"
+    },
+    "stories": [
+      {
+        "role": "desire",
+        "heading": {
+          "fr": "Des vacances à explorer autrement.",
+          "en": "Explore holidays in a new way.",
+          "ar": "اكتشف العطلات بطريقة مختلفة."
+        },
+        "body": {
+          "fr": "Imaginez les activités et les découvertes, puis consultez le programme proposé.",
+          "en": "Imagine activities and discoveries, then review the proposed programme.",
+          "ar": "تخيل الأنشطة والاكتشافات، ثم راجع البرنامج المقترح."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/families-world-r2--holidays.jpg",
+        "action": "included",
+        "focus": "50% 50%"
+      },
+      {
+        "role": "understand",
+        "heading": {
+          "fr": "Un programme se choisit dans les détails.",
+          "en": "Choose a programme through its details.",
+          "ar": "اختيار البرنامج يبدأ من تفاصيله."
+        },
+        "body": {
+          "fr": "Itinéraire, participation et préparation : retrouvez les éléments publiés.",
+          "en": "Itinerary, participation and preparation: explore the published details.",
+          "ar": "المسار والمشاركة والتحضير: اكتشف التفاصيل المنشورة."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/specialist-worlds-r1--seasonal-programmes.webp",
+        "action": "included",
+        "focus": "50% 50%"
+      },
+      {
+        "role": "guidance",
+        "heading": {
+          "fr": "Préparez votre prochaine découverte.",
+          "en": "Prepare your next discovery.",
+          "ar": "حضر اكتشافك القادم."
+        },
+        "body": {
+          "fr": "Vérifiez les modalités et préparez vos questions avant votre demande.",
+          "en": "Check arrangements and prepare questions before your request.",
+          "ar": "تحقق من التفاصيل وحضر أسئلتك قبل طلبك."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/storefront-imagery-r3--corporates--holidays.webp",
+        "action": "advice",
+        "focus": "50% 50%"
+      }
+    ]
+  },
+  {
+    "key": "montessori-home-service",
+    "domain": "service",
+    "treatment": "exploration",
+    "labels": {
+      "fr": "Montessori à domicile",
+      "en": "Montessori at home",
+      "ar": "مونتيسوري في المنزل"
+    },
+    "stories": [
+      {
+        "role": "desire",
+        "heading": {
+          "fr": "La découverte trouve sa place à la maison.",
+          "en": "Make room for discovery at home.",
+          "ar": "امنح الاكتشاف مكاناً في المنزل."
+        },
+        "body": {
+          "fr": "Un environnement d’activité pour imaginer l’accompagnement souhaité.",
+          "en": "An activity environment to imagine your preferred support.",
+          "ar": "بيئة أنشطة لتصور المرافقة المطلوبة."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/storefront-imagery-r3--development--montessori.webp",
+        "action": "included",
+        "focus": "50% 50%"
+      },
+      {
+        "role": "understand",
+        "heading": {
+          "fr": "Explorer l’approche et le cadre.",
+          "en": "Explore the approach and setting.",
+          "ar": "اكتشف النهج والإطار."
+        },
+        "body": {
+          "fr": "Consultez les activités, le public et les modalités décrits pour cette offre.",
+          "en": "Review activities, intended audience and arrangements for this offer.",
+          "ar": "راجع الأنشطة والجمهور والتفاصيل الموضحة لهذا العرض."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/families-world-r2--montessori.jpg",
+        "action": "included",
+        "focus": "50% 50%"
+      },
+      {
+        "role": "guidance",
+        "heading": {
+          "fr": "Parlons de votre environnement d’activité.",
+          "en": "Discuss your activity environment.",
+          "ar": "لنتحدث عن بيئة أنشطتك."
+        },
+        "body": {
+          "fr": "Les intérêts de l’enfant et l’organisation du foyer orientent l’échange.",
+          "en": "The child’s interests and household organisation guide the conversation.",
+          "ar": "توجه اهتمامات الطفل وتنظيم المنزل الحوار."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/storefront-imagery-r3--hospitality--montessori.webp",
+        "action": "advice",
+        "focus": "50% 50%"
+      }
+    ]
+  },
+  {
+    "key": "learning-homework-support",
+    "domain": "service",
+    "treatment": "learning",
+    "labels": {
+      "fr": "Soutien scolaire & devoirs",
+      "en": "Learning and homework support",
+      "ar": "الدعم الدراسي والواجبات"
+    },
+    "stories": [
+      {
+        "role": "desire",
+        "heading": {
+          "fr": "Un temps pour apprendre et avancer.",
+          "en": "Time to learn and move forward.",
+          "ar": "وقت للتعلم والتقدم."
+        },
+        "body": {
+          "fr": "Imaginez une routine de travail adaptée aux besoins à accompagner.",
+          "en": "Imagine a learning routine around the needs to support.",
+          "ar": "تخيل روتين تعلم يناسب الاحتياجات المطلوب مرافقتها."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/storefront-imagery-r3--corporates--homework.webp",
+        "action": "included",
+        "focus": "50% 50%"
+      },
+      {
+        "role": "understand",
+        "heading": {
+          "fr": "Préciser le besoin d’apprentissage.",
+          "en": "Clarify the learning need.",
+          "ar": "وضح حاجة التعلم."
+        },
+        "body": {
+          "fr": "Consultez les objectifs, les matières et le périmètre lorsqu’ils sont renseignés.",
+          "en": "Review objectives, subjects and scope when supplied.",
+          "ar": "راجع الأهداف والمواد والنطاق عند توفرها."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/families-world-r2--homework.jpg",
+        "action": "included",
+        "focus": "50% 50%"
+      },
+      {
+        "role": "guidance",
+        "heading": {
+          "fr": "Préparons un échange autour des apprentissages.",
+          "en": "Prepare a conversation about learning.",
+          "ar": "لنحضر حواراً حول التعلم."
+        },
+        "body": {
+          "fr": "Présentez le contexte scolaire et les besoins que vous souhaitez aborder.",
+          "en": "Share the school context and the needs you wish to address.",
+          "ar": "شارك السياق الدراسي والاحتياجات التي ترغب في مناقشتها."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/storefront-imagery-r3--development--homework.webp",
+        "action": "advice",
+        "focus": "50% 50%"
+      }
+    ]
+  },
+  {
+    "key": "non-medical-support-service",
+    "domain": "service",
+    "treatment": "support",
+    "labels": {
+      "fr": "Support enfant non médical",
+      "en": "Non-medical child support",
+      "ar": "دعم الطفل غير الطبي"
+    },
+    "stories": [
+      {
+        "role": "desire",
+        "heading": {
+          "fr": "Un accompagnement du quotidien à définir ensemble.",
+          "en": "Define everyday support together.",
+          "ar": "لنحدد المرافقة اليومية معاً."
+        },
+        "body": {
+          "fr": "Imaginez le cadre familial et les besoins pratiques à prendre en compte.",
+          "en": "Imagine the family setting and practical needs to consider.",
+          "ar": "تخيل الإطار العائلي والاحتياجات العملية الواجب مراعاتها."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/families-world-r2--support.jpg",
+        "action": "preparation",
+        "focus": "50% 50%"
+      },
+      {
+        "role": "understand",
+        "heading": {
+          "fr": "Un périmètre clair pour préparer la suite.",
+          "en": "A clear scope for the next step.",
+          "ar": "نطاق واضح للخطوة التالية."
+        },
+        "body": {
+          "fr": "Consultez les besoins couverts, la préparation et les limites non médicales.",
+          "en": "Review covered needs, preparation and non-medical boundaries.",
+          "ar": "راجع الاحتياجات المشمولة والتحضير والحدود غير الطبية."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/storefront-imagery-r3--health-partners--support.webp",
+        "action": "preparation",
+        "focus": "50% 50%"
+      },
+      {
+        "role": "guidance",
+        "heading": {
+          "fr": "Prenons le temps d’écouter votre besoin.",
+          "en": "Take time to understand your needs.",
+          "ar": "لنخصص وقتاً لفهم احتياجاتك."
+        },
+        "body": {
+          "fr": "Un échange aide à formuler une demande précise et adaptée au contexte.",
+          "en": "A conversation helps shape a precise request suited to the context.",
+          "ar": "يساعد الحوار على صياغة طلب دقيق يناسب السياق."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/living-world-02--support-editorial-r4.jpg",
+        "action": "advice",
+        "focus": "50% 50%"
+      }
+    ]
+  },
+  {
+    "key": "preschool-admission",
+    "domain": "academy",
+    "treatment": "admission",
+    "labels": {
+      "fr": "Admission crèche & préscolaire",
+      "en": "Kindergarten and preschool admissions",
+      "ar": "قبول الحضانة ورياض الأطفال"
+    },
+    "stories": [
+      {
+        "role": "desire",
+        "heading": {
+          "fr": "Une nouvelle étape pour votre famille.",
+          "en": "A new step for your family.",
+          "ar": "خطوة جديدة لعائلتك."
+        },
+        "body": {
+          "fr": "Découvrez le contexte d’accueil et examinez les informations d’admission.",
+          "en": "Explore the reception setting and review admission information.",
+          "ar": "اكتشف بيئة الاستقبال وراجع معلومات القبول."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/storefront-imagery-r3--establishments--preschool.webp",
+        "action": "organisation",
+        "focus": "50% 50%"
+      },
+      {
+        "role": "understand",
+        "heading": {
+          "fr": "Préparer la candidature en confiance.",
+          "en": "Prepare your application with clarity.",
+          "ar": "حضر طلب الالتحاق بوضوح."
+        },
+        "body": {
+          "fr": "Public concerné, documents et modalités : consultez les conditions publiées.",
+          "en": "Intended audience, documents and arrangements: review published conditions.",
+          "ar": "الجمهور والوثائق والتفاصيل: راجع الشروط المنشورة."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/specialist-worlds-r1--creches.webp",
+        "action": "organisation",
+        "focus": "50% 50%"
+      },
+      {
+        "role": "guidance",
+        "heading": {
+          "fr": "Parlons de cette première étape.",
+          "en": "Discuss this first step.",
+          "ar": "لنتحدث عن هذه الخطوة الأولى."
+        },
+        "body": {
+          "fr": "Préparez vos questions sur l’accueil et le parcours de candidature.",
+          "en": "Prepare your questions about reception and the application journey.",
+          "ar": "حضر أسئلتك حول الاستقبال ومسار الالتحاق."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/storefront-imagery-r3--establishments--family.webp",
+        "action": "advice",
+        "focus": "50% 50%"
+      }
+    ]
+  },
+  {
+    "key": "academy-course",
+    "domain": "academy",
+    "treatment": "course",
+    "labels": {
+      "fr": "Cours Academy",
+      "en": "Academy course",
+      "ar": "دورة الأكاديمية"
+    },
+    "stories": [
+      {
+        "role": "desire",
+        "heading": {
+          "fr": "De nouvelles compétences commencent par une envie.",
+          "en": "New skills begin with curiosity.",
+          "ar": "مهارات جديدة تبدأ بالرغبة في التعلم."
+        },
+        "body": {
+          "fr": "Imaginez la place de ces apprentissages dans votre pratique quotidienne.",
+          "en": "Imagine these learnings in your everyday practice.",
+          "ar": "تخيل مكان هذه المعارف في ممارستك اليومية."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/storefront-imagery-r3--academy--academy.webp",
+        "action": "curriculum",
+        "focus": "50% 50%"
+      },
+      {
+        "role": "understand",
+        "heading": {
+          "fr": "Explorez ce que vous allez apprendre.",
+          "en": "Explore what you will learn.",
+          "ar": "اكتشف ما ستتعلمه."
+        },
+        "body": {
+          "fr": "Parcourez les modules, les objectifs et les ressources publiés pour ce programme.",
+          "en": "Browse the published modules, objectives and resources for this programme.",
+          "ar": "تصفح الوحدات والأهداف والموارد المنشورة لهذا البرنامج."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/storefront-imagery-r3--academy--montessori.webp",
+        "action": "curriculum",
+        "focus": "50% 50%"
+      },
+      {
+        "role": "guidance",
+        "heading": {
+          "fr": "Choisissez votre prochaine étape d’apprentissage.",
+          "en": "Choose your next learning step.",
+          "ar": "اختر خطوة تعلمك القادمة."
+        },
+        "body": {
+          "fr": "Niveau, format ou session : préparez votre échange avec l’équipe Academy.",
+          "en": "Level, format or session: prepare your conversation with the Academy team.",
+          "ar": "المستوى أو الصيغة أو الجلسة: حضر حوارك مع فريق Academy."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/storefront-imagery-r3--academy--professional.webp",
+        "action": "advice",
+        "focus": "50% 50%"
+      }
+    ]
+  },
+  {
+    "key": "academy-cohort",
+    "domain": "academy",
+    "treatment": "cohort",
+    "labels": {
+      "fr": "Cohorte Academy",
+      "en": "Academy cohort",
+      "ar": "دفعة الأكاديمية"
+    },
+    "stories": [
+      {
+        "role": "desire",
+        "heading": {
+          "fr": "Apprendre ensemble, autour d’un même programme.",
+          "en": "Learn together, around one programme.",
+          "ar": "تعلم مع الآخرين حول برنامج واحد."
+        },
+        "body": {
+          "fr": "Imaginez les échanges du groupe et consultez l’organisation de cette session.",
+          "en": "Imagine group exchanges and review this session’s organisation.",
+          "ar": "تخيل حوارات المجموعة وراجع تنظيم هذه الجلسة."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/specialist-worlds-r1--academy-programmes.webp",
+        "action": "cohorts",
+        "focus": "50% 50%"
+      },
+      {
+        "role": "understand",
+        "heading": {
+          "fr": "La session qui correspond à votre agenda.",
+          "en": "A session that fits your schedule.",
+          "ar": "جلسة تناسب جدولك."
+        },
+        "body": {
+          "fr": "Dates, format et modalités publiées vous aident à préparer votre inscription.",
+          "en": "Published dates, format and arrangements help prepare enrolment.",
+          "ar": "تساعدك التواريخ والصيغة والتفاصيل المنشورة على إعداد التسجيل."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/storefront-imagery-r3--academy--school.webp",
+        "action": "cohorts",
+        "focus": "50% 50%"
+      },
+      {
+        "role": "guidance",
+        "heading": {
+          "fr": "Préparez votre participation au groupe.",
+          "en": "Prepare your participation in the group.",
+          "ar": "حضر مشاركتك في المجموعة."
+        },
+        "body": {
+          "fr": "Partagez vos questions sur l’organisation et les prérequis.",
+          "en": "Share your questions about organisation and prerequisites.",
+          "ar": "شارك أسئلتك حول التنظيم والمتطلبات."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/storefront-imagery-r3--establishments--academy.webp",
+        "action": "advice",
+        "focus": "50% 50%"
+      }
+    ]
+  },
+  {
+    "key": "certification-pathway",
+    "domain": "academy",
+    "treatment": "pathway",
+    "labels": {
+      "fr": "Parcours certifiant",
+      "en": "Certification pathway",
+      "ar": "مسار الشهادة"
+    },
+    "stories": [
+      {
+        "role": "desire",
+        "heading": {
+          "fr": "Votre progression se construit étape par étape.",
+          "en": "Build your progression step by step.",
+          "ar": "ابن تقدمك خطوة بخطوة."
+        },
+        "body": {
+          "fr": "Imaginez votre parcours, puis examinez sa séquence et ses conditions.",
+          "en": "Imagine your pathway, then review its sequence and conditions.",
+          "ar": "تخيل مسارك، ثم راجع تسلسله وشروطه."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/storefront-imagery-r3--professionals--academy.webp",
+        "action": "pathway",
+        "focus": "50% 50%"
+      },
+      {
+        "role": "understand",
+        "heading": {
+          "fr": "Comprendre le parcours jusqu’à l’évaluation.",
+          "en": "Understand the pathway through assessment.",
+          "ar": "افهم المسار حتى التقييم."
+        },
+        "body": {
+          "fr": "Consultez les étapes, les prérequis et les éléments de certification publiés.",
+          "en": "Review published steps, prerequisites and certification information.",
+          "ar": "راجع المراحل والمتطلبات ومعلومات الشهادة المنشورة."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/storefront-imagery-r3--professionals--professional.webp",
+        "action": "pathway",
+        "focus": "50% 50%"
+      },
+      {
+        "role": "guidance",
+        "heading": {
+          "fr": "Donnons un cap à votre parcours.",
+          "en": "Give your learning pathway direction.",
+          "ar": "امنح مسار تعلمك اتجاهاً."
+        },
+        "body": {
+          "fr": "Clarifiez votre point de départ et vos objectifs avec l’équipe Academy.",
+          "en": "Clarify your starting point and goals with the Academy team.",
+          "ar": "وضح نقطة البداية وأهدافك مع فريق Academy."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/specialist-worlds-r1--establishment-academy.webp",
+        "action": "advice",
+        "focus": "50% 50%"
+      }
+    ]
+  },
+  {
+    "key": "parent-workshop",
+    "domain": "academy",
+    "treatment": "workshop",
+    "labels": {
+      "fr": "Atelier parents",
+      "en": "Parent workshop",
+      "ar": "ورشة للوالدين"
+    },
+    "stories": [
+      {
+        "role": "desire",
+        "heading": {
+          "fr": "Des questions de parents. Des pistes à explorer.",
+          "en": "Parenting questions. Ideas to explore.",
+          "ar": "أسئلة الوالدين وأفكار للاستكشاف."
+        },
+        "body": {
+          "fr": "Imaginez un temps d’échange autour de situations concrètes du quotidien.",
+          "en": "Imagine time to exchange around everyday situations.",
+          "ar": "تخيل وقتاً للحوار حول مواقف يومية ملموسة."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/specialist-worlds-r1--workshops.webp",
+        "action": "outcomes",
+        "focus": "50% 50%"
+      },
+      {
+        "role": "understand",
+        "heading": {
+          "fr": "Un atelier se choisit autour de vos besoins.",
+          "en": "Choose a workshop around your needs.",
+          "ar": "اختر ورشة تناسب احتياجاتك."
+        },
+        "body": {
+          "fr": "Explorez les thèmes, les objectifs et l’organisation publiés.",
+          "en": "Explore published topics, objectives and organisation.",
+          "ar": "استعرض المواضيع والأهداف والتنظيم المنشور."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/storefront-imagery-r3--development--family.webp",
+        "action": "outcomes",
+        "focus": "50% 50%"
+      },
+      {
+        "role": "guidance",
+        "heading": {
+          "fr": "Trouvons le thème qui vous parle.",
+          "en": "Find the topic that matters to you.",
+          "ar": "لنجد الموضوع الذي يهمك."
+        },
+        "body": {
+          "fr": "Présentez les questions que vous souhaitez aborder avant votre participation.",
+          "en": "Share the questions you wish to explore before participating.",
+          "ar": "شارك الأسئلة التي ترغب في مناقشتها قبل المشاركة."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/families-world-r2--family.jpg",
+        "action": "advice",
+        "focus": "50% 50%"
+      }
+    ]
+  },
+  {
+    "key": "institutional-training",
+    "domain": "academy",
+    "treatment": "team",
+    "labels": {
+      "fr": "Formation professionnelle & institutionnelle",
+      "en": "Professional and institutional training",
+      "ar": "التدريب المهني والمؤسسي"
+    },
+    "stories": [
+      {
+        "role": "desire",
+        "heading": {
+          "fr": "Faire progresser une équipe, ensemble.",
+          "en": "Help a team progress together.",
+          "ar": "ساعد الفريق على التقدم معاً."
+        },
+        "body": {
+          "fr": "Imaginez l’application de la formation au sein de votre organisation.",
+          "en": "Imagine applying the training within your organisation.",
+          "ar": "تخيل تطبيق التدريب داخل مؤسستك."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/storefront-imagery-r3--establishments--academy.webp",
+        "action": "curriculum",
+        "focus": "50% 50%"
+      },
+      {
+        "role": "understand",
+        "heading": {
+          "fr": "Relier le programme aux besoins du terrain.",
+          "en": "Connect the programme to operational needs.",
+          "ar": "اربط البرنامج باحتياجات الميدان."
+        },
+        "body": {
+          "fr": "Consultez les objectifs, le format et les modalités pour votre équipe.",
+          "en": "Review objectives, format and arrangements for your team.",
+          "ar": "راجع الأهداف والصيغة والتفاصيل المناسبة لفريقك."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/storefront-imagery-r3--health-partners--academy.webp",
+        "action": "curriculum",
+        "focus": "50% 50%"
+      },
+      {
+        "role": "guidance",
+        "heading": {
+          "fr": "Préparons votre besoin de formation.",
+          "en": "Prepare your training need.",
+          "ar": "لنحضر حاجتك التدريبية."
+        },
+        "body": {
+          "fr": "Effectif, contexte et objectifs aident à organiser un échange utile.",
+          "en": "Team size, context and objectives help organise a useful conversation.",
+          "ar": "تساعد أعداد الفريق والسياق والأهداف على تنظيم حوار مفيد."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/specialist-worlds-r1--academy-request.webp",
+        "action": "advice",
+        "focus": "50% 50%"
+      }
+    ]
+  },
+  {
+    "key": "school-managed-programme",
+    "domain": "b2b",
+    "treatment": "programme",
+    "labels": {
+      "fr": "Programme géré école & crèche",
+      "en": "Managed school and crèche programme",
+      "ar": "برنامج مُدار للمدارس والحضانات"
+    },
+    "stories": [
+      {
+        "role": "desire",
+        "heading": {
+          "fr": "Un programme au service de votre établissement.",
+          "en": "A programme for your establishment.",
+          "ar": "برنامج يخدم مؤسستك."
+        },
+        "body": {
+          "fr": "Imaginez son intégration dans vos espaces, vos équipes et votre organisation.",
+          "en": "Imagine its integration into your spaces, teams and organisation.",
+          "ar": "تخيل دمجه في فضاءاتك وفرقك وتنظيمك."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/storefront-imagery-r3--establishments--school.webp",
+        "action": "included",
+        "focus": "50% 50%"
+      },
+      {
+        "role": "understand",
+        "heading": {
+          "fr": "Le périmètre avant le déploiement.",
+          "en": "Scope before deployment.",
+          "ar": "النطاق قبل التنفيذ."
+        },
+        "body": {
+          "fr": "Consultez les services, les bénéficiaires et les modalités de cette solution.",
+          "en": "Review services, beneficiaries and arrangements for this solution.",
+          "ar": "راجع الخدمات والمستفيدين وتفاصيل هذا الحل."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/specialist-worlds-r1--schools.webp",
+        "action": "included",
+        "focus": "50% 50%"
+      },
+      {
+        "role": "guidance",
+        "heading": {
+          "fr": "Préparez votre projet d’établissement.",
+          "en": "Prepare your establishment project.",
+          "ar": "حضر مشروع مؤسستك."
+        },
+        "body": {
+          "fr": "Partagez vos objectifs et les contraintes à prendre en compte.",
+          "en": "Share your objectives and the constraints to consider.",
+          "ar": "شارك أهدافك والقيود الواجب مراعاتها."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/storefront-imagery-r3--establishments--desk.webp",
+        "action": "advice",
+        "focus": "50% 50%"
+      }
+    ]
+  },
+  {
+    "key": "school-staff-reinforcement",
+    "domain": "b2b",
+    "treatment": "staff",
+    "labels": {
+      "fr": "Renfort de personnel école & crèche",
+      "en": "School and crèche staff reinforcement",
+      "ar": "تعزيز طاقم المدارس والحضانات"
+    },
+    "stories": [
+      {
+        "role": "desire",
+        "heading": {
+          "fr": "Une équipe, un besoin opérationnel à préciser.",
+          "en": "A team, an operational need to clarify.",
+          "ar": "فريق وحاجة تشغيلية للتوضيح."
+        },
+        "body": {
+          "fr": "Imaginez le renfort dans le contexte réel de votre établissement.",
+          "en": "Imagine reinforcement in your establishment’s actual context.",
+          "ar": "تخيل الدعم في السياق الفعلي لمؤسستك."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/storefront-imagery-r3--establishments--professional.webp",
+        "action": "deployment",
+        "focus": "50% 50%"
+      },
+      {
+        "role": "understand",
+        "heading": {
+          "fr": "Préparer l’intégration du renfort.",
+          "en": "Prepare reinforcement integration.",
+          "ar": "حضر دمج الدعم."
+        },
+        "body": {
+          "fr": "Rôles, périodes et conditions publiées orientent votre demande.",
+          "en": "Published roles, periods and conditions guide your request.",
+          "ar": "توجه الأدوار والفترات والشروط المنشورة طلبك."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/storefront-imagery-r3--professionals--preschool.webp",
+        "action": "deployment",
+        "focus": "50% 50%"
+      },
+      {
+        "role": "guidance",
+        "heading": {
+          "fr": "Parlons de vos besoins d’équipe.",
+          "en": "Discuss your staffing needs.",
+          "ar": "لنتحدث عن احتياجات فريقك."
+        },
+        "body": {
+          "fr": "Sites, volumes et organisation aident à cadrer le prochain échange.",
+          "en": "Sites, volumes and organisation help frame the next conversation.",
+          "ar": "تساعد المواقع والأعداد والتنظيم على تأطير الحوار القادم."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/storefront-imagery-r3--professionals--professional.webp",
+        "action": "advice",
+        "focus": "50% 50%"
+      }
+    ]
+  },
+  {
+    "key": "hospitality-kids-programme",
+    "domain": "b2b",
+    "treatment": "hospitality",
+    "labels": {
+      "fr": "Programme Hospitality Kids Friendly",
+      "en": "Hospitality kids-friendly programme",
+      "ar": "برنامج الضيافة الصديقة للأطفال"
+    },
+    "stories": [
+      {
+        "role": "desire",
+        "heading": {
+          "fr": "La famille fait partie de l’expérience de séjour.",
+          "en": "Families are part of the stay experience.",
+          "ar": "العائلة جزء من تجربة الإقامة."
+        },
+        "body": {
+          "fr": "Imaginez les espaces et les temps d’accueil de vos clients en famille.",
+          "en": "Imagine spaces and reception moments for your family guests.",
+          "ar": "تخيل فضاءات وأوقات استقبال ضيوفك مع عائلاتهم."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/specialist-worlds-r1--kids-club.webp",
+        "action": "included",
+        "focus": "50% 50%"
+      },
+      {
+        "role": "understand",
+        "heading": {
+          "fr": "Un programme à intégrer à vos opérations.",
+          "en": "A programme to integrate into operations.",
+          "ar": "برنامج لدمجه في العمليات."
+        },
+        "body": {
+          "fr": "Consultez le périmètre, les activités et les arrangements publiés.",
+          "en": "Review published scope, activities and arrangements.",
+          "ar": "راجع النطاق والأنشطة والترتيبات المنشورة."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/storefront-imagery-r3--hospitality--hospitality.webp",
+        "action": "included",
+        "focus": "50% 50%"
+      },
+      {
+        "role": "guidance",
+        "heading": {
+          "fr": "Préparons votre projet Kids Friendly.",
+          "en": "Prepare your Kids Friendly project.",
+          "ar": "لنحضر مشروعك المناسب للأطفال."
+        },
+        "body": {
+          "fr": "Votre établissement, ses espaces et sa clientèle guident la qualification.",
+          "en": "Your property, spaces and guests guide qualification.",
+          "ar": "يوجه مكان الإقامة وفضاءاته وضيوفه دراسة الاحتياجات."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/storefront-imagery-r3--hospitality--family.webp",
+        "action": "advice",
+        "focus": "50% 50%"
+      }
+    ]
+  },
+  {
+    "key": "corporate-childcare-benefit",
+    "domain": "b2b",
+    "treatment": "benefit",
+    "labels": {
+      "fr": "Bénéfice childcare collaborateurs",
+      "en": "Employee childcare benefit",
+      "ar": "ميزة رعاية الأطفال للموظفين"
+    },
+    "stories": [
+      {
+        "role": "desire",
+        "heading": {
+          "fr": "La vie des familles rencontre celle de l’entreprise.",
+          "en": "Family life meets working life.",
+          "ar": "تلتقي الحياة العائلية بالحياة المهنية."
+        },
+        "body": {
+          "fr": "Imaginez la place d’un programme familial dans votre politique collaborateurs.",
+          "en": "Imagine a family programme within your employee policy.",
+          "ar": "تخيل مكان برنامج عائلي ضمن سياسة موظفيك."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/storefront-imagery-r3--corporates--corporate.webp",
+        "action": "fit",
+        "focus": "50% 50%"
+      },
+      {
+        "role": "understand",
+        "heading": {
+          "fr": "Un dispositif se construit dans son périmètre.",
+          "en": "Build a programme around its scope.",
+          "ar": "ابن البرنامج انطلاقاً من نطاقه."
+        },
+        "body": {
+          "fr": "Population, éligibilité, contribution et services : examinez les modalités.",
+          "en": "Population, eligibility, contribution and services: examine the arrangements.",
+          "ar": "الأعداد والأهلية والمساهمة والخدمات: راجع التفاصيل."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/specialist-worlds-r1--family-benefits.webp",
+        "action": "fit",
+        "focus": "50% 50%"
+      },
+      {
+        "role": "guidance",
+        "heading": {
+          "fr": "Préparons un brief utile à vos équipes RH.",
+          "en": "Prepare a useful brief for your HR team.",
+          "ar": "لنحضر ملخصاً مفيداً لفريق الموارد البشرية."
+        },
+        "body": {
+          "fr": "Exposez les besoins de vos collaborateurs et vos contraintes de déploiement.",
+          "en": "Describe employee needs and your deployment constraints.",
+          "ar": "وضح احتياجات الموظفين وقيود التنفيذ."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/storefront-imagery-r3--corporates--desk.webp",
+        "action": "advice",
+        "focus": "50% 50%"
+      }
+    ]
+  },
+  {
+    "key": "health-adjacent-programme",
+    "domain": "b2b",
+    "treatment": "health",
+    "labels": {
+      "fr": "Programme partenaire santé non médical",
+      "en": "Health-adjacent non-medical programme",
+      "ar": "برنامج شريك صحي غير طبي"
+    },
+    "stories": [
+      {
+        "role": "desire",
+        "heading": {
+          "fr": "Un accompagnement familial autour de votre structure.",
+          "en": "Family support around your organisation.",
+          "ar": "مرافقة عائلية حول مؤسستك."
+        },
+        "body": {
+          "fr": "Imaginez la coordination des besoins pratiques dans votre contexte partenaire.",
+          "en": "Imagine coordinating practical needs in your partner setting.",
+          "ar": "تخيل تنسيق الاحتياجات العملية في سياق الشراكة."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/storefront-imagery-r3--health-partners--health.webp",
+        "action": "included",
+        "focus": "50% 50%"
+      },
+      {
+        "role": "understand",
+        "heading": {
+          "fr": "Un cadre non médical clairement défini.",
+          "en": "A clearly defined non-medical scope.",
+          "ar": "نطاق غير طبي محدد بوضوح."
+        },
+        "body": {
+          "fr": "Consultez les services, les interfaces et les limites de ce programme.",
+          "en": "Review the services, interfaces and boundaries of this programme.",
+          "ar": "راجع الخدمات ونقاط التنسيق وحدود هذا البرنامج."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/storefront-imagery-r3--health-partners--family.webp",
+        "action": "included",
+        "focus": "50% 50%"
+      },
+      {
+        "role": "guidance",
+        "heading": {
+          "fr": "Construisons votre besoin de partenariat.",
+          "en": "Prepare your partnership needs.",
+          "ar": "لنحضر احتياجات شراكتك."
+        },
+        "body": {
+          "fr": "Présentez votre structure et le périmètre que vous souhaitez explorer.",
+          "en": "Introduce your organisation and the scope you wish to explore.",
+          "ar": "عرف بمؤسستك والنطاق الذي ترغب في استكشافه."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/storefront-imagery-r3--health-partners--academy.webp",
+        "action": "advice",
+        "focus": "50% 50%"
+      }
+    ]
+  },
+  {
+    "key": "event-venue-programme",
+    "domain": "b2b",
+    "treatment": "venue",
+    "labels": {
+      "fr": "Programme lieux, événements & institutions",
+      "en": "Venue, event and institution programme",
+      "ar": "برنامج الأماكن والفعاليات والمؤسسات"
+    },
+    "stories": [
+      {
+        "role": "desire",
+        "heading": {
+          "fr": "Votre lieu peut accueillir une expérience familiale.",
+          "en": "Your venue can host a family experience.",
+          "ar": "يمكن لمكانك احتضان تجربة عائلية."
+        },
+        "body": {
+          "fr": "Imaginez les espaces, les usages et les moments à coordonner.",
+          "en": "Imagine spaces, uses and moments to coordinate.",
+          "ar": "تخيل الفضاءات والاستخدامات والأوقات المطلوب تنسيقها."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/storefront-imagery-r3--hospitality--holidays.webp",
+        "action": "deployment",
+        "focus": "50% 50%"
+      },
+      {
+        "role": "understand",
+        "heading": {
+          "fr": "Du contexte au programme opérationnel.",
+          "en": "From setting to operational programme.",
+          "ar": "من السياق إلى البرنامج التشغيلي."
+        },
+        "body": {
+          "fr": "Lieu, participants et périmètre : consultez les dispositions proposées.",
+          "en": "Venue, participants and scope: review proposed arrangements.",
+          "ar": "المكان والمشاركون والنطاق: راجع الترتيبات المقترحة."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/specialist-worlds-r1--family-days.webp",
+        "action": "deployment",
+        "focus": "50% 50%"
+      },
+      {
+        "role": "guidance",
+        "heading": {
+          "fr": "Préparons votre événement ou votre lieu.",
+          "en": "Prepare your event or venue.",
+          "ar": "لنحضر مناسبتك أو مكانك."
+        },
+        "body": {
+          "fr": "Vos contraintes d’accueil et vos objectifs guident le prochain échange.",
+          "en": "Reception constraints and objectives guide the next conversation.",
+          "ar": "توجه قيود الاستقبال والأهداف الحوار القادم."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/specialist-worlds-r1--family-concierge.webp",
+        "action": "advice",
+        "focus": "50% 50%"
+      }
+    ]
+  },
+  {
+    "key": "partner-os-plan",
+    "domain": "b2b",
+    "treatment": "workspace",
+    "labels": {
+      "fr": "Plan Partner OS",
+      "en": "Partner OS plan",
+      "ar": "خطة نظام الشركاء"
+    },
+    "stories": [
+      {
+        "role": "desire",
+        "heading": {
+          "fr": "Donnez un cadre à vos opérations.",
+          "en": "Give your operations a clear framework.",
+          "ar": "امنح عملياتك إطاراً واضحاً."
+        },
+        "body": {
+          "fr": "Imaginez l’organisation de votre activité, puis examinez les capacités du plan.",
+          "en": "Imagine organising your activity, then review the plan capabilities.",
+          "ar": "تخيل تنظيم نشاطك، ثم راجع قدرات الخطة."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/storefront-imagery-r3--partner-os--desk.webp",
+        "action": "included",
+        "focus": "50% 50%"
+      },
+      {
+        "role": "understand",
+        "heading": {
+          "fr": "Choisir à partir des fonctionnalités publiées.",
+          "en": "Choose through published capabilities.",
+          "ar": "اختر انطلاقاً من الوظائف المنشورة."
+        },
+        "body": {
+          "fr": "Modules, limites, support et conditions du plan restent accessibles dans le dossier.",
+          "en": "Modules, limits, support and plan conditions remain available in the dossier.",
+          "ar": "تظل الوحدات والحدود والدعم وشروط الخطة متاحة في الملف."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/specialist-worlds-r1--establishment-os.webp",
+        "action": "included",
+        "focus": "50% 50%"
+      },
+      {
+        "role": "guidance",
+        "heading": {
+          "fr": "Préparons votre choix de plan.",
+          "en": "Prepare your plan selection.",
+          "ar": "لنحضر اختيار خطتك."
+        },
+        "body": {
+          "fr": "Votre organisation et vos usages aident à préciser les questions utiles.",
+          "en": "Your organisation and uses help identify useful questions.",
+          "ar": "تساعد مؤسستك واستخداماتك على تحديد الأسئلة المفيدة."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/storefront-imagery-r3--partner-os--professional.webp",
+        "action": "advice",
+        "focus": "50% 50%"
+      }
+    ]
+  },
+  {
+    "key": "quality-check-assessment",
+    "domain": "b2b",
+    "treatment": "assessment",
+    "labels": {
+      "fr": "Évaluation Quality Check 360",
+      "en": "Quality Check 360 assessment",
+      "ar": "تقييم فحص الجودة 360"
+    },
+    "stories": [
+      {
+        "role": "desire",
+        "heading": {
+          "fr": "Voir plus clair pour préparer l’amélioration.",
+          "en": "See more clearly to prepare improvement.",
+          "ar": "رؤية أوضح للتحضير للتحسين."
+        },
+        "body": {
+          "fr": "Imaginez un échange structuré autour du périmètre à examiner.",
+          "en": "Imagine a structured conversation around the scope to review.",
+          "ar": "تخيل حواراً منظماً حول النطاق المطلوب مراجعته."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/storefront-imagery-r3--quality-check--school.webp",
+        "action": "evidence",
+        "focus": "50% 50%"
+      },
+      {
+        "role": "understand",
+        "heading": {
+          "fr": "Une évaluation commence par son cadre.",
+          "en": "An assessment starts with its scope.",
+          "ar": "التقييم يبدأ بإطاره."
+        },
+        "body": {
+          "fr": "Consultez les domaines, les méthodes et les livrables lorsqu’ils sont publiés.",
+          "en": "Review domains, methods and deliverables when published.",
+          "ar": "راجع المجالات والأساليب والمخرجات عند نشرها."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/storefront-imagery-r3--quality-check--desk.webp",
+        "action": "evidence",
+        "focus": "50% 50%"
+      },
+      {
+        "role": "guidance",
+        "heading": {
+          "fr": "Préparons votre demande d’évaluation.",
+          "en": "Prepare your assessment request.",
+          "ar": "لنحضر طلب تقييمك."
+        },
+        "body": {
+          "fr": "Décrivez votre structure et les objectifs de la démarche.",
+          "en": "Describe your organisation and the objectives of the process.",
+          "ar": "صف مؤسستك وأهداف العملية."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/storefront-imagery-r3--quality-check--professional.webp",
+        "action": "advice",
+        "focus": "50% 50%"
+      }
+    ]
+  },
+  {
+    "key": "custom-managed-solution",
+    "domain": "b2b",
+    "treatment": "project",
+    "labels": {
+      "fr": "Solution gérée sur mesure",
+      "en": "Custom managed solution",
+      "ar": "حل مُدار مخصص"
+    },
+    "stories": [
+      {
+        "role": "desire",
+        "heading": {
+          "fr": "Votre contexte mérite une réflexion complète.",
+          "en": "Your context deserves a complete conversation.",
+          "ar": "سياقك يستحق حواراً شاملاً."
+        },
+        "body": {
+          "fr": "Imaginez le projet dans votre organisation et rassemblez ses besoins essentiels.",
+          "en": "Imagine the project within your organisation and gather essential needs.",
+          "ar": "تخيل المشروع داخل مؤسستك واجمع احتياجاته الأساسية."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/atomic-neutral-r4--help-b2b.webp",
+        "action": "fit",
+        "focus": "50% 50%"
+      },
+      {
+        "role": "understand",
+        "heading": {
+          "fr": "Définir le besoin avant de construire la suite.",
+          "en": "Define the need before preparing the next step.",
+          "ar": "حدد الحاجة قبل إعداد الخطوة التالية."
+        },
+        "body": {
+          "fr": "Périmètre, contraintes et conditions publiées orientent la qualification.",
+          "en": "Published scope, constraints and conditions guide qualification.",
+          "ar": "يوجه النطاق والقيود والشروط المنشورة دراسة الاحتياجات."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/storefront-imagery-r3--establishments--desk.webp",
+        "action": "fit",
+        "focus": "50% 50%"
+      },
+      {
+        "role": "guidance",
+        "heading": {
+          "fr": "Transformons vos questions en un brief clair.",
+          "en": "Turn your questions into a clear brief.",
+          "ar": "حول أسئلتك إلى ملخص واضح."
+        },
+        "body": {
+          "fr": "L’équipe AngelCare reprend votre contexte pour préparer l’échange.",
+          "en": "The AngelCare team reviews your context to prepare the conversation.",
+          "ar": "يراجع فريق AngelCare سياقك لتحضير الحوار."
+        },
+        "image": "/angelcare-marketplace/atomic-editorial-r3/assets/specialist-worlds-r1--academy-request.webp",
+        "action": "advice",
+        "focus": "50% 50%"
+      }
+    ]
+  }
+]

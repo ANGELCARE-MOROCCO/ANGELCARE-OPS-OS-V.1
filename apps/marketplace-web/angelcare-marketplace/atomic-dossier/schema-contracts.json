@@ -1,0 +1,7293 @@
+{
+  "home-childcare-one-time": {
+    "domain": "service",
+    "conversion": "service_booking",
+    "labels": {
+      "fr": "Garde d’enfants à domicile · ponctuelle",
+      "en": "One-time home childcare",
+      "ar": "رعاية الأطفال المنزلية لمرة واحدة"
+    },
+    "fields": {
+      "name_fr": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom français",
+          "en": "French name",
+          "ar": "الاسم بالفرنسية"
+        }
+      },
+      "name_en": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom anglais",
+          "en": "English name",
+          "ar": "الاسم بالإنجليزية"
+        }
+      },
+      "name_ar": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom arabe",
+          "en": "Arabic name",
+          "ar": "الاسم بالعربية"
+        }
+      },
+      "short_description_fr": {
+        "destination": "description",
+        "section": "content",
+        "type": "textarea",
+        "labels": {
+          "fr": "Promesse de service",
+          "en": "Service promise",
+          "ar": "وعد الخدمة"
+        }
+      },
+      "description_fr": {
+        "destination": "description",
+        "section": "content",
+        "type": "richtext",
+        "labels": {
+          "fr": "Description complète",
+          "en": "Full description",
+          "ar": "الوصف الكامل"
+        }
+      },
+      "primary_image_reference": {
+        "destination": "media",
+        "section": "media",
+        "type": "media",
+        "labels": {
+          "fr": "Image principale",
+          "en": "Primary image",
+          "ar": "الصورة الرئيسية"
+        }
+      },
+      "gallery_references": {
+        "destination": "media",
+        "section": "media",
+        "type": "media_list",
+        "labels": {
+          "fr": "Galerie",
+          "en": "Gallery",
+          "ar": "المعرض"
+        }
+      },
+      "territory_codes": {
+        "destination": "coverage",
+        "section": "coverage",
+        "type": "territory_list",
+        "labels": {
+          "fr": "Territoires servis",
+          "en": "Service territories",
+          "ar": "مناطق الخدمة"
+        }
+      },
+      "price_mode": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "select",
+        "labels": {
+          "fr": "Mode de tarification",
+          "en": "Pricing mode",
+          "ar": "نمط التسعير"
+        }
+      },
+      "price_amount": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "money",
+        "labels": {
+          "fr": "Prix de référence en Dh",
+          "en": "Reference price in Dh",
+          "ar": "السعر المرجعي بالدرهم"
+        }
+      },
+      "minimum_lead_time_hours": {
+        "destination": "plans",
+        "section": "availability",
+        "type": "integer",
+        "labels": {
+          "fr": "Préavis minimum (heures)",
+          "en": "Minimum lead time (hours)",
+          "ar": "الحد الأدنى للإشعار بالساعات"
+        }
+      },
+      "available_days": {
+        "destination": "plans",
+        "section": "availability",
+        "type": "multiselect",
+        "labels": {
+          "fr": "Jours disponibles",
+          "en": "Available days",
+          "ar": "الأيام المتاحة"
+        }
+      },
+      "available_time_windows": {
+        "destination": "plans",
+        "section": "availability",
+        "type": "time_ranges",
+        "labels": {
+          "fr": "Plages horaires",
+          "en": "Available time windows",
+          "ar": "الفترات الزمنية المتاحة"
+        }
+      },
+      "age_min": {
+        "destination": "preparation",
+        "section": "eligibility",
+        "type": "number",
+        "labels": {
+          "fr": "Âge minimum",
+          "en": "Minimum age",
+          "ar": "الحد الأدنى للعمر"
+        }
+      },
+      "age_max": {
+        "destination": "preparation",
+        "section": "eligibility",
+        "type": "number",
+        "labels": {
+          "fr": "Âge maximum",
+          "en": "Maximum age",
+          "ar": "الحد الأقصى للعمر"
+        }
+      },
+      "children_min": {
+        "destination": "preparation",
+        "section": "eligibility",
+        "type": "integer",
+        "labels": {
+          "fr": "Nombre minimum d’enfants",
+          "en": "Minimum children",
+          "ar": "الحد الأدنى للأطفال"
+        }
+      },
+      "children_max": {
+        "destination": "preparation",
+        "section": "eligibility",
+        "type": "integer",
+        "labels": {
+          "fr": "Nombre maximum d’enfants",
+          "en": "Maximum children",
+          "ar": "الحد الأقصى للأطفال"
+        }
+      },
+      "minimum_duration_hours": {
+        "destination": "plans",
+        "section": "schedule",
+        "type": "number",
+        "labels": {
+          "fr": "Durée minimum (heures)",
+          "en": "Minimum duration (hours)",
+          "ar": "المدة الدنيا بالساعات"
+        }
+      },
+      "maximum_duration_hours": {
+        "destination": "plans",
+        "section": "schedule",
+        "type": "number",
+        "labels": {
+          "fr": "Durée maximum (heures)",
+          "en": "Maximum duration (hours)",
+          "ar": "المدة القصوى بالساعات"
+        }
+      },
+      "additional_child_price_dh": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "money",
+        "labels": {
+          "fr": "Supplément par enfant",
+          "en": "Additional child price",
+          "ar": "سعر الطفل الإضافي"
+        }
+      },
+      "same_day_enabled": {
+        "destination": "plans",
+        "section": "availability",
+        "type": "boolean",
+        "labels": {
+          "fr": "Réservation le jour même",
+          "en": "Same-day booking",
+          "ar": "الحجز في نفس اليوم"
+        }
+      },
+      "caregiver_language_options": {
+        "destination": "providers",
+        "section": "matching",
+        "type": "multiselect",
+        "labels": {
+          "fr": "Langues caregiver",
+          "en": "Caregiver languages",
+          "ar": "لغات مقدم الرعاية"
+        }
+      },
+      "activity_options": {
+        "destination": "included",
+        "section": "configuration",
+        "type": "multiselect",
+        "labels": {
+          "fr": "Activités proposées",
+          "en": "Activity options",
+          "ar": "خيارات الأنشطة"
+        }
+      },
+      "meal_support_enabled": {
+        "destination": "included",
+        "section": "configuration",
+        "type": "boolean",
+        "labels": {
+          "fr": "Assistance repas",
+          "en": "Meal support",
+          "ar": "مساعدة الوجبات"
+        }
+      },
+      "bedtime_support_enabled": {
+        "destination": "included",
+        "section": "configuration",
+        "type": "boolean",
+        "labels": {
+          "fr": "Routine coucher",
+          "en": "Bedtime support",
+          "ar": "دعم وقت النوم"
+        }
+      },
+      "schoolwork_support_enabled": {
+        "destination": "included",
+        "section": "configuration",
+        "type": "boolean",
+        "labels": {
+          "fr": "Aide devoirs",
+          "en": "Schoolwork support",
+          "ar": "دعم الواجبات"
+        }
+      },
+      "cancellation_policy_key": {
+        "destination": "conditions",
+        "section": "policy",
+        "type": "text",
+        "labels": {
+          "fr": "Politique d’annulation",
+          "en": "Cancellation policy",
+          "ar": "سياسة الإلغاء"
+        }
+      }
+    }
+  },
+  "home-childcare-recurring": {
+    "domain": "service",
+    "conversion": "recurring_booking",
+    "labels": {
+      "fr": "Garde d’enfants à domicile · récurrente",
+      "en": "Recurring home childcare",
+      "ar": "رعاية أطفال منزلية متكررة"
+    },
+    "fields": {
+      "name_fr": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom français",
+          "en": "French name",
+          "ar": "الاسم بالفرنسية"
+        }
+      },
+      "name_en": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom anglais",
+          "en": "English name",
+          "ar": "الاسم بالإنجليزية"
+        }
+      },
+      "name_ar": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom arabe",
+          "en": "Arabic name",
+          "ar": "الاسم بالعربية"
+        }
+      },
+      "short_description_fr": {
+        "destination": "description",
+        "section": "content",
+        "type": "textarea",
+        "labels": {
+          "fr": "Promesse de service",
+          "en": "Service promise",
+          "ar": "وعد الخدمة"
+        }
+      },
+      "description_fr": {
+        "destination": "description",
+        "section": "content",
+        "type": "richtext",
+        "labels": {
+          "fr": "Description complète",
+          "en": "Full description",
+          "ar": "الوصف الكامل"
+        }
+      },
+      "primary_image_reference": {
+        "destination": "media",
+        "section": "media",
+        "type": "media",
+        "labels": {
+          "fr": "Image principale",
+          "en": "Primary image",
+          "ar": "الصورة الرئيسية"
+        }
+      },
+      "gallery_references": {
+        "destination": "media",
+        "section": "media",
+        "type": "media_list",
+        "labels": {
+          "fr": "Galerie",
+          "en": "Gallery",
+          "ar": "المعرض"
+        }
+      },
+      "territory_codes": {
+        "destination": "coverage",
+        "section": "coverage",
+        "type": "territory_list",
+        "labels": {
+          "fr": "Territoires servis",
+          "en": "Service territories",
+          "ar": "مناطق الخدمة"
+        }
+      },
+      "price_mode": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "select",
+        "labels": {
+          "fr": "Mode de tarification",
+          "en": "Pricing mode",
+          "ar": "نمط التسعير"
+        }
+      },
+      "price_amount": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "money",
+        "labels": {
+          "fr": "Prix de référence en Dh",
+          "en": "Reference price in Dh",
+          "ar": "السعر المرجعي بالدرهم"
+        }
+      },
+      "minimum_lead_time_hours": {
+        "destination": "plans",
+        "section": "availability",
+        "type": "integer",
+        "labels": {
+          "fr": "Préavis minimum (heures)",
+          "en": "Minimum lead time (hours)",
+          "ar": "الحد الأدنى للإشعار بالساعات"
+        }
+      },
+      "available_days": {
+        "destination": "plans",
+        "section": "availability",
+        "type": "multiselect",
+        "labels": {
+          "fr": "Jours disponibles",
+          "en": "Available days",
+          "ar": "الأيام المتاحة"
+        }
+      },
+      "available_time_windows": {
+        "destination": "plans",
+        "section": "availability",
+        "type": "time_ranges",
+        "labels": {
+          "fr": "Plages horaires",
+          "en": "Available time windows",
+          "ar": "الفترات الزمنية المتاحة"
+        }
+      },
+      "age_min": {
+        "destination": "preparation",
+        "section": "eligibility",
+        "type": "number",
+        "labels": {
+          "fr": "Âge minimum",
+          "en": "Minimum age",
+          "ar": "الحد الأدنى للعمر"
+        }
+      },
+      "age_max": {
+        "destination": "preparation",
+        "section": "eligibility",
+        "type": "number",
+        "labels": {
+          "fr": "Âge maximum",
+          "en": "Maximum age",
+          "ar": "الحد الأقصى للعمر"
+        }
+      },
+      "children_min": {
+        "destination": "preparation",
+        "section": "eligibility",
+        "type": "integer",
+        "labels": {
+          "fr": "Nombre minimum d’enfants",
+          "en": "Minimum children",
+          "ar": "الحد الأدنى للأطفال"
+        }
+      },
+      "children_max": {
+        "destination": "preparation",
+        "section": "eligibility",
+        "type": "integer",
+        "labels": {
+          "fr": "Nombre maximum d’enfants",
+          "en": "Maximum children",
+          "ar": "الحد الأقصى للأطفال"
+        }
+      },
+      "minimum_duration_hours": {
+        "destination": "plans",
+        "section": "schedule",
+        "type": "number",
+        "labels": {
+          "fr": "Durée minimum (heures)",
+          "en": "Minimum duration (hours)",
+          "ar": "المدة الدنيا بالساعات"
+        }
+      },
+      "maximum_duration_hours": {
+        "destination": "plans",
+        "section": "schedule",
+        "type": "number",
+        "labels": {
+          "fr": "Durée maximum (heures)",
+          "en": "Maximum duration (hours)",
+          "ar": "المدة القصوى بالساعات"
+        }
+      },
+      "additional_child_price_dh": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "money",
+        "labels": {
+          "fr": "Supplément par enfant",
+          "en": "Additional child price",
+          "ar": "سعر الطفل الإضافي"
+        }
+      },
+      "same_day_enabled": {
+        "destination": "plans",
+        "section": "availability",
+        "type": "boolean",
+        "labels": {
+          "fr": "Réservation le jour même",
+          "en": "Same-day booking",
+          "ar": "الحجز في نفس اليوم"
+        }
+      },
+      "caregiver_language_options": {
+        "destination": "providers",
+        "section": "matching",
+        "type": "multiselect",
+        "labels": {
+          "fr": "Langues caregiver",
+          "en": "Caregiver languages",
+          "ar": "لغات مقدم الرعاية"
+        }
+      },
+      "activity_options": {
+        "destination": "included",
+        "section": "configuration",
+        "type": "multiselect",
+        "labels": {
+          "fr": "Activités proposées",
+          "en": "Activity options",
+          "ar": "خيارات الأنشطة"
+        }
+      },
+      "meal_support_enabled": {
+        "destination": "included",
+        "section": "configuration",
+        "type": "boolean",
+        "labels": {
+          "fr": "Assistance repas",
+          "en": "Meal support",
+          "ar": "مساعدة الوجبات"
+        }
+      },
+      "bedtime_support_enabled": {
+        "destination": "included",
+        "section": "configuration",
+        "type": "boolean",
+        "labels": {
+          "fr": "Routine coucher",
+          "en": "Bedtime support",
+          "ar": "دعم وقت النوم"
+        }
+      },
+      "schoolwork_support_enabled": {
+        "destination": "included",
+        "section": "configuration",
+        "type": "boolean",
+        "labels": {
+          "fr": "Aide devoirs",
+          "en": "Schoolwork support",
+          "ar": "دعم الواجبات"
+        }
+      },
+      "cancellation_policy_key": {
+        "destination": "conditions",
+        "section": "policy",
+        "type": "text",
+        "labels": {
+          "fr": "Politique d’annulation",
+          "en": "Cancellation policy",
+          "ar": "سياسة الإلغاء"
+        }
+      },
+      "recurrence_types": {
+        "destination": "planning",
+        "section": "recurrence",
+        "type": "multiselect",
+        "labels": {
+          "fr": "Récurrences autorisées",
+          "en": "Allowed recurrences",
+          "ar": "أنواع التكرار"
+        }
+      },
+      "minimum_commitment_weeks": {
+        "destination": "planning",
+        "section": "recurrence",
+        "type": "integer",
+        "labels": {
+          "fr": "Engagement minimum (semaines)",
+          "en": "Minimum commitment (weeks)",
+          "ar": "الحد الأدنى للالتزام بالأسابيع"
+        }
+      },
+      "monthly_included_hours": {
+        "destination": "planning",
+        "section": "recurrence",
+        "type": "number",
+        "labels": {
+          "fr": "Heures mensuelles incluses",
+          "en": "Monthly included hours",
+          "ar": "الساعات الشهرية المشمولة"
+        }
+      },
+      "pause_enabled": {
+        "destination": "planning",
+        "section": "recurrence",
+        "type": "boolean",
+        "labels": {
+          "fr": "Pause autorisée",
+          "en": "Pause allowed",
+          "ar": "إمكانية التوقف"
+        }
+      },
+      "schedule_change_limit": {
+        "destination": "planning",
+        "section": "recurrence",
+        "type": "integer",
+        "labels": {
+          "fr": "Modifications par mois",
+          "en": "Schedule changes per month",
+          "ar": "تعديلات الجدول شهرياً"
+        }
+      },
+      "provider_continuity_preference": {
+        "destination": "providers",
+        "section": "matching",
+        "type": "select",
+        "labels": {
+          "fr": "Continuité caregiver",
+          "en": "Caregiver continuity",
+          "ar": "استمرارية مقدم الرعاية"
+        }
+      },
+      "substitute_provider_policy": {
+        "destination": "providers",
+        "section": "matching",
+        "type": "select",
+        "labels": {
+          "fr": "Politique remplaçant",
+          "en": "Substitute provider policy",
+          "ar": "سياسة مقدم الرعاية البديل"
+        }
+      }
+    }
+  },
+  "school-pickup-care": {
+    "domain": "service",
+    "conversion": "route_booking",
+    "labels": {
+      "fr": "Sortie d’école & garde après l’école",
+      "en": "School pickup and after-school care",
+      "ar": "الاستلام من المدرسة والرعاية بعدها"
+    },
+    "fields": {
+      "name_fr": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom français",
+          "en": "French name",
+          "ar": "الاسم بالفرنسية"
+        }
+      },
+      "name_en": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom anglais",
+          "en": "English name",
+          "ar": "الاسم بالإنجليزية"
+        }
+      },
+      "name_ar": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom arabe",
+          "en": "Arabic name",
+          "ar": "الاسم بالعربية"
+        }
+      },
+      "short_description_fr": {
+        "destination": "description",
+        "section": "content",
+        "type": "textarea",
+        "labels": {
+          "fr": "Promesse de service",
+          "en": "Service promise",
+          "ar": "وعد الخدمة"
+        }
+      },
+      "description_fr": {
+        "destination": "description",
+        "section": "content",
+        "type": "richtext",
+        "labels": {
+          "fr": "Description complète",
+          "en": "Full description",
+          "ar": "الوصف الكامل"
+        }
+      },
+      "primary_image_reference": {
+        "destination": "media",
+        "section": "media",
+        "type": "media",
+        "labels": {
+          "fr": "Image principale",
+          "en": "Primary image",
+          "ar": "الصورة الرئيسية"
+        }
+      },
+      "gallery_references": {
+        "destination": "media",
+        "section": "media",
+        "type": "media_list",
+        "labels": {
+          "fr": "Galerie",
+          "en": "Gallery",
+          "ar": "المعرض"
+        }
+      },
+      "territory_codes": {
+        "destination": "coverage",
+        "section": "coverage",
+        "type": "territory_list",
+        "labels": {
+          "fr": "Territoires servis",
+          "en": "Service territories",
+          "ar": "مناطق الخدمة"
+        }
+      },
+      "price_mode": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "select",
+        "labels": {
+          "fr": "Mode de tarification",
+          "en": "Pricing mode",
+          "ar": "نمط التسعير"
+        }
+      },
+      "price_amount": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "money",
+        "labels": {
+          "fr": "Prix de référence en Dh",
+          "en": "Reference price in Dh",
+          "ar": "السعر المرجعي بالدرهم"
+        }
+      },
+      "minimum_lead_time_hours": {
+        "destination": "plans",
+        "section": "availability",
+        "type": "integer",
+        "labels": {
+          "fr": "Préavis minimum (heures)",
+          "en": "Minimum lead time (hours)",
+          "ar": "الحد الأدنى للإشعار بالساعات"
+        }
+      },
+      "available_days": {
+        "destination": "plans",
+        "section": "availability",
+        "type": "multiselect",
+        "labels": {
+          "fr": "Jours disponibles",
+          "en": "Available days",
+          "ar": "الأيام المتاحة"
+        }
+      },
+      "available_time_windows": {
+        "destination": "plans",
+        "section": "availability",
+        "type": "time_ranges",
+        "labels": {
+          "fr": "Plages horaires",
+          "en": "Available time windows",
+          "ar": "الفترات الزمنية المتاحة"
+        }
+      },
+      "school_codes": {
+        "destination": "coverage",
+        "section": "pickup",
+        "type": "list",
+        "labels": {
+          "fr": "Écoles couvertes",
+          "en": "Covered schools",
+          "ar": "المدارس المشمولة"
+        }
+      },
+      "pickup_windows": {
+        "destination": "coverage",
+        "section": "pickup",
+        "type": "time_ranges",
+        "labels": {
+          "fr": "Plages de sortie",
+          "en": "Dismissal windows",
+          "ar": "فترات الخروج"
+        }
+      },
+      "transport_enabled": {
+        "destination": "coverage",
+        "section": "transport",
+        "type": "boolean",
+        "labels": {
+          "fr": "Transport disponible",
+          "en": "Transport available",
+          "ar": "النقل متاح"
+        }
+      },
+      "home_supervision_enabled": {
+        "destination": "included",
+        "section": "aftercare",
+        "type": "boolean",
+        "labels": {
+          "fr": "Supervision à domicile",
+          "en": "Home supervision",
+          "ar": "الإشراف في المنزل"
+        }
+      },
+      "homework_support_enabled": {
+        "destination": "included",
+        "section": "aftercare",
+        "type": "boolean",
+        "labels": {
+          "fr": "Aide aux devoirs",
+          "en": "Homework support",
+          "ar": "دعم الواجبات"
+        }
+      },
+      "authorized_pickup_protocol": {
+        "destination": "conditions",
+        "section": "safety",
+        "type": "select",
+        "labels": {
+          "fr": "Protocole personne autorisée",
+          "en": "Authorized pickup protocol",
+          "ar": "بروتوكول الاستلام المصرح"
+        }
+      },
+      "handover_proof_type": {
+        "destination": "conditions",
+        "section": "safety",
+        "type": "select",
+        "labels": {
+          "fr": "Preuve de remise",
+          "en": "Handover proof",
+          "ar": "إثبات التسليم"
+        }
+      },
+      "route_authority": {
+        "destination": "coverage",
+        "section": "transport",
+        "type": "select",
+        "labels": {
+          "fr": "Autorité itinéraire",
+          "en": "Route authority",
+          "ar": "مرجعية المسار"
+        }
+      },
+      "lateness_policy": {
+        "destination": "conditions",
+        "section": "exceptions",
+        "type": "text",
+        "labels": {
+          "fr": "Gestion retard",
+          "en": "Lateness policy",
+          "ar": "سياسة التأخير"
+        }
+      },
+      "backup_transport_rule": {
+        "destination": "conditions",
+        "section": "exceptions",
+        "type": "text",
+        "labels": {
+          "fr": "Solution transport de secours",
+          "en": "Backup transport rule",
+          "ar": "قاعدة النقل الاحتياطي"
+        }
+      }
+    }
+  },
+  "overnight-extended-care": {
+    "domain": "service",
+    "conversion": "service_request",
+    "labels": {
+      "fr": "Garde de nuit & horaires étendus",
+      "en": "Overnight and extended-hours care",
+      "ar": "الرعاية الليلية والممتدة"
+    },
+    "fields": {
+      "name_fr": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom français",
+          "en": "French name",
+          "ar": "الاسم بالفرنسية"
+        }
+      },
+      "name_en": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom anglais",
+          "en": "English name",
+          "ar": "الاسم بالإنجليزية"
+        }
+      },
+      "name_ar": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom arabe",
+          "en": "Arabic name",
+          "ar": "الاسم بالعربية"
+        }
+      },
+      "short_description_fr": {
+        "destination": "description",
+        "section": "content",
+        "type": "textarea",
+        "labels": {
+          "fr": "Promesse de service",
+          "en": "Service promise",
+          "ar": "وعد الخدمة"
+        }
+      },
+      "description_fr": {
+        "destination": "description",
+        "section": "content",
+        "type": "richtext",
+        "labels": {
+          "fr": "Description complète",
+          "en": "Full description",
+          "ar": "الوصف الكامل"
+        }
+      },
+      "primary_image_reference": {
+        "destination": "media",
+        "section": "media",
+        "type": "media",
+        "labels": {
+          "fr": "Image principale",
+          "en": "Primary image",
+          "ar": "الصورة الرئيسية"
+        }
+      },
+      "gallery_references": {
+        "destination": "media",
+        "section": "media",
+        "type": "media_list",
+        "labels": {
+          "fr": "Galerie",
+          "en": "Gallery",
+          "ar": "المعرض"
+        }
+      },
+      "territory_codes": {
+        "destination": "coverage",
+        "section": "coverage",
+        "type": "territory_list",
+        "labels": {
+          "fr": "Territoires servis",
+          "en": "Service territories",
+          "ar": "مناطق الخدمة"
+        }
+      },
+      "price_mode": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "select",
+        "labels": {
+          "fr": "Mode de tarification",
+          "en": "Pricing mode",
+          "ar": "نمط التسعير"
+        }
+      },
+      "price_amount": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "money",
+        "labels": {
+          "fr": "Prix de référence en Dh",
+          "en": "Reference price in Dh",
+          "ar": "السعر المرجعي بالدرهم"
+        }
+      },
+      "minimum_lead_time_hours": {
+        "destination": "plans",
+        "section": "availability",
+        "type": "integer",
+        "labels": {
+          "fr": "Préavis minimum (heures)",
+          "en": "Minimum lead time (hours)",
+          "ar": "الحد الأدنى للإشعار بالساعات"
+        }
+      },
+      "available_days": {
+        "destination": "plans",
+        "section": "availability",
+        "type": "multiselect",
+        "labels": {
+          "fr": "Jours disponibles",
+          "en": "Available days",
+          "ar": "الأيام المتاحة"
+        }
+      },
+      "available_time_windows": {
+        "destination": "plans",
+        "section": "availability",
+        "type": "time_ranges",
+        "labels": {
+          "fr": "Plages horaires",
+          "en": "Available time windows",
+          "ar": "الفترات الزمنية المتاحة"
+        }
+      },
+      "age_min": {
+        "destination": "preparation",
+        "section": "eligibility",
+        "type": "number",
+        "labels": {
+          "fr": "Âge minimum",
+          "en": "Minimum age",
+          "ar": "الحد الأدنى للعمر"
+        }
+      },
+      "maximum_continuous_hours": {
+        "destination": "plans",
+        "section": "schedule",
+        "type": "number",
+        "labels": {
+          "fr": "Durée continue maximale",
+          "en": "Maximum continuous hours",
+          "ar": "الحد الأقصى للساعات المتواصلة"
+        }
+      },
+      "sleeping_arrangement_requirements": {
+        "destination": "conditions",
+        "section": "safety",
+        "type": "textarea",
+        "labels": {
+          "fr": "Exigences couchage caregiver",
+          "en": "Caregiver sleeping arrangement requirements",
+          "ar": "متطلبات نوم مقدم الرعاية"
+        }
+      },
+      "bedtime_support": {
+        "destination": "included",
+        "section": "configuration",
+        "type": "boolean",
+        "labels": {
+          "fr": "Routine coucher",
+          "en": "Bedtime routine",
+          "ar": "روتين النوم"
+        }
+      },
+      "morning_routine_support": {
+        "destination": "included",
+        "section": "configuration",
+        "type": "boolean",
+        "labels": {
+          "fr": "Routine matin",
+          "en": "Morning routine",
+          "ar": "روتين الصباح"
+        }
+      },
+      "school_dropoff_enabled": {
+        "destination": "coverage",
+        "section": "transport",
+        "type": "boolean",
+        "labels": {
+          "fr": "Dépôt école",
+          "en": "School drop-off",
+          "ar": "التوصيل إلى المدرسة"
+        }
+      },
+      "night_price_modifier": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "number",
+        "labels": {
+          "fr": "Majoration nuit (%)",
+          "en": "Night price modifier (%)",
+          "ar": "زيادة سعر الليل"
+        }
+      },
+      "enhanced_consent_required": {
+        "destination": "conditions",
+        "section": "safety",
+        "type": "boolean",
+        "labels": {
+          "fr": "Consentement renforcé",
+          "en": "Enhanced consent required",
+          "ar": "موافقة معززة مطلوبة"
+        }
+      }
+    }
+  },
+  "emergency-last-minute-care": {
+    "domain": "service",
+    "conversion": "urgent_request",
+    "labels": {
+      "fr": "Garde urgente & dernière minute",
+      "en": "Emergency and last-minute childcare",
+      "ar": "رعاية طارئة وفي اللحظة الأخيرة"
+    },
+    "fields": {
+      "name_fr": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom français",
+          "en": "French name",
+          "ar": "الاسم بالفرنسية"
+        }
+      },
+      "name_en": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom anglais",
+          "en": "English name",
+          "ar": "الاسم بالإنجليزية"
+        }
+      },
+      "name_ar": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom arabe",
+          "en": "Arabic name",
+          "ar": "الاسم بالعربية"
+        }
+      },
+      "short_description_fr": {
+        "destination": "description",
+        "section": "content",
+        "type": "textarea",
+        "labels": {
+          "fr": "Promesse de service",
+          "en": "Service promise",
+          "ar": "وعد الخدمة"
+        }
+      },
+      "description_fr": {
+        "destination": "description",
+        "section": "content",
+        "type": "richtext",
+        "labels": {
+          "fr": "Description complète",
+          "en": "Full description",
+          "ar": "الوصف الكامل"
+        }
+      },
+      "primary_image_reference": {
+        "destination": "media",
+        "section": "media",
+        "type": "media",
+        "labels": {
+          "fr": "Image principale",
+          "en": "Primary image",
+          "ar": "الصورة الرئيسية"
+        }
+      },
+      "gallery_references": {
+        "destination": "media",
+        "section": "media",
+        "type": "media_list",
+        "labels": {
+          "fr": "Galerie",
+          "en": "Gallery",
+          "ar": "المعرض"
+        }
+      },
+      "territory_codes": {
+        "destination": "coverage",
+        "section": "coverage",
+        "type": "territory_list",
+        "labels": {
+          "fr": "Territoires servis",
+          "en": "Service territories",
+          "ar": "مناطق الخدمة"
+        }
+      },
+      "price_mode": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "select",
+        "labels": {
+          "fr": "Mode de tarification",
+          "en": "Pricing mode",
+          "ar": "نمط التسعير"
+        }
+      },
+      "price_amount": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "money",
+        "labels": {
+          "fr": "Prix de référence en Dh",
+          "en": "Reference price in Dh",
+          "ar": "السعر المرجعي بالدرهم"
+        }
+      },
+      "minimum_lead_time_hours": {
+        "destination": "plans",
+        "section": "availability",
+        "type": "integer",
+        "labels": {
+          "fr": "Préavis minimum (heures)",
+          "en": "Minimum lead time (hours)",
+          "ar": "الحد الأدنى للإشعار بالساعات"
+        }
+      },
+      "available_days": {
+        "destination": "plans",
+        "section": "availability",
+        "type": "multiselect",
+        "labels": {
+          "fr": "Jours disponibles",
+          "en": "Available days",
+          "ar": "الأيام المتاحة"
+        }
+      },
+      "available_time_windows": {
+        "destination": "plans",
+        "section": "availability",
+        "type": "time_ranges",
+        "labels": {
+          "fr": "Plages horaires",
+          "en": "Available time windows",
+          "ar": "الفترات الزمنية المتاحة"
+        }
+      },
+      "maximum_lead_time_hours": {
+        "destination": "plans",
+        "section": "urgency",
+        "type": "integer",
+        "labels": {
+          "fr": "Besoin dans moins de (heures)",
+          "en": "Need within (hours)",
+          "ar": "الحاجة خلال ساعات"
+        }
+      },
+      "urgent_provider_pool": {
+        "destination": "plans",
+        "section": "capacity",
+        "type": "boolean",
+        "labels": {
+          "fr": "Pool urgent requis",
+          "en": "Urgent provider pool",
+          "ar": "فريق الطوارئ"
+        }
+      },
+      "urgency_price_modifier": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "number",
+        "labels": {
+          "fr": "Majoration urgence (%)",
+          "en": "Urgency price modifier (%)",
+          "ar": "زيادة سعر الطوارئ"
+        }
+      },
+      "rapid_confirmation_sla_minutes": {
+        "destination": "process",
+        "section": "operations",
+        "type": "integer",
+        "labels": {
+          "fr": "SLA confirmation (minutes)",
+          "en": "Confirmation SLA (minutes)",
+          "ar": "مهلة التأكيد بالدقائق"
+        }
+      },
+      "request_expiration_minutes": {
+        "destination": "process",
+        "section": "operations",
+        "type": "integer",
+        "labels": {
+          "fr": "Expiration demande (minutes)",
+          "en": "Request expiration (minutes)",
+          "ar": "انتهاء الطلب بالدقائق"
+        }
+      },
+      "excluded_complexity_flags": {
+        "destination": "conditions",
+        "section": "safety",
+        "type": "multiselect",
+        "labels": {
+          "fr": "Situations exclues en urgence",
+          "en": "Emergency excluded situations",
+          "ar": "الحالات المستبعدة في الطوارئ"
+        }
+      }
+    }
+  },
+  "hotel-travel-childcare": {
+    "domain": "service",
+    "conversion": "hotel_service_request",
+    "labels": {
+      "fr": "Garde hôtel, voyage & lieu temporaire",
+      "en": "Hotel and travel childcare",
+      "ar": "رعاية الأطفال في الفندق والسفر"
+    },
+    "fields": {
+      "name_fr": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom français",
+          "en": "French name",
+          "ar": "الاسم بالفرنسية"
+        }
+      },
+      "name_en": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom anglais",
+          "en": "English name",
+          "ar": "الاسم بالإنجليزية"
+        }
+      },
+      "name_ar": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom arabe",
+          "en": "Arabic name",
+          "ar": "الاسم بالعربية"
+        }
+      },
+      "short_description_fr": {
+        "destination": "description",
+        "section": "content",
+        "type": "textarea",
+        "labels": {
+          "fr": "Promesse de service",
+          "en": "Service promise",
+          "ar": "وعد الخدمة"
+        }
+      },
+      "description_fr": {
+        "destination": "description",
+        "section": "content",
+        "type": "richtext",
+        "labels": {
+          "fr": "Description complète",
+          "en": "Full description",
+          "ar": "الوصف الكامل"
+        }
+      },
+      "primary_image_reference": {
+        "destination": "media",
+        "section": "media",
+        "type": "media",
+        "labels": {
+          "fr": "Image principale",
+          "en": "Primary image",
+          "ar": "الصورة الرئيسية"
+        }
+      },
+      "gallery_references": {
+        "destination": "media",
+        "section": "media",
+        "type": "media_list",
+        "labels": {
+          "fr": "Galerie",
+          "en": "Gallery",
+          "ar": "المعرض"
+        }
+      },
+      "territory_codes": {
+        "destination": "coverage",
+        "section": "coverage",
+        "type": "territory_list",
+        "labels": {
+          "fr": "Territoires servis",
+          "en": "Service territories",
+          "ar": "مناطق الخدمة"
+        }
+      },
+      "price_mode": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "select",
+        "labels": {
+          "fr": "Mode de tarification",
+          "en": "Pricing mode",
+          "ar": "نمط التسعير"
+        }
+      },
+      "price_amount": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "money",
+        "labels": {
+          "fr": "Prix de référence en Dh",
+          "en": "Reference price in Dh",
+          "ar": "السعر المرجعي بالدرهم"
+        }
+      },
+      "minimum_lead_time_hours": {
+        "destination": "plans",
+        "section": "availability",
+        "type": "integer",
+        "labels": {
+          "fr": "Préavis minimum (heures)",
+          "en": "Minimum lead time (hours)",
+          "ar": "الحد الأدنى للإشعار بالساعات"
+        }
+      },
+      "available_days": {
+        "destination": "plans",
+        "section": "availability",
+        "type": "multiselect",
+        "labels": {
+          "fr": "Jours disponibles",
+          "en": "Available days",
+          "ar": "الأيام المتاحة"
+        }
+      },
+      "available_time_windows": {
+        "destination": "plans",
+        "section": "availability",
+        "type": "time_ranges",
+        "labels": {
+          "fr": "Plages horaires",
+          "en": "Available time windows",
+          "ar": "الفترات الزمنية المتاحة"
+        }
+      },
+      "property_types": {
+        "destination": "coverage",
+        "section": "venue",
+        "type": "multiselect",
+        "labels": {
+          "fr": "Types d’hébergement",
+          "en": "Property types",
+          "ar": "أنواع الإقامة"
+        }
+      },
+      "reservation_reference_required": {
+        "destination": "coverage",
+        "section": "venue",
+        "type": "boolean",
+        "labels": {
+          "fr": "Référence réservation requise",
+          "en": "Reservation reference required",
+          "ar": "مرجع الحجز مطلوب"
+        }
+      },
+      "room_access_policy": {
+        "destination": "conditions",
+        "section": "safety",
+        "type": "text",
+        "labels": {
+          "fr": "Politique accès chambre",
+          "en": "Room access policy",
+          "ar": "سياسة دخول الغرفة"
+        }
+      },
+      "multilingual_provider_required": {
+        "destination": "providers",
+        "section": "matching",
+        "type": "boolean",
+        "labels": {
+          "fr": "Caregiver multilingue",
+          "en": "Multilingual caregiver",
+          "ar": "مقدم رعاية متعدد اللغات"
+        }
+      },
+      "hotel_billing_modes": {
+        "destination": "conditions",
+        "section": "billing",
+        "type": "multiselect",
+        "labels": {
+          "fr": "Modes de facturation",
+          "en": "Billing modes",
+          "ar": "طرق الفوترة"
+        }
+      },
+      "late_night_enabled": {
+        "destination": "plans",
+        "section": "schedule",
+        "type": "boolean",
+        "labels": {
+          "fr": "Service tardif",
+          "en": "Late-night service",
+          "ar": "خدمة ليلية متأخرة"
+        }
+      }
+    }
+  },
+  "events-group-childcare": {
+    "domain": "service",
+    "conversion": "b2b_quote",
+    "labels": {
+      "fr": "Garde événementielle & groupe",
+      "en": "Event and group childcare",
+      "ar": "رعاية الأطفال للفعاليات والمجموعات"
+    },
+    "fields": {
+      "name_fr": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom français",
+          "en": "French name",
+          "ar": "الاسم بالفرنسية"
+        }
+      },
+      "name_en": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom anglais",
+          "en": "English name",
+          "ar": "الاسم بالإنجليزية"
+        }
+      },
+      "name_ar": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom arabe",
+          "en": "Arabic name",
+          "ar": "الاسم بالعربية"
+        }
+      },
+      "short_description_fr": {
+        "destination": "description",
+        "section": "content",
+        "type": "textarea",
+        "labels": {
+          "fr": "Promesse de service",
+          "en": "Service promise",
+          "ar": "وعد الخدمة"
+        }
+      },
+      "description_fr": {
+        "destination": "description",
+        "section": "content",
+        "type": "richtext",
+        "labels": {
+          "fr": "Description complète",
+          "en": "Full description",
+          "ar": "الوصف الكامل"
+        }
+      },
+      "primary_image_reference": {
+        "destination": "media",
+        "section": "media",
+        "type": "media",
+        "labels": {
+          "fr": "Image principale",
+          "en": "Primary image",
+          "ar": "الصورة الرئيسية"
+        }
+      },
+      "gallery_references": {
+        "destination": "media",
+        "section": "media",
+        "type": "media_list",
+        "labels": {
+          "fr": "Galerie",
+          "en": "Gallery",
+          "ar": "المعرض"
+        }
+      },
+      "territory_codes": {
+        "destination": "coverage",
+        "section": "coverage",
+        "type": "territory_list",
+        "labels": {
+          "fr": "Territoires servis",
+          "en": "Service territories",
+          "ar": "مناطق الخدمة"
+        }
+      },
+      "price_mode": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "select",
+        "labels": {
+          "fr": "Mode de tarification",
+          "en": "Pricing mode",
+          "ar": "نمط التسعير"
+        }
+      },
+      "price_amount": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "money",
+        "labels": {
+          "fr": "Prix de référence en Dh",
+          "en": "Reference price in Dh",
+          "ar": "السعر المرجعي بالدرهم"
+        }
+      },
+      "minimum_lead_time_hours": {
+        "destination": "plans",
+        "section": "availability",
+        "type": "integer",
+        "labels": {
+          "fr": "Préavis minimum (heures)",
+          "en": "Minimum lead time (hours)",
+          "ar": "الحد الأدنى للإشعار بالساعات"
+        }
+      },
+      "available_days": {
+        "destination": "plans",
+        "section": "availability",
+        "type": "multiselect",
+        "labels": {
+          "fr": "Jours disponibles",
+          "en": "Available days",
+          "ar": "الأيام المتاحة"
+        }
+      },
+      "available_time_windows": {
+        "destination": "plans",
+        "section": "availability",
+        "type": "time_ranges",
+        "labels": {
+          "fr": "Plages horaires",
+          "en": "Available time windows",
+          "ar": "الفترات الزمنية المتاحة"
+        }
+      },
+      "event_types": {
+        "destination": "included",
+        "section": "event",
+        "type": "multiselect",
+        "labels": {
+          "fr": "Types d’événement",
+          "en": "Event types",
+          "ar": "أنواع الفعاليات"
+        }
+      },
+      "children_capacity": {
+        "destination": "included",
+        "section": "scope",
+        "type": "integer",
+        "labels": {
+          "fr": "Capacité enfants",
+          "en": "Children capacity",
+          "ar": "سعة الأطفال"
+        }
+      },
+      "age_group_distribution": {
+        "destination": "included",
+        "section": "scope",
+        "type": "json",
+        "labels": {
+          "fr": "Répartition des âges",
+          "en": "Age group distribution",
+          "ar": "توزيع الأعمار"
+        }
+      },
+      "staffing_ratio": {
+        "destination": "process",
+        "section": "operations",
+        "type": "text",
+        "labels": {
+          "fr": "Ratio encadrement",
+          "en": "Staffing ratio",
+          "ar": "نسبة الإشراف"
+        }
+      },
+      "activity_programme_options": {
+        "destination": "included",
+        "section": "programme",
+        "type": "multiselect",
+        "labels": {
+          "fr": "Programmes d’activités",
+          "en": "Activity programmes",
+          "ar": "برامج الأنشطة"
+        }
+      },
+      "space_requirements_m2": {
+        "destination": "coverage",
+        "section": "venue",
+        "type": "number",
+        "labels": {
+          "fr": "Surface minimum m²",
+          "en": "Minimum space m²",
+          "ar": "المساحة الدنيا بالمتر"
+        }
+      },
+      "setup_teardown_required": {
+        "destination": "process",
+        "section": "operations",
+        "type": "boolean",
+        "labels": {
+          "fr": "Installation / démontage",
+          "en": "Setup / teardown",
+          "ar": "التركيب والتفكيك"
+        }
+      },
+      "quotation_required": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "boolean",
+        "labels": {
+          "fr": "Devis requis",
+          "en": "Quotation required",
+          "ar": "يتطلب عرض سعر"
+        }
+      }
+    }
+  },
+  "holiday-excursion-programme": {
+    "domain": "service",
+    "conversion": "programme_booking",
+    "labels": {
+      "fr": "Programmes vacances & excursions",
+      "en": "Holiday and excursion programmes",
+      "ar": "برامج العطل والرحلات"
+    },
+    "fields": {
+      "name_fr": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom du programme",
+          "en": "Programme name",
+          "ar": "اسم البرنامج"
+        }
+      },
+      "name_en": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom anglais",
+          "en": "English name",
+          "ar": "الاسم بالإنجليزية"
+        }
+      },
+      "name_ar": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom arabe",
+          "en": "Arabic name",
+          "ar": "الاسم بالعربية"
+        }
+      },
+      "short_description_fr": {
+        "destination": "description",
+        "section": "content",
+        "type": "textarea",
+        "labels": {
+          "fr": "Promesse programme",
+          "en": "Programme promise",
+          "ar": "وعد البرنامج"
+        }
+      },
+      "description_fr": {
+        "destination": "description",
+        "section": "content",
+        "type": "richtext",
+        "labels": {
+          "fr": "Description complète",
+          "en": "Full description",
+          "ar": "الوصف الكامل"
+        }
+      },
+      "primary_image_reference": {
+        "destination": "media",
+        "section": "media",
+        "type": "media",
+        "labels": {
+          "fr": "Visuel principal",
+          "en": "Primary visual",
+          "ar": "الصورة الرئيسية"
+        }
+      },
+      "territory_codes": {
+        "destination": "coverage",
+        "section": "coverage",
+        "type": "territory_list",
+        "labels": {
+          "fr": "Territoires",
+          "en": "Territories",
+          "ar": "المناطق"
+        }
+      },
+      "pricing_mode": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "select",
+        "labels": {
+          "fr": "Mode commercial",
+          "en": "Commercial pricing mode",
+          "ar": "نمط التسعير التجاري"
+        }
+      },
+      "starting_price_dh": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "money",
+        "labels": {
+          "fr": "Prix de départ Dh",
+          "en": "Starting price Dh",
+          "ar": "السعر الابتدائي بالدرهم"
+        }
+      },
+      "implementation_lead_time_days": {
+        "destination": "preparation",
+        "section": "delivery",
+        "type": "integer",
+        "labels": {
+          "fr": "Délai de mise en œuvre (jours)",
+          "en": "Implementation lead time (days)",
+          "ar": "مدة التنفيذ بالأيام"
+        }
+      },
+      "programme_start_date": {
+        "destination": "plans",
+        "section": "schedule",
+        "type": "date",
+        "labels": {
+          "fr": "Date de début",
+          "en": "Start date",
+          "ar": "تاريخ البداية"
+        }
+      },
+      "programme_end_date": {
+        "destination": "plans",
+        "section": "schedule",
+        "type": "date",
+        "labels": {
+          "fr": "Date de fin",
+          "en": "End date",
+          "ar": "تاريخ النهاية"
+        }
+      },
+      "meeting_point": {
+        "destination": "coverage",
+        "section": "logistics",
+        "type": "text",
+        "labels": {
+          "fr": "Point de rendez-vous",
+          "en": "Meeting point",
+          "ar": "نقطة الالتقاء"
+        }
+      },
+      "transport_enabled": {
+        "destination": "coverage",
+        "section": "logistics",
+        "type": "boolean",
+        "labels": {
+          "fr": "Transport inclus",
+          "en": "Transport included",
+          "ar": "النقل مشمول"
+        }
+      },
+      "capacity": {
+        "destination": "plans",
+        "section": "availability",
+        "type": "integer",
+        "labels": {
+          "fr": "Capacité",
+          "en": "Capacity",
+          "ar": "السعة"
+        }
+      },
+      "age_min": {
+        "destination": "preparation",
+        "section": "eligibility",
+        "type": "number",
+        "labels": {
+          "fr": "Âge minimum",
+          "en": "Minimum age",
+          "ar": "الحد الأدنى للعمر"
+        }
+      },
+      "age_max": {
+        "destination": "preparation",
+        "section": "eligibility",
+        "type": "number",
+        "labels": {
+          "fr": "Âge maximum",
+          "en": "Maximum age",
+          "ar": "الحد الأقصى للعمر"
+        }
+      },
+      "meal_included": {
+        "destination": "included",
+        "section": "programme",
+        "type": "boolean",
+        "labels": {
+          "fr": "Repas inclus",
+          "en": "Meal included",
+          "ar": "الوجبة مشمولة"
+        }
+      },
+      "authorization_documents": {
+        "destination": "conditions",
+        "section": "safety",
+        "type": "multiselect",
+        "labels": {
+          "fr": "Autorisations requises",
+          "en": "Required authorizations",
+          "ar": "التصاريح المطلوبة"
+        }
+      },
+      "weather_policy": {
+        "destination": "conditions",
+        "section": "exceptions",
+        "type": "text",
+        "labels": {
+          "fr": "Politique météo",
+          "en": "Weather policy",
+          "ar": "سياسة الطقس"
+        }
+      },
+      "waitlist_enabled": {
+        "destination": "plans",
+        "section": "availability",
+        "type": "boolean",
+        "labels": {
+          "fr": "Liste d’attente",
+          "en": "Waitlist enabled",
+          "ar": "قائمة انتظار"
+        }
+      }
+    }
+  },
+  "montessori-home-service": {
+    "domain": "service",
+    "conversion": "service_booking",
+    "labels": {
+      "fr": "Montessori à domicile",
+      "en": "Montessori at home",
+      "ar": "مونتيسوري في المنزل"
+    },
+    "fields": {
+      "name_fr": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom français",
+          "en": "French name",
+          "ar": "الاسم بالفرنسية"
+        }
+      },
+      "name_en": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom anglais",
+          "en": "English name",
+          "ar": "الاسم بالإنجليزية"
+        }
+      },
+      "name_ar": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom arabe",
+          "en": "Arabic name",
+          "ar": "الاسم بالعربية"
+        }
+      },
+      "short_description_fr": {
+        "destination": "description",
+        "section": "content",
+        "type": "textarea",
+        "labels": {
+          "fr": "Promesse de service",
+          "en": "Service promise",
+          "ar": "وعد الخدمة"
+        }
+      },
+      "description_fr": {
+        "destination": "description",
+        "section": "content",
+        "type": "richtext",
+        "labels": {
+          "fr": "Description complète",
+          "en": "Full description",
+          "ar": "الوصف الكامل"
+        }
+      },
+      "primary_image_reference": {
+        "destination": "media",
+        "section": "media",
+        "type": "media",
+        "labels": {
+          "fr": "Image principale",
+          "en": "Primary image",
+          "ar": "الصورة الرئيسية"
+        }
+      },
+      "gallery_references": {
+        "destination": "media",
+        "section": "media",
+        "type": "media_list",
+        "labels": {
+          "fr": "Galerie",
+          "en": "Gallery",
+          "ar": "المعرض"
+        }
+      },
+      "territory_codes": {
+        "destination": "coverage",
+        "section": "coverage",
+        "type": "territory_list",
+        "labels": {
+          "fr": "Territoires servis",
+          "en": "Service territories",
+          "ar": "مناطق الخدمة"
+        }
+      },
+      "price_mode": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "select",
+        "labels": {
+          "fr": "Mode de tarification",
+          "en": "Pricing mode",
+          "ar": "نمط التسعير"
+        }
+      },
+      "price_amount": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "money",
+        "labels": {
+          "fr": "Prix de référence en Dh",
+          "en": "Reference price in Dh",
+          "ar": "السعر المرجعي بالدرهم"
+        }
+      },
+      "minimum_lead_time_hours": {
+        "destination": "plans",
+        "section": "availability",
+        "type": "integer",
+        "labels": {
+          "fr": "Préavis minimum (heures)",
+          "en": "Minimum lead time (hours)",
+          "ar": "الحد الأدنى للإشعار بالساعات"
+        }
+      },
+      "available_days": {
+        "destination": "plans",
+        "section": "availability",
+        "type": "multiselect",
+        "labels": {
+          "fr": "Jours disponibles",
+          "en": "Available days",
+          "ar": "الأيام المتاحة"
+        }
+      },
+      "available_time_windows": {
+        "destination": "plans",
+        "section": "availability",
+        "type": "time_ranges",
+        "labels": {
+          "fr": "Plages horaires",
+          "en": "Available time windows",
+          "ar": "الفترات الزمنية المتاحة"
+        }
+      },
+      "age_min": {
+        "destination": "preparation",
+        "section": "eligibility",
+        "type": "number",
+        "labels": {
+          "fr": "Âge minimum",
+          "en": "Minimum age",
+          "ar": "الحد الأدنى للعمر"
+        }
+      },
+      "age_max": {
+        "destination": "preparation",
+        "section": "eligibility",
+        "type": "number",
+        "labels": {
+          "fr": "Âge maximum",
+          "en": "Maximum age",
+          "ar": "الحد الأقصى للعمر"
+        }
+      },
+      "development_domains": {
+        "destination": "included",
+        "section": "learning",
+        "type": "multiselect",
+        "labels": {
+          "fr": "Domaines de développement",
+          "en": "Development domains",
+          "ar": "مجالات التطور"
+        }
+      },
+      "session_objectives": {
+        "destination": "included",
+        "section": "learning",
+        "type": "list",
+        "labels": {
+          "fr": "Objectifs de séance",
+          "en": "Session objectives",
+          "ar": "أهداف الجلسة"
+        }
+      },
+      "material_requirements": {
+        "destination": "preparation",
+        "section": "delivery",
+        "type": "list",
+        "labels": {
+          "fr": "Matériel requis",
+          "en": "Required materials",
+          "ar": "المواد المطلوبة"
+        }
+      },
+      "session_duration_minutes": {
+        "destination": "plans",
+        "section": "schedule",
+        "type": "integer",
+        "labels": {
+          "fr": "Durée séance (minutes)",
+          "en": "Session duration (minutes)",
+          "ar": "مدة الجلسة بالدقائق"
+        }
+      },
+      "programme_length_sessions": {
+        "destination": "plans",
+        "section": "schedule",
+        "type": "integer",
+        "labels": {
+          "fr": "Nombre de séances",
+          "en": "Programme sessions",
+          "ar": "عدد الجلسات"
+        }
+      },
+      "parent_participation": {
+        "destination": "preparation",
+        "section": "delivery",
+        "type": "select",
+        "labels": {
+          "fr": "Participation parent",
+          "en": "Parent participation",
+          "ar": "مشاركة الوالد"
+        }
+      },
+      "provider_certification": {
+        "destination": "providers",
+        "section": "matching",
+        "type": "text",
+        "labels": {
+          "fr": "Certification intervenant",
+          "en": "Provider certification",
+          "ar": "شهادة مقدم الخدمة"
+        }
+      },
+      "kit_included": {
+        "destination": "preparation",
+        "section": "delivery",
+        "type": "boolean",
+        "labels": {
+          "fr": "Kit inclus",
+          "en": "Kit included",
+          "ar": "العدة مشمولة"
+        }
+      }
+    }
+  },
+  "learning-homework-support": {
+    "domain": "service",
+    "conversion": "service_booking",
+    "labels": {
+      "fr": "Soutien scolaire & devoirs",
+      "en": "Learning and homework support",
+      "ar": "الدعم الدراسي والواجبات"
+    },
+    "fields": {
+      "name_fr": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom français",
+          "en": "French name",
+          "ar": "الاسم بالفرنسية"
+        }
+      },
+      "name_en": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom anglais",
+          "en": "English name",
+          "ar": "الاسم بالإنجليزية"
+        }
+      },
+      "name_ar": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom arabe",
+          "en": "Arabic name",
+          "ar": "الاسم بالعربية"
+        }
+      },
+      "short_description_fr": {
+        "destination": "description",
+        "section": "content",
+        "type": "textarea",
+        "labels": {
+          "fr": "Promesse de service",
+          "en": "Service promise",
+          "ar": "وعد الخدمة"
+        }
+      },
+      "description_fr": {
+        "destination": "description",
+        "section": "content",
+        "type": "richtext",
+        "labels": {
+          "fr": "Description complète",
+          "en": "Full description",
+          "ar": "الوصف الكامل"
+        }
+      },
+      "primary_image_reference": {
+        "destination": "media",
+        "section": "media",
+        "type": "media",
+        "labels": {
+          "fr": "Image principale",
+          "en": "Primary image",
+          "ar": "الصورة الرئيسية"
+        }
+      },
+      "gallery_references": {
+        "destination": "media",
+        "section": "media",
+        "type": "media_list",
+        "labels": {
+          "fr": "Galerie",
+          "en": "Gallery",
+          "ar": "المعرض"
+        }
+      },
+      "territory_codes": {
+        "destination": "coverage",
+        "section": "coverage",
+        "type": "territory_list",
+        "labels": {
+          "fr": "Territoires servis",
+          "en": "Service territories",
+          "ar": "مناطق الخدمة"
+        }
+      },
+      "price_mode": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "select",
+        "labels": {
+          "fr": "Mode de tarification",
+          "en": "Pricing mode",
+          "ar": "نمط التسعير"
+        }
+      },
+      "price_amount": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "money",
+        "labels": {
+          "fr": "Prix de référence en Dh",
+          "en": "Reference price in Dh",
+          "ar": "السعر المرجعي بالدرهم"
+        }
+      },
+      "minimum_lead_time_hours": {
+        "destination": "plans",
+        "section": "availability",
+        "type": "integer",
+        "labels": {
+          "fr": "Préavis minimum (heures)",
+          "en": "Minimum lead time (hours)",
+          "ar": "الحد الأدنى للإشعار بالساعات"
+        }
+      },
+      "available_days": {
+        "destination": "plans",
+        "section": "availability",
+        "type": "multiselect",
+        "labels": {
+          "fr": "Jours disponibles",
+          "en": "Available days",
+          "ar": "الأيام المتاحة"
+        }
+      },
+      "available_time_windows": {
+        "destination": "plans",
+        "section": "availability",
+        "type": "time_ranges",
+        "labels": {
+          "fr": "Plages horaires",
+          "en": "Available time windows",
+          "ar": "الفترات الزمنية المتاحة"
+        }
+      },
+      "school_levels": {
+        "destination": "included",
+        "section": "learning",
+        "type": "multiselect",
+        "labels": {
+          "fr": "Niveaux scolaires",
+          "en": "School levels",
+          "ar": "المستويات الدراسية"
+        }
+      },
+      "subjects": {
+        "destination": "included",
+        "section": "learning",
+        "type": "multiselect",
+        "labels": {
+          "fr": "Matières",
+          "en": "Subjects",
+          "ar": "المواد"
+        }
+      },
+      "curriculum": {
+        "destination": "included",
+        "section": "learning",
+        "type": "text",
+        "labels": {
+          "fr": "Programme scolaire",
+          "en": "Curriculum",
+          "ar": "المنهج الدراسي"
+        }
+      },
+      "delivery_modes": {
+        "destination": "preparation",
+        "section": "delivery",
+        "type": "multiselect",
+        "labels": {
+          "fr": "Modes de séance",
+          "en": "Delivery modes",
+          "ar": "طرق التقديم"
+        }
+      },
+      "session_duration_minutes": {
+        "destination": "plans",
+        "section": "schedule",
+        "type": "integer",
+        "labels": {
+          "fr": "Durée séance",
+          "en": "Session duration",
+          "ar": "مدة الجلسة"
+        }
+      },
+      "progress_report_enabled": {
+        "destination": "process",
+        "section": "reporting",
+        "type": "boolean",
+        "labels": {
+          "fr": "Compte rendu parent",
+          "en": "Parent progress report",
+          "ar": "تقرير تقدم للوالد"
+        }
+      },
+      "tutor_qualification": {
+        "destination": "providers",
+        "section": "matching",
+        "type": "text",
+        "labels": {
+          "fr": "Qualification intervenant",
+          "en": "Tutor qualification",
+          "ar": "مؤهل المدرس"
+        }
+      }
+    }
+  },
+  "non-medical-support-service": {
+    "domain": "service",
+    "conversion": "suitability_request",
+    "labels": {
+      "fr": "Support enfant non médical",
+      "en": "Non-medical child support",
+      "ar": "دعم الطفل غير الطبي"
+    },
+    "fields": {
+      "name_fr": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom français",
+          "en": "French name",
+          "ar": "الاسم بالفرنسية"
+        }
+      },
+      "name_en": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom anglais",
+          "en": "English name",
+          "ar": "الاسم بالإنجليزية"
+        }
+      },
+      "name_ar": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom arabe",
+          "en": "Arabic name",
+          "ar": "الاسم بالعربية"
+        }
+      },
+      "short_description_fr": {
+        "destination": "description",
+        "section": "content",
+        "type": "textarea",
+        "labels": {
+          "fr": "Promesse de service",
+          "en": "Service promise",
+          "ar": "وعد الخدمة"
+        }
+      },
+      "description_fr": {
+        "destination": "description",
+        "section": "content",
+        "type": "richtext",
+        "labels": {
+          "fr": "Description complète",
+          "en": "Full description",
+          "ar": "الوصف الكامل"
+        }
+      },
+      "primary_image_reference": {
+        "destination": "media",
+        "section": "media",
+        "type": "media",
+        "labels": {
+          "fr": "Image principale",
+          "en": "Primary image",
+          "ar": "الصورة الرئيسية"
+        }
+      },
+      "gallery_references": {
+        "destination": "media",
+        "section": "media",
+        "type": "media_list",
+        "labels": {
+          "fr": "Galerie",
+          "en": "Gallery",
+          "ar": "المعرض"
+        }
+      },
+      "territory_codes": {
+        "destination": "coverage",
+        "section": "coverage",
+        "type": "territory_list",
+        "labels": {
+          "fr": "Territoires servis",
+          "en": "Service territories",
+          "ar": "مناطق الخدمة"
+        }
+      },
+      "price_mode": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "select",
+        "labels": {
+          "fr": "Mode de tarification",
+          "en": "Pricing mode",
+          "ar": "نمط التسعير"
+        }
+      },
+      "price_amount": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "money",
+        "labels": {
+          "fr": "Prix de référence en Dh",
+          "en": "Reference price in Dh",
+          "ar": "السعر المرجعي بالدرهم"
+        }
+      },
+      "minimum_lead_time_hours": {
+        "destination": "plans",
+        "section": "availability",
+        "type": "integer",
+        "labels": {
+          "fr": "Préavis minimum (heures)",
+          "en": "Minimum lead time (hours)",
+          "ar": "الحد الأدنى للإشعار بالساعات"
+        }
+      },
+      "available_days": {
+        "destination": "plans",
+        "section": "availability",
+        "type": "multiselect",
+        "labels": {
+          "fr": "Jours disponibles",
+          "en": "Available days",
+          "ar": "الأيام المتاحة"
+        }
+      },
+      "available_time_windows": {
+        "destination": "plans",
+        "section": "availability",
+        "type": "time_ranges",
+        "labels": {
+          "fr": "Plages horaires",
+          "en": "Available time windows",
+          "ar": "الفترات الزمنية المتاحة"
+        }
+      },
+      "supported_accommodations": {
+        "destination": "included",
+        "section": "support",
+        "type": "multiselect",
+        "labels": {
+          "fr": "Aménagements supportés",
+          "en": "Supported accommodations",
+          "ar": "التسهيلات المدعومة"
+        }
+      },
+      "non_medical_boundary": {
+        "destination": "conditions",
+        "section": "safety",
+        "type": "textarea",
+        "labels": {
+          "fr": "Limite non médicale",
+          "en": "Non-medical boundary",
+          "ar": "الحدود غير الطبية"
+        }
+      },
+      "excluded_medical_actions": {
+        "destination": "conditions",
+        "section": "safety",
+        "type": "multiselect",
+        "labels": {
+          "fr": "Actes médicaux exclus",
+          "en": "Excluded medical actions",
+          "ar": "الأعمال الطبية المستبعدة"
+        }
+      },
+      "provider_training_requirements": {
+        "destination": "providers",
+        "section": "matching",
+        "type": "list",
+        "labels": {
+          "fr": "Formation intervenant",
+          "en": "Provider training requirements",
+          "ar": "متطلبات تدريب مقدم الخدمة"
+        }
+      },
+      "suitability_review_conditions": {
+        "destination": "preparation",
+        "section": "eligibility",
+        "type": "list",
+        "labels": {
+          "fr": "Conditions d’adéquation",
+          "en": "Suitability review conditions",
+          "ar": "شروط الملاءمة"
+        }
+      },
+      "supporting_documents_allowed": {
+        "destination": "included",
+        "section": "configuration",
+        "type": "boolean",
+        "labels": {
+          "fr": "Documents facultatifs",
+          "en": "Supporting documents allowed",
+          "ar": "مستندات داعمة مسموحة"
+        }
+      }
+    }
+  },
+  "flashcards-learning-product": {
+    "domain": "product",
+    "conversion": "product_checkout",
+    "labels": {
+      "fr": "Flashcards & cartes pédagogiques",
+      "en": "Flashcards and learning cards",
+      "ar": "بطاقات تعليمية"
+    },
+    "fields": {
+      "name_fr": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom français",
+          "en": "French name",
+          "ar": "الاسم بالفرنسية"
+        }
+      },
+      "name_en": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom anglais",
+          "en": "English name",
+          "ar": "الاسم بالإنجليزية"
+        }
+      },
+      "name_ar": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom arabe",
+          "en": "Arabic name",
+          "ar": "الاسم بالعربية"
+        }
+      },
+      "short_description_fr": {
+        "destination": "description",
+        "section": "content",
+        "type": "textarea",
+        "labels": {
+          "fr": "Promesse commerciale",
+          "en": "Commercial promise",
+          "ar": "الوعد التجاري"
+        }
+      },
+      "description_fr": {
+        "destination": "description",
+        "section": "content",
+        "type": "richtext",
+        "labels": {
+          "fr": "Description complète",
+          "en": "Full description",
+          "ar": "الوصف الكامل"
+        }
+      },
+      "primary_image_reference": {
+        "destination": "media",
+        "section": "media",
+        "type": "media",
+        "labels": {
+          "fr": "Image principale",
+          "en": "Primary image",
+          "ar": "الصورة الرئيسية"
+        }
+      },
+      "gallery_references": {
+        "destination": "media",
+        "section": "media",
+        "type": "media_list",
+        "labels": {
+          "fr": "Galerie média",
+          "en": "Media gallery",
+          "ar": "معرض الوسائط"
+        }
+      },
+      "price_mode": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "select",
+        "labels": {
+          "fr": "Mode de prix",
+          "en": "Pricing mode",
+          "ar": "نمط التسعير"
+        }
+      },
+      "price_amount": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "money",
+        "labels": {
+          "fr": "Prix en Dh",
+          "en": "Price in Dh",
+          "ar": "السعر بالدرهم"
+        }
+      },
+      "territory_codes": {
+        "destination": "fulfillment",
+        "section": "availability",
+        "type": "territory_list",
+        "labels": {
+          "fr": "Territoires",
+          "en": "Territories",
+          "ar": "المناطق"
+        }
+      },
+      "stock_quantity": {
+        "destination": "fulfillment",
+        "section": "availability",
+        "type": "integer",
+        "labels": {
+          "fr": "Stock disponible",
+          "en": "Available stock",
+          "ar": "المخزون المتاح"
+        }
+      },
+      "learning_theme": {
+        "destination": "usage",
+        "section": "learning",
+        "type": "select",
+        "labels": {
+          "fr": "Thème pédagogique",
+          "en": "Learning theme",
+          "ar": "الموضوع التعليمي"
+        }
+      },
+      "learning_objectives": {
+        "destination": "usage",
+        "section": "learning",
+        "type": "list",
+        "labels": {
+          "fr": "Objectifs pédagogiques",
+          "en": "Learning objectives",
+          "ar": "الأهداف التعليمية"
+        }
+      },
+      "age_min": {
+        "destination": "specifications",
+        "section": "audience",
+        "type": "number",
+        "labels": {
+          "fr": "Âge minimum",
+          "en": "Minimum age",
+          "ar": "الحد الأدنى للعمر"
+        }
+      },
+      "age_max": {
+        "destination": "specifications",
+        "section": "audience",
+        "type": "number",
+        "labels": {
+          "fr": "Âge maximum",
+          "en": "Maximum age",
+          "ar": "الحد الأقصى للعمر"
+        }
+      },
+      "level": {
+        "destination": "specifications",
+        "section": "audience",
+        "type": "select",
+        "labels": {
+          "fr": "Niveau",
+          "en": "Level",
+          "ar": "المستوى"
+        }
+      },
+      "language": {
+        "destination": "usage",
+        "section": "learning",
+        "type": "select",
+        "labels": {
+          "fr": "Langue principale",
+          "en": "Primary language",
+          "ar": "اللغة الرئيسية"
+        }
+      },
+      "number_of_cards": {
+        "destination": "specifications",
+        "section": "specifications",
+        "type": "integer",
+        "labels": {
+          "fr": "Nombre de cartes",
+          "en": "Number of cards",
+          "ar": "عدد البطاقات"
+        }
+      },
+      "card_width_cm": {
+        "destination": "specifications",
+        "section": "specifications",
+        "type": "number",
+        "labels": {
+          "fr": "Largeur carte (cm)",
+          "en": "Card width (cm)",
+          "ar": "عرض البطاقة سم"
+        }
+      },
+      "card_height_cm": {
+        "destination": "specifications",
+        "section": "specifications",
+        "type": "number",
+        "labels": {
+          "fr": "Hauteur carte (cm)",
+          "en": "Card height (cm)",
+          "ar": "ارتفاع البطاقة سم"
+        }
+      },
+      "orientation": {
+        "destination": "specifications",
+        "section": "specifications",
+        "type": "select",
+        "labels": {
+          "fr": "Orientation",
+          "en": "Orientation",
+          "ar": "الاتجاه"
+        }
+      },
+      "material": {
+        "destination": "specifications",
+        "section": "specifications",
+        "type": "select",
+        "labels": {
+          "fr": "Matériau",
+          "en": "Material",
+          "ar": "المادة"
+        }
+      },
+      "finish": {
+        "destination": "specifications",
+        "section": "specifications",
+        "type": "select",
+        "labels": {
+          "fr": "Finition",
+          "en": "Finish",
+          "ar": "التشطيب"
+        }
+      },
+      "primary_color": {
+        "destination": "specifications",
+        "section": "variants",
+        "type": "text",
+        "labels": {
+          "fr": "Couleur principale",
+          "en": "Primary color",
+          "ar": "اللون الرئيسي"
+        }
+      },
+      "variant_languages": {
+        "destination": "specifications",
+        "section": "variants",
+        "type": "multiselect",
+        "labels": {
+          "fr": "Variantes de langue",
+          "en": "Language variants",
+          "ar": "خيارات اللغة"
+        }
+      },
+      "variant_colors": {
+        "destination": "specifications",
+        "section": "variants",
+        "type": "list",
+        "labels": {
+          "fr": "Variantes couleur",
+          "en": "Color variants",
+          "ar": "خيارات الألوان"
+        }
+      },
+      "box_dimensions": {
+        "destination": "specifications",
+        "section": "packaging",
+        "type": "text",
+        "labels": {
+          "fr": "Dimensions boîte",
+          "en": "Box dimensions",
+          "ar": "أبعاد العلبة"
+        }
+      },
+      "weight_grams": {
+        "destination": "specifications",
+        "section": "packaging",
+        "type": "integer",
+        "labels": {
+          "fr": "Poids (g)",
+          "en": "Weight (g)",
+          "ar": "الوزن غرام"
+        }
+      },
+      "included_guide": {
+        "destination": "contents",
+        "section": "contents",
+        "type": "boolean",
+        "labels": {
+          "fr": "Guide inclus",
+          "en": "Guide included",
+          "ar": "الدليل مشمول"
+        }
+      },
+      "activity_suggestions": {
+        "destination": "contents",
+        "section": "contents",
+        "type": "list",
+        "labels": {
+          "fr": "Suggestions d’activités",
+          "en": "Activity suggestions",
+          "ar": "اقتراحات الأنشطة"
+        }
+      },
+      "competency_domains": {
+        "destination": "usage",
+        "section": "learning",
+        "type": "multiselect",
+        "labels": {
+          "fr": "Compétences visées",
+          "en": "Competency domains",
+          "ar": "مجالات الكفاءة"
+        }
+      },
+      "replacement_cards_available": {
+        "destination": "conditions",
+        "section": "after_sales",
+        "type": "boolean",
+        "labels": {
+          "fr": "Cartes de remplacement",
+          "en": "Replacement cards available",
+          "ar": "بطاقات بديلة متاحة"
+        }
+      }
+    }
+  },
+  "montessori-development-kit": {
+    "domain": "product",
+    "conversion": "product_checkout",
+    "labels": {
+      "fr": "Kits Montessori & développement",
+      "en": "Montessori and development kits",
+      "ar": "أطقم مونتيسوري والتطوير"
+    },
+    "fields": {
+      "name_fr": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom français",
+          "en": "French name",
+          "ar": "الاسم بالفرنسية"
+        }
+      },
+      "name_en": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom anglais",
+          "en": "English name",
+          "ar": "الاسم بالإنجليزية"
+        }
+      },
+      "name_ar": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom arabe",
+          "en": "Arabic name",
+          "ar": "الاسم بالعربية"
+        }
+      },
+      "short_description_fr": {
+        "destination": "description",
+        "section": "content",
+        "type": "textarea",
+        "labels": {
+          "fr": "Promesse commerciale",
+          "en": "Commercial promise",
+          "ar": "الوعد التجاري"
+        }
+      },
+      "description_fr": {
+        "destination": "description",
+        "section": "content",
+        "type": "richtext",
+        "labels": {
+          "fr": "Description complète",
+          "en": "Full description",
+          "ar": "الوصف الكامل"
+        }
+      },
+      "primary_image_reference": {
+        "destination": "media",
+        "section": "media",
+        "type": "media",
+        "labels": {
+          "fr": "Image principale",
+          "en": "Primary image",
+          "ar": "الصورة الرئيسية"
+        }
+      },
+      "gallery_references": {
+        "destination": "media",
+        "section": "media",
+        "type": "media_list",
+        "labels": {
+          "fr": "Galerie média",
+          "en": "Media gallery",
+          "ar": "معرض الوسائط"
+        }
+      },
+      "price_mode": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "select",
+        "labels": {
+          "fr": "Mode de prix",
+          "en": "Pricing mode",
+          "ar": "نمط التسعير"
+        }
+      },
+      "price_amount": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "money",
+        "labels": {
+          "fr": "Prix en Dh",
+          "en": "Price in Dh",
+          "ar": "السعر بالدرهم"
+        }
+      },
+      "territory_codes": {
+        "destination": "fulfillment",
+        "section": "availability",
+        "type": "territory_list",
+        "labels": {
+          "fr": "Territoires",
+          "en": "Territories",
+          "ar": "المناطق"
+        }
+      },
+      "stock_quantity": {
+        "destination": "fulfillment",
+        "section": "availability",
+        "type": "integer",
+        "labels": {
+          "fr": "Stock disponible",
+          "en": "Available stock",
+          "ar": "المخزون المتاح"
+        }
+      },
+      "kit_type": {
+        "destination": "usage",
+        "section": "learning",
+        "type": "select",
+        "labels": {
+          "fr": "Type de kit",
+          "en": "Kit type",
+          "ar": "نوع العدة"
+        }
+      },
+      "learning_domains": {
+        "destination": "usage",
+        "section": "learning",
+        "type": "multiselect",
+        "labels": {
+          "fr": "Domaines pédagogiques",
+          "en": "Learning domains",
+          "ar": "المجالات التعليمية"
+        }
+      },
+      "components": {
+        "destination": "contents",
+        "section": "contents",
+        "type": "component_list",
+        "labels": {
+          "fr": "Composants du kit",
+          "en": "Kit components",
+          "ar": "مكونات العدة"
+        }
+      },
+      "difficulty": {
+        "destination": "specifications",
+        "section": "audience",
+        "type": "select",
+        "labels": {
+          "fr": "Difficulté",
+          "en": "Difficulty",
+          "ar": "الصعوبة"
+        }
+      },
+      "age_min": {
+        "destination": "specifications",
+        "section": "audience",
+        "type": "number",
+        "labels": {
+          "fr": "Âge minimum",
+          "en": "Minimum age",
+          "ar": "الحد الأدنى للعمر"
+        }
+      },
+      "age_max": {
+        "destination": "specifications",
+        "section": "audience",
+        "type": "number",
+        "labels": {
+          "fr": "Âge maximum",
+          "en": "Maximum age",
+          "ar": "الحد الأقصى للعمر"
+        }
+      },
+      "supervision_level": {
+        "destination": "conditions",
+        "section": "safety",
+        "type": "select",
+        "labels": {
+          "fr": "Niveau de supervision",
+          "en": "Supervision level",
+          "ar": "مستوى الإشراف"
+        }
+      },
+      "materials": {
+        "destination": "specifications",
+        "section": "specifications",
+        "type": "multiselect",
+        "labels": {
+          "fr": "Matériaux",
+          "en": "Materials",
+          "ar": "المواد"
+        }
+      },
+      "storage_solution": {
+        "destination": "specifications",
+        "section": "packaging",
+        "type": "text",
+        "labels": {
+          "fr": "Solution de rangement",
+          "en": "Storage solution",
+          "ar": "حل التخزين"
+        }
+      },
+      "activity_guide_reference": {
+        "destination": "contents",
+        "section": "contents",
+        "type": "media",
+        "labels": {
+          "fr": "Guide d’activités",
+          "en": "Activity guide",
+          "ar": "دليل الأنشطة"
+        }
+      },
+      "replacement_components": {
+        "destination": "conditions",
+        "section": "after_sales",
+        "type": "list",
+        "labels": {
+          "fr": "Composants remplaçables",
+          "en": "Replacement components",
+          "ar": "مكونات بديلة"
+        }
+      },
+      "refill_options": {
+        "destination": "conditions",
+        "section": "after_sales",
+        "type": "list",
+        "labels": {
+          "fr": "Options de recharge",
+          "en": "Refill options",
+          "ar": "خيارات إعادة التعبئة"
+        }
+      },
+      "variant_sizes": {
+        "destination": "specifications",
+        "section": "variants",
+        "type": "multiselect",
+        "labels": {
+          "fr": "Tailles de kit",
+          "en": "Kit sizes",
+          "ar": "أحجام العدة"
+        }
+      },
+      "variant_themes": {
+        "destination": "specifications",
+        "section": "variants",
+        "type": "list",
+        "labels": {
+          "fr": "Thèmes",
+          "en": "Themes",
+          "ar": "المواضيع"
+        }
+      }
+    }
+  },
+  "development-game": {
+    "domain": "product",
+    "conversion": "product_checkout",
+    "labels": {
+      "fr": "Jeux de développement",
+      "en": "Development games",
+      "ar": "ألعاب التطوير"
+    },
+    "fields": {
+      "name_fr": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom français",
+          "en": "French name",
+          "ar": "الاسم بالفرنسية"
+        }
+      },
+      "name_en": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom anglais",
+          "en": "English name",
+          "ar": "الاسم بالإنجليزية"
+        }
+      },
+      "name_ar": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom arabe",
+          "en": "Arabic name",
+          "ar": "الاسم بالعربية"
+        }
+      },
+      "short_description_fr": {
+        "destination": "description",
+        "section": "content",
+        "type": "textarea",
+        "labels": {
+          "fr": "Promesse commerciale",
+          "en": "Commercial promise",
+          "ar": "الوعد التجاري"
+        }
+      },
+      "description_fr": {
+        "destination": "description",
+        "section": "content",
+        "type": "richtext",
+        "labels": {
+          "fr": "Description complète",
+          "en": "Full description",
+          "ar": "الوصف الكامل"
+        }
+      },
+      "primary_image_reference": {
+        "destination": "media",
+        "section": "media",
+        "type": "media",
+        "labels": {
+          "fr": "Image principale",
+          "en": "Primary image",
+          "ar": "الصورة الرئيسية"
+        }
+      },
+      "gallery_references": {
+        "destination": "media",
+        "section": "media",
+        "type": "media_list",
+        "labels": {
+          "fr": "Galerie média",
+          "en": "Media gallery",
+          "ar": "معرض الوسائط"
+        }
+      },
+      "price_mode": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "select",
+        "labels": {
+          "fr": "Mode de prix",
+          "en": "Pricing mode",
+          "ar": "نمط التسعير"
+        }
+      },
+      "price_amount": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "money",
+        "labels": {
+          "fr": "Prix en Dh",
+          "en": "Price in Dh",
+          "ar": "السعر بالدرهم"
+        }
+      },
+      "territory_codes": {
+        "destination": "fulfillment",
+        "section": "availability",
+        "type": "territory_list",
+        "labels": {
+          "fr": "Territoires",
+          "en": "Territories",
+          "ar": "المناطق"
+        }
+      },
+      "stock_quantity": {
+        "destination": "fulfillment",
+        "section": "availability",
+        "type": "integer",
+        "labels": {
+          "fr": "Stock disponible",
+          "en": "Available stock",
+          "ar": "المخزون المتاح"
+        }
+      },
+      "competency_areas": {
+        "destination": "usage",
+        "section": "learning",
+        "type": "multiselect",
+        "labels": {
+          "fr": "Compétences développées",
+          "en": "Competency areas",
+          "ar": "المهارات المطورة"
+        }
+      },
+      "players_min": {
+        "destination": "usage",
+        "section": "usage",
+        "type": "integer",
+        "labels": {
+          "fr": "Joueurs minimum",
+          "en": "Minimum players",
+          "ar": "الحد الأدنى للاعبين"
+        }
+      },
+      "players_max": {
+        "destination": "usage",
+        "section": "usage",
+        "type": "integer",
+        "labels": {
+          "fr": "Joueurs maximum",
+          "en": "Maximum players",
+          "ar": "الحد الأقصى للاعبين"
+        }
+      },
+      "play_duration_minutes": {
+        "destination": "usage",
+        "section": "usage",
+        "type": "integer",
+        "labels": {
+          "fr": "Durée de jeu",
+          "en": "Play duration",
+          "ar": "مدة اللعب"
+        }
+      },
+      "indoor_outdoor": {
+        "destination": "usage",
+        "section": "usage",
+        "type": "select",
+        "labels": {
+          "fr": "Environnement",
+          "en": "Environment",
+          "ar": "البيئة"
+        }
+      },
+      "assembly_required": {
+        "destination": "usage",
+        "section": "usage",
+        "type": "boolean",
+        "labels": {
+          "fr": "Assemblage requis",
+          "en": "Assembly required",
+          "ar": "يتطلب تركيب"
+        }
+      },
+      "rules_reference": {
+        "destination": "contents",
+        "section": "contents",
+        "type": "media",
+        "labels": {
+          "fr": "Règles du jeu",
+          "en": "Game rules",
+          "ar": "قواعد اللعبة"
+        }
+      },
+      "language_dependency": {
+        "destination": "usage",
+        "section": "learning",
+        "type": "select",
+        "labels": {
+          "fr": "Dépendance linguistique",
+          "en": "Language dependency",
+          "ar": "الاعتماد على اللغة"
+        }
+      },
+      "accessibility_notes": {
+        "destination": "usage",
+        "section": "accessibility",
+        "type": "textarea",
+        "labels": {
+          "fr": "Accessibilité",
+          "en": "Accessibility",
+          "ar": "إمكانية الوصول"
+        }
+      }
+    }
+  },
+  "activity-subscription-box": {
+    "domain": "product",
+    "conversion": "subscription_checkout",
+    "labels": {
+      "fr": "Box d’activités & abonnement",
+      "en": "Activity and subscription boxes",
+      "ar": "صناديق الأنشطة والاشتراك"
+    },
+    "fields": {
+      "name_fr": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom français",
+          "en": "French name",
+          "ar": "الاسم بالفرنسية"
+        }
+      },
+      "name_en": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom anglais",
+          "en": "English name",
+          "ar": "الاسم بالإنجليزية"
+        }
+      },
+      "name_ar": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom arabe",
+          "en": "Arabic name",
+          "ar": "الاسم بالعربية"
+        }
+      },
+      "short_description_fr": {
+        "destination": "description",
+        "section": "content",
+        "type": "textarea",
+        "labels": {
+          "fr": "Promesse commerciale",
+          "en": "Commercial promise",
+          "ar": "الوعد التجاري"
+        }
+      },
+      "description_fr": {
+        "destination": "description",
+        "section": "content",
+        "type": "richtext",
+        "labels": {
+          "fr": "Description complète",
+          "en": "Full description",
+          "ar": "الوصف الكامل"
+        }
+      },
+      "primary_image_reference": {
+        "destination": "media",
+        "section": "media",
+        "type": "media",
+        "labels": {
+          "fr": "Image principale",
+          "en": "Primary image",
+          "ar": "الصورة الرئيسية"
+        }
+      },
+      "gallery_references": {
+        "destination": "media",
+        "section": "media",
+        "type": "media_list",
+        "labels": {
+          "fr": "Galerie média",
+          "en": "Media gallery",
+          "ar": "معرض الوسائط"
+        }
+      },
+      "price_mode": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "select",
+        "labels": {
+          "fr": "Mode de prix",
+          "en": "Pricing mode",
+          "ar": "نمط التسعير"
+        }
+      },
+      "price_amount": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "money",
+        "labels": {
+          "fr": "Prix en Dh",
+          "en": "Price in Dh",
+          "ar": "السعر بالدرهم"
+        }
+      },
+      "territory_codes": {
+        "destination": "fulfillment",
+        "section": "availability",
+        "type": "territory_list",
+        "labels": {
+          "fr": "Territoires",
+          "en": "Territories",
+          "ar": "المناطق"
+        }
+      },
+      "stock_quantity": {
+        "destination": "fulfillment",
+        "section": "availability",
+        "type": "integer",
+        "labels": {
+          "fr": "Stock disponible",
+          "en": "Available stock",
+          "ar": "المخزون المتاح"
+        }
+      },
+      "box_theme": {
+        "destination": "contents",
+        "section": "contents",
+        "type": "text",
+        "labels": {
+          "fr": "Thème de la box",
+          "en": "Box theme",
+          "ar": "موضوع الصندوق"
+        }
+      },
+      "activity_count": {
+        "destination": "contents",
+        "section": "contents",
+        "type": "integer",
+        "labels": {
+          "fr": "Nombre d’activités",
+          "en": "Number of activities",
+          "ar": "عدد الأنشطة"
+        }
+      },
+      "subscription_frequencies": {
+        "destination": "fulfillment",
+        "section": "subscription",
+        "type": "multiselect",
+        "labels": {
+          "fr": "Fréquences",
+          "en": "Frequencies",
+          "ar": "دورية الاشتراك"
+        }
+      },
+      "subscription_duration_months": {
+        "destination": "fulfillment",
+        "section": "subscription",
+        "type": "multiselect",
+        "labels": {
+          "fr": "Durées disponibles",
+          "en": "Available durations",
+          "ar": "مدد الاشتراك"
+        }
+      },
+      "child_age_bands": {
+        "destination": "specifications",
+        "section": "audience",
+        "type": "multiselect",
+        "labels": {
+          "fr": "Tranches d’âge",
+          "en": "Age bands",
+          "ar": "الفئات العمرية"
+        }
+      },
+      "sibling_option": {
+        "destination": "specifications",
+        "section": "configuration",
+        "type": "boolean",
+        "labels": {
+          "fr": "Option fratrie",
+          "en": "Sibling option",
+          "ar": "خيار الأشقاء"
+        }
+      },
+      "personalization_options": {
+        "destination": "specifications",
+        "section": "configuration",
+        "type": "list",
+        "labels": {
+          "fr": "Personnalisation",
+          "en": "Personalization",
+          "ar": "التخصيص"
+        }
+      },
+      "monthly_theme_calendar": {
+        "destination": "fulfillment",
+        "section": "subscription",
+        "type": "json",
+        "labels": {
+          "fr": "Calendrier des thèmes",
+          "en": "Theme calendar",
+          "ar": "جدول المواضيع"
+        }
+      },
+      "pause_skip_rules": {
+        "destination": "fulfillment",
+        "section": "subscription",
+        "type": "textarea",
+        "labels": {
+          "fr": "Règles pause / saut",
+          "en": "Pause / skip rules",
+          "ar": "قواعد الإيقاف والتخطي"
+        }
+      }
+    }
+  },
+  "digital-learning-resource": {
+    "domain": "product",
+    "conversion": "digital_checkout",
+    "labels": {
+      "fr": "Ressources pédagogiques digitales",
+      "en": "Digital learning resources",
+      "ar": "موارد تعليمية رقمية"
+    },
+    "fields": {
+      "name_fr": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom français",
+          "en": "French name",
+          "ar": "الاسم بالفرنسية"
+        }
+      },
+      "name_en": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom anglais",
+          "en": "English name",
+          "ar": "الاسم بالإنجليزية"
+        }
+      },
+      "name_ar": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom arabe",
+          "en": "Arabic name",
+          "ar": "الاسم بالعربية"
+        }
+      },
+      "short_description_fr": {
+        "destination": "description",
+        "section": "content",
+        "type": "textarea",
+        "labels": {
+          "fr": "Promesse commerciale",
+          "en": "Commercial promise",
+          "ar": "الوعد التجاري"
+        }
+      },
+      "description_fr": {
+        "destination": "description",
+        "section": "content",
+        "type": "richtext",
+        "labels": {
+          "fr": "Description complète",
+          "en": "Full description",
+          "ar": "الوصف الكامل"
+        }
+      },
+      "primary_image_reference": {
+        "destination": "media",
+        "section": "media",
+        "type": "media",
+        "labels": {
+          "fr": "Image principale",
+          "en": "Primary image",
+          "ar": "الصورة الرئيسية"
+        }
+      },
+      "gallery_references": {
+        "destination": "media",
+        "section": "media",
+        "type": "media_list",
+        "labels": {
+          "fr": "Galerie média",
+          "en": "Media gallery",
+          "ar": "معرض الوسائط"
+        }
+      },
+      "price_mode": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "select",
+        "labels": {
+          "fr": "Mode de prix",
+          "en": "Pricing mode",
+          "ar": "نمط التسعير"
+        }
+      },
+      "price_amount": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "money",
+        "labels": {
+          "fr": "Prix en Dh",
+          "en": "Price in Dh",
+          "ar": "السعر بالدرهم"
+        }
+      },
+      "territory_codes": {
+        "destination": "fulfillment",
+        "section": "availability",
+        "type": "territory_list",
+        "labels": {
+          "fr": "Territoires",
+          "en": "Territories",
+          "ar": "المناطق"
+        }
+      },
+      "stock_quantity": {
+        "destination": "fulfillment",
+        "section": "availability",
+        "type": "integer",
+        "labels": {
+          "fr": "Stock disponible",
+          "en": "Available stock",
+          "ar": "المخزون المتاح"
+        }
+      },
+      "resource_type": {
+        "destination": "specifications",
+        "section": "digital",
+        "type": "select",
+        "labels": {
+          "fr": "Type de ressource",
+          "en": "Resource type",
+          "ar": "نوع المورد"
+        }
+      },
+      "file_formats": {
+        "destination": "specifications",
+        "section": "digital",
+        "type": "multiselect",
+        "labels": {
+          "fr": "Formats de fichier",
+          "en": "File formats",
+          "ar": "صيغ الملفات"
+        }
+      },
+      "license_type": {
+        "destination": "fulfillment",
+        "section": "license",
+        "type": "select",
+        "labels": {
+          "fr": "Type de licence",
+          "en": "License type",
+          "ar": "نوع الترخيص"
+        }
+      },
+      "download_limit": {
+        "destination": "fulfillment",
+        "section": "license",
+        "type": "integer",
+        "labels": {
+          "fr": "Limite téléchargements",
+          "en": "Download limit",
+          "ar": "حد التنزيلات"
+        }
+      },
+      "access_duration_days": {
+        "destination": "fulfillment",
+        "section": "license",
+        "type": "integer",
+        "labels": {
+          "fr": "Durée d’accès (jours)",
+          "en": "Access duration (days)",
+          "ar": "مدة الوصول بالأيام"
+        }
+      },
+      "printing_instructions": {
+        "destination": "usage",
+        "section": "usage",
+        "type": "textarea",
+        "labels": {
+          "fr": "Instructions impression",
+          "en": "Printing instructions",
+          "ar": "تعليمات الطباعة"
+        }
+      },
+      "update_eligibility": {
+        "destination": "fulfillment",
+        "section": "license",
+        "type": "boolean",
+        "labels": {
+          "fr": "Mises à jour incluses",
+          "en": "Updates included",
+          "ar": "التحديثات مشمولة"
+        }
+      },
+      "digital_preview_reference": {
+        "destination": "media",
+        "section": "media",
+        "type": "media",
+        "labels": {
+          "fr": "Aperçu digital",
+          "en": "Digital preview",
+          "ar": "معاينة رقمية"
+        }
+      }
+    }
+  },
+  "preschool-admission": {
+    "domain": "academy",
+    "conversion": "admission_application",
+    "labels": {
+      "fr": "Admission crèche & préscolaire",
+      "en": "Kindergarten and preschool admissions",
+      "ar": "قبول الحضانة ورياض الأطفال"
+    },
+    "fields": {
+      "name_fr": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom du programme",
+          "en": "Programme name",
+          "ar": "اسم البرنامج"
+        }
+      },
+      "name_en": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom anglais",
+          "en": "English name",
+          "ar": "الاسم بالإنجليزية"
+        }
+      },
+      "name_ar": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom arabe",
+          "en": "Arabic name",
+          "ar": "الاسم بالعربية"
+        }
+      },
+      "short_description_fr": {
+        "destination": "description",
+        "section": "content",
+        "type": "textarea",
+        "labels": {
+          "fr": "Promesse programme",
+          "en": "Programme promise",
+          "ar": "وعد البرنامج"
+        }
+      },
+      "description_fr": {
+        "destination": "description",
+        "section": "content",
+        "type": "richtext",
+        "labels": {
+          "fr": "Description complète",
+          "en": "Full description",
+          "ar": "الوصف الكامل"
+        }
+      },
+      "primary_image_reference": {
+        "destination": "media",
+        "section": "media",
+        "type": "media",
+        "labels": {
+          "fr": "Visuel principal",
+          "en": "Primary visual",
+          "ar": "الصورة الرئيسية"
+        }
+      },
+      "territory_codes": {
+        "destination": "organisation",
+        "section": "coverage",
+        "type": "territory_list",
+        "labels": {
+          "fr": "Territoires",
+          "en": "Territories",
+          "ar": "المناطق"
+        }
+      },
+      "pricing_mode": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "select",
+        "labels": {
+          "fr": "Mode commercial",
+          "en": "Commercial pricing mode",
+          "ar": "نمط التسعير التجاري"
+        }
+      },
+      "starting_price_dh": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "money",
+        "labels": {
+          "fr": "Prix de départ Dh",
+          "en": "Starting price Dh",
+          "ar": "السعر الابتدائي بالدرهم"
+        }
+      },
+      "implementation_lead_time_days": {
+        "destination": "organisation",
+        "section": "delivery",
+        "type": "integer",
+        "labels": {
+          "fr": "Délai de mise en œuvre (jours)",
+          "en": "Implementation lead time (days)",
+          "ar": "مدة التنفيذ بالأيام"
+        }
+      },
+      "establishment_code": {
+        "destination": "organisation",
+        "section": "establishment",
+        "type": "text",
+        "labels": {
+          "fr": "Établissement",
+          "en": "Establishment",
+          "ar": "المؤسسة"
+        }
+      },
+      "campus_code": {
+        "destination": "organisation",
+        "section": "establishment",
+        "type": "text",
+        "labels": {
+          "fr": "Campus",
+          "en": "Campus",
+          "ar": "الحرم"
+        }
+      },
+      "academic_year": {
+        "destination": "curriculum",
+        "section": "programme",
+        "type": "text",
+        "labels": {
+          "fr": "Année scolaire",
+          "en": "Academic year",
+          "ar": "السنة الدراسية"
+        }
+      },
+      "intake_period": {
+        "destination": "curriculum",
+        "section": "programme",
+        "type": "text",
+        "labels": {
+          "fr": "Période d’admission",
+          "en": "Intake period",
+          "ar": "فترة القبول"
+        }
+      },
+      "class_level": {
+        "destination": "curriculum",
+        "section": "programme",
+        "type": "select",
+        "labels": {
+          "fr": "Niveau de classe",
+          "en": "Class level",
+          "ar": "المستوى الدراسي"
+        }
+      },
+      "age_min": {
+        "destination": "organisation",
+        "section": "eligibility",
+        "type": "number",
+        "labels": {
+          "fr": "Âge minimum",
+          "en": "Minimum age",
+          "ar": "الحد الأدنى للعمر"
+        }
+      },
+      "age_max": {
+        "destination": "organisation",
+        "section": "eligibility",
+        "type": "number",
+        "labels": {
+          "fr": "Âge maximum",
+          "en": "Maximum age",
+          "ar": "الحد الأقصى للعمر"
+        }
+      },
+      "capacity": {
+        "destination": "cohorts",
+        "section": "availability",
+        "type": "integer",
+        "labels": {
+          "fr": "Places disponibles",
+          "en": "Available places",
+          "ar": "الأماكن المتاحة"
+        }
+      },
+      "registration_fee_dh": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "money",
+        "labels": {
+          "fr": "Frais d’inscription",
+          "en": "Registration fee",
+          "ar": "رسوم التسجيل"
+        }
+      },
+      "tuition_display": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "text",
+        "labels": {
+          "fr": "Scolarité",
+          "en": "Tuition display",
+          "ar": "الرسوم الدراسية"
+        }
+      },
+      "meal_option": {
+        "destination": "included",
+        "section": "options",
+        "type": "boolean",
+        "labels": {
+          "fr": "Option repas",
+          "en": "Meal option",
+          "ar": "خيار الوجبات"
+        }
+      },
+      "transport_option": {
+        "destination": "included",
+        "section": "options",
+        "type": "boolean",
+        "labels": {
+          "fr": "Option transport",
+          "en": "Transport option",
+          "ar": "خيار النقل"
+        }
+      },
+      "required_documents": {
+        "destination": "organisation",
+        "section": "admission",
+        "type": "list",
+        "labels": {
+          "fr": "Documents requis",
+          "en": "Required documents",
+          "ar": "المستندات المطلوبة"
+        }
+      },
+      "visit_booking_enabled": {
+        "destination": "organisation",
+        "section": "admission",
+        "type": "boolean",
+        "labels": {
+          "fr": "Visite sur rendez-vous",
+          "en": "Visit booking",
+          "ar": "حجز زيارة"
+        }
+      },
+      "waitlist_enabled": {
+        "destination": "organisation",
+        "section": "admission",
+        "type": "boolean",
+        "labels": {
+          "fr": "Liste d’attente",
+          "en": "Waitlist",
+          "ar": "قائمة الانتظار"
+        }
+      }
+    }
+  },
+  "academy-course": {
+    "domain": "academy",
+    "conversion": "course_enrollment",
+    "labels": {
+      "fr": "Cours Academy",
+      "en": "Academy course",
+      "ar": "دورة الأكاديمية"
+    },
+    "fields": {
+      "name_fr": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom du programme",
+          "en": "Programme name",
+          "ar": "اسم البرنامج"
+        }
+      },
+      "name_en": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom anglais",
+          "en": "English name",
+          "ar": "الاسم بالإنجليزية"
+        }
+      },
+      "name_ar": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom arabe",
+          "en": "Arabic name",
+          "ar": "الاسم بالعربية"
+        }
+      },
+      "short_description_fr": {
+        "destination": "description",
+        "section": "content",
+        "type": "textarea",
+        "labels": {
+          "fr": "Promesse programme",
+          "en": "Programme promise",
+          "ar": "وعد البرنامج"
+        }
+      },
+      "description_fr": {
+        "destination": "description",
+        "section": "content",
+        "type": "richtext",
+        "labels": {
+          "fr": "Description complète",
+          "en": "Full description",
+          "ar": "الوصف الكامل"
+        }
+      },
+      "primary_image_reference": {
+        "destination": "media",
+        "section": "media",
+        "type": "media",
+        "labels": {
+          "fr": "Visuel principal",
+          "en": "Primary visual",
+          "ar": "الصورة الرئيسية"
+        }
+      },
+      "territory_codes": {
+        "destination": "organisation",
+        "section": "coverage",
+        "type": "territory_list",
+        "labels": {
+          "fr": "Territoires",
+          "en": "Territories",
+          "ar": "المناطق"
+        }
+      },
+      "pricing_mode": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "select",
+        "labels": {
+          "fr": "Mode commercial",
+          "en": "Commercial pricing mode",
+          "ar": "نمط التسعير التجاري"
+        }
+      },
+      "starting_price_dh": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "money",
+        "labels": {
+          "fr": "Prix de départ Dh",
+          "en": "Starting price Dh",
+          "ar": "السعر الابتدائي بالدرهم"
+        }
+      },
+      "implementation_lead_time_days": {
+        "destination": "organisation",
+        "section": "delivery",
+        "type": "integer",
+        "labels": {
+          "fr": "Délai de mise en œuvre (jours)",
+          "en": "Implementation lead time (days)",
+          "ar": "مدة التنفيذ بالأيام"
+        }
+      },
+      "course_subject": {
+        "destination": "outcomes",
+        "section": "learning",
+        "type": "text",
+        "labels": {
+          "fr": "Sujet du cours",
+          "en": "Course subject",
+          "ar": "موضوع الدورة"
+        }
+      },
+      "level": {
+        "destination": "outcomes",
+        "section": "learning",
+        "type": "select",
+        "labels": {
+          "fr": "Niveau",
+          "en": "Level",
+          "ar": "المستوى"
+        }
+      },
+      "intended_audience": {
+        "destination": "organisation",
+        "section": "audience",
+        "type": "multiselect",
+        "labels": {
+          "fr": "Public cible",
+          "en": "Intended audience",
+          "ar": "الجمهور المستهدف"
+        }
+      },
+      "learning_outcomes": {
+        "destination": "outcomes",
+        "section": "learning",
+        "type": "list",
+        "labels": {
+          "fr": "Résultats pédagogiques",
+          "en": "Learning outcomes",
+          "ar": "مخرجات التعلم"
+        }
+      },
+      "prerequisites": {
+        "destination": "organisation",
+        "section": "learning",
+        "type": "list",
+        "labels": {
+          "fr": "Prérequis",
+          "en": "Prerequisites",
+          "ar": "المتطلبات السابقة"
+        }
+      },
+      "duration_hours": {
+        "destination": "organisation",
+        "section": "delivery",
+        "type": "number",
+        "labels": {
+          "fr": "Durée (heures)",
+          "en": "Duration (hours)",
+          "ar": "المدة بالساعات"
+        }
+      },
+      "delivery_modality": {
+        "destination": "organisation",
+        "section": "delivery",
+        "type": "select",
+        "labels": {
+          "fr": "Modalité",
+          "en": "Delivery modality",
+          "ar": "طريقة التقديم"
+        }
+      },
+      "language": {
+        "destination": "organisation",
+        "section": "delivery",
+        "type": "select",
+        "labels": {
+          "fr": "Langue",
+          "en": "Language",
+          "ar": "اللغة"
+        }
+      },
+      "assessment_type": {
+        "destination": "assessment",
+        "section": "assessment",
+        "type": "select",
+        "labels": {
+          "fr": "Évaluation",
+          "en": "Assessment",
+          "ar": "التقييم"
+        }
+      },
+      "certificate_enabled": {
+        "destination": "assessment",
+        "section": "credential",
+        "type": "boolean",
+        "labels": {
+          "fr": "Certificat",
+          "en": "Certificate",
+          "ar": "الشهادة"
+        }
+      }
+    }
+  },
+  "academy-cohort": {
+    "domain": "academy",
+    "conversion": "cohort_enrollment",
+    "labels": {
+      "fr": "Cohorte Academy",
+      "en": "Academy cohort",
+      "ar": "دفعة الأكاديمية"
+    },
+    "fields": {
+      "name_fr": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom du programme",
+          "en": "Programme name",
+          "ar": "اسم البرنامج"
+        }
+      },
+      "name_en": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom anglais",
+          "en": "English name",
+          "ar": "الاسم بالإنجليزية"
+        }
+      },
+      "name_ar": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom arabe",
+          "en": "Arabic name",
+          "ar": "الاسم بالعربية"
+        }
+      },
+      "short_description_fr": {
+        "destination": "description",
+        "section": "content",
+        "type": "textarea",
+        "labels": {
+          "fr": "Promesse programme",
+          "en": "Programme promise",
+          "ar": "وعد البرنامج"
+        }
+      },
+      "description_fr": {
+        "destination": "description",
+        "section": "content",
+        "type": "richtext",
+        "labels": {
+          "fr": "Description complète",
+          "en": "Full description",
+          "ar": "الوصف الكامل"
+        }
+      },
+      "primary_image_reference": {
+        "destination": "media",
+        "section": "media",
+        "type": "media",
+        "labels": {
+          "fr": "Visuel principal",
+          "en": "Primary visual",
+          "ar": "الصورة الرئيسية"
+        }
+      },
+      "territory_codes": {
+        "destination": "organisation",
+        "section": "coverage",
+        "type": "territory_list",
+        "labels": {
+          "fr": "Territoires",
+          "en": "Territories",
+          "ar": "المناطق"
+        }
+      },
+      "pricing_mode": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "select",
+        "labels": {
+          "fr": "Mode commercial",
+          "en": "Commercial pricing mode",
+          "ar": "نمط التسعير التجاري"
+        }
+      },
+      "starting_price_dh": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "money",
+        "labels": {
+          "fr": "Prix de départ Dh",
+          "en": "Starting price Dh",
+          "ar": "السعر الابتدائي بالدرهم"
+        }
+      },
+      "implementation_lead_time_days": {
+        "destination": "organisation",
+        "section": "delivery",
+        "type": "integer",
+        "labels": {
+          "fr": "Délai de mise en œuvre (jours)",
+          "en": "Implementation lead time (days)",
+          "ar": "مدة التنفيذ بالأيام"
+        }
+      },
+      "course_subject": {
+        "destination": "outcomes",
+        "section": "learning",
+        "type": "text",
+        "labels": {
+          "fr": "Sujet du cours",
+          "en": "Course subject",
+          "ar": "موضوع الدورة"
+        }
+      },
+      "level": {
+        "destination": "outcomes",
+        "section": "learning",
+        "type": "select",
+        "labels": {
+          "fr": "Niveau",
+          "en": "Level",
+          "ar": "المستوى"
+        }
+      },
+      "intended_audience": {
+        "destination": "organisation",
+        "section": "audience",
+        "type": "multiselect",
+        "labels": {
+          "fr": "Public cible",
+          "en": "Intended audience",
+          "ar": "الجمهور المستهدف"
+        }
+      },
+      "learning_outcomes": {
+        "destination": "outcomes",
+        "section": "learning",
+        "type": "list",
+        "labels": {
+          "fr": "Résultats pédagogiques",
+          "en": "Learning outcomes",
+          "ar": "مخرجات التعلم"
+        }
+      },
+      "prerequisites": {
+        "destination": "organisation",
+        "section": "learning",
+        "type": "list",
+        "labels": {
+          "fr": "Prérequis",
+          "en": "Prerequisites",
+          "ar": "المتطلبات السابقة"
+        }
+      },
+      "duration_hours": {
+        "destination": "organisation",
+        "section": "delivery",
+        "type": "number",
+        "labels": {
+          "fr": "Durée (heures)",
+          "en": "Duration (hours)",
+          "ar": "المدة بالساعات"
+        }
+      },
+      "delivery_modality": {
+        "destination": "organisation",
+        "section": "delivery",
+        "type": "select",
+        "labels": {
+          "fr": "Modalité",
+          "en": "Delivery modality",
+          "ar": "طريقة التقديم"
+        }
+      },
+      "language": {
+        "destination": "organisation",
+        "section": "delivery",
+        "type": "select",
+        "labels": {
+          "fr": "Langue",
+          "en": "Language",
+          "ar": "اللغة"
+        }
+      },
+      "assessment_type": {
+        "destination": "assessment",
+        "section": "assessment",
+        "type": "select",
+        "labels": {
+          "fr": "Évaluation",
+          "en": "Assessment",
+          "ar": "التقييم"
+        }
+      },
+      "certificate_enabled": {
+        "destination": "assessment",
+        "section": "credential",
+        "type": "boolean",
+        "labels": {
+          "fr": "Certificat",
+          "en": "Certificate",
+          "ar": "الشهادة"
+        }
+      },
+      "cohort_code": {
+        "destination": "cohorts",
+        "section": "cohort",
+        "type": "text",
+        "labels": {
+          "fr": "Code cohorte",
+          "en": "Cohort code",
+          "ar": "رمز الدفعة"
+        }
+      },
+      "start_date": {
+        "destination": "cohorts",
+        "section": "cohort",
+        "type": "date",
+        "labels": {
+          "fr": "Date de début",
+          "en": "Start date",
+          "ar": "تاريخ البداية"
+        }
+      },
+      "end_date": {
+        "destination": "cohorts",
+        "section": "cohort",
+        "type": "date",
+        "labels": {
+          "fr": "Date de fin",
+          "en": "End date",
+          "ar": "تاريخ النهاية"
+        }
+      },
+      "session_calendar": {
+        "destination": "cohorts",
+        "section": "cohort",
+        "type": "json",
+        "labels": {
+          "fr": "Calendrier des sessions",
+          "en": "Session calendar",
+          "ar": "جدول الجلسات"
+        }
+      },
+      "seat_capacity": {
+        "destination": "cohorts",
+        "section": "cohort",
+        "type": "integer",
+        "labels": {
+          "fr": "Capacité",
+          "en": "Seat capacity",
+          "ar": "سعة المقاعد"
+        }
+      },
+      "enrollment_open_at": {
+        "destination": "cohorts",
+        "section": "cohort",
+        "type": "datetime",
+        "labels": {
+          "fr": "Ouverture inscriptions",
+          "en": "Enrollment opens",
+          "ar": "فتح التسجيل"
+        }
+      },
+      "enrollment_close_at": {
+        "destination": "cohorts",
+        "section": "cohort",
+        "type": "datetime",
+        "labels": {
+          "fr": "Clôture inscriptions",
+          "en": "Enrollment closes",
+          "ar": "إغلاق التسجيل"
+        }
+      },
+      "trainer_reference": {
+        "destination": "cohorts",
+        "section": "cohort",
+        "type": "text",
+        "labels": {
+          "fr": "Formateur",
+          "en": "Trainer",
+          "ar": "المدرب"
+        }
+      },
+      "attendance_requirement_percent": {
+        "destination": "cohorts",
+        "section": "cohort",
+        "type": "number",
+        "labels": {
+          "fr": "Présence minimum %",
+          "en": "Minimum attendance %",
+          "ar": "الحد الأدنى للحضور"
+        }
+      },
+      "waitlist_enabled": {
+        "destination": "cohorts",
+        "section": "cohort",
+        "type": "boolean",
+        "labels": {
+          "fr": "Liste d’attente",
+          "en": "Waitlist",
+          "ar": "قائمة انتظار"
+        }
+      }
+    }
+  },
+  "certification-pathway": {
+    "domain": "academy",
+    "conversion": "pathway_enrollment",
+    "labels": {
+      "fr": "Parcours certifiant",
+      "en": "Certification pathway",
+      "ar": "مسار الشهادة"
+    },
+    "fields": {
+      "name_fr": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom du programme",
+          "en": "Programme name",
+          "ar": "اسم البرنامج"
+        }
+      },
+      "name_en": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom anglais",
+          "en": "English name",
+          "ar": "الاسم بالإنجليزية"
+        }
+      },
+      "name_ar": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom arabe",
+          "en": "Arabic name",
+          "ar": "الاسم بالعربية"
+        }
+      },
+      "short_description_fr": {
+        "destination": "description",
+        "section": "content",
+        "type": "textarea",
+        "labels": {
+          "fr": "Promesse programme",
+          "en": "Programme promise",
+          "ar": "وعد البرنامج"
+        }
+      },
+      "description_fr": {
+        "destination": "description",
+        "section": "content",
+        "type": "richtext",
+        "labels": {
+          "fr": "Description complète",
+          "en": "Full description",
+          "ar": "الوصف الكامل"
+        }
+      },
+      "primary_image_reference": {
+        "destination": "media",
+        "section": "media",
+        "type": "media",
+        "labels": {
+          "fr": "Visuel principal",
+          "en": "Primary visual",
+          "ar": "الصورة الرئيسية"
+        }
+      },
+      "territory_codes": {
+        "destination": "organisation",
+        "section": "coverage",
+        "type": "territory_list",
+        "labels": {
+          "fr": "Territoires",
+          "en": "Territories",
+          "ar": "المناطق"
+        }
+      },
+      "pricing_mode": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "select",
+        "labels": {
+          "fr": "Mode commercial",
+          "en": "Commercial pricing mode",
+          "ar": "نمط التسعير التجاري"
+        }
+      },
+      "starting_price_dh": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "money",
+        "labels": {
+          "fr": "Prix de départ Dh",
+          "en": "Starting price Dh",
+          "ar": "السعر الابتدائي بالدرهم"
+        }
+      },
+      "implementation_lead_time_days": {
+        "destination": "organisation",
+        "section": "delivery",
+        "type": "integer",
+        "labels": {
+          "fr": "Délai de mise en œuvre (jours)",
+          "en": "Implementation lead time (days)",
+          "ar": "مدة التنفيذ بالأيام"
+        }
+      },
+      "component_course_keys": {
+        "destination": "pathway",
+        "section": "pathway",
+        "type": "list",
+        "labels": {
+          "fr": "Cours composant le parcours",
+          "en": "Component courses",
+          "ar": "الدورات المكونة للمسار"
+        }
+      },
+      "required_sequence": {
+        "destination": "pathway",
+        "section": "pathway",
+        "type": "boolean",
+        "labels": {
+          "fr": "Séquence obligatoire",
+          "en": "Required sequence",
+          "ar": "الترتيب المطلوب"
+        }
+      },
+      "practical_requirement": {
+        "destination": "pathway",
+        "section": "pathway",
+        "type": "textarea",
+        "labels": {
+          "fr": "Exigence pratique",
+          "en": "Practical requirement",
+          "ar": "متطلب عملي"
+        }
+      },
+      "assessment_requirements": {
+        "destination": "pathway",
+        "section": "pathway",
+        "type": "list",
+        "labels": {
+          "fr": "Évaluations requises",
+          "en": "Required assessments",
+          "ar": "التقييمات المطلوبة"
+        }
+      },
+      "retake_policy": {
+        "destination": "pathway",
+        "section": "pathway",
+        "type": "textarea",
+        "labels": {
+          "fr": "Politique de rattrapage",
+          "en": "Retake policy",
+          "ar": "سياسة الإعادة"
+        }
+      },
+      "attendance_threshold": {
+        "destination": "pathway",
+        "section": "pathway",
+        "type": "number",
+        "labels": {
+          "fr": "Seuil de présence %",
+          "en": "Attendance threshold %",
+          "ar": "نسبة الحضور"
+        }
+      },
+      "certificate_validity_months": {
+        "destination": "assessment",
+        "section": "credential",
+        "type": "integer",
+        "labels": {
+          "fr": "Validité certificat (mois)",
+          "en": "Certificate validity (months)",
+          "ar": "صلاحية الشهادة بالأشهر"
+        }
+      },
+      "renewal_enabled": {
+        "destination": "assessment",
+        "section": "credential",
+        "type": "boolean",
+        "labels": {
+          "fr": "Renouvellement",
+          "en": "Renewal",
+          "ar": "التجديد"
+        }
+      }
+    }
+  },
+  "parent-workshop": {
+    "domain": "academy",
+    "conversion": "event_enrollment",
+    "labels": {
+      "fr": "Atelier parents",
+      "en": "Parent workshop",
+      "ar": "ورشة للوالدين"
+    },
+    "fields": {
+      "name_fr": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom du programme",
+          "en": "Programme name",
+          "ar": "اسم البرنامج"
+        }
+      },
+      "name_en": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom anglais",
+          "en": "English name",
+          "ar": "الاسم بالإنجليزية"
+        }
+      },
+      "name_ar": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom arabe",
+          "en": "Arabic name",
+          "ar": "الاسم بالعربية"
+        }
+      },
+      "short_description_fr": {
+        "destination": "description",
+        "section": "content",
+        "type": "textarea",
+        "labels": {
+          "fr": "Promesse programme",
+          "en": "Programme promise",
+          "ar": "وعد البرنامج"
+        }
+      },
+      "description_fr": {
+        "destination": "description",
+        "section": "content",
+        "type": "richtext",
+        "labels": {
+          "fr": "Description complète",
+          "en": "Full description",
+          "ar": "الوصف الكامل"
+        }
+      },
+      "primary_image_reference": {
+        "destination": "media",
+        "section": "media",
+        "type": "media",
+        "labels": {
+          "fr": "Visuel principal",
+          "en": "Primary visual",
+          "ar": "الصورة الرئيسية"
+        }
+      },
+      "territory_codes": {
+        "destination": "organisation",
+        "section": "coverage",
+        "type": "territory_list",
+        "labels": {
+          "fr": "Territoires",
+          "en": "Territories",
+          "ar": "المناطق"
+        }
+      },
+      "pricing_mode": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "select",
+        "labels": {
+          "fr": "Mode commercial",
+          "en": "Commercial pricing mode",
+          "ar": "نمط التسعير التجاري"
+        }
+      },
+      "starting_price_dh": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "money",
+        "labels": {
+          "fr": "Prix de départ Dh",
+          "en": "Starting price Dh",
+          "ar": "السعر الابتدائي بالدرهم"
+        }
+      },
+      "implementation_lead_time_days": {
+        "destination": "organisation",
+        "section": "delivery",
+        "type": "integer",
+        "labels": {
+          "fr": "Délai de mise en œuvre (jours)",
+          "en": "Implementation lead time (days)",
+          "ar": "مدة التنفيذ بالأيام"
+        }
+      },
+      "workshop_theme": {
+        "destination": "outcomes",
+        "section": "learning",
+        "type": "select",
+        "labels": {
+          "fr": "Thème atelier",
+          "en": "Workshop theme",
+          "ar": "موضوع الورشة"
+        }
+      },
+      "event_format": {
+        "destination": "organisation",
+        "section": "delivery",
+        "type": "select",
+        "labels": {
+          "fr": "Format",
+          "en": "Format",
+          "ar": "الصيغة"
+        }
+      },
+      "household_access_count": {
+        "destination": "included",
+        "section": "access",
+        "type": "integer",
+        "labels": {
+          "fr": "Accès par foyer",
+          "en": "Household accesses",
+          "ar": "عدد الدخول للأسرة"
+        }
+      },
+      "replay_access_days": {
+        "destination": "included",
+        "section": "access",
+        "type": "integer",
+        "labels": {
+          "fr": "Replay (jours)",
+          "en": "Replay access (days)",
+          "ar": "الوصول للإعادة بالأيام"
+        }
+      },
+      "downloadable_guide": {
+        "destination": "included",
+        "section": "contents",
+        "type": "media",
+        "labels": {
+          "fr": "Guide téléchargeable",
+          "en": "Downloadable guide",
+          "ar": "دليل قابل للتنزيل"
+        }
+      },
+      "participation_certificate": {
+        "destination": "assessment",
+        "section": "credential",
+        "type": "boolean",
+        "labels": {
+          "fr": "Attestation de participation",
+          "en": "Participation certificate",
+          "ar": "شهادة مشاركة"
+        }
+      }
+    }
+  },
+  "institutional-training": {
+    "domain": "academy",
+    "conversion": "b2b_quote",
+    "labels": {
+      "fr": "Formation professionnelle & institutionnelle",
+      "en": "Professional and institutional training",
+      "ar": "التدريب المهني والمؤسسي"
+    },
+    "fields": {
+      "name_fr": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom du programme",
+          "en": "Programme name",
+          "ar": "اسم البرنامج"
+        }
+      },
+      "name_en": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom anglais",
+          "en": "English name",
+          "ar": "الاسم بالإنجليزية"
+        }
+      },
+      "name_ar": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom arabe",
+          "en": "Arabic name",
+          "ar": "الاسم بالعربية"
+        }
+      },
+      "short_description_fr": {
+        "destination": "description",
+        "section": "content",
+        "type": "textarea",
+        "labels": {
+          "fr": "Promesse programme",
+          "en": "Programme promise",
+          "ar": "وعد البرنامج"
+        }
+      },
+      "description_fr": {
+        "destination": "description",
+        "section": "content",
+        "type": "richtext",
+        "labels": {
+          "fr": "Description complète",
+          "en": "Full description",
+          "ar": "الوصف الكامل"
+        }
+      },
+      "primary_image_reference": {
+        "destination": "media",
+        "section": "media",
+        "type": "media",
+        "labels": {
+          "fr": "Visuel principal",
+          "en": "Primary visual",
+          "ar": "الصورة الرئيسية"
+        }
+      },
+      "territory_codes": {
+        "destination": "organisation",
+        "section": "coverage",
+        "type": "territory_list",
+        "labels": {
+          "fr": "Territoires",
+          "en": "Territories",
+          "ar": "المناطق"
+        }
+      },
+      "pricing_mode": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "select",
+        "labels": {
+          "fr": "Mode commercial",
+          "en": "Commercial pricing mode",
+          "ar": "نمط التسعير التجاري"
+        }
+      },
+      "starting_price_dh": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "money",
+        "labels": {
+          "fr": "Prix de départ Dh",
+          "en": "Starting price Dh",
+          "ar": "السعر الابتدائي بالدرهم"
+        }
+      },
+      "implementation_lead_time_days": {
+        "destination": "organisation",
+        "section": "delivery",
+        "type": "integer",
+        "labels": {
+          "fr": "Délai de mise en œuvre (jours)",
+          "en": "Implementation lead time (days)",
+          "ar": "مدة التنفيذ بالأيام"
+        }
+      },
+      "audience_types": {
+        "destination": "organisation",
+        "section": "scope",
+        "type": "multiselect",
+        "labels": {
+          "fr": "Publics professionnels",
+          "en": "Professional audiences",
+          "ar": "الفئات المهنية"
+        }
+      },
+      "participant_minimum": {
+        "destination": "organisation",
+        "section": "scope",
+        "type": "integer",
+        "labels": {
+          "fr": "Participants minimum",
+          "en": "Minimum participants",
+          "ar": "الحد الأدنى للمشاركين"
+        }
+      },
+      "participant_maximum": {
+        "destination": "organisation",
+        "section": "scope",
+        "type": "integer",
+        "labels": {
+          "fr": "Participants maximum",
+          "en": "Maximum participants",
+          "ar": "الحد الأقصى للمشاركين"
+        }
+      },
+      "training_modules": {
+        "destination": "curriculum",
+        "section": "programme",
+        "type": "list",
+        "labels": {
+          "fr": "Modules de formation",
+          "en": "Training modules",
+          "ar": "وحدات التدريب"
+        }
+      },
+      "onsite_online_modes": {
+        "destination": "organisation",
+        "section": "delivery",
+        "type": "multiselect",
+        "labels": {
+          "fr": "Modes disponibles",
+          "en": "Available modes",
+          "ar": "طرق التقديم"
+        }
+      },
+      "certification_required": {
+        "destination": "assessment",
+        "section": "credential",
+        "type": "boolean",
+        "labels": {
+          "fr": "Certification requise",
+          "en": "Certification required",
+          "ar": "شهادة مطلوبة"
+        }
+      },
+      "customization_level": {
+        "destination": "curriculum",
+        "section": "programme",
+        "type": "select",
+        "labels": {
+          "fr": "Niveau de personnalisation",
+          "en": "Customization level",
+          "ar": "مستوى التخصيص"
+        }
+      }
+    }
+  },
+  "school-managed-programme": {
+    "domain": "b2b",
+    "conversion": "b2b_quote",
+    "labels": {
+      "fr": "Programme géré école & crèche",
+      "en": "Managed school and crèche programme",
+      "ar": "برنامج مُدار للمدارس والحضانات"
+    },
+    "fields": {
+      "name_fr": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom de la solution",
+          "en": "Solution name",
+          "ar": "اسم الحل"
+        }
+      },
+      "name_en": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom anglais",
+          "en": "English name",
+          "ar": "الاسم بالإنجليزية"
+        }
+      },
+      "name_ar": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom arabe",
+          "en": "Arabic name",
+          "ar": "الاسم بالعربية"
+        }
+      },
+      "short_description_fr": {
+        "destination": "description",
+        "section": "content",
+        "type": "textarea",
+        "labels": {
+          "fr": "Promesse exécutive",
+          "en": "Executive promise",
+          "ar": "الوعد التنفيذي"
+        }
+      },
+      "description_fr": {
+        "destination": "description",
+        "section": "content",
+        "type": "richtext",
+        "labels": {
+          "fr": "Description complète",
+          "en": "Full description",
+          "ar": "الوصف الكامل"
+        }
+      },
+      "primary_image_reference": {
+        "destination": "media",
+        "section": "media",
+        "type": "media",
+        "labels": {
+          "fr": "Visuel principal",
+          "en": "Primary visual",
+          "ar": "الصورة الرئيسية"
+        }
+      },
+      "organization_type": {
+        "destination": "fit",
+        "section": "scope",
+        "type": "select",
+        "labels": {
+          "fr": "Type d’organisation",
+          "en": "Organization type",
+          "ar": "نوع المؤسسة"
+        }
+      },
+      "site_minimum": {
+        "destination": "fit",
+        "section": "scope",
+        "type": "integer",
+        "labels": {
+          "fr": "Sites minimum",
+          "en": "Minimum sites",
+          "ar": "الحد الأدنى للمواقع"
+        }
+      },
+      "site_maximum": {
+        "destination": "fit",
+        "section": "scope",
+        "type": "integer",
+        "labels": {
+          "fr": "Sites maximum",
+          "en": "Maximum sites",
+          "ar": "الحد الأقصى للمواقع"
+        }
+      },
+      "territory_codes": {
+        "destination": "deployment",
+        "section": "coverage",
+        "type": "territory_list",
+        "labels": {
+          "fr": "Territoires",
+          "en": "Territories",
+          "ar": "المناطق"
+        }
+      },
+      "pricing_mode": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "select",
+        "labels": {
+          "fr": "Mode commercial",
+          "en": "Commercial pricing mode",
+          "ar": "نمط التسعير التجاري"
+        }
+      },
+      "starting_price_dh": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "money",
+        "labels": {
+          "fr": "Prix de départ Dh",
+          "en": "Starting price Dh",
+          "ar": "السعر الابتدائي بالدرهم"
+        }
+      },
+      "quotation_required": {
+        "destination": "commercial",
+        "section": "conversion",
+        "type": "boolean",
+        "labels": {
+          "fr": "Devis requis",
+          "en": "Quotation required",
+          "ar": "يتطلب عرض سعر"
+        }
+      },
+      "implementation_lead_time_days": {
+        "destination": "deployment",
+        "section": "delivery",
+        "type": "integer",
+        "labels": {
+          "fr": "Délai de mise en œuvre",
+          "en": "Implementation lead time",
+          "ar": "مدة التنفيذ"
+        }
+      },
+      "programme_modules": {
+        "destination": "included",
+        "section": "programme",
+        "type": "multiselect",
+        "labels": {
+          "fr": "Modules du programme",
+          "en": "Programme modules",
+          "ar": "وحدات البرنامج"
+        }
+      },
+      "children_capacity": {
+        "destination": "fit",
+        "section": "scope",
+        "type": "integer",
+        "labels": {
+          "fr": "Capacité enfants",
+          "en": "Children capacity",
+          "ar": "سعة الأطفال"
+        }
+      },
+      "age_groups": {
+        "destination": "fit",
+        "section": "scope",
+        "type": "multiselect",
+        "labels": {
+          "fr": "Tranches d’âge",
+          "en": "Age groups",
+          "ar": "الفئات العمرية"
+        }
+      },
+      "operating_schedule": {
+        "destination": "deployment",
+        "section": "delivery",
+        "type": "json",
+        "labels": {
+          "fr": "Planning d’exploitation",
+          "en": "Operating schedule",
+          "ar": "جدول التشغيل"
+        }
+      },
+      "staffing_model": {
+        "destination": "deployment",
+        "section": "operations",
+        "type": "select",
+        "labels": {
+          "fr": "Modèle de staffing",
+          "en": "Staffing model",
+          "ar": "نموذج التوظيف"
+        }
+      },
+      "provider_ratio": {
+        "destination": "deployment",
+        "section": "operations",
+        "type": "text",
+        "labels": {
+          "fr": "Ratio intervenant/enfants",
+          "en": "Provider-to-child ratio",
+          "ar": "نسبة مقدم الخدمة للأطفال"
+        }
+      },
+      "transport_required": {
+        "destination": "deployment",
+        "section": "delivery",
+        "type": "boolean",
+        "labels": {
+          "fr": "Transport requis",
+          "en": "Transport required",
+          "ar": "النقل مطلوب"
+        }
+      },
+      "reporting_frequency": {
+        "destination": "evidence",
+        "section": "reporting",
+        "type": "select",
+        "labels": {
+          "fr": "Fréquence reporting",
+          "en": "Reporting frequency",
+          "ar": "دورية التقارير"
+        }
+      },
+      "contract_duration_months": {
+        "destination": "commercial",
+        "section": "commercial",
+        "type": "integer",
+        "labels": {
+          "fr": "Durée contrat (mois)",
+          "en": "Contract duration (months)",
+          "ar": "مدة العقد بالأشهر"
+        }
+      }
+    }
+  },
+  "school-staff-reinforcement": {
+    "domain": "b2b",
+    "conversion": "b2b_quote",
+    "labels": {
+      "fr": "Renfort de personnel école & crèche",
+      "en": "School and crèche staff reinforcement",
+      "ar": "تعزيز طاقم المدارس والحضانات"
+    },
+    "fields": {
+      "name_fr": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom de la solution",
+          "en": "Solution name",
+          "ar": "اسم الحل"
+        }
+      },
+      "name_en": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom anglais",
+          "en": "English name",
+          "ar": "الاسم بالإنجليزية"
+        }
+      },
+      "name_ar": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom arabe",
+          "en": "Arabic name",
+          "ar": "الاسم بالعربية"
+        }
+      },
+      "short_description_fr": {
+        "destination": "description",
+        "section": "content",
+        "type": "textarea",
+        "labels": {
+          "fr": "Promesse exécutive",
+          "en": "Executive promise",
+          "ar": "الوعد التنفيذي"
+        }
+      },
+      "description_fr": {
+        "destination": "description",
+        "section": "content",
+        "type": "richtext",
+        "labels": {
+          "fr": "Description complète",
+          "en": "Full description",
+          "ar": "الوصف الكامل"
+        }
+      },
+      "primary_image_reference": {
+        "destination": "media",
+        "section": "media",
+        "type": "media",
+        "labels": {
+          "fr": "Visuel principal",
+          "en": "Primary visual",
+          "ar": "الصورة الرئيسية"
+        }
+      },
+      "organization_type": {
+        "destination": "fit",
+        "section": "scope",
+        "type": "select",
+        "labels": {
+          "fr": "Type d’organisation",
+          "en": "Organization type",
+          "ar": "نوع المؤسسة"
+        }
+      },
+      "site_minimum": {
+        "destination": "fit",
+        "section": "scope",
+        "type": "integer",
+        "labels": {
+          "fr": "Sites minimum",
+          "en": "Minimum sites",
+          "ar": "الحد الأدنى للمواقع"
+        }
+      },
+      "site_maximum": {
+        "destination": "fit",
+        "section": "scope",
+        "type": "integer",
+        "labels": {
+          "fr": "Sites maximum",
+          "en": "Maximum sites",
+          "ar": "الحد الأقصى للمواقع"
+        }
+      },
+      "territory_codes": {
+        "destination": "deployment",
+        "section": "coverage",
+        "type": "territory_list",
+        "labels": {
+          "fr": "Territoires",
+          "en": "Territories",
+          "ar": "المناطق"
+        }
+      },
+      "pricing_mode": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "select",
+        "labels": {
+          "fr": "Mode commercial",
+          "en": "Commercial pricing mode",
+          "ar": "نمط التسعير التجاري"
+        }
+      },
+      "starting_price_dh": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "money",
+        "labels": {
+          "fr": "Prix de départ Dh",
+          "en": "Starting price Dh",
+          "ar": "السعر الابتدائي بالدرهم"
+        }
+      },
+      "quotation_required": {
+        "destination": "commercial",
+        "section": "conversion",
+        "type": "boolean",
+        "labels": {
+          "fr": "Devis requis",
+          "en": "Quotation required",
+          "ar": "يتطلب عرض سعر"
+        }
+      },
+      "implementation_lead_time_days": {
+        "destination": "deployment",
+        "section": "delivery",
+        "type": "integer",
+        "labels": {
+          "fr": "Délai de mise en œuvre",
+          "en": "Implementation lead time",
+          "ar": "مدة التنفيذ"
+        }
+      },
+      "required_roles": {
+        "destination": "included",
+        "section": "staffing",
+        "type": "multiselect",
+        "labels": {
+          "fr": "Rôles requis",
+          "en": "Required roles",
+          "ar": "الأدوار المطلوبة"
+        }
+      },
+      "personnel_count": {
+        "destination": "included",
+        "section": "staffing",
+        "type": "integer",
+        "labels": {
+          "fr": "Nombre de personnes",
+          "en": "Personnel count",
+          "ar": "عدد الموظفين"
+        }
+      },
+      "shift_patterns": {
+        "destination": "deployment",
+        "section": "schedule",
+        "type": "json",
+        "labels": {
+          "fr": "Horaires / shifts",
+          "en": "Shift patterns",
+          "ar": "نوبات العمل"
+        }
+      },
+      "qualification_requirements": {
+        "destination": "included",
+        "section": "staffing",
+        "type": "list",
+        "labels": {
+          "fr": "Qualifications",
+          "en": "Qualification requirements",
+          "ar": "متطلبات التأهيل"
+        }
+      },
+      "replacement_sla_hours": {
+        "destination": "deployment",
+        "section": "operations",
+        "type": "integer",
+        "labels": {
+          "fr": "SLA remplacement (heures)",
+          "en": "Replacement SLA (hours)",
+          "ar": "مهلة الاستبدال بالساعات"
+        }
+      },
+      "attendance_reporting": {
+        "destination": "evidence",
+        "section": "reporting",
+        "type": "boolean",
+        "labels": {
+          "fr": "Reporting présence",
+          "en": "Attendance reporting",
+          "ar": "تقارير الحضور"
+        }
+      },
+      "billing_basis": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "select",
+        "labels": {
+          "fr": "Base de facturation",
+          "en": "Billing basis",
+          "ar": "أساس الفوترة"
+        }
+      }
+    }
+  },
+  "hospitality-kids-programme": {
+    "domain": "b2b",
+    "conversion": "b2b_quote",
+    "labels": {
+      "fr": "Programme Hospitality Kids Friendly",
+      "en": "Hospitality kids-friendly programme",
+      "ar": "برنامج الضيافة الصديقة للأطفال"
+    },
+    "fields": {
+      "name_fr": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom de la solution",
+          "en": "Solution name",
+          "ar": "اسم الحل"
+        }
+      },
+      "name_en": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom anglais",
+          "en": "English name",
+          "ar": "الاسم بالإنجليزية"
+        }
+      },
+      "name_ar": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom arabe",
+          "en": "Arabic name",
+          "ar": "الاسم بالعربية"
+        }
+      },
+      "short_description_fr": {
+        "destination": "description",
+        "section": "content",
+        "type": "textarea",
+        "labels": {
+          "fr": "Promesse exécutive",
+          "en": "Executive promise",
+          "ar": "الوعد التنفيذي"
+        }
+      },
+      "description_fr": {
+        "destination": "description",
+        "section": "content",
+        "type": "richtext",
+        "labels": {
+          "fr": "Description complète",
+          "en": "Full description",
+          "ar": "الوصف الكامل"
+        }
+      },
+      "primary_image_reference": {
+        "destination": "media",
+        "section": "media",
+        "type": "media",
+        "labels": {
+          "fr": "Visuel principal",
+          "en": "Primary visual",
+          "ar": "الصورة الرئيسية"
+        }
+      },
+      "organization_type": {
+        "destination": "fit",
+        "section": "scope",
+        "type": "select",
+        "labels": {
+          "fr": "Type d’organisation",
+          "en": "Organization type",
+          "ar": "نوع المؤسسة"
+        }
+      },
+      "site_minimum": {
+        "destination": "fit",
+        "section": "scope",
+        "type": "integer",
+        "labels": {
+          "fr": "Sites minimum",
+          "en": "Minimum sites",
+          "ar": "الحد الأدنى للمواقع"
+        }
+      },
+      "site_maximum": {
+        "destination": "fit",
+        "section": "scope",
+        "type": "integer",
+        "labels": {
+          "fr": "Sites maximum",
+          "en": "Maximum sites",
+          "ar": "الحد الأقصى للمواقع"
+        }
+      },
+      "territory_codes": {
+        "destination": "deployment",
+        "section": "coverage",
+        "type": "territory_list",
+        "labels": {
+          "fr": "Territoires",
+          "en": "Territories",
+          "ar": "المناطق"
+        }
+      },
+      "pricing_mode": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "select",
+        "labels": {
+          "fr": "Mode commercial",
+          "en": "Commercial pricing mode",
+          "ar": "نمط التسعير التجاري"
+        }
+      },
+      "starting_price_dh": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "money",
+        "labels": {
+          "fr": "Prix de départ Dh",
+          "en": "Starting price Dh",
+          "ar": "السعر الابتدائي بالدرهم"
+        }
+      },
+      "quotation_required": {
+        "destination": "commercial",
+        "section": "conversion",
+        "type": "boolean",
+        "labels": {
+          "fr": "Devis requis",
+          "en": "Quotation required",
+          "ar": "يتطلب عرض سعر"
+        }
+      },
+      "implementation_lead_time_days": {
+        "destination": "deployment",
+        "section": "delivery",
+        "type": "integer",
+        "labels": {
+          "fr": "Délai de mise en œuvre",
+          "en": "Implementation lead time",
+          "ar": "مدة التنفيذ"
+        }
+      },
+      "property_types": {
+        "destination": "fit",
+        "section": "property",
+        "type": "multiselect",
+        "labels": {
+          "fr": "Type de propriété",
+          "en": "Property type",
+          "ar": "نوع المنشأة"
+        }
+      },
+      "property_size_rooms": {
+        "destination": "fit",
+        "section": "property",
+        "type": "integer",
+        "labels": {
+          "fr": "Nombre de chambres",
+          "en": "Room count",
+          "ar": "عدد الغرف"
+        }
+      },
+      "programme_modules": {
+        "destination": "included",
+        "section": "programme",
+        "type": "multiselect",
+        "labels": {
+          "fr": "Modules",
+          "en": "Programme modules",
+          "ar": "وحدات البرنامج"
+        }
+      },
+      "operating_hours": {
+        "destination": "deployment",
+        "section": "operations",
+        "type": "time_ranges",
+        "labels": {
+          "fr": "Horaires d’exploitation",
+          "en": "Operating hours",
+          "ar": "ساعات التشغيل"
+        }
+      },
+      "expected_child_volume": {
+        "destination": "fit",
+        "section": "scope",
+        "type": "integer",
+        "labels": {
+          "fr": "Volume enfants estimé",
+          "en": "Expected child volume",
+          "ar": "حجم الأطفال المتوقع"
+        }
+      },
+      "multilingual_needs": {
+        "destination": "included",
+        "section": "staffing",
+        "type": "multiselect",
+        "labels": {
+          "fr": "Langues requises",
+          "en": "Required languages",
+          "ar": "اللغات المطلوبة"
+        }
+      },
+      "guest_booking_integration": {
+        "destination": "deployment",
+        "section": "integration",
+        "type": "select",
+        "labels": {
+          "fr": "Intégration réservation hôtel",
+          "en": "Hotel booking integration",
+          "ar": "تكامل حجز الفندق"
+        }
+      },
+      "billing_model": {
+        "destination": "commercial",
+        "section": "billing",
+        "type": "select",
+        "labels": {
+          "fr": "Modèle de facturation",
+          "en": "Billing model",
+          "ar": "نموذج الفوترة"
+        }
+      },
+      "pilot_enabled": {
+        "destination": "commercial",
+        "section": "commercial",
+        "type": "boolean",
+        "labels": {
+          "fr": "Pilote disponible",
+          "en": "Pilot available",
+          "ar": "تجربة أولية متاحة"
+        }
+      }
+    }
+  },
+  "corporate-childcare-benefit": {
+    "domain": "b2b",
+    "conversion": "b2b_quote",
+    "labels": {
+      "fr": "Bénéfice childcare collaborateurs",
+      "en": "Employee childcare benefit",
+      "ar": "ميزة رعاية الأطفال للموظفين"
+    },
+    "fields": {
+      "name_fr": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom de la solution",
+          "en": "Solution name",
+          "ar": "اسم الحل"
+        }
+      },
+      "name_en": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom anglais",
+          "en": "English name",
+          "ar": "الاسم بالإنجليزية"
+        }
+      },
+      "name_ar": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom arabe",
+          "en": "Arabic name",
+          "ar": "الاسم بالعربية"
+        }
+      },
+      "short_description_fr": {
+        "destination": "description",
+        "section": "content",
+        "type": "textarea",
+        "labels": {
+          "fr": "Promesse exécutive",
+          "en": "Executive promise",
+          "ar": "الوعد التنفيذي"
+        }
+      },
+      "description_fr": {
+        "destination": "description",
+        "section": "content",
+        "type": "richtext",
+        "labels": {
+          "fr": "Description complète",
+          "en": "Full description",
+          "ar": "الوصف الكامل"
+        }
+      },
+      "primary_image_reference": {
+        "destination": "media",
+        "section": "media",
+        "type": "media",
+        "labels": {
+          "fr": "Visuel principal",
+          "en": "Primary visual",
+          "ar": "الصورة الرئيسية"
+        }
+      },
+      "organization_type": {
+        "destination": "fit",
+        "section": "scope",
+        "type": "select",
+        "labels": {
+          "fr": "Type d’organisation",
+          "en": "Organization type",
+          "ar": "نوع المؤسسة"
+        }
+      },
+      "site_minimum": {
+        "destination": "fit",
+        "section": "scope",
+        "type": "integer",
+        "labels": {
+          "fr": "Sites minimum",
+          "en": "Minimum sites",
+          "ar": "الحد الأدنى للمواقع"
+        }
+      },
+      "site_maximum": {
+        "destination": "fit",
+        "section": "scope",
+        "type": "integer",
+        "labels": {
+          "fr": "Sites maximum",
+          "en": "Maximum sites",
+          "ar": "الحد الأقصى للمواقع"
+        }
+      },
+      "territory_codes": {
+        "destination": "deployment",
+        "section": "coverage",
+        "type": "territory_list",
+        "labels": {
+          "fr": "Territoires",
+          "en": "Territories",
+          "ar": "المناطق"
+        }
+      },
+      "pricing_mode": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "select",
+        "labels": {
+          "fr": "Mode commercial",
+          "en": "Commercial pricing mode",
+          "ar": "نمط التسعير التجاري"
+        }
+      },
+      "starting_price_dh": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "money",
+        "labels": {
+          "fr": "Prix de départ Dh",
+          "en": "Starting price Dh",
+          "ar": "السعر الابتدائي بالدرهم"
+        }
+      },
+      "quotation_required": {
+        "destination": "commercial",
+        "section": "conversion",
+        "type": "boolean",
+        "labels": {
+          "fr": "Devis requis",
+          "en": "Quotation required",
+          "ar": "يتطلب عرض سعر"
+        }
+      },
+      "implementation_lead_time_days": {
+        "destination": "deployment",
+        "section": "delivery",
+        "type": "integer",
+        "labels": {
+          "fr": "Délai de mise en œuvre",
+          "en": "Implementation lead time",
+          "ar": "مدة التنفيذ"
+        }
+      },
+      "benefit_models": {
+        "destination": "included",
+        "section": "benefit",
+        "type": "multiselect",
+        "labels": {
+          "fr": "Modèles de bénéfice",
+          "en": "Benefit models",
+          "ar": "نماذج المنفعة"
+        }
+      },
+      "employee_population": {
+        "destination": "fit",
+        "section": "scope",
+        "type": "integer",
+        "labels": {
+          "fr": "Population salariés",
+          "en": "Employee population",
+          "ar": "عدد الموظفين"
+        }
+      },
+      "employer_contribution_type": {
+        "destination": "commercial",
+        "section": "finance",
+        "type": "select",
+        "labels": {
+          "fr": "Contribution employeur",
+          "en": "Employer contribution",
+          "ar": "مساهمة صاحب العمل"
+        }
+      },
+      "employer_contribution_value": {
+        "destination": "commercial",
+        "section": "finance",
+        "type": "number",
+        "labels": {
+          "fr": "Valeur contribution",
+          "en": "Contribution value",
+          "ar": "قيمة المساهمة"
+        }
+      },
+      "employee_eligibility_rules": {
+        "destination": "fit",
+        "section": "eligibility",
+        "type": "json",
+        "labels": {
+          "fr": "Règles d’éligibilité",
+          "en": "Eligibility rules",
+          "ar": "قواعد الأهلية"
+        }
+      },
+      "usage_limits": {
+        "destination": "included",
+        "section": "benefit",
+        "type": "json",
+        "labels": {
+          "fr": "Limites d’usage",
+          "en": "Usage limits",
+          "ar": "حدود الاستخدام"
+        }
+      },
+      "covered_service_keys": {
+        "destination": "included",
+        "section": "benefit",
+        "type": "list",
+        "labels": {
+          "fr": "Services couverts",
+          "en": "Covered services",
+          "ar": "الخدمات المشمولة"
+        }
+      },
+      "company_billing_cycle": {
+        "destination": "commercial",
+        "section": "billing",
+        "type": "select",
+        "labels": {
+          "fr": "Cycle de facturation",
+          "en": "Billing cycle",
+          "ar": "دورة الفوترة"
+        }
+      },
+      "privacy_boundary": {
+        "destination": "evidence",
+        "section": "privacy",
+        "type": "textarea",
+        "labels": {
+          "fr": "Limite de visibilité employeur",
+          "en": "Employer visibility boundary",
+          "ar": "حدود رؤية صاحب العمل"
+        }
+      }
+    }
+  },
+  "health-adjacent-programme": {
+    "domain": "b2b",
+    "conversion": "b2b_quote",
+    "labels": {
+      "fr": "Programme partenaire santé non médical",
+      "en": "Health-adjacent non-medical programme",
+      "ar": "برنامج شريك صحي غير طبي"
+    },
+    "fields": {
+      "name_fr": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom de la solution",
+          "en": "Solution name",
+          "ar": "اسم الحل"
+        }
+      },
+      "name_en": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom anglais",
+          "en": "English name",
+          "ar": "الاسم بالإنجليزية"
+        }
+      },
+      "name_ar": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom arabe",
+          "en": "Arabic name",
+          "ar": "الاسم بالعربية"
+        }
+      },
+      "short_description_fr": {
+        "destination": "description",
+        "section": "content",
+        "type": "textarea",
+        "labels": {
+          "fr": "Promesse exécutive",
+          "en": "Executive promise",
+          "ar": "الوعد التنفيذي"
+        }
+      },
+      "description_fr": {
+        "destination": "description",
+        "section": "content",
+        "type": "richtext",
+        "labels": {
+          "fr": "Description complète",
+          "en": "Full description",
+          "ar": "الوصف الكامل"
+        }
+      },
+      "primary_image_reference": {
+        "destination": "media",
+        "section": "media",
+        "type": "media",
+        "labels": {
+          "fr": "Visuel principal",
+          "en": "Primary visual",
+          "ar": "الصورة الرئيسية"
+        }
+      },
+      "organization_type": {
+        "destination": "fit",
+        "section": "scope",
+        "type": "select",
+        "labels": {
+          "fr": "Type d’organisation",
+          "en": "Organization type",
+          "ar": "نوع المؤسسة"
+        }
+      },
+      "site_minimum": {
+        "destination": "fit",
+        "section": "scope",
+        "type": "integer",
+        "labels": {
+          "fr": "Sites minimum",
+          "en": "Minimum sites",
+          "ar": "الحد الأدنى للمواقع"
+        }
+      },
+      "site_maximum": {
+        "destination": "fit",
+        "section": "scope",
+        "type": "integer",
+        "labels": {
+          "fr": "Sites maximum",
+          "en": "Maximum sites",
+          "ar": "الحد الأقصى للمواقع"
+        }
+      },
+      "territory_codes": {
+        "destination": "deployment",
+        "section": "coverage",
+        "type": "territory_list",
+        "labels": {
+          "fr": "Territoires",
+          "en": "Territories",
+          "ar": "المناطق"
+        }
+      },
+      "pricing_mode": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "select",
+        "labels": {
+          "fr": "Mode commercial",
+          "en": "Commercial pricing mode",
+          "ar": "نمط التسعير التجاري"
+        }
+      },
+      "starting_price_dh": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "money",
+        "labels": {
+          "fr": "Prix de départ Dh",
+          "en": "Starting price Dh",
+          "ar": "السعر الابتدائي بالدرهم"
+        }
+      },
+      "quotation_required": {
+        "destination": "commercial",
+        "section": "conversion",
+        "type": "boolean",
+        "labels": {
+          "fr": "Devis requis",
+          "en": "Quotation required",
+          "ar": "يتطلب عرض سعر"
+        }
+      },
+      "implementation_lead_time_days": {
+        "destination": "deployment",
+        "section": "delivery",
+        "type": "integer",
+        "labels": {
+          "fr": "Délai de mise en œuvre",
+          "en": "Implementation lead time",
+          "ar": "مدة التنفيذ"
+        }
+      },
+      "partner_types": {
+        "destination": "fit",
+        "section": "partner",
+        "type": "multiselect",
+        "labels": {
+          "fr": "Types de partenaire",
+          "en": "Partner types",
+          "ar": "أنواع الشركاء"
+        }
+      },
+      "programme_modules": {
+        "destination": "included",
+        "section": "programme",
+        "type": "multiselect",
+        "labels": {
+          "fr": "Modules non médicaux",
+          "en": "Non-medical modules",
+          "ar": "الوحدات غير الطبية"
+        }
+      },
+      "operating_hours": {
+        "destination": "deployment",
+        "section": "delivery",
+        "type": "time_ranges",
+        "labels": {
+          "fr": "Horaires",
+          "en": "Operating hours",
+          "ar": "ساعات التشغيل"
+        }
+      },
+      "expected_family_volume": {
+        "destination": "fit",
+        "section": "scope",
+        "type": "integer",
+        "labels": {
+          "fr": "Volume familles",
+          "en": "Expected family volume",
+          "ar": "حجم الأسر المتوقع"
+        }
+      },
+      "non_medical_scope_statement": {
+        "destination": "evidence",
+        "section": "safety",
+        "type": "textarea",
+        "labels": {
+          "fr": "Déclaration périmètre non médical",
+          "en": "Non-medical scope statement",
+          "ar": "بيان النطاق غير الطبي"
+        }
+      },
+      "prohibited_medical_claims": {
+        "destination": "evidence",
+        "section": "safety",
+        "type": "multiselect",
+        "labels": {
+          "fr": "Actes et promesses interdits",
+          "en": "Prohibited medical claims",
+          "ar": "الادعاءات الطبية المحظورة"
+        }
+      },
+      "safeguarding_requirements": {
+        "destination": "evidence",
+        "section": "safety",
+        "type": "list",
+        "labels": {
+          "fr": "Exigences safeguarding",
+          "en": "Safeguarding requirements",
+          "ar": "متطلبات الحماية"
+        }
+      }
+    }
+  },
+  "event-venue-programme": {
+    "domain": "b2b",
+    "conversion": "b2b_quote",
+    "labels": {
+      "fr": "Programme lieux, événements & institutions",
+      "en": "Venue, event and institution programme",
+      "ar": "برنامج الأماكن والفعاليات والمؤسسات"
+    },
+    "fields": {
+      "name_fr": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom de la solution",
+          "en": "Solution name",
+          "ar": "اسم الحل"
+        }
+      },
+      "name_en": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom anglais",
+          "en": "English name",
+          "ar": "الاسم بالإنجليزية"
+        }
+      },
+      "name_ar": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom arabe",
+          "en": "Arabic name",
+          "ar": "الاسم بالعربية"
+        }
+      },
+      "short_description_fr": {
+        "destination": "description",
+        "section": "content",
+        "type": "textarea",
+        "labels": {
+          "fr": "Promesse exécutive",
+          "en": "Executive promise",
+          "ar": "الوعد التنفيذي"
+        }
+      },
+      "description_fr": {
+        "destination": "description",
+        "section": "content",
+        "type": "richtext",
+        "labels": {
+          "fr": "Description complète",
+          "en": "Full description",
+          "ar": "الوصف الكامل"
+        }
+      },
+      "primary_image_reference": {
+        "destination": "media",
+        "section": "media",
+        "type": "media",
+        "labels": {
+          "fr": "Visuel principal",
+          "en": "Primary visual",
+          "ar": "الصورة الرئيسية"
+        }
+      },
+      "organization_type": {
+        "destination": "fit",
+        "section": "scope",
+        "type": "select",
+        "labels": {
+          "fr": "Type d’organisation",
+          "en": "Organization type",
+          "ar": "نوع المؤسسة"
+        }
+      },
+      "site_minimum": {
+        "destination": "fit",
+        "section": "scope",
+        "type": "integer",
+        "labels": {
+          "fr": "Sites minimum",
+          "en": "Minimum sites",
+          "ar": "الحد الأدنى للمواقع"
+        }
+      },
+      "site_maximum": {
+        "destination": "fit",
+        "section": "scope",
+        "type": "integer",
+        "labels": {
+          "fr": "Sites maximum",
+          "en": "Maximum sites",
+          "ar": "الحد الأقصى للمواقع"
+        }
+      },
+      "territory_codes": {
+        "destination": "deployment",
+        "section": "coverage",
+        "type": "territory_list",
+        "labels": {
+          "fr": "Territoires",
+          "en": "Territories",
+          "ar": "المناطق"
+        }
+      },
+      "pricing_mode": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "select",
+        "labels": {
+          "fr": "Mode commercial",
+          "en": "Commercial pricing mode",
+          "ar": "نمط التسعير التجاري"
+        }
+      },
+      "starting_price_dh": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "money",
+        "labels": {
+          "fr": "Prix de départ Dh",
+          "en": "Starting price Dh",
+          "ar": "السعر الابتدائي بالدرهم"
+        }
+      },
+      "quotation_required": {
+        "destination": "commercial",
+        "section": "conversion",
+        "type": "boolean",
+        "labels": {
+          "fr": "Devis requis",
+          "en": "Quotation required",
+          "ar": "يتطلب عرض سعر"
+        }
+      },
+      "implementation_lead_time_days": {
+        "destination": "deployment",
+        "section": "delivery",
+        "type": "integer",
+        "labels": {
+          "fr": "Délai de mise en œuvre",
+          "en": "Implementation lead time",
+          "ar": "مدة التنفيذ"
+        }
+      },
+      "venue_types": {
+        "destination": "fit",
+        "section": "venue",
+        "type": "multiselect",
+        "labels": {
+          "fr": "Types de lieu",
+          "en": "Venue types",
+          "ar": "أنواع الأماكن"
+        }
+      },
+      "programme_mode": {
+        "destination": "included",
+        "section": "programme",
+        "type": "select",
+        "labels": {
+          "fr": "Mode programme",
+          "en": "Programme mode",
+          "ar": "نمط البرنامج"
+        }
+      },
+      "expected_attendance": {
+        "destination": "fit",
+        "section": "scope",
+        "type": "integer",
+        "labels": {
+          "fr": "Fréquentation estimée",
+          "en": "Expected attendance",
+          "ar": "الحضور المتوقع"
+        }
+      },
+      "expected_child_volume": {
+        "destination": "fit",
+        "section": "scope",
+        "type": "integer",
+        "labels": {
+          "fr": "Volume enfants",
+          "en": "Expected child volume",
+          "ar": "حجم الأطفال"
+        }
+      },
+      "space_requirements": {
+        "destination": "fit",
+        "section": "venue",
+        "type": "textarea",
+        "labels": {
+          "fr": "Exigences espace",
+          "en": "Space requirements",
+          "ar": "متطلبات المساحة"
+        }
+      },
+      "security_access_requirements": {
+        "destination": "evidence",
+        "section": "security",
+        "type": "list",
+        "labels": {
+          "fr": "Accès / sécurité",
+          "en": "Security/access requirements",
+          "ar": "متطلبات الدخول والأمن"
+        }
+      },
+      "equipment_requirements": {
+        "destination": "deployment",
+        "section": "delivery",
+        "type": "list",
+        "labels": {
+          "fr": "Équipements",
+          "en": "Equipment requirements",
+          "ar": "متطلبات المعدات"
+        }
+      },
+      "staffing_requirements": {
+        "destination": "deployment",
+        "section": "operations",
+        "type": "json",
+        "labels": {
+          "fr": "Staffing",
+          "en": "Staffing requirements",
+          "ar": "متطلبات الموظفين"
+        }
+      }
+    }
+  },
+  "partner-os-plan": {
+    "domain": "b2b",
+    "conversion": "subscription_request",
+    "labels": {
+      "fr": "Plan Partner OS",
+      "en": "Partner OS plan",
+      "ar": "خطة نظام الشركاء"
+    },
+    "fields": {
+      "name_fr": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom de la solution",
+          "en": "Solution name",
+          "ar": "اسم الحل"
+        }
+      },
+      "name_en": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom anglais",
+          "en": "English name",
+          "ar": "الاسم بالإنجليزية"
+        }
+      },
+      "name_ar": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom arabe",
+          "en": "Arabic name",
+          "ar": "الاسم بالعربية"
+        }
+      },
+      "short_description_fr": {
+        "destination": "description",
+        "section": "content",
+        "type": "textarea",
+        "labels": {
+          "fr": "Promesse exécutive",
+          "en": "Executive promise",
+          "ar": "الوعد التنفيذي"
+        }
+      },
+      "description_fr": {
+        "destination": "description",
+        "section": "content",
+        "type": "richtext",
+        "labels": {
+          "fr": "Description complète",
+          "en": "Full description",
+          "ar": "الوصف الكامل"
+        }
+      },
+      "primary_image_reference": {
+        "destination": "media",
+        "section": "media",
+        "type": "media",
+        "labels": {
+          "fr": "Visuel principal",
+          "en": "Primary visual",
+          "ar": "الصورة الرئيسية"
+        }
+      },
+      "organization_type": {
+        "destination": "fit",
+        "section": "scope",
+        "type": "select",
+        "labels": {
+          "fr": "Type d’organisation",
+          "en": "Organization type",
+          "ar": "نوع المؤسسة"
+        }
+      },
+      "site_minimum": {
+        "destination": "fit",
+        "section": "scope",
+        "type": "integer",
+        "labels": {
+          "fr": "Sites minimum",
+          "en": "Minimum sites",
+          "ar": "الحد الأدنى للمواقع"
+        }
+      },
+      "site_maximum": {
+        "destination": "fit",
+        "section": "scope",
+        "type": "integer",
+        "labels": {
+          "fr": "Sites maximum",
+          "en": "Maximum sites",
+          "ar": "الحد الأقصى للمواقع"
+        }
+      },
+      "territory_codes": {
+        "destination": "deployment",
+        "section": "coverage",
+        "type": "territory_list",
+        "labels": {
+          "fr": "Territoires",
+          "en": "Territories",
+          "ar": "المناطق"
+        }
+      },
+      "pricing_mode": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "select",
+        "labels": {
+          "fr": "Mode commercial",
+          "en": "Commercial pricing mode",
+          "ar": "نمط التسعير التجاري"
+        }
+      },
+      "starting_price_dh": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "money",
+        "labels": {
+          "fr": "Prix de départ Dh",
+          "en": "Starting price Dh",
+          "ar": "السعر الابتدائي بالدرهم"
+        }
+      },
+      "quotation_required": {
+        "destination": "commercial",
+        "section": "conversion",
+        "type": "boolean",
+        "labels": {
+          "fr": "Devis requis",
+          "en": "Quotation required",
+          "ar": "يتطلب عرض سعر"
+        }
+      },
+      "implementation_lead_time_days": {
+        "destination": "deployment",
+        "section": "delivery",
+        "type": "integer",
+        "labels": {
+          "fr": "Délai de mise en œuvre",
+          "en": "Implementation lead time",
+          "ar": "مدة التنفيذ"
+        }
+      },
+      "tenant_type": {
+        "destination": "included",
+        "section": "plan",
+        "type": "select",
+        "labels": {
+          "fr": "Type de tenant",
+          "en": "Tenant type",
+          "ar": "نوع المستأجر"
+        }
+      },
+      "included_modules": {
+        "destination": "included",
+        "section": "plan",
+        "type": "multiselect",
+        "labels": {
+          "fr": "Modules inclus",
+          "en": "Included modules",
+          "ar": "الوحدات المشمولة"
+        }
+      },
+      "user_limit": {
+        "destination": "commercial",
+        "section": "limits",
+        "type": "integer",
+        "labels": {
+          "fr": "Limite utilisateurs",
+          "en": "User limit",
+          "ar": "حد المستخدمين"
+        }
+      },
+      "site_limit": {
+        "destination": "commercial",
+        "section": "limits",
+        "type": "integer",
+        "labels": {
+          "fr": "Limite sites",
+          "en": "Site limit",
+          "ar": "حد المواقع"
+        }
+      },
+      "usage_limits": {
+        "destination": "commercial",
+        "section": "limits",
+        "type": "json",
+        "labels": {
+          "fr": "Limites d’usage",
+          "en": "Usage limits",
+          "ar": "حدود الاستخدام"
+        }
+      },
+      "storage_gb": {
+        "destination": "commercial",
+        "section": "limits",
+        "type": "number",
+        "labels": {
+          "fr": "Stockage (Go)",
+          "en": "Storage (GB)",
+          "ar": "التخزين جيجابايت"
+        }
+      },
+      "support_level": {
+        "destination": "deployment",
+        "section": "support",
+        "type": "select",
+        "labels": {
+          "fr": "Niveau de support",
+          "en": "Support level",
+          "ar": "مستوى الدعم"
+        }
+      },
+      "onboarding_type": {
+        "destination": "deployment",
+        "section": "onboarding",
+        "type": "select",
+        "labels": {
+          "fr": "Onboarding",
+          "en": "Onboarding",
+          "ar": "الإعداد"
+        }
+      },
+      "setup_fee_dh": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "money",
+        "labels": {
+          "fr": "Frais setup",
+          "en": "Setup fee",
+          "ar": "رسوم الإعداد"
+        }
+      },
+      "recurring_fee_dh": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "money",
+        "labels": {
+          "fr": "Abonnement",
+          "en": "Recurring fee",
+          "ar": "الاشتراك"
+        }
+      },
+      "billing_period": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "select",
+        "labels": {
+          "fr": "Période de facturation",
+          "en": "Billing period",
+          "ar": "فترة الفوترة"
+        }
+      },
+      "trial_days": {
+        "destination": "commercial",
+        "section": "commercial",
+        "type": "integer",
+        "labels": {
+          "fr": "Essai (jours)",
+          "en": "Trial days",
+          "ar": "أيام التجربة"
+        }
+      },
+      "add_on_keys": {
+        "destination": "included",
+        "section": "plan",
+        "type": "list",
+        "labels": {
+          "fr": "Add-ons disponibles",
+          "en": "Available add-ons",
+          "ar": "الإضافات المتاحة"
+        }
+      }
+    }
+  },
+  "quality-check-assessment": {
+    "domain": "b2b",
+    "conversion": "assessment_request",
+    "labels": {
+      "fr": "Évaluation Quality Check 360",
+      "en": "Quality Check 360 assessment",
+      "ar": "تقييم فحص الجودة 360"
+    },
+    "fields": {
+      "name_fr": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom de la solution",
+          "en": "Solution name",
+          "ar": "اسم الحل"
+        }
+      },
+      "name_en": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom anglais",
+          "en": "English name",
+          "ar": "الاسم بالإنجليزية"
+        }
+      },
+      "name_ar": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom arabe",
+          "en": "Arabic name",
+          "ar": "الاسم بالعربية"
+        }
+      },
+      "short_description_fr": {
+        "destination": "description",
+        "section": "content",
+        "type": "textarea",
+        "labels": {
+          "fr": "Promesse exécutive",
+          "en": "Executive promise",
+          "ar": "الوعد التنفيذي"
+        }
+      },
+      "description_fr": {
+        "destination": "description",
+        "section": "content",
+        "type": "richtext",
+        "labels": {
+          "fr": "Description complète",
+          "en": "Full description",
+          "ar": "الوصف الكامل"
+        }
+      },
+      "primary_image_reference": {
+        "destination": "media",
+        "section": "media",
+        "type": "media",
+        "labels": {
+          "fr": "Visuel principal",
+          "en": "Primary visual",
+          "ar": "الصورة الرئيسية"
+        }
+      },
+      "organization_type": {
+        "destination": "fit",
+        "section": "scope",
+        "type": "select",
+        "labels": {
+          "fr": "Type d’organisation",
+          "en": "Organization type",
+          "ar": "نوع المؤسسة"
+        }
+      },
+      "site_minimum": {
+        "destination": "fit",
+        "section": "scope",
+        "type": "integer",
+        "labels": {
+          "fr": "Sites minimum",
+          "en": "Minimum sites",
+          "ar": "الحد الأدنى للمواقع"
+        }
+      },
+      "site_maximum": {
+        "destination": "fit",
+        "section": "scope",
+        "type": "integer",
+        "labels": {
+          "fr": "Sites maximum",
+          "en": "Maximum sites",
+          "ar": "الحد الأقصى للمواقع"
+        }
+      },
+      "territory_codes": {
+        "destination": "deployment",
+        "section": "coverage",
+        "type": "territory_list",
+        "labels": {
+          "fr": "Territoires",
+          "en": "Territories",
+          "ar": "المناطق"
+        }
+      },
+      "pricing_mode": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "select",
+        "labels": {
+          "fr": "Mode commercial",
+          "en": "Commercial pricing mode",
+          "ar": "نمط التسعير التجاري"
+        }
+      },
+      "starting_price_dh": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "money",
+        "labels": {
+          "fr": "Prix de départ Dh",
+          "en": "Starting price Dh",
+          "ar": "السعر الابتدائي بالدرهم"
+        }
+      },
+      "quotation_required": {
+        "destination": "commercial",
+        "section": "conversion",
+        "type": "boolean",
+        "labels": {
+          "fr": "Devis requis",
+          "en": "Quotation required",
+          "ar": "يتطلب عرض سعر"
+        }
+      },
+      "implementation_lead_time_days": {
+        "destination": "deployment",
+        "section": "delivery",
+        "type": "integer",
+        "labels": {
+          "fr": "Délai de mise en œuvre",
+          "en": "Implementation lead time",
+          "ar": "مدة التنفيذ"
+        }
+      },
+      "assessment_framework": {
+        "destination": "included",
+        "section": "assessment",
+        "type": "select",
+        "labels": {
+          "fr": "Référentiel",
+          "en": "Assessment framework",
+          "ar": "إطار التقييم"
+        }
+      },
+      "site_count": {
+        "destination": "fit",
+        "section": "scope",
+        "type": "integer",
+        "labels": {
+          "fr": "Nombre de sites",
+          "en": "Site count",
+          "ar": "عدد المواقع"
+        }
+      },
+      "assessment_scope": {
+        "destination": "included",
+        "section": "assessment",
+        "type": "multiselect",
+        "labels": {
+          "fr": "Périmètre",
+          "en": "Assessment scope",
+          "ar": "نطاق التقييم"
+        }
+      },
+      "evidence_requirements": {
+        "destination": "evidence",
+        "section": "evidence",
+        "type": "list",
+        "labels": {
+          "fr": "Preuves requises",
+          "en": "Evidence requirements",
+          "ar": "الأدلة المطلوبة"
+        }
+      },
+      "assessment_mode": {
+        "destination": "deployment",
+        "section": "delivery",
+        "type": "select",
+        "labels": {
+          "fr": "Mode",
+          "en": "Assessment mode",
+          "ar": "طريقة التقييم"
+        }
+      },
+      "duration_days": {
+        "destination": "deployment",
+        "section": "delivery",
+        "type": "number",
+        "labels": {
+          "fr": "Durée (jours)",
+          "en": "Duration (days)",
+          "ar": "المدة بالأيام"
+        }
+      },
+      "report_type": {
+        "destination": "evidence",
+        "section": "reporting",
+        "type": "select",
+        "labels": {
+          "fr": "Type de rapport",
+          "en": "Report type",
+          "ar": "نوع التقرير"
+        }
+      },
+      "corrective_action_support": {
+        "destination": "deployment",
+        "section": "followup",
+        "type": "boolean",
+        "labels": {
+          "fr": "Support actions correctives",
+          "en": "Corrective action support",
+          "ar": "دعم الإجراءات التصحيحية"
+        }
+      },
+      "followup_assessment_enabled": {
+        "destination": "deployment",
+        "section": "followup",
+        "type": "boolean",
+        "labels": {
+          "fr": "Évaluation de suivi",
+          "en": "Follow-up assessment",
+          "ar": "تقييم متابعة"
+        }
+      }
+    }
+  },
+  "custom-managed-solution": {
+    "domain": "b2b",
+    "conversion": "guided_diagnostic",
+    "labels": {
+      "fr": "Solution gérée sur mesure",
+      "en": "Custom managed solution",
+      "ar": "حل مُدار مخصص"
+    },
+    "fields": {
+      "name_fr": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom de la solution",
+          "en": "Solution name",
+          "ar": "اسم الحل"
+        }
+      },
+      "name_en": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom anglais",
+          "en": "English name",
+          "ar": "الاسم بالإنجليزية"
+        }
+      },
+      "name_ar": {
+        "destination": "identity",
+        "section": "identity",
+        "type": "text",
+        "labels": {
+          "fr": "Nom arabe",
+          "en": "Arabic name",
+          "ar": "الاسم بالعربية"
+        }
+      },
+      "short_description_fr": {
+        "destination": "description",
+        "section": "content",
+        "type": "textarea",
+        "labels": {
+          "fr": "Promesse exécutive",
+          "en": "Executive promise",
+          "ar": "الوعد التنفيذي"
+        }
+      },
+      "description_fr": {
+        "destination": "description",
+        "section": "content",
+        "type": "richtext",
+        "labels": {
+          "fr": "Description complète",
+          "en": "Full description",
+          "ar": "الوصف الكامل"
+        }
+      },
+      "primary_image_reference": {
+        "destination": "media",
+        "section": "media",
+        "type": "media",
+        "labels": {
+          "fr": "Visuel principal",
+          "en": "Primary visual",
+          "ar": "الصورة الرئيسية"
+        }
+      },
+      "organization_type": {
+        "destination": "fit",
+        "section": "scope",
+        "type": "select",
+        "labels": {
+          "fr": "Type d’organisation",
+          "en": "Organization type",
+          "ar": "نوع المؤسسة"
+        }
+      },
+      "site_minimum": {
+        "destination": "fit",
+        "section": "scope",
+        "type": "integer",
+        "labels": {
+          "fr": "Sites minimum",
+          "en": "Minimum sites",
+          "ar": "الحد الأدنى للمواقع"
+        }
+      },
+      "site_maximum": {
+        "destination": "fit",
+        "section": "scope",
+        "type": "integer",
+        "labels": {
+          "fr": "Sites maximum",
+          "en": "Maximum sites",
+          "ar": "الحد الأقصى للمواقع"
+        }
+      },
+      "territory_codes": {
+        "destination": "deployment",
+        "section": "coverage",
+        "type": "territory_list",
+        "labels": {
+          "fr": "Territoires",
+          "en": "Territories",
+          "ar": "المناطق"
+        }
+      },
+      "pricing_mode": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "select",
+        "labels": {
+          "fr": "Mode commercial",
+          "en": "Commercial pricing mode",
+          "ar": "نمط التسعير التجاري"
+        }
+      },
+      "starting_price_dh": {
+        "destination": "price",
+        "section": "pricing",
+        "type": "money",
+        "labels": {
+          "fr": "Prix de départ Dh",
+          "en": "Starting price Dh",
+          "ar": "السعر الابتدائي بالدرهم"
+        }
+      },
+      "quotation_required": {
+        "destination": "commercial",
+        "section": "conversion",
+        "type": "boolean",
+        "labels": {
+          "fr": "Devis requis",
+          "en": "Quotation required",
+          "ar": "يتطلب عرض سعر"
+        }
+      },
+      "implementation_lead_time_days": {
+        "destination": "deployment",
+        "section": "delivery",
+        "type": "integer",
+        "labels": {
+          "fr": "Délai de mise en œuvre",
+          "en": "Implementation lead time",
+          "ar": "مدة التنفيذ"
+        }
+      },
+      "solution_scope": {
+        "destination": "fit",
+        "section": "scope",
+        "type": "multiselect",
+        "labels": {
+          "fr": "Périmètre de solution",
+          "en": "Solution scope",
+          "ar": "نطاق الحل"
+        }
+      },
+      "site_count": {
+        "destination": "fit",
+        "section": "scope",
+        "type": "integer",
+        "labels": {
+          "fr": "Nombre de sites",
+          "en": "Site count",
+          "ar": "عدد المواقع"
+        }
+      },
+      "beneficiary_volume": {
+        "destination": "fit",
+        "section": "scope",
+        "type": "integer",
+        "labels": {
+          "fr": "Volume bénéficiaires",
+          "en": "Beneficiary volume",
+          "ar": "حجم المستفيدين"
+        }
+      },
+      "objectives": {
+        "destination": "fit",
+        "section": "diagnostic",
+        "type": "list",
+        "labels": {
+          "fr": "Objectifs",
+          "en": "Objectives",
+          "ar": "الأهداف"
+        }
+      },
+      "required_components": {
+        "destination": "fit",
+        "section": "diagnostic",
+        "type": "multiselect",
+        "labels": {
+          "fr": "Composants requis",
+          "en": "Required components",
+          "ar": "المكونات المطلوبة"
+        }
+      },
+      "budget_range_dh": {
+        "destination": "commercial",
+        "section": "commercial",
+        "type": "text",
+        "labels": {
+          "fr": "Fourchette budget Dh",
+          "en": "Budget range Dh",
+          "ar": "نطاق الميزانية"
+        }
+      },
+      "target_start_date": {
+        "destination": "commercial",
+        "section": "commercial",
+        "type": "date",
+        "labels": {
+          "fr": "Date cible",
+          "en": "Target start date",
+          "ar": "تاريخ البدء المستهدف"
+        }
+      },
+      "document_requirements": {
+        "destination": "fit",
+        "section": "diagnostic",
+        "type": "list",
+        "labels": {
+          "fr": "Documents attendus",
+          "en": "Required documents",
+          "ar": "المستندات المطلوبة"
+        }
+      },
+      "meeting_required": {
+        "destination": "commercial",
+        "section": "conversion",
+        "type": "boolean",
+        "labels": {
+          "fr": "Réunion requise",
+          "en": "Meeting required",
+          "ar": "اجتماع مطلوب"
+        }
+      }
+    }
+  }
+}

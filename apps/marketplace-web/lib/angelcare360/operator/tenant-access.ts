@@ -398,7 +398,7 @@ async function sendAccessEmail(input: { toEmail: string; fullName: string; subje
       entityType: 'tenant_access_account',
       entityId: input.accessAccountId || null,
       eventType: input.eventType || 'tenant.access.communication',
-      mailboxKey: 'B2B',
+      mailboxKey: 'IT_SUPPORT',
     },
   })
 }

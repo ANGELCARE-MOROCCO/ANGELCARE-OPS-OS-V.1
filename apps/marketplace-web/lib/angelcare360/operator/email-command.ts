@@ -8,6 +8,8 @@ import { writeOperatorAuditLog } from './audit'
 import { asString, asStringArray, getOperatorClient, safeList, toRecord } from './shared'
 import type { EmailCommandSnapshot } from '@/types/angelcare360/operator/email-command'
 import { assertExternalSideEffectAllowed } from '@/lib/sanila-demo/safety'
+import { SANILA_OPERATIONS_MAILBOX, selectSanilaOperationsMailbox } from '@/lib/email-os-core/operational-mailboxes'
+import { assertEmailRecipientAcceptance, EmailDeliveryUnconfirmedError } from '@/lib/email-os-core/delivery-receipt'
 
 const RULE_TABLE = 'angelcare360_operator_email_automation_rules'
 const RULE_VERSION_TABLE = 'angelcare360_operator_email_automation_rule_versions'
@@ -50,7 +52,8 @@ async function audit(action: string, entityType: string, entityId: string | null
 
 async function mailboxSnapshot() {
   const dbRows = await listEmailOSMultiMailboxesFromDb().catch(() => [])
-  const rows = dbRows.length ? dbRows : listEmailOSMultiMailboxes()
+  const rows = (dbRows.length ? dbRows : listEmailOSMultiMailboxes())
+    .filter(row => row.email.trim().toLowerCase() === SANILA_OPERATIONS_MAILBOX)
   const bridgeEnabled = Boolean(process.env.EMAIL_OS_BRIDGE_URL)
   return rows.map((row) => ({
     key: row.key,
@@ -121,7 +124,7 @@ async function upsertRule(input: unknown) {
     conditions: toRecord(payload.conditions),
     actions: toRecord(payload.actions),
     recipient_policy: toRecord(payload.recipientPolicy || payload.recipient_policy),
-    mailbox_key: asString(payload.mailboxKey || payload.mailbox_key) || null,
+    mailbox_key: 'IT_SUPPORT',
     template_id: asString(payload.templateId || payload.template_id) || null,
     approval_policy: toRecord(payload.approvalPolicy || payload.approval_policy),
     suppression_policy: toRecord(payload.suppressionPolicy || payload.suppression_policy),
@@ -173,7 +176,7 @@ async function upsertTemplate(input: unknown) {
     purpose: asString(payload.purpose, 'general_correspondence'),
     language: asString(payload.language, 'fr'),
     status: asString(payload.status, before?.status || 'draft'),
-    mailbox_key: asString(payload.mailboxKey || payload.mailbox_key) || null,
+    mailbox_key: 'IT_SUPPORT',
     subject_template: subject,
     html_template: asString(payload.htmlTemplate || payload.html_template) || null,
     text_template: textTemplate,
@@ -204,9 +207,9 @@ async function composeMessage(input: unknown) {
   const status = approvalRequired ? 'awaiting_approval' : scheduledAt && new Date(scheduledAt).getTime() > Date.now() ? 'scheduled' : 'queued'
   const { data, error } = await db.from(MESSAGE_TABLE).insert({
     message_reference: idRef('EML'), direction: 'outbound', thread_key: asString(payload.threadKey || payload.thread_key) || null,
-    mailbox_key: asString(payload.mailboxKey || payload.mailbox_key, 'B2B'), mailbox_email: asString(payload.mailboxEmail || payload.mailbox_email) || null,
+    mailbox_key: 'IT_SUPPORT', mailbox_email: SANILA_OPERATIONS_MAILBOX,
     subject, body_text: bodyText, body_html: asString(payload.bodyHtml || payload.body_html) || null,
-    sender_email: asString(payload.mailboxEmail || payload.mailbox_email) || '', recipient_emails: recipients,
+    sender_email: SANILA_OPERATIONS_MAILBOX, recipient_emails: recipients,
     cc_emails: asStringArray(payload.ccEmails || payload.cc_emails), bcc_emails: asStringArray(payload.bccEmails || payload.bcc_emails),
     status, delivery_state: status, automation_rule_id: asString(payload.automationRuleId || payload.automation_rule_id) || null,
     template_id: asString(payload.templateId || payload.template_id) || null, client_id: asString(payload.clientId || payload.client_id) || null,
@@ -256,7 +259,7 @@ async function sendMessage(input: unknown) {
     return { ok: true, simulated: true, code: demoSafety.code, record: data }
   }
   const mailboxes = [...await listEmailOSMultiMailboxesFromDb().catch(() => []), ...listEmailOSMultiMailboxes()]
-  const mailbox = mailboxes.find((item) => item.key === message.mailbox_key || item.email === message.mailbox_email) || mailboxes.find((item) => item.key === 'B2B') || mailboxes[0]
+  const mailbox = selectSanilaOperationsMailbox(mailboxes)
   if (!mailbox) return { ok: false, error: 'Aucune boîte Email OS configurée.' }
   await db.from(MESSAGE_TABLE).update({ status: 'bridge_processing', delivery_state: 'bridge_processing', attempt_count: numberValue(message.attempt_count) + 1, last_attempt_at: now(), updated_by: actor.user.id }).eq('id', id)
   await appendDeliveryEvent(db, id, 'bridge_processing', { mailbox: mailbox.email })
@@ -269,8 +272,9 @@ async function sendMessage(input: unknown) {
       headers: message.thread_key ? { 'X-AngelCare-Thread': message.thread_key } : undefined,
       attachments: message.attachments || [],
     })
+    assertEmailRecipientAcceptance(result.info, [...(message.recipient_emails || []), ...(message.cc_emails || []), ...(message.bcc_emails || [])])
     const providerMessageId = result.info?.messageId || null
-    const { data } = await db.from(MESSAGE_TABLE).update({ status: 'smtp_accepted', delivery_state: 'smtp_accepted', provider_message_id: providerMessageId, mailbox_email: mailbox.email, sent_at: now(), updated_by: actor.user.id }).eq('id', id).select('*').single()
+    const { data } = await db.from(MESSAGE_TABLE).update({ status: 'smtp_accepted', delivery_state: 'smtp_accepted', provider_message_id: providerMessageId, mailbox_key: 'IT_SUPPORT', mailbox_email: mailbox.email, sender_email: mailbox.email, sent_at: now(), updated_by: actor.user.id }).eq('id', id).select('*').single()
     await appendDeliveryEvent(db, id, 'smtp_accepted', { provider_message_id: providerMessageId, accepted: result.info?.accepted || [], rejected: result.info?.rejected || [], bridge: Boolean(result.info?.bridge) })
     await audit('message.sent', MESSAGE_TABLE, id, { provider_message_id: providerMessageId, mailbox: mailbox.email }, message, data)
     return { ok: true, record: data }
@@ -278,9 +282,10 @@ async function sendMessage(input: unknown) {
     const errorMessage = error instanceof Error ? error.message : 'Email OS send failed.'
     const attempt = numberValue(message.attempt_count) + 1
     const permanent = attempt >= Math.max(1, numberValue(toRecord(message.metadata).max_attempts, 3))
-    const status = permanent ? 'permanently_failed' : 'retry_scheduled'
-    const nextRetry = permanent ? null : new Date(Date.now() + Math.min(3600000, attempt * 5 * 60000)).toISOString()
-    const { data } = await db.from(MESSAGE_TABLE).update({ status, delivery_state: 'failed', failure_reason: errorMessage, next_retry_at: nextRetry, updated_by: actor.user.id }).eq('id', id).select('*').single()
+    const unconfirmed = error instanceof EmailDeliveryUnconfirmedError
+    const status = unconfirmed ? 'waiting_internal' : permanent ? 'permanently_failed' : 'retry_scheduled'
+    const nextRetry = permanent || unconfirmed ? null : new Date(Date.now() + Math.min(3600000, attempt * 5 * 60000)).toISOString()
+    const { data } = await db.from(MESSAGE_TABLE).update({ status, delivery_state: unconfirmed ? 'delivery_unknown' : 'failed', failure_reason: errorMessage, next_retry_at: nextRetry, updated_by: actor.user.id }).eq('id', id).select('*').single()
     await appendDeliveryEvent(db, id, 'failed', { error: errorMessage, attempt, next_retry_at: nextRetry })
     await audit('message.failed', MESSAGE_TABLE, id, { error: errorMessage, attempt }, message, data)
     return { ok: false, error: errorMessage, record: data }
@@ -358,9 +363,9 @@ export async function evaluateBusinessEvent(input: Record<string, unknown>) {
     }
     const approvalRequired = bool(toRecord(rule.approval_policy).required) || Boolean(template.approval_required)
     const messageResult = await db.from(MESSAGE_TABLE).insert({
-      message_reference: idRef('EML'), direction: 'outbound', mailbox_key: rule.mailbox_key || template.mailbox_key || 'B2B',
+      message_reference: idRef('EML'), direction: 'outbound', mailbox_key: 'IT_SUPPORT', mailbox_email: SANILA_OPERATIONS_MAILBOX,
       subject: renderTemplate(template.subject_template, context), body_text: renderTemplate(template.text_template, context), body_html: template.html_template ? renderTemplate(template.html_template, context) : null,
-      sender_email: '', recipient_emails: recipients.map((item) => item.email), cc_emails: [], bcc_emails: [],
+      sender_email: SANILA_OPERATIONS_MAILBOX, recipient_emails: recipients.map((item) => item.email), cc_emails: [], bcc_emails: [],
       status: approvalRequired ? 'awaiting_approval' : 'queued', delivery_state: approvalRequired ? 'awaiting_approval' : 'queued',
       automation_rule_id: rule.id, template_id: template.id, client_id: asString(input.clientId || input.client_id) || null,
       contact_id: recipients[0]?.contactId || null, institution_id: asString(input.institutionId || input.institution_id) || null,
@@ -543,7 +548,7 @@ async function sendStoredMessageAsSystem(db: any, message: any) {
     return { ok: true, simulated: true, code: demoSafety.code, record: data }
   }
   const mailboxes = [...await listEmailOSMultiMailboxesFromDb().catch(() => []), ...listEmailOSMultiMailboxes()]
-  const mailbox = mailboxes.find((item) => item.key === message.mailbox_key || item.email === message.mailbox_email) || mailboxes.find((item) => item.key === 'B2B') || mailboxes[0]
+  const mailbox = selectSanilaOperationsMailbox(mailboxes)
   if (!mailbox) return { ok: false, error: 'Aucune boîte Email OS configurée.' }
   const attempt = numberValue(message.attempt_count) + 1
   await db.from(MESSAGE_TABLE).update({ status: 'bridge_processing', delivery_state: 'bridge_processing', attempt_count: attempt, last_attempt_at: now() }).eq('id', message.id)
@@ -557,16 +562,18 @@ async function sendStoredMessageAsSystem(db: any, message: any) {
       headers: message.thread_key ? { 'X-AngelCare-Thread': message.thread_key } : undefined,
       attachments: message.attachments || [],
     })
+    assertEmailRecipientAcceptance(result.info, [...(message.recipient_emails || []), ...(message.cc_emails || []), ...(message.bcc_emails || [])])
     const providerMessageId = result.info?.messageId || null
-    const { data } = await db.from(MESSAGE_TABLE).update({ status: 'smtp_accepted', delivery_state: 'smtp_accepted', provider_message_id: providerMessageId, mailbox_email: mailbox.email, sent_at: now(), failure_reason: null, next_retry_at: null }).eq('id', message.id).select('*').single()
+    const { data } = await db.from(MESSAGE_TABLE).update({ status: 'smtp_accepted', delivery_state: 'smtp_accepted', provider_message_id: providerMessageId, mailbox_key: 'IT_SUPPORT', mailbox_email: mailbox.email, sender_email: mailbox.email, sent_at: now(), failure_reason: null, next_retry_at: null }).eq('id', message.id).select('*').single()
     await appendDeliveryEvent(db, message.id, 'worker.smtp_accepted', { provider_message_id: providerMessageId, accepted: result.info?.accepted || [], rejected: result.info?.rejected || [], bridge: Boolean(result.info?.bridge) })
     return { ok: true, record: data }
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Email OS worker send failed.'
     const permanent = attempt >= Math.max(1, numberValue(toRecord(message.metadata).max_attempts, 3))
-    const status = permanent ? 'permanently_failed' : 'retry_scheduled'
-    const nextRetry = permanent ? null : new Date(Date.now() + Math.min(3600000, attempt * 5 * 60000)).toISOString()
-    const { data } = await db.from(MESSAGE_TABLE).update({ status, delivery_state: 'failed', failure_reason: errorMessage, next_retry_at: nextRetry }).eq('id', message.id).select('*').single()
+    const unconfirmed = error instanceof EmailDeliveryUnconfirmedError
+    const status = unconfirmed ? 'waiting_internal' : permanent ? 'permanently_failed' : 'retry_scheduled'
+    const nextRetry = permanent || unconfirmed ? null : new Date(Date.now() + Math.min(3600000, attempt * 5 * 60000)).toISOString()
+    const { data } = await db.from(MESSAGE_TABLE).update({ status, delivery_state: unconfirmed ? 'delivery_unknown' : 'failed', failure_reason: errorMessage, next_retry_at: nextRetry }).eq('id', message.id).select('*').single()
     await appendDeliveryEvent(db, message.id, 'worker.failed', { error: errorMessage, attempt, next_retry_at: nextRetry })
     return { ok: false, error: errorMessage, record: data }
   }

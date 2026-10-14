@@ -6,7 +6,7 @@ import { getAngelcare360DocumentTemplate } from '@/lib/angelcare360/documents/te
 export async function getOperatorSettings() {
   await requireAngelcare360OperatorPermission('operator.settings.manage')
   const paymentProvider = getAngelcare360PaymentProviderStatus()
-  const emailBridgeAvailable = isAngelcare360EmailBridgeAvailable()
+  const emailBridgeAvailable = await isAngelcare360EmailBridgeAvailable()
   const invoiceTemplate = getAngelcare360DocumentTemplate('operator-saas-invoice')
   const receiptTemplate = getAngelcare360DocumentTemplate('operator-payment-receipt')
   const statementTemplate = getAngelcare360DocumentTemplate('operator-client-statement')

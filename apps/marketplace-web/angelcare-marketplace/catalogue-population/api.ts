@@ -1,4 +1,4 @@
-import {prepareTaxonomy,executeTaxonomy} from './taxonomy'
+import {prepareTaxonomy,executeTaxonomy,rollbackTaxonomy} from './taxonomy'
 import {requireMarketplaceApiContext,hasMarketplacePermission} from '../auth/context'
 import {apiFailure,apiSuccess,parseJsonObject,requestId} from '../server/request'
 import {MarketplaceError} from '../server/errors'
@@ -21,7 +21,7 @@ export async function handlePopulation(request:Request){const rid=requestId(requ
   throw new MarketplaceError('VALIDATION_ERROR','Lecture inconnue.');
  }
  if(request.method!=='POST')throw new MarketplaceError('VALIDATION_ERROR','Méthode inconnue.');const body=await parseJsonObject(request);const action=text(body.action);
- if(action==='taxonomy-prepare'||action==='taxonomy-execute'){await requireMarketplaceApiContext('marketplace.categories.manage');return apiSuccess(action==='taxonomy-prepare'?await prepareTaxonomy(body,context):await executeTaxonomy(text(body.id),context),{requestId:rid})}
+ if(action==='taxonomy-prepare'||action==='taxonomy-execute'||action==='taxonomy-rollback'){await requireMarketplaceApiContext('marketplace.categories.manage');return apiSuccess(action==='taxonomy-prepare'?await prepareTaxonomy(body,context):action==='taxonomy-rollback'?await rollbackTaxonomy(text(body.id),context):await executeTaxonomy(text(body.id),context),{requestId:rid})}
  if(action==='categories'){await requireMarketplaceApiContext('marketplace.catalog.manage');await requireMarketplaceApiContext('marketplace.categories.manage');return apiSuccess(await authority.categoryMutation(body,context),{requestId:rid})}
  await requireMarketplaceApiContext('marketplace.category_native_import.manage');
  if(action==='create')return apiSuccess(await authority.createBatch(body,context),{requestId:rid,status:201});

@@ -19,6 +19,8 @@
     "lib/angelcare360/email/email-os-bridge.ts",
     "lib/angelcare360/email/correspondence-ledger.ts",
     "lib/angelcare360/operator/email-command.ts",
+    "lib/angelcare360/operator/email.ts",
+    "lib/angelcare360/operator/settings.ts",
     "lib/angelcare360/operator/tenant-access.ts",
     "lib/email-os-core/send-mail.ts",
     "lib/email-os-core/multi-mailbox-resolver.ts",

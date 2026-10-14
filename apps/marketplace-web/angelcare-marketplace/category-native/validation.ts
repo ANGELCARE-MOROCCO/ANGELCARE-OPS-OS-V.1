@@ -16,11 +16,11 @@ import {
 const TRUE_VALUES = new Set(['true', '1', 'yes', 'oui', 'on'])
 const FALSE_VALUES = new Set(['false', '0', 'no', 'non', 'off'])
 
-export function categoryNativeText(value: unknown, max = 4000): string {
+export function categoryNativeText(value: unknown, max = Number.POSITIVE_INFINITY): string {
   return String(value ?? '').trim().slice(0, max)
 }
 
-export function categoryNativeOptionalText(value: unknown, max = 4000): string | null {
+export function categoryNativeOptionalText(value: unknown, max = Number.POSITIVE_INFINITY): string | null {
   const result = categoryNativeText(value, max)
   return result || null
 }
@@ -71,7 +71,7 @@ export function categoryNativeObject(value: unknown): Record<string, unknown> {
   }
 }
 
-function normalizeField(
+export function normalizeCategoryNativeField(
   field: ExperienceFieldBlueprint,
   value: unknown,
 ): { value: unknown; error: string | null } {
@@ -96,8 +96,11 @@ function normalizeField(
     if (maximum !== null && result > maximum) {
       return { value: result, error: `${field.label_fr} doit être inférieur ou égal à ${maximum}.` }
     }
+    if (field.field_type === 'integer' && !Number.isSafeInteger(result)) {
+      return { value: result, error: `${field.label_fr} doit être un entier exact, sans arrondi.` }
+    }
     return {
-      value: field.field_type === 'integer' ? Math.trunc(result) : result,
+      value: result,
       error: null,
     }
   }
@@ -117,11 +120,16 @@ function normalizeField(
   }
 
   if (['json', 'component_list', 'time_ranges'].includes(field.field_type)) {
-    const parsed = categoryNativeObject(value)
-    if (!Object.keys(parsed).length && categoryNativeText(value)) {
-      return { value: {}, error: `${field.label_fr} contient un JSON invalide.` }
+    try {
+      const parsed: unknown = typeof value === 'string' ? JSON.parse(value) : value
+      if (parsed === null || typeof parsed !== 'object') throw Error('structure')
+      if (['component_list', 'time_ranges'].includes(field.field_type) && !Array.isArray(parsed)) throw Error('liste')
+      if (field.validation.json_shape === 'array' && !Array.isArray(parsed)) throw Error('liste')
+      if (field.validation.json_shape === 'object' && Array.isArray(parsed)) throw Error('objet')
+      return { value: parsed, error: null }
+    } catch {
+      return { value: null, error: `${field.label_fr} contient un JSON invalide ou une structure incompatible.` }
     }
-    return { value: parsed, error: null }
   }
 
   const result = categoryNativeText(value)
@@ -138,10 +146,16 @@ function normalizeField(
       if (!new RegExp(pattern).test(result)) {
         return { value: result, error: `${field.label_fr} ne respecte pas le format requis.` }
       }
-    } catch {
-      // A malformed registry pattern must not crash an import. It is surfaced by schema QA.
-    }
+    } catch { return { value: result, error: `${field.label_fr} : règle du schéma invalide ; correction administrateur requise.` } }
   }
+
+  const maximumLength = categoryNativeNumber(field.validation.max_length ?? field.validation.maxLength)
+  const minimumLength = categoryNativeNumber(field.validation.min_length ?? field.validation.minLength)
+  if (minimumLength !== null && result.length < minimumLength) return { value: result, error: `${field.label_fr} exige au moins ${minimumLength} caractères.` }
+  if (maximumLength !== null && result.length > maximumLength) return { value: result, error: `${field.label_fr} dépasse ${maximumLength} caractères ; aucune troncature automatique.` }
+  if (field.field_type === 'date' && (!/^\d{4}-\d{2}-\d{2}$/.test(result) || !Number.isFinite(Date.parse(result)) || new Date(result).toISOString().slice(0, 10) !== result)) return { value: result, error: `${field.label_fr} exige une date valide AAAA-MM-JJ.` }
+  if (field.field_type === 'datetime' && (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2}(\.\d+)?)?(Z|[+-]\d{2}:\d{2})$/.test(result) || !Number.isFinite(Date.parse(result)))) return { value: result, error: `${field.label_fr} exige une date ISO avec fuseau horaire.` }
+  if (field.field_type === 'time' && !/^([01]\d|2[0-3]):[0-5]\d(:[0-5]\d)?$/.test(result)) return { value: result, error: `${field.label_fr} exige une heure valide HH:MM.` }
 
   return { value: result, error: null }
 }
@@ -175,7 +189,7 @@ export function validateCategoryNativeRow(
       normalized[field.field_key] = null
       continue
     }
-    const result = normalizeField(field, raw)
+    const result = normalizeCategoryNativeField(field, raw)
     normalized[field.field_key] = result.value
     if (result.error) errors.push(result.error)
   }
@@ -273,9 +287,11 @@ export function parseCategoryNativeCsv(source: string): Record<string, unknown>[
     throw new MarketplaceError('VALIDATION_ERROR', 'Le CSV contient des colonnes dupliquées.')
   }
 
-  return rows
-    .filter((values) => values.some((value) => value.trim()))
-    .map((values) => Object.fromEntries(headers.map((header, index) => [header, values[index] ?? ''])))
+  return rows.flatMap((values, index) => {
+    if (!values.some(value => value.trim())) return []
+    if (values.length !== headers.length) throw new MarketplaceError('VALIDATION_ERROR', `Ligne CSV ${index + 2} : ${values.length} cellules pour ${headers.length} colonnes. Aucun contenu n’a été ignoré.`)
+    return [Object.fromEntries(headers.map((header, index) => [header, values[index]]))]
+  })
 }
 
 function csvEscape(value: unknown): string {

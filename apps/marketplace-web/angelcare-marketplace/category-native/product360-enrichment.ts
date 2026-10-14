@@ -206,7 +206,7 @@ export function categoryNative360Fields(): ExperienceFieldBlueprint[] {
 export function categoryNativeCsvFields(schema: ExperienceSchemaBlueprint): ExperienceFieldBlueprint[] {
   const seen = new Set<string>()
   const nativeFields = schema.fields
-    .filter((entry) => entry.csv_enabled)
+    .filter((entry) => entry.csv_enabled && (!('status' in entry) || (entry as ExperienceFieldBlueprint & {status?: string}).status === 'active'))
     .map((entry) => CATEGORY_NATIVE_DEFERRED_MEDIA_KEYS.has(entry.field_key)
       ? { ...entry, required: false, help_fr: `${entry.help_fr || entry.label_fr} · Média différé : assignable manuellement après import.` }
       : entry)
@@ -264,7 +264,9 @@ export function categoryNativeDoctrineAttributes(
     out.service_area ??= territoryScope
     out.cancellation_policy ??= normalized.cancellation_policy_key
   } else if (sellable === 'recurring_service') {
-    out.frequency ??= firstPresent(normalized.frequency, normalized.recurrence_types)
+    // Recurrence choices are not a billing frequency. Only an explicit scalar
+    // frequency may reach the canonical recurrence authority.
+    out.frequency ??= normalized.frequency
     out.provider_capability ??= capability
     out.service_area ??= territoryScope
     out.cancellation_policy ??= normalized.cancellation_policy_key

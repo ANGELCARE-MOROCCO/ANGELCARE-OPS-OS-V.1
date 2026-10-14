@@ -88,6 +88,9 @@ export interface StudioBlockProps extends Record<string, unknown> {
   collectionKey?: string | StudioSourceReference
   categoryKey?: string | StudioSourceReference
   productCommerceRevision?: number
+  neutralExperienceRevision?: number
+  b2bCommerceRevision?: number
+  editorial?: Record<string, unknown>
   items?: Array<Record<string, unknown>>
   sourceDesign?: StudioDesignStyle
   responsive?: StudioResponsiveState

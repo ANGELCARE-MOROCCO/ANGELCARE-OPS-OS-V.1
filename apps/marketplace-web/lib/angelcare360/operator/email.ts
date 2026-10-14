@@ -40,7 +40,7 @@ async function logEmailAction(input: {
     metadata: {
       ...(input.metadata || {}),
       mailbox: getAngelcare360B2BMailboxEmail(),
-      emailBridgeAvailable: isAngelcare360EmailBridgeAvailable(),
+      emailBridgeAvailable: await isAngelcare360EmailBridgeAvailable(),
     },
   })
 }

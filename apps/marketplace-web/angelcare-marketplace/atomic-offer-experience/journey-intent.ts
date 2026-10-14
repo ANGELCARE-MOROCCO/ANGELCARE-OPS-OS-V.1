@@ -3,7 +3,7 @@ import type { ExperienceSchemaBlueprint } from '../category-native/types'
 const obj=(v:unknown):Record<string,unknown>=>v&&typeof v==='object'&&!Array.isArray(v)?v as Record<string,unknown>:{}
 const text=(v:unknown,max=200)=>typeof v==='string'?v.trim().slice(0,max):''
 const date=(v:unknown)=>{const s=text(v,10);if(!/^\d{4}-\d{2}-\d{2}$/.test(s))return '';const d=new Date(`${s}T12:00:00Z`);return Number.isFinite(d.getTime())&&d.toISOString().slice(0,10)===s?s:''}
-export const ATOMIC_INTENT_KEYS=['requestedDate','requestedTime','duration','city','cohortId','quantity','childrenCount','learnerType','learningGoal','organizationName'] as const
+export const ATOMIC_INTENT_KEYS=['requestedDate','requestedTime','duration','city','cohortId','quantity','childrenCount','learnerType','learningGoal','organizationName','projectBrief'] as const
 /** This extends customer intent only. Schema fields, imports, price and capacity stay authoritative. */
 export function atomicJourneyIntent(schema:ExperienceSchemaBlueprint,configuration:Record<string,unknown>):Record<string,unknown>{
   const out:Record<string,unknown>={}
@@ -30,6 +30,11 @@ export function atomicJourneyIntent(schema:ExperienceSchemaBlueprint,configurati
     if(organisation)out.organizationName=organisation
     const id=text(configuration.cohortId,36)
     if(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id))out.cohortId=id
+  }
+  if(['school-managed-programme','school-staff-reinforcement','hospitality-kids-programme','corporate-childcare-benefit','health-adjacent-programme','event-venue-programme','partner-os-plan','quality-check-assessment','custom-managed-solution'].includes(schema.schema_key)){
+    const organisation=text(configuration.organizationName,240),brief=text(configuration.projectBrief,1000)
+    if(organisation)out.organizationName=organisation
+    if(brief)out.projectBrief=brief
   }
   return out
 }
